@@ -8,7 +8,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
@@ -32,14 +31,22 @@ import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.test.beanItems.TestResultItem;
 import org.openelisglobal.test.service.TestServiceImpl;
 import org.openelisglobal.workplan.form.WorkplanForm;
+import org.openelisglobal.workplan.form.WorkplanForm.PrintWorkplan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class WorkplanByPanelController extends BaseWorkplanController {
+
+    private static final String[] ALLOWED_FIELDS = new String[] { "selectedSearchId" };
+
     @Autowired
     private AnalysisService analysisService;
     @Autowired
@@ -49,8 +56,14 @@ public class WorkplanByPanelController extends BaseWorkplanController {
     @Autowired
     private SampleQaEventService sampleQaEventService;
 
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
+
     @RequestMapping(value = "/WorkPlanByPanel", method = RequestMethod.GET)
-    public ModelAndView showWorkPlanByTest(HttpServletRequest request)
+    public ModelAndView showWorkPlanByTest(@Validated(PrintWorkplan.class) @ModelAttribute("form") WorkplanForm oldForm,
+            HttpServletRequest request)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         WorkplanForm form = new WorkplanForm();
 
@@ -58,29 +71,28 @@ public class WorkplanByPanelController extends BaseWorkplanController {
 
         List<TestResultItem> workplanTests;
 
-        String panelID = request.getParameter("selectedSearchID");
+        String panelID = oldForm.getSelectedSearchID();
 
         if (!GenericValidator.isBlankOrNull(panelID)) {
             String panelName = getPanelName(panelID);
             workplanTests = getWorkplanByPanel(panelID);
 
             // resultsLoadUtility.sortByAccessionAndSequence(workplanTests);
-            PropertyUtils.setProperty(form, "testTypeID", panelID);
-            PropertyUtils.setProperty(form, "testName", panelName);
-            PropertyUtils.setProperty(form, "workplanTests", workplanTests);
-            PropertyUtils.setProperty(form, "searchFinished", Boolean.TRUE);
+            form.setTestTypeID(panelID);
+            form.setTestName(panelName);
+            form.setWorkplanTests(workplanTests);
+            form.setSearchFinished(Boolean.TRUE);
         } else {
             // no search done, set workplanTests as empty
-            PropertyUtils.setProperty(form, "searchFinished", Boolean.FALSE);
-            PropertyUtils.setProperty(form, "testName", null);
-            PropertyUtils.setProperty(form, "workplanTests", new ArrayList<TestResultItem>());
+            form.setSearchFinished(Boolean.FALSE);
+            form.setTestName(null);
+            form.setWorkplanTests(new ArrayList<TestResultItem>());
         }
 
-        PropertyUtils.setProperty(form, "workplanType", "panel");
-        PropertyUtils.setProperty(form, "searchTypes",
-                DisplayListService.getInstance().getList(DisplayListService.ListType.PANELS));
-        PropertyUtils.setProperty(form, "searchLabel", MessageUtil.getMessage("workplan.panel.types"));
-        PropertyUtils.setProperty(form, "searchAction", "WorkPlanByPanel.do");
+        form.setWorkplanType("panel");
+        form.setSearchTypes(DisplayListService.getInstance().getList(DisplayListService.ListType.PANELS));
+        form.setSearchLabel(MessageUtil.getMessage("workplan.panel.types"));
+        form.setSearchAction("WorkPlanByPanel.do");
 
         return findForward(FWD_SUCCESS, form);
     }

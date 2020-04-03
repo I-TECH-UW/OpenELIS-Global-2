@@ -8,9 +8,10 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.SafeHtml;
 import org.openelisglobal.analyzerresults.action.beanitems.AnalyzerResultItem;
 import org.openelisglobal.common.form.BaseForm;
+import org.openelisglobal.common.form.IPagingForm;
 import org.openelisglobal.common.paging.PagingBean;
 
-public class AnalyzerResultsForm extends BaseForm {
+public class AnalyzerResultsForm extends BaseForm implements IPagingForm {
 
     public interface AnalyzerResuts {
     }
@@ -21,7 +22,7 @@ public class AnalyzerResultsForm extends BaseForm {
     @Valid
     private List<AnalyzerResultItem> resultList;
 
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String analyzerType = "";
 
     @NotNull
@@ -30,16 +31,16 @@ public class AnalyzerResultsForm extends BaseForm {
     @NotNull
     private Boolean displayMissingTestMsg = false;
 
-    private boolean hideShowFlag = false;
-
     public AnalyzerResultsForm() {
         setFormName("AnalyzerResultsForm");
     }
 
+    @Override
     public PagingBean getPaging() {
         return paging;
     }
 
+    @Override
     public void setPaging(PagingBean paging) {
         this.paging = paging;
     }
@@ -74,14 +75,6 @@ public class AnalyzerResultsForm extends BaseForm {
 
     public void setDisplayMissingTestMsg(Boolean displayMissingTestMsg) {
         this.displayMissingTestMsg = displayMissingTestMsg;
-    }
-
-    public boolean isHideShowFlag() {
-        return hideShowFlag;
-    }
-
-    public void setHideShowFlag(boolean hideShowFlag) {
-        this.hideShowFlag = hideShowFlag;
     }
 
 }

@@ -3,14 +3,14 @@
 * Version 1.1 (the "License"); you may not use this file except in
 * compliance with the License. You may obtain a copy of the License at
 * http://www.mozilla.org/MPL/
-* 
+*
 * Software distributed under the License is distributed on an "AS IS"
 * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
 * License for the specific language governing rights and limitations under
 * the License.
-* 
+*
 * The Original Code is OpenELIS code.
-* 
+*
 * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
 *
 * Contributor(s): CIRG, University of Washington, Seattle WA.
@@ -72,7 +72,7 @@ public class ObservationHistoryPopulateProvider extends BaseQueryProvider {
 
     private Patient patient = new Patient();
     private Sample sample = new Sample();
-    Map<String, String> historyMap = new LinkedHashMap<String, String>();
+    Map<String, String> historyMap = new LinkedHashMap<>();
 //    private String projectFormName;
 //    private RequestType requestType = RequestType.UNKNOWN;
 
@@ -80,11 +80,11 @@ public class ObservationHistoryPopulateProvider extends BaseQueryProvider {
     public void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String patientKey = (String) request.getParameter("patientKey");
-        String sampleKey = (String) request.getParameter("sampleKey");
+        String patientKey = request.getParameter("patientKey");
+        String sampleKey = request.getParameter("sampleKey");
         patient.setId(patientKey);
         sample.setId(sampleKey);
-        String s = (String) request.getSession().getAttribute("type");
+//        String s = (String) request.getSession().getAttribute("type");
 //        requestType = RequestType.valueOfAsUpperCase(s);
 
         String result = createSearchResultXML();
@@ -172,7 +172,7 @@ public class ObservationHistoryPopulateProvider extends BaseQueryProvider {
 
     /**
      * Get all observations histories of a certain types
-     * 
+     *
      * @param listName
      * @return
      */

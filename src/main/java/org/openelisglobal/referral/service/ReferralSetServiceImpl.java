@@ -7,7 +7,7 @@ import java.util.Set;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
-import org.openelisglobal.common.services.StatusService;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.StatusService.OrderStatus;
 import org.openelisglobal.note.service.NoteService;
@@ -18,6 +18,7 @@ import org.openelisglobal.result.service.ResultService;
 import org.openelisglobal.result.valueholder.Result;
 import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.valueholder.Sample;
+import org.openelisglobal.spring.util.SpringContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -95,7 +96,7 @@ public class ReferralSetServiceImpl implements ReferralSetService {
         for (Sample sample : parentSamples) {
             List<Analysis> analysisList = analysisService.getAnalysesBySampleId(sample.getId());
 
-            String finalizedId = StatusService.getInstance().getStatusID(AnalysisStatus.Finalized);
+            String finalizedId = SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized);
             boolean allAnalysisFinished = true;
 
             if (analysisList != null) {
@@ -109,7 +110,7 @@ public class ReferralSetServiceImpl implements ReferralSetService {
                         referralResultList = referralResultService.getReferralResultsForReferral(referral.getId());
                     }
 
-                    if (referralResultList.isEmpty()) {
+                    if (referralResultList.isEmpty() || referral == null) {
                         if (!finalizedId.equals(childAnalysis.getStatusId())) {
                             allAnalysisFinished = false;
                             break;
@@ -129,7 +130,7 @@ public class ReferralSetServiceImpl implements ReferralSetService {
             }
 
             if (allAnalysisFinished) {
-                sample.setStatusId(StatusService.getInstance().getStatusID(OrderStatus.Finished));
+                sample.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(OrderStatus.Finished));
                 sample.setSysUserId(sysUserId);
                 modifiedSamples.add(sample);
             }

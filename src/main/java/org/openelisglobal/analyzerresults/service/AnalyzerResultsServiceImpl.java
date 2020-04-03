@@ -11,7 +11,7 @@ import org.openelisglobal.analyzerresults.valueholder.AnalyzerResults;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
-import org.openelisglobal.common.services.StatusService;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.RecordStatus;
 import org.openelisglobal.note.service.NoteService;
 import org.openelisglobal.note.valueholder.Note;
@@ -22,6 +22,7 @@ import org.openelisglobal.result.valueholder.Result;
 import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.samplehuman.service.SampleHumanService;
 import org.openelisglobal.sampleitem.service.SampleItemService;
+import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.testanalyte.valueholder.TestAnalyte;
 import org.openelisglobal.testreflex.action.util.TestReflexBean;
 import org.openelisglobal.testreflex.action.util.TestReflexUtil;
@@ -90,17 +91,17 @@ public class AnalyzerResultsServiceImpl extends BaseObjectServiceImpl<AnalyzerRe
                     }
                 }
 
-                if (duplicateByAccessionAndTestOnly) {
+                if (duplicateByAccessionAndTestOnly && previousResult != null) {
                     result.setDuplicateAnalyzerResultId(previousResult.getId());
                     result.setReadOnly(true);
                 }
 
                 if (previousResults == null || duplicateByAccessionAndTestOnly) {
-
+                    result.setSysUserId(sysUserId);
                     String id = insert(result);
                     result.setId(id);
 
-                    if (duplicateByAccessionAndTestOnly) {
+                    if (duplicateByAccessionAndTestOnly && previousResult != null) {
                         previousResult.setDuplicateAnalyzerResultId(id);
                         previousResult.setSysUserId(sysUserId);
                     }
@@ -111,8 +112,8 @@ public class AnalyzerResultsServiceImpl extends BaseObjectServiceImpl<AnalyzerRe
                 }
             }
 
-        } catch (Exception e) {
-            LogEvent.logError("AnalyzerResultDAOImpl", "insertAnalyzerResult()", e.toString());
+        } catch (RuntimeException e) {
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in AnalyzerResult insertAnalyzerResult()", e);
         }
     }
@@ -121,14 +122,17 @@ public class AnalyzerResultsServiceImpl extends BaseObjectServiceImpl<AnalyzerRe
     @Transactional
     public void persistAnalyzerResults(List<AnalyzerResults> deletableAnalyzerResults,
             List<SampleGrouping> sampleGroupList, String sysUserId) {
-        removeHandledResultsFromAnalyzerResults(deletableAnalyzerResults);
+        removeHandledResultsFromAnalyzerResults(deletableAnalyzerResults, sysUserId);
 
         insertResults(sampleGroupList, sysUserId);
 
     }
 
-    private void removeHandledResultsFromAnalyzerResults(List<AnalyzerResults> deletableAnalyzerResults) {
-        deleteAll(deletableAnalyzerResults);
+    private void removeHandledResultsFromAnalyzerResults(List<AnalyzerResults> deletableAnalyzerResults,
+            String sysUserId) {
+        for (AnalyzerResults currentAnalyzerResult : deletableAnalyzerResults) {
+            delete(currentAnalyzerResult.getId(), sysUserId);
+        }
     }
 
     private boolean insertResults(List<SampleGrouping> sampleGroupList, String sysUserId) {
@@ -136,7 +140,7 @@ public class AnalyzerResultsServiceImpl extends BaseObjectServiceImpl<AnalyzerRe
             if (grouping.addSample) {
 //				try {
                 sampleService.insertDataWithAccessionNumber(grouping.sample);
-//				} catch (LIMSRuntimeException lre) {
+//				} catch (LIMSRuntimeException e) {
 //					Errors errors = new BaseErrors();
 //					String errorMsg = "warning.duplicate.accession";
 //					errors.reject(errorMsg, new String[] { grouping.sample.getAccessionNumber() }, errorMsg);
@@ -159,7 +163,7 @@ public class AnalyzerResultsServiceImpl extends BaseObjectServiceImpl<AnalyzerRe
                 RecordStatus sampleStatus = grouping.statusSet.getSampleRecordStatus() == null
                         ? RecordStatus.NotRegistered
                         : null;
-                StatusService.getInstance().persistRecordStatusForSample(grouping.sample, sampleStatus,
+                SpringContext.getBean(IStatusService.class).persistRecordStatusForSample(grouping.sample, sampleStatus,
                         grouping.patient, patientStatus, sysUserId);
             }
 
@@ -197,8 +201,7 @@ public class AnalyzerResultsServiceImpl extends BaseObjectServiceImpl<AnalyzerRe
         }
 
         TestReflexUtil testReflexUtil = new TestReflexUtil();
-        testReflexUtil.setCurrentUserId(sysUserId);
-        testReflexUtil.addNewTestsToDBForReflexTests(convertGroupListToTestReflexBeans(sampleGroupList));
+        testReflexUtil.addNewTestsToDBForReflexTests(convertGroupListToTestReflexBeans(sampleGroupList), sysUserId);
 
         return true;
     }

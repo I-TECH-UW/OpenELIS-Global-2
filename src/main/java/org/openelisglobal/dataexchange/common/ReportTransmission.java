@@ -28,7 +28,10 @@ import java.util.Properties;
 import javax.servlet.http.HttpServletResponse;
 
 import org.exolab.castor.mapping.Mapping;
+import org.exolab.castor.mapping.MappingException;
+import org.exolab.castor.xml.MarshalException;
 import org.exolab.castor.xml.Marshaller;
+import org.exolab.castor.xml.ValidationException;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.resources.ResourceLocator;
@@ -50,9 +53,9 @@ public class ReportTransmission {
             orWorker.createReport(resultReport);
             sendRawReport(orWorker.getHl7Message().encode(), url, true, responseHandler, HTTP_TYPE.POST);
         } catch (HL7Exception e) {
-            LogEvent.logError("ReportTransmission ", "sendHL7Report()", e.toString());
+            LogEvent.logError(e.toString(), e);
         } catch (IOException e) {
-            LogEvent.logError("ReportTransmission ", "sendHL7Report()", e.toString());
+            LogEvent.logError(e.toString(), e);
         }
     }
 
@@ -77,12 +80,18 @@ public class ReportTransmission {
 
             sendRawReport(xmlString, url, sendAsychronously, responseHandler, HTTP_TYPE.POST);
 
-        } catch (UnknownHostException he) {
+        } catch (UnknownHostException e) {
             List<String> errors = new ArrayList<>();
-            errors.add(he.toString());
+            errors.add(e.toString());
             responseHandler.handleResponse(HttpServletResponse.SC_BAD_REQUEST, errors, xmlString);
-        } catch (Exception e) {
-            LogEvent.logError("ReportTransmission ", "sendResults()", e.toString());
+        } catch (ValidationException | MarshalException | IOException | MappingException e) {
+            LogEvent.logError(e.toString(), e);
+        } finally {
+            try {
+                source.getByteStream().close();
+            } catch (IOException e) {
+                LogEvent.logError(e);
+            }
         }
 
     }
@@ -91,7 +100,7 @@ public class ReportTransmission {
             ITransmissionResponseHandler responseHandler, HTTP_TYPE httpType) {
         try {
             IExternalSender sender;
-            // System.out.println(contents );
+            // LogEvent.logInfo(this.getClass().getName(), "method unkown", contents );
             switch (httpType) {
             case GET:
                 sender = new HttpGetSender();
@@ -108,17 +117,16 @@ public class ReportTransmission {
             sender.setURI(url);
 
             if (sendAsychronously) {
-                AsynchronousExternalSender asynchSender = new AsynchronousExternalSender(sender, responseHandler,
-                        contents);
-                asynchSender.sendMessage();
+                IAsyncExternalSender asynchSender = SpringContext.getBean(IAsyncExternalSender.class);
+                asynchSender.sendMessage(sender, responseHandler, contents);
             } else {
                 sender.sendMessage();
                 if (responseHandler != null) {
                     responseHandler.handleResponse(sender.getSendResponse(), sender.getErrors(), contents);
                 }
             }
-        } catch (Exception e) {
-            LogEvent.logError("ReportTransmission ", "sendResults()", e.toString());
+        } catch (RuntimeException e) {
+            LogEvent.logError(e.toString(), e);
         }
 
     }
@@ -131,18 +139,16 @@ public class ReportTransmission {
         Properties transmissionMap = new Properties();
         try {
             propertyStream = resourceLocator.getNamedResourceAsInputStream(ResourceLocator.XMIT_PROPERTIES);
-
             transmissionMap.load(propertyStream);
         } catch (IOException e) {
-            LogEvent.logError("ReportTransmission ", "sendResults()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Unable to load transmission resource mappings.", e);
         } finally {
             if (null != propertyStream) {
                 try {
                     propertyStream.close();
-                    propertyStream = null;
-                } catch (Exception e) {
-                    LogEvent.logError("ReportTransmission ", "sendResults()", e.toString());
+                } catch (IOException e) {
+                    LogEvent.logError(e.toString(), e);
                 }
             }
         }

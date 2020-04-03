@@ -1,5 +1,6 @@
 package org.openelisglobal.interceptor;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -42,13 +43,13 @@ public class ModuleAuthenticationInterceptor extends HandlerInterceptorAdapter {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
-            throws Exception {
+            throws IOException {
 
         Errors errors = new BaseErrors();
         if (!hasPermission(errors, request)) {
             LogEvent.logInfo("ModuleAuthenticationInterceptor", "preHandle()",
                     "======> NOT ALLOWED ACCESS TO THIS MODULE");
-            System.out.println("has no permission"); //
+            LogEvent.logInfo(this.getClass().getName(), "method unkown", "has no permission"); //
             redirectStrategy.sendRedirect(request, response, "/Home.do?access=denied");
             return false;
         }
@@ -58,24 +59,14 @@ public class ModuleAuthenticationInterceptor extends HandlerInterceptorAdapter {
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
-            ModelAndView modelAndView) throws Exception {
-    }
-
-    @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
-            throws Exception {
+            ModelAndView modelAndView) {
     }
 
     protected boolean hasPermission(Errors errors, HttpServletRequest request) {
-        try {
-            if (SystemConfiguration.getInstance().getPermissionAgent().equals("ROLE")) {
-                return hasPermissionForUrl(request, USE_PARAMETERS) || userModuleService.isUserAdmin(request);
-            } else {
-                return userModuleService.isVerifyUserModule(request) || userModuleService.isUserAdmin(request);
-            }
-        } catch (NullPointerException e) {
-            LogEvent.logError("ModuleAuthenticationInterceptor", "hasPermission()", e.toString());
-            return false;
+        if (SystemConfiguration.getInstance().getPermissionAgent().equals("ROLE")) {
+            return hasPermissionForUrl(request, USE_PARAMETERS) || userModuleService.isUserAdmin(request);
+        } else {
+            return userModuleService.isVerifyUserModule(request) || userModuleService.isUserAdmin(request);
         }
     }
 
@@ -88,7 +79,7 @@ public class ModuleAuthenticationInterceptor extends HandlerInterceptorAdapter {
             sysModsByUrl = filterParamMatches(request, sysModsByUrl);
         }
         if (sysModsByUrl.isEmpty() && REQUIRE_MODULE) {
-            LogEvent.logError("ModuleAuthenticationInterceptor", "hasPermissionForUrl()",
+            LogEvent.logWarn("ModuleAuthenticationInterceptor", "hasPermissionForUrl()",
                     "This page has no modules assigned to it");
             return false;
         }

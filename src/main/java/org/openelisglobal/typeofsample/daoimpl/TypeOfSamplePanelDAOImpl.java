@@ -17,8 +17,9 @@
  */
 package org.openelisglobal.typeofsample.daoimpl;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
@@ -29,7 +30,6 @@ import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.typeofsample.dao.TypeOfSamplePanelDAO;
 import org.openelisglobal.typeofsample.valueholder.TypeOfSamplePanel;
-import org.openelisglobal.typeofsample.valueholder.TypeOfSampleTest;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,7 +56,7 @@ public class TypeOfSamplePanelDAOImpl extends BaseDAOImpl<TypeOfSamplePanel, Str
 //				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			}
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("TypeOfSampleDAOImpl", "deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in TypeOfSampleTest deleteData()", e);
 //		}
@@ -73,7 +73,7 @@ public class TypeOfSamplePanelDAOImpl extends BaseDAOImpl<TypeOfSamplePanel, Str
 //			auditDAO.saveNewHistory(typeOfSamplePanel, typeOfSamplePanel.getSysUserId(), "SAMPLETYPE_PANEL");
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("TypeOfSamplePanelDAOImpl", "insertData()", e.toString());
 //			throw new LIMSRuntimeException("Error in TypeOfSamplePanel insertData()", e);
 //		}
@@ -95,17 +95,17 @@ public class TypeOfSamplePanelDAOImpl extends BaseDAOImpl<TypeOfSamplePanel, Str
             } else {
                 typeOfSamplePanel.setId(null);
             }
-        } catch (Exception e) {
-            LogEvent.logError("TypeOfSamplePanelDAOImpl", "getData()", e.toString());
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TypeOfSamplePanel getData()", e);
         }
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllTypeOfSamplePanels() throws LIMSRuntimeException {
+    public List<TypeOfSamplePanel> getAllTypeOfSamplePanels() throws LIMSRuntimeException {
 
-        List list = new Vector();
+        List<TypeOfSamplePanel> list;
         try {
             String sql = "from TypeOfSamplePanel";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -114,9 +114,9 @@ public class TypeOfSamplePanelDAOImpl extends BaseDAOImpl<TypeOfSamplePanel, Str
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError("TypeOfSamplePanelDAOImpl", "getAllTypeOfSamples()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TypeOfSamplePanel getAllTypeOfSamplePanels()", e);
         }
 
@@ -125,9 +125,9 @@ public class TypeOfSamplePanelDAOImpl extends BaseDAOImpl<TypeOfSamplePanel, Str
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfTypeOfSamplePanel(int startingRecNo) throws LIMSRuntimeException {
+    public List<TypeOfSamplePanel> getPageOfTypeOfSamplePanel(int startingRecNo) throws LIMSRuntimeException {
 
-        List list = new Vector();
+        List<TypeOfSamplePanel> list;
         try {
             // calculate maxRow to be one more than the page size
             int endingRecNo = startingRecNo + DEFAULT_PAGE_SIZE + 1;
@@ -139,8 +139,8 @@ public class TypeOfSamplePanelDAOImpl extends BaseDAOImpl<TypeOfSamplePanel, Str
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
-            LogEvent.logError("TypeOfSamplePanelDAOImpl", "getPageOfTypeOfSamplePanels()", e.toString());
+        } catch (RuntimeException e) {
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TypeOfSamplePanel getPageOfTypeOfSamples()", e);
         }
 
@@ -153,9 +153,9 @@ public class TypeOfSamplePanelDAOImpl extends BaseDAOImpl<TypeOfSamplePanel, Str
             tos = entityManager.unwrap(Session.class).get(TypeOfSamplePanel.class, idString);
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError("TypeOfSamplePanelDAOImpl", "readTypeOfSample()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TypeOfSamplePanel readTypeOfSample()", e);
         }
 
@@ -164,91 +164,12 @@ public class TypeOfSamplePanelDAOImpl extends BaseDAOImpl<TypeOfSamplePanel, Str
 
     @Override
     @Transactional(readOnly = true)
-    public List getNextTypeOfSamplePanelRecord(String id) throws LIMSRuntimeException {
-
-        return getNextRecord(id, "TypeOfSamplePanel", TypeOfSamplePanel.class);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousTypeOfSamplePanelRecord(String id) throws LIMSRuntimeException {
-
-        return getPreviousRecord(id, "TypeOfSamplePanel", TypeOfSampleTest.class);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public Integer getTotalTypeOfSamplePanelCount() throws LIMSRuntimeException {
-        return getTotalCount("TypeOfSamplePanel", TypeOfSamplePanel.class);
+        return getCount();
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
-        int currentId = (Integer.valueOf(id)).intValue();
-        String tablePrefix = getTablePrefix(table);
 
-        List list = new Vector();
-        int rrn = 0;
-        try {
-            // bugzilla 1908 cannot use named query for postgres because of
-            // oracle ROWNUM
-            // instead get the list in this sortorder and determine the index of
-            // record with id = currentId
-            String sql = "select tos.id from TypeOfSampleTest tos " + " order by tos.domain, tos.description";
-
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            list = query.list();
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
-            rrn = list.indexOf(String.valueOf(currentId));
-
-            list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
-                    .setMaxResults(2).list();
-
-        } catch (Exception e) {
-            LogEvent.logError("TypeOfSampleDAOImpl", "getNextRecord()", e.toString());
-            throw new LIMSRuntimeException("Error in getNextRecord() for " + table, e);
-        }
-
-        return list;
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
-        int currentId = (Integer.valueOf(id)).intValue();
-        String tablePrefix = getTablePrefix(table);
-
-        List list = new Vector();
-
-        int rrn = 0;
-        try {
-            // bugzilla 1908 cannot use named query for postgres because of
-            // oracle ROWNUM
-            // instead get the list in this sortorder and determine the index of
-            // record with id = currentId
-            String sql = "select tos.id from TypeOfSampleTest tos " + " order by tos.domain desc, tos.description desc";
-
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            list = query.list();
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
-            rrn = list.indexOf(String.valueOf(currentId));
-
-            list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getPrevious")
-                    .setFirstResult(rrn + 1).setMaxResults(2).list();
-
-        } catch (Exception e) {
-            LogEvent.logError("TypeOfSampleDAOImpl", "getPreviousRecord()", e.toString());
-            throw new LIMSRuntimeException("Error in getPreviousRecord() for " + table, e);
-        }
-
-        return list;
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
     @Transactional(readOnly = true)
     public List<TypeOfSamplePanel> getTypeOfSamplePanelsForSampleType(String sampleType) {
         List<TypeOfSamplePanel> list;
@@ -265,18 +186,18 @@ public class TypeOfSamplePanelDAOImpl extends BaseDAOImpl<TypeOfSamplePanel, Str
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
-            LogEvent.logError("TypeOfSamplePanelDAOImpl", "getTypeOfSamplePanelsForSampleType", e.toString());
+        } catch (RuntimeException e) {
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TypeOfSamplePanelDAOImpl getTypeOfSamplePanelsForSampleType", e);
         }
 
         return list;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     @Transactional(readOnly = true)
     public List<TypeOfSamplePanel> getTypeOfSamplePanelsForPanel(String panelId) throws LIMSRuntimeException {
+        List<TypeOfSamplePanel> list = new ArrayList<>();
         String sql = "from TypeOfSamplePanel tosp where tosp.panelId = :panelId";
 
         try {
@@ -289,7 +210,7 @@ public class TypeOfSamplePanelDAOImpl extends BaseDAOImpl<TypeOfSamplePanel, Str
             handleException(e, "getTypeOfSamplePanelsForPanel");
         }
 
-        return null;
+        return list;
     }
 
 }

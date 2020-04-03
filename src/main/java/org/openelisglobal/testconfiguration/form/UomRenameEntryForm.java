@@ -14,10 +14,10 @@ public class UomRenameEntryForm extends BaseForm {
     private List uomList;
 
     @NotBlank
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String nameEnglish = "";
 
-    @SafeHtml
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String nameFrench = "";
 
     @NotBlank

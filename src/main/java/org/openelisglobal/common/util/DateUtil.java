@@ -29,6 +29,7 @@ import java.util.TimeZone;
 import java.util.regex.Pattern;
 
 import org.apache.commons.validator.GenericValidator;
+import org.openelisglobal.common.exception.LIMSException;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
@@ -81,7 +82,7 @@ public class DateUtil {
             try {
                 returnDate = new java.sql.Date(format.parse(date).getTime());
             } catch (ParseException e) {
-                LogEvent.logError("DateUtil", "convertStringDateToSqlDate()", e.toString());
+                LogEvent.logError(e.toString(), e);
                 throw new LIMSRuntimeException("Error parsing date", e);
             }
         }
@@ -96,7 +97,7 @@ public class DateUtil {
             try {
                 returnDate = new java.sql.Date(format.parse(date).getTime());
             } catch (ParseException e) {
-                LogEvent.logError("DateUtil", "convertStringDateTimeToSqlDate()", e.toString());
+                LogEvent.logError(e.toString(), e);
                 throw new LIMSRuntimeException("Error parsing date", e);
             }
         }
@@ -112,7 +113,7 @@ public class DateUtil {
             try {
                 returnTimestamp = new Timestamp(format.parse(date).getTime());
             } catch (ParseException e) {
-                LogEvent.logError("DateUtil", "convertStringDateToTruncatedTimestamp()", e.toString());
+                LogEvent.logError(e.toString(), e);
                 throw new LIMSRuntimeException("Error parsing date", e);
             }
         }
@@ -128,7 +129,7 @@ public class DateUtil {
             try {
                 returnTimestamp = new Timestamp(format.parse(date).getTime());
             } catch (ParseException e) {
-                LogEvent.logError("DateUtil", "convertStringDateToTimestamp()", e.toString());
+                LogEvent.logError(e.toString(), e);
                 throw new LIMSRuntimeException("Error parsing date", e);
             }
         }
@@ -145,9 +146,7 @@ public class DateUtil {
             try {
                 returnTimestamp = new Timestamp(format.parse(date).getTime());
             } catch (ParseException e) {
-                LogEvent.logError("DateUtil",
-                        "convertStringDateToTimestampWithPattern()\nPattern: " + pattern + "\nDate: " + date,
-                        e.toString());
+                LogEvent.logError(e.toString(), e);
                 throw new LIMSRuntimeException("Error parsing date", e);
             }
         }
@@ -165,8 +164,7 @@ public class DateUtil {
             try {
                 returnTimestamp = new Timestamp(format.parse(date).getTime());
             } catch (ParseException e) {
-                LogEvent.logError("DateUtil", "convertStringDateToTimestampWithPattern()\nlocale: " + locale
-                        + "\nPattern: " + pattern + "\nDate: " + date, e.toString());
+                LogEvent.logError(e.toString(), e);
                 throw new LIMSRuntimeException("Error parsing date", e);
             }
         }
@@ -193,8 +191,8 @@ public class DateUtil {
         if (date != null) {
             try {
                 returnDate = format.format(date);
-            } catch (Exception e) {
-                LogEvent.logError("DateUtil", "convertSqlDateToStringDate()", e.toString());
+            } catch (RuntimeException e) {
+                LogEvent.logError(e.toString(), e);
                 throw new LIMSRuntimeException("Error converting date", e);
             }
         }
@@ -225,9 +223,9 @@ public class DateUtil {
 
         try {
             returnDate = format.format(date);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
 
-            LogEvent.logError("DateUtil", "convertTimestampToStringDate()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error converting date", e);
         }
 
@@ -257,8 +255,8 @@ public class DateUtil {
                 }
 
                 returnTime = hours + ":" + minutes;
-            } catch (Exception e) {
-                LogEvent.logError("DateUtil", "convertTimestampToStringTime()", e.toString());
+            } catch (RuntimeException e) {
+                LogEvent.logError(e.toString(), e);
                 throw new LIMSRuntimeException("Error converting date", e);
             }
         }
@@ -268,16 +266,17 @@ public class DateUtil {
 
     // Decodes a time value in "hh:mm:ss" format and returns it as milliseconds
     // since midnight.
-    public static synchronized int decodeTime(String s) throws Exception {
+    public static synchronized int decodeTime(String s) throws LIMSException {
         SimpleDateFormat f = new SimpleDateFormat("HH:mm:ss");
-        // System.out.println("Passed in this time " +s);
+        // LogEvent.logInfo(this.getClass().getName(), "method unkown", "Passed in this
+        // time " +s);
         TimeZone utcTimeZone = TimeZone.getTimeZone("UTC");
         f.setTimeZone(utcTimeZone);
         f.setLenient(false);
         ParsePosition p = new ParsePosition(0);
         Date d = f.parse(s, p);
         if (d == null || !StringUtil.isRestOfStringBlank(s, p.getIndex())) {
-            throw new Exception("Invalid time value (hh:mm:ss): \"" + s + "\".");
+            throw new LIMSException("Invalid time value (hh:mm:ss): \"" + s + "\".");
         }
         return (int) d.getTime();
     }
@@ -302,9 +301,9 @@ public class DateUtil {
             try {
                 java.util.Date date = format.parse(ts);
                 tsToReturn = new Timestamp(date.getTime());
-            } catch (Exception e) {
+            } catch (ParseException e) {
                 // bugzilla 2154
-                LogEvent.logError("DateUtil", "formatStringToTimestamp()", e.toString());
+                LogEvent.logError(e.toString(), e);
                 throw new LIMSRuntimeException("Error converting date", e);
             }
         }
@@ -586,7 +585,7 @@ public class DateUtil {
         return new Timestamp(date.getTime());
     }
 
-    public static Object nowTimeAsText() {
+    public static String nowTimeAsText() {
         return convertTimestampToStringTime(getNowAsTimestamp());
     }
 
@@ -606,7 +605,7 @@ public class DateUtil {
      * The purpose of this is to not overwrite an old value with a less specified
      * new value If the new time is empty but the dates are the same then return the
      * timestamp of the old date/time If the dates differ use the new date/time
-     * 
+     *
      * @param oldDate
      * @param oldTime
      * @param newDate

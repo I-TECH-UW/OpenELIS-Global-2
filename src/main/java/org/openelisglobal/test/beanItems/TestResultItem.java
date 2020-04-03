@@ -82,19 +82,20 @@ public class TestResultItem implements ResultItem, Serializable {
      * N.B. test method is the type of test it is (HIV etc). analysisMethod is the
      * way the analysis is done automatic or manual
      */
-    @SafeHtml(groups = { LogbookResultsForm.LogbookResults.class, LogbookResultsForm.LogbookResults.class })
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { LogbookResultsForm.LogbookResults.class,
+            LogbookResultsForm.LogbookResults.class })
     private String testMethod;
 
-    @SafeHtml(groups = { LogbookResultsForm.LogbookResults.class })
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { LogbookResultsForm.LogbookResults.class })
     private String analysisMethod;
 
-    @SafeHtml(groups = { WorkplanForm.PrintWorkplan.class })
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { WorkplanForm.PrintWorkplan.class })
     private String testName;
 
     @Pattern(regexp = ValidationHelper.ID_REGEX, groups = { LogbookResultsForm.LogbookResults.class })
     private String testId;
 
-    @SafeHtml(groups = { LogbookResultsForm.LogbookResults.class })
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { LogbookResultsForm.LogbookResults.class })
     private String testKit1InventoryId;
 
     @Pattern(regexp = ValidationHelper.ID_REGEX, groups = { LogbookResultsForm.LogbookResults.class })
@@ -108,25 +109,25 @@ public class TestResultItem implements ResultItem, Serializable {
 
     private int significantDigits = -1;
 
-    @SafeHtml(groups = { LogbookResultsForm.LogbookResults.class })
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { LogbookResultsForm.LogbookResults.class })
     private String shadowResultValue;
-    @SafeHtml(groups = { LogbookResultsForm.LogbookResults.class })
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { LogbookResultsForm.LogbookResults.class })
     private String resultValue;
     private String remarks;
 
-    @SafeHtml(groups = { LogbookResultsForm.LogbookResults.class })
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { LogbookResultsForm.LogbookResults.class })
     private String technician;
     private boolean reportable;
     private String patientName;
 
-    @SafeHtml(groups = { WorkplanForm.PrintWorkplan.class })
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { WorkplanForm.PrintWorkplan.class })
     private String patientInfo;
     private String nationalId;
     private String unitsOfMeasure = "";
 
 //	private String testSortNumber;
 
-    @SafeHtml(groups = { LogbookResultsForm.LogbookResults.class })
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { LogbookResultsForm.LogbookResults.class })
     private String resultType;
     private ResultDisplayType resultDisplayType = ResultDisplayType.TEXT;
     private boolean isModified = false;
@@ -141,14 +142,13 @@ public class TestResultItem implements ResultItem, Serializable {
 
     @Pattern(regexp = ValidationHelper.ID_REGEX, groups = { LogbookResultsForm.LogbookResults.class })
     private String technicianSignatureId;
-    private String supervisorSignatureId;
 
     @Pattern(regexp = ValidationHelper.ID_REGEX, groups = { LogbookResultsForm.LogbookResults.class })
     private String resultLimitId;
     private List<IdValuePair> dictionaryResults;
     private String remove = NO;
 
-    @SafeHtml(groups = { LogbookResultsForm.LogbookResults.class })
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { LogbookResultsForm.LogbookResults.class })
     private String note;
     private String pastNotes;
     private boolean valid = true;
@@ -171,7 +171,7 @@ public class TestResultItem implements ResultItem, Serializable {
     @Pattern(regexp = ValidationHelper.ID_REGEX, groups = { LogbookResultsForm.LogbookResults.class })
     private String referralReasonId = "";
 
-    @SafeHtml(groups = { LogbookResultsForm.LogbookResults.class })
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { LogbookResultsForm.LogbookResults.class })
     private String multiSelectResultValues;
     private String initialSampleCondition;
     private String sampleType;
@@ -184,23 +184,23 @@ public class TestResultItem implements ResultItem, Serializable {
     private boolean displayResultAsLog = false;
     private String qualifiedDictionaryId = null;
 
-    @SafeHtml(groups = { LogbookResultsForm.LogbookResults.class })
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { LogbookResultsForm.LogbookResults.class })
     private String qualifiedResultValue = "";
     private String qualifiedResultId;
     private boolean hasQualifiedResult = false;
     private String nextVisitDate;
 
-    @SafeHtml(groups = { LogbookResultsForm.LogbookResults.class })
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { LogbookResultsForm.LogbookResults.class })
     private String forceTechApproval;
 
-    @SafeHtml(groups = { LogbookResultsForm.LogbookResults.class })
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { LogbookResultsForm.LogbookResults.class })
     private String reflexJSONResult;
     private boolean rejected = false;
 
     @Pattern(regexp = ValidationHelper.ID_REGEX, groups = { LogbookResultsForm.LogbookResults.class })
     private String rejectReasonId;
 
-    @SafeHtml(groups = { LogbookResultsForm.LogbookResults.class })
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { LogbookResultsForm.LogbookResults.class })
     private String considerRejectReason;
 
     public String getConsiderRejectReason() {
@@ -319,16 +319,6 @@ public class TestResultItem implements ResultItem, Serializable {
 
     public void setTechnicianSignatureId(String technicianId) {
         technicianSignatureId = technicianId;
-    }
-
-    @Deprecated
-    public String getSupervisorSignatureId() {
-        return supervisorSignatureId;
-    }
-
-    @Deprecated
-    public void setSupervisorSignatureId(String superviserId) {
-        supervisorSignatureId = superviserId;
     }
 
     public String getTestKitInventoryId() {

@@ -23,12 +23,12 @@ import java.util.List;
 
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
-import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.note.service.NoteServiceImpl;
 import org.openelisglobal.note.valueholder.Note;
 import org.openelisglobal.reports.action.implementation.reportBeans.RejectionReportBean;
+import org.openelisglobal.reports.form.ReportForm;
 import org.openelisglobal.spring.util.SpringContext;
 
 /**
@@ -37,7 +37,7 @@ public class RejectionReportByTestSection extends RejectionReport implements IRe
     private String unitName;
 
     @Override
-    public void setRequestParameters(BaseForm form) {
+    public void setRequestParameters(ReportForm form) {
         new ReportSpecificationParameters(ReportSpecificationParameters.Parameter.DATE_RANGE,
                 MessageUtil.getMessage("report.rejection.report.base") + " " + MessageUtil.getMessage("report.by.unit"),
                 MessageUtil.getMessage("report.instruction.all.fields")).setRequestParameters(form);
@@ -73,7 +73,7 @@ public class RejectionReportByTestSection extends RejectionReport implements IRe
         String noteText = null;
         for (Note note : testRejectionNotes) {
             Analysis analysis = SpringContext.getBean(AnalysisService.class).get(note.getReferenceId());
-            if (analysis != null && analysis.getTestSection() != null
+            if (analysis != null && analysis.getTestSection() != null && panelSelection.getSelection() != null
                     && panelSelection.getSelection().equals(analysis.getTestSection().getId())) {
                 if (analysis.getId().equals(currentAnalysis.getId())) {
                     noteText += (noteText != null ? "<br/>" : "") + note.getText();

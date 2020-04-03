@@ -9,10 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.StaleObjectStateException;
 import org.json.simple.JSONArray;
@@ -24,10 +22,11 @@ import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.formfields.FormFields.Field;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.DisplayListService.ListType;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.ResultSaveService;
-import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.beanAdapters.ResultSaveBeanAdapter;
 import org.openelisglobal.common.services.registration.ResultUpdateRegister;
@@ -53,6 +52,7 @@ import org.openelisglobal.result.action.util.ResultsLoadUtility;
 import org.openelisglobal.result.action.util.ResultsPaging;
 import org.openelisglobal.result.action.util.ResultsUpdateDataSet;
 import org.openelisglobal.result.form.LogbookResultsForm;
+import org.openelisglobal.result.form.LogbookResultsForm.LogbookResults;
 import org.openelisglobal.result.service.LogbookResultsPersistService;
 import org.openelisglobal.result.service.ResultInventoryService;
 import org.openelisglobal.result.service.ResultSignatureService;
@@ -74,6 +74,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -82,6 +84,24 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class LogbookResultsController extends LogbookResultsBaseController {
+
+    private final String[] ALLOWED_FIELDS = new String[] { "collectionDate", "recievedDate", "selectedTest",
+            "selectedAnalysisStatus", "selectedSampleStatus", "testSectionId", "type", "currentPageID",
+            "testResult[*].accessionNumber", "testResult[*].isModified", "testResult[*].analysisId",
+            "testResult[*].resultId", "testResult[*].testId", "testResult[*].technicianSignatureId",
+            "testResult[*].testKitId", "testResult[*].resultLimitId", "testResult[*].resultType", "testResult[*].valid",
+            "testResult[*].referralId", "testResult[*].referralCanceled", "testResult[*].considerRejectReason",
+            "testResult[*].hasQualifiedResult", "testResult[*].shadowResultValue", "testResult[*].reflexJSONResult",
+            "testResult[*].testDate", "testResult[*].analysisMethod", "testResult[*].testMethod",
+            "testResult[*].testKitInventoryId", "testResult[*].forceTechApproval", "testResult[*].lowerNormalRange",
+            "testResult[*].upperNormalRange", "testResult[*].significantDigits", "testResult[*].resultValue",
+            "testResult[*].qualifiedResultValue", "testResult[*].multiSelectResultValues",
+            "testResult[*].multiSelectResultValues", "testResult[*].qualifiedResultValue",
+            "testResult[*].qualifiedResultValue", "testResult[*].shadowReferredOut", "testResult[*].referredOut",
+            "testResult[*].referralReasonId", "testResult[*].technician", "testResult[*].shadowRejected",
+            "testResult[*].rejected", "testResult[*].rejectReasonId", "testResult[*].note",
+
+    };
 
     @Autowired
     private ResultSignatureService resultSigService;
@@ -94,72 +114,76 @@ public class LogbookResultsController extends LogbookResultsBaseController {
     @Autowired
     private TestSectionService testSectionService;
     @Autowired
-    private ReferralTypeService referralTypeService;
-    @Autowired
     private LogbookResultsPersistService logbookPersistService;
     @Autowired
     private AnalysisService analysisService;
     @Autowired
     private NoteService noteService;
 
-    private static final String RESULT_SUBJECT = "Result Note";
-    private static String REFERRAL_CONFORMATION_ID;
+    private final String RESULT_SUBJECT = "Result Note";
+    private final String REFERRAL_CONFORMATION_ID;
 
-    private boolean useTechnicianName;
-    private boolean alwaysValidate;
-    private boolean supportReferrals;
-    private String statusRuleSet;
-
-    @PostConstruct
-    private void initialize() {
+    private LogbookResultsController(ReferralTypeService referralTypeService) {
         ReferralType referralType = referralTypeService.getReferralTypeByName("Confirmation");
         if (referralType != null) {
             REFERRAL_CONFORMATION_ID = referralType.getId();
+        } else {
+            REFERRAL_CONFORMATION_ID = null;
         }
     }
 
-    private void refreshValues() {
-        useTechnicianName = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.resultTechnicianName,
-                "true");
-        alwaysValidate = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.ALWAYS_VALIDATE_RESULTS,
-                "true");
-        supportReferrals = FormFields.getInstance().useField(Field.ResultsReferral);
-        statusRuleSet = ConfigurationProperties.getInstance().getPropertyValueUpperCase(Property.StatusRules);
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
     }
 
     @RequestMapping(value = "/LogbookResults", method = RequestMethod.GET)
-    public ModelAndView showLogbookResults(HttpServletRequest request, @ModelAttribute("form") LogbookResultsForm form)
-            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        return getLogbookResults(request, new LogbookResultsForm());
+    public ModelAndView showLogbookResults(HttpServletRequest request,
+            @Validated(LogbookResults.class) @ModelAttribute("form") LogbookResultsForm form, BindingResult result)
+                    throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        LogbookResultsForm newForm = new LogbookResultsForm();
+        if (!(result.hasFieldErrors("type") || result.hasFieldErrors("testSectionId"))) {
+            newForm.setType(form.getType());
+            newForm.setTestSectionId(form.getTestSectionId());
+        }
+        return getLogbookResults(request, newForm);
     }
 
     private ModelAndView getLogbookResults(HttpServletRequest request, LogbookResultsForm form)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        refreshValues();
+
+        //        boolean useTechnicianName = ConfigurationProperties.getInstance()
+        //                .isPropertyValueEqual(Property.resultTechnicianName, "true");
+        //        boolean alwaysValidate = ConfigurationProperties.getInstance()
+        //                .isPropertyValueEqual(Property.ALWAYS_VALIDATE_RESULTS, "true");
+        //        boolean supportReferrals = FormFields.getInstance().useField(Field.ResultsReferral);
+        //        String statusRuleSet = ConfigurationProperties.getInstance().getPropertyValueUpperCase(Property.StatusRules);
+
         String requestedPage = request.getParameter("page");
-        String testSectionId = request.getParameter("testSectionId");
+        if (GenericValidator.isBlankOrNull(requestedPage)) {
+            requestedPage = "1";
+        }
+        int requestedPageNumber = Integer.parseInt(requestedPage);
+        String testSectionId = form.getTestSectionId();
 
         request.getSession().setAttribute(SAVE_DISABLED, TRUE);
 
         TestSection ts = null;
 
         String currentDate = getCurrentDate();
-        PropertyUtils.setProperty(form, "currentDate", currentDate);
-        PropertyUtils.setProperty(form, "logbookType", request.getParameter("type"));
-        PropertyUtils.setProperty(form, "referralReasons",
-                DisplayListService.getInstance().getList(DisplayListService.ListType.REFERRAL_REASONS));
-        PropertyUtils.setProperty(form, "rejectReasons", DisplayListService.getInstance()
+        form.setCurrentDate(currentDate);
+        form.setReferralReasons(DisplayListService.getInstance().getList(DisplayListService.ListType.REFERRAL_REASONS));
+        form.setRejectReasons(DisplayListService.getInstance()
                 .getNumberedListWithLeadingBlank(DisplayListService.ListType.REJECTION_REASONS));
 
         // load testSections for drop down
         List<IdValuePair> testSections = DisplayListService.getInstance().getList(ListType.TEST_SECTION);
-        PropertyUtils.setProperty(form, "testSections", testSections);
-        PropertyUtils.setProperty(form, "testSectionsByName",
-                DisplayListService.getInstance().getList(ListType.TEST_SECTION_BY_NAME));
+        form.setTestSections(testSections);
+        form.setTestSectionsByName(DisplayListService.getInstance().getList(ListType.TEST_SECTION_BY_NAME));
 
         if (!GenericValidator.isBlankOrNull(testSectionId)) {
             ts = testSectionService.get(testSectionId);
-            PropertyUtils.setProperty(form, "testSectionId", "0");
+            form.setTestSectionId("0");
         }
 
         setRequestType(ts == null ? MessageUtil.getMessage("workplan.unit.types") : ts.getLocalizedName());
@@ -192,9 +216,9 @@ public class LogbookResultsController extends LogbookResultsBaseController {
             paging.setDatabaseResults(request, form, tests);
 
         } else {
-            paging.page(request, form, requestedPage);
+            paging.page(request, form, requestedPageNumber);
         }
-        PropertyUtils.setProperty(form, "displayTestKit", false);
+        form.setDisplayTestKit(false);
         if (ts != null) {
             // this does not look right what happens after a new page!!!
             boolean isHaitiClinical = ConfigurationProperties.getInstance()
@@ -203,7 +227,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
                 InventoryUtility inventoryUtility = SpringContext.getBean(InventoryUtility.class);
                 inventoryList = inventoryUtility.getExistingActiveInventory();
 
-                PropertyUtils.setProperty(form, "displayTestKit", true);
+                form.setDisplayTestKit(true);
             }
         }
         List<String> hivKits = new ArrayList<>();
@@ -216,9 +240,9 @@ public class LogbookResultsController extends LogbookResultsBaseController {
                 syphilisKits.add(item.getInventoryLocationId());
             }
         }
-        PropertyUtils.setProperty(form, "hivKits", hivKits);
-        PropertyUtils.setProperty(form, "syphilisKits", syphilisKits);
-        PropertyUtils.setProperty(form, "inventoryItems", inventoryList);
+        form.setHivKits(hivKits);
+        form.setSyphilisKits(syphilisKits);
+        form.setInventoryItems(inventoryList);
 
         addFlashMsgsToRequest(request);
         return findForward(FWD_SUCCESS, form);
@@ -231,20 +255,26 @@ public class LogbookResultsController extends LogbookResultsBaseController {
     }
 
     @RequestMapping(value = { "/LogbookResults", "/PatientResults", "/AccessionResults",
-            "/StatusResults" }, method = RequestMethod.POST)
+    "/StatusResults" }, method = RequestMethod.POST)
     public ModelAndView showLogbookResultsUpdate(HttpServletRequest request,
             @ModelAttribute("form") @Validated(LogbookResultsForm.LogbookResults.class) LogbookResultsForm form,
             BindingResult result, RedirectAttributes redirectAttributes)
-            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+                    throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        boolean useTechnicianName = ConfigurationProperties.getInstance()
+                .isPropertyValueEqual(Property.resultTechnicianName, "true");
+        boolean alwaysValidate = ConfigurationProperties.getInstance()
+                .isPropertyValueEqual(Property.ALWAYS_VALIDATE_RESULTS, "true");
+        boolean supportReferrals = FormFields.getInstance().useField(Field.ResultsReferral);
+        String statusRuleSet = ConfigurationProperties.getInstance().getPropertyValueUpperCase(Property.StatusRules);
+
         if ("true".equals(request.getParameter("pageResults"))) {
             return getLogbookResults(request, form);
         }
 
         if (result.hasErrors()) {
             saveErrors(result);
-            findForward(FWD_FAIL_INSERT, form);
+            return findForward(FWD_FAIL_INSERT, form);
         }
-        refreshValues();
 
         List<IResultUpdate> updaters = ResultUpdateRegister.getRegisteredUpdaters();
 
@@ -262,17 +292,17 @@ public class LogbookResultsController extends LogbookResultsBaseController {
             return findForward(FWD_VALIDATION_ERROR, form);
         }
 
-        createResultsFromItems(actionDataSet);
+        createResultsFromItems(actionDataSet, supportReferrals, alwaysValidate, useTechnicianName, statusRuleSet);
         createAnalysisOnlyUpdates(actionDataSet);
 
         try {
             logbookPersistService.persistDataSet(actionDataSet, updaters, getSysUserId(request));
-        } catch (LIMSRuntimeException lre) {
+        } catch (LIMSRuntimeException e) {
             String errorMsg;
-            if (lre.getException() instanceof StaleObjectStateException) {
+            if (e.getException() instanceof StaleObjectStateException) {
                 errorMsg = "errors.OptimisticLockException";
             } else {
-                lre.printStackTrace();
+                LogEvent.logDebug(e);
                 errorMsg = "errors.UpdateException";
             }
 
@@ -287,11 +317,11 @@ public class LogbookResultsController extends LogbookResultsBaseController {
         }
 
         redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
-        if (GenericValidator.isBlankOrNull(form.getString("logbookType"))) {
+        if (GenericValidator.isBlankOrNull(form.getType())) {
             return findForward(FWD_SUCCESS_INSERT, form);
         } else {
             Map<String, String> params = new HashMap<>();
-            params.put("type", form.getString("logbookType"));
+            params.put("type", form.getType());
             return getForwardWithParameters(findForward(FWD_SUCCESS_INSERT, form), params);
         }
     }
@@ -309,14 +339,17 @@ public class LogbookResultsController extends LogbookResultsBaseController {
         }
     }
 
-    private void createResultsFromItems(ResultsUpdateDataSet actionDataSet) {
+    private void createResultsFromItems(ResultsUpdateDataSet actionDataSet, boolean supportReferrals,
+            boolean alwaysValidate, boolean useTechnicianName, String statusRuleSet) {
 
         for (TestResultItem testResultItem : actionDataSet.getModifiedItems()) {
 
             Analysis analysis = analysisService.get(testResultItem.getAnalysisId());
-            analysis.setStatusId(getStatusForTestResult(testResultItem));
+            analysis.setStatusId(getStatusForTestResult(testResultItem, alwaysValidate));
             analysis.setSysUserId(getSysUserId(request));
-            handleReferrals(testResultItem, analysis, actionDataSet);
+            if (supportReferrals) {
+                handleReferrals(testResultItem, analysis, actionDataSet);
+            }
             actionDataSet.getModifiedAnalysis().add(analysis);
 
             actionDataSet.addToNoteList(noteService.createSavableNote(analysis, NoteType.INTERNAL,
@@ -350,10 +383,10 @@ public class LogbookResultsController extends LogbookResultsBaseController {
             // If there is more than one result then each user selected reflex gets mapped
             // to that result
             for (Result result : results) {
-                addResult(result, testResultItem, analysis, results.size() > 1, actionDataSet);
+                addResult(result, testResultItem, analysis, results.size() > 1, actionDataSet, useTechnicianName);
 
-                if (analysisShouldBeUpdated(testResultItem, result)) {
-                    updateAnalysis(testResultItem, testResultItem.getTestDate(), analysis);
+                if (analysisShouldBeUpdated(testResultItem, result, supportReferrals)) {
+                    updateAnalysis(testResultItem, testResultItem.getTestDate(), analysis, statusRuleSet);
                 }
             }
         }
@@ -361,48 +394,45 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 
     private void handleReferrals(TestResultItem testResultItem, Analysis analysis, ResultsUpdateDataSet actionDataSet) {
 
-        if (supportReferrals) {
-
-            Referral referral = null;
-            // referredOut means the referral checkbox was checked, repeating
-            // analysis means that we have multi-select results, so only do one.
-            if (testResultItem.isShadowReferredOut()
-                    && !actionDataSet.getReferredAnalysisIds().contains(analysis.getId())) {
-                actionDataSet.getReferredAnalysisIds().add(analysis.getId());
-                // If it is a new result or there is no referral ID that means
-                // that a new referral has to be created if it was checked and
-                // it was canceled then we are un-canceling a canceled referral
-                if (testResultItem.getResultId() == null
-                        || GenericValidator.isBlankOrNull(testResultItem.getReferralId())) {
-                    referral = new Referral();
-                    referral.setReferralTypeId(REFERRAL_CONFORMATION_ID);
-                    referral.setSysUserId(getSysUserId(request));
-                    referral.setRequestDate(new Timestamp(new Date().getTime()));
-                    referral.setRequesterName(testResultItem.getTechnician());
-                    referral.setAnalysis(analysis);
-                    referral.setReferralReasonId(testResultItem.getReferralReasonId());
-                } else if (testResultItem.isReferralCanceled()) {
-                    referral = referralService.get(testResultItem.getReferralId());
-                    referral.setCanceled(false);
-                    referral.setSysUserId(getSysUserId(request));
-                    referral.setRequesterName(testResultItem.getTechnician());
-                    referral.setReferralReasonId(testResultItem.getReferralReasonId());
-                }
-
-                actionDataSet.getSavableReferrals().add(referral);
-
+        Referral referral = null;
+        // referredOut means the referral checkbox was checked, repeating
+        // analysis means that we have multi-select results, so only do one.
+        if (testResultItem.isShadowReferredOut()
+                && !actionDataSet.getReferredAnalysisIds().contains(analysis.getId())) {
+            actionDataSet.getReferredAnalysisIds().add(analysis.getId());
+            // If it is a new result or there is no referral ID that means
+            // that a new referral has to be created if it was checked and
+            // it was canceled then we are un-canceling a canceled referral
+            if (testResultItem.getResultId() == null
+                    || GenericValidator.isBlankOrNull(testResultItem.getReferralId())) {
+                referral = new Referral();
+                referral.setReferralTypeId(REFERRAL_CONFORMATION_ID);
+                referral.setSysUserId(getSysUserId(request));
+                referral.setRequestDate(new Timestamp(new Date().getTime()));
+                referral.setRequesterName(testResultItem.getTechnician());
+                referral.setAnalysis(analysis);
+                referral.setReferralReasonId(testResultItem.getReferralReasonId());
+            } else if (testResultItem.isReferralCanceled()) {
+                referral = referralService.get(testResultItem.getReferralId());
+                referral.setCanceled(false);
+                referral.setSysUserId(getSysUserId(request));
+                referral.setRequesterName(testResultItem.getTechnician());
+                referral.setReferralReasonId(testResultItem.getReferralReasonId());
             }
+
+            actionDataSet.getSavableReferrals().add(referral);
+
         }
     }
 
-    protected boolean analysisShouldBeUpdated(TestResultItem testResultItem, Result result) {
+    protected boolean analysisShouldBeUpdated(TestResultItem testResultItem, Result result, boolean supportReferrals) {
         return result != null && !GenericValidator.isBlankOrNull(result.getValue())
                 || (supportReferrals && ResultUtil.isReferred(testResultItem))
                 || ResultUtil.isForcedToAcceptance(testResultItem) || testResultItem.isShadowRejected();
     }
 
     private void addResult(Result result, TestResultItem testResultItem, Analysis analysis,
-            boolean multipleResultsForAnalysis, ResultsUpdateDataSet actionDataSet) {
+            boolean multipleResultsForAnalysis, ResultsUpdateDataSet actionDataSet, boolean useTechnicianName) {
         boolean newResult = result.getId() == null;
         boolean newAnalysisInLoop = analysis != actionDataSet.getPreviousAnalysis();
 
@@ -461,26 +491,26 @@ public class LogbookResultsController extends LogbookResultsBaseController {
                     }
                 }
             } catch (ParseException e) {
-                e.printStackTrace();
+                LogEvent.logDebug(e);
             }
         }
     }
 
-    private String getStatusForTestResult(TestResultItem testResult) {
+    private String getStatusForTestResult(TestResultItem testResult, boolean alwaysValidate) {
         if (testResult.isShadowRejected()) {
-            return StatusService.getInstance().getStatusID(AnalysisStatus.TechnicalRejected);
+            return SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalRejected);
         } else if (alwaysValidate || !testResult.isValid() || ResultUtil.isForcedToAcceptance(testResult)) {
-            return StatusService.getInstance().getStatusID(AnalysisStatus.TechnicalAcceptance);
+            return SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalAcceptance);
         } else if (noResults(testResult.getShadowResultValue(), testResult.getMultiSelectResultValues(),
                 testResult.getResultType())) {
-            return StatusService.getInstance().getStatusID(AnalysisStatus.NotStarted);
+            return SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NotStarted);
         } else {
             ResultLimit resultLimit = resultLimitService.get(testResult.getResultLimitId());
             if (resultLimit != null && resultLimit.isAlwaysValidate()) {
-                return StatusService.getInstance().getStatusID(AnalysisStatus.TechnicalAcceptance);
+                return SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalAcceptance);
             }
 
-            return StatusService.getInstance().getStatusID(AnalysisStatus.Finalized);
+            return SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized);
         }
     }
 
@@ -519,7 +549,8 @@ public class LogbookResultsController extends LogbookResultsBaseController {
         return testKit;
     }
 
-    private void updateAnalysis(TestResultItem testResultItem, String testDate, Analysis analysis) {
+    private void updateAnalysis(TestResultItem testResultItem, String testDate, Analysis analysis,
+            String statusRuleSet) {
         if (testResultItem.getAnalysisMethod() != null) {
             analysis.setAnalysisType(testResultItem.getAnalysisMethod());
         }
@@ -528,12 +559,12 @@ public class LogbookResultsController extends LogbookResultsBaseController {
         // This needs to be refactored -- part of the logic is in
         // getStatusForTestResult. RetroCI over rides to whatever was set before
         if (statusRuleSet.equals(STATUS_RULES_RETROCI)) {
-            if (!StatusService.getInstance().getStatusID(AnalysisStatus.Canceled).equals(analysis.getStatusId())) {
+            if (!SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Canceled).equals(analysis.getStatusId())) {
                 analysis.setCompletedDate(DateUtil.convertStringDateToSqlDate(testDate));
-                analysis.setStatusId(StatusService.getInstance().getStatusID(AnalysisStatus.TechnicalAcceptance));
+                analysis.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalAcceptance));
             }
-        } else if (StatusService.getInstance().matches(analysis.getStatusId(), AnalysisStatus.Finalized)
-                || StatusService.getInstance().matches(analysis.getStatusId(), AnalysisStatus.TechnicalAcceptance)
+        } else if (SpringContext.getBean(IStatusService.class).matches(analysis.getStatusId(), AnalysisStatus.Finalized)
+                || SpringContext.getBean(IStatusService.class).matches(analysis.getStatusId(), AnalysisStatus.TechnicalAcceptance)
                 || (analysis.isReferredOut()
                         && !GenericValidator.isBlankOrNull(testResultItem.getShadowResultValue()))) {
             analysis.setCompletedDate(DateUtil.convertStringDateToSqlDate(testDate));

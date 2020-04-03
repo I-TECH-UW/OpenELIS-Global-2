@@ -16,7 +16,6 @@
  */
 package org.openelisglobal.reports.action.implementation;
 
-import java.lang.reflect.InvocationTargetException;
 import java.sql.Date;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -30,7 +29,6 @@ import java.util.Set;
 
 import javax.annotation.PostConstruct;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.address.service.AddressPartService;
@@ -40,12 +38,11 @@ import org.openelisglobal.address.valueholder.PersonAddress;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
-import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.formfields.FormFields.Field;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.provider.validation.IAccessionNumberValidator;
-import org.openelisglobal.common.services.StatusService;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.TestIdentityService;
 import org.openelisglobal.common.util.ConfigurationProperties;
@@ -73,6 +70,7 @@ import org.openelisglobal.referral.service.ReferralResultService;
 import org.openelisglobal.referral.service.ReferralService;
 import org.openelisglobal.referral.valueholder.ReferralResult;
 import org.openelisglobal.reports.action.implementation.reportBeans.ClinicalPatientData;
+import org.openelisglobal.reports.form.ReportForm;
 import org.openelisglobal.result.service.ResultService;
 import org.openelisglobal.result.valueholder.Result;
 import org.openelisglobal.sample.service.SampleService;
@@ -88,7 +86,9 @@ import org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl;
 
 public abstract class PatientReport extends Report {
 
+    // not threadSafe, use this classes formatTwoDecimals method when using this
     private static final DecimalFormat twoDecimalFormat = new DecimalFormat("#.##");
+
     private static String ADDRESS_DEPT_ID;
     private static String ADDRESS_COMMUNE_ID;
     protected String currentContactInfo = "";
@@ -171,29 +171,21 @@ public abstract class PatientReport extends Report {
         return true;
     }
 
-    public void setRequestParameters(BaseForm form) {
-        try {
-            PropertyUtils.setProperty(form, "reportName", getReportNameForParameterPage());
+    public void setRequestParameters(ReportForm form) {
+        form.setReportName(getReportNameForParameterPage());
 
-            PropertyUtils.setProperty(form, "useAccessionDirect", Boolean.TRUE);
-            PropertyUtils.setProperty(form, "useHighAccessionDirect", Boolean.TRUE);
-            PropertyUtils.setProperty(form, "usePatientNumberDirect", Boolean.TRUE);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
+        form.setUseAccessionDirect(Boolean.TRUE);
+        form.setUseHighAccessionDirect(Boolean.TRUE);
+        form.setUsePatientNumberDirect(Boolean.TRUE);
     }
 
     @Override
-    public void initializeReport(BaseForm form) {
+    public void initializeReport(ReportForm form) {
         super.initializeReport();
         errorFound = false;
-        lowerNumber = form.getString("accessionDirect");
-        upperNumber = form.getString("highAccessionDirect");
-        String patientNumber = form.getString("patientNumberDirect");
+        lowerNumber = form.getAccessionDirect();
+        upperNumber = form.getHighAccessionDirect();
+        String patientNumber = form.getPatientNumberDirect();
 
         handledOrders = new ArrayList<>();
 
@@ -241,13 +233,13 @@ public abstract class PatientReport extends Report {
 
         if (!updatedAnalysis.isEmpty()) {
             try {
-                analysisService.updateAll(updatedAnalysis, true);
+                analysisService.updateAllNoAuditTrail(updatedAnalysis);
 //				for (Analysis analysis : updatedAnalysis) {
 //					analysisService.update(analysis, true);
 //				}
 
-            } catch (LIMSRuntimeException lre) {
-                LogEvent.logErrorStack(this.getClass().getSimpleName(), "initializeReport()", lre);
+            } catch (LIMSRuntimeException e) {
+                LogEvent.logErrorStack(e);
             }
         }
     }
@@ -308,11 +300,11 @@ public abstract class PatientReport extends Report {
 
         if (patientList.isEmpty()) {
             List<PatientIdentity> identities = patientIdentityService.getPatientIdentitiesByValueAndType(patientNumber,
-                    PatientServiceImpl.PATIENT_ST_IDENTITY);
+                    PatientServiceImpl.getPatientSTIdentity());
 
             if (identities.isEmpty()) {
                 identities = patientIdentityService.getPatientIdentitiesByValueAndType(patientNumber,
-                        PatientServiceImpl.PATIENT_SUBJECT_IDENTITY);
+                        PatientServiceImpl.getPatientSubjectIdentity());
             }
 
             if (!identities.isEmpty()) {
@@ -444,7 +436,7 @@ public abstract class PatientReport extends Report {
                 : Integer.parseInt(test.getSortOrder()));
         data.setSectionSortOrder(test.getTestSection().getSortOrderInt());
 
-        if (StatusService.getInstance().matches(analysisService.getStatusId(currentAnalysis),
+        if (SpringContext.getBean(IStatusService.class).matches(analysisService.getStatusId(currentAnalysis),
                 AnalysisStatus.Canceled)) {
             data.setResult(MessageUtil.getMessage("report.test.status.canceled"));
         } else if (currentAnalysis.isReferredOut()) {
@@ -457,7 +449,7 @@ public abstract class PatientReport extends Report {
              * setAppropriateResults( resultList, data ); setReferredResult( data,
              * resultList.get( 0 ) ); setNormalRange( data, test, resultList.get( 0 ) ); }
              */
-        } else if (!StatusService.getInstance().matches(analysisService.getStatusId(currentAnalysis),
+        } else if (!SpringContext.getBean(IStatusService.class).matches(analysisService.getStatusId(currentAnalysis),
                 AnalysisStatus.Finalized)) {
             sampleCompleteMap.put(sampleService.getAccessionNumber(currentSample), Boolean.FALSE);
             setEmptyResult(data);
@@ -506,13 +498,19 @@ public abstract class PatientReport extends Report {
         String resultValue = data.getResult();
         if (TestIdentityService.getInstance().isTestNumericViralLoad(analysisService.getTest(currentAnalysis))) {
             try {
-                resultValue += " (" + twoDecimalFormat.format(Math.log10(Double.parseDouble(resultValue))) + ")log ";
+                resultValue += " (" + formatTwoDecimals(Math.log10(Double.parseDouble(resultValue))) + ")log ";
             } catch (IllegalFormatException e) {
+                LogEvent.logDebug(this.getClass().getName(), "getAugmentedResult", e.getMessage());
                 // no-op
             }
         }
 
         return resultValue + (augmentResultWithFlag() ? getResultFlag(result, null) : "");
+    }
+
+    // thread safe implementation
+    protected synchronized String formatTwoDecimals(Double value) {
+        return twoDecimalFormat.format(value);
     }
 
     protected String getResultFlag(Result result, String imbed) {
@@ -557,6 +555,7 @@ public abstract class PatientReport extends Report {
                 }
             }
         } catch (NumberFormatException e) {
+            LogEvent.logInfo(this.getClass().getName(), "getResultFlag", e.getMessage());
             // no-op
         }
 
@@ -785,13 +784,13 @@ public abstract class PatientReport extends Report {
         setPatientName(data);
         data.setDept(patientDept);
         data.setCommune(patientCommune);
-        data.setStNumber(getLazyPatientIdentity(currentPatient, STNumber, PatientServiceImpl.PATIENT_ST_IDENTITY));
+        data.setStNumber(getLazyPatientIdentity(currentPatient, STNumber, PatientServiceImpl.getPatientSTIdentity()));
         data.setSubjectNumber(
-                getLazyPatientIdentity(currentPatient, subjectNumber, PatientServiceImpl.PATIENT_SUBJECT_IDENTITY));
+                getLazyPatientIdentity(currentPatient, subjectNumber, PatientServiceImpl.getPatientSubjectIdentity()));
         data.setHealthRegion(getLazyPatientIdentity(currentPatient, healthRegion,
-                PatientServiceImpl.PATIENT_HEALTH_REGION_IDENTITY));
+                PatientServiceImpl.getPatientHealthRegionIdentity()));
         data.setHealthDistrict(getLazyPatientIdentity(currentPatient, healthDistrict,
-                PatientServiceImpl.PATIENT_HEALTH_DISTRICT_IDENTITY));
+                PatientServiceImpl.getPatientHealthDistrictIdentity()));
 
         data.setLabOrderType(observationHistoryService.getValueForSample(ObservationType.PROGRAM,
                 sampleService.getId(currentSample)));
@@ -854,7 +853,7 @@ public abstract class PatientReport extends Report {
      *         for the same test (e.g. a multi-select result) and those are in item
      *         item 2 and item 3 this routine returns #3.
      */
-    protected int reportReferralResultValue(List<ReferralResult> referralResultsForReferral, int i) {
+    protected int lastUsedReportReferralResultValue(List<ReferralResult> referralResultsForReferral, int i) {
         ReferralResult referralResult = referralResultsForReferral.get(i);
         reportReferralResultValue = "";
         String currTestId = referralResult.getTestId();

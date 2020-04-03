@@ -71,7 +71,7 @@ public class ReportUtil {
                 .getReferenceTableByName("SAMPLE_QAEVENT").getId();
     }
 
-    public static enum DocumentTypes {
+    public enum DocumentTypes {
         NON_CONFORMITY_NOTIFCATION
     }
 
@@ -118,7 +118,7 @@ public class ReportUtil {
             tableId = SAMPLE_QAEVENT_TABLE_ID;
             break;
         default:
-            break;
+            throw new IllegalStateException("docType must be a supported type");
         }
 
         List<DocumentTrack> documents = new ArrayList<>();
@@ -150,7 +150,7 @@ public class ReportUtil {
 //			}
 
         } catch (LIMSRuntimeException e) {
-            LogEvent.logErrorStack("ReportUtil", "markDocumentsAsPrinted()", e);
+            LogEvent.logErrorStack(e);
         }
     }
 
@@ -164,7 +164,7 @@ public class ReportUtil {
             tableId = SAMPLE_QAEVENT_TABLE_ID;
             break;
         default:
-            break;
+            throw new IllegalStateException("docType must be a supported type");
         }
 
         return !documentTrackService.getByTypeRecordAndTable(documentType.getId(), tableId, recordId).isEmpty();

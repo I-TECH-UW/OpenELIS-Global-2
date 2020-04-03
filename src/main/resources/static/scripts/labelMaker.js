@@ -1,4 +1,6 @@
 //attempt the same page load with override
 function override() {
-	window.location = window.location.href + '&override=true';
+	var url = new URL(window.location.href);
+	url.searchParams.set('override', 'true');
+	window.location.href = url.toString();
 }

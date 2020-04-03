@@ -23,7 +23,7 @@ import java.util.Map;
 
 import org.openelisglobal.audittrail.action.workers.AuditTrailItem;
 import org.openelisglobal.audittrail.valueholder.History;
-import org.openelisglobal.common.services.StatusService;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.history.service.HistoryService;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.referencetables.service.ReferenceTablesService;
@@ -73,7 +73,7 @@ public class SampleHistoryService extends AbstractHistoryService {
         String statusId = item.getStatusId();
         if (statusId != null) {
             identifier = item.getTypeOfSample().getDescription();
-            newValueMap.put(STATUS_ATTRIBUTE, StatusService.getInstance().getStatusNameFromId(statusId));
+            newValueMap.put(STATUS_ATTRIBUTE, SpringContext.getBean(IStatusService.class).getStatusNameFromId(statusId));
             changeMap.put(STATUS_ATTRIBUTE, "");
         }
     }

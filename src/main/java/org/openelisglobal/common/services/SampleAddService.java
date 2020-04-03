@@ -30,6 +30,7 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.formfields.FormFields.Field;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.StatusService.SampleStatus;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.observationhistory.valueholder.ObservationHistory;
@@ -140,7 +141,7 @@ public class SampleAddService {
                 item.setSample(sample);
                 item.setTypeOfSample(typeOfSampleService.getTypeOfSampleById(sampleItem.attributeValue("sampleID")));
                 item.setSortOrder(Integer.toString(sampleItemIdIndex));
-                item.setStatusId(StatusService.getInstance().getStatusID(SampleStatus.Entered));
+                item.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(SampleStatus.Entered));
                 item.setCollector(sampleItem.attributeValue("collector"));
 
                 if (!GenericValidator.isBlankOrNull(collectionDateTime)) {
@@ -156,7 +157,7 @@ public class SampleAddService {
 
             }
         } catch (DocumentException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
 
         return sampleItemsTests;

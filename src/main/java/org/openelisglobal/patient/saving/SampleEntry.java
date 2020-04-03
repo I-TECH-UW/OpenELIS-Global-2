@@ -16,7 +16,6 @@
 */
 package org.openelisglobal.patient.saving;
 
-import java.lang.reflect.InvocationTargetException;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
@@ -26,19 +25,21 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.common.exception.LIMSException;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
-import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.provider.query.SampleItemTestProvider;
-import org.openelisglobal.common.services.StatusService;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.StatusService.RecordStatus;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.internationalization.MessageUtil;
+import org.openelisglobal.patient.saving.form.IAccessionerForm;
 import org.openelisglobal.sample.form.ProjectData;
 import org.openelisglobal.sample.util.CI.BaseProjectFormMapper;
 import org.openelisglobal.sample.util.CI.BaseProjectFormMapper.TypeOfSampleTests;
 import org.openelisglobal.sample.util.CI.ProjectForm;
 import org.openelisglobal.sampleitem.valueholder.SampleItem;
+import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
@@ -49,13 +50,13 @@ import org.springframework.stereotype.Service;
 @Primary
 public class SampleEntry extends Accessioner implements ISampleEntry {
 
-    protected BaseForm form;
+    protected IAccessionerForm form;
     protected HttpServletRequest request;
 
-    public SampleEntry(BaseForm form, String sysUserId, HttpServletRequest request) throws Exception {
+    public SampleEntry(IAccessionerForm form, String sysUserId, HttpServletRequest request) {
         this();
         setFieldsFromForm(form);
-        setRequest(request);
+        this.request = request;
         super.setSysUserId(sysUserId);
     }
 
@@ -71,16 +72,14 @@ public class SampleEntry extends Accessioner implements ISampleEntry {
     }
 
     @Override
-    public void setFieldsFromForm(BaseForm form)
-            throws LIMSRuntimeException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        setAccessionNumber((String) form.get("labNo"));
-        setPatientIdentifier((String) form.get("subjectNumber"));
+    public final void setFieldsFromForm(IAccessionerForm form) throws LIMSRuntimeException {
+        setAccessionNumber(form.getLabNo());
+        setPatientIdentifier(form.getSubjectNumber());
         setProjectFormMapperFromForm(form);
         this.form = form;
     }
 
-    public void setProjectFormMapperFromForm(BaseForm form)
-            throws LIMSRuntimeException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+    public void setProjectFormMapperFromForm(IAccessionerForm form) throws LIMSRuntimeException {
         projectFormMapper = getProjectFormMapper(form);
         projectFormMapper.setPatientForm(false);
         projectForm = projectFormMapper.getProjectForm();
@@ -94,7 +93,7 @@ public class SampleEntry extends Accessioner implements ISampleEntry {
     }
 
     @Override
-    protected void populateSampleData() throws Exception {
+    protected void populateSampleData() throws LIMSException {
         Timestamp receivedDate = DateUtil.convertStringDateStringTimeToTimestamp(projectFormMapper.getReceivedDate(),
                 projectFormMapper.getReceivedTime());
         Timestamp collectionDate = DateUtil.convertStringDateStringTimeToTimestamp(
@@ -105,13 +104,13 @@ public class SampleEntry extends Accessioner implements ISampleEntry {
         populateSampleItems();
     }
 
-    protected void populateSampleItems() throws Exception {
+    protected void populateSampleItems() throws LIMSException {
         List<TypeOfSampleTests> typeofSampleTestList = projectFormMapper.getTypeOfSampleTests();
 
         boolean testSampleMismatch = false;
         testSampleMismatch = (null == typeofSampleTestList) || (typeofSampleTestList.isEmpty());
 
-        if (!testSampleMismatch) {
+        if (!((null == typeofSampleTestList) || (typeofSampleTestList.isEmpty()))) {
             for (TypeOfSampleTests typeOfSampleTest : typeofSampleTestList) {
                 if (typeOfSampleTest.tests.isEmpty()) {
                     testSampleMismatch = true;
@@ -121,10 +120,8 @@ public class SampleEntry extends Accessioner implements ISampleEntry {
         }
 
         if (testSampleMismatch) {
-            // TO DO add this back in spring
-            // messages.add(ActionErrors.GLOBAL_MESSAGE, new
-            // ActionError("errors.no.sample"));
-            throw new Exception("Mis-match between tests and sample types.");
+            messages.reject("errors.no.sample");
+            throw new LIMSException("Mis-match between tests and sample types.");
         }
 
         Timestamp collectionDate = DateUtil.convertStringDateStringTimeToTimestamp(
@@ -217,13 +214,13 @@ public class SampleEntry extends Accessioner implements ISampleEntry {
             List<Analysis> analysisList = SampleItemTestProvider.findAnalysis(sampleId, projectForm.getProjectFormId(),
                     tProjectData);
             return cleanupExistingAnalysis(analysisList);
-        } catch (IllegalArgumentException ignore) {
+        } catch (IllegalArgumentException e) {
             return null; // reversing the test boxes resulted in NO valid resuest, so we can move on.
         }
     }
 
     private Map<String, SampleItem> cleanupExistingAnalysis(List<Analysis> analysisList) {
-        String canceledId = StatusService.getInstance().getStatusID(AnalysisStatus.Canceled);
+        String canceledId = SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Canceled);
         Map<String, SampleItem> sampleItemsToDelete = new HashMap<>();
         // first we assume we'll delete them all
         for (Analysis analysis : analysisList) {
@@ -231,7 +228,7 @@ public class SampleEntry extends Accessioner implements ISampleEntry {
             sampleItemsToDelete.put(sampleItem.getId(), sampleItem);
         }
         for (Analysis analysis : analysisList) {
-            AnalysisStatus analysisStatus = StatusService.getInstance().getAnalysisStatusForID(analysis.getStatusId());
+            AnalysisStatus analysisStatus = SpringContext.getBean(IStatusService.class).getAnalysisStatusForID(analysis.getStatusId());
             switch (analysisStatus) {
             case NotStarted:
                 // deletable => leave sampleItem in the Delete list
@@ -293,7 +290,7 @@ public class SampleEntry extends Accessioner implements ISampleEntry {
      * @see org.openelisglobal.patient.saving.Accessioner#persistSampleData()
      */
     @Override
-    protected void persistSampleData() throws Exception {
+    protected void persistSampleData() {
         // TODO Auto-generated method stub
         super.persistSampleData();
     }

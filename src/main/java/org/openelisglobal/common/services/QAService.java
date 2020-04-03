@@ -112,7 +112,7 @@ public class QAService {
     }
 
     public QAService(SampleQaEvent event) {
-        setSampleQaEvent(event);
+        sampleQaEvent = event;
     }
 
     public QAService() {
@@ -254,12 +254,12 @@ public class QAService {
     private static boolean nonconformingByDepricatedStatus(Sample sample, Analysis analysis) {
 
         return nonconformingByDepricatedStatus(sample) || analysis.getStatusId()
-                .equals(StatusService.getInstance().getStatusID(AnalysisStatus.NonConforming_depricated));
+                .equals(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NonConforming_depricated));
     }
 
     private static boolean nonconformingByDepricatedStatus(Sample sample) {
         return sample.getStatusId()
-                .equals(StatusService.getInstance().getStatusID(OrderStatus.NonConforming_depricated));
+                .equals(SpringContext.getBean(IStatusService.class).getStatusID(OrderStatus.NonConforming_depricated));
     }
 
     private static boolean hasOrderSampleQaEvent(Sample sample) {

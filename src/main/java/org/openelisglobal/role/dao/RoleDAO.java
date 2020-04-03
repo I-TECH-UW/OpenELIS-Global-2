@@ -29,25 +29,19 @@ public interface RoleDAO extends BaseDAO<Role, String> {
 
 //	public void deleteData(List<Role> roles) throws LIMSRuntimeException;
 
-    public List<Role> getAllRoles() throws LIMSRuntimeException;
+    List<Role> getAllRoles() throws LIMSRuntimeException;
 
-    public List<Role> getPageOfRoles(int startingRecNo) throws LIMSRuntimeException;
+    List<Role> getPageOfRoles(int startingRecNo) throws LIMSRuntimeException;
 
-    public void getData(Role role) throws LIMSRuntimeException;
+    void getData(Role role) throws LIMSRuntimeException;
 
 //	public void updateData(Role role) throws LIMSRuntimeException;
 
-    @SuppressWarnings("rawtypes")
-    public List getNextRoleRecord(String id) throws LIMSRuntimeException;
+    List<Role> getReferencingRoles(Role role) throws LIMSRuntimeException;
 
-    @SuppressWarnings("rawtypes")
-    public List getPreviousRoleRecord(String id) throws LIMSRuntimeException;
+    List<Role> getAllActiveRoles() throws LIMSRuntimeException;
 
-    public List<Role> getReferencingRoles(Role role) throws LIMSRuntimeException;
+    Role getRoleByName(String name) throws LIMSRuntimeException;
 
-    public List<Role> getAllActiveRoles() throws LIMSRuntimeException;
-
-    public Role getRoleByName(String name) throws LIMSRuntimeException;
-
-    public Role getRoleById(String roleId) throws LIMSRuntimeException;
+    Role getRoleById(String roleId) throws LIMSRuntimeException;
 }

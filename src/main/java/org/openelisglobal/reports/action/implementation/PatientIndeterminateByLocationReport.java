@@ -19,12 +19,12 @@ package org.openelisglobal.reports.action.implementation;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.commons.beanutils.PropertyUtils;
-import org.openelisglobal.common.form.BaseForm;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.organization.util.OrganizationTypeList;
 import org.openelisglobal.organization.valueholder.Organization;
 import org.openelisglobal.reports.action.implementation.reportBeans.IndeterminateReportData;
+import org.openelisglobal.reports.form.ReportForm;
 import org.openelisglobal.sampleproject.service.SampleProjectService;
 import org.openelisglobal.sampleproject.valueholder.SampleProject;
 import org.openelisglobal.spring.util.SpringContext;
@@ -47,30 +47,29 @@ public class PatientIndeterminateByLocationReport extends PatientIndeterminateRe
     }
 
     @Override
-    public void setRequestParameters(BaseForm form) {
+    public void setRequestParameters(ReportForm form) {
         try {
-            PropertyUtils.setProperty(form, "reportName",
-                    MessageUtil.getMessage("reports.label.patient.indeterminate"));
+            form.setReportName(MessageUtil.getMessage("reports.label.patient.indeterminate"));
 
-            PropertyUtils.setProperty(form, "useLowerDateRange", Boolean.TRUE);
-            PropertyUtils.setProperty(form, "useUpperDateRange", Boolean.TRUE);
+            form.setUseLowerDateRange(Boolean.TRUE);
+            form.setUseUpperDateRange(Boolean.TRUE);
 
-            PropertyUtils.setProperty(form, "useLocationCode", Boolean.TRUE);
+            form.setUseLocationCode(Boolean.TRUE);
             List<Organization> list = OrganizationTypeList.EID_ORGS_BY_NAME.getList();
-            PropertyUtils.setProperty(form, "locationCodeList", list);
-        } catch (Exception e) {
-            e.printStackTrace();
+            form.setLocationCodeList(list);
+        } catch (RuntimeException e) {
+            LogEvent.logDebug(e);
         }
     }
 
     @Override
-    public void initializeReport(BaseForm form) {
+    public void initializeReport(ReportForm form) {
         super.initializeReport();
         errorFound = false;
 
-        lowDateStr = form.getString("lowerDateRange");
-        highDateStr = form.getString("upperDateRange");
-        locationStr = form.getString("locationCode");
+        lowDateStr = form.getLowerDateRange();
+        highDateStr = form.getUpperDateRange();
+        locationStr = form.getLocationCode();
         dateRange = new DateRange(lowDateStr, highDateStr);
 
         createReportParameters();

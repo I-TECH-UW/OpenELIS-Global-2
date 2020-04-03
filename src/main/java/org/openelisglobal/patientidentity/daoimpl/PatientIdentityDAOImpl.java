@@ -22,7 +22,7 @@ public class PatientIdentityDAOImpl extends BaseDAOImpl<PatientIdentity, String>
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+    
     @Transactional(readOnly = true)
     public List<PatientIdentity> getPatientIdentitiesForPatient(String id) {
 
@@ -38,8 +38,8 @@ public class PatientIdentityDAOImpl extends BaseDAOImpl<PatientIdentity, String>
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
-        } catch (Exception e) {
-            LogEvent.logError("PatientIdentityDAOImpl", "getPatientIdentitiesForPatient()", e.toString());
+        } catch (RuntimeException e) {
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in PatientIdentityDAOImpl getPatientIdentitiesForPatient()", e);
         }
 
@@ -59,7 +59,7 @@ public class PatientIdentityDAOImpl extends BaseDAOImpl<PatientIdentity, String>
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("PatientIdentityDAOImpl", "insertData()", e.toString());
 //			throw new LIMSRuntimeException("Error in PatientIdentity insertData()", e);
 //		}
@@ -78,7 +78,7 @@ public class PatientIdentityDAOImpl extends BaseDAOImpl<PatientIdentity, String>
 //			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 //			String tableName = "PATIENT_IDENTITY";
 //			auditDAO.saveHistory(patientIdentity, oldData, sysUserId, event, tableName);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("PatientIdentityDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in PatientIdentity AuditTrail updateData()", e);
 //		}
@@ -89,7 +89,7 @@ public class PatientIdentityDAOImpl extends BaseDAOImpl<PatientIdentity, String>
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			// entityManager.unwrap(Session.class).evict // CSL remove old(patientIdentity);
 //			// entityManager.unwrap(Session.class).refresh // CSL remove old(patientIdentity);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("patientIdentityDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in patientIdentity updateData()", e);
 //		}
@@ -102,8 +102,8 @@ public class PatientIdentityDAOImpl extends BaseDAOImpl<PatientIdentity, String>
             current = entityManager.unwrap(Session.class).get(PatientIdentity.class, id);
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
-            LogEvent.logError("PatientIdentityDAOImpl", "readSampleHuman()", e.toString());
+        } catch (RuntimeException e) {
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in PatientIdentity getCurrentPatientIdentity()", e);
         }
 
@@ -125,7 +125,7 @@ public class PatientIdentityDAOImpl extends BaseDAOImpl<PatientIdentity, String>
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //
 //			LogEvent.logError("PatientIdentityDAOImpl", "delete()", e.toString());
 //			throw new LIMSRuntimeException("Error in PatientIdentity delete()", e);
@@ -139,8 +139,8 @@ public class PatientIdentityDAOImpl extends BaseDAOImpl<PatientIdentity, String>
             patientIdentity = entityManager.unwrap(Session.class).get(PatientIdentity.class, idString);
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
-            LogEvent.logError("PatientIdentityDAOImpl", "readPatientIdentity()", e.toString());
+        } catch (RuntimeException e) {
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in PatientIdentity readPatientIdentity()", e);
         }
 
@@ -148,7 +148,7 @@ public class PatientIdentityDAOImpl extends BaseDAOImpl<PatientIdentity, String>
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+    
     @Transactional(readOnly = true)
     public List<PatientIdentity> getPatientIdentitiesByValueAndType(String value, String identityType)
             throws LIMSRuntimeException {
@@ -165,8 +165,8 @@ public class PatientIdentityDAOImpl extends BaseDAOImpl<PatientIdentity, String>
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
             return identities;
-        } catch (Exception e) {
-            LogEvent.logError("PatientIdentityDAOImpl", "getPatientIdentitiesByValueAndType()", e.toString());
+        } catch (RuntimeException e) {
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in PatientIdentity getPatientIdentitiesByValueAndType()", e);
         }
     }

@@ -8,8 +8,8 @@ import java.util.Set;
 
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.ResultSaveService;
-import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.services.StatusService.OrderStatus;
 import org.openelisglobal.common.services.registration.interfaces.IResultUpdate;
 import org.openelisglobal.dataexchange.orderresult.OrderResponseWorker.Event;
@@ -23,6 +23,7 @@ import org.openelisglobal.result.action.util.ResultSet;
 import org.openelisglobal.result.action.util.ResultsUpdateDataSet;
 import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.valueholder.Sample;
+import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.testreflex.action.util.TestReflexBean;
 import org.openelisglobal.testreflex.action.util.TestReflexUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -128,9 +129,10 @@ public class LogbookPersistServiceImpl implements LogbookResultsPersistService {
 
     protected void setTestReflexes(ResultsUpdateDataSet actionDataSet, String sysUserId) {
         TestReflexUtil testReflexUtil = new TestReflexUtil();
-        testReflexUtil.setCurrentUserId(sysUserId);
-        testReflexUtil.addNewTestsToDBForReflexTests(convertToTestReflexBeanList(actionDataSet.getNewResults()));
-        testReflexUtil.updateModifiedReflexes(convertToTestReflexBeanList(actionDataSet.getModifiedResults()));
+        testReflexUtil.addNewTestsToDBForReflexTests(convertToTestReflexBeanList(actionDataSet.getNewResults()),
+                sysUserId);
+        testReflexUtil.updateModifiedReflexes(convertToTestReflexBeanList(actionDataSet.getModifiedResults()),
+                sysUserId);
     }
 
     private List<TestReflexBean> convertToTestReflexBeanList(List<ResultSet> resultSetList) {
@@ -170,8 +172,8 @@ public class LogbookPersistServiceImpl implements LogbookResultsPersistService {
             sampleSet.add(resultSet.sample);
         }
 
-        String sampleTestingStartedId = StatusService.getInstance().getStatusID(OrderStatus.Started);
-        String sampleNonConformingId = StatusService.getInstance().getStatusID(OrderStatus.NonConforming_depricated);
+        String sampleTestingStartedId = SpringContext.getBean(IStatusService.class).getStatusID(OrderStatus.Started);
+        String sampleNonConformingId = SpringContext.getBean(IStatusService.class).getStatusID(OrderStatus.NonConforming_depricated);
 
         for (Sample sample : sampleSet) {
             if (!(sample.getStatusId().equals(sampleNonConformingId)

@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
@@ -32,6 +33,8 @@ import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.analyte.service.AnalyteService;
 import org.openelisglobal.analyte.valueholder.Analyte;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.QAService;
 import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
@@ -103,8 +106,8 @@ public class ResultsValidationUtility {
 
     @PostConstruct
     private void initilaizeGlobalVariables() {
-        notValidStatus.add(Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.Finalized)));
-        notValidStatus.add(Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.TechnicalRejected)));
+        notValidStatus.add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized)));
+        notValidStatus.add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalRejected)));
         Analyte analyte = new Analyte();
         analyte.setAnalyteName("Conclusion");
         analyte = analyteService.getAnalyteByName(analyte, false);
@@ -114,7 +117,7 @@ public class ResultsValidationUtility {
         analyte = analyteService.getAnalyteByName(analyte, false);
         ANALYTE_CD4_CT_GENERATED_ID = analyte == null ? "" : analyte.getId();
 
-        Test test = testService.getTestByName("CD4 absolute count");
+        Test test = testService.getTestByLocalizedName("CD4 absolute count", Locale.ENGLISH);
         if (test != null) {
             CD4_COUNT_SORT_NUMBER = test.getSortOrder();
         }
@@ -173,6 +176,9 @@ public class ResultsValidationUtility {
                 headItem = analysisResultItem;
                 groupingCount++;
             } else {
+                if (headItem == null) {
+                    throw new IllegalStateException("headItem should not be null here");
+                }
                 headItem.setMultipleResultForSample(true);
                 analysisResultItem.setMultipleResultForSample(true);
             }
@@ -208,7 +214,9 @@ public class ResultsValidationUtility {
                             resultValue = GenericValidator.isBlankOrNull(dictionary.getLocalAbbreviation())
                                     ? dictionary.getDictEntry()
                                     : dictionary.getLocalAbbreviation();
-                        } catch (Exception e) {
+                        } catch (RuntimeException e) {
+                            LogEvent.logInfo(this.getClass().getName(), "getGroupedTestsForAnalysisList",
+                                    e.getMessage());
                             // no-op
                         }
 
@@ -357,7 +365,6 @@ public class ResultsValidationUtility {
         return true;
     }
 
-    @SuppressWarnings("unchecked")
     protected final List<TestResult> getPossibleResultsForTest(Test test) {
         return testResultService.getAllActiveTestResultsPerTest(test);
     }
@@ -447,7 +454,7 @@ public class ResultsValidationUtility {
             return null;
         }
 
-        return StatusService.getInstance().getRecordStatusForID(ohList.get(0).getValue());
+        return SpringContext.getBean(IStatusService.class).getRecordStatusForID(ohList.get(0).getValue());
     }
 
     public final AnalysisItem testResultItemToAnalysisItem(ResultValidationItem testResultItem) {
@@ -500,7 +507,7 @@ public class ResultsValidationUtility {
         }
         analysisResultItem.setReflexGroup(testResultItem.isReflexGroup());
         analysisResultItem.setChildReflex(testResultItem.isChildReflex());
-        analysisResultItem.setNonconforming(testResultItem.isNonconforming() || StatusService.getInstance()
+        analysisResultItem.setNonconforming(testResultItem.isNonconforming() || SpringContext.getBean(IStatusService.class)
                 .matches(testResultItem.getAnalysis().getStatusId(), AnalysisStatus.TechnicalRejected));
         analysisResultItem.setQualifiedDictionaryId(testResultItem.getQualifiedDictionaryId());
         analysisResultItem.setQualifiedResultValue(testResultItem.getQualifiedResultValue());
@@ -543,11 +550,6 @@ public class ResultsValidationUtility {
         }
         return uomName;
 
-    }
-
-    protected final String getTestId(String testName) {
-        Test test = testService.getTestByName(testName);
-        return test.getId();
     }
 
 }

@@ -4,14 +4,15 @@ import java.lang.reflect.InvocationTargetException;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.dev.form.WebTestInfoForm;
-import org.openelisglobal.login.service.LoginService;
-import org.openelisglobal.login.valueholder.Login;
+import org.openelisglobal.login.service.LoginUserService;
+import org.openelisglobal.login.valueholder.LoginUser;
 import org.openelisglobal.patient.service.PatientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -19,10 +20,17 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class webtestInfoController extends BaseController {
 
+    private static final String[] ALLOWED_FIELDS = new String[] {};
+
     @Autowired
-    LoginService loginService;
+    LoginUserService loginService;
     @Autowired
     PatientService patientService;
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
 
     @RequestMapping(value = "/webtestInfo", method = RequestMethod.GET)
     public ModelAndView showwebtestInfo(HttpServletRequest request)
@@ -30,7 +38,7 @@ public class webtestInfoController extends BaseController {
         WebTestInfoForm form = new WebTestInfoForm();
         String xmlWad = getWebTestXmlWad();
 
-        PropertyUtils.setProperty(form, "xmlWad", xmlWad);
+        form.setXmlWad(xmlWad);
 
         return findForward(FWD_SUCCESS, form);
     }
@@ -53,7 +61,7 @@ public class webtestInfoController extends BaseController {
 
     private void addUserInfo(StringBuilder xmlBuilder) {
         // Login user = loginDAO.getUserProfile("user");
-        Login user = loginService.getUserProfile("webtest");
+        LoginUser user = loginService.getUserProfile("webtest");
         if (user != null) {
             xmlBuilder.append("<webtestuser-id>");
             xmlBuilder.append(user.getSystemUserId() + "-" + user.getId());
@@ -70,7 +78,7 @@ public class webtestInfoController extends BaseController {
     }
 
 //	private void addNumberOfPatients(StringBuilder xmlBuilder) {
-//		int count = new PatientDAOImpl().getTotalCount("Patient", Patient.class);
+//		int count = new PatientDAOImpl().getCount();
 //
 //		xmlBuilder.append("<patient-count>");
 //		xmlBuilder.append(String.valueOf(count));
@@ -79,7 +87,7 @@ public class webtestInfoController extends BaseController {
 //	}
 
 //	private void addNumberOfSamples(StringBuilder xmlBuilder) {
-//		int count = new PatientDAOImpl().getTotalCount("Sample", Sample.class);
+//		int count = new PatientDAOImpl().getCount();
 //
 //		xmlBuilder.append("<sample-count>");
 //		xmlBuilder.append(String.valueOf(count));

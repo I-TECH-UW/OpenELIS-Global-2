@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.validator.GenericValidator;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.ITestIdentityService;
 import org.openelisglobal.common.services.TestIdentityService;
 import org.openelisglobal.common.util.DateUtil;
@@ -101,18 +102,17 @@ public class HL7OrderInterpreter implements IOrderInterpreter {
     public List<InterpreterResults> interpret(Message orderMessage) {
         this.orderMessage = (OML_O21) orderMessage;
 //		try{
-//			System.out.println(this.orderMessage.printStructure());
+//			LogEvent.logInfo(this.getClass().getName(), "method unkown", this.orderMessage.printStructure());
 //			LogEvent.logError( "Debugging", "hl7", this.orderMessage.printStructure());
 //		}catch(HL7Exception e1){
-//			// TODO Auto-generated catch block
-//			e1.printStackTrace();
+//        LogEvent.logError(this.getClass().getName(), "interpret", e1.getMessage());
 //		}
         try {
             patient = createPatientFromHL7();
             test = createTestFromHl7();
             extractOrderInformation();
         } catch (HL7Exception e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
             return buildResultList(true);
         }
         return buildResultList(false);
@@ -264,7 +264,7 @@ public class HL7OrderInterpreter implements IOrderInterpreter {
                     }
 
                 } catch (HL7Exception e) {
-                    e.printStackTrace();
+                    LogEvent.logDebug(e);
                     results.add(InterpreterResults.INTERPRET_ERROR);
                 }
             }
@@ -315,7 +315,7 @@ public class HL7OrderInterpreter implements IOrderInterpreter {
         try {
             return orderMessage.encode();
         } catch (HL7Exception e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
 
         return null;

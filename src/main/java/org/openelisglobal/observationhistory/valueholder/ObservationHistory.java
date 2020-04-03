@@ -24,8 +24,8 @@ import org.openelisglobal.common.valueholder.SimpleBaseEntity;
  * Entities which represent facts about a patient and a sample that has entered
  * the lab. Often taken from a demographic survey form filled out by the doctor,
  * but sometimes something which is generated in the lab like various statuses
- * of a sample. Originally for C�te d'Ivoire RetroCI Project
- * 
+ * of a sample. Originally for Cote d'Ivoire RetroCI Project
+ *
  * @author Paul A. Hill
  * @since 2010-04-16
  */
@@ -36,7 +36,7 @@ public class ObservationHistory extends BaseObject<String> implements SimpleBase
     /**
      * A Definition of all the correct types for the valueType field.
      */
-    public static enum ValueType {
+    public enum ValueType {
         DICTIONARY("D"), // the value is a FK to Dictionary.id
         LITERAL("L"), // the value is simply a literal value
         KEY("K"); // the value is a key for localization
@@ -82,16 +82,18 @@ public class ObservationHistory extends BaseObject<String> implements SimpleBase
         this.observationHistoryTypeId = observationHistoryTypeId;
         this.patientId = patientId;
         this.sampleId = sampleId;
-        this.setValue(value);
-        this.setValueType(valueType);
+        this.value = value;
+        this.valueType = valueType.getCode();
     }
 
     // Property accessors
 
+    @Override
     public String getId() {
         return this.id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }
@@ -139,7 +141,7 @@ public class ObservationHistory extends BaseObject<String> implements SimpleBase
     /**
      * value type indicates whether the value is a literal ("L") or the value is an
      * index to a fixed value from Dictionary ("D")
-     * 
+     *
      * @return "L" or "D"
      */
     public String getValueType() {
@@ -167,38 +169,51 @@ public class ObservationHistory extends BaseObject<String> implements SimpleBase
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         ObservationHistory other = (ObservationHistory) obj;
         if (observationHistoryTypeId == null) {
-            if (other.observationHistoryTypeId != null)
+            if (other.observationHistoryTypeId != null) {
                 return false;
-        } else if (!observationHistoryTypeId.equals(other.observationHistoryTypeId))
+            }
+        } else if (!observationHistoryTypeId.equals(other.observationHistoryTypeId)) {
             return false;
+        }
         if (patientId == null) {
-            if (other.patientId != null)
+            if (other.patientId != null) {
                 return false;
-        } else if (!patientId.equals(other.patientId))
+            }
+        } else if (!patientId.equals(other.patientId)) {
             return false;
+        }
         if (sampleId == null) {
-            if (other.sampleId != null)
+            if (other.sampleId != null) {
                 return false;
-        } else if (!sampleId.equals(other.sampleId))
+            }
+        } else if (!sampleId.equals(other.sampleId)) {
             return false;
+        }
         if (value == null) {
-            if (other.value != null)
+            if (other.value != null) {
                 return false;
-        } else if (!value.equals(other.value))
+            }
+        } else if (!value.equals(other.value)) {
             return false;
+        }
         if (valueType == null) {
-            if (other.valueType != null)
+            if (other.valueType != null) {
                 return false;
-        } else if (!valueType.equals(other.valueType))
+            }
+        } else if (!valueType.equals(other.valueType)) {
             return false;
+        }
         return true;
     }
 

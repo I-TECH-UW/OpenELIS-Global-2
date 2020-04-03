@@ -8,13 +8,9 @@ import org.openelisglobal.systemuser.valueholder.SystemUser;
 public interface SystemUserService extends BaseObjectService<SystemUser, String> {
     void getData(SystemUser systemUser);
 
-    List getPageOfSystemUsers(int startingRecNo);
+    List<SystemUser> getPageOfSystemUsers(int startingRecNo);
 
-    List getAllSystemUsers();
-
-    List getNextSystemUserRecord(String id);
-
-    List getPreviousSystemUserRecord(String id);
+    List<SystemUser> getAllSystemUsers();
 
     Integer getTotalSystemUserCount();
 

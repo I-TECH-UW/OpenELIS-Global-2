@@ -19,7 +19,7 @@ public abstract class LogbookResultsBaseController extends BaseController {
     }
 
     @Override
-    protected String getMessageForKey(String messageKey) throws Exception {
+    protected String getMessageForKey(String messageKey) {
         return MessageUtil.getMessage("results.title", messageKey);
     }
 

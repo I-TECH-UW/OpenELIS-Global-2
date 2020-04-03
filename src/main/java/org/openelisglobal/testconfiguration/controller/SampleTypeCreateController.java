@@ -1,17 +1,15 @@
 package org.openelisglobal.testconfiguration.controller;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.DisplayListService;
-import org.openelisglobal.localization.service.LocalizationService;
 import org.openelisglobal.localization.valueholder.Localization;
 import org.openelisglobal.role.service.RoleService;
 import org.openelisglobal.role.valueholder.Role;
@@ -24,6 +22,8 @@ import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -31,6 +31,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class SampleTypeCreateController extends BaseController {
+
+    private static final String[] ALLOWED_FIELDS = new String[] { "sampleTypeEnglishName", "sampleTypeFrenchName" };
 
     public static final String NAME_SEPARATOR = "$";
 
@@ -40,8 +42,11 @@ public class SampleTypeCreateController extends BaseController {
     private RoleService roleService;
     @Autowired
     private SampleTypeCreateService sampleTypeCreateService;
-    @Autowired
-    private LocalizationService localizationService;
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
 
     @RequestMapping(value = "/SampleTypeCreate", method = RequestMethod.GET)
     public ModelAndView showSampleTypeCreate(HttpServletRequest request) {
@@ -54,18 +59,13 @@ public class SampleTypeCreateController extends BaseController {
     }
 
     private void setupDisplayItems(SampleTypeCreateForm form) {
-        try {
-            PropertyUtils.setProperty(form, "existingSampleTypeList",
-                    DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE));
-            PropertyUtils.setProperty(form, "inactiveSampleTypeList",
-                    DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_INACTIVE));
-            List<TypeOfSample> typeOfSamples = typeOfSampleService.getAllTypeOfSamples();
-            PropertyUtils.setProperty(form, "existingEnglishNames",
-                    getExistingTestNames(typeOfSamples, Locale.ENGLISH));
-            PropertyUtils.setProperty(form, "existingFrenchNames", getExistingTestNames(typeOfSamples, Locale.FRENCH));
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            e.printStackTrace();
-        }
+        form.setExistingSampleTypeList(
+                DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE));
+        form.setInactiveSampleTypeList(
+                DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_INACTIVE));
+        List<TypeOfSample> typeOfSamples = typeOfSampleService.getAllTypeOfSamples();
+        form.setExistingEnglishNames(getExistingTestNames(typeOfSamples, Locale.ENGLISH));
+        form.setExistingFrenchNames(getExistingTestNames(typeOfSamples, Locale.FRENCH));
     }
 
     private String getExistingTestNames(List<TypeOfSample> typeOfSamples, Locale locale) {
@@ -81,16 +81,16 @@ public class SampleTypeCreateController extends BaseController {
 
     @RequestMapping(value = "/SampleTypeCreate", method = RequestMethod.POST)
     public ModelAndView postSampleTypeCreate(HttpServletRequest request,
-            @ModelAttribute("form") @Valid SampleTypeCreateForm form, BindingResult result) throws Exception {
+            @ModelAttribute("form") @Valid SampleTypeCreateForm form, BindingResult result)  {
         if (result.hasErrors()) {
             saveErrors(result);
             setupDisplayItems(form);
             return findForward(FWD_FAIL_INSERT, form);
         }
-        String identifyingName = form.getString("sampleTypeEnglishName");
+        String identifyingName = form.getSampleTypeEnglishName();
         String userId = getSysUserId(request);
 
-        Localization localization = createLocalization(form.getString("sampleTypeFrenchName"), identifyingName, userId);
+        Localization localization = createLocalization(form.getSampleTypeFrenchName(), identifyingName, userId);
 
         TypeOfSample typeOfSample = createTypeOfSample(identifyingName, userId);
 
@@ -108,8 +108,8 @@ public class SampleTypeCreateController extends BaseController {
         try {
             sampleTypeCreateService.createAndInsertSampleType(localization, typeOfSample, workplanModule, resultModule,
                     validationModule, workplanResultModule, resultResultModule, validationValidationModule);
-        } catch (LIMSRuntimeException lre) {
-            lre.printStackTrace();
+        } catch (LIMSRuntimeException e) {
+            LogEvent.logDebug(e);
         }
         DisplayListService.getInstance().refreshList(DisplayListService.ListType.SAMPLE_TYPE);
         DisplayListService.getInstance().refreshList(DisplayListService.ListType.SAMPLE_TYPE_INACTIVE);

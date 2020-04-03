@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.util.StringUtil;
 
 public class SecurityFilter implements Filter {
 
@@ -40,16 +41,16 @@ public class SecurityFilter implements Filter {
         // persistent XSS check
         if (httpRequest.getMethod().equals("POST") || httpRequest.getRequestURI().contains("Update")
                 || httpRequest.getRequestURI().contains("Save")) {
-            @SuppressWarnings("unchecked")
             Enumeration<String> parameterNames = httpRequest.getParameterNames();
             while (parameterNames.hasMoreElements()) {
-                String paramValue = httpRequest.getParameter(parameterNames.nextElement());
+                String curParam = parameterNames.nextElement();
+                String paramValue = httpRequest.getParameter(curParam);
                 // String paramValue = java.net.URLDecoder.decode(param, "UTF-8");
 
                 paramValue = paramValue.replaceAll("\\s", "");
                 if (paramValue.contains("<script>") || paramValue.contains("</script>")) {
                     suspectedAttack = true;
-                    attackList.add("XSS- " + paramValue);
+                    attackList.add("XSS on " + curParam + ": " + StringUtil.snipToMaxLength(paramValue, 50));
                 }
             }
         }
@@ -57,7 +58,7 @@ public class SecurityFilter implements Filter {
         if (suspectedAttack) {
             StringBuilder attackMessage = new StringBuilder();
             String separator = "";
-            attackMessage.append(httpRequest.getRequestURI());
+            attackMessage.append(StringUtil.snipToMaxLength(httpRequest.getRequestURI(), 50));
             attackMessage.append(" suspected attack(s) of type: ");
             for (String attack : attackList) {
                 attackMessage.append(separator);
@@ -66,7 +67,7 @@ public class SecurityFilter implements Filter {
             }
             // should log suspected attempt
             LogEvent.logWarn("SecurityFilter", "doFilter()", attackMessage.toString());
-            System.out.println(attackMessage.toString());
+            LogEvent.logInfo(this.getClass().getName(), "method unkown", attackMessage.toString());
             // send to safe page
             httpResponse.sendRedirect("Dashboard.do");
         } else {

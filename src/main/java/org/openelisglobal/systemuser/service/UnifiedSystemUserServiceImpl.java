@@ -2,8 +2,8 @@ package org.openelisglobal.systemuser.service;
 
 import java.util.List;
 
-import org.openelisglobal.login.service.LoginService;
-import org.openelisglobal.login.valueholder.Login;
+import org.openelisglobal.login.service.LoginUserService;
+import org.openelisglobal.login.valueholder.LoginUser;
 import org.openelisglobal.systemuser.valueholder.SystemUser;
 import org.openelisglobal.userrole.service.UserRoleService;
 import org.openelisglobal.userrole.valueholder.UserRole;
@@ -17,13 +17,13 @@ public class UnifiedSystemUserServiceImpl implements UnifiedSystemUserService {
     @Autowired
     SystemUserService systemUserService;
     @Autowired
-    LoginService loginService;
+    LoginUserService loginService;
     @Autowired
     UserRoleService userRoleService;
 
     @Override
     @Transactional
-    public void deleteData(List<UserRole> userRoles, List<SystemUser> systemUsers, List<Login> loginUsers,
+    public void deleteData(List<UserRole> userRoles, List<SystemUser> systemUsers, List<LoginUser> loginUsers,
             String sysUserId) {
         userRoleService.deleteAll(userRoles);
 

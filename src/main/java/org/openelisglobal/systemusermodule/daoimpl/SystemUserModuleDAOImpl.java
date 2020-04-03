@@ -17,9 +17,9 @@
 */
 package org.openelisglobal.systemusermodule.daoimpl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Session;
@@ -62,7 +62,7 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule, Strin
 //				String tableName = "SYSTEM_USER_MODULE";
 //				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("systemUserModuleDAOImpl", "AuditTrail deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in SystemUserModule AuditTrail deleteData()", e);
@@ -77,7 +77,7 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule, Strin
 //				// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("systemUserModuleDAOImpl", "deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in SystemUserModule deleteData()", e);
@@ -104,7 +104,7 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule, Strin
 //
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("systemUserModuleDAOImpl", "insertData()", e.toString());
 //			throw new LIMSRuntimeException("Error in SystemUserModule insertData()", e);
@@ -121,7 +121,7 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule, Strin
 //				throw new LIMSDuplicateRecordException(
 //						"Duplicate record exists for " + systemUserModule.getPermissionAgentId());
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("systemUserModuleDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in SystemUserModule updateData()", e);
@@ -137,7 +137,7 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule, Strin
 //			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 //			String tableName = "SYSTEM_USER_MODULE";
 //			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("systemUserModuleDAOImpl", "AuditTrail updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in SystemUserModule AuditTrail updateData()", e);
@@ -150,7 +150,7 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule, Strin
 //			// entityManager.unwrap(Session.class).evict // CSL remove old(systemUserModule);
 //			// entityManager.unwrap(Session.class).refresh // CSL remove
 //			// old(systemUserModule);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("systemUserModuleDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in SystemUserModule updateData()", e);
@@ -170,26 +170,26 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule, Strin
             } else {
                 systemUserModule.setId(null);
             }
-        } catch (Exception e) {
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             // bugzilla 2154
-            LogEvent.logError("systemUserModuleDAOImpl", "getData()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SystemUserModule getData()", e);
         }
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllPermissionModules() throws LIMSRuntimeException {
-        List list = new Vector();
+    public List<SystemUserModule> getAllPermissionModules() throws LIMSRuntimeException {
+        List<SystemUserModule> list;
         try {
             String sql = "from SystemUserModule";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError("systemUserModuleDAOImpl", "getAllSystemModules()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SystemUserModule getAllSystemModules()", e);
         }
 
@@ -198,16 +198,16 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule, Strin
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllPermissionModulesByAgentId(int systemUserId) throws LIMSRuntimeException {
-        List list = new Vector();
+    public List<SystemUserModule> getAllPermissionModulesByAgentId(int systemUserId) throws LIMSRuntimeException {
+        List<SystemUserModule> list;
         try {
             String sql = "from SystemUserModule s where s.systemUser.id = :param";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setParameter("param", systemUserId);
             list = query.list();
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError("systemUserModuleDAOImpl", "getAllSystemUserModulesBySystemUserId()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SystemUserModule getAllSystemUserModulesBySystemUserId()", e);
         }
 
@@ -217,8 +217,8 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule, Strin
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfPermissionModules(int startingRecNo) throws LIMSRuntimeException {
-        List list = new Vector();
+    public List<SystemUserModule> getPageOfPermissionModules(int startingRecNo) throws LIMSRuntimeException {
+        List<SystemUserModule> list;
         try {
             // calculate maxRow to be one more than the page size
             int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
@@ -231,9 +231,9 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule, Strin
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError("systemUserModuleDAOImpl", "getPageOfSystemUserModules()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SystemUserModule getPageOfSystemUserModules()", e);
         }
 
@@ -246,9 +246,9 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule, Strin
             sysUserModule = entityManager.unwrap(Session.class).get(SystemUserModule.class, idString);
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError("systemUserModuleDAOImpl", "readSystemUserModule()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Gender readSystemUserModule(idString)", e);
         }
 
@@ -257,85 +257,15 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule, Strin
 
     @Override
     @Transactional(readOnly = true)
-    public List getNextPermissionModuleRecord(String id) throws LIMSRuntimeException {
-
-        return getNextRecord(id, "SystemUserModule", SystemUserModule.class);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousPermissionModuleRecord(String id) throws LIMSRuntimeException {
-
-        return getPreviousRecord(id, "SystemUserModule", SystemUserModule.class);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public Integer getTotalPermissionModuleCount() throws LIMSRuntimeException {
-        return getTotalCount("SystemUserModule", SystemUserModule.class);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
-        int currentId = (Integer.valueOf(id)).intValue();
-        String tablePrefix = getTablePrefix(table);
-
-        List list = new Vector();
-        int rrn = 0;
-        try {
-            String sql = "select sum.id from SystemUserModule sum order by sum.systemUser.id";
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            list = query.list();
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
-            rrn = list.indexOf(String.valueOf(currentId));
-
-            list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
-                    .setMaxResults(2).list();
-
-        } catch (Exception e) {
-            // bugzilla 2154
-            LogEvent.logError("systemUserModuleDAOImpl", "getNextRecord()", e.toString());
-            throw new LIMSRuntimeException("Error in getNextRecord() for " + table, e);
-        }
-
-        return list;
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
-        int currentId = (Integer.valueOf(id)).intValue();
-        String tablePrefix = getTablePrefix(table);
-
-        List list = new Vector();
-        int rrn = 0;
-        try {
-            String sql = "select sum.id from SystemUserModule sum order by sum.systemUser.id";
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            list = query.list();
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
-            rrn = list.indexOf(String.valueOf(currentId));
-
-            list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getPrevious")
-                    .setFirstResult(rrn + 1).setMaxResults(2).list();
-
-        } catch (Exception e) {
-            // bugzilla 2154
-            LogEvent.logError("systemUserModuleDAOImpl", "getPreviousRecord()", e.toString());
-            throw new LIMSRuntimeException("Error in getPreviousRecord() for " + table, e);
-        }
-
-        return list;
+        return getCount();
     }
 
     @Override
     public boolean duplicateSystemUserModuleExists(SystemUserModule systemUserModule) throws LIMSRuntimeException {
         try {
 
-            List list = new ArrayList();
+            List<SystemUserModule> list = new ArrayList();
 
             String sql = "from SystemUserModule s where s.systemUser.id = :param and s.systemModule.id = :param2 and s.id != :param3";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -358,9 +288,9 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule, Strin
                 return false;
             }
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError("systemUserModuleDAOImpl", "duplicateSystemUserModuleExists()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in duplicateSystemUserModuleExists()", e);
         }
     }
@@ -380,7 +310,7 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule, Strin
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
 //			return list.size() > 0;
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("systemUserModuleDAOImpl", "isUserAllowedAccordingToName()", e.toString());
 //			throw new LIMSRuntimeException("Error in isUserAllowedAccordingToName()", e);
 //		}
@@ -388,7 +318,7 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule, Strin
 
     @Override
     public boolean doesUserHaveAnyModules(int userId) throws LIMSRuntimeException {
-        List userModuleList = getAllPermissionModulesByAgentId(userId);
+        List<SystemUserModule> userModuleList = getAllPermissionModulesByAgentId(userId);
         return userModuleList.size() > 0;
     }
 

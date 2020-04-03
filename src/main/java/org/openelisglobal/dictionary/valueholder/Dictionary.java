@@ -23,12 +23,14 @@ import org.openelisglobal.common.valueholder.BaseObject;
 import org.openelisglobal.common.valueholder.ValueHolder;
 import org.openelisglobal.common.valueholder.ValueHolderInterface;
 import org.openelisglobal.dictionarycategory.valueholder.DictionaryCategory;
+import org.openelisglobal.localization.valueholder.Localization;
 
 public class Dictionary extends BaseObject<String> {
 
     private static final long serialVersionUID = 1L;
 
     public class ComparatorLocalizedName implements Comparator<Dictionary> {
+        @Override
         public int compare(Dictionary o1, Dictionary o2) {
             return o1.getLocalizedName().compareTo(o2.getDefaultLocalizedName());
         }
@@ -47,6 +49,8 @@ public class Dictionary extends BaseObject<String> {
     private String localAbbreviation;
 
     private Integer sortOrder;
+
+    private ValueHolder localizedDictionaryName;
 
     public Integer getSortOrder() {
         return sortOrder;
@@ -67,8 +71,10 @@ public class Dictionary extends BaseObject<String> {
     public Dictionary() {
         super();
         this.dictionaryCategory = new ValueHolder();
+        this.localizedDictionaryName = new ValueHolder();
     }
 
+    @Override
     public String getId() {
         return this.id;
     }
@@ -85,6 +91,7 @@ public class Dictionary extends BaseObject<String> {
         this.dictionaryCategory.setValue(dictionaryCategory);
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }
@@ -121,6 +128,14 @@ public class Dictionary extends BaseObject<String> {
         this.selectedDictionaryCategoryId = selectedDictionaryCategoryId;
     }
 
+    public Localization getLocalizedDictionaryName() {
+        return (Localization)localizedDictionaryName.getValue();
+    }
+
+    public void setLocalizedDictionaryName(Localization localizedDictionaryName) {
+        this.localizedDictionaryName.setValue(localizedDictionaryName);
+    }
+
     @Override
     protected String getDefaultLocalizedName() {
         return dictEntry;
@@ -128,6 +143,6 @@ public class Dictionary extends BaseObject<String> {
 
     @Override
     public String toString() {
-        return "Dictionary [id=" + id + ", localAbbreviation=" + localAbbreviation + ", nameKey=" + nameKey + "]";
+        return "Dictionary [id=" + id + ", localAbbreviation=" + localAbbreviation + ", nameKey=" + getNameKey() + "]";
     }
 }

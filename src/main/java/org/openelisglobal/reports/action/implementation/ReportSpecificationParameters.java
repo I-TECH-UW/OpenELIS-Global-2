@@ -17,9 +17,9 @@ package org.openelisglobal.reports.action.implementation;
 
 import java.util.ArrayList;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
-import org.openelisglobal.common.form.BaseForm;
+import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.reports.form.ReportForm;
 
 public class ReportSpecificationParameters implements IReportParameterSetter {
     public enum Parameter {
@@ -28,11 +28,11 @@ public class ReportSpecificationParameters implements IReportParameterSetter {
 
     private String reportTitle;
     private String instructions;
-    private ArrayList<Parameter> parameters = new ArrayList<Parameter>();
+    private ArrayList<Parameter> parameters = new ArrayList<>();
 
     /**
      * Constructor for a single parameter.
-     * 
+     *
      * @param parameter    The parameter which will appear on the parameter page
      * @param title        The title for the page, it will appear above the
      *                     parameters
@@ -56,33 +56,33 @@ public class ReportSpecificationParameters implements IReportParameterSetter {
     }
 
     @Override
-    public void setRequestParameters(BaseForm form) {
+    public void setRequestParameters(ReportForm form) {
         try {
-            PropertyUtils.setProperty(form, "reportName", reportTitle);
+            form.setReportName(reportTitle);
             if (!GenericValidator.isBlankOrNull(instructions)) {
-                PropertyUtils.setProperty(form, "instructions", instructions);
+                form.setInstructions(instructions);
             }
-            PropertyUtils.setProperty(form, "reportName", reportTitle);
+            form.setReportName(reportTitle);
             for (Parameter parameter : parameters) {
                 switch (parameter) {
                 case DATE_RANGE: {
-                    PropertyUtils.setProperty(form, "useLowerDateRange", true);
-                    PropertyUtils.setProperty(form, "useUpperDateRange", true);
+                    form.setUseLowerDateRange(true);
+                    form.setUseUpperDateRange(true);
                     break;
                 }
                 case ACCESSION_RANGE: {
-                    PropertyUtils.setProperty(form, "useAccessionDirect", true);
-                    PropertyUtils.setProperty(form, "useHighAccessionDirect", true);
+                    form.setUseAccessionDirect(true);
+                    form.setUseHighAccessionDirect(true);
                     break;
                 }
                 case NO_SPECIFICATION: {
-                    PropertyUtils.setProperty(form, "noRequestSpecifications", true);
+                    form.setNoRequestSpecifications(true);
                     break;
                 }
                 }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (RuntimeException e) {
+            LogEvent.logDebug(e);
         }
     }
 

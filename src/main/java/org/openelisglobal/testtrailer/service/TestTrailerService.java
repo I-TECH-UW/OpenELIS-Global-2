@@ -8,17 +8,13 @@ import org.openelisglobal.testtrailer.valueholder.TestTrailer;
 public interface TestTrailerService extends BaseObjectService<TestTrailer, String> {
     void getData(TestTrailer testTrailer);
 
-    List getPageOfTestTrailers(int startingRecNo);
-
-    List getNextTestTrailerRecord(String id);
+    List<TestTrailer> getPageOfTestTrailers(int startingRecNo);
 
     Integer getTotalTestTrailerCount();
 
     TestTrailer getTestTrailerByName(TestTrailer testTrailer);
 
-    List getPreviousTestTrailerRecord(String id);
+    List<TestTrailer> getAllTestTrailers();
 
-    List getAllTestTrailers();
-
-    List getTestTrailers(String filter);
+    List<TestTrailer> getTestTrailers(String filter);
 }

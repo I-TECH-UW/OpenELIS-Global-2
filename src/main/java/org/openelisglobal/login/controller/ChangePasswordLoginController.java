@@ -12,15 +12,17 @@ import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.login.form.ChangePasswordLoginForm;
-import org.openelisglobal.login.service.LoginService;
+import org.openelisglobal.login.service.LoginUserService;
 import org.openelisglobal.login.validator.ChangePasswordLoginFormValidator;
 import org.openelisglobal.login.validator.LoginValidator;
-import org.openelisglobal.login.valueholder.Login;
+import org.openelisglobal.login.valueholder.LoginUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -30,12 +32,20 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class ChangePasswordLoginController extends BaseController {
 
+    private static final String[] ALLOWED_FIELDS = new String[] { "loginName", "password", "newPassword",
+            "confirmPassword" };
+
     @Autowired
-    ChangePasswordLoginFormValidator formValidator;
+    private ChangePasswordLoginFormValidator formValidator;
     @Autowired
-    LoginValidator loginValidator;
+    private LoginValidator loginValidator;
     @Autowired
-    LoginService loginService;
+    private LoginUserService loginService;
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
 
     @RequestMapping(value = "/ChangePasswordLogin", method = RequestMethod.GET)
     public ModelAndView showChangePasswordLogin(HttpServletRequest request) {
@@ -58,9 +68,9 @@ public class ChangePasswordLoginController extends BaseController {
 //		// populate valueholder from form
 //		PropertyUtils.copyProperties(newLogin, form);
         try {
-            Login login;
+            LoginUser login;
             // get user information if password correct
-            Optional<Login> matchedLogin = loginService.getValidatedLogin(form.getLoginName(), form.getPassword());
+            Optional<LoginUser> matchedLogin = loginService.getValidatedLogin(form.getLoginName(), form.getPassword());
             if (!matchedLogin.isPresent()) {
                 result.reject("login.error.message");
             } else {
@@ -77,9 +87,9 @@ public class ChangePasswordLoginController extends BaseController {
                 loginService.update(login);
             }
 
-        } catch (LIMSRuntimeException lre) {
+        } catch (LIMSRuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError("LoginChangePasswordUpdateAction", "performAction()", lre.toString());
+            LogEvent.logError(e.toString(), e);
             result.reject("login.error.message");
         }
         if (result.hasErrors()) {

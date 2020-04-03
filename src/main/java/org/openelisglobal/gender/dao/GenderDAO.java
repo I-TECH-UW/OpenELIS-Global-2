@@ -27,7 +27,7 @@ import org.openelisglobal.gender.valueholder.Gender;
  *         disable the creation of type comments go to
  *         Window>Preferences>Java>Code Generation.
  */
-public interface GenderDAO extends BaseDAO<Gender, String> {
+public interface GenderDAO extends BaseDAO<Gender, Integer> {
 
 //	public boolean insertData(Gender gender) throws LIMSRuntimeException;
 
@@ -39,11 +39,11 @@ public interface GenderDAO extends BaseDAO<Gender, String> {
 
 //	public void updateData(Gender gender) throws LIMSRuntimeException;
 
-//	public List getNextGenderRecord(String id) throws LIMSRuntimeException;
+
 
     public Gender getGenderByType(String type) throws LIMSRuntimeException;
 
-//	public List getPreviousGenderRecord(String id) throws LIMSRuntimeException;
+
 
 //	public Integer getTotalGenderCount() throws LIMSRuntimeException;
 

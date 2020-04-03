@@ -5,6 +5,7 @@ import javax.validation.Valid;
 
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.localization.service.LocalizationService;
 import org.openelisglobal.localization.valueholder.Localization;
@@ -14,6 +15,8 @@ import org.openelisglobal.testconfiguration.form.PanelRenameEntryForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -22,10 +25,17 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class PanelRenameEntryController extends BaseController {
 
+    private static final String[] ALLOWED_FIELDS = new String[] { "panelId", "nameEnglish", "nameFrench" };
+
     @Autowired
     PanelService panelService;
     @Autowired
     LocalizationService localizationService;
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
 
     @RequestMapping(value = "/PanelRenameEntry", method = RequestMethod.GET)
     public ModelAndView showPanelRenameEntry(HttpServletRequest request) {
@@ -80,7 +90,7 @@ public class PanelRenameEntryController extends BaseController {
             try {
                 localizationService.update(name);
             } catch (LIMSRuntimeException e) {
-                e.printStackTrace();
+                LogEvent.logDebug(e);
             }
         }
         DisplayListService.getInstance().getFreshList(DisplayListService.ListType.PANELS);

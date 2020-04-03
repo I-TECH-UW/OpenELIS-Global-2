@@ -466,7 +466,7 @@ public class Analysis extends BaseObject<String> implements NoteObject {
 
     @Override
     public String getTableId() {
-        return AnalysisServiceImpl.TABLE_REFERENCE_ID;
+        return AnalysisServiceImpl.getTableReferenceId();
     }
 
     @Override

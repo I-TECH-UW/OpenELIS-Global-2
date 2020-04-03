@@ -1,4 +1,4 @@
-/*=====================*/
+
 /* 
 * OpenELIS Main Stylesheet
 * Main styles used by OpenELIS
@@ -7,7 +7,7 @@
 * Clinical Informatics Research Group, University of Washington School of Nursing.
 * http://cirg.washington.edu
 */
-/*=====================*/
+
 
 /***** New organization of CSS - started 201106  *****/
 
@@ -158,6 +158,11 @@ caption {
 #oe-logo {
 	float: left;
 	margin: 0 5px 0 0
+}
+
+#oe-logo-img {
+	width: auto;
+	height: 71 px;
 }
 
 #oe-title {
@@ -1265,4 +1270,165 @@ tr.border_top td {
 	/*border is optional*/
 	border-bottom: 1px solid #444;
 	cursor: pointer;
+}
+
+view-non-conforming-section-1 > td {
+	width: 25%;
+}
+
+.view-non-conforming-descriptions {
+	width: 35%;
+}
+
+.full-table {
+	width: 80%;
+	text-align: center;
+}
+
+.center-caption {
+	text-align: center;
+}
+
+.corrective-action-section-1 {
+	width: 40%;
+	float: left;
+}
+
+.corrective-action-section-2 {
+	width: 60%;
+	float: left;
+}
+
+.half-table {
+	width: 50%;
+}
+
+.column-right-text {
+	float: right;
+}
+
+.form-div {
+	width: 100%;
+	margin-bottom: 5px;
+}
+
+.form-div label {
+	margin-bottom: 5px;
+	display: inline-block;
+}
+
+.form-control {
+	display: block;
+	padding: 5px 10px;
+}
+
+.edit-report-form {
+	padding: 10px 20px;
+}
+
+.current-report {
+	background: #5eb95e;
+}
+
+.report-ordering-panel {
+	width: 400px;
+}
+
+
+.result-select-box {
+	width: 90%;
+	margin: 10px auto;
+	display: inline-block;
+}
+
+.result-list-test {
+	width: 200px;
+	float: left;
+	margin: 10px;
+}
+
+.result-list-test select {
+	width: 100%;
+}
+
+.new-select-list-item {
+	background: #5eb95e;
+}
+
+.available-tests-cation {
+	text-align: center;
+	margin: 6px 0px;
+}
+
+.highlighted-tests a {
+	color: #5eb95e;
+}
+
+.rename-result-list-table {
+	margin: 0px auto;
+	width: 50%;
+}
+
+.rename-result-list-form {
+	width: 50%;
+	min-height: 50px;
+	margin: 20px auto;
+}
+  
+.form-div {
+	width: 100%;
+	margin-bottom: 5px;
+}
+
+.form-div label {
+	margin-bottom: 5px;
+	display: inline-block;
+}
+
+.form-control {
+	display: block;
+	padding: 5px 10px;
+}
+
+.edit-report-form {
+	padding: 10px 20px;
+}
+
+.current-report {
+	background: #5eb95e;
+}
+
+.report-ordering-panel {
+	width: 400px;
+}
+
+.view-non-conforming-section-1 > td {
+	width: 25%;
+}
+
+.report-nce-table {
+	min-width: 60%;
+}
+
+
+.report-nce-values-col {
+	width: 60%
+}
+
+.corrective-action-section-1 {
+	width: 40%;
+	float: left;
+}
+
+.corrective-action-section-2 {
+	width: 60%;
+	float: left;
+}
+
+.half-table {
+	width: 50%;
+}
+
+.column-right-text {
+	float: right;
 }

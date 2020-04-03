@@ -8,7 +8,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
@@ -31,14 +30,22 @@ import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.test.beanItems.TestResultItem;
 import org.openelisglobal.test.service.TestServiceImpl;
 import org.openelisglobal.workplan.form.WorkplanForm;
+import org.openelisglobal.workplan.form.WorkplanForm.PrintWorkplan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class WorkPlanByTestController extends BaseWorkplanController {
+
+    private static final String[] ALLOWED_FIELDS = new String[] {};
 
     @Autowired
     private AnalysisService analysisService;
@@ -50,8 +57,15 @@ public class WorkPlanByTestController extends BaseWorkplanController {
         HAS_NFS_PANEL = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.CONDENSE_NFS_PANEL, "true");
     }
 
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
+
     @RequestMapping(value = "/WorkPlanByTest", method = RequestMethod.GET)
-    public ModelAndView showWorkPlanByPanel(HttpServletRequest request)
+    public ModelAndView showWorkPlanByPanel(HttpServletRequest request,
+            @ModelAttribute("form") @Validated(PrintWorkplan.class) WorkplanForm oldForm,
+            BindingResult result)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         WorkplanForm form = new WorkplanForm();
 
@@ -59,7 +73,10 @@ public class WorkPlanByTestController extends BaseWorkplanController {
 
         List<TestResultItem> workplanTests;
 
-        String testType = request.getParameter("selectedSearchID");
+        String testType = "";
+        if (!result.hasFieldErrors("selectedSearchID")) {
+            testType = oldForm.getSelectedSearchID();
+        }
         String testName;
 
         if (!GenericValidator.isBlankOrNull(testType)) {
@@ -73,22 +90,25 @@ public class WorkPlanByTestController extends BaseWorkplanController {
             }
             ResultsLoadUtility resultsLoadUtility = new ResultsLoadUtility();
             resultsLoadUtility.sortByAccessionAndSequence(workplanTests);
-            PropertyUtils.setProperty(form, "testTypeID", testType);
-            PropertyUtils.setProperty(form, "testName", testName);
-            PropertyUtils.setProperty(form, "workplanTests", workplanTests);
-            PropertyUtils.setProperty(form, "searchFinished", Boolean.TRUE);
+            form.setTestTypeID(testType);
+            form.setTestName(testName);
+            form.setWorkplanTests(workplanTests);
+            form.setSearchFinished(Boolean.TRUE);
 
         } else {
             // no search done, set workplanTests as empty
-            PropertyUtils.setProperty(form, "searchFinished", Boolean.FALSE);
-            PropertyUtils.setProperty(form, "testName", null);
-            PropertyUtils.setProperty(form, "workplanTests", new ArrayList<TestResultItem>());
+            form.setSearchFinished(Boolean.FALSE);
+            form.setTestName(null);
+            form.setWorkplanTests(new ArrayList<TestResultItem>());
         }
 
-        PropertyUtils.setProperty(form, "searchTypes", getTestDropdownList());
-        PropertyUtils.setProperty(form, "workplanType", request.getParameter("type"));
-        PropertyUtils.setProperty(form, "searchLabel", MessageUtil.getMessage("workplan.test.types"));
-        PropertyUtils.setProperty(form, "searchAction", "WorkPlanByTest.do");
+        form.setSearchTypes(getTestDropdownList());
+        if (!result.hasFieldErrors("workplanType")) {
+            form.setWorkplanType(oldForm.getWorkplanType());
+        }
+        form.setWorkplanType("test");
+        form.setSearchLabel(MessageUtil.getMessage("workplan.test.types"));
+        form.setSearchAction("WorkPlanByTest.do");
 
         return findForward(FWD_SUCCESS, form);
     }

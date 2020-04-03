@@ -15,3 +15,8 @@ liqubase.properties
 
 # Maven Files #
 *target/
+
+# Additional build files
+src/main/resources/adminPassword.txt
+OEInstaller/*
+/docs_back

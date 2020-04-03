@@ -32,14 +32,10 @@ public class OrderLabel extends Label {
      */
     public OrderLabel(Patient patient, Sample sample, String labNo) {
         // set dimensions
-        try {
             width = Float
                     .parseFloat(ConfigurationProperties.getInstance().getPropertyValue(Property.ORDER_BARCODE_WIDTH));
             height = Float
                     .parseFloat(ConfigurationProperties.getInstance().getPropertyValue(Property.ORDER_BARCODE_HEIGHT));
-        } catch (Exception e) {
-            LogEvent.logError("OrderLabel", "OrderLabel OrderLabel()", e.toString());
-        }
         // get information to display above bar code
         Person person = patient.getPerson();
         SampleOrderService sampleOrderService = new SampleOrderService(sample);
@@ -147,8 +143,8 @@ public class OrderLabel extends Label {
         int max = 0;
         try {
             max = Integer.parseInt(ConfigurationProperties.getInstance().getPropertyValue(Property.MAX_ORDER_PRINTED));
-        } catch (Exception e) {
-            LogEvent.logError("OrderLabel", "OrderLabel getMaxNumLabels()", e.toString());
+        } catch (RuntimeException e) {
+            LogEvent.logError(e.toString(), e);
         }
         return max;
     }

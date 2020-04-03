@@ -2,15 +2,15 @@
 * The contents of this file are subject to the Mozilla Public License
 * Version 1.1 (the "License"); you may not use this file except in
 * compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/ 
-* 
+* http://www.mozilla.org/MPL/
+*
 * Software distributed under the License is distributed on an "AS IS"
 * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
 * License for the specific language governing rights and limitations under
 * the License.
-* 
+*
 * The Original Code is OpenELIS code.
-* 
+*
 * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
 */
 package org.openelisglobal.common.provider.validation;
@@ -27,11 +27,12 @@ import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.typeofsample.service.TypeOfSampleService;
 import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
+import org.owasp.encoder.Encode;
 
 /**
  * The QuickEntrySampleTypeValidationProvider class is used to validate, via
  * AJAX, the Sample Type entered on the Quick Entry view.
- * 
+ *
  * @author Ken Rosha 08/30/2006
  */
 public class QuickEntrySampleTypeValidationProvider extends BaseValidationProvider {
@@ -48,12 +49,13 @@ public class QuickEntrySampleTypeValidationProvider extends BaseValidationProvid
     }
     // ==============================================================
 
+    @Override
     public void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String targetId = (String) request.getParameter("id");
-        String formField = (String) request.getParameter("field");
+        String targetId = request.getParameter("id");
+        String formField = request.getParameter("field");
         String result = validate(targetId);
-        ajaxServlet.sendData(formField, result, request, response);
+        ajaxServlet.sendData(Encode.forXmlContent(formField), Encode.forXmlContent(result), request, response);
     }
     // ==============================================================
 

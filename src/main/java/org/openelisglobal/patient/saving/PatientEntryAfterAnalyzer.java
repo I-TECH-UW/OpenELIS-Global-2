@@ -18,7 +18,7 @@
 */
 
 /**
- * C�te d'Ivoire
+ * Cote d'Ivoire
  * @author pahill
  * @since 2010-06-25
  */
@@ -29,10 +29,11 @@ import static org.openelisglobal.common.services.StatusService.RecordStatus.NotR
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.openelisglobal.common.services.StatusService;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.patient.form.PatientEntryByProjectForm;
 import org.openelisglobal.patient.util.PatientUtil;
 import org.openelisglobal.samplehuman.valueholder.SampleHuman;
+import org.openelisglobal.spring.util.SpringContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
@@ -41,7 +42,7 @@ import org.springframework.stereotype.Service;
 public class PatientEntryAfterAnalyzer extends PatientEntry implements IPatientEntryAfterAnalyzer {
 
     public PatientEntryAfterAnalyzer(PatientEntryByProjectForm form, String sysUserId, HttpServletRequest request)
-            throws Exception {
+             {
         this();
         super.setFieldsFromForm(form);
         super.setSysUserId(sysUserId);
@@ -67,7 +68,7 @@ public class PatientEntryAfterAnalyzer extends PatientEntry implements IPatientE
      * @see org.openelisglobal.patient.saving.PatientEntry#populateSampleHuman()
      */
     @Override
-    protected void populateSampleHuman() throws Exception {
+    protected void populateSampleHuman()  {
         sampleHuman = new SampleHuman();
         sampleHuman.setSampleId(statusSet.getSampleId());
         sampleHumanService.getDataBySample(sampleHuman);
@@ -80,7 +81,7 @@ public class PatientEntryAfterAnalyzer extends PatientEntry implements IPatientE
      */
     @Override
     protected void persistRecordStatus() {
-        StatusService.getInstance().deleteRecordStatus(sample, PatientUtil.getUnknownPatient(), sysUserId);
+        SpringContext.getBean(IStatusService.class).deleteRecordStatus(sample, PatientUtil.getUnknownPatient(), sysUserId);
         super.persistRecordStatus();
     }
 }

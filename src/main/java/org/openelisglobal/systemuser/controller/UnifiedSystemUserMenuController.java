@@ -15,8 +15,8 @@ import org.openelisglobal.common.form.MenuForm;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.common.validator.BaseErrors;
-import org.openelisglobal.login.service.LoginService;
-import org.openelisglobal.login.valueholder.Login;
+import org.openelisglobal.login.service.LoginUserService;
+import org.openelisglobal.login.valueholder.LoginUser;
 import org.openelisglobal.systemuser.form.UnifiedSystemUserMenuForm;
 import org.openelisglobal.systemuser.service.SystemUserService;
 import org.openelisglobal.systemuser.service.UnifiedSystemUserService;
@@ -28,6 +28,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -37,14 +39,21 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class UnifiedSystemUserMenuController extends BaseMenuController {
 
+    private static final String[] ALLOWED_FIELDS = new String[] { "selectedIds[*]" };
+
     @Autowired
     SystemUserService systemUserService;
     @Autowired
-    LoginService loginService;
+    LoginUserService loginService;
     @Autowired
     UserRoleService userRoleService;
     @Autowired
     UnifiedSystemUserService unifiedSystemUserService;
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
 
     @RequestMapping(value = "/UnifiedSystemUserMenu", method = RequestMethod.GET)
     public ModelAndView showUnifiedSystemUserMenu(HttpServletRequest request, RedirectAttributes redirectAttributes)
@@ -65,7 +74,7 @@ public class UnifiedSystemUserMenuController extends BaseMenuController {
     }
 
     @Override
-    protected List createMenuList(MenuForm form, HttpServletRequest request) throws Exception {
+    protected List createMenuList(MenuForm form, HttpServletRequest request) {
         List<SystemUser> systemUsers = new ArrayList<>();
 
         String stringStartingRecNo = (String) request.getAttribute("startingRecNo");
@@ -86,9 +95,9 @@ public class UnifiedSystemUserMenuController extends BaseMenuController {
 
         List<UnifiedSystemUser> unifiedUsers = new ArrayList<>();
 
-        List<Login> loginUsers = loginService.getAll();
+        List<LoginUser> loginUsers = loginService.getAll();
 
-        HashMap<String, Login> loginMap = createLoginMap(loginUsers);
+        HashMap<String, LoginUser> loginMap = createLoginMap(loginUsers);
 
         for (SystemUser user : systemUsers) {
             UnifiedSystemUser unifiedUser = createUnifiedSystemUser(loginMap, user);
@@ -98,7 +107,7 @@ public class UnifiedSystemUserMenuController extends BaseMenuController {
         return unifiedUsers;
     }
 
-    private UnifiedSystemUser createUnifiedSystemUser(HashMap<String, Login> loginMap, SystemUser user) {
+    private UnifiedSystemUser createUnifiedSystemUser(HashMap<String, LoginUser> loginMap, SystemUser user) {
 
         UnifiedSystemUser unifiedUser = new UnifiedSystemUser();
         unifiedUser.setFirstName(user.getFirstName());
@@ -107,22 +116,22 @@ public class UnifiedSystemUserMenuController extends BaseMenuController {
         unifiedUser.setSystemUserId(user.getId());
         unifiedUser.setActive(user.getIsActive());
 
-        Login login = loginMap.get(user.getLoginName());
+        LoginUser login = loginMap.get(user.getLoginName());
 
         if (login != null) {
             unifiedUser.setExpDate(DateUtil.formatDateAsText(login.getPasswordExpiredDate()));
             unifiedUser.setDisabled(login.getAccountDisabled());
             unifiedUser.setLocked(login.getAccountLocked());
             unifiedUser.setTimeout(login.getUserTimeOut());
-            unifiedUser.setLoginUserId(login.getId());
+            unifiedUser.setLoginUserId(Integer.toString(login.getId()));
         }
         return unifiedUser;
     }
 
-    private HashMap<String, Login> createLoginMap(List<Login> loginUsers) {
-        HashMap<String, Login> loginMap = new HashMap<>();
+    private HashMap<String, LoginUser> createLoginMap(List<LoginUser> loginUsers) {
+        HashMap<String, LoginUser> loginMap = new HashMap<>();
 
-        for (Login login : loginUsers) {
+        for (LoginUser login : loginUsers) {
             loginMap.put(login.getLoginName(), login);
         }
 
@@ -148,7 +157,7 @@ public class UnifiedSystemUserMenuController extends BaseMenuController {
             return findForward(FWD_FAIL_DELETE, form);
         }
         List<String> selectedIDs = form.getSelectedIDs();
-        List<Login> loginUsers = new ArrayList<>();
+        List<LoginUser> loginUsers = new ArrayList<>();
         List<SystemUser> systemUsers = new ArrayList<>();
         List<UserRole> userRoles = new ArrayList<>();
 
@@ -164,10 +173,10 @@ public class UnifiedSystemUserMenuController extends BaseMenuController {
                 systemUsers.add(systemUser);
             }
 
-            String loginUserId = UnifiedSystemUser.getLoginUserIDFromCombinedID(selectedIDs.get(i));
+            Integer loginUserId = UnifiedSystemUser.getLoginUserIDFromCombinedID(selectedIDs.get(i));
 
-            if (!GenericValidator.isBlankOrNull(loginUserId)) {
-                Login loginUser = new Login();
+            if (null != loginUserId) {
+                LoginUser loginUser = new LoginUser();
                 loginUser.setId(loginUserId);
                 loginUser.setSysUserId(sysUserId);
                 loginUsers.add(loginUser);
@@ -188,9 +197,9 @@ public class UnifiedSystemUserMenuController extends BaseMenuController {
 
         try {
             unifiedSystemUserService.deleteData(userRoles, systemUsers, loginUsers, getSysUserId(request));
-        } catch (LIMSRuntimeException lre) {
+        } catch (LIMSRuntimeException e) {
 
-            if (lre.getException() instanceof org.hibernate.StaleObjectStateException) {
+            if (e.getException() instanceof org.hibernate.StaleObjectStateException) {
                 result.reject("errors.OptimisticLockException", "errors.OptimisticLockException");
             } else {
                 result.reject("errors.DeleteException", "errors.DeleteException");

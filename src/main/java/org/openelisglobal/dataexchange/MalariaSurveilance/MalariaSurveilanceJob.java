@@ -31,7 +31,7 @@ import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
-import org.openelisglobal.common.services.StatusService;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
@@ -63,7 +63,7 @@ public class MalariaSurveilanceJob implements Job {
     private static Map<String, String> RAPID_DICTIONARY_ID_VALUE_MAP;
     private static List<String> MALARIA_TEST_NAMES;
     private static List<String> RAPID_TEST_NAMES;
-    private static final String FINISHED_STATUS_ID = StatusService.getInstance().getStatusID(AnalysisStatus.Finalized);
+    private static final String FINISHED_STATUS_ID = SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized);
 
     private StringBuffer buffer;
 
@@ -129,7 +129,8 @@ public class MalariaSurveilanceJob implements Job {
 
     @Override
     public void execute(JobExecutionContext arg0) throws JobExecutionException {
-        System.out.println("MalariaSurveilance triggered: " + DateUtil.getCurrentDateAsText("dd-MM-yyyy hh:mm"));
+        LogEvent.logInfo(this.getClass().getName(), "method unkown",
+                "MalariaSurveilance triggered: " + DateUtil.getCurrentDateAsText("dd-MM-yyyy hh:mm"));
         LogEvent.logInfo("MalariaSurveilance", "execute()",
                 "Gathering triggered: " + DateUtil.getCurrentDateAsText("dd-MM-yyyy hh:mm"));
 
@@ -272,7 +273,7 @@ public class MalariaSurveilanceJob implements Job {
                 setJobTimestamp(runTime);
                 break;
             default:
-                System.out.println(errors);
+                LogEvent.logInfo(this.getClass().getName(), "method unkown", errors.toString());
             }
         }
 
@@ -284,7 +285,7 @@ public class MalariaSurveilanceJob implements Job {
             try {
                 cronSchedulerService.update(gatherScheduler);
             } catch (LIMSRuntimeException e) {
-                LogEvent.logError("AggregateGatherJob", "execute", e.toString());
+                LogEvent.logError(e.toString(), e);
             }
         }
 

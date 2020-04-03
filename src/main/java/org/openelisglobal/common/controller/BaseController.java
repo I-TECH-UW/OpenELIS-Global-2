@@ -110,9 +110,9 @@ public abstract class BaseController implements IActionConstants {
      *
      * @param messageKey the message key to look up
      */
-    protected String getMessageForKey(String messageKey) throws Exception {
+    protected String getMessageForKey(String messageKey) {
         String message = MessageUtil.getContextualMessage(messageKey);
-        return message == null ? getActualMessage(messageKey) : message;
+        return MessageUtil.messageNotFound(message, messageKey) ? getActualMessage(messageKey) : message;
     }
 
     /**
@@ -122,20 +122,22 @@ public abstract class BaseController implements IActionConstants {
      * @param request    the HttpServletRequest
      * @param messageKey the message key to look up
      */
-    protected String getMessageForKey(HttpServletRequest request, String messageKey) throws Exception {
+    protected String getMessageForKey(HttpServletRequest request, String messageKey) {
         if (null == messageKey) {
             return null;
         }
-        return MessageUtil.getMessage(messageKey);
+        String message = MessageUtil.getMessage(messageKey);
+        return MessageUtil.messageNotFound(message, messageKey) ? getActualMessage(messageKey) : message;
         // return ResourceLocator.getInstance().getMessageResources().getMessage(locale,
         // messageKey);
     }
 
-    protected String getMessageForKey(HttpServletRequest request, String messageKey, String arg0) throws Exception {
+    protected String getMessageForKey(HttpServletRequest request, String messageKey, String arg0) {
         if (null == messageKey) {
             return null;
         }
-        return MessageUtil.getMessage(messageKey);
+        String message = MessageUtil.getMessage(messageKey);
+        return MessageUtil.messageNotFound(message, messageKey) ? getActualMessage(messageKey) : message;
         // return ResourceLocator.getInstance().getMessageResources().getMessage(locale,
         // messageKey, arg0);
     }
@@ -156,9 +158,9 @@ public abstract class BaseController implements IActionConstants {
             } else {
                 pageTitle = getMessageForKey(request, pageTitleKey, pageTitleKeyParameter);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            LogEvent.logError("BaseController", "setPageTitles", "could not get message for key: " + pageTitleKey);
+        } catch (RuntimeException e) {
+            LogEvent.logDebug(e);
+            LogEvent.logError("could not get message for key: " + pageTitleKey, e);
         }
 
         try {
@@ -168,9 +170,9 @@ public abstract class BaseController implements IActionConstants {
                 pageSubtitle = getMessageForKey(request, pageSubtitleKey, pageSubtitleKeyParameter);
             }
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            LogEvent.logError("BaseController", "setPageTitles", "could not get message for key: " + pageSubtitleKey);
+        } catch (RuntimeException e) {
+            LogEvent.logDebug(e);
+            LogEvent.logError("could not get message for key: " + pageSubtitleKey, e);
         }
 
         if (null != pageTitle) {
@@ -236,37 +238,17 @@ public abstract class BaseController implements IActionConstants {
         return mv;
     }
 
-    protected ModelAndView getForward(ModelAndView mv, String id, String startingRecNo, String direction) {
-        LogEvent.logInfo("BaseAction", "getForward()", "This is forward " + mv.getViewName());
-
-        if (id != null) {
-            mv.addObject(ID, id);
-        }
-        if (startingRecNo != null) {
-            mv.addObject("startingRecNo", startingRecNo);
-        }
-        if (direction != null) {
-            mv.addObject("direction", direction);
-        }
-
-        return mv;
-    }
-
     protected ModelAndView getForwardWithParameters(ModelAndView mv, Map<String, String> params) {
         mv.addAllObjects(params);
         return mv;
     }
 
     protected void saveErrors(Errors errors) {
-        if (request.getAttribute(Constants.REQUEST_ERRORS) == null) {
+        Errors previousErrors = (Errors) request.getAttribute(Constants.REQUEST_ERRORS);
+        if (previousErrors == null) {
             request.setAttribute(Constants.REQUEST_ERRORS, errors);
-        } else {
-            Errors previousErrors = (Errors) request.getAttribute(Constants.REQUEST_ERRORS);
-            if (previousErrors.hasErrors() && previousErrors.getObjectName().equals(errors.getObjectName())) {
-                previousErrors.addAllErrors(errors);
-            } else {
-                request.setAttribute(Constants.REQUEST_ERRORS, errors);
-            }
+        } else if (previousErrors.hasErrors() && previousErrors.getObjectName().equals(errors.getObjectName())) {
+            previousErrors.addAllErrors(errors);
         }
     }
 
@@ -293,7 +275,7 @@ public abstract class BaseController implements IActionConstants {
             servletOutputStream.write(errorMsg);
 
         } catch (IOException e) {
-            LogEvent.logError("PrintWorkplanReportController", "writeErrorsToResponse", e.getMessage());
+            LogEvent.logError(e.getMessage(), e);
         }
 
     }
@@ -331,19 +313,19 @@ public abstract class BaseController implements IActionConstants {
             request.getSession().setAttribute(objectName, newForm);
             return newForm;
         } catch (InstantiationException | IllegalAccessException e) {
-            LogEvent.logError("BaseController", "resetFormSessionObject", e.getMessage());
+            LogEvent.logError(e.getMessage(), e);
             return form;
         }
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends BaseForm> T resetFormToType(BaseForm form, Class<T> classType) {
+    public <T extends BaseForm> T resetSessionFormToType(BaseForm form, Class<T> classType) {
         try {
             T newForm = classType.newInstance();
             request.getSession().setAttribute("form", newForm);
             return newForm;
         } catch (InstantiationException | IllegalAccessException e) {
-            LogEvent.logError("BaseController", "resetFormToType", e.getMessage());
+            LogEvent.logError(e.getMessage(), e);
             return null;
         }
     }

@@ -21,6 +21,9 @@ import static org.openelisglobal.reports.action.implementation.reportBeans.CSVCo
 import static org.openelisglobal.reports.action.implementation.reportBeans.CSVColumnBuilder.Strategy.LOG;
 import static org.openelisglobal.reports.action.implementation.reportBeans.CSVColumnBuilder.Strategy.NONE;
 
+import java.sql.Date;
+
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService;
 
 //import org.apache.commons.validator.GenericValidator;
@@ -93,11 +96,13 @@ public class VLColumnBuilder extends CIColumnBuilder {
 
     @Override
     public void makeSQL() {
-        String validStatusId = StatusService.getInstance().getStatusID(StatusService.AnalysisStatus.Finalized);
-        Test test = SpringContext.getBean(TestService.class).getActiveTestByName("Viral Load").get(0);
+        String validStatusId = SpringContext.getBean(IStatusService.class).getStatusID(StatusService.AnalysisStatus.Finalized);
+        Test test = SpringContext.getBean(TestService.class).getActiveTestsByName("Viral Load").get(0);
+        // this is done to ensure that sql injection can't succeed
+        int testId = Integer.parseInt(test.getId());
         query = new StringBuilder();
-        String lowDatePostgres = postgresDateFormat.format(dateRange.getLowDate());
-        String highDatePostgres = postgresDateFormat.format(dateRange.getHighDate());
+        Date lowDate = dateRange.getLowDate();
+        Date highDate = dateRange.getHighDate();
         query.append(SELECT_SAMPLE_PATIENT_ORGANIZATION);
         // all crosstab generated tables need to be listed in the following list and in
         // the WHERE clause at the bottom
@@ -109,21 +114,22 @@ public class VLColumnBuilder extends CIColumnBuilder {
                 + ", clinlims.sample_item as si, clinlims.analysis as a, clinlims.result as r ");
 
         // all observation history values
-        appendObservationHistoryCrosstab(lowDatePostgres, highDatePostgres);
+        appendObservationHistoryCrosstab(lowDate, highDate);
         // current ARV treatments
-        appendRepeatingObservation("currentARVTreatmentINNs", 4, lowDatePostgres, highDatePostgres);
+        appendRepeatingObservation(SQLConstant.CURRENT_ARV_TREATMENT_INNS, 4, lowDate, highDate);
         // result
         // appendResultCrosstab(lowDatePostgres, highDatePostgres );
 
         // and finally the join that puts these all together. Each cross table should be
         // listed here otherwise it's not in the result and you'll get a full join
-        query.append(" WHERE " + "\n a.test_id =" + test.getId()
+        query.append(" WHERE " + "\n a.test_id =" + testId
                 + ((validStatusId == null) ? "" : " AND a.status_id = " + validStatusId) + "\n AND a.id=r.analysis_id"
                 + "\n AND a.sampitem_id = si.id" + "\n AND s.id = si.samp_id" + "\n AND s.id=sh.samp_id"
                 + "\n AND sh.patient_id=pat.id" + "\n AND pat.person_id = per.id" + "\n AND s.id=so.samp_id"
                 + "\n AND so.org_id=o.id" + "\n AND s.id = sp.samp_id" + "\n AND s.id=demo.s_id"
                 + "\n AND s.id = currentARVTreatmentINNs.samp_id" + "\n AND s.collection_date >= date('"
-                + lowDatePostgres + "')" + "\n AND s.collection_date <= date('" + highDatePostgres + "')"
+                + formatDateForDatabaseSql(lowDate) + "')" + "\n AND s.collection_date <= date('"
+                + formatDateForDatabaseSql(highDate) + "')"
 
                 + "\n ORDER BY s.accession_number;");
         /////////

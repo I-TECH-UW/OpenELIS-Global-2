@@ -48,9 +48,10 @@ public class ResourceTranslator<T extends BaseObject> {
     /**
      *
      */
+    @SuppressWarnings("unchecked")
     public ResourceTranslator(List<T> ts) {
         for (T t : ts) {
-            map.put(getKey(t), t);
+            map.put(((SimpleBaseEntity<String>) t).getId(), t);
         }
     }
 

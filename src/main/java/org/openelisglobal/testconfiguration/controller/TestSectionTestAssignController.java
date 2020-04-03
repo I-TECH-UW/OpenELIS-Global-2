@@ -1,6 +1,5 @@
 package org.openelisglobal.testconfiguration.controller;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -8,12 +7,11 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.openelisglobal.common.controller.BaseController;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.util.IdValuePair;
-import org.openelisglobal.common.util.validator.GenericValidator;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.test.service.TestSectionService;
 import org.openelisglobal.test.service.TestService;
@@ -25,6 +23,8 @@ import org.openelisglobal.testconfiguration.service.TestSectionTestAssignService
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -33,10 +33,18 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class TestSectionTestAssignController extends BaseController {
 
+    private static final String[] ALLOWED_FIELDS = new String[] { "testId", "testSectionId",
+            "deactivateTestSectionId" };
+
     @Autowired
     private TestSectionTestAssignService testSectionTestAssignService;
     @Autowired
     private TestSectionService testSectionService;
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
 
     @RequestMapping(value = "/TestSectionTestAssign", method = RequestMethod.GET)
     public ModelAndView showTestSectionTestAssign(HttpServletRequest request) {
@@ -67,14 +75,9 @@ public class TestSectionTestAssignController extends BaseController {
         // we can't just append the original list because that list is in the cache
         List<IdValuePair> joinedList = new ArrayList<>(testSections);
         joinedList.addAll(DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION_INACTIVE));
-        try {
-            PropertyUtils.setProperty(form, "testSectionList", joinedList);
-            PropertyUtils.setProperty(form, "sectionTestList", testSectionTestsMap);
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
 
+        form.setTestSectionList(joinedList);
+        form.setSectionTestList(testSectionTestsMap);
     }
 
     @Override
@@ -109,9 +112,9 @@ public class TestSectionTestAssignController extends BaseController {
             return findForward(FWD_FAIL_INSERT, form);
         }
 
-        String testId = form.getString("testId");
-        String testSectionId = form.getString("testSectionId");
-        String deactivateTestSectionId = form.getString("deactivateTestSectionId");
+        String testId = form.getTestId();
+        String testSectionId = form.getTestSectionId();
+        String deactivateTestSectionId = form.getDeactivateTestSectionId();
         boolean updateTestSection = false;
         String currentUser = getSysUserId(request);
         Test test = SpringContext.getBean(TestService.class).get(testId);
@@ -132,7 +135,7 @@ public class TestSectionTestAssignController extends BaseController {
             updateTestSection = true;
         }
 
-        if (!GenericValidator.isBlankOrNull(deactivateTestSectionId)) {
+        if (!org.apache.commons.validator.GenericValidator.isBlankOrNull(deactivateTestSectionId)) {
             deActivateTestSection = testSectionService.get(deactivateTestSectionId);
             deActivateTestSection.setIsActive("N");
             deActivateTestSection.setSysUserId(currentUser);
@@ -141,8 +144,8 @@ public class TestSectionTestAssignController extends BaseController {
         try {
             testSectionTestAssignService.updateTestAndTestSections(test, testSection, deActivateTestSection,
                     updateTestSection);
-        } catch (HibernateException lre) {
-            lre.printStackTrace();
+        } catch (HibernateException e) {
+            LogEvent.logDebug(e);
         }
 
         DisplayListService.getInstance().refreshList(DisplayListService.ListType.TEST_SECTION);

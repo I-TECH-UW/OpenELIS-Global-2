@@ -17,12 +17,12 @@
 */
 package org.openelisglobal.sample.daoimpl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
-import java.util.Vector;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
@@ -36,6 +36,7 @@ import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.sample.dao.SampleDAO;
 import org.openelisglobal.sample.valueholder.Sample;
+import org.openelisglobal.sampleproject.valueholder.SampleProject;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -68,7 +69,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
 //				String tableName = "SAMPLE";
 //				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("SampleDAOImpl", "AuditTrail deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Sample AuditTrail deleteData()", e);
@@ -83,7 +84,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
 //				// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("SampleDAOImpl", "deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Sample deleteData()", e);
@@ -106,7 +107,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("SampleDAOImpl", "insertData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Sample insertData()", e);
 //		}
@@ -134,7 +135,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("SampleDAOImpl", "insertData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Sample insertData()", e);
@@ -155,7 +156,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
 //			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 //			String tableName = "SAMPLE";
 //			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("SampleDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Sample AuditTrail updateData()", e);
@@ -167,7 +168,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			// entityManager.unwrap(Session.class).evict // CSL remove old(sample);
 //			// entityManager.unwrap(Session.class).refresh // CSL remove old(sample);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("SampleDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Sample updateData()", e);
@@ -186,7 +187,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
                 String sql = "from SampleProject sp where samp_id = :sampleId";
                 Query query = entityManager.unwrap(Session.class).createQuery(sql);
                 query.setParameter("sampleId", Integer.parseInt(samp.getId()));
-                List list = query.list();
+                List<Sample> list = query.list();
                 // entityManager.unwrap(Session.class).flush(); // CSL remove old
                 // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
@@ -196,17 +197,17 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
             } else {
                 sample.setId(null);
             }
-        } catch (Exception e) {
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             // bugzilla 2154
-            LogEvent.logError("SampleDAOImpl", "getData()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Sample getData()", e);
         }
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfSamples(int startingRecNo) throws LIMSRuntimeException {
-        List samples = new Vector();
+    public List<Sample> getPageOfSamples(int startingRecNo) throws LIMSRuntimeException {
+        List<Sample> samples;
         try {
 
             // calculate maxRow to be one more than the page size
@@ -225,15 +226,15 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
 
             // set the display dates for STARTED_DATE, COMPLETED_DATE
             for (int i = 0; i < samples.size(); i++) {
-                samp = (Sample) samples.get(i);
+                samp = samples.get(i);
                 samp.setEnteredDateForDisplay(DateUtil.convertSqlDateToStringDate(samp.getEnteredDate()));
                 samp.setReceivedDateForDisplay(DateUtil.convertSqlDateToStringDate(samp.getReceivedDate()));
                 samp.setCollectionDateForDisplay(DateUtil.convertTimestampToStringDate(samp.getCollectionDate()));
                 samp.setTransmissionDateForDisplay(DateUtil.convertSqlDateToStringDate(samp.getTransmissionDate()));
                 samp.setReleasedDateForDisplay(DateUtil.convertSqlDateToStringDate(samp.getReleasedDate()));
             }
-        } catch (Exception e) {
-            LogEvent.logError("SampleDAOImpl", "getPageOfSamples()", e.toString());
+        } catch (RuntimeException e) {
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Sample getPageOfSamples()", e);
         }
 
@@ -247,13 +248,13 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
             String sql = "from Sample s where s.accessionNumber = :param";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setParameter("param", sample.getAccessionNumber());
-            List list = query.list();
+            List<Sample> list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
             Sample samp = null;
             if (list.size() > 0) {
-                samp = (Sample) list.get(0);
+                samp = list.get(0);
             }
 
             if (samp != null) {
@@ -261,7 +262,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
                 sql = "from SampleProject sp where samp_id = :param";
                 query = entityManager.unwrap(Session.class).createQuery(sql);
                 query.setInteger("param", Integer.parseInt(samp.getId()));
-                List sp = query.list();
+                List<SampleProject> sp = query.list();
                 // entityManager.unwrap(Session.class).flush(); // CSL remove old
                 // entityManager.unwrap(Session.class).clear(); // CSL remove old
                 samp.setSampleProjects(sp);
@@ -270,9 +271,9 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
             } else {
                 sample.setId(null);
             }
-        } catch (Exception e) {
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             // bugzilla 2154
-            LogEvent.logError("SampleDAOImpl", "getDataByAccessionNumber()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Sample getDataByAccessionNumber()", e);
         }
     }
@@ -283,9 +284,9 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
             samp = entityManager.unwrap(Session.class).get(Sample.class, idString);
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError("SampleDAOImpl", "readSample()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Sample readSample()", e);
         }
         return samp;
@@ -336,7 +337,8 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
                                 // over
                                 // the
                                 // limit
-                                // System.out.println("Error in Sample getNextAccessionNumber() max sequence
+                                // LogEvent.logInfo(this.getClass().getName(), "method unkown", "Error in Sample
+                                // getNextAccessionNumber() max sequence
                                 // number reached");
                                 throw new LIMSRuntimeException(
                                         "Error in Sample getNextAccessionNumber() max sequence number reached");
@@ -361,27 +363,12 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
                 accessionNumber = currentYear + ACC_NUMBER_SEQ_BEGIN;
             }
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError("SampleDAOImpl", "getNextAccessionNumber()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Sample getNextAccessionNumber()", e);
         }
         return accessionNumber;
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getNextSampleRecord(String id) throws LIMSRuntimeException {
-
-        return getNextRecord(id, "Sample", Sample.class);
-
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousSampleRecord(String id) throws LIMSRuntimeException {
-
-        return getPreviousRecord(id, "Sample", Sample.class);
     }
 
     /**
@@ -393,7 +380,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
      *         accession number does not exist.
      */
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public Sample getSampleByAccessionNumber(String accessionNumber) throws LIMSRuntimeException {
         Sample sample = null;
@@ -407,7 +394,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
                 sample = list.get(0);
             }
             // closeSession(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             throw new LIMSRuntimeException("Exception occurred in getSampleForAccessionNumber", e);
         }
         return sample;
@@ -416,8 +403,8 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
 
     @Override
     @Transactional(readOnly = true)
-    public List getSamplesByStatusAndDomain(List statuses, String domain) throws LIMSRuntimeException {
-        List list = new Vector();
+    public List<Sample> getSamplesByStatusAndDomain(List<String> statuses, String domain) throws LIMSRuntimeException {
+        List<Sample> list;
         try {
             String sql = "from Sample s where status in (:param1) and domain = :param2";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -426,10 +413,10 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
 
             // bugzilla 2154
-            LogEvent.logError("SampleDAOImpl", "getAllSampleByStatusAndDomain()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Sample getAllSampleByStatusAndDomain()", e);
         }
 
@@ -437,7 +424,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public List<Sample> getSamplesWithPendingQaEvents(Sample sample, boolean filterByQaEventCategory,
             String qaEventCategoryId, boolean filterByDomain) throws LIMSRuntimeException {
@@ -513,8 +500,8 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
-            LogEvent.logError("SampleDAOImpl", "getSamplesWithPendingQaEvents()", e.toString());
+        } catch (RuntimeException e) {
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Sample getSamplesWithPendingQaEvents()", e);
         }
 
@@ -532,7 +519,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
      * @see org.openelisglobal.sample.dao.SampleDAO#getSamplesReceivedInDateRange(String,
      *      String) (java.lang.String, java.lang.String)
      */
-    @SuppressWarnings("unchecked")
+
     @Override
     @Transactional(readOnly = true)
     public List<Sample> getSamplesReceivedInDateRange(String receivedDateStart, String receivedDateEnd)
@@ -556,15 +543,15 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
             query.setDate("start", start.getTime());
             query.setDate("end", end.getTime());
             list = query.list();
-        } catch (HibernateException he) {
-            LogEvent.logError("SampleDAOImpl", "getSamplesReceivedInDateRange()", he.toString());
-            throw new LIMSRuntimeException("Error in Sample getSamplesReceivedInDateRange()", he);
+        } catch (HibernateException e) {
+            LogEvent.logError(e.toString(), e);
+            throw new LIMSRuntimeException("Error in Sample getSamplesReceivedInDateRange()", e);
         }
         return list;
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public List<Sample> getSamplesCollectedOn(String collectionDate) throws LIMSRuntimeException {
         List<Sample> list = null;
@@ -577,9 +564,9 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
             query.setDate("date", calendar.getTime());
             list = query.list();
 
-        } catch (HibernateException he) {
-            LogEvent.logError("SampleDAOImpl", "getSamplesRecievedOn()", he.toString());
-            throw new LIMSRuntimeException("Error in Sample getSamplesRecievedOn()", he);
+        } catch (HibernateException e) {
+            LogEvent.logError(e.toString(), e);
+            throw new LIMSRuntimeException("Error in Sample getSamplesRecievedOn()", e);
         }
 
         return list;
@@ -596,7 +583,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public List<Sample> getSamplesByProjectAndStatusIDAndAccessionRange(List<Integer> inclusiveProjectIdList,
             List<Integer> inclusiveStatusIdList, String minAccession, String maxAccession) throws LIMSRuntimeException {
@@ -624,7 +611,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public List<Sample> getSamplesByProjectAndStatusIDAndAccessionRange(String projectId,
             List<Integer> inclusiveStatusIdList, String minAccession, String maxAccession) throws LIMSRuntimeException {
@@ -652,7 +639,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public List<Sample> getSamplesByAccessionRange(String minAccession, String maxAccession)
             throws LIMSRuntimeException {
@@ -686,8 +673,8 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
 
             greatestAccessionNumber = (String) query.uniqueResult();
 
-        } catch (Exception e) {
-            LogEvent.logError("SampleDAOImpl", "getLargestAccessionNumber()", e.toString());
+        } catch (RuntimeException e) {
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Exception occurred in SampleDAOImpl.getLargestAccessionNumber", e);
         }
 
@@ -704,8 +691,8 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
             Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setParameter("prefix", prefix + "%");
             greatestAccessionNumber = (String) query.uniqueResult();
-        } catch (Exception e) {
-            LogEvent.logError("SampleDAOImpl", "getLargestAccessionNumberWithPrefix()", e.toString());
+        } catch (RuntimeException e) {
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException(
                     "Exception occurred in SampleNumberDAOImpl.getLargestAccessionNumberWithPrefix", e);
         }
@@ -725,14 +712,13 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
             query.setParameter("starts", startingWith + "%");
             query.setInteger("numberSize", accessionSize);
             greatestAccessionNumber = (String) query.uniqueResult();
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             handleException(e, "getLargestAccessionNumberMatchingPattern");
         }
 
         return greatestAccessionNumber;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     @Transactional(readOnly = true)
     public List<Sample> getSamplesWithPendingQaEventsByService(String serviceId) throws LIMSRuntimeException {
@@ -751,7 +737,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public List<Sample> getConfirmationSamplesReceivedInDateRange(Date receivedDateStart, Date receivedDateEnd)
             throws LIMSRuntimeException {
@@ -771,7 +757,6 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
         return null;
     }
 
-    @SuppressWarnings("unchecked")
     @Transactional(readOnly = true)
     public List<Sample> getSamplesBySampleItem(Integer sampleitemId) throws LIMSRuntimeException {
 

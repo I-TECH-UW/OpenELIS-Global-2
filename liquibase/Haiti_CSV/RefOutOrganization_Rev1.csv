@@ -1,3 +1,0 @@
-id,short_name,name,lastupdated,active
- nextval( 'organization_seq' ) ,CDC,CDC, now() ,Y 
- nextval( 'organization_seq' ) ,CAREC,CAREC, now() ,Y 

@@ -25,11 +25,11 @@ import java.util.Map;
 
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
-import org.openelisglobal.common.form.BaseForm;
-import org.openelisglobal.common.services.StatusService;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.reports.action.implementation.reportBeans.HaitiAggregateReportData;
+import org.openelisglobal.reports.form.ReportForm;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.test.service.TestSectionService;
 import org.openelisglobal.test.service.TestService;
@@ -81,7 +81,7 @@ public abstract class IndicatorAllTest extends IndicatorReport implements IRepor
     }
 
     @Override
-    public void initializeReport(BaseForm form) {
+    public void initializeReport(ReportForm form) {
         super.initializeReport();
         setDateRange(form);
 
@@ -154,13 +154,13 @@ public abstract class IndicatorAllTest extends IndicatorReport implements IRepor
                 boolean finished = false;
                 boolean inProgress = false;
                 for (Analysis panelAnalysis : panelIdToAnalysisMap.get(panelId)) {
-                    if (StatusService.getInstance().matches(panelAnalysis.getStatusId(), AnalysisStatus.Canceled)) {
+                    if (SpringContext.getBean(IStatusService.class).matches(panelAnalysis.getStatusId(), AnalysisStatus.Canceled)) {
                         canceled = true;
                         break;
-                    } else if (StatusService.getInstance().matches(panelAnalysis.getStatusId(),
+                    } else if (SpringContext.getBean(IStatusService.class).matches(panelAnalysis.getStatusId(),
                             AnalysisStatus.NotStarted)) {
                         notStarted = true;
-                    } else if (StatusService.getInstance().matches(panelAnalysis.getStatusId(),
+                    } else if (SpringContext.getBean(IStatusService.class).matches(panelAnalysis.getStatusId(),
                             AnalysisStatus.Finalized)) {
                         finished = true;
                     } else {
@@ -179,11 +179,11 @@ public abstract class IndicatorAllTest extends IndicatorReport implements IRepor
 
                     String status;
                     if (inProgress || (notStarted && finished)) {
-                        status = StatusService.getInstance().getStatusID(AnalysisStatus.TechnicalAcceptance);
+                        status = SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalAcceptance);
                     } else if (notStarted) {
-                        status = StatusService.getInstance().getStatusID(AnalysisStatus.NotStarted);
+                        status = SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NotStarted);
                     } else {
-                        status = StatusService.getInstance().getStatusID(AnalysisStatus.Finalized);
+                        status = SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized);
                     }
 
                     Analysis proxyAnalysis = getProxyAnalysis(templateAnalysis, panelName, status);
@@ -236,17 +236,17 @@ public abstract class IndicatorAllTest extends IndicatorReport implements IRepor
                     concatSection_TestToBucketMap.put(concatedName, testBucket);
                 }
             } else if (test.getLocalizedTestName() == null) {
-                testBucket = testNameToBucketList.get(test.getTestName());
+                testBucket = testNameToBucketList.get(test.getLocalizedName());
             } else {
                 testBucket = testNameToBucketList.get(TestServiceImpl.getUserLocalizedReportingTestName(test));
             }
 
             if (testBucket != null) {
-                if (StatusService.getInstance().matches(analysis.getStatusId(), AnalysisStatus.NotStarted)) {
+                if (SpringContext.getBean(IStatusService.class).matches(analysis.getStatusId(), AnalysisStatus.NotStarted)) {
                     testBucket.notStartedCount++;
                 } else if (inProgress(analysis)) {
                     testBucket.inProgressCount++;
-                } else if (StatusService.getInstance().matches(analysis.getStatusId(), AnalysisStatus.Finalized)) {
+                } else if (SpringContext.getBean(IStatusService.class).matches(analysis.getStatusId(), AnalysisStatus.Finalized)) {
                     testBucket.finishedCount++;
                 }
             }
@@ -280,15 +280,15 @@ public abstract class IndicatorAllTest extends IndicatorReport implements IRepor
         proxyTestSection.setId(templateAnalysis.getTestSection().getId());
 
         proxyTest.setTestSection(proxyTestSection);
-        proxyTest.setTestName(panelName);
+//        proxyTest.setTestName(panelName);
 
         return proxyAnalysis;
     }
 
     private boolean inProgress(Analysis analysis) {
-        return StatusService.getInstance().matches(analysis.getStatusId(), AnalysisStatus.TechnicalAcceptance)
-                || StatusService.getInstance().matches(analysis.getStatusId(), AnalysisStatus.TechnicalRejected)
-                || StatusService.getInstance().matches(analysis.getStatusId(), AnalysisStatus.BiologistRejected);
+        return SpringContext.getBean(IStatusService.class).matches(analysis.getStatusId(), AnalysisStatus.TechnicalAcceptance)
+                || SpringContext.getBean(IStatusService.class).matches(analysis.getStatusId(), AnalysisStatus.TechnicalRejected)
+                || SpringContext.getBean(IStatusService.class).matches(analysis.getStatusId(), AnalysisStatus.BiologistRejected);
     }
 
     private void mergeLists() {

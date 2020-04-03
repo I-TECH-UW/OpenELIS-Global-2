@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=utf-8" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" %>
 <%@ page import="org.openelisglobal.common.action.IActionConstants,
                  org.openelisglobal.common.formfields.FormFields,
                  org.openelisglobal.common.formfields.FormFields.Field,
@@ -15,59 +15,38 @@
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
 
 
-<script type="text/javascript" src="scripts/ajaxCalls.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script type="text/javascript" src="<%=basePath%>scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
+<script type="text/javascript" src="scripts/ajaxCalls.js?"></script>
+<script type="text/javascript" src="scripts/utilities.js?" ></script>
 
 <c:set var="formName" value="${form.formName}" />
 <c:set var="patientProperties" value="${form.patientProperties}" />
 
 <%-- 		
 <bean:define id="patientProperties" name='${form.formName}' property='patientProperties' type="PatientManagementInfo" /> --%>
+<%
+	String formName = (String) request.getAttribute("formName");
+	PatientManagementInfo patientProperties = (PatientManagementInfo) request.getAttribute("patientProperties");
 
-
-<%!
-PatientManagementInfo patientProperties;
-String formName;
-
-	String basePath = "";
-	boolean supportSTNumber = true;
-	boolean supportAKA = true;
-	boolean supportMothersName = true;
-	boolean supportPatientType = true;
-	boolean supportInsurance = true;
-	boolean supportSubjectNumber = true;
-    boolean subjectNumberRequired = true;
-	boolean supportNationalID = true;
-	boolean supportOccupation = true;
-	boolean supportCommune = true;
-	boolean supportAddressDepartment = false;
-	boolean supportMothersInitial = true;
+	boolean supportSTNumber = FormFields.getInstance().useField(Field.StNumber);
+	boolean supportAKA = FormFields.getInstance().useField(Field.AKA);
+	boolean supportMothersName = FormFields.getInstance().useField(Field.MothersName);
+	boolean supportPatientType = FormFields.getInstance().useField(Field.PatientType);
+	boolean supportInsurance = FormFields.getInstance().useField(Field.InsuranceNumber);
+	boolean supportSubjectNumber = FormFields.getInstance().useField(Field.SubjectNumber);
+	boolean subjectNumberRequired = ConfigurationProperties.getInstance().isPropertyValueEqual(ConfigurationProperties.Property.PATIENT_SUBJECT_NUMBER_REQUIRED, "true");
+	boolean supportNationalID = FormFields.getInstance().useField(Field.NationalID);
+	boolean supportOccupation = FormFields.getInstance().useField(Field.Occupation);
+	boolean supportCommune = FormFields.getInstance().useField(Field.ADDRESS_COMMUNE);
+	boolean supportMothersInitial = FormFields.getInstance().useField(Field.MotherInitial);
+	boolean supportAddressDepartment = FormFields.getInstance().useField(Field.ADDRESS_DEPARTMENT );
+	String ambiguousDateReplacement = ConfigurationProperties.getInstance().getPropertyValue(ConfigurationProperties.Property.AmbiguousDateHolder);
+	
+	boolean patientNamesRequired = FormFields.getInstance().useField(Field.PatientNameRequired);
+	
 	boolean patientRequired = true;
 	boolean patientIDRequired = true;
-	boolean patientNamesRequired = true;
 	boolean patientAgeRequired = true;
 	boolean patientGenderRequired = true;
-	String ambiguousDateReplacement = ConfigurationProperties.getInstance().getPropertyValue(ConfigurationProperties.Property.AmbiguousDateHolder);
- %>
-<%
-	formName = (String) request.getAttribute("formName");
-	patientProperties = (PatientManagementInfo) request.getAttribute("patientProperties");
-
-	String path = request.getContextPath();
-	basePath = request.getScheme() + "://" + request.getServerName() + ":"
-			+ request.getServerPort() + path + "/";
-	supportSTNumber = FormFields.getInstance().useField(Field.StNumber);
-	supportAKA = FormFields.getInstance().useField(Field.AKA);
-	supportMothersName = FormFields.getInstance().useField(Field.MothersName);
-	supportPatientType = FormFields.getInstance().useField(Field.PatientType);
-	supportInsurance = FormFields.getInstance().useField(Field.InsuranceNumber);
-	supportSubjectNumber = FormFields.getInstance().useField(Field.SubjectNumber);
-    subjectNumberRequired = ConfigurationProperties.getInstance().isPropertyValueEqual(ConfigurationProperties.Property.PATIENT_SUBJECT_NUMBER_REQUIRED, "true");
-	supportNationalID = FormFields.getInstance().useField(Field.NationalID);
-	supportOccupation = FormFields.getInstance().useField(Field.Occupation);
-	supportCommune = FormFields.getInstance().useField(Field.ADDRESS_COMMUNE);
-	supportMothersInitial = FormFields.getInstance().useField(Field.MotherInitial);
-	supportAddressDepartment = FormFields.getInstance().useField(Field.ADDRESS_DEPARTMENT );
 	
 	if("SampleConfirmationEntryForm".equals( formName )){
 		patientIDRequired = FormFields.getInstance().useField(Field.PatientIDRequired_SampleConfirmation);
@@ -80,8 +59,6 @@ String formName;
 	    patientAgeRequired = true;
 		patientGenderRequired = true;
 	}
-	
-	patientNamesRequired = FormFields.getInstance().useField(Field.PatientNameRequired);
 %>
 
 <script type="text/javascript" >
@@ -516,6 +493,9 @@ function  /*void*/ getDetailedPatientInfo()
                         {//options
                           method: 'get', //http method
                           parameters: "provider=PatientSearchPopulateProvider&personKey=" + patientSelectID,
+          				  requestHeaders : {
+        					 "X-CSRF-Token" : getCsrfToken()
+        				  },
                           onSuccess:  processSearchPopulateSuccess,
                           onFailure:  processSearchPopulateFailure
                          }
@@ -779,7 +759,7 @@ function healthDistrictSuccess( xhr ){
 		healthDistrict.options.length = 0;
 		healthDistrict.options[0] = new Option('', '');
 		for( ;i < districts.length; ++i){
-			<!-- 			is this supposed to be value value or value id? -->
+			<%-- 			is this supposed to be value value or value id? --%>
 			healthDistrict.options[i + 1] = new Option(districts[i].attributes.getNamedItem("value").value, districts[i].attributes.getNamedItem("value").value);
 		}
 	}
@@ -1167,7 +1147,7 @@ function  processSubjectNumberSuccess(xhr){
 			
 			<form:select path="patientProperties.healthDistrict" id="healthDistrictID" disabled="true">
 			<option value="0" ></option>
-<!-- 			is this supposed to be value value or value id? -->
+<%-- 			is this supposed to be value value or value id? --%>
 			<form:options items="${patientProperties.healthDistricts}" itemLabel="value" itemValue="value"/>
 			</form:select>
 		</td>	

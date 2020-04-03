@@ -43,7 +43,7 @@ public class PatientIdentityTypeDAOImpl extends BaseDAOImpl<PatientIdentityType,
     private static Log log = LogFactory.getLog(PatientIdentityTypeDAOImpl.class);
 
     @Override
-    @SuppressWarnings("unchecked")
+    
     @Transactional(readOnly = true)
     public List<PatientIdentityType> getAllPatientIdenityTypes() throws LIMSRuntimeException {
         List<PatientIdentityType> list = null;
@@ -84,7 +84,7 @@ public class PatientIdentityTypeDAOImpl extends BaseDAOImpl<PatientIdentityType,
 //		}
 //	}
 
-    @SuppressWarnings("unchecked")
+    
     @Override
     public boolean duplicatePatientIdentityTypeExists(PatientIdentityType patientIdentityType)
             throws LIMSRuntimeException {

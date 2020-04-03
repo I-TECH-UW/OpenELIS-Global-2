@@ -28,10 +28,6 @@ public class Referral extends BaseObject<String> {
 
     private static final long serialVersionUID = 1L;
     private String id;
-    @SuppressWarnings("unused")
-    private String analysisId;
-    @SuppressWarnings("unused")
-    private String organizationId;
     private String organizationName;
     private Timestamp requestDate;
     private Timestamp sendReadyDate;
@@ -45,10 +41,12 @@ public class Referral extends BaseObject<String> {
     private ValueHolderInterface analysis = new ValueHolder();
     private ValueHolderInterface organization = new ValueHolder();
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }

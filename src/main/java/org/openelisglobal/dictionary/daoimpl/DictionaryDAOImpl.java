@@ -17,6 +17,7 @@
  */
 package org.openelisglobal.dictionary.daoimpl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import org.apache.commons.beanutils.PropertyUtils;
@@ -62,7 +63,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 //				String tableName = "DICTIONARY";
 //				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("DictionaryDAOImpl", "deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Dictionary AuditTrail deleteData()", e);
@@ -81,7 +82,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 //				// entityManager.unwrap(Session.class).evict // CSL remove old(cloneData);
 //				// entityManager.unwrap(Session.class).refresh // CSL remove old(cloneData);
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("DictionaryDAOImpl", "deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Dictionary deleteData()", e);
@@ -108,7 +109,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 //
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("DictionaryDAOImpl", "insertData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Dictionary insertData()", e);
@@ -127,7 +128,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 //			if (duplicateDictionaryExists(dictionary)) {
 //				throw new LIMSDuplicateRecordException("Duplicate record exists for " + dictionary.getDictEntry());
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("DictionaryDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Dictionary updateData()", e);
@@ -141,7 +142,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 //					throw new LIMSFrozenRecordException("Dictionary Entry is referenced " + dictionary.getDictEntry());
 //				}
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("DictionaryDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Dictionary updateData()", e);
@@ -158,7 +159,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 //			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 //			String tableName = "DICTIONARY";
 //			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("DictionaryDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Dictionary AuditTrail updateData()", e);
@@ -170,7 +171,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			// entityManager.unwrap(Session.class).evict // CSL remove old(dictionary);
 //			// entityManager.unwrap(Session.class).refresh // CSL remove old(dictionary);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("DictionaryDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Dictionary updateData()", e);
@@ -189,16 +190,16 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
             } else {
                 dictionary.setId(null);
             }
-        } catch (Exception e) {
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             // bugzilla 2154
-            LogEvent.logError("DictionaryDAOImpl", "getData()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Dictionary getData()", e);
         }
     }
 
 //	@Override
 //	public List getAllDictionarys() throws LIMSRuntimeException {
-//		List list = new Vector();
+//		List list ;
 //		try {
 //			String sql = "from Dictionary";
 //			Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -208,7 +209,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 //			list = query.list();
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("DictionaryDAOImpl", "getAllDictionarys()", e.toString());
 //			throw new LIMSRuntimeException("Error in Dictionary getAllDictionarys()", e);
@@ -219,7 +220,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 
 //	@Override
 //	public List getPageOfDictionarys(int startingRecNo) throws LIMSRuntimeException {
-//		List list = new Vector();
+//		List list ;
 //
 //		try {
 //			int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
@@ -233,7 +234,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 //			list = query.list();
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("DictionaryDAOImpl", "getPageOfDictionarys()", e.toString());
 //			throw new LIMSRuntimeException("Error in Dictionary getPageOfDictionarys()", e);
@@ -245,7 +246,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
     // bugzilla 1413
 //	@Override
 //	public List getPagesOfSearchedDictionarys(int startingRecNo, String searchString) throws LIMSRuntimeException {
-//		List list = new Vector();
+//		List list ;
 //		String wildCard = "*";
 //		String newSearchStr;
 //		String sql;
@@ -270,8 +271,8 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 //			list = query.list();
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (Exception e) {
-//			e.printStackTrace();
+//		} catch (RuntimeException e) {
+//			LogEvent.logDebug(e);
 //			throw new LIMSRuntimeException("Error in Dictionary getPageOfSearchedDictionarys()", e);
 //		}
 //
@@ -286,7 +287,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 //			dictionary = entityManager.unwrap(Session.class).get(Dictionary.class, idString);
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("DictionaryDAOImpl", "readDictionary()", e.toString());
 //			throw new LIMSRuntimeException("Error in Dictionary readDictionary()", e);
@@ -353,16 +354,15 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
                 query.setParameter("param2", categoryFilter);
             }
 
-            @SuppressWarnings("unchecked")
             List<Dictionary> list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
             return list;
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError("DictionaryDAOImpl", "getDictionaryEntrys()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException(
                     "Error in Dictionary getDictionaryEntrys(String filter, String categoryFilter)", e);
         }
@@ -396,7 +396,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
         try {
             String sql = "from Dictionary d where d.isActive= " + enquote(YES);
 
-            if (!StringUtil.isNullorNill(fieldValue)) {
+            if (!StringUtil.isNullorNill(fieldValue) && this.columnNameIsInjectionSafe(fieldName)) {
                 sql += " and d.dictionaryCategory." + fieldName + " = :param1";
             }
 
@@ -408,13 +408,12 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
             Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setParameter("param1", fieldValue);
 
-            @SuppressWarnings("unchecked")
             List<Dictionary> list = query.list();
             return list;
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError("DictionaryDAOImpl", "getDictionaryEntrysByCategoryAbbreviation()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException(
                     "Error in Dictionary getDictionaryEntrysByCategoryAbbreviation(String categoryFilter)", e);
         }
@@ -423,7 +422,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
     // bugzilla 1411
 //	@Override
 //	public Integer getTotalDictionaryCount() throws LIMSRuntimeException {
-//		return getTotalCount("Dictionary", Dictionary.class);
+//		return getCount();
 //	}
 
     // bugzilla 1427
@@ -432,7 +431,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 //		int currentId = (Integer.valueOf(id)).intValue();
 //		String tablePrefix = getTablePrefix(table);
 //
-//		List list = new Vector();
+//		List list ;
 //		// bugzilla 1908
 //		int rrn = 0;
 //		try {
@@ -450,7 +449,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 //			list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
 //					.setMaxResults(2).list();
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("DictionaryDAOImpl", "getNextRecord()", e.toString());
 //			throw new LIMSRuntimeException("Error in getNextRecord() for " + table, e);
@@ -465,7 +464,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 //		int currentId = (Integer.valueOf(id)).intValue();
 //		String tablePrefix = getTablePrefix(table);
 //
-//		List list = new Vector();
+//		List list ;
 //		int rrn = 0;
 //		try {
 //			// bugzilla 1908 cannot use named query for postgres because of
@@ -483,7 +482,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 //			list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getPrevious").setFirstResult(rrn + 1)
 //					.setMaxResults(2).list();
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("DictionaryDAOImpl", "getPreviousRecord()", e.toString());
 //			throw new LIMSRuntimeException("Error in getPreviousRecord() for " + table, e);
@@ -533,15 +532,15 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
             query.setInteger("param3", Integer.parseInt(dictId));
 
             return !query.list().isEmpty();
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError("DictionaryDAOImpl", "duplicateDictionaryExists()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in duplicateDictionaryExists()", e);
         }
     }
 
 //	@Override
-//	@SuppressWarnings("unchecked")
+//
 //	public Dictionary getDictionaryByLocalAbbrev(Dictionary dictionary) throws LIMSRuntimeException {
 //		try {
 //			String sql = null;
@@ -562,7 +561,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 //
 //			return d;
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("DictionaryDAOImpl", "getDictionaryByDictEntry()", e.toString());
 //			throw new LIMSRuntimeException("Error in Test getDictionaryByDictEntry()", e);
@@ -607,7 +606,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 //
 //			return d;
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("DictionaryDAOImpl", "getDictionaryByDictEntry()", e.toString());
 //			throw new LIMSRuntimeException("Error in DictionaryDAOImpl getDictionaryByDictEntry()", e);
 //		}
@@ -637,8 +636,8 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
             query.setParameter("param", dictionary.getId());
 
             return !query.list().isEmpty();
-        } catch (Exception e) {
-            LogEvent.logError("DictionaryDAOImpl", "dictionaryIsInUse()", e.toString());
+        } catch (RuntimeException e) {
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in dictionaryIsInUse()", e);
         }
     }
@@ -676,8 +675,8 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 //				}
 //			}
 //
-//		} catch (Exception e) {
-//			e.printStackTrace();
+//		} catch (RuntimeException e) {
+//			LogEvent.logDebug(e);
 //			throw new LIMSRuntimeException("Error in Dictionary getTotalSearchedDictionarys()", e);
 //		}
 //
@@ -686,7 +685,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 //	}
 
 //	@Override
-//	@SuppressWarnings("unchecked")
+//
 //	public List<Dictionary> getDictionaryEntriesByCategoryId(String categoryId) throws LIMSRuntimeException {
 //		String sql = "From Dictionary d where d.dictionaryCategory.id = :categoryId";
 //
@@ -698,7 +697,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 //			// closeSession(); // CSL remove old
 //
 //			return queryResults;
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			handleException(e, "getDictonaryEntriesByCategoryId");
 //		}
 //
@@ -712,7 +711,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
             Dictionary dictionary = entityManager.unwrap(Session.class).get(Dictionary.class, dictionaryId);
             // closeSession(); // CSL remove old
             return dictionary;
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             handleException(e, "getDictionaryById");
         }
 

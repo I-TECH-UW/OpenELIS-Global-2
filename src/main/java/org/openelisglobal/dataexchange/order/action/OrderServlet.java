@@ -64,7 +64,7 @@ public class OrderServlet extends HohServlet {
         public Message processMessage(Message message, Map theMetadata)
                 throws ReceivingApplicationException, HL7Exception {
             // LogEvent.logFatal("OrderServlet", "processMessage", message.encode());
-            // System.out.println("Received message:\n" + message.printStructure());
+            // LogEvent.logInfo(this.getClass().getName(), "method unkown", "Received message:\n" + message.printStructure());
 
             // TO DO add message signature verification for authentication of messages
 

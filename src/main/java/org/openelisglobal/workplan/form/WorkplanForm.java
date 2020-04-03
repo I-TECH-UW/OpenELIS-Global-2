@@ -34,7 +34,7 @@ public class WorkplanForm extends BaseForm {
     @Pattern(regexp = ValidationHelper.ID_REGEX, groups = { PrintWorkplan.class })
     private String testTypeID = "";
 
-    @SafeHtml(groups = { PrintWorkplan.class })
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { PrintWorkplan.class })
     private String testName = "";
 
     @NotNull(groups = { PrintWorkplan.class })
@@ -48,7 +48,7 @@ public class WorkplanForm extends BaseForm {
 
     // TODO switch to an enum?
     // @Pattern(regexp = "^$|^test$|^panel$", groups = { PrintWorkplan.class })
-    @Pattern(regexp = "^[a-zA-Z]*")
+    @Pattern(regexp = "^[a-zA-Z-]*", groups = { PrintWorkplan.class })
     private String workplanType = "";
 
     @Pattern(regexp = "^$|^WorkPlanByPanel.do$|^WorkPlanByTest.do$", groups = { PrintWorkplan.class })
@@ -143,8 +143,8 @@ public class WorkplanForm extends BaseForm {
         return workplanType;
     }
 
-    public void setWorkplanType(String workplanType) {
-        this.workplanType = workplanType;
+    public void setWorkplanType(String type) {
+        this.workplanType = type;
     }
 
     public String getSearchAction() {

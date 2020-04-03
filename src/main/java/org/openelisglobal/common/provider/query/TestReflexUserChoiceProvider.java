@@ -33,6 +33,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.servlet.validation.AjaxServlet;
 import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
@@ -48,10 +49,12 @@ import org.openelisglobal.testreflex.service.TestReflexService;
 import org.openelisglobal.testreflex.valueholder.TestReflex;
 import org.openelisglobal.testresult.service.TestResultService;
 import org.openelisglobal.testresult.valueholder.TestResult;
+import org.owasp.encoder.Encode;
 
 public class TestReflexUserChoiceProvider extends BaseQueryProvider {
 
     private static final String ID_SEPERATOR = ",";
+    private static final int MAX_FIELD_SIZE = 1024;
     protected AjaxServlet ajaxServlet = null;
 
     protected AnalysisService analysisService = SpringContext.getBean(AnalysisService.class);
@@ -79,6 +82,12 @@ public class TestReflexUserChoiceProvider extends BaseQueryProvider {
                 || (GenericValidator.isBlankOrNull(analysisIds) && GenericValidator.isBlankOrNull(accessionNumber))) {
             jResult = INVALID;
             jString = "Internal error, please contact Admin and file bug report";
+        } else if (resultIds.length() > MAX_FIELD_SIZE || testIds.length() > MAX_FIELD_SIZE
+                || rowIndex.length() > MAX_FIELD_SIZE || analysisIds.length() > MAX_FIELD_SIZE
+                || accessionNumber.length() > MAX_FIELD_SIZE) {
+            // check field size, so potential DOS attack is harder
+            jResult = INVALID;
+            jString = "Internal error, please contact Admin and file bug report";
         } else {
             jResult = createJsonTestReflex(resultIds, analysisIds, testIds, accessionNumber, rowIndex, jsonResult);
             StringWriter out = new StringWriter();
@@ -86,12 +95,12 @@ public class TestReflexUserChoiceProvider extends BaseQueryProvider {
                 jsonResult.writeJSONString(out);
                 jString = out.toString();
             } catch (IOException e) {
-                e.printStackTrace();
+                LogEvent.logDebug(e);
                 jResult = INVALID;
                 jString = "Internal error, please contact Admin and file bug report";
             }
         }
-        ajaxServlet.sendData(jString, jResult, request, response);
+        ajaxServlet.sendData(Encode.forXmlContent(jString), Encode.forXmlContent(jResult), request, response);
 
     }
 
@@ -106,22 +115,22 @@ public class TestReflexUserChoiceProvider extends BaseQueryProvider {
          * scriptlet_id then we are done. If it has only one Then we need to look for
          * the other
          */
-        ArrayList<TestReflex> selectableReflexes = new ArrayList<TestReflex>();
-        HashSet<String> reflexTriggers = new HashSet<String>();
-        HashSet<String> reflexTriggerIds = new HashSet<String>();
+        ArrayList<TestReflex> selectableReflexes = new ArrayList<>();
+        HashSet<String> reflexTriggers = new HashSet<>();
+//        HashSet<String> reflexTriggerIds = new HashSet<>();
         // Both test given results on client
         if (resultIdSeries.length > 1) {
             /*
              * String[] testIdSeries = testIds.split(ID_SEPERATOR);
-             * 
+             *
              * List<TestReflex> testReflexesForResultOne =
              * reflexUtil.getTestReflexsForDictioanryResultTestId(resultIdSeries[0],
              * testIdSeries[0], true);
-             * 
+             *
              * if (!testReflexesForResultOne.isEmpty()) { List<TestReflex> sibTestReflexList
              * = reflexUtil.getTestReflexsForDictioanryResultTestId(resultIdSeries[1],
              * testIdSeries[1], true);
-             * 
+             *
              * boolean allChoicesFound = false; for (TestReflex reflexFromResultOne :
              * testReflexesForResultOne) { for (TestReflex sibReflex : sibTestReflexList) {
              * if (areSibs(reflexFromResultOne, sibReflex) &&
@@ -201,14 +210,14 @@ public class TestReflexUserChoiceProvider extends BaseQueryProvider {
     }
 
     private void createTriggerList(HashSet<String> reflexTriggers, String reflexTriggerIds, JSONObject jsonResult) {
-        StringBuilder triggers = new StringBuilder();
+        StringBuilder triggers = new StringBuilder(32);
         for (String trigger : reflexTriggers) {
             triggers.append(trigger);
             triggers.append(",");
         }
         jsonResult.put("triggers", triggers.deleteCharAt(triggers.length() - 1).toString());
 
-        triggers = new StringBuilder();
+        triggers = new StringBuilder(32);
 
         String[] sortedTriggerIds = reflexTriggerIds.split(",");
         Arrays.sort(sortedTriggerIds);
@@ -234,6 +243,7 @@ public class TestReflexUserChoiceProvider extends BaseQueryProvider {
         }
     }
 
+    @SuppressWarnings("unused")
     private boolean areSibs(TestReflex testReflex, TestReflex sibTestReflex) {
         return !GenericValidator.isBlankOrNull(testReflex.getSiblingReflexId())
                 && !GenericValidator.isBlankOrNull(sibTestReflex.getSiblingReflexId())

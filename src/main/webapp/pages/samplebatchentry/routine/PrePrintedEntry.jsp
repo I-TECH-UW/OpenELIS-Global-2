@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=utf-8" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" %>
 <%@ page import="org.openelisglobal.common.action.IActionConstants,
                  org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory,
                  org.openelisglobal.common.provider.validation.IAccessionNumberValidator" %>
@@ -13,15 +13,11 @@
       
 
 <%!
-String path = "";
-String basePath = "";
-IAccessionNumberValidator accessionNumberValidator;
+	AccessionNumberValidatorFactory accessionNumberValidatorFactory = new AccessionNumberValidatorFactory();
 %>
 
 <%
-path = request.getContextPath();
-basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + path + "/";
-accessionNumberValidator = new AccessionNumberValidatorFactory().getValidator();
+	IAccessionNumberValidator accessionNumberValidator = accessionNumberValidatorFactory.getValidator();
 %>
 
 <script type="text/javascript">

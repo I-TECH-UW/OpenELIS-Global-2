@@ -11,7 +11,6 @@ import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.DateUtil;
-import org.openelisglobal.common.util.validator.GenericValidator;
 import org.openelisglobal.datasubmission.DataIndicatorFactory;
 import org.openelisglobal.datasubmission.DataSubmitter;
 import org.openelisglobal.datasubmission.form.DataSubmissionForm;
@@ -27,6 +26,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -35,6 +36,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class DataSubmissionController extends BaseController {
+
+    private static final String[] ALLOWED_FIELDS = new String[] { "dataSubUrl.value", "month", "year",
+            "indicators[*].sendIndicator", "indicators[*].dataValue.value",
+            "indicators[*].resources[*].columnValues[*].value" };
 
     @Autowired
     DataSubmissionFormValidator formValidator;
@@ -47,14 +52,28 @@ public class DataSubmissionController extends BaseController {
     @Autowired
     DataSubmitter dataSubmitter;
 
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
+
     @RequestMapping(value = "/DataSubmission", method = RequestMethod.GET)
     public ModelAndView showDataSubmission(HttpServletRequest request) {
         DataSubmissionForm form = new DataSubmissionForm();
 
-        int month = GenericValidator.isBlankOrNull(request.getParameter("month")) ? DateUtil.getCurrentMonth() + 1
+        int month = org.apache.commons.validator.GenericValidator.isBlankOrNull(request.getParameter("month"))
+                ? DateUtil.getCurrentMonth() + 1
                 : Integer.parseInt(request.getParameter("month"));
-        int year = GenericValidator.isBlankOrNull(request.getParameter("year")) ? DateUtil.getCurrentYear()
+        int year = org.apache.commons.validator.GenericValidator.isBlankOrNull(request.getParameter("year"))
+                ? DateUtil.getCurrentYear()
                 : Integer.parseInt(request.getParameter("year"));
+
+        if (month < 0 ) {
+            month = DateUtil.getCurrentMonth() + 1;
+        }
+        if (year < 0) {
+            year = DateUtil.getCurrentYear();
+        }
 
         List<DataIndicator> indicators = new ArrayList<>();
         List<TypeOfDataIndicator> typeOfIndicatorList = typeOfDataIndicatorService.getAllTypeOfDataIndicator();
@@ -90,10 +109,9 @@ public class DataSubmissionController extends BaseController {
 
         int month = form.getMonth();
         int year = form.getYear();
-        @SuppressWarnings("unchecked")
-        List<DataIndicator> indicators = (List<DataIndicator>) form.get("indicators");
+        List<DataIndicator> indicators = form.getIndicators();
         boolean submit = "true".equalsIgnoreCase(request.getParameter("submit"));
-        SiteInformation dataSubUrl = (SiteInformation) form.get("dataSubUrl");
+        SiteInformation dataSubUrl = form.getDataSubUrl();
         dataSubUrl = (SiteInformation) siteInformationService.getSiteInformationByDomainName("Data Sub URL");
         dataSubUrl.setValue(form.getDataSubUrl().getValue());
         dataSubUrl.setSysUserId(getSysUserId(request));

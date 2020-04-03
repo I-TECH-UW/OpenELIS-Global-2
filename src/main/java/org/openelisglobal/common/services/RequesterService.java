@@ -54,7 +54,7 @@ public class RequesterService {
     private List<SampleRequester> requesters;
     private Organization organization;
 
-    public static enum Requester {
+    public enum Requester {
         PERSON, ORGANIZATION;
 
         long id;
@@ -70,10 +70,10 @@ public class RequesterService {
 
     static {
         RequesterType requesterType = requesterTypeService.getRequesterTypeByName("organization");
-        Requester.ORGANIZATION.setId(requesterType != null ? Long.parseLong(requesterType.getId()) : -1L);
+        Requester.ORGANIZATION.setId(requesterType == null ? -1L : Long.parseLong(requesterType.getId()));
 
         requesterType = requesterTypeService.getRequesterTypeByName("provider");
-        Requester.PERSON.setId(requesterType != null ? Long.parseLong(requesterType.getId()) : -1L);
+        Requester.PERSON.setId(requesterType == null ? -1L : Long.parseLong(requesterType.getId()));
 
         OrganizationType orgType = organizationTypeService.getOrganizationTypeByName(REFERRAL_ORG_TYPE);
 
@@ -81,7 +81,7 @@ public class RequesterService {
     }
 
     public RequesterService(String sampleId) {
-        setSampleId(sampleId);
+        this.sampleId = sampleId;
     }
 
     public RequesterService() {
@@ -92,31 +92,31 @@ public class RequesterService {
     }
 
     public String getRequesterFirstName() {
-        return personService == null ? null : personService.getFirstName(getPerson());
+        return getPerson() == null ? null : personService.getFirstName(getPerson());
     }
 
     public String getRequesterLastName() {
-        return personService == null ? null : personService.getLastName(getPerson());
+        return getPerson() == null ? null : personService.getLastName(getPerson());
     }
 
     public String getRequesterLastFirstName() {
-        return personService == null ? null : personService.getLastFirstName(getPerson());
+        return getPerson() == null ? null : personService.getLastFirstName(getPerson());
     }
 
     public String getWorkPhone() {
-        return personService == null ? null : personService.getWorkPhone(getPerson());
+        return getPerson() == null ? null : personService.getWorkPhone(getPerson());
     }
 
     public String getCellPhone() {
-        return personService == null ? null : personService.getCellPhone(getPerson());
+        return getPerson() == null ? null : personService.getCellPhone(getPerson());
     }
 
     public String getFax() {
-        return personService == null ? null : personService.getFax(getPerson());
+        return getPerson() == null ? null : personService.getFax(getPerson());
     }
 
     public String getEmail() {
-        return personService == null ? null : personService.getEmail(getPerson());
+        return getPerson() == null ? null : personService.getEmail(getPerson());
     }
 
     public String getReferringSiteId() {

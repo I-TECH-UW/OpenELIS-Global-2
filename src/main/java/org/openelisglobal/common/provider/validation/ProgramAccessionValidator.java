@@ -25,7 +25,7 @@ import java.util.List;
 
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.action.IActionConstants;
-import org.openelisglobal.common.services.StatusService;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.RecordStatus;
 import org.openelisglobal.common.services.StatusSet;
 import org.openelisglobal.internationalization.MessageUtil;
@@ -169,7 +169,7 @@ public class ProgramAccessionValidator implements IAccessionNumberValidator {
         if (recordType == null) {
             return accessionNumberUsed;
         }
-        StatusSet statusSet = StatusService.getInstance().getStatusSetForAccessionNumber(accessionNumber);
+        StatusSet statusSet = SpringContext.getBean(IStatusService.class).getStatusSetForAccessionNumber(accessionNumber);
         String recordStatus = new String();
         boolean isSampleEntry = recordType.contains("Sample");
         boolean isPatientEntry = recordType.contains("Patient");
@@ -226,7 +226,7 @@ public class ProgramAccessionValidator implements IAccessionNumberValidator {
      * There are many possible samples with various status, only some of which are
      * valid during certain entry steps. This method provides validation results
      * identifying whether a given sample is appropriate given all the information.
-     * 
+     *
      * @param accessionNumber the number for the sample
      * @param recordType      initialPatient, initialSample, doublePatient (double
      *                        entry for patient), doubleSample
@@ -249,6 +249,7 @@ public class ProgramAccessionValidator implements IAccessionNumberValidator {
             } else {
                 if (recordType == null) {
                     results = ValidationResults.USED_FAIL;
+                    return results;
                 }
                 // record Type specified, so work out the detailed response to report
                 if (accessionUsed) {
@@ -301,7 +302,7 @@ public class ProgramAccessionValidator implements IAccessionNumberValidator {
     /**
      * Can the existing accession number be used in the given form? This method is
      * useful when we have an existing accessionNumber and want to ask the question.
-     * 
+     *
      * @param accessionNumber
      * @param existingRequired true => it is required that there is an existing
      *                         studyFormName?
@@ -320,7 +321,7 @@ public class ProgramAccessionValidator implements IAccessionNumberValidator {
     }
 
     public static String findStudyFormName(String accessionNumber) {
-        StatusSet statusSet = StatusService.getInstance().getStatusSetForAccessionNumber(accessionNumber);
+        StatusSet statusSet = SpringContext.getBean(IStatusService.class).getStatusSetForAccessionNumber(accessionNumber);
         Patient p = new Patient();
         p.setId(statusSet.getPatientId());
         Sample s = new Sample();

@@ -21,10 +21,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.jfree.util.Log;
-import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.services.QAService;
 import org.openelisglobal.common.services.QAService.QAObservationType;
 import org.openelisglobal.common.util.DateUtil;
@@ -39,6 +37,7 @@ import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.qaevent.worker.NonConformityUpdateWorker;
 import org.openelisglobal.referencetables.service.ReferenceTablesService;
 import org.openelisglobal.reports.action.implementation.reportBeans.FollowupRequiredData;
+import org.openelisglobal.reports.form.ReportForm;
 import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.util.CI.BaseProjectFormMapper;
 import org.openelisglobal.sample.valueholder.Sample;
@@ -85,12 +84,12 @@ public class RetroCIFollowupRequiredByLocation extends RetroCIReport implements 
      * @see org.openelisglobal.reports.action.implementation.IReportParameterSetter#setRequestParameters(org.openelisglobal.common.action.BaseActionForm)
      */
     @Override
-    public void setRequestParameters(BaseForm form) {
+    public void setRequestParameters(ReportForm form) {
         try {
-            PropertyUtils.setProperty(form, "reportName", getReportNameForParameterPage());
-            PropertyUtils.setProperty(form, "useLowerDateRange", Boolean.TRUE);
-            PropertyUtils.setProperty(form, "useUpperDateRange", Boolean.TRUE);
-        } catch (Exception e) {
+            form.setReportName(getReportNameForParameterPage());
+            form.setUseLowerDateRange(Boolean.TRUE);
+            form.setUseUpperDateRange(Boolean.TRUE);
+        } catch (RuntimeException e) {
             Log.error("Error in FollowupRequired_ByLocation.setRequestParemeters: ", e);
             // throw e;
         }
@@ -99,7 +98,7 @@ public class RetroCIFollowupRequiredByLocation extends RetroCIReport implements 
     /**
      * @return
      */
-    private Object getReportNameForParameterPage() {
+    private String getReportNameForParameterPage() {
         return MessageUtil.getMessage("reports.label.followupRequired.title");
     }
 
@@ -107,12 +106,12 @@ public class RetroCIFollowupRequiredByLocation extends RetroCIReport implements 
      * @see org.openelisglobal.reports.action.implementation.RetroCIReport#initializeReport(org.openelisglobal.common.action.BaseActionForm)
      */
     @Override
-    public void initializeReport(BaseForm form) {
+    public void initializeReport(ReportForm form) {
         super.initializeReport();
         errorFound = false;
 
-        lowDateStr = form.getString("lowerDateRange");
-        highDateStr = form.getString("upperDateRange");
+        lowDateStr = form.getLowerDateRange();
+        highDateStr = form.getUpperDateRange();
         dateRange = new DateRange(lowDateStr, highDateStr);
 
         createReportParameters();
@@ -294,7 +293,7 @@ public class RetroCIFollowupRequiredByLocation extends RetroCIReport implements 
         Dictionary dictionary = null;
         try {
             dictionary = dictionaryService.getDictionaryById(dictionaryId);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             return dictionaryId; // I guess it wasn't really a dictionary ID
                                  // after all, so let's just return it.
         }

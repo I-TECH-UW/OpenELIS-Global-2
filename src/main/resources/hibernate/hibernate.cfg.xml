@@ -24,6 +24,9 @@
 		<property name="hibernate.cache.provider_class">org.hibernate.cache.NoCacheProvider</property>
 		<property name="hibernate.cache.use_second_level_cache">false</property>
 		<property name="hibernate.cache.use_query_cache">false</property>
+		<property name="hibernate.current_session_context_class">thread</property>
+		<property name="connection.url">jdbc:postgresql://localhost:5432/ci_general_9.6</property>
+		<property name="connection.driver_class">org.postgresql.Driver</property>
 
 
 		<mapping resource="hibernate/hbm/Action.hbm.xml" />
@@ -39,7 +42,6 @@
 		<mapping resource="hibernate/hbm/County.hbm.xml" />
 		<mapping resource="hibernate/hbm/Dictionary.hbm.xml" />
 		<mapping resource="hibernate/hbm/DictionaryCategory.hbm.xml" />
-		<mapping resource="hibernate/hbm/Gender.hbm.xml" />
 		<mapping resource="hibernate/hbm/Label.hbm.xml" />
 		<mapping resource="hibernate/hbm/Method.hbm.xml" />
 		<mapping resource="hibernate/hbm/Note.hbm.xml" />
@@ -89,7 +91,6 @@
 		<mapping resource="hibernate/hbm/SystemModule.hbm.xml" />
 		<mapping resource="hibernate/hbm/SystemUserModule.hbm.xml" />
 		<mapping resource="hibernate/hbm/SystemUserSection.hbm.xml" />
-		<mapping resource="hibernate/hbm/Login.hbm.xml" />
 		<mapping resource="hibernate/hbm/SamplePdf.hbm.xml" />
 		<mapping resource="hibernate/hbm/SampleNewborn.hbm.xml" />
 		<mapping resource="hibernate/hbm/PatientRelation.hbm.xml" />
@@ -151,7 +152,15 @@
 		<mapping resource="hibernate/hbm/TypeOfDataIndicator.hbm.xml" />
 		<mapping resource="hibernate/hbm/SystemModuleUrl.hbm.xml" />
 		<mapping resource="hibernate/hbm/SystemModuleParam.hbm.xml" />
-
+		<mapping resource="hibernate/hbm/NceCategory.hbm.xml" />
+		<mapping resource="hibernate/hbm/NcEvent.hbm.xml" />
+		<mapping resource="hibernate/hbm/NceActionLog.hbm.xml" />
+		<mapping resource="hibernate/hbm/NceSpecimen.hbm.xml" />
+		<mapping resource="hibernate/hbm/NceType.hbm.xml" />
+		<mapping resource="hibernate/hbm/NceSpecimen.hbm.xml" />
+		<mapping resource="hibernate/hbm/LabComponent.hbm.xml" />
+		<mapping resource="hibernate/hbm/NcEvent.hbm.xml" />
+		<mapping resource="hibernate/hbm/Report.hbm.xml" />
 	</session-factory>
 
 </hibernate-configuration>

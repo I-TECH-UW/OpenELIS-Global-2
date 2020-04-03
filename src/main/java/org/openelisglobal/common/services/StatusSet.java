@@ -23,9 +23,7 @@ import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.StatusService.OrderStatus;
 import org.openelisglobal.common.services.StatusService.RecordStatus;
-import org.springframework.stereotype.Service;
 
-@Service
 public class StatusSet {
 
     private OrderStatus sampleStatus;

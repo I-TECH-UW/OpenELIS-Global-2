@@ -40,8 +40,8 @@ public class ResultInventoryServiceImpl extends BaseObjectServiceImpl<ResultInve
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllResultInventoryss() {
-        return getBaseObjectDAO().getAllResultInventoryss();
+    public List<ResultInventory> getAllResultInventoryss() {
+        return getBaseObjectDAO().getAllResultInventorys();
     }
 
     @Override

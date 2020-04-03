@@ -25,11 +25,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.openelisglobal.common.services.PhoneNumberService;
 import org.openelisglobal.common.servlet.validation.AjaxServlet;
 import org.openelisglobal.internationalization.MessageUtil;
+import org.owasp.encoder.Encode;
 
 /**
  * The QuickEntryAccessionNumberValidationProvider class is used to validate,
  * via AJAX.
- * 
+ *
  */
 public class PhoneNumberValidationProvider extends BaseValidationProvider {
 
@@ -57,6 +58,6 @@ public class PhoneNumberValidationProvider extends BaseValidationProvider {
         }
 
         response.setCharacterEncoding("UTF-8");
-        ajaxServlet.sendData(field, returnData, request, response);
+        ajaxServlet.sendData(Encode.forXmlContent(field), returnData, request, response);
     }
 }

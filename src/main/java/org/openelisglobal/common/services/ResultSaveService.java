@@ -26,6 +26,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.serviceBeans.ResultSaveBean;
 import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.referral.service.ReferralResultService;
@@ -61,8 +62,8 @@ public class ResultSaveService {
     }
 
     public ResultSaveService(Analysis analysis, String currentUserId) {
-        setAnalysis(analysis);
-        setCurrentUserId(currentUserId);
+        this.analysis = analysis;
+        this.currentUserId = currentUserId;
     }
 
     public void setAnalysis(Analysis analysis) {
@@ -92,7 +93,7 @@ public class ResultSaveService {
                     }
                     deletableResults.addAll(existingResults);
                 } catch (ParseException e) {
-                    e.printStackTrace();
+                    LogEvent.logDebug(e);
                 }
             }
 

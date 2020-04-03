@@ -25,8 +25,8 @@ import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.services.IReportTrackingService;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.ReportTrackingService;
-import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.dictionary.service.DictionaryService;
@@ -121,7 +121,7 @@ public abstract class PatientARVReport extends RetroCIPatientReport {
 
             }
 
-            if (!analysis.getStatusId().equals(StatusService.getInstance().getStatusID(AnalysisStatus.Canceled))) {
+            if (!analysis.getStatusId().equals(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Canceled))) {
                 String testName = TestServiceImpl.getUserLocalizedTestName(analysis.getTest());
                 List<Result> resultList = resultService.getResultsByAnalysis(analysis);
                 String resultValue = null;
@@ -161,8 +161,8 @@ public abstract class PatientARVReport extends RetroCIPatientReport {
                 }
             }
 
-            if (mayBeDuplicate && StatusService.getInstance().matches(analysis.getStatusId(), AnalysisStatus.Finalized)
-                    && lastReport.before(analysis.getLastupdated())) {
+            if (mayBeDuplicate && SpringContext.getBean(IStatusService.class).matches(analysis.getStatusId(), AnalysisStatus.Finalized)
+                    && lastReport != null && lastReport.before(analysis.getLastupdated())) {
                 mayBeDuplicate = false;
             }
 
@@ -234,7 +234,7 @@ public abstract class PatientARVReport extends RetroCIPatientReport {
                 try {
                     double viralLoad = Double.parseDouble(baseValue);
                     data.setAmpli2lo(String.format("%.3g%n", Math.log10(viralLoad)));
-                } catch (NumberFormatException nfe) {
+                } catch (NumberFormatException e) {
                     data.setAmpli2lo("");
                 }
             }

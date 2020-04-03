@@ -1,5 +1,5 @@
 <%@ page language="java"
-	contentType="text/html; charset=utf-8"
+	contentType="text/html; charset=UTF-8"
 	import="org.openelisglobal.common.action.IActionConstants,
 			org.openelisglobal.userrole.valueholder.UserRole" %>
 
@@ -19,7 +19,7 @@
 	   	<th> <spring:message code="systemuserrole.role"/> </th>
 	</tr>
 	<logic:iterate id="userRoles" name="${form.formName}" indexId="ctr" property="menuList" type="UserRole">
-		<!--<bean:define id="limitId" name="userRoles" property="id"/> -->
+		<%--<bean:define id="limitId" name="userRoles" property="id"/> --%>
 	  	<tr>
 	   		<td class="textcontent">
 	      		<html:multibox name="${form.formName}" property="selectedIDs">

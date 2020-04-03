@@ -19,11 +19,16 @@ package org.openelisglobal.common.provider.query.workerObjects;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
-import org.openelisglobal.common.externalLinks.ExternalPatientSearch;
+import org.openelisglobal.common.externalLinks.IExternalPatientSearch;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.provider.query.PatientDemographicsSearchResults;
 import org.openelisglobal.common.provider.query.PatientSearchResults;
 import org.openelisglobal.common.util.ConfigurationProperties;
@@ -76,36 +81,32 @@ public class PatientSearchLocalAndClinicWorker extends PatientSearchWorker {
             return IActionConstants.INVALID;
         }
 
-        ExternalPatientSearch externalSearch = new ExternalPatientSearch();
+        IExternalPatientSearch externalSearch = SpringContext.getBean(IExternalPatientSearch.class);
         externalSearch.setSearchCriteria(lastName, firstName, STNumber, subjectNumber, nationalID, guid);
         externalSearch.setConnectionCredentials(config.getPropertyValue(Property.PatientSearchURL),
                 config.getPropertyValue(Property.PatientSearchUserName),
                 config.getPropertyValue(Property.PatientSearchPassword),
                 (int) SystemConfiguration.getInstance().getSearchTimeLimit());
 
-        Thread searchThread = new Thread(externalSearch);
-        List<PatientSearchResults> localResults = null;
+        List<PatientSearchResults> localResults = new ArrayList<>();
         List<PatientDemographicsSearchResults> clinicResults = null;
-        List<PatientDemographicsSearchResults> newPatientsFromClinic = new ArrayList<PatientDemographicsSearchResults>();
+        List<PatientDemographicsSearchResults> newPatientsFromClinic = new ArrayList<>();
 
+        localResults = searchResultsService.getSearchResults(lastName, firstName, STNumber, subjectNumber, nationalID,
+                nationalID, patientID, guid);
         try {
+            Future<Integer> futureExternalSearchResult = externalSearch.runExternalSearch();
+            Integer externalSearchResult = futureExternalSearchResult
+                    .get(SystemConfiguration.getInstance().getSearchTimeLimit() + 500, TimeUnit.MILLISECONDS);
 
-            searchThread.start();
-            localResults = searchResultsService.getSearchResults(lastName, firstName, STNumber, subjectNumber,
-                    nationalID, nationalID, patientID, guid);
-
-            searchThread.join(SystemConfiguration.getInstance().getSearchTimeLimit() + 500);
-
-            if (externalSearch.getSearchResultStatus() == 200) {
+            if (externalSearchResult == 200) {
                 clinicResults = externalSearch.getSearchResults();
             } else {
-                // TODO do something with the errors
+                LogEvent.logWarn(this.getClass().getName(), "createSearchResultXML",
+                        "could not get external search results - failed response");
             }
-        } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IllegalStateException ise) {
-
+        } catch (InterruptedException | ExecutionException | TimeoutException | IllegalStateException e) {
+            LogEvent.logError(e.getMessage(), e);
         }
 
         findNewPatients(localResults, clinicResults, newPatientsFromClinic);
@@ -133,8 +134,8 @@ public class PatientSearchLocalAndClinicWorker extends PatientSearchWorker {
             for (PatientDemographicsSearchResults results : newPatientsFromClinic) {
                 insertNewPatients(results);
             }
-        } catch (LIMSRuntimeException lre) {
-            lre.printStackTrace();
+        } catch (LIMSRuntimeException e) {
+            LogEvent.logDebug(e);
         }
     }
 
@@ -190,7 +191,7 @@ public class PatientSearchLocalAndClinicWorker extends PatientSearchWorker {
             List<PatientDemographicsSearchResults> newPatientsFromClinic) {
 
         if (clinicResults != null) {
-            List<String> currentGuids = new ArrayList<String>();
+            List<String> currentGuids = new ArrayList<>();
 
             for (PatientSearchResults result : results) {
                 if (!GenericValidator.isBlankOrNull(result.getGUID())) {

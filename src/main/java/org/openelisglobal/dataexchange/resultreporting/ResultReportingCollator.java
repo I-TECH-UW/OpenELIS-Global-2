@@ -26,8 +26,8 @@ import java.util.Map;
 
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.LabIdentificationService;
-import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
@@ -89,7 +89,7 @@ public class ResultReportingCollator {
             resultTypeToHL7TypeMap.put(type.getTestResultType(), type.getHl7Value());
         }
 
-        VALIDATED_RESULT_STATUS_ID = StatusService.getInstance().getStatusID(AnalysisStatus.Finalized);
+        VALIDATED_RESULT_STATUS_ID = SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized);
     }
 
     public void clearResults() {
@@ -251,6 +251,7 @@ public class ResultReportingCollator {
 
     // is this a result update (ie Final_Result) as opposed to a non-result update
     // (Cancelled)
+    @SuppressWarnings("unused")
     private boolean isResultUpdate(Result result) {
         Event event = result.getResultEvent();
         if (event == null) {

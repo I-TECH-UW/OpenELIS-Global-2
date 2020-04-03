@@ -20,23 +20,24 @@ import static org.apache.commons.validator.GenericValidator.isBlankOrNull;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.jfree.util.Log;
-import org.openelisglobal.common.form.BaseForm;
+import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.project.service.ProjectService;
 import org.openelisglobal.project.valueholder.Project;
 import org.openelisglobal.reports.action.implementation.reportBeans.ARVFollowupColumnBuilder;
 import org.openelisglobal.reports.action.implementation.reportBeans.ARVInitialColumnBuilder;
-import org.openelisglobal.reports.action.implementation.reportBeans.CIColumnBuilder;
 import org.openelisglobal.reports.action.implementation.reportBeans.CSVColumnBuilder;
 import org.openelisglobal.reports.action.implementation.reportBeans.EIDColumnBuilder;
 import org.openelisglobal.reports.action.implementation.reportBeans.RTNColumnBuilder;
 import org.openelisglobal.reports.action.implementation.reportBeans.VLColumnBuilder;
+import org.openelisglobal.reports.form.ReportForm;
 import org.openelisglobal.spring.util.SpringContext;
 
 /**
@@ -54,14 +55,14 @@ public class ExportProjectByDate extends CSVSampleExportReport implements IRepor
     }
 
     @Override
-    public void setRequestParameters(BaseForm form) {
+    public void setRequestParameters(ReportForm form) {
         try {
-            PropertyUtils.setProperty(form, "reportName", getReportNameForParameterPage());
-            PropertyUtils.setProperty(form, "useLowerDateRange", Boolean.TRUE);
-            PropertyUtils.setProperty(form, "useUpperDateRange", Boolean.TRUE);
-            PropertyUtils.setProperty(form, "useProjectCode", Boolean.TRUE);
-            PropertyUtils.setProperty(form, "projectCodeList", getProjectList());
-        } catch (Exception e) {
+            form.setReportName(getReportNameForParameterPage());
+            form.setUseLowerDateRange(Boolean.TRUE);
+            form.setUseUpperDateRange(Boolean.TRUE);
+            form.setUseProjectCode(Boolean.TRUE);
+            form.setProjectCodeList(getProjectList());
+        } catch (RuntimeException e) {
             Log.error("Error in ExportProjectByDate.setRequestParemeters: ", e);
         }
     }
@@ -78,13 +79,13 @@ public class ExportProjectByDate extends CSVSampleExportReport implements IRepor
     }
 
     @Override
-    public void initializeReport(BaseForm form) {
+    public void initializeReport(ReportForm form) {
         super.initializeReport();
         errorFound = false;
 
-        lowDateStr = form.getString("lowerDateRange");
-        highDateStr = form.getString("upperDateRange");
-        projectStr = form.getString("projectCode");
+        lowDateStr = form.getLowerDateRange();
+        highDateStr = form.getUpperDateRange();
+        projectStr = form.getProjectCode();
         dateRange = new DateRange(lowDateStr, highDateStr);
 
         createReportParameters();
@@ -128,14 +129,14 @@ public class ExportProjectByDate extends CSVSampleExportReport implements IRepor
         try {
             csvColumnBuilder = getColumnBuilder(projectStr);
             csvColumnBuilder.buildDataSource();
-        } catch (Exception e) {
+        } catch (SQLException e) {
             Log.error("Error in " + this.getClass().getSimpleName() + ".createReportItems: ", e);
             add1LineErrorMessage("report.error.message.general.error");
         }
     }
 
     @Override
-    protected void writeResultsToBuffer(ByteArrayOutputStream buffer) throws Exception {
+    protected void writeResultsToBuffer(ByteArrayOutputStream buffer) throws IOException, SQLException, ParseException {
 
         String currentAccessionNumber = null;
         String[] splitBase = null;
@@ -168,7 +169,8 @@ public class ExportProjectByDate extends CSVSampleExportReport implements IRepor
     protected void writeConsolidatedBaseToBuffer(ByteArrayOutputStream buffer, String[] splitBase) throws IOException {
 
         if (splitBase != null) {
-            StringBuilder consolidatedLine = new StringBuilder();
+            int splitBaseNumChars = StringUtil.countChars(splitBase);
+            StringBuilder consolidatedLine = new StringBuilder(splitBaseNumChars + splitBase.length);
             for (String value : splitBase) {
                 consolidatedLine.append(value);
                 consolidatedLine.append(",");
@@ -180,7 +182,7 @@ public class ExportProjectByDate extends CSVSampleExportReport implements IRepor
     }
 
     private CSVColumnBuilder getColumnBuilder(String projectId) {
-        String projectTag = CIColumnBuilder.translateProjectId(projectId);
+        String projectTag = CSVColumnBuilder.translateProjectId(projectId);
         if (projectTag.equals("ARVB")) {
             return new ARVInitialColumnBuilder(dateRange, projectStr);
         } else if (projectTag.equals("ARVS")) {

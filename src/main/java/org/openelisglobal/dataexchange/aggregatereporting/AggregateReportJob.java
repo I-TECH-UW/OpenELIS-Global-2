@@ -63,7 +63,7 @@ public class AggregateReportJob implements Job {
 
     @Override
     public void execute(JobExecutionContext arg0) throws JobExecutionException {
-        System.out.println("Reporting triggered: " + DateUtil.getCurrentDateAsText("dd-MM-yyyy hh:mm"));
+        LogEvent.logInfo(this.getClass().getName(), "method unkown", "Reporting triggered: " + DateUtil.getCurrentDateAsText("dd-MM-yyyy hh:mm"));
         LogEvent.logInfo("AggregateReportJob", "execute()",
                 "Reporting triggered: " + DateUtil.getCurrentDateAsText("dd-MM-yyyy hh:mm"));
 
@@ -140,7 +140,7 @@ public class AggregateReportJob implements Job {
         try {
             cronSchedulerService.update(reportScheduler);
         } catch (LIMSRuntimeException e) {
-            LogEvent.logErrorStack(this.getClass().getSimpleName(), "updateRunTimestamp()", e);
+            LogEvent.logErrorStack(e);
         }
     }
 
@@ -151,7 +151,6 @@ public class AggregateReportJob implements Job {
         private static final long MAX_DELAY = 256; // Anything past this will be
                                                    // a cumulative time of over
                                                    // 8 hours
-        private static final long MILLI_SEC_PER_MIN = 1000L * 60L;
         private List<ReportExternalExport> sendableReports;
         private ReportExternalExportService reportExternalExportService = SpringContext
                 .getBean(ReportExternalExportService.class);
@@ -215,7 +214,7 @@ public class AggregateReportJob implements Job {
                 }
 
             } catch (LIMSRuntimeException e) {
-                LogEvent.logErrorStack(this.getClass().getSimpleName(), "handleSuccess()", e);
+                LogEvent.logErrorStack(e);
                 throw e;
             }
 
@@ -249,23 +248,23 @@ public class AggregateReportJob implements Job {
         private void retry() {
             delayInMin = delayInMin * 2L;
             if (delayInMin < MAX_DELAY) {
-                new Thread() {
-                    @Override
-                    public void run() {
-                        System.out.println(
-                                "Aggregate Report: Will attempt to resend report in " + delayInMin + " minutes.");
-                        LogEvent.logInfo("AggregateReportJob", "retry()",
-                                "Will attempt to resend report in " + delayInMin + " minutes.");
-                        try {
-                            sleep(delayInMin * MILLI_SEC_PER_MIN);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+//                new Thread() {
+//                    @Override
+//                    public void run() {
+//                        LogEvent.logInfo(this.getClass().getName(), "method unkown",
+//                                "Aggregate Report: Will attempt to resend report in " + delayInMin + " minutes.");
+//                        LogEvent.logInfo("AggregateReportJob", "retry()",
+//                                "Will attempt to resend report in " + delayInMin + " minutes.");
+//                        try {
+//                            sleep(delayInMin * MILLI_SEC_PER_MIN);
+//                        } catch (InterruptedException e) {
+//                            LogEvent.logDebug(e);
+//                        }
                         new ReportTransmission().sendReport(wrapper, castorPropertyName, url, false, instance);
-                    }
-                }.start();
+//                    }
+//                }.start();
             } else {
-                System.out.println("Aggregate report: Giving up trying to connect");
+                LogEvent.logInfo(this.getClass().getName(), "method unkown", "Aggregate report: Giving up trying to connect");
                 LogEvent.logInfo("AggregateReportJob", "retry()", "Giving up trying to connect");
             }
         }
@@ -279,7 +278,7 @@ public class AggregateReportJob implements Job {
                     siteInfoService.update(sendInfo);
                 }
             } catch (LIMSRuntimeException e) {
-                LogEvent.logErrorStack(this.getClass().getSimpleName(), "writeSendStatus()", e);
+                LogEvent.logErrorStack(e);
             }
         }
 

@@ -29,10 +29,12 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.servlet.validation.AjaxServlet;
 import org.openelisglobal.spring.util.SpringContext;
+import org.owasp.encoder.Encode;
 
 public class PendingAnalysisForTestProvider extends BaseQueryProvider {
 
@@ -45,7 +47,7 @@ public class PendingAnalysisForTestProvider extends BaseQueryProvider {
     private AnalysisService analysisService = SpringContext.getBean(AnalysisService.class);
 
     static {
-        IStatusService statusService = StatusService.getInstance();
+        IStatusService statusService = SpringContext.getBean(IStatusService.class);
         NOT_STARTED = new ArrayList<>();
         NOT_STARTED.add(Integer.parseInt(statusService.getStatusID(StatusService.AnalysisStatus.NotStarted)));
 
@@ -80,16 +82,16 @@ public class PendingAnalysisForTestProvider extends BaseQueryProvider {
                 jsonResult.writeJSONString(out);
                 jString = out.toString();
             } catch (IOException e) {
-                e.printStackTrace();
+                LogEvent.logDebug(e);
                 jResult = INVALID;
                 jString = "Internal error, please contact Admin and file bug report";
             } catch (IllegalStateException e) {
-                e.printStackTrace();
+                LogEvent.logDebug(e);
                 jResult = INVALID;
                 jString = "Internal error, please contact Admin and file bug report";
             }
         }
-        ajaxServlet.sendData(jString, jResult, request, response);
+        ajaxServlet.sendData(Encode.forXmlContent(jString), Encode.forXmlContent(jResult), request, response);
 
     }
 

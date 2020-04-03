@@ -22,11 +22,12 @@ import static org.openelisglobal.reports.action.implementation.reportBeans.CSVCo
 import static org.openelisglobal.reports.action.implementation.reportBeans.CSVColumnBuilder.Strategy.TEST_RESULT;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +37,9 @@ import org.hibernate.SessionFactory;
 import org.hibernate.jdbc.ReturningWork;
 import org.openelisglobal.analyte.service.AnalyteService;
 import org.openelisglobal.analyte.valueholder.Analyte;
+import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.services.StatusService.OrderStatus;
 import org.openelisglobal.common.util.DateUtil;
@@ -59,6 +63,32 @@ import org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl;
  * @since Mar 18, 2011
  */
 abstract public class CSVColumnBuilder {
+
+    // these are used so we are not passing around strings in the methods that are
+    // appended to sql
+    // this is to cover any potential sql injection that could be introduced by a
+    // developer
+    protected enum SQLConstant {
+        ARV_TREATMENT_ADV_EFF_GRD("arvTreatmentAdvEffGrd"), ARV_TREATMENT_ADV_EFF_TYPE("arvTreatmentAdvEffType"),
+        COTRIMOXAZOLE_TREAT_ADV_EFF_GRD("cotrimoxazoleTreatAdvEffGrd"),
+        COTRIMOXAZOLE_TREAT_ADV_EFF_TYPE("cotrimoxazoleTreatAdvEffType"),
+        CURRENT_ARV_TREATMENT_INNS("currentARVTreatmentINNs"), CURRENT_DISEASE_OTHER("currentDiseaseOther"),
+        CURRENT_DISEASES("currentDiseases"), DEMO("demo"), FUTURE_ARV_TREATMENT_INNS("futureARVTreatmentINNs"),
+        ORGANIZATION("organization"), PRIOR_ARV_TREATMENT_INNS("priorARVTreatmentINNs"),
+        PRIOR_DISEASE_OTHER("priorDiseaseOther"), PRIOR_DISEASES("priorDiseases"), RESULT("result");
+
+        private final String nameInSql;
+
+        private SQLConstant(String name) {
+            nameInSql = name;
+        }
+
+        @Override
+        public String toString() {
+            return nameInSql;
+        }
+    }
+
     /**
      *
      */
@@ -68,7 +98,7 @@ abstract public class CSVColumnBuilder {
         ResourceTranslator.GenderTranslator.getInstance();
 
         if (validStatusFilter != null) {
-            validStatusId = StatusService.getInstance().getStatusID(validStatusFilter);
+            validStatusId = SpringContext.getBean(IStatusService.class).getStatusID(validStatusFilter);
         }
     }
 
@@ -184,7 +214,7 @@ abstract public class CSVColumnBuilder {
      * @author Paul A. Hill (pahill@uw.edu)
      * @since Feb 1, 2011
      */
-    public static enum Strategy {
+    public enum Strategy {
         DICT, // dictionary localized value
         DICT_PLUS, // dictionary localized value or a string constant
         DICT_RAW, // dictionary localized value, no attempts at trimming to show just code number.
@@ -197,17 +227,19 @@ abstract public class CSVColumnBuilder {
         BLANK // Will always be an empty string. Used when column is wanted but data is not
     }
 
-    public void buildDataSource() throws Exception {
+    public void buildDataSource() throws SQLException {
         buildResultSet();
     }
 
     protected void buildResultSet() throws SQLException {
         makeSQL();
         String sql = query.toString();
-        // System.out.println("===1===\n" + sql.substring(0, 7000)); // the SQL is
+        // LogEvent.logInfo(this.getClass().getName(), "method unkown", "===1===\n" +
+        // sql.substring(0, 7000)); // the SQL is
         // chunked out only because Eclipse thinks printing really big strings to the
         // console must be wrong, so it truncates them
-        // System.out.println("===2===\n" + sql.substring(7000));
+        // LogEvent.logInfo(this.getClass().getName(), "method unkown", "===2===\n" +
+        // sql.substring(7000));
 //		Session session = HibernateUtil.getSession().getSessionFactory().openSession();
 //		PreparedStatement stmt = session.connection().prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE,
 //				ResultSet.CONCUR_READ_ONLY);
@@ -224,39 +256,58 @@ abstract public class CSVColumnBuilder {
         });
     }
 
+    protected synchronized String formatDateForDatabaseSql(Date date) {
+        // SimpleDateFormat is not thread safe
+        return postgresDateFormat.format(date);
+    }
+
+    private synchronized String formatDateTimeForDatabaseSql(Date date) {
+        // SimpleDateFormat is not thread safe
+        return postgresDateTime.format(date);
+    }
+
+    protected synchronized java.util.Date parseDateForDatabaseSql(String date) throws ParseException {
+        // SimpleDateFormat is not thread safe
+        return postgresDateFormat.parse(date);
+    }
+
+    private synchronized java.util.Date parseDateTimeForDatabaseSql(String date) throws ParseException {
+        // SimpleDateFormat is not thread safe
+        return postgresDateTime.parse(date);
+    }
+
     /**
      * @param value
      * @return
      */
     protected String datetimeToLocalDate(String value) {
         try {
-            Date parsed = postgresDateTime.parse(value);
-            java.sql.Date date = new java.sql.Date(parsed.getTime());
+            Date date = new java.sql.Date(parseDateTimeForDatabaseSql(value).getTime());
             return DateUtil.convertSqlDateToStringDate(date);
-        } catch (Exception e) {
+        } catch (ParseException e) {
             return value;
         }
     }
 
     protected String datetimeToLocalDateTime(String value) {
         try {
-            Date parsed = postgresDateTime.parse(value);
-            return DateUtil.formatDateTimeAsText(parsed);
-        } catch (Exception e) {
+            return DateUtil.formatDateTimeAsText(parseDateTimeForDatabaseSql(value));
+        } catch (ParseException e) {
             return value;
         }
     }
 
-    public String getValue(CSVColumn column, String accessionNumber) throws Exception {
+    public String getValue(CSVColumn column, String accessionNumber) throws SQLException, ParseException {
         String value;
         // look in the data source for a value
         try {
             value = resultSet.getString(trimToPostgresMaxColumnName(column.dbName));
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // if you end up where it is because the result set doesn't return a
             // column of the right name
             // Check MAX_POSTGRES_COL_NAME if this fails on a long name
-            System.out.println("Internal Error: Unable to find db column \"" + column.dbName + "\" in data.");
+            LogEvent.logInfo(this.getClass().getName(), "method unkown",
+                    "Internal Error: Unable to find db column \"" + column.dbName + "\" in data.");
             return "?" + column.csvName + "?";
         }
 
@@ -264,9 +315,18 @@ abstract public class CSVColumnBuilder {
         // translate should never return null, "" is better while it is doing
         // translation.
         if (result == null) {
-            System.out.println("A null found " + column.dbName);
+            LogEvent.logInfo(this.getClass().getName(), "method unkown", "A null found " + column.dbName);
         }
         return result;
+    }
+
+    private String prepareColumnName(String columnName) {
+        // trim and escape the column name so it is safe from sql injection
+        if (columnName.matches("[a-zA-Z0-9_ -]+")) {
+            return trimToPostgresMaxColumnName("\"" + columnName + "\"");
+        } else {
+            throw new LIMSRuntimeException("cannot add a column name that includes non alpha-numeric characters");
+        }
     }
 
     private String trimToPostgresMaxColumnName(String name) {
@@ -321,7 +381,7 @@ abstract public class CSVColumnBuilder {
             this.customStrategy = customStrategy;
         }
 
-        public String translate(String value, String accessionNumber) throws Exception {
+        public String translate(String value, String accessionNumber) throws SQLException, ParseException {
             switch (strategy) {
             case CUSTOM:
                 return customStrategy.translate(value, accessionNumber, csvName, dbName);
@@ -353,15 +413,15 @@ abstract public class CSVColumnBuilder {
             case LOG:
                 return isBlankOrNull(value) ? "" : translateLog(value);
             case SAMPLE_STATUS:
-                OrderStatus orderStatus = StatusService.getInstance().getOrderStatusForID(value);
+                OrderStatus orderStatus = SpringContext.getBean(IStatusService.class).getOrderStatusForID(value);
                 if (orderStatus == null) {
                     return "?";
                 }
                 switch (orderStatus) {
                 case Entered:
-                    return "E"; // entered, entr�e
+                    return "E"; // entered, entree
                 case Started:
-                    return "C"; // commenced, commenc�
+                    return "C"; // commenced, commence
                 case Finished:
                     return "F"; // Finished, Finale
                 case NonConforming_depricated:
@@ -370,7 +430,8 @@ abstract public class CSVColumnBuilder {
             case PROJECT:
                 return translateProjectId(value);
             case DEBUG:
-                System.out.println("Processing Column Value: " + csvName + " \"" + value + "\"");
+                LogEvent.logInfo(this.getClass().getName(), "method unkown",
+                        "Processing Column Value: " + csvName + " \"" + value + "\"");
             case BLANK:
                 return "";
             default:
@@ -398,14 +459,14 @@ abstract public class CSVColumnBuilder {
             try {
                 double d = Double.parseDouble(value);
                 return String.valueOf(Math.log10(d));
-            } catch (NumberFormatException nfe) {
+            } catch (NumberFormatException e) {
                 return "";
             }
         }
 
-        public String translateAge(Strategy strategy, String end) throws Exception {
-            Date birthday = resultSet.getDate("birth_date");
-            Date endDate = postgresDateTime.parse(end);
+        public String translateAge(Strategy strategy, String end) throws SQLException, ParseException {
+            java.util.Date birthday = resultSet.getDate("birth_date");
+            java.util.Date endDate = parseDateTimeForDatabaseSql(end);
             switch (strategy) {
             case AGE_YEARS:
                 return String.valueOf(DateUtil.getAgeInYears(birthday, endDate));
@@ -419,10 +480,10 @@ abstract public class CSVColumnBuilder {
 
         /**
          * @param value
-         * @return
-         * @throws Exception
+         * @return @
+         * @throws SQLException
          */
-        public String translateTestResult(String testName, String value) throws Exception {
+        public String translateTestResult(String testName, String value) throws SQLException {
             TestResult testResult = testResultsByTestName.get(testName);
             // if it is not in the table then its just a value in the result
             // that was NOT selected from a list, thus no translation
@@ -475,21 +536,23 @@ abstract public class CSVColumnBuilder {
      * @param lowDatePostgres
      * @param highDatePostgres
      */
-    protected void appendResultCrosstab(String lowDatePostgres, String highDatePostgres) {
+    protected void appendResultCrosstab(Date lowDate, Date highDate) {
         // A list of analytes which should not show up in the regular results,
         // because they are not the primary results, but, for example, is a
         // conclusion.
         // String excludeAnalytes = getExcludedAnalytesSet();
-        String listName = "result";
+        SQLConstant listName = SQLConstant.RESULT;
         query.append(", \n\n ( SELECT si.samp_id, si.id AS sampleItem_id, si.sort_order AS sampleItemNo, " + listName
                 + ".* " + " FROM sample_item AS si LEFT JOIN \n ");
 
         // Begin cross tab / pivot table
         query.append(" crosstab( " + "\n 'SELECT si.id, t.description, r.value "
                 + "\n FROM clinlims.result AS r, clinlims.analysis AS a, clinlims.sample_item AS si, clinlims.sample AS s, clinlims.test AS t, clinlims.test_result AS tr "
-                + "\n WHERE " + "\n s.id = si.samp_id" + " AND s.collection_date >= date(''" + lowDatePostgres
-                + "'')  AND s.collection_date <= date(''" + highDatePostgres + " '') " + "\n AND s.id = si.samp_id "
+                + "\n WHERE " + "\n s.id = si.samp_id" + " AND s.collection_date >= date(''"
+                + formatDateForDatabaseSql(lowDate) + "'')  AND s.collection_date <= date(''"
+                + formatDateForDatabaseSql(highDate) + " '') " + "\n AND s.id = si.samp_id "
                 + "\n AND si.id = a.sampitem_id "
+                // sql injection safe as user cannot overwrite validStatusId in database
                 + ((validStatusId == null) ? "" : " AND a.status_id = " + validStatusId)
                 + "\n AND a.id = r.analysis_id " + "\n AND r.test_result_id = tr.id" + "\n AND tr.test_id = t.id       "
                 // + (( excludeAnalytes == null)?"":
@@ -503,7 +566,7 @@ abstract public class CSVColumnBuilder {
         // resource name, because some tests have fancy characters in them and
         // somewhere
         // between iReport, Java and postgres a complex name (e.g. one including
-        // a beta, "�HCG Quant") get messed up and isn't found.
+        // a beta, " HCG Quant") get messed up and isn't found.
         query.append("\n as " + listName + " ( " // inner use of the list name
                 + "\"si_id\" numeric(10) ");
         for (Test col : allTests) {
@@ -511,7 +574,8 @@ abstract public class CSVColumnBuilder {
             if (!"CD4".equals(testName)) { // CD4 is listed as a test name but
                                            // it isn't clear it should be line
                                            // 446 may also have to be changed
-                query.append("\n, \"" + trimToPostgresMaxColumnName(testName) + "\" varchar(200) ");
+                // sql injection safe as it is escaped for
+                query.append("\n, " + prepareColumnName(testName) + " varchar(200) ");
             }
         }
         query.append(" ) \n");
@@ -533,14 +597,14 @@ abstract public class CSVColumnBuilder {
      * sb.toString(); }
      */
 
-    protected void appendObservationHistoryCrosstab(String lowDatePostgres, String highDatePostgres) {
-        String listName = "demo";
+    protected void appendObservationHistoryCrosstab(Date lowDate, Date highDate) {
+        SQLConstant listName = SQLConstant.DEMO;
         appendCrosstabPreamble(listName);
         query.append( // any Observation History items
                 "\n crosstab( " + "\n 'SELECT DISTINCT oh.sample_id as samp_id, oht.type_name, value "
                         + "\n FROM observation_history AS oh, sample AS s, observation_history_type AS oht "
-                        + "\n WHERE s.collection_date >= date(''" + lowDatePostgres + "'') "
-                        + "\n AND s.collection_date <= date(''" + highDatePostgres + "'')"
+                        + "\n WHERE s.collection_date >= date(''" + formatDateForDatabaseSql(lowDate) + "'') "
+                        + "\n AND s.collection_date <= date(''" + formatDateForDatabaseSql(highDate) + "'')"
                         + "\n AND s.id = oh.sample_id AND oh.observation_history_type_id = oht.id order by 1;' "
                         + "\n , "
                         + "\n 'SELECT DISTINCT oht.type_name FROM observation_history_type AS oht ORDER BY 1;' " + // must
@@ -573,20 +637,22 @@ abstract public class CSVColumnBuilder {
         // ... )
         query.append(" as demo ( " + " \"s_id\"                           numeric(10) ");
         for (ObservationHistoryType oht : allObHistoryTypes) {
+            // this is sql injection safe as users currently have no way of modifying fields
+            // in ObservationHistoryTypes
             query.append("\n," + oht.getTypeName() + " varchar(100) ");
         }
         query.append(" ) \n");
-        appendCrosstabPostfix(lowDatePostgres, highDatePostgres, listName);
+        appendCrosstabPostfix(lowDate, highDate, listName);
     }
 
-    protected void appendCrosstabPreamble(String listName) {
+    protected void appendCrosstabPreamble(SQLConstant listName) {
         query.append(", \n\n ( SELECT s.id AS samp_id, " + listName + ".* " + " FROM sample AS s LEFT JOIN \n ");
     }
 
-    protected void appendCrosstabPostfix(String lowDatePostgres, String highDatePostgres, String listName) {
-        query.append("\n ON s.id = " + listName + ".s_id " + " AND s.collection_date >= '" + lowDatePostgres + "'"
-                + " AND s.collection_date <= '" + highDatePostgres + "'" + " ORDER BY 1 " + "\n) AS " + listName
-                + "\n ");
+    protected void appendCrosstabPostfix(Date lowDate, Date highDate, SQLConstant listName) {
+        query.append("\n ON s.id = " + listName + ".s_id " + " AND s.collection_date >= '"
+                + formatDateForDatabaseSql(lowDate) + "'" + " AND s.collection_date <= '"
+                + formatDateForDatabaseSql(highDate) + "'" + " ORDER BY 1 " + "\n) AS " + listName + "\n ");
     }
 
     protected Object pad20(Object translate) {
@@ -629,10 +695,11 @@ abstract public class CSVColumnBuilder {
     }
 
     /**
-     * @return
-     * @throws Exception
+     * @return @
+     * @throws ParseException
+     * @throws SQLException
      */
-    public String nextLine() throws Exception {
+    public String nextLine() throws SQLException, ParseException {
         StringBuilder line = new StringBuilder();
         String accessionNumber = null;
         for (CSVColumn column : columnsInOrder) {
@@ -652,7 +719,7 @@ abstract public class CSVColumnBuilder {
         return line.toString();
     }
 
-    public boolean next() throws Exception {
+    public boolean next() throws SQLException {
         return resultSet.next();
     }
 

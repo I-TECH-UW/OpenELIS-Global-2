@@ -21,7 +21,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.services.QAService;
 import org.openelisglobal.common.services.QAService.QAObservationType;
 import org.openelisglobal.common.services.TableIdService;
@@ -38,6 +37,7 @@ import org.openelisglobal.qaevent.service.NonConformityHelper;
 import org.openelisglobal.qaevent.valueholder.QaEvent;
 import org.openelisglobal.reports.action.implementation.reportBeans.NonConformityReportData;
 import org.openelisglobal.reports.action.util.ReportUtil;
+import org.openelisglobal.reports.form.ReportForm;
 import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.sampleqaevent.service.SampleQaEventService;
@@ -82,10 +82,10 @@ public abstract class NonConformityByDate extends Report implements IReportCreat
     }
 
     @Override
-    public void initializeReport(BaseForm form) {
+    public void initializeReport(ReportForm form) {
         super.initializeReport();
-        lowDateStr = form.getString("lowerDateRange");
-        highDateStr = form.getString("upperDateRange");
+        lowDateStr = form.getLowerDateRange();
+        highDateStr = form.getUpperDateRange();
         dateRange = new DateRange(lowDateStr, highDateStr);
 
         createReportParameters();

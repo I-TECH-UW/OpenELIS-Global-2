@@ -1,9 +1,12 @@
 package org.openelisglobal.reports.controller;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URLDecoder;
+import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,7 +17,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
@@ -30,6 +32,8 @@ import org.openelisglobal.spring.util.SpringContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -37,12 +41,21 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.lowagie.text.DocumentException;
+
+import net.sf.jasperreports.engine.JRException;
+
 @Controller
 @SessionAttributes("form")
 public class ReportController extends BaseController {
 
+    private static final String[] ALLOWED_FIELDS = new String[] { "report", "reportType", "accessionDirect",
+            "highAccessionDirect", "patientNumberDirect", "patientUpperNumberDirect", "lowerDateRange",
+            "upperDateRange", "locationCode", "projectCode", "datePeriod", "lowerMonth", "lowerYear", "upperMonth",
+            "upperYear", "selectList.selection", };
+
     @Autowired
-    ServletContext context;
+    private ServletContext context;
 
     private static String reportPath = null;
     private static String imagesPath = null;
@@ -52,21 +65,26 @@ public class ReportController extends BaseController {
         return new ReportForm();
     }
 
-    @RequestMapping(value = "/Report", method = RequestMethod.GET)
-    public ModelAndView showReport(HttpServletRequest request, @ModelAttribute("form") BaseForm form)
-            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        form = resetFormToType(form, ReportForm.class);
-        form.setFormMethod(RequestMethod.GET);
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
 
-        PropertyUtils.setProperty(form, "type", request.getParameter("type"));
-        PropertyUtils.setProperty(form, "report", request.getParameter("report"));
+    @RequestMapping(value = "/Report", method = RequestMethod.GET)
+    public ModelAndView showReport(HttpServletRequest request, @ModelAttribute("form") BaseForm oldForm)
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        ReportForm newForm = resetSessionFormToType(oldForm, ReportForm.class);
+        newForm.setFormMethod(RequestMethod.GET);
+
+        newForm.setType(request.getParameter("type"));
+        newForm.setReport(request.getParameter("report"));
         IReportParameterSetter setter = ReportImplementationFactory.getParameterSetter(request.getParameter("report"));
 
         if (setter != null) {
-            setter.setRequestParameters(form);
+            setter.setRequestParameters(newForm);
         }
 
-        return findForward(FWD_SUCCESS, form);
+        return findForward(FWD_SUCCESS, newForm);
     }
 
     @RequestMapping(value = "/ReportPrint", method = RequestMethod.GET)
@@ -77,8 +95,6 @@ public class ReportController extends BaseController {
             saveErrors(result);
             return findForward(FWD_FAIL, form);
         }
-
-        PropertyUtils.setProperty(form, "type", request.getParameter("type"));
 
         IReportCreator reportCreator = ReportImplementationFactory.getReportCreator(request.getParameter("report"));
 
@@ -109,9 +125,9 @@ public class ReportController extends BaseController {
                 servletOutputStream.write(bytes, 0, bytes.length);
                 servletOutputStream.flush();
                 servletOutputStream.close();
-            } catch (Exception e) {
-                LogEvent.logErrorStack(this.getClass().getSimpleName(), "showReportPrint", e);
-                e.printStackTrace();
+            } catch (IOException | SQLException | JRException | DocumentException | ParseException e) {
+                LogEvent.logErrorStack(e);
+                LogEvent.logDebug(e);
             }
         }
 
@@ -130,14 +146,30 @@ public class ReportController extends BaseController {
         SpringContext.getBean(IReportTrackingService.class).addReports(refIds, type, reportName, getSysUserId(request));
     }
 
-    public String getReportPath() {
+    private String getReportPath() {
+        String reportPath = getReportPathValue();
+        if (reportPath.endsWith(File.separator)) {
+            return reportPath;
+        } else {
+            return reportPath + File.separator;
+        }
+    }
+
+    private String getReportPathValue() {
+
         if (reportPath == null) {
+            // TODO csl this was added by external developer but it breaks the other reports
+//            SiteInformation reportsPath = siteInformationService.getSiteInformationByName("reportsDirectory");
+//            if (reportsPath != null) {
+//                reportPath = reportsPath.getValue();
+//                return reportPath;
+//            }
             ClassLoader classLoader = getClass().getClassLoader();
             reportPath = classLoader.getResource("reports").getPath();
             try {
                 reportPath = URLDecoder.decode(reportPath, "UTF-8");
             } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
+                LogEvent.logDebug(e);
                 throw new LIMSRuntimeException(e);
             }
         }
@@ -150,7 +182,7 @@ public class ReportController extends BaseController {
             try {
                 imagesPath = URLDecoder.decode(imagesPath, "UTF-8");
             } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
+                LogEvent.logDebug(e);
                 throw new LIMSRuntimeException(e);
             }
         }

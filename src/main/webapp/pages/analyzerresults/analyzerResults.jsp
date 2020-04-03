@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=utf-8" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" %>
 <%@ page import="java.util.List,
                 org.openelisglobal.common.action.IActionConstants,
 				org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory,
@@ -15,35 +15,19 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
-
-
 <c:set var="analyzerType" value="${form.analyzerType}" />
 <c:set var="pagingSearch" value="${form.paging.searchTermToPage}" />
 
-<%!
-	String basePath = "";
-	IAccessionNumberValidator accessionNumberValidator;
-	String searchTerm = null;
-%>
-<%
-	String path = request.getContextPath();
-	basePath = request.getScheme() + "://" + request.getServerName() + ":"
-			+ request.getServerPort() + path + "/";
-
-	accessionNumberValidator = new AccessionNumberValidatorFactory().getValidator();
-	searchTerm = request.getParameter("searchTerm");
-%>
-
-<!-- N.B. testReflex.js is dependent on utilities.js so order is important  -->
-<script type="text/javascript" src="<%=basePath%>scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
-<script type="text/javascript" src="<%=basePath%>scripts/ajaxCalls.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
-<script type="text/javascript" src="<%=basePath%>scripts/testReflex.js?ver=<%= Versioning.getBuildNumber() %>" ></script>
-<script type="text/javascript" src="scripts/OEPaging.js?ver=<%= Versioning.getBuildNumber() %>"></script>
+<%-- N.B. testReflex.js is dependent on utilities.js so order is important  --%>
+<script type="text/javascript" src="scripts/utilities.js?" ></script>
+<script type="text/javascript" src="scripts/ajaxCalls.js?" ></script>
+<script type="text/javascript" src="scripts/testReflex.js?" ></script>
+<script type="text/javascript" src="scripts/OEPaging.js?"></script>
 <script type="text/javascript" >
 
 var dirty = false;
 
-var pager = new OEPager('${form.formName}', '<spring:escapeBody javaScriptEscape="true">${(analyzerType == "") ? "" : "&type=" +=  analyzerType}</spring:escapeBody>');
+var pager = new OEPager('${form.formName}', '<spring:escapeBody javaScriptEscape="true">${(analyzerType == "") ? "" : "&analyzerType=" +=  analyzerType}</spring:escapeBody>');
 pager.setCurrentPageNumber('<c:out value="${form.paging.currentPage}"/>');
 
 var pageSearch; //assigned in post load function
@@ -55,7 +39,7 @@ pagingSearch['${paging.id}'] = '${paging.value}';
 
 
 jQuery(document).ready( function() {
-			var searchTerm = '<%=Encode.forJavaScript(searchTerm)%>';
+			var searchTerm = '<%=Encode.forJavaScript(request.getParameter("searchTerm"))%>';
 
 			pageSearch = new OEPageSearch( $("searchNotFound"), "td", pager );
 
@@ -92,7 +76,7 @@ function  /*void*/ savePage()
 {
 	window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
 	var form = document.getElementById("mainForm");
-	form.action = "AnalyzerResults.do"  + '<spring:escapeBody javaScriptEscape="true">${(analyzerType == "") ? "": "?type=" += analyzerType}</spring:escapeBody>';
+	form.action = "AnalyzerResults.do"  + '<spring:escapeBody javaScriptEscape="true">${(analyzerType == "") ? "": "?analyzerType=" += analyzerType}</spring:escapeBody>';
 	form.submit();
 
 }
@@ -105,6 +89,9 @@ function validateAccessionNumberOnServer(field )
                       method: 'get', //http method
                       parameters: 'provider=SampleEntryAccessionNumberValidationProvider&field=' + field.id + '&accessionNumber=' + field.value,
                       indicator: 'throbbing',
+      				requestHeaders : {
+    					"X-CSRF-Token" : getCsrfToken()
+    				},
                       onSuccess:  processAccessionSuccess,
                       onFailure:  processAccessionFailure
                            }
@@ -194,7 +181,7 @@ function /*void*/ markUpdated(){
 	<%=MessageUtil.getContextualMessage("result.sample.id")%> : &nbsp;
 	<input type="text"
 	       id="labnoSearch"
-	       maxlength='<%= Integer.toString(accessionNumberValidator.getMaxAccessionLength())%>' />
+	       maxlength='<%= Integer.toString(new AccessionNumberValidatorFactory().getValidator().getMaxAccessionLength())%>' />
 	<input type="button" onclick="pageSearch.doLabNoSearch($(labnoSearch))" value='<%= MessageUtil.getMessage("label.button.search") %>'>
 	</div>
 </c:if>
@@ -224,8 +211,9 @@ function /*void*/ markUpdated(){
 		<c:set var="itemReadOnly" value="${resultList.readOnly}"/>
 		<c:if test="${showAccessionNumber}">
 			<c:set var="currentAccessionNumber" value="${resultList.accessionNumber}"/>
-			<c:set var="groupReadOnly" value="${resultList.groupReadOnly}"/>
+			<c:set var="groupReadOnly" value="${resultList.groupIsReadOnly}"/>
 		</c:if>
+		<form:hidden path="resultList[${iter.index}].id" />
 		<form:hidden path="resultList[${iter.index}].sampleGroupingNumber" />
 		<form:hidden path="resultList[${iter.index}].readOnly" />
 		<form:hidden path="resultList[${iter.index}].testResultType"/>
@@ -234,7 +222,7 @@ function /*void*/ markUpdated(){
 		<tr <c:if test="${resultList.isHighlighted}"> class="yellowHighlight"> </c:if> >
 			<td  align="center">
 			<c:if test="${showAccessionNumber && not groupReadOnly}">
-				<form:checkbox path="resultList${iter.index}.isAccepted"
+				<form:checkbox path="resultList[${iter.index}].isAccepted"
 							   id='accepted_${iter.index}'
 							   onchange="markUpdated();"
 							   onclick='enableDisableCheckboxes(this, ${iter.index} );' />
@@ -242,7 +230,7 @@ function /*void*/ markUpdated(){
 			</td>
 			<td  align="center">
 			<c:if test="${showAccessionNumber && not groupReadOnly}">
-				<form:checkbox path="resultList${iter.index}.isRejected"
+				<form:checkbox path="resultList[${iter.index}].isRejected"
 							   id='rejected_"${iter.index}'
 							   onchange="markUpdated();"
 							   onclick='enableDisableCheckboxes(this, ${iter.index} );' />
@@ -250,7 +238,7 @@ function /*void*/ markUpdated(){
 			</td>
 				<td align="center">
 			 <c:if test="${showAccessionNumber}">
-				<form:checkbox path="resultList${iter.index}.isDeleted"
+				<form:checkbox path="resultList[${iter.index}].isDeleted"
 							   id='deleted_${iter.index}'
 							   onchange="markUpdated();"
 							   onclick='enableDisableCheckboxes(this, ${iter.index} );' />
@@ -258,7 +246,7 @@ function /*void*/ markUpdated(){
 			</td>
 			<td class='${resultList.accessionNumber}'>
 				<c:if test="${showAccessionNumber}">
-						<form:input path="resultList${iter.index}.accessionNumber" readonly="true" style="border-style:hidden" />
+						<c:out value="${resultList.accessionNumber}" />
 						<c:if test="${resultList.nonconforming}">
 							<img src="./images/nonconforming.gif" />
 						</c:if>
@@ -269,7 +257,7 @@ function /*void*/ markUpdated(){
 			</td>
 			<td>
 			    <c:if test="${groupReadOnly || itemReadOnly}">
-				<form:input path="resultList${iter.index}.result"
+				<form:input path="resultList[${iter.index}].result"
 						   readonly="true"
 						   size="20"
 						   style="text-align:right;border-style:hidden;background-color:transparent" />
@@ -320,7 +308,7 @@ function /*void*/ markUpdated(){
 						 	     id='showHideButton_${iter.index}'
 						    />
 						 </c:if>
-				<form:hidden path="hideShowFlag"  id='hideShow_${iter.index}' value="hidden" />
+				<input type="hidden" id='hideShow_${iter.index}' value="hidden" />
             </c:if>
 
 		</td>

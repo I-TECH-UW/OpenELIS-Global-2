@@ -23,12 +23,12 @@ import java.util.List;
 
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
-import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.note.service.NoteServiceImpl;
 import org.openelisglobal.note.valueholder.Note;
 import org.openelisglobal.reports.action.implementation.reportBeans.RejectionReportBean;
+import org.openelisglobal.reports.form.ReportForm;
 import org.openelisglobal.spring.util.SpringContext;
 
 /**
@@ -37,7 +37,7 @@ public class RejectionReportByTest extends RejectionReport implements IReportCre
     private String testName = "";
 
     @Override
-    public void setRequestParameters(BaseForm form) {
+    public void setRequestParameters(ReportForm form) {
         new ReportSpecificationParameters(ReportSpecificationParameters.Parameter.DATE_RANGE,
                 MessageUtil.getMessage("report.rejection.report.base") + " " + MessageUtil.getMessage("report.by.test"),
                 MessageUtil.getMessage("report.instruction.all.fields")).setRequestParameters(form);

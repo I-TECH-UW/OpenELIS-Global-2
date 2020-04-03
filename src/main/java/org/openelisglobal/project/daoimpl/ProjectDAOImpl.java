@@ -15,9 +15,9 @@
 */
 package org.openelisglobal.project.daoimpl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
@@ -62,7 +62,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
 //				String tableName = "PROJECT";
 //				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("ProjectDAOImpl", "AuditTrail deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Project AuditTrail deleteData()", e);
@@ -81,7 +81,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
 //				// entityManager.unwrap(Session.class).evict // CSL remove old(cloneData);
 //				// entityManager.unwrap(Session.class).refresh // CSL remove old(cloneData);
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("ProjectDAOImpl", "deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Project deleteData()", e);
@@ -109,7 +109,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("ProjectDAOImpl", "insertData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Project insertData()", e);
@@ -125,7 +125,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
 //			if (duplicateProjectExists(project)) {
 //				throw new LIMSDuplicateRecordException("Duplicate record exists for " + project.getProjectName());
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("ProjectDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Project updateData()", e);
@@ -141,7 +141,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
 //			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 //			String tableName = "PROJECT";
 //			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("ProjectDAOImpl", "AuditTrail updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Project AuditTrail updateData()", e);
@@ -153,7 +153,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			// entityManager.unwrap(Session.class).evict // CSL remove old(project);
 //			// entityManager.unwrap(Session.class).refresh // CSL remove old(project);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("ProjectDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Project updateData()", e);
@@ -179,26 +179,26 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
             } else {
                 project.setId(null);
             }
-        } catch (Exception e) {
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             // bugzilla 2154
-            LogEvent.logError("ProjectDAOImpl", "getData()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Project getData()", e);
         }
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllProjects() throws LIMSRuntimeException {
-        List list = new Vector();
+    public List<Project> getAllProjects() throws LIMSRuntimeException {
+        List<Project> list;
         try {
             String sql = "from Project";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError("ProjectDAOImpl", "getAllProjects()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Project getAllProjects()", e);
         }
 
@@ -207,8 +207,8 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfProjects(int startingRecNo) throws LIMSRuntimeException {
-        List list = new Vector();
+    public List<Project> getPageOfProjects(int startingRecNo) throws LIMSRuntimeException {
+        List<Project> list;
         try {
             // calculate maxRow to be one more than the page size
             int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
@@ -223,9 +223,9 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError("ProjectDAOImpl", "getPageOfProjects()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Project getPageOfProjects()", e);
         }
 
@@ -238,29 +238,14 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
             pro = entityManager.unwrap(Session.class).get(Project.class, idString);
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError("ProjectDAOImpl", "readProject()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Project readProject()", e);
         }
 
         return pro;
 
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getNextProjectRecord(String id) throws LIMSRuntimeException {
-
-        return getNextRecord(id, "Project", Project.class);
-
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousProjectRecord(String id) throws LIMSRuntimeException {
-
-        return getPreviousRecord(id, "Project", Project.class);
     }
 
     // bugzilla 1978: added param activeOnly
@@ -290,19 +275,19 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
                 query.setParameter("param", project.getProjectName().trim());
             }
 
-            List list = query.list();
+            List<Project> list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
             Project pro = null;
             if (list.size() > 0) {
-                pro = (Project) list.get(0);
+                pro = list.get(0);
             }
 
             return pro;
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError("ProjectDAOImpl", "getProjectByName()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Project getProjectByName()", e);
         }
     }
@@ -311,7 +296,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
     // bugzilla 1978: added param activeOnly
     @Override
     @Transactional(readOnly = true)
-    public List getProjects(String filter, boolean activeOnly) throws LIMSRuntimeException {
+    public List<Project> getProjects(String filter, boolean activeOnly) throws LIMSRuntimeException {
         try {
             String sql = "";
             if (activeOnly) {
@@ -322,14 +307,14 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setParameter("param", filter + "%");
 
-            List list = query.list();
+            List<Project> list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
             return list;
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError("ProjectDAOImpl", "getProjects()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Project getProjects(String filter)", e);
         }
     }
@@ -338,60 +323,16 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
     @Override
     @Transactional(readOnly = true)
     public Integer getTotalProjectCount() throws LIMSRuntimeException {
-        return getTotalCount("Project", Project.class);
+        return getCount();
     }
 
     // overriding BaseDAOImpl bugzilla 1427 pass in name not id
-    @Override
-    @Transactional(readOnly = true)
-    public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
-
-        List list = new Vector();
-        try {
-            String sql = "from " + table + " t where name >= " + enquote(id) + " order by t.projectName";
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            query.setFirstResult(1);
-            query.setMaxResults(2);
-
-            list = query.list();
-
-        } catch (Exception e) {
-            // bugzilla 2154
-            LogEvent.logError("ProjectDAOImpl", "getNextRecord()", e.toString());
-            throw new LIMSRuntimeException("Error in getNextRecord() for " + table, e);
-        }
-
-        return list;
-    }
-
-    // overriding BaseDAOImpl bugzilla 1427 pass in name not id
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
-
-        List list = new Vector();
-        try {
-            String sql = "from " + table + " t order by t.projectName desc where name <= " + enquote(id);
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            query.setFirstResult(1);
-            query.setMaxResults(2);
-
-            list = query.list();
-        } catch (Exception e) {
-            // bugzilla 2154
-            LogEvent.logError("ProjectDAOImpl", "getPreviousRecord()", e.toString());
-            throw new LIMSRuntimeException("Error in getPreviousRecord() for " + table, e);
-        }
-
-        return list;
-    }
-
     // bugzilla 1482
     @Override
     public boolean duplicateProjectExists(Project project) throws LIMSRuntimeException {
         try {
 
-            List list = new ArrayList();
+            List<Project> list = new ArrayList();
 
             // not case sensitive hemolysis and Hemolysis are considered
             // duplicates
@@ -419,9 +360,9 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
                 return false;
             }
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError("ProjectDAOImpl", "duplicateProjectExists()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in duplicateProjectExists()", e);
         }
     }
@@ -439,19 +380,19 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
             }
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setParameter("param", project.getLocalAbbreviation().toLowerCase().trim());
-            List list = query.list();
+            List<Project> list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
             Project pro = null;
             if (list.size() > 0) {
-                pro = (Project) list.get(0);
+                pro = list.get(0);
             }
 
             return pro;
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError("ProjectDAOImpl", "getProjectByLocalAbbreviation()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Project getProjectByLocalAbbreviation()", e);
         }
     }

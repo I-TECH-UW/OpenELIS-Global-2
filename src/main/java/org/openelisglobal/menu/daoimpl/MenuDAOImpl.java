@@ -30,7 +30,7 @@ public class MenuDAOImpl extends BaseDAOImpl<Menu, String> implements MenuDAO {
         super(Menu.class);
     }
 
-//	@SuppressWarnings("unchecked")
+//	
 //	@Override
 //	public List<Menu> getAllMenus() throws LIMSRuntimeException {
 //
@@ -48,7 +48,7 @@ public class MenuDAOImpl extends BaseDAOImpl<Menu, String> implements MenuDAO {
 //		}
 //	}
 
-//	@SuppressWarnings("unchecked")
+//	
 //	@Override
 //	public List<Menu> getAllActiveMenus() throws LIMSRuntimeException {
 //
@@ -91,7 +91,7 @@ public class MenuDAOImpl extends BaseDAOImpl<Menu, String> implements MenuDAO {
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			// entityManager.unwrap(Session.class).evict // CSL remove old(menu);
 //			// entityManager.unwrap(Session.class).refresh // CSL remove old(menu);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //
 //			LogEvent.logError("Menu.DAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Menu updateData()", e);

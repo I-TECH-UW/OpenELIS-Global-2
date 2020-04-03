@@ -9,7 +9,6 @@ import org.openelisglobal.common.servlet.barcode.LabelMakerServlet;
 import org.openelisglobal.common.servlet.query.AjaxQueryXMLServlet;
 import org.openelisglobal.common.servlet.reports.LogoUploadServlet;
 import org.openelisglobal.common.servlet.reports.ReportsServlet;
-import org.openelisglobal.common.servlet.startup.StartStopListener;
 import org.openelisglobal.common.servlet.validation.AjaxTextServlet;
 import org.openelisglobal.common.servlet.validation.AjaxXMLServlet;
 import org.openelisglobal.dataexchange.aggregatereporting.IndicatorAggregationReportingServlet;
@@ -29,9 +28,7 @@ public class AnnotationWebAppInitializer implements WebApplicationInitializer {
         context.register(AppConfig.class);
 
         servletContext.addListener(new ContextLoaderListener(context));
-        servletContext.addListener(new StartStopListener());
 
-        setupFilters(servletContext);
         setupServlets(servletContext);
     }
 
@@ -109,9 +106,6 @@ public class AnnotationWebAppInitializer implements WebApplicationInitializer {
                 LabelMakerServlet.class);
         labelMakerServlet.setLoadOnStartup(++startupOrder);
         labelMakerServlet.addMapping("/LabelMakerServlet");
-    }
-
-    private void setupFilters(ServletContext servletContext) {
     }
 
 }

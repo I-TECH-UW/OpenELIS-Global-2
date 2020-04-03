@@ -56,12 +56,28 @@ function buildPopUp(rawResponse, showPopup){
     }
 }
 function getSelectionRow(name, value, index, selected ){
-    var check = selected ? "checked='checked' " : "";
-    return "<p class='selection_element'><input style='vertical-align:text-bottom' id='selection_" +
-        index + "' class='selectionCheckbox' value='" +
-        value +  "' type='checkbox' " +
-        check + ">&nbsp;&nbsp;&nbsp;" +
-        name + "</p>";
+    var tempWrapper = document.createElement('div');
+    var p = document.createElement('p');
+    p.setAttribute('class', 'selection_element')
+    var input = document.createElement('input');
+    input.setAttribute('style', 'vertical-align:text-bottom');
+    input.setAttribute('id','selection_' + index);
+    input.setAttribute('class', 'selectionCheckbox');
+    input.setAttribute('value', value);
+    input.setAttribute('type','checkbox');
+    if (selected) {
+        input.setAttribute('checked', 'checked');
+    }
+    input.innerText = '&nbsp;&nbsp;&nbsp;' + name;
+    p.appendChild(input);
+    tempWrapper.appendChild(p);
+    return tempWrapper.innerHTML;
+
+    // return "<p class='selection_element'><input style='vertical-align:text-bottom' id='selection_" +
+    //     index + "' class='selectionCheckbox' value='" +
+    //     value +  "' type='checkbox' " +
+    //     check + ">&nbsp;&nbsp;&nbsp;" +
+    //     name + "</p>";
 }
 
 function modalSelectAll(selectBox){
@@ -116,11 +132,52 @@ function addReflexToTests( editLabel ){
 
 
 function getSelectedTestDisplay( classValue, index, targetIds, parent, tests, editLabel){
-     return "<tr id='reflexSelection_" + index + "_" + targetIds + "' class='" + classValue + " reflexSelection_" + index + "'  >" +
-        "<td colspan='5' style='text-align:right'>" + parent + "</td>" +
-        "<td colspan='3'><textarea  readonly='true' id='reflexedTests' rows='2' style='width:98%' >" + tests + "</textarea></td>" +
-        "<td colspan='1' style='text-align: left'><input type='button' value='" + editLabel + "' onclick=\"editReflexes('" + index + "', '" + targetIds  + "');\"></td>"   +
-    "</tr>";
+	var wrapper = document.createElement('div');
+	
+	var tableRow = document.createElement('tr');
+	tableRow.setAttribute('id', 'reflexSelection_' + index + '_' + targetIds);
+	tableRow.setAttribute('class', 'classValue + ' reflexSelection_' + index');
+	wrapper.appendChild(tableRow);
+	
+	var rowCell = document.createElement('td');
+	tableRow.setAttribute('colspan', '5');
+	tableRow.setAttribute('style', 'text-align:right');
+	tableRow.setTextContent('parent');
+	tableRow.appendChild(rowCell);
+	
+	rowCell = document.createElement('td');
+	tableRow.setAttribute('colspan', '3');
+	var textArea = document.createElement('textArea');
+	textArea.setAttribute('readOnly', 'true');
+	textArea.setAttribute('id', 'reflexedTests');
+	textArea.setAttribute('rows, '2');
+	textArea.setAttribute('style', 'width:98%');
+	textArea.value = tests;
+	rowCell.appendChild(textArea);
+	tableRow.appendChild(rowCell);
+	
+	rowCell = document.createElement('td');
+	tableRow.setAttribute('colspan', '1');
+	tableRow.setAttribute('style', 'text-align:left');
+	var inputButton = document.createElement('input');
+	inputButton.setAttribute('type', 'button');
+	inputButton.setAttribute('value', editLabel);
+	inputButton.setAttribute('onclick', 'editReflexes("' + index + '", "' + targetIds + '");');
+	rowCell.appendChild(inputButton);
+	tableRow.appendChild(rowCell);
+	
+	rowCell = document.createElement('td');
+	tableRow.setAttribute('id', 'reflexSelection_' + index '_' + targetIds);
+	tableRow.appendChild(rowCell);
+	
+	return wrapper.innerHTML;
+	
+	
+    // return "<tr id='reflexSelection_" + index + "_" + targetIds + "' class='" + classValue + " reflexSelection_" + index + "'  >" +
+    //   "<td colspan='5' style='text-align:right'>" + parent + "</td>" +
+    //    "<td colspan='3'><textarea  readonly='true' id='reflexedTests' rows='2' style='width:98%' >" + tests + "</textarea></td>" +
+    //    "<td colspan='1' style='text-align: left'><input type='button' value='" + editLabel + "' onclick=\"editReflexes('" + index + "', '" + targetIds  + "');\"></td>"   +
+    //"</tr>";
 }
 
 function removeReflexesFor( triggers, row){

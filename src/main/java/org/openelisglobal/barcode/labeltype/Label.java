@@ -50,7 +50,7 @@ public abstract class Label {
     private String code;
 
     // information stored in/for database
-    public BarcodeLabelInfo labelInfo;
+    private BarcodeLabelInfo labelInfo;
     private String sysUserId; // for log tracking
     boolean newInfo; // for deciding if insert or update
 
@@ -235,6 +235,7 @@ public abstract class Label {
     }
 
     public void setSysUserId(String sysUserId) {
+        labelInfo.setSysUserId(sysUserId);
         this.sysUserId = sysUserId;
     }
 
@@ -295,36 +296,22 @@ public abstract class Label {
      * Otherwise, create new meta data for the label
      */
     public void linkBarcodeLabelInfo() {
-        // ensure transaction block
         try {
             labelInfo = barcodeLabelService.getDataByCode(code);
-            newInfo = false;
             if (labelInfo == null) {
-                newInfo = true;
                 labelInfo = new BarcodeLabelInfo(code);
             }
-        } catch (LIMSRuntimeException lre) {
-            LogEvent.logErrorStack("Label", "linkBarcodeLabelInfo()", lre);
+        } catch (LIMSRuntimeException e) {
+            LogEvent.logErrorStack(e);
         }
     }
 
-    /**
-     * Add 1 to the numPrinted value stored in the database
-     */
+    public BarcodeLabelInfo getLabelInfo() {
+        return labelInfo;
+    }
+
     public void incrementNumPrinted() {
         labelInfo.incrementNumPrinted();
-        labelInfo.setSysUserId(sysUserId);
-        // ensure transaction block
-        try {
-            if (newInfo) {
-                barcodeLabelService.insert(labelInfo);
-                newInfo = false;
-            } else {
-                barcodeLabelService.update(labelInfo);
-            }
-        } catch (LIMSRuntimeException lre) {
-            LogEvent.logErrorStack("Label", "linkBarcodeLabelInfo()", lre);
-        }
     }
 
 }

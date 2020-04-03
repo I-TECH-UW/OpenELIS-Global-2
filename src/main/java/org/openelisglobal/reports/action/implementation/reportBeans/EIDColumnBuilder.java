@@ -21,6 +21,9 @@ import static org.openelisglobal.reports.action.implementation.reportBeans.CSVCo
 import static org.openelisglobal.reports.action.implementation.reportBeans.CSVColumnBuilder.Strategy.NONE;
 import static org.openelisglobal.reports.action.implementation.reportBeans.CSVColumnBuilder.Strategy.TEST_RESULT;
 
+import java.sql.Date;
+
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.reports.action.implementation.Report.DateRange;
 import org.openelisglobal.spring.util.SpringContext;
@@ -79,8 +82,8 @@ public class EIDColumnBuilder extends CIColumnBuilder {
      */
     public void makeSQL_original() {// without analysis completed date ......
         query = new StringBuilder();
-        String lowDatePostgres = postgresDateFormat.format(dateRange.getLowDate());
-        String highDatePostgres = postgresDateFormat.format(dateRange.getHighDate());
+        Date lowDate = dateRange.getLowDate();
+        Date highDate = dateRange.getHighDate();
         query.append(SELECT_SAMPLE_PATIENT_ORGANIZATION);
         // all crosstab generated tables need to be listed in the SELECT column list and
         // in the WHERE clause at the bottom
@@ -91,12 +94,12 @@ public class EIDColumnBuilder extends CIColumnBuilder {
         query.append(FROM_SAMPLE_PATIENT_ORGANIZATION);
 
         // all observation history from expressions
-        appendObservationHistoryCrosstab(lowDatePostgres, highDatePostgres);
-        appendResultCrosstab(lowDatePostgres, highDatePostgres);
+        appendObservationHistoryCrosstab(lowDate, highDate);
+        appendResultCrosstab(lowDate, highDate);
 
         // and finally the join that puts these all together. Each cross table should be
         // listed here otherwise it's not in the result and you'll get a full join
-        query.append(buildWhereSamplePatienOrgSQL(lowDatePostgres, highDatePostgres)
+        query.append(buildWhereSamplePatienOrgSQL(lowDate, highDate)
                 // insert joining of any other crosstab here.
                 // insert joining of any other crosstab here.
                 + "\n AND s.id = demo.samp_id " + "\n AND s.id = result.samp_id " + "\n ORDER BY s.accession_number ");
@@ -108,11 +111,11 @@ public class EIDColumnBuilder extends CIColumnBuilder {
 
     @Override
     public void makeSQL() {
-        String validStatusId = StatusService.getInstance().getStatusID(StatusService.AnalysisStatus.Finalized);
-        Test test = testService.getActiveTestByName("DNA PCR").get(0);
+        String validStatusId = SpringContext.getBean(IStatusService.class).getStatusID(StatusService.AnalysisStatus.Finalized);
+        Test test = testService.getActiveTestsByName("DNA PCR").get(0);
         query = new StringBuilder();
-        String lowDatePostgres = postgresDateFormat.format(dateRange.getLowDate());
-        String highDatePostgres = postgresDateFormat.format(dateRange.getHighDate());
+        Date lowDate = dateRange.getLowDate();
+        Date highDate = dateRange.getHighDate();
         query.append(SELECT_SAMPLE_PATIENT_ORGANIZATION);
         // all crosstab generated tables need to be listed in the following list and in
         // the WHERE clause at the bottom
@@ -124,12 +127,12 @@ public class EIDColumnBuilder extends CIColumnBuilder {
                 + ", clinlims.sample_item as si, clinlims.analysis as a, clinlims.result as r ");
 
         // all observation history values
-        appendObservationHistoryCrosstab(lowDatePostgres, highDatePostgres);
+        appendObservationHistoryCrosstab(lowDate, highDate);
         // current ARV treatments
-        // appendRepeatingObservation("currentARVTreatmentINNs", 4, lowDatePostgres,
-        // highDatePostgres);
+        // appendRepeatingObservation("currentARVTreatmentINNs", 4, lowDate,
+        // highDate);
         // result
-        // appendResultCrosstab(lowDatePostgres, highDatePostgres );
+        // appendResultCrosstab(lowDate, highDate );
 
         // and finally the join that puts these all together. Each cross table should be
         // listed here otherwise it's not in the result and you'll get a full join
@@ -139,8 +142,8 @@ public class EIDColumnBuilder extends CIColumnBuilder {
                 + "\n AND sh.patient_id=pat.id" + "\n AND pat.person_id = per.id" + "\n AND s.id=so.samp_id"
                 + "\n AND so.org_id=o.id" + "\n AND s.id = sp.samp_id" + "\n AND s.id=demo.s_id"
                 // + "\n AND s.id = currentARVTreatmentINNs.samp_id"
-                + "\n AND s.collection_date >= date('" + lowDatePostgres + "')" + "\n AND s.collection_date <= date('"
-                + highDatePostgres + "')"
+                + "\n AND s.collection_date >= date('" + formatDateForDatabaseSql(lowDate) + "')"
+                + "\n AND s.collection_date <= date('" + formatDateForDatabaseSql(highDate) + "')"
 
                 + "\n ORDER BY s.accession_number;");
         /////////

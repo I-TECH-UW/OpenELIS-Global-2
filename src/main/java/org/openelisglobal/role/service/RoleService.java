@@ -8,9 +8,9 @@ import org.openelisglobal.role.valueholder.Role;
 public interface RoleService extends BaseObjectService<Role, String> {
     void getData(Role role);
 
-    List getNextRoleRecord(String id);
 
-    List getPreviousRoleRecord(String id);
+
+
 
     List<Role> getAllActiveRoles();
 

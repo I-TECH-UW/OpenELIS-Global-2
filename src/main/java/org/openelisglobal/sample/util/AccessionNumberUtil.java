@@ -27,11 +27,11 @@ import org.openelisglobal.common.provider.validation.AccessionNumberValidatorFac
 import org.openelisglobal.common.provider.validation.IAccessionNumberValidator;
 import org.openelisglobal.common.provider.validation.IAccessionNumberValidator.ValidationResults;
 import org.openelisglobal.common.provider.validation.ProgramAccessionValidator;
-import org.openelisglobal.common.services.StatusService;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.RecordStatus;
 import org.openelisglobal.common.services.StatusSet;
 import org.openelisglobal.common.util.StringUtil;
-import org.openelisglobal.common.util.validator.GenericValidator;
+import org.openelisglobal.spring.util.SpringContext;
 
 public class AccessionNumberUtil {
 
@@ -50,7 +50,7 @@ public class AccessionNumberUtil {
     }
 
     public static IAccessionNumberValidator getAccessionNumberValidator(String prefix) {
-        if (GenericValidator.isBlankOrNull(prefix)) {
+        if (org.apache.commons.validator.GenericValidator.isBlankOrNull(prefix)) {
             return getAccessionNumberValidator();
         }
         try {
@@ -80,19 +80,12 @@ public class AccessionNumberUtil {
 
     public static ValidationResults checkAccessionNumberValidity(String accessionNumber, String recordType,
             String isRequired, String projectFormName) {
-
-        try {
-            return getAccessionNumberValidator().checkAccessionNumberValidity(accessionNumber, recordType, isRequired,
-                    projectFormName);
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-        }
-
-        return ValidationResults.SAMPLE_NOT_FOUND;
+        return getAccessionNumberValidator().checkAccessionNumberValidity(accessionNumber, recordType, isRequired,
+                projectFormName);
     }
 
     public static ValidationResults isPatientStatusValid(String accessionNumber, RecordStatus validStatus) {
-        StatusSet statusSet = StatusService.getInstance().getStatusSetForAccessionNumber(accessionNumber);
+        StatusSet statusSet = SpringContext.getBean(IStatusService.class).getStatusSetForAccessionNumber(accessionNumber);
         if (statusSet.getPatientRecordStatus() == validStatus) {
             return SAMPLE_FOUND;
         } else {
@@ -101,7 +94,7 @@ public class AccessionNumberUtil {
     }
 
     public static ValidationResults isSampleStatusValid(String accessionNumber, RecordStatus validStatus) {
-        StatusSet statusSet = StatusService.getInstance().getStatusSetForAccessionNumber(accessionNumber);
+        StatusSet statusSet = SpringContext.getBean(IStatusService.class).getStatusSetForAccessionNumber(accessionNumber);
         RecordStatus sampleRecordStatus = statusSet.getSampleRecordStatus();
         if (sampleRecordStatus == validStatus) {
             return SAMPLE_FOUND;

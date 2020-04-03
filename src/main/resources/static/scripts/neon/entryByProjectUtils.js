@@ -17,7 +17,7 @@
 */
 
 /**
- * C�te d'Ivoire
+ * Cote d'Ivoire
  * There are two-ways through these objects one to "load" patient/subject then sample then observation history when searching on the edit/view screen.
  * The other is to "find" each when doing comparison during entry or 2nd entry.
  * @author pahill
@@ -166,6 +166,9 @@ function BaseLoader() {
                         {//options
                           method: 'get', //http method
                           parameters: urlParameters,
+						  requestHeaders : {
+								"X-CSRF-Token" : getCsrfToken()
+						  },
                           onSuccess:  onSuccessFunc, onFailure: onFailureFunc
                          });
 	}

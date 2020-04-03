@@ -8,16 +8,6 @@
 
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
 
-<%!
-String menuDef = "default";
-%>
-<%
-menuDef = "default";
-if (request.getAttribute("menuDefinition'}") != null) {
-  menuDef = (String)request.getAttribute("menuDefinition'}");
-}
-//System.out.println("menuDef " + menuDef);
-%>
 <c:set var="menuDef" value="${menuDefinition}" />
 <center>
 <table cellpadding="0" cellspacing="0" width="100%" height="100%" border="0">

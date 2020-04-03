@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=utf-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"%>
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
@@ -27,10 +27,10 @@
 		<img src="images/mainResults.jpg" /><br/>
 		<h1 class="txtHeader"><spring:message code="banner.menu.results" text="banner.menu.results"/></h1>
 	</td>
- <!--    <td align="center" width="139" valign="top">
+ <%--    <td align="center" width="139" valign="top">
 		<img src="images/mainInventory.jpg" /><br/>
 		<h1 class="txtHeader"><spring:message code="banner.menu.inventory"/></h1>
-	</td> --> 
+	</td> --%> 
 	
 	<td align="center" width="139" valign="top">
 		<img src="images/mainReports.jpg" /><br/>

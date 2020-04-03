@@ -12,7 +12,6 @@ import org.openelisglobal.common.controller.BaseMenuController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.form.MenuForm;
 import org.openelisglobal.common.log.LogEvent;
-import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.common.validator.BaseErrors;
 import org.openelisglobal.organization.form.OrganizationMenuForm;
@@ -22,6 +21,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -31,8 +32,15 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class OrganizationMenuController extends BaseMenuController {
 
+    private static final String[] ALLOWED_FIELDS = new String[] { "selectedIds[*]", "searchString" };
+
     @Autowired
     OrganizationService organizationService;
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
 
     @RequestMapping(value = { "/OrganizationMenu", "/SearchOrganizationMenu" }, method = RequestMethod.GET)
     public ModelAndView showOrganizationMenu(HttpServletRequest request, RedirectAttributes redirectAttributes)
@@ -54,22 +62,18 @@ public class OrganizationMenuController extends BaseMenuController {
     }
 
     @Override
-    protected List<Organization> createMenuList(MenuForm form, HttpServletRequest request) throws Exception {
+    protected List<Organization> createMenuList(MenuForm form, HttpServletRequest request) {
 
-        // System.out.println("I am in OrganizationMenuAction createMenuList()");
+        // LogEvent.logInfo(this.getClass().getName(), "method unkown", "I am in
+        // OrganizationMenuAction createMenuList()");
 
         List<Organization> organizations = new ArrayList<>();
 
-        String stringStartingRecNo = (String) request.getAttribute("startingRecNo");
-        int startingRecNo = Integer.parseInt(stringStartingRecNo);
+        int startingRecNo = this.getCurrentStartingRecNo(request);
 
-        // bugzilla 2372
-        String searchString = request.getParameter("searchString");
-
-        String doingSearch = request.getParameter("search");
-
-        if (!StringUtil.isNullorNill(doingSearch) && doingSearch.equals(YES)) {
-            organizations = organizationService.getPagesOfSearchedOrganizations(startingRecNo, searchString);
+        if (YES.equals(request.getParameter("search"))) {
+            organizations = organizationService.getPagesOfSearchedOrganizations(startingRecNo,
+                    request.getParameter("searchString"));
         } else {
             organizations = organizationService.getOrderedPage("organizationName", false, startingRecNo);
         }
@@ -78,9 +82,10 @@ public class OrganizationMenuController extends BaseMenuController {
 
         // bugzilla 1411 set pagination variables
         // bugzilla 2372 set pagination variables for searched results
-        if (!StringUtil.isNullorNill(doingSearch) && doingSearch.equals(YES)) {
+        if (YES.equals(request.getParameter("search"))) {
             request.setAttribute(MENU_TOTAL_RECORDS,
-                    String.valueOf(organizationService.getTotalSearchedOrganizationCount(searchString)));
+                    String.valueOf(organizationService
+                            .getTotalSearchedOrganizationCount(request.getParameter("searchString"))));
         } else {
             request.setAttribute(MENU_TOTAL_RECORDS, String.valueOf(organizationService.getCount()));
         }
@@ -105,11 +110,9 @@ public class OrganizationMenuController extends BaseMenuController {
         // know
         // what to do
 
-        if (!StringUtil.isNullorNill(doingSearch) && doingSearch.equals(YES)) {
+        if (YES.equals(request.getParameter("search"))) {
 
             request.setAttribute(IN_MENU_SELECT_LIST_HEADER_SEARCH, "true");
-
-            request.setAttribute(MENU_SELECT_LIST_HEADER_SEARCH_STRING, searchString);
         }
 
         return organizations;
@@ -134,7 +137,7 @@ public class OrganizationMenuController extends BaseMenuController {
             findForward(FWD_FAIL_DELETE, form);
         }
 
-        List<String> selectedIDs = (List<String>) form.get("selectedIDs");
+        List<String> selectedIDs = form.getSelectedIDs();
         List<Organization> organizations = new ArrayList<>();
         for (int i = 0; i < selectedIDs.size(); i++) {
             Organization organization = new Organization();
@@ -144,15 +147,17 @@ public class OrganizationMenuController extends BaseMenuController {
         }
 
         try {
-            // System.out.println("Going to delete Organization");
+            // LogEvent.logInfo(this.getClass().getName(), "method unkown", "Going to delete
+            // Organization");
             organizationService.deleteAll(organizations);
-            // System.out.println("Just deleted Organization");
-        } catch (LIMSRuntimeException lre) {
+            // LogEvent.logInfo(this.getClass().getName(), "method unkown", "Just deleted
+            // Organization");
+        } catch (LIMSRuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError("OrganizationDeleteAction", "performAction()", lre.toString());
+            LogEvent.logError(e.toString(), e);
 
             String errorMsg;
-            if (lre.getException() instanceof org.hibernate.StaleObjectStateException) {
+            if (e.getException() instanceof org.hibernate.StaleObjectStateException) {
                 errorMsg = "errors.OptimisticLockException";
             } else {
                 errorMsg = "errors.DeleteException";

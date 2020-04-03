@@ -2,6 +2,7 @@ package org.openelisglobal.renametestsection.service;
 
 import java.util.List;
 
+import org.hibernate.Hibernate;
 import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
 import org.openelisglobal.localization.valueholder.Localization;
@@ -35,7 +36,7 @@ public class RenameTestSectionServiceImpl extends BaseObjectServiceImpl<RenameTe
 
     @Override
     @Transactional(readOnly = true)
-    public List getTestSections(String filter) {
+    public List<RenameTestSection> getTestSections(String filter) {
         return getBaseObjectDAO().getTestSections(filter);
     }
 
@@ -47,13 +48,7 @@ public class RenameTestSectionServiceImpl extends BaseObjectServiceImpl<RenameTe
 
     @Override
     @Transactional(readOnly = true)
-    public List getNextTestSectionRecord(String id) {
-        return getBaseObjectDAO().getNextTestSectionRecord(id);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getPageOfTestSections(int startingRecNo) {
+    public List<RenameTestSection> getPageOfTestSections(int startingRecNo) {
         return getBaseObjectDAO().getPageOfTestSections(startingRecNo);
     }
 
@@ -65,13 +60,7 @@ public class RenameTestSectionServiceImpl extends BaseObjectServiceImpl<RenameTe
 
     @Override
     @Transactional(readOnly = true)
-    public List getPreviousTestSectionRecord(String id) {
-        return getBaseObjectDAO().getPreviousTestSectionRecord(id);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getAllTestSections() {
+    public List<RenameTestSection> getAllTestSections() {
         return getBaseObjectDAO().getAllTestSections();
     }
 
@@ -119,6 +108,8 @@ public class RenameTestSectionServiceImpl extends BaseObjectServiceImpl<RenameTe
     @Transactional(readOnly = true)
     public Localization getLocalizationForRenameTestSection(String id) {
         RenameTestSection renameTestSection = getTestSectionById(id);
-        return renameTestSection != null ? renameTestSection.getLocalization() : null;
+        Localization localization = renameTestSection != null ? renameTestSection.getLocalization() : null;
+        Hibernate.initialize(localization);
+        return localization;
     }
 }

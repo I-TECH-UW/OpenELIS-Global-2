@@ -12,8 +12,8 @@ import javax.servlet.http.HttpSession;
 
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.util.SystemConfiguration;
-import org.openelisglobal.login.service.LoginService;
-import org.openelisglobal.login.valueholder.Login;
+import org.openelisglobal.login.service.LoginUserService;
+import org.openelisglobal.login.valueholder.LoginUser;
 import org.openelisglobal.login.valueholder.UserSessionData;
 import org.openelisglobal.systemuser.service.SystemUserService;
 import org.openelisglobal.systemuser.valueholder.SystemUser;
@@ -34,7 +34,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
     private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
     @Autowired
-    private LoginService loginService;
+    private LoginUserService loginService;
     @Autowired
     private UserRoleService userRoleService;
     @Autowired
@@ -48,7 +48,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
             Authentication authentication) throws IOException, ServletException {
         String homePath = "/Dashboard.do";
-        Login loginInfo = loginService.getMatch("loginName", request.getParameter("loginName")).get();
+        LoginUser loginInfo = loginService.getMatch("loginName", request.getParameter("loginName")).get();
         setupUserSession(request, loginInfo);
 
         if (passwordExpiringSoon(loginInfo)) {
@@ -60,7 +60,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
     }
 
-    private void setupUserSession(HttpServletRequest request, Login loginInfo) {
+    private void setupUserSession(HttpServletRequest request, LoginUser loginInfo) {
         int timeout;
         if (loginInfo.getUserTimeOut() != null) {
             timeout = Integer.parseInt(loginInfo.getUserTimeOut()) * 60;
@@ -102,7 +102,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         return allPermittedPages;
     }
 
-    private boolean passwordExpiringSoon(Login loginInfo) {
+    private boolean passwordExpiringSoon(LoginUser loginInfo) {
         return loginInfo.getPasswordExpiredDayNo() <= Integer
                 .parseInt(SystemConfiguration.getInstance().getLoginUserPasswordExpiredReminderDay())
                 && (loginInfo.getPasswordExpiredDayNo() > Integer

@@ -46,7 +46,7 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder, String>
         try {
             Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setString("externalid", id);
-            @SuppressWarnings("unchecked")
+            
             List<ElectronicOrder> eOrders = query.list();
             // closeSession(); // CSL remove old
             return eOrders;
@@ -56,7 +56,7 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder, String>
         return null;
     }
 
-//	@SuppressWarnings("unchecked")
+//	
 //	@Override
 //	public List<ElectronicOrder> getElectronicOrdersByPatientId(String id) throws LIMSRuntimeException {
 //		String sql = "from ElectronicOrder eo where eo.patient.id = :patientid";
@@ -120,7 +120,7 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder, String>
 //		return null;
 //	}
 
-//	@SuppressWarnings("unchecked")
+//	
 //	@Override
 //	public List<ElectronicOrder> getAllElectronicOrders() {
 //		List<ElectronicOrder> list = new Vector<>();
@@ -130,7 +130,7 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder, String>
 //			list = query.list();
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			handleException(e, "getAllElectronicOrders");
 //		}
 //
@@ -138,7 +138,7 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder, String>
 //
 //	}
 
-    @SuppressWarnings("unchecked")
+    
     @Override
     @Transactional(readOnly = true)
     public List<ElectronicOrder> getAllElectronicOrdersOrderedBy(ElectronicOrder.SortOrder order) {
@@ -154,7 +154,7 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder, String>
             }
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             handleException(e, "getAllElectronicOrdersOrderedBy");
         }
 

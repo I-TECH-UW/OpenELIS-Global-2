@@ -17,6 +17,7 @@
 package org.openelisglobal.dataexchange.aggregatereporting;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -36,13 +37,13 @@ import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.dataexchange.aggregatereporting.valueholder.ReportExternalImport;
 import org.openelisglobal.dataexchange.service.aggregatereporting.ReportExternalImportService;
-import org.openelisglobal.login.service.LoginService;
-import org.openelisglobal.login.valueholder.Login;
+import org.openelisglobal.login.service.LoginUserService;
+import org.openelisglobal.login.valueholder.LoginUser;
 import org.openelisglobal.spring.util.SpringContext;
 
 public class IndicatorAggregationReportingServlet extends HttpServlet {
     private ReportExternalImportService reportImportService = SpringContext.getBean(ReportExternalImportService.class);
-    private LoginService loginService = SpringContext.getBean(LoginService.class);
+    private LoginUserService loginService = SpringContext.getBean(LoginUserService.class);
     private final String DATE_PATTERN = "yyyy-MM-dd";
 
     @Override
@@ -100,16 +101,16 @@ public class IndicatorAggregationReportingServlet extends HttpServlet {
                 // String.valueOf(readLength), new String(byteBuffer).trim());
 
                 if (readLength == -1) {
-                    return DocumentHelper.parseText(new String(byteBuffer).trim());
+                    return DocumentHelper.parseText(new String(byteBuffer, StandardCharsets.UTF_8).trim());
                 } else {
                     charCount += readLength;
                 }
 
             } catch (IOException e) {
-                e.printStackTrace();
+                LogEvent.logDebug(e);
                 return null;
-            } catch (DocumentException de) {
-                de.printStackTrace();
+            } catch (DocumentException e) {
+                LogEvent.logDebug(e);
                 return null;
             }
         }
@@ -120,8 +121,8 @@ public class IndicatorAggregationReportingServlet extends HttpServlet {
 
         try {
             reportImportService.updateReports(insertableImportReports, updatableImportReports);
-        } catch (Exception e) {
-            LogEvent.logErrorStack(this.getClass().getSimpleName(), "updateReports()", e);
+        } catch (RuntimeException e) {
+            LogEvent.logErrorStack(e);
         }
     }
 
@@ -164,11 +165,11 @@ public class IndicatorAggregationReportingServlet extends HttpServlet {
         String user = (String) userElement.getData();
         String password = (String) passwordElement.getData();
 
-        Login login = new Login();
+        LoginUser login = new LoginUser();
         login.setLoginName(user);
         login.setPassword(password);
 
-        Login loginInfo = loginService.getValidatedLogin(user, password).orElse(null);
+        LoginUser loginInfo = loginService.getValidatedLogin(user, password).orElse(null);
 
         return loginInfo != null;
     }

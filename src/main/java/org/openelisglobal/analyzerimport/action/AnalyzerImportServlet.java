@@ -19,6 +19,7 @@ package org.openelisglobal.analyzerimport.action;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -27,25 +28,30 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItemIterator;
 import org.apache.commons.fileupload.FileItemStream;
+import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analyzerimport.analyzerreaders.AnalyzerReader;
 import org.openelisglobal.analyzerimport.analyzerreaders.AnalyzerReaderFactory;
-import org.openelisglobal.login.service.LoginService;
-import org.openelisglobal.login.valueholder.Login;
+import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.login.service.LoginUserService;
+import org.openelisglobal.login.valueholder.LoginUser;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.systemuser.service.SystemUserService;
 import org.openelisglobal.systemuser.valueholder.SystemUser;
 
 public class AnalyzerImportServlet extends HttpServlet {
 
-    protected LoginService loginService = SpringContext.getBean(LoginService.class);
+    protected LoginUserService loginService = SpringContext.getBean(LoginUserService.class);
     protected SystemUserService systemUserService = SpringContext.getBean(SystemUserService.class);
 
     private static final long serialVersionUID = 1L;
-    private static final String USER = "user";
-    private static final String PASSWORD = "password";
-    private String systemUserId;
+    private static final String USER_FIELD_NAME = "user";
+    private static final String PASSWORD_FIELD_NAME = "password";
+
+    private static final long FILE_SIZE_MAX = 5 * 1024 * 1024;
+    private static final long FIELD_SIZE_MAX = 1024;
+    private static final long TOTAL_SIZE_MAX = FILE_SIZE_MAX + (2 * FIELD_SIZE_MAX);
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -60,6 +66,8 @@ public class AnalyzerImportServlet extends HttpServlet {
 
         try {
             ServletFileUpload upload = new ServletFileUpload();
+            upload.setFileSizeMax(FILE_SIZE_MAX);
+            upload.setSizeMax(TOTAL_SIZE_MAX);
 
             FileItemIterator iterator = upload.getItemIterator(request);
             while (iterator.hasNext()) {
@@ -70,10 +78,10 @@ public class AnalyzerImportServlet extends HttpServlet {
 
                 if (item.isFormField()) {
 
-                    if (PASSWORD.equals(item.getFieldName())) {
-                        password = streamToString(stream);
-                    } else if (USER.equals(item.getFieldName())) {
-                        user = streamToString(stream);
+                    if (PASSWORD_FIELD_NAME.equals(item.getFieldName())) {
+                        password = fieldStreamToString(stream);
+                    } else if (USER_FIELD_NAME.equals(item.getFieldName())) {
+                        user = fieldStreamToString(stream);
                     }
 
                 } else {
@@ -89,14 +97,15 @@ public class AnalyzerImportServlet extends HttpServlet {
 
                 stream.close();
             }
-        } catch (Exception ex) {
-            throw new ServletException(ex);
+        } catch (FileUploadException e) {
+            LogEvent.logError(e.getMessage(), e);
+            throw new ServletException(e);
         } finally {
             if (stream != null) {
                 try {
                     stream.close();
                 } catch (IOException e) {
-                    // LOG.warning(e.toString());
+                    LogEvent.logError(e.getMessage(), e);
                 }
             }
         }
@@ -114,51 +123,80 @@ public class AnalyzerImportServlet extends HttpServlet {
         }
 
         if (fileRead) {
-            boolean successful = reader.insertAnalyzerData(systemUserId);
+            boolean successful = reader.insertAnalyzerData(getSysUserId(user, password));
 
             if (successful) {
                 response.getWriter().print("success");
                 response.setStatus(HttpServletResponse.SC_OK);
                 return;
             } else {
-                response.getWriter().print(reader.getError());
+                if (reader != null) {
+                    response.getWriter().print(reader.getError());
+                }
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
 
         } else {
-            response.getWriter().print(reader.getError());
+            if (reader != null) {
+                response.getWriter().print(reader.getError());
+            }
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
 
     }
 
-    private boolean userValid(String user, String password) {
-        Login login = new Login();
+    private String getSysUserId(String user, String password) {
+        LoginUser login = new LoginUser();
         login.setLoginName(user);
         login.setPassword(password);
 
-//		LoginDAO loginDAO = new LoginDAOImpl();
+        login = loginService.getValidatedLogin(user, password).orElse(null);
+
+        if (login != null) {
+            SystemUser systemUser = systemUserService.getDataForLoginUser(login.getLoginName());
+            return systemUser.getId();
+        }
+
+        return "";
+    }
+
+    private boolean userValid(String user, String password) {
+        LoginUser login = new LoginUser();
+        login.setLoginName(user);
+        login.setPassword(password);
 
         login = loginService.getValidatedLogin(user, password).orElse(null);
 
         if (login == null) {
             return false;
         } else {
-//			SystemUserDAO systemUserDAO = new SystemUserDAOImpl();
-            SystemUser systemUser = systemUserService.getDataForLoginUser(login.getLoginName());
-            systemUserId = systemUser.getId();
+            return true;
         }
-
-        return true;
     }
 
-    private String streamToString(InputStream stream) throws IOException {
-        StringBuilder builder = new StringBuilder();
+//    private String streamToString(InputStream stream) throws IOException {
+//        StringBuilder builder = new StringBuilder();
+//        int len;
+//        byte[] buffer = new byte[1024];
+//        while ((len = stream.read(buffer, 0, buffer.length)) != -1) {
+//            builder.append(new String(buffer, 0, len, StandardCharsets.UTF_8));
+//        }
+//        return builder.toString();
+//    }
+
+    private String fieldStreamToString(InputStream stream) throws IOException {
+        StringBuilder builder = new StringBuilder((int) (FIELD_SIZE_MAX / 2));
         int len;
-        byte[] buffer = new byte[1024];
+        byte[] buffer = new byte[32];
+        int totalFieldSize = 0;
+
         while ((len = stream.read(buffer, 0, buffer.length)) != -1) {
-            builder.append(new String(buffer, 0, len));
+            builder.append(new String(buffer, 0, len, StandardCharsets.UTF_8));
+            totalFieldSize += len;
+            if (totalFieldSize >= FIELD_SIZE_MAX) {
+                break;
+            }
         }
         return builder.toString();
     }

@@ -19,7 +19,7 @@
 package org.openelisglobal.sample.util.CI;
 
 import org.openelisglobal.common.exception.LIMSRuntimeException;
-import org.openelisglobal.common.form.BaseForm;
+import org.openelisglobal.sample.util.CI.form.IProjectForm;
 
 public class ProjectFormMapperFactory {
 
@@ -31,7 +31,8 @@ public class ProjectFormMapperFactory {
     private static final String IND = "Indeterminate_Id";
     private static final String SPE = "Special_Request_Id";
 
-    public IProjectFormMapper getProjectInitializer(String projectFormId, BaseForm form) throws LIMSRuntimeException {
+    public IProjectFormMapper getProjectInitializer(String projectFormId, IProjectForm form)
+            throws LIMSRuntimeException {
 
         if (projectFormId.equals(InitialARV) || projectFormId.equals(FollowUpARV) || projectFormId.equals(VL)) {
             return new ARVFormMapper(projectFormId, form);

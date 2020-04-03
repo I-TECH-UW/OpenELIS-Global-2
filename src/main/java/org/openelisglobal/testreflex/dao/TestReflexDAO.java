@@ -51,20 +51,20 @@ public interface TestReflexDAO extends BaseDAO<TestReflex, String> {
      * @return
      * @throws LIMSRuntimeException
      */
-    public List getAllTestReflexs() throws LIMSRuntimeException;
+    List<TestReflex> getAllTestReflexs() throws LIMSRuntimeException;
 
     /**
      * @param startingRecNo
      * @return
      * @throws LIMSRuntimeException
      */
-    public List getPageOfTestReflexs(int startingRecNo) throws LIMSRuntimeException;
+    List<TestReflex> getPageOfTestReflexs(int startingRecNo) throws LIMSRuntimeException;
 
     /**
      * @param testReflex
      * @throws LIMSRuntimeException
      */
-    public void getData(TestReflex testReflex) throws LIMSRuntimeException;
+    void getData(TestReflex testReflex) throws LIMSRuntimeException;
 
     /**
      * @param testReflex
@@ -77,21 +77,19 @@ public interface TestReflexDAO extends BaseDAO<TestReflex, String> {
      * @return
      * @throws LIMSRuntimeException
      */
-    public List getNextTestReflexRecord(String id) throws LIMSRuntimeException;
 
     /**
      * @param id
      * @return
      * @throws LIMSRuntimeException
      */
-    public List getPreviousTestReflexRecord(String id) throws LIMSRuntimeException;
 
     /**
      * @param testReflex
      * @param testResult
      * @throws LIMSRuntimeException
      */
-    public List getTestReflexesByTestResult(TestResult testResult) throws LIMSRuntimeException;
+    List<TestReflex> getTestReflexesByTestResult(TestResult testResult) throws LIMSRuntimeException;
 
     /**
      * @param testReflex
@@ -99,7 +97,7 @@ public interface TestReflexDAO extends BaseDAO<TestReflex, String> {
      * @param testAnalyte
      * @throws LIMSRuntimeException
      */
-    public List getTestReflexesByTestResultAndTestAnalyte(TestResult testResult, TestAnalyte testAnalyte)
+    List<TestReflex> getTestReflexesByTestResultAndTestAnalyte(TestResult testResult, TestAnalyte testAnalyte)
             throws LIMSRuntimeException;
 
     // bugzilla 1411
@@ -107,7 +105,7 @@ public interface TestReflexDAO extends BaseDAO<TestReflex, String> {
      * @return
      * @throws LIMSRuntimeException
      */
-    public Integer getTotalTestReflexCount() throws LIMSRuntimeException;
+    Integer getTotalTestReflexCount() throws LIMSRuntimeException;
 
     /**
      * bugzilla 1798
@@ -115,7 +113,7 @@ public interface TestReflexDAO extends BaseDAO<TestReflex, String> {
      * @param analysis
      * @throws LIMSRuntimeException
      */
-    public boolean isReflexedTest(Analysis analysis) throws LIMSRuntimeException;
+    boolean isReflexedTest(Analysis analysis) throws LIMSRuntimeException;
 
     /**
      * Gets the ReflexTest for the analysis if there is one, otherwise returns null.
@@ -123,7 +121,7 @@ public interface TestReflexDAO extends BaseDAO<TestReflex, String> {
      * @param analysis
      * @throws LIMSRuntimeException
      */
-    public List<TestReflex> getTestReflexsByTestResultAnalyteTest(String testResultId, String analyteId, String testId)
+    List<TestReflex> getTestReflexsByTestResultAnalyteTest(String testResultId, String analyteId, String testId)
             throws LIMSRuntimeException;
 
     /*
@@ -135,10 +133,9 @@ public interface TestReflexDAO extends BaseDAO<TestReflex, String> {
      *
      * @param flag The value of the flag field. May be null
      */
-    public List<TestReflex> getTestReflexsByTestAndFlag(String testId, String flag) throws LIMSRuntimeException;
+    List<TestReflex> getTestReflexsByTestAndFlag(String testId, String flag) throws LIMSRuntimeException;
 
-    public List<TestReflex> getFlaggedTestReflexesByTestResult(TestResult testResult, String flag)
-            throws LIMSRuntimeException;
+    List<TestReflex> getFlaggedTestReflexesByTestResult(TestResult testResult, String flag) throws LIMSRuntimeException;
 
     boolean duplicateTestReflexExists(TestReflex testReflex) throws LIMSRuntimeException;
 }

@@ -23,20 +23,20 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.observationhistory.valueholder.ObservationHistory;
 import org.openelisglobal.patient.valueholder.ObservationData;
+import org.openelisglobal.sample.util.CI.form.IProjectForm;
 import org.openelisglobal.test.valueholder.Test;
 
 public class RTNFormMapper extends BaseProjectFormMapper implements IProjectFormMapper {
 
     private String projectCode = "LRTN";
 
-    public RTNFormMapper(String projectFormId, BaseForm form) {
+    public RTNFormMapper(String projectFormId, IProjectForm form) {
         super(projectFormId, form);
     }
 
-    private List<Test> getTests(BaseForm form) {
+    private List<Test> getTests(IProjectForm form) {
         List<Test> testList = new ArrayList<>();
 
         if (projectData.getSerologyHIVTest()) {
@@ -56,13 +56,11 @@ public class RTNFormMapper extends BaseProjectFormMapper implements IProjectForm
     @Override
     public ArrayList<TypeOfSampleTests> getTypeOfSampleTests() {
         ArrayList<TypeOfSampleTests> sItemTests = new ArrayList<>();
-        List<Test> testList = new ArrayList<>();
 
         // Check for Dry Tube Tests
         if (projectData.getSerologyHIVTest()) {
             if (projectData.getDryTubeTaken()) {
-                testList = getTests(form);
-                sItemTests.add(new TypeOfSampleTests(getTypeOfSample("Dry Tube"), testList));
+                sItemTests.add(new TypeOfSampleTests(getTypeOfSample("Dry Tube"), getTests(form)));
             }
         }
         return sItemTests;

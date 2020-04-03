@@ -48,7 +48,7 @@ public class SampleRequesterDAOImpl extends BaseDAOImpl<SampleRequester, String>
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("SampleRequesterDAOImpl", "insertData()", e.toString());
 //			throw new LIMSRuntimeException("Error in SampleRequester insertData()", e);
 //		}
@@ -66,7 +66,7 @@ public class SampleRequesterDAOImpl extends BaseDAOImpl<SampleRequester, String>
 //			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 //			String tableName = "SAMPLE_REQUESTER";
 //			auditDAO.saveHistory(sampleRequester, oldData, sysUserId, event, tableName);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("SampleRequesterDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in SampleRequester AuditTrail updateData()", e);
 //		}
@@ -78,7 +78,7 @@ public class SampleRequesterDAOImpl extends BaseDAOImpl<SampleRequester, String>
 //			// entityManager.unwrap(Session.class).evict // CSL remove old(sampleRequester);
 //			// entityManager.unwrap(Session.class).refresh // CSL remove
 //			// old(sampleRequester);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("SampleRequesterDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in SampleRequester updateData()", e);
 //		}
@@ -99,7 +99,7 @@ public class SampleRequesterDAOImpl extends BaseDAOImpl<SampleRequester, String>
         // closeSession(); // CSL remove old
     }
 
-    @SuppressWarnings("unchecked")
+    
     @Override
     @Transactional(readOnly = true)
     public List<SampleRequester> getRequestersForSampleId(String sampleId) throws LIMSRuntimeException {
@@ -130,7 +130,7 @@ public class SampleRequesterDAOImpl extends BaseDAOImpl<SampleRequester, String>
             // closeSession(); // CSL remove old
             return requester;
         } catch (HibernateException e) {
-            LogEvent.logError("SampleRequesterDAOImpl", "readOld()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in SampleRequester readOld()", e);
         }
     }

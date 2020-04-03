@@ -9,19 +9,15 @@ import org.openelisglobal.renametestsection.valueholder.RenameTestSection;
 public interface RenameTestSectionService extends BaseObjectService<RenameTestSection, String> {
     void getData(RenameTestSection testSection);
 
-    List getTestSections(String filter);
+    List<RenameTestSection> getTestSections(String filter);
 
     RenameTestSection getTestSectionByName(RenameTestSection testSection);
 
-    List getNextTestSectionRecord(String id);
-
-    List getPageOfTestSections(int startingRecNo);
+    List<RenameTestSection> getPageOfTestSections(int startingRecNo);
 
     Integer getTotalTestSectionCount();
 
-    List getPreviousTestSectionRecord(String id);
-
-    List getAllTestSections();
+    List<RenameTestSection> getAllTestSections();
 
     RenameTestSection getTestSectionById(String id);
 

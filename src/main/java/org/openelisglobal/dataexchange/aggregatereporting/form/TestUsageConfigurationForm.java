@@ -20,7 +20,7 @@ public class TestUsageConfigurationForm extends BaseForm {
 
     private String serviceUserName = "";
 
-    private String servicePassword = "";
+    private String servicePassword;
 
     private String lastSent = "Never";
 

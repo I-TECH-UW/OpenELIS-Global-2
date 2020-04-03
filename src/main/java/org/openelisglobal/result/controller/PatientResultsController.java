@@ -6,7 +6,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.services.DisplayListService;
@@ -26,6 +25,8 @@ import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.test.beanItems.TestResultItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -33,8 +34,15 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class PatientResultsController extends BaseController {
 
+    private static final String[] ALLOWED_FIELDS = new String[] {};
+
     @Autowired
     PatientService patientService;
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
 
     @RequestMapping(value = "/PatientResults", method = RequestMethod.GET)
     public ModelAndView showPatientResults(HttpServletRequest request)
@@ -45,15 +53,14 @@ public class PatientResultsController extends BaseController {
         resultsUtility.setSysUser(getSysUserId(request));
         request.getSession().setAttribute(SAVE_DISABLED, TRUE);
 
-        PropertyUtils.setProperty(form, "displayTestKit", Boolean.FALSE);
-        PropertyUtils.setProperty(form, "referralReasons",
-                DisplayListService.getInstance().getList(DisplayListService.ListType.REFERRAL_REASONS));
-        PropertyUtils.setProperty(form, "rejectReasons", DisplayListService.getInstance()
+        form.setDisplayTestKit(Boolean.FALSE);
+        form.setReferralReasons(DisplayListService.getInstance().getList(DisplayListService.ListType.REFERRAL_REASONS));
+        form.setRejectReasons(DisplayListService.getInstance()
                 .getNumberedListWithLeadingBlank(DisplayListService.ListType.REJECTION_REASONS));
         PatientSearch patientSearch = new PatientSearch();
         patientSearch.setLoadFromServerWithPatient(true);
         patientSearch.setSelectedPatientActionButtonText(MessageUtil.getMessage("resultsentry.patient.search"));
-        PropertyUtils.setProperty(form, "patientSearch", patientSearch);
+        form.setPatientSearch(patientSearch);
 
         ResultsPaging paging = new ResultsPaging();
         String newPage = request.getParameter("page");
@@ -63,7 +70,7 @@ public class PatientResultsController extends BaseController {
 
             if (!GenericValidator.isBlankOrNull(patientID)) {
 
-                PropertyUtils.setProperty(form, "searchFinished", Boolean.TRUE);
+                form.setSearchFinished(Boolean.TRUE);
                 Patient patient = getPatient(patientID);
 
                 String statusRules = ConfigurationProperties.getInstance()
@@ -77,14 +84,14 @@ public class PatientResultsController extends BaseController {
 
                 List<TestResultItem> results = resultsUtility.getGroupedTestsForPatient(patient);
 
-                PropertyUtils.setProperty(form, "testResult", results);
+                form.setTestResult(results);
 
                 // move this out of results utility
                 resultsUtility.addIdentifingPatientInfo(patient, form);
 
                 if (resultsUtility.inventoryNeeded()) {
                     addInventory(form);
-                    PropertyUtils.setProperty(form, "displayTestKit", true);
+                    form.setDisplayTestKit(true);
                 } else {
                     addEmptyInventoryList(form);
                 }
@@ -92,11 +99,11 @@ public class PatientResultsController extends BaseController {
                 paging.setDatabaseResults(request, form, results);
 
             } else {
-                PropertyUtils.setProperty(form, "testResult", new ArrayList<TestResultItem>());
-                PropertyUtils.setProperty(form, "searchFinished", Boolean.FALSE);
+                form.setTestResult(new ArrayList<TestResultItem>());
+                form.setSearchFinished(Boolean.FALSE);
             }
         } else {
-            paging.page(request, form, newPage);
+            paging.page(request, form, Integer.parseInt(newPage));
         }
 
         addFlashMsgsToRequest(request);
@@ -107,12 +114,12 @@ public class PatientResultsController extends BaseController {
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         InventoryUtility inventoryUtility = SpringContext.getBean(InventoryUtility.class);
         List<InventoryKitItem> list = inventoryUtility.getExistingActiveInventory();
-        PropertyUtils.setProperty(form, "inventoryItems", list);
+        form.setInventoryItems(list);
     }
 
     private void addEmptyInventoryList(PatientResultsForm form)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        PropertyUtils.setProperty(form, "inventoryItems", new ArrayList<InventoryKitItem>());
+        form.setInventoryItems(new ArrayList<InventoryKitItem>());
     }
 
     private Patient getPatient(String patientID) {

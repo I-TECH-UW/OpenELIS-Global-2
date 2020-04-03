@@ -1,6 +1,5 @@
 package org.openelisglobal.testconfiguration.controller;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -9,13 +8,13 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.panel.service.PanelService;
@@ -28,6 +27,8 @@ import org.openelisglobal.testconfiguration.validator.PanelOrderFormValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -35,6 +36,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class PanelOrderController extends BaseController {
+
+    private static final String[] ALLOWED_FIELDS = new String[] { "jsonChangeList" };
 
     @Autowired
     PanelOrderFormValidator formValidator;
@@ -52,16 +55,15 @@ public class PanelOrderController extends BaseController {
         return findForward(FWD_SUCCESS, form);
     }
 
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
+
     protected void setupDisplayItems(PanelOrderForm form) {
-        try {
-            PropertyUtils.setProperty(form, "panelList",
-                    DisplayListService.getInstance().getList(DisplayListService.ListType.PANELS));
-            PropertyUtils.setProperty(form, "existingSampleTypeList",
-                    DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE));
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        form.setPanelList(DisplayListService.getInstance().getList(DisplayListService.ListType.PANELS));
+        form.setExistingSampleTypeList(
+                DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE));
 
         HashMap<String, List<Panel>> existingSampleTypePanelMap = panelTestConfigurationUtil
                 .createTypeOfSamplePanelMap(true);
@@ -88,18 +90,13 @@ public class PanelOrderController extends BaseController {
             sampleTypePanelsInactive.add(sampleTypePanelInactive);
         }
 
-        try {
-            PropertyUtils.setProperty(form, "existingPanelList", sampleTypePanelsExists);
-            PropertyUtils.setProperty(form, "inactivePanelList", sampleTypePanelsInactive);
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        form.setExistingPanelList(sampleTypePanelsExists);
+        form.setInactivePanelList(sampleTypePanelsInactive);
     }
 
     @RequestMapping(value = "/PanelOrder", method = RequestMethod.POST)
     public ModelAndView postPanelOrder(HttpServletRequest request, @ModelAttribute("form") @Valid PanelOrderForm form,
-            BindingResult result) throws Exception {
+            BindingResult result) throws ParseException {
         formValidator.validate(form, result);
         if (result.hasErrors()) {
             saveErrors(result);
@@ -107,7 +104,7 @@ public class PanelOrderController extends BaseController {
             return findForward(FWD_FAIL_INSERT, form);
         }
 
-        String changeList = form.getString("jsonChangeList");
+        String changeList = form.getJsonChangeList();
 
         JSONParser parser = new JSONParser();
         JSONObject obj = (JSONObject) parser.parse(changeList);
@@ -125,7 +122,7 @@ public class PanelOrderController extends BaseController {
         try {
             panelService.updateAll(panels);
         } catch (LIMSRuntimeException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
 
         DisplayListService.getInstance().refreshList(DisplayListService.ListType.PANELS);
@@ -156,7 +153,7 @@ public class PanelOrderController extends BaseController {
                 list.add(set);
             }
         } catch (ParseException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
 
         return list;

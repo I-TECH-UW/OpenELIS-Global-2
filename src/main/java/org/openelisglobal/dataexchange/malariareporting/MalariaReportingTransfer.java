@@ -116,8 +116,8 @@ public class MalariaReportingTransfer {
 
             try {
                 reportExternalExportService.insert(report);
-            } catch (LIMSRuntimeException lre) {
-                LogEvent.logErrorStack(this.getClass().getSimpleName(), "bufferResults()", lre);
+            } catch (LIMSRuntimeException e) {
+                LogEvent.logErrorStack(e);
             }
         }
 
@@ -156,8 +156,8 @@ public class MalariaReportingTransfer {
 //				for (DocumentTrack document : documents) {
 //					trackService.insert(document);
 //				}
-            } catch (LIMSRuntimeException lre) {
-                LogEvent.logErrorStack(this.getClass().getSimpleName(), "markResultsAsSent()", lre);
+            } catch (LIMSRuntimeException e) {
+                LogEvent.logErrorStack(e);
             }
         }
     }

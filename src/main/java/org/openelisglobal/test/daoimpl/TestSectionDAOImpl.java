@@ -15,8 +15,9 @@
 */
 package org.openelisglobal.test.daoimpl;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
@@ -59,7 +60,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
 //				String tableName = "TEST_SECTION";
 //				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("TestSectionDAOImpl", "AuditTrail deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in TestSection AuditTrail deleteData()", e);
@@ -74,7 +75,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
 //				// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("TestSectionDAOImpl", "deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in TestSection deleteData()", e);
@@ -98,7 +99,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("TestSectionDAOImpl", "insertData()", e.toString());
 //			throw new LIMSRuntimeException("Error in TestSection insertData()", e);
@@ -115,7 +116,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
 //				throw new LIMSDuplicateRecordException(
 //						"Duplicate record exists for " + testSection.getTestSectionName());
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("TestSectionDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in TestSection updateData()", e);
@@ -131,7 +132,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
 //			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 //			String tableName = "TEST_SECTION";
 //			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("TestSectionDAOImpl", "AuditTrail updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in TestSection AuditTrail updateData()", e);
@@ -143,7 +144,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			// entityManager.unwrap(Session.class).evict // CSL remove old(testSection);
 //			// entityManager.unwrap(Session.class).refresh // CSL remove old(testSection);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("TestSectionDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in TestSection updateData()", e);
@@ -162,14 +163,14 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
             } else {
                 testSection.setId(null);
             }
-        } catch (Exception e) {
-            LogEvent.logError("TestSectionDAOImpl", "getData()", e.toString());
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TestSection getData()", e);
         }
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public List<TestSection> getAllTestSections() throws LIMSRuntimeException {
         List<TestSection> list = null;
@@ -179,8 +180,8 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
-            LogEvent.logError("TestSectionDAOImpl", "getAllTestSections()", e.toString());
+        } catch (RuntimeException e) {
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TestSection getAllTestSections()", e);
         }
         return list;
@@ -194,8 +195,9 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
      */
     @Override
     @Transactional(readOnly = true)
-    public List getAllTestSectionsBySysUserId(int sysUserId, String sectionIdList) throws LIMSRuntimeException {
-        List list = new Vector();
+    public List<TestSection> getAllTestSectionsBySysUserId(int sysUserId, List<String> sectionIds)
+            throws LIMSRuntimeException {
+        List<TestSection> list = new ArrayList<>();
 
         String sql = "";
 
@@ -206,20 +208,19 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
 //				SystemUserSection sus = (SystemUserSection) userTestSectionList.get(i);
 //				sectionIdList += sus.getTestSection().getId() + ",";
 //			}
-            if (!(sectionIdList.equals("")) && (sectionIdList.length() > 0)) {
-                sectionIdList = sectionIdList.substring(0, sectionIdList.length() - 1);
-                sql = "from TestSection where id in (" + sectionIdList + ")";
-            } else {
+            if (sectionIds.isEmpty()) {
                 return list;
             }
 
+            sql = "from TestSection where id in (:ids)";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setParameterList("ids", sectionIds);
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError("TestSectionDAOImpl", "getAllTestSectionsBySysUserId()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TestSection getAllTestSectionsBySysUserId()", e);
         }
         return list;
@@ -227,8 +228,8 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfTestSections(int startingRecNo) throws LIMSRuntimeException {
-        List list = new Vector();
+    public List<TestSection> getPageOfTestSections(int startingRecNo) throws LIMSRuntimeException {
+        List<TestSection> list;
         try {
             // calculate maxRow to be one more than the page size
             int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
@@ -242,9 +243,9 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError("TestSectionDAOImpl", "getPageOfTestSections()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TestSection getPageOfTestSections()", e);
         }
 
@@ -257,9 +258,9 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
             ts = entityManager.unwrap(Session.class).get(TestSection.class, idString);
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError("TestSectionDAOImpl", "readCity()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TestSection readCity()", e);
         }
 
@@ -269,8 +270,8 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
     // this is for autocomplete
     @Override
     @Transactional(readOnly = true)
-    public List getTestSections(String filter) throws LIMSRuntimeException {
-        List list = new Vector();
+    public List<TestSection> getTestSections(String filter) throws LIMSRuntimeException {
+        List<TestSection> list;
         try {
             String sql = "from TestSection t where upper(t.testSectionName) like upper(:param) order by upper(t.testSectionName)";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -278,9 +279,9 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError("TestSectionDAOImpl", "getTestSections()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TestSection getTestSections(String filter)", e);
         }
 
@@ -290,9 +291,9 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
     // this is for autocomplete
     @Override
     @Transactional(readOnly = true)
-    public List getTestSectionsBySysUserId(String filter, int sysUserId, String sectionIdList)
+    public List<TestSection> getTestSectionsBySysUserId(String filter, int sysUserId, List<String> sectionIdList)
             throws LIMSRuntimeException {
-        List list = new Vector();
+        List<TestSection> list = new ArrayList<>();
         String sql = "";
 
         try {
@@ -302,22 +303,21 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
 //				SystemUserSection sus = (SystemUserSection) userTestSectionList.get(i);
 //				sectionIdList += sus.getTestSection().getId() + ",";
 //			}
-            if (!(sectionIdList.equals("")) && (sectionIdList.length() > 0)) {
-                sectionIdList = sectionIdList.substring(0, sectionIdList.length() - 1);
-                sql = "from TestSection t where upper(t.testSectionName) like upper(:param) and t.id in ("
-                        + sectionIdList + ") order by upper(t.testSectionName)";
+            if (sectionIdList.size() > 0) {
+                sql = "from TestSection t where upper(t.testSectionName) like upper(:param) and t.id in (:sectionIdList) order by upper(t.testSectionName)";
             } else {
                 return list;
             }
 
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setParameter("param", filter + "%");
+            query.setParameterList("sectionIdList", sectionIdList);
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError("TestSectionDAOImpl", "getTestSectionsBySysUserId()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TestSection getTestSectionsBySysUserId(String filter)", e);
         }
 
@@ -325,22 +325,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public List getNextTestSectionRecord(String id) throws LIMSRuntimeException {
 
-        return getNextRecord(id, "TestSection", TestSection.class);
-
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousTestSectionRecord(String id) throws LIMSRuntimeException {
-
-        return getPreviousRecord(id, "TestSection", TestSection.class);
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
     @Transactional(readOnly = true)
     public TestSection getTestSectionByName(TestSection testSection) throws LIMSRuntimeException {
         try {
@@ -358,8 +343,8 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
 
             return null;
 
-        } catch (Exception e) {
-            LogEvent.logError("TestSectionDAOImpl", "getTestSectionByName()", e.toString());
+        } catch (RuntimeException e) {
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TestSection getTestSectionByName()", e);
         }
     }
@@ -368,77 +353,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
     @Override
     @Transactional(readOnly = true)
     public Integer getTotalTestSectionCount() throws LIMSRuntimeException {
-        return getTotalCount("TestSection", TestSection.class);
-    }
-
-//	bugzilla 1427
-    @Override
-    @Transactional(readOnly = true)
-    public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
-        int currentId = (Integer.valueOf(id)).intValue();
-        String tablePrefix = getTablePrefix(table);
-
-        List list = new Vector();
-        // bugzilla 1908
-        int rrn = 0;
-        try {
-            // bugzilla 1908 cannot use named query for postgres because of oracle ROWNUM
-            // instead get the list in this sortorder and determine the index of record with
-            // id = currentId
-            String sql = "select ts.id from TestSection ts "
-                    + " order by ts.organization.organizationName, ts.testSectionName";
-
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            list = query.list();
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
-            rrn = list.indexOf(String.valueOf(currentId));
-
-            list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
-                    .setMaxResults(2).list();
-
-        } catch (Exception e) {
-            // bugzilla 2154
-            LogEvent.logError("TestSectionDAOImpl", "getNextRecord()", e.toString());
-            throw new LIMSRuntimeException("Error in getNextRecord() for " + table, e);
-        }
-
-        return list;
-    }
-
-    // bugzilla 1427
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
-        int currentId = (Integer.valueOf(id)).intValue();
-        String tablePrefix = getTablePrefix(table);
-
-        List list = new Vector();
-        // bugzilla 1908
-        int rrn = 0;
-        try {
-            // bugzilla 1908 cannot use named query for postgres because of oracle ROWNUM
-            // instead get the list in this sortorder and determine the index of record with
-            // id = currentId
-            String sql = "select ts.id from TestSection ts "
-                    + " order by ts.organization.organizationName desc, ts.testSectionName desc";
-
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            list = query.list();
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
-            rrn = list.indexOf(String.valueOf(currentId));
-
-            list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getPrevious")
-                    .setFirstResult(rrn + 1).setMaxResults(2).list();
-
-        } catch (Exception e) {
-            // bugzilla 2154
-            LogEvent.logError("TestSectionDAOImpl", "getPreviousRecord()", e.toString());
-            throw new LIMSRuntimeException("Error in getPreviousRecord() for " + table, e);
-        }
-
-        return list;
+        return getCount();
     }
 
     @Override
@@ -456,14 +371,14 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
             }
             query.setInteger("id", Integer.parseInt(testSectionId));
 
-            List list = query.list();
+            List<TestSection> list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
             return !list.isEmpty();
 
-        } catch (Exception e) {
-            LogEvent.logError("TestSectionDAOImpl", "duplicateTestSectionExists()", e.toString());
+        } catch (RuntimeException e) {
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in duplicateTestSectionExists()", e);
         }
     }
@@ -475,7 +390,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
 
         try {
             Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            @SuppressWarnings("unchecked")
+
             List<TestSection> sections = query.list();
             // closeSession(); // CSL remove old
             return sections;
@@ -501,7 +416,6 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
         return null;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     @Transactional(readOnly = true)
     public TestSection getTestSectionByName(String testSection) throws LIMSRuntimeException {
@@ -518,7 +432,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
                 return list.get(0);
             }
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             handleException(e, "getTestSectionByName");
         }
 

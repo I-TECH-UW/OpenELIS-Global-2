@@ -41,7 +41,7 @@ import org.springframework.transaction.annotation.Transactional;
 @DependsOn({ "springContext" })
 public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> implements ResultService {
 
-    public static String TABLE_REFERENCE_ID;
+    private static String TABLE_REFERENCE_ID;
 
     @Autowired
     private static ResultDAO baseObjectDAO = SpringContext.getBean(ResultDAO.class);
@@ -71,6 +71,10 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
     @Override
     protected ResultDAO getBaseObjectDAO() {
         return baseObjectDAO;
+    }
+
+    public static String getTableReferenceId() {
+        return TABLE_REFERENCE_ID;
     }
 
     @Override
@@ -499,18 +503,6 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
 
     @Override
     @Transactional(readOnly = true)
-    public List getNextResultRecord(String id) {
-        return getBaseObjectDAO().getNextResultRecord(id);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousResultRecord(String id) {
-        return getBaseObjectDAO().getPreviousResultRecord(id);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public void getResultByAnalysisAndAnalyte(Result result, Analysis analysis, TestAnalyte ta) {
         getBaseObjectDAO().getResultByAnalysisAndAnalyte(result, analysis, ta);
 
@@ -579,7 +571,7 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllResults() {
+    public List<Result> getAllResults() {
         return getBaseObjectDAO().getAllResults();
     }
 
@@ -597,7 +589,7 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfResults(int startingRecNo) {
+    public List<Result> getPageOfResults(int startingRecNo) {
         return getBaseObjectDAO().getPageOfResults(startingRecNo);
     }
 

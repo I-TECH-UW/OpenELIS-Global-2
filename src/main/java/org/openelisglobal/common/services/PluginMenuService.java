@@ -17,6 +17,7 @@
 package org.openelisglobal.common.services;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
@@ -102,7 +103,7 @@ public class PluginMenuService {
     }
 
     public String getMenuLabel(String locale, String key) {
-        Map<String, String> localSpecificMap = menuLabelMap.get(locale);
+        Map<String, String> localSpecificMap = getLocaleSpecificMap(Locale.forLanguageTag(locale));
         if (localSpecificMap == null) {
             return key;
         }
@@ -112,6 +113,14 @@ public class PluginMenuService {
             return key;
         }
         return value;
+    }
+
+    private Map<String, String> getLocaleSpecificMap(Locale locale) {
+        Map<String, String> localSpecificMap = menuLabelMap.get(locale.toLanguageTag());
+        if (localSpecificMap == null) {
+            localSpecificMap = menuLabelMap.get(locale.getLanguage());
+        }
+        return localSpecificMap;
     }
 
     public void addMenu(Menu menu) {

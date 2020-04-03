@@ -17,6 +17,7 @@
 package org.openelisglobal.common.services.historyservices;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,7 +29,8 @@ import java.util.Map;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.audittrail.action.workers.AuditTrailItem;
 import org.openelisglobal.audittrail.valueholder.History;
-import org.openelisglobal.common.services.StatusService;
+import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
@@ -92,9 +94,9 @@ public abstract class AbstractHistoryService {
                     addInsertion(history, items);
                 }
             } catch (SQLException e) {
-                e.printStackTrace();
+                LogEvent.logDebug(e);
             } catch (IOException e) {
-                e.printStackTrace();
+                LogEvent.logDebug(e);
             }
         }
 
@@ -149,13 +151,13 @@ public abstract class AbstractHistoryService {
 
     private Map<String, String> getChangeMap(History history) throws SQLException, IOException {
         Map<String, String> changeMap = new HashMap<>();
-        // System.out.println( history.getId() + " : " + history.getActivity() );
+        // LogEvent.logInfo(this.getClass().getName(), "method unkown",  history.getId() + " : " + history.getActivity() );
         if ("U".equals(history.getActivity()) || "D".equals(history.getActivity())) {
 
             byte[] bindata = history.getChanges();
 
-            String changes = bindata.toString();
-            // System.out.println(history.getActivity() + " : "+ changes);
+            String changes = new String(bindata, StandardCharsets.UTF_8);
+            // LogEvent.logInfo(this.getClass().getName(), "method unkown", history.getActivity() + " : "+ changes);
             getObservableChanges(history, changeMap, changes);
 
         }
@@ -184,7 +186,7 @@ public abstract class AbstractHistoryService {
 
     protected String extractStatus(String changes) {
         String statusId = extractSimple(changes, "statusId");
-        return statusId == null ? null : StatusService.getInstance().getStatusNameFromId(statusId);
+        return statusId == null ? null : SpringContext.getBean(IStatusService.class).getStatusNameFromId(statusId);
     }
 
     protected String getViewableValue(String value, Result result) {

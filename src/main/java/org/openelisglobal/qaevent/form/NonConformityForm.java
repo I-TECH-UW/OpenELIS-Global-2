@@ -26,6 +26,9 @@ public class NonConformityForm extends BaseForm {
     public interface NonConformity {
     }
 
+    public interface NonConformitySearch {
+    }
+
     @NotNull(groups = { NonConformity.class })
     private Boolean readOnly = Boolean.TRUE;
 
@@ -49,7 +52,7 @@ public class NonConformityForm extends BaseForm {
     @Pattern(regexp = ValidationHelper.ID_REGEX, groups = { NonConformity.class })
     private String projectId = "";
 
-    @SafeHtml(groups = { NonConformity.class })
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { NonConformity.class })
     private String project = "";
 
     // unused?
@@ -74,28 +77,28 @@ public class NonConformityForm extends BaseForm {
     @Pattern(regexp = ValidationHelper.PATIENT_ID_REGEX, groups = { NonConformity.class })
     private String nationalId = "";
 
-    @ValidAccessionNumber(groups = { NonConformity.class })
+    @ValidAccessionNumber(groups = { NonConformity.class, NonConformitySearch.class })
     private String labNo = "";
 
     @NotNull(groups = { NonConformity.class })
     private Boolean doctorNew = Boolean.TRUE;
 
-    @SafeHtml(groups = { NonConformity.class })
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { NonConformity.class })
     private String doctor = "";
 
     @NotNull(groups = { NonConformity.class })
     private Boolean serviceNew = Boolean.TRUE;
 
-    @SafeHtml(groups = { NonConformity.class })
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { NonConformity.class })
     private String service = "";
 
-    @SafeHtml(groups = { NonConformity.class })
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { NonConformity.class })
     private String newServiceName = "";
 
     @Valid
     private List<QaEventItem> qaEvents;
 
-    @SafeHtml(groups = { NonConformity.class })
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { NonConformity.class })
     private String section = "";
 
     // for display
@@ -113,10 +116,10 @@ public class NonConformityForm extends BaseForm {
     // @NotNull(groups = { NonConformity.class })
     private Boolean commentNew;
 
-    @SafeHtml(groups = { NonConformity.class })
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { NonConformity.class })
     private String comment = "";
 
-    @SafeHtml(groups = { NonConformity.class })
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { NonConformity.class })
     private String biologest = "";
 
     // for display
@@ -137,16 +140,16 @@ public class NonConformityForm extends BaseForm {
     @Pattern(regexp = ValidationHelper.PHONE_REGEX, groups = { NonConformity.class })
     private String providerWorkPhone = "";
 
-    @SafeHtml(groups = { NonConformity.class })
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { NonConformity.class })
     private String providerStreetAddress = "";
 
-    @SafeHtml(groups = { NonConformity.class })
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { NonConformity.class })
     private String providerCity = "";
 
-    @SafeHtml(groups = { NonConformity.class })
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { NonConformity.class })
     private String providerCommune = "";
 
-    @SafeHtml(groups = { NonConformity.class })
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { NonConformity.class })
     private String providerDepartment = "";
 
     // for display

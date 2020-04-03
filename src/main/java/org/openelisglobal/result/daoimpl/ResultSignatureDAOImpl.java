@@ -17,6 +17,7 @@
 */
 package org.openelisglobal.result.daoimpl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,7 +55,7 @@ public class ResultSignatureDAOImpl extends BaseDAOImpl<ResultSignature, String>
 //				String tableName = "RESULT_SIGNATURE";
 //				auditDAO.saveHistory(resultSig, oldData, sysUserId, event, tableName);
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //
 //			LogEvent.logError("ResultSignatureDAOImpl", "AuditTrail deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in ResultSignature AuditTrail deleteData()", e);
@@ -69,7 +70,7 @@ public class ResultSignatureDAOImpl extends BaseDAOImpl<ResultSignature, String>
 //				// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //				// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("ResultSignatureDAOImpl", "deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in ResultSignature deleteData()", e);
 //		}
@@ -88,7 +89,7 @@ public class ResultSignatureDAOImpl extends BaseDAOImpl<ResultSignature, String>
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("ResultSignatureDAOImpl", "insertData()", e.toString());
 //			throw new LIMSRuntimeException("Error in ResultSignature insertData()", e);
 //		}
@@ -108,7 +109,7 @@ public class ResultSignatureDAOImpl extends BaseDAOImpl<ResultSignature, String>
 //			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 //			String tableName = "RESULT_SIGNATURE";
 //			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("ResultSignatureDAOImpl", "AuditTrail insertData()", e.toString());
 //			throw new LIMSRuntimeException("Error in ResultSignature AuditTrail updateData()", e);
 //		}
@@ -120,7 +121,7 @@ public class ResultSignatureDAOImpl extends BaseDAOImpl<ResultSignature, String>
 //			// entityManager.unwrap(Session.class).evict // CSL remove old(resultSignature);
 //			// entityManager.unwrap(Session.class).refresh // CSL remove
 //			// old(resultSignature);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("ResultSignatureDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in ResultSignature updateData()", e);
 //		}
@@ -139,14 +140,14 @@ public class ResultSignatureDAOImpl extends BaseDAOImpl<ResultSignature, String>
             } else {
                 resultSignature.setId(null);
             }
-        } catch (Exception e) {
-            LogEvent.logError("ResultSignatureDAOImpl", "getData()", e.toString());
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in ResultSignature getData()", e);
         }
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public List<ResultSignature> getResultSignaturesByResult(Result result) throws LIMSRuntimeException {
         List<ResultSignature> resultSignatures = null;
@@ -162,8 +163,8 @@ public class ResultSignatureDAOImpl extends BaseDAOImpl<ResultSignature, String>
 
             return resultSignatures;
 
-        } catch (Exception e) {
-            LogEvent.logError("ResultSignatureDAOImpl", "getResultSignatureByResult()", e.toString());
+        } catch (RuntimeException e) {
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in ResultSignature getResultSignatureResult()", e);
         }
     }
@@ -174,8 +175,8 @@ public class ResultSignatureDAOImpl extends BaseDAOImpl<ResultSignature, String>
             data = entityManager.unwrap(Session.class).get(ResultSignature.class, idString);
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
-            LogEvent.logError("ResultSignatureDAOImpl", "readResultSignature()", e.toString());
+        } catch (RuntimeException e) {
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in ResultSignature readResultSignature()", e);
         }
 
@@ -191,13 +192,12 @@ public class ResultSignatureDAOImpl extends BaseDAOImpl<ResultSignature, String>
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
             return re;
-        } catch (Exception e) {
-            LogEvent.logError("ResultSignatureDAOImpl", "getResultSignatureById()", e.toString());
+        } catch (RuntimeException e) {
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in ResultSignature getResultSignatureById()", e);
         }
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     @Transactional(readOnly = true)
     public List<ResultSignature> getResultSignaturesByResults(List<Result> resultList) throws LIMSRuntimeException {

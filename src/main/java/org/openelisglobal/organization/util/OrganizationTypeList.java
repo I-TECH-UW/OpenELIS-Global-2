@@ -64,7 +64,7 @@ public enum OrganizationTypeList {
      */
     private OrganizationTypeList(String orderBy, Comparator<Organization> comparator, String... name) {
         this.comparator = comparator;
-        this.orderBy = null;
+        this.orderBy = orderBy;
         this.name = name;
     }
 
@@ -86,7 +86,7 @@ public enum OrganizationTypeList {
 
     /**
      * Each lists is loaded as needed.
-     * 
+     *
      * @return a list of organization associated with a particular organization type
      *         or an empty list.
      */
@@ -97,8 +97,8 @@ public enum OrganizationTypeList {
             if (comparator != null) {
                 Collections.sort(all, comparator);
             }
-        } catch (RuntimeException rte) {
-            LogEvent.logErrorStack(OrganizationTypeList.class.getSimpleName(), "getList", rte);
+        } catch (RuntimeException e) {
+            LogEvent.logErrorStack(e);
             all = new ArrayList<>();
         }
         return all;

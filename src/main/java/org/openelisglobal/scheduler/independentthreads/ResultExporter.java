@@ -45,15 +45,14 @@ import org.openelisglobal.reports.valueholder.DocumentType;
 import org.openelisglobal.spring.util.SpringContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service
-@Scope("prototype")
-public class ResultExporter extends Thread implements IResultExporter {
+@Component
+public class ResultExporter {
 
-    private long sleepTime;
-    private boolean running = true;
     @Autowired
     private ReportQueueTypeService reportQueueTypeService;
     @Autowired
@@ -74,29 +73,7 @@ public class ResultExporter extends Thread implements IResultExporter {
         resultReportTypeId = reportQueueTypeService.getReportQueueTypeByName("Results").getId();
     }
 
-    public void setSleepInMin(long sleepInMin) {
-        sleepTime = sleepInMin * 1000L * 60L;
-    }
-
-    @Override
-    public void run() {
-
-        while (running) {
-            exportResults();
-
-            try {
-                sleep(sleepTime);
-            } catch (InterruptedException e) {
-                running = false;
-            }
-        }
-
-    }
-
-    public void stopExports() {
-        running = false;
-    }
-
+    @Scheduled(fixedRateString = "#{resultsResendTime}")
     private void exportResults() {
         if (shouldReportResults()) {
             List<ReportExternalExport> reportList = reportExternalExportService
@@ -125,7 +102,7 @@ public class ResultExporter extends Thread implements IResultExporter {
         String externalExportRowId;
 
         public SuccessReportHandler(String rowId) {
-            setRowId(rowId);
+            externalExportRowId = rowId;
         }
 
         public SuccessReportHandler() {
@@ -156,9 +133,9 @@ public class ResultExporter extends Thread implements IResultExporter {
                     }
                     reportExternalExportService.delete(report);
 
-                } catch (LIMSRuntimeException lre) {
-                    LogEvent.logErrorStack(this.getClass().getSimpleName(), "handleResponse", lre);
-                    throw lre;
+                } catch (LIMSRuntimeException e) {
+                    LogEvent.logErrorStack(e);
+                    throw e;
                 }
 
             }

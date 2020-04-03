@@ -57,20 +57,8 @@ public class PanelItemServiceImpl extends BaseObjectServiceImpl<PanelItem, Strin
 
     @Override
     @Transactional(readOnly = true)
-    public List getPreviousPanelItemRecord(String id) {
-        return getBaseObjectDAO().getPreviousPanelItemRecord(id);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getPageOfPanelItems(int startingRecNo) {
+    public List<PanelItem> getPageOfPanelItems(int startingRecNo) {
         return getBaseObjectDAO().getPageOfPanelItems(startingRecNo);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getNextPanelItemRecord(String id) {
-        return getBaseObjectDAO().getNextPanelItemRecord(id);
     }
 
     @Override
@@ -87,19 +75,19 @@ public class PanelItemServiceImpl extends BaseObjectServiceImpl<PanelItem, Strin
 
     @Override
     @Transactional(readOnly = true)
-    public List getAllPanelItems() {
+    public List<PanelItem> getAllPanelItems() {
         return getBaseObjectDAO().getAllPanelItems();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List getPanelItems(String filter) {
+    public List<PanelItem> getPanelItems(String filter) {
         return getBaseObjectDAO().getPanelItems(filter);
     }
 
     @Override
     public String insert(PanelItem panelItem) {
-        if (getBaseObjectDAO().duplicatePanelItemExists(panelItem)) {
+        if (duplicatePanelItemExists(panelItem)) {
             throw new LIMSDuplicateRecordException("Duplicate record exists for " + panelItem.getPanelName());
         }
         return super.insert(panelItem);
@@ -107,7 +95,7 @@ public class PanelItemServiceImpl extends BaseObjectServiceImpl<PanelItem, Strin
 
     @Override
     public PanelItem save(PanelItem panelItem) {
-        if (getBaseObjectDAO().duplicatePanelItemExists(panelItem)) {
+        if (duplicatePanelItemExists(panelItem)) {
             throw new LIMSDuplicateRecordException("Duplicate record exists for " + panelItem.getPanelName());
         }
         return super.save(panelItem);
@@ -115,7 +103,7 @@ public class PanelItemServiceImpl extends BaseObjectServiceImpl<PanelItem, Strin
 
     @Override
     public PanelItem update(PanelItem panelItem) {
-        if (getBaseObjectDAO().duplicatePanelItemExists(panelItem)) {
+        if (duplicatePanelItemExists(panelItem)) {
             throw new LIMSDuplicateRecordException("Duplicate record exists for " + panelItem.getPanelName());
         }
         return super.update(panelItem);
@@ -125,8 +113,8 @@ public class PanelItemServiceImpl extends BaseObjectServiceImpl<PanelItem, Strin
         PanelItem pi;
         try {
             pi = get(idString);
-        } catch (Exception e) {
-            LogEvent.logError("PanelItemDAOImpl", "readPanelItem()", e.toString());
+        } catch (RuntimeException e) {
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in PanelItem readPanelItem()", e);
         }
 
@@ -161,5 +149,18 @@ public class PanelItemServiceImpl extends BaseObjectServiceImpl<PanelItem, Strin
             panel.setSysUserId(currentUser);
             panelService.update(panel);
         }
+    }
+
+    @Override
+    public boolean duplicatePanelItemExists(PanelItem panelItem) throws LIMSRuntimeException {
+        List<PanelItem> existingPanelItems = getPanelItemsForPanel(
+                panelService.getIdForPanelName(panelItem.getPanelName()));
+        for (PanelItem existingPanelItem : existingPanelItems) {
+            if ((panelItem.getTest().getId().equals(existingPanelItem.getTest().getId()))
+                    || (panelItem.getTestName().equals(existingPanelItem.getTestName()))) {
+                return !panelItem.getId().equals(existingPanelItem.getId());
+            }
+        }
+        return false;
     }
 }

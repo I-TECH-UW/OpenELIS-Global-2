@@ -7,7 +7,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -18,6 +17,7 @@ import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.DisplayListService;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.spring.util.SpringContext;
@@ -30,6 +30,8 @@ import org.openelisglobal.test.valueholder.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -39,19 +41,25 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class BatchTestReassignmentController extends BaseController {
 
+    private static final String[] ALLOWED_FIELDS = new String[] { "jsonWad" };
+
     @Autowired
     BatchTestReassignmentFormValidator formValidator;
 
     @Autowired
     private AnalysisService analysisService;
 
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
+
     @RequestMapping(value = "/BatchTestReassignment", method = RequestMethod.GET)
     public ModelAndView showBatchTestReassignment(HttpServletRequest request)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         BatchTestReassignmentForm form = new BatchTestReassignmentForm();
 
-        PropertyUtils.setProperty(form, "sampleList",
-                DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE));
+        form.setSampleList(DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE));
 
         addFlashMsgsToRequest(request);
         return findForward(FWD_SUCCESS, form);
@@ -69,8 +77,8 @@ public class BatchTestReassignmentController extends BaseController {
             return findForward(FWD_FAIL_INSERT, form);
 
         }
-        String jsonString = form.getString("jsonWad");
-        // System.out.println(jsonString);
+        String jsonString = form.getJsonWad();
+        // LogEvent.logInfo(this.getClass().getName(), "method unkown", jsonString);
 
         List<Analysis> newAnalysis = new ArrayList<>();
         List<Analysis> cancelAnalysis = new ArrayList<>();
@@ -82,19 +90,19 @@ public class BatchTestReassignmentController extends BaseController {
             analysisService.updateAnalysises(cancelAnalysis, newAnalysis, getSysUserId(request));
 
         } catch (LIMSRuntimeException e) {
-            LogEvent.logErrorStack(this.getClass().getSimpleName(), "showBatchTestReassignmentUpdate", e);
+            LogEvent.logErrorStack(e);
         }
 
         if (changeBeans.isEmpty()) {
             redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
             return findForward(FWD_SUCCESS_INSERT, form);
         } else {
-            PropertyUtils.setProperty(form, "sampleList",
+            form.setSampleList(
                     DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE));
-            PropertyUtils.setProperty(form, "statusChangedList", changeBeans);
-            PropertyUtils.setProperty(form, "statusChangedSampleType", changedMetaInfo.sampleTypeName);
-            PropertyUtils.setProperty(form, "statusChangedCurrentTest", changedMetaInfo.currentTest);
-            PropertyUtils.setProperty(form, "statusChangedNextTest", changedMetaInfo.nextTest);
+            form.setStatusChangedList(changeBeans);
+            form.setStatusChangedSampleType(changedMetaInfo.sampleTypeName);
+            form.setStatusChangedCurrentTest(changedMetaInfo.currentTest);
+            form.setStatusChangedNextTest(changedMetaInfo.nextTest);
             return findForward("resubmit", form);
         }
     }
@@ -152,7 +160,7 @@ public class BatchTestReassignmentController extends BaseController {
                 changedMetaInfo.sampleTypeName = (String) obj.get("sampleType");
             }
         } catch (ParseException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
 
     }
@@ -170,7 +178,7 @@ public class BatchTestReassignmentController extends BaseController {
 
     private void verifyStatusNotChanged(List<Analysis> changed, List<Analysis> noChanged,
             StatusService.AnalysisStatus status, List<BatchTestStatusChangeBean> changeBeans) {
-        String statusId = StatusService.getInstance().getStatusID(status);
+        String statusId = SpringContext.getBean(IStatusService.class).getStatusID(status);
 
         List<Analysis> changedAnalysis = new ArrayList<>();
 
@@ -204,9 +212,9 @@ public class BatchTestReassignmentController extends BaseController {
     }
 
     private String getStatusName(String statusId) {
-        StatusService.AnalysisStatus status = StatusService.getInstance().getAnalysisStatusForID(statusId);
+        StatusService.AnalysisStatus status = SpringContext.getBean(IStatusService.class).getAnalysisStatusForID(statusId);
         String name = getStatusName(status);
-        return name == null ? StatusService.getInstance().getStatusName(status) : name;
+        return name == null ? SpringContext.getBean(IStatusService.class).getStatusName(status) : name;
     }
 
     private String getStatusName(StatusService.AnalysisStatus status) {
@@ -236,7 +244,7 @@ public class BatchTestReassignmentController extends BaseController {
         try {
             replacementTestArray = (JSONArray) parser.parse(replacementTests);
         } catch (ParseException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
             return replacementTestList;
         }
 
@@ -258,7 +266,7 @@ public class BatchTestReassignmentController extends BaseController {
         try {
             modifyAnalysisArray = (JSONArray) parser.parse(sampleIdList);
         } catch (ParseException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
             return analysisList;
         }
 

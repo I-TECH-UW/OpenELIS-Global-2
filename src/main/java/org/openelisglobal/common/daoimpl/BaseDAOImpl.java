@@ -43,7 +43,6 @@ import org.hibernate.persister.entity.AbstractEntityPersister;
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.dao.BaseDAO;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
-import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.common.valueholder.BaseObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -562,12 +561,18 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
     @Transactional(readOnly = true)
     public Optional<T> getNext(String id) {
         int start = (Integer.valueOf(id)).intValue();
-        String table = getObjectName();
 
         List<T> list;
         try {
-            String sql = "from " + table + " t order by t.id where id > " + start;
-            TypedQuery<T> query = entityManager.createQuery(sql, classType);
+            CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+            CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(classType);
+            Root<T> root = criteriaQuery.from(classType);
+            criteriaQuery.select(root);
+
+            Predicate greaterThanPredicate = criteriaBuilder.greaterThan(root.get("id"), start);
+            criteriaQuery.where(greaterThanPredicate);
+
+            TypedQuery<T> query = entityManager.createQuery(criteriaQuery);
             query.setFirstResult(0);
             query.setMaxResults(1);
             list = query.getResultList();
@@ -586,12 +591,18 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
     @Transactional(readOnly = true)
     public Optional<T> getPrevious(String id) {
         int start = (Integer.valueOf(id)).intValue();
-        String table = getObjectName();
 
         List<T> list;
         try {
-            String sql = "from " + table + " t order by t.id desc where id < " + start;
-            TypedQuery<T> query = entityManager.createQuery(sql, classType);
+            CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+            CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(classType);
+            Root<T> root = criteriaQuery.from(classType);
+            criteriaQuery.select(root);
+
+            Predicate greaterThanPredicate = criteriaBuilder.lessThan(root.get("id"), start);
+            criteriaQuery.where(greaterThanPredicate);
+
+            TypedQuery<T> query = entityManager.createQuery(criteriaQuery);
             query.setFirstResult(0);
             query.setMaxResults(1);
             list = query.getResultList();
@@ -709,52 +720,6 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 
     // end of new methods, below this point are legacy methods
 
-    @Override
-    @Deprecated
-    @Transactional(readOnly = true)
-    public List<T> getNextRecord(String id, String table, Class<T> clazz) throws LIMSRuntimeException {
-        int start = (Integer.valueOf(id)).intValue();
-        try {
-            String sql = "from " + table + " t where id >= " + start + " order by t.id";
-            TypedQuery<T> query = entityManager.createQuery(sql, clazz);
-            query.setFirstResult(1);
-            query.setMaxResults(2);
-
-            return query.getResultList();
-        } catch (Exception e) {
-            // bugzilla 2154
-            LogEvent.logError("BaseDAOImpl", "getNextRecord()", e.toString());
-            throw new LIMSRuntimeException("Error in getNextRecord() for " + table, e);
-        }
-    }
-
-    @Override
-    @Deprecated
-    @Transactional(readOnly = true)
-    public List<T> getPreviousRecord(String id, String table, Class<T> clazz) throws LIMSRuntimeException {
-        int start = (Integer.valueOf(id)).intValue();
-        try {
-            String sql = "from " + table + " t order by t.id desc where id <= " + start;
-            TypedQuery<T> query = entityManager.createQuery(sql, clazz);
-            query.setFirstResult(1);
-            query.setMaxResults(2);
-
-            return query.getResultList();
-        } catch (Exception e) {
-            // bugzilla 2154
-            LogEvent.logError("BaseDAOImpl", "getPreviousRecord()", e.toString());
-            throw new LIMSRuntimeException("Error in getPreviousRecord() for " + table, e);
-        }
-    }
-
-    // bugzilla 1411
-    @Override
-    @Deprecated
-    @Transactional(readOnly = true)
-    public Integer getTotalCount(String table, Class<T> clazz) throws LIMSRuntimeException {
-        return getCount();
-    }
-
     // bugzilla 1427
     public String enquote(String sql) {
 
@@ -763,13 +728,6 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
             sql = sql.replaceAll("'", "''");
         }
         return "'" + sql + "'";
-    }
-
-    // bugzilla 1427
-    @Deprecated
-    @Transactional(readOnly = true)
-    public String getTablePrefix(String table) {
-        return table.toLowerCase() + ".";
     }
 
     protected void handleException(Exception e, String method) throws LIMSRuntimeException {
@@ -799,6 +757,10 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
         public DBComparison getComparison() {
             return comparison;
         }
+    }
+
+    protected boolean columnNameIsInjectionSafe(String columnName) {
+        return columnName.matches("[a-zA-Z0-9 _]+");
     }
 
     // private static final int RANDOM_ALIAS_LENGTH = 5;

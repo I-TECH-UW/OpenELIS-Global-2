@@ -11,7 +11,9 @@ import org.openelisglobal.barcode.labeltype.BlankLabel;
 import org.openelisglobal.barcode.labeltype.Label;
 import org.openelisglobal.barcode.labeltype.OrderLabel;
 import org.openelisglobal.barcode.labeltype.SpecimenLabel;
-import org.openelisglobal.common.services.StatusService;
+import org.openelisglobal.barcode.service.BarcodeLabelInfoService;
+import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.SampleStatus;
 import org.openelisglobal.patient.service.PatientService;
 import org.openelisglobal.patient.valueholder.Patient;
@@ -58,9 +60,11 @@ public class BarcodeLabelMaker {
     // for audit trail when incrementing num printed
     private String sysUserId;
 
+    private BarcodeLabelInfoService barcodeLabelService = SpringContext.getBean(BarcodeLabelInfoService.class);
+
     private static final Set<Integer> ENTERED_STATUS_SAMPLE_LIST = new HashSet<>();
     static {
-        ENTERED_STATUS_SAMPLE_LIST.add(Integer.parseInt(StatusService.getInstance().getStatusID(SampleStatus.Entered)));
+        ENTERED_STATUS_SAMPLE_LIST.add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(SampleStatus.Entered)));
     }
 
     public BarcodeLabelMaker() {
@@ -93,9 +97,9 @@ public class BarcodeLabelMaker {
     public void generateLabels(String labNo, String patientId, String type, String quantity, String override) {
 
         /*
-         * System.out.println( "labNo: " + labNo + "\n" + "patientId: " + patientId +
-         * "\n" + "type: " + type + "\n" + "quantity: " + quantity + "\n" + "override: "
-         * + override);
+         * LogEvent.logInfo(this.getClass().getName(), "method unkown", "labNo: " +
+         * labNo + "\n" + "patientId: " + patientId + "\n" + "type: " + type + "\n" +
+         * "quantity: " + quantity + "\n" + "override: " + override);
          */
 
         SampleService sampleService = SpringContext.getBean(SampleService.class);
@@ -196,11 +200,12 @@ public class BarcodeLabelMaker {
                         label.incrementNumPrinted();
                     }
                 }
+                barcodeLabelService.save(label.getLabelInfo());
             }
             document.close();
             writer.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (DocumentException | IOException e) {
+            LogEvent.logDebug(e);
         }
 
         return stream;

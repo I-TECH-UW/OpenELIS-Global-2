@@ -1,5 +1,5 @@
 <%@ page language="java"
-	contentType="text/html; charset=utf-8"
+	contentType="text/html; charset=UTF-8"
 	import="org.openelisglobal.common.action.IActionConstants, 
 			org.openelisglobal.internationalization.MessageUtil" %>
 
@@ -13,26 +13,6 @@
 
 <div id="sound"></div>
 
- 
-
-
-
-<%!
-
-String allowEdits = "true";
-//bugzilla 1494
-String errorNewLine = "";
-%>
-
-<%
-if (request.getAttribute(IActionConstants.ALLOW_EDITS_KEY) != null) {
- allowEdits = (String)request.getAttribute(IActionConstants.ALLOW_EDITS_KEY);
-}
-//bugzilla 1494
-errorNewLine = MessageUtil.getMessage("error.dictionary.newlinecharacter");
-                    
-%>
-
 <script>
 function validateForm(form) {
 	//TO DO reintroduce validation
@@ -41,7 +21,7 @@ function validateForm(form) {
     if (validated) {
       var dictEntry = document.getElementById("dictEntry").value;
       if (containsNewLine(dictEntry)) {
-         alert('<%=errorNewLine%>'); 
+         alert('<%=MessageUtil.getMessage("error.dictionary.newlinecharacter")%>'); 
          validated = false;
       }
     }
@@ -106,6 +86,6 @@ function validateForm(form) {
 </table>
 
  
-<!-- <html:javascript formName="dictionaryForm"/> -->
+<%-- <html:javascript formName="dictionaryForm"/> --%>
 
 

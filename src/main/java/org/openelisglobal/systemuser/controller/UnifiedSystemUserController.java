@@ -15,7 +15,6 @@ import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
@@ -26,8 +25,8 @@ import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.common.validator.BaseErrors;
 import org.openelisglobal.login.dao.UserModuleService;
-import org.openelisglobal.login.service.LoginService;
-import org.openelisglobal.login.valueholder.Login;
+import org.openelisglobal.login.service.LoginUserService;
+import org.openelisglobal.login.valueholder.LoginUser;
 import org.openelisglobal.role.action.bean.DisplayRole;
 import org.openelisglobal.role.service.RoleService;
 import org.openelisglobal.role.valueholder.Role;
@@ -42,6 +41,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -51,11 +52,15 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class UnifiedSystemUserController extends BaseController {
 
-    @Autowired
-    UnifiedSystemUserFormValidator formValidator;
+    private static final String[] ALLOWED_FIELDS = new String[] { "systemUserId", "loginUserId", "userLoginName",
+            "userPassword", "confirmPassword", "userFirstName", "userLastName", "expirationDate", "timeout",
+            "accountLocked", "accountDisabled", "accountActive", "selectedRoles[*]" };
 
     @Autowired
-    private LoginService loginService;
+    private UnifiedSystemUserFormValidator formValidator;
+
+    @Autowired
+    private LoginUserService loginService;
     @Autowired
     private RoleService roleService;
     @Autowired
@@ -70,7 +75,7 @@ public class UnifiedSystemUserController extends BaseController {
 
     private static final String MAINTENANCE_ADMIN = "Maintenance Admin";
     private static String MAINTENANCE_ADMIN_ID;
-    public static final char DEFAULT_PASSWORD_FILLER = '@';
+    public static final char DEFAULT_OBFUSCATED_CHARACTER = '@';
 
     @PostConstruct
     private void initialize() {
@@ -81,6 +86,11 @@ public class UnifiedSystemUserController extends BaseController {
                 break;
             }
         }
+    }
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
     }
 
     @RequestMapping(value = "/UnifiedSystemUser", method = RequestMethod.GET)
@@ -119,11 +129,7 @@ public class UnifiedSystemUserController extends BaseController {
         List<DisplayRole> displayRoles = convertToDisplayRoles(roles);
         displayRoles = sortAndGroupRoles(displayRoles);
 
-        try {
-            PropertyUtils.setProperty(form, "roles", displayRoles);
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            e.printStackTrace();
-        }
+        form.setRoles(displayRoles);
     }
 
     private List<DisplayRole> convertToDisplayRoles(List<Role> roles) {
@@ -279,57 +285,58 @@ public class UnifiedSystemUserController extends BaseController {
     private void setDefaultProperties(UnifiedSystemUserForm form)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         String expireDate = getYearsFromNow(10);
-        PropertyUtils.setProperty(form, "expirationDate", expireDate);
-        PropertyUtils.setProperty(form, "timeout", "480");
-        PropertyUtils.setProperty(form, "systemUserLastupdated", new Timestamp(System.currentTimeMillis()));
+        form.setExpirationDate(expireDate);
+        form.setTimeout("480");
+        form.setSystemUserLastupdated(new Timestamp(System.currentTimeMillis()));
     }
 
     private void setPropertiesForExistingUser(UnifiedSystemUserForm form, String id, boolean doFiltering)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
-        Login login = getLoginFromCombinedId(id);
+        LoginUser login = getLoginFromCombinedId(id);
         SystemUser systemUser = getSystemUserFromCombinedId(id);
 
         if (login != null) {
             String proxyPassword = getProxyPassword(login);
-            PropertyUtils.setProperty(form, "loginUserId", login.getId());
-            PropertyUtils.setProperty(form, "accountDisabled", login.getAccountDisabled());
-            PropertyUtils.setProperty(form, "accountLocked", login.getAccountLocked());
-            PropertyUtils.setProperty(form, "userLoginName", login.getLoginName());
-            PropertyUtils.setProperty(form, "userPassword", proxyPassword);
-            PropertyUtils.setProperty(form, "confirmPassword", proxyPassword);
-            PropertyUtils.setProperty(form, "expirationDate", login.getPasswordExpiredDateForDisplay());
-            PropertyUtils.setProperty(form, "timeout", login.getUserTimeOut());
+            form.setLoginUserId(Integer.toString(login.getId()));
+            form.setAccountDisabled(login.getAccountDisabled());
+            form.setAccountLocked(login.getAccountLocked());
+            form.setUserLoginName(login.getLoginName());
+            form.setUserPassword(proxyPassword);
+            form.setConfirmPassword(proxyPassword);
+            form.setExpirationDate(login.getPasswordExpiredDateForDisplay());
+            form.setTimeout(login.getUserTimeOut());
         }
 
         if (systemUser != null) {
-            PropertyUtils.setProperty(form, "systemUserId", systemUser.getId());
-            PropertyUtils.setProperty(form, "userFirstName", systemUser.getFirstName());
-            PropertyUtils.setProperty(form, "userLastName", systemUser.getLastName());
-            PropertyUtils.setProperty(form, "accountActive", systemUser.getIsActive());
-            PropertyUtils.setProperty(form, "systemUserLastupdated", systemUser.getLastupdated());
+            form.setSystemUserId(systemUser.getId());
+            form.setUserFirstName(systemUser.getFirstName());
+            form.setUserLastName(systemUser.getLastName());
+            form.setAccountActive(systemUser.getIsActive());
+            form.setSystemUserLastupdated(systemUser.getLastupdated());
 
             List<String> roleIds = userRoleService.getRoleIdsForUser(systemUser.getId());
-            PropertyUtils.setProperty(form, "selectedRoles", roleIds);
+            form.setSelectedRoles(roleIds);
 
-            doFiltering = !roleIds.contains(MAINTENANCE_ADMIN_ID);
+            // is this meant to be returned?
+//            doFiltering = !roleIds.contains(MAINTENANCE_ADMIN_ID);
         }
 
     }
 
-    private String getProxyPassword(Login login) {
+    private String getProxyPassword(LoginUser login) {
         char[] chars = new char[9];
-        Arrays.fill(chars, DEFAULT_PASSWORD_FILLER);
+        Arrays.fill(chars, DEFAULT_OBFUSCATED_CHARACTER);
         return new String(chars);
         // return StringUtil.replaceAllChars(login.getPassword(),
         // DEFAULT_PASSWORD_FILLER);
     }
 
-    private Login getLoginFromCombinedId(String id) {
-        Login login = null;
-        String loginId = UnifiedSystemUser.getLoginUserIDFromCombinedID(id);
+    private LoginUser getLoginFromCombinedId(String id) {
+        LoginUser login = null;
+        Integer loginId = UnifiedSystemUser.getLoginUserIDFromCombinedID(id);
 
-        if (!GenericValidator.isBlankOrNull(loginId)) {
+        if (null != loginId) {
             login = loginService.get(loginId);
         }
 
@@ -375,11 +382,6 @@ public class UnifiedSystemUserController extends BaseController {
         request.setAttribute(PREVIOUS_DISABLED, "false");
         request.setAttribute(NEXT_DISABLED, "false");
 
-        String id = request.getParameter(ID);
-
-        String start = request.getParameter("startingRecNo");
-        String direction = request.getParameter("direction");
-
         if (form.getUserLoginName() != null) {
             form.setUserLoginName(form.getUserLoginName().trim());
         } else {
@@ -388,9 +390,7 @@ public class UnifiedSystemUserController extends BaseController {
 
         String forward = validateAndUpdateSystemUser(request, form);
 
-        if (forward.equals(FWD_SUCCESS)) {
-            return getForward(findForward(forward, form), id, start, direction);
-        } else if (forward.equals(FWD_SUCCESS_INSERT)) {
+        if (forward.equals(FWD_SUCCESS_INSERT)) {
             redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
             Map<String, String> params = new HashMap<>();
             params.put("forward", FWD_SUCCESS);
@@ -401,8 +401,7 @@ public class UnifiedSystemUserController extends BaseController {
         }
     }
 
-    public String validateAndUpdateSystemUser(HttpServletRequest request, UnifiedSystemUserForm form) {
-        String forward = FWD_SUCCESS_INSERT;
+    private String validateAndUpdateSystemUser(HttpServletRequest request, UnifiedSystemUserForm form) {
         String loginUserId = form.getLoginUserId();
         String systemUserId = form.getSystemUserId();
 
@@ -422,18 +421,16 @@ public class UnifiedSystemUserController extends BaseController {
 
         String loggedOnUserId = getSysUserId(request);
 
-        Login loginUser = createLoginUser(form, loginUserId, loginUserNew, passwordUpdated, loggedOnUserId);
+        LoginUser loginUser = createLoginUser(form, loginUserId, loginUserNew, passwordUpdated, loggedOnUserId);
         SystemUser systemUser = createSystemUser(form, systemUserId, systemUserNew, loggedOnUserId);
 
-        List<String> selectedRoles = form.getSelectedRoles();
-
         try {
-            userService.updateLoginUser(loginUser, loginUserNew, systemUser, systemUserNew, selectedRoles,
+            userService.updateLoginUser(loginUser, loginUserNew, systemUser, systemUserNew, form.getSelectedRoles(),
                     loggedOnUserId);
-        } catch (LIMSRuntimeException lre) {
-            if (lre.getException() instanceof org.hibernate.StaleObjectStateException) {
+        } catch (LIMSRuntimeException e) {
+            if (e.getException() instanceof org.hibernate.StaleObjectStateException) {
                 errors.reject("errors.OptimisticLockException", "errors.OptimisticLockException");
-            } else if (lre.getException() instanceof LIMSDuplicateRecordException) {
+            } else if (e.getException() instanceof LIMSDuplicateRecordException) {
                 errors.reject("errors.DuplicateRecordException", "errors.DuplicateRecordException");
             } else {
                 errors.reject("errors.UpdateException", "errors.UpdateException");
@@ -441,12 +438,10 @@ public class UnifiedSystemUserController extends BaseController {
 
             saveErrors(errors);
             disableNavigationButtons(request);
-            forward = FWD_FAIL_INSERT;
+            return FWD_FAIL_INSERT;
         }
 
-        selectedRoles = new ArrayList<>();
-
-        return forward;
+        return FWD_SUCCESS_INSERT;
     }
 
     private boolean passwordHasBeenUpdated(boolean loginUserNew, UnifiedSystemUserForm form) {
@@ -456,7 +451,7 @@ public class UnifiedSystemUserController extends BaseController {
 
         String password = form.getUserPassword();
 
-        return !StringUtil.containsOnly(password, DEFAULT_PASSWORD_FILLER);
+        return !StringUtil.containsOnly(password, DEFAULT_OBFUSCATED_CHARACTER);
     }
 
     private void validateUser(UnifiedSystemUserForm form, Errors errors, boolean loginUserIsNew,
@@ -467,9 +462,9 @@ public class UnifiedSystemUserController extends BaseController {
         if (GenericValidator.isBlankOrNull(form.getUserLoginName())) {
             errors.reject("errors.loginName.required", "errors.loginName.required");
         } else if (checkForDuplicateName) {
-            Login login = loginService.getMatch("loginName", form.getUserLoginName()).orElse(null);
+            LoginUser login = loginService.getMatch("loginName", form.getUserLoginName()).orElse(null);
             if (login != null) {
-                errors.reject("errors.loginName.duplicated", form.getUserLoginName());
+                errors.reject("errors.loginName.duplicated");
             }
         }
 
@@ -491,7 +486,7 @@ public class UnifiedSystemUserController extends BaseController {
 
         // check expiration date
         if (!GenericValidator.isDate(form.getExpirationDate(), SystemConfiguration.getInstance().getDateLocale())) {
-            errors.reject("errors.date", form.getExpirationDate());
+            errors.reject("errors.date");
         }
 
         // check timeout
@@ -505,7 +500,7 @@ public class UnifiedSystemUserController extends BaseController {
             return false;
         }
 
-        Login login = loginService.get(loginUserId);
+        LoginUser login = loginService.get(Integer.parseInt(loginUserId));
 
         return !newName.equals(login.getLoginName());
     }
@@ -514,7 +509,7 @@ public class UnifiedSystemUserController extends BaseController {
         try {
             int timeInMin = Integer.parseInt(timeout);
             return timeInMin > 0 && timeInMin < 601;
-        } catch (NumberFormatException nfe) {
+        } catch (NumberFormatException e) {
             return false;
         }
     }
@@ -523,13 +518,13 @@ public class UnifiedSystemUserController extends BaseController {
         return PasswordValidationFactory.getPasswordValidator().passwordValid(password);
     }
 
-    private Login createLoginUser(UnifiedSystemUserForm form, String loginUserId, boolean loginUserNew,
+    private LoginUser createLoginUser(UnifiedSystemUserForm form, String loginUserId, boolean loginUserNew,
             boolean passwordUpdated, String loggedOnUserId) {
 
-        Login login = new Login();
+        LoginUser login = new LoginUser();
 
         if (!loginUserNew) {
-            login = loginService.get(form.getLoginUserId());
+            login = loginService.get(Integer.parseInt(form.getLoginUserId()));
         }
         login.setAccountDisabled(form.getAccountDisabled());
         login.setAccountLocked(form.getAccountLocked());

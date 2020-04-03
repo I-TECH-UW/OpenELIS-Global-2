@@ -4,9 +4,8 @@ import java.lang.reflect.InvocationTargetException;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.beanutils.PropertyUtils;
-import org.jfree.util.Log;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.validator.BaseErrors;
 import org.openelisglobal.dictionary.ObservationHistoryList;
 import org.openelisglobal.internationalization.MessageUtil;
@@ -21,6 +20,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -29,11 +30,24 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class SampleBatchEntryByProjectController extends BaseSampleEntryController {
 
+    private static final String[] ALLOWED_FIELDS = new String[] { "labNo"
+            //
+            , "sampleOrderItems.newRequesterName", "observations.projectFormName", "ProjectData.viralLoadTest",
+            "ProjectData.edtaTubeTaken", "ProjectData.dryTubeTaken", "ProjectData.dbsTaken", "ProjectData.dnaPCR",
+            "ProjectData.ARVcenterName", "ProjectData.ARVcenterCode", "ProjectData.EIDSiteName",
+            "ProjectData.EIDsiteCode", "currentDate", "currentTime", "sampleOrderItems.receivedDateForDisplay",
+            "sampleOrderItems.receivedTime", "sampleXML", "sampleOrderItems.referringSiteId" };
+
     @Autowired
     SampleBatchEntryFormValidator formValidator;
 
     private static final String ON_DEMAND = "ondemand";
     private static final String PRE_PRINTED = "preprinted";
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
 
     @RequestMapping(value = "/SampleBatchEntryByProject", method = RequestMethod.POST)
     public ModelAndView showSampleBatchEntryByProject(HttpServletRequest request,
@@ -53,9 +67,9 @@ public class SampleBatchEntryByProjectController extends BaseSampleEntryControll
             }
             setupCommonFields(form, request);
             return findForward(setForward(form), form);
-        } catch (Exception e) {
-            Log.error(e.toString());
-            e.printStackTrace();
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+//            Log.error(e.toString());
+            LogEvent.logDebug(e);
             return findForward(FWD_FAIL, form);
         }
 
@@ -64,7 +78,7 @@ public class SampleBatchEntryByProjectController extends BaseSampleEntryControll
     private void setupEID(SampleBatchEntryForm form, HttpServletRequest request)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         ProjectData projectData = form.getProjectDataEID();
-        PropertyUtils.setProperty(form, "programCode", MessageUtil.getMessage("sample.entry.project.LDBS"));
+        form.setProgramCode(MessageUtil.getMessage("sample.entry.project.LDBS"));
         String sampleTypes = "";
         String tests = "";
         if (projectData.getDryTubeTaken()) {
@@ -79,16 +93,16 @@ public class SampleBatchEntryByProjectController extends BaseSampleEntryControll
         }
         request.setAttribute("sampleType", sampleTypes);
         request.setAttribute("testNames", tests);
-        PropertyUtils.setProperty(form, "projectData", projectData);
+        form.setProjectData(projectData);
         ObservationData observations = new ObservationData();
         observations.setProjectFormName("EID_Id");
-        PropertyUtils.setProperty(form, "observations", observations);
+        form.setObservations(observations);
     }
 
     private void setupViralLoad(SampleBatchEntryForm form, HttpServletRequest request)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         ProjectData projectData = form.getProjectDataVL();
-        PropertyUtils.setProperty(form, "programCode", MessageUtil.getMessage("sample.entry.project.LART"));
+        form.setProgramCode(MessageUtil.getMessage("sample.entry.project.LART"));
         String sampleTypes = "";
         String tests = "";
         if (projectData.getDryTubeTaken()) {
@@ -103,16 +117,14 @@ public class SampleBatchEntryByProjectController extends BaseSampleEntryControll
         }
         request.setAttribute("sampleType", sampleTypes);
         request.setAttribute("testNames", tests);
-        PropertyUtils.setProperty(form, "projectData", projectData);
+        form.setProjectData(projectData);
         ObservationData observations = new ObservationData();
         observations.setProjectFormName("VL_Id");
-        PropertyUtils.setProperty(form, "observations", observations);
+        form.setObservations(observations);
     }
 
     private void setupCommonFields(SampleBatchEntryForm form, HttpServletRequest request)
             throws LIMSRuntimeException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        PropertyUtils.setProperty(form, "currentDate", request.getParameter("currentDate"));
-        PropertyUtils.setProperty(form, "currentTime", request.getParameter("currentTime"));
         addOrganizationLists(form);
     }
 
@@ -120,27 +132,23 @@ public class SampleBatchEntryByProjectController extends BaseSampleEntryControll
             throws LIMSRuntimeException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
         // Get ARV Centers
-        PropertyUtils.setProperty(form, "projectData.ARVCenters", OrganizationTypeList.ARV_ORGS.getList());
-        PropertyUtils.setProperty(form, "organizationTypeLists", OrganizationTypeList.MAP);
+        form.getProjectData().setARVCenters(OrganizationTypeList.ARV_ORGS.getList());
+        form.setOrganizationTypeLists(OrganizationTypeList.MAP);
 
         // Get EID Sites
-        PropertyUtils.setProperty(form, "projectData.EIDSites", OrganizationTypeList.EID_ORGS.getList());
-        PropertyUtils.setProperty(form, "projectData.EIDSitesByName", OrganizationTypeList.EID_ORGS_BY_NAME.getList());
+        form.getProjectData().setEIDSites(OrganizationTypeList.EID_ORGS.getList());
+        form.getProjectData().setEIDSitesByName(OrganizationTypeList.EID_ORGS_BY_NAME.getList());
 
         // Get EID whichPCR List
-        // PropertyUtils.setProperty(form, "projectData.eidWhichPCRList",
-        // ObservationHistoryList.EID_WHICH_PCR.getList());
+        // form.getProjectData().setEidWhichPCRList(ObservationHistoryList.EID_WHICH_PCR.getList());
 
         // Get EID secondTestReason List
-        PropertyUtils.setProperty(form, "projectData.eidSecondPCRReasonList",
-                ObservationHistoryList.EID_SECOND_PCR_REASON.getList());
+        form.getProjectData().setEidSecondPCRReasonList(ObservationHistoryList.EID_SECOND_PCR_REASON.getList());
 
         // Get SPE Request Reasons
-        PropertyUtils.setProperty(form, "projectData.requestReasons",
-                ObservationHistoryList.SPECIAL_REQUEST_REASONS.getList());
+        form.getProjectData().setRequestReasons(ObservationHistoryList.SPECIAL_REQUEST_REASONS.getList());
 
-        PropertyUtils.setProperty(form, "projectData.isUnderInvestigationList",
-                ObservationHistoryList.YES_NO.getList());
+        form.getProjectData().setIsUnderInvestigationList(ObservationHistoryList.YES_NO.getList());
     }
 
     private String setForward(SampleBatchEntryForm form) {

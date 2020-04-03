@@ -7,7 +7,7 @@ import org.openelisglobal.common.form.BaseForm;
 
 public class ListPluginForm extends BaseForm {
 
-    private List<@SafeHtml String> pluginList;
+    private List<@SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE) String> pluginList;
 
     public ListPluginForm() {
         setFormName("listPluginForm");

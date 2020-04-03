@@ -17,8 +17,10 @@
  */
 package org.openelisglobal.test.daoimpl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Vector;
 
 import org.apache.commons.beanutils.PropertyUtils;
@@ -63,7 +65,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 //				String tableName = "TEST";
 //				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("TestDAOImpl", "AuditTrail deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Test AuditTrail deleteData()", e);
@@ -81,7 +83,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 //				// entityManager.unwrap(Session.class).evict // CSL remove old(cloneData);
 //				// entityManager.unwrap(Session.class).refresh // CSL remove old(cloneData);
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("TestDAOImpl", "deleteData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Test deleteData()", e);
@@ -105,7 +107,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("TestDAOImpl", "insertData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Test insertData()", e);
@@ -122,7 +124,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 //				throw new LIMSDuplicateRecordException(
 //						"Duplicate record exists for " + TestServiceImpl.getUserLocalizedTestName(test));
 //			}
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("TestDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Test updateData()", e);
 //		}
@@ -134,7 +136,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 //			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
 //			String tableName = "TEST";
 //			auditDAO.saveHistory(test, oldData, sysUserId, event, tableName);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			LogEvent.logError("TestDAOImpl", "AuditTrail updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Test AuditTrail updateData()", e);
 //		}
@@ -145,7 +147,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			// entityManager.unwrap(Session.class).evict // CSL remove old(test);
 //			// entityManager.unwrap(Session.class).refresh // CSL remove old(test);
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("TestDAOImpl", "updateData()", e.toString());
 //			throw new LIMSRuntimeException("Error in Test updateData()", e);
@@ -164,15 +166,15 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
             } else {
                 test.setId(null);
             }
-        } catch (Exception e) {
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             // bugzilla 2154
-            LogEvent.logError("TestDAOImpl", "getData()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Test getData()", e);
         }
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public List<Test> getAllTests(boolean onlyTestsFullySetup) throws LIMSRuntimeException {
         List<Test> list = new Vector<>();
@@ -182,7 +184,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
             list = query.list();
 //			list = filterOnlyFullSetup(onlyTestsFullySetup, list);
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             handleException(e, "getAllTests()");
         }
 
@@ -190,7 +192,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public List<Test> getAllActiveTests(boolean onlyTestsFullySetup) throws LIMSRuntimeException {
         List<Test> list = new Vector<>();
@@ -202,7 +204,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             handleException(e, "getAllActiveTests()");
         }
 
@@ -223,7 +225,6 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 //		return list;
 //	}
 
-    @SuppressWarnings("unchecked")
     @Override
     @Transactional(readOnly = true)
     public List<Test> getAllActiveOrderableTests() throws LIMSRuntimeException {
@@ -234,7 +235,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 
             // closeSession(); // CSL remove old
             return list;
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             handleException(e, "getAllActiveOrderableTests()");
         }
 
@@ -249,7 +250,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
      */
 //	@Override
 //	public List getAllTestsBySysUserId(int sysUserId, boolean onlyTestsFullySetup) throws LIMSRuntimeException {
-//		List list = new Vector();
+//		List list ;
 //		String sectionIdList = "";
 //		String sql;
 //
@@ -274,7 +275,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 //
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("TestDAOImpl", "getAllTestsBySysUserId()", e.toString());
 //			throw new LIMSRuntimeException("Error in Test getAllTestsBySysUserId()", e);
@@ -284,14 +285,14 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfTests(int startingRecNo) throws LIMSRuntimeException {
-        List list;
+    public List<Test> getPageOfTests(int startingRecNo) throws LIMSRuntimeException {
+        List<Test> list;
         try {
             // calculate maxRow to be one more than the page size
             int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 
             // bugzilla 1399
-            String sql = "from Test t order by t.testSection.testSectionName, t.testName";
+            String sql = "from Test t order by t.testSection.testSectionName";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setFirstResult(startingRecNo - 1);
             query.setMaxResults(endingRecNo - 1);
@@ -299,9 +300,9 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError("TestDAOImpl", "getPageOfTests()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Test getPageOfTests()", e);
         }
 
@@ -311,8 +312,8 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
     // bugzilla 2371
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfSearchedTests(int startingRecNo, String searchString) throws LIMSRuntimeException {
-        List list;
+    public List<Test> getPageOfSearchedTests(int startingRecNo, String searchString) throws LIMSRuntimeException {
+        List<Test> list;
         String wildCard = "*";
         String newSearchStr;
         String sql;
@@ -324,10 +325,10 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
             if (wCdPosition == -1) // no wild card looking for exact match
             {
                 newSearchStr = searchString.toLowerCase().trim();
-                sql = "from Test t  where trim(lower (t.description)) = :param  order by t.testSection.testSectionName, t.testName";
+                sql = "from Test t  where trim(lower (t.description)) = :param  order by t.testSection.testSectionName";
             } else {
                 newSearchStr = searchString.replace(wildCard, "%").toLowerCase().trim();
-                sql = "from Test t where trim(lower (t.description)) like :param  order by t.testSection.testSectionName, t.testName";
+                sql = "from Test t where trim(lower (t.description)) like :param  order by t.testSection.testSectionName";
             }
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setParameter("param", newSearchStr);
@@ -337,8 +338,8 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (RuntimeException e) {
+            LogEvent.logDebug(e);
             throw new LIMSRuntimeException("Error in Test getPageOfSearchedTests()", e);
         }
 
@@ -356,7 +357,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
      */
 //	@Override
 //	public List getPageOfTestsBySysUserId(int startingRecNo, int sysUserId) throws LIMSRuntimeException {
-//		List list = new Vector();
+//		List list ;
 //		try {
 //			// calculate maxRow to be one more than the page size
 //			int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
@@ -385,7 +386,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 //			list = query.list();
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("TestDAOImpl", "getPageOfTestsBySysUserId()", e.toString());
 //			throw new LIMSRuntimeException("Error in Test getPageOfTestsBySysUserId()", e);
@@ -413,7 +414,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 //
 //			String sectionIdList = "";
 //
-//			@SuppressWarnings("unchecked")
+//
 //			List<SystemUserSection> userTestSectionList = systemUserSectionDAO
 //					.getAllSystemUserSectionsBySystemUserId(sysUserId);
 //
@@ -444,13 +445,13 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 //			query.setFirstResult(startingRecNo - 1);
 //			query.setMaxResults(endingRecNo - 1);
 //
-//			@SuppressWarnings("unchecked")
+//
 //			List<Test> list = query.list();
 //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
 //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
 //			return list;
-//		} catch (Exception e) {
-//			e.printStackTrace();
+//		} catch (RuntimeException e) {
+//			LogEvent.logDebug(e);
 //			throw new LIMSRuntimeException("Error in Test getPageOfTestsBySysUserId()", e);
 //		}
 //
@@ -462,38 +463,23 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
             test = entityManager.unwrap(Session.class).get(Test.class, idString);
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError("TestDAOImpl", "readTest()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Test readTest()", e);
         }
 
         return test;
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public List getNextTestRecord(String id) throws LIMSRuntimeException {
-
-        return getNextRecord(id, "Test", Test.class);
-
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousTestRecord(String id) throws LIMSRuntimeException {
-
-        return getPreviousRecord(id, "Test", Test.class);
-    }
-
     // this is for autocomplete
     // bugzilla 2291 added onlyTestsFullySetup
     @Override
     @Transactional(readOnly = true)
-    public List getTests(String filter, boolean onlyTestsFullySetup) throws LIMSRuntimeException {
-        List list;
+    public List<Test> getTests(String filter, boolean onlyTestsFullySetup) throws LIMSRuntimeException {
+        List<Test> list;
         try {
-            String sql = "from Test t where upper(t.testName) like upper(:param) and t.isActive='Y' order by upper(t.testName)";
+            String sql = "from Test t where (upper(t.localizedTestName.english) like upper(:param) or upper(t.localizedTestName.french) like upper(:param)) and t.isActive='Y'";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setParameter("param", filter + "%");
             list = query.list();
@@ -501,8 +487,8 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 //			list = filterOnlyFullSetup(onlyTestsFullySetup, list);
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
-            LogEvent.logError("TestDAOImpl", "getTests()", e.toString());
+        } catch (RuntimeException e) {
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Test getTests(String filter)", e);
         }
 
@@ -511,84 +497,96 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 
     @Override
     @Transactional(readOnly = true)
-    public Test getTestByName(Test test) throws LIMSRuntimeException {
-        return getTestByName(test.getTestName());
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public Test getTestByName(String testName) throws LIMSRuntimeException {
+    public List<Test> getTestsByName(String testName) throws LIMSRuntimeException {
+        String sql = "from Test t where (t.localizedTestName.english = :testName or t.localizedTestName.french = :testName)";
         try {
-            String sql = "from Test t where t.testName = :testName";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setParameter("testName", testName);
 
-            @SuppressWarnings("unchecked")
-            List<Test> list = query.list();
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
-            Test t = null;
-
-            if (!list.isEmpty()) {
-                t = list.get(0);
-            }
-
-            return t;
-
-        } catch (Exception e) {
-            LogEvent.logError("TestDAOImpl", "getTestByName() " + testName, e.toString());
-            throw new LIMSRuntimeException("Error in Test getTestByName()", e);
-        }
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public Test getTestByUserLocalizedName(String testName) throws LIMSRuntimeException {
-        try {
-            String sql = "from Test t where (t.localizedTestName.english = :testName or t.localizedTestName.french = :testName) and t.isActive='Y'";
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            query.setParameter("testName", testName);
-
-            @SuppressWarnings("unchecked")
-            List<Test> list = query.list();
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
-            Test t = null;
-
-            if (!list.isEmpty()) {
-                t = list.get(0);
-            }
-
-            return t;
-
-        } catch (Exception e) {
+            return query.list();
+        } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError("TestDAOImpl", "getTestByName()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Test getTestByName()", e);
         }
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     @Transactional(readOnly = true)
-    public List<Test> getActiveTestByName(String testName) throws LIMSRuntimeException {
+    public List<Test> getActiveTestsByName(String testName) throws LIMSRuntimeException {
+        String sql = "from Test t where (t.localizedTestName.english = :testName or t.localizedTestName.french = :testName) and t.isActive='Y'";
         try {
-            String sql = "from Test t where t.testName = :testName and t.isActive='Y'";
-            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setParameter("testName", testName);
 
-            List<Test> list = query.list();
-            // closeSession(); // CSL remove old
-            return list;
-        } catch (HibernateException e) {
-            handleException(e, "getActiveTestByName");
+            return query.list();
+        } catch (RuntimeException e) {
+            // bugzilla 2154
+            LogEvent.logError(e.toString(), e);
+            throw new LIMSRuntimeException("Error in Test getTestByName()", e);
         }
-
-        return new ArrayList<>();
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+    @Transactional(readOnly = true)
+    public Test getActiveTestByLocalizedName(String testName, Locale locale) throws LIMSRuntimeException {
+        String sql;
+        if (Locale.ENGLISH.equals(locale)) {
+            sql = "from Test t where t.localizedTestName.english = :testName and t.isActive='Y'";
+        } else {
+            sql = "from Test t where t.localizedTestName.french = :testName and t.isActive='Y'";
+        }
+        try {
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setParameter("testName", testName);
+
+            List<Test> list = query.list();
+            Test t = null;
+
+            if (!list.isEmpty()) {
+                t = list.get(0);
+            }
+
+            return t;
+
+        } catch (RuntimeException e) {
+            // bugzilla 2154
+            LogEvent.logError(e.toString(), e);
+            throw new LIMSRuntimeException("Error in Test getTestByName()", e);
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Test getTestByLocalizedName(String testName, Locale locale) throws LIMSRuntimeException {
+        String sql;
+        if (Locale.ENGLISH.equals(locale)) {
+            sql = "from Test t where t.localizedTestName.english = :testName";
+        } else {
+            sql = "from Test t where t.localizedTestName.french = :testName";
+        }
+        try {
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setParameter("testName", testName);
+
+            List<Test> list = query.list();
+            Test t = null;
+
+            if (!list.isEmpty()) {
+                t = list.get(0);
+            }
+
+            return t;
+
+        } catch (RuntimeException e) {
+            // bugzilla 2154
+            LogEvent.logError(e.toString(), e);
+            throw new LIMSRuntimeException("Error in Test getTestByName()", e);
+        }
+    }
+
+    @Override
+
     @Transactional(readOnly = true)
     public Test getActiveTestById(Integer testId) throws LIMSRuntimeException {
         List<Test> list = null;
@@ -605,7 +603,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
             handleException(e, "getActiveTestById");
         }
 
-        return list.size() > 0 ? list.get(0) : null;
+        return (list != null && list.size() > 0) ? list.get(0) : null;
     }
 
     @Override
@@ -616,9 +614,9 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
             returnTest = entityManager.unwrap(Session.class).get(Test.class, test.getId());
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError("TestDAOImpl", "getTestById()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Test getTestById()", e);
         }
 
@@ -628,37 +626,39 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
     // this is for selectdropdown
     @Override
     @Transactional(readOnly = true)
-    public List getMethodsByTestSection(String filter) throws LIMSRuntimeException {
+    public List<Method> getMethodsByTestSection(String filter) throws LIMSRuntimeException {
         try {
             String sql = "from Test t where t.testSection = :param";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setParameter("param", filter);
 
-            List list = query.list();
+            List<Test> list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
-            List methods = new ArrayList();
+            List<Method> methods = new ArrayList();
 
             for (int i = 0; i < list.size(); i++) {
-                Test t = (Test) list.get(i);
+                Test t = list.get(i);
                 /*
-                 * System.out.println("This is test " + t.getId() + " " + t.getTestName());
+                 * LogEvent.logInfo(this.getClass().getName(), "method unkown", "This is test "
+                 * + t.getId() + " " + t.getTestName());
                  */
                 Method method = t.getMethod();
                 if (!methods.contains(method)) {
                     methods.add(method);
                 }
                 /*
-                 * System.out.println("Adding this method to list " + method.getId() + " " +
+                 * LogEvent.logInfo(this.getClass().getName(), "method unkown",
+                 * "Adding this method to list " + method.getId() + " " +
                  * method.getMethodName());
                  */
             }
 
             return methods;
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError("TestDAOImpl", "getMethodsByTestSection()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Method getMethodsByTestSection(String filter)", e);
         }
     }
@@ -666,20 +666,20 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
     // this is for selectdropdown
     @Override
     @Transactional(readOnly = true)
-    public List getTestsByTestSection(String filter) throws LIMSRuntimeException {
+    public List<Test> getTestsByTestSection(String filter) throws LIMSRuntimeException {
         try {
             String sql = "from Test t where t.testSection = :param";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setInteger("param", Integer.parseInt(filter));
 
-            List list = query.list();
+            List<Test> list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
             return list;
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError("TestDAOImpl", "getTestsByTestSection()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Method getTestsByTestSection(String filter)", e);
         }
     }
@@ -692,11 +692,11 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
             Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setInteger("id", Integer.parseInt(id));
 
-            List list = query.list();
+            List<Test> list = query.list();
             // closeSession(); // CSL remove old
             return list;
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             handleException(e, "getTestsByTestSectionId");
         }
 
@@ -706,20 +706,20 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
     // this is for selectdropdown
     @Override
     @Transactional(readOnly = true)
-    public List getTestsByMethod(String filter) throws LIMSRuntimeException {
+    public List<Test> getTestsByMethod(String filter) throws LIMSRuntimeException {
         try {
             String sql = "from Test t where t.method = :param";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setParameter("param", filter);
 
-            List list = query.list();
+            List<Test> list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
             return list;
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError("TestDAOImpl", "getTestsByMethod()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Method getTestsByMethod(String filter)", e);
         }
     }
@@ -727,21 +727,21 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
     // this is for selectdropdown
     @Override
     @Transactional(readOnly = true)
-    public List getTestsByTestSectionAndMethod(String filter, String filter2) throws LIMSRuntimeException {
+    public List<Test> getTestsByTestSectionAndMethod(String filter, String filter2) throws LIMSRuntimeException {
         try {
             String sql = "from Test t where t.testSection = :param1 and t.method = :param2";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setParameter("param1", filter);
             query.setParameter("param2", filter2);
 
-            List list = query.list();
+            List<Test> list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
             return list;
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError("TestDAOImpl", "getTestsByMethod()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Method getTestsByMethod(String filter)", e);
         }
     }
@@ -750,7 +750,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
     @Override
     @Transactional(readOnly = true)
     public Integer getTotalTestCount() throws LIMSRuntimeException {
-        return getTotalCount("Test", Test.class);
+        return getCount();
     }
 
     // bugzilla 2371
@@ -775,18 +775,18 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setParameter("param", newSearchStr);
 
-            List results = query.list();
+            List<Long> results = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
             if (results != null && results.get(0) != null) {
                 if (results.get(0) != null) {
-                    count = ((Long) results.get(0)).intValue();
+                    count = results.get(0).intValue();
                 }
             }
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (RuntimeException e) {
+            LogEvent.logDebug(e);
             throw new LIMSRuntimeException("Error in TestDaoImpl getTotalSearchedTestCount()", e);
         }
 
@@ -847,8 +847,8 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 //				}
 //			}
 //
-//		} catch (Exception e) {
-//			e.printStackTrace();
+//		} catch (RuntimeException e) {
+//			LogEvent.logDebug(e);
 //			throw new LIMSRuntimeException("Error in TestDaoImpl getTotalSearchedTestCountBySysUserId()", e);
 //		}
 //
@@ -877,8 +877,8 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 //
 //				}
 //			}
-//		} catch (Exception e) {
-//			e.printStackTrace();
+//		} catch (RuntimeException e) {
+//			LogEvent.logDebug(e);
 //			throw new LIMSRuntimeException("Error in testDAOImpl getAllSearchedTotalTestCount()", e);
 //		}
 //		return count;
@@ -886,81 +886,11 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 
     // end if bugzilla 2371
 
-    // bugzilla 1427
-    @Override
-    @Transactional(readOnly = true)
-    public List getNextRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
-        int currentId = Integer.valueOf(id);
-        String tablePrefix = getTablePrefix(table);
-
-        List list;
-        // bugzilla 1908
-        int rrn;
-        try {
-            // bugzilla 1908 cannot use named query for postgres because of
-            // oracle ROWNUM
-            // instead get the list in this sortorder and determine the index of
-            // record with id = currentId
-            String sql = "select t.id from Test t " + " order by t.testSection.testSectionName, t.testName";
-
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            list = query.list();
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
-            rrn = list.indexOf(String.valueOf(currentId));
-
-            list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getNext").setFirstResult(rrn + 1)
-                    .setMaxResults(2).list();
-
-        } catch (Exception e) {
-            // bugzilla 2154
-            LogEvent.logError("TestDAOImpl", "getNextRecord()", e.toString());
-            throw new LIMSRuntimeException("Error in getNextRecord() for " + table, e);
-        }
-
-        return list;
-    }
-
-    // bugzilla 1427
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousRecord(String id, String table, Class clazz) throws LIMSRuntimeException {
-        int currentId = Integer.valueOf(id);
-        String tablePrefix = getTablePrefix(table);
-
-        List list;
-        // bugzilla 1908
-        int rrn;
-        try {
-            // bugzilla 1908 cannot use named query for postgres because of
-            // oracle ROWNUM
-            // instead get the list in this sortorder and determine the index of
-            // record with id = currentId
-            String sql = "select t.id from Test t " + " order by t.testSection.testSectionName desc, t.testName desc";
-
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            list = query.list();
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
-            rrn = list.indexOf(String.valueOf(currentId));
-
-            list = entityManager.unwrap(Session.class).getNamedQuery(tablePrefix + "getPrevious")
-                    .setFirstResult(rrn + 1).setMaxResults(2).list();
-
-        } catch (Exception e) {
-            // bugzilla 2154
-            LogEvent.logError("TestDAOImpl", "getPreviousRecord()", e.toString());
-            throw new LIMSRuntimeException("Error in getPreviousRecord() for " + table, e);
-        }
-
-        return list;
-    }
-
     @Override
     public boolean duplicateTestExists(Test test) throws LIMSRuntimeException {
         try {
 
-            List list = new ArrayList();
+            List<Test> list = new ArrayList();
 
             if (test.getIsActive().equalsIgnoreCase("Y")) {
                 // not case sensitive hemolysis and Hemolysis are considered
@@ -985,8 +915,8 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 
             return !list.isEmpty();
 
-        } catch (Exception e) {
-            LogEvent.logError("TestDAOImpl", "duplicateTestExists()", e.toString());
+        } catch (RuntimeException e) {
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in duplicateTestExists()", e);
         }
     }
@@ -1015,7 +945,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 //				}
 //			}
 //			return result;
-//		} catch (Exception e) {
+//		} catch (RuntimeException e) {
 //			// bugzilla 2154
 //			LogEvent.logError("TestDAOImpl", "isTestFullySetup()", e.toString());
 //			throw new LIMSRuntimeException("Error in isTestFullySetup()", e);
@@ -1030,7 +960,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 
         try {
 
-            List list;
+            List<Test> list;
             Test testWithHighestSortOrder;
 
             String sql = "from Test t where t.testSection = :param and t.sortOrder is not null order by t.sortOrder desc";
@@ -1042,16 +972,16 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
             if (list.size() > 0) {
-                testWithHighestSortOrder = (Test) list.get(0);
+                testWithHighestSortOrder = list.get(0);
                 if (testWithHighestSortOrder != null
                         && !StringUtil.isNullorNill(testWithHighestSortOrder.getSortOrder())) {
                     result = (Integer.parseInt(testWithHighestSortOrder.getSortOrder()) + 1);
                 }
             }
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError("TestDAOImpl", "getNextAvailableSortOrderByTestSection()", e.toString());
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in getNextAvailableSortOrderByTestSection()", e);
         }
         return result;
@@ -1062,7 +992,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
      *      all entities from the database sorted by an appropriate property
      */
     @Override
-    @SuppressWarnings("unchecked")
+
     @Transactional(readOnly = true)
     public List<Test> getAllOrderBy(String columnName) throws LIMSRuntimeException {
         List<Test> entities;
@@ -1078,8 +1008,8 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(hql);
             entities = query.list();
             // closeSession(); // CSL remove old
-        } catch (Exception e) {
-            LogEvent.logError("TestDAOImpl", "getAllOrderBy()", e.toString());
+        } catch (RuntimeException e) {
+            LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in getAllOrderBy()", e);
         }
 
@@ -1140,7 +1070,6 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
         return null;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     @Transactional(readOnly = true)
     public List<Test> getTestsByLoincCode(String loincCode) {
@@ -1158,7 +1087,6 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
         return null;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     @Transactional(readOnly = true)
     public List<Test> getActiveTestsByLoinc(String loincCode) {
@@ -1173,6 +1101,21 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
             handleException(e, "getActiveTestByLoinc");
         }
 
+        return null;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Test> getAllTestsByDictionaryResult() {
+        String sql = "From Test t where t.id in (select tr.test from TestResult tr where tr.testResultType in ('D','M','C')) ORDER BY t.description asc";
+        try {
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            List<Test> tests = query.list();
+            // closeSession(); // CSL remove old
+            return tests;
+        } catch (HibernateException e) {
+            handleException(e, "getAllTestsByDictionaryResult");
+        }
         return null;
     }
 }

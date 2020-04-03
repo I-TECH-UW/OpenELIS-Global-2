@@ -1,5 +1,5 @@
 <%@ page language="java"
-         contentType="text/html; charset=utf-8"
+         contentType="text/html; charset=UTF-8"
          import="java.util.List,
          		org.openelisglobal.common.action.IActionConstants,
          		org.openelisglobal.common.util.IdValuePair,
@@ -32,11 +32,11 @@
 <c:set var="jsonChangeList" value="${form.jsonChangeList}" />
 <c:set var="activeTestList" value="${form.orderableTestList}" />
  
-<script type="text/javascript" src="scripts/jquery-ui.js?ver=<%= Versioning.getBuildNumber() %>"></script>
+<script type="text/javascript" src="scripts/jquery-ui.js?"></script>
 
 
 <link rel="stylesheet" media="screen" type="text/css"
-      href="<%=basePath%>css/jquery_ui/jquery.ui.theme.css?ver=<%= Versioning.getBuildNumber() %>"/>
+      href="css/jquery_ui/jquery.ui.theme.css?"/>
 
 <script type="text/javascript">
     var backFunction = selectBack;
@@ -277,17 +277,10 @@
 
 <hr/>
 
-<%!
-    String basePath = "";
-    int testCount = 0;
-    int columnCount = 0;
-    int columns = 4;
-%>
-
 <%
-    basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/";
-    columnCount = 0;
-    testCount = 0;
+	int testCount = 0;
+	int columnCount = 0;
+	int columns = 4;
 %>
 
 <form:hidden path="jsonChangeList" id="jsonChangeList"/>

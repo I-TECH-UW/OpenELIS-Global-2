@@ -39,11 +39,12 @@ import org.openelisglobal.dataexchange.service.aggregatereporting.ReportExternal
 import org.openelisglobal.dataexchange.service.aggregatereporting.ReportQueueTypeService;
 import org.openelisglobal.test.service.TestServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service
-public class TestUsageBacklog extends Thread implements ITestUsageBacklog {
+@Component
+public class TestUsageBacklog {
 
     @Autowired
     private ReportExternalExportService reportExternalExportService;
@@ -63,7 +64,9 @@ public class TestUsageBacklog extends Thread implements ITestUsageBacklog {
         }
     }
 
-    @Override
+    // workaround to make this run once on startup.
+    // If program is continuously running for 290,0000 millenia it will run again
+    @Scheduled(initialDelay = 1000 * 30, fixedDelay = Long.MAX_VALUE)
     @Transactional
     public void run() {
         if (ConfigurationProperties.getInstance().isPropertyValueEqual(Property.testUsageReporting, "true")) {
@@ -72,7 +75,7 @@ public class TestUsageBacklog extends Thread implements ITestUsageBacklog {
     }
 
     private void handleBacklog() {
-        System.out.println("Gathering triggered: " + DateUtil.getCurrentDateAsText("dd-MM-yyyy hh:mm"));
+        LogEvent.logInfo(this.getClass().getName(), "method unkown", "Gathering triggered: " + DateUtil.getCurrentDateAsText("dd-MM-yyyy hh:mm"));
         LogEvent.logInfo("TestUsagebacklog", "handleBacklog",
                 "Gathering triggered: " + DateUtil.getCurrentDateAsText("dd-MM-yyyy hh:mm"));
 
@@ -131,7 +134,7 @@ public class TestUsageBacklog extends Thread implements ITestUsageBacklog {
         try {
             json.writeJSONString(out);
         } catch (IOException e) {
-            e.printStackTrace();
+            LogEvent.logDebug(e);
         }
         String jsonText = out.toString().replace("\n", "");
 
@@ -153,7 +156,7 @@ public class TestUsageBacklog extends Thread implements ITestUsageBacklog {
             }
 
         } catch (LIMSRuntimeException e) {
-            LogEvent.logErrorStack(this.getClass().getSimpleName(), "writeReportForDayPeriod()", e);
+            LogEvent.logErrorStack(e);
             throw e;
         }
     }

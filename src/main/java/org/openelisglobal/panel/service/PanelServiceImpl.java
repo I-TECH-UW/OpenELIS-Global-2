@@ -2,6 +2,7 @@ package org.openelisglobal.panel.service;
 
 import java.util.List;
 
+import org.hibernate.Hibernate;
 import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
 import org.openelisglobal.localization.valueholder.Localization;
@@ -59,25 +60,13 @@ public class PanelServiceImpl extends BaseObjectServiceImpl<Panel, String> imple
 
     @Override
     @Transactional(readOnly = true)
-    public List getNextPanelRecord(String id) {
-        return getBaseObjectDAO().getNextPanelRecord(id);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List getPreviousPanelRecord(String id) {
-        return getBaseObjectDAO().getPreviousPanelRecord(id);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public Integer getTotalPanelCount() {
         return getBaseObjectDAO().getTotalPanelCount();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List getActivePanels(String filter) {
+    public List<Panel> getActivePanels(String filter) {
         return getBaseObjectDAO().getActivePanels(filter);
     }
 
@@ -95,7 +84,7 @@ public class PanelServiceImpl extends BaseObjectServiceImpl<Panel, String> imple
 
     @Override
     @Transactional(readOnly = true)
-    public List getPageOfPanels(int startingRecNo) {
+    public List<Panel> getPageOfPanels(int startingRecNo) {
         return getBaseObjectDAO().getPageOfPanels(startingRecNo);
     }
 
@@ -156,6 +145,8 @@ public class PanelServiceImpl extends BaseObjectServiceImpl<Panel, String> imple
     @Override
     public Localization getLocalizationForPanel(String id) {
         Panel panel = getPanelById(id);
-        return panel != null ? panel.getLocalization() : null;
+        Localization localization = panel != null ? panel.getLocalization() : null;
+        Hibernate.initialize(localization);
+        return localization;
     }
 }

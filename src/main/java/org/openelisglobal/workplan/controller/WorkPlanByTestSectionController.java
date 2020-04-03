@@ -6,7 +6,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.formfields.FormFields;
@@ -31,12 +30,19 @@ import org.openelisglobal.test.valueholder.TestSection;
 import org.openelisglobal.workplan.form.WorkplanForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class WorkPlanByTestSectionController extends BaseWorkplanController {
+
+    private static final String[] ALLOWED_FIELDS = new String[] { "testSectionId", "type" };
 
     @Autowired
     private org.openelisglobal.analysis.service.AnalysisService analysisService;
@@ -45,42 +51,50 @@ public class WorkPlanByTestSectionController extends BaseWorkplanController {
     @Autowired
     private TestSectionService testSectionService;
 
-    @RequestMapping(value = "/WorkPlanByTestSection", method = RequestMethod.GET)
-    public ModelAndView showWorkPlanByTestSection(HttpServletRequest request)
-            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        WorkplanForm form = new WorkplanForm();
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
 
+    @RequestMapping(value = "/WorkPlanByTestSection", method = RequestMethod.GET)
+    public ModelAndView showWorkPlanByTestSection(
+            @Validated(WorkplanForm.PrintWorkplan.class) @ModelAttribute("form") WorkplanForm form,
+            BindingResult result,
+            HttpServletRequest request)
+                    throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        if (result.hasErrors()) {
+            saveErrors(result);
+            return findForward(FWD_FAIL, form);
+        }
         request.getSession().setAttribute(SAVE_DISABLED, "true");
 
-        String testSectionId = (request.getParameter("testSectionId"));
-
-        String workplan = request.getParameter("type");
+        String testSectionId = form.getTestSectionId();
+        String workplan = form.getWorkplanType();
 
         // load testSections for drop down
-        PropertyUtils.setProperty(form, "testSections",
-                DisplayListService.getInstance().getList(ListType.TEST_SECTION));
-        PropertyUtils.setProperty(form, "testSectionsByName",
-                DisplayListService.getInstance().getList(ListType.TEST_SECTION_BY_NAME));
+        form.setTestSections(DisplayListService.getInstance().getList(ListType.TEST_SECTION));
+        form.setTestSectionsByName(DisplayListService.getInstance().getList(ListType.TEST_SECTION_BY_NAME));
 
+        List<TestResultItem> workplanTests = new ArrayList<>();
         TestSection ts = null;
 
         if (!GenericValidator.isBlankOrNull(testSectionId)) {
             ts = testSectionService.get(testSectionId);
-            PropertyUtils.setProperty(form, "testSectionId", "0");
-        }
+            form.setTestSectionId("0");
 
-        List<TestResultItem> workplanTests = new ArrayList<>();
-
-        if (!GenericValidator.isBlankOrNull(testSectionId)) {
             // get tests based on test section
             workplanTests = getWorkplanByTestSection(testSectionId);
-            PropertyUtils.setProperty(form, "workplanTests", workplanTests);
-            PropertyUtils.setProperty(form, "searchFinished", Boolean.TRUE);
-            PropertyUtils.setProperty(form, "testName", ts.getLocalizedName());
+            form.setWorkplanTests(workplanTests);
+            form.setSearchFinished(Boolean.TRUE);
+            if (ts != null) {
+                form.setTestName(ts.getLocalizedName());
+            } else {
+                throw new IllegalStateException("ts cannot be null here");
+            }
 
         } else {
             // set workplanTests as empty
-            PropertyUtils.setProperty(form, "workplanTests", new ArrayList<TestResultItem>());
+            form.setWorkplanTests(new ArrayList<TestResultItem>());
         }
         ResultsLoadUtility resultsLoadUtility = new ResultsLoadUtility();
         resultsLoadUtility.sortByAccessionAndSequence(workplanTests);
@@ -88,13 +102,12 @@ public class WorkPlanByTestSectionController extends BaseWorkplanController {
         if (isPatientNameAdded()) {
             addPatientNamesToList(workplanTests);
         }
-        PropertyUtils.setProperty(form, "workplanType", workplan);
-        PropertyUtils.setProperty(form, "searchLabel", MessageUtil.getMessage("workplan.unit.types"));
+        form.setWorkplanType(workplan);
+        form.setSearchLabel(MessageUtil.getMessage("workplan.unit.types"));
 
         return findForward(FWD_SUCCESS, form);
     }
 
-    @SuppressWarnings("unchecked")
     private List<TestResultItem> getWorkplanByTestSection(String testSectionId) {
 
         List<Analysis> testList = new ArrayList<>();
@@ -245,7 +258,7 @@ public class WorkPlanByTestSectionController extends BaseWorkplanController {
                 QAService qa = new QAService(event);
                 if (!GenericValidator.isBlankOrNull(qa.getObservationValue(QAObservationType.SECTION))
                         && qa.getObservationValue(QAObservationType.SECTION)
-                                .equals(analysis.getTestSection().getNameKey())) {
+                        .equals(analysis.getTestSection().getNameKey())) {
                     return true;
                 }
             }
@@ -258,7 +271,7 @@ public class WorkPlanByTestSectionController extends BaseWorkplanController {
     }
 
     @Override
-    protected String getMessageForKey(HttpServletRequest request, String messageKey) throws Exception {
+    protected String getMessageForKey(HttpServletRequest request, String messageKey) {
         if (GenericValidator.isBlankOrNull(request.getParameter("type"))) {
             return MessageUtil.getMessage(messageKey, MessageUtil.getMessage("workplan.unit.types"));
         }

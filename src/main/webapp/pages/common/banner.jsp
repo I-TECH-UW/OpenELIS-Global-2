@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=utf-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"%>
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
@@ -17,17 +17,8 @@
 				 org.openelisglobal.common.form.BaseForm,
 				 org.owasp.encoder.Encode"%>
 
-<%!String path = "";
-	String basePath = "";
-	String menuItems[];
-	boolean languageSwitch = false;
-%>
 <%
-	path = request.getContextPath();
-	basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + path
-	+ "/";
-
-	languageSwitch = "true".equals(ConfigurationProperties.getInstance().getPropertyValue(Property.languageSwitch));
+	boolean languageSwitch = "true".equals(ConfigurationProperties.getInstance().getPropertyValue(Property.languageSwitch));
 %>
 
 <c:set var="formName" value="${form.formName}"/>
@@ -52,25 +43,34 @@ function /*void*/ setLanguage( language ){
 //Note this is hardcoded for haiti clinical.  Message resources would be a good way to get both language and context
 function displayHelp(){
 
-    var url = '<%=basePath%>' + 'documentation/' + '<%= MessageUtil.getContextualMessage("documentation") %>';
+    var url = 'documentation/' + '<%= MessageUtil.getContextualMessage("documentation") %>';
 
 	var	newwindow=window.open( url,'name','height=1000,width=850, menuBar=yes');
 
 	if (window.focus) {newwindow.focus()}
 }
 
+function getCsrfToken() {
+	if (typeof customGetCsrfToken === "function") {
+		return customGetCsrfToken();
+	} else {
+		return document.getElementById("logout-form").elements["_csrf"].value;
+	}
+}
+
 </script>
 
-<!-- New additions below by mark47 -->
-<link rel="stylesheet" type="text/css" href="<%=basePath%>css/menu.css?ver=<%= Versioning.getBuildNumber() %>" />
+<%-- New additions below by mark47 --%>
+<link rel="stylesheet" type="text/css" href="css/menu.css?" />
 
-<!-- Begin new menu -->
+<%-- Begin new menu --%>
 
-<script type="text/javascript" src="<%=basePath%>scripts/menu/hoverIntent.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script type="text/javascript" src="<%=basePath%>scripts/menu/superfish.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script type="text/javascript" src="<%=basePath%>scripts/menu/supersubs.js?ver=<%= Versioning.getBuildNumber() %>"></script>
-<script type="text/javascript" src="<%=basePath%>scripts/menu/supposition.js?ver=<%= Versioning.getBuildNumber() %>"></script>
+<script type="text/javascript" src="scripts/menu/hoverIntent.js?"></script>
+<script type="text/javascript" src="scripts/menu/superfish.js?"></script>
+<script type="text/javascript" src="scripts/menu/supersubs.js?"></script>
+<script type="text/javascript" src="scripts/menu/supposition.js?"></script>
 <script type="text/javascript">
+
 	// initialize superfish menu plugin. supposition added to allow sub-menus on left when window size is too small.
 	jQuery(function(){
 		jQuery('ul.nav-menu').supersubs({
@@ -85,7 +85,9 @@ function displayHelp(){
 </script>
 
 <div id="header">
-  	<div id="oe-logo" style="width: 89px" onclick="navigateToHomePage();"><img src="images/openelis_logo.png" title="OpenELIS" alt="OpenELIS" /></div>
+  	<div id="oe-logo" onclick="navigateToHomePage();">
+  		<img id="oe-logo-img" src="images/openelis_logo.png" title="OpenELIS" alt="OpenELIS" width="auto" height="71"/>
+  	</div>
 	<div style="margin-left: 94px">
  		<div style="display: block">
 			<%
@@ -118,14 +120,14 @@ function displayHelp(){
 	if (usd != null) {
 %>
 
-<%= MenuUtil.getMenuAsHTML(path) %>
+<%= MenuUtil.getMenuAsHTML() %>
 
 <%
 		}
 %>
 
 	</div>
-</div> <!-- Closes id=header -->
+</div> <%-- Closes id=header --%>
 
 
 <% if( languageSwitch && "loginForm".equals((String) pageContext.getAttribute("formName")) ){ %>
