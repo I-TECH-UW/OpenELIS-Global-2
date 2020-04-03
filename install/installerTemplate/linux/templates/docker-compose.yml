@@ -1,47 +1,48 @@
 version: '3.3'
-# lines starting with a #db and #port will be uncommented when setup with a docker database
+# lines starting with a  and #port will be uncommented when setup with a docker database
 # lines starting with a #port will be uncommented when setup with a remote database
 # lines starting with a #h will be uncommented when setup with a local database
 services:
-#db    database:
-#db        container_name: openelisglobal-database # don't change
-#db        image: postgres:9.5
-#db        ports:
-#db            - "[% db_host_port %]:5432"
-#db        restart: always
-#db        env_file:
-#db            - [% db_env_dir %]database.env
-#db        volumes:
-#db              # preserves the database between containers
-#db            - [% db_data_dir %]:/var/lib/postgresql/data                
-#db              # files here will run on install
-#db            - [% db_init_dir %]:/docker-entrypoint-initdb.d    
-#db              # values must match values in DatabaseBackup.pl
-#db            - [% db_backups_dir %]:[% docker_backups_dir %]     
+    database:
+        container_name: openelisglobal-database # don't change
+        image: postgres:9.5
+        ports:
+            - "5435:5432"
+        restart: always
+        env_file:
+            - database.env
+        volumes:
+              # preserves the database between containers
+            - ~/dockerdbData:/var/lib/postgresql/data                
+              # files here will run on install
+            - /var/lib/openelis-global/databaseInit:/docker-entrypoint-initdb.d    
             
     openelisglobal:
         container_name: openelisglobal-webapp # don't change
+        build:
+            context: ./
+            dockerfile
         image: openelisglobal
-#db        depends_on:
-#db            - database
+        depends_on:
+            - database
         ports:
             - "8080:8080"
             - "8443:8443"
         restart: always
         environment:
               # context.xml doesn't seem to be able to pick up environment variables directly, so we are passing them in as CATALINA_OPTS
-            - CATALINA_OPTS= -DOE_DB_URL=jdbc:postgresql://[% db_host %]:[% db_port %]/clinlims -DOE_DB_USERNAME=clinlims
+            - CATALINA_OPTS= -DOE_DB_URL=jdbc:postgresql://database:5432/clinlims -DOE_DB_USERNAME=clinlims -DOE_DB_USER_PASSWORD=clinlims
         volumes:
-            - [% plugins_dir %]:/var/lib/openelis-global/plugins
+            - /var/lib/openelis-global/plugins:/var/lib/openelis-global/plugins
         secrets:
             - source: tomcat_cert.crt
             - source: tomcat_cert.key
               # this will be read into CATALINA_OPTS in docker-entrypoint.sh
-            - source: OE_DB_USER_PASSWORD
+#            - source: OE_DB_USER_PASSWORD
             
 secrets:
-  OE_DB_USER_PASSWORD:
-    file: [% secrets_dir %]OE_DB_USER_PASSWORD
+#  OE_DB_USER_PASSWORD:
+#    file: [% secrets_dir %]OE_DB_USER_PASSWORD
   tomcat_cert.crt:
     file: /etc/tomcat/ssl/certs/tomcat_cert.crt
   tomcat_cert.key:
