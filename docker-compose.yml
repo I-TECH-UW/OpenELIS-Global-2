@@ -19,13 +19,12 @@ services:
             interval: 10s
             retries: 10 
             
-    oe.openelisci.org:
+    oe.openelis.org:
         container_name: openelisglobal-webapp 
         image: openelisglobal
         depends_on:
-            - datasubscriber.openelisci.org
+            - datasubscriber.openelis.org
             - database
-            
         ports:
             - "8080:8080"
             - "8443:8443"
@@ -41,7 +40,7 @@ services:
             - source: truststore
             - source: common.properties
             
-    fhir.openelisci.org:
+    fhir.openelis.org:
         container_name: hapi-fhir-jpaserver
         image: hapi-fhir-jpaserver-starter
         depends_on:
@@ -60,11 +59,11 @@ services:
             - source: keystore
             - source: truststore
             
-    datasubscriber.openelisci.org:
+    datasubscriber.openelis.org:
         container_name: data-subscriber
         image: datasubscriber-webapp
         depends_on:
-            - fhir.openelisci.org
+            - fhir.openelis.org
             - database
         ports:
             - 8445:8443
@@ -74,11 +73,11 @@ services:
             - source: truststore
             - source: common.properties
             
-    dataimport.openelisci.org:
+    dataimport.openelis.org:
         container_name: data-import
         image: dataimport-webapp
         depends_on:
-            - fhir.openelisci.org
+            - fhir.openelis.org
             - database
         ports:
             - 8446:8443
