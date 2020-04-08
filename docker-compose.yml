@@ -1,11 +1,11 @@
 version: '3.3'
-
 services:
     database:
         container_name: openelisglobal-database 
         image: postgres:9.5
         ports:
             - "15432:5432"
+        restart: always
         env_file:
             - ./dev/database/database.env
         volumes:
@@ -13,15 +13,23 @@ services:
             - db-data:/var/lib/postgresql/data                
               # files here will run on install
             - ./dev/database/dbInit:/docker-entrypoint-initdb.d
+        healthcheck:
+            test: [ "CMD", "pg_isready", "-q", "-d", "clinlims", "-U", "clinlims" ]
+            timeout: 45s
+            interval: 10s
+            retries: 10 
             
     oe.openelisci.org:
         container_name: openelisglobal-webapp 
         image: openelisglobal
         depends_on:
+            - datasubscriber.openelisci.org
             - database
+            
         ports:
             - "8080:8080"
             - "8443:8443"
+        restart: always
         environment:
               # context.xml doesn't seem to be able to pick up environment variables directly, so we are passing them in as CATALINA_OPTS
             - CATALINA_OPTS= -Ddatasource.url=jdbc:postgresql://database:5432/clinlims?currentSchema=clinlims -Ddatasource.username=clinlims -Ddatasource.password=clinlims
@@ -31,7 +39,54 @@ services:
         secrets:
             - source: keystore
             - source: truststore
+            - source: common.properties
             
+    fhir.openelisci.org:
+        container_name: hapi-fhir-jpaserver
+        image: hapi-fhir-jpaserver-starter
+        depends_on:
+            - database
+        ports:
+            - "8081:8080"
+            - "8444:8443"
+        restart: always
+        environment:
+            - JAVA_OPTS= -Dhapi.properties=/run/secrets/hapi.properties
+        volumes:
+            - ./dev/tomcat/server.xml:/usr/local/tomcat/conf/server.xml
+        secrets:
+            - source: hapi.properties
+            - source: common.properties
+            - source: keystore
+            - source: truststore
+            
+    datasubscriber.openelisci.org:
+        container_name: data-subscriber
+        image: datasubscriber-webapp
+        depends_on:
+            - fhir.openelisci.org
+            - database
+        ports:
+            - 8445:8443
+        restart: always
+        secrets:
+            - source: keystore
+            - source: truststore
+            - source: common.properties
+            
+    dataimport.openelisci.org:
+        container_name: data-import
+        image: dataimport-webapp
+        depends_on:
+            - fhir.openelisci.org
+            - database
+        ports:
+            - 8446:8443
+        restart: always
+        secrets:
+            - source: keystore
+            - source: truststore
+            - source: common.properties
             
 volumes:
   db-data:            
@@ -40,4 +95,9 @@ secrets:
     file: ./dev/https/oe_selfsigned.keystore
   truststore:
     file: ./dev/https/oe_selfsigned.truststore
+  common.properties:
+    file: ./dev/properties/common.properties  
+  hapi.properties:
+    file: ./dev/properties/hapi.properties
+    
     
