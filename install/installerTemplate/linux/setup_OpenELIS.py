@@ -216,6 +216,8 @@ def do_install():
     
     get_user_values()
     
+#    get_fhir_api_user()
+    
     install_files_from_templates()
     
     install_site_info_config_file()
@@ -332,7 +334,6 @@ def create_properties_files():
             line = line.replace("[% db_port %]", DB_PORT) 
         if line.find("[% db_password %]")  >= 0:
             line = line.replace("[% db_password %]", CLINLIMS_PWD) 
-            
         
         output_file.write(line)
 
@@ -596,6 +597,8 @@ def do_update():
     backup_db()
 
     load_docker_image()
+    
+#    get_fhir_api_user()
     
     create_docker_compose_file()
     
