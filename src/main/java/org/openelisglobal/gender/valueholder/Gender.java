@@ -45,6 +45,10 @@ public class Gender extends BaseObject<Integer> {
     @Size(max = 1)
     private String genderType;
 
+    @Column(name = "name_key")
+    @Size(max = 60)
+    private String nameKey;
+
     public Gender() {
         super();
     }
@@ -73,6 +77,16 @@ public class Gender extends BaseObject<Integer> {
 
     public void setGenderType(String genderType) {
         this.genderType = genderType;
+    }
+
+    @Override
+    public String getNameKey() {
+        return this.nameKey;
+    }
+
+    @Override
+    public void setNameKey(String nameKey) {
+        this.nameKey = nameKey;
     }
 
     @Override

@@ -11,7 +11,7 @@
 
  
 <c:set var="valueEditable" value="${form.editable}"/>
-
+<script>
     jQuery(document).ready(function () {
     	<c:if test='${not form.editable}'>
             jQuery(".inputWidget").prop('disabled', true);

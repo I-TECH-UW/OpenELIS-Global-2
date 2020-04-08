@@ -160,6 +160,9 @@ public class LogbookResultsController extends LogbookResultsBaseController {
         //        String statusRuleSet = ConfigurationProperties.getInstance().getPropertyValueUpperCase(Property.StatusRules);
 
         String requestedPage = request.getParameter("page");
+        if (GenericValidator.isBlankOrNull(requestedPage)) {
+            requestedPage = "1";
+        }
         int requestedPageNumber = Integer.parseInt(requestedPage);
         String testSectionId = form.getTestSectionId();
 
