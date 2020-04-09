@@ -34,7 +34,7 @@ services:
             - CATALINA_OPTS= -Ddatasource.url=jdbc:postgresql://database:5432/clinlims?currentSchema=clinlims -Ddatasource.username=clinlims -Ddatasource.password=clinlims
         volumes:
             - ./dev/plugins:/var/lib/openelis-global/plugins
-            - ./dev/tomcat/server.xml:/usr/local/tomcat/conf/server.xml
+            - ./dev/tomcat/oe_server.xml:/usr/local/tomcat/conf/server.xml
         secrets:
             - source: keystore
             - source: truststore
@@ -52,7 +52,7 @@ services:
         environment:
             - JAVA_OPTS= -Dhapi.properties=/run/secrets/hapi.properties
         volumes:
-            - ./dev/tomcat/server.xml:/usr/local/tomcat/conf/server.xml
+            - ./dev/tomcat/hapi_server.xml:/usr/local/tomcat/conf/server.xml
         secrets:
             - source: hapi.properties
             - source: common.properties
