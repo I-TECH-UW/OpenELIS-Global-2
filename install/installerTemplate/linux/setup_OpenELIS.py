@@ -216,8 +216,6 @@ def do_install():
     
     get_user_values()
     
-#    get_fhir_api_user()
-    
     install_files_from_templates()
     
     install_site_info_config_file()
@@ -345,8 +343,8 @@ def create_properties_files():
 
 def create_server_xml_files():
     ensure_dir_exists(SECRETS_DIR)
-    template_file = open(INSTALLER_TEMPLATE_DIR + "server.xml", "r")
-    output_file = open(OE_ETC_DIR + "server.xml", "w")
+    template_file = open(INSTALLER_TEMPLATE_DIR + "oe_server.xml", "r")
+    output_file = open(OE_ETC_DIR + "oe_server.xml", "w")
 
     for line in template_file:
         if line.find("[% truststore_password %]")  >= 0:
@@ -358,8 +356,24 @@ def create_server_xml_files():
 
     template_file.close()
     output_file.close()
-    os.chmod(OE_ETC_DIR + "server.xml", 0640) 
-    os.chown(OE_ETC_DIR + 'server.xml', 8443, 8443)      
+    os.chmod(OE_ETC_DIR + "oe_server.xml", 0640) 
+    os.chown(OE_ETC_DIR + 'oe_server.xml', 8443, 8443)  
+    
+    template_file = open(INSTALLER_TEMPLATE_DIR + "hapi_server.xml", "r")
+    output_file = open(OE_ETC_DIR + "hapi_server.xml", "w")
+
+    for line in template_file:
+        if line.find("[% truststore_password %]")  >= 0:
+            line = line.replace("[% truststore_password %]", TRUSTSTORE_PWD)
+        if line.find("[% keystore_password %]")  >= 0:
+            line = line.replace("[% keystore_password %]", KEYSTORE_PWD) 
+        
+        output_file.write(line)
+
+    template_file.close()
+    output_file.close()
+    os.chmod(OE_ETC_DIR + "hapi_server.xml", 0640) 
+    os.chown(OE_ETC_DIR + 'hapi_server.xml', 8443, 8443)      
     
 
 def install_backup_task():
@@ -598,7 +612,8 @@ def do_update():
 
     load_docker_image()
     
-#    get_fhir_api_user()
+    get_keystore_password()
+    get_truststore_password()
     
     create_docker_compose_file()
     

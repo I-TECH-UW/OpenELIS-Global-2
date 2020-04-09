@@ -1,7 +1,6 @@
 package org.openelisglobal.dataexchange.fhir.controller;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.Arrays;
 
 import javax.annotation.PostConstruct;
@@ -44,7 +43,7 @@ public class InternalFhirApi {
 
     @PostConstruct
     // TODO make this run once for all time, not once per startup
-    public void registerExternalApi() throws IOException, URISyntaxException {
+    public void registerExternalApi() throws IOException {
         HttpPut httpPost = new HttpPut(dataSubscriberPath);
         BasicNameValuePair param1 = new BasicNameValuePair("resourceGroupName", "openElisInternalApi");
         BasicNameValuePair param2 = new BasicNameValuePair("sourceServerUri", fhirStorePath);
@@ -66,6 +65,8 @@ public class InternalFhirApi {
                         "could not successfully subscribe at " + localServerPath);
                 LogEvent.logError(this.getClass().getName(), "registerExternalApi", "responseCode " + responseCode);
             }
+
+        } catch (IOException | RuntimeException e) {
 
         }
     }
