@@ -67,7 +67,8 @@ public class InternalFhirApi {
             }
 
         } catch (IOException | RuntimeException e) {
-
+            //LogEvent.logError("Couldn't contact dataSubscriber:", e);
+            LogEvent.logError(this.getClass().getName(), "", "Couldn't contact dataSubscriber:");
         }
     }
 
