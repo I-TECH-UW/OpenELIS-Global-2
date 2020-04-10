@@ -62,7 +62,7 @@ public class InternalFhirApi {
                 break;
             default:
                 LogEvent.logError(this.getClass().getName(), "registerExternalApi",
-                        "could not successfully subscribe at " + localServerPath);
+                        "could not successfully subscribe at " + dataSubscriberPath);
                 LogEvent.logError(this.getClass().getName(), "registerExternalApi", "responseCode " + responseCode);
             }
 
@@ -73,6 +73,7 @@ public class InternalFhirApi {
 
     @PutMapping(value = "/{resourceType}/**")
     public ResponseEntity<String> receiveFhirRequest(@PathVariable("resourceType") ResourceType resourceType) {
+        System.out.println("received notification for resource of type: " + resourceType);
         fhirApiWorkflowService.processWorkflow(resourceType);
 
         return ResponseEntity.ok("");
