@@ -8,12 +8,15 @@ import java.util.Map;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Bundle.BundleEntryComponent;
-import org.hl7.fhir.r4.model.Patient;
 import org.hl7.fhir.r4.model.Reference;
 import org.hl7.fhir.r4.model.ResourceType;
 import org.hl7.fhir.r4.model.ServiceRequest;
 import org.hl7.fhir.r4.model.Task;
 import org.hl7.fhir.r4.model.Task.TaskStatus;
+import org.openelisglobal.dataexchange.fhir.service.TaskWorker.TaskResult;
+import org.openelisglobal.dataexchange.order.action.DBOrderExistanceChecker;
+import org.openelisglobal.patient.valueholder.Patient;
+import org.openelisglobal.spring.util.SpringContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
@@ -65,6 +68,14 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
                     System.out.println("BasedOn ServiceRequest: "
                             + fhirContext.newJsonParser().encodeResourceToString(serviceRequest));
                 }
+
+                TaskWorker worker = new TaskWorker(task);
+
+                worker.setInterpreter(SpringContext.getBean(TaskInterpreter.class));
+                worker.setExistanceChecker(SpringContext.getBean(DBOrderExistanceChecker.class));
+                worker.setPersister(SpringContext.getBean(TaskPersister.class));
+
+                TaskResult taskResult = worker.handleOrderRequest();
 
                 task.setStatus(TaskStatus.ACCEPTED);
                 fhirContext.newRestfulGenericClient(fhirStorePath).update().resource(task).execute();

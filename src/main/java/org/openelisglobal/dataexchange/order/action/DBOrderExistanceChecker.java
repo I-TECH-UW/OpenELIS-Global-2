@@ -45,11 +45,13 @@ public class DBOrderExistanceChecker implements IOrderExistanceChecker {
         }
 
         ElectronicOrder eOrder = eOrders.get(eOrders.size() - 1);
-        if (SpringContext.getBean(IStatusService.class).getStatusID(ExternalOrderStatus.Cancelled).equals(eOrder.getStatusId())) {
+        if (SpringContext.getBean(IStatusService.class).getStatusID(ExternalOrderStatus.Cancelled)
+                .equals(eOrder.getStatusId())) {
             return CheckResult.ORDER_FOUND_CANCELED;
         }
 
-        if (SpringContext.getBean(IStatusService.class).getStatusID(ExternalOrderStatus.Entered).equals(eOrder.getStatusId())) {
+        if (SpringContext.getBean(IStatusService.class).getStatusID(ExternalOrderStatus.Entered)
+                .equals(eOrder.getStatusId())) {
             return CheckResult.ORDER_FOUND_QUEUED;
         }
 
