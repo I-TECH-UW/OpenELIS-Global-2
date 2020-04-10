@@ -80,19 +80,19 @@ services:
             - source: truststore
             - source: common.properties
             
-    dataimport.openelisci.org:
-        container_name: [% data_import_name %]
-        image: dataimport-webapp
-        depends_on:
-            - fhir.openelisci.org
-#db            - database
-        ports:
-            - 8446:8443
-        restart: always
-        secrets:
-            - source: keystore
-            - source: truststore
-            - source: common.properties
+#    dataimport.openelisci.org:
+#        container_name: [% data_import_name %]
+#        image: dataimport-webapp
+#        depends_on:
+#            - fhir.openelisci.org
+##db            - database
+#        ports:
+#            - 8446:8443
+#        restart: always
+#        secrets:
+#            - source: keystore
+#            - source: truststore
+#            - source: common.properties
             
 secrets:
   datasource.password:

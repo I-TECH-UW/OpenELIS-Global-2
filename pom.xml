@@ -40,7 +40,7 @@
 		<dependency>
 			<groupId>ca.uhn.hapi.fhir</groupId>
 			<artifactId>hapi-fhir-structures-r4</artifactId>
-			<version>4.1.0</version>
+			<version>4.2.0</version>
 		</dependency>
 		<dependency>
 			<groupId>ca.uhn.hapi.fhir</groupId>
@@ -403,10 +403,10 @@
 				<version>3.8.0</version>
 				<configuration>
 					<!-- move to release when we compile in java versions >= 9 -->
-					<release>${maven.java.release}</release>
+<!-- 					<release>${maven.java.release}</release> -->
 					<!-- legacy for java versions < 9 -->
-					<!-- <source>${maven.compiler.source}</source> -->
-					<!-- <target>${maven.compiler.target}</target> -->
+					<source>${maven.compiler.source}</source>
+					<target>${maven.compiler.target}</target>
 				</configuration>
 			</plugin>
 			<plugin>

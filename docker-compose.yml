@@ -73,19 +73,19 @@ services:
             - source: truststore
             - source: common.properties
             
-    dataimport.openelis.org:
-        container_name: data-import
-        image: dataimport-webapp
-        depends_on:
-            - fhir.openelis.org
-            - database
-        ports:
-            - 8446:8443
-        restart: always
-        secrets:
-            - source: keystore
-            - source: truststore
-            - source: common.properties
+#    dataimport.openelis.org:
+#        container_name: data-import
+#        image: dataimport-webapp
+#        depends_on:
+#            - fhir.openelis.org
+#            - database
+#        ports:
+#            - 8446:8443
+#        restart: always
+#        secrets:
+#            - source: keystore
+#            - source: truststore
+#            - source: common.properties
             
 volumes:
   db-data:            

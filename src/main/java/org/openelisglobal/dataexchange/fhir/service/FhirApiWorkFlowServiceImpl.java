@@ -19,6 +19,7 @@ import org.hl7.fhir.r4.model.Task.TaskStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import ca.uhn.fhir.context.FhirContext;
@@ -33,9 +34,15 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
     private FhirContext fhirContext;
 
     @Value("${org.openelisglobal.fhirstore.uri}")
-    private String fhirStorePath;
+    private String localFhirStorePath;
     @Value("${org.openelisglobal.remote.source.uri}")
-    private String remoteSourceUrl;
+    private String remoteStorePath;
+
+    @Scheduled(initialDelay = 10 * 1000, fixedRate = 60 * 1000)
+    @Override
+    public void pollForRemoteTasks() {
+        processWorkflow(ResourceType.Task);
+    }
 
     @Override
     @Async
@@ -49,11 +56,11 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
     }
 
     private void beginTaskPath() {
-        if (GenericValidator.isBlankOrNull(remoteSourceUrl)) {
+        if (GenericValidator.isBlankOrNull(remoteStorePath)) {
             Map<String, List<String>> searchParams = new HashMap<>();
             searchParams.put("status", Arrays.asList("requested"));
 
-            IGenericClient fhirClient = fhirContext.newRestfulGenericClient(fhirStorePath);
+            IGenericClient fhirClient = fhirContext.newRestfulGenericClient(localFhirStorePath);
             Bundle bundle = fhirClient.search()//
                     .forResource(Task.class)//
                     .include(Task.INCLUDE_PATIENT)//
@@ -76,16 +83,15 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
                     }
 
                     task.setStatus(TaskStatus.ACCEPTED);
-                    fhirContext.newRestfulGenericClient(fhirStorePath).update().resource(task).execute();
+                    fhirContext.newRestfulGenericClient(localFhirStorePath).update().resource(task).execute();
                 }
             }
         }
-        // TODO delete this when include works on openMRS
         else {
             Map<String, List<String>> searchParams = new HashMap<>();
             searchParams.put("status", Arrays.asList("REQUESTED"));
 
-            IGenericClient sourceFhirClient = fhirContext.newRestfulGenericClient(remoteSourceUrl);
+            IGenericClient sourceFhirClient = fhirContext.newRestfulGenericClient(remoteStorePath);
             IClientInterceptor authInterceptor = new BasicAuthInterceptor("admin", "Admin123");
             sourceFhirClient.registerInterceptor(authInterceptor);
             Bundle bundle = sourceFhirClient.search()//
@@ -103,7 +109,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
                     Task task = (Task) bundleComponent.getResource();
                     System.out.println("Task: " + fhirContext.newJsonParser().encodeResourceToString(task));
                     task.setStatus(TaskStatus.ACCEPTED);
-                    fhirContext.newRestfulGenericClient(fhirStorePath).update().resource(task).execute();
+                    fhirContext.newRestfulGenericClient(localFhirStorePath).update().resource(task).execute();
 
 
                     List<ServiceRequest> basedOn = new ArrayList<>();
@@ -116,7 +122,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
                     for (ServiceRequest serviceRequest : basedOn) {
                         System.out.println("BasedOn ServiceRequest: "
                                 + fhirContext.newJsonParser().encodeResourceToString(serviceRequest));
-                        fhirContext.newRestfulGenericClient(fhirStorePath).update().resource(serviceRequest).execute();
+                        fhirContext.newRestfulGenericClient(localFhirStorePath).update().resource(serviceRequest).execute();
                     }
 
                     Patient forPatient = sourceFhirClient.read().resource(Patient.class)
@@ -126,7 +132,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
 
                     System.out
                             .println("For Patient: " + fhirContext.newJsonParser().encodeResourceToString(forPatient));
-                    fhirContext.newRestfulGenericClient(fhirStorePath).update().resource(forPatient).execute();
+                    fhirContext.newRestfulGenericClient(localFhirStorePath).update().resource(forPatient).execute();
 
                 }
             }
