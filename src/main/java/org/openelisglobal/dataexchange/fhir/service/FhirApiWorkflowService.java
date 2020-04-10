@@ -6,4 +6,6 @@ public interface FhirApiWorkflowService {
 
     void processWorkflow(ResourceType resourceType);
 
+    void pollForRemoteTasks();
+
 }
