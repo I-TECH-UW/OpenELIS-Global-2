@@ -45,7 +45,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
     @Value("${org.openelisglobal.task.useBasedOn}")
     private Boolean useBasedOn;
 
-    @Scheduled(initialDelay = 10 * 1000, fixedRate = 60 * 60 * 1000)
+    @Scheduled(initialDelay = 10 * 1000, fixedRate = 60 * 1000)
     @Override
     public void pollForRemoteTasks() {
         processWorkflow(ResourceType.Task);
@@ -63,11 +63,14 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
     }
 
     private void beginTaskPath() {
+
         Map<String, List<String>> remoteSearchParams = new HashMap<>();
         remoteSearchParams.put("status", Arrays.asList("REQUESTED"));
         // TODO make this configurable instead of hardcoded
-        remoteSearchParams.put("owner", Arrays.asList("Practitioner/f9badd80-ab76-11e2-9e96-0800200c9a66"));
+//        remoteSearchParams.put("owner", Arrays.asList("Practitioner/f9badd80-ab76-11e2-9e96-0800200c9a66"));
+        remoteSearchParams.put("owner", Arrays.asList("f9badd80-ab76-11e2-9e96-0800200c9a66"));
 
+        System.out.println("searching for Tasks");
 
         IGenericClient sourceFhirClient = fhirContext.newRestfulGenericClient(remoteStorePath);
         IClientInterceptor authInterceptor = new BasicAuthInterceptor("admin", "Admin123");
@@ -81,6 +84,11 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
                 .returnBundle(Bundle.class)//
                 .execute();
 
+        if (bundle.hasEntry()) {
+            System.out.println("received bundle with " + bundle.getEntry().size() + " entries");
+        } else {
+            System.out.println("received bundle with 0 entries");
+        }
         for (BundleEntryComponent bundleComponent : bundle.getEntry()) {
 
             if (bundleComponent.hasResource()
@@ -179,7 +187,6 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         return (Task) localBundle.getEntryFirstRep().getResource();
     }
 
-
     private ServiceRequest getServiceRequestWithSameIdentifier(ServiceRequest basedOn) {
         Map<String, List<String>> localSearchParams = new HashMap<>();
         localSearchParams.put(ServiceRequest.SP_IDENTIFIER,
@@ -201,7 +208,6 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
                 .returnBundle(Bundle.class).execute();
         return (Patient) localBundle.getEntryFirstRep().getResource();
     }
-
 
     private Bundle createBundleFromResources(List<Resource> createResources, List<Resource> updateResources) {
         Bundle transactionBundle = new Bundle();
