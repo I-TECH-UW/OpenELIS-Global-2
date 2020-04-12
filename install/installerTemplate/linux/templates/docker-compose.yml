@@ -1,7 +1,5 @@
 version: '3.3'
 # lines starting with a #db and #port will be uncommented when setup with a docker database
-# lines starting with a #port will be uncommented when setup with a remote database
-# lines starting with a #h will be uncommented when setup with a local database
 services:
 #db    database:
 #db        container_name: [% db_name %]
@@ -28,7 +26,7 @@ services:
         container_name: [% oe_name %]
         image: openelisglobal
         depends_on:
-            - datasubscriber.openelisci.org
+#            - datasubscriber.openelisci.org
 #db            - database
             
         ports:
@@ -66,19 +64,19 @@ services:
             - source: keystore
             - source: truststore
             
-    datasubscriber.openelisci.org:
-        container_name: [% data_subscriber_name %]
-        image: datasubscriber-webapp
-        depends_on:
-            - fhir.openelisci.org
-#db            - database
-        ports:
-            - 8445:8443
-        restart: always
-        secrets:
-            - source: keystore
-            - source: truststore
-            - source: common.properties
+#    datasubscriber.openelisci.org:
+#        container_name: [% data_subscriber_name %]
+#        image: datasubscriber-webapp
+#        depends_on:
+#            - fhir.openelisci.org
+##db            - database
+#        ports:
+#            - 8445:8443
+#        restart: always
+#        secrets:
+#            - source: keystore
+#            - source: truststore
+#            - source: common.properties
             
 #    dataimport.openelisci.org:
 #        container_name: [% data_import_name %]

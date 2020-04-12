@@ -23,7 +23,7 @@ services:
         container_name: openelisglobal-webapp 
         image: openelisglobal
         depends_on:
-            - datasubscriber.openelis.org
+#            - datasubscriber.openelis.org
             - database
         ports:
             - "8080:8080"
@@ -59,19 +59,19 @@ services:
             - source: keystore
             - source: truststore
             
-    datasubscriber.openelis.org:
-        container_name: data-subscriber
-        image: datasubscriber-webapp
-        depends_on:
-            - fhir.openelis.org
-            - database
-        ports:
-            - 8445:8443
-        restart: always
-        secrets:
-            - source: keystore
-            - source: truststore
-            - source: common.properties
+#    datasubscriber.openelis.org:
+#        container_name: data-subscriber
+#        image: datasubscriber-webapp
+#        depends_on:
+#            - fhir.openelis.org
+#            - database
+#        ports:
+#            - 8445:8443
+#        restart: always
+#        secrets:
+#            - source: keystore
+#            - source: truststore
+#            - source: common.properties
             
 #    dataimport.openelis.org:
 #        container_name: data-import
