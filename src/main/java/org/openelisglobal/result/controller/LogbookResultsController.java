@@ -165,6 +165,8 @@ public class LogbookResultsController extends LogbookResultsBaseController {
         }
         int requestedPageNumber = Integer.parseInt(requestedPage);
         String testSectionId = form.getTestSectionId();
+        testSectionId = "56";
+        System.out.println("LogbookResultsController:getLogbookResults: " + testSectionId);
 
         request.getSession().setAttribute(SAVE_DISABLED, TRUE);
 
@@ -188,12 +190,11 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 
         setRequestType(ts == null ? MessageUtil.getMessage("workplan.unit.types") : ts.getLocalizedName());
 
-        List<TestResultItem> tests;
-
         ResultsPaging paging = new ResultsPaging();
         List<InventoryKitItem> inventoryList = new ArrayList<>();
         ResultsLoadUtility resultsLoadUtility = SpringContext.getBean(ResultsLoadUtility.class);
         resultsLoadUtility.setSysUser(getSysUserId(request));
+        List<TestResultItem> tests = resultsLoadUtility.getUnfinishedTestResultItemsInTestSection(testSectionId);
 
         if (GenericValidator.isBlankOrNull(requestedPage)) {
 
@@ -216,6 +217,11 @@ public class LogbookResultsController extends LogbookResultsBaseController {
             paging.setDatabaseResults(request, form, tests);
 
         } else {
+            System.out.println("LogbookResultsController:getLogbookResults: ");
+            if (request != null) { System.out.println("request is not null");}
+            if (form != null) { System.out.println("form is not null");}
+            if (!tests.isEmpty()) { System.out.println("tests is not empty");}
+            
             paging.page(request, form, requestedPageNumber);
         }
         form.setDisplayTestKit(false);

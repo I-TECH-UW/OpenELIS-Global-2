@@ -20,6 +20,10 @@ import org.hl7.fhir.r4.model.ResourceType;
 import org.hl7.fhir.r4.model.ServiceRequest;
 import org.hl7.fhir.r4.model.Task;
 import org.hl7.fhir.r4.model.Task.TaskStatus;
+import org.openelisglobal.dataexchange.fhir.service.TaskWorker.TaskResult;
+import org.openelisglobal.dataexchange.order.action.DBOrderExistanceChecker;
+import org.openelisglobal.dataexchange.order.action.IOrderPersister;
+import org.openelisglobal.spring.util.SpringContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
@@ -59,7 +63,6 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
             beginTaskPath();
         default:
         }
-
     }
 
     private void beginTaskPath() {
@@ -83,7 +86,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
                 .whereMap(remoteSearchParams)//
                 .returnBundle(Bundle.class)//
                 .execute();
-
+        
         if (bundle.hasEntry()) {
             System.out.println("received bundle with " + bundle.getEntry().size() + " entries");
         } else {
@@ -93,13 +96,44 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
 
             if (bundleComponent.hasResource()
                     && ResourceType.Task.equals(bundleComponent.getResource().getResourceType())) {
+
                 Task remoteTask = (Task) bundleComponent.getResource();
-                System.out.println("Task: " + fhirContext.newJsonParser().encodeResourceToString(remoteTask));
+                // System.out.println("Task: " +
+                // fhirContext.newJsonParser().encodeResourceToString(remoteTask));
                 // should contain the Patient, the ServiceRequest, and the Task
                 Bundle transactionResponseBundle = saveRemoteTaskAsLocalTask(sourceFhirClient, remoteTask, bundle);
                 if (useBasedOn && !basedOnExistsLocallyForTask(remoteTask)) {
                     Task taskBasedOnRemoteTask = saveTaskBasedOnRemoteTask(sourceFhirClient, remoteTask, bundle);
                 }
+                
+                IGenericClient localFhirClient = fhirContext.newRestfulGenericClient(localFhirStorePath);
+                Map<String, List<String>> localSearchParams = new HashMap<>();
+                Task taskWithSameIdentifier = getTaskWithSameIdentifier(remoteTask);
+                localSearchParams.put("_id", Arrays.asList(taskWithSameIdentifier.getId()));
+                Bundle localBundle = localFhirClient.search()//
+                        .forResource(Task.class)//
+                        // TODO use include
+                        .include(Task.INCLUDE_PATIENT)//
+                        .include(Task.INCLUDE_BASED_ON)//
+                        .whereMap(localSearchParams)//
+                        .returnBundle(Bundle.class)//
+                        .execute();
+                
+                List<ServiceRequest> serviceRequestList = getBasedOnServiceRequestFromBundle(localBundle, taskWithSameIdentifier);
+                Patient forPatient = getForPatientFromBundle(localBundle, taskWithSameIdentifier);
+                System.out.println("localBundle: " + fhirContext.newJsonParser().encodeResourceToString(localBundle));
+
+                TaskWorker worker = new TaskWorker(remoteTask,
+                        fhirContext.newJsonParser().encodeResourceToString(remoteTask), serviceRequestList, forPatient);
+                worker.setInterpreter(SpringContext.getBean(TaskInterpreter.class));
+                worker.setExistanceChecker(SpringContext.getBean(DBOrderExistanceChecker.class));
+
+                worker.setPersister(SpringContext.getBean(IOrderPersister.class));
+
+                TaskResult taskResult = worker.handleOrderRequest();
+
+//                remoteTask.setStatus(TaskStatus.ACCEPTED);
+//                fhirContext.newRestfulGenericClient(fhirStorePath).update().resource(remoteTask).execute();
             }
         }
     }
@@ -265,7 +299,6 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         for (Reference reference : task.getBasedOn()) {
             basedOn.add((ServiceRequest) findResourceInBundle(bundle, reference.getReference()));
         }
-
         return basedOn;
     }
 

@@ -1331,15 +1331,17 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
     public List<Analysis> getAllAnalysisByTestSectionAndStatus(String testSectionId, List<Integer> analysisStatusList,
             List<Integer> sampleStatusList) throws LIMSRuntimeException {
 
-        String sql = "From Analysis a WHERE a.testSection.id = :testSectionId AND a.statusId IN (:analysisStatusList) AND a.sampleItem.sample.statusId IN (:sampleStatusList)";
-
+//        String sql = "From Analysis a WHERE a.testSection.id = :testSectionId AND a.statusId IN (:analysisStatusList) AND a.sampleItem.sample.statusId IN (:sampleStatusList)";
+        String sql = "From Analysis a WHERE a.testSection.id = :testSectionId";
+        System.out.println("AnalysisDAOImpl:testSectionId: " + testSectionId);
         try {
             Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setInteger("testSectionId", Integer.parseInt(testSectionId));
-            query.setParameterList("analysisStatusList", analysisStatusList);
-            query.setParameterList("sampleStatusList", sampleStatusList);
+//            query.setParameterList("analysisStatusList", analysisStatusList);
+//            query.setParameterList("sampleStatusList", sampleStatusList);
 
             List<Analysis> analysisList = query.list();
+            
 
             // closeSession(); // CSL remove old
 

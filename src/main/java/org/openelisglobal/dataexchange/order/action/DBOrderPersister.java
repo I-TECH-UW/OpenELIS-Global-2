@@ -262,7 +262,8 @@ public class DBOrderPersister implements IOrderPersister {
 
             if (eOrders != null && !eOrders.isEmpty()) {
                 ElectronicOrder eOrder = eOrders.get(eOrders.size() - 1);
-                eOrder.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(ExternalOrderStatus.Cancelled));
+                eOrder.setStatusId(
+                        SpringContext.getBean(IStatusService.class).getStatusID(ExternalOrderStatus.Cancelled));
                 eOrder.setSysUserId(SERVICE_USER_ID);
                 try {
                     eOrderService.update(eOrder);

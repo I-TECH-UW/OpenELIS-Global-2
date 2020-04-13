@@ -30,6 +30,7 @@ public class InternalFhirApi {
     @Autowired
     FhirApiWorkflowService fhirApiWorkflowService;
 
+
 //    @PostConstruct
 //     //TODO make this run once for all time, not once per startup
 //    public void registerExternalApi() throws IOException {
@@ -59,6 +60,7 @@ public class InternalFhirApi {
 //
 //        }
 //    }
+
 
     @PutMapping(value = "/{resourceType}/**")
     public ResponseEntity<String> receiveFhirRequest(@PathVariable("resourceType") ResourceType resourceType) {
