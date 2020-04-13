@@ -155,7 +155,7 @@ public class SampleEditController extends BaseController {
         if (GenericValidator.isBlankOrNull(request.getParameter("accessionNumber"))) {
             accessionNumber = getMostRecentAccessionNumberForPaitient(request.getParameter("patientID"));
         } else if (!result.hasFieldErrors("accessionNumber")) {
-            accessionNumber = form.getAccessionNumber();
+            accessionNumber = oldForm.getAccessionNumber();
         }
         if (!GenericValidator.isBlankOrNull(accessionNumber)) {
             form.setAccessionNumber(accessionNumber);
