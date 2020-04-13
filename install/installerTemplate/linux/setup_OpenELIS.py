@@ -692,13 +692,13 @@ def uninstall_docker_images():
     cmd = 'docker rm $(docker stop $(docker ps -a -q --filter="name=' + DOCKER_FHIR_API_CONTAINER_NAME + '" --format="{{.ID}}"))'
     os.system(cmd)
     
-    log("removing data subscriber image...", PRINT_TO_CONSOLE)
-    cmd = 'docker rm $(docker stop $(docker ps -a -q --filter="name=' + DOCKER_OE_SUB_CONTAINER_NAME + '" --format="{{.ID}}"))'
-    os.system(cmd)
-    
-    log("removing data import image...", PRINT_TO_CONSOLE)
-    cmd = 'docker rm $(docker stop $(docker ps -a -q --filter="name=' + DOCKER_OE_IMPORT_CONTAINER_NAME + '" --format="{{.ID}}"))'
-    os.system(cmd)
+#     log("removing data subscriber image...", PRINT_TO_CONSOLE)
+#     cmd = 'docker rm $(docker stop $(docker ps -a -q --filter="name=' + DOCKER_OE_SUB_CONTAINER_NAME + '" --format="{{.ID}}"))'
+#     os.system(cmd)
+#     
+#     log("removing data import image...", PRINT_TO_CONSOLE)
+#     cmd = 'docker rm $(docker stop $(docker ps -a -q --filter="name=' + DOCKER_OE_IMPORT_CONTAINER_NAME + '" --format="{{.ID}}"))'
+#     os.system(cmd)
 
 
 def uninstall_backup_task():
@@ -1025,13 +1025,14 @@ def load_docker_image():
     cmd = 'sudo docker load < ' + INSTALLER_DOCKER_DIR + 'JPAServer_DockerImage.tar.gz'
     os.system(cmd)
     
-    log("loading dataimport-webapp docker image", PRINT_TO_CONSOLE)
-    cmd = 'sudo docker load < ' + INSTALLER_DOCKER_DIR + 'DataImporter_DockerImage.tar.gz'
-    os.system(cmd)
+#     log("loading dataimport-webapp docker image", PRINT_TO_CONSOLE)
+#     cmd = 'sudo docker load < ' + INSTALLER_DOCKER_DIR + 'DataImporter_DockerImage.tar.gz'
+#     os.system(cmd)
     
-    log("loading datasubscriber-webapp docker image", PRINT_TO_CONSOLE)
-    cmd = 'sudo docker load < ' + INSTALLER_DOCKER_DIR + 'DataSubscriber_DockerImage.tar.gz'
-    os.system(cmd)
+#    log("loading datasubscriber-webapp docker image", PRINT_TO_CONSOLE)
+#    cmd = 'sudo docker load < ' + INSTALLER_DOCKER_DIR + 'DataSubscriber_DockerImage.tar.gz'
+#    os.system(cmd)
+
     if DOCKER_DB:
         log("loading postgres docker image", PRINT_TO_CONSOLE)
         cmd = 'sudo docker load < ' + INSTALLER_DOCKER_DIR + 'Postgres_DockerImage.tar.gz'

@@ -23,14 +23,13 @@ services:
 #         container_name: openelisglobal-webapp 
 #         image: openelisglobal
 #         depends_on:
-#             - datasubscriber.openelis.org
 #             - database
 #         ports:
 #             - "8080:8080"
 #             - "8443:8443"
 #         restart: always
 #         environment:
- #             context.xml doesn't seem to be able to pick up environment variables directly, so we are passing them in as CATALINA_OPTS
+##             context.xml doesn't seem to be able to pick up environment variables directly, so we are passing them in as CATALINA_OPTS
 #             - CATALINA_OPTS= -Ddatasource.url=jdbc:postgresql://database:5432/clinlims?currentSchema=clinlims -Ddatasource.username=clinlims -Ddatasource.password=clinlims
 #         volumes:
 #             - ./dev/plugins:/var/lib/openelis-global/plugins
@@ -59,33 +58,33 @@ services:
             - source: keystore
             - source: truststore
             
-    datasubscriber.openelis.org:
-        container_name: data-subscriber
-        image: datasubscriber-webapp
-        depends_on:
-            - fhir.openelis.org
-            - database
-        ports:
-            - 8445:8443
-        restart: always
-        secrets:
-            - source: keystore
-            - source: truststore
-            - source: common.properties
+#    datasubscriber.openelis.org:
+#        container_name: data-subscriber
+#        image: datasubscriber-webapp
+#        depends_on:
+#            - fhir.openelis.org
+#            - database
+#        ports:
+#            - 8445:8443
+#        restart: always
+#        secrets:
+#            - source: keystore
+#            - source: truststore
+#            - source: common.properties
             
-    dataimport.openelis.org:
-        container_name: data-import
-        image: dataimport-webapp
-        depends_on:
-            - fhir.openelis.org
-            - database
-        ports:
-            - 8446:8443
-        restart: always
-        secrets:
-            - source: keystore
-            - source: truststore
-            - source: common.properties
+#    dataimport.openelis.org:
+#        container_name: data-import
+#        image: dataimport-webapp
+#        depends_on:
+#            - fhir.openelis.org
+#            - database
+#        ports:
+#            - 8446:8443
+#        restart: always
+#        secrets:
+#            - source: keystore
+#            - source: truststore
+#            - source: common.properties
             
 volumes:
   db-data:            

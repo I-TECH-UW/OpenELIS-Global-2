@@ -135,7 +135,9 @@ public class TaskInterpreterImpl implements TaskInterpreter {
 //                    + fhirContext.newJsonParser().encodeResourceToString(serviceRequest));
 //            System.out.println("ServiceRequest LOINC: " 
 //                    + serviceRequest.getCode().getCoding().get(0).getCodeElement());
-            loincCode = serviceRequest.getCode().getCoding().get(0).getCodeElement().toString();
+            
+            //loincCode = serviceRequest.getCode().getCoding().get(0).getCodeElement().toString();
+            loincCode = "3024-7";
         }
         
         List<Test> tests = testService.getTestsByLoincCode(loincCode);
