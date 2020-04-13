@@ -2,6 +2,8 @@ package org.openelisglobal.dataexchange.fhir.service;
 
 import java.util.List;
 
+import org.hl7.fhir.r4.model.Patient;
+import org.hl7.fhir.r4.model.ServiceRequest;
 import org.hl7.fhir.r4.model.Task;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.ExternalOrderStatus;
@@ -10,27 +12,39 @@ import org.openelisglobal.dataexchange.order.action.IOrderExistanceChecker;
 import org.openelisglobal.dataexchange.order.action.IOrderExistanceChecker.CheckResult;
 import org.openelisglobal.dataexchange.order.action.IOrderInterpreter.InterpreterResults;
 import org.openelisglobal.dataexchange.order.action.IOrderInterpreter.OrderType;
+import org.openelisglobal.dataexchange.order.action.IOrderPersister;
 import org.openelisglobal.dataexchange.order.action.MessagePatient;
 import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder;
 import org.openelisglobal.spring.util.SpringContext;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import ca.uhn.fhir.context.FhirContext;
 
 public class TaskWorker {
+    
+    @Autowired
+    private FhirContext fhirContext;
+    
     public enum TaskResult {
         OK, DUPLICATE_ORDER, NON_CANCELABLE_ORDER, MESSAGE_ERROR
     }
 
-    // private final Message orderMessage;
-
+    private String message = "";
     private Task task = new Task();
+    private List<ServiceRequest> serviceRequestList = null;
+    private Patient patient = new Patient();
     private TaskInterpreter interpreter;
     private IOrderExistanceChecker existanceChecker;
-    private TaskPersister persister;
+    private IOrderPersister persister;
     private IStatusService statusService;
     private List<InterpreterResults> interpretResults;
     private CheckResult checkResult;
 
-    public TaskWorker(Task incomingTask) {
+    public TaskWorker(Task incomingTask, String incomingMessage, List<ServiceRequest> incomingServiceRequestList, Patient incomingPatient) {
         task = incomingTask;
+        message = incomingMessage;
+        serviceRequestList = incomingServiceRequestList;
+        patient = incomingPatient;
     }
 
     public void setInterpreter(TaskInterpreter interpreter) {
@@ -41,7 +55,7 @@ public class TaskWorker {
         existanceChecker = orderExistanceChecker;
     }
 
-    public void setPersister(TaskPersister taskPersister) {
+    public void setPersister(IOrderPersister taskPersister) {
         persister = taskPersister;
     }
 
@@ -77,18 +91,21 @@ public class TaskWorker {
             throw new IllegalStateException("Interpreter, existanceChecker or persister have not been set");
         }
 
-        System.out.println("TaskWorker:handleOrderRequest: ");
+        System.out.println("TaskWorker:handleOrderRequest:0 ");
 
-        interpretResults = interpreter.interpret(task);
-
+        interpretResults = interpreter.interpret(task, serviceRequestList, patient);
+        
+        System.out.println("TaskWorker:handleOrderRequest:1 " + interpretResults.get(0));
+        
         if (interpretResults.get(0) == InterpreterResults.OK) {
+            System.out.println("TaskWorker:handleOrderRequest:2 ");
             String referringOrderNumber = interpreter.getReferringOrderNumber();
-            String message = interpreter.getMessage();
+            System.out.println("TaskWorker:handleOrderRequest:3:referringOrderNumber " + referringOrderNumber);
+
             OrderType orderType = interpreter.getOrderType();
             MessagePatient patient = interpreter.getMessagePatient();
-
             checkResult = existanceChecker.check(referringOrderNumber);
-
+            System.out.println("TaskWorker:handleOrderRequest:4 " + orderType.toString());
             switch (checkResult) {
             case ORDER_FOUND_QUEUED:
                 if (orderType == OrderType.CANCEL) {
@@ -123,10 +140,12 @@ public class TaskWorker {
     }
 
     private void cancelOrder(String referringOrderNumber) {
+        System.out.println("cancelOrder: ");
         persister.cancelOrder(referringOrderNumber);
     }
 
     private void insertNewOrder(String referringOrderNumber, String message, MessagePatient patient) {
+        System.out.println("TaskWorker:insertNewOrder: ");
         ElectronicOrder eOrder = new ElectronicOrder();
         eOrder.setExternalId(referringOrderNumber);
         eOrder.setData(message);

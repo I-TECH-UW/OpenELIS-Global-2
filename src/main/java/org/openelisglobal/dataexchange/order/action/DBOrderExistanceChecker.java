@@ -35,6 +35,7 @@ public class DBOrderExistanceChecker implements IOrderExistanceChecker {
 
     @Override
     public CheckResult check(String orderId) {
+        System.out.println("DBOrderExistanceChecker:check: " + orderId);
         if (GenericValidator.isBlankOrNull(orderId)) {
             return CheckResult.NOT_FOUND;
         }

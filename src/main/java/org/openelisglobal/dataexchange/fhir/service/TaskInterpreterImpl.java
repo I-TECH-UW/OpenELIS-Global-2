@@ -1,9 +1,12 @@
 package org.openelisglobal.dataexchange.fhir.service;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.validator.GenericValidator;
+import org.hl7.fhir.r4.model.Patient;
+import org.hl7.fhir.r4.model.ServiceRequest;
 import org.hl7.fhir.r4.model.Task;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.ITestIdentityService;
@@ -17,12 +20,16 @@ import org.openelisglobal.test.valueholder.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.v251.segment.OBR;
 import ca.uhn.hl7v2.model.v251.segment.PID;
 
 @Service
 public class TaskInterpreterImpl implements TaskInterpreter {
+
+    @Autowired
+    private FhirContext fhirContext;
 
     public enum IdentityType {
         GUID("GU"), ST_NUMBER("ST"), NATIONAL_ID("NA"), OB_NUMBER("OB"), PC_NUMBER("PC");
@@ -72,27 +79,29 @@ public class TaskInterpreterImpl implements TaskInterpreter {
 
     private String labOrderNumber;
     private OrderType orderType;
+    private String orderMessage;
     private Task task;
-    private MessagePatient patient;
+    private Patient patient;
+    private List<ServiceRequest> serviceRequestList;
+    private MessagePatient messagePatient;
     private Test test;
     private List<InterpreterResults> results = new ArrayList<>();
     private List<String> unsupportedTests = new ArrayList<>();
     private List<String> unsupportedPanels = new ArrayList<>();
     private ITestIdentityService testIdentityService;
-
+    
     @Override
-    public List<InterpreterResults> interpret(Task incomingTask) {
+    public List<InterpreterResults> interpret(Task incomingTask, List<ServiceRequest> incomingServiceRequestList, Patient incomingPatient) {
+        
         this.task = incomingTask;
+        this.serviceRequestList = incomingServiceRequestList;
+        this.patient = incomingPatient;
+        
+        this.orderMessage = fhirContext.newJsonParser().encodeResourceToString(task);
 
-        System.out.println("TaskInterpreter:interpret:");
-//      try{
-//          LogEvent.logInfo(this.getClass().getName(), "method unkown", this.orderMessage.printStructure());
-//          LogEvent.logError( "Debugging", "hl7", this.orderMessage.printStructure());
-//      }catch(HL7Exception e1){
-//        LogEvent.logError(this.getClass().getName(), "interpret", e1.getMessage());
-//      }
+        System.out.println("TaskInterpreter:interpret: " + this.orderMessage);
         try {
-            patient = createPatientFromFHIR();
+            messagePatient = createPatientFromFHIR();
             test = createTestFromFHIR();
             extractOrderInformation();
         } catch (HL7Exception e) {
@@ -102,48 +111,81 @@ public class TaskInterpreterImpl implements TaskInterpreter {
         return buildResultList(false);
     }
 
-//    private void extractOrderInformation() throws HL7Exception {
-//        ORC orcSegment = orderMessage.getORDER().getORC();
-//        // labOrderNumber = orcSegment.getPlacerOrderNumber().encode();
-//        labOrderNumber = orderMessage.getORDER().getOBSERVATION_REQUEST().getOBR().getObr4_UniversalServiceIdentifier()
-//                .getCe1_Identifier().getValue();
-//        // strip encounter type (if exists) from field for just encounter uuid
-//        if (labOrderNumber.contains(";")) {
-//            labOrderNumber = labOrderNumber.substring(labOrderNumber.indexOf(";") + 1);
-//        }
-//
-//        if (OrderType.REQUEST.getIdentifier().equals(orcSegment.getOrderControl().getValue())) {
-//            orderType = OrderType.REQUEST;
-//        } else if (OrderType.CANCEL.getIdentifier().equals(orcSegment.getOrderControl().getValue())) {
-//            orderType = OrderType.CANCEL;
-//        } else {
-//            orderType = OrderType.UNKNOWN;
-//        }
-//
-//    }
-
     private void extractOrderInformation() throws HL7Exception {
-
+        System.out.println("extractOrderInformation:");
+        for (ServiceRequest serviceRequest : serviceRequestList) {
+            labOrderNumber = serviceRequest.getId();
+        }
+        System.out.println("extractOrderInformation:labOrderNumber: " + labOrderNumber);
+        //gnr: make electronic_order.external_id longer
+        if (labOrderNumber.length() > 60) 
+        {
+            labOrderNumber = labOrderNumber.substring(labOrderNumber.length() - 60);
+        } 
+      
+        orderType = OrderType.REQUEST;
     }
 
     private Test createTestFromFHIR() throws HL7Exception {
-//        ORC orcSegment = orderMessage.getORDER().getORC();
-//        String loincCode = orcSegment.getOrderType().getIdentifier().encode();
+        System.out.println("TaskInterpreter:createTestFromFHIR:");
+        
         String loincCode = "";
+        for (ServiceRequest serviceRequest : serviceRequestList) {
+//            System.out.println("BasedOn ServiceRequest: "
+//                    + fhirContext.newJsonParser().encodeResourceToString(serviceRequest));
+//            System.out.println("ServiceRequest LOINC: " 
+//                    + serviceRequest.getCode().getCoding().get(0).getCodeElement());
+            loincCode = serviceRequest.getCode().getCoding().get(0).getCodeElement().toString();
+        }
+        
         List<Test> tests = testService.getTestsByLoincCode(loincCode);
-//        if (tests.size() == 0) {
-//            return null;
-//        }
+        if (tests.size() == 0) {
+            return null;
+        }
         return tests.get(0);
     }
 
     private MessagePatient createPatientFromFHIR() throws HL7Exception {
+          System.out.println("TaskInterpreter:createPatientFromFHIR:");
+        
+//        System.out.println("Task: " + fhirContext.newJsonParser().encodeResourceToString(task));
+//        System.out.println("Patient: " 
+//                + fhirContext.newJsonParser().encodeResourceToString((IBaseResource) patient));
+        
+//        for (ServiceRequest serviceRequest : serviceRequestList) {
+//            System.out.println("BasedOn ServiceRequest: "
+//                    + fhirContext.newJsonParser().encodeResourceToString(serviceRequest));
+//        }
+        
+        MessagePatient messagePatient = new MessagePatient();
 
-        MessagePatient patient = new MessagePatient();
-
-        PID pid = null;
-//        PID pid = orderMessage.getPATIENT().getPID();
-//        CX patientId = pid.getPatientID();
+//          System.out.println("Patient.getId(): " + patient.getId());
+//          System.out.println("Patient.getIdBase(): " + patient.getIdBase());
+//          System.out.println("Patient.getBirthDate(): " + patient.getBirthDate());
+//          System.out.println("Patient.getGeneralPractitionerFirstRep(): " + patient.getGeneralPractitionerFirstRep());
+//          System.out.println("Patient.getGender(): " + patient.getGender());
+//          System.out.println("Patient.getIdentifierFirstRep().getUse(): " + patient.getIdentifierFirstRep().getUse());
+//          System.out.println("Patient.getIdentifierFirstRep().getSystem(): " + patient.getIdentifierFirstRep().getSystem());
+//          System.out.println("Patient.getIdentifierFirstRep().getValue(): " + patient.getIdentifierFirstRep().getValue());
+//          System.out.println("Patient.getNameFirstRep().getGivenAsSingleString(): " + patient.getNameFirstRep().getGivenAsSingleString());
+//          System.out.println("Patient.getNameFirstRep().getFamily(): " + patient.getNameFirstRep().getFamily());
+          
+         messagePatient.setExternalId(patient.getId());
+         
+         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+         String date = sdf.format(patient.getBirthDate()); 
+         messagePatient.setDisplayDOB(date);
+         
+         if(patient.getGender().toString() == "MALE") {
+             messagePatient.setGender("M");    
+         } else {
+             messagePatient.setGender("F");
+         }
+         
+         messagePatient.setLastName(patient.getNameFirstRep().getFamily());
+         messagePatient.setFirstName(patient.getNameFirstRep().getGivenAsSingleString());
+         
+          
 //        patient.setExternalId(patientId.getIDNumber().getValue());
 //        CX[] patientIdentities = pid.getPatientIdentifierList();
 //        for (CX identity : patientIdentities) {
@@ -163,21 +205,21 @@ public class TaskInterpreterImpl implements TaskInterpreter {
 //            }
 //        }
 
-        if (Gender.MALE.getIdentifier().equals(pid.getAdministrativeSex().getValue())) {
-            patient.setGender("M");
-        } else if (Gender.FEMALE.getIdentifier().equals(pid.getAdministrativeSex().getValue())) {
-            patient.setGender("F");
-        }
+//        if (Gender.MALE.getIdentifier().equals(pid.getAdministrativeSex().getValue())) {
+//            messagePatient.setGender("M");
+//        } else if (Gender.FEMALE.getIdentifier().equals(pid.getAdministrativeSex().getValue())) {
+//            messagePatient.setGender("F");
+//        }
+//
+//        setDOB(messagePatient, pid);
+//
+//        messagePatient.setLastName(pid.getPatientName(0).getFamilyName().getSurname().getValue());
+//        messagePatient.setFirstName(pid.getPatientName(0).getGivenName().getValue());
+//        messagePatient.setAddressStreet(pid.getPatientAddress(0).getStreetAddress().getStreetOrMailingAddress().getValue());
+//        messagePatient.setAddressVillage(pid.getPatientAddress(0).getCity().getValue());
+//        messagePatient.setAddressDepartment(pid.getPatientAddress(0).getStateOrProvince().getValue());
 
-        setDOB(patient, pid);
-
-        patient.setLastName(pid.getPatientName(0).getFamilyName().getSurname().getValue());
-        patient.setFirstName(pid.getPatientName(0).getGivenName().getValue());
-        patient.setAddressStreet(pid.getPatientAddress(0).getStreetAddress().getStreetOrMailingAddress().getValue());
-        patient.setAddressVillage(pid.getPatientAddress(0).getCity().getValue());
-        patient.setAddressDepartment(pid.getPatientAddress(0).getStateOrProvince().getValue());
-
-        return patient;
+        return messagePatient;
     }
 
     private void setDOB(MessagePatient patient, PID pid) throws HL7Exception {
@@ -203,6 +245,7 @@ public class TaskInterpreterImpl implements TaskInterpreter {
     }
 
     private List<InterpreterResults> buildResultList(boolean exceptionThrown) {
+        System.out.println("buildResultList: " + exceptionThrown);
         results = new ArrayList<>();
 
         if (exceptionThrown) {
@@ -226,10 +269,10 @@ public class TaskInterpreterImpl implements TaskInterpreter {
 
 //These are being commented out until we get confirmation on the desired policy.  Either the request should be rejected or the user should be required to
 // fill the missing information in at the time of sample entry.  Commenting these out supports the latter
-//              if(GenericValidator.isBlankOrNull(getMessagePatient().getGender())){
-//                  results.add(InterpreterResults.MISSING_PATIENT_GENDER);
-//              }
-//
+              if(GenericValidator.isBlankOrNull(getMessagePatient().getGender())){
+                  results.add(InterpreterResults.MISSING_PATIENT_GENDER);
+              }
+
 //              if(getMessagePatient().getDob() == null){
 //                  results.add(InterpreterResults.MISSING_PATIENT_DOB);
 //              }
@@ -239,7 +282,7 @@ public class TaskInterpreterImpl implements TaskInterpreter {
                         && getMessagePatient().getExternalId() == null) {
                     results.add(InterpreterResults.MISSING_PATIENT_IDENTIFIER);
                 }
-
+                System.out.println("buildResultList:if test: " + test.getId());
                 if (test == null || !getTestIdentityService().doesActiveTestExistForLoinc(test.getLoinc())) {
                     results.add(InterpreterResults.UNSUPPORTED_TESTS);
                 }
@@ -301,19 +344,12 @@ public class TaskInterpreterImpl implements TaskInterpreter {
         if (task == null) {
             return null;
         }
-
-//        try {
-//            return orderMessage.encode();
-//        } catch (HL7Exception e) {
-//            LogEvent.logDebug(e);
-//        }
-
-        return null;
+        return (fhirContext.newJsonParser().encodeResourceToString(task));
     }
 
     @Override
     public MessagePatient getMessagePatient() {
-        return patient;
+        return messagePatient;
     }
 
     @Override

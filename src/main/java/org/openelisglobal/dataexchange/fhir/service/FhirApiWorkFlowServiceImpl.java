@@ -8,6 +8,7 @@ import java.util.Map;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Bundle.BundleEntryComponent;
+import org.hl7.fhir.r4.model.Patient;
 import org.hl7.fhir.r4.model.Reference;
 import org.hl7.fhir.r4.model.ResourceType;
 import org.hl7.fhir.r4.model.ServiceRequest;
@@ -15,7 +16,7 @@ import org.hl7.fhir.r4.model.Task;
 import org.hl7.fhir.r4.model.Task.TaskStatus;
 import org.openelisglobal.dataexchange.fhir.service.TaskWorker.TaskResult;
 import org.openelisglobal.dataexchange.order.action.DBOrderExistanceChecker;
-import org.openelisglobal.patient.valueholder.Patient;
+import org.openelisglobal.dataexchange.order.action.IOrderPersister;
 import org.openelisglobal.spring.util.SpringContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -59,29 +60,32 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         for (BundleEntryComponent bundleComponent : bundle.getEntry()) {
             if (bundleComponent.hasResource()
                     && ResourceType.Task.equals(bundleComponent.getResource().getResourceType())) {
+                
                 Task task = (Task) bundleComponent.getResource();
-//                Patient forPatient = getForPatientFromTask(bundle, task);
-                List<ServiceRequest> basedOn = getBasedOnServiceRequestFromTask(bundle, task);
+                Patient patient = getForPatientFromTask(bundle, task);
+                List<ServiceRequest> serviceRequestList = getBasedOnServiceRequestFromTask(bundle, task);
+                
                 System.out.println("Task: " + fhirContext.newJsonParser().encodeResourceToString(task));
-//                System.out.println("For Patient: " + fhirContext.newJsonParser().encodeResourceToString(forPatient));
-                for (ServiceRequest serviceRequest : basedOn) {
+                System.out.println("Patient: " + fhirContext.newJsonParser().encodeResourceToString((IBaseResource) patient));
+                for (ServiceRequest serviceRequest : serviceRequestList) {
                     System.out.println("BasedOn ServiceRequest: "
                             + fhirContext.newJsonParser().encodeResourceToString(serviceRequest));
                 }
-
-                TaskWorker worker = new TaskWorker(task);
+                
+                TaskWorker worker = new TaskWorker(task, fhirContext.newJsonParser().encodeResourceToString(task), serviceRequestList, patient);
 
                 worker.setInterpreter(SpringContext.getBean(TaskInterpreter.class));
                 worker.setExistanceChecker(SpringContext.getBean(DBOrderExistanceChecker.class));
-                worker.setPersister(SpringContext.getBean(TaskPersister.class));
+
+                // gnr: IOrderPersister is DBOrderPersister in original OrderServlet
+                worker.setPersister(SpringContext.getBean(IOrderPersister.class));
 
                 TaskResult taskResult = worker.handleOrderRequest();
-
+                
                 task.setStatus(TaskStatus.ACCEPTED);
                 fhirContext.newRestfulGenericClient(fhirStorePath).update().resource(task).execute();
             }
         }
-
     }
 
     private List<ServiceRequest> getBasedOnServiceRequestFromTask(Bundle bundle, Task task) {
@@ -89,7 +93,6 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         for (Reference reference : task.getBasedOn()) {
             basedOn.add((ServiceRequest) findResourceInBundle(bundle, reference.getReference()));
         }
-
         return basedOn;
     }
 

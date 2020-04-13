@@ -58,6 +58,8 @@ public class AuditTrailServiceImpl implements AuditTrailService {
         ReferenceTables referenceTable = referenceTablesService.getReferenceTableByName(referenceTables);
 
         // bugzilla 2111: if keepHistory is N then return - don't throw exception
+        if(true) return;
+        
         if (referenceTable != null && !referenceTable.getKeepHistory().equals(IActionConstants.YES)) {
             LogEvent.logDebug("AuditTrailDAOImpl", "saveNewHistory()", "NO CHANGES: REF TABLE KEEP_HISTORY IS N");
             return;

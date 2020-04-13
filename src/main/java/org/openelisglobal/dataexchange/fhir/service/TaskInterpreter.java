@@ -2,6 +2,8 @@ package org.openelisglobal.dataexchange.fhir.service;
 
 import java.util.List;
 
+import org.hl7.fhir.r4.model.Patient;
+import org.hl7.fhir.r4.model.ServiceRequest;
 import org.hl7.fhir.r4.model.Task;
 import org.openelisglobal.dataexchange.order.action.IOrderInterpreter.InterpreterResults;
 import org.openelisglobal.dataexchange.order.action.IOrderInterpreter.OrderType;
@@ -14,8 +16,6 @@ public interface TaskInterpreter {
 
     public List<String> getUnsupportedPanels();
 
-    List<InterpreterResults> interpret(Task incomingTask);
-
     String getReferringOrderNumber();
 
     String getMessage();
@@ -27,6 +27,9 @@ public interface TaskInterpreter {
     List<InterpreterResults> getResultStatus();
 
     Test getTest();
+
+    List<InterpreterResults> interpret(Task incomingTask, List<ServiceRequest> incomingServiceRequestList,
+            Patient incomingPatient);
 
     
 }
