@@ -114,7 +114,7 @@ public class TaskInterpreterImpl implements TaskInterpreter {
     private void extractOrderInformation() throws HL7Exception {
         System.out.println("extractOrderInformation:");
         for (ServiceRequest serviceRequest : serviceRequestList) {
-            labOrderNumber = serviceRequest.getId();
+            labOrderNumber = serviceRequest.getIdentifierFirstRep().getValue();
         }
         System.out.println("extractOrderInformation:labOrderNumber: " + labOrderNumber);
         //gnr: make electronic_order.external_id longer
@@ -172,7 +172,7 @@ public class TaskInterpreterImpl implements TaskInterpreter {
 //          System.out.println("Patient.getNameFirstRep().getGivenAsSingleString(): " + patient.getNameFirstRep().getGivenAsSingleString());
 //          System.out.println("Patient.getNameFirstRep().getFamily(): " + patient.getNameFirstRep().getFamily());
           
-         messagePatient.setExternalId(patient.getId());
+         messagePatient.setExternalId(patient.getIdentifierFirstRep().getId());
          
          SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
          String date = sdf.format(patient.getBirthDate()); 
