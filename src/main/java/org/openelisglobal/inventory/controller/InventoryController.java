@@ -50,10 +50,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @SessionAttributes("form")
 public class InventoryController extends BaseController {
 
-    private static final String[] ALLOWED_FIELDS = new String[] { "newKitsXML", "inventoryItems[*].isActive",
-            "inventoryItems[*].isModified", "inventoryItems[*].inventoryLocationId", "inventoryItems[*].kitName",
-            "inventoryItems[*].type", "inventoryItems[*].receiveDate", "inventoryItems[*].expirationDate",
-            "inventoryItems[*].lotNumber", "inventoryItems[*].organizationId", "inventoryItems[*].source" };
+    private static final String[] ALLOWED_FIELDS = new String[] { "newKitsXML", "inventoryItems*.isActive",
+            "inventoryItems*.isModified", "inventoryItems*.inventoryLocationId", "inventoryItems*.kitName",
+            "inventoryItems*.type", "inventoryItems*.receiveDate", "inventoryItems*.expirationDate",
+            "inventoryItems*.lotNumber", "inventoryItems*.organizationId", "inventoryItems*.source" };
 
     @Autowired
     private InventoryFormValidator formValidator;

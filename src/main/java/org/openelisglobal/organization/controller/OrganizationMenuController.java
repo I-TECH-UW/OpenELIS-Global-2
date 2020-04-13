@@ -32,7 +32,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class OrganizationMenuController extends BaseMenuController {
 
-    private static final String[] ALLOWED_FIELDS = new String[] { "selectedIds[*]", "searchString" };
+    private static final String[] ALLOWED_FIELDS = new String[] { "selectedIds*", "searchString" };
 
     @Autowired
     OrganizationService organizationService;

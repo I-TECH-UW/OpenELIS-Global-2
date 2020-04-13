@@ -39,8 +39,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class PanelTestAssignController extends BaseController {
 
-    private static final String[] ALLOWED_FIELDS = new String[] { "panelId", "deactivatePanelId", "currentTests[*]",
-            "availableTests[*]" };
+    private static final String[] ALLOWED_FIELDS = new String[] { "panelId", "deactivatePanelId", "currentTests*",
+            "availableTests*" };
 
     @Autowired
     private PanelService panelService;

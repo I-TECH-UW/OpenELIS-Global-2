@@ -48,9 +48,11 @@ This updates the system from the sources in the sources list. It updates what ne
     
 ### Create and Load SSL Certificates
 
-1. Generate a signed .crt and .key for individual installation
+1. Generate a signed .crt and .key for individual installation or if you are just creating a test server, you can skip signed keys and instead run:
 
-2. Place files in server as:
+    ``sudo apt-get install ssl-cert``
+
+2. If you have signed keys, place files in server as:
 
     ``/etc/tomcat/ssl/certs/tomcat_cert.crt``
 
@@ -77,7 +79,7 @@ If you trust docker to provide your database, you can ignore this section
  
     b. EG: for OE 2.0 Beta 1: 
 
-    ``curl -L -O https://www.dropbox.com/s/2z04rng0tt7txbg/CDI_RegLabOpenElis_0.0.1-Beta_Installer.tar.gz?dl=0``
+    ``curl -L -O https://www.dropbox.com/s/gvvascwhx7pleht/OpenELIS-Global_2.0.1.0_Installer.tar.gz``
  
 2. Unpack and enter the installer by running the following commands in Terminal, Mobaxterm, or Putty, replacing all in the { } with the appropriate values
 

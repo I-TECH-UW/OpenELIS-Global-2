@@ -284,7 +284,6 @@ public class TaskInterpreterImpl implements TaskInterpreter {
                         && getMessagePatient().getExternalId() == null) {
                     results.add(InterpreterResults.MISSING_PATIENT_IDENTIFIER);
                 }
-                System.out.println("buildResultList:if test: " + test.getId());
                 if (test == null || !getTestIdentityService().doesActiveTestExistForLoinc(test.getLoinc())) {
                     results.add(InterpreterResults.UNSUPPORTED_TESTS);
                 }

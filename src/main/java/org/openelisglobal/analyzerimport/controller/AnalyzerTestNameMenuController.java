@@ -38,7 +38,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class AnalyzerTestNameMenuController extends BaseMenuController {
 
-    private static final String[] ALLOWED_FIELDS = new String[] { "selectedIDs[*]" };
+    private static final String[] ALLOWED_FIELDS = new String[] { "selectedIDs*" };
 
     @Autowired
     private AnalyzerTestMappingService analyzerTestMappingService;
