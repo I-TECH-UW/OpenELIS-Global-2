@@ -55,7 +55,7 @@ public class OrganizationController extends BaseController {
     private static final String[] ALLOWED_FIELDS = new String[] { "id", "parentOrgName",
             "organizationLocalAbbreviation", "organizationName", "shortName", "isActive", "multipleUnit",
             "streetAddress", "city", "department", "commune", "village", "state", "zipCode", "internetAddress",
-            "mlsSentinelLabFlag", "cliaNum", "mlsLabFlag", "selectedTypes[*]" };
+            "mlsSentinelLabFlag", "cliaNum", "mlsLabFlag", "selectedTypes*" };
 
     @Autowired
     private OrganizationService organizationService;
