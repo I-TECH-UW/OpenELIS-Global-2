@@ -51,7 +51,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class SiteInformationController extends BaseController {
 
     private static final String[] ALLOWED_FIELDS = new String[] { "paramName", "value",
-            "localization.localeValues[*]" };
+            "localization.localeValues*" };
 
     @Autowired
     SiteInformationFormValidator formValidator;

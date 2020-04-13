@@ -93,10 +93,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class AnalyzerResultsController extends BaseController {
 
     private static final String[] ALLOWED_FIELDS = new String[] { "analyzerType", "paging.currentPage",
-            "resultList[*].id", "resultList[*].sampleGroupingNumber", "resultList[*].readOnly",
-            "resultList[*].testResultType", "resultList[*].testId", "resultList[*].accessionNumber",
-            "resultList[*].isAccepted", "resultList[*].isRejected", "resultList[*].isDeleted", "resultList[*].result",
-            "resultList[*].completeDate", "resultList[*].note", "resultList[*].reflexSelectionId", };
+            "resultList*.id", "resultList*.sampleGroupingNumber", "resultList*.readOnly",
+            "resultList*.testResultType", "resultList*.testId", "resultList*.accessionNumber",
+            "resultList*.isAccepted", "resultList*.isRejected", "resultList*.isDeleted", "resultList*.result",
+            "resultList*.completeDate", "resultList*.note", "resultList*.reflexSelectionId", };
 
     private static final boolean IS_RETROCI = ConfigurationProperties.getInstance()
             .isPropertyValueEqual(ConfigurationProperties.Property.configurationName, "CI_GENERAL");

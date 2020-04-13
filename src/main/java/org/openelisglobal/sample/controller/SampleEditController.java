@@ -85,10 +85,10 @@ public class SampleEditController extends BaseController {
             "sampleOrderItems.otherLocationCode",
             //
             "accessionNumber", "newAccessionNumber", "isEditable", "maxAccessionNumber",
-            "existingTests[*].sampleItemChanged", "existingTests[*].sampleItemId", "existingTests[*].analysisId",
-            "existingTests[*].collectionDate", "existingTests[*].collectionTime", "existingTests[*].removeSample",
-            "existingTests[*].canceled", "possibleTests[*].testId", "possibleTests[*].sampleItemId",
-            "possibleTests[*].add" };
+            "existingTests*.sampleItemChanged", "existingTests*.sampleItemId", "existingTests*.analysisId",
+            "existingTests*.collectionDate", "existingTests*.collectionTime", "existingTests*.removeSample",
+            "existingTests*.canceled", "possibleTests*.testId", "possibleTests*.sampleItemId",
+            "possibleTests*.add" };
 
     @Autowired
     SampleEditFormValidator formValidator;
