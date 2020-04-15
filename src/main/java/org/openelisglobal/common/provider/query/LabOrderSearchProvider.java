@@ -18,6 +18,7 @@ package org.openelisglobal.common.provider.query;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,6 +58,7 @@ import org.openelisglobal.typeofsample.valueholder.TypeOfSampleTest;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.context.FhirVersionEnum;
+import ca.uhn.fhir.rest.client.api.IGenericClient;
 
 public class LabOrderSearchProvider extends BaseQueryProvider {
 //	private TestDAO testDAO = new TestDAOImpl();
@@ -85,6 +87,10 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
     private ServiceRequest serviceRequest = null;
     private Patient patient = null;
     private String patientGuid = null;
+    
+    List<ElectronicOrder> eOrders = null;
+    ElectronicOrder eOrder = null;
+    ExternalOrderStatus eOrderStatus = null;
 
     private static final String NOT_FOUND = "Not Found";
     private static final String CANCELED = "Canceled";
@@ -96,19 +102,33 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
     @Override
     public void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        
+        String orderNumber = request.getParameter("orderNumber");
+        
+        eOrders = electronicOrderService.getElectronicOrdersByExternalId(orderNumber);
+        if (eOrders.isEmpty()) {
+            //return NOT_FOUND;
+            return;
+        }
+        
+        eOrder = eOrders.get(eOrders.size() - 1);
+        eOrderStatus = SpringContext.getBean(IStatusService.class)
+                .getExternalOrderStatusForID(eOrder.getStatusId());
+        
         FhirContext fhirContext = new FhirContext(FhirVersionEnum.R4);
-//      IGenericClient localFhirClient = fhirContext.newRestfulGenericClient("https://host.openelis.org:8444/hapi-fhir-jpaserver/fhir/");
-//      Map<String, List<String>> localSearchParams = new HashMap<>();
-//      Task task = fhirContext.newJsonParser().parseResource(Task.class, orderMessage);
-//      localSearchParams.put("_id", Arrays.asList(task.getId()));
-//      Bundle realizedTask = localFhirClient.search()//
-//              .forResource(Task.class)//
-//              // TODO use include
-//              .include(Task.INCLUDE_PATIENT)//
-//              .include(Task.INCLUDE_BASED_ON)//
-//              .whereMap(localSearchParams)//
-//              .returnBundle(Bundle.class)//
-//              .execute();
+        
+        IGenericClient localFhirClient = fhirContext.newRestfulGenericClient("https://host.openelis.org:8444/hapi-fhir-jpaserver/fhir/");
+        Map<String, List<String>> localSearchParams = new HashMap<>();
+        Task task = fhirContext.newJsonParser().parseResource(Task.class, eOrder.getData());
+        localSearchParams.put("_id", Arrays.asList(task.getId()));
+        Bundle realizedTask = localFhirClient.search()//
+              .forResource(Task.class)//
+              // TODO use include
+              .include(Task.INCLUDE_PATIENT)//
+              .include(Task.INCLUDE_BASED_ON)//
+              .whereMap(localSearchParams)//
+              .returnBundle(Bundle.class)//
+              .execute();
         
         String json = "{\"resourceType\":\"Bundle\",\"id\":\"19a17f7b-00d6-4297-92ee-894b8317f304\",\"meta\":{\"lastUpdated\":\"2020-04-14T03:08:11.796+00:00\"},\"type\":\"searchset\",\"total\":1,\"link\":[{\"relation\":\"self\",\"url\":\"https://fhir.openelis.org:8443/hapi-fhir-jpaserver/fhir/Task?_id=https%3A%2F%2Ffhir.openelis.org%3A8443%2Fhapi-fhir-jpaserver%2Ffhir%2FTask%2F1%2F_history%2F1&_include=Task%3Apatient&_include=Task%3Abased-on\"}],\"entry\":[{\"fullUrl\":\"https://fhir.openelis.org:8443/hapi-fhir-jpaserver/fhir/Task/1\",\"resource\":{\"resourceType\":\"Task\",\"id\":\"1\",\"meta\":{\"versionId\":\"1\",\"lastUpdated\":\"2020-04-13T22:01:10.209+00:00\",\"source\":\"#2qWEjOulNwoH9lSP\"},\"identifier\":[{\"system\":\"http://isanteplus.org/ext/task/identifier\",\"value\":\"acefc798-6303-42f9-804b-e870c959ad55\"},{\"system\":\"https://isanteplusdemo.com/openmrs/ws/fhir2/\",\"value\":\"acefc798-6303-42f9-804b-e870c959ad55\"}],\"basedOn\":[{\"reference\":\"ServiceRequest/2\",\"type\":\"ServiceRequest\"}],\"status\":\"accepted\",\"intent\":\"order\",\"code\":{\"coding\":[{\"system\":\"http://loinc.org\",\"code\":\"3024-7\"}]},\"for\":{\"reference\":\"Patient/3\",\"type\":\"Patient\"},\"encounter\":{\"reference\":\"Encounter/e64957f4-497e-4b45-84a3-a6d54c8370fe\",\"type\":\"Encounter\"},\"authoredOn\":\"2020-04-08T20:48:12+00:00\",\"owner\":{\"reference\":\"Practitioner/f9badd80-ab76-11e2-9e96-0800200c9a66\",\"type\":\"Practitioner\"}},\"search\":{\"mode\":\"match\"}},{\"fullUrl\":\"https://fhir.openelis.org:8443/hapi-fhir-jpaserver/fhir/ServiceRequest/2\",\"resource\":{\"resourceType\":\"ServiceRequest\",\"id\":\"2\",\"meta\":{\"versionId\":\"1\",\"lastUpdated\":\"2020-04-13T22:01:10.209+00:00\",\"source\":\"#2qWEjOulNwoH9lSP\"},\"identifier\":[{\"system\":\"https://isanteplusdemo.com/openmrs/ws/fhir2/\",\"value\":\"d43606ba-ee2c-46f6-aaef-6164c764622f\"}],\"status\":\"unknown\",\"intent\":\"order\",\"encounter\":{\"reference\":\"Encounter/e64957f4-497e-4b45-84a3-a6d54c8370fe\",\"type\":\"Encounter\"}},\"search\":{\"mode\":\"include\"}},{\"fullUrl\":\"https://fhir.openelis.org:8443/hapi-fhir-jpaserver/fhir/Patient/3\",\"resource\":{\"resourceType\":\"Patient\",\"id\":\"3\",\"meta\":{\"versionId\":\"1\",\"lastUpdated\":\"2020-04-13T22:01:10.209+00:00\",\"source\":\"#2qWEjOulNwoH9lSP\"},\"text\":{\"status\":\"generated\",\"div\":\"<div xmlns=\\\"http://www.w3.org/1999/xhtml\\\"><div class=\\\"hapiHeaderText\\\">Piotr <b>MANKOWSKI </b></div><table class=\\\"hapiPropertyTable\\\"><tbody><tr><td>Identifier</td><td>10012R</td></tr><tr><td>Address</td><td><span>Haiti </span></td></tr><tr><td>Date of birth</td><td><span>01 January 1987</span></td></tr></tbody></table></div>\"},\"identifier\":[{\"id\":\"5981a256-d60c-44b1-beae-9bdd2cf572f8\",\"use\":\"official\",\"system\":\"iSantePlus ID\",\"value\":\"10012R\"},{\"id\":\"75a67d54-6fff-44d1-9c3e-2116c967b475\",\"use\":\"usual\",\"system\":\"Code National\",\"value\":\"100000\"},{\"id\":\"29447d21-3cd6-42a9-9ab2-79ebfa710a01\",\"use\":\"usual\",\"system\":\"ECID\",\"value\":\"04d759e0-5d02-11e8-b899-0242ac12000b\"},{\"system\":\"https://isanteplusdemo.com/openmrs/ws/fhir2/\",\"value\":\"e14e9bda-d273-4c74-8509-5732a4ebaf19\"}],\"active\":true,\"name\":[{\"id\":\"511275de-e301-44a3-95d2-28d0d3b35387\",\"family\":\"Mankowski\",\"given\":[\"Piotr\"]}],\"gender\":\"male\",\"birthDate\":\"1987-01-01\",\"deceasedBoolean\":false,\"address\":[{\"id\":\"d4f7c809-3d01-4032-b64d-4c22e8eccbbc\",\"use\":\"home\",\"country\":\"Haiti\"}]},\"search\":{\"mode\":\"include\"}}]}";
         // example
@@ -137,8 +157,6 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
             }
         }
 
-        String orderNumber = request.getParameter("orderNumber");
-
         StringBuilder xml = new StringBuilder();
 
         String result = createSearchResultXML(orderNumber, xml);
@@ -162,14 +180,7 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
 
         String success = VALID;
 
-        List<ElectronicOrder> eOrders = electronicOrderService.getElectronicOrdersByExternalId(orderNumber);
-        if (eOrders.isEmpty()) {
-            return NOT_FOUND;
-        }
-
-        ElectronicOrder eOrder = eOrders.get(eOrders.size() - 1);
-        ExternalOrderStatus eOrderStatus = SpringContext.getBean(IStatusService.class)
-                .getExternalOrderStatusForID(eOrder.getStatusId());
+       
 
         if (eOrderStatus == ExternalOrderStatus.Cancelled) {
             return CANCELED;
