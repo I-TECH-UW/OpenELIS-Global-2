@@ -133,13 +133,14 @@ public class SampleEditController extends BaseController {
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
-        binder.setAllowedFields(ALLOWED_FIELDS);
+//        binder.setAllowedFields(ALLOWED_FIELDS);
     }
 
     @RequestMapping(value = "/SampleEdit", method = RequestMethod.GET)
     public ModelAndView showSampleEdit(HttpServletRequest request, @ModelAttribute("form") @Validated(SampleEdit.class)
     SampleEditForm oldForm, BindingResult result)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        oldForm.getExistingTests().get(0).isCanceled();
         SampleEditForm form = new SampleEditForm();
         form.setFormAction("SampleEdit.do");
 

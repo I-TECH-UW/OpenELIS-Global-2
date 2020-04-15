@@ -180,12 +180,12 @@ public class LogbookResultsController extends LogbookResultsBaseController {
         }
 
         setRequestType(ts == null ? MessageUtil.getMessage("workplan.unit.types") : ts.getLocalizedName());
+        List<TestResultItem> tests;
 
         ResultsPaging paging = new ResultsPaging();
         List<InventoryKitItem> inventoryList = new ArrayList<>();
         ResultsLoadUtility resultsLoadUtility = SpringContext.getBean(ResultsLoadUtility.class);
         resultsLoadUtility.setSysUser(getSysUserId(request));
-        List<TestResultItem> tests = resultsLoadUtility.getUnfinishedTestResultItemsInTestSection(testSectionId);
 
         String requestedPage = request.getParameter("page");
 

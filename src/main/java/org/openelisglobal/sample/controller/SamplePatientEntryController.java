@@ -100,7 +100,6 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
     @RequestMapping(value = "/SamplePatientEntry", method = RequestMethod.GET)
     public ModelAndView showSamplePatientEntry(HttpServletRequest request)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        System.out.println("SamplePatientEntryController:GET ");
         SamplePatientEntryForm form = new SamplePatientEntryForm();
 
         request.getSession().setAttribute(SAVE_DISABLED, TRUE);
@@ -134,7 +133,6 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
             @ModelAttribute("form") @Validated(SamplePatientEntryForm.SamplePatientEntry.class) SamplePatientEntryForm form,
             BindingResult result, RedirectAttributes redirectAttributes)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        System.out.println("SamplePatientEntryController:POST ");
 
         formValidator.validate(form, result);
         if (result.hasErrors()) {
