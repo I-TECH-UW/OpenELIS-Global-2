@@ -149,7 +149,6 @@ public class ResultValidationController extends BaseResultValidationController {
 
             if (!GenericValidator.isBlankOrNull(form.getTestSectionId())) {
                 ts = testSectionService.get(form.getTestSectionId());
-                form.setTestSectionId("0");
             }
 
             List<AnalysisItem> resultList;
