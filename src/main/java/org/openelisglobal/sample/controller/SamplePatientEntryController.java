@@ -100,7 +100,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
     @RequestMapping(value = "/SamplePatientEntry", method = RequestMethod.GET)
     public ModelAndView showSamplePatientEntry(HttpServletRequest request)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        System.out.println("SamplePatientEntryController:GET ");
+        //System.out.println("SamplePatientEntryController:GET ");
         SamplePatientEntryForm form = new SamplePatientEntryForm();
 
         request.getSession().setAttribute(SAVE_DISABLED, TRUE);

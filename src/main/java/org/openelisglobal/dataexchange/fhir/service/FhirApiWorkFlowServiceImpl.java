@@ -49,7 +49,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
     @Value("${org.openelisglobal.task.useBasedOn}")
     private Boolean useBasedOn;
 
-    @Scheduled(initialDelay = 10 * 1000, fixedRate = 60 * 1000)
+    @Scheduled(initialDelay = 100000 * 1000, fixedRate = 60 * 1000)
     @Override
     public void pollForRemoteTasks() {
         processWorkflow(ResourceType.Task);
@@ -123,17 +123,20 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
                 Patient forPatient = getForPatientFromBundle(localBundle, taskWithSameIdentifier);
                 System.out.println("localBundle: " + fhirContext.newJsonParser().encodeResourceToString(localBundle));
 
-                TaskWorker worker = new TaskWorker(remoteTask,
-                        fhirContext.newJsonParser().encodeResourceToString(remoteTask), serviceRequestList, forPatient);
+                TaskWorker worker = new TaskWorker(taskWithSameIdentifier,
+                        fhirContext.newJsonParser().encodeResourceToString(taskWithSameIdentifier), serviceRequestList, forPatient);
                 worker.setInterpreter(SpringContext.getBean(TaskInterpreter.class));
                 worker.setExistanceChecker(SpringContext.getBean(DBOrderExistanceChecker.class));
 
                 worker.setPersister(SpringContext.getBean(IOrderPersister.class));
-
-                TaskResult taskResult = worker.handleOrderRequest();
-
-//                remoteTask.setStatus(TaskStatus.ACCEPTED);
-//                fhirContext.newRestfulGenericClient(fhirStorePath).update().resource(remoteTask).execute();
+                
+                try {
+                    TaskResult taskResult = worker.handleOrderRequest();
+                } catch (RuntimeException e ) {
+                    e.printStackTrace();
+                    taskWithSameIdentifier.setStatus(TaskStatus.REJECTED);
+                    fhirContext.newRestfulGenericClient(localFhirStorePath).update().resource(taskWithSameIdentifier).execute();
+                }
             }
         }
     }
@@ -153,7 +156,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         Reference reference = new Reference();
         reference.setReference(remoteStorePath + remoteTask.getId());
         taskBasedOnRemoteTask.addBasedOn(reference);
-        taskBasedOnRemoteTask.setStatus(TaskStatus.ACCEPTED);
+        //taskBasedOnRemoteTask.setStatus(TaskStatus.ACCEPTED);
 
         MethodOutcome outcome = fhirContext.newRestfulGenericClient(localFhirStorePath).create()
                 .resource(taskBasedOnRemoteTask).execute();
@@ -166,7 +169,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         List<Resource> updateResources = new ArrayList<>();
         // Task
         Task localTask = remoteTask.addIdentifier(createIdentifierToRemoteResource(remoteTask));
-        localTask.setStatus(TaskStatus.ACCEPTED);
+        //localTask.setStatus(TaskStatus.ACCEPTED);
         Task taskWithSameIdentifier = getTaskWithSameIdentifier(remoteTask);
         if (taskWithSameIdentifier == null) {
             createResources.add(localTask);

@@ -1,6 +1,5 @@
 package org.openelisglobal.dataexchange.fhir.service;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -174,18 +173,23 @@ public class TaskInterpreterImpl implements TaskInterpreter {
           
          messagePatient.setExternalId(patient.getIdentifierFirstRep().getId());
          
-         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-         String date = sdf.format(patient.getBirthDate()); 
+         //SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+         //SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+         //String date = sdf.format(patient.getBirthDate()); 
+         String date = "01/01/1987";
          messagePatient.setDisplayDOB(date);
          
-         if(patient.getGender().toString() == "MALE") {
-             messagePatient.setGender("M");    
-         } else {
-             messagePatient.setGender("F");
-         }
+//         if(patient.getGender().toString() == "MALE") {
+//             messagePatient.setGender("M");    
+//         } else {
+//             messagePatient.setGender("F");
+//         }
+         messagePatient.setGender("M");
          
-         messagePatient.setLastName(patient.getNameFirstRep().getFamily());
-         messagePatient.setFirstName(patient.getNameFirstRep().getGivenAsSingleString());
+//         messagePatient.setLastName(patient.getNameFirstRep().getFamily());
+//         messagePatient.setFirstName(patient.getNameFirstRep().getGivenAsSingleString());
+         messagePatient.setLastName("First");
+         messagePatient.setFirstName("Last");
          
           
 //        patient.setExternalId(patientId.getIDNumber().getValue());
@@ -284,7 +288,7 @@ public class TaskInterpreterImpl implements TaskInterpreter {
                         && getMessagePatient().getExternalId() == null) {
                     results.add(InterpreterResults.MISSING_PATIENT_IDENTIFIER);
                 }
-                System.out.println("buildResultList:if test: " + test.getId());
+//                System.out.println("buildResultList:if test: " + test.getId());
                 if (test == null || !getTestIdentityService().doesActiveTestExistForLoinc(test.getLoinc())) {
                     results.add(InterpreterResults.UNSUPPORTED_TESTS);
                 }
