@@ -100,7 +100,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
             "testResult*.qualifiedResultValue", "testResult*.shadowReferredOut", "testResult*.referredOut",
             "testResult*.referralReasonId", "testResult*.technician", "testResult*.shadowRejected",
             "testResult*.rejected", "testResult*.rejectReasonId", "testResult*.note",
-
+            "paging.currentPage"
     };
 
     @Autowired
@@ -159,11 +159,6 @@ public class LogbookResultsController extends LogbookResultsBaseController {
         //        boolean supportReferrals = FormFields.getInstance().useField(Field.ResultsReferral);
         //        String statusRuleSet = ConfigurationProperties.getInstance().getPropertyValueUpperCase(Property.StatusRules);
 
-        String requestedPage = request.getParameter("page");
-        if (GenericValidator.isBlankOrNull(requestedPage)) {
-            requestedPage = "1";
-        }
-        int requestedPageNumber = Integer.parseInt(requestedPage);
         String testSectionId = form.getTestSectionId();
 
         request.getSession().setAttribute(SAVE_DISABLED, TRUE);
@@ -183,7 +178,6 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 
         if (!GenericValidator.isBlankOrNull(testSectionId)) {
             ts = testSectionService.get(testSectionId);
-            form.setTestSectionId("0");
         }
 
         setRequestType(ts == null ? MessageUtil.getMessage("workplan.unit.types") : ts.getLocalizedName());
@@ -195,8 +189,11 @@ public class LogbookResultsController extends LogbookResultsBaseController {
         ResultsLoadUtility resultsLoadUtility = SpringContext.getBean(ResultsLoadUtility.class);
         resultsLoadUtility.setSysUser(getSysUserId(request));
 
+        String requestedPage = request.getParameter("page");
+
         if (GenericValidator.isBlankOrNull(requestedPage)) {
 
+            requestedPage = "1";
             new StatusRules().setAllowableStatusForLoadingResults(resultsLoadUtility);
 
             if (!GenericValidator.isBlankOrNull(testSectionId)) {
@@ -216,6 +213,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
             paging.setDatabaseResults(request, form, tests);
 
         } else {
+            int requestedPageNumber = Integer.parseInt(requestedPage);
             paging.page(request, form, requestedPageNumber);
         }
         form.setDisplayTestKit(false);
