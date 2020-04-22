@@ -33,7 +33,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class SiteInformationMenuController extends BaseMenuController {
 
-    private static final String[] ALLOWED_FIELDS = new String[] { "selectedIds[*]" };
+    private static final String[] ALLOWED_FIELDS = new String[] { "selectedIds*" };
 
     @Autowired
     private SiteInformationMenuFormValidator formValidator;

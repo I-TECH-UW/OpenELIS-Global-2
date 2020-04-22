@@ -41,8 +41,8 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class TestActivationController extends BaseController {
 
-    private static final String[] ALLOWED_FIELDS = new String[] { "jsonChangeList", "activeTestList[*].sampleType.id",
-            "inactiveTestList[*].sampleType.id" };
+    private static final String[] ALLOWED_FIELDS = new String[] { "jsonChangeList", "activeTestList*.sampleType.id",
+            "inactiveTestList*.sampleType.id" };
 
     @Autowired
     private TestActivationFormValidator formValidator;

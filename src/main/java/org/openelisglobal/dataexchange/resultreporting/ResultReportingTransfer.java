@@ -22,6 +22,12 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.hl7.fhir.r4.model.DiagnosticReport;
+import org.hl7.fhir.r4.model.Observation;
+import org.hl7.fhir.r4.model.Patient;
+import org.hl7.fhir.r4.model.Quantity;
+import org.hl7.fhir.r4.model.Reference;
+import org.hl7.fhir.r4.model.ServiceRequest;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.DateUtil;
@@ -29,11 +35,13 @@ import org.openelisglobal.dataexchange.aggregatereporting.valueholder.ReportExte
 import org.openelisglobal.dataexchange.aggregatereporting.valueholder.ReportQueueType;
 import org.openelisglobal.dataexchange.common.ITransmissionResponseHandler;
 import org.openelisglobal.dataexchange.common.ReportTransmission;
+import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder;
 import org.openelisglobal.dataexchange.orderresult.OrderResponseWorker.Event;
 import org.openelisglobal.dataexchange.orderresult.valueholder.HL7MessageOut;
 import org.openelisglobal.dataexchange.resultreporting.beans.ResultReportXmit;
 import org.openelisglobal.dataexchange.service.aggregatereporting.ReportExternalExportService;
 import org.openelisglobal.dataexchange.service.aggregatereporting.ReportQueueTypeService;
+import org.openelisglobal.dataexchange.service.order.ElectronicOrderService;
 import org.openelisglobal.dataexchange.service.orderresult.HL7MessageOutService;
 import org.openelisglobal.referencetables.service.ReferenceTablesService;
 import org.openelisglobal.referencetables.valueholder.ReferenceTables;
@@ -44,8 +52,15 @@ import org.openelisglobal.reports.valueholder.DocumentType;
 import org.openelisglobal.result.valueholder.Result;
 import org.openelisglobal.spring.util.SpringContext;
 
+import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.rest.api.MethodOutcome;
+import ca.uhn.fhir.rest.client.api.IGenericClient;
+
 public class ResultReportingTransfer {
 
+    private FhirContext fhirContext = SpringContext.getBean(FhirContext.class);
+    protected ElectronicOrderService electronicOrderService = SpringContext.getBean(ElectronicOrderService.class);
+    
     private static DocumentType DOCUMENT_TYPE;
     private static String QUEUE_TYPE_ID;
     private static String RESULT_REFERRANCE_TABLE_ID;
@@ -69,9 +84,60 @@ public class ResultReportingTransfer {
         if (resultReport.getTestResults() == null || resultReport.getTestResults().isEmpty()) {
             return;
         }
+        
+        if (resultReport.getTestResults().get(0).getReferringOrderNumber().isEmpty()) {
+          ITransmissionResponseHandler responseHandler = new ResultFailHandler(reportingResult);
+          new ReportTransmission().sendHL7Report(resultReport, url, responseHandler);
+        } else { // FHIR
+            
+          String orderNumber = resultReport.getTestResults().get(0).getReferringOrderNumber();
+          List<ElectronicOrder> eOrders = electronicOrderService.getElectronicOrdersByExternalId(orderNumber);
+          ElectronicOrder eOrder = eOrders.get(eOrders.size() - 1);
+         
+          String json_servicerequest = "{\"resourceType\":\"ServiceRequest\",\"id\":\"b72db761-0508-426f-aa8f-40cdc7871db0\",\"status\":\"active\",\"intent\":\"order\",\"code\":{\"coding\":[{\"system\":\"http://loinc.org\",\"code\":\"25836-8\"}]},\"subject\":{\"reference\":\"Patient/e14e9bda-d273-4c74-8509-5732a4ebaf19\",\"type\":\"Patient\"},\"encounter\":{\"reference\":\"Encounter/f1c2d68a-cac6-4c76-b5ab-851cb6882c6f\",\"type\":\"Encounter\"}}";
+          String json_patient = "{\"resourceType\":\"Patient\",\"id\":\"5981a256-d60c-44b1-beae-9bdd2cf572f8\",\"identifier\":[{\"id\":\"5981a256-d60c-44b1-beae-9bdd2cf572f8\",\"use\":\"official\",\"system\":\"iSantePlus ID\",\"value\":\"10012R\"},{\"id\":\"75a67d54-6fff-44d1-9c3e-2116c967b475\",\"use\":\"usual\",\"system\":\"Code National\",\"value\":\"100000\"},{\"id\":\"29447d21-3cd6-42a9-9ab2-79ebfa710a01\",\"use\":\"usual\",\"system\":\"ECID\",\"value\":\"04d759e0-5d02-11e8-b899-0242ac12000b\"}],\"active\":true,\"name\":[{\"id\":\"511275de-e301-44a3-95d2-28d0d3b35387\",\"family\":\"Mankowski\",\"given\":[\"Piotr\"]}],\"gender\":\"male\",\"birthDate\":\"1987-01-01\",\"deceasedBoolean\":false,\"address\":[{\"id\":\"d4f7c809-3d01-4032-b64d-4c22e8eccbbc\",\"use\":\"home\",\"country\":\"Haiti\"}]}";        ca.uhn.fhir.parser.IParser srparser = fhirContext.newJsonParser();
+          
+          ServiceRequest serviceRequest = srparser.parseResource(ServiceRequest.class, json_servicerequest);
+          ca.uhn.fhir.parser.IParser pparser = fhirContext.newJsonParser();
+          Patient patient = pparser.parseResource(Patient.class, json_patient);
+          
+          Observation observation = new Observation();
+          observation.setId("f001");
+          observation.setIdentifier(serviceRequest.getIdentifier());
+          observation.setBasedOn(serviceRequest.getBasedOn());
+          observation.setStatus(Observation.ObservationStatus.FINAL);
+          observation.setCode(serviceRequest.getCode());
+          observation.setSubject(serviceRequest.getSubject());
+          Quantity quantity = new Quantity();
+          quantity.setValue(new java.math.BigDecimal(
+                  resultReport.getTestResults().get(0).getResults().get(0).getResult().getText()));
+          quantity.setUnit(resultReport.getTestResults().get(0).getUnits());
+          observation.setValue(quantity);
+          IGenericClient localFhirClient = fhirContext.newRestfulGenericClient("https://host.openelis.org:8444/hapi-fhir-jpaserver/fhir/");
+          MethodOutcome oOutcome =localFhirClient.create().resource(observation).execute();
+          
+          DiagnosticReport diagnosticReport = new DiagnosticReport();
+          diagnosticReport.setId(resultReport.getTestResults().get(0).getTest().getCode());
+          diagnosticReport.setIdentifier(serviceRequest.getIdentifier());
+          diagnosticReport.setBasedOn(serviceRequest.getBasedOn());
+          diagnosticReport.setStatus(DiagnosticReport.DiagnosticReportStatus.FINAL);
+          diagnosticReport.setCode(serviceRequest.getCode());
+          diagnosticReport.setSubject(serviceRequest.getSubject());
+          Reference observationReference = new Reference();
+          
+          diagnosticReport.addResult(observationReference);
+          
+//          System.out.println("ResultReportingTransfer:sendResults:observation: " + 
+//                  fhirContext.newJsonParser().encodeResourceToString(observation));
+//          System.out.println("ResultReportingTransfer:sendResults:: " + 
+//                  fhirContext.newJsonParser().encodeResourceToString(diagnosticReport));
+         
+          observationReference.setId(oOutcome.getId().toString());
+          MethodOutcome drOutcome =localFhirClient.create().resource(diagnosticReport).execute();
+          System.out.println(oOutcome.getId());
+          System.out.println(drOutcome.getId());
+        }      
 
-        ITransmissionResponseHandler responseHandler = new ResultFailHandler(reportingResult);
-        new ReportTransmission().sendHL7Report(resultReport, url, responseHandler);
     }
 
     class ResultFailHandler implements ITransmissionResponseHandler {

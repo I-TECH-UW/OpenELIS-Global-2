@@ -404,8 +404,6 @@ function parsePatient(patienttag) {
             patientSearch("", "", "", "", "", "", guid, "true", processSearchSuccess, processSearchFailure );
         }       
     }
-    
-    
 }
 
 function clearRequester() {
