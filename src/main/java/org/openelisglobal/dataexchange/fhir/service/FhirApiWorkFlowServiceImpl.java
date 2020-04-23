@@ -49,7 +49,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
     @Value("${org.openelisglobal.task.useBasedOn}")
     private Boolean useBasedOn;
 
-    @Scheduled(initialDelay = 1000000 * 1000, fixedRate = 60 * 1000)
+    @Scheduled(initialDelay = 10 * 1000, fixedRate = 60 * 1000)
     @Override
     public void pollForRemoteTasks() {
         processWorkflow(ResourceType.Task);
@@ -123,14 +123,10 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
                 Patient forPatient = getForPatientFromBundle(localBundle, localTask);
                 System.out.println("localBundle: " + fhirContext.newJsonParser().encodeResourceToString(localBundle));
 
-
-//                if (!localTask.getStatus().equals(TaskStatus.ACCEPTED)) {
-                  if (localTask.getStatus().equals(TaskStatus.ACCEPTED)) {
+                if (!localTask.getStatus().equals(TaskStatus.ACCEPTED)) {
                     TaskWorker worker = new TaskWorker(remoteTask,
                             fhirContext.newJsonParser().encodeResourceToString(remoteTask), serviceRequestList,
                             forPatient);
-
-
 
                     worker.setInterpreter(SpringContext.getBean(TaskInterpreter.class));
                     worker.setExistanceChecker(SpringContext.getBean(DBOrderExistanceChecker.class));
@@ -146,8 +142,6 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
                         localFhirClient.update().resource(taskBasedOnRemoteTask).execute();
                     }
                 }
-
-
             }
         }
     }
@@ -168,7 +162,6 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         reference.setReference(remoteStorePath + remoteTask.getId());
         taskBasedOnRemoteTask.addBasedOn(reference);
 
-
         MethodOutcome outcome = fhirContext.newRestfulGenericClient(localFhirStorePath).create()
                 .resource(taskBasedOnRemoteTask).execute();
 
@@ -180,7 +173,6 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         List<Resource> updateResources = new ArrayList<>();
 
         Reference patientReference = new Reference();
-        // Task
 
         Task localTask = getTaskWithSameIdentifier(remoteTask);
         if (localTask == null) {
