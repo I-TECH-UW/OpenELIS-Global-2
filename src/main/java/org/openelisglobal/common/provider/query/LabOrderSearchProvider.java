@@ -191,10 +191,13 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
 
         String patientGuid = null;
         for (Identifier identifier : patient.getIdentifier()) {
-            if (identifier.getSystem().equalsIgnoreCase("https://isanteplusdemo.com/openmrs/ws/fhir2/")) {
-                patientGuid = identifier.getValue();
+//            if (identifier.getSystem().equalsIgnoreCase("https://isanteplusdemo.com/openmrs/ws/fhir2/")) {
+              if (identifier.getSystem().equalsIgnoreCase("iSantePlus ID")) {
+                patientGuid = identifier.getId();
             }
         }
+        
+        System.out.println("patientGuid: " + patientGuid);
 
         createOrderXML(eOrder.getData(), patientGuid, xml);
 

@@ -1,6 +1,8 @@
 package org.openelisglobal.dataexchange.fhir.service;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.validator.GenericValidator;
@@ -150,82 +152,36 @@ public class TaskInterpreterImpl implements TaskInterpreter {
     }
 
     private MessagePatient createPatientFromFHIR() throws HL7Exception {
-        System.out.println("TaskInterpreter:createPatientFromFHIR:");
-
-//        System.out.println("Task: " + fhirContext.newJsonParser().encodeResourceToString(task));
-//        System.out.println("Patient: " 
-//                + fhirContext.newJsonParser().encodeResourceToString((IBaseResource) patient));
-
-//        for (ServiceRequest serviceRequest : serviceRequestList) {
-//            System.out.println("BasedOn ServiceRequest: "
-//                    + fhirContext.newJsonParser().encodeResourceToString(serviceRequest));
-//        }
 
         MessagePatient messagePatient = new MessagePatient();
 
-//          System.out.println("Patient.getId(): " + patient.getId());
-//          System.out.println("Patient.getIdBase(): " + patient.getIdBase());
-//          System.out.println("Patient.getBirthDate(): " + patient.getBirthDate());
-//          System.out.println("Patient.getGeneralPractitionerFirstRep(): " + patient.getGeneralPractitionerFirstRep());
-//          System.out.println("Patient.getGender(): " + patient.getGender());
-//          System.out.println("Patient.getIdentifierFirstRep().getUse(): " + patient.getIdentifierFirstRep().getUse());
-//          System.out.println("Patient.getIdentifierFirstRep().getSystem(): " + patient.getIdentifierFirstRep().getSystem());
-//          System.out.println("Patient.getIdentifierFirstRep().getValue(): " + patient.getIdentifierFirstRep().getValue());
-//          System.out.println("Patient.getNameFirstRep().getGivenAsSingleString(): " + patient.getNameFirstRep().getGivenAsSingleString());
-//          System.out.println("Patient.getNameFirstRep().getFamily(): " + patient.getNameFirstRep().getFamily());
+          System.out.println("Patient.getId(): " + patient.getId());
+          System.out.println("Patient.getIdBase(): " + patient.getIdBase());
+          System.out.println("Patient.getBirthDate(): " + patient.getBirthDate());
+          System.out.println("Patient.getGeneralPractitionerFirstRep(): " + patient.getGeneralPractitionerFirstRep());
+          System.out.println("Patient.getGender(): " + patient.getGender());
+          System.out.println("Patient.getIdentifierFirstRep().getUse(): " + patient.getIdentifierFirstRep().getUse());
+          System.out.println("Patient.getIdentifierFirstRep().getSystem(): " + patient.getIdentifierFirstRep().getSystem());
+          System.out.println("Patient.getIdentifierFirstRep().getValue(): " + patient.getIdentifierFirstRep().getValue());
+          System.out.println("Patient.getNameFirstRep().getGivenAsSingleString(): " + patient.getNameFirstRep().getGivenAsSingleString());
+          System.out.println("Patient.getNameFirstRep().getFamily(): " + patient.getNameFirstRep().getFamily());
 
-        messagePatient.setExternalId(patient.getIdentifierFirstRep().getId());
+          messagePatient.setExternalId(patient.getIdentifierFirstRep().getId());
+          SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+          Date birthDate = new Date();
+          birthDate = patient.getBirthDate();
+          String strDate = sdf.format(birthDate);
+          messagePatient.setDisplayDOB(strDate);
 
-        // SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        // SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        // String date = sdf.format(patient.getBirthDate());
-        String date = "01/01/1987";
-        messagePatient.setDisplayDOB(date);
+          if(patient.getGender().toString() == "MALE") {
+             messagePatient.setGender("M");    
+          } else {
+             messagePatient.setGender("F");
+          }
 
-//         if(patient.getGender().toString() == "MALE") {
-//             messagePatient.setGender("M");    
-//         } else {
-//             messagePatient.setGender("F");
-//         }
-        messagePatient.setGender("M");
+          messagePatient.setLastName(patient.getNameFirstRep().getFamily());
+          messagePatient.setFirstName(patient.getNameFirstRep().getGivenAsSingleString());
 
-//         messagePatient.setLastName(patient.getNameFirstRep().getFamily());
-//         messagePatient.setFirstName(patient.getNameFirstRep().getGivenAsSingleString());
-        messagePatient.setLastName("First");
-        messagePatient.setFirstName("Last");
-
-//        patient.setExternalId(patientId.getIDNumber().getValue());
-//        CX[] patientIdentities = pid.getPatientIdentifierList();
-//        for (CX identity : patientIdentities) {
-//            String value = identity.getCx1_IDNumber().getValue();
-//            String code = identity.getIdentifierTypeCode().getValue();
-//
-//            if (IdentityType.GUID.getIdentifier().equals(code)) {
-//                patient.setGuid(value);
-//            } else if (IdentityType.ST_NUMBER.getIdentifier().equals(code)) {
-//                patient.setStNumber(value);
-//            } else if (IdentityType.NATIONAL_ID.getIdentifier().equals(code)) {
-//                patient.setNationalId(value);
-//            } else if (IdentityType.OB_NUMBER.getIdentifier().equals(code)) {
-//                patient.setObNumber(value);
-//            } else if (IdentityType.PC_NUMBER.getIdentifier().equals(code)) {
-//                patient.setPcNumber(value);
-//            }
-//        }
-
-//        if (Gender.MALE.getIdentifier().equals(pid.getAdministrativeSex().getValue())) {
-//            messagePatient.setGender("M");
-//        } else if (Gender.FEMALE.getIdentifier().equals(pid.getAdministrativeSex().getValue())) {
-//            messagePatient.setGender("F");
-//        }
-//
-//        setDOB(messagePatient, pid);
-//
-//        messagePatient.setLastName(pid.getPatientName(0).getFamilyName().getSurname().getValue());
-//        messagePatient.setFirstName(pid.getPatientName(0).getGivenName().getValue());
-//        messagePatient.setAddressStreet(pid.getPatientAddress(0).getStreetAddress().getStreetOrMailingAddress().getValue());
-//        messagePatient.setAddressVillage(pid.getPatientAddress(0).getCity().getValue());
-//        messagePatient.setAddressDepartment(pid.getPatientAddress(0).getStateOrProvince().getValue());
 
         return messagePatient;
     }

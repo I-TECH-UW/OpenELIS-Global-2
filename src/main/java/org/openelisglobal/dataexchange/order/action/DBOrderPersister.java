@@ -114,7 +114,11 @@ public class DBOrderPersister implements IOrderPersister {
         }
 
         List<PatientIdentity> identities = new ArrayList<>();
-        addIdentityIfAppropriate(IDENTITY_GUID_ID, orderPatient.getGuid(), identities);
+        if (orderPatient.getExternalId().length() == 0) //HL7
+            addIdentityIfAppropriate(IDENTITY_GUID_ID, orderPatient.getGuid(), identities);
+        else //FHIR
+            addIdentityIfAppropriate(IDENTITY_GUID_ID, orderPatient.getExternalId(), identities);
+        
         addIdentityIfAppropriate(IDENTITY_STNUMBER_ID, orderPatient.getStNumber(), identities);
         addIdentityIfAppropriate(IDENTITY_OBNUMBER_ID, orderPatient.getObNumber(), identities);
         addIdentityIfAppropriate(IDENTITY_PCNUMBER_ID, orderPatient.getPcNumber(), identities);
