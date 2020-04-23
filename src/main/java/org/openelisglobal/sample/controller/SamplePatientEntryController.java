@@ -100,6 +100,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
     @RequestMapping(value = "/SamplePatientEntry", method = RequestMethod.GET)
     public ModelAndView showSamplePatientEntry(HttpServletRequest request)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+
         SamplePatientEntryForm form = new SamplePatientEntryForm();
 
         request.getSession().setAttribute(SAVE_DISABLED, TRUE);
@@ -163,6 +164,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
         testAndInitializePatientForSaving(request, patientInfo, patientUpdate, updateData);
 
         updateData.setAccessionNumber(sampleOrder.getLabNo());
+        updateData.setReferringId(sampleOrder.getExternalOrderNumber());
         updateData.initProvider(sampleOrder);
         updateData.initSampleData(form.getSampleXML(), receivedDateForDisplay, trackPayments, sampleOrder);
         updateData.validateSample(result);

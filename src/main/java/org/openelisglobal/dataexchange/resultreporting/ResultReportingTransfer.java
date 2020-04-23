@@ -22,18 +22,33 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.Bundle.BundleEntryComponent;
+import org.hl7.fhir.r4.model.DiagnosticReport;
+import org.hl7.fhir.r4.model.Observation;
+import org.hl7.fhir.r4.model.Patient;
+import org.hl7.fhir.r4.model.Quantity;
+import org.hl7.fhir.r4.model.Reference;
+import org.hl7.fhir.r4.model.ResourceType;
+import org.hl7.fhir.r4.model.ServiceRequest;
+import org.hl7.fhir.r4.model.Task;
+import org.hl7.fhir.r4.model.Task.TaskOutputComponent;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.services.IStatusService;
+import org.openelisglobal.common.services.StatusService.ExternalOrderStatus;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.dataexchange.aggregatereporting.valueholder.ReportExternalExport;
 import org.openelisglobal.dataexchange.aggregatereporting.valueholder.ReportQueueType;
 import org.openelisglobal.dataexchange.common.ITransmissionResponseHandler;
 import org.openelisglobal.dataexchange.common.ReportTransmission;
+import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder;
 import org.openelisglobal.dataexchange.orderresult.OrderResponseWorker.Event;
 import org.openelisglobal.dataexchange.orderresult.valueholder.HL7MessageOut;
 import org.openelisglobal.dataexchange.resultreporting.beans.ResultReportXmit;
 import org.openelisglobal.dataexchange.service.aggregatereporting.ReportExternalExportService;
 import org.openelisglobal.dataexchange.service.aggregatereporting.ReportQueueTypeService;
+import org.openelisglobal.dataexchange.service.order.ElectronicOrderService;
 import org.openelisglobal.dataexchange.service.orderresult.HL7MessageOutService;
 import org.openelisglobal.referencetables.service.ReferenceTablesService;
 import org.openelisglobal.referencetables.valueholder.ReferenceTables;
@@ -44,7 +59,19 @@ import org.openelisglobal.reports.valueholder.DocumentType;
 import org.openelisglobal.result.valueholder.Result;
 import org.openelisglobal.spring.util.SpringContext;
 
+import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.rest.api.MethodOutcome;
+import ca.uhn.fhir.rest.client.api.IGenericClient;
+import ca.uhn.fhir.rest.gclient.TokenClientParam;
+
 public class ResultReportingTransfer {
+
+    private FhirContext fhirContext = SpringContext.getBean(FhirContext.class);
+
+    private Task task = null;
+    private ServiceRequest serviceRequest = null;
+    private Patient patient = null;
+    protected ElectronicOrderService electronicOrderService = SpringContext.getBean(ElectronicOrderService.class);
 
     private static DocumentType DOCUMENT_TYPE;
     private static String QUEUE_TYPE_ID;
@@ -70,8 +97,111 @@ public class ResultReportingTransfer {
             return;
         }
 
-        ITransmissionResponseHandler responseHandler = new ResultFailHandler(reportingResult);
-        new ReportTransmission().sendHL7Report(resultReport, url, responseHandler);
+        if (resultReport.getTestResults().get(0).getReferringOrderNumber().isEmpty()) {
+            ITransmissionResponseHandler responseHandler = new ResultFailHandler(reportingResult);
+            new ReportTransmission().sendHL7Report(resultReport, url, responseHandler);
+        } else { // FHIR
+
+            String orderNumber = resultReport.getTestResults().get(0).getReferringOrderNumber();
+            List<ElectronicOrder> eOrders = electronicOrderService.getElectronicOrdersByExternalId(orderNumber);
+            ElectronicOrder eOrder = eOrders.get(eOrders.size() - 1);
+            ExternalOrderStatus eOrderStatus = SpringContext.getBean(IStatusService.class)
+                    .getExternalOrderStatusForID(eOrder.getStatusId());
+
+            IGenericClient localFhirClient = fhirContext
+                    .newRestfulGenericClient("https://host.openelis.org:8444/hapi-fhir-jpaserver/fhir/");
+
+            task = fhirContext.newJsonParser().parseResource(Task.class, eOrder.getData());
+            System.out.println("task: " + fhirContext.newJsonParser().encodeResourceToString(task));
+
+            Bundle srBundle = (Bundle) localFhirClient.search().forResource(ServiceRequest.class)
+                    .where(new TokenClientParam("identifier").exactly()
+                            .code(task.getBasedOn().get(0).getReferenceElement().getIdPart()))
+                    .prettyPrint().execute();
+
+            serviceRequest = null;
+            for (BundleEntryComponent bundleComponent : srBundle.getEntry()) {
+                if (bundleComponent.hasResource()
+                        && ResourceType.ServiceRequest.equals(bundleComponent.getResource().getResourceType())) {
+                    serviceRequest = (ServiceRequest) bundleComponent.getResource();
+                }
+            }
+
+            System.out.println("serviceRequest: " + fhirContext.newJsonParser().encodeResourceToString(serviceRequest));
+            serviceRequest.getSubject().getReferenceElement().getIdPart();
+
+            Bundle pBundle = (Bundle) localFhirClient.search().forResource(Patient.class)
+                    .where(new TokenClientParam("identifier").exactly()
+                            .code(serviceRequest.getSubject().getReferenceElement().getIdPart()))
+                    .prettyPrint().execute();
+
+            patient = null;
+            for (BundleEntryComponent bundleComponent : pBundle.getEntry()) {
+                if (bundleComponent.hasResource()
+                        && ResourceType.Patient.equals(bundleComponent.getResource().getResourceType())) {
+                    patient = (Patient) bundleComponent.getResource();
+                }
+            }
+
+            System.out.println("patient: " + fhirContext.newJsonParser().encodeResourceToString(patient));
+
+            Observation observation = new Observation();
+            // observation.setId("f001");
+            observation.setIdentifier(serviceRequest.getIdentifier());
+            observation.setBasedOn(serviceRequest.getBasedOn());
+            observation.setStatus(Observation.ObservationStatus.FINAL);
+            observation.setCode(serviceRequest.getCode());
+            observation.setSubject(serviceRequest.getSubject());
+            Quantity quantity = new Quantity();
+            quantity.setValue(new java.math.BigDecimal(
+                    resultReport.getTestResults().get(0).getResults().get(0).getResult().getText()));
+            quantity.setUnit(resultReport.getTestResults().get(0).getUnits());
+            observation.setValue(quantity);
+            MethodOutcome oOutcome = localFhirClient.create().resource(observation).execute();
+
+            DiagnosticReport diagnosticReport = new DiagnosticReport();
+            diagnosticReport.setId(resultReport.getTestResults().get(0).getTest().getCode());
+            diagnosticReport.setIdentifier(serviceRequest.getIdentifier());
+            diagnosticReport.setBasedOn(serviceRequest.getBasedOn());
+            diagnosticReport.setStatus(DiagnosticReport.DiagnosticReportStatus.FINAL);
+            diagnosticReport.setCode(serviceRequest.getCode());
+            diagnosticReport.setSubject(serviceRequest.getSubject());
+
+            Reference observationReference = new Reference();
+            observationReference.setId(oOutcome.getId().toString());
+            diagnosticReport.addResult(observationReference);
+
+            MethodOutcome drOutcome = localFhirClient.create().resource(diagnosticReport).execute();
+            System.out.println("observation: " + oOutcome.getId());
+            System.out.println("diagnosticReport: " + drOutcome.getId());
+            System.out.println("task: " + task.getId());
+
+            Reference diagnosticReportReference = new Reference();
+            diagnosticReportReference.setId(drOutcome.getId().toString());
+
+            TaskOutputComponent theOutputComponent = new TaskOutputComponent();
+            theOutputComponent.setValue(diagnosticReportReference);
+
+//          List<TaskOutputComponent> theOutputList = null;
+//          theOutputList.add(theOutputComponent);
+
+            task.addOutput(theOutputComponent);
+            
+            System.out.println("task: " + fhirContext.newJsonParser().encodeResourceToString(task));
+            System.out.println("task: " + task.getOutput().get(0).getValue().getId().toString());
+            
+            try {
+            MethodOutcome tOutcome = localFhirClient.update(task.getId(), task);
+            MethodOutcome t1Outcome = 
+                    localFhirClient.update()
+                    .resource(fhirContext.newJsonParser().encodeResourceToString(task))
+                    .execute();
+            
+                localFhirClient.update().resource(task).execute();
+            } catch (Exception e){
+                System.out.println("task update exception: "  + e.getStackTrace());
+            }
+        }
     }
 
     class ResultFailHandler implements ITransmissionResponseHandler {

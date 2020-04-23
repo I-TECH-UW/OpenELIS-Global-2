@@ -196,6 +196,7 @@ public class ResultReportingCollator {
             actualSection = convertedSection;
         }
         testResult.setTestSection(actualSection);
+        testResult.setUnits(getUnitOfMeasure(result));
 
         if (result.getMinNormal().doubleValue() != result.getMaxNormal().doubleValue()) {
             TestRangeXmit normalRange = new TestRangeXmit();

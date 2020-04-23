@@ -68,7 +68,8 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
     private void beginTaskPath() {
 
         Map<String, List<String>> remoteSearchParams = new HashMap<>();
-        remoteSearchParams.put("status", Arrays.asList("REQUESTED"));
+//        remoteSearchParams.put("status", Arrays.asList("REQUESTED"));
+        remoteSearchParams.put("status", Arrays.asList("ACCEPTED"));
         // TODO make this configurable instead of hardcoded
         remoteSearchParams.put("owner", Arrays.asList("Practitioner/f9badd80-ab76-11e2-9e96-0800200c9a66"));
 //        remoteSearchParams.put("owner", Arrays.asList("f9badd80-ab76-11e2-9e96-0800200c9a66"));
@@ -141,7 +142,6 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
                         localFhirClient.update().resource(taskBasedOnRemoteTask).execute();
                     }
                 }
-
             }
         }
     }
@@ -161,7 +161,6 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         Reference reference = new Reference();
         reference.setReference(remoteStorePath + remoteTask.getId());
         taskBasedOnRemoteTask.addBasedOn(reference);
-//        taskBasedOnRemoteTask.setStatus(TaskStatus.ACCEPTED);
 
         MethodOutcome outcome = fhirContext.newRestfulGenericClient(localFhirStorePath).create()
                 .resource(taskBasedOnRemoteTask).execute();
@@ -174,7 +173,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         List<Resource> updateResources = new ArrayList<>();
 
         Reference patientReference = new Reference();
-        // Task
+
         Task localTask = getTaskWithSameIdentifier(remoteTask);
         if (localTask == null) {
             localTask = remoteTask.addIdentifier(createIdentifierToRemoteResource(remoteTask));
