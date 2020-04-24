@@ -39,6 +39,7 @@ import org.hl7.fhir.r4.model.Task;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.ExternalOrderStatus;
 import org.openelisglobal.common.util.XMLUtil;
+import org.openelisglobal.dataexchange.fhir.service.FhirApiWorkflowService;
 import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder;
 import org.openelisglobal.dataexchange.service.order.ElectronicOrderService;
 import org.openelisglobal.internationalization.MessageUtil;
@@ -70,9 +71,11 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
 //    private String localFhirStorePath;
 //    @Value("${org.openelisglobal.task.useBasedOn}")
 //    private Boolean useBasedOn;
-
+    
     private FhirContext fhirContext = SpringContext.getBean(FhirContext.class);
-
+   
+    protected FhirApiWorkflowService fhirApiWorkFlowService = SpringContext.getBean(FhirApiWorkflowService.class);
+    
     protected TestService testService = SpringContext.getBean(TestService.class);
     protected PanelService panelService = SpringContext.getBean(PanelService.class);
     protected PanelItemService panelItemService = SpringContext.getBean(PanelItemService.class);
@@ -115,7 +118,7 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
         eOrderStatus = SpringContext.getBean(IStatusService.class).getExternalOrderStatusForID(eOrder.getStatusId());
 
         IGenericClient localFhirClient = fhirContext
-                .newRestfulGenericClient("https://host.openelis.org:8444/hapi-fhir-jpaserver/fhir/");
+                .newRestfulGenericClient(fhirApiWorkFlowService.getLocalFhirStorePath());
         System.out.println("Data: " + eOrder.getData());
 
         Task task = fhirContext.newJsonParser().parseResource(Task.class, eOrder.getData());
@@ -134,6 +137,10 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
                         .code(task.getBasedOn().get(0).getReferenceElement().getIdPart()))
                 .prettyPrint().execute();
 
+        System.out.println("srBundle: " + fhirContext.newJsonParser().encodeResourceToString(srBundle));
+        System.out.println("task.getBasedOn().get(0).getReferenceElement().getIdPart(): " 
+                + task.getBasedOn().get(0).getReferenceElement().getIdPart());
+        
         serviceRequest = null;
         for (BundleEntryComponent bundleComponent : srBundle.getEntry()) {
             if (bundleComponent.hasResource()
@@ -143,13 +150,12 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
         }
 
         System.out.println("serviceRequest: " + fhirContext.newJsonParser().encodeResourceToString(serviceRequest));
-        serviceRequest.getSubject().getReferenceElement().getIdPart();
 
         Bundle pBundle = (Bundle) localFhirClient.search().forResource(Patient.class)
                 .where(new TokenClientParam("identifier").exactly()
                         .code(serviceRequest.getSubject().getReferenceElement().getIdPart()))
                 .prettyPrint().execute();
-
+        
         patient = null;
         for (BundleEntryComponent bundleComponent : pBundle.getEntry()) {
             if (bundleComponent.hasResource()

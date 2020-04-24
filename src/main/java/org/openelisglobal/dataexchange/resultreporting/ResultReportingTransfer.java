@@ -42,6 +42,7 @@ import org.openelisglobal.dataexchange.aggregatereporting.valueholder.ReportExte
 import org.openelisglobal.dataexchange.aggregatereporting.valueholder.ReportQueueType;
 import org.openelisglobal.dataexchange.common.ITransmissionResponseHandler;
 import org.openelisglobal.dataexchange.common.ReportTransmission;
+import org.openelisglobal.dataexchange.fhir.service.FhirApiWorkflowService;
 import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder;
 import org.openelisglobal.dataexchange.orderresult.OrderResponseWorker.Event;
 import org.openelisglobal.dataexchange.orderresult.valueholder.HL7MessageOut;
@@ -58,6 +59,7 @@ import org.openelisglobal.reports.valueholder.DocumentTrack;
 import org.openelisglobal.reports.valueholder.DocumentType;
 import org.openelisglobal.result.valueholder.Result;
 import org.openelisglobal.spring.util.SpringContext;
+import org.springframework.beans.factory.annotation.Value;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.api.MethodOutcome;
@@ -65,13 +67,17 @@ import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.gclient.TokenClientParam;
 
 public class ResultReportingTransfer {
+    
+    @Value("${org.openelisglobal.fhirstore.uri}")
+    private String localFhirStorePath;
 
     private FhirContext fhirContext = SpringContext.getBean(FhirContext.class);
-
+    
     private Task task = null;
     private ServiceRequest serviceRequest = null;
     private Patient patient = null;
     protected ElectronicOrderService electronicOrderService = SpringContext.getBean(ElectronicOrderService.class);
+    protected FhirApiWorkflowService fhirApiWorkFlowService = SpringContext.getBean(FhirApiWorkflowService.class);
 
     private static DocumentType DOCUMENT_TYPE;
     private static String QUEUE_TYPE_ID;
@@ -109,7 +115,7 @@ public class ResultReportingTransfer {
                     .getExternalOrderStatusForID(eOrder.getStatusId());
 
             IGenericClient localFhirClient = fhirContext
-                    .newRestfulGenericClient("https://host.openelis.org:8444/hapi-fhir-jpaserver/fhir/");
+                    .newRestfulGenericClient(fhirApiWorkFlowService.getLocalFhirStorePath());
 
             task = fhirContext.newJsonParser().parseResource(Task.class, eOrder.getData());
             System.out.println("task: " + fhirContext.newJsonParser().encodeResourceToString(task));
