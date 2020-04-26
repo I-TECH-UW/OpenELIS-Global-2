@@ -22,6 +22,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.hl7.fhir.r4.model.Annotation;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Bundle.BundleEntryComponent;
 import org.hl7.fhir.r4.model.DiagnosticReport;
@@ -67,12 +68,12 @@ import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.gclient.TokenClientParam;
 
 public class ResultReportingTransfer {
-    
+
     @Value("${org.openelisglobal.fhirstore.uri}")
     private String localFhirStorePath;
 
     private FhirContext fhirContext = SpringContext.getBean(FhirContext.class);
-    
+
     private Task task = null;
     private ServiceRequest serviceRequest = null;
     private Patient patient = null;
@@ -150,62 +151,58 @@ public class ResultReportingTransfer {
             }
 
             System.out.println("patient: " + fhirContext.newJsonParser().encodeResourceToString(patient));
-
-            Observation observation = new Observation();
-            // observation.setId("f001");
-            observation.setIdentifier(serviceRequest.getIdentifier());
-            observation.setBasedOn(serviceRequest.getBasedOn());
-            observation.setStatus(Observation.ObservationStatus.FINAL);
-            observation.setCode(serviceRequest.getCode());
-            observation.setSubject(serviceRequest.getSubject());
-            Quantity quantity = new Quantity();
-            quantity.setValue(new java.math.BigDecimal(
-                    resultReport.getTestResults().get(0).getResults().get(0).getResult().getText()));
-            quantity.setUnit(resultReport.getTestResults().get(0).getUnits());
-            observation.setValue(quantity);
-            MethodOutcome oOutcome = localFhirClient.create().resource(observation).execute();
-
-            DiagnosticReport diagnosticReport = new DiagnosticReport();
-            diagnosticReport.setId(resultReport.getTestResults().get(0).getTest().getCode());
-            diagnosticReport.setIdentifier(serviceRequest.getIdentifier());
-            diagnosticReport.setBasedOn(serviceRequest.getBasedOn());
-            diagnosticReport.setStatus(DiagnosticReport.DiagnosticReportStatus.FINAL);
-            diagnosticReport.setCode(serviceRequest.getCode());
-            diagnosticReport.setSubject(serviceRequest.getSubject());
-
-            Reference observationReference = new Reference();
-            observationReference.setId(oOutcome.getId().toString());
-            diagnosticReport.addResult(observationReference);
-
-            MethodOutcome drOutcome = localFhirClient.create().resource(diagnosticReport).execute();
-            System.out.println("observation: " + oOutcome.getId());
-            System.out.println("diagnosticReport: " + drOutcome.getId());
-            System.out.println("task: " + task.getId());
-
-            Reference diagnosticReportReference = new Reference();
-            diagnosticReportReference.setId(drOutcome.getId().toString());
-
-            TaskOutputComponent theOutputComponent = new TaskOutputComponent();
-            theOutputComponent.setValue(diagnosticReportReference);
-
-//          List<TaskOutputComponent> theOutputList = null;
-//          theOutputList.add(theOutputComponent);
-
-            task.addOutput(theOutputComponent);
-            
-            System.out.println("task: " + fhirContext.newJsonParser().encodeResourceToString(task));
-            System.out.println("task: " + task.getOutput().get(0).getValue().getId().toString());
-            
             try {
-            MethodOutcome tOutcome = localFhirClient.update(task.getId(), task);
-            MethodOutcome t1Outcome = 
-                    localFhirClient.update()
-                    .resource(fhirContext.newJsonParser().encodeResourceToString(task))
-                    .execute();
-            
+                Observation observation = new Observation();
+                observation.setIdentifier(serviceRequest.getIdentifier());
+                observation.setBasedOn(serviceRequest.getBasedOn());
+                observation.setStatus(Observation.ObservationStatus.FINAL);
+                observation.setCode(serviceRequest.getCode());
+                observation.setSubject(serviceRequest.getSubject());
+                Quantity quantity = new Quantity();
+                quantity.setValue(new java.math.BigDecimal(
+                        resultReport.getTestResults().get(0).getResults().get(0).getResult().getText()));
+                quantity.setUnit(resultReport.getTestResults().get(0).getUnits());
+                observation.setValue(quantity);
+                
+                Annotation oNote = new Annotation();
+                oNote.setText(resultReport.getTestResults().get(0).getTestNotes());
+                observation.addNote(oNote);
+                
+                MethodOutcome oOutcome = localFhirClient.create().resource(observation).execute();
+
+                DiagnosticReport diagnosticReport = new DiagnosticReport();
+                diagnosticReport.setId(resultReport.getTestResults().get(0).getTest().getCode());
+                diagnosticReport.setIdentifier(serviceRequest.getIdentifier());
+                diagnosticReport.setBasedOn(serviceRequest.getBasedOn());
+                diagnosticReport.setStatus(DiagnosticReport.DiagnosticReportStatus.FINAL);
+                diagnosticReport.setCode(serviceRequest.getCode());
+                diagnosticReport.setSubject(serviceRequest.getSubject());
+
+                Reference observationReference = new Reference();
+                observationReference.setType(oOutcome.getId().getResourceType());
+                observationReference
+                        .setReference(oOutcome.getId().getResourceType() + "/" + oOutcome.getId().getIdPart());
+                diagnosticReport.addResult(observationReference);
+                MethodOutcome drOutcome = localFhirClient.create().resource(diagnosticReport).execute();
+
+                Reference diagnosticReportReference = new Reference();
+                diagnosticReportReference.setType(drOutcome.getId().getResourceType());
+                diagnosticReportReference
+                        .setReference(drOutcome.getId().getResourceType() + "/" + drOutcome.getId().getIdPart());
+
+                TaskOutputComponent theOutputComponent = new TaskOutputComponent();
+                theOutputComponent.setValue(diagnosticReportReference);
+                task.addOutput(theOutputComponent);
+
+//            MethodOutcome tOutcome = localFhirClient.update(task.getId(), task);
+//            MethodOutcome t1Outcome = 
+//                    localFhirClient.update()
+//                    .resource(fhirContext.newJsonParser().encodeResourceToString(task))
+//                    .execute();
+
                 localFhirClient.update().resource(task).execute();
-            } catch (Exception e){
-                System.out.println("task update exception: "  + e.getStackTrace());
+            } catch (Exception e) {
+                System.out.println("Result update exception: " + e.getStackTrace());
             }
         }
     }
