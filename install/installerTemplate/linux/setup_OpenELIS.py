@@ -445,13 +445,13 @@ def install_db():
 
 def preserve_database_user_password():
     ensure_dir_exists(SECRETS_DIR)
-    db_user_password_file = open(SECRETS_DIR + 'OE_DB_USER_PASSWORD', 'w')
+    db_user_password_file = open(SECRETS_DIR + 'datasource.password', 'w')
     db_user_password_file.write(CLINLIMS_PWD)
     db_user_password_file.close()
 
     # own directory by tomcat user
-    os.chown(SECRETS_DIR + 'OE_DB_USER_PASSWORD', 8443, 8443)
-    os.chmod(SECRETS_DIR + 'OE_DB_USER_PASSWORD', 0640)
+    os.chown(SECRETS_DIR + 'datasource.password', 8443, 8443)
+    os.chmod(SECRETS_DIR + 'datasource.password', 0640)
     
     
 #def get_fhir_api_user():
@@ -750,7 +750,7 @@ def get_app_details():
 def find_password():
     global CLINLIMS_PWD
     try:
-        config_file = open(SECRETS_DIR + 'OE_DB_USER_PASSWORD')
+        config_file = open(SECRETS_DIR + 'datasource.password')
 
         for line in config_file:
             CLINLIMS_PWD = line

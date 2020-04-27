@@ -30,18 +30,18 @@ services:
         restart: always
         environment:
               # context.xml doesn't seem to be able to pick up environment variables directly, so we are passing them in as CATALINA_OPTS
-            - CATALINA_OPTS= -DOE_DB_URL=jdbc:postgresql://[% db_host %]:[% db_port %]/clinlims -DOE_DB_USERNAME=clinlims
+            - CATALINA_OPTS= -Ddatasource.url=jdbc:postgresql://[% db_host %]:[% db_port %]/clinlims -Ddatasource.username=clinlims
         volumes:
             - [% plugins_dir %]:/var/lib/openelis-global/plugins
         secrets:
             - source: tomcat_cert.crt
             - source: tomcat_cert.key
               # this will be read into CATALINA_OPTS in docker-entrypoint.sh
-            - source: OE_DB_USER_PASSWORD
+            - source: datasource.password
             
 secrets:
-  OE_DB_USER_PASSWORD:
-    file: [% secrets_dir %]OE_DB_USER_PASSWORD
+  datasource.password:
+    file: [% secrets_dir %]datasource.password
   tomcat_cert.crt:
     file: /etc/tomcat/ssl/certs/tomcat_cert.crt
   tomcat_cert.key:
