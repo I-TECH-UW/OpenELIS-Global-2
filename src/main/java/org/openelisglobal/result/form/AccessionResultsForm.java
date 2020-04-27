@@ -43,7 +43,7 @@ public class AccessionResultsForm extends BaseForm implements PatientInfoForm, R
 
     private Boolean searchFinished = false;
 
-    private String logbookType = "";
+    private String type = "";
 
     private List<IdValuePair> referralReasons;
 
@@ -207,12 +207,12 @@ public class AccessionResultsForm extends BaseForm implements PatientInfoForm, R
         this.searchFinished = searchFinished;
     }
 
-    public String getLogbookType() {
-        return logbookType;
+    public String getType() {
+        return type;
     }
 
-    public void setLogbookType(String logbookType) {
-        this.logbookType = logbookType;
+    public void setType(String type) {
+        this.type = type;
     }
 
     public List<IdValuePair> getReferralReasons() {

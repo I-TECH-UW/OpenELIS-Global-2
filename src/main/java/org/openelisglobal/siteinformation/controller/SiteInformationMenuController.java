@@ -33,7 +33,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class SiteInformationMenuController extends BaseMenuController {
 
-    private static final String[] ALLOWED_FIELDS = new String[] { "selectedIds[*]" };
+    private static final String[] ALLOWED_FIELDS = new String[] { "selectedIds*" };
 
     @Autowired
     private SiteInformationMenuFormValidator formValidator;
@@ -51,7 +51,7 @@ public class SiteInformationMenuController extends BaseMenuController {
 
     @RequestMapping(value = { "/NonConformityConfigurationMenu", "/WorkplanConfigurationMenu",
             "/PrintedReportsConfigurationMenu", "/SampleEntryConfigMenu", "/ResultConfigurationMenu",
-            "/MenuStatementConfigMenu", "/PatientConfigurationMenu",
+            "/MenuStatementConfigMenu", "/PatientConfigurationMenu", "/ValidationConfigurationMenu",
             "/SiteInformationMenu" }, method = RequestMethod.GET)
     public ModelAndView showSiteInformationMenu(HttpServletRequest request, RedirectAttributes redirectAttributes)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
@@ -93,6 +93,9 @@ public class SiteInformationMenuController extends BaseMenuController {
         } else if (path.contains("PatientConfiguration")) {
             form.setSiteInfoDomainName("PatientConfiguration");
             form.setFormName("PatientConfigurationMenuForm");
+        } else if (path.contains("ValidationConfiguration")) {
+            form.setSiteInfoDomainName("validationConfig");
+            form.setFormName("ValidationConfigurationMenuForm");
         } else {
             form.setSiteInfoDomainName("SiteInformation");
             form.setFormName("siteInformationMenuForm");
@@ -137,6 +140,9 @@ public class SiteInformationMenuController extends BaseMenuController {
         } else if ("MenuStatementConfig".equals(domainName)) {
             dbDomainName = "MenuStatementConfig";
             request.setAttribute(TITLE_KEY, "MenuStatementConfig.browse.title");
+        } else if ("validationConfig".equals(domainName)) {
+            dbDomainName = "validationConfig";
+            request.setAttribute(TITLE_KEY, "validationConfig.browse.title");
         }
 
         int startingRecNo = Integer.parseInt((String) request.getAttribute("startingRecNo"));

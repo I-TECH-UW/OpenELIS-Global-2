@@ -50,8 +50,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @SessionAttributes("form")
 public class SiteInformationController extends BaseController {
 
-    private static final String[] ALLOWED_FIELDS = new String[] { "paramName", "value",
-            "localization.localeValues[*]" };
+    private static final String[] ALLOWED_FIELDS = new String[] { "paramName", "value", "localization.localeValues*" };
 
     @Autowired
     SiteInformationFormValidator formValidator;
@@ -92,10 +91,11 @@ public class SiteInformationController extends BaseController {
 
     @RequestMapping(value = { "/NonConformityConfiguration", "/WorkplanConfiguration", "/PrintedReportsConfiguration",
             "/SampleEntryConfig", "/ResultConfiguration", "/MenuStatementConfig", "/PatientConfiguration",
-            "/SiteInformation", "/NextPreviousNonConformityConfiguration", "/NextPreviousWorkplanConfiguration",
-            "/NextPreviousPrintedReportsConfiguration", "/NextPreviousSampleEntryConfig",
-            "/NextPreviousResultConfiguration", "/NextPreviousMenuStatementConfig", "/NextPreviousPatientConfiguration",
-            "/NextPreviousSiteInformation" }, method = RequestMethod.GET)
+            "/ValidationConfiguration", "/SiteInformation", "/NextPreviousNonConformityConfiguration",
+            "/NextPreviousWorkplanConfiguration", "/NextPreviousPrintedReportsConfiguration",
+            "/NextPreviousSampleEntryConfig", "/NextPreviousResultConfiguration", "/NextPreviousMenuStatementConfig",
+            "/NextPreviousPatientConfiguration", "/NextPreviousSiteInformation",
+            "/NextPreviousValidationConfiguration" }, method = RequestMethod.GET)
     // TODO decide if still needing NextPrevious (functionality is not implemented)
     public ModelAndView showSiteInformation(HttpServletRequest request,
             @ModelAttribute("form") SiteInformationForm oldForm)
@@ -196,6 +196,11 @@ public class SiteInformationController extends BaseController {
             form.setFormName("PatientConfigurationForm");
             form.setFormAction("PatientConfiguration");
 
+        } else if (path.contains("ValidationConfiguration")) {
+            form.setSiteInfoDomainName("validationConfig");
+            form.setFormName("ValidationConfigurationForm");
+            form.setFormAction("ValidationConfiguration");
+
         } else {
             form.setSiteInfoDomainName("SiteInformation");
             form.setFormName("SiteInformationForm");
@@ -229,7 +234,7 @@ public class SiteInformationController extends BaseController {
 
     @RequestMapping(value = { "/NonConformityConfiguration", "/WorkplanConfiguration", "/PrintedReportsConfiguration",
             "/SampleEntryConfig", "/ResultConfiguration", "/MenuStatementConfig", "/PatientConfiguration",
-            "/SiteInformation" }, method = RequestMethod.POST)
+            "/ValidationConfiguration", "/SiteInformation" }, method = RequestMethod.POST)
     public ModelAndView showUpdateSiteInformation(HttpServletRequest request, HttpServletResponse response,
             @ModelAttribute("form") @Valid SiteInformationForm form, BindingResult result, SessionStatus status,
             RedirectAttributes redirectAttributes) {
@@ -440,10 +445,9 @@ public class SiteInformationController extends BaseController {
 
     @RequestMapping(value = { "/CancelNonConformityConfiguration", "/CancelWorkplanConfiguration",
             "/CancelPrintedReportsConfiguration", "/CancelSampleEntryConfig", "/CancelResultConfiguration",
-            "/CancelMenuStatementConfig", "/CancelPatientConfiguration",
+            "/CancelMenuStatementConfig", "/CancelPatientConfiguration", "/CancelValidationConfiguration",
             "/CancelSiteInformation" }, method = RequestMethod.GET)
-    public ModelAndView cancelSiteInformation(HttpServletRequest request,
-            SessionStatus status) {
+    public ModelAndView cancelSiteInformation(HttpServletRequest request, SessionStatus status) {
         status.setComplete();
         return findForward(FWD_CANCEL, new SiteInformationForm());
     }

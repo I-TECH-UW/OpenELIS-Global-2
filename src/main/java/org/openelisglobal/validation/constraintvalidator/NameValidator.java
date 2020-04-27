@@ -14,15 +14,23 @@ public class NameValidator implements ConstraintValidator<ValidName, String> {
         USERNAME, FIRST_NAME, LAST_NAME, FULL_NAME
     }
 
-    private final String FIRST_NAME_REGEX;
-    private final String LAST_NAME_REGEX;
-    private final String FULL_NAME_REGEX;
-    private final String USERNAME_REGEX;
+    private String FIRST_NAME_REGEX;
+    private String LAST_NAME_REGEX;
+    private String FULL_NAME_REGEX;
+    private String USERNAME_REGEX;
 
     private NameType nameType;
 
-    public NameValidator() {
-        SiteInformationService siteInformationService = SpringContext.getBean(SiteInformationService.class);
+    SiteInformationService siteInformationService = SpringContext.getBean(SiteInformationService.class);
+
+    private String escapeRegexChars(String regex) {
+        // TODO Auto-generated method stub
+        return regex;
+    }
+
+    @Override
+    public void initialize(ValidName constraint) {
+        nameType = constraint.nameType();
 
         String firstNameRegex = siteInformationService.getMatch("name", "firstNameCharset")
                 .orElse(new SiteInformation()).getValue();
@@ -40,16 +48,7 @@ public class NameValidator implements ConstraintValidator<ValidName, String> {
                 .getValue();
         usernameRegex = escapeRegexChars(usernameRegex);
         USERNAME_REGEX = "(?i)^[" + usernameRegex + "]*$";
-    }
 
-    private String escapeRegexChars(String regex) {
-        // TODO Auto-generated method stub
-        return regex;
-    }
-
-    @Override
-    public void initialize(ValidName constraint) {
-        nameType = constraint.nameType();
     }
 
     @Override

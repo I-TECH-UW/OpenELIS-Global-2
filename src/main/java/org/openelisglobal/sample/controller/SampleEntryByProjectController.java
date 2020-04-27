@@ -67,7 +67,7 @@ public class SampleEntryByProjectController extends BaseSampleEntryController {
             "ProjectData.hctTest", "ProjectData.vgmTest", "ProjectData.tcmhTest", "ProjectData.ccmhTest",
             "ProjectData.plqTest", "ProjectData.cd3CountTest", "ProjectData.cd4CountTest", "observations.vlPregnancy",
             "observations.vlSuckle", "observations.currentARVTreatment", "observations.arvTreatmentInitDate",
-            "observations.arvTreatmentRegime", "observations.currentARVTreatmentINNsList[*]",
+            "observations.arvTreatmentRegime", "observations.currentARVTreatmentINNsList*",
             "observations.vlReasonForRequest", "observations.vlOtherReasonForRequest", "observations.initcd4Count",
             "observations.initcd4Percent", "observations.initcd4Date", "observations.demandcd4Count",
             "observations.demandcd4Percent", "observations.demandcd4Date", "observations.vlBenefit",

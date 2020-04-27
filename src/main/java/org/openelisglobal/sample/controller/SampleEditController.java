@@ -85,10 +85,10 @@ public class SampleEditController extends BaseController {
             "sampleOrderItems.otherLocationCode",
             //
             "accessionNumber", "newAccessionNumber", "isEditable", "maxAccessionNumber",
-            "existingTests[*].sampleItemChanged", "existingTests[*].sampleItemId", "existingTests[*].analysisId",
-            "existingTests[*].collectionDate", "existingTests[*].collectionTime", "existingTests[*].removeSample",
-            "existingTests[*].canceled", "possibleTests[*].testId", "possibleTests[*].sampleItemId",
-            "possibleTests[*].add" };
+            "existingTests*.sampleItemChanged", "existingTests*.sampleItemId", "existingTests*.analysisId",
+            "existingTests*.collectionDate", "existingTests*.collectionTime", "existingTests*.removeSample",
+            "existingTests*.canceled", "possibleTests*.testId", "possibleTests*.sampleItemId",
+            "possibleTests*.add" };
 
     @Autowired
     SampleEditFormValidator formValidator;
@@ -155,7 +155,7 @@ public class SampleEditController extends BaseController {
         if (GenericValidator.isBlankOrNull(request.getParameter("accessionNumber"))) {
             accessionNumber = getMostRecentAccessionNumberForPaitient(request.getParameter("patientID"));
         } else if (!result.hasFieldErrors("accessionNumber")) {
-            accessionNumber = form.getAccessionNumber();
+            accessionNumber = oldForm.getAccessionNumber();
         }
         if (!GenericValidator.isBlankOrNull(accessionNumber)) {
             form.setAccessionNumber(accessionNumber);
