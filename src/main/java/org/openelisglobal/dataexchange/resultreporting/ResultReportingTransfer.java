@@ -34,6 +34,7 @@ import org.hl7.fhir.r4.model.ResourceType;
 import org.hl7.fhir.r4.model.ServiceRequest;
 import org.hl7.fhir.r4.model.Task;
 import org.hl7.fhir.r4.model.Task.TaskOutputComponent;
+import org.hl7.fhir.r4.model.Task.TaskStatus;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.IStatusService;
@@ -119,13 +120,27 @@ public class ResultReportingTransfer {
                     .newRestfulGenericClient(fhirApiWorkFlowService.getLocalFhirStorePath());
 
             task = fhirContext.newJsonParser().parseResource(Task.class, eOrder.getData());
+            
+            Bundle tBundle = (Bundle) localFhirClient.search().forResource(Task.class)
+                    .where(new TokenClientParam("identifier").exactly().code(task.getIdentifier().get(0).getValue()))
+                    .prettyPrint()
+                    .execute();
+            
+            task = null;
+            for (BundleEntryComponent bundleComponent : tBundle.getEntry()) {
+                if (bundleComponent.hasResource()
+                        && ResourceType.Task.equals(bundleComponent.getResource().getResourceType())) {
+                    task = (Task) bundleComponent.getResource();
+                }
+            }
+            
             System.out.println("task: " + fhirContext.newJsonParser().encodeResourceToString(task));
 
             Bundle srBundle = (Bundle) localFhirClient.search().forResource(ServiceRequest.class)
-                    .where(new TokenClientParam("identifier").exactly()
+                    .where(new TokenClientParam("_id").exactly()
                             .code(task.getBasedOn().get(0).getReferenceElement().getIdPart()))
                     .prettyPrint().execute();
-
+            
             serviceRequest = null;
             for (BundleEntryComponent bundleComponent : srBundle.getEntry()) {
                 if (bundleComponent.hasResource()
@@ -151,13 +166,16 @@ public class ResultReportingTransfer {
             }
 
             System.out.println("patient: " + fhirContext.newJsonParser().encodeResourceToString(patient));
+            System.out.println("patient Id: " + patient.getIdElement().getIdPart());
             try {
                 Observation observation = new Observation();
                 observation.setIdentifier(serviceRequest.getIdentifier());
                 observation.setBasedOn(serviceRequest.getBasedOn());
                 observation.setStatus(Observation.ObservationStatus.FINAL);
                 observation.setCode(serviceRequest.getCode());
-                observation.setSubject(serviceRequest.getSubject());
+                Reference subjectRef = new Reference();
+                subjectRef.setReference(patient.getResourceType() + "/" + patient.getIdElement().getIdPart());
+                observation.setSubject(subjectRef);
                 Quantity quantity = new Quantity();
                 quantity.setValue(new java.math.BigDecimal(
                         resultReport.getTestResults().get(0).getResults().get(0).getResult().getText()));
@@ -176,7 +194,7 @@ public class ResultReportingTransfer {
                 diagnosticReport.setBasedOn(serviceRequest.getBasedOn());
                 diagnosticReport.setStatus(DiagnosticReport.DiagnosticReportStatus.FINAL);
                 diagnosticReport.setCode(serviceRequest.getCode());
-                diagnosticReport.setSubject(serviceRequest.getSubject());
+                diagnosticReport.setSubject(subjectRef);
 
                 Reference observationReference = new Reference();
                 observationReference.setType(oOutcome.getId().getResourceType());
@@ -193,6 +211,7 @@ public class ResultReportingTransfer {
                 TaskOutputComponent theOutputComponent = new TaskOutputComponent();
                 theOutputComponent.setValue(diagnosticReportReference);
                 task.addOutput(theOutputComponent);
+                task.setStatus(TaskStatus.COMPLETED);
 
 //            MethodOutcome tOutcome = localFhirClient.update(task.getId(), task);
 //            MethodOutcome t1Outcome = 
