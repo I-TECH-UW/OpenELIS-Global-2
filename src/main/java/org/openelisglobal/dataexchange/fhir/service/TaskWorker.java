@@ -31,7 +31,7 @@ public class TaskWorker {
 
     private String message = "";
     private Task task = new Task();
-    private List<ServiceRequest> serviceRequestList = null;
+    private ServiceRequest serviceRequest = null;
     private Patient patient = new Patient();
     private TaskInterpreter interpreter;
     private IOrderExistanceChecker existanceChecker;
@@ -40,10 +40,10 @@ public class TaskWorker {
     private List<InterpreterResults> interpretResults;
     private CheckResult checkResult;
 
-    public TaskWorker(Task incomingTask, String incomingMessage, List<ServiceRequest> incomingServiceRequestList, Patient incomingPatient) {
+    public TaskWorker(Task incomingTask, String incomingMessage, ServiceRequest incomingServiceRequest, Patient incomingPatient) {
         task = incomingTask;
         message = incomingMessage;
-        serviceRequestList = incomingServiceRequestList;
+        serviceRequest = incomingServiceRequest;
         patient = incomingPatient;
     }
 
@@ -91,21 +91,14 @@ public class TaskWorker {
             throw new IllegalStateException("Interpreter, existanceChecker or persister have not been set");
         }
 
-        System.out.println("TaskWorker:handleOrderRequest:0 ");
-
-        interpretResults = interpreter.interpret(task, serviceRequestList, patient);
-        
-        System.out.println("TaskWorker:handleOrderRequest:1 " + interpretResults.get(0));
+        interpretResults = interpreter.interpret(task, serviceRequest, patient);
         
         if (interpretResults.get(0) == InterpreterResults.OK) {
-            System.out.println("TaskWorker:handleOrderRequest:2 ");
             String referringOrderNumber = interpreter.getReferringOrderNumber();
-            System.out.println("TaskWorker:handleOrderRequest:3:referringOrderNumber " + referringOrderNumber);
 
             OrderType orderType = interpreter.getOrderType();
             MessagePatient patient = interpreter.getMessagePatient();
             checkResult = existanceChecker.check(referringOrderNumber);
-            System.out.println("TaskWorker:handleOrderRequest:4 " + orderType.toString());
             switch (checkResult) {
             case ORDER_FOUND_QUEUED:
                 if (orderType == OrderType.CANCEL) {

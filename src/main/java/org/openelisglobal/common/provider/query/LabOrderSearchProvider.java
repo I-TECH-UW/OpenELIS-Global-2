@@ -124,18 +124,10 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
         Task task = fhirContext.newJsonParser().parseResource(Task.class, eOrder.getData());
         System.out.println("task: " + fhirContext.newJsonParser().encodeResourceToString(task));
 
-//        task = null;
-//        for (BundleEntryComponent bundleComponent : bundle.getEntry()) {
-//            if (bundleComponent.hasResource()
-//                    && ResourceType.Task.equals(bundleComponent.getResource().getResourceType())) {
-//                task = (Task) bundleComponent.getResource();
-//            }
-//        }
-
         Bundle srBundle = (Bundle) localFhirClient.search().forResource(ServiceRequest.class)
-                .where(new TokenClientParam("identifier").exactly()
-                        .code(task.getBasedOn().get(0).getReferenceElement().getIdPart()))
-                .prettyPrint().execute();
+                .where(new TokenClientParam("identifier").exactly().code(orderNumber))
+                .prettyPrint()
+                .execute();
 
         System.out.println("srBundle: " + fhirContext.newJsonParser().encodeResourceToString(srBundle));
         System.out.println("task.getBasedOn().get(0).getReferenceElement().getIdPart(): " 
@@ -152,7 +144,7 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
         System.out.println("serviceRequest: " + fhirContext.newJsonParser().encodeResourceToString(serviceRequest));
 
         Bundle pBundle = (Bundle) localFhirClient.search().forResource(Patient.class)
-                .where(new TokenClientParam("identifier").exactly()
+                .where(new TokenClientParam("_id").exactly()
                         .code(serviceRequest.getSubject().getReferenceElement().getIdPart()))
                 .prettyPrint().execute();
         
@@ -247,9 +239,9 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
         // OML_O21 hapiMsg = (OML_O21) p.parse(orderMessage);
         // ORC commonOrderSegment = hapiMsg.getORDER().getORC();
 
-        requesterValuesMap.put(PROVIDER_PHONE, "1234567890");
-        requesterValuesMap.put(PROVIDER_LAST_NAME, "providerLast");
-        requesterValuesMap.put(PROVIDER_FIRST_NAME, "providerFirst");
+        requesterValuesMap.put(PROVIDER_PHONE, "");
+        requesterValuesMap.put(PROVIDER_LAST_NAME, "Name");
+        requesterValuesMap.put(PROVIDER_FIRST_NAME, "");
 
 
         // pass loinc

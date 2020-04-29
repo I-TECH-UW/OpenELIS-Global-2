@@ -124,27 +124,29 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
 
                 List<ServiceRequest> serviceRequestList = getBasedOnServiceRequestFromBundle(localBundle, localTask);
                 Patient forPatient = getForPatientFromBundle(localBundle, localTask);
-                System.out.println("localBundle: " + fhirContext.newJsonParser().encodeResourceToString(localBundle));
+                TaskResult taskResult = null;
+                for (ServiceRequest serviceRequest : serviceRequestList) {
 
-                if (!localTask.getStatus().equals(TaskStatus.ACCEPTED)) {
+//                    if (!localTask.getStatus().equals(TaskStatus.ACCEPTED)) {
                     TaskWorker worker = new TaskWorker(remoteTask,
-                            fhirContext.newJsonParser().encodeResourceToString(remoteTask), serviceRequestList,
-                            forPatient);
+                            fhirContext.newJsonParser().encodeResourceToString(remoteTask), serviceRequest, forPatient);
 
                     worker.setInterpreter(SpringContext.getBean(TaskInterpreter.class));
                     worker.setExistanceChecker(SpringContext.getBean(DBOrderExistanceChecker.class));
-
                     worker.setPersister(SpringContext.getBean(IOrderPersister.class));
 
-                    TaskResult taskResult = worker.handleOrderRequest();
-                    TaskStatus taskStatus = TaskResult.OK == taskResult ? TaskStatus.ACCEPTED : TaskStatus.REJECTED;
-                    localTask.setStatus(taskStatus);
-                    localFhirClient.update().resource(localTask).execute();
-                    if (useBasedOn) {
-                        taskBasedOnRemoteTask.setStatus(taskStatus);
-                        localFhirClient.update().resource(taskBasedOnRemoteTask).execute();
-                    }
+                    taskResult = worker.handleOrderRequest();
                 }
+                
+                TaskStatus taskStatus = TaskResult.OK == taskResult ? TaskStatus.ACCEPTED : TaskStatus.REJECTED;
+                localTask.setStatus(taskStatus);
+                localFhirClient.update().resource(localTask).execute();
+                if (useBasedOn) {
+                    taskBasedOnRemoteTask.setStatus(taskStatus);
+                    localFhirClient.update().resource(taskBasedOnRemoteTask).execute();
+                }
+//                    }
+
             }
         }
     }

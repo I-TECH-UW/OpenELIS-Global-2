@@ -153,7 +153,7 @@ public class ResultReportingTransfer {
             serviceRequest.getSubject().getReferenceElement().getIdPart();
 
             Bundle pBundle = (Bundle) localFhirClient.search().forResource(Patient.class)
-                    .where(new TokenClientParam("identifier").exactly()
+                    .where(new TokenClientParam("_id").exactly()
                             .code(serviceRequest.getSubject().getReferenceElement().getIdPart()))
                     .prettyPrint().execute();
 
