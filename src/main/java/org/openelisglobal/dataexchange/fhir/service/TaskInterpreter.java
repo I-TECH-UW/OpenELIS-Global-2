@@ -28,7 +28,7 @@ public interface TaskInterpreter {
 
     Test getTest();
 
-    List<InterpreterResults> interpret(Task incomingTask, List<ServiceRequest> incomingServiceRequestList,
+    List<InterpreterResults> interpret(Task incomingTask, ServiceRequest incomingServiceRequest,
             Patient incomingPatient);
 
     

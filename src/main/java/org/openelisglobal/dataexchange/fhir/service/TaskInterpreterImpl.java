@@ -83,7 +83,7 @@ public class TaskInterpreterImpl implements TaskInterpreter {
     private String orderMessage;
     private Task task;
     private Patient patient;
-    private List<ServiceRequest> serviceRequestList;
+    private ServiceRequest serviceRequest;
     private MessagePatient messagePatient;
     private Test test;
     private List<InterpreterResults> results = new ArrayList<>();
@@ -92,20 +92,19 @@ public class TaskInterpreterImpl implements TaskInterpreter {
     private ITestIdentityService testIdentityService;
 
     @Override
-    public List<InterpreterResults> interpret(Task incomingTask, List<ServiceRequest> incomingServiceRequestList,
+    public List<InterpreterResults> interpret(Task incomingTask, ServiceRequest incomingServiceRequest,
             Patient incomingPatient) {
 
         this.task = incomingTask;
-        this.serviceRequestList = incomingServiceRequestList;
+        this.serviceRequest = incomingServiceRequest;
         this.patient = incomingPatient;
 
         this.orderMessage = fhirContext.newJsonParser().encodeResourceToString(task);
 
-        System.out.println("TaskInterpreter:interpret: " + this.orderMessage);
         try {
             messagePatient = createPatientFromFHIR();
-            test = createTestFromFHIR();
-            extractOrderInformation();
+            test = createTestFromFHIR(serviceRequest);
+            extractOrderInformation(serviceRequest);
         } catch (HL7Exception e) {
             LogEvent.logDebug(e);
             return buildResultList(true);
@@ -113,35 +112,28 @@ public class TaskInterpreterImpl implements TaskInterpreter {
         return buildResultList(false);
     }
 
-    private void extractOrderInformation() throws HL7Exception {
-        System.out.println("extractOrderInformation:");
-        for (ServiceRequest serviceRequest : serviceRequestList) {
-            labOrderNumber = serviceRequest.getIdentifierFirstRep().getValue();
-        }
-        System.out.println("extractOrderInformation:labOrderNumber: " + labOrderNumber);
+    private void extractOrderInformation(ServiceRequest serviceRequest) throws HL7Exception {
+        labOrderNumber = serviceRequest.getIdentifierFirstRep().getValue();
         // gnr: make electronic_order.external_id longer
         if (labOrderNumber.length() > 60) {
             labOrderNumber = labOrderNumber.substring(labOrderNumber.length() - 60);
         }
-
         orderType = OrderType.REQUEST;
     }
 
-    private Test createTestFromFHIR() throws HL7Exception {
+    private Test createTestFromFHIR(ServiceRequest serviceRequest) throws HL7Exception {
         System.out.println("TaskInterpreter:createTestFromFHIR:");
 
         String loincCode = "";
         String system = "";
         Integer i = 0;
-        for (ServiceRequest serviceRequest : serviceRequestList) {
-            while (i < serviceRequest.getCode().getCoding().size()) {
-                system = serviceRequest.getCode().getCoding().get(i).getSystemElement().toString();
-                if (system.equalsIgnoreCase("UriType[http://loinc.org]")) {
-                    loincCode = serviceRequest.getCode().getCoding().get(i).getCodeElement().toString();
-                    break;
-                }
-                i++;
+        while (i < serviceRequest.getCode().getCoding().size()) {
+            system = serviceRequest.getCode().getCoding().get(i).getSystemElement().toString();
+            if (system.equalsIgnoreCase("UriType[http://loinc.org]")) {
+                loincCode = serviceRequest.getCode().getCoding().get(i).getCodeElement().toString();
+                break;
             }
+            i++;
         }
 
         List<Test> tests = testService.getTestsByLoincCode(loincCode);
@@ -154,17 +146,6 @@ public class TaskInterpreterImpl implements TaskInterpreter {
     private MessagePatient createPatientFromFHIR() throws HL7Exception {
 
         MessagePatient messagePatient = new MessagePatient();
-
-          System.out.println("Patient.getId(): " + patient.getId());
-          System.out.println("Patient.getIdBase(): " + patient.getIdBase());
-          System.out.println("Patient.getBirthDate(): " + patient.getBirthDate());
-          System.out.println("Patient.getGeneralPractitionerFirstRep(): " + patient.getGeneralPractitionerFirstRep());
-          System.out.println("Patient.getGender(): " + patient.getGender());
-          System.out.println("Patient.getIdentifierFirstRep().getUse(): " + patient.getIdentifierFirstRep().getUse());
-          System.out.println("Patient.getIdentifierFirstRep().getSystem(): " + patient.getIdentifierFirstRep().getSystem());
-          System.out.println("Patient.getIdentifierFirstRep().getValue(): " + patient.getIdentifierFirstRep().getValue());
-          System.out.println("Patient.getNameFirstRep().getGivenAsSingleString(): " + patient.getNameFirstRep().getGivenAsSingleString());
-          System.out.println("Patient.getNameFirstRep().getFamily(): " + patient.getNameFirstRep().getFamily());
 
           messagePatient.setExternalId(patient.getIdentifierFirstRep().getId());
           SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
