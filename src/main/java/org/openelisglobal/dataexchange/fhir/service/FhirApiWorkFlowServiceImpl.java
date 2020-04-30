@@ -215,10 +215,12 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         List<ServiceRequest> remoteBasedOnServiceRequests = getBasedOnServiceRequestsFromServer(sourceFhirClient,
                 remoteTask);
 //      List<ServiceRequest> basedOnServiceRequests = getBasedOnServiceRequestFromBundle(bundle, remoteTask);
+        ServiceRequest localBasedOn = null;
         for (ServiceRequest remoteBasedOn : remoteBasedOnServiceRequests) {
-            ServiceRequest localBasedOn = getServiceRequestWithSameIdentifier(remoteBasedOn);
+             localBasedOn = getServiceRequestWithSameIdentifier(remoteBasedOn);
             if (localBasedOn == null) {
                 localBasedOn = remoteBasedOn.addIdentifier(createIdentifierToRemoteResource(remoteBasedOn));
+                localBasedOn.setSubject(patientReference);
                 createResources.add(localBasedOn);
                 if (remoteBasedOn.getSubject() != null && remoteBasedOn.getSubject().equals(remoteTask.getFor())) {
                     localBasedOn.setSubject(patientReference);
