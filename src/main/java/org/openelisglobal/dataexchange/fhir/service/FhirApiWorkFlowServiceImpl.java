@@ -64,7 +64,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         default:
         }
     }
-    
+
     public String getLocalFhirStorePath() {
         return localFhirStorePath;
     }
@@ -125,28 +125,28 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
                 List<ServiceRequest> serviceRequestList = getBasedOnServiceRequestFromBundle(localBundle, localTask);
                 Patient forPatient = getForPatientFromBundle(localBundle, localTask);
                 TaskResult taskResult = null;
-                for (ServiceRequest serviceRequest : serviceRequestList) {
+                if (!(localTask.getStatus().equals(TaskStatus.ACCEPTED) || localTask.getStatus().equals(TaskStatus.COMPLETED))) {
+                    for (ServiceRequest serviceRequest : serviceRequestList) {
 
-//                    if (!localTask.getStatus().equals(TaskStatus.ACCEPTED)) {
-                    TaskWorker worker = new TaskWorker(remoteTask,
-                            fhirContext.newJsonParser().encodeResourceToString(remoteTask), serviceRequest, forPatient);
+                        TaskWorker worker = new TaskWorker(remoteTask,
+                                fhirContext.newJsonParser().encodeResourceToString(remoteTask), serviceRequest,
+                                forPatient);
 
-                    worker.setInterpreter(SpringContext.getBean(TaskInterpreter.class));
-                    worker.setExistanceChecker(SpringContext.getBean(DBOrderExistanceChecker.class));
-                    worker.setPersister(SpringContext.getBean(IOrderPersister.class));
+                        worker.setInterpreter(SpringContext.getBean(TaskInterpreter.class));
+                        worker.setExistanceChecker(SpringContext.getBean(DBOrderExistanceChecker.class));
+                        worker.setPersister(SpringContext.getBean(IOrderPersister.class));
 
-                    taskResult = worker.handleOrderRequest();
+                        taskResult = worker.handleOrderRequest();
+                    }
+
+                    TaskStatus taskStatus = TaskResult.OK == taskResult ? TaskStatus.ACCEPTED : TaskStatus.REJECTED;
+                    localTask.setStatus(taskStatus);
+                    localFhirClient.update().resource(localTask).execute();
+                    if (useBasedOn) {
+                        taskBasedOnRemoteTask.setStatus(taskStatus);
+                        localFhirClient.update().resource(taskBasedOnRemoteTask).execute();
+                    }
                 }
-                
-                TaskStatus taskStatus = TaskResult.OK == taskResult ? TaskStatus.ACCEPTED : TaskStatus.REJECTED;
-                localTask.setStatus(taskStatus);
-                localFhirClient.update().resource(localTask).execute();
-                if (useBasedOn) {
-                    taskBasedOnRemoteTask.setStatus(taskStatus);
-                    localFhirClient.update().resource(taskBasedOnRemoteTask).execute();
-                }
-//                    }
-
             }
         }
     }
@@ -215,10 +215,12 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         List<ServiceRequest> remoteBasedOnServiceRequests = getBasedOnServiceRequestsFromServer(sourceFhirClient,
                 remoteTask);
 //      List<ServiceRequest> basedOnServiceRequests = getBasedOnServiceRequestFromBundle(bundle, remoteTask);
+        ServiceRequest localBasedOn = null;
         for (ServiceRequest remoteBasedOn : remoteBasedOnServiceRequests) {
-            ServiceRequest localBasedOn = getServiceRequestWithSameIdentifier(remoteBasedOn);
+            localBasedOn = getServiceRequestWithSameIdentifier(remoteBasedOn);
             if (localBasedOn == null) {
                 localBasedOn = remoteBasedOn.addIdentifier(createIdentifierToRemoteResource(remoteBasedOn));
+                localBasedOn.setSubject(patientReference);
                 createResources.add(localBasedOn);
                 if (remoteBasedOn.getSubject() != null && remoteBasedOn.getSubject().equals(remoteTask.getFor())) {
                     localBasedOn.setSubject(patientReference);
