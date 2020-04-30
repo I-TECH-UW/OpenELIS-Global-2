@@ -79,6 +79,7 @@ public class ResultReportingTransfer {
     private FhirContext fhirContext = SpringContext.getBean(FhirContext.class);
 
     private Task task = null;
+    private Task eTask = null;
     private ServiceRequest serviceRequest = null;
     private Patient patient = null;
     protected ElectronicOrderService electronicOrderService = SpringContext.getBean(ElectronicOrderService.class);
@@ -121,11 +122,11 @@ public class ResultReportingTransfer {
                 IGenericClient localFhirClient = fhirContext
                         .newRestfulGenericClient(fhirApiWorkFlowService.getLocalFhirStorePath());
 
-                task = fhirContext.newJsonParser().parseResource(Task.class, eOrder.getData());
+                eTask = fhirContext.newJsonParser().parseResource(Task.class, eOrder.getData());
                 
                 // using UUID from getData which is idPart in original etask
                 Bundle tsrBundle = (Bundle) localFhirClient.search().forResource(Task.class)
-                        .where(new TokenClientParam("identifier").exactly().code(task.getIdElement().getIdPart()))
+                        .where(new TokenClientParam("identifier").exactly().code(eTask.getIdElement().getIdPart()))
                         .include(new Include("Task:based-on"))
                         .prettyPrint()
                         .execute();
@@ -150,6 +151,21 @@ public class ResultReportingTransfer {
                 }
                 
                 for (ServiceRequest serviceRequest : serviceRequestList) {
+                    
+                 // task has to be refreshed after each loop 
+                 // using UUID from getData which is idPart in original etask
+                    Bundle tBundle = (Bundle) localFhirClient.search().forResource(Task.class)
+                            .where(new TokenClientParam("identifier").exactly().code(eTask.getIdElement().getIdPart()))
+                            .prettyPrint()
+                            .execute();
+                 
+                    task = null; 
+                    for (BundleEntryComponent bundleComponent : tBundle.getEntry()) {
+                        if (bundleComponent.hasResource()
+                                && ResourceType.Task.equals(bundleComponent.getResource().getResourceType())) {
+                            task = (Task) bundleComponent.getResource();
+                        }
+                    }
                     
                     Bundle pBundle = (Bundle) localFhirClient.search().forResource(Patient.class)
                             .where(new TokenClientParam("_id").exactly()
