@@ -25,19 +25,20 @@ import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.service.DatabaseChangeLogService;
 import org.openelisglobal.common.valueholder.DatabaseChangeLog;
 import org.openelisglobal.spring.util.SpringContext;
+import org.springframework.stereotype.Component;
 
+@Component
 public class Versioning {
 
-    private static final String PROPERTY_FILE = "/build.properties";
-    private static String buildNumber = "Not set";
-    private static String releaseNumber = " ";
+    private final String PROPERTY_FILE = "build.properties";
+    private String releaseNumber = " ";
 
-    static {
+    public Versioning() {
         InputStream propertyStream = null;
         Properties properties = null;
 
         try {
-            propertyStream = new Versioning().getClass().getResourceAsStream(PROPERTY_FILE);
+            propertyStream = this.getClass().getClassLoader().getResourceAsStream(PROPERTY_FILE);
             properties = new Properties();
             properties.load(propertyStream);
         } catch (IOException e) {
@@ -52,12 +53,11 @@ public class Versioning {
             }
         }
         if (properties != null) {
-            releaseNumber = properties.getProperty("release", " ");
-            buildNumber = properties.getProperty("build", "Not set");
+            releaseNumber = properties.getProperty("project.version", " ");
         }
     }
 
-    public static String getDatabaseVersion() {
+    public String getDatabaseVersion() {
         DatabaseChangeLogService databaseChangeLogService = SpringContext.getBean(DatabaseChangeLogService.class);
         DatabaseChangeLog changeLog = databaseChangeLogService.getLastExecutedChange();
 
@@ -68,11 +68,8 @@ public class Versioning {
         return "";
     }
 
-    public static String getBuildNumber() {
-        return buildNumber;
-    }
-
-    public static String getReleaseNumber() {
+    public String getReleaseNumber() {
         return releaseNumber;
     }
+
 }

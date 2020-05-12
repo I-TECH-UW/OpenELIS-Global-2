@@ -13,7 +13,6 @@ import org.openelisglobal.barcode.BarcodeLabelMaker;
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.provider.validation.IAccessionNumberValidator;
 import org.openelisglobal.common.util.StringUtil;
-import org.openelisglobal.common.util.Versioning;
 import org.openelisglobal.common.util.validator.GenericValidator;
 import org.openelisglobal.common.validator.BaseErrors;
 import org.openelisglobal.internationalization.MessageUtil;
@@ -109,14 +108,13 @@ public class LabelMakerServlet extends HttpServlet implements IActionConstants {
             String path = request.getContextPath();
             String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()
                     + path + "/";
-            String version = Versioning.getBuildNumber();
             response.setContentType("text/html; charset=utf-8");
             response.getWriter().println(MessageUtil.getMessage("barcode.message.maxreached"));
             response.getWriter().println("</br>");
             response.getWriter()
                     .println("<input type='button' id='overrideButton' value='Override' onclick='override();'>");
             response.getWriter().println("<script type=\"text/javascript\" src=\"" + basePath
-                    + "scripts/labelMaker.js?ver=" + version + "\" ></script>");
+                    + "scripts/labelMaker.js ></script>");
             // else return the pdf
         } else {
             response.setContentType("application/pdf");

@@ -222,8 +222,7 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
     }
 
     private void loadSpecial() {
-        propertiesValueMap.put(Property.releaseNumber, Versioning.getReleaseNumber());
-        propertiesValueMap.put(Property.buildNumber, Versioning.getBuildNumber());
+        propertiesValueMap.put(Property.releaseNumber, SpringContext.getBean(Versioning.class).getReleaseNumber());
     }
 
     protected class KeyDefaultPair {

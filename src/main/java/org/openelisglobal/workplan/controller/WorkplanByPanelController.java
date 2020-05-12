@@ -45,7 +45,7 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class WorkplanByPanelController extends BaseWorkplanController {
 
-    private static final String[] ALLOWED_FIELDS = new String[] { "selectedSearchId" };
+    private static final String[] ALLOWED_FIELDS = new String[] { "selectedSearchID" };
 
     @Autowired
     private AnalysisService analysisService;
