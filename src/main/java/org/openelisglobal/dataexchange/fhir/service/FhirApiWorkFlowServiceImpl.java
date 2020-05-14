@@ -126,6 +126,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
                 Patient forPatient = getForPatientFromBundle(localBundle, localTask);
                 TaskResult taskResult = null;
                 if (!(localTask.getStatus().equals(TaskStatus.ACCEPTED) || localTask.getStatus().equals(TaskStatus.COMPLETED))) {
+                    Boolean taskOrderAcceptedFlag = false;
                     for (ServiceRequest serviceRequest : serviceRequestList) {
 
                         TaskWorker worker = new TaskWorker(remoteTask,
@@ -137,9 +138,12 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
                         worker.setPersister(SpringContext.getBean(IOrderPersister.class));
 
                         taskResult = worker.handleOrderRequest();
+                        if (taskResult == TaskResult.OK) {
+                            taskOrderAcceptedFlag = true; // at least one order was accepted per Piotr 5/14/2020
+                        }
                     }
 
-                    TaskStatus taskStatus = TaskResult.OK == taskResult ? TaskStatus.ACCEPTED : TaskStatus.REJECTED;
+                    TaskStatus taskStatus = taskOrderAcceptedFlag ? TaskStatus.ACCEPTED : TaskStatus.REJECTED;
                     localTask.setStatus(taskStatus);
                     localFhirClient.update().resource(localTask).execute();
                     if (useBasedOn) {
