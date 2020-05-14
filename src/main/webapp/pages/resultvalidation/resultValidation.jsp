@@ -78,7 +78,7 @@ jQuery(document).ready( function() {
                 handleMultiSelectChange( e, data );
             });
 
-            pageSearch = new OEPageSearch( $("searchNotFound"), "td", pager );
+            pageSearch = new OEPageSearch( jQuery("searchNotFound"), "td", pager );
 			
 			if( searchTerm != "null" ){
 				 pageSearch.highlightSearch( searchTerm, false );
@@ -100,48 +100,48 @@ function  /*void*/ setMyCancelAction(form, action, validate, parameters)
 }
 
 function /*void*/ enableDisableCheckboxes( matchedElement, groupingNumber ){
-	$(matchedElement).checked = false;
+	jQuery(matchedElement).checked = false;
 	
-	$("sampleRejected_" + groupingNumber).checked = false;
-	$("sampleAccepted_" + groupingNumber).checked = false;
-	$("selectAllReject").checked = false;
-	$("selectAllAccept").checked = false;
+	jQuery("sampleRejected_" + groupingNumber).checked = false;
+	jQuery("sampleAccepted_" + groupingNumber).checked = false;
+	jQuery("selectAllReject").checked = false;
+	jQuery("selectAllAccept").checked = false;
 }
 
 function /*void*/ acceptSample(element, groupingNumber ){
-	$$(".accepted_" + groupingNumber).each( function(item){
+	jQuery(".accepted_" + groupingNumber).each( function(item){
 		item.checked = element.checked;
 		}
 	);
 
-	$$(".rejected_" + groupingNumber).each( function(item){
+	jQuery(".rejected_" + groupingNumber).each( function(item){
 		item.checked = false;
 		}
 	);
 	
-	$("sampleRejected_" + groupingNumber).checked = false;
-	$("selectAllReject").checked = false;
-	$("selectAllAccept").checked = false;
+	jQuery("sampleRejected_" + groupingNumber).checked = false;
+	jQuery("selectAllReject").checked = false;
+	jQuery("selectAllAccept").checked = false;
 }
 
 function /*void*/ rejectSample(element, groupingNumber ){
-	$$(".accepted_" + groupingNumber).each( function(item){
+	jQuery(".accepted_" + groupingNumber).each( function(item){
 		item.checked = false;
 		}
 	);
 
-	$$(".rejected_" + groupingNumber).each( function(item){
+	jQuery(".rejected_" + groupingNumber).each( function(item){
 		item.checked = element.checked;
 		}
 	);
 	
-	$("sampleAccepted_" + groupingNumber).checked = false;
-	$("selectAllAccept").checked = false;
-	$("selectAllReject").checked = false;
+	jQuery("sampleAccepted_" + groupingNumber).checked = false;
+	jQuery("selectAllAccept").checked = false;
+	jQuery("selectAllReject").checked = false;
 }
 
 function /*void*/ markUpdated(){
-	$("saveButtonId").disabled = false;
+	jQuery("saveButtonId").disabled = false;
 }
 
 function /*void*/ makeDirty(){
@@ -182,11 +182,11 @@ function toggleSelectAll( element ) {
     var index, item, checkboxes,matchedCheckboxes;
 
 	if (element.id == "selectAllAccept" ) {
-		checkboxes = $$(".accepted");
-		matchedCheckboxes = $$(".rejected");
+		checkboxes = jQuery(".accepted");
+		matchedCheckboxes = jQuery(".rejected");
 	} else if (element.id == "selectAllReject" ) {
-		checkboxes = $$(".rejected");
-		matchedCheckboxes = $$(".accepted");
+		checkboxes = jQuery(".rejected");
+		matchedCheckboxes = jQuery(".accepted");
 	}
 
 	if (element.checked == true ) {
@@ -208,7 +208,7 @@ function toggleSelectAll( element ) {
 }
 
 function updateLogValue(element, index ){
-	var logField = $("log_" + index );
+	var logField = jQuery("log_" + index );
 
 	if( logField ){
 		var logValue = Math.baseLog(element.value).toFixed(2);
@@ -230,8 +230,8 @@ function trim(element, significantDigits){
 }
 
 function updateReflexChild( group){
- 	var reflexGroup = $$(".reflexGroup_" + group);
-	var childReflex = $$(".childReflex_" + group);
+ 	var reflexGroup = jQuery(".reflexGroup_" + group);
+	var childReflex = jQuery(".childReflex_" + group);
  	var i, childId, rowId, resultIds = "", values="", requestString = "";
 
  	if( childReflex ){
@@ -240,7 +240,7 @@ function updateReflexChild( group){
 		for( i = 0; i < reflexGroup.length; i++ ){
 			if( childReflex[0] != reflexGroup[i]){
 				rowId = reflexGroup[i].id.split("_")[1];
-				resultIds += "," + $("resultIdValue_" + rowId).value;
+				resultIds += "," + jQuery("resultIdValue_" + rowId).value;
 				values += "," + reflexGroup[i].value;
 			}
 		}
@@ -281,7 +281,7 @@ function /*void*/ processTestReflexCD4Success(xhr)
 		value = formField.getElementsByTagName("value").item(0).childNodes[0].nodeValue;
 		
 		if( value && value.length > 0){
-			$("resultId_" + childRow).value = value;
+			jQuery("resultId_" + childRow).value = value;
 		}
 
 	}
@@ -345,7 +345,7 @@ function /*boolean*/ handleEnterEvent(){
 	       id="labnoSearch"
 	       placeholder='<spring:message code="sample.search.scanner.instructions"/>'
 	       maxlength='<%= Integer.toString(accessionNumberValidator.getMaxAccessionLength())%>' />
-	<input type="button" onclick="pageSearch.doLabNoSearch($(labnoSearch))" value='<%= MessageUtil.getMessage("label.button.search") %>'>
+	<input type="button" onclick="pageSearch.doLabNoSearch(jQuery(labnoSearch))" value='<%= MessageUtil.getMessage("label.button.search") %>'>
 	</span>
 </div>
 </c:if>
@@ -484,7 +484,7 @@ function /*boolean*/ handleEnterEvent(){
 						</form:select>
 						<form:input path='resultList[${iter.index}].qualifiedResultValue'
 			           			id='qualifiedDict_${iter.index}'
-			           			style = 'display:${(resultList.qualifiedResult) ? "inline" : "none"}'
+			           			style = 'display:${(resultList.hasQualifiedResult) ? "inline" : "none"}'
 					   			disabled="${resultList.readOnly}" 
 					   			/>
                     <c:out value="${resultList.units}"/>

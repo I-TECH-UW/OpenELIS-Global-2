@@ -151,6 +151,9 @@
 
                 option = createOption(data.value, dictionaryName, false);
                 jQuery("#referenceSelection").append(option);
+                
+                option = createOption(data.value, dictionaryName, false);
+                jQuery("#defaultTestResultSelection").append(option);
             } else {
                 jQuery("#dictionaryNameSortUI li[value=" + data.value + "]").remove();
 
@@ -159,6 +162,7 @@
                 jQuery("#dictionaryQualify").append(qualifiyList);
                 augmentMultiselects("#dictionaryQualify");
                 jQuery("#referenceSelection option[value=" + data.value + "]").remove();
+                jQuery("#defaultTestResultSelection option[value=" + data.value + "]").remove();
             }
         }
     }
@@ -181,6 +185,8 @@
         jQuery("#dictionaryNameSortUI li").remove();
         jQuery("#referenceSelection option").remove();
         jQuery("#referenceSelection").append(createOption("0", "", false));
+        jQuery("#defaultTestResultSelection option").remove();
+        jQuery("#defaultTestResultSelection").append(createOption("0", "", false));
     }
     function createOption(id, name, isActive) {
         var option = jQuery('<option/>');
@@ -621,6 +627,7 @@
             buildVerifyDictionaryList();
             jQuery("#dictionaryVerifyId").show();
             jQuery("#referenceValue").text(jQuery("#referenceSelection option:selected").text());
+            jQuery("#defaultTestResultValue").text(jQuery("#defaultTestResultSelection option:selected").text());
             jQuery(".selectListConfirm").show();
             jQuery(".confirmShow").show();
             jQuery(".selectShow").hide();
@@ -890,6 +897,9 @@
         jQuery("#dictionarySelection option:selected").each(function (index, value) {
             if (jQuery("#referenceSelection option:selected[value=" + value.value + "]").length == 1) {
                 jsonObj.dictionaryReference = value.value;
+            }
+            if (jQuery("#defaultTestResultSelection option:selected[value=" + value.value + "]").length == 1) {
+                jsonObj.defaultTestResult = value.value;
             }
             dictionary = {};
             dictionary.value = value.value;
@@ -1178,6 +1188,7 @@ td {
                     </ul>
                     </span>
                     <span><spring:message code="label.reference.value" /><br><ul><li id="referenceValue"></li></ul></span>
+                	<span><spring:message code="label.default.result" /><br><ul><li id="defaultTestResultValue"></li></ul></span>
                 </div>
                 <div id="sortDictionaryDiv" align="center" class="dictionarySelect"
                      style="padding:10px;float:left; width:33%; display:none;"><spring:message code="label.result.order" />
@@ -1190,6 +1201,13 @@ td {
                     <div id="dictionaryReference">
                         <spring:message code="label.reference.value" /><br/>
                         <select id='referenceSelection'>
+                            <option value="0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>
+                        </select>
+                    </div>
+                    <br>
+					<div id="defaultTestResult">
+                        <spring:message code="label.default.result" /><br/>
+                        <select id='defaultTestResultSelection'>
                             <option value="0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>
                         </select>
                     </div>

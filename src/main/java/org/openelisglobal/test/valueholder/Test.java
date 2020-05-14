@@ -28,6 +28,7 @@ import org.openelisglobal.localization.valueholder.Localization;
 import org.openelisglobal.method.valueholder.Method;
 import org.openelisglobal.scriptlet.valueholder.Scriptlet;
 import org.openelisglobal.test.service.TestServiceImpl;
+import org.openelisglobal.testresult.valueholder.TestResult;
 import org.openelisglobal.testtrailer.valueholder.TestTrailer;
 import org.openelisglobal.unitofmeasure.valueholder.UnitOfMeasure;
 
@@ -108,6 +109,8 @@ public class Test extends EnumValueItemImpl {
 
     private String guid;
 
+    private ValueHolder defaultTestResult;
+
     @Override
     public String getSortOrder() {
         return sortOrder;
@@ -129,6 +132,7 @@ public class Test extends EnumValueItemImpl {
         localizedReportingName = new ValueHolder();
         localizedTestSectionName = new ValueHolder();
         localizedReportingTestSectionName = new ValueHolder();
+        this.defaultTestResult = new ValueHolder();
     }
 
     @Override
@@ -463,5 +467,13 @@ public class Test extends EnumValueItemImpl {
     @Override
     public String getName() {
         return getLocalizedTestName().getLocalizedValue();
+    }
+
+    public TestResult getDefaultTestResult() {
+        return (TestResult) defaultTestResult.getValue();
+    }
+
+    public void setDefaultTestResult(TestResult defaultTestResult) {
+        this.defaultTestResult.setValue(defaultTestResult);
     }
 }
