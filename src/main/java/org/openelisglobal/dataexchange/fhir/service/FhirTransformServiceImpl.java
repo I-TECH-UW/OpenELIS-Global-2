@@ -117,7 +117,6 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 //                diagnosticReport.setIdentifier(serviceRequest.getIdentifier());
                 
                 diagnosticReport.setCode(codeableConcept);
-                
                
                 diagnosticReport.setIdentifier(identifierList);
                 
@@ -152,7 +151,10 @@ public class FhirTransformServiceImpl implements FhirTransformService {
             System.out.println("FhirTransformServiceImpl:Result update exception: " + e.toString());
             e.printStackTrace();
         }
-        return fhirContext.newJsonParser().encodeResourceToString(fhirPatient) + oOutcome.toString() + drOutcome.toString();
+        
+        return fhirContext.newJsonParser().encodeResourceToString(fhirPatient) + 
+                        oOutcome.toString() !=null ? "": oOutcome.toString() + 
+                        drOutcome.toString() !=null ? "": drOutcome.toString();
     }
 
     private org.hl7.fhir.r4.model.Patient CreateFhirPatientFromOEPatient(Patient patient) {

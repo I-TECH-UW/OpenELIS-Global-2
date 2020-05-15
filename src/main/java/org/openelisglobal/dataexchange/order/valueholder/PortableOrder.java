@@ -81,8 +81,6 @@ public class PortableOrder extends BaseObject<String> {
         this.subjectNumber = subjectNumber;
     }
 
-   
-
     public PortableOrder() {
         patient = new ValueHolder();
     }
