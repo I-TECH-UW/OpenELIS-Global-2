@@ -65,6 +65,8 @@ public class TestAddController extends BaseController {
     @Autowired
     private TestAddFormValidator formValidator;
     @Autowired
+    private DisplayListService displayListService;
+    @Autowired
     private DictionaryService dictionaryService;
     @Autowired
     private PanelService panelService;
@@ -142,6 +144,8 @@ public class TestAddController extends BaseController {
         }
 
         testService.refreshTestNames();
+        displayListService.refreshList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE);
+        displayListService.refreshList(DisplayListService.ListType.SAMPLE_TYPE_INACTIVE);
         SpringContext.getBean(TypeOfSampleService.class).clearCache();
 
         return findForward(FWD_SUCCESS_INSERT, form);
@@ -181,8 +185,11 @@ public class TestAddController extends BaseController {
                     .getTypeOfSampleById(testAddParams.sampleList.get(i).sampleTypeId);
             if (typeOfSample == null) {
                 continue;
+            } else {
+                typeOfSample.setActive("Y".equals(testAddParams.active));
             }
             TestSet testSet = new TestSet();
+            testSet.typeOfSample = typeOfSample;
             Test test = new Test();
             test.setUnitOfMeasure(uom);
             test.setLoinc(testAddParams.loinc);
@@ -517,6 +524,7 @@ public class TestAddController extends BaseController {
     public class TestSet {
         public Test test;
         public TypeOfSampleTest sampleTypeTest;
+        public TypeOfSample typeOfSample;
         public ArrayList<Test> sortedTests = new ArrayList<>();
         public ArrayList<PanelItem> panelItems = new ArrayList<>();
         public ArrayList<TestResult> testResults = new ArrayList<>();

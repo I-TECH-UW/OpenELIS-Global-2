@@ -13,6 +13,7 @@ import org.openelisglobal.test.valueholder.Test;
 import org.openelisglobal.testconfiguration.controller.TestAddController.TestSet;
 import org.openelisglobal.testresult.service.TestResultService;
 import org.openelisglobal.testresult.valueholder.TestResult;
+import org.openelisglobal.typeofsample.service.TypeOfSampleService;
 import org.openelisglobal.typeofsample.service.TypeOfSampleTestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,6 +34,8 @@ public class TestAddServiceImpl implements TestAddService {
     private ResultLimitService resultLimitService;
     @Autowired
     private TestResultService testResultService;
+    @Autowired
+    private TypeOfSampleService typeOfSampleService;
 
     @Override
     @Transactional
@@ -53,6 +56,9 @@ public class TestAddServiceImpl implements TestAddService {
                 test.setSysUserId(currentUserId);
                 testService.update(test);
             }
+
+            set.typeOfSample.setSysUserId(currentUserId);
+            typeOfSampleService.update(set.typeOfSample);
 
             set.sampleTypeTest.setSysUserId(currentUserId);
             set.sampleTypeTest.setTestId(set.test.getId());
