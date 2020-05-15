@@ -14,6 +14,7 @@ import org.apache.commons.validator.GenericValidator;
 import org.hibernate.StaleObjectStateException;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.PhoneNumberService;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
@@ -263,6 +264,7 @@ public class SiteInformationController extends BaseController {
         }
         // makes the changes take effect immediately
         ConfigurationProperties.forceReload();
+        DisplayListService.getInstance().refreshLists();
         if (FWD_SUCCESS_INSERT.equals(forward)) {
             redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
             // signal to remove form from session

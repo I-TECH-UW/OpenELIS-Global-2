@@ -87,21 +87,19 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 
     private final String[] ALLOWED_FIELDS = new String[] { "collectionDate", "recievedDate", "selectedTest",
             "selectedAnalysisStatus", "selectedSampleStatus", "testSectionId", "type", "currentPageID",
-            "testResult*.accessionNumber", "testResult*.isModified", "testResult*.analysisId",
-            "testResult*.resultId", "testResult*.testId", "testResult*.technicianSignatureId",
-            "testResult*.testKitId", "testResult*.resultLimitId", "testResult*.resultType", "testResult*.valid",
-            "testResult*.referralId", "testResult*.referralCanceled", "testResult*.considerRejectReason",
-            "testResult*.hasQualifiedResult", "testResult*.shadowResultValue", "testResult*.reflexJSONResult",
-            "testResult*.testDate", "testResult*.analysisMethod", "testResult*.testMethod",
-            "testResult*.testKitInventoryId", "testResult*.forceTechApproval", "testResult*.lowerNormalRange",
-            "testResult*.upperNormalRange", "testResult*.significantDigits", "testResult*.resultValue",
-            "testResult*.qualifiedResultValue", "testResult*.multiSelectResultValues",
-            "testResult*.multiSelectResultValues", "testResult*.qualifiedResultValue",
-            "testResult*.qualifiedResultValue", "testResult*.shadowReferredOut", "testResult*.referredOut",
-            "testResult*.referralReasonId", "testResult*.technician", "testResult*.shadowRejected",
-            "testResult*.rejected", "testResult*.rejectReasonId", "testResult*.note",
-            "paging.currentPage"
-    };
+            "testResult*.accessionNumber", "testResult*.isModified", "testResult*.analysisId", "testResult*.resultId",
+            "testResult*.testId", "testResult*.technicianSignatureId", "testResult*.testKitId",
+            "testResult*.resultLimitId", "testResult*.resultType", "testResult*.valid", "testResult*.referralId",
+            "testResult*.referralCanceled", "testResult*.considerRejectReason", "testResult*.hasQualifiedResult",
+            "testResult*.shadowResultValue", "testResult*.reflexJSONResult", "testResult*.testDate",
+            "testResult*.analysisMethod", "testResult*.testMethod", "testResult*.testKitInventoryId",
+            "testResult*.forceTechApproval", "testResult*.lowerNormalRange", "testResult*.upperNormalRange",
+            "testResult*.significantDigits", "testResult*.resultValue", "testResult*.qualifiedResultValue",
+            "testResult*.multiSelectResultValues", "testResult*.multiSelectResultValues",
+            "testResult*.qualifiedResultValue", "testResult*.qualifiedResultValue", "testResult*.shadowReferredOut",
+            "testResult*.referredOut", "testResult*.referralReasonId", "testResult*.technician",
+            "testResult*.shadowRejected", "testResult*.rejected", "testResult*.rejectReasonId", "testResult*.note",
+            "paging.currentPage" };
 
     @Autowired
     private ResultSignatureService resultSigService;
@@ -140,7 +138,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
     @RequestMapping(value = "/LogbookResults", method = RequestMethod.GET)
     public ModelAndView showLogbookResults(HttpServletRequest request,
             @Validated(LogbookResults.class) @ModelAttribute("form") LogbookResultsForm form, BindingResult result)
-                    throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         LogbookResultsForm newForm = new LogbookResultsForm();
         if (!(result.hasFieldErrors("type") || result.hasFieldErrors("testSectionId"))) {
             newForm.setType(form.getType());
@@ -152,12 +150,14 @@ public class LogbookResultsController extends LogbookResultsBaseController {
     private ModelAndView getLogbookResults(HttpServletRequest request, LogbookResultsForm form)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
-        //        boolean useTechnicianName = ConfigurationProperties.getInstance()
-        //                .isPropertyValueEqual(Property.resultTechnicianName, "true");
-        //        boolean alwaysValidate = ConfigurationProperties.getInstance()
-        //                .isPropertyValueEqual(Property.ALWAYS_VALIDATE_RESULTS, "true");
-        //        boolean supportReferrals = FormFields.getInstance().useField(Field.ResultsReferral);
-        //        String statusRuleSet = ConfigurationProperties.getInstance().getPropertyValueUpperCase(Property.StatusRules);
+        // boolean useTechnicianName = ConfigurationProperties.getInstance()
+        // .isPropertyValueEqual(Property.resultTechnicianName, "true");
+        // boolean alwaysValidate = ConfigurationProperties.getInstance()
+        // .isPropertyValueEqual(Property.ALWAYS_VALIDATE_RESULTS, "true");
+        // boolean supportReferrals =
+        // FormFields.getInstance().useField(Field.ResultsReferral);
+        // String statusRuleSet =
+        // ConfigurationProperties.getInstance().getPropertyValueUpperCase(Property.StatusRules);
 
         String testSectionId = form.getTestSectionId();
 
@@ -253,11 +253,11 @@ public class LogbookResultsController extends LogbookResultsBaseController {
     }
 
     @RequestMapping(value = { "/LogbookResults", "/PatientResults", "/AccessionResults",
-    "/StatusResults" }, method = RequestMethod.POST)
+            "/StatusResults" }, method = RequestMethod.POST)
     public ModelAndView showLogbookResultsUpdate(HttpServletRequest request,
             @ModelAttribute("form") @Validated(LogbookResultsForm.LogbookResults.class) LogbookResultsForm form,
             BindingResult result, RedirectAttributes redirectAttributes)
-                    throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         boolean useTechnicianName = ConfigurationProperties.getInstance()
                 .isPropertyValueEqual(Property.resultTechnicianName, "true");
         boolean alwaysValidate = ConfigurationProperties.getInstance()
@@ -503,9 +503,15 @@ public class LogbookResultsController extends LogbookResultsBaseController {
                 testResult.getResultType())) {
             return SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NotStarted);
         } else {
-            ResultLimit resultLimit = resultLimitService.get(testResult.getResultLimitId());
-            if (resultLimit != null && resultLimit.isAlwaysValidate()) {
-                return SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalAcceptance);
+            if (!GenericValidator.isBlankOrNull(testResult.getResultLimitId())) {
+                ResultLimit resultLimit = resultLimitService.get(testResult.getResultLimitId());
+                if (resultLimit.isAlwaysValidate()) {
+                    return SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalAcceptance);
+                }
+                if (TypeOfTestResultServiceImpl.ResultType.DICTIONARY.matches(testResult.getResultType())
+                        && !testResult.getResultValue().equals(resultLimit.getDictionaryNormalId())) {
+                    return SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalAcceptance);
+                }
             }
 
             return SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized);
@@ -557,12 +563,15 @@ public class LogbookResultsController extends LogbookResultsBaseController {
         // This needs to be refactored -- part of the logic is in
         // getStatusForTestResult. RetroCI over rides to whatever was set before
         if (statusRuleSet.equals(STATUS_RULES_RETROCI)) {
-            if (!SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Canceled).equals(analysis.getStatusId())) {
+            if (!SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Canceled)
+                    .equals(analysis.getStatusId())) {
                 analysis.setCompletedDate(DateUtil.convertStringDateToSqlDate(testDate));
-                analysis.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalAcceptance));
+                analysis.setStatusId(
+                        SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalAcceptance));
             }
         } else if (SpringContext.getBean(IStatusService.class).matches(analysis.getStatusId(), AnalysisStatus.Finalized)
-                || SpringContext.getBean(IStatusService.class).matches(analysis.getStatusId(), AnalysisStatus.TechnicalAcceptance)
+                || SpringContext.getBean(IStatusService.class).matches(analysis.getStatusId(),
+                        AnalysisStatus.TechnicalAcceptance)
                 || (analysis.isReferredOut()
                         && !GenericValidator.isBlankOrNull(testResultItem.getShadowResultValue()))) {
             analysis.setCompletedDate(DateUtil.convertStringDateToSqlDate(testDate));
