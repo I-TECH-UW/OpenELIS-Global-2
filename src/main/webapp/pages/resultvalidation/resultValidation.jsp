@@ -141,7 +141,7 @@ function /*void*/ rejectSample(element, groupingNumber ){
 }
 
 function /*void*/ markUpdated(){
-	jQuery("saveButtonId").disabled = false;
+	jQuery("#saveButtonId").prop('disabled', false);
 }
 
 function /*void*/ makeDirty(){
@@ -187,6 +187,9 @@ function toggleSelectAll( element ) {
 	} else if (element.id == "selectAllReject" ) {
 		checkboxes = jQuery(".rejected");
 		matchedCheckboxes = jQuery(".accepted");
+	} else if (element.id == "selectNormalAccept" ) {
+		checkboxes = jQuery(".normalAccepted");
+		matchedCheckboxes = jQuery(".rejected");
 	}
 
 	if (element.checked == true ) {
@@ -354,8 +357,18 @@ function /*boolean*/ handleEnterEvent(){
 <c:if test="${resultCount != 0}">
 <Table style="width:80%" >
     <tr>
-		<th colspan="3" style="background-color: white;width:15%;">
+		<th colspan="2" style="background-color: white;width:15%;">
 			<img src="./images/nonconforming.gif" /> = <%= MessageUtil.getContextualMessage("result.nonconforming.item")%>
+		</th>
+		<th style="text-align:center;width:3%;" style="background-color: white">&nbsp;
+				<spring:message code="validation.accept.normal" />
+			<input type="checkbox"
+				name="selectNormalAccept"
+				value="on"
+				onclick="toggleSelectAll(this);"
+				onchange="markUpdated(); makeDirty();"
+				id="selectNormalAccept"
+				class="acceptNormal">
 		</th>
 		<th style="text-align:center;width:3%;" style="background-color: white">&nbsp;
 				<spring:message code="validation.accept.all" />
@@ -487,7 +500,10 @@ function /*boolean*/ handleEnterEvent(){
 			           			style = 'display:${(resultList.hasQualifiedResult) ? "inline" : "none"}'
 					   			disabled="${resultList.readOnly}" 
 					   			/>
-                    <c:out value="${resultList.units}"/>
+<!-- 					   			TODO make this a configurable option instead of hardcoded -->
+					   	<c:if test="${false}">
+                   	 		<c:out value="${resultList.units}"/>
+                    	</c:if>
 					</c:when><c:when test="${'M' == resultList.resultType}">
                     <%-- multiple results --%>
                     <form:select path="resultList[${iter.index}].multiSelectResultValues"
@@ -569,7 +585,7 @@ function /*boolean*/ handleEnterEvent(){
 				<td style="text-align:center">
 					<form:checkbox path="resultList[${iter.index}].isAccepted"
 								   id='accepted_${iter.index}'
-								   cssClass='accepted accepted_${resultList.sampleGroupingNumber}'
+								   cssClass='accepted accepted_${resultList.sampleGroupingNumber} ${resultList.normal ? "normalAccepted" : "" }'
 								   onchange="markUpdated(); makeDirty();"
 								   onclick='enableDisableCheckboxes("rejected_${iter.index}", "${resultList.sampleGroupingNumber}");' 
 								   />

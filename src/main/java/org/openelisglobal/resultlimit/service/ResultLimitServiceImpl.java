@@ -10,6 +10,7 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.validator.GenericValidator;
+import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
 import org.openelisglobal.common.util.DateUtil;
@@ -20,6 +21,7 @@ import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.resultlimits.dao.ResultLimitDAO;
 import org.openelisglobal.resultlimits.valueholder.ResultLimit;
+import org.openelisglobal.samplehuman.service.SampleHumanService;
 import org.openelisglobal.siteinformation.service.SiteInformationService;
 import org.openelisglobal.siteinformation.valueholder.SiteInformation;
 import org.openelisglobal.test.valueholder.Test;
@@ -47,6 +49,8 @@ public class ResultLimitServiceImpl extends BaseObjectServiceImpl<ResultLimit, S
     private SiteInformationService siteInformationService;
     @Autowired
     private TypeOfTestResultService typeOfTestResultService;
+    @Autowired
+    private SampleHumanService sampleHumanService;
 
     @PostConstruct
     public void initializeGlobalVariables() {
@@ -376,5 +380,12 @@ public class ResultLimitServiceImpl extends BaseObjectServiceImpl<ResultLimit, S
     @Transactional(readOnly = true)
     public ResultLimit getResultLimitById(String resultLimitId) throws LIMSRuntimeException {
         return getBaseObjectDAO().getResultLimitById(resultLimitId);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ResultLimit getResultLimitForAnalysis(Analysis analysis) {
+        return getResultLimitForTestAndPatient(analysis.getTest(),
+                sampleHumanService.getPatientForSample(analysis.getSampleItem().getSample()));
     }
 }

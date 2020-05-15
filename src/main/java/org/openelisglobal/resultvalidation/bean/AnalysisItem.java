@@ -176,6 +176,8 @@ public class AnalysisItem {
 
     private boolean valid = true;
 
+    private boolean isNormal;
+
     public String getRejectReasonId() {
         return rejectReasonId;
     }
@@ -715,5 +717,13 @@ public class AnalysisItem {
 
     public void setValid(boolean valid) {
         this.valid = valid;
+    }
+
+    public boolean isNormal() {
+        return isNormal;
+    }
+
+    public void setNormal(boolean isNormal) {
+        this.isNormal = isNormal;
     }
 }
