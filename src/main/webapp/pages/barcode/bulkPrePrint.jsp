@@ -1,0 +1,174 @@
+<%@ page language="java" contentType="text/html; charset=utf-8" %>
+<%@ page import="org.openelisglobal.common.action.IActionConstants,
+			     org.openelisglobal.common.formfields.FormFields,
+			     org.openelisglobal.common.formfields.FormFields.Field,
+			     org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory,
+			     org.openelisglobal.common.provider.validation.IAccessionNumberValidator,
+			     org.openelisglobal.common.util.ConfigurationProperties.Property,
+			     org.openelisglobal.common.util.StringUtil,
+			     org.openelisglobal.common.util.*" %>
+
+
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="tiles" uri="http://tiles.apache.org/tags-tiles"%>	    
+
+<link rel="stylesheet" href="css/jquery_ui/jquery.ui.all.css">
+<link rel="stylesheet" href="css/customAutocomplete.css">
+
+<script src="scripts/ui/jquery.ui.core.js"></script>
+<script src="scripts/ui/jquery.ui.widget.js"></script>
+<script src="scripts/ui/jquery.ui.button.js"></script>
+<script src="scripts/ui/jquery.ui.menu.js"></script>
+<script src="scripts/ui/jquery.ui.position.js"></script>
+<script src="scripts/ui/jquery.ui.autocomplete.js"></script>
+<script src="scripts/customAutocomplete.js"></script>
+<script type="text/javascript" src="scripts/ajaxCalls.js"></script>
+<script>
+function calculateTotal() {
+	var numSetsOfLabels = document.getElementById('numSetsOfLabels').value;
+	
+	var numOrderLabelsPerSet = document.getElementById('numOrderLabelsPerSet').value;
+	var numSpecimenLabelsPerSet = document.getElementById('numSpecimenLabelsPerSet').value;
+	
+	var numTotalOrderLabels = numSetsOfLabels * numOrderLabelsPerSet;
+	var numTotalSpecimenLabels = numSetsOfLabels * numSpecimenLabelsPerSet;
+	var numTotalLabels = numTotalOrderLabels + numTotalSpecimenLabels ;
+// 	document.getElementById('numTotalOrderLabels').value = numTotalOrderLabels;
+// 	document.getElementById('numTotalSpecimenLabels').value = numTotalSpecimenLabels;
+	document.getElementById('numTotalLabels').value = numTotalLabels;
+}
+function preprintLabels() {
+	var numSetsOfLabels = document.getElementById('numSetsOfLabels').value;
+	
+	var numOrderLabelsPerSet = document.getElementById('numOrderLabelsPerSet').value;
+	var numSpecimenLabelsPerSet = document.getElementById('numSpecimenLabelsPerSet').value;
+	
+	var testIds = getTestIds();
+	
+	if (testIds.trim() == '') {
+		alert("missing tests");
+		return;
+	}
+	//label info
+	var queryString = 'prePrinting=true&numSetsOfLabels=' + numSetsOfLabels 
+		+ '&numOrderLabelsPerSet=' + numOrderLabelsPerSet
+		+ '&numSpecimenLabelsPerSet=' + numSpecimenLabelsPerSet;
+	//facility name
+	queryString = queryString + '&facilityName=' + document.getElementById('requesterId').options[document.getElementById('requesterId').selectedIndex].text;
+	//test names
+	queryString = queryString + '&testIds=' + testIds;
+	
+	
+    document.getElementById("ifpreprintbarcode").src = 'LabelMakerServlet?' + queryString;
+	document.getElementById("prePrintedBarcodeArea").show();
+}
+function getTestIds() {
+	if (document.getElementById('testIds_1')) {
+		return document.getElementById('testIds_1').value;
+	} else {
+		return "";
+	}
+}
+jQuery(document).ready(function () {
+	calculateTotal()
+	
+    var dropdown = jQuery("select#requesterId");
+    autoCompleteWidth = dropdown.width() + 66 + 'px';
+    clearNonMatching = true;
+    capitialize = true;
+    // Actually executes autocomplete
+    dropdown.combobox();
+    invalidLabID = '<spring:message code="error.site.invalid"/>'; // Alert if value is typed that's not on list. FIX - add bad message icon
+    maxRepMsg = '<spring:message code="sample.entry.project.siteMaxMsg"/>';
+    resultCallBack = function (textValue) {
+        siteListChanged(textValue);
+    	processFacilityIDChange();
+       // setOrderModified();
+        //setCorrectSave();
+    };
+});
+</script>
+
+<div>
+<h2>Pre-Print Barcodes</h2>
+<table>
+	<tr>
+		<td>Number of label sets:</td>
+		<td><input id="numSetsOfLabels" name="numSetsOfLabels" type="number" value="1" size ="2" onchange="calculateTotal()"/></td>
+	</tr>
+	<tr>
+		<td>Number of order labels per set:</td>
+		<td><input id="numOrderLabelsPerSet" name="numOrderLabelsPerSet" type="number" value="2" size ="1" onchange="calculateTotal()"/></td>
+		<td>Number of specimen labels per set:</td>
+		<td><input id="numSpecimenLabelsPerSet" name="numSpecimenLabelsPerSet" type="number" value="1" size="1" onchange="calculateTotal()"/></td>
+	</tr>
+	<tr></tr>
+<!-- 	<tr> -->
+<!-- 		<td>Total Order Labels to Print:</td> -->
+<!-- 		<td><input id="numTotalOrderLabels" type="number" value="1" size="2" readonly/></td> -->
+<!-- 	</tr> -->
+<!-- 	<tr> -->
+<!-- 		<td>Total Specimen Labels to Print:</td> -->
+<!-- 		<td><input id="numTotalSpecimenLabels" type="number" value="1" size="2" readonly/></td> -->
+<!-- 	</tr> -->
+	<tr>
+		<td>Total Labels to Print:</td>
+		<td><input id="numTotalLabels" type="number" value="2" size="2" readonly/></td>
+	</tr>
+</table>
+<table>
+	<tr>
+ 		<td>
+			<spring:message code="sample.batchentry.barcode.label.options"/>
+		</td>
+		<td>
+			<input type="checkbox"
+			id="psuedoFacilityID"
+			onchange="toggleFacilityID();">
+			<form:hidden path="facilityIDCheck"
+				disabled="true"
+				value="true" />
+			<spring:message code="sample.batchentry.barcode.label.facilityid"/>
+		</td>
+		<td><div id="facility-combobox">
+			<c:if test="${not sampleOrderItems.readOnly}" >
+		        <form:select id="requesterId"
+		                     path="facilityID"
+		                     onchange="siteListChanged(this);processFacilityIDChange();"
+		                     onkeyup="capitalizeValue( this.value );"
+
+		                >
+		            <option value=""></option>
+		            <form:options items="${form.sampleOrderItems.referringSiteList}" itemLabel="value"
+		                                    itemValue="id"/>
+		        </form:select>
+			</c:if>
+		    <c:if test="${sampleOrderItems.readOnly}" >
+		            <form:input id="requesterId" path="facilityID"  style="width:300px" />
+		    </c:if>
+		</div></td>
+	</tr>
+</table>
+</div>
+<div>
+<table width="75%">
+	<tr>
+		<td><h2>Sample</h2></td>
+	</tr>
+	<tr>
+		<td><tiles:insertAttribute name="sampleAdd"/></td>
+	</tr>
+	<tr>
+		<td>NOTE: If a facility and/or sample and test are added, they will be printed on EVERY label</td>
+	</tr>
+</table>
+</div>
+<div>
+<button id="prePrintButtonId" type="button" onclick="preprintLabels()">Pre-Print Labels</button>
+</div>
+<div style="display:none;" id="prePrintedBarcodeArea">
+		<h2><spring:message code="barcode.common.section.barcode.header"/></h2>
+		<iframe  src="about:blank" id="ifpreprintbarcode" width="75%" height="300px"></iframe>
+</div>

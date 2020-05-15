@@ -72,8 +72,9 @@ function addNewSamples(){
     SampleTypes[0] = new SampleType(sampleTypeValue, sampleDescription);
 	
 	notifyChangeListeners();
-	
-	checkValidSubPages();
+	if (typeof checkValidSubPages === "function") {
+		checkValidSubPages();
+	}
 }
 
 function addTypeToTable(table, sampleDescription, sampleType, currentTime, currentDate ) {
@@ -209,8 +210,10 @@ function removeRow( row ){
 		$("select" + rows[1].id).checked = true;
 		sampleClicked( rows[1].id.sub('_', '') );
 	}
-	
-	checkValidSubPages();
+
+	if (typeof checkValidSubPages === "function") {
+		checkValidSubPages();
+	}
 }
 
 function loadSamples(){
@@ -513,7 +516,9 @@ function assignTestsToSelected(checkbox, panelId){
 			panelIdElement.value = panelIdArray.join(",");
 		}		
 	}
-	checkValidSubPages();
+	if (typeof checkValidSubPages === "function") {
+		checkValidSubPages();
+	}
 }
 
 function addIdToUniqueIdList(id, list) {
@@ -543,8 +548,10 @@ function sectionSelectionChanged( selectionElement ){
 	var testIdNumber = selection.attr("id").split("_")[1];
 	var sectionMap = jQuery("#testSectionMap_" + selectedTypeRowId );
 	sectionMap.val( sectionMap.val() + jQuery("#testName_" + testIdNumber).val() + ":" + selection.val() + "," );
-	
-	checkValidSubPages();
+
+	if (typeof checkValidSubPages === "function") {
+		checkValidSubPages();
+	}
 }
 
 function editSelectedTest( ){
@@ -755,14 +762,18 @@ function userSampleTypeSelectionChanged( userTypeSelectionId, row,  qualifiableI
         jQuery("#userSampleTypeQualifierID_" + row).removeClass('required');
     }
 
-    checkValidSubPages();
+	if (typeof checkValidSubPages === "function") {
+		checkValidSubPages();
+	}
 }
 
 function sampleTypeQualifierChanged(element){
     var typeMap = jQuery("#testTypeMap_" + selectedTypeRowId );
     typeMap.val( typeMap.val() +  jQuery("#testName_" + element.id.split("_")[1]).val() + ":" + element.value + "," );
 
-    checkValidSubPages();
+	if (typeof checkValidSubPages === "function") {
+		checkValidSubPages();
+	}
 }
 </script>
 <div id="routineSampleAdd">
