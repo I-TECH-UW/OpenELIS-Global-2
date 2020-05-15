@@ -127,20 +127,21 @@ public class TaskInterpreterImpl implements TaskInterpreter {
         String loincCode = "";
         String system = "";
         Integer i = 0;
+        List<Test> tests = null;
         while (i < serviceRequest.getCode().getCoding().size()) {
             system = serviceRequest.getCode().getCoding().get(i).getSystemElement().toString();
             if (system.equalsIgnoreCase("UriType[http://loinc.org]")) {
                 loincCode = serviceRequest.getCode().getCoding().get(i).getCodeElement().toString();
-                break;
+
+                tests = testService.getTestsByLoincCode(loincCode);
+                if (tests.size() != 0) {
+                    return tests.get(0);
+                } 
             }
             i++;
         }
-
-        List<Test> tests = testService.getTestsByLoincCode(loincCode);
-        if (tests.size() == 0) {
-            return null;
-        }
-        return tests.get(0);
+        
+        return null;
     }
 
     private MessagePatient createPatientFromFHIR() throws HL7Exception {
