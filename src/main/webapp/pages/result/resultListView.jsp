@@ -136,6 +136,7 @@ jQuery(document).ready( function() {
             jQuery(".asmContainer").css("display","inline-block");
             disableRejectedResults();
             showCachedRejectionReasonRows();
+            jQuery(".hasDefaultValue").change();
 			});
 
 
@@ -714,9 +715,11 @@ function setField(id, value) {
 		<c:if test="${not (testResult.resultDisplayType == 'HIV') and not (testResult.resultDisplayType == 'SYPHILIS')}">
 			<td style="vertical-align:middle" class="ruled">
                 ${testResult.testName}
+                <c:if test="${not testResult.resultType == 'D'}">
 				<c:if test="${not empty testResult.normalRange}">
 					<br/><c:out value="${testResult.normalRange}"/>&nbsp;
 					<c:out value="${testResult.unitsOfMeasure}"/>
+				</c:if>
 				</c:if>
 			</td>
 		</c:if>
@@ -784,6 +787,7 @@ function setField(id, value) {
 			<%-- dictionary results --%>
 			<form:select path="testResult[${iter.index}].resultValue"
 			        id="resultId_${iter.index}"
+			        cssClass="${(empty testResult.resultValue) ? '' : 'hasDefaultValue' }"
 			        onchange="markUpdated(${iter.index}, ${testResult.userChoiceReflex}, '${testResult.siblingReflexKey}');
 					   		  ${(noteRequired && not (empty testResult.resultValue)) ? 'showNote(' += iter.index += ');' : ''}
 					   		  ${(not (empty testResult.qualifiedDictionaryId)) ? 'showQuantity(this, ' += iter.index += ', ' += testResult.qualifiedDictionaryId += ', \\'D\\');' : ''}

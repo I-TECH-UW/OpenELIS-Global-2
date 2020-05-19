@@ -65,6 +65,8 @@ public class TestAddController extends BaseController {
     @Autowired
     private TestAddFormValidator formValidator;
     @Autowired
+    private DisplayListService displayListService;
+    @Autowired
     private DictionaryService dictionaryService;
     @Autowired
     private PanelService panelService;
@@ -142,6 +144,8 @@ public class TestAddController extends BaseController {
         }
 
         testService.refreshTestNames();
+        displayListService.refreshList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE);
+        displayListService.refreshList(DisplayListService.ListType.SAMPLE_TYPE_INACTIVE);
         SpringContext.getBean(TypeOfSampleService.class).clearCache();
 
         return findForward(FWD_SUCCESS_INSERT, form);
@@ -181,12 +185,18 @@ public class TestAddController extends BaseController {
                     .getTypeOfSampleById(testAddParams.sampleList.get(i).sampleTypeId);
             if (typeOfSample == null) {
                 continue;
+            } else {
+                typeOfSample.setActive("Y".equals(testAddParams.active));
             }
             TestSet testSet = new TestSet();
+            testSet.typeOfSample = typeOfSample;
             Test test = new Test();
             test.setUnitOfMeasure(uom);
             test.setLoinc(testAddParams.loinc);
             test.setDescription(testAddParams.testNameEnglish + "(" + typeOfSample.getDescription() + ")");
+            // TODO remove test name if possible. Tests should be identified by LOINC and
+            // use a localization
+            test.setName(testAddParams.testNameEnglish);
             test.setLocalCode(testAddParams.testNameEnglish);
             test.setIsActive(testAddParams.active);
             test.setOrderable("Y".equals(testAddParams.orderable));
@@ -284,6 +294,7 @@ public class TestAddController extends BaseController {
                 sortOrder += 10;
                 testResult.setIsActive(true);
                 testResult.setValue(params.dictionaryId);
+                testResult.setDefault(params.isDefault);
                 testResult.setIsQuantifiable(params.isQuantifiable);
                 testResults.add(testResult);
             }
@@ -319,6 +330,7 @@ public class TestAddController extends BaseController {
                     DictionaryParams params = new DictionaryParams();
                     params.dictionaryId = (String) ((JSONObject) dictionaryArray.get(i)).get("value");
                     params.isQuantifiable = "Y".equals(((JSONObject) dictionaryArray.get(i)).get("qualified"));
+                    params.isDefault = params.dictionaryId.equals(obj.get("defaultTestResult"));
                     testAddParams.dictionaryParamList.add(params);
                 }
             }
@@ -512,6 +524,7 @@ public class TestAddController extends BaseController {
     public class TestSet {
         public Test test;
         public TypeOfSampleTest sampleTypeTest;
+        public TypeOfSample typeOfSample;
         public ArrayList<Test> sortedTests = new ArrayList<>();
         public ArrayList<PanelItem> panelItems = new ArrayList<>();
         public ArrayList<TestResult> testResults = new ArrayList<>();
@@ -533,6 +546,7 @@ public class TestAddController extends BaseController {
     }
 
     public class DictionaryParams {
+        public boolean isDefault;
         public String dictionaryId;
         public boolean isQuantifiable = false;
     }

@@ -32,6 +32,13 @@
  <c:set var="jsonChangeList" value="${form.jsonChangeList}" />
  <c:set var="activeTestList" value="${form.activeTestList}" />
  <c:set var="inactiveTestList" value="${form.inactiveTestList}" />
+ 
+
+<%
+	int testCount = 0;
+	int columnCount = 0;
+	int columns = 4;
+%>
 
 <script type="text/javascript" src="scripts/jquery-ui.js?"></script>
 <link rel="stylesheet" media="screen" type="text/css"
@@ -519,12 +526,6 @@ td {
 </div>
 
 <hr/>
-
-<%
-	int testCount = 0;
-	int columnCount = 0;
-	int columns = 4;
-%>
 
 <form:hidden path="jsonChangeList" id="jsonChangeList"/>
 

@@ -20,6 +20,7 @@ import org.openelisglobal.typeofsample.service.TypeOfSampleTestService;
 import org.openelisglobal.typeofsample.valueholder.TypeOfSampleTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TestModifyServiceImpl implements TestModifyService {
@@ -38,6 +39,7 @@ public class TestModifyServiceImpl implements TestModifyService {
     private LocalizationService localizationService;
 
     @Override
+    @Transactional
     public void updateTestSets(List<TestSet> testSets, TestAddParams testAddParams, Localization nameLocalization,
             Localization reportingNameLocalization, String currentUserId) {
         List<TypeOfSampleTest> typeOfSampleTest = typeOfSampleTestService
@@ -96,6 +98,10 @@ public class TestModifyServiceImpl implements TestModifyService {
                 Test nonTransiantTest = testService.getTestById(set.test.getId());
                 testResult.setTest(nonTransiantTest);
                 testResultService.insert(testResult);
+                if (testResult.getDefault()) {
+                    set.test.setDefaultTestResult(testResult);
+                    updateTestDefault(testAddParams.testId, testResult, currentUserId);
+                }
             }
 
             for (ResultLimit resultLimit : set.resultLimits) {
@@ -104,6 +110,17 @@ public class TestModifyServiceImpl implements TestModifyService {
                 resultLimitService.insert(resultLimit);
             }
         }
+    }
+
+    private void updateTestDefault(String testId, TestResult testResult, String currentUserId) {
+        Test test = testService.get(testId);
+
+        if (test != null) {
+            test.setSysUserId(currentUserId);
+            test.setDefaultTestResult(testResult);
+            testService.update(test);
+        }
+
     }
 
     private void updateTestEntities(String testId, String loinc, String userId) {

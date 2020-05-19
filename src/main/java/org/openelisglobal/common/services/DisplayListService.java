@@ -103,57 +103,10 @@ public class DisplayListService implements LocaleChangeListener {
     private TypeOfTestResultService typeOfTestResultService;
 
     @PostConstruct
-    private void registerInstance() {
-        instance = this;
-    }
-
-    @PostConstruct
     private void setupGlobalVariables() {
-        typeToListMap = new HashMap<>();
-        typeToListMap.put(ListType.HOURS, createHourList());
-        typeToListMap.put(ListType.MINS, createMinList());
-        typeToListMap.put(ListType.SAMPLE_TYPE, createTypeOfSampleList());
-        typeToListMap.put(ListType.SAMPLE_TYPE_ACTIVE, createSampleTypeList(false));
-        typeToListMap.put(ListType.SAMPLE_TYPE_INACTIVE, createSampleTypeList(true));
-        typeToListMap.put(ListType.INITIAL_SAMPLE_CONDITION,
-                createFromDictionaryCategoryLocalizedSort("specimen reception condition"));
-        typeToListMap.put(ListType.PATIENT_HEALTH_REGIONS, createPatientHealthRegions());
-        typeToListMap.put(ListType.PATIENT_MARITAL_STATUS,
-                createFromDictionaryCategoryLocalizedSort("Marital Status Demographic Information"));
-        typeToListMap.put(ListType.PATIENT_NATIONALITY,
-                createFromDictionaryCategoryLocalizedSort("Nationality Demographic Information"));
-        typeToListMap.put(ListType.PATIENT_EDUCATION,
-                createFromDictionaryCategoryLocalizedSort("Education Level Demographic Information"));
-        typeToListMap.put(ListType.GENDERS, createGenderList());
-        typeToListMap.put(ListType.SAMPLE_PATIENT_REFERRING_CLINIC, createReferringClinicList());
-        typeToListMap.put(ListType.QA_EVENTS, createSortedQAEvents());
-        typeToListMap.put(ListType.TEST_SECTION, createTestSectionList());
-        typeToListMap.put(ListType.TEST_SECTION_INACTIVE, createInactiveTestSection());
-        typeToListMap.put(ListType.TEST_SECTION_BY_NAME, createTestSectionByNameList());
-        typeToListMap.put(ListType.HAITI_DEPARTMENTS, createAddressDepartmentList());
-        typeToListMap.put(ListType.SAMPLE_PATIENT_PAYMENT_OPTIONS,
-                createFromDictionaryCategoryLocalizedSort("patientPayment"));
-        typeToListMap.put(ListType.PATIENT_SEARCH_CRITERIA, createPatientSearchCriteria());
-        typeToListMap.put(ListType.PANELS, createPanelList());
-        typeToListMap.put(ListType.PANELS_ACTIVE, createPanelList(false));
-        typeToListMap.put(ListType.PANELS_INACTIVE, createPanelList(true));
-        typeToListMap.put(ListType.ORDERABLE_TESTS, createOrderableTestList());
-        typeToListMap.put(ListType.ALL_TESTS, createTestList());
-        typeToListMap.put(ListType.REJECTION_REASONS, createDictionaryListForCategory("resultRejectionReasons"));
-        typeToListMap.put(ListType.REFERRAL_REASONS, createReferralReasonList());
-        typeToListMap.put(ListType.REFERRAL_ORGANIZATIONS, createReferralOrganizationList());
-        typeToListMap.put(ListType.TEST_LOCATION_CODE, createDictionaryListForCategory("testLocationCode"));
-        typeToListMap.put(ListType.PROGRAM, createDictionaryListForCategory("programs"));
-        typeToListMap.put(ListType.RESULT_TYPE_LOCALIZED, createLocalizedResultTypeList());
-        typeToListMap.put(ListType.RESULT_TYPE_RAW, createRawResultTypeList());
-        typeToListMap.put(ListType.UNIT_OF_MEASURE, createUOMList());
-        typeToListMap.put(ListType.UNIT_OF_MEASURE_ACTIVE, createUOMList());
-        typeToListMap.put(ListType.UNIT_OF_MEASURE_INACTIVE, createUOMList());
-        typeToListMap.put(ListType.DICTIONARY_TEST_RESULTS, createDictionaryTestResults());
-        typeToListMap.put(ListType.SEVERITY_CONSEQUENCES_LIST, createConsequencesList());
-        typeToListMap.put(ListType.SEVERITY_RECURRENCE_LIST, createRecurrenceList());
-        typeToListMap.put(ListType.ACTION_TYPE_LIST, createActionTypeList());
-        typeToListMap.put(ListType.LABORATORY_COMPONENT, createLaboratoryComponentList());
+        instance = this;
+
+        refreshLists();
 
         SystemConfiguration.getInstance().addLocalChangeListener(this);
     }
@@ -330,6 +283,54 @@ public class DisplayListService implements LocaleChangeListener {
     public List<IdValuePair> getFreshList(ListType listType) {
         refreshList(listType);
         return typeToListMap.get(listType);
+    }
+
+    public synchronized void refreshLists() {
+        typeToListMap = new HashMap<>();
+        typeToListMap.put(ListType.HOURS, createHourList());
+        typeToListMap.put(ListType.MINS, createMinList());
+        typeToListMap.put(ListType.SAMPLE_TYPE, createTypeOfSampleList());
+        typeToListMap.put(ListType.SAMPLE_TYPE_ACTIVE, createSampleTypeList(false));
+        typeToListMap.put(ListType.SAMPLE_TYPE_INACTIVE, createSampleTypeList(true));
+        typeToListMap.put(ListType.INITIAL_SAMPLE_CONDITION,
+                createFromDictionaryCategoryLocalizedSort("specimen reception condition"));
+        typeToListMap.put(ListType.PATIENT_HEALTH_REGIONS, createPatientHealthRegions());
+        typeToListMap.put(ListType.PATIENT_MARITAL_STATUS,
+                createFromDictionaryCategoryLocalizedSort("Marital Status Demographic Information"));
+        typeToListMap.put(ListType.PATIENT_NATIONALITY,
+                createFromDictionaryCategoryLocalizedSort("Nationality Demographic Information"));
+        typeToListMap.put(ListType.PATIENT_EDUCATION,
+                createFromDictionaryCategoryLocalizedSort("Education Level Demographic Information"));
+        typeToListMap.put(ListType.GENDERS, createGenderList());
+        typeToListMap.put(ListType.SAMPLE_PATIENT_REFERRING_CLINIC, createReferringClinicList());
+        typeToListMap.put(ListType.QA_EVENTS, createSortedQAEvents());
+        typeToListMap.put(ListType.TEST_SECTION, createTestSectionList());
+        typeToListMap.put(ListType.TEST_SECTION_INACTIVE, createInactiveTestSection());
+        typeToListMap.put(ListType.TEST_SECTION_BY_NAME, createTestSectionByNameList());
+        typeToListMap.put(ListType.HAITI_DEPARTMENTS, createAddressDepartmentList());
+        typeToListMap.put(ListType.SAMPLE_PATIENT_PAYMENT_OPTIONS,
+                createFromDictionaryCategoryLocalizedSort("patientPayment"));
+        typeToListMap.put(ListType.PATIENT_SEARCH_CRITERIA, createPatientSearchCriteria());
+        typeToListMap.put(ListType.PANELS, createPanelList());
+        typeToListMap.put(ListType.PANELS_ACTIVE, createPanelList(false));
+        typeToListMap.put(ListType.PANELS_INACTIVE, createPanelList(true));
+        typeToListMap.put(ListType.ORDERABLE_TESTS, createOrderableTestList());
+        typeToListMap.put(ListType.ALL_TESTS, createTestList());
+        typeToListMap.put(ListType.REJECTION_REASONS, createDictionaryListForCategory("resultRejectionReasons"));
+        typeToListMap.put(ListType.REFERRAL_REASONS, createReferralReasonList());
+        typeToListMap.put(ListType.REFERRAL_ORGANIZATIONS, createReferralOrganizationList());
+        typeToListMap.put(ListType.TEST_LOCATION_CODE, createDictionaryListForCategory("testLocationCode"));
+        typeToListMap.put(ListType.PROGRAM, createDictionaryListForCategory("programs"));
+        typeToListMap.put(ListType.RESULT_TYPE_LOCALIZED, createLocalizedResultTypeList());
+        typeToListMap.put(ListType.RESULT_TYPE_RAW, createRawResultTypeList());
+        typeToListMap.put(ListType.UNIT_OF_MEASURE, createUOMList());
+        typeToListMap.put(ListType.UNIT_OF_MEASURE_ACTIVE, createUOMList());
+        typeToListMap.put(ListType.UNIT_OF_MEASURE_INACTIVE, createUOMList());
+        typeToListMap.put(ListType.DICTIONARY_TEST_RESULTS, createDictionaryTestResults());
+        typeToListMap.put(ListType.SEVERITY_CONSEQUENCES_LIST, createConsequencesList());
+        typeToListMap.put(ListType.SEVERITY_RECURRENCE_LIST, createRecurrenceList());
+        typeToListMap.put(ListType.ACTION_TYPE_LIST, createActionTypeList());
+        typeToListMap.put(ListType.LABORATORY_COMPONENT, createLaboratoryComponentList());
     }
 
     public void refreshList(ListType listType) {

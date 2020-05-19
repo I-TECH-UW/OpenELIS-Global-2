@@ -417,6 +417,9 @@
 
                 option = createOption(data.value, dictionaryName, false);
                 jQuery("#referenceSelection").append(option);
+                
+                option = createOption(data.value, dictionaryName, false);
+                jQuery("#defaultTestResultSelection").append(option);
             } else {
                 jQuery("#dictionaryNameSortUI li[value=" + data.value + "]").remove();
 
@@ -425,11 +428,12 @@
                 jQuery("#dictionaryQualify").append(qualifiyList);
                 augmentMultiselects("#dictionaryQualify");
                 jQuery("#referenceSelection option[value=" + data.value + "]").remove();
+                jQuery("#defaultTestResultSelection option[value=" + data.value + "]").remove();
             }
         }
     }
 
-  	/*
+  	
     function dictionarySetDefault(valuesArray) {
         var dictionaryOption;
         clearDictionaryLists();
@@ -448,7 +452,7 @@
         }
         jQuery("#dictionarySelection").change();
     }
-  	*/
+  	
   	
   	
     function dictionarySetSelected(index) {
@@ -469,6 +473,8 @@
         jQuery("#dictionaryNameSortUI li").remove();
         jQuery("#referenceSelection option").remove();
         jQuery("#referenceSelection").append(createOption("0", "", false));
+        jQuery("#defaultTestResultSelection option").remove();
+        jQuery("#defaultTestResultSelection").append(createOption("0", "", false));
     }
     function createOption(id, name, isActive) {
         var option = jQuery('<option/>');
@@ -913,18 +919,19 @@
 
             jQuery(".resultClass").each(function (i,elem) {
             	significantDigits = jQuery(elem).attr("fSignificantDigits")
-            	dictionaryValues = jQuery(elem).attr("fDictionaryIds")
-            	dictionaryIds = jQuery(elem).attr("fDictionaryValues")
+            	dictionaryIds = jQuery(elem).attr("fDictionaryIds")
+            	dictionaryValues = jQuery(elem).attr("fDictionaryValues")
             	referenceValue = jQuery(elem).attr("fReferenceValue")
             	referenceId = jQuery(elem).attr("fReferenceId")
             });
             
             // format dictionary values
-            if(!typeof dictionaryValues === 'undefined') {
+            if( dictionaryValues !== null) {
             	var tmpArray = dictionaryValues.split("[");
             	var tmpArray = tmpArray[1].split("]");
             	var tmpArray = tmpArray[0].split(", ");
             	var valuesArray = jQuery.makeArray(tmpArray);
+            	dictionarySetDefault(valuesArray);
             }
             resultTypeId = jQuery("#resultTypeSelection").val();
             jQuery("#sortTitleDiv").attr("align", "left");
@@ -985,12 +992,16 @@
         	var referenceId = null;
             jQuery(".resultClass").each(function (i,elem) {
             	dictionaryValues = jQuery(elem).attr("fDictionaryValues")
-            	dictionaryValues = jQuery(elem).attr("fDictionaryIds")
+            	dictionaryIds = jQuery(elem).attr("fDictionaryIds")
             	referenceValue = jQuery(elem).attr("fReferenceValue")
             	referenceId = jQuery(elem).attr("fReferenceId")
             });
             
-            jQuery("#referenceValue").text(jQuery(referenceValue).text());
+            if (referenceValue == "n/a") {
+                jQuery("#referenceValue").text(referenceValue);
+            } else {
+            	jQuery("#referenceValue").text(jQuery(referenceValue).text());
+            }
             jQuery("#referenceId").text(jQuery(referenceId).text());
             
         } else if (step == "step3Dictionary") {
@@ -1019,7 +1030,8 @@
             	jQuery("#referenceValue").text(jQuery("#referenceSelection option:selected").text());
             	buildVerifyDictionaryList();
             }
-
+            jQuery("#defaultTestResultValue").text(jQuery("#defaultTestResultSelection option:selected").text());
+            
             jQuery("#dictionaryVerifyId").show();
             jQuery(".selectListConfirm").show();
             jQuery(".confirmShow").show();
@@ -1492,6 +1504,9 @@
         jQuery("#dictionarySelection option:selected").each(function (index, value) {
             if (jQuery("#referenceSelection option:selected[value=" + value.value + "]").length == 1) {
                 jsonObj.dictionaryReference = value.value;
+            }
+            if (jQuery("#defaultTestResultSelection option:selected[value=" + value.value + "]").length == 1) {
+                jsonObj.defaultTestResult = value.value;
             }
             dictionary = {};
             dictionary.value = value.value;
@@ -2018,6 +2033,7 @@ td {
 					<ul>
 							<li id="referenceValue"></li>
 						</ul></span>
+						<span><spring:message code="label.default.result" /><br><ul><li id="defaultTestResultValue"></li></ul></span>
 				</div>
 				<div id="sortDictionaryDiv" align="center" class="dictionarySelect"
 					style="padding: 10px; float: left; width: 33%; display: none;">
@@ -2037,6 +2053,13 @@ td {
 						</select>
 					</div>
 					<br>
+					<div id="defaultTestResult">
+                        <spring:message code="label.default.result" /><br/>
+                        <select id='defaultTestResultSelection'>
+                            <option value="0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>
+                        </select>
+                    </div>
+                    <br>
 
 					<div id="dictionaryQualify" class="dictionaryMultiSelect">
 						<spring:message code="label.qualifiers" />
