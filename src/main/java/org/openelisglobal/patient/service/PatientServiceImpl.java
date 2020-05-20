@@ -23,6 +23,7 @@ import org.openelisglobal.patient.action.bean.PatientManagementInfo;
 import org.openelisglobal.patient.dao.PatientDAO;
 import org.openelisglobal.patient.util.PatientUtil;
 import org.openelisglobal.patient.valueholder.Patient;
+import org.openelisglobal.patient.valueholder.PatientContact;
 import org.openelisglobal.patientidentity.service.PatientIdentityService;
 import org.openelisglobal.patientidentity.valueholder.PatientIdentity;
 import org.openelisglobal.patientidentitytype.service.PatientIdentityTypeService;
@@ -88,6 +89,8 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String> i
     private PatientPatientTypeService patientPatientTypeService;
     @Autowired
     private PersonService personService;
+    @Autowired
+    private PatientContactService patientContactService;
 
     @PostConstruct
     public void initializeGlobalVariables() {
@@ -602,7 +605,31 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String> i
             update(patient);
         }
 
+        persistContact(patientInfo, patient);
         persistPatientRelatedInformation(patientInfo, patient, sysUserId);
+    }
+
+    private void persistContact(PatientManagementInfo patientInfo, Patient patient) {
+        if (GenericValidator.isBlankOrNull(patientInfo.getPatientContact().getId())) {
+            PatientContact contact = patientInfo.getPatientContact();
+            Person contactPerson = patientInfo.getPatientContact().getPerson();
+            contact.setPatientId(patient.getId());
+            contact.setSysUserId(patientInfo.getPatientContact().getSysUserId());
+            contactPerson.setSysUserId(contact.getSysUserId());
+
+            personService.insert(contactPerson);
+            patientContactService.insert(contact);
+        } else {
+            Person newContactPerson = patientInfo.getPatientContact().getPerson();
+            PatientContact contact = patientContactService.get(patientInfo.getPatientContact().getId());
+            Person oldContactPerson = contact.getPerson();
+            oldContactPerson.setEmail(newContactPerson.getEmail());
+            oldContactPerson.setLastName(newContactPerson.getLastName());
+            oldContactPerson.setFirstName(newContactPerson.getFirstName());
+            oldContactPerson.setPrimaryPhone(newContactPerson.getPrimaryPhone());
+            contact.setSysUserId(patientInfo.getPatientContact().getSysUserId());
+            oldContactPerson.setSysUserId(patientInfo.getPatientContact().getSysUserId());
+        }
     }
 
     protected void persistPatientRelatedInformation(PatientManagementInfo patientInfo, Patient patient,

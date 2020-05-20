@@ -66,6 +66,9 @@ abstract public class PatientSearchWorker {
         XMLUtil.appendKeyValue("dataSourceName", result.getDataSourceName(), xml);
         XMLUtil.appendKeyValue("id", result.getPatientID(), xml);
         XMLUtil.appendKeyValue("referralPatientId", result.getReferringSitePatientId(), xml);
+        XMLUtil.appendKeyValue("contactName", result.getContactName(), xml);
+        XMLUtil.appendKeyValue("contactPhone", result.getContactPhone(), xml);
+        XMLUtil.appendKeyValue("contactEmail", result.getContactEmail(), xml);
     }
 
     private List<PatientIdentity> getIdentityListForPatient(String patientId) {

@@ -161,6 +161,7 @@
 		<mapping resource="hibernate/hbm/LabComponent.hbm.xml" />
 		<mapping resource="hibernate/hbm/NcEvent.hbm.xml" />
 		<mapping resource="hibernate/hbm/Report.hbm.xml" />
+		<mapping resource="hibernate/hbm/PatientContact.hbm.xml"/>
 	</session-factory>
 
 </hibernate-configuration>
