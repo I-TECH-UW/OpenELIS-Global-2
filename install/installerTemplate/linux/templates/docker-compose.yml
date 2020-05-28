@@ -27,6 +27,9 @@ services:
         ports:
             - "8080:8080"
             - "8443:8443"
+        networks:
+            - frontend
+#                ipv4_address: 172.20.1.1
         restart: always
         environment:
               # context.xml doesn't seem to be able to pick up environment variables directly, so we are passing them in as CATALINA_OPTS
@@ -46,3 +49,10 @@ secrets:
     file: /etc/tomcat/ssl/certs/tomcat_cert.crt
   tomcat_cert.key:
     file: /etc/tomcat/ssl/private/tomcat_cert.key
+    
+networks:
+  frontend:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.1.0/24

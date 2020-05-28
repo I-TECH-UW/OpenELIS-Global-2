@@ -72,6 +72,7 @@ PRINT_TO_CONSOLE = True
 MODE = "update-install"
 
 POSTGRES_LIB_DIR = "/usr/lib/postgresql/8.3/lib/"
+POSTGRES_MAIN_DIR = "/etc/postgresql/9.6/main/"
 EXPECTED_CROSSTAB_FUNCTIONS = "3"
 
 #Generated values
@@ -209,13 +210,13 @@ def do_install():
     get_site_id()    
     
 #    get_fhir_api_user()
+
+    install_docker()
     
     install_files_from_templates()
     
     install_site_info_config_file()
     
-    install_docker()
-
     install_db()
     
     preserve_database_user_password()
@@ -239,9 +240,15 @@ def install_files_from_templates():
 
 
 def create_docker_compose_file():
+    global DB_HOST_FOR_DOCKER_SERVICES
     template_file = open(INSTALLER_TEMPLATE_DIR + "docker-compose.yml", "r")
     output_file = open("docker-compose.yml", "w")
-
+    
+    if DOCKER_DB:
+        DB_HOST_FOR_DOCKER_SERVICES = "database" #use docker network to connect by service name
+    if DB_HOST == "localhost" or DB_HOST == "127.0.0.1":
+        DB_HOST_FOR_DOCKER_SERVICES = get_docker_host_ip() #get docker host loopback
+    
     for line in template_file:
         #set docker db attributes
         if DOCKER_DB:
@@ -427,6 +434,10 @@ def install_db():
         #make sure docker can read this file to run it
         os.chown(DB_INIT_DIR + '1-pgsqlPermissions.sql', 0, grp.getgrnam('docker')[2])
     elif LOCAL_DB:
+        #configure the postgres installation to make sure it can be connected to from the docker container
+        cmd = 'sudo ' + INSTALLER_SCRIPTS_DIR + 'configureHostPostgres.sh ' + POSTGRES_MAIN_DIR
+        os.system(cmd)
+        
         cmd = 'su -c "createdb  clinlims" postgres'
         os.system(cmd)
         #make sure postgres can read this file to run it
@@ -680,7 +691,7 @@ def update_database_user_role():
 def read_setup_properties_file():
     global DB_BACKUPS_DIR, SECRETS_DIR, PLUGINS_DIR
     global DB_DATA_DIR, DB_ENVIRONMENT_DIR, DB_INIT_DIR, DOCKER_DB, DOCKER_DB_BACKUPS_DIR, DOCKER_DB_HOST_PORT
-    global DB_HOST, DB_HOST_FOR_DOCKER_SERVICES, DB_PORT
+    global DB_HOST, DB_PORT
     global LOCAL_DB
     
     config = ConfigParser.ConfigParser() 
@@ -699,7 +710,6 @@ def read_setup_properties_file():
     DOCKER_DB = is_true_string(config.get(docker_db_info, 'provide_database'))
     if DOCKER_DB:
         DB_HOST = "docker"
-        DB_HOST_FOR_DOCKER_SERVICES = "database" #use docker network to connect by service name
         DB_PORT = "5432" 
     DOCKER_DB_HOST_PORT = config.get(docker_db_info,'host_port')
     DOCKER_DB_BACKUPS_DIR = ensure_dir_string(config.get(docker_db_info,'backups_dir'))
@@ -709,7 +719,6 @@ def read_setup_properties_file():
     
     #if localhost database, get the docker host ip address so services can connect to db on host
     if DB_HOST == "localhost" or DB_HOST == "127.0.0.1":
-        DB_HOST_FOR_DOCKER_SERVICES = get_docker_host_ip() #get docker host loopback
         LOCAL_DB = True
     else:
         LOCAL_DB = False
@@ -845,7 +854,7 @@ def db_installed(db_name):
 
 
 def check_postgres_preconditions():
-    global POSTGRES_LIB_DIR
+    global POSTGRES_LIB_DIR, POSTGRES_MAIN_DIR
     log("Checking for Postgres 8.3 or later installation", PRINT_TO_CONSOLE)
     os.system('psql --version > tmp')
     tmp_file = open('tmp')
@@ -871,6 +880,7 @@ def check_postgres_preconditions():
     if valid:
         log("Postgres" + str(major) + "." + str(minor) + " found!\n", PRINT_TO_CONSOLE)
         POSTGRES_LIB_DIR = "/usr/lib/postgresql/" + str(major) + "." + str(minor) + "/lib/"
+        POSTGRES_MAIN_DIR = "/etc/postgresql/" + str(major) + "." + str(minor) + "/main/"
         return True
     else:
         log("Postgres must be 8.3 or later\n", PRINT_TO_CONSOLE)

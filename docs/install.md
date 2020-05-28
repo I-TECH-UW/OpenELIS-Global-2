@@ -40,10 +40,6 @@ This updates the system from the sources in the sources list. It updates what ne
 
 3. Install Python
 
-    ``sudo apt-get update``
-
-    ``sudo apt-get upgrade``
-
     ``sudo apt-get install python``
     
 ### Create and Load SSL Certificates
@@ -64,9 +60,11 @@ If you trust docker to provide your database, you can ignore this section
 
 1. Install Postgresql
 
-	``sudo apt update``
-	
 	``sudo apt install postgresql postgresql-contrib``
+
+2. Configure Postgresql
+
+    Postgres gets configured automatically through the setup script. This might possibly interfere with other applications installed on the same server.
 
 	
 ### Install OpenELIS Global
