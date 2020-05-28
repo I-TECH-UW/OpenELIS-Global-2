@@ -49,7 +49,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
     @Value("${org.openelisglobal.task.useBasedOn}")
     private Boolean useBasedOn;
 
-    @Scheduled(initialDelay = 10 * 1000, fixedRate = 60 * 1000)
+    @Scheduled(initialDelay = 10 * 1000, fixedRate = 6000000 * 1000)
     @Override
     public void pollForRemoteTasks() {
         processWorkflow(ResourceType.Task);
@@ -90,7 +90,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
                 .whereMap(remoteSearchParams)//
                 .returnBundle(Bundle.class)//
                 .execute();
-
+        
         if (bundle.hasEntry()) {
             System.out.println("received bundle with " + bundle.getEntry().size() + " entries");
         } else {
@@ -125,6 +125,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
                 List<ServiceRequest> serviceRequestList = getBasedOnServiceRequestFromBundle(localBundle, localTask);
                 Patient forPatient = getForPatientFromBundle(localBundle, localTask);
                 TaskResult taskResult = null;
+//                if(true) {
                 if (!(localTask.getStatus().equals(TaskStatus.ACCEPTED) || localTask.getStatus().equals(TaskStatus.COMPLETED))) {
                     Boolean taskOrderAcceptedFlag = false;
                     for (ServiceRequest serviceRequest : serviceRequestList) {
