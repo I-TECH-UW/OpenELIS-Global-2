@@ -104,7 +104,7 @@ public class ResultReportingTransfer {
         }
     }
     
-    private TaskStatus checkTaskStatus(IGenericClient localFhirClient, Task eTask, Task task, DiagnosticReport newDiagnosticReport ) {
+    private TaskStatus checkTaskStatus(IGenericClient localFhirClient, Task eTask, Task task, DiagnosticReport newDiagnosticReport, List<String> taskCompleteList ) {
 
         Bundle bundle = new Bundle();
 
@@ -138,19 +138,19 @@ public class ResultReportingTransfer {
             }
         }
         
-        List<String> taskCompleteList = new ArrayList<String>();
+        
         String srIdentifier = null;
         for (ServiceRequest serviceRequest : serviceRequestList) {
-            System.out.println("sr: " + serviceRequest.getIdentifier().get(0).getValue());
+//            System.out.println("sr: " + serviceRequest.getIdentifier().get(0).getValue());
             srIdentifier = serviceRequest.getIdentifier().get(0).getValue();
             for (DiagnosticReport diagnosticReport : diagnosticReportList) {
 //                  if for all sr's a dr exists or the sr status is nonConforming task is complete
-                System.out.println("check dr found: " + srIdentifier + "==" + diagnosticReport.getIdentifierFirstRep().getValue());
-                if (srIdentifier.equals(diagnosticReport.getIdentifierFirstRep().getValue())
-                        || (checkEOrderStatus(srIdentifier) == ExternalOrderStatus.NonConforming)) {
-                    System.out.println("nonconforming or dr found: " + srIdentifier + "=="
-                            + diagnosticReport.getIdentifierFirstRep().getValue());
-                    taskCompleteList.add(srIdentifier + "==" + diagnosticReport.getIdentifierFirstRep().getValue());
+//                System.out.println("check dr found: " + srIdentifier + "==" + diagnosticReport.getIdentifierFirstRep().getValue());
+                if (srIdentifier.equals(diagnosticReport.getIdentifierFirstRep().getValue())) {
+                    taskCompleteList.add(srIdentifier + " == " + diagnosticReport.getIdentifierFirstRep().getValue() + " ");
+                    break;
+                } else if (checkEOrderStatus(srIdentifier) == ExternalOrderStatus.NonConforming) {
+                    taskCompleteList.add(srIdentifier + " == " + ExternalOrderStatus.NonConforming.toString() + " ");
                     break;
                 }
             }
@@ -271,11 +271,20 @@ public class ResultReportingTransfer {
                         theOutputComponent.setValue(diagnosticReportReference);
                         task.addOutput(theOutputComponent);
                         
-                        task.setStatus(checkTaskStatus(localFhirClient, eTask, task, diagnosticReport));
+                        List<String> taskCompleteList = new ArrayList<String>();
+                        task.setStatus(checkTaskStatus(localFhirClient, eTask, task, diagnosticReport, taskCompleteList));
                         
                         Coding coding = new Coding();
-                        coding.setSystem("string");
-                        coding.setCode("string)");
+                        coding.setSystem("OpenELIS"); // TODO: fix hardcode
+                        
+                        String statusReason = new String();
+                        StringBuilder sb = new StringBuilder();
+                        for (String reason : taskCompleteList ) {
+                            sb.append(reason);
+                            statusReason = sb.toString();
+                        }
+                        coding.setCode(statusReason);
+                        
                         List<Coding> codingList = new ArrayList<Coding>();
                         codingList.add(coding);
                         CodeableConcept taskStatusReason = new CodeableConcept();
