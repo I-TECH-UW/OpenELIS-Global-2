@@ -25,6 +25,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.hl7.fhir.r4.model.Annotation;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Bundle.BundleEntryComponent;
+import org.hl7.fhir.r4.model.CodeableConcept;
+import org.hl7.fhir.r4.model.Coding;
 import org.hl7.fhir.r4.model.DiagnosticReport;
 import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Observation;
@@ -80,7 +82,6 @@ public class ResultReportingTransfer {
 
     private Task task = null;
     private Task eTask = null;
-    private ServiceRequest serviceRequest = null;
     private Patient patient = null;
     protected ElectronicOrderService electronicOrderService = SpringContext.getBean(ElectronicOrderService.class);
     protected FhirApiWorkflowService fhirApiWorkFlowService = SpringContext.getBean(FhirApiWorkflowService.class);
@@ -102,6 +103,70 @@ public class ResultReportingTransfer {
             QUEUE_TYPE_ID = queueType.getId();
         }
     }
+    
+    private TaskStatus checkTaskStatus(IGenericClient localFhirClient, Task eTask, Task task, DiagnosticReport newDiagnosticReport, List<String> taskCompleteList ) {
+
+        Bundle bundle = new Bundle();
+
+        List<ServiceRequest> serviceRequestList = new ArrayList<ServiceRequest>();
+        List<DiagnosticReport> diagnosticReportList = new ArrayList<DiagnosticReport>();
+        
+        for (Reference srId : task.getBasedOn()) {
+            
+             bundle = (Bundle) localFhirClient.search().forResource(ServiceRequest.class)
+                    .where(new TokenClientParam("_id").exactly().code(srId.getReferenceElement().getValueAsString()))
+                    .prettyPrint()
+                    .execute();
+             
+            serviceRequestList.add((ServiceRequest) bundle.getEntryFirstRep().getResource());
+        }
+        
+        diagnosticReportList.add((DiagnosticReport) newDiagnosticReport); // add current dr
+        for (TaskOutputComponent drId : task.getOutput()) {
+            
+            bundle = (Bundle) localFhirClient.search().forResource(DiagnosticReport.class)
+                   .where(new TokenClientParam("_id").exactly().code(drId.getIdElement().getValueAsString()))
+                   .prettyPrint()
+                   .execute();
+        }
+            
+        for (BundleEntryComponent bundleComponent : bundle.getEntry()) {
+
+            if (bundleComponent.hasResource()
+                    && ResourceType.DiagnosticReport.equals(bundleComponent.getResource().getResourceType())) {
+                diagnosticReportList.add((DiagnosticReport) bundleComponent.getResource());
+            }
+        }
+        
+        
+        String srIdentifier = null;
+        for (ServiceRequest serviceRequest : serviceRequestList) {
+//            System.out.println("sr: " + serviceRequest.getIdentifier().get(0).getValue());
+            srIdentifier = serviceRequest.getIdentifier().get(0).getValue();
+            for (DiagnosticReport diagnosticReport : diagnosticReportList) {
+//                  if for all sr's a dr exists or the sr status is nonConforming task is complete
+//                System.out.println("check dr found: " + srIdentifier + "==" + diagnosticReport.getIdentifierFirstRep().getValue());
+                if (srIdentifier.equals(diagnosticReport.getIdentifierFirstRep().getValue())) {
+                    taskCompleteList.add(srIdentifier + " == " + diagnosticReport.getIdentifierFirstRep().getValue() + " ");
+                    break;
+                } else if (checkEOrderStatus(srIdentifier) == ExternalOrderStatus.NonConforming) {
+                    taskCompleteList.add(srIdentifier + " == " + ExternalOrderStatus.NonConforming.toString() + " ");
+                    break;
+                }
+            }
+        }
+        
+        if(taskCompleteList.size() == serviceRequestList.size()) {
+            return(TaskStatus.COMPLETED);
+        }
+        return(TaskStatus.INPROGRESS);
+    }
+    
+    private ExternalOrderStatus checkEOrderStatus(String srIdentifier) {
+        List<ElectronicOrder> eOrders = electronicOrderService.getElectronicOrdersByExternalId(srIdentifier);
+        ElectronicOrder eOrder = eOrders.get(eOrders.size() - 1);
+        return (SpringContext.getBean(IStatusService.class).getExternalOrderStatusForID(eOrder.getStatusId()));
+    }
 
     public void sendResults(ResultReportXmit resultReport, List<Result> reportingResult, String url) {
 
@@ -116,8 +181,6 @@ public class ResultReportingTransfer {
                 String orderNumber = result.getReferringOrderNumber();
                 List<ElectronicOrder> eOrders = electronicOrderService.getElectronicOrdersByExternalId(orderNumber);
                 ElectronicOrder eOrder = eOrders.get(eOrders.size() - 1);
-                ExternalOrderStatus eOrderStatus = SpringContext.getBean(IStatusService.class)
-                        .getExternalOrderStatusForID(eOrder.getStatusId());
 
                 IGenericClient localFhirClient = fhirContext
                         .newRestfulGenericClient(fhirApiWorkFlowService.getLocalFhirStorePath());
@@ -130,7 +193,7 @@ public class ResultReportingTransfer {
                         .include(new Include("Task:based-on"))
                         .prettyPrint()
                         .execute();
-             
+                
                 task = null; 
                 List<ServiceRequest> serviceRequestList = new ArrayList<ServiceRequest>();
                 for (BundleEntryComponent bundleComponent : tsrBundle.getEntry()) {
@@ -141,7 +204,6 @@ public class ResultReportingTransfer {
                     
                     if (bundleComponent.hasResource()
                             && ResourceType.ServiceRequest.equals(bundleComponent.getResource().getResourceType())) {
-                            
                         ServiceRequest serviceRequest = (ServiceRequest) bundleComponent.getResource();
                         for(Identifier identifier : serviceRequest.getIdentifier()) {
                             if(identifier.getValue().equals(orderNumber))
@@ -151,21 +213,6 @@ public class ResultReportingTransfer {
                 }
                 
                 for (ServiceRequest serviceRequest : serviceRequestList) {
-                    
-                 // task has to be refreshed after each loop 
-                 // using UUID from getData which is idPart in original etask
-                    Bundle tBundle = (Bundle) localFhirClient.search().forResource(Task.class)
-                            .where(new TokenClientParam("identifier").exactly().code(eTask.getIdElement().getIdPart()))
-                            .prettyPrint()
-                            .execute();
-                 
-                    task = null; 
-                    for (BundleEntryComponent bundleComponent : tBundle.getEntry()) {
-                        if (bundleComponent.hasResource()
-                                && ResourceType.Task.equals(bundleComponent.getResource().getResourceType())) {
-                            task = (Task) bundleComponent.getResource();
-                        }
-                    }
                     
                     Bundle pBundle = (Bundle) localFhirClient.search().forResource(Patient.class)
                             .where(new TokenClientParam("_id").exactly()
@@ -179,7 +226,7 @@ public class ResultReportingTransfer {
                             patient = (Patient) bundleComponent.getResource();
                         }
                     }
-
+                   
                     try {
                         Observation observation = new Observation();
                         observation.setIdentifier(serviceRequest.getIdentifier());
@@ -200,7 +247,6 @@ public class ResultReportingTransfer {
                         observation.addNote(oNote);
 
                         MethodOutcome oOutcome = localFhirClient.create().resource(observation).execute();
-
                         DiagnosticReport diagnosticReport = new DiagnosticReport();
                         diagnosticReport.setId(result.getTest().getCode());
                         diagnosticReport.setIdentifier(serviceRequest.getIdentifier());
@@ -224,16 +270,52 @@ public class ResultReportingTransfer {
                         TaskOutputComponent theOutputComponent = new TaskOutputComponent();
                         theOutputComponent.setValue(diagnosticReportReference);
                         task.addOutput(theOutputComponent);
-                        task.setStatus(TaskStatus.COMPLETED);
-
+                        
+                        List<String> taskCompleteList = new ArrayList<String>();
+                        task.setStatus(checkTaskStatus(localFhirClient, eTask, task, diagnosticReport, taskCompleteList));
+                        
+                        Coding coding = new Coding();
+                        coding.setSystem("OpenELIS"); // TODO: fix hardcode
+                        
+                        String statusReason = new String();
+                        StringBuilder sb = new StringBuilder();
+                        for (String reason : taskCompleteList ) {
+                            sb.append(reason);
+                            statusReason = sb.toString();
+                        }
+                        coding.setCode(statusReason);
+                        
+                        List<Coding> codingList = new ArrayList<Coding>();
+                        codingList.add(coding);
+                        CodeableConcept taskStatusReason = new CodeableConcept();
+                        taskStatusReason.setCoding(codingList);
+                        task.setStatusReason(taskStatusReason);
+                        
                         localFhirClient.update().resource(task).execute();
 
                     } catch (Exception e) {
-                        System.out.println("Result update exception: " + e.getStackTrace());
+                        System.out.println("Result update exception: ");
+                        e.printStackTrace();
                     }
                 }
             }
         }
+    }
+    
+    private Task getTaskFromEtask(IGenericClient localFhirClient, Task eTask) {
+        Bundle tBundle = (Bundle) localFhirClient.search().forResource(Task.class)
+                .where(new TokenClientParam("identifier").exactly().code(eTask.getIdElement().getIdPart()))
+                .prettyPrint()
+                .execute();
+     
+        task = null;
+        for (BundleEntryComponent bundleComponent : tBundle.getEntry()) {
+            if (bundleComponent.hasResource()
+                    && ResourceType.Task.equals(bundleComponent.getResource().getResourceType())) {
+                task = (Task) bundleComponent.getResource();
+            }
+        }
+        return(task);
     }
 
     class ResultFailHandler implements ITransmissionResponseHandler {
