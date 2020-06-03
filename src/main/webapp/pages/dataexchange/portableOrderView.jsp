@@ -47,18 +47,18 @@ jQuery(window).load(function(){
 });
 </script>
 
-<spring:message code="eorder.sort"/>: 
+<spring:message code="porder.sort"/>: 
 <form:select path="sortOrder" id="sortSelect" onchange="sortBy(this.value)">
 	<form:options items="${form.sortOrderOptions}" itemValue="value" itemLabel="label" />
 </form:select>
 <form:hidden path="page"/>
 
-<c:if test="${empty form.EOrders}">
-	<h2><spring:message code="eorder.noresults"/></h2>
+<c:if test="${empty form.POrders}">
+	<h2><spring:message code="porder.noresults"/></h2>
 </c:if>
-<c:if test="${not empty form.EOrders}">
+<c:if test="${not empty form.POrders}">
 	<h2>
-		<spring:message code="eorder.results"/> ${startIndex + 1} -  ${endIndex} <spring:message code="eorder.of"/> ${total}
+		<spring:message code="porder.results"/> ${startIndex + 1} -  ${endIndex} <spring:message code="porder.of"/> ${total}
 		<button class="prevButton" onClick="prevPage(); return false;"><spring:message code="label.button.previous"/></button>
 		<button class="nextButton" onClick="nextPage(); return false;"><spring:message code="label.button.next"/></button>
 	</h2>
@@ -66,34 +66,34 @@ jQuery(window).load(function(){
 		<tr>
 			<td style="width:1%"></td>
 			<td style="width:98%">
-				<c:forEach var="eOrder" items="${form.EOrders}">
+				<c:forEach var="pOrder" items="${form.POrders}">
 					
 					<h3>
-						<span><spring:message code="eorder.externalid"/>: <c:out value="${eOrder.externalId}"/></span>
-						<span style="float:right"><spring:message code="eorder.lastupdated"/>: <c:out value="${eOrder.lastupdated}"/></span>
+						<span><spring:message code="porder.externalid"/>: <c:out value="${pOrder.externalId}"/></span>
+						<span style="float:right"><spring:message code="porder.lastupdated"/>: <c:out value="${pOrder.lastupdated}"/></span>
 					</h3>
 					<div id="info" >
-						<b><spring:message code="eorder.timestamp"/>:</b> <c:out value="${eOrder.orderTimestamp}"/><br>
+						<b><spring:message code="porder.timestamp"/>:</b> <c:out value="${pOrder.orderTimestamp}"/><br>
 						<table>
 						<tr>
-							<td><b><spring:message code="eorder.patient"/>:</b></td>
+							<td><b><spring:message code="porder.patient"/>:</b></td>
 							<td></td>
 							<td></td>
 						</tr>
 						<tr>
 							 <td></td
-							 ><td><b><spring:message code="eorder.patient.name"/>: </b><c:out value="${eOrder.patient.person.lastName}"/>, <c:out value="${eOrder.patient.person.firstName}"/></td>
-							 <td><b><spring:message code="eorder.patient.gender"/>: </b><c:out value="${eOrder.patient.gender}"/></td>
+							 ><td><b><spring:message code="porder.patient.name"/>: </b><c:out value="${pOrder.patient.person.lastName}"/>, <c:out value="${pOrder.patient.person.firstName}"/></td>
+							 <td><b><spring:message code="porder.patient.gender"/>: </b><c:out value="${pOrder.patient.gender}"/></td>
 						</tr>
 						<tr>
 							 <td></td>
-							 <td><b><spring:message code="eorder.patient.birthdate"/>: </b><c:out value="${eOrder.patient.birthDateForDisplay}"/></td>
-							 <td><b><spring:message code="eorder.patient.id"/>: </b><c:out value="${eOrder.patient.externalId}"/></td>
+							 <td><b><spring:message code="porder.patient.birthdate"/>: </b><c:out value="${pOrder.patient.birthDateForDisplay}"/></td>
+							 <td><b><spring:message code="porder.patient.id"/>: </b><c:out value="${pOrder.patient.externalId}"/></td>
 						</tr>
 						</table>
-						<b><spring:message code="eorder.status"/>: </b> <spring:message code="${eOrder.status.nameKey}"/><br>
-						<b><spring:message code="eorder.message"/>: </b><br> 
-						<div class="colorFill message" style="white-space:pre;padding:5px;"><c:out value="${eOrder.data}"/></div>
+						<b><spring:message code="porder.status"/>: </b> <spring:message code="${pOrder.status.nameKey}"/><br>
+						<b><spring:message code="porder.message"/>: </b><br> 
+						<div class="colorFill message" style="white-space:pre;padding:5px;"><c:out value="${pOrder.data}"/></div>
 					</div>
 					<hr>
 				</c:forEach>
@@ -102,7 +102,7 @@ jQuery(window).load(function(){
 		</tr>
 	</table>
 	<h2>
-		<spring:message code="eorder.results"/> ${startIndex + 1} -  ${endIndex} <spring:message code="eorder.of"/> ${total}
+		<spring:message code="porder.results"/> ${startIndex + 1} -  ${endIndex} <spring:message code="porder.of"/> ${total}
 		<button class="prevButton" onClick="prevPage(); return false;"><spring:message code="label.button.previous"/></button>
 		<button class="nextButton" onClick="nextPage(); return false;"><spring:message code="label.button.next"/></button>
 	</h2>

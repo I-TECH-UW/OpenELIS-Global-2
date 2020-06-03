@@ -17,7 +17,7 @@ public class PortableOrderViewForm extends BaseForm {
     private int page = 1;
 
     // for display
-    private List<PortableOrder> eOrders;
+    private List<PortableOrder> pOrders;
 
     // for display
     private SortOrder[] sortOrderOptions = PortableOrder.SortOrder.values();
@@ -42,12 +42,12 @@ public class PortableOrderViewForm extends BaseForm {
         this.page = page;
     }
 
-    public List<PortableOrder> getEOrders() {
-        return eOrders;
+    public List<PortableOrder> getPOrders() {
+        return pOrders;
     }
 
-    public void setEOrders(List<PortableOrder> eOrders) {
-        this.eOrders = eOrders;
+    public void setPOrders(List<PortableOrder> pOrders) {
+        this.pOrders = pOrders;
     }
 
     public SortOrder[] getSortOrderOptions() {

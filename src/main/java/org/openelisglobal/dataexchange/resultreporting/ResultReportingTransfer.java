@@ -46,6 +46,7 @@ import org.openelisglobal.dataexchange.aggregatereporting.valueholder.ReportQueu
 import org.openelisglobal.dataexchange.common.ITransmissionResponseHandler;
 import org.openelisglobal.dataexchange.common.ReportTransmission;
 import org.openelisglobal.dataexchange.fhir.service.FhirApiWorkflowService;
+import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
 import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder;
 import org.openelisglobal.dataexchange.orderresult.OrderResponseWorker.Event;
 import org.openelisglobal.dataexchange.orderresult.valueholder.HL7MessageOut;
@@ -84,6 +85,7 @@ public class ResultReportingTransfer {
     private Patient patient = null;
     protected ElectronicOrderService electronicOrderService = SpringContext.getBean(ElectronicOrderService.class);
     protected FhirApiWorkflowService fhirApiWorkFlowService = SpringContext.getBean(FhirApiWorkflowService.class);
+    protected FhirTransformService fhirTransformService = SpringContext.getBean(FhirTransformService.class);
 
     private static DocumentType DOCUMENT_TYPE;
     private static String QUEUE_TYPE_ID;
@@ -104,23 +106,24 @@ public class ResultReportingTransfer {
     }
 
     public void sendResults(ResultReportXmit resultReport, List<Result> reportingResult, String url) {
-
-        if (resultReport.getTestResults() == null || resultReport.getTestResults().isEmpty()) {
-            return;
-        }
+        IGenericClient localFhirClient = fhirContext
+                .newRestfulGenericClient(fhirApiWorkFlowService.getLocalFhirStorePath());
+       
         for (TestResultsXmit result : resultReport.getTestResults()) {
-            if (result.getReferringOrderNumber().isEmpty()) {
-                ITransmissionResponseHandler responseHandler = new ResultFailHandler(reportingResult);
-                new ReportTransmission().sendHL7Report(resultReport, url, responseHandler);
-            } else { // FHIR
+            if (result.getReferringOrderNumber() == null) { // walk-in create FHIR
+                String fhir_json = fhirTransformService.CreateFhirFromOESample(result);
+                System.out.println("" + fhir_json);
+                break;
+            }
+            if (!result.getReferringOrderNumber().isEmpty()) { // eOrder create FHIR
+
                 String orderNumber = result.getReferringOrderNumber();
                 List<ElectronicOrder> eOrders = electronicOrderService.getElectronicOrdersByExternalId(orderNumber);
                 ElectronicOrder eOrder = eOrders.get(eOrders.size() - 1);
                 ExternalOrderStatus eOrderStatus = SpringContext.getBean(IStatusService.class)
                         .getExternalOrderStatusForID(eOrder.getStatusId());
-
-                IGenericClient localFhirClient = fhirContext
-                        .newRestfulGenericClient(fhirApiWorkFlowService.getLocalFhirStorePath());
+                
+//              fhirTransformService.CreateFhirFromOESample(eOrder);
 
                 eTask = fhirContext.newJsonParser().parseResource(Task.class, eOrder.getData());
                 
@@ -151,7 +154,6 @@ public class ResultReportingTransfer {
                 }
                 
                 for (ServiceRequest serviceRequest : serviceRequestList) {
-                    
                  // task has to be refreshed after each loop 
                  // using UUID from getData which is idPart in original etask
                     Bundle tBundle = (Bundle) localFhirClient.search().forResource(Task.class)
@@ -232,6 +234,12 @@ public class ResultReportingTransfer {
                         System.out.println("Result update exception: " + e.getStackTrace());
                     }
                 }
+                break;
+            }
+            if (result.getReferringOrderNumber().isEmpty()) { // HL7
+                ITransmissionResponseHandler responseHandler = new ResultFailHandler(reportingResult);
+                new ReportTransmission().sendHL7Report(resultReport, url, responseHandler);
+                break;
             }
         }
     }

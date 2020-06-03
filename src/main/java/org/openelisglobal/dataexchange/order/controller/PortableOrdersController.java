@@ -69,7 +69,7 @@ public class PortableOrdersController extends BaseController {
             pOrder.setStatus(statusOfSampleService.get(pOrder.getStatusId()));
             pOrder.setData(fhirTransformService.CreateFhirFromOESample(pOrder));
         }
-        form.setEOrders(pOrders);
+        form.setPOrders(pOrders);
 
         return findForward(FWD_SUCCESS, form);
     }
@@ -85,11 +85,11 @@ public class PortableOrdersController extends BaseController {
 
     @Override
     protected String getPageTitleKey() {
-        return "eorder.browse.title";
+        return "porder.browse.title";
     }
 
     @Override
     protected String getPageSubtitleKey() {
-        return "eorder.browse.title";
+        return "porder.browse.title";
     }
 }
