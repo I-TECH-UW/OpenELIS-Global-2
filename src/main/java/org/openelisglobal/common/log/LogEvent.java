@@ -171,7 +171,10 @@ public class LogEvent {
 
     // for preventing log forging
     private static String sanitizeLogMessage(String logMessage) {
-        String sanitizedLogMessage = logMessage.replace('\n', '_').replace('\r', '_').replace('\t', '_');
-        return Encode.forHtml(sanitizedLogMessage);
+        if (logMessage != null) {
+            String sanitizedLogMessage = logMessage.replace('\n', '_').replace('\r', '_').replace('\t', '_');
+            return Encode.forHtml(sanitizedLogMessage);
+        }
+        return null;
     }
 }
