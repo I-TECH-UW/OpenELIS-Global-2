@@ -15833,8 +15833,8 @@ SELECT pg_catalog.setval('clinlims.scriptlet_seq', 3, true);
 --
 
 COPY clinlims.site_information (id, name, lastupdated, description, value, encrypted, domain_id, value_type, instruction_key, "group", schedule_id, tag, dictionary_category_id, description_key, name_key) FROM stdin;
-100	firstNameCharset	\N	allowed characters in first name fields	a-zàâçéèêëîïôûùüÿñæœ -	f	18	text	instructions.validationconfig.firstname	0	\N	\N	\N	siteInfo.validationConfig.firstname	\N
-101	lastNameCharset	\N	allowed characters in last name fields	a-zàâçéèêëîïôûùüÿñæœ -	f	18	text	instructions.validationconfig.lastname	0	\N	\N	\N	siteInfo.validationConfig.lastname	\N
+100	firstNameCharset	\N	allowed characters in first name fields	.'a-zàâçéèêëîïôûùüÿñæœ -	f	18	text	instructions.validationconfig.firstname	0	\N	\N	\N	siteInfo.validationConfig.firstname	\N
+101	lastNameCharset	\N	allowed characters in last name fields	.'a-zàâçéèêëîïôûùüÿñæœ -	f	18	text	instructions.validationconfig.lastname	0	\N	\N	\N	siteInfo.validationConfig.lastname	\N
 102	userNameCharset	\N	allowed characters in username fields	a-zàâçéèêëîïôûùüÿñæœ ._@-	f	18	text	instructions.validationconfig.username	0	\N	\N	\N	siteInfo.validationConfig.username	\N
 103	patientIdCharset	\N	allowed characters in patient identifier fields	a-z0-9/àâçéèêëîïôûùüÿñæœ	f	18	text	instructions.validationconfig.patientid	0	\N	\N	\N	siteInfo.validationConfig.patientid	\N
 104	reportsDirectory	2020-01-22 21:46:59.769137-08	the directory for the reports	/reports	f	11	text	\N	0	\N	\N	\N	siteInfo.reportConfig.reportDirectory	\N
@@ -15861,7 +15861,7 @@ COPY clinlims.site_information (id, name, lastupdated, description, value, encry
 46	malariaCaseURL	2012-04-20 11:20:34.0183-07	The URL for malaria case reports		f	8	text	instructions.result.malaria.case.url	3	\N	url	\N	siteInfo.malariaCaseURL	\N
 47	malariaCaseReport	2012-04-20 11:20:34.0183-07	True to send reports, false otherwise	false	f	8	boolean	instructions.result.malaria.case	3	\N	enable	\N	siteInfo.malariaCaseReport	\N
 48	testUsageReporting	2012-05-02 13:18:22.637167-07	Should reporting testUsage electronically be enabled	false	f	6	boolean	instructions.test.usage	0	\N	enable	\N	siteInfo.testUsageReporting	\N
-49	default language locale	2012-05-14 11:24:08.802607-07	The default language local	fr-FR	f	1	dictionary	\N	0	\N	\N	197	siteInfo.default.language.locale	\N
+49	default language locale	2020-05-14 02:23:57.339+00	The default language local	en-US	f	1	dictionary	\N	0	\N	\N	197	siteInfo.default.language.locale	\N
 50	default date locale	2012-05-14 11:24:08.802607-07	The default date local	fr-FR	f	1	dictionary	\N	0	\N	\N	197	siteInfo.default.date.locale	\N
 52	condenseNSF	2012-06-01 15:10:58.452758-07	Should NFS be represented as NFS or as individual tests	false	f	11	boolean	\N	0	\N	\N	\N	siteInfo.condenseNSF	\N
 53	roleForPatientOnResults	2012-06-19 10:05:53.340299-07	Is patient information restricted to those in correct role	false	f	9	boolean	\N	0	\N	\N	\N	siteInfo.roleForPatientOnResults	\N

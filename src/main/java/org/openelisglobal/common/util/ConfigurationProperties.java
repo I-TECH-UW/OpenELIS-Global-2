@@ -113,9 +113,13 @@ public abstract class ConfigurationProperties {
         ORDER_BARCODE_WIDTH("widthOrderLabels"),    //Width of the order barcode
         SPECIMEN_BARCODE_HEIGHT("heightSpecimenLabels"),    //Height of the specimen barcode
         SPECIMEN_BARCODE_WIDTH("widthSpecimenLabels"),  //Width of the specimen barcode
-        SPECIMEN_FIELD_DATE("collectionDateCheck"),
-        SPECIMEN_FIELD_SEX("patientSexCheck"),
-        SPECIMEN_FIELD_TESTS("testsCheck");
+        SPECIMEN_FIELD_DATE("collectionDateCheck"), //
+        SPECIMEN_FIELD_SEX("patientSexCheck"), //
+        SPECIMEN_FIELD_TESTS("testsCheck"), //
+        INFO_HIGHWAY_USERNAME("infoHighway.username"), //
+        INFO_HIGHWAY_PASSWORD("infoHighway.password"), //
+        INFO_HIGHWAY_ADDRESS("infoHighway.uri"), //
+        INFO_HIGHWAY_ENABLED("infoHighway.enabled"); //
 
         private String name;
 

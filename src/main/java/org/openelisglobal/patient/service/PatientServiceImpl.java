@@ -702,21 +702,23 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String> i
         }
 
         if (commune == null) {
-            insertNewPatientInfo(ADDRESS_PART_COMMUNE_ID, patientInfo.getCommune(), "T", patient, sysUserId);
+            insertNewPatientAddressInfo(ADDRESS_PART_COMMUNE_ID, patientInfo.getCommune(), "T", patient, sysUserId);
         }
 
         if (village == null) {
-            insertNewPatientInfo(ADDRESS_PART_VILLAGE_ID, patientInfo.getCity(), "T", patient, sysUserId);
+            insertNewPatientAddressInfo(ADDRESS_PART_VILLAGE_ID, patientInfo.getCity(), "T", patient, sysUserId);
         }
 
         if (dept == null && patientInfo.getAddressDepartment() != null
                 && !patientInfo.getAddressDepartment().equals("0")) {
-            insertNewPatientInfo(ADDRESS_PART_DEPT_ID, patientInfo.getAddressDepartment(), "D", patient, sysUserId);
+            insertNewPatientAddressInfo(ADDRESS_PART_DEPT_ID, patientInfo.getAddressDepartment(), "D", patient, sysUserId);
         }
 
     }
 
-    private void insertNewPatientInfo(String partId, String value, String type, Patient patient, String sysUserId) {
+    @Override
+    public void insertNewPatientAddressInfo(String partId, String value, String type, Patient patient,
+            String sysUserId) {
         PersonAddress address;
         address = new PersonAddress();
         address.setPersonId(patient.getPerson().getId());

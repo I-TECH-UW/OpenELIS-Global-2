@@ -95,7 +95,7 @@ public class AggregateReportJob implements Job {
                     + "/IndicatorAggregation";//
 
             boolean sendAsychronously = false;
-            ResponseHandler responseHandler = SpringContext.getBean("aggregateResponseHandler");
+            ResponseHandler responseHandler = (ResponseHandler) SpringContext.getBean("aggregateResponseHandler");
             responseHandler.setReports(sendableReports);
             responseHandler.setReAttemptTry(wrapper, castorPropertyName, url);
 

@@ -1,6 +1,9 @@
 package org.openelisglobal.security;
 
+import org.jasypt.util.text.AES256TextEncryptor;
+import org.jasypt.util.text.TextEncryptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -34,6 +37,9 @@ public class SecurityConfig {
     private static final String CONTENT_SECURITY_POLICY = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval';"
             + " connect-src 'self'; img-src 'self'; style-src 'self' 'unsafe-inline';"
             + " frame-src 'self'; object-src 'self';";
+
+    @Value("${encryption.general.password:dev}")
+    private String encryptionPassword;
 
     @Autowired
     public void configureGlobalSecurity(AuthenticationManagerBuilder auth) throws Exception {
@@ -120,5 +126,12 @@ public class SecurityConfig {
     @Bean
     public HttpSessionEventPublisher httpSessionEventPublisher() {
         return new HttpSessionEventPublisher();
+    }
+
+    @Bean
+    public TextEncryptor textEncryptor() {
+        AES256TextEncryptor textEncryptor = new AES256TextEncryptor();
+        textEncryptor.setPassword(encryptionPassword);
+        return textEncryptor;
     }
 }

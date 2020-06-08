@@ -90,7 +90,8 @@ public class SiteInformationController extends BaseController {
         binder.setAllowedFields(ALLOWED_FIELDS);
     }
 
-    @RequestMapping(value = { "/NonConformityConfiguration", "/WorkplanConfiguration", "/PrintedReportsConfiguration",
+    @RequestMapping(value = { "/ExternalConnections", "/NonConformityConfiguration", "/WorkplanConfiguration",
+            "/PrintedReportsConfiguration",
             "/SampleEntryConfig", "/ResultConfiguration", "/MenuStatementConfig", "/PatientConfiguration",
             "/ValidationConfiguration", "/SiteInformation", "/NextPreviousNonConformityConfiguration",
             "/NextPreviousWorkplanConfiguration", "/NextPreviousPrintedReportsConfiguration",
@@ -162,7 +163,12 @@ public class SiteInformationController extends BaseController {
 
     private void setupFormForRequest(SiteInformationForm form, HttpServletRequest request) {
         String path = request.getServletPath();
-        if (path.contains("NonConformityConfiguration")) {
+        if (path.contains("ExternalConnections")) {
+            form.setSiteInfoDomainName("externalConnections");
+            form.setFormName("ExternalConnectionsForm");
+            form.setFormAction("ExternalConnections");
+
+        } else if (path.contains("NonConformityConfiguration")) {
             form.setSiteInfoDomainName("non_conformityConfiguration");
             form.setFormName("NonConformityConfigurationForm");
             form.setFormAction("NonConformityConfiguration");
@@ -233,7 +239,8 @@ public class SiteInformationController extends BaseController {
         return Boolean.TRUE;
     }
 
-    @RequestMapping(value = { "/NonConformityConfiguration", "/WorkplanConfiguration", "/PrintedReportsConfiguration",
+    @RequestMapping(value = { "/ExternalConnections", "/NonConformityConfiguration", "/WorkplanConfiguration",
+            "/PrintedReportsConfiguration",
             "/SampleEntryConfig", "/ResultConfiguration", "/MenuStatementConfig", "/PatientConfiguration",
             "/ValidationConfiguration", "/SiteInformation" }, method = RequestMethod.POST)
     public ModelAndView showUpdateSiteInformation(HttpServletRequest request, HttpServletResponse response,
@@ -445,7 +452,8 @@ public class SiteInformationController extends BaseController {
      * }
      */
 
-    @RequestMapping(value = { "/CancelNonConformityConfiguration", "/CancelWorkplanConfiguration",
+    @RequestMapping(value = { "/CancelExternalConnections", "/CancelNonConformityConfiguration",
+            "/CancelWorkplanConfiguration",
             "/CancelPrintedReportsConfiguration", "/CancelSampleEntryConfig", "/CancelResultConfiguration",
             "/CancelMenuStatementConfig", "/CancelPatientConfiguration", "/CancelValidationConfiguration",
             "/CancelSiteInformation" }, method = RequestMethod.GET)

@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.action.IActionConstants;
-import org.openelisglobal.common.provider.query.workerObjects.PatientSearchLocalAndClinicWorker;
+import org.openelisglobal.common.provider.query.workerObjects.PatientSearchLocalAndExternalWorker;
 import org.openelisglobal.common.provider.query.workerObjects.PatientSearchLocalWorker;
 import org.openelisglobal.common.provider.query.workerObjects.PatientSearchWorker;
 import org.openelisglobal.common.servlet.validation.AjaxServlet;
@@ -127,8 +127,7 @@ public class PatientSearchProvider extends BaseQueryProvider {
             return new PatientSearchLocalWorker();
         } else {
             UserSessionData usd = (UserSessionData) request.getSession().getAttribute(USER_SESSION_DATA);
-
-            return new PatientSearchLocalAndClinicWorker(String.valueOf(usd.getSystemUserId()));
+            return new PatientSearchLocalAndExternalWorker(String.valueOf(usd.getSystemUserId()));
         }
     }
 
