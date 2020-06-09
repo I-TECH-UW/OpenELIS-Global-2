@@ -532,10 +532,17 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String> i
         return getBaseObjectDAO().getData(patientId);
     }
 
+
     @Override
     @Transactional(readOnly = true)
-    public Patient getPatientByNationalId(String subjectNumber) {
-        return getBaseObjectDAO().getPatientByNationalId(subjectNumber);
+    public Patient getPatientByNationalId(String nationalId) {
+        return getBaseObjectDAO().getPatientByNationalId(nationalId);
+    }
+    
+    @Override
+    @Transactional(readOnly = true)
+    public Patient getPatientBySubjectNumber(String subjectNumber) {
+        return getBaseObjectDAO().getPatientBySubjectNumber(subjectNumber);
     }
 
     @Override
