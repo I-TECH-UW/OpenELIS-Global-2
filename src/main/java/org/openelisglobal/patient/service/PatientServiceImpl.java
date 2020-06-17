@@ -16,6 +16,7 @@ import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
 import org.openelisglobal.common.util.DateUtil;
+import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
 import org.openelisglobal.gender.service.GenderService;
 import org.openelisglobal.gender.valueholder.Gender;
 import org.openelisglobal.patient.action.IPatientUpdate.PatientUpdateStatus;
@@ -88,6 +89,8 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String> i
     private PatientPatientTypeService patientPatientTypeService;
     @Autowired
     private PersonService personService;
+    @Autowired
+    private FhirTransformService fhirTransformService;
 
     @PostConstruct
     public void initializeGlobalVariables() {
@@ -610,6 +613,11 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String> i
         }
 
         persistPatientRelatedInformation(patientInfo, patient, sysUserId);
+        
+        org.hl7.fhir.r4.model.Patient fhirPatient = 
+                fhirTransformService.CreateFhirPatientFromOEPatient(patientInfo);
+        
+        org.hl7.fhir.r4.model.Bundle pBundle = fhirTransformService.CreateFhirResource(fhirPatient);
     }
 
     protected void persistPatientRelatedInformation(PatientManagementInfo patientInfo, Patient patient,

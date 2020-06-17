@@ -180,7 +180,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 
         try {
             samplePatientService.persistData(updateData, patientUpdate, patientInfo, form, request);
-            String fhir_json = fhirTransformService.CreateFhirFromOESample(updateData, patientUpdate, patientInfo, form, request);
+//            String fhir_json = fhirTransformService.CreateFhirFromOESample(updateData, patientUpdate, patientInfo, form, request);
         } catch (LIMSRuntimeException e) {
             // ActionError error;
             if (e.getException() instanceof StaleObjectStateException) {

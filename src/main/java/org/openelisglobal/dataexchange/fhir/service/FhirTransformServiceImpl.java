@@ -582,7 +582,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         return null;
     }
     
-    Bundle CreateFhirResource(Resource resource) {
+    public Bundle CreateFhirResource(Resource resource) {
         Bundle bundle = new Bundle();
         Bundle resp = new Bundle();
         Identifier identifier = new Identifier();
@@ -608,7 +608,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         return resp;
     }
     
-    private org.hl7.fhir.r4.model.Patient CreateFhirPatientFromOEPatient(Patient patient) {
+    public org.hl7.fhir.r4.model.Patient CreateFhirPatientFromOEPatient(Patient patient) {
         org.hl7.fhir.r4.model.Patient fhirPatient = new org.hl7.fhir.r4.model.Patient();
         List<PatientIdentity> patientIdentityList = patientIdentityService.getPatientIdentitiesForPatient(patient.getId());
         String subjectNumber = null;
@@ -642,7 +642,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         return fhirPatient;
     }
     
-    private org.hl7.fhir.r4.model.Patient CreateFhirPatientFromOEPatient(PatientManagementInfo patientInfo) {
+    public org.hl7.fhir.r4.model.Patient CreateFhirPatientFromOEPatient(PatientManagementInfo patientInfo) {
         org.hl7.fhir.r4.model.Patient fhirPatient = new org.hl7.fhir.r4.model.Patient();
         
         String subjectNumber = patientInfo.getSubjectNumber();
