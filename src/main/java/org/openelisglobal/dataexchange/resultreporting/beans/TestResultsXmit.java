@@ -36,6 +36,8 @@ public class TestResultsXmit {
     private TestRangeXmit normalRange;
 
     private String status;
+    
+    private String unitOfMeasure;
 
     public CodedValueXmit getTest() {
         return test;
@@ -297,5 +299,14 @@ public class TestResultsXmit {
 
     public Event getResultsEvent() {
         return resultsEvent;
+    }
+    
+    public String getUnits() {
+        return unitOfMeasure;
+    }
+
+    public void setUnits(String unitOfMeasure) {
+        this.unitOfMeasure = unitOfMeasure;
+        
     }
 }

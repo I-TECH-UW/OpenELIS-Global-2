@@ -114,7 +114,11 @@ public class DBOrderPersister implements IOrderPersister {
         }
 
         List<PatientIdentity> identities = new ArrayList<>();
-        addIdentityIfAppropriate(IDENTITY_GUID_ID, orderPatient.getGuid(), identities);
+        if (orderPatient.getExternalId().length() == 0) //HL7
+            addIdentityIfAppropriate(IDENTITY_GUID_ID, orderPatient.getGuid(), identities);
+        else //FHIR
+            addIdentityIfAppropriate(IDENTITY_GUID_ID, orderPatient.getExternalId(), identities);
+        
         addIdentityIfAppropriate(IDENTITY_STNUMBER_ID, orderPatient.getStNumber(), identities);
         addIdentityIfAppropriate(IDENTITY_OBNUMBER_ID, orderPatient.getObNumber(), identities);
         addIdentityIfAppropriate(IDENTITY_PCNUMBER_ID, orderPatient.getPcNumber(), identities);
@@ -262,7 +266,8 @@ public class DBOrderPersister implements IOrderPersister {
 
             if (eOrders != null && !eOrders.isEmpty()) {
                 ElectronicOrder eOrder = eOrders.get(eOrders.size() - 1);
-                eOrder.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(ExternalOrderStatus.Cancelled));
+                eOrder.setStatusId(
+                        SpringContext.getBean(IStatusService.class).getStatusID(ExternalOrderStatus.Cancelled));
                 eOrder.setSysUserId(SERVICE_USER_ID);
                 try {
                     eOrderService.update(eOrder);

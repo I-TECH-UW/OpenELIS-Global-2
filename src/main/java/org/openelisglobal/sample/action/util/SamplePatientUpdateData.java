@@ -63,6 +63,7 @@ public class SamplePatientUpdateData {
     private Provider provider;
     private String patientId;
     private String accessionNumber;
+    private String referringId;
 
     private Sample sample;
     private SampleHuman sampleHuman = new SampleHuman();
@@ -127,6 +128,14 @@ public class SamplePatientUpdateData {
 
     public void setAccessionNumber(String accessionNumber) {
         this.accessionNumber = accessionNumber;
+    }
+    
+    public String getReferringId() {
+        return referringId;
+    }
+
+    public void setReferringId(String referringId) {
+        this.referringId = referringId;
     }
 
     public Sample getSample() {
@@ -273,6 +282,7 @@ public class SamplePatientUpdateData {
         sample = new Sample();
         sample.setSysUserId(currentUserId);
         sample.setAccessionNumber(accessionNumber);
+        sample.setReferringId(referringId);
 
         sample.setEnteredDate(DateUtil.getNowAsSqlDate());
 
