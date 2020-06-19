@@ -45,6 +45,7 @@ import org.openelisglobal.dataexchange.service.aggregatereporting.ReportExternal
 import org.openelisglobal.dataexchange.service.aggregatereporting.ReportQueueTypeService;
 import org.openelisglobal.dataexchange.service.order.ElectronicOrderService;
 import org.openelisglobal.dataexchange.service.orderresult.HL7MessageOutService;
+import org.openelisglobal.patient.service.PatientService;
 import org.openelisglobal.referencetables.service.ReferenceTablesService;
 import org.openelisglobal.referencetables.valueholder.ReferenceTables;
 import org.openelisglobal.reports.service.DocumentTrackService;
@@ -72,6 +73,7 @@ public class ResultReportingTransfer {
     protected ElectronicOrderService electronicOrderService = SpringContext.getBean(ElectronicOrderService.class);
     protected FhirApiWorkflowService fhirApiWorkFlowService = SpringContext.getBean(FhirApiWorkflowService.class);
     protected FhirTransformService fhirTransformService = SpringContext.getBean(FhirTransformService.class);
+    protected PatientService patientService = SpringContext.getBean(PatientService.class);
 
     private static DocumentType DOCUMENT_TYPE;
     private static String QUEUE_TYPE_ID;
@@ -97,7 +99,11 @@ public class ResultReportingTransfer {
        
         for (TestResultsXmit result : resultReport.getTestResults()) {
             if (result.getReferringOrderNumber() == null) { // walk-in create FHIR
-                String fhir_json = fhirTransformService.CreateFhirFromOESample(result);
+                String patientGuid = result.getPatientGUID();
+                String accessionNumber = result.getAccessionNumber();
+                accessionNumber = accessionNumber.substring(0,accessionNumber.indexOf('-')); // disregard test number within set
+                org.openelisglobal.patient.valueholder.Patient patient = patientService.getPatientForGuid(patientGuid);
+                String fhir_json = fhirTransformService.CreateFhirFromOESample(result, patient);
                 System.out.println("" + fhir_json);
                 continue;
             }

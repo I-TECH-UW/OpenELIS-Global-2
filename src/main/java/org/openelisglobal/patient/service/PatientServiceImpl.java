@@ -34,6 +34,7 @@ import org.openelisglobal.patienttype.util.PatientTypeMap;
 import org.openelisglobal.patienttype.valueholder.PatientPatientType;
 import org.openelisglobal.person.service.PersonService;
 import org.openelisglobal.person.valueholder.Person;
+import org.openelisglobal.spring.util.SpringContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -89,8 +90,8 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String> i
     private PatientPatientTypeService patientPatientTypeService;
     @Autowired
     private PersonService personService;
-    @Autowired
-    private FhirTransformService fhirTransformService;
+//    @Autowired
+    protected FhirTransformService fhirTransformService = SpringContext.getBean(FhirTransformService.class);
 
     @PostConstruct
     public void initializeGlobalVariables() {
@@ -605,19 +606,18 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String> i
             personService.update(patient.getPerson());
         }
         patient.setPerson(patient.getPerson());
-
-        if (patientInfo.getPatientUpdateStatus() == PatientUpdateStatus.ADD) {
-            insert(patient);
-        } else if (patientInfo.getPatientUpdateStatus() == PatientUpdateStatus.UPDATE) {
-            update(patient);
-        }
-
-        persistPatientRelatedInformation(patientInfo, patient, sysUserId);
         
         org.hl7.fhir.r4.model.Patient fhirPatient = 
                 fhirTransformService.CreateFhirPatientFromOEPatient(patientInfo);
         
-        org.hl7.fhir.r4.model.Bundle pBundle = fhirTransformService.CreateFhirResource(fhirPatient);
+        if (patientInfo.getPatientUpdateStatus() == PatientUpdateStatus.ADD) {
+            insert(patient);
+            org.hl7.fhir.r4.model.Bundle pBundle = fhirTransformService.CreateFhirResource(fhirPatient);
+        } else if (patientInfo.getPatientUpdateStatus() == PatientUpdateStatus.UPDATE) {
+            update(patient);
+            org.hl7.fhir.r4.model.Bundle pBundle = fhirTransformService.UpdateFhirResource(fhirPatient);
+        }
+        persistPatientRelatedInformation(patientInfo, patient, sysUserId);
     }
 
     protected void persistPatientRelatedInformation(PatientManagementInfo patientInfo, Patient patient,

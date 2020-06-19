@@ -17,7 +17,7 @@ public interface FhirTransformService {
     
     public String CreateFhirFromOESample(PortableOrder porder);
 
-    public String CreateFhirFromOESample(TestResultsXmit result);
+    public String CreateFhirFromOESample(TestResultsXmit result, Patient patient);
     
     public String CreateFhirFromOESample(ElectronicOrder eOrder, TestResultsXmit result);
 
@@ -28,5 +28,7 @@ public interface FhirTransformService {
     public org.hl7.fhir.r4.model.Patient CreateFhirPatientFromOEPatient(PatientManagementInfo patientInfo);
     
     public Bundle CreateFhirResource(Resource resource);
+    
+    public Bundle UpdateFhirResource(Resource resource);
     
 }
