@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
-<Context >
-    <Resources  cachingAllowed="false" />
+<Context logEffectiveWebXml="true"> 
+    <Resources cacheMaxSize="102400" />
     <Resource auth="Container" 
         driverClassName="org.postgresql.Driver" 
         maxTotal="20" maxIdle="10" maxWaitMillis="-1"

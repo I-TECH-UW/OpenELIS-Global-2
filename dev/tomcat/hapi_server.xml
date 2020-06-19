@@ -75,7 +75,7 @@
    			   URIEncoding="UTF-8"
                enableLookups="true" disableUploadTimeout="true"
                acceptCount="100" debug="0" scheme="https" secure="true"
-               clientAuth="false" sslProtocol="TLS" SSLEnabled="true" 
+               clientAuth="true" sslProtocol="TLS" SSLEnabled="true" 
                keystoreFile="/run/secrets/keystore"
                keystorePass="testtest"
                truststoreFile="/run/secrets/truststore"

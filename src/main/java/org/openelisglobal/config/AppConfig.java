@@ -15,8 +15,10 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.LocaleResolver;
@@ -32,7 +34,10 @@ import org.springframework.web.servlet.view.tiles3.TilesConfigurer;
 import org.springframework.web.servlet.view.tiles3.TilesView;
 
 @EnableWebMvc
+@EnableAsync
 @Configuration
+@PropertySource(value = { "classpath:application.properties",
+        "file:/run/secrets/common.properties" })
 @ComponentScan(basePackages = { "spring", "org.openelisglobal" })
 public class AppConfig implements WebMvcConfigurer {
 
@@ -101,7 +106,8 @@ public class AppConfig implements WebMvcConfigurer {
         registry.addInterceptor(localeChangeInterceptor()).addPathPatterns("/**");
         registry.addInterceptor(moduleAuthenticationInterceptor).addPathPatterns("/**")
                 .excludePathPatterns(SecurityConfig.OPEN_PAGES).excludePathPatterns(SecurityConfig.RESOURCE_PAGES)
-                .excludePathPatterns(SecurityConfig.AUTH_OPEN_PAGES);
+                .excludePathPatterns(SecurityConfig.AUTH_OPEN_PAGES)
+                .excludePathPatterns(SecurityConfig.CLIENT_CERTIFICATE_PAGES);
         registry.addInterceptor(urlLocatedErrorsInterceptor).addPathPatterns("/**");
         registry.addInterceptor(pageAttributesInterceptor).addPathPatterns("/**");
     }

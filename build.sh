@@ -38,7 +38,8 @@ INSTALL_DIR="${BUILD_SCRIPT_DIR}/install"
 
 #and other important locations
 PROJECT_DIR="${BUILD_SCRIPT_DIR}"
-#JPA_SERVER_DIR="${PROJECT_DIR}/../hapi-fhir-jpaserver-starter/"
+JPA_SERVER_DIR="${PROJECT_DIR}/hapi-fhir-jpaserver-starter/"
+#CONSOLIDATED_SERVER_DIR="${PROJECT_DIR}/Consolidated-Server/"
 
 cd ${PROJECT_DIR}
 echo Will build from $branch
@@ -71,7 +72,9 @@ bash ${INSTALL_DIR}/createDefaultPassword.sh
 
 echo "creating docker images"
 #create jpaserver docker image
-#bash ${INSTALL_DIR}/buildProject.sh -dl ${JPA_SERVER_DIR}
+bash ${INSTALL_DIR}/buildProject.sh -dl ${JPA_SERVER_DIR}
+#create data import docker image
+#bash ${INSTALL_DIR}/buildProject.sh -dl ${CONSOLIDATED_SERVER_DIR}
 #create the docker image
 bash ${INSTALL_DIR}/buildProject.sh -dl ${PROJECT_DIR}
 
@@ -85,7 +88,9 @@ createLinuxInstaller() {
 	cp -r ${INSTALL_DIR}/installerTemplate/linux/* ${INSTALLER_CREATION_DIR}/linux/${installerName}
 	cp OpenELIS-Global_DockerImage.tar.gz ${INSTALLER_CREATION_DIR}/linux/${installerName}/dockerImage/${context}-${projectVersion}.tar.gz
 	cp Postgres_DockerImage.tar.gz ${INSTALLER_CREATION_DIR}/linux/${installerName}/dockerImage/Postgres_DockerImage.tar.gz
-#	cp JPAServer_DockerImage.tar.gz ${INSTALLER_CREATION_DIR}/linux/${installerName}/dockerImage/JPAServer_DockerImage.tar.gz
+	cp JPAServer_DockerImage.tar.gz ${INSTALLER_CREATION_DIR}/linux/${installerName}/dockerImage/JPAServer_DockerImage.tar.gz
+#	cp DataImporter_DockerImage.tar.gz ${INSTALLER_CREATION_DIR}/linux/${installerName}/dockerImage/DataImporter_DockerImage.tar.gz
+#	cp DataSubscriber_DockerImage.tar.gz ${INSTALLER_CREATION_DIR}/linux/${installerName}/dockerImage/DataSubscriber_DockerImage.tar.gz
 #	cp ${PROJECT_DIR}/tools/DBBackup/installerTemplates/${backupFile} ${INSTALLER_CREATION_DIR}/linux/${context}/templates/DatabaseBackup.pl
 #	cp ${PROJECT_DIR}/database/baseDatabase/OpenELIS-Global.sql ${INSTALLER_CREATION_DIR}/linux/${installerName}/database/baseDatabase/databaseInstall.sql
 	
@@ -129,9 +134,14 @@ then
 	echo "saving docker image as OpenELIS-Global_DockerImage.tar.gz"
 	docker save ${artifactId}:latest | gzip > OpenELIS-Global_DockerImage.tar.gz
 	echo "saving Postgres docker image"
+	docker pull postgres:9.5
 	docker save postgres:9.5 | gzip > Postgres_DockerImage.tar.gz
-	#echo "saving JPA Server docker image"
-	#docker save hapi-fhir-jpaserver-starter:latest | gzip > JPAServer_DockerImage.tar.gz
+	echo "saving JPA Server docker image"
+	docker save hapi-fhir-jpaserver-starter:latest | gzip > JPAServer_DockerImage.tar.gz
+#	echo "saving Data Importer docker image"
+#	docker save dataimport-webapp:latest | gzip > DataImporter_DockerImage.tar.gz
+#	echo "saving Data Subscriber docker image"
+#	docker save datasubscriber-webapp:latest | gzip > DataSubscriber_DockerImage.tar.gz
 	
 	mkdir ${STAGING_DIR}
 	echo "downloading scripts for docker installation and docker-compose installation"
@@ -143,7 +153,9 @@ then
 	
 	rm OpenELIS-Global_DockerImage*.tar.gz
 	rm Postgres_DockerImage.tar.gz
-#	rm JPAServer_DockerImage.tar.gz
+	rm JPAServer_DockerImage.tar.gz
+	rm DataSubscriber_DockerImage.tar.gz
+	rm DataImporter_DockerImage.tar.gz
 	rm -r ${STAGING_DIR}
 	
 fi

@@ -58,8 +58,8 @@ public class OrderResponseWorker {
             event = testResults.getResultsEvent();
             List<ElectronicOrder> eOrders = eOrderService
                     .getElectronicOrdersByExternalId(testResults.getReferringOrderNumber());
-            eOrder = eOrders.get(eOrders.size() - 1);
-            originalMessage.parse(eOrder.getData());
+            eOrder = eOrders.size() > 0 ? eOrders.get(eOrders.size()-1) : null;
+            if (eOrder != null) originalMessage.parse(eOrder.getData());
             createPIDSegment(testResults);
             createORCSegment(testResults);
             createOBRSegment(testResults);

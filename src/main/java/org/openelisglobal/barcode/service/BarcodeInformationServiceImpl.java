@@ -1,7 +1,5 @@
 package org.openelisglobal.barcode.service;
 
-import javax.validation.Valid;
-
 import org.openelisglobal.barcode.form.BarcodeConfigurationForm;
 import org.openelisglobal.siteinformation.service.SiteInformationService;
 import org.openelisglobal.siteinformation.valueholder.SiteInformation;
@@ -17,7 +15,7 @@ public class BarcodeInformationServiceImpl implements BarcodeInformationService 
 
     @Override
     @Transactional
-    public void updateBarcodeInfoFromForm(@Valid BarcodeConfigurationForm form, String sysUserId) {
+    public void updateBarcodeInfoFromForm(BarcodeConfigurationForm form, String sysUserId) {
         updateSiteInfo("heightOrderLabels", Float.toString(form.getHeightOrderLabels()), "text", sysUserId);
         updateSiteInfo("widthOrderLabels", Float.toString(form.getWidthOrderLabels()), "text", sysUserId);
         updateSiteInfo("heightSpecimenLabels", Float.toString(form.getHeightSpecimenLabels()), "text", sysUserId);

@@ -26,7 +26,7 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject<PK>, PK extends
 
     private final Class<T> classType;
 
-    protected boolean auditTrailLog = true;
+    protected boolean auditTrailLog = false;
     protected List<String> defaultSortOrder = new ArrayList<>(Arrays.asList("id"));
 
     public BaseObjectServiceImpl(Class<T> clazz) {

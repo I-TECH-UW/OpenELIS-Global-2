@@ -10597,6 +10597,7 @@ COPY clinlims.menu (id, parent_id, presentation_order, element_id, action_url, c
 173	89	30	menu_reports_export_specific	/Report.do?type=patient&report=Trends	\N	reports.export.specific	tooltip.export.cpecific	f	t
 172	89	10	menu_reports_export_general	/Report.do?type=patient&report=CIStudyExport	\N	reports.export.general	tooltip.export.generale	f	t
 179	89	20	menu_reports_export_valid	/Report.do?type=patient&report=CISampleExport	\N	reports.export.valid	tooltip.export.valid	f	t
+184	2	5	menu_sample_porder	/PortableOrders.do	\N	banner.menu.porders	tooltip.bannner.menu.porders	f	t
 \.
 
 
