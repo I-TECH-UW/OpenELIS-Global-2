@@ -397,6 +397,12 @@
 
 	<build>
 		<finalName>OpenELIS-Global</finalName>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -405,8 +411,8 @@
 					<!-- move to release when we compile in java versions >= 9 -->
 					<release>${maven.java.release}</release>
 					<!-- legacy for java versions < 9 -->
-<!-- 					<source>${maven.compiler.source}</source> -->
-<!-- 					<target>${maven.compiler.target}</target> -->
+					<!-- <source>${maven.compiler.source}</source> -->
+					<!-- <target>${maven.compiler.target}</target> -->
 				</configuration>
 			</plugin>
 			<plugin>

@@ -3,6 +3,7 @@
                  org.openelisglobal.common.formfields.FormFields,
                  org.openelisglobal.common.formfields.FormFields.Field,
                  org.openelisglobal.patient.action.bean.PatientManagementInfo,
+                 org.openelisglobal.common.services.PhoneNumberService,
                  org.openelisglobal.common.util.*, org.openelisglobal.internationalization.MessageUtil" %>
 
 <%@ page isELIgnored="false" %>
@@ -1103,7 +1104,7 @@ function  processSubjectNumberSuccess(xhr){
 	<% if( FormFields.getInstance().useField(Field.PatientPhone)){ %>
 		<tr>
 			<td>&nbsp;</td>
-			<td style="text-align:right;"><%= MessageUtil.getContextualMessage("person.phone") %>:</td>
+			<td style="text-align:right;"><%= MessageUtil.getContextualMessage("person.phone") %>: <%=" " + PhoneNumberService.getPhoneFormat() %></td>
 			<td>
 				<form:input id="patientPhone" path="patientProperties.primaryPhone" onchange="validatePhoneNumber( this );" maxLength="35"/>
 <%-- 				<html:text id="patientPhone" name='${form.formName}' property="patientProperties.phone" maxlength="35" onchange="validatePhoneNumber( this );" />

@@ -36,7 +36,7 @@ public class SampleBatchEntryByProjectController extends BaseSampleEntryControll
             "ProjectData.edtaTubeTaken", "ProjectData.dryTubeTaken", "ProjectData.dbsTaken", "ProjectData.dnaPCR",
             "ProjectData.ARVcenterName", "ProjectData.ARVcenterCode", "ProjectData.EIDSiteName",
             "ProjectData.EIDsiteCode", "currentDate", "currentTime", "sampleOrderItems.receivedDateForDisplay",
-            "sampleOrderItems.receivedTime", "sampleXML", "sampleOrderItems.referringSiteId" };
+            "sampleOrderItems.receivedTime", "sampleXML", "sampleOrderItems.referringSiteId", "method" };
 
     @Autowired
     SampleBatchEntryFormValidator formValidator;
