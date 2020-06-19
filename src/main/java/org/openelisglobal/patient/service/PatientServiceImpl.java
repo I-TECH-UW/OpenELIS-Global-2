@@ -16,6 +16,7 @@ import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
 import org.openelisglobal.common.util.DateUtil;
+import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
 import org.openelisglobal.gender.service.GenderService;
 import org.openelisglobal.gender.valueholder.Gender;
 import org.openelisglobal.patient.action.IPatientUpdate.PatientUpdateStatus;
@@ -33,6 +34,7 @@ import org.openelisglobal.patienttype.util.PatientTypeMap;
 import org.openelisglobal.patienttype.valueholder.PatientPatientType;
 import org.openelisglobal.person.service.PersonService;
 import org.openelisglobal.person.valueholder.Person;
+import org.openelisglobal.spring.util.SpringContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -88,6 +90,8 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String> i
     private PatientPatientTypeService patientPatientTypeService;
     @Autowired
     private PersonService personService;
+//    @Autowired
+    protected FhirTransformService fhirTransformService = SpringContext.getBean(FhirTransformService.class);
 
     @PostConstruct
     public void initializeGlobalVariables() {
@@ -532,10 +536,17 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String> i
         return getBaseObjectDAO().getData(patientId);
     }
 
+
     @Override
     @Transactional(readOnly = true)
-    public Patient getPatientByNationalId(String subjectNumber) {
-        return getBaseObjectDAO().getPatientByNationalId(subjectNumber);
+    public Patient getPatientByNationalId(String nationalId) {
+        return getBaseObjectDAO().getPatientByNationalId(nationalId);
+    }
+    
+    @Override
+    @Transactional(readOnly = true)
+    public Patient getPatientBySubjectNumber(String subjectNumber) {
+        return getBaseObjectDAO().getPatientBySubjectNumber(subjectNumber);
     }
 
     @Override
@@ -595,13 +606,17 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String> i
             personService.update(patient.getPerson());
         }
         patient.setPerson(patient.getPerson());
-
+        
+        org.hl7.fhir.r4.model.Patient fhirPatient = 
+                fhirTransformService.CreateFhirPatientFromOEPatient(patientInfo);
+        
         if (patientInfo.getPatientUpdateStatus() == PatientUpdateStatus.ADD) {
             insert(patient);
+            org.hl7.fhir.r4.model.Bundle pBundle = fhirTransformService.CreateFhirResource(fhirPatient);
         } else if (patientInfo.getPatientUpdateStatus() == PatientUpdateStatus.UPDATE) {
             update(patient);
+            org.hl7.fhir.r4.model.Bundle pBundle = fhirTransformService.UpdateFhirResource(fhirPatient);
         }
-
         persistPatientRelatedInformation(patientInfo, patient, sysUserId);
     }
 

@@ -50,6 +50,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
     private Boolean useBasedOn;
 
     @Scheduled(initialDelay = 10 * 1000, fixedRate = 6000000 * 1000)
+
     @Override
     public void pollForRemoteTasks() {
         processWorkflow(ResourceType.Task);

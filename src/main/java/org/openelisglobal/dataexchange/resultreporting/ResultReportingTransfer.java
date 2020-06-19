@@ -22,6 +22,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+
 import org.hl7.fhir.r4.model.Annotation;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Bundle.BundleEntryComponent;
@@ -31,13 +32,8 @@ import org.hl7.fhir.r4.model.DiagnosticReport;
 import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Observation;
 import org.hl7.fhir.r4.model.Patient;
-import org.hl7.fhir.r4.model.Quantity;
-import org.hl7.fhir.r4.model.Reference;
-import org.hl7.fhir.r4.model.ResourceType;
 import org.hl7.fhir.r4.model.ServiceRequest;
 import org.hl7.fhir.r4.model.Task;
-import org.hl7.fhir.r4.model.Task.TaskOutputComponent;
-import org.hl7.fhir.r4.model.Task.TaskStatus;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.IStatusService;
@@ -48,6 +44,7 @@ import org.openelisglobal.dataexchange.aggregatereporting.valueholder.ReportQueu
 import org.openelisglobal.dataexchange.common.ITransmissionResponseHandler;
 import org.openelisglobal.dataexchange.common.ReportTransmission;
 import org.openelisglobal.dataexchange.fhir.service.FhirApiWorkflowService;
+import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
 import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder;
 import org.openelisglobal.dataexchange.orderresult.OrderResponseWorker.Event;
 import org.openelisglobal.dataexchange.orderresult.valueholder.HL7MessageOut;
@@ -57,6 +54,7 @@ import org.openelisglobal.dataexchange.service.aggregatereporting.ReportExternal
 import org.openelisglobal.dataexchange.service.aggregatereporting.ReportQueueTypeService;
 import org.openelisglobal.dataexchange.service.order.ElectronicOrderService;
 import org.openelisglobal.dataexchange.service.orderresult.HL7MessageOutService;
+import org.openelisglobal.patient.service.PatientService;
 import org.openelisglobal.referencetables.service.ReferenceTablesService;
 import org.openelisglobal.referencetables.valueholder.ReferenceTables;
 import org.openelisglobal.reports.service.DocumentTrackService;
@@ -68,10 +66,7 @@ import org.openelisglobal.spring.util.SpringContext;
 import org.springframework.beans.factory.annotation.Value;
 
 import ca.uhn.fhir.context.FhirContext;
-import ca.uhn.fhir.model.api.Include;
-import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
-import ca.uhn.fhir.rest.gclient.TokenClientParam;
 
 public class ResultReportingTransfer {
 
@@ -85,6 +80,8 @@ public class ResultReportingTransfer {
     private Patient patient = null;
     protected ElectronicOrderService electronicOrderService = SpringContext.getBean(ElectronicOrderService.class);
     protected FhirApiWorkflowService fhirApiWorkFlowService = SpringContext.getBean(FhirApiWorkflowService.class);
+    protected FhirTransformService fhirTransformService = SpringContext.getBean(FhirTransformService.class);
+    protected PatientService patientService = SpringContext.getBean(PatientService.class);
 
     private static DocumentType DOCUMENT_TYPE;
     private static String QUEUE_TYPE_ID;
@@ -169,135 +166,34 @@ public class ResultReportingTransfer {
     }
 
     public void sendResults(ResultReportXmit resultReport, List<Result> reportingResult, String url) {
-
-        if (resultReport.getTestResults() == null || resultReport.getTestResults().isEmpty()) {
-            return;
-        }
+        IGenericClient localFhirClient = fhirContext
+                .newRestfulGenericClient(fhirApiWorkFlowService.getLocalFhirStorePath());
+       
         for (TestResultsXmit result : resultReport.getTestResults()) {
-            if (result.getReferringOrderNumber().isEmpty()) {
-                ITransmissionResponseHandler responseHandler = new ResultFailHandler(reportingResult);
-                new ReportTransmission().sendHL7Report(resultReport, url, responseHandler);
-            } else { // FHIR
+            if (result.getReferringOrderNumber() == null) { // walk-in create FHIR
+                String patientGuid = result.getPatientGUID();
+                String accessionNumber = result.getAccessionNumber();
+                accessionNumber = accessionNumber.substring(0,accessionNumber.indexOf('-')); // disregard test number within set
+                org.openelisglobal.patient.valueholder.Patient patient = patientService.getPatientForGuid(patientGuid);
+                String fhir_json = fhirTransformService.CreateFhirFromOESample(result, patient);
+                System.out.println("" + fhir_json);
+                continue;
+            }
+            if (!result.getReferringOrderNumber().isEmpty()) { // eOrder create FHIR
+
                 String orderNumber = result.getReferringOrderNumber();
                 List<ElectronicOrder> eOrders = electronicOrderService.getElectronicOrdersByExternalId(orderNumber);
                 ElectronicOrder eOrder = eOrders.get(eOrders.size() - 1);
-
-                IGenericClient localFhirClient = fhirContext
-                        .newRestfulGenericClient(fhirApiWorkFlowService.getLocalFhirStorePath());
-
-                eTask = fhirContext.newJsonParser().parseResource(Task.class, eOrder.getData());
+                ExternalOrderStatus eOrderStatus = SpringContext.getBean(IStatusService.class)
+                        .getExternalOrderStatusForID(eOrder.getStatusId());
                 
-                // using UUID from getData which is idPart in original etask
-                Bundle tsrBundle = (Bundle) localFhirClient.search().forResource(Task.class)
-                        .where(new TokenClientParam("identifier").exactly().code(eTask.getIdElement().getIdPart()))
-                        .include(new Include("Task:based-on"))
-                        .prettyPrint()
-                        .execute();
-                
-                task = null; 
-                List<ServiceRequest> serviceRequestList = new ArrayList<ServiceRequest>();
-                for (BundleEntryComponent bundleComponent : tsrBundle.getEntry()) {
-                    if (bundleComponent.hasResource()
-                            && ResourceType.Task.equals(bundleComponent.getResource().getResourceType())) {
-                        task = (Task) bundleComponent.getResource();
-                    }
-                    
-                    if (bundleComponent.hasResource()
-                            && ResourceType.ServiceRequest.equals(bundleComponent.getResource().getResourceType())) {
-                        ServiceRequest serviceRequest = (ServiceRequest) bundleComponent.getResource();
-                        for(Identifier identifier : serviceRequest.getIdentifier()) {
-                            if(identifier.getValue().equals(orderNumber))
-                                serviceRequestList.add((ServiceRequest) bundleComponent.getResource());
-                        }
-                    }
-                }
-                
-                for (ServiceRequest serviceRequest : serviceRequestList) {
-                    
-                    Bundle pBundle = (Bundle) localFhirClient.search().forResource(Patient.class)
-                            .where(new TokenClientParam("_id").exactly()
-                                    .code(serviceRequest.getSubject().getReferenceElement().getIdPart()))
-                            .prettyPrint().execute();
-
-                    patient = null;
-                    for (BundleEntryComponent bundleComponent : pBundle.getEntry()) {
-                        if (bundleComponent.hasResource()
-                                && ResourceType.Patient.equals(bundleComponent.getResource().getResourceType())) {
-                            patient = (Patient) bundleComponent.getResource();
-                        }
-                    }
-                   
-                    try {
-                        Observation observation = new Observation();
-                        observation.setIdentifier(serviceRequest.getIdentifier());
-                        observation.setBasedOn(serviceRequest.getBasedOn());
-                        observation.setStatus(Observation.ObservationStatus.FINAL);
-                        observation.setCode(serviceRequest.getCode());
-                        Reference subjectRef = new Reference();
-                        subjectRef.setReference(patient.getResourceType() + "/" + patient.getIdElement().getIdPart());
-                        observation.setSubject(subjectRef);
-                        // TODO: numeric, check for other result types
-                        Quantity quantity = new Quantity();
-                        quantity.setValue(new java.math.BigDecimal(result.getResults().get(0).getResult().getText()));
-                        quantity.setUnit(result.getUnits());
-                        observation.setValue(quantity);
-
-                        Annotation oNote = new Annotation();
-                        oNote.setText(result.getTestNotes());
-                        observation.addNote(oNote);
-
-                        MethodOutcome oOutcome = localFhirClient.create().resource(observation).execute();
-                        DiagnosticReport diagnosticReport = new DiagnosticReport();
-                        diagnosticReport.setId(result.getTest().getCode());
-                        diagnosticReport.setIdentifier(serviceRequest.getIdentifier());
-                        diagnosticReport.setBasedOn(serviceRequest.getBasedOn());
-                        diagnosticReport.setStatus(DiagnosticReport.DiagnosticReportStatus.FINAL);
-                        diagnosticReport.setCode(serviceRequest.getCode());
-                        diagnosticReport.setSubject(subjectRef);
-
-                        Reference observationReference = new Reference();
-                        observationReference.setType(oOutcome.getId().getResourceType());
-                        observationReference
-                                .setReference(oOutcome.getId().getResourceType() + "/" + oOutcome.getId().getIdPart());
-                        diagnosticReport.addResult(observationReference);
-                        MethodOutcome drOutcome = localFhirClient.create().resource(diagnosticReport).execute();
-
-                        Reference diagnosticReportReference = new Reference();
-                        diagnosticReportReference.setType(drOutcome.getId().getResourceType());
-                        diagnosticReportReference.setReference(
-                                drOutcome.getId().getResourceType() + "/" + drOutcome.getId().getIdPart());
-
-                        TaskOutputComponent theOutputComponent = new TaskOutputComponent();
-                        theOutputComponent.setValue(diagnosticReportReference);
-                        task.addOutput(theOutputComponent);
-                        
-                        List<String> taskCompleteList = new ArrayList<String>();
-                        task.setStatus(checkTaskStatus(localFhirClient, eTask, task, diagnosticReport, taskCompleteList));
-                        
-                        Coding coding = new Coding();
-                        coding.setSystem("OpenELIS"); // TODO: fix hardcode
-                        
-                        String statusReason = new String();
-                        StringBuilder sb = new StringBuilder();
-                        for (String reason : taskCompleteList ) {
-                            sb.append(reason);
-                            statusReason = sb.toString();
-                        }
-                        coding.setCode(statusReason);
-                        
-                        List<Coding> codingList = new ArrayList<Coding>();
-                        codingList.add(coding);
-                        CodeableConcept taskStatusReason = new CodeableConcept();
-                        taskStatusReason.setCoding(codingList);
-                        task.setStatusReason(taskStatusReason);
-                        
-                        localFhirClient.update().resource(task).execute();
-
-                    } catch (Exception e) {
-                        System.out.println("Result update exception: ");
-                        e.printStackTrace();
-                    }
-                }
+                String fhir_json = fhirTransformService.CreateFhirFromOESample(eOrder, result);
+                continue;
+            }
+            if (result.getReferringOrderNumber().isEmpty()) { // HL7
+                ITransmissionResponseHandler responseHandler = new ResultFailHandler(reportingResult);
+                new ReportTransmission().sendHL7Report(resultReport, url, responseHandler);
+                continue;
             }
         }
     }
