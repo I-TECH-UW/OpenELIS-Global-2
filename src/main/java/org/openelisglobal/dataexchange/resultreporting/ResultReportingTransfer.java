@@ -22,6 +22,15 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+
+import org.hl7.fhir.r4.model.Annotation;
+import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.Bundle.BundleEntryComponent;
+import org.hl7.fhir.r4.model.CodeableConcept;
+import org.hl7.fhir.r4.model.Coding;
+import org.hl7.fhir.r4.model.DiagnosticReport;
+import org.hl7.fhir.r4.model.Identifier;
+import org.hl7.fhir.r4.model.Observation;
 import org.hl7.fhir.r4.model.Patient;
 import org.hl7.fhir.r4.model.ServiceRequest;
 import org.hl7.fhir.r4.model.Task;
@@ -68,7 +77,6 @@ public class ResultReportingTransfer {
 
     private Task task = null;
     private Task eTask = null;
-    private ServiceRequest serviceRequest = null;
     private Patient patient = null;
     protected ElectronicOrderService electronicOrderService = SpringContext.getBean(ElectronicOrderService.class);
     protected FhirApiWorkflowService fhirApiWorkFlowService = SpringContext.getBean(FhirApiWorkflowService.class);
@@ -91,6 +99,70 @@ public class ResultReportingTransfer {
         if (queueType != null) {
             QUEUE_TYPE_ID = queueType.getId();
         }
+    }
+    
+    private TaskStatus checkTaskStatus(IGenericClient localFhirClient, Task eTask, Task task, DiagnosticReport newDiagnosticReport, List<String> taskCompleteList ) {
+
+        Bundle bundle = new Bundle();
+
+        List<ServiceRequest> serviceRequestList = new ArrayList<ServiceRequest>();
+        List<DiagnosticReport> diagnosticReportList = new ArrayList<DiagnosticReport>();
+        
+        for (Reference srId : task.getBasedOn()) {
+            
+             bundle = (Bundle) localFhirClient.search().forResource(ServiceRequest.class)
+                    .where(new TokenClientParam("_id").exactly().code(srId.getReferenceElement().getValueAsString()))
+                    .prettyPrint()
+                    .execute();
+             
+            serviceRequestList.add((ServiceRequest) bundle.getEntryFirstRep().getResource());
+        }
+        
+        diagnosticReportList.add((DiagnosticReport) newDiagnosticReport); // add current dr
+        for (TaskOutputComponent drId : task.getOutput()) {
+            
+            bundle = (Bundle) localFhirClient.search().forResource(DiagnosticReport.class)
+                   .where(new TokenClientParam("_id").exactly().code(drId.getIdElement().getValueAsString()))
+                   .prettyPrint()
+                   .execute();
+        }
+            
+        for (BundleEntryComponent bundleComponent : bundle.getEntry()) {
+
+            if (bundleComponent.hasResource()
+                    && ResourceType.DiagnosticReport.equals(bundleComponent.getResource().getResourceType())) {
+                diagnosticReportList.add((DiagnosticReport) bundleComponent.getResource());
+            }
+        }
+        
+        
+        String srIdentifier = null;
+        for (ServiceRequest serviceRequest : serviceRequestList) {
+//            System.out.println("sr: " + serviceRequest.getIdentifier().get(0).getValue());
+            srIdentifier = serviceRequest.getIdentifier().get(0).getValue();
+            for (DiagnosticReport diagnosticReport : diagnosticReportList) {
+//                  if for all sr's a dr exists or the sr status is nonConforming task is complete
+//                System.out.println("check dr found: " + srIdentifier + "==" + diagnosticReport.getIdentifierFirstRep().getValue());
+                if (srIdentifier.equals(diagnosticReport.getIdentifierFirstRep().getValue())) {
+                    taskCompleteList.add(srIdentifier + " == " + diagnosticReport.getIdentifierFirstRep().getValue() + " ");
+                    break;
+                } else if (checkEOrderStatus(srIdentifier) == ExternalOrderStatus.NonConforming) {
+                    taskCompleteList.add(srIdentifier + " == " + ExternalOrderStatus.NonConforming.toString() + " ");
+                    break;
+                }
+            }
+        }
+        
+        if(taskCompleteList.size() == serviceRequestList.size()) {
+            return(TaskStatus.COMPLETED);
+        }
+        return(TaskStatus.INPROGRESS);
+    }
+    
+    private ExternalOrderStatus checkEOrderStatus(String srIdentifier) {
+        List<ElectronicOrder> eOrders = electronicOrderService.getElectronicOrdersByExternalId(srIdentifier);
+        ElectronicOrder eOrder = eOrders.get(eOrders.size() - 1);
+        return (SpringContext.getBean(IStatusService.class).getExternalOrderStatusForID(eOrder.getStatusId()));
     }
 
     public void sendResults(ResultReportXmit resultReport, List<Result> reportingResult, String url) {
@@ -124,6 +196,22 @@ public class ResultReportingTransfer {
                 continue;
             }
         }
+    }
+    
+    private Task getTaskFromEtask(IGenericClient localFhirClient, Task eTask) {
+        Bundle tBundle = (Bundle) localFhirClient.search().forResource(Task.class)
+                .where(new TokenClientParam("identifier").exactly().code(eTask.getIdElement().getIdPart()))
+                .prettyPrint()
+                .execute();
+     
+        task = null;
+        for (BundleEntryComponent bundleComponent : tBundle.getEntry()) {
+            if (bundleComponent.hasResource()
+                    && ResourceType.Task.equals(bundleComponent.getResource().getResourceType())) {
+                task = (Task) bundleComponent.getResource();
+            }
+        }
+        return(task);
     }
 
     class ResultFailHandler implements ITransmissionResponseHandler {

@@ -92,12 +92,12 @@ public class TaskWorker {
         }
 
         interpretResults = interpreter.interpret(task, serviceRequest, patient);
+        String referringOrderNumber = interpreter.getReferringOrderNumber();
+        OrderType orderType = interpreter.getOrderType();
+        MessagePatient patient = interpreter.getMessagePatient();
         
         if (interpretResults.get(0) == InterpreterResults.OK) {
-            String referringOrderNumber = interpreter.getReferringOrderNumber();
-
-            OrderType orderType = interpreter.getOrderType();
-            MessagePatient patient = interpreter.getMessagePatient();
+            
             checkResult = existanceChecker.check(referringOrderNumber);
             switch (checkResult) {
             case ORDER_FOUND_QUEUED:
@@ -113,19 +113,22 @@ public class TaskWorker {
                 if (orderType == OrderType.CANCEL) {
                     return TaskResult.NON_CANCELABLE_ORDER;
                 } else {
-                    insertNewOrder(referringOrderNumber, message, patient);
+                    insertNewOrder(referringOrderNumber, message, patient, ExternalOrderStatus.Entered);
                 }
                 break;
             case ORDER_FOUND_CANCELED:
                 if (orderType == OrderType.CANCEL) {
                     return TaskResult.NON_CANCELABLE_ORDER;
                 } else {
-                    insertNewOrder(referringOrderNumber, message, patient);
+                    insertNewOrder(referringOrderNumber, message, patient, ExternalOrderStatus.Entered);
                 }
                 break;
             }
-
+            
         } else {
+            if (interpretResults.get(0) == InterpreterResults.UNSUPPORTED_TESTS) {
+                insertNewOrder(referringOrderNumber, message, patient, ExternalOrderStatus.NonConforming);
+            }
             return TaskResult.MESSAGE_ERROR;
         }
 
@@ -137,12 +140,12 @@ public class TaskWorker {
         persister.cancelOrder(referringOrderNumber);
     }
 
-    private void insertNewOrder(String referringOrderNumber, String message, MessagePatient patient) {
+    private void insertNewOrder(String referringOrderNumber, String message, MessagePatient patient, ExternalOrderStatus eoStatus) {
         System.out.println("TaskWorker:insertNewOrder: ");
         ElectronicOrder eOrder = new ElectronicOrder();
         eOrder.setExternalId(referringOrderNumber);
         eOrder.setData(message);
-        eOrder.setStatusId(getStatusService().getStatusID(ExternalOrderStatus.Entered));
+        eOrder.setStatusId(getStatusService().getStatusID(eoStatus));
         eOrder.setOrderTimestamp(DateUtil.getNowAsTimestamp());
         eOrder.setSysUserId(persister.getServiceUserId());
 

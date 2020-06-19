@@ -284,11 +284,13 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
     }
 
     private void addToTestOrPanel(List<Request> tests, String loinc) {
-        List<Test> testNames = testService.getActiveTestsByLoinc(loinc);
-        String testName = testNames.get(0).getName();
+        List<Test> testList = testService.getActiveTestsByLoinc(loinc);
+        String testName = testList.get(0).getName();
+        String testId = testList.get(0).getId();
 
-        tests.add(new Request(testName, loinc,
-                typeOfSampleService.getTypeOfSampleNameForId(testService.getActiveTestsByLoinc(loinc).get(0).getId())));
+        TypeOfSample typeOfSample = typeOfSampleService.getTypeOfSampleForTest(testId);
+        String sampleName = typeOfSampleService.getTypeOfSampleNameForId(typeOfSample.getId());
+        tests.add(new Request(testName, loinc, sampleName));
     }
 
     private void createMaps(List<Request> testRequests, List<Request> panelNames) {
