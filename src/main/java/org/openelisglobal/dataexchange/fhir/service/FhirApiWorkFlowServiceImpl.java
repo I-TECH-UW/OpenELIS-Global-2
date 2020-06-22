@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.instance.model.api.IDomainResource;
@@ -292,7 +293,8 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         Bundle transactionBundle = new Bundle();
         transactionBundle.setType(BundleType.TRANSACTION);
         for (Resource createResource : createResources) {
-            transactionBundle.addEntry(createTransactionComponentFromResource(createResource, HTTPVerb.POST));
+            transactionBundle.addEntry(createTransactionComponentFromResource(createResource, HTTPVerb.PUT));
+//            transactionBundle.addEntry(createTransactionComponentFromResource(createResource, HTTPVerb.POST));
             transactionBundle.setTotal(transactionBundle.getTotal() + 1);
         }
         for (Resource updateResource : updateResources) {
@@ -309,7 +311,8 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         BundleEntryComponent transactionComponent = new BundleEntryComponent();
         transactionComponent.setResource(resource);
         transactionComponent.getRequest().setMethod(method);
-        transactionComponent.getRequest().setUrl(resource.getResourceType() + "/" + sourceResourceId);
+        transactionComponent.getRequest().setUrl(resource.getResourceType() + "/" + UUID.randomUUID());
+//        transactionComponent.getRequest().setUrl(resource.getResourceType() + "/" + sourceResourceId);
 
         return transactionComponent;
     }
