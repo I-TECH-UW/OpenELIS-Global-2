@@ -52,6 +52,13 @@ services:
             - JAVA_OPTS= -Dhapi.properties=/run/secrets/hapi.properties
         volumes:
             - ./dev/tomcat/hapi_server.xml:/usr/local/tomcat/conf/server.xml
+        extra_hosts:
+#    this should be the loopback to the docker host. 
+#    run 
+#    /sbin/ip route|awk '/default/ { print $3 }' 
+#    inside the container to make sure the ip address is correct
+#    make sure connections to 8446 are allowed by your firewall
+            - host.openelis.org:172.20.0.1
         secrets:
             - source: hapi.properties
             - source: common.properties
@@ -90,9 +97,9 @@ volumes:
   db-data:            
 secrets:
   keystore:
-    file: ./dev/https/oe_selfsigned.keystore
+    file: ./dev/https/openelis.org.keystore
   truststore:
-    file: ./dev/https/oe_selfsigned.truststore
+    file: ./dev/https/openelis.org.truststore
   common.properties:
     file: ./dev/properties/common.properties  
   hapi.properties:
