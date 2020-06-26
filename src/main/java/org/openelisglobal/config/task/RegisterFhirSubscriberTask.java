@@ -1,6 +1,8 @@
 package org.openelisglobal.config.task;
 
+import java.util.Arrays;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
@@ -19,6 +21,8 @@ import org.hl7.fhir.r4.model.Subscription.SubscriptionChannelType;
 import org.hl7.fhir.r4.model.Subscription.SubscriptionStatus;
 import org.hl7.fhir.utilities.xhtml.NodeType;
 import org.hl7.fhir.utilities.xhtml.XhtmlNode;
+import org.itech.fhir.dataexport.core.model.DataExportTask;
+import org.itech.fhir.dataexport.core.service.DataExportTaskService;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
@@ -48,6 +52,9 @@ public class RegisterFhirSubscriberTask {
     @Autowired
     FhirContext fhirContext;
 
+    @Autowired
+    private DataExportTaskService dataExportTaskService;
+
     @PostConstruct
     public void startTask() {
         if (!fhirSubscriber.isPresent()) {
@@ -60,8 +67,7 @@ public class RegisterFhirSubscriberTask {
             fhirSubscriber = Optional.of("https://" + fhirSubscriber.get());
         }
 
-        IGenericClient fhirClient = fhirContext
-                .newRestfulGenericClient(localFhirStorePath);
+        IGenericClient fhirClient = fhirContext.newRestfulGenericClient(localFhirStorePath);
 
         removeOldSubscription();
 
@@ -73,9 +79,8 @@ public class RegisterFhirSubscriberTask {
             Subscription subscription = createSubscriptionForResource(resourceType);
             BundleEntryComponent bundleEntry = new BundleEntryComponent();
             bundleEntry.setResource(subscription);
-            bundleEntry.setRequest(
-                    new BundleEntryRequestComponent().setMethod(HTTPVerb.PUT).setUrl(ResourceType.Subscription.name()
-                            + "/" + createSubscriptionIdForResourceType(resourceType)));
+            bundleEntry.setRequest(new BundleEntryRequestComponent().setMethod(HTTPVerb.PUT).setUrl(
+                    ResourceType.Subscription.name() + "/" + createSubscriptionIdForResourceType(resourceType)));
 
             subscriptionBundle.addEntry(bundleEntry);
 
@@ -89,6 +94,13 @@ public class RegisterFhirSubscriberTask {
                     + fhirSubscriber.get(), e);
         }
 
+        dataExportTaskService.getDAO().deleteAll();
+        DataExportTask dataExportTask = new DataExportTask();
+        dataExportTask.setFhirResources(Arrays.asList(fhirSubscriptionResources).stream()
+                .map(ResourceType::fromCode).collect(Collectors.toList()));
+        dataExportTask.setMaxDataExportInterval(60 * 24); // minutes
+        dataExportTask.setDataRequestAttemptTimeout(60 * 10); // seconds // currently unused
+        dataExportTaskService.getDAO().save(dataExportTask);
     }
 
     private void removeOldSubscription() {
@@ -126,8 +138,7 @@ public class RegisterFhirSubscriberTask {
                 .setReason("bulk subscription to detect any Creates or Updates to resources of type " + resourceType);
 
         SubscriptionChannelComponent channel = new SubscriptionChannelComponent();
-        channel.setType(SubscriptionChannelType.RESTHOOK)
-                .setEndpoint(fhirSubscriber.get());
+        channel.setType(SubscriptionChannelType.RESTHOOK).setEndpoint(fhirSubscriber.get());
         channel.addHeader("Server-Name: " + ConfigurationProperties.getInstance().getPropertyValue(Property.SiteName));
         channel.addHeader("Server-Code: " + ConfigurationProperties.getInstance().getPropertyValue(Property.SiteCode));
         channel.setPayload("application/fhir+json");

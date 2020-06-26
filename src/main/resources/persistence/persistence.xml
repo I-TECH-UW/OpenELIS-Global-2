@@ -7,6 +7,8 @@
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
         <class>org.openelisglobal.login.valueholder.LoginUser</class>
         <class>org.openelisglobal.gender.valueholder.Gender</class>
+        <class>org.itech.fhir.dataexport.core.model.DataExportAttempt</class>
+        <class>org.itech.fhir.dataexport.core.model.DataExportTask</class>
         <properties>
             <property name="hibernate.ejb.cfgfile" value="classpath:hibernate/hibernate.cfg.xml" />
         </properties>
