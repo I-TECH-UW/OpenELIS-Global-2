@@ -41,4 +41,5 @@ public class HibernateConfig {
         }
         return transactionManager;
     }
+
 }

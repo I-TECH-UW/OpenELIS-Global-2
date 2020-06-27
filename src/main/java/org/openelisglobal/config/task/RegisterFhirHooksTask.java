@@ -1,6 +1,8 @@
 package org.openelisglobal.config.task;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -31,12 +33,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import ca.uhn.fhir.context.FhirContext;
-import ca.uhn.fhir.parser.DataFormatException;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
-import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
 
 @Component
-public class RegisterFhirSubscriberTask {
+public class RegisterFhirHooksTask {
 
     @Value("${org.openelisglobal.fhir.subscriber}")
     private Optional<String> fhirSubscriber;
@@ -85,21 +85,27 @@ public class RegisterFhirSubscriberTask {
             subscriptionBundle.addEntry(bundleEntry);
 
         }
-        try {
-            Bundle returnedBundle = fhirClient.transaction().withBundle(subscriptionBundle).encodedJson().execute();
-            LogEvent.logDebug(this.getClass().getName(), "startTask", "subscription bundle returned:\n"
-                    + fhirContext.newJsonParser().encodeResourceToString(returnedBundle));
-        } catch (UnprocessableEntityException | DataFormatException e) {
-            LogEvent.logError("error while communicating subscription bundle to " + localFhirStorePath + " for "
-                    + fhirSubscriber.get(), e);
-        }
+//        try {
+//            Bundle returnedBundle = fhirClient.transaction().withBundle(subscriptionBundle).encodedJson().execute();
+//            LogEvent.logDebug(this.getClass().getName(), "startTask", "subscription bundle returned:\n"
+//                    + fhirContext.newJsonParser().encodeResourceToString(returnedBundle));
+//        } catch (UnprocessableEntityException | DataFormatException e) {
+//            LogEvent.logError("error while communicating subscription bundle to " + localFhirStorePath + " for "
+//                    + fhirSubscriber.get(), e);
+//        }
 
-        dataExportTaskService.getDAO().deleteAll();
-        DataExportTask dataExportTask = new DataExportTask();
+        DataExportTask dataExportTask = dataExportTaskService.getDAO().findByEndpoint(fhirSubscriber.get())
+                .orElse(new DataExportTask());
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Server-Name", ConfigurationProperties.getInstance().getPropertyValue(Property.SiteName));
+        headers.put("Server-Code", ConfigurationProperties.getInstance().getPropertyValue(Property.SiteCode));
+
         dataExportTask.setFhirResources(Arrays.asList(fhirSubscriptionResources).stream()
                 .map(ResourceType::fromCode).collect(Collectors.toList()));
+        dataExportTask.setHeaders(headers);
         dataExportTask.setMaxDataExportInterval(60 * 24); // minutes
         dataExportTask.setDataRequestAttemptTimeout(60 * 10); // seconds // currently unused
+        dataExportTask.setEndpoint(fhirSubscriber.get());
         dataExportTaskService.getDAO().save(dataExportTask);
     }
 

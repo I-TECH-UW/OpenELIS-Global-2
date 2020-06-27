@@ -18,8 +18,8 @@ public class InternalFhirApi {
     @Value("${org.openelisglobal.server.uri}")
     private String localServerPath;
 
-    @Value("${org.openelisglobal.datasubscriber.uri}")
-    private String dataSubscriberPath;
+//    @Value("${org.openelisglobal.datasubscriber.uri}")
+//    private String dataSubscriberPath;
 
     @Value("${org.openelisglobal.fhirstore.uri}")
     private String fhirStorePath;
