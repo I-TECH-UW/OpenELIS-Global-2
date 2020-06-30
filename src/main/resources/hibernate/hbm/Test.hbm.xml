@@ -107,6 +107,9 @@
 			type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType">
 			<column name="SORT_ORDER" precision="22" scale="0" />
 		</property>
+		
+		<property name="name" type="java.lang.String" column="name" />
+		
 		<property name="orderable" type="java.lang.Boolean"
 			column="orderable" />
 		<property name="guid" type="java.lang.String" column="guid" />
