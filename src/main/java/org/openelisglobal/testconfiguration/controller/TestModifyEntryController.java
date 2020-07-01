@@ -151,8 +151,10 @@ public class TestModifyEntryController extends BaseController {
             bean.setLoinc(test.getLoinc());
             bean.setActive(test.isActive() ? "Active" : "Not active");
             bean.setUom(testService.getUOM(test, false));
-            if (TypeOfTestResultServiceImpl.ResultType.NUMERIC.matches(resultType)) {
-                bean.setSignificantDigits(testService.getPossibleTestResults(test).get(0).getSignificantDigits());
+            if (TypeOfTestResultServiceImpl.ResultType.NUMERIC.matches(resultType)
+                    && testResultService.getAllActiveTestResultsPerTest(test).size() != 0) {
+                bean.setSignificantDigits(
+                        testResultService.getAllActiveTestResultsPerTest(test).get(0).getSignificantDigits());
                 bean.setHasLimitValues(true);
                 bean.setResultLimits(getResultLimits(test, bean.getSignificantDigits()));
             }
@@ -452,6 +454,11 @@ public class TestModifyEntryController extends BaseController {
             result.reject("error.hibernate.exception");
             setupDisplayItems(form);
             return findForward(FWD_FAIL_INSERT, form);
+        } catch (Exception e) {
+            LogEvent.logDebug(e);
+            result.reject("error.exception");
+            setupDisplayItems(form);
+            return findForward(FWD_FAIL_INSERT, form);
         }
 
         testService.refreshTestNames();
@@ -738,7 +745,7 @@ public class TestModifyEntryController extends BaseController {
         public String testReportNameFrench;
         String testSectionId;
         ArrayList<String> panelList = new ArrayList<>();
-        String uomId;
+        public String uomId;
         public String loinc;
         String resultTypeId;
         ArrayList<SampleTypeListAndTestOrder> sampleList = new ArrayList<>();

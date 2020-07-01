@@ -95,40 +95,56 @@ public class TaskWorker {
         String referringOrderNumber = interpreter.getReferringOrderNumber();
         OrderType orderType = interpreter.getOrderType();
         MessagePatient patient = interpreter.getMessagePatient();
+        checkResult = existanceChecker.check(referringOrderNumber);
         
         if (interpretResults.get(0) == InterpreterResults.OK) {
             
-            checkResult = existanceChecker.check(referringOrderNumber);
+//            checkResult = existanceChecker.check(referringOrderNumber);
             switch (checkResult) {
             case ORDER_FOUND_QUEUED:
                 if (orderType == OrderType.CANCEL) {
                     cancelOrder(referringOrderNumber);
                     return TaskResult.OK;
                 } else {
+                    System.out.println("TaskWorker:0");
                     return TaskResult.DUPLICATE_ORDER;
                 }
             case ORDER_FOUND_INPROGRESS:
+                System.out.println("TaskWorker:1");
                 return orderType == OrderType.CANCEL ? TaskResult.NON_CANCELABLE_ORDER : TaskResult.DUPLICATE_ORDER;
             case NOT_FOUND:
                 if (orderType == OrderType.CANCEL) {
+                    System.out.println("TaskWorker:2");
                     return TaskResult.NON_CANCELABLE_ORDER;
                 } else {
+                    System.out.println("TaskWorker:3");
                     insertNewOrder(referringOrderNumber, message, patient, ExternalOrderStatus.Entered);
                 }
                 break;
             case ORDER_FOUND_CANCELED:
                 if (orderType == OrderType.CANCEL) {
+                    System.out.println("TaskWorker:4");
                     return TaskResult.NON_CANCELABLE_ORDER;
                 } else {
+                    System.out.println("TaskWorker:5");
                     insertNewOrder(referringOrderNumber, message, patient, ExternalOrderStatus.Entered);
                 }
                 break;
             }
             
-        } else {
-            if (interpretResults.get(0) == InterpreterResults.UNSUPPORTED_TESTS) {
-                insertNewOrder(referringOrderNumber, message, patient, ExternalOrderStatus.NonConforming);
+        } else if (interpretResults.get(0) == InterpreterResults.UNSUPPORTED_TESTS && checkResult == CheckResult.ORDER_FOUND_QUEUED ) {
+            if (orderType == OrderType.CANCEL) {
+                System.out.println("TaskWorker:6");
+                cancelOrder(referringOrderNumber);
+                return TaskResult.OK;
+            } else {
+                System.out.println("TaskWorker:7");
+                return TaskResult.DUPLICATE_ORDER;
             }
+        } else if (interpretResults.get(0) == InterpreterResults.UNSUPPORTED_TESTS) {
+            System.out.println("TaskWorker:8");
+            System.out.println("TaskWorker:unsupported tests: " + referringOrderNumber + orderType);
+            insertNewOrder(referringOrderNumber, message, patient, ExternalOrderStatus.NonConforming);
             return TaskResult.MESSAGE_ERROR;
         }
 
@@ -141,7 +157,7 @@ public class TaskWorker {
     }
 
     private void insertNewOrder(String referringOrderNumber, String message, MessagePatient patient, ExternalOrderStatus eoStatus) {
-        System.out.println("TaskWorker:insertNewOrder: ");
+        System.out.println("TaskWorker:insertNewOrder: " + referringOrderNumber);
         ElectronicOrder eOrder = new ElectronicOrder();
         eOrder.setExternalId(referringOrderNumber);
         eOrder.setData(message);

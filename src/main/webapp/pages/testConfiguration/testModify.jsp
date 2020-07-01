@@ -962,7 +962,7 @@
         	
         	var defaultLimitsString = null;
         	defaultLimitsString = jQuery("#fLimit").val();
-        	//console.log("defaultLimitsString:" + defaultLimitsString);
+        	console.log("defaultLimitsString:" + defaultLimitsString);
         	defaultResultLimits = buildResultLimitesFromDefault(defaultLimitsString);
         	
             jQuery("#normalRangeDiv input,select").attr("disabled", "disabled");

@@ -50,7 +50,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
     @Value("${org.openelisglobal.task.useBasedOn}")
     private Boolean useBasedOn;
 
-    @Scheduled(initialDelay = 10 * 1000, fixedRate = 6000000 * 1000)
+    @Scheduled(initialDelay = 10 * 1000, fixedRate = 60000 * 1000)
 
     @Override
     public void pollForRemoteTasks() {
@@ -325,8 +325,8 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         }
 
         for (ServiceRequest serviceRequest : basedOn) {
-            System.out.println(
-                    "BasedOn ServiceRequest: " + fhirContext.newJsonParser().encodeResourceToString(serviceRequest));
+//            System.out.println(
+//                    "BasedOn ServiceRequest: " + fhirContext.newJsonParser().encodeResourceToString(serviceRequest));
 //                fhirContext.newRestfulGenericClient(localFhirStorePath).update().resource(serviceRequest)
 //                        .execute();
         }
@@ -336,7 +336,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
     private Patient getForPatientFromServer(IGenericClient fhirClient, Task remoteTask) {
         Patient forPatient = fhirClient.read().resource(Patient.class).withId(remoteTask.getFor().getReference())
                 .execute();
-        System.out.println("For Patient: " + fhirContext.newJsonParser().encodeResourceToString(forPatient));
+//        System.out.println("For Patient: " + fhirContext.newJsonParser().encodeResourceToString(forPatient));
 //      fhirContext.newRestfulGenericClient(localFhirStorePath).update().resource(forPatient).execute();
         return forPatient;
     }

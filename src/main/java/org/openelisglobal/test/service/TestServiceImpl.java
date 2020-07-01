@@ -586,6 +586,7 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
         if (test.getIsActive().equals(IActionConstants.YES) && getBaseObjectDAO().duplicateTestExists(test)) {
             throw new LIMSDuplicateRecordException("Duplicate record exists for " + test.getDescription());
         }
+        
         return super.insert(test);
     }
 
