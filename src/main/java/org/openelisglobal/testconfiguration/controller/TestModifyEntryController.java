@@ -745,7 +745,7 @@ public class TestModifyEntryController extends BaseController {
         public String testReportNameFrench;
         String testSectionId;
         ArrayList<String> panelList = new ArrayList<>();
-        String uomId;
+        public String uomId;
         public String loinc;
         String resultTypeId;
         ArrayList<SampleTypeListAndTestOrder> sampleList = new ArrayList<>();
