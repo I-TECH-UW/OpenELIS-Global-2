@@ -38,6 +38,11 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>org.itech</groupId>
+			<artifactId>dataexport-api</artifactId>
+			<version>0.0.0.1</version>
+		</dependency>
+		<dependency>
 			<groupId>ca.uhn.hapi.fhir</groupId>
 			<artifactId>hapi-fhir-structures-r4</artifactId>
 			<version>4.2.0</version>

@@ -32,7 +32,7 @@ public class HibernateConfig {
         return emf;
     }
 
-    @Bean
+    @Bean("transactionManager")
     @Primary
     public PlatformTransactionManager getTransactionManager(EntityManagerFactory entityManagerFactory) {
         if (transactionManager == null) {
@@ -41,4 +41,5 @@ public class HibernateConfig {
         }
         return transactionManager;
     }
+
 }

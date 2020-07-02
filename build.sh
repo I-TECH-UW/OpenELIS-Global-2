@@ -39,6 +39,7 @@ INSTALL_DIR="${BUILD_SCRIPT_DIR}/install"
 #and other important locations
 PROJECT_DIR="${BUILD_SCRIPT_DIR}"
 JPA_SERVER_DIR="${PROJECT_DIR}/hapi-fhir-jpaserver-starter/"
+DATA_EXPORT_DIR="${PROJECT_DIR}/dataexport/"
 #CONSOLIDATED_SERVER_DIR="${PROJECT_DIR}/Consolidated-Server/"
 
 cd ${PROJECT_DIR}
@@ -73,6 +74,8 @@ bash ${INSTALL_DIR}/createDefaultPassword.sh
 echo "creating docker images"
 #create jpaserver docker image
 bash ${INSTALL_DIR}/buildProject.sh -dl ${JPA_SERVER_DIR}
+#create dataexport jar so it can be used in OpenELIS
+bash ${INSTALL_DIR}/buildProject.sh -l ${DATA_EXPORT_DIR}
 #create data import docker image
 #bash ${INSTALL_DIR}/buildProject.sh -dl ${CONSOLIDATED_SERVER_DIR}
 #create the docker image
