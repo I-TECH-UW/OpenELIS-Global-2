@@ -56,7 +56,10 @@ public class PatientManagementController extends BaseController {
             "patientProperties.healthDistrict", "patientProperties.birthDateForDisplay", "patientProperties.age",
             "patientProperties.gender", "patientProperties.patientType", "patientProperties.insuranceNumber",
             "patientProperties.occupation", "patientProperties.education", "patientProperties.maritialStatus",
-            "patientProperties.nationality", "patientProperties.otherNationality" };
+            "patientProperties.nationality", "patientProperties.otherNationality",
+            "patientProperties.patientContact.id", "patientProperties.patientContact.person.firstName",
+            "patientProperties.patientContact.person.lastName", "patientProperties.patientContact.person.email",
+            "patientProperties.patientContact.person.primaryPhone" };
 
     @Autowired
     SamplePatientEntryFormValidator formValidator;
@@ -267,7 +270,6 @@ public class PatientManagementController extends BaseController {
 
     private void copyFormBeanToValueHolders(PatientManagementInfo patientInfo, Patient patient)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-
         PropertyUtils.copyProperties(patient, patientInfo);
         PropertyUtils.copyProperties(patient.getPerson(), patientInfo);
     }
@@ -279,6 +281,7 @@ public class PatientManagementController extends BaseController {
         for (PatientIdentity identity : patientInfo.getPatientIdentities()) {
             identity.setSysUserId(getSysUserId(request));
         }
+        patientInfo.getPatientContact().setSysUserId(getSysUserId(request));
     }
 
     @Override

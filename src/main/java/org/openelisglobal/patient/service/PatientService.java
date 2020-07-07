@@ -104,4 +104,6 @@ public interface PatientService extends BaseObjectService<Patient, String> {
 
     Patient getPatientBySubjectNumber(String subjectNumber);
 
+    void insertNewPatientAddressInfo(String partId, String value, String type, Patient patient, String sysUserId);
+
 }

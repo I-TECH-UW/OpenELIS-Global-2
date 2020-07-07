@@ -2,6 +2,8 @@ package org.openelisglobal.common.servlet.barcode;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -20,6 +22,8 @@ import org.openelisglobal.login.dao.UserModuleService;
 import org.openelisglobal.login.valueholder.UserSessionData;
 import org.openelisglobal.sample.util.AccessionNumberUtil;
 import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.test.service.TestService;
+import org.openelisglobal.test.valueholder.Test;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ObjectError;
 
@@ -50,6 +54,48 @@ public class LabelMakerServlet extends HttpServlet implements IActionConstants {
             response.getWriter().println(MessageUtil.getMessage("message.error.unauthorized"));
             return;
         }
+
+        if ("true".equalsIgnoreCase(request.getParameter("prePrinting"))) {
+            // writes to response
+            prePrintLabels(request, response);
+        } else {
+            // writes to response
+            printExistingOrder(request, response);
+        }
+
+    }
+
+    private void prePrintLabels(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        // get tests for request
+
+        String testIds = request.getParameter("testIds");
+        String[] testIdsArray = testIds.split(",");
+        List<Test> tests = new ArrayList<>();
+        for (String testId : testIdsArray) {
+            tests.add(SpringContext.getBean(TestService.class).getActiveTestById(Integer.parseInt(testId)));
+        }
+
+        // create requested labels as pdf stream
+        BarcodeLabelMaker labelMaker = new BarcodeLabelMaker();
+        UserSessionData usd = (UserSessionData) request.getSession().getAttribute(USER_SESSION_DATA);
+        labelMaker.setSysUserId(String.valueOf(usd.getSystemUserId()));
+
+        labelMaker.generatePrePrintLabels(Integer.parseInt(request.getParameter("numSetsOfLabels")),
+                Integer.parseInt(request.getParameter("numOrderLabelsPerSet")),
+                Integer.parseInt(request.getParameter("numSpecimenLabelsPerSet")), request.getParameter("facilityName"),
+                tests);
+        ByteArrayOutputStream labelAsOutputStream = labelMaker.createPrePrintedLabelsAsStream();
+
+        // if empty stream, assume at max printing
+        response.setContentType("application/pdf");
+        response.addHeader("Content-Disposition", "inline; filename=" + "sample.pdf");
+        response.setContentLength(labelAsOutputStream.size());
+        labelAsOutputStream.writeTo(response.getOutputStream());
+        response.getOutputStream().flush();
+        response.getOutputStream().close();
+    }
+
+    private void printExistingOrder(HttpServletRequest request, HttpServletResponse response) throws IOException {
         // get parameters
         String labNo = request.getParameter("labNo");
         String programCode = request.getParameter("programCode");

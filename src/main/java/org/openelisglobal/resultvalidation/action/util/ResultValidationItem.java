@@ -83,43 +83,54 @@ public class ResultValidationItem implements ResultItem, Serializable {
     private String qualifiedResultValue = "";
     private String qualificationResultId;
     private boolean hasQualifiedResult = false;
+    private boolean normalResult;
 
+    @Override
     public String getAccessionNumber() {
         return accessionNumber;
     }
 
+    @Override
     public void setAccessionNumber(String accessionNumber) {
         this.accessionNumber = accessionNumber;
     }
 
+    @Override
     public String getSequenceNumber() {
         return sequenceNumber;
     }
 
+    @Override
     public void setSequenceNumber(String sequenceNumber) {
         this.sequenceNumber = sequenceNumber;
     }
 
+    @Override
     public boolean isShowSampleDetails() {
         return showSampleDetails;
     }
 
+    @Override
     public void setShowSampleDetails(boolean showSampleDetails) {
         this.showSampleDetails = showSampleDetails;
     }
 
+    @Override
     public boolean getIsGroupSeparator() {
         return isGroupSeparator;
     }
 
+    @Override
     public void setIsGroupSeparator(boolean isGroupSeparator) {
         this.isGroupSeparator = isGroupSeparator;
     }
 
+    @Override
     public int getSampleGroupingNumber() {
         return sampleGroupingNumber;
     }
 
+    @Override
     public void setSampleGroupingNumber(int sampleGroupingNumber) {
         this.sampleGroupingNumber = sampleGroupingNumber;
     }
@@ -172,6 +183,7 @@ public class ResultValidationItem implements ResultItem, Serializable {
         this.testDate = testDate;
     }
 
+    @Override
     public String getTestName() {
         return testName;
     }
@@ -225,7 +237,7 @@ public class ResultValidationItem implements ResultItem, Serializable {
     }
 
     public List<IdValuePair> getDictionaryResults() {
-        return dictionaryResults == null ? new ArrayList<IdValuePair>() : dictionaryResults;
+        return dictionaryResults == null ? new ArrayList<>() : dictionaryResults;
     }
 
     public String getResultLimitId() {
@@ -429,4 +441,13 @@ public class ResultValidationItem implements ResultItem, Serializable {
     public void setAnalysis(Analysis analysis) {
         this.analysis = analysis;
     }
+
+    public boolean isNormalResult() {
+        return normalResult;
+    }
+
+    public void setNormalResult(boolean normalResult) {
+        this.normalResult = normalResult;
+    }
+
 }

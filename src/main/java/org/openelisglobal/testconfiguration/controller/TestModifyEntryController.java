@@ -497,6 +497,7 @@ public class TestModifyEntryController extends BaseController {
                 sortOrder += 10;
                 testResult.setIsActive(true);
                 testResult.setValue(params.dictionaryId);
+                testResult.setDefault(params.isDefault);
                 testResult.setIsQuantifiable(params.isQuantifiable);
                 testResults.add(testResult);
             }
@@ -643,6 +644,7 @@ public class TestModifyEntryController extends BaseController {
                     DictionaryParams params = new DictionaryParams();
                     params.dictionaryId = (String) ((JSONObject) dictionaryArray.get(i)).get("value");
                     params.isQuantifiable = "Y".equals(((JSONObject) dictionaryArray.get(i)).get("qualified"));
+                    params.isDefault = params.dictionaryId.equals(obj.get("defaultTestResult"));
                     testAddParams.dictionaryParamList.add(params);
                 }
             }
@@ -783,6 +785,7 @@ public class TestModifyEntryController extends BaseController {
     }
 
     public class DictionaryParams {
+        public Boolean isDefault;
         public String dictionaryId;
         public boolean isQuantifiable = false;
     }

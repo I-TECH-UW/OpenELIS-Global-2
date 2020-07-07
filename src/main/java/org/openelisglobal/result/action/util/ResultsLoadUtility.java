@@ -732,6 +732,11 @@ public class ResultsLoadUtility {
                 && !GenericValidator.isBlankOrNull(testResults.get(0).getSignificantDigits())) {
             testItem.setSignificantDigits(Integer.parseInt(testResults.get(0).getSignificantDigits()));
         }
+
+        if (test.getDefaultTestResult() != null) {
+            testItem.setResultValue(test.getDefaultTestResult().getValue());
+            testItem.setShadowResultValue(testItem.getResultValue());
+        }
         return testItem;
     }
 

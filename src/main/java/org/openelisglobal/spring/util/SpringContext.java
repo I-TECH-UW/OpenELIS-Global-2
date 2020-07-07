@@ -30,8 +30,8 @@ public class SpringContext implements ApplicationContextAware {
      * @param beanClass
      * @return
      */
-    public static <T extends Object> T getBean(String beanName) {
-        return (T) factory.getBean(beanName);
+    public static Object getBean(String beanName) {
+        return factory.getBean(beanName);
     }
 
     @SuppressWarnings("unchecked")

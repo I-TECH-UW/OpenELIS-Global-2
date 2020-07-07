@@ -851,10 +851,18 @@
 	<definition name="PrintBarcodeDefinition"
 		extends="baseDefinition">
 		<put-attribute name="body"
-			value="/pages/barcode/printBarcode.jsp" />
+			value="PrintBarcodeCoreDefinition" />
 		<put-attribute name="footer"
 			value="/pages/common/finishFooterButton.jsp" />
 	</definition>
+	
+	<definition name="PrintBarcodeCoreDefinition"  template="/pages/barcode/printBarcode.jsp">
+    	<put-attribute name="prePrinting" value="batchPrePrintParcodeBodyDefinition" />
+    </definition>
+    
+    <definition name="batchPrePrintParcodeBodyDefinition"  template="/pages/barcode/bulkPrePrint.jsp">
+		<put-attribute name="sampleAdd" value="/pages/samplebatchentry/setup/sampleAdd.jsp"/>
+    </definition>
 
 	<definition name="BarcodeConfigurationDefinition"
 		extends="baseDefinition">
