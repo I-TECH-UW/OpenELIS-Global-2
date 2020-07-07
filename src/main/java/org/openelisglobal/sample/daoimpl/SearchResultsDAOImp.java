@@ -87,6 +87,8 @@ public class SearchResultsDAOImp implements SearchResultsDAO {
             query.setInteger(ID_TYPE_FOR_GUID,
                     Integer.valueOf(PatientIdentityTypeMap.getInstance().getIDForType("GUID")));
 
+            firstName = '%' + firstName + '%';
+            
             if (queryFirstName) {
                 query.setString(FIRST_NAME_PARAM, firstName);
             }

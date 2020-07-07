@@ -23,7 +23,7 @@ import org.openelisglobal.common.util.IdValuePair;
 
 /**
  */
-public class PatientSearch {
+public class PatientEnhancedSearch {
     private boolean loadFromServerWithPatient = false;
     private String selectedPatientActionButtonText;
 

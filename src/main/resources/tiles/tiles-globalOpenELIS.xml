@@ -315,6 +315,8 @@
 		template="/pages/patient/patientManagement.jsp">
 		<put-attribute name="patientSearch"
 			value="/pages/patient/patientSearch.jsp" />
+		<put-attribute name="patientEnhancedSearch"
+			value="/pages/patient/patientEnhancedSearch.jsp" />
 	</definition>
 
 	<definition name="patientManagementNoSearchCore"
