@@ -84,6 +84,43 @@ function searchPatients()
 	patientSearch(lastName, firstName, STNumber, subjectNumber, nationalID, labNumber, "", false, processSearchSuccess);
 }
 
+function enhancedSearchPatients()
+{
+    var criteria = jQuery("#searchCriteria").val();
+    var genders = jQuery("#genders").val();
+    var value = jQuery("#firstNameSearchValue").val();
+    var splitName;
+    var lastName = "";
+    var firstName = "";
+    var STNumber = "";
+    var subjectNumber = "";
+    var nationalID = "";
+    var labNumber = "";
+    criteria = 1;
+
+
+	newSearchInfo = false;
+    jQuery("#resultsDiv").hide();
+    jQuery("#searchLabNumber").val('');
+    if( criteria == 1){
+        firstName =  value.trim();
+    }else if(criteria == 2){
+        lastName = value.trim();
+    }else if(criteria == 3){
+        splitName = value.split(",");
+        lastName = splitName[0].trim();
+        firstName = splitName.size() == 2 ? splitName[1].trim() : "";
+    }else if(criteria == 4){
+        STNumber = value.trim();
+        subjectNumber = value.trim();
+        nationalID = value.trim();
+    }else if(criteria == 5){
+        labNumber = value;
+        jQuery("#searchLabNumber").val(value);
+    }
+	patientSearch(lastName, firstName, STNumber, subjectNumber, nationalID, labNumber, "", false, processSearchSuccess);
+}
+
 function processSearchFailure(xhr)
 {
 	//alert( xhr.responseText );
@@ -385,17 +422,18 @@ function handleSelectedPatient(){
 			<td style="text-align: left;"><spring:message
 					code="patient.epiLastName" /> :</td>
 			<td><form:input path="patientProperties.lastName"
-					id="lastNameSearchValue" onchange="updatePatientEditStatus();" size="40" oninput="enableSearchButton(event.which);"
+					id="lastNameSearchValue" size="40" oninput="enableEnhancedSearchButton(event.which);"
 					placeholder='<%=MessageUtil.getMessage("label.select.search.here")%>' />
 			</td>
 		</tr>
 		<tr>
 			<td style="text-align: left;"><spring:message
 					code="patient.epiFirstName" /> :</td>
-			<td><form:input path="patientProperties.firstName"
-					id="firstNameSearchValue" onchange="updatePatientEditStatus();" size="40" oninput="enableSearchButton(event.which);"
-					placeholder='<%=MessageUtil.getMessage("label.select.search.here")%>' />
-			</td>
+			<td><input size="35" maxlength="120" id="firstNameSearchValue"
+				class="text patientEnhancedSearch"
+				placeholder='<%=MessageUtil.getMessage("label.select.search.here")%>'
+				type="text" oninput="enableEnhancedSearchButton(event.which);"
+				tabindex="2" /></td>
 		</tr>
 		</table>
 		
@@ -446,10 +484,10 @@ function handleSelectedPatient(){
 						<option value="${pair.id}">${pair.value}</option>
 					</c:forEach>
 			</select></td>
-			<td><input type="button" name="enhanedSearchButton"
+			<td><input type="button" name="enhancedSearchButton"
 				class="patientEnhancedSearch"
 				value="<%=MessageUtil.getMessage("label.patient.search")%>"
-				id="enhancedSearchButton" onclick="searchPatients()" disabled="disabled">
+				id="enhancedSearchButton" onclick="enhancedSearchPatients()" disabled="disabled">
 			</td>
 		</tr>
 	</table>
