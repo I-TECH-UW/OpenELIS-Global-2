@@ -88,7 +88,7 @@ function enhancedSearchPatients()
 {
     var criteria = jQuery("#searchCriteria").val();
     var genders = jQuery("#genders").val();
-    var value = jQuery("#firstNameSearchValue").val();
+    var value = jQuery("#firstNameSearchValue").val().trim();
     var splitName;
     var lastName = "";
     var firstName = "";
@@ -96,28 +96,18 @@ function enhancedSearchPatients()
     var subjectNumber = "";
     var nationalID = "";
     var labNumber = "";
-    criteria = 1;
-
 
 	newSearchInfo = false;
     jQuery("#resultsDiv").hide();
     jQuery("#searchLabNumber").val('');
-    if( criteria == 1){
-        firstName =  value.trim();
-    }else if(criteria == 2){
-        lastName = value.trim();
-    }else if(criteria == 3){
-        splitName = value.split(",");
-        lastName = splitName[0].trim();
-        firstName = splitName.size() == 2 ? splitName[1].trim() : "";
-    }else if(criteria == 4){
-        STNumber = value.trim();
-        subjectNumber = value.trim();
-        nationalID = value.trim();
-    }else if(criteria == 5){
-        labNumber = value;
-        jQuery("#searchLabNumber").val(value);
-    }
+    
+    firstName = jQuery("#firstNameSearchValue").val().trim();
+    lastName = jQuery("#lastNameSearchValue").val().trim();
+    
+    subjectNumber = jQuery("#subjectNumberSearchValue").val().trim();
+    STNumber = jQuery("#subjectNumberSearchValue").val().trim();
+    nationalID = jQuery("#subjectNumberSearchValue").val().trim();
+
 	patientSearch(lastName, firstName, STNumber, subjectNumber, nationalID, labNumber, "", false, processSearchSuccess);
 }
 
@@ -165,7 +155,6 @@ function clearSearchResultTable() {
 	var table = $("searchResultTable");
 	clearTable(table);
 	clearPatientInfoCache();
-	
 }
 
 function clearTable(table){
@@ -349,6 +338,27 @@ function enableSearchButton(eventCode){
 function enableEnhancedSearchButton(eventCode){
 	var enhancedSearchButton = jQuery("#enhancedSearchButton");
 	enhancedSearchButton.removeAttr("disabled");
+	var subjectNumberSearch = document.getElementById("subjectNumberSearchValue");
+	subjectNumberSearch.addEventListener("keyup", function(event) {
+		if(event.keyCode === 13) {
+			event.preventDefault();
+			document.getElementById("enhancedSearchButton").click();
+		}
+	});
+	var lastNameSearch = document.getElementById("lastNameSearchValue");
+	lastNameSearch.addEventListener("keyup", function(event) {
+		if(event.keyCode === 13) {
+			event.preventDefault();
+			document.getElementById("enhancedSearchButton").click();
+		}
+	});
+	var firstNameSearch = document.getElementById("firstNameSearchValue");
+	firstNameSearch.addEventListener("keyup", function(event) {
+		if(event.keyCode === 13) {
+			event.preventDefault();
+			document.getElementById("enhancedSearchButton").click();
+		}
+	});
 }
 
 function handleSelectedPatient(){
@@ -413,7 +423,7 @@ function handleSelectedPatient(){
 		<tr>
 			<td style="text-align: left;"><spring:message
 					code="patient.subject.number" /> :</td>
-			<td><form:input path="patientProperties.subjectNumber"
+			<td><input
 					id="subjectNumberSearchValue" size="40" oninput="enableEnhancedSearchButton(event.which);"
 					placeholder='<%=MessageUtil.getMessage("label.select.search.here")%>' />
 			</td>
@@ -421,7 +431,7 @@ function handleSelectedPatient(){
 		<tr>
 			<td style="text-align: left;"><spring:message
 					code="patient.epiLastName" /> :</td>
-			<td><form:input path="patientProperties.lastName"
+			<td><input 
 					id="lastNameSearchValue" size="40" oninput="enableEnhancedSearchButton(event.which);"
 					placeholder='<%=MessageUtil.getMessage("label.select.search.here")%>' />
 			</td>
@@ -443,7 +453,7 @@ function handleSelectedPatient(){
 			<spring:message code="patient.birthDate" />&nbsp;<%=DateUtil.getDateUserPrompt()%>:
 		</td>
 		<td>
-            <form:input path="patientProperties.birthDateForDisplay" 
+            <input 
                       onkeyup="addDateSlashes(this,event); normalizeDateFormat(this);"
                       onchange="checkValidAgeDate( this ); updatePatientEditStatus();"
                       oninput="enableSearchButton(event.which);"
@@ -466,7 +476,7 @@ function handleSelectedPatient(){
                        onchange="handleAgeChange( this ); updatePatientEditStatus();"
                        styleClass="text"
                     id="age"/> --%>
-           <form:input path="patientProperties.age" 
+           <input 
            			  onchange="handleAgeChange( this ); updatePatientEditStatus();"
            			  id="age"
                       cssClass="text"
