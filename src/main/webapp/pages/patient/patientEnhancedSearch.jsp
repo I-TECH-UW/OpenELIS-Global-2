@@ -96,6 +96,10 @@ function enhancedSearchPatients()
     var subjectNumber = "";
     var nationalID = "";
     var labNumber = "";
+    
+    var dateOfBirth = "";
+    var age = "";
+    var gender = "";
 
 	newSearchInfo = false;
     jQuery("#resultsDiv").hide();
@@ -107,6 +111,10 @@ function enhancedSearchPatients()
     subjectNumber = jQuery("#subjectNumberSearchValue").val().trim();
     STNumber = jQuery("#subjectNumberSearchValue").val().trim();
     nationalID = jQuery("#subjectNumberSearchValue").val().trim();
+    
+    dateOfBirth = jQuery("#dateOfBirthSearchValue").val().trim();
+    age = jQuery("#ageSearchValue").val().trim();
+    gender = jQuery("#searchGendersSearchValues").val().trim();
 
 	patientSearch(lastName, firstName, STNumber, subjectNumber, nationalID, labNumber, "", false, processSearchSuccess);
 }
@@ -359,6 +367,27 @@ function enableEnhancedSearchButton(eventCode){
 			document.getElementById("enhancedSearchButton").click();
 		}
 	});
+	var dateOfBirthSearch = document.getElementById("dateOfBirthSearchValue");
+	dateOfBirthSearch.addEventListener("keyup", function(event) {
+		if(event.keyCode === 13) {
+			event.preventDefault();
+			document.getElementById("enhancedSearchButton").click();
+		}
+	});
+	var ageSearch = document.getElementById("ageSearchValue");
+	ageSearch.addEventListener("keyup", function(event) {
+		if(event.keyCode === 13) {
+			event.preventDefault();
+			document.getElementById("enhancedSearchButton").click();
+		}
+	});
+	var genderSearch = document.getElementById("searchGendersSearchValues");
+	genderSearch.addEventListener("keyup", function(event) {
+		if(event.keyCode === 13) {
+			event.preventDefault();
+			document.getElementById("enhancedSearchButton").click();
+		}
+	});
 }
 
 function handleSelectedPatient(){
@@ -432,64 +461,48 @@ function handleSelectedPatient(){
 			<td style="text-align: left;"><spring:message
 					code="patient.epiLastName" /> :</td>
 			<td><input 
-					id="lastNameSearchValue" size="40" oninput="enableEnhancedSearchButton(event.which);"
+					id="lastNameSearchValue" 
+					size="40" 
+					oninput="enableEnhancedSearchButton(event.which);"
 					placeholder='<%=MessageUtil.getMessage("label.select.search.here")%>' />
 			</td>
 		</tr>
 		<tr>
 			<td style="text-align: left;"><spring:message
 					code="patient.epiFirstName" /> :</td>
-			<td><input size="35" maxlength="120" id="firstNameSearchValue"
-				class="text patientEnhancedSearch"
-				placeholder='<%=MessageUtil.getMessage("label.select.search.here")%>'
-				type="text" oninput="enableEnhancedSearchButton(event.which);"
-				tabindex="2" /></td>
+			<td><input
+				id="firstNameSearchValue"
+				size="40"
+				oninput="enableEnhancedSearchButton(event.which);"
+				placeholder='<%=MessageUtil.getMessage("label.select.search.here")%>' />
+			</td>
 		</tr>
 		</table>
-		
-		<table>
+
+	<table>
 		<tr>
-		<td style="text-align:right;">
-			<spring:message code="patient.birthDate" />&nbsp;<%=DateUtil.getDateUserPrompt()%>:
-		</td>
-		<td>
-            <input 
-                      onkeyup="addDateSlashes(this,event); normalizeDateFormat(this);"
-                      onchange="checkValidAgeDate( this ); updatePatientEditStatus();"
-                      oninput="enableSearchButton(event.which);"
-                      id="dateOfBirthSearchValue"
-                      placeholder='<%=MessageUtil.getMessage("label.select.search.here")%>' 
-                      cssClass="text"
-					  size="20"
-                      maxlength="10"/>
-                      
-			<div id="patientProperties.birthDateForDisplayMessage" class="blank" style="text-align: left;">
-		</td>
-		<td style="text-align:left;">
-			<spring:message code="patient.age" />:
-		</td>
-		<td >
-            <%-- <html:text property="patientProperties.age"
-                       name="${form.formName}"
-                       size="3"
-                       maxlength="3"
-                       onchange="handleAgeChange( this ); updatePatientEditStatus();"
-                       styleClass="text"
-                    id="age"/> --%>
-           <input 
-           			  onchange="handleAgeChange( this ); updatePatientEditStatus();"
-           			  id="age"
-                      cssClass="text"
-                      size="3"
-                      maxlength="3"
-                        />
-		</td>
+			<td style="text-align: right;"><spring:message
+					code="patient.birthDate" />&nbsp;<%=DateUtil.getDateUserPrompt()%>:
+			</td>
+			<td><input
+				onkeyup="addDateSlashes(this,event); normalizeDateFormat(this);"
+				onchange="checkValidAgeDate( this ); updatePatientEditStatus();"
+				oninput="enableSearchButton(event.which);"
+				id="dateOfBirthSearchValue"
+				placeholder='<%=MessageUtil.getMessage("label.select.search.here")%>'
+				cssClass="text" size="20" maxlength="10" />
+				<div id="patientProperties.birthDateForDisplayMessage" class="blank"
+					style="text-align: left;"></div></td>
+			<td style="text-align: left;"><spring:message code="patient.age" />:</td>
+			<td><input
+				onchange="handleAgeChange( this ); updatePatientEditStatus();"
+				id="ageSearchValue" cssClass="text" size="3" maxlength="3" /></td>
 			<td style="text-align: left;"><spring:message
 					code="patient.gender" />:</td>
-			<td><select id="searchGenders" style="float: left"
+			<td><select id="searchGendersSearchValues" style="float: left"
 				onchange="checkIndex(this)" tabindex="1"
 				class="patientEnhancedSearch">
-				<option value=" " ></option>
+					<option value=" "></option>
 					<c:forEach var="pair" items="${patientEnhancedSearch.genders}">
 						<option value="${pair.id}">${pair.value}</option>
 					</c:forEach>
@@ -497,8 +510,8 @@ function handleSelectedPatient(){
 			<td><input type="button" name="enhancedSearchButton"
 				class="patientEnhancedSearch"
 				value="<%=MessageUtil.getMessage("label.patient.search")%>"
-				id="enhancedSearchButton" onclick="enhancedSearchPatients()" disabled="disabled">
-			</td>
+				id="enhancedSearchButton" onclick="enhancedSearchPatients()"
+				disabled="disabled"></td>
 		</tr>
 	</table>
 </div>
