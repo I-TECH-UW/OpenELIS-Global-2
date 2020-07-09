@@ -49,6 +49,7 @@ public class SearchResultsDAOImp implements SearchResultsDAO {
     private static final String SUBJECT_NUMBER_PARAM = "subjectNumber";
     private static final String ID_PARAM = "id";
     private static final String GUID = "guid";
+    private static final String DATE_OF_BIRTH = "dateOfBirth";
 
     private static final String ID_TYPE_FOR_ST = "stNumberId";
     private static final String ID_TYPE_FOR_SUBJECT_NUMBER = "subjectNumberId";
@@ -60,7 +61,7 @@ public class SearchResultsDAOImp implements SearchResultsDAO {
     @SuppressWarnings("rawtypes")
     @Transactional
     public List<PatientSearchResults> getSearchResults(String lastName, String firstName, String STNumber,
-            String subjectNumber, String nationalID, String externalID, String patientID, String guid)
+            String subjectNumber, String nationalID, String externalID, String patientID, String guid, String dateOfBirth)
             throws LIMSRuntimeException {
 
         List queryResults;
@@ -75,9 +76,10 @@ public class SearchResultsDAOImp implements SearchResultsDAO {
             boolean queryAnyID = queryExternalId && queryNationalId;
             boolean queryPatientID = !GenericValidator.isBlankOrNull(patientID);
             boolean queryGuid = !GenericValidator.isBlankOrNull(guid);
+            boolean queryDateOfBirth = !GenericValidator.isBlankOrNull(dateOfBirth);
 
             String sql = buildQueryString(queryLastName, queryFirstName, querySTNumber, querySubjectNumber,
-                    queryNationalId, queryExternalId, queryAnyID, queryPatientID, queryGuid);
+                    queryNationalId, queryExternalId, queryAnyID, queryPatientID, queryGuid, queryDateOfBirth);
 
             org.hibernate.Query query = entityManager.unwrap(Session.class).createSQLQuery(sql);
 
@@ -95,6 +97,7 @@ public class SearchResultsDAOImp implements SearchResultsDAO {
             externalID = '%' + externalID + '%';
             patientID = '%' + patientID + '%';
             guid = '%' + guid + '%';
+            dateOfBirth = '%' + dateOfBirth + '%';
             
             if (queryFirstName) {
                 query.setString(FIRST_NAME_PARAM, firstName);
@@ -121,6 +124,12 @@ public class SearchResultsDAOImp implements SearchResultsDAO {
             if (queryGuid) {
                 query.setString(GUID, guid);
             }
+            
+            if (queryDateOfBirth) {
+                query.setString(DATE_OF_BIRTH, dateOfBirth);
+            }
+            
+            System.out.println(">>>: " + query.getQueryString());
             queryResults = query.list();
         } catch (RuntimeException e) {
             LogEvent.logDebug(e);
@@ -152,7 +161,7 @@ public class SearchResultsDAOImp implements SearchResultsDAO {
      *                      patient
      */
     private String buildQueryString(boolean lastName, boolean firstName, boolean STNumber, boolean subjectNumber,
-            boolean nationalID, boolean externalID, boolean anyID, boolean patientID, boolean guid) {
+            boolean nationalID, boolean externalID, boolean anyID, boolean patientID, boolean guid, boolean dateOfBirth) {
 
         StringBuilder queryBuilder = new StringBuilder();
         queryBuilder.append(
@@ -232,6 +241,13 @@ public class SearchResultsDAOImp implements SearchResultsDAO {
             queryBuilder.append(GUID);
             queryBuilder.append(" or");
         }
+        
+        if (dateOfBirth) {
+            queryBuilder.append(" p.entered_birth_date ilike :");
+            queryBuilder.append(DATE_OF_BIRTH);
+            queryBuilder.append(" and");
+        }
+     
         // No matter which was added last there is one dangling AND to remove.
         int lastAndIndex = queryBuilder.lastIndexOf("and");
         int lastOrIndex = queryBuilder.lastIndexOf("or");

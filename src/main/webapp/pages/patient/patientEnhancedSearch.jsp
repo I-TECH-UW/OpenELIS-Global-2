@@ -116,7 +116,7 @@ function enhancedSearchPatients()
     age = jQuery("#ageSearchValue").val().trim();
     gender = jQuery("#searchGendersSearchValues").val().trim();
 
-	patientSearch(lastName, firstName, STNumber, subjectNumber, nationalID, labNumber, "", false, processSearchSuccess);
+	patientSearch(lastName, firstName, STNumber, subjectNumber, nationalID, labNumber, "", dateOfBirth, false, processSearchSuccess);
 }
 
 function processSearchFailure(xhr)
@@ -478,19 +478,17 @@ function handleSelectedPatient(){
 			</td>
 		</tr>
 		</table>
-
-	<table>
+		<table>
 		<tr>
 			<td style="text-align: right;"><spring:message
-					code="patient.birthDate" />&nbsp;<%=DateUtil.getDateUserPrompt()%>:
-			</td>
+					code="patient.birthDate" />&nbsp;<%=DateUtil.getDateUserPrompt()%>:	</td>
 			<td><input
-				onkeyup="addDateSlashes(this,event); normalizeDateFormat(this);"
-				onchange="checkValidAgeDate( this ); updatePatientEditStatus();"
-				oninput="enableSearchButton(event.which);"
 				id="dateOfBirthSearchValue"
-				placeholder='<%=MessageUtil.getMessage("label.select.search.here")%>'
-				cssClass="text" size="20" maxlength="10" />
+				size="20"
+				onkeyup="addDateSlashes(this,event); normalizeDateFormat(this);"
+                onchange="checkValidAgeDate( this );"
+				oninput="enableEnhancedSearchButton(event.which);"
+				placeholder='<%=MessageUtil.getMessage("label.select.search.here")%>' />
 				<div id="patientProperties.birthDateForDisplayMessage" class="blank"
 					style="text-align: left;"></div></td>
 			<td style="text-align: left;"><spring:message code="patient.age" />:</td>
