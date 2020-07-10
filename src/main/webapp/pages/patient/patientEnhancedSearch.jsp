@@ -445,7 +445,9 @@ function handleSelectedPatient(){
 			<td style="text-align: left;"><spring:message
 					code="patient.subject.number" /> :</td>
 			<td><input
-					id="subjectNumberSearchValue" size="40" oninput="enableEnhancedSearchButton(event.which);"
+					id="subjectNumberSearchValue" 
+					size="40" 
+					onchange="enableEnhancedSearchButton(event.which);"
 					placeholder='<%=MessageUtil.getMessage("label.select.search.here")%>' />
 			</td>
 		</tr>
@@ -455,7 +457,7 @@ function handleSelectedPatient(){
 			<td><input 
 					id="lastNameSearchValue" 
 					size="40" 
-					oninput="enableEnhancedSearchButton(event.which);"
+					onchange="enableEnhancedSearchButton(event.which);"
 					placeholder='<%=MessageUtil.getMessage("label.select.search.here")%>' />
 			</td>
 		</tr>
@@ -465,7 +467,7 @@ function handleSelectedPatient(){
 			<td><input
 				id="firstNameSearchValue"
 				size="40"
-				oninput="enableEnhancedSearchButton(event.which);"
+				onchange="enableEnhancedSearchButton(event.which);"
 				placeholder='<%=MessageUtil.getMessage("label.select.search.here")%>' />
 			</td>
 		</tr>

@@ -132,7 +132,7 @@ public class SearchResultsDAOImp implements SearchResultsDAO {
             if (queryGender) {
                 query.setString(GENDER, gender);
             }
-//            System.out.println(">>>: " + query.getQueryString());
+            System.out.println(">>>: " + query.getQueryString());
 //            String[] dArray = { " ", " ", subjectNumber, nationalID, gender, " ", " ", " "};
 //            String[] sArray = query.getNamedParameters();
 //            for (int i = 0; i < sArray.length; i++) {
@@ -202,21 +202,10 @@ public class SearchResultsDAOImp implements SearchResultsDAO {
         queryBuilder.append(ID_TYPE_FOR_GUID);
         queryBuilder.append(" where ");
 
-        if (lastName) {
-            queryBuilder.append(" pr.last_name ilike :");
-            queryBuilder.append(LAST_NAME_PARAM);
-            queryBuilder.append(" and");
-        }
-
-        if (firstName) {
-            queryBuilder.append(" pr.first_name ilike :");
-            queryBuilder.append(FIRST_NAME_PARAM);
-            queryBuilder.append(" and");
-        }
-
         if (anyID) {
+            queryBuilder.append(" ( false or ");
             if (subjectNumber) {
-                queryBuilder.append(" ( piSN.identity_data ilike :");
+                queryBuilder.append(" piSN.identity_data ilike :");
                 queryBuilder.append(SUBJECT_NUMBER_PARAM);
                 queryBuilder.append(" or");
             }
@@ -236,12 +225,13 @@ public class SearchResultsDAOImp implements SearchResultsDAO {
             if (STNumber) {
                 queryBuilder.append(" pi.identity_data ilike :");
                 queryBuilder.append(ST_NUMBER_PARAM);
-                queryBuilder.append(" ) and");
+                queryBuilder.append(" and");
             }
             
         } else {
+            queryBuilder.append(" ( false or ");
             if (subjectNumber) {
-                queryBuilder.append(" ( piSN.identity_data ilike :");
+                queryBuilder.append(" piSN.identity_data ilike :");
                 queryBuilder.append(SUBJECT_NUMBER_PARAM);
                 queryBuilder.append(" or");
             }
@@ -261,8 +251,20 @@ public class SearchResultsDAOImp implements SearchResultsDAO {
             if (STNumber) {
                 queryBuilder.append(" pi.identity_data ilike :");
                 queryBuilder.append(ST_NUMBER_PARAM);
-                queryBuilder.append(" ) and");
+                queryBuilder.append(" and");
             }
+        }
+        
+        // Need to close paren before dangling AND/OR.
+        int lastAndIndex = queryBuilder.lastIndexOf("and");
+        int lastOrIndex = queryBuilder.lastIndexOf("or");
+
+        if (lastAndIndex > lastOrIndex) {
+            queryBuilder.delete(lastAndIndex, queryBuilder.length());
+            queryBuilder.append(") and");
+        } else if (lastOrIndex > lastAndIndex) {
+            queryBuilder.delete(lastOrIndex, queryBuilder.length());
+            queryBuilder.append(") or");
         }
 
         if (patientID) {
@@ -274,6 +276,18 @@ public class SearchResultsDAOImp implements SearchResultsDAO {
         if (guid) {
             queryBuilder.append(" piGUID.identity_data = :");
             queryBuilder.append(GUID);
+            queryBuilder.append(" and");
+        }
+        
+        if (lastName) {
+            queryBuilder.append(" pr.last_name ilike :");
+            queryBuilder.append(LAST_NAME_PARAM);
+            queryBuilder.append(" and");
+        }
+
+        if (firstName) {
+            queryBuilder.append(" pr.first_name ilike :");
+            queryBuilder.append(FIRST_NAME_PARAM);
             queryBuilder.append(" and");
         }
         
@@ -290,8 +304,8 @@ public class SearchResultsDAOImp implements SearchResultsDAO {
         }
      
         // No matter which was added last there is one dangling AND to remove.
-        int lastAndIndex = queryBuilder.lastIndexOf("and");
-        int lastOrIndex = queryBuilder.lastIndexOf("or");
+        lastAndIndex = queryBuilder.lastIndexOf("and");
+        lastOrIndex = queryBuilder.lastIndexOf("or");
 
         if (lastAndIndex > lastOrIndex) {
             queryBuilder.delete(lastAndIndex, queryBuilder.length());
