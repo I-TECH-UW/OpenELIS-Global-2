@@ -41,14 +41,15 @@ public class PatientSearchLocalWorker extends PatientSearchWorker {
 
     @Override
     public String createSearchResultXML(String lastName, String firstName, String STNumber, String subjectNumber,
-            String nationalID, String patientID, String guid, String dateOfBirth, StringBuilder xml) {
+            String nationalID, String patientID, String guid, String dateOfBirth, String gender, StringBuilder xml) {
 
         String success = IActionConstants.VALID;
 
         if (GenericValidator.isBlankOrNull(lastName) && GenericValidator.isBlankOrNull(firstName)
                 && GenericValidator.isBlankOrNull(STNumber) && GenericValidator.isBlankOrNull(subjectNumber)
                 && GenericValidator.isBlankOrNull(nationalID) && GenericValidator.isBlankOrNull(patientID)
-                && GenericValidator.isBlankOrNull(guid) && GenericValidator.isBlankOrNull(dateOfBirth)) {
+                && GenericValidator.isBlankOrNull(guid) && GenericValidator.isBlankOrNull(dateOfBirth)
+                && GenericValidator.isBlankOrNull(gender)) {
 
             xml.append("No search terms were entered");
             return IActionConstants.INVALID;
@@ -57,7 +58,7 @@ public class PatientSearchLocalWorker extends PatientSearchWorker {
         // N.B. results do not have the referrinngPatientId information but it is not
         // displayed so for now it will be left as null
         List<PatientSearchResults> results = searchResultsService.getSearchResults(lastName, firstName, STNumber,
-                subjectNumber, nationalID, nationalID, patientID, guid, dateOfBirth);
+                subjectNumber, nationalID, nationalID, patientID, guid, dateOfBirth, gender);
         if (!GenericValidator.isBlankOrNull(nationalID)) {
             List<PatientSearchResults> observationResults = getObservationsByReferringPatientId(nationalID);
             results.addAll(observationResults);

@@ -186,7 +186,7 @@ public class PatientManagementController extends BaseController {
                     .isBlankOrNull(patientInfo.getNationalId()) ? null : patientInfo.getNationalId();
 
             List<PatientSearchResults> results = searchService.getSearchResults(null, null, newSTNumber,
-                    newSubjectNumber, newNationalId, null, null, null);
+                    newSubjectNumber, newNationalId, null, null, null, null, null);
 
             if (!results.isEmpty()) {
                 for (PatientSearchResults result : results) {

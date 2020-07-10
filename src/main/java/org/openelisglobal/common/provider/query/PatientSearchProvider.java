@@ -63,6 +63,7 @@ public class PatientSearchProvider extends BaseQueryProvider {
         String labNumber = request.getParameter("labNumber");
         String guid = request.getParameter("guid");
         String dateOfBirth = request.getParameter("dateOfBirth");
+        String gender = request.getParameter("gender");
         String suppressExternalSearch = request.getParameter("suppressExternalSearch");
         String patientID = null;
 
@@ -86,7 +87,7 @@ public class PatientSearchProvider extends BaseQueryProvider {
 
             if (worker != null) {
                 result = worker.createSearchResultXML(lastName, firstName, STNumber, subjectNumber, nationalID,
-                        patientID, guid, dateOfBirth, xml);
+                        patientID, guid, dateOfBirth, gender, xml);
             } else {
                 result = INVALID;
                 xml.append("System is not configured correctly for searching for patients. Contact Administrator");

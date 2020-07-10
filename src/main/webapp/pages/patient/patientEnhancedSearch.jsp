@@ -109,14 +109,15 @@ function enhancedSearchPatients()
     lastName = jQuery("#lastNameSearchValue").val().trim();
     
     subjectNumber = jQuery("#subjectNumberSearchValue").val().trim();
+    nationalID = jQuery("#subjectNumberSearchValue").val().trim(); // facilitates "or"
     STNumber = jQuery("#subjectNumberSearchValue").val().trim();
     nationalID = jQuery("#subjectNumberSearchValue").val().trim();
     
     dateOfBirth = jQuery("#dateOfBirthSearchValue").val().trim();
-    age = jQuery("#ageSearchValue").val().trim();
     gender = jQuery("#searchGendersSearchValues").val().trim();
+    
 
-	patientSearch(lastName, firstName, STNumber, subjectNumber, nationalID, labNumber, "", dateOfBirth, false, processSearchSuccess);
+	patientSearch(lastName, firstName, STNumber, subjectNumber, nationalID, labNumber, "", dateOfBirth, gender, false, processSearchSuccess);
 }
 
 function processSearchFailure(xhr)
@@ -346,6 +347,7 @@ function enableSearchButton(eventCode){
 function enableEnhancedSearchButton(eventCode){
 	var enhancedSearchButton = jQuery("#enhancedSearchButton");
 	enhancedSearchButton.removeAttr("disabled");
+	
 	var subjectNumberSearch = document.getElementById("subjectNumberSearchValue");
 	subjectNumberSearch.addEventListener("keyup", function(event) {
 		if(event.keyCode === 13) {
@@ -374,19 +376,9 @@ function enableEnhancedSearchButton(eventCode){
 			document.getElementById("enhancedSearchButton").click();
 		}
 	});
-	var ageSearch = document.getElementById("ageSearchValue");
-	ageSearch.addEventListener("keyup", function(event) {
-		if(event.keyCode === 13) {
-			event.preventDefault();
-			document.getElementById("enhancedSearchButton").click();
-		}
-	});
 	var genderSearch = document.getElementById("searchGendersSearchValues");
-	genderSearch.addEventListener("keyup", function(event) {
-		if(event.keyCode === 13) {
-			event.preventDefault();
+	genderSearch.addEventListener("change", function(event) {
 			document.getElementById("enhancedSearchButton").click();
-		}
 	});
 }
 
@@ -417,33 +409,33 @@ function handleSelectedPatient(){
 
 <div id="PatientPage" class="colorFill patientEnhancedSearch" style="display:inline;" >
 
-	<h2><spring:message code="sample.entry.search"/></h2>
-    <c:if test="${form.warning}">
-        <h3 class="important-text"><spring:message code="order.modify.search.warning" /></h3>
-    </c:if>
-    <select id="searchCriteria"  style="float:left" onchange="checkIndex(this)" tabindex="1" class="patientEnhancedSearch">
-    <c:forEach var="pair" items="${patientEnhancedSearch.searchCriteria}">
-    	<option value="${pair.id}"> ${pair.value} </option>
-    </c:forEach>
-    </select>
+<%-- 	<h2><spring:message code="sample.entry.search"/></h2> --%>
+<%--     <c:if test="${form.warning}"> --%>
+<%--         <h3 class="important-text"><spring:message code="order.modify.search.warning" /></h3> --%>
+<%--     </c:if> --%>
+<!--     <select id="searchCriteria"  style="float:left" onchange="checkIndex(this)" tabindex="1" class="patientEnhancedSearch"> -->
+<%--     <c:forEach var="pair" items="${patientEnhancedSearch.searchCriteria}"> --%>
+<%--     	<option value="${pair.id}"> ${pair.value} </option> --%>
+<%--     </c:forEach> --%>
+<!--     </select> -->
 
-    <input size="35"
-           maxlength="120"
-           id="searchValue"
-           class="text patientEnhancedSearch"
-           placeholder='<%=MessageUtil.getMessage("label.select.search.here")%>'
-           type="text"
-           oninput="enableSearchButton(event.which);"
-           tabindex="2"/>
+<!--     <input size="35" -->
+<!--            maxlength="120" -->
+<!--            id="searchValue" -->
+<!--            class="text patientEnhancedSearch" -->
+<%--            placeholder='<%=MessageUtil.getMessage("label.select.search.here")%>' --%>
+<!--            type="text" -->
+<!--            oninput="enableSearchButton(event.which);" -->
+<!--            tabindex="2"/> -->
 
-    <input type="button"
-           name="searchButton"
-           class="patientEnhancedSearch"
-           value="<%= MessageUtil.getMessage("label.patient.search")%>"
-           id="searchButton"
-           onclick="searchPatients()"
-           disabled="disabled" >
-</div>
+<!--     <input type="button" -->
+<!--            name="searchButton" -->
+<!--            class="patientEnhancedSearch" -->
+<%--            value="<%= MessageUtil.getMessage("label.patient.search")%>" --%>
+<!--            id="searchButton" -->
+<!--            onclick="searchPatients()" -->
+<!--            disabled="disabled" > -->
+<!-- </div> -->
 
 <div id="PatientPage" class="patientEnhancedSearch"
 	style="text-align: left;">
@@ -491,14 +483,10 @@ function handleSelectedPatient(){
 				placeholder='<%=MessageUtil.getMessage("label.select.search.here")%>' />
 				<div id="patientProperties.birthDateForDisplayMessage" class="blank"
 					style="text-align: left;"></div></td>
-			<td style="text-align: left;"><spring:message code="patient.age" />:</td>
-			<td><input
-				onchange="handleAgeChange( this ); updatePatientEditStatus();"
-				id="ageSearchValue" cssClass="text" size="3" maxlength="3" /></td>
-			<td style="text-align: left;"><spring:message
-					code="patient.gender" />:</td>
+<%-- 			<td style="text-align: left;"><spring:message code="patient.age" />:</td> --%>
+			<td style="text-align: left;"><spring:message code="patient.gender" />:</td>
 			<td><select id="searchGendersSearchValues" style="float: left"
-				onchange="checkIndex(this)" tabindex="1"
+				onchange="enableEnhancedSearchButton(event.which); checkIndex(this)" tabindex="1"
 				class="patientEnhancedSearch">
 					<option value=" "></option>
 					<c:forEach var="pair" items="${patientEnhancedSearch.genders}">

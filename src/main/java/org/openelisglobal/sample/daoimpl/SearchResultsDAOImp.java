@@ -50,6 +50,7 @@ public class SearchResultsDAOImp implements SearchResultsDAO {
     private static final String ID_PARAM = "id";
     private static final String GUID = "guid";
     private static final String DATE_OF_BIRTH = "dateOfBirth";
+    private static final String GENDER = "gender";
 
     private static final String ID_TYPE_FOR_ST = "stNumberId";
     private static final String ID_TYPE_FOR_SUBJECT_NUMBER = "subjectNumberId";
@@ -61,7 +62,7 @@ public class SearchResultsDAOImp implements SearchResultsDAO {
     @SuppressWarnings("rawtypes")
     @Transactional
     public List<PatientSearchResults> getSearchResults(String lastName, String firstName, String STNumber,
-            String subjectNumber, String nationalID, String externalID, String patientID, String guid, String dateOfBirth)
+            String subjectNumber, String nationalID, String externalID, String patientID, String guid, String dateOfBirth, String gender)
             throws LIMSRuntimeException {
 
         List queryResults;
@@ -77,9 +78,10 @@ public class SearchResultsDAOImp implements SearchResultsDAO {
             boolean queryPatientID = !GenericValidator.isBlankOrNull(patientID);
             boolean queryGuid = !GenericValidator.isBlankOrNull(guid);
             boolean queryDateOfBirth = !GenericValidator.isBlankOrNull(dateOfBirth);
+            boolean queryGender = !GenericValidator.isBlankOrNull(gender);
 
             String sql = buildQueryString(queryLastName, queryFirstName, querySTNumber, querySubjectNumber,
-                    queryNationalId, queryExternalId, queryAnyID, queryPatientID, queryGuid, queryDateOfBirth);
+                    queryNationalId, queryExternalId, queryAnyID, queryPatientID, queryGuid, queryDateOfBirth, queryGender);
 
             org.hibernate.Query query = entityManager.unwrap(Session.class).createSQLQuery(sql);
 
@@ -98,6 +100,7 @@ public class SearchResultsDAOImp implements SearchResultsDAO {
             patientID = '%' + patientID + '%';
             guid = '%' + guid + '%';
             dateOfBirth = '%' + dateOfBirth + '%';
+//            gender = '%' + gender + '%';
             
             if (queryFirstName) {
                 query.setString(FIRST_NAME_PARAM, firstName);
@@ -120,16 +123,36 @@ public class SearchResultsDAOImp implements SearchResultsDAO {
             if (queryPatientID) {
                 query.setInteger(ID_PARAM, Integer.valueOf(patientID));
             }
-
             if (queryGuid) {
                 query.setString(GUID, guid);
             }
-            
             if (queryDateOfBirth) {
                 query.setString(DATE_OF_BIRTH, dateOfBirth);
             }
+            if (queryGender) {
+                query.setString(GENDER, gender);
+            }
+//            System.out.println(">>>: " + query.getQueryString());
+//            String[] dArray = { " ", " ", subjectNumber, nationalID, gender, " ", " ", " "};
+//            String[] sArray = query.getNamedParameters();
+//            for (int i = 0; i < sArray.length; i++) {
+//                System.out.println(">>>: " + sArray[i] + ":" + dArray[i] );
+//            }
+//            System.out.println(">>>: " +
+//            "lastName" + lastName + ':' +
+//            "firstName " +            firstName + ':' +
+//            "STNumber " +            STNumber + ':' +
+//            "subjectNumber " +            subjectNumber + ':' +
+//            "nationalID " +            nationalID + ':' +
+//            "externalID " +            externalID + ':' +
+//            "patientID " +            patientID + ':' +
+//            "guid " +            guid + ':' +
+//            "dateOfBirth " +            dateOfBirth + ':' +
+//            "gender " +            gender );
             
-            System.out.println(">>>: " + query.getQueryString());
+           
+            
+            
             queryResults = query.list();
         } catch (RuntimeException e) {
             LogEvent.logDebug(e);
@@ -161,7 +184,7 @@ public class SearchResultsDAOImp implements SearchResultsDAO {
      *                      patient
      */
     private String buildQueryString(boolean lastName, boolean firstName, boolean STNumber, boolean subjectNumber,
-            boolean nationalID, boolean externalID, boolean anyID, boolean patientID, boolean guid, boolean dateOfBirth) {
+            boolean nationalID, boolean externalID, boolean anyID, boolean patientID, boolean guid, boolean dateOfBirth, boolean gender) {
 
         StringBuilder queryBuilder = new StringBuilder();
         queryBuilder.append(
@@ -192,10 +215,16 @@ public class SearchResultsDAOImp implements SearchResultsDAO {
         }
 
         if (anyID) {
+            if (subjectNumber) {
+                queryBuilder.append(" ( piSN.identity_data ilike :");
+                queryBuilder.append(SUBJECT_NUMBER_PARAM);
+                queryBuilder.append(" or");
+            }
+
             if (nationalID) {
                 queryBuilder.append(" p.national_id ilike :");
                 queryBuilder.append(NATIONAL_ID_PARAM);
-                queryBuilder.append(" or ");
+                queryBuilder.append(" or");
             }
 
             if (externalID) {
@@ -203,7 +232,19 @@ public class SearchResultsDAOImp implements SearchResultsDAO {
                 queryBuilder.append(EXTERNAL_ID_PARAM);
                 queryBuilder.append(" or");
             }
+            
+            if (STNumber) {
+                queryBuilder.append(" pi.identity_data ilike :");
+                queryBuilder.append(ST_NUMBER_PARAM);
+                queryBuilder.append(" ) and");
+            }
+            
         } else {
+            if (subjectNumber) {
+                queryBuilder.append(" ( piSN.identity_data ilike :");
+                queryBuilder.append(SUBJECT_NUMBER_PARAM);
+                queryBuilder.append(" or");
+            }
 
             if (nationalID) {
                 queryBuilder.append(" p.national_id ilike :");
@@ -216,35 +257,35 @@ public class SearchResultsDAOImp implements SearchResultsDAO {
                 queryBuilder.append(EXTERNAL_ID_PARAM);
                 queryBuilder.append(" or");
             }
-        }
-
-        if (STNumber) {
-            queryBuilder.append(" pi.identity_data ilike :");
-            queryBuilder.append(ST_NUMBER_PARAM);
-            queryBuilder.append(" or");
-        }
-
-        if (subjectNumber) {
-            queryBuilder.append(" piSN.identity_data ilike :");
-            queryBuilder.append(SUBJECT_NUMBER_PARAM);
-            queryBuilder.append(" or");
+            
+            if (STNumber) {
+                queryBuilder.append(" pi.identity_data ilike :");
+                queryBuilder.append(ST_NUMBER_PARAM);
+                queryBuilder.append(" ) and");
+            }
         }
 
         if (patientID) {
             queryBuilder.append(" p.id = :");
             queryBuilder.append(ID_PARAM);
-            queryBuilder.append(" or");
+            queryBuilder.append(" and");
         }
 
         if (guid) {
             queryBuilder.append(" piGUID.identity_data = :");
             queryBuilder.append(GUID);
-            queryBuilder.append(" or");
+            queryBuilder.append(" and");
         }
         
         if (dateOfBirth) {
             queryBuilder.append(" p.entered_birth_date ilike :");
             queryBuilder.append(DATE_OF_BIRTH);
+            queryBuilder.append(" and");
+        }
+        
+        if (gender) {
+            queryBuilder.append(" p.gender = :");
+            queryBuilder.append(GENDER);
             queryBuilder.append(" and");
         }
      
