@@ -4,7 +4,9 @@ nav:
     - About: about.md
     - Install OpenELIS Global: install.md
     - Analyzers: analyzer.md
-    - Deploy: deploy.md 
-    - Develop: dev-sop.md
+    - Deploy:
+       - OpenMRS Interoperability: deployomrs.md 
+    - Develop: dev.md
+    - Website: http://openelis-global.org
 theme: readthedocs
 
