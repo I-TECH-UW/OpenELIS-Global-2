@@ -109,7 +109,7 @@ public class PatientManagementUpdate implements IPatientUpdate {
                     : patientInfo.getNationalId();
 
             List<PatientSearchResults> results = search.getSearchResults(null, null, newSTNumber, newSubjectNumber,
-                    newNationalId, null, null, null);
+                    newNationalId, null, null, null, null, null);
 
             if (!results.isEmpty()) {
 

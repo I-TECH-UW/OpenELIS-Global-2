@@ -447,7 +447,7 @@ function handleSelectedPatient(){
 			<td><input
 					id="subjectNumberSearchValue" 
 					size="40" 
-					onchange="enableEnhancedSearchButton(event.which);"
+					oninput="enableEnhancedSearchButton(event.which);"
 					placeholder='<%=MessageUtil.getMessage("label.select.search.here")%>' />
 			</td>
 		</tr>
@@ -457,7 +457,7 @@ function handleSelectedPatient(){
 			<td><input 
 					id="lastNameSearchValue" 
 					size="40" 
-					onchange="enableEnhancedSearchButton(event.which);"
+					oninput="enableEnhancedSearchButton(event.which);"
 					placeholder='<%=MessageUtil.getMessage("label.select.search.here")%>' />
 			</td>
 		</tr>
@@ -467,7 +467,7 @@ function handleSelectedPatient(){
 			<td><input
 				id="firstNameSearchValue"
 				size="40"
-				onchange="enableEnhancedSearchButton(event.which);"
+				oninput="enableEnhancedSearchButton(event.which);"
 				placeholder='<%=MessageUtil.getMessage("label.select.search.here")%>' />
 			</td>
 		</tr>
