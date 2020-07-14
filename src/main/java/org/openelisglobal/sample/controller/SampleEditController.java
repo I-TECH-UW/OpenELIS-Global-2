@@ -140,7 +140,9 @@ public class SampleEditController extends BaseController {
     public ModelAndView showSampleEdit(HttpServletRequest request, @ModelAttribute("form") @Validated(SampleEdit.class)
     SampleEditForm oldForm, BindingResult result)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        oldForm.getExistingTests().get(0).isCanceled();
+        if(oldForm.getExistingTests() != null) {
+            oldForm.getExistingTests().get(0).isCanceled();
+        }
         SampleEditForm form = new SampleEditForm();
         form.setFormAction("SampleEdit.do");
 

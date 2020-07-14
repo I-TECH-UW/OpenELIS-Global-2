@@ -65,7 +65,7 @@ public class PatientSearchLocalAndClinicWorker extends PatientSearchWorker {
      */
     @Override
     public String createSearchResultXML(String lastName, String firstName, String STNumber, String subjectNumber,
-            String nationalID, String patientID, String guid, StringBuilder xml) {
+            String nationalID, String patientID, String guid, String dateOfBirth, String gender, StringBuilder xml) {
 
         // just to make the name shorter
         ConfigurationProperties config = ConfigurationProperties.getInstance();
@@ -93,7 +93,7 @@ public class PatientSearchLocalAndClinicWorker extends PatientSearchWorker {
         List<PatientDemographicsSearchResults> newPatientsFromClinic = new ArrayList<>();
 
         localResults = searchResultsService.getSearchResults(lastName, firstName, STNumber, subjectNumber, nationalID,
-                nationalID, patientID, guid);
+                nationalID, patientID, guid, "", "");
         try {
             Future<Integer> futureExternalSearchResult = externalSearch.runExternalSearch();
             Integer externalSearchResult = futureExternalSearchResult

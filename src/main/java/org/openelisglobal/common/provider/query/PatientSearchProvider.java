@@ -62,6 +62,8 @@ public class PatientSearchProvider extends BaseQueryProvider {
         String nationalID = request.getParameter("nationalID");
         String labNumber = request.getParameter("labNumber");
         String guid = request.getParameter("guid");
+        String dateOfBirth = request.getParameter("dateOfBirth");
+        String gender = request.getParameter("gender");
         String suppressExternalSearch = request.getParameter("suppressExternalSearch");
         String patientID = null;
 
@@ -85,7 +87,7 @@ public class PatientSearchProvider extends BaseQueryProvider {
 
             if (worker != null) {
                 result = worker.createSearchResultXML(lastName, firstName, STNumber, subjectNumber, nationalID,
-                        patientID, guid, xml);
+                        patientID, guid, dateOfBirth, gender, xml);
             } else {
                 result = INVALID;
                 xml.append("System is not configured correctly for searching for patients. Contact Administrator");
@@ -100,10 +102,14 @@ public class PatientSearchProvider extends BaseQueryProvider {
         PersonService personService = SpringContext.getBean(PersonService.class);
         personService.getData(patient.getPerson());
         return new PatientSearchResults(BigDecimal.valueOf(Long.parseLong(patient.getId())),
-                patientPatientService.getFirstName(patient), patientPatientService.getLastName(patient),
-                patientPatientService.getGender(patient), patientPatientService.getEnteredDOB(patient),
-                patientPatientService.getNationalId(patient), patient.getExternalId(),
-                patientPatientService.getSTNumber(patient), patientPatientService.getSubjectNumber(patient),
+                patientPatientService.getFirstName(patient), 
+                patientPatientService.getLastName(patient),
+                patientPatientService.getGender(patient), 
+                patientPatientService.getEnteredDOB(patient),
+                patientPatientService.getNationalId(patient), 
+                patient.getExternalId(),
+                patientPatientService.getSTNumber(patient), 
+                patientPatientService.getSubjectNumber(patient),
                 patientPatientService.getGUID(patient),
                 SpringContext.getBean(ObservationHistoryService.class).getMostRecentValueForPatient(
                         ObservationType.REFERRERS_PATIENT_ID, patientPatientService.getPatientId(patient)));

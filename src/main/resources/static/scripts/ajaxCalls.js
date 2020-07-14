@@ -302,7 +302,7 @@ function validateSubjectNumberOnServer( subjectNumber, type, elementId, success,
 
 //sensitive data is being transmitted, therefore a token check should be done even on GET. 
 //Otherwise this should be moved to a POST request and rely on regular csrf functionality
-function patientSearch(lastName, firstName, STNumber, subjectNumber, nationalId, labNumber, guid, suppressExternalSearch, success, failure){
+function patientSearch(lastName, firstName, STNumber, subjectNumber, nationalId, labNumber, guid, dateOfBirth, gender, suppressExternalSearch, success, failure){
 	if( !failure){failure = defaultFailure;	}
 	new Ajax.Request (
             'ajaxQueryXML',  //url
@@ -315,6 +315,8 @@ function patientSearch(lastName, firstName, STNumber, subjectNumber, nationalId,
                			  "&nationalID=" + nationalId +
                			  "&labNumber=" + labNumber +
                			  "&guid=" + guid +
+               			  "&dateOfBirth=" + dateOfBirth +
+               			  "&gender=" + gender +
                			  "&suppressExternalSearch=" + suppressExternalSearch,
           		requestHeaders : {
         					"X-CSRF-Token" : getCsrfToken()
