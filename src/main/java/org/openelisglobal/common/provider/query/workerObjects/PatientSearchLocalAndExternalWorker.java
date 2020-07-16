@@ -70,7 +70,7 @@ public class PatientSearchLocalAndExternalWorker extends PatientSearchWorker {
      */
     @Override
     public String createSearchResultXML(String lastName, String firstName, String STNumber, String subjectNumber,
-            String nationalID, String patientID, String guid, StringBuilder xml) {
+            String nationalID, String patientID, String guid, String dateOfBirth, String gender, StringBuilder xml) {
 
         // just to make the name shorter
         ConfigurationProperties config = ConfigurationProperties.getInstance();
@@ -92,7 +92,7 @@ public class PatientSearchLocalAndExternalWorker extends PatientSearchWorker {
 
         List<PatientSearchResults> localResults = new ArrayList<>();
         localResults = searchResultsService.getSearchResults(lastName, firstName, STNumber, subjectNumber, nationalID,
-                nationalID, patientID, guid);
+                nationalID, patientID, guid, "", "");
         allResults.addAll(localResults);
 
         if (config.getPropertyValue(Property.INFO_HIGHWAY_ENABLED).equals("true")) {

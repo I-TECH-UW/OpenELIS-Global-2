@@ -10,6 +10,7 @@ import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.util.validator.CustomDateValidator.DateRelation;
 import org.openelisglobal.patient.action.IPatientUpdate.PatientUpdateStatus;
 import org.openelisglobal.patient.action.bean.PatientClinicalInfo;
+import org.openelisglobal.patient.action.bean.PatientEnhancedSearch;
 import org.openelisglobal.patient.action.bean.PatientManagementInfo;
 import org.openelisglobal.patient.action.bean.PatientSearch;
 import org.openelisglobal.project.valueholder.Project;
@@ -44,6 +45,9 @@ public class SamplePatientEntryForm extends BaseForm {
 
     // for display
     private PatientSearch patientSearch;
+    
+ // for display
+    private PatientEnhancedSearch patientEnhancedSearch;
 
     @Valid
     private PatientClinicalInfo patientClinicalProperties;
@@ -118,6 +122,14 @@ public class SamplePatientEntryForm extends BaseForm {
 
     public void setPatientSearch(PatientSearch patientSearch) {
         this.patientSearch = patientSearch;
+    }
+    
+    public PatientEnhancedSearch getPatientEnhancedSearch() {
+        return patientEnhancedSearch;
+    }
+
+    public void setPatientEnhancedSearch(PatientEnhancedSearch patientEnhancedSearch) {
+        this.patientEnhancedSearch = patientEnhancedSearch;
     }
 
     public PatientClinicalInfo getPatientClinicalProperties() {
