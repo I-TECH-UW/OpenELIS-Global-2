@@ -665,4 +665,10 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
         return getBaseObjectDAO().getTestByLocalizedName(testName, localizationService.getCurrentLocale());
     }
 
+    @Override
+    public Test getTestByName(String testName) {
+        // TODO Auto-generated method stub
+        return getTestByLocalizedName(testName);
+    }
+
 }

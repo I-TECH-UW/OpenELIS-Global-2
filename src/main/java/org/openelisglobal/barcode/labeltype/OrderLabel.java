@@ -25,6 +25,38 @@ import org.openelisglobal.spring.util.SpringContext;
  */
 public class OrderLabel extends Label {
 
+    public OrderLabel(String labNo, String facility) {
+        // set dimensions
+        try {
+            width = Float
+                    .parseFloat(ConfigurationProperties.getInstance().getPropertyValue(Property.ORDER_BARCODE_WIDTH));
+            height = Float
+                    .parseFloat(ConfigurationProperties.getInstance().getPropertyValue(Property.ORDER_BARCODE_HEIGHT));
+        } catch (Exception e) {
+            LogEvent.logError("OrderLabel", "OrderLabel OrderLabel()", e.toString());
+        }
+        // adding fields above bar code
+        aboveFields = new ArrayList<>();
+        LabelField labelField = new LabelField(MessageUtil.getMessage("barcode.label.info.patientname"), "", 6);
+        labelField.setDisplayFieldName(true);
+        labelField.setUnderline(true);
+        aboveFields.add(labelField);
+
+        labelField = new LabelField(MessageUtil.getMessage("barcode.label.info.patientdob"), "", 4);
+        labelField.setDisplayFieldName(true);
+        labelField.setUnderline(true);
+        aboveFields.add(labelField);
+
+        // aboveFields.add(getAvailableIdField(patient));
+        LabelField siteField = new LabelField(MessageUtil.getMessage("barcode.label.info.site"),
+                StringUtils.substring(facility, 0, 20), 4);
+        siteField.setDisplayFieldName(true);
+        aboveFields.add(siteField);
+
+        // adding bar code
+        setCode(labNo);
+    }
+
     /**
      * @param patient Who to include on order label
      * @param sample  What to include on order label
@@ -32,10 +64,9 @@ public class OrderLabel extends Label {
      */
     public OrderLabel(Patient patient, Sample sample, String labNo) {
         // set dimensions
-            width = Float
-                    .parseFloat(ConfigurationProperties.getInstance().getPropertyValue(Property.ORDER_BARCODE_WIDTH));
-            height = Float
-                    .parseFloat(ConfigurationProperties.getInstance().getPropertyValue(Property.ORDER_BARCODE_HEIGHT));
+        width = Float.parseFloat(ConfigurationProperties.getInstance().getPropertyValue(Property.ORDER_BARCODE_WIDTH));
+        height = Float
+                .parseFloat(ConfigurationProperties.getInstance().getPropertyValue(Property.ORDER_BARCODE_HEIGHT));
         // get information to display above bar code
         Person person = patient.getPerson();
         SampleOrderService sampleOrderService = new SampleOrderService(sample);

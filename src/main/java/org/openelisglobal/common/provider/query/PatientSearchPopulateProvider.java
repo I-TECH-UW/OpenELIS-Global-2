@@ -30,9 +30,11 @@ import org.openelisglobal.address.valueholder.AddressPart;
 import org.openelisglobal.address.valueholder.PersonAddress;
 import org.openelisglobal.common.util.XMLUtil;
 import org.openelisglobal.internationalization.MessageUtil;
+import org.openelisglobal.patient.service.PatientContactService;
 import org.openelisglobal.patient.service.PatientService;
 import org.openelisglobal.patient.util.PatientUtil;
 import org.openelisglobal.patient.valueholder.Patient;
+import org.openelisglobal.patient.valueholder.PatientContact;
 import org.openelisglobal.patientidentity.service.PatientIdentityService;
 import org.openelisglobal.patientidentity.valueholder.PatientIdentity;
 import org.openelisglobal.patientidentitytype.util.PatientIdentityTypeMap;
@@ -49,6 +51,7 @@ public class PatientSearchPopulateProvider extends BaseQueryProvider {
             .getBean(PatientPatientTypeService.class);
     protected AddressPartService addressPartService = SpringContext.getBean(AddressPartService.class);
     protected PersonAddressService personAddressService = SpringContext.getBean(PersonAddressService.class);
+    protected PatientContactService patientContactService = SpringContext.getBean(PatientContactService.class);
 
     private String ADDRESS_PART_VILLAGE_ID;
     private String ADDRESS_PART_COMMUNE_ID;
@@ -123,6 +126,7 @@ public class PatientSearchPopulateProvider extends BaseQueryProvider {
         PatientIdentityTypeMap identityMap = PatientIdentityTypeMap.getInstance();
 
         List<PatientIdentity> identityList = PatientUtil.getIdentityListForPatient(patient.getId());
+        List<PatientContact> patientContacts = patientContactService.getAllMatching("patientId", patient.getId());
 
         XMLUtil.appendKeyValue("ID", patient.getId(), xml);
         XMLUtil.appendKeyValue("nationalID", patient.getNationalId(), xml);
@@ -155,6 +159,14 @@ public class PatientSearchPopulateProvider extends BaseQueryProvider {
         XMLUtil.appendKeyValue("healthDistrict", identityMap.getIdentityValue(identityList, "HEALTH DISTRICT"), xml);
         XMLUtil.appendKeyValue("healthRegion", identityMap.getIdentityValue(identityList, "HEALTH REGION"), xml);
         XMLUtil.appendKeyValue("guid", identityMap.getIdentityValue(identityList, "GUID"), xml);
+        if (patientContacts.size() >= 1) {
+            PatientContact contact = patientContacts.get(0);
+            XMLUtil.appendKeyValue("contactFirstName", contact.getPerson().getFirstName(), xml);
+            XMLUtil.appendKeyValue("contactLastName", contact.getPerson().getLastName(), xml);
+            XMLUtil.appendKeyValue("contactPhone", contact.getPerson().getPrimaryPhone(), xml);
+            XMLUtil.appendKeyValue("contactEmail", contact.getPerson().getEmail(), xml);
+            XMLUtil.appendKeyValue("contactPK", contact.getId(), xml);
+        }
 
         if (patient.getLastupdated() != null) {
             String updateAsString = patient.getLastupdated().toString();

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.apache.commons.validator.GenericValidator;
 import org.hibernate.ObjectNotFoundException;
 import org.openelisglobal.audittrail.dao.AuditTrailService;
 import org.openelisglobal.common.action.IActionConstants;
@@ -205,7 +206,8 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject<PK>, PK extends
     @Transactional
     public T save(T baseObject) {
 
-        if (baseObject.getId() == null) {
+        if ((baseObject.getId() instanceof String && GenericValidator.isBlankOrNull((String) baseObject.getId()))
+                || null == baseObject.getId()) {
             return get(insert(baseObject));
         } else {
             return update(baseObject);

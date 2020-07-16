@@ -14,6 +14,7 @@ import org.apache.commons.validator.GenericValidator;
 import org.hibernate.StaleObjectStateException;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.PhoneNumberService;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
@@ -89,7 +90,8 @@ public class SiteInformationController extends BaseController {
         binder.setAllowedFields(ALLOWED_FIELDS);
     }
 
-    @RequestMapping(value = { "/NonConformityConfiguration", "/WorkplanConfiguration", "/PrintedReportsConfiguration",
+    @RequestMapping(value = { "/ExternalConnections", "/NonConformityConfiguration", "/WorkplanConfiguration",
+            "/PrintedReportsConfiguration",
             "/SampleEntryConfig", "/ResultConfiguration", "/MenuStatementConfig", "/PatientConfiguration",
             "/ValidationConfiguration", "/SiteInformation", "/NextPreviousNonConformityConfiguration",
             "/NextPreviousWorkplanConfiguration", "/NextPreviousPrintedReportsConfiguration",
@@ -161,7 +163,12 @@ public class SiteInformationController extends BaseController {
 
     private void setupFormForRequest(SiteInformationForm form, HttpServletRequest request) {
         String path = request.getServletPath();
-        if (path.contains("NonConformityConfiguration")) {
+        if (path.contains("ExternalConnections")) {
+            form.setSiteInfoDomainName("externalConnections");
+            form.setFormName("ExternalConnectionsForm");
+            form.setFormAction("ExternalConnections");
+
+        } else if (path.contains("NonConformityConfiguration")) {
             form.setSiteInfoDomainName("non_conformityConfiguration");
             form.setFormName("NonConformityConfigurationForm");
             form.setFormAction("NonConformityConfiguration");
@@ -232,7 +239,8 @@ public class SiteInformationController extends BaseController {
         return Boolean.TRUE;
     }
 
-    @RequestMapping(value = { "/NonConformityConfiguration", "/WorkplanConfiguration", "/PrintedReportsConfiguration",
+    @RequestMapping(value = { "/ExternalConnections", "/NonConformityConfiguration", "/WorkplanConfiguration",
+            "/PrintedReportsConfiguration",
             "/SampleEntryConfig", "/ResultConfiguration", "/MenuStatementConfig", "/PatientConfiguration",
             "/ValidationConfiguration", "/SiteInformation" }, method = RequestMethod.POST)
     public ModelAndView showUpdateSiteInformation(HttpServletRequest request, HttpServletResponse response,
@@ -263,6 +271,7 @@ public class SiteInformationController extends BaseController {
         }
         // makes the changes take effect immediately
         ConfigurationProperties.forceReload();
+        DisplayListService.getInstance().refreshLists();
         if (FWD_SUCCESS_INSERT.equals(forward)) {
             redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
             // signal to remove form from session
@@ -443,7 +452,8 @@ public class SiteInformationController extends BaseController {
      * }
      */
 
-    @RequestMapping(value = { "/CancelNonConformityConfiguration", "/CancelWorkplanConfiguration",
+    @RequestMapping(value = { "/CancelExternalConnections", "/CancelNonConformityConfiguration",
+            "/CancelWorkplanConfiguration",
             "/CancelPrintedReportsConfiguration", "/CancelSampleEntryConfig", "/CancelResultConfiguration",
             "/CancelMenuStatementConfig", "/CancelPatientConfiguration", "/CancelValidationConfiguration",
             "/CancelSiteInformation" }, method = RequestMethod.GET)

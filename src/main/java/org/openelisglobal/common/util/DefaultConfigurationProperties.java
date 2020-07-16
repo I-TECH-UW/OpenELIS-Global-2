@@ -35,7 +35,6 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
     protected static Map<ConfigurationProperties.Property, KeyDefaultPair> propertiesFileMap;
     protected static Map<String, ConfigurationProperties.Property> dbNamePropertiesMap;
     private boolean databaseLoaded = false;
-
     {
         // config from SystemConfiguration.properties
         propertiesFileMap = new HashMap<>();
@@ -44,6 +43,7 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
         propertiesFileMap.put(Property.ReferingLabParentOrg,
                 new KeyDefaultPair("organization.reference.lab.parent", null));
         propertiesFileMap.put(Property.resultsResendTime, new KeyDefaultPair("results.send.retry.time", "30"));
+
 //		propertiesFileMap.put(Property. , new KeyDefaultPair() );
 
         // config from site_information table
@@ -157,6 +157,14 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
         setDBPropertyMappingAndDefault(Property.SPECIMEN_FIELD_DATE, Property.SPECIMEN_FIELD_DATE.getName(), "true");
         setDBPropertyMappingAndDefault(Property.SPECIMEN_FIELD_SEX, Property.SPECIMEN_FIELD_SEX.getName(), "true");
         setDBPropertyMappingAndDefault(Property.SPECIMEN_FIELD_TESTS, Property.SPECIMEN_FIELD_TESTS.getName(), "true");
+        setDBPropertyMappingAndDefault(Property.INFO_HIGHWAY_ADDRESS, Property.INFO_HIGHWAY_ADDRESS.getName(),
+                "");
+        setDBPropertyMappingAndDefault(Property.INFO_HIGHWAY_USERNAME, Property.INFO_HIGHWAY_USERNAME.getName(),
+                "");
+        setDBPropertyMappingAndDefault(Property.INFO_HIGHWAY_PASSWORD, Property.INFO_HIGHWAY_PASSWORD.getName(),
+                "");
+        setDBPropertyMappingAndDefault(Property.INFO_HIGHWAY_ENABLED, Property.INFO_HIGHWAY_ENABLED.getName(), "");
+
     }
 
     private void setDBPropertyMappingAndDefault(Property property, String dbName, String defaultValue) {

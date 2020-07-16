@@ -7,7 +7,6 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
-import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.address.service.AddressPartService;
 import org.openelisglobal.address.service.PersonAddressService;
 import org.openelisglobal.address.valueholder.AddressPart;
@@ -16,6 +15,7 @@ import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
 import org.openelisglobal.common.util.DateUtil;
+import org.openelisglobal.common.util.validator.GenericValidator;
 import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
 import org.openelisglobal.gender.service.GenderService;
 import org.openelisglobal.gender.valueholder.Gender;
@@ -24,6 +24,7 @@ import org.openelisglobal.patient.action.bean.PatientManagementInfo;
 import org.openelisglobal.patient.dao.PatientDAO;
 import org.openelisglobal.patient.util.PatientUtil;
 import org.openelisglobal.patient.valueholder.Patient;
+import org.openelisglobal.patient.valueholder.PatientContact;
 import org.openelisglobal.patientidentity.service.PatientIdentityService;
 import org.openelisglobal.patientidentity.valueholder.PatientIdentity;
 import org.openelisglobal.patientidentitytype.service.PatientIdentityTypeService;
@@ -92,6 +93,9 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String> i
     private PersonService personService;
 //    @Autowired
     protected FhirTransformService fhirTransformService = SpringContext.getBean(FhirTransformService.class);
+
+    @Autowired
+    private PatientContactService patientContactService;
 
     @PostConstruct
     public void initializeGlobalVariables() {
@@ -542,7 +546,7 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String> i
     public Patient getPatientByNationalId(String nationalId) {
         return getBaseObjectDAO().getPatientByNationalId(nationalId);
     }
-    
+
     @Override
     @Transactional(readOnly = true)
     public Patient getPatientBySubjectNumber(String subjectNumber) {
@@ -606,10 +610,10 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String> i
             personService.update(patient.getPerson());
         }
         patient.setPerson(patient.getPerson());
-        
-        org.hl7.fhir.r4.model.Patient fhirPatient = 
+
+        org.hl7.fhir.r4.model.Patient fhirPatient =
                 fhirTransformService.CreateFhirPatientFromOEPatient(patientInfo);
-        
+
         if (patientInfo.getPatientUpdateStatus() == PatientUpdateStatus.ADD) {
             insert(patient);
             org.hl7.fhir.r4.model.Bundle pBundle = fhirTransformService.CreateFhirResource(fhirPatient);
@@ -617,7 +621,32 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String> i
             update(patient);
             org.hl7.fhir.r4.model.Bundle pBundle = fhirTransformService.UpdateFhirResource(fhirPatient);
         }
+
+        persistContact(patientInfo, patient);
         persistPatientRelatedInformation(patientInfo, patient, sysUserId);
+    }
+
+    private void persistContact(PatientManagementInfo patientInfo, Patient patient) {
+        if (GenericValidator.isBlankOrNull(patientInfo.getPatientContact().getId())) {
+            PatientContact contact = patientInfo.getPatientContact();
+            Person contactPerson = patientInfo.getPatientContact().getPerson();
+            contact.setPatientId(patient.getId());
+            contact.setSysUserId(patientInfo.getPatientContact().getSysUserId());
+            contactPerson.setSysUserId(contact.getSysUserId());
+
+            personService.insert(contactPerson);
+            patientContactService.insert(contact);
+        } else {
+            Person newContactPerson = patientInfo.getPatientContact().getPerson();
+            PatientContact contact = patientContactService.get(patientInfo.getPatientContact().getId());
+            Person oldContactPerson = contact.getPerson();
+            oldContactPerson.setEmail(newContactPerson.getEmail());
+            oldContactPerson.setLastName(newContactPerson.getLastName());
+            oldContactPerson.setFirstName(newContactPerson.getFirstName());
+            oldContactPerson.setPrimaryPhone(newContactPerson.getPrimaryPhone());
+            contact.setSysUserId(patientInfo.getPatientContact().getSysUserId());
+            oldContactPerson.setSysUserId(patientInfo.getPatientContact().getSysUserId());
+        }
     }
 
     protected void persistPatientRelatedInformation(PatientManagementInfo patientInfo, Patient patient,
@@ -690,21 +719,23 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String> i
         }
 
         if (commune == null) {
-            insertNewPatientInfo(ADDRESS_PART_COMMUNE_ID, patientInfo.getCommune(), "T", patient, sysUserId);
+            insertNewPatientAddressInfo(ADDRESS_PART_COMMUNE_ID, patientInfo.getCommune(), "T", patient, sysUserId);
         }
 
         if (village == null) {
-            insertNewPatientInfo(ADDRESS_PART_VILLAGE_ID, patientInfo.getCity(), "T", patient, sysUserId);
+            insertNewPatientAddressInfo(ADDRESS_PART_VILLAGE_ID, patientInfo.getCity(), "T", patient, sysUserId);
         }
 
         if (dept == null && patientInfo.getAddressDepartment() != null
                 && !patientInfo.getAddressDepartment().equals("0")) {
-            insertNewPatientInfo(ADDRESS_PART_DEPT_ID, patientInfo.getAddressDepartment(), "D", patient, sysUserId);
+            insertNewPatientAddressInfo(ADDRESS_PART_DEPT_ID, patientInfo.getAddressDepartment(), "D", patient, sysUserId);
         }
 
     }
 
-    private void insertNewPatientInfo(String partId, String value, String type, Patient patient, String sysUserId) {
+    @Override
+    public void insertNewPatientAddressInfo(String partId, String value, String type, Patient patient,
+            String sysUserId) {
         PersonAddress address;
         address = new PersonAddress();
         address.setPersonId(patient.getPerson().getId());

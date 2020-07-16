@@ -15833,8 +15833,8 @@ SELECT pg_catalog.setval('clinlims.scriptlet_seq', 3, true);
 --
 
 COPY clinlims.site_information (id, name, lastupdated, description, value, encrypted, domain_id, value_type, instruction_key, "group", schedule_id, tag, dictionary_category_id, description_key, name_key) FROM stdin;
-100	firstNameCharset	\N	allowed characters in first name fields	a-zàâçéèêëîïôûùüÿñæœ -	f	18	text	instructions.validationconfig.firstname	0	\N	\N	\N	siteInfo.validationConfig.firstname	\N
-101	lastNameCharset	\N	allowed characters in last name fields	a-zàâçéèêëîïôûùüÿñæœ -	f	18	text	instructions.validationconfig.lastname	0	\N	\N	\N	siteInfo.validationConfig.lastname	\N
+100	firstNameCharset	\N	allowed characters in first name fields	.'a-zàâçéèêëîïôûùüÿñæœ -	f	18	text	instructions.validationconfig.firstname	0	\N	\N	\N	siteInfo.validationConfig.firstname	\N
+101	lastNameCharset	\N	allowed characters in last name fields	.'a-zàâçéèêëîïôûùüÿñæœ -	f	18	text	instructions.validationconfig.lastname	0	\N	\N	\N	siteInfo.validationConfig.lastname	\N
 102	userNameCharset	\N	allowed characters in username fields	a-zàâçéèêëîïôûùüÿñæœ ._@-	f	18	text	instructions.validationconfig.username	0	\N	\N	\N	siteInfo.validationConfig.username	\N
 103	patientIdCharset	\N	allowed characters in patient identifier fields	a-z0-9/àâçéèêëîïôûùüÿñæœ	f	18	text	instructions.validationconfig.patientid	0	\N	\N	\N	siteInfo.validationConfig.patientid	\N
 104	reportsDirectory	2020-01-22 21:46:59.769137-08	the directory for the reports	/reports	f	11	text	\N	0	\N	\N	\N	siteInfo.reportConfig.reportDirectory	\N

@@ -61,7 +61,7 @@ public class NameValidator implements ConstraintValidator<ValidName, String> {
         case FIRST_NAME:
             return value.matches(FIRST_NAME_REGEX);
         case LAST_NAME:
-            return value.matches(LAST_NAME_REGEX);
+            return "UNKNOWN_".equals(value) || value.matches(LAST_NAME_REGEX);
         case FULL_NAME:
             return value.matches(FULL_NAME_REGEX);
         case USERNAME:
