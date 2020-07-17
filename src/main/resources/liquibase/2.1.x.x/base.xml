@@ -6,5 +6,6 @@
 	  http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
 	<include file="liquibase/2.1.x.x/info_highway_credentials.xml"/>
+	<include file="liquibase/2.1.x.x/external_connections.xml"/>
 
 </databaseChangeLog>

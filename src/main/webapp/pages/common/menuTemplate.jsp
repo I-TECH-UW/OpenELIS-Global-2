@@ -29,6 +29,8 @@ if (form == null) {
     
 %>
 <head>
+<link rel="stylesheet" href="fontawesome-free-5.13.1-web/css/fontawesome.min.css">
+<link href="fontawesome-free-5.13.1-web/css/solid.css" rel="stylesheet">
 	<link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
 	<link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
 	<link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
