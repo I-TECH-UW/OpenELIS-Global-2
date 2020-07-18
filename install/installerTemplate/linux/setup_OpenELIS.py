@@ -339,6 +339,10 @@ def create_properties_files():
             line = line.replace("[% db_port %]", DB_PORT) 
         if line.find("[% db_password %]")  >= 0:
             line = line.replace("[% db_password %]", CLINLIMS_PWD) 
+        if line.find("[% truststore_password %]")  >= 0:
+            line = line.replace("[% truststore_password %]", TRUSTSTORE_PWD)
+        if line.find("[% keystore_password %]")  >= 0:
+            line = line.replace("[% keystore_password %]", KEYSTORE_PWD) 
         
         output_file.write(line)
 
