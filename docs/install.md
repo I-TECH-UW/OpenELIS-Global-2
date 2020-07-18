@@ -44,11 +44,27 @@ This updates the system from the sources in the sources list. It updates what ne
     
 ### Create and Load SSL Certificates
 
-1. Generate a signed .crt and .key for individual installation or if you are just creating a test server, you can skip signed keys and instead run:
+1. Generate a signed .crt and .key for *.openelisci.org
+    
+2. Create keystore from key and cert (make sure to record the password somewhere secure as you will need to enter it elsewhere)
 
-    ``sudo apt-get install ssl-cert``
+    ``openssl pkcs12 -inkey path/toyour/key -in path/to/your/cert -export -out /etc/openelis-global/keystore``
+    
+    ``enter an export password``
 
-2. If you have signed keys, place files in server as:
+3. Create truststore with OpenELIS-Global's cert (or a CA that signs OE certs)
+   
+   using keytool (more reliable):
+   
+    ``sudo apt-get install default-jre``
+   
+    ``keytool -import -alias oeCert -file path/to/your/cert -storetype pkcs12 -keystore /etc/openelis-global/truststore``
+   
+   using openssl (less reliable, but doesn't require java):
+  
+    ``openssl pkcs12 -export -nokeys -in path/to/your/cert -out /etc/openelis-global/truststore``
+
+4. If you have signed keys, place files in server as:
 
     ``/etc/tomcat/ssl/certs/tomcat_cert.crt``
 
