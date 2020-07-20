@@ -16,6 +16,7 @@ import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.TableIdService;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.SystemConfiguration;
+import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
 import org.openelisglobal.dataexchange.service.order.ElectronicOrderService;
 import org.openelisglobal.observationhistory.service.ObservationHistoryService;
 import org.openelisglobal.observationhistory.valueholder.ObservationHistory;
@@ -71,6 +72,8 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
     private SampleRequesterService sampleRequesterService;
     @Autowired
     private OrganizationService organizationService;
+    @Autowired
+    private FhirTransformService fhirTransformService;
 
     @Transactional
     @Override
@@ -97,6 +100,8 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
 
         request.getSession().setAttribute("lastAccessionNumber", updateData.getAccessionNumber());
         request.getSession().setAttribute("lastPatientId", updateData.getPatientId());
+        
+        String fhir_json = fhirTransformService.CreateFhirFromOESample(updateData, patientUpdate, patientInfo, form, request);
     }
 
     private void persistObservations(SamplePatientUpdateData updateData) {

@@ -26,7 +26,7 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
-import org.openelisglobal.common.provider.query.PatientDemographicsSearchResults;
+import org.openelisglobal.common.provider.query.ExtendedPatientSearchResults;
 import org.openelisglobal.common.util.DateUtil;
 
 public class ExternalPatientSearchResultsXMLConverter {
@@ -46,8 +46,8 @@ public class ExternalPatientSearchResultsXMLConverter {
     private static final String ELEMENT_PATIENTS = "Patients";
 
     @SuppressWarnings("unchecked")
-    public List<PatientDemographicsSearchResults> convertXMLToSearchResults(String resultXML) throws DocumentException {
-        List<PatientDemographicsSearchResults> searchResults = new ArrayList<PatientDemographicsSearchResults>();
+    public List<ExtendedPatientSearchResults> convertXMLToSearchResults(String resultXML) throws DocumentException {
+        List<ExtendedPatientSearchResults> searchResults = new ArrayList<ExtendedPatientSearchResults>();
 
         Document replyDoc = DocumentHelper.parseText(resultXML);
         Element root = replyDoc.getRootElement();
@@ -56,16 +56,16 @@ public class ExternalPatientSearchResultsXMLConverter {
         List<Element> patientList = patients.elements(ELEMENT_PATIENT);
 
         for (Element patientElement : patientList) {
-            PatientDemographicsSearchResults result = createSearchResult(patientElement);
+            ExtendedPatientSearchResults result = createSearchResult(patientElement);
             searchResults.add(result);
         }
 
         return searchResults;
     }
 
-    private PatientDemographicsSearchResults createSearchResult(Element patientElement) {
+    private ExtendedPatientSearchResults createSearchResult(Element patientElement) {
 
-        PatientDemographicsSearchResults result = new PatientDemographicsSearchResults();
+        ExtendedPatientSearchResults result = new ExtendedPatientSearchResults();
 
         result.setFirstName(getValueFor(patientElement, ELEMENT_FIRST_NAME));
         result.setLastName(getValueFor(patientElement, ELEMENT_LAST_NAME));

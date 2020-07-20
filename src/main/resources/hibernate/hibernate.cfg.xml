@@ -140,6 +140,7 @@
 		<mapping resource="hibernate/hbm/QaObservationType.hbm.xml" />
 		<mapping resource="hibernate/hbm/QaObservation.hbm.xml" />
 		<mapping resource="hibernate/hbm/ElectronicOrder.hbm.xml" />
+		<mapping resource="hibernate/hbm/PortableOrder.hbm.xml" />
 		<mapping resource="hibernate/hbm/TestDictionary.hbm.xml" />
 		<mapping resource="hibernate/hbm/Localization.hbm.xml" />
 		<mapping resource="hibernate/hbm/Image.hbm.xml" />
@@ -161,6 +162,7 @@
 		<mapping resource="hibernate/hbm/LabComponent.hbm.xml" />
 		<mapping resource="hibernate/hbm/NcEvent.hbm.xml" />
 		<mapping resource="hibernate/hbm/Report.hbm.xml" />
+		<mapping resource="hibernate/hbm/PatientContact.hbm.xml"/>
 	</session-factory>
 
 </hibernate-configuration>

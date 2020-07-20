@@ -33,7 +33,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class SiteInformationMenuController extends BaseMenuController {
 
-    private static final String[] ALLOWED_FIELDS = new String[] { "selectedIds[*]" };
+    private static final String[] ALLOWED_FIELDS = new String[] { "selectedIds*" };
 
     @Autowired
     private SiteInformationMenuFormValidator formValidator;
@@ -49,9 +49,10 @@ public class SiteInformationMenuController extends BaseMenuController {
         binder.setAllowedFields(ALLOWED_FIELDS);
     }
 
-    @RequestMapping(value = { "/NonConformityConfigurationMenu", "/WorkplanConfigurationMenu",
+    @RequestMapping(value = { "/ExternalConnectionsMenu", "/NonConformityConfigurationMenu",
+            "/WorkplanConfigurationMenu",
             "/PrintedReportsConfigurationMenu", "/SampleEntryConfigMenu", "/ResultConfigurationMenu",
-            "/MenuStatementConfigMenu", "/PatientConfigurationMenu",
+            "/MenuStatementConfigMenu", "/PatientConfigurationMenu", "/ValidationConfigurationMenu",
             "/SiteInformationMenu" }, method = RequestMethod.GET)
     public ModelAndView showSiteInformationMenu(HttpServletRequest request, RedirectAttributes redirectAttributes)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
@@ -72,7 +73,10 @@ public class SiteInformationMenuController extends BaseMenuController {
 
     private void setupFormForRequest(SiteInformationMenuForm form, HttpServletRequest request) {
         String path = request.getServletPath();
-        if (path.contains("NonConformityConfiguration")) {
+        if (path.contains("ExternalConnections")) {
+            form.setSiteInfoDomainName("externalConnections");
+            form.setFormName("ExternalConnectionsMenuForm");
+        } else if (path.contains("NonConformityConfiguration")) {
             form.setSiteInfoDomainName("non_conformityConfiguration");
             form.setFormName("NonConformityConfigurationMenuForm");
         } else if (path.contains("WorkplanConfiguration")) {
@@ -93,6 +97,9 @@ public class SiteInformationMenuController extends BaseMenuController {
         } else if (path.contains("PatientConfiguration")) {
             form.setSiteInfoDomainName("PatientConfiguration");
             form.setFormName("PatientConfigurationMenuForm");
+        } else if (path.contains("ValidationConfiguration")) {
+            form.setSiteInfoDomainName("validationConfig");
+            form.setFormName("ValidationConfigurationMenuForm");
         } else {
             form.setSiteInfoDomainName("SiteInformation");
             form.setFormName("siteInformationMenuForm");
@@ -113,7 +120,10 @@ public class SiteInformationMenuController extends BaseMenuController {
 
         String domainName = siteInformationMenuForm.getSiteInfoDomainName();
         String dbDomainName = null;
-        if ("SiteInformation".equals(domainName)) {
+        if ("externalConnections".equals(domainName)) {
+            dbDomainName = "externalConnections";
+            request.setAttribute(TITLE_KEY, "externalConnections.browse.title");
+        } else if ("SiteInformation".equals(domainName)) {
             dbDomainName = "siteIdentity";
             request.setAttribute(TITLE_KEY, "siteInformation.browse.title");
         } else if ("ResultConfiguration".equals(domainName)) {
@@ -137,6 +147,9 @@ public class SiteInformationMenuController extends BaseMenuController {
         } else if ("MenuStatementConfig".equals(domainName)) {
             dbDomainName = "MenuStatementConfig";
             request.setAttribute(TITLE_KEY, "MenuStatementConfig.browse.title");
+        } else if ("validationConfig".equals(domainName)) {
+            dbDomainName = "validationConfig";
+            request.setAttribute(TITLE_KEY, "validationConfig.browse.title");
         }
 
         int startingRecNo = Integer.parseInt((String) request.getAttribute("startingRecNo"));

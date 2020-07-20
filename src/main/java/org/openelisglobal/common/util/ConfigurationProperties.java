@@ -30,7 +30,7 @@ public abstract class ConfigurationProperties {
 
     private static final Object lockObj = new Object();
     private static ConfigurationProperties activeConcreteInstance = null;
-    protected Map<ConfigurationProperties.Property, String> propertiesValueMap = new HashMap<ConfigurationProperties.Property, String>();
+    protected Map<ConfigurationProperties.Property, String> propertiesValueMap = new HashMap<>();
 
     // These should all be upper case. As you touch them change them
     public enum Property {
@@ -59,7 +59,7 @@ public abstract class ConfigurationProperties {
         malariaCaseReport("malariaCaseReport"),          //If true send malaria case reports
         malariaCaseReportURL("malariaCaseURL"),       //URL for malaria case reports
         releaseNumber("releaseNumber"),              //The release number
-        buildNumber("buildNumber"),                //Repository identifier
+//        buildNumber("buildNumber"),                //Repository identifier
         configurationName("configuration name"),          //Identifies the configuration i.e. HaitiLNSP or CI IPCI
         testUsageReportingURL("testUsageAggregationUrl"),      //URL for test summary reporting
         testUsageReporting("testUsageReporting"),         //If true send test summary report electronically
@@ -113,16 +113,20 @@ public abstract class ConfigurationProperties {
         ORDER_BARCODE_WIDTH("widthOrderLabels"),    //Width of the order barcode
         SPECIMEN_BARCODE_HEIGHT("heightSpecimenLabels"),    //Height of the specimen barcode
         SPECIMEN_BARCODE_WIDTH("widthSpecimenLabels"),  //Width of the specimen barcode
-        SPECIMEN_FIELD_DATE("collectionDateCheck"),
-        SPECIMEN_FIELD_SEX("patientSexCheck"),
-        SPECIMEN_FIELD_TESTS("testsCheck");
-        
+        SPECIMEN_FIELD_DATE("collectionDateCheck"), //
+        SPECIMEN_FIELD_SEX("patientSexCheck"), //
+        SPECIMEN_FIELD_TESTS("testsCheck"), //
+        INFO_HIGHWAY_USERNAME("infoHighway.username"), //
+        INFO_HIGHWAY_PASSWORD("infoHighway.password"), //
+        INFO_HIGHWAY_ADDRESS("infoHighway.uri"), //
+        INFO_HIGHWAY_ENABLED("infoHighway.enabled"); //
+
         private String name;
-        
+
         private Property(String name) {
             this.name = name;
         }
-        
+
         public String getName() {
             return name;
         }
@@ -186,7 +190,7 @@ public abstract class ConfigurationProperties {
 
     /**
      * For testing only to set a controllable singleton
-     * 
+     *
      * @param activeConcreteInstance
      */
     public static void setActiveConcreteInstance(ConfigurationProperties activeConcreteInstance) {

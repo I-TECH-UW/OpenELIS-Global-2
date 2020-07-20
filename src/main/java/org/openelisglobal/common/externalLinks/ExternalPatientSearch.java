@@ -46,13 +46,15 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.CoreConnectionPNames;
 import org.dom4j.DocumentException;
 import org.openelisglobal.common.log.LogEvent;
-import org.openelisglobal.common.provider.query.PatientDemographicsSearchResults;
+import org.openelisglobal.common.provider.query.ExtendedPatientSearchResults;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 
 @Service
+@Primary
 @Scope("prototype")
 public class ExternalPatientSearch implements IExternalPatientSearch {
 
@@ -82,7 +84,7 @@ public class ExternalPatientSearch implements IExternalPatientSearch {
     private int timeout = 0;
 
     protected String resultXML;
-    protected List<PatientDemographicsSearchResults> searchResults;
+    protected List<ExtendedPatientSearchResults> searchResults;
     protected List<String> errors;
     protected int returnStatus = HttpStatus.SC_CREATED;
 
@@ -116,7 +118,7 @@ public class ExternalPatientSearch implements IExternalPatientSearch {
     }
 
     @Override
-    synchronized public List<PatientDemographicsSearchResults> getSearchResults() {
+    synchronized public List<ExtendedPatientSearchResults> getSearchResults() {
 
         if (!finished) {
             throw new IllegalStateException("Results requested before ExternalPatientSearch thread was finished");
@@ -306,4 +308,10 @@ public class ExternalPatientSearch implements IExternalPatientSearch {
 
         return uriFinal;
     }
+
+    @Override
+    public String getConnectionString() {
+        return connectionString;
+    }
+
 }

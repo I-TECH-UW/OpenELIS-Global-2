@@ -15,6 +15,7 @@ import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.validator.BaseErrors;
+import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
 import org.openelisglobal.patient.action.IPatientUpdate;
 import org.openelisglobal.patient.action.IPatientUpdate.PatientUpdateStatus;
 import org.openelisglobal.patient.action.bean.PatientManagementInfo;
@@ -91,7 +92,9 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 
     @Autowired
     private SamplePatientEntryService samplePatientService;
-
+    
+    protected FhirTransformService fhirTransformService = SpringContext.getBean(FhirTransformService.class);
+    
     @InitBinder
     public void initBinder(WebDataBinder binder) {
         binder.setAllowedFields(ALLOWED_FIELDS);
@@ -100,6 +103,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
     @RequestMapping(value = "/SamplePatientEntry", method = RequestMethod.GET)
     public ModelAndView showSamplePatientEntry(HttpServletRequest request)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+
         SamplePatientEntryForm form = new SamplePatientEntryForm();
 
         request.getSession().setAttribute(SAVE_DISABLED, TRUE);
@@ -163,6 +167,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
         testAndInitializePatientForSaving(request, patientInfo, patientUpdate, updateData);
 
         updateData.setAccessionNumber(sampleOrder.getLabNo());
+        updateData.setReferringId(sampleOrder.getExternalOrderNumber());
         updateData.initProvider(sampleOrder);
         updateData.initSampleData(form.getSampleXML(), receivedDateForDisplay, trackPayments, sampleOrder);
         updateData.validateSample(result);
@@ -175,6 +180,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 
         try {
             samplePatientService.persistData(updateData, patientUpdate, patientInfo, form, request);
+//            String fhir_json = fhirTransformService.CreateFhirFromOESample(updateData, patientUpdate, patientInfo, form, request);
         } catch (LIMSRuntimeException e) {
             // ActionError error;
             if (e.getException() instanceof StaleObjectStateException) {
@@ -193,7 +199,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
             return findForward(FWD_FAIL_INSERT, form);
 
         }
-
+        
         redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
         return findForward(FWD_SUCCESS_INSERT, form);
     }

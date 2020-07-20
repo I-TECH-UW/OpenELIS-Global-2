@@ -1332,7 +1332,6 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             List<Integer> sampleStatusList) throws LIMSRuntimeException {
 
         String sql = "From Analysis a WHERE a.testSection.id = :testSectionId AND a.statusId IN (:analysisStatusList) AND a.sampleItem.sample.statusId IN (:sampleStatusList)";
-
         try {
             Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setInteger("testSectionId", Integer.parseInt(testSectionId));

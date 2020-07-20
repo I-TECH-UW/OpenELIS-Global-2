@@ -83,9 +83,9 @@ public class NonConformityController extends BaseController {
             "date", "time", "project", "projectId", "subjectNew", "subjectNo", "newSTNumber", "STNumber",
             "nationalIdNew", "nationalId", "serviceNew", "newServiceName", "service", "doctorNew", "requesterSampleID",
             "providerLastName", "providerFirstName", "providerStreetAddress", "providerCity", "providerCommune",
-            "providerDepartment", "providerWorkPhone", "doctor", "qaEvents[*].recordNumber", "qaEvents[*].id",
-            "qaEvents[*].qaEvent", "qaEvents[*].sampleType", "qaEvents[*].section", "qaEvents[*].authorizer",
-            "qaEvents[*].note", "qaEvents[*].remove", "commentNew", "comment" };
+            "providerDepartment", "providerWorkPhone", "doctor", "qaEvents*.recordNumber", "qaEvents*.id",
+            "qaEvents*.qaEvent", "qaEvents*.sampleType", "qaEvents*.section", "qaEvents*.authorizer",
+            "qaEvents*.note", "qaEvents*.remove", "commentNew", "comment" };
 
     @Autowired
     private NonConformityFormValidator formValidator;

@@ -85,10 +85,10 @@ public class SampleEditController extends BaseController {
             "sampleOrderItems.otherLocationCode",
             //
             "accessionNumber", "newAccessionNumber", "isEditable", "maxAccessionNumber",
-            "existingTests[*].sampleItemChanged", "existingTests[*].sampleItemId", "existingTests[*].analysisId",
-            "existingTests[*].collectionDate", "existingTests[*].collectionTime", "existingTests[*].removeSample",
-            "existingTests[*].canceled", "possibleTests[*].testId", "possibleTests[*].sampleItemId",
-            "possibleTests[*].add" };
+            "existingTests*.sampleItemChanged", "existingTests*.sampleItemId", "existingTests*.analysisId",
+            "existingTests*.collectionDate", "existingTests*.collectionTime", "existingTests*.removeSample",
+            "existingTests*.canceled", "possibleTests*.testId", "possibleTests*.sampleItemId",
+            "possibleTests*.add" };
 
     @Autowired
     SampleEditFormValidator formValidator;
@@ -133,13 +133,16 @@ public class SampleEditController extends BaseController {
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
-        binder.setAllowedFields(ALLOWED_FIELDS);
+//        binder.setAllowedFields(ALLOWED_FIELDS);
     }
 
     @RequestMapping(value = "/SampleEdit", method = RequestMethod.GET)
     public ModelAndView showSampleEdit(HttpServletRequest request, @ModelAttribute("form") @Validated(SampleEdit.class)
     SampleEditForm oldForm, BindingResult result)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        if(oldForm.getExistingTests() != null) {
+            oldForm.getExistingTests().get(0).isCanceled();
+        }
         SampleEditForm form = new SampleEditForm();
         form.setFormAction("SampleEdit.do");
 
@@ -155,7 +158,7 @@ public class SampleEditController extends BaseController {
         if (GenericValidator.isBlankOrNull(request.getParameter("accessionNumber"))) {
             accessionNumber = getMostRecentAccessionNumberForPaitient(request.getParameter("patientID"));
         } else if (!result.hasFieldErrors("accessionNumber")) {
-            accessionNumber = form.getAccessionNumber();
+            accessionNumber = oldForm.getAccessionNumber();
         }
         if (!GenericValidator.isBlankOrNull(accessionNumber)) {
             form.setAccessionNumber(accessionNumber);

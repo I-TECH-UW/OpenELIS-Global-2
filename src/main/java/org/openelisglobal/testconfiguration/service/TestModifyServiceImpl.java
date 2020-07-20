@@ -18,8 +18,10 @@ import org.openelisglobal.testresult.service.TestResultService;
 import org.openelisglobal.testresult.valueholder.TestResult;
 import org.openelisglobal.typeofsample.service.TypeOfSampleTestService;
 import org.openelisglobal.typeofsample.valueholder.TypeOfSampleTest;
+import org.openelisglobal.unitofmeasure.service.UnitOfMeasureService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TestModifyServiceImpl implements TestModifyService {
@@ -36,8 +38,11 @@ public class TestModifyServiceImpl implements TestModifyService {
     private TestResultService testResultService;
     @Autowired
     private LocalizationService localizationService;
+    @Autowired
+    private UnitOfMeasureService unitOfMeasureService;
 
     @Override
+    @Transactional
     public void updateTestSets(List<TestSet> testSets, TestAddParams testAddParams, Localization nameLocalization,
             Localization reportingNameLocalization, String currentUserId) {
         List<TypeOfSampleTest> typeOfSampleTest = typeOfSampleTestService
@@ -78,7 +83,7 @@ public class TestModifyServiceImpl implements TestModifyService {
             }
 
             updateTestNames(testAddParams.testId, nameLocalization, reportingNameLocalization, currentUserId);
-            updateTestEntities(testAddParams.testId, testAddParams.loinc, currentUserId);
+            updateTestEntities(testAddParams.testId, testAddParams.loinc, currentUserId, testAddParams.uomId);
 
             set.sampleTypeTest.setSysUserId(currentUserId);
             set.sampleTypeTest.setTestId(set.test.getId());
@@ -96,6 +101,10 @@ public class TestModifyServiceImpl implements TestModifyService {
                 Test nonTransiantTest = testService.getTestById(set.test.getId());
                 testResult.setTest(nonTransiantTest);
                 testResultService.insert(testResult);
+                if (testResult.getDefault()) {
+                    set.test.setDefaultTestResult(testResult);
+                    updateTestDefault(testAddParams.testId, testResult, currentUserId);
+                }
             }
 
             for (ResultLimit resultLimit : set.resultLimits) {
@@ -106,12 +115,24 @@ public class TestModifyServiceImpl implements TestModifyService {
         }
     }
 
-    private void updateTestEntities(String testId, String loinc, String userId) {
+    private void updateTestDefault(String testId, TestResult testResult, String currentUserId) {
+        Test test = testService.get(testId);
+
+        if (test != null) {
+            test.setSysUserId(currentUserId);
+            test.setDefaultTestResult(testResult);
+            testService.update(test);
+        }
+
+    }
+
+    private void updateTestEntities(String testId, String loinc, String userId, String uomId) {
         Test test = testService.get(testId);
 
         if (test != null) {
             test.setSysUserId(userId);
             test.setLoinc(loinc);
+            test.setUnitOfMeasure(unitOfMeasureService.getUnitOfMeasureById(uomId));
             testService.update(test);
         }
     }

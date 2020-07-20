@@ -110,4 +110,6 @@ public interface TestService extends BaseObjectService<Test, String> {
 
     Test getTestByLocalizedName(String testName);
 
+    Test getTestByName(String testName);
+
 }

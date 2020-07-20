@@ -38,6 +38,10 @@ public class PatientSearch {
     public List<IdValuePair> getSearchCriteria() {
         return DisplayListService.getInstance().getList(DisplayListService.ListType.PATIENT_SEARCH_CRITERIA);
     }
+    
+    public List<IdValuePair> getGenders() {
+        return DisplayListService.getInstance().getList(DisplayListService.ListType.GENDERS);
+    }
 
     public String getSelectedPatientActionButtonText() {
         return selectedPatientActionButtonText;

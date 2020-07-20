@@ -20,6 +20,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -38,6 +39,7 @@ import org.openelisglobal.organization.service.OrganizationService;
 import org.openelisglobal.organization.valueholder.Organization;
 import org.openelisglobal.patient.action.IPatientUpdate.PatientUpdateStatus;
 import org.openelisglobal.patient.service.PatientTypeService;
+import org.openelisglobal.patient.valueholder.PatientContact;
 import org.openelisglobal.patientidentity.valueholder.PatientIdentity;
 import org.openelisglobal.patienttype.valueholder.PatientType;
 import org.openelisglobal.sample.form.SamplePatientEntryForm;
@@ -147,6 +149,9 @@ public class PatientManagementInfo implements Serializable {
     private String healthDistrict;
     @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class })
     private String otherNationality;
+
+    @Valid
+    private PatientContact patientContact;
 
     // for display
     private static List<Dictionary> addressDepartments;
@@ -470,5 +475,14 @@ public class PatientManagementInfo implements Serializable {
 
     public void setPatientIdentities(List<PatientIdentity> patientIdentities) {
         this.patientIdentities = patientIdentities;
+    }
+
+
+    public PatientContact getPatientContact() {
+        return patientContact;
+    }
+
+    public void setPatientContact(PatientContact patientContact) {
+        this.patientContact = patientContact;
     }
 }

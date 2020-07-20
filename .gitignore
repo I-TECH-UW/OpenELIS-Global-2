@@ -16,7 +16,10 @@ liqubase.properties
 # Maven Files #
 *target/
 
+#Developer specific docker-compose
+/docker-compose.yml
+
 # Additional build files
 src/main/resources/adminPassword.txt
-OEInstaller/*
+/OEInstaller/
 /docs_back

@@ -2,6 +2,7 @@ package org.openelisglobal.resultlimit.service;
 
 import java.util.List;
 
+import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.service.BaseObjectService;
 import org.openelisglobal.common.util.IdValuePair;
@@ -38,4 +39,6 @@ public interface ResultLimitService extends BaseObjectService<ResultLimit, Strin
     List<ResultLimit> getResultLimits(String testId);
 
     List<ResultLimit> getResultLimits(Test test);
+
+    ResultLimit getResultLimitForAnalysis(Analysis analysis);
 }

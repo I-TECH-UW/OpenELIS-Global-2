@@ -461,6 +461,14 @@
 				<spring:message code="barcodeconfiguration.browse.title" />
 		</a></li>
 		
+		<li><a href=<c:url value="/ValidationConfigurationMenu.do"/> >
+				<spring:message code="validationconfiguration.browse.title" />
+		</a></li>
+		
+		<li><a href=<c:url value="ExternalConnectionsMenu"/> >
+				<spring:message code="externalConnections.browse.title" />
+		</a></li>
+		
 	<%-- 	<%
 			if ("true".equalsIgnoreCase((new SiteInformationDAOImpl()).getSiteInformationByName("Data Submission").getValue())) {
 		%>

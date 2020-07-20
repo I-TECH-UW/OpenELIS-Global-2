@@ -11,7 +11,7 @@
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
 
 
-Build number: <%= Versioning.getBuildNumber() %>&nbsp;&nbsp;&nbsp;&nbsp;<spring:message code="ellis.configuration" text="ellis.configuration"/>:&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;<spring:message code="ellis.configuration" text="ellis.configuration"/>:&nbsp;
 <%=ConfigurationProperties.getInstance().getPropertyValue( Property.configurationName )%><br/>
 <table width="100%">
 <tr>

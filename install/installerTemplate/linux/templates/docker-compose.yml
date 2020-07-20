@@ -1,13 +1,13 @@
 version: '3.3'
 # lines starting with a #db and #port will be uncommented when setup with a docker database
-# lines starting with a #port will be uncommented when setup with a remote database
-# lines starting with a #h will be uncommented when setup with a local database
 services:
 #db    database:
-#db        container_name: openelisglobal-database # don't change
+#db        container_name: [% db_name %]
 #db        image: postgres:9.5
 #db        ports:
 #db            - "[% db_host_port %]:5432"
+#db        networks:
+#db            - backend
 #db        restart: always
 #db        env_file:
 #db            - [% db_env_dir %]database.env
@@ -17,32 +17,78 @@ services:
 #db              # files here will run on install
 #db            - [% db_init_dir %]:/docker-entrypoint-initdb.d    
 #db              # values must match values in DatabaseBackup.pl
-#db            - [% db_backups_dir %]:[% docker_backups_dir %]     
+#db            - [% db_backups_dir %]:[% docker_backups_dir %]   
+#db        healthcheck:
+#db            test: [ "CMD", "pg_isready", "-q", "-d", "clinlims", "-U", "clinlims" ]
+#db            timeout: 45s
+#db            interval: 10s
+#db            retries: 10 
             
-    openelisglobal:
-        container_name: openelisglobal-webapp # don't change
+    oe.openelisci.org:
+        container_name: [% oe_name %]
         image: openelisglobal
-#db        depends_on:
+        depends_on:
+#            - datasubscriber.openelisci.org
 #db            - database
+            
         ports:
             - "8080:8080"
             - "8443:8443"
+        networks:
+            - frontend
+            - backend
+#                ipv4_address: 172.20.1.1
         restart: always
         environment:
               # context.xml doesn't seem to be able to pick up environment variables directly, so we are passing them in as CATALINA_OPTS
-            - CATALINA_OPTS= -DOE_DB_URL=jdbc:postgresql://[% db_host %]:[% db_port %]/clinlims -DOE_DB_USERNAME=clinlims
+            - CATALINA_OPTS= -Ddatasource.url=jdbc:postgresql://[% db_host %]:[% db_port %]/clinlims -Ddatasource.username=clinlims
         volumes:
             - [% plugins_dir %]:/var/lib/openelis-global/plugins
+            - [% etc_dir %]oe_server.xml:/usr/local/tomcat/conf/server.xml
         secrets:
-            - source: tomcat_cert.crt
-            - source: tomcat_cert.key
-              # this will be read into CATALINA_OPTS in docker-entrypoint.sh
-            - source: OE_DB_USER_PASSWORD
+            - source: keystore
+            - source: truststore
+            - source: datasource.password
+            - source: common.properties
+            
+    fhir.openelisci.org:
+        container_name: [% fhir_api_name %]
+        image: hapi-fhir-jpaserver-starter
+#db        depends_on:
+#db            - database
+        ports:
+            - "8081:8080"
+            - "8444:8443"
+        networks:
+            - frontend
+            - backend
+        restart: always
+        environment:
+            - JAVA_OPTS= -Dhapi.properties=/run/secrets/hapi.properties
+        volumes:
+            - [% etc_dir %]hapi_server.xml:/usr/local/tomcat/conf/server.xml
+        secrets:
+            - source: hapi.properties
+            - source: common.properties
+            - source: keystore
+            - source: truststore
             
 secrets:
-  OE_DB_USER_PASSWORD:
-    file: [% secrets_dir %]OE_DB_USER_PASSWORD
-  tomcat_cert.crt:
-    file: /etc/tomcat/ssl/certs/tomcat_cert.crt
-  tomcat_cert.key:
-    file: /etc/tomcat/ssl/private/tomcat_cert.key
+  datasource.password:
+    file: [% secrets_dir %]datasource.password  
+  common.properties:
+    file: [% secrets_dir %]common.properties  
+  hapi.properties:
+    file: [% secrets_dir %]hapi.properties
+  keystore:
+    file: [% etc_dir %]keystore
+  truststore:
+    file: [% etc_dir %]truststore
+    
+networks:
+  backend:
+  frontend:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.1.0/24
