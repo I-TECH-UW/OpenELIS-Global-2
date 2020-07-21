@@ -49,6 +49,11 @@ public class AnalyzerServiceImpl extends BaseObjectServiceImpl<Analyzer, String>
                 mapping.setSysUserId("1");
                 analyzerMappingService.insert(mapping);
                 existingMappings.add(mapping);
+            } else {
+                mapping.setLastupdated(analyzerMappingService.get(mapping.getId()).getLastupdated());
+                mapping.setSysUserId("1");
+                // update in case mapping was preserved before test was made
+                analyzerMappingService.update(mapping);
             }
         }
 
