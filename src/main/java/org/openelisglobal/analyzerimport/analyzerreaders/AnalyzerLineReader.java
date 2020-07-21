@@ -39,6 +39,7 @@ public class AnalyzerLineReader extends AnalyzerReader {
     private static final CharSequence FACSCANTO_INDICATOR = "BD FACSCanto II";
     private static final CharSequence COBAS_TAQMAN_DBS_INDICATOR = "AMPLIPREP";
     private static final CharSequence COBAS_C311_INDICATOR = "R_Type1";
+    private static final CharSequence MAURITUIS_INDICATOR = "R_Type1";
 
     private List<String> lines;
     private AnalyzerLineInserter inserter;
