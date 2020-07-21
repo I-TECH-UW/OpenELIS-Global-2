@@ -14,8 +14,7 @@
 9. Require a password on login
 10. Create a 1GB partition mounted at /web
 11. Select OpenSSH server during install *if running server version*
-
-a    .this will allow you to ssh into this computer allowing copy/paste for Windows users through Putty, or connections via terminal on Mac and from the shell in LINUX
+	* this will allow you to ssh into this computer allowing copy/paste for Windows users through Putty, or connections via terminal on Mac and from the shell in LINUX
 
 13. Finalize the ubuntu install
 
@@ -33,7 +32,7 @@ a    .this will allow you to ssh into this computer allowing copy/paste for Wind
 2. Open a command prompt and enter the following commands- this will install the needed services and install updates to the OS since the image was created. 
 This updates the system from the sources in the sources list. It updates what new packages are available.
 
-    ``sudo apt-get update``
+	``sudo apt-get update``
 
 
     ``sudo apt-get upgrade``
@@ -44,31 +43,64 @@ This updates the system from the sources in the sources list. It updates what ne
     
 ### Create and Load SSL Certificates
 
-1. Generate a signed .crt and .key for *.openelisci.org
-    
-2. Create keystore from key and cert (make sure to record the password somewhere secure as you will need to enter it elsewhere)
+OpenELIS uses SSL certificates to securely communicate with other software or consolidated lab data servers. For a test or temporary instance, use a self-signed certificate, and for a production instance create a proper signed certifcate. **You must have a cert and key created and in the keystore and truststore for the installer to run**
 
-    ``openssl pkcs12 -inkey path/toyour/key -in path/to/your/cert -export -out /etc/openelis-global/keystore``
-    
-    ``enter an export password``
+#### Generate a .crt and .key file for the domain you want to use. 
 
-3. Create truststore with OpenELIS-Global's cert (or a CA that signs OE certs)
+The command below is for generating and using a self-signed certifcate.
+
+
+	``sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/apache-selfsigned.key -out /etc/ssl/certs/apache-selfsigned.crt``
+
+
+#### Create keystore from key and cert 
+make sure to record the password somewhere secure as you will need to enter it elsewhere)
+
+    ``sudo openssl pkcs12 -inkey path/toyour/key -in path/to/your/cert -export -out /etc/openelis-global/keystore``
+    
+enter an export password 
+	
+**Be sure to remember your keystore password, you will need it later**
+	
+For the self-signed certificate above, you would use:
+	
+	``sudo openssl pkcs12 -inkey /etc/ssl/private/apache-selfsigned.key -in /etc/ssl/certs/apache-selfsigned.crt -export -out /etc/openelis-global/keystore``
+
+**Be sure to remember your keystore password, you will need it later **
+	
+#### Create truststore with OpenELIS-Global's cert (or a CA that signs OE certs)
+
+1. using keytool (more reliable):
    
-   using keytool (more reliable):
+	``sudo apt-get install default-jre``
    
-    ``sudo apt-get install default-jre``
+	``sudo keytool -import -alias oeCert -file path/to/your/cert -storetype pkcs12 -keystore /etc/openelis-global/truststore``
+	
+	* set the truststore password 
+	
+	**Be sure to remember your truststore password, you will need it later **
+	
+	* when prompted if you want to trust the cert type `yes`
+	
+	For the self-signed certificate above, you would use:
+	
+	``sudo keytool -import -alias oeCert -file /etc/ssl/certs/apache-selfsigned.crt -storetype pkcs12 -keystore /etc/openelis-global/truststore``
+	
+	* set the truststore password 
+	
+	**Be sure to remember your truststore password, you will need it later **
+	
+	* when prompted if you want to trust the cert type `yes`
    
-    ``keytool -import -alias oeCert -file path/to/your/cert -storetype pkcs12 -keystore /etc/openelis-global/truststore``
-   
-   using openssl (less reliable, but doesn't require java):
+	
+	
+2. using openssl (less reliable, but doesn't require java):
   
     ``openssl pkcs12 -export -nokeys -in path/to/your/cert -out /etc/openelis-global/truststore``
 
-4. If you have signed keys, place files in server as:
-
-    ``/etc/tomcat/ssl/certs/tomcat_cert.crt``
-
-    ``/etc/tomcat/ssl/private/tomcat_cert.key``
+	For the self-signed certificate above, you would use:
+	
+	``openssl pkcs12 -export -nokeys -in /etc/ssl/certs/apache-selfsigned.crt -out /etc/openelis-global/truststore``
     
 ### Install Postgresql
 OpenELIS-Global is configured to be able to install a docker based version of Postgres, but this is generally not recommended for production databases
