@@ -53,9 +53,9 @@ function testConnection(id) {
    	  	 	<td class="textcontent">
    	  	 		<button type="button" onClick="editConnection(${externalConnection.id})">Edit</button>
 	   	    </td>
-   	  	 	<td class="textcontent">
-   	  	 		<button type="button" onClick="testConnection(${externalConnection.id})">TestConnection</button>
-	   	    </td>
+<!--    	  	 	<td class="textcontent"> -->
+<%--    	  	 		<button type="button" onClick="testConnection(${externalConnection.id})">TestConnection</button> --%>
+<!-- 	   	    </td> -->
      	</tr>
 	</c:forEach>
 	</form:form>

@@ -1,14 +1,15 @@
 package org.openelisglobal.externalconnections.form;
 
 import java.util.List;
-import java.util.Map;
 
 import javax.validation.Valid;
 
 import org.openelisglobal.common.form.BaseForm;
+import org.openelisglobal.externalconnections.valueholder.BasicAuthenticationData;
+import org.openelisglobal.externalconnections.valueholder.CertificateAuthenticationData;
 import org.openelisglobal.externalconnections.valueholder.ExternalConnection;
 import org.openelisglobal.externalconnections.valueholder.ExternalConnection.AuthType;
-import org.openelisglobal.externalconnections.valueholder.ExternalConnectionAuthenticationData;
+import org.openelisglobal.externalconnections.valueholder.ExternalConnection.ProgrammedConnection;
 import org.openelisglobal.externalconnections.valueholder.ExternalConnectionContact;
 
 public class ExternalConnectionForm extends BaseForm {
@@ -19,12 +20,17 @@ public class ExternalConnectionForm extends BaseForm {
     private ExternalConnection externalConnection;
 
     @Valid
-    private Map<AuthType, ExternalConnectionAuthenticationData> externalConnectionAuthData;
+    private BasicAuthenticationData basicAuthenticationData;
+
+    @Valid
+    private CertificateAuthenticationData certificateAuthenticationData;
 
     @Valid
     private List<ExternalConnectionContact> externalConnectionContacts;
 
     private List<AuthType> authenticationTypes;
+
+    private List<ProgrammedConnection> programmedConnections;
 
     public ExternalConnection getExternalConnection() {
         return externalConnection;
@@ -32,6 +38,22 @@ public class ExternalConnectionForm extends BaseForm {
 
     public void setExternalConnection(ExternalConnection externalConnection) {
         this.externalConnection = externalConnection;
+    }
+
+    public BasicAuthenticationData getBasicAuthenticationData() {
+        return basicAuthenticationData;
+    }
+
+    public void setBasicAuthenticationData(BasicAuthenticationData basicAuthenticationData) {
+        this.basicAuthenticationData = basicAuthenticationData;
+    }
+
+    public CertificateAuthenticationData getCertificateAuthenticationData() {
+        return certificateAuthenticationData;
+    }
+
+    public void setCertificateAuthenticationData(CertificateAuthenticationData certificateAuthenticationData) {
+        this.certificateAuthenticationData = certificateAuthenticationData;
     }
 
     public List<AuthType> getAuthenticationTypes() {
@@ -42,21 +64,20 @@ public class ExternalConnectionForm extends BaseForm {
         this.authenticationTypes = authenticationTypes;
     }
 
-    public Map<AuthType, ExternalConnectionAuthenticationData> getExternalConnectionAuthData() {
-        return externalConnectionAuthData;
-    }
-
-    public void setExternalConnectionAuthData(
-            Map<AuthType, ExternalConnectionAuthenticationData> externalConnectionAuthData) {
-        this.externalConnectionAuthData = externalConnectionAuthData;
-    }
-
     public List<ExternalConnectionContact> getExternalConnectionContacts() {
         return externalConnectionContacts;
     }
 
     public void setExternalConnectionContacts(List<ExternalConnectionContact> externalConnectionContacts) {
         this.externalConnectionContacts = externalConnectionContacts;
+    }
+
+    public List<ProgrammedConnection> getProgrammedConnections() {
+        return programmedConnections;
+    }
+
+    public void setProgrammedConnections(List<ProgrammedConnection> programmedConnections) {
+        this.programmedConnections = programmedConnections;
     }
 
 }

@@ -4,6 +4,7 @@ import java.net.URI;
 
 import org.openelisglobal.common.propertyeditor.CaseInsensitiveEnumPropertyEditor;
 import org.openelisglobal.externalconnections.valueholder.ExternalConnection.AuthType;
+import org.openelisglobal.externalconnections.valueholder.ExternalConnection.ProgrammedConnection;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.beans.propertyeditors.URIEditor;
 import org.springframework.web.bind.WebDataBinder;
@@ -19,6 +20,8 @@ public class ControllerSetup {
         binder.registerCustomEditor(String.class, stringTrimmer);
         binder.registerCustomEditor(URI.class, new URIEditor(false));
         binder.registerCustomEditor(AuthType.class, new CaseInsensitiveEnumPropertyEditor<>(AuthType.class));
+        binder.registerCustomEditor(ProgrammedConnection.class,
+                new CaseInsensitiveEnumPropertyEditor<>(ProgrammedConnection.class));
     }
 
 }

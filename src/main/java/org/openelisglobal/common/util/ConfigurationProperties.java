@@ -50,6 +50,7 @@ public abstract class ConfigurationProperties {
         PatientSearchURL("patientSearchURL"),           //URL of where external patient information will be searched
         PatientSearchUserName("patientSearchLogOnUser"),      //User name for accesses to external patient search
         PatientSearchPassword("PatientSearchPassword"),      //User password for accesses to external patient search
+        PatientSearchEnabled("PatientSearchEnabled"),
         labDirectorName("lab director"),            //The name of the lab director
         languageSwitch("allowLanguageChange"),             //If true a user can switch between English and French (changes it for everybody)
         reportResults("resultReporting"),              //If true results will be reported electronically

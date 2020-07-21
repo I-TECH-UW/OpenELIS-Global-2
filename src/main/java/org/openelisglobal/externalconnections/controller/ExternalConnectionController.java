@@ -10,12 +10,16 @@ import javax.validation.Valid;
 
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.controller.BaseController;
+import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.externalconnections.form.ExternalConnectionForm;
 import org.openelisglobal.externalconnections.service.ExternalConnectionAuthenticationDataService;
 import org.openelisglobal.externalconnections.service.ExternalConnectionContactService;
 import org.openelisglobal.externalconnections.service.ExternalConnectionService;
+import org.openelisglobal.externalconnections.valueholder.BasicAuthenticationData;
+import org.openelisglobal.externalconnections.valueholder.CertificateAuthenticationData;
 import org.openelisglobal.externalconnections.valueholder.ExternalConnection;
 import org.openelisglobal.externalconnections.valueholder.ExternalConnection.AuthType;
+import org.openelisglobal.externalconnections.valueholder.ExternalConnection.ProgrammedConnection;
 import org.openelisglobal.externalconnections.valueholder.ExternalConnectionAuthenticationData;
 import org.openelisglobal.externalconnections.valueholder.ExternalConnectionContact;
 import org.openelisglobal.internationalization.MessageUtil;
@@ -67,9 +71,17 @@ public class ExternalConnectionController extends BaseController {
     public ModelAndView addEditExternalConnection(@ModelAttribute("form") ExternalConnectionForm form,
             @RequestParam(value = ID, required = false) Integer externalConnectionId) {
 
-        Map<AuthType, ExternalConnectionAuthenticationData> externalConnectionAuthData = form.getExternalConnectionAuthData() == null ? new HashMap<>() : form.getExternalConnectionAuthData();
-        List<ExternalConnectionContact> externalConnectionContacts = form.getExternalConnectionContacts() == null ? new ArrayList<>() : form.getExternalConnectionContacts();
+        List<ExternalConnectionContact> externalConnectionContacts = form.getExternalConnectionContacts() == null
+                ? new ArrayList<>()
+                : form.getExternalConnectionContacts();
         ExternalConnection externalConnection = form.getExternalConnection();
+        Map<AuthType, ExternalConnectionAuthenticationData> externalConnectionAuthData = new HashMap<>();
+        if (form.getBasicAuthenticationData() != null) {
+            externalConnectionAuthData.put(AuthType.BASIC, form.getBasicAuthenticationData());
+        }
+        if (form.getCertificateAuthenticationData() != null) {
+            externalConnectionAuthData.put(AuthType.CERTIFICATE, form.getCertificateAuthenticationData());
+        }
 
         if (null == externalConnectionId || 0 == externalConnectionId) {
             externalConnectionService.createNewExternalConnection(externalConnectionAuthData,
@@ -78,6 +90,7 @@ public class ExternalConnectionController extends BaseController {
             externalConnectionService.updateExternalConnection(externalConnectionAuthData, externalConnectionContacts,
                     externalConnection);
         }
+        ConfigurationProperties.forceReload();
         return findForward(FWD_SUCCESS_INSERT, form);
     }
 
@@ -85,12 +98,16 @@ public class ExternalConnectionController extends BaseController {
         request.setAttribute(IActionConstants.PAGE_SUBTITLE_KEY,
                 MessageUtil.getMessage("externalconnections.edit.title"));
         form.setAuthenticationTypes(Arrays.asList(AuthType.values()));
+        form.setProgrammedConnections(Arrays.asList(ProgrammedConnection.values()));
 
         form.setExternalConnection(externalConnectionService.get(externalConnectionId));
-        form.setExternalConnectionAuthData(
-                externalConnectionAuthenticationDataService.getForExternalConnection(externalConnectionId));
         form.setExternalConnectionContacts(
                 externalConnectionContactService.getAllMatching("externalConnection.id", externalConnectionId));
+        Map<AuthType, ExternalConnectionAuthenticationData> externalConnectionAuthData = externalConnectionAuthenticationDataService
+                .getForExternalConnection(externalConnectionId);
+        form.setBasicAuthenticationData((BasicAuthenticationData) externalConnectionAuthData.get(AuthType.BASIC));
+        form.setCertificateAuthenticationData(
+                (CertificateAuthenticationData) externalConnectionAuthData.get(AuthType.CERTIFICATE));
 
     }
 
@@ -98,9 +115,11 @@ public class ExternalConnectionController extends BaseController {
         request.setAttribute(IActionConstants.PAGE_SUBTITLE_KEY,
                 MessageUtil.getMessage("externalconnections.add.title"));
         form.setAuthenticationTypes(Arrays.asList(AuthType.values()));
+        form.setProgrammedConnections(Arrays.asList(ProgrammedConnection.values()));
 
         form.setExternalConnection(new ExternalConnection());
-        form.setExternalConnectionAuthData(new HashMap<>());
+        form.setBasicAuthenticationData(new BasicAuthenticationData());
+        form.setCertificateAuthenticationData(new CertificateAuthenticationData());
         form.setExternalConnectionContacts(new ArrayList<>());
     }
 

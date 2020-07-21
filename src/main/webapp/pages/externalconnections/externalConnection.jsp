@@ -80,6 +80,19 @@
 	<tr class="spacerRow">
 		<td>&nbsp;</td>
 	</tr>
+	<tr>
+		<td><spring:message code="externalconnections.programmedconnection"/></td>
+	</tr>
+	<tr>
+		<td>
+			<form:select path="externalConnection.programmedConnection">
+				<form:option value="" label=""/>
+				<form:options items="${form.programmedConnections}" itemLabel="message" itemValue="value"/>
+			</form:select></td>
+	</tr>
+	<tr class="spacerRow">
+		<td>&nbsp;</td>
+	</tr>
 
 	<tr>
 		<td><spring:message code="externalconnections.description"/> <span style="font-style:italic;">(<spring:message code="generic.optional"/>)</span></td>
@@ -184,11 +197,13 @@
 		<spring:message code="externalconnections.authtype.cert.instructions"/>
 	</td></tr>
 	<tr id="basicAuthRow" class="authRow" style="display:none;"><td>
+		<form:hidden path="basicAuthenticationData.id"/>
+		<form:hidden path="basicAuthenticationData.lastupdated"/>
 		<spring:message code="externalconnections.authtype.basic.username"/>
-		<input type="text"/>
+		<form:input path="basicAuthenticationData.username"/>
 		<br>
 		<spring:message code="externalconnections.authtype.basic.password"/>
-		<input type="password"/>
+		<form:password path="basicAuthenticationData.password" value="${form.basicAuthenticationData.password}"/>
 	</td></tr>
 <!-- 	<tr id="bearerAuthRow" style="display:none;"><td> -->
 <%-- 		<spring:message code="externalconnections.authtype.cert.upload"/> --%>
@@ -212,9 +227,9 @@
 		<span id="unlocked"><i class="fas fa-lock-open" style="color:DarkRed;"></i></span>
 		</td>
 	</tr>
-	<tr id="uploadCertRow" style="display:none;"><td>
-		<spring:message code="externalconnections.cert.upload"/>
-		<input type="file" name="trustCert" />
-		<button type="button" onClick="uploadTrustCert()"><spring:message code="generic.upload"/></button>
-		</td></tr>
+<!-- 	<tr id="uploadCertRow" style="display:none;"><td> -->
+<%-- 		<spring:message code="externalconnections.cert.upload"/> --%>
+<!-- 		<input type="file" name="trustCert" /> -->
+<%-- 		<button type="button" onClick="uploadTrustCert()"><spring:message code="generic.upload"/></button> --%>
+<!-- 		</td></tr> -->
 </table>

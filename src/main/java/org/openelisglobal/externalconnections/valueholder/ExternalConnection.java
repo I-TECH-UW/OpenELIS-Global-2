@@ -50,6 +50,27 @@ public class ExternalConnection extends BaseObject<Integer> {
 
     }
 
+    public enum ProgrammedConnection {
+//        CLINIC_SEARCH("clinlic_search", "externalconnections.clinicsearch"),
+        INFO_HIGHWAY("info_highway", "externalconnections.infohighway");
+
+        private String value;
+        private String messageKey;
+
+        ProgrammedConnection(String value, String messageKey) {
+            this.value = value;
+            this.messageKey = messageKey;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public String getMessage() {
+            return MessageUtil.getMessage(messageKey);
+        }
+    }
+
     private static final long serialVersionUID = -6727446336117070253L;
 
     @Id
@@ -64,8 +85,9 @@ public class ExternalConnection extends BaseObject<Integer> {
     @Column
     private URI uri;
 
-    @Column
-    private String name;
+    @Column(name = "programmed_connection")
+    @Enumerated(EnumType.STRING)
+    private ProgrammedConnection programmedConnection;
 
     @Valid
     @OneToOne(cascade = CascadeType.ALL)
@@ -99,12 +121,12 @@ public class ExternalConnection extends BaseObject<Integer> {
         this.uri = uri;
     }
 
-    public String getName() {
-        return name;
+    public ProgrammedConnection getProgrammedConnection() {
+        return programmedConnection;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setProgrammedConnection(ProgrammedConnection programmedConnection) {
+        this.programmedConnection = programmedConnection;
     }
 
     public AuthType getActiveAuthenticationType() {
