@@ -6,6 +6,8 @@ services:
 #db        image: postgres:9.5
 #db        ports:
 #db            - "[% db_host_port %]:5432"
+#db        networks:
+#db            - backend
 #db        restart: always
 #db        env_file:
 #db            - [% db_env_dir %]database.env
@@ -32,6 +34,10 @@ services:
         ports:
             - "8080:8080"
             - "8443:8443"
+        networks:
+            - frontend
+            - backend
+#                ipv4_address: 172.20.1.1
         restart: always
         environment:
               # context.xml doesn't seem to be able to pick up environment variables directly, so we are passing them in as CATALINA_OPTS
@@ -53,6 +59,9 @@ services:
         ports:
             - "8081:8080"
             - "8444:8443"
+        networks:
+            - frontend
+            - backend
         restart: always
         environment:
             - JAVA_OPTS= -Dhapi.properties=/run/secrets/hapi.properties
@@ -63,34 +72,6 @@ services:
             - source: common.properties
             - source: keystore
             - source: truststore
-            
-#    datasubscriber.openelisci.org:
-#        container_name: [% data_subscriber_name %]
-#        image: datasubscriber-webapp
-#        depends_on:
-#            - fhir.openelisci.org
-##db            - database
-#        ports:
-#            - 8445:8443
-#        restart: always
-#        secrets:
-#            - source: keystore
-#            - source: truststore
-#            - source: common.properties
-            
-#    dataimport.openelisci.org:
-#        container_name: [% data_import_name %]
-#        image: dataimport-webapp
-#        depends_on:
-#            - fhir.openelisci.org
-##db            - database
-#        ports:
-#            - 8446:8443
-#        restart: always
-#        secrets:
-#            - source: keystore
-#            - source: truststore
-#            - source: common.properties
             
 secrets:
   datasource.password:
@@ -104,3 +85,10 @@ secrets:
   truststore:
     file: [% etc_dir %]truststore
     
+networks:
+  backend:
+  frontend:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.1.0/24

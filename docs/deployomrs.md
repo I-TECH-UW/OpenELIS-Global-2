@@ -24,7 +24,7 @@ The current communication workflow uses HL7 V2.5.1 messages as documented here: 
 
 Start up the OpenELIS Update Task in `System Administration` → `Advanced Administration` → `Scheduler` → `Manage Scheduler`
 
-![screen1](img/omrsoe2.png)
+![screen1](img/omrsoe1.png)
 
 ###OpenELIS Global 2.x
 1. Install OpenELIS Global 2.x using the instructions [HERE](../install)

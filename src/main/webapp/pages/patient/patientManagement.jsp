@@ -545,7 +545,12 @@ function  /*void*/ processSearchPopulateSuccess(xhr)
 	var healthRegion = getSelectIndexFor( "healthRegionID", getXMLValue(response, "healthRegion"));
 	var healthDistrict = getXMLValue(response, "healthDistrict");
 	var guid = getXMLValue( response, "guid");
-	var phoneNumber = getXMLValue(response, "phoneNumber");
+	var phoneNumber = getXMLValue(response, "phoneNumber");	
+	var contactLastName = getXMLValue( response, "contactLastName");
+	var contactFirstName = getXMLValue( response, "contactFirstName");
+	var contactPhone = getXMLValue( response, "contactPhone");
+	var contactEmail = getXMLValue( response, "contactEmail");
+	var contactPK = getXMLValue( response, "contactPK");
 
 	setPatientInfo( nationalIDValue,
 					STValue,
@@ -573,7 +578,12 @@ function  /*void*/ processSearchPopulateSuccess(xhr)
 					healthRegion,
 					healthDistrict,
 					guid,
-					phoneNumber);
+					phoneNumber,
+					contactLastName, 
+					contactFirstName,
+					contactPhone,
+					contactEmail,
+					contactPK);
 
 }
 
@@ -611,7 +621,7 @@ function /*void*/ clearErrors(){
 
 function  /*void*/ setPatientInfo(nationalID, ST_ID, subjectNumber, lastName, firstName, aka, mother, street, city, dob, gender,
 		patientType, insurance, occupation, patientUpdated, personUpdated, motherInitial, commune, addressDept, educationId, nationalId, nationalOther,
-		maritialStatusId, healthRegionId, healthDistrictId, guid, phoneNumber ) {
+		maritialStatusId, healthRegionId, healthDistrictId, guid, phoneNumber, contactLastName, contactFirstName, contactPhone, contactEmail, contactPK ) {
 
 	clearErrors();
 
@@ -670,6 +680,12 @@ function  /*void*/ setPatientInfo(nationalID, ST_ID, subjectNumber, lastName, fi
 	}
 
 	if(supportPatientType){$("patientTypeID").selectedIndex = patientType == undefined ? 0 : patientType; }
+
+	$("contactLastNameID").value = contactLastName == undefined ? "" : contactLastName;
+	$("contactFirstNameID").value = contactFirstName == undefined ? "" : contactFirstName;
+	$("contactPhoneID").value = contactPhone == undefined ? "" : contactPhone;
+	$("contactEmailID").value = contactEmail == undefined ? "" : contactEmail;
+	$("contactPK_ID").value = contactPK == undefined ? "" : contactPK;
 
 	// run this b/c dynamically populating the fields does not constitute an onchange event to populate the patmgmt tile
 	// this is the fx called by the onchange event if manually changing the fields
@@ -796,6 +812,18 @@ function  processPhoneSuccess(xhr){
     pt_setSave();
 }
 
+function validateEmail( emailElement) {
+	var valid = validEmail(emailElement.value);
+	
+	setValidIndicaterOnField(valid, emailElement.id);
+    pt_setFieldValidity( valid, emailElement.id );
+    pt_setSave();
+}
+function validEmail(email) {
+	var re = /\S+@\S+\.\S+/;
+    return re.test(email);
+}
+
 function validateSubjectNumber( el, numberType ){
 
     validateSubjectNumberOnServer( el.value, numberType, el.id, processSubjectNumberSuccess );
@@ -842,6 +870,7 @@ function  processSubjectNumberSuccess(xhr){
 <form:hidden path="patientProperties.patientUpdateStatus" id="processingStatus" value="ADD"/>
 <form:hidden path="patientProperties.patientPK" id="patientPK_ID"/>
 <form:hidden path="patientProperties.guid" id="patientGUID_ID"/>
+<form:hidden path="patientProperties.patientContact.id" id="contactPK_ID"/>
 	
    <%--  <logic:equal value="false" name="${form.formName}" property="patientProperties.readOnly" > --%>
    <c:if test="${form.patientProperties.readOnly == false }" >
@@ -1019,6 +1048,56 @@ function  processSubjectNumberSuccess(xhr){
 		</td>
 	</tr>
 	<%} %>
+	<tr class="spacerRow" ><td colspan="2">&nbsp;</td></tr>
+	<tr>
+		<td style="width: 220px">
+			<spring:message code="patient.contact" />
+		</td>
+		<td style="text-align:right;">
+			<spring:message code="patient.contactLastName" />:
+		</td>
+		<td >
+			<form:input path="patientProperties.patientContact.person.lastName"
+					  cssClass="text"
+				      size="60"
+				      onchange="updatePatientEditStatus();"
+				      id="contactLastNameID"/>
+		</td>
+		<td style="text-align:right;">
+			<spring:message code="patient.contactFirstName" />:
+		</td>
+		<td >
+			<form:input path="patientProperties.patientContact.person.firstName"
+					  cssClass="text"
+					  size="25"
+					  onchange="updatePatientEditStatus();"
+					  id="contactFirstNameID"/>
+		</td>
+	</tr>
+	<tr>
+		<td style="width: 220px">
+		</td>
+		<td style="text-align:right;">
+			<spring:message code="patient.contactEmail" />:
+		</td>
+		<td >
+			<form:input path="patientProperties.patientContact.person.email"
+					  cssClass="text"
+				      size="60"
+				      onchange="updatePatientEditStatus();validateEmail( this );"
+				      id="contactEmailID"/>
+		</td>
+		<td style="text-align:right;">
+			<spring:message code="patient.contactPhone" />:
+		</td>
+		<td >
+			<form:input path="patientProperties.patientContact.person.primaryPhone"
+					  cssClass="text"
+					  size="25"
+					  onchange="updatePatientEditStatus();"
+					  id="contactPhoneID"/>
+		</td>
+	</tr>
 	<tr class="spacerRow" ><td colspan="2">&nbsp;</td></tr>
 	<tr>
 		<td >

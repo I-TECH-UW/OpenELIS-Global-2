@@ -22,6 +22,7 @@ import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.sampleitem.valueholder.SampleItem;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.test.service.TestServiceImpl;
+import org.openelisglobal.test.valueholder.Test;
 
 /**
  * Stores values and formatting for Specimen Labels
@@ -31,7 +32,75 @@ import org.openelisglobal.test.service.TestServiceImpl;
  */
 public class SpecimenLabel extends Label {
 
-    AnalysisService analysisService = SpringContext.getBean(AnalysisService.class);
+    private AnalysisService analysisService = SpringContext.getBean(AnalysisService.class);
+
+    public SpecimenLabel(String labNumber, String facilityName, List<Test> testsForSample) {
+        // adding fields above bar code
+        aboveFields = new ArrayList<>();
+
+        LabelField field;
+        field = new LabelField(MessageUtil.getMessage("barcode.label.info.patientname"), "", 6);
+        field.setDisplayFieldName(true);
+        field.setUnderline(true);
+        aboveFields.add(field);
+
+        field = new LabelField(MessageUtil.getMessage("barcode.label.info.patientdob"), "", 4);
+        field.setDisplayFieldName(true);
+        field.setUnderline(true);
+        aboveFields.add(field);
+
+        LabelField siteField = new LabelField(MessageUtil.getMessage("barcode.label.info.site"),
+                StringUtils.substring(facilityName, 0, 20), 4);
+        siteField.setDisplayFieldName(true);
+        aboveFields.add(siteField);
+
+        // getting fields for below bar code
+        StringBuilder tests = new StringBuilder();
+        String seperator = ""; // separator for appending tests to each other
+        for (Test test : testsForSample) {
+            tests.append(seperator);
+            tests.append(TestServiceImpl.getUserLocalizedTestName(test));
+            seperator = ", ";
+        }
+
+        // adding fields below bar code
+        belowFields = new ArrayList<>();
+        String useDateTime = ConfigurationProperties.getInstance().getPropertyValue(Property.SPECIMEN_FIELD_DATE);
+        String useSex = ConfigurationProperties.getInstance().getPropertyValue(Property.SPECIMEN_FIELD_SEX);
+        String useTests = ConfigurationProperties.getInstance().getPropertyValue(Property.SPECIMEN_FIELD_TESTS);
+        if ("true".equals(useSex)) {
+            LabelField sexField = new LabelField(MessageUtil.getMessage("barcode.label.info.patientsex"), "", 2);
+            sexField.setDisplayFieldName(true);
+            sexField.setUnderline(true);
+            belowFields.add(sexField);
+        }
+        if ("true".equals(useDateTime)) {
+            LabelField dateField = new LabelField(MessageUtil.getMessage("barcode.label.info.collectiondate"), "",
+                    3);
+            dateField.setDisplayFieldName(true);
+            dateField.setUnderline(true);
+            belowFields.add(dateField);
+            dateField = new LabelField(MessageUtil.getMessage("barcode.label.info.collectiontime"), "", 2);
+            dateField.setUnderline(true);
+            belowFields.add(dateField);
+        }
+        LabelField collectorField = new LabelField(MessageUtil.getMessage("barcode.label.info.collectorid"),
+                StringUtils.substring("", 0, 15), 3);
+        collectorField.setDisplayFieldName(true);
+        collectorField.setUnderline(true);
+        belowFields.add(collectorField);
+        if ("true".equals(useTests)) {
+            LabelField testsField = new LabelField(MessageUtil.getMessage("barcode.label.info.tests"),
+                    StringUtil.replaceNullWithEmptyString(tests.toString()), 10);
+            testsField.setStartNewline(true);
+            belowFields.add(testsField);
+        }
+
+        // add code
+//      String sampleCode = sampleItem.getSortOrder();
+//      setCode(labNo + "." + sampleCode);
+        setCode(labNumber);
+    }
 
     /**
      * @param patient    Who include on specimen label

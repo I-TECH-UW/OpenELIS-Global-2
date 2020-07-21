@@ -27,7 +27,8 @@ public class SiteInformationFormValidator implements Validator {
                 new String[] { "boolean", "logoUpload", "text", "freeText", "dictionary", "complex" });
 
         ValidationHelper.validateOptionField(form.getSiteInfoDomainName(), "siteInfoDomainName", errors,
-                new String[] { "non_conformityConfiguration", "WorkplanConfiguration", "PrintedReportsConfiguration",
+                new String[] { "externalConnections", "non_conformityConfiguration", "WorkplanConfiguration",
+                        "PrintedReportsConfiguration",
                         "sampleEntryConfig", "ResultConfiguration", "MenuStatementConfig", "PaitientConfiguration",
                         "validationConfig",
                         "SiteInformation" });

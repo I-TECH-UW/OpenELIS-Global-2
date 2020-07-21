@@ -84,7 +84,8 @@ public class ResultExporter {
             boolean sendAsychronously = false;
 
             for (ReportExternalExport report : reportList) {
-                IRowTransmissionResponseHandler responseHandler = SpringContext.getBean("successReportHandler");
+                IRowTransmissionResponseHandler responseHandler = (IRowTransmissionResponseHandler) SpringContext
+                        .getBean("successReportHandler");
                 responseHandler.setRowId(report.getId());
                 transmitter.sendRawReport(report.getData(), url, sendAsychronously, responseHandler, HTTP_TYPE.POST);
             }

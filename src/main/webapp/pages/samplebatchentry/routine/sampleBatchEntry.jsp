@@ -153,7 +153,7 @@ jQuery(document).ready(function () {
 	<c:if test="${not form.patientInfoCheck}">
 	<tr>
 			<td>
-				<form:hidden path="patientProperties.patientUpdateStatus" id="processingStatus"/>
+				<form:hidden path="patientProperties.patientUpdateStatus" id="processingStatus" value="ADD" />
 			</td>
 	</tr>
 	</c:if>
