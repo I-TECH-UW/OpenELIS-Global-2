@@ -43,6 +43,9 @@
 <c:if test="${menuDef == 'TypeOfSampleTestMenuDefinition'}">
   <tiles:insertAttribute name="rightTypeOfSampleTest" />
 </c:if>
+<c:if test="${menuDef == 'ExternalConnectionMenuDefinition'}">
+  <tiles:insertAttribute name="rightExternalConnection" />
+</c:if>
 <c:if test="${menuDef == 'UserRoleMenuDefinition'}">
   <tiles:insertAttribute name="rightUserRole" />
 </c:if>

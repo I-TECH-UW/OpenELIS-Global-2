@@ -22,11 +22,11 @@ body {
 	margin-top: 0;
 }
 
-label, input, button, select, textarea {
+label, input, password, button, select, textarea {
 	font-size: 13px;
 }
 
-input:focus, select:focus, textarea:focus {
+input:focus, password:focus, select:focus, textarea:focus {
 	outline: none;
 }
 
@@ -876,7 +876,7 @@ div.ttquestionmessage {
 	position: absolute;
 }
 
-input.text {
+input.text, input.password {
 	float: left;
 	text-align: left;
 }

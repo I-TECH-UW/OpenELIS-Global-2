@@ -232,9 +232,9 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject<PK>, PK extends
     }
 
     protected T update(T baseObject, String auditTrailType) {
-        T oldObject = getBaseObjectDAO().get(baseObject.getId())
-                .orElseThrow(() -> new ObjectNotFoundException(baseObject.getId(), classType.getName()));
         if (auditTrailLog) {
+            T oldObject = getBaseObjectDAO().get(baseObject.getId())
+                    .orElseThrow(() -> new ObjectNotFoundException(baseObject.getId(), classType.getName()));
             auditTrailDAO.saveHistory(baseObject, oldObject, baseObject.getSysUserId(), auditTrailType,
                     getBaseObjectDAO().getTableName());
         }
