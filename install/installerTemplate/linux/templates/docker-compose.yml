@@ -27,8 +27,7 @@ services:
     oe.openelisci.org:
         container_name: [% oe_name %]
         image: openelisglobal
-        depends_on:
-#            - datasubscriber.openelisci.org
+#db        depends_on:
 #db            - database
             
         ports:
