@@ -52,7 +52,13 @@ public class Localization extends BaseObject<String> {
     // to store the localeValues Map in its own table instead of as columns in
     // localization
     public String getFrench() {
-        return localeValues.get(Locale.FRENCH);
+        if (localeValues.get(Locale.FRANCE) != null) {
+            return localeValues.get(Locale.FRANCE);
+        } else if (localeValues.get(Locale.FRENCH) != null) {
+            return localeValues.get(Locale.FRENCH);
+        } else {
+            return "";
+        }
     }
 
     // these methods are here until we have time to refactor the database
@@ -66,7 +72,13 @@ public class Localization extends BaseObject<String> {
     // to store the localeValues Map in its own table instead of as columns in
     // localization
     public String getEnglish() {
-        return localeValues.get(Locale.ENGLISH);
+        if (localeValues.get(Locale.US) != null) {
+            return localeValues.get(Locale.US);
+        } else if (localeValues.get(Locale.ENGLISH) != null) {
+            return localeValues.get(Locale.ENGLISH);
+        } else {
+            return "";
+        }
     }
 
     // these methods are here until we have time to refactor the database
@@ -109,6 +121,10 @@ public class Localization extends BaseObject<String> {
 
     public void setLocalizedValue(Locale locale, String value) {
         localeValues.put(locale, value);
+    }
+
+    public void setLocalizedValue(String value) {
+        setLocalizedValue(LocaleContextHolder.getLocale(), value);
     }
 
     public List<Locale> getAllActiveLocales() {

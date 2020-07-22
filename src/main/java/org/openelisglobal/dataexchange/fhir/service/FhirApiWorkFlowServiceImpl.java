@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.hl7.fhir.instance.model.api.IBaseResource;
@@ -46,7 +47,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
     @Value("${org.openelisglobal.fhirstore.uri}")
     private String localFhirStorePath;
     @Value("${org.openelisglobal.remote.source.uri}")
-    private String remoteStorePath;
+    private Optional<String> remoteStorePath;
     @Value("${org.openelisglobal.task.useBasedOn}")
     private Boolean useBasedOn;
 
@@ -60,13 +61,16 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
     @Override
     @Async
     public void processWorkflow(ResourceType resourceType) {
-        switch (resourceType) {
-        case Task:
-            beginTaskPath();
-        default:
+        if (remoteStorePath.isPresent()) {
+            switch (resourceType) {
+            case Task:
+                beginTaskPath();
+            default:
+            }
         }
     }
 
+    @Override
     public String getLocalFhirStorePath() {
         return localFhirStorePath;
     }
@@ -81,7 +85,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
 
         System.out.println("searching for Tasks");
 
-        IGenericClient sourceFhirClient = fhirContext.newRestfulGenericClient(remoteStorePath);
+        IGenericClient sourceFhirClient = fhirContext.newRestfulGenericClient(remoteStorePath.get());
         IClientInterceptor authInterceptor = new BasicAuthInterceptor("admin", "Admin123");
         sourceFhirClient.registerInterceptor(authInterceptor);
         Bundle bundle = sourceFhirClient.search()//
@@ -92,7 +96,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
                 .whereMap(remoteSearchParams)//
                 .returnBundle(Bundle.class)//
                 .execute();
-        
+
         if (bundle.hasEntry()) {
             System.out.println("received bundle with " + bundle.getEntry().size() + " entries");
         } else {
@@ -197,10 +201,10 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         }
 
         if (localTask.hasEncounter()) {
-            replaceLocalReferenceWithAbsoluteReference(remoteStorePath, localTask.getEncounter());
+            replaceLocalReferenceWithAbsoluteReference(remoteStorePath.get(), localTask.getEncounter());
         }
         if (localTask.hasOwner()) {
-            replaceLocalReferenceWithAbsoluteReference(remoteStorePath, localTask.getOwner());
+            replaceLocalReferenceWithAbsoluteReference(remoteStorePath.get(), localTask.getOwner());
         }
 
         // Patient
@@ -251,7 +255,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
 
     private Identifier createIdentifierToRemoteResource(IDomainResource remoteResource) {
         Identifier identifier = new Identifier();
-        identifier.setSystem(remoteStorePath);
+        identifier.setSystem(remoteStorePath.get());
         identifier.setValue(remoteResource.getIdElement().getIdPart());
         return identifier;
     }

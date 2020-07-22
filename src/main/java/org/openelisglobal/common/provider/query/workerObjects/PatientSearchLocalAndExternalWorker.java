@@ -106,7 +106,7 @@ public class PatientSearchLocalAndExternalWorker extends PatientSearchWorker {
             externalSearches.add(externalSearch);
         }
 
-        if (useClinicSearch()) {
+        if (config.getPropertyValue(Property.PatientSearchEnabled).equals("true")) {
             IExternalPatientSearch externalSearch = SpringContext.getBean(IExternalPatientSearch.class);
             externalSearch.setSearchCriteria(lastName, firstName, STNumber, subjectNumber, nationalID, guid);
             externalSearch.setConnectionCredentials(config.getPropertyValue(Property.PatientSearchURL),
@@ -156,14 +156,6 @@ public class PatientSearchLocalAndExternalWorker extends PatientSearchWorker {
         }
 
         return success;
-    }
-
-    private boolean useClinicSearch() {
-        return false;
-    }
-
-    private boolean useInfoHighwaySearch() {
-        return true;
     }
 
     private void insertNewPatients(List<ExtendedPatientSearchResults> newPatientsFromClinic) {

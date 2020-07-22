@@ -92,6 +92,10 @@ ACTION_TIME = ''
 SITE_ID = ''
 KEYSTORE_PWD = ''
 TRUSTSTORE_PWD = ''
+ENCRYPTION_KEY = ''
+LOCAL_FHIR_SERVER_ADDRESS = 'https://fhir.openelisci.org:8443/hapi-fhir-jpaserver/fhir/'
+OPENMRS_SERVER_ADDRESS = 'https://isanteplusdemo.com/openmrs/ws/fhir2/'
+CONSOLIDATED_SERVER_ADDRESS = 'https://hub.openelisci.org:8444/fhir'
 
 #Stateful objects
 LOG_FILE = ''
@@ -319,8 +323,16 @@ def create_properties_files():
         if line.find("[% truststore_password %]")  >= 0:
             line = line.replace("[% truststore_password %]", TRUSTSTORE_PWD)
         if line.find("[% keystore_password %]")  >= 0:
-            line = line.replace("[% keystore_password %]", KEYSTORE_PWD) 
-        
+            line = line.replace("[% keystore_password %]", KEYSTORE_PWD)
+        if line.find("[% encryption_key %]")  >= 0:
+            line = line.replace("[% encryption_key %]", ENCRYPTION_KEY) 
+        if line.find("[% local_fhir_server_address %]")  >= 0:
+            line = line.replace("[% local_fhir_server_address %]", LOCAL_FHIR_SERVER_ADDRESS) 
+        if line.find("[% open_mrs_server_address %]")  >= 0:
+            line = line.replace("[% open_mrs_server_address %]", OPENMRS_SERVER_ADDRESS) 
+        if line.find("[% consolidated_server_address %]")  >= 0:
+            line = line.replace("[% consolidated_server_address %]", CONSOLIDATED_SERVER_ADDRESS) 
+
         output_file.write(line)
 
     template_file.close()
@@ -343,6 +355,8 @@ def create_properties_files():
             line = line.replace("[% truststore_password %]", TRUSTSTORE_PWD)
         if line.find("[% keystore_password %]")  >= 0:
             line = line.replace("[% keystore_password %]", KEYSTORE_PWD) 
+        if line.find("[% local_fhir_server_address %]")  >= 0:
+            line = line.replace("[% local_fhir_server_address %]", LOCAL_FHIR_SERVER_ADDRESS) 
         
         output_file.write(line)
 
@@ -882,6 +896,8 @@ def get_user_values():
     get_keystore_password()
     get_truststore_password()
     get_site_id()
+    get_encryption_key()
+    get_server_addresses()
 
 
 def get_keystore_password():
@@ -907,6 +923,47 @@ def get_site_id():
         You can set the values after the installation is complete.
     """
     SITE_ID = raw_input("site number for this lab (5 character): ")
+        
+        
+def get_encryption_key():
+    global ENCRYPTION_KEY
+
+    print """
+    Enter an encryption key that will be used to encrypt sensitive data.
+    This value must stay the same between installations or the program will lose all encrypted data.
+    Record this value somewhere secure.
+    """
+    ENCRYPTION_KEY = raw_input("encryption key: ")
+        
+        
+def get_server_addresses():
+    global LOCAL_FHIR_SERVER_ADDRESS, OPENMRS_SERVER_ADDRESS, CONSOLIDATED_SERVER_ADDRESS
+
+    print """
+    Enter the full server path to the local fhir store (most likely the address of this server on port 8444)
+    """
+    fhir_server_address = raw_input("local fhir store path (default  " + LOCAL_FHIR_SERVER_ADDRESS + ") : ")
+    if fhir_server_address:
+        if not fhir_server_address.startswith("https://"):
+            LOCAL_FHIR_SERVER_ADDRESS = "https://" + fhir_server_address
+        else:
+            LOCAL_FHIR_SERVER_ADDRESS = fhir_server_address
+    
+    print """
+    Enter the full server path to the OpenMRS instance you'd like to poll for Fhir Tasks. Leave blank to disable the OpenMRS bridge
+    """
+    OPENMRS_SERVER_ADDRESS = raw_input("OpenMRS address: ")
+    if OPENMRS_SERVER_ADDRESS:
+        if not OPENMRS_SERVER_ADDRESS.startswith("https://"):
+            OPENMRS_SERVER_ADDRESS = "https://" + OPENMRS_SERVER_ADDRESS
+            
+    print """
+    Enter the full server path to the consolidated server to send data to. Leave blank to disable sending data to the Consolidated server
+    """
+    CONSOLIDATED_SERVER_ADDRESS = raw_input("local fhir store (default  " + LOCAL_FHIR_SERVER_ADDRESS + ") : ")
+    if CONSOLIDATED_SERVER_ADDRESS:
+        if not CONSOLIDATED_SERVER_ADDRESS.startswith("https://"):
+            CONSOLIDATED_SERVER_ADDRESS = "https://" + CONSOLIDATED_SERVER_ADDRESS
     
         
         
