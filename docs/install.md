@@ -147,6 +147,6 @@ Wait while install procedure completes
 
 Configure the backup:
 
-Follow the SOP at: 
-https://docs.google.com/document/d/1HNGaeUdFIe6n_bd7Sz1q9lpMmAyymbb1H8_8GjTVYfc/edit
+Follow the SOP at: [Backup Configuration](../backups)
+
 
