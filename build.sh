@@ -157,8 +157,8 @@ then
 	rm OpenELIS-Global_DockerImage*.tar.gz
 	rm Postgres_DockerImage.tar.gz
 	rm JPAServer_DockerImage.tar.gz
-	rm DataSubscriber_DockerImage.tar.gz
-	rm DataImporter_DockerImage.tar.gz
+#	rm DataSubscriber_DockerImage.tar.gz
+#	rm DataImporter_DockerImage.tar.gz
 	rm -r ${STAGING_DIR}
 	
 fi

@@ -67,8 +67,6 @@ DB_PORT="5432"
 DOCKER_OE_REPO_NAME = "openelisglobal" #must match docker image name (not container name)
 DOCKER_OE_CONTAINER_NAME = "openelisglobal-webapp" 
 DOCKER_FHIR_API_CONTAINER_NAME = "external-fhir-api"
-DOCKER_OE_SUB_CONTAINER_NAME = "datasubscriber-webapp"
-DOCKER_OE_IMPORT_CONTAINER_NAME = "dataimport-webapp"
 DOCKER_DB_CONTAINER_NAME = "openelisglobal-database" 
 DOCKER_DB_BACKUPS_DIR = "/backups/"  # path in docker container
 DOCKER_DB_HOST_PORT = "5432"
@@ -219,7 +217,9 @@ def do_install():
     
     generate_passwords()
     
-    get_user_values()
+    get_stored_user_values()
+    
+    get_non_stored_user_values()
 
     install_docker()
     
@@ -296,10 +296,6 @@ def create_docker_compose_file():
             line = line.replace("[% oe_name %]", DOCKER_OE_CONTAINER_NAME )
         if line.find("[% fhir_api_name %]")  >= 0:
             line = line.replace("[% fhir_api_name %]", DOCKER_FHIR_API_CONTAINER_NAME )
-        if line.find("[% data_subscriber_name %]")  >= 0:
-            line = line.replace("[% data_subscriber_name %]", DOCKER_OE_SUB_CONTAINER_NAME )
-        if line.find("[% data_import_name %]")  >= 0:
-            line = line.replace("[% data_import_name %]", DOCKER_OE_IMPORT_CONTAINER_NAME )
         
         output_file.write(line)
 
@@ -641,8 +637,7 @@ def do_update():
 
     load_docker_image()
     
-    get_keystore_password()
-    get_truststore_password()
+    get_non_stored_user_values()
     
     create_docker_compose_file()
     
@@ -721,14 +716,6 @@ def uninstall_docker_images():
     cmd = 'docker rm $(docker stop $(docker ps -a -q --filter="name=' + DOCKER_FHIR_API_CONTAINER_NAME + '" --format="{{.ID}}"))'
     os.system(cmd)
     
-#     log("removing data subscriber image...", PRINT_TO_CONSOLE)
-#     cmd = 'docker rm $(docker stop $(docker ps -a -q --filter="name=' + DOCKER_OE_SUB_CONTAINER_NAME + '" --format="{{.ID}}"))'
-#     os.system(cmd)
-#     
-#     log("removing data import image...", PRINT_TO_CONSOLE)
-#     cmd = 'docker rm $(docker stop $(docker ps -a -q --filter="name=' + DOCKER_OE_IMPORT_CONTAINER_NAME + '" --format="{{.ID}}"))'
-#     os.system(cmd)
-
 
 def uninstall_backup_task():
     log("removing backup task " + APP_NAME, PRINT_TO_CONSOLE)
@@ -892,24 +879,37 @@ def get_action_time():
     return ACTION_TIME
 
 
-def get_user_values():
+def get_non_stored_user_values():
     get_keystore_password()
     get_truststore_password()
-    get_site_id()
     get_encryption_key()
     get_server_addresses()
+    
+
+def get_stored_user_values():
+    get_site_id()
 
 
 def get_keystore_password():
     global KEYSTORE_PWD
     print "keystore location: " + KEYSTORE_PATH
     KEYSTORE_PWD = getpass("keystore password: ")
+    cmd = "keytool -list -keystore " + KEYSTORE_PATH + " -storepass " + KEYSTORE_PWD
+    status = os.system(cmd)
+    if not status == 0:
+        print "password for the keystore is incorrect. Please try again"
+        get_keystore_password()
 
 
 def  get_truststore_password():
     global TRUSTSTORE_PWD
     print "truststore location: " + TRUSTSTORE_PATH
     TRUSTSTORE_PWD = getpass("truststore password: ")
+    cmd = "keytool -list -keystore " + TRUSTSTORE_PATH + " -storepass " + TRUSTSTORE_PWD
+    status = os.system(cmd)
+    if not status == 0:
+        print "password for the truststore is incorrect. Please try again"
+        get_truststore_password()
     
         
 def get_site_id():
@@ -933,14 +933,20 @@ def get_encryption_key():
     This value must stay the same between installations or the program will lose all encrypted data.
     Record this value somewhere secure.
     """
-    ENCRYPTION_KEY = raw_input("encryption key: ")
+    ENCRYPTION_KEY = getpass("encryption key: ")
+    confirm_encryption_key = getpass("confirm encryption key: ")
+    while (not confirm_encryption_key == ENCRYPTION_KEY):
+        print "encryption key did not match. Please re-enter the encryption key"
+        ENCRYPTION_KEY = getpass("encryption key: ")
+        confirm_encryption_key = getpass("confirm encryption key: ")
         
         
 def get_server_addresses():
     global LOCAL_FHIR_SERVER_ADDRESS, OPENMRS_SERVER_ADDRESS, CONSOLIDATED_SERVER_ADDRESS
 
     print """
-    Enter the full server path to the local fhir store (most likely the address of this server on port 8444)
+    Enter the full server path to the local fhir store 
+    (most likely the address of this server on port 8444)
     """
     fhir_server_address = raw_input("local fhir store path (default  " + LOCAL_FHIR_SERVER_ADDRESS + ") : ")
     if fhir_server_address:
@@ -950,7 +956,8 @@ def get_server_addresses():
             LOCAL_FHIR_SERVER_ADDRESS = fhir_server_address
     
     print """
-    Enter the full server path to the OpenMRS instance you'd like to poll for Fhir Tasks. Leave blank to disable the OpenMRS bridge
+    Enter the full server path to the OpenMRS instance you'd like to poll for Fhir Tasks. 
+    Leave blank to disable the OpenMRS bridge
     """
     OPENMRS_SERVER_ADDRESS = raw_input("OpenMRS address: ")
     if OPENMRS_SERVER_ADDRESS:
@@ -958,9 +965,10 @@ def get_server_addresses():
             OPENMRS_SERVER_ADDRESS = "https://" + OPENMRS_SERVER_ADDRESS
             
     print """
-    Enter the full server path to the consolidated server to send data to. Leave blank to disable sending data to the Consolidated server
+    Enter the full server path to the consolidated server to send data to. 
+    Leave blank to disable sending data to the Consolidated server
     """
-    CONSOLIDATED_SERVER_ADDRESS = raw_input("local fhir store (default  " + LOCAL_FHIR_SERVER_ADDRESS + ") : ")
+    CONSOLIDATED_SERVER_ADDRESS = raw_input("Consolidated server address: ")
     if CONSOLIDATED_SERVER_ADDRESS:
         if not CONSOLIDATED_SERVER_ADDRESS.startswith("https://"):
             CONSOLIDATED_SERVER_ADDRESS = "https://" + CONSOLIDATED_SERVER_ADDRESS

@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.apache.commons.validator.GenericValidator;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.instance.model.api.IDomainResource;
 import org.hl7.fhir.r4.model.Bundle;
@@ -61,7 +62,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
     @Override
     @Async
     public void processWorkflow(ResourceType resourceType) {
-        if (remoteStorePath.isPresent()) {
+        if (remoteStorePath.isPresent() && !GenericValidator.isBlankOrNull(remoteStorePath.get())) {
             switch (resourceType) {
             case Task:
                 beginTaskPath();
