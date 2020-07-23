@@ -108,8 +108,8 @@ public class AppConfig implements WebMvcConfigurer {
         registry.addInterceptor(localeChangeInterceptor()).addPathPatterns("/**");
         registry.addInterceptor(moduleAuthenticationInterceptor).addPathPatterns("/**")
                 .excludePathPatterns(SecurityConfig.OPEN_PAGES).excludePathPatterns(SecurityConfig.RESOURCE_PAGES)
-                .excludePathPatterns(SecurityConfig.AUTH_OPEN_PAGES)
-                .excludePathPatterns(SecurityConfig.CLIENT_CERTIFICATE_PAGES);
+                .excludePathPatterns(SecurityConfig.AUTH_OPEN_PAGES);
+//                .excludePathPatterns(SecurityConfig.CLIENT_CERTIFICATE_PAGES);
         registry.addInterceptor(urlLocatedErrorsInterceptor).addPathPatterns("/**");
         registry.addInterceptor(pageAttributesInterceptor).addPathPatterns("/**");
     }
