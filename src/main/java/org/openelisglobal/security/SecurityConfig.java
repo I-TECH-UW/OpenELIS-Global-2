@@ -1,7 +1,5 @@
 package org.openelisglobal.security;
 
-import java.util.ArrayList;
-
 import org.jasypt.util.text.AES256TextEncryptor;
 import org.jasypt.util.text.TextEncryptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +12,6 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -36,8 +32,8 @@ public class SecurityConfig {
     public static final String[] AUTH_OPEN_PAGES = { "/Home.do", "/Dashboard.do", "/Logout.do", "/MasterListsPage.do" };
     public static final String[] RESOURCE_PAGES = { "/css/**", "/favicon/**", "/images/**", "/documentation/**",
             "/scripts/**", "/jsp/**" };
-    public static final String[] HTTP_BASIC_SERVLET_PAGES = { "/importAnalyzer/**" };
-    public static final String[] CLIENT_CERTIFICATE_PAGES = { "/fhir/**" };
+    public static final String[] HTTP_BASIC_SERVLET_PAGES = { "/importAnalyzer/**", "/fhir/**" };
+//    public static final String[] CLIENT_CERTIFICATE_PAGES = {};
 
     private static final String CONTENT_SECURITY_POLICY = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval';"
             + " connect-src 'self'; img-src 'self'; style-src 'self' 'unsafe-inline';"
@@ -76,25 +72,25 @@ public class SecurityConfig {
 
     }
 
-    @Configuration
-    @Order(2)
-    public static class clientCertificateSecurityConfiguration extends WebSecurityConfigurerAdapter {
-        @Override
-        protected void configure(HttpSecurity http) throws Exception {
-            CharacterEncodingFilter filter = new CharacterEncodingFilter();
-            filter.setEncoding("UTF-8");
-            filter.setForceEncoding(true);
-            http.addFilterBefore(filter, CsrfFilter.class);
-
-            // for all requests going to a http basic page, use this security configuration
-            http.requestMatchers().antMatchers(CLIENT_CERTIFICATE_PAGES).and().authorizeRequests().anyRequest()
-                    // ensure they are authenticated
-                    .authenticated().and().x509().subjectPrincipalRegex("CN=(.*?)(?:,|$)")
-                    .userDetailsService(allowAllUserDetailsService()).and()
-                    // disable csrf as it is not needed for httpBasic
-                    .csrf().disable();
-        }
-    }
+//    @Configuration
+//    @Order(2)
+//    public static class clientCertificateSecurityConfiguration extends WebSecurityConfigurerAdapter {
+//        @Override
+//        protected void configure(HttpSecurity http) throws Exception {
+//            CharacterEncodingFilter filter = new CharacterEncodingFilter();
+//            filter.setEncoding("UTF-8");
+//            filter.setForceEncoding(true);
+//            http.addFilterBefore(filter, CsrfFilter.class);
+//
+//            // for all requests going to a client cert page, use this security configuration
+//            http.requestMatchers().antMatchers(CLIENT_CERTIFICATE_PAGES).and().authorizeRequests().anyRequest()
+//                    // ensure they are authenticated
+//                    .authenticated().and().x509().subjectPrincipalRegex("CN=(.*?)(?:,|$)")
+//                    .userDetailsService(allowAllUserDetailsService()).and()
+//                    // disable csrf as it is not needed for httpBasic
+//                    .csrf().disable();
+//        }
+//    }
 
 //
 //    @Configuration
@@ -159,15 +155,15 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    public static UserDetailsService allowAllUserDetailsService() {
-        return new UserDetailsService() {
-            @Override
-            public UserDetails loadUserByUsername(String username) {
-                return new User("falseIdol", "", new ArrayList<>());
-            }
-        };
-    }
+//    @Bean
+//    public static UserDetailsService allowAllUserDetailsService() {
+//        return new UserDetailsService() {
+//            @Override
+//            public UserDetails loadUserByUsername(String username) {
+//                return new User("falseIdol", "", new ArrayList<>());
+//            }
+//        };
+//    }
 
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
