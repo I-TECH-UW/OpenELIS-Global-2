@@ -13,3 +13,6 @@
 [submodule "hapi-fhir-jpaserver-starter"]
 	path = hapi-fhir-jpaserver-starter
 	url = git@github.com:I-TECH-UW/hapi-fhir-jpaserver-starter.git
+[submodule "dataexport"]
+	path = dataexport
+	url = git@github.com:I-TECH-UW/dataexport.git
