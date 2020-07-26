@@ -1,6 +1,7 @@
 package org.openelisglobal.config;
 
 import java.util.Locale;
+import java.util.Properties;
 
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
@@ -19,6 +20,8 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -124,6 +127,25 @@ public class AppConfig implements WebMvcConfigurer {
         registry.addResourceHandler("fontawesome-free-5.13.1-web/**")
                 .addResourceLocations("/static/fontawesome-free-5.13.1-web/");
         registry.addResourceHandler("documentation/**").addResourceLocations("classpath:static/documentation/");
+    }
+
+    @Bean
+    public JavaMailSender getJavaMailSender() {
+        // TODO pull from ExternalConnections?
+        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+        mailSender.setHost("smtp.mailtrap.io");
+        mailSender.setPort(2525);
+
+        mailSender.setUsername("1a2b3v4d5e6f7g");
+        mailSender.setPassword("1a2b3v4d5e6f7g");
+
+        Properties props = mailSender.getJavaMailProperties();
+        props.put("mail.transport.protocol", "smtp");
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.debug", "true");
+
+        return mailSender;
     }
 
 }

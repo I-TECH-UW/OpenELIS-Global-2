@@ -52,7 +52,8 @@ public class ExternalConnection extends BaseObject<Integer> {
 
     public enum ProgrammedConnection {
 //        CLINIC_SEARCH("clinlic_search", "externalconnections.clinicsearch"),
-        INFO_HIGHWAY("info_highway", "externalconnections.infohighway");
+        INFO_HIGHWAY("info_highway", "externalconnections.infohighway"),
+        SMTP_SERVER("smtp_server", "externalconnections.smtpserver");
 
         private String value;
         private String messageKey;
@@ -85,7 +86,7 @@ public class ExternalConnection extends BaseObject<Integer> {
     @Column
     private URI uri;
 
-    @Column(name = "programmed_connection")
+    @Column(name = "programmed_connection", unique = true)
     @Enumerated(EnumType.STRING)
     private ProgrammedConnection programmedConnection;
 
