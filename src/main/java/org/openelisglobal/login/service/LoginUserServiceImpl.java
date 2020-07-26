@@ -85,12 +85,11 @@ public class LoginUserServiceImpl extends BaseObjectServiceImpl<LoginUser, Integ
     @Override
     @Transactional(readOnly = true)
     public Optional<LoginUser> getValidatedLogin(String loginName, String password) {
-        PasswordUtil passUtil = new PasswordUtil();
         List<LoginUser> logins = baseObjectDAO.getAllMatching("loginName", loginName);
 
         if (logins.size() == 1) {
             LoginUser login = logins.get(0);
-            if (passUtil.checkPassword(password, login.getPassword())) {
+            if (PasswordUtil.checkPassword(password, login.getPassword())) {
                 inferExtraData(login);
                 login.setSysUserId(String.valueOf(login.getSystemUserId()));
                 return Optional.of(login);
@@ -101,8 +100,7 @@ public class LoginUserServiceImpl extends BaseObjectServiceImpl<LoginUser, Integ
 
     @Override
     public void hashPassword(LoginUser login, String newPassword) {
-        PasswordUtil passUtil = new PasswordUtil();
-        login.setPassword(passUtil.hashPassword(newPassword));
+        login.setPassword(PasswordUtil.hashPassword(newPassword));
         Calendar passwordExpiredDate = Calendar.getInstance();
         passwordExpiredDate.add(Calendar.MONTH,
                 Integer.parseInt(SystemConfiguration.getInstance().getLoginUserChangePasswordExpiredMonth()));
