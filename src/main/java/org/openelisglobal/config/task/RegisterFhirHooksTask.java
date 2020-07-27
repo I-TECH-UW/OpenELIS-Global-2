@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.commons.validator.GenericValidator;
 import org.hl7.fhir.instance.model.api.IAnyResource;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Bundle.BundleEntryComponent;
@@ -57,7 +58,7 @@ public class RegisterFhirHooksTask {
 
     @PostConstruct
     public void startTask() {
-        if (!fhirSubscriber.isPresent()) {
+        if (!fhirSubscriber.isPresent() || GenericValidator.isBlankOrNull(fhirSubscriber.get())) {
             return;
         }
         if (fhirSubscriber.get().startsWith("http://")) {
