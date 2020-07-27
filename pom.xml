@@ -17,7 +17,7 @@
 		<maven.java.release>8</maven.java.release>
 
 		<major.version>2</major.version>
-		<minor.version>0</minor.version>
+		<minor.version>1</minor.version>
 		<state.version>1</state.version><!-- 0 = alpha, 1 = beta, 2 = rc, 3 = deployable -->
 		<fix.version>0</fix.version>
 
