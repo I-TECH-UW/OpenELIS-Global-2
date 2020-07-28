@@ -36,7 +36,9 @@
 	</parameter>
 	<parameter name="leftHeaderImage" class="java.io.InputStream" isForPrompting="false"/>
 	<parameter name="rightHeaderImage" class="java.io.InputStream" isForPrompting="false"/>
-	<parameter name="signatureImage" class="java.io.InputStream" isForPrompting="false"/>
+	<parameter name="labDirectorName" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="labDirectorTitle" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="useLabDirectorSignature" class="java.lang.Boolean" isForPrompting="false"/>
 	<parameter name="localization" class="java.util.Map" isForPrompting="false"/>
 	<parameter name="imagesPath" class="java.lang.String"/>
 	<queryString>
@@ -83,17 +85,12 @@
 	<group name="person" isStartNewPage="true" isResetPageNumber="true" footerPosition="ForceAtBottom">
 		<groupExpression><![CDATA[$F{subjectNumber}]]></groupExpression>
 		<groupFooter>
-			<band height="68">
+			<band height="80">
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				<textField evaluationTime="Group" evaluationGroup="person" pattern="">
-					<reportElement x="373" y="35" width="100" height="14" isRemoveLineWhenBlank="true" uuid="98ec4770-2dbd-4446-a00b-596e54e7e66a"/>
-					<textElement verticalAlignment="Middle">
-						<font size="8" isBold="false"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$P{localization}.get("date")]]></textFieldExpression>
-				</textField>
-				<textField evaluationTime="Group" evaluationGroup="person" pattern="">
-					<reportElement x="371" y="0" width="182" height="50" isRemoveLineWhenBlank="true" uuid="0ff93d5e-c46a-454e-aa2a-a50da7774bc2"/>
+					<reportElement x="371" y="0" width="182" height="70" isRemoveLineWhenBlank="true" uuid="0ff93d5e-c46a-454e-aa2a-a50da7774bc2">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
 					<box leftPadding="4">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
@@ -108,7 +105,19 @@
 					<textFieldExpression><![CDATA[$P{localization}.get("signValidation")]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="person" pattern="">
-					<reportElement x="1" y="0" width="370" height="50" isRemoveLineWhenBlank="true" uuid="5933bf31-f0d2-4e80-9b0c-c7e0e764e672"/>
+					<reportElement x="375" y="56" width="100" height="14" isRemoveLineWhenBlank="true" uuid="98ec4770-2dbd-4446-a00b-596e54e7e66a">
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					</reportElement>
+					<textElement verticalAlignment="Middle">
+						<font size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{localization}.get("date")]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="person" pattern="">
+					<reportElement x="1" y="0" width="370" height="70" isRemoveLineWhenBlank="true" uuid="5933bf31-f0d2-4e80-9b0c-c7e0e764e672">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
 					<box topPadding="0" leftPadding="4">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
@@ -123,9 +132,35 @@
 					<textFieldExpression><![CDATA[$P{localization}.get("labInfomation")]]></textFieldExpression>
 				</textField>
 				<image>
-					<reportElement x="373" y="10" width="178" height="25" uuid="5c12e0ad-2c6e-453f-8220-8b150902e7e6"/>
+					<reportElement x="373" y="10" width="178" height="25" uuid="5c12e0ad-2c6e-453f-8220-8b150902e7e6">
+						<printWhenExpression><![CDATA[$P{useLabDirectorSignature}]]></printWhenExpression>
+					</reportElement>
 					<imageExpression><![CDATA[$P{imagesPath}+ "labDirectorSignature.jpg"]]></imageExpression>
 				</image>
+				<textField>
+					<reportElement x="375" y="35" width="100" height="10" uuid="17e10974-d1e6-4d29-8cf2-3aa4183c05ff">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<printWhenExpression><![CDATA[$P{useLabDirectorSignature} && $P{labDirectorTitle} != null]]></printWhenExpression>
+					</reportElement>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{labDirectorName}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="375" y="45" width="100" height="10" uuid="394095f4-bdfd-4af5-9ba0-f1ee3a952806">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<printWhenExpression><![CDATA[$P{useLabDirectorSignature} && $P{labDirectorTitle} != null]]></printWhenExpression>
+					</reportElement>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{labDirectorTitle}]]></textFieldExpression>
+				</textField>
 			</band>
 		</groupFooter>
 	</group>
