@@ -12,7 +12,6 @@ import javax.xml.namespace.QName;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPBodyElement;
 import javax.xml.soap.SOAPConnection;
 import javax.xml.soap.SOAPConnectionFactory;
 import javax.xml.soap.SOAPElement;
@@ -23,7 +22,6 @@ import javax.xml.soap.SOAPPart;
 
 import org.apache.commons.validator.GenericValidator;
 import org.apache.http.HttpStatus;
-import org.openelisglobal.common.externalLinks.IExternalPatientSearch;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.provider.query.ExtendedPatientSearchResults;
 import org.openelisglobal.common.util.DateUtil;
@@ -35,6 +33,7 @@ import org.w3c.dom.DOMException;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
 
 @Service("InfoHighwaySearch")
 @Scope("prototype")
@@ -283,10 +282,9 @@ public class PatientInfoHighwaySearch implements IExternalPatientSearch {
     private void processResponse(SOAPMessage soapResponse) throws SOAPException {
         SOAPBody soapResponseBody = soapResponse.getSOAPBody();
         QName bodyName = new QName("http://ws.server.mhaccess.crimsonlogic.com/", "queryResponse", "ns3");
-        @SuppressWarnings("unchecked")
-        Iterator<SOAPBodyElement> iterator = soapResponseBody.getChildElements(bodyName);
+        Iterator<javax.xml.soap.Node> iterator = soapResponseBody.getChildElements(bodyName);
         while (iterator.hasNext()) {
-            SOAPBodyElement queryResponse = iterator.next();
+            SOAPElement queryResponse = (SOAPElement) iterator.next();
 
             Node returnNode = queryResponse.getElementsByTagName("return").item(0);
             if (returnNode.getNodeType() == Node.ELEMENT_NODE) {
