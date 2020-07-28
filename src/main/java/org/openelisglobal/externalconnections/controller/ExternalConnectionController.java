@@ -64,6 +64,8 @@ public class ExternalConnectionController extends BaseController {
         } else {
             fillForm(externalConnectionId, form);
         }
+
+        request.getSession().setAttribute(SAVE_DISABLED, TRUE);
         return findForward(FWD_SUCCESS, form);
     }
 
