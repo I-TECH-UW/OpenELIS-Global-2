@@ -201,8 +201,10 @@
 		<spring:message code="externalconnections.authtype.cert.instructions"/>
 	</td></tr>
 	<tr id="basicAuthRow" class="authRow" style="display:none;"><td>
-		<form:hidden path="basicAuthenticationData.id"/>
-		<form:hidden path="basicAuthenticationData.lastupdated"/>
+		<c:if test="${not empty form.basicAuthenticationData.id}">
+			<form:hidden path="basicAuthenticationData.id"/>
+			<form:hidden path="basicAuthenticationData.lastupdated"/>
+		</c:if>
 		<spring:message code="externalconnections.authtype.basic.username"/>
 		<form:input path="basicAuthenticationData.username" onChange="setSave()"/>
 		<br>
@@ -226,7 +228,7 @@
 	</tr>
 
 	<tr>
-		<td><form:input id="connectionUri" path="externalConnection.uri" onInput="setSave()checkIfHttps()"/>
+		<td><form:input id="connectionUri" path="externalConnection.uri" onInput="setSave();checkIfHttps()"/>
 		<span id="locked"><i class="fas fa-lock" style="color:Green;"></i></span>
 		<span id="unlocked"><i class="fas fa-lock-open" style="color:DarkRed;"></i></span>
 		</td>
