@@ -150,22 +150,22 @@ public abstract class CIColumnBuilder extends CSVColumnBuilder {
     protected void defineBasicColumns() {
         add("accession_number", "LABNO", NONE);
         add("status_id", "ECHSTAT", SAMPLE_STATUS);
-        add("national_id", "SUJETNO", NONE);
-        add("project_id", "ETUDE", PROJECT);
-        add("external_id", "SUJETSIT", NONE);
+        add("national_id", "SUBJECTNUMBER", NONE);
+        add("project_id", "STUDY", PROJECT);
+        add("external_id", "SUBJECTID", NONE);
         add("received_date", "DRCPT", DATE_TIME); // reception date
         add("collection_date", "DINTV", DATE_TIME); // interview date
         add("organization_code", "CODE_SITE", NONE);
-        add("organization_name", "NOM_SITE", NONE);
+        add("organization_name", "NAME_SITE", NONE);
         add("datim_org_code", "CODE_SITE_DATIM", NONE);
-        add("datim_org_name", "NOM_SITE_DATIM", NONE);
+        add("datim_org_name", "NAME_SITE_DATIM", NONE);
         // add("last_name", "NOM", NONE);
         // add("first_name", "PRENOM", NONE);
-        add("gender", "SEXE", GENDER);
-        add("birth_date", "DATENAIS", DATE);
-        add("collection_date", "AGEANS", AGE_YEARS);
-        add("collection_date", "AGEMOIS", AGE_MONTHS);
-        add("collection_date", "AGESEMS", AGE_WEEKS);
+        add("gender", "SEX", GENDER);
+        add("birth_date", "DATEBIRTH", DATE);
+        add("collection_date", "AGEYEARS", AGE_YEARS);
+        add("collection_date", "AGEMONTHS", AGE_MONTHS);
+        add("collection_date", "AGEWEEKS", AGE_WEEKS);
     }
 
     @Override

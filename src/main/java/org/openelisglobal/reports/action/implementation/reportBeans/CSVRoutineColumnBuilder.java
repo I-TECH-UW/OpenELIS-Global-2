@@ -407,13 +407,13 @@ abstract public class CSVRoutineColumnBuilder {
                 }
                 switch (orderStatus) {
                 case Entered:
-                    return "Saisie"; // entered,
+                    return "Entered"; // entered,
                 case Started:
-                    return "En_Cours"; // commenced,
+                    return "Started"; // commenced,
                 case Finished:
-                    return "Fini"; // Finished,
+                    return "Finished"; // Finished,
                 case NonConforming_depricated:
-                    return "Non-conforme"; // Non-conforming, Non-conformes
+                    return "Non-conforming"; // Non-conforming, Non-conformes
                 }
 
             case DEBUG:
