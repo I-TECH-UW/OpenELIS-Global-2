@@ -52,13 +52,13 @@
 			<column name="description_key" value="siteInfo.instruction.directortitle.d" />
 		</insert>
 		<rollback>
-			<delete schemaName="clinlims" tableName="reference_tables">
+			<delete schemaName="clinlims" tableName="site_information">
 				<where>name='labDirectorSignature'</where>
 			</delete>
-			<delete schemaName="clinlims" tableName="reference_tables">
+			<delete schemaName="clinlims" tableName="site_information">
 				<where>name='labDirectorName'</where>
 			</delete>
-			<delete schemaName="clinlims" tableName="reference_tables">
+			<delete schemaName="clinlims" tableName="site_information">
 				<where>name='labDirectorTitle'</where>
 			</delete>
 		</rollback>

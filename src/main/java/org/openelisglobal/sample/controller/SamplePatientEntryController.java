@@ -92,9 +92,9 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 
     @Autowired
     private SamplePatientEntryService samplePatientService;
-    
+
     protected FhirTransformService fhirTransformService = SpringContext.getBean(FhirTransformService.class);
-    
+
     @InitBinder
     public void initBinder(WebDataBinder binder) {
         binder.setAllowedFields(ALLOWED_FIELDS);
@@ -126,6 +126,9 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
         if (FormFields.getInstance().useField(FormFields.Field.InitialSampleCondition)) {
             form.setInitialSampleConditionList(
                     DisplayListService.getInstance().getList(ListType.INITIAL_SAMPLE_CONDITION));
+        }
+        if (FormFields.getInstance().useField(FormFields.Field.SampleNature)) {
+            form.setSampleNatureList(DisplayListService.getInstance().getList(ListType.SAMPLE_NATURE));
         }
 
         addFlashMsgsToRequest(request);
@@ -199,7 +202,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
             return findForward(FWD_FAIL_INSERT, form);
 
         }
-        
+
         redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
         return findForward(FWD_SUCCESS_INSERT, form);
     }

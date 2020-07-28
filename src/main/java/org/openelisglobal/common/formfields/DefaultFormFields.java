@@ -25,14 +25,14 @@ import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 
 public class DefaultFormFields extends AFormFields {
-    private HashMap<FormFields.Field, Boolean> defaultAttributes = new HashMap<FormFields.Field, Boolean>();
+    private HashMap<FormFields.Field, Boolean> defaultAttributes = new HashMap<>();
 
     {
         /*
          * The rules for setting the default true or false are: If you have been asked
          * to hide an existing field then the default should be true If you have been
          * asked to add a new field then the default should be false
-         * 
+         *
          * The goal is to not break any existing configurations
          */
         setFieldTrue(Field.StNumber);
@@ -56,6 +56,7 @@ public class DefaultFormFields extends AFormFields {
         setFieldTrue(Field.SampleEntryRequestingSiteSampleId);
         setFieldTrue(Field.ADDRESS_COMMUNE);
         setFieldTrue(Field.ADDRESS_VILLAGE);
+        setFieldTrue(Field.SampleNature);
 
         setFieldFalse(Field.OrgState);
         setFieldFalse(Field.ZipCode);
