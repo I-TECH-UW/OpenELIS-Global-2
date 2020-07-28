@@ -117,6 +117,8 @@ public abstract class ConfigurationProperties {
         SPECIMEN_FIELD_DATE("collectionDateCheck"), //
         SPECIMEN_FIELD_SEX("patientSexCheck"), //
         SPECIMEN_FIELD_TESTS("testsCheck"), //
+        LAB_DIRECTOR_NAME("labDirectorName"), //
+        LAB_DIRECTOR_TITLE("labDirectorTitle"), //
         INFO_HIGHWAY_USERNAME("infoHighway.username"), //
         INFO_HIGHWAY_PASSWORD("infoHighway.password"), //
         INFO_HIGHWAY_ADDRESS("infoHighway.uri"), //

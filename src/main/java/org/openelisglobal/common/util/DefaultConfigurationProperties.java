@@ -166,6 +166,8 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
         setDBPropertyMappingAndDefault(Property.SPECIMEN_FIELD_SEX, Property.SPECIMEN_FIELD_SEX.getName(), "true");
         setDBPropertyMappingAndDefault(Property.SPECIMEN_FIELD_TESTS, Property.SPECIMEN_FIELD_TESTS.getName(), "true");
 
+        setDBPropertyMappingAndDefault(Property.LAB_DIRECTOR_NAME, Property.LAB_DIRECTOR_NAME.getName(), "");
+        setDBPropertyMappingAndDefault(Property.LAB_DIRECTOR_TITLE, Property.LAB_DIRECTOR_TITLE.getName(), "");
         setDBPropertyMappingAndDefault(Property.INFO_HIGHWAY_ADDRESS, Property.INFO_HIGHWAY_ADDRESS.getName(), "");
         setDBPropertyMappingAndDefault(Property.INFO_HIGHWAY_USERNAME, Property.INFO_HIGHWAY_USERNAME.getName(), "");
         setDBPropertyMappingAndDefault(Property.INFO_HIGHWAY_PASSWORD, Property.INFO_HIGHWAY_PASSWORD.getName(), "");

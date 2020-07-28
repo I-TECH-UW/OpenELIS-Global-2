@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.12.2.final using JasperReports Library version 3.7.2  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PatientReport" pageWidth="612" pageHeight="792" whenNoDataType="AllSectionsNoDetail" columnWidth="552" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" resourceBundle="languages/message" whenResourceMissingType="Empty">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
@@ -35,6 +36,7 @@
 	</parameter>
 	<parameter name="leftHeaderImage" class="java.io.InputStream" isForPrompting="false"/>
 	<parameter name="rightHeaderImage" class="java.io.InputStream" isForPrompting="false"/>
+	<parameter name="signatureImage" class="java.io.InputStream" isForPrompting="false"/>
 	<parameter name="localization" class="java.util.Map" isForPrompting="false"/>
 	<parameter name="imagesPath" class="java.lang.String"/>
 	<queryString>
@@ -81,10 +83,10 @@
 	<group name="person" isStartNewPage="true" isResetPageNumber="true" footerPosition="ForceAtBottom">
 		<groupExpression><![CDATA[$F{subjectNumber}]]></groupExpression>
 		<groupFooter>
-			<band height="50">
+			<band height="68">
 				<textField evaluationTime="Group" evaluationGroup="person" pattern="">
 					<reportElement x="373" y="35" width="100" height="14" isRemoveLineWhenBlank="true"/>
-					<textElement verticalAlignment="Middle">
+					<textElement verticalAlignment="Middle" lineSpacing="Single">
 						<font size="8" isBold="false"/>
 					</textElement>
 					<textFieldExpression class="java.lang.String"><![CDATA[$P{localization}.get("date")]]></textFieldExpression>
@@ -98,7 +100,7 @@
 						<bottomPen lineWidth="0.5"/>
 						<rightPen lineWidth="0.5"/>
 					</box>
-					<textElement>
+					<textElement lineSpacing="Single">
 						<font size="8" isBold="false"/>
 					</textElement>
 					<textFieldExpression class="java.lang.String"><![CDATA[$P{localization}.get("signValidation")]]></textFieldExpression>
@@ -112,11 +114,15 @@
 						<bottomPen lineWidth="0.5"/>
 						<rightPen lineWidth="0.5"/>
 					</box>
-					<textElement>
+					<textElement lineSpacing="Single">
 						<font size="8" isBold="false"/>
 					</textElement>
 					<textFieldExpression class="java.lang.String"><![CDATA[$P{localization}.get("labInfomation")]]></textFieldExpression>
 				</textField>
+				<image>
+					<reportElement x="373" y="10" width="178" height="25"/>
+					<imageExpression class="java.lang.String"><![CDATA[$P{imagesPath}+ "labDirectorSignature.jpg"]]></imageExpression>
+				</image>
 			</band>
 		</groupFooter>
 	</group>
@@ -159,7 +165,7 @@
 							<bottomPen lineWidth="0.25" lineStyle="Solid"/>
 							<rightPen lineWidth="0.25" lineStyle="Solid"/>
 						</box>
-						<textElement>
+						<textElement lineSpacing="Single">
 							<font size="8"/>
 						</textElement>
 						<textFieldExpression class="java.lang.String"><![CDATA[$F{contactInfo}]]></textFieldExpression>
@@ -172,7 +178,7 @@
 							<bottomPen lineWidth="0.5" lineStyle="Solid"/>
 							<rightPen lineWidth="0.5" lineStyle="Solid"/>
 						</box>
-						<textElement verticalAlignment="Middle">
+						<textElement verticalAlignment="Middle" lineSpacing="Single">
 							<font size="8"/>
 						</textElement>
 						<textFieldExpression class="java.lang.String"><![CDATA[$P{localization}.get("prescriber")]]></textFieldExpression>
@@ -185,7 +191,7 @@
 							<bottomPen lineWidth="0.5" lineStyle="Solid"/>
 							<rightPen lineWidth="0.5" lineStyle="Solid"/>
 						</box>
-						<textElement>
+						<textElement lineSpacing="Single">
 							<font size="8"/>
 						</textElement>
 						<textFieldExpression class="java.lang.String"><![CDATA[$F{siteInfo}]]></textFieldExpression>
@@ -198,7 +204,7 @@
 							<bottomPen lineWidth="0.5" lineStyle="Solid"/>
 							<rightPen lineWidth="0.5" lineStyle="Solid"/>
 						</box>
-						<textElement verticalAlignment="Middle">
+						<textElement verticalAlignment="Middle" lineSpacing="Single">
 							<font size="8"/>
 						</textElement>
 						<textFieldExpression class="java.lang.String"><![CDATA[$P{localization}.get("referringSite")]]></textFieldExpression>
@@ -211,7 +217,7 @@
 							<bottomPen lineWidth="0.5" lineStyle="Solid"/>
 							<rightPen lineWidth="0.5" lineStyle="Solid"/>
 						</box>
-						<textElement verticalAlignment="Middle">
+						<textElement verticalAlignment="Middle" lineSpacing="Single">
 							<font size="8"/>
 						</textElement>
 						<textFieldExpression class="java.lang.String"><![CDATA[$P{localization}.get("patientCode")]]></textFieldExpression>
@@ -224,7 +230,7 @@
 							<bottomPen lineWidth="0.5" lineStyle="Solid"/>
 							<rightPen lineWidth="0.0" lineStyle="Solid"/>
 						</box>
-						<textElement verticalAlignment="Middle">
+						<textElement verticalAlignment="Middle" lineSpacing="Single">
 							<font size="8"/>
 						</textElement>
 						<textFieldExpression class="java.lang.String"><![CDATA[$F{subjectNumber}]]></textFieldExpression>
@@ -236,7 +242,7 @@
 							<leftPen lineWidth="0.0" lineStyle="Solid"/>
 							<rightPen lineWidth="0.0" lineStyle="Solid"/>
 						</box>
-						<textElement>
+						<textElement lineSpacing="Single">
 							<font size="8"/>
 						</textElement>
 						<textFieldExpression class="java.lang.String"><![CDATA[$F{nationalId}]]></textFieldExpression>
@@ -249,7 +255,7 @@
 							<bottomPen lineWidth="0.5"/>
 							<rightPen lineWidth="0.5" lineStyle="Solid"/>
 						</box>
-						<textElement>
+						<textElement lineSpacing="Single">
 							<font size="8"/>
 						</textElement>
 						<textFieldExpression class="java.lang.String"><![CDATA[$P{localization}.get("idNational")]]></textFieldExpression>
@@ -262,7 +268,7 @@
 							<bottomPen lineWidth="0.5"/>
 							<rightPen lineWidth="0.5" lineStyle="Solid"/>
 						</box>
-						<textElement>
+						<textElement lineSpacing="Single">
 							<font size="8"/>
 						</textElement>
 						<textFieldExpression class="java.lang.String"><![CDATA[$P{localization}.get("ordinanceNo")]]></textFieldExpression>
@@ -276,7 +282,7 @@
 							<bottomPen lineWidth="0.5"/>
 							<rightPen lineWidth="0.5" lineStyle="Solid"/>
 						</box>
-						<textElement>
+						<textElement lineSpacing="Single">
 							<font size="8"/>
 						</textElement>
 						<textFieldExpression class="java.lang.String"><![CDATA[$F{accessionNumber}]]></textFieldExpression>
@@ -295,7 +301,7 @@
 							<bottomPen lineWidth="0.5"/>
 							<rightPen lineWidth="0.5"/>
 						</box>
-						<textElement verticalAlignment="Middle">
+						<textElement verticalAlignment="Middle" lineSpacing="Single">
 							<font size="8"/>
 						</textElement>
 						<textFieldExpression class="java.lang.String"><![CDATA[$R{report.age}]]></textFieldExpression>
@@ -309,7 +315,7 @@
 							<bottomPen lineWidth="0.5"/>
 							<rightPen lineWidth="0.5"/>
 						</box>
-						<textElement verticalAlignment="Middle">
+						<textElement verticalAlignment="Middle" lineSpacing="Single">
 							<font size="8"/>
 						</textElement>
 						<textFieldExpression class="java.lang.String"><![CDATA[$F{age}]]></textFieldExpression>
@@ -325,7 +331,7 @@
 							<bottomPen lineWidth="0.5"/>
 							<rightPen lineWidth="0.5"/>
 						</box>
-						<textElement verticalAlignment="Middle">
+						<textElement verticalAlignment="Middle" lineSpacing="Single">
 							<font size="8"/>
 						</textElement>
 						<textFieldExpression class="java.lang.String"><![CDATA[$F{gender}]]></textFieldExpression>
@@ -339,7 +345,7 @@
 							<bottomPen lineWidth="0.5"/>
 							<rightPen lineWidth="0.5"/>
 						</box>
-						<textElement verticalAlignment="Middle">
+						<textElement verticalAlignment="Middle" lineSpacing="Single">
 							<font size="8"/>
 						</textElement>
 						<textFieldExpression class="java.lang.String"><![CDATA[$R{report.sex}]]></textFieldExpression>
@@ -353,7 +359,7 @@
 							<bottomPen lineWidth="0.5" lineStyle="Solid"/>
 							<rightPen lineWidth="0.5" lineStyle="Solid"/>
 						</box>
-						<textElement verticalAlignment="Middle">
+						<textElement verticalAlignment="Middle" lineSpacing="Single">
 							<font fontName="SansSerif" size="8"/>
 						</textElement>
 						<textFieldExpression class="java.lang.String"><![CDATA[$P{localization}.get("patientCode")]]></textFieldExpression>
@@ -366,7 +372,7 @@
 							<bottomPen lineWidth="0.5" lineStyle="Solid"/>
 							<rightPen lineWidth="0.0" lineStyle="Solid"/>
 						</box>
-						<textElement verticalAlignment="Middle">
+						<textElement verticalAlignment="Middle" lineSpacing="Single">
 							<font size="8"/>
 						</textElement>
 						<textFieldExpression class="java.lang.String"><![CDATA[$F{subjectNumber}]]></textFieldExpression>
@@ -378,7 +384,7 @@
 							<leftPen lineWidth="0.5" lineStyle="Solid"/>
 							<rightPen lineWidth="0.5" lineStyle="Solid"/>
 						</box>
-						<textElement>
+						<textElement lineSpacing="Single">
 							<font size="8"/>
 						</textElement>
 						<textFieldExpression class="java.lang.String"><![CDATA[$P{localization}.get("idNational")]]></textFieldExpression>
@@ -391,7 +397,7 @@
 							<bottomPen lineWidth="0.5" lineStyle="Solid"/>
 							<rightPen lineWidth="0.5" lineStyle="Solid"/>
 						</box>
-						<textElement verticalAlignment="Middle">
+						<textElement verticalAlignment="Middle" lineSpacing="Single">
 							<font size="8"/>
 						</textElement>
 						<textFieldExpression class="java.lang.String"><![CDATA[$P{billingNumberLabel}]]></textFieldExpression>
@@ -403,7 +409,7 @@
 							<leftPen lineWidth="0.0" lineStyle="Solid"/>
 							<rightPen lineWidth="0.0" lineStyle="Solid"/>
 						</box>
-						<textElement>
+						<textElement lineSpacing="Single">
 							<font size="8"/>
 						</textElement>
 						<textFieldExpression class="java.lang.String"><![CDATA[$F{nationalId}]]></textFieldExpression>
@@ -415,7 +421,7 @@
 							<bottomPen lineWidth="0.5" lineStyle="Solid"/>
 							<rightPen lineWidth="0.0" lineStyle="Solid"/>
 						</box>
-						<textElement verticalAlignment="Middle">
+						<textElement verticalAlignment="Middle" lineSpacing="Single">
 							<font size="8"/>
 						</textElement>
 						<textFieldExpression class="java.lang.String"><![CDATA[$F{billingNumber}]]></textFieldExpression>
@@ -428,7 +434,7 @@
 							<bottomPen lineWidth="0.5"/>
 							<rightPen lineWidth="0.5"/>
 						</box>
-						<textElement verticalAlignment="Middle">
+						<textElement verticalAlignment="Middle" lineSpacing="Single">
 							<font size="8"/>
 						</textElement>
 						<textFieldExpression class="java.lang.String"><![CDATA[$P{localization}.get("prescriber")]]></textFieldExpression>
@@ -438,7 +444,7 @@
 						<box leftPadding="4">
 							<bottomPen lineWidth="0.5"/>
 						</box>
-						<textElement>
+						<textElement lineSpacing="Single">
 							<font size="8"/>
 						</textElement>
 						<textFieldExpression class="java.lang.String"><![CDATA[$F{contactInfo}]]></textFieldExpression>
@@ -451,7 +457,7 @@
 							<bottomPen lineWidth="0.5"/>
 							<rightPen lineWidth="0.5"/>
 						</box>
-						<textElement verticalAlignment="Middle">
+						<textElement verticalAlignment="Middle" lineSpacing="Single">
 							<font size="8"/>
 						</textElement>
 						<textFieldExpression class="java.lang.String"><![CDATA[$P{localization}.get("referringSite")]]></textFieldExpression>
@@ -462,7 +468,7 @@
 							<bottomPen lineWidth="0.5"/>
 							<rightPen lineWidth="0.5"/>
 						</box>
-						<textElement>
+						<textElement lineSpacing="Single">
 							<font size="8"/>
 						</textElement>
 						<textFieldExpression class="java.lang.String"><![CDATA[$F{siteInfo}]]></textFieldExpression>
@@ -475,7 +481,7 @@
 							<bottomPen lineWidth="0.5"/>
 							<rightPen lineWidth="0.5"/>
 						</box>
-						<textElement verticalAlignment="Middle">
+						<textElement verticalAlignment="Middle" lineSpacing="Single">
 							<font size="8"/>
 						</textElement>
 						<textFieldExpression class="java.lang.String"><![CDATA[$P{localization}.get("ordinanceNo")]]></textFieldExpression>
@@ -486,7 +492,7 @@
 							<topPen lineWidth="1.0"/>
 							<bottomPen lineWidth="0.5"/>
 						</box>
-						<textElement>
+						<textElement lineSpacing="Single">
 							<font size="8"/>
 						</textElement>
 						<textFieldExpression class="java.lang.String"><![CDATA[$F{accessionNumber}]]></textFieldExpression>
@@ -499,7 +505,7 @@
 							<bottomPen lineWidth="0.5"/>
 							<rightPen lineWidth="0.5"/>
 						</box>
-						<textElement verticalAlignment="Middle">
+						<textElement verticalAlignment="Middle" lineSpacing="Single">
 							<font size="8"/>
 						</textElement>
 						<textFieldExpression class="java.lang.String"><![CDATA[$P{localization}.get("program")]]></textFieldExpression>
@@ -511,7 +517,7 @@
 							<bottomPen lineWidth="0.5"/>
 							<rightPen lineWidth="0.5"/>
 						</box>
-						<textElement>
+						<textElement lineSpacing="Single">
 							<font size="8"/>
 						</textElement>
 						<textFieldExpression class="java.lang.String"><![CDATA[$F{labOrderType}]]></textFieldExpression>
@@ -525,7 +531,7 @@
 							<bottomPen lineWidth="0.5"/>
 							<rightPen lineWidth="0.5"/>
 						</box>
-						<textElement verticalAlignment="Middle">
+						<textElement verticalAlignment="Middle" lineSpacing="Single">
 							<font size="8"/>
 						</textElement>
 						<textFieldExpression class="java.lang.String"><![CDATA[$P{localization}.get("orderDate")]]></textFieldExpression>
@@ -539,7 +545,7 @@
 							<bottomPen lineWidth="0.5"/>
 							<rightPen lineWidth="0.5"/>
 						</box>
-						<textElement verticalAlignment="Middle">
+						<textElement verticalAlignment="Middle" lineSpacing="Single">
 							<font size="8"/>
 						</textElement>
 						<textFieldExpression class="java.lang.String"><![CDATA[$P{localization}.get("receiptDate")]]></textFieldExpression>
@@ -550,7 +556,7 @@
 							<bottomPen lineWidth="0.5"/>
 							<rightPen lineWidth="0.5"/>
 						</box>
-						<textElement>
+						<textElement lineSpacing="Single">
 							<font size="8"/>
 						</textElement>
 						<textFieldExpression class="java.lang.String"><![CDATA[$F{orderDate}]]></textFieldExpression>
@@ -561,7 +567,7 @@
 							<bottomPen lineWidth="0.5"/>
 							<rightPen lineWidth="0.5"/>
 						</box>
-						<textElement>
+						<textElement lineSpacing="Single">
 							<font size="8"/>
 						</textElement>
 						<textFieldExpression class="java.lang.String"><![CDATA[$F{recievedDate}]]></textFieldExpression>
@@ -575,7 +581,7 @@
 							<bottomPen lineWidth="0.5"/>
 							<rightPen lineWidth="0.5"/>
 						</box>
-						<textElement>
+						<textElement lineSpacing="Single">
 							<font size="8" isBold="false" isItalic="false"/>
 						</textElement>
 						<text><![CDATA[  Nom, Prénom(s)]]></text>
@@ -586,7 +592,7 @@
 							<bottomPen lineWidth="0.5"/>
 							<rightPen lineWidth="0.5"/>
 						</box>
-						<textElement>
+						<textElement lineSpacing="Single">
 							<font size="8"/>
 						</textElement>
 						<textFieldExpression class="java.lang.String"><![CDATA[$F{patientName}]]></textFieldExpression>
@@ -604,49 +610,49 @@
 			<band height="25" splitType="Prevent">
 				<textField>
 					<reportElement mode="Transparent" x="1" y="13" width="110" height="12" backcolor="#FFFFFF"/>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
+					<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 						<font size="7"/>
 					</textElement>
 					<textFieldExpression class="java.lang.String"><![CDATA[$P{localization}.get("test")]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement x="264" y="13" width="59" height="12"/>
-					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single" markup="none">
 						<font size="7"/>
 					</textElement>
 					<textFieldExpression class="java.lang.String"><![CDATA[$P{localization}.get("status")]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement mode="Transparent" x="357" y="13" width="117" height="12" backcolor="#FFFFFF"/>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
+					<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 						<font size="7"/>
 					</textElement>
 					<textFieldExpression class="java.lang.String"><![CDATA[$P{localization}.get("referenceValue")]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement mode="Transparent" x="474" y="13" width="78" height="12" backcolor="#FFFFFF"/>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
+					<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 						<font size="7"/>
 					</textElement>
 					<textFieldExpression class="java.lang.String"><![CDATA[$P{localization}.get("unit")]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement mode="Transparent" x="146" y="13" width="118" height="12" backcolor="#FFFFFF"/>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
+					<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 						<font size="7"/>
 					</textElement>
 					<textFieldExpression class="java.lang.String"><![CDATA[$P{localization}.get("outcome")]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement mode="Transparent" x="323" y="13" width="34" height="12" isPrintWhenDetailOverflows="true" backcolor="#FFFFFF"/>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
+					<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 						<font size="7"/>
 					</textElement>
 					<textFieldExpression class="java.lang.String"><![CDATA[$P{localization}.get("alert")]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement mode="Transparent" x="111" y="13" width="35" height="12" backcolor="#FFFFFF"/>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
+					<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 						<font size="7"/>
 					</textElement>
 					<textFieldExpression class="java.lang.String"><![CDATA[$P{localization}.get("specimen")]]></textFieldExpression>
@@ -660,7 +666,7 @@
 						<bottomPen lineWidth="0.0"/>
 						<rightPen lineWidth="0.0"/>
 					</box>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
+					<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 						<font size="9" isBold="true"/>
 					</textElement>
 					<textFieldExpression class="java.lang.String"><![CDATA[$F{testSection}]]></textFieldExpression>
@@ -766,14 +772,14 @@
 				<reportElement mode="Transparent" x="0" y="93" width="552" height="16" isRemoveLineWhenBlank="true">
 					<printWhenExpression><![CDATA[$F{correctedResult}]]></printWhenExpression>
 				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Bottom">
+				<textElement textAlignment="Center" verticalAlignment="Bottom" lineSpacing="Single">
 					<font size="12" isBold="true"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{localization}.get("correctedReport")]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement mode="Opaque" x="1" y="110" width="550" height="13"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{report.results} + " " + $F{completeFlag}]]></textFieldExpression>
@@ -818,7 +824,7 @@
 						<bottomPen lineWidth="0.0" lineColor="#CCCCCC"/>
 						<rightPen lineWidth="0.5"/>
 					</box>
-					<textElement textAlignment="Right" verticalAlignment="Middle" markup="styled">
+					<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single" markup="styled">
 						<font fontName="SansSerif" size="6" isBold="false" isItalic="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="true"/>
 					</textElement>
 					<textFieldExpression class="java.lang.String"><![CDATA[$F{result}]]></textFieldExpression>
@@ -832,7 +838,7 @@
 						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
 					</box>
-					<textElement verticalAlignment="Middle" markup="html">
+					<textElement verticalAlignment="Middle" lineSpacing="Single" markup="html">
 						<font size="6"/>
 					</textElement>
 					<textFieldExpression class="java.lang.String"><![CDATA[$F{testName}]]></textFieldExpression>
@@ -845,7 +851,7 @@
 						<bottomPen lineWidth="0.0" lineColor="#CCCCCC"/>
 						<rightPen lineWidth="0.5"/>
 					</box>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
+					<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 						<font size="6"/>
 					</textElement>
 					<textFieldExpression class="java.lang.String"><![CDATA[$F{testRefRange}]]></textFieldExpression>
@@ -856,7 +862,7 @@
 						<leftPen lineWidth="0.5"/>
 						<rightPen lineWidth="0.5"/>
 					</box>
-					<textElement textAlignment="Center" verticalAlignment="Middle" markup="html">
+					<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single" markup="html">
 						<font fontName="SansSerif" size="6" isBold="true"/>
 					</textElement>
 					<textFieldExpression class="java.lang.String"><![CDATA[$F{alerts}]]></textFieldExpression>
@@ -869,14 +875,14 @@
 						<bottomPen lineWidth="0.0" lineColor="#CCCCCC"/>
 						<rightPen lineWidth="0.5"/>
 					</box>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
+					<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 						<font size="6"/>
 					</textElement>
 					<textFieldExpression class="java.lang.String"><![CDATA[$F{uom}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
 					<reportElement x="263" y="0" width="60" height="12"/>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
+					<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 						<font size="6"/>
 					</textElement>
 					<textFieldExpression class="java.lang.String"><![CDATA[$F{analysisStatus}]]></textFieldExpression>
@@ -890,7 +896,7 @@
 						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
 					</box>
-					<textElement textAlignment="Center" verticalAlignment="Middle" markup="html">
+					<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single" markup="html">
 						<font size="6"/>
 					</textElement>
 					<textFieldExpression class="java.lang.String"><![CDATA[$F{sampleSortOrder}]]></textFieldExpression>
@@ -907,7 +913,7 @@
 					<bottomPen lineWidth="0.5" lineColor="#000000"/>
 					<rightPen lineWidth="0.5" lineColor="#000000"/>
 				</box>
-				<textElement markup="styled">
+				<textElement lineSpacing="Single" markup="styled">
 					<font size="6"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{note}]]></textFieldExpression>
@@ -918,14 +924,14 @@
 		<band height="16" splitType="Stretch">
 			<textField>
 				<reportElement x="28" y="2" width="524" height="14"/>
-				<textElement verticalAlignment="Middle">
+				<textElement verticalAlignment="Middle" lineSpacing="Single">
 					<font size="7"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA["B = " + $R{report.belowNormal} + "  E = " + $R{report.aboveNormal} + "  * = " + $R{report.abnormal}  +  "  R = " + $R{report.extLabReference} + "  C = " + $R{report.confirmTest}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="0" y="2" width="28" height="14"/>
-				<textElement verticalAlignment="Middle">
+				<textElement verticalAlignment="Middle" lineSpacing="Single">
 					<font size="6"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{report.legend}]]></textFieldExpression>
@@ -938,7 +944,7 @@
 				<reportElement x="371" y="4" width="126" height="10">
 					<printWhenExpression><![CDATA[$P{usePageNumbers}.equals("true")]]></printWhenExpression>
 				</reportElement>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
+				<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single">
 					<font size="7"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA["Page "+$V{PAGE_NUMBER}+" "+$P{localization}.get("about")]]></textFieldExpression>
@@ -947,14 +953,14 @@
 				<reportElement x="497" y="4" width="37" height="10">
 					<printWhenExpression><![CDATA[$P{usePageNumbers}.equals("true")]]></printWhenExpression>
 				</reportElement>
-				<textElement verticalAlignment="Middle">
+				<textElement verticalAlignment="Middle" lineSpacing="Single">
 					<font size="7"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy HH.mm.ss">
 				<reportElement x="102" y="4" width="148" height="10"/>
-				<textElement verticalAlignment="Middle">
+				<textElement verticalAlignment="Middle" lineSpacing="Single">
 					<font size="7" isBold="true"/>
 				</textElement>
 				<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
@@ -962,7 +968,7 @@
 			<textField>
 				<reportElement x="2" y="4" width="100" height="10"/>
 				<box rightPadding="4"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
+				<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single">
 					<font size="7" isBold="true"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{localization}.get("reportDate")]]></textFieldExpression>

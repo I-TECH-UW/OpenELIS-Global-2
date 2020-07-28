@@ -409,7 +409,7 @@
 		<finalName>OpenELIS-Global</finalName>
 		<resources>
 			<resource>
-				<directory>src/main/resources</directory>
+				<directory>src/main/filtered-resources</directory>
 				<filtering>true</filtering>
 			</resource>
 		</resources>
