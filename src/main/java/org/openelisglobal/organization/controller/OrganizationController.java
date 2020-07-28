@@ -145,7 +145,7 @@ public class OrganizationController extends BaseController {
             start = request.getParameter("startingRecNo");
         }
         // validate id
-        if (ValidationHelper.ID_REGEX.matches(id)) {
+        if (request.getParameter(ID) != null && request.getParameter(ID).matches(ValidationHelper.ID_REGEX)) {
             id = request.getParameter(ID);
         }
 
@@ -309,6 +309,7 @@ public class OrganizationController extends BaseController {
             organization = organizationService.get(form.getId());
             request.setAttribute("key", "organization.edit.title");
         }
+        form.setOrganization(organization);
 
         List<String> selectedOrgTypes = form.getSelectedTypes();
 
@@ -373,6 +374,7 @@ public class OrganizationController extends BaseController {
         }
 
         DisplayListService.getInstance().refreshList(DisplayListService.ListType.REFERRAL_ORGANIZATIONS);
+        DisplayListService.getInstance().refreshLists();
 
         redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
         status.setComplete();
