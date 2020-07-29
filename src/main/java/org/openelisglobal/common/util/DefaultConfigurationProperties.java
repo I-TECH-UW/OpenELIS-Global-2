@@ -214,6 +214,23 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
                 }
             }
         }
+        Optional<ExternalConnection> smtpConnection = externalConnectionsService.getMatch("programmedConnection",
+                ProgrammedConnection.SMTP_SERVER.name());
+        if (smtpConnection.isPresent()) {
+            Optional<BasicAuthenticationData> basicAuthData = basicAuthenticationDataService
+                    .getByExternalConnection(smtpConnection.get().getId());
+            if (basicAuthData.isPresent()) {
+                propertiesValueMap.put(Property.PATIENT_RESULTS_SMTP_ADDRESS, smtpConnection.get().getUri().toString());
+                propertiesValueMap.put(Property.PATIENT_RESULTS_SMTP_USERNAME, basicAuthData.get().getUsername());
+                propertiesValueMap.put(Property.PATIENT_RESULTS_SMTP_PASSWORD, basicAuthData.get().getPassword());
+                if (smtpConnection.get().getActive() != null) {
+                    propertiesValueMap.put(Property.PATIENT_RESULTS_SMTP_ENABLED,
+                            smtpConnection.get().getActive().toString());
+                } else {
+                    propertiesValueMap.put(Property.PATIENT_RESULTS_SMTP_ENABLED, Boolean.FALSE.toString());
+                }
+            }
+        }
 
 //        Optional<ExternalConnection> clinicConnection = externalConnectionsService.getMatch("programmedConnection",
 //                ProgrammedConnection.CLINIC_SEARCH.name());
@@ -226,7 +243,7 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
 //                propertiesValueMap.put(Property.PatientSearchPassword, basicAuthData.get().getPassword());
 //                if (clinicConnection.get().getActive() != null) {
 //                    propertiesValueMap.put(Property.PatientSearchEnabled,
-//                            infoHighwayConnection.get().getActive().toString());
+//                            clinicConnection.get().getActive().toString());
 //                } else {
 //                    propertiesValueMap.put(Property.PatientSearchEnabled, Boolean.FALSE.toString());
 //                }

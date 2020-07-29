@@ -792,6 +792,7 @@
         jQuery("#resultTypeRO").text(jQuery("#resultTypeSelection  option:selected").text());
         jQuery("#activeRO").text(jQuery("#active").attr("checked") ? "Y" : "N");
         jQuery("#orderableRO").text(jQuery("#orderable").attr("checked") ? "Y" : "N");
+        jQuery("#notifyResultsRO").text(jQuery("#notifyResults").attr("checked") ? "Y" : "N");
     }
 
     function createJSON() {
@@ -807,6 +808,7 @@
         jsonObj.uom = jQuery("#uomSelection").val();
         jsonObj.resultType = jQuery("#resultTypeSelection").val();
         jsonObj.orderable = jQuery("#orderable").attr("checked") ? 'Y' : 'N';
+        jsonObj.notifyResults = jQuery("#notifyResults").attr("checked") ? 'Y' : 'N';
         jsonObj.active = jQuery("#active").attr("checked") ? 'Y' : 'N';
         jsonObj.sampleTypes = [];
         addJsonSortingOrder(jsonObj);
@@ -1120,8 +1122,9 @@ td {
                     <label for="orderable"><spring:message code="test.isActive"/></label>
                     <input type="checkbox" id="active" checked="checked"/><br/>
                     <label for="orderable"><spring:message code="label.orderable"/></label>
-                    <input type="checkbox" id="orderable" checked="checked"/>
-
+                    <input type="checkbox" id="orderable" checked="checked"/><br/>
+                    <label for="notifyResults"> <spring:message code="test.notifyResults" /></label>
+                    <input type="checkbox" id='notifyResults'/>
                 </td>
             </tr>
         </table>
@@ -1155,6 +1158,9 @@ td {
             <br/>
             <spring:message code="label.orderable"/>
             <div class="tab" id="orderableRO"></div>
+            <br/>
+            <spring:message code="test.notifyResults"/>
+            <div class="tab" id="notifyResultsRO"></div>
             <br/>
         </div>
         <div class="step2" style="float:right;  width:80%; display: none">

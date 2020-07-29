@@ -8,5 +8,6 @@
 	<include file="liquibase/2.1.x.x/external_connections.xml"/>
 	<include file="liquibase/2.1.x.x/lab_director_signature.xml"/>
 	<include file="liquibase/2.1.x.x/sample_nature.xml"/>
+	<include file="liquibase/2.1.x.x/client_notifications.xml"/>
 
 </databaseChangeLog>

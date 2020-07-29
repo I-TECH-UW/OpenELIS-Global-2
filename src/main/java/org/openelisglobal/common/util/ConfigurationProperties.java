@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.validator.GenericValidator;
+import org.openelisglobal.spring.util.SpringContext;
 
 /*
  * This is an abstract class which represents the configuration properties of the application.  The derived
@@ -122,7 +123,11 @@ public abstract class ConfigurationProperties {
         INFO_HIGHWAY_USERNAME("infoHighway.username"), //
         INFO_HIGHWAY_PASSWORD("infoHighway.password"), //
         INFO_HIGHWAY_ADDRESS("infoHighway.uri"), //
-        INFO_HIGHWAY_ENABLED("infoHighway.enabled"); //
+        INFO_HIGHWAY_ENABLED("infoHighway.enabled"), //
+        PATIENT_RESULTS_SMTP_USERNAME("patientresultssmtp.username"), //
+        PATIENT_RESULTS_SMTP_PASSWORD("patientresultssmtp.password"), //
+        PATIENT_RESULTS_SMTP_ADDRESS("patientresultssmtp.uri"), //
+        PATIENT_RESULTS_SMTP_ENABLED("patientresultssmtp.enabled"); //
 
         private String name;
 
@@ -163,6 +168,8 @@ public abstract class ConfigurationProperties {
 
     public static void forceReload() {
         activeConcreteInstance = null;
+        SpringContext.getBean(ConfigurationListenerService.class).refreshConfigurations();
+
     }
 
     /*

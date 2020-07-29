@@ -200,6 +200,7 @@ public class TestAddController extends BaseController {
             test.setLocalCode(testAddParams.testNameEnglish);
             test.setIsActive(testAddParams.active);
             test.setOrderable("Y".equals(testAddParams.orderable));
+            test.setNotifyResults("Y".equals(testAddParams.notifyResults));
             test.setIsReportable("N");
             test.setTestSection(testSection);
             test.setGuid(String.valueOf(UUID.randomUUID()));
@@ -318,6 +319,7 @@ public class TestAddController extends BaseController {
             extractSampleTypes(obj, parser, testAddParams);
             testAddParams.active = (String) obj.get("active");
             testAddParams.orderable = (String) obj.get("orderable");
+            testAddParams.notifyResults = (String) obj.get("notifyResults");
             if (TypeOfTestResultServiceImpl.ResultType.isNumericById(testAddParams.resultTypeId)) {
                 testAddParams.lowValid = (String) obj.get("lowValid");
                 testAddParams.highValid = (String) obj.get("highValid");
@@ -513,6 +515,7 @@ public class TestAddController extends BaseController {
         ArrayList<SampleTypeListAndTestOrder> sampleList = new ArrayList<>();
         String active;
         String orderable;
+        String notifyResults;
         String lowValid;
         String highValid;
         public String significantDigits;
