@@ -206,6 +206,7 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
         if (infoHighwayConnection.isPresent()) {
             Optional<BasicAuthenticationData> basicAuthData = basicAuthenticationDataService
                     .getByExternalConnection(infoHighwayConnection.get().getId());
+            // basic auth is required for info highway
             if (basicAuthData.isPresent()) {
                 propertiesValueMap.put(Property.INFO_HIGHWAY_ADDRESS, infoHighwayConnection.get().getUri().toString());
                 propertiesValueMap.put(Property.INFO_HIGHWAY_USERNAME, basicAuthData.get().getUsername());
@@ -215,6 +216,7 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
                             infoHighwayConnection.get().getActive().toString());
                 }
             }
+
         }
         Optional<ExternalConnection> smtpConnection = externalConnectionsService.getMatch("programmedConnection",
                 ProgrammedConnection.SMTP_SERVER.name());
@@ -222,14 +224,16 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
         if (smtpConnection.isPresent()) {
             Optional<BasicAuthenticationData> basicAuthData = basicAuthenticationDataService
                     .getByExternalConnection(smtpConnection.get().getId());
+            propertiesValueMap.put(Property.PATIENT_RESULTS_SMTP_ADDRESS, smtpConnection.get().getUri().toString());
+            // basic auth only required if smtp server haas username password
             if (basicAuthData.isPresent()) {
-                propertiesValueMap.put(Property.PATIENT_RESULTS_SMTP_ADDRESS, smtpConnection.get().getUri().toString());
                 propertiesValueMap.put(Property.PATIENT_RESULTS_SMTP_USERNAME, basicAuthData.get().getUsername());
                 propertiesValueMap.put(Property.PATIENT_RESULTS_SMTP_PASSWORD, basicAuthData.get().getPassword());
-                if (smtpConnection.get().getActive() != null) {
-                    propertiesValueMap.put(Property.PATIENT_RESULTS_SMTP_ENABLED,
-                            smtpConnection.get().getActive().toString());
-                }
+
+            }
+            if (smtpConnection.get().getActive() != null) {
+                propertiesValueMap.put(Property.PATIENT_RESULTS_SMTP_ENABLED,
+                        smtpConnection.get().getActive().toString());
             }
         }
 
