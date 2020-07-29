@@ -10,7 +10,7 @@ should use is a plugin model.
 
 ## Basics
 
-There is a directory /plugin in OpenElis. Any jar file in this directory
+There is a directory /var/lib/openelis-global/plugins/ in OpenElis. Any jar file in this directory
 will be processed and if it is a valid analyzer plugin it will be added
 to the application. If the plugin is later removed any imported data
 will be retained but the analyzer will no longer appear in the menu and
