@@ -46,10 +46,10 @@ import org.springframework.web.servlet.view.tiles3.TilesView;
 @EnableWebMvc
 @EnableAsync
 @Configuration
-@EnableJpaRepositories(basePackages = "org.itech")
+@EnableJpaRepositories(basePackages = { "org.itech", "org.ozeki.sms" })
 @PropertySource(value = { "classpath:application.properties",
         "file:/run/secrets/common.properties" })
-@ComponentScan(basePackages = { "spring", "org.openelisglobal", "org.itech" })
+@ComponentScan(basePackages = { "spring", "org.openelisglobal", "org.itech", "org.ozeki.sms" })
 public class AppConfig implements WebMvcConfigurer {
 
     @Autowired

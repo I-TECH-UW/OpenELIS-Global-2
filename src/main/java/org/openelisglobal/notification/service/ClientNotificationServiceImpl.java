@@ -4,17 +4,24 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.clientresultsview.service.ClientResultsViewInfoService;
 import org.openelisglobal.clientresultsview.valueholder.ClientResultsViewBean;
+import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.common.util.ConfigurationProperties.Property;
+import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.notification.service.sender.ClientNotificationSender;
 import org.openelisglobal.notification.valueholder.ClientNotification;
 import org.openelisglobal.notification.valueholder.ClientResultsViewNotificationPayload;
 import org.openelisglobal.notification.valueholder.EmailNotification;
 import org.openelisglobal.notification.valueholder.NotificationPayloadTemplate;
 import org.openelisglobal.notification.valueholder.NotificationPayloadTemplate.NotificationPayloadType;
+import org.openelisglobal.notification.valueholder.SMSNotification;
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.result.valueholder.Result;
 import org.openelisglobal.samplehuman.service.SampleHumanService;
+import org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +34,8 @@ public class ClientNotificationServiceImpl implements ClientNotificationService 
     private NotificationPayloadTemplateService notificationPayloadTemplateService;
     @Autowired
     private SampleHumanService sampleHumanService;
+    @Autowired
+    private DictionaryService dictionaryService;
 
     @SuppressWarnings("rawtypes")
     @Autowired
@@ -51,8 +60,8 @@ public class ClientNotificationServiceImpl implements ClientNotificationService 
         switch (type) {
         case CLIENT_RESULTS:
             template.setMessageTemplate(
-                    "[testName] Testing Results have been finalized. If you are not awaiting test results please call XXXXXXXXXXX. and delete this notice. Otherwise, please click the link below and "
-                            + "put in the following password: [accessPassword] when prompted. [accessAddress]");
+                    "[testName] testing results have been finalized. If you are not awaiting test results please call XXXXXXXXXXX and delete this notice."
+                            + "\n\n" + "[patientFirstName] [patientLastNameInitial]: [testResult]");
             template.setSubjectTemplate("[testName] Testing Results");
             break;
         default:
@@ -82,6 +91,8 @@ public class ClientNotificationServiceImpl implements ClientNotificationService 
     }
 
     @Override
+    // requires new ensures that even if sending the notification fails, the
+    // operation calling this will still be saved
     public void createAndSendClientNotification(Result result) {
         ClientResultsViewBean resultsViewInfo = new ClientResultsViewBean(result);
         resultsViewInfo.setSysUserId("1");
@@ -89,13 +100,56 @@ public class ClientNotificationServiceImpl implements ClientNotificationService 
 
         Patient patient = sampleHumanService.getPatientForSample(result.getAnalysis().getSampleItem().getSample());
 
-        // TODO get address somehow ( add externalConnection?)
-        EmailNotification emailNotification = new EmailNotification();
-        emailNotification.setRecipientEmailAddress(patient.getPerson().getEmail());
-        emailNotification.setPayload(new ClientResultsViewNotificationPayload(resultsViewInfo.getPassword(),
-                "someAddress", result.getAnalysis().getTestName()));
+        String resultForDisplay = "";
 
-        getSenderForNotification(emailNotification).send(emailNotification);
+        if (TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(result.getResultType())) {
+            // TODO
+        } else if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(result.getResultType())) {
+            resultForDisplay = dictionaryService.getDataForId(result.getValue()).getDictEntry();
+        } else if (TypeOfTestResultServiceImpl.ResultType.isNumeric(result.getResultType())) {
+            // TODO
+        } else if (TypeOfTestResultServiceImpl.ResultType.isTextOnlyVariant(result.getResultType())) {
+            resultForDisplay = result.getValue();
+        }
+
+        try {
+            if (!GenericValidator.isBlankOrNull(patient.getPerson().getEmail()) && ConfigurationProperties.getInstance()
+                    .getPropertyValue(Property.PATIENT_RESULTS_SMTP_ENABLED).equals(Boolean.TRUE.toString())) {
+                EmailNotification emailNotification = new EmailNotification();
+                emailNotification.setRecipientEmailAddress(patient.getPerson().getEmail());
+                // TODO figure out where to store address and how to retrieve
+                emailNotification.setPayload(new ClientResultsViewNotificationPayload(resultsViewInfo.getPassword(),
+                        "someAddress", result.getAnalysis().getTest().getName(), resultForDisplay,
+                        patient.getPerson().getFirstName(), patient.getPerson().getLastName().substring(0, 1)));
+
+                getSenderForNotification(emailNotification).send(emailNotification);
+            }
+        } catch (RuntimeException e) {
+            // TODO add redundancy mechanism in case can't reach SMTP server
+            LogEvent.logError(this.getClass().getName(), "createAndSendClientNotification",
+                    "could not send email notification");
+            LogEvent.logErrorStack(e);
+        }
+
+        try {
+            if (!GenericValidator.isBlankOrNull(patient.getPerson().getPrimaryPhone())
+                    && ConfigurationProperties.getInstance().getPropertyValue(Property.PATIENT_RESULTS_SMS_ENABLED)
+                            .equals(Boolean.TRUE.toString())) {
+                SMSNotification smsNotification = new SMSNotification();
+                smsNotification.setReceiverPhoneNumber(patient.getPerson().getPrimaryPhone());
+                // TODO figure out where to store address and how to retrieve
+                smsNotification.setPayload(new ClientResultsViewNotificationPayload(resultsViewInfo.getPassword(),
+                        "someAddress", result.getAnalysis().getTest().getName(), result.getValue(),
+                        patient.getPerson().getFirstName(), patient.getPerson().getLastName().substring(0, 1)));
+
+                getSenderForNotification(smsNotification).send(smsNotification);
+            }
+        } catch (RuntimeException e) {
+            LogEvent.logError(this.getClass().getName(), "createAndSendClientNotification",
+                    "could not send sms notification");
+            LogEvent.logErrorStack(e);
+        }
+
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })

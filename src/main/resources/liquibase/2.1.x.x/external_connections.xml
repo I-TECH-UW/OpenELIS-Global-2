@@ -108,7 +108,7 @@
 	</changeSet>
 	
 	<changeSet author="csteele" id="5">
-		<preConditions onFail="MARK_RAN">
+		<preConditions onFail="WARN">
 			<tableExists tableName="basic_authentication_data" />
 		</preConditions>
 		<addUniqueConstraint schemaName="clinlims"

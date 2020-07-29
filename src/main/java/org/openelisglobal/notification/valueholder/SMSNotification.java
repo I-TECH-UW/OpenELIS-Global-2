@@ -2,10 +2,30 @@ package org.openelisglobal.notification.valueholder;
 
 public class SMSNotification implements ClientNotification {
 
+    private NotificationPayload payload;
+
+    private String receiverPhoneNumber;
+
     @Override
     public String getMessage() {
-        // TODO Auto-generated method stub
-        return null;
+        return payload.getMessage();
+    }
+
+    public void setPayload(NotificationPayload payload) {
+        this.payload = payload;
+    }
+
+    @Override
+    public String getSubject() {
+        return payload.getSubject();
+    }
+
+    public String getReceiverPhoneNumber() {
+        return receiverPhoneNumber;
+    }
+
+    public void setReceiverPhoneNumber(String receiverPhoneNumber) {
+        this.receiverPhoneNumber = receiverPhoneNumber;
     }
 
 }

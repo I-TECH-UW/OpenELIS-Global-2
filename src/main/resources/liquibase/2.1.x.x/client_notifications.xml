@@ -58,4 +58,32 @@
 			sequenceName="notification_payload_template_seq" startValue="1" />
 	</changeSet>
 	
+	<changeSet author="csteele" id="4">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="ozekimessageout" />
+			</not>
+		</preConditions>
+		<createTable schemaName="clinlims" tableName="ozekimessageout">  
+	        <column name="id" type="INTEGER" autoIncrement="true" valueSequenceNext="notification_payload_template_seq" >
+				<constraints primaryKey="true" />
+			</column>
+			<column name="sender" type="VARCHAR(30)" />
+			<column name="receiver" type="VARCHAR(30)" />
+			<column name="msg" type="VARCHAR(160)" />
+			<column name="senttime" type="VARCHAR(100)" />
+			<column name="receivedtime" type="VARCHAR(100)" />
+			<column name="operator" type="VARCHAR(100)" />
+			<column name="msgtype" type="VARCHAR(30)" />
+			<column name="preference" type="VARCHAR(30)" />
+			<column name="status" type="VARCHAR(100)" />
+			<column name="errormsg" type="VARCHAR(250)" />
+	    </createTable>  
+	    <createIndex schemaName="clinlims" 
+            tableName="ozekimessageout"
+            indexName="idx_ozekimessageout_id">  
+        	<column name="id"/>  
+    	</createIndex> 
+	</changeSet>
+	
 </databaseChangeLog>

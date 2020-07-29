@@ -89,6 +89,7 @@ public class FormFields {
         SampleEntryRequesterLastNameRequired, // Is the requester name required
         SAMPLE_ENTRY_USE_REFFERING_PATIENT_NUMBER, // Include referral patient number
         PatientPhone, // Include patient phone with patient info
+        PatientEmail, // Include patient email with patient info
         PatientHealthRegion, // Include patient health region with patient info
         PatientHealthDistrict, // Include patient health district with patient info
         PatientMarriageStatus, // Include patient marriage status with patient info

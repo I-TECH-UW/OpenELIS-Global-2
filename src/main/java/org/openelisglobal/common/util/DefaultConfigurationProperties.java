@@ -168,10 +168,13 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
 
         setDBPropertyMappingAndDefault(Property.LAB_DIRECTOR_NAME, Property.LAB_DIRECTOR_NAME.getName(), "");
         setDBPropertyMappingAndDefault(Property.LAB_DIRECTOR_TITLE, Property.LAB_DIRECTOR_TITLE.getName(), "");
-        setDBPropertyMappingAndDefault(Property.INFO_HIGHWAY_ADDRESS, Property.INFO_HIGHWAY_ADDRESS.getName(), "");
-        setDBPropertyMappingAndDefault(Property.INFO_HIGHWAY_USERNAME, Property.INFO_HIGHWAY_USERNAME.getName(), "");
-        setDBPropertyMappingAndDefault(Property.INFO_HIGHWAY_PASSWORD, Property.INFO_HIGHWAY_PASSWORD.getName(), "");
-        setDBPropertyMappingAndDefault(Property.INFO_HIGHWAY_ENABLED, Property.INFO_HIGHWAY_ENABLED.getName(), "");
+        // these are set through external connection now
+//        setDBPropertyMappingAndDefault(Property.INFO_HIGHWAY_ADDRESS, Property.INFO_HIGHWAY_ADDRESS.getName(), "");
+//        setDBPropertyMappingAndDefault(Property.INFO_HIGHWAY_USERNAME, Property.INFO_HIGHWAY_USERNAME.getName(), "");
+//        setDBPropertyMappingAndDefault(Property.INFO_HIGHWAY_PASSWORD, Property.INFO_HIGHWAY_PASSWORD.getName(), "");
+//        setDBPropertyMappingAndDefault(Property.INFO_HIGHWAY_ENABLED, Property.INFO_HIGHWAY_ENABLED.getName(), "");
+        setDBPropertyMappingAndDefault(Property.PATIENT_RESULTS_SMS_ENABLED,
+                Property.PATIENT_RESULTS_SMS_ENABLED.getName(), Boolean.TRUE.toString());
 
     }
 
@@ -199,6 +202,7 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
 
         Optional<ExternalConnection> infoHighwayConnection = externalConnectionsService.getMatch("programmedConnection",
                 ProgrammedConnection.INFO_HIGHWAY.name());
+        propertiesValueMap.put(Property.INFO_HIGHWAY_ENABLED, Boolean.FALSE.toString());
         if (infoHighwayConnection.isPresent()) {
             Optional<BasicAuthenticationData> basicAuthData = basicAuthenticationDataService
                     .getByExternalConnection(infoHighwayConnection.get().getId());
@@ -209,13 +213,12 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
                 if (infoHighwayConnection.get().getActive() != null) {
                     propertiesValueMap.put(Property.INFO_HIGHWAY_ENABLED,
                             infoHighwayConnection.get().getActive().toString());
-                } else {
-                    propertiesValueMap.put(Property.INFO_HIGHWAY_ENABLED, Boolean.FALSE.toString());
                 }
             }
         }
         Optional<ExternalConnection> smtpConnection = externalConnectionsService.getMatch("programmedConnection",
                 ProgrammedConnection.SMTP_SERVER.name());
+        propertiesValueMap.put(Property.PATIENT_RESULTS_SMTP_ENABLED, Boolean.FALSE.toString());
         if (smtpConnection.isPresent()) {
             Optional<BasicAuthenticationData> basicAuthData = basicAuthenticationDataService
                     .getByExternalConnection(smtpConnection.get().getId());
@@ -226,8 +229,6 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
                 if (smtpConnection.get().getActive() != null) {
                     propertiesValueMap.put(Property.PATIENT_RESULTS_SMTP_ENABLED,
                             smtpConnection.get().getActive().toString());
-                } else {
-                    propertiesValueMap.put(Property.PATIENT_RESULTS_SMTP_ENABLED, Boolean.FALSE.toString());
                 }
             }
         }

@@ -124,6 +124,7 @@ public abstract class ConfigurationProperties {
         INFO_HIGHWAY_PASSWORD("infoHighway.password"), //
         INFO_HIGHWAY_ADDRESS("infoHighway.uri"), //
         INFO_HIGHWAY_ENABLED("infoHighway.enabled"), //
+        PATIENT_RESULTS_SMS_ENABLED("patientresultssms.enabled"), //
         PATIENT_RESULTS_SMTP_USERNAME("patientresultssmtp.username"), //
         PATIENT_RESULTS_SMTP_PASSWORD("patientresultssmtp.password"), //
         PATIENT_RESULTS_SMTP_ADDRESS("patientresultssmtp.uri"), //

@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.IResultSaveService;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.ResultSaveService;
@@ -61,8 +62,12 @@ public class ResultValidationServiceImpl implements ResultValidationService {
                 resultService.insert(resultUpdate);
             }
             if (isResultAnalysisFinalized(resultUpdate, analysisUpdateList)) {
-                if (clientNotificationService.shouldSendNotification(resultUpdate)) {
-                    clientNotificationService.createAndSendClientNotification(resultUpdate);
+                try {
+                    if (clientNotificationService.shouldSendNotification(resultUpdate)) {
+                        clientNotificationService.createAndSendClientNotification(resultUpdate);
+                    }
+                } catch (RuntimeException e) {
+                    LogEvent.logError(e);
                 }
             }
         }

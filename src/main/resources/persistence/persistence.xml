@@ -24,6 +24,8 @@
 		
 		<class>org.itech.fhir.dataexport.core.model.DataExportAttempt</class>
 		<class>org.itech.fhir.dataexport.core.model.DataExportTask</class>
+		
+		<class>org.ozeki.sms.valueholder.OzekiMessageOut</class>
 		<properties>
 			<property name="hibernate.ejb.cfgfile"
 				value="classpath:hibernate/hibernate.cfg.xml" />

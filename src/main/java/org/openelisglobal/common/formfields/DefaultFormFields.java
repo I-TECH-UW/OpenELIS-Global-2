@@ -56,7 +56,6 @@ public class DefaultFormFields extends AFormFields {
         setFieldTrue(Field.SampleEntryRequestingSiteSampleId);
         setFieldTrue(Field.ADDRESS_COMMUNE);
         setFieldTrue(Field.ADDRESS_VILLAGE);
-        setFieldTrue(Field.SampleNature);
 
         setFieldFalse(Field.OrgState);
         setFieldFalse(Field.ZipCode);
@@ -105,6 +104,8 @@ public class DefaultFormFields extends AFormFields {
         setFieldFalse(Field.SAMPLE_ENTRY_USE_REFFERING_PATIENT_NUMBER);
         setFieldFalse(Field.NON_CONFORMITY_PROVIDER_ADDRESS);
         setFieldFalse(Field.TEST_LOCATION_CODE);
+        setFieldFalse(Field.SampleNature);
+        setFieldFalse(Field.PatientEmail);
     }
 
     @Override

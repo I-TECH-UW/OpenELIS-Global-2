@@ -12,12 +12,22 @@ public class ClientResultsViewNotificationPayload implements NotificationPayload
 
     private String testName;
 
+    private String testResult;
+
+    private String patientFirstName;
+
+    private String patientLastNameInitial;
+
     private NotificationPayloadTemplate payloadTemplate;
 
-    public ClientResultsViewNotificationPayload(String accessPassword, String accessAddress, String testName) {
+    public ClientResultsViewNotificationPayload(String accessPassword, String accessAddress, String testName,
+            String testResult, String patientFirstName, String patientLastNameInitial) {
         this.accessPassword = accessPassword;
         this.accessAddress = accessAddress;
         this.testName = testName;
+        this.testResult = testResult;
+        this.patientFirstName = patientFirstName;
+        this.patientLastNameInitial = patientLastNameInitial;
         payloadTemplate = SpringContext.getBean(NotificationPayloadTemplateService.class)
                 .getForNotificationPayloadType(NotificationPayloadType.CLIENT_RESULTS);
     }
@@ -28,6 +38,9 @@ public class ClientResultsViewNotificationPayload implements NotificationPayload
         message = message.replaceAll("\\[testName\\]", testName);
         message = message.replaceAll("\\[accessPassword\\]", accessPassword);
         message = message.replaceAll("\\[accessAddress\\]", accessAddress);
+        message = message.replaceAll("\\[testResult\\]", testResult);
+        message = message.replaceAll("\\[patientFirstName\\]", patientFirstName);
+        message = message.replaceAll("\\[patientLastNameInitial\\]", patientLastNameInitial);
         return message;
     }
 
