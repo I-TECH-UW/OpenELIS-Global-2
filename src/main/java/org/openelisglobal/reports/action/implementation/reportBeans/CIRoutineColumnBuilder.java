@@ -125,20 +125,20 @@ public abstract class CIRoutineColumnBuilder extends CSVRoutineColumnBuilder {
 
     protected void defineBasicColumns() {
         add("accession_number", "LABNO", NONE);
-        add("national_id", "IDENTIFIANT", NONE);
-        add("gender", "SEXE", NONE);
-        add("birth_date", "DATENAIS", DATE);
-        add("entered_date", "AGEANS", AGE_YEARS);
-        add("entered_date", "AGEMOIS", AGE_MONTHS);
-        add("entered_date", "AGESEMS", AGE_WEEKS);
+        add("national_id", "IDENTIFIER", NONE);
+        add("gender", "SEX", NONE);
+        add("birth_date", "BIRTHDATE", DATE);
+        add("entered_date", "AGEYEARS", AGE_YEARS);
+        add("entered_date", "AGEMONTHS", AGE_MONTHS);
+        add("entered_date", "AGEWEEKS", AGE_WEEKS);
         add("received_date", "DATERECPT", DATE_TIME); // reception date
-        add("entered_date", "DATESAISIE", DATE_TIME); // interview date
+        add("entered_date", "DATEENTERED", DATE_TIME); // interview date
         add("collection_date", "DATECOLLECT", DATE_TIME); // collection date
         // add("released_date", "DATEVALIDATION", DATE_TIME ); // validation date
-        add("organization_code", "CODEREFERANT", NONE);
-        add("organization_name", "REFERANT", NONE);
-        add("program", "PROGRAMME", PROGRAM);
-        add("status_id", "STATUT", SAMPLE_STATUS);
+        add("organization_code", "CODEREFERER", NONE);
+        add("organization_name", "REFERER", NONE);
+        add("program", "PROGRAM", PROGRAM);
+        add("status_id", "STATUS", SAMPLE_STATUS);
         // add("external_id", "SUJETSIT", NONE);
         // add("last_name", "NOM", NONE);
         // add("first_name", "PRENOM", NONE);

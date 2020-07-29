@@ -75,6 +75,9 @@ public class SampleEditForm extends BaseForm {
     // for display
     private List<IdValuePair> initialSampleConditionList;
 
+    // for display
+    private List<IdValuePair> sampleNatureList;
+
     @ValidDate(relative = DateRelation.TODAY, groups = { SampleEdit.class })
     private String currentDate = "";
 
@@ -326,5 +329,13 @@ public class SampleEditForm extends BaseForm {
 
     public void setMaxAccessionLength(int maxAccessionLength) {
         this.maxAccessionLength = maxAccessionLength;
+    }
+
+    public List<IdValuePair> getSampleNatureList() {
+        return sampleNatureList;
+    }
+
+    public void setSampleNatureList(List<IdValuePair> sampleNatureList) {
+        this.sampleNatureList = sampleNatureList;
     }
 }

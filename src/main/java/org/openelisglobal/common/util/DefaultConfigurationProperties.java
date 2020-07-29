@@ -21,9 +21,15 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.externalconnections.service.BasicAuthenticationDataService;
+import org.openelisglobal.externalconnections.service.ExternalConnectionService;
+import org.openelisglobal.externalconnections.valueholder.BasicAuthenticationData;
+import org.openelisglobal.externalconnections.valueholder.ExternalConnection;
+import org.openelisglobal.externalconnections.valueholder.ExternalConnection.ProgrammedConnection;
 import org.openelisglobal.siteinformation.service.SiteInformationService;
 import org.openelisglobal.siteinformation.valueholder.SiteInformation;
 import org.openelisglobal.spring.util.SpringContext;
@@ -34,8 +40,8 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
     private java.util.Properties properties = null;
     protected static Map<ConfigurationProperties.Property, KeyDefaultPair> propertiesFileMap;
     protected static Map<String, ConfigurationProperties.Property> dbNamePropertiesMap;
-    private boolean databaseLoaded = false;
 
+    private boolean databaseLoaded = false;
     {
         // config from SystemConfiguration.properties
         propertiesFileMap = new HashMap<>();
@@ -44,6 +50,7 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
         propertiesFileMap.put(Property.ReferingLabParentOrg,
                 new KeyDefaultPair("organization.reference.lab.parent", null));
         propertiesFileMap.put(Property.resultsResendTime, new KeyDefaultPair("results.send.retry.time", "30"));
+
 //		propertiesFileMap.put(Property. , new KeyDefaultPair() );
 
         // config from site_information table
@@ -53,6 +60,7 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
         setDBPropertyMappingAndDefault(Property.PatientSearchURL, Property.PatientSearchURL.getName(), "");
         setDBPropertyMappingAndDefault(Property.PatientSearchUserName, Property.PatientSearchUserName.getName(), "");
         setDBPropertyMappingAndDefault(Property.PatientSearchPassword, Property.PatientSearchPassword.getName(), "");
+        setDBPropertyMappingAndDefault(Property.PatientSearchEnabled, Property.PatientSearchEnabled.getName(), "true");
         setDBPropertyMappingAndDefault(Property.UseExternalPatientInfo, Property.UseExternalPatientInfo.getName(),
                 "false");
         setDBPropertyMappingAndDefault(Property.labDirectorName, Property.labDirectorName.getName(), "");
@@ -157,6 +165,17 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
         setDBPropertyMappingAndDefault(Property.SPECIMEN_FIELD_DATE, Property.SPECIMEN_FIELD_DATE.getName(), "true");
         setDBPropertyMappingAndDefault(Property.SPECIMEN_FIELD_SEX, Property.SPECIMEN_FIELD_SEX.getName(), "true");
         setDBPropertyMappingAndDefault(Property.SPECIMEN_FIELD_TESTS, Property.SPECIMEN_FIELD_TESTS.getName(), "true");
+
+        setDBPropertyMappingAndDefault(Property.LAB_DIRECTOR_NAME, Property.LAB_DIRECTOR_NAME.getName(), "");
+        setDBPropertyMappingAndDefault(Property.LAB_DIRECTOR_TITLE, Property.LAB_DIRECTOR_TITLE.getName(), "");
+        // these are set through external connection now
+//        setDBPropertyMappingAndDefault(Property.INFO_HIGHWAY_ADDRESS, Property.INFO_HIGHWAY_ADDRESS.getName(), "");
+//        setDBPropertyMappingAndDefault(Property.INFO_HIGHWAY_USERNAME, Property.INFO_HIGHWAY_USERNAME.getName(), "");
+//        setDBPropertyMappingAndDefault(Property.INFO_HIGHWAY_PASSWORD, Property.INFO_HIGHWAY_PASSWORD.getName(), "");
+//        setDBPropertyMappingAndDefault(Property.INFO_HIGHWAY_ENABLED, Property.INFO_HIGHWAY_ENABLED.getName(), "");
+        setDBPropertyMappingAndDefault(Property.PATIENT_RESULTS_SMS_ENABLED,
+                Property.PATIENT_RESULTS_SMS_ENABLED.getName(), Boolean.TRUE.toString());
+
     }
 
     private void setDBPropertyMappingAndDefault(Property property, String dbName, String defaultValue) {
@@ -176,6 +195,64 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
         }
     }
 
+    protected void loadExternalConnectionsFromDatabase() {
+        ExternalConnectionService externalConnectionsService = SpringContext.getBean(ExternalConnectionService.class);
+        BasicAuthenticationDataService basicAuthenticationDataService = SpringContext
+                .getBean(BasicAuthenticationDataService.class);
+
+        Optional<ExternalConnection> infoHighwayConnection = externalConnectionsService.getMatch("programmedConnection",
+                ProgrammedConnection.INFO_HIGHWAY.name());
+        propertiesValueMap.put(Property.INFO_HIGHWAY_ENABLED, Boolean.FALSE.toString());
+        if (infoHighwayConnection.isPresent()) {
+            Optional<BasicAuthenticationData> basicAuthData = basicAuthenticationDataService
+                    .getByExternalConnection(infoHighwayConnection.get().getId());
+            if (basicAuthData.isPresent()) {
+                propertiesValueMap.put(Property.INFO_HIGHWAY_ADDRESS, infoHighwayConnection.get().getUri().toString());
+                propertiesValueMap.put(Property.INFO_HIGHWAY_USERNAME, basicAuthData.get().getUsername());
+                propertiesValueMap.put(Property.INFO_HIGHWAY_PASSWORD, basicAuthData.get().getPassword());
+                if (infoHighwayConnection.get().getActive() != null) {
+                    propertiesValueMap.put(Property.INFO_HIGHWAY_ENABLED,
+                            infoHighwayConnection.get().getActive().toString());
+                }
+            }
+        }
+        Optional<ExternalConnection> smtpConnection = externalConnectionsService.getMatch("programmedConnection",
+                ProgrammedConnection.SMTP_SERVER.name());
+        propertiesValueMap.put(Property.PATIENT_RESULTS_SMTP_ENABLED, Boolean.FALSE.toString());
+        if (smtpConnection.isPresent()) {
+            Optional<BasicAuthenticationData> basicAuthData = basicAuthenticationDataService
+                    .getByExternalConnection(smtpConnection.get().getId());
+            if (basicAuthData.isPresent()) {
+                propertiesValueMap.put(Property.PATIENT_RESULTS_SMTP_ADDRESS, smtpConnection.get().getUri().toString());
+                propertiesValueMap.put(Property.PATIENT_RESULTS_SMTP_USERNAME, basicAuthData.get().getUsername());
+                propertiesValueMap.put(Property.PATIENT_RESULTS_SMTP_PASSWORD, basicAuthData.get().getPassword());
+                if (smtpConnection.get().getActive() != null) {
+                    propertiesValueMap.put(Property.PATIENT_RESULTS_SMTP_ENABLED,
+                            smtpConnection.get().getActive().toString());
+                }
+            }
+        }
+
+//        Optional<ExternalConnection> clinicConnection = externalConnectionsService.getMatch("programmedConnection",
+//                ProgrammedConnection.CLINIC_SEARCH.name());
+//        if (clinicConnection.isPresent()) {
+//            Optional<BasicAuthenticationData> basicAuthData = basicAuthenticationDataService
+//                    .getByExternalConnection(clinicConnection.get().getId());
+//            if (basicAuthData.isPresent()) {
+//                propertiesValueMap.put(Property.PatientSearchURL, clinicConnection.get().getUri().toString());
+//                propertiesValueMap.put(Property.PatientSearchUserName, basicAuthData.get().getUsername());
+//                propertiesValueMap.put(Property.PatientSearchPassword, basicAuthData.get().getPassword());
+//                if (clinicConnection.get().getActive() != null) {
+//                    propertiesValueMap.put(Property.PatientSearchEnabled,
+//                            clinicConnection.get().getActive().toString());
+//                } else {
+//                    propertiesValueMap.put(Property.PatientSearchEnabled, Boolean.FALSE.toString());
+//                }
+//            }
+//        }
+
+    }
+
     protected void loadFromDatabase() {
         SiteInformationService siteInformationService = SpringContext.getBean(SiteInformationService.class);
         List<SiteInformation> siteInformationList = siteInformationService.getAllSiteInformation();
@@ -186,6 +263,8 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
                 propertiesValueMap.put(property, siteInformation.getValue());
             }
         }
+
+        loadExternalConnectionsFromDatabase();
 
         databaseLoaded = true;
     }

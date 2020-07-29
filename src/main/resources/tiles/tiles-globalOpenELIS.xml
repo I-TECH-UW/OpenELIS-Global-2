@@ -23,6 +23,14 @@
 		<put-attribute name="footer"
 			value="/pages/common/emptyPlaceHolder.jsp" />
 	</definition>
+	
+	<definition name="portableOrderViewDefinition"
+		extends="baseDefinition">
+		<put-attribute name="body"
+			value="/pages/dataexchange/portableOrderView.jsp" />
+		<put-attribute name="footer"
+			value="/pages/common/emptyPlaceHolder.jsp" />
+	</definition>
 
 	<definition name="databaseCleaningDefinition"
 		extends="baseMenuDefinition">
@@ -132,6 +140,8 @@
 		template="/pages/samplebatchentry/routine/patientManagement.jsp">
 		<put-attribute name="patientSearch"
 			value="/pages/samplebatchentry/routine/patientSearch.jsp" />
+		<put-attribute name="patientEnhancedSearch"
+			value="/pages/patient/patientEnhancedSearch.jsp" />
 	</definition>
 
 
@@ -307,6 +317,8 @@
 		template="/pages/patient/patientManagement.jsp">
 		<put-attribute name="patientSearch"
 			value="/pages/patient/patientSearch.jsp" />
+		<put-attribute name="patientEnhancedSearch"
+			value="/pages/patient/patientEnhancedSearch.jsp" />
 	</definition>
 
 	<definition name="patientManagementNoSearchCore"

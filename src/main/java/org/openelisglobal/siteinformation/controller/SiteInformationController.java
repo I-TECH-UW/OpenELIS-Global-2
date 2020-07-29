@@ -90,7 +90,8 @@ public class SiteInformationController extends BaseController {
         binder.setAllowedFields(ALLOWED_FIELDS);
     }
 
-    @RequestMapping(value = { "/NonConformityConfiguration", "/WorkplanConfiguration", "/PrintedReportsConfiguration",
+    @RequestMapping(value = { "/NonConformityConfiguration", "/WorkplanConfiguration",
+            "/PrintedReportsConfiguration",
             "/SampleEntryConfig", "/ResultConfiguration", "/MenuStatementConfig", "/PatientConfiguration",
             "/ValidationConfiguration", "/SiteInformation", "/NextPreviousNonConformityConfiguration",
             "/NextPreviousWorkplanConfiguration", "/NextPreviousPrintedReportsConfiguration",
@@ -233,7 +234,8 @@ public class SiteInformationController extends BaseController {
         return Boolean.TRUE;
     }
 
-    @RequestMapping(value = { "/NonConformityConfiguration", "/WorkplanConfiguration", "/PrintedReportsConfiguration",
+    @RequestMapping(value = { "/NonConformityConfiguration", "/WorkplanConfiguration",
+            "/PrintedReportsConfiguration",
             "/SampleEntryConfig", "/ResultConfiguration", "/MenuStatementConfig", "/PatientConfiguration",
             "/ValidationConfiguration", "/SiteInformation" }, method = RequestMethod.POST)
     public ModelAndView showUpdateSiteInformation(HttpServletRequest request, HttpServletResponse response,
@@ -445,7 +447,8 @@ public class SiteInformationController extends BaseController {
      * }
      */
 
-    @RequestMapping(value = { "/CancelNonConformityConfiguration", "/CancelWorkplanConfiguration",
+    @RequestMapping(value = { "/CancelNonConformityConfiguration",
+            "/CancelWorkplanConfiguration",
             "/CancelPrintedReportsConfiguration", "/CancelSampleEntryConfig", "/CancelResultConfiguration",
             "/CancelMenuStatementConfig", "/CancelPatientConfiguration", "/CancelValidationConfiguration",
             "/CancelSiteInformation" }, method = RequestMethod.GET)

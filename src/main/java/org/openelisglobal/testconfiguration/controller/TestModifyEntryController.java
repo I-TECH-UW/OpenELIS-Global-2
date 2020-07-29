@@ -148,11 +148,14 @@ public class TestModifyEntryController extends BaseController {
             TypeOfSample typeOfSample = testService.getTypeOfSample(test);
             bean.setSampleType(typeOfSample != null ? typeOfSample.getLocalizedName() : "n/a");
             bean.setOrderable(test.getOrderable() ? "Orderable" : "Not orderable");
+            bean.setNotifyResults(test.isNotifyResults());
             bean.setLoinc(test.getLoinc());
             bean.setActive(test.isActive() ? "Active" : "Not active");
             bean.setUom(testService.getUOM(test, false));
-            if (TypeOfTestResultServiceImpl.ResultType.NUMERIC.matches(resultType)) {
-                bean.setSignificantDigits(testService.getPossibleTestResults(test).get(0).getSignificantDigits());
+            if (TypeOfTestResultServiceImpl.ResultType.NUMERIC.matches(resultType)
+                    && testResultService.getAllActiveTestResultsPerTest(test).size() != 0) {
+                bean.setSignificantDigits(
+                        testResultService.getAllActiveTestResultsPerTest(test).get(0).getSignificantDigits());
                 bean.setHasLimitValues(true);
                 bean.setResultLimits(getResultLimits(test, bean.getSignificantDigits()));
             }
@@ -452,6 +455,11 @@ public class TestModifyEntryController extends BaseController {
             result.reject("error.hibernate.exception");
             setupDisplayItems(form);
             return findForward(FWD_FAIL_INSERT, form);
+        } catch (Exception e) {
+            LogEvent.logDebug(e);
+            result.reject("error.exception");
+            setupDisplayItems(form);
+            return findForward(FWD_FAIL_INSERT, form);
         }
 
         testService.refreshTestNames();
@@ -535,7 +543,6 @@ public class TestModifyEntryController extends BaseController {
             }
             TestSet testSet = new TestSet();
             Test test = new Test();
-
             test.setId(testAddParams.testId);
 
             test.setUnitOfMeasure(uom);
@@ -543,9 +550,12 @@ public class TestModifyEntryController extends BaseController {
             test.setLocalCode(testAddParams.testNameEnglish);
             test.setIsActive(testAddParams.active);
             test.setOrderable("Y".equals(testAddParams.orderable));
+            test.setNotifyResults("Y".equals(testAddParams.notifyResults));
             test.setIsReportable("N");
             test.setTestSection(testSection);
-            test.setGuid(String.valueOf(UUID.randomUUID()));
+            if (GenericValidator.isBlankOrNull(test.getGuid())) {
+                test.setGuid(String.valueOf(UUID.randomUUID()));
+            }
             ArrayList<String> orderedTests = testAddParams.sampleList.get(i).orderedTests;
             for (int j = 0; j < orderedTests.size(); j++) {
                 if ("0".equals(orderedTests.get(j))) {
@@ -625,6 +635,7 @@ public class TestModifyEntryController extends BaseController {
             extractSampleTypes(obj, parser, testAddParams);
             testAddParams.active = (String) obj.get("active");
             testAddParams.orderable = (String) obj.get("orderable");
+            testAddParams.notifyResults = (String) obj.get("notifyResults");
             if (TypeOfTestResultServiceImpl.ResultType.isNumericById(testAddParams.resultTypeId)) {
                 testAddParams.lowValid = (String) obj.get("lowValid");
                 testAddParams.highValid = (String) obj.get("highValid");
@@ -740,12 +751,13 @@ public class TestModifyEntryController extends BaseController {
         public String testReportNameFrench;
         String testSectionId;
         ArrayList<String> panelList = new ArrayList<>();
-        String uomId;
+        public String uomId;
         public String loinc;
         String resultTypeId;
         ArrayList<SampleTypeListAndTestOrder> sampleList = new ArrayList<>();
         String active;
         String orderable;
+        public String notifyResults;
         String lowValid;
         String highValid;
         public String significantDigits;

@@ -33,6 +33,7 @@ public class TestCatalogBean {
     private String loinc;
     private String active;
     private String orderable;
+    private Boolean notifyResults;
     private boolean hasDictionaryValues = false;
     private List<String> dictionaryValues;
     private List<String> dictionaryIds;
@@ -200,5 +201,13 @@ public class TestCatalogBean {
 
     public void setTestSortOrder(int testSortOrder) {
         this.testSortOrder = testSortOrder;
+    }
+
+    public Boolean getNotifyResults() {
+        return notifyResults;
+    }
+
+    public void setNotifyResults(Boolean notifyResults) {
+        this.notifyResults = notifyResults;
     }
 }

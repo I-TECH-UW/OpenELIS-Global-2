@@ -72,6 +72,7 @@ public class SiteInformationMenuController extends BaseMenuController {
 
     private void setupFormForRequest(SiteInformationMenuForm form, HttpServletRequest request) {
         String path = request.getServletPath();
+
         if (path.contains("NonConformityConfiguration")) {
             form.setSiteInfoDomainName("non_conformityConfiguration");
             form.setFormName("NonConformityConfigurationMenuForm");

@@ -678,7 +678,8 @@ function  /*void*/ getDetailedPatientInfo() {
 	<form:hidden path="patientProperties.patientLastUpdated" id="patientLastUpdated" />
 	<form:hidden path="patientProperties.personLastUpdated" id="personLastUpdated"/>
 
-	<tiles:insertAttribute name="patientSearch" />
+<%-- 	<tiles:insertAttribute name="patientSearch" /> --%>
+	<tiles:insertAttribute name="patientEnhancedSearch" />
 
 	<form:hidden path="patientProperties.patientUpdateStatus" id="processingStatus" value="ADD" />
 	<form:hidden path="patientProperties.patientPK" id="patientPK_ID" />

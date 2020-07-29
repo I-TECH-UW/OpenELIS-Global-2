@@ -404,18 +404,16 @@ function parsePatient(patienttag) {
             patientSearch("", "", "", "", "", "", guid, "true", processSearchSuccess, processSearchFailure );
         }       
     }
-    
-    
 }
 
 function clearRequester() {
 
-    $("providerFirstNameID").value = '';
+//    $("providerFirstName").value = '';
     $("providerLastNameID").value = '';
     $("labNo").value = '';
     $("receivedDateForDisplay").value = '${entryDate}';
     $("receivedTime").value = '';
-    $("referringPatientNumber").value = '';
+ //   $("externalOrderNumber").value = '';
 
 }
 
@@ -424,7 +422,7 @@ function parseRequester(requester) {
     var first = "";
     if (firstName.length > 0) {
             first = firstName[0].firstChild.nodeValue;
-            $("providerFirstNameID").value = first;
+            //$("providerFirstName").value = first;
     }
     var lastName = requester.item(0).getElementsByTagName("lastName");
     var last = "";

@@ -1,7 +1,12 @@
 package org.openelisglobal.config;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Locale;
+import java.util.Properties;
 
+import org.apache.commons.validator.GenericValidator;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.interceptor.CommonPageAttributesInterceptor;
@@ -11,12 +16,19 @@ import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.security.SecurityConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.Scope;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.LocaleResolver;
@@ -32,8 +44,12 @@ import org.springframework.web.servlet.view.tiles3.TilesConfigurer;
 import org.springframework.web.servlet.view.tiles3.TilesView;
 
 @EnableWebMvc
+@EnableAsync
 @Configuration
-@ComponentScan(basePackages = { "spring", "org.openelisglobal" })
+@EnableJpaRepositories(basePackages = { "org.itech", "org.ozeki.sms" })
+@PropertySource(value = { "classpath:application.properties",
+        "file:/run/secrets/common.properties" })
+@ComponentScan(basePackages = { "spring", "org.openelisglobal", "org.itech", "org.ozeki.sms" })
 public class AppConfig implements WebMvcConfigurer {
 
     @Autowired
@@ -102,6 +118,7 @@ public class AppConfig implements WebMvcConfigurer {
         registry.addInterceptor(moduleAuthenticationInterceptor).addPathPatterns("/**")
                 .excludePathPatterns(SecurityConfig.OPEN_PAGES).excludePathPatterns(SecurityConfig.RESOURCE_PAGES)
                 .excludePathPatterns(SecurityConfig.AUTH_OPEN_PAGES);
+//                .excludePathPatterns(SecurityConfig.CLIENT_CERTIFICATE_PAGES);
         registry.addInterceptor(urlLocatedErrorsInterceptor).addPathPatterns("/**");
         registry.addInterceptor(pageAttributesInterceptor).addPathPatterns("/**");
     }
@@ -113,7 +130,45 @@ public class AppConfig implements WebMvcConfigurer {
         registry.addResourceHandler("css/**").addResourceLocations("classpath:static/css/");
         registry.addResourceHandler("images/**").addResourceLocations("/static/images/");
         registry.addResourceHandler("favicon/**").addResourceLocations("/static/favicon/");
+        registry.addResourceHandler("fontawesome-free-5.13.1-web/**")
+                .addResourceLocations("/static/fontawesome-free-5.13.1-web/");
         registry.addResourceHandler("documentation/**").addResourceLocations("classpath:static/documentation/");
+    }
+
+    @Bean
+    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+    // prototype scope so we don't have to restart when connection info is edited
+    public JavaMailSender getJavaMailSender() {
+        ConfigurationProperties configurationProperties = ConfigurationProperties.getInstance();
+        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+        Properties props = mailSender.getJavaMailProperties();
+        props.put("mail.transport.protocol", "smtp");
+        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.debug", "true");
+
+        String address = configurationProperties.getPropertyValue(Property.PATIENT_RESULTS_SMTP_ADDRESS);
+        if (!GenericValidator.isBlankOrNull(address)) {
+            try {
+                URI uri = new URI(address);
+                mailSender.setHost(uri.getHost());
+                mailSender.setPort(uri.getPort());
+            } catch (URISyntaxException e) {
+                LogEvent.logError(e);
+            }
+        }
+
+        String username = configurationProperties.getPropertyValue(Property.PATIENT_RESULTS_SMTP_USERNAME);
+        String password = configurationProperties.getPropertyValue(Property.PATIENT_RESULTS_SMTP_PASSWORD);
+        if (!(GenericValidator.isBlankOrNull(username) || GenericValidator.isBlankOrNull(password))) {
+            mailSender.setUsername(username);
+            mailSender.setPassword(password);
+            props.put("mail.smtp.auth", "true");
+        }
+
+
+
+
+        return mailSender;
     }
 
 }

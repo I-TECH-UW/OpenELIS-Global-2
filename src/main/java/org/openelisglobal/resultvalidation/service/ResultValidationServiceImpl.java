@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.IResultSaveService;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.ResultSaveService;
@@ -13,6 +14,7 @@ import org.openelisglobal.common.services.StatusService.OrderStatus;
 import org.openelisglobal.common.services.registration.interfaces.IResultUpdate;
 import org.openelisglobal.note.service.NoteService;
 import org.openelisglobal.note.valueholder.Note;
+import org.openelisglobal.notification.service.ClientNotificationService;
 import org.openelisglobal.result.service.ResultService;
 import org.openelisglobal.result.valueholder.Result;
 import org.openelisglobal.resultvalidation.bean.AnalysisItem;
@@ -29,13 +31,15 @@ public class ResultValidationServiceImpl implements ResultValidationService {
     private ResultService resultService;
     private NoteService noteService;
     private SampleService sampleService;
+    private ClientNotificationService clientNotificationService;
 
     public ResultValidationServiceImpl(AnalysisService analysisService, ResultService resultService,
-            NoteService noteService, SampleService sampleService) {
+            NoteService noteService, SampleService sampleService, ClientNotificationService clientNotificationService) {
         this.analysisService = analysisService;
         this.resultService = resultService;
         this.noteService = noteService;
         this.sampleService = sampleService;
+        this.clientNotificationService = clientNotificationService;
     }
 
     @Override
@@ -56,6 +60,15 @@ public class ResultValidationServiceImpl implements ResultValidationService {
                 resultService.update(resultUpdate);
             } else {
                 resultService.insert(resultUpdate);
+            }
+            if (isResultAnalysisFinalized(resultUpdate, analysisUpdateList)) {
+                try {
+                    if (clientNotificationService.shouldSendNotification(resultUpdate)) {
+                        clientNotificationService.createAndSendClientNotification(resultUpdate);
+                    }
+                } catch (RuntimeException e) {
+                    LogEvent.logError(e);
+                }
             }
         }
 
@@ -80,6 +93,19 @@ public class ResultValidationServiceImpl implements ResultValidationService {
         for (IResultUpdate updater : updaters) {
             updater.transactionalUpdate(resultSaveService);
         }
+    }
+
+    private boolean isResultAnalysisFinalized(Result result, List<Analysis> analysisUpdateList) {
+        String analysisId = result.getAnalysis().getId();
+        for (Analysis analysis : analysisUpdateList) {
+            if (analysis.getId().equals(analysisId)) {
+                return analysis.getStatusId()
+                        .equals(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized));
+            } else {
+                return false;
+            }
+        }
+        return false;
     }
 
     private void checkIfSamplesFinished(List<AnalysisItem> resultItemList, List<Sample> sampleUpdateList) {
@@ -119,10 +145,12 @@ public class ResultValidationServiceImpl implements ResultValidationService {
 
     private List<Integer> getSampleFinishedStatuses() {
         ArrayList<Integer> sampleFinishedStatus = new ArrayList<>();
-        sampleFinishedStatus.add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized)));
-        sampleFinishedStatus.add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Canceled)));
         sampleFinishedStatus.add(
-                Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NonConforming_depricated)));
+                Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized)));
+        sampleFinishedStatus.add(
+                Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Canceled)));
+        sampleFinishedStatus.add(Integer.parseInt(
+                SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NonConforming_depricated)));
         return sampleFinishedStatus;
     }
 

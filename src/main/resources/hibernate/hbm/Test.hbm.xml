@@ -21,7 +21,7 @@
 			<column name="TEST_SECTION_ID" precision="10" scale="0" />
 		</many-to-one>
 		<many-to-one name="label"
-			class="org.openelisglobal.label.valueholder.Label" fetch="select">
+			class="org.openelisglobal.label.valueholder.Label" fetch="select" lazy="false">
 			<column name="LABEL_ID" precision="10" scale="0" />
 		</many-to-one>
 		<many-to-one name="localizedTestName"
@@ -42,16 +42,16 @@
 		</many-to-one>
 		<many-to-one name="scriptlet"
 			class="org.openelisglobal.scriptlet.valueholder.Scriptlet"
-			fetch="select">
+			fetch="select" lazy="false">
 			<column name="SCRIPTLET_ID" precision="10" scale="0" />
 		</many-to-one>
 		<many-to-one name="method"
-			class="org.openelisglobal.method.valueholder.Method" fetch="select">
+			class="org.openelisglobal.method.valueholder.Method" fetch="select" lazy="false">
 			<column name="METHOD_ID" precision="10" scale="0" />
 		</many-to-one>
 		<many-to-one name="testTrailer"
 			class="org.openelisglobal.testtrailer.valueholder.TestTrailer"
-			fetch="select">
+			fetch="select" lazy="false">
 			<column name="TEST_TRAILER_ID" precision="10" scale="0" />
 		</many-to-one>
 		<property name="localCode" type="java.lang.String">
@@ -107,8 +107,11 @@
 			type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType">
 			<column name="SORT_ORDER" precision="22" scale="0" />
 		</property>
+		
 		<property name="orderable" type="java.lang.Boolean"
 			column="orderable" />
+		<property name="notifyResults" type="java.lang.Boolean"
+			column="notify_results" />
 		<property name="guid" type="java.lang.String" column="guid" />
 		<property name="name" type="java.lang.String" column="name" />
 		<many-to-one name="defaultTestResult"

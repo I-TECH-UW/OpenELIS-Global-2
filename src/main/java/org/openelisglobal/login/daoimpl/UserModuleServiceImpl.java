@@ -34,6 +34,9 @@ import org.openelisglobal.systemusermodule.service.SystemUserModuleService;
 import org.openelisglobal.systemusermodule.valueholder.PermissionModule;
 import org.openelisglobal.systemusermodule.valueholder.SystemUserModule;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -66,6 +69,7 @@ public class UserModuleServiceImpl implements UserModuleService, IActionConstant
      */
     @Override
     @Transactional(readOnly = true)
+    @Deprecated
     public boolean isUserModuleFound(HttpServletRequest request) throws LIMSRuntimeException {
         boolean isFound = false;
         try {
@@ -155,8 +159,16 @@ public class UserModuleServiceImpl implements UserModuleService, IActionConstant
     private LoginUser getUserLogin(HttpServletRequest request) throws LIMSRuntimeException {
         LoginUser login = null;
         try {
-            UserSessionData usd = (UserSessionData) request.getSession().getAttribute(USER_SESSION_DATA);
-            login = loginService.getUserProfile(usd.getLoginName());
+//            UserSessionData usd = (UserSessionData) request.getSession().getAttribute(USER_SESSION_DATA);
+//            login = loginService.getUserProfile(usd.getLoginName());
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication != null) {
+                Object principal = authentication.getPrincipal();
+                if (principal instanceof UserDetails) {
+                    UserDetails user = (UserDetails) principal;
+                    login = loginService.getUserProfile(user.getUsername());
+                }
+            }
         } catch (LIMSRuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);

@@ -123,6 +123,7 @@ public abstract class Report implements IReportCreator {
         localizationMap.put("sampleType", MessageUtil.getMessage("report.sampleType"));
         localizationMap.put("reception", MessageUtil.getMessage("report.reception"));
         localizationMap.put("initialResults", MessageUtil.getMessage("report.initialResults"));
+        localizationMap.put("results", MessageUtil.getMessage("report.results"));
         localizationMap.put("confirmationResults", MessageUtil.getMessage("report.confirmationResult"));
         localizationMap.put("requesterContact", MessageUtil.getMessage("report.requesterContact"));
         localizationMap.put("telephoneAbv", MessageUtil.getMessage("report.telephoneAbv"));
@@ -187,6 +188,7 @@ public abstract class Report implements IReportCreator {
         localizationMap.put("activity", MessageUtil.getMessage("report.activity"));
         localizationMap.put("from", MessageUtil.getMessage("report.from"));
         localizationMap.put("to", MessageUtil.getMessage("report.to"));
+        localizationMap.put("of", MessageUtil.getMessage("report.of"));
         localizationMap.put("printed", MessageUtil.getMessage("report.printed"));
         localizationMap.put("techId", MessageUtil.getMessage("report.techId"));
         localizationMap.put("collection", MessageUtil.getMessage("report.collection"));

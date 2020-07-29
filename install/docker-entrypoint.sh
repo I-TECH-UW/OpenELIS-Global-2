@@ -17,5 +17,4 @@ file_env_secret() {
 #must stay the same as filename in docker-compose.yml
 file_env_secret "datasource.password"
 
-echo "catalina opts are: ${CATALINA_OPTS}"
 $CATALINA_HOME/bin/catalina.sh run

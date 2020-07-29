@@ -10,6 +10,7 @@ import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.util.validator.CustomDateValidator.DateRelation;
 import org.openelisglobal.patient.action.IPatientUpdate.PatientUpdateStatus;
 import org.openelisglobal.patient.action.bean.PatientClinicalInfo;
+import org.openelisglobal.patient.action.bean.PatientEnhancedSearch;
 import org.openelisglobal.patient.action.bean.PatientManagementInfo;
 import org.openelisglobal.patient.action.bean.PatientSearch;
 import org.openelisglobal.project.valueholder.Project;
@@ -45,6 +46,9 @@ public class SamplePatientEntryForm extends BaseForm {
     // for display
     private PatientSearch patientSearch;
 
+ // for display
+    private PatientEnhancedSearch patientEnhancedSearch;
+
     @Valid
     private PatientClinicalInfo patientClinicalProperties;
 
@@ -53,6 +57,9 @@ public class SamplePatientEntryForm extends BaseForm {
 
     // for display
     private List<IdValuePair> initialSampleConditionList;
+
+    // for display
+    private List<IdValuePair> sampleNatureList;
 
     // for display
     private List<IdValuePair> testSectionList;
@@ -120,6 +127,14 @@ public class SamplePatientEntryForm extends BaseForm {
         this.patientSearch = patientSearch;
     }
 
+    public PatientEnhancedSearch getPatientEnhancedSearch() {
+        return patientEnhancedSearch;
+    }
+
+    public void setPatientEnhancedSearch(PatientEnhancedSearch patientEnhancedSearch) {
+        this.patientEnhancedSearch = patientEnhancedSearch;
+    }
+
     public PatientClinicalInfo getPatientClinicalProperties() {
         return patientClinicalProperties;
     }
@@ -158,5 +173,13 @@ public class SamplePatientEntryForm extends BaseForm {
 
     public void setWarning(Boolean warning) {
         this.warning = warning;
+    }
+
+    public List<IdValuePair> getSampleNatureList() {
+        return sampleNatureList;
+    }
+
+    public void setSampleNatureList(List<IdValuePair> sampleNatureList) {
+        this.sampleNatureList = sampleNatureList;
     }
 }

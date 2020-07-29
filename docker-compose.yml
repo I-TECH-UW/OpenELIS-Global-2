@@ -1,11 +1,11 @@
 version: '3.3'
-
 services:
     database:
         container_name: openelisglobal-database 
         image: postgres:9.5
         ports:
             - "15432:5432"
+        restart: always
         env_file:
             - ./dev/database/database.env
         volumes:
@@ -13,31 +13,68 @@ services:
             - db-data:/var/lib/postgresql/data                
               # files here will run on install
             - ./dev/database/dbInit:/docker-entrypoint-initdb.d
+        healthcheck:
+            test: [ "CMD", "pg_isready", "-q", "-d", "clinlims", "-U", "clinlims" ]
+            timeout: 45s
+            interval: 10s
+            retries: 10 
             
-    oe.openelisci.org:
-        container_name: openelisglobal-webapp 
-        image: openelisglobal
+#     oe.openelis.org:
+#         container_name: openelisglobal-webapp 
+#         image: openelisglobal
+#         depends_on:
+#             - database
+#         ports:
+#             - "8080:8080"
+#             - "8443:8443"
+#         restart: always
+#         environment:
+     #       context.xml doesn't seem to be able to pick up environment variables directly, so we are passing them in as CATALINA_OPTS
+#             - CATALINA_OPTS= -Ddatasource.url=jdbc:postgresql://database:5432/clinlims?currentSchema=clinlims -Ddatasource.username=clinlims -Ddatasource.password=clinlims
+#         volumes:
+#             - ./dev/plugins:/var/lib/openelis-global/plugins
+#             - ./dev/tomcat/oe_server.xml:/usr/local/tomcat/conf/server.xml
+#         secrets:
+#             - source: keystore
+#             - source: truststore
+#             - source: common.properties
+            
+    fhir.openelis.org:
+        container_name: hapi-fhir-jpaserver
+        image: hapi-fhir-jpaserver-starter
         depends_on:
             - database
         ports:
-            - "8080:8080"
-            - "8443:8443"
+            - "8081:8080"
+            - "8444:8443"
+        restart: always
         environment:
-              # context.xml doesn't seem to be able to pick up environment variables directly, so we are passing them in as CATALINA_OPTS
-            - CATALINA_OPTS= -Ddatasource.url=jdbc:postgresql://database:5432/clinlims?currentSchema=clinlims -Ddatasource.username=clinlims -Ddatasource.password=clinlims
+            - JAVA_OPTS= -Dhapi.properties=/run/secrets/hapi.properties
         volumes:
-            - ./dev/plugins:/var/lib/openelis-global/plugins
-            - ./dev/tomcat/server.xml:/usr/local/tomcat/conf/server.xml
+            - ./dev/tomcat/hapi_server.xml:/usr/local/tomcat/conf/server.xml
+        extra_hosts:
+#    this should be the loopback to the docker host. 
+#    run 
+#    /sbin/ip route|awk '/default/ { print $3 }' 
+#    inside the container to make sure the ip address is correct
+#    make sure connections to 8446 are allowed by your firewall
+            - host.openelis.org:172.20.0.1
         secrets:
+            - source: hapi.properties
+            - source: common.properties
             - source: keystore
             - source: truststore
-            
             
 volumes:
   db-data:            
 secrets:
   keystore:
-    file: ./dev/https/oe_selfsigned.keystore
+    file: ./dev/https/openelis.org.keystore
   truststore:
-    file: ./dev/https/oe_selfsigned.truststore
+    file: ./dev/https/openelis.org.truststore
+  common.properties:
+    file: ./dev/properties/common.properties  
+  hapi.properties:
+    file: ./dev/properties/hapi.properties
+    
     

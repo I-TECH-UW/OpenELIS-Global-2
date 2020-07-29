@@ -160,7 +160,6 @@ public class LogbookResultsController extends LogbookResultsBaseController {
         // ConfigurationProperties.getInstance().getPropertyValueUpperCase(Property.StatusRules);
 
         String testSectionId = form.getTestSectionId();
-
         request.getSession().setAttribute(SAVE_DISABLED, TRUE);
 
         TestSection ts = null;
@@ -181,7 +180,6 @@ public class LogbookResultsController extends LogbookResultsBaseController {
         }
 
         setRequestType(ts == null ? MessageUtil.getMessage("workplan.unit.types") : ts.getLocalizedName());
-
         List<TestResultItem> tests;
 
         ResultsPaging paging = new ResultsPaging();
@@ -192,7 +190,6 @@ public class LogbookResultsController extends LogbookResultsBaseController {
         String requestedPage = request.getParameter("page");
 
         if (GenericValidator.isBlankOrNull(requestedPage)) {
-
             requestedPage = "1";
             new StatusRules().setAllowableStatusForLoadingResults(resultsLoadUtility);
 

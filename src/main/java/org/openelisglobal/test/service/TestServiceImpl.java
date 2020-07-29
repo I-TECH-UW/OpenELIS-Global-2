@@ -586,6 +586,7 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
         if (test.getIsActive().equals(IActionConstants.YES) && getBaseObjectDAO().duplicateTestExists(test)) {
             throw new LIMSDuplicateRecordException("Duplicate record exists for " + test.getDescription());
         }
+
         return super.insert(test);
     }
 
@@ -662,6 +663,16 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
     @Override
     public Test getTestByLocalizedName(String testName) {
         return getBaseObjectDAO().getTestByLocalizedName(testName, localizationService.getCurrentLocale());
+    }
+
+    @Override
+    public Test getTestByName(String testName) {
+        return getTestByLocalizedName(testName);
+    }
+
+    @Override
+    public List<Test> getActiveTestByName(String testName) {
+        return getBaseObjectDAO().getActiveTestsByName(testName);
     }
 
 }

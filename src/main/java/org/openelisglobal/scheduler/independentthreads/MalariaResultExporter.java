@@ -80,7 +80,8 @@ public class MalariaResultExporter {
             boolean sendAsychronously = false;
 
             for (ReportExternalExport report : reportList) {
-                IRowTransmissionResponseHandler responseHandler = SpringContext.getBean("malariaSuccessReportHandler");
+                IRowTransmissionResponseHandler responseHandler = (IRowTransmissionResponseHandler) SpringContext
+                        .getBean("malariaSuccessReportHandler");
                 responseHandler.setRowId(report.getId());
                 transmitter.sendRawReport(report.getData(), url, sendAsychronously, responseHandler, HTTP_TYPE.POST);
             }

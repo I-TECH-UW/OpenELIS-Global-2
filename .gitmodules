@@ -7,3 +7,12 @@
 [submodule "tools/Password-Migrator"]
 	path = tools/Password-Migrator
 	url = git@github.com:I-TECH-UW/Password-Migrator.git
+[submodule "Consolidated-Server"]
+	path = Consolidated-Server
+	url = git@github.com:I-TECH-UW/Consolidated-Server.git
+[submodule "hapi-fhir-jpaserver-starter"]
+	path = hapi-fhir-jpaserver-starter
+	url = git@github.com:I-TECH-UW/hapi-fhir-jpaserver-starter.git
+[submodule "dataexport"]
+	path = dataexport
+	url = git@github.com:I-TECH-UW/dataexport.git

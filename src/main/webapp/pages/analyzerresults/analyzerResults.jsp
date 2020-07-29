@@ -15,7 +15,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
-<c:set var="analyzerType" value="${form.analyzerType}" />
+<c:set var="type" value="${form.type}" />
 <c:set var="pagingSearch" value="${form.paging.searchTermToPage}" />
 
 <%-- N.B. testReflex.js is dependent on utilities.js so order is important  --%>
@@ -27,7 +27,7 @@
 
 var dirty = false;
 
-var pager = new OEPager('${form.formName}', '<spring:escapeBody javaScriptEscape="true">${(analyzerType == "") ? "" : "&analyzerType=" +=  analyzerType}</spring:escapeBody>');
+var pager = new OEPager('${form.formName}', '<spring:escapeBody javaScriptEscape="true">${(type == "") ? "" : "&type=" +=  type}</spring:escapeBody>');
 pager.setCurrentPageNumber('<c:out value="${form.paging.currentPage}"/>');
 
 var pageSearch; //assigned in post load function
@@ -76,7 +76,7 @@ function  /*void*/ savePage()
 {
 	window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
 	var form = document.getElementById("mainForm");
-	form.action = "AnalyzerResults.do"  + '<spring:escapeBody javaScriptEscape="true">${(analyzerType == "") ? "": "?analyzerType=" += analyzerType}</spring:escapeBody>';
+	form.action = "AnalyzerResults.do"  + '<spring:escapeBody javaScriptEscape="true">${(type == "") ? "": "?type=" += type}</spring:escapeBody>';
 	form.submit();
 
 }
@@ -147,7 +147,7 @@ function /*void*/ markUpdated(){
 }
 
 </script>
-<form:hidden path="analyzerType"/>
+<form:hidden path="type"/>
 <c:if test="${form.displayNotFoundMsg}">
 	 <div class="indented-important-message"><spring:message code="result.noResultsFound"/></div>
 </c:if>

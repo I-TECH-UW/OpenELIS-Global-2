@@ -715,7 +715,7 @@ function setField(id, value) {
 		<c:if test="${not (testResult.resultDisplayType == 'HIV') and not (testResult.resultDisplayType == 'SYPHILIS')}">
 			<td style="vertical-align:middle" class="ruled">
                 ${testResult.testName}
-                <c:if test="${not testResult.resultType == 'D'}">
+                <c:if test="${not (testResult.resultType == 'D')}">
 				<c:if test="${not empty testResult.normalRange}">
 					<br/><c:out value="${testResult.normalRange}"/>&nbsp;
 					<c:out value="${testResult.unitsOfMeasure}"/>

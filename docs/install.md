@@ -14,8 +14,7 @@
 9. Require a password on login
 10. Create a 1GB partition mounted at /web
 11. Select OpenSSH server during install *if running server version*
-
-a    .this will allow you to ssh into this computer allowing copy/paste for Windows users through Putty, or connections via terminal on Mac and from the shell in LINUX
+	* this will allow you to ssh into this computer allowing copy/paste for Windows users through Putty, or connections via terminal on Mac and from the shell in LINUX
 
 13. Finalize the ubuntu install
 
@@ -33,30 +32,75 @@ a    .this will allow you to ssh into this computer allowing copy/paste for Wind
 2. Open a command prompt and enter the following commands- this will install the needed services and install updates to the OS since the image was created. 
 This updates the system from the sources in the sources list. It updates what new packages are available.
 
-    ``sudo apt-get update``
+	``sudo apt-get update``
 
 
     ``sudo apt-get upgrade``
 
 3. Install Python
 
-    ``sudo apt-get update``
-
-    ``sudo apt-get upgrade``
-
     ``sudo apt-get install python``
     
 ### Create and Load SSL Certificates
 
-1. Generate a signed .crt and .key for individual installation or if you are just creating a test server, you can skip signed keys and instead run:
+OpenELIS uses SSL certificates to securely communicate with other software or consolidated lab data servers. For a test or temporary instance, use a self-signed certificate, and for a production instance create a proper signed certifcate. **You must have a cert and key created and in the keystore and truststore for the installer to run**
 
-    ``sudo apt-get install ssl-cert``
+#### Generate a .crt and .key file for the domain you want to use. 
 
-2. If you have signed keys, place files in server as:
+The command below is for generating and using a self-signed certifcate.
 
-    ``/etc/tomcat/ssl/certs/tomcat_cert.crt``
 
-    ``/etc/tomcat/ssl/private/tomcat_cert.key``
+	``sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/apache-selfsigned.key -out /etc/ssl/certs/apache-selfsigned.crt``
+
+
+#### Create keystore from key and cert 
+make sure to record the password somewhere secure as you will need to enter it elsewhere)
+
+    ``sudo openssl pkcs12 -inkey path/toyour/key -in path/to/your/cert -export -out /etc/openelis-global/keystore``
+    
+enter an export password 
+	
+**Be sure to remember your keystore password, you will need it later**
+	
+For the self-signed certificate above, you would use:
+	
+	``sudo openssl pkcs12 -inkey /etc/ssl/private/apache-selfsigned.key -in /etc/ssl/certs/apache-selfsigned.crt -export -out /etc/openelis-global/keystore``
+
+**Be sure to remember your keystore password, you will need it later **
+	
+#### Create truststore with OpenELIS-Global's cert (or a CA that signs OE certs)
+
+1. using keytool (more reliable):
+   
+	``sudo apt-get install default-jre``
+   
+	``sudo keytool -import -alias oeCert -file path/to/your/cert -storetype pkcs12 -keystore /etc/openelis-global/truststore``
+	
+	* set the truststore password 
+	
+	**Be sure to remember your truststore password, you will need it later **
+	
+	* when prompted if you want to trust the cert type `yes`
+	
+	For the self-signed certificate above, you would use:
+	
+	``sudo keytool -import -alias oeCert -file /etc/ssl/certs/apache-selfsigned.crt -storetype pkcs12 -keystore /etc/openelis-global/truststore``
+	
+	* set the truststore password 
+	
+	**Be sure to remember your truststore password, you will need it later **
+	
+	* when prompted if you want to trust the cert type `yes`
+   
+	
+	
+2. using openssl (less reliable, but doesn't require java):
+  
+    ``openssl pkcs12 -export -nokeys -in path/to/your/cert -out /etc/openelis-global/truststore``
+
+	For the self-signed certificate above, you would use:
+	
+	``openssl pkcs12 -export -nokeys -in /etc/ssl/certs/apache-selfsigned.crt -out /etc/openelis-global/truststore``
     
 ### Install Postgresql
 OpenELIS-Global is configured to be able to install a docker based version of Postgres, but this is generally not recommended for production databases
@@ -64,9 +108,11 @@ If you trust docker to provide your database, you can ignore this section
 
 1. Install Postgresql
 
-	``sudo apt update``
-	
 	``sudo apt install postgresql postgresql-contrib``
+
+2. Configure Postgresql
+
+    Postgres gets configured automatically through the setup script. This might possibly interfere with other applications installed on the same server.
 
 	
 ### Install OpenELIS Global
@@ -101,6 +147,6 @@ Wait while install procedure completes
 
 Configure the backup:
 
-Follow the SOP at: 
-https://docs.google.com/document/d/1HNGaeUdFIe6n_bd7Sz1q9lpMmAyymbb1H8_8GjTVYfc/edit
+Follow the SOP at: [Backup Configuration](../backups)
+
 
