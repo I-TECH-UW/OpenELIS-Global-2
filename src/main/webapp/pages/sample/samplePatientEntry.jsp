@@ -401,10 +401,12 @@ function parsePatient(patienttag) {
     if (guidtag) {
         if (guidtag[0].firstChild) {
             guid = guidtag[0].firstChild.nodeValue;
-            patientSearch("", "", "", "", "", "", guid, "true", processSearchSuccess, processSearchFailure );
+            patientSearch("", "", "", "", "", "", guid, "", "", "true", processSearchSuccess, processSearchFailure );
         }       
     }
 }
+
+
 
 function clearRequester() {
 
@@ -439,10 +441,8 @@ function parseRequester(requester) {
             $("providerWorkPhoneID").value = phone;
         }
     }
-    
-    
-    
 }
+
 function parseSampletypes(sampletypes, SampleTypes) {
         
         var index = 0;

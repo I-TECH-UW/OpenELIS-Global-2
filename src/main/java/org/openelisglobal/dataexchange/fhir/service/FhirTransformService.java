@@ -1,5 +1,7 @@
 package org.openelisglobal.dataexchange.fhir.service;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.hl7.fhir.r4.model.Bundle;
@@ -30,5 +32,7 @@ public interface FhirTransformService {
     public Bundle CreateFhirResource(Resource resource);
     
     public Bundle UpdateFhirResource(Resource resource);
+
+    public List<ElectronicOrder> getFhirOrdersById(String id);
     
 }

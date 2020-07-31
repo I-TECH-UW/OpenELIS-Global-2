@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<Context logEffectiveWebXml="true"> 
+<Context logEffectiveWebXml="false"> 
     <Resources cacheMaxSize="102400" />
     <Resource auth="Container" 
         driverClassName="org.postgresql.Driver" 

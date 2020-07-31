@@ -81,7 +81,7 @@ function searchPatients()
         labNumber = value;
         jQuery("#searchLabNumber").val(value);
     }
-	patientSearch(lastName, firstName, STNumber, subjectNumber, nationalID, labNumber, "", false, processSearchSuccess);
+	patientSearch(lastName, firstName, STNumber, subjectNumber, nationalID, labNumber, "", "", "", false, processSearchSuccess);
 }
 
 function enhancedSearchPatients()
