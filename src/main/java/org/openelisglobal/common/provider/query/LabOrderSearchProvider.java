@@ -40,6 +40,7 @@ import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.ExternalOrderStatus;
 import org.openelisglobal.common.util.XMLUtil;
 import org.openelisglobal.dataexchange.fhir.service.FhirApiWorkflowService;
+import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
 import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder;
 import org.openelisglobal.dataexchange.service.order.ElectronicOrderService;
 import org.openelisglobal.internationalization.MessageUtil;
@@ -75,6 +76,7 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
     private FhirContext fhirContext = SpringContext.getBean(FhirContext.class);
    
     protected FhirApiWorkflowService fhirApiWorkFlowService = SpringContext.getBean(FhirApiWorkflowService.class);
+    protected FhirTransformService fhirTransformService = SpringContext.getBean(FhirTransformService.class);
     
     protected TestService testService = SpringContext.getBean(TestService.class);
     protected PanelService panelService = SpringContext.getBean(PanelService.class);
@@ -82,6 +84,7 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
     protected TypeOfSampleTestService typeOfSampleTestService = SpringContext.getBean(TypeOfSampleTestService.class);
     protected ElectronicOrderService electronicOrderService = SpringContext.getBean(ElectronicOrderService.class);
     private TypeOfSampleService typeOfSampleService = SpringContext.getBean(TypeOfSampleService.class);
+    
 
     private Map<TypeOfSample, PanelTestLists> typeOfSampleMap;
     private Map<Panel, List<TypeOfSample>> panelSampleTypesMap;
@@ -110,9 +113,13 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
 
         String orderNumber = request.getParameter("orderNumber");
         eOrders = electronicOrderService.getElectronicOrdersByExternalId(orderNumber);
+        System.out.println("LabOrderSearchProvider:OrderNumber: " + orderNumber);
+        
         if (eOrders.isEmpty()) {
-            // return NOT_FOUND;
-            return;
+            eOrders = fhirTransformService.getFhirOrdersById(orderNumber);
+            if (eOrders.isEmpty()) {
+                return;
+            }
         }
         eOrder = eOrders.get(eOrders.size() - 1);
         eOrderStatus = SpringContext.getBean(IStatusService.class).getExternalOrderStatusForID(eOrder.getStatusId());
@@ -130,10 +137,16 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
                 .execute();
 
         System.out.println("srBundle: " + fhirContext.newJsonParser().encodeResourceToString(srBundle));
-        System.out.println("task.getBasedOn().get(0).getReferenceElement().getIdPart(): " 
-                + task.getBasedOn().get(0).getReferenceElement().getIdPart());
+//        System.out.println("task.getBasedOn().get(0).getReferenceElement().getIdPart(): " 
+//                + task.getBasedOn().get(0).getReferenceElement().getIdPart());
         
         serviceRequest = null;
+        if (srBundle.getEntry().size() == 0 ) {
+            srBundle = (Bundle) localFhirClient.search().forResource(ServiceRequest.class)
+                    .where(new TokenClientParam("_id").exactly().code(orderNumber))
+                    .prettyPrint()
+                    .execute();
+        }
         for (BundleEntryComponent bundleComponent : srBundle.getEntry()) {
             if (bundleComponent.hasResource()
                     && ResourceType.ServiceRequest.equals(bundleComponent.getResource().getResourceType())) {
@@ -190,7 +203,7 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
         String patientGuid = null;
         for (Identifier identifier : patient.getIdentifier()) {
 //            if (identifier.getSystem().equalsIgnoreCase("https://isanteplusdemo.com/openmrs/ws/fhir2/")) {
-              if (identifier.getSystem().equalsIgnoreCase("iSantePlus ID")) {
+              if (identifier.getSystem().equalsIgnoreCase("iSantePlus ID") || identifier.getSystem().equalsIgnoreCase("LocatorForm")) {
                 patientGuid = identifier.getId();
             }
         }

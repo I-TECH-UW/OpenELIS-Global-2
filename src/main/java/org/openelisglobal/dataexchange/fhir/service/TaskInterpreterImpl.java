@@ -115,7 +115,7 @@ public class TaskInterpreterImpl implements TaskInterpreter {
     private void extractOrderInformation(ServiceRequest serviceRequest) throws HL7Exception {
         labOrderNumber = serviceRequest.getIdentifierFirstRep().getValue();
         // gnr: make electronic_order.external_id longer
-        if (labOrderNumber.length() > 60) {
+        if (labOrderNumber != null && labOrderNumber.length() > 60) {
             labOrderNumber = labOrderNumber.substring(labOrderNumber.length() - 60);
         }
         orderType = OrderType.REQUEST;
