@@ -88,7 +88,7 @@ function searchPatients() {
     jQuery("#searchLabNumber").val('');
     jQuery("#searchLabNumber").val(labNumber);
 
-	patientSearch(lastName, firstName, STNumber, subjectNumber, nationalID, labNumber, "", false, processSearchSuccess);
+	patientSearch(lastName, firstName, STNumber, subjectNumber, nationalID, labNumber, "", "", "", false, processSearchSuccess);
 
 }
 

@@ -57,6 +57,54 @@ public class SearchResultsDAOImp implements SearchResultsDAO {
     private static final String ID_TYPE_FOR_GUID = "guidId";
 
     private static final Charset UTF_8 = Charset.forName("UTF-8");
+    
+    @Override
+    @SuppressWarnings("rawtypes")
+    @Transactional
+    public List<PatientSearchResults> getSearchResultsByGUID(String lastName, String firstName, String STNumber,
+            String subjectNumber, String nationalID, String externalID, String patientID, String guid, String dateOfBirth, String gender)
+            throws LIMSRuntimeException {
+
+        List queryResults;
+        
+        try {
+            boolean queryFirstName = !GenericValidator.isBlankOrNull(firstName);
+            boolean queryLastName = !GenericValidator.isBlankOrNull(lastName);
+            boolean queryNationalId = !GenericValidator.isBlankOrNull(nationalID);
+            boolean querySTNumber = !GenericValidator.isBlankOrNull(STNumber);
+            boolean querySubjectNumber = !GenericValidator.isBlankOrNull(subjectNumber);
+            boolean queryExternalId = !GenericValidator.isBlankOrNull(externalID);
+            boolean queryAnyID = queryExternalId && queryNationalId;
+            boolean queryPatientID = !GenericValidator.isBlankOrNull(patientID);
+            boolean queryGuid = !GenericValidator.isBlankOrNull(guid);
+            boolean queryDateOfBirth = !GenericValidator.isBlankOrNull(dateOfBirth);
+            boolean queryGender = !GenericValidator.isBlankOrNull(gender);
+        
+        String sql = buildQueryString(queryLastName, queryFirstName, querySTNumber, querySubjectNumber,
+                queryNationalId, queryExternalId, queryAnyID, queryPatientID, queryGuid, queryDateOfBirth, queryGender);
+
+        org.hibernate.Query query = entityManager.unwrap(Session.class).createSQLQuery(sql);
+        
+        
+        queryResults = query.list();
+    } catch (RuntimeException e) {
+        LogEvent.logDebug(e);
+        throw new LIMSRuntimeException("Error in SearchResultsDAOImpl getSearchResults()", e);
+    }
+
+    List<PatientSearchResults> results = new ArrayList<>();
+
+    for (Object resultLine : queryResults) {
+
+        Object[] line = (Object[]) resultLine;
+
+        results.add(new PatientSearchResults((BigDecimal) line[0], (String) line[1], (String) line[2],
+                (String) line[3], (String) line[4], (String) line[5], (String) line[6], (String) line[7],
+                (String) line[8], (String) line[9], null));
+    }
+
+    return results;
+    }
 
     @Override
     @SuppressWarnings("rawtypes")
@@ -98,7 +146,7 @@ public class SearchResultsDAOImp implements SearchResultsDAO {
             nationalID = '%' + nationalID + '%';
             externalID = '%' + externalID + '%';
             patientID = '%' + patientID + '%';
-            guid = '%' + guid + '%';
+//            guid = '%' + guid + '%';
             dateOfBirth = '%' + dateOfBirth + '%';
 //            gender = '%' + gender + '%';
             
@@ -132,13 +180,14 @@ public class SearchResultsDAOImp implements SearchResultsDAO {
             if (queryGender) {
                 query.setString(GENDER, gender);
             }
-            System.out.println(">>>: " + query.getQueryString());
+            System.out.println("SearchResultsDAOImp:getSearchResults:query:guid: " + guid);
+            System.out.println("SearchResultsDAOImp:getSearchResults:query: " + query.getQueryString());
 //            String[] dArray = { " ", " ", subjectNumber, nationalID, gender, " ", " ", " "};
 //            String[] sArray = query.getNamedParameters();
 //            for (int i = 0; i < sArray.length; i++) {
 //                System.out.println(">>>: " + sArray[i] + ":" + dArray[i] );
 //            }
-//            System.out.println(">>>: " +
+//            System.out.println("SearchResultsDAOImp:getSearchResults:query: " +
 //            "lastName" + lastName + ':' +
 //            "firstName " +            firstName + ':' +
 //            "STNumber " +            STNumber + ':' +
@@ -148,7 +197,8 @@ public class SearchResultsDAOImp implements SearchResultsDAO {
 //            "patientID " +            patientID + ':' +
 //            "guid " +            guid + ':' +
 //            "dateOfBirth " +            dateOfBirth + ':' +
-//            "gender " +            gender );
+//            "gender " +            gender 
+//            );
             
            
             
