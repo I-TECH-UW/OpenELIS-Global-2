@@ -203,7 +203,7 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
         String patientGuid = null;
         for (Identifier identifier : patient.getIdentifier()) {
 //            if (identifier.getSystem().equalsIgnoreCase("https://isanteplusdemo.com/openmrs/ws/fhir2/")) {
-              if (identifier.getSystem().equalsIgnoreCase("iSantePlus ID") || identifier.getSystem().equalsIgnoreCase("LocatorForm")) {
+              if (identifier.getSystem().equalsIgnoreCase("iSantePlus ID") || identifier.getSystem().equalsIgnoreCase("https://host.openelis.org/locator-form")) {
                 patientGuid = identifier.getId();
             }
         }
