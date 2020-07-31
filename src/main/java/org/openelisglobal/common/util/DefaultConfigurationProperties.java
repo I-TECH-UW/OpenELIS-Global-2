@@ -60,7 +60,7 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
         setDBPropertyMappingAndDefault(Property.PatientSearchURL, Property.PatientSearchURL.getName(), "");
         setDBPropertyMappingAndDefault(Property.PatientSearchUserName, Property.PatientSearchUserName.getName(), "");
         setDBPropertyMappingAndDefault(Property.PatientSearchPassword, Property.PatientSearchPassword.getName(), "");
-        setDBPropertyMappingAndDefault(Property.PatientSearchEnabled, Property.PatientSearchEnabled.getName(), "true");
+        setDBPropertyMappingAndDefault(Property.PatientSearchEnabled, Property.PatientSearchEnabled.getName(), "false");
         setDBPropertyMappingAndDefault(Property.UseExternalPatientInfo, Property.UseExternalPatientInfo.getName(),
                 "false");
         setDBPropertyMappingAndDefault(Property.labDirectorName, Property.labDirectorName.getName(), "");

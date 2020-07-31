@@ -63,6 +63,7 @@
 <div style="color: DarkRed;"><spring:message code="externalconnections.instructions"/></div>
 
 <form:hidden id="externalConnectionId" path="externalConnection.id" />
+<input type="hidden" name="externalConnection.active" value="true" />
 <c:if test="${not empty form.externalConnection.lastupdated}">
 	<form:hidden id="externalConnectionId" path="externalConnection.lastupdated" />
 	<form:hidden  path="externalConnection.descriptionLocalization.lastupdated" />
