@@ -97,7 +97,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 
     @Override
     public List<ElectronicOrder> getFhirOrdersById(String srId) {
-        List<ElectronicOrder> eOrders = new ArrayList<ElectronicOrder>();
+        List<ElectronicOrder> eOrders = new ArrayList<>();
         ServiceRequest serviceRequest = new ServiceRequest();
         org.hl7.fhir.r4.model.Patient fhirPatient = new org.hl7.fhir.r4.model.Patient();
         Task task = new Task();
