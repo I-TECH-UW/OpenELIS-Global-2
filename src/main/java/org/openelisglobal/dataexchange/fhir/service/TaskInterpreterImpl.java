@@ -19,6 +19,7 @@ import org.openelisglobal.dataexchange.order.action.MessagePatient;
 import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.test.valueholder.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import ca.uhn.fhir.context.FhirContext;
@@ -27,6 +28,7 @@ import ca.uhn.hl7v2.model.v251.segment.OBR;
 import ca.uhn.hl7v2.model.v251.segment.PID;
 
 @Service
+@Scope("prototype")
 public class TaskInterpreterImpl implements TaskInterpreter {
 
     @Autowired
@@ -136,11 +138,11 @@ public class TaskInterpreterImpl implements TaskInterpreter {
                 tests = testService.getTestsByLoincCode(loincCode);
                 if (tests.size() != 0) {
                     return tests.get(0);
-                } 
+                }
             }
             i++;
         }
-        
+
         return null;
     }
 
@@ -156,7 +158,7 @@ public class TaskInterpreterImpl implements TaskInterpreter {
           messagePatient.setDisplayDOB(strDate);
 
           if(patient.getGender().toString() == "MALE") {
-             messagePatient.setGender("M");    
+             messagePatient.setGender("M");
           } else {
              messagePatient.setGender("F");
           }
