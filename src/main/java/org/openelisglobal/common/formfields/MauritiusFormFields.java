@@ -21,7 +21,7 @@ import java.util.HashMap;
 
 import org.openelisglobal.common.formfields.FormFields.Field;
 
-public class CI_GeneralFormFields implements IFormFieldsForImplementation {
+public class MauritiusFormFields implements IFormFieldsForImplementation {
 
     @Override
     public HashMap<FormFields.Field, Boolean> getImplementationAttributes() {
@@ -65,7 +65,7 @@ public class CI_GeneralFormFields implements IFormFieldsForImplementation {
         settings.put(Field.SampleEntrySampleCollector, Boolean.TRUE);
         settings.put(Field.PatientPhone, Boolean.TRUE);
         settings.put(Field.PatientHealthRegion, Boolean.TRUE);
-        settings.put(Field.PatientHealthDistrict, Boolean.TRUE);
+        settings.put(Field.PatientHealthDistrict, Boolean.FALSE);
         settings.put(Field.PatientMarriageStatus, Boolean.TRUE);
         settings.put(Field.PatientEducation, Boolean.TRUE);
         settings.put(Field.SampleEntryPatientClinical, Boolean.FALSE);
@@ -87,6 +87,8 @@ public class CI_GeneralFormFields implements IFormFieldsForImplementation {
         settings.put(Field.ADDRESS_COMMUNE, Boolean.TRUE);
         settings.put(Field.ADDRESS_VILLAGE, Boolean.TRUE);
         settings.put(Field.SEARCH_PATIENT_WITH_LAB_NO, Boolean.TRUE);
+        settings.put(Field.SampleNature, Boolean.TRUE);
+        settings.put(Field.PatientEmail, Boolean.TRUE);
 
         return settings;
     }
