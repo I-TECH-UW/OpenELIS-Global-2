@@ -160,4 +160,7 @@ public interface AnalysisService extends BaseObjectService<Analysis, String> {
 
     TestSection getTestSection(Analysis analysis);
 
+    List<Analysis> getAllAnalysisByTestsAndStatus(List<Integer> list, List<Integer> analysisStatusList,
+            List<Integer> sampleStatusList);
+
 }

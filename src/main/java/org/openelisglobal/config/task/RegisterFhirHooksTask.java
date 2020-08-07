@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.validator.GenericValidator;
-import org.hl7.fhir.instance.model.api.IAnyResource;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Bundle.BundleEntryComponent;
 import org.hl7.fhir.r4.model.Bundle.BundleEntryRequestComponent;
@@ -117,7 +116,7 @@ public class RegisterFhirHooksTask {
         deleteTransactionBundle.setType(BundleType.TRANSACTION);
         for (ResourceType resourceType : ResourceType.values()) {
             Bundle responseBundle = (Bundle) fhirClient.search().forResource(Subscription.class)
-                    .where(IAnyResource.RES_ID.exactly().code(createSubscriptionIdForResourceType(resourceType)))
+                    .where(Subscription.RES_ID.exactly().code(createSubscriptionIdForResourceType(resourceType)))
                     .execute();
             if (responseBundle.hasEntry()) {
                 BundleEntryComponent bundleEntry = new BundleEntryComponent();

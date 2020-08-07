@@ -50,6 +50,8 @@ public interface TestService extends BaseObjectService<Test, String> {
 
     List<Test> getTestsByLoincCode(String loincCode);
 
+    List<Test> getActiveTestsByLoinc(String[] loincCodes);
+
     List<Test> getAllOrderBy(String columnName);
 
     boolean isTestFullySetup(Test test);

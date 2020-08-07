@@ -129,6 +129,10 @@ public class ReportImplementationFactory {
             } else if (report.equals("rejectionReportByTestSection")) {
                 return new RejectionReportByTestSection();
             }
+
+            else if (report.equals("covidResultsReport")) {
+                return new CovidResultsReport();
+            }
         }
 
         return null;
@@ -249,6 +253,10 @@ public class ReportImplementationFactory {
                 return new RejectionReportByTest();
             } else if (report.equals("rejectionReportByTestSection")) {
                 return new RejectionReportByTestSection();
+            }
+
+            else if (report.equals("covidResultsReport")) {
+                return new CovidResultsReport();
             }
         }
 

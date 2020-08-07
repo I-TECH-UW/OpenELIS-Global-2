@@ -470,6 +470,11 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
     }
 
     @Override
+    public List<Test> getActiveTestsByLoinc(String[] loincCodes) {
+        return getBaseObjectDAO().getActiveTestsByLoinc(loincCodes);
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public List<Test> getAllActiveOrderableTests() {
         return getBaseObjectDAO().getAllActiveOrderableTests();

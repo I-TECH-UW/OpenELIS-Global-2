@@ -208,7 +208,9 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
 
     private Task getLocalTaskBasedOnTask(Task remoteTask) {
         Map<String, List<String>> localSearchParams = new HashMap<>();
-        localSearchParams.put(Task.SP_BASED_ON, Arrays.asList(remoteStorePath.get() + remoteTask.getId()));
+        localSearchParams.put(Task.SP_BASED_ON,
+                Arrays.asList(remoteStorePath.get() + ResourceType.Task.toString() + "/"
+                        + remoteTask.getIdElement().getIdPart()));
 
         IGenericClient localFhirClient = fhirContext.newRestfulGenericClient(localFhirStorePath);
         Bundle localBundle = localFhirClient.search().forResource(Task.class).whereMap(localSearchParams)

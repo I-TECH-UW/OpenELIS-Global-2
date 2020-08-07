@@ -60,7 +60,6 @@ import org.openelisglobal.typeofsample.valueholder.TypeOfSampleTest;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
-import ca.uhn.fhir.rest.gclient.TokenClientParam;
 
 public class LabOrderSearchProvider extends BaseQueryProvider {
 //	private TestDAO testDAO = new TestDAOImpl();
@@ -72,19 +71,19 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
 //    private String localFhirStorePath;
 //    @Value("${org.openelisglobal.task.useBasedOn}")
 //    private Boolean useBasedOn;
-    
+
     private FhirContext fhirContext = SpringContext.getBean(FhirContext.class);
-   
+
     protected FhirApiWorkflowService fhirApiWorkFlowService = SpringContext.getBean(FhirApiWorkflowService.class);
     protected FhirTransformService fhirTransformService = SpringContext.getBean(FhirTransformService.class);
-    
+
     protected TestService testService = SpringContext.getBean(TestService.class);
     protected PanelService panelService = SpringContext.getBean(PanelService.class);
     protected PanelItemService panelItemService = SpringContext.getBean(PanelItemService.class);
     protected TypeOfSampleTestService typeOfSampleTestService = SpringContext.getBean(TypeOfSampleTestService.class);
     protected ElectronicOrderService electronicOrderService = SpringContext.getBean(ElectronicOrderService.class);
     private TypeOfSampleService typeOfSampleService = SpringContext.getBean(TypeOfSampleService.class);
-    
+
 
     private Map<TypeOfSample, PanelTestLists> typeOfSampleMap;
     private Map<Panel, List<TypeOfSample>> panelSampleTypesMap;
@@ -114,7 +113,7 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
         String orderNumber = request.getParameter("orderNumber");
         eOrders = electronicOrderService.getElectronicOrdersByExternalId(orderNumber);
         System.out.println("LabOrderSearchProvider:OrderNumber: " + orderNumber);
-        
+
         if (eOrders.isEmpty()) {
             eOrders = fhirTransformService.getFhirOrdersById(orderNumber);
             if (eOrders.isEmpty()) {
@@ -132,18 +131,18 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
         System.out.println("task: " + fhirContext.newJsonParser().encodeResourceToString(task));
 
         Bundle srBundle = (Bundle) localFhirClient.search().forResource(ServiceRequest.class)
-                .where(new TokenClientParam("identifier").exactly().code(orderNumber))
+                .where(ServiceRequest.IDENTIFIER.exactly().code(orderNumber))
                 .prettyPrint()
                 .execute();
 
         System.out.println("srBundle: " + fhirContext.newJsonParser().encodeResourceToString(srBundle));
-//        System.out.println("task.getBasedOn().get(0).getReferenceElement().getIdPart(): " 
+//        System.out.println("task.getBasedOn().get(0).getReferenceElement().getIdPart(): "
 //                + task.getBasedOn().get(0).getReferenceElement().getIdPart());
-        
+
         serviceRequest = null;
         if (srBundle.getEntry().size() == 0 ) {
             srBundle = (Bundle) localFhirClient.search().forResource(ServiceRequest.class)
-                    .where(new TokenClientParam("_id").exactly().code(orderNumber))
+                    .where(ServiceRequest.RES_ID.exactly().code(orderNumber))
                     .prettyPrint()
                     .execute();
         }
@@ -157,10 +156,10 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
         System.out.println("serviceRequest: " + fhirContext.newJsonParser().encodeResourceToString(serviceRequest));
 
         Bundle pBundle = (Bundle) localFhirClient.search().forResource(Patient.class)
-                .where(new TokenClientParam("_id").exactly()
+                .where(Patient.RES_ID.exactly()
                         .code(serviceRequest.getSubject().getReferenceElement().getIdPart()))
                 .prettyPrint().execute();
-        
+
         patient = null;
         for (BundleEntryComponent bundleComponent : pBundle.getEntry()) {
             if (bundleComponent.hasResource()
@@ -207,7 +206,7 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
                 patientGuid = identifier.getId();
             }
         }
-        
+
         System.out.println("patientGuid: " + patientGuid);
 
         createOrderXML(eOrder.getData(), patientGuid, xml);
@@ -269,7 +268,7 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
             }
             i++;
         }
-        
+
         addToTestOrPanel(tests, loinc);
 
     }
