@@ -2,6 +2,7 @@ package org.openelisglobal.test.service;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -115,5 +116,7 @@ public interface TestService extends BaseObjectService<Test, String> {
     Test getTestByName(String testName);
 
     List<Test> getActiveTestByName(String testName);
+
+    Optional<Test> getActiveTestByLoincCodeAndSampleType(String loincCode, String sampleTypeId);
 
 }
