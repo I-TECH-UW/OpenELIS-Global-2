@@ -92,7 +92,8 @@ KEYSTORE_PWD = ''
 TRUSTSTORE_PWD = ''
 ENCRYPTION_KEY = ''
 LOCAL_FHIR_SERVER_ADDRESS = 'https://fhir.openelisci.org:8443/hapi-fhir-jpaserver/fhir/'
-OPENMRS_SERVER_ADDRESS = 'https://isanteplusdemo.com/openmrs/ws/fhir2/'
+REMOTE_FHIR_SOURCE = 'https://isanteplusdemo.com/openmrs/ws/fhir2/'
+REMOTE_FHIR_SOURCE_UPDATE_STATUS = False
 CONSOLIDATED_SERVER_ADDRESS = 'https://hub.openelisci.org:8444/fhir'
 
 #Stateful objects
@@ -324,8 +325,10 @@ def create_properties_files():
             line = line.replace("[% encryption_key %]", ENCRYPTION_KEY) 
         if line.find("[% local_fhir_server_address %]")  >= 0:
             line = line.replace("[% local_fhir_server_address %]", LOCAL_FHIR_SERVER_ADDRESS) 
-        if line.find("[% open_mrs_server_address %]")  >= 0:
-            line = line.replace("[% open_mrs_server_address %]", OPENMRS_SERVER_ADDRESS) 
+        if line.find("[% remote_fhir_server_address %]")  >= 0:
+            line = line.replace("[% remote_fhir_server_address %]", REMOTE_FHIR_SOURCE) 
+        if line.find("[% remote_source_update_status %]")  >= 0:
+            line = line.replace("[% remote_source_update_status %]", REMOTE_FHIR_SOURCE_UPDATE_STATUS) 
         if line.find("[% consolidated_server_address %]")  >= 0:
             line = line.replace("[% consolidated_server_address %]", CONSOLIDATED_SERVER_ADDRESS) 
 
@@ -942,7 +945,7 @@ def get_encryption_key():
         
         
 def get_server_addresses():
-    global LOCAL_FHIR_SERVER_ADDRESS, OPENMRS_SERVER_ADDRESS, CONSOLIDATED_SERVER_ADDRESS
+    global LOCAL_FHIR_SERVER_ADDRESS, REMOTE_FHIR_SOURCE, CONSOLIDATED_SERVER_ADDRESS
 
     print """
     Enter the full server path to the local fhir store 
@@ -956,13 +959,24 @@ def get_server_addresses():
             LOCAL_FHIR_SERVER_ADDRESS = fhir_server_address
     
     print """
-    Enter the full server path to the OpenMRS instance you'd like to poll for Fhir Tasks. 
-    Leave blank to disable the OpenMRS bridge
+    Enter the full server path to the remote fhir instance you'd like to poll for Fhir Tasks (eg. OpenMRS) . 
+    Leave blank to disable polling a remote instance
     """
-    OPENMRS_SERVER_ADDRESS = raw_input("OpenMRS address: ")
-    if OPENMRS_SERVER_ADDRESS:
-        if not OPENMRS_SERVER_ADDRESS.startswith("https://"):
-            OPENMRS_SERVER_ADDRESS = "https://" + OPENMRS_SERVER_ADDRESS
+    REMOTE_FHIR_SOURCE = raw_input("Remote Fhir Address: ")
+    if REMOTE_FHIR_SOURCE:
+        if not REMOTE_FHIR_SOURCE.startswith("https://"):
+            REMOTE_FHIR_SOURCE = "https://" + REMOTE_FHIR_SOURCE
+    
+    if REMOTE_FHIR_SOURCE:
+        while True: 
+            statusResponse = raw_input("Should OpenELIS update the status of the remote fhir source? [Y]es [N]o: ")
+            updateStatus = statusResponse[0].lower() 
+            if statusResponse == '' or not updateStatus in ['y','n']: 
+                print('Please answer with yes or no!') 
+            else:
+                if updateStatus == 'y':
+                    REMOTE_FHIR_SOURCE_UPDATE_STATUS = True
+                break 
             
     print """
     Enter the full server path to the consolidated server to send data to. 

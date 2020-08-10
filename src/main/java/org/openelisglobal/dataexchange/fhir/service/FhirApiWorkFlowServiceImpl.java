@@ -49,13 +49,14 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
     private String localFhirStorePath;
     @Value("${org.openelisglobal.remote.source.uri}")
     private Optional<String> remoteStorePath;
+    @Value("${org.openelisglobal.remote.source.updateStatus}")
+    private Optional<Boolean> remoteStoreUpdateStatus;
     @Value("${org.openelisglobal.remote.source.identifier}")
     private Optional<String> remoteStoreIdentifier;
     @Value("${org.openelisglobal.task.useBasedOn}")
     private Boolean useBasedOn;
 
-    @Scheduled(initialDelay = 10 * 1000, fixedRate = 60000 * 1000)
-
+    @Scheduled(initialDelay = 10 * 1000, fixedRate = 5 * 60 * 1000)
     @Override
     public void pollForRemoteTasks() {
         processWorkflow(ResourceType.Task);
@@ -81,8 +82,8 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
     private void beginTaskPath() {
 
         Map<String, List<String>> remoteSearchParams = new HashMap<>();
+        remoteSearchParams.put("status", Arrays.asList("REQUESTED"));
         if (remoteStoreIdentifier.isPresent() && !GenericValidator.isBlankOrNull(remoteStoreIdentifier.get())) {
-            remoteSearchParams.put("status", Arrays.asList("REQUESTED"));
             remoteSearchParams.put("owner", Arrays.asList(remoteStoreIdentifier.get()));
 //            remoteSearchParams.put("owner", Arrays.asList("Practitioner/f9badd80-ab76-11e2-9e96-0800200c9a66"));
         }
@@ -168,6 +169,10 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
 
                     TaskStatus taskStatus = taskOrderAcceptedFlag ? TaskStatus.ACCEPTED : TaskStatus.REJECTED;
                     localTask.setStatus(taskStatus);
+                    if (remoteStoreUpdateStatus.isPresent() && remoteStoreUpdateStatus.get()) {
+                        remoteTask.setStatus(TaskStatus.ACCEPTED);
+                        sourceFhirClient.update().resource(remoteTask).execute();
+                    }
                     localFhirClient.update().resource(localTask).execute();
                     if (useBasedOn) {
                         taskBasedOnRemoteTask.setStatus(taskStatus);
@@ -208,9 +213,8 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
 
     private Task getLocalTaskBasedOnTask(Task remoteTask) {
         Map<String, List<String>> localSearchParams = new HashMap<>();
-        localSearchParams.put(Task.SP_BASED_ON,
-                Arrays.asList(remoteStorePath.get() + ResourceType.Task.toString() + "/"
-                        + remoteTask.getIdElement().getIdPart()));
+        localSearchParams.put(Task.SP_BASED_ON, Arrays.asList(
+                remoteStorePath.get() + ResourceType.Task.toString() + "/" + remoteTask.getIdElement().getIdPart()));
 
         IGenericClient localFhirClient = fhirContext.newRestfulGenericClient(localFhirStorePath);
         Bundle localBundle = localFhirClient.search().forResource(Task.class).whereMap(localSearchParams)
@@ -419,7 +423,6 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
 //      fhirContext.newRestfulGenericClient(localFhirStorePath).update().resource(forPatient).execute();
         return forPatient;
     }
-
 
     // these methods can find the results in the bundle when include is used instead
     // of reaching back to the server
