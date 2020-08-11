@@ -82,7 +82,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
     private void beginTaskPath() {
 
         Map<String, List<String>> remoteSearchParams = new HashMap<>();
-        remoteSearchParams.put("status", Arrays.asList("REQUESTED"));
+        remoteSearchParams.put("status", Arrays.asList("REQUESTED", "requested"));
         if (remoteStoreIdentifier.isPresent() && !GenericValidator.isBlankOrNull(remoteStoreIdentifier.get())) {
             remoteSearchParams.put("owner", Arrays.asList(remoteStoreIdentifier.get()));
 //            remoteSearchParams.put("owner", Arrays.asList("Practitioner/f9badd80-ab76-11e2-9e96-0800200c9a66"));

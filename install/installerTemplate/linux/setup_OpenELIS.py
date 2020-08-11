@@ -93,7 +93,7 @@ TRUSTSTORE_PWD = ''
 ENCRYPTION_KEY = ''
 LOCAL_FHIR_SERVER_ADDRESS = 'https://fhir.openelisci.org:8443/hapi-fhir-jpaserver/fhir/'
 REMOTE_FHIR_SOURCE = 'https://isanteplusdemo.com/openmrs/ws/fhir2/'
-REMOTE_FHIR_SOURCE_UPDATE_STATUS = False
+REMOTE_FHIR_SOURCE_UPDATE_STATUS = "false"
 CONSOLIDATED_SERVER_ADDRESS = 'https://hub.openelisci.org:8444/fhir'
 
 #Stateful objects
@@ -975,7 +975,7 @@ def get_server_addresses():
                 print('Please answer with yes or no!') 
             else:
                 if updateStatus == 'y':
-                    REMOTE_FHIR_SOURCE_UPDATE_STATUS = True
+                    REMOTE_FHIR_SOURCE_UPDATE_STATUS = "true"
                 break 
             
     print """
