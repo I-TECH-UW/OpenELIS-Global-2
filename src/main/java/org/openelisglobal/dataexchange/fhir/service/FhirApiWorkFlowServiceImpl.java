@@ -82,7 +82,8 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
     private void beginTaskPath() {
 
         Map<String, List<String>> remoteSearchParams = new HashMap<>();
-        remoteSearchParams.put("status", Arrays.asList("REQUESTED", "requested"));
+        remoteSearchParams.put("status", Arrays.asList(TaskStatus.REQUESTED.toCode()));
+//      remoteSearchParams.put("status", Arrays.asList("REQUESTED", "requested"));
         if (remoteStoreIdentifier.isPresent() && !GenericValidator.isBlankOrNull(remoteStoreIdentifier.get())) {
             remoteSearchParams.put("owner", Arrays.asList(remoteStoreIdentifier.get()));
 //            remoteSearchParams.put("owner", Arrays.asList("Practitioner/f9badd80-ab76-11e2-9e96-0800200c9a66"));
@@ -170,7 +171,8 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
                     TaskStatus taskStatus = taskOrderAcceptedFlag ? TaskStatus.ACCEPTED : TaskStatus.REJECTED;
                     localTask.setStatus(taskStatus);
                     if (remoteStoreUpdateStatus.isPresent() && remoteStoreUpdateStatus.get()) {
-                        remoteTask.setStatus(TaskStatus.ACCEPTED);
+                        System.out.println("updating remote status to " + taskStatus);
+                        remoteTask.setStatus(taskStatus);
                         sourceFhirClient.update().resource(remoteTask).execute();
                     }
                     localFhirClient.update().resource(localTask).execute();

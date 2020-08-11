@@ -945,7 +945,7 @@ def get_encryption_key():
         
         
 def get_server_addresses():
-    global LOCAL_FHIR_SERVER_ADDRESS, REMOTE_FHIR_SOURCE, CONSOLIDATED_SERVER_ADDRESS
+    global LOCAL_FHIR_SERVER_ADDRESS, REMOTE_FHIR_SOURCE, CONSOLIDATED_SERVER_ADDRESS, REMOTE_FHIR_SOURCE_UPDATE_STATUS
 
     print """
     Enter the full server path to the local fhir store 
