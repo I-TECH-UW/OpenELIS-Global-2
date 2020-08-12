@@ -152,8 +152,8 @@ public class LogbookResultsForm extends BaseForm implements ResultsPagingForm {
         return type;
     }
 
-    public void setType(String logbookType) {
-        this.type = logbookType;
+    public void setType(String type) {
+        this.type = type;
     }
 
     public List<IdValuePair> getReferralReasons() {
