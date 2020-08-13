@@ -103,10 +103,10 @@ public class WorkPlanByTestController extends BaseWorkplanController {
         }
 
         form.setSearchTypes(getTestDropdownList());
-        if (!result.hasFieldErrors("workplanType")) {
-            form.setWorkplanType(oldForm.getWorkplanType());
+        if (!result.hasFieldErrors("type")) {
+            form.setType(oldForm.getType());
         }
-        form.setWorkplanType("test");
+        form.setType("test");
         form.setSearchLabel(MessageUtil.getMessage("workplan.test.types"));
         form.setSearchAction("WorkPlanByTest.do");
 

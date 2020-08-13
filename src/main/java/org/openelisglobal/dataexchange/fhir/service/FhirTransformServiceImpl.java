@@ -73,9 +73,9 @@ public class FhirTransformServiceImpl implements FhirTransformService {
     IGenericClient localFhirClient = fhirContext
             .newRestfulGenericClient(fhirApiWorkFlowService.getLocalFhirStorePath());
     org.hl7.fhir.r4.model.Patient fhirPatient = new org.hl7.fhir.r4.model.Patient();
-    
+
     private IStatusService statusService;
-    
+
     private IStatusService getStatusService() {
         if (statusService == null) {
             statusService = SpringContext.getBean(IStatusService.class);
@@ -101,7 +101,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         ServiceRequest serviceRequest = new ServiceRequest();
         org.hl7.fhir.r4.model.Patient fhirPatient = new org.hl7.fhir.r4.model.Patient();
         Task task = new Task();
-        
+
         try {
             Bundle srBundle = (Bundle) localFhirClient.search().forResource(ServiceRequest.class)
                     .where(new TokenClientParam("_id").exactly().code(srId))
@@ -110,59 +110,61 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 
             if (srBundle.getEntry().size() != 0) {
                 serviceRequest = (ServiceRequest) srBundle.getEntryFirstRep().getResource();
-                
+
                 Bundle pBundle = (Bundle) localFhirClient.search().forResource(org.hl7.fhir.r4.model.Patient.class)
                         .where(new TokenClientParam("_id").exactly().code(serviceRequest.getSubject().getReference().toString()))
                         .prettyPrint().execute();
-                
+
                 fhirPatient = new org.hl7.fhir.r4.model.Patient();
                 if (pBundle.getEntry().size() != 0) {
                     fhirPatient = (org.hl7.fhir.r4.model.Patient) pBundle.getEntryFirstRep().getResource();
                 }
-                
+
                 Bundle tBundle = (Bundle) localFhirClient.search().forResource(Task.class)
                         .where(new ReferenceClientParam("based-on").hasId(serviceRequest.getResourceType() + "/" + srId))
                         .prettyPrint().execute();
-                
+
                 if (tBundle.getEntry().size() != 0) {
                     task = (Task) tBundle.getEntryFirstRep().getResource();
                 }
-                
+
                 System.out.println("FhirTransformServiceImpl:getFhirOrdersById:sr: " +
                         serviceRequest.getIdElement().getIdPart() + " patient: " +
                         fhirPatient.getIdElement().getIdPart() + " task: " +
                         task.getIdElement().getIdPart() );
-               
+
+            } else {
+                return new ArrayList<>();
             }
         } catch (Exception e) {
             System.out.println("FhirTransformServiceImpl:Transform exception: " + e.toString());
             e.printStackTrace();
-        } 
-        
+        }
+
         TaskWorker worker = new TaskWorker(task,
                 fhirContext.newJsonParser().encodeResourceToString(task), serviceRequest,
                 fhirPatient);
 
         TaskInterpreter interpreter = SpringContext.getBean(TaskInterpreter.class);
         worker.setInterpreter(interpreter);
-        
+
         worker.setExistanceChecker(SpringContext.getBean(DBOrderExistanceChecker.class));
-        
+
         IOrderPersister persister = SpringContext.getBean(IOrderPersister.class);
         worker.setPersister(persister);
-        
+
         TaskResult taskResult = null;
         taskResult = worker.handleOrderRequest();
-        
-        
-        
+
+
+
         if (taskResult == TaskResult.OK) {
             task.setStatus(TaskStatus.ACCEPTED);
             localFhirClient.update().resource(task).execute();
-            
+
             MessagePatient messagePatient = interpreter.getMessagePatient();
             messagePatient.setExternalId(fhirPatient.getIdElement().getIdPart());
-            
+
             ElectronicOrder eOrder = new ElectronicOrder();
             eOrder.setExternalId(srId);
             eOrder.setData(fhirContext.newJsonParser().encodeResourceToString(task));
@@ -175,7 +177,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         }
         return eOrders;
     }
-    
+
     @Override
     public String CreateFhirFromOESample(TestResultsXmit result, Patient patient) {
         System.out.println("CreateFhirFromOESample:result ");

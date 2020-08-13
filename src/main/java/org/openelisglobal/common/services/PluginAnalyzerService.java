@@ -94,7 +94,10 @@ public class PluginAnalyzerService {
     private List<AnalyzerTestMapping> createTestMappings(List<TestMapping> nameMappings) {
         ArrayList<AnalyzerTestMapping> testMappings = new ArrayList<>();
         for (TestMapping names : nameMappings) {
-            String testId = getIdForTestName(names.getDbbTestName());
+            String testId = getIdForTestLoincCode(names.getDbbTestLoincCode());
+            if (testId == null) {
+                testId = getIdForTestName(names.getDbbTestName());
+            }
 
             AnalyzerTestMapping analyzerMapping = new AnalyzerTestMapping();
             analyzerMapping.setAnalyzerTestName(names.getAnalyzerTestName());
@@ -102,6 +105,20 @@ public class PluginAnalyzerService {
             testMappings.add(analyzerMapping);
         }
         return testMappings;
+    }
+
+    private String getIdForTestLoincCode(String dbbTestLoincCode) {
+        List<Test> tests = testService.getTestsByLoincCode(dbbTestLoincCode);
+        Test test;
+        if (tests != null && !tests.isEmpty()) {
+            test = tests.get(0);
+            if (test != null) {
+                return test.getId();
+            }
+        }
+        LogEvent.logWarn(this.getClass().getName(), "getIdForTestLoincCode",
+                "Unable to find test " + dbbTestLoincCode + " in test catalog. Searching by name instead");
+        return null;
     }
 
     private String getIdForTestName(String dbbTestName) {
@@ -125,10 +142,18 @@ public class PluginAnalyzerService {
     public static class TestMapping {
         private final String analyzerTestName;
         private final String dbbTestName;
+        private final String dbbTestLoincCode;
 
         public TestMapping(String analyzerTestName, String dbbTestName) {
             this.analyzerTestName = analyzerTestName;
             this.dbbTestName = dbbTestName;
+            this.dbbTestLoincCode = "";
+        }
+
+        public TestMapping(String analyzerTestName, String dbbTestName, String dbbTestLoincCode) {
+            this.analyzerTestName = analyzerTestName;
+            this.dbbTestName = dbbTestName;
+            this.dbbTestLoincCode = dbbTestLoincCode;
         }
 
         public String getAnalyzerTestName() {
@@ -137,6 +162,10 @@ public class PluginAnalyzerService {
 
         public String getDbbTestName() {
             return dbbTestName;
+        }
+
+        public String getDbbTestLoincCode() {
+            return dbbTestLoincCode;
         }
     }
 

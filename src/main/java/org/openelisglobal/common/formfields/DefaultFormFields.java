@@ -137,6 +137,8 @@ public class DefaultFormFields extends AFormFields {
             return new CI_GeneralFormFields().getImplementationAttributes();
         } else if (IActionConstants.FORM_FIELD_SET_KENYA.equals(fieldSet)) {
             return new KenyaFormFields().getImplementationAttributes();
+        } else if (IActionConstants.FORM_FIELD_SET_MAURITIUS.equals(fieldSet)) {
+            return new MauritiusFormFields().getImplementationAttributes();
         }
         return null;
     }

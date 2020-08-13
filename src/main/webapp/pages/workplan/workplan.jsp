@@ -17,13 +17,13 @@
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
-<c:set var="workplanType" value="${form.workplanType}"/>
+<c:set var="type" value="${form.type}"/>
 <c:set var="tests" value="${form.workplanTests}"/>
 <c:set var="testCount" value="${fn:length(tests)}"/>
 <c:set var="currentAccessionNumber" value=""/>
 <c:set var="rowColorIndex" value="2"/>
 
-<c:if test="${not (workplanType == 'test') && not (workplanType == 'panel')}">
+<c:if test="${not (type == 'test') && not (type == 'panel')}">
 <c:set var="testSectionsByName" value="${form.testSectionsByName}"/>
 	<script type="text/javascript" >
 	var testSectionNameIdHash = [];
@@ -65,13 +65,13 @@ function printWorkplan() {
 }
 
 </script>
-<form:hidden path="workplanType"/>
+<form:hidden path="type"/>
 <form:hidden path="testTypeID"/>
 <c:choose>
-<c:when test="${not (workplanType == 'test') && not (workplanType == 'panel')}">
+<c:when test="${not (type == 'test') && not (type == 'panel')}">
 <div id="searchDiv" class="colorFill"  >
 <div id="PatientPage" class="colorFill" style="display:inline" >
-<input type="hidden" name="testName" value='<c:out value="${workplanType}"/>' />
+<input type="hidden" name="testName" value='<c:out value="${type}"/>' />
 <h2><spring:message code="sample.entry.search"/></h2>
 	<table width="30%">
 		<tr>
@@ -115,7 +115,7 @@ function printWorkplan() {
 		<th width="5%" style="text-align: left;">
 			<spring:message code="label.button.remove"/>
 		</th>
-		<c:if test="${workplanType == 'test'}">
+		<c:if test="${type == 'test'}">
 			<th width="3%">&nbsp;</th>
 		</c:if>
     	<th width="10%" style="text-align: left;">
@@ -131,7 +131,7 @@ function printWorkplan() {
 	    	<spring:message code="sample.entry.nextVisit.date"/>
 	    </th>
 	    <% } %>
-		<c:if test="${not (workplanType == 'test')}">
+		<c:if test="${not (type == 'test')}">
 		<th width="3%">&nbsp;</th>
 		<th width="30%" style="text-align: left;">
 			<% if(ConfigurationProperties.getInstance().isPropertyValueEqual(Property.configurationName, "Haiti LNSP")){ %>
@@ -169,7 +169,7 @@ function printWorkplan() {
 						   onclick='disableEnableTest(this,${iter.index});' />
 			    </c:if>
 				</td>
-				<c:if test="${workplanType == 'test'}">
+				<c:if test="${type == 'test'}">
 				<td>
 					<c:if test="${workplanTests.nonconforming}">
 						<img src="./images/nonconforming.gif" />
@@ -195,7 +195,7 @@ function printWorkplan() {
 		    		</c:if>
 	    			</td>
 	    		<% } %>
-					<c:if test="${not (workplanType == 'test')}">
+					<c:if test="${not (type == 'test')}">
 					<td>
 						<c:if test="${workplanTests.nonconforming}">
 							<img src="./images/nonconforming.gif" />
@@ -222,12 +222,12 @@ function printWorkplan() {
 	</tr>
 </Table>
 </c:if>
-<c:if test="${workplanType == 'test' || workplanType == 'panel' }">
+<c:if test="${type == 'test' || type == 'panel' }">
 	<c:if test="${testCount == 0}">
 		<h2><%= MessageUtil.getContextualMessage("result.noTestsFound") %></h2>
 	</c:if>
 </c:if>
-<c:if test="${not (workplanType == 'test') && not (workplanType == 'panel') }">
+<c:if test="${not (type == 'test') && not (type == 'panel') }">
 	<c:if test="${testCount == 0}">
 		<c:if test="${not empty form.testSectionId}">
 		<h2><%=MessageUtil.getContextualMessage("result.noTestsFound") %></h2>

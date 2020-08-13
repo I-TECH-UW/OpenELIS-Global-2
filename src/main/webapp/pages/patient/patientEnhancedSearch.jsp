@@ -439,6 +439,9 @@ function handleSelectedPatient(){
 
 <div id="PatientPage" class="patientEnhancedSearch"
 	style="text-align: left;">
+	    <input
+           id="searchValue"
+           type="hidden"/>
 	<h2><spring:message code="sample.entry.search" /></h2>
 	<table>
 		<tr>
