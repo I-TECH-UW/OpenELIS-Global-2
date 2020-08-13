@@ -48,7 +48,7 @@ public class WorkplanForm extends BaseForm {
 
     // TODO switch to an enum?
     // @Pattern(regexp = "^$|^test$|^panel$", groups = { PrintWorkplan.class })
-    @Pattern(regexp = "^[a-zA-Z-]*", groups = { PrintWorkplan.class })
+    @Pattern(regexp = "^[ a-zA-Z-]*", groups = { PrintWorkplan.class })
     private String type = "";
 
     @Pattern(regexp = "^$|^WorkPlanByPanel.do$|^WorkPlanByTest.do$", groups = { PrintWorkplan.class })
