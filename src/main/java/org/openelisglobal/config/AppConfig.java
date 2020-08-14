@@ -132,7 +132,7 @@ public class AppConfig implements WebMvcConfigurer {
         registry.addResourceHandler("favicon/**").addResourceLocations("/static/favicon/");
         registry.addResourceHandler("fontawesome-free-5.13.1-web/**")
                 .addResourceLocations("/static/fontawesome-free-5.13.1-web/");
-        registry.addResourceHandler("documentation/**").addResourceLocations("classpath:static/documentation/");
+        registry.addResourceHandler("documentation/direct/**").addResourceLocations("classpath:static/documentation/");
     }
 
     @Bean
