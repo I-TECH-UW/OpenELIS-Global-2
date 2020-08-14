@@ -153,7 +153,7 @@ abstract public class CSVColumnBuilder {
     // convert the
     // test description to a column name so we need to truncate
     // It's actually 63 but UTF_8 makes 59 safer.
-    private static final int MAX_POSTGRES_COL_NAME = 59;
+    private static final int MAX_POSTGRES_COL_NAME = 55;
 
     /**
      * the test have to be sorted by the name, because they have to match the pivot
@@ -322,10 +322,10 @@ abstract public class CSVColumnBuilder {
 
     private String prepareColumnName(String columnName) {
         // trim and escape the column name so it is safe from sql injection
-        if (columnName.matches("[a-zA-Z0-9_ -]+")) {
-            return trimToPostgresMaxColumnName("\"" + columnName + "\"");
+        if (columnName.matches("(?i)[a-zàâçéèêëîïôûùüÿñæœ0-9_ ()%/\\[\\]+-]+")) {
+            return "\"" + trimToPostgresMaxColumnName(columnName) + "\"";
         } else {
-            throw new LIMSRuntimeException("cannot add a column name that includes non alpha-numeric characters");
+            throw new LIMSRuntimeException("cannot add a column name that includes dangerous characters");
         }
     }
 

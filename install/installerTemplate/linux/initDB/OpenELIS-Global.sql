@@ -10344,7 +10344,7 @@ COPY clinlims.localization (id, description, english, french, lastupdated) FROM 
 112	test report name	Stat-Pak	Stat-Pak-Sang total	2020-01-22 21:46:11.21754-08
 113	test name	Determine	Determine	2020-01-22 21:46:11.21754-08
 114	test report name	Determine	Determine-Plasma	2020-01-22 21:46:11.21754-08
-115	test name	Murex	Determine	2020-01-22 21:46:11.21754-08
+115	test name	Determine	Determine	2020-01-22 21:46:11.21754-08
 116	test report name	Murex	Determine-Sérum	2020-01-22 21:46:11.21754-08
 117	test name	Vironostika	Determine	2020-01-22 21:46:11.21754-08
 118	test report name	Vironostika	Determine-Sang total	2020-01-22 21:46:11.21754-08
