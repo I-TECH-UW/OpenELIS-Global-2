@@ -63,6 +63,7 @@ then
     fi
 fi
 git pull origin $branch
+git submodule update --recursive
 
 #git rev-list HEAD | tac | nl | tail -n 1 | sed 's/\t/ hash-/g'  |sed 's/\s\{2,\}/revision-/g' > ../../version.txt 
 #cd ../..

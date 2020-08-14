@@ -140,6 +140,8 @@
 		template="/pages/samplebatchentry/routine/patientManagement.jsp">
 		<put-attribute name="patientSearch"
 			value="/pages/samplebatchentry/routine/patientSearch.jsp" />
+		<put-attribute name="patientEnhancedSearch"
+			value="/pages/patient/patientEnhancedSearch.jsp" />
 	</definition>
 
 

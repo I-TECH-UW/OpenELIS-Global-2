@@ -28,7 +28,7 @@ import org.openelisglobal.statusofsample.valueholder.StatusOfSample;
 public class ElectronicOrder extends BaseObject<String> {
 
     public enum SortOrder {
-        LAST_UPDATED("lastUpdated", "eorder.lastupdated"), EXTERNAL_ID("externalId", "eorder.externalid"),
+        LAST_UPDATED("lastupdated", "eorder.lastupdated"), EXTERNAL_ID("externalId", "eorder.externalid"),
         STATUS_ID("statusId", "eorder.status");
 
         private String value;
@@ -71,10 +71,12 @@ public class ElectronicOrder extends BaseObject<String> {
         patient = new ValueHolder();
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }

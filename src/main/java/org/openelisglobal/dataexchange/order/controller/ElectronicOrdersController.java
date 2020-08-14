@@ -24,7 +24,7 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class ElectronicOrdersController extends BaseController {
 
-    private static final String[] ALLOWED_FIELDS = new String[] {};
+    private static final String[] ALLOWED_FIELDS = new String[] { "searchValue", "page", "sortOrder" };
 
     @Autowired
     private StatusOfSampleService statusOfSampleService;
@@ -45,10 +45,13 @@ public class ElectronicOrdersController extends BaseController {
         if (result.hasErrors()) {
             saveErrors(result);
             form.setSortOrder(ElectronicOrder.SortOrder.LAST_UPDATED);
+            form.setSearchValue("");
             form.setPage(1);
         }
+        List<ElectronicOrder> eOrders;
 
-        List<ElectronicOrder> eOrders = electronicOrderService.getAllElectronicOrdersOrderedBy(form.getSortOrder());
+        eOrders = electronicOrderService.getAllElectronicOrdersContainingValueOrderedBy(form.getSearchValue(),
+                form.getSortOrder());
 
         // correct for proper bounds
         int startIndex = (form.getPage() - 1) * 50;

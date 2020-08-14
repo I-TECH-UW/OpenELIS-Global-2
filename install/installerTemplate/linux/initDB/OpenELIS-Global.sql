@@ -10344,7 +10344,7 @@ COPY clinlims.localization (id, description, english, french, lastupdated) FROM 
 112	test report name	Stat-Pak	Stat-Pak-Sang total	2020-01-22 21:46:11.21754-08
 113	test name	Determine	Determine	2020-01-22 21:46:11.21754-08
 114	test report name	Determine	Determine-Plasma	2020-01-22 21:46:11.21754-08
-115	test name	Murex	Determine	2020-01-22 21:46:11.21754-08
+115	test name	Determine	Determine	2020-01-22 21:46:11.21754-08
 116	test report name	Murex	Determine-Sérum	2020-01-22 21:46:11.21754-08
 117	test name	Vironostika	Determine	2020-01-22 21:46:11.21754-08
 118	test report name	Vironostika	Determine-Sang total	2020-01-22 21:46:11.21754-08
@@ -10590,7 +10590,7 @@ COPY clinlims.menu (id, parent_id, presentation_order, element_id, action_url, c
 171	2	10	menu_sample_print_barcode	/PrintBarcode.do	\N	banner.menu.printBarcode	banner.menu.printBarcode	f	t
 89	62	40	menu_reports_export	\N	\N	reports.export.byDate	tooltip.reports.export.byDate	f	t
 174	2	5	menu_sample_eorder	/ElectronicOrders.do	\N	banner.menu.eorders	tooltip.bannner.menu.eorders	f	t
-175	38	1	menu_help_user_manual	/documentation/CI_Regional_fr.pdf	\N	banner.menu.help.usermanual	tooltip.bannner.menu.help.usermanual	t	t
+175	38	1	menu_help_user_manual	/documentation/UserManual	\N	banner.menu.help.usermanual	tooltip.bannner.menu.help.usermanual	t	t
 176	38	2	menu_help_documents	\N	\N	banner.menu.help.documents	tooltip.bannner.menu.help.documents	f	t
 177	176	1	menu_help_form_VL	/documentation/FICHE_DEMANDE_CHARGE_VIRALE_VF_25102016.pdf	\N	banner.menu.help.formVL	tooltip.bannner.menu.help.formVL	t	t
 178	176	2	menu_help_form_DBS	/documentation/DBS_Identn_18Juin2010.pdf	\N	banner.menu.help.formDBS	tooltip.bannner.menu.help.formDBS	t	t

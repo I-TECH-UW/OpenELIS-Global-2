@@ -67,6 +67,7 @@ public class FormFields {
         ResultsReferral, // Can results be referred out
         ValueHozSpaceOnResults, // favors a layout which values horizontal space over vertical space
         InitialSampleCondition, // Allow for collection of sample condition with sample entry
+        SampleNature, // Allow for collection of sample nature with sample entry
         PatientRequired, // By default, a (minimal) patient to go with a sample is required.
         PatientRequired_SampleConfirmation, // Is patient required for sample confirmation
         QA_FULL_PROVIDER_INFO, // Include provider information on non-conformity
@@ -88,6 +89,7 @@ public class FormFields {
         SampleEntryRequesterLastNameRequired, // Is the requester name required
         SAMPLE_ENTRY_USE_REFFERING_PATIENT_NUMBER, // Include referral patient number
         PatientPhone, // Include patient phone with patient info
+        PatientEmail, // Include patient email with patient info
         PatientHealthRegion, // Include patient health region with patient info
         PatientHealthDistrict, // Include patient health district with patient info
         PatientMarriageStatus, // Include patient marriage status with patient info

@@ -77,6 +77,7 @@ import org.openelisglobal.sourceofsample.valueholder.SourceOfSample;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.test.service.TestServiceImpl;
 import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
@@ -185,7 +186,7 @@ public class ResultsReportProvider extends BaseReportsProvider {
         File previewWaterMark = new File(
                 classLoader.getResource("/reports/images/rslts_previewwatermark.gif").getFile());
 
-        Locale locale = SystemConfiguration.getInstance().getDefaultLocale();
+        Locale locale = LocaleContextHolder.getLocale();
         // bugzilla 2227
         Date today = Calendar.getInstance().getTime();
         dateAsText = DateUtil.formatDateAsText(today);

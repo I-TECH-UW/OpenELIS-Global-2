@@ -17,12 +17,12 @@
 */
 package org.openelisglobal.reports.action.implementation.reportBeans;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.openelisglobal.common.valueholder.BaseObject;
-import org.openelisglobal.common.valueholder.SimpleBaseEntity;
 import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
 import org.openelisglobal.gender.service.GenderService;
@@ -38,20 +38,19 @@ import org.openelisglobal.spring.util.SpringContext;
  * @author Paul A. Hill (pahill@uw.edu)
  * @since Feb 1, 2011
  */
-public class ResourceTranslator<T extends BaseObject> {
+public class ResourceTranslator<T extends BaseObject<PK>, PK extends Serializable> {
     /**
      * placed on values that are not actually translated
      */
     public static final String NOT_FOUND_TAG = "%%";
-    protected Map<String, T> map = new HashMap<>();
+    protected Map<PK, T> map = new HashMap<>();
 
     /**
      *
      */
-    @SuppressWarnings("unchecked")
     public ResourceTranslator(List<T> ts) {
         for (T t : ts) {
-            map.put(((SimpleBaseEntity<String>) t).getId(), t);
+            map.put(((BaseObject<PK>) t).getId(), t);
         }
     }
 
@@ -62,9 +61,8 @@ public class ResourceTranslator<T extends BaseObject> {
      * @param some object
      * @return some value of some field in that object, typicaly the ID.
      */
-    @SuppressWarnings("unchecked")
     protected String getKey(T t) {
-        return ((SimpleBaseEntity<String>) t).getId();
+        return ((BaseObject<PK>) t).getId().toString();
     }
 
     /**
@@ -106,7 +104,7 @@ public class ResourceTranslator<T extends BaseObject> {
         return resource;
     }
 
-    public static class GenderTranslator extends ResourceTranslator<Gender> {
+    public static class GenderTranslator extends ResourceTranslator<Gender, Integer> {
         private static GenderTranslator instance = null;
 
         public static GenderTranslator getInstance() {
@@ -140,7 +138,7 @@ public class ResourceTranslator<T extends BaseObject> {
         }
     }
 
-    public static class DictionaryTranslator extends ResourceTranslator<Dictionary> {
+    public static class DictionaryTranslator extends ResourceTranslator<Dictionary, String> {
         private static DictionaryTranslator instance = null;
 
         public static DictionaryTranslator getInstance() {
@@ -150,7 +148,6 @@ public class ResourceTranslator<T extends BaseObject> {
             return instance;
         }
 
-        @SuppressWarnings("unchecked")
         public DictionaryTranslator() {
             super(SpringContext.getBean(DictionaryService.class).getAll());
         }

@@ -438,6 +438,13 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
 
     @Override
     @Transactional(readOnly = true)
+    public List<Analysis> getAllAnalysisByTestsAndStatus(List<Integer> testIds, List<Integer> analysisStatusList,
+            List<Integer> sampleStatusList) {
+        return getBaseObjectDAO().getAllAnalysisByTestsAndStatus(testIds, analysisStatusList, sampleStatusList);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public List<Analysis> getAllAnalysisByTestSectionAndStatus(String testSectionId, List<Integer> analysisStatusList,
             List<Integer> sampleStatusList) {
         return getBaseObjectDAO().getAllAnalysisByTestSectionAndStatus(testSectionId, analysisStatusList,

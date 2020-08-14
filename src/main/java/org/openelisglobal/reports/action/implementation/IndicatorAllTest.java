@@ -350,7 +350,8 @@ public abstract class IndicatorAllTest extends IndicatorReport implements IRepor
 
     @Override
     protected String getNameForReportRequest() {
-        return MessageUtil.getMessage("openreports.all.tests.aggregate");
+        return "";
+//        return MessageUtil.getMessage("openreports.all.tests.aggregate");
     }
 
     private void setTestAggregates() {

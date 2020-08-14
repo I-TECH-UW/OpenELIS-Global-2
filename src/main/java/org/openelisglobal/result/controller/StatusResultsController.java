@@ -44,7 +44,8 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class StatusResultsController extends BaseController {
 
-    private static final String[] ALLOWED_FIELDS = new String[] {};
+    private static final String[] ALLOWED_FIELDS = new String[] { "collectionDate", "recievedDate", "selectedTest",
+            "selectedAnalysisStatus", "selectedSampleStatus" };
 
     private static final boolean REVERSE_SORT_ORDER = false;
     @Autowired

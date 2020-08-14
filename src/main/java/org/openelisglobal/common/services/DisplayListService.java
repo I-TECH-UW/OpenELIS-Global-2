@@ -73,7 +73,7 @@ public class DisplayListService implements LocaleChangeListener {
         ORDERABLE_TESTS, ALL_TESTS, REJECTION_REASONS, REFERRAL_REASONS, REFERRAL_ORGANIZATIONS, TEST_LOCATION_CODE,
         PROGRAM, RESULT_TYPE_LOCALIZED, RESULT_TYPE_RAW, UNIT_OF_MEASURE, UNIT_OF_MEASURE_ACTIVE,
         UNIT_OF_MEASURE_INACTIVE, DICTIONARY_TEST_RESULTS, LAB_COMPONENT, SEVERITY_CONSEQUENCES_LIST,
-        SEVERITY_RECURRENCE_LIST, ACTION_TYPE_LIST, LABORATORY_COMPONENT
+        SEVERITY_RECURRENCE_LIST, ACTION_TYPE_LIST, LABORATORY_COMPONENT, SAMPLE_NATURE
     }
 
     private static Map<ListType, List<IdValuePair>> typeToListMap;
@@ -141,6 +141,7 @@ public class DisplayListService implements LocaleChangeListener {
         typeToListMap.put(ListType.SAMPLE_TYPE_INACTIVE, createSampleTypeList(true));
         typeToListMap.put(ListType.INITIAL_SAMPLE_CONDITION,
                 createFromDictionaryCategoryLocalizedSort("specimen reception condition"));
+        typeToListMap.put(ListType.SAMPLE_NATURE, createFromDictionaryCategoryLocalizedSort("specimen nature"));
         typeToListMap.put(ListType.PATIENT_HEALTH_REGIONS, createPatientHealthRegions());
         typeToListMap.put(ListType.PATIENT_MARITAL_STATUS,
                 createFromDictionaryCategoryLocalizedSort("Marital Status Demographic Information"));
@@ -294,6 +295,7 @@ public class DisplayListService implements LocaleChangeListener {
         typeToListMap.put(ListType.SAMPLE_TYPE_INACTIVE, createSampleTypeList(true));
         typeToListMap.put(ListType.INITIAL_SAMPLE_CONDITION,
                 createFromDictionaryCategoryLocalizedSort("specimen reception condition"));
+        typeToListMap.put(ListType.SAMPLE_NATURE, createFromDictionaryCategoryLocalizedSort("specimen nature"));
         typeToListMap.put(ListType.PATIENT_HEALTH_REGIONS, createPatientHealthRegions());
         typeToListMap.put(ListType.PATIENT_MARITAL_STATUS,
                 createFromDictionaryCategoryLocalizedSort("Marital Status Demographic Information"));

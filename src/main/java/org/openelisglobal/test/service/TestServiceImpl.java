@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Vector;
 
 import javax.annotation.PostConstruct;
@@ -467,6 +468,25 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
     @Transactional(readOnly = true)
     public List<Test> getActiveTestsByLoinc(String loincCode) {
         return getBaseObjectDAO().getActiveTestsByLoinc(loincCode);
+    }
+
+    @Override
+    public List<Test> getActiveTestsByLoinc(String[] loincCodes) {
+        return getBaseObjectDAO().getActiveTestsByLoinc(loincCodes);
+    }
+
+    @Override
+    public Optional<Test> getActiveTestByLoincCodeAndSampleType(String loincCode, String sampleTypeId) {
+        List<Test> tests = getBaseObjectDAO().getActiveTestsByLoinc(loincCode);
+        for (Test test : tests) {
+            for (TypeOfSampleTest typeOfSampleTest : typeOfSampleTestService
+                    .getTypeOfSampleTestsForTest(test.getId())) {
+                if (typeOfSampleTest.getTypeOfSampleId().equals(sampleTypeId)) {
+                    return Optional.of(test);
+                }
+            }
+        }
+        return Optional.empty();
     }
 
     @Override

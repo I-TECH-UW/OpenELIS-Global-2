@@ -141,8 +141,8 @@ abstract public class CSVRoutineColumnBuilder {
     // This is the largest value possible for a postgres column name. The code will
     // convert the
     // test description to a column name so we need to truncate
-    // It's actually 63 but UTF_8 makes 59 safer.
-    private static final int MAX_POSTGRES_COL_NAME = 59;
+    // It's actually 63 but UTF_8 makes 55 safer.
+    private static final int MAX_POSTGRES_COL_NAME = 55;
 
     /**
      * the test have to be sorted by the name, because they have to match the pivot
@@ -306,10 +306,10 @@ abstract public class CSVRoutineColumnBuilder {
 
     private String prepareColumnName(String columnName) {
         // trim and escape the column name so it is safe from sql injection
-        if (columnName.matches("[a-zA-Z0-9_ -]+")) {
-            return trimToPostgresMaxColumnName("\"" + columnName + "\"");
+        if (columnName.matches("(?i)[a-zàâçéèêëîïôûùüÿñæœ0-9_ ()%/\\[\\]+-]+")) {
+            return "\"" + trimToPostgresMaxColumnName(columnName) + "\"";
         } else {
-            throw new LIMSRuntimeException("cannot add a column name that includes non alpha-numeric characters");
+            throw new LIMSRuntimeException("cannot add a column name that includes dangerous characters");
         }
     }
 
@@ -407,13 +407,13 @@ abstract public class CSVRoutineColumnBuilder {
                 }
                 switch (orderStatus) {
                 case Entered:
-                    return "Saisie"; // entered,
+                    return "Entered"; // entered,
                 case Started:
-                    return "En_Cours"; // commenced,
+                    return "Started"; // commenced,
                 case Finished:
-                    return "Fini"; // Finished,
+                    return "Finished"; // Finished,
                 case NonConforming_depricated:
-                    return "Non-conforme"; // Non-conforming, Non-conformes
+                    return "Non-conforming"; // Non-conforming, Non-conformes
                 }
 
             case DEBUG:

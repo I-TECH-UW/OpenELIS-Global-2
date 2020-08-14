@@ -45,7 +45,7 @@ public class SamplePatientEntryForm extends BaseForm {
 
     // for display
     private PatientSearch patientSearch;
-    
+
  // for display
     private PatientEnhancedSearch patientEnhancedSearch;
 
@@ -57,6 +57,9 @@ public class SamplePatientEntryForm extends BaseForm {
 
     // for display
     private List<IdValuePair> initialSampleConditionList;
+
+    // for display
+    private List<IdValuePair> sampleNatureList;
 
     // for display
     private List<IdValuePair> testSectionList;
@@ -123,7 +126,7 @@ public class SamplePatientEntryForm extends BaseForm {
     public void setPatientSearch(PatientSearch patientSearch) {
         this.patientSearch = patientSearch;
     }
-    
+
     public PatientEnhancedSearch getPatientEnhancedSearch() {
         return patientEnhancedSearch;
     }
@@ -170,5 +173,13 @@ public class SamplePatientEntryForm extends BaseForm {
 
     public void setWarning(Boolean warning) {
         this.warning = warning;
+    }
+
+    public List<IdValuePair> getSampleNatureList() {
+        return sampleNatureList;
+    }
+
+    public void setSampleNatureList(List<IdValuePair> sampleNatureList) {
+        this.sampleNatureList = sampleNatureList;
     }
 }
