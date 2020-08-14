@@ -37,4 +37,9 @@ public class ElectronicOrderServiceImpl extends BaseObjectServiceImpl<Electronic
         return getBaseObjectDAO().getElectronicOrdersByExternalId(id);
     }
 
+    @Override
+    public List<ElectronicOrder> getAllElectronicOrdersContainingValueOrderedBy(String searchValue, SortOrder order) {
+        return getBaseObjectDAO().getAllElectronicOrdersContainingValueOrderedBy(searchValue, order);
+    }
+
 }
