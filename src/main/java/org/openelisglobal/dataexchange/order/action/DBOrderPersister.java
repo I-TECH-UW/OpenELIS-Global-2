@@ -40,12 +40,14 @@ import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.systemuser.service.SystemUserService;
 import org.openelisglobal.systemuser.valueholder.SystemUser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Scope("prototype")
+@Primary
 public class DBOrderPersister implements IOrderPersister {
 
     private String SERVICE_USER_ID;
@@ -86,7 +88,12 @@ public class DBOrderPersister implements IOrderPersister {
     }
 
     private void persist(MessagePatient orderPatient) {
-        patient = patientService.getPatientByExternalId(orderPatient.getExternalId());
+        if (!GenericValidator.isBlankOrNull(orderPatient.getGuid())) {
+            patient = patientService.getPatientForGuid(orderPatient.getGuid());
+        }
+        if (patient == null && !GenericValidator.isBlankOrNull(orderPatient.getExternalId())) {
+            patient = patientService.getPatientByExternalId(orderPatient.getExternalId());
+        }
         if (patient == null) {
             createNewPatient(orderPatient);
         } else {
@@ -114,11 +121,12 @@ public class DBOrderPersister implements IOrderPersister {
         }
 
         List<PatientIdentity> identities = new ArrayList<>();
-        if (orderPatient.getExternalId().length() == 0) //HL7
+        if (orderPatient.getExternalId().length() == 0) {
             addIdentityIfAppropriate(IDENTITY_GUID_ID, orderPatient.getGuid(), identities);
-        else //FHIR
+        } else {
             addIdentityIfAppropriate(IDENTITY_GUID_ID, orderPatient.getExternalId(), identities);
-        
+        }
+
         addIdentityIfAppropriate(IDENTITY_STNUMBER_ID, orderPatient.getStNumber(), identities);
         addIdentityIfAppropriate(IDENTITY_OBNUMBER_ID, orderPatient.getObNumber(), identities);
         addIdentityIfAppropriate(IDENTITY_PCNUMBER_ID, orderPatient.getPcNumber(), identities);

@@ -14,6 +14,8 @@ import org.openelisglobal.common.servlet.validation.AjaxXMLServlet;
 import org.openelisglobal.dataexchange.aggregatereporting.IndicatorAggregationReportingServlet;
 import org.openelisglobal.dataexchange.order.action.OrderRawServlet;
 import org.openelisglobal.dataexchange.order.action.OrderServlet;
+import org.openelisglobal.dataexchange.order.legacy.action.LegacyOrderRawServlet;
+import org.openelisglobal.dataexchange.order.legacy.action.LegacyOrderServlet;
 import org.openelisglobal.metricservice.action.MetricServicesServlet;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
@@ -101,6 +103,16 @@ public class AnnotationWebAppInitializer implements WebApplicationInitializer {
                 OrderRawServlet.class);
         orderRequestRawServlet.setLoadOnStartup(++startupOrder);
         orderRequestRawServlet.addMapping("/OrderRequest_Raw");
+
+        ServletRegistration.Dynamic legacyOrderServlet = servletContext.addServlet("LegacyOrderRequestServlet",
+                LegacyOrderServlet.class);
+        legacyOrderServlet.setLoadOnStartup(++startupOrder);
+        legacyOrderServlet.addMapping("/LegacyOrderRequest");
+
+        ServletRegistration.Dynamic legacyOrderRequestRawServlet = servletContext
+                .addServlet("LegacyOrderRequestRawServlet", LegacyOrderRawServlet.class);
+        legacyOrderRequestRawServlet.setLoadOnStartup(++startupOrder);
+        legacyOrderRequestRawServlet.addMapping("/LegacyOrderRequest_Raw");
 
         ServletRegistration.Dynamic labelMakerServlet = servletContext.addServlet("LabelMakerServlet",
                 LabelMakerServlet.class);
