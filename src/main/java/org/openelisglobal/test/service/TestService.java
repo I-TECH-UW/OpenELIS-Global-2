@@ -119,4 +119,10 @@ public interface TestService extends BaseObjectService<Test, String> {
 
     Optional<Test> getActiveTestByLoincCodeAndSampleType(String loincCode, String sampleTypeId);
 
+    void deactivateAllTests();
+
+    void activateTests(List<String> testNames);
+
+    void activateTestsAndDeactivateOthers(List<String> asList);
+
 }

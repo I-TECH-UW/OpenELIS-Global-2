@@ -23,9 +23,9 @@ import java.util.Map;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 
-import org.openelisglobal.dataexchange.order.action.DBOrderExistanceChecker;
-import org.openelisglobal.dataexchange.order.action.DBOrderPersister;
+import org.openelisglobal.dataexchange.order.action.IOrderExistanceChecker;
 import org.openelisglobal.dataexchange.order.action.IOrderInterpreter.InterpreterResults;
+import org.openelisglobal.dataexchange.order.action.IOrderPersister;
 import org.openelisglobal.dataexchange.order.action.OrderWorker;
 import org.openelisglobal.dataexchange.order.action.OrderWorker.OrderResult;
 import org.openelisglobal.spring.util.SpringContext;
@@ -75,8 +75,8 @@ public class LegacyOrderServlet extends HohServlet{
 			OrderWorker worker = new OrderWorker(message);
 
             worker.setInterpreter(SpringContext.getBean(LegacyHL7OrderInterpreter.class));
-            worker.setExistanceChecker(SpringContext.getBean(DBOrderExistanceChecker.class));
-            worker.setPersister(SpringContext.getBean(DBOrderPersister.class));
+            worker.setExistanceChecker(SpringContext.getBean(IOrderExistanceChecker.class));
+            worker.setPersister(SpringContext.getBean(IOrderPersister.class));
 
 			OrderResult orderResult = worker.handleOrderRequest();
 

@@ -1,5 +1,6 @@
 package org.openelisglobal.config;
 
+import javax.servlet.MultipartConfigElement;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
@@ -24,6 +25,9 @@ import org.springframework.web.servlet.DispatcherServlet;
 
 public class AnnotationWebAppInitializer implements WebApplicationInitializer {
 
+    private String TMP_FOLDER = System.getProperty("java.io.tmpdir");
+    private int MAX_UPLOAD_SIZE = 5 * 1024 * 1024;
+
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
         AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext();
@@ -42,6 +46,9 @@ public class AnnotationWebAppInitializer implements WebApplicationInitializer {
                 new DispatcherServlet(dispatcherContext));
         dispatcher.setLoadOnStartup(++startupOrder);
         dispatcher.addMapping("/");
+        MultipartConfigElement multipartConfigElement = new MultipartConfigElement(TMP_FOLDER, MAX_UPLOAD_SIZE,
+                MAX_UPLOAD_SIZE * 2, MAX_UPLOAD_SIZE / 2);
+        dispatcher.setMultipartConfig(multipartConfigElement);
 
         ServletRegistration.Dynamic logoUploadServlet = servletContext.addServlet("logoUpload",
                 LogoUploadServlet.class);

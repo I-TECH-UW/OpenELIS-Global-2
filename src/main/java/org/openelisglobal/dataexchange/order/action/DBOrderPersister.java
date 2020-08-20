@@ -121,7 +121,7 @@ public class DBOrderPersister implements IOrderPersister {
         }
 
         List<PatientIdentity> identities = new ArrayList<>();
-        if (orderPatient.getExternalId().length() == 0) {
+        if (GenericValidator.isBlankOrNull(orderPatient.getExternalId())) {
             addIdentityIfAppropriate(IDENTITY_GUID_ID, orderPatient.getGuid(), identities);
         } else {
             addIdentityIfAppropriate(IDENTITY_GUID_ID, orderPatient.getExternalId(), identities);

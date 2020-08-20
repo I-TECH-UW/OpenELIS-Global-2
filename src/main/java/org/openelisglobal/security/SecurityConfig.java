@@ -27,8 +27,9 @@ public class SecurityConfig {
     private UserDetailsService userDetailsService;
 
     // pages that have special security constraints
-    public static final String[] OPEN_PAGES = { "/ChangePasswordLogin.do", "/UpdateLoginChangePassword.do",
-            "/LoginPage.do" };
+    public static final String[] OPEN_PAGES = { "/LegacyOrderRequest", "/ChangePasswordLogin.do",
+            "/UpdateLoginChangePassword.do" };
+    public static final String[] LOGIN_PAGES = { "/LoginPage.do", "/ValidateLogin.do" };
     public static final String[] AUTH_OPEN_PAGES = { "/Home.do", "/Dashboard.do", "/Logout.do", "/MasterListsPage.do" };
     public static final String[] RESOURCE_PAGES = { "/css/**", "/favicon/**", "/images/**", "/documentation/**",
             "/scripts/**", "/jsp/**" };
@@ -92,24 +93,25 @@ public class SecurityConfig {
 //        }
 //    }
 
-//
-//    @Configuration
-//    @Order(3)
-//    public static class openSecurityConfiguration extends WebSecurityConfigurerAdapter {
-//        @Override
-//        protected void configure(HttpSecurity http) throws Exception {
-//            CharacterEncodingFilter filter = new CharacterEncodingFilter();
-//            filter.setEncoding("UTF-8");
-//            filter.setForceEncoding(true);
-//            http.addFilterBefore(filter, CsrfFilter.class);
-//
-//            // for all requests going to a http basic page, use this security configuration
-//            http.requestMatchers().antMatchers(OPEN_PAGES).and().authorizeRequests().anyRequest().permitAll().and()
-//                    // disable csrf as it is not needed for httpBasic
-//                    .csrf().disable();
-//        }
-//
-//    }
+
+    @Configuration
+    @Order(2)
+    public static class openSecurityConfiguration extends WebSecurityConfigurerAdapter {
+        @Override
+        protected void configure(HttpSecurity http) throws Exception {
+            CharacterEncodingFilter filter = new CharacterEncodingFilter();
+            filter.setEncoding("UTF-8");
+            filter.setForceEncoding(true);
+            http.addFilterBefore(filter, CsrfFilter.class);
+
+            // for all requests going to open pages, use this security configuration
+            http.requestMatchers().antMatchers(OPEN_PAGES).and().authorizeRequests().anyRequest().permitAll().and()
+                    // disable csrf as it is not needed for open pages
+                    .csrf().disable()
+                    .headers().frameOptions().sameOrigin().contentSecurityPolicy(CONTENT_SECURITY_POLICY);
+        }
+
+    }
 
     @Configuration
     public static class defaultSecurityConfiguration extends WebSecurityConfigurerAdapter {
@@ -123,7 +125,7 @@ public class SecurityConfig {
 
             http.authorizeRequests()
                     // allow all users to access these pages no matter authentication status
-                    .antMatchers(OPEN_PAGES).permitAll().antMatchers(RESOURCE_PAGES).permitAll()
+                    .antMatchers(LOGIN_PAGES).permitAll().antMatchers(RESOURCE_PAGES).permitAll()
                     // ensure all other requests are authenticated
                     .anyRequest().authenticated().and()
                     // setup login redirection and logic
