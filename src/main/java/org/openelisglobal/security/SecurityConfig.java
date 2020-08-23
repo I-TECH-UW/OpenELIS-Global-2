@@ -27,6 +27,7 @@ public class SecurityConfig {
     private UserDetailsService userDetailsService;
 
     // pages that have special security constraints
+    // TODO move LegacyOrderRequest to basic auth
     public static final String[] OPEN_PAGES = { "/LegacyOrderRequest", "/ChangePasswordLogin.do",
             "/UpdateLoginChangePassword.do" };
     public static final String[] LOGIN_PAGES = { "/LoginPage.do", "/ValidateLogin.do" };
