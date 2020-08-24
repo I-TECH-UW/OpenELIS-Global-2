@@ -112,6 +112,13 @@
 		<put-attribute name="footer"
 			value="/pages/login/loginChangePasswordButtons.jsp" />
 	</definition>
+	
+			<!--OpenlmisTAB -->
+	<definition name="openlmisPageDefinition"
+		extends="baseMenuDefinition">
+		<put-attribute name="body"
+			value="/pages/openlmis/openlmisPage.jsp" />
+	</definition>
 
 	<!--MASTERLISTSTAB -->
 	<definition name="masterListsPageDefinition"
@@ -119,7 +126,7 @@
 		<put-attribute name="body"
 			value="masterListsPageBodyDefinition" />
 	</definition>
-
+	
 	<definition name="masterListsPageBodyDefinition"
 		template="/pages/menu/masterListsTab/masterListsPage.jsp">
 		<put-attribute name="left"
