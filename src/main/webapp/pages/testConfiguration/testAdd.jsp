@@ -1346,7 +1346,7 @@ td {
                         <span class="sexRange_0" style="display: none">
                             <spring:message code="sex.male" />
                         </span>
-                </td>ocalization
+                </td>
                 <td><input class="yearMonthSelect_0" type="radio" name="time_0" value="<%=MessageUtil.getContextualMessage("abbreviation.year.single")%>"
                            onchange="upperAgeRangeChanged('0')" checked><spring:message code="abbreviation.year.single" />
                     <input class="yearMonthSelect_0" type="radio" name="time_0" value="<%=MessageUtil.getContextualMessage("abbreviation.month.single")%>"
