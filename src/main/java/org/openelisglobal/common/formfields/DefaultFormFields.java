@@ -25,7 +25,7 @@ import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 
 public class DefaultFormFields extends AFormFields {
-    private HashMap<FormFields.Field, Boolean> defaultAttributes = new HashMap<>();
+    private HashMap<FormFields.Field, FormField> defaultAttributes = new HashMap<>();
 
     {
         /*
@@ -106,23 +106,39 @@ public class DefaultFormFields extends AFormFields {
         setFieldFalse(Field.TEST_LOCATION_CODE);
         setFieldFalse(Field.SampleNature);
         setFieldFalse(Field.PatientEmail);
+
+        setFieldLabelKey(Field.PatientHealthRegion, "person.health.region");
+        setFieldLabelKey(Field.PatientHealthDistrict, "person.health.district");
     }
 
-    @Override
-    protected HashMap<Field, Boolean> getDefaultAttributes() {
-        return defaultAttributes;
+    private void setFieldLabelKey(Field field, String labelKey) {
+        if (!defaultAttributes.containsKey(field)) {
+            defaultAttributes.put(field, new FormField());
+        }
+        defaultAttributes.get(field).setLabelKey(labelKey);
     }
 
     private void setFieldFalse(Field field) {
-        defaultAttributes.put(field, Boolean.FALSE);
+        if (!defaultAttributes.containsKey(field)) {
+            defaultAttributes.put(field, new FormField());
+        }
+        defaultAttributes.get(field).setInUse(false);
     }
 
     private void setFieldTrue(Field field) {
-        defaultAttributes.put(field, Boolean.TRUE);
+        if (!defaultAttributes.containsKey(field)) {
+            defaultAttributes.put(field, new FormField());
+        }
+        defaultAttributes.get(field).setInUse(true);
     }
 
     @Override
-    protected HashMap<Field, Boolean> getSetAttributes() {
+    protected HashMap<Field, FormField> getDefaultAttributes() {
+        return defaultAttributes;
+    }
+
+    @Override
+    protected HashMap<Field, FormField> getSetAttributes() {
         String fieldSet = ConfigurationProperties.getInstance().getPropertyValueUpperCase(Property.FormFieldSet);
 
         if (IActionConstants.FORM_FIELD_SET_LNSP_HAITI.equals(fieldSet)) {
@@ -140,6 +156,8 @@ public class DefaultFormFields extends AFormFields {
         } else if (IActionConstants.FORM_FIELD_SET_MAURITIUS.equals(fieldSet)) {
             return new MauritiusFormFields().getImplementationAttributes();
         }
-        return null;
+        return new HashMap<>();
     }
+
+
 }

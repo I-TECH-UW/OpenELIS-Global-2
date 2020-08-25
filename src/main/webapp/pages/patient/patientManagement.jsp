@@ -1206,7 +1206,9 @@ function  processSubjectNumberSuccess(xhr){
 	<% if( FormFields.getInstance().useField(Field.PatientHealthRegion)){ %>
 	<tr>
 	<td>&nbsp;</td>
-	<td style="text-align:right;"><spring:message code="person.health.district"/>: </td>
+	<td style="text-align:right;">
+		<%= FormFields.getInstance().getLabel(Field.PatientHealthRegion) %>:
+	</td>
 		<td>
 			<%-- <nested:hidden name='${form.formName}' property="patientProperties.healthRegion" id="shadowHealthRegion" />
 			<html:select name='${form.formName}'
