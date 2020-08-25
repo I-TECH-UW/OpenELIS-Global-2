@@ -19,6 +19,8 @@ package org.openelisglobal.common.formfields;
 
 import java.util.Map;
 
+import org.openelisglobal.internationalization.MessageUtil;
+
 /*
  * These are different fields on the forms which can be turned on and off by configuration.
  * Note that the administration menu is in it's own class because it is a big area confined to it a single page
@@ -102,10 +104,11 @@ public class FormFields {
 
     private static FormFields instance = null;
 
-    private Map<FormFields.Field, Boolean> fields;
+    private Map<FormFields.Field, FormField> fields;
 
     private FormFields() {
-        fields = new DefaultFormFields().getFieldFormSet();
+        AFormFields defaultFields = new DefaultFormFields();
+        fields = defaultFields.getFieldFormSet();
     }
 
     public static FormFields getInstance() {
@@ -117,6 +120,10 @@ public class FormFields {
     }
 
     public boolean useField(FormFields.Field field) {
-        return fields.get(field);
+        return fields.get(field).getInUse();
+    }
+
+    public String getLabel(FormFields.Field field) {
+        return MessageUtil.getMessage(fields.get(field).getLabelKey());
     }
 }
