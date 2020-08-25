@@ -79,9 +79,10 @@ jQuery(window).load(function(){
 					
 					<h3>
 						<span><spring:message code="eorder.externalid"/>: 
+						<c:out value="${eOrder.externalId}"/>
 						<input type="button" 
-							onclick="location.href='https://localhost:8443/OpenELIS-Global/SamplePatientEntry.do?ID=${eOrder.externalId}';" 
-							value="${eOrder.externalId}" /></span>
+							onclick="location.href='SamplePatientEntry.do?ID=${eOrder.externalId}';" 
+							value="<spring:message code="eorder.enterorder"/>" /></span>
 						<span style="float:right"><spring:message code="eorder.lastupdated"/>: <c:out value="${eOrder.lastupdated}"/></span>
 					</h3>
 					<div id="info" >
