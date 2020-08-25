@@ -40,6 +40,7 @@ import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.ExternalOrderStatus;
 import org.openelisglobal.common.util.XMLUtil;
 import org.openelisglobal.dataexchange.fhir.service.FhirApiWorkflowService;
+import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
 import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder;
 import org.openelisglobal.dataexchange.service.order.ElectronicOrderService;
 import org.openelisglobal.internationalization.MessageUtil;
@@ -59,7 +60,6 @@ import org.openelisglobal.typeofsample.valueholder.TypeOfSampleTest;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
-import ca.uhn.fhir.rest.gclient.TokenClientParam;
 
 public class LabOrderSearchProvider extends BaseQueryProvider {
 //	private TestDAO testDAO = new TestDAOImpl();
@@ -71,11 +71,12 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
 //    private String localFhirStorePath;
 //    @Value("${org.openelisglobal.task.useBasedOn}")
 //    private Boolean useBasedOn;
-    
+
     private FhirContext fhirContext = SpringContext.getBean(FhirContext.class);
-   
+
     protected FhirApiWorkflowService fhirApiWorkFlowService = SpringContext.getBean(FhirApiWorkflowService.class);
-    
+    protected FhirTransformService fhirTransformService = SpringContext.getBean(FhirTransformService.class);
+
     protected TestService testService = SpringContext.getBean(TestService.class);
     protected PanelService panelService = SpringContext.getBean(PanelService.class);
     protected PanelItemService panelItemService = SpringContext.getBean(PanelItemService.class);
@@ -110,53 +111,47 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
 
         String orderNumber = request.getParameter("orderNumber");
         eOrders = electronicOrderService.getElectronicOrdersByExternalId(orderNumber);
+
         if (eOrders.isEmpty()) {
-            // return NOT_FOUND;
-            return;
+            eOrders = fhirTransformService.getFhirOrdersById(orderNumber);
         }
-        eOrder = eOrders.get(eOrders.size() - 1);
-        eOrderStatus = SpringContext.getBean(IStatusService.class).getExternalOrderStatusForID(eOrder.getStatusId());
+        if (!eOrders.isEmpty()) {
+            eOrder = eOrders.get(eOrders.size() - 1);
+            eOrderStatus = SpringContext.getBean(IStatusService.class)
+                    .getExternalOrderStatusForID(eOrder.getStatusId());
 
-        IGenericClient localFhirClient = fhirContext
-                .newRestfulGenericClient(fhirApiWorkFlowService.getLocalFhirStorePath());
-        System.out.println("Data: " + eOrder.getData());
+            IGenericClient localFhirClient = fhirContext
+                    .newRestfulGenericClient(fhirApiWorkFlowService.getLocalFhirStorePath());
 
-        Task task = fhirContext.newJsonParser().parseResource(Task.class, eOrder.getData());
-        System.out.println("task: " + fhirContext.newJsonParser().encodeResourceToString(task));
+            Task task = fhirContext.newJsonParser().parseResource(Task.class, eOrder.getData());
 
-        Bundle srBundle = (Bundle) localFhirClient.search().forResource(ServiceRequest.class)
-                .where(new TokenClientParam("identifier").exactly().code(orderNumber))
-                .prettyPrint()
-                .execute();
+            Bundle srBundle = (Bundle) localFhirClient.search().forResource(ServiceRequest.class)
+                    .where(ServiceRequest.IDENTIFIER.exactly().code(orderNumber)).prettyPrint().execute();
 
-        System.out.println("srBundle: " + fhirContext.newJsonParser().encodeResourceToString(srBundle));
-        System.out.println("task.getBasedOn().get(0).getReferenceElement().getIdPart(): " 
-                + task.getBasedOn().get(0).getReferenceElement().getIdPart());
-        
-        serviceRequest = null;
-        for (BundleEntryComponent bundleComponent : srBundle.getEntry()) {
-            if (bundleComponent.hasResource()
-                    && ResourceType.ServiceRequest.equals(bundleComponent.getResource().getResourceType())) {
-                serviceRequest = (ServiceRequest) bundleComponent.getResource();
+            serviceRequest = null;
+            if (srBundle.getEntry().size() == 0) {
+                srBundle = (Bundle) localFhirClient.search().forResource(ServiceRequest.class)
+                        .where(ServiceRequest.RES_ID.exactly().code(orderNumber)).prettyPrint().execute();
+            }
+            for (BundleEntryComponent bundleComponent : srBundle.getEntry()) {
+                if (bundleComponent.hasResource()
+                        && ResourceType.ServiceRequest.equals(bundleComponent.getResource().getResourceType())) {
+                    serviceRequest = (ServiceRequest) bundleComponent.getResource();
+                }
+            }
+
+            Bundle pBundle = (Bundle) localFhirClient.search().forResource(Patient.class)
+                    .where(Patient.RES_ID.exactly().code(serviceRequest.getSubject().getReferenceElement().getIdPart()))
+                    .prettyPrint().execute();
+
+            patient = null;
+            for (BundleEntryComponent bundleComponent : pBundle.getEntry()) {
+                if (bundleComponent.hasResource()
+                        && ResourceType.Patient.equals(bundleComponent.getResource().getResourceType())) {
+                    patient = (Patient) bundleComponent.getResource();
+                }
             }
         }
-
-        System.out.println("serviceRequest: " + fhirContext.newJsonParser().encodeResourceToString(serviceRequest));
-
-        Bundle pBundle = (Bundle) localFhirClient.search().forResource(Patient.class)
-                .where(new TokenClientParam("_id").exactly()
-                        .code(serviceRequest.getSubject().getReferenceElement().getIdPart()))
-                .prettyPrint().execute();
-        
-        patient = null;
-        for (BundleEntryComponent bundleComponent : pBundle.getEntry()) {
-            if (bundleComponent.hasResource()
-                    && ResourceType.Patient.equals(bundleComponent.getResource().getResourceType())) {
-                patient = (Patient) bundleComponent.getResource();
-            }
-        }
-
-        System.out.println("patient: " + fhirContext.newJsonParser().encodeResourceToString(patient));
 
         StringBuilder xml = new StringBuilder();
 
@@ -173,7 +168,6 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
             result += "\n\n" + MessageUtil.getMessage("electronic.order.message.suggestion");
             xml.append("empty");
         }
-        System.out.println("LabOrderSearchProvider:xml: " + result + " " + xml.toString());
         ajaxServlet.sendData(xml.toString(), result, request, response);
     }
 
@@ -185,17 +179,18 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
             return CANCELED;
         } else if (eOrderStatus == ExternalOrderStatus.Realized) {
             return REALIZED;
+        } else if (eOrders.isEmpty()) {
+            return NOT_FOUND;
         }
 
         String patientGuid = null;
         for (Identifier identifier : patient.getIdentifier()) {
 //            if (identifier.getSystem().equalsIgnoreCase("https://isanteplusdemo.com/openmrs/ws/fhir2/")) {
-              if (identifier.getSystem().equalsIgnoreCase("iSantePlus ID")) {
+            if (identifier.getSystem().equalsIgnoreCase("iSantePlus ID")
+                    || identifier.getSystem().equalsIgnoreCase("https://host.openelis.org/locator-form")) {
                 patientGuid = identifier.getId();
             }
         }
-        
-        System.out.println("patientGuid: " + patientGuid);
 
         createOrderXML(eOrder.getData(), patientGuid, xml);
 
@@ -243,7 +238,6 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
         requesterValuesMap.put(PROVIDER_LAST_NAME, "Name");
         requesterValuesMap.put(PROVIDER_FIRST_NAME, "");
 
-
         // pass loinc
         String loinc = "";
         String system = "";
@@ -256,7 +250,7 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
             }
             i++;
         }
-        
+
         addToTestOrPanel(tests, loinc);
 
     }

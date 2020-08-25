@@ -148,6 +148,7 @@ public class TestModifyEntryController extends BaseController {
             TypeOfSample typeOfSample = testService.getTypeOfSample(test);
             bean.setSampleType(typeOfSample != null ? typeOfSample.getLocalizedName() : "n/a");
             bean.setOrderable(test.getOrderable() ? "Orderable" : "Not orderable");
+            bean.setNotifyResults(test.isNotifyResults());
             bean.setLoinc(test.getLoinc());
             bean.setActive(test.isActive() ? "Active" : "Not active");
             bean.setUom(testService.getUOM(test, false));
@@ -542,7 +543,6 @@ public class TestModifyEntryController extends BaseController {
             }
             TestSet testSet = new TestSet();
             Test test = new Test();
-
             test.setId(testAddParams.testId);
 
             test.setUnitOfMeasure(uom);
@@ -550,9 +550,12 @@ public class TestModifyEntryController extends BaseController {
             test.setLocalCode(testAddParams.testNameEnglish);
             test.setIsActive(testAddParams.active);
             test.setOrderable("Y".equals(testAddParams.orderable));
+            test.setNotifyResults("Y".equals(testAddParams.notifyResults));
             test.setIsReportable("N");
             test.setTestSection(testSection);
-            test.setGuid(String.valueOf(UUID.randomUUID()));
+            if (GenericValidator.isBlankOrNull(test.getGuid())) {
+                test.setGuid(String.valueOf(UUID.randomUUID()));
+            }
             ArrayList<String> orderedTests = testAddParams.sampleList.get(i).orderedTests;
             for (int j = 0; j < orderedTests.size(); j++) {
                 if ("0".equals(orderedTests.get(j))) {
@@ -632,6 +635,7 @@ public class TestModifyEntryController extends BaseController {
             extractSampleTypes(obj, parser, testAddParams);
             testAddParams.active = (String) obj.get("active");
             testAddParams.orderable = (String) obj.get("orderable");
+            testAddParams.notifyResults = (String) obj.get("notifyResults");
             if (TypeOfTestResultServiceImpl.ResultType.isNumericById(testAddParams.resultTypeId)) {
                 testAddParams.lowValid = (String) obj.get("lowValid");
                 testAddParams.highValid = (String) obj.get("highValid");
@@ -753,6 +757,7 @@ public class TestModifyEntryController extends BaseController {
         ArrayList<SampleTypeListAndTestOrder> sampleList = new ArrayList<>();
         String active;
         String orderable;
+        public String notifyResults;
         String lowValid;
         String highValid;
         public String significantDigits;

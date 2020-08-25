@@ -52,14 +52,10 @@ public class LogoUploadServlet extends HttpServlet {
     private SiteInformationService siteInformationService = SpringContext.getBean(SiteInformationService.class);
     private UserModuleService userModuleService = SpringContext.getBean(UserModuleService.class);
     private LogoUploadService logoUploadService = SpringContext.getBean(LogoUploadService.class);
-    private static final String PREVIEW_FILE_PATH = File.separator + "static" + File.separator + "images"
-            + File.separator;
-    private String FULL_PREVIEW_FILE_PATH;
 
     @Override
     public void init() throws ServletException {
         super.init();
-        FULL_PREVIEW_FILE_PATH = getServletContext().getRealPath("") + PREVIEW_FILE_PATH;
     }
 
     @Override
@@ -93,7 +89,7 @@ public class LogoUploadServlet extends HttpServlet {
 
     private void removeImage(String logoName) {
         File previewFile = new File(
-                FULL_PREVIEW_FILE_PATH + (logoName.equals("headerLeftImage") ? "leftLabLogo.jpg" : "rightLabLogo.jpg"));
+                imageService.getFullPreviewPath() + imageService.getImageNameFilePath(logoName));
 
         boolean deleteSuccess = previewFile.delete();
         if (!deleteSuccess) {
@@ -121,6 +117,7 @@ public class LogoUploadServlet extends HttpServlet {
 
     }
 
+
     private void updateImage(HttpServletRequest request, String whichLogo) throws ServletException {
         DiskFileItemFactory factory = new DiskFileItemFactory();
 
@@ -139,8 +136,8 @@ public class LogoUploadServlet extends HttpServlet {
 
                 if (validToWrite(item)) {
 
-                    File previewFile = new File(FULL_PREVIEW_FILE_PATH
-                            + (whichLogo.equals("headerLeftImage") ? "leftLabLogo.jpg" : "rightLabLogo.jpg"));
+                    File previewFile = new File(imageService.getFullPreviewPath()
+                            + imageService.getImageNameFilePath(whichLogo));
 
                     item.write(previewFile);
 
@@ -210,7 +207,7 @@ public class LogoUploadServlet extends HttpServlet {
         String filePath;
         try {
             filePath = file.getCanonicalPath();
-            return filePath.startsWith((new File(FULL_PREVIEW_FILE_PATH).getCanonicalPath()));
+            return filePath.startsWith((new File(imageService.getFullPreviewPath()).getCanonicalPath()));
         } catch (IOException e) {
             LogEvent.logErrorStack(e);
             return false;

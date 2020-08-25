@@ -23,29 +23,30 @@ import org.openelisglobal.common.formfields.FormFields.Field;
 
 public class CI_RETROFormFields implements IFormFieldsForImplementation {
 
-    public HashMap<FormFields.Field, Boolean> getImplementationAttributes() {
-        HashMap<FormFields.Field, Boolean> settings = new HashMap<FormFields.Field, Boolean>();
+    @Override
+    public HashMap<FormFields.Field, FormField> getImplementationAttributes() {
+        HashMap<FormFields.Field, FormField> settings = new HashMap<>();
 
-        settings.put(Field.StNumber, Boolean.FALSE);
-        settings.put(Field.AKA, Boolean.FALSE);
-        settings.put(Field.MothersName, Boolean.FALSE);
-        settings.put(Field.PatientType, Boolean.TRUE);
-        settings.put(Field.InsuranceNumber, Boolean.FALSE);
-        settings.put(Field.CollectionDate, Boolean.TRUE);
-        settings.put(Field.OrgLocalAbrev, Boolean.FALSE);
-        settings.put(Field.InlineOrganizationTypes, Boolean.TRUE);
-        settings.put(Field.ProviderInfo, Boolean.FALSE);
-        settings.put(Field.NationalID, Boolean.TRUE);
-        settings.put(Field.SearchSampleStatus, Boolean.TRUE);
-        settings.put(Field.OrgLocalAbrev, Boolean.FALSE);
-        settings.put(Field.OrganizationAddressInfo, Boolean.FALSE);
-        settings.put(Field.DepersonalizedResults, Boolean.TRUE);
-        settings.put(Field.SEARCH_PATIENT_WITH_LAB_NO, Boolean.TRUE);
-        settings.put(Field.Project, Boolean.TRUE);
-        settings.put(Field.QA_FULL_PROVIDER_INFO, Boolean.FALSE);
-        settings.put(Field.QASubjectNumber, Boolean.FALSE);
-        settings.put(Field.ADDRESS_COMMUNE, Boolean.FALSE);
-        settings.put(Field.ADDRESS_VILLAGE, Boolean.FALSE);
+        settings.put(Field.StNumber, new FormField(Boolean.FALSE));
+        settings.put(Field.AKA, new FormField(Boolean.FALSE));
+        settings.put(Field.MothersName, new FormField(Boolean.FALSE));
+        settings.put(Field.PatientType, new FormField(Boolean.TRUE));
+        settings.put(Field.InsuranceNumber, new FormField(Boolean.FALSE));
+        settings.put(Field.CollectionDate, new FormField(Boolean.TRUE));
+        settings.put(Field.OrgLocalAbrev, new FormField(Boolean.FALSE));
+        settings.put(Field.InlineOrganizationTypes, new FormField(Boolean.TRUE));
+        settings.put(Field.ProviderInfo, new FormField(Boolean.FALSE));
+        settings.put(Field.NationalID, new FormField(Boolean.TRUE));
+        settings.put(Field.SearchSampleStatus, new FormField(Boolean.TRUE));
+        settings.put(Field.OrgLocalAbrev, new FormField(Boolean.FALSE));
+        settings.put(Field.OrganizationAddressInfo, new FormField(Boolean.FALSE));
+        settings.put(Field.DepersonalizedResults, new FormField(Boolean.TRUE));
+        settings.put(Field.SEARCH_PATIENT_WITH_LAB_NO, new FormField(Boolean.TRUE));
+        settings.put(Field.Project, new FormField(Boolean.TRUE));
+        settings.put(Field.QA_FULL_PROVIDER_INFO, new FormField(Boolean.FALSE));
+        settings.put(Field.QASubjectNumber, new FormField(Boolean.FALSE));
+        settings.put(Field.ADDRESS_COMMUNE, new FormField(Boolean.FALSE));
+        settings.put(Field.ADDRESS_VILLAGE, new FormField(Boolean.FALSE));
 
         return settings;
     }

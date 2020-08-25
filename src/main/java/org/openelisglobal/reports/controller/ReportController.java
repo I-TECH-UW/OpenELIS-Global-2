@@ -49,7 +49,7 @@ import net.sf.jasperreports.engine.JRException;
 @SessionAttributes("form")
 public class ReportController extends BaseController {
 
-    private static final String[] ALLOWED_FIELDS = new String[] { "report", "reportType", "accessionDirect",
+    private static final String[] ALLOWED_FIELDS = new String[] { "report", "reportType", "type", "accessionDirect",
             "highAccessionDirect", "patientNumberDirect", "patientUpperNumberDirect", "lowerDateRange",
             "upperDateRange", "locationCode", "projectCode", "datePeriod", "lowerMonth", "lowerYear", "upperMonth",
             "upperYear", "selectList.selection", };

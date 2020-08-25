@@ -99,7 +99,7 @@
 var compactHozSpace = '<%=compactHozSpace%>';
 var dirty = false;
 
-var pager = new OEPager('${form.formName}', '&type=<spring:escapeBody javaScriptEscape="true">${type}</spring:escapeBody>');
+var pager = new OEPager('${form.formName}', '&type=' + encodeURIComponent('<spring:escapeBody javaScriptEscape="true">${type}</spring:escapeBody>'));
 pager.setCurrentPageNumber('<spring:escapeBody javaScriptEscape="true">${form.paging.currentPage}</spring:escapeBody>');
 
 var pageSearch; //assigned in post load function
@@ -236,7 +236,7 @@ function  /*void*/ savePage()
 	jQuery( "#saveButtonId" ).prop("disabled",true);
 	window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
 	var form = document.getElementById("mainForm");
-	form.action = '${form.formName}'.sub('Form','') + ".do"  + '?type=<spring:escapeBody javaScriptEscape="true">${type}</spring:escapeBody>';
+	form.action = '${form.formName}'.sub('Form','') + ".do"  + '?type=' + encodeURIComponent('<spring:escapeBody javaScriptEscape="true">${type}</spring:escapeBody>');
 	form.submit();
 }
 
@@ -301,7 +301,7 @@ function processTestReflexCD4Success(parameters)
 }
 
 function submitTestSectionSelect( element ) {
-	window.location.href = "LogbookResults.do?testSectionId=" + element.value + "&type=" + testSectionNameIdHash[element.value] ;	
+	window.location.href = "LogbookResults.do?testSectionId=" + element.value + "&type=" + encodeURIComponent(testSectionNameIdHash[element.value]) ;	
 }
 
 var showForceWarning = true;
@@ -715,7 +715,7 @@ function setField(id, value) {
 		<c:if test="${not (testResult.resultDisplayType == 'HIV') and not (testResult.resultDisplayType == 'SYPHILIS')}">
 			<td style="vertical-align:middle" class="ruled">
                 ${testResult.testName}
-                <c:if test="${not testResult.resultType == 'D'}">
+                <c:if test="${not (testResult.resultType == 'D')}">
 				<c:if test="${not empty testResult.normalRange}">
 					<br/><c:out value="${testResult.normalRange}"/>&nbsp;
 					<c:out value="${testResult.unitsOfMeasure}"/>

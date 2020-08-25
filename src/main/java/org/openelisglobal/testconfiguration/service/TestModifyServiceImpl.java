@@ -83,7 +83,8 @@ public class TestModifyServiceImpl implements TestModifyService {
             }
 
             updateTestNames(testAddParams.testId, nameLocalization, reportingNameLocalization, currentUserId);
-            updateTestEntities(testAddParams.testId, testAddParams.loinc, currentUserId, testAddParams.uomId);
+            updateTestEntities(testAddParams.testId, testAddParams.loinc, currentUserId, testAddParams.uomId,
+                    set.test.isNotifyResults());
 
             set.sampleTypeTest.setSysUserId(currentUserId);
             set.sampleTypeTest.setTestId(set.test.getId());
@@ -126,13 +127,14 @@ public class TestModifyServiceImpl implements TestModifyService {
 
     }
 
-    private void updateTestEntities(String testId, String loinc, String userId, String uomId) {
+    private void updateTestEntities(String testId, String loinc, String userId, String uomId, boolean notifyResults) {
         Test test = testService.get(testId);
 
         if (test != null) {
             test.setSysUserId(userId);
             test.setLoinc(loinc);
             test.setUnitOfMeasure(unitOfMeasureService.getUnitOfMeasureById(uomId));
+            test.setNotifyResults(notifyResults);
             testService.update(test);
         }
     }

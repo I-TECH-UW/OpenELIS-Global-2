@@ -311,8 +311,9 @@ function capitalizeValue( text){
     $("requesterId").value = text.toUpperCase();
 }
 
-function checkOrderReferral( value ){
+function checkOrderReferral( ){
 
+	var value = jQuery("#externalOrderNumber").val()
     getLabOrder(value, processLabOrderSuccess);
     showSection( $("orderSectionId"), 'orderDisplay');
 }
@@ -401,10 +402,12 @@ function parsePatient(patienttag) {
     if (guidtag) {
         if (guidtag[0].firstChild) {
             guid = guidtag[0].firstChild.nodeValue;
-            patientSearch("", "", "", "", "", "", guid, "true", processSearchSuccess, processSearchFailure );
+            patientSearch("", "", "", "", "", "", guid, "", "", "true", processSearchSuccess, processSearchFailure );
         }       
     }
 }
+
+
 
 function clearRequester() {
 
@@ -439,10 +442,8 @@ function parseRequester(requester) {
             $("providerWorkPhoneID").value = phone;
         }
     }
-    
-    
-    
 }
+
 function parseSampletypes(sampletypes, SampleTypes) {
         
         var index = 0;
@@ -576,9 +577,9 @@ function  processPhoneSuccess(xhr){
 
 <% if( acceptExternalOrders){ %>
 <%= MessageUtil.getContextualMessage( "referring.order.number" ) %>:
-<form:input path="sampleOrderItems.externalOrderNumber" onchange="checkOrderReferral(this.value);makeDirty();"/>
+<form:input id="externalOrderNumber" path="sampleOrderItems.externalOrderNumber" onchange="checkOrderReferral();makeDirty();"/>
 <input type="button" name="searchExternalButton" value='<%= MessageUtil.getMessage("label.button.search")%>'
-       onclick="checkOrderReferral($(externalOrderNumber).value);makeDirty();">
+       onclick="checkOrderReferral();makeDirty();">
 <%= MessageUtil.getContextualMessage( "referring.order.not.found" ) %>
 <hr style="width:100%;height:5px"/>
 

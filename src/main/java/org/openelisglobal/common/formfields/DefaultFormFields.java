@@ -25,14 +25,14 @@ import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 
 public class DefaultFormFields extends AFormFields {
-    private HashMap<FormFields.Field, Boolean> defaultAttributes = new HashMap<FormFields.Field, Boolean>();
+    private HashMap<FormFields.Field, FormField> defaultAttributes = new HashMap<>();
 
     {
         /*
          * The rules for setting the default true or false are: If you have been asked
          * to hide an existing field then the default should be true If you have been
          * asked to add a new field then the default should be false
-         * 
+         *
          * The goal is to not break any existing configurations
          */
         setFieldTrue(Field.StNumber);
@@ -104,23 +104,41 @@ public class DefaultFormFields extends AFormFields {
         setFieldFalse(Field.SAMPLE_ENTRY_USE_REFFERING_PATIENT_NUMBER);
         setFieldFalse(Field.NON_CONFORMITY_PROVIDER_ADDRESS);
         setFieldFalse(Field.TEST_LOCATION_CODE);
+        setFieldFalse(Field.SampleNature);
+        setFieldFalse(Field.PatientEmail);
+
+        setFieldLabelKey(Field.PatientHealthRegion, "person.health.region");
+        setFieldLabelKey(Field.PatientHealthDistrict, "person.health.district");
     }
 
-    @Override
-    protected HashMap<Field, Boolean> getDefaultAttributes() {
-        return defaultAttributes;
+    private void setFieldLabelKey(Field field, String labelKey) {
+        if (!defaultAttributes.containsKey(field)) {
+            defaultAttributes.put(field, new FormField());
+        }
+        defaultAttributes.get(field).setLabelKey(labelKey);
     }
 
     private void setFieldFalse(Field field) {
-        defaultAttributes.put(field, Boolean.FALSE);
+        if (!defaultAttributes.containsKey(field)) {
+            defaultAttributes.put(field, new FormField());
+        }
+        defaultAttributes.get(field).setInUse(false);
     }
 
     private void setFieldTrue(Field field) {
-        defaultAttributes.put(field, Boolean.TRUE);
+        if (!defaultAttributes.containsKey(field)) {
+            defaultAttributes.put(field, new FormField());
+        }
+        defaultAttributes.get(field).setInUse(true);
     }
 
     @Override
-    protected HashMap<Field, Boolean> getSetAttributes() {
+    protected HashMap<Field, FormField> getDefaultAttributes() {
+        return defaultAttributes;
+    }
+
+    @Override
+    protected HashMap<Field, FormField> getSetAttributes() {
         String fieldSet = ConfigurationProperties.getInstance().getPropertyValueUpperCase(Property.FormFieldSet);
 
         if (IActionConstants.FORM_FIELD_SET_LNSP_HAITI.equals(fieldSet)) {
@@ -135,7 +153,11 @@ public class DefaultFormFields extends AFormFields {
             return new CI_GeneralFormFields().getImplementationAttributes();
         } else if (IActionConstants.FORM_FIELD_SET_KENYA.equals(fieldSet)) {
             return new KenyaFormFields().getImplementationAttributes();
+        } else if (IActionConstants.FORM_FIELD_SET_MAURITIUS.equals(fieldSet)) {
+            return new MauritiusFormFields().getImplementationAttributes();
         }
-        return null;
+        return new HashMap<>();
     }
+
+
 }

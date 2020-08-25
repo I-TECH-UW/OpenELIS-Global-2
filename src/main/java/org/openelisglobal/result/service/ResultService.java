@@ -70,4 +70,6 @@ public interface ResultService extends BaseObjectService<Result, String> {
     String getReportingTestName(Result result);
 
     String getResultValue(Result result, boolean printable);
+
+    String getResultValueForDisplay(Result result, String string, boolean b, boolean c);
 }

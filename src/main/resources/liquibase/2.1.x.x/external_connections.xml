@@ -107,4 +107,12 @@
 		</createTable>
 	</changeSet>
 	
+	<changeSet author="csteele" id="5">
+		<preConditions onFail="WARN">
+			<tableExists tableName="basic_authentication_data" />
+		</preConditions>
+		<addUniqueConstraint schemaName="clinlims"
+			tableName="basic_authentication_data" columnNames="external_connection_id" constraintName="unique_basic_authentication_data_external_connection_id"/>
+	</changeSet>
+	
 </databaseChangeLog>

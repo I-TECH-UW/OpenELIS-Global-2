@@ -546,6 +546,7 @@ function  /*void*/ processSearchPopulateSuccess(xhr)
 	var healthDistrict = getXMLValue(response, "healthDistrict");
 	var guid = getXMLValue( response, "guid");
 	var phoneNumber = getXMLValue(response, "phoneNumber");	
+	var email = getXMLValue(response, "email");	
 	var contactLastName = getXMLValue( response, "contactLastName");
 	var contactFirstName = getXMLValue( response, "contactFirstName");
 	var contactPhone = getXMLValue( response, "contactPhone");
@@ -579,6 +580,7 @@ function  /*void*/ processSearchPopulateSuccess(xhr)
 					healthDistrict,
 					guid,
 					phoneNumber,
+					email,
 					contactLastName, 
 					contactFirstName,
 					contactPhone,
@@ -621,7 +623,7 @@ function /*void*/ clearErrors(){
 
 function  /*void*/ setPatientInfo(nationalID, ST_ID, subjectNumber, lastName, firstName, aka, mother, street, city, dob, gender,
 		patientType, insurance, occupation, patientUpdated, personUpdated, motherInitial, commune, addressDept, educationId, nationalId, nationalOther,
-		maritialStatusId, healthRegionId, healthDistrictId, guid, phoneNumber, contactLastName, contactFirstName, contactPhone, contactEmail, contactPK ) {
+		maritialStatusId, healthRegionId, healthDistrictId, guid, phoneNumber, email, contactLastName, contactFirstName, contactPhone, contactEmail, contactPK ) {
 
 	clearErrors();
 
@@ -642,6 +644,7 @@ function  /*void*/ setPatientInfo(nationalID, ST_ID, subjectNumber, lastName, fi
 	$("personLastUpdated").value = personUpdated == undefined ? "" : personUpdated;
 	$("patientGUID_ID").value = guid == undefined ? "" : guid;
 	$("patientPhone").value = phoneNumber == undefined ? "" : phoneNumber;
+	$("patientEmail").value = email == undefined ? "" : email;
 	$("genderID").selectedIndex = gender == undefined ? 0 : gender;
 	if(supportPatientNationality){
 		$("nationalityID").selectedIndex = nationalId == undefined ? 0 : nationalId; 
@@ -1191,11 +1194,21 @@ function  processSubjectNumberSuccess(xhr){
  --%>			</td>
 		</tr>
 	<% } %>
+	<% if( FormFields.getInstance().useField(Field.PatientEmail)){ %> 
+		<tr>
+			<td>&nbsp;</td>
+			<td style="text-align:right;"><%= MessageUtil.getContextualMessage("person.email") %>:</td>
+			<td>
+				<form:input id="patientEmail" path="patientProperties.email" onchange="validateEmail( this );" maxLength="35"/>			</td>
+		</tr>
+	<% } %>
 	<tr class="spacerRow"><td >&nbsp;</td></tr>
 	<% if( FormFields.getInstance().useField(Field.PatientHealthRegion)){ %>
 	<tr>
 	<td>&nbsp;</td>
-	<td style="text-align:right;"><spring:message code="person.health.region"/>: </td>
+	<td style="text-align:right;">
+		<%= FormFields.getInstance().getLabel(Field.PatientHealthRegion) %>:
+	</td>
 		<td>
 			<%-- <nested:hidden name='${form.formName}' property="patientProperties.healthRegion" id="shadowHealthRegion" />
 			<html:select name='${form.formName}'

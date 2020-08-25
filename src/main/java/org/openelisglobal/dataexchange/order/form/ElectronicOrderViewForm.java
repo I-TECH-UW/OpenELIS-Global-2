@@ -16,6 +16,8 @@ public class ElectronicOrderViewForm extends BaseForm {
     @Min(1)
     private int page = 1;
 
+    private String searchValue;
+
     // for display
     private List<ElectronicOrder> eOrders;
 
@@ -56,5 +58,13 @@ public class ElectronicOrderViewForm extends BaseForm {
 
     public void setSortOrderOptions(SortOrder[] sortOrderOptions) {
         this.sortOrderOptions = sortOrderOptions;
+    }
+
+    public String getSearchValue() {
+        return searchValue;
+    }
+
+    public void setSearchValue(String searchValue) {
+        this.searchValue = searchValue;
     }
 }

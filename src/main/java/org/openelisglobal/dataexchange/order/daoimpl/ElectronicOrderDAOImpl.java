@@ -16,6 +16,7 @@
  */
 package org.openelisglobal.dataexchange.order.daoimpl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -27,6 +28,7 @@ import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.dataexchange.order.dao.ElectronicOrderDAO;
 import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder;
+import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder.SortOrder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,7 +48,7 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder, String>
         try {
             Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setString("externalid", id);
-            
+
             List<ElectronicOrder> eOrders = query.list();
             // closeSession(); // CSL remove old
             return eOrders;
@@ -56,7 +58,7 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder, String>
         return null;
     }
 
-//	
+//
 //	@Override
 //	public List<ElectronicOrder> getElectronicOrdersByPatientId(String id) throws LIMSRuntimeException {
 //		String sql = "from ElectronicOrder eo where eo.patient.id = :patientid";
@@ -120,7 +122,7 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder, String>
 //		return null;
 //	}
 
-//	
+//
 //	@Override
 //	public List<ElectronicOrder> getAllElectronicOrders() {
 //		List<ElectronicOrder> list = new Vector<>();
@@ -138,10 +140,10 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder, String>
 //
 //	}
 
-    
+
     @Override
     @Transactional(readOnly = true)
-    public List<ElectronicOrder> getAllElectronicOrdersOrderedBy(ElectronicOrder.SortOrder order) {
+    public List<ElectronicOrder> getAllElectronicOrdersOrderedBy(SortOrder order) {
         List<ElectronicOrder> list = new Vector<>();
         try {
             if (order.equals(ElectronicOrder.SortOrder.LAST_UPDATED)) {
@@ -161,4 +163,34 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder, String>
         return list;
     }
 
+    @Override
+    public List<ElectronicOrder> getAllElectronicOrdersContainingValueOrderedBy(String searchValue, SortOrder order) {
+        
+        String sql = 
+                 "from ElectronicOrder eo "
+                + "join eo.patient patient "
+                + "join patient.person person  "
+                + "where lower(eo.data) like concat('%', lower(:searchValue), '%') "
+                + "or lower(person.firstName) like concat('%', lower(:searchValue), '%') "
+                + "or lower(person.lastName) like concat('%', lower(:searchValue), '%') "
+                + "or lower(concat(person.firstName, ' ', person.lastName)) like concat('%', lower(:searchValue), '%')order by :order";
+        try {
+            
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setString("searchValue", searchValue);
+            query.setString("order", order.getValue());
+            
+            List<Object> records = query.list();
+            List<ElectronicOrder> eOrders = new ArrayList<ElectronicOrder>();
+            for (int i = 0; i < records.size(); i++) {
+                Object[] oArray = (Object[]) records.get(i);
+                ElectronicOrder eo = (ElectronicOrder) oArray[0];
+                eOrders.add(eo);
+            }
+            return eOrders;
+        } catch (HibernateException e) {
+            handleException(e, "getAllElectronicOrdersContainingValue");
+        }
+        return null;
+    }
 }

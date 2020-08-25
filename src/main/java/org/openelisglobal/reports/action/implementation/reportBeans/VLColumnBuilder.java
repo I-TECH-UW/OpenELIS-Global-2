@@ -53,8 +53,8 @@ public class VLColumnBuilder extends CIColumnBuilder {
         // add("patient_oe_id" ,"PATIENT_OE_ID", NONE);
 
         add("hivStatus", "STATVIH", DICT_RAW);
-        add("nameOfDoctor", "NOMMED", NONE);
-        add("nameOfSampler", "NOMPRELEV", NONE);
+        add("nameOfDoctor", "NAMEMED", NONE);
+        add("nameOfSampler", "NAMESAMPLER", NONE);
         add("arvTreatmentInitDate", "ARV_INIT_DATE", NONE);
         add("arvTreatmentRegime", "ARVREG");
 

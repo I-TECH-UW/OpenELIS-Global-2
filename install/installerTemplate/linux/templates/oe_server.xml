@@ -64,7 +64,8 @@
                acceptCount="100" debug="0" scheme="https" secure="true"
                sslProtocol="TLS" SSLEnabled="true" 
                keystoreFile="/run/secrets/keystore" keystoreType="PKCS12" keystorePass="[% keystore_password %]"
-               truststoreFile="/run/secrets/truststore" truststoreType="PKCS12" truststorePass="[% truststore_password %]"/>
+               truststoreFile="/run/secrets/truststore" truststoreType="PKCS12" truststorePass="[% truststore_password %]"
+               URIEncoding="UTF-8" />
                
     <!-- A "Connector" using the shared thread pool-->
     <!--
