@@ -16,6 +16,7 @@
  */
 package org.openelisglobal.dataexchange.order.daoimpl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -164,19 +165,32 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder, String>
 
     @Override
     public List<ElectronicOrder> getAllElectronicOrdersContainingValueOrderedBy(String searchValue, SortOrder order) {
-        String sql = "from ElectronicOrder eo where eo.data like concat('%', :searchValue, '%') order by :order";
-
+        
+        String sql = 
+                 "from ElectronicOrder eo "
+                + "join eo.patient patient "
+                + "join patient.person person  "
+                + "where lower(eo.data) like concat('%', lower(:searchValue), '%') "
+                + "or lower(person.firstName) like concat('%', lower(:searchValue), '%') "
+                + "or lower(person.lastName) like concat('%', lower(:searchValue), '%') "
+                + "or lower(concat(person.firstName, ' ', person.lastName)) like concat('%', lower(:searchValue), '%')order by :order";
         try {
+            
             Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setString("searchValue", searchValue);
             query.setString("order", order.getValue());
-
-            List<ElectronicOrder> eOrders = query.list();
+            
+            List<Object> records = query.list();
+            List<ElectronicOrder> eOrders = new ArrayList<ElectronicOrder>();
+            for (int i = 0; i < records.size(); i++) {
+                Object[] oArray = (Object[]) records.get(i);
+                ElectronicOrder eo = (ElectronicOrder) oArray[0];
+                eOrders.add(eo);
+            }
             return eOrders;
         } catch (HibernateException e) {
             handleException(e, "getAllElectronicOrdersContainingValue");
         }
         return null;
     }
-
 }
