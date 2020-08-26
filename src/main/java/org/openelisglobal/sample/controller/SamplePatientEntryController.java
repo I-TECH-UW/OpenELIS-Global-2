@@ -106,7 +106,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
     @RequestMapping(value = "/SamplePatientEntry", method = RequestMethod.GET)
     
     public ModelAndView showSamplePatientEntry(HttpServletRequest request,
-            @RequestParam(value = ID, required = true) UUID externalOrderNumber)
+            @RequestParam(value = ID, required = false) UUID externalOrderNumber)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
         SamplePatientEntryForm form = new SamplePatientEntryForm();
