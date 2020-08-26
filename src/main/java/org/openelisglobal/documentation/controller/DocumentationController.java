@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class DocumentationController {
 
-    @GetMapping(value = "/documentation/UserManual", produces = MediaType.APPLICATION_PDF_VALUE)
+    @GetMapping(value = "/docs/UserManual", produces = MediaType.APPLICATION_PDF_VALUE)
     public @ResponseBody byte[] getUserManual() throws IOException {
         Locale locale = LocaleContextHolder.getLocale();
         String filename = "";

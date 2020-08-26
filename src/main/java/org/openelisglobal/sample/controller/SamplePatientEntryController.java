@@ -1,6 +1,7 @@
 package org.openelisglobal.sample.controller;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -36,6 +37,7 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -102,14 +104,18 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
     }
 
     @RequestMapping(value = "/SamplePatientEntry", method = RequestMethod.GET)
-    public ModelAndView showSamplePatientEntry(HttpServletRequest request)
+    
+    public ModelAndView showSamplePatientEntry(HttpServletRequest request,
+            @RequestParam(value = ID, required = false) UUID externalOrderNumber)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
         SamplePatientEntryForm form = new SamplePatientEntryForm();
-
+        
         request.getSession().setAttribute(SAVE_DISABLED, TRUE);
         SampleOrderService sampleOrderService = new SampleOrderService();
+        
         form.setSampleOrderItems(sampleOrderService.getSampleOrderItem());
+        form.getSampleOrderItems().setExternalOrderNumber(externalOrderNumber.toString());
         form.setPatientProperties(new PatientManagementInfo());
         form.setPatientSearch(new PatientSearch());
         form.setSampleTypes(DisplayListService.getInstance().getList(ListType.SAMPLE_TYPE_ACTIVE));

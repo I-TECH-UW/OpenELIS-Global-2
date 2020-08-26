@@ -77,7 +77,7 @@
                keystoreFile="/run/secrets/keystore"
                keystorePass="testtest"
                truststoreFile="/run/secrets/truststore"
-               truststorePass="testtest" />
+               truststorePass="testtest" URIEncoding="UTF-8" />
                
     <!-- A "Connector" using the shared thread pool-->
     <!--

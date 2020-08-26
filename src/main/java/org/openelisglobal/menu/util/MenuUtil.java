@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.validator.GenericValidator;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.PluginMenuService;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.menu.service.MenuService;
@@ -92,7 +93,15 @@ public class MenuUtil {
             if (menu.getParent() == null) {
                 rootWrapper.getChildMenus().add(menuToMenuItemMap.get(menu));
             } else {
-                menuToMenuItemMap.get(menu.getParent()).getChildMenus().add(menuToMenuItemMap.get(menu));
+                MenuItem menuItem = menuToMenuItemMap.get(menu.getParent());
+                if (menuItem == null) {
+                    LogEvent.logWarn("MenuUtil", "createTree",
+                            "parent menu item " + menu.getParent().getElementId()
+                                    + " is not active so can't attach child node " + menu.getElementId()
+                                    + ". Continuing without child node");
+                } else {
+                    menuToMenuItemMap.get(menu.getParent()).getChildMenus().add(menuToMenuItemMap.get(menu));
+                }
             }
         }
 

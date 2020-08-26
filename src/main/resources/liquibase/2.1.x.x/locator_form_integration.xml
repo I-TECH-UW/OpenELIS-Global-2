@@ -24,9 +24,6 @@
 		</insert>
 		<rollback>
 			<delete schemaName="clinlims" tableName="status_of_sample">
-				<where>name='specimen nature'</where>
-			</delete>
-			<delete schemaName="clinlims" tableName="observation_history_type">
 				<where>status_type = 'EXTERNAL_ORDER' AND name = 'NonConforming'</where>
 			</delete>
 		</rollback>

@@ -78,7 +78,11 @@ jQuery(window).load(function(){
 				<c:forEach var="eOrder" items="${form.EOrders}">
 					
 					<h3>
-						<span><spring:message code="eorder.externalid"/>: <c:out value="${eOrder.externalId}"/></span>
+						<span><spring:message code="eorder.externalid"/>: 
+						<c:out value="${eOrder.externalId}"/>
+						<input type="button" 
+							onclick="location.href='SamplePatientEntry.do?ID=${eOrder.externalId}';" 
+							value="<spring:message code="eorder.enterorder"/>" /></span>
 						<span style="float:right"><spring:message code="eorder.lastupdated"/>: <c:out value="${eOrder.lastupdated}"/></span>
 					</h3>
 					<div id="info" >
