@@ -61,7 +61,7 @@ public class AnalyzerResultsServiceImpl extends BaseObjectServiceImpl<AnalyzerRe
     @Override
     @Transactional(readOnly = true)
     public List<AnalyzerResults> getResultsbyAnalyzer(String analyzerId) {
-        return baseObjectDAO.getAllMatchingOrdered("analyzerId", analyzerId, "id", false);
+        return baseObjectDAO.getAllMatchingOrdered("analyzerId", Integer.parseInt(analyzerId), "id", false);
     }
 
     @Override

@@ -24,6 +24,7 @@
 <%
 	boolean useCollectionDate = FormFields.getInstance().useField(Field.CollectionDate);
 	boolean useInitialSampleCondition = FormFields.getInstance().useField(Field.InitialSampleCondition);
+	boolean useSampleNature = FormFields.getInstance().useField(Field.SampleNature); 
 	boolean useCollector = FormFields.getInstance().useField(Field.SampleEntrySampleCollector);
 	boolean autofillCollectionDate = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.AUTOFILL_COLLECTION_DATE, "true");
 %>
@@ -43,6 +44,7 @@
 var useCollectionDate = <%= useCollectionDate %>;
 var autoFillCollectionDate = <%= autofillCollectionDate %>;
 var useInitialSampleCondition = <%= useInitialSampleCondition  %>;
+var useSampleNature = <%= useSampleNature  %>;
 var useCollector = <%= useCollector %>;
 var currentCheckedType = -1;
 var currentTypeForTests = -1;
@@ -114,6 +116,15 @@ function addTypeToTable(table, sampleDescription, sampleType, currentTime, curre
 			initialConditionCell.innerHTML = newMulti.innerHTML.replace("initialSampleConditionList", "formBreaker");
 
 			jQuery("#initialCondition_" + rowLabel).asmSelect({	removeLabel: "X"});
+		}
+		
+		if( useSampleNature ){
+			var newSelect = $("sampleNaturePrototypeID").parentNode.cloneNode(true);
+			var selection = newSelect.getElementsByTagName("select")[0];
+			selection.id = "sampleNature_" + rowLabel;
+
+			var sampleNatureCell = newRow.insertCell(++cellCount);
+ 			sampleNatureCell.innerHTML = newSelect.innerHTML.replace("sampleNatureList", "formBreaker");
 		}
 
 		if( useCollectionDate ){
@@ -265,6 +276,19 @@ function convertSampleToXml( id ){
 		for( var i = 0; i < optionLength; ++i ){
 			if( initialConditions.options[i].selected ){
 				xml += initialConditions.options[i].value + ",";
+			}
+		}
+
+		xml =  xml.substring(0,xml.length - 1);
+		xml += "'";
+	}
+	if( useSampleNature ){
+		var sampleNature = $("sampleNature" + id);
+		var optionLength = sampleNature.options.length;
+		xml += " sampleNatureId=' ";
+		for( var i = 0; i < optionLength; ++i ){
+			if( sampleNature.options[i].selected ){
+				xml += sampleNature.options[i].value + ",";
 			}
 		}
 
@@ -761,6 +785,14 @@ function sampleTypeQualifierChanged(element){
 </form:select>
 </div>
 <% } %>
+<% if(useSampleNature){ %>
+<div id="sampleNaturePrototype" style="display: none" >
+<form:select path=""
+			 id= 'sampleNaturePrototypeID'>
+			<form:options items="${form.sampleNatureList}" itemValue="id" itemLabel="value"/>
+</form:select>
+</div>
+<% } %>
 <div id="sectionPrototype" style="display:none;" >
 	<span class="requiredlabel" style="visibility:hidden;">*</span>
 	
@@ -828,6 +860,11 @@ function sampleTypeQualifierChanged(element){
 				<% if(useInitialSampleCondition){ %>
 				<th style="width:15%">
 					<spring:message code="sample.entry.sample.condition"/>
+				</th>
+				<% } %>
+				<% if(useSampleNature){ %>
+				<th style="width:15%">
+					<spring:message code="sample.entry.sample.nature"/>
 				</th>
 				<% } %>
 				<% if( useCollectionDate ){ %>

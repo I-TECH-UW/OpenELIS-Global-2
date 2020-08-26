@@ -19,6 +19,8 @@ package org.openelisglobal.common.formfields;
 
 import java.util.Map;
 
+import org.openelisglobal.internationalization.MessageUtil;
+
 /*
  * These are different fields on the forms which can be turned on and off by configuration.
  * Note that the administration menu is in it's own class because it is a big area confined to it a single page
@@ -67,6 +69,7 @@ public class FormFields {
         ResultsReferral, // Can results be referred out
         ValueHozSpaceOnResults, // favors a layout which values horizontal space over vertical space
         InitialSampleCondition, // Allow for collection of sample condition with sample entry
+        SampleNature, // Allow for collection of sample nature with sample entry
         PatientRequired, // By default, a (minimal) patient to go with a sample is required.
         PatientRequired_SampleConfirmation, // Is patient required for sample confirmation
         QA_FULL_PROVIDER_INFO, // Include provider information on non-conformity
@@ -88,6 +91,7 @@ public class FormFields {
         SampleEntryRequesterLastNameRequired, // Is the requester name required
         SAMPLE_ENTRY_USE_REFFERING_PATIENT_NUMBER, // Include referral patient number
         PatientPhone, // Include patient phone with patient info
+        PatientEmail, // Include patient email with patient info
         PatientHealthRegion, // Include patient health region with patient info
         PatientHealthDistrict, // Include patient health district with patient info
         PatientMarriageStatus, // Include patient marriage status with patient info
@@ -100,10 +104,11 @@ public class FormFields {
 
     private static FormFields instance = null;
 
-    private Map<FormFields.Field, Boolean> fields;
+    private Map<FormFields.Field, FormField> fields;
 
     private FormFields() {
-        fields = new DefaultFormFields().getFieldFormSet();
+        AFormFields defaultFields = new DefaultFormFields();
+        fields = defaultFields.getFieldFormSet();
     }
 
     public static FormFields getInstance() {
@@ -115,6 +120,10 @@ public class FormFields {
     }
 
     public boolean useField(FormFields.Field field) {
-        return fields.get(field);
+        return fields.get(field).getInUse();
+    }
+
+    public String getLabel(FormFields.Field field) {
+        return MessageUtil.getMessage(fields.get(field).getLabelKey());
     }
 }

@@ -61,6 +61,9 @@ public class SampleBatchEntrySetupController extends BaseSampleEntryController {
             form.setInitialSampleConditionList(
                     DisplayListService.getInstance().getList(ListType.INITIAL_SAMPLE_CONDITION));
         }
+        if (FormFields.getInstance().useField(FormFields.Field.SampleNature)) {
+            form.setSampleNatureList(DisplayListService.getInstance().getList(ListType.SAMPLE_NATURE));
+        }
 
         return findForward(FWD_SUCCESS, form);
     }

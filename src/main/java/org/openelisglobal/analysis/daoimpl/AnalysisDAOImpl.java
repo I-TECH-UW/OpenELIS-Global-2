@@ -1325,8 +1325,30 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         return list;
     }
 
-    @Override
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<Analysis> getAllAnalysisByTestsAndStatus(List<Integer> testIds, List<Integer> analysisStatusList,
+            List<Integer> sampleStatusList) {
+        String sql = "From Analysis a WHERE a.test.id IN (:testIds) AND a.statusId IN (:analysisStatusList) AND a.sampleItem.sample.statusId IN (:sampleStatusList)";
+        try {
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setParameterList("testIds", testIds);
+            query.setParameterList("analysisStatusList", analysisStatusList);
+            query.setParameterList("sampleStatusList", sampleStatusList);
+
+            List<Analysis> analysisList = query.list();
+
+            return analysisList;
+
+        } catch (HibernateException e) {
+            handleException(e, "getAllAnalysisByTestSectionAndStatus");
+        }
+
+        return null;
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public List<Analysis> getAllAnalysisByTestSectionAndStatus(String testSectionId, List<Integer> analysisStatusList,
             List<Integer> sampleStatusList) throws LIMSRuntimeException {

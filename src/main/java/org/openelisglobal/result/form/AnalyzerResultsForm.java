@@ -23,7 +23,7 @@ public class AnalyzerResultsForm extends BaseForm implements IPagingForm {
     private List<AnalyzerResultItem> resultList;
 
     @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
-    private String analyzerType = "";
+    private String type;
 
     @NotNull
     private Boolean displayNotFoundMsg = false;
@@ -53,12 +53,12 @@ public class AnalyzerResultsForm extends BaseForm implements IPagingForm {
         this.resultList = resultList;
     }
 
-    public String getAnalyzerType() {
-        return analyzerType;
+    public String getType() {
+        return type;
     }
 
-    public void setAnalyzerType(String analyzerType) {
-        this.analyzerType = analyzerType;
+    public void setType(String type) {
+        this.type = type;
     }
 
     public Boolean getDisplayNotFoundMsg() {

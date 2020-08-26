@@ -11,12 +11,21 @@
 		<!-- converters -->
 		<class>org.itech.fhir.dataexport.core.model.converter.DataExportStatusConverter</class>
 		<class>org.itech.fhir.dataexport.core.model.converter.FhirResourceTypeConverter</class>
+		<class>org.openelisglobal.hibernate.converter.URIConverter</class>
+		<class>org.openelisglobal.security.converter.EncryptionConverter</class>
 
 		<!-- entities -->
 		<class>org.openelisglobal.login.valueholder.LoginUser</class>
 		<class>org.openelisglobal.gender.valueholder.Gender</class>
+		<class>org.openelisglobal.externalconnections.valueholder.ExternalConnection</class>
+		<class>org.openelisglobal.externalconnections.valueholder.ExternalConnectionContact</class>
+		<class>org.openelisglobal.externalconnections.valueholder.CertificateAuthenticationData</class>
+		<class>org.openelisglobal.externalconnections.valueholder.BasicAuthenticationData</class>
+		
 		<class>org.itech.fhir.dataexport.core.model.DataExportAttempt</class>
 		<class>org.itech.fhir.dataexport.core.model.DataExportTask</class>
+		
+		<class>org.ozeki.sms.valueholder.OzekiMessageOut</class>
 		<properties>
 			<property name="hibernate.ejb.cfgfile"
 				value="classpath:hibernate/hibernate.cfg.xml" />

@@ -63,6 +63,7 @@ then
     fi
 fi
 git pull origin $branch
+git submodule update --recursive
 
 #git rev-list HEAD | tac | nl | tail -n 1 | sed 's/\t/ hash-/g'  |sed 's/\s\{2,\}/revision-/g' > ../../version.txt 
 #cd ../..
@@ -157,8 +158,8 @@ then
 	rm OpenELIS-Global_DockerImage*.tar.gz
 	rm Postgres_DockerImage.tar.gz
 	rm JPAServer_DockerImage.tar.gz
-	rm DataSubscriber_DockerImage.tar.gz
-	rm DataImporter_DockerImage.tar.gz
+#	rm DataSubscriber_DockerImage.tar.gz
+#	rm DataImporter_DockerImage.tar.gz
 	rm -r ${STAGING_DIR}
 	
 fi

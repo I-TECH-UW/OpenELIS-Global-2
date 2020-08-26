@@ -38,7 +38,7 @@ public class AnalyzerResultsDAOImpl extends BaseDAOImpl<AnalyzerResults, String>
     }
 
 //	@Override
-//	
+//
 //	public List<AnalyzerResults> getResultsbyAnalyzer(String analyzerId) throws LIMSRuntimeException {
 //
 //		List<AnalyzerResults> results = null;
@@ -63,7 +63,7 @@ public class AnalyzerResultsDAOImpl extends BaseDAOImpl<AnalyzerResults, String>
 //	}
 
     @Override
-    
+
     @Transactional(readOnly = true)
     public List<AnalyzerResults> getDuplicateResultByAccessionAndTest(AnalyzerResults result) {
         try {

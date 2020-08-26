@@ -1,6 +1,7 @@
 package org.openelisglobal.sample.controller;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -36,6 +37,7 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -50,7 +52,8 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
             "patientProperties.lastName", "patientProperties.firstName", "patientProperties.aka",
             "patientProperties.mothersName", "patientProperties.mothersInitial", "patientProperties.streetAddress",
             "patientProperties.commune", "patientProperties.city", "patientProperties.addressDepartment",
-            "patientProperties.addressDepartment", "patientPhone", "patientProperties.healthRegion",
+            "patientProperties.addressDepartment", "patientPhone", "patientProperties.primaryPhone",
+            "patientProperties.email", "patientProperties.healthRegion",
             "patientProperties.healthDistrict", "patientProperties.birthDateForDisplay", "patientProperties.age",
             "patientProperties.gender", "patientProperties.patientType", "patientProperties.insuranceNumber",
             "patientProperties.occupation", "patientProperties.education", "patientProperties.maritialStatus",
@@ -92,23 +95,27 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 
     @Autowired
     private SamplePatientEntryService samplePatientService;
-    
+
     protected FhirTransformService fhirTransformService = SpringContext.getBean(FhirTransformService.class);
-    
+
     @InitBinder
     public void initBinder(WebDataBinder binder) {
         binder.setAllowedFields(ALLOWED_FIELDS);
     }
 
     @RequestMapping(value = "/SamplePatientEntry", method = RequestMethod.GET)
-    public ModelAndView showSamplePatientEntry(HttpServletRequest request)
+    
+    public ModelAndView showSamplePatientEntry(HttpServletRequest request,
+            @RequestParam(value = ID, required = true) UUID externalOrderNumber)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
         SamplePatientEntryForm form = new SamplePatientEntryForm();
-
+        
         request.getSession().setAttribute(SAVE_DISABLED, TRUE);
         SampleOrderService sampleOrderService = new SampleOrderService();
+        
         form.setSampleOrderItems(sampleOrderService.getSampleOrderItem());
+        form.getSampleOrderItems().setExternalOrderNumber(externalOrderNumber.toString());
         form.setPatientProperties(new PatientManagementInfo());
         form.setPatientSearch(new PatientSearch());
         form.setSampleTypes(DisplayListService.getInstance().getList(ListType.SAMPLE_TYPE_ACTIVE));
@@ -126,6 +133,9 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
         if (FormFields.getInstance().useField(FormFields.Field.InitialSampleCondition)) {
             form.setInitialSampleConditionList(
                     DisplayListService.getInstance().getList(ListType.INITIAL_SAMPLE_CONDITION));
+        }
+        if (FormFields.getInstance().useField(FormFields.Field.SampleNature)) {
+            form.setSampleNatureList(DisplayListService.getInstance().getList(ListType.SAMPLE_NATURE));
         }
 
         addFlashMsgsToRequest(request);
@@ -199,7 +209,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
             return findForward(FWD_FAIL_INSERT, form);
 
         }
-        
+
         redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
         return findForward(FWD_SUCCESS_INSERT, form);
     }

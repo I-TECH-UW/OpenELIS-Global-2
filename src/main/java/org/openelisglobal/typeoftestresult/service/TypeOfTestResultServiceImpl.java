@@ -83,6 +83,10 @@ public class TypeOfTestResultServiceImpl extends BaseObjectServiceImpl<TypeOfTes
             return "N".equals(type.getCharacterValue());
         }
 
+        public static boolean isNumeric(String type) {
+            return "N".equals(type);
+        }
+
         public static boolean isDictionaryVarientById(String resultTypeId) {
             return DICTIONARY.getId().equals(resultTypeId) || MULTISELECT.getId().equals(resultTypeId)
                     || CASCADING_MULTISELECT.getId().equals(resultTypeId);

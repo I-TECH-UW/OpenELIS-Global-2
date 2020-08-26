@@ -10,12 +10,10 @@
 6. Name the system: oeserver 
 7. user itech 
 8. set password and record it 
-    a. I suggest adding the ssh key for each support user to enable passwordless connection. 
+    * I suggest adding the ssh key for each support user to enable passwordless connection. 
 9. Require a password on login
-10. Create a 1GB partition mounted at /web
-11. Select OpenSSH server during install *if running server version*
-
-a    .this will allow you to ssh into this computer allowing copy/paste for Windows users through Putty, or connections via terminal on Mac and from the shell in LINUX
+11. Select OpenSSH server during install *if running server version, if running desktop you will need to install it after*
+	* this will allow you to ssh into this computer allowing copy/paste for Windows users through Putty, or connections via terminal on Mac and from the shell in LINUX
 
 13. Finalize the ubuntu install
 
@@ -28,47 +26,84 @@ a    .this will allow you to ssh into this computer allowing copy/paste for Wind
 
 1. Ensure that the system is connected to the internet properly, you can try to ping google DNS at 8.8.8.8
 
-    ``ping 8.8.8.8``
+        ping 8.8.8.8
 
 2. Open a command prompt and enter the following commands- this will install the needed services and install updates to the OS since the image was created. 
 This updates the system from the sources in the sources list. It updates what new packages are available.
 
-    ``sudo apt-get update``
+	    sudo apt-get update
 
 
-    ``sudo apt-get upgrade``
+        sudo apt-get upgrade
 
 3. Install Python
 
-    ``sudo apt-get install python``
+        sudo apt-get install python
     
 ### Create and Load SSL Certificates
 
-1. Generate a signed .crt and .key for *.openelisci.org
-    
-2. Create keystore from key and cert (make sure to record the password somewhere secure as you will need to enter it elsewhere)
+OpenELIS uses SSL certificates to securely communicate with other software or consolidated lab data servers. For a test or temporary instance, use a self-signed certificate, and for a production instance create a proper signed certifcate. **You must have a cert and key created and in the keystore and truststore for the installer to run**
 
-    ``openssl pkcs12 -inkey path/toyour/key -in path/to/your/cert -export -out /etc/openelis-global/keystore``
-    
-    ``enter an export password``
+#### Generate a .crt and .key file for the domain you want to use. 
 
-3. Create truststore with OpenELIS-Global's cert (or a CA that signs OE certs)
+The command below is for generating and using a self-signed certifcate. **Note: for FQDN use *.openelisci.org**
+
+
+    sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/apache-selfsigned.key -out /etc/ssl/certs/apache-selfsigned.crt
+
+
+#### Create keystore from key and cert 
+Make the directories for the keystore
+
+    sudo mkdir /etc/openelis-global/
+
+make sure to record the password somewhere secure as you will need to enter it elsewhere)
+
+    sudo openssl pkcs12 -inkey path/toyour/key -in path/to/your/cert -export -out /etc/openelis-global/keystore
+    
+enter an export password 
+	
+**Be sure to remember your keystore password, you will need it later**
+	
+For the self-signed certificate above, you would use:
+	
+    sudo openssl pkcs12 -inkey /etc/ssl/private/apache-selfsigned.key -in /etc/ssl/certs/apache-selfsigned.crt -export -out /etc/openelis-global/keystore
+
+**Be sure to remember your keystore password, you will need it later **
+	
+#### Create truststore with OpenELIS-Global's cert (or a CA that signs OE certs)
+
+1. using keytool (more reliable):
    
-   using keytool (more reliable):
+	    sudo apt-get install default-jre
    
-    ``sudo apt-get install default-jre``
+        sudo keytool -import -alias oeCert -file path/to/your/cert -storetype pkcs12 -keystore /etc/openelis-global/truststore
+	
+	* set the truststore password 
+	
+	**Be sure to remember your truststore password, you will need it later **
+	
+	* when prompted if you want to trust the cert type `yes`
+	
+	For the self-signed certificate above, you would use:
+	
+        sudo keytool -import -alias oeCert -file /etc/ssl/certs/apache-selfsigned.crt -storetype pkcs12 -keystore /etc/openelis-global/truststore
+	
+	* set the truststore password 
+	
+	**Be sure to remember your truststore password, you will need it later **
+	
+	* when prompted if you want to trust the cert type `yes`
    
-    ``keytool -import -alias oeCert -file path/to/your/cert -storetype pkcs12 -keystore /etc/openelis-global/truststore``
-   
-   using openssl (less reliable, but doesn't require java):
+	
+	
+2. using openssl (less reliable, but doesn't require java):
   
-    ``openssl pkcs12 -export -nokeys -in path/to/your/cert -out /etc/openelis-global/truststore``
+        openssl pkcs12 -export -nokeys -in path/to/your/cert -out /etc/openelis-global/truststore
 
-4. If you have signed keys, place files in server as:
-
-    ``/etc/tomcat/ssl/certs/tomcat_cert.crt``
-
-    ``/etc/tomcat/ssl/private/tomcat_cert.key``
+	For the self-signed certificate above, you would use:
+	
+	    openssl pkcs12 -export -nokeys -in /etc/ssl/certs/apache-selfsigned.crt -out /etc/openelis-global/truststore
     
 ### Install Postgresql
 OpenELIS-Global is configured to be able to install a docker based version of Postgres, but this is generally not recommended for production databases
@@ -76,7 +111,7 @@ If you trust docker to provide your database, you can ignore this section
 
 1. Install Postgresql
 
-	``sudo apt install postgresql postgresql-contrib``
+	    sudo apt install postgresql postgresql-contrib
 
 2. Configure Postgresql
 
@@ -89,17 +124,17 @@ If you trust docker to provide your database, you can ignore this section
 
     a. Download latest installer package: 
 
-    ``curl -L -O https://url_for_the _file.tar.gz``
+        curl -L -O https://url_for_the _file.tar.gz
  
-    b. EG: for OE 2.0 Beta 1: 
+    b. EG: for OE 2.0 Beta 1.2: 
 
-    ``curl -L -O https://www.dropbox.com/s/gvvascwhx7pleht/OpenELIS-Global_2.0.1.0_Installer.tar.gz``
+        curl -L -O https://www.dropbox.com/s/4kctm43r164vbl5/OpenELIS-Global_2.1.2.0_Installer.tar.gz?dl=0
  
 2. Unpack and enter the installer by running the following commands in Terminal, Mobaxterm, or Putty, replacing all in the { } with the appropriate values
 
-    ``tar xzf {context_name}_{installer_version}_Installer.tar.gz``
+        tar xzf {context_name}_{installer_version}_Installer.tar.gz
     
-    ``cd {context_name}_{installer_version}_Installer``
+        cd {context_name}_{installer_version}_Installer
     
 3. Optionally configure your install by editing setup.ini
 
@@ -107,14 +142,17 @@ If you trust docker to provide your database, you can ignore this section
 
 3. Run the install script in Terminal or Putty
 
-     ``sudo python setup_OpenELIS.py ``
+        sudo python setup_OpenELIS.py
 
 Wait while install procedure completes
 
 4. Check if OpenELIS is running at http://{server_ip_address}:8080/OpenELIS-Global
 
+Default user: admin
+Default password: adminADMIN!
+
 Configure the backup:
 
-Follow the SOP at: 
-https://docs.google.com/document/d/1HNGaeUdFIe6n_bd7Sz1q9lpMmAyymbb1H8_8GjTVYfc/edit
+Follow the SOP at: [Backup Configuration](../backups)
+
 

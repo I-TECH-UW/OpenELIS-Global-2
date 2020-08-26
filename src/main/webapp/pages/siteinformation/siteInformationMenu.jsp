@@ -47,6 +47,11 @@
                 <img src="./images/leftLabLogo.jpg?ver=<%= Math.random() %>"  
                 	 height="42" 
 	   		         width="42"  />
+                </c:when>
+	   			<c:when test="${site.name == 'labDirectorSignature'}">
+                <img src="./images/labDirectorSignature.jpg?ver=<%= Math.random() %>"  
+                	 height="42" 
+	   		         width="42"  />
                 </c:when><c:otherwise>
                 <img src="./images/rightLabLogo.jpg?ver=<%= Math.random() %>"  
                 	 height="42" 

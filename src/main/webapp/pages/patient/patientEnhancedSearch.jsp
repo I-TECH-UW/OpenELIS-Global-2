@@ -81,7 +81,7 @@ function searchPatients()
         labNumber = value;
         jQuery("#searchLabNumber").val(value);
     }
-	patientSearch(lastName, firstName, STNumber, subjectNumber, nationalID, labNumber, "", false, processSearchSuccess);
+	patientSearch(lastName, firstName, STNumber, subjectNumber, nationalID, labNumber, "", "", "", false, processSearchSuccess);
 }
 
 function enhancedSearchPatients()
@@ -439,6 +439,9 @@ function handleSelectedPatient(){
 
 <div id="PatientPage" class="patientEnhancedSearch"
 	style="text-align: left;">
+	    <input
+           id="searchValue"
+           type="hidden"/>
 	<h2><spring:message code="sample.entry.search" /></h2>
 	<table>
 		<tr>

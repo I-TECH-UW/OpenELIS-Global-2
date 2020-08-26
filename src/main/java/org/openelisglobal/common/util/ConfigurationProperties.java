@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.validator.GenericValidator;
+import org.openelisglobal.spring.util.SpringContext;
 
 /*
  * This is an abstract class which represents the configuration properties of the application.  The derived
@@ -50,6 +51,7 @@ public abstract class ConfigurationProperties {
         PatientSearchURL("patientSearchURL"),           //URL of where external patient information will be searched
         PatientSearchUserName("patientSearchLogOnUser"),      //User name for accesses to external patient search
         PatientSearchPassword("PatientSearchPassword"),      //User password for accesses to external patient search
+        PatientSearchEnabled("PatientSearchEnabled"),
         labDirectorName("lab director"),            //The name of the lab director
         languageSwitch("allowLanguageChange"),             //If true a user can switch between English and French (changes it for everybody)
         reportResults("resultReporting"),              //If true results will be reported electronically
@@ -116,10 +118,17 @@ public abstract class ConfigurationProperties {
         SPECIMEN_FIELD_DATE("collectionDateCheck"), //
         SPECIMEN_FIELD_SEX("patientSexCheck"), //
         SPECIMEN_FIELD_TESTS("testsCheck"), //
+        LAB_DIRECTOR_NAME("labDirectorName"), //
+        LAB_DIRECTOR_TITLE("labDirectorTitle"), //
         INFO_HIGHWAY_USERNAME("infoHighway.username"), //
         INFO_HIGHWAY_PASSWORD("infoHighway.password"), //
         INFO_HIGHWAY_ADDRESS("infoHighway.uri"), //
-        INFO_HIGHWAY_ENABLED("infoHighway.enabled"); //
+        INFO_HIGHWAY_ENABLED("infoHighway.enabled"), //
+        PATIENT_RESULTS_SMS_ENABLED("patientresultssms.enabled"), //
+        PATIENT_RESULTS_SMTP_USERNAME("patientresultssmtp.username"), //
+        PATIENT_RESULTS_SMTP_PASSWORD("patientresultssmtp.password"), //
+        PATIENT_RESULTS_SMTP_ADDRESS("patientresultssmtp.uri"), //
+        PATIENT_RESULTS_SMTP_ENABLED("patientresultssmtp.enabled"); //
 
         private String name;
 
@@ -160,6 +169,8 @@ public abstract class ConfigurationProperties {
 
     public static void forceReload() {
         activeConcreteInstance = null;
+        SpringContext.getBean(ConfigurationListenerService.class).refreshConfigurations();
+
     }
 
     /*

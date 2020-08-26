@@ -10,14 +10,14 @@
 
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<c:set var="workplanType" value="${form.workplanType}"/>
+<c:set var="type" value="${form.type}"/>
 <c:set var="responseAction" value="${form.searchAction}"/>
 
 <script type="text/javascript" src="scripts/utilities.js?" ></script>
 <script type="text/javascript">
 
 function doShowTests(element){
-	window.location.href = '<c:url value="${responseAction}?type=${workplanType}&selectedSearchID="/>' + element.value;
+	window.location.href = '<c:url value="${responseAction}?type=${type}&selectedSearchID="/>' + element.value;
 }
 
 function validateTest(){

@@ -111,9 +111,16 @@ function setPatientThenPrintLabel() {
     var subjectNumber = "";
     var nationalID = "";
     var labNumber = "";
+    
+    var dateOfBirth = "";
+    var age = "";
+    var gender = "";
 	labNumber = jQuery("#labNo").val();
+    
+    dateOfBirth = jQuery("#dateOfBirthSearchValue").val().trim();
+    gender = jQuery("#searchGendersSearchValues").val().trim();
     jQuery("#searchLabNumber").val(labNumber);
-    patientSearch(lastName, firstName, STNumber, subjectNumber, nationalID, labNumber, "", false, processSearchSuccessPrint);
+    patientSearch(lastName, firstName, STNumber, subjectNumber, nationalID, labNumber, "", dateOfBirth, gender, false, processSearchSuccessPrint);
 }
 
 //set patient id in hidden field before making request to LabelMakerServlet, 

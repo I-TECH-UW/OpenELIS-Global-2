@@ -61,11 +61,8 @@ public class SampleAddService {
     private final Map<String, Panel> panelIdPanelMap = new HashMap<>();
     private boolean xmlProcessed = false;
     private int sampleItemIdIndex = 0;
-    private static final boolean USE_INITIAL_SAMPLE_CONDITION = FormFields.getInstance()
-            .useField(Field.InitialSampleCondition);
     private static final boolean USE_RECEIVE_DATE_FOR_COLLECTION_DATE = !FormFields.getInstance()
             .useField(Field.CollectionDate);
-    private static final String INITIAL_CONDITION_OBSERVATION_ID;
 
     private static TypeOfSampleService typeOfSampleService = SpringContext.getBean(TypeOfSampleService.class);
     private static PanelService panelService = SpringContext.getBean(PanelService.class);
@@ -73,9 +70,6 @@ public class SampleAddService {
     private static ObservationHistoryTypeService ohtService = SpringContext
             .getBean(ObservationHistoryTypeService.class);
 
-    static {
-        INITIAL_CONDITION_OBSERVATION_ID = getObservationHistoryTypeId("initialSampleCondition");
-    }
 
     private static String getObservationHistoryTypeId(String name) {
         ObservationHistoryType oht;
@@ -131,9 +125,12 @@ public class SampleAddService {
 
                 augmentPanelIdToPanelMap(panelIDs);
                 List<ObservationHistory> initialConditionList = null;
-
-                if (USE_INITIAL_SAMPLE_CONDITION) {
+                if (FormFields.getInstance().useField(Field.InitialSampleCondition)) {
                     initialConditionList = addInitialSampleConditions(sampleItem, initialConditionList);
+                }
+                ObservationHistory sampleNature = null;
+                if (FormFields.getInstance().useField(Field.SampleNature)) {
+                    sampleNature = getSampleNature(sampleItem);
                 }
 
                 SampleItem item = new SampleItem();
@@ -153,7 +150,7 @@ public class SampleAddService {
 
                 sampleItemsTests.add(new SampleTestCollection(item, tests,
                         USE_RECEIVE_DATE_FOR_COLLECTION_DATE ? collectionDateFromRecieveDate : collectionDateTime,
-                        initialConditionList, testIdToUserSectionMap, testIdToSampleTypeMap));
+                        initialConditionList, testIdToUserSectionMap, testIdToSampleTypeMap, sampleNature));
 
             }
         } catch (DocumentException e) {
@@ -220,11 +217,24 @@ public class SampleAddService {
                 ObservationHistory initialSampleConditions = new ObservationHistory();
                 initialSampleConditions.setValue(initialSampleConditionIds[j]);
                 initialSampleConditions.setValueType(ObservationHistory.ValueType.DICTIONARY);
-                initialSampleConditions.setObservationHistoryTypeId(INITIAL_CONDITION_OBSERVATION_ID);
+                initialSampleConditions
+                        .setObservationHistoryTypeId(getObservationHistoryTypeId("initialSampleCondition"));
                 initialConditionList.add(initialSampleConditions);
             }
         }
         return initialConditionList;
+    }
+
+    private ObservationHistory getSampleNature(Element sampleItem) {
+        String sampleNatureId = sampleItem.attributeValue("sampleNatureId");
+        ObservationHistory sampleNature = new ObservationHistory();
+        if (!GenericValidator.isBlankOrNull(sampleNatureId)) {
+
+            sampleNature.setValue(sampleNatureId);
+            sampleNature.setValueType(ObservationHistory.ValueType.DICTIONARY);
+            sampleNature.setObservationHistoryTypeId(getObservationHistoryTypeId("sampleNature"));
+        }
+        return sampleNature;
     }
 
     private void addTests(String testIDs, List<Test> tests) {
@@ -244,16 +254,18 @@ public class SampleAddService {
         public List<ObservationHistory> initialSampleConditionIdList;
         public Map<String, String> testIdToUserSectionMap;
         public Map<String, String> testIdToUserSampleTypeMap;
+        public ObservationHistory sampleNature;
 
         public SampleTestCollection(SampleItem item, List<Test> tests, String collectionDate,
                 List<ObservationHistory> initialConditionList, Map<String, String> testIdToUserSectionMap,
-                Map<String, String> testIdToUserSampleTypeMap) {
+                Map<String, String> testIdToUserSampleTypeMap, ObservationHistory sampleNature) {
             this.item = item;
             this.tests = tests;
             this.collectionDate = collectionDate;
             this.testIdToUserSectionMap = testIdToUserSectionMap;
             this.testIdToUserSampleTypeMap = testIdToUserSampleTypeMap;
             initialSampleConditionIdList = initialConditionList;
+            this.sampleNature = sampleNature;
 
         }
     }

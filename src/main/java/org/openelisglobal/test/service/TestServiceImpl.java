@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Vector;
 
 import javax.annotation.PostConstruct;
@@ -470,6 +471,25 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
     }
 
     @Override
+    public List<Test> getActiveTestsByLoinc(String[] loincCodes) {
+        return getBaseObjectDAO().getActiveTestsByLoinc(loincCodes);
+    }
+
+    @Override
+    public Optional<Test> getActiveTestByLoincCodeAndSampleType(String loincCode, String sampleTypeId) {
+        List<Test> tests = getBaseObjectDAO().getActiveTestsByLoinc(loincCode);
+        for (Test test : tests) {
+            for (TypeOfSampleTest typeOfSampleTest : typeOfSampleTestService
+                    .getTypeOfSampleTestsForTest(test.getId())) {
+                if (typeOfSampleTest.getTypeOfSampleId().equals(sampleTypeId)) {
+                    return Optional.of(test);
+                }
+            }
+        }
+        return Optional.empty();
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public List<Test> getAllActiveOrderableTests() {
         return getBaseObjectDAO().getAllActiveOrderableTests();
@@ -586,7 +606,7 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
         if (test.getIsActive().equals(IActionConstants.YES) && getBaseObjectDAO().duplicateTestExists(test)) {
             throw new LIMSDuplicateRecordException("Duplicate record exists for " + test.getDescription());
         }
-        
+
         return super.insert(test);
     }
 
@@ -667,8 +687,12 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
 
     @Override
     public Test getTestByName(String testName) {
-        // TODO Auto-generated method stub
         return getTestByLocalizedName(testName);
+    }
+
+    @Override
+    public List<Test> getActiveTestByName(String testName) {
+        return getBaseObjectDAO().getActiveTestsByName(testName);
     }
 
 }
