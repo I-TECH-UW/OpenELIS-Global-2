@@ -27,9 +27,11 @@ import org.openelisglobal.common.services.StatusService.OrderStatus;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.internationalization.MessageUtil;
+import org.openelisglobal.qaevent.service.NceSpecimenService;
 import org.openelisglobal.qaevent.service.QaEventService;
 import org.openelisglobal.qaevent.service.QaObservationService;
 import org.openelisglobal.qaevent.service.QaObservationTypeService;
+import org.openelisglobal.qaevent.valueholder.NceSpecimen;
 import org.openelisglobal.qaevent.valueholder.QaEvent;
 import org.openelisglobal.qaevent.valueholder.QaObservation;
 import org.openelisglobal.qaevent.valueholder.QaObservation.ObservedType;
@@ -60,6 +62,7 @@ public class QAService {
     private static QaObservationTypeService qaObservationTypeService = SpringContext
             .getBean(QaObservationTypeService.class);
     private static ReferenceTablesService referenceTablesService = SpringContext.getBean(ReferenceTablesService.class);
+    private static NceSpecimenService nceSpecimenService = SpringContext.getBean(NceSpecimenService.class);
 
     private SampleQaEvent sampleQaEvent;
     private final List<QaObservation> observationList = new ArrayList<>();
@@ -226,6 +229,7 @@ public class QAService {
 
         if (sampleItem != null) {
             boolean nonconforming = nonconformingByDepricatedStatus(sampleItem.getSample(), analysis);
+            nonconforming = nonconforming || hasNonConformingEvent(sampleItem);
 
             if (!nonconforming) {
                 nonconforming = hasOrderOnlyQaEventOrSampleQaEvent(sampleItem);
@@ -239,7 +243,6 @@ public class QAService {
     public static boolean isOrderNonConforming(Sample sample) {
         if (sample != null) {
             boolean nonconforming = nonconformingByDepricatedStatus(sample);
-
             if (!nonconforming) {
                 nonconforming = hasOrderSampleQaEvent(sample);
             }
@@ -250,16 +253,22 @@ public class QAService {
 
         return false;
     }
-
     private static boolean nonconformingByDepricatedStatus(Sample sample, Analysis analysis) {
 
         return nonconformingByDepricatedStatus(sample) || analysis.getStatusId()
                 .equals(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NonConforming_depricated));
     }
 
+    private static boolean hasNonConformingEvent(SampleItem sampleItem) {
+        List<NceSpecimen> nceSpecimens = nceSpecimenService.getSpecimenBySampleItemId(sampleItem.getId());
+        return !nceSpecimens.isEmpty();
+    }
+
     private static boolean nonconformingByDepricatedStatus(Sample sample) {
-        return sample.getStatusId()
+        boolean nonconformingStatus = false;
+        nonconformingStatus = nonconformingStatus || sample.getStatusId()
                 .equals(SpringContext.getBean(IStatusService.class).getStatusID(OrderStatus.NonConforming_depricated));
+        return nonconformingStatus;
     }
 
     private static boolean hasOrderSampleQaEvent(Sample sample) {
