@@ -92,10 +92,10 @@ public class ReportNonConformingEventController extends BaseController {
     public ModelAndView showReportNonConformingEventUpdate(HttpServletRequest request,
             @ModelAttribute("form") NonConformingEventForm form, BindingResult result,
             RedirectAttributes redirectAttributes) {
-        redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
 
         boolean updated = nonConformingEventWorker.update(form);
         if (updated) {
+            redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
             return findForward(FWD_SUCCESS_INSERT, form);
         } else {
             return findForward(FWD_FAIL_INSERT, form);

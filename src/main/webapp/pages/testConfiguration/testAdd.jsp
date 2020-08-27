@@ -32,7 +32,7 @@
   --%>
 
 <%
-    String locale = SystemConfiguration.getInstance().getDefaultLocale().toString();
+	Locale locale = LocaleContextHolder.getLocale().toString();
 %>
 <%--Do not add jquery.ui.js, it will break the sorting --%>
 <script type="text/javascript" src="scripts/jquery.asmselect.js?"></script>
@@ -238,10 +238,10 @@
             ul.append(createLI(id, name, false));
         }
 
-        <% if( locale.equals("en_US")){ %>
-        ul.append( createLI(0, jQuery("#testNameEnglish").val(), true) );
+        <% if( locale.getLanguage.equals("en")){ %>
+        	ul.append( createLI(0, jQuery("#testNameEnglish").val(), true) );
         <% } else { %>
-        ul.append( createLI(0, jQuery("#testNameFrench").val(), true) );
+        	ul.append( createLI(0, jQuery("#testNameFrench").val(), true) );
         <% } %>
 
         jQuery("#sort" + sampleTypeId).append(ul);
@@ -1346,7 +1346,7 @@ td {
                         <span class="sexRange_0" style="display: none">
                             <spring:message code="sex.male" />
                         </span>
-                </td>ocalization
+                </td>
                 <td><input class="yearMonthSelect_0" type="radio" name="time_0" value="<%=MessageUtil.getContextualMessage("abbreviation.year.single")%>"
                            onchange="upperAgeRangeChanged('0')" checked><spring:message code="abbreviation.year.single" />
                     <input class="yearMonthSelect_0" type="radio" name="time_0" value="<%=MessageUtil.getContextualMessage("abbreviation.month.single")%>"
