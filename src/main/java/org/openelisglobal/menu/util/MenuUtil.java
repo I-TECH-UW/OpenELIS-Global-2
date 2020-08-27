@@ -96,8 +96,7 @@ public class MenuUtil {
                 MenuItem menuItem = menuToMenuItemMap.get(menu.getParent());
                 if (menuItem == null) {
                     LogEvent.logWarn("MenuUtil", "createTree",
-                            "parent menu item " + menu.getParent().getElementId()
-                                    + " is not active so can't attach child node " + menu.getElementId()
+                            "parent menu item is not active so can't attach child node " + menu.getElementId()
                                     + ". Continuing without child node");
                 } else {
                     menuToMenuItemMap.get(menu.getParent()).getChildMenus().add(menuToMenuItemMap.get(menu));

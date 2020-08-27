@@ -7,6 +7,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.validator.GenericValidator;
+import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.formfields.FormFields.Field;
@@ -45,7 +46,7 @@ public class WorkPlanByTestSectionController extends BaseWorkplanController {
     private static final String[] ALLOWED_FIELDS = new String[] { "testSectionId", "type" };
 
     @Autowired
-    private org.openelisglobal.analysis.service.AnalysisService analysisService;
+    private AnalysisService analysisService;
     @Autowired
     private SampleQaEventService sampleQaEventService;
     @Autowired
@@ -168,7 +169,8 @@ public class WorkPlanByTestSectionController extends BaseWorkplanController {
                 testResultItem.setNonconforming(QAService.isAnalysisParentNonConforming(analysis));
 
                 if (FormFields.getInstance().useField(Field.QaEventsBySection)) {
-                    testResultItem.setNonconforming(getQaEventByTestSection(analysis));
+                    testResultItem
+                            .setNonconforming(testResultItem.isNonconforming() || getQaEventByTestSection(analysis));
                 }
 
                 testResultItem.setPatientInfo(subjectNumber);

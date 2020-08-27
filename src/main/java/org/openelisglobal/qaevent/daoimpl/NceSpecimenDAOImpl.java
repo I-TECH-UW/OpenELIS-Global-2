@@ -37,4 +37,15 @@ public class NceSpecimenDAOImpl extends BaseDAOImpl<NceSpecimen, String> impleme
         }
         return list;
     }
+
+    @Override
+    public List<NceSpecimen> getSpecimenBySampleId(String sampleId) {
+        List<NceSpecimen> list;
+        String sql = "from NceSpecimen ns where ns.sampleItemId=:sampleId ";
+        org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+        ((Query) query).setParameter("sampleId", Integer.parseInt(sampleId));
+        list = query.list();
+
+        return list;
+    }
 }
