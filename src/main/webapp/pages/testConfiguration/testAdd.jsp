@@ -2,6 +2,8 @@
          contentType="text/html; charset=UTF-8"
          import="org.openelisglobal.internationalization.MessageUtil,
          		java.util.List,
+         		java.util.Locale,
+         		org.springframework.context.i18n.LocaleContextHolder,
          		org.openelisglobal.common.action.IActionConstants,
          		org.openelisglobal.common.util.IdValuePair,
          		org.openelisglobal.common.util.Versioning,
@@ -32,7 +34,7 @@
   --%>
 
 <%
-	Locale locale = LocaleContextHolder.getLocale().toString();
+	Locale locale = LocaleContextHolder.getLocale();
 %>
 <%--Do not add jquery.ui.js, it will break the sorting --%>
 <script type="text/javascript" src="scripts/jquery.asmselect.js?"></script>
@@ -238,7 +240,7 @@
             ul.append(createLI(id, name, false));
         }
 
-        <% if( locale.getLanguage.equals("en")){ %>
+        <% if( locale.getLanguage().equals("en")){ %>
         	ul.append( createLI(0, jQuery("#testNameEnglish").val(), true) );
         <% } else { %>
         	ul.append( createLI(0, jQuery("#testNameFrench").val(), true) );
