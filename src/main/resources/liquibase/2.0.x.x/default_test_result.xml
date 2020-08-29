@@ -6,12 +6,12 @@
 	  http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
 	<changeSet author="caleb" id="1">
-		<comment>add lastupdated to site informations without to stop a bug</comment>
+		<comment>add a default test result</comment>
 
 		<!-- auto-rollsback -->
 		<addColumn schemaName="clinlims"
-            tableName="test">
-        <column name="default_test_result_id" type="numeric(10)"/>
+            tableName="test_result">
+        <column name="is_default" defaultValue="false" type="BOOLEAN"/>
     </addColumn>
 
 	</changeSet>

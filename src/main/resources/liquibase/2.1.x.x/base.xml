@@ -12,4 +12,10 @@
 	<include file="liquibase/2.1.x.x/locator_form_integration.xml"/>
 	<include file="liquibase/2.1.x.x/user_manual_translation.xml"/>
 
+	<!-- mauritius specific changes  -->
+	<include file="liquibase/2.1.x.x/covid_report_menu.xml"/>
+	<include file="liquibase/2.1.x.x/covid_tests.xml"/>
+	<include file="liquibase/2.1.x.x/mauritius_organizations.xml"/>
+	<include file="liquibase/2.1.x.x/set_mauritius_field_form.xml"/>
+
 </databaseChangeLog>
