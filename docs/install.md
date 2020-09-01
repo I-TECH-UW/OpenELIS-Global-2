@@ -128,7 +128,7 @@ If you trust docker to provide your database, you can ignore this section
  
     b. EG: for OE 2.0 Beta 1.2: 
 
-        curl -L -O https://www.dropbox.com/s/4kctm43r164vbl5/OpenELIS-Global_2.1.2.0_Installer.tar.gz?dl=0
+        curl -L -O https://www.dropbox.com/s/rm0ugq857rrktc7/OpenELIS-Global_2.1.2.1_Installer.tar.gz
  
 2. Unpack and enter the installer by running the following commands in Terminal, Mobaxterm, or Putty, replacing all in the { } with the appropriate values
 
