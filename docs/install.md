@@ -126,7 +126,7 @@ If you trust docker to provide your database, you can ignore this section
 
         curl -L -O https://url_for_the _file.tar.gz
  
-    b. EG: for OE 2.0 Beta 1.2: 
+    b. EG: for OE 2.0 Beta 2.1: 
 
         curl -L -O https://www.dropbox.com/s/rm0ugq857rrktc7/OpenELIS-Global_2.1.2.1_Installer.tar.gz
  
