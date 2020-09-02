@@ -4,11 +4,16 @@ import java.util.List;
 
 import javax.validation.constraints.Pattern;
 
-import org.openelisglobal.common.form.MenuForm;
+import org.openelisglobal.common.form.AdminOptionMenuForm;
 import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.externalconnections.valueholder.ExternalConnection;
 
-public class ExternalConnectionMenuForm extends MenuForm {
+public class ExternalConnectionMenuForm extends AdminOptionMenuForm<ExternalConnection> {
+    /**
+     *
+     */
+    private static final long serialVersionUID = -5867483862656304158L;
+
     private String lastupdated;
 
     private List<ExternalConnection> menuList;
@@ -33,7 +38,7 @@ public class ExternalConnectionMenuForm extends MenuForm {
     }
 
     @Override
-    public void setMenuList(List menuList) {
+    public void setMenuList(List<ExternalConnection> menuList) {
         this.menuList = menuList;
     }
 
