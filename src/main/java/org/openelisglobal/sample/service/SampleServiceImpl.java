@@ -80,6 +80,7 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
 
     public SampleServiceImpl() {
         super(Sample.class);
+        this.auditTrailLog = true;
     }
 
     @Override

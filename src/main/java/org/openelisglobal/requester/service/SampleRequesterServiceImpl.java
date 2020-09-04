@@ -17,6 +17,7 @@ public class SampleRequesterServiceImpl extends BaseObjectServiceImpl<SampleRequ
 
     SampleRequesterServiceImpl() {
         super(SampleRequester.class);
+        this.auditTrailLog = true;
     }
 
     @Override
