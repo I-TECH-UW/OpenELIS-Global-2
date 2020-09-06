@@ -1906,7 +1906,6 @@ td {
 				<td width="25%" style="vertical-align: top; padding: 4px"
 					id="panelSelectionCell"><spring:message code="typeofsample.panel.panel" /><br /> 
 					<select id="panelSelection" name="panelSelection" multiple="multiple" title="Multiple">
-					 <select id="panelSelection" multiple="multiple" title="Multiple">
                         <% for (IdValuePair pair : panelList) { %>
                         <option value='<%=pair.getId()%>'><%=pair.getValue()%>
                         </option>

@@ -2,6 +2,7 @@ package org.openelisglobal.panelitem.service;
 
 import java.util.List;
 
+import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
@@ -153,11 +154,18 @@ public class PanelItemServiceImpl extends BaseObjectServiceImpl<PanelItem, Strin
 
     @Override
     public boolean duplicatePanelItemExists(PanelItem panelItem) throws LIMSRuntimeException {
-        List<PanelItem> existingPanelItems = getPanelItemsForPanel(
-                panelService.getIdForPanelName(panelItem.getPanelName()));
+        if (panelItem.getPanel() == null && GenericValidator.isBlankOrNull(panelItem.getPanelName())) {
+            throw new IllegalStateException("must be able to identify the panel to check if this is a duplicate");
+        }
+        List<PanelItem> existingPanelItems;
+        if (panelItem.getPanel() != null && !GenericValidator.isBlankOrNull(panelItem.getPanel().getId())) {
+            existingPanelItems = getPanelItemsForPanel(panelItem.getPanel().getId());
+        } else {
+            existingPanelItems = getPanelItemsForPanel(panelService.getIdForPanelName(panelItem.getPanelName()));
+        }
         for (PanelItem existingPanelItem : existingPanelItems) {
             if ((panelItem.getTest().getId().equals(existingPanelItem.getTest().getId()))
-                    || (panelItem.getTestName().equals(existingPanelItem.getTestName()))) {
+                    || (panelItem.getTest().getName().equals(existingPanelItem.getTest().getName()))) {
                 return !panelItem.getId().equals(existingPanelItem.getId());
             }
         }
