@@ -16,7 +16,11 @@ import org.openelisglobal.testconfiguration.controller.TestModifyEntryController
 import org.openelisglobal.testconfiguration.controller.TestModifyEntryController.TestSet;
 import org.openelisglobal.testresult.service.TestResultService;
 import org.openelisglobal.testresult.valueholder.TestResult;
+import org.openelisglobal.typeofsample.service.TypeOfSamplePanelService;
+import org.openelisglobal.typeofsample.service.TypeOfSampleService;
 import org.openelisglobal.typeofsample.service.TypeOfSampleTestService;
+import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
+import org.openelisglobal.typeofsample.valueholder.TypeOfSamplePanel;
 import org.openelisglobal.typeofsample.valueholder.TypeOfSampleTest;
 import org.openelisglobal.unitofmeasure.service.UnitOfMeasureService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +32,10 @@ public class TestModifyServiceImpl implements TestModifyService {
 
     @Autowired
     private TypeOfSampleTestService typeOfSampleTestService;
+    @Autowired
+    private TypeOfSampleService typeOfSampleService;
+    @Autowired
+    private TypeOfSamplePanelService typeOfSamplePanelService;
     @Autowired
     private PanelItemService panelItemService;
     @Autowired
@@ -95,7 +103,17 @@ public class TestModifyServiceImpl implements TestModifyService {
                 Test nonTransiantTest = testService.getTestById(set.test.getId());
                 item.setTest(nonTransiantTest);
                 panelItemService.insert(item);
+                if (item.getPanel() != null) {
+                    TypeOfSample sampleType = typeOfSampleService.get(set.sampleTypeTest.getTypeOfSampleId());
+                    if (typeOfSamplePanelService.getTypeOfSamplePanelsForSampleType(sampleType.getId()).isEmpty()) {
+                        TypeOfSamplePanel tosp = new TypeOfSamplePanel();
+                        tosp.setPanelId(item.getPanel().getId());
+                        tosp.setTypeOfSampleId(sampleType.getId());
+                        typeOfSamplePanelService.insert(tosp);
+                    }
+                }
             }
+
 
             for (TestResult testResult : set.testResults) {
                 testResult.setSysUserId(currentUserId);

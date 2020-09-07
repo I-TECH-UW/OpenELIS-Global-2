@@ -1,7 +1,10 @@
 package org.openelisglobal.security;
 
+import javax.servlet.ServletContext;
+
 import org.jasypt.util.text.AES256TextEncryptor;
 import org.jasypt.util.text.TextEncryptor;
+import org.openelisglobal.spring.util.SpringContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -20,6 +23,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.web.filter.CharacterEncodingFilter;
+import org.springframework.web.multipart.support.MultipartFilter;
 
 @EnableWebSecurity
 public class SecurityConfig {
@@ -57,6 +61,9 @@ public class SecurityConfig {
             filter.setEncoding("UTF-8");
             filter.setForceEncoding(true);
             http.addFilterBefore(filter, CsrfFilter.class);
+            MultipartFilter multipartFilter = new MultipartFilter();
+            multipartFilter.setServletContext(SpringContext.getBean(ServletContext.class));
+            http.addFilterBefore(multipartFilter, CsrfFilter.class);
 
             // for all requests going to a http basic page, use this security configuration
             http.requestMatchers().antMatchers(HTTP_BASIC_SERVLET_PAGES).and().authorizeRequests().anyRequest()
@@ -120,6 +127,9 @@ public class SecurityConfig {
             filter.setEncoding("UTF-8");
             filter.setForceEncoding(true);
             http.addFilterBefore(filter, CsrfFilter.class);
+            MultipartFilter multipartFilter = new MultipartFilter();
+            multipartFilter.setServletContext(SpringContext.getBean(ServletContext.class));
+            http.addFilterBefore(multipartFilter, CsrfFilter.class);
 
             http.authorizeRequests()
                     // allow all users to access these pages no matter authentication status

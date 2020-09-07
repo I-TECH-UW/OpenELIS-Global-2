@@ -3,7 +3,9 @@ package org.openelisglobal.menu.controller;
 import javax.servlet.http.HttpServletRequest;
 
 import org.openelisglobal.common.controller.BaseController;
-import org.openelisglobal.common.form.MainForm;
+import org.openelisglobal.menu.form.AdminMenuForm;
+import org.openelisglobal.menu.service.AdminMenuItemService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -16,6 +18,9 @@ public class MasterListsPageController extends BaseController {
 
     private static final String[] ALLOWED_FIELDS = new String[] {};
 
+    @Autowired
+    private AdminMenuItemService adminMenuItemService;
+
     @InitBinder
     public void initBinder(WebDataBinder binder) {
         binder.setAllowedFields(ALLOWED_FIELDS);
@@ -24,7 +29,8 @@ public class MasterListsPageController extends BaseController {
     @RequestMapping(value = "/MasterListsPage", method = { RequestMethod.GET, RequestMethod.POST })
     public ModelAndView showMasterListsPage(HttpServletRequest request) {
 
-        MainForm form = new MainForm();
+        AdminMenuForm form = new AdminMenuForm();
+        form.setAdminMenuItems(adminMenuItemService.getActiveItemsSorted());
         return findForward(FWD_SUCCESS, form);
     }
 

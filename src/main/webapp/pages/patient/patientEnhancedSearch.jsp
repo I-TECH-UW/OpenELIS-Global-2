@@ -108,10 +108,9 @@ function enhancedSearchPatients()
     firstName = jQuery("#firstNameSearchValue").val().trim();
     lastName = jQuery("#lastNameSearchValue").val().trim();
     
-    subjectNumber = jQuery("#subjectNumberSearchValue").val().trim();
-    nationalID = jQuery("#subjectNumberSearchValue").val().trim(); // facilitates "or"
-    STNumber = jQuery("#subjectNumberSearchValue").val().trim();
-    nationalID = jQuery("#subjectNumberSearchValue").val().trim();
+    subjectNumber = jQuery("#patientIdNumberSearchValue").val().trim();
+    nationalID = jQuery("#patientIdNumberSearchValue").val().trim(); // facilitates "or"
+    STNumber = jQuery("#patientIdNumberSearchValue").val().trim();
     
     dateOfBirth = jQuery("#dateOfBirthSearchValue").val().trim();
     gender = jQuery("#searchGendersSearchValues").val().trim();
@@ -348,8 +347,8 @@ function enableEnhancedSearchButton(eventCode){
 	var enhancedSearchButton = jQuery("#enhancedSearchButton");
 	enhancedSearchButton.removeAttr("disabled");
 	
-	var subjectNumberSearch = document.getElementById("subjectNumberSearchValue");
-	subjectNumberSearch.addEventListener("keyup", function(event) {
+	var patientIdNumberSearch = document.getElementById("patientIdNumberSearchValue");
+	patientIdNumberSearch.addEventListener("keyup", function(event) {
 		if(event.keyCode === 13) {
 			event.preventDefault();
 			document.getElementById("enhancedSearchButton").click();
@@ -446,9 +445,9 @@ function handleSelectedPatient(){
 	<table>
 		<tr>
 			<td style="text-align: left;"><spring:message
-					code="patient.subject.number" /> :</td>
+					code="patient.id.number.search" /> :</td>
 			<td><input
-					id="subjectNumberSearchValue" 
+					id="patientIdNumberSearchValue" 
 					size="40" 
 					oninput="enableEnhancedSearchButton(event.which);"
 					placeholder='<%=MessageUtil.getMessage("label.select.search.here")%>' />

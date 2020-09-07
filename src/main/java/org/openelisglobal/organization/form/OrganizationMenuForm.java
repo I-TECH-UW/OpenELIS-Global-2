@@ -5,12 +5,18 @@ import java.util.List;
 import javax.validation.constraints.Pattern;
 
 import org.hibernate.validator.constraints.SafeHtml;
-import org.openelisglobal.common.form.MenuForm;
+import org.openelisglobal.common.form.AdminOptionMenuForm;
 import org.openelisglobal.common.validator.ValidationHelper;
+import org.openelisglobal.organization.valueholder.Organization;
 
-public class OrganizationMenuForm extends MenuForm {
+public class OrganizationMenuForm extends AdminOptionMenuForm<Organization> {
+    /**
+     *
+     */
+    private static final long serialVersionUID = 3849998051592681962L;
+
     // for display
-    private List menuList;
+    private List<Organization> menuList;
 
     private List<@Pattern(regexp = ValidationHelper.ID_REGEX) String> selectedIDs;
 
@@ -22,12 +28,12 @@ public class OrganizationMenuForm extends MenuForm {
     }
 
     @Override
-    public List getMenuList() {
+    public List<Organization> getMenuList() {
         return menuList;
     }
 
     @Override
-    public void setMenuList(List menuList) {
+    public void setMenuList(List<Organization> menuList) {
         this.menuList = menuList;
     }
 

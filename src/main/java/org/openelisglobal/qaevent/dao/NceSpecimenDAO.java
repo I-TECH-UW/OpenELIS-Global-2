@@ -9,4 +9,6 @@ import org.openelisglobal.qaevent.valueholder.NceSpecimen;
 public interface NceSpecimenDAO extends BaseDAO<NceSpecimen, String> {
 
     List<NceSpecimen> getSpecimenByNceId(String nceId) throws LIMSRuntimeException;
+
+    List<NceSpecimen> getSpecimenBySampleId(String sampleId);
 }

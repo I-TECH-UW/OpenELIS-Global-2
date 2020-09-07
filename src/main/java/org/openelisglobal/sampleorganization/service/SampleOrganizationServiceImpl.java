@@ -16,6 +16,7 @@ public class SampleOrganizationServiceImpl extends BaseObjectServiceImpl<SampleO
 
     SampleOrganizationServiceImpl() {
         super(SampleOrganization.class);
+        this.auditTrailLog = true;
     }
 
     @Override

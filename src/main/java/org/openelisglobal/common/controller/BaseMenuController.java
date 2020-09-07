@@ -7,13 +7,14 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.openelisglobal.common.exception.LIMSRuntimeException;
-import org.openelisglobal.common.form.MenuForm;
+import org.openelisglobal.common.form.AdminOptionMenuForm;
 import org.openelisglobal.common.log.LogEvent;
-import org.openelisglobal.common.service.BaseObjectService;
 import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.common.util.SystemConfiguration;
+import org.openelisglobal.menu.service.AdminMenuItemService;
+import org.openelisglobal.spring.util.SpringContext;
 
-public abstract class BaseMenuController extends BaseController {
+public abstract class BaseMenuController<T> extends BaseController {
 
     protected static final int PREVIOUS = 1;
 
@@ -25,7 +26,7 @@ public abstract class BaseMenuController extends BaseController {
         return SystemConfiguration.getInstance().getDefaultPageSize();
     }
 
-    protected String performMenuAction(MenuForm form, HttpServletRequest request)
+    protected String performMenuAction(AdminOptionMenuForm<T> form, HttpServletRequest request)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
         String forward = FWD_SUCCESS;
@@ -34,7 +35,7 @@ public abstract class BaseMenuController extends BaseController {
         if (!StringUtil.isNullorNill(request.getParameter("paging"))) {
             action = Integer.parseInt(request.getParameter("paging"));
         }
-        List menuList = null;
+        List<T> menuList = null;
 
         try {
             switch (action) {
@@ -53,6 +54,7 @@ public abstract class BaseMenuController extends BaseController {
         }
 
         form.setMenuList(menuList);
+        form.setAdminMenuItems(SpringContext.getBean(AdminMenuItemService.class).getActiveItemsSorted());
 
         request.setAttribute(DEACTIVATE_DISABLED, getDeactivateDisabled());
         request.setAttribute(ADD_DISABLED, getAddDisabled());
@@ -65,7 +67,7 @@ public abstract class BaseMenuController extends BaseController {
         return forward;
     }
 
-    protected List doNextPage(MenuForm form, HttpServletRequest request) {
+    protected List<T> doNextPage(AdminOptionMenuForm<T> form, HttpServletRequest request) {
 
         int startingRecNo = getCurrentStartingRecNo(request);
 
@@ -76,7 +78,7 @@ public abstract class BaseMenuController extends BaseController {
         String stringNextStartingRecNo = String.valueOf(nextStartingRecNo);
         request.setAttribute("startingRecNo", stringNextStartingRecNo);
 
-        List nextPageList = createMenuList(form, request);
+        List<T> nextPageList = createMenuList(form, request);
 
         request.setAttribute(PREVIOUS_DISABLED, "false");
 
@@ -92,7 +94,7 @@ public abstract class BaseMenuController extends BaseController {
         return nextPageList;
     }
 
-    protected List doPreviousPage(MenuForm form, HttpServletRequest request) {
+    protected List<T> doPreviousPage(AdminOptionMenuForm<T> form, HttpServletRequest request) {
 
         int startingRecNo = getCurrentStartingRecNo(request);
 
@@ -100,7 +102,7 @@ public abstract class BaseMenuController extends BaseController {
         String stringNextStartingRecNo = String.valueOf(nextStartingRecNo);
         request.setAttribute("startingRecNo", stringNextStartingRecNo);
 
-        List previousPageList = createMenuList(form, request);
+        List<T> previousPageList = createMenuList(form, request);
 
         request.setAttribute(NEXT_DISABLED, "false");
 
@@ -120,7 +122,7 @@ public abstract class BaseMenuController extends BaseController {
         return previousPageList;
     }
 
-    protected List doNone(MenuForm form, HttpServletRequest request) {
+    protected List<T> doNone(AdminOptionMenuForm<T> form, HttpServletRequest request) {
 
         int startingRecNo = getCurrentStartingRecNo(request);
 
@@ -128,7 +130,7 @@ public abstract class BaseMenuController extends BaseController {
         String stringNextStartingRecNo = String.valueOf(nextStartingRecNo);
         request.setAttribute("startingRecNo", stringNextStartingRecNo);
 
-        List samePageList = createMenuList(form, request);
+        List<T> samePageList = createMenuList(form, request);
 
         // this is first page: don't enable previous button
 
@@ -165,7 +167,7 @@ public abstract class BaseMenuController extends BaseController {
         return startingRecNo;
     }
 
-    protected abstract List createMenuList(MenuForm form, HttpServletRequest request);
+    protected abstract List<T> createMenuList(AdminOptionMenuForm<T> form, HttpServletRequest request);
 
     protected abstract String getDeactivateDisabled();
 
@@ -175,22 +177,6 @@ public abstract class BaseMenuController extends BaseController {
 
     protected String getEditDisabled() {
         return "false";
-    }
-
-    protected void setDisplayPageBounds(HttpServletRequest request, int listSize, int startingRecNo,
-            BaseObjectService baseObjectService) throws LIMSRuntimeException {
-        request.setAttribute(MENU_TOTAL_RECORDS, String.valueOf(baseObjectService.getCount()));
-        request.setAttribute(MENU_FROM_RECORD, String.valueOf(startingRecNo));
-
-        int numOfRecs = 0;
-        if (listSize != 0) {
-            numOfRecs = Math.min(listSize, getPageSize());
-
-            numOfRecs--;
-        }
-
-        int endingRecNo = startingRecNo + numOfRecs;
-        request.setAttribute(MENU_TO_RECORD, String.valueOf(endingRecNo));
     }
 
     protected void setDisplayPageBounds(HttpServletRequest request, int listSize, int startingRecNo, int totalRecords)

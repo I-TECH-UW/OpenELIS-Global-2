@@ -10,5 +10,7 @@
 	<include file="liquibase/2.1.x.x/sample_nature.xml"/>
 	<include file="liquibase/2.1.x.x/client_notifications.xml"/>
 	<include file="liquibase/2.1.x.x/locator_form_integration.xml"/>
+	<include file="liquibase/2.1.x.x/user_manual_translation.xml"/>
+	<include file="liquibase/2.1.x.x/admin_menu_clean.xml"/>
 
 </databaseChangeLog>

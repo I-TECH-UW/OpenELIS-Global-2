@@ -1,5 +1,12 @@
 package org.openelisglobal.externalconnections.controller;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -23,6 +30,7 @@ import org.openelisglobal.externalconnections.valueholder.ExternalConnection.Pro
 import org.openelisglobal.externalconnections.valueholder.ExternalConnectionAuthenticationData;
 import org.openelisglobal.externalconnections.valueholder.ExternalConnectionContact;
 import org.openelisglobal.internationalization.MessageUtil;
+import org.openelisglobal.security.certs.service.TruststoreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
@@ -32,10 +40,36 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class ExternalConnectionController extends BaseController {
+
+    private static final String[] ALLOWED_FIELDS = new String[] { "externalConnection.id", "externalConnection.active",
+            "externalConnection.lastupdated", "externalConnection.programmedConnection",
+            "externalConnection.activeAuthenticationType", "externalConnection.uri",
+            //
+            "externalConnection.descriptionLocalization.lastupdated", "externalConnection.descriptionLocalization.id",
+            "externalConnection.descriptionLocalization.localizedValue",
+            //
+            "externalConnection.nameLocalization.lastupdated", "externalConnection.nameLocalization.id",
+            "externalConnection.nameLocalization.localizedValue",
+            //
+            "externalConnectionContacts*.id", "externalConnectionContacts*.lastupdated",
+            //
+            "externalConnectionContacts*.person.id",
+            "externalConnectionContacts*.person.lastupdated", "externalConnectionContacts*.person.lastName",
+            "externalConnectionContacts*.person.firstName", "externalConnectionContacts*.person.primaryPhone",
+            "externalConnectionContacts*.person.email",
+            //
+            "certificateAuthenticationData.certificate", "certificateAuthenticationData.id",
+            "certificateAuthenticationData.lastupdated",
+            //
+            "basicAuthenticationData.username", "basicAuthenticationData.password", "basicAuthenticationData.id",
+            "basicAuthenticationData.lastupdated",
+
+    };
 
     @Autowired
     private ExternalConnectionService externalConnectionService;
@@ -43,9 +77,12 @@ public class ExternalConnectionController extends BaseController {
     private ExternalConnectionContactService externalConnectionContactService;
     @Autowired
     private ExternalConnectionAuthenticationDataService externalConnectionAuthenticationDataService;
+    @Autowired
+    private TruststoreService truststoreService;
 
     @InitBinder
-    public void initBinder(WebDataBinder binder) {
+    public void initBinder(WebDataBinder webdataBinder) {
+        webdataBinder.setAllowedFields(ALLOWED_FIELDS);
     }
 
     @GetMapping(value = "/ExternalConnection")
@@ -70,8 +107,9 @@ public class ExternalConnectionController extends BaseController {
     }
 
     @PostMapping(value = "/ExternalConnection")
-    public ModelAndView addEditExternalConnection(@ModelAttribute("form") ExternalConnectionForm form,
-            @RequestParam(value = ID, required = false) Integer externalConnectionId) {
+    public ModelAndView addEditExternalConnection(@Valid @ModelAttribute("form") ExternalConnectionForm form,
+            @RequestParam(value = ID, required = false) Integer externalConnectionId)
+            throws CertificateException, KeyStoreException, NoSuchAlgorithmException, IOException {
 
         List<ExternalConnectionContact> externalConnectionContacts = form.getExternalConnectionContacts() == null
                 ? new ArrayList<>()
@@ -83,6 +121,8 @@ public class ExternalConnectionController extends BaseController {
         }
         if (form.getCertificateAuthenticationData() != null) {
             externalConnectionAuthData.put(AuthType.CERTIFICATE, form.getCertificateAuthenticationData());
+            loadCertificateIntoTruststore(form.getExternalConnection().getNameLocalization().getLocalizedValue(),
+                    form.getCertificateAuthenticationData().getCertificate());
         }
 
         if (null == externalConnectionId || 0 == externalConnectionId) {
@@ -96,7 +136,18 @@ public class ExternalConnectionController extends BaseController {
         return findForward(FWD_SUCCESS_INSERT, form);
     }
 
-    private void fillForm(Integer externalConnectionId, @Valid @ModelAttribute("form") ExternalConnectionForm form) {
+    private void loadCertificateIntoTruststore(String connectionName,
+            MultipartFile certificateFile)
+            throws CertificateException, IOException, KeyStoreException, NoSuchAlgorithmException {
+        if (certificateFile != null && !certificateFile.isEmpty()) {
+            final CertificateFactory cf = CertificateFactory.getInstance("X.509");
+            final InputStream is = certificateFile.getInputStream();
+            final Certificate certificate = cf.generateCertificate(is);
+            truststoreService.addTrustedCert(connectionName, certificate);
+        }
+    }
+
+    private void fillForm(Integer externalConnectionId, @ModelAttribute("form") ExternalConnectionForm form) {
         request.setAttribute(IActionConstants.PAGE_SUBTITLE_KEY,
                 MessageUtil.getMessage("externalconnections.edit.title"));
         form.setAuthenticationTypes(Arrays.asList(AuthType.values()));

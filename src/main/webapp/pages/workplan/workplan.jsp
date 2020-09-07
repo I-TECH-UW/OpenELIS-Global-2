@@ -146,13 +146,13 @@ function printWorkplan() {
 		</th>
   	</tr>
 
-	<c:forEach items="${form.workplanTests}" var="workplanTests" varStatus="iter">
+	<c:forEach items="${form.workplanTests}" var="workplanTest" varStatus="iter">
 		<form:hidden path="workplanTests[${iter.index}].accessionNumber"/>
 		<form:hidden path="workplanTests[${iter.index}].patientInfo"/>
 		<form:hidden path="workplanTests[${iter.index}].receivedDate"/>
 		<form:hidden path="workplanTests[${iter.index}].testName"/>
-		<c:if test="${not (workplanTests.accessionNumber == currentAccessionNumber)}" var="showAccessionNumber">
-			<c:set var="currentAccessionNumber" value="${workplanTests.accessionNumber}"/>
+		<c:if test="${not (workplanTest.accessionNumber == currentAccessionNumber)}" var="showAccessionNumber">
+			<c:set var="currentAccessionNumber" value="${workplanTest.accessionNumber}"/>
 			<c:set var="rowColorIndex" value="${rowColorIndex + 1}"/>
 		</c:if>
      		<tr id='row_${iter.index}' 
@@ -162,7 +162,7 @@ function printWorkplan() {
      		</c:choose>
      		>
      			<td id='cell_${iter.index}'>
-     			<c:if test="${not workplanTests.servingAsTestGroupIdentifier}">
+     			<c:if test="${not workplanTest.servingAsTestGroupIdentifier}">
 					<form:checkbox path="workplanTests[${iter.index}].notIncludedInWorkplan"
 						   id='includedCheck_${iter.index}'
 						   cssClass="includedCheck"
@@ -171,42 +171,42 @@ function printWorkplan() {
 				</td>
 				<c:if test="${type == 'test'}">
 				<td>
-					<c:if test="${workplanTests.nonconforming}">
+					<c:if test="${workplanTest.nonconforming}">
 						<img src="./images/nonconforming.gif" />
 					</c:if>
 				</td>	
 				</c:if>
 	    		<td>
 	      		<c:if test="${showAccessionNumber}">
-	      			<c:out value="${workplanTests.accessionNumber}"/>
+	      			<c:out value="${workplanTest.accessionNumber}"/>
 				</c:if>
 	    		</td>
 	    		<% if( ConfigurationProperties.getInstance().isPropertyValueEqual(Property.SUBJECT_ON_WORKPLAN, "true")){ %>
 		    		<td>
 		      		<c:if test="${showAccessionNumber}">
-		    			<c:out value="${workplanTests.patientInfo}"/>
+		    			<c:out value="${workplanTest.patientInfo}"/>
 		    		</c:if>
 		    		</td>
 	    		<% } %>
 	    		<% if(ConfigurationProperties.getInstance().isPropertyValueEqual(Property.NEXT_VISIT_DATE_ON_WORKPLAN, "true")){ %>
 	    			<td>
 	      			<c:if test="${showAccessionNumber}">
-		    			<c:out value="${workplanTests.nextVisitDate}"/>
+		    			<c:out value="${workplanTest.nextVisitDate}"/>
 		    		</c:if>
 	    			</td>
 	    		<% } %>
 					<c:if test="${not (type == 'test')}">
 					<td>
-						<c:if test="${workplanTests.nonconforming}">
+						<c:if test="${workplanTest.nonconforming}">
 							<img src="./images/nonconforming.gif" />
 						</c:if>
 				</td>
 				<td>
-					${workplanTests.testName} 
+					${workplanTest.testName} 
 				</td>
 				</c:if>
 	    		<td>
-	      			<c:out value="${workplanTests.receivedDate}"/>
+	      			<c:out value="${workplanTest.receivedDate}"/>
 	    		</td>
       		</tr>
   	</c:forEach>

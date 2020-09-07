@@ -105,9 +105,10 @@ public class AppConfig implements WebMvcConfigurer {
         return localeChangeInterceptor;
     }
 
-    @Bean(name = "multipartResolver")
+    @Bean(name = "filterMultipartResolver")
     public CommonsMultipartResolver multipartResolver() {
         CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver();
+        multipartResolver.setDefaultEncoding("utf-8");
         multipartResolver.setMaxUploadSize(20848820);
         return multipartResolver;
     }
@@ -132,7 +133,7 @@ public class AppConfig implements WebMvcConfigurer {
         registry.addResourceHandler("favicon/**").addResourceLocations("/static/favicon/");
         registry.addResourceHandler("fontawesome-free-5.13.1-web/**")
                 .addResourceLocations("/static/fontawesome-free-5.13.1-web/");
-        registry.addResourceHandler("documentation/direct/**").addResourceLocations("classpath:static/documentation/");
+        registry.addResourceHandler("documentation/**").addResourceLocations("classpath:static/documentation/");
     }
 
     @Bean

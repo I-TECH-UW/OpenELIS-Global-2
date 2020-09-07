@@ -74,7 +74,7 @@
 					<textFieldExpression><![CDATA[$F{testName}]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-					<reportElement key="textField" positionType="FixRelativeToBottom" mode="Opaque" x="2" y="0" width="128" height="27" forecolor="#000000" backcolor="#FFFFFF" uuid="d74ca846-5b77-4450-8e19-9e68aae7416f"/>
+					<reportElement key="textField" positionType="FixRelativeToBottom" mode="Opaque" x="0" y="0" width="136" height="27" forecolor="#000000" backcolor="#FFFFFF" uuid="d74ca846-5b77-4450-8e19-9e68aae7416f"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -82,7 +82,7 @@
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font size="13" isBold="true"/>
+						<font size="12" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{accessionNumber}]]></textFieldExpression>
 				</textField>
