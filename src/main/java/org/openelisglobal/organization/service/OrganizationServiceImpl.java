@@ -180,8 +180,8 @@ public class OrganizationServiceImpl extends BaseObjectServiceImpl<Organization,
     @Transactional
     public void activateOrganizations(List<String> organizationNames) {
         for (Organization organization : getBaseObjectDAO().getAll()) {
-            if (organizationNames.contains(organization.getOrganizationName())
-                    || organizationNames.contains(organization.getName())) {
+            if (organizationNames.contains(organization.getName())
+                    || organizationNames.contains(organization.getOrganizationName())) {
                 organization.setIsActive("Y");
             }
         }
