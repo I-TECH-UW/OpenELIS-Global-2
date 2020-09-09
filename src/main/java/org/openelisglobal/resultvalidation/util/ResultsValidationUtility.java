@@ -334,11 +334,18 @@ public class ResultsValidationUtility {
     private boolean isNormalResult(Analysis analysis, Result result) {
         boolean normalResult = false;
         ResultLimit resultLimit = resultLimitService.getResultLimitForAnalysis(analysis);
+
         if (resultLimit != null) {
             if (TypeOfTestResultServiceImpl.ResultType.DICTIONARY.matches(result.getResultType())
                     && result.getValue().equals(resultLimit.getDictionaryNormalId())) {
                 normalResult = true;
+            } else if (TypeOfTestResultServiceImpl.ResultType.NUMERIC.matches(result.getResultType())
+                    && !GenericValidator.isBlankOrNull(result.getValue())
+                    && (resultLimit.getHighNormal() >= Double.parseDouble(result.getValue())
+                            && resultLimit.getLowNormal() <= Double.parseDouble(result.getValue()))) {
+                normalResult = true;
             } else if (!TypeOfTestResultServiceImpl.ResultType.DICTIONARY.matches(result.getResultType())
+                    && !GenericValidator.isBlankOrNull(result.getValue())
                     && (resultLimit.getHighNormal() >= Double.parseDouble(result.getValue())
                             && resultLimit.getLowNormal() <= Double.parseDouble(result.getValue()))) {
                 normalResult = true;

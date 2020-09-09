@@ -308,7 +308,7 @@ var showForceWarning = true;
 function forceTechApproval(checkbox, index ){
 	if( jQuery(checkbox).attr('checked')){
 		if( showForceWarning){
-			alert( "<%= MessageUtil.getContextualMessage("result.forceAccept.warning")%>" );
+			alert( `<%= MessageUtil.getContextualMessage("result.forceAccept.warning")%>` );
 			showForceWarning = false;
 		}
 		showNote( index );

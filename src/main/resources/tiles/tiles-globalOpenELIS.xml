@@ -325,6 +325,8 @@
 		template="/pages/patient/patientManagement.jsp">
 		<put-attribute name="patientSearch"
 			value="/pages/common/emptyPlaceHolder.jsp" />
+		<put-attribute name="patientEnhancedSearch"
+			value="/pages/common/emptyPlaceHolder.jsp" />
 	</definition>
 
 	<definition name="nonConformityDefiniton"

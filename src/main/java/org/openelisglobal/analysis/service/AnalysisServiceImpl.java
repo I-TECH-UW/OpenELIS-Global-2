@@ -69,6 +69,7 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
 
     public AnalysisServiceImpl() {
         super(Analysis.class);
+        this.auditTrailLog = true;
     }
 
     public static String getTableReferenceId() {

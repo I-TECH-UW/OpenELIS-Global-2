@@ -210,7 +210,7 @@
 	</definition>
 	
 	<definition name="externalConnectionDefinition"
-		extends="baseDefinition">
+		extends="baseDefinitionNoForm">
 		<put-attribute name="body"
 			value="/pages/externalconnections/externalConnection.jsp" />
 		<put-attribute name="footer"

@@ -235,6 +235,7 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject<PK>, PK extends
         if (auditTrailLog) {
             T oldObject = getBaseObjectDAO().get(baseObject.getId())
                     .orElseThrow(() -> new ObjectNotFoundException(baseObject.getId(), classType.getName()));
+            getBaseObjectDAO().evict(oldObject);
             auditTrailDAO.saveHistory(baseObject, oldObject, baseObject.getSysUserId(), auditTrailType,
                     getBaseObjectDAO().getTableName());
         }

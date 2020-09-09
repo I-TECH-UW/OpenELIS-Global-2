@@ -12,14 +12,11 @@
 
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
+<script type="text/javascript" src="scripts/externalConnections.js"></script>
 <script>
 
 function editConnection(id) {
 	location.href = "ExternalConnection?ID=" + id;
-}
-
-function testConnection(id) {
-	
 }
 
 </script>
@@ -53,9 +50,13 @@ function testConnection(id) {
    	  	 	<td class="textcontent">
    	  	 		<button type="button" onClick="editConnection(${externalConnection.id})">Edit</button>
 	   	    </td>
-<!--    	  	 	<td class="textcontent"> -->
-<%--    	  	 		<button type="button" onClick="testConnection(${externalConnection.id})">TestConnection</button> --%>
-<!-- 	   	    </td> -->
+   	  	 	<td class="textcontent">
+				<button type="button" onClick="testConnectionById(${externalConnection.id})"><spring:message code="externalConnections.test"/></button>
+				<span id="connect-wait-${externalConnection.id}" hidden="hidden"><i class="fas fa-spinner" style="color:Blue;" ></i></span>
+				<span id="connect-success-${externalConnection.id}" hidden="hidden"><i class="fas fa-check-double" style="color:Green;" ></i></span>
+				<span id="connect-partial-${externalConnection.id}" hidden="hidden"><i class="fas fa-check" style="color:Goldenrod;"></i></span>
+				<span id="connect-fail-${externalConnection.id}" hidden="hidden"><i class="fas fa-times" style="color:DarkRed;"></i></span>
+	   	    </td>
      	</tr>
 	</c:forEach>
 	</form:form>

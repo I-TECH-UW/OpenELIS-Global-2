@@ -43,7 +43,6 @@ public class ReportHistoryService extends AbstractHistoryService {
         setUpForReport(sample);
     }
 
-    @SuppressWarnings("unchecked")
     private void setUpForReport(Sample sample) {
         List<DocumentTrack> documentList = SpringContext.getBean(IReportTrackingService.class)
                 .getReportsForSample(sample, ReportType.PATIENT);

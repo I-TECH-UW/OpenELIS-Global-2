@@ -11,8 +11,8 @@
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
 
 
-&nbsp;&nbsp;&nbsp;&nbsp;<spring:message code="ellis.configuration" text="ellis.configuration"/>:&nbsp;
-<%=ConfigurationProperties.getInstance().getPropertyValue( Property.configurationName )%><br/>
+<%-- &nbsp;&nbsp;&nbsp;&nbsp;<spring:message code="ellis.configuration" text="ellis.configuration"/>:&nbsp; --%>
+<%-- <%=ConfigurationProperties.getInstance().getPropertyValue( Property.configurationName )%><br/> --%>
 <table width="100%">
 <tr>
 <td width="15%" valign="top"><tiles:insertAttribute name="left"/></td>

@@ -67,6 +67,7 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
 
     ResultServiceImpl() {
         super(Result.class);
+        this.auditTrailLog = true;
     }
 
     @Override
@@ -296,6 +297,7 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
         }
     }
 
+    @Override
     public String getResultValueForDisplay(Result result, String separator, boolean printable, boolean includeUOM) {
         if (GenericValidator.isBlankOrNull(result.getValue())) {
             return "";
