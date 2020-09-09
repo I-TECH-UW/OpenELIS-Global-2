@@ -101,7 +101,6 @@ public class SecurityConfig {
 //        }
 //    }
 
-
     @Configuration
     @Order(2)
     public static class openSecurityConfiguration extends WebSecurityConfigurerAdapter {
@@ -111,12 +110,15 @@ public class SecurityConfig {
             filter.setEncoding("UTF-8");
             filter.setForceEncoding(true);
             http.addFilterBefore(filter, CsrfFilter.class);
+            MultipartFilter multipartFilter = new MultipartFilter();
+            multipartFilter.setServletContext(SpringContext.getBean(ServletContext.class));
+            http.addFilterBefore(multipartFilter, CsrfFilter.class);
 
             // for all requests going to open pages, use this security configuration
             http.requestMatchers().antMatchers(OPEN_PAGES).and().authorizeRequests().anyRequest().permitAll().and()
                     // disable csrf as it is not needed for open pages
-                    .csrf().disable()
-                    .headers().frameOptions().sameOrigin().contentSecurityPolicy(CONTENT_SECURITY_POLICY);
+                    .csrf().disable().headers().frameOptions().sameOrigin()
+                    .contentSecurityPolicy(CONTENT_SECURITY_POLICY);
         }
 
     }

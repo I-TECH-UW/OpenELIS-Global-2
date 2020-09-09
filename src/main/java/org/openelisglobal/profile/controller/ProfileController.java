@@ -12,12 +12,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping("/Profile")
 public class ProfileController extends BaseController {
 
     @Autowired
@@ -28,14 +26,14 @@ public class ProfileController extends BaseController {
     private static final String TEST_PROFILE_SUCCESS = "testSuccess";
     private static final String ORGANIZATION_PROFILE_SUCCESS = "organizationSuccess";
 
-    @GetMapping("/Test")
+    @GetMapping("/TestProfile")
     public ModelAndView viewTestPage() {
         ProfileForm form = new ProfileForm();
-        form.setFormAction("/Profile/Test.do");
+        form.setFormAction("/TestProfile.do");
         return findForward(FWD_SUCCESS, form);
     }
 
-    @PostMapping("/Test")
+    @PostMapping("/TestProfile")
     public ModelAndView applyTestProfile(@ModelAttribute("form") ProfileForm form,
             RedirectAttributes redirectAttributes) throws IOException {
         String testNamesString = new String(form.getFile().getBytes());
@@ -46,14 +44,14 @@ public class ProfileController extends BaseController {
         return findForward(TEST_PROFILE_SUCCESS, form);
     }
 
-    @GetMapping("/Organization")
+    @GetMapping("/OrganizationProfile")
     public ModelAndView viewOrganizationPage() {
         ProfileForm form = new ProfileForm();
-        form.setFormAction("/Profile/Organization.do");
+        form.setFormAction("/OrganizationProfile.do");
         return findForward(FWD_SUCCESS, form);
     }
 
-    @PostMapping("/Organization")
+    @PostMapping("/OrganizationProfile")
     public ModelAndView applyOrganizationProfile(@ModelAttribute("form") ProfileForm form,
             RedirectAttributes redirectAttributes) throws IOException {
         String organizationNamesString = new String(form.getFile().getBytes());
@@ -71,9 +69,9 @@ public class ProfileController extends BaseController {
         case FWD_SUCCESS:
             return "profileDefinition";
         case TEST_PROFILE_SUCCESS:
-            return "redirect:/Profile/Test.do";
+            return "redirect:/TestProfile.do";
         case ORGANIZATION_PROFILE_SUCCESS:
-            return "redirect:/Profile/Organization.do";
+            return "redirect:/OrganizationProfile.do";
         }
         return "PageNotFound";
     }

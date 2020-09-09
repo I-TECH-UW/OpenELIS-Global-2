@@ -9,7 +9,6 @@
 <script>
     jQuery(document).ready(function () {
     });
-
 </script>
 
 <form:form name="${form.formName}"
@@ -27,4 +26,3 @@
 	    </tr>
 	</table>
 </form:form>
-		
