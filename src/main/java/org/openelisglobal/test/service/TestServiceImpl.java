@@ -695,4 +695,30 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
         return getBaseObjectDAO().getActiveTestsByName(testName);
     }
 
+    @Override
+    @Transactional
+    public void deactivateAllTests() {
+        for (Test test : getBaseObjectDAO().getAll()) {
+            test.setIsActive("N");
+        }
+    }
+
+    @Override
+    @Transactional
+    public void activateTests(List<String> testNames) {
+        for (Test test : getBaseObjectDAO().getAll()) {
+            if (testNames.contains(test.getLocalizedTestName().getEnglish())
+                    || testNames.contains(test.getLocalizedTestName().getFrench())) {
+                test.setIsActive("Y");
+            }
+        }
+    }
+
+    @Override
+    @Transactional
+    public void activateTestsAndDeactivateOthers(List<String> testNames) {
+        deactivateAllTests();
+        activateTests(testNames);
+    }
+
 }
