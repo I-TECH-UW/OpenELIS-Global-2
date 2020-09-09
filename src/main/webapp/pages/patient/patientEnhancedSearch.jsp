@@ -115,6 +115,8 @@ function enhancedSearchPatients()
     dateOfBirth = jQuery("#dateOfBirthSearchValue").val().trim();
     gender = jQuery("#searchGendersSearchValues").val().trim();
     
+    labNumber = jQuery("#patientLabNoSearchValue").val().trim();
+    
 
 	patientSearch(lastName, firstName, STNumber, subjectNumber, nationalID, labNumber, "", dateOfBirth, gender, false, processSearchSuccess);
 }
@@ -443,6 +445,17 @@ function handleSelectedPatient(){
            type="hidden"/>
 	<h2><spring:message code="sample.entry.search" /></h2>
 	<table>
+		<tr>
+			<td style="text-align: left;"><spring:message
+					code="patient.labno.search" /> :</td>
+			<td><input
+					id="patientLabNoSearchValue" 
+					size="40"
+					maxlength="<%= Integer.toString(accessionNumberValidator.getMaxAccessionLength()) %>"
+					oninput="enableEnhancedSearchButton(event.which);"
+					placeholder='<%=MessageUtil.getMessage("label.select.search.here")%>' />
+			</td>
+		</tr>
 		<tr>
 			<td style="text-align: left;"><spring:message
 					code="patient.id.number.search" /> :</td>
