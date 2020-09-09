@@ -215,6 +215,7 @@ abstract public class CSVColumnBuilder {
      * @since Feb 1, 2011
      */
     public enum Strategy {
+        ANALYSIS_STATUS,
         DICT, // dictionary localized value
         DICT_PLUS, // dictionary localized value or a string constant
         DICT_RAW, // dictionary localized value, no attempts at trimming to show just code number.
