@@ -10,7 +10,7 @@ import javax.validation.Valid;
 import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.controller.BaseMenuController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
-import org.openelisglobal.common.form.MenuForm;
+import org.openelisglobal.common.form.AdminOptionMenuForm;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.common.validator.BaseErrors;
@@ -30,7 +30,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-public class DictionaryMenuController extends BaseMenuController {
+public class DictionaryMenuController extends BaseMenuController<Dictionary> {
 
     private static final String[] ALLOWED_FIELDS = new String[] { "selectedIDs*" };
 
@@ -61,7 +61,7 @@ public class DictionaryMenuController extends BaseMenuController {
     }
 
     @Override
-    protected List<Dictionary> createMenuList(MenuForm form, HttpServletRequest request) {
+    protected List<Dictionary> createMenuList(AdminOptionMenuForm<Dictionary> form, HttpServletRequest request) {
 
         List<Dictionary> dictionaries;
 

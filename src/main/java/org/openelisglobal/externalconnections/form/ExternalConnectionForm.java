@@ -14,7 +14,10 @@ import org.openelisglobal.externalconnections.valueholder.ExternalConnectionCont
 
 public class ExternalConnectionForm extends BaseForm {
 
-    private static final long serialVersionUID = -6449520042353223609L;
+    /**
+     *
+     */
+    private static final long serialVersionUID = -4622561239579733266L;
 
     @Valid
     private ExternalConnection externalConnection;

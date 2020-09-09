@@ -10,7 +10,7 @@ import javax.validation.Valid;
 import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.controller.BaseMenuController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
-import org.openelisglobal.common.form.MenuForm;
+import org.openelisglobal.common.form.AdminOptionMenuForm;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.common.validator.BaseErrors;
@@ -30,7 +30,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-public class OrganizationMenuController extends BaseMenuController {
+public class OrganizationMenuController extends BaseMenuController<Organization> {
 
     private static final String[] ALLOWED_FIELDS = new String[] { "selectedIds*", "searchString" };
 
@@ -62,7 +62,7 @@ public class OrganizationMenuController extends BaseMenuController {
     }
 
     @Override
-    protected List<Organization> createMenuList(MenuForm form, HttpServletRequest request) {
+    protected List<Organization> createMenuList(AdminOptionMenuForm<Organization> form, HttpServletRequest request) {
 
         // LogEvent.logInfo(this.getClass().getName(), "method unkown", "I am in
         // OrganizationMenuAction createMenuList()");

@@ -32,6 +32,7 @@ public class SampleItemServiceImpl extends BaseObjectServiceImpl<SampleItem, Str
 
     SampleItemServiceImpl() {
         super(SampleItem.class);
+        this.auditTrailLog = true;
     }
 
     public static String getSampleItemTableReferenceId() {

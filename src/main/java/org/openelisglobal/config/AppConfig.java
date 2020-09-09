@@ -105,12 +105,13 @@ public class AppConfig implements WebMvcConfigurer {
         return localeChangeInterceptor;
     }
 
-//    @Bean(name = "multipartResolver")
-//    public CommonsMultipartResolver multipartResolver() {
-//        CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver();
-//        multipartResolver.setMaxUploadSize(20848820);
-//        return multipartResolver;
-//    }
+    @Bean(name = "filterMultipartResolver")
+    public CommonsMultipartResolver multipartResolver() {
+        CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver();
+        multipartResolver.setDefaultEncoding("utf-8");
+        multipartResolver.setMaxUploadSize(20848820);
+        return multipartResolver;
+    }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {

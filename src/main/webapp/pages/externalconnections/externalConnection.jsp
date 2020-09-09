@@ -7,6 +7,7 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
+<script type="text/javascript" src="scripts/externalConnections.js"></script>
 <script>
 
 	jQuery(document).ready(function() {
@@ -38,15 +39,24 @@
 		}
 	}
 	
-	function uploadTrustCert() {
-		
-	}
-	
 	function setSave() {
 		jQuery("#saveButtonId").attr("disabled", !validateForm(jQuery("#mainForm")));
 	}
 
 	function validateForm(form) {
+		if (jQuery.trim(jQuery("#connectionName").val()) === '') {
+			return false;
+		}
+		if (jQuery.trim(jQuery("#programmedConnection").val()) === '') {
+			return false;
+		}
+		if (jQuery.trim(jQuery("#authenticationType").val()) === '') {
+			return false;
+		}
+		if (jQuery.trim(jQuery("#connectionUri").val()) === '') {
+			return false;
+		}
+		
 		return true;
 	}
 	
@@ -57,13 +67,21 @@
 		}
 		jQuery("#mainForm").submit();
 	}
-
+	
 </script>
+
+<form:form name="${form.formName}" 
+			action="${form.formAction}" 
+			modelAttribute="form" 
+			onSubmit="return submitForm(this);" 
+			method="${form.formMethod}"
+			id="mainForm"
+			enctype="multipart/form-data">
 
 <div style="color: DarkRed;"><spring:message code="externalconnections.instructions"/></div>
 
 <form:hidden id="externalConnectionId" path="externalConnection.id" />
-<input type="hidden" name="externalConnection.active" value="true" />
+<form:hidden path="externalConnection.active" value="true" />
 <c:if test="${not empty form.externalConnection.lastupdated}">
 	<form:hidden id="externalConnectionId" path="externalConnection.lastupdated" />
 	<form:hidden  path="externalConnection.descriptionLocalization.lastupdated" />
@@ -90,7 +108,7 @@
 	</tr>
 	<tr>
 		<td>
-			<form:select path="externalConnection.programmedConnection" onChange="setSave()">
+			<form:select id="programmedConnection" path="externalConnection.programmedConnection" onChange="setSave()">
 				<form:option value="" label=""/>
 				<form:options items="${form.programmedConnections}" itemLabel="message" itemValue="value"/>
 			</form:select></td>
@@ -167,14 +185,14 @@
 						path="externalConnectionContacts[${iter.index}].person.lastName"
 						placeholder="${lastNamePlaceholder}" /></td>
 				<td><form:input
-					path="externalConnectionContacts[${iter.index}].person.firstName"
-					placeholder="${firstNamePlaceholder}" onChange="setSave()" /></td>
+						path="externalConnectionContacts[${iter.index}].person.firstName"
+						placeholder="${firstNamePlaceholder}" onChange="setSave()" /></td>
 				<td><form:input
-					path="externalConnectionContacts[${iter.index}].person.primaryPhone"
-					placeholder="${phonePlaceholder}" onChange="setSave()" /></td>
+						path="externalConnectionContacts[${iter.index}].person.primaryPhone"
+						placeholder="${phonePlaceholder}" onChange="setSave()" /></td>
 				<td><form:input
-					path="externalConnectionContacts[${iter.index}].person.email"
-					placeholder="${emailPlaceholder}" onChange="setSave()" /></td>
+						path="externalConnectionContacts[${iter.index}].person.email"
+						placeholder="${emailPlaceholder}" onChange="setSave()" /></td>
 			</tr>
 		</c:forEach>
 		</c:otherwise>
@@ -199,7 +217,14 @@
 			</form:select></td>
 	</tr>
 	<tr id="certificateAuthRow" class="authRow" style="display:none;"><td>
-		<spring:message code="externalconnections.authtype.cert.instructions"/>
+		<spring:message code="externalconnections.authtype.cert.instructions" htmlEscape="false"/>
+		<br>
+		<spring:message code="externalconnections.authtype.cert.upload"/>
+		<input type="file" name="certificate"  onChange="setSave()"/>
+		<c:if test="${not empty form.certificateAuthenticationData.id}">
+			<form:hidden path="certificateAuthenticationData.id"/>
+			<form:hidden path="certificateAuthenticationData.lastupdated"/>
+		</c:if>
 	</td></tr>
 	<tr id="basicAuthRow" class="authRow" style="display:none;"><td>
 		<c:if test="${not empty form.basicAuthenticationData.id}">
@@ -212,11 +237,8 @@
 		<spring:message code="externalconnections.authtype.basic.password"/>
 		<form:password path="basicAuthenticationData.password" value="${form.basicAuthenticationData.password}" onChange="setSave()"/>
 	</td></tr>
-<!-- 	<tr id="bearerAuthRow" style="display:none;"><td> -->
-<%-- 		<spring:message code="externalconnections.authtype.cert.upload"/> --%>
-<!-- 		<input type="file" name="trustCert" /> -->
-<%-- 		<button type="button" onClick="uploadTrustCert()"><spring:message code="generic.upload"/></button> --%>
-<!-- 	</td></tr> -->
+	<tr id="bearerAuthRow" style="display:none;"><td>
+	</td></tr>
 	<tr id="noneAuthRow" class="authRow" style="display:none;"><td>
 	</td></tr>
 	
@@ -229,14 +251,20 @@
 	</tr>
 
 	<tr>
-		<td><form:input id="connectionUri" path="externalConnection.uri" onInput="setSave();checkIfHttps()"/>
-		<span id="locked"><i class="fas fa-lock" style="color:Green;"></i></span>
-		<span id="unlocked"><i class="fas fa-lock-open" style="color:DarkRed;"></i></span>
+		<td>
+			<form:input id="connectionUri" path="externalConnection.uri" onInput="setSave();checkIfHttps()"/>
+			<span id="locked"><i class="fas fa-lock" style="color:Green;"></i></span>
+			<span id="unlocked"><i class="fas fa-lock-open" style="color:DarkRed;"></i></span>
 		</td>
 	</tr>
-<!-- 	<tr id="uploadCertRow" style="display:none;"><td> -->
-<%-- 		<spring:message code="externalconnections.cert.upload"/> --%>
-<!-- 		<input type="file" name="trustCert" /> -->
-<%-- 		<button type="button" onClick="uploadTrustCert()"><spring:message code="generic.upload"/></button> --%>
-<!-- 		</td></tr> -->
+	<tr>
+		<td>
+			<button type="button" onClick="testConnection()"><spring:message code="externalConnections.test"/></button>
+			<span id="connect-wait" hidden="hidden"><i class="fas fa-spinner" style="color:Blue;" ></i></span>
+			<span id="connect-success" hidden="hidden"><i class="fas fa-check-double" style="color:Green;" ></i></span>
+			<span id="connect-partial" hidden="hidden"><i class="fas fa-check" style="color:Goldenrod;"></i></span>
+			<span id="connect-fail" hidden="hidden"><i class="fas fa-times" style="color:DarkRed;"></i></span>
+		</td>
+	</tr>
 </table>
+</form:form>

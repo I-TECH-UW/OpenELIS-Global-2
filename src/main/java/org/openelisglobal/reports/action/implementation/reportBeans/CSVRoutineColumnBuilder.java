@@ -306,9 +306,11 @@ abstract public class CSVRoutineColumnBuilder {
 
     private String prepareColumnName(String columnName) {
         // trim and escape the column name so it is safe from sql injection
-        if (columnName.matches("(?i)[a-zàâçéèêëîïôûùüÿñæœ0-9_ ()%/\\[\\]+-]+")) {
+        if (columnName.matches("(?i)[a-zàâçéèêëîïôûùüÿñæœ0-9_ ()%/\\[\\]+\\-]+")) {
             return "\"" + trimToPostgresMaxColumnName(columnName) + "\"";
         } else {
+            LogEvent.logError(this.getClass().getName(), "prepareColumnName",
+                    "dangerous character detected in '" + columnName + "'");
             throw new LIMSRuntimeException("cannot add a column name that includes dangerous characters");
         }
     }
