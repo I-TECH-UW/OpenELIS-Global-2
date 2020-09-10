@@ -87,7 +87,7 @@ public class ProgramAccessionValidator implements IAccessionNumberValidator {
 
     @Override
     public ValidationResults validFormat(String accessionNumber, boolean checkDate) {
-        // The rule is 4 digit program code and 4 incremented numbers
+        // The rule is 4 digit program code and 5 incremented numbers
         if (accessionNumber.length() != LENGTH) {
 
             return ValidationResults.LENGTH_FAIL;

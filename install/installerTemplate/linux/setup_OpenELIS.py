@@ -52,6 +52,7 @@ DB_ENVIRONMENT_DIR = OE_VAR_DIR + "database/env/"
 DB_INIT_DIR = OE_VAR_DIR + "initDB/"
 SECRETS_DIR = OE_VAR_DIR + "secrets/"
 PLUGINS_DIR = OE_VAR_DIR + "plugins/"
+LOGS_DIR = OE_VAR_DIR + "logs/"
 CRON_INSTALL_DIR = "/etc/cron.d/"
 
 #full file paths
@@ -236,7 +237,11 @@ def do_install():
 
     load_docker_image()
     
-    install_plugins_dir()
+    ensure_dir_exists(PLUGINS_DIR)
+    
+    ensure_dir_exists(LOGS_DIR)
+    os.chmod(LOGS_DIR, 0777) 
+    os.chown(LOGS_DIR, 8443, 8443)  
 
     start_docker_containers()
 
@@ -291,6 +296,8 @@ def create_docker_compose_file():
             line = line.replace("[% secrets_dir %]", SECRETS_DIR)  
         if line.find("[% plugins_dir %]")  >= 0:
             line = line.replace("[% plugins_dir %]", PLUGINS_DIR)
+        if line.find("[% logs_dir %]")  >= 0:
+            line = line.replace("[% logs_dir %]", LOGS_DIR)
         if line.find("[% etc_dir %]")  >= 0:
             line = line.replace("[% etc_dir %]", OE_ETC_DIR )
         if line.find("[% oe_name %]")  >= 0:
@@ -612,11 +619,6 @@ def install_crosstab():
         os.system(cmd)
         
 
-def install_plugins_dir():
-    ensure_dir_exists(PLUGINS_DIR)
-    
-
-
 #---------------------------------------------------------------------
 #             UPDATE
 #---------------------------------------------------------------------
@@ -637,8 +639,18 @@ def do_update():
         return
 
     backup_db()
+    
+    uninstall_docker_images()
+    
+    clean_docker_objects()
 
     load_docker_image()
+    
+    ensure_dir_exists(PLUGINS_DIR)
+    
+    ensure_dir_exists(LOGS_DIR)
+    os.chmod(LOGS_DIR, 0777) 
+    os.chown(LOGS_DIR, 8443, 8443)  
     
     get_non_stored_user_values()
     
@@ -1135,6 +1147,16 @@ def load_docker_image():
 def start_docker_containers():
     log("starting docker containers", PRINT_TO_CONSOLE)
     cmd = 'sudo docker-compose up -d '
+    os.system(cmd)
+
+
+def clean_docker_objects():
+    log("cleaning docker network", PRINT_TO_CONSOLE)
+    cmd = 'sudo docker network prune'
+    os.system(cmd)
+    
+    log("cleaning docker images", PRINT_TO_CONSOLE)
+    cmd = 'sudo docker image prune'
     os.system(cmd)
     
     
