@@ -107,6 +107,8 @@ public class PrintBarcodeForm extends BaseForm {
 
     private boolean warning;
 
+    private List<IdValuePair> sampleNatureList;
+
     public PrintBarcodeForm() {
         setFormName("PrintBarcodeForm");
     }
@@ -333,6 +335,16 @@ public class PrintBarcodeForm extends BaseForm {
 
     public void setWarning(boolean warning) {
         this.warning = warning;
+    }
+
+    public List<IdValuePair> getSampleNatureList() {
+        return sampleNatureList;
+
+    }
+
+    public void setSampleNatureList(List<IdValuePair> sampleNatureList) {
+        this.sampleNatureList = sampleNatureList;
+
     }
 
 }

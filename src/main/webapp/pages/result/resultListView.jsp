@@ -120,7 +120,7 @@ jQuery(document).ready( function() {
 				handleMultiSelectChange( e, data );
 				});
 
-			pageSearch = new OEPageSearch( $("searchNotFound"), compactHozSpace == "true" ? "tr" : "td", pager );
+			pageSearch = new OEPageSearch( document.getElementById("searchNotFound"), compactHozSpace == "true" ? "tr" : "td", pager );
 
 			if( searchTerm != "null" ){
 				 pageSearch.highlightSearch( searchTerm, false );
@@ -308,7 +308,7 @@ var showForceWarning = true;
 function forceTechApproval(checkbox, index ){
 	if( jQuery(checkbox).attr('checked')){
 		if( showForceWarning){
-			alert( "<%= MessageUtil.getContextualMessage("result.forceAccept.warning")%>" );
+			alert( `<%= MessageUtil.getContextualMessage("result.forceAccept.warning")%>` );
 			showForceWarning = false;
 		}
 		showNote( index );
@@ -496,7 +496,7 @@ function setField(id, value) {
 	       id="labnoSearch"
 	       placeholder='<spring:message code="sample.search.scanner.instructions"/>'
 	       maxlength='<%= Integer.toString(accessionNumberValidator.getMaxAccessionLength())%>' />
-	<input type="button" onclick="pageSearch.doLabNoSearch($(labnoSearch))" value='<%= MessageUtil.getMessage("label.button.search") %>'>
+	<input type="button" onclick="pageSearch.doLabNoSearch(document.getElementById('labnoSearch'))" value='<%= MessageUtil.getMessage("label.button.search") %>'>
 	</div>
 </c:if>
 

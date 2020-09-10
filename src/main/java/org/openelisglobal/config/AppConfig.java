@@ -105,9 +105,10 @@ public class AppConfig implements WebMvcConfigurer {
         return localeChangeInterceptor;
     }
 
-    @Bean(name = "multipartResolver")
+    @Bean(name = "filterMultipartResolver")
     public CommonsMultipartResolver multipartResolver() {
         CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver();
+        multipartResolver.setDefaultEncoding("utf-8");
         multipartResolver.setMaxUploadSize(20848820);
         return multipartResolver;
     }
@@ -116,7 +117,9 @@ public class AppConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(localeChangeInterceptor()).addPathPatterns("/**");
         registry.addInterceptor(moduleAuthenticationInterceptor).addPathPatterns("/**")
-                .excludePathPatterns(SecurityConfig.OPEN_PAGES).excludePathPatterns(SecurityConfig.RESOURCE_PAGES)
+                .excludePathPatterns(SecurityConfig.OPEN_PAGES)//
+                .excludePathPatterns(SecurityConfig.LOGIN_PAGES)//
+                .excludePathPatterns(SecurityConfig.RESOURCE_PAGES)//
                 .excludePathPatterns(SecurityConfig.AUTH_OPEN_PAGES);
 //                .excludePathPatterns(SecurityConfig.CLIENT_CERTIFICATE_PAGES);
         registry.addInterceptor(urlLocatedErrorsInterceptor).addPathPatterns("/**");

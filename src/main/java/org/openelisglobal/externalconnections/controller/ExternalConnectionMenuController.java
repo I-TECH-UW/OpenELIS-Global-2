@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.controller.BaseMenuController;
-import org.openelisglobal.common.form.MenuForm;
+import org.openelisglobal.common.form.AdminOptionMenuForm;
 import org.openelisglobal.common.validator.BaseErrors;
 import org.openelisglobal.externalconnections.form.ExternalConnectionMenuForm;
 import org.openelisglobal.externalconnections.service.ExternalConnectionService;
@@ -22,7 +22,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-public class ExternalConnectionMenuController extends BaseMenuController {
+public class ExternalConnectionMenuController extends BaseMenuController<ExternalConnection> {
 
     private static final String[] ALLOWED_FIELDS = new String[] { "selectedIds*" };
 
@@ -53,7 +53,8 @@ public class ExternalConnectionMenuController extends BaseMenuController {
     }
 
     @Override
-    protected List createMenuList(MenuForm form, HttpServletRequest request) {
+    protected List<ExternalConnection> createMenuList(AdminOptionMenuForm<ExternalConnection> form,
+            HttpServletRequest request) {
         List<ExternalConnection> connections;
 
         request.setAttribute(TITLE_KEY, "externalConnections.browse.title");

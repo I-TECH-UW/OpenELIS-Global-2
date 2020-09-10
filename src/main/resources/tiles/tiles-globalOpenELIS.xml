@@ -325,6 +325,8 @@
 		template="/pages/patient/patientManagement.jsp">
 		<put-attribute name="patientSearch"
 			value="/pages/common/emptyPlaceHolder.jsp" />
+		<put-attribute name="patientEnhancedSearch"
+			value="/pages/common/emptyPlaceHolder.jsp" />
 	</definition>
 
 	<definition name="nonConformityDefiniton"
@@ -915,6 +917,13 @@
 		<put-attribute name="body"
 					   value="/pages/testConfiguration/resultSelectListRename.jsp" />
 
+		<put-attribute name="footer"
+					   value="/pages/common/emptyPlaceHolder.jsp" />
+	</definition>
+	
+	<definition name="profileDefinition" extends="baseDefinitionNoForm">
+		<put-attribute name="body"
+					   value="/pages/profiles/profile.jsp" />
 		<put-attribute name="footer"
 					   value="/pages/common/emptyPlaceHolder.jsp" />
 	</definition>

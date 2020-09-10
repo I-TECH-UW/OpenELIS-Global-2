@@ -42,6 +42,24 @@ JPA_SERVER_DIR="${PROJECT_DIR}/hapi-fhir-jpaserver-starter/"
 DATA_EXPORT_DIR="${PROJECT_DIR}/dataexport/"
 #CONSOLIDATED_SERVER_DIR="${PROJECT_DIR}/Consolidated-Server/"
 
+if [ $createInstaller == true ]
+then
+	cd ${CALL_DIR}
+	
+	if [ -d "${INSTALLER_CREATION_DIR}" ]
+	then
+		while true; do
+		    read -p "Installer directory has been detected, replace it? [Y]es [N]o: " yn
+		    case $yn in
+		        [Yy][Ee][Ss]|[Yy] ) break;;
+		        [Nn][Oo]|[Nn] ) exit;;
+		        * ) echo "Please answer yes or no.";;
+		    esac
+		done
+		rm -r ${INSTALLER_CREATION_DIR}
+	fi
+fi
+
 cd ${PROJECT_DIR}
 echo Will build from $branch
 #cd source/openelisglobal-core
@@ -110,22 +128,6 @@ createLinuxInstaller() {
 
 if [ $createInstaller == true ]
 then
-	cd ${CALL_DIR}
-	
-	if [ -d "${INSTALLER_CREATION_DIR}" ]
-	then
-		while true; do
-		    read -p "Installer directory has been detected, replace it? [Y]es [N]o: " yn
-		    case $yn in
-		        [Yy][Ee][Ss]|[Yy] ) break;;
-		        [Nn][Oo]|[Nn] ) exit;;
-		        * ) echo "Please answer yes or no.";;
-		    esac
-		done
-		rm -r ${INSTALLER_CREATION_DIR}
-	fi
-	mkdir -p ${INSTALLER_CREATION_DIR}
-	
 	cd ${PROJECT_DIR}
 	#get useful info from the maven project
 	output=$({ echo 'ARTIFACT_ID=${project.artifactId}';\

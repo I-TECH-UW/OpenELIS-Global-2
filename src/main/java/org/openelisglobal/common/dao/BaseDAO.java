@@ -320,4 +320,6 @@ public interface BaseDAO<T extends BaseObject<PK>, PK extends Serializable> {
     List<T> getLikeOrderedPage(Map<String, String> propertyValues, List<String> orderProperties, boolean descending,
             int startingRecNo);
 
+    void evict(T oldObject);
+
 }

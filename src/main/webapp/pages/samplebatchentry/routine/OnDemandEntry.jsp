@@ -100,7 +100,8 @@ function processAccessionSuccess(xhr) {
 }
 
 function onPostBatchSampleSuccess() {
-	setPatientThenPrintLabel();
+	printLabel();
+// 	setPatientThenPrintLabel();
 }
 
 function setPatientThenPrintLabel() {
