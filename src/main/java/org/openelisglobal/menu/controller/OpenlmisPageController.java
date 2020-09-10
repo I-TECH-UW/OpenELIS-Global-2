@@ -4,6 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.form.MainForm;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -16,6 +17,9 @@ public class OpenlmisPageController extends BaseController {
 
     private static final String[] ALLOWED_FIELDS = new String[] {};
 
+    @Value("${org.openelisglobal.inventoryUrl:https://test.openlmis.org/#!/login}")
+    private String inventoryUrl;
+    
     @InitBinder
     public void initBinder(WebDataBinder binder) {
         binder.setAllowedFields(ALLOWED_FIELDS);
@@ -24,6 +28,7 @@ public class OpenlmisPageController extends BaseController {
     @RequestMapping(value = "/OpenlmisPage", method = { RequestMethod.GET, RequestMethod.POST })
     public ModelAndView showOpenlmisPage(HttpServletRequest request) {
 
+        request.setAttribute("inventoryUrl", inventoryUrl);
         MainForm form = new MainForm();
         return findForward(FWD_SUCCESS, form);
     }
