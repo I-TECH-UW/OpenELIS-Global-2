@@ -29,7 +29,7 @@ public class ProfileController extends BaseController {
     @GetMapping("/TestProfile")
     public ModelAndView viewTestPage() {
         ProfileForm form = new ProfileForm();
-        form.setFormAction("/TestProfile.do");
+        form.setFormAction("TestProfile.do");
         return findForward(FWD_SUCCESS, form);
     }
 
@@ -47,7 +47,7 @@ public class ProfileController extends BaseController {
     @GetMapping("/OrganizationProfile")
     public ModelAndView viewOrganizationPage() {
         ProfileForm form = new ProfileForm();
-        form.setFormAction("/OrganizationProfile.do");
+        form.setFormAction("OrganizationProfile.do");
         return findForward(FWD_SUCCESS, form);
     }
 
