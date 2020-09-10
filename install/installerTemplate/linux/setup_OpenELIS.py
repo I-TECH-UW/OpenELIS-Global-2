@@ -240,6 +240,8 @@ def do_install():
     ensure_dir_exists(PLUGINS_DIR)
     
     ensure_dir_exists(LOGS_DIR)
+    os.chmod(LOGS_DIR, 0777) 
+    os.chown(LOGS_DIR, 8443, 8443)  
 
     start_docker_containers()
 
@@ -638,15 +640,17 @@ def do_update():
 
     backup_db()
     
-    stop_docker_containers()
+    uninstall_docker_images()
     
-    clean_docker_containers()
+    clean_docker_objects()
 
     load_docker_image()
     
     ensure_dir_exists(PLUGINS_DIR)
     
     ensure_dir_exists(LOGS_DIR)
+    os.chmod(LOGS_DIR, 0777) 
+    os.chown(LOGS_DIR, 8443, 8443)  
     
     get_non_stored_user_values()
     
@@ -1146,15 +1150,13 @@ def start_docker_containers():
     os.system(cmd)
 
 
-def stop_docker_containers():
-    log("stopping docker containers", PRINT_TO_CONSOLE)
-    cmd = 'sudo docker-compose stop '
+def clean_docker_objects():
+    log("cleaning docker network", PRINT_TO_CONSOLE)
+    cmd = 'sudo docker network prune'
     os.system(cmd)
-
-
-def clean_docker_containers():
-    log("cleaning docker containers", PRINT_TO_CONSOLE)
-    cmd = 'sudo docker system prune'
+    
+    log("cleaning docker images", PRINT_TO_CONSOLE)
+    cmd = 'sudo docker image prune'
     os.system(cmd)
     
     
