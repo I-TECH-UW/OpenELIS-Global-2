@@ -44,6 +44,7 @@ services:
         volumes:
             - [% plugins_dir %]:/var/lib/openelis-global/plugins
             - [% etc_dir %]oe_server.xml:/usr/local/tomcat/conf/server.xml
+            - [% logs_dir %]:/var/lib/openelis-global/logs
         secrets:
             - source: keystore
             - source: truststore
