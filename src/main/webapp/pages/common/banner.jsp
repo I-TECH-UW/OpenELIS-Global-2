@@ -113,7 +113,7 @@ function getCsrfToken() {
 		    </div>
     
 		    <% if("true".equals(ConfigurationProperties.getInstance().getPropertyValueLowerCase(Property.TrainingInstallation))){ %>
-		      <div id="training-alert"><span title="training.note">training.note</span></div>
+		      <div id="training-alert"><span title="training.note"><spring:message code="training.note"/></span></div>
 		    <% } %>
   		</div>
 <%	
