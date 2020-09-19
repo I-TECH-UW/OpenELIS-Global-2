@@ -8,7 +8,6 @@ import javax.servlet.ServletRegistration;
 import org.openelisglobal.analyzerimport.action.AnalyzerImportServlet;
 import org.openelisglobal.common.servlet.barcode.LabelMakerServlet;
 import org.openelisglobal.common.servlet.query.AjaxQueryXMLServlet;
-import org.openelisglobal.common.servlet.reports.LogoUploadServlet;
 import org.openelisglobal.common.servlet.reports.ReportsServlet;
 import org.openelisglobal.common.servlet.validation.AjaxTextServlet;
 import org.openelisglobal.common.servlet.validation.AjaxXMLServlet;
@@ -48,10 +47,11 @@ public class AnnotationWebAppInitializer implements WebApplicationInitializer {
                 MAX_UPLOAD_SIZE * 2, MAX_UPLOAD_SIZE / 2);
         dispatcher.setMultipartConfig(multipartConfigElement);
 
-        ServletRegistration.Dynamic logoUploadServlet = servletContext.addServlet("logoUpload",
-                LogoUploadServlet.class);
-        logoUploadServlet.setLoadOnStartup(++startupOrder);
-        logoUploadServlet.addMapping("/logoUpload");
+        // converted to controller
+//        ServletRegistration.Dynamic logoUploadServlet = servletContext.addServlet("logoUpload",
+//                LogoUploadServlet.class);
+//        logoUploadServlet.setLoadOnStartup(++startupOrder);
+//        logoUploadServlet.addMapping("/logoUpload");
 
         ServletRegistration.Dynamic ajaxTextServlet = servletContext.addServlet("ajaxText", AjaxTextServlet.class);
         ajaxTextServlet.setLoadOnStartup(++startupOrder);
