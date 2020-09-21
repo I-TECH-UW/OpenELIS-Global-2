@@ -35,7 +35,14 @@
 <script src="scripts/customAutocomplete.js?"></script>
 <script src="scripts/utilities.js?"></script>
 <script src="scripts/ajaxCalls.js?"></script>
-<script></script>
+<script>
+
+document.getElementById('searchValue').addEventListener('keydown', function(e){
+    if (document.getElementById('searchValue').value === '') return;
+    if (e.which === 13) searchNCE();
+    // e.which === 13 means enter key is pressed.
+});
+</script>
 <div align="center">
     <h2><spring:message code="nonconforming.page.correctiveAction.title" /></h2>
 
@@ -43,8 +50,7 @@
         <option value="<c:out value="1" />">Lab Order Number</option>
         <option value="<c:out value="2" />">NCE Number</option>
     </select>
-    <input type="text" name="searchValue"
-           value="" onkeyup="enableSearch()" onpaste="enableSearch()" id="searchValue">
+    <input type="text" name="searchValue" oninput="enableSearch()" id="searchValue">
     &nbsp;
     <button type="button" id="searchButtonId"
            onclick="searchNCE();" disabled ><spring:message code="label.button.search" /></button>
