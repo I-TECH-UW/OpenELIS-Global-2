@@ -124,7 +124,7 @@ public class TaskInterpreterImpl implements TaskInterpreter {
     }
 
     private Test createTestFromFHIR(ServiceRequest serviceRequest) throws HL7Exception {
-        System.out.println("TaskInterpreter:createTestFromFHIR:");
+        LogEvent.logDebug(this.getClass().getName(), "createTestFromFHIR", "TaskInterpreter:createTestFromFHIR:");
 
         String loincCode = "";
         String system = "";
@@ -193,7 +193,7 @@ public class TaskInterpreterImpl implements TaskInterpreter {
     }
 
     private List<InterpreterResults> buildResultList(boolean exceptionThrown) {
-        System.out.println("buildResultList: " + exceptionThrown);
+        LogEvent.logDebug(this.getClass().getName(), "buildResultList", "buildResultList: " + exceptionThrown);
         results = new ArrayList<>();
 
         if (exceptionThrown) {

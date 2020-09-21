@@ -232,7 +232,7 @@ public class BarcodeLabelMaker {
             document.close();
             writer.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            LogEvent.logError(e);
         }
 
         return stream;
