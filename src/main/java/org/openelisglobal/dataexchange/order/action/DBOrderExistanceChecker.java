@@ -19,6 +19,7 @@ package org.openelisglobal.dataexchange.order.action;
 import java.util.List;
 
 import org.apache.commons.validator.GenericValidator;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.ExternalOrderStatus;
 import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder;
@@ -35,7 +36,7 @@ public class DBOrderExistanceChecker implements IOrderExistanceChecker {
 
     @Override
     public CheckResult check(String orderId) {
-        System.out.println("DBOrderExistanceChecker:check: " + orderId);
+        LogEvent.logDebug(this.getClass().getName(), "check", "DBOrderExistanceChecker:check: " + orderId);
         if (GenericValidator.isBlankOrNull(orderId)) {
             return CheckResult.NOT_FOUND;
         }
