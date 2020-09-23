@@ -23,6 +23,7 @@ import org.hl7.fhir.r4.model.ResourceType;
 import org.hl7.fhir.r4.model.ServiceRequest;
 import org.hl7.fhir.r4.model.Task;
 import org.hl7.fhir.r4.model.Task.TaskStatus;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.dataexchange.fhir.service.TaskWorker.TaskResult;
 import org.openelisglobal.dataexchange.order.action.DBOrderExistanceChecker;
 import org.openelisglobal.dataexchange.order.action.IOrderPersister;
@@ -89,7 +90,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
 //            remoteSearchParams.put("owner", Arrays.asList("Practitioner/f9badd80-ab76-11e2-9e96-0800200c9a66"));
         }
 
-        System.out.println("searching for Tasks");
+        LogEvent.logDebug(this.getClass().getName(), "beginTaskPath", "searching for Tasks");
 
         IGenericClient sourceFhirClient = fhirContext.newRestfulGenericClient(remoteStorePath.get());
         IClientInterceptor authInterceptor = new BasicAuthInterceptor("admin", "Admin123");
@@ -104,9 +105,10 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
                 .execute();
 
         if (bundle.hasEntry()) {
-            System.out.println("received bundle with " + bundle.getEntry().size() + " entries");
+            LogEvent.logDebug(this.getClass().getName(), "beginTaskPath",
+                    "received bundle with " + bundle.getEntry().size() + " entries");
         } else {
-            System.out.println("received bundle with 0 entries");
+            LogEvent.logDebug(this.getClass().getName(), "beginTaskPath", "received bundle with 0 entries");
         }
         for (BundleEntryComponent bundleComponent : bundle.getEntry()) {
 
@@ -171,7 +173,8 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
                     TaskStatus taskStatus = taskOrderAcceptedFlag ? TaskStatus.ACCEPTED : TaskStatus.REJECTED;
                     localTask.setStatus(taskStatus);
                     if (remoteStoreUpdateStatus.isPresent() && remoteStoreUpdateStatus.get()) {
-                        System.out.println("updating remote status to " + taskStatus);
+                        LogEvent.logDebug(this.getClass().getName(), "beginTaskPath",
+                                "updating remote status to " + taskStatus);
                         remoteTask.setStatus(taskStatus);
                         sourceFhirClient.update().resource(remoteTask).execute();
                     }
@@ -320,8 +323,6 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
                 patients.add(fhirClient.read().resource(Patient.class)
                         .withId(serviceRequest.getSubject().getReference()).execute());
             }
-//            System.out.println("For Patient: " + fhirContext.newJsonParser().encodeResourceToString(forPatient));
-//          fhirContext.newRestfulGenericClient(localFhirStorePath).update().resource(forPatient).execute();
         }
         return patients;
     }
@@ -383,7 +384,8 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
             transactionBundle.addEntry(createTransactionComponentFromResource(updateResource, HTTPVerb.PUT));
             transactionBundle.setTotal(transactionBundle.getTotal() + 1);
         }
-        System.out.println(fhirContext.newJsonParser().encodeResourceToString(transactionBundle));
+        LogEvent.logDebug(this.getClass().getName(), "createBundleFromResources",
+                fhirContext.newJsonParser().encodeResourceToString(transactionBundle));
         return transactionBundle;
     }
 
@@ -406,12 +408,6 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
                     fhirClient.read().resource(ServiceRequest.class).withId(basedOnElement.getReference()).execute());
         }
 
-        for (ServiceRequest serviceRequest : basedOn) {
-//            System.out.println(
-//                    "BasedOn ServiceRequest: " + fhirContext.newJsonParser().encodeResourceToString(serviceRequest));
-//                fhirContext.newRestfulGenericClient(localFhirStorePath).update().resource(serviceRequest)
-//                        .execute();
-        }
         return basedOn;
     }
 
@@ -421,8 +417,6 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         }
         Patient forPatient = fhirClient.read().resource(Patient.class).withId(remoteTask.getFor().getReference())
                 .execute();
-//        System.out.println("For Patient: " + fhirContext.newJsonParser().encodeResourceToString(forPatient));
-//      fhirContext.newRestfulGenericClient(localFhirStorePath).update().resource(forPatient).execute();
         return forPatient;
     }
 

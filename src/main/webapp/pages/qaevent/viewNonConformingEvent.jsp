@@ -37,6 +37,7 @@
     nceType['categoryId'] = '${nceType.categoryId}';
     nceTypes.push(nceType);
     </c:forEach>
+    
 </script>
 
 <div align="center">
@@ -47,7 +48,7 @@
         <option value="<c:out value="2" />"><spring:message code="nonconforming.event.ncenumber" /></option>
     </select>
     <input type="text" name="searchValue"
-           value="" onkeyup="enableSearch()" onpaste="enableSearch()" id="searchValue">
+           value="" oninput="enableSearch()" id="searchValue">
     &nbsp;
     <button type="button" id="searchButtonId"
            onclick="searchNCE();" disabled><spring:message code="label.button.search" /></button>
@@ -389,6 +390,15 @@
 
     jQuery(document).ready( function() {
         setSave(true);
+        
+        document.getElementById("searchValue").addEventListener('keydown', function(e){
+            if (document.getElementById("searchValue").value === '') return;
+            // e.which === 13 means enter key is pressed.
+            if (e.which === 13) {
+            	e.preventDefault();
+            	searchNCE();
+            }
+        });
     });
 
 </script>

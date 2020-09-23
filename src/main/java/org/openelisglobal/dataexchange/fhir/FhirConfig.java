@@ -24,14 +24,10 @@ public class FhirConfig {
     }
 
     public void configureFhirHttpClient(FhirContext fhirContext) {
-        try {
-            IRestfulClientFactory clientFactory = new ApacheRestfulClientFactory(fhirContext);
+        IRestfulClientFactory clientFactory = new ApacheRestfulClientFactory(fhirContext);
 
-            clientFactory.setHttpClient(httpClient);
-            fhirContext.setRestfulClientFactory(clientFactory);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        clientFactory.setHttpClient(httpClient);
+        fhirContext.setRestfulClientFactory(clientFactory);
 
     }
 

@@ -2,6 +2,7 @@ package org.openelisglobal.dataexchange.fhir.controller;
 
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.hl7.fhir.r4.model.ResourceType;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.dataexchange.fhir.service.FhirApiWorkflowService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,8 @@ public class InternalFhirApi {
 
     @PutMapping(value = "/{resourceType}/**")
     public ResponseEntity<String> receiveFhirRequest(@PathVariable("resourceType") ResourceType resourceType) {
-        System.out.println("received notification for resource of type: " + resourceType);
+        LogEvent.logDebug(this.getClass().getName(), "receiveFhirRequest",
+                "received notification for resource of type: " + resourceType);
         fhirApiWorkflowService.processWorkflow(resourceType);
 
         return ResponseEntity.ok("");
