@@ -120,11 +120,9 @@ public class BarcodeLabelMaker {
      *                  label
      * @param type      The type of bar code that should be created
      * @param quantity  The number of labels that should be printed
-     * @param override  Whether the print limit should be ignored in label
-     *                  generation
      * @param request   This is used to attribute this action to a user
      */
-    public void generateLabels(String labNo, String patientId, String type, String quantity, String override) {
+    public void generateLabels(String labNo, String type, String quantity, String override) {
 
         /*
          * LogEvent.logInfo(this.getClass().getName(), "method unkown", "labNo: " +
@@ -137,7 +135,7 @@ public class BarcodeLabelMaker {
         if ("default".equals(type)) {
             // add 2 order label per default
             Sample sample = sampleService.getSampleByAccessionNumber(labNo);
-            OrderLabel orderLabel = new OrderLabel(getPatientForID(patientId), sample, labNo);
+            OrderLabel orderLabel = new OrderLabel(sampleService.getPatient(sample), sample, labNo);
             orderLabel.setNumLabels(2);
             orderLabel.linkBarcodeLabelInfo();
             // get sysUserId from login module
@@ -150,7 +148,8 @@ public class BarcodeLabelMaker {
             List<SampleItem> sampleItemList = sampleItemService.getSampleItemsBySampleIdAndStatus(sample.getId(),
                     ENTERED_STATUS_SAMPLE_LIST);
             for (SampleItem sampleItem : sampleItemList) {
-                SpecimenLabel specLabel = new SpecimenLabel(getPatientForID(patientId), sample, sampleItem, labNo);
+                SpecimenLabel specLabel = new SpecimenLabel(sampleService.getPatient(sample), sample, sampleItem,
+                        labNo);
                 specLabel.setNumLabels(1);
                 specLabel.linkBarcodeLabelInfo();
                 // get sysUserId from login module
@@ -162,7 +161,7 @@ public class BarcodeLabelMaker {
             // order case
         } else if ("order".equals(type)) {
             Sample sample = sampleService.getSampleByAccessionNumber(labNo);
-            OrderLabel orderLabel = new OrderLabel(getPatientForID(patientId), sample, labNo);
+            OrderLabel orderLabel = new OrderLabel(sampleService.getPatient(sample), sample, labNo);
             orderLabel.setNumLabels(Integer.parseInt(quantity));
             orderLabel.linkBarcodeLabelInfo();
             // get sysUserId from login module
@@ -181,7 +180,8 @@ public class BarcodeLabelMaker {
             for (SampleItem sampleItem : sampleItemList) {
                 // get only the sample item matching the specimen number
                 if (sampleItem.getSortOrder().equals(specimenNumber)) {
-                    SpecimenLabel specLabel = new SpecimenLabel(getPatientForID(patientId), sample, sampleItem, labNo);
+                    SpecimenLabel specLabel = new SpecimenLabel(sampleService.getPatient(sample), sample, sampleItem,
+                            labNo);
                     specLabel.setNumLabels(Integer.parseInt(quantity));
                     specLabel.linkBarcodeLabelInfo();
                     // get sysUserId from login module
