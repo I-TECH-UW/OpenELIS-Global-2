@@ -35,14 +35,6 @@
 <script src="scripts/customAutocomplete.js?"></script>
 <script src="scripts/utilities.js?"></script>
 <script src="scripts/ajaxCalls.js?"></script>
-<script>
-
-document.getElementById('searchValue').addEventListener('keydown', function(e){
-    if (document.getElementById('searchValue').value === '') return;
-    if (e.which === 13) searchNCE();
-    // e.which === 13 means enter key is pressed.
-});
-</script>
 <div align="center">
     <h2><spring:message code="nonconforming.page.correctiveAction.title" /></h2>
 
@@ -551,6 +543,16 @@ document.getElementById('searchValue').addEventListener('keydown', function(e){
                // jQuery('.action-type').append('<input type="checkbox" value="' + actionTypes[i].id + '" name="actionType" />' + actionTypes[i].value + '<br/>');
             }
         } */
+        
+        document.getElementById("searchValue").addEventListener('keydown', function(e){
+        	
+            if (document.getElementById("searchValue").value === '') return;
+            // e.which === 13 means enter key is pressed.
+            if (e.which === 13) {
+            	e.preventDefault();
+            	searchNCE();
+            }
+        });
     });
 
 </script>
