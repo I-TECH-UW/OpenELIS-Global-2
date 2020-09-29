@@ -146,7 +146,7 @@ If you trust docker to provide your database, you can ignore this section
 
 Wait while install procedure completes
 
-4. Check if OpenELIS is running at http://{server_ip_address}:8080/OpenELIS-Global
+4. Check if OpenELIS is running at https://{server_ip_address}:8443/OpenELIS-Global/
 
 Default user: admin
 Default password: adminADMIN!
