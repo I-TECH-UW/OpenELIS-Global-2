@@ -1,8 +1,8 @@
 ## Bare Metal Server Installation for OpenELIS Global 2.0 on Ubuntu 16.04 LTS
 
-### Setup Ubuntu (16.04)
+### Setup Ubuntu (16.04 LTS Server)
 
-1. Boot Ubuntu from a CD. [Note: Use Ubuntu Server 16.04 LTS, or desktop if you want the GUI) [Download](http://releases.ubuntu.com/16.04/).
+1. Boot Ubuntu from a CD. [Note: Use Ubuntu Server 16.04 LTS, do NOT use desktop] [Download](http://releases.ubuntu.com/16.04/).
 2. Select to download the updates in the background while installing. 
 3. Select: Erase disk and install Ubuntu
 4. Select the appropriate time zone 
@@ -72,6 +72,8 @@ For the self-signed certificate above, you would use:
 **Be sure to remember your keystore password, you will need it later **
 	
 #### Create truststore with OpenELIS-Global's cert (or a CA that signs OE certs)
+
+**Choose ONE of the two methods below to reate your truststore**
 
 1. using keytool (more reliable):
    
