@@ -133,7 +133,7 @@ public class ClientNotificationServiceImpl implements ClientNotificationService 
 
         try {
             if (!GenericValidator.isBlankOrNull(patient.getPerson().getPrimaryPhone())
-                    && ConfigurationProperties.getInstance().getPropertyValue(Property.PATIENT_RESULTS_SMS_ENABLED)
+                    && ConfigurationProperties.getInstance().getPropertyValue(Property.PATIENT_RESULTS_BMP_SMS_ENABLED)
                             .equals(Boolean.TRUE.toString())) {
                 SMSNotification smsNotification = new SMSNotification();
                 smsNotification.setReceiverPhoneNumber(patient.getPerson().getPrimaryPhone());

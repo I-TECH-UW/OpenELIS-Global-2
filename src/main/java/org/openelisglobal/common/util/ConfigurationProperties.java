@@ -124,11 +124,18 @@ public abstract class ConfigurationProperties {
         INFO_HIGHWAY_PASSWORD("infoHighway.password"), //
         INFO_HIGHWAY_ADDRESS("infoHighway.uri"), //
         INFO_HIGHWAY_ENABLED("infoHighway.enabled"), //
-        PATIENT_RESULTS_SMS_ENABLED("patientresultssms.enabled"), //
+        PATIENT_RESULTS_BMP_SMS_USERNAME("patientresultsbmpsms.username"), //
+        PATIENT_RESULTS_BMP_SMS_PASSWORD("patientresultsbmpsms.password"), //
+        PATIENT_RESULTS_BMP_SMS_ADDRESS("patientresultsbmpsms.uri"), //
+        PATIENT_RESULTS_BMP_SMS_ENABLED("patientresultsbmpsms.enabled"), //
+        PATIENT_RESULTS_SMPP_SMS_USERNAME("patientresultssmpp.username"), //
+        PATIENT_RESULTS_SMPP_SMS_PASSWORD("patientresultssmpp.password"), //
+        PATIENT_RESULTS_SMPP_SMS_ADDRESS("patientresultssmpp.uri"), //
+        PATIENT_RESULTS_SMPP_SMS_ENABLED("patientresultssmpp.enabled"), //
         PATIENT_RESULTS_SMTP_USERNAME("patientresultssmtp.username"), //
         PATIENT_RESULTS_SMTP_PASSWORD("patientresultssmtp.password"), //
         PATIENT_RESULTS_SMTP_ADDRESS("patientresultssmtp.uri"), //
-        PATIENT_RESULTS_SMTP_ENABLED("patientresultssmtp.enabled"); //
+        PATIENT_RESULTS_SMTP_ENABLED("patientresultssmtp.enabled"),; //
 
         private String name;
 

@@ -173,9 +173,6 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
 //        setDBPropertyMappingAndDefault(Property.INFO_HIGHWAY_USERNAME, Property.INFO_HIGHWAY_USERNAME.getName(), "");
 //        setDBPropertyMappingAndDefault(Property.INFO_HIGHWAY_PASSWORD, Property.INFO_HIGHWAY_PASSWORD.getName(), "");
 //        setDBPropertyMappingAndDefault(Property.INFO_HIGHWAY_ENABLED, Property.INFO_HIGHWAY_ENABLED.getName(), "");
-        setDBPropertyMappingAndDefault(Property.PATIENT_RESULTS_SMS_ENABLED,
-                Property.PATIENT_RESULTS_SMS_ENABLED.getName(), Boolean.TRUE.toString());
-
     }
 
     private void setDBPropertyMappingAndDefault(Property property, String dbName, String defaultValue) {
@@ -234,6 +231,46 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
             if (smtpConnection.get().getActive() != null) {
                 propertiesValueMap.put(Property.PATIENT_RESULTS_SMTP_ENABLED,
                         smtpConnection.get().getActive().toString());
+            }
+        }
+
+        Optional<ExternalConnection> bmpSmsConnection = externalConnectionsService.getMatch("programmedConnection",
+                ProgrammedConnection.BMP_SMS_SERVER.name());
+        propertiesValueMap.put(Property.PATIENT_RESULTS_BMP_SMS_ENABLED, Boolean.FALSE.toString());
+        if (bmpSmsConnection.isPresent()) {
+            Optional<BasicAuthenticationData> basicAuthData = basicAuthenticationDataService
+                    .getByExternalConnection(bmpSmsConnection.get().getId());
+            propertiesValueMap.put(Property.PATIENT_RESULTS_BMP_SMS_ADDRESS,
+                    bmpSmsConnection.get().getUri().toString());
+            // basic auth only required if bmp sms server has username password
+            if (basicAuthData.isPresent()) {
+                propertiesValueMap.put(Property.PATIENT_RESULTS_BMP_SMS_USERNAME, basicAuthData.get().getUsername());
+                propertiesValueMap.put(Property.PATIENT_RESULTS_BMP_SMS_PASSWORD, basicAuthData.get().getPassword());
+
+            }
+            if (bmpSmsConnection.get().getActive() != null) {
+                propertiesValueMap.put(Property.PATIENT_RESULTS_BMP_SMS_ENABLED,
+                        bmpSmsConnection.get().getActive().toString());
+            }
+        }
+
+        Optional<ExternalConnection> smppSmsConnection = externalConnectionsService.getMatch("programmedConnection",
+                ProgrammedConnection.SMPP_SERVER.name());
+        propertiesValueMap.put(Property.PATIENT_RESULTS_SMPP_SMS_ENABLED, Boolean.FALSE.toString());
+        if (smppSmsConnection.isPresent()) {
+            Optional<BasicAuthenticationData> basicAuthData = basicAuthenticationDataService
+                    .getByExternalConnection(smppSmsConnection.get().getId());
+            propertiesValueMap.put(Property.PATIENT_RESULTS_SMPP_SMS_ADDRESS,
+                    smppSmsConnection.get().getUri().toString());
+            // basic auth only required if smpp server has username password
+            if (basicAuthData.isPresent()) {
+                propertiesValueMap.put(Property.PATIENT_RESULTS_SMPP_SMS_USERNAME, basicAuthData.get().getUsername());
+                propertiesValueMap.put(Property.PATIENT_RESULTS_SMPP_SMS_PASSWORD, basicAuthData.get().getPassword());
+
+            }
+            if (smppSmsConnection.get().getActive() != null) {
+                propertiesValueMap.put(Property.PATIENT_RESULTS_SMPP_SMS_ENABLED,
+                        smppSmsConnection.get().getActive().toString());
             }
         }
 
