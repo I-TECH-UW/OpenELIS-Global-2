@@ -134,7 +134,7 @@ public class PatientSearchLocalAndExternalWorker extends PatientSearchWorker {
                                     + " - failed response");
                 }
             } catch (InterruptedException | ExecutionException | TimeoutException | IllegalStateException e) {
-                LogEvent.logError(e.getMessage(), e);
+                LogEvent.logErrorStack(e);
             }
 
             findNewPatients(localResults, externalResults, newPatientsFromExternalSearch);

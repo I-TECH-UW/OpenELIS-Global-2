@@ -23,10 +23,10 @@ public class SMSNotificationSender implements ClientNotificationSender<SMSNotifi
     public void send(SMSNotification notification) {
         ConfigurationProperties configurationProperties = ConfigurationProperties.getInstance();
         if (Boolean.TRUE.toString().equalsIgnoreCase(
-                configurationProperties.getPropertyValue(Property.PATIENT_RESULTS_SMPP_SMS_ADDRESS))) {
+                configurationProperties.getPropertyValue(Property.PATIENT_RESULTS_SMPP_SMS_ENABLED))) {
             smppNotificationSender.send(notification);
         } else if (Boolean.TRUE.toString()
-                .equalsIgnoreCase(configurationProperties.getPropertyValue(Property.PATIENT_RESULTS_BMP_SMS_ADDRESS))) {
+                .equalsIgnoreCase(configurationProperties.getPropertyValue(Property.PATIENT_RESULTS_BMP_SMS_ENABLED))) {
             bmpSMSNotificationSender.send(notification);
         }
     }

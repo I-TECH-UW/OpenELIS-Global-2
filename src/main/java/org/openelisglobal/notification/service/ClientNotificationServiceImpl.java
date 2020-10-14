@@ -23,6 +23,7 @@ import org.openelisglobal.result.valueholder.Result;
 import org.openelisglobal.samplehuman.service.SampleHumanService;
 import org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -91,6 +92,7 @@ public class ClientNotificationServiceImpl implements ClientNotificationService 
     }
 
     @Override
+    @Async
     // requires new ensures that even if sending the notification fails, the
     // operation calling this will still be saved
     public void createAndSendClientNotification(Result result) {
@@ -107,7 +109,7 @@ public class ClientNotificationServiceImpl implements ClientNotificationService 
         } else if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(result.getResultType())) {
             resultForDisplay = dictionaryService.getDataForId(result.getValue()).getDictEntry();
         } else if (TypeOfTestResultServiceImpl.ResultType.isNumeric(result.getResultType())) {
-            // TODO
+            resultForDisplay = result.getValue();
         } else if (TypeOfTestResultServiceImpl.ResultType.isTextOnlyVariant(result.getResultType())) {
             resultForDisplay = result.getValue();
         }
@@ -133,13 +135,23 @@ public class ClientNotificationServiceImpl implements ClientNotificationService 
 
         try {
             if (!GenericValidator.isBlankOrNull(patient.getPerson().getPrimaryPhone())
-                    && ConfigurationProperties.getInstance().getPropertyValue(Property.PATIENT_RESULTS_BMP_SMS_ENABLED)
-                            .equals(Boolean.TRUE.toString())) {
+                    && (ConfigurationProperties.getInstance().getPropertyValue(Property.PATIENT_RESULTS_BMP_SMS_ENABLED)
+                            .equals(Boolean.TRUE.toString())
+                            || ConfigurationProperties.getInstance()
+                                    .getPropertyValue(Property.PATIENT_RESULTS_SMPP_SMS_ENABLED)
+                                    .equals(Boolean.TRUE.toString()))) {
                 SMSNotification smsNotification = new SMSNotification();
-                smsNotification.setReceiverPhoneNumber(patient.getPerson().getPrimaryPhone());
+                String phoneNumber = "";
+                for (char ch : patient.getPerson().getPrimaryPhone().toCharArray()) {
+                    // 5
+                    if (Character.isDigit(ch)) {
+                        phoneNumber = phoneNumber + ch;
+                    }
+                }
+                smsNotification.setReceiverPhoneNumber(phoneNumber);
                 // TODO figure out where to store address and how to retrieve
                 smsNotification.setPayload(new ClientResultsViewNotificationPayload(resultsViewInfo.getPassword(),
-                        "someAddress", result.getAnalysis().getTest().getName(), result.getValue(),
+                        "someAddress", result.getAnalysis().getTest().getName(), resultForDisplay,
                         patient.getPerson().getFirstName(), patient.getPerson().getLastName().substring(0, 1)));
 
                 getSenderForNotification(smsNotification).send(smsNotification);

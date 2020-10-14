@@ -1,6 +1,8 @@
 package org.openelisglobal.notification.service.sender;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -25,9 +27,11 @@ public class BMPSMSNotificationSender {
         String username = configurationProperties.getPropertyValue(Property.PATIENT_RESULTS_BMP_SMS_USERNAME);
         String password = configurationProperties.getPropertyValue(Property.PATIENT_RESULTS_BMP_SMS_PASSWORD);
 
-        String getString = address + "?UserName=" + username + "&PassWord=" + password + "&UserData="
-                + notification.getMessage() + "&Concatenated=0&Mode=0&Deferred=false&Number="
-                + notification.getReceiverPhoneNumber() + "&Dsr=false";
+        String getString = address + "?UserName=" + URLEncoder.encode(username, StandardCharsets.UTF_8) + "&PassWord="
+                + URLEncoder.encode(password, StandardCharsets.UTF_8) + "&UserData="
+                + URLEncoder.encode(notification.getMessage(), StandardCharsets.UTF_8)
+                + "&Concatenated=0&Mode=0&Deferred=false&Number="
+                + URLEncoder.encode(notification.getReceiverPhoneNumber(), StandardCharsets.UTF_8) + "&Dsr=false";
 
         HttpGet getRequest = new HttpGet(getString);
         try (CloseableHttpResponse response = httpClient.execute(getRequest)) {
