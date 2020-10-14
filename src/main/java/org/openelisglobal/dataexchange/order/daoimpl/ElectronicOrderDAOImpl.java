@@ -146,7 +146,7 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder, String>
     public List<ElectronicOrder> getAllElectronicOrdersOrderedBy(SortOrder order) {
         List<ElectronicOrder> list = new Vector<>();
         try {
-            if (order.equals(ElectronicOrder.SortOrder.LAST_UPDATED)) {
+            if (order.equals(ElectronicOrder.SortOrder.LAST_UPDATED_DESC)) {
                 list = entityManager.unwrap(Session.class).createCriteria(ElectronicOrder.class)
                         .addOrder(Order.desc("lastupdated")).list();
             } else {
@@ -167,19 +167,36 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder, String>
     public List<ElectronicOrder> getAllElectronicOrdersContainingValueOrderedBy(String searchValue, SortOrder order) {
         
         String sql = 
-                 "from ElectronicOrder eo "
-                + "join eo.patient patient "
-                + "join patient.person person  "
-                + "where lower(eo.data) like concat('%', lower(:searchValue), '%') "
-                + "or lower(person.firstName) like concat('%', lower(:searchValue), '%') "
-                + "or lower(person.lastName) like concat('%', lower(:searchValue), '%') "
-                + "or lower(concat(person.firstName, ' ', person.lastName)) like concat('%', lower(:searchValue), '%')order by :order";
+                "from ElectronicOrder eo "
+               + "join eo.patient patient "
+               + "join patient.person person  "
+               + "where lower(eo.data) like concat('%', lower(:searchValue), '%') "
+               + "or lower(person.firstName) like concat('%', lower(:searchValue), '%') "
+               + "or lower(person.lastName) like concat('%', lower(:searchValue), '%') "
+               + "or lower(concat(person.firstName, ' ', person.lastName)) like concat('%', lower(:searchValue), '%') order by ";
+               
+        switch (order.getValue()) {
+            case "statusId":
+                sql = sql + "eo.statusId asc";
+                break;
+            case "lastupdatedasc":
+                sql = sql + "eo.statusId asc, eo.lastupdated asc";
+                break;
+            case "lastupdateddesc":
+                sql = sql + "eo.statusId asc, eo.lastupdated desc";
+                break;
+            case "externalId":
+                sql = sql + "eo.externalId asc";
+                break;
+            default:
+                //
+                break;
+        }
         try {
             
             Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setString("searchValue", searchValue);
-            query.setString("order", order.getValue());
-            
+            //query.setString("order", order.getValue());
             List<Object> records = query.list();
             List<ElectronicOrder> eOrders = new ArrayList<ElectronicOrder>();
             for (int i = 0; i < records.size(); i++) {
