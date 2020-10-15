@@ -15,4 +15,10 @@
 	<include file="liquibase/2.1.x.x/patient_status_report_menu.xml"/>
 	<include file="liquibase/2.1.x.x/sample_batch_entry_module_permission.xml"/>
 
+	<!-- mauritius specific changes  -->
+	<include file="liquibase/2.1.x.x/covid_report_menu.xml"/>
+	<include file="liquibase/2.1.x.x/covid_tests.xml"/>
+	<include file="liquibase/2.1.x.x/mauritius_organizations.xml"/>
+	<include file="liquibase/2.1.x.x/set_mauritius_field_form.xml"/>
+
 </databaseChangeLog>

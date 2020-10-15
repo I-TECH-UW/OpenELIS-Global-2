@@ -522,7 +522,7 @@ public class ResultsValidationUtility {
         analysisResultItem.setDictionaryResults(testResultItem.getDictionaryResults());
         analysisResultItem.setDisplayResultAsLog(
                 TestIdentityService.getInstance().isTestNumericViralLoad(testResultItem.getTestId()));
-        analysisResultItem.setNormal(testResultItem.isNormalResult());
+        analysisResultItem.setIsNormal(testResultItem.isNormalResult());
         if (result != null) {
             if (TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(testResultItem.getResultType())) {
                 Analysis analysis = testResultItem.getAnalysis();

@@ -498,7 +498,7 @@ public class TestModifyEntryController extends BaseController {
                 sortOrder += 10;
                 testResult.setIsActive(true);
                 testResult.setValue(params.dictionaryId);
-                testResult.setDefault(params.isDefault);
+                testResult.setIsDefault(params.isDefault);
                 testResult.setIsQuantifiable(params.isQuantifiable);
                 testResults.add(testResult);
             }

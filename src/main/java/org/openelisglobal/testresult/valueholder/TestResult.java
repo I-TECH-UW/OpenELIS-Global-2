@@ -40,8 +40,6 @@ public class TestResult extends BaseObject<String> {
     private Boolean isQuantifiable = false;
     private Boolean isNormal = false;
     private Boolean isActive = true;
-
-    // transient
     private Boolean isDefault = false;
 
     public TestResult() {
@@ -200,11 +198,11 @@ public class TestResult extends BaseObject<String> {
         isNormal = normal;
     }
 
-    public void setDefault(boolean isDefault) {
+    public void setIsDefault(boolean isDefault) {
         this.isDefault = isDefault;
     }
 
-    public Boolean getDefault() {
+    public Boolean getIsDefault() {
         return isDefault;
     }
 }

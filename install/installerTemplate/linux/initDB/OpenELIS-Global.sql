@@ -9325,7 +9325,7 @@ COPY clinlims.dictionary (id, is_active, dict_entry, lastupdated, local_abbrev, 
 254	Y	Not lysed by phage	2007-10-08 09:56:44.403	\N	3	\N	25400	\N
 255	Y	Lysed by phage	2007-10-08 09:57:04.542	\N	3	\N	25500	\N
 256	Y	Not performed	2007-10-08 09:57:57.952	\N	3	\N	25600	\N
-257	Y	Non-encapsulated	2007-10-08 09:58:19.183	\N	3	\N	25700	\N
+257	Y	Non-encapsulated	2007-10-08 09:58:19.	\N	3	\N	25700	\N
 258	Y	Encapsulated	2007-10-08 09:58:32.744	\N	3	\N	25800	\N
 259	Y	Catalase produced	2007-10-08 09:59:18.243	\N	3	\N	25900	\N
 260	Y	No spores	2007-10-08 09:59:32.582	\N	3	\N	26000	\N
@@ -10515,7 +10515,7 @@ COPY clinlims.menu (id, parent_id, presentation_order, element_id, action_url, c
 22	\N	10	menu_administration	/MasterListsPage.do	\N	banner.menu.administration	tooltip.banner.menu.administration	f	t
 23	22	1	menu_administration_test_management	/TestManagementConfigMenu.do	\N	configuration.test.management	configuration.test.management	f	t
 182	6	3	menu_non_conforming_corrective_actions	/NCECorrectiveAction.do	\N	banner.menu.nonconformity.correctiveActions	tooltip.banner.menu.nonconformity.correctiveActions	f	t
-183	22	2	menu_administration_report_management	/ReportConfiguration.do	\N	banner.menu.reportManagement	tooltip.banner.reportManagement	f	t
+	22	2	menu_administration_report_management	/ReportConfiguration.do	\N	banner.menu.reportManagement	tooltip.banner.reportManagement	f	t
 30	2	4	menu_sample_edit	/SampleEdit.do?type=readwrite	\N	banner.menu.sampleEdit	banner.menu.sampleEdit	f	t
 31	11	3	menu_results_referred	/ReferredOutTests.do	\N	banner.menu.referredOut	tooltip.banner.menu.referredOut	f	t
 40	2	2	menu_sample_create	\N	\N	banner.menu.sampleCreate	tooltip.bannner.menu.sampleCreate	f	t
@@ -10604,7 +10604,7 @@ COPY clinlims.menu (id, parent_id, presentation_order, element_id, action_url, c
 -- Name: menu_seq; Type: SEQUENCE SET; Schema: clinlims; Owner: clinlims
 --
 
-SELECT pg_catalog.setval('clinlims.menu_seq', 183, true);
+SELECT pg_catalog.setval('clinlims.menu_seq', 184, true);
 
 
 --
