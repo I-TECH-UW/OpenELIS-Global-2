@@ -42,12 +42,12 @@ public class BMPSMSNotificationSender {
 
         HttpGet getRequest = new HttpGet(getString);
         try (CloseableHttpResponse response = httpClient.execute(getRequest)) {
-            System.out.println("response status code from BMP SMS: " + response.getStatusLine().getStatusCode());
-            System.out.println("response status from BMP SMS: " + EntityUtils.toString(response.getEntity(), "UTF-8"));
-//            LogEvent.logDebug(this.getClass().getName(), "send",
-//                    "response status code from BMP SMS: " + response.getStatusLine().getStatusCode());
-//            LogEvent.logDebug(this.getClass().getName(), "send",
-//                    "response status from BMP SMS: " + EntityUtils.toString(response.getEntity(), "UTF-8"));
+//            System.out.println("response status code from BMP SMS: " + response.getStatusLine().getStatusCode());
+//            System.out.println("response status from BMP SMS: " + EntityUtils.toString(response.getEntity(), "UTF-8"));
+            LogEvent.logDebug(this.getClass().getName(), "send",
+                    "response status code from BMP SMS: " + response.getStatusLine().getStatusCode());
+            LogEvent.logDebug(this.getClass().getName(), "send",
+                    "response status from BMP SMS: " + EntityUtils.toString(response.getEntity(), "UTF-8"));
         } catch (IOException e) {
             LogEvent.logErrorStack(e);
         }
