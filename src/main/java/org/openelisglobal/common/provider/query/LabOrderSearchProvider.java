@@ -235,7 +235,7 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
         // ORC commonOrderSegment = hapiMsg.getORDER().getORC();
 
         requesterValuesMap.put(PROVIDER_PHONE, "");
-        requesterValuesMap.put(PROVIDER_LAST_NAME, "Name");
+        requesterValuesMap.put(PROVIDER_LAST_NAME, "Dr. Mauritius");
         requesterValuesMap.put(PROVIDER_FIRST_NAME, "");
 
         // pass loinc

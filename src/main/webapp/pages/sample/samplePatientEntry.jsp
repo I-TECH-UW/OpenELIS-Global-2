@@ -412,7 +412,7 @@ function parsePatient(patienttag) {
 function clearRequester() {
 
 //    $("providerFirstName").value = '';
-    $("providerLastNameID").value = '';
+    $("providerLastNameID").value = 'dname';
     $("labNo").value = '';
     $("receivedDateForDisplay").value = '${entryDate}';
     $("receivedTime").value = '';
@@ -430,8 +430,8 @@ function parseRequester(requester) {
     var lastName = requester.item(0).getElementsByTagName("lastName");
     var last = "";
     if (lastName.length > 0) {
-            last = lastName[0].firstChild.nodeValue;
-            $("providerLastNameID").value = last;    
+        last = lastName[0].firstChild.nodeValue;
+        $("providerLastNameID").value = last;    
     }
     
     var phoneNum = requester.item(0).getElementsByTagName("providerWorkPhoneID");
