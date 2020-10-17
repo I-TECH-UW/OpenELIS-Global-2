@@ -114,6 +114,10 @@
 			column="notify_results" />
 		<property name="guid" type="java.lang.String" column="guid" />
 		<property name="name" type="java.lang.String" column="name" />
+		<many-to-one name="defaultTestResult"
+			class="org.openelisglobal.testresult.valueholder.TestResult" fetch="select" lazy="false">
+			<column name="default_test_result_id" precision="10" scale="0" />
+		</many-to-one>
 	</class>
 <!-- 	<query name="test.getNext"> -->
 <!-- 		from Test t order by t.testSection.testSectionName, t.testName -->

@@ -586,7 +586,7 @@ function /*boolean*/ handleEnterEvent(){
 				<td style="text-align:center">
 					<form:checkbox path="resultList[${iter.index}].isAccepted"
 								   id='accepted_${iter.index}'
-								   cssClass='accepted accepted_${resultList.sampleGroupingNumber} ${resultList.isNormal ? "normalAccepted" : "" }'
+								   cssClass='accepted accepted_${resultList.sampleGroupingNumber} ${resultList.normal ? "normalAccepted" : "" }'
 								   onchange="markUpdated(); makeDirty();"
 								   onclick='enableDisableCheckboxes("rejected_${iter.index}", "${resultList.sampleGroupingNumber}");' 
 								   />

@@ -120,6 +120,10 @@ public class TestModifyServiceImpl implements TestModifyService {
                 Test nonTransiantTest = testService.getTestById(set.test.getId());
                 testResult.setTest(nonTransiantTest);
                 testResultService.insert(testResult);
+                if (testResult.getDefault()) {
+                    set.test.setDefaultTestResult(testResult);
+                    updateTestDefault(testAddParams.testId, testResult, currentUserId);
+                }
             }
 
             for (ResultLimit resultLimit : set.resultLimits) {
@@ -128,6 +132,17 @@ public class TestModifyServiceImpl implements TestModifyService {
                 resultLimitService.insert(resultLimit);
             }
         }
+    }
+
+    private void updateTestDefault(String testId, TestResult testResult, String currentUserId) {
+        Test test = testService.get(testId);
+
+        if (test != null) {
+            test.setSysUserId(currentUserId);
+            test.setDefaultTestResult(testResult);
+            testService.update(test);
+        }
+
     }
 
     private void updateTestEntities(String testId, String loinc, String userId, String uomId, boolean notifyResults) {

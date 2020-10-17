@@ -74,6 +74,9 @@ public class TestAddServiceImpl implements TestAddService {
                 testResult.setSysUserId(currentUserId);
                 testResult.setTest(set.test);
                 testResultService.insert(testResult);
+                if (testResult.getDefault()) {
+                    set.test.setDefaultTestResult(testResult);
+                }
             }
 
 

@@ -719,11 +719,11 @@ public class AnalysisItem {
         this.valid = valid;
     }
 
-    public boolean getIsNormal() {
+    public boolean isNormal() {
         return isNormal;
     }
 
-    public void setIsNormal(boolean isNormal) {
+    public void setNormal(boolean isNormal) {
         this.isNormal = isNormal;
     }
 }

@@ -715,9 +715,8 @@ public class ResultsLoadUtility {
                 analysisService.getTriggeredReflex(analysis) && analysisService.resultIsConclusion(result, analysis));
         testItem.setPastNotes(notes);
         testItem.setDisplayResultAsLog(hasLogValue(test));
-        testItem.setNonconforming(
-                analysisService.isParentNonConforming(analysis) || SpringContext.getBean(IStatusService.class)
-                        .matches(analysisService.getStatusId(analysis), AnalysisStatus.TechnicalRejected));
+        testItem.setNonconforming(analysisService.isParentNonConforming(analysis) || SpringContext.getBean(IStatusService.class)
+                .matches(analysisService.getStatusId(analysis), AnalysisStatus.TechnicalRejected));
         if (FormFields.getInstance().useField(Field.QaEventsBySection)) {
             testItem.setNonconforming(testItem.isNonconforming() || getQaEventByTestSection(analysis));
         }
@@ -734,11 +733,9 @@ public class ResultsLoadUtility {
             testItem.setSignificantDigits(Integer.parseInt(testResults.get(0).getSignificantDigits()));
         }
 
-        for (TestResult testResult : testResults) {
-            if (testResult.getIsDefault()) {
-                testItem.setResultValue(testResult.getValue());
-                testItem.setShadowResultValue(testItem.getResultValue());
-            }
+        if (test.getDefaultTestResult() != null) {
+            testItem.setResultValue(test.getDefaultTestResult().getValue());
+            testItem.setShadowResultValue(testItem.getResultValue());
         }
         return testItem;
     }

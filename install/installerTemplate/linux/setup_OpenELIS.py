@@ -96,7 +96,6 @@ LOCAL_FHIR_SERVER_ADDRESS = 'https://fhir.openelisci.org:8443/hapi-fhir-jpaserve
 REMOTE_FHIR_SOURCE = 'https://isanteplusdemo.com/openmrs/ws/fhir2/'
 REMOTE_FHIR_SOURCE_UPDATE_STATUS = "false"
 CONSOLIDATED_SERVER_ADDRESS = 'https://hub.openelisci.org:8444/fhir'
-LIQUIBASE_CONTEXT = 'general'
 
 #Stateful objects
 LOG_FILE = ''
@@ -338,9 +337,7 @@ def create_properties_files():
         if line.find("[% remote_source_update_status %]")  >= 0:
             line = line.replace("[% remote_source_update_status %]", REMOTE_FHIR_SOURCE_UPDATE_STATUS) 
         if line.find("[% consolidated_server_address %]")  >= 0:
-            line = line.replace("[% consolidated_server_address %]", CONSOLIDATED_SERVER_ADDRESS)  
-        if line.find("[% liquibase_context %]")  >= 0:
-            line = line.replace("[% liquibase_context %]", LIQUIBASE_CONTEXT) 
+            line = line.replace("[% consolidated_server_address %]", CONSOLIDATED_SERVER_ADDRESS) 
 
         output_file.write(line)
 
@@ -1001,14 +998,8 @@ def get_server_addresses():
     if CONSOLIDATED_SERVER_ADDRESS:
         if not CONSOLIDATED_SERVER_ADDRESS.startswith("https://"):
             CONSOLIDATED_SERVER_ADDRESS = "https://" + CONSOLIDATED_SERVER_ADDRESS
- 
-def get_liquibase_context():
-    global LIQUIBASE_CONTEXT  
-
-    print """
-    Enter the Liquibase context you would like to run. Examples are 'cdi', 'mauritius', 'haiti' without quotes
-    """
-    LIQUIBASE_CONTEXT = raw_input("Liquibase context: ")
+    
+        
         
 #---------------------------------------------------------------------
 #             PASSWORD GENERATION

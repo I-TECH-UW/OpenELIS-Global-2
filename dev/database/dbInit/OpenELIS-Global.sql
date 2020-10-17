@@ -10605,7 +10605,7 @@ COPY clinlims.menu (id, parent_id, presentation_order, element_id, action_url, c
 -- Name: menu_seq; Type: SEQUENCE SET; Schema: clinlims; Owner: clinlims
 --
 
-SELECT pg_catalog.setval('clinlims.menu_seq', 184, true);
+SELECT pg_catalog.setval('clinlims.menu_seq', 183, true);
 
 
 --

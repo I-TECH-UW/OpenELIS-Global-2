@@ -59,8 +59,6 @@
 			column="is_active" />
 		<property name="isNormal" type="java.lang.Boolean"
 				  column="is_normal" />
-		<property name="isDefault" type="java.lang.Boolean"
-				  column="is_default" />
 
 	</class>
 </hibernate-mapping>

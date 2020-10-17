@@ -295,7 +295,7 @@ public class TestAddController extends BaseController {
                 sortOrder += 10;
                 testResult.setIsActive(true);
                 testResult.setValue(params.dictionaryId);
-                testResult.setIsDefault(params.isDefault);
+                testResult.setDefault(params.isDefault);
                 testResult.setIsQuantifiable(params.isQuantifiable);
                 testResults.add(testResult);
             }
