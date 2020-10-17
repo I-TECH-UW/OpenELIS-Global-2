@@ -29,6 +29,7 @@ import org.openelisglobal.sample.service.SamplePatientEntryService;
 import org.openelisglobal.sample.validator.SamplePatientEntryFormValidator;
 import org.openelisglobal.spring.util.SpringContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -44,6 +45,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class SamplePatientEntryController extends BaseSampleEntryController {
+    
+@Value("${org.openelisglobal.requester.lastName}")
+private String requesterLastName;
+@Value("${org.openelisglobal.requester.firstName}")
+private String requesterFirstName;   
+@Value("${org.openelisglobal.requester.phone}")
+private String requesterPhone;   
 
     private static final String[] ALLOWED_FIELDS = new String[] { "patientProperties.currentDate",
             "patientProperties.patientLastUpdated", "patientProperties.personLastUpdated",
@@ -113,15 +121,17 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 
         request.getSession().setAttribute(SAVE_DISABLED, TRUE);
         SampleOrderService sampleOrderService = new SampleOrderService();
-
         form.setSampleOrderItems(sampleOrderService.getSampleOrderItem());
+        form.getSampleOrderItems().setProviderLastName(requesterLastName);
+        form.getSampleOrderItems().setProviderFirstName(requesterFirstName);
+        form.getSampleOrderItems().setProviderWorkPhone(requesterPhone);
         form.getSampleOrderItems().setExternalOrderNumber(externalOrderNumber);
         form.setPatientProperties(new PatientManagementInfo());
         form.setPatientSearch(new PatientSearch());
         form.setSampleTypes(DisplayListService.getInstance().getList(ListType.SAMPLE_TYPE_ACTIVE));
         form.setTestSectionList(DisplayListService.getInstance().getList(ListType.TEST_SECTION));
         form.setCurrentDate(DateUtil.getCurrentDateAsText());
-
+        
         // for (Object program : form.getSampleOrderItems().getProgramList()) {
         // LogEvent.logInfo(this.getClass().getName(), "method unkown", ((IdValuePair)
         // program).getValue());
