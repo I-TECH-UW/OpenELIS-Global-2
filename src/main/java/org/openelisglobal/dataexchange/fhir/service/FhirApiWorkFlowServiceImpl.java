@@ -69,7 +69,13 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         for (String remoteStorePath : remoteStorePaths) {
             switch (resourceType) {
             case Task:
-                beginTaskPath(remoteStorePath);
+                try {
+                    beginTaskPath(remoteStorePath);
+                } catch (RuntimeException e) {
+                    LogEvent.logError(this.getClass().getName(), "processWorkflow",
+                            "could not process Task workflow using remote address: " + remoteStorePath);
+                    LogEvent.logError(this.getClass().getName(), "processWorkflow", e.getMessage());
+                }
             default:
             }
         }
