@@ -33,8 +33,8 @@ public abstract class BaseSiteYearAccessionValidator {
 
     protected SampleService sampleService = SpringContext.getBean(SampleService.class);
 
-    protected static final String INCREMENT_STARTING_VALUE = "000001";
-    protected static final int UPPER_INC_RANGE = 999999;
+    protected static final String INCREMENT_STARTING_VALUE = "0000000000001";
+    protected static final long UPPER_INC_RANGE = 9999999999999L;
     protected static final int SITE_START = 0;
     protected int SITE_END = getSiteEndIndex();
     protected int YEAR_START = getYearStartIndex();
@@ -108,7 +108,7 @@ public abstract class BaseSiteYearAccessionValidator {
 
         if (increment < UPPER_INC_RANGE) {
             increment++;
-            incrementAsString = String.format("%06d", increment);
+            incrementAsString = String.format("%013d", increment);
         } else {
             throw new IllegalArgumentException("AccessionNumber has no next value");
         }
