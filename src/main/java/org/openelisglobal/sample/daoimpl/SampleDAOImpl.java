@@ -297,7 +297,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
     public String getNextAccessionNumber() {
         String accessionNumber = null;
         String lastAccessionNumber = null;
-
+        
         // get the current year
         Calendar cal = Calendar.getInstance();
         int currentYear = cal.get(Calendar.YEAR);
