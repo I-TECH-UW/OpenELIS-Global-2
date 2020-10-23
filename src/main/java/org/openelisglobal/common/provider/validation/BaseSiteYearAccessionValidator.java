@@ -126,10 +126,13 @@ public abstract class BaseSiteYearAccessionValidator {
             String projectFormName) {
 
         ValidationResults results;
-        if( !Boolean.valueOf(ConfigurationProperties.getInstance().getPropertyValue(Property.ACCESSION_NUMBER_VALIDATE))) {
-            results = ValidationResults.SUCCESS;
-        } else {
+        boolean validateAccessionNumber = ConfigurationProperties.getInstance()
+                .isPropertyValueEqual(Property.ACCESSION_NUMBER_VALIDATE, "true");
+        if( validateAccessionNumber ) {
             results = validFormat(accessionNumber, true);
+        } else {
+            results = ValidationResults.SUCCESS;
+            
         }
         // TODO refactor accessionNumberIsUsed into two methods so the null isn't
         // needed. (Its only used for program accession number)

@@ -14,6 +14,8 @@ import org.apache.commons.lang.StringUtils;
 import org.openelisglobal.barcode.BarcodeLabelMaker;
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.provider.validation.IAccessionNumberValidator;
+import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.common.util.validator.GenericValidator;
 import org.openelisglobal.common.validator.BaseErrors;
@@ -192,20 +194,24 @@ public class LabelMakerServlet extends HttpServlet implements IActionConstants {
             errors.reject("barcode.label.error.type.invalid", "barcode.label.error.type.invalid");
         }
         // Validate "labNo" (either labNo, labNo.itemNo)
-        IAccessionNumberValidator accessionNumberValidator = AccessionNumberUtil
-                .getAccessionNumberValidator(programCode);
-        String accessionNumber;
+        boolean validateAccessionNumber = ConfigurationProperties.getInstance()
+                .isPropertyValueEqual(Property.ACCESSION_NUMBER_VALIDATE, "true");
+        if (validateAccessionNumber) {
+            IAccessionNumberValidator accessionNumberValidator = AccessionNumberUtil
+                    .getAccessionNumberValidator(programCode);
+            String accessionNumber;
 //        String sampleItemNumber;
-        if (labNo.indexOf(".") > 0) {
-            accessionNumber = labNo.substring(0, labNo.indexOf("."));
+            if (labNo.indexOf(".") > 0) {
+                accessionNumber = labNo.substring(0, labNo.indexOf("."));
 //            sampleItemNumber = labNo.substring(labNo.indexOf(".") + 1);
-        } else {
-            accessionNumber = labNo;
+            } else {
+                accessionNumber = labNo;
 //            sampleItemNumber = "0";
-        }
-        if (!(IAccessionNumberValidator.ValidationResults.SUCCESS == accessionNumberValidator
-                .validFormat(accessionNumber, false))) {
-            errors.reject("barcode.label.error.accession.invalid", "barcode.label.error.accession.invalid");
+            }
+            if (!(IAccessionNumberValidator.ValidationResults.SUCCESS == accessionNumberValidator
+                    .validFormat(accessionNumber, false))) {
+                errors.reject("barcode.label.error.accession.invalid", "barcode.label.error.accession.invalid");
+            }
         }
         SampleService sampleService = SpringContext.getBean(SampleService.class);
         if (sampleService.getSampleByAccessionNumber(labNo) == null) {

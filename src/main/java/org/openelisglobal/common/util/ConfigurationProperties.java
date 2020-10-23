@@ -76,7 +76,7 @@ public abstract class ConfigurationProperties {
         failedValidationMarker("showValidationFailureIcon"),      //If true results that failed validation will have icon next to them
         resultsResendTime("results.send.retry.time"),           //How much time between trying to resend results that failed to reach their destination
         TRACK_PATIENT_PAYMENT("trackPayment"),       //If true then patient payment status can be entered
-        ACCESSION_NUMBER_VALIDATE("accessionValidate"),       //If true then validate the accession number
+        ACCESSION_NUMBER_VALIDATE("validateAccessionNumber"),       //If true then validate the accession number
         ALERT_FOR_INVALID_RESULTS("alertWhenInvalidResult"),   //If true then technician will get an alert for results outside of the valid range
         DEFAULT_LANG_LOCALE("default language locale"),         //Default language locale
         DEFAULT_DATE_LOCALE("default date locale"),         //Date local
