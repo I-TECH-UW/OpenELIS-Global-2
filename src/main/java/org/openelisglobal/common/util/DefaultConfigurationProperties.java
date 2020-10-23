@@ -100,6 +100,8 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
         // DB
         setDBPropertyMappingAndDefault(Property.TRACK_PATIENT_PAYMENT, Property.TRACK_PATIENT_PAYMENT.getName(),
                 "false");
+        setDBPropertyMappingAndDefault(Property.ACCESSION_NUMBER_VALIDATE, Property.ACCESSION_NUMBER_VALIDATE.getName(),
+                "");
         setDBPropertyMappingAndDefault(Property.ALERT_FOR_INVALID_RESULTS, Property.ALERT_FOR_INVALID_RESULTS.getName(),
                 "false");
         setDBPropertyMappingAndDefault(Property.DEFAULT_DATE_LOCALE, Property.DEFAULT_DATE_LOCALE.getName(), "fr-FR");

@@ -24,8 +24,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openelisglobal.common.provider.validation.IAccessionNumberValidator.ValidationResults;
 import org.openelisglobal.common.servlet.validation.AjaxServlet;
-import org.openelisglobal.common.util.ConfigurationProperties;
-import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.sample.util.AccessionNumberUtil;
 import org.openelisglobal.sample.util.CI.ProjectForm;
 import org.owasp.encoder.Encode;
@@ -83,10 +81,10 @@ public class SampleEntryAccessionNumberValidationProvider extends BaseValidation
 
         String returnData;
         
-       if( !Boolean.valueOf(ConfigurationProperties.getInstance()
-                .getPropertyValue(Property.ACCESSION_NUMBER_VALIDATE))) {
-            result = ValidationResults.SUCCESS;
-        }
+//       if( !Boolean.valueOf(ConfigurationProperties.getInstance()
+//                .getPropertyValue(Property.ACCESSION_NUMBER_VALIDATE))) {
+//            result = ValidationResults.SUCCESS;
+//        }
         
         switch (result) {
         case SUCCESS:
