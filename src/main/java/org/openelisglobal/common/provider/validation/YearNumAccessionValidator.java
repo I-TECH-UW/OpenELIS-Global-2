@@ -20,6 +20,8 @@ package org.openelisglobal.common.provider.validation;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.sample.service.SampleService;
@@ -168,13 +170,17 @@ public class YearNumAccessionValidator implements IAccessionNumberValidator {
     public ValidationResults checkAccessionNumberValidity(String accessionNumber, String recordType, String isRequired,
             String projectFormName) {
 
-        ValidationResults results = validFormat(accessionNumber, true);
+        ValidationResults results;
+        if( !Boolean.valueOf(ConfigurationProperties.getInstance().getPropertyValue(Property.ACCESSION_NUMBER_VALIDATE))) {
+            results = ValidationResults.SUCCESS;
+        } else {
+            results = validFormat(accessionNumber, true);
+        }
         // TODO refactor accessionNumberIsUsed into two methods so the null isn't
         // needed. (Its only used for program accession number)
         if (results == ValidationResults.SUCCESS && accessionNumberIsUsed(accessionNumber, null)) {
             results = ValidationResults.USED_FAIL;
         }
-
         return results;
     }
 

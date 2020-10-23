@@ -170,7 +170,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 
         boolean trackPayments = ConfigurationProperties.getInstance()
                 .isPropertyValueEqual(Property.TRACK_PATIENT_PAYMENT, "true");
-
+        
         String receivedDateForDisplay = sampleOrder.getReceivedDateForDisplay();
 
         if (!org.apache.commons.validator.GenericValidator.isBlankOrNull(sampleOrder.getReceivedTime())) {
