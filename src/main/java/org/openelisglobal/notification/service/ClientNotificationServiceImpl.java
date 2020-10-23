@@ -11,6 +11,7 @@ import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.dictionary.service.DictionaryService;
+import org.openelisglobal.dictionary.valueholder.Dictionary;
 import org.openelisglobal.notification.service.sender.ClientNotificationSender;
 import org.openelisglobal.notification.valueholder.ClientNotification;
 import org.openelisglobal.notification.valueholder.ClientResultsViewNotificationPayload;
@@ -107,7 +108,15 @@ public class ClientNotificationServiceImpl implements ClientNotificationService 
         if (TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(result.getResultType())) {
             // TODO
         } else if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(result.getResultType())) {
-            resultForDisplay = dictionaryService.getDataForId(result.getValue()).getDictEntry();
+            Dictionary dictionary = dictionaryService.getDataForId(result.getValue());
+            resultForDisplay = dictionary.getLocalizedName();
+
+            if ("unknown".equals(resultForDisplay)) {
+                resultForDisplay = GenericValidator.isBlankOrNull(dictionary.getLocalAbbreviation())
+                        ? dictionary.getDictEntry()
+                        : dictionary.getLocalAbbreviation();
+            }
+//            resultForDisplay = dictionaryService.getDataForId(result.getValue()).getDictEntry();
         } else if (TypeOfTestResultServiceImpl.ResultType.isNumeric(result.getResultType())) {
             resultForDisplay = result.getValue();
         } else if (TypeOfTestResultServiceImpl.ResultType.isTextOnlyVariant(result.getResultType())) {

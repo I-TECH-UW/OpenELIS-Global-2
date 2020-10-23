@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
+import org.apache.commons.validator.GenericValidator;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -25,7 +26,6 @@ public class BMPSMSNotificationSender {
     @Autowired
     private CloseableHttpClient httpClient;
 
-
     public void send(SMSNotification notification) {
         ConfigurationProperties configurationProperties = ConfigurationProperties.getInstance();
 
@@ -33,23 +33,52 @@ public class BMPSMSNotificationSender {
         String username = configurationProperties.getPropertyValue(Property.PATIENT_RESULTS_BMP_SMS_USERNAME);
         String password = configurationProperties.getPropertyValue(Property.PATIENT_RESULTS_BMP_SMS_PASSWORD);
 
+        sendSMS(notification, address, username, password, "");
+
+    }
+
+    private void sendSMS(SMSNotification notification, String address, String username, String password,
+            String phonePrefix) {
+
         String getString = address + "?UserName=" + URLEncoder.encode(username, StandardCharsets.UTF_8) + "&PassWord="
                 + URLEncoder.encode(password, StandardCharsets.UTF_8) + "&UserData="
-                + URLEncoder.encode(notification.getMessage(), StandardCharsets.UTF_8)
-                + "&SenderId=" + URLEncoder.encode(senderId, StandardCharsets.UTF_8)
-                + "&Concatenated=0&Mode=0&Deferred=false&Number="
-                + URLEncoder.encode(notification.getReceiverPhoneNumber(), StandardCharsets.UTF_8) + "&Dsr=false";
+                + URLEncoder.encode(notification.getMessage(), StandardCharsets.UTF_8) + "&SenderId="
+                + URLEncoder.encode(senderId, StandardCharsets.UTF_8) + "&Concatenated=0&Mode=0&Deferred=false&Number="
+                + URLEncoder.encode(phonePrefix + notification.getReceiverPhoneNumber(), StandardCharsets.UTF_8)
+                + "&Dsr=false";
 
+        String statusReturned = null;
         HttpGet getRequest = new HttpGet(getString);
         try (CloseableHttpResponse response = httpClient.execute(getRequest)) {
             System.out.println("response status code from BMP SMS: " + response.getStatusLine().getStatusCode());
-            System.out.println("response status from BMP SMS: " + EntityUtils.toString(response.getEntity(), "UTF-8"));
-            LogEvent.logDebug(this.getClass().getName(), "send",
+            statusReturned = EntityUtils.toString(response.getEntity(), "UTF-8");
+            System.out.println("response status from BMP SMS: " + statusReturned);
+            LogEvent.logDebug(this.getClass().getName(), "sendSMS",
                     "response status code from BMP SMS: " + response.getStatusLine().getStatusCode());
-            LogEvent.logDebug(this.getClass().getName(), "send",
-                    "response status from BMP SMS: " + EntityUtils.toString(response.getEntity(), "UTF-8"));
+            LogEvent.logDebug(this.getClass().getName(), "sendSMS", "response status from BMP SMS: " + statusReturned);
         } catch (IOException e) {
+            LogEvent.logError(this.getClass().getName(), "sendSMS",
+                    "failed to communicate with " + address + " for sending SMS");
             LogEvent.logErrorStack(e);
+        }
+
+        if (!GenericValidator.isBlankOrNull(statusReturned) && statusReturned.contains("-")) {
+            String returnedCode = statusReturned.substring(statusReturned.indexOf("-") + 1).strip();
+            if (returnedCode.length() < 4) {
+                // an error has occurred
+                LogEvent.logError(this.getClass().getName(), "sendSMS", "response from BMP SMS: " + statusReturned);
+                try {
+                    int code = Integer.parseInt(returnedCode);
+                    if (code == 91 && !"00".equals(phonePrefix)) {
+                        // phone format, try with 00 prefix
+                        this.sendSMS(notification, address, username, password, "00");
+                    }
+                } catch (NumberFormatException e) {
+                    LogEvent.logError(this.getClass().getName(), "sendSMS",
+                            "failed to parse error response from SMS server");
+                }
+            }
+
         }
 
     }
