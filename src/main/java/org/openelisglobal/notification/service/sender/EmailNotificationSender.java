@@ -1,9 +1,11 @@
 package org.openelisglobal.notification.service.sender;
 
 import org.openelisglobal.common.util.ConfigurationListener;
+import org.openelisglobal.common.util.validator.GenericValidator;
 import org.openelisglobal.notification.valueholder.EmailNotification;
 import org.openelisglobal.spring.util.SpringContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
@@ -13,6 +15,8 @@ public class EmailNotificationSender implements ClientNotificationSender<EmailNo
 
     @Autowired
     private JavaMailSender javaMailSender;
+    @Value("${org.openelisglobal.mail.bcc:}")
+    private String bcc;
 
     @Override
     public Class<EmailNotification> forClass() {
@@ -24,6 +28,9 @@ public class EmailNotificationSender implements ClientNotificationSender<EmailNo
     public void send(EmailNotification notification) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(notification.getRecipientEmailAddress());
+        if (!GenericValidator.isBlankOrNull(bcc)) {
+            message.setBcc(bcc);
+        }
         message.setSubject(notification.getSubject());
         message.setText(notification.getMessage());
         javaMailSender.send(message);

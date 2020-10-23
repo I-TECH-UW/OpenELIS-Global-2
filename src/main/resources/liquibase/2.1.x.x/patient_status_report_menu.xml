@@ -14,4 +14,14 @@
 		<!-- no rollback as these options were never needed -->
 	</changeSet>
 	
+	<changeSet author="ctsteele" id="2">
+<!-- 		no precondition needed-->
+      <update schemaName="clinlims"
+      tableName="menu">
+      <column name="action_url" value="/Report.do?type=patient&amp;report=patientCILNSP_vreduit"/>
+      <where>element_id='menu_reports_status_patient'</where>
+      </update>
+		<!-- no rollback as these options were never needed -->
+</changeSet>
+	
 </databaseChangeLog>
