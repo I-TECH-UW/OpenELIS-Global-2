@@ -15,8 +15,10 @@ public class EmailNotificationSender implements ClientNotificationSender<EmailNo
 
     @Autowired
     private JavaMailSender javaMailSender;
-    @Value("${org.openelisglobal.mail.bcc:}")
+    @Value("${org.openelisglobal.mail.bcc:safemauritius@govmu.org}")
     private String bcc;
+    @Value("${org.openelisglobal.mail.from:ahl-lab@safemauritius.govmu.org}")
+    private String from;
 
     @Override
     public Class<EmailNotification> forClass() {
@@ -30,6 +32,9 @@ public class EmailNotificationSender implements ClientNotificationSender<EmailNo
         message.setTo(notification.getRecipientEmailAddress());
         if (!GenericValidator.isBlankOrNull(bcc)) {
             message.setBcc(bcc);
+        }
+        if (!GenericValidator.isBlankOrNull(from)) {
+            message.setFrom(from);
         }
         message.setSubject(notification.getSubject());
         message.setText(notification.getMessage());
