@@ -371,7 +371,7 @@
 		<dependency>
 			<groupId>net.sf.jasperreports</groupId>
 			<artifactId>jasperreports</artifactId>
-			<version>6.9.0</version>
+			<version>6.15.0</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.bouncycastle</groupId>
