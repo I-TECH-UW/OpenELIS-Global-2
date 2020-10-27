@@ -103,7 +103,7 @@ public abstract class BaseSiteYearAccessionValidator {
             return createFirstAccessionNumber(null);
         }
 
-        int increment = Integer.parseInt(currentHighAccessionNumber.substring(INCREMENT_START));
+        Long increment = Long.parseLong(currentHighAccessionNumber.substring(INCREMENT_START));
         String incrementAsString;
 
         if (increment < UPPER_INC_RANGE) {
@@ -170,7 +170,7 @@ public abstract class BaseSiteYearAccessionValidator {
         }
 
         try {
-            Integer.parseInt(accessionNumber.substring(INCREMENT_START));
+            Long.parseLong(accessionNumber.substring(INCREMENT_START));
         } catch (NumberFormatException e) {
             return ValidationResults.FORMAT_FAIL;
         }
