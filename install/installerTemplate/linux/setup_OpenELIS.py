@@ -346,6 +346,11 @@ def create_properties_files():
     os.chmod(SECRETS_DIR + "common.properties", 0640)   
     os.chown(SECRETS_DIR + 'common.properties', 8443, 8443) 
     
+    output_file = open(SECRETS_DIR + "extra.properties", "w")
+    output_file.close()
+    os.chmod(SECRETS_DIR + "extra.properties", 0640)   
+    os.chown(SECRETS_DIR + 'extra.properties', 8443, 8443) 
+    
     template_file = open(INSTALLER_TEMPLATE_DIR + "hapi.properties", "r")
     output_file = open(SECRETS_DIR + "hapi.properties", "w")
 

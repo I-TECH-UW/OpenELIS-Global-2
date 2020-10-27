@@ -50,6 +50,7 @@ services:
             - source: truststore
             - source: datasource.password
             - source: common.properties
+            - source: extra.properties
             
     fhir.openelisci.org:
         container_name: [% fhir_api_name %]
@@ -78,6 +79,8 @@ secrets:
     file: [% secrets_dir %]datasource.password  
   common.properties:
     file: [% secrets_dir %]common.properties  
+  extra.properties:
+    file: [% secrets_dir %]extra.properties  
   hapi.properties:
     file: [% secrets_dir %]hapi.properties
   keystore:
