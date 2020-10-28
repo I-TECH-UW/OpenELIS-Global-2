@@ -346,8 +346,8 @@ def create_properties_files():
     os.chmod(SECRETS_DIR + "common.properties", 0640)   
     os.chown(SECRETS_DIR + 'common.properties', 8443, 8443) 
     
-    output_file = open(SECRETS_DIR + "extra.properties", "w")
-    output_file.close()
+    if not os.path.exists(SECRETS_DIR + "extra.properties"):
+        open(SECRETS_DIR + "extra.properties", "w").close()
     os.chmod(SECRETS_DIR + "extra.properties", 0640)   
     os.chown(SECRETS_DIR + 'extra.properties', 8443, 8443) 
     
