@@ -4,7 +4,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %> 
 
 <script type="text/javascript">
@@ -84,10 +84,10 @@ jQuery(window).load(function(){
 						<input type="button" 
 							onclick="location.href='SamplePatientEntry.do?ID=${eOrder.externalId}';" 
 							value="<spring:message code="eorder.enterorder"/>" /></span>
-						<span style="float:right"><spring:message code="eorder.lastupdated"/>: <c:out value="${eOrder.lastupdated}"/></span>
+						<span style="float:right"><spring:message code="eorder.lastupdated"/>: <fmt:formatDate value="${eOrder.lastupdated}" pattern="yyyy-MM-dd HH:mm z"/></span>
 					</h3>
 					<div id="info" >
-						<b><spring:message code="eorder.timestamp"/>:</b> <c:out value="${eOrder.orderTimestamp}"/><br>
+						<b><spring:message code="eorder.timestamp"/>:</b> <fmt:formatDate value="${eOrder.orderTimestamp}" pattern="yyyy-MM-dd HH:mm z"/> <br>
 						<table>
 						<tr>
 							<td><b><spring:message code="eorder.patient"/>:</b></td>
