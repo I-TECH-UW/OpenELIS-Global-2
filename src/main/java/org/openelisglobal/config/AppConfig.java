@@ -22,7 +22,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.context.annotation.PropertySources;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
@@ -48,9 +47,9 @@ import org.springframework.web.servlet.view.tiles3.TilesView;
 @EnableAsync
 @Configuration
 @EnableJpaRepositories(basePackages = { "org.itech", "org.ozeki.sms" })
-@PropertySources({ @PropertySource(value = "classpath:application.properties"),
-        @PropertySource(value = "file:/run/secrets/extra.properties", ignoreResourceNotFound = true),
-        @PropertySource(value = "file:/run/secrets/common.properties") })
+@PropertySource("classpath:application.properties")
+@PropertySource("file:/run/secrets/common.properties")
+@PropertySource(value = "file:/run/secrets/extra.properties", ignoreResourceNotFound = true)
 @ComponentScan(basePackages = { "spring", "org.openelisglobal", "org.itech", "org.ozeki.sms" })
 public class AppConfig implements WebMvcConfigurer {
 
