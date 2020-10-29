@@ -54,13 +54,13 @@ public class CovidResultsCSVBuilder extends CovidResultsBuilderImpl {
         valueRow.put(PATIENT_LAST_NAME_PROPERTY_NAME, patient.getPerson().getLastName());
         valueRow.put(PATIENT_FIRST_NAME_PROPERTY_NAME, patient.getPerson().getFirstName());
         valueRow.put(PATIENT_DATE_OF_BIRTH_PROPERTY_NAME, patient.getBirthDateForDisplay());
+        valueRow.put(PATIENT_PHONE_NO_PROPERTY_NAME, patient.getPerson().getPrimaryPhone());
 
         try {
-            Task task = getTaskForAnalysis(analysis);
-
-            if (!GenericValidator.isBlankOrNull(task.getDescription())) {
+            Optional<Task> task = getTaskForAnalysis(analysis);
+            if (task.isPresent() && !GenericValidator.isBlankOrNull(task.get().getDescription())) {
                 try {
-                    convertJSONToCSV(new JSONObject(task.getDescription()), LOCATOR_FORM_PROPERTY_NAME, valueRow);
+                    convertJSONToCSV(new JSONObject(task.get().getDescription()), LOCATOR_FORM_PROPERTY_NAME, valueRow);
                 } catch (JSONException e) {
                     LogEvent.logError(this.getClass().getName(), "addValueRow",
                             "could not make json from task description");

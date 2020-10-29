@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.apache.commons.validator.GenericValidator;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Bundle.BundleEntryComponent;
 import org.hl7.fhir.r4.model.ResourceType;
@@ -54,6 +55,7 @@ public abstract class CovidResultsBuilderImpl implements CovidResultsBuilder {
     protected static final String PATIENT_LAST_NAME_PROPERTY_NAME = "family name";
     protected static final String PATIENT_FIRST_NAME_PROPERTY_NAME = "given name";
     protected static final String PATIENT_DATE_OF_BIRTH_PROPERTY_NAME = "date of birth";
+    protected static final String PATIENT_PHONE_NO_PROPERTY_NAME = "phone number";
     protected static final String LOCATOR_FORM_PROPERTY_NAME = "locatorForm";
 
     protected static final String EMPTY_VALUE = "";
@@ -83,10 +85,13 @@ public abstract class CovidResultsBuilderImpl implements CovidResultsBuilder {
                 && analysis.getStartedDate().before(this.dateRange.getHighDate())).collect(Collectors.toList());
     }
 
-    protected Task getTaskForAnalysis(Analysis analysis) {
+    protected Optional<Task> getTaskForAnalysis(Analysis analysis) {
         IGenericClient client = fhirContext
                 .newRestfulGenericClient(SpringContext.getBean(FhirApiWorkflowService.class).getLocalFhirStorePath());
         String serviceRequestId = analysis.getSampleItem().getSample().getReferringId();
+        if (GenericValidator.isBlankOrNull(serviceRequestId)) {
+            return Optional.empty();
+        }
 
         ServiceRequest serviceRequest = null;
         Bundle responseBundle = client.search().forResource(ServiceRequest.class)
@@ -99,8 +104,7 @@ public abstract class CovidResultsBuilderImpl implements CovidResultsBuilder {
         }
 
         if (serviceRequest == null) {
-            throw new IllegalStateException(
-                    "could not find service request for analysis with serviceRequestId: " + serviceRequestId);
+            return Optional.empty();
         }
         responseBundle = client.search().forResource(Task.class)
                 .where(Task.BASED_ON.hasId(serviceRequest.getIdElement().getIdPart()))
@@ -108,7 +112,7 @@ public abstract class CovidResultsBuilderImpl implements CovidResultsBuilder {
         for (BundleEntryComponent bundleComponent : responseBundle.getEntry()) {
             if (bundleComponent.hasResource()
                     && ResourceType.Task.equals(bundleComponent.getResource().getResourceType())) {
-                return (Task) bundleComponent.getResource();
+                return Optional.of((Task) bundleComponent.getResource());
             }
         }
         throw new IllegalStateException("could not find task for analysis with serviceRequestId: " + serviceRequestId);
