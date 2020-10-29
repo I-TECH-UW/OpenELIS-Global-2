@@ -99,7 +99,8 @@ public abstract class CovidResultsBuilderImpl implements CovidResultsBuilder {
         }
 
         if (serviceRequest == null) {
-            throw new IllegalStateException("could not find service request for analysis");
+            throw new IllegalStateException(
+                    "could not find service request for analysis with serviceRequestId: " + serviceRequestId);
         }
         responseBundle = client.search().forResource(Task.class)
                 .where(Task.BASED_ON.hasId(serviceRequest.getIdElement().getIdPart()))
@@ -110,7 +111,7 @@ public abstract class CovidResultsBuilderImpl implements CovidResultsBuilder {
                 return (Task) bundleComponent.getResource();
             }
         }
-        throw new IllegalStateException("could not find task for analysis");
+        throw new IllegalStateException("could not find task for analysis with serviceRequestId: " + serviceRequestId);
     }
 
     protected Optional<Result> getResultForAnalysis(Analysis analysis) {

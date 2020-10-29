@@ -23,7 +23,6 @@ import ca.uhn.hl7v2.hoh.util.repackage.Base64.Charsets;
 
 public class CovidResultsCSVBuilder extends CovidResultsBuilderImpl {
 
-
     private List<String> columnNames = new ArrayList<>();
     private List<Map<String, String>> valueRows = new ArrayList<>();
 
@@ -56,19 +55,25 @@ public class CovidResultsCSVBuilder extends CovidResultsBuilderImpl {
         valueRow.put(PATIENT_FIRST_NAME_PROPERTY_NAME, patient.getPerson().getFirstName());
         valueRow.put(PATIENT_DATE_OF_BIRTH_PROPERTY_NAME, patient.getBirthDateForDisplay());
 
-        Task task = getTaskForAnalysis(analysis);
+        try {
+            Task task = getTaskForAnalysis(analysis);
 
-        if (!GenericValidator.isBlankOrNull(task.getDescription())) {
-            try {
-                convertJSONToCSV(new JSONObject(task.getDescription()), LOCATOR_FORM_PROPERTY_NAME, valueRow);
-            } catch (JSONException e) {
-                LogEvent.logError(this.getClass().getName(), "addValueRow",
-                        "could not make json from task description");
-                LogEvent.logError(e);
+            if (!GenericValidator.isBlankOrNull(task.getDescription())) {
+                try {
+                    convertJSONToCSV(new JSONObject(task.getDescription()), LOCATOR_FORM_PROPERTY_NAME, valueRow);
+                } catch (JSONException e) {
+                    LogEvent.logError(this.getClass().getName(), "addValueRow",
+                            "could not make json from task description");
+                    LogEvent.logError(e);
+                }
             }
-        }
 
-        valueRows.add(valueRow);
+            valueRows.add(valueRow);
+        } catch (IllegalStateException e) {
+            LogEvent.logError(this.getClass().getName(), "addValueRow",
+                    "could not retrieve FhirTask from analysis with id: " + analysis.getId());
+            LogEvent.logError(this.getClass().getName(), "addValueRow", e.getMessage());
+        }
     }
 
     private void convertJSONToCSV(JSONObject jsonObject, String keyPrefix, Map<String, String> valueRow) {
