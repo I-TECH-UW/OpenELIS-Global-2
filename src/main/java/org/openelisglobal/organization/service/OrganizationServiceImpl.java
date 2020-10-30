@@ -175,6 +175,18 @@ public class OrganizationServiceImpl extends BaseObjectServiceImpl<Organization,
             organization.setIsActive("N");
         }
     }
+    
+    @Override
+    @Transactional
+    public void deactivateOrganizations(List<Organization> deactivateOrganizations) {
+        for (Organization organization : getBaseObjectDAO().getAll()) {
+            for (Organization deactivateOrganization : deactivateOrganizations)  {
+                if (deactivateOrganization.getId().equals(organization.getId()) ) {
+                    organization.setIsActive("N");
+                }
+            }
+        }
+    }
 
     @Override
     @Transactional

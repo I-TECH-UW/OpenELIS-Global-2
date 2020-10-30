@@ -383,11 +383,16 @@
                    id="providerLastNameID"
                    onchange="setOrderModified();setCorrectSave();"
                    size="30"/>
-        <spring:message code="humansampleone.provider.firstName.short"/>:
+    </td>               
+    <tr>
+    <td>
+        <spring:message code="sample.entry.provider.firstName"/>:
+    <td>
         <form:input path="sampleOrderItems.providerFirstName" onchange="setOrderModified();"
                    size="30"/>
-
+	</td>
     </td>
+    </tr>
 </tr>
 <tr>
     <td>

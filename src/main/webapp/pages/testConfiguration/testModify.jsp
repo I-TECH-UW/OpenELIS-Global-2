@@ -111,7 +111,7 @@
     }
 
     function setForEditing(testId, name) {
-        jQuery("#catDiv").show();
+    	jQuery("#catDiv").show();
         jQuery("#testName").text(name);
         jQuery(".error").each(function (index, value) {
             value.value = "";
@@ -2290,9 +2290,10 @@ td {
 			value="<%=MessageUtil.getContextualMessage("label.button.back")%>"
 			onclick="navigateBackFromConfirm()" />
 	</div>
-
 	<table>
 		<%
+			testCount = 0;
+			columnCount = 1;
 			while (testCount < testList.size()) {
 		%>
 		<tr>
@@ -2301,7 +2302,7 @@ td {
 				onclick="setForEditing( '<%=((IdValuePair) testList.get(testCount)).getId() + "', '"
 						+ ((IdValuePair) testList.get(testCount)).getValue()%>');"
 				class="textButton test" /> <%
- 	testCount++;
+ 		testCount++;
  		columnCount = 1;
  %></td>
 			<%
@@ -2312,8 +2313,8 @@ td {
 				onclick="setForEditing( '<%=((IdValuePair) testList.get(testCount)).getId() + "', '"
 							+ ((IdValuePair) testList.get(testCount)).getValue()%>' );"
 				class="textButton test" /> <%
- 	testCount++;
- 			columnCount++;
+ 		testCount++;
+ 		columnCount++;
  %></td>
 			<%
 				}
