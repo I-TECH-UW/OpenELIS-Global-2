@@ -90,7 +90,7 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
         setDBPropertyMappingAndDefault(Property.SiteName, Property.SiteName.getName(), "");
         setDBPropertyMappingAndDefault(Property.PasswordRequirments, Property.PasswordRequirments.getName(), "MINN");
         setDBPropertyMappingAndDefault(Property.FormFieldSet, Property.FormFieldSet.getName(),
-                IActionConstants.FORM_FIELD_SET_CI_GENERAL);
+                IActionConstants.FORM_FIELD_SET_MAURITIUS);
         setDBPropertyMappingAndDefault(Property.StringContext, Property.StringContext.getName(), "");
         setDBPropertyMappingAndDefault(Property.StatusRules, Property.StatusRules.getName(), "CI");
         setDBPropertyMappingAndDefault(Property.ReflexAction, Property.ReflexAction.getName(), "Haiti");
