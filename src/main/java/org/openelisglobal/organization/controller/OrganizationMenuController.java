@@ -130,7 +130,7 @@ public class OrganizationMenuController extends BaseMenuController<Organization>
         return SystemConfiguration.getInstance().getDefaultPageSize();
     }
 
-    // Deactivate not Delete
+    // gnr: Deactivate not Delete
     @RequestMapping(value = "/DeleteOrganization", method = RequestMethod.POST)
     public ModelAndView showDeleteOrganization(HttpServletRequest request,
             @RequestParam(value = ID, required = false) @Pattern(regexp = "[a-zA-Z0-9 -]*") String ID,
