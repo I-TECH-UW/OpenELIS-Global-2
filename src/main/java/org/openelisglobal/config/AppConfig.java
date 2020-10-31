@@ -166,6 +166,8 @@ public class AppConfig implements WebMvcConfigurer {
             mailSender.setUsername(username);
             mailSender.setPassword(password);
             props.put("mail.smtp.auth", "true");
+        } else {
+            props.put("mail.smtp.auth", "false");
         }
 
         return mailSender;

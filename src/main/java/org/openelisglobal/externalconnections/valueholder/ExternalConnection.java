@@ -52,6 +52,8 @@ public class ExternalConnection extends BaseObject<Integer> {
 
     public enum ProgrammedConnection {
 //        CLINIC_SEARCH("clinlic_search", "externalconnections.clinicsearch"),
+        SMPP_SERVER("smpp_server", "externalconnections.smppserver"),
+        BMP_SMS_SERVER("bmp_sms_server", "externalconnections.bmpsms"),
         INFO_HIGHWAY("info_highway", "externalconnections.infohighway"),
         SMTP_SERVER("smtp_server", "externalconnections.smtpserver");
 

@@ -1,8 +1,8 @@
 ## Bare Metal Server Installation for OpenELIS Global 2.0 on Ubuntu 16.04 LTS
 
-### Setup Ubuntu (16.04)
+### Setup Ubuntu (16.04 LTS Server)
 
-1. Boot Ubuntu from a CD. [Note: Use Ubuntu Server 16.04 LTS, or desktop if you want the GUI) [Download](http://releases.ubuntu.com/16.04/).
+1. Boot Ubuntu from a CD. [Note: Use Ubuntu Server 16.04 LTS, do NOT use desktop] [Download](http://releases.ubuntu.com/16.04/).
 2. Select to download the updates in the background while installing. 
 3. Select: Erase disk and install Ubuntu
 4. Select the appropriate time zone 
@@ -73,6 +73,8 @@ For the self-signed certificate above, you would use:
 	
 #### Create truststore with OpenELIS-Global's cert (or a CA that signs OE certs)
 
+**Choose ONE of the two methods below to reate your truststore**
+
 1. using keytool (more reliable):
    
 	    sudo apt-get install default-jre
@@ -126,9 +128,9 @@ If you trust docker to provide your database, you can ignore this section
 
         curl -L -O https://url_for_the _file.tar.gz
  
-    b. EG: for OE 2.0 Beta 2.1: 
+    b. EG: for OE 2.1 : 
 
-        curl -L -O https://www.dropbox.com/s/nmr4kuo08cjo09c/OpenELIS-Global_2.1.2.3_Installer.tar.gz
+        curl -L -O https://www.dropbox.com/s/zgrm6qiggf8tahf/OpenELIS-Global_2.1.3.0_Installer.tar.gz
  
 2. Unpack and enter the installer by running the following commands in Terminal, Mobaxterm, or Putty, replacing all in the { } with the appropriate values
 
@@ -146,7 +148,7 @@ If you trust docker to provide your database, you can ignore this section
 
 Wait while install procedure completes
 
-4. Check if OpenELIS is running at http://{server_ip_address}:8080/OpenELIS-Global
+4. Check if OpenELIS is running at https://{server_ip_address}:8443/OpenELIS-Global/
 
 Default user: admin
 Default password: adminADMIN!

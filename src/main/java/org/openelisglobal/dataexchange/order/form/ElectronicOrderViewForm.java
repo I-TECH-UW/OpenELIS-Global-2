@@ -11,7 +11,7 @@ import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder.SortOrd
 
 public class ElectronicOrderViewForm extends BaseForm {
     @NotNull
-    private ElectronicOrder.SortOrder sortOrder = ElectronicOrder.SortOrder.LAST_UPDATED;
+    private ElectronicOrder.SortOrder sortOrder = ElectronicOrder.SortOrder.STATUS_ID;
 
     @Min(1)
     private int page = 1;
