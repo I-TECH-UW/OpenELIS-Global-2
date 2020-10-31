@@ -170,10 +170,8 @@ public class AppConfig implements WebMvcConfigurer {
             props.put("mail.smtp.auth", "false");
         }
 
-
-
-
         return mailSender;
     }
+
 
 }

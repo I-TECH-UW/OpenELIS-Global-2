@@ -14,20 +14,18 @@
  * Copyright (C) ITECH, University of Washington, Seattle WA.  All Rights Reserved.
  *
  */
-package org.openelisglobal.dataexchange.order.action;
+package org.openelisglobal.dataexchange.order.legacy.action;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.validator.GenericValidator;
-import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.ITestIdentityService;
 import org.openelisglobal.common.services.TestIdentityService;
 import org.openelisglobal.common.util.DateUtil;
-import org.openelisglobal.test.service.TestService;
+import org.openelisglobal.dataexchange.order.action.IOrderInterpreter;
+import org.openelisglobal.dataexchange.order.action.MessagePatient;
 import org.openelisglobal.test.valueholder.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
@@ -41,10 +39,9 @@ import ca.uhn.hl7v2.model.v251.segment.OBR;
 import ca.uhn.hl7v2.model.v251.segment.ORC;
 import ca.uhn.hl7v2.model.v251.segment.PID;
 
-@Service
+@Service("LegacyHL7OrderInterpreter")
 @Scope("prototype")
-@Primary
-public class HL7OrderInterpreter implements IOrderInterpreter {
+public class LegacyHL7OrderInterpreter implements IOrderInterpreter {
 
     public enum IdentityType {
         GUID("GU"), ST_NUMBER("ST"), NATIONAL_ID("NA"), OB_NUMBER("OB"), PC_NUMBER("PC");
@@ -89,14 +86,10 @@ public class HL7OrderInterpreter implements IOrderInterpreter {
         }
     }
 
-    @Autowired
-    TestService testService;
-
     private String labOrderNumber;
     private OrderType orderType;
     private OML_O21 orderMessage;
     private MessagePatient patient;
-    private Test test;
     private List<InterpreterResults> results = new ArrayList<>();
     private List<String> unsupportedTests = new ArrayList<>();
     private List<String> unsupportedPanels = new ArrayList<>();
@@ -106,31 +99,26 @@ public class HL7OrderInterpreter implements IOrderInterpreter {
     public List<InterpreterResults> interpret(Message orderMessage) {
         this.orderMessage = (OML_O21) orderMessage;
 //		try{
-//			LogEvent.logInfo(this.getClass().getName(), "method unkown", this.orderMessage.printStructure());
+//			System.out.println(this.orderMessage.printStructure());
 //			LogEvent.logError( "Debugging", "hl7", this.orderMessage.printStructure());
 //		}catch(HL7Exception e1){
-//        LogEvent.logError(this.getClass().getName(), "interpret", e1.getMessage());
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
 //		}
         try {
             patient = createPatientFromHL7();
-            test = createTestFromHl7();
             extractOrderInformation();
         } catch (HL7Exception e) {
-            LogEvent.logDebug(e);
+            e.printStackTrace();
             return buildResultList(true);
         }
         return buildResultList(false);
     }
 
     private void extractOrderInformation() throws HL7Exception {
-        ORC orcSegment = orderMessage.getORDER().getORC();
-        // labOrderNumber = orcSegment.getPlacerOrderNumber().encode();
-        labOrderNumber = orderMessage.getORDER().getOBSERVATION_REQUEST().getOBR().getObr4_UniversalServiceIdentifier()
-                .getCe1_Identifier().getValue();
-        // strip encounter type (if exists) from field for just encounter uuid
-        if (labOrderNumber.contains(";")) {
-            labOrderNumber = labOrderNumber.substring(labOrderNumber.indexOf(";") + 1);
-        }
+        ORC orcSegment = (ORC) orderMessage.getORDER().get("ORC");
+
+        labOrderNumber = orcSegment.getPlacerOrderNumber().encode();
 
         if (OrderType.REQUEST.getIdentifier().equals(orcSegment.getOrderControl().getValue())) {
             orderType = OrderType.REQUEST;
@@ -142,23 +130,12 @@ public class HL7OrderInterpreter implements IOrderInterpreter {
 
     }
 
-    private Test createTestFromHl7() throws HL7Exception {
-        ORC orcSegment = orderMessage.getORDER().getORC();
-        String loincCode = orcSegment.getOrderType().getIdentifier().encode();
-        List<Test> tests = testService.getTestsByLoincCode(loincCode);
-        if (tests.size() == 0) {
-            return null;
-        }
-        return tests.get(0);
-    }
-
     private MessagePatient createPatientFromHL7() throws HL7Exception {
 
         MessagePatient patient = new MessagePatient();
 
-        PID pid = orderMessage.getPATIENT().getPID();
-        CX patientId = pid.getPatientID();
-        patient.setExternalId(patientId.getIDNumber().getValue());
+        PID pid = (PID) orderMessage.getPATIENT().get("PID");
+
         CX[] patientIdentities = pid.getPatientIdentifierList();
         for (CX identity : patientIdentities) {
             String value = identity.getCx1_IDNumber().getValue();
@@ -231,12 +208,9 @@ public class HL7OrderInterpreter implements IOrderInterpreter {
             }
 
             if (orderType == OrderType.REQUEST) {
-                // a GUID is no longer being sent, so no longer requiring it, it is instead
-                // generated upon receiving patient
-                /*
-                 * if(GenericValidator.isBlankOrNull(getMessagePatient().getGuid())){
-                 * results.add(InterpreterResults.MISSING_PATIENT_GUID); }
-                 */
+                if (GenericValidator.isBlankOrNull(getMessagePatient().getGuid())) {
+                    results.add(InterpreterResults.MISSING_PATIENT_GUID);
+                }
 
 //These are being commented out until we get confirmation on the desired policy.  Either the request should be rejected or the user should be required to
 // fill the missing information in at the time of sample entry.  Commenting these out supports the latter
@@ -249,13 +223,8 @@ public class HL7OrderInterpreter implements IOrderInterpreter {
 //				}
 
                 if (getMessagePatient().getNationalId() == null && getMessagePatient().getObNumber() == null
-                        && getMessagePatient().getPcNumber() == null && getMessagePatient().getStNumber() == null
-                        && getMessagePatient().getExternalId() == null) {
+                        && getMessagePatient().getPcNumber() == null && getMessagePatient().getStNumber() == null) {
                     results.add(InterpreterResults.MISSING_PATIENT_IDENTIFIER);
-                }
-
-                if (test == null || !getTestIdentityService().doesActiveTestExistForLoinc(test.getLoinc())) {
-                    results.add(InterpreterResults.UNSUPPORTED_TESTS);
                 }
 
                 try {
@@ -268,7 +237,7 @@ public class HL7OrderInterpreter implements IOrderInterpreter {
                     }
 
                 } catch (HL7Exception e) {
-                    LogEvent.logDebug(e);
+                    e.printStackTrace();
                     results.add(InterpreterResults.INTERPRET_ERROR);
                 }
             }
@@ -284,25 +253,27 @@ public class HL7OrderInterpreter implements IOrderInterpreter {
     private void checkOBR(OBR obr) throws HL7Exception {
         if (obr.isEmpty()) {
             results.add(InterpreterResults.MISSING_TESTS);
+        } else {
+            String name = obr.getUniversalServiceIdentifier().getText().getValue();
+            String identifier = obr.getUniversalServiceIdentifier().getIdentifier().getValue();
+            if (identifier.startsWith(ServiceIdentifier.TEST.getIdentifier() + "-")) {
+                if (!getTestIdentityService().doesTestExist(name)) {
+                    if (!results.contains(InterpreterResults.UNSUPPORTED_TESTS)) {
+                        results.add(InterpreterResults.UNSUPPORTED_TESTS);
+                    }
+                    unsupportedTests.add(name);
+                }
+            } else if (identifier.startsWith(ServiceIdentifier.PANEL.getIdentifier() + "-")) {
+                if (!getTestIdentityService().doesPanelExist(name)) {
+                    if (!results.contains(InterpreterResults.UNSUPPORTED_PANELS)) {
+                        results.add(InterpreterResults.UNSUPPORTED_PANELS);
+                    }
+                    unsupportedPanels.add(name);
+                }
+            } else {
+                results.add(InterpreterResults.OTHER_THAN_PANEL_OR_TEST_REQUESTED);
+            }
         }
-        // moving away from name based testrequet to LOINC based test requests
-        // test request no longer in obr, now appears in orc
-        /*
-         * else{ String name = obr.getUniversalServiceIdentifier().getText().getValue();
-         * String identifier =
-         * obr.getUniversalServiceIdentifier().getIdentifier().getValue(); if(
-         * identifier.startsWith(ServiceIdentifier.TEST.getIdentifier() + "-")){
-         * if(!getTestIdentityService().doesActiveTestExist(name)){ if(
-         * !results.contains(InterpreterResults.UNSUPPORTED_TESTS)){
-         * results.add(InterpreterResults.UNSUPPORTED_TESTS); } unsupportedTests.add(
-         * name ); } }else if(
-         * identifier.startsWith(ServiceIdentifier.PANEL.getIdentifier() + "-")){
-         * if(!getTestIdentityService().doesPanelExist(name)){ if(
-         * !results.contains(InterpreterResults.UNSUPPORTED_PANELS)){
-         * results.add(InterpreterResults.UNSUPPORTED_PANELS); } unsupportedPanels.add(
-         * name ); } }else{
-         * results.add(InterpreterResults.OTHER_THAN_PANEL_OR_TEST_REQUESTED); } }
-         */
     }
 
     @Override
@@ -319,7 +290,7 @@ public class HL7OrderInterpreter implements IOrderInterpreter {
         try {
             return orderMessage.encode();
         } catch (HL7Exception e) {
-            LogEvent.logDebug(e);
+            e.printStackTrace();
         }
 
         return null;
@@ -364,7 +335,8 @@ public class HL7OrderInterpreter implements IOrderInterpreter {
 
     @Override
     public Test getTest() {
-        return test;
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }
