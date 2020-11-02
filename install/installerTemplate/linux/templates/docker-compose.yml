@@ -7,7 +7,7 @@ services:
 #db        ports:
 #db            - "[% db_host_port %]:5432"
 #db        networks:
-#db            - backend
+#db            - default
 #db        restart: always
 #db        env_file:
 #db            - [% db_env_dir %]database.env
@@ -29,14 +29,12 @@ services:
         image: openelisglobal
 #db        depends_on:
 #db            - database
-            
         ports:
             - "8080:8080"
             - "8443:8443"
         networks:
-            - frontend
-            - backend
-#                ipv4_address: 172.20.1.1
+            default:
+                ipv4_address: 172.20.1.1
         restart: always
         environment:
               # context.xml doesn't seem to be able to pick up environment variables directly, so we are passing them in as CATALINA_OPTS
@@ -61,8 +59,7 @@ services:
             - "8081:8080"
             - "8444:8443"
         networks:
-            - frontend
-            - backend
+            - default
         restart: always
         environment:
             - JAVA_OPTS= -Dhapi.properties=/run/secrets/hapi.properties
@@ -89,8 +86,7 @@ secrets:
     file: [% etc_dir %]truststore
     
 networks:
-  backend:
-  frontend:
+  default:
     driver: bridge
     ipam:
       config:
