@@ -15,9 +15,9 @@
 		<maven.java.release>11</maven.java.release>
 
 		<major.version>2</major.version>
-		<minor.version>2</minor.version>
-		<state.version>1</state.version><!-- 0 = alpha, 1 = beta, 2 = rc, 3 = deployable -->
-		<fix.version>1</fix.version>
+		<minor.version>1</minor.version>
+		<state.version>2</state.version><!-- 0 = alpha, 1 = beta, 2 = rc, 3 = deployable -->
+		<fix.version>4</fix.version>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
@@ -35,11 +35,6 @@
 	</properties>
 
 	<dependencies>
-		<dependency>
-			<groupId>org.jsmpp</groupId>
-			<artifactId>jsmpp</artifactId>
-			<version>2.3.5</version>
-		</dependency>
 		<dependency>
 			<groupId>org.itech</groupId>
 			<artifactId>dataexport-api</artifactId>

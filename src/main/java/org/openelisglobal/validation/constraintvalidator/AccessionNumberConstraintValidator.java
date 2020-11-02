@@ -8,8 +8,6 @@ import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory;
 import org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory.AccessionFormat;
 import org.openelisglobal.common.provider.validation.IAccessionNumberValidator.ValidationResults;
-import org.openelisglobal.common.util.ConfigurationProperties;
-import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.validation.annotations.ValidAccessionNumber;
 
 public class AccessionNumberConstraintValidator implements ConstraintValidator<ValidAccessionNumber, String> {
@@ -23,10 +21,6 @@ public class AccessionNumberConstraintValidator implements ConstraintValidator<V
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-        
-        if( !Boolean.valueOf(ConfigurationProperties.getInstance().getPropertyValue(Property.ACCESSION_NUMBER_VALIDATE))) {
-            return true;
-        }
         if (org.apache.commons.validator.GenericValidator.isBlankOrNull(value)) {
             return true;
         }

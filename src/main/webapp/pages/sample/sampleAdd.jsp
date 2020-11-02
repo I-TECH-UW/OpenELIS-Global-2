@@ -775,7 +775,7 @@ function sampleTypeQualifierChanged(element){
 <div id="sampleConditionPrototype" style="display: none" >
 <form:select path="initialSampleConditionList"
 			 multiple="true"
-             title='<spring:message/>'
+			 title='<%= MessageUtil.getMessage("result.multiple_select")%>'
 			 id= 'prototypeID'>
 			<c:forEach var="optionValue" items="${form.initialSampleConditionList}">
 						<option value='${optionValue.id}' >

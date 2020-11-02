@@ -6,7 +6,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import javax.validation.constraints.Pattern;
 
 import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.controller.BaseMenuController;
@@ -27,7 +26,6 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -130,10 +128,8 @@ public class OrganizationMenuController extends BaseMenuController<Organization>
         return SystemConfiguration.getInstance().getDefaultPageSize();
     }
 
-    // Deactivate not Delete
     @RequestMapping(value = "/DeleteOrganization", method = RequestMethod.POST)
     public ModelAndView showDeleteOrganization(HttpServletRequest request,
-            @RequestParam(value = ID, required = false) @Pattern(regexp = "[a-zA-Z0-9 -]*") String ID,
             @ModelAttribute("form") @Valid OrganizationMenuForm form, BindingResult result,
             RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
@@ -141,12 +137,7 @@ public class OrganizationMenuController extends BaseMenuController<Organization>
             findForward(FWD_FAIL_DELETE, form);
         }
 
-        String[] IDs = ID.split(",");
-        List<String> selectedIDs = new ArrayList<String>();
-        for (int i = 0; i < IDs.length; i++) {
-            selectedIDs.add(IDs[i]);
-        }
-//        List<String> selectedIDs = form.getSelectedIDs;
+        List<String> selectedIDs = form.getSelectedIDs();
         List<Organization> organizations = new ArrayList<>();
         for (int i = 0; i < selectedIDs.size(); i++) {
             Organization organization = new Organization();
@@ -158,7 +149,7 @@ public class OrganizationMenuController extends BaseMenuController<Organization>
         try {
             // LogEvent.logInfo(this.getClass().getName(), "method unkown", "Going to delete
             // Organization");
-            organizationService.deactivateOrganizations(organizations);
+            organizationService.deleteAll(organizations);
             // LogEvent.logInfo(this.getClass().getName(), "method unkown", "Just deleted
             // Organization");
         } catch (LIMSRuntimeException e) {

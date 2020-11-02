@@ -75,7 +75,7 @@ public class MauritiusFormFields implements IFormFieldsForImplementation {
         settings.put(Field.SampleEntryReferralSiteCode, new FormField(Boolean.FALSE));
         settings.put(Field.QA_DOCUMENT_NUMBER, new FormField(Boolean.FALSE));
         settings.put(Field.CollectionTime, new FormField(Boolean.TRUE));
-        settings.put(Field.TEST_LOCATION_CODE, new FormField(Boolean.FALSE));
+        settings.put(Field.TEST_LOCATION_CODE, new FormField(Boolean.TRUE));
         settings.put(Field.ProviderInfo, new FormField(Boolean.TRUE));
         settings.put(Field.SearchSampleStatus, new FormField(Boolean.TRUE));
         settings.put(Field.OrganizationAddressInfo, new FormField(Boolean.FALSE));

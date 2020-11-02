@@ -83,10 +83,11 @@ public class SampleOrderService {
         SampleOrderItem orderItems = new SampleOrderItem();
 
         String dateAsText = DateUtil.getCurrentDateAsText();
+
         orderItems.setReceivedDateForDisplay(dateAsText);
         orderItems.setRequestDate(dateAsText);
         orderItems.setReceivedTime(DateUtil.convertTimestampToStringHourTime(DateUtil.getNowAsTimestamp()));
-        
+
         if (needRequesterList) {
             orderItems.setReferringSiteList(DisplayListService.getInstance()
                     .getFreshList(DisplayListService.ListType.SAMPLE_PATIENT_REFERRING_CLINIC));

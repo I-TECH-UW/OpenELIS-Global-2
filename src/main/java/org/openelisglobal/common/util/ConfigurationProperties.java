@@ -76,7 +76,6 @@ public abstract class ConfigurationProperties {
         failedValidationMarker("showValidationFailureIcon"),      //If true results that failed validation will have icon next to them
         resultsResendTime("results.send.retry.time"),           //How much time between trying to resend results that failed to reach their destination
         TRACK_PATIENT_PAYMENT("trackPayment"),       //If true then patient payment status can be entered
-        ACCESSION_NUMBER_VALIDATE("validateAccessionNumber"),       //If true then validate the accession number
         ALERT_FOR_INVALID_RESULTS("alertWhenInvalidResult"),   //If true then technician will get an alert for results outside of the valid range
         DEFAULT_LANG_LOCALE("default language locale"),         //Default language locale
         DEFAULT_DATE_LOCALE("default date locale"),         //Date local
@@ -125,18 +124,11 @@ public abstract class ConfigurationProperties {
         INFO_HIGHWAY_PASSWORD("infoHighway.password"), //
         INFO_HIGHWAY_ADDRESS("infoHighway.uri"), //
         INFO_HIGHWAY_ENABLED("infoHighway.enabled"), //
-        PATIENT_RESULTS_BMP_SMS_USERNAME("patientresultsbmpsms.username"), //
-        PATIENT_RESULTS_BMP_SMS_PASSWORD("patientresultsbmpsms.password"), //
-        PATIENT_RESULTS_BMP_SMS_ADDRESS("patientresultsbmpsms.uri"), //
-        PATIENT_RESULTS_BMP_SMS_ENABLED("patientresultsbmpsms.enabled"), //
-        PATIENT_RESULTS_SMPP_SMS_USERNAME("patientresultssmpp.username"), //
-        PATIENT_RESULTS_SMPP_SMS_PASSWORD("patientresultssmpp.password"), //
-        PATIENT_RESULTS_SMPP_SMS_ADDRESS("patientresultssmpp.uri"), //
-        PATIENT_RESULTS_SMPP_SMS_ENABLED("patientresultssmpp.enabled"), //
+        PATIENT_RESULTS_SMS_ENABLED("patientresultssms.enabled"), //
         PATIENT_RESULTS_SMTP_USERNAME("patientresultssmtp.username"), //
         PATIENT_RESULTS_SMTP_PASSWORD("patientresultssmtp.password"), //
         PATIENT_RESULTS_SMTP_ADDRESS("patientresultssmtp.uri"), //
-        PATIENT_RESULTS_SMTP_ENABLED("patientresultssmtp.enabled"),; //
+        PATIENT_RESULTS_SMTP_ENABLED("patientresultssmtp.enabled"); //
 
         private String name;
 

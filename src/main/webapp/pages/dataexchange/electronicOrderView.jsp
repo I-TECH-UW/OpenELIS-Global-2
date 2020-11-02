@@ -54,13 +54,12 @@ jQuery(window).load(function(){
 });
 </script>
 
-<b><spring:message code="eorder.instruction"/></b><br>
-<form:input path="searchValue" id="searchValue" />
-<button type="button" onClick="searchElectronicOrders()"><spring:message code="label.button.search" /> </button><br>
 <spring:message code="eorder.sort"/>: 
 <form:select path="sortOrder" id="sortOption" onchange="searchElectronicOrders()">
 	<form:options items="${form.sortOrderOptions}" itemValue="value" itemLabel="label" />
 </form:select>
+<form:input path="searchValue" id="searchValue" />
+<button type="button" onClick="searchElectronicOrders()"><spring:message code="label.button.search" /> </button>
 <form:hidden path="page"/>
 
 <c:if test="${empty form.EOrders}">

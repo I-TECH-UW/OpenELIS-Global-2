@@ -45,6 +45,4 @@ public interface OrganizationService extends BaseObjectService<Organization, Str
     void deactivateAllOrganizations();
 
     void activateOrganizations(List<String> organizationNames);
-
-    void deactivateOrganizations(List<Organization> organizations);
 }

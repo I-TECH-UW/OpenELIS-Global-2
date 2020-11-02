@@ -38,7 +38,6 @@ public class AccessionNumberUtil {
     private static IAccessionNumberValidator accessionNumberValidator;
 
     public static IAccessionNumberValidator getAccessionNumberValidator() {
-       
         if (accessionNumberValidator == null) {
             try {
                 accessionNumberValidator = new AccessionNumberValidatorFactory().getValidator();

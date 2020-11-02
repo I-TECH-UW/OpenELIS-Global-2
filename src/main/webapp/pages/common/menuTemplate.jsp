@@ -89,18 +89,12 @@ function setMenuAction(button, form, action, validate, parameters) {
    } else {
       for (var i = 0; i < fieldObj.length; i++) {
          if (fieldObj[i].checked == true) {
-        	if(ID.length > 0) {
-        		ID += ",";
-        	}
-            ID += encodeURIComponent(fieldObj[i].value);
-            
-            //break;
+            ID = encodeURIComponent(fieldObj[i].value);
+            break;
          }
        }
     }
   }
-  
-  
   
   var sessionid = getSessionFromURL(form.action);
   var context = '<%= request.getContextPath() %>';
@@ -155,7 +149,6 @@ function setMenuAction(button, form, action, validate, parameters) {
    
 
   form.action = context + '/' + action + parsedFormName + '.do' + sessionid + parameters;
-  form.selectedIDs = parameters;
   
   if ((button.name == 'edit' && ID == '') || (button.name=='search' && searchString == '') ||(button.name=='searchString' && searchString == '') ) {
   } else if (button.name == 'deactivate'){

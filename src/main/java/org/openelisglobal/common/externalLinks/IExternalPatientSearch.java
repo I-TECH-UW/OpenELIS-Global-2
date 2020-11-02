@@ -12,11 +12,9 @@ public interface IExternalPatientSearch {
     void setSearchCriteria(String lastName, String firstName, String STNumber, String subjectNumber, String nationalID,
             String guid);
 
-    void setConnectionCredentials(String connectionString, String name, String password);
+    void setConnectionCredentials(String connectionString, String name, String password, int timeout_Mil);
 
     List<ExtendedPatientSearchResults> getSearchResults();
 
     String getConnectionString();
-
-    int getTimeout();
 }

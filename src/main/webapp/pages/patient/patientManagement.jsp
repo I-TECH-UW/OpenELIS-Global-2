@@ -644,9 +644,7 @@ function  /*void*/ setPatientInfo(nationalID, ST_ID, subjectNumber, lastName, fi
 	$("personLastUpdated").value = personUpdated == undefined ? "" : personUpdated;
 	$("patientGUID_ID").value = guid == undefined ? "" : guid;
 	$("patientPhone").value = phoneNumber == undefined ? "" : phoneNumber;
-	<% if( FormFields.getInstance().useField(Field.PatientEmail)){ %> 
 	$("patientEmail").value = email == undefined ? "" : email;
-	<% } %>
 	$("genderID").selectedIndex = gender == undefined ? 0 : gender;
 	if(supportPatientNationality){
 		$("nationalityID").selectedIndex = nationalId == undefined ? 0 : nationalId; 

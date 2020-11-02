@@ -239,7 +239,6 @@ public class ProgramAccessionValidator implements IAccessionNumberValidator {
     @Override
     public ValidationResults checkAccessionNumberValidity(String accessionNumber, String recordType, String isRequired,
             String studyFormName) {
-        
         ValidationResults results = validFormat(accessionNumber, true);
         boolean accessionUsed = (sampleService.getSampleByAccessionNumber(accessionNumber) != null);
         if (results == ValidationResults.SUCCESS) {

@@ -44,7 +44,7 @@ public class ElectronicOrdersController extends BaseController {
         // if invalid request, default to basic values
         if (result.hasErrors()) {
             saveErrors(result);
-            form.setSortOrder(ElectronicOrder.SortOrder.STATUS_ID);
+            form.setSortOrder(ElectronicOrder.SortOrder.LAST_UPDATED);
             form.setSearchValue("");
             form.setPage(1);
         }
@@ -52,6 +52,7 @@ public class ElectronicOrdersController extends BaseController {
 
         eOrders = electronicOrderService.getAllElectronicOrdersContainingValueOrderedBy(form.getSearchValue(),
                 form.getSortOrder());
+
         // correct for proper bounds
         int startIndex = (form.getPage() - 1) * 50;
         startIndex = startIndex > eOrders.size() ? 0 : startIndex;

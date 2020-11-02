@@ -309,6 +309,7 @@
     				 id="requesterId" 
                      onchange="setOrderModified();siteListChanged(this);setCorrectSave();"
                      onkeyup="capitalizeValue( this.value );" >
+            <option value=""></option>
             <form:options items="${form.sampleOrderItems.referringSiteList}" itemValue="id" itemLabel="value"/>
             </form:select>
     	</c:if>
@@ -383,16 +384,11 @@
                    id="providerLastNameID"
                    onchange="setOrderModified();setCorrectSave();"
                    size="30"/>
-    </td>               
-    <tr>
-    <td>
-        <spring:message code="sample.entry.provider.firstName"/>:
-    <td>
+        <spring:message code="humansampleone.provider.firstName.short"/>:
         <form:input path="sampleOrderItems.providerFirstName" onchange="setOrderModified();"
                    size="30"/>
-	</td>
+
     </td>
-    </tr>
 </tr>
 <tr>
     <td>

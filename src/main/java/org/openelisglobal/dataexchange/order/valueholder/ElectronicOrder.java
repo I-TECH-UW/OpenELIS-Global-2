@@ -28,10 +28,8 @@ import org.openelisglobal.statusofsample.valueholder.StatusOfSample;
 public class ElectronicOrder extends BaseObject<String> {
 
     public enum SortOrder {
-        STATUS_ID("statusId", "eorder.status"),
-        LAST_UPDATED_ASC("lastupdatedasc", "eorder.lastupdatedasc"),
-        LAST_UPDATED_DESC("lastupdateddesc", "eorder.lastupdateddesc"),
-        EXTERNAL_ID("externalId", "eorder.externalid");
+        LAST_UPDATED("lastupdated", "eorder.lastupdated"), EXTERNAL_ID("externalId", "eorder.externalid"),
+        STATUS_ID("statusId", "eorder.status");
 
         private String value;
         private String displayKey;

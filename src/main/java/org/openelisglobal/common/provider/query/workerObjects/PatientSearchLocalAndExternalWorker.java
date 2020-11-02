@@ -36,6 +36,7 @@ import org.openelisglobal.common.provider.query.ExtendedPatientSearchResults;
 import org.openelisglobal.common.provider.query.PatientSearchResults;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
+import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.patient.service.PatientService;
 import org.openelisglobal.patient.valueholder.Patient;
@@ -99,7 +100,8 @@ public class PatientSearchLocalAndExternalWorker extends PatientSearchWorker {
             externalSearch.setSearchCriteria(lastName, firstName, STNumber, subjectNumber, nationalID, guid);
             externalSearch.setConnectionCredentials(config.getPropertyValue(Property.INFO_HIGHWAY_ADDRESS),
                     config.getPropertyValue(Property.INFO_HIGHWAY_USERNAME),
-                    config.getPropertyValue(Property.INFO_HIGHWAY_PASSWORD));
+                    config.getPropertyValue(Property.INFO_HIGHWAY_PASSWORD),
+                    (int) SystemConfiguration.getInstance().getSearchTimeLimit());
 
             externalSearches.add(externalSearch);
         }
@@ -109,7 +111,8 @@ public class PatientSearchLocalAndExternalWorker extends PatientSearchWorker {
             externalSearch.setSearchCriteria(lastName, firstName, STNumber, subjectNumber, nationalID, guid);
             externalSearch.setConnectionCredentials(config.getPropertyValue(Property.PatientSearchURL),
                     config.getPropertyValue(Property.PatientSearchUserName),
-                    config.getPropertyValue(Property.PatientSearchPassword));
+                    config.getPropertyValue(Property.PatientSearchPassword),
+                    (int) SystemConfiguration.getInstance().getSearchTimeLimit());
 
             externalSearches.add(externalSearch);
         }
@@ -121,7 +124,7 @@ public class PatientSearchLocalAndExternalWorker extends PatientSearchWorker {
             try {
                 Future<Integer> futureExternalSearchResult = externalSearch.runExternalSearch();
                 Integer externalSearchResult = futureExternalSearchResult
-                        .get(externalSearch.getTimeout(), TimeUnit.MILLISECONDS);
+                        .get(SystemConfiguration.getInstance().getSearchTimeLimit() + 500, TimeUnit.MILLISECONDS);
 
                 if (externalSearchResult == 200) {
                     externalResults = externalSearch.getSearchResults();
@@ -131,7 +134,7 @@ public class PatientSearchLocalAndExternalWorker extends PatientSearchWorker {
                                     + " - failed response");
                 }
             } catch (InterruptedException | ExecutionException | TimeoutException | IllegalStateException e) {
-                LogEvent.logErrorStack(e);
+                LogEvent.logError(e.getMessage(), e);
             }
 
             findNewPatients(localResults, externalResults, newPatientsFromExternalSearch);
