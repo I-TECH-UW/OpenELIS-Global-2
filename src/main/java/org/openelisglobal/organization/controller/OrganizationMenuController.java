@@ -133,7 +133,7 @@ public class OrganizationMenuController extends BaseMenuController<Organization>
     // gnr: Deactivate not Delete
     @RequestMapping(value = "/DeleteOrganization", method = RequestMethod.POST)
     public ModelAndView showDeleteOrganization(HttpServletRequest request,
-            @RequestParam(value = ID, required = false) @Pattern(regexp = "[a-zA-Z0-9 -]*") String ID,
+            @RequestParam(value = ID, required = false) @Pattern(regexp = "[a-zA-Z0-9 -]*") String id,
             @ModelAttribute("form") @Valid OrganizationMenuForm form, BindingResult result,
             RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
@@ -141,7 +141,7 @@ public class OrganizationMenuController extends BaseMenuController<Organization>
             findForward(FWD_FAIL_DELETE, form);
         }
 
-        String[] IDs = ID.split(",");
+        String[] IDs = id.split(",");
         List<String> selectedIDs = new ArrayList<String>();
         for (int i = 0; i < IDs.length; i++) {
             selectedIDs.add(IDs[i]);
