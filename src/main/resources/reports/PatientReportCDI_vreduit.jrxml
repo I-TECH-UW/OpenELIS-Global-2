@@ -105,7 +105,7 @@
 					<textFieldExpression><![CDATA[$P{localization}.get("signValidation")]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="person" pattern="">
-					<reportElement x="375" y="56" width="100" height="14" isRemoveLineWhenBlank="true" uuid="98ec4770-2dbd-4446-a00b-596e54e7e66a">
+					<reportElement x="375" y="56" width="65" height="14" isRemoveLineWhenBlank="true" uuid="98ec4770-2dbd-4446-a00b-596e54e7e66a">
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					</reportElement>
 					<textElement verticalAlignment="Middle">
@@ -160,6 +160,16 @@
 						<font size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$P{labDirectorTitle}]]></textFieldExpression>
+				</textField>
+				<textField pattern="dd/MM/yyyy">
+					<reportElement x="440" y="56" width="112" height="15" uuid="61530b18-693c-4be9-8913-d9741c20b7db">
+						<printWhenExpression><![CDATA[$P{useLabDirectorSignature}]]></printWhenExpression>
+					</reportElement>
+					<textElement verticalAlignment="Middle">
+						<font size="12" isBold="true"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupFooter>
