@@ -1081,7 +1081,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
             // closeSession(); // CSL remove old
             return tests;
         } catch (HibernateException e) {
-            handleException(e, "getTestByLoincCode");
+            handleException(e, "getTestsByLoincCode");
         }
 
         return null;
@@ -1098,7 +1098,23 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
             // closeSession(); // CSL remove old
             return tests;
         } catch (HibernateException e) {
-            handleException(e, "getActiveTestByLoinc");
+            handleException(e, "getActiveTestsByLoinc");
+        }
+
+        return null;
+    }
+
+    @Override
+    public List<Test> getActiveTestsByLoinc(String[] loincCodes) {
+        String sql = "From Test t where t.loinc IN (:loinc) and t.isActive='Y'";
+        try {
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setParameterList("loinc", loincCodes);
+            List<Test> tests = query.list();
+            // closeSession(); // CSL remove old
+            return tests;
+        } catch (HibernateException e) {
+            handleException(e, "getActiveTestsByLoinc");
         }
 
         return null;

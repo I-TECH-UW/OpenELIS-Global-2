@@ -12,7 +12,6 @@ import javax.xml.namespace.QName;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPBodyElement;
 import javax.xml.soap.SOAPConnection;
 import javax.xml.soap.SOAPConnectionFactory;
 import javax.xml.soap.SOAPElement;
@@ -23,10 +22,10 @@ import javax.xml.soap.SOAPPart;
 
 import org.apache.commons.validator.GenericValidator;
 import org.apache.http.HttpStatus;
-import org.openelisglobal.common.externalLinks.IExternalPatientSearch;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.provider.query.ExtendedPatientSearchResults;
 import org.openelisglobal.common.util.DateUtil;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
@@ -36,9 +35,13 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+
 @Service("InfoHighwaySearch")
 @Scope("prototype")
 public class PatientInfoHighwaySearch implements IExternalPatientSearch {
+
+    @Value("${org.openelisglobal.externalSearch.infohighway.timeout:50000}")
+    private Integer timeout;
 
     public static final String MALFORMED_REPLY = "Malformed reply";
     public static final String URI_BUILD_FAILURE = "Failed to build URI";
@@ -54,7 +57,6 @@ public class PatientInfoHighwaySearch implements IExternalPatientSearch {
     private String connectionString;
     private String connectionName;
     private String connectionPassword;
-    private int timeout = 0;
 
     protected String resultXML;
     protected List<ExtendedPatientSearchResults> searchResults = new ArrayList<>();
@@ -78,8 +80,7 @@ public class PatientInfoHighwaySearch implements IExternalPatientSearch {
     }
 
     @Override
-    synchronized public void setConnectionCredentials(String connectionString, String name, String password,
-            int timeout_Mil) {
+    synchronized public void setConnectionCredentials(String connectionString, String name, String password) {
         if (finished) {
             throw new IllegalStateException("ServiceCredentials set after ExternalPatientSearch thread was started");
         }
@@ -87,7 +88,6 @@ public class PatientInfoHighwaySearch implements IExternalPatientSearch {
         this.connectionString = connectionString;
         connectionName = name;
         connectionPassword = password;
-        timeout = timeout_Mil;
     }
 
     @Override
@@ -165,7 +165,7 @@ public class PatientInfoHighwaySearch implements IExternalPatientSearch {
         try {
             callSoapWebService(connectionString, soapAction);
         } catch (SOAPException e) {
-            LogEvent.logError("Error occurred while calling SOAP web service", e);
+            LogEvent.logErrorStack(e);
         }
         setPossibleErrors();
     }
@@ -273,6 +273,7 @@ public class PatientInfoHighwaySearch implements IExternalPatientSearch {
 
         } catch (Exception e) {
             LogEvent.logError("Error occurred while sending SOAP Request to Server!", e);
+            LogEvent.logErrorStack(e);
         } finally {
             if (soapConnection != null) {
                 soapConnection.close();
@@ -283,10 +284,9 @@ public class PatientInfoHighwaySearch implements IExternalPatientSearch {
     private void processResponse(SOAPMessage soapResponse) throws SOAPException {
         SOAPBody soapResponseBody = soapResponse.getSOAPBody();
         QName bodyName = new QName("http://ws.server.mhaccess.crimsonlogic.com/", "queryResponse", "ns3");
-        @SuppressWarnings("unchecked")
-        Iterator<SOAPBodyElement> iterator = soapResponseBody.getChildElements(bodyName);
+        Iterator<javax.xml.soap.Node> iterator = soapResponseBody.getChildElements(bodyName);
         while (iterator.hasNext()) {
-            SOAPBodyElement queryResponse = iterator.next();
+            SOAPElement queryResponse = (SOAPElement) iterator.next();
 
             Node returnNode = queryResponse.getElementsByTagName("return").item(0);
             if (returnNode.getNodeType() == Node.ELEMENT_NODE) {
@@ -379,13 +379,17 @@ public class PatientInfoHighwaySearch implements IExternalPatientSearch {
 
         soapMessage.saveChanges();
 
-        soapMessage.writeTo(System.out);
         return soapMessage;
     }
 
     @Override
     public String getConnectionString() {
         return connectionString;
+    }
+
+    @Override
+    public int getTimeout() {
+        return timeout;
     }
 
 }

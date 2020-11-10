@@ -30,7 +30,7 @@ function doSelectPatientForResults(){
 </script>
 
 <div id="searchDiv" class="colorFill"  >
-	<tiles:insertAttribute name="searchPanel" />
+<tiles:insertAttribute name="searchPanel" />
 </div>
 <c:if test="${form.searchFinished}">
 	<div id="resultsDiv" class="colorFill" >

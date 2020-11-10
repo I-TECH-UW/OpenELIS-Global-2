@@ -54,6 +54,7 @@ public class ObservationHistoryServiceImpl extends BaseObjectServiceImpl<Observa
 
     ObservationHistoryServiceImpl() {
         super(ObservationHistory.class);
+        this.auditTrailLog = true;
     }
 
     @Override

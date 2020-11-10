@@ -37,7 +37,6 @@ import org.hibernate.SessionFactory;
 import org.hibernate.jdbc.ReturningWork;
 import org.openelisglobal.analyte.service.AnalyteService;
 import org.openelisglobal.analyte.valueholder.Analyte;
-import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService;
@@ -153,7 +152,7 @@ abstract public class CSVColumnBuilder {
     // convert the
     // test description to a column name so we need to truncate
     // It's actually 63 but UTF_8 makes 59 safer.
-    private static final int MAX_POSTGRES_COL_NAME = 59;
+    private static final int MAX_POSTGRES_COL_NAME = 55;
 
     /**
      * the test have to be sorted by the name, because they have to match the pivot
@@ -215,6 +214,7 @@ abstract public class CSVColumnBuilder {
      * @since Feb 1, 2011
      */
     public enum Strategy {
+        ANALYSIS_STATUS,
         DICT, // dictionary localized value
         DICT_PLUS, // dictionary localized value or a string constant
         DICT_RAW, // dictionary localized value, no attempts at trimming to show just code number.
@@ -321,12 +321,12 @@ abstract public class CSVColumnBuilder {
     }
 
     private String prepareColumnName(String columnName) {
-        // trim and escape the column name so it is safe from sql injection
-        if (columnName.matches("[a-zA-Z0-9_ -]+")) {
-            return trimToPostgresMaxColumnName("\"" + columnName + "\"");
-        } else {
-            throw new LIMSRuntimeException("cannot add a column name that includes non alpha-numeric characters");
+        // trim and escape the column name so it is more safe from sql injection
+        if (!columnName.matches("(?i)[a-zàâçéèêëîïôûùüÿñæœ0-9_ ()%/\\[\\]+\\-]+")) {
+            LogEvent.logWarn(this.getClass().getName(), "prepareColumnName",
+                    "potentially dangerous character detected in '" + columnName + "'");
         }
+        return "\"" + trimToPostgresMaxColumnName(columnName = columnName.replace("\"", "\\\"")) + "\"";
     }
 
     private String trimToPostgresMaxColumnName(String name) {

@@ -111,7 +111,7 @@
     }
 
     function setForEditing(testId, name) {
-        jQuery("#catDiv").show();
+    	jQuery("#catDiv").show();
         jQuery("#testName").text(name);
         jQuery(".error").each(function (index, value) {
             value.value = "";
@@ -162,6 +162,8 @@
 				panelOption.forEach(function(elem) {
 					jQuery(elem).attr("selected", true)
 				});
+				
+				jQuery("#notifyResults").prop('checked', jQuery(elem).attr('fNotifyResults') === 'true');
 				
 				jQuery("#panelSelection").change();
 							
@@ -521,15 +523,15 @@
             if (name != modName ) {
             	ul.append(createLI(id, name, false));
             } else {
-            	ul.append(createLI(id, name, true));
+            	//ul.append(createLI(id, name, true));
             }
         }
 
         <%if (locale.equals("en_US")) {%>
-        //ul.append( createLI(modId, jQuery("#testNameEnglish").val(), true) );
-        <%} else {%>
-        //ul.append( createLI(modId, jQuery("#testNameFrench").val(), true) );
-        <%}%>
+        ul.append( createLI(modId, jQuery("#testNameEnglish").val(), true) );
+        <%} else { %>
+        ul.append( createLI(modId, jQuery("#testNameFrench").val(), true) );
+        <% } %>
 
         jQuery("#sort" + sampleTypeId).append(ul);
 
@@ -926,7 +928,8 @@
             });
             
             // format dictionary values
-            if( dictionaryValues !== null) {
+            //if( dictionaryValues !== null) {
+            if( false ) {
             	var tmpArray = dictionaryValues.split("[");
             	var tmpArray = tmpArray[1].split("]");
             	var tmpArray = tmpArray[0].split(", ");
@@ -1291,6 +1294,7 @@
         jQuery("#resultTypeRO").text(jQuery("#resultTypeSelection  option:selected").text());
         jQuery("#activeRO").text(jQuery("#active").attr("checked") ? "Y" : "N");
         jQuery("#orderableRO").text(jQuery("#orderable").attr("checked") ? "Y" : "N");
+        jQuery("#notifyResultsRO").text(jQuery("#notifyResults").attr("checked") ? "Y" : "N");
     }
 
     function createJSON() {
@@ -1307,6 +1311,7 @@
         jsonObj.loinc = jQuery("#loinc").val();
         jsonObj.resultType = jQuery("#resultTypeSelection").val();
         jsonObj.orderable = jQuery("#orderable").attr("checked") ? 'Y' : 'N';
+        jsonObj.notifyResults = jQuery("#notifyResults").attr("checked") ? 'Y' : 'N';
         jsonObj.active = jQuery("#active").attr("checked") ? 'Y' : 'N';
         
         jQuery(".resultClass").each(function (i,elem) {
@@ -1632,6 +1637,7 @@ td {
 					fDictionaryIds='<%=bean.getDictionaryIds()%>'
 					fReferenceValue='<%=bean.getReferenceValue()%>'
 					fReferenceId='<%=bean.getReferenceId()%>'
+					fNotifyResults='<%=bean.getNotifyResults()%>'
 				class='resultClass'>
 				
 				<tr>
@@ -1672,6 +1678,7 @@ td {
 				<tr>
 					<td><b><%=bean.getActive()%></b></td>
 					<td><b><%=bean.getOrderable()%></b></td>
+					<%if (bean.getNotifyResults()) { %><td><b><spring:message code="test.notifyResults"/></b></td><%} %>
 				</tr>
 				<tr>
 					<td><span class="catalog-label"><spring:message code="label.test.unit" /></span> <b><%=bean.getTestUnit()%></b></td>
@@ -1899,48 +1906,40 @@ td {
 				<td width="25%" style="vertical-align: top; padding: 4px"
 					id="panelSelectionCell"><spring:message code="typeofsample.panel.panel" /><br /> 
 					<select id="panelSelection" name="panelSelection" multiple="multiple" title="Multiple">
-					 <%
-							for (IdValuePair pair : panelList) {
-					 %>
-						<option value='<%=pair.getId()%>'><%=pair.getValue()%>
-						</option>
-					 <%
-							}
-					 %>
+                        <% for (IdValuePair pair : panelList) { %>
+                        <option value='<%=pair.getId()%>'><%=pair.getValue()%>
+                        </option>
+                        <% } %>
 					   
 				</select><br />
 				<br />
 				<br /> <spring:message code="label.unitofmeasure" /><br /> 
 				<select id="uomSelection">
-						<option value='0'></option>
-						<%
-							for (IdValuePair pair : uomList) {
-						%>
-						<option value='<%=pair.getId()%>'><%=pair.getValue()%>
-						</option>
-						<%
-							}
-						%>
-				</select></td>
+                        <option value='0'></option>
+                        <% for (IdValuePair pair : uomList) { %>
+                        <option value='<%=pair.getId()%>'><%=pair.getValue()%>
+                        </option>
+                        <% } %>
+                    </select>
+                </td>
 				<td width="25%" style="vertical-align: top; padding: 4px"><spring:message code="result.resultType" /><span class="requiredlabel">*</span><br />
-					<select id="resultTypeSelection" class="required"
-					onchange="checkReadyForNextStep()">
-						<option value="0"></option>
-						<%
-							for (IdValuePair pair : resultTypeList) {
-						%>
-						<option value='<%=pair.getId()%>'><%=pair.getValue()%>
-						</option>
-						<%
-							}
-						%>
+					 <select id="resultTypeSelection" class="required" onchange="checkReadyForNextStep()">
+                        <option value="0"></option>
+                        <% for (IdValuePair pair : resultTypeList) { %>
+                        <option value='<%=pair.getId()%>'><%=pair.getValue()%>
+                        </option>
+                        <% } %>
 				</select><br />
 				<br />
 				<br />
 				<br />
-				<br /> <label for="orderable"><spring:message code="test.isActive" /></label> <input type="checkbox" id="active"
-					checked="checked" /><br /> <label for="orderable"><spring:message code="label.orderable" /></label> <input type="checkbox" id="orderable"
-					checked="checked" /></td>
+				<br /> 
+				<label for="orderable"><spring:message code="test.isActive" /></label> 
+				<input type="checkbox" id="active"checked="checked" /><br />
+				<label for="orderable"><spring:message code="label.orderable" /></label>
+				<input type="checkbox" id="orderable" checked="checked" /><br/>
+				<label for="notifyResults"><spring:message code="test.notifyResults" /></label>
+				<input type="checkbox" id="notifyResults"/></td>
 			</tr>
 		</table>
 	</div>
@@ -1949,10 +1948,13 @@ td {
 		<div style="float: left; width: 20%;">
 			<spring:message code="test.testName" />
 			<br /> <span class="tab"><spring:message code="label.english" />:
-				<span id="testNameEnglishRO"></span></span><br /> <span class="tab"><spring:message code="label.french" />: <span id="testNameFrenchRO"></span></span><br /> <br />
+				<span id="testNameEnglishRO"></span></span><br /> <span class="tab"><spring:message
+					code="label.french" />: <span id="testNameFrenchRO"></span></span><br />
+			<br />
 			<spring:message code="test.testName.reporting" />
 			<br /> <span class="tab"><spring:message code="label.english" />:
-				<span id="testReportNameEnglishRO"></span></span><br /> <span class="tab"><spring:message code="label.french" />: <span id="testReportNameFrenchRO"></span></span><br />
+				<span id="testReportNameEnglishRO"></span></span><br /> <span class="tab"><spring:message
+					code="label.french" />: <span id="testReportNameFrenchRO"></span></span><br />
 			<br />
 			<spring:message code="test.testSectionName" />
 			<div id="testSectionRO" class="tab"></div>
@@ -1981,6 +1983,9 @@ td {
 			<spring:message code="label.orderable" />
 			<div class="tab" id="orderableRO"></div>
 			<br />
+			<spring:message code="test.notifyResults" />
+			<div class="tab" id="notifyResultsRO"></div>
+			<br />
 		</div>
 		<div class="step2" style="float: right; width: 80%; display: none">
 			<div id="sampleTypeSelectionDiv" class="step2"
@@ -1989,14 +1994,10 @@ td {
 				<span class="requiredlabel">*</span> <select
 					id="sampleTypeSelection" class="required" multiple="multiple"
 					title="Multiple">
-					<%
-						for (IdValuePair pair : sampleTypeList) {
-					%>
+					<% for (IdValuePair pair : sampleTypeList) { %>
 					<option value='<%=pair.getId()%>'><%=pair.getValue()%>
 					</option>
-					<%
-						}
-					%>
+					<% } %>
 				</select><br />
 			</div>
 			<div id="testDisplayOrderDiv" style="float: left; width: 80%;">
@@ -2004,7 +2005,7 @@ td {
 					<spring:message code="label.test.display.order" />
 				</div>
 				<div id="endOrderMarker"></div>
-				
+
 				<div class="dictionarySelect dictionaryMultiSelect"
 					id="dictionarySelectId"
 					style="padding: 10px; float: left; width: 280px; display: none; overflow: hidden">
@@ -2012,28 +2013,25 @@ td {
 					<span class="requiredlabel">*</span><br /> <select
 						id="dictionarySelection" class="required" multiple="multiple"
 						title="Multiple">
-						<%
-							for (IdValuePair pair : dictionaryList) {
-						%>
+						<% for (IdValuePair pair : dictionaryList) { %>
 						<option value='<%=pair.getId()%>'><%=pair.getValue()%>
 						</option>
-						<%
-							}
-						%>
-					</select><br />
-					<br />
-					<br />
+						<% } %>
+					</select><br /> <br /> <br />
 				</div>
 				<div id="dictionaryVerifyId"
 					style="padding: 10px; float: left; width: 280px; display: none; overflow: hidden;">
-					<span><span class="half-tab"><spring:message code="label.select.list" /></span><br />
+					<span><span class="half-tab"><spring:message
+								code="label.select.list" /></span><br />
 						<ul id="dictionaryVerifyListId">
 
 						</ul> </span> <span><spring:message code="label.reference.value" /><br>
-					<ul>
+						<ul>
 							<li id="referenceValue"></li>
+						</ul></span> <span><spring:message code="label.default.result" /><br>
+					<ul>
+							<li id="defaultTestResultValue"></li>
 						</ul></span>
-						<span><spring:message code="label.default.result" /><br><ul><li id="defaultTestResultValue"></li></ul></span>
 				</div>
 				<div id="sortDictionaryDiv" align="center" class="dictionarySelect"
 					style="padding: 10px; float: left; width: 33%; display: none;">
@@ -2054,12 +2052,12 @@ td {
 					</div>
 					<br>
 					<div id="defaultTestResult">
-                        <spring:message code="label.default.result" /><br/>
-                        <select id='defaultTestResultSelection'>
-                            <option value="0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>
-                        </select>
-                    </div>
-                    <br>
+						<spring:message code="label.default.result" />
+						<br /> <select id='defaultTestResultSelection'>
+							<option value="0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>
+						</select>
+					</div>
+					<br>
 
 					<div id="dictionaryQualify" class="dictionaryMultiSelect">
 						<spring:message code="label.qualifiers" />
@@ -2070,14 +2068,12 @@ td {
 			</div>
 		</div>
 	</div>
-	
-				<div id="dictionaryAskDiv" style="display: none;">
-					<input type="button"
-					value="<%=MessageUtil.getContextualMessage("label.button.editSelectValues")%>"
-					onclick="editDictionaryAsk();" id="editDictionaryButton" /> 
-				</div>
-				
-	<%    List<IdValuePair> groupedDictionaryList = (List<IdValuePair>) pageContext.getAttribute("groupedDictionaryList"); %>
+	<div id="dictionaryAskDiv" style="display: none;">
+		<input type="button"
+			value="<%=MessageUtil.getContextualMessage("label.button.editSelectValues")%>"
+			onclick="editDictionaryAsk();" id="editDictionaryButton" />
+	</div>
+	<% 	List<IdValuePair> groupedDictionaryList = (List<IdValuePair>) pageContext.getAttribute("groupedDictionaryList"); %>
 	<div id="dictionaryExistingGroups" class="dictionarySelect"
 		style="display: none; width: 100%">
 		<div style="width: 100%; text-align: center;">
@@ -2085,47 +2081,39 @@ td {
 		</div>
 		<hr>
 		<table>
-			<%	while (testCount < groupedDictionaryList.size()) {	%>
-			<tr>
-				<td id='<%="dictionaryGroup_" + testCount%>'
-					style="padding: 5px 10px; vertical-align: top"><input
-					type="button"
-					value="<%=MessageUtil.getContextualMessage("label.form.select")%>"
-					onclick="<%="dictionarySetSelected(" + testCount + ");"%>"
-					class="textButton" />
-					<ul style="padding-left: 0; list-style-type: none">
-						<%	
-							for (IdValuePair pair : (Iterable<IdValuePair>) groupedDictionaryList.get(testCount)) {
-						%>	
-							<li value="<%=pair.getId()%>"><%=pair.getValue()%></li> 
-						
-						<% } %>
+            <% while (testCount < groupedDictionaryList.size()) {%>
+            <tr>
+                <td id='<%= "dictionaryGroup_" + testCount%>' style="padding: 5px 10px; vertical-align: top">
+                    <input type="button" value="<%=MessageUtil.getContextualMessage("label.form.select")%>" onclick="<%="dictionarySetSelected(" + testCount + ");" %>"
+                           class="textButton"/>
+                    <ul style="padding-left:0; list-style-type: none">
+                        <% for (IdValuePair pair : (Iterable<IdValuePair>) groupedDictionaryList.get(testCount)) { %>
+                        <li value="<%=pair.getId()%>"><%=pair.getValue()%>
+                        </li>
+                        <% } %>
 					</ul> 
-	<%
- 		testCount++;
- 		columnCount = 1;
- 	%>
- </td>
-				<%	while (testCount < groupedDictionaryList.size() && (columnCount < columns)) {	%>
-				<td id='<%="dictionaryGroup_" + testCount%>'
-					style="padding: 5px 10px; vertical-align: top"><input
-					type="button"
-					value="<%=MessageUtil.getContextualMessage("label.form.select")%>"
-					onclick="<%="dictionarySetSelected(" + testCount + ");"%>"
-					class="textButton" />
-					<ul style="padding-left: 0; list-style-type: none">
-					<%
-						for (IdValuePair pair : (Iterable<IdValuePair>) groupedDictionaryList.get(testCount)) {
-					%>
-						<li value="<%=pair.getId()%>"><%=pair.getValue()%></li>
-					<% 	} %>
+	 <%
+                        testCount++;
+                        columnCount = 1;
+                    %></td>
+               <% while (testCount < groupedDictionaryList.size() && (columnCount < columns)) {%>
+                <td id='<%= "dictionaryGroup_" + testCount%>' style="padding: 5px 10px; vertical-align: top">
+                    <input type="button" value="<%=MessageUtil.getContextualMessage("label.form.select")%>" onclick="<%="dictionarySetSelected(" + testCount + ");" %>"
+                           class="textButton"/>
+                    <ul style="padding-left:0; list-style-type: none">
+                        <% for (IdValuePair pair : (Iterable<IdValuePair>) groupedDictionaryList.get(testCount)) { %>
+                        <li value="<%=pair.getId()%>"><%=pair.getValue()%>
+                        </li>
+                        <% } %>
 					</ul></td>
-				<%	testCount++;
-					columnCount++;	%>
-				<%	}	%>
+				  <%
+                        testCount++;
+                        columnCount++;
+                    %>
+                <% } %>
 
 			</tr>
-			<% } %>
+            <% } %>
 		</table>
 	</div>
 	<div id="normalRangeTemplate" style="display: none;">
@@ -2154,14 +2142,10 @@ td {
 				<td><select id="ageRangeSelect_index"
 					onchange="ageRangeSelected( this, 'index');">
 						<option value="0"></option>
-						<%
-							for (IdValuePair pair : ageRangeList) {
-						%>
-						<option value='<%=pair.getId()%>'><%=pair.getValue()%>
-						</option>
-						<%
-							}
-						%>
+						 <% for (IdValuePair pair : ageRangeList) { %>
+                        <option value='<%=pair.getId()%>'><%=pair.getValue()%>
+                        </option>
+                        <% } %>
 				</select></td>
 				<td><input type="text" value="-Infinity" size="10"
 					id="lowNormal_index" class="lowNormal"
@@ -2306,9 +2290,10 @@ td {
 			value="<%=MessageUtil.getContextualMessage("label.button.back")%>"
 			onclick="navigateBackFromConfirm()" />
 	</div>
-
 	<table>
 		<%
+			testCount = 0;
+			columnCount = 1;
 			while (testCount < testList.size()) {
 		%>
 		<tr>
@@ -2317,7 +2302,7 @@ td {
 				onclick="setForEditing( '<%=((IdValuePair) testList.get(testCount)).getId() + "', '"
 						+ ((IdValuePair) testList.get(testCount)).getValue()%>');"
 				class="textButton test" /> <%
- 	testCount++;
+ 		testCount++;
  		columnCount = 1;
  %></td>
 			<%
@@ -2328,8 +2313,8 @@ td {
 				onclick="setForEditing( '<%=((IdValuePair) testList.get(testCount)).getId() + "', '"
 							+ ((IdValuePair) testList.get(testCount)).getValue()%>' );"
 				class="textButton test" /> <%
- 	testCount++;
- 			columnCount++;
+ 		testCount++;
+ 		columnCount++;
  %></td>
 			<%
 				}

@@ -200,6 +200,9 @@ public class SampleEditController extends BaseController {
             form.setInitialSampleConditionList(
                     DisplayListService.getInstance().getList(ListType.INITIAL_SAMPLE_CONDITION));
         }
+        if (FormFields.getInstance().useField(FormFields.Field.SampleNature)) {
+            form.setSampleNatureList(DisplayListService.getInstance().getList(ListType.SAMPLE_NATURE));
+        }
 
         form.setCurrentDate(DateUtil.getCurrentDateAsText());
         PatientSearch patientSearch = new PatientSearch();

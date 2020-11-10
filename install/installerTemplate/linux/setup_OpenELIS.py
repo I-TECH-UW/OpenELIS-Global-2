@@ -52,6 +52,7 @@ DB_ENVIRONMENT_DIR = OE_VAR_DIR + "database/env/"
 DB_INIT_DIR = OE_VAR_DIR + "initDB/"
 SECRETS_DIR = OE_VAR_DIR + "secrets/"
 PLUGINS_DIR = OE_VAR_DIR + "plugins/"
+LOGS_DIR = OE_VAR_DIR + "logs/"
 CRON_INSTALL_DIR = "/etc/cron.d/"
 
 #full file paths
@@ -67,8 +68,6 @@ DB_PORT="5432"
 DOCKER_OE_REPO_NAME = "openelisglobal" #must match docker image name (not container name)
 DOCKER_OE_CONTAINER_NAME = "openelisglobal-webapp" 
 DOCKER_FHIR_API_CONTAINER_NAME = "external-fhir-api"
-DOCKER_OE_SUB_CONTAINER_NAME = "datasubscriber-webapp"
-DOCKER_OE_IMPORT_CONTAINER_NAME = "dataimport-webapp"
 DOCKER_DB_CONTAINER_NAME = "openelisglobal-database" 
 DOCKER_DB_BACKUPS_DIR = "/backups/"  # path in docker container
 DOCKER_DB_HOST_PORT = "5432"
@@ -94,7 +93,8 @@ KEYSTORE_PWD = ''
 TRUSTSTORE_PWD = ''
 ENCRYPTION_KEY = ''
 LOCAL_FHIR_SERVER_ADDRESS = 'https://fhir.openelisci.org:8443/hapi-fhir-jpaserver/fhir/'
-OPENMRS_SERVER_ADDRESS = 'https://isanteplusdemo.com/openmrs/ws/fhir2/'
+REMOTE_FHIR_SOURCE = 'https://isanteplusdemo.com/openmrs/ws/fhir2/'
+REMOTE_FHIR_SOURCE_UPDATE_STATUS = "false"
 CONSOLIDATED_SERVER_ADDRESS = 'https://hub.openelisci.org:8444/fhir'
 
 #Stateful objects
@@ -219,7 +219,9 @@ def do_install():
     
     generate_passwords()
     
-    get_user_values()
+    get_stored_user_values()
+    
+    get_non_stored_user_values()
 
     install_docker()
     
@@ -235,7 +237,11 @@ def do_install():
 
     load_docker_image()
     
-    install_plugins_dir()
+    ensure_dir_exists(PLUGINS_DIR)
+    
+    ensure_dir_exists(LOGS_DIR)
+    os.chmod(LOGS_DIR, 0777) 
+    os.chown(LOGS_DIR, 8443, 8443)  
 
     start_docker_containers()
 
@@ -290,16 +296,14 @@ def create_docker_compose_file():
             line = line.replace("[% secrets_dir %]", SECRETS_DIR)  
         if line.find("[% plugins_dir %]")  >= 0:
             line = line.replace("[% plugins_dir %]", PLUGINS_DIR)
+        if line.find("[% logs_dir %]")  >= 0:
+            line = line.replace("[% logs_dir %]", LOGS_DIR)
         if line.find("[% etc_dir %]")  >= 0:
             line = line.replace("[% etc_dir %]", OE_ETC_DIR )
         if line.find("[% oe_name %]")  >= 0:
             line = line.replace("[% oe_name %]", DOCKER_OE_CONTAINER_NAME )
         if line.find("[% fhir_api_name %]")  >= 0:
             line = line.replace("[% fhir_api_name %]", DOCKER_FHIR_API_CONTAINER_NAME )
-        if line.find("[% data_subscriber_name %]")  >= 0:
-            line = line.replace("[% data_subscriber_name %]", DOCKER_OE_SUB_CONTAINER_NAME )
-        if line.find("[% data_import_name %]")  >= 0:
-            line = line.replace("[% data_import_name %]", DOCKER_OE_IMPORT_CONTAINER_NAME )
         
         output_file.write(line)
 
@@ -328,8 +332,10 @@ def create_properties_files():
             line = line.replace("[% encryption_key %]", ENCRYPTION_KEY) 
         if line.find("[% local_fhir_server_address %]")  >= 0:
             line = line.replace("[% local_fhir_server_address %]", LOCAL_FHIR_SERVER_ADDRESS) 
-        if line.find("[% open_mrs_server_address %]")  >= 0:
-            line = line.replace("[% open_mrs_server_address %]", OPENMRS_SERVER_ADDRESS) 
+        if line.find("[% remote_fhir_server_address %]")  >= 0:
+            line = line.replace("[% remote_fhir_server_address %]", REMOTE_FHIR_SOURCE) 
+        if line.find("[% remote_source_update_status %]")  >= 0:
+            line = line.replace("[% remote_source_update_status %]", REMOTE_FHIR_SOURCE_UPDATE_STATUS) 
         if line.find("[% consolidated_server_address %]")  >= 0:
             line = line.replace("[% consolidated_server_address %]", CONSOLIDATED_SERVER_ADDRESS) 
 
@@ -339,6 +345,11 @@ def create_properties_files():
     output_file.close()
     os.chmod(SECRETS_DIR + "common.properties", 0640)   
     os.chown(SECRETS_DIR + 'common.properties', 8443, 8443) 
+    
+    if not os.path.exists(SECRETS_DIR + "extra.properties"):
+        open(SECRETS_DIR + "extra.properties", "w").close()
+    os.chmod(SECRETS_DIR + "extra.properties", 0640)   
+    os.chown(SECRETS_DIR + 'extra.properties', 8443, 8443) 
     
     template_file = open(INSTALLER_TEMPLATE_DIR + "hapi.properties", "r")
     output_file = open(SECRETS_DIR + "hapi.properties", "w")
@@ -613,11 +624,6 @@ def install_crosstab():
         os.system(cmd)
         
 
-def install_plugins_dir():
-    ensure_dir_exists(PLUGINS_DIR)
-    
-
-
 #---------------------------------------------------------------------
 #             UPDATE
 #---------------------------------------------------------------------
@@ -638,11 +644,20 @@ def do_update():
         return
 
     backup_db()
+    
+    uninstall_docker_images()
+    
+    clean_docker_objects()
 
     load_docker_image()
     
-    get_keystore_password()
-    get_truststore_password()
+    ensure_dir_exists(PLUGINS_DIR)
+    
+    ensure_dir_exists(LOGS_DIR)
+    os.chmod(LOGS_DIR, 0777) 
+    os.chown(LOGS_DIR, 8443, 8443)  
+    
+    get_non_stored_user_values()
     
     create_docker_compose_file()
     
@@ -721,14 +736,6 @@ def uninstall_docker_images():
     cmd = 'docker rm $(docker stop $(docker ps -a -q --filter="name=' + DOCKER_FHIR_API_CONTAINER_NAME + '" --format="{{.ID}}"))'
     os.system(cmd)
     
-#     log("removing data subscriber image...", PRINT_TO_CONSOLE)
-#     cmd = 'docker rm $(docker stop $(docker ps -a -q --filter="name=' + DOCKER_OE_SUB_CONTAINER_NAME + '" --format="{{.ID}}"))'
-#     os.system(cmd)
-#     
-#     log("removing data import image...", PRINT_TO_CONSOLE)
-#     cmd = 'docker rm $(docker stop $(docker ps -a -q --filter="name=' + DOCKER_OE_IMPORT_CONTAINER_NAME + '" --format="{{.ID}}"))'
-#     os.system(cmd)
-
 
 def uninstall_backup_task():
     log("removing backup task " + APP_NAME, PRINT_TO_CONSOLE)
@@ -892,24 +899,37 @@ def get_action_time():
     return ACTION_TIME
 
 
-def get_user_values():
+def get_non_stored_user_values():
     get_keystore_password()
     get_truststore_password()
-    get_site_id()
     get_encryption_key()
     get_server_addresses()
+    
+
+def get_stored_user_values():
+    get_site_id()
 
 
 def get_keystore_password():
     global KEYSTORE_PWD
     print "keystore location: " + KEYSTORE_PATH
     KEYSTORE_PWD = getpass("keystore password: ")
+    cmd = "keytool -list -keystore " + KEYSTORE_PATH + " -storepass " + KEYSTORE_PWD
+    status = os.system(cmd)
+    if not status == 0:
+        print "password for the keystore is incorrect. Please try again"
+        get_keystore_password()
 
 
 def  get_truststore_password():
     global TRUSTSTORE_PWD
     print "truststore location: " + TRUSTSTORE_PATH
     TRUSTSTORE_PWD = getpass("truststore password: ")
+    cmd = "keytool -list -keystore " + TRUSTSTORE_PATH + " -storepass " + TRUSTSTORE_PWD
+    status = os.system(cmd)
+    if not status == 0:
+        print "password for the truststore is incorrect. Please try again"
+        get_truststore_password()
     
         
 def get_site_id():
@@ -933,14 +953,20 @@ def get_encryption_key():
     This value must stay the same between installations or the program will lose all encrypted data.
     Record this value somewhere secure.
     """
-    ENCRYPTION_KEY = raw_input("encryption key: ")
+    ENCRYPTION_KEY = getpass("encryption key: ")
+    confirm_encryption_key = getpass("confirm encryption key: ")
+    while (not confirm_encryption_key == ENCRYPTION_KEY):
+        print "encryption key did not match. Please re-enter the encryption key"
+        ENCRYPTION_KEY = getpass("encryption key: ")
+        confirm_encryption_key = getpass("confirm encryption key: ")
         
         
 def get_server_addresses():
-    global LOCAL_FHIR_SERVER_ADDRESS, OPENMRS_SERVER_ADDRESS, CONSOLIDATED_SERVER_ADDRESS
+    global LOCAL_FHIR_SERVER_ADDRESS, REMOTE_FHIR_SOURCE, CONSOLIDATED_SERVER_ADDRESS, REMOTE_FHIR_SOURCE_UPDATE_STATUS
 
     print """
-    Enter the full server path to the local fhir store (most likely the address of this server on port 8444)
+    Enter the full server path to the local fhir store 
+    (most likely the address of this server on port 8444)
     """
     fhir_server_address = raw_input("local fhir store path (default  " + LOCAL_FHIR_SERVER_ADDRESS + ") : ")
     if fhir_server_address:
@@ -950,17 +976,30 @@ def get_server_addresses():
             LOCAL_FHIR_SERVER_ADDRESS = fhir_server_address
     
     print """
-    Enter the full server path to the OpenMRS instance you'd like to poll for Fhir Tasks. Leave blank to disable the OpenMRS bridge
+    Enter the full server path to the remote fhir instance you'd like to poll for Fhir Tasks (eg. OpenMRS) . 
+    Leave blank to disable polling a remote instance
     """
-    OPENMRS_SERVER_ADDRESS = raw_input("OpenMRS address: ")
-    if OPENMRS_SERVER_ADDRESS:
-        if not OPENMRS_SERVER_ADDRESS.startswith("https://"):
-            OPENMRS_SERVER_ADDRESS = "https://" + OPENMRS_SERVER_ADDRESS
+    REMOTE_FHIR_SOURCE = raw_input("Remote Fhir Address: ")
+    if REMOTE_FHIR_SOURCE:
+        if not REMOTE_FHIR_SOURCE.startswith("https://"):
+            REMOTE_FHIR_SOURCE = "https://" + REMOTE_FHIR_SOURCE
+    
+    if REMOTE_FHIR_SOURCE:
+        while True: 
+            statusResponse = raw_input("Should OpenELIS update the status of the remote fhir source? [Y]es [N]o: ")
+            updateStatus = statusResponse[0].lower() 
+            if statusResponse == '' or not updateStatus in ['y','n']: 
+                print('Please answer with yes or no!') 
+            else:
+                if updateStatus == 'y':
+                    REMOTE_FHIR_SOURCE_UPDATE_STATUS = "true"
+                break 
             
     print """
-    Enter the full server path to the consolidated server to send data to. Leave blank to disable sending data to the Consolidated server
+    Enter the full server path to the consolidated server to send data to. 
+    Leave blank to disable sending data to the Consolidated server
     """
-    CONSOLIDATED_SERVER_ADDRESS = raw_input("local fhir store (default  " + LOCAL_FHIR_SERVER_ADDRESS + ") : ")
+    CONSOLIDATED_SERVER_ADDRESS = raw_input("Consolidated server address: ")
     if CONSOLIDATED_SERVER_ADDRESS:
         if not CONSOLIDATED_SERVER_ADDRESS.startswith("https://"):
             CONSOLIDATED_SERVER_ADDRESS = "https://" + CONSOLIDATED_SERVER_ADDRESS
@@ -1113,6 +1152,16 @@ def load_docker_image():
 def start_docker_containers():
     log("starting docker containers", PRINT_TO_CONSOLE)
     cmd = 'sudo docker-compose up -d '
+    os.system(cmd)
+
+
+def clean_docker_objects():
+    log("cleaning docker network", PRINT_TO_CONSOLE)
+    cmd = 'sudo docker network prune'
+    os.system(cmd)
+    
+    log("cleaning docker images", PRINT_TO_CONSOLE)
+    cmd = 'sudo docker image prune'
     os.system(cmd)
     
     

@@ -192,6 +192,14 @@ public class SampleEditServiceImpl implements SampleEditService {
                     observationService.insert(observation);
                 }
             }
+
+            if (sampleTestCollection.sampleNature != null) {
+                sampleTestCollection.sampleNature.setPatientId(patient.getId());
+                sampleTestCollection.sampleNature.setSampleItemId(sampleTestCollection.item.getId());
+                sampleTestCollection.sampleNature.setSampleId(sampleTestCollection.item.getSample().getId());
+                sampleTestCollection.sampleNature.setSysUserId(sysUserId);
+                observationService.insert(sampleTestCollection.sampleNature);
+            }
         }
 
         if (referringPerson != null) {

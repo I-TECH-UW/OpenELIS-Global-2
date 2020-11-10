@@ -18,6 +18,7 @@ import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
 import org.openelisglobal.referencetables.service.ReferenceTablesService;
 import org.openelisglobal.result.dao.ResultDAO;
+import org.openelisglobal.result.daoimpl.ResultDAOImpl;
 import org.openelisglobal.result.valueholder.Result;
 import org.openelisglobal.result.valueholder.ResultSignature;
 import org.openelisglobal.resultlimit.service.ResultLimitService;
@@ -66,6 +67,7 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
 
     ResultServiceImpl() {
         super(Result.class);
+        this.auditTrailLog = true;
     }
 
     @Override
@@ -295,9 +297,116 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
         }
     }
 
+    @Override
+    public String getResultValueForDisplay(Result result, String separator, boolean printable, boolean includeUOM) {
+        if (GenericValidator.isBlankOrNull(result.getValue())) {
+            return "";
+        }
+
+        if (TypeOfTestResultServiceImpl.ResultType.DICTIONARY.matches(getTestType(result))) {
+
+            if (!printable) {
+                return result.getValue();
+            }
+            String reportResult = "";
+            List<Result> resultList = baseObjectDAO.getResultsByAnalysis(result.getAnalysis());
+            if (!resultList.isEmpty()) {
+                if (resultList.size() == 1) {
+                    reportResult = getDictValueForDisplay(result);
+                } else {
+                    // If dictionary result it can also have a quantified result
+                    List<Result> dictionaryResults = new ArrayList<>();
+                    Result quantification = null;
+                    for (Result sibResult : resultList) {
+                        if (TypeOfTestResultServiceImpl.ResultType.DICTIONARY.matches(sibResult.getResultType())) {
+                            dictionaryResults.add(sibResult);
+                        } else if (TypeOfTestResultServiceImpl.ResultType.ALPHA.matches(sibResult.getResultType())
+                                && sibResult.getParentResult() != null) {
+                            quantification = sibResult;
+                        }
+                    }
+
+                    for (Result sibResult : dictionaryResults) {
+                        Dictionary dictionary = dictionaryService.getDictionaryById(sibResult.getValue());
+                        reportResult = (dictionary != null && dictionary.getId() != null)
+                                ? dictionary.getLocalizedName()
+                                : "";
+                        if (quantification != null
+                                && quantification.getParentResult().getId().equals(sibResult.getId())) {
+                            reportResult += separator + quantification.getValue();
+                        }
+                    }
+                }
+            }
+
+            if (includeUOM && !GenericValidator.isBlankOrNull(reportResult)) {
+                String uom = getUOM(result);
+                if (!GenericValidator.isBlankOrNull(uom)) {
+                    reportResult += " " + uom;
+                }
+            }
+
+            return StringEscapeUtils.escapeHtml(reportResult);
+        } else if (TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(getTestType(result))) {
+            StringBuilder buffer = new StringBuilder();
+            boolean firstPass = true;
+
+            List<Result> results = new ResultDAOImpl().getResultsByAnalysis(result.getAnalysis());
+
+            for (Result multiResult : results) {
+                if (!GenericValidator.isBlankOrNull(multiResult.getValue())
+                        && TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(multiResult.getResultType())) {
+                    if (firstPass) {
+                        firstPass = false;
+                    } else {
+                        buffer.append(separator);
+                    }
+                    buffer.append(dictionaryService.getDataForId(multiResult.getValue()).getDictEntry());
+                }
+            }
+            return buffer.toString();
+        } else if (TypeOfTestResultServiceImpl.ResultType.NUMERIC.matches(getTestType(result))) {
+            int significantPlaces = result.getSignificantDigits();
+            if (significantPlaces == -1) {
+                return result.getValue() + appendUOM(result, includeUOM);
+            }
+            if (significantPlaces == 0) {
+                return result.getValue().split("\\.")[0] + appendUOM(result, includeUOM);
+            }
+            StringBuilder value = new StringBuilder();
+            value.append(result.getValue());
+            int startFill = 0;
+
+            if (!result.getValue().contains(".")) {
+                value.append(".");
+            } else {
+                startFill = result.getValue().length() - result.getValue().lastIndexOf(".") - 1;
+            }
+
+            for (int i = startFill; i < significantPlaces; i++) {
+                value.append("0");
+            }
+
+            return value.toString() + appendUOM(result, includeUOM);
+        } else if (TypeOfTestResultServiceImpl.ResultType.ALPHA.matches(result.getResultType())
+                && !GenericValidator.isBlankOrNull(result.getValue())) {
+            return result.getValue().split("\\(")[0].trim();
+        } else {
+            return result.getValue();
+        }
+    }
+
     private String getDictEntry(Result result) {
         Dictionary dictionary = dictionaryService.getDataForId(result.getValue());
         return dictionary != null ? dictionary.getDictEntry() : "";
+    }
+
+    private String getDictValueForDisplay(Result result) {
+        Dictionary dictionary = dictionaryService.getDataForId(result.getValue());
+        if (dictionary != null) {
+            return dictionary.getLocalizedName() == null ? dictionary.getDictEntry() : dictionary.getLocalizedName();
+        }
+        return "";
     }
 
     private String appendUOM(Result result, boolean includeUOM) {

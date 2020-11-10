@@ -111,6 +111,9 @@ public class Test extends EnumValueItemImpl {
 
     private ValueHolder defaultTestResult;
 
+    // should we notify patient of a finalized result
+    private Boolean notifyResults;
+
     @Override
     public String getSortOrder() {
         return sortOrder;
@@ -475,5 +478,16 @@ public class Test extends EnumValueItemImpl {
 
     public void setDefaultTestResult(TestResult defaultTestResult) {
         this.defaultTestResult.setValue(defaultTestResult);
+    }
+
+    public Boolean isNotifyResults() {
+        if (notifyResults == null) {
+            return false;
+        }
+        return notifyResults;
+    }
+
+    public void setNotifyResults(boolean notifyResults) {
+        this.notifyResults = notifyResults;
     }
 }

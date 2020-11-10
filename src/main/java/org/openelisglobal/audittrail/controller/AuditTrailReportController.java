@@ -22,7 +22,7 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class AuditTrailReportController extends BaseController {
 
-    private static final String[] ALLOWED_FIELDS = new String[] {};
+    private static final String[] ALLOWED_FIELDS = new String[] { "accessionNumberSearch" };
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {

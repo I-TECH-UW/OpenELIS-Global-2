@@ -7,7 +7,6 @@ import javax.servlet.ServletRegistration;
 import org.openelisglobal.analyzerimport.action.AnalyzerImportServlet;
 import org.openelisglobal.common.servlet.barcode.LabelMakerServlet;
 import org.openelisglobal.common.servlet.query.AjaxQueryXMLServlet;
-import org.openelisglobal.common.servlet.reports.LogoUploadServlet;
 import org.openelisglobal.common.servlet.reports.ReportsServlet;
 import org.openelisglobal.common.servlet.validation.AjaxTextServlet;
 import org.openelisglobal.common.servlet.validation.AjaxXMLServlet;
@@ -24,27 +23,26 @@ public class AnnotationWebAppInitializer implements WebApplicationInitializer {
 
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
-        AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext();
-        context.register(AppConfig.class);
+        AnnotationConfigWebApplicationContext rootContext = new AnnotationConfigWebApplicationContext();
+        rootContext.register(AppConfig.class);
 
-        servletContext.addListener(new ContextLoaderListener(context));
+        servletContext.addListener(new ContextLoaderListener(rootContext));
 
-        setupServlets(servletContext);
+        setupServlets(servletContext, rootContext);
     }
 
-    private void setupServlets(ServletContext servletContext) {
+    private void setupServlets(ServletContext servletContext, AnnotationConfigWebApplicationContext rootContext) {
         int startupOrder = 0;
-        AnnotationConfigWebApplicationContext dispatcherContext = new AnnotationConfigWebApplicationContext();
-
         ServletRegistration.Dynamic dispatcher = servletContext.addServlet("dispatcher",
-                new DispatcherServlet(dispatcherContext));
+                new DispatcherServlet(rootContext));
         dispatcher.setLoadOnStartup(++startupOrder);
         dispatcher.addMapping("/");
 
-        ServletRegistration.Dynamic logoUploadServlet = servletContext.addServlet("logoUpload",
-                LogoUploadServlet.class);
-        logoUploadServlet.setLoadOnStartup(++startupOrder);
-        logoUploadServlet.addMapping("/logoUpload");
+        // converted to controller
+//        ServletRegistration.Dynamic logoUploadServlet = servletContext.addServlet("logoUpload",
+//                LogoUploadServlet.class);
+//        logoUploadServlet.setLoadOnStartup(++startupOrder);
+//        logoUploadServlet.addMapping("/logoUpload");
 
         ServletRegistration.Dynamic ajaxTextServlet = servletContext.addServlet("ajaxText", AjaxTextServlet.class);
         ajaxTextServlet.setLoadOnStartup(++startupOrder);

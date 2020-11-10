@@ -194,6 +194,7 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String> i
 
     PatientServiceImpl() {
         super(Patient.class);
+        this.auditTrailLog = true;
     }
 
     @Override

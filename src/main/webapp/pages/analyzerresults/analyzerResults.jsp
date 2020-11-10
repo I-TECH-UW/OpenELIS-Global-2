@@ -41,7 +41,7 @@ pagingSearch['${paging.id}'] = '${paging.value}';
 jQuery(document).ready( function() {
 			var searchTerm = '<%=Encode.forJavaScript(request.getParameter("searchTerm"))%>';
 
-			pageSearch = new OEPageSearch( $("searchNotFound"), "td", pager );
+			pageSearch = new OEPageSearch( document.getElementById("searchNotFound"), "td", pager );
 
 			if( searchTerm != "null" ){
 				 pageSearch.highlightSearch( searchTerm, false );
@@ -182,7 +182,7 @@ function /*void*/ markUpdated(){
 	<input type="text"
 	       id="labnoSearch"
 	       maxlength='<%= Integer.toString(new AccessionNumberValidatorFactory().getValidator().getMaxAccessionLength())%>' />
-	<input type="button" onclick="pageSearch.doLabNoSearch($(labnoSearch))" value='<%= MessageUtil.getMessage("label.button.search") %>'>
+	<input type="button" onclick="pageSearch.doLabNoSearch(document.getElementById('labnoSearch'))" value='<%= MessageUtil.getMessage("label.button.search") %>'>
 	</div>
 </c:if>
 <br/><br/><img src="./images/nonconforming.gif" /> = <spring:message code="result.nonconforming.item"/>

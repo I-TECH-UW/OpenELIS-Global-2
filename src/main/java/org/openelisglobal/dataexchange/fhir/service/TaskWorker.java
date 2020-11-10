@@ -5,6 +5,7 @@ import java.util.List;
 import org.hl7.fhir.r4.model.Patient;
 import org.hl7.fhir.r4.model.ServiceRequest;
 import org.hl7.fhir.r4.model.Task;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.ExternalOrderStatus;
 import org.openelisglobal.common.util.DateUtil;
@@ -21,10 +22,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import ca.uhn.fhir.context.FhirContext;
 
 public class TaskWorker {
-    
+
     @Autowired
     private FhirContext fhirContext;
-    
+
     public enum TaskResult {
         OK, DUPLICATE_ORDER, NON_CANCELABLE_ORDER, MESSAGE_ERROR
     }
@@ -96,9 +97,9 @@ public class TaskWorker {
         OrderType orderType = interpreter.getOrderType();
         MessagePatient patient = interpreter.getMessagePatient();
         checkResult = existanceChecker.check(referringOrderNumber);
-        
+
         if (interpretResults.get(0) == InterpreterResults.OK) {
-            
+
 //            checkResult = existanceChecker.check(referringOrderNumber);
             switch (checkResult) {
             case ORDER_FOUND_QUEUED:
@@ -106,44 +107,45 @@ public class TaskWorker {
                     cancelOrder(referringOrderNumber);
                     return TaskResult.OK;
                 } else {
-                    System.out.println("TaskWorker:0");
+                    LogEvent.logDebug(this.getClass().getName(), "handleOrderRequest", "TaskWorker:0");
                     return TaskResult.DUPLICATE_ORDER;
                 }
             case ORDER_FOUND_INPROGRESS:
-                System.out.println("TaskWorker:1");
+                LogEvent.logDebug(this.getClass().getName(), "handleOrderRequest", "TaskWorker:1");
                 return orderType == OrderType.CANCEL ? TaskResult.NON_CANCELABLE_ORDER : TaskResult.DUPLICATE_ORDER;
             case NOT_FOUND:
                 if (orderType == OrderType.CANCEL) {
-                    System.out.println("TaskWorker:2");
+                    LogEvent.logDebug(this.getClass().getName(), "handleOrderRequest", "TaskWorker:2");
                     return TaskResult.NON_CANCELABLE_ORDER;
                 } else {
-                    System.out.println("TaskWorker:3");
+                    LogEvent.logDebug(this.getClass().getName(), "handleOrderRequest", "TaskWorker:3");
                     insertNewOrder(referringOrderNumber, message, patient, ExternalOrderStatus.Entered);
                 }
                 break;
             case ORDER_FOUND_CANCELED:
                 if (orderType == OrderType.CANCEL) {
-                    System.out.println("TaskWorker:4");
+                    LogEvent.logDebug(this.getClass().getName(), "handleOrderRequest", "TaskWorker:4");
                     return TaskResult.NON_CANCELABLE_ORDER;
                 } else {
-                    System.out.println("TaskWorker:5");
+                    LogEvent.logDebug(this.getClass().getName(), "handleOrderRequest", "TaskWorker:5");
                     insertNewOrder(referringOrderNumber, message, patient, ExternalOrderStatus.Entered);
                 }
                 break;
             }
-            
+
         } else if (interpretResults.get(0) == InterpreterResults.UNSUPPORTED_TESTS && checkResult == CheckResult.ORDER_FOUND_QUEUED ) {
             if (orderType == OrderType.CANCEL) {
-                System.out.println("TaskWorker:6");
+                LogEvent.logDebug(this.getClass().getName(), "handleOrderRequest", "TaskWorker:6");
                 cancelOrder(referringOrderNumber);
                 return TaskResult.OK;
             } else {
-                System.out.println("TaskWorker:7");
+                LogEvent.logDebug(this.getClass().getName(), "handleOrderRequest", "TaskWorker:7");
                 return TaskResult.DUPLICATE_ORDER;
             }
         } else if (interpretResults.get(0) == InterpreterResults.UNSUPPORTED_TESTS) {
-            System.out.println("TaskWorker:8");
-            System.out.println("TaskWorker:unsupported tests: " + referringOrderNumber + orderType);
+            LogEvent.logDebug(this.getClass().getName(), "handleOrderRequest", "TaskWorker:8");
+            LogEvent.logDebug(this.getClass().getName(), "handleOrderRequest",
+                    "TaskWorker:unsupported tests: " + referringOrderNumber + orderType);
             insertNewOrder(referringOrderNumber, message, patient, ExternalOrderStatus.NonConforming);
             return TaskResult.MESSAGE_ERROR;
         }
@@ -152,12 +154,13 @@ public class TaskWorker {
     }
 
     private void cancelOrder(String referringOrderNumber) {
-        System.out.println("cancelOrder: ");
+        LogEvent.logDebug(this.getClass().getName(), "cancelOrder", "cancelOrder: ");
         persister.cancelOrder(referringOrderNumber);
     }
 
     private void insertNewOrder(String referringOrderNumber, String message, MessagePatient patient, ExternalOrderStatus eoStatus) {
-        System.out.println("TaskWorker:insertNewOrder: " + referringOrderNumber);
+        LogEvent.logDebug(this.getClass().getName(), "insertNewOrder",
+                "TaskWorker:insertNewOrder: " + referringOrderNumber);
         ElectronicOrder eOrder = new ElectronicOrder();
         eOrder.setExternalId(referringOrderNumber);
         eOrder.setData(message);

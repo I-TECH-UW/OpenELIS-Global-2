@@ -10,7 +10,7 @@ import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.controller.BaseMenuController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
-import org.openelisglobal.common.form.MenuForm;
+import org.openelisglobal.common.form.AdminOptionMenuForm;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.validator.BaseErrors;
 import org.openelisglobal.localization.service.LocalizationService;
@@ -31,7 +31,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-public class SiteInformationMenuController extends BaseMenuController {
+public class SiteInformationMenuController extends BaseMenuController<SiteInformation> {
 
     private static final String[] ALLOWED_FIELDS = new String[] { "selectedIds*" };
 
@@ -106,7 +106,8 @@ public class SiteInformationMenuController extends BaseMenuController {
     }
 
     @Override
-    protected List createMenuList(MenuForm form, HttpServletRequest request) {
+    protected List<SiteInformation> createMenuList(AdminOptionMenuForm<SiteInformation> form,
+            HttpServletRequest request) {
         List<SiteInformation> configurationList;
 
         if (!(form instanceof SiteInformationMenuForm)) {

@@ -2,6 +2,8 @@
          contentType="text/html; charset=UTF-8"
          import="org.openelisglobal.internationalization.MessageUtil,
          		java.util.List,
+         		java.util.Locale,
+         		org.springframework.context.i18n.LocaleContextHolder,
          		org.openelisglobal.common.action.IActionConstants,
          		org.openelisglobal.common.util.IdValuePair,
          		org.openelisglobal.common.util.Versioning,
@@ -32,7 +34,7 @@
   --%>
 
 <%
-    String locale = SystemConfiguration.getInstance().getDefaultLocale().toString();
+	Locale locale = LocaleContextHolder.getLocale();
 %>
 <%--Do not add jquery.ui.js, it will break the sorting --%>
 <script type="text/javascript" src="scripts/jquery.asmselect.js?"></script>
@@ -238,10 +240,10 @@
             ul.append(createLI(id, name, false));
         }
 
-        <% if( locale.equals("en_US")){ %>
-        ul.append( createLI(0, jQuery("#testNameEnglish").val(), true) );
+        <% if( locale.getLanguage().equals("en")){ %>
+        	ul.append( createLI(0, jQuery("#testNameEnglish").val(), true) );
         <% } else { %>
-        ul.append( createLI(0, jQuery("#testNameFrench").val(), true) );
+        	ul.append( createLI(0, jQuery("#testNameFrench").val(), true) );
         <% } %>
 
         jQuery("#sort" + sampleTypeId).append(ul);
@@ -792,6 +794,7 @@
         jQuery("#resultTypeRO").text(jQuery("#resultTypeSelection  option:selected").text());
         jQuery("#activeRO").text(jQuery("#active").attr("checked") ? "Y" : "N");
         jQuery("#orderableRO").text(jQuery("#orderable").attr("checked") ? "Y" : "N");
+        jQuery("#notifyResultsRO").text(jQuery("#notifyResults").attr("checked") ? "Y" : "N");
     }
 
     function createJSON() {
@@ -807,6 +810,7 @@
         jsonObj.uom = jQuery("#uomSelection").val();
         jsonObj.resultType = jQuery("#resultTypeSelection").val();
         jsonObj.orderable = jQuery("#orderable").attr("checked") ? 'Y' : 'N';
+        jsonObj.notifyResults = jQuery("#notifyResults").attr("checked") ? 'Y' : 'N';
         jsonObj.active = jQuery("#active").attr("checked") ? 'Y' : 'N';
         jsonObj.sampleTypes = [];
         addJsonSortingOrder(jsonObj);
@@ -1120,8 +1124,9 @@ td {
                     <label for="orderable"><spring:message code="test.isActive"/></label>
                     <input type="checkbox" id="active" checked="checked"/><br/>
                     <label for="orderable"><spring:message code="label.orderable"/></label>
-                    <input type="checkbox" id="orderable" checked="checked"/>
-
+                    <input type="checkbox" id="orderable" checked="checked"/><br/>
+                    <label for="notifyResults"> <spring:message code="test.notifyResults" /></label>
+                    <input type="checkbox" id='notifyResults'/>
                 </td>
             </tr>
         </table>
@@ -1155,6 +1160,9 @@ td {
             <br/>
             <spring:message code="label.orderable"/>
             <div class="tab" id="orderableRO"></div>
+            <br/>
+            <spring:message code="test.notifyResults"/>
+            <div class="tab" id="notifyResultsRO"></div>
             <br/>
         </div>
         <div class="step2" style="float:right;  width:80%; display: none">
@@ -1340,7 +1348,7 @@ td {
                         <span class="sexRange_0" style="display: none">
                             <spring:message code="sex.male" />
                         </span>
-                </td>ocalization
+                </td>
                 <td><input class="yearMonthSelect_0" type="radio" name="time_0" value="<%=MessageUtil.getContextualMessage("abbreviation.year.single")%>"
                            onchange="upperAgeRangeChanged('0')" checked><spring:message code="abbreviation.year.single" />
                     <input class="yearMonthSelect_0" type="radio" name="time_0" value="<%=MessageUtil.getContextualMessage("abbreviation.month.single")%>"

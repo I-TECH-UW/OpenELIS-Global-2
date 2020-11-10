@@ -11,7 +11,7 @@ import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.controller.BaseMenuController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
-import org.openelisglobal.common.form.MenuForm;
+import org.openelisglobal.common.form.AdminOptionMenuForm;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.common.validator.BaseErrors;
@@ -37,7 +37,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-public class UnifiedSystemUserMenuController extends BaseMenuController {
+public class UnifiedSystemUserMenuController extends BaseMenuController<UnifiedSystemUser> {
 
     private static final String[] ALLOWED_FIELDS = new String[] { "selectedIds*" };
 
@@ -74,7 +74,8 @@ public class UnifiedSystemUserMenuController extends BaseMenuController {
     }
 
     @Override
-    protected List createMenuList(MenuForm form, HttpServletRequest request) {
+    protected List<UnifiedSystemUser> createMenuList(AdminOptionMenuForm<UnifiedSystemUser> form,
+            HttpServletRequest request) {
         List<SystemUser> systemUsers = new ArrayList<>();
 
         String stringStartingRecNo = (String) request.getAttribute("startingRecNo");
@@ -86,7 +87,18 @@ public class UnifiedSystemUserMenuController extends BaseMenuController {
 
         request.setAttribute("menuDefinition", "UnifiedSystemUserMenuDefinition");
 
-        setDisplayPageBounds(request, systemUsers.size(), startingRecNo, systemUserService);
+        request.setAttribute(MENU_TOTAL_RECORDS, String.valueOf(systemUserService.getCount()));
+        request.setAttribute(MENU_FROM_RECORD, String.valueOf(startingRecNo));
+
+        int numOfRecs = 0;
+        if (systemUsers.size() != 0) {
+            numOfRecs = Math.min(systemUsers.size(), getPageSize());
+
+            numOfRecs--;
+        }
+
+        int endingRecNo = startingRecNo + numOfRecs;
+        request.setAttribute(MENU_TO_RECORD, String.valueOf(endingRecNo));
 
         return unifiedUsers;
     }

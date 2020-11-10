@@ -19,6 +19,7 @@ public class DocumentTrackServiceImpl extends BaseObjectServiceImpl<DocumentTrac
 
     DocumentTrackServiceImpl() {
         super(DocumentTrack.class);
+        this.auditTrailLog = true;
     }
 
     @Override

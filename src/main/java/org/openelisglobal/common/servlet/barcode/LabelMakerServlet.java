@@ -14,12 +14,15 @@ import org.apache.commons.lang.StringUtils;
 import org.openelisglobal.barcode.BarcodeLabelMaker;
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.provider.validation.IAccessionNumberValidator;
+import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.common.util.validator.GenericValidator;
 import org.openelisglobal.common.validator.BaseErrors;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.login.dao.UserModuleService;
 import org.openelisglobal.login.valueholder.UserSessionData;
+import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.util.AccessionNumberUtil;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.test.service.TestService;
@@ -99,17 +102,12 @@ public class LabelMakerServlet extends HttpServlet implements IActionConstants {
         // get parameters
         String labNo = request.getParameter("labNo");
         String programCode = request.getParameter("programCode");
-        String patientId = request.getParameter("patientId");
         String type = request.getParameter("type");
         String quantity = request.getParameter("quantity");
         String override = request.getParameter("override");
         if (StringUtils.isEmpty(labNo)) { // get last used accession number if none provided
             labNo = (String) request.getSession().getAttribute("lastAccessionNumber");
             labNo = StringUtil.replaceNullWithEmptyString(labNo);
-        }
-        if (StringUtils.isEmpty(patientId)) { // get last used patient id if none provided
-            patientId = (String) request.getSession().getAttribute("lastPatientId");
-            patientId = StringUtil.replaceNullWithEmptyString(patientId);
         }
         // set to default values if none provided
         if (StringUtils.isEmpty(type)) {
@@ -127,7 +125,7 @@ public class LabelMakerServlet extends HttpServlet implements IActionConstants {
         }
 
         // validate the given parameters
-        Errors errors = validate(labNo, programCode, patientId, type, quantity, override);
+        Errors errors = validate(labNo, programCode, type, quantity, override);
         if (errors.hasErrors()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             response.setContentType("text/html; charset=utf-8");
@@ -146,7 +144,7 @@ public class LabelMakerServlet extends HttpServlet implements IActionConstants {
         UserSessionData usd = (UserSessionData) request.getSession().getAttribute(USER_SESSION_DATA);
         labelMaker.setOverride(override);
         labelMaker.setSysUserId(String.valueOf(usd.getSystemUserId()));
-        labelMaker.generateLabels(labNo, patientId, type, quantity, override);
+        labelMaker.generateLabels(labNo, type, quantity, override);
         ByteArrayOutputStream labelAsOutputStream = labelMaker.createLabelsAsStream();
 
         // if empty stream, assume at max printing
@@ -184,7 +182,7 @@ public class LabelMakerServlet extends HttpServlet implements IActionConstants {
      * @param override    Ensure is bool
      * @return any errors that were generated along the way
      */
-    private Errors validate(String labNo, String programCode, String patientId, String type, String quantity,
+    private Errors validate(String labNo, String programCode, String type, String quantity,
             String override) {
         Errors errors = new BaseErrors();
         // Validate quantity
@@ -195,25 +193,29 @@ public class LabelMakerServlet extends HttpServlet implements IActionConstants {
         if (!"default".equals(type) && !"order".equals(type) && !"specimen".equals(type) && !"blank".equals(type)) {
             errors.reject("barcode.label.error.type.invalid", "barcode.label.error.type.invalid");
         }
-        // Validate patientId
-        if (!org.apache.commons.validator.GenericValidator.isInt(patientId)) {
-            errors.reject("barcode.label.error.patientid.invalid", "barcode.label.error.patientid.invalid");
-        }
         // Validate "labNo" (either labNo, labNo.itemNo)
-        IAccessionNumberValidator accessionNumberValidator = AccessionNumberUtil
-                .getAccessionNumberValidator(programCode);
-        String accessionNumber;
+        boolean validateAccessionNumber = ConfigurationProperties.getInstance()
+                .isPropertyValueEqual(Property.ACCESSION_NUMBER_VALIDATE, "true");
+        if (validateAccessionNumber) {
+            IAccessionNumberValidator accessionNumberValidator = AccessionNumberUtil
+                    .getAccessionNumberValidator(programCode);
+            String accessionNumber;
 //        String sampleItemNumber;
-        if (labNo.indexOf(".") > 0) {
-            accessionNumber = labNo.substring(0, labNo.indexOf("."));
+            if (labNo.indexOf(".") > 0) {
+                accessionNumber = labNo.substring(0, labNo.indexOf("."));
 //            sampleItemNumber = labNo.substring(labNo.indexOf(".") + 1);
-        } else {
-            accessionNumber = labNo;
+            } else {
+                accessionNumber = labNo;
 //            sampleItemNumber = "0";
+            }
+            if (!(IAccessionNumberValidator.ValidationResults.SUCCESS == accessionNumberValidator
+                    .validFormat(accessionNumber, false))) {
+                errors.reject("barcode.label.error.accession.invalid", "barcode.label.error.accession.invalid");
+            }
         }
-        if (!(IAccessionNumberValidator.ValidationResults.SUCCESS == accessionNumberValidator
-                .validFormat(accessionNumber, false))) {
-            errors.reject("barcode.label.error.accession.invalid", "barcode.label.error.accession.invalid");
+        SampleService sampleService = SpringContext.getBean(SampleService.class);
+        if (sampleService.getSampleByAccessionNumber(labNo) == null) {
+            errors.reject("barcode.label.error.accession.nosample", "barcode.label.error.accession.nosample");
         }
         // validate override
         if (!GenericValidator.isBool(override)

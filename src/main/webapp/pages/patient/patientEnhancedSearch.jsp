@@ -81,7 +81,7 @@ function searchPatients()
         labNumber = value;
         jQuery("#searchLabNumber").val(value);
     }
-	patientSearch(lastName, firstName, STNumber, subjectNumber, nationalID, labNumber, "", false, processSearchSuccess);
+	patientSearch(lastName, firstName, STNumber, subjectNumber, nationalID, labNumber, "", "", "", false, processSearchSuccess);
 }
 
 function enhancedSearchPatients()
@@ -108,13 +108,14 @@ function enhancedSearchPatients()
     firstName = jQuery("#firstNameSearchValue").val().trim();
     lastName = jQuery("#lastNameSearchValue").val().trim();
     
-    subjectNumber = jQuery("#subjectNumberSearchValue").val().trim();
-    nationalID = jQuery("#subjectNumberSearchValue").val().trim(); // facilitates "or"
-    STNumber = jQuery("#subjectNumberSearchValue").val().trim();
-    nationalID = jQuery("#subjectNumberSearchValue").val().trim();
+    subjectNumber = jQuery("#patientIdNumberSearchValue").val().trim();
+    nationalID = jQuery("#patientIdNumberSearchValue").val().trim(); // facilitates "or"
+    STNumber = jQuery("#patientIdNumberSearchValue").val().trim();
     
     dateOfBirth = jQuery("#dateOfBirthSearchValue").val().trim();
     gender = jQuery("#searchGendersSearchValues").val().trim();
+    
+    labNumber = jQuery("#patientLabNoSearchValue").val().trim();
     
 
 	patientSearch(lastName, firstName, STNumber, subjectNumber, nationalID, labNumber, "", dateOfBirth, gender, false, processSearchSuccess);
@@ -348,8 +349,8 @@ function enableEnhancedSearchButton(eventCode){
 	var enhancedSearchButton = jQuery("#enhancedSearchButton");
 	enhancedSearchButton.removeAttr("disabled");
 	
-	var subjectNumberSearch = document.getElementById("subjectNumberSearchValue");
-	subjectNumberSearch.addEventListener("keyup", function(event) {
+	var patientIdNumberSearch = document.getElementById("patientIdNumberSearchValue");
+	patientIdNumberSearch.addEventListener("keyup", function(event) {
 		if(event.keyCode === 13) {
 			event.preventDefault();
 			document.getElementById("enhancedSearchButton").click();
@@ -439,13 +440,27 @@ function handleSelectedPatient(){
 
 <div id="PatientPage" class="patientEnhancedSearch"
 	style="text-align: left;">
+	    <input
+           id="searchValue"
+           type="hidden"/>
 	<h2><spring:message code="sample.entry.search" /></h2>
 	<table>
 		<tr>
 			<td style="text-align: left;"><spring:message
-					code="patient.subject.number" /> :</td>
+					code="patient.labno.search" /> :</td>
 			<td><input
-					id="subjectNumberSearchValue" 
+					id="patientLabNoSearchValue" 
+					size="40"
+					maxlength="<%= Integer.toString(accessionNumberValidator.getMaxAccessionLength()) %>"
+					oninput="enableEnhancedSearchButton(event.which);"
+					placeholder='<%=MessageUtil.getMessage("label.select.search.here")%>' />
+			</td>
+		</tr>
+		<tr>
+			<td style="text-align: left;"><spring:message
+					code="patient.id.number.search" /> :</td>
+			<td><input
+					id="patientIdNumberSearchValue" 
 					size="40" 
 					oninput="enableEnhancedSearchButton(event.which);"
 					placeholder='<%=MessageUtil.getMessage("label.select.search.here")%>' />

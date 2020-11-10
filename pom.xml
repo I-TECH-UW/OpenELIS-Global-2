@@ -12,14 +12,12 @@
 	<packaging>war</packaging>
 
 	<properties>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
-		<maven.java.release>8</maven.java.release>
+		<maven.java.release>11</maven.java.release>
 
 		<major.version>2</major.version>
-		<minor.version>0</minor.version>
+		<minor.version>2</minor.version>
 		<state.version>1</state.version><!-- 0 = alpha, 1 = beta, 2 = rc, 3 = deployable -->
-		<fix.version>0</fix.version>
+		<fix.version>2</fix.version>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
@@ -38,6 +36,11 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>org.jsmpp</groupId>
+			<artifactId>jsmpp</artifactId>
+			<version>2.3.5</version>
+		</dependency>
+		<dependency>
 			<groupId>org.itech</groupId>
 			<artifactId>dataexport-api</artifactId>
 			<version>0.0.0.1</version>
@@ -45,12 +48,18 @@
 		<dependency>
 			<groupId>ca.uhn.hapi.fhir</groupId>
 			<artifactId>hapi-fhir-structures-r4</artifactId>
-			<version>4.2.0</version>
+			<version>5.0.2</version>
+			<exclusions>
+				<exclusion>
+					<groupId>xpp3</groupId>
+					<artifactId>xpp3</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>ca.uhn.hapi.fhir</groupId>
 			<artifactId>hapi-fhir-client</artifactId>
-			<version>4.2.0</version>
+			<version>5.0.2</version>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
@@ -176,6 +185,16 @@
 		</dependency>
 		<!-- JAVAX DEPENDENCIES -->
 		<dependency>
+			<groupId>javax.annotation</groupId>
+			<artifactId>javax.annotation-api</artifactId>
+			<version>1.3.2</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.mail</groupId>
+			<artifactId>javax.mail</artifactId>
+			<version>1.6.0</version>
+		</dependency>
+		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
 			<version>4.0.1</version>
@@ -186,6 +205,11 @@
 			<artifactId>javax.servlet.jsp-api</artifactId>
 			<version>2.3.3</version>
 			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.xml.soap</groupId>
+			<artifactId>javax.xml.soap-api</artifactId>
+			<version>1.4.0</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.validation</groupId>
@@ -251,6 +275,11 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-aop</artifactId>
+			<version>${springframework.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context-support</artifactId>
 			<version>${springframework.version}</version>
 		</dependency>
 		<dependency>
@@ -325,11 +354,6 @@
 			<version>0.9.5.4</version>
 		</dependency>
 		<dependency>
-			<groupId>dom4j</groupId>
-			<artifactId>dom4j</artifactId>
-			<version>1.6.1</version>
-		</dependency>
-		<dependency>
 			<groupId>org.owasp.encoder</groupId>
 			<artifactId>encoder</artifactId>
 			<version>1.2.2</version>
@@ -340,9 +364,14 @@
 			<version>5.5.13</version>
 		</dependency>
 		<dependency>
+			<groupId>jakarta.xml.ws</groupId>
+			<artifactId>jakarta.xml.ws-api</artifactId>
+			<version>2.3.3</version>
+		</dependency>
+		<dependency>
 			<groupId>net.sf.jasperreports</groupId>
 			<artifactId>jasperreports</artifactId>
-			<version>6.9.0</version>
+			<version>6.15.0</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.bouncycastle</groupId>
@@ -350,6 +379,16 @@
 				</exclusion>
 			</exclusions>
 
+		</dependency>
+		<dependency>
+			<groupId>com.sun.activation</groupId>
+			<artifactId>javax.activation</artifactId>
+			<version>1.2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.mail</groupId>
+			<artifactId>javax.mail-api</artifactId>
+			<version>1.6.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mindrot</groupId>
@@ -402,6 +441,11 @@
 			<artifactId>jasypt</artifactId>
 			<version>1.9.3</version>
 		</dependency>
+		<dependency>
+			<groupId>com.sun.xml.messaging.saaj</groupId>
+			<artifactId>saaj-impl</artifactId>
+			<version>1.4.0</version>
+		</dependency>
 
 	</dependencies>
 
@@ -409,8 +453,11 @@
 		<finalName>OpenELIS-Global</finalName>
 		<resources>
 			<resource>
-				<directory>src/main/resources</directory>
+				<directory>src/main/filtered-resources</directory>
 				<filtering>true</filtering>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
 			</resource>
 		</resources>
 		<plugins>

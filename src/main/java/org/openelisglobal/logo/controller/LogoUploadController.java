@@ -14,86 +14,64 @@
 * Copyright (C) ITECH, University of Washington, Seattle WA.  All Rights Reserved.
 *
 */
-package org.openelisglobal.common.servlet.reports;
+package org.openelisglobal.logo.controller;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.service.servlet.reports.LogoUploadService;
 import org.openelisglobal.image.service.ImageService;
 import org.openelisglobal.image.valueholder.Image;
-import org.openelisglobal.internationalization.MessageUtil;
-import org.openelisglobal.login.dao.UserModuleService;
+import org.openelisglobal.logo.form.LogoUploadForm;
 import org.openelisglobal.siteinformation.service.SiteInformationService;
 import org.openelisglobal.siteinformation.valueholder.SiteInformation;
-import org.openelisglobal.spring.util.SpringContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.multipart.MultipartFile;
 
-public class LogoUploadServlet extends HttpServlet {
+@Controller
+@RequestMapping("/logoUpload")
+public class LogoUploadController {
+    
 
     static final long serialVersionUID = 1L;
 
-    private ImageService imageService = SpringContext.getBean(ImageService.class);
-    private SiteInformationService siteInformationService = SpringContext.getBean(SiteInformationService.class);
-    private UserModuleService userModuleService = SpringContext.getBean(UserModuleService.class);
-    private LogoUploadService logoUploadService = SpringContext.getBean(LogoUploadService.class);
-    private static final String PREVIEW_FILE_PATH = File.separator + "static" + File.separator + "images"
-            + File.separator;
-    private String FULL_PREVIEW_FILE_PATH;
+    @Autowired
+    private ImageService imageService;
+    @Autowired
+    private SiteInformationService siteInformationService;
+    @Autowired
+    private LogoUploadService logoUploadService;
 
-    @Override
-    public void init() throws ServletException {
-        super.init();
-        FULL_PREVIEW_FILE_PATH = getServletContext().getRealPath("") + PREVIEW_FILE_PATH;
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+    @PostMapping
+    protected String doPost(HttpServletRequest request, @ModelAttribute("form") LogoUploadForm form)
             throws ServletException, IOException {
-        // check for authentication
-        if (userModuleService.isSessionExpired(request)) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.setContentType("text/html; charset=utf-8");
-            response.getWriter().println(MessageUtil.getMessage("message.error.unauthorized"));
-            return;
-        }
-
-        String whichLogo = request.getParameter("logo");
+        String whichLogo = form.getLogoName();
         boolean removeImage = "true".equals(request.getParameter("removeImage"));
-        // Check that we have a file upload request
-        boolean isMultipart = ServletFileUpload.isMultipartContent(request);
-
-        if (!isMultipart) {
-            return;
-        }
 
         if (removeImage) {
             removeImage(whichLogo);
         } else {
-            updateImage(request, whichLogo);
+            updateImage(form.getLogoFile(), whichLogo);
         }
 
-        response.sendRedirect(getServletContext().getContextPath() + "/PrintedReportsConfigurationMenu.do");
+        return "redirect:/PrintedReportsConfigurationMenu.do";
     }
 
     private void removeImage(String logoName) {
-        File previewFile = new File(
-                FULL_PREVIEW_FILE_PATH + (logoName.equals("headerLeftImage") ? "leftLabLogo.jpg" : "rightLabLogo.jpg"));
+        File previewFile = new File(imageService.getFullPreviewPath() + imageService.getImageNameFilePath(logoName));
 
         boolean deleteSuccess = previewFile.delete();
         if (!deleteSuccess) {
@@ -121,37 +99,18 @@ public class LogoUploadServlet extends HttpServlet {
 
     }
 
-    private void updateImage(HttpServletRequest request, String whichLogo) throws ServletException {
-        DiskFileItemFactory factory = new DiskFileItemFactory();
-
-        factory.setSizeThreshold(Image.MAX_MEMORY_SIZE);
-
-        factory.setRepository(new File(System.getProperty("java.io.tmpdir")));
-
-        ServletFileUpload upload = new ServletFileUpload(factory);
-
-        upload.setSizeMax(Image.MAX_MEMORY_SIZE);
-
+    private void updateImage(MultipartFile logoFile, String whichLogo) throws ServletException {
         try {
-            List<FileItem> items = upload.parseRequest(request);
+            if (validToWrite(logoFile)) {
 
-            for (FileItem item : items) {
+                File previewFile = new File(
+                        imageService.getFullPreviewPath() + imageService.getImageNameFilePath(whichLogo));
 
-                if (validToWrite(item)) {
+                logoFile.transferTo(previewFile);
 
-                    File previewFile = new File(FULL_PREVIEW_FILE_PATH
-                            + (whichLogo.equals("headerLeftImage") ? "leftLabLogo.jpg" : "rightLabLogo.jpg"));
+                writeFileImageToDatabase(previewFile, whichLogo);
 
-                    item.write(previewFile);
-
-                    writeFileImageToDatabase(previewFile, whichLogo);
-
-                    break;
-                }
             }
-
-        } catch (FileUploadException e) {
-            throw new ServletException(e);
         } catch (RuntimeException e) {
             throw new ServletException(e);
         } catch (Exception e) {
@@ -210,18 +169,19 @@ public class LogoUploadServlet extends HttpServlet {
         String filePath;
         try {
             filePath = file.getCanonicalPath();
-            return filePath.startsWith((new File(FULL_PREVIEW_FILE_PATH).getCanonicalPath()));
+            return filePath.startsWith((new File(imageService.getFullPreviewPath()).getCanonicalPath()));
         } catch (IOException e) {
             LogEvent.logErrorStack(e);
             return false;
         }
     }
 
-    private boolean validToWrite(FileItem item) {
-        boolean valid = !item.isFormField() && item.getSize() > 0 && !GenericValidator.isBlankOrNull(item.getName())
-                && (item.getName().contains("jpg") || item.getName().contains("png") || item.getName().contains("gif"));
+    private boolean validToWrite(MultipartFile logoFile) {
+        boolean valid = logoFile.getSize() > 0 && !GenericValidator.isBlankOrNull(logoFile.getOriginalFilename())
+                && (logoFile.getOriginalFilename().contains("jpg") || logoFile.getOriginalFilename().contains("png")
+                        || logoFile.getOriginalFilename().contains("gif"));
 
-        try (InputStream input = item.getInputStream()) {
+        try (InputStream input = logoFile.getInputStream()) {
             ImageIO.read(input);
         } catch (IOException e) {
             valid = false;

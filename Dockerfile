@@ -6,7 +6,6 @@ RUN rm -rf /usr/local/tomcat/webapps/* \
     
 #Deploy the war into tomcat image and point root to it
 ADD target/OpenELIS-Global.war /usr/local/tomcat/webapps/OpenELIS-Global.war
-RUN ln -s /usr/local/tomcat/webapps/OpenELIS-Global /usr/local/tomcat/webapps/ROOT
     
 #contains sensitive data, so being mounted at runtime
 #ADD ./install/tomcat-resources/server.xml /usr/local/tomcat/conf/server.xml
