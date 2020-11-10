@@ -52,8 +52,7 @@ Liquibase often complains about checksum errors. We hope to be able to get rid o
 
 
 1. Follow password migration instructions
-    1. Currently located [here](https://docs.google.com/document/d/1ZfFanwLskT9A0i5GC92PVF-5McWXttBITBi1Jbn3_yU/edit?usp=sharing)…
-
+    1. Currently located [here](password.md)
 
 ## Run Liquibase on Old Server
 
@@ -126,7 +125,7 @@ Liquibase often complains about checksum errors. We hope to be able to get rid o
 
 
 1. Follow password migration instructions
-    1. Currently located [here](https://docs.google.com/document/d/1ZfFanwLskT9A0i5GC92PVF-5McWXttBITBi1Jbn3_yU/edit?usp=sharing)…
+    1. Currently located [here](password.md)
 
 
 ## Run Liquibase
@@ -155,7 +154,7 @@ Liquibase often complains about checksum errors. We hope to be able to get rid o
 
 
 1. Follow normal install instructions for OpenELIS-Global 2 on the computer
-    1. Currently located [here](https://docs.google.com/document/d/1ilMuzqNPrCTv3p_UNnaHWdtA6U3YOaQVjPQ6IlqgGKc/edit?usp=sharing)...
+    1. Currently located [here](install.md)
 
 
 ## Pause Docker Container
@@ -214,7 +213,7 @@ Liquibase often complains about checksum errors. We hope to be able to get rid o
 
 
 1. Follow password migration instructions
-    1. Currently located [here](https://docs.google.com/document/d/1ZfFanwLskT9A0i5GC92PVF-5McWXttBITBi1Jbn3_yU/edit?usp=sharing)…
+    1. Currently located [here](password.md)
 
 
 ## Run Liquibase
