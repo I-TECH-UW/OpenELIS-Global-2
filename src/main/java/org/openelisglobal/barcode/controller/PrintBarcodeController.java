@@ -118,6 +118,10 @@ public class PrintBarcodeController extends BaseController {
             displayObjects.put("existingTests", currentTestList);
         }
 
+        if (FormFields.getInstance().useField(FormFields.Field.SampleNature)) {
+            form.setSampleNatureList(DisplayListService.getInstance().getList(ListType.SAMPLE_NATURE));
+        }
+
         return findForward(FWD_SUCCESS, displayObjects, form);
     }
 

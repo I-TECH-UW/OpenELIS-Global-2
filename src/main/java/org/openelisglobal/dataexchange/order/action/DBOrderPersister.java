@@ -28,8 +28,10 @@ import org.openelisglobal.common.services.StatusService.ExternalOrderStatus;
 import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder;
 import org.openelisglobal.dataexchange.service.order.ElectronicOrderService;
+import org.openelisglobal.patient.service.PatientContactService;
 import org.openelisglobal.patient.service.PatientService;
 import org.openelisglobal.patient.valueholder.Patient;
+import org.openelisglobal.patient.valueholder.PatientContact;
 import org.openelisglobal.patientidentity.service.PatientIdentityService;
 import org.openelisglobal.patientidentity.valueholder.PatientIdentity;
 import org.openelisglobal.patientidentitytype.service.PatientIdentityTypeService;
@@ -66,6 +68,8 @@ public class DBOrderPersister implements IOrderPersister {
     private PersonService personService;
     @Autowired
     private PatientService patientService;
+    @Autowired
+    private PatientContactService patientContactService;
 
     private Patient patient;
 
@@ -94,12 +98,35 @@ public class DBOrderPersister implements IOrderPersister {
         }
     }
 
+    private void persistContact(MessagePatient orderPatient, Patient patient) {
+        PatientContact contact = new PatientContact();
+        Person contactPerson = new Person();
+        contactPerson.setFirstName(orderPatient.getContactFirstName());
+        contactPerson.setLastName(orderPatient.getContactLastName());
+        contactPerson.setEmail(orderPatient.getContactEmail());
+        contactPerson.setPrimaryPhone(orderPatient.getContactPhone());
+
+        contact.setPatientId(patient.getId());
+        contact.setSysUserId(SERVICE_USER_ID);
+        contactPerson.setSysUserId(SERVICE_USER_ID);
+
+        contactPerson.setId(personService.insert(contactPerson));
+        contact.setPerson(contactPerson);
+        patientContactService.insert(contact);
+    }
+
     private void createNewPatient(MessagePatient orderPatient) {
         Person person = new Person();
         person.setFirstName(orderPatient.getFirstName());
         person.setLastName(orderPatient.getLastName());
         person.setStreetAddress(orderPatient.getAddressStreet());
         person.setCity(orderPatient.getAddressVillage());
+        person.setCountry(orderPatient.getAddressCountry());
+        person.setEmail(orderPatient.getEmail());
+        person.setPrimaryPhone(orderPatient.getMobilePhone());
+        if (GenericValidator.isBlankOrNull(person.getPrimaryPhone())) {
+            person.setPrimaryPhone(orderPatient.getWorkPhone());
+        }
         person.setSysUserId(SERVICE_USER_ID);
 
         patient = new Patient();
@@ -109,16 +136,18 @@ public class DBOrderPersister implements IOrderPersister {
         patient.setPerson(person);
         patient.setSysUserId(SERVICE_USER_ID);
         patient.setExternalId(orderPatient.getExternalId());
+
         if (GenericValidator.isBlankOrNull(orderPatient.getGuid())) {
             orderPatient.setGuid(java.util.UUID.randomUUID().toString());
         }
 
         List<PatientIdentity> identities = new ArrayList<>();
-        if (orderPatient.getExternalId().length() == 0) //HL7
+        if (orderPatient.getExternalId().length() == 0) {
             addIdentityIfAppropriate(IDENTITY_GUID_ID, orderPatient.getGuid(), identities);
-        else //FHIR
+        } else {
             addIdentityIfAppropriate(IDENTITY_GUID_ID, orderPatient.getExternalId(), identities);
-        
+        }
+
         addIdentityIfAppropriate(IDENTITY_STNUMBER_ID, orderPatient.getStNumber(), identities);
         addIdentityIfAppropriate(IDENTITY_OBNUMBER_ID, orderPatient.getObNumber(), identities);
         addIdentityIfAppropriate(IDENTITY_PCNUMBER_ID, orderPatient.getPcNumber(), identities);
@@ -130,6 +159,8 @@ public class DBOrderPersister implements IOrderPersister {
             identity.setPatientId(patient.getId());
             identityService.insert(identity);
         }
+
+        persistContact(orderPatient, patient);
     }
 
     private void addIdentityIfAppropriate(String typeId, String value, List<PatientIdentity> identities) {

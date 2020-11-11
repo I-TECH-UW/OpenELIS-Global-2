@@ -47,8 +47,9 @@ import org.springframework.web.servlet.view.tiles3.TilesView;
 @EnableAsync
 @Configuration
 @EnableJpaRepositories(basePackages = { "org.itech", "org.ozeki.sms" })
-@PropertySource(value = { "classpath:application.properties",
-        "file:/run/secrets/common.properties" })
+@PropertySource("classpath:application.properties")
+@PropertySource("file:/run/secrets/common.properties")
+@PropertySource(value = "file:/run/secrets/extra.properties", ignoreResourceNotFound = true)
 @ComponentScan(basePackages = { "spring", "org.openelisglobal", "org.itech", "org.ozeki.sms" })
 public class AppConfig implements WebMvcConfigurer {
 
@@ -117,7 +118,9 @@ public class AppConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(localeChangeInterceptor()).addPathPatterns("/**");
         registry.addInterceptor(moduleAuthenticationInterceptor).addPathPatterns("/**")
-                .excludePathPatterns(SecurityConfig.OPEN_PAGES).excludePathPatterns(SecurityConfig.RESOURCE_PAGES)
+                .excludePathPatterns(SecurityConfig.OPEN_PAGES)//
+                .excludePathPatterns(SecurityConfig.LOGIN_PAGES)//
+                .excludePathPatterns(SecurityConfig.RESOURCE_PAGES)//
                 .excludePathPatterns(SecurityConfig.AUTH_OPEN_PAGES);
 //                .excludePathPatterns(SecurityConfig.CLIENT_CERTIFICATE_PAGES);
         registry.addInterceptor(urlLocatedErrorsInterceptor).addPathPatterns("/**");
@@ -164,10 +167,9 @@ public class AppConfig implements WebMvcConfigurer {
             mailSender.setUsername(username);
             mailSender.setPassword(password);
             props.put("mail.smtp.auth", "true");
+        } else {
+            props.put("mail.smtp.auth", "false");
         }
-
-
-
 
         return mailSender;
     }

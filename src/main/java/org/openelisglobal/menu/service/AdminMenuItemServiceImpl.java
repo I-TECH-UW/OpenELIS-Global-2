@@ -9,6 +9,7 @@ import javax.annotation.PostConstruct;
 
 import org.openelisglobal.common.formfields.AdminFormFields;
 import org.openelisglobal.common.formfields.AdminFormFields.Field;
+import org.openelisglobal.common.util.ConfigurationListener;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.internationalization.MessageUtil;
@@ -16,7 +17,7 @@ import org.openelisglobal.menu.valueholder.AdminMenuItem;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AdminMenuItemServiceImpl implements AdminMenuItemService {
+public class AdminMenuItemServiceImpl implements AdminMenuItemService, ConfigurationListener {
 
     List<AdminMenuItem> adminMenuItems;
 
@@ -187,6 +188,11 @@ public class AdminMenuItemServiceImpl implements AdminMenuItemService {
 
         });
         return sortedMenuItems;
+    }
+
+    @Override
+    public void refreshConfiguration() {
+        createActiveList();
     }
 
 }

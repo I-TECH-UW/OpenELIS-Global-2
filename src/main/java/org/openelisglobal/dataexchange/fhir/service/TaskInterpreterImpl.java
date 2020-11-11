@@ -4,9 +4,14 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.validator.GenericValidator;
+import org.hl7.fhir.r4.model.Address;
+import org.hl7.fhir.r4.model.ContactPoint;
+import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Patient;
+import org.hl7.fhir.r4.model.Patient.ContactComponent;
 import org.hl7.fhir.r4.model.ServiceRequest;
 import org.hl7.fhir.r4.model.Task;
 import org.openelisglobal.common.log.LogEvent;
@@ -124,7 +129,7 @@ public class TaskInterpreterImpl implements TaskInterpreter {
     }
 
     private Test createTestFromFHIR(ServiceRequest serviceRequest) throws HL7Exception {
-        System.out.println("TaskInterpreter:createTestFromFHIR:");
+        LogEvent.logDebug(this.getClass().getName(), "createTestFromFHIR", "TaskInterpreter:createTestFromFHIR:");
 
         String loincCode = "";
         String system = "";
@@ -150,22 +155,67 @@ public class TaskInterpreterImpl implements TaskInterpreter {
 
         MessagePatient messagePatient = new MessagePatient();
 
-          messagePatient.setExternalId(patient.getIdentifierFirstRep().getId());
-          SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-          Date birthDate = new Date();
-          birthDate = patient.getBirthDate();
-          String strDate = sdf.format(birthDate);
-          messagePatient.setDisplayDOB(strDate);
+        messagePatient.setExternalId(patient.getIdentifierFirstRep().getId());
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        Date birthDate = new Date();
+        birthDate = patient.getBirthDate();
+        String strDate = sdf.format(birthDate);
+        messagePatient.setDisplayDOB(strDate);
 
-          if(patient.getGender().toString() == "MALE") {
-             messagePatient.setGender("M");
-          } else {
-             messagePatient.setGender("F");
-          }
+        if (patient.getGender().toString() == "MALE") {
+            messagePatient.setGender("M");
+        } else {
+            messagePatient.setGender("F");
+        }
 
-          messagePatient.setLastName(patient.getNameFirstRep().getFamily());
-          messagePatient.setFirstName(patient.getNameFirstRep().getGivenAsSingleString());
+        for (Identifier identifier : patient.getIdentifier()) {
+            if ("http://govmu.org".equals(identifier.getSystem())) {
+                messagePatient.setNationalId(identifier.getId());
+            }
+            if ("passport".equals(identifier.getSystem())) {
+                if (GenericValidator.isBlankOrNull(messagePatient.getNationalId())) {
+                    messagePatient.setNationalId(identifier.getId());
+                }
+            }
+        }
+        messagePatient.setLastName(patient.getNameFirstRep().getFamily());
+        messagePatient.setFirstName(patient.getNameFirstRep().getGivenAsSingleString());
 
+        for (ContactPoint telecom : patient.getTelecom()) {
+            if (ContactPoint.ContactPointSystem.EMAIL.equals(telecom.getSystem())) {
+                messagePatient.setEmail(telecom.getValue());
+            }
+            if (ContactPoint.ContactPointSystem.SMS.equals(telecom.getSystem())) {
+                messagePatient.setMobilePhone(telecom.getValue());
+            }
+            if (ContactPoint.ContactPointSystem.PHONE.equals(telecom.getSystem())) {
+                messagePatient.setWorkPhone(telecom.getValue());
+            }
+        }
+        for (Address address : patient.getAddress()) {
+            if (Address.AddressUse.TEMP.equals(address.getUse())) {
+                messagePatient.setAddressStreet(address.getLine().stream().map(line -> line.getValue())
+                        .collect(Collectors.toList()).stream().collect(Collectors.joining(", ")));
+                messagePatient.setAddressVillage(address.getCity());
+                messagePatient.setAddressDepartment(address.getState());
+                messagePatient.setAddressCountry(address.getCountry());
+            }
+        }
+
+        ContactComponent contact = patient.getContactFirstRep();
+        messagePatient.setContactLastName(contact.getName().getFamily());
+        messagePatient.setContactFirstName(contact.getName().getGivenAsSingleString());
+        for (ContactPoint contactTelecom : contact.getTelecom()) {
+            if (ContactPoint.ContactPointSystem.EMAIL.equals(contactTelecom.getSystem())) {
+                messagePatient.setContactEmail(contactTelecom.getValue());
+            }
+            if (ContactPoint.ContactPointSystem.SMS.equals(contactTelecom.getSystem())) {
+                messagePatient.setContactPhone(contactTelecom.getValue());
+            }
+//            if (ContactPoint.ContactPointSystem.PHONE.equals(contactTelecom.getSystem())) {
+//                messagePatient.setContactPhone(contactTelecom.getValue());
+//            }
+        }
 
         return messagePatient;
     }
@@ -193,7 +243,7 @@ public class TaskInterpreterImpl implements TaskInterpreter {
     }
 
     private List<InterpreterResults> buildResultList(boolean exceptionThrown) {
-        System.out.println("buildResultList: " + exceptionThrown);
+        LogEvent.logDebug(this.getClass().getName(), "buildResultList", "buildResultList: " + exceptionThrown);
         results = new ArrayList<>();
 
         if (exceptionThrown) {

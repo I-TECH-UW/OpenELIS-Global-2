@@ -53,7 +53,7 @@ var pagingSearch = new Object();
 
 jQuery(document).ready( function() {
 			var searchTerm = '<%=Encode.forJavaScript(searchTerm)%>';
-			pageSearch = new OEPageSearch( $("searchNotFound"), "td", pager );
+			pageSearch = new OEPageSearch( document.getElementById("searchNotFound"), "td", pager );
 			
 			if( searchTerm != "null" ){
 				 pageSearch.highlightSearch( searchTerm, false );
@@ -182,7 +182,7 @@ function /*boolean*/ handleEnterEvent(){
 	       id="labnoSearch"
 	       placeholder='<spring:message code="sample.search.scanner.instructions"/>'
 	       maxlength='<%= Integer.toString(accessionNumberValidator.getMaxAccessionLength())%>' />
-	<input type="button" onclick="pageSearch.doLabNoSearch($(labnoSearch))" value='<%= MessageUtil.getMessage("label.button.search") %>'>
+	<input type="button" onclick="pageSearch.doLabNoSearch(document.getElementById('labnoSearch'))" value='<%= MessageUtil.getMessage("label.button.search") %>'>
 	</span>
 </div>
 </c:if>

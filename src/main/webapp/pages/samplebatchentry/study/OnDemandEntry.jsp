@@ -81,7 +81,8 @@ function checkSampleEnteredSuccess(xhr) {
     var formField = xhr.responseXML.getElementsByTagName("formfield").item(0);
     var message = xhr.responseXML.getElementsByTagName("message").item(0);
     if (message.firstChild.nodeValue == "SAMPLE_FOUND") {
-    	setPatientThenPrintLabel();
+    	printLabel();
+//     	setPatientThenPrintLabel();
     } else {
         alert("<spring:message code='error.notentered' />");    	
     }

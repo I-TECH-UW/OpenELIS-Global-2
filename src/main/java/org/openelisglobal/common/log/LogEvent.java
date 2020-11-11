@@ -84,6 +84,11 @@ public class LogEvent {
                 throwable);
     }
 
+    public static void logTrace(String className, String methodName, String debugMessage) {
+        getLog().trace(
+                "Class: " + className + ", Method: " + methodName + ", Trace: " + sanitizeLogMessage(debugMessage));
+    }
+
     /**
      * Write to the log file (type debug)
      *

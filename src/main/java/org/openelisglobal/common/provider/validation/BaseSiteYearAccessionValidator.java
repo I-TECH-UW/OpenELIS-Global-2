@@ -33,8 +33,8 @@ public abstract class BaseSiteYearAccessionValidator {
 
     protected SampleService sampleService = SpringContext.getBean(SampleService.class);
 
-    protected static final String INCREMENT_STARTING_VALUE = "000001";
-    protected static final int UPPER_INC_RANGE = 999999;
+    protected static final String INCREMENT_STARTING_VALUE = "0000000000001";
+    protected static final long UPPER_INC_RANGE = 9999999999999L;
     protected static final int SITE_START = 0;
     protected int SITE_END = getSiteEndIndex();
     protected int YEAR_START = getYearStartIndex();
@@ -103,12 +103,12 @@ public abstract class BaseSiteYearAccessionValidator {
             return createFirstAccessionNumber(null);
         }
 
-        int increment = Integer.parseInt(currentHighAccessionNumber.substring(INCREMENT_START));
+        Long increment = Long.parseLong(currentHighAccessionNumber.substring(INCREMENT_START));
         String incrementAsString;
 
         if (increment < UPPER_INC_RANGE) {
             increment++;
-            incrementAsString = String.format("%06d", increment);
+            incrementAsString = String.format("%013d", increment);
         } else {
             throw new IllegalArgumentException("AccessionNumber has no next value");
         }
@@ -125,7 +125,15 @@ public abstract class BaseSiteYearAccessionValidator {
     public ValidationResults checkAccessionNumberValidity(String accessionNumber, String recordType, String isRequired,
             String projectFormName) {
 
-        ValidationResults results = validFormat(accessionNumber, true);
+        ValidationResults results;
+        boolean validateAccessionNumber = ConfigurationProperties.getInstance()
+                .isPropertyValueEqual(Property.ACCESSION_NUMBER_VALIDATE, "true");
+        if( validateAccessionNumber ) {
+            results = validFormat(accessionNumber, true);
+        } else {
+            results = ValidationResults.SUCCESS;
+            
+        }
         // TODO refactor accessionNumberIsUsed into two methods so the null isn't
         // needed. (Its only used for program accession number)
         if (results == ValidationResults.SUCCESS && accessionNumberIsUsed(accessionNumber, null)) {
@@ -162,7 +170,7 @@ public abstract class BaseSiteYearAccessionValidator {
         }
 
         try {
-            Integer.parseInt(accessionNumber.substring(INCREMENT_START));
+            Long.parseLong(accessionNumber.substring(INCREMENT_START));
         } catch (NumberFormatException e) {
             return ValidationResults.FORMAT_FAIL;
         }
