@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.validator.GenericValidator;
 import org.hl7.fhir.r4.model.Address;
 import org.hl7.fhir.r4.model.ContactPoint;
+import org.hl7.fhir.r4.model.Enumerations.AdministrativeGender;
 import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Patient;
 import org.hl7.fhir.r4.model.Patient.ContactComponent;
@@ -162,9 +163,9 @@ public class TaskInterpreterImpl implements TaskInterpreter {
         String strDate = sdf.format(birthDate);
         messagePatient.setDisplayDOB(strDate);
 
-        if (patient.getGender().toString() == "MALE") {
+        if (AdministrativeGender.MALE.equals(patient.getGender())) {
             messagePatient.setGender("M");
-        } else {
+        } else if (AdministrativeGender.FEMALE.equals(patient.getGender())) {
             messagePatient.setGender("F");
         }
 
