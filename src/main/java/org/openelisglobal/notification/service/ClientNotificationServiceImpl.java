@@ -24,6 +24,7 @@ import org.openelisglobal.result.valueholder.Result;
 import org.openelisglobal.samplehuman.service.SampleHumanService;
 import org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -38,6 +39,9 @@ public class ClientNotificationServiceImpl implements ClientNotificationService 
     private SampleHumanService sampleHumanService;
     @Autowired
     private DictionaryService dictionaryService;
+
+    @Value("${org.openelisglobal.ozeki.active:false}")
+    private Boolean ozekiActive;
 
     @SuppressWarnings("rawtypes")
     @Autowired
@@ -124,8 +128,7 @@ public class ClientNotificationServiceImpl implements ClientNotificationService 
         }
 
         try {
-            if (!GenericValidator.isBlankOrNull(patient.getPerson().getEmail()) && ConfigurationProperties.getInstance()
-                    .getPropertyValue(Property.PATIENT_RESULTS_SMTP_ENABLED).equals(Boolean.TRUE.toString())) {
+            if (shouldSendEmail() && canSendEmail(patient)) {
                 EmailNotification emailNotification = new EmailNotification();
                 emailNotification.setRecipientEmailAddress(patient.getPerson().getEmail());
                 // TODO figure out where to store address and how to retrieve
@@ -143,12 +146,7 @@ public class ClientNotificationServiceImpl implements ClientNotificationService 
         }
 
         try {
-            if (!GenericValidator.isBlankOrNull(patient.getPerson().getPrimaryPhone())
-                    && (ConfigurationProperties.getInstance().getPropertyValue(Property.PATIENT_RESULTS_BMP_SMS_ENABLED)
-                            .equals(Boolean.TRUE.toString())
-                            || ConfigurationProperties.getInstance()
-                                    .getPropertyValue(Property.PATIENT_RESULTS_SMPP_SMS_ENABLED)
-                                    .equals(Boolean.TRUE.toString()))) {
+            if (shouldSendSMS() && canSendSMS(patient)) {
                 SMSNotification smsNotification = new SMSNotification();
                 String phoneNumber = "";
                 for (char ch : patient.getPerson().getPrimaryPhone().toCharArray()) {
@@ -171,6 +169,27 @@ public class ClientNotificationServiceImpl implements ClientNotificationService 
             LogEvent.logErrorStack(e);
         }
 
+    }
+
+    private boolean canSendSMS(Patient patient) {
+        return !GenericValidator.isBlankOrNull(patient.getPerson().getPrimaryPhone());
+    }
+
+    private boolean shouldSendSMS() {
+        return ConfigurationProperties.getInstance().getPropertyValue(Property.PATIENT_RESULTS_BMP_SMS_ENABLED)
+                .equals(Boolean.TRUE.toString())
+                || ConfigurationProperties.getInstance().getPropertyValue(Property.PATIENT_RESULTS_SMPP_SMS_ENABLED)
+                        .equals(Boolean.TRUE.toString())
+                || ozekiActive;
+    }
+
+    private boolean canSendEmail(Patient patient) {
+        return !GenericValidator.isBlankOrNull(patient.getPerson().getEmail());
+    }
+
+    private boolean shouldSendEmail() {
+        return ConfigurationProperties.getInstance().getPropertyValue(Property.PATIENT_RESULTS_SMTP_ENABLED)
+                .equals(Boolean.TRUE.toString());
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
