@@ -2,6 +2,7 @@ package org.openelisglobal.test.service;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -49,6 +50,8 @@ public interface TestService extends BaseObjectService<Test, String> {
     Test getTestByDescription(String description);
 
     List<Test> getTestsByLoincCode(String loincCode);
+
+    List<Test> getActiveTestsByLoinc(String[] loincCodes);
 
     List<Test> getAllOrderBy(String columnName);
 
@@ -109,5 +112,17 @@ public interface TestService extends BaseObjectService<Test, String> {
     List<Test> getTestsByName(String testName) throws LIMSRuntimeException;
 
     Test getTestByLocalizedName(String testName);
+
+    Test getTestByName(String testName);
+
+    List<Test> getActiveTestByName(String testName);
+
+    Optional<Test> getActiveTestByLoincCodeAndSampleType(String loincCode, String sampleTypeId);
+
+    void deactivateAllTests();
+
+    void activateTests(List<String> testNames);
+
+    void activateTestsAndDeactivateOthers(List<String> asList);
 
 }

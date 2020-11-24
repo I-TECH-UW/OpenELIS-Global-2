@@ -21,6 +21,7 @@ import org.openelisglobal.systemusermodule.service.PermissionModuleService;
 import org.openelisglobal.systemusermodule.valueholder.PermissionModule;
 import org.openelisglobal.userrole.service.UserRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
@@ -41,6 +42,9 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
     private PermissionModuleService<PermissionModule> permissionModuleService;
     @Autowired
     private SystemUserService systemUserService;
+
+    @Value("${org.openelisglobal.timezone:}")
+    private String timezone;
 
     public static final int DEFAULT_SESSION_TIMEOUT_IN_MINUTES = 20;
 
@@ -73,12 +77,14 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         SystemUser su = systemUserService.get(String.valueOf(loginInfo.getSystemUserId()));
         // create usersessiondata and store in session
         UserSessionData usd = new UserSessionData();
+
         usd.setSytemUserId(loginInfo.getSystemUserId());
         usd.setLoginName(loginInfo.getLoginName());
         usd.setElisUserName(su.getNameForDisplay());
         usd.setUserTimeOut(timeout * 60);
         usd.setAdmin(loginService.isUserAdmin(loginInfo));
         request.getSession().setAttribute(IActionConstants.USER_SESSION_DATA, usd);
+        request.getSession().setAttribute("timezone", timezone);
 
         // get permitted actions map (available modules for the current user)
         if (SystemConfiguration.getInstance().getPermissionAgent().equals("ROLE")) {

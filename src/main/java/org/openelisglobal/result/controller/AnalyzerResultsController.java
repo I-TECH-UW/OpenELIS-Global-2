@@ -76,6 +76,7 @@ import org.openelisglobal.typeofsample.service.TypeOfSampleTestService;
 import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
 import org.openelisglobal.typeofsample.valueholder.TypeOfSampleTest;
 import org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl;
+import org.owasp.encoder.Encode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -92,30 +93,17 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class AnalyzerResultsController extends BaseController {
 
-    private static final String[] ALLOWED_FIELDS = new String[] { "analyzerType", "paging.currentPage",
-            "resultList[*].id", "resultList[*].sampleGroupingNumber", "resultList[*].readOnly",
-            "resultList[*].testResultType", "resultList[*].testId", "resultList[*].accessionNumber",
-            "resultList[*].isAccepted", "resultList[*].isRejected", "resultList[*].isDeleted", "resultList[*].result",
-            "resultList[*].completeDate", "resultList[*].note", "resultList[*].reflexSelectionId", };
+    private static final String[] ALLOWED_FIELDS = new String[] { "type", "paging.currentPage", "resultList*.id",
+            "resultList*.sampleGroupingNumber", "resultList*.readOnly", "resultList*.testResultType",
+            "resultList*.testId", "resultList*.accessionNumber", "resultList*.isAccepted", "resultList*.isRejected",
+            "resultList*.isDeleted", "resultList*.result", "resultList*.completeDate", "resultList*.note",
+            "resultList*.reflexSelectionId", };
 
     private static final boolean IS_RETROCI = ConfigurationProperties.getInstance()
             .isPropertyValueEqual(ConfigurationProperties.Property.configurationName, "CI_GENERAL");
     private static final String REJECT_VALUE = "XXXX";
     private String RESULT_SUBJECT = "Analyzer Result Note";
     private String DBS_SAMPLE_TYPE_ID;
-
-    @PostConstruct
-    private void initialize() {
-        if (IS_RETROCI) {
-            TypeOfSample typeOfSample = new TypeOfSample();
-            typeOfSample.setDescription("DBS");
-            typeOfSample.setDomain("H");
-            typeOfSample = typeOfSampleService.getTypeOfSampleByDescriptionAndDomain(typeOfSample, false);
-            DBS_SAMPLE_TYPE_ID = typeOfSample.getId();
-        } else {
-            DBS_SAMPLE_TYPE_ID = null;
-        }
-    }
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -161,6 +149,16 @@ public class AnalyzerResultsController extends BaseController {
 
     @PostConstruct
     public void InitializeGlobalVariables() {
+        if (IS_RETROCI) {
+            TypeOfSample typeOfSample = new TypeOfSample();
+            typeOfSample.setDescription("DBS");
+            typeOfSample.setDomain("H");
+            typeOfSample = typeOfSampleService.getTypeOfSampleByDescriptionAndDomain(typeOfSample, false);
+            DBS_SAMPLE_TYPE_ID = typeOfSample.getId();
+        } else {
+            DBS_SAMPLE_TYPE_ID = null;
+        }
+
         analyzerNameToSubtitleKey.put(AnalyzerTestNameCache.COBAS_INTEGRA400_NAME, "banner.menu.results.cobas.integra");
         analyzerNameToSubtitleKey.put(AnalyzerTestNameCache.SYSMEX_XT2000_NAME, "banner.menu.results.sysmex");
         analyzerNameToSubtitleKey.put(AnalyzerTestNameCache.FACSCALIBUR, "banner.menu.results.facscalibur");
@@ -173,19 +171,18 @@ public class AnalyzerResultsController extends BaseController {
 
     @RequestMapping(value = "/AnalyzerResults", method = RequestMethod.GET)
     public ModelAndView showAnalyzerResults(@Valid @ModelAttribute("form") AnalyzerResultsForm oldForm,
-            BindingResult result,
-            HttpServletRequest request)
+            BindingResult result, HttpServletRequest request)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         AnalyzerResultsForm form = new AnalyzerResultsForm();
 
         request.getSession().setAttribute(SAVE_DISABLED, TRUE);
 
         String requestAnalyzerType = null;
-        if (!result.hasFieldErrors("analyzerType")) {
-            requestAnalyzerType = oldForm.getAnalyzerType();
+        if (!result.hasFieldErrors("type")) {
+            requestAnalyzerType = oldForm.getType();
         }
 
-        form.setAnalyzerType(requestAnalyzerType);
+        form.setType(requestAnalyzerType);
 
         AnalyzerResultsPaging paging = new AnalyzerResultsPaging();
         if (GenericValidator.isBlankOrNull(request.getParameter("page"))) {
@@ -719,11 +716,11 @@ public class AnalyzerResultsController extends BaseController {
         }
 
         redirectAttibutes.addFlashAttribute(FWD_SUCCESS, true);
-        if (GenericValidator.isBlankOrNull(form.getAnalyzerType())) {
+        if (GenericValidator.isBlankOrNull(form.getType())) {
             return findForward(FWD_SUCCESS_INSERT, form);
         } else {
             Map<String, String> params = new HashMap<>();
-            params.put("type", form.getAnalyzerType());
+            params.put("type", form.getType());
             // params.put("forward", FWD_SUCCESS_INSERT);
             return getForwardWithParameters(findForward(FWD_SUCCESS_INSERT, form), params);
         }
@@ -794,7 +791,8 @@ public class AnalyzerResultsController extends BaseController {
 
         if (groupedAnalyzerResultItems != null && !groupedAnalyzerResultItems.isEmpty()) {
             String accessionNumber = groupedAnalyzerResultItems.get(0).getAccessionNumber();
-            StatusSet statusSet = SpringContext.getBean(IStatusService.class).getStatusSetForAccessionNumber(accessionNumber);
+            StatusSet statusSet = SpringContext.getBean(IStatusService.class)
+                    .getStatusSetForAccessionNumber(accessionNumber);
 
             // If neither the test request or demographics has been entered then
             // both a skeleton set of entries should be made
@@ -1006,7 +1004,8 @@ public class AnalyzerResultsController extends BaseController {
                     sampleItem = new SampleItem();
                     sampleItem.setSysUserId(getSysUserId(request));
                     sampleItem.setSortOrder("1");
-                    sampleItem.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(SampleStatus.Entered));
+                    sampleItem
+                            .setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(SampleStatus.Entered));
                     sampleItem.setCollectionDate(DateUtil.getNowAsTimestamp());
                     sampleItem.setTypeOfSample(typeOfSample);
                     analysis.setSampleItem(sampleItem);
@@ -1258,7 +1257,8 @@ public class AnalyzerResultsController extends BaseController {
     }
 
     private void populateAnalysis(AnalyzerResultItem resultItem, Analysis analysis, Test test) {
-        if (!SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Canceled).equals(analysis.getStatusId())) {
+        if (!SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Canceled)
+                .equals(analysis.getStatusId())) {
             String statusId = SpringContext.getBean(IStatusService.class).getStatusID(
                     resultItem.getIsAccepted() ? AnalysisStatus.TechnicalAcceptance : AnalysisStatus.TechnicalRejected);
             analysis.setStatusId(statusId);
@@ -1369,7 +1369,7 @@ public class AnalyzerResultsController extends BaseController {
         } else if (FWD_FAIL.equals(forward)) {
             return "homePageDefinition";
         } else if (FWD_SUCCESS_INSERT.equals(forward)) {
-            return "redirect:/AnalyzerResults.do";
+            return "redirect:/AnalyzerResults.do?type=" + Encode.forUriComponent(request.getParameter("type"));
         } else if (FWD_FAIL_INSERT.equals(forward)) {
             return "analyzerResultsDefinition";
         } else if (FWD_VALIDATION_ERROR.equals(forward)) {

@@ -46,15 +46,21 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.CoreConnectionPNames;
 import org.dom4j.DocumentException;
 import org.openelisglobal.common.log.LogEvent;
-import org.openelisglobal.common.provider.query.PatientDemographicsSearchResults;
+import org.openelisglobal.common.provider.query.ExtendedPatientSearchResults;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 
 @Service
+@Primary
 @Scope("prototype")
 public class ExternalPatientSearch implements IExternalPatientSearch {
+
+    @Value("${org.openelisglobal.externalSearch.timeout:5000}")
+    private Integer timeout;
 
     private static final String GET_PARAM_PWD = "pwd";
     private static final String GET_PARAM_NAME = "name";
@@ -79,16 +85,14 @@ public class ExternalPatientSearch implements IExternalPatientSearch {
     private String connectionString;
     private String connectionName;
     private String connectionPassword;
-    private int timeout = 0;
 
     protected String resultXML;
-    protected List<PatientDemographicsSearchResults> searchResults;
+    protected List<ExtendedPatientSearchResults> searchResults;
     protected List<String> errors;
     protected int returnStatus = HttpStatus.SC_CREATED;
 
     @Override
-    synchronized public void setConnectionCredentials(String connectionString, String name, String password,
-            int timeout_Mil) {
+    synchronized public void setConnectionCredentials(String connectionString, String name, String password) {
         if (finished) {
             throw new IllegalStateException("ServiceCredentials set after ExternalPatientSearch thread was started");
         }
@@ -96,7 +100,6 @@ public class ExternalPatientSearch implements IExternalPatientSearch {
         this.connectionString = connectionString;
         connectionName = name;
         connectionPassword = password;
-        timeout = timeout_Mil;
     }
 
     @Override
@@ -116,7 +119,7 @@ public class ExternalPatientSearch implements IExternalPatientSearch {
     }
 
     @Override
-    synchronized public List<PatientDemographicsSearchResults> getSearchResults() {
+    synchronized public List<ExtendedPatientSearchResults> getSearchResults() {
 
         if (!finished) {
             throw new IllegalStateException("Results requested before ExternalPatientSearch thread was finished");
@@ -306,4 +309,15 @@ public class ExternalPatientSearch implements IExternalPatientSearch {
 
         return uriFinal;
     }
+
+    @Override
+    public String getConnectionString() {
+        return connectionString;
+    }
+
+    @Override
+    public int getTimeout() {
+        return timeout;
+    }
+
 }

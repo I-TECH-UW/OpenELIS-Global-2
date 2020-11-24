@@ -19,6 +19,7 @@
 <%
 	boolean useCollectionDate = FormFields.getInstance().useField(Field.CollectionDate);
 	boolean useInitialSampleCondition = FormFields.getInstance().useField(Field.InitialSampleCondition);
+	boolean useSampleNature = FormFields.getInstance().useField(Field.SampleNature); 
 	boolean useCollector = FormFields.getInstance().useField(Field.SampleEntrySampleCollector);
 	boolean autofillCollectionDate = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.AUTOFILL_COLLECTION_DATE, "true");
 %>
@@ -38,6 +39,7 @@
 var useCollectionDate = <%= useCollectionDate %>;
 var autoFillCollectionDate = <%= autofillCollectionDate %>;
 var useInitialSampleCondition = <%= useInitialSampleCondition  %>;
+var useSampleNature = <%= useSampleNature  %>;
 var useCollector = <%= useCollector %>;
 var currentCheckedType = -1;
 var currentTypeForTests = -1;
@@ -72,8 +74,9 @@ function addNewSamples(){
     SampleTypes[0] = new SampleType(sampleTypeValue, sampleDescription);
 	
 	notifyChangeListeners();
-	
-	checkValidSubPages();
+	if (typeof checkValidSubPages === "function") {
+		checkValidSubPages();
+	}
 }
 
 function addTypeToTable(table, sampleDescription, sampleType, currentTime, currentDate ) {
@@ -100,6 +103,15 @@ function addTypeToTable(table, sampleDescription, sampleType, currentTime, curre
 			jQuery("#initialCondition_" + rowLabel).asmSelect({	removeLabel: "X"});
 		}
 
+		if( useSampleNature ){
+			var newSelect = $("sampleNaturePrototypeID").parentNode.cloneNode(true);
+			var selection = newSelect.getElementsByTagName("select")[0];
+			selection.id = "sampleNature_" + rowLabel;
+
+			var sampleNatureCell = newRow.insertCell(++cellCount);
+ 			sampleNatureCell.innerHTML = newSelect.innerHTML.replace("sampleNatureList", "formBreaker");
+		}
+		
 		if( useCollectionDate ){
 			var collectionDate = newRow.insertCell(++cellCount);
 			var collectionTime = newRow.insertCell(++cellCount);
@@ -209,8 +221,10 @@ function removeRow( row ){
 		$("select" + rows[1].id).checked = true;
 		sampleClicked( rows[1].id.sub('_', '') );
 	}
-	
-	checkValidSubPages();
+
+	if (typeof checkValidSubPages === "function") {
+		checkValidSubPages();
+	}
 }
 
 function loadSamples(){
@@ -249,6 +263,19 @@ function convertSampleToXml( id ){
 		for( var i = 0; i < optionLength; ++i ){
 			if( initialConditions.options[i].selected ){
 				xml += initialConditions.options[i].value + ",";
+			}
+		}
+
+		xml =  xml.substring(0,xml.length - 1);
+		xml += "'";
+	}
+	if( useSampleNature ){
+		var sampleNature = $("sampleNature" + id);
+		var optionLength = sampleNature.options.length;
+		xml += " sampleNatureId=' ";
+		for( var i = 0; i < optionLength; ++i ){
+			if( sampleNature.options[i].selected ){
+				xml += sampleNature.options[i].value + ",";
 			}
 		}
 
@@ -513,7 +540,9 @@ function assignTestsToSelected(checkbox, panelId){
 			panelIdElement.value = panelIdArray.join(",");
 		}		
 	}
-	checkValidSubPages();
+	if (typeof checkValidSubPages === "function") {
+		checkValidSubPages();
+	}
 }
 
 function addIdToUniqueIdList(id, list) {
@@ -543,8 +572,10 @@ function sectionSelectionChanged( selectionElement ){
 	var testIdNumber = selection.attr("id").split("_")[1];
 	var sectionMap = jQuery("#testSectionMap_" + selectedTypeRowId );
 	sectionMap.val( sectionMap.val() + jQuery("#testName_" + testIdNumber).val() + ":" + selection.val() + "," );
-	
-	checkValidSubPages();
+
+	if (typeof checkValidSubPages === "function") {
+		checkValidSubPages();
+	}
 }
 
 function editSelectedTest( ){
@@ -755,14 +786,18 @@ function userSampleTypeSelectionChanged( userTypeSelectionId, row,  qualifiableI
         jQuery("#userSampleTypeQualifierID_" + row).removeClass('required');
     }
 
-    checkValidSubPages();
+	if (typeof checkValidSubPages === "function") {
+		checkValidSubPages();
+	}
 }
 
 function sampleTypeQualifierChanged(element){
     var typeMap = jQuery("#testTypeMap_" + selectedTypeRowId );
     typeMap.val( typeMap.val() +  jQuery("#testName_" + element.id.split("_")[1]).val() + ":" + element.value + "," );
 
-    checkValidSubPages();
+	if (typeof checkValidSubPages === "function") {
+		checkValidSubPages();
+	}
 }
 </script>
 <div id="routineSampleAdd">
@@ -770,6 +805,14 @@ function sampleTypeQualifierChanged(element){
 	<div id="sampleConditionPrototype" style="display: none" >
 	<form:select path="" id="prototypeID" multiple="true">
 		<form:options items="${form.initialSampleConditionList}" itemValue="id" itemLabel="value"/>
+	</form:select>
+	</div>
+	<% } %>
+	<% if(useSampleNature){ %>
+	<div id="sampleNaturePrototype" style="display: none" >
+	<form:select path=""
+				 id= 'sampleNaturePrototypeID'>
+				<form:options items="${form.sampleNatureList}" itemValue="id" itemLabel="value"/>
 	</form:select>
 	</div>
 	<% } %>
@@ -822,6 +865,11 @@ function sampleTypeQualifierChanged(element){
 					<% if(useInitialSampleCondition){ %>
 					<th style="width:15%">
 						<spring:message code="sample.entry.sample.condition"/>
+					</th>
+					<% } %>
+					<% if(useSampleNature){ %>
+					<th style="width:15%">
+						<spring:message code="sample.entry.sample.nature"/>
 					</th>
 					<% } %>
 					<% if( useCollectionDate ){ %>

@@ -21,6 +21,7 @@ import java.util.List;
 import org.openelisglobal.common.dao.BaseDAO;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder;
+import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder.SortOrder;
 
 public interface ElectronicOrderDAO extends BaseDAO<ElectronicOrder, String> {
 
@@ -33,5 +34,7 @@ public interface ElectronicOrderDAO extends BaseDAO<ElectronicOrder, String> {
 //	public List<ElectronicOrder> getAllElectronicOrders();
 
     List<ElectronicOrder> getAllElectronicOrdersOrderedBy(ElectronicOrder.SortOrder order);
+
+    public List<ElectronicOrder> getAllElectronicOrdersContainingValueOrderedBy(String searchValue, SortOrder order);
 
 }

@@ -19,6 +19,7 @@ public class SampleQaEventServiceImpl extends BaseObjectServiceImpl<SampleQaEven
 
     SampleQaEventServiceImpl() {
         super(SampleQaEvent.class);
+        this.auditTrailLog = true;
     }
 
     @Override

@@ -136,7 +136,7 @@ function getSelectedTestDisplay( classValue, index, targetIds, parent, tests, ed
 	
 	var tableRow = document.createElement('tr');
 	tableRow.setAttribute('id', 'reflexSelection_' + index + '_' + targetIds);
-	tableRow.setAttribute('class', 'classValue + ' reflexSelection_' + index');
+	tableRow.setAttribute('class', classValue + ' reflexSelection_' + index);
 	wrapper.appendChild(tableRow);
 	
 	var rowCell = document.createElement('td');
@@ -150,7 +150,7 @@ function getSelectedTestDisplay( classValue, index, targetIds, parent, tests, ed
 	var textArea = document.createElement('textArea');
 	textArea.setAttribute('readOnly', 'true');
 	textArea.setAttribute('id', 'reflexedTests');
-	textArea.setAttribute('rows, '2');
+	textArea.setAttribute('rows', '2');
 	textArea.setAttribute('style', 'width:98%');
 	textArea.value = tests;
 	rowCell.appendChild(textArea);
@@ -167,7 +167,7 @@ function getSelectedTestDisplay( classValue, index, targetIds, parent, tests, ed
 	tableRow.appendChild(rowCell);
 	
 	rowCell = document.createElement('td');
-	tableRow.setAttribute('id', 'reflexSelection_' + index '_' + targetIds);
+	tableRow.setAttribute('id', 'reflexSelection_' + index + '_' + targetIds);
 	tableRow.appendChild(rowCell);
 	
 	return wrapper.innerHTML;

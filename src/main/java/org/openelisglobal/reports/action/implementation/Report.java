@@ -34,12 +34,12 @@ import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.DateUtil;
-import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.organization.service.OrganizationService;
 import org.openelisglobal.organization.valueholder.Organization;
 import org.openelisglobal.reports.action.implementation.reportBeans.ErrorMessages;
 import org.openelisglobal.spring.util.SpringContext;
+import org.springframework.context.i18n.LocaleContextHolder;
 
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
@@ -104,7 +104,7 @@ public abstract class Report implements IReportCreator {
         reportParameters.put("localization", createLocalizationMap());
         // reportParameters.put("leftHeaderImage", getImage("headerLeftImage"));
         // reportParameters.put("rightHeaderImage", getImage("headerRightImage"));
-        reportParameters.put("REPORT_LOCALE", SystemConfiguration.getInstance().getDefaultLocale());
+        reportParameters.put(JRParameter.REPORT_LOCALE, LocaleContextHolder.getLocale());
         reportParameters.put(JRParameter.REPORT_RESOURCE_BUNDLE, MessageUtil.getMessageSourceAsResourceBundle());
     }
 
@@ -123,6 +123,7 @@ public abstract class Report implements IReportCreator {
         localizationMap.put("sampleType", MessageUtil.getMessage("report.sampleType"));
         localizationMap.put("reception", MessageUtil.getMessage("report.reception"));
         localizationMap.put("initialResults", MessageUtil.getMessage("report.initialResults"));
+        localizationMap.put("results", MessageUtil.getMessage("report.results"));
         localizationMap.put("confirmationResults", MessageUtil.getMessage("report.confirmationResult"));
         localizationMap.put("requesterContact", MessageUtil.getMessage("report.requesterContact"));
         localizationMap.put("telephoneAbv", MessageUtil.getMessage("report.telephoneAbv"));
@@ -187,6 +188,7 @@ public abstract class Report implements IReportCreator {
         localizationMap.put("activity", MessageUtil.getMessage("report.activity"));
         localizationMap.put("from", MessageUtil.getMessage("report.from"));
         localizationMap.put("to", MessageUtil.getMessage("report.to"));
+        localizationMap.put("of", MessageUtil.getMessage("report.of"));
         localizationMap.put("printed", MessageUtil.getMessage("report.printed"));
         localizationMap.put("techId", MessageUtil.getMessage("report.techId"));
         localizationMap.put("collection", MessageUtil.getMessage("report.collection"));

@@ -18,14 +18,23 @@ package org.openelisglobal.person.valueholder;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.Pattern;
+
+import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.common.valueholder.BaseObject;
+import org.openelisglobal.validation.annotations.ValidName;
+import org.openelisglobal.validation.constraintvalidator.NameValidator.NameType;
 
 public class Person extends BaseObject<String> {
 
+    @Pattern(regexp = ValidationHelper.ID_REGEX)
     private String id;
 
+    @ValidName(nameType = NameType.LAST_NAME)
     private String lastName;
 
+    @ValidName(nameType = NameType.FIRST_NAME)
     private String firstName;
 
     private String middleName;
@@ -41,17 +50,17 @@ public class Person extends BaseObject<String> {
     private String zipCode;
 
     private String country;
-
+    @Pattern(regexp = ValidationHelper.PHONE_REGEX)
     private String workPhone;
-
+    @Pattern(regexp = ValidationHelper.PHONE_REGEX)
     private String homePhone;
-
+    @Pattern(regexp = ValidationHelper.PHONE_REGEX)
     private String cellPhone;
-
+    @Pattern(regexp = ValidationHelper.PHONE_REGEX)
     private String primaryPhone;
 
     private String fax;
-
+    @Email
     private String email;
 
     private Set patients = new HashSet(0);

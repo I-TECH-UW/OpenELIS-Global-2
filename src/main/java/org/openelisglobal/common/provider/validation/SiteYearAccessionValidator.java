@@ -22,7 +22,7 @@ public class SiteYearAccessionValidator extends BaseSiteYearAccessionValidator i
 
     @Override
     public int getMaxAccessionLength() {
-        return getSiteEndIndex() + 8;
+        return getSiteEndIndex() + 15;
     }
 
     @Override

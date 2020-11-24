@@ -10,7 +10,7 @@ import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.controller.BaseMenuController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
-import org.openelisglobal.common.form.MenuForm;
+import org.openelisglobal.common.form.AdminOptionMenuForm;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.validator.BaseErrors;
 import org.openelisglobal.localization.service.LocalizationService;
@@ -31,9 +31,9 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-public class SiteInformationMenuController extends BaseMenuController {
+public class SiteInformationMenuController extends BaseMenuController<SiteInformation> {
 
-    private static final String[] ALLOWED_FIELDS = new String[] { "selectedIds[*]" };
+    private static final String[] ALLOWED_FIELDS = new String[] { "selectedIds*" };
 
     @Autowired
     private SiteInformationMenuFormValidator formValidator;
@@ -51,7 +51,7 @@ public class SiteInformationMenuController extends BaseMenuController {
 
     @RequestMapping(value = { "/NonConformityConfigurationMenu", "/WorkplanConfigurationMenu",
             "/PrintedReportsConfigurationMenu", "/SampleEntryConfigMenu", "/ResultConfigurationMenu",
-            "/MenuStatementConfigMenu", "/PatientConfigurationMenu",
+            "/MenuStatementConfigMenu", "/PatientConfigurationMenu", "/ValidationConfigurationMenu",
             "/SiteInformationMenu" }, method = RequestMethod.GET)
     public ModelAndView showSiteInformationMenu(HttpServletRequest request, RedirectAttributes redirectAttributes)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
@@ -72,6 +72,7 @@ public class SiteInformationMenuController extends BaseMenuController {
 
     private void setupFormForRequest(SiteInformationMenuForm form, HttpServletRequest request) {
         String path = request.getServletPath();
+
         if (path.contains("NonConformityConfiguration")) {
             form.setSiteInfoDomainName("non_conformityConfiguration");
             form.setFormName("NonConformityConfigurationMenuForm");
@@ -93,6 +94,9 @@ public class SiteInformationMenuController extends BaseMenuController {
         } else if (path.contains("PatientConfiguration")) {
             form.setSiteInfoDomainName("PatientConfiguration");
             form.setFormName("PatientConfigurationMenuForm");
+        } else if (path.contains("ValidationConfiguration")) {
+            form.setSiteInfoDomainName("validationConfig");
+            form.setFormName("ValidationConfigurationMenuForm");
         } else {
             form.setSiteInfoDomainName("SiteInformation");
             form.setFormName("siteInformationMenuForm");
@@ -102,7 +106,8 @@ public class SiteInformationMenuController extends BaseMenuController {
     }
 
     @Override
-    protected List createMenuList(MenuForm form, HttpServletRequest request) {
+    protected List<SiteInformation> createMenuList(AdminOptionMenuForm<SiteInformation> form,
+            HttpServletRequest request) {
         List<SiteInformation> configurationList;
 
         if (!(form instanceof SiteInformationMenuForm)) {
@@ -137,6 +142,9 @@ public class SiteInformationMenuController extends BaseMenuController {
         } else if ("MenuStatementConfig".equals(domainName)) {
             dbDomainName = "MenuStatementConfig";
             request.setAttribute(TITLE_KEY, "MenuStatementConfig.browse.title");
+        } else if ("validationConfig".equals(domainName)) {
+            dbDomainName = "validationConfig";
+            request.setAttribute(TITLE_KEY, "validationConfig.browse.title");
         }
 
         int startingRecNo = Integer.parseInt((String) request.getAttribute("startingRecNo"));

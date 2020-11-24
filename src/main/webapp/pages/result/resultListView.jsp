@@ -99,7 +99,7 @@
 var compactHozSpace = '<%=compactHozSpace%>';
 var dirty = false;
 
-var pager = new OEPager('${form.formName}', '&type=<spring:escapeBody javaScriptEscape="true">${type}</spring:escapeBody>');
+var pager = new OEPager('${form.formName}', '&type=' + encodeURIComponent('<spring:escapeBody javaScriptEscape="true">${type}</spring:escapeBody>'));
 pager.setCurrentPageNumber('<spring:escapeBody javaScriptEscape="true">${form.paging.currentPage}</spring:escapeBody>');
 
 var pageSearch; //assigned in post load function
@@ -120,7 +120,7 @@ jQuery(document).ready( function() {
 				handleMultiSelectChange( e, data );
 				});
 
-			pageSearch = new OEPageSearch( $("searchNotFound"), compactHozSpace == "true" ? "tr" : "td", pager );
+			pageSearch = new OEPageSearch( document.getElementById("searchNotFound"), compactHozSpace == "true" ? "tr" : "td", pager );
 
 			if( searchTerm != "null" ){
 				 pageSearch.highlightSearch( searchTerm, false );
@@ -136,6 +136,7 @@ jQuery(document).ready( function() {
             jQuery(".asmContainer").css("display","inline-block");
             disableRejectedResults();
             showCachedRejectionReasonRows();
+            jQuery(".hasDefaultValue").change();
 			});
 
 
@@ -235,7 +236,7 @@ function  /*void*/ savePage()
 	jQuery( "#saveButtonId" ).prop("disabled",true);
 	window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
 	var form = document.getElementById("mainForm");
-	form.action = '${form.formName}'.sub('Form','') + ".do"  + '?type=<spring:escapeBody javaScriptEscape="true">${type}</spring:escapeBody>';
+	form.action = '${form.formName}'.sub('Form','') + ".do"  + '?type=' + encodeURIComponent('<spring:escapeBody javaScriptEscape="true">${type}</spring:escapeBody>');
 	form.submit();
 }
 
@@ -300,14 +301,14 @@ function processTestReflexCD4Success(parameters)
 }
 
 function submitTestSectionSelect( element ) {
-	window.location.href = "LogbookResults.do?testSectionId=" + element.value + "&type=" + testSectionNameIdHash[element.value] ;	
+	window.location.href = "LogbookResults.do?testSectionId=" + element.value + "&type=" + encodeURIComponent(testSectionNameIdHash[element.value]) ;	
 }
 
 var showForceWarning = true;
 function forceTechApproval(checkbox, index ){
 	if( jQuery(checkbox).attr('checked')){
 		if( showForceWarning){
-			alert( "<%= MessageUtil.getContextualMessage("result.forceAccept.warning")%>" );
+			alert( `<%= MessageUtil.getContextualMessage("result.forceAccept.warning")%>` );
 			showForceWarning = false;
 		}
 		showNote( index );
@@ -495,7 +496,7 @@ function setField(id, value) {
 	       id="labnoSearch"
 	       placeholder='<spring:message code="sample.search.scanner.instructions"/>'
 	       maxlength='<%= Integer.toString(accessionNumberValidator.getMaxAccessionLength())%>' />
-	<input type="button" onclick="pageSearch.doLabNoSearch($(labnoSearch))" value='<%= MessageUtil.getMessage("label.button.search") %>'>
+	<input type="button" onclick="pageSearch.doLabNoSearch(document.getElementById('labnoSearch'))" value='<%= MessageUtil.getMessage("label.button.search") %>'>
 	</div>
 </c:if>
 
@@ -714,9 +715,11 @@ function setField(id, value) {
 		<c:if test="${not (testResult.resultDisplayType == 'HIV') and not (testResult.resultDisplayType == 'SYPHILIS')}">
 			<td style="vertical-align:middle" class="ruled">
                 ${testResult.testName}
+                <c:if test="${not (testResult.resultType == 'D')}">
 				<c:if test="${not empty testResult.normalRange}">
 					<br/><c:out value="${testResult.normalRange}"/>&nbsp;
 					<c:out value="${testResult.unitsOfMeasure}"/>
+				</c:if>
 				</c:if>
 			</td>
 		</c:if>
@@ -784,6 +787,7 @@ function setField(id, value) {
 			<%-- dictionary results --%>
 			<form:select path="testResult[${iter.index}].resultValue"
 			        id="resultId_${iter.index}"
+			        cssClass="${(empty testResult.resultValue) ? '' : 'hasDefaultValue' }"
 			        onchange="markUpdated(${iter.index}, ${testResult.userChoiceReflex}, '${testResult.siblingReflexKey}');
 					   		  ${(noteRequired && not (empty testResult.resultValue)) ? 'showNote(' += iter.index += ');' : ''}
 					   		  ${(not (empty testResult.qualifiedDictionaryId)) ? 'showQuantity(this, ' += iter.index += ', ' += testResult.qualifiedDictionaryId += ', \\'D\\');' : ''}

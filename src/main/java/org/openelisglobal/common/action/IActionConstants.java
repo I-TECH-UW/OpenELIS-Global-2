@@ -231,6 +231,7 @@ public interface IActionConstants {
     String FORM_FIELD_SET_CDI = "CDI";
     String FORM_FIELD_SET_CI_GENERAL = "CI_GENERAL";
     String FORM_FIELD_SET_KENYA = "KENYA";
+    String FORM_FIELD_SET_MAURITIUS = "MAURITIUS";
 
     String ANALYSIS_TYPE_MANUAL = "MANUAL";
     String ANALYSIS_TYPE_AUTO = "AUTO";

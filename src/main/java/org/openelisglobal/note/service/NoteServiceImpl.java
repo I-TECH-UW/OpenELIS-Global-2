@@ -84,6 +84,7 @@ public class NoteServiceImpl extends BaseObjectServiceImpl<Note, String> impleme
 
     NoteServiceImpl() {
         super(Note.class);
+        this.auditTrailLog = true;
     }
 
     public static String getTableReferenceId() {

@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.validator.GenericValidator;
-import org.jfree.util.Log;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.servlet.validation.AjaxServlet;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.project.service.ProjectService;
@@ -74,12 +74,9 @@ public class ScanGeneratorProvider extends BaseQueryProvider {
                     error = MessageUtil.getMessage("errors.invalid", "program.code");
                 }
             }
-        } catch (IllegalStateException e) {
-            error = MessageUtil.getMessage("error.accession.no.next");
-            Log.error(e.toString());
-        } catch (IllegalArgumentException e) {
-            error = MessageUtil.getMessage("error.accession.no.next");
-            Log.error(e.toString());
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            error = MessageUtil.getMessage("error.accession.no.error");
+            LogEvent.logError( this.getClass().getName(), "processRequest", e.toString());
         }
 
         String result = GenericValidator.isBlankOrNull(nextNumber) ? INVALID : VALID;

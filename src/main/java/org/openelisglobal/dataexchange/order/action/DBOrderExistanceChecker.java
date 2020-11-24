@@ -19,6 +19,7 @@ package org.openelisglobal.dataexchange.order.action;
 import java.util.List;
 
 import org.apache.commons.validator.GenericValidator;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.ExternalOrderStatus;
 import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder;
@@ -35,6 +36,7 @@ public class DBOrderExistanceChecker implements IOrderExistanceChecker {
 
     @Override
     public CheckResult check(String orderId) {
+        LogEvent.logDebug(this.getClass().getName(), "check", "DBOrderExistanceChecker:check: " + orderId);
         if (GenericValidator.isBlankOrNull(orderId)) {
             return CheckResult.NOT_FOUND;
         }
@@ -45,11 +47,15 @@ public class DBOrderExistanceChecker implements IOrderExistanceChecker {
         }
 
         ElectronicOrder eOrder = eOrders.get(eOrders.size() - 1);
-        if (SpringContext.getBean(IStatusService.class).getStatusID(ExternalOrderStatus.Cancelled).equals(eOrder.getStatusId())) {
+        if (SpringContext.getBean(IStatusService.class).getStatusID(ExternalOrderStatus.Cancelled)
+                .equals(eOrder.getStatusId())) {
             return CheckResult.ORDER_FOUND_CANCELED;
         }
 
-        if (SpringContext.getBean(IStatusService.class).getStatusID(ExternalOrderStatus.Entered).equals(eOrder.getStatusId())) {
+        if (SpringContext.getBean(IStatusService.class).getStatusID(ExternalOrderStatus.Entered)
+                .equals(eOrder.getStatusId()) ||
+            SpringContext.getBean(IStatusService.class).getStatusID(ExternalOrderStatus.NonConforming)
+                .equals(eOrder.getStatusId())) {
             return CheckResult.ORDER_FOUND_QUEUED;
         }
 

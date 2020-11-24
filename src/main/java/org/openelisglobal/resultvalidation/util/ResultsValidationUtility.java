@@ -53,6 +53,8 @@ import org.openelisglobal.observationhistorytype.service.ObservationHistoryTypeS
 import org.openelisglobal.observationhistorytype.valueholder.ObservationHistoryType;
 import org.openelisglobal.result.service.ResultService;
 import org.openelisglobal.result.valueholder.Result;
+import org.openelisglobal.resultlimit.service.ResultLimitService;
+import org.openelisglobal.resultlimits.valueholder.ResultLimit;
 import org.openelisglobal.resultvalidation.action.util.ResultValidationItem;
 import org.openelisglobal.resultvalidation.bean.AnalysisItem;
 import org.openelisglobal.sample.service.SampleService;
@@ -92,6 +94,8 @@ public class ResultsValidationUtility {
     protected ObservationHistoryTypeService ohTypeService;
     @Autowired
     protected AnalysisService analysisService;
+    @Autowired
+    protected ResultLimitService resultLimitService;
 
     protected String SAMPLE_STATUS_OBSERVATION_HISTORY_TYPE_ID;
     protected String CD4_COUNT_SORT_NUMBER;
@@ -106,8 +110,10 @@ public class ResultsValidationUtility {
 
     @PostConstruct
     private void initilaizeGlobalVariables() {
-        notValidStatus.add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized)));
-        notValidStatus.add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalRejected)));
+        notValidStatus.add(
+                Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized)));
+        notValidStatus.add(Integer
+                .parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalRejected)));
         Analyte analyte = new Analyte();
         analyte.setAnalyteName("Conclusion");
         analyte = analyteService.getAnalyteByName(analyte, false);
@@ -320,7 +326,32 @@ public class ResultsValidationUtility {
         testItem.setQualifiedDictionaryId(getQualifiedDictionaryId(testResults));
         testItem.setPastNotes(notes);
 
+        testItem.setNormalResult(isNormalResult(analysis, result));
+
         return testItem;
+    }
+
+    private boolean isNormalResult(Analysis analysis, Result result) {
+        boolean normalResult = false;
+        ResultLimit resultLimit = resultLimitService.getResultLimitForAnalysis(analysis);
+
+        if (resultLimit != null) {
+            if (TypeOfTestResultServiceImpl.ResultType.DICTIONARY.matches(result.getResultType())
+                    && result.getValue().equals(resultLimit.getDictionaryNormalId())) {
+                normalResult = true;
+            } else if (TypeOfTestResultServiceImpl.ResultType.NUMERIC.matches(result.getResultType())
+                    && !GenericValidator.isBlankOrNull(result.getValue())
+                    && (resultLimit.getHighNormal() >= Double.parseDouble(result.getValue())
+                            && resultLimit.getLowNormal() <= Double.parseDouble(result.getValue()))) {
+                normalResult = true;
+            } else if (!TypeOfTestResultServiceImpl.ResultType.DICTIONARY.matches(result.getResultType())
+                    && !GenericValidator.isBlankOrNull(result.getValue())
+                    && (resultLimit.getHighNormal() >= Double.parseDouble(result.getValue())
+                            && resultLimit.getLowNormal() <= Double.parseDouble(result.getValue()))) {
+                normalResult = true;
+            }
+        }
+        return normalResult;
     }
 
     protected final String getQualifiedDictionaryId(List<TestResult> testResults) {
@@ -491,6 +522,7 @@ public class ResultsValidationUtility {
         analysisResultItem.setDictionaryResults(testResultItem.getDictionaryResults());
         analysisResultItem.setDisplayResultAsLog(
                 TestIdentityService.getInstance().isTestNumericViralLoad(testResultItem.getTestId()));
+        analysisResultItem.setNormal(testResultItem.isNormalResult());
         if (result != null) {
             if (TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(testResultItem.getResultType())) {
                 Analysis analysis = testResultItem.getAnalysis();
@@ -507,8 +539,9 @@ public class ResultsValidationUtility {
         }
         analysisResultItem.setReflexGroup(testResultItem.isReflexGroup());
         analysisResultItem.setChildReflex(testResultItem.isChildReflex());
-        analysisResultItem.setNonconforming(testResultItem.isNonconforming() || SpringContext.getBean(IStatusService.class)
-                .matches(testResultItem.getAnalysis().getStatusId(), AnalysisStatus.TechnicalRejected));
+        analysisResultItem
+                .setNonconforming(testResultItem.isNonconforming() || SpringContext.getBean(IStatusService.class)
+                        .matches(testResultItem.getAnalysis().getStatusId(), AnalysisStatus.TechnicalRejected));
         analysisResultItem.setQualifiedDictionaryId(testResultItem.getQualifiedDictionaryId());
         analysisResultItem.setQualifiedResultValue(testResultItem.getQualifiedResultValue());
         analysisResultItem.setQualifiedResultId(testResultItem.getQualificationResultId());

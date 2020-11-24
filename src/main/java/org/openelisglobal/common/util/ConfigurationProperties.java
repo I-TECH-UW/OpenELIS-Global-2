@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.validator.GenericValidator;
+import org.openelisglobal.spring.util.SpringContext;
 
 /*
  * This is an abstract class which represents the configuration properties of the application.  The derived
@@ -30,7 +31,7 @@ public abstract class ConfigurationProperties {
 
     private static final Object lockObj = new Object();
     private static ConfigurationProperties activeConcreteInstance = null;
-    protected Map<ConfigurationProperties.Property, String> propertiesValueMap = new HashMap<ConfigurationProperties.Property, String>();
+    protected Map<ConfigurationProperties.Property, String> propertiesValueMap = new HashMap<>();
 
     // These should all be upper case. As you touch them change them
     public enum Property {
@@ -50,6 +51,7 @@ public abstract class ConfigurationProperties {
         PatientSearchURL("patientSearchURL"),           //URL of where external patient information will be searched
         PatientSearchUserName("patientSearchLogOnUser"),      //User name for accesses to external patient search
         PatientSearchPassword("PatientSearchPassword"),      //User password for accesses to external patient search
+        PatientSearchEnabled("PatientSearchEnabled"),
         labDirectorName("lab director"),            //The name of the lab director
         languageSwitch("allowLanguageChange"),             //If true a user can switch between English and French (changes it for everybody)
         reportResults("resultReporting"),              //If true results will be reported electronically
@@ -59,7 +61,7 @@ public abstract class ConfigurationProperties {
         malariaCaseReport("malariaCaseReport"),          //If true send malaria case reports
         malariaCaseReportURL("malariaCaseURL"),       //URL for malaria case reports
         releaseNumber("releaseNumber"),              //The release number
-        buildNumber("buildNumber"),                //Repository identifier
+//        buildNumber("buildNumber"),                //Repository identifier
         configurationName("configuration name"),          //Identifies the configuration i.e. HaitiLNSP or CI IPCI
         testUsageReportingURL("testUsageAggregationUrl"),      //URL for test summary reporting
         testUsageReporting("testUsageReporting"),         //If true send test summary report electronically
@@ -74,6 +76,7 @@ public abstract class ConfigurationProperties {
         failedValidationMarker("showValidationFailureIcon"),      //If true results that failed validation will have icon next to them
         resultsResendTime("results.send.retry.time"),           //How much time between trying to resend results that failed to reach their destination
         TRACK_PATIENT_PAYMENT("trackPayment"),       //If true then patient payment status can be entered
+        ACCESSION_NUMBER_VALIDATE("validateAccessionNumber"),       //If true then validate the accession number
         ALERT_FOR_INVALID_RESULTS("alertWhenInvalidResult"),   //If true then technician will get an alert for results outside of the valid range
         DEFAULT_LANG_LOCALE("default language locale"),         //Default language locale
         DEFAULT_DATE_LOCALE("default date locale"),         //Date local
@@ -113,16 +116,34 @@ public abstract class ConfigurationProperties {
         ORDER_BARCODE_WIDTH("widthOrderLabels"),    //Width of the order barcode
         SPECIMEN_BARCODE_HEIGHT("heightSpecimenLabels"),    //Height of the specimen barcode
         SPECIMEN_BARCODE_WIDTH("widthSpecimenLabels"),  //Width of the specimen barcode
-        SPECIMEN_FIELD_DATE("collectionDateCheck"),
-        SPECIMEN_FIELD_SEX("patientSexCheck"),
-        SPECIMEN_FIELD_TESTS("testsCheck");
-        
+        SPECIMEN_FIELD_DATE("collectionDateCheck"), //
+        SPECIMEN_FIELD_SEX("patientSexCheck"), //
+        SPECIMEN_FIELD_TESTS("testsCheck"), //
+        LAB_DIRECTOR_NAME("labDirectorName"), //
+        LAB_DIRECTOR_TITLE("labDirectorTitle"), //
+        INFO_HIGHWAY_USERNAME("infoHighway.username"), //
+        INFO_HIGHWAY_PASSWORD("infoHighway.password"), //
+        INFO_HIGHWAY_ADDRESS("infoHighway.uri"), //
+        INFO_HIGHWAY_ENABLED("infoHighway.enabled"), //
+        PATIENT_RESULTS_BMP_SMS_USERNAME("patientresultsbmpsms.username"), //
+        PATIENT_RESULTS_BMP_SMS_PASSWORD("patientresultsbmpsms.password"), //
+        PATIENT_RESULTS_BMP_SMS_ADDRESS("patientresultsbmpsms.uri"), //
+        PATIENT_RESULTS_BMP_SMS_ENABLED("patientresultsbmpsms.enabled"), //
+        PATIENT_RESULTS_SMPP_SMS_USERNAME("patientresultssmpp.username"), //
+        PATIENT_RESULTS_SMPP_SMS_PASSWORD("patientresultssmpp.password"), //
+        PATIENT_RESULTS_SMPP_SMS_ADDRESS("patientresultssmpp.uri"), //
+        PATIENT_RESULTS_SMPP_SMS_ENABLED("patientresultssmpp.enabled"), //
+        PATIENT_RESULTS_SMTP_USERNAME("patientresultssmtp.username"), //
+        PATIENT_RESULTS_SMTP_PASSWORD("patientresultssmtp.password"), //
+        PATIENT_RESULTS_SMTP_ADDRESS("patientresultssmtp.uri"), //
+        PATIENT_RESULTS_SMTP_ENABLED("patientresultssmtp.enabled"),; //
+
         private String name;
-        
+
         private Property(String name) {
             this.name = name;
         }
-        
+
         public String getName() {
             return name;
         }
@@ -156,6 +177,8 @@ public abstract class ConfigurationProperties {
 
     public static void forceReload() {
         activeConcreteInstance = null;
+        SpringContext.getBean(ConfigurationListenerService.class).refreshConfigurations();
+
     }
 
     /*
@@ -186,7 +209,7 @@ public abstract class ConfigurationProperties {
 
     /**
      * For testing only to set a controllable singleton
-     * 
+     *
      * @param activeConcreteInstance
      */
     public static void setActiveConcreteInstance(ConfigurationProperties activeConcreteInstance) {

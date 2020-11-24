@@ -39,4 +39,12 @@ public interface OrganizationService extends BaseObjectService<Organization, Str
     void deleteAllLinksForOrganization(String id);
 
     List<Organization> getOrganizationsByTypeName(String orderByProperty, String referralOrgType);
+
+    void activateOrganizationsAndDeactivateOthers(List<String> organizationNames);
+
+    void deactivateAllOrganizations();
+
+    void activateOrganizations(List<String> organizationNames);
+
+    void deactivateOrganizations(List<Organization> organizations);
 }

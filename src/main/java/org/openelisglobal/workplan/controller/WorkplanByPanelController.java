@@ -45,7 +45,7 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class WorkplanByPanelController extends BaseWorkplanController {
 
-    private static final String[] ALLOWED_FIELDS = new String[] { "selectedSearchId" };
+    private static final String[] ALLOWED_FIELDS = new String[] { "selectedSearchID" };
 
     @Autowired
     private AnalysisService analysisService;
@@ -89,7 +89,7 @@ public class WorkplanByPanelController extends BaseWorkplanController {
             form.setWorkplanTests(new ArrayList<TestResultItem>());
         }
 
-        form.setWorkplanType("panel");
+        form.setType("panel");
         form.setSearchTypes(DisplayListService.getInstance().getList(DisplayListService.ListType.PANELS));
         form.setSearchLabel(MessageUtil.getMessage("workplan.panel.types"));
         form.setSearchAction("WorkPlanByPanel.do");

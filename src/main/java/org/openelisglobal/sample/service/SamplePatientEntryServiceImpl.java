@@ -16,6 +16,7 @@ import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.TableIdService;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.SystemConfiguration;
+import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
 import org.openelisglobal.dataexchange.service.order.ElectronicOrderService;
 import org.openelisglobal.observationhistory.service.ObservationHistoryService;
 import org.openelisglobal.observationhistory.valueholder.ObservationHistory;
@@ -71,12 +72,15 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
     private SampleRequesterService sampleRequesterService;
     @Autowired
     private OrganizationService organizationService;
+    @Autowired
+    private FhirTransformService fhirTransformService;
 
     @Transactional
     @Override
     public void persistData(SamplePatientUpdateData updateData, PatientManagementUpdate patientUpdate,
             PatientManagementInfo patientInfo, SamplePatientEntryForm form, HttpServletRequest request) {
         boolean useInitialSampleCondition = FormFields.getInstance().useField(Field.InitialSampleCondition);
+        boolean useSampleNature = FormFields.getInstance().useField(Field.SampleNature);
 
         persistOrganizationData(updateData);
 
@@ -92,11 +96,17 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
         if (useInitialSampleCondition) {
             persistInitialSampleConditions(updateData);
         }
+        if (useSampleNature) {
+            persistSampleNature(updateData);
+        }
 
         persistObservations(updateData);
 
         request.getSession().setAttribute("lastAccessionNumber", updateData.getAccessionNumber());
         request.getSession().setAttribute("lastPatientId", updateData.getPatientId());
+
+        String fhir_json = fhirTransformService.CreateFhirFromOESample(updateData, patientUpdate, patientInfo, form,
+                request);
     }
 
     private void persistObservations(SamplePatientUpdateData updateData) {
@@ -218,6 +228,21 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
                     observation.setSysUserId(updateData.getCurrentUserId());
                     observationHistoryService.insert(observation);
                 }
+            }
+        }
+    }
+
+    private void persistSampleNature(SamplePatientUpdateData updateData) {
+
+        for (SampleTestCollection sampleTestCollection : updateData.getSampleItemsTests()) {
+            ObservationHistory sampleNature = sampleTestCollection.sampleNature;
+
+            if (sampleNature != null) {
+                sampleNature.setSampleId(sampleTestCollection.item.getSample().getId());
+                sampleNature.setSampleItemId(sampleTestCollection.item.getId());
+                sampleNature.setPatientId(updateData.getPatientId());
+                sampleNature.setSysUserId(updateData.getCurrentUserId());
+                observationHistoryService.insert(sampleNature);
             }
         }
     }

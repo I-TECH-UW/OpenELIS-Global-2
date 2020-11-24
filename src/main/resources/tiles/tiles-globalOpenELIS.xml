@@ -23,6 +23,14 @@
 		<put-attribute name="footer"
 			value="/pages/common/emptyPlaceHolder.jsp" />
 	</definition>
+	
+	<definition name="portableOrderViewDefinition"
+		extends="baseDefinition">
+		<put-attribute name="body"
+			value="/pages/dataexchange/portableOrderView.jsp" />
+		<put-attribute name="footer"
+			value="/pages/common/emptyPlaceHolder.jsp" />
+	</definition>
 
 	<definition name="databaseCleaningDefinition"
 		extends="baseMenuDefinition">
@@ -132,6 +140,8 @@
 		template="/pages/samplebatchentry/routine/patientManagement.jsp">
 		<put-attribute name="patientSearch"
 			value="/pages/samplebatchentry/routine/patientSearch.jsp" />
+		<put-attribute name="patientEnhancedSearch"
+			value="/pages/patient/patientEnhancedSearch.jsp" />
 	</definition>
 
 
@@ -287,8 +297,10 @@
 
 	<definition name="accessionSampleEditCore"
 		template="/pages/result/resultsBySearch.jsp">
+<!-- 		<put-attribute name="searchPanel" -->
+<!-- 			value="/pages/patient/patientSearch.jsp" /> -->
 		<put-attribute name="searchPanel"
-			value="/pages/patient/patientSearch.jsp" />
+			value="/pages/patient/patientEnhancedSearch.jsp" />
 		<put-attribute name="resultsPanel"
 			value="sampleEditCore" />
 	</definition>
@@ -307,11 +319,15 @@
 		template="/pages/patient/patientManagement.jsp">
 		<put-attribute name="patientSearch"
 			value="/pages/patient/patientSearch.jsp" />
+		<put-attribute name="patientEnhancedSearch"
+			value="/pages/patient/patientEnhancedSearch.jsp" />
 	</definition>
 
 	<definition name="patientManagementNoSearchCore"
 		template="/pages/patient/patientManagement.jsp">
 		<put-attribute name="patientSearch"
+			value="/pages/common/emptyPlaceHolder.jsp" />
+		<put-attribute name="patientEnhancedSearch"
 			value="/pages/common/emptyPlaceHolder.jsp" />
 	</definition>
 
@@ -843,10 +859,18 @@
 	<definition name="PrintBarcodeDefinition"
 		extends="baseDefinition">
 		<put-attribute name="body"
-			value="/pages/barcode/printBarcode.jsp" />
+			value="PrintBarcodeCoreDefinition" />
 		<put-attribute name="footer"
 			value="/pages/common/finishFooterButton.jsp" />
 	</definition>
+	
+	<definition name="PrintBarcodeCoreDefinition"  template="/pages/barcode/printBarcode.jsp">
+    	<put-attribute name="prePrinting" value="batchPrePrintParcodeBodyDefinition" />
+    </definition>
+    
+    <definition name="batchPrePrintParcodeBodyDefinition"  template="/pages/barcode/bulkPrePrint.jsp">
+		<put-attribute name="sampleAdd" value="/pages/samplebatchentry/setup/sampleAdd.jsp"/>
+    </definition>
 
 	<definition name="BarcodeConfigurationDefinition"
 		extends="baseDefinition">
@@ -895,6 +919,13 @@
 		<put-attribute name="body"
 					   value="/pages/testConfiguration/resultSelectListRename.jsp" />
 
+		<put-attribute name="footer"
+					   value="/pages/common/emptyPlaceHolder.jsp" />
+	</definition>
+	
+	<definition name="profileDefinition" extends="baseDefinitionNoForm">
+		<put-attribute name="body"
+					   value="/pages/profiles/profile.jsp" />
 		<put-attribute name="footer"
 					   value="/pages/common/emptyPlaceHolder.jsp" />
 	</definition>

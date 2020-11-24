@@ -3,6 +3,7 @@ package org.openelisglobal.sample.controller;
 import java.lang.reflect.InvocationTargetException;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.Pattern;
 
 import org.hibernate.StaleObjectStateException;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
@@ -15,6 +16,7 @@ import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.validator.BaseErrors;
+import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
 import org.openelisglobal.patient.action.IPatientUpdate;
 import org.openelisglobal.patient.action.IPatientUpdate.PatientUpdateStatus;
 import org.openelisglobal.patient.action.bean.PatientManagementInfo;
@@ -27,6 +29,7 @@ import org.openelisglobal.sample.service.SamplePatientEntryService;
 import org.openelisglobal.sample.validator.SamplePatientEntryFormValidator;
 import org.openelisglobal.spring.util.SpringContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -35,12 +38,20 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class SamplePatientEntryController extends BaseSampleEntryController {
+
+    @Value("${org.openelisglobal.requester.lastName:}")
+    private String requesterLastName;
+    @Value("${org.openelisglobal.requester.firstName:}")
+    private String requesterFirstName;
+    @Value("${org.openelisglobal.requester.phone:}")
+    private String requesterPhone;
 
     private static final String[] ALLOWED_FIELDS = new String[] { "patientProperties.currentDate",
             "patientProperties.patientLastUpdated", "patientProperties.personLastUpdated",
@@ -49,11 +60,12 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
             "patientProperties.lastName", "patientProperties.firstName", "patientProperties.aka",
             "patientProperties.mothersName", "patientProperties.mothersInitial", "patientProperties.streetAddress",
             "patientProperties.commune", "patientProperties.city", "patientProperties.addressDepartment",
-            "patientProperties.addressDepartment", "patientPhone", "patientProperties.healthRegion",
-            "patientProperties.healthDistrict", "patientProperties.birthDateForDisplay", "patientProperties.age",
-            "patientProperties.gender", "patientProperties.patientType", "patientProperties.insuranceNumber",
-            "patientProperties.occupation", "patientProperties.education", "patientProperties.maritialStatus",
-            "patientProperties.nationality", "patientProperties.otherNationality", "patientClinicalProperties.stdOther",
+            "patientProperties.addressDepartment", "patientPhone", "patientProperties.primaryPhone",
+            "patientProperties.email", "patientProperties.healthRegion", "patientProperties.healthDistrict",
+            "patientProperties.birthDateForDisplay", "patientProperties.age", "patientProperties.gender",
+            "patientProperties.patientType", "patientProperties.insuranceNumber", "patientProperties.occupation",
+            "patientProperties.education", "patientProperties.maritialStatus", "patientProperties.nationality",
+            "patientProperties.otherNationality", "patientClinicalProperties.stdOther",
             "patientClinicalProperties.tbDiarrhae", "patientClinicalProperties.stdZona",
             "patientClinicalProperties.tbPrurigol", "patientClinicalProperties.stdKaposi",
             "patientClinicalProperties.tbMenigitis", "patientClinicalProperties.stdCandidiasis",
@@ -92,19 +104,28 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
     @Autowired
     private SamplePatientEntryService samplePatientService;
 
+    protected FhirTransformService fhirTransformService = SpringContext.getBean(FhirTransformService.class);
+
     @InitBinder
     public void initBinder(WebDataBinder binder) {
         binder.setAllowedFields(ALLOWED_FIELDS);
     }
 
     @RequestMapping(value = "/SamplePatientEntry", method = RequestMethod.GET)
-    public ModelAndView showSamplePatientEntry(HttpServletRequest request)
+
+    public ModelAndView showSamplePatientEntry(HttpServletRequest request,
+            @RequestParam(value = ID, required = false) @Pattern(regexp = "[a-zA-Z0-9 -]*") String externalOrderNumber)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+
         SamplePatientEntryForm form = new SamplePatientEntryForm();
 
         request.getSession().setAttribute(SAVE_DISABLED, TRUE);
         SampleOrderService sampleOrderService = new SampleOrderService();
         form.setSampleOrderItems(sampleOrderService.getSampleOrderItem());
+        form.getSampleOrderItems().setProviderLastName(requesterLastName);
+        form.getSampleOrderItems().setProviderFirstName(requesterFirstName);
+        form.getSampleOrderItems().setProviderWorkPhone(requesterPhone);
+        form.getSampleOrderItems().setExternalOrderNumber(externalOrderNumber);
         form.setPatientProperties(new PatientManagementInfo());
         form.setPatientSearch(new PatientSearch());
         form.setSampleTypes(DisplayListService.getInstance().getList(ListType.SAMPLE_TYPE_ACTIVE));
@@ -122,6 +143,9 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
         if (FormFields.getInstance().useField(FormFields.Field.InitialSampleCondition)) {
             form.setInitialSampleConditionList(
                     DisplayListService.getInstance().getList(ListType.INITIAL_SAMPLE_CONDITION));
+        }
+        if (FormFields.getInstance().useField(FormFields.Field.SampleNature)) {
+            form.setSampleNatureList(DisplayListService.getInstance().getList(ListType.SAMPLE_NATURE));
         }
 
         addFlashMsgsToRequest(request);
@@ -146,7 +170,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 
         boolean trackPayments = ConfigurationProperties.getInstance()
                 .isPropertyValueEqual(Property.TRACK_PATIENT_PAYMENT, "true");
-
+        
         String receivedDateForDisplay = sampleOrder.getReceivedDateForDisplay();
 
         if (!org.apache.commons.validator.GenericValidator.isBlankOrNull(sampleOrder.getReceivedTime())) {
@@ -163,6 +187,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
         testAndInitializePatientForSaving(request, patientInfo, patientUpdate, updateData);
 
         updateData.setAccessionNumber(sampleOrder.getLabNo());
+        updateData.setReferringId(sampleOrder.getExternalOrderNumber());
         updateData.initProvider(sampleOrder);
         updateData.initSampleData(form.getSampleXML(), receivedDateForDisplay, trackPayments, sampleOrder);
         updateData.validateSample(result);
@@ -175,6 +200,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 
         try {
             samplePatientService.persistData(updateData, patientUpdate, patientInfo, form, request);
+//            String fhir_json = fhirTransformService.CreateFhirFromOESample(updateData, patientUpdate, patientInfo, form, request);
         } catch (LIMSRuntimeException e) {
             // ActionError error;
             if (e.getException() instanceof StaleObjectStateException) {

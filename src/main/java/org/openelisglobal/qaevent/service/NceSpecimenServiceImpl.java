@@ -29,4 +29,10 @@ public class NceSpecimenServiceImpl extends BaseObjectServiceImpl<NceSpecimen, S
     protected NceSpecimenDAO getBaseObjectDAO() {
         return baseObjectDAO;
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<NceSpecimen> getSpecimenBySampleItemId(String sampleId) {
+        return baseObjectDAO.getSpecimenBySampleId(sampleId);
+    }
 }

@@ -128,6 +128,14 @@ public class ReportImplementationFactory {
                 return new RejectionReportByTest();
             } else if (report.equals("rejectionReportByTestSection")) {
                 return new RejectionReportByTestSection();
+            } else if (report.equals("CIStudyExport")) {
+                return new ExportStudyProjectByDate();
+            } else if (report.equals("Trends")) {
+                return new ExportTrendsByDate();
+            }
+
+            else if (report.equals("covidResultsReport")) {
+                return new CovidResultsReport();
             }
         }
 
@@ -249,6 +257,14 @@ public class ReportImplementationFactory {
                 return new RejectionReportByTest();
             } else if (report.equals("rejectionReportByTestSection")) {
                 return new RejectionReportByTestSection();
+            } else if (report.equals("CIStudyExport")) {
+                return new ExportStudyProjectByDate();
+            } else if (report.equals("Trends")) {
+                return new ExportTrendsByDate();
+            }
+
+            else if (report.equals("covidResultsReport")) {
+                return new CovidResultsReport();
             }
         }
 

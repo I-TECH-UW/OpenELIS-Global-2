@@ -3,7 +3,7 @@ package org.openelisglobal.common.externalLinks;
 import java.util.List;
 import java.util.concurrent.Future;
 
-import org.openelisglobal.common.provider.query.PatientDemographicsSearchResults;
+import org.openelisglobal.common.provider.query.ExtendedPatientSearchResults;
 
 public interface IExternalPatientSearch {
 
@@ -12,7 +12,11 @@ public interface IExternalPatientSearch {
     void setSearchCriteria(String lastName, String firstName, String STNumber, String subjectNumber, String nationalID,
             String guid);
 
-    void setConnectionCredentials(String connectionString, String name, String password, int timeout_Mil);
+    void setConnectionCredentials(String connectionString, String name, String password);
 
-    List<PatientDemographicsSearchResults> getSearchResults();
+    List<ExtendedPatientSearchResults> getSearchResults();
+
+    String getConnectionString();
+
+    int getTimeout();
 }

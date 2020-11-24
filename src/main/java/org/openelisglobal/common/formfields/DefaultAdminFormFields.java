@@ -25,7 +25,7 @@ import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 
 public class DefaultAdminFormFields extends AAdminFormFields {
-    private HashMap<AdminFormFields.Field, Boolean> defaultAttributes = new HashMap<AdminFormFields.Field, Boolean>();
+    private HashMap<AdminFormFields.Field, Boolean> defaultAttributes = new HashMap<>();
 
     {
         defaultAttributes.put(Field.ActionMenu, Boolean.FALSE);
@@ -106,6 +106,8 @@ public class DefaultAdminFormFields extends AAdminFormFields {
             return new CI_GeneralAdminFormFields().getImplementationAttributes();
         } else if (IActionConstants.FORM_FIELD_SET_KENYA.equals(fieldSet)) {
             return new KenyaAdminFormFields().getImplementationAttributes();
+        } else if (IActionConstants.FORM_FIELD_SET_MAURITIUS.equals(fieldSet)) {
+            return new MauritiusAdminFormFields().getImplementationAttributes();
         }
 
         return null;

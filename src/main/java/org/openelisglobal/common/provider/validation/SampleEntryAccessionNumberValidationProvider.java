@@ -77,11 +77,15 @@ public class SampleEntryAccessionNumberValidationProvider extends BaseValidation
                             isRequired, projectFormName)
                     : AccessionNumberUtil.checkAccessionNumberValidity(accessionNumber, recordType, isRequired,
                             projectFormName);
-
         }
 
         String returnData;
-
+        
+//       if( !Boolean.valueOf(ConfigurationProperties.getInstance()
+//                .getPropertyValue(Property.ACCESSION_NUMBER_VALIDATE))) {
+//            result = ValidationResults.SUCCESS;
+//        }
+        
         switch (result) {
         case SUCCESS:
             returnData = VALID;
