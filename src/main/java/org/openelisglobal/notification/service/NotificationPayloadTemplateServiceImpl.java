@@ -19,6 +19,7 @@ public class NotificationPayloadTemplateServiceImpl extends BaseObjectServiceImp
 
     public NotificationPayloadTemplateServiceImpl() {
         super(NotificationPayloadTemplate.class);
+        this.auditTrailLog = false;
     }
 
     @Override

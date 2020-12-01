@@ -16,6 +16,8 @@ import org.openelisglobal.common.valueholder.BaseObject;
 @Table(name = "notification_payload_template")
 public class NotificationPayloadTemplate extends BaseObject<Integer> {
 
+    private static final long serialVersionUID = 3273600381468746329L;
+
     public enum NotificationPayloadType {
         TEST_RESULT
     }

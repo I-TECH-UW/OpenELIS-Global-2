@@ -7,7 +7,10 @@ nav:
     - Deploy:
        - OpenMRS Interoperability: deployomrs.md
        - Backup Script Configuration: backups.md
-    - Develop: dev.md
+       - Update From OpenELIS Global 1.x to 2.x: upgrade1to2.md
+    - Develop: 
+       - Developers: dev.md
+       - Database Profiles Mass facility and test catalog updates: dbprofiles.md
     - Website: http://openelis-global.org
 theme: readthedocs
 
