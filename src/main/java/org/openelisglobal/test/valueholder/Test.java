@@ -490,4 +490,8 @@ public class Test extends EnumValueItemImpl {
     public void setNotifyResults(boolean notifyResults) {
         this.notifyResults = notifyResults;
     }
+
+    public String getAugmentedTestName() {
+        return TestServiceImpl.getLocalizedTestNameWithType(this.id);
+    }
 }

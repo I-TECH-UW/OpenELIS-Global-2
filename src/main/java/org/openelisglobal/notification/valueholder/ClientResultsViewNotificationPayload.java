@@ -1,9 +1,5 @@
 package org.openelisglobal.notification.valueholder;
 
-import org.openelisglobal.notification.service.NotificationPayloadTemplateService;
-import org.openelisglobal.notification.valueholder.NotificationPayloadTemplate.NotificationPayloadType;
-import org.openelisglobal.spring.util.SpringContext;
-
 public class ClientResultsViewNotificationPayload implements NotificationPayload {
 
     private String accessPassword;
@@ -21,15 +17,15 @@ public class ClientResultsViewNotificationPayload implements NotificationPayload
     private NotificationPayloadTemplate payloadTemplate;
 
     public ClientResultsViewNotificationPayload(String accessPassword, String accessAddress, String testName,
-            String testResult, String patientFirstName, String patientLastNameInitial) {
+            String testResult, String patientFirstName, String patientLastNameInitial,
+            NotificationPayloadTemplate payloadTemplate) {
         this.accessPassword = accessPassword;
         this.accessAddress = accessAddress;
         this.testName = testName;
         this.testResult = testResult;
         this.patientFirstName = patientFirstName;
         this.patientLastNameInitial = patientLastNameInitial;
-        payloadTemplate = SpringContext.getBean(NotificationPayloadTemplateService.class)
-                .getForNotificationPayloadType(NotificationPayloadType.CLIENT_RESULTS);
+        this.payloadTemplate = payloadTemplate;
     }
 
     @Override
@@ -48,6 +44,11 @@ public class ClientResultsViewNotificationPayload implements NotificationPayload
     public String getSubject() {
         String subject = payloadTemplate.getSubjectTemplate();
         subject = subject.replaceAll("\\[testName\\]", testName);
+        subject = subject.replaceAll("\\[accessPassword\\]", accessPassword);
+        subject = subject.replaceAll("\\[accessAddress\\]", accessAddress);
+        subject = subject.replaceAll("\\[testResult\\]", testResult);
+        subject = subject.replaceAll("\\[patientFirstName\\]", patientFirstName);
+        subject = subject.replaceAll("\\[patientLastNameInitial\\]", patientLastNameInitial);
         return subject;
     }
 

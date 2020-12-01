@@ -552,6 +552,8 @@
 			value="siteInformationMenuDefinition" />
 		<put-attribute name="rightAnalyzerTestName"
 			value="analyzerTestNameMenuDefinition" />
+		<put-attribute name="rightTestNotification"
+			value="testNotificationMenuDefinition" />
 	</definition>
 
 	<definition name="typeOfSampleTestMenuDefinition"
@@ -930,7 +932,23 @@
 					   value="/pages/common/emptyPlaceHolder.jsp" />
 	</definition>
 
+	<definition name="testNotificationMenuDefinition"
+		extends="baseMenuSelectListDefinition">
+		<put-attribute name="header"
+			value="/pages/testnotification/headerButtons.jsp" />
+		<put-attribute name="body"
+			value="/pages/testnotification/testNotificationMenu.jsp" />
+		<put-attribute name="footer"
+			value="/pages/testnotification/headerButtons.jsp" />
+	</definition>
 
+	<definition name="testNotificationConfigDefinition"
+		extends="baseDefinition">
+		<put-attribute name="preSelectionHeader"
+			value="/pages/common/actionSuccess.jsp" />
+		<put-attribute name="body"
+			value="/pages/testnotification/testNotification.jsp" />
+	</definition>
 </tiles-definitions>
 
 

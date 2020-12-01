@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+	xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+	  http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+
+	<changeSet author="csteele" id="1">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="test_notification_config" />
+			</not>
+		</preConditions>
+		<createSequence incrementBy="1" schemaName="clinlims"
+			sequenceName="test_notification_config_seq" startValue="1" />
+		<createTable schemaName="clinlims"
+			tableName="test_notification_config">
+			<column name="id" type="INTEGER"
+				valueSequenceNext="test_notification_config_seq">
+				<constraints primaryKey="true" />
+			</column>
+			<column name="test_id" type="NUMERIC(10)">
+				<constraints
+					foreignKeyName="fk_test_notification_config_test"
+					references="test(id)" />
+			</column>
+			<column name="default_payload_template_id" type="INTEGER">
+				<constraints
+					foreignKeyName="fk_test_notification_config_default_payload_template"
+					references="notification_payload_template(id)" />
+			</column>
+			<column name="last_updated" type="DATE" />
+		</createTable>
+
+
+		<createSequence incrementBy="1" schemaName="clinlims"
+			sequenceName="test_notification_config_option_seq" startValue="1" />
+		<createTable schemaName="clinlims"
+			tableName="test_notification_config_option">
+			<column name="id" type="INTEGER"
+				valueSequenceNext="test_notification_config_option_seq">
+				<constraints primaryKey="true" />
+			</column>
+			<column name="test_notification_config_id" type="INTEGER">
+				<constraints
+					foreignKeyName="fk_test_notification_config_option_test_notification_config"
+					references="test_notification_config(id)" />
+			</column>
+			<column name="notification_nature" type="VARCHAR(255)" />
+			<column name="notification_person_type" type="VARCHAR(255)" />
+			<column name="notification_method" type="VARCHAR(255)" />
+			<column name="payload_template_id" type="INTEGER">
+				<constraints
+					foreignKeyName="fk_test_notification_config_default_payload_template"
+					references="notification_payload_template(id)" />
+			</column>
+			<column name="active" type="BOOLEAN" />
+			<column name="last_updated" type="DATE" />
+		</createTable>
+		<addUniqueConstraint catalogName="cat"
+			columnNames="test_notification_config_id, notification_person_type, notification_method"
+			constraintName="unique_option_constraint" schemaName="clinlims"
+			tableName="test_notification_config_option" />
+	</changeSet>
+	
+	
+	<changeSet author="csteele" id="2">
+		<dropUniqueConstraint  
+            constraintName="unique_notification_payload_template_type"  
+            schemaName="clinlims"  
+            tableName="notification_payload_template"  
+        />  
+	</changeSet>
+
+</databaseChangeLog>

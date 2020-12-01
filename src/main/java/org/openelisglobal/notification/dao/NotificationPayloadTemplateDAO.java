@@ -6,6 +6,6 @@ import org.openelisglobal.notification.valueholder.NotificationPayloadTemplate.N
 
 public interface NotificationPayloadTemplateDAO extends BaseDAO<NotificationPayloadTemplate, Integer> {
 
-    NotificationPayloadTemplate getForNotificationPayloadType(NotificationPayloadType notificationPayloadType);
+    NotificationPayloadTemplate getSystemDefaultPayloadTemplateForType(NotificationPayloadType type);
 
 }

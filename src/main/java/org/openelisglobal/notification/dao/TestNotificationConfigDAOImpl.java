@@ -1,0 +1,39 @@
+package org.openelisglobal.notification.dao;
+
+import java.util.Optional;
+
+import org.hibernate.Session;
+import org.hibernate.query.Query;
+import org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.notification.valueholder.TestNotificationConfig;
+import org.springframework.stereotype.Component;
+
+@Component
+public class TestNotificationConfigDAOImpl extends BaseDAOImpl<TestNotificationConfig, Integer>
+        implements TestNotificationConfigDAO {
+
+    public TestNotificationConfigDAOImpl() {
+        super(TestNotificationConfig.class);
+    }
+
+    @Override
+    public Optional<TestNotificationConfig> getTestNotificationConfigForTestId(String testId) {
+        TestNotificationConfig data;
+        try {
+            String sql = "From TestNotificationConfig as tnc where tnc.test.id = :testId";
+            Query<TestNotificationConfig> query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setParameter("testId", Integer.parseInt(testId));
+            data = query.uniqueResult();
+        } catch (RuntimeException e) {
+            LogEvent.logError(e.toString(), e);
+            throw new LIMSRuntimeException(
+                    "Error in TestNotificationConfigDAOImpl getTestNotificationConfigForTestId()", e);
+        }
+
+        return Optional.ofNullable(data);
+    }
+
+
+}
