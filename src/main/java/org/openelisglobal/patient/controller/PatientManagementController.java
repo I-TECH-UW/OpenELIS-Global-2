@@ -52,7 +52,10 @@ public class PatientManagementController extends BaseController {
             "patientProperties.lastName", "patientProperties.firstName", "patientProperties.aka",
             "patientProperties.mothersName", "patientProperties.mothersInitial", "patientProperties.streetAddress",
             "patientProperties.commune", "patientProperties.city", "patientProperties.addressDepartment",
-            "patientProperties.addressDepartment", "patientPhone", "patientProperties.healthRegion",
+            "patientProperties.addressDepartment", 
+            
+            "patientProperties.primaryPhone", "patientProperties.email", "patientProperties.healthRegion",
+            
             "patientProperties.healthDistrict", "patientProperties.birthDateForDisplay", "patientProperties.age",
             "patientProperties.gender", "patientProperties.patientType", "patientProperties.insuranceNumber",
             "patientProperties.occupation", "patientProperties.education", "patientProperties.maritialStatus",
