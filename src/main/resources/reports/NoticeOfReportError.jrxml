@@ -10,7 +10,6 @@
 	</parameter>
 	<parameter name="rightHeaderImage" class="java.io.InputStream" isForPrompting="false"/>
 	<parameter name="leftHeaderImage" class="java.io.InputStream" isForPrompting="false"/>
-	<parameter name="localization" class="java.util.Map" isForPrompting="false"/>
 	<field name="msgLine1" class="java.lang.String"/>
 	<field name="msgLine2" class="java.lang.String"/>
 	<field name="msgLine3" class="java.lang.String"/>
@@ -32,7 +31,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="20" isBold="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{localization}.get("noReportMessage")]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{report.noReportMessage}]]></textFieldExpression>
 			</textField>
 		</band>
 	</columnHeader>
@@ -44,20 +43,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{msgLine1}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="0" y="23" width="572" height="20"/>
-				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{msgLine2}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="0" y="46" width="572" height="20"/>
-				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{msgLine3}]]></textFieldExpression>
-			</textField>
-		</band>
-	</detail>
-	<columnFooter>
-		<band height="45" splitType="Stretch"/>
-	</columnFooter>
+				<reportElement x="0" y="23" width="572" hget("noReportMessage")
 	<pageFooter>
 		<band height="54" splitType="Stretch"/>
 	</pageFooter>

@@ -39,7 +39,6 @@
 	<parameter name="labDirectorName" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="labDirectorTitle" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="useLabDirectorSignature" class="java.lang.Boolean" isForPrompting="false"/>
-	<parameter name="localization" class="java.util.Map" isForPrompting="false"/>
 	<parameter name="imagesPath" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
@@ -102,7 +101,7 @@
 						<font size="8" isBold="false"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$P{localization}.get("signValidation")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$R{report.signValidation}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="person" pattern="">
 					<reportElement x="375" y="56" width="100" height="14" isRemoveLineWhenBlank="true" uuid="98ec4770-2dbd-4446-a00b-596e54e7e66a">
@@ -112,7 +111,7 @@
 						<font size="8" isBold="false"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$P{localization}.get("date")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$R{report.date}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="person" pattern="">
 					<reportElement x="1" y="0" width="370" height="70" isRemoveLineWhenBlank="true" uuid="5933bf31-f0d2-4e80-9b0c-c7e0e764e672">
@@ -129,7 +128,7 @@
 						<font size="8" isBold="false"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$P{localization}.get("labInfomation")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$R{report.labInfomation}]]></textFieldExpression>
 				</textField>
 				<image>
 					<reportElement x="373" y="10" width="178" height="25" uuid="5c12e0ad-2c6e-453f-8220-8b150902e7e6">
@@ -182,7 +181,7 @@
 						<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$P{localization}.get("specimenCollectTimes") + ": " + ($F{collectionDateTime} != null ? $F{collectionDateTime}: "" )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$R{report.specimenCollectTimes} + ": " + ($F{collectionDateTime} != null ? $F{collectionDateTime}: "" )]]></textFieldExpression>
 				</textField>
 				<frame>
 					<reportElement mode="Opaque" x="0" y="65" width="553" height="29" isRemoveLineWhenBlank="true" forecolor="#66FF66" backcolor="#FFFFFF" uuid="94a8606d-2df2-4adc-9e39-b633b26690a2">
@@ -222,7 +221,7 @@
 							<font size="8"/>
 							<paragraph lineSpacing="Single"/>
 						</textElement>
-						<textFieldExpression><![CDATA[$P{localization}.get("prescriber")]]></textFieldExpression>
+						<textFieldExpression><![CDATA[$R{report.prescriber}]]></textFieldExpression>
 					</textField>
 					<textField isBlankWhenNull="true">
 						<reportElement stretchType="RelativeToBandHeight" x="361" y="14" width="192" height="14" backcolor="#FFFFFF" uuid="c630507a-59a7-404d-8ab6-a7c4d596188a"/>
@@ -250,7 +249,7 @@
 							<font size="8"/>
 							<paragraph lineSpacing="Single"/>
 						</textElement>
-						<textFieldExpression><![CDATA[$P{localization}.get("referringSite")]]></textFieldExpression>
+						<textFieldExpression><![CDATA[$R{report.referringSite}]]></textFieldExpression>
 					</textField>
 					<textField>
 						<reportElement mode="Opaque" x="0" y="0" width="100" height="14" backcolor="#E6E6E6" uuid="cb2ffe81-f1ed-4424-9324-5142e3bc5441"/>
@@ -264,7 +263,7 @@
 							<font size="8"/>
 							<paragraph lineSpacing="Single"/>
 						</textElement>
-						<textFieldExpression><![CDATA[$P{localization}.get("patientCode")]]></textFieldExpression>
+						<textFieldExpression><![CDATA[$R{report.patientCode}]]></textFieldExpression>
 					</textField>
 					<textField isBlankWhenNull="true">
 						<reportElement mode="Transparent" x="101" y="0" width="86" height="14" backcolor="#FFFFFF" uuid="3470cf11-fe1a-4d20-a1f8-1b3a43cac28a"/>
@@ -305,7 +304,7 @@
 							<font size="8"/>
 							<paragraph lineSpacing="Single"/>
 						</textElement>
-						<textFieldExpression><![CDATA[$P{localization}.get("idNational")]]></textFieldExpression>
+						<textFieldExpression><![CDATA[$R{report.idNational}]]></textFieldExpression>
 					</textField>
 					<textField>
 						<reportElement mode="Opaque" x="361" y="0" width="95" height="14" backcolor="#E6E6E6" uuid="958994bb-c2c0-4199-b0e0-f95aa9d12179"/>
@@ -319,7 +318,7 @@
 							<font size="8"/>
 							<paragraph lineSpacing="Single"/>
 						</textElement>
-						<textFieldExpression><![CDATA[$P{localization}.get("ordinanceNo")]]></textFieldExpression>
+						<textFieldExpression><![CDATA[$R{report.ordinanceNo}]]></textFieldExpression>
 					</textField>
 					<textField isBlankWhenNull="true">
 						<reportElement x="456" y="0" width="97" height="14" backcolor="#C0C0C0" uuid="4b2f159a-17c9-41ae-b094-0d9e646006ca"/>
@@ -416,7 +415,7 @@
 							<font fontName="SansSerif" size="8"/>
 							<paragraph lineSpacing="Single"/>
 						</textElement>
-						<textFieldExpression><![CDATA[$P{localization}.get("patientCode")]]></textFieldExpression>
+						<textFieldExpression><![CDATA[$R{report.patientCode}]]></textFieldExpression>
 					</textField>
 					<textField isBlankWhenNull="true">
 						<reportElement x="101" y="0" width="100" height="21" uuid="f9125cec-a7be-4cde-a2f6-b6a40b661762"/>
@@ -443,7 +442,7 @@
 							<font size="8"/>
 							<paragraph lineSpacing="Single"/>
 						</textElement>
-						<textFieldExpression><![CDATA[$P{localization}.get("idNational")]]></textFieldExpression>
+						<textFieldExpression><![CDATA[$R{report.idNational}]]></textFieldExpression>
 					</textField>
 					<textField>
 						<reportElement mode="Opaque" x="199" y="10" width="87" height="11" backcolor="#E6E6E6" uuid="f927c59b-260d-48f4-b6d8-029a74115b5e"/>
@@ -497,7 +496,7 @@
 							<font size="8"/>
 							<paragraph lineSpacing="Single"/>
 						</textElement>
-						<textFieldExpression><![CDATA[$P{localization}.get("prescriber")]]></textFieldExpression>
+						<textFieldExpression><![CDATA[$R{report.prescriber}]]></textFieldExpression>
 					</textField>
 					<textField isBlankWhenNull="true">
 						<reportElement stretchType="RelativeToBandHeight" x="100" y="32" width="171" height="11" uuid="63325ff4-aba7-4e3b-aced-3501c840c670"/>
@@ -522,7 +521,7 @@
 							<font size="8"/>
 							<paragraph lineSpacing="Single"/>
 						</textElement>
-						<textFieldExpression><![CDATA[$P{localization}.get("referringSite")]]></textFieldExpression>
+						<textFieldExpression><![CDATA[$R{report.referringSite}]]></textFieldExpression>
 					</textField>
 					<textField isBlankWhenNull="true">
 						<reportElement stretchType="RelativeToBandHeight" x="371" y="32" width="183" height="11" isPrintWhenDetailOverflows="true" uuid="9c486008-327b-4fad-9dcd-a8297f3240cd"/>
@@ -548,7 +547,7 @@
 							<font size="8"/>
 							<paragraph lineSpacing="Single"/>
 						</textElement>
-						<textFieldExpression><![CDATA[$P{localization}.get("ordinanceNo")]]></textFieldExpression>
+						<textFieldExpression><![CDATA[$R{report.ordinanceNo}]]></textFieldExpression>
 					</textField>
 					<textField isBlankWhenNull="true">
 						<reportElement x="100" y="43" width="171" height="11" uuid="cb18dee3-4339-4a59-9698-83b860ee4cf9"/>
@@ -574,7 +573,7 @@
 							<font size="8"/>
 							<paragraph lineSpacing="Single"/>
 						</textElement>
-						<textFieldExpression><![CDATA[$P{localization}.get("program")]]></textFieldExpression>
+						<textFieldExpression><![CDATA[$R{report.program}]]></textFieldExpression>
 					</textField>
 					<textField isBlankWhenNull="true">
 						<reportElement x="371" y="43" width="183" height="11" uuid="2ceb5f5a-e147-4cd6-9381-e7af879b4b4d"/>
@@ -602,7 +601,7 @@
 							<font size="8"/>
 							<paragraph lineSpacing="Single"/>
 						</textElement>
-						<textFieldExpression><![CDATA[$P{localization}.get("orderDate")]]></textFieldExpression>
+						<textFieldExpression><![CDATA[$R{report.orderDate}]]></textFieldExpression>
 					</textField>
 					<textField>
 						<reportElement mode="Opaque" x="271" y="54" width="162" height="11" backcolor="#E6E6E6" uuid="3d4dca0b-9bd4-4418-be17-d786f6165566"/>
@@ -617,7 +616,7 @@
 							<font size="8"/>
 							<paragraph lineSpacing="Single"/>
 						</textElement>
-						<textFieldExpression><![CDATA[$P{localization}.get("receiptDate")]]></textFieldExpression>
+						<textFieldExpression><![CDATA[$R{report.receiptDate}]]></textFieldExpression>
 					</textField>
 					<textField isBlankWhenNull="true">
 						<reportElement x="164" y="54" width="107" height="11" uuid="02e109fa-850f-4632-9980-bc83f46c80d4"/>
@@ -687,7 +686,7 @@
 						<font size="7"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$P{localization}.get("test")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$R{report.email}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement x="264" y="13" width="59" height="12" uuid="93145981-a41f-4842-b50f-245c563c3fe2"/>
@@ -695,7 +694,7 @@
 						<font size="7"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$P{localization}.get("status")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$R{report.status}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement mode="Transparent" x="357" y="13" width="117" height="12" backcolor="#FFFFFF" uuid="af6fb0b0-7935-4839-b930-ea910fe115f7"/>
@@ -703,7 +702,7 @@
 						<font size="7"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$P{localization}.get("referenceValue")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$R{report.referenceValue}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement mode="Transparent" x="474" y="13" width="78" height="12" backcolor="#FFFFFF" uuid="66ed746d-f781-4682-89ca-509af3a985fd"/>
@@ -711,7 +710,7 @@
 						<font size="7"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$P{localization}.get("unit")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$R{report.unit}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement mode="Transparent" x="146" y="13" width="118" height="12" backcolor="#FFFFFF" uuid="b9eb04f5-32f9-4529-95f4-12bb427f5de6"/>
@@ -719,7 +718,7 @@
 						<font size="7"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$P{localization}.get("outcome")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$R{report.outcome}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement mode="Transparent" x="323" y="13" width="34" height="12" isPrintWhenDetailOverflows="true" backcolor="#FFFFFF" uuid="b105daa6-4e5a-46e2-a543-dbb79ac164da"/>
@@ -727,7 +726,7 @@
 						<font size="7"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$P{localization}.get("alert")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$R{report.alert}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement mode="Transparent" x="111" y="13" width="35" height="12" backcolor="#FFFFFF" uuid="60720d7d-4760-4f4a-978e-8820f99e4435"/>
@@ -735,7 +734,7 @@
 						<font size="7"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$P{localization}.get("specimen")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$R{report.specimen}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement mode="Transparent" x="1" y="0" width="551" height="14" backcolor="#FFFFFF" uuid="6812550f-0a45-4cbb-a7e5-6d5714c8a39f"/>
@@ -795,14 +794,11 @@
 				<subreportParameter name="labName1">
 					<subreportParameterExpression><![CDATA[$P{siteName}]]></subreportParameterExpression>
 				</subreportParameter>
-				<subreportParameter name="localization">
-					<subreportParameterExpression><![CDATA[$P{localization}]]></subreportParameterExpression>
-				</subreportParameter>
 				<subreportParameter name="billingNumberLabel">
 					<subreportParameterExpression><![CDATA[$P{billingNumberLabel}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="reportTitle">
-					<subreportParameterExpression><![CDATA[$P{localization}.get("analysisReport")]]></subreportParameterExpression>
+					<subreportParameterExpression><![CDATA[$R{report.analysisReport}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="rightHeaderImage">
 					<subreportParameterExpression><![CDATA[$P{rightHeaderImage}]]></subreportParameterExpression>
@@ -857,7 +853,7 @@
 					<font size="12" isBold="true"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{localization}.get("correctedReport")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{report.correctedReport}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement mode="Opaque" x="1" y="110" width="550" height="13" uuid="e92e9718-5cbe-4e23-af55-8d2ddd09d5cd"/>
@@ -1041,7 +1037,7 @@
 					<font size="7"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" "+$P{localization}.get("about")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{report.label.page}+" "+$V{PAGE_NUMBER}+" "+$R{report.about}]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Group" evaluationGroup="Accession Number">
 				<reportElement x="497" y="4" width="37" height="10" uuid="fbc71ed2-8d6d-46ba-920f-256901710d1a">
@@ -1068,7 +1064,7 @@
 					<font size="7" isBold="true"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{localization}.get("reportDate")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{report.reportDate}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageFooter>

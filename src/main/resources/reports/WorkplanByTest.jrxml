@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="WorkplanByTest" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="30" bottomMargin="30">
+<!-- Created with Jaspersoft Studio version 6.14.0.final using JasperReports Library version 6.14.0-2ab0d8625be255bf609c78e1181801213e51db8f  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="WorkplanByTest" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="30" bottomMargin="30" uuid="8414fde9-7502-42bf-91c3-7340e4c6ad98">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.0"/>
@@ -16,7 +17,7 @@
 		<defaultValueExpression><![CDATA[Boolean.FALSE]]></defaultValueExpression>
 	</parameter>
 	<parameter name="labNumberTitle" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA["Lab No."]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[$R{report.label.labno}]]></defaultValueExpression>
 	</parameter>
 	<parameter name="subjectNoTitle" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="receptionDate" class="java.lang.String" isForPrompting="false"/>
@@ -35,7 +36,7 @@
 	<pageHeader>
 		<band height="52" splitType="Stretch">
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-2" x="1" y="24" width="554" height="22"/>
+				<reportElement key="textField-2" x="1" y="24" width="554" height="22" uuid="cba10d63-2cbc-4fce-84dd-36b62d49efbb"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -45,10 +46,10 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="12" isBold="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{workPlan} + ": " + $P{testName}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{workPlan} + ": " + $P{testName}]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report" pattern="MM/dd/yyyy" isBlankWhenNull="false">
-				<reportElement key="textField" x="440" y="6" width="110" height="20"/>
+				<reportElement key="textField" x="440" y="6" width="110" height="20" uuid="6d16d39d-8f45-453f-9961-92439e184e80"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -56,14 +57,14 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center"/>
-				<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
 	<columnHeader>
 		<band height="20" splitType="Stretch">
 			<textField>
-				<reportElement x="151" y="1" width="111" height="16"/>
+				<reportElement x="151" y="1" width="111" height="16" uuid="a79588ec-9115-4ba0-8d87-fe9b6fe9d1f3"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -73,39 +74,38 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="10"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{receptionDate}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{receptionDate}]]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement key="line-1" x="1" y="19" width="557" height="1"/>
+				<reportElement key="line-1" x="1" y="19" width="557" height="1" uuid="41bfb42e-4bc0-44f2-83a6-8c9930d22027"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
 			<textField>
-				<reportElement x="262" y="1" width="126" height="16">
+				<reportElement x="262" y="1" width="126" height="16" uuid="8d1477b2-21a6-45e1-82f7-b17945587d63">
 					<printWhenExpression><![CDATA[$P{printSubjectNo}]]></printWhenExpression>
 				</reportElement>
 				<textElement verticalAlignment="Middle"/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{subjectNoTitle}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{subjectNoTitle}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="12" y="1" width="115" height="16"/>
-				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{labNumberTitle}]]></textFieldExpression>
+				<reportElement x="12" y="1" width="128" height="16" uuid="50cbda87-d226-43c1-87d6-044f471e32bc"/>
+				<textFieldExpression><![CDATA[$P{labNumberTitle}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="388" y="1" width="128" height="16">
+				<reportElement x="388" y="1" width="128" height="16" uuid="536d9eca-c420-4bdf-9bfd-65578bbaf40b">
 					<printWhenExpression><![CDATA[$P{printNextVisit}]]></printWhenExpression>
 				</reportElement>
 				<textElement verticalAlignment="Middle"/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{appointmentDate}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{appointmentDate}]]></textFieldExpression>
 			</textField>
 		</band>
 	</columnHeader>
 	<detail>
 		<band height="16" splitType="Stretch">
-			<textField isBlankWhenNull="true">
-				<reportElement key="textField" x="12" y="0" width="115" height="13"/>
+			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+				<reportElement key="textField" x="12" y="0" width="128" height="13" uuid="02d0ca30-bb65-4179-8fa9-66367b596e72"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -113,12 +113,12 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font size="10"/>
+					<font size="11"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{accessionNumber}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{accessionNumber}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField" mode="Transparent" x="152" y="0" width="110" height="13"/>
+				<reportElement key="textField" mode="Transparent" x="152" y="0" width="110" height="13" uuid="5c529b3e-52f3-4175-9852-77de5bd16ba4"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -128,27 +128,25 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="10"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{receivedDate}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{receivedDate}]]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement key="line-2" x="1" y="14" width="557" height="1"/>
+				<reportElement key="line-2" x="1" y="14" width="557" height="1" uuid="3c2ad395-763b-4c56-94bb-11f07de3553a"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
 			<textField isBlankWhenNull="true">
-				<reportElement x="262" y="0" width="126" height="13">
+				<reportElement x="262" y="0" width="126" height="13" uuid="e586ddbf-313e-423a-ab24-1e07c1088ac2">
 					<printWhenExpression><![CDATA[$P{printSubjectNo}]]></printWhenExpression>
 				</reportElement>
-				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{patientInfo}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{patientInfo}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="388" y="0" width="128" height="13">
+				<reportElement x="388" y="0" width="128" height="13" uuid="56ea8e13-9cfe-44a8-8ee9-3d6b59f38055">
 					<printWhenExpression><![CDATA[$P{printNextVisit}]]></printWhenExpression>
 				</reportElement>
-				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{nextVisitDate}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{nextVisitDate}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

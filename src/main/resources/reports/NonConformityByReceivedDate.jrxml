@@ -36,7 +36,6 @@
 	</parameter>
 	<parameter name="leftHeaderImage" class="java.io.InputStream" isForPrompting="false"/>
 	<parameter name="rightHeaderImage" class="java.io.InputStream" isForPrompting="false"/>
-	<parameter name="localization" class="java.util.Map" isForPrompting="false"/>
 	<field name="accessionNumber" class="java.lang.String"/>
 	<field name="subjectNumber" class="java.lang.String"/>
 	<field name="siteSubjectNumber" class="java.lang.String"/>
@@ -59,7 +58,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font size="11" isBold="true" isItalic="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$P{localization}.get("biologist")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$R{report.biologist}]]></textFieldExpression>
 				</textField>
 				<rectangle>
 					<reportElement x="0" y="0" width="751" height="76" backcolor="#FFFFFF" uuid="0dd5424a-03d5-4924-b41e-c0504ef0e6d5"/>
@@ -89,7 +88,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font size="11" isBold="true" isItalic="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$P{localization}.get("subjectNo")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$R{report.subjectNo}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
 					<reportElement x="87" y="28" width="100" height="18" backcolor="#CCCCFF" uuid="52a09c58-184f-42a2-b699-69aea9b6a423"/>
@@ -103,7 +102,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font size="11" isBold="true" isItalic="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$P{localization}.get("siteSubjectNo")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$R{report.siteSubjectNo}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
 					<reportElement x="87" y="46" width="100" height="18" backcolor="#CCCCFF" uuid="d536d837-3491-4b92-82ae-36fb63e88ba8">
@@ -119,7 +118,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font size="11" isBold="true" isItalic="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$P{localization}.get("study")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$R{report.study}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
 					<reportElement x="309" y="10" width="100" height="18" backcolor="#CCCCFF" uuid="c53a5828-5730-4247-87d4-21f1b4c8e006">
@@ -135,7 +134,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font size="11" isBold="true" isItalic="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$P{localization}.get("service")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$R{report.service}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
 					<reportElement x="309" y="28" width="100" height="18" backcolor="#CCCCFF" uuid="2d1b7222-cbdc-41a2-a550-b6077355fc82">
@@ -149,7 +148,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font size="11" isBold="true" isItalic="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$P{localization}.get("reasonForRejection")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$R{report.reasonForRejection}]]></textFieldExpression>
 				</textField>
 				<rectangle>
 					<reportElement x="0" y="76" width="751" height="25" backcolor="#CCCCCC" uuid="a1e5f7f0-25c6-4f77-82ae-497b7fe4ebac"/>
@@ -170,35 +169,35 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font size="11" isBold="true" isItalic="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$P{localization}.get("section")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$R{report.section}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement positionType="FixRelativeToBottom" mode="Transparent" x="174" y="77" width="135" height="20" backcolor="#CCCCCC" uuid="83b11b5c-d88f-4eb3-9161-3a4b2b5bad33"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font size="11" isBold="true" isItalic="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$P{localization}.get("reasonForRejection")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$R{report.reasonForRejection}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement positionType="FixRelativeToBottom" mode="Transparent" x="309" y="77" width="117" height="20" backcolor="#CCCCCC" uuid="2bbe3f12-ffb1-4d12-99fe-1c74c3a990ae"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font size="11" isBold="true" isItalic="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$P{localization}.get("typeOfSample")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$R{report.typeOfSample}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement positionType="FixRelativeToBottom" mode="Transparent" x="426" y="77" width="90" height="20" backcolor="#CCCCCC" uuid="03178567-d203-4429-8992-7a3ac8135cf8"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font size="11" isBold="true" isItalic="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$P{localization}.get("biologist")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$R{report.biologist}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement positionType="FixRelativeToBottom" mode="Transparent" x="516" y="77" width="107" height="20" backcolor="#CCCCCC" uuid="ce887222-9d9b-4c49-b2c4-6555d070007b"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font size="11" isBold="true" isItalic="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$P{localization}.get("note")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$R{report.note}]]></textFieldExpression>
 				</textField>
 				<line>
 					<reportElement key="line-1" positionType="FixRelativeToBottom" x="0" y="0" width="751" height="1" uuid="0c61421c-95ea-47b1-a222-7cb879c4373a"/>
@@ -211,7 +210,7 @@
 					<textElement verticalAlignment="Middle">
 						<font size="11" isBold="true" isItalic="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$P{localization}.get("date")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$R{report.date}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -225,7 +224,7 @@
 				<textField>
 					<reportElement x="10" y="1" width="77" height="20" uuid="4349e52f-d706-466c-b991-ba842ec1e74a"/>
 					<textElement verticalAlignment="Middle"/>
-					<textFieldExpression><![CDATA[$P{localization}.get("comments")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$R{report.comments}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupFooter>
@@ -343,7 +342,7 @@
 					<printWhenExpression><![CDATA[$P{usePageNumbers}.equals("true")]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" "+$P{localization}.get("about")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{report.label.page}+" "+$V{PAGE_NUMBER}+" "+$R{report.about}]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report">
 				<reportElement x="705" y="20" width="40" height="20" uuid="ffd45ea5-83b1-4529-a440-09aa7ca4b36a">
@@ -357,7 +356,7 @@
 					<printWhenExpression><![CDATA[$P{supervisorSignature}]]></printWhenExpression>
 				</reportElement>
 				<textElement verticalAlignment="Bottom"/>
-				<textFieldExpression><![CDATA[$P{localization}.get("supervisorSign")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{report.supervisorSign}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageFooter>
