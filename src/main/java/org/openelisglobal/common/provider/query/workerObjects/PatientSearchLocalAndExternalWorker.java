@@ -259,7 +259,9 @@ public class PatientSearchLocalAndExternalWorker extends PatientSearchWorker {
         for (PatientSearchResults result : results) {
             String messageKey = GenericValidator.isBlankOrNull(result.getGUID()) ? "patient.local.source"
                     : "patient.imported.source";
-            result.setDataSourceName(MessageUtil.getMessage(messageKey));
+            if (GenericValidator.isBlankOrNull(result.getDataSourceName())) {
+                result.setDataSourceName(MessageUtil.getMessage(messageKey));
+            }
         }
     }
 }
