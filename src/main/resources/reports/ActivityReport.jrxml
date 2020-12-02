@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.14.0.final using JasperReports Library version 6.14.0-2ab0d8625be255bf609c78e1181801213e51db8f  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="WorkplanByTest" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="30" bottomMargin="30" resourceBundle="languages/message" whenResourceMissingType="Key" uuid="ad5d13f8-f854-43ae-8411-0ce82766998a">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="WorkplanByTest" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="30" bottomMargin="30" resourceBundle="languages/message" whenResourceMissingType="Key" uuid="c765d1f8-3be5-4040-99e5-4d27b2557d40">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.5"/>
@@ -47,7 +47,7 @@
 	<pageHeader>
 		<band height="102" splitType="Stretch">
 			<textField evaluationTime="Report" pattern="dd/MM/yyyy" isBlankWhenNull="false">
-				<reportElement key="textField" mode="Transparent" x="482" y="2" width="67" height="20" backcolor="#FFFFFF" uuid="964767e0-8118-42b0-94fb-08caa6a8d6d0"/>
+				<reportElement key="textField" mode="Transparent" x="482" y="2" width="67" height="20" backcolor="#FFFFFF" uuid="1f23b20e-863a-440b-8ce1-135465a8365a"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -58,18 +58,18 @@
 				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 			</textField>
 			<image isUsingCache="true">
-				<reportElement x="1" y="1" width="65" height="64" uuid="193aa301-9547-4cb5-95bb-9a563ecc1f3f"/>
+				<reportElement x="1" y="1" width="65" height="64" uuid="71a7081c-2f0b-4ed8-a638-2e8df3b20a4d"/>
 				<imageExpression><![CDATA[$P{leftHeaderImage}]]></imageExpression>
 			</image>
 			<textField isBlankWhenNull="true">
-				<reportElement x="164" y="2" width="229" height="20" uuid="259a5c4f-6032-4e5a-97fc-393aef238ee4"/>
+				<reportElement x="164" y="2" width="229" height="20" uuid="3c2b55f6-ab02-4ca3-b714-bf7ab357691b"/>
 				<textElement textAlignment="Center">
 					<font isItalic="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{labName}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-2" x="1" y="45" width="554" height="22" uuid="b03ed929-b624-41fe-9741-6566c7517c3a"/>
+				<reportElement key="textField-2" x="1" y="45" width="554" height="22" uuid="9cdefebb-b484-48b0-96fb-bce8bc68f139"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

@@ -1056,7 +1056,7 @@ function  processSubjectNumberSuccess(xhr){
 	<tr class="spacerRow" ><td colspan="2">&nbsp;</td></tr>
 	<tr>
 		<td style="width: 220px">
-			<spring:message code="patient.contact" />
+			<spring:message code="emergency.contact" />
 		</td>
 		<td style="text-align:right;">
 			<spring:message code="patient.contactLastName" />:

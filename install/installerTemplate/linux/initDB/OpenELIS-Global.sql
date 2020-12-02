@@ -17166,7 +17166,7 @@ COPY clinlims.test (id, method_id, uom_id, description, loinc, reporting_descrip
 4	\N	27	Créatinine(Serum)	\N	Creatinine	\N	Y	\N	\N	N	\N	\N	\N	\N	\N	\N	2012-10-24 11:58:25.267898	\N	\N	56	\N	\N	Creatinine-Serum	40	Créatinine	t	d7f672c4-52ea-4c26-bdf0-e9527d2ba95f	9	10
 5	\N	29	Amylase(Serum)	\N	Amylase	\N	Y	\N	\N	N	\N	\N	\N	\N	\N	\N	2012-10-24 11:58:25.267898	\N	\N	56	\N	\N	Amylase-Serum	50	Amylase	t	b45cace4-5436-41c3-a4df-bcc9c11395eb	11	12
 6	\N	25	Albumine recherche miction(Urines)	\N	Albumine	\N	Y	\N	\N	N	\N	\N	\N	\N	\N	\N	2012-10-24 11:58:25.267898	\N	\N	56	\N	\N	Albumin-Urines	60	Albumine recherche miction	t	3578f53d-8e5c-4e16-9dd3-65fe4d1a1f4d	13	14
-57	\N	\N	Determine(Sérum)		Determine-Sérum	\N	Y	\N	\N	N	\N	\N	\N	\N	\N	\N	2013-10-10 16:52:59.678901	\N	\N	117	\N	\N	Murex-Serum	480	Determine	t	585a6c2a-93ca-454f-ace3-f9a5fa61d33d	115	116
+57	\N	\N	Determine(Sérum)		Determine-Sérum	\N	\N	\N	\N	N	\N	\N	\N	\N	\N	\N	2013-10-10 16:52:59.678901	\N	\N	117	\N	\N	Murex-Serum	480	Determine	t	585a6c2a-93ca-454f-ace3-f9a5fa61d33d	115	116
 58	\N	\N	Determine(Sang total)		Determine-Sang total	\N	Y	\N	\N	N	\N	\N	\N	\N	\N	\N	2013-10-10 16:52:59.678901	\N	\N	117	\N	\N	Vironostika-Blood	490	Determine	t	1f6ebdb4-0305-4fe6-8112-4b8cc8644298	117	118
 7	\N	25	Cholestérol total(Serum)	\N	Chol total	\N	Y	\N	\N	N	\N	\N	\N	\N	\N	\N	2012-10-24 11:58:25.267898	\N	\N	56	\N	\N	Total cholesterol-Serum	70	Cholestérol total	t	4cd86c73-eca4-4968-a410-ee9d61f5da11	15	16
 8	\N	25	Cholestérol HDL(Serum)	\N	Chol HDL	\N	Y	\N	\N	N	\N	\N	\N	\N	\N	\N	2012-10-24 11:58:25.267898	\N	\N	56	\N	\N	HDL cholesterol-Serum	80	Cholestérol HDL	t	eea822b4-5535-4e25-b9ef-fd492bef4349	17	18
