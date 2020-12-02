@@ -63,7 +63,7 @@
 				<imageExpression><![CDATA[$P{leftHeaderImage}]]></imageExpression>
 			</image>
 			<textField isBlankWhenNull="true">
-				<reportElement x="164" y="2" width="229" height="20" uuid="3c2b55f6-ab02-4ca3-b714-bf7ab357691b"/>
+				<reportElement x="120" y="2" width="291" height="20" uuid="3c2b55f6-ab02-4ca3-b714-bf7ab357691b"/>
 				<textElement textAlignment="Center">
 					<font isItalic="true"/>
 				</textElement>
