@@ -1,5 +1,7 @@
 package org.openelisglobal.notification.controller;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
@@ -10,12 +12,14 @@ import org.openelisglobal.notification.service.TestNotificationConfigService;
 import org.openelisglobal.notification.valueholder.NotificationPayloadTemplate.NotificationPayloadType;
 import org.openelisglobal.notification.valueholder.TestNotificationConfig;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -45,6 +49,13 @@ public class TestNotificationConfigController extends BaseController {
         form.setConfig(testNotificationConfigService.getTestNotificationConfigForTestId(testId)
                 .orElse(new TestNotificationConfig()));
         return findForward(FWD_SUCCESS, form);
+    }
+
+    @GetMapping(value = "/TestNotificationConfig/raw/list", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody()
+    public List<TestNotificationConfig> getNotificationConfigs(
+            @RequestParam(name = "testIds", required = false) List<String> testIds) {
+        return testNotificationConfigService.getTestNotificationConfigForTestId(testIds);
     }
 
     @PostMapping("/TestNotificationConfig")

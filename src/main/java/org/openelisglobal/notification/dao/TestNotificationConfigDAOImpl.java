@@ -1,6 +1,8 @@
 package org.openelisglobal.notification.dao;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.hibernate.Session;
 import org.hibernate.query.Query;
@@ -35,5 +37,22 @@ public class TestNotificationConfigDAOImpl extends BaseDAOImpl<TestNotificationC
         return Optional.ofNullable(data);
     }
 
+    @Override
+    public List<TestNotificationConfig> getTestNotificationConfigsForTestIds(List<String> testIds) {
+        List<TestNotificationConfig> data;
+        try {
+            String sql = "From TestNotificationConfig as tnc where tnc.test.id IN (:testIds)";
+            Query<TestNotificationConfig> query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setParameterList("testIds",
+                    testIds.stream().map(i -> Integer.parseInt(i)).collect(Collectors.toList()));
+            data = query.getResultList();
+        } catch (RuntimeException e) {
+            LogEvent.logError(e.toString(), e);
+            throw new LIMSRuntimeException(
+                    "Error in TestNotificationConfigDAOImpl getTestNotificationConfigForTestIds()", e);
+        }
+
+        return data;
+    }
 
 }

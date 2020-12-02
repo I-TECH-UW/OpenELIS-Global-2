@@ -59,8 +59,8 @@ public class TestNotificationConfigServiceImpl extends BaseObjectServiceImpl<Tes
             }
         }
 
-        oldConfig.getClientEmail().setActive(targetTestNotificationConfig.getClientEmail().getActive());
-        oldConfig.getClientSMS().setActive(targetTestNotificationConfig.getClientSMS().getActive());
+        oldConfig.getPatientEmail().setActive(targetTestNotificationConfig.getPatientEmail().getActive());
+        oldConfig.getPatientSMS().setActive(targetTestNotificationConfig.getPatientSMS().getActive());
         oldConfig.getProviderEmail().setActive(targetTestNotificationConfig.getProviderEmail().getActive());
         oldConfig.getProviderSMS().setActive(targetTestNotificationConfig.getProviderSMS().getActive());
         oldConfig.setSysUserId(sysUserId);
@@ -149,6 +149,11 @@ public class TestNotificationConfigServiceImpl extends BaseObjectServiceImpl<Tes
             oldConfig = newTestNotificationConfig;
         }
         save(oldConfig);
+    }
+
+    @Override
+    public List<TestNotificationConfig> getTestNotificationConfigForTestId(List<String> testIds) {
+        return baseDAO.getTestNotificationConfigsForTestIds(testIds);
     }
 
 }

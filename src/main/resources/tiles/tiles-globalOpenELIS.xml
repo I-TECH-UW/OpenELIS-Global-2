@@ -948,6 +948,9 @@
 			value="/pages/common/actionSuccess.jsp" />
 		<put-attribute name="body"
 			value="/pages/testnotification/testNotification.jsp" />
+		<put-attribute name="footer"
+			
+			value="/pages/common/saveCancelFooterButtons.jsp" />
 	</definition>
 </tiles-definitions>
 

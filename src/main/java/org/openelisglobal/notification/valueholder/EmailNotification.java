@@ -1,6 +1,6 @@
 package org.openelisglobal.notification.valueholder;
 
-public class EmailNotification implements ClientNotification {
+public class EmailNotification implements RemoteNotification {
 
     private String recipientEmailAddress;
 

@@ -35,7 +35,7 @@
 		<tr>
 			<th rowspan="2">&nbsp;</th>
 			<th rowspan="2"><spring:message code="" text="Test name" /></th>
-			<th colspan="2"><spring:message code="" text="Client" /></th>
+			<th colspan="2"><spring:message code="" text="Patient" /></th>
 			<th colspan="2"><spring:message code="" text="Provider" /></th>
 		</tr>
 		<tr>
@@ -59,14 +59,14 @@
 					<td style="border-top: solid thin;">${notificationConfig.test.augmentedTestName}</td>
 					<td
 						style="border-top: solid thin; text-align: center; vertical-align: middle;">
-						<form:checkbox path="menuList[${iter.index}].clientEmail.active"
-							value="${notificationConfig.clientEmail.active}"
+						<form:checkbox path="menuList[${iter.index}].patientEmail.active"
+							value="${notificationConfig.patientEmail.active}"
 							onChange="makeDirty();" />
 					</td>
 					<td
 						style="border-top: solid thin; text-align: center; vertical-align: middle;">
-						<form:checkbox path="menuList[${iter.index}].clientSMS.active"
-							value="${notificationConfig.clientSMS.active}"
+						<form:checkbox path="menuList[${iter.index}].patientSMS.active"
+							value="${notificationConfig.patientSMS.active}"
 							onChange="makeDirty();" />
 					</td>
 					<td

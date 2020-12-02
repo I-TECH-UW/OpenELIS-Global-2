@@ -23,6 +23,9 @@ import org.openelisglobal.notification.valueholder.TestNotificationConfigOption.
 import org.openelisglobal.notification.valueholder.TestNotificationConfigOption.NotificationPersonType;
 import org.openelisglobal.test.valueholder.Test;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "test_notification_config")
 public class TestNotificationConfig extends BaseObject<Integer> {
@@ -35,13 +38,15 @@ public class TestNotificationConfig extends BaseObject<Integer> {
     private Integer id;
 
     @Valid
-    @OneToOne
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "test_id", referencedColumnName = "id")
+    @JsonIgnore
     private Test test;
 
     @Valid
     @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH })
     @JoinColumn(name = "default_payload_template_id", referencedColumnName = "id")
+    @JsonIgnore
     private NotificationPayloadTemplate defaultPayloadTemplate;
 
     // could implement defaults for individual method types and person types types
@@ -61,6 +66,7 @@ public class TestNotificationConfig extends BaseObject<Integer> {
     @Valid
     @OneToMany(mappedBy = "testNotificationConfig", cascade = { CascadeType.PERSIST, CascadeType.MERGE,
             CascadeType.DETACH, CascadeType.REFRESH }, fetch = FetchType.EAGER)
+    @JsonIgnore
     private List<TestNotificationConfigOption> options;
 
     public TestNotificationConfig() {
@@ -87,6 +93,11 @@ public class TestNotificationConfig extends BaseObject<Integer> {
 
     public Test getTest() {
         return test;
+    }
+
+    @JsonGetter
+    public String getTestId() {
+        return test.getId();
     }
 
     public void setTest(Test test) {
@@ -130,12 +141,12 @@ public class TestNotificationConfig extends BaseObject<Integer> {
 
     // used in jsps
 
-    public TestNotificationConfigOption getClientEmail() {
+    public TestNotificationConfigOption getPatientEmail() {
         return getOptionFor(NotificationNature.RESULT_VALIDATION, NotificationMethod.EMAIL,
                 NotificationPersonType.CLIENT);
     }
 
-    public TestNotificationConfigOption getClientSMS() {
+    public TestNotificationConfigOption getPatientSMS() {
         return getOptionFor(NotificationNature.RESULT_VALIDATION, NotificationMethod.SMS,
                 NotificationPersonType.CLIENT);
     }

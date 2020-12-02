@@ -1,7 +1,7 @@
-package org.openelisglobal.clientresultsview.service;
+package org.openelisglobal.testresultsview.service;
 
-import org.openelisglobal.clientresultsview.valueholder.ClientResultsViewBean;
 import org.openelisglobal.common.service.BaseObjectService;
+import org.openelisglobal.testresultsview.valueholder.ClientResultsViewBean;
 
 public interface ClientResultsViewInfoService extends BaseObjectService<ClientResultsViewBean, Integer> {
 

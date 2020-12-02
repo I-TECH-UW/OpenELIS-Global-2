@@ -18,4 +18,6 @@ public interface TestNotificationConfigService extends BaseObjectService<TestNot
     void removeEmptyPayloadTemplates(TestNotificationConfig testNotificationConfig, String sysUserId);
 
     void updatePayloadTemplatesMessageAndSubject(TestNotificationConfig testNotificationConfig, String sysUserId);
+
+    List<TestNotificationConfig> getTestNotificationConfigForTestId(List<String> testIds);
 }

@@ -44,7 +44,7 @@
 	border-top: none;
 }
 
-.clientEmailRow {
+.patientEmailRow {
 	visibility: visible;
 }
 </style>
@@ -64,6 +64,7 @@
 			return "<spring:message code="banner.menu.dataLossWarning"/>";
 		}
 		window.onbeforeunload = formWarning;
+		document.getElementById("saveButtonId").disabled = false;
 	}
 
 	function enableEditSystemDefault() {
@@ -115,11 +116,11 @@
 					<c:out
 						value="${form.config.test.localizedTestName.localizedValue}" />
 				</h2> 
-				<br> <spring:message code="" text="Client Email" /> <form:checkbox
-					path="config.clientEmail.active"
+				<br> <spring:message code="" text="Patient Email" /> <form:checkbox
+					path="config.patientEmail.active"
 					onChange="makeDirty();" /> <spring:message code=""
-					text="Client SMS" /> <form:checkbox
-					path="config.clientSMS.active"
+					text="Patient SMS" /> <form:checkbox
+					path="config.patientSMS.active"
 					onChange="makeDirty();" /> <spring:message code=""
 					text="Provider Email" /> <form:checkbox
 					path="config.providerEmail.active"
@@ -228,9 +229,9 @@
 			<td>
 				<div class="tab-label">
 					<button type="button" class="tablinks active"
-						onclick="openTab(event, 'clientEmailRow')">Client Email</button>
+						onclick="openTab(event, 'patientEmailRow')">Patient Email</button>
 					<button type="button" class="tablinks"
-						onclick="openTab(event, 'clientSMSRow')">Client SMS</button>
+						onclick="openTab(event, 'patientSMSRow')">Patient SMS</button>
 					<button type="button" class="tablinks"
 						onclick="openTab(event, 'providerEmailRow')">Provider
 						Email</button>
@@ -240,55 +241,55 @@
 			</td>
 		</tr>
 
-		<tr class="clientEmailRow tabcontent">
+		<tr class="patientEmailRow tabcontent">
 			<td>
 				<h2>
-					<spring:message code="testnotification.client.email.template"
+					<spring:message code="testnotification.patient.email.template"
 						text="Email Message" />
 				</h2>
 			</td>
 		</tr>
-		<tr class="clientEmailRow tabcontent">
+		<tr class="patientEmailRow tabcontent">
 			<td><spring:message code="testnotification.subjecttemplate"
 					text="Subject" /> 
-					<form:hidden path="config.clientEmail.payloadTemplate.type" value="TEST_RESULT"/>
+					<form:hidden path="config.patientEmail.payloadTemplate.type" value="TEST_RESULT"/>
 					<form:input
-					path="config.clientEmail.payloadTemplate.subjectTemplate"
+					path="config.patientEmail.payloadTemplate.subjectTemplate"
 					onChange="makeDirty();" /></td>
 		</tr>
-		<tr class="clientEmailRow tabcontent">
+		<tr class="patientEmailRow tabcontent">
 			<td><spring:message code="testnotification.messagetemplate"
 					text="Message" /></td>
 		</tr>
-		<tr class="clientEmailRow tabcontent">
+		<tr class="patientEmailRow tabcontent">
 			<td><form:textarea
-					path="config.clientEmail.payloadTemplate.messageTemplate"
+					path="config.patientEmail.payloadTemplate.messageTemplate"
 					cols="50" rows="10" style="overflow:scroll;"
 					onChange="makeDirty();" /></td>
 		</tr>
-		<tr class="clientSMSRow tabcontent">
+		<tr class="patientSMSRow tabcontent">
 			<td>
 				<h2>
-					<spring:message code="testnotification.client.sms.template"
+					<spring:message code="testnotification.patient.sms.template"
 						text="SMS Message" />
 				</h2>
 			</td>
 		</tr>
-		<tr class="clientSMSRow tabcontent">
+		<tr class="patientSMSRow tabcontent">
 			<td><spring:message code="testnotification.subjecttemplate"
 					text="Subject" /> 
-					<form:hidden path="config.clientSMS.payloadTemplate.type" value="TEST_RESULT"/>
+					<form:hidden path="config.patientSMS.payloadTemplate.type" value="TEST_RESULT"/>
 					<form:input
-					path="config.clientSMS.payloadTemplate.subjectTemplate"
+					path="config.patientSMS.payloadTemplate.subjectTemplate"
 					onChange="makeDirty();" /></td>
 		</tr>
-		<tr class="clientSMSRow tabcontent">
+		<tr class="patientSMSRow tabcontent">
 			<td><spring:message code="testnotification.messagetemplate"
 					text="Message" /></td>
 		</tr>
-		<tr class="clientSMSRow tabcontent">
+		<tr class="patientSMSRow tabcontent">
 			<td><form:textarea
-					path="config.clientSMS.payloadTemplate.messageTemplate"
+					path="config.patientSMS.payloadTemplate.messageTemplate"
 					cols="50" rows="10" style="overflow:scroll;"
 					onChange="makeDirty();" /></td>
 		</tr>

@@ -6,16 +6,14 @@ import java.util.Optional;
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.validator.GenericValidator;
-import org.openelisglobal.clientresultsview.service.ClientResultsViewInfoService;
-import org.openelisglobal.clientresultsview.valueholder.ClientResultsViewBean;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
 import org.openelisglobal.notification.service.sender.ClientNotificationSender;
-import org.openelisglobal.notification.valueholder.ClientNotification;
-import org.openelisglobal.notification.valueholder.ClientResultsViewNotificationPayload;
+import org.openelisglobal.notification.valueholder.RemoteNotification;
+import org.openelisglobal.notification.valueholder.PatientResultsViewNotificationPayload;
 import org.openelisglobal.notification.valueholder.EmailNotification;
 import org.openelisglobal.notification.valueholder.NotificationPayloadTemplate;
 import org.openelisglobal.notification.valueholder.NotificationPayloadTemplate.NotificationPayloadType;
@@ -28,6 +26,8 @@ import org.openelisglobal.notification.valueholder.TestNotificationConfigOption.
 import org.openelisglobal.person.valueholder.Person;
 import org.openelisglobal.result.valueholder.Result;
 import org.openelisglobal.samplehuman.service.SampleHumanService;
+import org.openelisglobal.testresultsview.service.ClientResultsViewInfoService;
+import org.openelisglobal.testresultsview.valueholder.ClientResultsViewBean;
 import org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -81,7 +81,7 @@ public class TestNotificationServiceImpl implements TestNotificationService {
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public void sendNotification(ClientNotification clientNotification) {
+    public void sendNotification(RemoteNotification clientNotification) {
         for (ClientNotificationSender notificationSender : notificationSenders) {
             if (clientNotification.getClass().isAssignableFrom(notificationSender.forClass())) {
                 notificationSender.send(clientNotification);
@@ -195,7 +195,7 @@ public class TestNotificationServiceImpl implements TestNotificationService {
                     ? option.getTestNotificationConfig().getDefaultPayloadTemplate()
                     : option.getPayloadTemplate();
             // TODO figure out where to store address and how to retrieve
-            smsNotification.setPayload(new ClientResultsViewNotificationPayload(resultsViewInfo.getPassword(),
+            smsNotification.setPayload(new PatientResultsViewNotificationPayload(resultsViewInfo.getPassword(),
                     "someAddress", resultsViewInfo.getResult().getAnalysis().getTest().getName(), resultForDisplay,
                     testPerson.getFirstName(), testPerson.getLastName().substring(0, 1), template));
 
@@ -227,7 +227,7 @@ public class TestNotificationServiceImpl implements TestNotificationService {
                 template = option.getPayloadTemplate();
             }
             // TODO figure out where to store address and how to retrieve
-            emailNotification.setPayload(new ClientResultsViewNotificationPayload(resultsViewInfo.getPassword(),
+            emailNotification.setPayload(new PatientResultsViewNotificationPayload(resultsViewInfo.getPassword(),
                     "someAddress", resultsViewInfo.getResult().getAnalysis().getTest().getName(), resultForDisplay,
                     testPerson.getFirstName(), testPerson.getLastName().substring(0, 1), template));
 

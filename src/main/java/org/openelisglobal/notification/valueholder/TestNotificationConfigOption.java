@@ -17,6 +17,8 @@ import javax.validation.constraints.NotNull;
 
 import org.openelisglobal.common.valueholder.BaseObject;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "test_notification_config_option")
 public class TestNotificationConfigOption extends BaseObject<Integer> {
@@ -43,6 +45,7 @@ public class TestNotificationConfigOption extends BaseObject<Integer> {
     @Valid
     @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH })
     @JoinColumn(name = "test_notification_config_id", referencedColumnName = "id")
+    @JsonIgnore
     private TestNotificationConfig testNotificationConfig;
 
     // persistence
@@ -69,6 +72,7 @@ public class TestNotificationConfigOption extends BaseObject<Integer> {
     @Valid
     @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH })
     @JoinColumn(name = "payload_template_id", referencedColumnName = "id")
+    @JsonIgnore
     private NotificationPayloadTemplate payloadTemplate;
 
     @Column(name = "active")

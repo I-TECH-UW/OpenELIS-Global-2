@@ -1,7 +1,7 @@
-package org.openelisglobal.clientresultsview.dao;
+package org.openelisglobal.testresultsview.dao;
 
-import org.openelisglobal.clientresultsview.valueholder.ClientResultsViewBean;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.openelisglobal.testresultsview.valueholder.ClientResultsViewBean;
 import org.springframework.stereotype.Component;
 
 @Component

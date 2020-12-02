@@ -1,4 +1,4 @@
-package org.openelisglobal.clientresultsview.valueholder;
+package org.openelisglobal.testresultsview.valueholder;
 
 import javax.persistence.Column;
 import javax.persistence.Convert;

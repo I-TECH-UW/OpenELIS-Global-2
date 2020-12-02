@@ -1,6 +1,6 @@
 package org.openelisglobal.notification.valueholder;
 
-public class ClientResultsViewNotificationPayload implements NotificationPayload {
+public class PatientResultsViewNotificationPayload implements NotificationPayload {
 
     private String accessPassword;
 
@@ -16,7 +16,7 @@ public class ClientResultsViewNotificationPayload implements NotificationPayload
 
     private NotificationPayloadTemplate payloadTemplate;
 
-    public ClientResultsViewNotificationPayload(String accessPassword, String accessAddress, String testName,
+    public PatientResultsViewNotificationPayload(String accessPassword, String accessAddress, String testName,
             String testResult, String patientFirstName, String patientLastNameInitial,
             NotificationPayloadTemplate payloadTemplate) {
         this.accessPassword = accessPassword;
