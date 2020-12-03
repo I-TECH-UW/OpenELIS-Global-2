@@ -4,6 +4,28 @@ function defaultFailure(xhr){
 
 //sensitive data is being transmitted, therefore a token check should be done even on GET. 
 //Otherwise this should be moved to a POST request and rely on regular csrf functionality
+function getNotificationsForTests( testIds, success, failure){
+	if( !failure ){	failure = defaultFailure;}
+	if (!testIds || testIds === "" || testIds.length === 0) {
+		return;
+	}
+
+	new Ajax.Request('TestNotificationConfig/raw/list',
+			{
+				method : 'get', 
+				parameters : "testIds=" + testIds.join(",") ,
+			    //indicator: 'throbbing',
+				requestHeaders : {
+					"X-CSRF-Token" : getCsrfToken()
+				},
+				onSuccess : success,
+				onFailure : failure
+			});
+
+}
+
+//sensitive data is being transmitted, therefore a token check should be done even on GET. 
+//Otherwise this should be moved to a POST request and rely on regular csrf functionality
 function getLabOrder( orderNumber, success, failure){
 	if( !failure ){	failure = defaultFailure;}
 	

@@ -11,7 +11,7 @@ import org.openelisglobal.common.service.BaseObjectServiceImpl;
 import org.openelisglobal.notification.dao.TestNotificationConfigDAO;
 import org.openelisglobal.notification.valueholder.NotificationPayloadTemplate;
 import org.openelisglobal.notification.valueholder.TestNotificationConfig;
-import org.openelisglobal.notification.valueholder.TestNotificationConfigOption;
+import org.openelisglobal.notification.valueholder.NotificationConfigOption;
 import org.openelisglobal.test.service.TestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -88,9 +88,9 @@ public class TestNotificationConfigServiceImpl extends BaseObjectServiceImpl<Tes
                 oldConfig.setDefaultPayloadTemplate(null);
                 oldConfig.setSysUserId(sysUserId);
             }
-            for (TestNotificationConfigOption newOption : newTestNotificationConfig.getOptions()) {
+            for (NotificationConfigOption newOption : newTestNotificationConfig.getOptions()) {
                 if (testDefaultEmpty(newOption.getPayloadTemplate())) {
-                    TestNotificationConfigOption oldOption = oldConfig.getOptionFor(newOption.getNotificationNature(),
+                    NotificationConfigOption oldOption = oldConfig.getOptionFor(newOption.getNotificationNature(),
                             newOption.getNotificationMethod(), newOption.getNotificationPersonType());
                     oldOption.setPayloadTemplate(null);
                     oldOption.setSysUserId(sysUserId);
@@ -130,8 +130,8 @@ public class TestNotificationConfigServiceImpl extends BaseObjectServiceImpl<Tes
             }
             oldPayloadTemplate.setSysUserId(sysUserId);
 
-            for (TestNotificationConfigOption newOption : newTestNotificationConfig.getOptions()) {
-                TestNotificationConfigOption oldOption = oldConfig.getOptionFor(newOption.getNotificationNature(),
+            for (NotificationConfigOption newOption : newTestNotificationConfig.getOptions()) {
+                NotificationConfigOption oldOption = oldConfig.getOptionFor(newOption.getNotificationNature(),
                         newOption.getNotificationMethod(), newOption.getNotificationPersonType());
 
                 newPayloadTemplate = newOption.getPayloadTemplate();
@@ -154,6 +154,11 @@ public class TestNotificationConfigServiceImpl extends BaseObjectServiceImpl<Tes
     @Override
     public List<TestNotificationConfig> getTestNotificationConfigForTestId(List<String> testIds) {
         return baseDAO.getTestNotificationConfigsForTestIds(testIds);
+    }
+
+    @Override
+    public TestNotificationConfig getForConfigOption(Integer configOptionId) {
+        return baseDAO.getForConfigOption(configOptionId);
     }
 
 }

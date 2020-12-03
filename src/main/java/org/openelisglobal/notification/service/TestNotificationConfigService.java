@@ -20,4 +20,6 @@ public interface TestNotificationConfigService extends BaseObjectService<TestNot
     void updatePayloadTemplatesMessageAndSubject(TestNotificationConfig testNotificationConfig, String sysUserId);
 
     List<TestNotificationConfig> getTestNotificationConfigForTestId(List<String> testIds);
+
+    TestNotificationConfig getForConfigOption(Integer configOptionId);
 }

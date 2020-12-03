@@ -20,8 +20,8 @@ import org.openelisglobal.common.valueholder.BaseObject;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-@Table(name = "test_notification_config_option")
-public class TestNotificationConfigOption extends BaseObject<Integer> {
+@Table(name = "notification_config_option")
+public class NotificationConfigOption extends BaseObject<Integer> {
 
     private static final long serialVersionUID = -6242849348547228319L;
 
@@ -30,7 +30,7 @@ public class TestNotificationConfigOption extends BaseObject<Integer> {
     }
 
     public enum NotificationPersonType {
-        CLIENT, PROVIDER
+        PATIENT, PROVIDER
     }
 
     public enum NotificationMethod {
@@ -38,15 +38,9 @@ public class TestNotificationConfigOption extends BaseObject<Integer> {
     }
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "test_notification_config_option_generator")
-    @SequenceGenerator(name = "test_notification_config_option_generator", sequenceName = "test_notification_config_option_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "notification_config_option_generator")
+    @SequenceGenerator(name = "notification_config_option_generator", sequenceName = "notification_config_option_seq", allocationSize = 1)
     private Integer id;
-
-    @Valid
-    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH })
-    @JoinColumn(name = "test_notification_config_id", referencedColumnName = "id")
-    @JsonIgnore
-    private TestNotificationConfig testNotificationConfig;
 
     // persistence
     @Enumerated(EnumType.STRING)
@@ -78,17 +72,16 @@ public class TestNotificationConfigOption extends BaseObject<Integer> {
     @Column(name = "active")
     private boolean active;
 
-    public TestNotificationConfigOption(TestNotificationConfig testNotificationConfig,
-            NotificationMethod methodType, NotificationPersonType personType, NotificationNature notificationNature,
+    public NotificationConfigOption(NotificationMethod methodType, NotificationPersonType personType,
+            NotificationNature notificationNature,
             boolean active) {
-        this.testNotificationConfig = testNotificationConfig;
         this.notificationMethod = methodType;
         this.notificationPersonType = personType;
         this.notificationNature = notificationNature;
         this.active = active;
     }
 
-    public TestNotificationConfigOption() {
+    public NotificationConfigOption() {
 
     }
 
@@ -100,14 +93,6 @@ public class TestNotificationConfigOption extends BaseObject<Integer> {
     @Override
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public TestNotificationConfig getTestNotificationConfig() {
-        return testNotificationConfig;
-    }
-
-    public void setTestNotificationConfig(TestNotificationConfig testNotificationConfig) {
-        this.testNotificationConfig = testNotificationConfig;
     }
 
     public NotificationNature getNotificationNature() {

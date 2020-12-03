@@ -554,8 +554,140 @@ function assignTestsToSelected(checkbox, panelId){
 			panelIdElement.value = panelIdArray.join(",");
 		}		
 	}
+	getNotificationsForTests(chosenIds, addNotificationConfigurations);
+	addNotificationsOptions(chosenIds, chosenTests);
 	testAndSetSave();
 }
+
+function addNotificationsOptions(testIds, testNames) {
+	var resultReportingSection = document.getElementById("resultReportingSection");
+	resultReportingSection.innerHTML = '';
+	if (testIds.length === 0) {
+		return;
+	}
+	var resultsSectionHeader  = document.createElement("h2");
+	resultsSectionHeader.appendChild(document.createTextNode("<spring:message code='' text='Result Reporting'/>"));
+	resultReportingSection.appendChild(resultsSectionHeader)
+	
+	var table = document.createElement("table");
+	var row = document.createElement("tr");
+	var col = document.createElement("td");
+	row.appendChild(col);
+	col = document.createElement("td");
+	col.colSpan = "2";
+	col.style.textAlign = "center";
+	col.style.fontWeight = "bold";
+	col.appendChild(document.createTextNode("<spring:message code='' text='Patient'/>"))
+	row.appendChild(col);
+	col = document.createElement("td");
+	col.colSpan = "2";
+	col.style.textAlign = "center";
+	col.style.fontWeight = "bold";
+	col.appendChild(document.createTextNode("<spring:message code='' text='Requester'/>"))
+	row.appendChild(col);
+	table.appendChild(row)
+	resultReportingSection.appendChild(table)
+
+	
+	for (var i = 0; i < testIds.length; ++i) {
+		addNotificationsOption(testIds[i], testNames[i], table);
+	}
+}
+
+function addNotificationsOption(testId, testName, table) {
+	var resultReportingSection = document.getElementById("resultReportingSection");
+	var row = document.createElement("tr");
+	var col = document.createElement("td");
+	var emailNote = "<spring:message code='' text='Email'/>";
+	var smsNote = "<spring:message code='' text='SMS'/>";
+	col.appendChild(document.createTextNode(testName));
+	col.style.fontWeight = "bold";
+	row.appendChild(col);
+	col = document.createElement("td");
+	var checkbox = document.createElement("input");
+	checkbox.type = "checkbox";
+	checkbox.classList.add("patientEmailInput");
+	checkbox.setAttribute("onchange","editNotificationValue(\"" + testId+ "\", \"" + testName + "\")");
+	checkbox.value = testId;
+	checkbox.id = "patientEmail_" + testId;
+	col.appendChild(checkbox);
+	col.appendChild(document.createTextNode(emailNote));
+	row.appendChild(col);
+	col = document.createElement("td");
+	checkbox = document.createElement("input");
+	checkbox.type = "checkbox";
+	checkbox.classList.add("patientSMSInput");
+	checkbox.setAttribute("onchange","editNotificationValue(\"" + testId+ "\", \"" + testName + "\")");
+	checkbox.value = testId;
+	checkbox.id = "patientSMS_" + testId;
+	col.appendChild(checkbox);
+	col.appendChild(document.createTextNode(smsNote));
+	row.appendChild(col);
+	col = document.createElement("td");
+	checkbox = document.createElement("input");
+	checkbox.type = "checkbox";
+	checkbox.classList.add("providerEmailInput");
+	checkbox.setAttribute("onchange","editNotificationValue(\"" + testId+ "\", \"" + testName + "\")");
+	checkbox.value = testId;
+	checkbox.id = "providerEmail_" + testId;
+	col.appendChild(checkbox);
+	col.appendChild(document.createTextNode(emailNote));
+	row.appendChild(col);
+	col = document.createElement("td");
+	checkbox = document.createElement("input");
+	checkbox.type = "checkbox";
+	checkbox.classList.add("providerSMSInput");
+	checkbox.setAttribute("onchange","editNotificationValue(\"" + testId+ "\", \"" + testName + "\")");
+	checkbox.value = testId;
+	checkbox.id = "providerSMS_" + testId;
+	col.appendChild(checkbox);
+	col.appendChild(document.createTextNode(smsNote));
+	row.appendChild(col);
+	table.appendChild(row);
+	
+}
+
+function addNotificationConfigurations(xhr) {
+	var jsonObj = JSON.parse(xhr.response);
+	for (var i = 0; i < jsonObj.length; ++i) {
+		var testId = jsonObj[i].testId;
+		var patientEmail = jsonObj[i].patientEmail.active;
+		var patientSMS = jsonObj[i].patientSMS.active;
+		var providerEmail = jsonObj[i].providerEmail.active;
+		var providerSMS = jsonObj[i].providerSMS.active;
+
+		document.getElementById("patientEmail_" + testId).checked = patientEmail;
+		document.getElementById("patientSMS_" + testId).checked = patientSMS;
+		document.getElementById("providerEmail_" + testId).checked = providerEmail;
+		document.getElementById("providerSMS_" + testId).checked = providerSMS;
+	}
+}
+
+function editNotificationValue(testId, testName) {
+	
+	var notificationVals = jQuery('input[class="patientEmailInput"]:checked').map(function(){
+        return jQuery(this).val();
+    }).get().join(',');
+	document.getElementById("patientEmailNotificationTestIds").value = notificationVals;
+	
+	notificationVals = jQuery('input[class="patientSMSInput"]:checked').map(function(){
+        return jQuery(this).val();
+     }).get().join(',');
+	document.getElementById("patientSMSNotificationTestIds").value = notificationVals;
+	
+	notificationVals = jQuery('input[class="providerEmailInput"]:checked').map(function(){
+        return jQuery(this).val();
+     }).get().join(',');
+	document.getElementById("providerEmailNotificationTestIds").value = notificationVals;
+	
+	notificationVals = jQuery('input[class="providerSMSInput"]:checked').map(function(){
+        return jQuery(this).val();
+     }).get().join(',');
+	document.getElementById("providerSMSNotificationTestIds").value = notificationVals;
+
+	document.getElementById("customNotificationLogic").value = "true";
+}
+
 
 function addIdToUniqueIdList(id, list) {
 	if (list) {
@@ -824,6 +956,12 @@ function sampleTypeQualifierChanged(element){
 </div>
 
 <form:hidden  path="sampleXML"  id="sampleXML"/>
+<form:hidden path="patientEmailNotificationTestIds" id="patientEmailNotificationTestIds"/>
+<form:hidden path="patientSMSNotificationTestIds" id="patientSMSNotificationTestIds"/>
+<form:hidden path="providerEmailNotificationTestIds" id="providerEmailNotificationTestIds"/>
+<form:hidden path="providerSMSNotificationTestIds" id="providerSMSNotificationTestIds"/>
+<form:hidden path="customNotificationLogic" id="customNotificationLogic" value="false"/>
+
 	<Table style="width:100%">
 		<tr>
 			<td>

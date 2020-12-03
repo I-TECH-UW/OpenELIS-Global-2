@@ -15,7 +15,7 @@ import org.openelisglobal.common.services.registration.interfaces.IResultUpdate;
 import org.openelisglobal.note.service.NoteService;
 import org.openelisglobal.note.valueholder.Note;
 import org.openelisglobal.notification.service.TestNotificationService;
-import org.openelisglobal.notification.valueholder.TestNotificationConfigOption.NotificationNature;
+import org.openelisglobal.notification.valueholder.NotificationConfigOption.NotificationNature;
 import org.openelisglobal.result.service.ResultService;
 import org.openelisglobal.result.valueholder.Result;
 import org.openelisglobal.resultvalidation.bean.AnalysisItem;
@@ -101,8 +101,6 @@ public class ResultValidationServiceImpl implements ResultValidationService {
             if (analysis.getId().equals(analysisId)) {
                 return analysis.getStatusId()
                         .equals(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized));
-            } else {
-                return false;
             }
         }
         return false;

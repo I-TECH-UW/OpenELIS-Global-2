@@ -646,6 +646,9 @@ function  processPhoneSuccess(xhr){
 </div>
 </div>
 
+<div id="resultReportingSection">
+</div>
+
 <script type="text/javascript" >
 
 //all methods here either overwrite methods in tiles or all called after they are loaded

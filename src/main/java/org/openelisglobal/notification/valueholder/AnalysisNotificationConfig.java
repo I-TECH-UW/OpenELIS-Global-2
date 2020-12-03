@@ -18,30 +18,30 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.Valid;
 
+import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.notification.valueholder.NotificationConfigOption.NotificationMethod;
 import org.openelisglobal.notification.valueholder.NotificationConfigOption.NotificationNature;
 import org.openelisglobal.notification.valueholder.NotificationConfigOption.NotificationPersonType;
-import org.openelisglobal.test.valueholder.Test;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-@Table(name = "test_notification_config")
-public class TestNotificationConfig extends NotificationConfig<Test> {
+@Table(name = "analysis_notification_config")
+public class AnalysisNotificationConfig extends NotificationConfig<Analysis> {
 
     private static final long serialVersionUID = -3516692281036957868L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "test_notification_config_generator")
-    @SequenceGenerator(name = "test_notification_config_generator", sequenceName = "test_notification_config_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "analysis_notification_config_generator")
+    @SequenceGenerator(name = "analysis_notification_config_generator", sequenceName = "analysis_notification_config_seq", allocationSize = 1)
     private Integer id;
 
     @Valid
     @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "test_id", referencedColumnName = "id")
+    @JoinColumn(name = "analysis_id", referencedColumnName = "id")
     @JsonIgnore
-    private Test test;
+    private Analysis analysis;
 
     @Valid
     @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH })
@@ -49,25 +49,14 @@ public class TestNotificationConfig extends NotificationConfig<Test> {
     @JsonIgnore
     private NotificationPayloadTemplate defaultPayloadTemplate;
 
-    // could implement defaults for individual method types and person types types
-    // as well
-//    @OneToMany
-//    @JoinTable(name = "test_notification_default_method", joinColumns = @JoinColumn(name = "test_notification_config_id"), //
-//            inverseJoinColumns = @JoinColumn(name = "notification_payload_template_id")) //
-//    @MapKeyColumn(name = "notification_method")
-//    private Map<NotificationMethod, NotificationPayloadTemplate> defaultMethodPayloadTemplate;
-//
-//    @OneToMany
-//    @JoinTable(name = "test_notification_default_person_type", joinColumns = @JoinColumn(name = "test_notification_config_id"), //
-//            inverseJoinColumns = @JoinColumn(name = "notification_payload_template_id")) //
-//    @MapKeyColumn(name = "notification_person_type")
-//    private Map<NotificationPersonType, NotificationPayloadTemplate> defaultPersonPayloadTemplate;
-
     @Valid
     @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
-    @JoinTable(name = "test_notification_config_config_option", joinColumns = @JoinColumn(name = "test_notification_config_id"), inverseJoinColumns = @JoinColumn(name = "notification_config_option_id"))
+    @JoinTable(name = "analysis_notification_config_config_option", joinColumns = @JoinColumn(name = "analysis_notification_config_id"), inverseJoinColumns = @JoinColumn(name = "notification_config_option_id"))
     @JsonIgnore
     private List<NotificationConfigOption> options;
+
+    public AnalysisNotificationConfig() {
+    }
 
     @Override
     public Integer getId() {
@@ -79,17 +68,17 @@ public class TestNotificationConfig extends NotificationConfig<Test> {
         this.id = id;
     }
 
-    public Test getTest() {
-        return test;
+    public Analysis getAnalysis() {
+        return analysis;
     }
 
     @JsonGetter
-    public String getTestId() {
-        return test.getId();
+    public String getAnalysisId() {
+        return analysis.getId();
     }
 
-    public void setTest(Test test) {
-        this.test = test;
+    public void setAnalysis(Analysis analysis) {
+        this.analysis = analysis;
     }
 
     public NotificationPayloadTemplate getDefaultPayloadTemplate() {
@@ -126,6 +115,8 @@ public class TestNotificationConfig extends NotificationConfig<Test> {
         options.add(configOption);
         return configOption;
     }
+
+    // used in jsps
 
     public NotificationConfigOption getPatientEmail() {
         return getOptionFor(NotificationNature.RESULT_VALIDATION, NotificationMethod.EMAIL,

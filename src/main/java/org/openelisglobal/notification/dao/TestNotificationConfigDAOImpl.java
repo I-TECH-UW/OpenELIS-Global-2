@@ -55,4 +55,20 @@ public class TestNotificationConfigDAOImpl extends BaseDAOImpl<TestNotificationC
         return data;
     }
 
+    @Override
+    public TestNotificationConfig getForConfigOption(Integer configOptionId) {
+        TestNotificationConfig data;
+        try {
+            String sql = "SELECT tnc From TestNotificationConfig as tnc join tnc.options as tnco where tnco.id = :configOptionId";
+            Query<TestNotificationConfig> query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setParameter("configOptionId", configOptionId);
+            data = query.uniqueResult();
+        } catch (RuntimeException e) {
+            LogEvent.logError(e.toString(), e);
+            throw new LIMSRuntimeException("Error in TestNotificationConfigDAOImpl getForConfigOption()", e);
+        }
+
+        return data;
+    }
+
 }

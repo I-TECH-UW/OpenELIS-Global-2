@@ -12,17 +12,19 @@ import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
 import org.openelisglobal.notification.service.sender.ClientNotificationSender;
-import org.openelisglobal.notification.valueholder.RemoteNotification;
-import org.openelisglobal.notification.valueholder.PatientResultsViewNotificationPayload;
+import org.openelisglobal.notification.valueholder.AnalysisNotificationConfig;
 import org.openelisglobal.notification.valueholder.EmailNotification;
+import org.openelisglobal.notification.valueholder.NotificationConfig;
+import org.openelisglobal.notification.valueholder.NotificationConfigOption;
+import org.openelisglobal.notification.valueholder.NotificationConfigOption.NotificationMethod;
+import org.openelisglobal.notification.valueholder.NotificationConfigOption.NotificationNature;
+import org.openelisglobal.notification.valueholder.NotificationConfigOption.NotificationPersonType;
 import org.openelisglobal.notification.valueholder.NotificationPayloadTemplate;
 import org.openelisglobal.notification.valueholder.NotificationPayloadTemplate.NotificationPayloadType;
+import org.openelisglobal.notification.valueholder.PatientResultsViewNotificationPayload;
+import org.openelisglobal.notification.valueholder.RemoteNotification;
 import org.openelisglobal.notification.valueholder.SMSNotification;
 import org.openelisglobal.notification.valueholder.TestNotificationConfig;
-import org.openelisglobal.notification.valueholder.TestNotificationConfigOption;
-import org.openelisglobal.notification.valueholder.TestNotificationConfigOption.NotificationMethod;
-import org.openelisglobal.notification.valueholder.TestNotificationConfigOption.NotificationNature;
-import org.openelisglobal.notification.valueholder.TestNotificationConfigOption.NotificationPersonType;
 import org.openelisglobal.person.valueholder.Person;
 import org.openelisglobal.result.valueholder.Result;
 import org.openelisglobal.samplehuman.service.SampleHumanService;
@@ -48,6 +50,8 @@ public class TestNotificationServiceImpl implements TestNotificationService {
     private DictionaryService dictionaryService;
     @Autowired
     private TestNotificationConfigService testNotificationConfigService;
+    @Autowired
+    private AnalysisNotificationConfigService analysisNotificationConfigService;
 
     @Value("${org.openelisglobal.ozeki.active:false}")
     private Boolean ozekiActive;
@@ -93,23 +97,28 @@ public class TestNotificationServiceImpl implements TestNotificationService {
     @Async
     @Transactional(readOnly = true)
     public void createAndSendNotificationsToConfiguredSources(NotificationNature nature, Result result) {
-        Optional<TestNotificationConfig> testNotificationConfig = testNotificationConfigService
-                .getTestNotificationConfigForTestId(result.getAnalysis().getTest().getId());
-        if (testNotificationConfig.isEmpty()) {
-            // test hasn't been configured to send notifications
-            return;
+        Optional<? extends NotificationConfig<?>> notificationConfig = analysisNotificationConfigService
+                .getAnalysisNotificationConfigForAnalysisId(result.getAnalysis().getId());
+        if (notificationConfig.isEmpty()) {
+            // analysis hasn't been configured to return results
+            notificationConfig = testNotificationConfigService
+                    .getTestNotificationConfigForTestId(result.getAnalysis().getTest().getId());
+            if (notificationConfig.isEmpty()) {
+                // test hasn't been configured to send notifications
+                return;
+            }
         }
 
         switch (nature) {
         case RESULT_VALIDATION:
-            createAndSendResultsNotificationsToConfiguredSources(nature, result, testNotificationConfig);
+            createAndSendResultsNotificationsToConfiguredSources(nature, result, notificationConfig);
         default:
         }
 
     }
 
     private void createAndSendResultsNotificationsToConfiguredSources(NotificationNature nature, Result result,
-            Optional<TestNotificationConfig> testNotificationConfig) {
+            Optional<? extends NotificationConfig<?>> notificationConfig) {
         ClientResultsViewBean resultsViewInfo = new ClientResultsViewBean(result);
         resultsViewInfo.setSysUserId("1");
         resultsViewInfo = clientResultsViewInfoService.save(resultsViewInfo);
@@ -135,17 +144,16 @@ public class TestNotificationServiceImpl implements TestNotificationService {
         }
         for (NotificationMethod methodType : NotificationMethod.values()) {
             if (systemEnabledForMethod(methodType)) {
-                createAndSendNotificationsConfiguredForTest(nature, methodType, testNotificationConfig.get(),
+                createAndSendNotificationsConfiguredForTest(nature, methodType, notificationConfig.get(),
                         resultForDisplay, resultsViewInfo);
             }
         }
     }
 
     private void createAndSendNotificationsConfiguredForTest(NotificationNature nature, NotificationMethod methodType,
-            TestNotificationConfig testNotificationConfig, String resultForDisplay,
-            ClientResultsViewBean resultsViewInfo) {
+            NotificationConfig<?> notificationConfig, String resultForDisplay, ClientResultsViewBean resultsViewInfo) {
         for (NotificationPersonType personType : NotificationPersonType.values()) {
-            TestNotificationConfigOption option = testNotificationConfig.getOptionFor(nature, methodType, personType);
+            NotificationConfigOption option = notificationConfig.getOptionFor(nature, methodType, personType);
             if (option.getActive()) {
                 createAndSendNotificationToPerson(nature, methodType, personType, option, resultForDisplay,
                         resultsViewInfo);
@@ -156,12 +164,12 @@ public class TestNotificationServiceImpl implements TestNotificationService {
     }
 
     private void createAndSendNotificationToPerson(NotificationNature nature, NotificationMethod methodType,
-            NotificationPersonType personType, TestNotificationConfigOption option, String resultForDisplay,
+            NotificationPersonType personType, NotificationConfigOption option, String resultForDisplay,
             ClientResultsViewBean resultsViewInfo) {
         Person testPerson = sampleHumanService
                 .getPatientForSample(resultsViewInfo.getResult().getAnalysis().getSampleItem().getSample()).getPerson();
         Person receiverPerson = null;
-        if (NotificationPersonType.CLIENT.equals(personType)) {
+        if (NotificationPersonType.PATIENT.equals(personType)) {
             receiverPerson = testPerson;
         } else if (NotificationPersonType.PROVIDER.equals(personType)) {
             receiverPerson = sampleHumanService
@@ -178,8 +186,7 @@ public class TestNotificationServiceImpl implements TestNotificationService {
     }
 
     private void createAndSendResultsNotificationSMS(Person testPerson, Person receiverPerson,
-            TestNotificationConfigOption option,
-            String resultForDisplay, ClientResultsViewBean resultsViewInfo) {
+            NotificationConfigOption option, String resultForDisplay, ClientResultsViewBean resultsViewInfo) {
         try {
             SMSNotification smsNotification = new SMSNotification();
             String phoneNumber = "";
@@ -191,9 +198,7 @@ public class TestNotificationServiceImpl implements TestNotificationService {
             }
             smsNotification.setReceiverPhoneNumber(phoneNumber);
 
-            NotificationPayloadTemplate template = option.getPayloadTemplate() == null
-                    ? option.getTestNotificationConfig().getDefaultPayloadTemplate()
-                    : option.getPayloadTemplate();
+            NotificationPayloadTemplate template = findTemplate(option);
             // TODO figure out where to store address and how to retrieve
             smsNotification.setPayload(new PatientResultsViewNotificationPayload(resultsViewInfo.getPassword(),
                     "someAddress", resultsViewInfo.getResult().getAnalysis().getTest().getName(), resultForDisplay,
@@ -210,22 +215,12 @@ public class TestNotificationServiceImpl implements TestNotificationService {
     }
 
     private void createAndSendResultsNotificationEmail(Person testPerson, Person receiverPerson,
-            TestNotificationConfigOption option,
-            String resultForDisplay, ClientResultsViewBean resultsViewInfo) {
+            NotificationConfigOption option, String resultForDisplay, ClientResultsViewBean resultsViewInfo) {
         try {
             EmailNotification emailNotification = new EmailNotification();
             emailNotification.setRecipientEmailAddress(receiverPerson.getEmail());
 
-            NotificationPayloadTemplate template;
-            if (option.getPayloadTemplate() == null
-                    && option.getTestNotificationConfig().getDefaultPayloadTemplate() == null) {
-                template = notificationPayloadTemplateService
-                        .getSystemDefaultPayloadTemplateForType(NotificationPayloadType.TEST_RESULT);
-            } else if (option.getPayloadTemplate() == null) {
-                template = option.getTestNotificationConfig().getDefaultPayloadTemplate();
-            } else {
-                template = option.getPayloadTemplate();
-            }
+            NotificationPayloadTemplate template = findTemplate(option);
             // TODO figure out where to store address and how to retrieve
             emailNotification.setPayload(new PatientResultsViewNotificationPayload(resultsViewInfo.getPassword(),
                     "someAddress", resultsViewInfo.getResult().getAnalysis().getTest().getName(), resultForDisplay,
@@ -238,6 +233,33 @@ public class TestNotificationServiceImpl implements TestNotificationService {
                     "could not send email notification");
             LogEvent.logError(e);
         }
+    }
+
+    private NotificationPayloadTemplate findTemplate(NotificationConfigOption option) {
+        NotificationPayloadTemplate template;
+        TestNotificationConfig testNotificationConfig = testNotificationConfigService
+                .getForConfigOption(option.getId());
+        AnalysisNotificationConfig analyzerNotificationConfig = analysisNotificationConfigService
+                .getForConfigOption(option.getId());
+        // default to system default for type
+        if (option.getPayloadTemplate() == null
+                && (testNotificationConfig == null || testNotificationConfig.getDefaultPayloadTemplate() == null)
+                && (analyzerNotificationConfig == null
+                        || analyzerNotificationConfig.getDefaultPayloadTemplate() == null)) {
+            template = notificationPayloadTemplateService
+                    .getSystemDefaultPayloadTemplateForType(NotificationPayloadType.TEST_RESULT);
+            // ... unless this option is for a test and it has a test default
+        } else if (option.getPayloadTemplate() == null && (analyzerNotificationConfig == null
+                || analyzerNotificationConfig.getDefaultPayloadTemplate() == null)) {
+            template = testNotificationConfig.getDefaultPayloadTemplate();
+            // ... unless this option is for an analysis and it has an analysis default
+        } else if (option.getPayloadTemplate() == null) {
+            template = analyzerNotificationConfig.getDefaultPayloadTemplate();
+            // ...unless there is one configured for this option
+        } else {
+            template = option.getPayloadTemplate();
+        }
+        return template;
     }
 
     private boolean systemEnabledForMethod(NotificationMethod methodType) {

@@ -12,4 +12,6 @@ public interface TestNotificationConfigDAO extends BaseDAO<TestNotificationConfi
 
     List<TestNotificationConfig> getTestNotificationConfigsForTestIds(List<String> testIds);
 
+    TestNotificationConfig getForConfigOption(Integer configOptionId);
+
 }

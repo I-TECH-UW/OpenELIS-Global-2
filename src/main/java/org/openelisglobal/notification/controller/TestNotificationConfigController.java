@@ -15,7 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -26,7 +28,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class TestNotificationConfigController extends BaseController {
 
-//    private static final String[] ALLOWED_FIELDS = new String[] { "testNotificationConfig*" };
+    private static final String[] ALLOWED_FIELDS = new String[] { "config*", "editSystemDefaultPayloadTemplate",
+            "systemDefaultPayloadTemplate*" };
 
     @Autowired
     private TestNotificationConfigService testNotificationConfigService;
@@ -34,10 +37,10 @@ public class TestNotificationConfigController extends BaseController {
     @Autowired
     private NotificationPayloadTemplateService payloadTemplateService;
 
-//    @InitBinder
-//    public void initBinder(WebDataBinder binder) {
-//        binder.setAllowedFields(ALLOWED_FIELDS);
-//    }
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
 
     @GetMapping("/TestNotificationConfig")
     public ModelAndView displayNotificationConfig(@RequestParam(name = "testId", required = false) String testId) {
