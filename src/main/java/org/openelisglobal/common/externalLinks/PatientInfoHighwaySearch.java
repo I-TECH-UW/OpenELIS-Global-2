@@ -25,6 +25,7 @@ import org.apache.http.HttpStatus;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.provider.query.ExtendedPatientSearchResults;
 import org.openelisglobal.common.util.DateUtil;
+import org.openelisglobal.internationalization.MessageUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.scheduling.annotation.Async;
@@ -306,6 +307,7 @@ public class PatientInfoHighwaySearch implements IExternalPatientSearch {
     private void addPatient(NodeList fieldsList, NodeList valueList) {
         try {
             ExtendedPatientSearchResults patient = new ExtendedPatientSearchResults();
+            patient.setDataSourceName(MessageUtil.getMessage("externalconnections.infohighway"));
             for (int i = 0; i < fieldsList.getLength(); ++i) {
                 addField(patient, fieldsList.item(i).getTextContent(), valueList.item(i).getTextContent());
             }
