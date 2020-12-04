@@ -952,6 +952,14 @@
 			
 			value="/pages/common/saveCancelFooterButtons.jsp" />
 	</definition>
+
+	<definition name="notificationCenterDefinition"
+		extends="baseDefinition">
+		<put-attribute name="body"
+			value="/pages/notificationcenter/notificationCenter.jsp" />
+		<put-attribute name="footer"
+			value="/pages/common/emptyPlaceHolder.jsp" />
+	</definition>
 </tiles-definitions>
 
 
