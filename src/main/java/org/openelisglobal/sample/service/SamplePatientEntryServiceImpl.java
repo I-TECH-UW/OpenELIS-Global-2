@@ -1,5 +1,6 @@
 package org.openelisglobal.sample.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -255,6 +256,8 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
             NotificationConfigOption nto2 = testNotificationConfig.get().getOptionFor(notificationNature, method,
                     personType);
             nto.setPayloadTemplate(nto2.getPayloadTemplate());
+            nto.setAdditionalContacts(new ArrayList<>());
+            nto.getAdditionalContacts().addAll(nto2.getAdditionalContacts());
         }
 
     }

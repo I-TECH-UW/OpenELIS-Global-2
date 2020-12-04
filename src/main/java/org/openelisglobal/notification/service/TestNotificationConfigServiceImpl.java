@@ -9,9 +9,9 @@ import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.dao.BaseDAO;
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
 import org.openelisglobal.notification.dao.TestNotificationConfigDAO;
+import org.openelisglobal.notification.valueholder.NotificationConfigOption;
 import org.openelisglobal.notification.valueholder.NotificationPayloadTemplate;
 import org.openelisglobal.notification.valueholder.TestNotificationConfig;
-import org.openelisglobal.notification.valueholder.NotificationConfigOption;
 import org.openelisglobal.test.service.TestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -147,12 +147,13 @@ public class TestNotificationConfigServiceImpl extends BaseObjectServiceImpl<Tes
             }
         } else {
             oldConfig = newTestNotificationConfig;
+            oldConfig.setTest(testService.get(newTestNotificationConfig.getTestId()));
         }
         save(oldConfig);
     }
 
     @Override
-    public List<TestNotificationConfig> getTestNotificationConfigForTestId(List<String> testIds) {
+    public List<TestNotificationConfig> getTestNotificationConfigsForTestId(List<String> testIds) {
         return baseDAO.getTestNotificationConfigsForTestIds(testIds);
     }
 

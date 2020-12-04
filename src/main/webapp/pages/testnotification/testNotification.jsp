@@ -103,6 +103,11 @@
 	function validateForm(form) {
 		return true;
 	}
+	
+	function savePage() {
+		window.onbeforeunload = null;
+		document.getElementById("mainForm").submit();
+	}
 </script>
 
 <form:hidden path="config.id" />
@@ -113,21 +118,15 @@
 			<td>
 
 				<h2>
-					<c:out
-						value="${form.config.test.localizedTestName.localizedValue}" />
-				</h2> 
-				<br> <spring:message code="" text="Patient Email" /> <form:checkbox
-					path="config.patientEmail.active"
-					onChange="makeDirty();" /> <spring:message code=""
-					text="Patient SMS" /> <form:checkbox
-					path="config.patientSMS.active"
-					onChange="makeDirty();" /> <spring:message code=""
-					text="Provider Email" /> <form:checkbox
-					path="config.providerEmail.active"
-					onChange="makeDirty();" /> <spring:message code=""
-					text='Provider SMS' /> <form:checkbox
-					path="config.providerSMS.active"
-					onChange="makeDirty();" />
+					<c:out value="${form.config.test.localizedTestName.localizedValue}" />
+				</h2> <br> <spring:message code="" text="Patient Email" /> <form:checkbox
+					path="config.patientEmail.active" onChange="makeDirty();" /> <spring:message
+					code="" text="Patient SMS" /> <form:checkbox
+					path="config.patientSMS.active" onChange="makeDirty();" /> <spring:message
+					code="" text="Provider Email" /> <form:checkbox
+					path="config.providerEmail.active" onChange="makeDirty();" /> <spring:message
+					code="" text='Provider SMS' /> <form:checkbox
+					path="config.providerSMS.active" onChange="makeDirty();" />
 			</td>
 		</tr>
 		<tr>
@@ -137,14 +136,13 @@
 					<b>
 						<h2 style="background-color: rgb(200, 218, 218)">Instructions:</h2>
 						When a notification is created, it will first check if a message
-						template is defined for the recipient/message type. <br>
-					<br> If none exists, it will use the test default message. <br>
-					<br> If that does not exist, it will use the system default
-						message. <br>
-					<br> Variables will be replaced by their corresponding values
-						in the message body and the subject. <br>
-					<br> Variables should always include the square brackets and
-						should have no whitespace. <br>
+						template is defined for the recipient/message type. <br> <br>
+						If none exists, it will use the test default message. <br> <br>
+						If that does not exist, it will use the system default message. <br>
+						<br> Variables will be replaced by their corresponding values
+						in the message body and the subject. <br> <br> Variables
+						should always include the square brackets and should have no
+						whitespace. <br>
 
 						<h3 style="background-color: rgb(200, 218, 218)">Variable
 							List:</h3> [testName] : Name of the test this is for<br>
@@ -199,9 +197,8 @@
 		</tr>
 		<tr>
 			<td><spring:message code="testnotification.subjecttemplate"
-					text="Subject" />
-					<form:hidden path="config.defaultPayloadTemplate.type" value="TEST_RESULT"/>
-					<form:input
+					text="Subject" /> <form:hidden
+					path="config.defaultPayloadTemplate.type" value="TEST_RESULT" /> <form:input
 					path="config.defaultPayloadTemplate.subjectTemplate"
 					onChange="makeDirty();" /></td>
 		</tr>
@@ -211,9 +208,8 @@
 		</tr>
 		<tr>
 			<td><form:textarea
-					path="config.defaultPayloadTemplate.messageTemplate"
-					cols="50" rows="10" style="overflow:scroll;"
-					onChange="makeDirty();" /></td>
+					path="config.defaultPayloadTemplate.messageTemplate" cols="50"
+					rows="10" style="overflow:scroll;" onChange="makeDirty();" /></td>
 		</tr>
 
 		<!-- 		METHOD/PERSON SPECIFIC -->
@@ -250,12 +246,26 @@
 			</td>
 		</tr>
 		<tr class="patientEmailRow tabcontent">
-			<td><spring:message code="testnotification.subjecttemplate"
-					text="Subject" /> 
-					<form:hidden path="config.patientEmail.payloadTemplate.type" value="TEST_RESULT"/>
-					<form:input
-					path="config.patientEmail.payloadTemplate.subjectTemplate"
-					onChange="makeDirty();" /></td>
+			<td>
+				<table>
+					<tr>
+						<td><spring:message code="testnotification.bcc" text="BCC" />
+						</td>
+						<td><form:input
+								path="config.patientEmail.additionalContacts"
+								onChange="makeDirty();" /></td>
+					</tr>
+					<tr>
+						<td><spring:message code="testnotification.subjecttemplate"
+								text="Subject" /></td>
+						<td><form:hidden
+								path="config.patientEmail.payloadTemplate.type"
+								value="TEST_RESULT" /> <form:input
+								path="config.patientEmail.payloadTemplate.subjectTemplate"
+								onChange="makeDirty();" /></td>
+					</tr>
+				</table>
+			</td>
 		</tr>
 		<tr class="patientEmailRow tabcontent">
 			<td><spring:message code="testnotification.messagetemplate"
@@ -276,12 +286,13 @@
 			</td>
 		</tr>
 		<tr class="patientSMSRow tabcontent">
-			<td><spring:message code="testnotification.subjecttemplate"
-					text="Subject" /> 
-					<form:hidden path="config.patientSMS.payloadTemplate.type" value="TEST_RESULT"/>
-					<form:input
-					path="config.patientSMS.payloadTemplate.subjectTemplate"
-					onChange="makeDirty();" /></td>
+			<td>
+				<%-- 			<spring:message code="testnotification.subjecttemplate" --%>
+				<%-- 					text="Subject" />  --%> <form:hidden
+					path="config.patientSMS.payloadTemplate.type" value="TEST_RESULT" />
+				<%-- 					<form:input --%> <%-- 					path="config.patientSMS.payloadTemplate.subjectTemplate" --%>
+				<%-- 					onChange="makeDirty();" /> --%>
+			</td>
 		</tr>
 		<tr class="patientSMSRow tabcontent">
 			<td><spring:message code="testnotification.messagetemplate"
@@ -289,9 +300,8 @@
 		</tr>
 		<tr class="patientSMSRow tabcontent">
 			<td><form:textarea
-					path="config.patientSMS.payloadTemplate.messageTemplate"
-					cols="50" rows="10" style="overflow:scroll;"
-					onChange="makeDirty();" /></td>
+					path="config.patientSMS.payloadTemplate.messageTemplate" cols="50"
+					rows="10" style="overflow:scroll;" onChange="makeDirty();" /></td>
 		</tr>
 
 
@@ -304,12 +314,26 @@
 			</td>
 		</tr>
 		<tr class="providerEmailRow tabcontent">
-			<td><spring:message code="testnotification.subjecttemplate"
-					text="Subject" /> 
-					<form:hidden path="config.providerEmail.payloadTemplate.type" value="TEST_RESULT"/>
-					<form:input
-					path="config.providerEmail.payloadTemplate.subjectTemplate"
-					onChange="makeDirty();" /></td>
+			<td>
+				<table>
+					<tr>
+						<td><spring:message code="testnotification.bcc" text="BCC" />
+						</td>
+						<td><form:input
+								path="config.providerEmail.additionalContacts"
+								onChange="makeDirty();" /></td>
+					</tr>
+					<tr>
+						<td><spring:message code="testnotification.subjecttemplate"
+								text="Subject" /></td>
+						<td><form:hidden
+								path="config.providerEmail.payloadTemplate.type"
+								value="TEST_RESULT" /> <form:input
+								path="config.providerEmail.payloadTemplate.subjectTemplate"
+								onChange="makeDirty();" /></td>
+					</tr>
+				</table>
+			</td>
 		</tr>
 		<tr class="providerEmailRow tabcontent">
 			<td><spring:message code="testnotification.messagetemplate"
@@ -330,12 +354,13 @@
 			</td>
 		</tr>
 		<tr class="providerSMSRow tabcontent">
-			<td><spring:message code="testnotification.subjecttemplate"
-					text="Subject" /> 
-					<form:hidden path="config.providerSMS.payloadTemplate.type" value="TEST_RESULT"/>
-					<form:input
-					path="config.providerSMS.payloadTemplate.subjectTemplate"
-					onChange="makeDirty();" /></td>
+			<td>
+				<%-- 			<spring:message code="testnotification.subjecttemplate" --%>
+				<%-- 					text="Subject" />  --%> <form:hidden
+					path="config.providerSMS.payloadTemplate.type" value="TEST_RESULT" />
+				<%-- 					<form:input --%> <%-- 					path="config.providerSMS.payloadTemplate.subjectTemplate" --%>
+				<%-- 					onChange="makeDirty();" /> --%>
+			</td>
 		</tr>
 		<tr class="providerSMSRow tabcontent">
 			<td><spring:message code="testnotification.messagetemplate"
@@ -343,13 +368,9 @@
 		</tr>
 		<tr class="providerSMSRow tabcontent">
 			<td><form:textarea
-					path="config.providerSMS.payloadTemplate.messageTemplate"
-					cols="50" rows="10" style="overflow:scroll;"
-					onChange="makeDirty();" /></td>
+					path="config.providerSMS.payloadTemplate.messageTemplate" cols="50"
+					rows="10" style="overflow:scroll;" onChange="makeDirty();" /></td>
 		</tr>
-
-
-
 	</tbody>
 </table>
 

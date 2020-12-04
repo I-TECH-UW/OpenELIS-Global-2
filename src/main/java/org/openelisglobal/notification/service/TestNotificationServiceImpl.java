@@ -219,6 +219,7 @@ public class TestNotificationServiceImpl implements TestNotificationService {
         try {
             EmailNotification emailNotification = new EmailNotification();
             emailNotification.setRecipientEmailAddress(receiverPerson.getEmail());
+            emailNotification.setBccs(option.getAdditionalContacts());
 
             NotificationPayloadTemplate template = findTemplate(option);
             // TODO figure out where to store address and how to retrieve
