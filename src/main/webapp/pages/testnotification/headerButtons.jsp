@@ -21,7 +21,7 @@
   	</tr>
   	<tr>
 			<td>
-				<button type="button" onClick="saveChanges()"><spring:message code="button.savechages" text="Save Changes"/></button>
+				<button type="button" onClick="saveChanges()"><spring:message code="label.button.save" /></button>
 			</td>
 
 		</tr>

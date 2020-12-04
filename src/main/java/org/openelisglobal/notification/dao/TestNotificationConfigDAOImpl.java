@@ -49,7 +49,7 @@ public class TestNotificationConfigDAOImpl extends BaseDAOImpl<TestNotificationC
         } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException(
-                    "Error in TestNotificationConfigDAOImpl getTestNotificationConfigForTestIds()", e);
+                    "Error in TestNotificationConfigDAOImpl getTestNotificationConfigsForTestIds()", e);
         }
 
         return data;

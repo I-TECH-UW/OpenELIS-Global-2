@@ -103,6 +103,11 @@
 	function validateForm(form) {
 		return true;
 	}
+	
+	function savePage() {
+		window.onbeforeunload = null;
+		document.getElementById("mainForm").submit();
+	}
 </script>
 
 <form:hidden path="config.id" />
@@ -113,45 +118,25 @@
 			<td>
 
 				<h2>
-					<c:out
-						value="${form.config.test.localizedTestName.localizedValue}" />
-				</h2> 
-				<br> <spring:message code="" text="Patient Email" /> <form:checkbox
-					path="config.patientEmail.active"
-					onChange="makeDirty();" /> <spring:message code=""
-					text="Patient SMS" /> <form:checkbox
-					path="config.patientSMS.active"
-					onChange="makeDirty();" /> <spring:message code=""
-					text="Provider Email" /> <form:checkbox
-					path="config.providerEmail.active"
-					onChange="makeDirty();" /> <spring:message code=""
-					text='Provider SMS' /> <form:checkbox
-					path="config.providerSMS.active"
-					onChange="makeDirty();" />
+					<c:out value="${form.config.test.localizedTestName.localizedValue}" />
+				</h2> <br> <spring:message code="testnotification.patient.email" /> <form:checkbox
+					path="config.patientEmail.active" onChange="makeDirty();" /> <spring:message
+					code="testnotification.patient.sms" /> <form:checkbox
+					path="config.patientSMS.active" onChange="makeDirty();" /> <spring:message
+					 code="testnotification.provider.email" /> <form:checkbox
+					path="config.providerEmail.active" onChange="makeDirty();" /> <spring:message
+					 code="testnotification.provider.sms" /> <form:checkbox
+					path="config.providerSMS.active" onChange="makeDirty();" />
 			</td>
 		</tr>
 		<tr>
 			<td>
 				<div id="instructions"
-					style="background-color: rgb(200, 218, 218); padding: 20px;">
-					<b>
-						<h2 style="background-color: rgb(200, 218, 218)">Instructions:</h2>
-						When a notification is created, it will first check if a message
-						template is defined for the recipient/message type. <br>
-					<br> If none exists, it will use the test default message. <br>
-					<br> If that does not exist, it will use the system default
-						message. <br>
-					<br> Variables will be replaced by their corresponding values
-						in the message body and the subject. <br>
-					<br> Variables should always include the square brackets and
-						should have no whitespace. <br>
-
-						<h3 style="background-color: rgb(200, 218, 218)">Variable
-							List:</h3> [testName] : Name of the test this is for<br>
-						[testResult] : Result of the test<br> [patientFirstName] :
-						Patient's first<br> [patientLastNameInitial] : Patient's last
-						name's initial<br>
-
+					style="white-space: pre-line;background-color: rgb(200, 218, 218); padding: 20px;"
+					><b><h2 style="background-color: rgb(200, 218, 218)"><spring:message code="testnotification.instructions.header"/></h2>
+						<spring:message code="testnotification.instructions.body"/>
+						<h3 style="background-color: rgb(200, 218, 218)"><spring:message code="testnotification.instructionis.variables.header"/></h3>
+						<spring:message code="testnotification.instructionis.variables.body"/>
 					</b>
 				</div>
 			</td>
@@ -160,8 +145,7 @@
 		<tr>
 			<td style="width: 100%;">
 				<h2>
-					<spring:message code="testnotification.systemdefault.template"
-						text="System Default Message" />
+					<spring:message code="testnotification.systemdefault.template"/>
 					<form:hidden id="editSystemDefaultPayloadTemplate"
 						path="editSystemDefaultPayloadTemplate" value="false" />
 					<form:hidden path="systemDefaultPayloadTemplate.id" />
@@ -169,17 +153,15 @@
 			</td>
 		</tr>
 		<tr>
-			<td><spring:message code="testnotification.subjecttemplate"
-					text="Subject" /> <form:input
+			<td><spring:message code="testnotification.subjecttemplate" /> <form:input
 					path="systemDefaultPayloadTemplate.subjectTemplate"
 					class="systemDefault" onChange="makeDirty();" disabled="true" />
 
 				<button style="float: right;" type="button"
-					onClick="enableEditSystemDefault()">Edit</button></td>
+					onClick="enableEditSystemDefault()"><spring:message code="label.button.edit" /></button></td>
 		</tr>
 		<tr>
-			<td><spring:message code="testnotification.messagetemplate"
-					text="Message" /></td>
+			<td><spring:message code="testnotification.messagetemplate"/></td>
 		</tr>
 		<tr>
 			<td><form:textarea
@@ -192,36 +174,30 @@
 		<tr>
 			<td>
 				<h2>
-					<spring:message code="testnotification.testdefault.template"
-						text="Test Default Message" />
+					<spring:message code="testnotification.testdefault.template" />
 				</h2>
 			</td>
 		</tr>
 		<tr>
-			<td><spring:message code="testnotification.subjecttemplate"
-					text="Subject" />
-					<form:hidden path="config.defaultPayloadTemplate.type" value="TEST_RESULT"/>
-					<form:input
+			<td><spring:message code="testnotification.subjecttemplate" /> <form:hidden
+					path="config.defaultPayloadTemplate.type" value="TEST_RESULT" /> <form:input
 					path="config.defaultPayloadTemplate.subjectTemplate"
 					onChange="makeDirty();" /></td>
 		</tr>
 		<tr>
-			<td><spring:message code="testnotification.messagetemplate"
-					text="Message" /></td>
+			<td><spring:message code="testnotification.messagetemplate" /></td>
 		</tr>
 		<tr>
 			<td><form:textarea
-					path="config.defaultPayloadTemplate.messageTemplate"
-					cols="50" rows="10" style="overflow:scroll;"
-					onChange="makeDirty();" /></td>
+					path="config.defaultPayloadTemplate.messageTemplate" cols="50"
+					rows="10" style="overflow:scroll;" onChange="makeDirty();" /></td>
 		</tr>
 
 		<!-- 		METHOD/PERSON SPECIFIC -->
 		<tr>
 			<td>
 				<h2>
-					<spring:message code="testnotification.options"
-						text="Individual Messages" />
+					<spring:message code="testnotification.options" />
 				</h2>
 			</td>
 		</tr>
@@ -229,14 +205,13 @@
 			<td>
 				<div class="tab-label">
 					<button type="button" class="tablinks active"
-						onclick="openTab(event, 'patientEmailRow')">Patient Email</button>
+						onclick="openTab(event, 'patientEmailRow')"><spring:message code="testnotification.patient.email"/></button>
 					<button type="button" class="tablinks"
-						onclick="openTab(event, 'patientSMSRow')">Patient SMS</button>
+						onclick="openTab(event, 'patientSMSRow')"><spring:message code="testnotification.patient.sms"/></button>
 					<button type="button" class="tablinks"
-						onclick="openTab(event, 'providerEmailRow')">Provider
-						Email</button>
+						onclick="openTab(event, 'providerEmailRow')"><spring:message code="testnotification.provider.email"/></button>
 					<button type="button" class="tablinks"
-						onclick="openTab(event, 'providerSMSRow')">Provider SMS</button>
+						onclick="openTab(event, 'providerSMSRow')"><spring:message code="testnotification.provider.sms"/></button>
 				</div>
 			</td>
 		</tr>
@@ -244,22 +219,33 @@
 		<tr class="patientEmailRow tabcontent">
 			<td>
 				<h2>
-					<spring:message code="testnotification.patient.email.template"
-						text="Email Message" />
+					<spring:message code="testnotification.patient.email" />
 				</h2>
 			</td>
 		</tr>
 		<tr class="patientEmailRow tabcontent">
-			<td><spring:message code="testnotification.subjecttemplate"
-					text="Subject" /> 
-					<form:hidden path="config.patientEmail.payloadTemplate.type" value="TEST_RESULT"/>
-					<form:input
-					path="config.patientEmail.payloadTemplate.subjectTemplate"
-					onChange="makeDirty();" /></td>
+			<td>
+				<table>
+					<tr>
+						<td><spring:message code="testnotification.bcc" text="BCC" />
+						</td>
+						<td><form:input
+								path="config.patientEmail.additionalContacts"
+								onChange="makeDirty();" /></td>
+					</tr>
+					<tr>
+						<td><spring:message code="testnotification.subjecttemplate"/></td>
+						<td><form:hidden
+								path="config.patientEmail.payloadTemplate.type"
+								value="TEST_RESULT" /> <form:input
+								path="config.patientEmail.payloadTemplate.subjectTemplate"
+								onChange="makeDirty();" /></td>
+					</tr>
+				</table>
+			</td>
 		</tr>
 		<tr class="patientEmailRow tabcontent">
-			<td><spring:message code="testnotification.messagetemplate"
-					text="Message" /></td>
+			<td><spring:message code="testnotification.messagetemplate" /></td>
 		</tr>
 		<tr class="patientEmailRow tabcontent">
 			<td><form:textarea
@@ -270,50 +256,59 @@
 		<tr class="patientSMSRow tabcontent">
 			<td>
 				<h2>
-					<spring:message code="testnotification.patient.sms.template"
-						text="SMS Message" />
+					<spring:message code="testnotification.patient.sms" />
 				</h2>
 			</td>
 		</tr>
 		<tr class="patientSMSRow tabcontent">
-			<td><spring:message code="testnotification.subjecttemplate"
-					text="Subject" /> 
-					<form:hidden path="config.patientSMS.payloadTemplate.type" value="TEST_RESULT"/>
-					<form:input
-					path="config.patientSMS.payloadTemplate.subjectTemplate"
-					onChange="makeDirty();" /></td>
+			<td>
+				<%-- 			<spring:message code="testnotification.subjecttemplate" --%>
+				<%-- 					text="Subject" />  --%> <form:hidden
+					path="config.patientSMS.payloadTemplate.type" value="TEST_RESULT" />
+				<%-- 					<form:input --%> <%-- 					path="config.patientSMS.payloadTemplate.subjectTemplate" --%>
+				<%-- 					onChange="makeDirty();" /> --%>
+			</td>
 		</tr>
 		<tr class="patientSMSRow tabcontent">
-			<td><spring:message code="testnotification.messagetemplate"
-					text="Message" /></td>
+			<td><spring:message code="testnotification.messagetemplate" /></td>
 		</tr>
 		<tr class="patientSMSRow tabcontent">
 			<td><form:textarea
-					path="config.patientSMS.payloadTemplate.messageTemplate"
-					cols="50" rows="10" style="overflow:scroll;"
-					onChange="makeDirty();" /></td>
+					path="config.patientSMS.payloadTemplate.messageTemplate" cols="50"
+					rows="10" style="overflow:scroll;" onChange="makeDirty();" /></td>
 		</tr>
 
 
 		<tr class="providerEmailRow tabcontent">
 			<td>
 				<h2>
-					<spring:message code="testnotification.provider.email.template"
-						text="Email Message" />
+					<spring:message code="testnotification.provider.email" />
 				</h2>
 			</td>
 		</tr>
 		<tr class="providerEmailRow tabcontent">
-			<td><spring:message code="testnotification.subjecttemplate"
-					text="Subject" /> 
-					<form:hidden path="config.providerEmail.payloadTemplate.type" value="TEST_RESULT"/>
-					<form:input
-					path="config.providerEmail.payloadTemplate.subjectTemplate"
-					onChange="makeDirty();" /></td>
+			<td>
+				<table>
+					<tr>
+						<td><spring:message code="testnotification.bcc" text="BCC" />
+						</td>
+						<td><form:input
+								path="config.providerEmail.additionalContacts"
+								onChange="makeDirty();" /></td>
+					</tr>
+					<tr>
+						<td><spring:message code="testnotification.subjecttemplate"/></td>
+						<td><form:hidden
+								path="config.providerEmail.payloadTemplate.type"
+								value="TEST_RESULT" /> <form:input
+								path="config.providerEmail.payloadTemplate.subjectTemplate"
+								onChange="makeDirty();" /></td>
+					</tr>
+				</table>
+			</td>
 		</tr>
 		<tr class="providerEmailRow tabcontent">
-			<td><spring:message code="testnotification.messagetemplate"
-					text="Message" /></td>
+			<td><spring:message code="testnotification.messagetemplate"/></td>
 		</tr>
 		<tr class="providerEmailRow tabcontent">
 			<td><form:textarea
@@ -324,32 +319,27 @@
 		<tr class="providerSMSRow tabcontent">
 			<td>
 				<h2>
-					<spring:message code="testnotification.provider.sms.template"
-						text="SMS Message" />
+					<spring:message code="testnotification.provider.sms" />
 				</h2>
 			</td>
 		</tr>
 		<tr class="providerSMSRow tabcontent">
-			<td><spring:message code="testnotification.subjecttemplate"
-					text="Subject" /> 
-					<form:hidden path="config.providerSMS.payloadTemplate.type" value="TEST_RESULT"/>
-					<form:input
-					path="config.providerSMS.payloadTemplate.subjectTemplate"
-					onChange="makeDirty();" /></td>
+			<td>
+				<%-- 			<spring:message code="testnotification.subjecttemplate" --%>
+				<%-- 					text="Subject" />  --%> <form:hidden
+					path="config.providerSMS.payloadTemplate.type" value="TEST_RESULT" />
+				<%-- 					<form:input --%> <%-- 					path="config.providerSMS.payloadTemplate.subjectTemplate" --%>
+				<%-- 					onChange="makeDirty();" /> --%>
+			</td>
 		</tr>
 		<tr class="providerSMSRow tabcontent">
-			<td><spring:message code="testnotification.messagetemplate"
-					text="Message" /></td>
+			<td><spring:message code="testnotification.messagetemplate"/></td>
 		</tr>
 		<tr class="providerSMSRow tabcontent">
 			<td><form:textarea
-					path="config.providerSMS.payloadTemplate.messageTemplate"
-					cols="50" rows="10" style="overflow:scroll;"
-					onChange="makeDirty();" /></td>
+					path="config.providerSMS.payloadTemplate.messageTemplate" cols="50"
+					rows="10" style="overflow:scroll;" onChange="makeDirty();" /></td>
 		</tr>
-
-
-
 	</tbody>
 </table>
 

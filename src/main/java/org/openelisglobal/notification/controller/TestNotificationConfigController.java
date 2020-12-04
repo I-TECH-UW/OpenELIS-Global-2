@@ -5,12 +5,14 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.notification.form.TestNotificationConfigForm;
 import org.openelisglobal.notification.service.NotificationPayloadTemplateService;
 import org.openelisglobal.notification.service.TestNotificationConfigService;
 import org.openelisglobal.notification.valueholder.NotificationPayloadTemplate.NotificationPayloadType;
 import org.openelisglobal.notification.valueholder.TestNotificationConfig;
+import org.openelisglobal.test.service.TestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -36,6 +38,8 @@ public class TestNotificationConfigController extends BaseController {
 
     @Autowired
     private NotificationPayloadTemplateService payloadTemplateService;
+    @Autowired
+    private TestService testService;
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -51,14 +55,19 @@ public class TestNotificationConfigController extends BaseController {
                 payloadTemplateService.getSystemDefaultPayloadTemplateForType(NotificationPayloadType.TEST_RESULT));
         form.setConfig(testNotificationConfigService.getTestNotificationConfigForTestId(testId)
                 .orElse(new TestNotificationConfig()));
+        if (form.getConfig().getTest() == null || GenericValidator.isBlankOrNull(form.getConfig().getTest().getId())) {
+            form.getConfig().setTest(testService.get(testId));
+        }
         return findForward(FWD_SUCCESS, form);
     }
 
     @GetMapping(value = "/TestNotificationConfig/raw/list", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody()
+    @ResponseBody
     public List<TestNotificationConfig> getNotificationConfigs(
             @RequestParam(name = "testIds", required = false) List<String> testIds) {
-        return testNotificationConfigService.getTestNotificationConfigForTestId(testIds);
+        List<TestNotificationConfig> configs = testNotificationConfigService
+                .getTestNotificationConfigsForTestId(testIds);
+        return configs;
     }
 
     @PostMapping("/TestNotificationConfig")

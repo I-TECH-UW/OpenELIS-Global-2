@@ -44,7 +44,7 @@
 			<column name="test_id" type="NUMERIC(10)">
 				<constraints
 					foreignKeyName="fk_test_notification_config_test"
-					references="test(id)" />
+					references="test(id)" unique="true" />
 			</column>
 			<column name="default_payload_template_id" type="INTEGER">
 				<constraints
@@ -81,7 +81,7 @@
 			<column name="analysis_id" type="NUMERIC(10)">
 				<constraints
 					foreignKeyName="fk_analysis_notification_config_test"
-					references="analysis(id)" />
+					references="analysis(id)" unique="true" />
 			</column>
 			<column name="default_payload_template_id" type="INTEGER">
 				<constraints
@@ -114,6 +114,21 @@
 		<dropUniqueConstraint
 			constraintName="unique_notification_payload_template_type"
 			schemaName="clinlims" tableName="notification_payload_template" />
+	</changeSet>
+
+
+	<changeSet author="csteele" id="3">
+		
+		<createTable schemaName="clinlims"
+			tableName="additional_contacts">
+			<column name="contact" type="VARCHAR(255)" />
+			<column name="notification_config_option_id" type="INTEGER">
+				<constraints
+					foreignKeyName="fk_additional_contacts_notification_config_option_id"
+					references="notification_config_option(id)" />
+			</column>
+		</createTable>
+		
 	</changeSet>
 
 </databaseChangeLog>

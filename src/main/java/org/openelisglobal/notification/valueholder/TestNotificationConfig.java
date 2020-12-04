@@ -100,14 +100,17 @@ public class TestNotificationConfig extends NotificationConfig<Test> {
         this.defaultPayloadTemplate = defaultPayloadTemplate;
     }
 
+    @Override
     public List<NotificationConfigOption> getOptions() {
         return options;
     }
 
+    @Override
     public void setOptions(List<NotificationConfigOption> options) {
         this.options = options;
     }
 
+    @Override
     public NotificationConfigOption getOptionFor(NotificationNature nature, NotificationMethod methodType,
             NotificationPersonType personType) {
         if (options == null) {
@@ -127,21 +130,25 @@ public class TestNotificationConfig extends NotificationConfig<Test> {
         return configOption;
     }
 
+    @Override
     public NotificationConfigOption getPatientEmail() {
         return getOptionFor(NotificationNature.RESULT_VALIDATION, NotificationMethod.EMAIL,
                 NotificationPersonType.PATIENT);
     }
 
+    @Override
     public NotificationConfigOption getPatientSMS() {
         return getOptionFor(NotificationNature.RESULT_VALIDATION, NotificationMethod.SMS,
                 NotificationPersonType.PATIENT);
     }
 
+    @Override
     public NotificationConfigOption getProviderEmail() {
         return getOptionFor(NotificationNature.RESULT_VALIDATION, NotificationMethod.EMAIL,
                 NotificationPersonType.PROVIDER);
     }
 
+    @Override
     public NotificationConfigOption getProviderSMS() {
         return getOptionFor(NotificationNature.RESULT_VALIDATION, NotificationMethod.SMS,
                 NotificationPersonType.PROVIDER);

@@ -566,7 +566,7 @@ function addNotificationsOptions(testIds, testNames) {
 		return;
 	}
 	var resultsSectionHeader  = document.createElement("h2");
-	resultsSectionHeader.appendChild(document.createTextNode("<spring:message code='' text='Result Reporting'/>"));
+	resultsSectionHeader.appendChild(document.createTextNode("<spring:message code='testnotification.patiententry.header'/>"));
 	resultReportingSection.appendChild(resultsSectionHeader)
 	
 	var table = document.createElement("table");
@@ -577,13 +577,13 @@ function addNotificationsOptions(testIds, testNames) {
 	col.colSpan = "2";
 	col.style.textAlign = "center";
 	col.style.fontWeight = "bold";
-	col.appendChild(document.createTextNode("<spring:message code='' text='Patient'/>"))
+	col.appendChild(document.createTextNode("<spring:message code='label.patient'/>"))
 	row.appendChild(col);
 	col = document.createElement("td");
 	col.colSpan = "2";
 	col.style.textAlign = "center";
 	col.style.fontWeight = "bold";
-	col.appendChild(document.createTextNode("<spring:message code='' text='Requester'/>"))
+	col.appendChild(document.createTextNode("<spring:message code='label.requester'/>"))
 	row.appendChild(col);
 	table.appendChild(row)
 	resultReportingSection.appendChild(table)
@@ -598,8 +598,8 @@ function addNotificationsOption(testId, testName, table) {
 	var resultReportingSection = document.getElementById("resultReportingSection");
 	var row = document.createElement("tr");
 	var col = document.createElement("td");
-	var emailNote = "<spring:message code='' text='Email'/>";
-	var smsNote = "<spring:message code='' text='SMS'/>";
+	var emailNote = "<spring:message code='externalconnections.email'/>";
+	var smsNote = "<spring:message code='externalconnections.sms'/>";
 	col.appendChild(document.createTextNode(testName));
 	col.style.fontWeight = "bold";
 	row.appendChild(col);

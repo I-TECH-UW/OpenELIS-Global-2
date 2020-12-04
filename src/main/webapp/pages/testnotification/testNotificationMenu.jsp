@@ -34,15 +34,15 @@
 	<thead>
 		<tr>
 			<th rowspan="2">&nbsp;</th>
-			<th rowspan="2"><spring:message code="" text="Test name" /></th>
-			<th colspan="2"><spring:message code="" text="Patient" /></th>
-			<th colspan="2"><spring:message code="" text="Provider" /></th>
+			<th rowspan="2"><spring:message code="label.testName" /></th>
+			<th colspan="2"><spring:message code="label.patient"/></th>
+			<th colspan="2"><spring:message code="label.provider"/></th>
 		</tr>
 		<tr>
-			<th><spring:message code="" text="Email" /></th>
-			<th><spring:message code="" text='SMS' /></th>
-			<th><spring:message code="" text="Email" /></th>
-			<th><spring:message code="" text='SMS' /></th>
+			<th><spring:message code="externalconnection.email" /></th>
+			<th><spring:message code="externalconnection.sms"/></th>
+			<th><spring:message code="externalconnection.email" /></th>
+			<th><spring:message code="externalconnection.sms" /></th>
 		</tr>
 	</thead>
 	<tbody>
@@ -86,7 +86,7 @@
 					</c:url>
 					<td style="text-align: center; vertical-align: middle;"><a
 						style="cursor: pointer" href="${editUrl}"
-						title="<spring:message code='tooltip.fulledit' text='Go to full edit page'/>">
+						title="<spring:message code='tooltip.fulledit'/>">
 							<i class="fas fa-cog"></i>
 					</a></td>
 				</tr>

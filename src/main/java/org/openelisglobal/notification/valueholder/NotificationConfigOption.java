@@ -1,10 +1,15 @@
 package org.openelisglobal.notification.valueholder;
 
+import java.util.List;
+
 import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -72,6 +77,12 @@ public class NotificationConfigOption extends BaseObject<Integer> {
     @Column(name = "active")
     private boolean active;
 
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name="additional_contacts", joinColumns=@JoinColumn(name="notification_config_option_id"))
+    @Column(name="contact")
+    @JsonIgnore
+    private List<String> additionalContacts;
+
     public NotificationConfigOption(NotificationMethod methodType, NotificationPersonType personType,
             NotificationNature notificationNature,
             boolean active) {
@@ -127,12 +138,20 @@ public class NotificationConfigOption extends BaseObject<Integer> {
         this.payloadTemplate = payloadTemplate;
     }
 
-    public Boolean getActive() {
+    public boolean getActive() {
         return active;
     }
 
-    public void setActive(Boolean active) {
+    public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public List<String> getAdditionalContacts() {
+        return additionalContacts;
+    }
+
+    public void setAdditionalContacts(List<String> additionalContacts) {
+        this.additionalContacts = additionalContacts;
     }
 
 }
