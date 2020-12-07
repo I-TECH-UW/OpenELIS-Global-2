@@ -561,7 +561,7 @@ function assignTestsToSelected(checkbox, panelId){
 
 function addNotificationsOptions(testIds, testNames) {
 	var resultReportingSection = document.getElementById("resultReportingSection");
-	resultReportingSection.innerHTML = '';
+	resultReportingSection.innerHTML = '<hr style="width:100%; height:5px;" />';
 	if (testIds.length === 0) {
 		return;
 	}
