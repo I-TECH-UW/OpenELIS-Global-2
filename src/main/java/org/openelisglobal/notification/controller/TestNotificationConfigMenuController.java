@@ -34,6 +34,11 @@ public class TestNotificationConfigMenuController extends BaseMenuController<Tes
     @Autowired
     private TestNotificationConfigService testNotificationConfigService;
 
+    @Override
+    protected int getPageSize() {
+        return -1;
+    }
+
     @GetMapping("/TestNotificationConfigMenu")
     public ModelAndView displayNotificationConfig()
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
