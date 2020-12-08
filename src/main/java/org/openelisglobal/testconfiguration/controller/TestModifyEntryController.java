@@ -588,6 +588,13 @@ public class TestModifyEntryController extends BaseController {
     }
 
     private ArrayList<ResultLimit> createDictionaryResultLimit(TestAddParams testAddParams) {
+        
+        List<TestResult> testResults = testResultService.getActiveTestResultsByTest(testAddParams.testId);
+        for (int i = 0; i < testResults.size(); i++) {
+            testResults.get(i).setIsActive(false);
+        }
+        testResultService.updateAll(testResults);
+        
         ArrayList<ResultLimit> resultLimits = new ArrayList<>();
         if (!org.apache.commons.validator.GenericValidator.isBlankOrNull(testAddParams.dictionaryReferenceId)) {
             ResultLimit limit = new ResultLimit();
