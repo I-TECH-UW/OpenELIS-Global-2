@@ -81,6 +81,13 @@
 	<tbody>
 		<tr>
 			<td>
+			<h1><spring:message code=""
+						text="Notification Center" />
+			</h1>
+			</td>
+		</tr>
+		<tr>
+			<td>
 
 				<div class="tab-label">
 				<button type="button" class="tablinks active"
@@ -97,7 +104,7 @@
 		<tr class="electronicOrders tabcontent">
 			<td>
 				<h2>
-					<spring:message code="testnotification.patient.sms.template"
+					<spring:message code=""
 						text="Electronic Orders" />
 				</h2>
 			</td>
@@ -110,7 +117,7 @@
 		<tr class="systemMessages tabcontent">
 			<td>
 				<h2>
-					<spring:message code="testnotification.patient.sms.template"
+					<spring:message code=""
 						text="System Messages" />
 				</h2>
 			</td>
@@ -122,7 +129,7 @@
 		<tr class="referralResults tabcontent">
 			<td>
 				<h2>
-					<spring:message code="testnotification.patient.sms.template"
+					<spring:message code=""
 						text="Referral Results" />
 				</h2>
 			</td>
