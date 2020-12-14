@@ -2,6 +2,7 @@ package org.openelisglobal.dataexchange.fhir;
 
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -12,6 +13,9 @@ import ca.uhn.fhir.rest.client.api.IRestfulClientFactory;
 
 @Configuration
 public class FhirConfig {
+
+    @Value("${org.openelisglobal.oe.fhir.system:http://openelis-global.org}")
+    private String oeFhirSystem;
 
     @Autowired
     CloseableHttpClient httpClient;
@@ -29,6 +33,14 @@ public class FhirConfig {
         clientFactory.setHttpClient(httpClient);
         fhirContext.setRestfulClientFactory(clientFactory);
 
+    }
+
+    public String getOeFhirSystem() {
+        return oeFhirSystem;
+    }
+
+    public void setOeFhirSystem(String oeFhirSystem) {
+        this.oeFhirSystem = oeFhirSystem;
     }
 
 }

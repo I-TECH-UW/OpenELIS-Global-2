@@ -4,8 +4,11 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -16,6 +19,7 @@ import org.hl7.fhir.r4.model.Bundle.BundleEntryComponent;
 import org.hl7.fhir.r4.model.CodeableConcept;
 import org.hl7.fhir.r4.model.Coding;
 import org.hl7.fhir.r4.model.DiagnosticReport;
+import org.hl7.fhir.r4.model.Endpoint;
 import org.hl7.fhir.r4.model.Enumerations.AdministrativeGender;
 import org.hl7.fhir.r4.model.HumanName;
 import org.hl7.fhir.r4.model.Identifier;
@@ -28,11 +32,13 @@ import org.hl7.fhir.r4.model.ServiceRequest;
 import org.hl7.fhir.r4.model.Task;
 import org.hl7.fhir.r4.model.Task.TaskOutputComponent;
 import org.hl7.fhir.r4.model.Task.TaskStatus;
+import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.SampleAddService.SampleTestCollection;
 import org.openelisglobal.common.services.StatusService.ExternalOrderStatus;
 import org.openelisglobal.common.util.DateUtil;
+import org.openelisglobal.dataexchange.fhir.FhirConfig;
 import org.openelisglobal.dataexchange.fhir.service.TaskWorker.TaskResult;
 import org.openelisglobal.dataexchange.order.action.DBOrderExistanceChecker;
 import org.openelisglobal.dataexchange.order.action.IOrderPersister;
@@ -42,6 +48,8 @@ import org.openelisglobal.dataexchange.order.valueholder.PortableOrder;
 import org.openelisglobal.dataexchange.resultreporting.beans.CodedValueXmit;
 import org.openelisglobal.dataexchange.resultreporting.beans.TestResultsXmit;
 import org.openelisglobal.dataexchange.service.order.ElectronicOrderService;
+import org.openelisglobal.organization.valueholder.Organization;
+import org.openelisglobal.organization.valueholder.OrganizationType;
 import org.openelisglobal.patient.action.bean.PatientManagementInfo;
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.patientidentity.service.PatientIdentityService;
@@ -70,9 +78,9 @@ public class FhirTransformServiceImpl implements FhirTransformService {
     protected ElectronicOrderService electronicOrderService = SpringContext.getBean(ElectronicOrderService.class);
     protected TestService testService = SpringContext.getBean(TestService.class);
 
+    private FhirConfig fhirConfig = SpringContext.getBean(FhirConfig.class);
     IGenericClient localFhirClient = fhirContext
             .newRestfulGenericClient(fhirApiWorkFlowService.getLocalFhirStorePath());
-    org.hl7.fhir.r4.model.Patient fhirPatient = new org.hl7.fhir.r4.model.Patient();
 
     private IStatusService statusService;
 
@@ -104,15 +112,14 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 
         try {
             Bundle srBundle = (Bundle) localFhirClient.search().forResource(ServiceRequest.class)
-                    .where(new TokenClientParam("_id").exactly().code(srId))
-                    .prettyPrint()
-                    .execute();
+                    .where(new TokenClientParam("_id").exactly().code(srId)).prettyPrint().execute();
 
             if (srBundle.getEntry().size() != 0) {
                 serviceRequest = (ServiceRequest) srBundle.getEntryFirstRep().getResource();
 
                 Bundle pBundle = (Bundle) localFhirClient.search().forResource(org.hl7.fhir.r4.model.Patient.class)
-                        .where(new TokenClientParam("_id").exactly().code(serviceRequest.getSubject().getReference().toString()))
+                        .where(new TokenClientParam("_id").exactly()
+                                .code(serviceRequest.getSubject().getReference().toString()))
                         .prettyPrint().execute();
 
                 fhirPatient = new org.hl7.fhir.r4.model.Patient();
@@ -121,7 +128,8 @@ public class FhirTransformServiceImpl implements FhirTransformService {
                 }
 
                 Bundle tBundle = (Bundle) localFhirClient.search().forResource(Task.class)
-                        .where(new ReferenceClientParam("based-on").hasId(serviceRequest.getResourceType() + "/" + srId))
+                        .where(new ReferenceClientParam("based-on")
+                                .hasId(serviceRequest.getResourceType() + "/" + srId))
                         .prettyPrint().execute();
 
                 if (tBundle.getEntry().size() != 0) {
@@ -129,10 +137,9 @@ public class FhirTransformServiceImpl implements FhirTransformService {
                 }
 
                 LogEvent.logDebug(this.getClass().getName(), "getFhirOrdersById",
-                        "FhirTransformServiceImpl:getFhirOrdersById:sr: " +
-                        serviceRequest.getIdElement().getIdPart() + " patient: " +
-                        fhirPatient.getIdElement().getIdPart() + " task: " +
-                        task.getIdElement().getIdPart() );
+                        "FhirTransformServiceImpl:getFhirOrdersById:sr: " + serviceRequest.getIdElement().getIdPart()
+                                + " patient: " + fhirPatient.getIdElement().getIdPart() + " task: "
+                                + task.getIdElement().getIdPart());
 
             } else {
                 return new ArrayList<>();
@@ -142,9 +149,8 @@ public class FhirTransformServiceImpl implements FhirTransformService {
                     "FhirTransformServiceImpl:Transform exception: " + e.toString());
         }
 
-        TaskWorker worker = new TaskWorker(task,
-                fhirContext.newJsonParser().encodeResourceToString(task), serviceRequest,
-                fhirPatient);
+        TaskWorker worker = new TaskWorker(task, fhirContext.newJsonParser().encodeResourceToString(task),
+                serviceRequest, fhirPatient);
 
         TaskInterpreter interpreter = SpringContext.getBean(TaskInterpreter.class);
         worker.setInterpreter(interpreter);
@@ -156,8 +162,6 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 
         TaskResult taskResult = null;
         taskResult = worker.handleOrderRequest();
-
-
 
         if (taskResult == TaskResult.OK) {
             task.setStatus(TaskStatus.ACCEPTED);
@@ -185,9 +189,10 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 
         String patientGuid = result.getPatientGUID();
         String accessionNumber = result.getAccessionNumber();
-        accessionNumber = accessionNumber.substring(0,accessionNumber.indexOf('-')); // disregard test number within set
+        accessionNumber = accessionNumber.substring(0, accessionNumber.indexOf('-')); // disregard test number within
+                                                                                      // set
 //        org.openelisglobal.patient.valueholder.Patient patient = patientService.getPatientForGuid(patientGuid);
-        fhirPatient = CreateFhirPatientFromOEPatient(patient);
+        org.hl7.fhir.r4.model.Patient fhirPatient = CreateFhirPatientFromOEPatient(patient);
         Bundle oResp = null;
         Bundle drResp = null;
 
@@ -195,14 +200,13 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 
             Reference basedOnRef = new Reference();
             Bundle srBundle = (Bundle) localFhirClient.search().forResource(ServiceRequest.class)
-                    .where(new TokenClientParam("code").exactly().code(accessionNumber))
-                    .prettyPrint()
-                    .execute();
+                    .where(new TokenClientParam("code").exactly().code(accessionNumber)).prettyPrint().execute();
 
             if (srBundle.getEntry().size() != 0) {
                 BundleEntryComponent bundleComponent = srBundle.getEntryFirstRep();
                 ServiceRequest existingServiceRequest = (ServiceRequest) bundleComponent.getResource();
-                basedOnRef.setReference(existingServiceRequest.getResourceType() + "/" + existingServiceRequest.getIdElement().getIdPart());
+                basedOnRef.setReference(existingServiceRequest.getResourceType() + "/"
+                        + existingServiceRequest.getIdElement().getIdPart());
             }
 
             // check for patient existence
@@ -218,7 +222,8 @@ public class FhirTransformServiceImpl implements FhirTransformService {
                 subjectRef.setReference("Patient/" + resp.getEntryFirstRep().getId());
             } else {
                 BundleEntryComponent bundleComponent = pBundle.getEntryFirstRep();
-                org.hl7.fhir.r4.model.Patient existingPatient = (org.hl7.fhir.r4.model.Patient) bundleComponent.getResource();
+                org.hl7.fhir.r4.model.Patient existingPatient = (org.hl7.fhir.r4.model.Patient) bundleComponent
+                        .getResource();
                 subjectRef.setReference("Patient/" + existingPatient.getIdElement().getIdPart());
             }
 
@@ -240,14 +245,16 @@ public class FhirTransformServiceImpl implements FhirTransformService {
                             "patient: " + fhirContext.newJsonParser().encodeResourceToString(fhirPatient));
                     LogEvent.logDebug(this.getClass().getName(), "CreateFhirFromOESample",
                             "existing observation: " + fhirContext.newJsonParser()
-                            .encodeResourceToString(oBundle.getEntryFirstRep().getResource()));
+                                    .encodeResourceToString(oBundle.getEntryFirstRep().getResource()));
                     LogEvent.logDebug(this.getClass().getName(), "CreateFhirFromOESample",
                             "existing diagnosticReport: " + fhirContext.newJsonParser()
-                            .encodeResourceToString(drBundle.getEntryFirstRep().getResource()));
+                                    .encodeResourceToString(drBundle.getEntryFirstRep().getResource()));
 
                     return (fhirContext.newJsonParser().encodeResourceToString(fhirPatient)
-                            + fhirContext.newJsonParser().encodeResourceToString(oBundle.getEntryFirstRep().getResource())
-                            + fhirContext.newJsonParser().encodeResourceToString(drBundle.getEntryFirstRep().getResource()));
+                            + fhirContext.newJsonParser()
+                                    .encodeResourceToString(oBundle.getEntryFirstRep().getResource())
+                            + fhirContext.newJsonParser()
+                                    .encodeResourceToString(drBundle.getEntryFirstRep().getResource()));
                 }
 
                 Observation observation = new Observation();
@@ -302,8 +309,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 
                 Reference observationReference = new Reference();
 //                observationReference.setType(oResp.getId().getResourceType());
-                observationReference
-                        .setReference("Observation/" + oResp.getEntryFirstRep().getId());
+                observationReference.setReference("Observation/" + oResp.getEntryFirstRep().getId());
                 diagnosticReport.addResult(observationReference);
 
                 LogEvent.logDebug(this.getClass().getName(), "CreateFhirFromOESample",
@@ -327,7 +333,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
                 "CreateFhirFromOESample:pOrder:externalId: " + pOrder.getExternalId());
 
         org.openelisglobal.patient.valueholder.Patient patient = (pOrder.getPatient());
-        fhirPatient = CreateFhirPatientFromOEPatient(patient);
+        org.hl7.fhir.r4.model.Patient fhirPatient = CreateFhirPatientFromOEPatient(patient);
         Bundle oBundle = new Bundle();
         Bundle drBundle = new Bundle();
         Bundle srBundle = new Bundle();
@@ -360,17 +366,16 @@ public class FhirTransformServiceImpl implements FhirTransformService {
             if (pBundle.getEntry().size() == 0) {
 //                oOutcome = localFhirClient.create().resource(fhirPatient).execute();
                 oResp = CreateFhirResource(fhirPatient);
-                subjectRef.setReference( "Patient/" + oResp.getEntryFirstRep().getId());
+                subjectRef.setReference("Patient/" + oResp.getEntryFirstRep().getId());
             } else {
                 BundleEntryComponent bundleComponent = pBundle.getEntryFirstRep();
-                org.hl7.fhir.r4.model.Patient existingPatient = (org.hl7.fhir.r4.model.Patient) bundleComponent.getResource();
+                org.hl7.fhir.r4.model.Patient existingPatient = (org.hl7.fhir.r4.model.Patient) bundleComponent
+                        .getResource();
                 subjectRef.setReference("Patient/" + existingPatient.getIdElement().getIdPart());
             }
 
             srBundle = (Bundle) localFhirClient.search().forResource(ServiceRequest.class)
-                    .where(new TokenClientParam("code").exactly().code(pOrder.getExternalId()))
-                    .prettyPrint()
-                    .execute();
+                    .where(new TokenClientParam("code").exactly().code(pOrder.getExternalId())).prettyPrint().execute();
 
             if (srBundle.getEntry().size() == 0) {
 
@@ -383,13 +388,11 @@ public class FhirTransformServiceImpl implements FhirTransformService {
             if (pOrder.getResultValue() != null && pOrder.getUomName() != null) {
 
                 oBundle = (Bundle) localFhirClient.search().forResource(Observation.class)
-                        .where(new TokenClientParam("code").exactly().code(pOrder.getExternalId()))
-                        .prettyPrint()
+                        .where(new TokenClientParam("code").exactly().code(pOrder.getExternalId())).prettyPrint()
                         .execute();
 
                 drBundle = (Bundle) localFhirClient.search().forResource(DiagnosticReport.class)
-                        .where(new TokenClientParam("code").exactly().code(pOrder.getExternalId()))
-                        .prettyPrint()
+                        .where(new TokenClientParam("code").exactly().code(pOrder.getExternalId())).prettyPrint()
                         .execute();
 
                 if (oBundle.getEntry().size() != 0 && drBundle.getEntry().size() != 0) {
@@ -405,10 +408,13 @@ public class FhirTransformServiceImpl implements FhirTransformService {
                             "existing serviceRequest: " + fhirContext.newJsonParser()
                                     .encodeResourceToString(srBundle.getEntryFirstRep().getResource()));
 
-                    return (fhirContext.newJsonParser().encodeResourceToString(fhirPatient) +
-                            fhirContext.newJsonParser().encodeResourceToString(oBundle.getEntryFirstRep().getResource()) +
-                            fhirContext.newJsonParser().encodeResourceToString(drBundle.getEntryFirstRep().getResource()) +
-                            fhirContext.newJsonParser().encodeResourceToString(srBundle.getEntryFirstRep().getResource()));
+                    return (fhirContext.newJsonParser().encodeResourceToString(fhirPatient)
+                            + fhirContext.newJsonParser()
+                                    .encodeResourceToString(oBundle.getEntryFirstRep().getResource())
+                            + fhirContext.newJsonParser()
+                                    .encodeResourceToString(drBundle.getEntryFirstRep().getResource())
+                            + fhirContext.newJsonParser()
+                                    .encodeResourceToString(srBundle.getEntryFirstRep().getResource()));
                 }
 
                 Observation observation = new Observation();
@@ -450,23 +456,23 @@ public class FhirTransformServiceImpl implements FhirTransformService {
                 diagnosticReport.setSubject(subjectRef);
 
                 Reference observationReference = new Reference();
-                observationReference
-                        .setReference("Observation/" + oResp.getEntryFirstRep().getId());
+                observationReference.setReference("Observation/" + oResp.getEntryFirstRep().getId());
                 diagnosticReport.addResult(observationReference);
 
                 Reference serviceRequestReference = new Reference();
 //                serviceRequestReference.setType(srOutcome.getId().getResourceType());
-                serviceRequestReference
-                        .setReference("ServiceRequest/" + srResp.getEntryFirstRep().getId());
+                serviceRequestReference.setReference("ServiceRequest/" + srResp.getEntryFirstRep().getId());
                 diagnosticReport.addBasedOn(serviceRequestReference);
 
 //                drOutcome = localFhirClient.create().resource(diagnosticReport).execute();
                 drResp = CreateFhirResource(diagnosticReport);
 
-                return (fhirContext.newJsonParser().encodeResourceToString(fhirPatient) +
-                        fhirContext.newJsonParser().encodeResourceToString(oResp.getEntryFirstRep().getResource()) +
-                        fhirContext.newJsonParser().encodeResourceToString(drResp.getEntryFirstRep().getResource()) +
-                        fhirContext.newJsonParser().encodeResourceToString((srResp == null) ? srBundle.getEntryFirstRep().getResource() : srResp.getEntryFirstRep().getResource()));
+                return (fhirContext.newJsonParser().encodeResourceToString(fhirPatient)
+                        + fhirContext.newJsonParser().encodeResourceToString(oResp.getEntryFirstRep().getResource())
+                        + fhirContext.newJsonParser().encodeResourceToString(drResp.getEntryFirstRep().getResource())
+                        + fhirContext.newJsonParser()
+                                .encodeResourceToString((srResp == null) ? srBundle.getEntryFirstRep().getResource()
+                                        : srResp.getEntryFirstRep().getResource()));
             }
         } catch (Exception e) {
             LogEvent.logError(e);
@@ -479,20 +485,23 @@ public class FhirTransformServiceImpl implements FhirTransformService {
                 "patient: " + fhirContext.newJsonParser().encodeResourceToString(fhirPatient));
         returnString += fhirContext.newJsonParser().encodeResourceToString(fhirPatient);
 
-        if(oBundle.getEntry().size() != 0) {
+        if (oBundle.getEntry().size() != 0) {
             LogEvent.logDebug(this.getClass().getName(), "CreateFhirFromOESample", "observation: "
                     + fhirContext.newJsonParser().encodeResourceToString(oBundle.getEntryFirstRep().getResource()));
-            returnString += fhirContext.newJsonParser().encodeResourceToString(oBundle.getEntryFirstRep().getResource());
+            returnString += fhirContext.newJsonParser()
+                    .encodeResourceToString(oBundle.getEntryFirstRep().getResource());
         }
-        if(drBundle.getEntry().size() != 0) {
+        if (drBundle.getEntry().size() != 0) {
             LogEvent.logDebug(this.getClass().getName(), "CreateFhirFromOESample", "diagnosticReport: "
                     + fhirContext.newJsonParser().encodeResourceToString(drBundle.getEntryFirstRep().getResource()));
-            returnString += fhirContext.newJsonParser().encodeResourceToString(drBundle.getEntryFirstRep().getResource());
+            returnString += fhirContext.newJsonParser()
+                    .encodeResourceToString(drBundle.getEntryFirstRep().getResource());
         }
-        if(srBundle.getEntry().size() != 0) {
+        if (srBundle.getEntry().size() != 0) {
             LogEvent.logDebug(this.getClass().getName(), "CreateFhirFromOESample", "serviceRequest: "
                     + fhirContext.newJsonParser().encodeResourceToString(srBundle.getEntryFirstRep().getResource()));
-            returnString += fhirContext.newJsonParser().encodeResourceToString(srBundle.getEntryFirstRep().getResource());
+            returnString += fhirContext.newJsonParser()
+                    .encodeResourceToString(srBundle.getEntryFirstRep().getResource());
         } else {
             LogEvent.logDebug(this.getClass().getName(), "CreateFhirFromOESample", "serviceRequest: "
                     + fhirContext.newJsonParser().encodeResourceToString(srResp.getEntryFirstRep().getResource()));
@@ -502,7 +511,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
     }
 
     @Override
-    public String CreateFhirFromOESample(ElectronicOrder eOrder, TestResultsXmit result) {
+    public void CreateFhirFromOESample(ElectronicOrder eOrder, TestResultsXmit result) {
         Bundle oResp = null;
         Bundle drResp = null;
 
@@ -518,9 +527,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         // using UUID from getData which is idPart in original etask
         Bundle tsrBundle = (Bundle) localFhirClient.search().forResource(Task.class)
                 .where(new TokenClientParam("identifier").exactly().code(eTask.getIdElement().getIdPart()))
-                .include(new Include("Task:based-on"))
-                .prettyPrint()
-                .execute();
+                .include(new Include("Task:based-on")).prettyPrint().execute();
 
         task = null;
         List<ServiceRequest> serviceRequestList = new ArrayList<>();
@@ -534,8 +541,8 @@ public class FhirTransformServiceImpl implements FhirTransformService {
                     && ResourceType.ServiceRequest.equals(bundleComponent.getResource().getResourceType())) {
 
                 ServiceRequest serviceRequest = (ServiceRequest) bundleComponent.getResource();
-                for(Identifier identifier : serviceRequest.getIdentifier()) {
-                    if(identifier.getValue().equals(orderNumber)) {
+                for (Identifier identifier : serviceRequest.getIdentifier()) {
+                    if (identifier.getValue().equals(orderNumber)) {
                         serviceRequestList.add((ServiceRequest) bundleComponent.getResource());
                     }
                 }
@@ -543,12 +550,11 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         }
 
         for (ServiceRequest serviceRequest : serviceRequestList) {
-         // task has to be refreshed after each loop
-         // using UUID from getData which is idPart in original etask
+            // task has to be refreshed after each loop
+            // using UUID from getData which is idPart in original etask
             Bundle tBundle = (Bundle) localFhirClient.search().forResource(Task.class)
                     .where(new TokenClientParam("identifier").exactly().code(eTask.getIdElement().getIdPart()))
-                    .prettyPrint()
-                    .execute();
+                    .prettyPrint().execute();
 
             task = null;
             for (BundleEntryComponent bundleComponent : tBundle.getEntry()) {
@@ -603,8 +609,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 
                 Reference observationReference = new Reference();
 //                observationReference.setType(oOutcome.getId().getResourceType());
-                observationReference
-                        .setReference("Observation/" + oResp.getEntryFirstRep().getId());
+                observationReference.setReference("Observation/" + oResp.getEntryFirstRep().getId());
                 diagnosticReport.addResult(observationReference);
 //                drOutcome = localFhirClient.create().resource(diagnosticReport).execute();
                 drResp = CreateFhirResource(diagnosticReport);
@@ -626,9 +631,9 @@ public class FhirTransformServiceImpl implements FhirTransformService {
             }
         }
 
-        return (fhirContext.newJsonParser().encodeResourceToString(fhirPatient) +
-                fhirContext.newJsonParser().encodeResourceToString(oResp.getEntryFirstRep().getResource()) +
-                fhirContext.newJsonParser().encodeResourceToString(drResp.getEntryFirstRep().getResource()));
+//        return (fhirContext.newJsonParser().encodeResourceToString(patient)
+//                + fhirContext.newJsonParser().encodeResourceToString(oResp.getEntryFirstRep().getResource())
+//                + fhirContext.newJsonParser().encodeResourceToString(drResp.getEntryFirstRep().getResource()));
     }
 
     @Override
@@ -638,7 +643,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         LogEvent.logDebug(this.getClass().getName(), "CreateFhirFromOESample",
                 "CreateFhirFromOESample:add Order:accession#: " + updateData.getAccessionNumber());
 
-        fhirPatient = CreateFhirPatientFromOEPatient(patientInfo);
+        org.hl7.fhir.r4.model.Patient fhirPatient = CreateFhirPatientFromOEPatient(patientInfo);
 
         Bundle srBundle = new Bundle();
         Bundle pResp = new Bundle();
@@ -666,8 +671,8 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 
         try {
             // check for patient existence
-            Bundle pBundle = (Bundle) localFhirClient.search().forResource(org.hl7.fhir.r4.model.Patient.class)
-                    .where(new TokenClientParam("identifier").exactly().code(fhirPatient.getIdentifierFirstRep().getValue()))
+            Bundle pBundle = (Bundle) localFhirClient.search().forResource(org.hl7.fhir.r4.model.Patient.class).where(
+                    new TokenClientParam("identifier").exactly().code(fhirPatient.getIdentifierFirstRep().getValue()))
                     .prettyPrint().execute();
 
             Reference subjectRef = new Reference();
@@ -680,13 +685,14 @@ public class FhirTransformServiceImpl implements FhirTransformService {
                 subjectRef.setReference("Patient/" + pResp.getEntryFirstRep().getResponse().getLocation());
             } else {
                 BundleEntryComponent bundleComponent = pBundle.getEntryFirstRep();
-                org.hl7.fhir.r4.model.Patient existingPatient = (org.hl7.fhir.r4.model.Patient) bundleComponent.getResource();
-                subjectRef.setReference(existingPatient.getResourceType() + "/" + existingPatient.getIdElement().getIdPart());
+                org.hl7.fhir.r4.model.Patient existingPatient = (org.hl7.fhir.r4.model.Patient) bundleComponent
+                        .getResource();
+                subjectRef.setReference(
+                        existingPatient.getResourceType() + "/" + existingPatient.getIdElement().getIdPart());
             }
 
             srBundle = (Bundle) localFhirClient.search().forResource(ServiceRequest.class)
-                    .where(new TokenClientParam("code").exactly().code(updateData.getAccessionNumber()))
-                    .prettyPrint()
+                    .where(new TokenClientParam("code").exactly().code(updateData.getAccessionNumber())).prettyPrint()
                     .execute();
 
             if (srBundle.getEntry().size() == 0) {
@@ -716,9 +722,8 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 
         try {
 
-            bundle.addEntry()
-                    .setFullUrl(resource.getIdElement().getValue())
-                    .setResource(resource).getRequest().setUrl(resourceType + "/" + UUID.randomUUID()).setMethod(Bundle.HTTPVerb.PUT);
+            bundle.addEntry().setFullUrl(resource.getIdElement().getValue()).setResource(resource).getRequest()
+                    .setUrl(resourceType + "/" + UUID.randomUUID()).setMethod(Bundle.HTTPVerb.PUT);
 
             LogEvent.logDebug(this.getClass().getName(), "CreateFhirResource", "CreateFhirResource: "
                     + fhirContext.newJsonParser().setPrettyPrint(true).encodeResourceToString(bundle));
@@ -750,11 +755,11 @@ public class FhirTransformServiceImpl implements FhirTransformService {
                 // check for patient existence
                 LogEvent.logDebug(this.getClass().getName(), "CreateFhirFromOESample", "UpdateFhirResource:resourceId: "
                         + fhirContext.newJsonParser().setPrettyPrint(true).encodeResourceToString(fhirPatient));
-                LogEvent.logDebug(this.getClass().getName(), "CreateFhirFromOESample", "UpdateFhirResource:resourceId: "
-                        + fhirPatient.getIdentifier().get(0).getValue()
-                        );
+                LogEvent.logDebug(this.getClass().getName(), "CreateFhirFromOESample",
+                        "UpdateFhirResource:resourceId: " + fhirPatient.getIdentifier().get(0).getValue());
                 Bundle pBundle = (Bundle) localFhirClient.search().forResource(org.hl7.fhir.r4.model.Patient.class)
-                        .where(new TokenClientParam("identifier").exactly().code(fhirPatient.getIdentifier().get(0).getValue()))
+                        .where(new TokenClientParam("identifier").exactly()
+                                .code(fhirPatient.getIdentifier().get(0).getValue()))
                         .prettyPrint().execute();
 
                 LogEvent.logDebug(this.getClass().getName(), "CreateFhirFromOESample", "UpdateFhirResource:pBundle: "
@@ -765,11 +770,12 @@ public class FhirTransformServiceImpl implements FhirTransformService {
                             .setUrl("Patient/" + UUID.randomUUID()).setMethod(Bundle.HTTPVerb.PUT);
                     LogEvent.logDebug(this.getClass().getName(), "CreateFhirFromOESample",
                             "Update<Create>FhirResource: "
-                            + fhirContext.newJsonParser().setPrettyPrint(true).encodeResourceToString(bundle));
+                                    + fhirContext.newJsonParser().setPrettyPrint(true).encodeResourceToString(bundle));
                     resp = localFhirClient.transaction().withBundle(bundle).execute();
                 } else {
                     bundle.addEntry().setFullUrl(resource.getIdElement().getValue()).setResource(resource).getRequest()
-                            .setUrl("Patient/" + pBundle.getEntryFirstRep().getResource().getIdElement().getIdPart()).setMethod(Bundle.HTTPVerb.PUT);
+                            .setUrl("Patient/" + pBundle.getEntryFirstRep().getResource().getIdElement().getIdPart())
+                            .setMethod(Bundle.HTTPVerb.PUT);
                     LogEvent.logDebug(this.getClass().getName(), "CreateFhirFromOESample", "UpdateFhirResource: "
                             + fhirContext.newJsonParser().setPrettyPrint(true).encodeResourceToString(bundle));
                     resp = localFhirClient.transaction().withBundle(bundle).execute();
@@ -788,10 +794,11 @@ public class FhirTransformServiceImpl implements FhirTransformService {
     @Override
     public org.hl7.fhir.r4.model.Patient CreateFhirPatientFromOEPatient(Patient patient) {
         org.hl7.fhir.r4.model.Patient fhirPatient = new org.hl7.fhir.r4.model.Patient();
-        List<PatientIdentity> patientIdentityList = patientIdentityService.getPatientIdentitiesForPatient(patient.getId());
+        List<PatientIdentity> patientIdentityList = patientIdentityService
+                .getPatientIdentitiesForPatient(patient.getId());
         String subjectNumber = null;
-        for (PatientIdentity patientIdentity : patientIdentityList ) {
-            if(patientIdentity.getIdentityTypeId().equalsIgnoreCase("9")) { // fix hardcode Subject Number
+        for (PatientIdentity patientIdentity : patientIdentityList) {
+            if (patientIdentity.getIdentityTypeId().equalsIgnoreCase("9")) { // fix hardcode Subject Number
                 subjectNumber = patientIdentity.getIdentityData();
             }
         }
@@ -842,7 +849,6 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         humanNameList.add(humanName);
         fhirPatient.setName(humanNameList);
 
-
         String strDate = patientInfo.getBirthDateForDisplay();
         Date fhirDate = new Date();
         try {
@@ -862,5 +868,87 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 
         return fhirPatient;
     }
-}
 
+    @Override
+    public Organization fhirOrganizationToOrganization(org.hl7.fhir.r4.model.Organization fhirOrganization,
+            IGenericClient client) {
+        Organization organization = new Organization();
+        organization.setOrganizationName(fhirOrganization.getName());
+        organization.setIsActive(IActionConstants.YES);
+        setIdentifiers(organization, fhirOrganization);
+        setAddressInfo(organization, fhirOrganization);
+        setOrganizationTypes(organization, fhirOrganization, client);
+        if (fhirOrganization.getEndpoint() != null && fhirOrganization.getEndpoint().size() > 0) {
+            setConnectionInfo(organization, fhirOrganization, client);
+        }
+        if (fhirOrganization.getPartOf() != null
+                && !GenericValidator.isBlankOrNull(fhirOrganization.getPartOf().getId())) {
+            setParentOrg(organization, fhirOrganization, client);
+        }
+        organization.setMlsLabFlag(IActionConstants.NO);
+        organization.setMlsSentinelLabFlag(IActionConstants.NO);
+
+        return organization;
+    }
+
+    private void setParentOrg(Organization organization, org.hl7.fhir.r4.model.Organization fhirOrganization,
+            IGenericClient client) {
+        org.hl7.fhir.r4.model.Organization parentOrg = client.read().resource(org.hl7.fhir.r4.model.Organization.class)
+                .withId(fhirOrganization.getPartOf().getReferenceElement().getIdPart()).execute();
+        if (parentOrg != null) {
+            organization.setOrganization(fhirOrganizationToOrganization(parentOrg, client));
+        }
+        // TODO Auto-generated method stub
+
+    }
+
+    private void setIdentifiers(Organization organization, org.hl7.fhir.r4.model.Organization fhirOrganization) {
+        for (Identifier identifier : fhirOrganization.getIdentifier()) {
+            if (identifier.getSystem().equals(fhirConfig.getOeFhirSystem() + "/org_cliaNum")) {
+                organization.setCliaNum(identifier.getValue());
+            } else if (identifier.getSystem().equals(fhirConfig.getOeFhirSystem() + "/org_shortName")) {
+                organization.setShortName(identifier.getValue());
+            } else if (identifier.getSystem().equals(fhirConfig.getOeFhirSystem() + "/org_code")) {
+                organization.setCode(identifier.getValue());
+            }
+        }
+    }
+
+    private void setOrganizationTypes(Organization organization, org.hl7.fhir.r4.model.Organization fhirOrganization,
+            IGenericClient client) {
+        Set<OrganizationType> orgTypes = new HashSet<>();
+        OrganizationType orgType = null;
+        for (CodeableConcept type : fhirOrganization.getType()) {
+            for (Coding coding :type.getCoding()) {
+                if (coding.getSystem() != null
+                        && coding.getSystem().equals(fhirConfig.getOeFhirSystem() + "/orgType")) {
+                    orgType = new OrganizationType();
+                    orgType.setName(coding.getCode());
+                    orgType.setDescription(type.getText());
+                    orgType.setOrganizations(new HashSet<>());
+                    orgType.getOrganizations().add(organization);
+                    orgTypes.add(orgType);
+                }
+            }
+        }
+        organization.setOrganizationTypes(orgTypes);
+    }
+
+    private void setConnectionInfo(Organization organization, org.hl7.fhir.r4.model.Organization fhirOrganization,
+            IGenericClient client) {
+        Endpoint endpoint = client.read().resource(Endpoint.class)
+                .withId(fhirOrganization.getEndpointFirstRep().getReferenceElement().getIdPart()).execute();
+        if (endpoint != null) {
+            organization.setInternetAddress(endpoint.getAddress());
+        }
+
+    }
+
+    private void setAddressInfo(Organization organization, org.hl7.fhir.r4.model.Organization fhirOrganization) {
+        organization.setStreetAddress(fhirOrganization.getAddressFirstRep().getLine().stream()
+                .map(e -> e.asStringValue()).collect(Collectors.joining("\\n")));
+        organization.setCity(fhirOrganization.getAddressFirstRep().getCity());
+        organization.setState(fhirOrganization.getAddressFirstRep().getState());
+        organization.setZipCode(fhirOrganization.getAddressFirstRep().getPostalCode());
+    }
+}

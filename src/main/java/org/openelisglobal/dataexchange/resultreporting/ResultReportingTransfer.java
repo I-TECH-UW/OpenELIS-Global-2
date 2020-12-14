@@ -186,7 +186,7 @@ public class ResultReportingTransfer {
                 ExternalOrderStatus eOrderStatus = SpringContext.getBean(IStatusService.class)
                         .getExternalOrderStatusForID(eOrder.getStatusId());
 
-                String fhirJson = fhirTransformService.CreateFhirFromOESample(eOrder, result);
+                fhirTransformService.CreateFhirFromOESample(eOrder, result);
                 continue;
             }
             if (result.getReferringOrderNumber().isEmpty()) { // HL7
