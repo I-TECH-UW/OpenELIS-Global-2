@@ -123,11 +123,11 @@
         setCorrectSave();
     }
 
-    function siteListChanged(textValue) {
+    function siteListChanged(siteList) {
         var siteList = $("requesterId");
-
         //if the index is 0 it is a new entry, if it is not then the textValue may include the index value
-        if (siteList.selectedIndex == 0 || siteList.options[siteList.selectedIndex].label != textValue) {
+        // create new entry has been removed gnr
+        if (siteList.selectedIndex == 0) {
             $("newRequesterName").value = textValue;
         } else if (useReferralSiteCode) {
             getCodeForOrganization(siteList.options[siteList.selectedIndex].value, processCodeSuccess);
@@ -492,7 +492,8 @@
 </tr>
 <% } %>
 <tr>
-<% if( ConfigurationProperties.getInstance().isPropertyValueEqual( Property.USE_BILLING_REFERENCE_NUMBER, "true" )){ %>
+<!-- turn off for release 2.2.3.1 gnr -->
+<% if( !ConfigurationProperties.getInstance().isPropertyValueEqual( Property.USE_BILLING_REFERENCE_NUMBER, "true" )){ %>
     <td><label for="billingReferenceNumber">
     	<c:out value="${billingReferenceNumberLabel}"/>
     </label>
@@ -560,8 +561,8 @@
         invalidLabID = '<spring:message code="error.site.invalid"/>'; // Alert if value is typed that's not on list. FIX - add bad message icon
         maxRepMsg = '<spring:message code="sample.entry.project.siteMaxMsg"/>';
 
-        resultCallBack = function (textValue) {
-            siteListChanged(textValue);
+        resultCallBack = function (siteList) {
+            siteListChanged(siteList);
             setOrderModified();
             setCorrectSave();
         };
