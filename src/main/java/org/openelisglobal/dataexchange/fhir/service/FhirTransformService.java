@@ -4,7 +4,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.Reference;
 import org.hl7.fhir.r4.model.Resource;
 import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder;
 import org.openelisglobal.dataexchange.order.valueholder.PortableOrder;
@@ -32,13 +32,15 @@ public interface FhirTransformService {
 
     public org.hl7.fhir.r4.model.Patient CreateFhirPatientFromOEPatient(PatientManagementInfo patientInfo);
 
-    public Bundle CreateFhirResource(Resource resource);
-
-    public Bundle UpdateFhirResource(Resource resource);
-
     public List<ElectronicOrder> getFhirOrdersById(String id);
 
     Organization fhirOrganizationToOrganization(org.hl7.fhir.r4.model.Organization fhirOrganization,
             IGenericClient client);
+
+    Reference createReferenceFor(Resource resource);
+
+    org.hl7.fhir.r4.model.Organization getFhirOrganization(Organization organization);
+
+    public org.hl7.fhir.r4.model.Patient getFhirPatient(PatientManagementInfo patientInfo);
 
 }

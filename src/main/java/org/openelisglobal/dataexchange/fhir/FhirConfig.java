@@ -16,10 +16,15 @@ public class FhirConfig {
 
     @Value("${org.openelisglobal.oe.fhir.system:http://openelis-global.org}")
     private String oeFhirSystem;
+    @Value("${org.openelisglobal.fhirstore.uri}")
+    private String localFhirStorePath;
 
     @Autowired
     CloseableHttpClient httpClient;
 
+    public String getLocalFhirStorePath() {
+        return localFhirStorePath;
+    }
     @Bean
     public FhirContext fhirContext() {
         FhirContext fhirContext = new FhirContext(FhirVersionEnum.R4);

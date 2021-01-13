@@ -41,6 +41,7 @@ import org.openelisglobal.dataexchange.aggregatereporting.valueholder.ReportExte
 import org.openelisglobal.dataexchange.aggregatereporting.valueholder.ReportQueueType;
 import org.openelisglobal.dataexchange.common.ITransmissionResponseHandler;
 import org.openelisglobal.dataexchange.common.ReportTransmission;
+import org.openelisglobal.dataexchange.fhir.FhirConfig;
 import org.openelisglobal.dataexchange.fhir.service.FhirApiWorkflowService;
 import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
 import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder;
@@ -73,6 +74,7 @@ public class ResultReportingTransfer {
     private String localFhirStorePath;
 
     private FhirContext fhirContext = SpringContext.getBean(FhirContext.class);
+    private FhirConfig fhirConfig = SpringContext.getBean(FhirConfig.class);
 
     private Task task = null;
     private Task eTask = null;
@@ -166,7 +168,7 @@ public class ResultReportingTransfer {
 
     public void sendResults(ResultReportXmit resultReport, List<Result> reportingResult, String url) {
         IGenericClient localFhirClient = fhirContext
-                .newRestfulGenericClient(fhirApiWorkFlowService.getLocalFhirStorePath());
+                .newRestfulGenericClient(fhirConfig.getLocalFhirStorePath());
 
         for (TestResultsXmit result : resultReport.getTestResults()) {
             if (result.getReferringOrderNumber() == null) { // walk-in create FHIR

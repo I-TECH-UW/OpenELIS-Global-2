@@ -12,6 +12,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Bundle.BundleEntryComponent;
+import org.openelisglobal.common.services.DisplayListService;
+import org.openelisglobal.common.services.DisplayListService.ListType;
 import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
 import org.openelisglobal.organization.valueholder.Organization;
 import org.openelisglobal.organization.valueholder.OrganizationType;
@@ -64,7 +66,7 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
                     transientOrganization.setOrganizationTypes(new HashSet<>());
                     Organization dbOrg = insertOrUpdateOrganization(transientOrganization);
                     // make sure it gets activated
-                    activateOrgs.add(dbOrg.getName());
+                    activateOrgs.add(dbOrg.getOrganizationName());
 
                     for (OrganizationType transientOrgType : transientOrganizationTypes) {
                         OrganizationType dbOrgType;
@@ -86,6 +88,9 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
             }
             organizationService.activateOrganizations(activateOrgs);
         }
+        DisplayListService.getInstance().refreshList(ListType.REFERRAL_ORGANIZATIONS);
+        DisplayListService.getInstance().refreshList(ListType.SAMPLE_PATIENT_REFERRING_CLINIC);
+        DisplayListService.getInstance().refreshList(ListType.PATIENT_HEALTH_REGIONS);
     }
 
     private OrganizationType insertOrUpdateOrganizationType(OrganizationType orgType) {
@@ -108,7 +113,7 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
         Organization dbOrg = organizationService.getOrganizationByName(organization, true);
         if (dbOrg != null) {
             dbOrg.setOrganizationTypes(organization.getOrganizationTypes());
-            dbOrg.setOrganizationName(organization.getName());
+            dbOrg.setOrganizationName(organization.getOrganizationName());
             dbOrg.setStreetAddress(organization.getStreetAddress());
             dbOrg.setCity(organization.getCity());
             dbOrg.setZipCode(organization.getZipCode());
