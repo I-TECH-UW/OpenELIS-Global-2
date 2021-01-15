@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.14.0.final using JasperReports Library version 6.14.0-2ab0d8625be255bf609c78e1181801213e51db8f  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PatientReport" pageWidth="612" pageHeight="792" whenNoDataType="AllSectionsNoDetail" columnWidth="552" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" resourceBundle="languages/message" whenResourceMissingType="Empty" uuid="4e6101c3-eebd-48c7-bdad-cf2d3cb2841f">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="50"/>
+	<property name="ireport.y" value="0"/>
+	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
-	<import value="net.sf.jasperreports.engine.*"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String">
 		<defaultValueExpression><![CDATA["../reports/"]]></defaultValueExpression>
 	</parameter>
@@ -40,6 +39,9 @@
 	<parameter name="labDirectorTitle" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="useLabDirectorSignature" class="java.lang.Boolean" isForPrompting="false"/>
 	<parameter name="imagesPath" class="java.lang.String"/>
+	<parameter name="useBillingNumber" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[Boolean.FALSE]]></defaultValueExpression>
+	</parameter>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -167,7 +169,7 @@
 		<groupExpression><![CDATA[$F{accessionNumber}]]></groupExpression>
 		<groupHeader>
 			<band height="94" splitType="Prevent">
-				<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
+				<textField pattern="" isBlankWhenNull="true">
 					<reportElement mode="Opaque" x="0" y="65" width="553" height="29" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#FFFFFF" uuid="dc521cf1-3684-4296-960d-aa1d5affe724">
 						<printWhenExpression><![CDATA[$V{PAGE_NUMBER} == 1]]></printWhenExpression>
 					</reportElement>
@@ -432,7 +434,9 @@
 						<textFieldExpression><![CDATA[$F{subjectNumber}]]></textFieldExpression>
 					</textField>
 					<textField>
-						<reportElement mode="Opaque" x="199" y="0" width="87" height="11" backcolor="#E6E6E6" uuid="52c294c3-412a-4d35-bb30-7de09c2883d4"/>
+						<reportElement mode="Opaque" x="199" y="0" width="87" height="11" backcolor="#E6E6E6" uuid="52c294c3-412a-4d35-bb30-7de09c2883d4">
+							<printWhenExpression><![CDATA[$P{useBillingNumber}.equals( Boolean.TRUE )]]></printWhenExpression>
+						</reportElement>
 						<box leftPadding="4">
 							<topPen lineWidth="0.5" lineStyle="Solid"/>
 							<leftPen lineWidth="0.5" lineStyle="Solid"/>
@@ -445,7 +449,9 @@
 						<textFieldExpression><![CDATA[$R{report.idNational}]]></textFieldExpression>
 					</textField>
 					<textField>
-						<reportElement mode="Opaque" x="199" y="10" width="87" height="11" backcolor="#E6E6E6" uuid="f927c59b-260d-48f4-b6d8-029a74115b5e"/>
+						<reportElement mode="Opaque" x="199" y="10" width="87" height="11" backcolor="#E6E6E6" uuid="f927c59b-260d-48f4-b6d8-029a74115b5e">
+							<printWhenExpression><![CDATA[$P{useBillingNumber}.equals( Boolean.TRUE )]]></printWhenExpression>
+						</reportElement>
 						<box leftPadding="4">
 							<topPen lineWidth="1.0" lineColor="#CCCCCC"/>
 							<leftPen lineWidth="0.5" lineStyle="Solid"/>
@@ -459,7 +465,9 @@
 						<textFieldExpression><![CDATA[$P{billingNumberLabel}]]></textFieldExpression>
 					</textField>
 					<textField isBlankWhenNull="true">
-						<reportElement x="286" y="0" width="117" height="11" uuid="440f8e31-a540-44b7-a7d1-581b0e0be5d0"/>
+						<reportElement x="286" y="0" width="117" height="11" uuid="440f8e31-a540-44b7-a7d1-581b0e0be5d0">
+							<printWhenExpression><![CDATA[$P{useBillingNumber}.equals( Boolean.TRUE )]]></printWhenExpression>
+						</reportElement>
 						<box leftPadding="4">
 							<topPen lineWidth="0.5" lineStyle="Solid"/>
 							<leftPen lineWidth="0.0" lineStyle="Solid"/>
@@ -472,7 +480,9 @@
 						<textFieldExpression><![CDATA[$F{nationalId}]]></textFieldExpression>
 					</textField>
 					<textField isBlankWhenNull="true">
-						<reportElement x="285" y="10" width="117" height="11" uuid="cb903e92-4277-424e-8c36-e956a14dba2f"/>
+						<reportElement x="285" y="10" width="117" height="11" uuid="cb903e92-4277-424e-8c36-e956a14dba2f">
+							<printWhenExpression><![CDATA[$P{useBillingNumber}.equals( Boolean.TRUE )]]></printWhenExpression>
+						</reportElement>
 						<box leftPadding="4">
 							<leftPen lineWidth="0.0" lineStyle="Solid"/>
 							<bottomPen lineWidth="0.5" lineStyle="Solid"/>
@@ -642,21 +652,21 @@
 						</textElement>
 						<textFieldExpression><![CDATA[$F{recievedDate}]]></textFieldExpression>
 					</textField>
-					<staticText>
-						<reportElement mode="Opaque" x="1" y="21" width="100" height="11" backcolor="#E6E6E6" uuid="e1688b62-2157-47fd-9292-cac2efc2bb20"/>
-						<box>
+					<textField>
+						<reportElement mode="Opaque" x="1" y="21" width="100" height="11" backcolor="#E6E6E6" uuid="cc7246d5-9534-4e1d-95db-a2ce59fa0d1e"/>
+						<box leftPadding="4">
 							<pen lineWidth="0.5"/>
 							<topPen lineWidth="0.5"/>
 							<leftPen lineWidth="0.5"/>
 							<bottomPen lineWidth="0.5"/>
 							<rightPen lineWidth="0.5"/>
 						</box>
-						<textElement>
+						<textElement markup="none">
 							<font size="8" isBold="false" isItalic="false"/>
 							<paragraph lineSpacing="Single"/>
 						</textElement>
-						<text><![CDATA[  Last Name, First Name(s)]]></text>
-					</staticText>
+						<textFieldExpression><![CDATA[$R{label.patient_name}]]></textFieldExpression>
+					</textField>
 					<textField isBlankWhenNull="true">
 						<reportElement x="101" y="21" width="453" height="11" uuid="ef039d8a-dab3-48bc-9d05-61b4f34a5040"/>
 						<box leftPadding="4">
@@ -668,6 +678,38 @@
 							<paragraph lineSpacing="Single"/>
 						</textElement>
 						<textFieldExpression><![CDATA[$F{patientName}]]></textFieldExpression>
+					</textField>
+					<textField>
+						<reportElement mode="Opaque" x="199" y="0" width="88" height="21" backcolor="#E6E6E6" uuid="28d9d5fd-1c42-44d8-8c53-398add6495fd">
+							<printWhenExpression><![CDATA[$P{useBillingNumber}.equals( Boolean.FALSE )]]></printWhenExpression>
+						</reportElement>
+						<box leftPadding="4">
+							<pen lineWidth="0.5"/>
+							<topPen lineWidth="0.5"/>
+							<leftPen lineWidth="0.5"/>
+							<bottomPen lineWidth="0.5"/>
+							<rightPen lineWidth="0.5"/>
+						</box>
+						<textElement verticalAlignment="Middle">
+							<font size="8"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$R{report.idNational}]]></textFieldExpression>
+					</textField>
+					<textField>
+						<reportElement mode="Opaque" x="287" y="0" width="115" height="21" uuid="5dd768c3-05f7-4441-8888-a92761ec8b6c">
+							<printWhenExpression><![CDATA[$P{useBillingNumber}.equals( Boolean.FALSE )]]></printWhenExpression>
+						</reportElement>
+						<box leftPadding="4">
+							<pen lineWidth="0.5"/>
+							<topPen lineWidth="0.5"/>
+							<leftPen lineWidth="0.5"/>
+							<bottomPen lineWidth="0.5"/>
+							<rightPen lineWidth="0.5"/>
+						</box>
+						<textElement verticalAlignment="Middle">
+							<font size="8"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$F{nationalId}]]></textFieldExpression>
 					</textField>
 				</frame>
 			</band>
@@ -895,7 +937,7 @@
 						<pen lineWidth="0.0"/>
 					</graphicElement>
 				</rectangle>
-				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<textField isBlankWhenNull="true">
 					<reportElement stretchType="RelativeToTallestObject" x="146" y="0" width="117" height="12" uuid="85834b4b-905d-4e59-92a3-474edfb0f5aa"/>
 					<box topPadding="2" bottomPadding="2" rightPadding="4">
 						<topPen lineWidth="0.0" lineColor="#CCCCCC"/>
@@ -909,7 +951,7 @@
 					</textElement>
 					<textFieldExpression><![CDATA[$F{result}]]></textFieldExpression>
 				</textField>
-				<textField textAdjust="StretchHeight">
+				<textField>
 					<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="111" height="12" isPrintWhenDetailOverflows="true" uuid="7369b84e-d459-45d6-9e8b-688d3dc83c5d"/>
 					<box topPadding="2" leftPadding="4" bottomPadding="2">
 						<pen lineStyle="Solid" lineColor="#000000"/>
@@ -938,7 +980,7 @@
 					</textElement>
 					<textFieldExpression><![CDATA[$F{testRefRange}]]></textFieldExpression>
 				</textField>
-				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<textField isBlankWhenNull="true">
 					<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="323" y="0" width="34" height="12" backcolor="#FFFFFF" uuid="63be3b3a-d647-464f-b0a7-0fa5bb2a0adf"/>
 					<box>
 						<leftPen lineWidth="0.5"/>
@@ -972,7 +1014,7 @@
 					</textElement>
 					<textFieldExpression><![CDATA[$F{analysisStatus}]]></textFieldExpression>
 				</textField>
-				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<textField isBlankWhenNull="true">
 					<reportElement stretchType="RelativeToTallestObject" x="111" y="0" width="35" height="12" isPrintWhenDetailOverflows="true" uuid="44c91a22-b27e-499f-bbf0-de8e83fc01ea"/>
 					<box topPadding="2" leftPadding="4" bottomPadding="2">
 						<pen lineStyle="Solid" lineColor="#000000"/>
@@ -988,7 +1030,7 @@
 					<textFieldExpression><![CDATA[$F{sampleSortOrder}]]></textFieldExpression>
 				</textField>
 			</frame>
-			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+			<textField isBlankWhenNull="true">
 				<reportElement positionType="Float" mode="Opaque" x="10" y="12" width="543" height="11" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" backcolor="#F5F5F5" uuid="33e6ed2f-7490-4610-bb37-82e66d73ae33">
 					<printWhenExpression><![CDATA[$F{note} != null]]></printWhenExpression>
 				</reportElement>
