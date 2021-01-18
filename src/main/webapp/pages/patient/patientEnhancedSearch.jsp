@@ -156,8 +156,7 @@ function processSearchSuccess(xhr)
 			handleSelectedPatient();
 		}
 		</c:if>
-	}else
-	{
+	} else {
 		$("searchResultsDiv").hide();
 		$("noPatientFound").show();
 		selectPatient( null );
@@ -406,6 +405,7 @@ function handleSelectedPatient(){
     }
     window.onbeforeunload = null;
     window.location = searchUrl;
+
 }
 </script>
 

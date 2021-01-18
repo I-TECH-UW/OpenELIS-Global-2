@@ -2,20 +2,30 @@ package org.openelisglobal.referral.fhir.form;
 
 import java.util.List;
 
-import org.openelisglobal.common.form.BaseForm;
+import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder;
 
-public class FhirReferralForm extends BaseForm {
+public class FhirReferralForm extends FhirReferralSearchForm {
 
     private static final long serialVersionUID = 3245627796529364543L;
 
-    private List<FhirReferralItem> referrals;
+    private List<ElectronicOrder> electronicOrders;
 
-    public List<FhirReferralItem> getReferrals() {
-        return referrals;
+    public FhirReferralForm(FhirReferralSearchForm searchForm) {
+        externalAccessionNumber = (searchForm.getExternalAccessionNumber());
+        patientFirstName = (searchForm.getPatientFirstName());
+        patientLastName = (searchForm.getPatientLastName());
+        gender = (searchForm.getGender());
+        patientID = (searchForm.getPatientID());
+        dateOfBirth = (searchForm.getDateOfBirth());
+        page = searchForm.getPage();
     }
 
-    public void setReferrals(List<FhirReferralItem> referrals) {
-        this.referrals = referrals;
+    public void setElectronicOrders(List<ElectronicOrder> electronicOrders) {
+        this.electronicOrders = electronicOrders;
+    }
+
+    public List<ElectronicOrder> getElectronicOrders() {
+        return electronicOrders;
     }
 
 }
