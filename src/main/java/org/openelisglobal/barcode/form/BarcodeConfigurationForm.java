@@ -36,7 +36,7 @@ public class BarcodeConfigurationForm extends BaseForm {
 
     private boolean patientSexCheck;
 
-    private boolean prePrintUseAltAccession;
+    private boolean prePrintDontUseAltAccession;
 
     @Pattern(regexp = ValidationHelper.ALPHA_NUM_REGEX)
     @Size(min = 4, max = 4)
@@ -129,12 +129,12 @@ public class BarcodeConfigurationForm extends BaseForm {
         this.patientSexCheck = patientSexCheck;
     }
 
-    public boolean getPrePrintUseAltAccession() {
-        return prePrintUseAltAccession;
+    public boolean getPrePrintDontUseAltAccession() {
+        return prePrintDontUseAltAccession;
     }
 
-    public void setPrePrintUseAltAccession(boolean prePrintUseAltAccession) {
-        this.prePrintUseAltAccession = prePrintUseAltAccession;
+    public void setPrePrintDontUseAltAccession(boolean prePrintDontUseAltAccession) {
+        this.prePrintDontUseAltAccession = prePrintDontUseAltAccession;
     }
 
     public String getPrePrintAltAccessionPrefix() {

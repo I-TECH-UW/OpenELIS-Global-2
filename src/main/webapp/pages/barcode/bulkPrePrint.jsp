@@ -166,7 +166,7 @@ jQuery(document).ready(function () {
 	<c:if test="${not (empty form.startingAtAccession)}" >
 		<tr>
 		<td>
-			<spring:message code="Starting at" />: <c:out value="${altAccessionPrefix}"/>
+			<spring:message code="labno.alt.startAt" />: <c:out value="${altAccessionPrefix}"/>
 			<input id="startingAtValue" disabled="disabled" maxLength="${altAccessionValueLength}" value="${fn:substring(form.startingAtAccession, altAccessionPrefixLength, altAccessionLength)}"/>
 			<button type="button" onClick="enableStartingAt()"><spring:message code="button.label.edit" /></button>
 		</td>

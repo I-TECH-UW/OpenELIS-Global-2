@@ -101,7 +101,7 @@ public class BarcodeConfigurationController extends BaseController {
                 .valueOf(ConfigurationProperties.getInstance().getPropertyValue(Property.USE_ALT_ACCESSION_PREFIX));
         String prePrintAltAccessionPrefix = ConfigurationProperties.getInstance()
                 .getPropertyValue(Property.ALT_ACCESSION_PREFIX);
-        form.setPrePrintUseAltAccession(prePrintUseAltAccession);
+        form.setPrePrintDontUseAltAccession(!prePrintUseAltAccession);
         form.setPrePrintAltAccessionPrefix(prePrintAltAccessionPrefix);
         form.setSitePrefix(ConfigurationProperties.getInstance().getPropertyValue(Property.ACCESSION_NUMBER_PREFIX));
     }
