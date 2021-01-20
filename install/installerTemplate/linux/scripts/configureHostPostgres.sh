@@ -12,6 +12,8 @@
 
 postgres_dir=$1
 echo "Postgres main directory is ${postgres_dir}"
+#get apt tools so we can use ifconfig
+apt-get --assume-yes install net-tools
 # Determine the docker bridge IP address (assumed to be docker0)
 bridge_ip=$(ifconfig docker0 | grep "inet addr:" | awk '{print $2}' | sed "s/.*://")
 

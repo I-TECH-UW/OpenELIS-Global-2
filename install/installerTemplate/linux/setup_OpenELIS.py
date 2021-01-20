@@ -558,7 +558,9 @@ def install_db():
         #every .sql and .sh in db_init_dir will be auto run by docker on install
         shutil.copytree(INSTALLER_DB_INIT_DIR, DB_INIT_DIR)
         #make sure docker can read this file to run it
-        os.chown(DB_INIT_DIR + '1-pgsqlPermissions.sql', 0, grp.getgrnam('docker')[2])
+        os.chown(DB_INIT_DIR + '1-pgsqlPermissions.sql', 0, 0)
+        #TODO not the best for security. consider revisiting
+        os.chmod(DB_INIT_DIR + '1-pgsqlPermissions.sql', 0644)  
     elif LOCAL_DB:
         #configure the postgres installation to make sure it can be connected to from the docker container
         cmd = 'sudo ' + INSTALLER_SCRIPTS_DIR + 'configureHostPostgres.sh ' + POSTGRES_MAIN_DIR
@@ -1114,8 +1116,18 @@ def check_postgres_preconditions():
 
     if valid:
         log("Postgres" + str(major) + "." + str(minor) + " found!\n", PRINT_TO_CONSOLE)
-        POSTGRES_LIB_DIR = "/usr/lib/postgresql/" + str(major) + "." + str(minor) + "/lib/"
-        POSTGRES_MAIN_DIR = "/etc/postgresql/" + str(major) + "." + str(minor) + "/main/"
+        if os.path.isfile("/usr/lib/postgresql/" + str(major) + "." + str(minor) + "/lib/"):
+            POSTGRES_LIB_DIR = "/usr/lib/postgresql/" + str(major) + "." + str(minor) + "/lib/"
+        elif os.path.isfile("/usr/lib/postgresql/" + str(major) + "/lib/"):
+            POSTGRES_LIB_DIR = "/usr/lib/postgresql/" + str(major) + "/lib/"
+        else:
+            log("Could not find postgres installation folders\n", PRINT_TO_CONSOLE)
+        if os.path.isfile("/etc/postgresql/" + str(major) + "." + str(minor) + "/main/"):
+            POSTGRES_MAIN_DIR = "/etc/postgresql/" + str(major) + "." + str(minor) + "/main/"
+        elif os.path.isfile("/etc/postgresql/" + str(major) + "/main/"):
+            POSTGRES_LIB_DIR = "/etc/postgresql/" + str(major) + "/main/"
+        else:
+            log("Could not find postgres installation folders\n", PRINT_TO_CONSOLE)
         return True
     else:
         log("Postgres must be 8.3 or later\n", PRINT_TO_CONSOLE)
