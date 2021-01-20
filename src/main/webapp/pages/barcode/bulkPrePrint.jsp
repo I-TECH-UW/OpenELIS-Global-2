@@ -2,8 +2,6 @@
 <%@ page import="org.openelisglobal.common.action.IActionConstants,
 			     org.openelisglobal.common.formfields.FormFields,
 			     org.openelisglobal.common.formfields.FormFields.Field,
-			     org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory,
-			     org.openelisglobal.common.provider.validation.IAccessionNumberValidator,
 			     org.openelisglobal.common.util.ConfigurationProperties.Property,
 			     org.openelisglobal.common.util.StringUtil,
 			     org.openelisglobal.common.util.*" %>
@@ -12,7 +10,13 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="tiles" uri="http://tiles.apache.org/tags-tiles"%>	    
+<%@ taglib prefix="tiles" uri="http://tiles.apache.org/tags-tiles"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>	
+   
+<c:set var="altAccessionLength" value="${fn:length(form.startingAtAccession)}"/>
+<c:set var="altAccessionPrefixLength" value="6"/>
+<c:set var="altAccessionValueLength" value="${altAccessionLength - altAccessionPrefixLength}"/>
+<c:set var="altAccessionPrefix" value="${fn:substring(form.startingAtAccession, 0, altAccessionPrefixLength)}"/> 
 
 <link rel="stylesheet" href="css/jquery_ui/jquery.ui.all.css">
 <link rel="stylesheet" href="css/customAutocomplete.css">
@@ -46,22 +50,26 @@ function preprintLabels() {
 	var numSpecimenLabelsPerSet = document.getElementById('numSpecimenLabelsPerSet').value;
 	
 	var testIds = getTestIds();
-	
 	if (testIds.trim() == '') {
 		alert("missing tests");
 		return;
 	}
+	
+	var startingAtValue = String(jQuery("#startingAtValue").val()).padStart(${altAccessionValueLength}, "0");
+	var startingAt = '${altAccessionPrefix}' + startingAtValue;
+
 	//label info
-	var queryString = 'prePrinting=true&numSetsOfLabels=' + numSetsOfLabels 
-		+ '&numOrderLabelsPerSet=' + numOrderLabelsPerSet
-		+ '&numSpecimenLabelsPerSet=' + numSpecimenLabelsPerSet;
-	//facility name
-	queryString = queryString + '&facilityName=' + document.getElementById('requesterId').options[document.getElementById('requesterId').selectedIndex].text;
-	//test names
-	queryString = queryString + '&testIds=' + testIds;
+	const params = new URLSearchParams({
+		"prePrinting": "true",
+		"numSetsOfLabels": numSetsOfLabels,
+		"numOrderLabelsPerSet": numOrderLabelsPerSet,
+		"numSpecimenLabelsPerSet": numSpecimenLabelsPerSet,
+		"facilityName": document.getElementById('requesterId').options[document.getElementById('requesterId').selectedIndex].text,
+		"testIds": testIds,
+		"startingAt": startingAt,
+		});
 	
-	
-    document.getElementById("ifpreprintbarcode").src = 'LabelMakerServlet?' + queryString;
+    document.getElementById("ifpreprintbarcode").src = 'LabelMakerServlet?' + params.toString();
 	document.getElementById("prePrintedBarcodeArea").show();
 }
 function getTestIds() {
@@ -71,6 +79,11 @@ function getTestIds() {
 		return "";
 	}
 }
+
+function enableStartingAt() {
+	jQuery("#startingAtValue").prop("disabled", false);
+}
+
 jQuery(document).ready(function () {
 	calculateTotal()
 	
@@ -150,6 +163,15 @@ jQuery(document).ready(function () {
 		    </c:if>
 		</div></td>
 	</tr>
+	<c:if test="${not (empty form.startingAtAccession)}" >
+		<tr>
+		<td>
+			<spring:message code="Starting at" />: <c:out value="${altAccessionPrefix}"/>
+			<input id="startingAtValue" disabled="disabled" maxLength="${altAccessionValueLength}" value="${fn:substring(form.startingAtAccession, altAccessionPrefixLength, altAccessionLength)}"/>
+			<button type="button" onClick="enableStartingAt()"><spring:message code="button.label.edit" /></button>
+		</td>
+		</tr>
+	</c:if>
 </table>
 </div>
 <div>

@@ -7,9 +7,7 @@
 --%>
 
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-         import="org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory,
-                org.openelisglobal.common.provider.validation.IAccessionNumberValidator,
-
+         import="org.openelisglobal.sample.util.AccessionNumberUtil,
                 org.openelisglobal.internationalization.MessageUtil,
                 org.openelisglobal.common.util.Versioning" %>
 <%@ page import="java.text.SimpleDateFormat" %>
@@ -23,12 +21,8 @@
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
 <%! 
-	AccessionNumberValidatorFactory accessionNumberValidatorFactory = new AccessionNumberValidatorFactory();
     SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
     String maxDate = df.format(Calendar.getInstance().getTime());
-%>
-<%
-	IAccessionNumberValidator accessionNumberValidator = accessionNumberValidatorFactory.getValidator();
 %>
 <script>
     var labOrderNumberText="<%= MessageUtil.getContextualMessage("nonconforming.event.laborderNumber")%>";
@@ -60,7 +54,7 @@
         </c:forEach>
     </select>
     <input type="text" name="searchValue"
-           maxlength='<%=Integer.toString(accessionNumberValidator.getMaxAccessionLength())%>'
+           maxlength='<%=Integer.toString(AccessionNumberUtil.getMaxAccessionLength())%>'
            value="" oninput="enableSearch()" id="searchValue">
     &nbsp;
     <input type="button" id="searchButtonId"

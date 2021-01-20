@@ -109,6 +109,8 @@ public class PrintBarcodeForm extends BaseForm {
 
     private List<IdValuePair> sampleNatureList;
 
+    private String startingAtAccession;
+
     public PrintBarcodeForm() {
         setFormName("PrintBarcodeForm");
     }
@@ -345,6 +347,14 @@ public class PrintBarcodeForm extends BaseForm {
     public void setSampleNatureList(List<IdValuePair> sampleNatureList) {
         this.sampleNatureList = sampleNatureList;
 
+    }
+
+    public String getStartingAtAccession() {
+        return startingAtAccession;
+    }
+
+    public void setStartingAtAccession(String startingAtAccession) {
+        this.startingAtAccession = startingAtAccession;
     }
 
 }

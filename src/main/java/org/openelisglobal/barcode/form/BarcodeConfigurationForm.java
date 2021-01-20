@@ -1,7 +1,11 @@
 package org.openelisglobal.barcode.form;
 
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+
 import org.hibernate.validator.constraints.Range;
 import org.openelisglobal.common.form.BaseForm;
+import org.openelisglobal.common.validator.ValidationHelper;
 
 public class BarcodeConfigurationForm extends BaseForm {
 
@@ -31,6 +35,15 @@ public class BarcodeConfigurationForm extends BaseForm {
     private boolean testsCheck;
 
     private boolean patientSexCheck;
+
+    private boolean prePrintUseAltAccession;
+
+    @Pattern(regexp = ValidationHelper.ALPHA_NUM_REGEX)
+    @Size(min = 4, max = 4)
+    private String prePrintAltAccessionPrefix;
+
+    // for display/validation logic only
+    private String sitePrefix;
 
     public BarcodeConfigurationForm() {
         setFormName("BarcodeConfigurationForm");
@@ -114,5 +127,29 @@ public class BarcodeConfigurationForm extends BaseForm {
 
     public void setPatientSexCheck(boolean patientSexCheck) {
         this.patientSexCheck = patientSexCheck;
+    }
+
+    public boolean getPrePrintUseAltAccession() {
+        return prePrintUseAltAccession;
+    }
+
+    public void setPrePrintUseAltAccession(boolean prePrintUseAltAccession) {
+        this.prePrintUseAltAccession = prePrintUseAltAccession;
+    }
+
+    public String getPrePrintAltAccessionPrefix() {
+        return prePrintAltAccessionPrefix;
+    }
+
+    public void setPrePrintAltAccessionPrefix(String prePrintAltAccessionPrefix) {
+        this.prePrintAltAccessionPrefix = prePrintAltAccessionPrefix;
+    }
+
+    public String getSitePrefix() {
+        return sitePrefix;
+    }
+
+    public void setSitePrefix(String sitePrefix) {
+        this.sitePrefix = sitePrefix;
     }
 }

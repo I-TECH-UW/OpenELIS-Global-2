@@ -888,6 +888,8 @@
 			value="/pages/barcode/numberBarcodeConfig.jsp" />
 		<put-attribute name="elementsBarCodes"
 			value="/pages/barcode/elementsBarcodeConfig.jsp" />
+		<put-attribute name="alternateAccession"
+			value="/pages/barcode/alternateAccessionConfig.jsp" />
 		<put-attribute name="sizeBarCodes"
 			value="/pages/barcode/sizeBarcodeConfig.jsp" />
 	</definition>

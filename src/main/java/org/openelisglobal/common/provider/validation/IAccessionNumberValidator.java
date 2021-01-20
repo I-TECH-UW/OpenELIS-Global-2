@@ -25,7 +25,7 @@ public interface IAccessionNumberValidator {
 
     enum ValidationResults {
         SUCCESS, SITE_FAIL, YEAR_FAIL, USED_FAIL, IS_NOT_USED_FAIL, LENGTH_FAIL, FORMAT_FAIL, PROGRAM_FAIL,
-        REQUIRED_FAIL, PATIENT_STATUS_FAIL, SAMPLE_STATUS_FAIL, SAMPLE_FOUND, SAMPLE_NOT_FOUND
+        REQUIRED_FAIL, PATIENT_STATUS_FAIL, SAMPLE_STATUS_FAIL, SAMPLE_FOUND, SAMPLE_NOT_FOUND, GENERIC_FAIL
     }
 
     /**
@@ -63,20 +63,6 @@ public interface IAccessionNumberValidator {
      */
     String getInvalidFormatMessage(ValidationResults results);
 
-    /**
-     * @param programCode -- if used, may be null otherwise
-     * @return The first accession number if no others are have been generated
-     */
-    String createFirstAccessionNumber(String programCode);
-
-    String incrementAccessionNumber(String currentHighAccessionNumber);
-
-    /**
-     * @param programCode -- code if needed, may be null
-     * @return The next available number, may be null if one can not be generated.
-     */
-    String getNextAvailableAccessionNumber(String programCode);
-
     int getMaxAccessionLength();
 
     int getMinAccessionLength();
@@ -89,14 +75,14 @@ public interface IAccessionNumberValidator {
     /**
      * Get the part of the accession number which should not change. ie. for Haiti
      * it would be the site number, for Cote d'Ivoire it would be the Program prefix
-     * 
+     *
      * @return
      */
     int getInvarientLength();
 
     /**
      * The max length - the invarientLength
-     * 
+     *
      * @return
      */
     int getChangeableLength();
