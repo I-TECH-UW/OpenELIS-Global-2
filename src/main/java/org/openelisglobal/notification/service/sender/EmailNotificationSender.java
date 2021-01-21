@@ -25,13 +25,16 @@ public class EmailNotificationSender implements ClientNotificationSender<EmailNo
         return EmailNotification.class;
     }
 
-
     @Override
     public void send(EmailNotification notification) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(notification.getRecipientEmailAddress());
-        if (!GenericValidator.isBlankOrNull(bcc)) {
-            message.setBcc(bcc);
+        if (notification.getBccs() != null && notification.getBccs().size() > 0) {
+            message.setBcc(notification.getBccs().stream().toArray(String[]::new));
+        } else {
+            if (!GenericValidator.isBlankOrNull(bcc)) {
+                message.setBcc(bcc);
+            }
         }
         if (!GenericValidator.isBlankOrNull(from)) {
             message.setFrom(from);

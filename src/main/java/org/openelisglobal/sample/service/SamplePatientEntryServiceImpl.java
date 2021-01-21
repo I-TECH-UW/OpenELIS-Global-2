@@ -1,6 +1,8 @@
 package org.openelisglobal.sample.service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -18,6 +20,14 @@ import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
 import org.openelisglobal.dataexchange.service.order.ElectronicOrderService;
+import org.openelisglobal.notification.service.AnalysisNotificationConfigService;
+import org.openelisglobal.notification.service.TestNotificationConfigService;
+import org.openelisglobal.notification.valueholder.AnalysisNotificationConfig;
+import org.openelisglobal.notification.valueholder.NotificationConfigOption;
+import org.openelisglobal.notification.valueholder.NotificationConfigOption.NotificationMethod;
+import org.openelisglobal.notification.valueholder.NotificationConfigOption.NotificationNature;
+import org.openelisglobal.notification.valueholder.NotificationConfigOption.NotificationPersonType;
+import org.openelisglobal.notification.valueholder.TestNotificationConfig;
 import org.openelisglobal.observationhistory.service.ObservationHistoryService;
 import org.openelisglobal.observationhistory.valueholder.ObservationHistory;
 import org.openelisglobal.organization.service.OrganizationService;
@@ -74,6 +84,10 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
     private OrganizationService organizationService;
     @Autowired
     private FhirTransformService fhirTransformService;
+    @Autowired
+    private TestNotificationConfigService testNotificationConfigService;
+    @Autowired
+    private AnalysisNotificationConfigService analysisNotificationConfigService;
 
     @Transactional
     @Override
@@ -170,6 +184,9 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
                         sampleTestCollection.testIdToUserSectionMap.get(test.getId()),
                         sampleTestCollection.testIdToUserSampleTypeMap.get(test.getId()), updateData);
                 analysisService.insert(analysis);
+                if (updateData.getCustomNotificationLogic()) {
+                    persistAnalysisNotificationConfigs(analysis, updateData);
+                }
             }
 
         }
@@ -194,6 +211,56 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
      * sampleProject.setSysUserId(getSysUserId(request));
      * sampleProjectDAO.insertData(sampleProject); }
      */
+
+    private void persistAnalysisNotificationConfigs(Analysis analysis, SamplePatientUpdateData updateData) {
+        Optional<TestNotificationConfig> testNotificationConfig = testNotificationConfigService
+                .getTestNotificationConfigForTestId(analysis.getTest().getId());
+        AnalysisNotificationConfig analysisNotificationConfig = new AnalysisNotificationConfig();
+        analysisNotificationConfig.setAnalysis(analysis);
+        if (testNotificationConfig.isPresent()) {
+            analysisNotificationConfig
+                    .setDefaultPayloadTemplate(testNotificationConfig.get().getDefaultPayloadTemplate());
+        }
+
+        this.persistAnalysisNotificationConfig(analysis, updateData.getPatientEmailNotificationTestIds(),
+                analysisNotificationConfig, testNotificationConfig, NotificationMethod.EMAIL,
+                NotificationPersonType.PATIENT);
+        this.persistAnalysisNotificationConfig(analysis, updateData.getPatientSMSNotificationTestIds(),
+                analysisNotificationConfig, testNotificationConfig, NotificationMethod.SMS,
+                NotificationPersonType.PATIENT);
+        this.persistAnalysisNotificationConfig(analysis, updateData.getProviderEmailNotificationTestIds(),
+                analysisNotificationConfig, testNotificationConfig, NotificationMethod.EMAIL,
+                NotificationPersonType.PROVIDER);
+        this.persistAnalysisNotificationConfig(analysis, updateData.getProviderSMSNotificationTestIds(),
+                analysisNotificationConfig, testNotificationConfig, NotificationMethod.SMS,
+                NotificationPersonType.PROVIDER);
+        analysisNotificationConfigService.save(analysisNotificationConfig);
+    }
+
+    private void persistAnalysisNotificationConfig(Analysis analysis, List<String> testIds,
+            AnalysisNotificationConfig analysisNotificationConfig,
+            Optional<TestNotificationConfig> testNotificationConfig,
+            NotificationMethod method, NotificationPersonType personType) {
+        NotificationNature notificationNature = NotificationNature.RESULT_VALIDATION;
+        NotificationConfigOption nto = analysisNotificationConfig.getOptionFor(notificationNature, method, personType);
+        nto.setNotificationMethod(method);
+        nto.setNotificationNature(notificationNature);
+        nto.setNotificationPersonType(personType);
+        if (testIds.contains(analysis.getTest().getId())) {
+            nto.setActive(true);
+        } else {
+            nto.setActive(false);
+        }
+
+        if (testNotificationConfig.isPresent()) {
+            NotificationConfigOption nto2 = testNotificationConfig.get().getOptionFor(notificationNature, method,
+                    personType);
+            nto.setPayloadTemplate(nto2.getPayloadTemplate());
+            nto.setAdditionalContacts(new ArrayList<>());
+            nto.getAdditionalContacts().addAll(nto2.getAdditionalContacts());
+        }
+
+    }
 
     private void persistRequesterData(SamplePatientUpdateData updateData) {
         if (updateData.getProviderPerson() != null && !org.apache.commons.validator.GenericValidator

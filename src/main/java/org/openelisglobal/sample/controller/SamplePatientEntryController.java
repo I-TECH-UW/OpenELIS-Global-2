@@ -53,7 +53,10 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
     @Value("${org.openelisglobal.requester.phone:}")
     private String requesterPhone;
 
-    private static final String[] ALLOWED_FIELDS = new String[] { "patientProperties.currentDate",
+    private static final String[] ALLOWED_FIELDS = new String[] { "customNotificationLogic",
+            "patientEmailNotificationTestIds",
+            "patientSMSNotificationTestIds", "providerEmailNotificationTestIds", "providerSMSNotificationTestIds",
+            "patientProperties.currentDate",
             "patientProperties.patientLastUpdated", "patientProperties.personLastUpdated",
             "patientProperties.patientUpdateStatus", "patientProperties.patientPK", "patientProperties.guid",
             "patientProperties.STnumber", "patientProperties.subjectNumber", "patientProperties.nationalId",
@@ -170,7 +173,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 
         boolean trackPayments = ConfigurationProperties.getInstance()
                 .isPropertyValueEqual(Property.TRACK_PATIENT_PAYMENT, "true");
-        
+
         String receivedDateForDisplay = sampleOrder.getReceivedDateForDisplay();
 
         if (!org.apache.commons.validator.GenericValidator.isBlankOrNull(sampleOrder.getReceivedTime())) {
@@ -190,6 +193,11 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
         updateData.setReferringId(sampleOrder.getExternalOrderNumber());
         updateData.initProvider(sampleOrder);
         updateData.initSampleData(form.getSampleXML(), receivedDateForDisplay, trackPayments, sampleOrder);
+        updateData.setPatientEmailNotificationTestIds(form.getPatientEmailNotificationTestIds());
+        updateData.setPatientSMSNotificationTestIds(form.getPatientSMSNotificationTestIds());
+        updateData.setProviderEmailNotificationTestIds(form.getProviderEmailNotificationTestIds());
+        updateData.setProviderSMSNotificationTestIds(form.getProviderSMSNotificationTestIds());
+        updateData.setCustomNotificationLogic(form.getCustomNotificationLogic());
         updateData.validateSample(result);
 
         if (result.hasErrors()) {

@@ -173,6 +173,11 @@ public class AdminMenuItemServiceImpl implements AdminMenuItemService, Configura
             curItem.setMessageKey("unifiedSystemUser.browser.title");
             adminMenuItems.add(curItem);
         }
+
+        curItem = new AdminMenuItem();
+        curItem.setPath("/TestNotificationConfigMenu.do");
+        curItem.setMessageKey("testnotificationconfig.browse.title");
+        adminMenuItems.add(curItem);
     }
 
     @Override

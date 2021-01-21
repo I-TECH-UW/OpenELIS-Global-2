@@ -1,6 +1,6 @@
 package org.openelisglobal.notification.valueholder;
 
-public class SMSNotification implements ClientNotification {
+public class SMSNotification implements RemoteNotification {
 
     private NotificationPayload payload;
 

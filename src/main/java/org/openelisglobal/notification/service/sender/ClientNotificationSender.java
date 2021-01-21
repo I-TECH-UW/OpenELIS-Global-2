@@ -1,8 +1,8 @@
 package org.openelisglobal.notification.service.sender;
 
-import org.openelisglobal.notification.valueholder.ClientNotification;
+import org.openelisglobal.notification.valueholder.RemoteNotification;
 
-public interface ClientNotificationSender<T extends ClientNotification> {
+public interface ClientNotificationSender<T extends RemoteNotification> {
 
     public Class<T> forClass();
 

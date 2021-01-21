@@ -1,9 +1,9 @@
-package org.openelisglobal.clientresultsview.service;
+package org.openelisglobal.testresultsview.service;
 
-import org.openelisglobal.clientresultsview.dao.ClientResultsViewInfoDAO;
-import org.openelisglobal.clientresultsview.valueholder.ClientResultsViewBean;
 import org.openelisglobal.common.dao.BaseDAO;
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.testresultsview.dao.ClientResultsViewInfoDAO;
+import org.openelisglobal.testresultsview.valueholder.ClientResultsViewBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
