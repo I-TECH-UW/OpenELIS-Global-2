@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.Vector;
+import java.util.stream.Collectors;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
@@ -1575,6 +1576,22 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
         return null;
 
+    }
+
+    @Override
+    public List<Analysis> get(List<String> ids) {
+        String sql = "from Analysis a where a.id in (:ids)";
+
+        try {
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setParameterList("ids", ids.stream().map(e -> Integer.parseInt(e)).collect(Collectors.toList()));
+            List<Analysis> analysisList = query.list();
+            return analysisList;
+        } catch (HibernateException e) {
+            handleException(e, "get");
+        }
+        // TODO Auto-generated method stub
+        return null;
     }
 
 //	@Override

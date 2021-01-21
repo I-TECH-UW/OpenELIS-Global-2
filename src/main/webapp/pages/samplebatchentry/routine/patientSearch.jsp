@@ -55,6 +55,7 @@ function searchPatients() {
 	newSearchInfo = false;
     jQuery("#resultsDiv").hide();
     jQuery("#searchLabNumber").val('');
+	jQuery("#loading").show();
     if (criteria == 1) {
         firstName =  value.trim();
     } else if (criteria == 2) {
@@ -72,10 +73,12 @@ function searchPatients() {
         jQuery("#searchLabNumber").val(value);
     }
 
+	jQuery("#loading").show();
 	patientSearch(lastName, firstName, STNumber, subjectNumber, nationalID, labNumber, "", "", "", false, processSearchSuccess);
 }
 
 function processSearchSuccess(xhr) {
+	jQuery("#loading").hide();
 	//alert(xhr.responseText);
 	var formField = xhr.responseXML.getElementsByTagName("formfield").item(0);
 	var message = xhr.responseXML.getElementsByTagName("message").item(0);
@@ -316,6 +319,7 @@ function handleSelectedPatient() {
            id="searchButton"
            onclick="searchPatients()"
            disabled="disabled" >
+			<span id="loading" class="fa-2x" hidden="hidden"><i class="fas fa-spinner fa-pulse"></i></span>
            
   	<span id="scanInstruction" style="display: none;"><spring:message code="sample.search.scanner.instructions"/> </span>
 

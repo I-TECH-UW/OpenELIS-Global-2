@@ -422,7 +422,7 @@ public class SamplePatientUpdateData {
             } else {
                 Organization organization = new Organization();
                 organization.setOrganizationName(orderItem.getNewRequesterName());
-                organization = orgService.getOrganizationByName(organization, true);
+                organization = orgService.getActiveOrganizationByName(organization, true);
                 orgId = organization.getId();
 
                 if (!GenericValidator.isBlankOrNull(orgId)) {
@@ -444,7 +444,7 @@ public class SamplePatientUpdateData {
         boolean newName = true;
         Organization organization = new Organization();
         organization.setOrganizationName(requesterName);
-        organization = orgService.getOrganizationByName(organization, true);
+        organization = orgService.getActiveOrganizationByName(organization, true);
 
         if (organization == null) {
             newName = true;

@@ -311,7 +311,7 @@ function capitalizeValue( text){
     $("requesterId").value = text.toUpperCase();
 }
 
-function checkOrderReferral( ){
+function checkOrderReferral(){
 
 	var value = jQuery("#externalOrderNumber").val()
     getLabOrder(value, processLabOrderSuccess);
@@ -747,5 +747,12 @@ function /*void*/ registerSampleChangedForSampleEntry(){
 registerPatientChangedForSampleEntry();
 registerSampleChangedForSampleEntry();
 
+jQuery(document).ready(function() {
+	<% if( acceptExternalOrders){ %>
+	if (jQuery("#externalOrderNumber").val()) {
+		checkOrderReferral();
+	}
+	<% } %>
+})
 
 </script>

@@ -620,4 +620,9 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
             updateNoAuditTrail(analysis);
         }
     }
+
+    @Override
+    public List<Analysis> get(List<String> value) {
+        return baseObjectDAO.get(value);
+    }
 }

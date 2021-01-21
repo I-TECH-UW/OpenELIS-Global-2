@@ -84,9 +84,9 @@ public class ReferredOutTestsController extends BaseController {
             "referralItems*.multiSelectResultValues", "referralItems*.referredMultiDictionaryResult",
             "referralItems*.multiSelectResultValues", "testResult*.multiSelectResultValues",
             "testResult*.qualifiedResultValue", "referralItems*.referredReportDate",
-            "referralItems*.additionalTests*.referralResultId",
-            "referralItems*.additionalTests*.referredResultType", "referralItems*.additionalTests*.remove",
-            "referralItems*.additionalTests*.referredTestId", "referralItems*.additionalTests*.referredResult",
+            "referralItems*.additionalTests*.referralResultId", "referralItems*.additionalTests*.referredResultType",
+            "referralItems*.additionalTests*.remove", "referralItems*.additionalTests*.referredTestId",
+            "referralItems*.additionalTests*.referredResult",
             "referralItems*.additionalTests*.referredDictionaryResult",
             "referralItems*.additionalTests*.multiSelectResultValues",
             "referralItems*.additionalTests*.referredDictionaryResult",
@@ -526,15 +526,13 @@ public class ReferredOutTestsController extends BaseController {
     private void validateModifedItem(ReferralItem referralItem, Errors errors) {
         // if an institution has not been entered then there may not be a test
         if (!institutionEntered(referralItem) && testEntered(referralItem)) {
-            errors.reject("error.referral.missingInstitution", new String[] {},
-                    "error.referral.missingInstitution");
+            errors.reject("error.referral.missingInstitution", new String[] {}, "error.referral.missingInstitution");
         }
 
         // if a test has not been entered then there can not be a result or
         // report date
         if (!testEntered(referralItem) && (reportDateEntered(referralItem) || resultEntered(referralItem))) {
-            errors.reject("error.referral.missingTest", new String[] {},
-                    "error.referral.missingTest");
+            errors.reject("error.referral.missingTest", new String[] {}, "error.referral.missingTest");
         }
         try {
             DateUtil.convertStringDateToTruncatedTimestamp(referralItem.getReferredReportDate());

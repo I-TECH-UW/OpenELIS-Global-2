@@ -104,6 +104,7 @@ function enhancedSearchPatients()
 	newSearchInfo = false;
     jQuery("#resultsDiv").hide();
     jQuery("#searchLabNumber").val('');
+	jQuery("#loading").show();
     
     firstName = jQuery("#firstNameSearchValue").val().trim();
     lastName = jQuery("#lastNameSearchValue").val().trim();
@@ -124,11 +125,13 @@ function enhancedSearchPatients()
 function processSearchFailure(xhr)
 {
 	//alert( xhr.responseText );
+	jQuery("#loading").hide();
 	alert("<spring:message code="error.system"/>");
 }
 
 function processSearchSuccess(xhr)
 {
+	jQuery("#loading").hide();
 	//alert( xhr.responseText );
 	var formField = xhr.responseXML.getElementsByTagName("formfield").item(0);
 	var message = xhr.responseXML.getElementsByTagName("message").item(0);
@@ -153,8 +156,7 @@ function processSearchSuccess(xhr)
 			handleSelectedPatient();
 		}
 		</c:if>
-	}else
-	{
+	} else {
 		$("searchResultsDiv").hide();
 		$("noPatientFound").show();
 		selectPatient( null );
@@ -403,6 +405,7 @@ function handleSelectedPatient(){
     }
     window.onbeforeunload = null;
     window.location = searchUrl;
+
 }
 </script>
 
@@ -515,6 +518,11 @@ function handleSelectedPatient(){
 				value="<%=MessageUtil.getMessage("label.patient.search")%>"
 				id="enhancedSearchButton" onclick="enhancedSearchPatients()"
 				disabled="disabled"></td>
+		</tr>
+		<tr>
+			<td>
+			<span id="loading" class="fa-2x" hidden="hidden"><i class="fas fa-spinner fa-pulse"></i></span>
+			</td>
 		</tr>
 	</table>
 </div>

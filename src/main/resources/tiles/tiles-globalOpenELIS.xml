@@ -932,6 +932,14 @@
 					   value="/pages/common/emptyPlaceHolder.jsp" />
 	</definition>
 
+	<definition name="fhirReferralDefinition"
+				extends="baseDefinition">
+		<put-attribute name="preSelectionHeader"
+					   value="/pages/common/actionSuccess.jsp" />
+		<put-attribute name="body"
+					   value="/pages/fhirReferral/referral.jsp" />
+	</definition>
+
 	<definition name="testNotificationMenuDefinition"
 		extends="baseMenuSelectListDefinition">
 		<put-attribute name="header"

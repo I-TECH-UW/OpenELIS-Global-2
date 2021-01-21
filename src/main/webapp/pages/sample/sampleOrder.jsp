@@ -121,6 +121,11 @@
         setValidIndicaterOnField(success, "labNo");
 
         setCorrectSave();
+		
+        <c:if test="${param.attemptAutoSave}">
+//		jQuery("#generateAccessionButton").click();
+	    	savePage();
+		</c:if>
     }
 
     function siteListChanged(siteList) {
@@ -182,7 +187,6 @@
         <td style="width:35%">
             <%=MessageUtil.getContextualMessage( "quick.entry.accession.number" )%>
             :
-            <span class="requiredlabel">*</span>
         </td>
         <td style="width:65%">
             <form:input path="sampleOrderItems.labNo"
@@ -192,7 +196,7 @@
                       id="labNo"/>
 
             <spring:message code="sample.entry.scanner.instructions" htmlEscape="false"/>
-            <input type="button" value='<%=MessageUtil.getMessage("sample.entry.scanner.generate")%>'
+            <input type="button" id="generateAccessionButton" value='<%=MessageUtil.getMessage("sample.entry.scanner.generate")%>'
                    onclick="setOrderModified();getNextAccessionNumber(); " class="textButton">
         </td>
     </tr>
