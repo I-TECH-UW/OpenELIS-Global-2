@@ -100,7 +100,7 @@ public class MessageUtil {
         String suffixedValue = getMessage(contextualKey);
 
         if (GenericValidator.isBlankOrNull(suffixedValue) || contextualKey.equals(suffixedValue)) {
-            LogEvent.logDebug("MessageUtil", "getContextualKey()", "contextual key not found, using non-contextul key");
+            LogEvent.logTrace("MessageUtil", "getContextualKey()", "contextual key not found, using non-contextul key");
             return key;
         }
         return contextualKey;
