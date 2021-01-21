@@ -52,6 +52,7 @@ DB_ENVIRONMENT_DIR = OE_VAR_DIR + "database/env/"
 DB_INIT_DIR = OE_VAR_DIR + "initDB/"
 SECRETS_DIR = OE_VAR_DIR + "secrets/"
 PLUGINS_DIR = OE_VAR_DIR + "plugins/"
+CONFIG_DIR = OE_VAR_DIR + "config/"
 LOGS_DIR = OE_VAR_DIR + "logs/"
 CRON_INSTALL_DIR = "/etc/cron.d/"
 
@@ -78,8 +79,8 @@ LOCAL_DB = True
 PRINT_TO_CONSOLE = True
 MODE = "update-install"
 
-POSTGRES_LIB_DIR = "/usr/lib/postgresql/8.3/lib/"
-POSTGRES_MAIN_DIR = "/etc/postgresql/9.6/main/"
+POSTGRES_LIB_DIR = "/usr/lib/postgresql/12/lib/"
+POSTGRES_MAIN_DIR = "/etc/postgresql/12/main/"
 EXPECTED_CROSSTAB_FUNCTIONS = "3"
 
 #Generated values
@@ -96,6 +97,7 @@ LOCAL_FHIR_SERVER_ADDRESS = 'https://fhir.openelisci.org:8443/hapi-fhir-jpaserve
 REMOTE_FHIR_SOURCE = 'https://isanteplusdemo.com/openmrs/ws/fhir2/'
 REMOTE_FHIR_SOURCE_UPDATE_STATUS = "false"
 CONSOLIDATED_SERVER_ADDRESS = 'https://hub.openelisci.org:8444/fhir'
+TIMEZONE = ''
 
 #Stateful objects
 LOG_FILE = ''
@@ -219,6 +221,8 @@ def do_install():
     
     generate_passwords()
     
+    get_install_user_values()
+    
     get_stored_user_values()
     
     get_non_stored_user_values()
@@ -304,6 +308,8 @@ def create_docker_compose_file():
             line = line.replace("[% oe_name %]", DOCKER_OE_CONTAINER_NAME )
         if line.find("[% fhir_api_name %]")  >= 0:
             line = line.replace("[% fhir_api_name %]", DOCKER_FHIR_API_CONTAINER_NAME )
+        if line.find("[% timezone %]")  >= 0:
+            line = line.replace("[% timezone %]", TIMEZONE )
         
         output_file.write(line)
 
@@ -659,6 +665,8 @@ def do_update():
     os.chmod(LOGS_DIR, 0777) 
     os.chown(LOGS_DIR, 8443, 8443)  
     
+    get_stored_user_values()
+    
     get_non_stored_user_values()
     
     create_docker_compose_file()
@@ -908,15 +916,27 @@ def get_non_stored_user_values():
     get_server_addresses()
     
 
-def get_stored_user_values():
+def get_install_user_values():
     get_site_id()
+
+
+def get_stored_user_values():
+    ensure_dir_exists(CONFIG_DIR)
+    os.chmod(CONFIG_DIR, 0777) 
+    get_set_timezone()
+
+
+def get_set_timezone():
+    if (not is_timezone_set()):
+        set_timezone()
+    get_timezone()
 
 
 def get_keystore_password():
     global KEYSTORE_PWD
     print "keystore location: " + KEYSTORE_PATH
     KEYSTORE_PWD = getpass("keystore password: ")
-    cmd = "keytool -list -keystore " + KEYSTORE_PATH + " -storepass " + KEYSTORE_PWD
+    cmd = "openssl pkcs12 -info -in " + KEYSTORE_PATH + " -nokeys -passin pass:" + KEYSTORE_PWD
     status = os.system(cmd)
     if not status == 0:
         print "password for the keystore is incorrect. Please try again"
@@ -927,7 +947,7 @@ def  get_truststore_password():
     global TRUSTSTORE_PWD
     print "truststore location: " + TRUSTSTORE_PATH
     TRUSTSTORE_PWD = getpass("truststore password: ")
-    cmd = "keytool -list -keystore " + TRUSTSTORE_PATH + " -storepass " + TRUSTSTORE_PWD
+    cmd = "openssl pkcs12 -info -in " + TRUSTSTORE_PATH + " -nokeys -passin pass:" + TRUSTSTORE_PWD
     status = os.system(cmd)
     if not status == 0:
         print "password for the truststore is incorrect. Please try again"
@@ -1006,8 +1026,23 @@ def get_server_addresses():
         if not CONSOLIDATED_SERVER_ADDRESS.startswith("https://"):
             CONSOLIDATED_SERVER_ADDRESS = "https://" + CONSOLIDATED_SERVER_ADDRESS
     
+
+def is_timezone_set():
+    return os.path.isfile(CONFIG_DIR + 'TZ')
         
         
+def get_timezone():
+    global TIMEZONE
+    tz_file = open(CONFIG_DIR + 'TZ')
+    TIMEZONE = tz_file.readline()
+
+    
+def set_timezone():
+    cmd = "tzselect >" + CONFIG_DIR + 'TZ'
+    os.system(cmd)
+        
+        
+                
 #---------------------------------------------------------------------
 #             PASSWORD GENERATION
 #---------------------------------------------------------------------
@@ -1092,7 +1127,6 @@ def db_installed(db_name):
 
 def check_postgres_preconditions():
     global POSTGRES_LIB_DIR, POSTGRES_MAIN_DIR
-    log("Checking for Postgres 8.3 or later installation", PRINT_TO_CONSOLE)
     os.system('psql --version > tmp')
     tmp_file = open('tmp')
     first_line = tmp_file.readline()
@@ -1116,18 +1150,20 @@ def check_postgres_preconditions():
 
     if valid:
         log("Postgres" + str(major) + "." + str(minor) + " found!\n", PRINT_TO_CONSOLE)
-        if os.path.isfile("/usr/lib/postgresql/" + str(major) + "." + str(minor) + "/lib/"):
+        if os.path.isdir("/usr/lib/postgresql/" + str(major) + "." + str(minor) + "/lib/"):
             POSTGRES_LIB_DIR = "/usr/lib/postgresql/" + str(major) + "." + str(minor) + "/lib/"
-        elif os.path.isfile("/usr/lib/postgresql/" + str(major) + "/lib/"):
+        elif os.path.isdir("/usr/lib/postgresql/" + str(major) + "/lib/"):
             POSTGRES_LIB_DIR = "/usr/lib/postgresql/" + str(major) + "/lib/"
         else:
             log("Could not find postgres installation folders\n", PRINT_TO_CONSOLE)
-        if os.path.isfile("/etc/postgresql/" + str(major) + "." + str(minor) + "/main/"):
+            return False
+        if os.path.isdir("/etc/postgresql/" + str(major) + "." + str(minor) + "/main/"):
             POSTGRES_MAIN_DIR = "/etc/postgresql/" + str(major) + "." + str(minor) + "/main/"
-        elif os.path.isfile("/etc/postgresql/" + str(major) + "/main/"):
-            POSTGRES_LIB_DIR = "/etc/postgresql/" + str(major) + "/main/"
+        elif os.path.isdir("/etc/postgresql/" + str(major) + "/main/"):
+            POSTGRES_MAIN_DIR = "/etc/postgresql/" + str(major) + "/main/"
         else:
             log("Could not find postgres installation folders\n", PRINT_TO_CONSOLE)
+            return False
         return True
     else:
         log("Postgres must be 8.3 or later\n", PRINT_TO_CONSOLE)
