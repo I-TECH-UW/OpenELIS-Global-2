@@ -2,8 +2,7 @@
 	contentType="text/html; charset=UTF-8"
 	import="org.apache.commons.validator.GenericValidator, 
 			org.openelisglobal.common.action.IActionConstants,
-			org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory,
-			org.openelisglobal.common.provider.validation.IAccessionNumberValidator,
+			org.openelisglobal.sample.util.AccessionNumberUtil,
 			org.openelisglobal.common.util.IdValuePair,
 			org.openelisglobal.internationalization.MessageUtil,
 			org.openelisglobal.common.util.Versioning,
@@ -31,12 +30,8 @@
 <c:set var="resultCount" value="${fn:length(results)}" />
 <c:set var="rowColorIndex" value="${2}" />
 
-<%!
-	AccessionNumberValidatorFactory accessionNumberValidatorFactory = new AccessionNumberValidatorFactory();
-%>
 <%
 	int rowColorIndex = 2;
-	IAccessionNumberValidator accessionNumberValidator = accessionNumberValidatorFactory.getValidator();
 	String searchTerm = request.getParameter("searchTerm");
 	String url = request.getAttribute("javax.servlet.forward.servlet_path").toString();	
 	//boolean showTestSectionSelect = !ConfigurationProperties.getInstance().isPropertyValueEqual(Property.configurationName, "CI RetroCI");
@@ -348,7 +343,7 @@ function /*boolean*/ handleEnterEvent(){
 	<input type="text"
 	       id="labnoSearch"
 	       placeholder='<spring:message code="sample.search.scanner.instructions"/>'
-	       maxlength='<%= Integer.toString(accessionNumberValidator.getMaxAccessionLength())%>' />
+	       maxlength='<%= Integer.toString(AccessionNumberUtil.getMaxAccessionLength())%>' />
 	<input type="button" onclick="pageSearch.doLabNoSearch(document.getElementById('labnoSearch'))" value='<%= MessageUtil.getMessage("label.button.search") %>'>
 	</span>
 </div>

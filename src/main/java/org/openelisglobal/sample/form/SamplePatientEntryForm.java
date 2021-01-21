@@ -4,10 +4,12 @@ import java.util.List;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.util.validator.CustomDateValidator.DateRelation;
+import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.patient.action.IPatientUpdate.PatientUpdateStatus;
 import org.openelisglobal.patient.action.bean.PatientClinicalInfo;
 import org.openelisglobal.patient.action.bean.PatientEnhancedSearch;
@@ -31,6 +33,16 @@ public class SamplePatientEntryForm extends BaseForm {
 
     @Valid
     private List<Project> projects;
+
+    private boolean customNotificationLogic;
+
+    private List<@Pattern(regexp = ValidationHelper.ID_REGEX) String> patientEmailNotificationTestIds;
+
+    private List<@Pattern(regexp = ValidationHelper.ID_REGEX) String> patientSMSNotificationTestIds;
+
+    private List<@Pattern(regexp = ValidationHelper.ID_REGEX) String> providerEmailNotificationTestIds;
+
+    private List<@Pattern(regexp = ValidationHelper.ID_REGEX) String> providerSMSNotificationTestIds;
 
     private PatientUpdateStatus patientUpdateStatus = PatientUpdateStatus.ADD;
 
@@ -85,6 +97,38 @@ public class SamplePatientEntryForm extends BaseForm {
 
     public void setProjects(List<Project> projects) {
         this.projects = projects;
+    }
+
+    public List<String> getPatientEmailNotificationTestIds() {
+        return patientEmailNotificationTestIds;
+    }
+
+    public void setPatientEmailNotificationTestIds(List<String> patientEmailNotificationTestIds) {
+        this.patientEmailNotificationTestIds = patientEmailNotificationTestIds;
+    }
+
+    public List<String> getPatientSMSNotificationTestIds() {
+        return patientSMSNotificationTestIds;
+    }
+
+    public void setPatientSMSNotificationTestIds(List<String> patientSMSNotificationTestIds) {
+        this.patientSMSNotificationTestIds = patientSMSNotificationTestIds;
+    }
+
+    public List<String> getProviderEmailNotificationTestIds() {
+        return providerEmailNotificationTestIds;
+    }
+
+    public void setProviderEmailNotificationTestIds(List<String> providerEmailNotificationTestIds) {
+        this.providerEmailNotificationTestIds = providerEmailNotificationTestIds;
+    }
+
+    public List<String> getProviderSMSNotificationTestIds() {
+        return providerSMSNotificationTestIds;
+    }
+
+    public void setProviderSMSNotificationTestIds(List<String> providerSMSNotificationTestIds) {
+        this.providerSMSNotificationTestIds = providerSMSNotificationTestIds;
     }
 
     public PatientUpdateStatus getPatientUpdateStatus() {
@@ -182,4 +226,13 @@ public class SamplePatientEntryForm extends BaseForm {
     public void setSampleNatureList(List<IdValuePair> sampleNatureList) {
         this.sampleNatureList = sampleNatureList;
     }
+
+    public boolean getCustomNotificationLogic() {
+        return customNotificationLogic;
+    }
+
+    public void setCustomNotificationLogic(boolean customNotificationLogic) {
+        this.customNotificationLogic = customNotificationLogic;
+    }
+
 }

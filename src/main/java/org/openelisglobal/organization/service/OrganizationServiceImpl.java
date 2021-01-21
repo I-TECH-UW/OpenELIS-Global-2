@@ -31,6 +31,12 @@ public class OrganizationServiceImpl extends BaseObjectServiceImpl<Organization,
 
     @Override
     @Transactional(readOnly = true)
+    public Organization getActiveOrganizationByName(Organization organization, boolean ignoreCase) {
+        return baseObjectDAO.getActiveOrganizationByName(organization, ignoreCase);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public Organization getOrganizationByName(Organization organization, boolean ignoreCase) {
         return baseObjectDAO.getOrganizationByName(organization, ignoreCase);
     }
@@ -175,7 +181,7 @@ public class OrganizationServiceImpl extends BaseObjectServiceImpl<Organization,
             organization.setIsActive("N");
         }
     }
-    
+
     @Override
     @Transactional
     public void deactivateOrganizations(List<Organization> deactivateOrganizations) {

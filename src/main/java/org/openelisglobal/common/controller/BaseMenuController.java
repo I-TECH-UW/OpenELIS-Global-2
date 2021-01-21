@@ -82,7 +82,7 @@ public abstract class BaseMenuController<T> extends BaseController {
 
         request.setAttribute(PREVIOUS_DISABLED, "false");
 
-        if (nextPageList.size() > getPageSize()) {
+        if (getPageSize() > 0 && nextPageList.size() > getPageSize()) {
             request.setAttribute(NEXT_DISABLED, "false");
             // chop off last record (this was only to indicate that there are
             // more records
@@ -106,7 +106,7 @@ public abstract class BaseMenuController<T> extends BaseController {
 
         request.setAttribute(NEXT_DISABLED, "false");
 
-        if (previousPageList.size() > getPageSize()) {
+        if (getPageSize() > 0 && previousPageList.size() > getPageSize()) {
             request.setAttribute(PREVIOUS_DISABLED, "false");
             // chop off last record (this was only to indicate that there are
             // more records
@@ -138,7 +138,7 @@ public abstract class BaseMenuController<T> extends BaseController {
             request.setAttribute(PREVIOUS_DISABLED, "true");
         }
 
-        if (samePageList.size() > getPageSize()) {
+        if (getPageSize() > 0 && samePageList.size() > getPageSize()) {
             request.setAttribute(NEXT_DISABLED, "false");
             // chop off last record (this was only to indicate that there are
             // more records
@@ -185,9 +185,11 @@ public abstract class BaseMenuController<T> extends BaseController {
         request.setAttribute(MENU_FROM_RECORD, String.valueOf(startingRecNo));
 
         int numOfRecs = 0;
-        if (listSize != 0) {
+        if (getPageSize() <= 0) {
+            numOfRecs = listSize;
+            numOfRecs--;
+        } else if (listSize != 0) {
             numOfRecs = Math.min(listSize, getPageSize());
-
             numOfRecs--;
         }
 
