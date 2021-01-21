@@ -3,7 +3,6 @@
 				org.openelisglobal.common.formfields.FormFields,
 				org.openelisglobal.common.util.*, org.openelisglobal.internationalization.MessageUtil,
 	            org.openelisglobal.common.util.ConfigurationProperties.Property,
-		        org.openelisglobal.sample.util.AccessionNumberUtil,
 		        org.openelisglobal.sample.bean.SampleEditItem" %>
 
 <%@ page isELIgnored="false" %>

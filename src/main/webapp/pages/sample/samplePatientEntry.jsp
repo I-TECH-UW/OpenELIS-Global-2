@@ -3,13 +3,11 @@
                  org.openelisglobal.common.util.SystemConfiguration,
                  org.openelisglobal.common.util.ConfigurationProperties,
                  org.openelisglobal.common.util.ConfigurationProperties.Property,
-                 org.openelisglobal.common.provider.validation.IAccessionNumberValidator,
                  org.openelisglobal.common.formfields.FormFields,
                  org.openelisglobal.common.formfields.FormFields.Field,
                  org.openelisglobal.common.util.Versioning,
                  org.openelisglobal.internationalization.MessageUtil,
-                 org.openelisglobal.sample.bean.SampleOrderItem,
-                 org.openelisglobal.sample.util.AccessionNumberUtil" %>
+                 org.openelisglobal.sample.bean.SampleOrderItem" %>
 
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
@@ -33,8 +31,6 @@
     boolean trackPayment = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.TRACK_PATIENT_PAYMENT, "true");
     boolean requesterLastNameRequired = FormFields.getInstance().useField(Field.SampleEntryRequesterLastNameRequired);
 	boolean acceptExternalOrders = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.ACCEPT_EXTERNAL_ORDERS, "true");
-
-	IAccessionNumberValidator accessionNumberValidator = AccessionNumberUtil.getAccessionNumberValidator();
 %>
 
 

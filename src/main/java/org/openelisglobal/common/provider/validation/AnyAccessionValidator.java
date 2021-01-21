@@ -1,6 +1,6 @@
 package org.openelisglobal.common.provider.validation;
 
-public class AnyAccessionValidator implements IAccessionNumberValidator {
+public class AnyAccessionValidator implements IAccessionNumberGenerator {
 
     @Override
     public boolean needProgramCode() {
@@ -39,7 +39,7 @@ public class AnyAccessionValidator implements IAccessionNumberValidator {
     }
 
     @Override
-    public String getNextAvailableAccessionNumber(String programCode) {
+    public String getNextAvailableAccessionNumber(String programCode, boolean reserve) {
         // TODO Auto-generated method stub
         return null;
     }

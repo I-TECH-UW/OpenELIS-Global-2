@@ -1,8 +1,7 @@
 <%@ page language="java"
 	contentType="text/html; charset=UTF-8"
 	import="org.openelisglobal.common.action.IActionConstants,
-			org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory,
-			org.openelisglobal.common.provider.validation.IAccessionNumberValidator,
+            org.openelisglobal.sample.util.AccessionNumberUtil,
 		    org.openelisglobal.common.util.DateUtil,
 			org.openelisglobal.internationalization.MessageUtil,
 			org.openelisglobal.common.util.Versioning,
@@ -14,14 +13,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
-
-<%!
-	AccessionNumberValidatorFactory accessionValidatorFactory = new AccessionNumberValidatorFactory();
- %>
-
-<%
-	IAccessionNumberValidator accessionValidator = accessionValidatorFactory.getValidator();
-%>
 
 <%-- Creates updated UI. Removing for current release 
 <link rel="stylesheet" media="screen" type="text/css" href="css/bootstrap.min.css?" />
@@ -177,14 +168,14 @@ function onPrint(){
 		</span>
 		<form:input path="accessionDirect"
 				   cssClass="input-medium" 
-				   maxlength='<%= Integer.toString(accessionValidator.getMaxAccessionLength())%>'
+				   maxlength='<%= Integer.toString(AccessionNumberUtil.getMaxAccessionLength())%>'
 				   />
 	  </c:if>
 	  <c:if test="${form.useHighAccessionDirect}">
 		<span style="padding-left: 10px"><%= MessageUtil.getContextualMessage("report.to") %></span>
 			<form:input path="highAccessionDirect"
 			           cssClass="input-medium"
-			           maxlength='<%= Integer.toString(accessionValidator.getMaxAccessionLength())%>'/>
+			           maxlength='<%= Integer.toString(AccessionNumberUtil.getMaxAccessionLength())%>'/>
 	  </c:if>
 	  <c:if test="${form.useAccessionDirect}">
 	  

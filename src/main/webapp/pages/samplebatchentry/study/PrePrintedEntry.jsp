@@ -1,8 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" %>
 <%@ page import="org.openelisglobal.common.action.IActionConstants,
                  org.openelisglobal.common.util.Versioning,
-                 org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory,
-                 org.openelisglobal.common.provider.validation.IAccessionNumberValidator,
+				 org.openelisglobal.sample.util.AccessionNumberUtil,
                  org.openelisglobal.internationalization.MessageUtil" %>
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
@@ -11,19 +10,8 @@
 
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-      
-
-<%!
-	AccessionNumberValidatorFactory accessionNumberValidatorFactory = new AccessionNumberValidatorFactory();
-%>
-
-<%
-	IAccessionNumberValidator accessionNumberValidator = accessionNumberValidatorFactory.getValidator();
-%>
-
 <script type="text/javascript">
 var lineSeparator = "";
-var accessionLength = <%= accessionNumberValidator.getMaxAccessionLength()%>;
 inPrintState = false;
 
 //Adds warning when leaving page
