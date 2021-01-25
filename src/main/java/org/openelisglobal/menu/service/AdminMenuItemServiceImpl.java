@@ -99,24 +99,31 @@ public class AdminMenuItemServiceImpl implements AdminMenuItemService, Configura
             curItem.setMessageKey("resultConfiguration.browse.title");
             adminMenuItems.add(curItem);
         }
-        if (adminFields.useField(Field.PRINTED_REPORTS_CONFIGURATION)) {
-            curItem = new AdminMenuItem();
-            curItem.setPath("/PrintedReportsConfigurationMenu.do");
-            curItem.setMessageKey("printedReportsConfiguration.browse.title");
-            adminMenuItems.add(curItem);
-        }
-        if (adminFields.useField(Field.WORKPLAN_CONFIGURATION)) {
-            curItem = new AdminMenuItem();
-            curItem.setPath("/WorkplanConfigurationMenu.do");
-            curItem.setMessageKey("workplanConfiguration.browse.title");
-            adminMenuItems.add(curItem);
-        }
+        
+        // gnr: pivotal 176523804, 176372736
+        if(false) {
         if (adminFields.useField(Field.NON_CONFORMITY_CONFIGURATION)) {
             curItem = new AdminMenuItem();
             curItem.setPath("/NonConformityConfigurationMenu.do");
             curItem.setMessageKey("nonConformityConfiguration.browse.title");
             adminMenuItems.add(curItem);
         }
+
+        if (adminFields.useField(Field.PRINTED_REPORTS_CONFIGURATION)) {
+            curItem = new AdminMenuItem();
+            curItem.setPath("/PrintedReportsConfigurationMenu.do");
+            curItem.setMessageKey("printedReportsConfiguration.browse.title");
+            adminMenuItems.add(curItem);
+        }
+        }
+
+        if (adminFields.useField(Field.WORKPLAN_CONFIGURATION)) {
+            curItem = new AdminMenuItem();
+            curItem.setPath("/WorkplanConfigurationMenu.do");
+            curItem.setMessageKey("workplanConfiguration.browse.title");
+            adminMenuItems.add(curItem);
+        }
+
 
         curItem = new AdminMenuItem();
         curItem.setPath("/ReportConfiguration.do");

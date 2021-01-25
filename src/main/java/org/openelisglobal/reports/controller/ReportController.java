@@ -96,6 +96,8 @@ public class ReportController extends BaseController {
             return findForward(FWD_FAIL, form);
         }
 
+        LogEvent.logTrace("ReportController", "Log GET ", request.getParameter("report"));
+//        System.out.println("ReportController:" + "Out GET " + request.getParameter("report"));
         IReportCreator reportCreator = ReportImplementationFactory.getReportCreator(request.getParameter("report"));
 
         if (reportCreator != null) {
