@@ -181,5 +181,7 @@ public interface AnalysisDAO extends BaseDAO<Analysis, String> {
     List<Analysis> getAllAnalysisByTestsAndStatus(List<Integer> testIds, List<Integer> analysisStatusList,
             List<Integer> sampleStatusList);
 
+    List<Analysis> get(List<String> value);
+
 //	void updateData(Analysis analysis, boolean skipAuditTrail) throws LIMSRuntimeException;
 }

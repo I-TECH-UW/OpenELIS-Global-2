@@ -587,6 +587,12 @@ function  /*void*/ processSearchPopulateSuccess(xhr)
 					contactEmail,
 					contactPK);
 
+	<c:if test="${param.attemptAutoSave}">
+//		jQuery("#generateAccessionButton").click();
+		setOrderModified();
+		getNextAccessionNumber();
+	</c:if>
+
 }
 
 function /*string*/ getXMLValue( response, key )

@@ -1,6 +1,6 @@
 package org.openelisglobal.notification.valueholder;
 
-public interface ClientNotification {
+public interface RemoteNotification {
 
     public String getMessage();
 

@@ -12,16 +12,19 @@
 
 postgres_dir=$1
 echo "Postgres main directory is ${postgres_dir}"
+#get apt tools so we can use ifconfig
+apt-get --assume-yes install net-tools
 # Determine the docker bridge IP address (assumed to be docker0)
-bridge_ip=$(ifconfig docker0 | grep "inet addr:" | awk '{print $2}' | sed "s/.*://")
+bridge_ip=$(ifconfig docker0 | grep "inet" | awk '{print $2}' | sed "s/.*://")
 
 # subnet for container interfaces
 docker_subnet="172.20.1.0/24"
 
 # update postgresql.conf to listen only on the bridge interface
-sed -i.orig "s/^[#]\?listen_addresses .*/listen_addresses = '${bridge_ip}'/g" ${postgres_dir}postgresql.conf
+sed -i.orig "s/^[#]\?listen_addresses .*/listen_addresses = '*'/g" ${postgres_dir}postgresql.conf
 
 # update pg_hba.conf to allow connections from the subnet
+echo "host    clinlims             clinlims             localhost                   md5" >> ${postgres_dir}pg_hba.conf
 echo "host    clinlims             clinlims             ${docker_subnet}            md5" >> ${postgres_dir}pg_hba.conf
 
 # update ufw firewall rules (postgres assumed to be runing on port 5432)

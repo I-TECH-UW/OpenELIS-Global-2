@@ -148,6 +148,8 @@ If you trust docker to provide your database, you can ignore this section
 
 Wait while install procedure completes
 
+Please note: OpenELIS Global 2.x is designed for and is testing on Chrome only. Please be sure to use Chrome for OpenELIS. 
+
 4. Check if OpenELIS is running at https://{server_ip_address}:8443/OpenELIS-Global/
 
 Default user: admin

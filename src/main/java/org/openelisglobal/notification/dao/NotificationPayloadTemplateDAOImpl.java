@@ -1,5 +1,7 @@
 package org.openelisglobal.notification.dao;
 
+import java.util.List;
+
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
@@ -18,21 +20,26 @@ public class NotificationPayloadTemplateDAOImpl extends BaseDAOImpl<Notification
     }
 
     @Override
-    public NotificationPayloadTemplate getForNotificationPayloadType(NotificationPayloadType notificationPayloadType) {
-        NotificationPayloadTemplate data;
+    public NotificationPayloadTemplate getSystemDefaultPayloadTemplateForType(NotificationPayloadType type) {
+        List<NotificationPayloadTemplate> data;
         try {
-            String sql = "from NotificationPayloadTemplate as npt where npt.type = :type";
+            String sql = "from NotificationPayloadTemplate as npt where npt.type = :type order by npt.id asc";
             Query<NotificationPayloadTemplate> query = entityManager.unwrap(Session.class).createQuery(sql);
-            query.setParameter("type", notificationPayloadType.name());
-            data = query.uniqueResult();
+            query.setParameter("type", type.name());
+            query.setFirstResult(0);
+            query.setMaxResults(1);
+            data = query.getResultList();
         } catch (RuntimeException e) {
-            // bugzilla 2154
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException(
-                    "Error in NotificationPayloadTemplateDAOImpl getForNotificationPayloadType()", e);
+                    "Error in TestNotificationConfigDAOImpl getTestNotificationConfigForTestId()", e);
         }
 
-        return data;
+        if (data.size() == 0) {
+            return null;
+        } else {
+            return data.get(0);
+        }
     }
 
 }

@@ -16,9 +16,14 @@
  */
 package org.openelisglobal.common.provider.validation;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.openelisglobal.common.util.ConfigurationProperties;
 
-public class SiteYearAccessionValidator extends BaseSiteYearAccessionValidator implements IAccessionNumberValidator {
+public class SiteYearAccessionValidator extends BaseSiteYearAccessionValidator implements IAccessionNumberGenerator {
+
+    private static Set<String> REQUESTED_NUMBERS = new HashSet<>();
 
     @Override
     public int getMaxAccessionLength() {
@@ -27,7 +32,8 @@ public class SiteYearAccessionValidator extends BaseSiteYearAccessionValidator i
 
     @Override
     public int getMinAccessionLength() {
-        return getMaxAccessionLength();
+//      return getSiteEndIndex() + 7;
+        return getSiteEndIndex() + 15;
     }
 
     @Override
@@ -64,6 +70,16 @@ public class SiteYearAccessionValidator extends BaseSiteYearAccessionValidator i
     public String getPrefix() {
         return ConfigurationProperties.getInstance()
                 .getPropertyValue(ConfigurationProperties.Property.ACCESSION_NUMBER_PREFIX);
+    }
+
+    @Override
+    protected Set<String> getReservedNumbers() {
+        return REQUESTED_NUMBERS;
+    }
+
+    @Override
+    protected String getOverrideStartingAt() {
+        return null;
     }
 
 }

@@ -1,7 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
          import="org.openelisglobal.common.formfields.FormFields.Field,
-                 org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory,
-                 org.openelisglobal.common.provider.validation.IAccessionNumberValidator,
+				 org.openelisglobal.sample.util.AccessionNumberUtil,
                  org.openelisglobal.common.services.PhoneNumberService,
                  org.openelisglobal.common.util.ConfigurationProperties,
                  org.openelisglobal.common.util.ConfigurationProperties.Property,
@@ -22,10 +21,6 @@
 <c:set var="formName" value="${form.formName}" />
 
 
-<%!
-	AccessionNumberValidatorFactory accessionNumberValidatorFactory = new AccessionNumberValidatorFactory();
-%>
-
 <%
 	boolean useCollectionDate = FormFields.getInstance().useField( Field.CollectionDate );
     boolean useInitialSampleCondition = FormFields.getInstance().useField( Field.InitialSampleCondition );
@@ -39,8 +34,6 @@
     boolean requesterLastNameRequired = FormFields.getInstance().useField( Field.SampleEntryRequesterLastNameRequired );
     boolean acceptExternalOrders = ConfigurationProperties.getInstance().isPropertyValueEqual( Property.ACCEPT_EXTERNAL_ORDERS, "true" );
     boolean restrictNewReferringSiteEntries = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.restrictFreeTextRefSiteEntry, "true");
-
-    IAccessionNumberValidator accessionNumberValidator = accessionNumberValidatorFactory.getValidator();
 %>
 
 <script type="text/javascript" src="scripts/additional_utilities.js"></script>
@@ -121,6 +114,11 @@
         setValidIndicaterOnField(success, "labNo");
 
         setCorrectSave();
+		
+        <c:if test="${param.attemptAutoSave}">
+//		jQuery("#generateAccessionButton").click();
+	    	savePage();
+		</c:if>
     }
 
     function siteListChanged(siteList) {
@@ -182,17 +180,16 @@
         <td style="width:35%">
             <%=MessageUtil.getContextualMessage( "quick.entry.accession.number" )%>
             :
-            <span class="requiredlabel">*</span>
         </td>
         <td style="width:65%">
             <form:input path="sampleOrderItems.labNo"
-                      maxlength='<%= Integer.toString(accessionNumberValidator.getMaxAccessionLength())%>'
+                      maxlength='<%= Integer.toString(AccessionNumberUtil.getMaxAccessionLength())%>'
                       onchange="checkAccessionNumber(this);"
                       cssClass="text"
                       id="labNo"/>
 
             <spring:message code="sample.entry.scanner.instructions" htmlEscape="false"/>
-            <input type="button" value='<%=MessageUtil.getMessage("sample.entry.scanner.generate")%>'
+            <input type="button" id="generateAccessionButton" value='<%=MessageUtil.getMessage("sample.entry.scanner.generate")%>'
                    onclick="setOrderModified();getNextAccessionNumber(); " class="textButton">
         </td>
     </tr>

@@ -8,7 +8,7 @@ import org.openelisglobal.organization.valueholder.Organization;
 public interface OrganizationService extends BaseObjectService<Organization, String> {
     void getData(Organization organization);
 
-    Organization getOrganizationByName(Organization organization, boolean ignoreCase);
+    Organization getActiveOrganizationByName(Organization organization, boolean ignoreCase);
 
     List<Organization> getOrganizationsByParentId(String parentId);
 
@@ -47,4 +47,6 @@ public interface OrganizationService extends BaseObjectService<Organization, Str
     void activateOrganizations(List<String> organizationNames);
 
     void deactivateOrganizations(List<Organization> organizations);
+
+    Organization getOrganizationByName(Organization organization, boolean ignoreCase);
 }

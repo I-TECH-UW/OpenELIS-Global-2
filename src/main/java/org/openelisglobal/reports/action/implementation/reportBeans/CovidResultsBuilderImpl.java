@@ -20,7 +20,7 @@ import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.StatusService.OrderStatus;
-import org.openelisglobal.dataexchange.fhir.service.FhirApiWorkflowService;
+import org.openelisglobal.dataexchange.fhir.FhirConfig;
 import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.reports.action.implementation.Report.DateRange;
@@ -44,6 +44,7 @@ public abstract class CovidResultsBuilderImpl implements CovidResultsBuilder {
     protected AnalysisService analysisService = SpringContext.getBean(AnalysisService.class);
     protected TestService testService = SpringContext.getBean(TestService.class);
     protected FhirContext fhirContext = SpringContext.getBean(FhirContext.class);
+    protected FhirConfig fhirConfig = SpringContext.getBean(FhirConfig.class);
     protected DictionaryService dictionaryService = SpringContext.getBean(DictionaryService.class);
     protected SampleHumanService sampleHumanService = SpringContext.getBean(SampleHumanService.class);
 
@@ -87,7 +88,7 @@ public abstract class CovidResultsBuilderImpl implements CovidResultsBuilder {
 
     protected Optional<Task> getTaskForAnalysis(Analysis analysis) {
         IGenericClient client = fhirContext
-                .newRestfulGenericClient(SpringContext.getBean(FhirApiWorkflowService.class).getLocalFhirStorePath());
+                .newRestfulGenericClient(fhirConfig.getLocalFhirStorePath());
         String serviceRequestId = analysis.getSampleItem().getSample().getReferringId();
         if (GenericValidator.isBlankOrNull(serviceRequestId)) {
             return Optional.empty();
