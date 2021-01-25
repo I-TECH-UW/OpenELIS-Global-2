@@ -1,5 +1,7 @@
 package org.openelisglobal.notification.service;
 
+import javax.transaction.Transactional;
+
 import org.openelisglobal.common.dao.BaseDAO;
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
 import org.openelisglobal.notification.dao.NotificationPayloadTemplateDAO;
@@ -26,9 +28,23 @@ public class NotificationPayloadTemplateServiceImpl extends BaseObjectServiceImp
     }
 
     @Override
-    public NotificationPayloadTemplate getForNotificationPayloadType(NotificationPayloadType notificationPayloadType) {
-        return baseDAO.getForNotificationPayloadType(notificationPayloadType);
+    public NotificationPayloadTemplate getSystemDefaultPayloadTemplateForType(NotificationPayloadType type) {
+        return baseDAO.getSystemDefaultPayloadTemplateForType(type);
+    }
 
+    @Override
+    @Transactional
+    public void updatePayloadTemplateMessagesAndSubject(NotificationPayloadTemplate newPayloadTemplate, String sysUserId) {
+        NotificationPayloadTemplate oldTemplate;
+        if (newPayloadTemplate.getId() == null) {
+            oldTemplate = newPayloadTemplate;
+        } else {
+            oldTemplate = get(newPayloadTemplate.getId());
+            oldTemplate.setSubjectTemplate(newPayloadTemplate.getSubjectTemplate());
+            oldTemplate.setMessageTemplate(newPayloadTemplate.getMessageTemplate());
+        }
+        oldTemplate.setSysUserId(sysUserId);
+        save(oldTemplate);
     }
 
 }

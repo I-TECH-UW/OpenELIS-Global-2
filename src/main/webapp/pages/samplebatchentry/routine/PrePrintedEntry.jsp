@@ -1,7 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" %>
 <%@ page import="org.openelisglobal.common.action.IActionConstants,
-                 org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory,
-                 org.openelisglobal.common.provider.validation.IAccessionNumberValidator" %>
+				 org.openelisglobal.sample.util.AccessionNumberUtil" %>
                  
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
@@ -10,19 +9,9 @@
 
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-      
-
-<%!
-	AccessionNumberValidatorFactory accessionNumberValidatorFactory = new AccessionNumberValidatorFactory();
-%>
-
-<%
-	IAccessionNumberValidator accessionNumberValidator = accessionNumberValidatorFactory.getValidator();
-%>
-
 <script type="text/javascript">
 var lineSeparator = "";
-var accessionLength = <%= accessionNumberValidator.getMaxAccessionLength()%>;
+var minAccessionLength = <%= AccessionNumberUtil.getMinAccessionLength()%>; 
 inPrintState = false;
 
 //Adds warning when leaving page
@@ -58,11 +47,10 @@ function moveAccessionToRecentArea() {
 }
 
 //check if labNo is valid accession number when a character key is pressed and length is accession length
-function checkAccessionNumber(accessionNumber, event) {
-	var charPressed = (event.keyCode >=48 && event.keyCode <=57) || (event.keyCode >=65 && event.keyCode <=90) || (event.keyCode >=96 && event.keyCode <=105)
-	if (accessionNumber.value.length >= accessionLength && charPressed) {
+function checkAccessionNumber(accessionNumber) {
+	if (accessionNumber.value.length >= minAccessionLength) {
       	validateAccessionNumberOnServer(false, false, accessionNumber.id, accessionNumber.value, processAccessionSuccess, null);
-	} else if (accessionNumber.value.length < accessionLength) {
+	} else if (accessionNumber.value.length < minAccessionLength) {
 		inPrintState = false;
 		setSave();
 	}
@@ -77,6 +65,8 @@ function processAccessionSuccess(xhr) {
         setSave()
     } else {
         alert(message.firstChild.nodeValue);
+        inPrintState = false;
+        setSave()
     }
     var labElement = formField.firstChild.nodeValue;
     selectFieldErrorDisplay(success, document.getElementById(labElement));
@@ -93,8 +83,8 @@ function processAccessionSuccess(xhr) {
 <tr>
 	<td>
 		<form:input path="sampleOrderItems.labNo"
-			maxlength='<%= Integer.toString(accessionNumberValidator.getMaxAccessionLength())%>'
-            onkeyup="checkAccessionNumber(this, event);"
+			maxlength='<%= Integer.toString(AccessionNumberUtil.getMaxAccessionLength())%>'
+            onchange="checkAccessionNumber(this);"
             styleClass="text"
             id="labNo"/>
 		<button type="button" onclick="saveLabel();"

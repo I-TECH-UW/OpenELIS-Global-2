@@ -10,8 +10,7 @@
 			org.openelisglobal.common.util.IdValuePair,
 			org.openelisglobal.common.formfields.FormFields,
 			org.openelisglobal.common.formfields.FormFields.Field,
-			org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory,
-			org.openelisglobal.common.provider.validation.IAccessionNumberValidator,
+			org.openelisglobal.sample.util.AccessionNumberUtil,
 			org.openelisglobal.common.util.ConfigurationProperties,
 			org.openelisglobal.common.util.ConfigurationProperties.Property,
 			org.openelisglobal.internationalization.MessageUtil,
@@ -48,14 +47,9 @@
 	</script>
 </c:if>
 	
-<%!
-	AccessionNumberValidatorFactory accessionValidatorFactory = new AccessionNumberValidatorFactory();
- %>
 <%
 	String searchTerm = request.getParameter("searchTerm");
 
-	IAccessionNumberValidator accessionNumberValidator = accessionValidatorFactory.getValidator();
-	
 	boolean useSTNumber = FormFields.getInstance().useField(Field.StNumber);
 	boolean useNationalID = FormFields.getInstance().useField(Field.NationalID);
 	boolean useSubjectNumber = FormFields.getInstance().useField(Field.SubjectNumber);
@@ -70,7 +64,6 @@
 	boolean noteRequired =  ConfigurationProperties.getInstance().isPropertyValueEqual(Property.notesRequiredForModifyResults, "true");
 	pageContext.setAttribute("noteRequired", noteRequired);
 	boolean autofillTechBox = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.autoFillTechNameBox, "true");
-
 %>
 
 <link rel="stylesheet" type="text/css" href="css/bootstrap_simple.css?" />
@@ -495,7 +488,7 @@ function setField(id, value) {
 	<input type="text"
 	       id="labnoSearch"
 	       placeholder='<spring:message code="sample.search.scanner.instructions"/>'
-	       maxlength='<%= Integer.toString(accessionNumberValidator.getMaxAccessionLength())%>' />
+	       maxlength='<%= Integer.toString(AccessionNumberUtil.getMaxAccessionLength())%>' />
 	<input type="button" onclick="pageSearch.doLabNoSearch(document.getElementById('labnoSearch'))" value='<%= MessageUtil.getMessage("label.button.search") %>'>
 	</div>
 </c:if>

@@ -32,7 +32,7 @@ import org.openelisglobal.workplan.form.WorkplanForm;
 import net.sf.jasperreports.engine.JRParameter;
 
 public class TestSectionWorkplanReport implements IWorkplanReport {
-    private static int PREFIX_LENGTH = AccessionNumberUtil.getAccessionNumberValidator().getInvarientLength();
+    private static int PREFIX_LENGTH = AccessionNumberUtil.getMainAccessionNumberGenerator().getInvarientLength();
     private static final String BASE_FILE_NAME = "WorkplanByTestSection";
     private static final String FILE_NAME_WITH_RESULTS = "WorkplanResultsByTestSection";
     private final HashMap<String, Object> parameterMap = new HashMap<>();
@@ -68,7 +68,7 @@ public class TestSectionWorkplanReport implements IWorkplanReport {
         parameterMap.put("nameOfTest", getNameOfTest());
         parameterMap.put("nameOfPatient", getNameOfPatient());
         parameterMap.put("labName", ConfigurationProperties.getInstance().getPropertyValue(Property.SiteName));
-        parameterMap.put("accessionPrefix", AccessionNumberUtil.getAccessionNumberValidator().getPrefix());
+        parameterMap.put("accessionPrefix", AccessionNumberUtil.getMainAccessionNumberGenerator().getPrefix());
         parameterMap.put("prefixLength", PREFIX_LENGTH);
         parameterMap.put("SUBREPORT_DIR", reportPath);
         parameterMap.put("receptionDate", MessageUtil.getMessage("report.receptionDate"));

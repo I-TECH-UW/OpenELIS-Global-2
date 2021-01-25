@@ -86,6 +86,12 @@ public class SamplePatientUpdateData {
     private List<OrganizationAddress> orgAddressExtra = new ArrayList<>();
     private final String currentUserId;
 
+    private boolean customNotificationLogic;
+    private List<String> patientEmailNotificationTestIds;
+    private List<String> patientSMSNotificationTestIds;
+    private List<String> providerEmailNotificationTestIds;
+    private List<String> providerSMSNotificationTestIds;
+
     public SamplePatientUpdateData(String currentUserId) {
         this.currentUserId = currentUserId;
     }
@@ -129,7 +135,7 @@ public class SamplePatientUpdateData {
     public void setAccessionNumber(String accessionNumber) {
         this.accessionNumber = accessionNumber;
     }
-    
+
     public String getReferringId() {
         return referringId;
     }
@@ -416,7 +422,7 @@ public class SamplePatientUpdateData {
             } else {
                 Organization organization = new Organization();
                 organization.setOrganizationName(orderItem.getNewRequesterName());
-                organization = orgService.getOrganizationByName(organization, true);
+                organization = orgService.getActiveOrganizationByName(organization, true);
                 orgId = organization.getId();
 
                 if (!GenericValidator.isBlankOrNull(orgId)) {
@@ -438,7 +444,7 @@ public class SamplePatientUpdateData {
         boolean newName = true;
         Organization organization = new Organization();
         organization.setOrganizationName(requesterName);
-        organization = orgService.getOrganizationByName(organization, true);
+        organization = orgService.getActiveOrganizationByName(organization, true);
 
         if (organization == null) {
             newName = true;
@@ -500,6 +506,46 @@ public class SamplePatientUpdateData {
                     observationHistoryService.getObservationTypeIdForType(ObservationType.PROGRAM),
                     ValueType.DICTIONARY);
         }
+    }
+
+    public boolean getCustomNotificationLogic() {
+        return customNotificationLogic;
+    }
+
+    public void setCustomNotificationLogic(boolean customNotificationLogic) {
+        this.customNotificationLogic = customNotificationLogic;
+    }
+
+    public List<String> getPatientEmailNotificationTestIds() {
+        return patientEmailNotificationTestIds;
+    }
+
+    public void setPatientEmailNotificationTestIds(List<String> patientEmailNotificationTestIds) {
+        this.patientEmailNotificationTestIds = patientEmailNotificationTestIds;
+    }
+
+    public List<String> getPatientSMSNotificationTestIds() {
+        return patientSMSNotificationTestIds;
+    }
+
+    public void setPatientSMSNotificationTestIds(List<String> patientSMSNotificationTestIds) {
+        this.patientSMSNotificationTestIds = patientSMSNotificationTestIds;
+    }
+
+    public List<String> getProviderEmailNotificationTestIds() {
+        return providerEmailNotificationTestIds;
+    }
+
+    public void setProviderEmailNotificationTestIds(List<String> providerEmailNotificationTestIds) {
+        this.providerEmailNotificationTestIds = providerEmailNotificationTestIds;
+    }
+
+    public List<String> getProviderSMSNotificationTestIds() {
+        return providerSMSNotificationTestIds;
+    }
+
+    public void setProviderSMSNotificationTestIds(List<String> providerSMSNotificationTestIds) {
+        this.providerSMSNotificationTestIds = providerSMSNotificationTestIds;
     }
 
 }

@@ -33,6 +33,8 @@ import org.openelisglobal.samplehuman.service.SampleHumanService;
 import org.openelisglobal.sampleqaevent.service.SampleQaEventService;
 import org.openelisglobal.sampleqaevent.valueholder.SampleQaEvent;
 import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.statusofsample.service.StatusOfSampleService;
+import org.openelisglobal.statusofsample.valueholder.StatusOfSample;
 import org.openelisglobal.test.service.TestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
@@ -68,6 +70,8 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
     private OrganizationService organizationService;
     @Autowired
     private TestService testService;
+    @Autowired
+    private StatusOfSampleService statusOfSampleService;
 
     @PostConstruct
     private void initializeGlobalVariables() {
@@ -426,6 +430,12 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
     public String generateAccessionNumberAndInsert(Sample sample) {
         sample.setAccessionNumber(getBaseObjectDAO().getNextAccessionNumber());
         return insert(sample);
+    }
+    
+    @Override
+    public String getSampleStatusForDisplay(Sample sample) {
+        StatusOfSample statusOfSample = statusOfSampleService.get(sample.getStatusId());
+        return statusOfSample.getStatusOfSampleName();
     }
 
 }

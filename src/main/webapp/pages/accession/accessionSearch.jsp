@@ -2,8 +2,7 @@
 <%@ page import="org.openelisglobal.common.action.IActionConstants,
                  org.openelisglobal.common.util.ConfigurationProperties,
 			     org.openelisglobal.common.util.ConfigurationProperties.Property,
-			     org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory,
-			     org.openelisglobal.common.provider.validation.IAccessionNumberValidator,
+				 org.openelisglobal.sample.util.AccessionNumberUtil,
                  org.openelisglobal.common.util.Versioning,
 			     org.openelisglobal.internationalization.MessageUtil" %>
 
@@ -68,7 +67,7 @@ function /*void*/ handleEnterEvent(  ){
 			<input name="accessionNumber"
 			       size="20"
 			       id="searchAccessionID"
-			       maxlength="<%= Integer.toString(new AccessionNumberValidatorFactory().getValidator().getMaxAccessionLength()) %>"
+			       maxlength="<%=Integer.toString(AccessionNumberUtil.getMaxAccessionLength())%>"
 			       onkeyup="validateEntrySize( this.value );"
 			       onblur="validateEntrySize( this.value );"
 			       class="text"
