@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.12.2.final using JasperReports Library version 6.12.0  -->
+<!-- Created with Jaspersoft Studio version 6.14.0.final using JasperReports Library version 6.14.0-2ab0d8625be255bf609c78e1181801213e51db8f  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="WorkplanByTestSection" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="30" bottomMargin="30" isFloatColumnFooter="true" uuid="fcce0fb0-06c7-4642-a08b-82227d520ef7">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
@@ -17,10 +17,10 @@
 		<defaultValueExpression><![CDATA[Boolean.FALSE]]></defaultValueExpression>
 	</parameter>
 	<parameter name="labNumberTitle" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA["Lab No."]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[$R{report.label.labno}]]></defaultValueExpression>
 	</parameter>
 	<parameter name="subjectNoTitle" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA["Subjet No."]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[$R{report.subjectNo}]]></defaultValueExpression>
 	</parameter>
 	<parameter name="workPlan" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="receptionDate" class="java.lang.String" isForPrompting="false"/>
@@ -44,7 +44,7 @@
 		<band splitType="Stretch"/>
 	</title>
 	<pageHeader>
-		<band height="52" splitType="Stretch">
+		<band height="47" splitType="Stretch">
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-2" x="1" y="25" width="554" height="22" uuid="05d81cf6-5d3f-4090-b39d-d1c7e75d5279"/>
 				<box>
@@ -56,7 +56,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="12" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{workPlan}+": " +$P{testSection}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{workPlan}+ ": " +$P{testSection}]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report" pattern="dd/MM/yyyy" isBlankWhenNull="false">
 				<reportElement key="textField" x="410" y="5" width="136" height="14" uuid="2506df5a-6b9d-4594-85d7-ea1ed5da4ec7"/>
@@ -153,7 +153,7 @@
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="16" splitType="Stretch">
+		<band height="13" splitType="Stretch">
 			<frame>
 				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="1" y="0" width="554" height="13" backcolor="#FFFFFF" uuid="f8bcb4fb-87b6-4608-bf93-4e9b2712ae65"/>
 				<box>
@@ -224,7 +224,7 @@
 			<textField>
 				<reportElement positionType="FixRelativeToBottom" isPrintRepeatedValues="false" x="463" y="2" width="53" height="12" uuid="506f478b-f30b-485f-8a41-5b2574205cbe"/>
 				<textElement textAlignment="Right"/>
-				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{report.label.page}+" "+$V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageFooter>

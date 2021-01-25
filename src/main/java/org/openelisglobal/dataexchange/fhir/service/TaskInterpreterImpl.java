@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.validator.GenericValidator;
 import org.hl7.fhir.r4.model.Address;
 import org.hl7.fhir.r4.model.ContactPoint;
+import org.hl7.fhir.r4.model.Enumerations.AdministrativeGender;
 import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Patient;
 import org.hl7.fhir.r4.model.Patient.ContactComponent;
@@ -18,6 +19,7 @@ import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.ITestIdentityService;
 import org.openelisglobal.common.services.TestIdentityService;
 import org.openelisglobal.common.util.DateUtil;
+import org.openelisglobal.dataexchange.fhir.FhirConfig;
 import org.openelisglobal.dataexchange.order.action.IOrderInterpreter.InterpreterResults;
 import org.openelisglobal.dataexchange.order.action.IOrderInterpreter.OrderType;
 import org.openelisglobal.dataexchange.order.action.MessagePatient;
@@ -38,6 +40,8 @@ public class TaskInterpreterImpl implements TaskInterpreter {
 
     @Autowired
     private FhirContext fhirContext;
+    @Autowired
+    private FhirConfig fhirConfig;
 
     public enum IdentityType {
         GUID("GU"), ST_NUMBER("ST"), NATIONAL_ID("NA"), OB_NUMBER("OB"), PC_NUMBER("PC");
@@ -155,16 +159,30 @@ public class TaskInterpreterImpl implements TaskInterpreter {
 
         MessagePatient messagePatient = new MessagePatient();
 
-        messagePatient.setExternalId(patient.getIdentifierFirstRep().getId());
+//        messagePatient.setExternalId(patient.getIdentifierFirstRep().getId());
+        for (Identifier identifier : patient.getIdentifier()) {
+            if (identifier.getType().hasCoding(fhirConfig.getOeFhirSystem() + "/genIdType", "externalId")) {
+                messagePatient.setExternalId(identifier.getValue());
+            }
+            if ((fhirConfig.getOeFhirSystem() + "pat_nationalId").equals(identifier.getSystem())) {
+                messagePatient.setNationalId(identifier.getValue());
+            }
+            if ((fhirConfig.getOeFhirSystem() + "pat_guid").equals(identifier.getSystem())) {
+                messagePatient.setGuid(identifier.getValue());
+            }
+            if ((fhirConfig.getOeFhirSystem() + "pat_stNumber").equals(identifier.getSystem())) {
+                messagePatient.setStNumber(identifier.getValue());
+            }
+        }
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         Date birthDate = new Date();
         birthDate = patient.getBirthDate();
         String strDate = sdf.format(birthDate);
         messagePatient.setDisplayDOB(strDate);
 
-        if (patient.getGender().toString() == "MALE") {
+        if (AdministrativeGender.MALE.equals(patient.getGender())) {
             messagePatient.setGender("M");
-        } else {
+        } else if (AdministrativeGender.FEMALE.equals(patient.getGender())) {
             messagePatient.setGender("F");
         }
 

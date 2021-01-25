@@ -14,4 +14,7 @@ public interface ElectronicOrderService extends BaseObjectService<ElectronicOrde
 
     List<ElectronicOrder> getAllElectronicOrdersContainingValueOrderedBy(String searchValue, SortOrder sortOrder);
 
+    List<ElectronicOrder> getAllElectronicOrdersContainingValuesOrderedBy(String accessionNumber,
+            String patientLastName, String patientFirstName, String gender, SortOrder order);
+
 }

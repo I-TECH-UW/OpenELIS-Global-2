@@ -7,10 +7,12 @@ services:
 #db        ports:
 #db            - "[% db_host_port %]:5432"
 #db        networks:
-#db            - backend
+#db            - default
 #db        restart: always
 #db        env_file:
 #db            - [% db_env_dir %]database.env
+#db        environment:
+#db            - TZ=[% timezone %]
 #db        volumes:
 #db              # preserves the database between containers
 #db            - [% db_data_dir %]:/var/lib/postgresql/data                
@@ -29,16 +31,15 @@ services:
         image: openelisglobal
 #db        depends_on:
 #db            - database
-            
         ports:
             - "8080:8080"
             - "8443:8443"
         networks:
-            - frontend
-            - backend
-#                ipv4_address: 172.20.1.1
+            default:
+                ipv4_address: 172.20.1.121
         restart: always
         environment:
+            - TZ=[% timezone %]
               # context.xml doesn't seem to be able to pick up environment variables directly, so we are passing them in as CATALINA_OPTS
             - CATALINA_OPTS= -Ddatasource.url=jdbc:postgresql://[% db_host %]:[% db_port %]/clinlims -Ddatasource.username=clinlims
         volumes:
@@ -61,10 +62,10 @@ services:
             - "8081:8080"
             - "8444:8443"
         networks:
-            - frontend
-            - backend
+            - default
         restart: always
         environment:
+            - TZ=[% timezone %]
             - JAVA_OPTS= -Dhapi.properties=/run/secrets/hapi.properties
         volumes:
             - [% etc_dir %]hapi_server.xml:/usr/local/tomcat/conf/server.xml
@@ -89,8 +90,7 @@ secrets:
     file: [% etc_dir %]truststore
     
 networks:
-  backend:
-  frontend:
+  default:
     driver: bridge
     ipam:
       config:

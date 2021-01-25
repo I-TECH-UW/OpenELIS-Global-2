@@ -39,14 +39,10 @@
 		<parameter name="testNames" class="java.util.List" isForPrompting="false"/>
 		<parameter name="testResults" class="java.util.List" isForPrompting="false"/>
 		<parameter name="compleationDate" class="java.util.List"/>
-		<parameter name="localization" class="java.util.Map" isForPrompting="false"/>
 	</subDataset>
 	<subDataset name="requesterResultDataset" uuid="194e2b42-9ad6-45b1-83e3-9b001a97e07c">
 		<parameter name="testNames" class="java.util.List" isForPrompting="false"/>
 		<parameter name="testResults" class="java.util.List" isForPrompting="false"/>
-		<parameter name="localization" class="java.util.Map" isForPrompting="false">
-			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
-		</parameter>
 	</subDataset>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String">
 		<defaultValueExpression><![CDATA["../reports/"]]></defaultValueExpression>
@@ -66,7 +62,6 @@
 	<parameter name="labName1" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="labName2" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="reportTitle" class="java.lang.String" isForPrompting="false"/>
-	<parameter name="localization" class="java.util.Map" isForPrompting="false"/>
 	<parameter name="leftHeaderImage" class="java.io.InputStream" isForPrompting="false"/>
 	<parameter name="rightHeaderImage" class="java.io.InputStream" isForPrompting="false"/>
 	<queryString>
@@ -97,7 +92,7 @@
 					<textElement>
 						<font size="14" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$P{localization}.get("site") + ": " + $F{organizationName}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$R{report.site} + ": " + $F{organizationName}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -118,7 +113,7 @@
 				<textField>
 					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="5" y="0" width="140" height="20" uuid="14b2fc0d-de07-4d2e-9001-f1872dd521de"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle"/>
-					<textFieldExpression><![CDATA[$P{localization}.get("requestOrderNumber")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$R{report.requestOrderNumber}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
 					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="5" y="20" width="140" height="20" uuid="d46204e2-eb99-48eb-a5e2-4f9d2ec17d32"/>
@@ -128,7 +123,7 @@
 				<textField>
 					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="145" y="0" width="140" height="20" uuid="fc86878e-53c0-4c9d-91cb-2c7208530de3"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle"/>
-					<textFieldExpression><![CDATA[$P{localization}.get("confirmationOrderNumber")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$R{report.confirmationOrderNumber}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
 					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="145" y="20" width="140" height="20" uuid="aa67aff1-3b3b-4e71-8583-950ce977415f"/>
@@ -138,7 +133,7 @@
 				<textField>
 					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="285" y="0" width="140" height="20" uuid="7f5f5aba-d600-4c74-a186-e0d4119e3825"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle"/>
-					<textFieldExpression><![CDATA[$P{localization}.get("sampleType")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$R{report.sampleType}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
 					<reportElement positionType="Float" x="285" y="20" width="140" height="20" uuid="10687c13-2da0-4dd7-97b8-5311beead5c8"/>
@@ -148,7 +143,7 @@
 				<textField>
 					<reportElement x="425" y="0" width="140" height="20" uuid="afebf999-e266-4f7c-abac-a3ad31cf504d"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none"/>
-					<textFieldExpression><![CDATA[$P{localization}.get("reception")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$R{report.reception}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
 					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="425" y="20" width="140" height="20" uuid="3959c4ba-97b2-42f9-8dab-c73d18ee1cf9"/>
@@ -158,26 +153,26 @@
 				<textField isBlankWhenNull="true">
 					<reportElement positionType="Float" x="24" y="44" width="420" height="18" uuid="7b5003d9-8e06-4b94-9afd-3aa092ce7fac"/>
 					<textElement verticalAlignment="Middle"/>
-					<textFieldExpression><![CDATA[$P{localization}.get("requesterContact") + ": " + $F{requesterName}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$R{report.requesterContact} + ": " + $F{requesterName}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
 					<reportElement positionType="Float" x="24" y="62" width="140" height="18" uuid="2d003080-6d79-4b45-b97a-768954b94154"/>
 					<textElement verticalAlignment="Middle"/>
-					<textFieldExpression><![CDATA[$P{localization}.get("telephoneAbv") + ": " + $F{requesterPhone}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$R{report.telephoneAbv} + ": " + $F{requesterPhone}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
 					<reportElement positionType="Float" x="170" y="62" width="140" height="18" uuid="039a8a20-2352-4491-a81d-73f6cb65b821"/>
 					<textElement verticalAlignment="Middle">
 						<font size="9"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$P{localization}.get("fax") + ": " + $F{requesterFax}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$R{report.fax} + ": " + $F{requesterFax}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
 					<reportElement positionType="Float" x="310" y="62" width="140" height="18" uuid="850a8034-496b-458b-99ae-117cc1b48b33"/>
 					<textElement verticalAlignment="Middle">
 						<font size="9"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$P{localization}.get("email") + ": " + $F{requesterEMail}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$R{report.email} + ": " + $F{requesterEMail}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -190,7 +185,7 @@
 						<textElement>
 							<font size="10"/>
 						</textElement>
-						<textFieldExpression><![CDATA[$P{localization}.get("note") + ": " + $F{note}]]></textFieldExpression>
+						<textFieldExpression><![CDATA[$R{report.note} + ": " + $F{note}]]></textFieldExpression>
 					</textField>
 				</frame>
 				<frame>
@@ -208,9 +203,6 @@
 								<datasetParameter name="compleationDate">
 									<datasetParameterExpression><![CDATA[$F{compleationDate}]]></datasetParameterExpression>
 								</datasetParameter>
-								<datasetParameter name="localization">
-									<datasetParameterExpression><![CDATA[$P{localization}]]></datasetParameterExpression>
-								</datasetParameter>
 								<dataSourceExpression><![CDATA[new JREmptyDataSource($F{labTest}.size())]]></dataSourceExpression>
 							</datasetRun>
 							<jr:column width="155" uuid="f46f8d02-3412-4118-8e81-b2caddea7650">
@@ -222,7 +214,7 @@
 										<textElement verticalAlignment="Middle" markup="none">
 											<font isBold="true"/>
 										</textElement>
-										<textFieldExpression><![CDATA[$P{localization}.get("confirmationResults")]]></textFieldExpression>
+										<textFieldExpression><![CDATA[$R{report.confirmationResult}]]></textFieldExpression>
 									</textField>
 								</jr:detailCell>
 							</jr:column>
@@ -307,9 +299,6 @@
 				<subreportParameter name="siteId">
 					<subreportParameterExpression><![CDATA[$P{siteId}]]></subreportParameterExpression>
 				</subreportParameter>
-				<subreportParameter name="localization">
-					<subreportParameterExpression><![CDATA[$P{localization}]]></subreportParameterExpression>
-				</subreportParameter>
 				<subreportParameter name="reportTitle">
 					<subreportParameterExpression><![CDATA[$P{reportTitle}]]></subreportParameterExpression>
 				</subreportParameter>
@@ -343,15 +332,11 @@
 						<reportElement key="requesterTable" style="table" stretchType="RelativeToTallestObject" x="40" y="0" width="500" height="20" uuid="569331c0-e8b7-442e-8ad7-9d85f6c6b6a8"/>
 						<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
 							<datasetRun subDataset="requesterResultDataset" uuid="dc66db8e-b711-41a3-9617-bf8b67722810">
-								<parametersMapExpression><![CDATA[$P{localization}]]></parametersMapExpression>
 								<datasetParameter name="testNames">
 									<datasetParameterExpression><![CDATA[$F{requesterTest}]]></datasetParameterExpression>
 								</datasetParameter>
 								<datasetParameter name="testResults">
 									<datasetParameterExpression><![CDATA[$F{requesterResult}]]></datasetParameterExpression>
-								</datasetParameter>
-								<datasetParameter name="localization">
-									<datasetParameterExpression><![CDATA[$P{localization}]]></datasetParameterExpression>
 								</datasetParameter>
 								<dataSourceExpression><![CDATA[new JREmptyDataSource($F{requesterTest}.size())]]></dataSourceExpression>
 							</datasetRun>
@@ -374,7 +359,7 @@
 											<printWhenExpression><![CDATA[$V{REPORT_COUNT} == 1]]></printWhenExpression>
 										</reportElement>
 										<textElement markup="none"/>
-										<textFieldExpression><![CDATA[$P{localization}.get("initialResults")]]></textFieldExpression>
+										<textFieldExpression><![CDATA[$R{report.initialResults}]]></textFieldExpression>
 									</textField>
 								</jr:detailCell>
 							</jr:column>
@@ -388,7 +373,7 @@
 										<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
 											<font isBold="true"/>
 										</textElement>
-										<textFieldExpression><![CDATA[$P{localization}.get("test")]]></textFieldExpression>
+										<textFieldExpression><![CDATA[$R{report.test}]]></textFieldExpression>
 									</textField>
 								</jr:columnHeader>
 								<jr:detailCell style="table 1_TD" height="20" rowSpan="1">
@@ -408,7 +393,7 @@
 										<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
 											<font isBold="true"/>
 										</textElement>
-										<textFieldExpression><![CDATA[$P{localization}.get("result")]]></textFieldExpression>
+										<textFieldExpression><![CDATA[$R{report.result}]]></textFieldExpression>
 									</textField>
 								</jr:columnHeader>
 								<jr:detailCell style="table 1_TD" height="20" rowSpan="1">
@@ -428,7 +413,7 @@
 										<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
 											<font isBold="true"/>
 										</textElement>
-										<textFieldExpression><![CDATA[$P{localization}.get("completionDate")]]></textFieldExpression>
+										<textFieldExpression><![CDATA[$R{report.completionDate}]]></textFieldExpression>
 									</textField>
 								</jr:columnHeader>
 								<jr:detailCell height="20" rowSpan="1"/>
@@ -461,7 +446,7 @@
 					<printWhenExpression><![CDATA[$P{usePageNumbers}.equals("true")]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" " + $R{report.pageNumberOf}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{report.page}+$V{PAGE_NUMBER}+" " + $R{report.pageNumberOf}]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report">
 				<reportElement x="509" y="4" width="40" height="20" uuid="97f31d88-8ca9-4bff-afc1-54d9b9bb151d">

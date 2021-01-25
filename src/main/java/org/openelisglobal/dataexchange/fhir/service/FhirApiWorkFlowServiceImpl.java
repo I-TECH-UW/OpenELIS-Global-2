@@ -8,13 +8,14 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.apache.commons.validator.GenericValidator;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.instance.model.api.IDomainResource;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Bundle.BundleEntryComponent;
 import org.hl7.fhir.r4.model.Bundle.BundleType;
 import org.hl7.fhir.r4.model.Bundle.HTTPVerb;
+import org.hl7.fhir.r4.model.CodeableConcept;
+import org.hl7.fhir.r4.model.Coding;
 import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Patient;
 import org.hl7.fhir.r4.model.Reference;
@@ -24,6 +25,7 @@ import org.hl7.fhir.r4.model.ServiceRequest;
 import org.hl7.fhir.r4.model.Task;
 import org.hl7.fhir.r4.model.Task.TaskStatus;
 import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.dataexchange.fhir.FhirConfig;
 import org.openelisglobal.dataexchange.fhir.service.TaskWorker.TaskResult;
 import org.openelisglobal.dataexchange.order.action.DBOrderExistanceChecker;
 import org.openelisglobal.dataexchange.order.action.IOrderPersister;
@@ -39,12 +41,17 @@ import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IClientInterceptor;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.client.interceptor.BasicAuthInterceptor;
+import ca.uhn.fhir.rest.gclient.IQuery;
 
 @Service
 public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
 
     @Autowired
     private FhirContext fhirContext;
+    @Autowired
+    private FhirConfig fhirConfig;
+    @Autowired
+    private FhirTransformService fhirTransformService;
 
     @Value("${org.openelisglobal.fhirstore.uri}")
     private String localFhirStorePath;
@@ -52,12 +59,12 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
     private String[] remoteStorePaths;
     @Value("${org.openelisglobal.remote.source.updateStatus}")
     private Optional<Boolean> remoteStoreUpdateStatus;
-    @Value("${org.openelisglobal.remote.source.identifier}")
-    private Optional<String> remoteStoreIdentifier;
+    @Value("${org.openelisglobal.remote.source.identifier:}#{T(java.util.Collections).emptyList()}")
+    private List<String> remoteStoreIdentifier;
     @Value("${org.openelisglobal.task.useBasedOn}")
     private Boolean useBasedOn;
 
-    @Scheduled(initialDelay = 10 * 1000, fixedRate = 5 * 60 * 1000)
+    @Scheduled(initialDelay = 10 * 1000, fixedRate = 2 * 60 * 1000)
     @Override
     public void pollForRemoteTasks() {
         processWorkflow(ResourceType.Task);
@@ -81,33 +88,23 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         }
     }
 
-    @Override
-    public String getLocalFhirStorePath() {
-        return localFhirStorePath;
-    }
-
     private void beginTaskPath(String remoteStorePath) {
-
-        Map<String, List<String>> remoteSearchParams = new HashMap<>();
-        remoteSearchParams.put("status", Arrays.asList(TaskStatus.REQUESTED.toCode()));
-//      remoteSearchParams.put("status", Arrays.asList("REQUESTED", "requested"));
-        if (remoteStoreIdentifier.isPresent() && !GenericValidator.isBlankOrNull(remoteStoreIdentifier.get())) {
-            remoteSearchParams.put("owner", Arrays.asList(remoteStoreIdentifier.get()));
-//            remoteSearchParams.put("owner", Arrays.asList("Practitioner/f9badd80-ab76-11e2-9e96-0800200c9a66"));
-        }
-
         LogEvent.logDebug(this.getClass().getName(), "beginTaskPath", "searching for Tasks");
 
         IGenericClient sourceFhirClient = fhirContext.newRestfulGenericClient(remoteStorePath);
         IClientInterceptor authInterceptor = new BasicAuthInterceptor("admin", "Admin123");
         sourceFhirClient.registerInterceptor(authInterceptor);
-        Bundle bundle = sourceFhirClient.search()//
+        IQuery<Bundle> searchQuery = sourceFhirClient.search()//
                 .forResource(Task.class)//
+                .returnBundle(Bundle.class)//
                 // TODO use include
 //                .include(Task.INCLUDE_PATIENT)//
 //                .include(Task.INCLUDE_BASED_ON)//
-                .whereMap(remoteSearchParams)//
-                .returnBundle(Bundle.class)//
+                .where(Task.STATUS.exactly().code(TaskStatus.REQUESTED.toCode()));
+        if (!remoteStoreIdentifier.isEmpty()) {
+            searchQuery.where(Task.OWNER.hasAnyOfIds(remoteStoreIdentifier));
+        }
+        Bundle bundle = searchQuery
                 .execute();
 
         if (bundle.hasEntry()) {
@@ -259,7 +256,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         List<Resource> createResources = new ArrayList<>();
         List<Resource> updateResources = new ArrayList<>();
 
-        Reference patientReference = new Reference();
+        Reference patientReference = null;
 
         Task localTask = getTaskWithSameIdentifier(remoteTask, remoteStorePath);
         if (localTask == null) {
@@ -315,9 +312,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
                 createResources.add(localForPatient);
             } else {
                 // patient already exists so we should update the reference to ours
-                patientReference = new Reference();
-                patientReference.setReference(
-                        localForPatient.getResourceType() + "/" + localForPatient.getIdElement().getIdPart());
+                patientReference = fhirTransformService.createReferenceFor(localForPatient);
 //                updateResources.add(forPatient.setId(patientWithSameIdentifier.getIdElement().getValue()));
             }
         }
@@ -346,6 +341,8 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
     private Identifier createIdentifierToRemoteResource(IDomainResource remoteResource, String remoteStorePath) {
         Identifier identifier = new Identifier();
         identifier.setSystem(remoteStorePath);
+        identifier.setType(new CodeableConcept()
+                .addCoding(new Coding().setCode("externalId").setSystem(fhirConfig.getOeFhirSystem() + "/genIdType")));
         identifier.setValue(remoteResource.getIdElement().getIdPart());
         return identifier;
     }

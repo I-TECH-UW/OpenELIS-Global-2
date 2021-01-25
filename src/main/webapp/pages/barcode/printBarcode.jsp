@@ -2,8 +2,7 @@
 <%@ page import="org.openelisglobal.common.action.IActionConstants,
 			     org.openelisglobal.common.formfields.FormFields,
 			     org.openelisglobal.common.formfields.FormFields.Field,
-			     org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory,
-			     org.openelisglobal.common.provider.validation.IAccessionNumberValidator,
+				 org.openelisglobal.sample.util.AccessionNumberUtil,
 			     org.openelisglobal.common.util.ConfigurationProperties.Property,
 			     org.openelisglobal.internationalization.MessageUtil,
 			     org.openelisglobal.common.util.*, org.openelisglobal.internationalization.MessageUtil" %>
@@ -268,7 +267,7 @@ function enableSearchButton(eventCode){
     } else {
         searchButton.attr("disabled", "disabled");
     }
-    valueElem.attr("maxlength","<%=Integer.toString(new AccessionNumberValidatorFactory().getValidator().getMaxAccessionLength())%>");
+    valueElem.attr("maxlength","<%=Integer.toString(AccessionNumberUtil.getMaxAccessionLength())%>");
     
 }
 

@@ -119,6 +119,8 @@ public abstract class ConfigurationProperties {
         SPECIMEN_FIELD_DATE("collectionDateCheck"), //
         SPECIMEN_FIELD_SEX("patientSexCheck"), //
         SPECIMEN_FIELD_TESTS("testsCheck"), //
+        ALT_ACCESSION_PREFIX("prePrintAltAccessionPrefix"), //
+        USE_ALT_ACCESSION_PREFIX("prePrintUseAltAccession"), //
         LAB_DIRECTOR_NAME("labDirectorName"), //
         LAB_DIRECTOR_TITLE("labDirectorTitle"), //
         INFO_HIGHWAY_USERNAME("infoHighway.username"), //
@@ -136,7 +138,7 @@ public abstract class ConfigurationProperties {
         PATIENT_RESULTS_SMTP_USERNAME("patientresultssmtp.username"), //
         PATIENT_RESULTS_SMTP_PASSWORD("patientresultssmtp.password"), //
         PATIENT_RESULTS_SMTP_ADDRESS("patientresultssmtp.uri"), //
-        PATIENT_RESULTS_SMTP_ENABLED("patientresultssmtp.enabled"),; //
+        PATIENT_RESULTS_SMTP_ENABLED("patientresultssmtp.enabled"); //
 
         private String name;
 

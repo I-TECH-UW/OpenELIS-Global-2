@@ -42,4 +42,11 @@ public class ElectronicOrderServiceImpl extends BaseObjectServiceImpl<Electronic
         return getBaseObjectDAO().getAllElectronicOrdersContainingValueOrderedBy(searchValue, order);
     }
 
+    @Override
+    public List<ElectronicOrder> getAllElectronicOrdersContainingValuesOrderedBy(String accessionNumber,
+            String patientLastName, String patientFirstName, String gender, SortOrder order) {
+        return getBaseObjectDAO().getAllElectronicOrdersContainingValuesOrderedBy(accessionNumber, patientLastName,
+                patientFirstName, gender, order);
+    }
+
 }

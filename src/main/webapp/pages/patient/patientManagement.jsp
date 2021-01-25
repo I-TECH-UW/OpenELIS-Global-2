@@ -587,6 +587,12 @@ function  /*void*/ processSearchPopulateSuccess(xhr)
 					contactEmail,
 					contactPK);
 
+	<c:if test="${param.attemptAutoSave}">
+//		jQuery("#generateAccessionButton").click();
+		setOrderModified();
+		getNextAccessionNumber();
+	</c:if>
+
 }
 
 function /*string*/ getXMLValue( response, key )
@@ -1056,7 +1062,7 @@ function  processSubjectNumberSuccess(xhr){
 	<tr class="spacerRow" ><td colspan="2">&nbsp;</td></tr>
 	<tr>
 		<td style="width: 220px">
-			<spring:message code="patient.contact" />
+			<spring:message code="emergency.contact" />
 		</td>
 		<td style="text-align:right;">
 			<spring:message code="patient.contactLastName" />:
@@ -1191,7 +1197,7 @@ function  processSubjectNumberSuccess(xhr){
 			<td>&nbsp;</td>
 			<td style="text-align:right;"><%= MessageUtil.getContextualMessage("person.phone") %>: <%=" " + PhoneNumberService.getPhoneFormat() %></td>
 			<td>
-				<form:input id="patientPhone" path="patientProperties.primaryPhone" onchange="validatePhoneNumber( this );" maxLength="35"/>
+				<form:input id="patientPhone" path="patientProperties.primaryPhone" onchange="updatePatientEditStatus();validatePhoneNumber( this );" maxLength="35"/>
 <%-- 				<html:text id="patientPhone" name='${form.formName}' property="patientProperties.phone" maxlength="35" onchange="validatePhoneNumber( this );" />
  --%>			</td>
 		</tr>
@@ -1201,7 +1207,7 @@ function  processSubjectNumberSuccess(xhr){
 			<td>&nbsp;</td>
 			<td style="text-align:right;"><%= MessageUtil.getContextualMessage("person.email") %>:</td>
 			<td>
-				<form:input id="patientEmail" path="patientProperties.email" onchange="validateEmail( this );" maxLength="35"/>			</td>
+				<form:input id="patientEmail" path="patientProperties.email" onchange="updatePatientEditStatus();validateEmail( this );" maxLength="35"/>			</td>
 		</tr>
 	<% } %>
 	<tr class="spacerRow"><td >&nbsp;</td></tr>

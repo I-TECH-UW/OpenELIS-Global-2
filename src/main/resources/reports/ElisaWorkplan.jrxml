@@ -41,7 +41,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="12"/>
 				</textElement>
-				<text><![CDATA[Plan de Travail]]></text>
+				<text><![CDATA[$R{report.label.workplan}]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-2" x="259" y="25" width="136" height="22"/>
@@ -82,7 +82,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="7"/>
 				</textElement>
-				<text><![CDATA[Lab No.]]></text>
+				<text><![CDATA[$R{report.label.labno}]]></text>
 			</staticText>
 			<line>
 				<reportElement key="line-1" x="1" y="19" width="557" height="1"/>
@@ -101,7 +101,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="7"/>
 				</textElement>
-				<text><![CDATA[Murex]]></text>
+				<text><![CDATA[$R{sample.entry.project.murexTest}]]></text>
 			</staticText>
 			<staticText>
 				<reportElement key="staticText-1" x="90" y="2" width="45" height="16"/>
@@ -114,7 +114,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="7" isBold="false"/>
 				</textElement>
-				<text><![CDATA[Integral]]></text>
+				<text><![CDATA[$R{sample.entry.project.integralTest}]]></text>
 			</staticText>
 			<staticText>
 				<reportElement key="staticText-1" x="135" y="2" width="45" height="16"/>
@@ -127,7 +127,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="7"/>
 				</textElement>
-				<text><![CDATA[Vironostika]]></text>
+				<text><![CDATA[$R{sample.entry.project.vironostikaTest}]]></text>
 			</staticText>
 			<staticText>
 				<reportElement key="staticText-1" x="225" y="2" width="45" height="16"/>
@@ -140,7 +140,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="7"/>
 				</textElement>
-				<text><![CDATA[Genie II]]></text>
+				<text><![CDATA[$R{sample.entry.project.genieIITest}]]></text>
 			</staticText>
 			<staticText>
 				<reportElement key="staticText-1" x="270" y="2" width="45" height="16" isPrintWhenDetailOverflows="true"/>
@@ -153,7 +153,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="7"/>
 				</textElement>
-				<text><![CDATA[Genie II 1/100]]></text>
+				<text><![CDATA[$R{sample.entry.project.genieII100Test}]]></text>
 			</staticText>
 			<staticText>
 				<reportElement key="staticText-1" x="315" y="2" width="45" height="16"/>
@@ -167,7 +167,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="7"/>
 				</textElement>
-				<text><![CDATA[Genie II 1/10]]></text>
+				<text><![CDATA[$R{sample.entry.project.genieII10Test}]]></text>
 			</staticText>
 			<staticText>
 				<reportElement key="staticText-1" x="360" y="2" width="45" height="16"/>
@@ -180,7 +180,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="7"/>
 				</textElement>
-				<text><![CDATA[WB 1]]></text>
+				<text><![CDATA[$R{sample.entry.project.wb1Test}]]></text>
 			</staticText>
 			<staticText>
 				<reportElement key="staticText-1" x="405" y="2" width="45" height="16"/>
@@ -193,7 +193,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="7"/>
 				</textElement>
-				<text><![CDATA[WB 2]]></text>
+				<text><![CDATA[$R{sample.entry.project.wb2Test}]]></text>
 			</staticText>
 			<staticText>
 				<reportElement key="staticText-1" stretchType="RelativeToBandHeight" x="450" y="2" width="45" height="16"/>
@@ -206,7 +206,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="7"/>
 				</textElement>
-				<text><![CDATA[p24 Ag]]></text>
+				<text><![CDATA[$R{sample.entry.project.p24AgTest}]]></text>
 			</staticText>
 			<staticText>
 				<reportElement key="staticText-1" x="497" y="2" width="75" height="16"/>
@@ -219,7 +219,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="7"/>
 				</textElement>
-				<text><![CDATA[Prochain Test]]></text>
+				<text><![CDATA[$R{result.validation.next.test}]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="180" y="2" width="45" height="16"/>
@@ -229,7 +229,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="7"/>
 				</textElement>
-				<text><![CDATA[Bioline]]></text>
+				<text><![CDATA[$R{label.biolineTest}]]></text>
 			</staticText>
 		</band>
 	</columnHeader>

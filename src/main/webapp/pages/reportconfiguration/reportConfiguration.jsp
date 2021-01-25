@@ -9,8 +9,6 @@
          import="org.openelisglobal.common.action.IActionConstants,
 				org.openelisglobal.common.formfields.FormFields,
                 org.openelisglobal.common.formfields.FormFields.Field,
-                org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory,
-                org.openelisglobal.common.provider.validation.IAccessionNumberValidator,
                 org.openelisglobal.common.provider.validation.NonConformityRecordNumberValidationProvider,
                 org.openelisglobal.common.services.PhoneNumberService,
                 org.openelisglobal.common.util.DateUtil,
@@ -21,12 +19,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%!
-	AccessionNumberValidatorFactory accessionNumberValidatorFactory = new AccessionNumberValidatorFactory();
-%>
 <%
-	IAccessionNumberValidator accessionNumberValidator = accessionNumberValidatorFactory.getValidator();
-
 	boolean useProject = FormFields.getInstance().useField(Field.Project);
 	boolean useSiteList = FormFields.getInstance().useField(Field.NON_CONFORMITY_SITE_LIST);
 	boolean useSubjectNo = FormFields.getInstance().useField(Field.QASubjectNumber);

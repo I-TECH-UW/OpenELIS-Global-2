@@ -27,7 +27,7 @@ import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.spring.util.SpringContext;
 
-public class YearNumAccessionValidator implements IAccessionNumberValidator {
+public class YearNumAccessionValidator implements IAccessionNumberGenerator {
 
     protected SampleService sampleService = SpringContext.getBean(SampleService.class);
 
@@ -114,7 +114,7 @@ public class YearNumAccessionValidator implements IAccessionNumberValidator {
             return MessageUtil.getMessage("sample.entry.invalid.accession.number.length");
         case USED_FAIL:
             return MessageUtil.getMessage("sample.entry.invalid.accession.number.suggestion") + " "
-                    + getNextAvailableAccessionNumber(null);
+                    + getNextAvailableAccessionNumber(null, true);
         case YEAR_FAIL:
         case FORMAT_FAIL:
             return getInvalidFormatMessage(results);
@@ -126,7 +126,7 @@ public class YearNumAccessionValidator implements IAccessionNumberValidator {
     }
 
     @Override
-    public String getNextAvailableAccessionNumber(String prefix) {
+    public String getNextAvailableAccessionNumber(String prefix, boolean reserve) {
         String nextAccessionNumber;
 
         String curLargestAccessionNumber = sampleService.getLargestAccessionNumberWithPrefix(prefix);
@@ -228,4 +228,5 @@ public class YearNumAccessionValidator implements IAccessionNumberValidator {
     public String getPrefix() {
         return null; // no single prefix
     }
+
 }

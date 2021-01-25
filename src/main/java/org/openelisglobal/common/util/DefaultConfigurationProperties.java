@@ -168,6 +168,10 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
         setDBPropertyMappingAndDefault(Property.SPECIMEN_FIELD_SEX, Property.SPECIMEN_FIELD_SEX.getName(), "true");
         setDBPropertyMappingAndDefault(Property.SPECIMEN_FIELD_TESTS, Property.SPECIMEN_FIELD_TESTS.getName(), "true");
 
+        setDBPropertyMappingAndDefault(Property.ALT_ACCESSION_PREFIX, Property.ALT_ACCESSION_PREFIX.getName(), "");
+        setDBPropertyMappingAndDefault(Property.USE_ALT_ACCESSION_PREFIX, Property.USE_ALT_ACCESSION_PREFIX.getName(),
+                "false");
+
         setDBPropertyMappingAndDefault(Property.LAB_DIRECTOR_NAME, Property.LAB_DIRECTOR_NAME.getName(), "");
         setDBPropertyMappingAndDefault(Property.LAB_DIRECTOR_TITLE, Property.LAB_DIRECTOR_TITLE.getName(), "");
         // these are set through external connection now

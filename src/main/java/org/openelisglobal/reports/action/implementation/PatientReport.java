@@ -389,6 +389,16 @@ public abstract class PatientReport extends Report {
         } else {
             reportParameters.put("useSTNumber", Boolean.TRUE);
         }
+        if (ConfigurationProperties.getInstance().isCaseInsensitivePropertyValueEqual(Property.configurationName, "CI LNSP") || 
+            ConfigurationProperties.getInstance().isCaseInsensitivePropertyValueEqual(Property.configurationName, "CI IPCI") ||
+            ConfigurationProperties.getInstance().isCaseInsensitivePropertyValueEqual(Property.configurationName, "CI_REGIONAL") ||
+            ConfigurationProperties.getInstance().isCaseInsensitivePropertyValueEqual(Property.configurationName, "RETROCI") ||
+            ConfigurationProperties.getInstance().isCaseInsensitivePropertyValueEqual(Property.configurationName, "CI_GENERAL")
+                ) {
+            reportParameters.put("useBillingNumber", Boolean.TRUE);
+        } else {
+            reportParameters.put("useBillingNumber", Boolean.FALSE);
+        }
     }
 
     protected abstract String getHeaderName();

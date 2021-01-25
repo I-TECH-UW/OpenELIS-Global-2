@@ -1,6 +1,7 @@
 package org.openelisglobal.referral.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -11,6 +12,7 @@ import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.StatusService.OrderStatus;
 import org.openelisglobal.note.service.NoteService;
+import org.openelisglobal.referral.fhir.service.FhirReferralService;
 import org.openelisglobal.referral.valueholder.Referral;
 import org.openelisglobal.referral.valueholder.ReferralResult;
 import org.openelisglobal.referral.valueholder.ReferralSet;
@@ -38,6 +40,8 @@ public class ReferralSetServiceImpl implements ReferralSetService {
     private AnalysisService analysisService;
     @Autowired
     private NoteService noteService;
+    @Autowired
+    private FhirReferralService fhirReferralService;
 
     @Transactional
     @Override
@@ -88,6 +92,18 @@ public class ReferralSetServiceImpl implements ReferralSetService {
 
         for (Sample sample : modifiedSamples) {
             sampleService.update(sample);
+        }
+
+        for (ReferralSet referralSet : referralSetList) {
+            if (referralSet.getReferral().isCanceled()) {
+                fhirReferralService.cancelReferralToOrganization(referralSet.getReferral().getOrganization().getId(),
+                        referralSet.getReferral().getAnalysis().getSampleItem().getSample().getId(),
+                        Arrays.asList(referralSet.getReferral().getAnalysis().getId()));
+            } else {
+                fhirReferralService.referAnalysisesToOrganization(referralSet.getReferral().getOrganization().getId(),
+                        referralSet.getReferral().getAnalysis().getSampleItem().getSample().getId(),
+                        Arrays.asList(referralSet.getReferral().getAnalysis().getId()));
+            }
         }
 
     }

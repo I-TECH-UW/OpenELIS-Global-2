@@ -300,7 +300,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 
     @Override
     @Transactional(readOnly = true)
-    public Organization getOrganizationByName(Organization organization, boolean ignoreCase)
+    public Organization getActiveOrganizationByName(Organization organization, boolean ignoreCase)
             throws LIMSRuntimeException {
         String sql = null;
         try {
@@ -318,8 +318,40 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
             }
 
             List<Organization> list = query.list();
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+            Organization org = null;
+            if (list.size() > 0) {
+                org = list.get(0);
+            }
+
+            return org;
+
+        } catch (RuntimeException e) {
+            // bugzilla 2154
+            LogEvent.logError(e.toString(), e);
+            throw new LIMSRuntimeException("Error in Organization getActiveOrganizationByName()", e);
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Organization getOrganizationByName(Organization organization, boolean ignoreCase)
+            throws LIMSRuntimeException {
+        String sql = null;
+        try {
+            if (ignoreCase) {
+                sql = "from Organization o where trim(lower(o.organizationName)) = :param";
+            } else {
+                sql = "from Organization o where o.organizationName = :param";
+            }
+
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            if (ignoreCase) {
+                query.setString("param", organization.getOrganizationName().trim().toLowerCase());
+            } else {
+                query.setString("param", organization.getOrganizationName());
+            }
+
+            List<Organization> list = query.list();
             Organization org = null;
             if (list.size() > 0) {
                 org = list.get(0);

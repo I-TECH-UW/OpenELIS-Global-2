@@ -322,7 +322,7 @@ public class OrganizationController extends BaseController {
             String parentOrgName = form.getParentOrgName();
             Organization o = new Organization();
             o.setOrganizationName(parentOrgName);
-            Organization parentOrg = organizationService.getOrganizationByName(o, false);
+            Organization parentOrg = organizationService.getActiveOrganizationByName(o, false);
             organization.setOrganization(parentOrg);
         }
         Map<String, OrganizationAddress> addressParts = createAddressParts(form, isNew);

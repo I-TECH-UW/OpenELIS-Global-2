@@ -14,7 +14,7 @@
 		<defaultValueExpression><![CDATA[Boolean.FALSE]]></defaultValueExpression>
 	</parameter>
 	<parameter name="labNumberTitle" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA["Lab No."]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[$R{report.label.labno}]]></defaultValueExpression>
 	</parameter>
 	<parameter name="subjectNoTitle" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
@@ -193,7 +193,7 @@
 				<textElement textAlignment="Right">
 					<font size="9" isItalic="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" " + $R{report.pageNumberOf}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{report.label.page}+" "+$V{PAGE_NUMBER}+" " + $R{report.pageNumberOf}]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report">
 				<reportElement x="537" y="2" width="16" height="12" uuid="3a23e36f-76c7-4106-81e6-580813cf51d4"/>
