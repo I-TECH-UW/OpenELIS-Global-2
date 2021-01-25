@@ -87,4 +87,6 @@ public interface SampleService extends BaseObjectService<Sample, String> {
     Date getCompletedDate(Sample sample);
 
     String getTwoYearReceivedDateForDisplay(Sample sample);
+
+    String getSampleStatusForDisplay(Sample sample);
 }
