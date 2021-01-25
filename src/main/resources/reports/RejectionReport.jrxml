@@ -10,7 +10,7 @@
 	<import value="net.sf.jasperreports.engine.data.*"/>
 	<parameter name="activityLabel" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="labNumberTitle" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA["Lab No."]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[$R{report.label.labno}]]></defaultValueExpression>
 	</parameter>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
 	<parameter name="labName" class="java.lang.String"/>
@@ -81,7 +81,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="12" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Rapport de Rejet]]></text>
+				<text><![CDATA[$R{reject.report}]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-2" x="1" y="67" width="554" height="22"/>
@@ -94,7 +94,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="11" isBold="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["De " + $P{startDate} + " à " + $P{endDate}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{report.from}+" " + $P{startDate} + " "+$R{report.to}+" " + $P{endDate}]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement x="0" y="91" width="555" height="1"/>
@@ -105,7 +105,7 @@
 			<staticText>
 				<reportElement x="411" y="2" width="69" height="20"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<text><![CDATA[Imprimé le: ]]></text>
+				<text><![CDATA[$R{report.printed}+" "]]></text>
 			</staticText>
 		</band>
 	</pageHeader>
@@ -114,7 +114,7 @@
 			<staticText>
 				<reportElement x="71" y="15" width="51" height="15"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<text><![CDATA[réception]]></text>
+				<text><![CDATA[$R{testSection.Reception}]]></text>
 			</staticText>
 			<line>
 				<reportElement key="line-1" x="0" y="32" width="555" height="1"/>
@@ -130,7 +130,7 @@
 			<staticText>
 				<reportElement x="490" y="0" width="57" height="30"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle"/>
-				<text><![CDATA[Tech ID]]></text>
+				<text><![CDATA[$R{report.techId}]]></text>
 			</staticText>
 			<staticText>
 				<reportElement key="staticText" x="71" y="0" width="51" height="16"/>
@@ -270,7 +270,7 @@
 				<textElement textAlignment="Right">
 					<font size="9" isItalic="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["Page "+$V{PAGE_NUMBER}+" sur"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{report.label.page}+" "+$V{PAGE_NUMBER}+" sur"]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report">
 				<reportElement x="537" y="11" width="16" height="12"/>

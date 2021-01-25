@@ -30,7 +30,6 @@
 	<parameter name="directorName" class="java.lang.String"/>
 	<parameter name="leftHeaderImage" class="java.io.InputStream" isForPrompting="false"/>
 	<parameter name="rightHeaderImage" class="java.io.InputStream" isForPrompting="false"/>
-	<parameter name="localization" class="java.util.Map" isForPrompting="false"/>
 	<field name="testName" class="java.lang.String"/>
 	<field name="positive" class="java.lang.Integer"/>
 	<field name="negative" class="java.lang.Integer"/>
@@ -107,50 +106,50 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="12" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{localization}.get("total")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{report.total}]]></textFieldExpression>
 			</textField>
 			<textField pattern="">
 				<reportElement mode="Transparent" x="271" y="260" width="40" height="18" backcolor="#FFFFFF" uuid="82314a1b-11b9-4e58-ad46-2a36a2801b47"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$P{localization}.get("children")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{report.children}]]></textFieldExpression>
 			</textField>
 			<textField pattern="">
 				<reportElement mode="Transparent" x="231" y="260" width="40" height="18" backcolor="#FFFFFF" uuid="88e94ec7-da61-4f5b-8977-d46ab164f13b"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$P{localization}.get("women")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{report.women}]]></textFieldExpression>
 			</textField>
 			<textField pattern="">
 				<reportElement mode="Transparent" x="191" y="262" width="40" height="18" backcolor="#FFFFFF" uuid="e354eb1e-ac61-4680-9c38-39a052374d62"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$P{localization}.get("men")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{report.men}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="4" y="193" width="100" height="20" uuid="5b7ead12-68d3-4967-a255-3735345ddd1c"/>
 				<textElement verticalAlignment="Middle">
 					<font size="12" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{localization}.get("population")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{report.population}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="104" y="193" width="100" height="20" uuid="282a1499-a4bf-4c0b-aea8-5f7ed9e67972"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="12" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{localization}.get("total")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{report.total}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="4" y="166" width="509" height="20" uuid="02de45eb-2a9e-4966-8e42-c7e8f364dc3c"/>
 				<textElement verticalAlignment="Middle">
 					<font size="14" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{localization}.get("accounTestsByAgeAndSex")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{report.accounTestsByAgeAndSex}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="124" y="136" width="294" height="20" uuid="93d442b2-54d4-4ffa-adcd-e259b0e1209a"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{localization}.get("from")+" " + $P{startDate} + " "+$P{localization}.get("to")+ " " + $P{stopDate}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{report.from}+" " + $P{startDate} + " "+$R{report.to}+ " " + $P{stopDate}]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement x="4" y="404" width="572" height="1" uuid="060dc347-f338-4310-862a-bc66440d6125"/>
@@ -174,9 +173,6 @@
 				</subreportParameter>
 				<subreportParameter name="labName1">
 					<subreportParameterExpression><![CDATA[$P{labName1}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="localization">
-					<subreportParameterExpression><![CDATA[$P{localization}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="reportTitle">
 					<subreportParameterExpression><![CDATA[$P{reportTitle}]]></subreportParameterExpression>
@@ -205,42 +201,42 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="12" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{localization}.get("positive")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{report.positive}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="4" y="7" width="509" height="20" uuid="31008214-ada5-4f32-9453-3fb5ba5e141d"/>
 				<textElement verticalAlignment="Middle">
 					<font size="14" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{localization}.get("accountHivTypeTest")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{report.accountHivTypeTest}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="204" y="32" width="80" height="20" uuid="67302326-9a65-4648-8c47-57b4fb9c908a"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="12" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{localization}.get("negative")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{report.negative}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="284" y="32" width="82" height="20" uuid="f8bb41d2-865f-4607-9f6a-1ba0632328b4"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="12" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{localization}.get("undetermined")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{report.undetermined}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="364" y="32" width="80" height="20" uuid="bb8ff7f1-8001-4469-9287-dc78652f9739"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="12" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{localization}.get("waiting")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{report.waiting}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="444" y="32" width="80" height="20" uuid="20f5be22-f34e-4b31-bf83-3fb4387f2e51"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="12" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{localization}.get("total")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{report.total}]]></textFieldExpression>
 			</textField>
 		</band>
 	</columnHeader>
@@ -249,12 +245,12 @@
 			<textField>
 				<reportElement x="0" y="20" width="124" height="20" uuid="65edabb3-8c77-4a88-ae73-6f6a287527a6"/>
 				<textElement verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$P{localization}.get("account")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{report.account}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="0" y="40" width="124" height="20" uuid="c5621fa7-e0ae-4910-b5bb-a3b8bc938348"/>
 				<textElement verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$P{localization}.get("percentage")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{report.percentage}]]></textFieldExpression>
 			</textField>
 			<rectangle>
 				<reportElement x="0" y="0" width="572" height="20" backcolor="#F5F5F5" uuid="2c8837d0-e51c-4966-b5df-332972c70e97"/>
@@ -328,14 +324,14 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Site ID: " + $P{siteId}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{report.label.siteID} + $P{siteId}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="429" y="4" width="80" height="20" uuid="e611a7a4-23d2-4b02-970c-34fd11bad43b">
 					<printWhenExpression><![CDATA[$P{usePageNumbers}.equals("true")]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+ " " + $R{report.pageNumberOf}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{report.label.page}+" "+$V{PAGE_NUMBER}+ " " + $R{report.pageNumberOf}]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report">
 				<reportElement x="509" y="4" width="40" height="20" uuid="71aca3e0-acaf-4cf5-99c0-5579636d8bbc">
