@@ -503,6 +503,32 @@
     </td>
 </tr>
 <% } %>
+<% if( ConfigurationProperties.getInstance().isPropertyValueEqual( Property.CONTACT_TRACING, "true" )){ %>
+<tr>
+    <td><label for="contactTracingIndexName">
+    	<spring:message code="field.contacttracing.indexname.label" />
+    </label>
+    </td>
+    <td>
+        <form:input path="sampleOrderItems.contactTracingIndexName"
+                    cssClass="text"
+                    id="contactTracingIndexName"
+                    onchange="setOrderModified();makeDirty()" />
+    </td>
+</tr>
+<tr>
+    <td><label for="contactTracingIndexRecordNumber">
+    	<spring:message code="field.contacttracing.indexrecordnumber.label" />
+    </label>
+    </td>
+    <td>
+        <form:input path="sampleOrderItems.contactTracingIndexRecordNumber"
+                    cssClass="text"
+                    id="contactTracingIndexRecordNumber"
+                    onchange="setOrderModified();makeDirty()" />
+    </td>
+</tr>
+<% } %>
 <% if( FormFields.getInstance().useField( Field.TEST_LOCATION_CODE ) ){%>
 <tr>
     <td><spring:message code="sample.entry.sample.period"/>:</td>

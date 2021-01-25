@@ -51,6 +51,7 @@ import org.openelisglobal.requester.valueholder.SampleRequester;
 import org.openelisglobal.sample.bean.SampleOrderItem;
 import org.openelisglobal.sample.util.AccessionNumberUtil;
 import org.openelisglobal.sample.valueholder.Sample;
+import org.openelisglobal.sample.valueholder.SampleAdditionalField;
 import org.openelisglobal.samplehuman.valueholder.SampleHuman;
 import org.openelisglobal.spring.util.SpringContext;
 import org.springframework.validation.Errors;
@@ -66,6 +67,7 @@ public class SamplePatientUpdateData {
     private String referringId;
 
     private Sample sample;
+    private List<SampleAdditionalField> sampleFields;
     private SampleHuman sampleHuman = new SampleHuman();
     private SampleRequester requesterSite;
     private List<SampleTestCollection> sampleItemsTests;
@@ -546,6 +548,28 @@ public class SamplePatientUpdateData {
 
     public void setProviderSMSNotificationTestIds(List<String> providerSMSNotificationTestIds) {
         this.providerSMSNotificationTestIds = providerSMSNotificationTestIds;
+    }
+
+    public List<SampleAdditionalField> getSampleFields() {
+        return sampleFields;
+    }
+
+    public void setSampleFields(List<SampleAdditionalField> sampleFields) {
+        this.sampleFields = sampleFields;
+    }
+
+    public void addSampleField(SampleAdditionalField sampleField) {
+        if (sampleFields == null) {
+            sampleFields = new ArrayList<>();
+        }
+        sampleFields.add(sampleField);
+    }
+
+    public void addAllSampleFields(List<SampleAdditionalField> sampleFields) {
+        if (sampleFields == null) {
+            sampleFields = new ArrayList<>();
+        }
+        this.sampleFields.addAll(sampleFields);
     }
 
 }

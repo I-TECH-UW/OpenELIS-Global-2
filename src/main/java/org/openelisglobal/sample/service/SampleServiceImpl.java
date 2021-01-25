@@ -27,8 +27,10 @@ import org.openelisglobal.requester.service.RequesterTypeService;
 import org.openelisglobal.requester.service.SampleRequesterService;
 import org.openelisglobal.requester.valueholder.RequesterType;
 import org.openelisglobal.requester.valueholder.SampleRequester;
+import org.openelisglobal.sample.dao.SampleAdditionalFieldDAO;
 import org.openelisglobal.sample.dao.SampleDAO;
 import org.openelisglobal.sample.valueholder.Sample;
+import org.openelisglobal.sample.valueholder.SampleAdditionalField;
 import org.openelisglobal.samplehuman.service.SampleHumanService;
 import org.openelisglobal.sampleqaevent.service.SampleQaEventService;
 import org.openelisglobal.sampleqaevent.valueholder.SampleQaEvent;
@@ -68,6 +70,8 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
     private OrganizationService organizationService;
     @Autowired
     private TestService testService;
+    @Autowired
+    private SampleAdditionalFieldDAO sampleAdditionalFieldDAO;
 
     @PostConstruct
     private void initializeGlobalVariables() {
@@ -426,6 +430,25 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
     public String generateAccessionNumberAndInsert(Sample sample) {
         sample.setAccessionNumber(getBaseObjectDAO().getNextAccessionNumber());
         return insert(sample);
+    }
+
+    @Override
+    public List<SampleAdditionalField> getSampleAdditionalFieldsForSample(String sampleId) {
+        return sampleAdditionalFieldDAO.getAllForSample(sampleId);
+    }
+
+    @Override
+    public SampleAdditionalField getSampleAdditionalFieldForSample(String sampleId, String fieldName) {
+        return sampleAdditionalFieldDAO.getFieldForSample(fieldName, sampleId).orElse(new SampleAdditionalField());
+    }
+
+    @Override
+    public SampleAdditionalField saveSampleAdditionalField(SampleAdditionalField sampleAdditionalField) {
+        if (sampleAdditionalField.getLastupdated() == null) {
+            return sampleAdditionalFieldDAO.get(sampleAdditionalFieldDAO.insert(sampleAdditionalField)).get();
+        } else {
+            return sampleAdditionalFieldDAO.update(sampleAdditionalField);
+        }
     }
 
 }

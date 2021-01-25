@@ -8,5 +8,6 @@
 	<include file="liquibase/2.0.x.x/base.xml"/>
 	<include file="liquibase/2.1.x.x/base.xml"/>
 	<include file="liquibase/2.2.x.x/base.xml"/>
+	<include file="liquibase/2.3.x.x/base.xml"/>
 
 </databaseChangeLog>

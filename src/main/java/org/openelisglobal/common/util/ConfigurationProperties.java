@@ -138,7 +138,8 @@ public abstract class ConfigurationProperties {
         PATIENT_RESULTS_SMTP_USERNAME("patientresultssmtp.username"), //
         PATIENT_RESULTS_SMTP_PASSWORD("patientresultssmtp.password"), //
         PATIENT_RESULTS_SMTP_ADDRESS("patientresultssmtp.uri"), //
-        PATIENT_RESULTS_SMTP_ENABLED("patientresultssmtp.enabled"); //
+        PATIENT_RESULTS_SMTP_ENABLED("patientresultssmtp.enabled"), //
+        CONTACT_TRACING("contactTracingEnabled"); //
 
         private String name;
 
