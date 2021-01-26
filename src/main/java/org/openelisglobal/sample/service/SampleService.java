@@ -94,4 +94,6 @@ public interface SampleService extends BaseObjectService<Sample, String> {
     SampleAdditionalField getSampleAdditionalFieldForSample(String sampleId, String fieldName);
 
     SampleAdditionalField saveSampleAdditionalField(SampleAdditionalField sampleAdditionalField);
+
+    String getSampleStatusForDisplay(Sample sample);
 }

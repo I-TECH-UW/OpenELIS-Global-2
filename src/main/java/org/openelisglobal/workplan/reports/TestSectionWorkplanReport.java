@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.internationalization.MessageUtil;
@@ -40,13 +41,12 @@ public class TestSectionWorkplanReport implements IWorkplanReport {
     protected String reportPath = "";
 
     public TestSectionWorkplanReport(String testSection) {
-        messageKey = messageKey + testSection.replace(' ', '-');
-        this.testSection = MessageUtil.getContextualMessage(messageKey);
+        //messageKey = messageKey + testSection.replace(' ', '-');
+        //this.testSection = MessageUtil.getContextualMessage(messageKey);
 
-        if (this.testSection == null) {
+        if (GenericValidator.isBlankOrNull(this.testSection)) {
             this.testSection = testSection;
         }
-
     }
 
     @Override

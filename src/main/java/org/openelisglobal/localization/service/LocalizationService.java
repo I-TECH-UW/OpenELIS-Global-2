@@ -5,7 +5,9 @@ import java.util.Locale;
 
 import org.openelisglobal.common.service.BaseObjectService;
 import org.openelisglobal.localization.valueholder.Localization;
+import org.springframework.stereotype.Service;
 
+@Service
 public interface LocalizationService extends BaseObjectService<Localization, String> {
 
     @Override
