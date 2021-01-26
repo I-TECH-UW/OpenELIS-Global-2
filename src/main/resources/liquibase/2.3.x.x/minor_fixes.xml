@@ -5,9 +5,9 @@
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
 	  http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
+  	<property name="now" value="now()" dbms="postgresql"/>
 
 	<changeSet author="csteele" id="1">
-	
 		<preConditions onFail="MARK_RAN">
 			<sqlCheck  expectedResult="1">SELECT count(*) FROM clinlims.site_information WHERE name = 'non-conformity signature'</sqlCheck> 
 		</preConditions>
@@ -16,6 +16,20 @@
 				>
 				<where>name='non-conformity signature'</where>
 		</delete>
+	</changeSet>
+	
+	<!-- run always since this will patch an error if it ever crops up again -->
+	<changeSet author="csteele" id="3" runAlways="true">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<sqlCheck expectedResult="0">SELECT count(*) FROM clinlims.login_user WHERE last_updated is null</sqlCheck> 
+			</not>
+		</preConditions>
+      	<update schemaName="clinlims"
+      		tableName="login_user">
+      		<column name="last_updated" valueComputed="${now}"/>
+      		<where>last_updated is null</where>
+      	</update>
 	</changeSet>
 
 </databaseChangeLog>
