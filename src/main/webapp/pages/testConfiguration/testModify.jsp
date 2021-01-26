@@ -507,31 +507,32 @@
         var test, name, modName, id, modId;
         var ul = jQuery(document.createElement("ul"));
         var length = tests.length;
+        var testId = jQuery("#testId").val() 
         ul.addClass("sortable sortable-tag");
 
         for (var i = 0; i < length; ++i) {
             test = tests[i];
             name = getValueFromXmlElement(test, "name");
             
-            <%if (locale.equals("en_US")) {%>
+            <%if (locale.equals("en_US") || locale.equals("en")) {%>
             modName = jQuery("#testNameEnglish").val();
             <%} else {%>
             modName = jQuery("#testNameFrench").val();
             <%}%>
             
             id = getValueFromXmlElement(test, "id");
-            if (name != modName ) {
+            if (id != testId ) {
             	ul.append(createLI(id, name, false));
             } else {
-            	//ul.append(createLI(id, name, true));
+            	ul.append(createLI(id, modName, true));
             }
         }
 
-        <%if (locale.equals("en_US")) {%>
-        ul.append( createLI(modId, jQuery("#testNameEnglish").val(), true) );
-        <%} else { %>
-        ul.append( createLI(modId, jQuery("#testNameFrench").val(), true) );
-        <% } %>
+<%--         <%if (locale.equals("en_US") || locale.equals("en")) {%> --%>
+//         	ul.append( createLI(modId, jQuery("#testNameEnglish").val(), true) );
+<%--         <%} else { %> --%>
+//         	ul.append( createLI(modId, jQuery("#testNameFrench").val(), true) );
+<%--         <% } %> --%>
 
         jQuery("#sort" + sampleTypeId).append(ul);
 
