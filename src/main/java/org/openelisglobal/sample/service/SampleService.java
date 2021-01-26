@@ -11,6 +11,7 @@ import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.person.valueholder.Person;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.sample.valueholder.SampleAdditionalField;
+import org.openelisglobal.sample.valueholder.SampleAdditionalField.AdditionalFieldName;
 import org.openelisglobal.sampleqaevent.valueholder.SampleQaEvent;
 
 public interface SampleService extends BaseObjectService<Sample, String> {
@@ -91,7 +92,7 @@ public interface SampleService extends BaseObjectService<Sample, String> {
 
     List<SampleAdditionalField> getSampleAdditionalFieldsForSample(String sampleId);
 
-    SampleAdditionalField getSampleAdditionalFieldForSample(String sampleId, String fieldName);
+    SampleAdditionalField getSampleAdditionalFieldForSample(String sampleId, AdditionalFieldName fieldName);
 
     SampleAdditionalField saveSampleAdditionalField(SampleAdditionalField sampleAdditionalField);
 

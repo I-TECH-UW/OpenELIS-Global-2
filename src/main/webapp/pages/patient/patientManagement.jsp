@@ -362,7 +362,9 @@ function  /*void*/ checkValidAgeDate(dateElement)
 		setValidIndicaterOnField(dateElement.value.blank(), dateElement.name);
 	    pt_setFieldValidity( dateElement.value.blank(),  dateElement.name);
 		pt_setSave();
-		$("age").value = null;
+		$("ageYears").value = null;
+		$("ageMonths").value = null;
+		$("ageDays").value = null;
 	}
 }
 
@@ -410,7 +412,9 @@ function  /*void*/ updatePatientAge( DOB )
     setValidIndicaterOnField( true, jQuery("#ageYears").attr('id'));
     setValidIndicaterOnField( true, jQuery("#ageMonths").attr('id'));
     setValidIndicaterOnField( true, jQuery("#ageDays").attr('id'));
-    pt_setFieldValid( $("age").name );
+    pt_setFieldValid( $("ageYears").name );
+    pt_setFieldValid( $("ageMonths").name );
+    pt_setFieldValid( $("ageDays").name );
 }
 
 function /*void*/ handleAgeChange()
@@ -727,7 +731,9 @@ function  /*void*/ setPatientInfo(nationalID, ST_ID, subjectNumber, lastName, fi
 	}
 	if (dob == undefined) {
 		document.getElementById("dateOfBirthID").value = "";
-		document.getElementById("age").value = "";
+		document.getElementById("ageYears").value = "";
+		document.getElementById("ageMonths").value = "";
+		document.getElementById("ageDays").value = "";
 	} else {
 		var dobElement = document.getElementById("dateOfBirthID").value = dob;
 		updatePatientAge( $("dateOfBirthID") );

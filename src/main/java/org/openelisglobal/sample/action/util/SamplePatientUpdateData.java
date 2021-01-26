@@ -67,7 +67,7 @@ public class SamplePatientUpdateData {
     private String referringId;
 
     private Sample sample;
-    private List<SampleAdditionalField> sampleFields;
+    private List<SampleAdditionalField> sampleFields = new ArrayList<>();
     private SampleHuman sampleHuman = new SampleHuman();
     private SampleRequester requesterSite;
     private List<SampleTestCollection> sampleItemsTests;

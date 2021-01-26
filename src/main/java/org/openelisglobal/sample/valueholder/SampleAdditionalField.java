@@ -79,7 +79,7 @@ public class SampleAdditionalField extends BaseObject<SampleAdditionalFieldId> {
     }
 
     @Embeddable
-    public class SampleAdditionalFieldId implements Serializable {
+    public static class SampleAdditionalFieldId implements Serializable {
         private static final long serialVersionUID = -9097137007120585441L;
         @Column(name = "field_name")
         @Enumerated(value = EnumType.STRING)

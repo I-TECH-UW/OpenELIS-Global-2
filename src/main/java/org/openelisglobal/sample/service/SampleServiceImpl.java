@@ -31,6 +31,7 @@ import org.openelisglobal.sample.dao.SampleAdditionalFieldDAO;
 import org.openelisglobal.sample.dao.SampleDAO;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.sample.valueholder.SampleAdditionalField;
+import org.openelisglobal.sample.valueholder.SampleAdditionalField.AdditionalFieldName;
 import org.openelisglobal.samplehuman.service.SampleHumanService;
 import org.openelisglobal.sampleqaevent.service.SampleQaEventService;
 import org.openelisglobal.sampleqaevent.valueholder.SampleQaEvent;
@@ -448,7 +449,7 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
     }
 
     @Override
-    public SampleAdditionalField getSampleAdditionalFieldForSample(String sampleId, String fieldName) {
+    public SampleAdditionalField getSampleAdditionalFieldForSample(String sampleId, AdditionalFieldName fieldName) {
         return sampleAdditionalFieldDAO.getFieldForSample(fieldName, sampleId).orElse(new SampleAdditionalField());
     }
 
