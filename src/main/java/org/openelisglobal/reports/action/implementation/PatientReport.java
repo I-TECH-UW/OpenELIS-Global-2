@@ -402,6 +402,8 @@ public abstract class PatientReport extends Report {
         }
         if (Boolean.valueOf(ConfigurationProperties.getInstance().getPropertyValue(Property.CONTACT_TRACING))) {
             reportParameters.put("useContactTracing", Boolean.TRUE);
+        } else {
+            reportParameters.put("useContactTracing", Boolean.FALSE);
         }
     }
 
