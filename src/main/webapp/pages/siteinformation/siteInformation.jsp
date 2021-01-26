@@ -81,7 +81,7 @@
 	<input type="hidden" name="logoName" id="logoName" />
     <input type="file" name="logoFile" onchange="checklogLogoFile( this )" id="inputWidget"/><br/>
     <spring:message code="label.remove.image" />
-    <input type="checkbox" name="removeImage" id="removeImage" />
+    <input type="checkbox" name="removeImage" id="removeImage" value="true" />
     <script type="text/javascript">
         jQuery("#mainForm").attr("enctype", "multipart/form-data");
         jQuery(":file").css("width", "600px"); 
