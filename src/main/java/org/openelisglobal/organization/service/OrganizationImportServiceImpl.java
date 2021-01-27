@@ -94,7 +94,7 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
             }
             organizationService.activateOrganizations(activateOrgs);
             // import fhir organizations as is
-            fhirPersistanceService.createFhirResourcesInFhirStore(remoteFhirOrganizations);
+            fhirPersistanceService.updateFhirResourcesInFhirStore(remoteFhirOrganizations);
         }
         DisplayListService.getInstance().refreshList(ListType.REFERRAL_ORGANIZATIONS);
         DisplayListService.getInstance().refreshList(ListType.SAMPLE_PATIENT_REFERRING_CLINIC);
