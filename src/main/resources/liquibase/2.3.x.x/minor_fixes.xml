@@ -19,7 +19,7 @@
 	</changeSet>
 	
 	<!-- run always since this will patch an error if it ever crops up again -->
-	<changeSet author="csteele" id="3" runAlways="true">
+	<changeSet author="csteele" id="2" runAlways="true">
 		<preConditions onFail="MARK_RAN">
 			<not>
 				<sqlCheck expectedResult="0">SELECT count(*) FROM clinlims.login_user WHERE last_updated is null</sqlCheck> 
@@ -31,5 +31,5 @@
       		<where>last_updated is null</where>
       	</update>
 	</changeSet>
-
+	
 </databaseChangeLog>
