@@ -5,6 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Pattern;
 
+import org.apache.commons.validator.GenericValidator;
 import org.hibernate.StaleObjectStateException;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.formfields.FormFields;
@@ -27,6 +28,8 @@ import org.openelisglobal.sample.form.SamplePatientEntryForm;
 import org.openelisglobal.sample.service.PatientManagementUpdate;
 import org.openelisglobal.sample.service.SamplePatientEntryService;
 import org.openelisglobal.sample.validator.SamplePatientEntryFormValidator;
+import org.openelisglobal.sample.valueholder.SampleAdditionalField;
+import org.openelisglobal.sample.valueholder.SampleAdditionalField.AdditionalFieldName;
 import org.openelisglobal.spring.util.SpringContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -98,6 +101,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
             "sampleOrderItems.facilityPhone", "sampleOrderItems.facilityFax", "sampleOrderItems.paymentOptionSelection",
             "sampleOrderItems.billingReferenceNumber", "sampleOrderItems.testLocationCode",
             "sampleOrderItems.otherLocationCode",
+            "sampleOrderItems.contactTracingIndexName", "sampleOrderItems.contactTracingIndexRecordNumber",
             //
             "currentDate", "sampleOrderItems.newRequesterName", "sampleOrderItems.externalOrderNumber" };
 
@@ -198,6 +202,9 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
         updateData.setProviderEmailNotificationTestIds(form.getProviderEmailNotificationTestIds());
         updateData.setProviderSMSNotificationTestIds(form.getProviderSMSNotificationTestIds());
         updateData.setCustomNotificationLogic(form.getCustomNotificationLogic());
+        if (Boolean.valueOf(ConfigurationProperties.getInstance().getPropertyValue(Property.CONTACT_TRACING))) {
+            setContactTracingInfo(updateData, sampleOrder);
+        }
         updateData.validateSample(result);
 
         if (result.hasErrors()) {
@@ -230,6 +237,22 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 
         redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
         return findForward(FWD_SUCCESS_INSERT, form);
+    }
+
+    private void setContactTracingInfo(SamplePatientUpdateData updateData, SampleOrderItem sampleOrder) {
+        SampleAdditionalField field;
+        if (!GenericValidator.isBlankOrNull(sampleOrder.getContactTracingIndexName())) {
+            field = new SampleAdditionalField();
+            field.setFieldName(AdditionalFieldName.CONTACT_TRACING_INDEX_NAME);
+            field.setFieldValue(sampleOrder.getContactTracingIndexName());
+            updateData.addSampleField(field);
+        }
+        if (!GenericValidator.isBlankOrNull(sampleOrder.getContactTracingIndexRecordNumber())) {
+            field = new SampleAdditionalField();
+            field.setFieldName(AdditionalFieldName.CONTACT_TRACING_INDEX_RECORD_NUMBER);
+            field.setFieldValue(sampleOrder.getContactTracingIndexRecordNumber());
+            updateData.addSampleField(field);
+        }
     }
 
     private void testAndInitializePatientForSaving(HttpServletRequest request, PatientManagementInfo patientInfo,

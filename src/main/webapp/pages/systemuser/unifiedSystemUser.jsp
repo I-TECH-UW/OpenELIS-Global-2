@@ -176,7 +176,7 @@ function mySaveAction() {
 						</td>
 						<td>
 							<form:input path="expirationDate" 
-							          onchange="makeDirty();" />
+							          cssClass='required' onchange="makeDirty();" />
 						</td>
 		</tr>
 		<tr>

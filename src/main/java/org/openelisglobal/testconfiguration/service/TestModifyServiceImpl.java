@@ -84,10 +84,7 @@ public class TestModifyServiceImpl implements TestModifyService {
             // testAddParams.testId, delete then insert to modify for most elements
 
             for (Test test : set.sortedTests) {
-                test.setSysUserId(currentUserId);
-                // if (!test.getId().equals( set.test.getId() )) {
-                testService.update(test);
-                // }
+                updateTestSortOrder(test.getId(), test.getSortOrder(), currentUserId);
             }
 
             updateTestNames(testAddParams.testId, nameLocalization, reportingNameLocalization, currentUserId);
@@ -114,7 +111,6 @@ public class TestModifyServiceImpl implements TestModifyService {
                 }
             }
 
-
             for (TestResult testResult : set.testResults) {
                 testResult.setSysUserId(currentUserId);
                 Test nonTransiantTest = testService.getTestById(set.test.getId());
@@ -132,6 +128,17 @@ public class TestModifyServiceImpl implements TestModifyService {
                 resultLimitService.insert(resultLimit);
             }
         }
+    }
+
+    private void updateTestSortOrder(String testId, String sortOrder, String currentUserId) {
+        Test test = testService.get(testId);
+
+        if (test != null) {
+            test.setSysUserId(currentUserId);
+            test.setSortOrder(sortOrder);
+            testService.update(test);
+        }
+
     }
 
     private void updateTestDefault(String testId, TestResult testResult, String currentUserId) {

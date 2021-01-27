@@ -174,6 +174,7 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
 
         setDBPropertyMappingAndDefault(Property.LAB_DIRECTOR_NAME, Property.LAB_DIRECTOR_NAME.getName(), "");
         setDBPropertyMappingAndDefault(Property.LAB_DIRECTOR_TITLE, Property.LAB_DIRECTOR_TITLE.getName(), "");
+        setDBPropertyMappingAndDefault(Property.CONTACT_TRACING, Property.CONTACT_TRACING.getName(), "false");
         // these are set through external connection now
 //        setDBPropertyMappingAndDefault(Property.INFO_HIGHWAY_ADDRESS, Property.INFO_HIGHWAY_ADDRESS.getName(), "");
 //        setDBPropertyMappingAndDefault(Property.INFO_HIGHWAY_USERNAME, Property.INFO_HIGHWAY_USERNAME.getName(), "");
