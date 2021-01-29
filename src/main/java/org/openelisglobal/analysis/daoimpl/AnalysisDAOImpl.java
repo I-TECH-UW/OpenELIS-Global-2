@@ -337,6 +337,31 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             throw new LIMSRuntimeException("Error in Analysis getAllAnalysisByTestsAndStatuses()", e);
         }
     }
+    
+    @Override
+    @Transactional(readOnly = true)
+    public List<Analysis> getAllAnalysisByTestsAndStatusAndCompletedDateRange(List<String> testIdList,
+            List<Integer> statusIdList, Date lowDate, Date highDate) throws LIMSRuntimeException {
+        List<Integer> testList = new ArrayList<>();
+        try {
+            String sql = "from Analysis a where a.test.id IN (:testList) and a.statusId IN (:statusIdList) "
+                    + "and a.completedDate BETWEEN :lowDate AND :highDate order by a.sampleItem.sample.accessionNumber";
+
+            for (String testId : testIdList) {
+                testList.add(Integer.parseInt(testId));
+            }
+
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setParameterList("testList", testList);
+            query.setParameterList("statusIdList", statusIdList);
+            query.setDate("lowDate", lowDate);
+            query.setDate("highDate", highDate);
+            return query.list();
+        } catch (RuntimeException e) {
+            LogEvent.logError(e.toString(), e);
+            throw new LIMSRuntimeException("Error in Analysis getAllAnalysisByTestsAndStatusAndCompletedDateRange()", e);
+        }
+    }
 
     @Override
     @Transactional(readOnly = true)
@@ -1348,6 +1373,38 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
         return null;
     }
+    
+ 
+    
+    @Override
+    @Transactional(readOnly = true)
+    public List<Analysis> getAllAnalysisByTestsAndStatusAndCompletedDateRange(List<Integer> testIdList, List<Integer> analysisStatusList,
+            List<Integer> sampleStatusList, Date lowDate, Date highDate) {
+        List<Integer> testList = new ArrayList<>();
+        try {
+            String sql = "from Analysis a where a.test.id IN (:testList) and a.statusId IN (:analysisStatusList) "
+                    + "and a.sampleItem.sample.statusId IN (:sampleStatusList) "
+                    + "and a.completedDate BETWEEN :lowDate AND :highDate order by a.sampleItem.sample.accessionNumber";
+
+            for (Integer testId : testIdList) {
+                testList.add(testId);
+            }
+
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setParameterList("testList", testList);
+            query.setParameterList("sampleStatusList", sampleStatusList);
+            query.setParameterList("analysisStatusList", analysisStatusList);
+            query.setDate("lowDate", lowDate);
+            query.setDate("highDate", highDate);
+
+            List<Analysis> analysisList = query.list();
+            return analysisList;
+
+        } catch (HibernateException e) {
+            handleException(e, "getAllAnalysisByTestsAndStatusAndCompletedDateRange");
+        }
+        return null;
+    }
 
     @Override
     @Transactional(readOnly = true)
@@ -1593,6 +1650,8 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         // TODO Auto-generated method stub
         return null;
     }
+
+ 
 
 //	@Override
 //	public Analysis getPatientPreviousAnalysisForTestName(Patient patient, Sample currentSample, String testName) {
