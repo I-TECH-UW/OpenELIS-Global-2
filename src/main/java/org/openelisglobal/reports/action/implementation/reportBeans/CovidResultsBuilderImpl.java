@@ -88,7 +88,6 @@ public abstract class CovidResultsBuilderImpl implements CovidResultsBuilder {
                 this.dateRange.getLowDate(),
                 this.dateRange.getHighDate());
                 
-        System.out.println("getAllAnalysisByTestsAndStatusAndCompleteDateRange:" + analysises.size());
         return analysises;
         
 //        return analysises.stream().filter(analysis -> analysis.getStartedDate().after(this.dateRange.getLowDate())

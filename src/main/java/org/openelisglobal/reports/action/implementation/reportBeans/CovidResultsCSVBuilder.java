@@ -24,8 +24,6 @@ import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.spring.util.SpringContext;
 
-import ca.uhn.fhir.context.FhirContext;
-import ca.uhn.fhir.parser.IParser;
 import ca.uhn.hl7v2.hoh.util.repackage.Base64.Charsets;
 
 public class CovidResultsCSVBuilder extends CovidResultsBuilderImpl {
@@ -164,7 +162,8 @@ public class CovidResultsCSVBuilder extends CovidResultsBuilderImpl {
         valueRow.put(PATIENT_DATE_OF_BIRTH_PROPERTY_NAME, patient.getBirthDateForDisplay());
         valueRow.put(PATIENT_PHONE_NO_PROPERTY_NAME, patient.getPerson().getPrimaryPhone());
         
-        String tString = "{\"resourceType\":\"Task\",\"id\":\"04c4fb6d-8738-4926-a7fe-699f4e28f2d7\",\"meta\":{\"versionId\":\"1\",\"lastUpdated\":\"2020-10-12T05:16:23.651+00:00\",\"source\":\"#Q22w7sIOqJxRwBlj\"},\"identifier\":[{\"id\":\"04c4fb6d-8738-4926-a7fe-699f4e28f2d7\",\"system\":\"https://host.openelis.org/locator-form\"},{\"system\":\"https://testing.openelisci.org:8448/hapi-fhir-jpaserver/fhir/\",\"value\":\"04c4fb6d-8738-4926-a7fe-699f4e28f2d7\"}],\"basedOn\":[{\"reference\":\"ServiceRequest/01ba623d-e465-41a3-bb83-ddcef1edf297\",\"type\":\"ServiceRequest\"}],\"status\":\"requested\",\"description\":\"{\\\"lastName\\\":\\\"Bhurosah\\\",\\\"firstName\\\":\\\"Suresh\\\",\\\"middleInitial\\\":\\\"\\\",\\\"seatNumber\\\":\\\"\\\",\\\"dateOfBirth\\\":\\\"1987-10-20\\\",\\\"sex\\\":\\\"MALE\\\",\\\"nationality\\\":\\\"MU\\\",\\\"passportNumber\\\":\\\"78u\\\",\\\"travellerType\\\":\\\"RESIDENT\\\",\\\"airlineName\\\":\\\"Air Mauritius\\\",\\\"flightNumber\\\":\\\"MK0241\\\",\\\"arrivalDate\\\":\\\"2020-10-13\\\",\\\"title\\\":\\\"MR\\\",\\\"lengthOfStay\\\":null,\\\"countriesVisited\\\":[\\\"AE\\\"],\\\"portOfEmbarkation\\\":\\\"\\\",\\\"fever\\\":null,\\\"soreThroat\\\":null,\\\"jointPain\\\":null,\\\"cough\\\":null,\\\"breathingDifficulties\\\":null,\\\"rash\\\":null,\\\"visitPurpose\\\":\\\"BUSINESS\\\",\\\"mobilePhone\\\":\\\"+23057789383\\\",\\\"fixedPhone\\\":\\\"+2304600133\\\",\\\"email\\\":\\\"pmohabeer@govmu.org\\\",\\\"nationalID\\\":\\\"09087666657456G\\\",\\\"permanentAddress\\\":{\\\"hotelName\\\":null,\\\"numberAndStreet\\\":\\\"Rosehill\\\",\\\"apartmentNumber\\\":\\\"\\\",\\\"city\\\":\\\"\\\",\\\"stateProvince\\\":\\\"\\\",\\\"country\\\":\\\"MU\\\",\\\"zipPostalCode\\\":\\\"\\\"},\\\"temporaryAddress\\\":{\\\"hotelName\\\":\\\"Civic\\\",\\\"numberAndStreet\\\":\\\"camp\\\",\\\"apartmentNumber\\\":\\\"\\\",\\\"city\\\":\\\"\\\",\\\"stateProvince\\\":\\\"\\\",\\\"country\\\":\\\"MU\\\",\\\"zipPostalCode\\\":null},\\\"emergencyContact\\\":{\\\"lastName\\\":\\\"Mohabeer\\\",\\\"firstName\\\":\\\"priya\\\",\\\"address\\\":\\\"Royal Road Mare Tabac\\\",\\\"country\\\":\\\"MU\\\",\\\"mobilePhone\\\":\\\"+23057582994\\\"},\\\"familyTravelCompanions\\\":[],\\\"nonFamilyTravelCompanions\\\":[],\\\"acceptedTerms\\\":true}\"}";
+// gnr: use srStrings to test by commenting off getTaskForAnalysis
+        //        String tString = "{\"resourceType\":\"Task\",\"id\":\"04c4fb6d-8738-4926-a7fe-699f4e28f2d7\",\"meta\":{\"versionId\":\"1\",\"lastUpdated\":\"2020-10-12T05:16:23.651+00:00\",\"source\":\"#Q22w7sIOqJxRwBlj\"},\"identifier\":[{\"id\":\"04c4fb6d-8738-4926-a7fe-699f4e28f2d7\",\"system\":\"https://host.openelis.org/locator-form\"},{\"system\":\"https://testing.openelisci.org:8448/hapi-fhir-jpaserver/fhir/\",\"value\":\"04c4fb6d-8738-4926-a7fe-699f4e28f2d7\"}],\"basedOn\":[{\"reference\":\"ServiceRequest/01ba623d-e465-41a3-bb83-ddcef1edf297\",\"type\":\"ServiceRequest\"}],\"status\":\"requested\",\"description\":\"{\\\"lastName\\\":\\\"Bhurosah\\\",\\\"firstName\\\":\\\"Suresh\\\",\\\"middleInitial\\\":\\\"\\\",\\\"seatNumber\\\":\\\"\\\",\\\"dateOfBirth\\\":\\\"1987-10-20\\\",\\\"sex\\\":\\\"MALE\\\",\\\"nationality\\\":\\\"MU\\\",\\\"passportNumber\\\":\\\"78u\\\",\\\"travellerType\\\":\\\"RESIDENT\\\",\\\"airlineName\\\":\\\"Air Mauritius\\\",\\\"flightNumber\\\":\\\"MK0241\\\",\\\"arrivalDate\\\":\\\"2020-10-13\\\",\\\"title\\\":\\\"MR\\\",\\\"lengthOfStay\\\":null,\\\"countriesVisited\\\":[\\\"AE\\\"],\\\"portOfEmbarkation\\\":\\\"\\\",\\\"fever\\\":null,\\\"soreThroat\\\":null,\\\"jointPain\\\":null,\\\"cough\\\":null,\\\"breathingDifficulties\\\":null,\\\"rash\\\":null,\\\"visitPurpose\\\":\\\"BUSINESS\\\",\\\"mobilePhone\\\":\\\"+23057789383\\\",\\\"fixedPhone\\\":\\\"+2304600133\\\",\\\"email\\\":\\\"pmohabeer@govmu.org\\\",\\\"nationalID\\\":\\\"09087666657456G\\\",\\\"permanentAddress\\\":{\\\"hotelName\\\":null,\\\"numberAndStreet\\\":\\\"Rosehill\\\",\\\"apartmentNumber\\\":\\\"\\\",\\\"city\\\":\\\"\\\",\\\"stateProvince\\\":\\\"\\\",\\\"country\\\":\\\"MU\\\",\\\"zipPostalCode\\\":\\\"\\\"},\\\"temporaryAddress\\\":{\\\"hotelName\\\":\\\"Civic\\\",\\\"numberAndStreet\\\":\\\"camp\\\",\\\"apartmentNumber\\\":\\\"\\\",\\\"city\\\":\\\"\\\",\\\"stateProvince\\\":\\\"\\\",\\\"country\\\":\\\"MU\\\",\\\"zipPostalCode\\\":null},\\\"emergencyContact\\\":{\\\"lastName\\\":\\\"Mohabeer\\\",\\\"firstName\\\":\\\"priya\\\",\\\"address\\\":\\\"Royal Road Mare Tabac\\\",\\\"country\\\":\\\"MU\\\",\\\"mobilePhone\\\":\\\"+23057582994\\\"},\\\"familyTravelCompanions\\\":[],\\\"nonFamilyTravelCompanions\\\":[],\\\"acceptedTerms\\\":true}\"}";
         
         // empty arrays         String srString ="{\"resourceType\":\"ServiceRequest\",\"status\":\"requested\",\"description\":\"{\\\"lastName\\\":\\\"Bhurosah\\\",\\\"firstName\\\":\\\"Suresh\\\",\\\"middleInitial\\\":\\\"\\\",\\\"seatNumber\\\":\\\"\\\",\\\"dateOfBirth\\\":\\\"1987-10-20\\\",\\\"sex\\\":\\\"MALE\\\",\\\"nationality\\\":\\\"MU\\\",\\\"passportNumber\\\":\\\"78u\\\",\\\"travellerType\\\":\\\"RESIDENT\\\",\\\"airlineName\\\":\\\"Air Mauritius\\\",\\\"flightNumber\\\":\\\"MK0241\\\",\\\"arrivalDate\\\":\\\"2020-10-13\\\",\\\"title\\\":\\\"MR\\\",\\\"lengthOfStay\\\":null,\\\"countriesVisited\\\":[\\\"AE\\\"],\\\"portOfEmbarkation\\\":\\\"\\\",\\\"fever\\\":null,\\\"soreThroat\\\":null,\\\"jointPain\\\":null,\\\"cough\\\":null,\\\"breathingDifficulties\\\":null,\\\"rash\\\":null,\\\"visitPurpose\\\":\\\"BUSINESS\\\",\\\"mobilePhone\\\":\\\"+23057789383\\\",\\\"fixedPhone\\\":\\\"+2304600133\\\",\\\"email\\\":\\\"pmohabeer@govmu.org\\\",\\\"nationalID\\\":\\\"09087666657456G\\\",\\\"permanentAddress\\\":{\\\"hotelName\\\":null,\\\"numberAndStreet\\\":\\\"Rosehill\\\",\\\"apartmentNumber\\\":\\\"\\\",\\\"city\\\":\\\"\\\",\\\"stateProvince\\\":\\\"\\\",\\\"country\\\":\\\"MU\\\",\\\"zipPostalCode\\\":\\\"\\\"},\\\"temporaryAddress\\\":{\\\"hotelName\\\":\\\"Civic\\\",\\\"numberAndStreet\\\":\\\"camp\\\",\\\"apartmentNumber\\\":\\\"\\\",\\\"city\\\":\\\"\\\",\\\"stateProvince\\\":\\\"\\\",\\\"country\\\":\\\"MU\\\",\\\"zipPostalCode\\\":null},\\\"emergencyContact\\\":{\\\"lastName\\\":\\\"Mohabeer\\\",\\\"firstName\\\":\\\"priya\\\",\\\"address\\\":\\\"Royal Road Mare Tabac\\\",\\\"country\\\":\\\"MU\\\",\\\"mobilePhone\\\":\\\"+23057582994\\\"},\\\"familyTravelCompanions\\\":[],\\\"nonFamilyTravelCompanions\\\":[],\\\"acceptedTerms\\\":true}\"}";
         // family 1, nonF empty String srString ="{\"resourceType\":\"ServiceRequest\",\"status\":\"requested\",\"description\":\"{\\\"lastName\\\":\\\"Bhurosah\\\",\\\"firstName\\\":\\\"Suresh\\\",\\\"middleInitial\\\":\\\"\\\",\\\"seatNumber\\\":\\\"\\\",\\\"dateOfBirth\\\":\\\"1987-10-20\\\",\\\"sex\\\":\\\"MALE\\\",\\\"nationality\\\":\\\"MU\\\",\\\"passportNumber\\\":\\\"78u\\\",\\\"travellerType\\\":\\\"RESIDENT\\\",\\\"airlineName\\\":\\\"Air Mauritius\\\",\\\"flightNumber\\\":\\\"MK0241\\\",\\\"arrivalDate\\\":\\\"2020-10-13\\\",\\\"title\\\":\\\"MR\\\",\\\"lengthOfStay\\\":null,\\\"countriesVisited\\\":[\\\"AE\\\"],\\\"portOfEmbarkation\\\":\\\"\\\",\\\"fever\\\":null,\\\"soreThroat\\\":null,\\\"jointPain\\\":null,\\\"cough\\\":null,\\\"breathingDifficulties\\\":null,\\\"rash\\\":null,\\\"visitPurpose\\\":\\\"BUSINESS\\\",\\\"mobilePhone\\\":\\\"+23057789383\\\",\\\"fixedPhone\\\":\\\"+2304600133\\\",\\\"email\\\":\\\"pmohabeer@govmu.org\\\",\\\"nationalID\\\":\\\"09087666657456G\\\",\\\"permanentAddress\\\":{\\\"hotelName\\\":null,\\\"numberAndStreet\\\":\\\"Rosehill\\\",\\\"apartmentNumber\\\":\\\"\\\",\\\"city\\\":\\\"\\\",\\\"stateProvince\\\":\\\"\\\",\\\"country\\\":\\\"MU\\\",\\\"zipPostalCode\\\":\\\"\\\"},\\\"temporaryAddress\\\":{\\\"hotelName\\\":\\\"Civic\\\",\\\"numberAndStreet\\\":\\\"camp\\\",\\\"apartmentNumber\\\":\\\"\\\",\\\"city\\\":\\\"\\\",\\\"stateProvince\\\":\\\"\\\",\\\"country\\\":\\\"MU\\\",\\\"zipPostalCode\\\":null},\\\"emergencyContact\\\":{\\\"lastName\\\":\\\"Mohabeer\\\",\\\"firstName\\\":\\\"priya\\\",\\\"address\\\":\\\"Royal Road Mare Tabac\\\",\\\"country\\\":\\\"MU\\\",\\\"mobilePhone\\\":\\\"+23057582994\\\"},\\\"familyTravelCompanions\\\":[{\\\"lastName\\\":\\\"familyTest\\\",\\\"firstName\\\":\\\"Junior\\\",\\\"middleInitial\\\":\\\"\\\",\\\"seatNumber\\\":\\\"4B\\\",\\\"dateOfBirth\\\":\\\"2005-05-15\\\",\\\"sex\\\":\\\"MALE\\\",\\\"nationality\\\":\\\"LU\\\",\\\"passportNumber\\\":\\\"7676767676767\\\"}],\\\"nonFamilyTravelCompanions\\\":[],\\\"acceptedTerms\\\":true}\"}";
@@ -172,33 +171,35 @@ public class CovidResultsCSVBuilder extends CovidResultsBuilderImpl {
         // fam 1 nonf 1 String srString ="{\"resourceType\":\"ServiceRequest\",\"status\":\"requested\",\"description\":\"{\\\"lastName\\\":\\\"Bhurosah\\\",\\\"firstName\\\":\\\"Suresh\\\",\\\"middleInitial\\\":\\\"\\\",\\\"seatNumber\\\":\\\"\\\",\\\"dateOfBirth\\\":\\\"1987-10-20\\\",\\\"sex\\\":\\\"MALE\\\",\\\"nationality\\\":\\\"MU\\\",\\\"passportNumber\\\":\\\"78u\\\",\\\"travellerType\\\":\\\"RESIDENT\\\",\\\"airlineName\\\":\\\"Air Mauritius\\\",\\\"flightNumber\\\":\\\"MK0241\\\",\\\"arrivalDate\\\":\\\"2020-10-13\\\",\\\"title\\\":\\\"MR\\\",\\\"lengthOfStay\\\":null,\\\"countriesVisited\\\":[\\\"AE\\\"],\\\"portOfEmbarkation\\\":\\\"\\\",\\\"fever\\\":null,\\\"soreThroat\\\":null,\\\"jointPain\\\":null,\\\"cough\\\":null,\\\"breathingDifficulties\\\":null,\\\"rash\\\":null,\\\"visitPurpose\\\":\\\"BUSINESS\\\",\\\"mobilePhone\\\":\\\"+23057789383\\\",\\\"fixedPhone\\\":\\\"+2304600133\\\",\\\"email\\\":\\\"pmohabeer@govmu.org\\\",\\\"nationalID\\\":\\\"09087666657456G\\\",\\\"permanentAddress\\\":{\\\"hotelName\\\":null,\\\"numberAndStreet\\\":\\\"Rosehill\\\",\\\"apartmentNumber\\\":\\\"\\\",\\\"city\\\":\\\"\\\",\\\"stateProvince\\\":\\\"\\\",\\\"country\\\":\\\"MU\\\",\\\"zipPostalCode\\\":\\\"\\\"},\\\"temporaryAddress\\\":{\\\"hotelName\\\":\\\"Civic\\\",\\\"numberAndStreet\\\":\\\"camp\\\",\\\"apartmentNumber\\\":\\\"\\\",\\\"city\\\":\\\"\\\",\\\"stateProvince\\\":\\\"\\\",\\\"country\\\":\\\"MU\\\",\\\"zipPostalCode\\\":null},\\\"emergencyContact\\\":{\\\"lastName\\\":\\\"Mohabeer\\\",\\\"firstName\\\":\\\"priya\\\",\\\"address\\\":\\\"Royal Road Mare Tabac\\\",\\\"country\\\":\\\"MU\\\",\\\"mobilePhone\\\":\\\"+23057582994\\\"},\\\"familyTravelCompanions\\\":[{\\\"lastName\\\":\\\"familyTest\\\",\\\"firstName\\\":\\\"Junior\\\",\\\"middleInitial\\\":\\\"\\\",\\\"seatNumber\\\":\\\"4B\\\",\\\"dateOfBirth\\\":\\\"2005-05-15\\\",\\\"sex\\\":\\\"MALE\\\",\\\"nationality\\\":\\\"LU\\\",\\\"passportNumber\\\":\\\"7676767676767\\\"}] ,\\\"nonFamilyTravelCompanions\\\":[{\\\"lastName\\\":\\\"familyTest\\\",\\\"firstName\\\":\\\"Junior\\\",\\\"middleInitial\\\":\\\"\\\",\\\"seatNumber\\\":\\\"4B\\\",\\\"dateOfBirth\\\":\\\"2005-05-15\\\",\\\"sex\\\":\\\"MALE\\\",\\\"nationality\\\":\\\"LU\\\",\\\"passportNumber\\\":\\\"7676767676767\\\"}],\\\"acceptedTerms\\\":true}\"}";
         
         // fam 1 nonf 2
-        String srString ="{\"resourceType\":\"ServiceRequest\",\"status\":\"requested\",\"description\":\"{\\\"lastName\\\":\\\"Bhurosah\\\",\\\"firstName\\\":\\\"Suresh\\\",\\\"middleInitial\\\":\\\"\\\",\\\"seatNumber\\\":\\\"\\\",\\\"dateOfBirth\\\":\\\"1987-10-20\\\",\\\"sex\\\":\\\"MALE\\\",\\\"nationality\\\":\\\"MU\\\",\\\"passportNumber\\\":\\\"78u\\\",\\\"travellerType\\\":\\\"RESIDENT\\\",\\\"airlineName\\\":\\\"Air Mauritius\\\",\\\"flightNumber\\\":\\\"MK0241\\\",\\\"arrivalDate\\\":\\\"2020-10-13\\\",\\\"title\\\":\\\"MR\\\",\\\"lengthOfStay\\\":null,\\\"countriesVisited\\\":[\\\"AE\\\"],\\\"portOfEmbarkation\\\":\\\"\\\",\\\"fever\\\":null,\\\"soreThroat\\\":null,\\\"jointPain\\\":null,\\\"cough\\\":null,\\\"breathingDifficulties\\\":null,\\\"rash\\\":null,\\\"visitPurpose\\\":\\\"BUSINESS\\\",\\\"mobilePhone\\\":\\\"+23057789383\\\",\\\"fixedPhone\\\":\\\"+2304600133\\\",\\\"email\\\":\\\"pmohabeer@govmu.org\\\",\\\"nationalID\\\":\\\"09087666657456G\\\",\\\"permanentAddress\\\":{\\\"hotelName\\\":null,\\\"numberAndStreet\\\":\\\"Rosehill\\\",\\\"apartmentNumber\\\":\\\"\\\",\\\"city\\\":\\\"\\\",\\\"stateProvince\\\":\\\"\\\",\\\"country\\\":\\\"MU\\\",\\\"zipPostalCode\\\":\\\"\\\"},\\\"temporaryAddress\\\":{\\\"hotelName\\\":\\\"Civic\\\",\\\"numberAndStreet\\\":\\\"camp\\\",\\\"apartmentNumber\\\":\\\"\\\",\\\"city\\\":\\\"\\\",\\\"stateProvince\\\":\\\"\\\",\\\"country\\\":\\\"MU\\\",\\\"zipPostalCode\\\":null},\\\"emergencyContact\\\":{\\\"lastName\\\":\\\"Mohabeer\\\",\\\"firstName\\\":\\\"priya\\\",\\\"address\\\":\\\"Royal Road Mare Tabac\\\",\\\"country\\\":\\\"MU\\\",\\\"mobilePhone\\\":\\\"+23057582994\\\"},\\\"familyTravelCompanions\\\":[{\\\"lastName\\\":\\\"familyTest\\\",\\\"firstName\\\":\\\"Junior\\\",\\\"middleInitial\\\":\\\"\\\",\\\"seatNumber\\\":\\\"4B\\\",\\\"dateOfBirth\\\":\\\"2005-05-15\\\",\\\"sex\\\":\\\"MALE\\\",\\\"nationality\\\":\\\"LU\\\",\\\"passportNumber\\\":\\\"7676767676767\\\"}],\\\"nonFamilyTravelCompanions\\\":[{\\\"lastName\\\":\\\"nonFamilyTest\\\",\\\"firstName\\\":\\\"Junior1\\\",\\\"middleInitial\\\":\\\"\\\",\\\"seatNumber\\\":\\\"4B\\\",\\\"dateOfBirth\\\":\\\"2005-05-15\\\",\\\"sex\\\":\\\"MALE\\\",\\\"nationality\\\":\\\"LU\\\",\\\"passportNumber\\\":\\\"7676767676767\\\"}, {\\\"lastName\\\":\\\"nonFamilyTest\\\",\\\"firstName\\\":\\\"Junior2\\\",\\\"middleInitial\\\":\\\"\\\",\\\"seatNumber\\\":\\\"4B\\\",\\\"dateOfBirth\\\":\\\"2005-05-15\\\",\\\"sex\\\":\\\"MALE\\\",\\\"nationality\\\":\\\"LU\\\",\\\"passportNumber\\\":\\\"7676767676767\\\"}],\\\"acceptedTerms\\\":true}\"}";
+//        String srString ="{\"resourceType\":\"ServiceRequest\",\"status\":\"requested\",\"description\":\"{\\\"lastName\\\":\\\"Bhurosah\\\",\\\"firstName\\\":\\\"Suresh\\\",\\\"middleInitial\\\":\\\"\\\",\\\"seatNumber\\\":\\\"\\\",\\\"dateOfBirth\\\":\\\"1987-10-20\\\",\\\"sex\\\":\\\"MALE\\\",\\\"nationality\\\":\\\"MU\\\",\\\"passportNumber\\\":\\\"78u\\\",\\\"travellerType\\\":\\\"RESIDENT\\\",\\\"airlineName\\\":\\\"Air Mauritius\\\",\\\"flightNumber\\\":\\\"MK0241\\\",\\\"arrivalDate\\\":\\\"2020-10-13\\\",\\\"title\\\":\\\"MR\\\",\\\"lengthOfStay\\\":null,\\\"countriesVisited\\\":[\\\"AE\\\"],\\\"portOfEmbarkation\\\":\\\"\\\",\\\"fever\\\":null,\\\"soreThroat\\\":null,\\\"jointPain\\\":null,\\\"cough\\\":null,\\\"breathingDifficulties\\\":null,\\\"rash\\\":null,\\\"visitPurpose\\\":\\\"BUSINESS\\\",\\\"mobilePhone\\\":\\\"+23057789383\\\",\\\"fixedPhone\\\":\\\"+2304600133\\\",\\\"email\\\":\\\"pmohabeer@govmu.org\\\",\\\"nationalID\\\":\\\"09087666657456G\\\",\\\"permanentAddress\\\":{\\\"hotelName\\\":null,\\\"numberAndStreet\\\":\\\"Rosehill\\\",\\\"apartmentNumber\\\":\\\"\\\",\\\"city\\\":\\\"\\\",\\\"stateProvince\\\":\\\"\\\",\\\"country\\\":\\\"MU\\\",\\\"zipPostalCode\\\":\\\"\\\"},\\\"temporaryAddress\\\":{\\\"hotelName\\\":\\\"Civic\\\",\\\"numberAndStreet\\\":\\\"camp\\\",\\\"apartmentNumber\\\":\\\"\\\",\\\"city\\\":\\\"\\\",\\\"stateProvince\\\":\\\"\\\",\\\"country\\\":\\\"MU\\\",\\\"zipPostalCode\\\":null},\\\"emergencyContact\\\":{\\\"lastName\\\":\\\"Mohabeer\\\",\\\"firstName\\\":\\\"priya\\\",\\\"address\\\":\\\"Royal Road Mare Tabac\\\",\\\"country\\\":\\\"MU\\\",\\\"mobilePhone\\\":\\\"+23057582994\\\"},\\\"familyTravelCompanions\\\":[{\\\"lastName\\\":\\\"familyTest\\\",\\\"firstName\\\":\\\"Junior\\\",\\\"middleInitial\\\":\\\"\\\",\\\"seatNumber\\\":\\\"4B\\\",\\\"dateOfBirth\\\":\\\"2005-05-15\\\",\\\"sex\\\":\\\"MALE\\\",\\\"nationality\\\":\\\"LU\\\",\\\"passportNumber\\\":\\\"7676767676767\\\"}],\\\"nonFamilyTravelCompanions\\\":[{\\\"lastName\\\":\\\"nonFamilyTest\\\",\\\"firstName\\\":\\\"Junior1\\\",\\\"middleInitial\\\":\\\"\\\",\\\"seatNumber\\\":\\\"4B\\\",\\\"dateOfBirth\\\":\\\"2005-05-15\\\",\\\"sex\\\":\\\"MALE\\\",\\\"nationality\\\":\\\"LU\\\",\\\"passportNumber\\\":\\\"7676767676767\\\"}, {\\\"lastName\\\":\\\"nonFamilyTest\\\",\\\"firstName\\\":\\\"Junior2\\\",\\\"middleInitial\\\":\\\"\\\",\\\"seatNumber\\\":\\\"4B\\\",\\\"dateOfBirth\\\":\\\"2005-05-15\\\",\\\"sex\\\":\\\"MALE\\\",\\\"nationality\\\":\\\"LU\\\",\\\"passportNumber\\\":\\\"7676767676767\\\"}],\\\"acceptedTerms\\\":true}\"}";
         
-        FhirContext fhirContext = FhirContext.forR4();
-        IParser parser = fhirContext.newJsonParser();
+//        FhirContext fhirContext = FhirContext.forR4();
+//        IParser parser = fhirContext.newJsonParser();
 
-        Task ttask = parser.parseResource(Task.class, tString);
-        Optional<Task> task = Optional.ofNullable(ttask);
-        
-    
-        JSONObject json = new JSONObject(srString);
-        System.out.println("description:" + json.getString("description"));
-   
-        JSONObject jDescription = new JSONObject(json.getString("description"));
-        System.out.println("description:" + jDescription.toString());
-        
-        JSONArray jFamilyTravelCompanions = new JSONArray(jDescription.get("familyTravelCompanions").toString());
-        System.out.println("familyTravelCompanions:" + jFamilyTravelCompanions.toString());
-        JSONArray jNonFamilyTravelCompanions = new JSONArray(jDescription.get("nonFamilyTravelCompanions").toString());
-        System.out.println("jNonFamilyTravelCompanions:" + jNonFamilyTravelCompanions.toString());
+//        Task ttask = parser.parseResource(Task.class, tString);
+//        Optional<Task> task = Optional.ofNullable(ttask);
+//        
+//    
+//        JSONObject json = new JSONObject(srString);
+//        System.out.println("description:" + json.getString("description"));
+//   
+//        JSONObject jDescription = new JSONObject(json.getString("description"));
+//        System.out.println("description:" + jDescription.toString());
+//        
+//        JSONArray jFamilyTravelCompanions = new JSONArray(jDescription.get("familyTravelCompanions").toString());
+//        System.out.println("familyTravelCompanions:" + jFamilyTravelCompanions.toString());
+//        JSONArray jNonFamilyTravelCompanions = new JSONArray(jDescription.get("nonFamilyTravelCompanions").toString());
+//        System.out.println("jNonFamilyTravelCompanions:" + jNonFamilyTravelCompanions.toString());
 
         try {
-//            Optional<Task> task = getTaskForAnalysis(analysis);
+            Optional<Task> task = getTaskForAnalysis(analysis);
+            
             if (task.isPresent() && !GenericValidator.isBlankOrNull(task.get().getDescription())) {
                 try {
-//                    System.out.println("jDescription:" + jDescription.toString());
-                    System.out.println("jFamilyTravelCompanions:" + jFamilyTravelCompanions.toString());
-                    
+                    JSONObject jDescription = new JSONObject(task.get().getDescription());
+                    JSONArray jFamilyTravelCompanions = new JSONArray(jDescription.get("familyTravelCompanions").toString());
+                    JSONArray jNonFamilyTravelCompanions = new JSONArray(jDescription.get("nonFamilyTravelCompanions").toString());
+                        
                     convertJSONToCSV(new JSONObject(task.get().getDescription()), LOCATOR_FORM_PROPERTY_NAME, valueRow, jFamilyTravelCompanions, jNonFamilyTravelCompanions );
                 } catch (JSONException e) {
                     LogEvent.logError(this.getClass().getName(), "addValueRow",
@@ -221,19 +222,13 @@ public class CovidResultsCSVBuilder extends CovidResultsBuilderImpl {
         
         for ( Integer i = 0; i <= keyMap.size(); i++) {
             String keyMatch = keyMap.get(i);
-//            System.out.println(">>>" + i.toString() + " " + keyMatch);
             for (String key : jsonObject.keySet()) {
-//                System.out.println("<<<" + key);
                 if (!key.equalsIgnoreCase(keyMatch)) { // skip
                 } else {
 
                     if (jsonObject.get(key) == null) {
                         String columnName = getCreateColumnName(keyPrefix, ".", key);
                         valueRow.put(columnName, EMPTY_VALUE);
-//                } else if (jsonObject.get(key) instanceof JSONObject) {
-//                    convertJSONToCSV(jsonObject.getJSONObject(key), keyPrefix + "." + key, valueRow);
-//                } else if (jsonObject.get(key) instanceof JSONArray) {
-//                    convertJSONToCSV(jsonObject.getJSONArray(key), keyPrefix + "." + key, valueRow);
                     } else  {
                         String columnName = getCreateColumnName(keyPrefix, ".", key);
                         valueRow.put(columnName, jsonObject.get(key).toString());
@@ -244,26 +239,18 @@ public class CovidResultsCSVBuilder extends CovidResultsBuilderImpl {
     }
 
     private void convertJSONToCSV(JSONObject jsonObject, String keyPrefix, Map<String, String> valueRow, JSONArray jFamilyTravelCompanions, JSONArray jNonFamilyTravelCompanions) {
-        System.out.println("jFamilyTravelCompanions" + jFamilyTravelCompanions.toString());
-        System.out.println("jNonFamilyTravelCompanions" + jNonFamilyTravelCompanions.toString());
         
         Map<Integer, String> keyMap = descriptionFieldOrder.get(0);
         
         for ( Integer i = 0; i <= keyMap.size(); i++) {
             String keyMatch = keyMap.get(i);
-//            System.out.println(">>>" + i.toString() + " " + keyMatch);
             for (String key : jsonObject.keySet()) {
-//                System.out.println("<<<" + key);
                 if (!key.equalsIgnoreCase(keyMatch)) { // skip
                 } else {
 
                     if (jsonObject.get(key) == null) {
                         String columnName = getCreateColumnName(keyPrefix, ".", key);
                         valueRow.put(columnName, EMPTY_VALUE);
-//                } else if (jsonObject.get(key) instanceof JSONObject) {
-//                    convertJSONToCSV(jsonObject.getJSONObject(key), keyPrefix + "." + key, valueRow);
-//                } else if (jsonObject.get(key) instanceof JSONArray) {
-//                    convertJSONToCSV(jsonObject.getJSONArray(key), keyPrefix + "." + key, valueRow);
                     } else if (!(key.equalsIgnoreCase("permanentAddress") || key.equalsIgnoreCase("temporaryAddress")
                             || key.equalsIgnoreCase("emergencyContact")
                             || key.equalsIgnoreCase("familyTravelCompanions")
@@ -276,56 +263,28 @@ public class CovidResultsCSVBuilder extends CovidResultsBuilderImpl {
         }
         
         keyMap = addressFieldOrder.get(0);
-//        System.out.println("km size" + keyMap.size());
         for ( Integer i = 0; i <= keyMap.size(); i++) {
             String keyMatch = keyMap.get(i);
-//            System.out.println(">>>" + i.toString() + " " + keyMatch);
             for (String key : jsonObject.keySet()) {
-//                System.out.println("<<<" + key);
                 if (!key.equalsIgnoreCase(keyMatch)) { // skip
                 } else {
 
-//                    if (jsonObject.get(key) == null) {
-//                        String columnName = getCreateColumnName(keyPrefix, ".", key);
-//                        valueRow.put(columnName, EMPTY_VALUE);
                     if (jsonObject.get(key) instanceof JSONObject && (key.equalsIgnoreCase("permanentAddress") || key.equalsIgnoreCase("temporaryAddress"))) {
                         convertJSONToCSV(jsonObject.getJSONObject(key), keyPrefix + "." + key, valueRow, keyMap);
-//                } else if (jsonObject.get(key) instanceof JSONArray) {
-//                    convertJSONToCSV(jsonObject.getJSONArray(key), keyPrefix + "." + key, valueRow);
-//                    } else if (!(key.equalsIgnoreCase("permanentAddress") || key.equalsIgnoreCase("temporaryAddress")
-//                            || key.equalsIgnoreCase("emergencyContact")
-//                            || key.equalsIgnoreCase("familyTravelCompanions")
-//                            || key.equalsIgnoreCase("nonFamilyTravelCompanions"))) {
-//                        String columnName = getCreateColumnName(keyPrefix, ".", key);
-//                        valueRow.put(columnName, jsonObject.get(key).toString());
                     }
                 }
             }
         }
         
         keyMap = emergencyContactFieldOrder.get(0);
-//        System.out.println("km size" + keyMap.size());
         for ( Integer i = 0; i <= keyMap.size(); i++) {
             String keyMatch = keyMap.get(i);
-//            System.out.println(">>>" + i.toString() + " " + keyMatch);
             for (String key : jsonObject.keySet()) {
-//                System.out.println("<<<" + key);
                 if (!key.equalsIgnoreCase(keyMatch)) { // skip
                 } else {
 
-//                    if (jsonObject.get(key) == null) {
-//                        String columnName = getCreateColumnName(keyPrefix, ".", key);
-//                        valueRow.put(columnName, EMPTY_VALUE);
                     if (jsonObject.get(key) instanceof JSONObject && (key.equalsIgnoreCase("emergencyContact"))) {
                         convertJSONToCSV(jsonObject.getJSONObject(key), keyPrefix + "." + key, valueRow, keyMap);
-//                } else if (jsonObject.get(key) instanceof JSONArray) {
-//                    convertJSONToCSV(jsonObject.getJSONArray(key), keyPrefix + "." + key, valueRow);
-//                    } else if (!(key.equalsIgnoreCase("permanentAddress") || key.equalsIgnoreCase("temporaryAddress")
-//                            || key.equalsIgnoreCase("emergencyContact")
-//                            || key.equalsIgnoreCase("familyTravelCompanions")
-//                            || key.equalsIgnoreCase("nonFamilyTravelCompanions"))) {
-//                        String columnName = getCreateColumnName(keyPrefix, ".", key);
-//                        valueRow.put(columnName, jsonObject.get(key).toString());
                     }
                 }
             }
@@ -333,20 +292,12 @@ public class CovidResultsCSVBuilder extends CovidResultsBuilderImpl {
         
         
         keyMap = travelCompanionFieldOrder.get(0);
-//        System.out.println("km size" + keyMap.size());
         for ( Integer i = 0; i <= keyMap.size(); i++) {
             String keyMatch = keyMap.get(i);
-//            System.out.println(">>>" + i.toString() + " " + keyMatch);
             for (String key : jsonObject.keySet()) {
-//                System.out.println("<<<" + key);
                 if (!key.equalsIgnoreCase(keyMatch)) { // skip
                 } else {
 
-//                    if (jsonObject.get(key) == null) {
-//                        String columnName = getCreateColumnName(keyPrefix, ".", key);
-//                        valueRow.put(columnName, EMPTY_VALUE);
-//                    if (jsonObject.get(key) instanceof JSONObject && (key.equalsIgnoreCase("permanentAddress") || key.equalsIgnoreCase("temporaryAddress"))) {
-//                        convertJSONToCSV(jsonObject.getJSONObject(key), keyPrefix + "." + key, valueRow, keyMap);
                     if (jsonObject.get(key) instanceof JSONArray 
                             && key.equalsIgnoreCase("familyTravelCompanions")) {
                         convertJSONToCSV(jFamilyTravelCompanions, keyPrefix + "." + key, valueRow, keyMap);
@@ -364,7 +315,6 @@ public class CovidResultsCSVBuilder extends CovidResultsBuilderImpl {
         
         
         Iterator<Object> iterator = jsonArray.iterator();
-        System.out.println("jsonArray:" + jsonArray.toString());
         int i = 0;
         while (iterator.hasNext()) {
             Object object = iterator.next();
