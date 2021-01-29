@@ -820,6 +820,25 @@ public class FhirTransformServiceImpl implements FhirTransformService {
     }
 
     @Override
+    public org.hl7.fhir.r4.model.Organization organizationToFhirOrganization(Organization organization) {
+        org.hl7.fhir.r4.model.Organization fhirOrganization = new org.hl7.fhir.r4.model.Organization();
+        fhirOrganization.setId(organization.getId());
+        fhirOrganization.setName(organization.getOrganizationName());
+        this.setFhirIdentifiers(fhirOrganization, organization);
+        this.setFhirAddressInfo(fhirOrganization, organization);
+        this.setFhirOrganizationTypes(fhirOrganization, organization);
+
+//        if (!GenericValidator.isBlankOrNull(organization.getInternetAddress())) {
+//            Endpoint endpoint = this.setFhirConnectionInfo(fhirOrganization, organization);
+//        }
+//        if (organization.getOrganization() != null) {
+//            org.hl7.fhir.r4.model.Organization parentFhirOrganization = this.setFhirParentOrg(fhirOrganization,
+//                    organization);
+//        }
+        return fhirOrganization;
+    }
+
+    @Override
     public Organization fhirOrganizationToOrganization(org.hl7.fhir.r4.model.Organization fhirOrganization,
             IGenericClient client) {
         Organization organization = new Organization();
@@ -862,6 +881,21 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         }
     }
 
+    private void setFhirIdentifiers(org.hl7.fhir.r4.model.Organization fhirOrganization, Organization organization) {
+        if (!GenericValidator.isBlankOrNull(organization.getCliaNum())) {
+            fhirOrganization.addIdentifier(new Identifier().setSystem(fhirConfig.getOeFhirSystem() + "/org_cliaNum")
+                    .setValue(organization.getCliaNum()));
+        }
+        if (!GenericValidator.isBlankOrNull(organization.getShortName())) {
+            fhirOrganization.addIdentifier(new Identifier().setSystem(fhirConfig.getOeFhirSystem() + "/org_shortName")
+                    .setValue(organization.getShortName()));
+        }
+        if (!GenericValidator.isBlankOrNull(organization.getCode())) {
+            fhirOrganization.addIdentifier(new Identifier().setSystem(fhirConfig.getOeFhirSystem() + "/org_code")
+                    .setValue(organization.getCode()));
+        }
+    }
+
     private void setOrganizationTypes(Organization organization, org.hl7.fhir.r4.model.Organization fhirOrganization,
             IGenericClient client) {
         Set<OrganizationType> orgTypes = new HashSet<>();
@@ -882,6 +916,18 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         organization.setOrganizationTypes(orgTypes);
     }
 
+    private void setFhirOrganizationTypes(org.hl7.fhir.r4.model.Organization fhirOrganization,
+            Organization organization) {
+        Set<OrganizationType> orgTypes = organization.getOrganizationTypes();
+        for (OrganizationType orgType : orgTypes) {
+            fhirOrganization.addType(new CodeableConcept() //
+                    .setText(orgType.getDescription()) //
+                    .addCoding(new Coding() //
+                            .setSystem(fhirConfig.getOeFhirSystem() + "/orgType") //
+                            .setCode(orgType.getName())));
+        }
+    }
+
     private void setConnectionInfo(Organization organization, org.hl7.fhir.r4.model.Organization fhirOrganization,
             IGenericClient client) {
         Endpoint endpoint = client.read().resource(Endpoint.class)
@@ -898,6 +944,21 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         organization.setCity(fhirOrganization.getAddressFirstRep().getCity());
         organization.setState(fhirOrganization.getAddressFirstRep().getState());
         organization.setZipCode(fhirOrganization.getAddressFirstRep().getPostalCode());
+    }
+
+    private void setFhirAddressInfo(org.hl7.fhir.r4.model.Organization fhirOrganization, Organization organization) {
+        if (!GenericValidator.isBlankOrNull(organization.getStreetAddress())) {
+            fhirOrganization.getAddressFirstRep().addLine(organization.getStreetAddress());
+        }
+        if (!GenericValidator.isBlankOrNull(organization.getCity())) {
+            fhirOrganization.getAddressFirstRep().setCity(organization.getCity());
+        }
+        if (!GenericValidator.isBlankOrNull(organization.getState())) {
+            fhirOrganization.getAddressFirstRep().setState(organization.getState());
+        }
+        if (!GenericValidator.isBlankOrNull(organization.getZipCode())) {
+            fhirOrganization.getAddressFirstRep().setPostalCode(organization.getZipCode());
+        }
     }
 
     @Override

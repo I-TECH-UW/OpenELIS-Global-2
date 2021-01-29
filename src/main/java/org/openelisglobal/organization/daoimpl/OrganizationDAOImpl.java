@@ -334,6 +334,25 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 
     @Override
     @Transactional(readOnly = true)
+    public List<Organization> getActiveOrganizations() throws LIMSRuntimeException {
+        String sql = null;
+        try {
+            sql = "from Organization o where o.isActive='Y'";
+
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            List<Organization> list = query.list();
+
+            return list;
+
+        } catch (RuntimeException e) {
+            // bugzilla 2154
+            LogEvent.logError(e.toString(), e);
+            throw new LIMSRuntimeException("Error in Organization getActiveOrganizations()", e);
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public Organization getOrganizationByName(Organization organization, boolean ignoreCase)
             throws LIMSRuntimeException {
         String sql = null;

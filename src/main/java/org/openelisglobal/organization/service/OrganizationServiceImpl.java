@@ -37,6 +37,12 @@ public class OrganizationServiceImpl extends BaseObjectServiceImpl<Organization,
 
     @Override
     @Transactional(readOnly = true)
+    public List<Organization> getActiveOrganizations() {
+        return baseObjectDAO.getActiveOrganizations();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public Organization getOrganizationByName(Organization organization, boolean ignoreCase) {
         return baseObjectDAO.getOrganizationByName(organization, ignoreCase);
     }
