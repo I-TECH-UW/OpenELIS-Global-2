@@ -21,6 +21,7 @@ import java.text.DateFormatSymbols;
 import java.text.ParseException;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
+import java.time.Period;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -381,16 +382,18 @@ public class DateUtil {
 
     public static String getCurrentAgeForDate(Timestamp birthDate, Timestamp endDate) {
         if (birthDate != null) {
-            long age = endDate.getTime() - birthDate.getTime();
-
-            Date ageDate = new Date(age);
-
-            Calendar calendar = new GregorianCalendar();
-            calendar.setTime(ageDate);
-
-            return String.valueOf(calendar.get(Calendar.YEAR) - EPIC);
+            Period period = Period.between(birthDate.toLocalDateTime().toLocalDate(),
+                    endDate.toLocalDateTime().toLocalDate());
+            return String.valueOf(period.getYears());
         }
 
+        return null;
+    }
+
+    public static Period getPeriodBetweenDates(Timestamp birthDate, Timestamp endDate) {
+        if (birthDate != null) {
+            return Period.between(birthDate.toLocalDateTime().toLocalDate(), endDate.toLocalDateTime().toLocalDate());
+        }
         return null;
     }
 

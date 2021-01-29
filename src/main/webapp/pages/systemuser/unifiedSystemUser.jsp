@@ -175,8 +175,10 @@ function mySaveAction() {
 							<spring:message code="login.password.expired.date" /> <span class="requiredlabel">*</span>
 						</td>
 						<td>
-							<form:input path="expirationDate"
-										cssClass='required' onchange="requiredFieldUpdated(this); makeDirty();" />
+
+							<form:input path="expirationDate" 
+							          cssClass='required' onchange="makeDirty();" />
+
 						</td>
 		</tr>
 		<tr>

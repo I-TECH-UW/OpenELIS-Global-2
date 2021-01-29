@@ -362,7 +362,9 @@ function  /*void*/ checkValidAgeDate(dateElement)
 		setValidIndicaterOnField(dateElement.value.blank(), dateElement.name);
 	    pt_setFieldValidity( dateElement.value.blank(),  dateElement.name);
 		pt_setSave();
-		$("age").value = null;
+		$("ageYears").value = null;
+		$("ageMonths").value = null;
+		$("ageDays").value = null;
 	}
 }
 
@@ -393,42 +395,45 @@ function  /*void*/ updatePatientAge( DOB )
 	var dayDOB = splitDOB[dayIndex];
 	var yearDOB = splitDOB[yearIndex];
 
+	var birthdate = new Date(yearDOB, monthDOB - 1, dayDOB);
 	var today = new Date();
+	var ageDate  = new Date(today - birthdate);
+	
+	var diffJSON = dateDiffToday(yearDOB + "-" + monthDOB + "-" + dayDOB);
+	
+	var ageYears = diffJSON['years'];
+	var ageMonths = diffJSON['months'];
+	var ageDays = diffJSON['days'];
 
-	var adjustment = 0;
+	jQuery("#ageYears").val(ageYears);
+	jQuery("#ageMonths").val(ageMonths);
+	jQuery("#ageDays").val(ageDays);
 
-	if( !monthDOB.match( /^\d+$/ ) ){
-		monthDOB = "01";
-	}
-
-	if( !dayDOB.match( /^\d+$/ ) ){
-		dayDOB = "01";
-	}
-
-	//months start at 0, January is month 0
-	var monthToday = today.getMonth() + 1;
-
-	if( monthToday < monthDOB ||
-	    (monthToday == monthDOB && today.getDate() < dayDOB  ))
-	    {
-	    	adjustment = -1;
-	    }
-
-	var calculatedAge = today.getFullYear() - yearDOB + adjustment;
-
-	var age = document.getElementById("age");
-	age.value = calculatedAge;
-
-    setValidIndicaterOnField( true, $("age").name);
-    pt_setFieldValid( $("age").name );
+    setValidIndicaterOnField( true, jQuery("#ageYears").attr('id'));
+    setValidIndicaterOnField( true, jQuery("#ageMonths").attr('id'));
+    setValidIndicaterOnField( true, jQuery("#ageDays").attr('id'));
+    pt_setFieldValid( $("ageYears").name );
+    pt_setFieldValid( $("ageMonths").name );
+    pt_setFieldValid( $("ageDays").name );
 }
 
-function /*void*/ handleAgeChange( age )
+function /*void*/ handleAgeChange()
 {
-	if( pt_checkValidAge( age ) )
+	var ageYears = jQuery("#ageYears").val();
+	var ageMonths = jQuery("#ageMonths").val();
+	var ageDays = jQuery("#ageDays").val();
+// 	if (ageMonths) {
+// 		if (ageYears) {
+// 			ageYears = ageYears + Math.floor(ageMonths / 12);
+// 		} else {
+// 			ageYears = Math.floor(ageMonths / 12);
+// 		}
+// 	}
+// 	ageMonths = ageMonths % 12;
+	if( pt_checkValidAge() )
 	{
-		pt_updateDOB( age );
-		if (age.value > 1) {
+		pt_updateDOB( ageYears, ageMonths, ageDays );
+		if (ageYears >= 1 || ageMonths >= 1 || ageDays >= 1) {
 			setValidIndicaterOnField( true, $("dateOfBirthID").name);
 			pt_setFieldValid( $("dateOfBirthID").name );
 		} else {
@@ -440,31 +445,73 @@ function /*void*/ handleAgeChange( age )
 	pt_setSave();
 }
 
-function  /*bool*/ pt_checkValidAge( age )
+function  /*bool*/ pt_checkValidAge()
 {
-	var valid = age.value.blank();
-
-	if( !valid ){
+	var valid = true;
+	var ageYears = jQuery("#ageYears");
+	var ageMonths = jQuery("#ageMonths");
+	var ageDays = jQuery("#ageDays");
+	if( !ageYears.val().blank() ){
 		var regEx = new RegExp("^\\s*\\d{1,2}\\s*$");
-	 	valid =  regEx.test(age.value);
+		var yearValid = regEx.test(ageYears.val());
+	 	valid = valid && yearValid;
+		setValidIndicaterOnField(  yearValid , ageYears.attr('id') );
+	} else {
+		setValidIndicaterOnField(  true , ageYears.attr('id') );
 	}
 
-	setValidIndicaterOnField(  valid , age.name );
-	pt_setFieldValidity( valid, age.name );
+	if( !ageMonths.val().blank() ){
+		var regEx = new RegExp("^\\s*\\d{1,2}\\s*$");
+		var monthValid = regEx.test(ageMonths.val());
+	 	valid = valid && monthValid;
+		setValidIndicaterOnField(  monthValid , ageMonths.attr('id') );
+	} else {
+		setValidIndicaterOnField(  true , ageMonths.attr('id') );
+	}
+
+	if( !ageDays.val().blank() ){
+		var regEx = new RegExp("^\\s*\\d{1,2}\\s*$");
+		var dayValid = regEx.test(ageDays.val());
+	 	valid = valid && dayValid;
+		setValidIndicaterOnField(  dayValid , ageDays.attr('id') );
+	} else {
+		setValidIndicaterOnField(  true , ageDays.attr('id') );
+	}
+
+// 	pt_setFieldValidity( valid, age.name );
 
 	return valid;
 }
 
-function  /*void*/ pt_updateDOB( age )
+function  /*void*/ pt_updateDOB( ageYears, ageMonths, ageDays )
 {
-	if( age.value.blank() ){
+	if( ageYears.blank() && ageMonths.blank() && ageDays.blank() ){
 		$("dateOfBirthID").value = null;
-	}else{
-		var today = new Date();
+	} else {
+		
+		var date = new Date();
+		if ( !ageDays.blank() ) {
+			date.setDate( date.getDate() - parseInt(ageDays));
+		}
+		if ( !ageMonths.blank() ) {
+			date.setMonth( date.getMonth() - parseInt(ageMonths));
+		}
+		if ( !ageYears.blank() ) {
+			date.setFullYear( date.getFullYear() - parseInt(ageYears));
+		}
+		
 
 		var day = "xx";
 		var month = "xx";
-		var year = today.getFullYear() - age.value;
+		var year = "xxxx";
+		if (!ageDays.blank() ) {
+			day = date.getDate();
+		}
+		if (!ageMonths.blank() || !ageDays.blank() ) {
+			//month is normally index based
+			month = date.getMonth() + 1;
+		}
+		year = date.getFullYear();
 
 		var datePattern = '<%=SystemConfiguration.getInstance().getPatternForDateLocale() %>';
 		var splitPattern = datePattern.split("/");
@@ -473,9 +520,9 @@ function  /*void*/ pt_updateDOB( age )
 
 		for( var i = 0; i < 3; i++ ){
 			if(splitPattern[i] == "DD"){
-				DOB = DOB + day + "/";
+				DOB = DOB + day.toLocaleString('en', {minimumIntegerDigits:2}) + "/";
 			}else if(splitPattern[i] == "MM" ){
-				DOB = DOB + month + "/";
+				DOB = DOB + month.toLocaleString('en', {minimumIntegerDigits:2}) + "/";
 			}else if(splitPattern[i] == "YYYY" ){
 				DOB = DOB + year + "/";
 			}
@@ -684,7 +731,9 @@ function  /*void*/ setPatientInfo(nationalID, ST_ID, subjectNumber, lastName, fi
 	}
 	if (dob == undefined) {
 		document.getElementById("dateOfBirthID").value = "";
-		document.getElementById("age").value = "";
+		document.getElementById("ageYears").value = "";
+		document.getElementById("ageMonths").value = "";
+		document.getElementById("ageDays").value = "";
 	} else {
 		var dobElement = document.getElementById("dateOfBirthID").value = dob;
 		updatePatientAge( $("dateOfBirthID") );
@@ -1294,14 +1343,36 @@ function  processSubjectNumberSuccess(xhr){
                        onchange="handleAgeChange( this ); updatePatientEditStatus();"
                        styleClass="text"
                     id="age"/> --%>
-           <form:input path="patientProperties.age" 
-           			  onchange="handleAgeChange( this ); updatePatientEditStatus();"
-           			  id="age"
+           <form:input path="patientProperties.ageYears" 
+           			  onchange="handleAgeChange(); updatePatientEditStatus();"
+           			  id="ageYears"
                       cssClass="text"
                       size="3"
                       maxlength="3"
+                      placeholder="years"
                         />
-			<div id="patientProperties.ageMessage" class="blank" ></div>
+			<div  class="blank" ><spring:message code="years.label"/></div>
+			<div id="ageYearsMessage" class="blank" ></div>
+           <form:input path="patientProperties.ageMonths" 
+           			  onchange="handleAgeChange(); updatePatientEditStatus();"
+           			  id="ageMonths"
+                      cssClass="text"
+                      size="2"
+                      maxlength="2"
+                      placeholder="months"
+                        />
+			<div  class="blank" ><spring:message code="months.label"/></div>
+			<div id="ageMonthsMessage" class="blank" ></div>
+           <form:input path="patientProperties.ageDays" 
+           			  onchange="handleAgeChange(); updatePatientEditStatus();"
+           			  id="ageDays"
+                      cssClass="text"
+                      size="2"
+                      maxlength="2"
+                      placeholder="days"
+                        />
+			<div  class="blank" ><spring:message code="days.label"/></div>
+			<div id="ageDaysMessage" class="blank" ></div>
 		</td>
 		<td style="text-align:right;">
 			<spring:message code="patient.gender" />:

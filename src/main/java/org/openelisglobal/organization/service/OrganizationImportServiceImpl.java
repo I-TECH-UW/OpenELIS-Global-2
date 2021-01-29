@@ -12,8 +12,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Bundle.BundleEntryComponent;
+import org.hl7.fhir.r4.model.Resource;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.DisplayListService.ListType;
+import org.openelisglobal.dataexchange.fhir.service.FhirPersistanceService;
 import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
 import org.openelisglobal.organization.valueholder.Organization;
 import org.openelisglobal.organization.valueholder.OrganizationType;
@@ -38,6 +40,8 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
     @Autowired
     private FhirTransformService fhirTransformService;
     @Autowired
+    private FhirPersistanceService fhirPersistanceService;
+    @Autowired
     private OrganizationService organizationService;
     @Autowired
     private OrganizationTypeService organizationTypeService;
@@ -54,9 +58,11 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
 
             organizationService.deactivateAllOrganizations();
             List<String> activateOrgs = new ArrayList<>();
+            List<Resource> remoteFhirOrganizations = new ArrayList<>();
             Set<OrganizationType> loadedOrgTypes = new HashSet<>();
             for (BundleEntryComponent entry : responseBundle.getEntry()) {
                 if (entry.hasResource()) {
+                    remoteFhirOrganizations.add(entry.getResource());
                     Organization transientOrganization = fhirTransformService.fhirOrganizationToOrganization(
                             (org.hl7.fhir.r4.model.Organization) entry.getResource(), client);
                     // preserve the link to the set of org types
@@ -87,6 +93,8 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
                 }
             }
             organizationService.activateOrganizations(activateOrgs);
+            // import fhir organizations as is
+            fhirPersistanceService.updateFhirResourcesInFhirStore(remoteFhirOrganizations);
         }
         DisplayListService.getInstance().refreshList(ListType.REFERRAL_ORGANIZATIONS);
         DisplayListService.getInstance().refreshList(ListType.SAMPLE_PATIENT_REFERRING_CLINIC);
