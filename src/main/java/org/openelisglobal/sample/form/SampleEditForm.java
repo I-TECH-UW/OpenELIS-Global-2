@@ -111,6 +111,12 @@ public class SampleEditForm extends BaseForm {
     // in validator
     private int maxAccessionLength = editableAccession + nonEditableAccession;
 
+    private boolean customNotificationLogic;
+    private List<String> patientEmailNotificationTestIds;
+    private List<String> patientSMSNotificationTestIds;
+    private List<String> providerEmailNotificationTestIds;
+    private List<String> providerSMSNotificationTestIds;
+
     public SampleEditForm() {
         setFormName("SampleEditForm");
     }
@@ -338,4 +344,45 @@ public class SampleEditForm extends BaseForm {
     public void setSampleNatureList(List<IdValuePair> sampleNatureList) {
         this.sampleNatureList = sampleNatureList;
     }
+
+    public boolean getCustomNotificationLogic() {
+        return customNotificationLogic;
+    }
+
+    public void setCustomNotificationLogic(boolean customNotificationLogic) {
+        this.customNotificationLogic = customNotificationLogic;
+    }
+
+    public List<String> getPatientEmailNotificationTestIds() {
+        return patientEmailNotificationTestIds;
+    }
+
+    public void setPatientEmailNotificationTestIds(List<String> patientEmailNotificationTestIds) {
+        this.patientEmailNotificationTestIds = patientEmailNotificationTestIds;
+    }
+
+    public List<String> getPatientSMSNotificationTestIds() {
+        return patientSMSNotificationTestIds;
+    }
+
+    public void setPatientSMSNotificationTestIds(List<String> patientSMSNotificationTestIds) {
+        this.patientSMSNotificationTestIds = patientSMSNotificationTestIds;
+    }
+
+    public List<String> getProviderEmailNotificationTestIds() {
+        return providerEmailNotificationTestIds;
+    }
+
+    public void setProviderEmailNotificationTestIds(List<String> providerEmailNotificationTestIds) {
+        this.providerEmailNotificationTestIds = providerEmailNotificationTestIds;
+    }
+
+    public List<String> getProviderSMSNotificationTestIds() {
+        return providerSMSNotificationTestIds;
+    }
+
+    public void setProviderSMSNotificationTestIds(List<String> providerSMSNotificationTestIds) {
+        this.providerSMSNotificationTestIds = providerSMSNotificationTestIds;
+    }
+
 }
