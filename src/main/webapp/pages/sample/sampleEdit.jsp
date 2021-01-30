@@ -55,6 +55,14 @@ jQuery(function() {
    	sampleIdStart = maxAccessionNumber.substring(lastDash + 1);
 });
 
+function altAccessionSearchFunction(labNumber) {
+	jQuery("#loading").hide();
+	var url = new URL(window.location.href);
+	url.searchParams.set('accessionNumber', labNumber);
+	
+	window.location.href = url.toString();
+}
+
 function  /*void*/ setMyCancelAction(form, action, validate, parameters)
 {
 	//first turn off any further validation

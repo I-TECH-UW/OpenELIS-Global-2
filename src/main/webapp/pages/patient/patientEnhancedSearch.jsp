@@ -110,6 +110,11 @@ function enhancedSearchPatients()
     
     labNumber = jQuery("#patientLabNoSearchValue").val().trim();
     
+	if (typeof altAccessionSearchFunction === "function" && (labNumber !== "" || labNumber != null)) {
+		altAccessionSearchFunction(labNumber);
+		return;
+	}
+    
 
 	patientSearch(lastName, firstName, STNumber, subjectNumber, nationalID, labNumber, "", dateOfBirth, gender, false, processSearchSuccess);
 }
