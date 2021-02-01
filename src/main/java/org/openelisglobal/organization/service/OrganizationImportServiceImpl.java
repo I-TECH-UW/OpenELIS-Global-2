@@ -10,6 +10,7 @@ import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.GenericValidator;
+import org.hl7.fhir.instance.model.api.IBaseBundle;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Bundle.BundleEntryComponent;
 import org.hl7.fhir.r4.model.Resource;
@@ -53,15 +54,30 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
     public void importOrganizationList() {
         if (!GenericValidator.isBlankOrNull(facilityFhirStore)) {
             IGenericClient client = fhirContext.newRestfulGenericClient(facilityFhirStore);
+            List<Bundle> responseBundles = new ArrayList<>();
             Bundle responseBundle = client.search().forResource(org.hl7.fhir.r4.model.Organization.class)
                     .returnBundle(Bundle.class).execute();
-
+            responseBundles.add(responseBundle);
+            while (responseBundle.getLink(IBaseBundle.LINK_NEXT) != null) {
+                responseBundle = client.loadPage().next(responseBundle).execute();
+                responseBundles.add(responseBundle);
+            }
             organizationService.deactivateAllOrganizations();
-            List<String> activateOrgs = new ArrayList<>();
-            List<Resource> remoteFhirOrganizations = new ArrayList<>();
-            Set<OrganizationType> loadedOrgTypes = new HashSet<>();
+            importFromBundle(client, responseBundles);
+        }
+        DisplayListService.getInstance().refreshList(ListType.REFERRAL_ORGANIZATIONS);
+        DisplayListService.getInstance().refreshList(ListType.SAMPLE_PATIENT_REFERRING_CLINIC);
+        DisplayListService.getInstance().refreshList(ListType.PATIENT_HEALTH_REGIONS);
+    }
+
+    private void importFromBundle(IGenericClient client, List<Bundle> responseBundles) {
+        List<String> activateOrgs = new ArrayList<>();
+        List<Resource> remoteFhirOrganizations = new ArrayList<>();
+        Set<OrganizationType> loadedOrgTypes = new HashSet<>();
+        for (Bundle responseBundle : responseBundles) {
             for (BundleEntryComponent entry : responseBundle.getEntry()) {
                 if (entry.hasResource()) {
+//                    client.delete().resource(entry.getResource()).cascade(DeleteCascadeModeEnum.DELETE).execute();
                     remoteFhirOrganizations.add(entry.getResource());
                     Organization transientOrganization = fhirTransformService.fhirOrganizationToOrganization(
                             (org.hl7.fhir.r4.model.Organization) entry.getResource(), client);
@@ -70,6 +86,8 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
                     // clear out the org types so we don't insert ones that should already exist in
                     // the db
                     transientOrganization.setOrganizationTypes(new HashSet<>());
+                    // saved separately first so we dont persist a parent per child
+                    persistParentOrgWithoutOrgTypes(transientOrganization);
                     Organization dbOrg = insertOrUpdateOrganization(transientOrganization);
                     // make sure it gets activated
                     activateOrgs.add(dbOrg.getOrganizationName());
@@ -92,13 +110,19 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
                     }
                 }
             }
-            organizationService.activateOrganizations(activateOrgs);
-            // import fhir organizations as is
-            fhirPersistanceService.updateFhirResourcesInFhirStore(remoteFhirOrganizations);
         }
-        DisplayListService.getInstance().refreshList(ListType.REFERRAL_ORGANIZATIONS);
-        DisplayListService.getInstance().refreshList(ListType.SAMPLE_PATIENT_REFERRING_CLINIC);
-        DisplayListService.getInstance().refreshList(ListType.PATIENT_HEALTH_REGIONS);
+        organizationService.activateOrganizations(activateOrgs);
+        // import fhir organizations as is
+        fhirPersistanceService.updateFhirResourcesInFhirStore(remoteFhirOrganizations);
+    }
+
+    private void persistParentOrgWithoutOrgTypes(Organization transientOrganization) {
+        if (transientOrganization.getOrganization() != null) {
+            persistParentOrgWithoutOrgTypes(transientOrganization.getOrganization());
+            transientOrganization.getOrganization().setOrganizationTypes(new HashSet<>());
+            transientOrganization
+                    .setOrganization(this.insertOrUpdateOrganization(transientOrganization.getOrganization()));
+        }
     }
 
     private OrganizationType insertOrUpdateOrganizationType(OrganizationType orgType) {

@@ -43,4 +43,6 @@ public interface FhirTransformService {
 
     public org.hl7.fhir.r4.model.Patient getFhirPatient(PatientManagementInfo patientInfo);
 
+    org.hl7.fhir.r4.model.Organization organizationToFhirOrganization(Organization organization);
+
 }
