@@ -186,6 +186,10 @@ public class SampleOrderItem implements Serializable {
     // for display
     private Collection programList;
 
+    private String contactTracingIndexName;
+
+    private String contactTracingIndexRecordNumber;
+
     public String getNewRequesterName() {
         return newRequesterName;
     }
@@ -472,5 +476,21 @@ public class SampleOrderItem implements Serializable {
 
     public void setProgramList(Collection programList) {
         this.programList = programList;
+    }
+
+    public String getContactTracingIndexName() {
+        return contactTracingIndexName;
+    }
+
+    public void setContactTracingIndexName(String contactTracingIndexName) {
+        this.contactTracingIndexName = contactTracingIndexName;
+    }
+
+    public String getContactTracingIndexRecordNumber() {
+        return contactTracingIndexRecordNumber;
+    }
+
+    public void setContactTracingIndexRecordNumber(String contactTracingIndexRecordNumber) {
+        this.contactTracingIndexRecordNumber = contactTracingIndexRecordNumber;
     }
 }

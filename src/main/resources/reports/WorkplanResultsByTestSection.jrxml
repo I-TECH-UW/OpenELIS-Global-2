@@ -11,10 +11,10 @@
 	<import value="net.sf.jasperreports.engine.data.*"/>
 	<parameter name="testSection" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="labNumberTitle" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA["Lab No."]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[$R{report.label.labno}]]></defaultValueExpression>
 	</parameter>
 	<parameter name="subjectNoTitle" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA["Subjet No."]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[$R{report.subjectNo}]]></defaultValueExpression>
 	</parameter>
 	<parameter name="printSubjectNo" class="java.lang.Boolean">
 		<defaultValueExpression><![CDATA[Boolean.FALSE]]></defaultValueExpression>
@@ -217,7 +217,7 @@
 				<textElement textAlignment="Right">
 					<font size="9" isItalic="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" "+$R{report.pageNumberOf}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{report.label.page}+" "+$V{PAGE_NUMBER}+" "+$R{report.pageNumberOf}]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report">
 				<reportElement x="536" y="2" width="16" height="12" uuid="d3f0f3eb-ddd6-4bcf-b4b5-3d7258e19edb"/>

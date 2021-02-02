@@ -54,6 +54,7 @@ SECRETS_DIR = OE_VAR_DIR + "secrets/"
 PLUGINS_DIR = OE_VAR_DIR + "plugins/"
 CONFIG_DIR = OE_VAR_DIR + "config/"
 LOGS_DIR = OE_VAR_DIR + "logs/"
+TOMCAT_LOGS_DIR = OE_VAR_DIR + "tomcatLogs/"
 CRON_INSTALL_DIR = "/etc/cron.d/"
 
 #full file paths
@@ -246,6 +247,10 @@ def do_install():
     ensure_dir_exists(LOGS_DIR)
     os.chmod(LOGS_DIR, 0777) 
     os.chown(LOGS_DIR, 8443, 8443)  
+    ensure_dir_exists(TOMCAT_LOGS_DIR)
+    os.chmod(TOMCAT_LOGS_DIR, 0777) 
+    os.chown(TOMCAT_LOGS_DIR, 8443, 8443)  
+    
 
     start_docker_containers()
 
@@ -302,6 +307,8 @@ def create_docker_compose_file():
             line = line.replace("[% plugins_dir %]", PLUGINS_DIR)
         if line.find("[% logs_dir %]")  >= 0:
             line = line.replace("[% logs_dir %]", LOGS_DIR)
+        if line.find("[% tomcat_logs_dir %]")  >= 0:
+            line = line.replace("[% tomcat_logs_dir %]", TOMCAT_LOGS_DIR)
         if line.find("[% etc_dir %]")  >= 0:
             line = line.replace("[% etc_dir %]", OE_ETC_DIR )
         if line.find("[% oe_name %]")  >= 0:
@@ -663,7 +670,10 @@ def do_update():
     
     ensure_dir_exists(LOGS_DIR)
     os.chmod(LOGS_DIR, 0777) 
-    os.chown(LOGS_DIR, 8443, 8443)  
+    os.chown(LOGS_DIR, 8443, 8443)
+    ensure_dir_exists(TOMCAT_LOGS_DIR)
+    os.chmod(TOMCAT_LOGS_DIR, 0777) 
+    os.chown(TOMCAT_LOGS_DIR, 8443, 8443)  
     
     get_stored_user_values()
     

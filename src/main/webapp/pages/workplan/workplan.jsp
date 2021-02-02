@@ -71,7 +71,7 @@ function printWorkplan() {
 <c:when test="${not (type == 'test') && not (type == 'panel')}">
 <div id="searchDiv" class="colorFill"  >
 <div id="PatientPage" class="colorFill" style="display:inline" >
-<input type="hidden" name="testName" value='<c:out value="${type}"/>' />
+<input type="hidden" name="testName" value='<c:out value="${form.testName}"/>' />
 <h2><spring:message code="sample.entry.search"/></h2>
 	<table width="30%">
 		<tr>

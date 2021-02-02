@@ -10,7 +10,6 @@
 	<import value="net.sf.jasperreports.engine.data.*"/>
 	<parameter name="siteName" class="java.lang.String"/>
 	<parameter name="directorName" class="java.lang.String"/>
-	<parameter name="localization" class="java.util.Map" isForPrompting="false"/>
 	<field name="testSection" class="java.lang.String"/>
 	<field name="count" class="java.lang.String"/>
 	<background>
@@ -72,7 +71,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="12"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{localization}.get("testSection")]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{report.testSection}]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement key="line-1" x="1" y="19" width="557" height="1"/>
@@ -82,7 +81,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="12"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{localization}.get("total")]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{report.total}]]></textFieldExpression>
 			</textField>
 		</band>
 	</columnHeader>

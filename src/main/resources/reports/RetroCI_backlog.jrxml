@@ -65,7 +65,7 @@
 							<tickLabelFont/>
 						</axisFormat>
 					</categoryAxisFormat>
-					<valueAxisLabelExpression><![CDATA["Jours"]]></valueAxisLabelExpression>
+					<valueAxisLabelExpression><![CDATA[$R{report.label.days}]]></valueAxisLabelExpression>
 					<valueAxisFormat>
 						<axisFormat>
 							<labelFont/>

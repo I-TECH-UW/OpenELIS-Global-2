@@ -191,7 +191,7 @@ public class WorkplanByPanelController extends BaseWorkplanController {
     }
 
     private String getPanelName(String panelId) {
-        return panelService.get(panelId).getName();
+        return panelService.get(panelId).getLocalizedName();//getName();
     }
 
     private boolean getQaEventByTestSection(Analysis analysis) {

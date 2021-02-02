@@ -15,4 +15,8 @@ public interface FhirPersistanceService {
 
     Bundle updateFhirResourcesInFhirStore(List<Resource> resources);
 
+    Bundle makeTransactionBundleForCreate(List<Resource> resources);
+
+    Bundle makeTransactionBundleForUpdate(List<Resource> resources);
+
 }
