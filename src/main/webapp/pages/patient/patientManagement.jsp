@@ -873,7 +873,7 @@ function  processPhoneSuccess(xhr){
 }
 
 function validateEmail( emailElement) {
-	var valid = validEmail(emailElement.value);
+	var valid = emailElement.value === "" || validEmail(emailElement.value);
 	
 	setValidIndicaterOnField(valid, emailElement.id);
     pt_setFieldValidity( valid, emailElement.id );

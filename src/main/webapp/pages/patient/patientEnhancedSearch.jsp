@@ -493,12 +493,13 @@ function handleSelectedPatient(){
 					code="patient.birthDate" />&nbsp;<%=DateUtil.getDateUserPrompt()%>:	</td>
 			<td><input
 				id="dateOfBirthSearchValue"
+				name="dateOfBirthSearchValue"
 				size="20"
 				onkeyup="addDateSlashes(this,event); normalizeDateFormat(this);"
                 onchange="checkValidAgeDate( this );"
 				oninput="enableEnhancedSearchButton(event.which);"
 				placeholder='<%=MessageUtil.getMessage("label.select.search.here")%>' />
-				<div id="patientProperties.birthDateForDisplayMessage" class="blank"
+				<div id="dateOfBirthSearchValueMessage" class="blank"
 					style="text-align: left;"></div></td>
 <%-- 			<td style="text-align: left;"><spring:message code="patient.age" />:</td> --%>
 			<td style="text-align: left;"><spring:message code="patient.gender" />:</td>

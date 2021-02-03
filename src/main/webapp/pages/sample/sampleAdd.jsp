@@ -561,6 +561,9 @@ function assignTestsToSelected(checkbox, panelId){
 
 function addNotificationsOptions(testIds, testNames) {
 	var resultReportingSection = document.getElementById("resultReportingSection");
+	if (resultReportingSection == null ) {
+		return;
+	}
 	resultReportingSection.innerHTML = '<hr style="width:100%; height:5px;" />';
 	if (testIds.length === 0) {
 		return;
@@ -596,6 +599,9 @@ function addNotificationsOptions(testIds, testNames) {
 
 function addNotificationsOption(testId, testName, table) {
 	var resultReportingSection = document.getElementById("resultReportingSection");
+	if (resultReportingSection == null ) {
+		return;
+	}
 	var row = document.createElement("tr");
 	var col = document.createElement("td");
 	var emailNote = "<spring:message code='externalconnections.email'/>";
