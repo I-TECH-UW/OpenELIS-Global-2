@@ -337,7 +337,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             throw new LIMSRuntimeException("Error in Analysis getAllAnalysisByTestsAndStatuses()", e);
         }
     }
-    
+
     @Override
     @Transactional(readOnly = true)
     public List<Analysis> getAllAnalysisByTestsAndStatusAndCompletedDateRange(List<String> testIdList,
@@ -1195,7 +1195,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
     public List<Analysis> getAnalysisStartedOn(Date collectionDate) throws LIMSRuntimeException {
 
         try {
-            String sql = "from Analysis a where a.startedDate = :startedDate";
+            String sql = "from Analysis a where DATE(a.startedDate) = DATE(:startedDate)";
             Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setDate("startedDate", collectionDate);
 
@@ -1217,7 +1217,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             return getAnalysisStartedOn(collectionDate);
         }
 
-        String sql = "from Analysis a where a.sampleItem.collectionDate = :startedDate and a.statusId not in ( :statusList )";
+        String sql = "from Analysis a where DATE(a.sampleItem.collectionDate) = DATE(:startedDate) and a.statusId not in ( :statusList )";
 
         try {
             Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -1373,9 +1373,9 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
         return null;
     }
-    
- 
-    
+
+
+
     @Override
     @Transactional(readOnly = true)
     public List<Analysis> getAllAnalysisByTestsAndStatusAndCompletedDateRange(List<Integer> testIdList, List<Integer> analysisStatusList,
@@ -1651,7 +1651,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         return null;
     }
 
- 
+
 
 //	@Override
 //	public Analysis getPatientPreviousAnalysisForTestName(Patient patient, Sample currentSample, String testName) {
