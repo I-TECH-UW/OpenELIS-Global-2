@@ -61,6 +61,9 @@ public abstract class CovidResultsBuilderImpl implements CovidResultsBuilder {
     protected static final String SAMPLE_RECEIVED_DATE_PROPERTY_NAME = "sample received date";
     protected static final String SITE_PROPERTY_NAME = "site code";
     protected static final String LOCATOR_FORM_PROPERTY_NAME = "locatorForm";
+    protected static final String CONTACT_TRACING_INDEX_NAME = "contact tracing index name";
+    protected static final String CONTACT_TRACING_INDEX_RECORD_NUMBER = "contact tracing dossier number";
+    
 
     protected static final String EMPTY_VALUE = "";
 
