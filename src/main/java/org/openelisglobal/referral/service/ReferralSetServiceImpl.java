@@ -8,11 +8,13 @@ import java.util.Set;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.StatusService.OrderStatus;
 import org.openelisglobal.note.service.NoteService;
 import org.openelisglobal.referral.fhir.service.FhirReferralService;
+import org.openelisglobal.referral.fhir.service.TestNotFullyConfiguredException;
 import org.openelisglobal.referral.valueholder.Referral;
 import org.openelisglobal.referral.valueholder.ReferralResult;
 import org.openelisglobal.referral.valueholder.ReferralSet;
@@ -100,9 +102,14 @@ public class ReferralSetServiceImpl implements ReferralSetService {
                         referralSet.getReferral().getAnalysis().getSampleItem().getSample().getId(),
                         Arrays.asList(referralSet.getReferral().getAnalysis().getId()));
             } else {
+                try {
                 fhirReferralService.referAnalysisesToOrganization(referralSet.getReferral().getOrganization().getId(),
                         referralSet.getReferral().getAnalysis().getSampleItem().getSample().getId(),
                         Arrays.asList(referralSet.getReferral().getAnalysis().getId()));
+                } catch (TestNotFullyConfiguredException e) {
+                    LogEvent.logError(this.getClass().getName(), "updateRefreralSets",
+                            "unable to automatically refer a test that does not have a loinc code set");
+                }
             }
         }
 

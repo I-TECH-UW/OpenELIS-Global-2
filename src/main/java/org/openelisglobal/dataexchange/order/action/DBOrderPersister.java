@@ -90,7 +90,8 @@ public class DBOrderPersister implements IOrderPersister {
     }
 
     private void persist(MessagePatient orderPatient) {
-        patient = patientService.getPatientByExternalId(orderPatient.getExternalId());
+        patient = patientService.getPatientForGuid(orderPatient.getGuid());
+        patient = patient == null ? patientService.getPatientByExternalId(orderPatient.getExternalId()) : patient;
         if (patient == null) {
             createNewPatient(orderPatient);
         } else {
@@ -142,7 +143,7 @@ public class DBOrderPersister implements IOrderPersister {
         }
 
         List<PatientIdentity> identities = new ArrayList<>();
-        if (orderPatient.getExternalId().length() == 0) {
+        if (!GenericValidator.isBlankOrNull(orderPatient.getGuid())) {
             addIdentityIfAppropriate(IDENTITY_GUID_ID, orderPatient.getGuid(), identities);
         } else {
             addIdentityIfAppropriate(IDENTITY_GUID_ID, orderPatient.getExternalId(), identities);
@@ -185,6 +186,8 @@ public class DBOrderPersister implements IOrderPersister {
         updateIdentityIfNeeded(IDENTITY_STNUMBER_ID, orderPatient.getStNumber(), patient.getId(), identityList,
                 identityService);
         updateIdentityIfNeeded(IDENTITY_PCNUMBER_ID, orderPatient.getPcNumber(), patient.getId(), identityList,
+                identityService);
+        updateIdentityIfNeeded(IDENTITY_GUID_ID, orderPatient.getGuid(), patient.getId(), identityList,
                 identityService);
     }
 

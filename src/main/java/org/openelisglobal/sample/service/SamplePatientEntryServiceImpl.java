@@ -97,6 +97,7 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
         boolean useInitialSampleCondition = FormFields.getInstance().useField(Field.InitialSampleCondition);
         boolean useSampleNature = FormFields.getInstance().useField(Field.SampleNature);
 
+        String fhir_json = fhirTransformService.CreateFhirFromOESample(updateData, patientInfo);
         persistOrganizationData(updateData);
 
         if (updateData.isSavePatient()) {
@@ -120,8 +121,6 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
         request.getSession().setAttribute("lastAccessionNumber", updateData.getAccessionNumber());
         request.getSession().setAttribute("lastPatientId", updateData.getPatientId());
 
-        String fhir_json = fhirTransformService.CreateFhirFromOESample(updateData, patientUpdate, patientInfo, form,
-                request);
     }
 
     private void persistContactTracingData(SamplePatientUpdateData updateData) {

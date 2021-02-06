@@ -617,10 +617,13 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String> i
         if (patientInfo.getPatientUpdateStatus() == PatientUpdateStatus.ADD) {
             insert(patient);
             org.hl7.fhir.r4.model.Bundle pBundle = fhirPersistanceService.createFhirResourceInFhirStore(fhirPatient);
+            patientInfo.setGuid(
+                    fhirTransformService.getIdFromLocation(pBundle.getEntryFirstRep().getResponse().getLocation()));
         } else if (patientInfo.getPatientUpdateStatus() == PatientUpdateStatus.UPDATE) {
-            org.hl7.fhir.r4.model.Patient oldFhirPatient = fhirTransformService.getFhirPatient(patientInfo);
+            org.hl7.fhir.r4.model.Patient oldFhirPatient = fhirTransformService.getFhirPatientOrCreate(patientInfo);
             fhirPatient.setId(oldFhirPatient.getIdElement());
             update(patient);
+            patientInfo.setGuid(fhirPatient.getIdElement().getIdPart());
             org.hl7.fhir.r4.model.Bundle pBundle = fhirPersistanceService.updateFhirResourceInFhirStore(fhirPatient);
         }
 
@@ -673,6 +676,7 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String> i
         persistIdentityType(patientInfo.getHealthDistrict(), "HEALTH DISTRICT", patientInfo, patient, sysUserId);
         persistIdentityType(patientInfo.getHealthRegion(), "HEALTH REGION", patientInfo, patient, sysUserId);
         persistIdentityType(patientInfo.getOtherNationality(), "OTHER NATIONALITY", patientInfo, patient, sysUserId);
+        persistIdentityType(patientInfo.getGuid(), "GUID", patientInfo, patient, sysUserId);
     }
 
     private void persistExtraPatientAddressInfo(PatientManagementInfo patientInfo, Patient patient, String sysUserId) {
