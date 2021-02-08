@@ -164,13 +164,13 @@ public class TaskInterpreterImpl implements TaskInterpreter {
             if (identifier.getType().hasCoding(fhirConfig.getOeFhirSystem() + "/genIdType", "externalId")) {
                 messagePatient.setExternalId(identifier.getValue());
             }
-            if ((fhirConfig.getOeFhirSystem() + "pat_nationalId").equals(identifier.getSystem())) {
+            if ((fhirConfig.getOeFhirSystem() + "/pat_nationalId").equals(identifier.getSystem())) {
                 messagePatient.setNationalId(identifier.getValue());
             }
-            if ((fhirConfig.getOeFhirSystem() + "pat_guid").equals(identifier.getSystem())) {
+            if ((fhirConfig.getOeFhirSystem() + "/pat_guid").equals(identifier.getSystem())) {
                 messagePatient.setGuid(identifier.getValue());
             }
-            if ((fhirConfig.getOeFhirSystem() + "pat_stNumber").equals(identifier.getSystem())) {
+            if ((fhirConfig.getOeFhirSystem() + "/pat_stNumber").equals(identifier.getSystem())) {
                 messagePatient.setStNumber(identifier.getValue());
             }
         }
