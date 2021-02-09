@@ -59,7 +59,7 @@ public class ActivityReportByTest extends ActivityReport implements IReportCreat
 
         String currentAnalysisId = "-1";
         for (Result result : resultList) {
-            if (result.getAnalysis() != null) {
+            if (result.getAnalysis() != null && result.getAnalysis().getId() != null) {
                 if (!currentAnalysisId.equals(result.getAnalysis().getId())) {
                     testsResults.add(createActivityReportBean(result, false));
 //                    System.out.println("ActivityReport:" + "in buildReportContent " + result.getStringId());
