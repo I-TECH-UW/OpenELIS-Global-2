@@ -32,4 +32,17 @@
       	</update>
 	</changeSet>
 	
+	<changeSet author="csteele" id="3">
+      	<update schemaName="clinlims"
+      		tableName="result_limits">
+      		<column name="min_age" valueComputed="FLOOR(min_age/12*365)"/>
+      		<where>min_age != 'infinity'</where>
+      	</update>
+      	<update schemaName="clinlims"
+      		tableName="result_limits">
+      		<column name="max_age" valueComputed="FLOOR(max_age/12*365)"/>
+      		<where>max_age != 'infinity'</where>
+      	</update>
+	</changeSet>
+	
 </databaseChangeLog>
