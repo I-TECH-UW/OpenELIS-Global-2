@@ -36,6 +36,7 @@
 	boolean supportSubjectNumber = FormFields.getInstance().useField(Field.SubjectNumber);
 	boolean subjectNumberRequired = ConfigurationProperties.getInstance().isPropertyValueEqual(ConfigurationProperties.Property.PATIENT_SUBJECT_NUMBER_REQUIRED, "true");
 	boolean supportNationalID = FormFields.getInstance().useField(Field.NationalID);
+	boolean nationalIDRequired = ConfigurationProperties.getInstance().isPropertyValueEqual(ConfigurationProperties.Property.PATIENT_NATIONAL_ID_REQUIRED, "true");
 	boolean supportOccupation = FormFields.getInstance().useField(Field.Occupation);
 	boolean supportCommune = FormFields.getInstance().useField(Field.ADDRESS_COMMUNE);
 	boolean supportMothersInitial = FormFields.getInstance().useField(Field.MotherInitial);
@@ -78,6 +79,7 @@ var supportInsurance = <%= supportInsurance %>;
 var supportSubjectNumber = <%= supportSubjectNumber %>;
 var subjectNumberRequired = <%= subjectNumberRequired %>;
 var supportNationalID = <%= supportNationalID %>;
+var nationalIDRequired = <%= nationalIDRequired %>;
 var supportMothersInitial = <%= supportMothersInitial %>;
 var supportCommune = <%= supportCommune %>;
 var supportCity = <%= FormFields.getInstance().useField(Field.ADDRESS_VILLAGE) %>;
@@ -115,12 +117,15 @@ if( patientIDRequired){
 	if (supportSTNumber) {
 		pt_requiredOneOfFields.push("ST_ID");
 	} else if (supportSubjectNumber && subjectNumberRequired){
-		pt_requiredOneOfFields = new Array("subjectNumberID");
+		pt_requiredOneOfFields.push("subjectNumberID");
 	}
 }
 
 if (supportSubjectNumber && subjectNumberRequired){
 	pt_requiredFields.push("subjectNumberID");
+}
+if (supportNationalId && nationalIDRequired) {
+	pt_requiredFields.push("nationalID");
 }
 
 var updateStatus = "ADD";
@@ -1000,6 +1005,9 @@ function  processSubjectNumberSuccess(xhr){
         <% if( supportNationalID ){ %>
         <td style="text-align:right;">
             <%=MessageUtil.getContextualMessage("patient.NationalID") %>:
+            <% if(nationalIDRequired){ %>
+            <span class="requiredlabel">*</span>
+            <% } %>
 
         </td>
         <td >

@@ -8,5 +8,6 @@
 	<include file="liquibase/2.3.x.x/contact_tracing_fields.xml"/>
 	<include file="liquibase/2.3.x.x/minor_fixes.xml"/>
 	<include file="liquibase/2.3.x.x/user_url_permissions.xml"/>
+	<include file="liquibase/2.3.x.x/national_id_config.xml"/>
 
 </databaseChangeLog>

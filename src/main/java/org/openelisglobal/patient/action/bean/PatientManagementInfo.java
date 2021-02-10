@@ -31,6 +31,7 @@ import org.hibernate.validator.constraints.SafeHtml;
 import org.openelisglobal.common.formfields.FormFields.Field;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.DisplayListService.ListType;
+import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.util.validator.CustomDateValidator.DateRelation;
 import org.openelisglobal.common.validator.ValidationHelper;
@@ -72,9 +73,14 @@ public class PatientManagementInfo implements Serializable {
     @Pattern(regexp = ValidationHelper.PATIENT_ID_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
             SamplePatientEntryBatch.class })
     private String STnumber;
+
+    @OptionalNotBlank(properties = { Property.PATIENT_SUBJECT_NUMBER_REQUIRED }, groups = {
+            SamplePatientEntryForm.SamplePatientEntry.class })
     @Pattern(regexp = ValidationHelper.PATIENT_ID_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
             SamplePatientEntryBatch.class })
     private String subjectNumber;
+    @OptionalNotBlank(properties = { Property.PATIENT_NATIONAL_ID_REQUIRED }, groups = {
+            SamplePatientEntryForm.SamplePatientEntry.class })
     @Pattern(regexp = ValidationHelper.PATIENT_ID_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
             SamplePatientEntryBatch.class })
     private String nationalId;
