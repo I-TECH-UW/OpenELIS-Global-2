@@ -209,7 +209,7 @@ public class ResultLimitServiceImpl extends BaseObjectServiceImpl<ResultLimit, S
             Calendar dob = Calendar.getInstance();
             dob.setTime(patient.getBirthDate());
 
-            return DateUtil.getAgeInMonths(patient.getBirthDate(), new Date());
+            return DateUtil.getAgeInDays(patient.getBirthDate(), new Date());
         }
 
         return INVALID_PATIENT_AGE;
