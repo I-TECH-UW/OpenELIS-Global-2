@@ -124,7 +124,8 @@ if( patientIDRequired){
 if (supportSubjectNumber && subjectNumberRequired){
 	pt_requiredFields.push("subjectNumberID");
 }
-if (supportNationalId && nationalIDRequired) {
+
+if (supportNationalID && nationalIDRequired) {
 	pt_requiredFields.push("nationalID");
 }
 
