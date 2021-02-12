@@ -16,6 +16,7 @@ public class OptionalNotBlankConstraintValidator implements ConstraintValidator<
     @Override
     public void initialize(OptionalNotBlank constraint) {
         fields = constraint.formFields();
+        properties = constraint.properties();
     }
 
     @Override
