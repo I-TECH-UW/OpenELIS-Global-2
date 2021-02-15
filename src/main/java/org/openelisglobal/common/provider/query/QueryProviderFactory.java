@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.resources.ResourceLocator;
@@ -26,9 +24,6 @@ public class QueryProviderFactory {
     }
 
     // class
-
-    // Logger
-    private static Log log = LogFactory.getLog(QueryProviderFactory.class);
 
     // Properties object that holds validation provider mappings
     private Properties queryProviderClassMap = null;
@@ -95,7 +90,8 @@ public class QueryProviderFactory {
 
         String mapping = queryProviderClassMap.getProperty(queryProvidername);
         if (mapping == null) {
-            log.error("getQueryProviderClassName - Unable to find mapping for " + queryProvidername);
+            LogEvent.logError(this.getClass().getName(), "getQueryProviderClassName",
+                    "getQueryProviderClassName - Unable to find mapping for " + queryProvidername);
             throw new LIMSRuntimeException(
                     "getQueryProviderClassName - Unable to find mapping for " + queryProvidername);
         }

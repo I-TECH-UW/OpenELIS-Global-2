@@ -23,7 +23,6 @@ import org.hibernate.Session;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
-import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.gender.dao.GenderDAO;
 import org.openelisglobal.gender.valueholder.Gender;
 import org.springframework.stereotype.Component;
@@ -34,7 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Component
 @Transactional
-public class GenderDAOImpl extends BaseDAOImpl<Gender, String> implements GenderDAO {
+public class GenderDAOImpl extends BaseDAOImpl<Gender, Integer> implements GenderDAO {
 
     public GenderDAOImpl() {
         super(Gender.class);
@@ -321,11 +320,11 @@ public class GenderDAOImpl extends BaseDAOImpl<Gender, String> implements Gender
 
             // initialize with 0 (for new records where no id has been generated
             // yet
-            String genderId = "0";
-            if (!StringUtil.isNullorNill(gender.getId())) {
+            Integer genderId = 0;
+            if (gender.getId() != null) {
                 genderId = gender.getId();
             }
-            query.setInteger("genderId", Integer.parseInt(genderId));
+            query.setInteger("genderId", genderId);
 
             list = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old

@@ -5,8 +5,11 @@
         maxTotal="20" maxIdle="10" maxWaitMillis="-1"
         name="jdbc/LimsDS" 
         type="javax.sql.DataSource" 
-        url="jdbc:postgresql://localhost:5432/clinlims" 
-        username="clinlims"/>
+        url="jdbc:postgresql://localhost:5435/clinlims" 
+        username="clinlims"
+        password="clinlims"
+        />
+        
 
 </Context>
 

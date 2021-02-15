@@ -38,9 +38,9 @@ import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.formfields.FormFields.Field;
 import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.QAService;
 import org.openelisglobal.common.services.QAService.QAObservationType;
-import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.StatusService.OrderStatus;
 import org.openelisglobal.common.services.TestIdentityService;
@@ -715,7 +715,7 @@ public class ResultsLoadUtility {
                 analysisService.getTriggeredReflex(analysis) && analysisService.resultIsConclusion(result, analysis));
         testItem.setPastNotes(notes);
         testItem.setDisplayResultAsLog(hasLogValue(test));
-        testItem.setNonconforming(analysisService.isParentNonConforming(analysis) || StatusService.getInstance()
+        testItem.setNonconforming(analysisService.isParentNonConforming(analysis) || SpringContext.getBean(IStatusService.class)
                 .matches(analysisService.getStatusId(analysis), AnalysisStatus.TechnicalRejected));
         if (FormFields.getInstance().useField(Field.QaEventsBySection)) {
             testItem.setNonconforming(testItem.isNonconforming() || getQaEventByTestSection(analysis));
@@ -950,15 +950,15 @@ public class ResultsLoadUtility {
     }
 
     public void addExcludedAnalysisStatus(AnalysisStatus status) {
-        excludedAnalysisStatus.add(Integer.parseInt(StatusService.getInstance().getStatusID(status)));
+        excludedAnalysisStatus.add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(status)));
     }
 
     public void addIncludedSampleStatus(OrderStatus status) {
-        sampleStatusList.add(Integer.parseInt(StatusService.getInstance().getStatusID(status)));
+        sampleStatusList.add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(status)));
     }
 
     public void addIncludedAnalysisStatus(AnalysisStatus status) {
-        analysisStatusList.add(Integer.parseInt(StatusService.getInstance().getStatusID(status)));
+        analysisStatusList.add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(status)));
     }
 
     private List<InventoryKitItem> getActiveKits() {

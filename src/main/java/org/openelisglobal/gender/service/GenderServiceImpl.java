@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class GenderServiceImpl extends BaseObjectServiceImpl<Gender, String> implements GenderService {
+public class GenderServiceImpl extends BaseObjectServiceImpl<Gender, Integer> implements GenderService {
     @Autowired
     protected GenderDAO baseObjectDAO;
 
@@ -23,7 +23,7 @@ public class GenderServiceImpl extends BaseObjectServiceImpl<Gender, String> imp
     }
 
     @Override
-    public String insert(Gender gender) {
+    public Integer insert(Gender gender) {
         if (getBaseObjectDAO().duplicateGenderExists(gender)) {
             throw new LIMSDuplicateRecordException("Duplicate record exists for " + gender.getGenderType());
         }

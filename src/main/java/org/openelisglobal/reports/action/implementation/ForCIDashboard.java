@@ -28,6 +28,7 @@ import java.util.List;
 
 import org.apache.commons.validator.GenericValidator;
 import org.jfree.util.Log;
+import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.project.service.ProjectService;
 import org.openelisglobal.project.valueholder.Project;
@@ -198,7 +199,8 @@ public class ForCIDashboard extends CSVSampleExportReport implements IReportPara
     protected void writeConsolidatedBaseToBuffer(ByteArrayOutputStream buffer, String[] splitBase) throws IOException {
 
         if (splitBase != null) {
-            StringBuilder consolidatedLine = new StringBuilder();
+            int splitBaseNumChars = StringUtil.countChars(splitBase);
+            StringBuilder consolidatedLine = new StringBuilder(splitBaseNumChars + splitBase.length);
             for (String value : splitBase) {
                 consolidatedLine.append(value);
                 consolidatedLine.append(",");

@@ -1,3 +1,9 @@
 [submodule "plugins"]
 	path = plugins
 	url = https://github.com/openelisglobal/openelisglobal-plugins.git
+[submodule "tools/Liquibase-Outdated"]
+	path = tools/Liquibase-Outdated
+	url = git@github.com:I-TECH-UW/Liquibase-Outdated.git
+[submodule "tools/Password-Migrator"]
+	path = tools/Password-Migrator
+	url = git@github.com:I-TECH-UW/Password-Migrator.git

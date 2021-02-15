@@ -24,9 +24,9 @@ import org.openelisglobal.address.valueholder.OrganizationAddress;
 import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.formfields.FormFields.Field;
 import org.openelisglobal.common.provider.validation.IAccessionNumberValidator;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.SampleAddService;
 import org.openelisglobal.common.services.SampleAddService.SampleTestCollection;
-import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.services.StatusService.ExternalOrderStatus;
 import org.openelisglobal.common.services.StatusService.OrderStatus;
 import org.openelisglobal.common.services.TableIdService;
@@ -284,7 +284,7 @@ public class SamplePatientUpdateData {
         }
 
         sample.setDomain(SystemConfiguration.getInstance().getHumanDomain());
-        sample.setStatusId(StatusService.getInstance().getStatusID(OrderStatus.Entered));
+        sample.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(OrderStatus.Entered));
 
         setElectronicOrderIfNeeded(sampleOrder);
     }
@@ -296,7 +296,7 @@ public class SamplePatientUpdateData {
             List<ElectronicOrder> orders = electronicOrderService.getElectronicOrdersByExternalId(externalOrderNumber);
             if (!orders.isEmpty()) {
                 electronicOrder = orders.get(orders.size() - 1);
-                electronicOrder.setStatusId(StatusService.getInstance().getStatusID(ExternalOrderStatus.Realized));
+                electronicOrder.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(ExternalOrderStatus.Realized));
                 electronicOrder.setSysUserId(currentUserId);
 
                 sample.setReferringId(externalOrderNumber);

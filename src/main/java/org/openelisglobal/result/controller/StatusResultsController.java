@@ -15,7 +15,7 @@ import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.services.DisplayListService;
-import org.openelisglobal.common.services.StatusService;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.StatusService.OrderStatus;
 import org.openelisglobal.common.util.ConfigurationProperties;
@@ -63,7 +63,7 @@ public class StatusResultsController extends BaseController {
         // currently this is the only one being excluded for Haiti_LNSP. If it
         // gets more complicate use the status sets
         excludedStatusIds = new HashSet<>();
-        excludedStatusIds.add(Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.Canceled)));
+        excludedStatusIds.add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Canceled)));
     }
 
     @InitBinder
@@ -292,16 +292,16 @@ public class StatusResultsController extends BaseController {
         List<DropPair> list = new ArrayList<>();
         list.add(new DropPair("0", ""));
 
-        list.add(new DropPair(StatusService.getInstance().getStatusID(AnalysisStatus.NotStarted),
-                StatusService.getInstance().getStatusName(AnalysisStatus.NotStarted)));
-        list.add(new DropPair(StatusService.getInstance().getStatusID(AnalysisStatus.Canceled),
-                StatusService.getInstance().getStatusName(AnalysisStatus.Canceled)));
-        list.add(new DropPair(StatusService.getInstance().getStatusID(AnalysisStatus.TechnicalAcceptance),
-                StatusService.getInstance().getStatusName(AnalysisStatus.TechnicalAcceptance)));
-        list.add(new DropPair(StatusService.getInstance().getStatusID(AnalysisStatus.TechnicalRejected),
-                StatusService.getInstance().getStatusName(AnalysisStatus.TechnicalRejected)));
-        list.add(new DropPair(StatusService.getInstance().getStatusID(AnalysisStatus.BiologistRejected),
-                StatusService.getInstance().getStatusName(AnalysisStatus.BiologistRejected)));
+        list.add(new DropPair(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NotStarted),
+                SpringContext.getBean(IStatusService.class).getStatusName(AnalysisStatus.NotStarted)));
+        list.add(new DropPair(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Canceled),
+                SpringContext.getBean(IStatusService.class).getStatusName(AnalysisStatus.Canceled)));
+        list.add(new DropPair(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalAcceptance),
+                SpringContext.getBean(IStatusService.class).getStatusName(AnalysisStatus.TechnicalAcceptance)));
+        list.add(new DropPair(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalRejected),
+                SpringContext.getBean(IStatusService.class).getStatusName(AnalysisStatus.TechnicalRejected)));
+        list.add(new DropPair(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.BiologistRejected),
+                SpringContext.getBean(IStatusService.class).getStatusName(AnalysisStatus.BiologistRejected)));
 
         return list;
     }
@@ -311,10 +311,10 @@ public class StatusResultsController extends BaseController {
         List<DropPair> list = new ArrayList<>();
         list.add(new DropPair("0", ""));
 
-        list.add(new DropPair(StatusService.getInstance().getStatusID(OrderStatus.Entered),
-                StatusService.getInstance().getStatusName(OrderStatus.Entered)));
-        list.add(new DropPair(StatusService.getInstance().getStatusID(OrderStatus.Started),
-                StatusService.getInstance().getStatusName(OrderStatus.Started)));
+        list.add(new DropPair(SpringContext.getBean(IStatusService.class).getStatusID(OrderStatus.Entered),
+                SpringContext.getBean(IStatusService.class).getStatusName(OrderStatus.Entered)));
+        list.add(new DropPair(SpringContext.getBean(IStatusService.class).getStatusID(OrderStatus.Started),
+                SpringContext.getBean(IStatusService.class).getStatusName(OrderStatus.Started)));
 
         return list;
     }

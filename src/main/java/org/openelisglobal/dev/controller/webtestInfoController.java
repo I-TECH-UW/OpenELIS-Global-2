@@ -6,8 +6,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.dev.form.WebTestInfoForm;
-import org.openelisglobal.login.service.LoginService;
-import org.openelisglobal.login.valueholder.Login;
+import org.openelisglobal.login.service.LoginUserService;
+import org.openelisglobal.login.valueholder.LoginUser;
 import org.openelisglobal.patient.service.PatientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,7 +23,7 @@ public class webtestInfoController extends BaseController {
     private static final String[] ALLOWED_FIELDS = new String[] {};
 
     @Autowired
-    LoginService loginService;
+    LoginUserService loginService;
     @Autowired
     PatientService patientService;
 
@@ -61,7 +61,7 @@ public class webtestInfoController extends BaseController {
 
     private void addUserInfo(StringBuilder xmlBuilder) {
         // Login user = loginDAO.getUserProfile("user");
-        Login user = loginService.getUserProfile("webtest");
+        LoginUser user = loginService.getUserProfile("webtest");
         if (user != null) {
             xmlBuilder.append("<webtestuser-id>");
             xmlBuilder.append(user.getSystemUserId() + "-" + user.getId());

@@ -43,7 +43,7 @@ public class NonConformingEventForm extends BaseForm {
     @SafeHtml(whitelistType = WhiteListType.NONE)
     private String dateOfEvent;
 
-    @SafeHtml(whitelistType = WhiteListType.NONE)
+    @ValidAccessionNumber
     private String labOrderNumber;
 
     @Pattern(regexp = ValidationHelper.ID_REGEX)
@@ -55,8 +55,7 @@ public class NonConformingEventForm extends BaseForm {
     @SafeHtml(whitelistType = WhiteListType.NONE)
     private String site;
 
-    @SafeHtml(whitelistType = WhiteListType.NONE)
-    private String reportingUnit;
+    private Integer reportingUnit;
 
     @SafeHtml(whitelistType = WhiteListType.NONE)
     private String description;
@@ -69,9 +68,6 @@ public class NonConformingEventForm extends BaseForm {
 
     @Valid
     private List<SampleItem> specimens;
-
-    @ValidAccessionNumber
-    private String labNo;
 
     @Pattern(regexp = ValidationHelper.ID_REGEX)
     private String specimenId;
@@ -219,11 +215,11 @@ public class NonConformingEventForm extends BaseForm {
         this.site = site;
     }
 
-    public String getReportingUnit() {
+    public Integer getReportingUnit() {
         return reportingUnit;
     }
 
-    public void setReportingUnit(String reportingUnit) {
+    public void setReportingUnit(Integer reportingUnit) {
         this.reportingUnit = reportingUnit;
     }
 
@@ -441,14 +437,6 @@ public class NonConformingEventForm extends BaseForm {
 
     public void setActionTypeList(List<IdValuePair> actionTypeList) {
         this.actionTypeList = actionTypeList;
-    }
-
-    public String getLabNo() {
-        return labNo;
-    }
-
-    public void setLabNo(String labNo) {
-        this.labNo = labNo;
     }
 
     public String getSpecimenId() {

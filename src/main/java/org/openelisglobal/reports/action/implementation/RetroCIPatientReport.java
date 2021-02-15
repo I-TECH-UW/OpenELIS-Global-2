@@ -22,7 +22,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.apache.commons.validator.GenericValidator;
-import org.openelisglobal.common.services.StatusService;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.StatusService.OrderStatus;
 import org.openelisglobal.internationalization.MessageUtil;
@@ -56,10 +56,10 @@ public abstract class RetroCIPatientReport extends RetroCIReport {
     static {
         READY_FOR_REPORT_STATUS_IDS = new ArrayList<>();
         READY_FOR_REPORT_STATUS_IDS
-                .add(Integer.parseInt(StatusService.getInstance().getStatusID(OrderStatus.Finished)));
-        READY_FOR_REPORT_STATUS_IDS.add(Integer.parseInt(StatusService.getInstance().getStatusID(OrderStatus.Started)));
+                .add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(OrderStatus.Finished)));
+        READY_FOR_REPORT_STATUS_IDS.add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(OrderStatus.Started)));
 
-        ANALYSIS_FINALIZED_STATUS_ID = StatusService.getInstance().getStatusID(AnalysisStatus.Finalized);
+        ANALYSIS_FINALIZED_STATUS_ID = SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized);
     }
 
     @Override

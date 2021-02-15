@@ -25,8 +25,8 @@ import org.openelisglobal.common.formfields.FormFields.Field;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.DisplayListService.ListType;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.ResultSaveService;
-import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.beanAdapters.ResultSaveBeanAdapter;
 import org.openelisglobal.common.services.registration.ResultUpdateRegister;
@@ -160,6 +160,9 @@ public class LogbookResultsController extends LogbookResultsBaseController {
         //        String statusRuleSet = ConfigurationProperties.getInstance().getPropertyValueUpperCase(Property.StatusRules);
 
         String requestedPage = request.getParameter("page");
+        if (GenericValidator.isBlankOrNull(requestedPage)) {
+            requestedPage = "1";
+        }
         int requestedPageNumber = Integer.parseInt(requestedPage);
         String testSectionId = form.getTestSectionId();
 
@@ -495,19 +498,19 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 
     private String getStatusForTestResult(TestResultItem testResult, boolean alwaysValidate) {
         if (testResult.isShadowRejected()) {
-            return StatusService.getInstance().getStatusID(AnalysisStatus.TechnicalRejected);
+            return SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalRejected);
         } else if (alwaysValidate || !testResult.isValid() || ResultUtil.isForcedToAcceptance(testResult)) {
-            return StatusService.getInstance().getStatusID(AnalysisStatus.TechnicalAcceptance);
+            return SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalAcceptance);
         } else if (noResults(testResult.getShadowResultValue(), testResult.getMultiSelectResultValues(),
                 testResult.getResultType())) {
-            return StatusService.getInstance().getStatusID(AnalysisStatus.NotStarted);
+            return SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NotStarted);
         } else {
             ResultLimit resultLimit = resultLimitService.get(testResult.getResultLimitId());
             if (resultLimit != null && resultLimit.isAlwaysValidate()) {
-                return StatusService.getInstance().getStatusID(AnalysisStatus.TechnicalAcceptance);
+                return SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalAcceptance);
             }
 
-            return StatusService.getInstance().getStatusID(AnalysisStatus.Finalized);
+            return SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized);
         }
     }
 
@@ -556,12 +559,12 @@ public class LogbookResultsController extends LogbookResultsBaseController {
         // This needs to be refactored -- part of the logic is in
         // getStatusForTestResult. RetroCI over rides to whatever was set before
         if (statusRuleSet.equals(STATUS_RULES_RETROCI)) {
-            if (!StatusService.getInstance().getStatusID(AnalysisStatus.Canceled).equals(analysis.getStatusId())) {
+            if (!SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Canceled).equals(analysis.getStatusId())) {
                 analysis.setCompletedDate(DateUtil.convertStringDateToSqlDate(testDate));
-                analysis.setStatusId(StatusService.getInstance().getStatusID(AnalysisStatus.TechnicalAcceptance));
+                analysis.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalAcceptance));
             }
-        } else if (StatusService.getInstance().matches(analysis.getStatusId(), AnalysisStatus.Finalized)
-                || StatusService.getInstance().matches(analysis.getStatusId(), AnalysisStatus.TechnicalAcceptance)
+        } else if (SpringContext.getBean(IStatusService.class).matches(analysis.getStatusId(), AnalysisStatus.Finalized)
+                || SpringContext.getBean(IStatusService.class).matches(analysis.getStatusId(), AnalysisStatus.TechnicalAcceptance)
                 || (analysis.isReferredOut()
                         && !GenericValidator.isBlankOrNull(testResultItem.getShadowResultValue()))) {
             analysis.setCompletedDate(DateUtil.convertStringDateToSqlDate(testDate));

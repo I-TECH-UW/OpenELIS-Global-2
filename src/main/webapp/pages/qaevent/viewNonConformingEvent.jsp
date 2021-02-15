@@ -49,9 +49,8 @@
     <input type="text" name="searchValue"
            value="" onkeyup="enableSearch()" onpaste="enableSearch()" id="searchValue">
     &nbsp;
-    <input type="button" id="searchButtonId"
-           value='<spring:message code="label.button.search" />'
-           onclick="searchNCE();" disabled />
+    <button type="button" id="searchButtonId"
+           onclick="searchNCE();" disabled><spring:message code="label.button.search" /></button>
 
     <table id="searchResults">
 
@@ -150,6 +149,7 @@
                         <p>
                             <form:select path="nceType" id="nceType" onchange="checkIfValid()">
                                 <option value="">Select one</option>
+                                <form:options items="${form.nceTypes}" itemLabel="name" itemValue="id" />
                             </form:select>
                         </p>
                     </td>
@@ -272,7 +272,7 @@
     function searchNCE() {
         var criteria = jQuery("#searchCriteria").val();
         var value = jQuery("#searchValue").val();
-        var nceNumber;
+        var nceNumber = "";
         var labNumber = "";
 
 

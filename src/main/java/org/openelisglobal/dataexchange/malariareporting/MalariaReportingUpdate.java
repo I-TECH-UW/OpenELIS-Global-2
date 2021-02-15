@@ -26,7 +26,7 @@ import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.IResultSaveService;
-import org.openelisglobal.common.services.StatusService;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.registration.interfaces.IResultUpdate;
 import org.openelisglobal.common.util.ConfigurationProperties;
@@ -56,7 +56,7 @@ public class MalariaReportingUpdate implements IResultUpdate {
 
     public MalariaReportingUpdate() {
         REPORTABLE_STATUS_IDS = new HashSet<>();
-        REPORTABLE_STATUS_IDS.add(Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.Finalized)));
+        REPORTABLE_STATUS_IDS.add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized)));
 
         // N.B. This should be discoverable from the DB, not hard coded by name
         MALARIA_TEST_IDS = new HashSet<>();

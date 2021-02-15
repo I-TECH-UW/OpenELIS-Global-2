@@ -396,7 +396,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
         try {
             String sql = "from Dictionary d where d.isActive= " + enquote(YES);
 
-            if (!StringUtil.isNullorNill(fieldValue)) {
+            if (!StringUtil.isNullorNill(fieldValue) && this.columnNameIsInjectionSafe(fieldName)) {
                 sql += " and d.dictionaryCategory." + fieldName + " = :param1";
             }
 

@@ -3,8 +3,10 @@
     xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
 
-    <persistence-unit name="myApp">
+    <persistence-unit name="OpenELIS-Global-persistence-unit">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+        <class>org.openelisglobal.login.valueholder.LoginUser</class>
+        <class>org.openelisglobal.gender.valueholder.Gender</class>
         <properties>
             <property name="hibernate.ejb.cfgfile" value="classpath:hibernate/hibernate.cfg.xml" />
         </properties>

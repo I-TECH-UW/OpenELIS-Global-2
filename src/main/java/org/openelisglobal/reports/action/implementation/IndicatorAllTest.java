@@ -25,7 +25,7 @@ import java.util.Map;
 
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
-import org.openelisglobal.common.services.StatusService;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.reports.action.implementation.reportBeans.HaitiAggregateReportData;
@@ -154,13 +154,13 @@ public abstract class IndicatorAllTest extends IndicatorReport implements IRepor
                 boolean finished = false;
                 boolean inProgress = false;
                 for (Analysis panelAnalysis : panelIdToAnalysisMap.get(panelId)) {
-                    if (StatusService.getInstance().matches(panelAnalysis.getStatusId(), AnalysisStatus.Canceled)) {
+                    if (SpringContext.getBean(IStatusService.class).matches(panelAnalysis.getStatusId(), AnalysisStatus.Canceled)) {
                         canceled = true;
                         break;
-                    } else if (StatusService.getInstance().matches(panelAnalysis.getStatusId(),
+                    } else if (SpringContext.getBean(IStatusService.class).matches(panelAnalysis.getStatusId(),
                             AnalysisStatus.NotStarted)) {
                         notStarted = true;
-                    } else if (StatusService.getInstance().matches(panelAnalysis.getStatusId(),
+                    } else if (SpringContext.getBean(IStatusService.class).matches(panelAnalysis.getStatusId(),
                             AnalysisStatus.Finalized)) {
                         finished = true;
                     } else {
@@ -179,11 +179,11 @@ public abstract class IndicatorAllTest extends IndicatorReport implements IRepor
 
                     String status;
                     if (inProgress || (notStarted && finished)) {
-                        status = StatusService.getInstance().getStatusID(AnalysisStatus.TechnicalAcceptance);
+                        status = SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalAcceptance);
                     } else if (notStarted) {
-                        status = StatusService.getInstance().getStatusID(AnalysisStatus.NotStarted);
+                        status = SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NotStarted);
                     } else {
-                        status = StatusService.getInstance().getStatusID(AnalysisStatus.Finalized);
+                        status = SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized);
                     }
 
                     Analysis proxyAnalysis = getProxyAnalysis(templateAnalysis, panelName, status);
@@ -242,11 +242,11 @@ public abstract class IndicatorAllTest extends IndicatorReport implements IRepor
             }
 
             if (testBucket != null) {
-                if (StatusService.getInstance().matches(analysis.getStatusId(), AnalysisStatus.NotStarted)) {
+                if (SpringContext.getBean(IStatusService.class).matches(analysis.getStatusId(), AnalysisStatus.NotStarted)) {
                     testBucket.notStartedCount++;
                 } else if (inProgress(analysis)) {
                     testBucket.inProgressCount++;
-                } else if (StatusService.getInstance().matches(analysis.getStatusId(), AnalysisStatus.Finalized)) {
+                } else if (SpringContext.getBean(IStatusService.class).matches(analysis.getStatusId(), AnalysisStatus.Finalized)) {
                     testBucket.finishedCount++;
                 }
             }
@@ -286,9 +286,9 @@ public abstract class IndicatorAllTest extends IndicatorReport implements IRepor
     }
 
     private boolean inProgress(Analysis analysis) {
-        return StatusService.getInstance().matches(analysis.getStatusId(), AnalysisStatus.TechnicalAcceptance)
-                || StatusService.getInstance().matches(analysis.getStatusId(), AnalysisStatus.TechnicalRejected)
-                || StatusService.getInstance().matches(analysis.getStatusId(), AnalysisStatus.BiologistRejected);
+        return SpringContext.getBean(IStatusService.class).matches(analysis.getStatusId(), AnalysisStatus.TechnicalAcceptance)
+                || SpringContext.getBean(IStatusService.class).matches(analysis.getStatusId(), AnalysisStatus.TechnicalRejected)
+                || SpringContext.getBean(IStatusService.class).matches(analysis.getStatusId(), AnalysisStatus.BiologistRejected);
     }
 
     private void mergeLists() {

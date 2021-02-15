@@ -8,7 +8,6 @@ import org.apache.commons.lang.StringUtils;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.barcode.LabelField;
-import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.SampleOrderService;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
@@ -42,14 +41,10 @@ public class SpecimenLabel extends Label {
      */
     public SpecimenLabel(Patient patient, Sample sample, SampleItem sampleItem, String labNo) {
         // set dimensions
-        try {
             width = Float.parseFloat(
                     ConfigurationProperties.getInstance().getPropertyValue(Property.SPECIMEN_BARCODE_WIDTH));
             height = Float.parseFloat(
                     ConfigurationProperties.getInstance().getPropertyValue(Property.SPECIMEN_BARCODE_HEIGHT));
-        } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
-        }
         // get information for displaying above bar code
         SampleOrderService sampleOrderService = new SampleOrderService(sample);
         Person person = patient.getPerson();
@@ -177,13 +172,8 @@ public class SpecimenLabel extends Label {
     @Override
     public int getMaxNumLabels() {
         int max = 0;
-        try {
             max = Integer
                     .parseInt(ConfigurationProperties.getInstance().getPropertyValue(Property.MAX_SPECIMEN_PRINTED));
-        } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
-        }
-
         return max;
     }
 

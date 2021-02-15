@@ -23,7 +23,7 @@ import java.util.Map;
 
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
-import org.openelisglobal.common.services.StatusService;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.reports.action.implementation.reportBeans.ValidationBacklogData;
 import org.openelisglobal.reports.form.ReportForm;
@@ -61,7 +61,7 @@ public class ValidationBacklogReport extends Report {
     private AnalysisService analysisService = SpringContext.getBean(AnalysisService.class);
 
     public ValidationBacklogReport() {
-        TECH_ACCEPT_ID = StatusService.getInstance().getStatusID(AnalysisStatus.TechnicalAcceptance);
+        TECH_ACCEPT_ID = SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalAcceptance);
         TestSection testSection = testSectionService.getTestSectionByName("user");
         if (testSection != null) {
             USER_SELECT_SECTION_ID = testSection.getId();

@@ -22,18 +22,28 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 
-import org.openelisglobal.common.log.LogEvent;
+import javax.persistence.Column;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.Transient;
+import javax.persistence.Version;
+
 import org.openelisglobal.internationalization.MessageUtil;
 
+@MappedSuperclass
 public abstract class BaseObject<PK extends Serializable> implements Serializable, Cloneable {
 
     private static final long serialVersionUID = 1L;
 
+    @Column(name = "last_updated")
+    @Version
     private Timestamp lastupdated;
 
+    @Transient
     private Timestamp originalLastupdated;
+    @Transient
     private String sysUserId;
-    protected String nameKey;
+    @Transient
+    private String nameKey;
 
     public BaseObject() {
     }
@@ -48,9 +58,13 @@ public abstract class BaseObject<PK extends Serializable> implements Serializabl
             return null;
         } else if (getId().getClass().equals(String.class)) {
             return (String) getId();
+        } else if (getId().getClass().equals(Integer.class)) {
+            return Integer.toString((Integer) getId());
+        } else if (getId().getClass().equals(Long.class)) {
+            return Long.toString((Long) getId());
         } else {
             throw new UnsupportedOperationException(
-                    "object must override getStringId() as its id is not of type String");
+                    "object must override getStringId() as it's id is not a recognizeable type");
         }
     }
 
@@ -86,15 +100,17 @@ public abstract class BaseObject<PK extends Serializable> implements Serializabl
         Timestamp ts = new Timestamp(System.currentTimeMillis());
 
         if (ts.getNanos() == 0) {
-            try {
-                // a little past 0 millisecs
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                // bugzilla 2154
-                LogEvent.logError(e.toString(), e);
-            }
-
-            ts = new Timestamp(System.currentTimeMillis());
+            ts.setNanos(1);
+            // unsure why we need this, but this is an unnecessary way to get non 0
+//            try {
+//                // a little past 0 millisecs
+//                Thread.sleep(100);
+//            } catch (InterruptedException e) {
+//                // bugzilla 2154
+//                LogEvent.logError(e.toString(), e);
+//            }
+//
+//            ts = new Timestamp(System.currentTimeMillis());
         }
         setLastupdated(ts);
         // setLastupdatedBy( getSessionContext().getUsername() );

@@ -51,8 +51,16 @@ public class SecurityConfig {
             filter.setForceEncoding(true);
             http.addFilterBefore(filter, CsrfFilter.class);
 
+            // for all requests going to a http basic page, use this security configuration
             http.requestMatchers().antMatchers(HTTP_BASIC_SERVLET_PAGES).and().authorizeRequests().anyRequest()
-                    .authenticated().and().httpBasic().and().csrf().disable();
+                    // ensure they are authenticated
+                    .authenticated().and()
+                    // ensure they authenticate with http basic
+                    .httpBasic().and()
+                    // disable csrf as it is not needed for httpBasic
+                    .csrf().disable()
+                    // add security headers
+                    .headers().frameOptions().sameOrigin().contentSecurityPolicy(CONTENT_SECURITY_POLICY);
         }
 
     }

@@ -33,7 +33,7 @@ import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
-import org.openelisglobal.common.services.StatusService;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.internationalization.MessageUtil;
@@ -76,11 +76,11 @@ public class IPCIRealisationReport extends Report {
     private AnalysisService analysisService = SpringContext.getBean(AnalysisService.class);
 
     static {
-        NOT_STARTED_STATUS_ID = StatusService.getInstance().getStatusID(AnalysisStatus.NotStarted);
-        FINALIZED_STATUS_ID = StatusService.getInstance().getStatusID(AnalysisStatus.Finalized);
-        TECH_ACCEPT_ID = StatusService.getInstance().getStatusID(AnalysisStatus.TechnicalAcceptance);
-        TECH_REJECT_ID = StatusService.getInstance().getStatusID(AnalysisStatus.TechnicalRejected);
-        BIOLOGIST_REJECT_ID = StatusService.getInstance().getStatusID(AnalysisStatus.BiologistRejected);
+        NOT_STARTED_STATUS_ID = SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NotStarted);
+        FINALIZED_STATUS_ID = SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized);
+        TECH_ACCEPT_ID = SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalAcceptance);
+        TECH_REJECT_ID = SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalRejected);
+        BIOLOGIST_REJECT_ID = SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.BiologistRejected);
         USER_TEST_SECTION_ID = testSectionService.getTestSectionByName("user").getId();
     }
 

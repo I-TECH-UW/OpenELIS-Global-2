@@ -22,8 +22,8 @@ import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.DisplayListService.ListType;
 import org.openelisglobal.common.services.IResultSaveService;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.ResultSaveService;
-import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.beanAdapters.ResultSaveBeanAdapter;
 import org.openelisglobal.common.services.registration.ValidationUpdateRegister;
@@ -175,11 +175,11 @@ public class ResultValidationController extends BaseResultValidationController {
     public List<Integer> getValidationStatus() {
         List<Integer> validationStatus = new ArrayList<>();
         validationStatus
-                .add(Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.TechnicalAcceptance)));
+                .add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalAcceptance)));
         if (ConfigurationProperties.getInstance()
                 .isPropertyValueEqual(ConfigurationProperties.Property.VALIDATE_REJECTED_TESTS, "true")) {
             validationStatus
-                    .add(Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.TechnicalRejected)));
+                    .add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalRejected)));
         }
 
         return validationStatus;
@@ -332,14 +332,14 @@ public class ResultValidationController extends BaseResultValidationController {
                 if (!analysisIdList.contains(analysis.getId())) {
 
                     if (analysisItem.getIsAccepted()) {
-                        analysis.setStatusId(StatusService.getInstance().getStatusID(AnalysisStatus.Finalized));
+                        analysis.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized));
                         analysis.setReleasedDate(new java.sql.Date(Calendar.getInstance().getTimeInMillis()));
                         analysisIdList.add(analysis.getId());
                         analysisUpdateList.add(analysis);
                     }
 
                     if (analysisItem.getIsRejected()) {
-                        analysis.setStatusId(StatusService.getInstance().getStatusID(AnalysisStatus.BiologistRejected));
+                        analysis.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.BiologistRejected));
                         analysisIdList.add(analysis.getId());
                         analysisUpdateList.add(analysis);
                     }
@@ -411,7 +411,7 @@ public class ResultValidationController extends BaseResultValidationController {
                 List<Analysis> acceptedAnalysisList = createAnalysisFromElisaAnalysisItem(resultItem);
 
                 for (Analysis analysis : acceptedAnalysisList) {
-                    analysis.setStatusId(StatusService.getInstance().getStatusID(AnalysisStatus.Finalized));
+                    analysis.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized));
                     analysisUpdateList.add(analysis);
                 }
             }
@@ -420,7 +420,7 @@ public class ResultValidationController extends BaseResultValidationController {
                 List<Analysis> rejectedAnalysisList = createAnalysisFromElisaAnalysisItem(resultItem);
 
                 for (Analysis analysis : rejectedAnalysisList) {
-                    analysis.setStatusId(StatusService.getInstance().getStatusID(AnalysisStatus.BiologistRejected));
+                    analysis.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.BiologistRejected));
                     analysisUpdateList.add(analysis);
                 }
 

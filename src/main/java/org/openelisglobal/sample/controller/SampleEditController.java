@@ -24,8 +24,8 @@ import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.provider.validation.IAccessionNumberValidator.ValidationResults;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.DisplayListService.ListType;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.SampleOrderService;
-import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.StatusService.SampleStatus;
 import org.openelisglobal.common.util.DateUtil;
@@ -102,9 +102,9 @@ public class SampleEditController extends BaseController {
     static {
         excludedAnalysisStatusList = new HashSet<>();
         excludedAnalysisStatusList
-                .add(Integer.parseInt(StatusService.getInstance().getStatusID(AnalysisStatus.Canceled)));
+                .add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Canceled)));
 
-        ENTERED_STATUS_SAMPLE_LIST.add(Integer.parseInt(StatusService.getInstance().getStatusID(SampleStatus.Entered)));
+        ENTERED_STATUS_SAMPLE_LIST.add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(SampleStatus.Entered)));
         ABLE_TO_CANCEL_ROLE_NAMES.add("Validator");
         ABLE_TO_CANCEL_ROLE_NAMES.add("Validation");
         ABLE_TO_CANCEL_ROLE_NAMES.add("Biologist");
@@ -301,18 +301,18 @@ public class SampleEditController extends BaseController {
             sampleEditItem.setSampleItemId(sampleItem.getId());
 
             boolean canCancel = allowedToCancelAll
-                    || (!StatusService.getInstance().matches(analysis.getStatusId(), AnalysisStatus.Canceled)
-                            && StatusService.getInstance().matches(analysis.getStatusId(), AnalysisStatus.NotStarted));
+                    || (!SpringContext.getBean(IStatusService.class).matches(analysis.getStatusId(), AnalysisStatus.Canceled)
+                            && SpringContext.getBean(IStatusService.class).matches(analysis.getStatusId(), AnalysisStatus.NotStarted));
 
             if (!canCancel) {
                 canRemove = false;
             }
             sampleEditItem.setCanCancel(canCancel);
             sampleEditItem.setAnalysisId(analysis.getId());
-            sampleEditItem.setStatus(StatusService.getInstance().getStatusNameFromId(analysis.getStatusId()));
+            sampleEditItem.setStatus(SpringContext.getBean(IStatusService.class).getStatusNameFromId(analysis.getStatusId()));
             sampleEditItem.setSortOrder(analysis.getTest().getSortOrder());
             sampleEditItem.setHasResults(
-                    !StatusService.getInstance().matches(analysis.getStatusId(), AnalysisStatus.NotStarted));
+                    !SpringContext.getBean(IStatusService.class).matches(analysis.getStatusId(), AnalysisStatus.NotStarted));
 
             analysisSampleItemList.add(sampleEditItem);
         }

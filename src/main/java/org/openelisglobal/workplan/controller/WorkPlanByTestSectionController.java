@@ -69,7 +69,7 @@ public class WorkPlanByTestSectionController extends BaseWorkplanController {
         request.getSession().setAttribute(SAVE_DISABLED, "true");
 
         String testSectionId = form.getTestSectionId();
-        String workplan = form.getType();
+        String workplan = form.getWorkplanType();
 
         // load testSections for drop down
         form.setTestSections(DisplayListService.getInstance().getList(ListType.TEST_SECTION));
@@ -102,7 +102,7 @@ public class WorkPlanByTestSectionController extends BaseWorkplanController {
         if (isPatientNameAdded()) {
             addPatientNamesToList(workplanTests);
         }
-        form.setType(workplan);
+        form.setWorkplanType(workplan);
         form.setSearchLabel(MessageUtil.getMessage("workplan.unit.types"));
 
         return findForward(FWD_SUCCESS, form);
