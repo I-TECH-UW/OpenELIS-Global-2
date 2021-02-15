@@ -2,8 +2,7 @@
 		import="org.openelisglobal.common.action.IActionConstants,
 				org.openelisglobal.common.formfields.FormFields,
                 org.openelisglobal.common.formfields.FormFields.Field,
-                org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory,
-                org.openelisglobal.common.provider.validation.IAccessionNumberValidator,
+				org.openelisglobal.sample.util.AccessionNumberUtil,
                 org.openelisglobal.common.provider.validation.NonConformityRecordNumberValidationProvider,
                 org.openelisglobal.common.services.PhoneNumberService,
                 org.openelisglobal.common.util.DateUtil,
@@ -19,16 +18,11 @@
 
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<%! 
-	AccessionNumberValidatorFactory accessionNumberValidatorFactory = new AccessionNumberValidatorFactory();
-%>
 <%
 	boolean useProject = FormFields.getInstance().useField(Field.Project);
 	boolean useSiteList = FormFields.getInstance().useField(Field.NON_CONFORMITY_SITE_LIST);
 	boolean useSubjectNo = FormFields.getInstance().useField(Field.QASubjectNumber);
 	boolean useNationalID = FormFields.getInstance().useField(Field.NationalID);
-	
-	IAccessionNumberValidator accessionNumberValidator = accessionNumberValidatorFactory.getValidator();
 %>
 
 <link rel="stylesheet" href="css/jquery_ui/jquery.ui.all.css?">
@@ -331,7 +325,7 @@ function  processPhoneSuccess(xhr){
 	<%= MessageUtil.getContextualMessage("quick.entry.accession.number") %>
 	:
 	<input type="text" name="labNo"
-		maxlength='<%=Integer.toString(accessionNumberValidator.getMaxAccessionLength())%>'
+		maxlength='<%=Integer.toString(AccessionNumberUtil.getMaxAccessionLength())%>'
 		value="" onchange="doNothing()" id="searchId">
 	&nbsp;
 	<input type="button" id="searchButtonId"
@@ -765,7 +759,7 @@ function  processPhoneSuccess(xhr){
 function makeDirty() {
 	dirty = true;
 
-	if (typeof (showSuccessMessage) != 'undefinded') {
+	if (typeof (showSuccessMessage) != 'undefined') {
 		showSuccessMessage(false);
 	}
 	// Adds warning when leaving page if content has been entered into makeDirty form fields

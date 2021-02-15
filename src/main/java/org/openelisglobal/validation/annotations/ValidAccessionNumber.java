@@ -22,7 +22,7 @@ public @interface ValidAccessionNumber {
 
     Class<?>[] groups() default {};
 
-    AccessionFormat format() default AccessionFormat.DEFAULT;
+    AccessionFormat format() default AccessionFormat.GENERAL;
 
     boolean dateValidate() default false;
 

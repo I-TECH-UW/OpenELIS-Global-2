@@ -395,6 +395,10 @@ public class DisplayListService implements LocaleChangeListener {
             typeToListMap.put(ListType.UNIT_OF_MEASURE, createUnitOfMeasureList());
             break;
         }
+        case PATIENT_HEALTH_REGIONS: {
+            typeToListMap.put(ListType.PATIENT_HEALTH_REGIONS, createPatientHealthRegions());
+            break;
+        }
         }
     }
 

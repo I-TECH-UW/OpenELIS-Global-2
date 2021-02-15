@@ -552,6 +552,8 @@
 			value="siteInformationMenuDefinition" />
 		<put-attribute name="rightAnalyzerTestName"
 			value="analyzerTestNameMenuDefinition" />
+		<put-attribute name="rightTestNotification"
+			value="testNotificationMenuDefinition" />
 	</definition>
 
 	<definition name="typeOfSampleTestMenuDefinition"
@@ -888,6 +890,8 @@
 			value="/pages/barcode/numberBarcodeConfig.jsp" />
 		<put-attribute name="elementsBarCodes"
 			value="/pages/barcode/elementsBarcodeConfig.jsp" />
+		<put-attribute name="alternateAccession"
+			value="/pages/barcode/alternateAccessionConfig.jsp" />
 		<put-attribute name="sizeBarCodes"
 			value="/pages/barcode/sizeBarcodeConfig.jsp" />
 	</definition>
@@ -930,7 +934,42 @@
 					   value="/pages/common/emptyPlaceHolder.jsp" />
 	</definition>
 
+	<definition name="fhirReferralDefinition"
+				extends="baseDefinition">
+		<put-attribute name="preSelectionHeader"
+					   value="/pages/common/actionSuccess.jsp" />
+		<put-attribute name="body"
+					   value="/pages/fhirReferral/referral.jsp" />
+	</definition>
 
+	<definition name="testNotificationMenuDefinition"
+		extends="baseMenuSelectListDefinition">
+		<put-attribute name="header"
+			value="/pages/testnotification/headerButtons.jsp" />
+		<put-attribute name="body"
+			value="/pages/testnotification/testNotificationMenu.jsp" />
+		<put-attribute name="footer"
+			value="/pages/testnotification/headerButtons.jsp" />
+	</definition>
+
+	<definition name="testNotificationConfigDefinition"
+		extends="baseDefinition">
+		<put-attribute name="preSelectionHeader"
+			value="/pages/common/actionSuccess.jsp" />
+		<put-attribute name="body"
+			value="/pages/testnotification/testNotification.jsp" />
+		<put-attribute name="footer"
+			
+			value="/pages/common/saveCancelFooterButtons.jsp" />
+	</definition>
+
+	<definition name="notificationCenterDefinition"
+		extends="baseDefinition">
+		<put-attribute name="body"
+			value="/pages/notificationcenter/notificationCenter.jsp" />
+		<put-attribute name="footer"
+			value="/pages/common/emptyPlaceHolder.jsp" />
+	</definition>
 </tiles-definitions>
 
 

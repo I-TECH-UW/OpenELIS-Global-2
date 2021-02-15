@@ -166,12 +166,11 @@ public class WorkPlanByTestSectionController extends BaseWorkplanController {
                 testResultItem.setReceivedDate(getReceivedDateDisplay(sample));
                 testResultItem.setSampleGroupingNumber(sampleGroupingNumber);
                 testResultItem.setTestId(analysis.getTest().getId());
-                testResultItem.setNonconforming(QAService.isAnalysisParentNonConforming(analysis));
-
+                boolean nonConforming = QAService.isAnalysisParentNonConforming(analysis);
                 if (FormFields.getInstance().useField(Field.QaEventsBySection)) {
-                    testResultItem
-                            .setNonconforming(testResultItem.isNonconforming() || getQaEventByTestSection(analysis));
+                    nonConforming = nonConforming || getQaEventByTestSection(analysis);
                 }
+                testResultItem.setNonconforming(nonConforming);
 
                 testResultItem.setPatientInfo(subjectNumber);
                 testResultItem.setNextVisitDate(nextVisit);

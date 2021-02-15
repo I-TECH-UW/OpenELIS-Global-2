@@ -54,7 +54,8 @@ public class ScanGeneratorProvider extends BaseQueryProvider {
         String error = null;
         try {
             if (GenericValidator.isBlankOrNull(programCode)) {
-                nextNumber = getNextScanNumber("");
+                nextNumber = AccessionNumberUtil.getMainAccessionNumberGenerator().getNextAvailableAccessionNumber("",
+                        true);
             } else {
                 // check program code validity
                 List<Project> programCodes = projectService.getAllProjects();
@@ -66,7 +67,8 @@ public class ScanGeneratorProvider extends BaseQueryProvider {
                     }
                 }
                 if (found) {
-                    nextNumber = getNextScanNumber(programCode);
+                    nextNumber = AccessionNumberUtil.getProgramAccessionNumberGenerator()
+                            .getNextAvailableAccessionNumber(programCode, true);
                     if (GenericValidator.isBlankOrNull(nextNumber)) {
                         error = MessageUtil.getMessage("error.accession.no.next");
                     }
@@ -83,11 +85,6 @@ public class ScanGeneratorProvider extends BaseQueryProvider {
         String returnData = Encode.forXmlContent(GenericValidator.isBlankOrNull(error) ? nextNumber : error);
 
         ajaxServlet.sendData(returnData, result, request, response);
-    }
-
-    private String getNextScanNumber(String optionalPrefix) throws IllegalStateException {
-
-        return AccessionNumberUtil.getNextAccessionNumber(optionalPrefix);
     }
 
 }

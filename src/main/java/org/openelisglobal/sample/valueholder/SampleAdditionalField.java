@@ -1,0 +1,108 @@
+package org.openelisglobal.sample.valueholder;
+
+import java.io.Serializable;
+
+import javax.persistence.Column;
+import javax.persistence.Convert;
+import javax.persistence.Embeddable;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
+import javax.persistence.Table;
+
+import org.openelisglobal.common.valueholder.BaseObject;
+import org.openelisglobal.hibernate.converter.StringToIntegerConverter;
+import org.openelisglobal.sample.valueholder.SampleAdditionalField.SampleAdditionalFieldId;
+
+@Entity
+@Table(name = "sample_additional_fields")
+public class SampleAdditionalField extends BaseObject<SampleAdditionalFieldId> {
+
+    public enum AdditionalFieldName {
+        CONTACT_TRACING_INDEX_NAME, CONTACT_TRACING_INDEX_RECORD_NUMBER
+    }
+
+    private static final long serialVersionUID = 932652572195268450L;
+
+    @EmbeddedId
+    private SampleAdditionalFieldId id;
+
+    @MapsId("sampleId") // value corresponds to property in the ID class
+    @ManyToOne
+    @JoinColumn(name = "sample_id")
+    private Sample sample;
+    @Column(name = "field_value")
+    private String fieldValue;
+
+    @Override
+    public SampleAdditionalFieldId getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(SampleAdditionalFieldId id) {
+        this.id = id;
+    }
+
+    public Sample getSample() {
+        return sample;
+    }
+
+    public void setSample(Sample sample) {
+        this.sample = sample;
+    }
+
+    public AdditionalFieldName getFieldName() {
+        if (id == null) {
+            id = new SampleAdditionalFieldId();
+        }
+        return id.getFieldName();
+    }
+
+    public void setFieldName(AdditionalFieldName fieldName) {
+        if (id == null) {
+            id = new SampleAdditionalFieldId();
+        }
+        this.id.setFieldName(fieldName);
+    }
+
+    public String getFieldValue() {
+        return fieldValue;
+    }
+
+    public void setFieldValue(String fieldValue) {
+        this.fieldValue = fieldValue;
+    }
+
+    @Embeddable
+    public static class SampleAdditionalFieldId implements Serializable {
+        private static final long serialVersionUID = -9097137007120585441L;
+        @Column(name = "field_name")
+        @Enumerated(value = EnumType.STRING)
+        private AdditionalFieldName fieldName;
+        @Convert(converter = StringToIntegerConverter.class)
+        private String sampleId;
+
+        public AdditionalFieldName getFieldName() {
+            return fieldName;
+        }
+
+        public void setFieldName(AdditionalFieldName fieldName) {
+            this.fieldName = fieldName;
+        }
+
+        public String getSampleId() {
+            return sampleId;
+        }
+
+        public void setSampleId(String sampleId) {
+            this.sampleId = sampleId;
+        }
+
+    }
+
+}

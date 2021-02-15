@@ -1,8 +1,12 @@
 package org.openelisglobal.notification.valueholder;
 
-public class EmailNotification implements ClientNotification {
+import java.util.List;
+
+public class EmailNotification implements RemoteNotification {
 
     private String recipientEmailAddress;
+
+    private List<String> bccs;
 
     private NotificationPayload payload;
 
@@ -30,6 +34,14 @@ public class EmailNotification implements ClientNotification {
     @Override
     public String getSubject() {
         return payload.getSubject();
+    }
+
+    public List<String> getBccs() {
+        return bccs;
+    }
+
+    public void setBccs(List<String> bccs) {
+        this.bccs = bccs;
     }
 
 }

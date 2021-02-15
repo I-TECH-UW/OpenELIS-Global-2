@@ -63,9 +63,6 @@ public class LoginUser extends BaseObject<Integer> {
     @Column(name = "password_expired_dt")
     private Date passwordExpiredDT;
 
-    @Transient
-    private String passwordExpiredDateForDisplay;
-
     @Column(name = "account_locked")
     @Size(max = 1)
     private String accountLocked;
@@ -172,18 +169,16 @@ public class LoginUser extends BaseObject<Integer> {
 
     public void setPasswordExpiredDate(Date passwordExpiredDT) {
         this.passwordExpiredDT = passwordExpiredDT;
-        this.passwordExpiredDateForDisplay = DateUtil.convertSqlDateToStringDate(passwordExpiredDT);
     }
 
     public void setPasswordExpiredDateForDisplay(String passwordExpiredDTForDisplay) {
-        this.passwordExpiredDateForDisplay = passwordExpiredDTForDisplay;
         // also update the java.sql.Date
         String locale = SystemConfiguration.getInstance().getDefaultLocale().toString();
-        this.passwordExpiredDT = DateUtil.convertStringDateToSqlDate(this.passwordExpiredDateForDisplay, locale);
+        this.passwordExpiredDT = DateUtil.convertStringDateToSqlDate(passwordExpiredDTForDisplay, locale);
     }
 
     public String getPasswordExpiredDateForDisplay() {
-        return passwordExpiredDateForDisplay;
+        return DateUtil.convertSqlDateToStringDate(passwordExpiredDT);
     }
 
     public String getAccountLocked() {

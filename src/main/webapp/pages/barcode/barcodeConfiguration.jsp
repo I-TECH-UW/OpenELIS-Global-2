@@ -36,4 +36,5 @@ function enableSave() {
 
 <tiles:insertAttribute name="numberBarCodes"/>
 <tiles:insertAttribute name="elementsBarCodes"/>
+<tiles:insertAttribute name="alternateAccession"/>
 <tiles:insertAttribute name="sizeBarCodes"/>

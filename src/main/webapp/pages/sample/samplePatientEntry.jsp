@@ -3,13 +3,11 @@
                  org.openelisglobal.common.util.SystemConfiguration,
                  org.openelisglobal.common.util.ConfigurationProperties,
                  org.openelisglobal.common.util.ConfigurationProperties.Property,
-                 org.openelisglobal.common.provider.validation.IAccessionNumberValidator,
                  org.openelisglobal.common.formfields.FormFields,
                  org.openelisglobal.common.formfields.FormFields.Field,
                  org.openelisglobal.common.util.Versioning,
                  org.openelisglobal.internationalization.MessageUtil,
-                 org.openelisglobal.sample.bean.SampleOrderItem,
-                 org.openelisglobal.sample.util.AccessionNumberUtil" %>
+                 org.openelisglobal.sample.bean.SampleOrderItem" %>
 
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
@@ -33,8 +31,6 @@
     boolean trackPayment = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.TRACK_PATIENT_PAYMENT, "true");
     boolean requesterLastNameRequired = FormFields.getInstance().useField(Field.SampleEntryRequesterLastNameRequired);
 	boolean acceptExternalOrders = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.ACCEPT_EXTERNAL_ORDERS, "true");
-
-	IAccessionNumberValidator accessionNumberValidator = AccessionNumberUtil.getAccessionNumberValidator();
 %>
 
 
@@ -311,7 +307,7 @@ function capitalizeValue( text){
     $("requesterId").value = text.toUpperCase();
 }
 
-function checkOrderReferral( ){
+function checkOrderReferral(){
 
 	var value = jQuery("#externalOrderNumber").val()
     getLabOrder(value, processLabOrderSuccess);
@@ -646,6 +642,9 @@ function  processPhoneSuccess(xhr){
 </div>
 </div>
 
+<div id="resultReportingSection">
+</div>
+
 <script type="text/javascript" >
 
 //all methods here either overwrite methods in tiles or all called after they are loaded
@@ -744,5 +743,12 @@ function /*void*/ registerSampleChangedForSampleEntry(){
 registerPatientChangedForSampleEntry();
 registerSampleChangedForSampleEntry();
 
+jQuery(document).ready(function() {
+	<% if( acceptExternalOrders){ %>
+	if (jQuery("#externalOrderNumber").val()) {
+		checkOrderReferral();
+	}
+	<% } %>
+})
 
 </script>

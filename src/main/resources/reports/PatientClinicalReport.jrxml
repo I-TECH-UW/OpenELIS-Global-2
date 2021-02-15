@@ -104,7 +104,7 @@
 						<rightPen lineWidth="0.0"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle"/>
-					<textFieldExpression class="java.lang.String"><![CDATA["No d'ordre: " + $F{accessionNumber}]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$R{report.label.orderNo}+" "+ $F{accessionNumber}]]></textFieldExpression>
 				</textField>
 				<textField pattern="dd/MM/yyyy" isBlankWhenNull="false">
 					<reportElement x="0" y="78" width="297" height="14" isPrintWhenDetailOverflows="true"/>
@@ -116,7 +116,7 @@
 						<rightPen lineWidth="0.0"/>
 					</box>
 					<textElement verticalAlignment="Middle"/>
-					<textFieldExpression class="java.lang.String"><![CDATA["Date & heure de demande: " + $F{orderDate}]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$R{report.label.orderDateTime}+" " + $F{orderDate}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement mode="Opaque" x="404" y="0" width="50" height="14" backcolor="#CCCCCC"/>
@@ -347,7 +347,7 @@
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 					<reportElement x="-1" y="92" width="553" height="20" isPrintWhenDetailOverflows="true"/>
 					<textElement verticalAlignment="Middle"/>
-					<textFieldExpression class="java.lang.String"><![CDATA["Date & heure de prélèvement: " + ($F{collectionDateTime} != null ? $F{collectionDateTime}: "" )]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$R{report.label.collectionDateTime}+" " + ($F{collectionDateTime} != null ? $F{collectionDateTime}: "" )]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -447,7 +447,7 @@
 					<subreportParameterExpression><![CDATA[$P{siteName}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="reportTitle">
-					<subreportParameterExpression><![CDATA["Résultats d'Analyses"]]></subreportParameterExpression>
+					<subreportParameterExpression><![CDATA[$R{report.analysisReport}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="rightHeaderImage">
 					<subreportParameterExpression><![CDATA[$P{rightHeaderImage}]]></subreportParameterExpression>
@@ -661,7 +661,7 @@
 					<printWhenExpression><![CDATA[$P{usePageNumbers}.equals("true")]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<textFieldExpression class="java.lang.String"><![CDATA["Page "+$V{PAGE_NUMBER}+" sur"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{report.label.page}+" "+$V{PAGE_NUMBER}+" sur"]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Group" evaluationGroup="Accession Number">
 				<reportElement x="509" y="4" width="40" height="20">

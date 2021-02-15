@@ -121,11 +121,11 @@ public class WorkplanByPanelController extends BaseWorkplanController {
                             .getValueForSample(ObservationType.NEXT_VISIT_DATE, sample.getId()));
                     testResultItem.setReceivedDate(getReceivedDateDisplay(sample));
                     testResultItem.setTestName(TestServiceImpl.getUserLocalizedTestName(analysis.getTest()));
-                    testResultItem.setNonconforming(QAService.isAnalysisParentNonConforming(analysis));
+                    boolean nonConforming = QAService.isAnalysisParentNonConforming(analysis);
                     if (FormFields.getInstance().useField(Field.QaEventsBySection)) {
-                        testResultItem.setNonconforming(getQaEventByTestSection(analysis));
+                        nonConforming = nonConforming || getQaEventByTestSection(analysis);
                     }
-
+                    testResultItem.setNonconforming(nonConforming);
                     if (addPatientName) {
                         testResultItem.setPatientName(getPatientName(analysis));
                     }
@@ -191,7 +191,7 @@ public class WorkplanByPanelController extends BaseWorkplanController {
     }
 
     private String getPanelName(String panelId) {
-        return panelService.get(panelId).getName();
+        return panelService.get(panelId).getLocalizedName();//getName();
     }
 
     private boolean getQaEventByTestSection(Analysis analysis) {

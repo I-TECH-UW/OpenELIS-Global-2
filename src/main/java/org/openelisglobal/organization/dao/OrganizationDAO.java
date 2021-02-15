@@ -45,7 +45,7 @@ public interface OrganizationDAO extends BaseDAO<Organization, String> {
 
     List<Organization> getOrganizations(String filter) throws LIMSRuntimeException;
 
-    Organization getOrganizationByName(Organization organization, boolean ignoreCase) throws LIMSRuntimeException;
+    Organization getActiveOrganizationByName(Organization organization, boolean ignoreCase) throws LIMSRuntimeException;
 
     Integer getTotalOrganizationCount() throws LIMSRuntimeException;
 
@@ -80,5 +80,9 @@ public interface OrganizationDAO extends BaseDAO<Organization, String> {
     List<Organization> getOrganizationsByParentId(String parentId) throws LIMSRuntimeException;
 
     boolean duplicateOrganizationExists(Organization organization) throws LIMSRuntimeException;
+
+    Organization getOrganizationByName(Organization organization, boolean ignoreCase);
+
+    List<Organization> getActiveOrganizations() throws LIMSRuntimeException;
 
 }

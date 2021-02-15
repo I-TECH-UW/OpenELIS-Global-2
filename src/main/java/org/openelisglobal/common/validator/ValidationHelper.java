@@ -23,6 +23,7 @@ public class ValidationHelper {
     public static final String MINUTES_REGEX = "^[0-5]?[0-9]$";
     public static final String YES_NO_REGEX = "^$|^" + IActionConstants.YES + "$|^" + IActionConstants.NO + "$";
     public static final String FLOAT_REGEX = "^[+-]?Infinity$|^([+-]?\\d*\\.?\\d*)$";
+    public static final String ALPHA_NUM_REGEX = "(?i)^[a-z0-9]*$";
 
     private static final String DEFAULT_PREFIX = "Field ";
 

@@ -33,7 +33,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.parser.DataFormatException;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
+import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
 
 @Component
 public class RegisterFhirHooksTask {
@@ -85,14 +87,14 @@ public class RegisterFhirHooksTask {
             subscriptionBundle.addEntry(bundleEntry);
 
         }
-//        try {
-//            Bundle returnedBundle = fhirClient.transaction().withBundle(subscriptionBundle).encodedJson().execute();
-//            LogEvent.logDebug(this.getClass().getName(), "startTask", "subscription bundle returned:\n"
-//                    + fhirContext.newJsonParser().encodeResourceToString(returnedBundle));
-//        } catch (UnprocessableEntityException | DataFormatException e) {
-//            LogEvent.logError("error while communicating subscription bundle to " + localFhirStorePath + " for "
-//                    + fhirSubscriber.get(), e);
-//        }
+        try {
+            Bundle returnedBundle = fhirClient.transaction().withBundle(subscriptionBundle).encodedJson().execute();
+            LogEvent.logDebug(this.getClass().getName(), "startTask", "subscription bundle returned:\n"
+                    + fhirContext.newJsonParser().encodeResourceToString(returnedBundle));
+        } catch (UnprocessableEntityException | DataFormatException e) {
+            LogEvent.logError("error while communicating subscription bundle to " + localFhirStorePath + " for "
+                    + fhirSubscriber.get(), e);
+        }
 
         DataExportTask dataExportTask = dataExportTaskService.getDAO().findByEndpoint(fhirSubscriber.get())
                 .orElse(new DataExportTask());

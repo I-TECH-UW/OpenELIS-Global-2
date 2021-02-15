@@ -63,7 +63,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Bottom">
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["Résultats " + $P{status}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{analyzer.results.results}+" " + $P{status}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="1" y="76" width="547" height="20"/>

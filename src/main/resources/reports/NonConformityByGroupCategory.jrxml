@@ -32,7 +32,6 @@
 	<parameter name="imagesPath" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="leftHeaderImage" class="java.io.InputStream" isForPrompting="false"/>
 	<parameter name="rightHeaderImage" class="java.io.InputStream" isForPrompting="false"/>
-	<parameter name="localization" class="java.util.Map" isForPrompting="false"/>
 	<field name="category" class="java.lang.String"/>
 	<field name="categoryCount" class="java.lang.Integer"/>
 	<field name="group" class="java.lang.String"/>
@@ -60,7 +59,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font size="16" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$P{localization}.get("total")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$R{report.total}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupFooter>
@@ -104,7 +103,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font size="12" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$P{localization}.get("total") + ": " + $F{group}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$R{report.total} + ": " + $F{group}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupFooter>
@@ -162,9 +161,6 @@
 				</subreportParameter>
 				<subreportParameter name="reportTitle">
 					<subreportParameterExpression><![CDATA[$P{reportTitle}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="localization">
-					<subreportParameterExpression><![CDATA[$P{localization}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="rightHeaderImage">
 					<subreportParameterExpression><![CDATA[$P{rightHeaderImage}]]></subreportParameterExpression>
@@ -229,7 +225,7 @@
 					<printWhenExpression><![CDATA[$P{usePageNumbers}.equals("true")]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" "+$P{localization}.get("about")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{report.label.page}+" "+$V{PAGE_NUMBER}+" "+$R{report.about}]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report">
 				<reportElement x="509" y="20" width="40" height="20" uuid="1886e937-5401-4df6-9e54-e522bd00e15a">
@@ -243,7 +239,7 @@
 					<printWhenExpression><![CDATA[$P{supervisorSignature}]]></printWhenExpression>
 				</reportElement>
 				<textElement verticalAlignment="Bottom"/>
-				<textFieldExpression><![CDATA[$P{localization}.get("supervisorSign")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{report.supervisorSign}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageFooter>

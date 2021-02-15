@@ -5,6 +5,7 @@ RUN rm -rf /usr/local/tomcat/webapps/* \
     /usr/local/tomcat/conf/Catalina/localhost/manager.xml
     
 #Deploy the war into tomcat image and point root to it
+ADD install/tomcat-resources/ROOT.war /usr/local/tomcat/webapps/ROOT.war
 ADD target/OpenELIS-Global.war /usr/local/tomcat/webapps/OpenELIS-Global.war
     
 #contains sensitive data, so being mounted at runtime

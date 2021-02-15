@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.Vector;
+import java.util.stream.Collectors;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
@@ -334,6 +335,31 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Analysis getAllAnalysisByTestsAndStatuses()", e);
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Analysis> getAllAnalysisByTestsAndStatusAndCompletedDateRange(List<String> testIdList,
+            List<Integer> statusIdList, Date lowDate, Date highDate) throws LIMSRuntimeException {
+        List<Integer> testList = new ArrayList<>();
+        try {
+            String sql = "from Analysis a where a.test.id IN (:testList) and a.statusId IN (:statusIdList) "
+                    + "and a.completedDate BETWEEN :lowDate AND :highDate order by a.sampleItem.sample.accessionNumber";
+
+            for (String testId : testIdList) {
+                testList.add(Integer.parseInt(testId));
+            }
+
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setParameterList("testList", testList);
+            query.setParameterList("statusIdList", statusIdList);
+            query.setDate("lowDate", lowDate);
+            query.setDate("highDate", highDate);
+            return query.list();
+        } catch (RuntimeException e) {
+            LogEvent.logError(e.toString(), e);
+            throw new LIMSRuntimeException("Error in Analysis getAllAnalysisByTestsAndStatusAndCompletedDateRange()", e);
         }
     }
 
@@ -1169,7 +1195,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
     public List<Analysis> getAnalysisStartedOn(Date collectionDate) throws LIMSRuntimeException {
 
         try {
-            String sql = "from Analysis a where a.startedDate = :startedDate";
+            String sql = "from Analysis a where DATE(a.startedDate) = DATE(:startedDate)";
             Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setDate("startedDate", collectionDate);
 
@@ -1191,7 +1217,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             return getAnalysisStartedOn(collectionDate);
         }
 
-        String sql = "from Analysis a where a.sampleItem.collectionDate = :startedDate and a.statusId not in ( :statusList )";
+        String sql = "from Analysis a where DATE(a.sampleItem.collectionDate) = DATE(:startedDate) and a.statusId not in ( :statusList )";
 
         try {
             Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql);
@@ -1345,6 +1371,38 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             handleException(e, "getAllAnalysisByTestSectionAndStatus");
         }
 
+        return null;
+    }
+
+
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Analysis> getAllAnalysisByTestsAndStatusAndCompletedDateRange(List<Integer> testIdList, List<Integer> analysisStatusList,
+            List<Integer> sampleStatusList, Date lowDate, Date highDate) {
+        List<Integer> testList = new ArrayList<>();
+        try {
+            String sql = "from Analysis a where a.test.id IN (:testList) and a.statusId IN (:analysisStatusList) "
+                    + "and a.sampleItem.sample.statusId IN (:sampleStatusList) "
+                    + "and a.completedDate BETWEEN :lowDate AND :highDate order by a.sampleItem.sample.accessionNumber";
+
+            for (Integer testId : testIdList) {
+                testList.add(testId);
+            }
+
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setParameterList("testList", testList);
+            query.setParameterList("sampleStatusList", sampleStatusList);
+            query.setParameterList("analysisStatusList", analysisStatusList);
+            query.setDate("lowDate", lowDate);
+            query.setDate("highDate", highDate);
+
+            List<Analysis> analysisList = query.list();
+            return analysisList;
+
+        } catch (HibernateException e) {
+            handleException(e, "getAllAnalysisByTestsAndStatusAndCompletedDateRange");
+        }
         return null;
     }
 
@@ -1576,6 +1634,24 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         return null;
 
     }
+
+    @Override
+    public List<Analysis> get(List<String> ids) {
+        String sql = "from Analysis a where a.id in (:ids)";
+
+        try {
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setParameterList("ids", ids.stream().map(e -> Integer.parseInt(e)).collect(Collectors.toList()));
+            List<Analysis> analysisList = query.list();
+            return analysisList;
+        } catch (HibernateException e) {
+            handleException(e, "get");
+        }
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+
 
 //	@Override
 //	public Analysis getPatientPreviousAnalysisForTestName(Patient patient, Sample currentSample, String testName) {
