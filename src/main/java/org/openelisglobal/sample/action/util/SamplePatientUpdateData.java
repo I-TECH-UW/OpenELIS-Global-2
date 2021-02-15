@@ -51,6 +51,7 @@ import org.openelisglobal.requester.valueholder.SampleRequester;
 import org.openelisglobal.sample.bean.SampleOrderItem;
 import org.openelisglobal.sample.util.AccessionNumberUtil;
 import org.openelisglobal.sample.valueholder.Sample;
+import org.openelisglobal.sample.valueholder.SampleAdditionalField;
 import org.openelisglobal.samplehuman.valueholder.SampleHuman;
 import org.openelisglobal.spring.util.SpringContext;
 import org.springframework.validation.Errors;
@@ -66,6 +67,7 @@ public class SamplePatientUpdateData {
     private String referringId;
 
     private Sample sample;
+    private List<SampleAdditionalField> sampleFields = new ArrayList<>();
     private SampleHuman sampleHuman = new SampleHuman();
     private SampleRequester requesterSite;
     private List<SampleTestCollection> sampleItemsTests;
@@ -85,6 +87,12 @@ public class SamplePatientUpdateData {
     private List<ObservationHistory> observations = new ArrayList<>();
     private List<OrganizationAddress> orgAddressExtra = new ArrayList<>();
     private final String currentUserId;
+
+    private boolean customNotificationLogic;
+    private List<String> patientEmailNotificationTestIds;
+    private List<String> patientSMSNotificationTestIds;
+    private List<String> providerEmailNotificationTestIds;
+    private List<String> providerSMSNotificationTestIds;
 
     public SamplePatientUpdateData(String currentUserId) {
         this.currentUserId = currentUserId;
@@ -129,7 +137,7 @@ public class SamplePatientUpdateData {
     public void setAccessionNumber(String accessionNumber) {
         this.accessionNumber = accessionNumber;
     }
-    
+
     public String getReferringId() {
         return referringId;
     }
@@ -416,7 +424,7 @@ public class SamplePatientUpdateData {
             } else {
                 Organization organization = new Organization();
                 organization.setOrganizationName(orderItem.getNewRequesterName());
-                organization = orgService.getOrganizationByName(organization, true);
+                organization = orgService.getActiveOrganizationByName(organization, true);
                 orgId = organization.getId();
 
                 if (!GenericValidator.isBlankOrNull(orgId)) {
@@ -438,7 +446,7 @@ public class SamplePatientUpdateData {
         boolean newName = true;
         Organization organization = new Organization();
         organization.setOrganizationName(requesterName);
-        organization = orgService.getOrganizationByName(organization, true);
+        organization = orgService.getActiveOrganizationByName(organization, true);
 
         if (organization == null) {
             newName = true;
@@ -500,6 +508,68 @@ public class SamplePatientUpdateData {
                     observationHistoryService.getObservationTypeIdForType(ObservationType.PROGRAM),
                     ValueType.DICTIONARY);
         }
+    }
+
+    public boolean getCustomNotificationLogic() {
+        return customNotificationLogic;
+    }
+
+    public void setCustomNotificationLogic(boolean customNotificationLogic) {
+        this.customNotificationLogic = customNotificationLogic;
+    }
+
+    public List<String> getPatientEmailNotificationTestIds() {
+        return patientEmailNotificationTestIds;
+    }
+
+    public void setPatientEmailNotificationTestIds(List<String> patientEmailNotificationTestIds) {
+        this.patientEmailNotificationTestIds = patientEmailNotificationTestIds;
+    }
+
+    public List<String> getPatientSMSNotificationTestIds() {
+        return patientSMSNotificationTestIds;
+    }
+
+    public void setPatientSMSNotificationTestIds(List<String> patientSMSNotificationTestIds) {
+        this.patientSMSNotificationTestIds = patientSMSNotificationTestIds;
+    }
+
+    public List<String> getProviderEmailNotificationTestIds() {
+        return providerEmailNotificationTestIds;
+    }
+
+    public void setProviderEmailNotificationTestIds(List<String> providerEmailNotificationTestIds) {
+        this.providerEmailNotificationTestIds = providerEmailNotificationTestIds;
+    }
+
+    public List<String> getProviderSMSNotificationTestIds() {
+        return providerSMSNotificationTestIds;
+    }
+
+    public void setProviderSMSNotificationTestIds(List<String> providerSMSNotificationTestIds) {
+        this.providerSMSNotificationTestIds = providerSMSNotificationTestIds;
+    }
+
+    public List<SampleAdditionalField> getSampleFields() {
+        return sampleFields;
+    }
+
+    public void setSampleFields(List<SampleAdditionalField> sampleFields) {
+        this.sampleFields = sampleFields;
+    }
+
+    public void addSampleField(SampleAdditionalField sampleField) {
+        if (sampleFields == null) {
+            sampleFields = new ArrayList<>();
+        }
+        sampleFields.add(sampleField);
+    }
+
+    public void addAllSampleFields(List<SampleAdditionalField> sampleFields) {
+        if (sampleFields == null) {
+            sampleFields = new ArrayList<>();
+        }
+        this.sampleFields.addAll(sampleFields);
     }
 
 }

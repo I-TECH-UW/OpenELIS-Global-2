@@ -215,6 +215,7 @@ abstract public class CSVRoutineColumnBuilder {
         // MAKE SURE ALL GENERATED QUERIES STAY SQL INJECTION SAFE
         makeSQL();
         String sql = query.toString();
+        System.out.println("buildResultSet:" + sql);
         // LogEvent.logInfo(this.getClass().getName(), "method unkown", "===1===\n" +
         // sql.substring(0, 7000)); // the SQL is
         // chunked out only because Eclipse thinks printing really big strings to the

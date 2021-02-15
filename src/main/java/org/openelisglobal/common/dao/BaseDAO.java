@@ -286,14 +286,11 @@ public interface BaseDAO<T extends BaseObject<PK>, PK extends Serializable> {
 
     /**
      * @param id the id to start from
-     * @return list of the object corresponding to the next two ids ( if they exist)
      */
     Optional<T> getNext(String id);
 
     /**
      * @param id the id to start from
-     * @return list of the object corresponding to the previous two ids ( if they
-     *         exist)
      */
     Optional<T> getPrevious(String id);
 

@@ -22,7 +22,6 @@ import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.provider.validation.PasswordValidationFactory;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.StringUtil;
-import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.common.validator.BaseErrors;
 import org.openelisglobal.login.dao.UserModuleService;
 import org.openelisglobal.login.service.LoginUserService;
@@ -482,11 +481,6 @@ public class UnifiedSystemUserController extends BaseController {
             } else if (!passwordValid(form.getUserPassword())) { // validity
                 errors.reject("login.error.password.requirement");
             }
-        }
-
-        // check expiration date
-        if (!GenericValidator.isDate(form.getExpirationDate(), SystemConfiguration.getInstance().getDateLocale())) {
-            errors.reject("errors.date");
         }
 
         // check timeout

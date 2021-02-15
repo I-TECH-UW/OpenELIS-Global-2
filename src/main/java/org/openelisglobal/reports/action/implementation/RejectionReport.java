@@ -46,7 +46,7 @@ import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 public abstract class RejectionReport extends Report implements IReportCreator {
-    private int PREFIX_LENGTH = AccessionNumberUtil.getAccessionNumberValidator().getInvarientLength();
+    private int PREFIX_LENGTH = AccessionNumberUtil.getMainAccessionNumberGenerator().getInvarientLength();
     protected List<RejectionReportBean> rejections;
     protected String reportPath = "";
     protected DateRange dateRange;
@@ -62,7 +62,7 @@ public abstract class RejectionReport extends Report implements IReportCreator {
     protected void createReportParameters() {
         super.createReportParameters();
         reportParameters.put("activityLabel", getActivityLabel());
-        reportParameters.put("accessionPrefix", AccessionNumberUtil.getAccessionNumberValidator().getPrefix());
+        reportParameters.put("accessionPrefix", AccessionNumberUtil.getMainAccessionNumberGenerator().getPrefix());
         reportParameters.put("labNumberTitle", MessageUtil.getContextualMessage("quick.entry.accession.number"));
         reportParameters.put("labName", ConfigurationProperties.getInstance().getPropertyValue(Property.SiteName));
         reportParameters.put("SUBREPORT_DIR", reportPath);

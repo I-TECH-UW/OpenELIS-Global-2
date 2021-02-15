@@ -2,8 +2,7 @@
 <%@ page import="org.openelisglobal.common.action.IActionConstants,
 			     org.openelisglobal.common.formfields.FormFields,
 			     org.openelisglobal.common.formfields.FormFields.Field,
-			     org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory,
-			     org.openelisglobal.common.provider.validation.IAccessionNumberValidator,
+				 org.openelisglobal.sample.util.AccessionNumberUtil,
 			     org.openelisglobal.common.util.ConfigurationProperties.Property,
 			     org.openelisglobal.common.util.*, org.openelisglobal.internationalization.MessageUtil" %>
 
@@ -14,17 +13,12 @@
 
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<%!
-	AccessionNumberValidatorFactory accessionNumberValidatorFactory = new AccessionNumberValidatorFactory();
- %>
-
  <%
-	 boolean supportSTNumber = FormFields.getInstance().useField(Field.StNumber);
-	 boolean supportMothersName = FormFields.getInstance().useField(Field.MothersName);
-	 boolean supportSubjectNumber = FormFields.getInstance().useField(Field.SubjectNumber);
-	 boolean supportNationalID = FormFields.getInstance().useField(Field.NationalID);
-	 boolean supportLabNumber = FormFields.getInstance().useField(Field.SEARCH_PATIENT_WITH_LAB_NO);
-	 IAccessionNumberValidator accessionNumberValidator = accessionNumberValidatorFactory.getValidator();
+ 	boolean supportSTNumber = FormFields.getInstance().useField(Field.StNumber);
+ 	 boolean supportMothersName = FormFields.getInstance().useField(Field.MothersName);
+ 	 boolean supportSubjectNumber = FormFields.getInstance().useField(Field.SubjectNumber);
+ 	 boolean supportNationalID = FormFields.getInstance().useField(Field.NationalID);
+ 	 boolean supportLabNumber = FormFields.getInstance().useField(Field.SEARCH_PATIENT_WITH_LAB_NO);
  %>
 
 <script type="text/javascript" src="scripts/ajaxCalls.js?" ></script>
@@ -55,6 +49,7 @@ function searchPatients() {
 	newSearchInfo = false;
     jQuery("#resultsDiv").hide();
     jQuery("#searchLabNumber").val('');
+	jQuery("#loading").show();
     if (criteria == 1) {
         firstName =  value.trim();
     } else if (criteria == 2) {
@@ -72,10 +67,12 @@ function searchPatients() {
         jQuery("#searchLabNumber").val(value);
     }
 
+	jQuery("#loading").show();
 	patientSearch(lastName, firstName, STNumber, subjectNumber, nationalID, labNumber, "", "", "", false, processSearchSuccess);
 }
 
 function processSearchSuccess(xhr) {
+	jQuery("#loading").hide();
 	//alert(xhr.responseText);
 	var formField = xhr.responseXML.getElementsByTagName("formfield").item(0);
 	var message = xhr.responseXML.getElementsByTagName("message").item(0);
@@ -248,7 +245,7 @@ function checkIndex(select) {
     var valueElem = jQuery("#searchValue");
 	if (indexVal == "5") {
 		jQuery("#scanInstruction").show();
-        valueElem.attr("maxlength","<%= Integer.toString(accessionNumberValidator.getMaxAccessionLength()) %>");
+        valueElem.attr("maxlength","<%= Integer.toString(AccessionNumberUtil.getMaxAccessionLength()) %>");
 	} else {
 		jQuery("#scanInstruction").hide();
         valueElem.attr("maxlength","120");
@@ -316,6 +313,7 @@ function handleSelectedPatient() {
            id="searchButton"
            onclick="searchPatients()"
            disabled="disabled" >
+			<span id="loading" class="fa-2x" hidden="hidden"><i class="fas fa-spinner fa-pulse"></i></span>
            
   	<span id="scanInstruction" style="display: none;"><spring:message code="sample.search.scanner.instructions"/> </span>
 

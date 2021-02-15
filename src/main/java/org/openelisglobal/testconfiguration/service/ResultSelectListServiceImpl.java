@@ -176,7 +176,7 @@ public class ResultSelectListServiceImpl implements ResultSelectListService {
             dictionaryService.save(dictionary);
             return true;
         } catch (RuntimeException e) {
-            LogEvent.logDebug(e);
+            LogEvent.logError(e);
         }
         return false;
     }

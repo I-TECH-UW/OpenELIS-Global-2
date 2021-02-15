@@ -18,7 +18,6 @@ package org.openelisglobal.common.provider.validation;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.HashSet;
 import java.util.Set;
 
 import org.openelisglobal.common.provider.validation.IAccessionNumberValidator.ValidationResults;
@@ -41,9 +40,9 @@ public abstract class BaseSiteYearAccessionValidator {
     protected int YEAR_END = getYearEndIndex();
     protected int INCREMENT_START = getIncrementStartIndex();
     protected int INCREMENT_END = getMaxAccessionLength();
-    protected int LENGTH = getMaxAccessionLength();
+    protected int MAX_LENGTH = getMaxAccessionLength();
+    protected int MIN_LENGTH = getMinAccessionLength();
     protected static final boolean NEED_PROGRAM_CODE = false;
-    private static Set<String> REQUESTED_NUMBERS = new HashSet<>();
 
     public boolean needProgramCode() {
         return NEED_PROGRAM_CODE;
@@ -55,7 +54,7 @@ public abstract class BaseSiteYearAccessionValidator {
     }
 
     public String getInvalidMessage(ValidationResults results) {
-        String suggestedAccessionNumber = getNextAvailableAccessionNumber(null);
+        String suggestedAccessionNumber = getNextAvailableAccessionNumber(null, true);
 
         return MessageUtil.getMessage("sample.entry.invalid.accession.number.suggestion") + " "
                 + suggestedAccessionNumber;
@@ -63,29 +62,29 @@ public abstract class BaseSiteYearAccessionValidator {
     }
 
     // input parameter is not used in this case
-    public String getNextAvailableAccessionNumber(String nullPrefix) {
+    public String getNextAvailableAccessionNumber(String nullPrefix, boolean reserve) {
 
         String nextAccessionNumber;
 
-        String curLargestAccessionNumber = sampleService.getLargestAccessionNumberMatchingPattern(
-                ConfigurationProperties.getInstance().getPropertyValue(Property.ACCESSION_NUMBER_PREFIX),
+        String curLargestAccessionNumber = sampleService.getLargestAccessionNumberMatchingPattern(getPrefix(),
                 getMaxAccessionLength());
 
+        Set<String> reservedNumbers = getReservedNumbers();
         if (curLargestAccessionNumber == null) {
-            if (REQUESTED_NUMBERS.isEmpty()) {
+            if (reservedNumbers.isEmpty()) {
                 nextAccessionNumber = createFirstAccessionNumber(null);
             } else {
-                nextAccessionNumber = REQUESTED_NUMBERS.iterator().next();
+                nextAccessionNumber = reservedNumbers.iterator().next();
             }
         } else {
             nextAccessionNumber = incrementAccessionNumber(curLargestAccessionNumber);
         }
 
-        while (REQUESTED_NUMBERS.contains(nextAccessionNumber)) {
+        while (reservedNumbers.contains(nextAccessionNumber)) {
             nextAccessionNumber = incrementAccessionNumber(nextAccessionNumber);
         }
 
-        REQUESTED_NUMBERS.add(nextAccessionNumber);
+        reservedNumbers.add(nextAccessionNumber);
 
         return nextAccessionNumber;
     }
@@ -128,11 +127,11 @@ public abstract class BaseSiteYearAccessionValidator {
         ValidationResults results;
         boolean validateAccessionNumber = ConfigurationProperties.getInstance()
                 .isPropertyValueEqual(Property.ACCESSION_NUMBER_VALIDATE, "true");
-        if( validateAccessionNumber ) {
+        if (validateAccessionNumber) {
             results = validFormat(accessionNumber, true);
         } else {
             results = ValidationResults.SUCCESS;
-            
+
         }
         // TODO refactor accessionNumberIsUsed into two methods so the null isn't
         // needed. (Its only used for program accession number)
@@ -144,7 +143,10 @@ public abstract class BaseSiteYearAccessionValidator {
     }
 
     public ValidationResults validFormat(String accessionNumber, boolean checkDate) {
-        if (accessionNumber.length() != LENGTH) {
+        if (accessionNumber.length() > MAX_LENGTH) {
+            return ValidationResults.LENGTH_FAIL;
+        }
+        if (accessionNumber.length() < MIN_LENGTH) {
             return ValidationResults.LENGTH_FAIL;
         }
 
@@ -204,6 +206,8 @@ public abstract class BaseSiteYearAccessionValidator {
         return format.toString();
     }
 
+    protected abstract Set<String> getReservedNumbers();
+
     protected abstract String getPrefix();
 
     protected abstract int getIncrementStartIndex();
@@ -216,5 +220,9 @@ public abstract class BaseSiteYearAccessionValidator {
 
     protected abstract int getMaxAccessionLength();
 
+    protected abstract int getMinAccessionLength();
+
     protected abstract int getChangeableLength();
+
+    protected abstract String getOverrideStartingAt();
 }

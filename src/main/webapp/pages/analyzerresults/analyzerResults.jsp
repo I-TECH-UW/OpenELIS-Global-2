@@ -1,8 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" %>
 <%@ page import="java.util.List,
                 org.openelisglobal.common.action.IActionConstants,
-				org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory,
-			    org.openelisglobal.common.provider.validation.IAccessionNumberValidator,
+				org.openelisglobal.sample.util.AccessionNumberUtil,
                 org.openelisglobal.common.util.Versioning,
 				org.openelisglobal.internationalization.MessageUtil,
 				org.owasp.encoder.Encode" %>
@@ -181,7 +180,7 @@ function /*void*/ markUpdated(){
 	<%=MessageUtil.getContextualMessage("result.sample.id")%> : &nbsp;
 	<input type="text"
 	       id="labnoSearch"
-	       maxlength='<%= Integer.toString(new AccessionNumberValidatorFactory().getValidator().getMaxAccessionLength())%>' />
+	       maxlength='<%=Integer.toString(AccessionNumberUtil.getMaxAccessionLength())%>' />
 	<input type="button" onclick="pageSearch.doLabNoSearch(document.getElementById('labnoSearch'))" value='<%= MessageUtil.getMessage("label.button.search") %>'>
 	</div>
 </c:if>

@@ -16,6 +16,7 @@
 
 package org.openelisglobal.patient.action.bean;
 
+import java.time.Period;
 import java.util.List;
 import java.util.Map;
 
@@ -85,10 +86,13 @@ public class PatientManagementBridge {
 
             info.setMothersInitial(patientService.getMothersInitial(patient));
             if (readOnly) {
-                info.setAge(DateUtil.getCurrentAgeForDate(
+                Period period = DateUtil.getPeriodBetweenDates(
                         DateUtil.convertStringDateStringTimeToTimestamp(patientService.getBirthdayForDisplay(patient),
                                 null),
-                        DateUtil.convertStringDateStringTimeToTimestamp(DateUtil.getCurrentDateAsText(), null)));
+                        DateUtil.convertStringDateStringTimeToTimestamp(DateUtil.getCurrentDateAsText(), null));
+                info.setAgeYears(String.valueOf(period.getYears()));
+                info.setAgeMonths(String.valueOf(period.getMonths()));
+                info.setAgeDays(String.valueOf(period.getDays()));
             }
         }
 

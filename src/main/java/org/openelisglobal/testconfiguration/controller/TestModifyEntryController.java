@@ -560,6 +560,7 @@ public class TestModifyEntryController extends BaseController {
             for (int j = 0; j < orderedTests.size(); j++) {
                 if ("0".equals(orderedTests.get(j))) {
                     test.setSortOrder(String.valueOf(j));
+                    testSet.sortedTests.add(test);
                 } else {
                     Test orderedTest = SpringContext.getBean(TestService.class).get(orderedTests.get(j));
                     orderedTest.setSortOrder(String.valueOf(j));
@@ -588,6 +589,13 @@ public class TestModifyEntryController extends BaseController {
     }
 
     private ArrayList<ResultLimit> createDictionaryResultLimit(TestAddParams testAddParams) {
+
+        List<TestResult> testResults = testResultService.getActiveTestResultsByTest(testAddParams.testId);
+        for (int i = 0; i < testResults.size(); i++) {
+            testResults.get(i).setIsActive(false);
+        }
+        testResultService.updateAll(testResults);
+
         ArrayList<ResultLimit> resultLimits = new ArrayList<>();
         if (!org.apache.commons.validator.GenericValidator.isBlankOrNull(testAddParams.dictionaryReferenceId)) {
             ResultLimit limit = new ResultLimit();

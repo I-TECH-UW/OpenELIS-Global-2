@@ -16,6 +16,7 @@ import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.validator.GenericValidator;
+import org.openelisglobal.dataexchange.fhir.service.FhirPersistanceService;
 import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
 import org.openelisglobal.gender.service.GenderService;
 import org.openelisglobal.gender.valueholder.Gender;
@@ -35,7 +36,6 @@ import org.openelisglobal.patienttype.util.PatientTypeMap;
 import org.openelisglobal.patienttype.valueholder.PatientPatientType;
 import org.openelisglobal.person.service.PersonService;
 import org.openelisglobal.person.valueholder.Person;
-import org.openelisglobal.spring.util.SpringContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -91,8 +91,10 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String> i
     private PatientPatientTypeService patientPatientTypeService;
     @Autowired
     private PersonService personService;
-//    @Autowired
-    protected FhirTransformService fhirTransformService = SpringContext.getBean(FhirTransformService.class);
+    @Autowired
+    protected FhirTransformService fhirTransformService;
+    @Autowired
+    protected FhirPersistanceService fhirPersistanceService;
 
     @Autowired
     private PatientContactService patientContactService;
@@ -541,7 +543,6 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String> i
         return getBaseObjectDAO().getData(patientId);
     }
 
-
     @Override
     @Transactional(readOnly = true)
     public Patient getPatientByNationalId(String nationalId) {
@@ -612,15 +613,18 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String> i
         }
         patient.setPerson(patient.getPerson());
 
-        org.hl7.fhir.r4.model.Patient fhirPatient =
-                fhirTransformService.CreateFhirPatientFromOEPatient(patientInfo);
-
+        org.hl7.fhir.r4.model.Patient fhirPatient = fhirTransformService.CreateFhirPatientFromOEPatient(patientInfo);
         if (patientInfo.getPatientUpdateStatus() == PatientUpdateStatus.ADD) {
             insert(patient);
-            org.hl7.fhir.r4.model.Bundle pBundle = fhirTransformService.CreateFhirResource(fhirPatient);
+            org.hl7.fhir.r4.model.Bundle pBundle = fhirPersistanceService.createFhirResourceInFhirStore(fhirPatient);
+            patientInfo.setGuid(
+                    fhirTransformService.getIdFromLocation(pBundle.getEntryFirstRep().getResponse().getLocation()));
         } else if (patientInfo.getPatientUpdateStatus() == PatientUpdateStatus.UPDATE) {
+            org.hl7.fhir.r4.model.Patient oldFhirPatient = fhirTransformService.getFhirPatientOrCreate(patientInfo);
+            fhirPatient.setId(oldFhirPatient.getIdElement());
             update(patient);
-            org.hl7.fhir.r4.model.Bundle pBundle = fhirTransformService.UpdateFhirResource(fhirPatient);
+            patientInfo.setGuid(fhirPatient.getIdElement().getIdPart());
+            org.hl7.fhir.r4.model.Bundle pBundle = fhirPersistanceService.updateFhirResourceInFhirStore(fhirPatient);
         }
 
         persistContact(patientInfo, patient);
@@ -672,6 +676,7 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String> i
         persistIdentityType(patientInfo.getHealthDistrict(), "HEALTH DISTRICT", patientInfo, patient, sysUserId);
         persistIdentityType(patientInfo.getHealthRegion(), "HEALTH REGION", patientInfo, patient, sysUserId);
         persistIdentityType(patientInfo.getOtherNationality(), "OTHER NATIONALITY", patientInfo, patient, sysUserId);
+        persistIdentityType(patientInfo.getGuid(), "GUID", patientInfo, patient, sysUserId);
     }
 
     private void persistExtraPatientAddressInfo(PatientManagementInfo patientInfo, Patient patient, String sysUserId) {
@@ -729,7 +734,8 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String> i
 
         if (dept == null && patientInfo.getAddressDepartment() != null
                 && !patientInfo.getAddressDepartment().equals("0")) {
-            insertNewPatientAddressInfo(ADDRESS_PART_DEPT_ID, patientInfo.getAddressDepartment(), "D", patient, sysUserId);
+            insertNewPatientAddressInfo(ADDRESS_PART_DEPT_ID, patientInfo.getAddressDepartment(), "D", patient,
+                    sysUserId);
         }
 
     }

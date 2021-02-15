@@ -14,4 +14,8 @@ public interface SearchResultsDAO {
     List<PatientSearchResults> getSearchResultsByGUID(String lastName, String firstName, String STNumber,
             String subjectNumber, String nationalID, String externalID, String patientID, String guid,
             String dateOfBirth, String gender) throws LIMSRuntimeException;
+
+    List<PatientSearchResults> getSearchResultsExact(String lastName, String firstName, String STNumber,
+            String subjectNumber, String nationalID, String externalID, String patientID, String guid,
+            String dateOfBirth, String gender) throws LIMSRuntimeException;
 }

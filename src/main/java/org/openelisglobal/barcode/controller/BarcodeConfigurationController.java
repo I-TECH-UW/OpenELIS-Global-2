@@ -27,7 +27,7 @@ public class BarcodeConfigurationController extends BaseController {
 
     private static final String[] ALLOWED_FIELDS = new String[] { "heightOrderLabels", "heightSpecimenLabels",
             "widthOrderLabels", "widthSpecimenLabels", "collectionDateCheck", "testsCheck", "patientSexCheck",
-            "numOrderLabels", "numSpecimenLabels" };
+            "numOrderLabels", "numSpecimenLabels", "prePrintUseAltAccession", "prePrintAltAccessionPrefix" };
 
     @Autowired
     private BarcodeInformationService barcodeInformationService;
@@ -96,6 +96,14 @@ public class BarcodeConfigurationController extends BaseController {
         form.setCollectionDateCheck(Boolean.valueOf(collectionDateCheck));
         form.setTestsCheck(Boolean.valueOf(testsCheck));
         form.setPatientSexCheck(Boolean.valueOf(patientSexCheck));
+
+        Boolean prePrintUseAltAccession = Boolean
+                .valueOf(ConfigurationProperties.getInstance().getPropertyValue(Property.USE_ALT_ACCESSION_PREFIX));
+        String prePrintAltAccessionPrefix = ConfigurationProperties.getInstance()
+                .getPropertyValue(Property.ALT_ACCESSION_PREFIX);
+        form.setPrePrintDontUseAltAccession(!prePrintUseAltAccession);
+        form.setPrePrintAltAccessionPrefix(prePrintAltAccessionPrefix);
+        form.setSitePrefix(ConfigurationProperties.getInstance().getPropertyValue(Property.ACCESSION_NUMBER_PREFIX));
     }
 
     @RequestMapping(value = "/BarcodeConfiguration", method = RequestMethod.POST)

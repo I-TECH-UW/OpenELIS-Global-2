@@ -23,7 +23,6 @@
 	</parameter>
 	<parameter name="directorName" class="java.lang.String"/>
 	<parameter name="rightHeaderImage" class="java.io.InputStream" isForPrompting="false"/>
-	<parameter name="localization" class="java.util.Map" isForPrompting="false"/>
 	<parameter name="leftHeaderImage" class="java.io.InputStream" isForPrompting="false"/>
 	<parameter name="imagesPath" class="java.lang.String"/>
 	<field name="testName" class="java.lang.String"/>
@@ -162,9 +161,6 @@
 				<subreportParameter name="labName1">
 					<subreportParameterExpression><![CDATA[$P{siteName}]]></subreportParameterExpression>
 				</subreportParameter>
-				<subreportParameter name="localization">
-					<subreportParameterExpression><![CDATA[$P{localization}]]></subreportParameterExpression>
-				</subreportParameter>
 				<subreportParameter name="reportTitle">
 					<subreportParameterExpression><![CDATA[$P{reportTitle}]]></subreportParameterExpression>
 				</subreportParameter>
@@ -216,7 +212,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Site ID: " + $P{siteId}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{report.label.siteID}+" " + $P{siteId}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
@@ -323,7 +319,7 @@
 					<printWhenExpression><![CDATA[$P{usePageNumbers}.equals("true")]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" "+$P{localization}.get("about")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{report.label.page}+" "+$V{PAGE_NUMBER}+" "+$R{report.about}]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report">
 				<reportElement x="523" y="16" width="40" height="20" uuid="d011ae12-05bc-440c-971f-4e60ff2fc838">

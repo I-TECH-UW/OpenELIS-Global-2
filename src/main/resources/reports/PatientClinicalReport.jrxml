@@ -105,7 +105,11 @@
 						<rightPen lineWidth="0.0"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+<<<<<<< HEAD
 					<textFieldExpression><![CDATA["No d'ordre: " + $F{accessionNumber}]]></textFieldExpression>
+=======
+					<textFieldExpression class="java.lang.String"><![CDATA[$R{report.label.orderNo}+" "+ $F{accessionNumber}]]></textFieldExpression>
+>>>>>>> 651ed66231ad2bea9539bc81dc3a8b9c42b373fa
 				</textField>
 				<textField pattern="dd/MM/yyyy" isBlankWhenNull="false">
 					<reportElement x="0" y="78" width="297" height="14" isPrintWhenDetailOverflows="true" uuid="51300568-7a21-4d11-bdeb-8a8302e18e1f"/>
@@ -117,7 +121,11 @@
 						<rightPen lineWidth="0.0"/>
 					</box>
 					<textElement verticalAlignment="Middle"/>
+<<<<<<< HEAD
 					<textFieldExpression><![CDATA["Date & heure de demande: " + $F{orderDate}]]></textFieldExpression>
+=======
+					<textFieldExpression class="java.lang.String"><![CDATA[$R{report.label.orderDateTime}+" " + $F{orderDate}]]></textFieldExpression>
+>>>>>>> 651ed66231ad2bea9539bc81dc3a8b9c42b373fa
 				</textField>
 				<staticText>
 					<reportElement mode="Opaque" x="404" y="0" width="50" height="14" backcolor="#CCCCCC" uuid="d5e70598-192a-4ab0-91c3-6939b39038b8"/>
@@ -348,7 +356,11 @@
 				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 					<reportElement x="-1" y="92" width="553" height="20" isPrintWhenDetailOverflows="true" uuid="6dfe1b56-396a-4ffe-b4f9-3c594983660d"/>
 					<textElement verticalAlignment="Middle"/>
+<<<<<<< HEAD
 					<textFieldExpression><![CDATA["Date & heure de prélèvement: " + ($F{collectionDateTime} != null ? $F{collectionDateTime}: "" )]]></textFieldExpression>
+=======
+					<textFieldExpression class="java.lang.String"><![CDATA[$R{report.label.collectionDateTime}+" " + ($F{collectionDateTime} != null ? $F{collectionDateTime}: "" )]]></textFieldExpression>
+>>>>>>> 651ed66231ad2bea9539bc81dc3a8b9c42b373fa
 				</textField>
 			</band>
 		</groupHeader>
@@ -448,7 +460,11 @@
 					<subreportParameterExpression><![CDATA[$P{siteName}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="reportTitle">
+<<<<<<< HEAD
 					<subreportParameterExpression><![CDATA["Résultats d'Analyses"]]></subreportParameterExpression>
+=======
+					<subreportParameterExpression><![CDATA[$R{report.analysisReport}]]></subreportParameterExpression>
+>>>>>>> 651ed66231ad2bea9539bc81dc3a8b9c42b373fa
 				</subreportParameter>
 				<subreportParameter name="rightHeaderImage">
 					<subreportParameterExpression><![CDATA[$P{rightHeaderImage}]]></subreportParameterExpression>
@@ -660,7 +676,11 @@
 					<printWhenExpression><![CDATA[$P{usePageNumbers}.equals("true")]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+<<<<<<< HEAD
 				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" sur"]]></textFieldExpression>
+=======
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{report.label.page}+" "+$V{PAGE_NUMBER}+" sur"]]></textFieldExpression>
+>>>>>>> 651ed66231ad2bea9539bc81dc3a8b9c42b373fa
 			</textField>
 			<textField evaluationTime="Group" evaluationGroup="Accession Number">
 				<reportElement x="509" y="4" width="40" height="20" uuid="c64df684-d1f5-4d98-8660-8c732aa26b43">

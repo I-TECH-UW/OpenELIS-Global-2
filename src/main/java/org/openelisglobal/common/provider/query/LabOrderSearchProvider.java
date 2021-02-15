@@ -39,6 +39,7 @@ import org.hl7.fhir.r4.model.Task;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.ExternalOrderStatus;
 import org.openelisglobal.common.util.XMLUtil;
+import org.openelisglobal.dataexchange.fhir.FhirConfig;
 import org.openelisglobal.dataexchange.fhir.service.FhirApiWorkflowService;
 import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
 import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder;
@@ -73,6 +74,7 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
 //    private Boolean useBasedOn;
 
     private FhirContext fhirContext = SpringContext.getBean(FhirContext.class);
+    private FhirConfig fhirConfig = SpringContext.getBean(FhirConfig.class);
 
     protected FhirApiWorkflowService fhirApiWorkFlowService = SpringContext.getBean(FhirApiWorkflowService.class);
     protected FhirTransformService fhirTransformService = SpringContext.getBean(FhirTransformService.class);
@@ -121,7 +123,7 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
                     .getExternalOrderStatusForID(eOrder.getStatusId());
 
             IGenericClient localFhirClient = fhirContext
-                    .newRestfulGenericClient(fhirApiWorkFlowService.getLocalFhirStorePath());
+                    .newRestfulGenericClient(fhirConfig.getLocalFhirStorePath());
 
             Task task = fhirContext.newJsonParser().parseResource(Task.class, eOrder.getData());
 
@@ -189,6 +191,8 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
             if (identifier.getSystem().equalsIgnoreCase("iSantePlus ID")
                     || identifier.getSystem().equalsIgnoreCase("https://host.openelis.org/locator-form")) {
                 patientGuid = identifier.getId();
+            } else if (identifier.getSystem().equalsIgnoreCase(fhirConfig.getOeFhirSystem() + "/pat_guid")) {
+                patientGuid = identifier.getValue();
             }
         }
 
