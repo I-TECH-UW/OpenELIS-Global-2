@@ -29,6 +29,8 @@ if (form == null) {
     
 %>
 <head>
+<link rel="stylesheet" href="fontawesome-free-5.13.1-web/css/fontawesome.min.css">
+<link href="fontawesome-free-5.13.1-web/css/solid.css" rel="stylesheet">
 	<link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
 	<link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
 	<link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
@@ -87,12 +89,18 @@ function setMenuAction(button, form, action, validate, parameters) {
    } else {
       for (var i = 0; i < fieldObj.length; i++) {
          if (fieldObj[i].checked == true) {
-            ID = encodeURIComponent(fieldObj[i].value);
-            break;
+        	if(ID.length > 0) {
+        		ID += ",";
+        	}
+            ID += encodeURIComponent(fieldObj[i].value);
+            
+            //break;
          }
        }
     }
   }
+  
+  
   
   var sessionid = getSessionFromURL(form.action);
   var context = '<%= request.getContextPath() %>';
@@ -147,6 +155,7 @@ function setMenuAction(button, form, action, validate, parameters) {
    
 
   form.action = context + '/' + action + parsedFormName + '.do' + sessionid + parameters;
+  form.selectedIDs = parameters;
   
   if ((button.name == 'edit' && ID == '') || (button.name=='search' && searchString == '') ||(button.name=='searchString' && searchString == '') ) {
   } else if (button.name == 'deactivate'){

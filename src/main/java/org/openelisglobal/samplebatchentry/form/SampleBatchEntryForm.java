@@ -51,6 +51,19 @@ public class SampleBatchEntryForm extends SamplePatientEntryForm {
     private List<IdValuePair> initialSampleConditionList;
 
     // for display
+    private List<IdValuePair> sampleNatureList;
+
+    @Override
+    public List<IdValuePair> getSampleNatureList() {
+        return sampleNatureList;
+    }
+
+    @Override
+    public void setSampleNatureList(List<IdValuePair> sampleNatureList) {
+        this.sampleNatureList = sampleNatureList;
+    }
+
+    // for display
     private List<IdValuePair> testSectionList;
 
     private boolean patientInfoCheck = false;
@@ -106,10 +119,12 @@ public class SampleBatchEntryForm extends SamplePatientEntryForm {
         setFormName("sampleBatchEntryForm");
     }
 
+    @Override
     public String getCurrentDate() {
         return currentDate;
     }
 
+    @Override
     public void setCurrentDate(String currentDate) {
         this.currentDate = currentDate;
     }
@@ -130,50 +145,62 @@ public class SampleBatchEntryForm extends SamplePatientEntryForm {
         this.project = project;
     }
 
+    @Override
     public List<Project> getProjects() {
         return projects;
     }
 
+    @Override
     public void setProjects(List<Project> projects) {
         this.projects = projects;
     }
 
+    @Override
     public List<IdValuePair> getSampleTypes() {
         return sampleTypes;
     }
 
+    @Override
     public void setSampleTypes(List<IdValuePair> sampleTypes) {
         this.sampleTypes = sampleTypes;
     }
 
+    @Override
     public String getSampleXML() {
         return sampleXML;
     }
 
+    @Override
     public void setSampleXML(String sampleXML) {
         this.sampleXML = sampleXML;
     }
 
+    @Override
     public SampleOrderItem getSampleOrderItems() {
         return sampleOrderItems;
     }
 
+    @Override
     public void setSampleOrderItems(SampleOrderItem sampleOrderItems) {
         this.sampleOrderItems = sampleOrderItems;
     }
 
+    @Override
     public List<IdValuePair> getInitialSampleConditionList() {
         return initialSampleConditionList;
     }
 
+    @Override
     public void setInitialSampleConditionList(List<IdValuePair> initialSampleConditionList) {
         this.initialSampleConditionList = initialSampleConditionList;
     }
 
+    @Override
     public List<IdValuePair> getTestSectionList() {
         return testSectionList;
     }
 
+    @Override
     public void setTestSectionList(List<IdValuePair> testSectionList) {
         this.testSectionList = testSectionList;
     }
@@ -226,18 +253,22 @@ public class SampleBatchEntryForm extends SamplePatientEntryForm {
         this.labNo = labNo;
     }
 
+    @Override
     public PatientManagementInfo getPatientProperties() {
         return patientProperties;
     }
 
+    @Override
     public void setPatientProperties(PatientManagementInfo patientProperties) {
         this.patientProperties = patientProperties;
     }
 
+    @Override
     public PatientSearch getPatientSearch() {
         return patientSearch;
     }
 
+    @Override
     public void setPatientSearch(PatientSearch patientSearch) {
         this.patientSearch = patientSearch;
     }

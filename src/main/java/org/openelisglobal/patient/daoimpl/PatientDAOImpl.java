@@ -375,4 +375,10 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
         return new ArrayList<>();
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public Patient getPatientBySubjectNumber(String subjectNumber) {
+        return getPatientByStringProperty("subjectNumber", subjectNumber);
+    }
+
 }

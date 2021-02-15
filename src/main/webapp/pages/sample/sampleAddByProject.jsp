@@ -1324,7 +1324,7 @@ function /*void*/ setSaveButton() {
             <INPUT type="text" name="eid.infantID" id="eid.infantID" size="4" class="text"
                 onchange="handleDBSSubjectId(); makeDirty();"
                 maxlength="4" />
-            <form:input path="subjectNumber"
+            <form:input id="eid.subjectNumber"  path="subjectNumber"
             		style="display:none;"
                     onchange="checkRequiredField(this); makeDirty();" />
 	    	<div id="eid.subjectNumberMessage" class="blank" ></div>
@@ -1349,11 +1349,11 @@ function /*void*/ setSaveButton() {
         </td>
         <td>
             <div class="blank"><spring:message code="sample.entry.project.LDBS"/></div>
-            <INPUT type="text" name="eid.labNoForDisplay" id="eid.labNoForDisplay" size="5" class="text"
+            <input type="text" name="eid.labNoForDisplay" id="eid.labNoForDisplay" size="5" class="text"
                 onchange="handleLabNoChange( this, '<spring:message code="sample.entry.project.LDBS"/>', false );makeDirty();"
                 maxlength="5" />
             <form:input 
-				path="labNo"
+				path="labNo" id="eid.labNo"
                 styleClass="text" style="display:none;" />
             <div id="eid.labNoMessage" class="blank" > </div>
         </td>

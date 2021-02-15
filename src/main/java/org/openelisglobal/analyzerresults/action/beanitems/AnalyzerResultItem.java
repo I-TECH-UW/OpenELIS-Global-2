@@ -26,7 +26,6 @@ import org.hibernate.validator.constraints.SafeHtml;
 import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
 import org.openelisglobal.result.form.AnalyzerResultsForm;
-import org.openelisglobal.validation.annotations.ValidAccessionNumber;
 import org.openelisglobal.validation.annotations.ValidDate;
 
 public class AnalyzerResultItem implements Serializable {
@@ -38,7 +37,10 @@ public class AnalyzerResultItem implements Serializable {
     private String units;
     private String testName;
 
-    @ValidAccessionNumber(groups = { AnalyzerResultsForm.AnalyzerResuts.class })
+    // TODO move all accession number to the same format so they can be validated
+    // properly
+//    @ValidAccessionNumber(groups = { AnalyzerResultsForm.AnalyzerResuts.class })
+    @Pattern(regexp = "^[0-9a-zA-Z -]*$", groups = { AnalyzerResultsForm.AnalyzerResuts.class })
     private String accessionNumber;
 
     @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { AnalyzerResultsForm.AnalyzerResuts.class })

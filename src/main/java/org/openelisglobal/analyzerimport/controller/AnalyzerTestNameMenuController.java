@@ -19,7 +19,7 @@ import org.openelisglobal.analyzerimport.valueholder.AnalyzerTestMapping;
 import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.controller.BaseMenuController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
-import org.openelisglobal.common.form.MenuForm;
+import org.openelisglobal.common.form.AdminOptionMenuForm;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.validator.BaseErrors;
 import org.openelisglobal.internationalization.MessageUtil;
@@ -36,9 +36,9 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-public class AnalyzerTestNameMenuController extends BaseMenuController {
+public class AnalyzerTestNameMenuController extends BaseMenuController<NamedAnalyzerTestMapping> {
 
-    private static final String[] ALLOWED_FIELDS = new String[] { "selectedIDs[*]" };
+    private static final String[] ALLOWED_FIELDS = new String[] { "selectedIDs*" };
 
     @Autowired
     private AnalyzerTestMappingService analyzerTestMappingService;
@@ -72,8 +72,8 @@ public class AnalyzerTestNameMenuController extends BaseMenuController {
     }
 
     @Override
-    @SuppressWarnings("rawtypes")
-    protected List createMenuList(MenuForm form, HttpServletRequest request) {
+    protected List<NamedAnalyzerTestMapping> createMenuList(AdminOptionMenuForm<NamedAnalyzerTestMapping> form,
+            HttpServletRequest request) {
 
         request.setAttribute("menuDefinition", "AnalyzerTestNameMenuDefinition");
 

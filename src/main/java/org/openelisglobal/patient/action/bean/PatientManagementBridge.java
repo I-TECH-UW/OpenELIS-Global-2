@@ -81,6 +81,7 @@ public class PatientManagementBridge {
             info.setHealthDistrict(patientService.getHealthDistrict(patient));
             info.setHealthRegion(patientService.getHealthRegion(patient));
             info.setPrimaryPhone(patient.getPerson().getPrimaryPhone());
+            info.setEmail(patient.getPerson().getEmail());
 
             info.setMothersInitial(patientService.getMothersInitial(patient));
             if (readOnly) {

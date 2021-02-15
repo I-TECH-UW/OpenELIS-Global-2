@@ -18,10 +18,12 @@ import org.openelisglobal.common.services.StatusService.SampleStatus;
 import org.openelisglobal.patient.service.PatientService;
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.sample.service.SampleService;
+import org.openelisglobal.sample.util.AccessionNumberUtil;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.sampleitem.service.SampleItemService;
 import org.openelisglobal.sampleitem.valueholder.SampleItem;
 import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.test.valueholder.Test;
 
 import com.lowagie.text.BadElementException;
 import com.lowagie.text.Chunk;
@@ -80,6 +82,34 @@ public class BarcodeLabelMaker {
         this.labels = labels;
     }
 
+    public void generatePrePrintLabels(Integer numSetsOfLabels, Integer numOrderLabelsPerSet,
+            Integer numSpecimenLabelsPerSet, String facilityName, List<Test> tests) {
+        for (int i = 0; i < numSetsOfLabels; ++i) {
+            String accessionNumber = genNextPrePrintedAccessionNumber();
+            OrderLabel orderLabel = new OrderLabel(accessionNumber, facilityName);
+            orderLabel.setNumLabels(numOrderLabelsPerSet);
+//          orderLabel.linkBarcodeLabelInfo();
+            // get sysUserId from login module
+//            orderLabel.setSysUserId(sysUserId);
+//          if (orderLabel.checkIfPrintable() || "true".equals(override)) {
+            labels.add(orderLabel);
+//          }
+
+            SpecimenLabel specimenLabel = new SpecimenLabel(accessionNumber, facilityName, tests);
+            specimenLabel.setNumLabels(numSpecimenLabelsPerSet);
+//          specimenLabel.linkBarcodeLabelInfo();
+            // get sysUserId from login module
+//            specimenLabel.setSysUserId(sysUserId);
+//          if (specimenLabel.checkIfPrintable() || "true".equals(override)) {
+            labels.add(specimenLabel);
+//          }
+        }
+    }
+
+    private String genNextPrePrintedAccessionNumber() {
+        return AccessionNumberUtil.getNextAccessionNumber("");
+    }
+
     /**
      * Create all labels that were requested and place them into the provided list
      * of labels
@@ -90,11 +120,9 @@ public class BarcodeLabelMaker {
      *                  label
      * @param type      The type of bar code that should be created
      * @param quantity  The number of labels that should be printed
-     * @param override  Whether the print limit should be ignored in label
-     *                  generation
      * @param request   This is used to attribute this action to a user
      */
-    public void generateLabels(String labNo, String patientId, String type, String quantity, String override) {
+    public void generateLabels(String labNo, String type, String quantity, String override) {
 
         /*
          * LogEvent.logInfo(this.getClass().getName(), "method unkown", "labNo: " +
@@ -107,7 +135,7 @@ public class BarcodeLabelMaker {
         if ("default".equals(type)) {
             // add 2 order label per default
             Sample sample = sampleService.getSampleByAccessionNumber(labNo);
-            OrderLabel orderLabel = new OrderLabel(getPatientForID(patientId), sample, labNo);
+            OrderLabel orderLabel = new OrderLabel(sampleService.getPatient(sample), sample, labNo);
             orderLabel.setNumLabels(2);
             orderLabel.linkBarcodeLabelInfo();
             // get sysUserId from login module
@@ -120,7 +148,8 @@ public class BarcodeLabelMaker {
             List<SampleItem> sampleItemList = sampleItemService.getSampleItemsBySampleIdAndStatus(sample.getId(),
                     ENTERED_STATUS_SAMPLE_LIST);
             for (SampleItem sampleItem : sampleItemList) {
-                SpecimenLabel specLabel = new SpecimenLabel(getPatientForID(patientId), sample, sampleItem, labNo);
+                SpecimenLabel specLabel = new SpecimenLabel(sampleService.getPatient(sample), sample, sampleItem,
+                        labNo);
                 specLabel.setNumLabels(1);
                 specLabel.linkBarcodeLabelInfo();
                 // get sysUserId from login module
@@ -132,7 +161,7 @@ public class BarcodeLabelMaker {
             // order case
         } else if ("order".equals(type)) {
             Sample sample = sampleService.getSampleByAccessionNumber(labNo);
-            OrderLabel orderLabel = new OrderLabel(getPatientForID(patientId), sample, labNo);
+            OrderLabel orderLabel = new OrderLabel(sampleService.getPatient(sample), sample, labNo);
             orderLabel.setNumLabels(Integer.parseInt(quantity));
             orderLabel.linkBarcodeLabelInfo();
             // get sysUserId from login module
@@ -151,7 +180,8 @@ public class BarcodeLabelMaker {
             for (SampleItem sampleItem : sampleItemList) {
                 // get only the sample item matching the specimen number
                 if (sampleItem.getSortOrder().equals(specimenNumber)) {
-                    SpecimenLabel specLabel = new SpecimenLabel(getPatientForID(patientId), sample, sampleItem, labNo);
+                    SpecimenLabel specLabel = new SpecimenLabel(sampleService.getPatient(sample), sample, sampleItem,
+                            labNo);
                     specLabel.setNumLabels(Integer.parseInt(quantity));
                     specLabel.linkBarcodeLabelInfo();
                     // get sysUserId from login module
@@ -172,6 +202,40 @@ public class BarcodeLabelMaker {
                 labels.add(blankLabel);
             }
         }
+    }
+
+    /**
+     * Creates a PDF as a stream of all the stored labels
+     *
+     * @return Stream of all labels that have been generated
+     */
+    public ByteArrayOutputStream createPrePrintedLabelsAsStream() {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        if (labels.isEmpty()) {
+            return stream;
+        }
+        try {
+            Document document = new Document();
+            PdfWriter writer = PdfWriter.getInstance(document, stream);
+            document.open();
+            for (Label label : labels) {
+                for (int i = 0; i < label.getNumLabels(); ++i) {
+                    // a ratio is used with set width so that font size
+                    // does not need to be adjusted
+                    float ratio = label.getHeight() / label.getWidth();
+                    label.pdfWidth = 350;
+                    label.pdfHeight = label.pdfWidth * ratio;
+                    drawLabel(label, writer, document);
+//                  label.incrementNumPrinted();
+                }
+            }
+            document.close();
+            writer.close();
+        } catch (Exception e) {
+            LogEvent.logError(e);
+        }
+
+        return stream;
     }
 
     /**

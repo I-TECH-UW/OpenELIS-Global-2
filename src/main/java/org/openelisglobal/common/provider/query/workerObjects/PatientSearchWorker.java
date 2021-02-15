@@ -35,7 +35,7 @@ abstract public class PatientSearchWorker {
     protected PatientIdentityService patientIdentityService = SpringContext.getBean(PatientIdentityService.class);
 
     abstract public String createSearchResultXML(String lastName, String firstName, String STNumber,
-            String subjectNumber, String nationalID, String patientID, String guid, StringBuilder xml);
+            String subjectNumber, String nationalID, String patientID, String guid, String dateOfBirth, String gender, StringBuilder xml);
 
     public void appendSearchResultRow(PatientSearchResults searchResults, StringBuilder xml) {
 
@@ -66,6 +66,9 @@ abstract public class PatientSearchWorker {
         XMLUtil.appendKeyValue("dataSourceName", result.getDataSourceName(), xml);
         XMLUtil.appendKeyValue("id", result.getPatientID(), xml);
         XMLUtil.appendKeyValue("referralPatientId", result.getReferringSitePatientId(), xml);
+        XMLUtil.appendKeyValue("contactName", result.getContactName(), xml);
+        XMLUtil.appendKeyValue("contactPhone", result.getContactPhone(), xml);
+        XMLUtil.appendKeyValue("contactEmail", result.getContactEmail(), xml);
     }
 
     private List<PatientIdentity> getIdentityListForPatient(String patientId) {

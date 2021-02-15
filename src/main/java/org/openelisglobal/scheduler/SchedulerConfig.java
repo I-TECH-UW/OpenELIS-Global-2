@@ -87,8 +87,7 @@ public class SchedulerConfig implements SchedulingConfigurer {
             reloadableScheduler = StdSchedulerFactory.getDefaultScheduler();
             addReloadableCronSchedulers(reloadableScheduler);
         } catch (SchedulerException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LogEvent.logError(e);
         }
 
     }

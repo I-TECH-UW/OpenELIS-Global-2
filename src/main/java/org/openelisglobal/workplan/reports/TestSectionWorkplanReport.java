@@ -40,7 +40,7 @@ public class TestSectionWorkplanReport implements IWorkplanReport {
     protected String reportPath = "";
 
     public TestSectionWorkplanReport(String testSection) {
-        messageKey = messageKey + testSection;
+        messageKey = messageKey + testSection.replace(' ', '-');
         this.testSection = MessageUtil.getContextualMessage(messageKey);
 
         if (this.testSection == null) {

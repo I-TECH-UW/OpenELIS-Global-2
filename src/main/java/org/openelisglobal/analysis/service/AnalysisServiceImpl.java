@@ -69,6 +69,7 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
 
     public AnalysisServiceImpl() {
         super(Analysis.class);
+        this.auditTrailLog = true;
     }
 
     public static String getTableReferenceId() {
@@ -434,6 +435,13 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
     @Transactional(readOnly = true)
     public List<Analysis> getAnalysesBySampleIdExcludedByStatusId(String id, Set<Integer> statusIds) {
         return getBaseObjectDAO().getAnalysesBySampleIdExcludedByStatusId(id, statusIds);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Analysis> getAllAnalysisByTestsAndStatus(List<Integer> testIds, List<Integer> analysisStatusList,
+            List<Integer> sampleStatusList) {
+        return getBaseObjectDAO().getAllAnalysisByTestsAndStatus(testIds, analysisStatusList, sampleStatusList);
     }
 
     @Override

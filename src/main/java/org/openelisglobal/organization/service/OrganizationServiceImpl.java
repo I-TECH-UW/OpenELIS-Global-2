@@ -168,4 +168,42 @@ public class OrganizationServiceImpl extends BaseObjectServiceImpl<Organization,
         return getBaseObjectDAO().getOrganizationsByTypeName(orderByProperty, referralOrgType);
     }
 
+    @Override
+    @Transactional
+    public void deactivateAllOrganizations() {
+        for (Organization organization : getBaseObjectDAO().getAll()) {
+            organization.setIsActive("N");
+        }
+    }
+    
+    @Override
+    @Transactional
+    public void deactivateOrganizations(List<Organization> deactivateOrganizations) {
+        for (Organization organization : getBaseObjectDAO().getAll()) {
+            for (Organization deactivateOrganization : deactivateOrganizations)  {
+                if (deactivateOrganization.getId().equals(organization.getId()) ) {
+                    organization.setIsActive("N");
+                }
+            }
+        }
+    }
+
+    @Override
+    @Transactional
+    public void activateOrganizations(List<String> organizationNames) {
+        for (Organization organization : getBaseObjectDAO().getAll()) {
+            if (organizationNames.contains(organization.getName())
+                    || organizationNames.contains(organization.getOrganizationName())) {
+                organization.setIsActive("Y");
+            }
+        }
+    }
+
+    @Override
+    @Transactional
+    public void activateOrganizationsAndDeactivateOthers(List<String> organizationNames) {
+        deactivateAllOrganizations();
+        activateOrganizations(organizationNames);
+    }
+
 }

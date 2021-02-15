@@ -136,6 +136,8 @@
 			value="organizationMenuDefinition" />
 		<put-attribute name="rightTestSection"
 			value="testSectionMenuDefinition" />
+		<put-attribute name="rightExternalConnection"
+			value="externalConnectionMenuDefinition" />
 		<put-attribute name="rightTypeOfSamplePanel"
 			value="/pages/common/emptyPlaceHolder.jsp" />
 		<put-attribute name="rightTypeOfSampleTest"
@@ -205,6 +207,20 @@
 		extends="baseDefinition">
 		<put-attribute name="body"
 			value="/pages/organization/organization.jsp" />
+	</definition>
+	
+	<definition name="externalConnectionDefinition"
+		extends="baseDefinitionNoForm">
+		<put-attribute name="body"
+			value="/pages/externalconnections/externalConnection.jsp" />
+		<put-attribute name="footer"
+			value="/pages/common/saveCancelFooterButtons.jsp" />
+	</definition>
+	
+	<definition name="externalConnectionMenuDefinition"
+		extends="baseMenuSelectListDefinition">
+		<put-attribute name="body"
+			value="/pages/externalconnections/externalConnectionMenu.jsp" />
 	</definition>
 
 </tiles-definitions>

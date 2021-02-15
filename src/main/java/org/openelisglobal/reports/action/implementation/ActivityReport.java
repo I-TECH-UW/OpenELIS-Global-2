@@ -118,7 +118,7 @@ public abstract class ActivityReport extends Report implements IReportCreator {
         PatientService patientService = SpringContext.getBean(PatientService.class);
         SampleHumanService sampleHumanService = SpringContext.getBean(SampleHumanService.class);
         Patient patient = sampleHumanService.getPatientForSample(sample);
-        item.setResultValue(resultService.getResultValue(result, "\n", true, true));
+        item.setResultValue(resultService.getResultValueForDisplay(result, "\n", true, true));
         item.setTechnician(resultService.getSignature(result));
         item.setAccessionNumber(sampleService.getAccessionNumber(sample).substring(PREFIX_LENGTH));
         item.setReceivedDate(sampleService.getReceivedDateWithTwoYearDisplay(sample));

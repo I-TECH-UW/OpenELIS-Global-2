@@ -19,7 +19,11 @@ import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.barcode.form.PrintBarcodeForm;
 import org.openelisglobal.common.controller.BaseController;
+import org.openelisglobal.common.formfields.FormFields;
+import org.openelisglobal.common.services.DisplayListService;
+import org.openelisglobal.common.services.DisplayListService.ListType;
 import org.openelisglobal.common.services.IStatusService;
+import org.openelisglobal.common.services.SampleOrderService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.StatusService.SampleStatus;
 import org.openelisglobal.common.util.DateUtil;
@@ -29,6 +33,7 @@ import org.openelisglobal.patient.service.PatientService;
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.person.service.PersonService;
 import org.openelisglobal.sample.bean.SampleEditItem;
+import org.openelisglobal.sample.form.ProjectData;
 import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.samplehuman.service.SampleHumanService;
@@ -65,11 +70,15 @@ public class PrintBarcodeController extends BaseController {
     @Autowired
     private SampleItemService sampleItemService;
     @Autowired
+    private SampleOrderService sampleOrderService;
+    @Autowired
     private AnalysisService analysisService;
     @Autowired
     private TypeOfSampleService typeOfSampleService;
     @Autowired
     private SampleHumanService sampleHumanService;
+    @Autowired
+    private DisplayListService displayListService;
 
     @PostConstruct
     private void initialize() {
@@ -93,6 +102,7 @@ public class PrintBarcodeController extends BaseController {
         form.setFormAction("PrintBarcode");
         form.setFormMethod(RequestMethod.GET);
         Map<String, Object> displayObjects = new HashMap<>();
+        addPrePrintFields(form);
         addPatientSearch(displayObjects);
 
         if (org.apache.commons.validator.GenericValidator.isBlankOrNull(request.getParameter("accessionNumber"))) {
@@ -107,8 +117,27 @@ public class PrintBarcodeController extends BaseController {
             List<SampleEditItem> currentTestList = getCurrentTestInfo(sampleItemList, accessionNumber, false);
             displayObjects.put("existingTests", currentTestList);
         }
-        addPatientSearch(displayObjects);
+
+        if (FormFields.getInstance().useField(FormFields.Field.SampleNature)) {
+            form.setSampleNatureList(DisplayListService.getInstance().getList(ListType.SAMPLE_NATURE));
+        }
+
         return findForward(FWD_SUCCESS, displayObjects, form);
+    }
+
+    private void addPrePrintFields(@Valid PrintBarcodeForm form) {
+        form.setSampleOrderItems(sampleOrderService.getSampleOrderItem());
+        form.setSampleTypes(displayListService.getList(ListType.SAMPLE_TYPE_ACTIVE));
+        form.setTestSectionList(displayListService.getList(ListType.TEST_SECTION));
+        form.setCurrentDate(DateUtil.getCurrentDateAsText());
+        form.setCurrentTime(DateUtil.getCurrentTimeAsText());
+        form.getSampleOrderItems().setReceivedTime(DateUtil.getCurrentTimeAsText());
+        form.setProjectDataVL(new ProjectData());
+        form.setProjectDataEID(new ProjectData());
+
+        if (FormFields.getInstance().useField(FormFields.Field.InitialSampleCondition)) {
+            form.setInitialSampleConditionList(displayListService.getList(ListType.INITIAL_SAMPLE_CONDITION));
+        }
     }
 
     private void addPatientSearch(Map<String, Object> displayObjects) {
@@ -202,18 +231,20 @@ public class PrintBarcodeController extends BaseController {
             sampleEditItem.setTestName(TestServiceImpl.getUserLocalizedTestName(analysis.getTest()));
             sampleEditItem.setSampleItemId(sampleItem.getId());
 
-            boolean canCancel = allowedToCancelAll
-                    || (!SpringContext.getBean(IStatusService.class).matches(analysis.getStatusId(), AnalysisStatus.Canceled)
-                            && SpringContext.getBean(IStatusService.class).matches(analysis.getStatusId(), AnalysisStatus.NotStarted));
+            boolean canCancel = allowedToCancelAll || (!SpringContext.getBean(IStatusService.class)
+                    .matches(analysis.getStatusId(), AnalysisStatus.Canceled)
+                    && SpringContext.getBean(IStatusService.class).matches(analysis.getStatusId(),
+                            AnalysisStatus.NotStarted));
             if (!canCancel) {
                 canRemove = false;
             }
             sampleEditItem.setCanCancel(canCancel);
             sampleEditItem.setAnalysisId(analysis.getId());
-            sampleEditItem.setStatus(SpringContext.getBean(IStatusService.class).getStatusNameFromId(analysis.getStatusId()));
+            sampleEditItem
+                    .setStatus(SpringContext.getBean(IStatusService.class).getStatusNameFromId(analysis.getStatusId()));
             sampleEditItem.setSortOrder(analysis.getTest().getSortOrder());
-            sampleEditItem.setHasResults(
-                    !SpringContext.getBean(IStatusService.class).matches(analysis.getStatusId(), AnalysisStatus.NotStarted));
+            sampleEditItem.setHasResults(!SpringContext.getBean(IStatusService.class).matches(analysis.getStatusId(),
+                    AnalysisStatus.NotStarted));
 
             analysisSampleItemList.add(sampleEditItem);
             break;

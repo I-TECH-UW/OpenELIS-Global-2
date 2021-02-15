@@ -27,7 +27,7 @@ public class ResultValidationForm extends BaseForm {
     @Valid
     private List<AnalysisItem> resultList;
 
-    @Pattern(regexp = "^[a-zA-Z-]*$", groups = { ResultValidation.class })
+    @Pattern(regexp = "^[a-zA-Z -]*$", groups = { ResultValidation.class })
     private String testSection = "";
 
     // for display

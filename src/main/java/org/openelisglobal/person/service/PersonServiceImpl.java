@@ -48,6 +48,7 @@ public class PersonServiceImpl extends BaseObjectServiceImpl<Person, String> imp
 
     public PersonServiceImpl() {
         super(Person.class);
+        this.auditTrailLog = true;
     }
 
     @Override

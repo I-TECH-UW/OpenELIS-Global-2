@@ -35,9 +35,9 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 @Controller
 public class PrintWorkplanReportController extends BaseController {
 
-    private static final String[] ALLOWED_FIELDS = new String[] { "selectedSearchID", "workplanType", "testTypeID",
-            "testSectionId", "testName", "workplanTests[*].accessionNumber", "workplanTests[*].patientInfo",
-            "workplanTests[*].receivedDate", "workplanTests[*].testName", "workplanTests[*].notIncludedInWorkplan" };
+    private static final String[] ALLOWED_FIELDS = new String[] { "selectedSearchID", "type", "testTypeID",
+            "testSectionId", "testName", "workplanTests*.accessionNumber", "workplanTests*.patientInfo",
+            "workplanTests*.receivedDate", "workplanTests*.testName", "workplanTests*.notIncludedInWorkplan" };
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -54,7 +54,7 @@ public class PrintWorkplanReportController extends BaseController {
 
         request.getSession().setAttribute(SAVE_DISABLED, "true");
 
-        String workplanType = form.getWorkplanType();
+        String workplanType = form.getType();
         String workplanName;
 
         if (workplanType.equals("test")) {

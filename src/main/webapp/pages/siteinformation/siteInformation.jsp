@@ -78,15 +78,16 @@
     <form:textarea path="value" rows="2" style="width:50%"/>
 </c:if>
 <c:if test="${form.valueType == 'logoUpload'}">
-    <input type="file" name="aFile" onchange="checklogLogoFile( this )" id="inputWidget"/><br/>
-    <spring:message code="label.remove.image" /><input type="checkbox" id="removeImage" />
+	<input type="hidden" name="logoName" id="logoName" />
+    <input type="file" name="logoFile" onchange="checklogLogoFile( this )" id="inputWidget"/><br/>
+    <spring:message code="label.remove.image" />
+    <input type="checkbox" name="removeImage" id="removeImage" />
     <script type="text/javascript">
-        jQuery("form").attr("enctype", "multipart/form-data");
-        jQuery(":file").css("width", "600px");
+        jQuery("#mainForm").attr("enctype", "multipart/form-data");
+        jQuery(":file").css("width", "600px"); 
         function setAction(form, action, validate, parameters) {
-        	var siteInfoName = jQuery("#siteInfoName").val()
-            form.action = '<%= request.getContextPath() %>' + "/logoUpload?logo=" + siteInfoName + "&removeImage=" + jQuery("#removeImage").is(":checked") 
-            		+ "&_csrf=" + jQuery('input[name=_csrf]').val();
+        	jQuery("#logoName").val(jQuery("#siteInfoName").val());
+            form.action = '<%= request.getContextPath() %>' + "/logoUpload";
             form.validateDocument = new Object();
             form.validateDocument.value = validate;
 

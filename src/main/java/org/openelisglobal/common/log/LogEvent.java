@@ -84,6 +84,11 @@ public class LogEvent {
                 throwable);
     }
 
+    public static void logTrace(String className, String methodName, String debugMessage) {
+        getLog().trace(
+                "Class: " + className + ", Method: " + methodName + ", Trace: " + sanitizeLogMessage(debugMessage));
+    }
+
     /**
      * Write to the log file (type debug)
      *
@@ -171,7 +176,10 @@ public class LogEvent {
 
     // for preventing log forging
     private static String sanitizeLogMessage(String logMessage) {
-        String sanitizedLogMessage = logMessage.replace('\n', '_').replace('\r', '_').replace('\t', '_');
-        return Encode.forHtml(sanitizedLogMessage);
+        if (logMessage != null) {
+            String sanitizedLogMessage = logMessage.replace('\n', '_').replace('\r', '_').replace('\t', '_');
+            return Encode.forHtml(sanitizedLogMessage);
+        }
+        return null;
     }
 }

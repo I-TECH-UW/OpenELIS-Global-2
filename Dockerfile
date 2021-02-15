@@ -1,15 +1,14 @@
-FROM tomcat:8.5-jdk8
+FROM tomcat:8.5-jdk11
 
 #Clean out unneccessary files from tomcat (especially pre-existing applications) 
 #RUN rm -rf /usr/local/tomcat/webapps/* \ 
 #    /usr/local/tomcat/conf/Catalina/localhost/manager.xml
     
-#Deploy the war into tomcat image
+#Deploy the war into tomcat image and point root to it
 ADD target/OpenELIS-Global.war /usr/local/tomcat/webapps/OpenELIS-Global.war
     
-#rewrite server.xml with our server.xml for a number of security configurations
-#    
-ADD install/tomcat-resources/server.xml /usr/local/tomcat/conf/server.xml
+#contains sensitive data, so being mounted at runtime
+#ADD ./install/tomcat-resources/server.xml /usr/local/tomcat/conf/server.xml
 
 #rewrite cataline.properties with our catalina.properties so it contains:
 #    org.apache.catalina.STRICT_SERVLET_COMPLIANCE=true

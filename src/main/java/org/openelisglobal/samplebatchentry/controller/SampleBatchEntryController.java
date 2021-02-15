@@ -19,6 +19,7 @@ import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.common.validator.BaseErrors;
+import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
 import org.openelisglobal.organization.service.OrganizationService;
 import org.openelisglobal.organization.valueholder.Organization;
 import org.openelisglobal.patient.action.IPatientUpdate;
@@ -83,7 +84,9 @@ public class SampleBatchEntryController extends BaseController {
     SamplePatientEntryFormValidator entryFormValidator;
 
     @Autowired
-    private SamplePatientEntryService samplePatientService;
+    private SamplePatientEntryService samplePatientEntryService;
+    
+    protected FhirTransformService fhirTransformService = SpringContext.getBean(FhirTransformService.class);
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -194,7 +197,8 @@ public class SampleBatchEntryController extends BaseController {
         }
 
         try {
-            samplePatientService.persistData(updateData, patientUpdate, patientInfo, form, request);
+            samplePatientEntryService.persistData(updateData, patientUpdate, patientInfo, form, request);
+//            String fhir_json = fhirTransformService.CreateFhirFromOESample(updateData, patientUpdate, patientInfo, form, request);
         } catch (LIMSRuntimeException e) {
             // ActionError error;
             if (e.getException() instanceof StaleObjectStateException) {

@@ -2,6 +2,8 @@
          contentType="text/html; charset=UTF-8"
          import="org.openelisglobal.internationalization.MessageUtil,
          		java.util.List,
+         		java.util.Locale,
+         		org.springframework.context.i18n.LocaleContextHolder,
          		org.openelisglobal.common.action.IActionConstants,
          		org.openelisglobal.common.util.IdValuePair,
          		org.openelisglobal.common.util.Versioning,
@@ -32,7 +34,7 @@
   --%>
 
 <%
-    String locale = SystemConfiguration.getInstance().getDefaultLocale().toString();
+	Locale locale = LocaleContextHolder.getLocale();
 %>
 <%--Do not add jquery.ui.js, it will break the sorting --%>
 <script type="text/javascript" src="scripts/jquery.asmselect.js?"></script>
@@ -151,6 +153,9 @@
 
                 option = createOption(data.value, dictionaryName, false);
                 jQuery("#referenceSelection").append(option);
+                
+                option = createOption(data.value, dictionaryName, false);
+                jQuery("#defaultTestResultSelection").append(option);
             } else {
                 jQuery("#dictionaryNameSortUI li[value=" + data.value + "]").remove();
 
@@ -159,6 +164,7 @@
                 jQuery("#dictionaryQualify").append(qualifiyList);
                 augmentMultiselects("#dictionaryQualify");
                 jQuery("#referenceSelection option[value=" + data.value + "]").remove();
+                jQuery("#defaultTestResultSelection option[value=" + data.value + "]").remove();
             }
         }
     }
@@ -181,6 +187,8 @@
         jQuery("#dictionaryNameSortUI li").remove();
         jQuery("#referenceSelection option").remove();
         jQuery("#referenceSelection").append(createOption("0", "", false));
+        jQuery("#defaultTestResultSelection option").remove();
+        jQuery("#defaultTestResultSelection").append(createOption("0", "", false));
     }
     function createOption(id, name, isActive) {
         var option = jQuery('<option/>');
@@ -232,10 +240,10 @@
             ul.append(createLI(id, name, false));
         }
 
-        <% if( locale.equals("en_US")){ %>
-        ul.append( createLI(0, jQuery("#testNameEnglish").val(), true) );
+        <% if( locale.getLanguage().equals("en")){ %>
+        	ul.append( createLI(0, jQuery("#testNameEnglish").val(), true) );
         <% } else { %>
-        ul.append( createLI(0, jQuery("#testNameFrench").val(), true) );
+        	ul.append( createLI(0, jQuery("#testNameFrench").val(), true) );
         <% } %>
 
         jQuery("#sort" + sampleTypeId).append(ul);
@@ -621,6 +629,7 @@
             buildVerifyDictionaryList();
             jQuery("#dictionaryVerifyId").show();
             jQuery("#referenceValue").text(jQuery("#referenceSelection option:selected").text());
+            jQuery("#defaultTestResultValue").text(jQuery("#defaultTestResultSelection option:selected").text());
             jQuery(".selectListConfirm").show();
             jQuery(".confirmShow").show();
             jQuery(".selectShow").hide();
@@ -785,6 +794,7 @@
         jQuery("#resultTypeRO").text(jQuery("#resultTypeSelection  option:selected").text());
         jQuery("#activeRO").text(jQuery("#active").attr("checked") ? "Y" : "N");
         jQuery("#orderableRO").text(jQuery("#orderable").attr("checked") ? "Y" : "N");
+        jQuery("#notifyResultsRO").text(jQuery("#notifyResults").attr("checked") ? "Y" : "N");
     }
 
     function createJSON() {
@@ -800,6 +810,7 @@
         jsonObj.uom = jQuery("#uomSelection").val();
         jsonObj.resultType = jQuery("#resultTypeSelection").val();
         jsonObj.orderable = jQuery("#orderable").attr("checked") ? 'Y' : 'N';
+        jsonObj.notifyResults = jQuery("#notifyResults").attr("checked") ? 'Y' : 'N';
         jsonObj.active = jQuery("#active").attr("checked") ? 'Y' : 'N';
         jsonObj.sampleTypes = [];
         addJsonSortingOrder(jsonObj);
@@ -890,6 +901,9 @@
         jQuery("#dictionarySelection option:selected").each(function (index, value) {
             if (jQuery("#referenceSelection option:selected[value=" + value.value + "]").length == 1) {
                 jsonObj.dictionaryReference = value.value;
+            }
+            if (jQuery("#defaultTestResultSelection option:selected[value=" + value.value + "]").length == 1) {
+                jsonObj.defaultTestResult = value.value;
             }
             dictionary = {};
             dictionary.value = value.value;
@@ -1110,8 +1124,9 @@ td {
                     <label for="orderable"><spring:message code="test.isActive"/></label>
                     <input type="checkbox" id="active" checked="checked"/><br/>
                     <label for="orderable"><spring:message code="label.orderable"/></label>
-                    <input type="checkbox" id="orderable" checked="checked"/>
-
+                    <input type="checkbox" id="orderable" checked="checked"/><br/>
+                    <label for="notifyResults"> <spring:message code="test.notifyResults" /></label>
+                    <input type="checkbox" id='notifyResults'/>
                 </td>
             </tr>
         </table>
@@ -1146,6 +1161,9 @@ td {
             <spring:message code="label.orderable"/>
             <div class="tab" id="orderableRO"></div>
             <br/>
+            <spring:message code="test.notifyResults"/>
+            <div class="tab" id="notifyResultsRO"></div>
+            <br/>
         </div>
         <div class="step2" style="float:right;  width:80%; display: none">
             <div  id="sampleTypeSelectionDiv" class="step2" style="float:left; width:20%;">
@@ -1178,6 +1196,7 @@ td {
                     </ul>
                     </span>
                     <span><spring:message code="label.reference.value" /><br><ul><li id="referenceValue"></li></ul></span>
+                	<span><spring:message code="label.default.result" /><br><ul><li id="defaultTestResultValue"></li></ul></span>
                 </div>
                 <div id="sortDictionaryDiv" align="center" class="dictionarySelect"
                      style="padding:10px;float:left; width:33%; display:none;"><spring:message code="label.result.order" />
@@ -1190,6 +1209,13 @@ td {
                     <div id="dictionaryReference">
                         <spring:message code="label.reference.value" /><br/>
                         <select id='referenceSelection'>
+                            <option value="0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>
+                        </select>
+                    </div>
+                    <br>
+					<div id="defaultTestResult">
+                        <spring:message code="label.default.result" /><br/>
+                        <select id='defaultTestResultSelection'>
                             <option value="0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>
                         </select>
                     </div>
@@ -1322,7 +1348,7 @@ td {
                         <span class="sexRange_0" style="display: none">
                             <spring:message code="sex.male" />
                         </span>
-                </td>ocalization
+                </td>
                 <td><input class="yearMonthSelect_0" type="radio" name="time_0" value="<%=MessageUtil.getContextualMessage("abbreviation.year.single")%>"
                            onchange="upperAgeRangeChanged('0')" checked><spring:message code="abbreviation.year.single" />
                     <input class="yearMonthSelect_0" type="radio" name="time_0" value="<%=MessageUtil.getContextualMessage("abbreviation.month.single")%>"

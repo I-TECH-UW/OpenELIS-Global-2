@@ -4,34 +4,44 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %> 
 
 <script type="text/javascript">
+var date = new Date()
+var offset = date.getTimezoneOffset()
+
 var pageNumber = ${(startIndex / 50) + 1};
 var firstPage = pageNumber == 1;
 var lastPage = ${total == endIndex};
 	
-function sortBy(sortOption) {
+function searchElectronicOrders() {
+	var searchValue = jQuery("#searchValue").val();
+	var sortOption = jQuery("#sortOption").val();
 	const params = new URLSearchParams({
 		"sortOrder": sortOption,
+		"searchValue": searchValue,
 		});
 	window.location.href = "ElectronicOrders.do?" + params.toString();
 }
 
 function nextPage() {
-	var sortOption = jQuery("#sortSelect").val();
+	var searchValue = jQuery("#searchValue").val();
+	var sortOption = jQuery("#sortOption").val();
 	const params = new URLSearchParams({
 		"sortOrder": sortOption,
+		"searchValue": searchValue,
 		"page": (pageNumber + 1),
 		});
 	window.location.href = "ElectronicOrders.do?" + params.toString();
 }
 
 function prevPage() {
-	var sortOption = jQuery("#sortSelect").val();
+	var searchValue = jQuery("#searchValue").val();
+	var sortOption = jQuery("#sortOption").val();
 	const params = new URLSearchParams({
 		"sortOrder": sortOption,
+		"searchValue": searchValue,
 		"page": (pageNumber -1),
 		});
 	window.location.href = "ElectronicOrders.do?" + params.toString();
@@ -46,9 +56,11 @@ jQuery(window).load(function(){
 	});
 });
 </script>
-
+<b><spring:message code="eorder.instruction"/></b><br>
+<form:input path="searchValue" id="searchValue" />
+<button type="button" onClick="searchElectronicOrders()"><spring:message code="label.button.search" /> </button><br>
 <spring:message code="eorder.sort"/>: 
-<form:select path="sortOrder" id="sortSelect" onchange="sortBy(this.value)">
+<form:select path="sortOrder" id="sortOption" onchange="searchElectronicOrders()">
 	<form:options items="${form.sortOrderOptions}" itemValue="value" itemLabel="label" />
 </form:select>
 <form:hidden path="page"/>
@@ -69,11 +81,29 @@ jQuery(window).load(function(){
 				<c:forEach var="eOrder" items="${form.EOrders}">
 					
 					<h3>
-						<span><spring:message code="eorder.externalid"/>: <c:out value="${eOrder.externalId}"/></span>
-						<span style="float:right"><spring:message code="eorder.lastupdated"/>: <c:out value="${eOrder.lastupdated}"/></span>
+						<span><spring:message code="eorder.externalid"/>: 
+						<c:out value="${eOrder.externalId}"/>
+						<input type="button" 
+							onclick="location.href='SamplePatientEntry.do?ID=${eOrder.externalId}';" 
+							value="<spring:message code="eorder.enterorder"/>" /></span>
+						<span style="float:right"><spring:message code="eorder.lastupdated"/>: 
+						<c:if test="${empty sessionScope.timezone}">
+							<fmt:formatDate value="${eOrder.lastupdated}" pattern="yyyy-MM-dd HH:mm z"/> 
+						</c:if>
+						<c:if test="${not empty sessionScope.timezone}">
+							<fmt:formatDate value="${eOrder.lastupdated}" timeZone="${sessionScope.timezone}" pattern="yyyy-MM-dd HH:mm z"/> 
+						</c:if>
+						</span>
 					</h3>
 					<div id="info" >
-						<b><spring:message code="eorder.timestamp"/>:</b> <c:out value="${eOrder.orderTimestamp}"/><br>
+						<b><spring:message code="eorder.timestamp"/>:</b> 
+						<c:if test="${empty sessionScope.timezone}">
+							<fmt:formatDate value="${eOrder.orderTimestamp}" pattern="yyyy-MM-dd HH:mm z"/> 
+						</c:if>
+						<c:if test="${not empty sessionScope.timezone}">
+							<fmt:formatDate value="${eOrder.orderTimestamp}" timeZone="${sessionScope.timezone}" pattern="yyyy-MM-dd HH:mm z"/> 
+						</c:if>
+						<br>
 						<table>
 						<tr>
 							<td><b><spring:message code="eorder.patient"/>:</b></td>
@@ -93,7 +123,7 @@ jQuery(window).load(function(){
 						</table>
 						<b><spring:message code="eorder.status"/>: </b> <spring:message code="${eOrder.status.nameKey}"/><br>
 						<b><spring:message code="eorder.message"/>: </b><br> 
-						<div class="colorFill message" style="white-space:pre;padding:5px;"><c:out value="${eOrder.data}"/></div>
+						<div class="colorFill message" style="padding:5px;"><c:out value="${eOrder.data}"/></div>
 					</div>
 					<hr>
 				</c:forEach>

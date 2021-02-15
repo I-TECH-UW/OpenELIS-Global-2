@@ -75,12 +75,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class ResultValidationController extends BaseResultValidationController {
 
     private static final String[] ALLOWED_FIELDS = new String[] { "testSectionId", "paging.currentPage", "testSection",
-            "testName", "resultList[*].accessionNumber", "resultList[*].analysisId", "resultList[*].testId",
-            "resultList[*].sampleId", "resultList[*].resultType", "resultList[*].sampleGroupingNumber",
-            "resultList[*].noteId", "resultList[*].resultId", "resultList[*].hasQualifiedResult",
-            "resultList[*].sampleIsAccepted", "resultList[*].sampleIsRejected", "resultList[*].result",
-            "resultList[*].qualifiedResultValue", "resultList[*].multiSelectResultValues", "resultList[*].isAccepted",
-            "resultList[*].isRejected", "resultList[*].note" };
+            "testName", "resultList*.accessionNumber", "resultList*.analysisId", "resultList*.testId",
+            "resultList*.sampleId", "resultList*.resultType", "resultList*.sampleGroupingNumber",
+            "resultList*.noteId", "resultList*.resultId", "resultList*.hasQualifiedResult",
+            "resultList*.sampleIsAccepted", "resultList*.sampleIsRejected", "resultList*.result",
+            "resultList*.qualifiedResultValue", "resultList*.multiSelectResultValues", "resultList*.isAccepted",
+            "resultList*.isRejected", "resultList*.note" };
 
     // autowiring not needed, using constructor injection
     private AnalysisService analysisService;
@@ -149,7 +149,6 @@ public class ResultValidationController extends BaseResultValidationController {
 
             if (!GenericValidator.isBlankOrNull(form.getTestSectionId())) {
                 ts = testSectionService.get(form.getTestSectionId());
-                form.setTestSectionId("0");
             }
 
             List<AnalysisItem> resultList;

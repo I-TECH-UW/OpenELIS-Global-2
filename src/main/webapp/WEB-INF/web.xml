@@ -25,10 +25,10 @@
 	</error-page>
 
 	<jsp-config>
-<!-- 		<taglib> -->
-<!-- 			<taglib-uri>/tags/labdev-view</taglib-uri> -->
-<!-- 			<taglib-location>/WEB-INF/taglib/labdev-view.tld</taglib-location> -->
-<!-- 		</taglib> -->
+		<!-- <taglib> -->
+		<!-- <taglib-uri>/tags/labdev-view</taglib-uri> -->
+		<!-- <taglib-location>/WEB-INF/taglib/labdev-view.tld</taglib-location> -->
+		<!-- </taglib> -->
 
 		<taglib>
 			<taglib-uri>/tags/ajaxtags</taglib-uri>
@@ -55,29 +55,30 @@
 			<url-pattern>/*</url-pattern>
 			<http-method-omission>GET</http-method-omission>
 			<http-method-omission>POST</http-method-omission>
+			<http-method-omission>PUT</http-method-omission>
 		</web-resource-collection>
 		<auth-constraint />
 	</security-constraint>
 	<security-constraint>
-        <web-resource-collection>
-            <web-resource-name>HTTPSOnly</web-resource-name>
-            <url-pattern>/*</url-pattern>
-        </web-resource-collection>
-        <user-data-constraint>
-            <transport-guarantee>CONFIDENTIAL</transport-guarantee>
-        </user-data-constraint>
-    </security-constraint>
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>HTTPSOrHTTP</web-resource-name>
-            <url-pattern>*.ico</url-pattern>
-            <url-pattern>/img/*</url-pattern>
-            <url-pattern>/css/*</url-pattern>
-        </web-resource-collection>
-        <user-data-constraint>
-            <transport-guarantee>NONE</transport-guarantee>
-        </user-data-constraint>
-    </security-constraint>
+		<web-resource-collection>
+			<web-resource-name>HTTPSOnly</web-resource-name>
+			<url-pattern>/*</url-pattern>
+		</web-resource-collection>
+		<user-data-constraint>
+			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
+		</user-data-constraint>
+	</security-constraint>
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>HTTPSOrHTTP</web-resource-name>
+			<url-pattern>*.ico</url-pattern>
+			<url-pattern>/img/*</url-pattern>
+			<url-pattern>/css/*</url-pattern>
+		</web-resource-collection>
+		<user-data-constraint>
+			<transport-guarantee>NONE</transport-guarantee>
+		</user-data-constraint>
+	</security-constraint>
 
 	<context-param>
 		<param-name>defaultHtmlEscape</param-name>

@@ -88,7 +88,7 @@ function searchPatients() {
     jQuery("#searchLabNumber").val('');
     jQuery("#searchLabNumber").val(labNumber);
 
-	patientSearch(lastName, firstName, STNumber, subjectNumber, nationalID, labNumber, "", false, processSearchSuccess);
+	patientSearch(lastName, firstName, STNumber, subjectNumber, nationalID, labNumber, "", "", "", false, processSearchSuccess);
 
 }
 
@@ -327,13 +327,18 @@ function printBarcode(button) {
     }
 </script>
 
+<!-- new for pre-printing -->
+<tiles:insertAttribute name="prePrinting"/>
+
+<!-- end new for pre-printing -->
+
 <input type="hidden" id="searchLabNumber">
 <form:hidden path="accessionNumber"/>
 <form:hidden path="patientId"/>
 
 <div id="PatientPage" class=" patientSearch" style="display:inline;" >
 
-	<h2><spring:message code="sample.entry.search"/></h2>
+	<h2><spring:message code="sample.entry.search.barcode"/></h2>
     <c:if test="${!empty warning}">
         <h3 class="important-text"><spring:message code="order.modify.search.warning" /></h3>
     </c:if>

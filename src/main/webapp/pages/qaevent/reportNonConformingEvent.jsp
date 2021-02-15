@@ -35,6 +35,7 @@
     var affectedSpecimenText="<%= MessageUtil.getContextualMessage("nonconforming.affectedSpecimen")%>";
     var specimenNumber="<%= MessageUtil.getContextualMessage("nonconforming.specimenNumber")%>";
     var specimenType="<%= MessageUtil.getContextualMessage("nonconforming.specimenType")%>";
+    
 </script>
 
 <link rel="stylesheet" href="css/jquery_ui/jquery.ui.all.css?">
@@ -60,7 +61,7 @@
     </select>
     <input type="text" name="searchValue"
            maxlength='<%=Integer.toString(accessionNumberValidator.getMaxAccessionLength())%>'
-           value="" onkeyup="enableSearch()" onpaste="enableSearch()" id="searchValue">
+           value="" oninput="enableSearch()" id="searchValue">
     &nbsp;
     <input type="button" id="searchButtonId"
            value='<%=MessageUtil.getMessage("label.button.search")%>'
@@ -412,5 +413,14 @@
             cancelButton.addEventListener("click", cancelPage);
         }
         document.getElementById("goToNCEForm").style.display = "none";
+        
+        document.getElementById("searchValue").addEventListener('keydown', function(e){
+            if (document.getElementById("searchValue").value === '') return;
+            // e.which === 13 means enter key is pressed.
+            if (e.which === 13) {
+            	e.preventDefault();
+            	searchNCE();
+            }
+        });
     });
 </script>

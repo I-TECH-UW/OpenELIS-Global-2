@@ -79,9 +79,13 @@ function searchPatients()
         labNumber = value;
         jQuery("#searchLabNumber").val(value);
     }
+	patientSearch(lastName, firstName, STNumber, subjectNumber, nationalID, labNumber, "", "", "", false, processSearchSuccess);
+}
 
-	patientSearch(lastName, firstName, STNumber, subjectNumber, nationalID, labNumber, "", false, processSearchSuccess);
-
+function processSearchFailure(xhr)
+{
+	//alert( xhr.responseText );
+	alert("<spring:message code="error.system"/>");
 }
 
 function processSearchSuccess(xhr)
@@ -303,6 +307,7 @@ function enableSearchButton(eventCode){
 }
 
 function handleSelectedPatient(){
+	console.log("patientSearch:HandleSelectedPatient: ");
     var accessionNumber = "";
     if(jQuery("#searchCriteria").val() == 5){//lab number
         accessionNumber = jQuery("#searchValue").val();
