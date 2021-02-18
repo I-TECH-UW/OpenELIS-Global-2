@@ -115,6 +115,9 @@ public class SampleSearchPopulateProvider extends BaseQueryProvider {
 
     private Sample getSampleForPatientID(String patientID) {
         List<Sample> samples = sampleHumanService.getSamplesForPatient(patientID);
+        if (samples == null || samples.size() == 0) {
+            return null;
+        }
         Sample sample = findBestMatch(samples);
         // Reread in order to fill in pretend columns (aka accessionNumber)
         sampleService.getData(sample);

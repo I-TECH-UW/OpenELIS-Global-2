@@ -91,6 +91,39 @@ public class PluginAnalyzerService {
         return analyzer.getId();
     }
 
+    public String addAnalyzerDatabaseParts(String name, String description, List<TestMapping> nameMappings,
+            boolean hasSetupPage) {
+        Analyzer analyzer = analyzerService.getAnalyzerByName(name);
+        if (analyzer != null && analyzer.getId() != null) {
+            analyzer.setActive(true);
+            analyzer.setHasSetupPage(hasSetupPage);
+            registerAanlyzerInCache(name, analyzer.getId());
+        } else {
+            if (analyzer == null) {
+                analyzer = new Analyzer();
+                analyzer.setActive(true);
+                analyzer.setName(name);
+                analyzer.setHasSetupPage(hasSetupPage);
+            }
+            analyzer.setDescription(description);
+        }
+
+        List<AnalyzerTestMapping> testMappings = createTestMappings(nameMappings);
+        if (!testMappings.isEmpty() && existingMappings == null) {
+            existingMappings = analyzerMappingService.getAll();
+        }
+
+        analyzer.setSysUserId("1");
+
+        try {
+            analyzerService.persistData(analyzer, testMappings, existingMappings);
+            registerAanlyzerInCache(name, analyzer.getId());
+        } catch (RuntimeException e) {
+            LogEvent.logErrorStack(e);
+        }
+        return analyzer.getId();
+    }
+
     private List<AnalyzerTestMapping> createTestMappings(List<TestMapping> nameMappings) {
         ArrayList<AnalyzerTestMapping> testMappings = new ArrayList<>();
         for (TestMapping names : nameMappings) {

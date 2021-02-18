@@ -970,6 +970,20 @@
 		<put-attribute name="footer"
 			value="/pages/common/emptyPlaceHolder.jsp" />
 	</definition>
+
+	<definition name="quantStudioSetupDefinition"
+		extends="baseDefinition">
+		<put-attribute name="body"
+			value="quantStudioSetupBodyDefinition" />
+		<put-attribute name="footer"
+			value="/pages/common/emptyPlaceHolder.jsp" />
+	</definition>
+
+	<definition name="quantStudioSetupBodyDefinition"
+		template="/pages/analyzer/quaintstudio/setupExperiment.jsp">
+		<put-attribute name="patientEnhancedSearch"
+			value="/pages/patient/patientEnhancedSearch.jsp" />
+	</definition>
 </tiles-definitions>
 
 
