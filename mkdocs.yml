@@ -2,8 +2,7 @@ site_name: OpenELIS Global Documentation
 nav:
     - Home: index.md
     - About: about.md
-    - Install OpenELIS Global: install.md
-    - Install OpenELIS Global Ubuntu 20: install20.md
+    - Install OpenELIS Global: install20.md
     - Analyzers: analyzer.md
     - Deploy:
        - OpenMRS Interoperability: deployomrs.md

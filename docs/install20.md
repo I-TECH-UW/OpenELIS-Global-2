@@ -1,4 +1,4 @@
-## Bare Metal Server Installation for OpenELIS Global 2.0 on Ubuntu 16.04 LTS
+## Bare Metal Server Installation for OpenELIS Global 2.0 on Ubuntu 20.04 LTS
 
 ### Setup Ubuntu 20.04.2.0 LTS (Focal Fossa)
 
@@ -122,7 +122,7 @@ If you trust docker to provide your database, you can ignore this section.
     Postgres gets configured automatically through the setup script. This might possibly interfere with other applications installed on the same server.
 
 	
-### Install OpenELIS Global
+### Download OpenELIS Global
 
 1. Install OpenELIS Global
 
