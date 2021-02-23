@@ -383,6 +383,10 @@ function enableEnhancedSearchButton(eventCode){
 }
 
 function handleSelectedPatient(){
+	if (typeof(handleSelectedPatientAlt) === 'function') {
+		handleSelectedPatientAlt();
+		return;
+	}
     var accessionNumber = "";
     if(jQuery("#searchCriteria").val() == 5){//lab number
         accessionNumber = jQuery("#searchValue").val();

@@ -17,11 +17,15 @@
 */
 package org.openelisglobal.analyzerimport.dao;
 
+import java.util.List;
+
 import org.openelisglobal.analyzerimport.valueholder.AnalyzerTestMapping;
 import org.openelisglobal.analyzerimport.valueholder.AnalyzerTestMappingPK;
 import org.openelisglobal.common.dao.BaseDAO;
 
 public interface AnalyzerTestMappingDAO extends BaseDAO<AnalyzerTestMapping, AnalyzerTestMappingPK> {
+
+    List<AnalyzerTestMapping> getAllForAnalyzer(String analyzerId);
 
 //	List<AnalyzerTestMapping> getAllAnalyzerTestMappings() throws LIMSRuntimeException;
 
