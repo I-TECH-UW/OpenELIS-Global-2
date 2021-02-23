@@ -37,27 +37,173 @@
 <script type="text/javascript" src="./scripts/ajaxCalls.js"></script>
 <script>
 
-var wellRows = 8;
-var wellCols = 12;
+function getCurActiveIdentifier() {
+	return jQuery(".activeWell").attr('identifier');
+}
+
+function getAnalyzerId() {
+	return jQuery("#analyzerId").val();
+}
+
+function getTestId() {
+	return jQuery("#analyzerTests_" + getAnalyzerId() + "_testSelect").val();;
+}
+
+function getNumWellColumns() {
+	return jQuery("#wellColumns_" + getAnalyzerId()).val();
+}
+
+function getNumWellRows() {
+	return jQuery("#wellRows_" + getAnalyzerId()).val();
+}
+
+function getTestName() {
+	return jQuery("#analyzerTests_" + getAnalyzerId() + " option:selected").text()
+}
+
+function getDateString(date) {
+	var yyyy = date.getFullYear();
+	var mm = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+	var dd = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+	var hh = date.getHours() < 10 ? "0" + date.getHours() : date.getHours();
+	var MM = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
+	
+	return yyyy 
+		+ "-" + mm
+		+ "-"  + dd
+		+ " " + hh
+		+ ":" + MM;
+}
+
+function setTotalEmpty() {
+	var total = getNumWellColumns() * getNumWellRows();
+	var filled = jQuery(".filledWell").length;
+	var empty = total - filled;
+	jQuery(".emptyTotalNum").text(empty);
+}
+
+function setupNewExperiment() {
+	window.beforeunload = "warning";
+	jQuery("#step1").hide();
+	setDefaultFilename();
+	setTestNameForDisplay();
+	jQuery("#step2").show();
+}
+
+function setDefaultFilename() {
+	var dateString = getDateString(new Date());
+	var testName = getTestName();
+	var analyzerName = jQuery("#analyzerId option:selected").text();
+	setFilename( dateString + " " + testName + " " + analyzerName);
+}
+
+function setTestNameForDisplay() {
+	jQuery("#testName").val(getTestName());
+}
+
+function setFilename(filename) {
+	jQuery("#filename").val(filename)
+}
 
 function setWell(well) {
+	clearDisplayValues();
 	jQuery(".well").removeClass("activeWell");
 	jQuery(".well").addClass("inactiveWell");
 	well.classList.add("activeWell");
 	well.classList.add("filledWell");
 	jQuery(".activeWell").removeClass("inactiveWell");
 	if  (jQuery(".activeWell > .well-value-full").val()) {
-		setValuesFromXML(new DOMParser().parseFromString(jQuery(".activeWell > .well-value-full").val(), 'application/xml'));
+		setSampleValuesFromXML(new DOMParser().parseFromString(jQuery(".activeWell > .well-value-full").val(), 'application/xml'));
 	}
-	setTotalEmpty();
 	jQuery("#selectPatientButtonID").prop("disabled", false);
+	jQuery("#cposButton").prop("disabled", false);
+	jQuery("#cnegButton").prop("disabled", false);
 }
 
-function setTotalEmpty() {
-	var total = wellCols * wellRows;
-	var filled = jQuery(".filledWell").length;
-	var empty = total - filled;
-	jQuery(".emptyTotalNum").text(empty);
+function clearDisplayValues() {
+	jQuery("#summaryId").hide();
+	jQuery(".sampleInfo").text("");
+	jQuery(".patientInfo").text("");
+	
+}
+
+function loadExperiment() {
+	window.beforeunload = "warning";
+	jQuery("#downloadSetup").attr('disabled',false);
+	jQuery("#experimentId").val(jQuery("#previousRun").val());
+	setDefaultFilename();
+	setTestNameForDisplay();
+	getPreviousExperimentSetup(jQuery("#previousRun").val(), loadExperimentSuccess);
+}
+
+function loadExperimentSuccess(xhr) {
+	jQuery("#step1").hide();
+	jQuery("#step2").show();
+	var responseText = xhr.responseText;
+	var jsonResponse = JSON.parse(responseText);
+	Object.keys(jsonResponse).forEach(function(key) {
+		if (!jsonResponse[key]) {
+			
+		} else if (jsonResponse[key] != "CNEG" && jsonResponse[key] != "CPOS") {
+			searchForLabNo(jsonResponse[key], key);
+		} else if (jsonResponse[key] == "CNEG" ) {
+			setNegative(key);
+		} else if (jsonResponse[key] == "CPOS" ) {
+			setPositive(key);
+		}
+	});
+}
+
+//this one is used solely when loading a previous experiment setup
+function searchForLabNo(labNumber, identifier) {
+	patientSearch("", "", "", "", "", labNumber, "", "", "", false, searchByLabNoSuccess, null, [identifier, labNumber]);
+}
+
+function searchForPatientByLabNo(labNumber) {
+	patientSearch("", "", "", "", "", labNumber, "", "", "", false, searchForPatientByLabNoSuccess, null, labNumber);
+}
+
+function searchByLabNoSuccess(xhr, extraParams) {
+	var formField = xhr.responseXML.getElementsByTagName("formfield").item(0);
+	var message = xhr.responseXML.getElementsByTagName("message").item(0);
+	var resultNodes = formField.getElementsByTagName("result");
+
+	//should always be length of one since we searched by accesion number
+	for( var i = 0; i < resultNodes.length; i++ ) {
+		setPatientValues(resultNodes.item(i));
+	}
+	handleSelectedPatientAlt(extraParams[0], extraParams[1]);
+}
+
+function searchForPatientByLabNoSuccess(xhr, extraParams) {
+	var formField = xhr.responseXML.getElementsByTagName("formfield").item(0);
+	var message = xhr.responseXML.getElementsByTagName("message").item(0);
+	var resultNodes = formField.getElementsByTagName("result");
+
+	//should always be length of one since we searched by accesion number
+	for( var i = 0; i < resultNodes.length; i++ ) {
+		setPatientValues(resultNodes.item(i));
+	}
+}
+
+function setPatientValues(result) {
+	var patient = result.getElementsByTagName("patient")[0];
+
+	var firstName = getValueFromXmlElement( patient, "first");
+	var lastName = getValueFromXmlElement( patient, "last");
+	var gender = getValueFromXmlElement( patient, "gender");
+	var DOB = getValueFromXmlElement( patient, "dob");
+	var stNumber = getValueFromXmlElement( patient, "ST");
+	var subjectNumber = getValueFromXmlElement( patient, "subjectNumber");
+	var nationalID = getValueFromXmlElement( patient, "nationalID");
+	var mother = getValueFromXmlElement( patient, "mother");
+	var pk = getValueFromXmlElement( result, "id");
+	var dataSourceName = getValueFromXmlElement( result, "dataSourceName");
+	
+
+	jQuery("#patNameSpan").text(lastName + ', ' + firstName);
+	jQuery("#patSubjectIdSpan").text(subjectNumber);
+
 }
 
 function handleSelectedPatientAlt(identifier, accessionNumber) {
@@ -74,22 +220,23 @@ function handleSelectedPatientAlt(identifier, accessionNumber) {
     if( !(typeof requestType === 'undefined') ){
     	searchUrl += "&type=" + requestType;
     }
-    getSampleForLabOrderOrPatient(accessionNumber, patientID, selectedPatientSuccess, null, identifier);
+    getSampleForLabOrderOrPatientWithTest(accessionNumber, patientID, getTestId(), true, selectedPatientGetSampleSuccess, null, identifier);
 }
 
-function selectedPatientSuccess(xhr, identifier) {
-	setValuesFromXML(xhr.responseXML, identifier);
+function selectedPatientGetSampleSuccess(xhr, identifier) {
+	setSampleValuesFromXML(xhr.responseXML, identifier);
 }
 
-function setValuesFromXML(xml, identifier) {
+function setSampleValuesFromXML(xml, identifier) {
+	$("searchResultsDiv").hide();
 	if (xml.getElementsByTagName("formfield").item(0).firstChild.nodeValue === 'empty') {
 		alert('could not be found');
 	} else {
 		var labNo = xml.getElementsByTagName("labNo").item(0).firstChild.nodeValue;
 		setLabInfoForWell(labNo, xml, identifier);
+		searchForPatientByLabNo(labNo);
 	}
 }
-
 
 function setLabInfoForWell(labNo, xml, identifier) {
 	jQuery("#well_" + identifier + " > .well-value").text(labNo);
@@ -98,16 +245,55 @@ function setLabInfoForWell(labNo, xml, identifier) {
 	jQuery("#summaryId").show();
 	jQuery("#labNoSpan").text(labNo);
 	if (labNo != "CPOS" && labNo != "CNEG") {
-		jQuery("#receivedSpan").text(xml.getElementsByTagName("receivedDateForDisplay").item(0).firstChild.nodeValue);
+		var receivedDate = xml.getElementsByTagName("receivedDateForDisplay").item(0).firstChild.nodeValue;
+		var receivedTime = xml.getElementsByTagName("receivedTimeForDisplay").item(0).firstChild.nodeValue;
+		jQuery("#receivedSpan").text(receivedDate + ' ' + receivedTime);
 	}
-	
+}
+
+function saveExperiment() {
+	setupExperimentFile(saveExperimentSuccess)
+}
+
+function saveExperimentSuccess(xhr) {
+	var responseText = xhr.responseText;
+	console.log("experiment id: " + responseText);
+	jQuery("#experimentId").val(responseText);
+	jQuery("#downloadSetup").attr('disabled',false);
+}
+
+function downloadSetupFile() {
+	window.open("AnalyzerSetupFile/" + jQuery("#experimentId").val() + "?filename=" + jQuery("#filename").val(), '_blank');
+}
+
+function setPositive(identifier) {
+	var xml = new DOMParser().parseFromString("<fieldmessage><formfield>found</formfield><labNo>CPOS</labNo></fieldmessage>", 'application/xml');
+	if (identifier) {
+		setSampleValuesFromXML(xml, identifier);
+	} else {
+		setSampleValuesFromXML(xml, getCurActiveIdentifier());
+	}
+}
+
+function setNegative(identifier) {
+	var xml = new DOMParser().parseFromString("<fieldmessage><formfield>found</formfield><labNo>CNEG</labNo></fieldmessage>", 'application/xml');
+	if (identifier) {
+		setSampleValuesFromXML(xml, identifier);
+	} else {
+		setSampleValuesFromXML(xml, getCurActiveIdentifier());
+	}
+}
+
+function showSelectedTestRow() {
+	jQuery(".testSelectRow").hide();
+	jQuery("#analyzerTests_" + getAnalyzerId()).show();
 }
 
 function generateTable() {
 	var table = document.getElementById("experimentInputTable");
 	generateColGroup(table);
-	generateTableHeader(table, wellCols);
-	generateTableBody(table, wellRows, wellCols);
+	generateTableHeader(table, getNumWellColumns());
+	generateTableBody(table, getNumWellRows(), getNumWellColumns());
 }
 
 function generateColGroup(table) {
@@ -180,114 +366,15 @@ function numToAlpha(num) {
 	return String.fromCharCode(num + 65);
 }
 
-function setupNewExperiment() {
-	jQuery("#step1").hide();
-	
-	setDefaultFilename();
-	jQuery("#step2").show();
-}
-
-function setDefaultFilename() {
-	setFilename(getDateString(new Date()) + " Quantstudio 3 - 96 Wells")
-}
-
-function setFilename(filename) {
-	jQuery("#filename").val( filename)
-}
-
-function getDateString(date) {
-	var yyyy = date.getFullYear();
-	var mm = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
-	var dd = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
-	var hh = date.getHours() < 10 ? "0" + date.getHours() : date.getHours();
-	var MM = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
-	
-	return yyyy 
-		+ "-" + mm
-		+ "-"  + dd
-		+ " " + hh
-		+ ":" + MM;
-}
-
-function loadExperiment() {
-	jQuery("#downloadSetup").attr('disabled',false);
-	jQuery("#experimentId").val(jQuery("#previousRun").val());
-	setDefaultFilename();
-	getPreviousExperimentSetup(jQuery("#previousRun").val(), loadExperimentSuccess);
-}
-
-function loadExperimentSuccess(xhr) {
-	jQuery("#step1").hide();
-	jQuery("#step2").show();
-	var responseText = xhr.responseText;
-	var jsonResponse = JSON.parse(responseText);
-	Object.keys(jsonResponse).forEach(function(key) {
-		if (!jsonResponse[key]) {
-			
-		} else if (jsonResponse[key] != "CNEG" && jsonResponse[key] != "CPOS") {
-			searchForLabNo(jsonResponse[key], key);
-		} else if (jsonResponse[key] == "CNEG" ) {
-			setNegative(key);
-		} else if (jsonResponse[key] == "CPOS" ) {
-			setPositive(key);
-		}
-	});
-	
-}
-
-function searchForLabNo(labNumber, identifier) {
-	patientSearch("", "", "", "", "", labNumber, "", "", "", false, searchByLabNoSuccess, null, [identifier, labNumber]);
-}
-
-function searchByLabNoSuccess(xhr, extraParams) {
-	var formField = xhr.responseXML.getElementsByTagName("formfield").item(0);
-	var message = xhr.responseXML.getElementsByTagName("message").item(0);
-	handleSelectedPatientAlt(extraParams[0], extraParams[1]);
-}
-
-function saveExperiment() {
-	setupExperimentFile(saveExperimentSuccess)
-}
-
-function saveExperimentSuccess(xhr) {
-	var responseText = xhr.responseText;
-	console.log("experiment id: " + responseText);
-	jQuery("#experimentId").val(responseText);
-	jQuery("#downloadSetup").attr('disabled',false);
-}
-
-function downloadSetupFile() {
-	window.open("AnalyzerSetupFile/" + jQuery("#experimentId").val() + "?filename=" + jQuery("#filename").val(), '_blank');
-}
-
-function setPositive(identifier) {
-	var xml = new DOMParser().parseFromString("<fieldmessage><formfield>found</formfield><labNo>CPOS</labNo></fieldmessage>", 'application/xml');
-	if (identifier) {
-		setValuesFromXML(xml, identifier);
-	} else {
-		setValuesFromXML(xml, getCurActiveIdentifier());
-	}
-}
-
-function setNegative(identifier) {
-	var xml = new DOMParser().parseFromString("<fieldmessage><formfield>found</formfield><labNo>CNEG</labNo></fieldmessage>", 'application/xml');
-	if (identifier) {
-		setValuesFromXML(xml, identifier);
-	} else {
-		setValuesFromXML(xml, getCurActiveIdentifier());
-	}
-}
-
-function getCurActiveIdentifier() {
-	return jQuery(".activeWell").attr('identifier');
-}
-
 jQuery( document ).ready(function() {
 	generateTable();
 	jQuery("#downloadSetup").attr('disabled',true);
 	jQuery("#selectPatientButtonID").prop("disabled", true);
+	jQuery("#cposButton").prop("disabled", true);
+	jQuery("#cnegButton").prop("disabled", true);
 	jQuery("#summaryId").hide();
 	jQuery("#step2").hide();
+	showSelectedTestRow();
 	setTotalEmpty();
 });
 
@@ -299,82 +386,128 @@ jQuery( document ).ready(function() {
 </h2>
 
 <table id="step1" style="width: 80%;">
-<tr>
-	<td>
-		<spring:message code="" text="Analyzer Template Name"/>
-	</td>
-	<td>
-		<form:select path="analyzerId"  >
-		<form:options items="${form.analyzers}" itemLabel="label" itenValue="value"/>
-		</form:select>
-	</td>
-	<td>
-	</td>
-</tr>
-<tr>
-	<td style="padding-bottom:2em;"></td>
-</tr>
-<tr style="vertical-align: top;">
-	<td>
-	</td>
-	<td>
-		<button type="button" onClick="setupNewExperiment()" ><spring:message code="" text="Setup New Experiment"/></button>
-	</td>
-	<td>
-		<form:select path="previousRun" id="previousRun">
-			<form:options items="${form.previousRuns}" itemLabel="label" itemValue="value"/>
-		</form:select>
-		<br>
-		<br>
-		<button type="button" onClick="loadExperiment()"><spring:message code="" text="Load Experiment"/></button>
-	</td>
-</tr>
+	<tr>
+		<td>
+			<spring:message code="" text="Analyzer Template Name"/>
+		</td>
+		<td>
+			<form:select path="analyzerId" id="analyzerId" onChange="showSelectedTestRow()" >
+			<form:options items="${form.analyzers}" itemLabel="label" itemValue="value"/>
+			</form:select>
+			<c:forEach items="${form.analyzersWellInfo}" var="analyzerWellInfo" varStatus="iter">
+				<input type="hidden" id="wellColumns_${analyzerWellInfo.key}" value="${analyzerWellInfo.value.wellColumns}"/>
+				<input type="hidden" id="wellRows_${analyzerWellInfo.key}" value="${analyzerWellInfo.value.wellRows}"/>
+			</c:forEach>
+		</td>
+		<td>
+		</td>
+	</tr>
+	<c:forEach items="${form.analyzersTests}" var="analyzerTests" varStatus="iter">
+	<tr id="analyzerTests_${analyzerTests.key}" class="testSelectRow">
+		<td>
+			<spring:message code="" text="Test name"/>
+		</td>
+		<td>
+			<select id="analyzerTests_${analyzerTests.key}_testSelect">
+				<c:forEach items="${analyzerTests.value}" var="test" varStatus="test_iter">
+				<option value="${test.value}">${test.label}</option>
+				</c:forEach>
+			</select>
+		</td>
+		<td>
+		</td>
+	</tr>
+	</c:forEach>
+	<tr>
+		<td style="padding-bottom:2em;"></td>
+	</tr>
+	<tr style="vertical-align: top;">
+		<td>
+		</td>
+		<td>
+			<button type="button" onClick="setupNewExperiment()" ><spring:message code="" text="Setup New Experiment"/></button>
+		</td>
+		<td>
+			<form:select path="previousRun" id="previousRun">
+				<form:options items="${form.previousRuns}" itemLabel="label" itemValue="value"/>
+			</form:select>
+			<br>
+			<br>
+			<button type="button" onClick="loadExperiment()"><spring:message code="" text="Load Experiment"/></button>
+		</td>
+	</tr>
 </table>
 
 <table id="step2">
-<tr style="vertical-align: top;">
-	<td>
-		<table>
-		<tr>
-			<td>
-				<spring:message code="" text="Analyzer Run Label"/>
-				<form:input id="filename" path="filename" />
-			</td>
-		</tr>
-		<tr>
-			<td>
-<%-- 				<spring:message code="" text="Test name"/> --%>
-<!-- 				<select > -->
-<!-- 				</select> -->
-			</td>
-		</tr>
-		<tr>
-			<td>
-				<button type="button" onClick="setPositive()"><spring:message code="" text="Positive Control Sample"/></button>
-				<button type="button" onClick="setNegative()"><spring:message code="" text="Negative Control Sample"/></button>
-			</td>
-		</tr>
-		</table>
-		<tiles:insertAttribute name="patientEnhancedSearch" />
-		<div id="summaryId">
-			<spring:message code="" text="Lab No."/>:
-			<span id="labNoSpan"></span>
-			<spring:message code="" text="Received"/>:
-			<span id="receivedSpan"></span>
-		</div>
-	</td>
-	<td>
-<!-- 		<div style="overflow:scroll; width: 70rem;"> -->
-				<table id="experimentInputTable"  style="width: 85rem; text-align: center; table-layout: fixed;"></table>
-				<div style="float:right;"><span class="emptyTotalNum"></span> <spring:message code="" text="Empty"/></div>
-<!-- 		</div> -->
-	</td>
-</tr>
-<tr>
-	<td colspan="2">
-		<button type="button" onClick="saveExperiment();"><spring:message code="" text="Save Experiment"/></button>
-		<button type="button" id="downloadSetup" onClick="downloadSetupFile();" disabled="disabled"><spring:message code="" text="Download Experiment Setup File"/></button>
-	</td>
-</tr>
+	<tr style="vertical-align: top;">
+		<td>
+			<table>
+			<tr>
+				<td>
+					<spring:message code="" text="Analyzer Run Label"/>
+					<form:input id="filename" path="filename" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<spring:message code="" text="Test Name"/>
+					<input id="testName" readonly="readonly"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<button id="cposButton" type="button" onClick="setPositive()"><spring:message code="" text="Positive Control Sample"/></button>
+					<button id="cnegButton" type="button" onClick="setNegative()"><spring:message code="" text="Negative Control Sample"/></button>
+				</td>
+			</tr>
+			</table>
+			<tiles:insertAttribute name="patientEnhancedSearch" />
+			<table id="summaryId">
+			<tr>
+				<td>
+					<b><spring:message code="" text="Sample Info"/></b>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<spring:message code="" text="Lab No."/>:
+					<span id="labNoSpan" class="sampleInfo"></span>
+				</td>
+				<td>
+					<spring:message code="" text="Received"/>:
+					<span id="receivedSpan" class="sampleInfo"></span>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<b><spring:message code="" text="Patient Info"/></b>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<spring:message code="" text="Patient Name"/>:
+					<span id="patNameSpan" class="patientInfo"></span>
+				</td>
+				<td>
+					<spring:message code="" text="Subject Number"/>:
+					<span id="patSubjectIdSpan" class="patientInfo"></span>
+				</td>
+			</tr>
+				
+			</table>
+		</td>
+		<td>
+	<!-- 		<div style="overflow:scroll; width: 70rem;"> -->
+					<table id="experimentInputTable"  style="width: 85rem; text-align: center; table-layout: fixed;"></table>
+					<div style="float:right;"><span class="emptyTotalNum"></span> <spring:message code="" text="Empty"/></div>
+	<!-- 		</div> -->
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2">
+			<button type="button" onClick="saveExperiment();"><spring:message code="" text="Save Experiment"/></button>
+			<button type="button" id="downloadSetup" onClick="downloadSetupFile();" disabled="disabled"><spring:message code="" text="Download Experiment Setup File"/></button>
+		</td>
+	</tr>
 </table>
 

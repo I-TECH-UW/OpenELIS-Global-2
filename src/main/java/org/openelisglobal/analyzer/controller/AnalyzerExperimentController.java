@@ -1,6 +1,9 @@
 package org.openelisglobal.analyzer.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -9,11 +12,15 @@ import javax.validation.Valid;
 import org.openelisglobal.analyzer.form.AnalyzerSetupForm;
 import org.openelisglobal.analyzer.service.AnalyzerExperimentService;
 import org.openelisglobal.analyzer.service.AnalyzerService;
+import org.openelisglobal.analyzer.valueholder.Analyzer;
+import org.openelisglobal.analyzer.valueholder.WellInfo;
+import org.openelisglobal.analyzerimport.service.AnalyzerTestMappingService;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSException;
 import org.openelisglobal.common.util.LabelValuePair;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.patient.action.bean.PatientSearch;
+import org.openelisglobal.test.service.TestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -34,19 +41,41 @@ public class AnalyzerExperimentController extends BaseController {
     private AnalyzerExperimentService analyzerExperimentService;
     @Autowired
     private AnalyzerService analyzerService;
+    @Autowired
+    private AnalyzerTestMappingService analyzerMappingService;
+    @Autowired
+    private TestService testService;
 
     @GetMapping("/AnalyzerSetup")
     public ModelAndView displayAnalyzerSetup() {
         AnalyzerSetupForm form = new AnalyzerSetupForm();
         PatientSearch patientSearch = new PatientSearch();
         patientSearch.setLoadFromServerWithPatient(true);
-        patientSearch.setSelectedPatientActionButtonText(MessageUtil.getMessage("label.patient.search.select"));
+        patientSearch.setSelectedPatientActionButtonText(MessageUtil.getMessage("label.patient.search.select.test"));
         form.setPatientSearch(patientSearch);
-        form.setAnalyzers(analyzerService.getAllMatching("hasSetupPage", true).stream()
-                .map(e -> new LabelValuePair(e.getName(), e.getId().toString())).collect(Collectors.toList()));
+        List<Analyzer> analyzers = analyzerService.getAllMatching("hasSetupPage", true);
+        List<LabelValuePair> analyzerLabels = new ArrayList<>();
+        Map<String, List<LabelValuePair>> analyzersTests = new HashMap<>();
+        Map<String, WellInfo> analyzersWellInfo = new HashMap<>();
+        for (Analyzer analyzer : analyzers) {
+            analyzerLabels.add(new LabelValuePair(analyzer.getDescription(), analyzer.getId().toString()));
+            analyzersWellInfo.put(analyzer.getId(), new WellInfo(12, 8));
+            analyzersTests.put(analyzer.getId(), analyzerMappingService.getAllForAnalyzer(analyzer.getId()).stream()
+                    .map(e -> new LabelValuePair(
+                            testService.get(e.getTestId()).getLocalizedTestName().getLocalizedValue(), e.getTestId()))
+                    .collect(Collectors.toList()));
+//            analyzerTests.put(analyzer.getId(),
+//                    analyzerMappingService.getAllForAnalyzer(analyzer.getId()).stream()
+//                            .map(e -> new LabelValuePair(e.getAnalyzerTestName(), e.getTestId()))
+//                            .collect(Collectors.toList()));
+
+        }
+        form.setAnalyzers(analyzerLabels);
+        form.setAnalyzersTests(analyzersTests);
+        form.setAnalyzersWellInfo(analyzersWellInfo);
+//        form.setTests(analyzerService.getAllMatching("hasSetupPage", true).stream().map(e -> e.))
         form.setPreviousRuns(analyzerExperimentService.getAllOrdered("lastupdated", true).stream()
-                .map(e -> new LabelValuePair(e.getName(), e.getId().toString()))
-                .collect(Collectors.toList()));
+                .map(e -> new LabelValuePair(e.getName(), e.getId().toString())).collect(Collectors.toList()));
         return findForward(FWD_SUCCESS, form);
     }
 

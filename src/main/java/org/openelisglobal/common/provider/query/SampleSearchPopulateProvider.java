@@ -18,6 +18,8 @@
 package org.openelisglobal.common.provider.query;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -25,8 +27,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.validator.GenericValidator;
+import org.openelisglobal.analysis.service.AnalysisService;
+import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.exception.LIMSInvalidConfigurationException;
 import org.openelisglobal.common.services.IStatusService;
+import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.StatusSet;
 import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.common.util.XMLUtil;
@@ -45,6 +50,8 @@ import org.openelisglobal.spring.util.SpringContext;
 public class SampleSearchPopulateProvider extends BaseQueryProvider {
 
     protected SampleService sampleService = SpringContext.getBean(SampleService.class);
+    protected AnalysisService analysisService = SpringContext.getBean(AnalysisService.class);
+    protected IStatusService statusService = SpringContext.getBean(IStatusService.class);
     protected SampleHumanService sampleHumanService = SpringContext.getBean(SampleHumanService.class);
     protected SampleOrganizationService sampleOrganizationService = SpringContext
             .getBean(SampleOrganizationService.class);
@@ -57,29 +64,68 @@ public class SampleSearchPopulateProvider extends BaseQueryProvider {
     @Override
     public void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String patientID = request.getParameter("patientKey");
+        String patientId = request.getParameter("patientKey");
         String accessionNo = request.getParameter("accessionNo");
+        String testId = request.getParameter("testId");
+        boolean unvalidatedTestOnly = GenericValidator.isBlankOrNull(request.getParameter("unvalidatedTestOnly"))
+                ? false
+                : Boolean.valueOf(request.getParameter("unvalidatedTestOnly"));
 
         StringBuilder xml = new StringBuilder();
         String result = VALID;
         Sample sample;
-        if (!GenericValidator.isBlankOrNull(patientID)) {
-            sample = getSampleForPatientID(patientID);
+        if (!GenericValidator.isBlankOrNull(patientId)) {
+            sample = getSampleForPatientIdAndTestId(patientId, testId, unvalidatedTestOnly);
         } else {
-            sample = sampleService.getSampleByAccessionNumber(accessionNo);
-            StatusSet statusSet = SpringContext.getBean(IStatusService.class).getStatusSetForAccessionNumber(accessionNo);
-            patientID = statusSet.getPatientId();
+            sample = getSampleByAccessionNumberAndTestId(accessionNo, testId, unvalidatedTestOnly);
+
+            StatusSet statusSet = SpringContext.getBean(IStatusService.class)
+                    .getStatusSetForAccessionNumber(accessionNo);
+            patientId = statusSet.getPatientId();
         }
 
         if (sample == null) {
             xml.append("empty");
             // result = MessageUtil.getMessage("xxx");
         } else {
-            createReturnXML(sample, patientID, xml);
+            createReturnXML(sample, patientId, xml);
         }
 
         ajaxServlet.sendData(xml.toString(), result, request, response);
 
+    }
+
+    private Sample getSampleByAccessionNumberAndTestId(String accessionNo, String testId, boolean unvalidatedTestOnly) {
+        Sample sample = sampleService.getSampleByAccessionNumber(accessionNo);
+        if (GenericValidator.isBlankOrNull(testId) || (sampleService.sampleContainsTest(sample.getId(), testId)
+                && (!unvalidatedTestOnly || testNotFinialized(testId, sample.getId())))) {
+            return sample;
+        }
+        return null;
+    }
+
+    private boolean testNotFinialized(String testId, String sampleId) {
+        List<Integer> statusList = new ArrayList<>();
+        statusList.add(Integer
+                .parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.BiologistRejected)));
+        statusList.add(
+                Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Canceled)));
+        statusList.add(Integer.parseInt(
+                SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NonConforming_depricated)));
+        statusList.add(
+                Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NotStarted)));
+        statusList.add(Integer
+                .parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalAcceptance)));
+        statusList.add(Integer
+                .parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalRejected)));
+        List<Analysis> analysises = analysisService.getAnalysesBySampleIdTestIdAndStatusId(
+                Arrays.asList(Integer.parseInt(sampleId)), Arrays.asList(Integer.parseInt(testId)), statusList);
+        for (Analysis analysis : analysises) {
+            if (analysis.getTest().getId().equals(testId)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -113,30 +159,33 @@ public class SampleSearchPopulateProvider extends BaseQueryProvider {
         return so.getOrganization();
     }
 
-    private Sample getSampleForPatientID(String patientID) {
-        List<Sample> samples = sampleHumanService.getSamplesForPatient(patientID);
+    private Sample getSampleForPatientIdAndTestId(String patientId, String testId, boolean unvalidatedTestOnly) {
+        List<Sample> samples = sampleHumanService.getSamplesForPatient(patientId);
         if (samples == null || samples.size() == 0) {
             return null;
         }
-        Sample sample = findBestMatch(samples);
+        Sample sample = findBestMatch(samples, testId, unvalidatedTestOnly);
+        if (sample == null) {
+            return null;
+        }
+
         // Reread in order to fill in pretend columns (aka accessionNumber)
         sampleService.getData(sample);
         return sample;
     }
 
-    /**
-     *
-     * @param samples
-     * @return one Sample to return to the UI
-     */
-    private Sample findBestMatch(List<Sample> samples) {
-        Sample best = samples.get(0);
+    private Sample findBestMatch(List<Sample> samples, String testId, boolean unvalidatedTestOnly) {
+        Sample best = null;
         for (Sample sample : samples) {
-            // currently latest entered date is the criteria
-            if (best.getEnteredDate().getTime() <= sample.getEnteredDate().getTime()) {
-                best = sample;
+            if (GenericValidator.isBlankOrNull(testId) || (sampleService.sampleContainsTest(sample.getId(), testId)
+                    && (!unvalidatedTestOnly || testNotFinialized(testId, sample.getId())))) {
+                if ((best == null || best.getEnteredDate().getTime() <= sample.getEnteredDate().getTime())) {
+                    // currently latest entered date is the criteria
+                    best = sample;
+                }
             }
         }
         return best;
     }
+
 }

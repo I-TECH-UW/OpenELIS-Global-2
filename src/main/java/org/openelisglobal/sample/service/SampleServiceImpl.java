@@ -462,4 +462,15 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
         }
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public boolean sampleContainsTest(String sampleId, String testId) {
+        for (Analysis curAnalysis : analysisService.getAnalysesBySampleId(sampleId)) {
+            if (curAnalysis.getTest().getId().equals(testId)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

@@ -30,7 +30,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 
 @Component
-public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler, IActionConstants {
+public class CustomFormAuthenticationSuccessHandler implements AuthenticationSuccessHandler, IActionConstants {
 
     private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 

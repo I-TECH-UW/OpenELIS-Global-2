@@ -127,31 +127,24 @@ public class PluginAnalyzerService {
     private List<AnalyzerTestMapping> createTestMappings(List<TestMapping> nameMappings) {
         ArrayList<AnalyzerTestMapping> testMappings = new ArrayList<>();
         for (TestMapping names : nameMappings) {
-            String testId = getIdForTestLoincCode(names.getDbbTestLoincCode());
-            if (testId == null) {
-                testId = getIdForTestName(names.getDbbTestName());
+            List<Test> tests = testService.getTestsByLoincCode(names.getDbbTestLoincCode());
+            if (tests == null || tests.size() == 0) {
+                testMappings.add(createAnalyzerTestMapping(names, getIdForTestName(names.getDbbTestName())));
+            } else {
+                for (Test test : tests) {
+                    testMappings.add(createAnalyzerTestMapping(names, test.getId()));
+                }
             }
 
-            AnalyzerTestMapping analyzerMapping = new AnalyzerTestMapping();
-            analyzerMapping.setAnalyzerTestName(names.getAnalyzerTestName());
-            analyzerMapping.setTestId(testId);
-            testMappings.add(analyzerMapping);
         }
         return testMappings;
     }
 
-    private String getIdForTestLoincCode(String dbbTestLoincCode) {
-        List<Test> tests = testService.getTestsByLoincCode(dbbTestLoincCode);
-        Test test;
-        if (tests != null && !tests.isEmpty()) {
-            test = tests.get(0);
-            if (test != null) {
-                return test.getId();
-            }
-        }
-        LogEvent.logWarn(this.getClass().getName(), "getIdForTestLoincCode",
-                "Unable to find test " + dbbTestLoincCode + " in test catalog. Searching by name instead");
-        return null;
+    private AnalyzerTestMapping createAnalyzerTestMapping(TestMapping names, String testId) {
+        AnalyzerTestMapping analyzerMapping = new AnalyzerTestMapping();
+        analyzerMapping.setAnalyzerTestName(names.getAnalyzerTestName());
+        analyzerMapping.setTestId(testId);
+        return analyzerMapping;
     }
 
     private String getIdForTestName(String dbbTestName) {

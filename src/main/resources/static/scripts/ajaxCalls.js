@@ -66,6 +66,27 @@ function getSampleForLabOrderOrPatient( orderNumber, patientPK, success, failure
 
 //sensitive data is being transmitted, therefore a token check should be done even on GET. 
 //Otherwise this should be moved to a POST request and rely on regular csrf functionality
+function getSampleForLabOrderOrPatientWithTest( orderNumber, patientPK, testId, unvalidatedTestOnly, success, failure, additionalSuccessParams){
+	if( !failure ){	failure = defaultFailure;}
+	
+	new Ajax.Request('ajaxQueryXML',
+			{
+				method : 'get', 
+				parameters : "provider=SampleSearchPopulateProvider&unvalidatedTestOnly=" + unvalidatedTestOnly + "&testId=" + testId + "&patientKey=" + patientPK + "&accessionNo=" + orderNumber ,
+			    //indicator: 'throbbing',
+				requestHeaders : {
+					"X-CSRF-Token" : getCsrfToken()
+				},
+				onSuccess : additionalSuccessParams ? function (xhr) {
+				 	success(xhr, additionalSuccessParams);
+				} : success,
+				onFailure : failure
+			});
+
+}
+
+//sensitive data is being transmitted, therefore a token check should be done even on GET. 
+//Otherwise this should be moved to a POST request and rely on regular csrf functionality
 function getTestNames( testId, success, failure){
     if( !failure ){	failure = defaultFailure;}
 
