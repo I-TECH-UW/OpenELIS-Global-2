@@ -2,8 +2,6 @@ package org.openelisglobal.dataexchange.fhir.service;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.hl7.fhir.r4.model.Reference;
 import org.hl7.fhir.r4.model.Resource;
 import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder;
@@ -13,8 +11,6 @@ import org.openelisglobal.organization.valueholder.Organization;
 import org.openelisglobal.patient.action.bean.PatientManagementInfo;
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.sample.action.util.SamplePatientUpdateData;
-import org.openelisglobal.sample.form.SamplePatientEntryForm;
-import org.openelisglobal.sample.service.PatientManagementUpdate;
 
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 
@@ -26,7 +22,7 @@ public interface FhirTransformService {
 
     public void CreateFhirFromOESample(ElectronicOrder eOrder, TestResultsXmit result);
 
-    public String CreateFhirFromOESample(SamplePatientUpdateData updateData, PatientManagementUpdate patientUpdate, PatientManagementInfo patientInfo, SamplePatientEntryForm form, HttpServletRequest request);
+    String CreateFhirFromOESample(SamplePatientUpdateData updateData, PatientManagementInfo patientInfo);
 
     public org.hl7.fhir.r4.model.Patient CreateFhirPatientFromOEPatient(Patient patient);
 
@@ -41,6 +37,12 @@ public interface FhirTransformService {
 
     org.hl7.fhir.r4.model.Organization getFhirOrganization(Organization organization);
 
-    public org.hl7.fhir.r4.model.Patient getFhirPatient(PatientManagementInfo patientInfo);
+    public org.hl7.fhir.r4.model.Patient getFhirPatientOrCreate(PatientManagementInfo patientInfo);
+
+    org.hl7.fhir.r4.model.Organization organizationToFhirOrganization(Organization organization);
+
+    org.hl7.fhir.r4.model.Patient getFhirPatient(PatientManagementInfo patientInfo);
+
+    String getIdFromLocation(String location);
 
 }

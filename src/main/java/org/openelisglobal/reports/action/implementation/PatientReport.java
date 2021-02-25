@@ -76,6 +76,7 @@ import org.openelisglobal.result.valueholder.Result;
 import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.util.AccessionNumberUtil;
 import org.openelisglobal.sample.valueholder.Sample;
+import org.openelisglobal.sample.valueholder.SampleAdditionalField.AdditionalFieldName;
 import org.openelisglobal.samplehuman.service.SampleHumanService;
 import org.openelisglobal.sampleitem.valueholder.SampleItem;
 import org.openelisglobal.spring.util.SpringContext;
@@ -389,7 +390,7 @@ public abstract class PatientReport extends Report {
         } else {
             reportParameters.put("useSTNumber", Boolean.TRUE);
         }
-        if (ConfigurationProperties.getInstance().isCaseInsensitivePropertyValueEqual(Property.configurationName, "CI LNSP") || 
+        if (ConfigurationProperties.getInstance().isCaseInsensitivePropertyValueEqual(Property.configurationName, "CI LNSP") ||
             ConfigurationProperties.getInstance().isCaseInsensitivePropertyValueEqual(Property.configurationName, "CI IPCI") ||
             ConfigurationProperties.getInstance().isCaseInsensitivePropertyValueEqual(Property.configurationName, "CI_REGIONAL") ||
             ConfigurationProperties.getInstance().isCaseInsensitivePropertyValueEqual(Property.configurationName, "RETROCI") ||
@@ -398,6 +399,11 @@ public abstract class PatientReport extends Report {
             reportParameters.put("useBillingNumber", Boolean.TRUE);
         } else {
             reportParameters.put("useBillingNumber", Boolean.FALSE);
+        }
+        if (Boolean.valueOf(ConfigurationProperties.getInstance().getPropertyValue(Property.CONTACT_TRACING))) {
+            reportParameters.put("useContactTracing", Boolean.TRUE);
+        } else {
+            reportParameters.put("useContactTracing", Boolean.FALSE);
         }
     }
 
@@ -830,6 +836,14 @@ public abstract class PatientReport extends Report {
 
         if (doAnalysis) {
             reportResultAndConclusion(data);
+        }
+        if (Boolean.valueOf(ConfigurationProperties.getInstance().getPropertyValue(Property.CONTACT_TRACING))) {
+            data.setContactTracingIndexName(
+                    sampleService.getSampleAdditionalFieldForSample(sampleService.getId(currentSample),
+                            AdditionalFieldName.CONTACT_TRACING_INDEX_NAME).getFieldValue());
+            data.setContactTracingIndexRecordNumber(
+                    sampleService.getSampleAdditionalFieldForSample(sampleService.getId(currentSample),
+                            AdditionalFieldName.CONTACT_TRACING_INDEX_RECORD_NUMBER).getFieldValue());
         }
 
         return data;

@@ -371,8 +371,8 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
 
     @Override
     @Transactional(readOnly = true)
-    public List<Analysis> getAllAnalysisByTestsAndStatus(List<String> nfsTestIdList, List<Integer> statusList) {
-        return baseObjectDAO.getAllAnalysisByTestsAndStatus(nfsTestIdList, statusList);
+    public List<Analysis> getAllAnalysisByTestsAndStatusAndCompletedDateRange(List<Integer> testIdList, List<Integer> analysisStatusList, List<Integer> sampleStatusList, Date lowDate, Date highDate) {
+        return baseObjectDAO.getAllAnalysisByTestsAndStatusAndCompletedDateRange(testIdList, analysisStatusList, sampleStatusList, lowDate, highDate);
     }
 
     @Override
@@ -624,5 +624,11 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
     @Override
     public List<Analysis> get(List<String> value) {
         return baseObjectDAO.get(value);
+    }
+
+    @Override
+    public List<Analysis> getAllAnalysisByTestsAndStatus(List<String> testIdList, List<Integer> statusIdList) {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

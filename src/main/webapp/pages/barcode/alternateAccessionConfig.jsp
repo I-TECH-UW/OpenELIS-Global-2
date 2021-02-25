@@ -33,7 +33,7 @@ function altAccessionKeyUp() {
 }
 
 function altAccessionValid() {
-	if (jQuery("#prePrintDontUseAltAccession").prop('checked')) {
+	if (!jQuery("#prePrintDontUseAltAccession").prop('checked')) {
 		if (jQuery("#prePrintAltAccessionPrefix").val().toLowerCase() === jQuery("#sitePrefix").val().toLowerCase()) {
 			return false;
 		}

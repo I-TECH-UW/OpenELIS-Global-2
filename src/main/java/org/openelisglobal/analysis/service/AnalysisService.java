@@ -165,4 +165,8 @@ public interface AnalysisService extends BaseObjectService<Analysis, String> {
 
     List<Analysis> get(List<String> value);
 
+
+    List<Analysis> getAllAnalysisByTestsAndStatusAndCompletedDateRange(List<Integer> nfsTestIdList,
+            List<Integer> analysisStatusList, List<Integer> sampleStatusList, Date lowDate, Date highDate);
+
 }

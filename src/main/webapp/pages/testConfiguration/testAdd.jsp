@@ -306,7 +306,7 @@
     }
 
     function upperAgeRangeChanged(index) {
-        var copy, htmlCopy, monthYear, lowAge, lowAgeValue, highAgeValue, lowAgeModifier, newMonthValue;
+    	var copy, htmlCopy, monthYear, lowAge, lowAgeValue, highAgeValue, lowAgeModifier, newDayValue;
         var element = jQuery("#upperAgeSetter_" + index);
 
         element.removeClass("error");
@@ -317,7 +317,8 @@
                 lowAge = jQuery("#lowerAge_" + index).text();
                 lowAgeModifier = lowAge.charAt(lowAge.length - 1);
                 lowAgeValue = lowAge.substring(0, lowAge.length - 1);
-                lowAgeValue = lowAgeModifier == "<%=MessageUtil.getContextualMessage("abbreviation.year.single")%>" ? lowAgeValue *= 12 : +lowAgeValue;
+                lowAgeValue = lowAgeModifier == '<%=MessageUtil.getMessage("abbreviation.day.single")%>' ? +lowAgeValue : lowAgeModifier == '<%=MessageUtil.getMessage("abbreviation.month.single")%>' ? Math.floor(lowAgeValue * 365/12) : lowAgeValue *= 365;
+<%--                 lowAgeValue = lowAgeModifier == "<%=MessageUtil.getContextualMessage("abbreviation.year.single")%>" ? lowAgeValue *= 12 : +lowAgeValue; --%>
                 highAgeValue = +element.val();
                 if (highAgeValue != element.val()) {
                     alert("<%=MessageUtil.getContextualMessage("error.age.value")%>");
@@ -325,9 +326,9 @@
                     return;
                 }
 
-                newMonthValue = monthYear == '<%=MessageUtil.getContextualMessage("abbreviation.month.single")%>' ? highAgeValue : 12 * highAgeValue;
-
-                if (newMonthValue <= lowAgeValue) {
+<%--                 newMonthValue = monthYear == '<%=MessageUtil.getContextualMessage("abbreviation.month.single")%>' ? highAgeValue : 12 * highAgeValue; --%>
+                newDayValue = monthYear == '<%=MessageUtil.getMessage("abbreviation.day.single")%>' ? highAgeValue : monthYear == '<%=MessageUtil.getMessage("abbreviation.month.single")%>' ? Math.floor(highAgeValue * 365/12) : 365 * highAgeValue;
+                if (newDayValue <= lowAgeValue) {
                     element.addClass("error");
                     alert("<%=MessageUtil.getContextualMessage("error.age.begining.ending.order")%>");
                     return;
@@ -1283,7 +1284,11 @@ td {
                 <td><input class="yearMonthSelect_index" type="radio" name="time_index" value="<%=MessageUtil.getContextualMessage("abbreviation.year.single")%>"
                            onchange="upperAgeRangeChanged( 'index' )" checked><spring:message code="abbreviation.year.single" />
                     <input class="yearMonthSelect_index" type="radio" name="time_index" value="<%=MessageUtil.getContextualMessage("abbreviation.month.single")%>"
-                           onchange="upperAgeRangeChanged( 'index' )"><spring:message code="abbreviation.month.single" />&nbsp;</td>
+                           onchange="upperAgeRangeChanged( 'index' )"><spring:message code="abbreviation.month.single" />
+                    <input class="yearMonthSelect_index" type="radio" name="time_index" value="<%=MessageUtil.getContextualMessage("abbreviation.day.single")%>"
+                           onchange="upperAgeRangeChanged('index')"> <spring:message code="abbreviation.day.single" />&nbsp;</td>
+
+                           
                 <td id="lowerAge_index">0</td>
                 <td><input type="text" id="upperAgeSetter_index" value="Infinity" size="10"
                            onchange="upperAgeRangeChanged( 'index' )"><span id="upperAge_index"></span></td>
@@ -1352,7 +1357,9 @@ td {
                 <td><input class="yearMonthSelect_0" type="radio" name="time_0" value="<%=MessageUtil.getContextualMessage("abbreviation.year.single")%>"
                            onchange="upperAgeRangeChanged('0')" checked><spring:message code="abbreviation.year.single" />
                     <input class="yearMonthSelect_0" type="radio" name="time_0" value="<%=MessageUtil.getContextualMessage("abbreviation.month.single")%>"
-                           onchange="upperAgeRangeChanged('0')"><spring:message code="abbreviation.month.single" />&nbsp;</td>
+                           onchange="upperAgeRangeChanged('0')"><spring:message code="abbreviation.month.single" />
+                    <input class="yearMonthSelect_0" type="radio" name="time_0" value="<%=MessageUtil.getContextualMessage("abbreviation.day.single")%>"
+                           onchange="upperAgeRangeChanged('0')"><spring:message code="abbreviation.day.single" />&nbsp;</td>
                 <td id="lowerAge_0">0&nbsp;</td>
                 <td><input type="text" id="upperAgeSetter_0" value="Infinity" size="10"
                            onchange="upperAgeRangeChanged('0')"><span id="upperAge_0"></span></td>

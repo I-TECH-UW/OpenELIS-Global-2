@@ -139,6 +139,9 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
                 "true");
         setDBPropertyMappingAndDefault(Property.ALLOW_DUPLICATE_SUBJECT_NUMBERS,
                 Property.ALLOW_DUPLICATE_SUBJECT_NUMBERS.getName(), "true");
+        setDBPropertyMappingAndDefault(Property.ALLOW_DUPLICATE_NATIONAL_IDS,
+                Property.ALLOW_DUPLICATE_NATIONAL_IDS.getName(), "false");
+
         setDBPropertyMappingAndDefault(Property.VALIDATE_REJECTED_TESTS, Property.VALIDATE_REJECTED_TESTS.getName(),
                 "false");
         setDBPropertyMappingAndDefault(Property.TEST_NAME_AUGMENTED, Property.TEST_NAME_AUGMENTED.getName(), "true");
@@ -153,6 +156,9 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
         setDBPropertyMappingAndDefault(Property.PATIENT_ID_REQUIRED, Property.PATIENT_ID_REQUIRED.getName(), "true");
         setDBPropertyMappingAndDefault(Property.PATIENT_SUBJECT_NUMBER_REQUIRED,
                 Property.PATIENT_SUBJECT_NUMBER_REQUIRED.getName(), "true");
+        setDBPropertyMappingAndDefault(Property.PATIENT_NATIONAL_ID_REQUIRED,
+                Property.PATIENT_NATIONAL_ID_REQUIRED.getName(), "true");
+
         setDBPropertyMappingAndDefault(Property.QA_SAMPLE_ID_REQUIRED, Property.QA_SAMPLE_ID_REQUIRED.getName(),
                 "false");
         setDBPropertyMappingAndDefault(Property.MAX_ORDER_PRINTED, Property.MAX_ORDER_PRINTED.getName(), "10");
@@ -174,6 +180,7 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
 
         setDBPropertyMappingAndDefault(Property.LAB_DIRECTOR_NAME, Property.LAB_DIRECTOR_NAME.getName(), "");
         setDBPropertyMappingAndDefault(Property.LAB_DIRECTOR_TITLE, Property.LAB_DIRECTOR_TITLE.getName(), "");
+        setDBPropertyMappingAndDefault(Property.CONTACT_TRACING, Property.CONTACT_TRACING.getName(), "false");
         // these are set through external connection now
 //        setDBPropertyMappingAndDefault(Property.INFO_HIGHWAY_ADDRESS, Property.INFO_HIGHWAY_ADDRESS.getName(), "");
 //        setDBPropertyMappingAndDefault(Property.INFO_HIGHWAY_USERNAME, Property.INFO_HIGHWAY_USERNAME.getName(), "");

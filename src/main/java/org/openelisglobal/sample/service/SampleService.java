@@ -10,6 +10,8 @@ import org.openelisglobal.organization.valueholder.Organization;
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.person.valueholder.Person;
 import org.openelisglobal.sample.valueholder.Sample;
+import org.openelisglobal.sample.valueholder.SampleAdditionalField;
+import org.openelisglobal.sample.valueholder.SampleAdditionalField.AdditionalFieldName;
 import org.openelisglobal.sampleqaevent.valueholder.SampleQaEvent;
 
 public interface SampleService extends BaseObjectService<Sample, String> {
@@ -88,5 +90,13 @@ public interface SampleService extends BaseObjectService<Sample, String> {
 
     String getTwoYearReceivedDateForDisplay(Sample sample);
 
+    List<SampleAdditionalField> getSampleAdditionalFieldsForSample(String sampleId);
+
+    SampleAdditionalField getSampleAdditionalFieldForSample(String sampleId, AdditionalFieldName fieldName);
+
+    SampleAdditionalField saveSampleAdditionalField(SampleAdditionalField sampleAdditionalField);
+
     String getSampleStatusForDisplay(Sample sample);
+
+    boolean sampleContainsTest(String sampleId, String testId);
 }

@@ -112,6 +112,7 @@ public class SampleTypeCreateController extends BaseController {
             LogEvent.logDebug(e);
         }
         DisplayListService.getInstance().refreshList(DisplayListService.ListType.SAMPLE_TYPE);
+        DisplayListService.getInstance().refreshList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE);
         DisplayListService.getInstance().refreshList(DisplayListService.ListType.SAMPLE_TYPE_INACTIVE);
 
         return findForward(FWD_SUCCESS_INSERT, form);

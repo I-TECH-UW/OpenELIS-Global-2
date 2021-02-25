@@ -58,8 +58,13 @@ public class FhirReferralServiceImpl implements FhirReferralService {
     public Bundle cancelReferralToOrganization(String referralOrganizationId, String sampleId,
             List<String> analysisIds) {
         IGenericClient localClient = fhirContext.newRestfulGenericClient(fhirConfig.getLocalFhirStorePath());
-//        org.openelisglobal.organization.valueholder.Organization referralOrganization = organizationService
-//                .get(referralOrganizationId);
+        org.openelisglobal.organization.valueholder.Organization referralOrganization = organizationService
+                .get(referralOrganizationId);
+        Organization fhirOrg = getFhirOrganization(referralOrganization);
+        if (fhirOrg == null) {
+            // organization doesn't exist as fhir organization, cannot cancel automatically
+            return new Bundle();
+        }
         Sample sample = sampleService.get(sampleId);
         List<Analysis> analysises = analysisService.get(analysisIds);
         Bundle serviceRequestBundle = localClient.search().forResource(ServiceRequest.class).returnBundle(Bundle.class)
@@ -111,7 +116,6 @@ public class FhirReferralServiceImpl implements FhirReferralService {
                 .returnBundle(Bundle.class).where(ServiceRequest.BASED_ON.hasAnyOfIds(originalServiceRequest.getId()))
                 .execute();
 
-        ServiceRequest serviceRequest = new ServiceRequest();
         for (BundleEntryComponent entry : createdServiceRequestBundle.getEntry()) {
             if (entry.hasResource() && ResourceType.ServiceRequest.equals(entry.getResource().getResourceType())) {
                 return (ServiceRequest) entry.getResource();
@@ -127,6 +131,11 @@ public class FhirReferralServiceImpl implements FhirReferralService {
         IGenericClient localClient = fhirContext.newRestfulGenericClient(fhirConfig.getLocalFhirStorePath());
         org.openelisglobal.organization.valueholder.Organization referralOrganization = organizationService
                 .get(referralOrganizationId);
+        Organization fhirOrg = getFhirOrganization(referralOrganization);
+        if (fhirOrg == null) {
+            // organization doesn't exist as fhir organization, cannot refer automatically
+            return new Bundle();
+        }
         List<Resource> newResources = new ArrayList<>();
         Sample sample = sampleService.get(sampleId);
         List<Analysis> analysises = analysisService.get(analysisIds);
@@ -136,7 +145,7 @@ public class FhirReferralServiceImpl implements FhirReferralService {
 
         List<ServiceRequest> serviceRequests = createServiceRequestsForReferredTest(analysises, sample,
                 serviceRequestAndPatientBundle);
-        Task task = createReferralTask(getFhirOrganization(referralOrganization),
+        Task task = createReferralTask(fhirOrg,
                 getFhirPatient(serviceRequestAndPatientBundle), serviceRequests, sample.getAccessionNumber());
 
         newResources.add(task);

@@ -380,16 +380,16 @@
                    id="providerLastNameID"
                    onchange="setOrderModified();setCorrectSave();"
                    size="30"/>
-    </td>               
-    <tr>
+    </td> 
+</tr>              
+<tr>
     <td>
         <spring:message code="sample.entry.provider.firstName"/>:
+	</td>
     <td>
         <form:input path="sampleOrderItems.providerFirstName" onchange="setOrderModified();"
                    size="30"/>
-	</td>
     </td>
-    </tr>
 </tr>
 <tr>
     <td>
@@ -499,6 +499,32 @@
         <form:input path="sampleOrderItems.billingReferenceNumber"
                     cssClass="text"
                     id="billingReferenceNumber"
+                    onchange="setOrderModified();makeDirty()" />
+    </td>
+</tr>
+<% } %>
+<% if( ConfigurationProperties.getInstance().isPropertyValueEqual( Property.CONTACT_TRACING, "true" )){ %>
+<tr>
+    <td><label for="contactTracingIndexName">
+    	<spring:message code="field.contacttracing.indexname.label" />
+    </label>
+    </td>
+    <td>
+        <form:input path="sampleOrderItems.contactTracingIndexName"
+                    cssClass="text"
+                    id="contactTracingIndexName"
+                    onchange="setOrderModified();makeDirty()" />
+    </td>
+</tr>
+<tr>
+    <td><label for="contactTracingIndexRecordNumber">
+    	<spring:message code="field.contacttracing.indexrecordnumber.label" />
+    </label>
+    </td>
+    <td>
+        <form:input path="sampleOrderItems.contactTracingIndexRecordNumber"
+                    cssClass="text"
+                    id="contactTracingIndexRecordNumber"
                     onchange="setOrderModified();makeDirty()" />
     </td>
 </tr>

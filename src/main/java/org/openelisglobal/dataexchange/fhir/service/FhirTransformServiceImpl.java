@@ -12,8 +12,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.validator.GenericValidator;
 import org.hl7.fhir.r4.model.Annotation;
 import org.hl7.fhir.r4.model.Bundle;
@@ -57,8 +55,6 @@ import org.openelisglobal.patient.service.PatientService;
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.patientidentity.service.PatientIdentityService;
 import org.openelisglobal.sample.action.util.SamplePatientUpdateData;
-import org.openelisglobal.sample.form.SamplePatientEntryForm;
-import org.openelisglobal.sample.service.PatientManagementUpdate;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.test.valueholder.Test;
@@ -644,14 +640,10 @@ public class FhirTransformServiceImpl implements FhirTransformService {
     }
 
     @Override
-    public String CreateFhirFromOESample(SamplePatientUpdateData updateData, PatientManagementUpdate patientUpdate,
-            PatientManagementInfo patientInfo, SamplePatientEntryForm form, HttpServletRequest request) {
+    public String CreateFhirFromOESample(SamplePatientUpdateData updateData, PatientManagementInfo patientInfo) {
 
         LogEvent.logDebug(this.getClass().getName(), "CreateFhirFromOESample",
                 "CreateFhirFromOESample:add Order:accession#: " + updateData.getAccessionNumber());
-
-        org.hl7.fhir.r4.model.Patient fhirPatient = CreateFhirPatientFromOEPatient(patientInfo);
-
         Bundle srBundle = new Bundle();
         Bundle pResp = new Bundle();
         Bundle srResp = new Bundle();
@@ -677,25 +669,21 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         codeableConcept.setCoding(codingList);
 
         try {
-            // check for patient existence
-            Bundle pBundle = (Bundle) localFhirClient.search().forResource(org.hl7.fhir.r4.model.Patient.class).where(
-                    new TokenClientParam("identifier").exactly().code(fhirPatient.getIdentifierFirstRep().getValue()))
-                    .prettyPrint().execute();
-
             Reference subjectRef = new Reference();
-
-            if (pBundle.getEntry().size() == 0) {
+            org.hl7.fhir.r4.model.Patient fhirPatient = getFhirPatient(patientInfo);
+            // check for patient existence
+            if (fhirPatient == null) {
+                fhirPatient = CreateFhirPatientFromOEPatient(patientInfo);
 //                pOutcome = localFhirClient.create().resource(fhirPatient).execute();
                 pResp = fhirPersistanceService.createFhirResourceInFhirStore(fhirPatient);
+                patientInfo.setGuid(getIdFromLocation(pResp.getEntryFirstRep().getResponse().getLocation()));
                 LogEvent.logDebug(this.getClass().getName(), "CreateFhirFromOESample",
                         "pResp:" + fhirContext.newJsonParser().setPrettyPrint(true).encodeResourceToString(pResp));
 //                subjectRef.setReference("Patient/" + pResp.getEntryFirstRep().getResponse().getLocation());
                 subjectRef.setReference(pResp.getEntryFirstRep().getResponse().getLocation());
             } else {
-                BundleEntryComponent bundleComponent = pBundle.getEntryFirstRep();
-                org.hl7.fhir.r4.model.Patient existingPatient = (org.hl7.fhir.r4.model.Patient) bundleComponent
-                        .getResource();
-                subjectRef = createReferenceFor(existingPatient);
+                subjectRef = createReferenceFor(fhirPatient);
+                patientInfo.setGuid(fhirPatient.getIdElement().getId());
             }
 
             srBundle = (Bundle) localFhirClient.search().forResource(ServiceRequest.class)
@@ -736,7 +724,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 
 //        identifier.setId(subjectNumber);
 //        identifier.setSystem("OpenELIS-Global/SubjectNumber"); // fix hardcode
-        fhirPatient.setIdentifier(createIdentifiers(subjectNumber, nationalId, stNumber));
+        fhirPatient.setIdentifier(createIdentifiers(subjectNumber, nationalId, stNumber, guid));
 
         HumanName humanName = new HumanName();
         List<HumanName> humanNameList = new ArrayList<>();
@@ -757,7 +745,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         return fhirPatient;
     }
 
-    private List<Identifier> createIdentifiers(String subjectNumber, String nationalId, String stNumber) {
+    private List<Identifier> createIdentifiers(String subjectNumber, String nationalId, String stNumber, String guid) {
         List<Identifier> identifierList = new ArrayList<>();
         if (!GenericValidator.isBlankOrNull(subjectNumber)) {
             identifierList.add(createIdentifier(fhirConfig.getOeFhirSystem() + "/pat_subjectNumber", subjectNumber));
@@ -767,6 +755,9 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         }
         if (!GenericValidator.isBlankOrNull(stNumber)) {
             identifierList.add(createIdentifier(fhirConfig.getOeFhirSystem() + "/pat_stNumber", stNumber));
+        }
+        if (!GenericValidator.isBlankOrNull(guid)) {
+            identifierList.add(createIdentifier(fhirConfig.getOeFhirSystem() + "/pat_guid", guid));
         }
         return identifierList;
     }
@@ -790,7 +781,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 //        List<Identifier> identifierList = new ArrayList<>();
 //        identifierList.add(identifier);
         fhirPatient.setIdentifier(createIdentifiers(patientInfo.getSubjectNumber(), patientInfo.getNationalId(),
-                patientInfo.getSTnumber()));
+                patientInfo.getSTnumber(), patientInfo.getGuid()));
 
         HumanName humanName = new HumanName();
         List<HumanName> humanNameList = new ArrayList<>();
@@ -817,6 +808,25 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         }
 
         return fhirPatient;
+    }
+
+    @Override
+    public org.hl7.fhir.r4.model.Organization organizationToFhirOrganization(Organization organization) {
+        org.hl7.fhir.r4.model.Organization fhirOrganization = new org.hl7.fhir.r4.model.Organization();
+        fhirOrganization.setId(organization.getId());
+        fhirOrganization.setName(organization.getOrganizationName());
+        this.setFhirIdentifiers(fhirOrganization, organization);
+        this.setFhirAddressInfo(fhirOrganization, organization);
+        this.setFhirOrganizationTypes(fhirOrganization, organization);
+
+//        if (!GenericValidator.isBlankOrNull(organization.getInternetAddress())) {
+//            Endpoint endpoint = this.setFhirConnectionInfo(fhirOrganization, organization);
+//        }
+//        if (organization.getOrganization() != null) {
+//            org.hl7.fhir.r4.model.Organization parentFhirOrganization = this.setFhirParentOrg(fhirOrganization,
+//                    organization);
+//        }
+        return fhirOrganization;
     }
 
     @Override
@@ -862,6 +872,21 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         }
     }
 
+    private void setFhirIdentifiers(org.hl7.fhir.r4.model.Organization fhirOrganization, Organization organization) {
+        if (!GenericValidator.isBlankOrNull(organization.getCliaNum())) {
+            fhirOrganization.addIdentifier(new Identifier().setSystem(fhirConfig.getOeFhirSystem() + "/org_cliaNum")
+                    .setValue(organization.getCliaNum()));
+        }
+        if (!GenericValidator.isBlankOrNull(organization.getShortName())) {
+            fhirOrganization.addIdentifier(new Identifier().setSystem(fhirConfig.getOeFhirSystem() + "/org_shortName")
+                    .setValue(organization.getShortName()));
+        }
+        if (!GenericValidator.isBlankOrNull(organization.getCode())) {
+            fhirOrganization.addIdentifier(new Identifier().setSystem(fhirConfig.getOeFhirSystem() + "/org_code")
+                    .setValue(organization.getCode()));
+        }
+    }
+
     private void setOrganizationTypes(Organization organization, org.hl7.fhir.r4.model.Organization fhirOrganization,
             IGenericClient client) {
         Set<OrganizationType> orgTypes = new HashSet<>();
@@ -882,6 +907,18 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         organization.setOrganizationTypes(orgTypes);
     }
 
+    private void setFhirOrganizationTypes(org.hl7.fhir.r4.model.Organization fhirOrganization,
+            Organization organization) {
+        Set<OrganizationType> orgTypes = organization.getOrganizationTypes();
+        for (OrganizationType orgType : orgTypes) {
+            fhirOrganization.addType(new CodeableConcept() //
+                    .setText(orgType.getDescription()) //
+                    .addCoding(new Coding() //
+                            .setSystem(fhirConfig.getOeFhirSystem() + "/orgType") //
+                            .setCode(orgType.getName())));
+        }
+    }
+
     private void setConnectionInfo(Organization organization, org.hl7.fhir.r4.model.Organization fhirOrganization,
             IGenericClient client) {
         Endpoint endpoint = client.read().resource(Endpoint.class)
@@ -900,6 +937,21 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         organization.setZipCode(fhirOrganization.getAddressFirstRep().getPostalCode());
     }
 
+    private void setFhirAddressInfo(org.hl7.fhir.r4.model.Organization fhirOrganization, Organization organization) {
+        if (!GenericValidator.isBlankOrNull(organization.getStreetAddress())) {
+            fhirOrganization.getAddressFirstRep().addLine(organization.getStreetAddress());
+        }
+        if (!GenericValidator.isBlankOrNull(organization.getCity())) {
+            fhirOrganization.getAddressFirstRep().setCity(organization.getCity());
+        }
+        if (!GenericValidator.isBlankOrNull(organization.getState())) {
+            fhirOrganization.getAddressFirstRep().setState(organization.getState());
+        }
+        if (!GenericValidator.isBlankOrNull(organization.getZipCode())) {
+            fhirOrganization.getAddressFirstRep().setPostalCode(organization.getZipCode());
+        }
+    }
+
     @Override
     public Reference createReferenceFor(Resource resource) {
         Reference reference = new Reference(resource);
@@ -909,6 +961,24 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 
     public org.hl7.fhir.r4.model.Patient getFhirPatient(Map<String, String> patientIds) {
         Bundle bundle;
+        if (patientIds.containsKey("GUID")) {
+            bundle = localFhirClient.search().forResource(org.hl7.fhir.r4.model.Patient.class)
+                    .returnBundle(Bundle.class)
+                    .where(org.hl7.fhir.r4.model.Patient.IDENTIFIER.exactly()
+                            .systemAndCode(fhirConfig.getOeFhirSystem() + "/pat_guid", patientIds.get("GUID")))
+                    .execute();
+            if (bundle.hasEntry()) {
+                return (org.hl7.fhir.r4.model.Patient) bundle.getEntryFirstRep().getResource();
+            }
+            // legacy check for previous identifier system that was used
+            bundle = localFhirClient.search().forResource(org.hl7.fhir.r4.model.Patient.class)
+                    .returnBundle(Bundle.class).where(org.hl7.fhir.r4.model.Patient.IDENTIFIER.exactly()
+                            .systemAndCode("OpenELIS-Global/SubjectNumber", patientIds.get("SubjectNumber")))
+                    .execute();
+            if (bundle.hasEntry()) {
+                return (org.hl7.fhir.r4.model.Patient) bundle.getEntryFirstRep().getResource();
+            }
+        }
         if (patientIds.containsKey("SubjectNumber")) {
             bundle = localFhirClient.search().forResource(org.hl7.fhir.r4.model.Patient.class)
                     .returnBundle(Bundle.class)
@@ -962,13 +1032,22 @@ public class FhirTransformServiceImpl implements FhirTransformService {
     @Override
     public org.hl7.fhir.r4.model.Patient getFhirPatient(PatientManagementInfo patientInfo) {
         Map<String, String> patientIds = new HashMap<>();
-        if (!GenericValidator.isBlankOrNull(patientInfo.getSubjectNumber())) {
-            patientIds.put("SubjectNumber", patientInfo.getSubjectNumber());
+        // these two ids are not always unique, so it is best to ignore them
+//        if (!GenericValidator.isBlankOrNull(patientInfo.getSubjectNumber())) {
+//            patientIds.put("SubjectNumber", patientInfo.getSubjectNumber());
+//        }
+//        if (!GenericValidator.isBlankOrNull(patientInfo.getNationalId())) {
+//            patientIds.put("NationalId", patientInfo.getNationalId());
+//        }
+        if (!GenericValidator.isBlankOrNull(patientInfo.getGuid())) {
+            patientIds.put("GUID", patientInfo.getGuid());
         }
-        if (!GenericValidator.isBlankOrNull(patientInfo.getNationalId())) {
-            patientIds.put("NationalId", patientInfo.getNationalId());
-        }
-        org.hl7.fhir.r4.model.Patient fhirPatient = getFhirPatient(patientIds);
+        return getFhirPatient(patientIds);
+    }
+
+    @Override
+    public org.hl7.fhir.r4.model.Patient getFhirPatientOrCreate(PatientManagementInfo patientInfo) {
+        org.hl7.fhir.r4.model.Patient fhirPatient = getFhirPatient(patientInfo);
         if (fhirPatient == null) {
             fhirPatient = this.CreateFhirPatientFromOEPatient(patientInfo);
             fhirPatient.setId(UUID.randomUUID().toString());
@@ -976,4 +1055,12 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         return fhirPatient;
     }
 
+    @Override
+    public String getIdFromLocation(String location) {
+        String id = location.substring(location.indexOf("/") + 1);
+        while (id.lastIndexOf("/") > 0) {
+            id = id.substring(0, id.lastIndexOf("/"));
+        }
+        return id;
+    }
 }

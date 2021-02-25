@@ -219,6 +219,7 @@ public class PatientManagementUpdate implements IPatientUpdate {
         persistIdentityType(patientInfo.getHealthDistrict(), "HEALTH DISTRICT");
         persistIdentityType(patientInfo.getHealthRegion(), "HEALTH REGION");
         persistIdentityType(patientInfo.getOtherNationality(), "OTHER NATIONALITY");
+        persistIdentityType(patientInfo.getGuid(), "GUID");
     }
 
     private void persistExtraPatientAddressInfo(PatientManagementInfo patientInfo) {

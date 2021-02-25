@@ -40,6 +40,7 @@ import org.openelisglobal.requester.service.SampleRequesterService;
 import org.openelisglobal.requester.valueholder.SampleRequester;
 import org.openelisglobal.sample.action.util.SamplePatientUpdateData;
 import org.openelisglobal.sample.form.SamplePatientEntryForm;
+import org.openelisglobal.sample.valueholder.SampleAdditionalField;
 import org.openelisglobal.samplehuman.service.SampleHumanService;
 import org.openelisglobal.sampleitem.service.SampleItemService;
 import org.openelisglobal.spring.util.SpringContext;
@@ -96,6 +97,7 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
         boolean useInitialSampleCondition = FormFields.getInstance().useField(Field.InitialSampleCondition);
         boolean useSampleNature = FormFields.getInstance().useField(Field.SampleNature);
 
+        String fhir_json = fhirTransformService.CreateFhirFromOESample(updateData, patientInfo);
         persistOrganizationData(updateData);
 
         if (updateData.isSavePatient()) {
@@ -119,8 +121,11 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
         request.getSession().setAttribute("lastAccessionNumber", updateData.getAccessionNumber());
         request.getSession().setAttribute("lastPatientId", updateData.getPatientId());
 
-        String fhir_json = fhirTransformService.CreateFhirFromOESample(updateData, patientUpdate, patientInfo, form,
-                request);
+    }
+
+    private void persistContactTracingData(SamplePatientUpdateData updateData) {
+        // TODO Auto-generated method stub
+
     }
 
     private void persistObservations(SamplePatientUpdateData updateData) {
@@ -169,6 +174,10 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
 
         sampleService.insertDataWithAccessionNumber(updateData.getSample());
 
+        for (SampleAdditionalField field : updateData.getSampleFields()) {
+            field.setSample(updateData.getSample());
+            sampleService.saveSampleAdditionalField(field);
+        }
         // if (!GenericValidator.isBlankOrNull(projectId)) {
         // persistSampleProject();
         // }
@@ -239,8 +248,8 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
 
     private void persistAnalysisNotificationConfig(Analysis analysis, List<String> testIds,
             AnalysisNotificationConfig analysisNotificationConfig,
-            Optional<TestNotificationConfig> testNotificationConfig,
-            NotificationMethod method, NotificationPersonType personType) {
+            Optional<TestNotificationConfig> testNotificationConfig, NotificationMethod method,
+            NotificationPersonType personType) {
         NotificationNature notificationNature = NotificationNature.RESULT_VALIDATION;
         NotificationConfigOption nto = analysisNotificationConfig.getOptionFor(notificationNature, method, personType);
         nto.setNotificationMethod(method);

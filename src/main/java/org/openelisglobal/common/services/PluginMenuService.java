@@ -40,7 +40,7 @@ public class PluginMenuService {
     private MenuService menuService;
 
     public enum KnownMenu {
-        ANALYZER("menu_results_analyzer");
+        ANALYZER("menu_results_analyzer"), WORKPLAN("menu_workplan");
 
         private final String elementId;
 
@@ -126,6 +126,10 @@ public class PluginMenuService {
     public void addMenu(Menu menu) {
         MenuUtil.addMenu(menu);
         actionToKeyMap.put(menu.getActionURL(), menu.getDisplayKey());
+    }
+
+    public boolean hasMenu(Menu menu) {
+        return actionToKeyMap.containsKey(menu.getActionURL());
     }
 
     public String getKeyForAction(String action) {
