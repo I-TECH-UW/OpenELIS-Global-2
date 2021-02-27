@@ -63,7 +63,7 @@
                enableLookups="true" disableUploadTimeout="true"
                acceptCount="100" debug="0" scheme="https" secure="true"
                sslProtocol="TLS" SSLEnabled="true" 
-               keystoreFile="/run/secrets/keystore" keystoreType="PKCS12" keystorePass="[% keystore_password %]"
+               keystoreFile="/run/secrets/client_facing_keystore" keystoreType="PKCS12" keystorePass="[% keystore_password %]"
                truststoreFile="/run/secrets/truststore" truststoreType="PKCS12" truststorePass="[% truststore_password %]"
                URIEncoding="UTF-8" />
                

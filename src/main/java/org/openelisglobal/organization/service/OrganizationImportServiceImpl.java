@@ -16,6 +16,7 @@ import org.hl7.fhir.r4.model.Bundle.BundleEntryComponent;
 import org.hl7.fhir.r4.model.Resource;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.DisplayListService.ListType;
+import org.openelisglobal.dataexchange.fhir.FhirUtil;
 import org.openelisglobal.dataexchange.fhir.service.FhirPersistanceService;
 import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
 import org.openelisglobal.organization.valueholder.Organization;
@@ -39,6 +40,8 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
     @Autowired
     private FhirContext fhirContext;
     @Autowired
+    private FhirUtil fhirUtil;
+    @Autowired
     private FhirTransformService fhirTransformService;
     @Autowired
     private FhirPersistanceService fhirPersistanceService;
@@ -53,7 +56,7 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
     @Retryable(value = RuntimeException.class, maxAttempts = 10, backoff = @Backoff(delay = 1000 * 60))
     public void importOrganizationList() {
         if (!GenericValidator.isBlankOrNull(facilityFhirStore)) {
-            IGenericClient client = fhirContext.newRestfulGenericClient(facilityFhirStore);
+            IGenericClient client = fhirUtil.getFhirClient(facilityFhirStore);
             List<Bundle> responseBundles = new ArrayList<>();
             Bundle responseBundle = client.search().forResource(org.hl7.fhir.r4.model.Organization.class)
                     .returnBundle(Bundle.class).execute();

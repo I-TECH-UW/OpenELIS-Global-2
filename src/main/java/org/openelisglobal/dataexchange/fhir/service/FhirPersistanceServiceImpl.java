@@ -12,6 +12,7 @@ import org.hl7.fhir.r4.model.Resource;
 import org.hl7.fhir.r4.model.ResourceType;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.dataexchange.fhir.FhirConfig;
+import org.openelisglobal.dataexchange.fhir.FhirUtil;
 import org.openelisglobal.spring.util.SpringContext;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +24,8 @@ public class FhirPersistanceServiceImpl implements FhirPersistanceService {
 
     private FhirContext fhirContext = SpringContext.getBean(FhirContext.class);
     private FhirConfig fhirConfig = SpringContext.getBean(FhirConfig.class);
-    IGenericClient localFhirClient = fhirContext.newRestfulGenericClient(fhirConfig.getLocalFhirStorePath());
+    private FhirUtil fhirUtil = SpringContext.getBean(FhirUtil.class);
+    IGenericClient localFhirClient = fhirUtil.getFhirClient(fhirConfig.getLocalFhirStorePath());
 
     @Override
     public Bundle createFhirResourceInFhirStore(Resource resource) {

@@ -1,7 +1,7 @@
 version: '3.3'
 # lines starting with a #db and #port will be uncommented when setup with a docker database
 services:
-#db    database:
+#db    db.openelis.org:
 #db        container_name: [% db_name %]
 #db        image: postgres:9.5
 #db        ports:
@@ -26,7 +26,7 @@ services:
 #db            interval: 10s
 #db            retries: 10 
             
-    oe.openelisci.org:
+    oe.openelis.org:
         container_name: [% oe_name %]
         image: openelisglobal
 #db        depends_on:
@@ -48,13 +48,14 @@ services:
             - [% logs_dir %]:/var/lib/openelis-global/logs
             - [% tomcat_logs_dir %]:/usr/local/tomcat/logs
         secrets:
+            - source: client_facing_keystore
             - source: keystore
             - source: truststore
             - source: datasource.password
             - source: common.properties
             - source: extra.properties
             
-    fhir.openelisci.org:
+    fhir.openelis.org:
         container_name: [% fhir_api_name %]
         image: hapi-fhir-jpaserver-starter
 #db        depends_on:
@@ -85,6 +86,8 @@ secrets:
     file: [% secrets_dir %]extra.properties  
   hapi.properties:
     file: [% secrets_dir %]hapi.properties
+  client_facing_keystore:
+    file: [% etc_dir %]client_facing_keystore
   keystore:
     file: [% etc_dir %]keystore
   truststore:

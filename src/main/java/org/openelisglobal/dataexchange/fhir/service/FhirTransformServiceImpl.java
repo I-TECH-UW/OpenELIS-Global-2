@@ -12,6 +12,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.validator.GenericValidator;
 import org.hl7.fhir.r4.model.Annotation;
 import org.hl7.fhir.r4.model.Bundle;
@@ -39,6 +41,7 @@ import org.openelisglobal.common.services.SampleAddService.SampleTestCollection;
 import org.openelisglobal.common.services.StatusService.ExternalOrderStatus;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.dataexchange.fhir.FhirConfig;
+import org.openelisglobal.dataexchange.fhir.FhirUtil;
 import org.openelisglobal.dataexchange.fhir.service.TaskWorker.TaskResult;
 import org.openelisglobal.dataexchange.order.action.DBOrderExistanceChecker;
 import org.openelisglobal.dataexchange.order.action.IOrderPersister;
@@ -70,18 +73,32 @@ import ca.uhn.fhir.rest.gclient.TokenClientParam;
 @Service
 public class FhirTransformServiceImpl implements FhirTransformService {
 
-    private FhirContext fhirContext = SpringContext.getBean(FhirContext.class);
-    protected FhirApiWorkflowService fhirApiWorkFlowService = SpringContext.getBean(FhirApiWorkflowService.class);
-    protected PatientIdentityService patientIdentityService = SpringContext.getBean(PatientIdentityService.class);
-    protected ElectronicOrderService electronicOrderService = SpringContext.getBean(ElectronicOrderService.class);
-    protected TestService testService = SpringContext.getBean(TestService.class);
+    @Autowired
+    private FhirContext fhirContext;
+    @Autowired
+    protected FhirApiWorkflowService fhirApiWorkFlowService;
+    @Autowired
+    protected PatientIdentityService patientIdentityService;
+    @Autowired
+    protected ElectronicOrderService electronicOrderService;
+    @Autowired
+    protected TestService testService;
 
     @Autowired
     private FhirPersistanceService fhirPersistanceService;
-    private FhirConfig fhirConfig = SpringContext.getBean(FhirConfig.class);
-    IGenericClient localFhirClient = fhirContext.newRestfulGenericClient(fhirConfig.getLocalFhirStorePath());
+    @Autowired
+    private FhirUtil fhirUtil;
+    @Autowired
+    private FhirConfig fhirConfig;
+    IGenericClient localFhirClient;
 
+    @Autowired
     private IStatusService statusService;
+
+    @PostConstruct
+    public void initVars() {
+        localFhirClient = fhirUtil.getFhirClient(fhirConfig.getLocalFhirStorePath());
+    }
 
     private IStatusService getStatusService() {
         if (statusService == null) {
@@ -95,7 +112,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 //        localSearchParams.put(Patient.SUBJECT_NUMBER,
 //                Arrays.asList(remoteStorePath + "|" + remotePatient.getIdElement().getIdPart()));
 //
-//        IGenericClient localFhirClient = fhirContext.newRestfulGenericClient(localFhirStorePath);
+//        IGenericClient localFhirClient = fhirUtil.getFhirClient(localFhirStorePath);
 //        Bundle localBundle = localFhirClient.search()
 //                .forResource(org.hl7.fhir.r4.model.Patient.class).whereMap(localSearchParams)
 //                .returnBundle(Bundle.class).execute();
@@ -116,9 +133,9 @@ public class FhirTransformServiceImpl implements FhirTransformService {
             if (srBundle.getEntry().size() != 0) {
                 serviceRequest = (ServiceRequest) srBundle.getEntryFirstRep().getResource();
 
-                Bundle pBundle = (Bundle) localFhirClient.search().forResource(org.hl7.fhir.r4.model.Patient.class)
-                        .where(new TokenClientParam("_id").exactly()
-                                .code(serviceRequest.getSubject().getReference().toString()))
+                Bundle pBundle = (Bundle) localFhirClient
+                        .search().forResource(org.hl7.fhir.r4.model.Patient.class).where(new TokenClientParam("_id")
+                                .exactly().code(serviceRequest.getSubject().getReference().toString()))
                         .prettyPrint().execute();
 
                 fhirPatient = new org.hl7.fhir.r4.model.Patient();

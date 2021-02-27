@@ -169,7 +169,7 @@
 <form:hidden path="sampleOrderItems.modified" id="orderModified"/>
 <form:hidden path="sampleOrderItems.sampleId" id="sampleId"/>
 
-<div id=orderDisplay <%= acceptExternalOrders? "style='display:none'" : ""  %> >
+<div id=orderDisplay <%= acceptExternalOrders ? "style='display:none'" : ""  %> >
 <table style="width:100%">
 
 <tr>
@@ -306,6 +306,7 @@
     				 id="requesterId" 
                      onchange="setOrderModified();siteListChanged(this);setCorrectSave();"
                      onkeyup="capitalizeValue( this.value );" >
+            <option ></option>
             <form:options items="${form.sampleOrderItems.referringSiteList}" itemValue="id" itemLabel="value"/>
             </form:select>
     	</c:if>

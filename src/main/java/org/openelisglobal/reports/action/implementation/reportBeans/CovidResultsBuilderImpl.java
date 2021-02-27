@@ -21,6 +21,7 @@ import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.StatusService.OrderStatus;
 import org.openelisglobal.dataexchange.fhir.FhirConfig;
+import org.openelisglobal.dataexchange.fhir.FhirUtil;
 import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.reports.action.implementation.Report.DateRange;
@@ -45,6 +46,7 @@ public abstract class CovidResultsBuilderImpl implements CovidResultsBuilder {
     protected TestService testService = SpringContext.getBean(TestService.class);
     protected FhirContext fhirContext = SpringContext.getBean(FhirContext.class);
     protected FhirConfig fhirConfig = SpringContext.getBean(FhirConfig.class);
+    protected FhirUtil fhirUtil = SpringContext.getBean(FhirUtil.class);
     protected DictionaryService dictionaryService = SpringContext.getBean(DictionaryService.class);
     protected SampleHumanService sampleHumanService = SpringContext.getBean(SampleHumanService.class);
 
@@ -63,7 +65,7 @@ public abstract class CovidResultsBuilderImpl implements CovidResultsBuilder {
     protected static final String LOCATOR_FORM_PROPERTY_NAME = "locatorForm";
     protected static final String CONTACT_TRACING_INDEX_NAME = "contact tracing index name";
     protected static final String CONTACT_TRACING_INDEX_RECORD_NUMBER = "contact tracing dossier number";
-    
+
 
     protected static final String EMPTY_VALUE = "";
 
@@ -83,23 +85,22 @@ public abstract class CovidResultsBuilderImpl implements CovidResultsBuilder {
     protected List<Analysis> getCovidAnalysisWithinDate() {
 
         List<Test> tests = testService.getActiveTestsByLoinc(COVID_LOINC_CODES);
-        
+
         List<Analysis> analysises = analysisService.getAllAnalysisByTestsAndStatusAndCompletedDateRange(
                 tests.stream().map(test -> Integer.parseInt(test.getId())).collect(Collectors.toList()),
                 ANALYSIS_STATUS_IDS.stream().map(val -> Integer.parseInt(val)).collect(Collectors.toList()),
                 SAMPLE_STATUS_IDS.stream().map(val -> Integer.parseInt(val)).collect(Collectors.toList()),
                 this.dateRange.getLowDate(),
                 this.dateRange.getHighDate());
-                
+
         return analysises;
-        
+
 //        return analysises.stream().filter(analysis -> analysis.getStartedDate().after(this.dateRange.getLowDate())
 //                && analysis.getStartedDate().before(this.dateRange.getHighDate())).collect(Collectors.toList());
     }
 
     protected Optional<Task> getTaskForAnalysis(Analysis analysis) {
-        IGenericClient client = fhirContext
-                .newRestfulGenericClient(fhirConfig.getLocalFhirStorePath());
+        IGenericClient client = fhirUtil.getFhirClient(fhirConfig.getLocalFhirStorePath());
         String serviceRequestId = analysis.getSampleItem().getSample().getReferringId();
         if (GenericValidator.isBlankOrNull(serviceRequestId)) {
             return Optional.empty();
