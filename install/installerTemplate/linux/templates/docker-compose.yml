@@ -30,7 +30,7 @@ services:
         container_name: [% oe_name %]
         image: openelisglobal
 #db        depends_on:
-#db            - database
+#db            - db.openelis.org
         ports:
             - "8080:8080"
             - "8443:8443"
@@ -59,7 +59,7 @@ services:
         container_name: [% fhir_api_name %]
         image: hapi-fhir-jpaserver-starter
 #db        depends_on:
-#db            - database
+#db            - db.openelis.org
         ports:
             - "8081:8080"
             - "8444:8443"
