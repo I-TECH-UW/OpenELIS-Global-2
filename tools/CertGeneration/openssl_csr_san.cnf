@@ -16,6 +16,7 @@ stateOrProvinceName_default     = [State or Province]
 localityName_default            = [City or Town]
 0.organizationName_default      = [Organization]
 organizationalUnitName_default  = [Fully Qualified Domain Name]
+commonName_default              = FQDN_VAR
 emailAddress_default            = [your email address]
 
 [ req_ext ]

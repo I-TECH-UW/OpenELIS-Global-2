@@ -68,6 +68,7 @@ do
   read -p 'Would you like another IP entry for this cert (enter ip entry or enter to skip): ' IP_ENTRY
 done
 
+echo "" >> $INT_CA_DIR/${SERVER_NAME}_openssl_csr_san.cnf
 for i in "${!DNS_ENTRIES[@]}"; do 
   position=$(( $i + 2 ))
   echo "DNS.$position = ${DNS_ENTRIES[$i]}" >> $INT_CA_DIR/${SERVER_NAME}_openssl_csr_san.cnf
@@ -77,8 +78,8 @@ for i in "${!IP_ENTRIES[@]}"; do
   echo "IP.$position  = ${IP_ENTRIES[$i]}" >> $INT_CA_DIR/${SERVER_NAME}_openssl_csr_san.cnf
 done
 
-
 cd $INT_CA_DIR
+find ./ \( -type d -name .git -prune \) -o -type f -print0 | xargs -0 sed -i s/FQDN_VAR/$SERVER_NAME/g
 read -sp 'enter the CA keys password:' CA_PASSWORD
 echo
 
@@ -159,6 +160,6 @@ cp $INT_CA_DIR/private/$SERVER_NAME.key.pem $CERT_DIR/$SERVER_NAME.key.pem
 cp $INT_CA_DIR/${SERVER_NAME}_openssl_csr_san.cnf $CERT_DIR/${SERVER_NAME}_openssl_csr_san.cnf
 
 cd $CERT_DIR/..
-tar -czf $CERT_DIR/$CERT_DIR_NAME.tar.gz $CERT_DIR_NAME
+tar -czf $CERT_DIR_NAME.tar.gz $CERT_DIR_NAME
 
 
