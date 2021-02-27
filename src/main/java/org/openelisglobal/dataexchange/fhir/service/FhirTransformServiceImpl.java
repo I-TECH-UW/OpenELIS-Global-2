@@ -39,6 +39,7 @@ import org.openelisglobal.common.services.SampleAddService.SampleTestCollection;
 import org.openelisglobal.common.services.StatusService.ExternalOrderStatus;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.dataexchange.fhir.FhirConfig;
+import org.openelisglobal.dataexchange.fhir.FhirUtil;
 import org.openelisglobal.dataexchange.fhir.service.TaskWorker.TaskResult;
 import org.openelisglobal.dataexchange.order.action.DBOrderExistanceChecker;
 import org.openelisglobal.dataexchange.order.action.IOrderPersister;
@@ -78,8 +79,10 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 
     @Autowired
     private FhirPersistanceService fhirPersistanceService;
+    @Autowired
+    private FhirUtil fhirUtil;
     private FhirConfig fhirConfig = SpringContext.getBean(FhirConfig.class);
-    IGenericClient localFhirClient = fhirContext.newRestfulGenericClient(fhirConfig.getLocalFhirStorePath());
+    IGenericClient localFhirClient = fhirUtil.getFhirClient(fhirConfig.getLocalFhirStorePath());
 
     private IStatusService statusService;
 
@@ -95,7 +98,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 //        localSearchParams.put(Patient.SUBJECT_NUMBER,
 //                Arrays.asList(remoteStorePath + "|" + remotePatient.getIdElement().getIdPart()));
 //
-//        IGenericClient localFhirClient = fhirContext.newRestfulGenericClient(localFhirStorePath);
+//        IGenericClient localFhirClient = fhirUtil.getFhirClient(localFhirStorePath);
 //        Bundle localBundle = localFhirClient.search()
 //                .forResource(org.hl7.fhir.r4.model.Patient.class).whereMap(localSearchParams)
 //                .returnBundle(Bundle.class).execute();
