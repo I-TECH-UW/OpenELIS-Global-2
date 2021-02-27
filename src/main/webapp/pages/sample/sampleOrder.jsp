@@ -169,7 +169,7 @@
 <form:hidden path="sampleOrderItems.modified" id="orderModified"/>
 <form:hidden path="sampleOrderItems.sampleId" id="sampleId"/>
 
-<div id=orderDisplay <%= acceptExternalOrders? "style='display:none'" : ""  %> >
+<div id=orderDisplay <%= acceptExternalOrders ? "style='display:none'" : ""  %> >
 <table style="width:100%">
 
 <tr>

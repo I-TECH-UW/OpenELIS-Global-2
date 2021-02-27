@@ -263,6 +263,9 @@ jQuery('body').on('change', 'input', function() {
 	makeDirty();
 });
 
+jQuery( document ).ready( function() {
+	jQuery('#orderDisplay').show();
+});
 </script>
 
 <hr/>
