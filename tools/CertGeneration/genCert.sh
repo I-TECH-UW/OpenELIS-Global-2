@@ -129,6 +129,15 @@ then
   echo "imported intermediate CA into truststore for $SERVER_NAME"
 fi
 
+if [[ ! -f "$INT_CA_DIR/certs/int.$SERVER_NAME.truststore.p12" ]]
+then
+  keytool -import -alias intermediate_ca -file $INT_CA_DIR/certs/int.$COUNTRY_NAME.crt.pem \
+    -noprompt -storetype pkcs12 \
+    -storepass $PASSWORD \
+    -keystore $INT_CA_DIR/certs/int.$SERVER_NAME.truststore.p12
+  echo "made intermediate CA for $SERVER_NAME using intermediate CA"
+fi
+
 if [[ ! -f "$INT_CA_DIR/certs/$SERVER_NAME.truststore.p12" ]]
 then
   keytool -import -alias $SERVER_NAME -file $INT_CA_DIR/certs/$SERVER_NAME.crt.pem \
@@ -141,6 +150,7 @@ else
   echo "old truststore found. erring on caution and leaving it as is. individual truststore not created "
 fi
 cp $INT_CA_DIR/certs/ca.$SERVER_NAME.truststore.p12 $CERT_DIR/ca.$SERVER_NAME.truststore.p12
+cp $INT_CA_DIR/certs/int.$SERVER_NAME.truststore.p12 $CERT_DIR/int.$SERVER_NAME.truststore.p12
 cp $INT_CA_DIR/certs/$SERVER_NAME.truststore.p12 $CERT_DIR/$SERVER_NAME.truststore.p12
 cp $INT_CA_DIR/certs/chain.$SERVER_NAME.crt.pem $CERT_DIR/chain.$SERVER_NAME.crt.pem
 cp $INT_CA_DIR/certs/$SERVER_NAME.crt.pem $CERT_DIR/$SERVER_NAME.crt.pem
