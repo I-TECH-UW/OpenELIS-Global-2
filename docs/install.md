@@ -62,12 +62,18 @@ make sure to record the password somewhere secure as you will need to enter it e
     sudo openssl pkcs12 -inkey path/toyour/key -in path/to/your/cert -export -out /etc/openelis-global/keystore
     
 enter an export password 
+
+copy the keystore to be your client facing keystore as well
+
+    cp /etc/openelis-global/keystore /etc/openelis-global/client_facing_keystore
 	
 **Be sure to remember your keystore password, you will need it later**
 	
 For the self-signed certificate above, you would use:
 	
     sudo openssl pkcs12 -inkey /etc/ssl/private/apache-selfsigned.key -in /etc/ssl/certs/apache-selfsigned.crt -export -out /etc/openelis-global/keystore
+
+    cp /etc/openelis-global/keystore /etc/openelis-global/client_facing_keystore
 
 **Be sure to remember your keystore password, you will need it later **
 	
