@@ -150,14 +150,14 @@ then
 else
   echo "old truststore found. erring on caution and leaving it as is. individual truststore not created "
 fi
-cp $INT_CA_DIR/certs/ca.$SERVER_NAME.truststore.p12 $CERT_DIR/ca.$SERVER_NAME.truststore.p12
-cp $INT_CA_DIR/certs/int.$SERVER_NAME.truststore.p12 $CERT_DIR/int.$SERVER_NAME.truststore.p12
-cp $INT_CA_DIR/certs/$SERVER_NAME.truststore.p12 $CERT_DIR/$SERVER_NAME.truststore.p12
-cp $INT_CA_DIR/certs/chain.$SERVER_NAME.crt.pem $CERT_DIR/chain.$SERVER_NAME.crt.pem
-cp $INT_CA_DIR/certs/$SERVER_NAME.crt.pem $CERT_DIR/$SERVER_NAME.crt.pem
-cp $INT_CA_DIR/certs/$SERVER_NAME.keystore.p12 $CERT_DIR/$SERVER_NAME.keystore.p12
-cp $INT_CA_DIR/private/$SERVER_NAME.key.pem $CERT_DIR/$SERVER_NAME.key.pem
-cp $INT_CA_DIR/${SERVER_NAME}_openssl_csr_san.cnf $CERT_DIR/${SERVER_NAME}_openssl_csr_san.cnf
+mv $INT_CA_DIR/certs/ca.$SERVER_NAME.truststore.p12 $CERT_DIR/ca.$SERVER_NAME.truststore.p12
+mv $INT_CA_DIR/certs/int.$SERVER_NAME.truststore.p12 $CERT_DIR/int.$SERVER_NAME.truststore.p12
+mv $INT_CA_DIR/certs/$SERVER_NAME.truststore.p12 $CERT_DIR/$SERVER_NAME.truststore.p12
+mv $INT_CA_DIR/certs/chain.$SERVER_NAME.crt.pem $CERT_DIR/chain.$SERVER_NAME.crt.pem
+mv $INT_CA_DIR/certs/$SERVER_NAME.crt.pem $CERT_DIR/$SERVER_NAME.crt.pem
+mv $INT_CA_DIR/certs/$SERVER_NAME.keystore.p12 $CERT_DIR/$SERVER_NAME.keystore.p12
+mv $INT_CA_DIR/private/$SERVER_NAME.key.pem $CERT_DIR/$SERVER_NAME.key.pem
+mv $INT_CA_DIR/${SERVER_NAME}_openssl_csr_san.cnf $CERT_DIR/${SERVER_NAME}_openssl_csr_san.cnf
 
 cd $CERT_DIR/..
 tar -czf $CERT_DIR_NAME.tar.gz $CERT_DIR_NAME
