@@ -750,7 +750,7 @@
 						<font size="7"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$R{report.email}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$R{report.test}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement x="264" y="13" width="59" height="12" uuid="93145981-a41f-4842-b50f-245c563c3fe2"/>
