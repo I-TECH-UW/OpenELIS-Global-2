@@ -51,8 +51,6 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
     private FhirConfig fhirConfig;
     @Autowired
     private FhirUtil fhirUtil;
-    @Autowired
-    private FhirTransformService fhirTransformService;
 
     @Value("${org.openelisglobal.fhirstore.uri}")
     private String localFhirStorePath;
