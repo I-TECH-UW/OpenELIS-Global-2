@@ -127,7 +127,7 @@ public class DisplayListService implements LocaleChangeListener {
         Collections.sort(testResults, new Comparator<IdValuePair>() {
             @Override
             public int compare(IdValuePair o1, IdValuePair o2) {
-                return o1.getValue().compareTo(o2.getValue());
+                return o1.getValue().toLowerCase().compareTo(o2.getValue().toLowerCase());
             }
         });
         return testResults;
@@ -398,6 +398,9 @@ public class DisplayListService implements LocaleChangeListener {
         case PATIENT_HEALTH_REGIONS: {
             typeToListMap.put(ListType.PATIENT_HEALTH_REGIONS, createPatientHealthRegions());
             break;
+        }
+        case DICTIONARY_TEST_RESULTS: {
+            typeToListMap.put(ListType.DICTIONARY_TEST_RESULTS, createDictionaryTestResults());
         }
         }
     }
