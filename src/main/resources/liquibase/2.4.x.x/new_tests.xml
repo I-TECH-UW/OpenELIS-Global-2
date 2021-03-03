@@ -8,7 +8,6 @@
 
 	<!-- create extension if not exists "uuid-ossp"; !must be superuser -->
 
-
         <changeSet author="rossumg" id="5">
                 <sql>
                         update clinlims.localization set english = 'COVID-19 PCR', french = 'COVID-19 PCR' where description = 'test name' and english in ('Covid PCR', 'Covid(PCR)');
@@ -46,7 +45,7 @@
         		id, description, english, french, lastupdated)
         		VALUES
          		(nextval('localization_seq'),'test name','COVID-19 PCR','COVID-19 PCR', now()),
-         		(nextval('localization_seq'),'test report name ','SARS-CoV-2 RNA by qRT-PCR','SARS-CoV-2 RNA by qRT-PCR', now());
+         		(nextval('localization_seq'),'test report name','SARS-CoV-2 RNA by qRT-PCR','SARS-CoV-2 RNA by qRT-PCR', now());
                 </sql>
         </changeSet>
         
@@ -322,7 +321,7 @@
         		id, description, english, french, lastupdated)
         		VALUES
          		(nextval('localization_seq'),'test name','COVID-19 ANTIBODY IgM','COVID-19 ANITBODY IgM', now()),
-         		(nextval('localization_seq'),'test report name ','IgM to SARS-CoV-2 by EIA or LFA','IgM to SARS-CoV-2 by EIA or LFA', now());
+         		(nextval('localization_seq'),'test report name','IgM to SARS-CoV-2 by EIA or LFA','IgM to SARS-CoV-2 by EIA or LFA', now());
                 </sql>
         </changeSet>
 
@@ -509,7 +508,7 @@
         		id, description, english, french, lastupdated)
         		VALUES
          		(nextval('localization_seq'),'test name','COVID-19 ANTIBODY IgG','COVID-19 ANITBODY IgG', now()),
-         		(nextval('localization_seq'),'test report name ','IgG to SARS-CoV-2 by EIA or LFA','IgG to SARS-CoV-2 by EIA or LFA', now());
+         		(nextval('localization_seq'),'test report name','IgG to SARS-CoV-2 by EIA or LFA','IgG to SARS-CoV-2 by EIA or LFA', now());
                 </sql>
         </changeSet>
 
@@ -667,7 +666,7 @@
         		id, description, english, french, lastupdated)
         		VALUES
          		(nextval('localization_seq'),'test name','DENGUE PCR','DENGUE PCR', now()),
-         		(nextval('localization_seq'),'test report name ','Dengue virus RNA by qRT-PCR','Dengue virus RNA by qRT-PCR', now());
+         		(nextval('localization_seq'),'test report name','Dengue virus RNA by qRT-PCR','Dengue virus RNA by qRT-PCR', now());
                 </sql>
         </changeSet>
 
@@ -940,7 +939,7 @@
         		id, description, english, french, lastupdated)
         		VALUES
          		(nextval('localization_seq'),'test name','HIV INFANT VIRAL LOAD','HIV INFANT VIRAL LOAD', now()),
-         		(nextval('localization_seq'),'test report name ','HIV-1 DNA by qRT-PCR','HIV-1 DNA by qRT-PCR', now());
+         		(nextval('localization_seq'),'test report name','HIV-1 DNA by qRT-PCR','HIV-1 DNA by qRT-PCR', now());
                 </sql>
         </changeSet>
 
@@ -990,7 +989,7 @@
         
         <changeSet author="rossumg" id="325">
 		<preConditions onFail="MARK_RAN">
-			<sqlCheck  expectedResult="0">SELECT count(*) FROM clinlims.test_results WHERE test_id = 
+			<sqlCheck  expectedResult="0">SELECT count(*) FROM clinlims.test_result WHERE test_id = 
 				(select id from clinlims.test where description = 'HIVINFANTVIRALLOAD(Serum)')</sqlCheck> 
                 </preConditions>
 
@@ -1194,7 +1193,7 @@
         		id, description, english, french, lastupdated)
         		VALUES
          		(nextval('localization_seq'),'test name','HIV VIRAL LOAD','HIV VIRAL LOAD', now()),
-         		(nextval('localization_seq'),'test report name ','HIV-1 RNA by qRT-PCR','HIV-1 RNA by qRT-PCR', now());
+         		(nextval('localization_seq'),'test report name','HIV-1 RNA by qRT-PCR','HIV-1 RNA by qRT-PCR', now());
                 </sql>
         </changeSet>
 
@@ -1389,7 +1388,7 @@
         		id, description, english, french, lastupdated)
         		VALUES
          		(nextval('localization_seq'),'test name','HEPATITIS C VIRAL LOAD','HEPATITIS C VIRAL LOAD', now()),
-         		(nextval('localization_seq'),'test report name ','HCV RNA by qRT-PCR','HCV RNA by qRT-PCR', now());
+         		(nextval('localization_seq'),'test report name','HCV RNA by qRT-PCR','HCV RNA by qRT-PCR', now());
                 </sql>
         </changeSet>
 
@@ -1521,7 +1520,7 @@
         		id, description, english, french, lastupdated)
         		VALUES
          		(nextval('localization_seq'),'test name','HEPATITIS B VIRAL LOAD','HEPATITIS B VIRAL LOAD', now()),
-         		(nextval('localization_seq'),'test report name ','HBV RNA by qRT-PCR','HBV RNA by qRT-PCR', now());
+         		(nextval('localization_seq'),'test report name','HBV RNA by qRT-PCR','HBV RNA by qRT-PCR', now());
                 </sql>
         </changeSet>
 
