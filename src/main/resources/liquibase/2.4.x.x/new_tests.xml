@@ -56,8 +56,10 @@
 
                 <sql>
 			INSERT INTO clinlims.test(
-        		id, method_id, uom_id, description, loinc, reporting_description, sticker_req_flag, is_active, active_begin, active_end, is_reportable, time_holding, time_wait, time_ta_average, time_ta_warning, time_ta_max, label_qty, lastupdated, label_id, test_trailer_id, test_section_id, scriptlet_id, test_format_id, local_code, sort_order, name, orderable, guid, name_localization_id, reporting_name_localization_id, default_test_result_id, notify_results)
-			VALUES (nextval('test_seq'),null,null,'COVIDPCR(Respiratory Swab)','94500-6',null,null,'Y',null,null,'N',null,null,null,null,null,null,now(),null,null,136,null,null,'COVIDPCR',1,'COVIDPCR','t',uuid_generate_v4(),
+        		id, method_id, uom_id, description, loinc, reporting_description, sticker_req_flag, is_active, active_begin, active_end, is_reportable, time_holding, time_wait, time_ta_average, time_ta_warning, time_ta_max, label_qty, lastupdated, label_id, test_trailer_id, test_section_id, scriptlet_id, test_format_id, local_code, sort_order, name, orderable, 
+        		guid, name_localization_id, reporting_name_localization_id, default_test_result_id, notify_results)
+			VALUES (nextval('test_seq'),null,null,'COVIDPCR(Respiratory Swab)','94500-6',null,null,'Y',null,null,'N',null,null,null,null,null,null,now(),null,null,136,null,null,'COVIDPCR',1,'COVIDPCR','t',
+			'e73d8c27-a69d-4c8b-95ea-86c0e0b351bd',
 			(select id from localization where description = 'test name' and english = 'COVID-19 PCR' limit 1),
 			(select id from localization where description = 'test report name' and english = 'SARS-CoV-2 RNA by qRT-PCR' limit 1),
 			null,'f');
@@ -129,7 +131,8 @@
                 <sql>
 			INSERT INTO clinlims.test(
         		id, method_id, uom_id, description, loinc, reporting_description, sticker_req_flag, is_active, active_begin, active_end, is_reportable, time_holding, time_wait, time_ta_average, time_ta_warning, time_ta_max, label_qty, lastupdated, label_id, test_trailer_id, test_section_id, scriptlet_id, test_format_id, local_code, sort_order, name, orderable, guid, name_localization_id, reporting_name_localization_id, default_test_result_id, notify_results)
-			VALUES (nextval('test_seq'),null,null,'COVIDPCR(Sputum)','94500-6',null,null,'Y',null,null,'N',null,null,null,null,null,null,now(),null,null,136,null,null,'COVIDPCR',1,'COVIDPCR','t',uuid_generate_v4(),
+			VALUES (nextval('test_seq'),null,null,'COVIDPCR(Sputum)','94500-6',null,null,'Y',null,null,'N',null,null,null,null,null,null,now(),null,null,136,null,null,'COVIDPCR',1,'COVIDPCR','t',
+			'6ad5c653-93be-4803-a849-a2b9e230dd4d',
 			(select id from localization where description = 'test name' and english = 'COVID-19 PCR' limit 1),
 			(select id from localization where description = 'test report name' and english = 'SARS-CoV-2 RNA by qRT-PCR' limit 1),
 			null,'f');
@@ -200,7 +203,8 @@
                 <sql>
 			INSERT INTO clinlims.test(
         		id, method_id, uom_id, description, loinc, reporting_description, sticker_req_flag, is_active, active_begin, active_end, is_reportable, time_holding, time_wait, time_ta_average, time_ta_warning, time_ta_max, label_qty, lastupdated, label_id, test_trailer_id, test_section_id, scriptlet_id, test_format_id, local_code, sort_order, name, orderable, guid, name_localization_id, reporting_name_localization_id, default_test_result_id, notify_results)
-			VALUES (nextval('test_seq'),null,null,'COVIDPCR(Fluid)','94500-6',null,null,'Y',null,null,'N',null,null,null,null,null,null,now(),null,null,136,null,null,'COVIDPCR',1,'COVIDPCR','t',uuid_generate_v4(),
+			VALUES (nextval('test_seq'),null,null,'COVIDPCR(Fluid)','94500-6',null,null,'Y',null,null,'N',null,null,null,null,null,null,now(),null,null,136,null,null,'COVIDPCR',1,'COVIDPCR','t',
+			'16127641-0026-48f1-ac23-c29da4f73b85',
 			(select id from localization where description = 'test name' and english = 'COVID-19 PCR' limit 1),
 			(select id from localization where description = 'test report name' and english = 'SARS-CoV-2 RNA by qRT-PCR' limit 1),
 			null,'f');
@@ -334,7 +338,8 @@
                 <sql>
 			INSERT INTO clinlims.test(
         		id, method_id, uom_id, description, loinc, reporting_description, sticker_req_flag, is_active, active_begin, active_end, is_reportable, time_holding, time_wait, time_ta_average, time_ta_warning, time_ta_max, label_qty, lastupdated, label_id, test_trailer_id, test_section_id, scriptlet_id, test_format_id, local_code, sort_order, name, orderable, guid, name_localization_id, reporting_name_localization_id, default_test_result_id, notify_results)
-			VALUES (nextval('test_seq'),null,null,'COVID-19ANTIBODYIgM(Serum)','94500-6',null,null,'Y',null,null,'N',null,null,null,null,null,null,now(),null,null,136,null,null,'COVIDPCR',1,'COVIDPCR','t',uuid_generate_v4(),
+			VALUES (nextval('test_seq'),null,null,'COVID-19ANTIBODYIgM(Serum)','94500-6',null,null,'Y',null,null,'N',null,null,null,null,null,null,now(),null,null,136,null,null,'COVIDPCR',1,'COVIDPCR','t',
+			'2d2dcab4-5429-403c-99d9-ebbcff876a3e',
 			(select id from localization where description = 'test name' and english = 'COVID-19 ANTIBODY IgM' limit 1),
 			(select id from localization where description = 'test report name' and english = 'IgM to SARS-CoV-2 by EIA or LFA' limit 1),
 			null,'f');
@@ -421,7 +426,8 @@
                 <sql>
 			INSERT INTO clinlims.test(
         		id, method_id, uom_id, description, loinc, reporting_description, sticker_req_flag, is_active, active_begin, active_end, is_reportable, time_holding, time_wait, time_ta_average, time_ta_warning, time_ta_max, label_qty, lastupdated, label_id, test_trailer_id, test_section_id, scriptlet_id, test_format_id, local_code, sort_order, name, orderable, guid, name_localization_id, reporting_name_localization_id, default_test_result_id, notify_results)
-			VALUES (nextval('test_seq'),null,null,'COVID-19ANTIBODYIgM(Plasma)','94500-6',null,null,'Y',null,null,'N',null,null,null,null,null,null,now(),null,null,136,null,null,'COVIDPCR',1,'COVIDPCR','t',uuid_generate_v4(),
+			VALUES (nextval('test_seq'),null,null,'COVID-19ANTIBODYIgM(Plasma)','94500-6',null,null,'Y',null,null,'N',null,null,null,null,null,null,now(),null,null,136,null,null,'COVIDPCR',1,'COVIDPCR','t',
+			'9ffbec64-45c4-48e7-bb36-b46b482d8d7e',
 			(select id from localization where description = 'test name' and english = 'COVID-19 ANTIBODY IgM' limit 1),
 			(select id from localization where description = 'test report name' and english = 'IgM to SARS-CoV-2 by EIA or LFA' limit 1),
 			null,'f');
@@ -520,7 +526,8 @@
                 <sql>
 			INSERT INTO clinlims.test(
         		id, method_id, uom_id, description, loinc, reporting_description, sticker_req_flag, is_active, active_begin, active_end, is_reportable, time_holding, time_wait, time_ta_average, time_ta_warning, time_ta_max, label_qty, lastupdated, label_id, test_trailer_id, test_section_id, scriptlet_id, test_format_id, local_code, sort_order, name, orderable, guid, name_localization_id, reporting_name_localization_id, default_test_result_id, notify_results)
-			VALUES (nextval('test_seq'),null,null,'COVID-19ANTIBODYIgG(Serum)','94500-6',null,null,'Y',null,null,'N',null,null,null,null,null,null,now(),null,null,136,null,null,'COVIDPCR',1,'COVIDPCR','t',uuid_generate_v4(),
+			VALUES (nextval('test_seq'),null,null,'COVID-19ANTIBODYIgG(Serum)','94500-6',null,null,'Y',null,null,'N',null,null,null,null,null,null,now(),null,null,136,null,null,'COVIDPCR',1,'COVIDPCR','t',
+			'f4d1f590-62fa-43f2-8d94-466848b9df77',
 			(select id from localization where description = 'test name' and english = 'COVID-19 ANTIBODY IgG' limit 1),
 			(select id from localization where description = 'test report name' and english = 'IgG to SARS-CoV-2 by EIA or LFA' limit 1),
 			null,'f');
@@ -592,7 +599,8 @@
                 <sql>
 			INSERT INTO clinlims.test(
         		id, method_id, uom_id, description, loinc, reporting_description, sticker_req_flag, is_active, active_begin, active_end, is_reportable, time_holding, time_wait, time_ta_average, time_ta_warning, time_ta_max, label_qty, lastupdated, label_id, test_trailer_id, test_section_id, scriptlet_id, test_format_id, local_code, sort_order, name, orderable, guid, name_localization_id, reporting_name_localization_id, default_test_result_id, notify_results)
-			VALUES (nextval('test_seq'),null,null,'COVID-19ANTIBODYIgG(Plasma)','94500-6',null,null,'Y',null,null,'N',null,null,null,null,null,null,now(),null,null,136,null,null,'COVIDPCR',1,'COVIDPCR','t',uuid_generate_v4(),
+			VALUES (nextval('test_seq'),null,null,'COVID-19ANTIBODYIgG(Plasma)','94500-6',null,null,'Y',null,null,'N',null,null,null,null,null,null,now(),null,null,136,null,null,'COVIDPCR',1,'COVIDPCR','t',
+			'e8ce2295-b205-43cc-9e45-254eb248bb2f',
 			(select id from localization where description = 'test name' and english = 'COVID-19 ANTIBODY IgG' limit 1),
 			(select id from localization where description = 'test report name' and english = 'IgG to SARS-CoV-2 by EIA or LFA' limit 1),
 			null,'f');
@@ -678,7 +686,8 @@
                 <sql>
 			INSERT INTO clinlims.test(
         		id, method_id, uom_id, description, loinc, reporting_description, sticker_req_flag, is_active, active_begin, active_end, is_reportable, time_holding, time_wait, time_ta_average, time_ta_warning, time_ta_max, label_qty, lastupdated, label_id, test_trailer_id, test_section_id, scriptlet_id, test_format_id, local_code, sort_order, name, orderable, guid, name_localization_id, reporting_name_localization_id, default_test_result_id, notify_results)
-			VALUES (nextval('test_seq'),null,null,'DENGUEPCR(Serum)','94500-6',null,null,'Y',null,null,'N',null,null,null,null,null,null,now(),null,null,136,null,null,'DENGUEPCR',1,'DENGUEPCR','t',uuid_generate_v4(),
+			VALUES (nextval('test_seq'),null,null,'DENGUEPCR(Serum)','94500-6',null,null,'Y',null,null,'N',null,null,null,null,null,null,now(),null,null,136,null,null,'DENGUEPCR',1,'DENGUEPCR','t',
+			'd7ee6d4f-32b0-4b06-a470-f2a5c486d1d4',
 			(select id from localization where description = 'test name' and english = 'DENGUE PCR' limit 1),
 			(select id from localization where description = 'test report name' and english = 'Dengue virus RNA by qRT-PCR' limit 1),
 			null,'f');
@@ -760,7 +769,8 @@
                 <sql>
 			INSERT INTO clinlims.test(
         		id, method_id, uom_id, description, loinc, reporting_description, sticker_req_flag, is_active, active_begin, active_end, is_reportable, time_holding, time_wait, time_ta_average, time_ta_warning, time_ta_max, label_qty, lastupdated, label_id, test_trailer_id, test_section_id, scriptlet_id, test_format_id, local_code, sort_order, name, orderable, guid, name_localization_id, reporting_name_localization_id, default_test_result_id, notify_results)
-			VALUES (nextval('test_seq'),null,null,'DENGUEPCR(Plasma)','94500-6',null,null,'Y',null,null,'N',null,null,null,null,null,null,now(),null,null,136,null,null,'DENGUEPCR',1,'DENGUEPCR','t',uuid_generate_v4(),
+			VALUES (nextval('test_seq'),null,null,'DENGUEPCR(Plasma)','94500-6',null,null,'Y',null,null,'N',null,null,null,null,null,null,now(),null,null,136,null,null,'DENGUEPCR',1,'DENGUEPCR','t',
+			'04359ce3-5510-4a6c-a5ac-7889f0f61af6',
 			(select id from localization where description = 'test name' and english = 'DENGUE PCR' limit 1),
 			(select id from localization where description = 'test report name' and english = 'Dengue virus RNA by qRT-PCR' limit 1),
 			null,'f');
@@ -842,7 +852,8 @@
                 <sql>
 			INSERT INTO clinlims.test(
         		id, method_id, uom_id, description, loinc, reporting_description, sticker_req_flag, is_active, active_begin, active_end, is_reportable, time_holding, time_wait, time_ta_average, time_ta_warning, time_ta_max, label_qty, lastupdated, label_id, test_trailer_id, test_section_id, scriptlet_id, test_format_id, local_code, sort_order, name, orderable, guid, name_localization_id, reporting_name_localization_id, default_test_result_id, notify_results)
-			VALUES (nextval('test_seq'),null,null,'DENGUEPCR(DBS)','94500-6',null,null,'Y',null,null,'N',null,null,null,null,null,null,now(),null,null,136,null,null,'DENGUEPCR',1,'DENGUEPCR','t',uuid_generate_v4(),
+			VALUES (nextval('test_seq'),null,null,'DENGUEPCR(DBS)','94500-6',null,null,'Y',null,null,'N',null,null,null,null,null,null,now(),null,null,136,null,null,'DENGUEPCR',1,'DENGUEPCR','t',
+			'cdf7524c-7615-474a-81bc-fe0678ac3521',
 			(select id from localization where description = 'test name' and english = 'DENGUE PCR' limit 1),
 			(select id from localization where description = 'test report name' and english = 'Dengue virus RNA by qRT-PCR' limit 1),
 			null,'f');
@@ -951,7 +962,8 @@
                 <sql>
 			INSERT INTO clinlims.test(
         		id, method_id, uom_id, description, loinc, reporting_description, sticker_req_flag, is_active, active_begin, active_end, is_reportable, time_holding, time_wait, time_ta_average, time_ta_warning, time_ta_max, label_qty, lastupdated, label_id, test_trailer_id, test_section_id, scriptlet_id, test_format_id, local_code, sort_order, name, orderable, guid, name_localization_id, reporting_name_localization_id, default_test_result_id, notify_results)
-			VALUES (nextval('test_seq'),null,null,'HIVINFANTVIRALLOAD(Serum)','94500-6',null,null,'Y',null,null,'N',null,null,null,null,null,null,now(),null,null,136,null,null,'HIVINFANTVIRALLOAD',1,'HIVINFANTVIRALLOAD','t',uuid_generate_v4(),
+			VALUES (nextval('test_seq'),null,null,'HIVINFANTVIRALLOAD(Serum)','94500-6',null,null,'Y',null,null,'N',null,null,null,null,null,null,now(),null,null,136,null,null,'HIVINFANTVIRALLOAD',1,'HIVINFANTVIRALLOAD','t',
+			'9393e04f-d733-404a-9b5a-f97537534845',
 			(select id from localization where description = 'test name' and english = 'HIV INFANT VIRAL LOAD' limit 1),
 			(select id from localization where description = 'test report name' and english = 'HIV-1 DNA by qRT-PCR' limit 1),
 			null,'f');
@@ -1031,7 +1043,8 @@
                 <sql>
 			INSERT INTO clinlims.test(
         		id, method_id, uom_id, description, loinc, reporting_description, sticker_req_flag, is_active, active_begin, active_end, is_reportable, time_holding, time_wait, time_ta_average, time_ta_warning, time_ta_max, label_qty, lastupdated, label_id, test_trailer_id, test_section_id, scriptlet_id, test_format_id, local_code, sort_order, name, orderable, guid, name_localization_id, reporting_name_localization_id, default_test_result_id, notify_results)
-			VALUES (nextval('test_seq'),null,null,'HIVINFANTVIRALLOAD(Plasma)','94500-6',null,null,'Y',null,null,'N',null,null,null,null,null,null,now(),null,null,136,null,null,'HIVINFANTVIRALLOAD',1,'HIVINFANTVIRALLOAD','t',uuid_generate_v4(),
+			VALUES (nextval('test_seq'),null,null,'HIVINFANTVIRALLOAD(Plasma)','94500-6',null,null,'Y',null,null,'N',null,null,null,null,null,null,now(),null,null,136,null,null,'HIVINFANTVIRALLOAD',1,'HIVINFANTVIRALLOAD','t',
+			'fffd97ee-9615-4758-a156-e47394be3adb',
 			(select id from localization where description = 'test name' and english = 'HIV INFANT VIRAL LOAD' limit 1),
 			(select id from localization where description = 'test report name' and english = 'HIV INFANT VIRAL LOAD' limit 1),
 			null,'f');
@@ -1111,7 +1124,8 @@
                 <sql>
 			INSERT INTO clinlims.test(
         		id, method_id, uom_id, description, loinc, reporting_description, sticker_req_flag, is_active, active_begin, active_end, is_reportable, time_holding, time_wait, time_ta_average, time_ta_warning, time_ta_max, label_qty, lastupdated, label_id, test_trailer_id, test_section_id, scriptlet_id, test_format_id, local_code, sort_order, name, orderable, guid, name_localization_id, reporting_name_localization_id, default_test_result_id, notify_results)
-			VALUES (nextval('test_seq'),null,null,'HIVINFANTVIRALLOAD(DBS)','94500-6',null,null,'Y',null,null,'N',null,null,null,null,null,null,now(),null,null,136,null,null,'HIVINFANTVIRALLOAD',1,'HIVINFANTVIRALLOAD','t',uuid_generate_v4(),
+			VALUES (nextval('test_seq'),null,null,'HIVINFANTVIRALLOAD(DBS)','94500-6',null,null,'Y',null,null,'N',null,null,null,null,null,null,now(),null,null,136,null,null,'HIVINFANTVIRALLOAD',1,'HIVINFANTVIRALLOAD','t',
+			'77c5e673-2f25-46d8-8215-116ad31593dc',
 			(select id from localization where description = 'test name' and english = 'HIV INFANT VIRAL LOAD' limit 1),
 			(select id from localization where description = 'test report name' and english = 'HIV INFANT VIRAL LOAD' limit 1),
 			null,'f');
@@ -1205,7 +1219,8 @@
                 <sql>
 			INSERT INTO clinlims.test(
         		id, method_id, uom_id, description, loinc, reporting_description, sticker_req_flag, is_active, active_begin, active_end, is_reportable, time_holding, time_wait, time_ta_average, time_ta_warning, time_ta_max, label_qty, lastupdated, label_id, test_trailer_id, test_section_id, scriptlet_id, test_format_id, local_code, sort_order, name, orderable, guid, name_localization_id, reporting_name_localization_id, default_test_result_id, notify_results)
-			VALUES (nextval('test_seq'),null,null,'HIVVIRALLOAD(Serum)','94500-6',null,null,'Y',null,null,'N',null,null,null,null,null,null,now(),null,null,136,null,null,'HIVVIRALLOAD',1,'HIVVIRALLOAD','t',uuid_generate_v4(),
+			VALUES (nextval('test_seq'),null,null,'HIVVIRALLOAD(Serum)','94500-6',null,null,'Y',null,null,'N',null,null,null,null,null,null,now(),null,null,136,null,null,'HIVVIRALLOAD',1,'HIVVIRALLOAD','t',
+			'f7d1aec4-f378-4034-8aba-ea1b4b277d0b',
 			(select id from localization where description = 'test name' and english = 'HIV VIRAL LOAD' limit 1),
 			(select id from localization where description = 'test report name' and english = 'HIV-1 RNA by qRT-PCR' limit 1),
 			null,'f');
@@ -1265,7 +1280,8 @@
                 <sql>
 			INSERT INTO clinlims.test(
         		id, method_id, uom_id, description, loinc, reporting_description, sticker_req_flag, is_active, active_begin, active_end, is_reportable, time_holding, time_wait, time_ta_average, time_ta_warning, time_ta_max, label_qty, lastupdated, label_id, test_trailer_id, test_section_id, scriptlet_id, test_format_id, local_code, sort_order, name, orderable, guid, name_localization_id, reporting_name_localization_id, default_test_result_id, notify_results)
-			VALUES (nextval('test_seq'),null,null,'HIVVIRALLOAD(Plasma)','94500-6',null,null,'Y',null,null,'N',null,null,null,null,null,null,now(),null,null,136,null,null,'HIVVIRALLOAD',1,'HIVVIRALLOAD','t',uuid_generate_v4(),
+			VALUES (nextval('test_seq'),null,null,'HIVVIRALLOAD(Plasma)','94500-6',null,null,'Y',null,null,'N',null,null,null,null,null,null,now(),null,null,136,null,null,'HIVVIRALLOAD',1,'HIVVIRALLOAD','t',
+			'45db7e2e-189d-4845-8625-9cff6d8369ae',
 			(select id from localization where description = 'test name' and english = 'HIV VIRAL LOAD' limit 1),
 			(select id from localization where description = 'test report name' and english = 'HIV-1 RNA by qRT-PCR' limit 1),
 			null,'f');
@@ -1326,7 +1342,8 @@
                 <sql>
 			INSERT INTO clinlims.test(
         		id, method_id, uom_id, description, loinc, reporting_description, sticker_req_flag, is_active, active_begin, active_end, is_reportable, time_holding, time_wait, time_ta_average, time_ta_warning, time_ta_max, label_qty, lastupdated, label_id, test_trailer_id, test_section_id, scriptlet_id, test_format_id, local_code, sort_order, name, orderable, guid, name_localization_id, reporting_name_localization_id, default_test_result_id, notify_results)
-			VALUES (nextval('test_seq'),null,null,'HIVVIRALLOAD(DBS)','94500-6',null,null,'Y',null,null,'N',null,null,null,null,null,null,now(),null,null,136,null,null,'HIVVIRALLOAD',1,'HIVVIRALLOAD','t',uuid_generate_v4(),
+			VALUES (nextval('test_seq'),null,null,'HIVVIRALLOAD(DBS)','94500-6',null,null,'Y',null,null,'N',null,null,null,null,null,null,now(),null,null,136,null,null,'HIVVIRALLOAD',1,'HIVVIRALLOAD','t',
+			'cdb8ded7-cc1d-4cc8-b1a0-1c2eb38cf24f',
 			(select id from localization where description = 'test name' and english = 'HIV VIRAL LOAD' limit 1),
 			(select id from localization where description = 'test report name' and english = 'HIV-1 RNA by qRT-PCR' limit 1),
 			null,'f');
@@ -1400,7 +1417,8 @@
                 <sql>
 			INSERT INTO clinlims.test(
         		id, method_id, uom_id, description, loinc, reporting_description, sticker_req_flag, is_active, active_begin, active_end, is_reportable, time_holding, time_wait, time_ta_average, time_ta_warning, time_ta_max, label_qty, lastupdated, label_id, test_trailer_id, test_section_id, scriptlet_id, test_format_id, local_code, sort_order, name, orderable, guid, name_localization_id, reporting_name_localization_id, default_test_result_id, notify_results)
-			VALUES (nextval('test_seq'),null,null,'HEPATITISCVIRALLOAD(Serum)','94500-6',null,null,'Y',null,null,'N',null,null,null,null,null,null,now(),null,null,136,null,null,'HEPATITISCVIRALLOAD',1,'HEPATITISCVIRALLOAD','t',uuid_generate_v4(),
+			VALUES (nextval('test_seq'),null,null,'HEPATITISCVIRALLOAD(Serum)','94500-6',null,null,'Y',null,null,'N',null,null,null,null,null,null,now(),null,null,136,null,null,'HEPATITISCVIRALLOAD',1,'HEPATITISCVIRALLOAD','t',
+			'f76057f5-65ee-4457-960c-aaba6af81d08',
 			(select id from localization where description = 'test name' and english = 'HEPATITIS C VIRAL LOAD' limit 1),
 			(select id from localization where description = 'test report name' and english = 'HCV RNA by qRT-PCR' limit 1),
 			null,'f');
@@ -1459,7 +1477,8 @@
                 <sql>
 			INSERT INTO clinlims.test(
         		id, method_id, uom_id, description, loinc, reporting_description, sticker_req_flag, is_active, active_begin, active_end, is_reportable, time_holding, time_wait, time_ta_average, time_ta_warning, time_ta_max, label_qty, lastupdated, label_id, test_trailer_id, test_section_id, scriptlet_id, test_format_id, local_code, sort_order, name, orderable, guid, name_localization_id, reporting_name_localization_id, default_test_result_id, notify_results)
-			VALUES (nextval('test_seq'),null,null,'HEPATITISCVIRALLOAD(Plasma)','94500-6',null,null,'Y',null,null,'N',null,null,null,null,null,null,now(),null,null,136,null,null,'HEPATITISCVIRALLOAD',1,'HEPATITISCVIRALLOAD','t',uuid_generate_v4(),
+			VALUES (nextval('test_seq'),null,null,'HEPATITISCVIRALLOAD(Plasma)','94500-6',null,null,'Y',null,null,'N',null,null,null,null,null,null,now(),null,null,136,null,null,'HEPATITISCVIRALLOAD',1,'HEPATITISCVIRALLOAD','t',
+			'6480988b-fd76-49bf-acae-9a1385b0f4d6',
 			(select id from localization where description = 'test name' and english = 'HEPATITIS C VIRAL LOAD' limit 1),
 			(select id from localization where description = 'test report name' and english = 'HCV RNA by qRT-PCR' limit 1),
 			null,'f');
@@ -1532,7 +1551,8 @@
                 <sql>
 			INSERT INTO clinlims.test(
         		id, method_id, uom_id, description, loinc, reporting_description, sticker_req_flag, is_active, active_begin, active_end, is_reportable, time_holding, time_wait, time_ta_average, time_ta_warning, time_ta_max, label_qty, lastupdated, label_id, test_trailer_id, test_section_id, scriptlet_id, test_format_id, local_code, sort_order, name, orderable, guid, name_localization_id, reporting_name_localization_id, default_test_result_id, notify_results)
-			VALUES (nextval('test_seq'),null,null,'HEPATITISBVIRALLOAD(Serum)','94500-6',null,null,'Y',null,null,'N',null,null,null,null,null,null,now(),null,null,136,null,null,'HEPATITISBVIRALLOAD',1,'HEPATITISBVIRALLOAD','t',uuid_generate_v4(),
+			VALUES (nextval('test_seq'),null,null,'HEPATITISBVIRALLOAD(Serum)','94500-6',null,null,'Y',null,null,'N',null,null,null,null,null,null,now(),null,null,136,null,null,'HEPATITISBVIRALLOAD',1,'HEPATITISBVIRALLOAD','t',
+			'860e9c3d-5b90-4643-a5c9-437015b79b67',
 			(select id from localization where description = 'test name' and english = 'HEPATITIS B VIRAL LOAD' limit 1),
 			(select id from localization where description = 'test report name' and english = 'HBV RNA by qRT-PCR' limit 1),
 			null,'f');
@@ -1591,7 +1611,8 @@
                 <sql>
 			INSERT INTO clinlims.test(
         		id, method_id, uom_id, description, loinc, reporting_description, sticker_req_flag, is_active, active_begin, active_end, is_reportable, time_holding, time_wait, time_ta_average, time_ta_warning, time_ta_max, label_qty, lastupdated, label_id, test_trailer_id, test_section_id, scriptlet_id, test_format_id, local_code, sort_order, name, orderable, guid, name_localization_id, reporting_name_localization_id, default_test_result_id, notify_results)
-			VALUES (nextval('test_seq'),null,null,'HEPATITISBVIRALLOAD(Plasma)','94500-6',null,null,'Y',null,null,'N',null,null,null,null,null,null,now(),null,null,136,null,null,'HEPATITISBVIRALLOAD',1,'HEPATITISBVIRALLOAD','t',uuid_generate_v4(),
+			VALUES (nextval('test_seq'),null,null,'HEPATITISBVIRALLOAD(Plasma)','94500-6',null,null,'Y',null,null,'N',null,null,null,null,null,null,now(),null,null,136,null,null,'HEPATITISBVIRALLOAD',1,'HEPATITISBVIRALLOAD','t',
+			'2c48e3c7-9a2b-41e9-9df6-ec9e1465c07c',
 			(select id from localization where description = 'test name' and english = 'HEPATITIS B VIRAL LOAD' limit 1),
 			(select id from localization where description = 'test report name' and english = 'HBV RNA by qRT-PCR' limit 1),
 			null,'f');
