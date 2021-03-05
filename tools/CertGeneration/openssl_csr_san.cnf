@@ -24,4 +24,3 @@ emailAddress_default            = [your email address]
 subjectAltName = @alt_names
 
 [alt_names]
-DNS.1 = *.openelis.org
