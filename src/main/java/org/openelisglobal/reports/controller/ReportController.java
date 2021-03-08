@@ -52,7 +52,7 @@ public class ReportController extends BaseController {
     private static final String[] ALLOWED_FIELDS = new String[] { "report", "reportType", "type", "accessionDirect",
             "highAccessionDirect", "patientNumberDirect", "patientUpperNumberDirect", "lowerDateRange",
             "upperDateRange", "locationCode", "projectCode", "datePeriod", "lowerMonth", "lowerYear", "upperMonth",
-            "upperYear", "selectList.selection", };
+            "upperYear", "selectList.selection", "experimentId" };
 
     @Autowired
     private ServletContext context;
