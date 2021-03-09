@@ -843,27 +843,27 @@
 				<text><![CDATA[Comments]]></text>
 			</staticText>
 			<textField textAdjust="StretchHeight">
-				<reportElement x="0" y="0" width="270" height="32" uuid="ad24ebf3-e79a-4bab-952d-cd8e551db7ab">
+				<reportElement x="17" y="0" width="223" height="32" uuid="ad24ebf3-e79a-4bab-952d-cd8e551db7ab">
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
-				<box topPadding="0" leftPadding="20"/>
+				<box topPadding="0" leftPadding="0"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font size="16"/>
+					<font size="14"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Date: " + $P{date}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight">
-				<reportElement x="270" y="0" width="320" height="32" uuid="ad24ebf3-e79a-4bab-952d-cd8e551db7ab">
+				<reportElement x="240" y="0" width="400" height="32" uuid="ad24ebf3-e79a-4bab-952d-cd8e551db7ab">
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="16"/>
+					<font size="14"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{title}]]></textFieldExpression>
 			</textField>
