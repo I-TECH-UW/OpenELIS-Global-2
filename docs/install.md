@@ -1,23 +1,21 @@
-## Bare Metal Server Installation for OpenELIS Global 2.0 on Ubuntu 16.04 LTS
+## Bare Metal Server Installation for OpenELIS Global 2.0 on Ubuntu 20.04 LTS
 
-### Setup Ubuntu (16.04 LTS Server)
+### Setup Ubuntu 20.04.2.0 LTS (Focal Fossa)
 
-1. Boot Ubuntu from a CD. [Note: Use Ubuntu Server 16.04 LTS, do NOT use desktop] [Download](http://releases.ubuntu.com/16.04/).
-2. Select to download the updates in the background while installing. 
-3. Select: Erase disk and install Ubuntu
-4. Select the appropriate time zone 
-5. Chose UI language 
-6. Name the system: oeserver 
-7. user itech 
-8. set password and record it 
+1. Boot Ubuntu from a CD. [Note: Use Ubuntu Server 20.04.2.0 LTS, do NOT use desktop] [Download](https://releases.ubuntu.com/20.04/ubuntu-20.04.2-live-server-amd64.iso).
+1. Chose UI language and keyboard layout
+1. Set the network configuration
+1. Use the default mirror
+1. Set up the hard disk
+1. Name the system: openelis 
+1. user openelis
+1. set password and record it 
     * I suggest adding the ssh key for each support user to enable passwordless connection. 
-9. Require a password on login
-11. Select OpenSSH server during install *if running server version, if running desktop you will need to install it after*
-	* this will allow you to ssh into this computer allowing copy/paste for Windows users through Putty, or connections via terminal on Mac and from the shell in LINUX
-
-13. Finalize the ubuntu install
-
-14. Reboot
+1. Select Install OpenSSH server
+    * this will allow you to ssh into this computer allowing copy/paste for Windows users through Putty, or connections via terminal on Mac and from the shell in LINUX
+1. Skip the optional server snaps
+1. Finalize the ubuntu install
+1. Reboot
 
 **NOTE: I like to connect via ssh if I’m going to be using a lot of resources from my own computer here. This allows me to easily copy and paste commands below. For windows, the best utility I’ve found is Mobaxterm, as it incoperates a SCP client as well** [available for free download online](https://mobaxterm.mobatek.net/).
 .
@@ -28,13 +26,14 @@
 
         ping 8.8.8.8
 
-2. Open a command prompt and enter the following commands- this will install the needed services and install updates to the OS since the image was created. 
+1. Install Net Tools in order to find the IP Address
+        
+		sudo apt install net-tools
+
+1. Open a command prompt and enter the following commands- this will install the needed services and install updates to the OS since the image was created. 
 This updates the system from the sources in the sources list. It updates what new packages are available.
 
-	    sudo apt-get update
-
-
-        sudo apt-get upgrade
+	    sudo apt-get update && sudo apt-get upgrade
 
 3. Install Python
 
@@ -112,10 +111,10 @@ For the self-signed certificate above, you would use:
 	For the self-signed certificate above, you would use:
 	
 	    openssl pkcs12 -export -nokeys -in /etc/ssl/certs/apache-selfsigned.crt -out /etc/openelis-global/truststore
-    
+        
 ### Install Postgresql
 OpenELIS-Global is configured to be able to install a docker based version of Postgres, but this is generally not recommended for production databases
-If you trust docker to provide your database, you can ignore this section
+If you trust docker to provide your database, you can ignore this section. 
 
 1. Install Postgresql
 
@@ -126,7 +125,7 @@ If you trust docker to provide your database, you can ignore this section
     Postgres gets configured automatically through the setup script. This might possibly interfere with other applications installed on the same server.
 
 	
-### Install OpenELIS Global
+### Download OpenELIS Global
 
 1. Install OpenELIS Global
 
@@ -134,15 +133,18 @@ If you trust docker to provide your database, you can ignore this section
 
         curl -L -O https://url_for_the _file.tar.gz
  
-    b. EG: for OE 2.1 : 
+    b. EG: for OE 2.3 : 
 
-        curl -L -O https://www.dropbox.com/s/zgrm6qiggf8tahf/OpenELIS-Global_2.1.3.0_Installer.tar.gz
+        curl -L -O https://www.dropbox.com/s/zrk5127xrg8cn6g/OpenELIS-Global_2.3.2.2_Installer.tar.gz
  
 2. Unpack and enter the installer by running the following commands in Terminal, Mobaxterm, or Putty, replacing all in the { } with the appropriate values
 
-        tar xzf {context_name}_{installer_version}_Installer.tar.gz
+        tar xzf OpenELIS-Global_{installer_version}_Installer.tar.gz
     
-        cd {context_name}_{installer_version}_Installer
+        cd OpenELIS-Global_{installer_version}_Installer
+		
+	a. EG: tar -xvf OpenELIS-Global_2.3.2.2_Installer.tar.gz
+	b. cd OpenELIS-Global_2.3.2.2_Installer/
     
 3. Optionally configure your install by editing setup.ini
 
@@ -150,9 +152,32 @@ If you trust docker to provide your database, you can ignore this section
 
 3. Run the install script in Terminal or Putty
 
-        sudo python setup_OpenELIS.py
+        sudo python2 setup_OpenELIS.py
+
+### Install OpenELIS Global ###
+
+1. Set the site identification number for this instance
+    a. The site number is used to set the default test order prefix, and to identify the system to the consolidated server and other data systems.
+
+1. Set the time zone for OpenELIS Application
+    a. Select the region that your country is in
+	a. Select the country
+	a. Verify the time zone
+1. Enter in the keystore password we set earlier
+1. Same with the truststore
+1. Enter an encryption key, this will help secure your data by encrypting your database
+
+OpenELIS uses FHIR for much of its internal and external communication, if you don't know what the options mean, leave them at the default. 
+
+1. Local FHIR store is the link to the local FHIR API
+1. The remote FHIR store is used in the use case where OpenELIS is polling for lab orders and returning results. EG: [the FHIR2 Module for OpenMRS](../deployomrs)
+1. The Consolidated Sevrer is a central server which collects lab data for reporting, serves as a master facility list, etc.  
+	
+
 
 Wait while install procedure completes
+
+
 
 Please note: OpenELIS Global 2.x is designed for and is testing on Chrome only. Please be sure to use Chrome for OpenELIS. 
 
