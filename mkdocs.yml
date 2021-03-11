@@ -3,6 +3,7 @@ nav:
     - Home: index.md
     - About: about.md
     - Install OpenELIS Global: install20.md
+    - Upgrade to the Newest Version: upgrade.md
     - Analyzers: analyzer.md
     - Deploy:
        - OpenMRS Interoperability: deployomrs.md
