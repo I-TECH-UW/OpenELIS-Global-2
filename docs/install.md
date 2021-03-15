@@ -193,4 +193,4 @@ Configure the backup:
 Follow the SOP at: [Backup Configuration](../backups)
 
 To set the identifier for this particular instance, use the /var/lib/openelisglobal/secrets/extra.properties file, and set the organization value to the same identifier as is set in the consolidated server FHIR location object. 
-org.openelisglobal.remote.source.identifier=Organization/8136af30-901c-4d77-b133-99de824804ee
+EG: `org.openelisglobal.remote.source.identifier=Organization/8136bd30-901c-4d47-b133-72de813404ee`
