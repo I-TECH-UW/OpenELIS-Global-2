@@ -156,6 +156,8 @@ If you trust docker to provide your database, you can ignore this section.
 
 ### Install OpenELIS Global ###
 
+**OpenELIS Global uses the following file to set things like the consolidated server address, it is not overwritten by the installer. /var/lib/openelisglobal/secrets/extra.properties**
+
 1. Set the site identification number for this instance
     a. The site number is used to set the default test order prefix, and to identify the system to the consolidated server and other data systems.
 
@@ -190,4 +192,5 @@ Configure the backup:
 
 Follow the SOP at: [Backup Configuration](../backups)
 
-
+To set the identifier for this particular instance, use the /var/lib/openelisglobal/secrets/extra.properties file, and set the organization value to the same identifier as is set in the consolidated server FHIR location object. 
+org.openelisglobal.remote.source.identifier=Organization/8136af30-901c-4d77-b133-99de824804ee
