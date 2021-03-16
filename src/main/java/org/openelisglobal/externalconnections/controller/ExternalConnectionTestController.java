@@ -11,7 +11,9 @@ import org.openelisglobal.externalconnections.valueholder.ExternalConnection.Aut
 import org.openelisglobal.externalconnections.valueholder.ExternalConnectionAuthenticationData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,6 +21,31 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class ExternalConnectionTestController {
+    
+    private static final String[] ALLOWED_FIELDS = new String[] { 
+            "externalConnection.serialVersionUID",
+            "externalConnection.id",
+            "externalConnection.active",
+            "externalConnection.uri",
+            "externalConnection.programmedConnection",
+            "externalConnection.nameLocalization",
+            "externalConnection.descriptionLocalization",
+            "externalConnection.activeAuthenticationType",
+            
+            "basicAuthenticationData.serialVersionUID",
+            "basicAuthenticationData.username",
+            "basicAuthenticationData.password",
+            
+            "certificateAuthenticationData.certificate",
+            
+            "externalConnectionContacts*.id",
+            "externalConnectionContacts*.person",
+            
+            "authenticationTypes*.value",
+            "authenticationTypes*.messageKey",
+            
+            "programmedConnections*.value",
+            "programmedConnections*.messageKey" };
 
 	@Autowired
 	private ExternalConnectionTestService externalConnectionTestService;
@@ -26,6 +53,11 @@ public class ExternalConnectionTestController {
 	private ExternalConnectionService externalConnectionService;
 	@Autowired
 	private ExternalConnectionAuthenticationDataService externalConnectionAuthDataService;
+	
+	@InitBinder
+	public void initBinder(WebDataBinder binder) {
+	    binder.setAllowedFields(ALLOWED_FIELDS);
+	}
 
 	@PostMapping("/TestExternalConnection")
 	public ResponseEntity<Map<RequestMethod, Integer>> testConnection(ExternalConnectionForm form) {

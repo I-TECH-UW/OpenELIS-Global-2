@@ -133,7 +133,7 @@ public class SampleEditController extends BaseController {
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
-//        binder.setAllowedFields(ALLOWED_FIELDS);
+        binder.setAllowedFields(ALLOWED_FIELDS);
     }
 
     @RequestMapping(value = "/SampleEdit", method = RequestMethod.GET)
