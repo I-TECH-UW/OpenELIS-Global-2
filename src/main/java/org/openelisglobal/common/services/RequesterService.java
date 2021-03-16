@@ -19,7 +19,6 @@ package org.openelisglobal.common.services;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.openelisglobal.organization.service.OrganizationService;
 import org.openelisglobal.organization.service.OrganizationTypeService;
 import org.openelisglobal.organization.valueholder.Organization;
 import org.openelisglobal.organization.valueholder.OrganizationType;
@@ -46,11 +45,10 @@ public class RequesterService {
     public static final String REFERRAL_ORG_TYPE_ID;
 
     private static SampleRequesterService sampleRequesterService = SpringContext.getBean(SampleRequesterService.class);
-    private SampleService sampleService;
+    private static SampleService sampleService = SpringContext.getBean(SampleService.class);
     private static PersonService personService = SpringContext.getBean(PersonService.class);
     private static OrganizationTypeService organizationTypeService = SpringContext
             .getBean(OrganizationTypeService.class);
-    private static OrganizationService organizationService = SpringContext.getBean(OrganizationService.class);
     private static RequesterTypeService requesterTypeService = SpringContext.getBean(RequesterTypeService.class);
 
     private String sampleId;
