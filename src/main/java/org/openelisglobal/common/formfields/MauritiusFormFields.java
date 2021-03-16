@@ -44,6 +44,7 @@ public class MauritiusFormFields implements IFormFieldsForImplementation {
         settings.put(Field.OrganizationMultiUnit, new FormField(Boolean.FALSE));
         settings.put(Field.OrganizationOrgId, new FormField(Boolean.FALSE));
         settings.put(Field.RequesterSiteList, new FormField(Boolean.TRUE));
+        settings.put(Field.SITE_DEPARTMENT, new FormField(Boolean.TRUE));
         settings.put(Field.ADDRESS_CITY, new FormField(Boolean.FALSE));
         settings.put(Field.PatientRequired, new FormField(Boolean.TRUE));
         settings.put(Field.SampleCondition, new FormField(Boolean.TRUE));

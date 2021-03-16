@@ -16,6 +16,7 @@
 
 package org.openelisglobal.common.services;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.openelisglobal.organization.service.OrganizationService;
@@ -28,6 +29,8 @@ import org.openelisglobal.requester.service.RequesterTypeService;
 import org.openelisglobal.requester.service.SampleRequesterService;
 import org.openelisglobal.requester.valueholder.RequesterType;
 import org.openelisglobal.requester.valueholder.SampleRequester;
+import org.openelisglobal.sample.service.SampleService;
+import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.spring.util.SpringContext;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Scope;
@@ -43,6 +46,7 @@ public class RequesterService {
     public static final String REFERRAL_ORG_TYPE_ID;
 
     private static SampleRequesterService sampleRequesterService = SpringContext.getBean(SampleRequesterService.class);
+    private SampleService sampleService;
     private static PersonService personService = SpringContext.getBean(PersonService.class);
     private static OrganizationTypeService organizationTypeService = SpringContext
             .getBean(OrganizationTypeService.class);
@@ -53,6 +57,7 @@ public class RequesterService {
     private Person person;
     private List<SampleRequester> requesters;
     private Organization organization;
+    private Organization organizationDepartment;
 
     public enum Requester {
         PERSON, ORGANIZATION;
@@ -147,37 +152,61 @@ public class RequesterService {
         return organization;
     }
 
-    public SampleRequester getSampleRequesterByType(Requester type, boolean createIfNotFound) {
-        if (requesters == null) {
+    public Organization getOrganizationDepartment() {
+        if (organizationDepartment == null) {
             buildRequesters();
         }
 
+        return organizationDepartment;
+
+    }
+
+    public List<SampleRequester> getSampleRequestersByType(Requester type, boolean createIfNotFound) {
+        if (requesters == null) {
+            buildRequesters();
+        }
+        List<SampleRequester> sampleRequesters = new ArrayList<>();
+
         for (SampleRequester requester : requesters) {
             if (requester.getRequesterTypeId() == type.getId()) {
-                return requester;
+                sampleRequesters.add(requester);
             }
         }
 
         // reachable only if existing requester not found
-        if (createIfNotFound) {
+        if (sampleRequesters.size() <= 0 && createIfNotFound) {
             SampleRequester newRequester = new SampleRequester();
             newRequester.setRequesterTypeId(type.getId());
             newRequester.setSampleId(Long.parseLong(sampleId));
 
-            return newRequester;
+            sampleRequesters.add(newRequester);
         }
 
-        return null;
+        return sampleRequesters;
+    }
+
+    public SampleRequester getOrganizationSampleRequesterByType(boolean createIfNotFound, String orgTypeId) {
+        if (requesters == null) {
+            buildRequesters();
+        }
+        return sampleService.getOrganizationSampleRequester(sampleService.get(sampleId), orgTypeId);
     }
 
     private void buildRequesters() {
         requesters = sampleRequesterService.getRequestersForSampleId(sampleId);
-        for (SampleRequester requester : requesters) {
-            if (requester.getRequesterTypeId() == Requester.PERSON.getId()) {
-                person = personService.getPersonById(String.valueOf(requester.getRequesterId()));
-            } else if (requester.getRequesterTypeId() == Requester.ORGANIZATION.getId()) {
-                organization = organizationService.getOrganizationById(String.valueOf(requester.getRequesterId()));
-            }
-        }
+        Sample sample = sampleService.get(sampleId);
+        person = sampleService.getPersonRequester(sample);
+        organization = sampleService.getOrganizationRequester(sampleService.get(sampleId),
+                TableIdService.getInstance().REFERRING_ORG_TYPE_ID);
+        organizationDepartment = sampleService.getOrganizationRequester(sampleService.get(sampleId),
+                TableIdService.getInstance().REFERRING_ORG_DEPARTMENT_TYPE_ID);
+//        for (SampleRequester requester : requesters) {
+//            if (requester.getRequesterTypeId() == Requester.PERSON.getId()) {
+//                person = personService.getPersonById(String.valueOf(requester.getRequesterId()));
+//            } else if (requester.getRequesterTypeId() == Requester.ORGANIZATION.getId()) {
+//
+//                organization = organizationService.getOrganizationById(String.valueOf(requester.getRequesterId()));
+//            }
+//        }
     }
 }

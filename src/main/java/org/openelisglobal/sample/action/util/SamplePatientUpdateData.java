@@ -43,7 +43,6 @@ import org.openelisglobal.observationhistory.valueholder.ObservationHistory;
 import org.openelisglobal.observationhistory.valueholder.ObservationHistory.ValueType;
 import org.openelisglobal.organization.service.OrganizationService;
 import org.openelisglobal.organization.valueholder.Organization;
-import org.openelisglobal.patient.service.PatientService;
 import org.openelisglobal.patient.util.PatientUtil;
 import org.openelisglobal.person.valueholder.Person;
 import org.openelisglobal.provider.valueholder.Provider;
@@ -70,6 +69,7 @@ public class SamplePatientUpdateData {
     private List<SampleAdditionalField> sampleFields = new ArrayList<>();
     private SampleHuman sampleHuman = new SampleHuman();
     private SampleRequester requesterSite;
+    private SampleRequester requesterSiteDepartment;
     private List<SampleTestCollection> sampleItemsTests;
     private SampleAddService sampleAddService;
     private Errors patientErrors;
@@ -80,7 +80,6 @@ public class SamplePatientUpdateData {
     private boolean useReceiveDateForCollectionDate = !FormFields.getInstance().useField(Field.CollectionDate);
     private String collectionDateFromReceiveDate = null;
 
-    private PatientService patientService = SpringContext.getBean(PatientService.class);
     private OrganizationService orgService = SpringContext.getBean(OrganizationService.class);
     private ElectronicOrderService electronicOrderService = SpringContext.getBean(ElectronicOrderService.class);
 
@@ -168,6 +167,14 @@ public class SamplePatientUpdateData {
 
     public void setRequesterSite(SampleRequester requesterSite) {
         this.requesterSite = requesterSite;
+    }
+
+    public SampleRequester getRequesterSiteDepartment() {
+        return requesterSiteDepartment;
+    }
+
+    private void setRequesterSiteDepartment(SampleRequester requesterSiteDepartment) {
+        this.requesterSiteDepartment = requesterSiteDepartment;
     }
 
     public List<SampleTestCollection> getSampleItemsTests() {
@@ -314,7 +321,8 @@ public class SamplePatientUpdateData {
             List<ElectronicOrder> orders = electronicOrderService.getElectronicOrdersByExternalId(externalOrderNumber);
             if (!orders.isEmpty()) {
                 electronicOrder = orders.get(orders.size() - 1);
-                electronicOrder.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(ExternalOrderStatus.Realized));
+                electronicOrder.setStatusId(
+                        SpringContext.getBean(IStatusService.class).getStatusID(ExternalOrderStatus.Realized));
                 electronicOrder.setSysUserId(currentUserId);
 
                 sample.setReferringId(externalOrderNumber);
@@ -389,6 +397,22 @@ public class SamplePatientUpdateData {
         if (FormFields.getInstance().useField(Field.RequesterSiteList)) {
             setRequesterSite(initSampleRequester(sampleOrder));
         }
+        if (FormFields.getInstance().useField(Field.SITE_DEPARTMENT)) {
+            setRequesterSiteDepartment(initSampleRequesterDepartment(sampleOrder));
+        }
+    }
+
+    private SampleRequester initSampleRequesterDepartment(SampleOrderItem orderItem) {
+        SampleRequester requester = null;
+
+        String orgId = orderItem.getReferringSiteDepartmentId();
+
+        if (!GenericValidator.isBlankOrNull(orgId)) {
+            requester = createSiteRequester(orgId,
+                    TableIdService.getInstance().ORGANIZATION_REQUESTER_TYPE_ID);
+        }
+
+        return requester;
     }
 
     private SampleRequester initSampleRequester(SampleOrderItem orderItem) {
@@ -397,7 +421,7 @@ public class SamplePatientUpdateData {
         String orgId = orderItem.getReferringSiteId();
 
         if (!GenericValidator.isBlankOrNull(orgId)) {
-            requester = createSiteRequester(orgId);
+            requester = createSiteRequester(orgId, TableIdService.getInstance().ORGANIZATION_REQUESTER_TYPE_ID);
             if (FormFields.getInstance().useField(Field.SampleEntryReferralSiteCode)) {
                 updateCurrentOrgIfNeeded(orderItem.getReferringSiteCode(), orgId);
             }
@@ -406,7 +430,7 @@ public class SamplePatientUpdateData {
 
             if (confirmNewRequesterName(orderItem.getNewRequesterName())) {
                 // will be corrected after newOrg is persisted
-                requester = createSiteRequester("0");
+                requester = createSiteRequester("0", TableIdService.getInstance().ORGANIZATION_REQUESTER_TYPE_ID);
 
                 setNewOrganization(new Organization());
 
@@ -428,7 +452,7 @@ public class SamplePatientUpdateData {
                 orgId = organization.getId();
 
                 if (!GenericValidator.isBlankOrNull(orgId)) {
-                    requester = createSiteRequester(orgId);
+                    requester = createSiteRequester(orgId, TableIdService.getInstance().ORGANIZATION_REQUESTER_TYPE_ID);
                 }
             }
         }
@@ -456,11 +480,11 @@ public class SamplePatientUpdateData {
         return newName;
     }
 
-    private SampleRequester createSiteRequester(String orgId) {
+    private SampleRequester createSiteRequester(String orgId, long requesterTypeId) {
         SampleRequester requester;
         requester = new SampleRequester();
         requester.setRequesterId(orgId);
-        requester.setRequesterTypeId(TableIdService.getInstance().ORGANIZATION_REQUESTER_TYPE_ID);
+        requester.setRequesterTypeId(requesterTypeId);
         requester.setSysUserId(currentUserId);
         return requester;
     }

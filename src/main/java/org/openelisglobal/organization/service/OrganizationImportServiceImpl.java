@@ -149,11 +149,13 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
         if (dbOrg != null) {
             dbOrg.setOrganizationTypes(organization.getOrganizationTypes());
             dbOrg.setOrganizationName(organization.getOrganizationName());
+            dbOrg.setOrganization(organization.getOrganization());
             dbOrg.setStreetAddress(organization.getStreetAddress());
             dbOrg.setCity(organization.getCity());
             dbOrg.setZipCode(organization.getZipCode());
             dbOrg.setState(organization.getState());
             dbOrg.setInternetAddress(organization.getInternetAddress());
+            dbOrg = organizationService.update(dbOrg);
         } else {
             dbOrg = organizationService.save(organization);
         }

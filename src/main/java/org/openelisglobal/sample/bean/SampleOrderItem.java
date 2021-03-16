@@ -18,6 +18,7 @@ package org.openelisglobal.sample.bean;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.List;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -26,6 +27,7 @@ import javax.validation.constraints.Pattern;
 
 import org.hibernate.validator.constraints.SafeHtml;
 import org.openelisglobal.common.formfields.FormFields.Field;
+import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.util.validator.CustomDateValidator.DateRelation;
 import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.sample.form.SampleEditForm;
@@ -96,6 +98,10 @@ public class SampleOrderItem implements Serializable {
             SamplePatientEntryBatch.class, SampleEditForm.SampleEdit.class })
     private String referringSiteId;
 
+    @Pattern(regexp = ValidationHelper.ID_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
+            SamplePatientEntryBatch.class, SampleEditForm.SampleEdit.class })
+    private String referringSiteDepartmentId;
+
     @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class,
             SampleEditForm.SampleEdit.class })
     private String referringSiteCode;
@@ -104,8 +110,15 @@ public class SampleOrderItem implements Serializable {
             SampleEditForm.SampleEdit.class })
     private String referringSiteName;
 
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
+            SamplePatientEntryBatch.class, SampleEditForm.SampleEdit.class })
+    private String referringSiteDepartmentName;
+
     // for display
-    private Collection referringSiteList;
+    private List<IdValuePair> referringSiteList;
+
+    // for display
+    private List<IdValuePair> referringSiteDepartmentList;
 
     @Pattern(regexp = ValidationHelper.ID_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
             SamplePatientEntryBatch.class })
@@ -302,12 +315,20 @@ public class SampleOrderItem implements Serializable {
         this.referringSiteName = referringSiteName;
     }
 
-    public Collection getReferringSiteList() {
+    public List<IdValuePair> getReferringSiteList() {
         return referringSiteList;
     }
 
-    public void setReferringSiteList(Collection referringSiteList) {
+    public void setReferringSiteList(List<IdValuePair> referringSiteList) {
         this.referringSiteList = referringSiteList;
+    }
+
+    public List<IdValuePair> getReferringSiteDepartmentList() {
+        return referringSiteDepartmentList;
+    }
+
+    public void setReferringSiteDepartmentList(List<IdValuePair> referringSiteDepartmentList) {
+        this.referringSiteDepartmentList = referringSiteDepartmentList;
     }
 
     public String getProviderId() {
@@ -492,5 +513,21 @@ public class SampleOrderItem implements Serializable {
 
     public void setContactTracingIndexRecordNumber(String contactTracingIndexRecordNumber) {
         this.contactTracingIndexRecordNumber = contactTracingIndexRecordNumber;
+    }
+
+    public String getReferringSiteDepartmentId() {
+        return referringSiteDepartmentId;
+    }
+
+    public void setReferringSiteDepartmentId(String referringSiteDepartmentId) {
+        this.referringSiteDepartmentId = referringSiteDepartmentId;
+    }
+
+    public String getReferringSiteDepartmentName() {
+        return referringSiteDepartmentName;
+    }
+
+    public void setReferringSiteDepartmentName(String referringSiteDepartmentName) {
+        this.referringSiteDepartmentName = referringSiteDepartmentName;
     }
 }

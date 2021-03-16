@@ -37,6 +37,7 @@ public class FormFields {
         CollectionDate, // Track collection date for samples, current date will be used if false
         CollectionTime, // Track collection time for samples
         RequesterSiteList, // Present list of referring sites
+        SITE_DEPARTMENT, // list of departments under referring sites
         OrgLocalAbrev, // Use organization abbreviation. Should be standardized to FALSE
         OrgState, // Include state in organization info
         ZipCode, // Include zip code in organization info
@@ -121,6 +122,10 @@ public class FormFields {
 
     public boolean useField(FormFields.Field field) {
         return fields.get(field).getInUse();
+    }
+
+    public boolean requireField(FormFields.Field field) {
+        return fields.get(field).getRequired();
     }
 
     public String getLabel(FormFields.Field field) {

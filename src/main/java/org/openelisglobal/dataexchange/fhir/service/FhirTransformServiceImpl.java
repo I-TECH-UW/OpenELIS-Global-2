@@ -859,9 +859,12 @@ public class FhirTransformServiceImpl implements FhirTransformService {
             setConnectionInfo(organization, fhirOrganization, client);
         }
         if (fhirOrganization.getPartOf() != null
-                && !GenericValidator.isBlankOrNull(fhirOrganization.getPartOf().getId())) {
+                && !GenericValidator.isBlankOrNull(fhirOrganization.getPartOf().getReference())) {
             setParentOrg(organization, fhirOrganization, client);
         }
+//        else {
+//            organization.setOrganization(null);
+//        }
         organization.setMlsLabFlag(IActionConstants.NO);
         organization.setMlsSentinelLabFlag(IActionConstants.NO);
 
@@ -915,6 +918,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
                     orgType = new OrganizationType();
                     orgType.setName(coding.getCode());
                     orgType.setDescription(type.getText());
+                    orgType.setNameKey("org_type." + coding.getCode() + ".name");
                     orgType.setOrganizations(new HashSet<>());
                     orgType.getOrganizations().add(organization);
                     orgTypes.add(orgType);

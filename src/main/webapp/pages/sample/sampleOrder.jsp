@@ -34,6 +34,7 @@
     boolean requesterLastNameRequired = FormFields.getInstance().useField( Field.SampleEntryRequesterLastNameRequired );
     boolean acceptExternalOrders = ConfigurationProperties.getInstance().isPropertyValueEqual( Property.ACCEPT_EXTERNAL_ORDERS, "true" );
     boolean restrictNewReferringSiteEntries = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.restrictFreeTextRefSiteEntry, "true");
+	boolean useSiteDepartment = FormFields.getInstance().useField(Field.SITE_DEPARTMENT );
 %>
 
 <script type="text/javascript" src="scripts/additional_utilities.js"></script>
@@ -49,6 +50,7 @@
 <script type="text/javascript">
     var useReferralSiteList = <%= useReferralSiteList%>;
     var useReferralSiteCode = <%= useReferralSiteCode %>;
+    var useSiteDepartment = <%= useSiteDepartment %>;
 
     function checkAccessionNumber(accessionNumber) {
         //check if empty
@@ -130,6 +132,12 @@
         } else if (useReferralSiteCode) {
             getCodeForOrganization(siteList.options[siteList.selectedIndex].value, processCodeSuccess);
         }
+
+    	if ( useSiteDepartment ) {
+    		if(document.getElementById("requesterId").selectedIndex != 0){
+    			getDepartmentsForSiteClinic( document.getElementById("requesterId").value, "", siteDepartmentSuccess, null);
+    		} 
+    	}
     }
 
     function processCodeSuccess(xhr) {
@@ -140,6 +148,32 @@
         if (success) {
             jQuery("#requesterCodeId").val(code.getAttribute("value"));
         }
+    }
+    
+    function siteDepartmentSuccess (xhr) {
+        console.log(xhr.responseText);
+        var message = xhr.responseXML.getElementsByTagName("message").item(0).firstChild.nodeValue;
+    	var departments = xhr.responseXML.getElementsByTagName("formfield").item(0).childNodes[0].childNodes;
+    	var selected = xhr.responseXML.getElementsByTagName("formfield").item(0).childNodes[1];
+    	var isValid = message == "<%=IActionConstants.VALID%>";
+    	var requesterDepartment = jQuery("#requesterDepartmentId");
+    	var i = 0;
+
+    	requesterDepartment.disabled = "";
+    	if( isValid ){
+    		requesterDepartment.children('option').remove();
+    		requesterDepartment.append(new Option('', ''));
+    		for( ;i < departments.length; ++i){
+//     						is this supposed to be value value or value id?
+    		requesterDepartment.append(
+    				new Option(departments[i].attributes.getNamedItem("value").value, 
+    					departments[i].attributes.getNamedItem("id").value));
+    		}
+    	}
+    	
+    	if( selected){
+    		requesterDepartment.selectedIndex = getSelectIndexFor( "requesterDepartmentId", selected.childNodes[0].nodeValue);
+    	}
     }
 
     function testLocationCodeChanged(element) {
@@ -313,24 +347,33 @@
     	<c:if test="${form.sampleOrderItems.readOnly}" >
             <form:input path="sampleOrderItems.referringSiteName"  style="width:300px" />
     	</c:if>
-        <%-- <logic:equal value="false" name='${formName}' property="sampleOrderItems.readOnly" >
-        <html:select id="requesterId"
-                     name="${formName}"
-                     property="sampleOrderItems.referringSiteId"
-                     onchange="setOrderModified();siteListChanged(this);setCorrectSave();"
-                     onkeyup="capitalizeValue( this.value );"
-                     
-                >
-            <option value=""></option>
-            <html:optionsCollection name="${formName}" property="sampleOrderItems.referringSiteList" label="value"
-                                    value="id"/>
-        </html:select>
-        </logic:equal>
-        <logic:equal value="true" name='${formName}' property="sampleOrderItems.readOnly" >
-            <html:text property="sampleOrderItems.referringSiteName" name="${formName}" style="width:300px" />
-        </logic:equal> --%>
     </td>
 </tr>
+
+	<% if( useSiteDepartment ){ %>
+	<tr>
+	    <td>
+	        <%= MessageUtil.getContextualMessage( "sample.entry.project.siteDepartmentName" ) %>:
+	        <% if( FormFields.getInstance().requireField( Field.SITE_DEPARTMENT ) ){%>
+	        <span class="requiredlabel">*</span>
+	        <% } %>
+	    </td>
+	    <td colspan="3" >
+	    	<c:if test="${form.sampleOrderItems.readOnly == false}" >
+	    		<form:select path="sampleOrderItems.referringSiteDepartmentId" 
+	    				 id="requesterDepartmentId" 
+	                     onchange="setOrderModified();setCorrectSave();"
+	                     onkeyup="capitalizeValue( this.value );" >
+	            <option value="0" ></option>
+	            <form:options items="${form.sampleOrderItems.referringSiteDepartmentList}" itemValue="id" itemLabel="value"/>
+	            </form:select>
+	    	</c:if>
+	    	<c:if test="${form.sampleOrderItems.readOnly}" >
+	            <form:input path="sampleOrderItems.referringSiteDepartmentName"  style="width:300px" />
+	    	</c:if>
+	    </td>
+	</tr>
+	<% } %>
 <% } %>
 <% if( useReferralSiteCode ){ %>
 <tr>
