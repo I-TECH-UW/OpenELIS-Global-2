@@ -84,5 +84,15 @@
 		<param-name>defaultHtmlEscape</param-name>
 		<param-value>true</param-value>
 	</context-param>
+	
+	<filter>
+		<filter-name>SetCacheControl</filter-name>
+		<filter-class>openELIS.cacheControlFilter</filter-class>
+	</filter>                       
+	<filter-mapping>
+		<filter-name>SetCacheControl</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
 
 </web-app>
