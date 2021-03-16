@@ -62,6 +62,7 @@ public class DefaultFormFields extends AFormFields {
         setFieldFalse(Field.MLS);
         setFieldFalse(Field.CollectionTime);
         setFieldFalse(Field.RequesterSiteList);
+        setFieldFalse(Field.SITE_DEPARTMENT);
         setFieldFalse(Field.InlineOrganizationTypes);
         setFieldFalse(Field.SubjectNumber);
         setFieldFalse(Field.ADDRESS_DEPARTMENT);

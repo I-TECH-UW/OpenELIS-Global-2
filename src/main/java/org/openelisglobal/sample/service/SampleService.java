@@ -9,6 +9,7 @@ import org.openelisglobal.common.service.BaseObjectService;
 import org.openelisglobal.organization.valueholder.Organization;
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.person.valueholder.Person;
+import org.openelisglobal.requester.valueholder.SampleRequester;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.sample.valueholder.SampleAdditionalField;
 import org.openelisglobal.sample.valueholder.SampleAdditionalField.AdditionalFieldName;
@@ -62,6 +63,8 @@ public interface SampleService extends BaseObjectService<Sample, String> {
 
     Organization getOrganizationRequester(Sample sample);
 
+    Organization getOrganizationRequester(Sample sample, String orgTypeId);
+
     Person getPersonRequester(Sample sample);
 
     List<SampleQaEvent> getSampleQAEventList(Sample sample);
@@ -99,4 +102,6 @@ public interface SampleService extends BaseObjectService<Sample, String> {
     String getSampleStatusForDisplay(Sample sample);
 
     boolean sampleContainsTest(String sampleId, String testId);
+
+    SampleRequester getOrganizationSampleRequester(Sample sample, String orgTypeId);
 }
