@@ -9,6 +9,7 @@
         url="${datasource.url}"
         username="${datasource.username}"
         password="${datasource.password}" />
+        <CookieProcessor sameSiteCookies="strict" />
 </Context>
 
 <!-- clinlims  -->
