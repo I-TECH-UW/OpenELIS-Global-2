@@ -100,7 +100,7 @@ There are four configurable values in the file:
 
    *  *The target application*  
    In the following case the application is haitiOpenElis on the local host.
-`my $upLoadtargetURL = 'http://localhost:8080/[openelisURL]/importAnalyzer';`
+`my $upLoadtargetURL = 'https://localhost:8443/[openelisURL]/importAnalyzer';`
 
    *  *The user name and password.*  
    This user name and password must have been added as a user to the application.  The user should be added with no roles.
