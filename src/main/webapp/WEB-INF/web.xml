@@ -86,11 +86,11 @@
 	</context-param>
 	
 	<filter>
-		<filter-name>SetCacheControl</filter-name>
-		<filter-class>openELIS.cacheControlFilter</filter-class>
+		<filter-name>CacheControlFilter</filter-name>
+		<filter-class>org.openelisglobal.security.CacheControlFilter</filter-class>
 	</filter>                       
 	<filter-mapping>
-		<filter-name>SetCacheControl</filter-name>
+		<filter-name>CacheControlFilter</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 	
