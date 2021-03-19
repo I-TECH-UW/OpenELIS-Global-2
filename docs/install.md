@@ -129,7 +129,7 @@ If you trust docker to provide your database, you can ignore this section.
 
 1. Install OpenELIS Global
 
-    a. Download latest installer package: 
+    a. [Download latest installer package Here:](https://www.dropbox.com/sh/47lagjht4ynpcg8/AABORyLmkpVTtRReeD6wSnJra?dl=0) 
 
         curl -L -O https://url_for_the _file.tar.gz
  
