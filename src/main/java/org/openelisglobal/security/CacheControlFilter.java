@@ -18,7 +18,7 @@ public class CacheControlFilter implements Filter {
         HttpServletResponse resp = (HttpServletResponse) response;
         resp.setHeader("Expires", "Tue, 03 Jul 2001 06:00:00 GMT");
         resp.setDateHeader("Last-Modified", new Date().getTime());
-        resp.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0, post-check=0, pre-check=0");
+        resp.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, max-age=31536000, post-check=0, pre-check=0");
         resp.setHeader("Pragma", "no-cache");
 
         chain.doFilter(request, response);
