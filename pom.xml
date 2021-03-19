@@ -172,11 +172,6 @@
 			<artifactId>hapi-structures-v251</artifactId>
 			<version>${hapi.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>ca.uhn.hapi</groupId>
-			<artifactId>hapi-structures-v25</artifactId>
-			<version>${hapi.version}</version>
-		</dependency>
 		<!-- HIBERNATE DEPENDENCIES -->
 		<dependency>
 			<groupId>org.hibernate.validator</groupId>
