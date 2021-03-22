@@ -68,7 +68,8 @@ public class DisplayListService implements LocaleChangeListener {
     public enum ListType {
         HOURS, MINS, SAMPLE_TYPE_ACTIVE, SAMPLE_TYPE_INACTIVE, SAMPLE_TYPE, INITIAL_SAMPLE_CONDITION,
         SAMPLE_PATIENT_PAYMENT_OPTIONS, PATIENT_HEALTH_REGIONS, PATIENT_MARITAL_STATUS, PATIENT_NATIONALITY,
-        PATIENT_EDUCATION, GENDERS, SAMPLE_PATIENT_REFERRING_CLINIC, QA_EVENTS, TEST_SECTION, TEST_SECTION_INACTIVE,
+        PATIENT_EDUCATION, GENDERS, SAMPLE_PATIENT_REFERRING_CLINIC, SAMPLE_PATIENT_CLINIC_DEPARTMENT, QA_EVENTS,
+        TEST_SECTION, TEST_SECTION_INACTIVE,
         TEST_SECTION_BY_NAME, HAITI_DEPARTMENTS, PATIENT_SEARCH_CRITERIA, PANELS, PANELS_ACTIVE, PANELS_INACTIVE,
         ORDERABLE_TESTS, ALL_TESTS, REJECTION_REASONS, REFERRAL_REASONS, REFERRAL_ORGANIZATIONS, TEST_LOCATION_CODE,
         PROGRAM, RESULT_TYPE_LOCALIZED, RESULT_TYPE_RAW, UNIT_OF_MEASURE, UNIT_OF_MEASURE_ACTIVE,
@@ -127,7 +128,7 @@ public class DisplayListService implements LocaleChangeListener {
         Collections.sort(testResults, new Comparator<IdValuePair>() {
             @Override
             public int compare(IdValuePair o1, IdValuePair o2) {
-                return o1.getValue().compareTo(o2.getValue());
+                return o1.getValue().toLowerCase().compareTo(o2.getValue().toLowerCase());
             }
         });
         return testResults;
@@ -398,6 +399,9 @@ public class DisplayListService implements LocaleChangeListener {
         case PATIENT_HEALTH_REGIONS: {
             typeToListMap.put(ListType.PATIENT_HEALTH_REGIONS, createPatientHealthRegions());
             break;
+        }
+        case DICTIONARY_TEST_RESULTS: {
+            typeToListMap.put(ListType.DICTIONARY_TEST_RESULTS, createDictionaryTestResults());
         }
         }
     }

@@ -130,6 +130,7 @@ function clearDisplayValues() {
 function loadExperiment() {
 	window.beforeunload = "warning";
 	jQuery("#downloadSetup").attr('disabled',false);
+	jQuery("#printSetup").attr('disabled',false);
 	jQuery("#experimentId").val(jQuery("#previousRun").val());
 	setDefaultFilename();
 	setTestNameForDisplay();
@@ -260,10 +261,24 @@ function saveExperimentSuccess(xhr) {
 	console.log("experiment id: " + responseText);
 	jQuery("#experimentId").val(responseText);
 	jQuery("#downloadSetup").attr('disabled',false);
+	jQuery("#printSetup").attr('disabled',false);
 }
 
 function downloadSetupFile() {
-	window.open("AnalyzerSetupFile/" + jQuery("#experimentId").val() + "?filename=" + jQuery("#filename").val(), '_blank');
+	params.append('report', 'MauritiusProtocolSheet');
+	params.append('filename', jQuery("#filename").val());
+	params.append('experimentId', jQuery("#experimentId").val());
+	
+	window.open("AnalyzerSetupFile/" + jQuery("#experimentId").val() + "?" + params.toString(), '_blank');
+}
+
+function printSetupFile() {
+	const params = new URLSearchParams();
+	params.append('report', 'MauritiusProtocolSheet');
+	params.append('reportName', jQuery("#filename").val());
+	params.append('experimentId', jQuery("#experimentId").val());
+	
+	window.open("ReportPrint/?" + params.toString(), '_blank');
 }
 
 function setPositive(identifier) {
@@ -369,6 +384,7 @@ function numToAlpha(num) {
 jQuery( document ).ready(function() {
 	generateTable();
 	jQuery("#downloadSetup").attr('disabled',true);
+	jQuery("#printSetup").attr('disabled',true);
 	jQuery("#selectPatientButtonID").prop("disabled", true);
 	jQuery("#cposButton").prop("disabled", true);
 	jQuery("#cnegButton").prop("disabled", true);
@@ -507,6 +523,7 @@ jQuery( document ).ready(function() {
 		<td colspan="2">
 			<button type="button" onClick="saveExperiment();"><spring:message code="" text="Save Experiment"/></button>
 			<button type="button" id="downloadSetup" onClick="downloadSetupFile();" disabled="disabled"><spring:message code="" text="Download Experiment Setup File"/></button>
+			<button type="button" id="printSetup" onClick="printSetupFile();" disabled="disabled"><spring:message code="" text="Print Protocol Sheet"/></button>
 		</td>
 	</tr>
 </table>

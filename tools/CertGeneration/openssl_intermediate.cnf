@@ -12,7 +12,7 @@ crl_dir           = $dir/crl
 new_certs_dir     = $dir/newcerts
 database          = $dir/index.txt
 serial            = $dir/serial
-RANDFILE          = $dir/private/.rand
+RANDFILE          = /dev/urandom
 
 # The root key and root certificate.
 private_key       = $dir/private/int.DOMAINNAME.key.pem

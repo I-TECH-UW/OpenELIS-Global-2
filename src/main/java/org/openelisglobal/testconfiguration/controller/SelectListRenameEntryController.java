@@ -3,6 +3,8 @@ package org.openelisglobal.testconfiguration.controller;
 import javax.servlet.http.HttpServletRequest;
 
 import org.openelisglobal.common.controller.BaseController;
+import org.openelisglobal.common.services.DisplayListService;
+import org.openelisglobal.common.services.DisplayListService.ListType;
 import org.openelisglobal.common.validator.BaseErrors;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.testconfiguration.form.ResultSelectListRenameForm;
@@ -57,6 +59,7 @@ public class SelectListRenameEntryController extends BaseController {
             @ModelAttribute("form") ResultSelectListRenameForm form, RedirectAttributes redirectAttributes) {
 
         boolean renamed = resultSelectListService.renameOption(form, getSysUserId(request));
+        DisplayListService.getInstance().refreshList(ListType.DICTIONARY_TEST_RESULTS);
 
         if (renamed) {
             redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);

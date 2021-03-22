@@ -97,6 +97,8 @@ public class ReportForm extends BaseForm {
 
     private String instructions = "";
 
+    private Integer experimentId;
+
     public ReportForm() {
         setFormName("ReportForm");
     }
@@ -378,5 +380,13 @@ public class ReportForm extends BaseForm {
 
     public void setInstructions(String instructions) {
         this.instructions = instructions;
+    }
+
+    public Integer getExperimentId() {
+        return experimentId;
+    }
+
+    public void setExperimentId(Integer experimentId) {
+        this.experimentId = experimentId;
     }
 }

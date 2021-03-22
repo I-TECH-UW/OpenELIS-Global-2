@@ -101,7 +101,8 @@ then
   openssl ca -config $ROOT_CA_DIR/openssl_root.cnf -extensions v3_intermediate_ca -days 3650 \
     -notext -md sha256 -in $INT_CA_DIR/csr/int.$COUNTRY_NAME.csr \
     -batch -passin pass:$PASSWORD  \
-    -out $INT_CA_DIR/certs/int.$COUNTRY_NAME.crt.pem
+    -out $INT_CA_DIR/certs/int.$COUNTRY_NAME.crt.pem \
+    -rand_serial
   echo "made intermediate crt for $COUNTRY_NAME"
   
   cat $INT_CA_DIR/certs/int.$COUNTRY_NAME.crt.pem $ROOT_CA_DIR/certs/ca.ROOT.crt.pem \
