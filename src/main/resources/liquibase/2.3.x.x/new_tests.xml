@@ -29,15 +29,39 @@
 			INSERT INTO clinlims.localization(
         		id, description, english, french, lastupdated)
         		VALUES
-         		(nextval('localization_seq'),'type of sample name','Respiratory Swab','Respiratory Swab', now()),
-         		(nextval('localization_seq'),'type of sample name','Fluid','Fluid', now()),
+         		(nextval('localization_seq'),'type of sample name','Respiratory Swab','Respiratory Swab', now());
+                </sql>
+        </changeSet>
+        
+        <changeSet author="rossumg" id="16">
+		<preConditions onFail="MARK_RAN">
+                        <sqlCheck  expectedResult="0">SELECT count(*) FROM clinlims.localization WHERE english = 'Fluid'</sqlCheck> 
+                </preConditions>
+
+                <sql>
+			INSERT INTO clinlims.localization(
+        		id, description, english, french, lastupdated)
+        		VALUES
+         		(nextval('localization_seq'),'type of sample name','Fluid','Fluid', now());
+                </sql>
+        </changeSet>
+        
+        <changeSet author="rossumg" id="17">
+		<preConditions onFail="MARK_RAN">
+                        <sqlCheck  expectedResult="0">SELECT count(*) FROM clinlims.localization WHERE english = 'Sputum'</sqlCheck> 
+                </preConditions>
+
+                <sql>
+			INSERT INTO clinlims.localization(
+        		id, description, english, french, lastupdated)
+        		VALUES
          		(nextval('localization_seq'),'type of sample name','Sputum','Sputum', now());
                 </sql>
         </changeSet>
         
         <changeSet author="rossumg" id="20">
 		<preConditions onFail="MARK_RAN">
-                        <sqlCheck  expectedResult="0">SELECT count(*) FROM clinlims.localization WHERE english = 'COVID-19'</sqlCheck> 
+                        <sqlCheck  expectedResult="0">SELECT count(*) FROM clinlims.localization WHERE english = 'COVID-19 PCR'</sqlCheck> 
                 </preConditions>
 
                 <sql>
@@ -537,7 +561,7 @@
         <changeSet author="rossumg" id="175">
 		<preConditions onFail="MARK_RAN">
 			<sqlCheck  expectedResult="0">SELECT count(*) FROM clinlims.sampletype_test WHERE test_id = 
-				(select id from clinlims.test where description = 'COVID-19ANTIBODYIgG(Serum')</sqlCheck> 
+				(select id from clinlims.test where description = 'COVID-19ANTIBODYIgG(Serum)')</sqlCheck> 
                 </preConditions>
 
                 <sql>
@@ -552,7 +576,7 @@
         <changeSet author="rossumg" id="180">
 		<preConditions onFail="MARK_RAN">
 			<sqlCheck  expectedResult="0">SELECT count(*) FROM clinlims.result_limits WHERE test_id = 
-				(select id from clinlims.test where description = 'COVID-19ANTIBODYIgG(Serum')</sqlCheck> 
+				(select id from clinlims.test where description = 'COVID-19ANTIBODYIgG(Serum)')</sqlCheck> 
                 </preConditions>
 
                 <sql>
@@ -566,7 +590,7 @@
         <changeSet author="rossumg" id="185">
 		<preConditions onFail="MARK_RAN">
 			<sqlCheck  expectedResult="0">SELECT count(*) FROM clinlims.test_result WHERE test_id = 
-				(select id from clinlims.test where description = 'COVID-19ANTIBODYIgG(Serum')</sqlCheck> 
+				(select id from clinlims.test where description = 'COVID-19ANTIBODYIgG(Serum)')</sqlCheck> 
                 </preConditions>
 
                 <sql>
