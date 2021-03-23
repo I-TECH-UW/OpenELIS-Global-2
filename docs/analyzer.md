@@ -76,6 +76,15 @@ Creation Steps
 .. _`https://github.com/openelisglobal/openelisglobal-plugins`: https://github.com/openelisglobal/openelisglobal-plugins
 .. _SourceTree: http://www.sourcetreeapp.com/
 
+
+# How to add Analyzer on the main OpenELIS project?
+1. The plugins must be compile on a jar file
+2. the jar file must be copy on the folder: -- to update --
+3. the main project will be recompile including the jar file, the plugin is proper upload when its available in the menu.
+4. login to OpenELIS -> Results -> from Analyzer -> Analyzer name.
+
+
+
 # How are analyzer results imported to OpenELIS?
 
 The model being used is that the analyzer will write a results file to the file system and a perl script will monitor the directory where the results files are written. That directory is referred to as the staging directory.  When a new file is detected it is copied to another directory called the transmissionQueue.  The script will then send the file to a service in OpenELIS and as soon as it is successfully sent it will be deleted from the transmissionQueue.
@@ -86,11 +95,13 @@ Some points to keep in mind:
 
 1. The script depends on the timestamp of the files in the staging directory to insure that they are not moved to the transmissionQueue more than once.  There are some strangely named files in the transmissionQueue that track the timestamp, do not delete them or all of the files from the staging directory will be resent.
 
-1. The file in the transmissionQueue is deleted after successful transmission.
+1. The file in the transmissionQueue folder is deleted after successful transmission.
 
 1. During development it is easiest to copy (not move) the test file to the transmissionQueue directory rather than updating the timestamp and adding it to the staging directory.
 
 The perl file is in openelisgloble-core\tools\AnalyzerSideDataImport\FlatFileTransport.pl 
+Note that it exist to type of export file , one for windows environment and another for linux. 
+the main difference is how we mention the folder path in the perl code.
 
 Depending on where perl is installed on your system the script will be invoked with something similar to: `c:\Perl\bin\perl.exe FlatFileTransport.pl`
 
@@ -110,7 +121,9 @@ my $upLoadPassword = '';`
 
    *  *The location of the staging directory.*  
    The directory to which the analyzer is writing it's output files.  In the perl script is an example of a single script supporting two analyzers but one of them has been commented out.  In this example the name of the directory is a directory relative to the perl script named staging
-`my $stagingDir1 = ".\\staging";`
+`my $stagingDir1 = ".\\staging";` -- for windows environment
+
+`my $stagingDir1 = ".//staging";` -- for linux environment
 
     * In this example the directory has been mapped from one machine to the machine the perl script is on to a drive named Y
 'my $stagingDir2 = "Y:";`
