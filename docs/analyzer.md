@@ -99,7 +99,7 @@ Some points to keep in mind:
 
 1. During development it is easiest to copy (not move) the test file to the transmissionQueue directory rather than updating the timestamp and adding it to the staging directory.
 
-The perl file is in openelisgloble-core\tools\AnalyzerSideDataImport\FlatFileTransport.pl .
+The perl file is in "openelisglobal-core\tools\AnalyzerSideDataImport\FlatFileTransport.pl".
 Note that it exist to type of export file , one for windows environment and another for linux. 
 the main difference is how we mention the folder path in the perl script.
 
