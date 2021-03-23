@@ -12,7 +12,6 @@ This study encompasses several aspects of the activity within the laboratory and
 * *Workflows*
 
 If possible, Attach: 
-
 	1. A map of the physical layout of the lab
 	2. A description of the physical sample processing workflow
 	3. Any sample forms used in the workflow
@@ -26,8 +25,8 @@ Collect any infprmations concerning existing data software used on the laborator
 
 * *Infrastructure Needs*
 
-Short description of current and our proposed power failure backup plan, stability of current power, etc.; current internet and intranet network; 
-
+Short description of current and our proposed power failure backup plan, stability of current power, etc.
+current internet and intranet network; 
 	1. Power Supply
 	2. Internet Network
 	3. Intranet Network
@@ -38,32 +37,43 @@ Short description of current and our proposed power failure backup plan, stabili
 ## Equipments needs
 we are working on the deployment of an application using network configuration. 
 The main application is installed on a computer (server). 
-several client workstations will be able to access to this server via a network to be configured.
+several client workstations will be able to access to this server via a network to be configured
 
 * *server minimal configuration*
 
-	`Processor:	Core i3`
-	`RAM:	4 Go`
-	`Hard Disk:	500 Go`
-	`External Hard Disk:	500 Go`
-	`Ethernet Output available or provide wifi key`
-	`UPS: 1000 /1500 VA`
-
-* *Workstation minimal configuration*
+	`Processor:	Core i3`;
+		
+	`RAM:	4 Go`;
 	
-	Processor:	Dual core
-	RAM:	4 Go
-	Hard Disk:	500 Go
-	External Hard Disk:	500 Go
-	Ethernet Output available or provide wifi key
-	UPS: 650 VA
+	`Hard Disk:	500 Go`;
+		
+	`External Hard Disk:	500 Go`;
+	
+	`Ethernet Output available or provide wifi key`;
+	
+	`UPS: 1000 /1500 VA`;
+
+* *workstation minimal configuration*
+	
+	`Processor:	Dual core`;
+	
+	`RAM:	4 Go`;
+	
+	`Hard Disk:	500 Go`;
+	
+	`External Hard Disk:	500 Go`;
+	
+	`Ethernet Output available or provide wifi key`;
+	
+	`UPS: 650 VA`;
+	
 	
 * *Network Configuration*
 	
-	Wifi Router
-	Provide wifi key or ethernt cable
-
-
+	`Wifi Router`;
+	
+	`Provide wifi key or ethernt cable`;
+	
 
 ## Server and workstations Configurations
 
