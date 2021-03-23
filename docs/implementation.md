@@ -6,6 +6,7 @@ It is good to have an idea of the existing in terms of infrastructure, process, 
 This study encompasses several aspects of the activity within the laboratory and should provide an idea of the following aspects:
 
 * *Site Overview.*
+
 	a short Description of the laboratory activity
 
 * *Workflows.*
