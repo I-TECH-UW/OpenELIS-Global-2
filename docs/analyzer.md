@@ -30,7 +30,7 @@ should be added under "analyzer". There is an example called
 WeberAnalyzer which can be used as a template. Note that it also
 includes a **SMALL** input file sample as well as contact information.
 
-##Good manners
+## Good manners
 
 
 If you want to modify an existing analyzer written by a different
@@ -45,7 +45,7 @@ copyright notice and name yourself as a contributor, not as the creator.
 If you no longer are using a particular analyzer and do not care if the
 work is modified please note that in the contact file.
 
-##Working with git
+## Working with git
 
 
 The plugins are in a separate repository from the core but the IDE is
@@ -54,14 +54,14 @@ IDE you are only committing what is in openelisglobal-core, not anything
 from openelisglobal-plugin. To maintain that repository you will need to
 either work from the command line or use a tool such as `SourceTree`_.
 
-##For all IDE's
+## For all IDE's
 
 The JDK that is being used to compile the plugin **MUST** be as old or
 older than the Java version under which tomcat is running. i.e. If
 tomcat is using JRE 1.7 and the plugin was compiled with JDK 1.8 then
 bad things will happen
 
-##Setting up for Eclipse
+## Setting up for Eclipse
 
 
 Creation Steps
@@ -128,7 +128,7 @@ my $upLoadPassword = '';`
     * In this example the directory has been mapped from one machine to the machine the perl script is on to a drive named Y
 'my $stagingDir2 = "Y:";`
 
-##Troubleshooting:
+## Troubleshooting:
 
 Perl and curl give good error messages so most problems in the script will be obvious.  However sometimes the server returns errors which are not as obvious.
 
