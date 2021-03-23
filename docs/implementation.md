@@ -5,10 +5,10 @@ The initial assessment is an **IMPORTANT** step in the preparation of the implem
 It is good to have an idea of the existing in terms of infrastructure, process, organization, existing documents, existing software ...
 This study encompasses several aspects of the activity within the laboratory and should provide an idea of the following aspects:
 
-* *Site Overview*
+* *Site Overview.*
 	a short Description of the laboratory activity
 
-* *Workflows*
+* *Workflows.*
 If possible, Attach: 
 	1. A map of the physical layout of the lab
 	2. A description of the physical sample processing workflow
@@ -16,11 +16,11 @@ If possible, Attach:
 	4. A description of the QA/QC workflows
 	5. The Integration Workflow
 
-* *External Electronic Systems Interoperability*
+* *External Electronic Systems Interoperability.*
 Collect any infprmations concerning existing data software used on the laboratory for potential system interoprability.
 
 
-* *Infrastructure Needs*
+* *Infrastructure Needs.*
 Short description of current and our proposed power failure backup plan, stability of current power, etc.; current internet and intranet network; 
 	1. Power Supply
 	2. Internet Network
