@@ -1,7 +1,7 @@
 # OpenELIS Global - Implementation Notes
 
 ## Assessments
-The initial assessment is an **important ** step in the preparation of the implementation of IT solutions, particularly in the area of HIS which concerns us.
+The initial assessment is an ** important ** step in the preparation of the implementation of IT solutions, particularly in the area of HIS which concerns us.
 It is good to have an idea of the existing in terms of infrastructure, process, organization, existing documents, existing software ...
 This study encompasses several aspects of the activity within the laboratory and should provide an idea of the following aspects:
 
