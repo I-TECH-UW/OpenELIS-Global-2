@@ -79,7 +79,7 @@ Creation Steps
 
 # How to add Analyzer on the main OpenELIS project?
 1. The plugins must be compile on a jar file
-2. the jar file must be copy on the folder: `/var/lib/openelis-global/plugins/ ` 
+2. the jar file must be copy on the folder: `/var/lib/openelis-global/plugins/ ` on the same machine where OpenELIS has been deployed
 3. the main project will be recompile including the jar file, the plugin is proper upload when its available in the menu.
 4. login to OpenELIS -> Results -> from Analyzer -> Analyzer name.
 
