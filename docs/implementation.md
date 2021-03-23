@@ -6,6 +6,32 @@
 
 
 ## Equipments needs
+we are working on the deployment of an application using network configuration. 
+The main application is installed on a computer (server). 
+several client workstations will be able to access to this server via a network to be configured.
+
+	* * server minimal configuration
+	
+	`my Processor:	Core i3
+	`my RAM:	4 Go
+	`my Hard Disk:	500 Go
+	`my External Hard Disk:	500 Go
+	`my Ethernet Output available or provide wifi key
+	`my UPS: 1000 /1500 VA
+
+	* * workstation minimal configuration
+	
+	`my Processor:	Dual core
+	`my RAM:	4 Go
+	`my Hard Disk:	500 Go
+	`my External Hard Disk:	500 Go
+	`my Ethernet Output available or provide wifi key
+	`my UPS: 650 VA
+	
+	* * Network Configuration
+	
+	`my Wifi Router
+	`my provide wifi key or ethernt cable
 
 
 
