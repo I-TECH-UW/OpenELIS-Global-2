@@ -42,12 +42,12 @@ several client workstations will be able to access to this server via a network 
 
 	* *server minimal configuration*
 
-	Processor:	Core i3
-	`RAM:	4 Go
-	`Hard Disk:	500 Go
-	`External Hard Disk:	500 Go
-	`Ethernet Output available or provide wifi key
-	`UPS: 1000 /1500 VA
+	`Processor:	Core i3`
+	`RAM:	4 Go`
+	`Hard Disk:	500 Go`
+	`External Hard Disk:	500 Go`
+	`Ethernet Output available or provide wifi key`
+	`UPS: 1000 /1500 VA`
 
 	* *workstation minimal configuration*
 	
