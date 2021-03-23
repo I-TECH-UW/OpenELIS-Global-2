@@ -38,9 +38,9 @@ Short description of current and our proposed power failure backup plan, stabili
 ## Equipments needs
 we are working on the deployment of an application using network configuration. 
 The main application is installed on a computer (server). 
-several client workstations will be able to access to this server via a network to be configured.
+several client workstations will be able to access to this server via a network to be configured
 
-	* *server minimal configuration*
+* *server minimal configuration*
 
 	`Processor:	Core i3`
 	`RAM:	4 Go`
@@ -49,7 +49,7 @@ several client workstations will be able to access to this server via a network 
 	`Ethernet Output available or provide wifi key`
 	`UPS: 1000 /1500 VA`
 
-	* *workstation minimal configuration*
+* *workstation minimal configuration*
 	
 	`Processor:	Dual core
 	`RAM:	4 Go
