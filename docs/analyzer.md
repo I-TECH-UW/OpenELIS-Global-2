@@ -128,7 +128,7 @@ my $upLoadPassword = '';`
     * In this example the directory has been mapped from one machine to the machine the perl script is on to a drive named Y
 'my $stagingDir2 = "Y:";`
 
-## Troubleshooting:
+## Troubleshooting
 
 Perl and curl give good error messages so most problems in the script will be obvious.  However sometimes the server returns errors which are not as obvious.
 
