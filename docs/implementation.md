@@ -32,9 +32,7 @@ Short description of current and our proposed power failure backup plan, stabili
 	2. Internet Network
 	3. Intranet Network
 	4. Equipment Needs and Placement
-		The following is a list of equipment needs, specifications, and placement for installation of LIS.
-	5. Equipment Needs and placements
-	6. Workforce Capacity (composition, knowledge, skills, attitudes)
+	5. Workforce Capacity (composition, knowledge, skills, attitudes)
 
 
 ## Equipments needs
