@@ -18,6 +18,7 @@ function altAccessionOnChange() {
 	if (jQuery("#prePrintAltAccessionPrefix").val().length < 4) {
 		alert("<spring:message code="labno.alt.prefix.error.length"/>");
 	} 
+	altAccessionKeyUp();
 }
 
 function altAccessionKeyUp() {
@@ -33,7 +34,7 @@ function altAccessionKeyUp() {
 }
 
 function altAccessionValid() {
-	if (jQuery("#prePrintDontUseAltAccession").prop('checked')) {
+	if (!jQuery("#prePrintDontUseAltAccession").prop('checked')) {
 		if (jQuery("#prePrintAltAccessionPrefix").val().toLowerCase() === jQuery("#sitePrefix").val().toLowerCase()) {
 			return false;
 		}

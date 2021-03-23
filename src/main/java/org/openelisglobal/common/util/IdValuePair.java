@@ -48,4 +48,9 @@ public class IdValuePair implements Serializable {
             });
         }
     }
+
+    @Override
+    public String toString() {
+        return "id=" + id + ", value=" + value;
+    }
 }

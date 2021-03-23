@@ -94,6 +94,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
             "sampleOrderItems.labNo", "sampleOrderItems.requestDate", "sampleOrderItems.receivedDateForDisplay",
             "sampleOrderItems.receivedTime", "sampleOrderItems.nextVisitDate", "sampleOrderItems.requesterSampleID",
             "sampleOrderItems.referringPatientNumber", "sampleOrderItems.referringSiteId",
+            "referringSiteDepartmentName", "sampleOrderItems.referringSiteDepartmentId",
             "sampleOrderItems.referringSiteName", "sampleOrderItems.referringSiteCode", "sampleOrderItems.program",
             "sampleOrderItems.providerLastName", "sampleOrderItems.providerFirstName",
             "sampleOrderItems.providerWorkPhone", "sampleOrderItems.providerFax", "sampleOrderItems.providerEmail",

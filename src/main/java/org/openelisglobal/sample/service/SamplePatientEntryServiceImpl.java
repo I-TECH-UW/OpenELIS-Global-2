@@ -156,6 +156,24 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
         if (updateData.getCurrentOrganization() != null) {
             organizationService.update(updateData.getCurrentOrganization());
         }
+//        newOrganization = updateData.getNewOrganizationDepartment();
+//        if (newOrganization != null) {
+//            organizationService.insert(newOrganization);
+//            organizationService.linkOrganizationAndType(newOrganization,
+//                    TableIdService.getInstance().REFERRING_ORG_TYPE_ID);
+//            if (updateData.getRequesterSite() != null) {
+//                updateData.getRequesterSite().setRequesterId(newOrganization.getId());
+//            }
+//
+//            for (OrganizationAddress address : updateData.getOrgAddressExtra()) {
+//                address.setOrganizationId(newOrganization.getId());
+//                organizationAddressService.insert(address);
+//            }
+//        }
+//
+//        if (updateData.getCurrentOrganizationDepartment() != null) {
+//            organizationService.update(updateData.getCurrentOrganizationDepartment());
+//        }
 
     }
 
@@ -288,6 +306,14 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
                 updateData.getRequesterSite().setRequesterId(updateData.getNewOrganization().getId());
             }
             sampleRequesterService.insert(updateData.getRequesterSite());
+        }
+
+        if (updateData.getRequesterSiteDepartment() != null) {
+            updateData.getRequesterSiteDepartment().setSampleId(Long.parseLong(updateData.getSample().getId()));
+//            if (updateData.getNewOrganizationDepartment() != null) {
+//                updateData.getRequesterSite().setRequesterId(updateData.getNewOrganizationDepartment().getId());
+//            }
+            sampleRequesterService.insert(updateData.getRequesterSiteDepartment());
         }
     }
 

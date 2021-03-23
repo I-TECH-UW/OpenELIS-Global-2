@@ -383,6 +383,10 @@ function enableEnhancedSearchButton(eventCode){
 }
 
 function handleSelectedPatient(){
+	if (typeof(handleSelectedPatientAlt) === 'function') {
+		handleSelectedPatientAlt();
+		return;
+	}
     var accessionNumber = "";
     if(jQuery("#searchCriteria").val() == 5){//lab number
         accessionNumber = jQuery("#searchValue").val();
@@ -495,7 +499,7 @@ function handleSelectedPatient(){
 				id="dateOfBirthSearchValue"
 				name="dateOfBirthSearchValue"
 				size="20"
-				onkeyup="addDateSlashes(this,event); normalizeDateFormat(this);"
+				onkeyup="addDateSlashes(this,event); "
                 onchange="checkValidAgeDate( this );"
 				oninput="enableEnhancedSearchButton(event.which);"
 				placeholder='<%=MessageUtil.getMessage("label.select.search.here")%>' />

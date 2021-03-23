@@ -13,6 +13,7 @@ import org.openelisglobal.common.service.BaseObjectServiceImpl;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
+import org.openelisglobal.common.services.TableIdService;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.observationhistory.service.ObservationHistoryService;
 import org.openelisglobal.observationhistory.service.ObservationHistoryServiceImpl;
@@ -271,7 +272,53 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
         for (SampleRequester requester : requesters) {
             if (ORGANIZATION_REQUESTER_TYPE_ID == requester.getRequesterTypeId()) {
                 Organization org = organizationService.getOrganizationById(String.valueOf(requester.getRequesterId()));
-                return org != null ? org : null;
+                if (org != null && org.getOrganizationTypes().stream()
+                        .anyMatch(e -> e.getId().equals(TableIdService.getInstance().REFERRING_ORG_TYPE_ID))) {
+                    return org;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public SampleRequester getOrganizationSampleRequester(Sample sample, String orgTypeId) {
+        if (sample == null) {
+            return null;
+        }
+
+        List<SampleRequester> requesters = sampleRequesterService.getRequestersForSampleId(sample.getId());
+
+        for (SampleRequester requester : requesters) {
+            if (ORGANIZATION_REQUESTER_TYPE_ID == requester.getRequesterTypeId()) {
+                Organization org = organizationService.getOrganizationById(String.valueOf(requester.getRequesterId()));
+                if (org != null && org.getOrganizationTypes().stream().anyMatch(e -> e.getId().equals(orgTypeId))) {
+                    return requester;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Organization getOrganizationRequester(Sample sample, String orgTypeId) {
+        if (sample == null) {
+            return null;
+        }
+
+        List<SampleRequester> requesters = sampleRequesterService.getRequestersForSampleId(sample.getId());
+
+        for (SampleRequester requester : requesters) {
+
+            if (ORGANIZATION_REQUESTER_TYPE_ID == requester.getRequesterTypeId()) {
+                Organization org = organizationService.getOrganizationById(String.valueOf(requester.getRequesterId()));
+                if (org != null && org.getOrganizationTypes().stream().anyMatch(e -> e.getId().equals(orgTypeId))) {
+                    return org;
+                }
             }
         }
 
@@ -296,7 +343,8 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
         }
 
         List<Integer> statusList = new ArrayList<>();
-        statusList.add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized)));
+        statusList.add(
+                Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized)));
 
         List<Analysis> analysisList = analysisService.getAnalysesBySampleIdTestIdAndStatusId(sampIDList, testIDList,
                 statusList);
@@ -460,6 +508,17 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
         } else {
             return sampleAdditionalFieldDAO.update(sampleAdditionalField);
         }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public boolean sampleContainsTest(String sampleId, String testId) {
+        for (Analysis curAnalysis : analysisService.getAnalysesBySampleId(sampleId)) {
+            if (curAnalysis.getTest().getId().equals(testId)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

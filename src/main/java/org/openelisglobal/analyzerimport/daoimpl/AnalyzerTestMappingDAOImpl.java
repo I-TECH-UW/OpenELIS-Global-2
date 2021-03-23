@@ -17,10 +17,15 @@
  */
 package org.openelisglobal.analyzerimport.daoimpl;
 
+import java.util.List;
+
+import org.hibernate.Session;
 import org.openelisglobal.analyzerimport.dao.AnalyzerTestMappingDAO;
 import org.openelisglobal.analyzerimport.valueholder.AnalyzerTestMapping;
 import org.openelisglobal.analyzerimport.valueholder.AnalyzerTestMappingPK;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.log.LogEvent;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +36,23 @@ public class AnalyzerTestMappingDAOImpl extends BaseDAOImpl<AnalyzerTestMapping,
 
     public AnalyzerTestMappingDAOImpl() {
         super(AnalyzerTestMapping.class);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<AnalyzerTestMapping> getAllForAnalyzer(String analyzerId) {
+        List<AnalyzerTestMapping> list;
+        try {
+            String sql = "from AnalyzerTestMapping a where a.compoundId.analyzerId = :analyzerId";
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setParameter("analyzerId", Integer.parseInt(analyzerId));
+            list = query.list();
+        } catch (RuntimeException e) {
+            LogEvent.logError(e.toString(), e);
+            throw new LIMSRuntimeException("Error in AnalyzerTestMappingDAOImpl getAllForAnalyzer()", e);
+        }
+
+        return list;
     }
 
 //	@Override
@@ -71,7 +93,7 @@ public class AnalyzerTestMappingDAOImpl extends BaseDAOImpl<AnalyzerTestMapping,
 //	}
 
 //	@Override
-//	
+//
 //	public List<AnalyzerTestMapping> getAllAnalyzerTestMappings() throws LIMSRuntimeException {
 //		List<AnalyzerTestMapping> list = null;
 //		try {

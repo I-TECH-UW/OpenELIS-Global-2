@@ -91,34 +91,60 @@ public class PluginAnalyzerService {
         return analyzer.getId();
     }
 
+    public String addAnalyzerDatabaseParts(String name, String description, List<TestMapping> nameMappings,
+            boolean hasSetupPage) {
+        Analyzer analyzer = analyzerService.getAnalyzerByName(name);
+        if (analyzer != null && analyzer.getId() != null) {
+            analyzer.setActive(true);
+            analyzer.setHasSetupPage(hasSetupPage);
+            registerAanlyzerInCache(name, analyzer.getId());
+        } else {
+            if (analyzer == null) {
+                analyzer = new Analyzer();
+                analyzer.setActive(true);
+                analyzer.setName(name);
+                analyzer.setHasSetupPage(hasSetupPage);
+            }
+            analyzer.setDescription(description);
+        }
+
+        List<AnalyzerTestMapping> testMappings = createTestMappings(nameMappings);
+        if (!testMappings.isEmpty() && existingMappings == null) {
+            existingMappings = analyzerMappingService.getAll();
+        }
+
+        analyzer.setSysUserId("1");
+
+        try {
+            analyzerService.persistData(analyzer, testMappings, existingMappings);
+            registerAanlyzerInCache(name, analyzer.getId());
+        } catch (RuntimeException e) {
+            LogEvent.logErrorStack(e);
+        }
+        return analyzer.getId();
+    }
+
     private List<AnalyzerTestMapping> createTestMappings(List<TestMapping> nameMappings) {
         ArrayList<AnalyzerTestMapping> testMappings = new ArrayList<>();
         for (TestMapping names : nameMappings) {
-            String testId = getIdForTestLoincCode(names.getDbbTestLoincCode());
-            if (testId == null) {
-                testId = getIdForTestName(names.getDbbTestName());
+            List<Test> tests = testService.getTestsByLoincCode(names.getDbbTestLoincCode());
+            if (tests == null || tests.size() == 0) {
+                testMappings.add(createAnalyzerTestMapping(names, getIdForTestName(names.getDbbTestName())));
+            } else {
+                for (Test test : tests) {
+                    testMappings.add(createAnalyzerTestMapping(names, test.getId()));
+                }
             }
 
-            AnalyzerTestMapping analyzerMapping = new AnalyzerTestMapping();
-            analyzerMapping.setAnalyzerTestName(names.getAnalyzerTestName());
-            analyzerMapping.setTestId(testId);
-            testMappings.add(analyzerMapping);
         }
         return testMappings;
     }
 
-    private String getIdForTestLoincCode(String dbbTestLoincCode) {
-        List<Test> tests = testService.getTestsByLoincCode(dbbTestLoincCode);
-        Test test;
-        if (tests != null && !tests.isEmpty()) {
-            test = tests.get(0);
-            if (test != null) {
-                return test.getId();
-            }
-        }
-        LogEvent.logWarn(this.getClass().getName(), "getIdForTestLoincCode",
-                "Unable to find test " + dbbTestLoincCode + " in test catalog. Searching by name instead");
-        return null;
+    private AnalyzerTestMapping createAnalyzerTestMapping(TestMapping names, String testId) {
+        AnalyzerTestMapping analyzerMapping = new AnalyzerTestMapping();
+        analyzerMapping.setAnalyzerTestName(names.getAnalyzerTestName());
+        analyzerMapping.setTestId(testId);
+        return analyzerMapping;
     }
 
     private String getIdForTestName(String dbbTestName) {

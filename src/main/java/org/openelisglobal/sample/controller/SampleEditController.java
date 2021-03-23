@@ -76,7 +76,9 @@ public class SampleEditController extends BaseController {
             "sampleOrderItems.labNo", "sampleOrderItems.requestDate", "sampleOrderItems.receivedDateForDisplay",
             "sampleOrderItems.receivedTime", "sampleOrderItems.nextVisitDate", "sampleOrderItems.requesterSampleID",
             "sampleOrderItems.referringPatientNumber", "sampleOrderItems.referringSiteId",
-            "sampleOrderItems.referringSiteName", "sampleOrderItems.referringSiteCode", "sampleOrderItems.program",
+            "sampleOrderItems.referringSiteName", "sampleOrderItems.referringSiteCode",
+            "sampleOrderItems.referringSiteDepartmentId", "sampleOrderItems.referringSiteDepartmentName",
+            "sampleOrderItems.program",
             "sampleOrderItems.providerLastName", "sampleOrderItems.providerFirstName",
             "sampleOrderItems.providerWorkPhone", "sampleOrderItems.providerFax", "sampleOrderItems.providerEmail",
             "sampleOrderItems.facilityAddressStreet", "sampleOrderItems.facilityAddressCommune",
@@ -133,7 +135,7 @@ public class SampleEditController extends BaseController {
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
-//        binder.setAllowedFields(ALLOWED_FIELDS);
+        binder.setAllowedFields(ALLOWED_FIELDS);
     }
 
     @RequestMapping(value = "/SampleEdit", method = RequestMethod.GET)

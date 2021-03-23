@@ -3,6 +3,8 @@ package org.openelisglobal.testconfiguration.controller;
 import javax.servlet.http.HttpServletRequest;
 
 import org.openelisglobal.common.controller.BaseController;
+import org.openelisglobal.common.services.DisplayListService;
+import org.openelisglobal.common.services.DisplayListService.ListType;
 import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.testconfiguration.form.ResultSelectListForm;
 import org.openelisglobal.testconfiguration.service.ResultSelectListService;
@@ -63,7 +65,8 @@ public class ResultSelectListAddController extends BaseController {
         boolean saved = resultSelectListService.addResultSelectList(form, currentUserId);
         if (saved) {
             redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
-            return findForward(FWD_SUCCESS, form);
+            DisplayListService.getInstance().refreshList(ListType.DICTIONARY_TEST_RESULTS);
+            return findForward(FWD_SUCCESS_INSERT, form);
         }
         return findForward(FWD_FAIL_INSERT, form);
 

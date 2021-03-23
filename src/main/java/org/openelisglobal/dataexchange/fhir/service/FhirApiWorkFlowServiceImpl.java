@@ -26,6 +26,7 @@ import org.hl7.fhir.r4.model.Task;
 import org.hl7.fhir.r4.model.Task.TaskStatus;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.dataexchange.fhir.FhirConfig;
+import org.openelisglobal.dataexchange.fhir.FhirUtil;
 import org.openelisglobal.dataexchange.fhir.service.TaskWorker.TaskResult;
 import org.openelisglobal.dataexchange.order.action.DBOrderExistanceChecker;
 import org.openelisglobal.dataexchange.order.action.IOrderPersister;
@@ -38,9 +39,7 @@ import org.springframework.stereotype.Service;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.api.MethodOutcome;
-import ca.uhn.fhir.rest.client.api.IClientInterceptor;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
-import ca.uhn.fhir.rest.client.interceptor.BasicAuthInterceptor;
 import ca.uhn.fhir.rest.gclient.IQuery;
 
 @Service
@@ -51,7 +50,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
     @Autowired
     private FhirConfig fhirConfig;
     @Autowired
-    private FhirTransformService fhirTransformService;
+    private FhirUtil fhirUtil;
 
     @Value("${org.openelisglobal.fhirstore.uri}")
     private String localFhirStorePath;
@@ -93,9 +92,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         if (remoteStoreIdentifier.isEmpty()) {
             return;
         }
-        IGenericClient sourceFhirClient = fhirContext.newRestfulGenericClient(remoteStorePath);
-        IClientInterceptor authInterceptor = new BasicAuthInterceptor("admin", "Admin123");
-        sourceFhirClient.registerInterceptor(authInterceptor);
+        IGenericClient sourceFhirClient = fhirUtil.getFhirClient(remoteStorePath);
         IQuery<Bundle> searchQuery = sourceFhirClient.search()//
                 .forResource(Task.class)//
                 .returnBundle(Bundle.class)//
@@ -120,76 +117,84 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
                     && ResourceType.Task.equals(bundleComponent.getResource().getResourceType())) {
 
                 Task remoteTask = (Task) bundleComponent.getResource();
-                // should contain the Patient, the ServiceRequest, and the Task
-                Bundle transactionResponseBundle = saveRemoteTaskAsLocalTask(sourceFhirClient, remoteTask, bundle,
-                        remoteStorePath);
-                Task taskBasedOnRemoteTask = getLocalTaskBasedOnTask(remoteTask, remoteStorePath);
-                if (useBasedOn && taskBasedOnRemoteTask == null) {
-                    taskBasedOnRemoteTask = saveTaskBasedOnRemoteTask(sourceFhirClient, remoteTask, bundle,
-                            remoteStorePath);
+                try {
+                    processTask(remoteTask, remoteStorePath, sourceFhirClient, bundle);
+                } catch (RuntimeException e) {
+                    LogEvent.logError(this.getClass().getName(), "beginTaskPath",
+                            "could not process Task with identifier : " + remoteTask.getId());
                 }
 
-                IGenericClient localFhirClient = fhirContext.newRestfulGenericClient(localFhirStorePath);
-                Map<String, List<String>> localSearchParams = new HashMap<>();
-                Task localTask = getTaskWithSameIdentifier(remoteTask, remoteStorePath);
-                localSearchParams.put("_id", Arrays.asList(localTask.getId()));
-                Bundle localBundle = localFhirClient.search()//
-                        .forResource(Task.class)//
-                        // TODO use include
-                        .include(Task.INCLUDE_PATIENT)//
-                        .include(Task.INCLUDE_BASED_ON)//
-                        .include(ServiceRequest.INCLUDE_PATIENT.asRecursive())//
-                        .whereMap(localSearchParams)//
-                        .returnBundle(Bundle.class)//
-                        .execute();
+            }
+        }
+    }
 
-                List<ServiceRequest> serviceRequestList = getBasedOnServiceRequestFromBundle(localBundle, localTask);
-                List<Patient> patients = new ArrayList<>();
-                Patient forPatient = getForPatientFromBundle(localBundle, localTask);
-                if (forPatient == null) {
-                    patients = getForPatientFromBundle(localBundle, serviceRequestList);
-                } else {
-                    patients.add(forPatient);
+    private void processTask(Task remoteTask, String remoteStorePath, IGenericClient sourceFhirClient, Bundle bundle) {
+        // should contain the Patient, the ServiceRequest, and the Task
+        Bundle transactionResponseBundle = saveRemoteTaskAsLocalTask(sourceFhirClient, remoteTask, bundle,
+                remoteStorePath);
+        Task taskBasedOnRemoteTask = getLocalTaskBasedOnTask(remoteTask, remoteStorePath);
+        if (useBasedOn && taskBasedOnRemoteTask == null) {
+            taskBasedOnRemoteTask = saveTaskBasedOnRemoteTask(sourceFhirClient, remoteTask, bundle, remoteStorePath);
+        }
+
+        IGenericClient localFhirClient = fhirUtil.getFhirClient(localFhirStorePath);
+        Map<String, List<String>> localSearchParams = new HashMap<>();
+        Task localTask = getTaskWithSameIdentifier(remoteTask, remoteStorePath);
+        localSearchParams.put("_id", Arrays.asList(localTask.getId()));
+        Bundle localBundle = localFhirClient.search()//
+                .forResource(Task.class)//
+                // TODO use include
+                .include(Task.INCLUDE_PATIENT)//
+                .include(Task.INCLUDE_BASED_ON)//
+                .include(ServiceRequest.INCLUDE_PATIENT.asRecursive())//
+                .whereMap(localSearchParams)//
+                .returnBundle(Bundle.class)//
+                .execute();
+
+        List<ServiceRequest> serviceRequestList = getBasedOnServiceRequestFromBundle(localBundle, localTask);
+        List<Patient> patients = new ArrayList<>();
+        Patient forPatient = getForPatientFromBundle(localBundle, localTask);
+        if (forPatient == null) {
+            patients = getForPatientFromBundle(localBundle, serviceRequestList);
+        } else {
+            patients.add(forPatient);
+        }
+        TaskResult taskResult = null;
+//        if(true) {
+        if (localTask.getStatus() == null || !(localTask.getStatus().equals(TaskStatus.ACCEPTED)
+                || localTask.getStatus().equals(TaskStatus.COMPLETED))) {
+            Boolean taskOrderAcceptedFlag = false;
+            for (ServiceRequest serviceRequest : serviceRequestList) {
+
+                Patient patient = getPatientForTaskOrServiceRequest(remoteTask, serviceRequest, patients);
+                if (patient == null) {
+                    throw new IllegalStateException("could not find a patient for task or service request");
                 }
-                TaskResult taskResult = null;
-//                if(true) {
-                if (localTask.getStatus() == null || !(localTask.getStatus().equals(TaskStatus.ACCEPTED)
-                        || localTask.getStatus().equals(TaskStatus.COMPLETED))) {
-                    Boolean taskOrderAcceptedFlag = false;
-                    for (ServiceRequest serviceRequest : serviceRequestList) {
+                TaskWorker worker = new TaskWorker(remoteTask,
+                        fhirContext.newJsonParser().encodeResourceToString(remoteTask), serviceRequest, patient);
 
-                        Patient patient = getPatientForTaskOrServiceRequest(remoteTask, serviceRequest, patients);
-                        if (patient == null) {
-                            throw new IllegalStateException("could not find a patient for task or service request");
-                        }
-                        TaskWorker worker = new TaskWorker(remoteTask,
-                                fhirContext.newJsonParser().encodeResourceToString(remoteTask), serviceRequest,
-                                patient);
+                worker.setInterpreter(SpringContext.getBean(TaskInterpreter.class));
+                worker.setExistanceChecker(SpringContext.getBean(DBOrderExistanceChecker.class));
+                worker.setPersister(SpringContext.getBean(IOrderPersister.class));
 
-                        worker.setInterpreter(SpringContext.getBean(TaskInterpreter.class));
-                        worker.setExistanceChecker(SpringContext.getBean(DBOrderExistanceChecker.class));
-                        worker.setPersister(SpringContext.getBean(IOrderPersister.class));
-
-                        taskResult = worker.handleOrderRequest();
-                        if (taskResult == TaskResult.OK) {
-                            taskOrderAcceptedFlag = true; // at least one order was accepted per Piotr 5/14/2020
-                        }
-                    }
-
-                    TaskStatus taskStatus = taskOrderAcceptedFlag ? TaskStatus.ACCEPTED : TaskStatus.REJECTED;
-                    localTask.setStatus(taskStatus);
-                    if (remoteStoreUpdateStatus.isPresent() && remoteStoreUpdateStatus.get()) {
-                        LogEvent.logDebug(this.getClass().getName(), "beginTaskPath",
-                                "updating remote status to " + taskStatus);
-                        remoteTask.setStatus(taskStatus);
-                        sourceFhirClient.update().resource(remoteTask).execute();
-                    }
-                    localFhirClient.update().resource(localTask).execute();
-                    if (useBasedOn) {
-                        taskBasedOnRemoteTask.setStatus(taskStatus);
-                        localFhirClient.update().resource(taskBasedOnRemoteTask).execute();
-                    }
+                taskResult = worker.handleOrderRequest();
+                if (taskResult == TaskResult.OK) {
+                    taskOrderAcceptedFlag = true; // at least one order was accepted per Piotr 5/14/2020
                 }
+            }
+
+            TaskStatus taskStatus = taskOrderAcceptedFlag ? TaskStatus.ACCEPTED : TaskStatus.REJECTED;
+            localTask.setStatus(taskStatus);
+            if (remoteStoreUpdateStatus.isPresent() && remoteStoreUpdateStatus.get()) {
+                LogEvent.logDebug(this.getClass().getName(), "beginTaskPath",
+                        "updating remote status to " + taskStatus);
+                remoteTask.setStatus(taskStatus);
+                sourceFhirClient.update().resource(remoteTask).execute();
+            }
+            localFhirClient.update().resource(localTask).execute();
+            if (useBasedOn) {
+                taskBasedOnRemoteTask.setStatus(taskStatus);
+                localFhirClient.update().resource(taskBasedOnRemoteTask).execute();
             }
         }
     }
@@ -227,7 +232,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         localSearchParams.put(Task.SP_BASED_ON, Arrays
                 .asList(remoteStorePath + ResourceType.Task.toString() + "/" + remoteTask.getIdElement().getIdPart()));
 
-        IGenericClient localFhirClient = fhirContext.newRestfulGenericClient(localFhirStorePath);
+        IGenericClient localFhirClient = fhirUtil.getFhirClient(localFhirStorePath);
         Bundle localBundle = localFhirClient.search().forResource(Task.class).whereMap(localSearchParams)
                 .returnBundle(Bundle.class).execute();
         return (Task) localBundle.getEntryFirstRep().getResource();
@@ -246,7 +251,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         reference.setReference(referenceString);
         taskBasedOnRemoteTask.addBasedOn(reference);
 
-        MethodOutcome outcome = fhirContext.newRestfulGenericClient(localFhirStorePath).update()
+        MethodOutcome outcome = fhirUtil.getFhirClient(localFhirStorePath).update()
                 .resource(taskBasedOnRemoteTask).execute();
 
         return (Task) outcome.getResource();
@@ -315,7 +320,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         }
 
         // Run the transaction
-        return fhirContext.newRestfulGenericClient(localFhirStorePath).transaction()
+        return fhirUtil.getFhirClient(localFhirStorePath).transaction()
                 .withBundle(createBundleFromResources(createResources, updateResources)).execute();
     }
 
@@ -349,7 +354,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         localSearchParams.put(Task.SP_IDENTIFIER,
                 Arrays.asList(remoteStorePath + "|" + remoteTask.getIdElement().getIdPart()));
 
-        IGenericClient localFhirClient = fhirContext.newRestfulGenericClient(localFhirStorePath);
+        IGenericClient localFhirClient = fhirUtil.getFhirClient(localFhirStorePath);
         Bundle localBundle = localFhirClient.search().forResource(Task.class).whereMap(localSearchParams)
                 .returnBundle(Bundle.class).execute();
         return (Task) localBundle.getEntryFirstRep().getResource();
@@ -360,14 +365,14 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         localSearchParams.put(ServiceRequest.SP_IDENTIFIER,
                 Arrays.asList(remoteStorePath + "|" + basedOn.getIdElement().getIdPart()));
 
-        IGenericClient localFhirClient = fhirContext.newRestfulGenericClient(localFhirStorePath);
+        IGenericClient localFhirClient = fhirUtil.getFhirClient(localFhirStorePath);
         Bundle localBundle = localFhirClient.search().forResource(ServiceRequest.class).whereMap(localSearchParams)
                 .returnBundle(Bundle.class).execute();
         return (ServiceRequest) localBundle.getEntryFirstRep().getResource();
     }
 
     private Patient getPatientWithSameServiceIdentifier(Patient remotePatient, String remoteStorePath) {
-        IGenericClient localFhirClient = fhirContext.newRestfulGenericClient(localFhirStorePath);
+        IGenericClient localFhirClient = fhirUtil.getFhirClient(localFhirStorePath);
         Map<String, List<String>> localSearchParams = new HashMap<>();
         localSearchParams.put(Patient.SP_IDENTIFIER,
                 Arrays.asList(remoteStorePath + "|" + remotePatient.getIdElement().getIdPart()));
@@ -378,7 +383,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
     }
 
     private Patient getPatientWithSameIdIfExists(Patient remotePatient, String remoteStorePath) {
-        IGenericClient localFhirClient = fhirContext.newRestfulGenericClient(localFhirStorePath);
+        IGenericClient localFhirClient = fhirUtil.getFhirClient(localFhirStorePath);
         Bundle localBundle = localFhirClient.search().forResource(Patient.class)
                 .where(Patient.RES_ID.exactly().code(remotePatient.getIdElement().getId())).returnBundle(Bundle.class)
                 .execute();

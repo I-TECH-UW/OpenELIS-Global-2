@@ -3,13 +3,16 @@ nav:
     - Home: index.md
     - About: about.md
     - Install OpenELIS Global: install.md
+    - Upgrade to the Newest Version: upgrade.md
     - Analyzers: analyzer.md
     - Deploy:
        - OpenMRS Interoperability: deployomrs.md
        - Backup Script Configuration: backups.md
        - Update From OpenELIS Global 1.x to 2.x: upgrade1to2.md
+       - Password Migration: password.md
     - Develop: 
        - Developers: dev.md
+       - Adding facilities to the Consolidated Server: addingfacilities.md
        - Database Profiles Mass facility and test catalog updates: dbprofiles.md
     - Website: http://openelis-global.org
 theme: readthedocs
