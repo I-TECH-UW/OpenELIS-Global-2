@@ -40,28 +40,28 @@ we are working on the deployment of an application using network configuration.
 The main application is installed on a computer (server). 
 several client workstations will be able to access to this server via a network to be configured.
 
-	* *server minimal configuration*
+* *server minimal configuration*
 
-	Processor:	Core i3
-	`RAM:	4 Go
-	`Hard Disk:	500 Go
-	`External Hard Disk:	500 Go
-	`Ethernet Output available or provide wifi key
-	`UPS: 1000 /1500 VA
+	`Processor:	Core i3`
+	`RAM:	4 Go`
+	`Hard Disk:	500 Go`
+	`External Hard Disk:	500 Go`
+	`Ethernet Output available or provide wifi key`
+	`UPS: 1000 /1500 VA`
 
-	* *workstation minimal configuration*
+* *Workstation minimal configuration*
 	
-	`Processor:	Dual core
-	`RAM:	4 Go
-	`Hard Disk:	500 Go
-	`External Hard Disk:	500 Go
-	`Ethernet Output available or provide wifi key
-	`UPS: 650 VA
+	Processor:	Dual core
+	RAM:	4 Go
+	Hard Disk:	500 Go
+	External Hard Disk:	500 Go
+	Ethernet Output available or provide wifi key
+	UPS: 650 VA
 	
-	* *Network Configuration*
+* *Network Configuration*
 	
-	`Wifi Router
-	`Provide wifi key or ethernt cable
+	Wifi Router
+	Provide wifi key or ethernt cable
 
 
 
