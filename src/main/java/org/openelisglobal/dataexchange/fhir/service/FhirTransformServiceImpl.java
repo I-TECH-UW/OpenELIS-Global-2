@@ -199,7 +199,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
     }
 
     @Override
-    public String CreateFhirFromOESample(TestResultsXmit result, Patient patient) {
+    public void CreateFhirFromOESample(TestResultsXmit result, Patient patient) {
         LogEvent.logDebug(this.getClass().getName(), "CreateFhirFromOESample", "CreateFhirFromOESample:result ");
 
         String patientGuid = result.getPatientGUID();
@@ -265,11 +265,12 @@ public class FhirTransformServiceImpl implements FhirTransformService {
                             "existing diagnosticReport: " + fhirContext.newJsonParser()
                                     .encodeResourceToString(drBundle.getEntryFirstRep().getResource()));
 
-                    return (fhirContext.newJsonParser().encodeResourceToString(fhirPatient)
-                            + fhirContext.newJsonParser()
-                                    .encodeResourceToString(oBundle.getEntryFirstRep().getResource())
-                            + fhirContext.newJsonParser()
-                                    .encodeResourceToString(drBundle.getEntryFirstRep().getResource()));
+                    return;
+//                    return (fhirContext.newJsonParser().encodeResourceToString(fhirPatient)
+//                            + fhirContext.newJsonParser()
+//                                    .encodeResourceToString(oBundle.getEntryFirstRep().getResource())
+//                            + fhirContext.newJsonParser()
+//                                    .encodeResourceToString(drBundle.getEntryFirstRep().getResource()));
                 }
 
                 Observation observation = new Observation();
@@ -336,9 +337,12 @@ public class FhirTransformServiceImpl implements FhirTransformService {
             LogEvent.logError(e);
         }
 
-        return (fhirContext.newJsonParser().encodeResourceToString(fhirPatient)
-                + fhirContext.newJsonParser().encodeResourceToString(oResp.getEntryFirstRep().getResource())
-                + fhirContext.newJsonParser().encodeResourceToString(drResp.getEntryFirstRep().getResource()));
+        return;
+//      return (fhirContext.newJsonParser().encodeResourceToString(fhirPatient)
+//              + fhirContext.newJsonParser()
+//                      .encodeResourceToString(oBundle.getEntryFirstRep().getResource())
+//              + fhirContext.newJsonParser()
+//                      .encodeResourceToString(drBundle.getEntryFirstRep().getResource()));
     }
 
     @Override
