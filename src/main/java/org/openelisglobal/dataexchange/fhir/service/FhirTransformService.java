@@ -18,7 +18,7 @@ public interface FhirTransformService {
 
     public String CreateFhirFromOESample(PortableOrder porder);
 
-    public String CreateFhirFromOESample(TestResultsXmit result, Patient patient);
+    public void CreateFhirFromOESample(TestResultsXmit result, Patient patient);
 
     public void CreateFhirFromOESample(ElectronicOrder eOrder, TestResultsXmit result);
 

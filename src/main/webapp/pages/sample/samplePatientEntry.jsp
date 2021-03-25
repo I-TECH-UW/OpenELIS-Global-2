@@ -582,18 +582,18 @@ function  processPhoneSuccess(xhr){
 <% } %>
             
 <div id=sampleEntryPage >
-<input type="button" name="showHide" value='<%= acceptExternalOrders ? "+" : "-" %>' onclick="showHideSection(this, 'orderDisplay');" id="orderSectionId">
+<input type="button" name="showHide" value='-' onclick="showHideSection(this, 'orderDisplay');" id="orderSectionId">
 <%= MessageUtil.getContextualMessage("sample.entry.order.label") %>
 <span class="requiredlabel">*</span>
 
 <tiles:insertAttribute name="sampleOrder" />
 
 <hr style="width:100%;height:5px" />
-<input type="button" name="showHide" value="+" onclick="showHideSection(this, 'samplesDisplay');" id="samplesSectionId">
+<input type="button" name="showHide" value="-" onclick="showHideSection(this, 'samplesDisplay');" id="samplesSectionId">
 <%= MessageUtil.getContextualMessage("sample.entry.sampleList.label") %>
 <span class="requiredlabel">*</span>
 
-<div id="samplesDisplay" class="colorFill" style="display:none;" >
+<div id="samplesDisplay" class="colorFill" >
     <tiles:insertAttribute name="addSample"/>
 </div>
 
@@ -603,7 +603,7 @@ function  processPhoneSuccess(xhr){
 <table style="width:100%">
     <tr>
         <td style="width:15%;text-align:left">
-            <input type="button" name="showHide" value="+" onclick="showHideSection(this, 'patientInfo');" id="orderSectionId">
+            <input type="button" name="showHide" value="-" onclick="showHideSection(this, 'patientInfo');" id="orderSectionId">
             <spring:message code="sample.entry.patient" />:
             <% if ( patientRequired ) { %><span class="requiredlabel">*</span><% } %>
         </td>
@@ -636,7 +636,7 @@ function  processPhoneSuccess(xhr){
     </tr>
 </table>
 
-<div id="patientInfo"  style="display:none;" >
+<div id="patientInfo"  >
     <tiles:insertAttribute name="patientInfo" />
     <tiles:insertAttribute name="patientClinicalInfo" />
 </div>
@@ -744,6 +744,7 @@ registerPatientChangedForSampleEntry();
 registerSampleChangedForSampleEntry();
 
 jQuery(document).ready(function() {
+	
 	<% if( acceptExternalOrders){ %>
 	if (jQuery("#externalOrderNumber").val()) {
 		checkOrderReferral();

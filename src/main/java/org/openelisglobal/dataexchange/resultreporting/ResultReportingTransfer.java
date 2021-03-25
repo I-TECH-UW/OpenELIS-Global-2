@@ -177,8 +177,9 @@ public class ResultReportingTransfer {
                 String accessionNumber = result.getAccessionNumber();
                 accessionNumber = accessionNumber.substring(0,accessionNumber.indexOf('-')); // disregard test number within set
                 org.openelisglobal.patient.valueholder.Patient patient = patientService.getPatientForGuid(patientGuid);
-                String fhirJson = fhirTransformService.CreateFhirFromOESample(result, patient);
-                LogEvent.logDebug(this.getClass().getName(), "sendResults", "" + fhirJson);
+                fhirTransformService.CreateFhirFromOESample(result, patient);
+//                String fhirJson = fhirTransformService.CreateFhirFromOESample(result, patient);
+//                LogEvent.logDebug(this.getClass().getName(), "sendResults", "" + fhirJson);
                 continue;
             }
             if (!result.getReferringOrderNumber().isEmpty()) { // eOrder create FHIR
