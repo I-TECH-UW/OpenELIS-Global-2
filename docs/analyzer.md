@@ -30,7 +30,7 @@ should be added under "analyzer". There is an example called
 WeberAnalyzer which can be used as a template. Note that it also
 includes a **SMALL** input file sample as well as contact information.
 
-##Good manners
+## Good manners
 
 
 If you want to modify an existing analyzer written by a different
@@ -45,7 +45,7 @@ copyright notice and name yourself as a contributor, not as the creator.
 If you no longer are using a particular analyzer and do not care if the
 work is modified please note that in the contact file.
 
-##Working with git
+## Working with git
 
 
 The plugins are in a separate repository from the core but the IDE is
@@ -54,14 +54,14 @@ IDE you are only committing what is in openelisglobal-core, not anything
 from openelisglobal-plugin. To maintain that repository you will need to
 either work from the command line or use a tool such as `SourceTree`_.
 
-##For all IDE's
+## For all IDE's
 
 The JDK that is being used to compile the plugin **MUST** be as old or
 older than the Java version under which tomcat is running. i.e. If
 tomcat is using JRE 1.7 and the plugin was compiled with JDK 1.8 then
 bad things will happen
 
-##Setting up for Eclipse
+## Setting up for Eclipse
 
 
 Creation Steps
@@ -76,6 +76,15 @@ Creation Steps
 .. _`https://github.com/openelisglobal/openelisglobal-plugins`: https://github.com/openelisglobal/openelisglobal-plugins
 .. _SourceTree: http://www.sourcetreeapp.com/
 
+
+# How to add Analyzer on the main OpenELIS project?
+1. The plugins must be compile on a jar file
+2. the jar file must be copy on the folder: -- to update --
+3. the main project will be recompile including the jar file, the plugin is proper upload when its available in the menu.
+4. login to OpenELIS -> Results -> from Analyzer -> Analyzer name.
+
+
+
 # How are analyzer results imported to OpenELIS?
 
 The model being used is that the analyzer will write a results file to the file system and a perl script will monitor the directory where the results files are written. That directory is referred to as the staging directory.  When a new file is detected it is copied to another directory called the transmissionQueue.  The script will then send the file to a service in OpenELIS and as soon as it is successfully sent it will be deleted from the transmissionQueue.
@@ -86,11 +95,13 @@ Some points to keep in mind:
 
 1. The script depends on the timestamp of the files in the staging directory to insure that they are not moved to the transmissionQueue more than once.  There are some strangely named files in the transmissionQueue that track the timestamp, do not delete them or all of the files from the staging directory will be resent.
 
-1. The file in the transmissionQueue is deleted after successful transmission.
+1. The file in the transmissionQueue folder is deleted after successful transmission.
 
 1. During development it is easiest to copy (not move) the test file to the transmissionQueue directory rather than updating the timestamp and adding it to the staging directory.
 
-The perl file is in openelisgloble-core\tools\AnalyzerSideDataImport\FlatFileTransport.pl 
+The perl file is in "openelisglobal-core\tools\AnalyzerSideDataImport\FlatFileTransport.pl".
+Note that it exist to type of export file , one for windows environment and another for linux. 
+the main difference is how we mention the folder path in the perl script.
 
 Depending on where perl is installed on your system the script will be invoked with something similar to: `c:\Perl\bin\perl.exe FlatFileTransport.pl`
 
@@ -110,12 +121,14 @@ my $upLoadPassword = '';`
 
    *  *The location of the staging directory.*  
    The directory to which the analyzer is writing it's output files.  In the perl script is an example of a single script supporting two analyzers but one of them has been commented out.  In this example the name of the directory is a directory relative to the perl script named staging
-`my $stagingDir1 = ".\\staging";`
+`my $stagingDir1 = ".\\staging";` -- for windows
+
+ `my $stagingDir1 = ".//staging";` -- for linux
 
     * In this example the directory has been mapped from one machine to the machine the perl script is on to a drive named Y
 'my $stagingDir2 = "Y:";`
 
-##Troubleshooting:
+## Troubleshooting
 
 Perl and curl give good error messages so most problems in the script will be obvious.  However sometimes the server returns errors which are not as obvious.
 

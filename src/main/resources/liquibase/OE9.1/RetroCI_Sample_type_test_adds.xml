@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+<changeSet author="CI OpenELIS developers group" id="1">
+    <preConditions onFail="MARK_RAN">
+		<sqlCheck expectedResult="0">SELECT COUNT(*) FROM clinlims.sampletype_test WHERE test_id = 174</sqlCheck>
+	</preConditions>
+	<comment>create link with SampleType and RetroCI tests</comment>
+  <sql>
+    
+		ALTER SEQUENCE clinlims.sample_type_test_seq restart WITH 500;
+		 INSERT INTO clinlims.sampletype_test(  id, sample_type_id, test_id, is_panel)  VALUES (313,25,193, default);  
+		 INSERT INTO clinlims.sampletype_test(  id, sample_type_id, test_id, is_panel)  VALUES (314,25,194, default);  
+		 INSERT INTO clinlims.sampletype_test(  id, sample_type_id, test_id, is_panel)  VALUES (315,25,195, default);  
+		 INSERT INTO clinlims.sampletype_test(  id, sample_type_id, test_id, is_panel)  VALUES (316,25,196, default);  
+		 INSERT INTO clinlims.sampletype_test(  id, sample_type_id, test_id, is_panel)  VALUES (317,25,197, default);  
+		 INSERT INTO clinlims.sampletype_test(  id, sample_type_id, test_id, is_panel)  VALUES (278,24,159, default);  
+		 INSERT INTO clinlims.sampletype_test(  id, sample_type_id, test_id, is_panel)  VALUES (279,24,160, default);  
+		 INSERT INTO clinlims.sampletype_test(  id, sample_type_id, test_id, is_panel)  VALUES (280,24,161, default);  
+		 INSERT INTO clinlims.sampletype_test(  id, sample_type_id, test_id, is_panel)  VALUES (281,24,162, default);  
+		 INSERT INTO clinlims.sampletype_test(  id, sample_type_id, test_id, is_panel)  VALUES (282,24,163, default);  
+		 INSERT INTO clinlims.sampletype_test(  id, sample_type_id, test_id, is_panel)  VALUES (283,24,164, default);  
+		 INSERT INTO clinlims.sampletype_test(  id, sample_type_id, test_id, is_panel)  VALUES (284,24,165, default);  
+		 INSERT INTO clinlims.sampletype_test(  id, sample_type_id, test_id, is_panel)  VALUES (285,24,166, default);  
+		 INSERT INTO clinlims.sampletype_test(  id, sample_type_id, test_id, is_panel)  VALUES (286,24,167, default);  
+		 INSERT INTO clinlims.sampletype_test(  id, sample_type_id, test_id, is_panel)  VALUES (287,24,168, default);  
+		 INSERT INTO clinlims.sampletype_test(  id, sample_type_id, test_id, is_panel)  VALUES (288,24,169, default);  
+		 INSERT INTO clinlims.sampletype_test(  id, sample_type_id, test_id, is_panel)  VALUES (289,24,170, default);  
+		 INSERT INTO clinlims.sampletype_test(  id, sample_type_id, test_id, is_panel)  VALUES (291,25,172, default);  
+		 INSERT INTO clinlims.sampletype_test(  id, sample_type_id, test_id, is_panel)  VALUES (292,25,173, default);  
+		 INSERT INTO clinlims.sampletype_test(  id, sample_type_id, test_id, is_panel)  VALUES (293,25,174, default);  
+		 INSERT INTO clinlims.sampletype_test(  id, sample_type_id, test_id, is_panel)  VALUES (294,25,175, default);  
+		 INSERT INTO clinlims.sampletype_test(  id, sample_type_id, test_id, is_panel)  VALUES (295,26,175, default);  
+		 INSERT INTO clinlims.sampletype_test(  id, sample_type_id, test_id, is_panel)  VALUES (296,24,176, default);  
+		 INSERT INTO clinlims.sampletype_test(  id, sample_type_id, test_id, is_panel)  VALUES (297,25,177, default);  
+		 INSERT INTO clinlims.sampletype_test(  id, sample_type_id, test_id, is_panel)  VALUES (298,25,178, default);  
+		 INSERT INTO clinlims.sampletype_test(  id, sample_type_id, test_id, is_panel)  VALUES (299,25,179, default);  
+		 INSERT INTO clinlims.sampletype_test(  id, sample_type_id, test_id, is_panel)  VALUES (300,25,180, default);  
+		 INSERT INTO clinlims.sampletype_test(  id, sample_type_id, test_id, is_panel)  VALUES (301,25,181, default);  
+		 INSERT INTO clinlims.sampletype_test(  id, sample_type_id, test_id, is_panel)  VALUES (302,25,182, default);  
+		 INSERT INTO clinlims.sampletype_test(  id, sample_type_id, test_id, is_panel)  VALUES (303,25,183, default);  
+		 INSERT INTO clinlims.sampletype_test(  id, sample_type_id, test_id, is_panel)  VALUES (304,25,184, default);  
+		 INSERT INTO clinlims.sampletype_test(  id, sample_type_id, test_id, is_panel)  VALUES (305,25,185, default);  
+		 INSERT INTO clinlims.sampletype_test(  id, sample_type_id, test_id, is_panel)  VALUES (306,25,186, default);  
+		 INSERT INTO clinlims.sampletype_test(  id, sample_type_id, test_id, is_panel)  VALUES (307,25,187, default);  
+		 INSERT INTO clinlims.sampletype_test(  id, sample_type_id, test_id, is_panel)  VALUES (308,25,188, default);  
+		 INSERT INTO clinlims.sampletype_test(  id, sample_type_id, test_id, is_panel)  VALUES (309,25,189, default);  
+		 INSERT INTO clinlims.sampletype_test(  id, sample_type_id, test_id, is_panel)  VALUES (310,25,190, default);  
+		 INSERT INTO clinlims.sampletype_test(  id, sample_type_id, test_id, is_panel)  VALUES (311,25,191, default);  
+		 INSERT INTO clinlims.sampletype_test(  id, sample_type_id, test_id, is_panel)  VALUES (312,25,192, default);  
+		 INSERT INTO clinlims.sampletype_test(  id, sample_type_id, test_id, is_panel)  VALUES (318,24,198, default);  
+		 INSERT INTO clinlims.sampletype_test(  id, sample_type_id, test_id, is_panel)  VALUES (319,24,199, default);  
+
+	</sql>
+</changeSet>  
+
+</databaseChangeLog> 
