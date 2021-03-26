@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.12.2.final using JasperReports Library version 6.12.2-75c5e90a222ab406e416cbf590a5397028a52de3  -->
+<!-- Created with Jaspersoft Studio version 6.12.2.final using JasperReports Library version 6.12.0  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PatientReport" pageWidth="612" pageHeight="792" whenNoDataType="AllSectionsNoDetail" columnWidth="552" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty" uuid="aef8cdbd-c816-467f-a8b2-d0d32793e5ac">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
+	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
-	<import value="net.sf.jasperreports.engine.*"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String">
 		<defaultValueExpression><![CDATA["../reports/"]]></defaultValueExpression>
 	</parameter>
@@ -81,7 +81,7 @@
 						<rightPen lineWidth="0.5"/>
 					</box>
 					<textElement verticalAlignment="Middle"/>
-					<text><![CDATA[Nom, Prénom]]></text>
+					<text><![CDATA[Nom, Prï¿½nom]]></text>
 				</staticText>
 				<textField isBlankWhenNull="true">
 					<reportElement x="87" y="0" width="317" height="14" uuid="9b93c188-c2c4-4d6b-b16f-a7c640cf4c42"/>
@@ -105,11 +105,7 @@
 						<rightPen lineWidth="0.0"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle"/>
-<<<<<<< HEAD
-					<textFieldExpression><![CDATA["No d'ordre: " + $F{accessionNumber}]]></textFieldExpression>
-=======
-					<textFieldExpression class="java.lang.String"><![CDATA[$R{report.label.orderNo}+" "+ $F{accessionNumber}]]></textFieldExpression>
->>>>>>> 651ed66231ad2bea9539bc81dc3a8b9c42b373fa
+					<textFieldExpression><![CDATA[$R{report.label.orderNo}+" "+ $F{accessionNumber}]]></textFieldExpression>
 				</textField>
 				<textField pattern="dd/MM/yyyy" isBlankWhenNull="false">
 					<reportElement x="0" y="78" width="297" height="14" isPrintWhenDetailOverflows="true" uuid="51300568-7a21-4d11-bdeb-8a8302e18e1f"/>
@@ -121,11 +117,7 @@
 						<rightPen lineWidth="0.0"/>
 					</box>
 					<textElement verticalAlignment="Middle"/>
-<<<<<<< HEAD
-					<textFieldExpression><![CDATA["Date & heure de demande: " + $F{orderDate}]]></textFieldExpression>
-=======
-					<textFieldExpression class="java.lang.String"><![CDATA[$R{report.label.orderDateTime}+" " + $F{orderDate}]]></textFieldExpression>
->>>>>>> 651ed66231ad2bea9539bc81dc3a8b9c42b373fa
+					<textFieldExpression><![CDATA[$R{report.label.orderDateTime}+" " + $F{orderDate}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement mode="Opaque" x="404" y="0" width="50" height="14" backcolor="#CCCCCC" uuid="d5e70598-192a-4ab0-91c3-6939b39038b8"/>
@@ -275,7 +267,7 @@
 						<rightPen lineWidth="0.5"/>
 					</box>
 					<textElement verticalAlignment="Middle"/>
-					<text><![CDATA[Départ.]]></text>
+					<text><![CDATA[Dï¿½part.]]></text>
 				</staticText>
 				<textField isBlankWhenNull="true">
 					<reportElement x="50" y="28" width="170" height="14" uuid="504d3380-aa24-4683-9bc7-650d9315fcb2"/>
@@ -356,11 +348,7 @@
 				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 					<reportElement x="-1" y="92" width="553" height="20" isPrintWhenDetailOverflows="true" uuid="6dfe1b56-396a-4ffe-b4f9-3c594983660d"/>
 					<textElement verticalAlignment="Middle"/>
-<<<<<<< HEAD
-					<textFieldExpression><![CDATA["Date & heure de prélèvement: " + ($F{collectionDateTime} != null ? $F{collectionDateTime}: "" )]]></textFieldExpression>
-=======
-					<textFieldExpression class="java.lang.String"><![CDATA[$R{report.label.collectionDateTime}+" " + ($F{collectionDateTime} != null ? $F{collectionDateTime}: "" )]]></textFieldExpression>
->>>>>>> 651ed66231ad2bea9539bc81dc3a8b9c42b373fa
+					<textFieldExpression><![CDATA[$R{report.label.collectionDateTime}+" " + ($F{collectionDateTime} != null ? $F{collectionDateTime}: "" )]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -390,17 +378,17 @@
 				<staticText>
 					<reportElement mode="Opaque" x="330" y="14" width="144" height="29" backcolor="#CCCCCC" uuid="fe588da0-2f82-40e1-95b5-79b4016863e6"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle"/>
-					<text><![CDATA[Valeur de Référence]]></text>
+					<text><![CDATA[Valeur de Rï¿½fï¿½rence]]></text>
 				</staticText>
 				<staticText>
 					<reportElement mode="Opaque" x="472" y="14" width="79" height="29" backcolor="#CCCCCC" uuid="efe6296f-1639-4655-83a3-3186fc5c4db1"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle"/>
-					<text><![CDATA[Unité]]></text>
+					<text><![CDATA[Unitï¿½]]></text>
 				</staticText>
 				<staticText>
 					<reportElement mode="Opaque" x="162" y="14" width="118" height="29" backcolor="#CCCCCC" uuid="50db0dfb-45bc-40d8-93d8-5d5bb66abf5e"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle"/>
-					<text><![CDATA[Résultat]]></text>
+					<text><![CDATA[Rï¿½sultat]]></text>
 				</staticText>
 				<textField>
 					<reportElement mode="Opaque" x="2" y="1" width="548" height="14" backcolor="#CCCCCC" uuid="c477f981-a3e2-42ad-b755-0adc9eabd6f2"/>
@@ -460,11 +448,7 @@
 					<subreportParameterExpression><![CDATA[$P{siteName}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="reportTitle">
-<<<<<<< HEAD
-					<subreportParameterExpression><![CDATA["Résultats d'Analyses"]]></subreportParameterExpression>
-=======
 					<subreportParameterExpression><![CDATA[$R{report.analysisReport}]]></subreportParameterExpression>
->>>>>>> 651ed66231ad2bea9539bc81dc3a8b9c42b373fa
 				</subreportParameter>
 				<subreportParameter name="rightHeaderImage">
 					<subreportParameterExpression><![CDATA[$P{rightHeaderImage}]]></subreportParameterExpression>
@@ -485,7 +469,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Bottom">
 					<font size="16" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Rapport corrigé]]></text>
+				<text><![CDATA[Rapport corrigï¿½]]></text>
 			</staticText>
 		</band>
 	</pageHeader>
@@ -638,7 +622,7 @@
 					<bottomPen lineWidth="0.5"/>
 					<rightPen lineWidth="0.5"/>
 				</box>
-				<text><![CDATA[Remarques générales du laboratoire]]></text>
+				<text><![CDATA[Remarques gï¿½nï¿½rales du laboratoire]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="370" y="19" width="182" height="61" uuid="9fcaee6f-cb20-4d9e-988b-d84b57fb3a14"/>
@@ -665,7 +649,7 @@
 			<staticText>
 				<reportElement x="0" y="0" width="552" height="19" uuid="3a7ad019-8f5f-4549-81d5-66dd05ff6da5"/>
 				<textElement verticalAlignment="Middle"/>
-				<text><![CDATA[ B = Inférieure à la Normale        E =  Supérieure à la Normale        * = Anormale]]></text>
+				<text><![CDATA[ B = Infï¿½rieure ï¿½ la Normale        E =  Supï¿½rieure ï¿½ la Normale        * = Anormale]]></text>
 			</staticText>
 		</band>
 	</columnFooter>
@@ -676,11 +660,7 @@
 					<printWhenExpression><![CDATA[$P{usePageNumbers}.equals("true")]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-<<<<<<< HEAD
-				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" sur"]]></textFieldExpression>
-=======
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{report.label.page}+" "+$V{PAGE_NUMBER}+" sur"]]></textFieldExpression>
->>>>>>> 651ed66231ad2bea9539bc81dc3a8b9c42b373fa
+				<textFieldExpression><![CDATA[$R{report.label.page}+" "+$V{PAGE_NUMBER}+" sur"]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Group" evaluationGroup="Accession Number">
 				<reportElement x="509" y="4" width="40" height="20" uuid="c64df684-d1f5-4d98-8660-8c732aa26b43">
