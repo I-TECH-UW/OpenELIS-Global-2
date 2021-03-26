@@ -79,6 +79,10 @@
 </c:if>
 <c:if test="${form.valueType == 'logoUpload'}">
 	<input type="hidden" name="logoName" id="logoName" />
+    <img id="imagePreview" src="./dbImage/siteInformation/${form.paramName}.jpg"  
+       	 height="42" 
+	     width="42"  />
+    <br>
     <input type="file" name="logoFile" onchange="checklogLogoFile( this )" id="inputWidget"/><br/>
     <spring:message code="label.remove.image" />
     <input type="checkbox" name="removeImage" id="removeImage" value="true" />
@@ -93,6 +97,27 @@
 
             validateAndSubmitForm(form);
         }
+        
+        jQuery('#removeImage').click(function() {
+            if(jQuery(this).is(":checked")) {
+            	jQuery("#imagePreview").hide();
+            }
+            else if(jQuery(this).is(":not(:checked)")) {
+            	jQuery("#imagePreview").show();
+            }
+      	});
+        
+        jQuery('#inputWidget').change(function(){
+            const file = this.files[0];
+            console.log(file);
+            if (file){
+              let reader = new FileReader();
+              reader.onload = function(event){
+                jQuery('#imagePreview').attr('src', '');
+              }
+              reader.readAsDataURL(file);
+            }
+          });
     </script>
 
 </c:if>

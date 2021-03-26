@@ -39,6 +39,7 @@
 	<parameter name="labDirectorName" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="labDirectorTitle" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="useLabDirectorSignature" class="java.lang.Boolean" isForPrompting="false"/>
+	<parameter name="labDirectorSignature" class="java.io.InputStream" isForPrompting="false"/>
 	<parameter name="imagesPath" class="java.lang.String"/>
 	<parameter name="useBillingNumber" class="java.lang.Boolean" isForPrompting="false">
 		<defaultValueExpression><![CDATA[Boolean.FALSE]]></defaultValueExpression>
@@ -142,7 +143,7 @@
 					<reportElement x="373" y="10" width="178" height="25" uuid="5c12e0ad-2c6e-453f-8220-8b150902e7e6">
 						<printWhenExpression><![CDATA[$P{useLabDirectorSignature}]]></printWhenExpression>
 					</reportElement>
-					<imageExpression><![CDATA[$P{imagesPath}+ "labDirectorSignature.jpg"]]></imageExpression>
+					<imageExpression><![CDATA[$P{labDirectorSignature}]]></imageExpression>
 				</image>
 				<textField>
 					<reportElement x="375" y="35" width="100" height="10" uuid="17e10974-d1e6-4d29-8cf2-3aa4183c05ff">
