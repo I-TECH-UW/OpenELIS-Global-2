@@ -281,10 +281,10 @@
 
 	<definition name="patientResultsCore"
 		template="/pages/result/resultsBySearch.jsp">
-<!-- 		<put-attribute name="searchPanel" -->
-<!-- 			value="/pages/patient/patientEnhancedSearch.jsp" /> -->
 		<put-attribute name="searchPanel"
-			value="/pages/patient/patientSearch.jsp" />
+			value="/pages/patient/patientEnhancedSearch.jsp" />
+<!-- 		<put-attribute name="searchPanel" -->
+<!-- 			value="/pages/patient/patientSearch.jsp" /> -->
 		<put-attribute name="resultsPanel"
 			value="resultListViewCore" />
 	</definition>
