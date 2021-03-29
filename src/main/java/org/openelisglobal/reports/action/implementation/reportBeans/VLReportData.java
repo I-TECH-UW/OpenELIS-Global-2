@@ -57,6 +57,7 @@ public class VLReportData {
     private String clinic;
     private String status;
     private String vih;
+    private String sampleTypeName;
     private Boolean duplicateReport = Boolean.FALSE;
 
     private List<SampleQaEvent> sampleQAEventList;
@@ -220,11 +221,11 @@ public class VLReportData {
         this.ampli2lo = ampli2lo;
     }
 
-    public String getpregnancy() {
+    public String getPregnancy() {
         return pregnancy;
     }
 
-    public void setpregnancy(String pregnancy) {
+    public void setPregnancy(String pregnancy) {
         this.pregnancy = pregnancy;
     }
 
@@ -242,6 +243,14 @@ public class VLReportData {
 
     public void setvih(String vih) {
         this.vih = vih;
+    }
+
+    public String getSampleTypeName() {
+        return sampleTypeName;
+    }
+
+    public void setSampleTypeName(String sampleTypeName) {
+        this.sampleTypeName = sampleTypeName;
     }
 
     public Boolean getDuplicateReport() {

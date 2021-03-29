@@ -15,6 +15,8 @@
 */
 package org.openelisglobal.sampleorganization.valueholder;
 
+import java.sql.Timestamp;
+
 import org.openelisglobal.common.valueholder.BaseObject;
 import org.openelisglobal.common.valueholder.ValueHolder;
 import org.openelisglobal.common.valueholder.ValueHolderInterface;
@@ -69,5 +71,13 @@ public class SampleOrganization extends BaseObject<String> {
 
     public void setOrganization(Organization organization) {
         this.organization.setValue(organization);
+    }
+    
+    public SampleOrganization(int id,Organization org,Sample samp,String sampOrgType,Timestamp lastupdated) {
+        this.id= String.valueOf(id);
+        this.organization.setValue(org);
+        this.sample.setValue(samp);
+        this.sampleOrganizationType=sampOrgType;
+        this.setLastupdated(lastupdated);
     }
 }

@@ -16,7 +16,10 @@
 package org.openelisglobal.sampleorganization.daoimpl;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.List;
+
+import javax.persistence.TypedQuery;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
@@ -25,6 +28,7 @@ import org.hibernate.Session;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.organization.valueholder.Organization;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.sampleorganization.dao.SampleOrganizationDAO;
 import org.openelisglobal.sampleorganization.valueholder.SampleOrganization;
@@ -204,11 +208,21 @@ public class SampleOrganizationDAOImpl extends BaseDAOImpl<SampleOrganization, S
     @Override
     @Transactional(readOnly = true)
     public SampleOrganization getDataBySample(Sample sample) throws LIMSRuntimeException {
-        String sql = "From SampleOrganization so where so.sample.id = :sampleId";
+        //PK: update query because it could not retrieve organization information
+        String sql = "From SampleOrganization so join so.organization org where so.sample.id = :sampleId";
         try {
-            Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            query.setInteger("sampleId", Integer.parseInt(sample.getId()));
-            List<SampleOrganization> sampleOrg = query.list();
+            TypedQuery<Object[]> q = entityManager.unwrap(Session.class).createQuery(sql,Object[].class); 
+            //Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            //query.setInteger("sampleId", Integer.parseInt(sample.getId()));
+            //List<SampleOrganization> sampleOrg = query.list();
+            q.setParameter("sampleId", Integer.parseInt(sample.getId()));
+            List<SampleOrganization> sampleOrg = new ArrayList<>();
+            List<Object[]> results = q.getResultList();
+            for(Object[] row : results) {
+                SampleOrganization so = (SampleOrganization)row[0];
+                so.setOrganization((Organization)row[1]);
+                sampleOrg.add(so);
+            }
             // closeSession(); // CSL remove old
             // There was a bug that allowed the same sample id / organization id to be
             // entered twice

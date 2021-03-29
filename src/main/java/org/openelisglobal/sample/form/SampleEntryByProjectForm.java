@@ -51,7 +51,7 @@ public class SampleEntryByProjectForm extends BaseForm implements IAccessionerFo
     @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String doctor = "";
 
-    @NotBlank
+    //@NotBlank
     @Size(max = 7)
     @Pattern(regexp = ValidationHelper.PATIENT_ID_REGEX)
     private String subjectNumber = "";

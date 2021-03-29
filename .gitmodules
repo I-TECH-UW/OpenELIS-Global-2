@@ -15,4 +15,11 @@
 	url = https://github.com/I-TECH-UW/hapi-fhir-jpaserver-starter.git
 [submodule "dataexport"]
 	path = dataexport
-	url = https://github.com/I-TECH-UW/dataexport.git
+	url = https://github.com/I-TECH-UW/dataexport.git	
+[submodule "oe-plugins"]
+       path = oe-plugins
+       url = https://github.com/openelisglobal/openelisglobal-plugins.git
+       
+[submodule "openelisglobal-plugins"]
+	path = openelisglobal-plugins
+	url = https://github.com/openelisglobal/openelisglobal-plugins.git

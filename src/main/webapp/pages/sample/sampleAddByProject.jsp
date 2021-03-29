@@ -117,7 +117,7 @@ function Studies() {
     this.validators["Special_Request_Id"].setRequiredFields( new Array("spe.labNo", "spe.receivedDateForDisplay", "spe.interviewDate", "subjectOrSiteSubject", "spe.gender") );
 
     this.validators["VL_Id"] = new FieldValidator();
-    this.validators["VL_Id"].setRequiredFields( new Array("vl.receivedDateForDisplay", "vl.interviewDate", "vl.gender", "vl.dateOfBirth") );
+    this.validators["VL_Id"].setRequiredFields( new Array("vl.labNo", "vl.receivedDateForDisplay", "vl.interviewDate", "subjectOrSiteSubject", "vl.centerCode", "vl.gender", "vl.dateOfBirth") );
     
     this.getValidator = function /*FieldValidator*/ (divId) {
         return this.validators[divId];
@@ -192,6 +192,9 @@ function setDefaultTests( div )
     if (div=="Indeterminate_Id" ){
             tests = new Array ("ind.serologyHIVTest", "ind.dryTubeTaken");
     }
+    if (div=="VL_Id" ){
+        tests = new Array ("vl.viralLoadTest");
+	}
 
     for( var i = 0; i < tests.length; i++ ){
         var testId = tests[i];
@@ -356,8 +359,8 @@ function /*void*/ setSaveButton() {
             			id="iarv.nameOfDoctor"
             			size="50"
             			onchange="compareAllObservationHistoryFields(true)"/>
-            </td>
             <div id="iarv.nameOfDoctorMessage" class="blank"></div>
+            </td>
         </tr>
         <tr>
             <td class="required">*</td>
@@ -370,7 +373,7 @@ function /*void*/ setSaveButton() {
 	                    onkeyup="addDateSlashes(this, event);"
 	                    onchange="iarv.checkReceivedDate(false);"
 	                    id="iarv.receivedDateForDisplay" maxlength="10"/>
-                    <div id="iarv.receivedDateForDisplayMessage" class="blank" />
+                    <div id="iarv.receivedDateForDisplayMessage" class="blank" > </div>
             </td>
         </tr>
         <tr>
@@ -384,7 +387,7 @@ function /*void*/ setSaveButton() {
                 onblur="iarv.checkReceivedTime(true);"
                 cssClass="text"
                 id="iarv.receivedTimeForDisplay" maxlength="5"/>
-                <div id="iarv.receivedTimeForDisplayMessage" class="blank" />
+                <div id="iarv.receivedTimeForDisplayMessage" class="blank" > </div>
             </td>
         </tr>
         <tr>
@@ -398,7 +401,7 @@ function /*void*/ setSaveButton() {
                     onchange="iarv.checkInterviewDate(false)"
                     cssClass="text"
                     id="iarv.interviewDate" maxlength="10"/>
-                    <div id="iarv.interviewDateMessage" class="blank" /> 
+                    <div id="iarv.interviewDateMessage" class="blank" > </div> 
             </td>
         </tr>
         <tr>
@@ -412,7 +415,7 @@ function /*void*/ setSaveButton() {
                     onblur="iarv.checkInterviewTime(true);"
                     cssClass="text"
                     id="iarv.interviewTime" maxlength="5"/>
-                    <div id="iarv.interviewTimeMessage" class="blank" />
+                    <div id="iarv.interviewTimeMessage" class="blank" > </div>
             </td>
         </tr>       
         <tr>
@@ -466,7 +469,7 @@ function /*void*/ setSaveButton() {
                         <form:option value="">&nbsp;</form:option>
             			<form:options items="${form.formLists['GENDERS']}" itemLabel="localizedName" itemValue="id"/>
             </form:select>
-                <div id="iarv.genderMessage" class="blank" />
+                <div id="iarv.genderMessage" class="blank" > </div>
             </td>
         </tr>
 
@@ -716,7 +719,7 @@ function /*void*/ setSaveButton() {
                     id="farv.receivedDateForDisplay" maxlength="10"
                     onkeyup="addDateSlashes(this, event);"
                     onchange="farv.checkReceivedDate(false);" />
-                    <div id="farv.receivedDateForDisplayMessage" class="blank" />
+                    <div id="farv.receivedDateForDisplayMessage" class="blank"></div>
             </td>
         </tr>
         <tr>
@@ -731,7 +734,7 @@ function /*void*/ setSaveButton() {
                     onkeyup="filterTimeKeys(this, event);"
                     id="farv.receivedTimeForDisplay" maxlength="5"                    
                     onblur="farv.checkReceivedTime(true);" />
-                    <div id="farv.receivedTimeForDisplayMessage" class="blank" />
+                    <div id="farv.receivedTimeForDisplayMessage" class="blank" > </div>
             </td>
         </tr>
         <tr>
@@ -746,7 +749,7 @@ function /*void*/ setSaveButton() {
                     onchange="farv.checkInterviewDate(false)"
                     cssClass="text"
                     id="farv.interviewDate" maxlength="10"/>
-                    <div id="farv.interviewDateMessage" class="blank" />
+                    <div id="farv.interviewDateMessage" class="blank" > </div>
             </td>
         </tr>
         <tr>
@@ -761,7 +764,7 @@ function /*void*/ setSaveButton() {
                     onblur="farv.checkInterviewTime(true);"
                     cssClass="text"
                     id="farv.interviewTime" maxlength="5"/>
-                    <div id="farv.interviewTimeMessage" class="blank" />
+                    <div id="farv.interviewTimeMessage" class="blank" > </div>
             </td>
         </tr>       
        
@@ -775,7 +778,7 @@ function /*void*/ setSaveButton() {
                         cssClass="text"
                         maxlength="7"
                         onchange="farv.checkSubjectNumber(true);" />
-                <div id="farv.subjectNumberMessage" class="blank" />
+                <div id="farv.subjectNumberMessage" class="blank" > </div>
             </td>
         </tr>
         <tr>
@@ -787,7 +790,7 @@ function /*void*/ setSaveButton() {
                         id="farv.siteSubjectNumber"
                         cssClass="text"
                         onchange="farv.checkSiteSubjectNumber(true);" />
-                <div id="farv.siteSubjectNumberMessage" class="blank" />
+                <div id="farv.siteSubjectNumberMessage" class="blank" > </div>
             </td>
         </tr>
         <tr>
@@ -820,7 +823,7 @@ function /*void*/ setSaveButton() {
                     	<form:option value="">&nbsp;</form:option>
             			<form:options items="${form.formLists['GENDERS']}" itemLabel="localizedName" itemValue="id"/>
                 </form:select>
-                <div id="farv.genderIDMessage" class="blank" />
+                <div id="farv.genderIDMessage" class="blank" > </div>
             </td>
         </tr>
 
@@ -1050,7 +1053,7 @@ function /*void*/ setSaveButton() {
                     onchange="rtn.checkReceivedDate(false)"
                     cssClass="text"
                     id="rtn.receivedDateForDisplay" maxlength="10"/>
-                    <div id="rtn.receivedDateForDisplayMessage" class="blank" />
+                    <div id="rtn.receivedDateForDisplayMessage" class="blank" > </div>
             </td>
         </tr>
         <tr>
@@ -1065,7 +1068,7 @@ function /*void*/ setSaveButton() {
                     onkeyup="filterTimeKeys(this, event);"
                     id="rtn.receivedTimeForDisplay" maxlength="5"                    
                     onblur="rtn.checkReceivedTime(true);" />
-                    <div id="rtn.receivedTimeForDisplayMessage" class="blank" />
+                    <div id="rtn.receivedTimeForDisplayMessage" class="blank" > </div>
             </td>
         </tr>
         <tr>
@@ -1080,7 +1083,7 @@ function /*void*/ setSaveButton() {
                     onchange="rtn.checkInterviewDate(false)"
                     cssClass="text"
                     id="rtn.interviewDate" maxlength="10"/>
-                    <div id="rtn.interviewDateMessage" class="blank" />
+                    <div id="rtn.interviewDateMessage" class="blank" > </div>
             </td>
         </tr>
         <tr>
@@ -1095,7 +1098,7 @@ function /*void*/ setSaveButton() {
                     cssClass="text"
                     id="rtn.interviewTime" maxlength="5"                    
                     onblur="rtn.checkInterviewTime(true);" />
-                    <div id="rtn.interviewTimeMessage" class="blank" />
+                    <div id="rtn.interviewTimeMessage" class="blank" > </div>
             </td>
         </tr>       
         <tr>
@@ -1160,7 +1163,7 @@ function /*void*/ setSaveButton() {
                 <form:input path="labNo"
                         cssClass="text" style="display:none;"
                         id="rtn.labNo" />
-                <div id="rtn.labNoForDisplayMessage" class="blank" />
+                <div id="rtn.labNoForDisplayMessage" class="blank" > </div>
             </td>
         </tr>
         <tr>
@@ -1177,7 +1180,7 @@ function /*void*/ setSaveButton() {
                        path="ProjectData.dryTubeTaken"
                        id="rtn.dryTubeTaken"
                        onchange="rtn.checkSampleItem($('rtn.dryTubeTaken'))" />
-                <div id="rtn.dryTubeTakenMessage" class="blank" />
+                <div id="rtn.dryTubeTakenMessage" class="blank" > </div>
             </td>
         </tr>
         <tr>
@@ -1238,7 +1241,7 @@ function /*void*/ setSaveButton() {
 	                    onkeyup="addDateSlashes(this, event);"
 	                    onchange="eid.checkReceivedDate(false);"
 	                    id="eid.receivedDateForDisplay" maxlength="10"/>
-                        <div id="eid.receivedDateForDisplayMessage" class="blank" /> 
+                        <div id="eid.receivedDateForDisplayMessage" class="blank" > </div> 
             </td>
     </tr>
      <tr>
@@ -1265,7 +1268,7 @@ function /*void*/ setSaveButton() {
                     onchange="eid.checkInterviewDate(false)"
                     cssClass="text"
                     id="eid.interviewDate" maxlength="10" />
-                    <div id="eid.interviewDateMessage" class="blank" />
+                    <div id="eid.interviewDateMessage" class="blank" > </div>
             </td>
     </tr>
     <tr>
@@ -1438,7 +1441,7 @@ function /*void*/ setSaveButton() {
                     onkeyup="addDateSlashes(this, event);"
                     onchange="eid.checkDateOfBirth(false);" 
 	     			id="eid.dateOfBirth" maxlength="10" />
-	     			<div id="eid.dateOfBirthMessage" class="blank" />
+	     			<div id="eid.dateOfBirthMessage" class="blank" > </div>
 	     			
             </td>
     </tr>
@@ -2691,7 +2694,7 @@ function /*void*/ setSaveButton() {
 	                    onkeyup="addDateSlashes(this, event);"
 	                    onchange="vl.checkReceivedDate(false);"
 	                    id="vl.receivedDateForDisplay" maxlength="10"/>
-                        <div id="vl.receivedDateForDisplayMessage" class="blank" /> 
+                        <div id="vl.receivedDateForDisplayMessage" class="blank" > </div> 
             </td>
     </tr>
      <tr>
@@ -2718,7 +2721,7 @@ function /*void*/ setSaveButton() {
                     onchange="vl.checkInterviewDate(false)"
                     cssClass="text"
                     id="vl.interviewDate" maxlength="10" />
-                    <div id="vl.interviewDateMessage" class="blank" />
+                    <div id="vl.interviewDateMessage" class="blank" > </div>
             </td>
     </tr>
     <tr>
@@ -2767,7 +2770,7 @@ function /*void*/ setSaveButton() {
             </td>
             <td>
                 <div class="blank"><spring:message code="sample.entry.project.LVL"/></div>
-                <INPUT type="text" name="vl.labNoForDisplay" id="ind.labNoForDisplay" size="5" class="text"
+                <INPUT type="text" name="vl.labNoForDisplay" id="vl.labNoForDisplay" size="5" class="text"
                     onchange="handleLabNoChange( this, '<spring:message code="sample.entry.project.LVL"/>', false );makeDirty();"
                     maxlength="5" />
                 <form:input path="labNo" style="display:none;"
@@ -2788,7 +2791,7 @@ function /*void*/ setSaveButton() {
                     onkeyup="addDateSlashes(this, event);"
                     onchange="vl.checkDateOfBirth(false);" 
 	     			id="vl.dateOfBirth" maxlength="10" />
-	     			<div id="vl.dateOfBirthMessage" class="blank" />
+	     			<div id="vl.dateOfBirthMessage" class="blank" > </div>
 	     			
             </td>
     </tr>
@@ -2799,13 +2802,17 @@ function /*void*/ setSaveButton() {
              <spring:message code="patient.age" />
         </td>
         <td>
+            <div class="blank"><spring:message code="label.year"/></div>
+            <INPUT type="text" name="age" id="vl.year" size="3" class="text"
+                onchange="vl.checkAge( this, true, 'year' ); clearField('vl.month');clearField('vl.ageWeek');"
+                maxlength="2" />
             <div class="blank"><spring:message code="label.month"/></div>
             <INPUT type="text" name="age" id="vl.month" size="3" class="text"
-                onchange="vl.checkAge( this, true, 'month' ); clearField('vl.ageWeek');"
+                onchange="vl.checkAge( this, true, 'month' ); clearField('vl.ageWeek');clearField('vl.year');"
                 maxlength="2" />
             <div class="blank"><spring:message code="label.week"/></div>
             <INPUT type="text" name="ageWeek" id="vl.ageWeek" size="3" class="text"
-                onchange="vl.checkAge( this, true, 'week' ); clearField('vl.month');"
+                onchange="vl.checkAge( this, true, 'week' ); clearField('vl.month');clearField('vl.year');"
                 maxlength="2" />
             <div id="vl.ageMessage" class="blank" > </div>
         </td>
@@ -2839,7 +2846,7 @@ function /*void*/ setSaveButton() {
                  id="vl.vlPregnancy"
                  onchange="makeDirty();compareAllObservationHistoryFields(true)" >
                  <form:option value="">&nbsp;</form:option>
-            	 <form:options items= "${form.dictionaryLists['YES_NO']}" itemLabel="localizedName" />
+            	 <form:options items= "${form.dictionaryLists['YES_NO']}" itemLabel="localizedName" itemValue="id" />
 	    	</form:select>
         </td>
     </tr>
@@ -2855,7 +2862,7 @@ function /*void*/ setSaveButton() {
                  id="vl.vlSuckle"
                  onchange="makeDirty();compareAllObservationHistoryFields(true)" >
                  <form:option value="">&nbsp;</form:option>
-            	 <form:options items= "${form.dictionaryLists['YES_NO']}" itemLabel="localizedName" />  
+            	 <form:options items= "${form.dictionaryLists['YES_NO']}" itemLabel="localizedName" itemValue="id"/>  
 	    	</form:select>
         </td>
     </tr>
@@ -2871,7 +2878,7 @@ function /*void*/ setSaveButton() {
                  id="vl.hivStatus"
                  onchange="vl.checkHivStatus(true);" >
                  <form:option value="">&nbsp;</form:option>
-            	 <form:options items= "${form.dictionaryLists['HIV_STATUSES']}" itemLabel="localizedName" />  
+            	 <form:options items= "${form.dictionaryLists['HIV_STATUSES']}" itemLabel="localizedName" itemValue="id" />  
 	    	</form:select>
 	    	<div id="vl.hivStatusMessage" class="blank" > </div>
         </td>
@@ -2889,7 +2896,7 @@ function /*void*/ setSaveButton() {
                  id="vl.currentARVTreatment"
                  onchange="vl.checkInterruptedARVTreatment();compareAllObservationHistoryFields(true);" >
                  <form:option value="">&nbsp;</form:option>
-            	 <form:options items= "${form.dictionaryLists['YES_NO']}" itemLabel="localizedName" />  
+            	 <form:options items= "${form.dictionaryLists['YES_NO']}" itemLabel="localizedName" itemValue="id" />  
 	    	</form:select>
         </td>
     </tr>
@@ -2903,9 +2910,9 @@ function /*void*/ setSaveButton() {
             <form:input path="observations.arvTreatmentInitDate"
 					cssClass="text"
                     onkeyup="addDateSlashes(this, event);"
-                    onchange="vl.checkDate(false);" 
+                    onchange="vl.checkDate(this,false);" 
 	     			id="vl.arvTreatmentInitDate" maxlength="10" />
-	     			<div id="arvTreatmentInitDateMessage" class="blank" />
+	     			<div id="arvTreatmentInitDateMessage" class="blank" > </div>
         </td>
     </tr>
     
@@ -2920,7 +2927,7 @@ function /*void*/ setSaveButton() {
                  id="vl.arvTreatmentRegime"
                  onchange="makeDirty();compareAllObservationHistoryFields(true);"  >
                  <form:option value="">&nbsp;</form:option>
-            	 <form:options items= "${form.dictionaryLists['ARV_REGIME']}" itemLabel="localizedName" />  
+            	 <form:options items= "${form.dictionaryLists['ARV_REGIME']}" itemLabel="localizedName" itemValue="id" />  
 	    	</form:select>
         </td>
     </tr>
@@ -2960,7 +2967,7 @@ function /*void*/ setSaveButton() {
                  id="vl.vlReasonForRequest"
                  onchange="vl.checkVLRequestReason();compareAllObservationHistoryFields(true);" >
                  <form:option value="">&nbsp;</form:option>
-            	 <form:options items= "${form.dictionaryLists['ARV_REASON_FOR_VL_DEMAND']}" itemLabel="localizedName" />  
+            	 <form:options items= "${form.dictionaryLists['ARV_REASON_FOR_VL_DEMAND']}" itemLabel="localizedName" itemValue="id"  />  
 	    	</form:select>
 	    	<div id="vlReasonForRequestMessage" class="blank" > </div>
         </td>
@@ -2976,7 +2983,7 @@ function /*void*/ setSaveButton() {
 					cssClass="text"
                     onchange="compareAllObservationHistoryFields(true);"
 	     			id="vl.vlOtherReasonForRequest" maxlength="50" />
-	     			<div id="vlOtherReasonForRequestMessage" class="blank" />
+	     			<div id="vlOtherReasonForRequestMessage" class="blank" > </div>
         </td>
     </tr>    
     
@@ -2998,7 +3005,7 @@ function /*void*/ setSaveButton() {
 					cssClass="text"
                     onchange="makeDirty();compareAllObservationHistoryFields(true);"
 	     			id="vl.initcd4Count" maxlength="4" />
-	     			<div id="initcd4CountMessage" class="blank" />
+	     			<div id="initcd4CountMessage" class="blank" > </div>
         </td>
     </tr> 
     
@@ -3011,7 +3018,7 @@ function /*void*/ setSaveButton() {
 					cssClass="text"
                     onchange="makeDirty();compareAllObservationHistoryFields(true);"
 	     			id="vl.initcd4Percent" maxlength="10" />
-	     			<div id="initcd4PercentMessage" class="blank" />
+	     			<div id="initcd4PercentMessage" class="blank" > </div>
         </td>
     </tr> 
     
@@ -3025,7 +3032,7 @@ function /*void*/ setSaveButton() {
                     onkeyup="addDateSlashes(this, event);"
                     onchange="vl.checkDate(this,false);"
 	     			id="vl.initcd4Date" maxlength="10" />
-	     			<div id="initcd4DateMessage" class="blank" />
+	     			<div id="initcd4DateMessage" class="blank" > </div>
         </td>
     </tr>
     
@@ -3047,7 +3054,7 @@ function /*void*/ setSaveButton() {
 					cssClass="text"
                     onchange="makeDirty();compareAllObservationHistoryFields(true);"
 	     			id="vl.demandcd4Count" maxlength="4" />
-	     			<div id="demandcd4CountMessage" class="blank" />
+	     			<div id="demandcd4CountMessage" class="blank" > </div>
         </td>
     </tr> 
     
@@ -3060,7 +3067,7 @@ function /*void*/ setSaveButton() {
 					cssClass="text"
                     onchange="makeDirty();compareAllObservationHistoryFields(true);"
 	     			id="vl.demandcd4Percent" maxlength="10" />
-	     			<div id="demandcd4PercentMessage" class="blank" />
+	     			<div id="demandcd4PercentMessage" class="blank" > </div>
         </td>
     </tr>
     
@@ -3074,7 +3081,7 @@ function /*void*/ setSaveButton() {
                     onkeyup="addDateSlashes(this, event);"
                     onchange="vl.checkDate(this,false);"
 	     			id="vl.demandcd4Date" maxlength="10" />
-	     			<div id="demandcd4DateMessage" class="blank" />
+	     			<div id="demandcd4DateMessage" class="blank" > </div>
         </td>
     </tr>
     
@@ -3091,7 +3098,7 @@ function /*void*/ setSaveButton() {
                  id="vl.vlBenefit"
                  onchange="vl.checkVLBenefit();compareAllObservationHistoryFields(true);" >
                  <form:option value="">&nbsp;</form:option>
-            	 <form:options items= "${form.dictionaryLists['YES_NO']}" itemLabel="localizedName" />  
+            	 <form:options items= "${form.dictionaryLists['YES_NO']}" itemLabel="localizedName" itemValue="id"/>  
 	    	</form:select>
         </td>
     </tr>
@@ -3105,7 +3112,7 @@ function /*void*/ setSaveButton() {
 					cssClass="text"
                     onchange="makeDirty();compareAllObservationHistoryFields(true);"
 	     			id="vl.demandcd4Percent" maxlength="10" />
-	     			<div id="demandcd4PercentMessage" class="blank" />
+	     			<div id="demandcd4PercentMessage" class="blank" > </div>
         </td>
     </tr>
     
@@ -3118,7 +3125,7 @@ function /*void*/ setSaveButton() {
 					cssClass="text"
 					onkeypress="vl.IsNumeric(this,event);"
 	     			id="vl.priorVLValue" maxlength="10" />
-	     			<div id="priorVLValueMessage" class="blank" />
+	     			<div id="priorVLValueMessage" class="blank" > </div>
         </td>
     </tr> 
     
@@ -3132,7 +3139,7 @@ function /*void*/ setSaveButton() {
                     onkeyup="addDateSlashes(this, event);"
                     onchange="vl.checkDate(this,false);"
 	     			id="vl.priorVLDate" maxlength="10" />
-	     			<div id="priorVLDateMessage" class="blank" />
+	     			<div id="priorVLDateMessage" class="blank" > </div>
         </td>
     </tr>
     
@@ -3173,7 +3180,7 @@ function /*void*/ setSaveButton() {
                  id="vl.underInvestigation"
                  onchange="makeDirty();compareAllObservationHistoryFields(true)" >
                  <form:option value="">&nbsp;</form:option>
-            	 <form:options items= "${form.dictionaryLists['YES_NO']}" itemLabel="localizedName" /> 
+            	 <form:options items= "${form.dictionaryLists['YES_NO']}" itemLabel="localizedName" itemValue="id" /> 
 	    	</form:select>
         </td>
     </tr>
@@ -3188,7 +3195,58 @@ function /*void*/ setSaveButton() {
                     onchange="makeDirty();" id="vl.underInvestigationComment" />
             </td>
     </tr> 
+    <tr><td colspan="6"><hr/></td></tr>
     
+         <tr>
+        <td></td>
+        <td>
+<tr>
+		<td ></td>
+		<td colspan="3" class="sectionTitle">
+			<spring:message  code="sample.entry.project.title.specimen" />
+		</td>
+	</tr>
+	<tr>
+		<td width="2%"></td>
+		<td width="38%"><spring:message code="sample.entry.project.ARV.edtaTubeTaken" /></td>
+		<td width="60%">
+			<form:checkbox name="${form.formName}"
+			       cssClass="text"
+				   path="ProjectData.edtaTubeTaken"
+				   id="vl.edtaTubeTaken"
+				   onchange="vl.checkSampleItem($('vl.edtaTubeTaken'));" />
+		</td>
+	</tr>
+	
+	<tr>
+		<td width="2%"></td>
+		<td width="38%"><spring:message code="sample.entry.project.title.dryBloodSpot" /></td>
+		<td width="60%">
+			<form:checkbox name="${form.formName}"
+			       cssClass="checkbox"
+				   path="ProjectData.dbsvlTaken"
+				   id="vl.dbsvlTaken"
+				   onchange="vl.checkSampleItem($('vl.dbsvlTaken'));" />
+		</td>
+	</tr>	
+	
+	
+	<tr>
+		<td></td>
+		<td colspan="3" class="sectionTitle">
+			<spring:message  code="sample.entry.project.title.tests" />
+		</td>
+	</tr>
+	<tr>
+		<td></td>
+		<td><spring:message code="sample.entry.project.ARV.viralLoadTest" /></td>
+		<td>
+			<form:checkbox name="${form.formName}"
+				   path="ProjectData.viralLoadTest"
+				   id="vl.viralLoadTest"
+				   onchange="vl.checkSampleItem($('vl.edtaTubeTaken'), this);" />
+		</td>
+	</tr>        
     </table>   
 </div>
 

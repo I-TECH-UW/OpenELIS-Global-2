@@ -14,9 +14,13 @@ import org.openelisglobal.common.services.ReportTrackingService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.internationalization.MessageUtil;
+import org.openelisglobal.observationhistory.service.ObservationHistoryService;
+import org.openelisglobal.observationhistory.service.ObservationHistoryServiceImpl.ObservationType;
+import org.openelisglobal.observationhistory.valueholder.ObservationHistory;
 import org.openelisglobal.reports.action.implementation.reportBeans.VLReportData;
 import org.openelisglobal.result.service.ResultService;
 import org.openelisglobal.result.valueholder.Result;
+import org.openelisglobal.sampleitem.service.SampleItemService;
 import org.openelisglobal.sampleorganization.service.SampleOrganizationService;
 import org.openelisglobal.sampleorganization.valueholder.SampleOrganization;
 import org.openelisglobal.spring.util.SpringContext;
@@ -35,6 +39,7 @@ public abstract class PatientVLReport extends RetroCIPatientReport {
     private AnalysisService analysisService = SpringContext.getBean(AnalysisService.class);
     private ResultService resultService = SpringContext.getBean(ResultService.class);
     private SampleOrganizationService orgService = SpringContext.getBean(SampleOrganizationService.class);
+    private ObservationHistoryService obsService = SpringContext.getBean(ObservationHistoryService.class);
 
     protected List<VLReportData> reportItems;
     private String invalidValue = MessageUtil.getMessage("report.test.status.inProgress");
@@ -124,7 +129,10 @@ public abstract class PatientVLReport extends RetroCIPatientReport {
                     }
 
                 }
-
+             // PK: add sampletypename and hivStatus to report data
+                data.setSampleTypeName(analysisService.getTypeOfSample(analysis).getLocalizedName());
+                String hivStatus = obsService.getValueForSample(ObservationType.HIV_STATUS, reportSample.getId());
+                data.setvih(hivStatus==null?"":hivStatus);
             }
             if (mayBeDuplicate && SpringContext.getBean(IStatusService.class).matches(analysis.getStatusId(), AnalysisStatus.Finalized)
                     && lastReport != null && lastReport.before(analysis.getLastupdated())) {
@@ -149,9 +157,10 @@ public abstract class PatientVLReport extends RetroCIPatientReport {
         data.setAge(DateUtil.getCurrentAgeForDate(reportPatient.getBirthDate(), reportSample.getCollectionDate()));
         data.setGender(reportPatient.getGender());
         data.setCollectiondate(DateUtil.convertTimestampToStringDateAndTime(reportSample.getCollectionDate()));
-        SampleOrganization sampleOrg = new SampleOrganization();
-        sampleOrg.setSample(reportSample);
-        orgService.getDataBySample(sampleOrg);
+        //SampleOrganization sampleOrg = new SampleOrganization();
+        //sampleOrg.setSample(reportSample);
+        //orgService.getDataBySample(sampleOrg);
+        SampleOrganization sampleOrg = orgService.getDataBySample(reportSample);
         data.setServicename(sampleOrg.getId() == null ? "" : sampleOrg.getOrganization().getOrganizationName());
         data.setDoctor(getObservationValues(OBSERVATION_DOCTOR_ID));
         data.setAccession_number(reportSample.getAccessionNumber());

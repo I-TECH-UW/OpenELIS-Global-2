@@ -840,7 +840,7 @@ function BaseProjectChecker() {
 			// if we already found a sample, we just compare to that 
 			var compared = comparePatientField( this.idPre + "siteSubjectNumber", false, blanksAllowed, "externalID");
 			// updateFieldValidity(compared, this.idPre + "siteSubjectNumber");
-		} else if ( snField.value == "" && ssnField.value != "" ) {
+		} else if ( snField.value.trim() == "" && ssnField.value.trim() != "" ) {
 			// if the siteSubjectNumber is filled in try that
 			this.handleSubjectChange("externalID", ssnField, isWanted, afterNewPatient);
 		} else {
