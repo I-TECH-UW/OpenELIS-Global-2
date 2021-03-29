@@ -1,8 +1,8 @@
 FROM tomcat:8.5-jdk11
 
 #Clean out unneccessary files from tomcat (especially pre-existing applications) 
-RUN rm -rf /usr/local/tomcat/webapps/* \ 
-    /usr/local/tomcat/conf/Catalina/localhost/manager.xml
+#RUN rm -rf /usr/local/tomcat/webapps/* \ 
+#    /usr/local/tomcat/conf/Catalina/localhost/manager.xml
     
 #Deploy the war into tomcat image and point root to it
 ADD install/tomcat-resources/ROOT.war /usr/local/tomcat/webapps/ROOT.war
@@ -20,7 +20,7 @@ ADD target/OpenELIS-Global.war /usr/local/tomcat/webapps/OpenELIS-Global.war
 ADD install/tomcat-resources/catalina.properties /usr/local/tomcat/conf/catalina.properties
 
 #replace ServerInfo.properties with a less informative one
-RUN mkdir -p /usr/local/tomcat/lib/org/apache/catalina/util
+#RUN mkdir -p /usr/local/tomcat/lib/org/apache/catalina/util
 ADD install/tomcat-resources/ServerInfo.properties /usr/local/tomcat/lib/org/apache/catalina/util/ServerInfo.properties 
 
 #restrict files

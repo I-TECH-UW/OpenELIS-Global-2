@@ -24,6 +24,7 @@ import org.hl7.fhir.r4.model.Task.TaskStatus;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.dataexchange.fhir.FhirConfig;
+import org.openelisglobal.dataexchange.fhir.FhirUtil;
 import org.openelisglobal.dataexchange.fhir.service.FhirPersistanceService;
 import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
 import org.openelisglobal.organization.service.OrganizationService;
@@ -52,12 +53,14 @@ public class FhirReferralServiceImpl implements FhirReferralService {
     private FhirContext fhirContext;
     @Autowired
     private FhirConfig fhirConfig;
+    @Autowired
+    private FhirUtil fhirUtil;
 
     @Override
     @Transactional
     public Bundle cancelReferralToOrganization(String referralOrganizationId, String sampleId,
             List<String> analysisIds) {
-        IGenericClient localClient = fhirContext.newRestfulGenericClient(fhirConfig.getLocalFhirStorePath());
+        IGenericClient localClient = fhirUtil.getFhirClient(fhirConfig.getLocalFhirStorePath());
         org.openelisglobal.organization.valueholder.Organization referralOrganization = organizationService
                 .get(referralOrganizationId);
         Organization fhirOrg = getFhirOrganization(referralOrganization);
@@ -111,7 +114,7 @@ public class FhirReferralServiceImpl implements FhirReferralService {
     }
 
     private ServiceRequest getServiceRequestBasedOnOriginal(ServiceRequest originalServiceRequest, Analysis analysis) {
-        IGenericClient localClient = fhirContext.newRestfulGenericClient(fhirConfig.getLocalFhirStorePath());
+        IGenericClient localClient = fhirUtil.getFhirClient(fhirConfig.getLocalFhirStorePath());
         Bundle createdServiceRequestBundle = localClient.search().forResource(ServiceRequest.class)
                 .returnBundle(Bundle.class).where(ServiceRequest.BASED_ON.hasAnyOfIds(originalServiceRequest.getId()))
                 .execute();
@@ -128,7 +131,7 @@ public class FhirReferralServiceImpl implements FhirReferralService {
     @Transactional
     public Bundle referAnalysisesToOrganization(String referralOrganizationId, String sampleId,
             List<String> analysisIds) {
-        IGenericClient localClient = fhirContext.newRestfulGenericClient(fhirConfig.getLocalFhirStorePath());
+        IGenericClient localClient = fhirUtil.getFhirClient(fhirConfig.getLocalFhirStorePath());
         org.openelisglobal.organization.valueholder.Organization referralOrganization = organizationService
                 .get(referralOrganizationId);
         Organization fhirOrg = getFhirOrganization(referralOrganization);
@@ -226,7 +229,7 @@ public class FhirReferralServiceImpl implements FhirReferralService {
 
     @Override
     public Bundle referAnalysisesToOrganization(String referralOrganizationId, String analysisId) {
-        IGenericClient localClient = fhirContext.newRestfulGenericClient(fhirConfig.getLocalFhirStorePath());
+        IGenericClient localClient = fhirUtil.getFhirClient(fhirConfig.getLocalFhirStorePath());
         org.openelisglobal.organization.valueholder.Organization referralOrganization = organizationService
                 .get(referralOrganizationId);
         List<Resource> newResources = new ArrayList<>();

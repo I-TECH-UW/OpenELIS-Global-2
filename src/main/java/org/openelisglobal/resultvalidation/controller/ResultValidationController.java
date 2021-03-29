@@ -232,12 +232,12 @@ public class ResultValidationController extends BaseResultValidationController {
         // wrapper object for holding modifedResultSet and newResultSet
         IResultSaveService resultSaveService = new ResultValidationSaveService();
 
-        if (testSectionName.equals("serology")) {
-            createUpdateElisaList(resultItemList, analysisUpdateList);
-        } else {
+//        if (testSectionName.equals("serology")) {
+//            createUpdateElisaList(resultItemList, analysisUpdateList);
+//        } else {
             createUpdateList(resultItemList, analysisUpdateList, resultUpdateList, noteUpdateList, deletableList,
                     resultSaveService, areListeners);
-        }
+//        }
 
         try {
             resultValidationService.persistdata(deletableList, analysisUpdateList, resultUpdateList, resultItemList,

@@ -40,6 +40,7 @@ import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.ExternalOrderStatus;
 import org.openelisglobal.common.util.XMLUtil;
 import org.openelisglobal.dataexchange.fhir.FhirConfig;
+import org.openelisglobal.dataexchange.fhir.FhirUtil;
 import org.openelisglobal.dataexchange.fhir.service.FhirApiWorkflowService;
 import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
 import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder;
@@ -75,6 +76,7 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
 
     private FhirContext fhirContext = SpringContext.getBean(FhirContext.class);
     private FhirConfig fhirConfig = SpringContext.getBean(FhirConfig.class);
+    private FhirUtil fhirUtil = SpringContext.getBean(FhirUtil.class);
 
     protected FhirApiWorkflowService fhirApiWorkFlowService = SpringContext.getBean(FhirApiWorkflowService.class);
     protected FhirTransformService fhirTransformService = SpringContext.getBean(FhirTransformService.class);
@@ -122,8 +124,7 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
             eOrderStatus = SpringContext.getBean(IStatusService.class)
                     .getExternalOrderStatusForID(eOrder.getStatusId());
 
-            IGenericClient localFhirClient = fhirContext
-                    .newRestfulGenericClient(fhirConfig.getLocalFhirStorePath());
+            IGenericClient localFhirClient = fhirUtil.getFhirClient(fhirConfig.getLocalFhirStorePath());
 
             Task task = fhirContext.newJsonParser().parseResource(Task.class, eOrder.getData());
 

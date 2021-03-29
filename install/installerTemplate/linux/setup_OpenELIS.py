@@ -39,6 +39,7 @@ CRON_FILE_NAME = "openElis"
 LOG_FILE_NAME = "installer.log"
 POSTGRES_ROLE_UPDATE_FILE_NAME = "updateDBPassword.sql"
 SETUP_CONFIG_FILE_NAME = "setup.ini"
+CLIENT_FACING_KEYSTORE = "client_facing_keystore"
 KEYSTORE = "keystore"
 TRUSTSTORE = "truststore"
 
@@ -58,6 +59,7 @@ TOMCAT_LOGS_DIR = OE_VAR_DIR + "tomcatLogs/"
 CRON_INSTALL_DIR = "/etc/cron.d/"
 
 #full file paths
+CLIENT_FACING_KEYSTORE_PATH = OE_ETC_DIR + CLIENT_FACING_KEYSTORE
 KEYSTORE_PATH = OE_ETC_DIR + KEYSTORE
 TRUSTSTORE_PATH = OE_ETC_DIR + TRUSTSTORE
 
@@ -94,7 +96,7 @@ SITE_ID = ''
 KEYSTORE_PWD = ''
 TRUSTSTORE_PWD = ''
 ENCRYPTION_KEY = ''
-LOCAL_FHIR_SERVER_ADDRESS = 'https://fhir.openelisci.org:8443/hapi-fhir-jpaserver/fhir/'
+LOCAL_FHIR_SERVER_ADDRESS = 'https://fhir.openelis.org:8443/hapi-fhir-jpaserver/fhir/'
 REMOTE_FHIR_SOURCE = 'https://isanteplusdemo.com/openmrs/ws/fhir2/'
 REMOTE_FHIR_SOURCE_UPDATE_STATUS = "false"
 CONSOLIDATED_SERVER_ADDRESS = 'https://hub.openelisci.org:8444/fhir'
@@ -272,7 +274,7 @@ def create_docker_compose_file():
     output_file = open("docker-compose.yml", "w")
     
     if DOCKER_DB:
-        DB_HOST_FOR_DOCKER_SERVICES = "database" #use docker network to connect by service name
+        DB_HOST_FOR_DOCKER_SERVICES = "db.openelis.org" #use docker network to connect by service name
     if DB_HOST == "localhost" or DB_HOST == "127.0.0.1":
         DB_HOST_FOR_DOCKER_SERVICES = get_docker_host_ip() #get docker host loopback
     
@@ -995,17 +997,17 @@ def get_encryption_key():
         
 def get_server_addresses():
     global LOCAL_FHIR_SERVER_ADDRESS, REMOTE_FHIR_SOURCE, CONSOLIDATED_SERVER_ADDRESS, REMOTE_FHIR_SOURCE_UPDATE_STATUS
-
-    print """
-    Enter the full server path to the local fhir store 
-    (most likely the address of this server on port 8444)
-    """
-    fhir_server_address = raw_input("local fhir store path (default  " + LOCAL_FHIR_SERVER_ADDRESS + ") : ")
-    if fhir_server_address:
-        if not fhir_server_address.startswith("https://"):
-            LOCAL_FHIR_SERVER_ADDRESS = "https://" + fhir_server_address
-        else:
-            LOCAL_FHIR_SERVER_ADDRESS = fhir_server_address
+#    should be no longer neccessary since we use *.openelis.org in all our backend certs
+#    print """
+#    Enter the full server path to the local fhir store 
+#    (most likely the address of this server on port 8444)
+#    """
+#    fhir_server_address = raw_input("local fhir store path (default  " + LOCAL_FHIR_SERVER_ADDRESS + ") : ")
+#    if fhir_server_address:
+#        if not fhir_server_address.startswith("https://"):
+#            LOCAL_FHIR_SERVER_ADDRESS = "https://" + fhir_server_address
+#        else:
+#            LOCAL_FHIR_SERVER_ADDRESS = fhir_server_address
     
     print """
     Enter the full server path to the remote fhir instance you'd like to poll for Fhir Tasks (eg. OpenMRS) . 
@@ -1097,6 +1099,10 @@ def check_preconditions(goal):
             log("\ncould not find a readable keystore. Check that file exists and is readable by the current user", PRINT_TO_CONSOLE)
             log("\nkeystore should exist at: " + KEYSTORE_PATH, PRINT_TO_CONSOLE)
             return False
+        if (not os.path.isfile(CLIENT_FACING_KEYSTORE_PATH) or not os.access(CLIENT_FACING_KEYSTORE_PATH, os.R_OK)):
+            log("\ncould not find a readable client facing keystore. Check that file exists and is readable by the current user", PRINT_TO_CONSOLE)
+            log("\nkeystore should exist at: " + CLIENT_FACING_KEYSTORE_PATH, PRINT_TO_CONSOLE)
+            return False
         if (not os.path.isfile(TRUSTSTORE_PATH) or not os.access(TRUSTSTORE_PATH, os.R_OK)):
             log("\ncould not find a readable trsutstore. Check that file exists and is readable by the current user", PRINT_TO_CONSOLE)
             log("\ntruststore should exist at: " + TRUSTSTORE_PATH, PRINT_TO_CONSOLE)
@@ -1109,6 +1115,10 @@ def check_preconditions(goal):
         if (not os.path.isfile(KEYSTORE_PATH) or not os.access(KEYSTORE_PATH, os.R_OK)):
             log("\ncould not find a readable keystore. Check that file exists and is readable by the current user", PRINT_TO_CONSOLE)
             log("\nkeystore should exist at: " + KEYSTORE_PATH, PRINT_TO_CONSOLE)
+            return False
+        if (not os.path.isfile(CLIENT_FACING_KEYSTORE_PATH) or not os.access(CLIENT_FACING_KEYSTORE_PATH, os.R_OK)):
+            log("\ncould not find a readable client facing keystore. Check that file exists and is readable by the current user", PRINT_TO_CONSOLE)
+            log("\nkeystore should exist at: " + CLIENT_FACING_KEYSTORE_PATH, PRINT_TO_CONSOLE)
             return False
         if (not os.path.isfile(TRUSTSTORE_PATH) or not os.access(TRUSTSTORE_PATH, os.R_OK)):
             log("\ncould not find a readable trsutstore. Check that file exists and is readable by the current user", PRINT_TO_CONSOLE)
