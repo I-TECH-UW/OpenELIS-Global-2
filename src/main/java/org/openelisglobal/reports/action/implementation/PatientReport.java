@@ -44,6 +44,7 @@ import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.provider.validation.IAccessionNumberValidator;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
+import org.openelisglobal.common.services.TableIdService;
 import org.openelisglobal.common.services.TestIdentityService;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
@@ -55,6 +56,7 @@ import org.openelisglobal.note.service.NoteService;
 import org.openelisglobal.note.service.NoteServiceImpl.NoteType;
 import org.openelisglobal.observationhistory.service.ObservationHistoryService;
 import org.openelisglobal.observationhistory.service.ObservationHistoryServiceImpl.ObservationType;
+import org.openelisglobal.organization.service.OrganizationService;
 import org.openelisglobal.organization.valueholder.Organization;
 import org.openelisglobal.patient.service.PatientService;
 import org.openelisglobal.patient.service.PatientServiceImpl;
@@ -110,6 +112,7 @@ public abstract class PatientReport extends Report {
     protected NoteService noteService = SpringContext.getBean(NoteService.class);
     protected PersonAddressService addressService = SpringContext.getBean(PersonAddressService.class);
     protected AddressPartService addressPartService = SpringContext.getBean(AddressPartService.class);
+    protected OrganizationService organizationService = SpringContext.getBean(OrganizationService.class);
 
     private List<String> handledOrders;
     private List<Analysis> updatedAnalysis = new ArrayList<>();
@@ -282,10 +285,14 @@ public abstract class PatientReport extends Report {
         currentSiteInfo = "";
         currentProvider = null;
 
-        Organization org = sampleService.getOrganizationRequester(currentSample);
-        if (org != null) {
-            currentSiteInfo = org.getOrganizationName();
-        }
+//        sampleService.getOrganizationRequester(currentSample);
+        Organization referringOrg = sampleService.getOrganizationRequester(currentSample,
+                TableIdService.getInstance().REFERRING_ORG_TYPE_ID);
+        Organization referringDepartmentOrg = sampleService.getOrganizationRequester(currentSample,
+                TableIdService.getInstance().REFERRING_ORG_DEPARTMENT_TYPE_ID);
+
+        currentSiteInfo += referringOrg == null ? "" : referringOrg.getOrganizationName();
+        currentSiteInfo += "|" + (referringDepartmentOrg == null ? "" : referringDepartmentOrg.getOrganizationName());
 
         Person person = sampleService.getPersonRequester(currentSample);
         if (person != null) {
@@ -390,12 +397,16 @@ public abstract class PatientReport extends Report {
         } else {
             reportParameters.put("useSTNumber", Boolean.TRUE);
         }
-        if (ConfigurationProperties.getInstance().isCaseInsensitivePropertyValueEqual(Property.configurationName, "CI LNSP") ||
-            ConfigurationProperties.getInstance().isCaseInsensitivePropertyValueEqual(Property.configurationName, "CI IPCI") ||
-            ConfigurationProperties.getInstance().isCaseInsensitivePropertyValueEqual(Property.configurationName, "CI_REGIONAL") ||
-            ConfigurationProperties.getInstance().isCaseInsensitivePropertyValueEqual(Property.configurationName, "RETROCI") ||
-            ConfigurationProperties.getInstance().isCaseInsensitivePropertyValueEqual(Property.configurationName, "CI_GENERAL")
-                ) {
+        if (ConfigurationProperties.getInstance().isCaseInsensitivePropertyValueEqual(Property.configurationName,
+                "CI LNSP")
+                || ConfigurationProperties.getInstance().isCaseInsensitivePropertyValueEqual(Property.configurationName,
+                        "CI IPCI")
+                || ConfigurationProperties.getInstance().isCaseInsensitivePropertyValueEqual(Property.configurationName,
+                        "CI_REGIONAL")
+                || ConfigurationProperties.getInstance().isCaseInsensitivePropertyValueEqual(Property.configurationName,
+                        "RETROCI")
+                || ConfigurationProperties.getInstance().isCaseInsensitivePropertyValueEqual(Property.configurationName,
+                        "CI_GENERAL")) {
             reportParameters.put("useBillingNumber", Boolean.TRUE);
         } else {
             reportParameters.put("useBillingNumber", Boolean.FALSE);

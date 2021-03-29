@@ -269,8 +269,8 @@ public class NonConformityController extends BaseController {
             if (sampleRequester.getRequesterTypeId() == typeID) {
                 String orgId = String.valueOf(sampleRequester.getRequesterId());
                 Organization org = organizationService.get(orgId);
-
-                if (org != null) {
+                if (org != null && org.getOrganizationTypes().stream()
+                        .anyMatch(e -> e.getId().equals(TableIdService.getInstance().REFERRING_ORG_TYPE_ID))) {
                     String orgName = org.getOrganizationName();
                     orgName += GenericValidator.isBlankOrNull(org.getShortName()) ? "" : ("-" + org.getShortName());
                     return orgName;

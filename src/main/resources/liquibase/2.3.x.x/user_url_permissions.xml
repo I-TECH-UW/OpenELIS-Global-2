@@ -190,5 +190,50 @@
       	</insert>
       	
 	</changeSet>
+	
+	<changeSet author="csteele" id="8" >
+		<preConditions onFail="MARK_RAN">
+			<sqlCheck expectedResult="0">SELECT count(*) FROM clinlims.system_module WHERE name = 'ReportCovid'</sqlCheck> 
+		</preConditions>
+      	<insert schemaName="clinlims"
+      		tableName="system_module">
+			<column name="id" valueSequenceNext="system_module_seq" />
+			<column name="name" value="ReportCovid" />
+			<column name="description" value="covid report pages" />
+      	</insert>
+      	<insert schemaName="clinlims"
+      		tableName="system_role_module">
+			<column name="id" valueSequenceNext="system_role_module_seq" />
+      		<column name="system_role_id" valueComputed="(SELECT id FROM clinlims.system_role WHERE name = 'Maintenance Admin')"/>
+      		<column name="system_module_id" valueComputed="(SELECT id FROM clinlims.system_module WHERE name = 'ReportCovid')"/>
+      	</insert>
+      	<insert schemaName="clinlims"
+      		tableName="system_role_module">
+			<column name="id" valueSequenceNext="system_role_module_seq" />
+      		<column name="system_role_id" valueComputed="(SELECT id FROM clinlims.system_role WHERE name = 'Reports')"/>
+      		<column name="system_module_id" valueComputed="(SELECT id FROM clinlims.system_module WHERE name = 'ReportCovid')"/>
+      	</insert>
+      	<insert schemaName="clinlims"
+      		tableName="system_module_param">
+			<column name="id" valueSequenceNext="system_module_param_seq" />
+      		<column name="name" value="report"/>
+      		<column name="value" value="covidResultsReport"/>
+      	</insert>
+      	<insert schemaName="clinlims"
+      		tableName="system_module_url">
+			<column name="id" valueSequenceNext="system_module_url_seq" />
+			<column name="url_path" value="/ReportPrint" />
+      		<column name="system_module_id" valueComputed="(SELECT id FROM clinlims.system_module WHERE name = 'ReportCovid')"/>
+      		<column name="system_module_param_id" valueComputed="(SELECT id FROM system_module_param WHERE value = 'covidResultsReport')"/>
+      	</insert>
+      	<insert schemaName="clinlims"
+      		tableName="system_module_url">
+			<column name="id" valueSequenceNext="system_module_url_seq" />
+			<column name="url_path" value="/Report" />
+      		<column name="system_module_id" valueComputed="(SELECT id FROM clinlims.system_module WHERE name = 'ReportCovid')"/>
+      		<column name="system_module_param_id" valueComputed="(SELECT id FROM system_module_param WHERE value = 'covidResultsReport')"/>
+      	</insert>
+      	
+	</changeSet>
 
 </databaseChangeLog>

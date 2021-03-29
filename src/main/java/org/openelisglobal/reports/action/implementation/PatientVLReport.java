@@ -85,6 +85,8 @@ public abstract class PatientVLReport extends RetroCIPatientReport {
 //		String invalidValue = MessageUtil.getMessage("report.test.status.inProgress");
 
         for (Analysis analysis : analysisList) {
+        	
+        	data.setsampleTypeName(analysis.getSampleTypeName());
 
             if (analysis.getCompletedDate() != null) {
                 if (analysis.getCompletedDate().getTime() > maxCompleationTime) {

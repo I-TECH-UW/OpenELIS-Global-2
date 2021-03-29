@@ -28,6 +28,7 @@ import org.itech.fhir.dataexport.core.service.DataExportTaskService;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
+import org.openelisglobal.dataexchange.fhir.FhirUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -53,6 +54,8 @@ public class RegisterFhirHooksTask {
 
     @Autowired
     FhirContext fhirContext;
+    @Autowired
+    private FhirUtil fhirUtil;
 
     @Autowired
     private DataExportTaskService dataExportTaskService;
@@ -69,7 +72,7 @@ public class RegisterFhirHooksTask {
             fhirSubscriber = Optional.of("https://" + fhirSubscriber.get());
         }
 
-        IGenericClient fhirClient = fhirContext.newRestfulGenericClient(localFhirStorePath);
+        IGenericClient fhirClient = fhirUtil.getFhirClient(localFhirStorePath);
 
         removeOldSubscription();
 
@@ -112,7 +115,7 @@ public class RegisterFhirHooksTask {
     }
 
     private void removeOldSubscription() {
-        IGenericClient fhirClient = fhirContext.newRestfulGenericClient(localFhirStorePath);
+        IGenericClient fhirClient = fhirUtil.getFhirClient(localFhirStorePath);
 
         Bundle deleteTransactionBundle = new Bundle();
         deleteTransactionBundle.setType(BundleType.TRANSACTION);

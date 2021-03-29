@@ -499,7 +499,7 @@ function handleSelectedPatient(){
 				id="dateOfBirthSearchValue"
 				name="dateOfBirthSearchValue"
 				size="20"
-				onkeyup="addDateSlashes(this,event); normalizeDateFormat(this);"
+				onkeyup="addDateSlashes(this,event); "
                 onchange="checkValidAgeDate( this );"
 				oninput="enableEnhancedSearchButton(event.which);"
 				placeholder='<%=MessageUtil.getMessage("label.select.search.here")%>' />

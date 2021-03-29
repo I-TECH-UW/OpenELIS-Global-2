@@ -25,6 +25,7 @@ import org.openelisglobal.audittrail.valueholder.History;
 import org.openelisglobal.common.services.IStatusService;
 //import org.openelisglobal.common.services.PersonService;
 import org.openelisglobal.common.services.RequesterService;
+import org.openelisglobal.common.services.TableIdService;
 import org.openelisglobal.history.service.HistoryService;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.organization.service.OrganizationService;
@@ -86,7 +87,8 @@ public class OrderHistoryService extends AbstractHistoryService {
     private void addReferrerHistory(Sample sample, History searchHistory) {
         RequesterService requesterService = new RequesterService(sample.getId());
 
-        requester = requesterService.getSampleRequesterByType(RequesterService.Requester.ORGANIZATION, false);
+        requester = requesterService.getOrganizationSampleRequesterByType(false,
+                TableIdService.getInstance().REFERRING_ORG_TYPE_ID);
         if (requester != null) {
             searchHistory.setReferenceId(requester.getId());
             searchHistory.setReferenceTable(SAMPLE_REQUESTER_TABLE_ID);
@@ -96,8 +98,11 @@ public class OrderHistoryService extends AbstractHistoryService {
             currentOrganizationRequesterLinkId = requester.getId();
         }
 
-        requester = requesterService.getSampleRequesterByType(RequesterService.Requester.PERSON, false);
-        if (requester != null) {
+        List<SampleRequester> sampleRequesters = requesterService
+                .getSampleRequestersByType(RequesterService.Requester.PERSON, false);
+        requester = null;
+        if (sampleRequesters.size() != 0) {
+            sampleRequesters.get(0);
             searchHistory.setReferenceId(requester.getId());
             searchHistory.setReferenceTable(SAMPLE_REQUESTER_TABLE_ID);
             List<History> list = historyService.getHistoryByRefIdAndRefTableId(searchHistory);

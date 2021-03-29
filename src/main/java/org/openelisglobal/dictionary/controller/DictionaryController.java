@@ -14,6 +14,7 @@ import org.openelisglobal.common.exception.LIMSFrozenRecordException;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.common.validator.BaseErrors;
@@ -208,6 +209,7 @@ public class DictionaryController extends BaseController {
 
         status.setComplete();
         redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
+        DisplayListService.getInstance().refreshLists();
         return findForward(FWD_SUCCESS_INSERT, form);
     }
 
