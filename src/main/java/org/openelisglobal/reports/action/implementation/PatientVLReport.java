@@ -85,8 +85,6 @@ public abstract class PatientVLReport extends RetroCIPatientReport {
 //		String invalidValue = MessageUtil.getMessage("report.test.status.inProgress");
 
         for (Analysis analysis : analysisList) {
-        	
-        	data.setsampleTypeName(analysis.getSampleTypeName());
 
             if (analysis.getCompletedDate() != null) {
                 if (analysis.getCompletedDate().getTime() > maxCompleationTime) {
@@ -132,7 +130,7 @@ public abstract class PatientVLReport extends RetroCIPatientReport {
 
                 }
              // PK: add sampletypename and hivStatus to report data
-                data.setSampleTypeName(analysisService.getTypeOfSample(analysis).getLocalizedName());
+                data.setSampleTypeName(analysis.getSampleTypeName());
                 String hivStatus = obsService.getValueForSample(ObservationType.HIV_STATUS, reportSample.getId());
                 data.setvih(hivStatus==null?"":hivStatus);
             }
