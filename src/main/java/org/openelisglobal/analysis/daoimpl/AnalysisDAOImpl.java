@@ -1696,7 +1696,6 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         return 0;
     }
 
-
 //	@Override
 //	public Analysis getPatientPreviousAnalysisForTestName(Patient patient, Sample currentSample, String testName) {
 //		Analysis previousAnalysis = null;
