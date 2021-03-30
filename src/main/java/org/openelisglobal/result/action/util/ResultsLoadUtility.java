@@ -252,10 +252,19 @@ public class ResultsLoadUtility {
 
     public List<TestResultItem> getUnfinishedTestResultItemsInTestSection(String testSectionId) {
 
-        List<Analysis> analysisList = analysisService.getAllAnalysisByTestSectionAndStatus(testSectionId,
+//        List<Analysis> fullAnalysisList = analysisService.getAllAnalysisByTestSectionAndStatus(testSectionId,
+//                analysisStatusList, sampleStatusList);
+//        request.setAttribute("analysisesSize", fullAnalysisList.size());
+        List<Analysis> analysisList = analysisService.getPageAnalysisByTestSectionAndStatus(testSectionId,
                 analysisStatusList, sampleStatusList);
 
         return getGroupedTestsForAnalysisList(analysisList, SORT_FORWARD);
+    }
+
+    public int getTotalCountAnalysisByTestSectionAndStatus(String testSectionId) {
+        return analysisService.getCountAnalysisByTestSectionAndStatus(testSectionId, analysisStatusList,
+                sampleStatusList);
+
     }
 
     public List<TestResultItem> getGroupedTestsForAnalysisList(List<Analysis> filteredAnalysisList, boolean forwardSort)
