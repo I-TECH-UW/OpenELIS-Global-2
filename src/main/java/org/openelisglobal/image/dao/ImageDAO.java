@@ -26,4 +26,6 @@ public interface ImageDAO extends BaseDAO<Image, String> {
 
 //	public String saveImage(Image image) throws LIMSRuntimeException;
 
+    Image getImageByDescription(String imageDescription);
+
 }

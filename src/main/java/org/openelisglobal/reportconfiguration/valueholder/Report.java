@@ -1,4 +1,4 @@
-package src.main.java.org.openelisglobal.reportconfiguration.valueholder;
+package org.openelisglobal.reportconfiguration.valueholder;
 
 import java.util.Objects;
 
@@ -19,12 +19,14 @@ public class Report extends BaseObject<String> {
     private String menuElementId;
     private String displayKey;
 
+    @Override
     @Id
     @Column(name = "id", nullable = false)
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }
@@ -91,8 +93,12 @@ public class Report extends BaseObject<String> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Report report = (Report) o;
         return id == report.id &&
                 Objects.equals(category, report.category) &&

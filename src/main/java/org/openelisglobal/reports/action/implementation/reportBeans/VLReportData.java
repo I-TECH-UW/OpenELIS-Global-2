@@ -14,7 +14,7 @@
  * Copyright (C) CIRG, University of Washington, Seattle WA.  All Rights Reserved.
  *
  */
-package us.mn.state.health.lims.reports.action.implementation.reportBeans;
+package org.openelisglobal.reports.action.implementation.reportBeans;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,17 +22,16 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.validator.GenericValidator;
-
-import us.mn.state.health.lims.common.services.NoteService;
-import us.mn.state.health.lims.common.services.QAService;
-import us.mn.state.health.lims.common.services.QAService.QAObservationType;
-import us.mn.state.health.lims.note.valueholder.Note;
-import us.mn.state.health.lims.qaevent.valueholder.retroCI.QaEventItem;
-import us.mn.state.health.lims.sample.valueholder.Sample;
-import us.mn.state.health.lims.sampleitem.valueholder.SampleItem;
-import us.mn.state.health.lims.sampleqaevent.dao.SampleQaEventDAO;
-import us.mn.state.health.lims.sampleqaevent.daoimpl.SampleQaEventDAOImpl;
-import us.mn.state.health.lims.sampleqaevent.valueholder.SampleQaEvent;
+import org.openelisglobal.common.services.QAService;
+import org.openelisglobal.common.services.QAService.QAObservationType;
+import org.openelisglobal.note.service.NoteService;
+import org.openelisglobal.note.valueholder.Note;
+import org.openelisglobal.qaevent.valueholder.retroCI.QaEventItem;
+import org.openelisglobal.sample.service.SampleService;
+import org.openelisglobal.sample.valueholder.Sample;
+import org.openelisglobal.sampleitem.valueholder.SampleItem;
+import org.openelisglobal.sampleqaevent.valueholder.SampleQaEvent;
+import org.openelisglobal.spring.util.SpringContext;
 
 public class VLReportData {
 
@@ -60,15 +59,15 @@ public class VLReportData {
 	private String vih;
 	private String sampleTypeName;
 	private Boolean duplicateReport = Boolean.FALSE;
-	
+
 	private List<SampleQaEvent> sampleQAEventList;
 	private String allQaEvents=null;
 	List<QaEventItem> qaEventItems;
 	private String sampleQAEventNotes="";
 	private String virologyVlQaEvent=null;
 	private String receptionQaEvent=null;
-	
-	private Map<String, String> previousResultMap = new HashMap<String, String>();
+
+	private Map<String, String> previousResultMap = new HashMap<>();
 
 	public String getSubjectno() {
 		return subjectno;
@@ -184,36 +183,36 @@ public class VLReportData {
 	public void setAmpli2lo(String ampli2lo) {
 		this.ampli2lo = ampli2lo;
 	}
-	
+
 	public String getpregnancy() {
 		return pregnancy;
 	}
 	public void setpregnancy(String pregnancy) {
 		this.pregnancy = pregnancy;
 	}
-	
+
 	public String getsuckle() {
 		return suckle;
 	}
 	public void setsuckle(String suckle) {
 		this.suckle = suckle;
 	}
-	
-	
+
+
 	public String getvih() {
 		return vih;
 	}
 	public void setvih(String vih) {
 		this.vih = vih;
 	}
-	
+
 	public String getSampleTypeName() {
 		return sampleTypeName;
 	}
 	public void setSampleTypeName(String sampleTypeName) {
 		this.sampleTypeName = sampleTypeName;
 	}
-	
+
 	public Boolean getDuplicateReport() {
 		return duplicateReport;
 	}
@@ -251,7 +250,7 @@ public class VLReportData {
 		this.previousResultMap=previousResultMap;
 	}
 	public void getSampleQaEventItems(Sample sample){
-	    qaEventItems = new ArrayList<QaEventItem>();
+	    qaEventItems = new ArrayList<>();
 		if(sample != null){
 			getSampleQaEvents(sample);
 			for(SampleQaEvent event : sampleQAEventList){
@@ -263,29 +262,30 @@ public class VLReportData {
                 // -1 is the index for "all samples"
 			//	String sampleType=(sampleItem == null) ? "-1" : sampleItem.getTypeOfSample().getNameKey();
 			//	allQaEvents=allQaEvents==null?sampleType+":"+qa.getQAEvent().getNameKey():allQaEvents+";"+sampleType+":"+qa.getQAEvent().getNameKey();
-		
+
 				if(!GenericValidator.isBlankOrNull(qa.getObservationValue( QAObservationType.SECTION )) && qa.getObservationValue( QAObservationType.SECTION ).equals("testSection.VL"))
-				{	
+				{
 					//virologyVlQaEvent=virologyVlQaEvent==null ? qa.getQAEvent().getLocalizedName() : virologyVlQaEvent+" , "+qa.getQAEvent().getLocalizedName();
 					sampleQAEventNotes=sampleQAEventNotes+"  "+getNoteForSampleQaEvent(event);
 					String sampleType=(sampleItem == null) ? "-1" : sampleItem.getTypeOfSample().getNameKey();
 					allQaEvents=allQaEvents==null?sampleType+":"+qa.getQAEvent().getNameKey():allQaEvents+";"+sampleType+":"+qa.getQAEvent().getNameKey();
-			
+
 				}
 			}
-			
+
 		}
-		
+
 	}
 	public void getSampleQaEvents(Sample sample){
-		SampleQaEventDAO sampleQaEventDAO = new SampleQaEventDAOImpl();
-		sampleQAEventList = sampleQaEventDAO.getSampleQaEventsBySample(sample);
+        SampleService sampleService = SpringContext.getBean(SampleService.class);
+        sampleQAEventList = sampleService.getSampleQAEventList(sample);
 	}
 	public static String getNoteForSampleQaEvent(SampleQaEvent sampleQaEvent){
 		if(sampleQaEvent == null || GenericValidator.isBlankOrNull(sampleQaEvent.getId())){
 			return null;
 		}else{
-	        Note note = new NoteService( sampleQaEvent ).getMostRecentNoteFilteredBySubject( null );
+            NoteService noteService = SpringContext.getBean(NoteService.class);
+            Note note = noteService.getMostRecentNoteFilteredBySubject(sampleQaEvent, null);
 			return note != null ? note.getText() : null;
 		}
 	}

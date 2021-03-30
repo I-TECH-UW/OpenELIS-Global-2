@@ -453,6 +453,13 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
     }
 
     @Override
+    public List<Analysis> getPageAnalysisByTestSectionAndStatus(String testSectionId, List<Integer> analysisStatusList,
+            List<Integer> sampleStatusList) {
+        return getBaseObjectDAO().getPageAnalysisByTestSectionAndStatus(testSectionId, analysisStatusList,
+                sampleStatusList);
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public List<Analysis> getMaxRevisionAnalysesBySampleIncludeCanceled(SampleItem sampleItem) {
         return getBaseObjectDAO().getMaxRevisionAnalysesBySampleIncludeCanceled(sampleItem);
@@ -628,7 +635,13 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
 
     @Override
     public List<Analysis> getAllAnalysisByTestsAndStatus(List<String> testIdList, List<Integer> statusIdList) {
-        // TODO Auto-generated method stub
-        return null;
+        return baseObjectDAO.getAllAnalysisByTestsAndStatus(testIdList, statusIdList);
+    }
+
+    @Override
+    public int getCountAnalysisByTestSectionAndStatus(String testSectionId, List<Integer> analysisStatusList,
+            List<Integer> sampleStatusList) {
+        return baseObjectDAO.getCountAnalysisByTestSectionAndStatus(testSectionId, analysisStatusList,
+                sampleStatusList);
     }
 }
