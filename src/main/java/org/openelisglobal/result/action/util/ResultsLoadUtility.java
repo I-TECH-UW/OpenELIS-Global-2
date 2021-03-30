@@ -252,10 +252,19 @@ public class ResultsLoadUtility {
 
     public List<TestResultItem> getUnfinishedTestResultItemsInTestSection(String testSectionId) {
 
-        List<Analysis> analysisList = analysisService.getAllAnalysisByTestSectionAndStatus(testSectionId,
+//      List<Analysis> fullAnalysisList = analysisService.getAllAnalysisByTestSectionAndStatus(testSectionId,
+//          analysisStatusList, sampleStatusList);
+//      request.setAttribute("analysisesSize", fullAnalysisList.size());
+        List<Analysis> analysisList = analysisService.getPageAnalysisByTestSectionAndStatus(testSectionId,
                 analysisStatusList, sampleStatusList);
 
         return getGroupedTestsForAnalysisList(analysisList, SORT_FORWARD);
+    }
+
+    public int getTotalCountAnalysisByTestSectionAndStatus(String testSectionId) {
+        return analysisService.getCountAnalysisByTestSectionAndStatus(testSectionId, analysisStatusList,
+                sampleStatusList);
+
     }
 
     public List<TestResultItem> getGroupedTestsForAnalysisList(List<Analysis> filteredAnalysisList, boolean forwardSort)
@@ -715,8 +724,9 @@ public class ResultsLoadUtility {
                 analysisService.getTriggeredReflex(analysis) && analysisService.resultIsConclusion(result, analysis));
         testItem.setPastNotes(notes);
         testItem.setDisplayResultAsLog(hasLogValue(test));
-        testItem.setNonconforming(analysisService.isParentNonConforming(analysis) || SpringContext.getBean(IStatusService.class)
-                .matches(analysisService.getStatusId(analysis), AnalysisStatus.TechnicalRejected));
+        testItem.setNonconforming(
+                analysisService.isParentNonConforming(analysis) || SpringContext.getBean(IStatusService.class)
+                        .matches(analysisService.getStatusId(analysis), AnalysisStatus.TechnicalRejected));
         if (FormFields.getInstance().useField(Field.QaEventsBySection)) {
             testItem.setNonconforming(testItem.isNonconforming() || getQaEventByTestSection(analysis));
         }

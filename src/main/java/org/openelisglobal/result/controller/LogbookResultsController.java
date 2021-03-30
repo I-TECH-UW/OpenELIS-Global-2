@@ -195,6 +195,8 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 
             if (!GenericValidator.isBlankOrNull(testSectionId)) {
                 tests = resultsLoadUtility.getUnfinishedTestResultItemsInTestSection(testSectionId);
+                int count = resultsLoadUtility.getTotalCountAnalysisByTestSectionAndStatus(testSectionId);
+                request.setAttribute("analysisCount", count);
             } else {
                 tests = new ArrayList<>();
             }
