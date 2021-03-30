@@ -20,7 +20,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -29,6 +31,52 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class TestNotificationConfigMenuController extends BaseMenuController<TestNotificationConfig> {
 
+    private static final String[] ALLOWED_FIELDS = new String[] { 
+            "testNotificationConfigs*.id",
+            "testNotificationConfigs*.test",
+            "testNotificationConfigs*.defaultPayloadTemplate",
+            
+            "testList*.id",
+            "testList*.methodName",
+            "testList*.method",
+            "testList*.labelName",
+            "testList*.label",
+            "testList*.testTrailerName",
+            "testList*.testTrailer",
+            "testList*.testSectionName",
+            "testList*.testSection",
+            "testList*.scriptletName",
+            "testList*.scriptlet",
+            "testList*.description",
+            "testList*.loinc",
+            "testList*.stickerRequiredFlag",
+            "testList*.alternateTestDisplayValue",
+            "testList*.activeBeginDate = null",
+            "testList*.activeBeginDateForDisplay",
+            "testList*.activeEndDate = null",
+            "testList*.activeEndDateForDisplay",
+            "testList*.isReportable",
+            "testList*.timeHolding",
+            "testList*.timeWait",
+            "testList*.timeAverage",
+            "testList*.timeWarning",
+            "testList*.timeMax",
+            "testList*.labelQuantity",
+            "testList*.unitOfMeasure",
+            "testList*.sortOrder",
+            "testList*.localCode",
+            "testList*.orderable",
+            "testList*.localizedTestName",
+            "testList*.localizedReportingName",
+            "testList*.localizedTestSectionName",
+            "testList*.localizedReportingTestSectionName",
+            "testList*.guid",
+            "testList*.defaultTestResult",
+            "testList*.notifyResults",
+            
+            "selectedIDs*."
+    };
+    
     @Autowired
     private TestService testService;
     @Autowired
@@ -37,6 +85,11 @@ public class TestNotificationConfigMenuController extends BaseMenuController<Tes
     @Override
     protected int getPageSize() {
         return -1;
+    }
+    
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
     }
 
     @GetMapping("/TestNotificationConfigMenu")

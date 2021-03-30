@@ -36,6 +36,8 @@ import org.openelisglobal.siteinformation.service.SiteInformationService;
 import org.openelisglobal.siteinformation.valueholder.SiteInformation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -45,6 +47,11 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/logoUpload")
 public class LogoUploadController {
     
+    private static final String[] ALLOWED_FIELDS = new String[] { 
+            "removeImage",
+            "logoName",
+            "logoFile"
+    };
 
     static final long serialVersionUID = 1L;
 
@@ -54,6 +61,11 @@ public class LogoUploadController {
     private SiteInformationService siteInformationService;
     @Autowired
     private LogoUploadService logoUploadService;
+    
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
 
     @PostMapping
     protected String doPost(HttpServletRequest request, @ModelAttribute("form") LogoUploadForm form)
