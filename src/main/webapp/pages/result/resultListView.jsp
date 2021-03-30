@@ -339,6 +339,14 @@ function setField(id, value) {
 	jQuery("#" + id).val(value);
 }
 
+function altAccessionHighlightSearch(accessionNumber) {
+	if (confirm('Searching for an individual Lab no will take you to a new page.\n\nUnsaved data on this page will be lost.\n\nWould you like to continue?')) {
+		window.onbeforeunload = null;
+		var params = new URLSearchParams("accessionNumber=" + accessionNumber);
+		window.location = "AccessionResults.do?" + params.toString();
+	}
+}
+
 </script>
 
 <c:if test="${form.displayTestSections}">
@@ -972,6 +980,8 @@ function setField(id, value) {
 	1- 60 of ${analysisCount}
 	</c:if>
 	<c:if test="${empty analysisCount}">
+	<c:set var="total" value="${form.paging.totalPages}"/>
+	<c:set var="currentPage" value="${form.paging.currentPage}"/>
 	<button type="button" style="width:100px;" onclick="pager.pageBack();" <c:if test="${currentPage == 1}">disabled="disabled"</c:if>>
 		<spring:message code="label.button.previous"/>
 	</button>
