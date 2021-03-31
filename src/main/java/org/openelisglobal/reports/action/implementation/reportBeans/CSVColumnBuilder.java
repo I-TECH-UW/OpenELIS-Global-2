@@ -245,6 +245,7 @@ abstract public class CSVColumnBuilder {
 //				ResultSet.CONCUR_READ_ONLY);
 //		resultSet = stmt.executeQuery();
         Session session = SpringContext.getBean(SessionFactory.class).getCurrentSession();
+        session.beginTransaction();
         resultSet = session.doReturningWork(new ReturningWork<ResultSet>() {
 
             @Override
@@ -254,6 +255,7 @@ abstract public class CSVColumnBuilder {
             }
 
         });
+        session.close();
     }
 
     protected synchronized String formatDateForDatabaseSql(Date date) {
@@ -403,7 +405,7 @@ abstract public class CSVColumnBuilder {
             case AGE_WEEKS:
                 return isBlankOrNull(value) ? "" : translateAge(strategy, value);
             case GENDER:
-                return isBlankOrNull(value) ? "" : ResourceTranslator.GenderTranslator.getInstance().translate(value);
+                return isBlankOrNull(value) ? "" : ResourceTranslator.GenderTranslator.getInstance().translateOrNot(value);
             case DROP_ZERO:
                 return ("0".equals(value) || value == null) ? "" : value;
             case TEST_RESULT:
@@ -526,7 +528,7 @@ abstract public class CSVColumnBuilder {
     abstract public void makeSQL();
 
     protected void defineAllObservationHistoryTypes() {
-        allObHistoryTypes = ohtService.getAllOrdered("type_name", false);
+        allObHistoryTypes = ohtService.getAllOrdered("typeName", false);
     }
 
     /**

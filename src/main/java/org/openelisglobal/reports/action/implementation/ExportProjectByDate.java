@@ -110,7 +110,8 @@ public class ExportProjectByDate extends CSVSampleExportReport implements IRepor
      *         otherwise
      */
     private boolean validateProject() {
-        if (isBlankOrNull(projectStr) || "0".equals(Integer.getInteger(projectStr).toString())) {
+      //PK: the old one Integer.getInteger(projectStr).toString()) throws NullPointerException
+        if (isBlankOrNull(projectStr) || "0".equals(Integer.parseInt(projectStr)+"")) { 
             add1LineErrorMessage("report.error.message.project.missing");
             return false;
         }
