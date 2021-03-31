@@ -1,4 +1,4 @@
-package src.main.java.org.openelisglobal.reportconfiguration.valueholder;
+package org.openelisglobal.reportconfiguration.valueholder;
 
 import java.util.Objects;
 
