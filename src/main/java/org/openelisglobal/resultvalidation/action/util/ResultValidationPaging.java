@@ -33,7 +33,6 @@ import org.openelisglobal.resultvalidation.bean.AnalysisItem;
 import org.openelisglobal.resultvalidation.form.ResultValidationForm;
 
 public class ResultValidationPaging {
-    public static final int VALIDATION_PAGING_SIZE = 240;
     private PagingUtility<List<AnalysisItem>> paging = new PagingUtility<>();
     private static AnalysisItemPageHelper pagingHelper = new AnalysisItemPageHelper();
 
@@ -101,7 +100,7 @@ public class ResultValidationPaging {
                     pagedResults.add(page);
                     page = new ArrayList<>();
                 }
-                if (resultCount >= VALIDATION_PAGING_SIZE) {
+                if (resultCount >= IActionConstants.VALIDATION_PAGING_SIZE) {
                     currentAccessionNumber = item.getAccessionNumber();
                 }
 

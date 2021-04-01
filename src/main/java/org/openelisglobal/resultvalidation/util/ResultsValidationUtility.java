@@ -148,14 +148,41 @@ public class ResultsValidationUtility {
         return resultList;
 
     }
+    
+    public int getCountResultValidationList(List<Integer> statusList, String testSectionId) {
+
+//        List<AnalysisItem> resultList = new ArrayList<>();
+        int count=0;
+        if (!GenericValidator.isBlankOrNull(testSectionId)) {
+            count = getCountUnValidatedTestResultItemsInTestSection(testSectionId, statusList);
+//            resultList = testResultListToAnalysisItemList(testList);
+//            sortByAccessionNumberAndOrder(resultList);
+//            setGroupingNumbers(resultList);
+        }
+
+        return count;
+
+    }
 
     @SuppressWarnings("unchecked")
     public final List<ResultValidationItem> getUnValidatedTestResultItemsInTestSection(String sectionId,
             List<Integer> statusList) {
 
+//        List<Analysis> analysisList = analysisService.getAllAnalysisByTestSectionAndStatus(sectionId, statusList,
+//                false);
+          // getPage for validation
+          List<Analysis> analysisList = analysisService.getPageAnalysisByTestSectionAndStatus(sectionId, statusList,
+              false);
+        return getGroupedTestsForAnalysisList(analysisList, !StatusRules.useRecordStatusForValidation());
+    }
+    
+    @SuppressWarnings("unchecked")
+    public final int getCountUnValidatedTestResultItemsInTestSection(String sectionId,
+            List<Integer> statusList) {
+        // getAll for count
         List<Analysis> analysisList = analysisService.getAllAnalysisByTestSectionAndStatus(sectionId, statusList,
                 false);
-        return getGroupedTestsForAnalysisList(analysisList, !StatusRules.useRecordStatusForValidation());
+        return getCountGroupedTestsForAnalysisList(analysisList, !StatusRules.useRecordStatusForValidation());
     }
 
     protected final void sortByAccessionNumberAndOrder(List<AnalysisItem> resultItemList) {
@@ -239,6 +266,49 @@ public class ResultsValidationUtility {
         }
 
         return selectedTestList;
+    }
+    
+    public final int getCountGroupedTestsForAnalysisList(Collection<Analysis> filteredAnalysisList,
+            boolean ignoreRecordStatus) throws LIMSRuntimeException {
+
+        List<ResultValidationItem> selectedTestList = new ArrayList<>();
+        Dictionary dictionary;
+
+        for (Analysis analysis : filteredAnalysisList) {
+
+            if (ignoreRecordStatus || sampleReadyForValidation(analysis.getSampleItem().getSample())) {
+                List<ResultValidationItem> testResultItemList = getResultItemFromAnalysis(analysis);
+                // NB. The resultValue is filled in during getResultItemFromAnalysis as a side
+                // effect of setResult
+                for (ResultValidationItem validationItem : testResultItemList) {
+                    if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(validationItem.getResultType())) {
+                        dictionary = new Dictionary();
+                        String resultValue = null;
+                        try {
+                            dictionary.setId(validationItem.getResultValue());
+                            dictionaryService.getData(dictionary);
+                            resultValue = GenericValidator.isBlankOrNull(dictionary.getLocalAbbreviation())
+                                    ? dictionary.getDictEntry()
+                                    : dictionary.getLocalAbbreviation();
+                        } catch (RuntimeException e) {
+                            LogEvent.logInfo(this.getClass().getName(), "getGroupedTestsForAnalysisList",
+                                    e.getMessage());
+                            // no-op
+                        }
+
+                        validationItem.setResultValue(resultValue);
+
+                    }
+
+                    validationItem.setAnalysis(analysis);
+                    validationItem.setNonconforming(QAService.isAnalysisParentNonConforming(analysis) || StatusService
+                            .getInstance().matches(analysis.getStatusId(), AnalysisStatus.TechnicalRejected));
+                    selectedTestList.add(validationItem);
+                }
+            }
+        }
+
+        return selectedTestList.size();
     }
 
     protected final boolean sampleReadyForValidation(Sample sample) {

@@ -381,6 +381,13 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
             boolean sortedByDateAndAccession) {
         return baseObjectDAO.getAllAnalysisByTestSectionAndStatus(sectionId, statusList, sortedByDateAndAccession);
     }
+    
+    @Override
+    @Transactional(readOnly = true)
+    public List<Analysis> getPageAnalysisByTestSectionAndStatus(String sectionId, List<Integer> statusList,
+            boolean sortedByDateAndAccession) {
+        return baseObjectDAO.getPageAnalysisByTestSectionAndStatus(sectionId, statusList, sortedByDateAndAccession);
+    }
 
     @Override
     @Transactional(readOnly = true)
