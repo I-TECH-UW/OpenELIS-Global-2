@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.DisplayListService;
@@ -157,6 +158,10 @@ public class ResultValidationController extends BaseResultValidationController {
             if (!GenericValidator.isBlankOrNull(form.getTestSectionId())) {
                 resultList = resultsValidationUtility.getResultValidationList(getValidationStatus(),
                         form.getTestSectionId());
+                int count = resultsValidationUtility.getCountResultValidationList(getValidationStatus(),
+                        form.getTestSectionId());
+                request.setAttribute("analysisCount", count);
+                request.setAttribute("pageSize", IActionConstants.VALIDATION_PAGING_SIZE);
 
             } else {
                 resultList = new ArrayList<>();
@@ -248,7 +253,7 @@ public class ResultValidationController extends BaseResultValidationController {
 
         for (IResultUpdate updater : updaters) {
 
-            updater.postTransactionalCommitUpdate(resultSaveService);
+//            updater.postTransactionalCommitUpdate(resultSaveService);
         }
 
         // route save back to RetroC specific ResultValidationRetroCAction
