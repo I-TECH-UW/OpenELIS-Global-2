@@ -327,7 +327,10 @@ function /*boolean*/ handleEnterEvent(){
 	<form:hidden path="paging.currentPage" id="currentPageID" />
 	<c:set var="total" value="${form.paging.totalPages}"/>
 	<c:set var="currentPage" value="${form.paging.currentPage}"/>
-	
+	<c:if test="${not empty analysisCount}">
+		1- <c:out value="${pageSize}"/> of <c:out value="${analysisCount}"/>
+	</c:if>
+	<c:if test="${empty analysisCount}">
 	<button type="button" style="width:100px;" onclick="pager.pageBack();" <c:if test="${currentPage == 1}">disabled="disabled"</c:if>>
 		<spring:message code="label.button.previous"/>
 	</button>
@@ -337,6 +340,7 @@ function /*boolean*/ handleEnterEvent(){
 	&nbsp;
 	<c:out value="${form.paging.currentPage}"/> <spring:message code="report.pageNumberOf" />
 	<c:out value="${form.paging.totalPages}"/>
+	</c:if>
 	<span style="float : right" >
 	<span style="visibility: hidden" id="searchNotFound"><em><%= MessageUtil.getMessage("search.term.notFound") %></em></span>
 	<%=MessageUtil.getContextualMessage("result.sample.id")%> : &nbsp;
@@ -657,7 +661,9 @@ function /*boolean*/ handleEnterEvent(){
 	
 	  	
 </Table>
-
+<c:if test="${not empty analysisCount}">
+	1- ${pageSize} of ${analysisCount}
+	</c:if>
 <c:if test="${resultCount != 0}">
 	<c:set var="total" value="${form.paging.totalPages}"/>
 	<c:set var="currentPage" value="${form.paging.currentPage}"/>

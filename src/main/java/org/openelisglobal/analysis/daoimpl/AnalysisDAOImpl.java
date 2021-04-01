@@ -33,6 +33,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.openelisglobal.analysis.dao.AnalysisDAO;
 import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
@@ -397,6 +398,31 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setInteger("testSectionId", Integer.parseInt(testSectionId));
             query.setParameterList("statusIdList", statusIdList);
+            return query.list();
+        } catch (RuntimeException e) {
+
+            LogEvent.logError(e.toString(), e);
+            throw new LIMSRuntimeException("Error in Analysis getAllAnalysisByTestSectionAndStatuses()", e);
+        }
+    }
+    
+    @Override
+    @Transactional(readOnly = true)
+    public List<Analysis> getPageAnalysisByTestSectionAndStatus(String testSectionId, List<Integer> statusIdList,
+            boolean sortedByDateAndAccession) throws LIMSRuntimeException {
+        try {
+            String sql = "from Analysis a where a.testSection.id = :testSectionId and a.statusId IN (:statusIdList) order by a.id";
+
+            if (sortedByDateAndAccession) {
+                // sql += " order by a.sampleItem.sample.receivedTimestamp asc,
+                // a.sampleItem.sample.accessionNumber";
+            }
+
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setInteger("testSectionId", Integer.parseInt(testSectionId));
+            query.setParameterList("statusIdList", statusIdList);
+            query.setMaxResults(IActionConstants.VALIDATION_PAGING_SIZE);
+            
             return query.list();
         } catch (RuntimeException e) {
 
@@ -1441,7 +1467,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             query.setInteger("testSectionId", Integer.parseInt(testSectionId));
             query.setParameterList("analysisStatusList", analysisStatusList);
             query.setParameterList("sampleStatusList", sampleStatusList);
-            query.setMaxResults(PAGING_SIZE);
+            query.setMaxResults(IActionConstants.PAGING_SIZE);
 
             List<Analysis> analysisList = query.list();
 
