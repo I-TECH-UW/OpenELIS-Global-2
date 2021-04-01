@@ -339,6 +339,14 @@ function setField(id, value) {
 	jQuery("#" + id).val(value);
 }
 
+function altAccessionHighlightSearch(accessionNumber) {
+	if (confirm('Searching for an individual Lab no will take you to a new page.\n\nUnsaved data on this page will be lost.\n\nWould you like to continue?')) {
+		window.onbeforeunload = null;
+		var params = new URLSearchParams("accessionNumber=" + accessionNumber);
+		window.location = "AccessionResults.do?" + params.toString();
+	}
+}
+
 </script>
 
 <c:if test="${form.displayTestSections}">
@@ -385,9 +393,9 @@ function setField(id, value) {
     </div>
 </div>
 
-<c:if test="${not empty form.type}" >
-	<form:hidden path="type" />
-</c:if>
+<%-- <c:if test="${not empty form.type}" > --%>
+<%-- 	<form:hidden path="type" /> --%>
+<%-- </c:if> --%>
 
 <c:if test="${testCount != 0}">
 <c:if test="${form.displayTestKit}">
@@ -473,15 +481,20 @@ function setField(id, value) {
 	<form:hidden id="currentPageID" path="paging.currentPage"/>
 	<c:set var="total" value="${form.paging.totalPages}"/>
 	<c:set var="currentPage" value="${form.paging.currentPage}"/>
-	<button type="button" style="width:100px;" onclick="pager.pageBack();" <c:if test="${currentPage == 1}">disabled="disabled"</c:if>>
-		<spring:message code="label.button.previous"/>
-	</button>
-	<button type="button" style="width:100px;" onclick="pager.pageFoward();" <c:if test="${currentPage == total}">disabled="disabled"</c:if>>
-		<spring:message code="label.button.next"/>
-	</button>
-	&nbsp;
-	<c:out value="${form.paging.currentPage}"/> <spring:message code="report.pageNumberOf" />
-	<c:out value="${form.paging.totalPages}"/>
+	<c:if test="${not empty analysisCount}">
+		1- 60 of <c:out value="${analysisCount}"/>
+	</c:if>
+	<c:if test="${empty analysisCount}">
+		<button type="button" style="width:100px;" onclick="pager.pageBack();" <c:if test="${currentPage == 1}">disabled="disabled"</c:if>>
+			<spring:message code="label.button.previous"/>
+		</button>
+		<button type="button" style="width:100px;" onclick="pager.pageFoward();" <c:if test="${currentPage == total}">disabled="disabled"</c:if>>
+			<spring:message code="label.button.next"/>
+		</button>
+		&nbsp;
+		<c:out value="${form.paging.currentPage}"/> <spring:message code="report.pageNumberOf" />
+		<c:out value="${form.paging.totalPages}"/>
+	</c:if>
 	<div class='textcontent' style="float: right" >
 	<span style="visibility: hidden" id="searchNotFound"><em><%= MessageUtil.getMessage("search.term.notFound") %></em></span>
 	<%=MessageUtil.getContextualMessage("result.sample.id")%> : &nbsp;
@@ -963,6 +976,10 @@ function setField(id, value) {
 	</c:forEach>
 </Table>
 <c:if test="${not (form.paging.totalPages == 0)}">
+	<c:if test="${not empty analysisCount}">
+	1- 60 of ${analysisCount}
+	</c:if>
+	<c:if test="${empty analysisCount}">
 	<c:set var="total" value="${form.paging.totalPages}"/>
 	<c:set var="currentPage" value="${form.paging.currentPage}"/>
 	<button type="button" style="width:100px;" onclick="pager.pageBack();" <c:if test="${currentPage == 1}">disabled="disabled"</c:if>>
@@ -974,6 +991,7 @@ function setField(id, value) {
 	&nbsp;
 	<c:out value="${form.paging.currentPage}"/> of
 	<c:out value="${form.paging.totalPages}"/>
+	</c:if>
 </c:if>
 
 </c:if>

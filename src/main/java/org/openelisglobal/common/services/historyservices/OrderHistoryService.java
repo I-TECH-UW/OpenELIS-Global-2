@@ -102,7 +102,7 @@ public class OrderHistoryService extends AbstractHistoryService {
                 .getSampleRequestersByType(RequesterService.Requester.PERSON, false);
         requester = null;
         if (sampleRequesters.size() != 0) {
-            sampleRequesters.get(0);
+            requester = sampleRequesters.get(0);
             searchHistory.setReferenceId(requester.getId());
             searchHistory.setReferenceTable(SAMPLE_REQUESTER_TABLE_ID);
             List<History> list = historyService.getHistoryByRefIdAndRefTableId(searchHistory);

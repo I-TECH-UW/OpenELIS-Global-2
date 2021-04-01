@@ -15,7 +15,10 @@
  */
 package org.openelisglobal.image.daoimpl;
 
+import org.hibernate.Session;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.image.dao.ImageDAO;
 import org.openelisglobal.image.valueholder.Image;
 import org.springframework.stereotype.Component;
@@ -27,6 +30,22 @@ public class ImageDAOImpl extends BaseDAOImpl<Image, String> implements ImageDAO
 
     public ImageDAOImpl() {
         super(Image.class);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Image getImageByDescription(String imageDescription) {
+
+        try {
+            String sql = "from Image i where i.description = :imageDescription";
+
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setParameter("imageDescription", imageDescription);
+            return (Image) query.uniqueResult();
+        } catch (RuntimeException e) {
+            LogEvent.logError(e.toString(), e);
+            throw new LIMSRuntimeException("Error in Image getImageByDescription()", e);
+        }
     }
 
 //	@Override
