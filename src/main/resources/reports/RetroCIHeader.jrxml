@@ -91,11 +91,11 @@
 				</textElement>
 				<text><![CDATA[Responsable: Dr TONI]]></text>
 			</staticText>
-			<image isUsingCache="false">
+			<image isUsingCache="true">
 				<reportElement x="2" y="0" width="100" height="80" uuid="aaeb5de5-faff-486b-9802-a74a1cf967cb"/>
 				<imageExpression><![CDATA[$P{leftHeaderImage}]]></imageExpression>
 			</image>
-			<image hAlign="Right" isUsingCache="false">
+			<image hAlign="Right" isUsingCache="true">
 				<reportElement x="449" y="1" width="100" height="80" uuid="17f9cb89-c9ff-4f09-9d94-d0fd01ba6c0d"/>
 				<imageExpression><![CDATA[$P{rightHeaderImage}]]></imageExpression>
 			</image>
