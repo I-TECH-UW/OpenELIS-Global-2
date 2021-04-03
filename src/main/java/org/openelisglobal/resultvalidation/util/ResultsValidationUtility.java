@@ -21,9 +21,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
 
@@ -33,6 +35,8 @@ import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.analyte.service.AnalyteService;
 import org.openelisglobal.analyte.valueholder.Analyte;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.formfields.FormFields;
+import org.openelisglobal.common.formfields.FormFields.Field;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.QAService;
@@ -51,6 +55,12 @@ import org.openelisglobal.observationhistory.service.ObservationHistoryService;
 import org.openelisglobal.observationhistory.valueholder.ObservationHistory;
 import org.openelisglobal.observationhistorytype.service.ObservationHistoryTypeService;
 import org.openelisglobal.observationhistorytype.valueholder.ObservationHistoryType;
+import org.openelisglobal.patient.form.PatientInfoForm;
+import org.openelisglobal.patient.service.PatientService;
+import org.openelisglobal.patient.util.PatientUtil;
+import org.openelisglobal.patient.valueholder.Patient;
+import org.openelisglobal.patientidentity.valueholder.PatientIdentity;
+import org.openelisglobal.patientidentitytype.util.PatientIdentityTypeMap;
 import org.openelisglobal.result.service.ResultService;
 import org.openelisglobal.result.valueholder.Result;
 import org.openelisglobal.resultlimit.service.ResultLimitService;
@@ -76,6 +86,8 @@ public class ResultsValidationUtility {
 
     @Autowired
     protected DictionaryService dictionaryService;
+    @Autowired
+    protected PatientService patientService;
     @Autowired
     protected TestSectionService testSectionService;
     @Autowired
@@ -107,6 +119,7 @@ public class ResultsValidationUtility {
     protected Map<String, String> testIdToUnits = new HashMap<>();
     protected Map<String, Boolean> accessionToValidMap;
     protected String totalTestName = "";
+    private static boolean depersonalize = FormFields.getInstance().useField(Field.DepersonalizedResults);
 
     @PostConstruct
     private void initilaizeGlobalVariables() {
@@ -139,7 +152,8 @@ public class ResultsValidationUtility {
         List<AnalysisItem> resultList = new ArrayList<>();
 
         if (!GenericValidator.isBlankOrNull(testSectionId)) {
-            List<ResultValidationItem> testList = getUnValidatedTestResultItemsInTestSection(testSectionId, statusList);
+            List<ResultValidationItem> testList = getPageUnValidatedTestResultItemsInTestSection(testSectionId,
+                    statusList);
             resultList = testResultListToAnalysisItemList(testList);
             sortByAccessionNumberAndOrder(resultList);
             setGroupingNumbers(resultList);
@@ -148,11 +162,11 @@ public class ResultsValidationUtility {
         return resultList;
 
     }
-    
+
     public int getCountResultValidationList(List<Integer> statusList, String testSectionId) {
 
 //        List<AnalysisItem> resultList = new ArrayList<>();
-        int count=0;
+        int count = 0;
         if (!GenericValidator.isBlankOrNull(testSectionId)) {
             count = getCountUnValidatedTestResultItemsInTestSection(testSectionId, statusList);
 //            resultList = testResultListToAnalysisItemList(testList);
@@ -165,20 +179,19 @@ public class ResultsValidationUtility {
     }
 
     @SuppressWarnings("unchecked")
-    public final List<ResultValidationItem> getUnValidatedTestResultItemsInTestSection(String sectionId,
+    public final List<ResultValidationItem> getPageUnValidatedTestResultItemsInTestSection(String sectionId,
             List<Integer> statusList) {
 
 //        List<Analysis> analysisList = analysisService.getAllAnalysisByTestSectionAndStatus(sectionId, statusList,
 //                false);
-          // getPage for validation
-          List<Analysis> analysisList = analysisService.getPageAnalysisByTestSectionAndStatus(sectionId, statusList,
-              false);
+        // getPage for validation
+        List<Analysis> analysisList = analysisService.getPageAnalysisByTestSectionAndStatus(sectionId, statusList,
+                false);
         return getGroupedTestsForAnalysisList(analysisList, !StatusRules.useRecordStatusForValidation());
     }
-    
+
     @SuppressWarnings("unchecked")
-    public final int getCountUnValidatedTestResultItemsInTestSection(String sectionId,
-            List<Integer> statusList) {
+    public final int getCountUnValidatedTestResultItemsInTestSection(String sectionId, List<Integer> statusList) {
         // getAll for count
         List<Analysis> analysisList = analysisService.getAllAnalysisByTestSectionAndStatus(sectionId, statusList,
                 false);
@@ -267,7 +280,7 @@ public class ResultsValidationUtility {
 
         return selectedTestList;
     }
-    
+
     public final int getCountGroupedTestsForAnalysisList(Collection<Analysis> filteredAnalysisList,
             boolean ignoreRecordStatus) throws LIMSRuntimeException {
 
@@ -653,6 +666,47 @@ public class ResultsValidationUtility {
         }
         return uomName;
 
+    }
+
+    public List<AnalysisItem> getValidationAnalysisBySample(Sample sample) {
+        List<AnalysisItem> resultList = new ArrayList<>();
+
+        List<ResultValidationItem> testList = getGroupedTestsForSample(sample);
+        resultList = testResultListToAnalysisItemList(testList);
+        sortByAccessionNumberAndOrder(resultList);
+        setGroupingNumbers(resultList);
+
+        return resultList;
+    }
+
+    public List<ResultValidationItem> getGroupedTestsForSample(Sample sample) {
+        Set<Integer> excludedAnalysisStatus = new HashSet<>();
+        excludedAnalysisStatus.addAll(this.notValidStatus);
+        List<Analysis> analysisList = analysisService.getAnalysesBySampleIdExcludedByStatusId(sample.getId(),
+                excludedAnalysisStatus);
+        return getGroupedTestsForAnalysisList(analysisList, !StatusRules.useRecordStatusForValidation());
+    }
+
+    public void addIdentifingPatientInfo(Patient patient, PatientInfoForm form) {
+
+        if (patient == null) {
+            return;
+        }
+
+        PatientIdentityTypeMap identityMap = PatientIdentityTypeMap.getInstance();
+        List<PatientIdentity> identityList = PatientUtil.getIdentityListForPatient(patient);
+
+        if (!depersonalize) {
+            form.setFirstName(patient.getPerson().getFirstName());
+            form.setLastName(patient.getPerson().getLastName());
+            form.setDob(patient.getBirthDateForDisplay());
+            form.setGender(patient.getGender());
+        }
+
+        form.setSt(identityMap.getIdentityValue(identityList, "ST"));
+        form.setNationalId(GenericValidator.isBlankOrNull(patient.getNationalId()) ? patient.getExternalId()
+                : patient.getNationalId());
+        form.setSubjectNumber(patientService.getSubjectNumber(patient));
     }
 
 }
