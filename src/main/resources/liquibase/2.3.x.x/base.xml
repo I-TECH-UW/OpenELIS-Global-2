@@ -11,5 +11,6 @@
 	<include file="liquibase/2.3.x.x/national_id_config.xml"/>
 	<include file="liquibase/2.3.x.x/analyzer_experiment.xml"/>
 	<include file="liquibase/2.3.x.x/new_tests.xml"/>
+	<include file="liquibase/2.3.x.x/accession_validation.xml"/>
 
 </databaseChangeLog>

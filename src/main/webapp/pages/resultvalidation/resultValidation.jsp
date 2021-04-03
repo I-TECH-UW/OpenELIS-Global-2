@@ -287,7 +287,7 @@ function altAccessionHighlightSearch(accessionNumber) {
 	if (confirm('Searching for an individual Lab no will take you to a new page.\n\nUnsaved data on this page will be lost.\n\nWould you like to continue?')) {
 		window.onbeforeunload = null;
 		var params = new URLSearchParams("accessionNumber=" + accessionNumber);
-		window.location = "AccessionResults.do?" + params.toString();
+		window.location = "AccessionValidation.do?" + params.toString();
 	}
 }
 

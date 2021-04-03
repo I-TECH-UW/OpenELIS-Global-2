@@ -141,6 +141,7 @@ public class ResultValidationController extends BaseResultValidationController {
         String newPage = request.getParameter("page");
 
         TestSection ts = null;
+        form.setSearchFinished(false);
 
         if (GenericValidator.isBlankOrNull(newPage)) {
 
@@ -162,12 +163,12 @@ public class ResultValidationController extends BaseResultValidationController {
                         form.getTestSectionId());
                 request.setAttribute("analysisCount", count);
                 request.setAttribute("pageSize", IActionConstants.VALIDATION_PAGING_SIZE);
+                form.setSearchFinished(true);
 
             } else {
                 resultList = new ArrayList<>();
             }
             paging.setDatabaseResults(request, form, resultList);
-            form.setSearchFinished(true);
         } else {
             paging.page(request, form, Integer.parseInt(newPage));
         }
@@ -197,6 +198,7 @@ public class ResultValidationController extends BaseResultValidationController {
         if ("true".equals(request.getParameter("pageResults"))) {
             return getResultValidation(request, form);
         }
+        form.setSearchFinished(false);
 
         if (result.hasErrors()) {
             saveErrors(result);
