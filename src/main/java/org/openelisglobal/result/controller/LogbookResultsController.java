@@ -197,6 +197,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
                 tests = resultsLoadUtility.getUnfinishedTestResultItemsInTestSection(testSectionId);
                 int count = resultsLoadUtility.getTotalCountAnalysisByTestSectionAndStatus(testSectionId);
                 request.setAttribute("analysisCount", count);
+                request.setAttribute("pageSize", tests.size());
             } else {
                 tests = new ArrayList<>();
             }
