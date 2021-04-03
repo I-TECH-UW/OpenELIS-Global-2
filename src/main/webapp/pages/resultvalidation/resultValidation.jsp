@@ -163,17 +163,6 @@ function savePage() {
 	form.submit();
 }
 
-function submitTestSectionSelect( element ) {
-	
-	var testSectionNameIdHash = [];
-
-	<c:forEach items="${testSectionsByName}" var="testSection">
-		testSectionNameIdHash["${testSection.id}"] = "${testSection.value}";
-	</c:forEach>
-		window.location.href = "ResultValidation.do?testSectionId=" + element.value + "&test=&type=" + testSectionNameIdHash[element.value];
-	
-}
-
 function toggleSelectAll( element ) {
     var index, item, checkboxes,matchedCheckboxes;
 
@@ -294,33 +283,15 @@ function /*boolean*/ handleEnterEvent(){
 	return false;
 }
 
-</script>
+function altAccessionHighlightSearch(accessionNumber) {
+	if (confirm('Searching for an individual Lab no will take you to a new page.\n\nUnsaved data on this page will be lost.\n\nWould you like to continue?')) {
+		window.onbeforeunload = null;
+		var params = new URLSearchParams("accessionNumber=" + accessionNumber);
+		window.location = "AccessionResults.do?" + params.toString();
+	}
+}
 
-<% if( !(url.contains("RetroC"))){ %>
-<div id="searchDiv" class="colorFill"  >
-<div id="PatientPage" class="colorFill" style="display:inline" >
-<h2><spring:message code="sample.entry.search"/></h2>
-	<table width="30%">
-		<tr>
-			<td width="50%" align="right" >
-				<%= MessageUtil.getMessage("workplan.unit.types") %>
-			</td>
-			<td>			
-				<form:select path="testSectionId" 
-					 onchange="submitTestSectionSelect(this);" >
-					<option value=""></option>
-					<form:options items="${form.testSections}" itemLabel="value" itemValue="id" />
-				</form:select>
-		   	</td>
-		</tr>
-	</table>
-	<br/>
-	<h1>
-		
-	</h1>
-</div>
-</div>
-	<% }%>
+</script>
 
 <c:if test="${resultCount != 0}">
 <div  style="width:80%" >
@@ -661,21 +632,21 @@ function /*boolean*/ handleEnterEvent(){
 	
 	  	
 </Table>
-<c:if test="${not empty analysisCount}">
-	1- ${pageSize} of ${analysisCount}
+<c:if test="${not (form.paging.totalPages == 0)}">
+	<c:if test="${not empty analysisCount}">
+	1 - ${pageSize} of ${analysisCount}
 	</c:if>
-<c:if test="${resultCount != 0}">
+	<c:if test="${empty analysisCount}">
 	<c:set var="total" value="${form.paging.totalPages}"/>
 	<c:set var="currentPage" value="${form.paging.currentPage}"/>
-
 	<button type="button" style="width:100px;" onclick="pager.pageBack();" <c:if test="${currentPage == 1}">disabled="disabled"</c:if>>
 		<spring:message code="label.button.previous"/>
 	</button>
 	<button type="button" style="width:100px;" onclick="pager.pageFoward();" <c:if test="${currentPage == total}">disabled="disabled"</c:if>>
 		<spring:message code="label.button.next"/>
 	</button>
-
 	&nbsp;
 	<c:out value="${form.paging.currentPage}"/> of
 	<c:out value="${form.paging.totalPages}"/>
+	</c:if>
 </c:if>

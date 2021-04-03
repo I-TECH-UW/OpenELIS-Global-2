@@ -30,13 +30,13 @@ import org.openelisglobal.common.paging.PagingBean;
 import org.openelisglobal.common.paging.PagingUtility;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.resultvalidation.bean.AnalysisItem;
-import org.openelisglobal.resultvalidation.form.ResultValidationForm;
+import org.openelisglobal.resultvalidation.form.ValidationPagingForm;
 
 public class ResultValidationPaging {
     private PagingUtility<List<AnalysisItem>> paging = new PagingUtility<>();
     private static AnalysisItemPageHelper pagingHelper = new AnalysisItemPageHelper();
 
-    public void setDatabaseResults(HttpServletRequest request, ResultValidationForm form,
+    public void setDatabaseResults(HttpServletRequest request, ValidationPagingForm form,
             List<AnalysisItem> analysisItems)
                     throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
@@ -50,7 +50,7 @@ public class ResultValidationPaging {
         }
     }
 
-    public void page(HttpServletRequest request, ResultValidationForm form, int newPage)
+    public void page(HttpServletRequest request, ValidationPagingForm form, int newPage)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
         request.getSession().setAttribute(IActionConstants.SAVE_DISABLED, IActionConstants.FALSE);
@@ -72,7 +72,7 @@ public class ResultValidationPaging {
         }
     }
 
-    public void updatePagedResults(HttpServletRequest request, ResultValidationForm form) {
+    public void updatePagedResults(HttpServletRequest request, ValidationPagingForm form) {
         List<AnalysisItem> clientAnalysis = form.getResultList();
         PagingBean bean = form.getPaging();
 

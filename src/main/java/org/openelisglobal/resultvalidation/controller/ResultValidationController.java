@@ -167,7 +167,7 @@ public class ResultValidationController extends BaseResultValidationController {
                 resultList = new ArrayList<>();
             }
             paging.setDatabaseResults(request, form, resultList);
-
+            form.setSearchFinished(true);
         } else {
             paging.page(request, form, Integer.parseInt(newPage));
         }
