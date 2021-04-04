@@ -17,7 +17,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
-import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.DisplayListService;
@@ -162,7 +161,7 @@ public class ResultValidationController extends BaseResultValidationController {
                 int count = resultsValidationUtility.getCountResultValidationList(getValidationStatus(),
                         form.getTestSectionId());
                 request.setAttribute("analysisCount", count);
-                request.setAttribute("pageSize", IActionConstants.VALIDATION_PAGING_SIZE);
+                request.setAttribute("pageSize", resultList.size());
                 form.setSearchFinished(true);
 
             } else {
