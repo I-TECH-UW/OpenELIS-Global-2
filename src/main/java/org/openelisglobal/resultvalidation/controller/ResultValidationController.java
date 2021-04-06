@@ -1,7 +1,5 @@
 package org.openelisglobal.resultvalidation.controller;
 
-import static org.apache.commons.validator.GenericValidator.isBlankOrNull;
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,10 +12,8 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
-import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.DisplayListService;
@@ -68,7 +64,6 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -141,6 +136,7 @@ public class ResultValidationController extends BaseResultValidationController {
         String newPage = request.getParameter("page");
 
         TestSection ts = null;
+        form.setSearchFinished(false);
 
         if (GenericValidator.isBlankOrNull(newPage)) {
 
@@ -161,13 +157,13 @@ public class ResultValidationController extends BaseResultValidationController {
                 int count = resultsValidationUtility.getCountResultValidationList(getValidationStatus(),
                         form.getTestSectionId());
                 request.setAttribute("analysisCount", count);
-                request.setAttribute("pageSize", IActionConstants.VALIDATION_PAGING_SIZE);
+                request.setAttribute("pageSize", resultList.size());
+                form.setSearchFinished(true);
 
             } else {
                 resultList = new ArrayList<>();
             }
             paging.setDatabaseResults(request, form, resultList);
-
         } else {
             paging.page(request, form, Integer.parseInt(newPage));
         }
@@ -197,6 +193,7 @@ public class ResultValidationController extends BaseResultValidationController {
         if ("true".equals(request.getParameter("pageResults"))) {
             return getResultValidation(request, form);
         }
+        form.setSearchFinished(false);
 
         if (result.hasErrors()) {
             saveErrors(result);

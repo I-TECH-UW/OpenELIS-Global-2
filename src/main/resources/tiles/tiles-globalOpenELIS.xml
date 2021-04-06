@@ -297,6 +297,14 @@
 			value="resultListViewCore" />
 	</definition>
 
+	<definition name="accessionValidationCore"
+		template="/pages/result/resultsBySearch.jsp">
+		<put-attribute name="searchPanel"
+			value="/pages/accession/accessionSearch.jsp" />
+		<put-attribute name="resultsPanel"
+			value="/pages/resultvalidation/resultValidation.jsp" />
+	</definition>
+
 	<definition name="accessionSampleEditCore"
 		template="/pages/result/resultsBySearch.jsp">
 <!-- 		<put-attribute name="searchPanel" -->
@@ -437,6 +445,15 @@
 			value="/pages/common/saveCancelFooterButtons.jsp" />
 	</definition>
 
+	<definition name="accessionValidationDefinition"
+		extends="baseDefinition">
+		<put-attribute name="preSelectionHeader"
+			value="/pages/common/actionSuccess.jsp" />
+		<put-attribute name="body" value="accessionValidationCore" />
+		<put-attribute name="footer"
+			value="/pages/common/saveCancelFooterButtons.jsp" />
+	</definition>
+
 	<definition name="statusResultDefinition"
 		extends="baseDefinition">
 		<put-attribute name="preSelectionHeader"
@@ -460,10 +477,19 @@
 		<put-attribute name="preSelectionHeader"
 			value="/pages/common/actionSuccess.jsp" />
 		<put-attribute name="body"
-			value="/pages/resultvalidation/resultValidation.jsp" />
+			value="resultValidationCoreDefinition" />
 		<put-attribute name="footer"
 			value="/pages/common/saveCancelFooterButtons.jsp" />
 	</definition>
+	
+	<definition name="resultValidationCoreDefinition"
+		template="/pages/result/resultsBySearch.jsp">
+		<put-attribute name="searchPanel"
+			value="/pages/resultvalidation/resultValidationUnitSearch.jsp" />
+		<put-attribute name="resultsPanel"
+			value="/pages/resultvalidation/resultValidation.jsp" />
+	</definition>
+	
 	<definition name="elisaAlgorithmResultValidationDefinition"
 		extends="baseDefinition">
 		<put-attribute name="preSelectionHeader"
