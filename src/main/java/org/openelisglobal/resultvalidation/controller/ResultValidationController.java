@@ -125,9 +125,11 @@ public class ResultValidationController extends BaseResultValidationController {
             @ModelAttribute("form") @Validated(ResultValidationForm.ResultValidation.class) ResultValidationForm oldForm)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
+        String accessionNumber = request.getParameter("accessionNumber");
         ResultValidationForm newForm = new ResultValidationForm();
         newForm.setTestSectionId(oldForm.getTestSectionId());
         newForm.setTestSection(oldForm.getTestSection());
+        newForm.setAccessionNumber(accessionNumber);
         return getResultValidation(request, newForm);
     }
 
@@ -155,16 +157,18 @@ public class ResultValidationController extends BaseResultValidationController {
             List<AnalysisItem> resultList;
             ResultsValidationUtility resultsValidationUtility = SpringContext.getBean(ResultsValidationUtility.class);
             setRequestType(ts == null ? MessageUtil.getMessage("workplan.unit.types") : ts.getLocalizedName());
-            if (!GenericValidator.isBlankOrNull(form.getTestSectionId())) {
+            
+            if ( !(GenericValidator.isBlankOrNull(form.getTestSectionId()) &&
+                    GenericValidator.isBlankOrNull(form.getAccessionNumber())) )  {
+                
                 resultList = resultsValidationUtility.getResultValidationList(getValidationStatus(),
-                        form.getTestSectionId());
+                        form.getTestSectionId(), form.getAccessionNumber());
                 int count = resultsValidationUtility.getCountResultValidationList(getValidationStatus(),
                         form.getTestSectionId());
                 request.setAttribute("analysisCount", count);
                 request.setAttribute("pageSize", resultList.size());
                 form.setSearchFinished(true);
-
-            } else {
+                } else {
                 resultList = new ArrayList<>();
             }
             paging.setDatabaseResults(request, form, resultList);

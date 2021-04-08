@@ -147,12 +147,18 @@ public class ResultsValidationUtility {
         }
     }
 
-    public List<AnalysisItem> getResultValidationList(List<Integer> statusList, String testSectionId) {
-
+    public List<AnalysisItem> getResultValidationList(List<Integer> statusList, String testSectionId, String accessionNumber) {
+        
         List<AnalysisItem> resultList = new ArrayList<>();
 
         if (!GenericValidator.isBlankOrNull(testSectionId)) {
             List<ResultValidationItem> testList = getPageUnValidatedTestResultItemsInTestSection(testSectionId,
+                    statusList);
+            resultList = testResultListToAnalysisItemList(testList);
+            sortByAccessionNumberAndOrder(resultList);
+            setGroupingNumbers(resultList);
+        } else if (!GenericValidator.isBlankOrNull(accessionNumber)) {
+            List<ResultValidationItem> testList = getPageUnValidatedTestResultItemsAtAccessionNumber(accessionNumber,
                     statusList);
             resultList = testResultListToAnalysisItemList(testList);
             sortByAccessionNumberAndOrder(resultList);
@@ -190,6 +196,18 @@ public class ResultsValidationUtility {
         return getGroupedTestsForAnalysisList(analysisList, !StatusRules.useRecordStatusForValidation());
     }
 
+    @SuppressWarnings("unchecked")
+    public final List<ResultValidationItem> getPageUnValidatedTestResultItemsAtAccessionNumber(String accessionNumber,
+            List<Integer> statusList) {
+
+//        List<Analysis> analysisList = analysisService.getAllAnalysisByTestSectionAndStatus(sectionId, statusList,
+//                false);
+        // getPage for validation
+        List<Analysis> analysisList = analysisService.getPageAnalysisAtAccessionNumberAndStatus(accessionNumber, statusList,
+                false);
+        return getGroupedTestsForAnalysisList(analysisList, !StatusRules.useRecordStatusForValidation());
+    }
+    
     @SuppressWarnings("unchecked")
     public final int getCountUnValidatedTestResultItemsInTestSection(String sectionId, List<Integer> statusList) {
         // getAll for count
@@ -390,7 +408,7 @@ public class ResultsValidationUtility {
         List<TestResult> testResults = getPossibleResultsForTest(test);
 
         String displayTestName = TestServiceImpl.getLocalizedTestNameWithType(test);
-//		displayTestName = augmentTestNameWithRange(displayTestName, result);
+//      displayTestName = augmentTestNameWithRange(displayTestName, result);
 
         ResultValidationItem testItem = new ResultValidationItem();
 
@@ -417,8 +435,7 @@ public class ResultsValidationUtility {
     private boolean isNormalResult(Analysis analysis, Result result) {
         boolean normalResult = false;
         ResultLimit resultLimit = resultLimitService.getResultLimitForAnalysis(analysis);
-
-        if (resultLimit != null) {
+        if (resultLimit != null && result != null) {
             if (TypeOfTestResultServiceImpl.ResultType.DICTIONARY.matches(result.getResultType())
                     && result.getValue().equals(resultLimit.getDictionaryNormalId())) {
                 normalResult = true;

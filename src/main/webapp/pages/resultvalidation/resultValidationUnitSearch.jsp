@@ -30,6 +30,8 @@
 <c:set var="resultCount" value="${fn:length(results)}" />
 <c:set var="rowColorIndex" value="${2}" />
 
+<script type="text/javascript" src="scripts/OEPaging.js?"></script>
+
 <%
 	int rowColorIndex = 2;
 	String searchTerm = request.getParameter("searchTerm");
@@ -38,7 +40,6 @@
 %>
 
 <script>
-
 
 function submitTestSectionSelect( element ) {
 	
@@ -50,17 +51,33 @@ function submitTestSectionSelect( element ) {
 		window.location.href = "ResultValidation.do?testSectionId=" + element.value + "&test=&type=" + testSectionNameIdHash[element.value];
 	
 }
-</script>
 
+function validateEntrySize( elementValue ){
+	$("retrieveTestsID").disabled = (elementValue.length == 0);
+}
+
+function doShowTests(){
+	var form = document.getElementById("mainForm");
+	window.location.href = '${form.formName}'.sub('Form','') + ".do?accessionNumber="  + $("searchAccessionID").value;
+}
+
+function /*void*/ handleEnterEvent(  ){
+	if( $("searchAccessionID").value.length > 0){
+		doShowTests();
+	}
+	return false;
+}
+
+</script>
 
 <% if( !(url.contains("RetroC"))){ %>
 <div id="searchDiv" class="colorFill"  >
 <div id="PatientPage" class="colorFill" style="display:inline" >
 <h2><spring:message code="sample.entry.search"/></h2>
-	<table width="30%">
+	<table width="50%">
 		<tr>
-			<td width="50%" align="right" >
-				<%= MessageUtil.getMessage("workplan.unit.types") %>
+			<td width="50%" align="right">
+				<%= MessageUtil.getMessage("workplan.unit.types") %>: &nbsp;
 			</td>
 			<td>			
 				<form:select path="testSectionId" 
@@ -70,8 +87,31 @@ function submitTestSectionSelect( element ) {
 				</form:select>
 		   	</td>
 		</tr>
+		
+		<tr >
+		<td width="50%" align="right" >
+			<%=MessageUtil.getContextualMessage("quick.entry.accession.range")%>
+		</td>
+		<td width="50%">
+			<input name="accessionNumber"
+			       size="20"
+			       id="searchAccessionID"
+			       maxlength="<%=Integer.toString(AccessionNumberUtil.getMaxAccessionLength())%>"
+			       onkeyup="validateEntrySize( this.value );"
+			       onblur="validateEntrySize( this.value );"
+			       class="text"
+			       type="text">
+			<spring:message code="sample.search.scanner.instructions"/>
+		</td>
+	</tr>
+		
 	</table>
 	<br/>
+	
+	<button type="button" name="retrieveTestsButton" id="retrieveTestsID"  onclick="doShowTests();" disabled="disabled" >
+		<%= MessageUtil.getContextualMessage("validationentry.accession.range") %>
+	</button>
+	
 	<h1>
 		
 	</h1>

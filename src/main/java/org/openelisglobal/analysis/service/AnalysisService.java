@@ -177,4 +177,7 @@ public interface AnalysisService extends BaseObjectService<Analysis, String> {
 
     List<Analysis> getPageAnalysisByTestSectionAndStatus(String sectionId, List<Integer> statusList,
             boolean sortedByDateAndAccession);
+    
+    List<Analysis> getPageAnalysisAtAccessionNumberAndStatus(String accessionNumber, List<Integer> statusList,
+            boolean sortedByDateAndAccession);
 }
