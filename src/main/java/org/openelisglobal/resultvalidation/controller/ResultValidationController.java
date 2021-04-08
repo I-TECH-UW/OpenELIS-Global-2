@@ -1,5 +1,7 @@
 package org.openelisglobal.resultvalidation.controller;
 
+import static org.apache.commons.validator.GenericValidator.isBlankOrNull;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,6 +14,7 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
@@ -64,6 +67,7 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -121,9 +125,11 @@ public class ResultValidationController extends BaseResultValidationController {
             @ModelAttribute("form") @Validated(ResultValidationForm.ResultValidation.class) ResultValidationForm oldForm)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
+        String accessionNumber = request.getParameter("accessionNumber");
         ResultValidationForm newForm = new ResultValidationForm();
         newForm.setTestSectionId(oldForm.getTestSectionId());
         newForm.setTestSection(oldForm.getTestSection());
+        newForm.setAccessionNumber(accessionNumber);
         return getResultValidation(request, newForm);
     }
 
@@ -151,16 +157,18 @@ public class ResultValidationController extends BaseResultValidationController {
             List<AnalysisItem> resultList;
             ResultsValidationUtility resultsValidationUtility = SpringContext.getBean(ResultsValidationUtility.class);
             setRequestType(ts == null ? MessageUtil.getMessage("workplan.unit.types") : ts.getLocalizedName());
-            if (!GenericValidator.isBlankOrNull(form.getTestSectionId())) {
+            
+            if ( !(GenericValidator.isBlankOrNull(form.getTestSectionId()) &&
+                    GenericValidator.isBlankOrNull(form.getAccessionNumber())) )  {
+                
                 resultList = resultsValidationUtility.getResultValidationList(getValidationStatus(),
-                        form.getTestSectionId());
+                        form.getTestSectionId(), form.getAccessionNumber());
                 int count = resultsValidationUtility.getCountResultValidationList(getValidationStatus(),
                         form.getTestSectionId());
                 request.setAttribute("analysisCount", count);
                 request.setAttribute("pageSize", resultList.size());
                 form.setSearchFinished(true);
-
-            } else {
+                } else {
                 resultList = new ArrayList<>();
             }
             paging.setDatabaseResults(request, form, resultList);

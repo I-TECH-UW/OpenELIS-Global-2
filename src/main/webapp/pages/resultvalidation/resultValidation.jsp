@@ -298,8 +298,9 @@ function altAccessionHighlightSearch(accessionNumber) {
 	<form:hidden path="paging.currentPage" id="currentPageID" />
 	<c:set var="total" value="${form.paging.totalPages}"/>
 	<c:set var="currentPage" value="${form.paging.currentPage}"/>
-	<c:if test="${not empty analysisCount}">
-		1- <c:out value="${pageSize}"/> of <c:out value="${analysisCount}"/>
+	1- <c:out value="${pageSize}"/>
+	<c:if test="${analysisCount != 0}">
+		 of <c:out value="${analysisCount}"/>
 	</c:if>
 	<c:if test="${empty analysisCount}">
 	<button type="button" style="width:100px;" onclick="pager.pageBack();" <c:if test="${currentPage == 1}">disabled="disabled"</c:if>>
@@ -633,8 +634,9 @@ function altAccessionHighlightSearch(accessionNumber) {
 	  	
 </Table>
 <c:if test="${not (form.paging.totalPages == 0)}">
-	<c:if test="${not empty analysisCount}">
-	1 - ${pageSize} of ${analysisCount}
+	1- <c:out value="${pageSize}"/>
+	<c:if test="${analysisCount != 0}">
+		 of <c:out value="${analysisCount}"/>
 	</c:if>
 	<c:if test="${empty analysisCount}">
 	<c:set var="total" value="${form.paging.totalPages}"/>
