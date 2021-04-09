@@ -75,21 +75,30 @@ function /*void*/ handleEnterEvent(  ){
 <div id="PatientPage" class="colorFill" style="display:inline" >
 <h2><spring:message code="sample.entry.search"/></h2>
 	<table width="50%">
-		<tr>
-			<td width="50%" align="right">
-				<%= MessageUtil.getMessage("workplan.unit.types") %>: &nbsp;
-			</td>
-			<td>			
-				<form:select path="testSectionId" 
-					 onchange="submitTestSectionSelect(this);" >
-					<option value=""></option>
-					<form:options items="${form.testSections}" itemLabel="value" itemValue="id" />
-				</form:select>
-		   	</td>
-		</tr>
+		<tr >
+		<td width="50%" align="right" >
+			<%=MessageUtil.getContextualMessage("quick.entry.accession.range")%>
+		</td>
+		<td width="50%">
+			<input name="accessionNumber"
+			       size="20"
+			       id="searchAccessionID"
+			       maxlength="<%=Integer.toString(AccessionNumberUtil.getMaxAccessionLength())%>"
+			       onkeyup="validateEntrySize( this.value );"
+			       onblur="validateEntrySize( this.value );"
+			       class="text"
+			       type="text">
+			<spring:message code="sample.search.scanner.instructions"/>
+		</td>
+	</tr>
 		
 	</table>
 	<br/>
+	
+	<button type="button" name="retrieveTestsButton" id="retrieveTestsID"  onclick="doShowTests();" disabled="disabled" >
+		<%= MessageUtil.getContextualMessage("validationentry.accession.range") %>
+	</button>
+	
 	<h1>
 		
 	</h1>

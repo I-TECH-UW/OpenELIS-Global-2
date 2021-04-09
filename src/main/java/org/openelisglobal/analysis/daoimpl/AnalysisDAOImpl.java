@@ -441,9 +441,10 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             boolean sortedByDateAndAccession) throws LIMSRuntimeException {
         try {
             String anumBegin = accessionNumber;
-            String anumEnd = "99999999999999999";
+            String anumEnd = "999999999999999999";
             String sql = "from Analysis a "
-                    + " where a.sampleItem.sample.accessionNumber between :anumBegin and :anumEnd "
+                    + " where a.sampleItem.sample.accessionNumber "
+                    + " between :anumBegin and :anumEnd "
                     + " and a.statusId NOT IN (:statusIdList)  "
                     + " order by a.sampleItem.sample.accessionNumber ";
             if (sortedByDateAndAccession) {
