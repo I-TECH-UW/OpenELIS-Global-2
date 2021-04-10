@@ -545,19 +545,15 @@ public class AccessionValidationRangeController extends BaseResultValidationCont
     @Override
     protected String findLocalForward(String forward) {
         if (FWD_SUCCESS.equals(forward)) {
-            return "resultValidationDefinition";
-        } else if ("elisaSuccess".equals(forward)) {
-            return "elisaAlgorithmResultValidationDefinition";
+            return "accessionValidationRangeDefinition";
         } else if (FWD_FAIL.equals(forward)) {
             return "homePageDefinition";
         } else if (FWD_SUCCESS_INSERT.equals(forward)) {
-            return "redirect:/ResultValidation.do";
-        } else if ("successRetroC".equals(forward)) {
-            return "redirect:/ResultValidationRetroC.do";
+            return "redirect:/AccessionValidationRange.do";
         } else if (FWD_FAIL_INSERT.equals(forward)) {
             return "homePageDefinition";
         } else if (FWD_VALIDATION_ERROR.equals(forward)) {
-            return "resultValidationDefinition";
+            return "accessionValidationRangeDefinition";
         } else {
             return "PageNotFound";
         }
