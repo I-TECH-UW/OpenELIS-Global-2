@@ -210,10 +210,7 @@ public class ResultsValidationUtility {
     
     @SuppressWarnings("unchecked")
     public final int getCountUnValidatedTestResultItemsInTestSection(String sectionId, List<Integer> statusList) {
-        // getAll for count
-        List<Analysis> analysisList = analysisService.getAllAnalysisByTestSectionAndStatus(sectionId, statusList,
-                false);
-        return getCountGroupedTestsForAnalysisList(analysisList, !StatusRules.useRecordStatusForValidation());
+        return analysisService.getCountAnalysisByTestSectionAndStatus(sectionId, statusList);
     }
 
     protected final void sortByAccessionNumberAndOrder(List<AnalysisItem> resultItemList) {

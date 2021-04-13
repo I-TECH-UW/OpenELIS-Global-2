@@ -201,4 +201,6 @@ public interface AnalysisDAO extends BaseDAO<Analysis, String> {
     
     List<Analysis> getPageAnalysisAtAccessionNumberAndStatus(String accessionNumber, List<Integer> statusIdList,
             boolean sortedByDateAndAccession) throws LIMSRuntimeException;
+
+    int getCountAnalysisByTestSectionAndStatus(String testSectionId, List<Integer> analysisStatusList);
 }
