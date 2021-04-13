@@ -156,16 +156,13 @@ public class AccessionValidationRangeController extends BaseResultValidationCont
 
             List<AnalysisItem> resultList;
             ResultsValidationUtility resultsValidationUtility = SpringContext.getBean(ResultsValidationUtility.class);
-            setRequestType(ts == null ? MessageUtil.getMessage("workplan.unit.types") : ts.getLocalizedName());
+            setRequestType(ts == null ? MessageUtil.getMessage("validation.range.title") : ts.getLocalizedName());
             
             if ( !(GenericValidator.isBlankOrNull(form.getTestSectionId()) &&
                     GenericValidator.isBlankOrNull(form.getAccessionNumber())) )  {
                 
                 resultList = resultsValidationUtility.getResultValidationList(getValidationStatus(),
                         form.getTestSectionId(), form.getAccessionNumber());
-                int count = resultsValidationUtility.getCountResultValidationList(getValidationStatus(),
-                        form.getTestSectionId());
-                request.setAttribute("analysisCount", count);
                 request.setAttribute("pageSize", resultList.size());
                 form.setSearchFinished(true);
                 } else {

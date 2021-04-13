@@ -1774,6 +1774,26 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
         return 0;
     }
+    
+    @Override
+    public int getCountAnalysisByTestSectionAndStatus(String testSectionId, List<Integer> analysisStatusList ) {
+
+        String hql = "SELECT COUNT(*) From Analysis a WHERE a.testSection.id = :testSectionId AND a.statusId IN (:analysisStatusList)";
+        try {
+            Query<Long> query = entityManager.unwrap(Session.class).createQuery(hql);
+            query.setInteger("testSectionId", Integer.parseInt(testSectionId));
+            query.setParameterList("analysisStatusList", analysisStatusList);
+
+            Long analysisList = query.uniqueResult();
+
+            return analysisList.intValue();
+
+        } catch (HibernateException e) {
+            handleException(e, "getAllAnalysisByTestSectionAndStatus");
+        }
+
+        return 0;
+    }
 
 //	@Override
 //	public Analysis getPatientPreviousAnalysisForTestName(Patient patient, Sample currentSample, String testName) {

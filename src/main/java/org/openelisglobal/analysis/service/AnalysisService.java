@@ -180,4 +180,6 @@ public interface AnalysisService extends BaseObjectService<Analysis, String> {
     
     List<Analysis> getPageAnalysisAtAccessionNumberAndStatus(String accessionNumber, List<Integer> statusList,
             boolean sortedByDateAndAccession);
+
+    int getCountAnalysisByTestSectionAndStatus(String sectionId, List<Integer> statusList);
 }

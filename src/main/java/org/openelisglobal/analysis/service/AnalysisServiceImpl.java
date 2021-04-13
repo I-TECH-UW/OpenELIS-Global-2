@@ -658,4 +658,9 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
         return baseObjectDAO.getCountAnalysisByTestSectionAndStatus(testSectionId, analysisStatusList,
                 sampleStatusList);
     }
+
+    @Override
+    public int getCountAnalysisByTestSectionAndStatus(String testSectionId, List<Integer> analysisStatusList) {
+        return baseObjectDAO.getCountAnalysisByTestSectionAndStatus(testSectionId, analysisStatusList);
+    }
 }
