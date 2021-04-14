@@ -43,23 +43,23 @@
 			tableName="analysis">
 			<column name="fhir_uuid" />
 		</createIndex>
-		<createIndex indexName="analysis_fhir_uuid_index"
+		<createIndex indexName="result_fhir_uuid_index"
 			tableName="result">
 			<column name="fhir_uuid" />
 		</createIndex>
-		<createIndex indexName="analysis_fhir_uuid_index"
+		<createIndex indexName="sample_item_fhir_uuid_index"
 			tableName="sample_item">
 			<column name="fhir_uuid" />
 		</createIndex>
-		<createIndex indexName="analysis_fhir_uuid_index"
+		<createIndex indexName="organization_fhir_uuid_index"
 			tableName="organization">
 			<column name="fhir_uuid" />
 		</createIndex>
-		<createIndex indexName="analysis_fhir_uuid_index"
+		<createIndex indexName="patient_fhir_uuid_index"
 			tableName="patient">
 			<column name="fhir_uuid" />
 		</createIndex>
-		<createIndex indexName="analysis_fhir_uuid_index"
+		<createIndex indexName="sample_fhir_uuid_index"
 			tableName="sample">
 			<column name="fhir_uuid"/>
 		</createIndex>
