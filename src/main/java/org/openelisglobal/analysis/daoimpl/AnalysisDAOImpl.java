@@ -411,7 +411,10 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
     public List<Analysis> getPageAnalysisByTestSectionAndStatus(String testSectionId, List<Integer> statusIdList,
             boolean sortedByDateAndAccession) throws LIMSRuntimeException {
         try {
-            String sql = "from Analysis a where a.testSection.id = :testSectionId and a.statusId IN (:statusIdList) order by a.id";
+            String sql = "from Analysis a "
+                    + " where a.testSection.id = :testSectionId "
+                    + " and a.statusId IN (:statusIdList) "
+                    + " order by a.sampleItem.sample.accessionNumber ";
 
             if (sortedByDateAndAccession) {
                 // sql += " order by a.sampleItem.sample.receivedTimestamp asc,
@@ -419,7 +422,57 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             }
 
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            
             query.setInteger("testSectionId", Integer.parseInt(testSectionId));
+            query.setParameterList("statusIdList", statusIdList);
+            query.setMaxResults(IActionConstants.VALIDATION_PAGING_SIZE);
+            
+            return query.list();
+        } catch (RuntimeException e) {
+
+            LogEvent.logError(e.toString(), e);
+            throw new LIMSRuntimeException("Error in Analysis getAllAnalysisByTestSectionAndStatuses()", e);
+        }
+    }
+    
+    @Override
+    @Transactional(readOnly = true)
+    public List<Analysis> getPageAnalysisAtAccessionNumberAndStatus(String accessionNumber, List<Integer> statusIdList,
+            boolean sortedByDateAndAccession) throws LIMSRuntimeException {
+        
+        //  if prefix is numeric then used it else not
+        String anumBegin="";
+        String sql = "";
+        try {
+            int i = Integer.parseInt(accessionNumber.substring(0,7));
+            anumBegin = accessionNumber;
+            sql = "from Analysis a "
+                    + " where a.sampleItem.sample.accessionNumber "
+                    + " between :anumBegin and :anumEnd "
+                    + " and a.statusId NOT IN (:statusIdList)  "
+                    + " order by a.sampleItem.sample.accessionNumber ";
+        } catch (NumberFormatException nfe) {
+            anumBegin = accessionNumber.substring(accessionNumber.length() - 13);
+            sql = "from Analysis a "
+                    + " where right(a.sampleItem.sample.accessionNumber,13) "
+                    + " between :anumBegin and :anumEnd "
+                    + " and a.statusId NOT IN (:statusIdList)  "
+                    + " order by a.sampleItem.sample.accessionNumber ";
+        }
+        
+        try {
+            String anumEnd = "99999999999999999999";
+            
+            if (sortedByDateAndAccession) {
+                // sql += " order by a.sampleItem.sample.receivedTimestamp asc,
+                // a.sampleItem.sample.accessionNumber";
+            }
+
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            
+            query.setParameter("anumBegin", String.valueOf((anumBegin)));
+            query.setParameter("anumEnd", String.valueOf((anumEnd)));
+            
             query.setParameterList("statusIdList", statusIdList);
             query.setMaxResults(IActionConstants.VALIDATION_PAGING_SIZE);
             
@@ -1709,6 +1762,26 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             query.setInteger("testSectionId", Integer.parseInt(testSectionId));
             query.setParameterList("analysisStatusList", analysisStatusList);
             query.setParameterList("sampleStatusList", sampleStatusList);
+
+            Long analysisList = query.uniqueResult();
+
+            return analysisList.intValue();
+
+        } catch (HibernateException e) {
+            handleException(e, "getAllAnalysisByTestSectionAndStatus");
+        }
+
+        return 0;
+    }
+    
+    @Override
+    public int getCountAnalysisByTestSectionAndStatus(String testSectionId, List<Integer> analysisStatusList ) {
+
+        String hql = "SELECT COUNT(*) From Analysis a WHERE a.testSection.id = :testSectionId AND a.statusId IN (:analysisStatusList)";
+        try {
+            Query<Long> query = entityManager.unwrap(Session.class).createQuery(hql);
+            query.setInteger("testSectionId", Integer.parseInt(testSectionId));
+            query.setParameterList("analysisStatusList", analysisStatusList);
 
             Long analysisList = query.uniqueResult();
 

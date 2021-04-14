@@ -31,8 +31,6 @@ import org.openelisglobal.common.services.registration.interfaces.IResultUpdate;
 import org.openelisglobal.common.services.serviceBeans.ResultSaveBean;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.validator.BaseErrors;
-import org.openelisglobal.dataexchange.fhir.exception.FhirLocalPersistingException;
-import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
 import org.openelisglobal.dataexchange.orderresult.OrderResponseWorker.Event;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.note.service.NoteService;
@@ -74,7 +72,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-public class ResultValidationController extends BaseResultValidationController {
+public class AccessionValidationRangeController extends BaseResultValidationController {
 
     private static final String[] ALLOWED_FIELDS = new String[] { "testSectionId", "paging.currentPage", "testSection",
             "testName", "resultList*.accessionNumber", "resultList*.analysisId", "resultList*.testId",
@@ -93,18 +91,16 @@ public class ResultValidationController extends BaseResultValidationController {
     private SystemUserService systemUserService;
     private ResultValidationService resultValidationService;
     private NoteService noteService;
-    private FhirTransformService fhirTransformService;
 
     private final String RESULT_SUBJECT = "Result Note";
     private final String RESULT_TABLE_ID;
     private final String RESULT_REPORT_ID;
 
-    public ResultValidationController(AnalysisService analysisService, TestResultService testResultService,
+    public AccessionValidationRangeController(AnalysisService analysisService, TestResultService testResultService,
             SampleHumanService sampleHumanService, DocumentTrackService documentTrackService,
             TestSectionService testSectionService, SystemUserService systemUserService,
             ReferenceTablesService referenceTablesService, DocumentTypeService documentTypeService,
-            ResultValidationService resultValidationService, NoteService noteService,
-            FhirTransformService fhirTransformService) {
+            ResultValidationService resultValidationService, NoteService noteService) {
 
         this.analysisService = analysisService;
         this.testResultService = testResultService;
@@ -114,7 +110,6 @@ public class ResultValidationController extends BaseResultValidationController {
         this.systemUserService = systemUserService;
         this.resultValidationService = resultValidationService;
         this.noteService = noteService;
-        this.fhirTransformService = fhirTransformService;
 
         RESULT_TABLE_ID = referenceTablesService.getReferenceTableByName("RESULT").getId();
         RESULT_REPORT_ID = documentTypeService.getDocumentTypeByName("resultExport").getId();
@@ -125,8 +120,8 @@ public class ResultValidationController extends BaseResultValidationController {
         binder.setAllowedFields(ALLOWED_FIELDS);
     }
 
-    @RequestMapping(value = "/ResultValidation", method = RequestMethod.GET)
-    public ModelAndView showResultValidation(HttpServletRequest request,
+    @RequestMapping(value = "/AccessionValidationRange", method = RequestMethod.GET)
+    public ModelAndView showAccessionValidationRange(HttpServletRequest request,
             @ModelAttribute("form") @Validated(ResultValidationForm.ResultValidation.class) ResultValidationForm oldForm)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
@@ -161,16 +156,13 @@ public class ResultValidationController extends BaseResultValidationController {
 
             List<AnalysisItem> resultList;
             ResultsValidationUtility resultsValidationUtility = SpringContext.getBean(ResultsValidationUtility.class);
-            setRequestType(ts == null ? MessageUtil.getMessage("workplan.unit.types") : ts.getLocalizedName());
+            setRequestType(ts == null ? MessageUtil.getMessage("validation.range.title") : ts.getLocalizedName());
             
             if ( !(GenericValidator.isBlankOrNull(form.getTestSectionId()) &&
                     GenericValidator.isBlankOrNull(form.getAccessionNumber())) )  {
                 
                 resultList = resultsValidationUtility.getResultValidationList(getValidationStatus(),
                         form.getTestSectionId(), form.getAccessionNumber());
-                int count = resultsValidationUtility.getCountResultValidationList(getValidationStatus(),
-                        form.getTestSectionId());
-                request.setAttribute("analysisCount", count);
                 request.setAttribute("pageSize", resultList.size());
                 form.setSearchFinished(true);
                 } else {
@@ -198,8 +190,8 @@ public class ResultValidationController extends BaseResultValidationController {
         return validationStatus;
     }
 
-    @RequestMapping(value = "/ResultValidation", method = RequestMethod.POST)
-    public ModelAndView showResultValidationSave(HttpServletRequest request,
+    @RequestMapping(value = "/AccessionValidationRange", method = RequestMethod.POST)
+    public ModelAndView showAccessionValidationRangeSave(HttpServletRequest request,
             @ModelAttribute("form") @Validated(ResultValidationForm.ResultValidation.class) ResultValidationForm form,
             BindingResult result, RedirectAttributes redirectAttributes)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
@@ -257,12 +249,6 @@ public class ResultValidationController extends BaseResultValidationController {
         try {
             resultValidationService.persistdata(deletableList, analysisUpdateList, resultUpdateList, resultItemList,
                     sampleUpdateList, noteUpdateList, resultSaveService, updaters, getSysUserId(request));
-            try {
-                fhirTransformService.transformPersistResultValidationFhirObjects(deletableList, analysisUpdateList,
-                        resultUpdateList, resultItemList, sampleUpdateList, noteUpdateList);
-            } catch (FhirLocalPersistingException e) {
-                LogEvent.logError(e);
-            }
         } catch (LIMSRuntimeException e) {
             LogEvent.logErrorStack(e);
         }
@@ -556,19 +542,15 @@ public class ResultValidationController extends BaseResultValidationController {
     @Override
     protected String findLocalForward(String forward) {
         if (FWD_SUCCESS.equals(forward)) {
-            return "resultValidationDefinition";
-        } else if ("elisaSuccess".equals(forward)) {
-            return "elisaAlgorithmResultValidationDefinition";
+            return "accessionValidationRangeDefinition";
         } else if (FWD_FAIL.equals(forward)) {
             return "homePageDefinition";
         } else if (FWD_SUCCESS_INSERT.equals(forward)) {
-            return "redirect:/ResultValidation.do";
-        } else if ("successRetroC".equals(forward)) {
-            return "redirect:/ResultValidationRetroC.do";
+            return "redirect:/AccessionValidationRange.do";
         } else if (FWD_FAIL_INSERT.equals(forward)) {
             return "homePageDefinition";
         } else if (FWD_VALIDATION_ERROR.equals(forward)) {
-            return "resultValidationDefinition";
+            return "accessionValidationRangeDefinition";
         } else {
             return "PageNotFound";
         }

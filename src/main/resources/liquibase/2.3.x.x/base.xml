@@ -13,5 +13,6 @@
 	<include file="liquibase/2.3.x.x/new_tests.xml"/>
 	<include file="liquibase/2.3.x.x/accession_validation.xml"/>
 	<include file="liquibase/2.3.x.x/uuid_columns.xml"/>
+	<include file="liquibase/2.3.x.x/accession_validation_range.xml"/>
 
 </databaseChangeLog>

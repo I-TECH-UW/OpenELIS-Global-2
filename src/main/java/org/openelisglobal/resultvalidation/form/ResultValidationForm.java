@@ -31,6 +31,18 @@ public class ResultValidationForm extends BaseForm implements ValidationPagingFo
 
     @Pattern(regexp = "^[a-zA-Z -]*$", groups = { ResultValidation.class })
     private String testSection = "";
+    
+    private String accessionNumber = "";
+    
+    
+
+    public String getAccessionNumber() {
+        return accessionNumber;
+    }
+
+    public void setAccessionNumber(String accessionNumber) {
+        this.accessionNumber = accessionNumber;
+    }
 
     // for display
     private String testName = "";
@@ -86,7 +98,7 @@ public class ResultValidationForm extends BaseForm implements ValidationPagingFo
     public void setTestSection(String testSection) {
         this.testSection = testSection;
     }
-
+    
     public String getTestName() {
         return testName;
     }
