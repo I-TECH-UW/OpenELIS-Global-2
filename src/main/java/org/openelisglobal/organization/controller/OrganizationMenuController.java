@@ -15,6 +15,7 @@ import org.openelisglobal.common.form.AdminOptionMenuForm;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.common.validator.BaseErrors;
+import org.openelisglobal.dataexchange.fhir.exception.FhirTransformationException;
 import org.openelisglobal.organization.form.OrganizationMenuForm;
 import org.openelisglobal.organization.service.OrganizationExportService;
 import org.openelisglobal.organization.service.OrganizationService;
@@ -71,7 +72,7 @@ public class OrganizationMenuController extends BaseMenuController<Organization>
 
     @GetMapping(value = "/OrganizationExport", produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody byte[] exportOrganizations(
-            @RequestParam(name = "active", defaultValue = "true") String active) {
+            @RequestParam(name = "active", defaultValue = "true") String active) throws FhirTransformationException {
         return organizationExportService.exportFhirOrganizationsFromOrganizations(Boolean.valueOf(active)).getBytes();
     }
 

@@ -7,6 +7,7 @@ import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Endpoint;
 import org.hl7.fhir.r4.model.Resource;
 import org.openelisglobal.common.util.validator.GenericValidator;
+import org.openelisglobal.dataexchange.fhir.exception.FhirTransformationException;
 import org.openelisglobal.dataexchange.fhir.service.FhirPersistanceService;
 import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
 import org.openelisglobal.organization.valueholder.Organization;
@@ -30,7 +31,7 @@ public class OrganizationExportServiceImpl implements OrganizationExportService 
 
     @Transactional(readOnly = true)
     @Override
-    public String exportFhirOrganizationsFromOrganizations(boolean active) {
+    public String exportFhirOrganizationsFromOrganizations(boolean active) throws FhirTransformationException {
         List<Organization> organizations;
         if (active) {
             organizations = organizationService.getActiveOrganizations();
@@ -42,8 +43,10 @@ public class OrganizationExportServiceImpl implements OrganizationExportService 
         List<Resource> resources = new ArrayList<>();
         for (Organization organization : organizations) {
             org.hl7.fhir.r4.model.Organization fhirOrganization = fhirTransformService
-                    .organizationToFhirOrganization(organization);
-            resources.add(fhirOrganization);
+                    .transformToFhirOrganization(organization);
+            if (resources.stream().noneMatch(e -> e.getId().equals(fhirOrganization.getId()))) {
+                resources.add(fhirOrganization);
+            }
 
             if (!GenericValidator.isBlankOrNull(organization.getInternetAddress())) {
                 Endpoint endpoint = addFhirConnectionInfo(fhirOrganization, organization, String.valueOf(++i));
@@ -71,9 +74,9 @@ public class OrganizationExportServiceImpl implements OrganizationExportService 
     }
 
     private org.hl7.fhir.r4.model.Organization addFhirParentOrg(org.hl7.fhir.r4.model.Organization fhirOrganization,
-            Organization organization) {
+            Organization organization) throws FhirTransformationException {
         org.hl7.fhir.r4.model.Organization partOfOrg = fhirTransformService
-                .organizationToFhirOrganization(organization.getOrganization());
+                .transformToFhirOrganization(organization.getOrganization());
         fhirOrganization.setPartOf(fhirTransformService.createReferenceFor(partOfOrg));
         return partOfOrg;
     }

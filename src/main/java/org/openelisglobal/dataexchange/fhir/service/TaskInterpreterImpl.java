@@ -174,11 +174,13 @@ public class TaskInterpreterImpl implements TaskInterpreter {
                 messagePatient.setStNumber(identifier.getValue());
             }
         }
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        Date birthDate = new Date();
-        birthDate = patient.getBirthDate();
-        String strDate = sdf.format(birthDate);
-        messagePatient.setDisplayDOB(strDate);
+        // TODO set fhirUUID of message patient
+        Date birthDate = patient.getBirthDate();
+        if (birthDate != null) {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            String strDate = sdf.format(birthDate);
+            messagePatient.setDisplayDOB(strDate);
+        }
 
         if (AdministrativeGender.MALE.equals(patient.getGender())) {
             messagePatient.setGender("M");
@@ -289,9 +291,9 @@ public class TaskInterpreterImpl implements TaskInterpreter {
                     results.add(InterpreterResults.MISSING_PATIENT_GENDER);
                 }
 
-//              if(getMessagePatient().getDob() == null){
-//                  results.add(InterpreterResults.MISSING_PATIENT_DOB);
-//              }
+                if (getMessagePatient().getDisplayDOB() == null) {
+                    results.add(InterpreterResults.MISSING_PATIENT_DOB);
+                }
 
                 if (getMessagePatient().getNationalId() == null && getMessagePatient().getObNumber() == null
                         && getMessagePatient().getPcNumber() == null && getMessagePatient().getStNumber() == null

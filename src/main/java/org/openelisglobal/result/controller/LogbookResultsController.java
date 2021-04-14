@@ -36,6 +36,9 @@ import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.IdValuePair;
+import org.openelisglobal.dataexchange.fhir.exception.FhirPersistanceException;
+import org.openelisglobal.dataexchange.fhir.exception.FhirTransformationException;
+import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.inventory.action.InventoryUtility;
 import org.openelisglobal.inventory.form.InventoryKitItem;
@@ -117,6 +120,8 @@ public class LogbookResultsController extends LogbookResultsBaseController {
     private AnalysisService analysisService;
     @Autowired
     private NoteService noteService;
+    @Autowired
+    private FhirTransformService fhirTransformService;
 
     private final String RESULT_SUBJECT = "Result Note";
     private final String REFERRAL_CONFORMATION_ID;
@@ -295,6 +300,11 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 
         try {
             logbookPersistService.persistDataSet(actionDataSet, updaters, getSysUserId(request));
+            try {
+                fhirTransformService.transformPersistResultsEntryFhirObjects(actionDataSet);
+            } catch (FhirTransformationException | FhirPersistanceException e) {
+                LogEvent.logError(e);
+            }
         } catch (LIMSRuntimeException e) {
             String errorMsg;
             if (e.getException() instanceof StaleObjectStateException) {

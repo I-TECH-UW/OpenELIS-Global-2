@@ -77,4 +77,6 @@ public interface SampleDAO extends BaseDAO<Sample, String> {
             throws LIMSRuntimeException;
 
     String getNextAccessionNumber();
+
+    List<Sample> getAllMissingFhirUuid();
 }

@@ -2,6 +2,7 @@ package org.openelisglobal.sampleitem.service;
 
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 
@@ -42,6 +43,14 @@ public class SampleItemServiceImpl extends BaseObjectServiceImpl<SampleItem, Str
     @Override
     protected SampleItemDAO getBaseObjectDAO() {
         return baseObjectDAO;
+    }
+
+    @Override
+    public String insert(SampleItem sampleItem) {
+        if (sampleItem.getFhirUuid() == null) {
+            sampleItem.setFhirUuid(UUID.randomUUID());
+        }
+        return super.insert(sampleItem);
     }
 
     @Override

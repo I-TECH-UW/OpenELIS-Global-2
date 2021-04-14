@@ -1,48 +1,51 @@
 package org.openelisglobal.dataexchange.fhir.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Reference;
 import org.hl7.fhir.r4.model.Resource;
-import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder;
-import org.openelisglobal.dataexchange.order.valueholder.PortableOrder;
-import org.openelisglobal.dataexchange.resultreporting.beans.TestResultsXmit;
+import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.dataexchange.fhir.exception.FhirLocalPersistingException;
+import org.openelisglobal.dataexchange.fhir.exception.FhirPersistanceException;
+import org.openelisglobal.dataexchange.fhir.exception.FhirTransformationException;
+import org.openelisglobal.note.valueholder.Note;
 import org.openelisglobal.organization.valueholder.Organization;
 import org.openelisglobal.patient.action.bean.PatientManagementInfo;
-import org.openelisglobal.patient.valueholder.Patient;
+import org.openelisglobal.result.action.util.ResultsUpdateDataSet;
+import org.openelisglobal.result.valueholder.Result;
+import org.openelisglobal.resultvalidation.bean.AnalysisItem;
 import org.openelisglobal.sample.action.util.SamplePatientUpdateData;
-
-import ca.uhn.fhir.rest.client.api.IGenericClient;
+import org.openelisglobal.sample.valueholder.Sample;
 
 public interface FhirTransformService {
 
-    public String CreateFhirFromOESample(PortableOrder porder);
+    void transformPersistPatient(PatientManagementInfo patientInfo)
+            throws FhirTransformationException, FhirPersistanceException;
 
-    public void CreateFhirFromOESample(TestResultsXmit result, Patient patient);
+    void transformPersistOrderEntryFhirObjects(SamplePatientUpdateData updateData, PatientManagementInfo patientInfo)
+            throws FhirTransformationException, FhirPersistanceException;
 
-    public void CreateFhirFromOESample(ElectronicOrder eOrder, TestResultsXmit result);
+    void transformPersistResultsEntryFhirObjects(ResultsUpdateDataSet actionDataSet)
+            throws FhirTransformationException, FhirPersistanceException;
 
-    String CreateFhirFromOESample(SamplePatientUpdateData updateData, PatientManagementInfo patientInfo);
+    Organization transformToOrganization(org.hl7.fhir.r4.model.Organization fhirOrganization)
+            throws FhirTransformationException;
 
-    public org.hl7.fhir.r4.model.Patient CreateFhirPatientFromOEPatient(Patient patient);
+    org.hl7.fhir.r4.model.Organization transformToFhirOrganization(Organization organization)
+            throws FhirTransformationException;
 
-    public org.hl7.fhir.r4.model.Patient CreateFhirPatientFromOEPatient(PatientManagementInfo patientInfo);
-
-    public List<ElectronicOrder> getFhirOrdersById(String id);
-
-    Organization fhirOrganizationToOrganization(org.hl7.fhir.r4.model.Organization fhirOrganization,
-            IGenericClient client);
+    String getIdFromLocation(String location);
 
     Reference createReferenceFor(Resource resource);
 
-    org.hl7.fhir.r4.model.Organization getFhirOrganization(Organization organization);
+    void transformPersistResultValidationFhirObjects(List<Result> deletableList, List<Analysis> analysisUpdateList,
+            ArrayList<Result> resultUpdateList, List<AnalysisItem> resultItemList, ArrayList<Sample> sampleUpdateList,
+            ArrayList<Note> noteUpdateList) throws FhirLocalPersistingException;
 
-    public org.hl7.fhir.r4.model.Patient getFhirPatientOrCreate(PatientManagementInfo patientInfo);
+    org.hl7.fhir.r4.model.Patient transformToFhirPatient(String patientId) throws FhirTransformationException;
 
-    org.hl7.fhir.r4.model.Organization organizationToFhirOrganization(Organization organization);
-
-    org.hl7.fhir.r4.model.Patient getFhirPatient(PatientManagementInfo patientInfo);
-
-    String getIdFromLocation(String location);
+    Bundle transformPersistObjectsUnderSample(String sampleId) throws FhirLocalPersistingException;
 
 }

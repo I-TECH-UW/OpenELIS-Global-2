@@ -59,5 +59,7 @@
 			type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType" />
 		<property name="collector" column="collector"
 			type="java.lang.String" />
+		<property name="fhirUuid"
+			column="fhir_uuid" type="java.util.UUID" />
 	</class>
 </hibernate-mapping>

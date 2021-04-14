@@ -8894,8 +8894,6 @@ SELECT pg_catalog.setval('clinlims.analyte_seq', 99, true);
 --
 
 COPY clinlims.analyzer (id, scrip_id, name, machine_id, description, analyzer_type, is_active, location, lastupdated) FROM stdin;
-1	\N	sysmex	1	bootstrap machine	\N	t	\N	2009-11-25 15:35:31.343118
-3	\N	cobas_integra	\N	cobas_integra	\N	t	\N	2009-12-14 15:35:31.34118
 \.
 
 
@@ -10597,7 +10595,6 @@ COPY clinlims.menu (id, parent_id, presentation_order, element_id, action_url, c
 173	89	30	menu_reports_export_specific	/Report.do?type=patient&report=Trends	\N	reports.export.specific	tooltip.export.cpecific	f	t
 172	89	10	menu_reports_export_general	/Report.do?type=patient&report=CIStudyExport	\N	reports.export.general	tooltip.export.generale	f	t
 179	89	20	menu_reports_export_valid	/Report.do?type=patient&report=CISampleExport	\N	reports.export.valid	tooltip.export.valid	f	t
-184	2	5	menu_sample_porder	/PortableOrders.do	\N	banner.menu.porders	tooltip.bannner.menu.porders	f	t
 \.
 
 

@@ -1443,7 +1443,6 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             query.setInteger("testSectionId", Integer.parseInt(testSectionId));
             query.setParameterList("analysisStatusList", analysisStatusList);
             query.setParameterList("sampleStatusList", sampleStatusList);
-
             List<Analysis> analysisList = query.list();
 
             // closeSession(); // CSL remove old
@@ -1474,7 +1473,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             return analysisList;
 
         } catch (HibernateException e) {
-            handleException(e, "getAllAnalysisByTestSectionAndStatus");
+            handleException(e, "getPageAnalysisByTestSectionAndStatus");
         }
 
         return null;

@@ -17,6 +17,7 @@ package org.openelisglobal.organization.valueholder;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.validation.constraints.Pattern;
 
@@ -69,6 +70,7 @@ public class Organization extends EnumValueItemImpl implements SimpleBaseEntity<
     @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String code;
     private Set<OrganizationType> organizationTypes;
+    private UUID fhirUuid;
 
     public Organization() {
         super();
@@ -261,5 +263,17 @@ public class Organization extends EnumValueItemImpl implements SimpleBaseEntity<
 
     public void setOrganizationTypes(Set<OrganizationType> organizationTypes) {
         this.organizationTypes = organizationTypes;
+    }
+
+    public UUID getFhirUuid() {
+        return fhirUuid;
+    }
+
+    public void setFhirUuid(UUID fhirUuid) {
+        this.fhirUuid = fhirUuid;
+    }
+
+    public String getFhirUuidAsString() {
+        return fhirUuid == null ? "" : fhirUuid.toString();
     }
 }

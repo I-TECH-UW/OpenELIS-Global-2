@@ -16,6 +16,7 @@ import org.openelisglobal.dataexchange.order.action.IOrderInterpreter.OrderType;
 import org.openelisglobal.dataexchange.order.action.IOrderPersister;
 import org.openelisglobal.dataexchange.order.action.MessagePatient;
 import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder;
+import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrderType;
 import org.openelisglobal.spring.util.SpringContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -148,6 +149,12 @@ public class TaskWorker {
                     "TaskWorker:unsupported tests: " + referringOrderNumber + orderType);
             insertNewOrder(referringOrderNumber, message, patient, ExternalOrderStatus.NonConforming);
             return TaskResult.MESSAGE_ERROR;
+        } else if (interpretResults.get(0) == InterpreterResults.MISSING_PATIENT_DOB) {
+            LogEvent.logDebug(this.getClass().getName(), "handleOrderRequest", "TaskWorker:9");
+            LogEvent.logDebug(this.getClass().getName(), "handleOrderRequest",
+                    "TaskWorker:missing patient dob: " + referringOrderNumber + orderType);
+            insertNewOrder(referringOrderNumber, message, patient, ExternalOrderStatus.NonConforming);
+            return TaskResult.MESSAGE_ERROR;
         }
 
         return TaskResult.OK;
@@ -167,6 +174,7 @@ public class TaskWorker {
         eOrder.setStatusId(getStatusService().getStatusID(eoStatus));
         eOrder.setOrderTimestamp(DateUtil.getNowAsTimestamp());
         eOrder.setSysUserId(persister.getServiceUserId());
+        eOrder.setType(ElectronicOrderType.FHIR);
 
         persister.persist(patient, eOrder);
     }

@@ -12,6 +12,7 @@ import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.StatusService.OrderStatus;
+import org.openelisglobal.dataexchange.fhir.exception.FhirLocalPersistingException;
 import org.openelisglobal.note.service.NoteService;
 import org.openelisglobal.referral.fhir.service.FhirReferralService;
 import org.openelisglobal.referral.fhir.service.TestNotFullyConfiguredException;
@@ -98,9 +99,15 @@ public class ReferralSetServiceImpl implements ReferralSetService {
 
         for (ReferralSet referralSet : referralSetList) {
             if (referralSet.getReferral().isCanceled()) {
-                fhirReferralService.cancelReferralToOrganization(referralSet.getReferral().getOrganization().getId(),
-                        referralSet.getReferral().getAnalysis().getSampleItem().getSample().getId(),
-                        Arrays.asList(referralSet.getReferral().getAnalysis().getId()));
+//                try {
+//                    fhirReferralService.cancelReferralToOrganization(
+//                            referralSet.getReferral().getOrganization().getId(),
+//                            referralSet.getReferral().getAnalysis().getSampleItem().getSample().getId(),
+//                            Arrays.asList(referralSet.getReferral().getAnalysis().getId()));
+//                } catch (FhirLocalPersistingException e) {
+//                    // TODO don't catch since this is a considerable error in OE world going ahead?
+//                    LogEvent.logError(e);
+//                }
             } else {
                 try {
                 fhirReferralService.referAnalysisesToOrganization(referralSet.getReferral().getOrganization().getId(),
@@ -109,6 +116,9 @@ public class ReferralSetServiceImpl implements ReferralSetService {
                 } catch (TestNotFullyConfiguredException e) {
                     LogEvent.logError(this.getClass().getName(), "updateRefreralSets",
                             "unable to automatically refer a test that does not have a loinc code set");
+                } catch (FhirLocalPersistingException e) {
+                    LogEvent.logError(this.getClass().getName(), "updateRefreralSets",
+                            "had a problem saving the referral locally in fhir");
                 }
             }
         }

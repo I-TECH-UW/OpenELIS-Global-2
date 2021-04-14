@@ -297,7 +297,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
     public String getNextAccessionNumber() {
         String accessionNumber = null;
         String lastAccessionNumber = null;
-        
+
         // get the current year
         Calendar cal = Calendar.getInstance();
         int currentYear = cal.get(Calendar.YEAR);
@@ -794,5 +794,19 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
         }
 
         return null;
+    }
+
+    @Override
+    public List<Sample> getAllMissingFhirUuid() {
+        String sql = "from Sample s where s.fhirUuid is NULL";
+        try {
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            List<Sample> sampleList = query.list();
+
+            return sampleList;
+        } catch (HibernateException e) {
+            handleException(e, "getSamplesBySampleItem");
+        }
+        return new ArrayList<>();
     }
 }

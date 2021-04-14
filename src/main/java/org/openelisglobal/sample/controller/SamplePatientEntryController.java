@@ -17,6 +17,8 @@ import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.validator.BaseErrors;
+import org.openelisglobal.dataexchange.fhir.exception.FhirPersistanceException;
+import org.openelisglobal.dataexchange.fhir.exception.FhirTransformationException;
 import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
 import org.openelisglobal.patient.action.IPatientUpdate;
 import org.openelisglobal.patient.action.IPatientUpdate.PatientUpdateStatus;
@@ -62,6 +64,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
             "patientProperties.currentDate",
             "patientProperties.patientLastUpdated", "patientProperties.personLastUpdated",
             "patientProperties.patientUpdateStatus", "patientProperties.patientPK", "patientProperties.guid",
+            "patientProperties.fhirUuid",
             "patientProperties.STnumber", "patientProperties.subjectNumber", "patientProperties.nationalId",
             "patientProperties.lastName", "patientProperties.firstName", "patientProperties.aka",
             "patientProperties.mothersName", "patientProperties.mothersInitial", "patientProperties.streetAddress",
@@ -216,7 +219,13 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 
         try {
             samplePatientService.persistData(updateData, patientUpdate, patientInfo, form, request);
-//            String fhir_json = fhirTransformService.CreateFhirFromOESample(updateData, patientUpdate, patientInfo, form, request);
+            try {
+                fhirTransformService.transformPersistOrderEntryFhirObjects(updateData, patientInfo);
+            } catch (FhirTransformationException | FhirPersistanceException e) {
+                LogEvent.logError(e);
+            }
+            // String fhir_json = fhirTransformService.CreateFhirFromOESample(updateData,
+            // patientUpdate, patientInfo, form, request);
         } catch (LIMSRuntimeException e) {
             // ActionError error;
             if (e.getException() instanceof StaleObjectStateException) {

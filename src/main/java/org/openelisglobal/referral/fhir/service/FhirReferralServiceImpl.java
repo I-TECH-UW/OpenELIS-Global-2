@@ -1,40 +1,56 @@
 package org.openelisglobal.referral.fhir.service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Bundle.BundleEntryComponent;
 import org.hl7.fhir.r4.model.CodeableConcept;
 import org.hl7.fhir.r4.model.Coding;
-import org.hl7.fhir.r4.model.Identifier;
+import org.hl7.fhir.r4.model.Observation;
 import org.hl7.fhir.r4.model.Organization;
 import org.hl7.fhir.r4.model.Patient;
+import org.hl7.fhir.r4.model.Quantity;
+import org.hl7.fhir.r4.model.Reference;
 import org.hl7.fhir.r4.model.Resource;
-import org.hl7.fhir.r4.model.ResourceType;
 import org.hl7.fhir.r4.model.ServiceRequest;
+import org.hl7.fhir.r4.model.StringType;
 import org.hl7.fhir.r4.model.Task;
 import org.hl7.fhir.r4.model.Task.TaskStatus;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.dataexchange.fhir.FhirConfig;
-import org.openelisglobal.dataexchange.fhir.FhirUtil;
+import org.openelisglobal.dataexchange.fhir.exception.FhirLocalPersistingException;
+import org.openelisglobal.dataexchange.fhir.exception.FhirPersistanceException;
+import org.openelisglobal.dataexchange.fhir.exception.FhirTransformationException;
+import org.openelisglobal.dataexchange.fhir.service.FhirApiWorkFlowServiceImpl.ReferralResultsImportObjects;
 import org.openelisglobal.dataexchange.fhir.service.FhirPersistanceService;
 import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
+import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.organization.service.OrganizationService;
+import org.openelisglobal.result.action.util.ResultSet;
+import org.openelisglobal.result.action.util.ResultsUpdateDataSet;
+import org.openelisglobal.result.service.LogbookResultsPersistService;
+import org.openelisglobal.result.service.ResultService;
+import org.openelisglobal.result.valueholder.Result;
 import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.valueholder.Sample;
+import org.openelisglobal.samplehuman.service.SampleHumanService;
+import org.openelisglobal.testresult.service.TestResultService;
+import org.openelisglobal.testresult.valueholder.TestResult;
+import org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import ca.uhn.fhir.context.FhirContext;
-import ca.uhn.fhir.rest.client.api.IGenericClient;
 
 @Service
 public class FhirReferralServiceImpl implements FhirReferralService {
@@ -44,94 +60,55 @@ public class FhirReferralServiceImpl implements FhirReferralService {
     @Autowired
     private SampleService sampleService;
     @Autowired
+    private SampleHumanService sampleHumanService;
+    @Autowired
     private AnalysisService analysisService;
     @Autowired
     private FhirTransformService fhirTransformService;
     @Autowired
     private FhirPersistanceService fhirPersistanceService;
     @Autowired
-    private FhirContext fhirContext;
+    private ResultService resultService;
+    @Autowired
+    private LogbookResultsPersistService logbookPersistService;
+    @Autowired
+    private DictionaryService dictionaryService;
+    @Autowired
+    private TestResultService testResultService;
     @Autowired
     private FhirConfig fhirConfig;
-    @Autowired
-    private FhirUtil fhirUtil;
+    @Value("${org.openelisglobal.remote.source.identifier:}#{T(java.util.Collections).emptyList()}")
+    private List<String> remoteStoreIdentifier;
 
-    @Override
-    @Transactional
-    public Bundle cancelReferralToOrganization(String referralOrganizationId, String sampleId,
-            List<String> analysisIds) {
-        IGenericClient localClient = fhirUtil.getFhirClient(fhirConfig.getLocalFhirStorePath());
-        org.openelisglobal.organization.valueholder.Organization referralOrganization = organizationService
-                .get(referralOrganizationId);
-        Organization fhirOrg = getFhirOrganization(referralOrganization);
-        if (fhirOrg == null) {
-            // organization doesn't exist as fhir organization, cannot cancel automatically
-            return new Bundle();
-        }
-        Sample sample = sampleService.get(sampleId);
-        List<Analysis> analysises = analysisService.get(analysisIds);
-        Bundle serviceRequestBundle = localClient.search().forResource(ServiceRequest.class).returnBundle(Bundle.class)
-                .where(ServiceRequest.CODE.exactly().code(sample.getAccessionNumber())).execute();
-
-        List<ServiceRequest> serviceRequests = getServiceRequestsBasedOnOriginalsForReferredTest(analysises, sample,
-                serviceRequestBundle);
-
-        Bundle cancelTaskBundle = localClient.search().forResource(Task.class).returnBundle(Bundle.class)
-                .where(Task.BASED_ON
-                        .hasAnyOfIds(serviceRequests.stream().map(e -> e.getId()).collect(Collectors.toList())))
-                .execute();
-        List<Resource> cancelTasks = new ArrayList<>();
-        for (BundleEntryComponent entry : cancelTaskBundle.getEntry()) {
-            if (entry.hasResource() && ResourceType.Task.equals(entry.getResource().getResourceType())) {
-                Task cancelTask = ((Task) entry.getResource());
-                cancelTask.setStatus(TaskStatus.CANCELLED);
-                cancelTasks.add(cancelTask);
-            }
-        }
-        return fhirPersistanceService.updateFhirResourcesInFhirStore(cancelTasks);
-    }
-
-    private List<ServiceRequest> getServiceRequestsBasedOnOriginalsForReferredTest(List<Analysis> analysises,
-            Sample sample, Bundle serviceRequesttBundle) {
-        List<ServiceRequest> serviceRequests = new ArrayList<>();
-        for (Analysis analysis : analysises) {
-            for (BundleEntryComponent entry : serviceRequesttBundle.getEntry()) {
-                if (entry.hasResource() && ResourceType.ServiceRequest.equals(entry.getResource().getResourceType())) {
-                    ServiceRequest originalServiceRequest = (ServiceRequest) entry.getResource();
-                    if (entryIsForAnalysis(originalServiceRequest, analysis)) {
-                        ServiceRequest createdServiceRequest = getServiceRequestBasedOnOriginal(originalServiceRequest,
-                                analysis);
-                        if (createdServiceRequest != null) {
-                            serviceRequests.add(getServiceRequestBasedOnOriginal(originalServiceRequest, analysis));
-                        }
-                        break;
-                    }
-                }
-            }
-        }
-
-        return serviceRequests;
-    }
-
-    private ServiceRequest getServiceRequestBasedOnOriginal(ServiceRequest originalServiceRequest, Analysis analysis) {
-        IGenericClient localClient = fhirUtil.getFhirClient(fhirConfig.getLocalFhirStorePath());
-        Bundle createdServiceRequestBundle = localClient.search().forResource(ServiceRequest.class)
-                .returnBundle(Bundle.class).where(ServiceRequest.BASED_ON.hasAnyOfIds(originalServiceRequest.getId()))
-                .execute();
-
-        for (BundleEntryComponent entry : createdServiceRequestBundle.getEntry()) {
-            if (entry.hasResource() && ResourceType.ServiceRequest.equals(entry.getResource().getResourceType())) {
-                return (ServiceRequest) entry.getResource();
-            }
-        }
-        return null;
-    }
+//    @Override
+//    @Transactional
+//    public Bundle cancelReferralToOrganization(String referralOrganizationId, String sampleId,
+//            List<String> analysisIds) throws FhirLocalPersistingException {
+//        org.openelisglobal.organization.valueholder.Organization referralOrganization = organizationService
+//                .get(referralOrganizationId);
+//        Organization fhirOrg = getFhirOrganization(referralOrganization);
+//        if (fhirOrg == null) {
+//            // organization doesn't exist as fhir organization, cannot cancel automatically
+//            return new Bundle();
+//        }
+//        Sample sample = sampleService.get(sampleId);
+//        List<Analysis> analysises = analysisService.get(analysisIds);
+//
+//        List<ServiceRequest> serviceRequests = new ArrayList<>();
+//        for (Analysis analysis : analysises) {
+//            serviceRequests.add(fhirPersistanceService.getServiceRequestByAnalysisUuid(analysis.getFhirUuidAsString())
+//                    .orElseThrow());
+//        }
+//
+//        Task task = this.fhirPersistanceService.getTaskBasedOnServiceRequests(serviceRequests).orElseThrow();
+//        task.setStatus(TaskStatus.CANCELLED);
+//        return fhirPersistanceService.updateFhirResourceInFhirStore(task);
+//    }
 
     @Override
     @Transactional
     public Bundle referAnalysisesToOrganization(String referralOrganizationId, String sampleId,
-            List<String> analysisIds) {
-        IGenericClient localClient = fhirUtil.getFhirClient(fhirConfig.getLocalFhirStorePath());
+            List<String> analysisIds) throws FhirLocalPersistingException {
         org.openelisglobal.organization.valueholder.Organization referralOrganization = organizationService
                 .get(referralOrganizationId);
         Organization fhirOrg = getFhirOrganization(referralOrganization);
@@ -141,83 +118,38 @@ public class FhirReferralServiceImpl implements FhirReferralService {
         }
         List<Resource> newResources = new ArrayList<>();
         Sample sample = sampleService.get(sampleId);
-        List<Analysis> analysises = analysisService.get(analysisIds);
-        Bundle serviceRequestAndPatientBundle = localClient.search().forResource(ServiceRequest.class)
-                .returnBundle(Bundle.class).where(ServiceRequest.CODE.exactly().code(sample.getAccessionNumber()))
-                .include(ServiceRequest.INCLUDE_SUBJECT).execute();
 
-        List<ServiceRequest> serviceRequests = createServiceRequestsForReferredTest(analysises, sample,
-                serviceRequestAndPatientBundle);
-        Task task = createReferralTask(fhirOrg,
-                getFhirPatient(serviceRequestAndPatientBundle), serviceRequests, sample.getAccessionNumber());
+        List<Analysis> analysises = analysisService.get(analysisIds);
+        List<ServiceRequest> serviceRequests = new ArrayList<>();
+        for (Analysis analysis : analysises) {
+            serviceRequests.add(fhirPersistanceService.getServiceRequestByAnalysisUuid(analysis.getFhirUuidAsString())
+                    .orElseThrow());
+        }
+        Task task = createReferralTask(fhirOrg, fhirPersistanceService
+                .getPatientByUuid(sampleHumanService.getPatientForSample(sample).getFhirUuidAsString()).orElseThrow(),
+                serviceRequests);
 
         newResources.add(task);
-        newResources.addAll(serviceRequests);
         return fhirPersistanceService.createFhirResourcesInFhirStore(newResources);
     }
 
     private Organization getFhirOrganization(org.openelisglobal.organization.valueholder.Organization organization) {
-        return fhirTransformService.getFhirOrganization(organization);
-    }
-
-    private Patient getFhirPatient(Bundle serviceRequestAndPatientBundle) {
-        for (BundleEntryComponent entry : serviceRequestAndPatientBundle.getEntry()) {
-            if (entry.hasResource() && ResourceType.Patient.equals(entry.getResource().getResourceType())) {
-                return (Patient) entry.getResource();
-            }
-        }
-        return null;
-    }
-
-    private List<ServiceRequest> createServiceRequestsForReferredTest(List<Analysis> analysises, Sample sample,
-            Bundle serviceRequestAndPatientBundle) {
-        List<ServiceRequest> serviceRequests = new ArrayList<>();
-        for (Analysis analysis : analysises) {
-            for (BundleEntryComponent entry : serviceRequestAndPatientBundle.getEntry()) {
-                if (entry.hasResource() && ResourceType.ServiceRequest.equals(entry.getResource().getResourceType())) {
-                    ServiceRequest basedOnServiceRequest = (ServiceRequest) entry.getResource();
-                    if (entryIsForAnalysis(basedOnServiceRequest, analysis)) {
-                        serviceRequests.add(createServiceRequestBasedOnOriginal(basedOnServiceRequest, analysis));
-                        break;
-                    }
-                }
-            }
-        }
-
-        return serviceRequests;
-    }
-
-    private boolean entryIsForAnalysis(ServiceRequest basedOnServiceRequest, Analysis analysis) {
-        if (GenericValidator.isBlankOrNull(analysis.getTest().getLoinc())) {
-            throw new TestNotFullyConfiguredException();
-        }
-        return basedOnServiceRequest.getCode().hasCoding("http://loinc.org", analysis.getTest().getLoinc());
-    }
-
-    private ServiceRequest createServiceRequestBasedOnOriginal(ServiceRequest originalServiceRequest,
-            Analysis analysis) {
-        ServiceRequest serviceRequest = new ServiceRequest();
-        // a temp id is used to preserve the connection between objects in the bundle.
-        // the id will be overwritten when the object is saved
-        String tempId = UUID.randomUUID().toString();
-        serviceRequest.setId(tempId);
-        serviceRequest.setSubject(originalServiceRequest.getSubject());
-        serviceRequest.addBasedOn(fhirTransformService.createReferenceFor(originalServiceRequest));
-        serviceRequest.setCode(new CodeableConcept()
-                .addCoding(new Coding().setCode(analysis.getTest().getLoinc()).setSystem("http://loinc.org")));
-        return serviceRequest;
+        return fhirPersistanceService.getFhirOrganizationByName(organization.getOrganizationName()).orElseThrow();
     }
 
     public Task createReferralTask(Organization referralOrganization, Patient patient,
-            List<ServiceRequest> serviceRequests, String labNumber) {
+            List<ServiceRequest> serviceRequests) {
         Bundle bundle = new Bundle();
         Task task = new Task();
-        task.setGroupIdentifier(
-                new Identifier().setValue(labNumber).setSystem(fhirConfig.getOeFhirSystem() + "/samp_labNumber"));
+//        task.setGroupIdentifier(
+//                new Identifier().setValue(labNumber).setSystem(fhirConfig.getOeFhirSystem() + "/samp_labNumber"));
         // TODO put the referral reason into the code
         task.setReasonCode(new CodeableConcept()
                 .addCoding(new Coding().setSystem(fhirConfig.getOeFhirSystem() + "/refer_reason")));
         task.setOwner(fhirTransformService.createReferenceFor(referralOrganization));
+        if (!remoteStoreIdentifier.isEmpty()) {
+            task.setRequester(new Reference(remoteStoreIdentifier.get(0)));
+        }
         task.setStatus(TaskStatus.REQUESTED);
         task.setFor(fhirTransformService.createReferenceFor(patient));
         task.setBasedOn(serviceRequests.stream().map(e -> fhirTransformService.createReferenceFor(e))
@@ -228,25 +160,79 @@ public class FhirReferralServiceImpl implements FhirReferralService {
     }
 
     @Override
-    public Bundle referAnalysisesToOrganization(String referralOrganizationId, String analysisId) {
-        IGenericClient localClient = fhirUtil.getFhirClient(fhirConfig.getLocalFhirStorePath());
-        org.openelisglobal.organization.valueholder.Organization referralOrganization = organizationService
-                .get(referralOrganizationId);
-        List<Resource> newResources = new ArrayList<>();
-        Analysis analysis = analysisService.get(analysisId);
-        Sample sample = sampleService.getSampleByAccessionNumber(analysisService.getOrderAccessionNumber(analysis));
-        Bundle serviceRequestAndPatientBundle = localClient.search().forResource(Patient.class)
-                .returnBundle(Bundle.class).where(ServiceRequest.CODE.exactly().code(sample.getAccessionNumber()))
-                .include(ServiceRequest.INCLUDE_SUBJECT).execute();
+    @Transactional
+    public void setReferralResult(ReferralResultsImportObjects resultsImport) {
+        Analysis analysis = analysisService
+                .getMatch("fhirUuid",
+                        UUID.fromString(
+                                resultsImport.originalReferralObjects.serviceRequest.getIdElement().getIdPart()))
+                .orElseThrow();
+        List<Result> currentResults = resultService.getResultsByAnalysis(analysis);
 
-        List<ServiceRequest> serviceRequests = createServiceRequestsForReferredTest(Arrays.asList(analysis), sample,
-                serviceRequestAndPatientBundle);
-        Task task = createReferralTask(getFhirOrganization(referralOrganization),
-                getFhirPatient(serviceRequestAndPatientBundle), serviceRequests, sample.getAccessionNumber());
+        ResultsUpdateDataSet resultsUpdateDataSet = new ResultsUpdateDataSet("1");
+        List<Analysis> modifiedAnalysis = resultsUpdateDataSet.getModifiedAnalysis();
 
-        newResources.add(task);
-        newResources.addAll(serviceRequests);
-        return fhirPersistanceService.createFhirResourcesInFhirStore(newResources);
+        modifiedAnalysis.add(analysis);
+        analysis.setEnteredDate(DateUtil.getNowAsTimestamp());
+        analysis.setSysUserId("1");
+        for (Observation observation : resultsImport.observations) {
+            Result result = new Result();
+            if (currentResults.size() == 1 && resultsImport.observations.size() == 1) {
+                result = currentResults.get(0);
+            } else {
+                result = new Result();
+                TestResult testResult = result.getTestResult();
+                String testResultType = testResult.getTestResultType();
+                result.setResultType(testResultType);
+                result.setAnalysis(analysis);
+                currentResults.stream().forEach(e -> {
+                    resultService.delete(e);
+                });
+            }
+
+            Sample sample = analysis.getSampleItem().getSample();
+            if (TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(result.getResultType())
+                    || TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(result.getResultType())) {
+                String inferredValue = ((StringType) observation.getValue()).getValueAsString();
+                List<TestResult> testResults = testResultService
+                        .getAllActiveTestResultsPerTest(analysisService.getTest(analysis));
+                dictionaryService.getMatch("dictEntry", inferredValue).orElseThrow();
+                for (TestResult testResult : testResults) {
+                    if (StringUtils.equals(inferredValue,
+                            dictionaryService.get(testResult.getValue()).getDictEntry())) {
+                        result.setValue(dictionaryService.get(testResult.getValue()).getId());
+                    }
+                }
+            } else if (TypeOfTestResultServiceImpl.ResultType.isNumeric(result.getResultType())) {
+                result.setValue(((Quantity) observation.getValue()).getValue().toPlainString());
+            } else if (TypeOfTestResultServiceImpl.ResultType.isTextOnlyVariant(result.getResultType())) {
+                result.setValue(((StringType) observation.getValue()).getValueAsString());
+            }
+
+            result.setSysUserId("1");
+
+            if (GenericValidator.isBlankOrNull(result.getId())) {
+                resultsUpdateDataSet.getNewResults()
+                        .add(new ResultSet(result, null, null, sampleService.getPatient(sample),
+                                analysis.getSampleItem().getSample(), new HashMap<>(),
+                                resultsImport.observations.size() > 1));
+            } else {
+                resultsUpdateDataSet.getModifiedResults()
+                        .add(new ResultSet(result, null, null, sampleService.getPatient(sample),
+                                analysis.getSampleItem().getSample(), new HashMap<>(),
+                                resultsImport.observations.size() > 1));
+            }
+        }
+        resultsUpdateDataSet.setPreviousAnalysis(analysis);
+
+        logbookPersistService.persistDataSet(resultsUpdateDataSet, new ArrayList<>(), "1");
+        try {
+            fhirTransformService.transformPersistResultsEntryFhirObjects(resultsUpdateDataSet);
+            resultsImport.originalReferralObjects.task.setStatus(TaskStatus.COMPLETED);
+            fhirPersistanceService.updateFhirResourceInFhirStore(resultsImport.originalReferralObjects.task);
+        } catch (FhirTransformationException | FhirPersistanceException e) {
+            LogEvent.logError(e);
+        }
     }
 
 }
