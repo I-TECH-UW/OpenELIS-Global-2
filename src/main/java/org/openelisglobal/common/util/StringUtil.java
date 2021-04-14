@@ -47,6 +47,7 @@ public class StringUtil {
     private static final Character CHAR_QUOTE = '"';
 //    private static String STRING_KEY_SUFFIX = null;
     private static Pattern INTEGER_REG_EX = Pattern.compile("^-?\\d+$");
+    private static Pattern ALL_NUMERIC_REG_EX = Pattern.compile("^\\d+$");
 
     public enum EncodeContext {
         JAVASCRIPT, HTML
@@ -322,6 +323,10 @@ public class StringUtil {
      */
     public static boolean isInteger(String result) {
         return INTEGER_REG_EX.matcher(result).matches();
+    }
+
+    public static boolean isAllNumeric(String result) {
+        return ALL_NUMERIC_REG_EX.matcher(result).matches();
     }
 
     public static boolean textInCommaSeperatedValues(String target, String csv) {
