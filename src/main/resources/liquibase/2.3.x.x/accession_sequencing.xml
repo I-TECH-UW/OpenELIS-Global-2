@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+	xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+	  http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+	<changeSet author="csteele" id="3">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="alt_accession_number_generator"
+					schemaName="clinlims" />
+			</not>
+		</preConditions>
+		<comment>alt prefix year num table for accession generation</comment>
+		<createTable schemaName="clinlims"
+			tableName="alt_accession_number_generator">
+			<column name="id" type="bigint" defaultValueNumeric="1" />
+		</createTable>
+	</changeSet>
+
+	<changeSet author="csteele" id="4">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists
+					tableName="site_year_accession_number_generator"
+					schemaName="clinlims" />
+			</not>
+		</preConditions>
+		<comment>site year num table for accession generation</comment>
+		<createTable schemaName="clinlims"
+			tableName="site_year_accession_number_generator">
+			<column name="id" type="bigint" defaultValueNumeric="1" />
+		</createTable>
+	</changeSet>
+	<changeSet author="csteele" id="5">
+		<preConditions onFail="MARK_RAN">
+			<sqlCheck expectedResult="0">
+				select count(*) from clinlims.site_year_accession_number_generator;
+			</sqlCheck>
+		</preConditions>
+		<comment> accession generation</comment>
+		<insert schemaName="clinlims"
+			tableName="site_year_accession_number_generator">
+			<column name="id" value="1"/>
+		</insert>
+		<insert schemaName="clinlims"
+			tableName="alt_accession_number_generator">
+			<column name="id" value="1"/>
+		</insert>
+	</changeSet>
+</databaseChangeLog>

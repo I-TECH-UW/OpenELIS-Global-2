@@ -60,12 +60,10 @@ public class YearNumAccessionValidator implements IAccessionNumberGenerator {
         return NEED_PROGRAM_CODE;
     }
 
-    @Override
     public String createFirstAccessionNumber(String programCode) {
         return DateUtil.getTwoDigitYear() + separator + incrementStartingValue;
     }
 
-    @Override
     public String incrementAccessionNumber(String currentHighAccessionNumber) {
 
         int increment = Integer.parseInt(currentHighAccessionNumber.substring(INCREMENT_START + separatorLength));
@@ -227,6 +225,11 @@ public class YearNumAccessionValidator implements IAccessionNumberGenerator {
     @Override
     public String getPrefix() {
         return null; // no single prefix
+    }
+
+    @Override
+    public String getNextAccessionNumber(String programCode, boolean reserve) {
+        return this.getNextAvailableAccessionNumber(programCode, reserve);
     }
 
 }

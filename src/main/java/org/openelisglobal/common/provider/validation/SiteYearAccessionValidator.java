@@ -16,14 +16,10 @@
  */
 package org.openelisglobal.common.provider.validation;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.common.util.DateUtil;
 
 public class SiteYearAccessionValidator extends BaseSiteYearAccessionValidator implements IAccessionNumberGenerator {
-
-    private static Set<String> REQUESTED_NUMBERS = new HashSet<>();
 
     @Override
     public int getMaxAccessionLength() {
@@ -73,13 +69,20 @@ public class SiteYearAccessionValidator extends BaseSiteYearAccessionValidator i
     }
 
     @Override
-    protected Set<String> getReservedNumbers() {
-        return REQUESTED_NUMBERS;
-    }
-
-    @Override
     protected String getOverrideStartingAt() {
         return null;
     }
+
+    @Override
+    public String incrementAccessionNumber() throws IllegalArgumentException {
+        long nextNum = accessionDAO.getNextNumberForSiteYearFormatIncrement();
+        String year = DateUtil.getTwoDigitYear();
+        String incrementAsString;
+
+        incrementAsString = String.format("%013d", nextNum);
+
+        return getPrefix() + year + incrementAsString;
+    }
+
 
 }
