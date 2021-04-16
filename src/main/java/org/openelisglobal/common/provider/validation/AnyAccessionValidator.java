@@ -27,18 +27,6 @@ public class AnyAccessionValidator implements IAccessionNumberGenerator {
     }
 
     @Override
-    public String createFirstAccessionNumber(String programCode) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public String incrementAccessionNumber(String currentHighAccessionNumber) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
     public String getNextAvailableAccessionNumber(String programCode, boolean reserve) {
         // TODO Auto-generated method stub
         return null;
@@ -83,6 +71,12 @@ public class AnyAccessionValidator implements IAccessionNumberGenerator {
 
     @Override
     public String getPrefix() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public String getNextAccessionNumber(String programCode, boolean reserve) {
         // TODO Auto-generated method stub
         return null;
     }
