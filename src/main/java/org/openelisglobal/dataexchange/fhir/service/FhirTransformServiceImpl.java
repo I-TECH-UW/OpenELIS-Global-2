@@ -432,10 +432,14 @@ public class FhirTransformServiceImpl implements FhirTransformService {
             serviceRequest.setIntent(ServiceRequestIntent.ORDER);
         }
 
-        if (analysis.getStatusId().equals(statusService.getStatusID(AnalysisStatus.Finalized))) {
-            serviceRequest.setStatus(ServiceRequestStatus.COMPLETED);
-        } else if (analysis.getStatusId().equals(statusService.getStatusID(AnalysisStatus.NotStarted))) {
+        if (analysis.getStatusId().equals(statusService.getStatusID(AnalysisStatus.NotStarted))) {
             serviceRequest.setStatus(ServiceRequestStatus.ACTIVE);
+        } else if (analysis.getStatusId().equals(statusService.getStatusID(AnalysisStatus.TechnicalAcceptance))) {
+            serviceRequest.setStatus(ServiceRequestStatus.ACTIVE);
+        } else if (analysis.getStatusId().equals(statusService.getStatusID(AnalysisStatus.TechnicalRejected))) {
+            serviceRequest.setStatus(ServiceRequestStatus.ACTIVE);
+        } else if (analysis.getStatusId().equals(statusService.getStatusID(AnalysisStatus.Finalized))) {
+            serviceRequest.setStatus(ServiceRequestStatus.COMPLETED);
         } else if (analysis.getStatusId().equals(statusService.getStatusID(AnalysisStatus.Canceled))) {
             serviceRequest.setStatus(ServiceRequestStatus.REVOKED);
         } else {
