@@ -1,22 +1,19 @@
 package org.openelisglobal.common.dao;
 
-import org.openelisglobal.common.exception.LIMSInvalidConfigurationException;
 import org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory.AccessionFormat;
+import org.openelisglobal.common.valueholder.AccessionNumberInfo;
+import org.openelisglobal.common.valueholder.AccessionNumberInfo.AccessionIdentity;
 
 public interface AccessionDAO {
 
-    long getNextNumberForAccessionFormat(AccessionFormat accessionFormat) throws LIMSInvalidConfigurationException;
+    long getNextNumberNoIncrement(String prefix, AccessionFormat accessionFormat);
 
-    long getNextNumberForSiteYearFormatIncrement();
+    long getNextNumberIncrement(String prefix, AccessionFormat accessionFormat);
 
-    long getNextNumberForAltYearFormatIncrement();
+    AccessionNumberInfo save(AccessionNumberInfo info);
 
-    long setNextValNumberForSiteYearFormat(long value);
+    AccessionNumberInfo get(AccessionIdentity accessionIdentity);
 
-    long setNextValNumberForAltYearFormat(long value);
-
-    long getNextNumberForAltYearFormatNoIncrement();
-
-    long getNextNumberForSiteYearFormatNoIncrement();
+    boolean exists(AccessionIdentity accessionIdentity);
 
 }

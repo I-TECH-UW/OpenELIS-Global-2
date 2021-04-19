@@ -16,6 +16,7 @@
  */
 package org.openelisglobal.common.provider.validation;
 
+import org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory.AccessionFormat;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.DateUtil;
 
@@ -69,20 +70,20 @@ public class SiteYearAccessionValidator extends BaseSiteYearAccessionValidator i
     }
 
     @Override
-    protected String getOverrideStartingAt() {
-        return null;
-    }
-
-    @Override
     public String incrementAccessionNumber() throws IllegalArgumentException {
-        long nextNum = accessionDAO.getNextNumberForSiteYearFormatIncrement();
         String year = DateUtil.getTwoDigitYear();
+        long nextNum = accessionService.getNextNumberIncrement(this.getPrefix() + year, AccessionFormat.SITE_YEAR);
         String incrementAsString;
-
         incrementAsString = String.format("%013d", nextNum);
-
         return getPrefix() + year + incrementAsString;
     }
 
-
+    @Override
+    public String incrementAccessionNumberNoReserve() throws IllegalArgumentException {
+        String year = DateUtil.getTwoDigitYear();
+        long nextNum = accessionService.getNextNumberNoIncrement(this.getPrefix() + year, AccessionFormat.ALT_YEAR);
+        String incrementAsString;
+        incrementAsString = String.format("%013d", nextNum);
+        return getPrefix() + year + incrementAsString;
+    }
 }

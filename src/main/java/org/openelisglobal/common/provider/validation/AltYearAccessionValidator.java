@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.commons.validator.GenericValidator;
+import org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory.AccessionFormat;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.DateUtil;
@@ -68,7 +69,6 @@ public class AltYearAccessionValidator extends BaseSiteYearAccessionValidator im
         return getMaxAccessionLength() - getInvarientLength();
     }
 
-    @Override
     public String getOverrideStartingAt() {
         return startingAt;
     }
@@ -80,21 +80,28 @@ public class AltYearAccessionValidator extends BaseSiteYearAccessionValidator im
     @Override
     public String incrementAccessionNumber() throws IllegalArgumentException {
         if (GenericValidator.isBlankOrNull(startingAt)) {
-
-            long nextNum = accessionDAO.getNextNumberForAltYearFormatIncrement();
             String year = DateUtil.getTwoDigitYear();
+            long nextNum = accessionService.getNextNumberIncrement(this.getPrefix() + year, AccessionFormat.ALT_YEAR);
             String incrementAsString;
-
             incrementAsString = String.format("%013d", nextNum);
-
             return getPrefix() + year + incrementAsString;
         } else {
             String nextAccessionNumber = startingAt;
             while (localReservedNumbers.contains(nextAccessionNumber)) {
-                nextAccessionNumber = incrementAccessionNumber(startingAt);
+                nextAccessionNumber = incrementAccessionNumber(nextAccessionNumber);
             }
+            localReservedNumbers.add(nextAccessionNumber);
             return nextAccessionNumber;
         }
+    }
+
+    @Override
+    public String incrementAccessionNumberNoReserve() throws IllegalArgumentException {
+        String year = DateUtil.getTwoDigitYear();
+        long nextNum = accessionService.getNextNumberNoIncrement(this.getPrefix() + year, AccessionFormat.ALT_YEAR);
+        String incrementAsString;
+        incrementAsString = String.format("%013d", nextNum);
+        return getPrefix() + year + incrementAsString;
     }
 
     public String incrementAccessionNumber(String currentHighAccessionNumber) throws IllegalArgumentException {

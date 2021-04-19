@@ -19,9 +19,9 @@ package org.openelisglobal.common.provider.validation;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-import org.openelisglobal.common.dao.AccessionDAO;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.provider.validation.IAccessionNumberValidator.ValidationResults;
+import org.openelisglobal.common.service.AccessionService;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.DateUtil;
@@ -32,7 +32,7 @@ import org.openelisglobal.spring.util.SpringContext;
 public abstract class BaseSiteYearAccessionValidator {
 
     protected SampleService sampleService = SpringContext.getBean(SampleService.class);
-    protected AccessionDAO accessionDAO = SpringContext.getBean(AccessionDAO.class);
+    protected AccessionService accessionService = SpringContext.getBean(AccessionService.class);
 
     protected static final long UPPER_INC_RANGE = 9999999999999L;
     protected static final int SITE_START = 0;
@@ -59,12 +59,13 @@ public abstract class BaseSiteYearAccessionValidator {
 
     // input parameter is not used in this case
     public String getNextAvailableAccessionNumber(String nullPrefix, boolean reserve) {
-        if (!reserve) {
-            LogEvent.logWarn(BaseSiteYearAccessionValidator.class.getName(), "getNextAvailableAccessionNumber", "this generator always reserves");
-        }
         String nextAccessionNumber;
         do {
-            nextAccessionNumber = incrementAccessionNumber();
+            if (reserve) {
+                nextAccessionNumber = incrementAccessionNumber();
+            } else {
+                nextAccessionNumber = incrementAccessionNumberNoReserve();
+            }
         } while (accessionNumberIsUsed(nextAccessionNumber, null));
         return nextAccessionNumber;
     }
@@ -79,6 +80,8 @@ public abstract class BaseSiteYearAccessionValidator {
     }
 
     public abstract String incrementAccessionNumber() throws IllegalArgumentException;
+
+    public abstract String incrementAccessionNumberNoReserve() throws IllegalArgumentException;
 
     // recordType parameter is not used in this case
     public boolean accessionNumberIsUsed(String accessionNumber, String recordType) {
@@ -188,5 +191,4 @@ public abstract class BaseSiteYearAccessionValidator {
 
     protected abstract int getChangeableLength();
 
-    protected abstract String getOverrideStartingAt();
 }
