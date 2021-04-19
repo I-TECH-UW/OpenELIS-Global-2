@@ -75,7 +75,7 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
     }
 
     private void importFromBundle(IGenericClient client, List<Bundle> responseBundles) throws FhirGeneralException {
-        List<Resource> remoteFhirOrganizations = new ArrayList<>();
+        Map<String, Resource> remoteFhirOrganizations = new HashMap<>();
 
         Map<String, OrganizationObjects> organizationObjectsByOrgUUID = new HashMap<>();
         Map<String, OrganizationType> orgTypesByName = new HashMap<>();
@@ -88,7 +88,7 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
                 if (entry.hasResource() && entry.getResource().getResourceType().equals(ResourceType.Organization)) {
                     org.hl7.fhir.r4.model.Organization fhirOrganization = (org.hl7.fhir.r4.model.Organization) entry
                             .getResource();
-                    remoteFhirOrganizations.add(fhirOrganization);
+                    remoteFhirOrganizations.put(fhirOrganization.getIdElement().getIdPart(), fhirOrganization);
 
                     OrganizationObjects organizationObjects = organizationObjectsByOrgUUID
                             .getOrDefault(fhirOrganization.getIdElement().getIdPart(), new OrganizationObjects());

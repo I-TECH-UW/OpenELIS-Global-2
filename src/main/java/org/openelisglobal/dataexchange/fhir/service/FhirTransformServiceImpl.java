@@ -130,69 +130,108 @@ public class FhirTransformServiceImpl implements FhirTransformService {
     @Autowired
     private IStatusService statusService;
 
-    @Override
     @Transactional
-    public Bundle transformPersistObjectsUnderSample(String sampleId) throws FhirLocalPersistingException {
+    @Override
+    public Bundle transformPersistObjectsUnderSamples(List<String> sampleIds) throws FhirLocalPersistingException {
         FhirOperations fhirOperations = new FhirOperations();
-        Sample sample = sampleService.get(sampleId);
-        Patient patient = sampleHumanService.getPatientForSample(sample);
-        List<SampleItem> sampleItems = sampleItemService.getSampleItemsBySampleId(sampleId);
-        List<Analysis> analysises = analysisService.getAnalysesBySampleId(sampleId);
-        List<Result> results = resultService.getResultsForSample(sample);
+        CountingTempIdGenerator tempIdGenerator = new CountingTempIdGenerator();
 
-        if (sample.getFhirUuid() == null) {
-            sample.setFhirUuid(UUID.randomUUID());
-        }
-        if (patient.getFhirUuid() == null) {
-            patient.setFhirUuid(UUID.randomUUID());
-        }
-        for (SampleItem sampleItem : sampleItems) {
-            if (sampleItem.getFhirUuid() == null) {
-                sampleItem.setFhirUuid(UUID.randomUUID());
+        Map<String, Task> tasks = new HashMap<>();
+        Map<String, org.hl7.fhir.r4.model.Patient> fhirPatients = new HashMap<>();
+        Map<String, Specimen> specimens = new HashMap<>();
+        Map<String, ServiceRequest> serviceRequests = new HashMap<>();
+        Map<String, DiagnosticReport> diagnosticReports = new HashMap<>();
+        Map<String,Observation> observations = new HashMap<>();
+        for (String sampleId : sampleIds) {
+            Sample sample = sampleService.get(sampleId);
+            Patient patient = sampleHumanService.getPatientForSample(sample);
+            List<SampleItem> sampleItems = sampleItemService.getSampleItemsBySampleId(sampleId);
+            List<Analysis> analysises = analysisService.getAnalysesBySampleId(sampleId);
+            List<Result> results = resultService.getResultsForSample(sample);
+
+            if (sample.getFhirUuid() == null) {
+                sample.setFhirUuid(UUID.randomUUID());
+            }
+            if (patient.getFhirUuid() == null) {
+                patient.setFhirUuid(UUID.randomUUID());
+            }
+            sampleItems.stream().forEach((e) -> {
+                if (e.getFhirUuid() == null) {
+                    e.setFhirUuid(UUID.randomUUID());
+                }
+            });
+
+            analysises.stream().forEach((e) -> {
+                if (e.getFhirUuid() == null) {
+                    e.setFhirUuid(UUID.randomUUID());
+                }
+            });
+
+            results.stream().forEach((e) -> {
+                if (e.getFhirUuid() == null) {
+                    e.setFhirUuid(UUID.randomUUID());
+                }
+            });
+            Task task = this.transformToTask(sample);
+            if (tasks.containsKey(task.getIdElement().getIdPart())) {
+                LogEvent.logError("", "", "task collision with id: " + task.getIdElement().getIdPart());
+            }
+            tasks.put(task.getIdElement().getIdPart(), task);
+
+            org.hl7.fhir.r4.model.Patient fhirPatient = this.transformToFhirPatient(patient);
+            if (fhirPatients.containsKey(fhirPatient.getIdElement().getIdPart())) {
+                LogEvent.logError("", "", "patient collision with id: " + fhirPatient.getIdElement().getIdPart());
+            }
+            fhirPatients.put(fhirPatient.getIdElement().getIdPart(), fhirPatient);
+
+            for (SampleItem sampleItem : sampleItems) {
+                Specimen specimen = this.transformToSpecimen(sampleItem);
+                if (specimens.containsKey(specimen.getIdElement().getIdPart())) {
+                    LogEvent.logError("", "", "specimen collision with id: " + specimen.getIdElement().getIdPart());
+                }
+                specimens.put(specimen.getIdElement().getIdPart(), specimen);
+            }
+            for (Analysis analysis : analysises) {
+                ServiceRequest serviceRequest = this.transformToServiceRequest(analysis);
+                if (serviceRequests.containsKey(serviceRequest.getIdElement().getIdPart())) {
+                    LogEvent.logError("", "",
+                            "serviceRequest collision with id: " + serviceRequest.getIdElement().getIdPart());
+                }
+                serviceRequests.put(serviceRequest.getIdElement().getIdPart(), serviceRequest);
+            }
+            for (Result result : results) {
+                DiagnosticReport diagnosticReport = this.transformResultToDiagnosticReport(result.getAnalysis());
+                if (diagnosticReports.containsKey(result.getAnalysis().getFhirUuidAsString())) {
+                    LogEvent.logError("", "",
+                            "diagnosticReport collision with id: " + diagnosticReport.getIdElement().getIdPart());
+                }
+                diagnosticReports.put(result.getAnalysis().getFhirUuidAsString(), diagnosticReport);
+                Observation observation = this.transformResultToObservation(result);
+                if (observations.containsKey(observation.getIdElement().getIdPart())) {
+                    LogEvent.logError("", "",
+                            "observation collision with id: " + observation.getIdElement().getIdPart());
+                }
+                observations.put(observation.getIdElement().getIdPart(), observation);
             }
         }
-        for (Analysis analysis : analysises) {
-            if (analysis.getFhirUuid() == null) {
-                analysis.setFhirUuid(UUID.randomUUID());
-            }
-        }
-        for (Result result : results) {
-            if (result.getFhirUuid() == null) {
-                result.setFhirUuid(UUID.randomUUID());
-            }
-        }
 
-        Task task = this.transformToTask(sample.getId());
-        org.hl7.fhir.r4.model.Patient fhirPatient = this.transformToFhirPatient(patient.getId());
-        List<Specimen> specimens = new ArrayList<>();
-        for (SampleItem sampleItem : sampleItems) {
-            specimens.add(this.transformToSpecimen(sampleItem.getId()));
+        for (Task task : tasks.values()) {
+            this.addToOperations(fhirOperations, tempIdGenerator, task);
         }
-        List<ServiceRequest> serviceRequests = new ArrayList<>();
-        for (Analysis analysis : analysises) {
-            serviceRequests.add(this.transformToServiceRequest(analysis.getId()));
+        for (org.hl7.fhir.r4.model.Patient fhirPatient : fhirPatients.values()) {
+            this.addToOperations(fhirOperations, tempIdGenerator, fhirPatient);
         }
-        Map<UUID, DiagnosticReport> diagnosticReports = new HashMap<>();
-        List<Observation> observations = new ArrayList<>();
-        for (Result result : results) {
-            diagnosticReports.put(result.getAnalysis().getFhirUuid(),
-                    this.transformResultToDiagnosticReport(result.getId()));
-            observations.add(this.transformResultToObservation(result.getId()));
+        for (Specimen specimen : specimens.values()) {
+            this.addToOperations(fhirOperations, tempIdGenerator, specimen);
         }
-
-        fhirOperations.updateResources.add(task);
-        fhirOperations.updateResources.add(fhirPatient);
-        for (Specimen specimen : specimens) {
-            fhirOperations.updateResources.add(specimen);
+        for (ServiceRequest serviceRequest : serviceRequests.values()) {
+            this.addToOperations(fhirOperations, tempIdGenerator, serviceRequest);
         }
-        for (ServiceRequest serviceRequest : serviceRequests) {
-            fhirOperations.updateResources.add(serviceRequest);
-        }
-        for (Observation observation : observations) {
-            fhirOperations.updateResources.add(observation);
+        for (Observation observation : observations.values()) {
+            this.addToOperations(fhirOperations, tempIdGenerator, observation);
         }
         for (DiagnosticReport diagnosticReport : diagnosticReports.values()) {
-            fhirOperations.updateResources.add(diagnosticReport);
+            this.addToOperations(fhirOperations, tempIdGenerator, diagnosticReport);
         }
 
         Bundle responseBundle = fhirPersistanceService.createUpdateFhirResourcesInFhirStore(fhirOperations);
@@ -497,7 +536,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         specimen.setAccessionIdentifier(this.createIdentifier(fhirConfig.getOeFhirSystem() + "/sampleItem_labNo",
                 sampleItem.getSample().getAccessionNumber() + "-" + sampleItem.getSortOrder()));
         specimen.setStatus(SpecimenStatus.AVAILABLE);
-        specimen.setType(transformTypeOfSampleToCodeableConcept(sampleItem.getTypeOfSample().getId()));
+        specimen.setType(transformTypeOfSampleToCodeableConcept(sampleItem.getTypeOfSample()));
         specimen.setReceivedTime(new Date());
         specimen.setCollection(transformToCollection(sampleItem.getCollectionDate(), sampleItem.getCollector()));
 
@@ -622,35 +661,46 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 
     private void addToOperations(FhirOperations fhirOperations, TempIdGenerator tempIdGenerator, Resource resource) {
         if (this.setTempIdIfMissing(resource, tempIdGenerator)) {
-            fhirOperations.createResources.add(resource);
+            if (fhirOperations.createResources.containsKey(resource.getIdElement().getIdPart())) {
+                LogEvent.logError("", "",
+                        "collision on id: " + resource.getResourceType() + "/" + resource.getIdElement().getIdPart());
+            }
+            fhirOperations.createResources.put(resource.getIdElement().getIdPart(), resource);
         } else {
-            fhirOperations.updateResources.add(resource);
+            if (fhirOperations.updateResources.containsKey(resource.getIdElement().getIdPart())) {
+                LogEvent.logError("", "",
+                        "collision on id: " + resource.getResourceType() + "/" + resource.getIdElement().getIdPart());
+            }
+            fhirOperations.updateResources.put(resource.getIdElement().getIdPart(), resource);
         }
     }
 
+    // TODO switch DR over to analysis fully
     private FhirResultObjects transformToFhirResultObjects(Result result) {
         FhirResultObjects fhirResultWrapper = new FhirResultObjects();
 
-        fhirResultWrapper.diagnosticReport = transformResultToDiagnosticReport(result.getId());
-        fhirResultWrapper.observation = transformResultToObservation(result.getId());
+        fhirResultWrapper.diagnosticReport = transformResultToDiagnosticReport(result.getAnalysis());
+        fhirResultWrapper.observation = transformResultToObservation(result);
 
         return fhirResultWrapper;
     }
 
-    private DiagnosticReport transformResultToDiagnosticReport(String resultId) {
-        return transformResultToDiagnosticReport(resultService.get(resultId));
+    private DiagnosticReport transformResultToDiagnosticReport(String analysisId) {
+        return transformResultToDiagnosticReport(analysisService.get(analysisId));
     }
 
-    private DiagnosticReport transformResultToDiagnosticReport(Result result) {
+    private DiagnosticReport transformResultToDiagnosticReport(Analysis analysis) {
 //        Result result = resultService.get(resultId);
-        Analysis analysis = result.getAnalysis();
+//        Analysis analysis = result.getAnalysis();
         List<Result> allResults = resultService.getResultsByAnalysis(analysis);
         SampleItem sampleItem = analysis.getSampleItem();
         Patient patient = sampleHumanService.getPatientForSample(sampleItem.getSample());
-        DiagnosticReport diagnosticReport = fhirPersistanceService
-                .getDiagnosticReportByAnalysisUuid(analysis.getFhirUuidAsString()).orElse(new DiagnosticReport());
-        diagnosticReport.addIdentifier(this.createIdentifier(fhirConfig.getOeFhirSystem() + "/analysisResult_uuid",
-                analysis.getFhirUuidAsString()));
+
+        DiagnosticReport diagnosticReport = new DiagnosticReport();
+
+//        DiagnosticReport diagnosticReport = fhirPersistanceService
+//                .getDiagnosticReportByAnalysisUuid(analysis.getFhirUuidAsString())
+//                .orElseGet(() -> genNewDiagnosticReport(analysis));
 
         // TODO make sure these align with each other.
         // we may need to add detection for when result is changed and add those status
@@ -674,6 +724,13 @@ public class FhirTransformServiceImpl implements FhirTransformService {
                     .addResult(this.createReferenceFor(ResourceType.Observation, curResult.getFhirUuidAsString()));
         }
 
+        return diagnosticReport;
+    }
+
+    private DiagnosticReport genNewDiagnosticReport(Analysis analysis) {
+        DiagnosticReport diagnosticReport = new DiagnosticReport();
+        diagnosticReport.addIdentifier(this.createIdentifier(fhirConfig.getOeFhirSystem() + "/analysisResult_uuid",
+                analysis.getFhirUuidAsString()));
         return diagnosticReport;
     }
 
@@ -860,9 +917,9 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         return annotation;
     }
 
-    private boolean setTempIdIfMissing(Resource updatedPatient, TempIdGenerator tempIdGenerator) {
-        if (GenericValidator.isBlankOrNull(updatedPatient.getId())) {
-            updatedPatient.setId(tempIdGenerator.getNextId());
+    private boolean setTempIdIfMissing(Resource resource, TempIdGenerator tempIdGenerator) {
+        if (GenericValidator.isBlankOrNull(resource.getId())) {
+            resource.setId(tempIdGenerator.getNextId());
             return true;
         }
         return false;

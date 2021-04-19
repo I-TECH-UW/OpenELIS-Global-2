@@ -3,6 +3,7 @@ package org.openelisglobal.referral.fhir.service;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -116,7 +117,7 @@ public class FhirReferralServiceImpl implements FhirReferralService {
             // organization doesn't exist as fhir organization, cannot refer automatically
             return new Bundle();
         }
-        List<Resource> newResources = new ArrayList<>();
+        Map<String, Resource> newResources = new HashMap<>();
         Sample sample = sampleService.get(sampleId);
 
         List<Analysis> analysises = analysisService.get(analysisIds);
@@ -129,8 +130,7 @@ public class FhirReferralServiceImpl implements FhirReferralService {
                 .getPatientByUuid(sampleHumanService.getPatientForSample(sample).getFhirUuidAsString()).orElseThrow(),
                 serviceRequests);
 
-        newResources.add(task);
-        return fhirPersistanceService.createFhirResourcesInFhirStore(newResources);
+        return fhirPersistanceService.createFhirResourceInFhirStore(task);
     }
 
     private Organization getFhirOrganization(org.openelisglobal.organization.valueholder.Organization organization) {

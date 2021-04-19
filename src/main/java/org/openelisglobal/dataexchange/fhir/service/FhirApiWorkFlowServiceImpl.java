@@ -118,7 +118,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
             return;
         }
 
-        List<Resource> updateResources = new ArrayList<>();
+        Map<String, Resource> updateResources = new HashMap<>();
 
         IGenericClient sourceFhirClient = fhirUtil.getFhirClient(remoteStorePath);
         Bundle originalTasksBundle = sourceFhirClient.search()//
@@ -153,7 +153,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
                 Task originalTask = originalTasksById
                         .get(taskBasedOnOrginalTask.getBasedOnFirstRep().getReferenceElement().getIdPart());
                 originalTask.setStatus(TaskStatus.ACCEPTED);
-                updateResources.add(originalTask);
+                updateResources.put(originalTask.getIdElement().getIdPart(), originalTask);
                 acceptedTasks
                         .add(originalTasksById.get(taskBasedOnOrginalTask.getBasedOnFirstRep().getReferenceElement().getIdPart()));
             }
@@ -173,7 +173,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
                 Task originalTask = originalTasksById
                         .get(taskBasedOnOrginalTask.getBasedOnFirstRep().getReferenceElement().getIdPart());
                 originalTask.setStatus(TaskStatus.REJECTED);
-                updateResources.add(originalTask);
+                updateResources.put(originalTask.getIdElement().getIdPart(), originalTask);
                 rejectedTasks.add(originalTask);
             }
         }

@@ -46,6 +46,6 @@ public interface FhirTransformService {
 
     org.hl7.fhir.r4.model.Patient transformToFhirPatient(String patientId) throws FhirTransformationException;
 
-    Bundle transformPersistObjectsUnderSample(String sampleId) throws FhirLocalPersistingException;
+    Bundle transformPersistObjectsUnderSamples(List<String> sampleIds) throws FhirLocalPersistingException;
 
 }

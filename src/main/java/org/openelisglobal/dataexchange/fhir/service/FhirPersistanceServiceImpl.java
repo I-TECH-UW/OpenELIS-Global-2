@@ -2,7 +2,9 @@ package org.openelisglobal.dataexchange.fhir.service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -34,22 +36,22 @@ import ca.uhn.fhir.rest.client.api.IGenericClient;
 public class FhirPersistanceServiceImpl implements FhirPersistanceService {
 
     public static class FhirOperations {
-        List<Resource> createResources; // will do a put with a new uuid
-        List<Resource> updateResources; // will do a put with the id used in the resource
+        Map<String, Resource> createResources; // will do a put with a new uuid
+        Map<String, Resource> updateResources; // will do a put with the id used in the resource
 
         public FhirOperations() {
-            createResources = new ArrayList<>();
-            updateResources = new ArrayList<>();
+            createResources = new HashMap<>();
+            updateResources = new HashMap<>();
         }
 
         public FhirOperations(int createSize, int updateSize) {
-            createResources = new ArrayList<>(createSize);
-            updateResources = new ArrayList<>(updateSize);
+            createResources = new HashMap<>(createSize);
+            updateResources = new HashMap<>(updateSize);
         }
 
         public void addAll(FhirOperations fhirOperationLists) {
-            createResources.addAll(fhirOperationLists.createResources);
-            updateResources.addAll(fhirOperationLists.updateResources);
+            createResources.putAll(fhirOperationLists.createResources);
+            updateResources.putAll(fhirOperationLists.updateResources);
         }
     }
 
@@ -67,16 +69,16 @@ public class FhirPersistanceServiceImpl implements FhirPersistanceService {
 
     @Override
     public Bundle createFhirResourceInFhirStore(Resource resource) throws FhirLocalPersistingException {
-        return createFhirResourcesInFhirStore(Arrays.asList(resource));
+        return createFhirResourcesInFhirStore(Map.of(resource.getIdElement().getIdPart(), resource));
     }
 
     @Override
     public Bundle updateFhirResourceInFhirStore(Resource resource) throws FhirLocalPersistingException {
-        return updateFhirResourcesInFhirStore(Arrays.asList(resource));
+        return updateFhirResourcesInFhirStore(Map.of(resource.getIdElement().getIdPart(), resource));
     }
 
     @Override
-    public Bundle createFhirResourcesInFhirStore(List<Resource> resources) throws FhirLocalPersistingException {
+    public Bundle createFhirResourcesInFhirStore(Map<String, Resource> resources) throws FhirLocalPersistingException {
         Bundle transactionBundle = makeTransactionBundleForCreate(resources);
         Bundle transactionResponseBundle = new Bundle();
         try {
@@ -89,7 +91,7 @@ public class FhirPersistanceServiceImpl implements FhirPersistanceService {
     }
 
     @Override
-    public Bundle updateFhirResourcesInFhirStore(List<Resource> resources) throws FhirLocalPersistingException {
+    public Bundle updateFhirResourcesInFhirStore(Map<String, Resource> resources) throws FhirLocalPersistingException {
         Bundle transactionBundle = makeTransactionBundleForUpdate(resources);
         Bundle transactionResponseBundle = new Bundle();
         try {
@@ -102,7 +104,8 @@ public class FhirPersistanceServiceImpl implements FhirPersistanceService {
     }
 
     @Override
-    public Bundle createUpdateFhirResourcesInFhirStore(List<Resource> createResources, List<Resource> updateResources)
+    public Bundle createUpdateFhirResourcesInFhirStore(Map<String, Resource> createResources,
+            Map<String, Resource> updateResources)
             throws FhirLocalPersistingException {
         Bundle transactionBundle = new Bundle();
         transactionBundle.setType(BundleType.TRANSACTION);
@@ -233,14 +236,14 @@ public class FhirPersistanceServiceImpl implements FhirPersistanceService {
     }
 
     @Override
-    public Bundle makeTransactionBundleForCreate(List<Resource> resources) {
+    public Bundle makeTransactionBundleForCreate(Map<String, Resource> resources) {
         Bundle transactionBundle = new Bundle();
         transactionBundle.setType(BundleType.TRANSACTION);
         addCreateToTransactionBundle(resources, transactionBundle);
         return transactionBundle;
     }
 
-    public Bundle makeTransactionBundleForUpdate(List<Resource> resources) {
+    public Bundle makeTransactionBundleForUpdate(Map<String, Resource> resources) {
         Bundle transactionBundle = new Bundle();
         transactionBundle.setType(BundleType.TRANSACTION);
         addUpdatesToTransactionBundle(resources, transactionBundle);
@@ -248,8 +251,8 @@ public class FhirPersistanceServiceImpl implements FhirPersistanceService {
 
     }
 
-    public Bundle addCreateToTransactionBundle(List<Resource> resources, Bundle transactionBundle) {
-        for (Resource resource : resources) {
+    public Bundle addCreateToTransactionBundle(Map<String, Resource> createResources, Bundle transactionBundle) {
+        for (Resource resource : createResources.values()) {
             String id = UUID.randomUUID().toString();
             String resourceType = resource.getResourceType().toString();
             if (ResourceType.Patient.toString().equalsIgnoreCase(resourceType)) {
@@ -266,8 +269,8 @@ public class FhirPersistanceServiceImpl implements FhirPersistanceService {
         return transactionBundle;
     }
 
-    public Bundle addUpdatesToTransactionBundle(List<Resource> resources, Bundle transactionBundle) {
-        for (Resource resource : resources) {
+    public Bundle addUpdatesToTransactionBundle(Map<String, Resource> updateResources, Bundle transactionBundle) {
+        for (Resource resource : updateResources.values()) {
             transactionBundle.addEntry().setFullUrl(resource.getIdElement().getValue()).setResource(resource)
                     .getRequest().setUrl(resource.getResourceType() + "/" + resource.getIdElement().getIdPart())
                     .setMethod(Bundle.HTTPVerb.PUT);

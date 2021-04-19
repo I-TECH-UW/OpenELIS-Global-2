@@ -1,6 +1,7 @@
 package org.openelisglobal.dataexchange.fhir.service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.hl7.fhir.r4.model.Bundle;
@@ -20,12 +21,6 @@ public interface FhirPersistanceService {
 
     Bundle updateFhirResourceInFhirStore(Resource resource) throws FhirLocalPersistingException;
 
-    Bundle createFhirResourcesInFhirStore(List<Resource> resources) throws FhirLocalPersistingException;
-
-    Bundle updateFhirResourcesInFhirStore(List<Resource> resources) throws FhirLocalPersistingException;
-
-    Bundle createUpdateFhirResourcesInFhirStore(List<Resource> createResources, List<Resource> updateResources)
-            throws FhirLocalPersistingException;
 
     Bundle createUpdateFhirResourcesInFhirStore(FhirOperations fhirOperations) throws FhirLocalPersistingException;
 
@@ -42,13 +37,21 @@ public interface FhirPersistanceService {
 
     Optional<Specimen> getSpecimenBySampleItemUuid(String uuid);
 
-    Bundle makeTransactionBundleForCreate(List<Resource> resources);
 
     Optional<DiagnosticReport> getDiagnosticReportByAnalysisUuid(String uuid);
 
     Optional<Task> getTaskBasedOnServiceRequest(String referringId);
 
     Optional<Task> getTaskBasedOnTask(String taskId);
+
+    Bundle createUpdateFhirResourcesInFhirStore(Map<String, Resource> createResources,
+            Map<String, Resource> updateResources) throws FhirLocalPersistingException;
+
+    Bundle updateFhirResourcesInFhirStore(Map<String, Resource> resources) throws FhirLocalPersistingException;
+
+    Bundle makeTransactionBundleForCreate(Map<String, Resource> resources);
+
+    Bundle createFhirResourcesInFhirStore(Map<String, Resource> resources) throws FhirLocalPersistingException;
 
 //    Optional<ServiceRequest> getTaskBasedOnServiceRequests(List<ServiceRequest> serviceRequests);
 
