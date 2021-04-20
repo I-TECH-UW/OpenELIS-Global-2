@@ -171,10 +171,7 @@ jQuery(document).ready(function () {
 		    </c:if>
 		</div></td>
 	</tr>
-	<c:if test="${not (empty form.startingAtAccession)}" >
-		<tr style="display:hidden;">
-	</c:if>
-		<tr>
+	<tr <c:if test="${empty form.startingAtAccession}" >style="display:none;"</c:if>>
 		<td>
 			<spring:message code="labno.alt.startAt" />: <c:out value="${altAccessionPrefix}"/>
 			<input id="startingAtValue" disabled="disabled" maxLength="${altAccessionValueLength}" value="${fn:substring(form.startingAtAccession, altAccessionPrefixLength, altAccessionLength)}"/>
