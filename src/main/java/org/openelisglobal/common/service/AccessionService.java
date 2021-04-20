@@ -13,4 +13,6 @@ public interface AccessionService {
     long getNextNumberIncrement(AccessionIdentity accessionIdentity) throws LIMSInvalidConfigurationException;
 
     long getNextNumberNoIncrement(AccessionIdentity accessionIdentity) throws LIMSInvalidConfigurationException;
+
+    void setCurVal(String prefix, AccessionFormat accessionFormat, long curVal);
 }

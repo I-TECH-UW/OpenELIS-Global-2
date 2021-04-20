@@ -61,13 +61,19 @@ public class AccessionServiceImpl implements AccessionService {
     }
 
     private AccessionNumberInfo createAccessionInfo(String prefix, AccessionFormat accessionFormat, long value) {
-
         AccessionNumberInfo info = new AccessionNumberInfo();
         info.setAccessionIdentity(new AccessionIdentity(prefix, accessionFormat));
         info.setCurVal(value);
 
         return accessionDAO.save(info);
 
+    }
+
+    @Override
+    public void setCurVal(String prefix, AccessionFormat accessionFormat, long curVal) {
+        AccessionNumberInfo info = accessionDAO.get(new AccessionIdentity(prefix, accessionFormat));
+        info.setCurVal(curVal);
+        accessionDAO.save(info);
     }
 
 }

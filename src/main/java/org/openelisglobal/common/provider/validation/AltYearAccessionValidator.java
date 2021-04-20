@@ -79,8 +79,8 @@ public class AltYearAccessionValidator extends BaseSiteYearAccessionValidator im
 
     @Override
     public String incrementAccessionNumber() throws IllegalArgumentException {
+        String year = DateUtil.getTwoDigitYear();
         if (GenericValidator.isBlankOrNull(startingAt)) {
-            String year = DateUtil.getTwoDigitYear();
             long nextNum = accessionService.getNextNumberIncrement(this.getPrefix() + year, AccessionFormat.ALT_YEAR);
             String incrementAsString;
             incrementAsString = String.format("%013d", nextNum);
@@ -91,6 +91,14 @@ public class AltYearAccessionValidator extends BaseSiteYearAccessionValidator im
                 nextAccessionNumber = incrementAccessionNumber(nextAccessionNumber);
             }
             localReservedNumbers.add(nextAccessionNumber);
+
+            long increment = Long.parseLong(nextAccessionNumber.substring(INCREMENT_START));
+            long dbIncrement = accessionService.getNextNumberNoIncrement(this.getPrefix() + year,
+                    AccessionFormat.ALT_YEAR);
+            if (dbIncrement <= increment) {
+                accessionService.setCurVal(this.getPrefix() + year, AccessionFormat.ALT_YEAR, increment);
+            }
+
             return nextAccessionNumber;
         }
     }
