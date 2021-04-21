@@ -2,6 +2,7 @@ package org.openelisglobal.dataexchange.fhir.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Future;
 
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Reference;
@@ -46,6 +47,8 @@ public interface FhirTransformService {
 
     org.hl7.fhir.r4.model.Patient transformToFhirPatient(String patientId) throws FhirTransformationException;
 
-    Bundle transformPersistObjectsUnderSamples(List<String> sampleIds) throws FhirLocalPersistingException;
+    Future<Bundle> transformPersistObjectsUnderSamples(List<String> sampleIds) throws FhirLocalPersistingException;
+
+    Future<Bundle> transformPersistPatients(List<String> patientIds) throws FhirLocalPersistingException;
 
 }

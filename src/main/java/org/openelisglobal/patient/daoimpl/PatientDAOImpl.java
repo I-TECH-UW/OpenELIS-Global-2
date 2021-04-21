@@ -381,4 +381,18 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
         return getPatientByStringProperty("subjectNumber", subjectNumber);
     }
 
+    @Override
+    public List<Patient> getAllMissingFhirUuid() {
+        String sql = "from Patient p where p.fhirUuid is NULL";
+        try {
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            List<Patient> patientList = query.list();
+
+            return patientList;
+        } catch (HibernateException e) {
+            handleException(e, "getAllMissingFhirUuid");
+        }
+        return new ArrayList<>();
+    }
+
 }

@@ -822,4 +822,9 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String> i
         }
     }
 
+    @Override
+    public List<Patient> getAllMissingFhirUuid() {
+        return baseObjectDAO.getAllMissingFhirUuid();
+    }
+
 }

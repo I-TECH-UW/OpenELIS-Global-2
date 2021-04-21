@@ -1,14 +1,13 @@
 package org.openelisglobal.dataexchange.fhir.service;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.validator.GenericValidator;
 import org.hl7.fhir.r4.model.Address;
 import org.hl7.fhir.r4.model.ContactPoint;
+import org.hl7.fhir.r4.model.DateType;
 import org.hl7.fhir.r4.model.Enumerations.AdministrativeGender;
 import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Patient;
@@ -175,13 +174,18 @@ public class TaskInterpreterImpl implements TaskInterpreter {
             }
         }
         // TODO set fhirUUID of message patient
-        Date birthDate = patient.getBirthDate();
+        DateType birthDate = patient.getBirthDateElement();
         if (birthDate != null) {
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-            String strDate = sdf.format(birthDate);
-            messagePatient.setDisplayDOB(strDate);
-        }
+            String day = birthDate.getDay() == null ? DateUtil.AMBIGUOUS_DATE_SEGMENT
+                    : String.format("%2d", birthDate.getDay());
+            String month = birthDate.getMonth() == null ? DateUtil.AMBIGUOUS_DATE_SEGMENT
+                    : String.format("%2d", birthDate.getMonth() + 1);
+            String year = birthDate.getYear() == null
+                    ? DateUtil.AMBIGUOUS_DATE_SEGMENT + DateUtil.AMBIGUOUS_DATE_SEGMENT
+                    : String.format("%4d", birthDate.getYear());
 
+            messagePatient.setDisplayDOB(day + "/" + month + "/" + year);
+        }
         if (AdministrativeGender.MALE.equals(patient.getGender())) {
             messagePatient.setGender("M");
         } else if (AdministrativeGender.FEMALE.equals(patient.getGender())) {

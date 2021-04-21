@@ -940,7 +940,7 @@ public abstract class PatientReport extends Report {
             return "";
         }
 
-        dob = dob.replaceAll("xx", "01");
+        dob = dob.replaceAll(DateUtil.AMBIGUOUS_DATE_SEGMENT, "01");
         Date dobDate = DateUtil.convertStringDateToSqlDate(dob);
         int months = DateUtil.getAgeInMonths(dobDate, DateUtil.getNowAsSqlDate());
         if (months > 35) {
