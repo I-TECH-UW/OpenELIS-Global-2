@@ -28,7 +28,6 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
-import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.LocaleResolver;
@@ -44,13 +43,12 @@ import org.springframework.web.servlet.view.tiles3.TilesConfigurer;
 import org.springframework.web.servlet.view.tiles3.TilesView;
 
 @EnableWebMvc
-@EnableAsync
 @Configuration
 @EnableJpaRepositories(basePackages = { "org.itech", "org.ozeki.sms" })
 @PropertySource("classpath:application.properties")
 @PropertySource("file:/run/secrets/common.properties")
 @PropertySource(value = "file:/run/secrets/extra.properties", ignoreResourceNotFound = true)
-@ComponentScan(basePackages = { "spring", "org.openelisglobal", "org.itech", "org.ozeki.sms" })
+@ComponentScan(basePackages = { "spring", "org.openelisglobal", "org.itech", "org.ozeki.sms", "oe.plugin" })
 public class AppConfig implements WebMvcConfigurer {
 
     @Autowired

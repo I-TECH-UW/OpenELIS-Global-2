@@ -571,7 +571,8 @@ function  /*void*/ processSearchPopulateSuccess(xhr)
 	setUpdateStatus("NO_ACTION");
     //alert(xhr.responseText);
 	var response = xhr.responseXML.getElementsByTagName("formfield").item(0);
-
+	
+	var fhirUuidValue = getXMLValue(response, "fhirUuid");
 	var nationalIDValue = getXMLValue(response, "nationalID");
 	var STValue = getXMLValue(response, "ST_ID");
 	var subjectNumberValue = getXMLValue(response, "subjectNumber");
@@ -638,7 +639,8 @@ function  /*void*/ processSearchPopulateSuccess(xhr)
 					contactFirstName,
 					contactPhone,
 					contactEmail,
-					contactPK);
+					contactPK,
+					fhirUuidValue);
 
 	<c:if test="${param.attemptAutoSave}">
 //		jQuery("#generateAccessionButton").click();
@@ -682,10 +684,11 @@ function /*void*/ clearErrors(){
 
 function  /*void*/ setPatientInfo(nationalID, ST_ID, subjectNumber, lastName, firstName, aka, mother, street, city, dob, gender,
 		patientType, insurance, occupation, patientUpdated, personUpdated, motherInitial, commune, addressDept, educationId, nationalId, nationalOther,
-		maritialStatusId, healthRegionId, healthDistrictId, guid, phoneNumber, email, contactLastName, contactFirstName, contactPhone, contactEmail, contactPK ) {
+		maritialStatusId, healthRegionId, healthDistrictId, guid, phoneNumber, email, contactLastName, contactFirstName, contactPhone, contactEmail, contactPK,fhirUuidValue ) {
 
 	clearErrors();
 
+// 	jQuery("patientFhirUuid").val(fhirUuidValue == undefined ? "" : fhirUuidValue);
 	if ( supportNationalID) { $("nationalID").value = nationalID == undefined ? "" : nationalID; }
 	if(supportSTNumber){ $("ST_ID").value = ST_ID == undefined ? "" : ST_ID; }
 	if(supportSubjectNumber){ $("subjectNumberID").value = subjectNumber == undefined ? "" : subjectNumber; }
@@ -937,6 +940,7 @@ function  processSubjectNumberSuccess(xhr){
 <form:hidden path="patientProperties.patientPK" id="patientPK_ID"/>
 <form:hidden path="patientProperties.guid" id="patientGUID_ID"/>
 <form:hidden path="patientProperties.patientContact.id" id="contactPK_ID"/>
+<%-- <form:hidden path="patientProperties.fhirUuid" id="patientFhirUuid"/> --%>
 	
    <%--  <logic:equal value="false" name="${form.formName}" property="patientProperties.readOnly" > --%>
    <c:if test="${form.patientProperties.readOnly == false }" >

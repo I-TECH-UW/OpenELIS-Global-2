@@ -87,6 +87,7 @@ public class PatientManagementInfo implements Serializable {
     @Pattern(regexp = ValidationHelper.PATIENT_ID_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
             SamplePatientEntryBatch.class })
     private String guid;
+//    private UUID fhirUuid;
 
     @OptionalNotBlank(formFields = { Field.PatientNameRequired }, groups = {
             SamplePatientEntryForm.SamplePatientEntry.class })
@@ -519,4 +520,16 @@ public class PatientManagementInfo implements Serializable {
     public void setPatientContact(PatientContact patientContact) {
         this.patientContact = patientContact;
     }
+
+//    public UUID getFhirUuid() {
+//        return fhirUuid;
+//    }
+//
+//    public void setFhirUuid(UUID fhirUuid) {
+//        this.fhirUuid = fhirUuid;
+//    }
+//
+//    public String getFhirUuidAsString() {
+//        return fhirUuid == null ? "" : fhirUuid.toString();
+//    }
 }

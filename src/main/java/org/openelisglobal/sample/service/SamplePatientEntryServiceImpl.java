@@ -3,9 +3,11 @@ package org.openelisglobal.sample.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.address.service.OrganizationAddressService;
 import org.openelisglobal.address.valueholder.OrganizationAddress;
 import org.openelisglobal.analysis.service.AnalysisService;
@@ -18,7 +20,6 @@ import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.TableIdService;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.SystemConfiguration;
-import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
 import org.openelisglobal.dataexchange.service.order.ElectronicOrderService;
 import org.openelisglobal.notification.service.AnalysisNotificationConfigService;
 import org.openelisglobal.notification.service.TestNotificationConfigService;
@@ -84,8 +85,6 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
     @Autowired
     private OrganizationService organizationService;
     @Autowired
-    private FhirTransformService fhirTransformService;
-    @Autowired
     private TestNotificationConfigService testNotificationConfigService;
     @Autowired
     private AnalysisNotificationConfigService analysisNotificationConfigService;
@@ -97,7 +96,6 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
         boolean useInitialSampleCondition = FormFields.getInstance().useField(Field.InitialSampleCondition);
         boolean useSampleNature = FormFields.getInstance().useField(Field.SampleNature);
 
-        String fhir_json = fhirTransformService.CreateFhirFromOESample(updateData, patientInfo);
         persistOrganizationData(updateData);
 
         if (updateData.isSavePatient()) {
@@ -120,11 +118,6 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
 
         request.getSession().setAttribute("lastAccessionNumber", updateData.getAccessionNumber());
         request.getSession().setAttribute("lastPatientId", updateData.getPatientId());
-
-    }
-
-    private void persistContactTracingData(SamplePatientUpdateData updateData) {
-        // TODO Auto-generated method stub
 
     }
 
@@ -190,6 +183,7 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
     private void persistSampleData(SamplePatientUpdateData updateData) {
         String analysisRevision = SystemConfiguration.getInstance().getAnalysisDefaultRevision();
 
+        updateData.getSample().setFhirUuid(UUID.randomUUID());
         sampleService.insertDataWithAccessionNumber(updateData.getSample());
 
         for (SampleAdditionalField field : updateData.getSampleFields()) {
@@ -201,9 +195,11 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
         // }
 
         for (SampleTestCollection sampleTestCollection : updateData.getSampleItemsTests()) {
-
+            if (GenericValidator.isBlankOrNull(sampleTestCollection.item.getFhirUuidAsString())) {
+                sampleTestCollection.item.setFhirUuid(UUID.randomUUID());
+            }
             sampleItemService.insert(sampleTestCollection.item);
-
+            sampleTestCollection.analysises = new ArrayList<>();
             for (Test test : sampleTestCollection.tests) {
                 test = testService.get(test.getId());
 
@@ -211,6 +207,8 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
                         sampleTestCollection.testIdToUserSectionMap.get(test.getId()),
                         sampleTestCollection.testIdToUserSampleTypeMap.get(test.getId()), updateData);
                 analysisService.insert(analysis);
+                sampleTestCollection.analysises.add(analysis);
+
                 if (updateData.getCustomNotificationLogic()) {
                     persistAnalysisNotificationConfigs(analysis, updateData);
                 }
@@ -373,6 +371,8 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
             analysis.setSampleTypeName(sampleTypeName);
         }
         analysis.setTestSection(testSection);
+        // this will be used as an identifier for the service request as well
+        analysis.setFhirUuid(UUID.randomUUID());
         return analysis;
     }
 }

@@ -33,5 +33,11 @@
 		<property name="data" type="java.lang.String">
 			<column name="data" not-null="true" />
 		</property>
+		<property name="type">
+            <type name="org.hibernate.type.EnumType">
+                <param name="enumClass">org.openelisglobal.dataexchange.order.valueholder.ElectronicOrderType</param>
+                <param name="useNamed">true</param>
+            </type>
+        </property>
 	</class>
 </hibernate-mapping>

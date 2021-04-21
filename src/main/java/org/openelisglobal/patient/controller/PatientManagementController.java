@@ -16,6 +16,9 @@ import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.provider.query.PatientSearchResults;
 import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.dataexchange.fhir.exception.FhirPersistanceException;
+import org.openelisglobal.dataexchange.fhir.exception.FhirTransformationException;
+import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
 import org.openelisglobal.patient.action.IPatientUpdate.PatientUpdateStatus;
 import org.openelisglobal.patient.action.bean.PatientManagementInfo;
 import org.openelisglobal.patient.action.bean.PatientSearch;
@@ -48,14 +51,14 @@ public class PatientManagementController extends BaseController {
     private static final String[] ALLOWED_FIELDS = new String[] { "patientProperties.currentDate",
             "patientProperties.patientLastUpdated", "patientProperties.personLastUpdated",
             "patientProperties.patientUpdateStatus", "patientProperties.patientPK", "patientProperties.guid",
-            "patientProperties.STnumber", "patientProperties.subjectNumber", "patientProperties.nationalId",
-            "patientProperties.lastName", "patientProperties.firstName", "patientProperties.aka",
-            "patientProperties.mothersName", "patientProperties.mothersInitial", "patientProperties.streetAddress",
-            "patientProperties.commune", "patientProperties.city", "patientProperties.addressDepartment",
-            "patientProperties.addressDepartment", 
-            
+            "patientProperties.fhirUuid", "patientProperties.STnumber", "patientProperties.subjectNumber",
+            "patientProperties.nationalId", "patientProperties.lastName", "patientProperties.firstName",
+            "patientProperties.aka", "patientProperties.mothersName", "patientProperties.mothersInitial",
+            "patientProperties.streetAddress", "patientProperties.commune", "patientProperties.city",
+            "patientProperties.addressDepartment", "patientProperties.addressDepartment",
+
             "patientProperties.primaryPhone", "patientProperties.email", "patientProperties.healthRegion",
-            
+
             "patientProperties.healthDistrict", "patientProperties.birthDateForDisplay", "patientProperties.age",
             "patientProperties.gender", "patientProperties.patientType", "patientProperties.insuranceNumber",
             "patientProperties.occupation", "patientProperties.education", "patientProperties.maritialStatus",
@@ -85,6 +88,8 @@ public class PatientManagementController extends BaseController {
     PersonAddressService personAddressService;
     @Autowired
     SearchResultsService searchService;
+    @Autowired
+    protected FhirTransformService fhirTransformService;
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -128,6 +133,7 @@ public class PatientManagementController extends BaseController {
             }
             try {
                 patientService.persistPatientData(patientInfo, patient, getSysUserId(request));
+                fhirTransformService.transformPersistPatient(patientInfo);
             } catch (LIMSRuntimeException e) {
 
                 if (e.getException() instanceof StaleObjectStateException) {
@@ -142,6 +148,8 @@ public class PatientManagementController extends BaseController {
                     return findForward(FWD_FAIL_INSERT, form);
                 }
 
+            } catch (FhirTransformationException | FhirPersistanceException e) {
+                LogEvent.logError(e);
             }
 
         }

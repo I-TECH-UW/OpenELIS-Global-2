@@ -140,7 +140,6 @@
 		<mapping resource="hibernate/hbm/QaObservationType.hbm.xml" />
 		<mapping resource="hibernate/hbm/QaObservation.hbm.xml" />
 		<mapping resource="hibernate/hbm/ElectronicOrder.hbm.xml" />
-		<mapping resource="hibernate/hbm/PortableOrder.hbm.xml" />
 		<mapping resource="hibernate/hbm/TestDictionary.hbm.xml" />
 		<mapping resource="hibernate/hbm/Localization.hbm.xml" />
 		<mapping resource="hibernate/hbm/Image.hbm.xml" />

@@ -4,6 +4,7 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
 import org.openelisglobal.common.action.IActionConstants;
+import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.validator.CustomDateValidator;
 import org.openelisglobal.validation.annotations.ValidDate;
 
@@ -40,7 +41,7 @@ public class DateConstraintValidator implements ConstraintValidator<ValidDate, S
             }
 
         }
-        datePortion = datePortion.replaceAll("xx", "01");
+        datePortion = datePortion.replaceAll(DateUtil.AMBIGUOUS_DATE_SEGMENT, "01");
         String result = CustomDateValidator.getInstance().validateDate(
                 CustomDateValidator.getInstance().getDate(datePortion), validateDateConstraint.relative());
         if (!IActionConstants.VALID.equals(result)) {

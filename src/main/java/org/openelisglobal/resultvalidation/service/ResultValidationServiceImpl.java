@@ -12,6 +12,7 @@ import org.openelisglobal.common.services.ResultSaveService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.StatusService.OrderStatus;
 import org.openelisglobal.common.services.registration.interfaces.IResultUpdate;
+import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
 import org.openelisglobal.note.service.NoteService;
 import org.openelisglobal.note.valueholder.Note;
 import org.openelisglobal.notification.service.TestNotificationService;
@@ -33,14 +34,17 @@ public class ResultValidationServiceImpl implements ResultValidationService {
     private NoteService noteService;
     private SampleService sampleService;
     private TestNotificationService testNotificationService;
+    private FhirTransformService fhirTransformService;
 
     public ResultValidationServiceImpl(AnalysisService analysisService, ResultService resultService,
-            NoteService noteService, SampleService sampleService, TestNotificationService testNotificationService) {
+            NoteService noteService, SampleService sampleService, TestNotificationService testNotificationService,
+            FhirTransformService fhirTransformService) {
         this.analysisService = analysisService;
         this.resultService = resultService;
         this.noteService = noteService;
         this.sampleService = sampleService;
         this.testNotificationService = testNotificationService;
+        this.fhirTransformService = fhirTransformService;
     }
 
     @Override
@@ -93,6 +97,7 @@ public class ResultValidationServiceImpl implements ResultValidationService {
         for (IResultUpdate updater : updaters) {
             updater.transactionalUpdate(resultSaveService);
         }
+
     }
 
     private boolean isResultAnalysisFinalized(Result result, List<Analysis> analysisUpdateList) {

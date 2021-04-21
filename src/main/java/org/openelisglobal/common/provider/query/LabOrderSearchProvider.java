@@ -41,7 +41,6 @@ import org.openelisglobal.common.services.StatusService.ExternalOrderStatus;
 import org.openelisglobal.common.util.XMLUtil;
 import org.openelisglobal.dataexchange.fhir.FhirConfig;
 import org.openelisglobal.dataexchange.fhir.FhirUtil;
-import org.openelisglobal.dataexchange.fhir.service.FhirApiWorkflowService;
 import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
 import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder;
 import org.openelisglobal.dataexchange.service.order.ElectronicOrderService;
@@ -78,7 +77,6 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
     private FhirConfig fhirConfig = SpringContext.getBean(FhirConfig.class);
     private FhirUtil fhirUtil = SpringContext.getBean(FhirUtil.class);
 
-    protected FhirApiWorkflowService fhirApiWorkFlowService = SpringContext.getBean(FhirApiWorkflowService.class);
     protected FhirTransformService fhirTransformService = SpringContext.getBean(FhirTransformService.class);
 
     protected TestService testService = SpringContext.getBean(TestService.class);
@@ -116,9 +114,9 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
         String orderNumber = request.getParameter("orderNumber");
         eOrders = electronicOrderService.getElectronicOrdersByExternalId(orderNumber);
 
-        if (eOrders.isEmpty()) {
-            eOrders = fhirTransformService.getFhirOrdersById(orderNumber);
-        }
+//        if (eOrders.isEmpty()) {
+//            eOrders = fhirTransformService.getElectronicOrdersOrdersByServiceRequestId(orderNumber);
+//        }
         if (!eOrders.isEmpty()) {
             eOrder = eOrders.get(eOrders.size() - 1);
             eOrderStatus = SpringContext.getBean(IStatusService.class)

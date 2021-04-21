@@ -4,6 +4,7 @@ import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 
@@ -91,6 +92,14 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
     public SampleServiceImpl() {
         super(Sample.class);
         this.auditTrailLog = true;
+    }
+
+    @Override
+    public String insert(Sample sample) {
+        if (sample.getFhirUuid() == null) {
+            sample.setFhirUuid(UUID.randomUUID());
+        }
+        return super.insert(sample);
     }
 
     @Override
@@ -519,6 +528,12 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
             }
         }
         return false;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Sample> getAllMissingFhirUuid() {
+        return sampleDAO.getAllMissingFhirUuid();
     }
 
 }
