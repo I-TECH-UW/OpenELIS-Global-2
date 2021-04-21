@@ -69,7 +69,8 @@ public class FhirPersistanceServiceImpl implements FhirPersistanceService {
 
     @Override
     public Bundle createFhirResourceInFhirStore(Resource resource) throws FhirLocalPersistingException {
-        return createFhirResourcesInFhirStore(Map.of(resource.getIdElement().getIdPart(), resource));
+        String id = resource.getIdElement().getIdPart() == null ? "" : resource.getIdElement().getIdPart();
+        return createFhirResourcesInFhirStore(Map.of(id, resource));
     }
 
     @Override
