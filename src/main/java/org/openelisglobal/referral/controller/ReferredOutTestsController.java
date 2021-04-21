@@ -350,20 +350,24 @@ public class ReferredOutTestsController extends BaseController {
 
     private String getAppropriateResultValue(List<Result> results) {
         Result result = results.get(0);
-        if (TypeOfTestResultServiceImpl.ResultType.DICTIONARY.matches(result.getResultType())) {
-            Dictionary dictionary = dictionaryService.get(result.getValue());
-            if (dictionary != null) {
-                return dictionary.getLocalizedName();
+        if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(result.getResultType())) {
+            if (!GenericValidator.isBlankOrNull(result.getValue())) {
+                Dictionary dictionary = dictionaryService.get(result.getValue());
+                if (dictionary != null) {
+                    return dictionary.getLocalizedName();
+                }
             }
         } else if (TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(result.getResultType())) {
             StringBuilder multiResult = new StringBuilder();
 
             for (Result subResult : results) {
-                Dictionary dictionary = dictionaryService.get(subResult.getValue());
+                if (!GenericValidator.isBlankOrNull(result.getValue())) {
+                    Dictionary dictionary = dictionaryService.get(subResult.getValue());
 
-                if (dictionary.getId() != null) {
-                    multiResult.append(dictionary.getLocalizedName());
-                    multiResult.append(", ");
+                    if (dictionary.getId() != null) {
+                        multiResult.append(dictionary.getLocalizedName());
+                        multiResult.append(", ");
+                    }
                 }
             }
 
