@@ -22,6 +22,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.DateUtil;
@@ -93,7 +94,7 @@ public class ResultReportingTransfer {
 //                fhirTransformService.CreateFhirFromOESample(eOrder, result);
 //                continue;
 //            }
-            if (result.getReferringOrderNumber().isEmpty()) { // HL7
+            if (!GenericValidator.isBlankOrNull(result.getReferringOrderNumber())) { // HL7
                 ITransmissionResponseHandler responseHandler = new ResultFailHandler(reportingResult);
                 new ReportTransmission().sendHL7Report(resultReport, url, responseHandler);
                 continue;

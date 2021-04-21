@@ -321,7 +321,13 @@ public class LogbookResultsController extends LogbookResultsBaseController {
         }
 
         for (IResultUpdate updater : updaters) {
-            updater.postTransactionalCommitUpdate(actionDataSet);
+            try {
+                updater.postTransactionalCommitUpdate(actionDataSet);
+            } catch (Exception e) {
+                LogEvent.logError(this.getClass().getName(), "showLogbookResultsUpdate",
+                        "error doing a post transactional commit");
+                LogEvent.logError(e);
+            }
         }
 
         redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
