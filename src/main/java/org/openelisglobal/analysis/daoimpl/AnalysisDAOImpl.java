@@ -57,44 +57,44 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         super(Analysis.class);
     }
 
-//	@Override
-//	@SuppressWarnings("rawtypes")
-//	public void deleteData(List analyses) throws LIMSRuntimeException {
-//		// add to audit trail
-//		try {
+//  @Override
+//  @SuppressWarnings("rawtypes")
+//  public void deleteData(List analyses) throws LIMSRuntimeException {
+//      // add to audit trail
+//      try {
 //
-//			for (int i = 0; i < analyses.size(); i++) {
-//				Analysis data = (Analysis) analyses.get(i);
+//          for (int i = 0; i < analyses.size(); i++) {
+//              Analysis data = (Analysis) analyses.get(i);
 //
-//				Analysis oldData = readAnalysis(data.getId());
-//				Analysis newData = new Analysis();
+//              Analysis oldData = readAnalysis(data.getId());
+//              Analysis newData = new Analysis();
 //
-//				String sysUserId = data.getSysUserId();
-//				String event = IActionConstants.AUDIT_TRAIL_DELETE;
-//				String tableName = "ANALYSIS";
-//				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-//			}
-//		} catch (RuntimeException e) {
+//              String sysUserId = data.getSysUserId();
+//              String event = IActionConstants.AUDIT_TRAIL_DELETE;
+//              String tableName = "ANALYSIS";
+//              auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+//          }
+//      } catch (RuntimeException e) {
 //
-//			LogEvent.logError("AnalysisDAOImpl", "AuditTrail deleteData()", e.toString());
-//			throw new LIMSRuntimeException("Error in Analysis AuditTrail deleteData()", e);
-//		}
+//          LogEvent.logError("AnalysisDAOImpl", "AuditTrail deleteData()", e.toString());
+//          throw new LIMSRuntimeException("Error in Analysis AuditTrail deleteData()", e);
+//      }
 //
-//		try {
-//			for (int i = 0; i < analyses.size(); i++) {
-//				Analysis data = (Analysis) analyses.get(i);
-//				// bugzilla 2206
-//				data = readAnalysis(data.getId());
-//				entityManager.unwrap(Session.class).delete(data);
-//				// entityManager.unwrap(Session.class).flush(); // CSL remove old
-//				// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//			}
-//		} catch (RuntimeException e) {
+//      try {
+//          for (int i = 0; i < analyses.size(); i++) {
+//              Analysis data = (Analysis) analyses.get(i);
+//              // bugzilla 2206
+//              data = readAnalysis(data.getId());
+//              entityManager.unwrap(Session.class).delete(data);
+//              // entityManager.unwrap(Session.class).flush(); // CSL remove old
+//              // entityManager.unwrap(Session.class).clear(); // CSL remove old
+//          }
+//      } catch (RuntimeException e) {
 //
-//			LogEvent.logError("AnalysisDAOImpl", "deleteData()", e.toString());
-//			throw new LIMSRuntimeException("Error in Analysis deleteData()", e);
-//		}
-//	}
+//          LogEvent.logError("AnalysisDAOImpl", "deleteData()", e.toString());
+//          throw new LIMSRuntimeException("Error in Analysis deleteData()", e);
+//      }
+//  }
 
     /*
      * Warning: duplicateCheck uses SystemConfiguration setting for excluding status
@@ -103,67 +103,67 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
      * @see org.openelisglobal.analysis.dao.AnalysisDAO#insertData(us.mn.state
      * .health.lims.analysis.valueholder.Analysis, boolean)
      */
-//	@Override
-//	public boolean insertData(Analysis analysis, boolean duplicateCheck) throws LIMSRuntimeException {
+//  @Override
+//  public boolean insertData(Analysis analysis, boolean duplicateCheck) throws LIMSRuntimeException {
 //
-//		try {
+//      try {
 //
-//			if (duplicateCheck) {
-//				if (duplicateExists(analysis)) {
-//					throw new LIMSDuplicateRecordException("Duplicate record exists for this sample and test "
-//							+ analysis.getTest().getTestDisplayValue());
-//				}
-//			}
-//			String id = (String) entityManager.unwrap(Session.class).save(analysis);
-//			analysis.setId(id);
+//          if (duplicateCheck) {
+//              if (duplicateExists(analysis)) {
+//                  throw new LIMSDuplicateRecordException("Duplicate record exists for this sample and test "
+//                          + analysis.getTest().getTestDisplayValue());
+//              }
+//          }
+//          String id = (String) entityManager.unwrap(Session.class).save(analysis);
+//          analysis.setId(id);
 //
-//			// bugzilla 1824 inserts will be logged in history table
+//          // bugzilla 1824 inserts will be logged in history table
 //
-//			String sysUserId = analysis.getSysUserId();
-//			String tableName = "ANALYSIS";
-//			auditDAO.saveNewHistory(analysis, sysUserId, tableName);
+//          String sysUserId = analysis.getSysUserId();
+//          String tableName = "ANALYSIS";
+//          auditDAO.saveNewHistory(analysis, sysUserId, tableName);
 //
-//		} catch (RuntimeException e) {
-//			LogEvent.logError("AnalysisDAOImpl", "insertData()", e.toString());
-//			throw new LIMSRuntimeException("Error in Analysis insertData()", e);
-//		}
+//      } catch (RuntimeException e) {
+//          LogEvent.logError("AnalysisDAOImpl", "insertData()", e.toString());
+//          throw new LIMSRuntimeException("Error in Analysis insertData()", e);
+//      }
 //
-//		return true;
-//	}
+//      return true;
+//  }
 
-//	@Override
-//	public void updateData(Analysis analysis) {
-//		updateData(analysis, false);
-//	}
+//  @Override
+//  public void updateData(Analysis analysis) {
+//      updateData(analysis, false);
+//  }
 //
-//	@Override
-//	public void updateData(Analysis analysis, boolean skipAuditTrail) throws LIMSRuntimeException {
-//		Analysis oldData = readAnalysis(analysis.getId());
+//  @Override
+//  public void updateData(Analysis analysis, boolean skipAuditTrail) throws LIMSRuntimeException {
+//      Analysis oldData = readAnalysis(analysis.getId());
 //
-//		if (!skipAuditTrail) {
-//			try {
+//      if (!skipAuditTrail) {
+//          try {
 //
-//				String sysUserId = analysis.getSysUserId();
-//				String event = IActionConstants.AUDIT_TRAIL_UPDATE;
-//				String tableName = "ANALYSIS";
-//				auditDAO.saveHistory(analysis, oldData, sysUserId, event, tableName);
-//			} catch (RuntimeException e) {
-//				LogEvent.logError("AnalysisDAOImpl", "AuditTrail updateData()", e.toString());
-//				throw new LIMSRuntimeException("Error in Analysis AuditTrail updateData()", e);
-//			}
-//		}
+//              String sysUserId = analysis.getSysUserId();
+//              String event = IActionConstants.AUDIT_TRAIL_UPDATE;
+//              String tableName = "ANALYSIS";
+//              auditDAO.saveHistory(analysis, oldData, sysUserId, event, tableName);
+//          } catch (RuntimeException e) {
+//              LogEvent.logError("AnalysisDAOImpl", "AuditTrail updateData()", e.toString());
+//              throw new LIMSRuntimeException("Error in Analysis AuditTrail updateData()", e);
+//          }
+//      }
 //
-//		try {
-//			entityManager.unwrap(Session.class).merge(analysis);
-//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//			// entityManager.unwrap(Session.class).evict // CSL remove old(analysis);
-//			// entityManager.unwrap(Session.class).refresh // CSL remove old(analysis);
-//		} catch (RuntimeException e) {
-//			LogEvent.logError("AnalysisDAOImpl", "updateData()", e.toString());
-//			throw new LIMSRuntimeException("Error in Analysis updateData()", e);
-//		}
-//	}
+//      try {
+//          entityManager.unwrap(Session.class).merge(analysis);
+//          // entityManager.unwrap(Session.class).flush(); // CSL remove old
+//          // entityManager.unwrap(Session.class).clear(); // CSL remove old
+//          // entityManager.unwrap(Session.class).evict // CSL remove old(analysis);
+//          // entityManager.unwrap(Session.class).refresh // CSL remove old(analysis);
+//      } catch (RuntimeException e) {
+//          LogEvent.logError("AnalysisDAOImpl", "updateData()", e.toString());
+//          throw new LIMSRuntimeException("Error in Analysis updateData()", e);
+//      }
+//  }
 
     @Override
     @Transactional(readOnly = true)
@@ -182,50 +182,50 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         }
     }
 
-//	@Override
-//	@SuppressWarnings("rawtypes")
-//	public List getAllAnalyses() throws LIMSRuntimeException {
-//		List list ;
-//		try {
-//			String sql = "from Analysis a order by a.id";
-//			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-//			list = query.list();
-//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (RuntimeException e) {
+//  @Override
+//  @SuppressWarnings("rawtypes")
+//  public List getAllAnalyses() throws LIMSRuntimeException {
+//      List list ;
+//      try {
+//          String sql = "from Analysis a order by a.id";
+//          org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+//          list = query.list();
+//          // entityManager.unwrap(Session.class).flush(); // CSL remove old
+//          // entityManager.unwrap(Session.class).clear(); // CSL remove old
+//      } catch (RuntimeException e) {
 //
-//			LogEvent.logError("AnalysisDAOImpl", "getAllAnalyses()", e.toString());
-//			throw new LIMSRuntimeException("Error in Analysis getAllAnalyses()", e);
-//		}
+//          LogEvent.logError("AnalysisDAOImpl", "getAllAnalyses()", e.toString());
+//          throw new LIMSRuntimeException("Error in Analysis getAllAnalyses()", e);
+//      }
 //
-//		return list;
-//	}
+//      return list;
+//  }
 
-//	@Override
-//	@SuppressWarnings("rawtypes")
-//	public List getPageOfAnalyses(int startingRecNo) throws LIMSRuntimeException {
-//		List list ;
+//  @Override
+//  @SuppressWarnings("rawtypes")
+//  public List getPageOfAnalyses(int startingRecNo) throws LIMSRuntimeException {
+//      List list ;
 //
-//		try {
-//			// calculate maxRow to be one more than the page size
-//			int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
+//      try {
+//          // calculate maxRow to be one more than the page size
+//          int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 //
-//			String sql = "from Analysis a order by a.id";
-//			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-//			query.setFirstResult(startingRecNo - 1);
-//			query.setMaxResults(endingRecNo - 1);
+//          String sql = "from Analysis a order by a.id";
+//          org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+//          query.setFirstResult(startingRecNo - 1);
+//          query.setMaxResults(endingRecNo - 1);
 //
-//			list = query.list();
-//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (RuntimeException e) {
+//          list = query.list();
+//          // entityManager.unwrap(Session.class).flush(); // CSL remove old
+//          // entityManager.unwrap(Session.class).clear(); // CSL remove old
+//      } catch (RuntimeException e) {
 //
-//			LogEvent.logError("AnalysisDAOImpl", "getPageOfAnalyses()", e.toString());
-//			throw new LIMSRuntimeException("Error in Analysis getPageOfAnalyses()", e);
-//		}
+//          LogEvent.logError("AnalysisDAOImpl", "getPageOfAnalyses()", e.toString());
+//          throw new LIMSRuntimeException("Error in Analysis getPageOfAnalyses()", e);
+//      }
 //
-//		return list;
-//	}
+//      return list;
+//  }
 
     public Analysis readAnalysis(String idString) {
         Analysis analysis = null;
@@ -240,64 +240,64 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         return analysis;
     }
 
-//	@Override
-//	@SuppressWarnings("rawtypes")
-//	public List getAnalyses(String filter) throws LIMSRuntimeException {
-//		List list ;
-//		try {
-//			String sql = "from Analysis a where upper(a.analysisType) like upper(:param) order by upper(a.analysisType)";
-//			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-//			query.setParameter("param", filter + "%");
-//			list = query.list();
-//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (RuntimeException e) {
+//  @Override
+//  @SuppressWarnings("rawtypes")
+//  public List getAnalyses(String filter) throws LIMSRuntimeException {
+//      List list ;
+//      try {
+//          String sql = "from Analysis a where upper(a.analysisType) like upper(:param) order by upper(a.analysisType)";
+//          org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+//          query.setParameter("param", filter + "%");
+//          list = query.list();
+//          // entityManager.unwrap(Session.class).flush(); // CSL remove old
+//          // entityManager.unwrap(Session.class).clear(); // CSL remove old
+//      } catch (RuntimeException e) {
 //
-//			LogEvent.logError("AnalysisDAOImpl", "getAnalyses()", e.toString());
-//			throw new LIMSRuntimeException("Error in Analysis getAnalyses(String filter)", e);
-//		}
+//          LogEvent.logError("AnalysisDAOImpl", "getAnalyses()", e.toString());
+//          throw new LIMSRuntimeException("Error in Analysis getAnalyses(String filter)", e);
+//      }
 //
-//		return list;
+//      return list;
 //
-//	}
+//  }
 
-//	@Override
-//	@SuppressWarnings("rawtypes")
-//	public List getNextAnalysisRecord(String id) throws LIMSRuntimeException {
+//  @Override
+//  @SuppressWarnings("rawtypes")
+//  public List getNextAnalysisRecord(String id) throws LIMSRuntimeException {
 //
-//		return getNextRecord(id, "Analysis", Analysis.class);
+//      return getNextRecord(id, "Analysis", Analysis.class);
 //
-//	}
+//  }
 //
-//	@Override
-//	@SuppressWarnings("rawtypes")
-//	public List getPreviousAnalysisRecord(String id) throws LIMSRuntimeException {
+//  @Override
+//  @SuppressWarnings("rawtypes")
+//  public List getPreviousAnalysisRecord(String id) throws LIMSRuntimeException {
 //
-//		return getPreviousRecord(id, "Analysis", Analysis.class);
-//	}
+//      return getPreviousRecord(id, "Analysis", Analysis.class);
+//  }
 
-//	@Override
-//	@SuppressWarnings({ "rawtypes", "unchecked" })
-//	public List getAllAnalysesPerTest(Test test) throws LIMSRuntimeException {
-//		List list ;
-//		try {
-//			String sql = "from Analysis a where a.test = :testId and (a.status is null or a.status NOT IN (:exclusionList)) order by a.sampleItem.sample.accessionNumber";
-//			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-//			query.setInteger("testId", Integer.parseInt(test.getId()));
-//			List statusesToExclude = new ArrayList();
-//			statusesToExclude.add(SystemConfiguration.getInstance().getAnalysisStatusCanceled());
-//			query.setParameterList("exclusionList", statusesToExclude);
-//			list = query.list();
-//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (RuntimeException e) {
+//  @Override
+//  @SuppressWarnings({ "rawtypes", "unchecked" })
+//  public List getAllAnalysesPerTest(Test test) throws LIMSRuntimeException {
+//      List list ;
+//      try {
+//          String sql = "from Analysis a where a.test = :testId and (a.status is null or a.status NOT IN (:exclusionList)) order by a.sampleItem.sample.accessionNumber";
+//          org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+//          query.setInteger("testId", Integer.parseInt(test.getId()));
+//          List statusesToExclude = new ArrayList();
+//          statusesToExclude.add(SystemConfiguration.getInstance().getAnalysisStatusCanceled());
+//          query.setParameterList("exclusionList", statusesToExclude);
+//          list = query.list();
+//          // entityManager.unwrap(Session.class).flush(); // CSL remove old
+//          // entityManager.unwrap(Session.class).clear(); // CSL remove old
+//      } catch (RuntimeException e) {
 //
-//			LogEvent.logError("AnalysisDAOImpl", "getAllAnalysesPerTest()", e.toString());
-//			throw new LIMSRuntimeException("Error in Analysis getAllAnalysesPerTest()", e);
-//		}
+//          LogEvent.logError("AnalysisDAOImpl", "getAllAnalysesPerTest()", e.toString());
+//          throw new LIMSRuntimeException("Error in Analysis getAllAnalysesPerTest()", e);
+//      }
 //
-//		return list;
-//	}
+//      return list;
+//  }
 
     @Override
     @Transactional(readOnly = true)
@@ -405,7 +405,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             throw new LIMSRuntimeException("Error in Analysis getAllAnalysisByTestSectionAndStatuses()", e);
         }
     }
-    
+
     @Override
     @Transactional(readOnly = true)
     public List<Analysis> getPageAnalysisByTestSectionAndStatus(String testSectionId, List<Integer> statusIdList,
@@ -422,11 +422,11 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             }
 
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            
+
             query.setInteger("testSectionId", Integer.parseInt(testSectionId));
             query.setParameterList("statusIdList", statusIdList);
             query.setMaxResults(IActionConstants.VALIDATION_PAGING_SIZE);
-            
+
             return query.list();
         } catch (RuntimeException e) {
 
@@ -434,53 +434,29 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             throw new LIMSRuntimeException("Error in Analysis getAllAnalysisByTestSectionAndStatuses()", e);
         }
     }
-    
+
     @Override
     @Transactional(readOnly = true)
     public List<Analysis> getPageAnalysisAtAccessionNumberAndStatus(String accessionNumber, List<Integer> statusIdList,
             boolean sortedByDateAndAccession) throws LIMSRuntimeException {
-        
-        //  if prefix is numeric then used it else not
-        String anumBegin="";
-        String sql = "";
-        try {
-            int i = Integer.parseInt(accessionNumber.substring(0,7));
-            anumBegin = accessionNumber;
-            sql = "from Analysis a "
-                    + " where a.sampleItem.sample.accessionNumber "
-                    + " between :anumBegin and :anumEnd "
-                    + " and a.statusId NOT IN (:statusIdList)  "
-                    + " order by a.sampleItem.sample.accessionNumber ";
-        } catch (NumberFormatException nfe) {
-            anumBegin = accessionNumber.substring(accessionNumber.length() - 13);
-            sql = "from Analysis a "
-                    + " where right(a.sampleItem.sample.accessionNumber,13) "
-                    + " between :anumBegin and :anumEnd "
-                    + " and a.statusId NOT IN (:statusIdList)  "
-                    + " order by a.sampleItem.sample.accessionNumber ";
-        }
-        
-        try {
-            String anumEnd = "99999999999999999999";
-            
-            if (sortedByDateAndAccession) {
-                // sql += " order by a.sampleItem.sample.receivedTimestamp asc,
-                // a.sampleItem.sample.accessionNumber";
-            }
 
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            
-            query.setParameter("anumBegin", String.valueOf((anumBegin)));
-            query.setParameter("anumEnd", String.valueOf((anumEnd)));
-            
+        String hql = "from Analysis a "//
+                + " where a.sampleItem.sample.accessionNumber >= :accessionNumber"//
+                + " and length(a.sampleItem.sample.accessionNumber) = length(:accessionNumber)  "//
+                + " and a.statusId IN (:statusIdList)  "//
+                + " order by a.sampleItem.sample.accessionNumber";
+        try {
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(hql);
+
+            query.setParameter("accessionNumber", accessionNumber);
             query.setParameterList("statusIdList", statusIdList);
             query.setMaxResults(IActionConstants.VALIDATION_PAGING_SIZE);
-            
+
             return query.list();
         } catch (RuntimeException e) {
 
             LogEvent.logError(e.toString(), e);
-            throw new LIMSRuntimeException("Error in Analysis getAllAnalysisByTestSectionAndStatuses()", e);
+            throw new LIMSRuntimeException("Error in Analysis getPageAnalysisAtAccessionNumberAndStatus()", e);
         }
     }
 
@@ -1123,37 +1099,37 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
     }
 
-//	@Override
-//	@SuppressWarnings({ "rawtypes", "unchecked" })
-//	protected boolean duplicateExists(Analysis analysis) {
-//		try {
+//  @Override
+//  @SuppressWarnings({ "rawtypes", "unchecked" })
+//  protected boolean duplicateExists(Analysis analysis) {
+//      try {
 //
-//			List list = new ArrayList();
+//          List list = new ArrayList();
 //
-//			String sql = "from Analysis a where a.sampleItem = :param and a.test = :param2 and a.status NOT IN (:param3)";
-//			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-//			query.setParameter("param", analysis.getSampleItem());
-//			query.setParameter("param2", analysis.getTest());
-//			List statusesToExclude = new ArrayList();
-//			statusesToExclude.add(SystemConfiguration.getInstance().getAnalysisStatusCanceled());
-//			query.setParameterList("param3", statusesToExclude);
+//          String sql = "from Analysis a where a.sampleItem = :param and a.test = :param2 and a.status NOT IN (:param3)";
+//          org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+//          query.setParameter("param", analysis.getSampleItem());
+//          query.setParameter("param2", analysis.getTest());
+//          List statusesToExclude = new ArrayList();
+//          statusesToExclude.add(SystemConfiguration.getInstance().getAnalysisStatusCanceled());
+//          query.setParameterList("param3", statusesToExclude);
 //
-//			list = query.list();
-//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+//          list = query.list();
+//          // entityManager.unwrap(Session.class).flush(); // CSL remove old
+//          // entityManager.unwrap(Session.class).clear(); // CSL remove old
 //
-//			if (list.size() > 0) {
-//				return true;
-//			} else {
-//				return false;
-//			}
+//          if (list.size() > 0) {
+//              return true;
+//          } else {
+//              return false;
+//          }
 //
-//		} catch (RuntimeException e) {
+//      } catch (RuntimeException e) {
 //
-//			LogEvent.logError("AnalysisDAOImpl", "duplicateAnalysisExists()", e.toString());
-//			throw new LIMSRuntimeException("Error in duplicateAnalysisExists()", e);
-//		}
-//	}
+//          LogEvent.logError("AnalysisDAOImpl", "duplicateAnalysisExists()", e.toString());
+//          throw new LIMSRuntimeException("Error in duplicateAnalysisExists()", e);
+//      }
+//  }
 
     @Override
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -1773,7 +1749,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
         return 0;
     }
-    
+
     @Override
     public int getCountAnalysisByTestSectionAndStatus(String testSectionId, List<Integer> analysisStatusList ) {
 
@@ -1794,46 +1770,46 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         return 0;
     }
 
-//	@Override
-//	public Analysis getPatientPreviousAnalysisForTestName(Patient patient, Sample currentSample, String testName) {
-//		Analysis previousAnalysis = null;
-//		List<Integer> sampIDList = new ArrayList<>();
-//		List<Integer> testIDList = new ArrayList<>();
-////		TestDAO testDAO = new TestDAOImpl();
-////		SampleHumanDAO sampleHumanDAO = new SampleHumanDAOImpl();
+//  @Override
+//  public Analysis getPatientPreviousAnalysisForTestName(Patient patient, Sample currentSample, String testName) {
+//      Analysis previousAnalysis = null;
+//      List<Integer> sampIDList = new ArrayList<>();
+//      List<Integer> testIDList = new ArrayList<>();
+////        TestDAO testDAO = new TestDAOImpl();
+////        SampleHumanDAO sampleHumanDAO = new SampleHumanDAOImpl();
 //
-//		List<Sample> sampList = sampleHumanService.getSamplesForPatient(patient.getId());
+//      List<Sample> sampList = sampleHumanService.getSamplesForPatient(patient.getId());
 //
-//		if (sampList.isEmpty() || testService.getTestByName(testName) == null) {
-//			return previousAnalysis;
-//		}
+//      if (sampList.isEmpty() || testService.getTestByName(testName) == null) {
+//          return previousAnalysis;
+//      }
 //
-//		testIDList.add(Integer.parseInt(testService.getTestByName(testName).getId()));
+//      testIDList.add(Integer.parseInt(testService.getTestByName(testName).getId()));
 //
-//		for (Sample sample : sampList) {
-//			sampIDList.add(Integer.parseInt(sample.getId()));
-//		}
+//      for (Sample sample : sampList) {
+//          sampIDList.add(Integer.parseInt(sample.getId()));
+//      }
 //
-//		List<Integer> statusList = new ArrayList<>();
-//		statusList.add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized)));
+//      List<Integer> statusList = new ArrayList<>();
+//      statusList.add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized)));
 //
-////		AnalysisDAO analysisDAO = new AnalysisDAOImpl();
-//		List<Analysis> analysisList = getAnalysesBySampleIdTestIdAndStatusId(sampIDList, testIDList, statusList);
+////        AnalysisDAO analysisDAO = new AnalysisDAOImpl();
+//      List<Analysis> analysisList = getAnalysesBySampleIdTestIdAndStatusId(sampIDList, testIDList, statusList);
 //
-//		if (analysisList == null || analysisList.isEmpty()) {
-//			return previousAnalysis;
-//		}
+//      if (analysisList == null || analysisList.isEmpty()) {
+//          return previousAnalysis;
+//      }
 //
-//		for (int i = 0; i < analysisList.size(); i++) {
-//			if (i < analysisList.size() - 1 && currentSample.getAccessionNumber()
-//					.equals(analysisList.get(i).getSampleItem().getSample().getAccessionNumber())) {
-//				previousAnalysis = analysisList.get(i + 1);
-//				return previousAnalysis;
-//			}
+//      for (int i = 0; i < analysisList.size(); i++) {
+//          if (i < analysisList.size() - 1 && currentSample.getAccessionNumber()
+//                  .equals(analysisList.get(i).getSampleItem().getSample().getAccessionNumber())) {
+//              previousAnalysis = analysisList.get(i + 1);
+//              return previousAnalysis;
+//          }
 //
-//		}
-//		return previousAnalysis;
+//      }
+//      return previousAnalysis;
 //
-//	}
+//  }
 
 }

@@ -18,9 +18,10 @@ package org.openelisglobal.common.provider.validation;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.Set;
 
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.provider.validation.IAccessionNumberValidator.ValidationResults;
+import org.openelisglobal.common.service.AccessionService;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.DateUtil;
@@ -31,8 +32,8 @@ import org.openelisglobal.spring.util.SpringContext;
 public abstract class BaseSiteYearAccessionValidator {
 
     protected SampleService sampleService = SpringContext.getBean(SampleService.class);
+    protected AccessionService accessionService = SpringContext.getBean(AccessionService.class);
 
-    protected static final String INCREMENT_STARTING_VALUE = "0000000000001";
     protected static final long UPPER_INC_RANGE = 9999999999999L;
     protected static final int SITE_START = 0;
     protected int SITE_END = getSiteEndIndex();
@@ -48,11 +49,6 @@ public abstract class BaseSiteYearAccessionValidator {
         return NEED_PROGRAM_CODE;
     }
 
-    // input parameter is not used in this case
-    public String createFirstAccessionNumber(String nullPrefix) {
-        return getPrefix() + DateUtil.getTwoDigitYear() + INCREMENT_STARTING_VALUE;
-    }
-
     public String getInvalidMessage(ValidationResults results) {
         String suggestedAccessionNumber = getNextAvailableAccessionNumber(null, true);
 
@@ -63,61 +59,32 @@ public abstract class BaseSiteYearAccessionValidator {
 
     // input parameter is not used in this case
     public String getNextAvailableAccessionNumber(String nullPrefix, boolean reserve) {
-
         String nextAccessionNumber;
-
-        String curLargestAccessionNumber = sampleService.getLargestAccessionNumberMatchingPattern(getPrefix(),
-                getMaxAccessionLength());
-
-        Set<String> reservedNumbers = getReservedNumbers();
-        if (curLargestAccessionNumber == null) {
-            if (reservedNumbers.isEmpty()) {
-                nextAccessionNumber = createFirstAccessionNumber(null);
+        do {
+            if (reserve) {
+                nextAccessionNumber = incrementAccessionNumber();
             } else {
-                nextAccessionNumber = reservedNumbers.iterator().next();
+                nextAccessionNumber = incrementAccessionNumberNoReserve();
             }
-        } else {
-            nextAccessionNumber = incrementAccessionNumber(curLargestAccessionNumber);
-        }
-
-        while (reservedNumbers.contains(nextAccessionNumber)) {
-            nextAccessionNumber = incrementAccessionNumber(nextAccessionNumber);
-        }
-
-        reservedNumbers.add(nextAccessionNumber);
-
+        } while (accessionNumberIsUsed(nextAccessionNumber, null));
         return nextAccessionNumber;
     }
 
-    public String incrementAccessionNumber(String currentHighAccessionNumber) throws IllegalArgumentException {
-        // if the year differs then start the sequence again. If not then
-        // increment but check for overflow into year
-        int year = new GregorianCalendar().get(Calendar.YEAR) - 2000;
-
-        try {
-            if (year != Integer.parseInt(currentHighAccessionNumber.substring(YEAR_START, YEAR_END))) {
-                return createFirstAccessionNumber(null);
-            }
-        } catch (NumberFormatException e) {
-            return createFirstAccessionNumber(null);
+    // input parameter is not used in this case
+    public String getNextAccessionNumber(String nullPrefix, boolean reserve) {
+        if (!reserve) {
+            LogEvent.logWarn(BaseSiteYearAccessionValidator.class.getName(), "getNextAvailableAccessionNumber",
+                    "this generator always reserves");
         }
-
-        Long increment = Long.parseLong(currentHighAccessionNumber.substring(INCREMENT_START));
-        String incrementAsString;
-
-        if (increment < UPPER_INC_RANGE) {
-            increment++;
-            incrementAsString = String.format("%013d", increment);
-        } else {
-            throw new IllegalArgumentException("AccessionNumber has no next value");
-        }
-
-        return currentHighAccessionNumber.substring(SITE_START, YEAR_END) + incrementAsString;
+        return incrementAccessionNumber();
     }
+
+    public abstract String incrementAccessionNumber() throws IllegalArgumentException;
+
+    public abstract String incrementAccessionNumberNoReserve() throws IllegalArgumentException;
 
     // recordType parameter is not used in this case
     public boolean accessionNumberIsUsed(String accessionNumber, String recordType) {
-
         return sampleService.getSampleByAccessionNumber(accessionNumber) != null;
     }
 
@@ -206,7 +173,7 @@ public abstract class BaseSiteYearAccessionValidator {
         return format.toString();
     }
 
-    protected abstract Set<String> getReservedNumbers();
+//    protected abstract Set<String> getReservedNumbers();
 
     protected abstract String getPrefix();
 
@@ -224,5 +191,4 @@ public abstract class BaseSiteYearAccessionValidator {
 
     protected abstract int getChangeableLength();
 
-    protected abstract String getOverrideStartingAt();
 }
