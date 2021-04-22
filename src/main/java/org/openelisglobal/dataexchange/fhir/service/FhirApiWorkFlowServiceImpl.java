@@ -350,9 +350,6 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         List<ServiceRequest> remoteServiceRequests = getBasedOnServiceRequestsFromServer(sourceFhirClient, remoteTask);
 
         Task taskBasedOnRemoteTask = getLocalTaskBasedOnTask(remoteTask, remoteStorePath);
-        if (taskBasedOnRemoteTask != null) {
-            return;
-        }
         if (taskBasedOnRemoteTask == null) {
             taskBasedOnRemoteTask = saveTaskBasedOnRemoteTask(sourceFhirClient, remoteTask, bundle, remoteStorePath);
         }
@@ -382,9 +379,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         TaskResult taskResult = null;
 //            if (localTask.getStatus() == null || !(localTask.getStatus().equals(TaskStatus.ACCEPTED)
 //                    || localTask.getStatus().equals(TaskStatus.COMPLETED))) {
-        if (localTask.getStatus() == null || !(localTask.getStatus().equals(TaskStatus.RECEIVED)
-                || localTask.getStatus().equals(TaskStatus.ACCEPTED)
-                || localTask.getStatus().equals(TaskStatus.COMPLETED))) {
+        if (localTask.getStatus() == null || localTask.getStatus().equals(TaskStatus.REQUESTED)) {
             Boolean taskOrderAcceptedFlag = false;
             for (ServiceRequest serviceRequest : serviceRequestList) {
 
