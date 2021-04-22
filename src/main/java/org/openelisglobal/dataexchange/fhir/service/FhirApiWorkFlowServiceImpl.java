@@ -300,10 +300,10 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
     }
 
     private void beginTaskImportOrderPath(String remoteStorePath) {
-        LogEvent.logDebug(this.getClass().getName(), "beginTaskPath", "searching for Tasks");
         if (remoteStoreIdentifier.isEmpty()) {
             return;
         }
+        LogEvent.logDebug(this.getClass().getName(), "beginTaskPath", "searching for Tasks");
         IGenericClient sourceFhirClient = fhirUtil.getFhirClient(remoteStorePath);
         IQuery<Bundle> searchQuery = sourceFhirClient.search()//
                 .forResource(Task.class)//
@@ -330,7 +330,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
                 try {
                     processTaskImportOrder(remoteTask, remoteStorePath, sourceFhirClient, bundle);
                 } catch (RuntimeException e) {
-                    e.printStackTrace();
+                    LogEvent.logError(e);
                     LogEvent.logError(this.getClass().getName(), "beginTaskPath",
                             "could not process Task with identifier : " + remoteTask.getId());
                 }

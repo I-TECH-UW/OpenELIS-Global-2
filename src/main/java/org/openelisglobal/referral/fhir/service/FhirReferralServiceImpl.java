@@ -1,6 +1,7 @@
 package org.openelisglobal.referral.fhir.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -114,6 +115,8 @@ public class FhirReferralServiceImpl implements FhirReferralService {
                 .get(referralOrganizationId);
         Organization fhirOrg = getFhirOrganization(referralOrganization);
         if (fhirOrg == null) {
+            LogEvent.logError(this.getClass().getName(), "referAnalysisesToOrganization",
+                    "no fhir organization provided");
             // organization doesn't exist as fhir organization, cannot refer automatically
             return new Bundle();
         }
@@ -150,6 +153,7 @@ public class FhirReferralServiceImpl implements FhirReferralService {
         if (!remoteStoreIdentifier.isEmpty()) {
             task.setRequester(new Reference(remoteStoreIdentifier.get(0)));
         }
+        task.setAuthoredOn(new Date());
         task.setStatus(TaskStatus.REQUESTED);
         task.setFor(fhirTransformService.createReferenceFor(patient));
         task.setBasedOn(serviceRequests.stream().map(e -> fhirTransformService.createReferenceFor(e))
