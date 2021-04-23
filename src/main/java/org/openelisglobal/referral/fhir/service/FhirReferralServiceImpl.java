@@ -166,10 +166,12 @@ public class FhirReferralServiceImpl implements FhirReferralService {
     @Override
     @Transactional
     public void setReferralResult(ReferralResultsImportObjects resultsImport) {
+        // TODO make this work for multiple service requests
         Analysis analysis = analysisService
                 .getMatch("fhirUuid",
                         UUID.fromString(
-                                resultsImport.originalReferralObjects.serviceRequest.getIdElement().getIdPart()))
+                                resultsImport.originalReferralObjects.serviceRequests.get(0).getIdElement()
+                                        .getIdPart()))
                 .orElseThrow();
         List<Result> currentResults = resultService.getResultsByAnalysis(analysis);
 
