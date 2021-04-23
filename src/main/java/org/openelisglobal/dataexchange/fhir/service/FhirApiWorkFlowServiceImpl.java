@@ -8,7 +8,6 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.instance.model.api.IDomainResource;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Bundle.BundleEntryComponent;
@@ -466,18 +465,17 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
             fhirOperations.updateResources.put(localTask.getIdElement().getIdPart(), localTask);
         }
 
-        if (localTask.hasEncounter()) {
-            replaceLocalReferenceWithAbsoluteReference(remoteStorePath, localTask.getEncounter());
-        }
-        if (localTask.hasOwner()) {
-            replaceLocalReferenceWithAbsoluteReference(remoteStorePath, localTask.getOwner());
-        }
+//        if (localTask.hasEncounter()) {
+//            replaceLocalReferenceWithAbsoluteReference(remoteStorePath, localTask.getEncounter());
+//        }
+//        if (localTask.hasOwner()) {
+//            replaceLocalReferenceWithAbsoluteReference(remoteStorePath, localTask.getOwner());
+//        }
 
         // ServiceRequests
 //      List<ServiceRequest> basedOnServiceRequests = getBasedOnServiceRequestFromBundle(bundle, remoteTask);
-        Optional<ServiceRequest> localBasedOn = null;
         for (ServiceRequest remoteBasedOn : remoteServiceRequests) {
-            localBasedOn = getServiceRequestWithSameIdentifier(remoteBasedOn, remoteStorePath);
+            Optional<ServiceRequest> localBasedOn = getServiceRequestWithSameIdentifier(remoteBasedOn, remoteStorePath);
             if (localBasedOn.isEmpty()) {
                 fhirOperations.createResources.put(idGenerator.getNextId(),
                         remoteBasedOn.addIdentifier(createIdentifierToRemoteResource(remoteBasedOn, remoteStorePath)));
@@ -513,15 +511,10 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         for (ServiceRequest serviceRequest : serviceRequests) {
             if (serviceRequest.getSubject() != null && serviceRequest.getSubject().getReference() != null) {
                 patients.add(fhirClient.read().resource(Patient.class)
-                        .withId(serviceRequest.getSubject().getReference()).execute());
+                        .withId(serviceRequest.getSubject().getReferenceElement().getIdPart()).execute());
             }
         }
         return patients;
-    }
-
-    private void replaceLocalReferenceWithAbsoluteReference(String fhirStorePath, Reference reference) {
-        reference.setReference(fhirStorePath + reference.getReference());
-
     }
 
     private Identifier createIdentifierToRemoteResource(IDomainResource remoteResource, String remoteStorePath) {
@@ -572,57 +565,25 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         List<ServiceRequest> basedOn = new ArrayList<>();
         for (Reference basedOnElement : remoteTask.getBasedOn()) {
             basedOn.add(
-                    fhirClient.read().resource(ServiceRequest.class).withId(basedOnElement.getReference()).execute());
+                    fhirClient.read().resource(ServiceRequest.class)
+                            .withId(basedOnElement.getReferenceElement().getIdPart()).execute());
         }
         return basedOn;
     }
 
     private Patient getForPatientFromServer(IGenericClient fhirClient, Task remoteTask) {
-        if (remoteTask.getFor() == null || remoteTask.getFor().getReference() == null) {
-            return null;
-        }
-        Patient forPatient = fhirClient.read().resource(Patient.class).withId(remoteTask.getFor().getReference())
+        Patient forPatient = null;
+        if (!(remoteTask.getFor() == null || remoteTask.getFor().getReference() == null)) {
+            forPatient = fhirClient.read().resource(Patient.class)
+                    .withId(remoteTask.getFor().getReferenceElement().getIdPart())
                 .execute();
+        }
+
+        if (forPatient == null ) {
+            LogEvent.logWarn(this.getClass().getName(), "getForPatientFromServer",
+                    "remoteTask doesn't reference a patient, or referenced patient returned null");
+        }
         return forPatient;
-    }
-
-    // these methods can find the results in the bundle when include is used instead
-    // of reaching back to the server
-    private List<ServiceRequest> getBasedOnServiceRequestFromBundle(Bundle bundle, Task task) {
-        List<ServiceRequest> basedOn = new ArrayList<>();
-        for (Reference reference : task.getBasedOn()) {
-            basedOn.add((ServiceRequest) findResourceInBundle(bundle, reference.getReference()));
-        }
-        return basedOn;
-    }
-
-    private Patient getForPatientFromBundle(Bundle bundle, Task task) {
-        if (task.getFor() != null && task.getFor().getReference() != null) {
-            return (Patient) findResourceInBundle(bundle, task.getFor().getReference());
-        } else {
-            return null;
-        }
-    }
-
-    private IBaseResource findResourceInBundle(Bundle bundle, String reference) {
-        for (BundleEntryComponent bundleComponent : bundle.getEntry()) {
-            if (bundleComponent.hasResource() && bundleComponent.getFullUrl().endsWith(reference)) {
-                return bundleComponent.getResource();
-            }
-        }
-        return null;
-
-    }
-
-    private List<Patient> getForPatientFromBundle(Bundle bundle, List<ServiceRequest> serviceRequestList) {
-        List<Patient> patients = new ArrayList<>();
-
-        for (ServiceRequest serviceRequest : serviceRequestList) {
-            if (serviceRequest.getSubject() != null && serviceRequest.getSubject().getReference() != null) {
-                patients.add((Patient) findResourceInBundle(bundle, serviceRequest.getSubject().getReference()));
-            }
-        }
-        return patients;
     }
 
     public class OriginalReferralObjects {
