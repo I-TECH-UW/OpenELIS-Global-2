@@ -17,6 +17,8 @@ import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Bundle.BundleEntryComponent;
 import org.hl7.fhir.r4.model.Resource;
 import org.hl7.fhir.r4.model.ResourceType;
+import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.DisplayListService.ListType;
 import org.openelisglobal.dataexchange.fhir.FhirUtil;
@@ -119,6 +121,7 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
         }
 
         for (OrganizationObjects organizationObjects : organizationObjectsByOrgUUID.values()) {
+            try {
             Organization curOrganization = organizationObjects.organization;
             // ensure the parent org is in the db
             if (!GenericValidator.isBlankOrNull(organizationObjects.parentUUID)) {
@@ -141,6 +144,12 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
                 OrganizationType orgType = dbOrgTypesByName.get(orgTypeName);
                 dbOrg.getOrganizationTypes().add(orgType);
                 orgType.getOrganizations().add(dbOrg);
+            }
+            } catch (LIMSRuntimeException e) {
+                LogEvent.logError(e);
+                LogEvent.logError(this.getClass().getName(), "",
+                        "error importing an organization with id: "
+                                + organizationObjects.organization.getFhirUuidAsString());
             }
 
         }

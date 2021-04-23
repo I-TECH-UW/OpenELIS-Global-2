@@ -347,7 +347,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         task.setId(sample.getFhirUuidAsString());
 
         List<ElectronicOrder> eOrders = electronicOrderService.getElectronicOrdersByExternalId(sample.getReferringId());
-        if (eOrders.size() > 0) {
+        if (eOrders.size() > 0 && ElectronicOrderType.FHIR.equals(eOrders.get(0).getType())) {
             Task referredTask = fhirPersistanceService.getTaskBasedOnServiceRequest(sample.getReferringId())
                     .orElseThrow();
             Task preCreatedTask = fhirPersistanceService.getTaskBasedOnTask(referredTask.getIdElement().getIdPart())

@@ -116,13 +116,14 @@ public class FhirTransformationController extends BaseController {
         response.getWriter().println("sample batches failed: " + batchFailure);
     }
 
-    private void waitForResults(List<Future<Bundle>> promises) {
+    private void waitForResults(List<Future<Bundle>> promises) throws Exception {
         for (Future<Bundle> promise : promises) {
             try {
                 promise.get();
             } catch (InterruptedException | ExecutionException e) {
-                LogEvent.logErrorStack(e);
+                LogEvent.logError(e);
                 LogEvent.logError(this.getClass().getName(), "waitForResults", "Error getting value from thread");
+                throw new Exception();
             }
         }
 

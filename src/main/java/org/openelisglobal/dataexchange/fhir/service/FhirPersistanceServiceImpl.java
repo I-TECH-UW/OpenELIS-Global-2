@@ -30,6 +30,7 @@ import org.openelisglobal.dataexchange.fhir.exception.FhirLocalPersistingExcepti
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 
 @Service
@@ -59,6 +60,8 @@ public class FhirPersistanceServiceImpl implements FhirPersistanceService {
     private FhirConfig fhirConfig;
     @Autowired
     private FhirUtil fhirUtil;
+    @Autowired
+    private FhirContext fhirContext;
 
     IGenericClient localFhirClient;
 
@@ -114,7 +117,11 @@ public class FhirPersistanceServiceImpl implements FhirPersistanceService {
         addCreateToTransactionBundle(createResources, transactionBundle);
         Bundle transactionResponseBundle = new Bundle();
         try {
+            LogEvent.logDebug(this.getClass().getName(), "",
+                    "creating resources: " + fhirContext.newJsonParser().encodeResourceToString(transactionBundle));
             transactionResponseBundle = localFhirClient.transaction().withBundle(transactionBundle).execute();
+            LogEvent.logDebug(this.getClass().getName(), "", "created resources: "
+                    + fhirContext.newJsonParser().encodeResourceToString(transactionResponseBundle));
         } catch (Exception e) {
             LogEvent.logError(e);
             throw new FhirLocalPersistingException(e);
@@ -140,7 +147,11 @@ public class FhirPersistanceServiceImpl implements FhirPersistanceService {
         }
         Bundle transactionResponseBundle = new Bundle();
         try {
+            LogEvent.logDebug(this.getClass().getName(), "",
+                    "creating resources: " + fhirContext.newJsonParser().encodeResourceToString(transactionBundle));
             transactionResponseBundle = localFhirClient.transaction().withBundle(transactionBundle).execute();
+            LogEvent.logDebug(this.getClass().getName(), "", "created resources: "
+                    + fhirContext.newJsonParser().encodeResourceToString(transactionResponseBundle));
         } catch (Exception e) {
             LogEvent.logError(e);
             throw new FhirLocalPersistingException(e);

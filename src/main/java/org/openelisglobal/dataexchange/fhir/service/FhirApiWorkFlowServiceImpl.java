@@ -32,6 +32,7 @@ import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.dataexchange.fhir.FhirConfig;
 import org.openelisglobal.dataexchange.fhir.FhirUtil;
 import org.openelisglobal.dataexchange.fhir.exception.FhirLocalPersistingException;
+import org.openelisglobal.dataexchange.fhir.service.FhirPersistanceServiceImpl.FhirOperations;
 import org.openelisglobal.dataexchange.fhir.service.TaskWorker.TaskResult;
 import org.openelisglobal.dataexchange.order.action.DBOrderExistanceChecker;
 import org.openelisglobal.dataexchange.order.action.IOrderPersister;
@@ -329,7 +330,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
                 Task remoteTask = (Task) bundleComponent.getResource();
                 try {
                     processTaskImportOrder(remoteTask, remoteStorePath, sourceFhirClient, bundle);
-                } catch (RuntimeException e) {
+                } catch (RuntimeException | FhirLocalPersistingException e) {
                     LogEvent.logError(e);
                     LogEvent.logError(this.getClass().getName(), "beginTaskPath",
                             "could not process Task with identifier : " + remoteTask.getId());
@@ -340,7 +341,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
     }
 
     private void processTaskImportOrder(Task remoteTask, String remoteStorePath, IGenericClient sourceFhirClient,
-            Bundle bundle) {
+            Bundle bundle) throws FhirLocalPersistingException {
         // TODO use fhirPersistenceService
         // should contain the Patient, the ServiceRequest, and the Task
         Bundle transactionResponseBundle = saveRemoteTaskAsLocalTask(sourceFhirClient, remoteTask, bundle,
@@ -471,9 +472,9 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
     }
 
     private Bundle saveRemoteTaskAsLocalTask(IGenericClient sourceFhirClient, Task remoteTask, Bundle bundle,
-            String remoteStorePath) {
-        List<Resource> createResources = new ArrayList<>();
-        List<Resource> updateResources = new ArrayList<>();
+            String remoteStorePath) throws FhirLocalPersistingException {
+        FhirOperations fhirOperations = new FhirOperations();
+        TempIdGenerator idGenerator = new CountingTempIdGenerator();
 
         List<ServiceRequest> remoteServiceRequests = getBasedOnServiceRequestsFromServer(sourceFhirClient, remoteTask);
         List<Patient> remotePatients = new ArrayList<>();
@@ -488,7 +489,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         if (localTask == null) {
             localTask = remoteTask.addIdentifier(createIdentifierToRemoteResource(remoteTask, remoteStorePath));
 //            localTask.setStatus(TaskStatus.ACCEPTED);
-            createResources.add(localTask);
+            fhirOperations.createResources.put(idGenerator.getNextId(), localTask);
         } else {
 //            updateResources.add(localTask.setId(taskWithSameIdentifier.getIdElement().getValue()));
         }
@@ -509,7 +510,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
             if (localBasedOn == null) {
                 localBasedOn = remoteBasedOn
                         .addIdentifier(createIdentifierToRemoteResource(remoteBasedOn, remoteStorePath));
-                createResources.add(localBasedOn);
+                fhirOperations.createResources.put(idGenerator.getNextId(), localBasedOn);
                 localServiceRequests.add(localBasedOn);
             } else {
 //                updateResources.add(basedOn.setId(serviceRequestWithSameIdentifier.getIdElement().getValue()));
@@ -524,7 +525,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
             if (localForPatient == null) {
                 localForPatient = patient.addIdentifier(createIdentifierToRemoteResource(patient, remoteStorePath));
 //                localForPatient.addLink(new PatientLinkComponent().setType(LinkType.SEEALSO).setOther(patient));
-                createResources.add(localForPatient);
+                fhirOperations.createResources.put(idGenerator.getNextId(), localForPatient);
                 patients.add(localForPatient);
             } else {
                 // patient already exists so we should update the reference to ours
@@ -532,9 +533,11 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
             }
         }
 
+        LogEvent.logDebug(this.getClass().getName(), "",
+                "creating local copies of the remote fhir objects relating to Task: "
+                        + remoteTask.getIdElement().getIdPart());
         // Run the transaction
-        return fhirUtil.getFhirClient(localFhirStorePath).transaction()
-                .withBundle(createBundleFromResources(createResources, updateResources)).execute();
+        return fhirPersistanceService.createUpdateFhirResourcesInFhirStore(fhirOperations);
     }
 
     private List<Patient> getForPatientFromServer(IGenericClient fhirClient, List<ServiceRequest> serviceRequests) {
