@@ -152,8 +152,8 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
                         .get(taskBasedOnOrginalTask.getBasedOnFirstRep().getReferenceElement().getIdPart());
                 originalTask.setStatus(TaskStatus.ACCEPTED);
                 updateResources.put(originalTask.getIdElement().getIdPart(), originalTask);
-                acceptedTasks
-                        .add(originalTasksById.get(taskBasedOnOrginalTask.getBasedOnFirstRep().getReferenceElement().getIdPart()));
+                acceptedTasks.add(originalTasksById
+                        .get(taskBasedOnOrginalTask.getBasedOnFirstRep().getReferenceElement().getIdPart()));
             }
         }
 
@@ -344,16 +344,12 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         Bundle transactionResponseBundle = saveRemoteTaskAsLocalTask(sourceFhirClient, remoteTask, bundle,
                 remoteStorePath);
 
-        Patient remotePatientForTask = getForPatientFromServer(sourceFhirClient, remoteTask);
-        List<ServiceRequest> remoteServiceRequests = getBasedOnServiceRequestsFromServer(sourceFhirClient, remoteTask);
-
         Task taskBasedOnRemoteTask = getLocalTaskBasedOnTask(remoteTask, remoteStorePath);
         if (taskBasedOnRemoteTask == null) {
             taskBasedOnRemoteTask = saveTaskBasedOnRemoteTask(sourceFhirClient, remoteTask, bundle, remoteStorePath);
         }
 
         IGenericClient localFhirClient = fhirUtil.getFhirClient(localFhirStorePath);
-        Map<String, List<String>> localSearchParams = new HashMap<>();
         Task localTask = getTaskWithSameIdentifier(remoteTask, remoteStorePath);
         Bundle localBundle = localFhirClient.search()//
                 .forResource(Task.class)//
@@ -361,7 +357,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
                 .include(Task.INCLUDE_PATIENT)//
                 .include(Task.INCLUDE_BASED_ON)//
                 .include(ServiceRequest.INCLUDE_PATIENT.asRecursive())//
-                .where(Task.RES_ID.exactly().codes(localTask.getId()))//
+                .where(Task.RES_ID.exactly().codes(localTask.getIdElement().getIdPart()))//
                 .returnBundle(Bundle.class)//
                 .execute();
 
@@ -467,7 +463,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
 //            localTask.setStatus(TaskStatus.ACCEPTED);
             fhirOperations.createResources.put(idGenerator.getNextId(), localTask);
         } else {
-//            updateResources.add(localTask.setId(taskWithSameIdentifier.getIdElement().getValue()));
+            fhirOperations.updateResources.put(localTask.getIdElement().getIdPart(), localTask);
         }
 
         if (localTask.hasEncounter()) {
@@ -479,33 +475,29 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
 
         // ServiceRequests
 //      List<ServiceRequest> basedOnServiceRequests = getBasedOnServiceRequestFromBundle(bundle, remoteTask);
-        List<ServiceRequest> localServiceRequests = new ArrayList<>();
-        ServiceRequest localBasedOn = null;
+        Optional<ServiceRequest> localBasedOn = null;
         for (ServiceRequest remoteBasedOn : remoteServiceRequests) {
             localBasedOn = getServiceRequestWithSameIdentifier(remoteBasedOn, remoteStorePath);
-            if (localBasedOn == null) {
-                localBasedOn = remoteBasedOn
-                        .addIdentifier(createIdentifierToRemoteResource(remoteBasedOn, remoteStorePath));
-                fhirOperations.createResources.put(idGenerator.getNextId(), localBasedOn);
-                localServiceRequests.add(localBasedOn);
+            if (localBasedOn.isEmpty()) {
+                fhirOperations.createResources.put(idGenerator.getNextId(),
+                        remoteBasedOn.addIdentifier(createIdentifierToRemoteResource(remoteBasedOn, remoteStorePath)));
             } else {
-//                updateResources.add(basedOn.setId(serviceRequestWithSameIdentifier.getIdElement().getValue()));
+                fhirOperations.updateResources.put(localBasedOn.get().getIdElement().getIdPart(), localBasedOn.get());
             }
         }
 
         // Patient
 //      Patient forPatient = getForPatientFromBundle(bundle, remoteTask);
-        List<Patient> patients = new ArrayList<>();
         for (Patient patient : remotePatients) {
-            Patient localForPatient = getPatientWithSameServiceIdentifier(patient, remoteStorePath);
-            if (localForPatient == null) {
-                localForPatient = patient.addIdentifier(createIdentifierToRemoteResource(patient, remoteStorePath));
+            Optional<Patient> localForPatient = getPatientWithSameServiceIdentifier(patient, remoteStorePath);
+            if (localForPatient.isEmpty()) {
 //                localForPatient.addLink(new PatientLinkComponent().setType(LinkType.SEEALSO).setOther(patient));
-                fhirOperations.createResources.put(idGenerator.getNextId(), localForPatient);
-                patients.add(localForPatient);
+                fhirOperations.createResources.put(idGenerator.getNextId(),
+                        patient.addIdentifier(createIdentifierToRemoteResource(patient, remoteStorePath)));
             } else {
                 // patient already exists so we should update the reference to ours
-//                updateResources.add(forPatient.setId(patientWithSameIdentifier.getIdElement().getValue()));
+                fhirOperations.updateResources.put(localForPatient.get().getIdElement().getIdPart(),
+                        localForPatient.get());
             }
         }
 
@@ -550,25 +542,31 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         return (Task) localBundle.getEntryFirstRep().getResource();
     }
 
-    private ServiceRequest getServiceRequestWithSameIdentifier(ServiceRequest basedOn, String remoteStorePath) {
+    private Optional<ServiceRequest> getServiceRequestWithSameIdentifier(ServiceRequest basedOn,
+            String remoteStorePath) {
         IGenericClient localFhirClient = fhirUtil.getFhirClient(localFhirStorePath);
         Bundle localBundle = localFhirClient.search()//
                 .forResource(ServiceRequest.class)//
                 .where(ServiceRequest.IDENTIFIER.exactly().codes(basedOn.getIdElement().getIdPart()))//
                 .returnBundle(Bundle.class).execute();
-        return (ServiceRequest) localBundle.getEntryFirstRep().getResource();
+        if (localBundle.hasEntry()) {
+            return Optional.of((ServiceRequest) localBundle.getEntryFirstRep().getResource());
+        }
+        return Optional.empty();
     }
 
-    private Patient getPatientWithSameServiceIdentifier(Patient remotePatient, String remoteStorePath) {
+    private Optional<Patient> getPatientWithSameServiceIdentifier(Patient remotePatient, String remoteStorePath) {
         IGenericClient localFhirClient = fhirUtil.getFhirClient(localFhirStorePath);
 
         Bundle localBundle = localFhirClient.search()//
                 .forResource(Patient.class)//
                 .where(Patient.IDENTIFIER.exactly().codes(remotePatient.getIdElement().getIdPart()))//
                 .returnBundle(Bundle.class).execute();
-        return (Patient) localBundle.getEntryFirstRep().getResource();
+        if (localBundle.hasEntry()) {
+            return Optional.of((Patient) localBundle.getEntryFirstRep().getResource());
+        }
+        return Optional.empty();
     }
-
 
     private List<ServiceRequest> getBasedOnServiceRequestsFromServer(IGenericClient fhirClient, Task remoteTask) {
         List<ServiceRequest> basedOn = new ArrayList<>();
