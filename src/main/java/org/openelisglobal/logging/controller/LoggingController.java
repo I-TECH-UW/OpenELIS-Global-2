@@ -11,6 +11,7 @@ public class LoggingController {
 
     @GetMapping(path = "/logging")
     public void changeLoggingLevel(@RequestParam(name = "logLevel", defaultValue = "E") String logLevel,
+            @RequestParam(name = "logger", defaultValue = "org.openelisglobal") String logger,
             @RequestParam(name = "rootLogLevel", defaultValue = "E") String rootLogLevel) {
         org.apache.logging.log4j.Level log4jLogLevel;
         org.apache.logging.log4j.Level rootLog4jLogLevel;
@@ -43,38 +44,11 @@ public class LoggingController {
             log4jLogLevel = Level.ERROR;
             break;
         }
-        switch (rootLogLevel) {
-        case "A":
-            rootLog4jLogLevel = Level.ALL;
-            break;
-        case "I":
-            rootLog4jLogLevel = Level.INFO;
-            break;
-        case "T":
-            rootLog4jLogLevel = Level.TRACE;
-            break;
-        case "D":
-            rootLog4jLogLevel = Level.DEBUG;
-            break;
-        case "W":
-            rootLog4jLogLevel = Level.WARN;
-            break;
-        case "E":
-            rootLog4jLogLevel = Level.ERROR;
-            break;
-        case "F":
-            rootLog4jLogLevel = Level.FATAL;
-            break;
-        case "O":
-            rootLog4jLogLevel = Level.OFF;
-            break;
-        default:
-            rootLog4jLogLevel = Level.ERROR;
-            break;
+        if ("root".equals(logger)) {
+            Configurator.setRootLevel(log4jLogLevel);
+        } else {
+            Configurator.setLevel(logger, log4jLogLevel);
         }
-
-        Configurator.setLevel("org.openelisglobal", log4jLogLevel);
-        Configurator.setRootLevel(rootLog4jLogLevel);
 
     }
 
