@@ -122,10 +122,13 @@ public class BarcodeLabelMaker {
     private String genNextPrePrintedAccessionNumber(IAccessionNumberGenerator accessionValidator, String startingAt)
             throws LIMSInvalidConfigurationException {
         if (accessionValidator == null) {
-            return AccessionNumberUtil.getMainAccessionNumberGenerator().getNextAvailableAccessionNumber("", true);
-        } else {
-            return accessionValidator.getNextAvailableAccessionNumber("", true);
+            accessionValidator = AccessionNumberUtil.getMainAccessionNumberGenerator();
         }
+//        if (GenericValidator.isBlankOrNull(startingAt)) {
+        return accessionValidator.getNextAvailableAccessionNumber("", true);
+//        } else {
+//            return accessionValidator.getNextAccessionNumber("", true);
+//        }
     }
 
     /**

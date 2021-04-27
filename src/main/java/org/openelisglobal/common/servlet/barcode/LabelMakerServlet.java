@@ -95,10 +95,16 @@ public class LabelMakerServlet extends HttpServlet implements IActionConstants {
         UserSessionData usd = (UserSessionData) request.getSession().getAttribute(USER_SESSION_DATA);
         labelMaker.setSysUserId(String.valueOf(usd.getSystemUserId()));
 
+        String startingAt = request.getParameter("startingAt");
+        if (GenericValidator.isBlankOrNull(startingAt) || startingAt.trim().equals("null")
+                || startingAt.trim().equals("undefined")) {
+            startingAt = "";
+
+        }
         labelMaker.generatePrePrintLabels(Integer.parseInt(request.getParameter("numSetsOfLabels")),
                 Integer.parseInt(request.getParameter("numOrderLabelsPerSet")),
                 Integer.parseInt(request.getParameter("numSpecimenLabelsPerSet")), request.getParameter("facilityName"),
-                tests, request.getParameter("startingAt"));
+                tests, startingAt);
         ByteArrayOutputStream labelAsOutputStream = labelMaker.createPrePrintedLabelsAsStream();
 
         // if empty stream, assume at max printing
