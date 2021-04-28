@@ -366,8 +366,8 @@ def create_properties_files():
     os.chmod(SECRETS_DIR + "extra.properties", 0640)   
     os.chown(SECRETS_DIR + 'extra.properties', 8443, 8443) 
     
-    template_file = open(INSTALLER_TEMPLATE_DIR + "hapi.properties", "r")
-    output_file = open(SECRETS_DIR + "hapi.properties", "w")
+    template_file = open(INSTALLER_TEMPLATE_DIR + "hapi_application.yaml", "r")
+    output_file = open(SECRETS_DIR + "hapi_application.yaml", "w")
 
     for line in template_file:
         #common attributes
@@ -388,8 +388,8 @@ def create_properties_files():
 
     template_file.close()
     output_file.close()
-    os.chmod(SECRETS_DIR + "hapi.properties", 0640)  
-    os.chown(SECRETS_DIR + 'hapi.properties', 8443, 8443)   
+    os.chmod(SECRETS_DIR + "hapi_application.yaml", 0640)  
+    os.chown(SECRETS_DIR + 'hapi_application.yaml', 8443, 8443)   
     
 
 def create_server_xml_files():
