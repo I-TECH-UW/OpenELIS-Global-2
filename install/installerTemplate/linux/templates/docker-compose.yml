@@ -67,12 +67,12 @@ services:
             - default
         restart: always
         environment:
-          SPRING_CONFIG_LOCATION: file:///run/secrets/application.yaml
+          SPRING_CONFIG_LOCATION: file:///run/secrets/hapi_application.yaml
 #            - TZ=[% timezone %]
         volumes:
             - [% etc_dir %]hapi_server.xml:/usr/local/tomcat/conf/server.xml
         secrets:
-            - source: hapi.properties
+            - source: hapi_application.yaml
             - source: common.properties
             - source: keystore
             - source: truststore
@@ -86,8 +86,8 @@ secrets:
     file: [% secrets_dir %]extra.properties  
 #  hapi.properties:
 #    file: [% secrets_dir %]hapi.properties
-  application.yaml:
-     file: [% secrets_dir %]application.yaml
+  hapi_application.yaml:
+     file: [% secrets_dir %]hapi_application.yaml
   client_facing_keystore:
     file: [% etc_dir %]client_facing_keystore
   keystore:
