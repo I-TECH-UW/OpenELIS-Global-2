@@ -31,10 +31,10 @@ spring:
 #  ssl:
 #    client-auth: need
 #    key-store: file:/run/secrets/keystore
-#    key-store-password: testtest
-#    key-password: testtest
+#    key-store-password: 
+#    key-password: 
 #    trust-store: file:/run/secrets/truststore
-#    trust-store-password: testtest
+#    trust-store-password: 
 
 hapi:
   fhir:

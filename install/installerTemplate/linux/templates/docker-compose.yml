@@ -68,7 +68,14 @@ services:
         restart: always
         environment:
           SPRING_CONFIG_LOCATION: file:///run/secrets/hapi_application.yaml
-#            - TZ=[% timezone %]
+          TZ: [% timezone %]
+          JAVA_OPTS: "-Djavax.net.ssl.trustStore=/run/secrets/truststore 
+                      -Djavax.net.ssl.trustStorePassword=[% truststore_password %] 
+                      -Djavax.net.ssl.trustStoreType=pkcs12 
+                      -Djavax.net.ssl.keyStore=/run/secrets/keystore 
+                      -Djavax.net.ssl.keyStorePassword=[% keystore_password %] 
+                      -Djavax.net.ssl.keyStoreType=pkcs12"
+          
         volumes:
             - [% etc_dir %]hapi_server.xml:/usr/local/tomcat/conf/server.xml
         secrets:
