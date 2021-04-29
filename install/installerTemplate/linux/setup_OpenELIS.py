@@ -319,6 +319,10 @@ def create_docker_compose_file():
             line = line.replace("[% fhir_api_name %]", DOCKER_FHIR_API_CONTAINER_NAME )
         if line.find("[% timezone %]")  >= 0:
             line = line.replace("[% timezone %]", TIMEZONE )
+        if line.find("[% truststore_password %]")  >= 0:
+            line = line.replace("[% truststore_password %]", TRUSTSTORE_PWD )
+        if line.find("[% keystore_password %]")  >= 0:
+            line = line.replace("[% keystore_password %]", KEYSTORE_PWD )
         
         output_file.write(line)
 
