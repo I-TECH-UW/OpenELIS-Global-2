@@ -67,9 +67,6 @@ public class FhirTransformationController extends BaseController {
                     if (promises.size() >= threads || i + 1 == patients.size()) {
                         waitForResults(promises);
                         promises = new ArrayList<>();
-                        // done so if there is a lot of data being processed, we backup to the CS in
-                        // tandem
-                        runExportTasks();
                     }
                 } catch (FhirPersistanceException e) {
                     LogEvent.logError(e);
@@ -128,18 +125,6 @@ public class FhirTransformationController extends BaseController {
         response.getWriter().println("sample batches failed: " + batchFailure);
     }
 
-    private void runExportTasks() {
-
-        for (DataExportTask dataExportTask : dataExportTaskService.getDAO().findAll()) {
-            try {
-                dataExportService.exportNewDataFromLocalToRemote(dataExportTask);
-            } catch (InterruptedException | ExecutionException | TimeoutException e) {
-                LogEvent.logError(e);
-                LogEvent.logError(this.getClass().getName(), "runExportTasks", "error exporting to remote server");
-            }
-        }
-    }
-
     private void waitForResults(List<Future<Bundle>> promises) throws Exception {
         for (Future<Bundle> promise : promises) {
             try {
@@ -150,7 +135,21 @@ public class FhirTransformationController extends BaseController {
                 throw new Exception();
             }
         }
+        // done so if there is a lot of data being processed, we backup to the CS in
+        // tandem
+        runExportTasks();
 
+    }
+
+    private void runExportTasks() {
+        for (DataExportTask dataExportTask : dataExportTaskService.getDAO().findAll()) {
+            try {
+                dataExportService.exportNewDataFromLocalToRemote(dataExportTask);
+            } catch (InterruptedException | ExecutionException | TimeoutException e) {
+                LogEvent.logError(e);
+                LogEvent.logError(this.getClass().getName(), "runExportTasks", "error exporting to remote server");
+            }
+        }
     }
 
     @Override
