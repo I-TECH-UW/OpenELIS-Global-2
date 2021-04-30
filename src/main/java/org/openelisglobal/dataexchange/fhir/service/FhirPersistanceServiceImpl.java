@@ -334,15 +334,20 @@ public class FhirPersistanceServiceImpl implements FhirPersistanceService {
             LogEvent.logDebug(this.getClass().getName(), "",
                     "no service request with identifier " + referringId + " with configured systems");
         } else {
+            LogEvent.logDebug(FhirPersistanceServiceImpl.class.getName(), "getTaskBasedOnServiceRequest",
+                    "found serviceRequest " + serviceRequest.getIdElement().getIdPart()
+                            + " with an equal identifier to " + referringId);
             bundle = localFhirClient.search()//
                     .forResource(Task.class)//
                     .returnBundle(Bundle.class)//
-                    .where(Task.BASED_ON.hasId(serviceRequest.getId()))//
+                    .where(Task.BASED_ON.hasId(serviceRequest.getIdElement().getIdPart()))//
                     .execute();
             if (bundle.hasEntry()) {
                 return Optional.of((Task) bundle.getEntryFirstRep().getResource());
             }
         }
+        LogEvent.logDebug(FhirPersistanceServiceImpl.class.getName(), "getTaskBasedOnServiceRequest",
+                "no task found based-on serviceRequest " + serviceRequest.getIdElement().getIdPart());
 
         return Optional.empty();
     }
@@ -391,10 +396,12 @@ public class FhirPersistanceServiceImpl implements FhirPersistanceService {
             LogEvent.logDebug(this.getClass().getName(), "",
                     "no task with identifier " + taskId + " with configured systems");
         } else {
+            LogEvent.logDebug(FhirPersistanceServiceImpl.class.getName(), "getTaskBasedOnServiceRequest",
+                    "found task " + task.getIdElement().getIdPart() + " with an equal identifier to " + taskId);
             bundle = localFhirClient.search()//
                     .forResource(Task.class)//
                     .returnBundle(Bundle.class)//
-                    .where(Task.BASED_ON.hasId(task.getId()))//
+                    .where(Task.BASED_ON.hasId(task.getIdElement().getIdPart()))//
                     .execute();
             if (bundle.hasEntry()) {
                 return Optional.of((Task) bundle.getEntryFirstRep().getResource());
@@ -402,7 +409,7 @@ public class FhirPersistanceServiceImpl implements FhirPersistanceService {
         }
 
         LogEvent.logWarn(FhirPersistanceServiceImpl.class.getName(), "getTaskBasedOnTask",
-                "no task found based-on task" + taskId);
+                "no task found based-on task" + task.getIdElement().getIdPart());
         return Optional.empty();
     }
 
