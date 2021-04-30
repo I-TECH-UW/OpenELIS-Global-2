@@ -64,8 +64,6 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
 
     @Value("${org.openelisglobal.fhirstore.uri}")
     private String localFhirStorePath;
-    @Value("${org.openelisglobal.remote.source.uri}")
-    private String[] remoteStorePaths;
     @Value("${org.openelisglobal.remote.source.updateStatus}")
     private Optional<Boolean> remoteStoreUpdateStatus;
     @Value("${org.openelisglobal.remote.source.identifier:}#{T(java.util.Collections).emptyList()}")
@@ -80,7 +78,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
     @Override
     @Async
     public void processWorkflow(ResourceType resourceType) {
-        for (String remoteStorePath : remoteStorePaths) {
+        for (String remoteStorePath : fhirConfig.getRemoteStorePaths()) {
             switch (resourceType) {
             case Task:
                 try {
@@ -472,7 +470,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
 
             localTask.addBasedOn(fhirTransformService.createReferenceFor(localServiceRequest));
             localServiceRequests.add(localServiceRequest);
-            fhirOperations.createResources.put(idGenerator.getNextId(), localServiceRequest);
+            fhirOperations.updateResources.put(localServiceRequest.getIdElement().getIdPart(), localServiceRequest);
         }
 
         // Patient
@@ -527,7 +525,8 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         IGenericClient localFhirClient = fhirUtil.getFhirClient(localFhirStorePath);
         Bundle localBundle = localFhirClient.search()//
                 .forResource(Task.class)//
-                .where(Task.IDENTIFIER.exactly().identifier(remoteTask.getIdElement().getIdPart()))//
+                .where(Task.IDENTIFIER.exactly().systemAndIdentifier(remoteStorePath,
+                        remoteTask.getIdElement().getIdPart()))//
                 .returnBundle(Bundle.class).execute();
         for (BundleEntryComponent entry : localBundle.getEntry()) {
             if (entry.hasResource() && ResourceType.Task.equals(entry.getResource().getResourceType())) {
@@ -547,7 +546,8 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         IGenericClient localFhirClient = fhirUtil.getFhirClient(localFhirStorePath);
         Bundle localBundle = localFhirClient.search()//
                 .forResource(ServiceRequest.class)//
-                .where(ServiceRequest.IDENTIFIER.exactly().identifier(basedOn.getIdElement().getIdPart()))//
+                .where(ServiceRequest.IDENTIFIER.exactly().systemAndIdentifier(remoteStorePath,
+                        basedOn.getIdElement().getIdPart()))//
                 .returnBundle(Bundle.class).execute();
         for (BundleEntryComponent entry : localBundle.getEntry()) {
             if (entry.hasResource() && ResourceType.ServiceRequest.equals(entry.getResource().getResourceType())) {
@@ -566,7 +566,8 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
 
         Bundle localBundle = localFhirClient.search()//
                 .forResource(Patient.class)//
-                .where(Patient.IDENTIFIER.exactly().identifier(remotePatient.getIdElement().getIdPart()))//
+                .where(Patient.IDENTIFIER.exactly().systemAndIdentifier(remoteStorePath,
+                        remotePatient.getIdElement().getIdPart()))//
                 .returnBundle(Bundle.class).execute();
         for (BundleEntryComponent entry : localBundle.getEntry()) {
             if (entry.hasResource() && ResourceType.Patient.equals(entry.getResource().getResourceType())) {

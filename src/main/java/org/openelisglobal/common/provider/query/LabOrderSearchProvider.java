@@ -119,18 +119,16 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
 
             IGenericClient localFhirClient = fhirUtil.getFhirClient(fhirConfig.getLocalFhirStorePath());
 
-            Bundle srBundle = (Bundle) localFhirClient.search().forResource(ServiceRequest.class)
-                    .where(ServiceRequest.IDENTIFIER.exactly().identifier(orderNumber)).prettyPrint().execute();
-
             serviceRequest = null;
-            if (srBundle.getEntry().size() == 0) {
-                srBundle = (Bundle) localFhirClient.search().forResource(ServiceRequest.class)
-                        .where(ServiceRequest.RES_ID.exactly().code(orderNumber)).prettyPrint().execute();
-            }
-            for (BundleEntryComponent bundleComponent : srBundle.getEntry()) {
-                if (bundleComponent.hasResource()
-                        && ResourceType.ServiceRequest.equals(bundleComponent.getResource().getResourceType())) {
-                    serviceRequest = (ServiceRequest) bundleComponent.getResource();
+            for (String remotePath : fhirConfig.getRemoteStorePaths()) {
+                Bundle srBundle = (Bundle) localFhirClient.search().forResource(ServiceRequest.class)
+                        .where(ServiceRequest.IDENTIFIER.exactly().systemAndIdentifier(remotePath, orderNumber))
+                        .execute();
+                for (BundleEntryComponent bundleComponent : srBundle.getEntry()) {
+                    if (bundleComponent.hasResource()
+                            && ResourceType.ServiceRequest.equals(bundleComponent.getResource().getResourceType())) {
+                        serviceRequest = (ServiceRequest) bundleComponent.getResource();
+                    }
                 }
             }
 

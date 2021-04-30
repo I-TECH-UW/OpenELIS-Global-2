@@ -218,7 +218,7 @@ public class CovidResultsCSVBuilder extends CovidResultsBuilderImpl {
 //        System.out.println("jNonFamilyTravelCompanions:" + jNonFamilyTravelCompanions.toString());
 
         try {
-            Optional<Task> task = getTaskForAnalysis(analysis);
+            Optional<Task> task = getReferringTaskForAnalysis(analysis);
             
             if (task.isPresent() && !GenericValidator.isBlankOrNull(task.get().getDescription())) {
 //              if (true) {

@@ -18,6 +18,8 @@ public class FhirConfig {
     private String oeFhirSystem;
     @Value("${org.openelisglobal.fhirstore.uri}")
     private String localFhirStorePath;
+    @Value("${org.openelisglobal.remote.source.uri}")
+    private String[] remoteStorePaths;
     @Value("${org.openelisglobal.fhirstore.username:}")
     private String username;
     @Value("${org.openelisglobal.fhirstore.password:}")
@@ -55,6 +57,10 @@ public class FhirConfig {
 
     public String getPassword() {
         return password;
+    }
+
+    public String[] getRemoteStorePaths() {
+        return remoteStorePaths;
     }
 
 }
