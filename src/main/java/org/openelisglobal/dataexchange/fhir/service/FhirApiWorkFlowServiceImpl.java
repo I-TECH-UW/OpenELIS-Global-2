@@ -527,7 +527,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         IGenericClient localFhirClient = fhirUtil.getFhirClient(localFhirStorePath);
         Bundle localBundle = localFhirClient.search()//
                 .forResource(Task.class)//
-                .where(Task.IDENTIFIER.exactly().identifier(remoteTask.getId()))//
+                .where(Task.IDENTIFIER.exactly().identifier(remoteTask.getIdElement().getIdPart()))//
                 .returnBundle(Bundle.class).execute();
         for (BundleEntryComponent entry : localBundle.getEntry()) {
             if (entry.hasResource() && ResourceType.Task.equals(entry.getResource().getResourceType())) {
@@ -547,7 +547,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         IGenericClient localFhirClient = fhirUtil.getFhirClient(localFhirStorePath);
         Bundle localBundle = localFhirClient.search()//
                 .forResource(ServiceRequest.class)//
-                .where(ServiceRequest.IDENTIFIER.exactly().identifier(basedOn.getId()))//
+                .where(ServiceRequest.IDENTIFIER.exactly().identifier(basedOn.getIdElement().getIdPart()))//
                 .returnBundle(Bundle.class).execute();
         for (BundleEntryComponent entry : localBundle.getEntry()) {
             if (entry.hasResource() && ResourceType.ServiceRequest.equals(entry.getResource().getResourceType())) {
@@ -566,7 +566,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
 
         Bundle localBundle = localFhirClient.search()//
                 .forResource(Patient.class)//
-                .where(Patient.IDENTIFIER.exactly().identifier(remotePatient.getId()))//
+                .where(Patient.IDENTIFIER.exactly().identifier(remotePatient.getIdElement().getIdPart()))//
                 .returnBundle(Bundle.class).execute();
         for (BundleEntryComponent entry : localBundle.getEntry()) {
             if (entry.hasResource() && ResourceType.Patient.equals(entry.getResource().getResourceType())) {
