@@ -109,8 +109,7 @@ public class FhirPersistanceServiceImpl implements FhirPersistanceService {
 
     @Override
     public Bundle createUpdateFhirResourcesInFhirStore(Map<String, Resource> createResources,
-            Map<String, Resource> updateResources)
-            throws FhirLocalPersistingException {
+            Map<String, Resource> updateResources) throws FhirLocalPersistingException {
         Bundle transactionBundle = new Bundle();
         transactionBundle.setType(BundleType.TRANSACTION);
         addUpdatesToTransactionBundle(updateResources, transactionBundle);
@@ -164,9 +163,8 @@ public class FhirPersistanceServiceImpl implements FhirPersistanceService {
         List<ServiceRequest> serviceRequests = new ArrayList<>();
         Bundle searchBundle = localFhirClient.search().forResource(ServiceRequest.class)//
                 .returnBundle(Bundle.class)//
-                .where(ServiceRequest.IDENTIFIER.exactly().systemAndIdentifier(
-                        fhirConfig.getOeFhirSystem() + "/samp_labNo",
-                        accessionNumber))//
+                .where(ServiceRequest.IDENTIFIER.exactly()
+                        .systemAndIdentifier(fhirConfig.getOeFhirSystem() + "/samp_labNo", accessionNumber))//
                 .execute();
         for (BundleEntryComponent entry : searchBundle.getEntry()) {
             serviceRequests.add((ServiceRequest) entry.getResource());
@@ -226,9 +224,8 @@ public class FhirPersistanceServiceImpl implements FhirPersistanceService {
         Bundle bundle = localFhirClient.search()//
                 .forResource(Specimen.class)//
                 .returnBundle(Bundle.class)//
-                .where(Specimen.IDENTIFIER.exactly().systemAndIdentifier(
-                        fhirConfig.getOeFhirSystem() + "/sampleItem_uuid",
-                        uuid))//
+                .where(Specimen.IDENTIFIER.exactly()
+                        .systemAndIdentifier(fhirConfig.getOeFhirSystem() + "/sampleItem_uuid", uuid))//
                 .execute();
         if (bundle.hasEntry()) {
             return Optional.of((Specimen) bundle.getEntryFirstRep().getResource());
@@ -295,6 +292,7 @@ public class FhirPersistanceServiceImpl implements FhirPersistanceService {
 
     @Override
     public Optional<Task> getTaskBasedOnServiceRequest(String referringId) {
+
         Bundle bundle = localFhirClient.search()//
                 .forResource(Task.class)//
                 .returnBundle(Bundle.class)//
@@ -303,8 +301,49 @@ public class FhirPersistanceServiceImpl implements FhirPersistanceService {
         if (bundle.hasEntry()) {
             return Optional.of((Task) bundle.getEntryFirstRep().getResource());
         }
-        LogEvent.logWarn(FhirPersistanceServiceImpl.class.getName(), "getTaskBasedOnServiceRequest",
+        LogEvent.logDebug(FhirPersistanceServiceImpl.class.getName(), "getTaskBasedOnServiceRequest",
                 "no task found based-on serviceRequest " + referringId);
+        LogEvent.logDebug(FhirPersistanceServiceImpl.class.getName(), "getTaskBasedOnServiceRequest",
+                "trying to find service requests that have an identifier equal to " + referringId);
+
+        ServiceRequest serviceRequest = null;
+
+        bundle = localFhirClient.search()//
+                .forResource(Task.class)//
+                .returnBundle(Bundle.class)//
+                .where(ServiceRequest.IDENTIFIER.exactly().identifier(referringId))//
+                .execute();
+        if (bundle.hasEntry()) {
+            serviceRequest = (ServiceRequest) bundle.getEntryFirstRep().getResource();
+        }
+        if (serviceRequest == null) {
+            LogEvent.logDebug(this.getClass().getName(), "", "no service request with identifier " + referringId);
+            for (String remotePath : fhirConfig.getRemoteStorePaths()) {
+
+                bundle = localFhirClient.search()//
+                        .forResource(Task.class)//
+                        .returnBundle(Bundle.class)//
+                        .where(ServiceRequest.IDENTIFIER.exactly().systemAndIdentifier(remotePath, referringId))//
+                        .execute();
+                if (bundle.hasEntry()) {
+                    serviceRequest = (ServiceRequest) bundle.getEntryFirstRep().getResource();
+                }
+            }
+        }
+        if (serviceRequest == null) {
+            LogEvent.logDebug(this.getClass().getName(), "",
+                    "no service request with identifier " + referringId + " with configured systems");
+        } else {
+            bundle = localFhirClient.search()//
+                    .forResource(Task.class)//
+                    .returnBundle(Bundle.class)//
+                    .where(Task.BASED_ON.hasId(serviceRequest.getId()))//
+                    .execute();
+            if (bundle.hasEntry()) {
+                return Optional.of((Task) bundle.getEntryFirstRep().getResource());
+            }
+        }
+
         return Optional.empty();
     }
 
@@ -318,6 +357,50 @@ public class FhirPersistanceServiceImpl implements FhirPersistanceService {
         if (bundle.hasEntry()) {
             return Optional.of((Task) bundle.getEntryFirstRep().getResource());
         }
+
+        LogEvent.logDebug(FhirPersistanceServiceImpl.class.getName(), "getTaskBasedOnServiceRequest",
+                "no task found based-on task " + taskId);
+        LogEvent.logDebug(FhirPersistanceServiceImpl.class.getName(), "getTaskBasedOnServiceRequest",
+                "trying to find task that have an identifier equal to " + taskId);
+
+        Task task = null;
+
+        bundle = localFhirClient.search()//
+                .forResource(Task.class)//
+                .returnBundle(Bundle.class)//
+                .where(Task.IDENTIFIER.exactly().identifier(taskId))//
+                .execute();
+        if (bundle.hasEntry()) {
+            task = (Task) bundle.getEntryFirstRep().getResource();
+        }
+        if (task == null) {
+            LogEvent.logDebug(this.getClass().getName(), "", "no task with identifier " + taskId);
+            for (String remotePath : fhirConfig.getRemoteStorePaths()) {
+
+                bundle = localFhirClient.search()//
+                        .forResource(Task.class)//
+                        .returnBundle(Bundle.class)//
+                        .where(Task.IDENTIFIER.exactly().systemAndIdentifier(remotePath, taskId))//
+                        .execute();
+                if (bundle.hasEntry()) {
+                    task = (Task) bundle.getEntryFirstRep().getResource();
+                }
+            }
+        }
+        if (task == null) {
+            LogEvent.logDebug(this.getClass().getName(), "",
+                    "no task with identifier " + taskId + " with configured systems");
+        } else {
+            bundle = localFhirClient.search()//
+                    .forResource(Task.class)//
+                    .returnBundle(Bundle.class)//
+                    .where(Task.BASED_ON.hasId(task.getId()))//
+                    .execute();
+            if (bundle.hasEntry()) {
+                return Optional.of((Task) bundle.getEntryFirstRep().getResource());
+            }
+        }
+
         LogEvent.logWarn(FhirPersistanceServiceImpl.class.getName(), "getTaskBasedOnTask",
                 "no task found based-on task" + taskId);
         return Optional.empty();
