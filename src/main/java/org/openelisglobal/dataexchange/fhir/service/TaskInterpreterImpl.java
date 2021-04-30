@@ -31,7 +31,6 @@ import org.springframework.stereotype.Service;
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.v251.segment.OBR;
-import ca.uhn.hl7v2.model.v251.segment.PID;
 
 @Service
 @Scope("prototype")
@@ -179,12 +178,12 @@ public class TaskInterpreterImpl implements TaskInterpreter {
         DateType birthDate = patient.getBirthDateElement();
         if (birthDate != null) {
             String day = birthDate.getDay() == null ? DateUtil.AMBIGUOUS_DATE_SEGMENT
-                    : String.format("%2d", birthDate.getDay());
+                    : String.format("%02d", birthDate.getDay());
             String month = birthDate.getMonth() == null ? DateUtil.AMBIGUOUS_DATE_SEGMENT
-                    : String.format("%2d", birthDate.getMonth() + 1);
+                    : String.format("%02d", birthDate.getMonth() + 1);
             String year = birthDate.getYear() == null
                     ? DateUtil.AMBIGUOUS_DATE_SEGMENT + DateUtil.AMBIGUOUS_DATE_SEGMENT
-                    : String.format("%4d", birthDate.getYear());
+                    : String.format("%04d", birthDate.getYear());
 
             messagePatient.setDisplayDOB(day + "/" + month + "/" + year);
         }
@@ -246,27 +245,6 @@ public class TaskInterpreterImpl implements TaskInterpreter {
         return messagePatient;
     }
 
-    private void setDOB(MessagePatient patient, PID pid) throws HL7Exception {
-        String dob = pid.getDateTimeOfBirth().encode();
-
-        if (dob.length() >= 4) {
-            String year = null;
-            String month = DateUtil.AMBIGUOUS_DATE_SEGMENT;
-            String date = DateUtil.AMBIGUOUS_DATE_SEGMENT;
-
-            year = dob.substring(0, 4);
-
-            if (dob.length() >= 6) {
-                month = dob.substring(4, 6);
-            }
-
-            if (dob.length() >= 8) {
-                date = dob.substring(6, 8);
-            }
-
-            patient.setDisplayDOB(date + "/" + month + "/" + year);
-        }
-    }
 
     private List<InterpreterResults> buildResultList(boolean exceptionThrown) {
         LogEvent.logDebug(this.getClass().getName(), "buildResultList", "buildResultList: " + exceptionThrown);

@@ -126,6 +126,13 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
                 .where(Task.STATUS.exactly().code(TaskStatus.REQUESTED.toCode()))//
                 .where(Task.REQUESTER.hasAnyOfIds(remoteStoreIdentifier))//
                 .execute();
+        if (originalTasksBundle.hasEntry()) {
+            LogEvent.logDebug(this.getClass().getName(), "beginTaskCheckIfAcceptedPath",
+                    "received bundle with " + originalTasksBundle.getEntry().size() + " entries");
+        } else {
+            LogEvent.logDebug(this.getClass().getName(), "beginTaskCheckIfAcceptedPath",
+                    "received bundle with 0 entries");
+        }
         Map<String, Task> originalTasksById = new HashMap<>();
         for (BundleEntryComponent bundleEntry : originalTasksBundle.getEntry()) {
             if (bundleEntry.hasResource() && bundleEntry.getResource().getResourceType().equals(ResourceType.Task)) {
@@ -193,6 +200,13 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
                 .where(Task.STATUS.exactly().code(TaskStatus.ACCEPTED.toCode()))//
                 .where(Task.REQUESTER.hasAnyOfIds(remoteStoreIdentifier));
         Bundle originalTasksBundle = searchQuery.execute();
+        if (originalTasksBundle.hasEntry()) {
+            LogEvent.logDebug(this.getClass().getName(), "beginTaskImportResultsPath",
+                    "received bundle with " + originalTasksBundle.getEntry().size() + " entries");
+        } else {
+            LogEvent.logDebug(this.getClass().getName(), "beginTaskImportResultsPath",
+                    "received bundle with 0 entries");
+        }
         Map<String, OriginalReferralObjects> originalReferralObjectsByServiceRequest = new HashMap<>();
         for (BundleEntryComponent bundleEntry : originalTasksBundle.getEntry()) {
             if (bundleEntry.hasResource()) {
@@ -301,7 +315,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         if (remoteStoreIdentifier.isEmpty()) {
             return;
         }
-        LogEvent.logDebug(this.getClass().getName(), "beginTaskPath", "searching for Tasks");
+        LogEvent.logDebug(this.getClass().getName(), "beginTaskImportOrderPath", "searching for Tasks");
         IGenericClient sourceFhirClient = fhirUtil.getFhirClient(remoteStorePath);
         IQuery<Bundle> searchQuery = sourceFhirClient.search()//
                 .forResource(Task.class)//
@@ -314,10 +328,10 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         Bundle bundle = searchQuery.execute();
 
         if (bundle.hasEntry()) {
-            LogEvent.logDebug(this.getClass().getName(), "beginTaskPath",
+            LogEvent.logDebug(this.getClass().getName(), "beginTaskImportOrderPath",
                     "received bundle with " + bundle.getEntry().size() + " entries");
         } else {
-            LogEvent.logDebug(this.getClass().getName(), "beginTaskPath", "received bundle with 0 entries");
+            LogEvent.logDebug(this.getClass().getName(), "beginTaskImportOrderPath", "received bundle with 0 entries");
         }
         for (BundleEntryComponent bundleComponent : bundle.getEntry()) {
 
@@ -329,7 +343,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
                     processTaskImportOrder(remoteTask, remoteStorePath, sourceFhirClient, bundle);
                 } catch (RuntimeException | FhirLocalPersistingException e) {
                     LogEvent.logError(e);
-                    LogEvent.logError(this.getClass().getName(), "beginTaskPath",
+                    LogEvent.logError(this.getClass().getName(), "beginTaskImportOrderPath",
                             "could not process Task with identifier : " + remoteTask.getId());
                 }
 

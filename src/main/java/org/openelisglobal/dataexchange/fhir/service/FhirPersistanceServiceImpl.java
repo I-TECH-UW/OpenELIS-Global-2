@@ -303,6 +303,8 @@ public class FhirPersistanceServiceImpl implements FhirPersistanceService {
         if (bundle.hasEntry()) {
             return Optional.of((Task) bundle.getEntryFirstRep().getResource());
         }
+        LogEvent.logWarn(FhirPersistanceServiceImpl.class.getName(), "getTaskBasedOnServiceRequest",
+                "no task found based-on serviceRequest " + referringId);
         return Optional.empty();
     }
 
@@ -316,6 +318,8 @@ public class FhirPersistanceServiceImpl implements FhirPersistanceService {
         if (bundle.hasEntry()) {
             return Optional.of((Task) bundle.getEntryFirstRep().getResource());
         }
+        LogEvent.logWarn(FhirPersistanceServiceImpl.class.getName(), "getTaskBasedOnTask",
+                "no task found based-on task" + taskId);
         return Optional.empty();
     }
 
