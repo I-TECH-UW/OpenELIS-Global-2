@@ -27,15 +27,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.validator.GenericValidator;
-import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Bundle.BundleEntryComponent;
 import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Patient;
-import org.hl7.fhir.r4.model.Reference;
 import org.hl7.fhir.r4.model.ResourceType;
 import org.hl7.fhir.r4.model.ServiceRequest;
-import org.hl7.fhir.r4.model.Task;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.ExternalOrderStatus;
@@ -91,11 +88,8 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
     private Map<Panel, List<TypeOfSample>> panelSampleTypesMap;
     private Map<String, List<TestSampleType>> testNameTestSampleTypeMap;
 
-    private Bundle bundle = null;
-    private Task task = null;
     private ServiceRequest serviceRequest = null;
     private Patient patient = null;
-    private String patientGuid = null;
 
     List<ElectronicOrder> eOrders = null;
     ElectronicOrder eOrder = null;
@@ -124,8 +118,6 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
                     .getExternalOrderStatusForID(eOrder.getStatusId());
 
             IGenericClient localFhirClient = fhirUtil.getFhirClient(fhirConfig.getLocalFhirStorePath());
-
-            Task task = fhirContext.newJsonParser().parseResource(Task.class, eOrder.getData());
 
             Bundle srBundle = (Bundle) localFhirClient.search().forResource(ServiceRequest.class)
                     .where(ServiceRequest.IDENTIFIER.exactly().code(orderNumber)).prettyPrint().execute();
@@ -260,27 +252,27 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
 
     }
 
-    private List<ServiceRequest> getBasedOnServiceRequestFromBundle(Bundle bundle, Task task) {
-        List<ServiceRequest> basedOn = new ArrayList<>();
-        for (Reference reference : task.getBasedOn()) {
-            basedOn.add((ServiceRequest) findResourceInBundle(bundle, reference.getReference()));
-        }
-        return basedOn;
-    }
-
-    private Patient getForPatientFromBundle(Bundle bundle, Task task) {
-        return (Patient) findResourceInBundle(bundle, task.getFor().getReference());
-    }
-
-    private IBaseResource findResourceInBundle(Bundle bundle, String reference) {
-        for (BundleEntryComponent bundleComponent : bundle.getEntry()) {
-            if (bundleComponent.hasResource() && bundleComponent.getFullUrl().endsWith(reference)) {
-                return bundleComponent.getResource();
-            }
-        }
-        return null;
-
-    }
+//    private List<ServiceRequest> getBasedOnServiceRequestFromBundle(Bundle bundle, Task task) {
+//        List<ServiceRequest> basedOn = new ArrayList<>();
+//        for (Reference reference : task.getBasedOn()) {
+//            basedOn.add((ServiceRequest) findResourceInBundle(bundle, reference.getReference()));
+//        }
+//        return basedOn;
+//    }
+//
+//    private Patient getForPatientFromBundle(Bundle bundle, Task task) {
+//        return (Patient) findResourceInBundle(bundle, task.getFor().getReference());
+//    }
+//
+//    private IBaseResource findResourceInBundle(Bundle bundle, String reference) {
+//        for (BundleEntryComponent bundleComponent : bundle.getEntry()) {
+//            if (bundleComponent.hasResource() && bundleComponent.getFullUrl().endsWith(reference)) {
+//                return bundleComponent.getResource();
+//            }
+//        }
+//        return null;
+//
+//    }
 
     private void addToTestOrPanel(List<Request> tests, String loinc) {
         List<Test> testList = testService.getActiveTestsByLoinc(loinc);

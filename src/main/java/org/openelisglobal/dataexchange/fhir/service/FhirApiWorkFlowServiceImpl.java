@@ -489,9 +489,8 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
             localPatient = existingLocalPatient.get();
             // patient already exists so we should update the reference to ours
         }
-        fhirOperations.updateResources.put(existingLocalPatient.get().getIdElement().getIdPart(),
-                existingLocalPatient.get());
-        localTask.setFor(fhirTransformService.createReferenceFor(existingLocalPatient.get()));
+        fhirOperations.updateResources.put(localPatient.getIdElement().getIdPart(), localPatient);
+        localTask.setFor(fhirTransformService.createReferenceFor(localPatient));
 
         LogEvent.logDebug(this.getClass().getName(), "",
                 "creating local copies of the remote fhir objects relating to Task: "
@@ -528,6 +527,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         IGenericClient localFhirClient = fhirUtil.getFhirClient(localFhirStorePath);
         Bundle localBundle = localFhirClient.search()//
                 .forResource(Task.class)//
+                .where(Task.IDENTIFIER.exactly().code(remoteTask.getId()))//
                 .returnBundle(Bundle.class).execute();
         for (BundleEntryComponent entry : localBundle.getEntry()) {
             if (entry.hasResource() && ResourceType.Task.equals(entry.getResource().getResourceType())) {
@@ -547,7 +547,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         IGenericClient localFhirClient = fhirUtil.getFhirClient(localFhirStorePath);
         Bundle localBundle = localFhirClient.search()//
                 .forResource(ServiceRequest.class)//
-                .where(ServiceRequest.IDENTIFIER.exactly().codes(basedOn.getId()))//
+                .where(ServiceRequest.IDENTIFIER.exactly().code(basedOn.getId()))//
                 .returnBundle(Bundle.class).execute();
         for (BundleEntryComponent entry : localBundle.getEntry()) {
             if (entry.hasResource() && ResourceType.ServiceRequest.equals(entry.getResource().getResourceType())) {
@@ -566,11 +566,8 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
 
         Bundle localBundle = localFhirClient.search()//
                 .forResource(Patient.class)//
-                .where(Patient.IDENTIFIER.exactly().codes(remotePatient.getId()))//
+                .where(Patient.IDENTIFIER.exactly().code(remotePatient.getId()))//
                 .returnBundle(Bundle.class).execute();
-        if (localBundle.hasEntry()) {
-            return Optional.of((Patient) localBundle.getEntryFirstRep().getResource());
-        }
         for (BundleEntryComponent entry : localBundle.getEntry()) {
             if (entry.hasResource() && ResourceType.Patient.equals(entry.getResource().getResourceType())) {
                 LogEvent.logDebug(this.getClass().getName(), "",
