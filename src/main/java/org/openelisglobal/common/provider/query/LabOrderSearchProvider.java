@@ -36,6 +36,7 @@ import org.hl7.fhir.r4.model.Reference;
 import org.hl7.fhir.r4.model.ResourceType;
 import org.hl7.fhir.r4.model.ServiceRequest;
 import org.hl7.fhir.r4.model.Task;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.ExternalOrderStatus;
 import org.openelisglobal.common.util.XMLUtil;
@@ -194,6 +195,7 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
                 patientGuid = identifier.getValue();
             }
         }
+        LogEvent.logDebug(this.getClass().getName(), "createSearchResultXML", "using patient guid " + patientGuid);
 
         createOrderXML(eOrder.getData(), patientGuid, xml);
 
@@ -517,6 +519,10 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
     private void addAlerts(StringBuilder xml, String patientGuid) {
         PatientService patientService = SpringContext.getBean(PatientService.class);
         org.openelisglobal.patient.valueholder.Patient patient = patientService.getPatientForGuid(patientGuid);
+        if (patient == null) {
+            XMLUtil.appendKeyValue("user_alert", MessageUtil.getMessage("electronic.order.warning.missingPatient"),
+                    xml);
+        }
         if (GenericValidator.isBlankOrNull(patientService.getEnteredDOB(patient))
                 || GenericValidator.isBlankOrNull(patientService.getGender(patient))) {
             XMLUtil.appendKeyValue("user_alert", MessageUtil.getMessage("electroinic.order.warning.missingPatientInfo"),

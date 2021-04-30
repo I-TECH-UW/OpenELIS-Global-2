@@ -436,6 +436,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         if (remotePatientForTask == null) {
             remotePatientForTask = getForPatientFromServer(sourceFhirClient, remoteServiceRequests);
         }
+        String originalRemoteTaskId = remoteTask.getIdElement().getIdPart();
         Optional<Task> existingLocalTask = getTaskWithSameIdentifier(remoteTask, remoteStorePath);
         Task localTask;
         if (existingLocalTask.isEmpty()) {
@@ -494,7 +495,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
 
         LogEvent.logDebug(this.getClass().getName(), "",
                 "creating local copies of the remote fhir objects relating to Task: "
-                        + remoteTask.getIdElement().getIdPart());
+                        + originalRemoteTaskId);
         // Run the transaction
         fhirPersistanceService.createUpdateFhirResourcesInFhirStore(fhirOperations);
         OriginalReferralObjects objects = new OriginalReferralObjects();
@@ -527,11 +528,17 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         IGenericClient localFhirClient = fhirUtil.getFhirClient(localFhirStorePath);
         Bundle localBundle = localFhirClient.search()//
                 .forResource(Task.class)//
-                .where(Task.IDENTIFIER.exactly().codes(remoteTask.getIdElement().getIdPart()))//
                 .returnBundle(Bundle.class).execute();
-        if (localBundle.hasEntry()) {
-            return Optional.of((Task) localBundle.getEntryFirstRep().getResource());
+        for (BundleEntryComponent entry : localBundle.getEntry()) {
+            if (entry.hasResource() && ResourceType.Task.equals(entry.getResource().getResourceType())) {
+                LogEvent.logDebug(this.getClass().getName(), "",
+                        "found task with same identifier as " + remoteTask.getIdElement().getIdPart());
+                return Optional.of((Task) localBundle.getEntryFirstRep().getResource());
+            }
         }
+        LogEvent.logDebug(this.getClass().getName(), "",
+                "no task with same identifier " + remoteTask.getIdElement().getIdPart());
+
         return Optional.empty();
     }
 
@@ -540,11 +547,17 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         IGenericClient localFhirClient = fhirUtil.getFhirClient(localFhirStorePath);
         Bundle localBundle = localFhirClient.search()//
                 .forResource(ServiceRequest.class)//
-                .where(ServiceRequest.IDENTIFIER.exactly().codes(basedOn.getIdElement().getIdPart()))//
+                .where(ServiceRequest.IDENTIFIER.exactly().codes(basedOn.getId()))//
                 .returnBundle(Bundle.class).execute();
-        if (localBundle.hasEntry()) {
-            return Optional.of((ServiceRequest) localBundle.getEntryFirstRep().getResource());
+        for (BundleEntryComponent entry : localBundle.getEntry()) {
+            if (entry.hasResource() && ResourceType.ServiceRequest.equals(entry.getResource().getResourceType())) {
+                LogEvent.logDebug(this.getClass().getName(), "",
+                        "found serviceRequest with same identifier as " + basedOn.getIdElement().getIdPart());
+                return Optional.of((ServiceRequest) localBundle.getEntryFirstRep().getResource());
+            }
         }
+        LogEvent.logDebug(this.getClass().getName(), "",
+                "no serviceRequest with same identifier " + basedOn.getIdElement().getIdPart());
         return Optional.empty();
     }
 
@@ -553,11 +566,20 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
 
         Bundle localBundle = localFhirClient.search()//
                 .forResource(Patient.class)//
-                .where(Patient.IDENTIFIER.exactly().codes(remotePatient.getIdElement().getIdPart()))//
+                .where(Patient.IDENTIFIER.exactly().codes(remotePatient.getId()))//
                 .returnBundle(Bundle.class).execute();
         if (localBundle.hasEntry()) {
             return Optional.of((Patient) localBundle.getEntryFirstRep().getResource());
         }
+        for (BundleEntryComponent entry : localBundle.getEntry()) {
+            if (entry.hasResource() && ResourceType.Patient.equals(entry.getResource().getResourceType())) {
+                LogEvent.logDebug(this.getClass().getName(), "",
+                        "found patient with same identifier as " + remotePatient.getIdElement().getIdPart());
+                return Optional.of((Patient) localBundle.getEntryFirstRep().getResource());
+            }
+        }
+        LogEvent.logDebug(this.getClass().getName(), "",
+                "no patient with same identifier " + remotePatient.getIdElement().getIdPart());
         return Optional.empty();
     }
 
