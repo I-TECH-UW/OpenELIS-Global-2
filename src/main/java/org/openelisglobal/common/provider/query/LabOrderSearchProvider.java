@@ -39,7 +39,6 @@ import org.openelisglobal.common.services.StatusService.ExternalOrderStatus;
 import org.openelisglobal.common.util.XMLUtil;
 import org.openelisglobal.dataexchange.fhir.FhirConfig;
 import org.openelisglobal.dataexchange.fhir.FhirUtil;
-import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
 import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder;
 import org.openelisglobal.dataexchange.service.order.ElectronicOrderService;
 import org.openelisglobal.internationalization.MessageUtil;
@@ -57,7 +56,6 @@ import org.openelisglobal.typeofsample.service.TypeOfSampleTestService;
 import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
 import org.openelisglobal.typeofsample.valueholder.TypeOfSampleTest;
 
-import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 
 public class LabOrderSearchProvider extends BaseQueryProvider {
@@ -71,17 +69,14 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
 //    @Value("${org.openelisglobal.task.useBasedOn}")
 //    private Boolean useBasedOn;
 
-    private FhirContext fhirContext = SpringContext.getBean(FhirContext.class);
     private FhirConfig fhirConfig = SpringContext.getBean(FhirConfig.class);
     private FhirUtil fhirUtil = SpringContext.getBean(FhirUtil.class);
 
-    protected FhirTransformService fhirTransformService = SpringContext.getBean(FhirTransformService.class);
-
-    protected TestService testService = SpringContext.getBean(TestService.class);
-    protected PanelService panelService = SpringContext.getBean(PanelService.class);
-    protected PanelItemService panelItemService = SpringContext.getBean(PanelItemService.class);
-    protected TypeOfSampleTestService typeOfSampleTestService = SpringContext.getBean(TypeOfSampleTestService.class);
-    protected ElectronicOrderService electronicOrderService = SpringContext.getBean(ElectronicOrderService.class);
+    private TestService testService = SpringContext.getBean(TestService.class);
+    private PanelService panelService = SpringContext.getBean(PanelService.class);
+    private PanelItemService panelItemService = SpringContext.getBean(PanelItemService.class);
+    private TypeOfSampleTestService typeOfSampleTestService = SpringContext.getBean(TypeOfSampleTestService.class);
+    private ElectronicOrderService electronicOrderService = SpringContext.getBean(ElectronicOrderService.class);
     private TypeOfSampleService typeOfSampleService = SpringContext.getBean(TypeOfSampleService.class);
 
     private Map<TypeOfSample, PanelTestLists> typeOfSampleMap;
@@ -90,10 +85,11 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
 
     private ServiceRequest serviceRequest = null;
     private Patient patient = null;
+    private String patientGuid;
 
-    List<ElectronicOrder> eOrders = null;
-    ElectronicOrder eOrder = null;
-    ExternalOrderStatus eOrderStatus = null;
+    private List<ElectronicOrder> eOrders = null;
+    private ElectronicOrder eOrder = null;
+    private ExternalOrderStatus eOrderStatus = null;
 
     private static final String NOT_FOUND = "Not Found";
     private static final String CANCELED = "Canceled";
@@ -119,7 +115,6 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
 
             IGenericClient localFhirClient = fhirUtil.getFhirClient(fhirConfig.getLocalFhirStorePath());
 
-            serviceRequest = null;
             for (String remotePath : fhirConfig.getRemoteStorePaths()) {
                 Bundle srBundle = (Bundle) localFhirClient.search().forResource(ServiceRequest.class)
                         .where(ServiceRequest.IDENTIFIER.exactly().systemAndIdentifier(remotePath, orderNumber))
@@ -128,20 +123,27 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
                     if (bundleComponent.hasResource()
                             && ResourceType.ServiceRequest.equals(bundleComponent.getResource().getResourceType())) {
                         serviceRequest = (ServiceRequest) bundleComponent.getResource();
+
                     }
                 }
             }
+            if (serviceRequest != null) {
+                LogEvent.logDebug(this.getClass().getName(), "processRequest",
+                        "found matching serviceRequest " + serviceRequest.getIdElement().getIdPart());
+            } else {
+                LogEvent.logDebug(this.getClass().getName(), "processRequest", "no matching serviceRequest");
+            }
 
-            Bundle pBundle = (Bundle) localFhirClient.search().forResource(Patient.class)
-                    .where(Patient.RES_ID.exactly().code(serviceRequest.getSubject().getReferenceElement().getIdPart()))
-                    .prettyPrint().execute();
+            patient = localFhirClient.read()//
+                    .resource(Patient.class)//
+                    .withId(serviceRequest.getSubject().getReferenceElement().getIdPart())//
+                    .execute();
 
-            patient = null;
-            for (BundleEntryComponent bundleComponent : pBundle.getEntry()) {
-                if (bundleComponent.hasResource()
-                        && ResourceType.Patient.equals(bundleComponent.getResource().getResourceType())) {
-                    patient = (Patient) bundleComponent.getResource();
-                }
+            if (patient != null) {
+                LogEvent.logDebug(this.getClass().getName(), "processRequest",
+                        "found matching patient " + patient.getIdElement().getIdPart());
+            } else {
+                LogEvent.logDebug(this.getClass().getName(), "processRequest", "no matching patient");
             }
         }
 
@@ -175,7 +177,7 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
             return NOT_FOUND;
         }
 
-        String patientGuid = null;
+        patientGuid = getPatientGuid(eOrder);
         for (Identifier identifier : patient.getIdentifier()) {
 //            if (identifier.getSystem().equalsIgnoreCase("https://isanteplusdemo.com/openmrs/ws/fhir2/")) {
             if (identifier.getSystem().equalsIgnoreCase("iSantePlus ID")
@@ -512,8 +514,7 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
         if (patient == null) {
             XMLUtil.appendKeyValue("user_alert", MessageUtil.getMessage("electronic.order.warning.missingPatient"),
                     xml);
-        }
-        if (GenericValidator.isBlankOrNull(patientService.getEnteredDOB(patient))
+        } else if (GenericValidator.isBlankOrNull(patientService.getEnteredDOB(patient))
                 || GenericValidator.isBlankOrNull(patientService.getGender(patient))) {
             XMLUtil.appendKeyValue("user_alert", MessageUtil.getMessage("electroinic.order.warning.missingPatientInfo"),
                     xml);

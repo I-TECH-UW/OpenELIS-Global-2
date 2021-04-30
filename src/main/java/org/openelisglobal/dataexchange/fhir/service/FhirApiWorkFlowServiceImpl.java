@@ -427,7 +427,6 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
     private OriginalReferralObjects saveRemoteTaskAsLocalTask(IGenericClient sourceFhirClient, Task remoteTask,
             Bundle bundle, String remoteStorePath) throws FhirLocalPersistingException {
         FhirOperations fhirOperations = new FhirOperations();
-        TempIdGenerator idGenerator = new CountingTempIdGenerator();
 
         List<ServiceRequest> remoteServiceRequests = getBasedOnServiceRequestsFromServer(sourceFhirClient, remoteTask);
         Patient remotePatientForTask = getForPatientFromServer(sourceFhirClient, remoteTask);
@@ -441,10 +440,10 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
             localTask = remoteTask.addIdentifier(createIdentifierToRemoteResource(remoteTask, remoteStorePath));
 //            localTask.setStatus(TaskStatus.ACCEPTED);
             localTask.setId(UUID.randomUUID().toString());
+            fhirOperations.updateResources.put(localTask.getIdElement().getIdPart(), localTask);
         } else {
             localTask = existingLocalTask.get();
         }
-        fhirOperations.updateResources.put(localTask.getIdElement().getIdPart(), localTask);
 
 //        if (localTask.hasEncounter()) {
 //            replaceLocalReferenceWithAbsoluteReference(remoteStorePath, localTask.getEncounter());
@@ -464,13 +463,13 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
                 localServiceRequest = remoteBasedOn
                         .addIdentifier(createIdentifierToRemoteResource(remoteBasedOn, remoteStorePath));
                 localServiceRequest.setId(UUID.randomUUID().toString());
+                fhirOperations.updateResources.put(localServiceRequest.getIdElement().getIdPart(), localServiceRequest);
             } else {
                 localServiceRequest = existingLocalBasedOn.get();
             }
 
             localTask.addBasedOn(fhirTransformService.createReferenceFor(localServiceRequest));
             localServiceRequests.add(localServiceRequest);
-            fhirOperations.updateResources.put(localServiceRequest.getIdElement().getIdPart(), localServiceRequest);
         }
 
         // Patient
@@ -483,12 +482,15 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
                     .addIdentifier(createIdentifierToRemoteResource(remotePatientForTask, remoteStorePath));
 //                localForPatient.addLink(new PatientLinkComponent().setType(LinkType.SEEALSO).setOther(patient));
             localPatient.setId(UUID.randomUUID().toString());
+            fhirOperations.updateResources.put(localPatient.getIdElement().getIdPart(), localPatient);
         } else {
             localPatient = existingLocalPatient.get();
             // patient already exists so we should update the reference to ours
         }
-        fhirOperations.updateResources.put(localPatient.getIdElement().getIdPart(), localPatient);
         localTask.setFor(fhirTransformService.createReferenceFor(localPatient));
+        for (ServiceRequest serviceRequest : localServiceRequests) {
+            serviceRequest.setSubject(fhirTransformService.createReferenceFor(localPatient));
+        }
 
         LogEvent.logDebug(this.getClass().getName(), "",
                 "creating local copies of the remote fhir objects relating to Task: "
