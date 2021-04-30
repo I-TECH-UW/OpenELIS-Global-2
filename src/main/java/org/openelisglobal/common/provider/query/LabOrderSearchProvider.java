@@ -120,7 +120,7 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
             IGenericClient localFhirClient = fhirUtil.getFhirClient(fhirConfig.getLocalFhirStorePath());
 
             Bundle srBundle = (Bundle) localFhirClient.search().forResource(ServiceRequest.class)
-                    .where(ServiceRequest.IDENTIFIER.exactly().code(orderNumber)).prettyPrint().execute();
+                    .where(ServiceRequest.IDENTIFIER.exactly().identifier(orderNumber)).prettyPrint().execute();
 
             serviceRequest = null;
             if (srBundle.getEntry().size() == 0) {

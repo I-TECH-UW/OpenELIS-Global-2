@@ -108,7 +108,8 @@ public abstract class CovidResultsBuilderImpl implements CovidResultsBuilder {
 
         ServiceRequest serviceRequest = null;
         Bundle responseBundle = client.search().forResource(ServiceRequest.class)
-                .where(ServiceRequest.IDENTIFIER.exactly().code(serviceRequestId)).returnBundle(Bundle.class).execute();
+                .where(ServiceRequest.IDENTIFIER.exactly().identifier(serviceRequestId)).returnBundle(Bundle.class)
+                .execute();
         for (BundleEntryComponent bundleComponent : responseBundle.getEntry()) {
             if (bundleComponent.hasResource()
                     && ResourceType.ServiceRequest.equals(bundleComponent.getResource().getResourceType())) {

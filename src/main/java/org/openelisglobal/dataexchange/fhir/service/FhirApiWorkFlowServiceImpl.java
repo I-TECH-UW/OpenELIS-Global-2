@@ -527,7 +527,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         IGenericClient localFhirClient = fhirUtil.getFhirClient(localFhirStorePath);
         Bundle localBundle = localFhirClient.search()//
                 .forResource(Task.class)//
-                .where(Task.IDENTIFIER.exactly().code(remoteTask.getId()))//
+                .where(Task.IDENTIFIER.exactly().identifier(remoteTask.getId()))//
                 .returnBundle(Bundle.class).execute();
         for (BundleEntryComponent entry : localBundle.getEntry()) {
             if (entry.hasResource() && ResourceType.Task.equals(entry.getResource().getResourceType())) {
@@ -547,7 +547,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         IGenericClient localFhirClient = fhirUtil.getFhirClient(localFhirStorePath);
         Bundle localBundle = localFhirClient.search()//
                 .forResource(ServiceRequest.class)//
-                .where(ServiceRequest.IDENTIFIER.exactly().code(basedOn.getId()))//
+                .where(ServiceRequest.IDENTIFIER.exactly().identifier(basedOn.getId()))//
                 .returnBundle(Bundle.class).execute();
         for (BundleEntryComponent entry : localBundle.getEntry()) {
             if (entry.hasResource() && ResourceType.ServiceRequest.equals(entry.getResource().getResourceType())) {
@@ -566,7 +566,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
 
         Bundle localBundle = localFhirClient.search()//
                 .forResource(Patient.class)//
-                .where(Patient.IDENTIFIER.exactly().code(remotePatient.getId()))//
+                .where(Patient.IDENTIFIER.exactly().identifier(remotePatient.getId()))//
                 .returnBundle(Bundle.class).execute();
         for (BundleEntryComponent entry : localBundle.getEntry()) {
             if (entry.hasResource() && ResourceType.Patient.equals(entry.getResource().getResourceType())) {

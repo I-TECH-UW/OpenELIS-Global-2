@@ -164,7 +164,8 @@ public class FhirPersistanceServiceImpl implements FhirPersistanceService {
         List<ServiceRequest> serviceRequests = new ArrayList<>();
         Bundle searchBundle = localFhirClient.search().forResource(ServiceRequest.class)//
                 .returnBundle(Bundle.class)//
-                .where(ServiceRequest.IDENTIFIER.exactly().systemAndCode(fhirConfig.getOeFhirSystem() + "/samp_labNo",
+                .where(ServiceRequest.IDENTIFIER.exactly().systemAndIdentifier(
+                        fhirConfig.getOeFhirSystem() + "/samp_labNo",
                         accessionNumber))//
                 .execute();
         for (BundleEntryComponent entry : searchBundle.getEntry()) {
@@ -197,7 +198,8 @@ public class FhirPersistanceServiceImpl implements FhirPersistanceService {
         Bundle bundle = localFhirClient.search()//
                 .forResource(Patient.class)//
                 .returnBundle(Bundle.class)//
-                .where(Patient.IDENTIFIER.exactly().systemAndCode(fhirConfig.getOeFhirSystem() + "/pat_uuid", uuid))//
+                .where(Patient.IDENTIFIER.exactly().systemAndIdentifier(fhirConfig.getOeFhirSystem() + "/pat_uuid",
+                        uuid))//
                 .execute();
         if (bundle.hasEntry()) {
             return Optional.of((Patient) bundle.getEntryFirstRep().getResource());
@@ -211,7 +213,7 @@ public class FhirPersistanceServiceImpl implements FhirPersistanceService {
                 .forResource(ServiceRequest.class)//
                 .returnBundle(Bundle.class)//
                 .where(ServiceRequest.IDENTIFIER.exactly()
-                        .systemAndCode(fhirConfig.getOeFhirSystem() + "/analysis_uuid", uuid))//
+                        .systemAndIdentifier(fhirConfig.getOeFhirSystem() + "/analysis_uuid", uuid))//
                 .execute();
         if (bundle.hasEntry()) {
             return Optional.of((ServiceRequest) bundle.getEntryFirstRep().getResource());
@@ -224,7 +226,8 @@ public class FhirPersistanceServiceImpl implements FhirPersistanceService {
         Bundle bundle = localFhirClient.search()//
                 .forResource(Specimen.class)//
                 .returnBundle(Bundle.class)//
-                .where(Specimen.IDENTIFIER.exactly().systemAndCode(fhirConfig.getOeFhirSystem() + "/sampleItem_uuid",
+                .where(Specimen.IDENTIFIER.exactly().systemAndIdentifier(
+                        fhirConfig.getOeFhirSystem() + "/sampleItem_uuid",
                         uuid))//
                 .execute();
         if (bundle.hasEntry()) {
@@ -239,7 +242,7 @@ public class FhirPersistanceServiceImpl implements FhirPersistanceService {
                 .forResource(DiagnosticReport.class)//
                 .returnBundle(Bundle.class)//
                 .where(DiagnosticReport.IDENTIFIER.exactly()
-                        .systemAndCode(fhirConfig.getOeFhirSystem() + "/analysisResult_uuid", uuid))//
+                        .systemAndIdentifier(fhirConfig.getOeFhirSystem() + "/analysisResult_uuid", uuid))//
                 .execute();
         if (bundle.hasEntry()) {
             return Optional.of((DiagnosticReport) bundle.getEntryFirstRep().getResource());
