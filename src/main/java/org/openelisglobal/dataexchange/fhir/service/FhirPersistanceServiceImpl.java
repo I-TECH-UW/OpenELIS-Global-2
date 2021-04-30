@@ -309,7 +309,7 @@ public class FhirPersistanceServiceImpl implements FhirPersistanceService {
         ServiceRequest serviceRequest = null;
 
         bundle = localFhirClient.search()//
-                .forResource(Task.class)//
+                .forResource(ServiceRequest.class)//
                 .returnBundle(Bundle.class)//
                 .where(ServiceRequest.IDENTIFIER.exactly().identifier(referringId))//
                 .execute();
@@ -321,7 +321,7 @@ public class FhirPersistanceServiceImpl implements FhirPersistanceService {
             for (String remotePath : fhirConfig.getRemoteStorePaths()) {
 
                 bundle = localFhirClient.search()//
-                        .forResource(Task.class)//
+                        .forResource(ServiceRequest.class)//
                         .returnBundle(Bundle.class)//
                         .where(ServiceRequest.IDENTIFIER.exactly().systemAndIdentifier(remotePath, referringId))//
                         .execute();

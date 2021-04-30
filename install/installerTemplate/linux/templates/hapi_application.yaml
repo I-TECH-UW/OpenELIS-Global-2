@@ -58,22 +58,22 @@ hapi:
     #  - Patient
     #  - Observation
 #    allow_cascading_deletes: true
-#    allow_contains_searches: true
+    allow_contains_searches: true
     allow_external_references: true
 #    allow_multiple_delete: true
 #    allow_override_default_search_params: true
     allow_placeholder_references: true
     auto_create_placeholder_reference_targets: true
 #    default_encoding: JSON
-#    default_pretty_print: true
-#    default_page_size: 20
+    default_pretty_print: false
+    default_page_size: 100
 #    enable_index_missing_fields: false
 #    enforce_referential_integrity_on_delete: false
 #    enforce_referential_integrity_on_write: false
 #    etag_support_enabled: true
 #    expunge_enabled: true
 #    daoconfig_client_id_strategy: null
-#    fhirpath_interceptor_enabled: false
+    fhirpath_interceptor_enabled: false
 #    filter_search_enabled: true
 #    graphql_enabled: true
 #    narrative_enabled: true
@@ -97,9 +97,9 @@ hapi:
 #      log_exceptions: true
 #      name: fhirtest.access
 #    max_binary_size: 104857600
-#    max_page_size: 200
-#    retain_cached_searches_mins: 60
-#    reuse_cached_search_results_millis: 60000
+    max_page_size: 200
+    retain_cached_searches_mins: 60
+    reuse_cached_search_results_millis: 0
     tester:
 
         home:
