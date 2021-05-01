@@ -85,18 +85,18 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
                     beginTaskImportOrderPath(remoteStorePath);
                 } catch (RuntimeException e) {
                     LogEvent.logError(this.getClass().getName(), "processWorkflow",
-                            "could not process Task workflow using remote address: " + remoteStorePath);
+                            "could not process Task import workflow using remote address: " + remoteStorePath);
                     LogEvent.logError(this.getClass().getName(), "processWorkflow", e.getMessage());
                 }
                 try {
                     beginTaskCheckIfAcceptedPath(remoteStorePath);
                 } catch (RuntimeException e) {
                     LogEvent.logError(this.getClass().getName(), "processWorkflow",
-                            "could not process Task workflow using remote address: " + remoteStorePath);
+                            "could not process Task accepted workflow using remote address: " + remoteStorePath);
                     LogEvent.logError(this.getClass().getName(), "processWorkflow", e.getMessage());
                 } catch (FhirLocalPersistingException e) {
                     LogEvent.logError(this.getClass().getName(), "processWorkflow",
-                            "could not process Task workflow using remote address: " + remoteStorePath);
+                            "could not process Task result import workflow using remote address: " + remoteStorePath);
                     LogEvent.logError(this.getClass().getName(), "processWorkflow", e.getMessage());
                 }
                 try {
@@ -149,33 +149,35 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         List<Task> rejectedTasks = new ArrayList<>();
         for (Entry<String, Task> taskEntry : originalTasksById.entrySet()) {
             Optional<Task> task = fhirPersistanceService.getTaskBasedOnTask(taskEntry.getKey());
-            LogEvent.logDebug(FhirApiWorkFlowServiceImpl.class.getName(), "beginTaskCheckIfAcceptedPath", "task "
-                    + task.get().getIdElement().getIdPart() + " has been detected as " + task.get().getStatus());
-            LogEvent.logDebug(FhirApiWorkFlowServiceImpl.class.getName(), "beginTaskCheckIfAcceptedPath",
-                    "changing task " + taskEntry.getKey() + " to " + task.get().getStatus());
-            if (task.isPresent() && TaskStatus.RECEIVED.equals(task.get().getStatus())) {
-                Task taskBasedOnOrginalTask = task.get();
-                Task originalTask = taskEntry.getValue();
-                originalTask.setStatus(TaskStatus.RECEIVED);
-                updateResources.put(originalTask.getIdElement().getIdPart(), originalTask);
-                receivedTasks.add(originalTasksById
-                        .get(taskBasedOnOrginalTask.getBasedOnFirstRep().getReferenceElement().getIdPart()));
-            }
-            if (task.isPresent() && TaskStatus.ACCEPTED.equals(task.get().getStatus())) {
-                Task taskBasedOnOrginalTask = task.get();
-                Task originalTask = taskEntry.getValue();
-                originalTask.setStatus(TaskStatus.ACCEPTED);
-                updateResources.put(originalTask.getIdElement().getIdPart(), originalTask);
-                acceptedTasks.add(originalTasksById
-                        .get(taskBasedOnOrginalTask.getBasedOnFirstRep().getReferenceElement().getIdPart()));
-            }
-            if (task.isPresent() && TaskStatus.REJECTED.equals(task.get().getStatus())) {
-                Task taskBasedOnOrginalTask = task.get();
-                Task originalTask = taskEntry.getValue();
-                originalTask.setStatus(TaskStatus.REJECTED);
-                updateResources.put(originalTask.getIdElement().getIdPart(), originalTask);
-                rejectedTasks.add(originalTasksById
-                        .get(taskBasedOnOrginalTask.getBasedOnFirstRep().getReferenceElement().getIdPart()));
+            if (task.isPresent()) {
+                LogEvent.logDebug(FhirApiWorkFlowServiceImpl.class.getName(), "beginTaskCheckIfAcceptedPath", "task "
+                        + task.get().getIdElement().getIdPart() + " has been detected as " + task.get().getStatus());
+                LogEvent.logDebug(FhirApiWorkFlowServiceImpl.class.getName(), "beginTaskCheckIfAcceptedPath",
+                        "changing task " + taskEntry.getKey() + " to " + task.get().getStatus());
+                if (TaskStatus.RECEIVED.equals(task.get().getStatus())) {
+                    Task taskBasedOnOrginalTask = task.get();
+                    Task originalTask = taskEntry.getValue();
+                    originalTask.setStatus(TaskStatus.RECEIVED);
+                    updateResources.put(originalTask.getIdElement().getIdPart(), originalTask);
+                    receivedTasks.add(originalTasksById
+                            .get(taskBasedOnOrginalTask.getBasedOnFirstRep().getReferenceElement().getIdPart()));
+                }
+                if (TaskStatus.ACCEPTED.equals(task.get().getStatus())) {
+                    Task taskBasedOnOrginalTask = task.get();
+                    Task originalTask = taskEntry.getValue();
+                    originalTask.setStatus(TaskStatus.ACCEPTED);
+                    updateResources.put(originalTask.getIdElement().getIdPart(), originalTask);
+                    acceptedTasks.add(originalTasksById
+                            .get(taskBasedOnOrginalTask.getBasedOnFirstRep().getReferenceElement().getIdPart()));
+                }
+                if (TaskStatus.REJECTED.equals(task.get().getStatus())) {
+                    Task taskBasedOnOrginalTask = task.get();
+                    Task originalTask = taskEntry.getValue();
+                    originalTask.setStatus(TaskStatus.REJECTED);
+                    updateResources.put(originalTask.getIdElement().getIdPart(), originalTask);
+                    rejectedTasks.add(originalTasksById
+                            .get(taskBasedOnOrginalTask.getBasedOnFirstRep().getReferenceElement().getIdPart()));
+                }
             }
         }
 
@@ -501,8 +503,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         }
 
         LogEvent.logDebug(this.getClass().getName(), "",
-                "creating local copies of the remote fhir objects relating to Task: "
-                        + originalRemoteTaskId);
+                "creating local copies of the remote fhir objects relating to Task: " + originalRemoteTaskId);
         // Run the transaction
         fhirPersistanceService.createUpdateFhirResourcesInFhirStore(fhirOperations);
         OriginalReferralObjects objects = new OriginalReferralObjects();
