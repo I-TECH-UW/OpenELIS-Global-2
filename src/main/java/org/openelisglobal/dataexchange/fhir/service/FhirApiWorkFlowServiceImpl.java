@@ -123,7 +123,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
                 .forResource(Task.class)//
                 .returnBundle(Bundle.class)//
 //                .revInclude(Task.INCLUDE_BASED_ON)//
-                .where(Task.STATUS.exactly().code(TaskStatus.REQUESTED.toCode()))//
+                .where(Task.STATUS.exactly().codes(TaskStatus.REQUESTED.toCode(), TaskStatus.RECEIVED.toCode()))//
                 .where(Task.REQUESTER.hasAnyOfIds(remoteStoreIdentifier))//
                 .execute();
         if (originalTasksBundle.hasEntry()) {
@@ -144,42 +144,38 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
             return;
         }
 
-        Bundle tasksBasedOnOriginalTasksBundle = sourceFhirClient.search()//
-                .forResource(Task.class)//
-                .returnBundle(Bundle.class)//
-//                .revInclude(Task.INCLUDE_BASED_ON)//
-                .where(Task.BASED_ON.hasAnyOfIds(originalTasksById.keySet()))
-                .where(Task.STATUS.exactly().code(TaskStatus.ACCEPTED.toCode()))//
-                .execute();
+        List<Task> receivedTasks = new ArrayList<>();
         List<Task> acceptedTasks = new ArrayList<>();
-        for (BundleEntryComponent bundleEntry : tasksBasedOnOriginalTasksBundle.getEntry()) {
-            if (bundleEntry.hasResource() && bundleEntry.getResource().getResourceType().equals(ResourceType.Task)) {
-                Task taskBasedOnOrginalTask = (Task) bundleEntry.getResource();
-                Task originalTask = originalTasksById
-                        .get(taskBasedOnOrginalTask.getBasedOnFirstRep().getReferenceElement().getIdPart());
+        List<Task> rejectedTasks = new ArrayList<>();
+        for (Entry<String, Task> taskEntry : originalTasksById.entrySet()) {
+            Optional<Task> task = fhirPersistanceService.getTaskBasedOnTask(taskEntry.getKey());
+            LogEvent.logDebug(FhirApiWorkFlowServiceImpl.class.getName(), "beginTaskCheckIfAcceptedPath", "task "
+                    + task.get().getIdElement().getIdPart() + " has been detected as " + task.get().getStatus());
+            LogEvent.logDebug(FhirApiWorkFlowServiceImpl.class.getName(), "beginTaskCheckIfAcceptedPath",
+                    "changing task " + taskEntry.getKey() + " to " + task.get().getStatus());
+            if (task.isPresent() && TaskStatus.RECEIVED.equals(task.get().getStatus())) {
+                Task taskBasedOnOrginalTask = task.get();
+                Task originalTask = taskEntry.getValue();
+                originalTask.setStatus(TaskStatus.RECEIVED);
+                updateResources.put(originalTask.getIdElement().getIdPart(), originalTask);
+                receivedTasks.add(originalTasksById
+                        .get(taskBasedOnOrginalTask.getBasedOnFirstRep().getReferenceElement().getIdPart()));
+            }
+            if (task.isPresent() && TaskStatus.ACCEPTED.equals(task.get().getStatus())) {
+                Task taskBasedOnOrginalTask = task.get();
+                Task originalTask = taskEntry.getValue();
                 originalTask.setStatus(TaskStatus.ACCEPTED);
                 updateResources.put(originalTask.getIdElement().getIdPart(), originalTask);
                 acceptedTasks.add(originalTasksById
                         .get(taskBasedOnOrginalTask.getBasedOnFirstRep().getReferenceElement().getIdPart()));
             }
-        }
-
-        tasksBasedOnOriginalTasksBundle = sourceFhirClient.search()//
-                .forResource(Task.class)//
-                .returnBundle(Bundle.class)//
-//                .revInclude(Task.INCLUDE_BASED_ON)//
-                .where(Task.BASED_ON.hasAnyOfIds(originalTasksById.keySet()))
-                .where(Task.STATUS.exactly().code(TaskStatus.REJECTED.toCode()))//
-                .execute();
-        List<Task> rejectedTasks = new ArrayList<>();
-        for (BundleEntryComponent bundleEntry : tasksBasedOnOriginalTasksBundle.getEntry()) {
-            if (bundleEntry.hasResource() && bundleEntry.getResource().getResourceType().equals(ResourceType.Task)) {
-                Task taskBasedOnOrginalTask = (Task) bundleEntry.getResource();
-                Task originalTask = originalTasksById
-                        .get(taskBasedOnOrginalTask.getBasedOnFirstRep().getReferenceElement().getIdPart());
+            if (task.isPresent() && TaskStatus.REJECTED.equals(task.get().getStatus())) {
+                Task taskBasedOnOrginalTask = task.get();
+                Task originalTask = taskEntry.getValue();
                 originalTask.setStatus(TaskStatus.REJECTED);
                 updateResources.put(originalTask.getIdElement().getIdPart(), originalTask);
-                rejectedTasks.add(originalTask);
+                rejectedTasks.add(originalTasksById
+                        .get(taskBasedOnOrginalTask.getBasedOnFirstRep().getReferenceElement().getIdPart()));
             }
         }
 
@@ -376,8 +372,6 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         }
 
         TaskResult taskResult = null;
-//            if (localTask.getStatus() == null || !(localTask.getStatus().equals(TaskStatus.ACCEPTED)
-//                    || localTask.getStatus().equals(TaskStatus.COMPLETED))) {
         if (localObjects.task.getStatus() == null || localObjects.task.getStatus().equals(TaskStatus.REQUESTED)) {
             Boolean taskOrderAcceptedFlag = false;
             for (ServiceRequest serviceRequest : serviceRequestList) {
@@ -395,7 +389,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
                 }
             }
 
-            TaskStatus taskStatus = taskOrderAcceptedFlag ? TaskStatus.RECEIVED : TaskStatus.REJECTED;
+            TaskStatus taskStatus = taskOrderAcceptedFlag ? TaskStatus.ACCEPTED : TaskStatus.REJECTED;
             localObjects.task.setStatus(taskStatus);
             if (remoteStoreUpdateStatus.isPresent() && remoteStoreUpdateStatus.get()) {
                 LogEvent.logDebug(this.getClass().getName(), "beginTaskPath",
@@ -405,8 +399,8 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
             }
             IGenericClient localFhirClient = fhirContext.newRestfulGenericClient(localFhirStorePath);
             localFhirClient.update().resource(localObjects.task).execute();
-            taskBasedOnRemoteTask.setStatus(taskStatus);
-            localFhirClient.update().resource(taskBasedOnRemoteTask).execute();
+//            taskBasedOnRemoteTask.setStatus(taskStatus);
+//            localFhirClient.update().resource(taskBasedOnRemoteTask).execute();
         }
     }
 
@@ -453,7 +447,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         if (existingLocalTask.isEmpty()) {
             localTask = remoteTask.addIdentifier(createIdentifierToRemoteResource(remoteTask, remoteStorePath));
 //            localTask.setStatus(TaskStatus.ACCEPTED);
-            localTask.setId(UUID.randomUUID().toString());
+//            localTask.setId(UUID.randomUUID().toString());
             fhirOperations.updateResources.put(localTask.getIdElement().getIdPart(), localTask);
         } else {
             localTask = existingLocalTask.get();
@@ -476,7 +470,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
             if (existingLocalBasedOn.isEmpty()) {
                 localServiceRequest = remoteBasedOn
                         .addIdentifier(createIdentifierToRemoteResource(remoteBasedOn, remoteStorePath));
-                localServiceRequest.setId(UUID.randomUUID().toString());
+//                localServiceRequest.setId(UUID.randomUUID().toString());
                 fhirOperations.updateResources.put(localServiceRequest.getIdElement().getIdPart(), localServiceRequest);
             } else {
                 localServiceRequest = existingLocalBasedOn.get();
@@ -495,7 +489,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
             localPatient = remotePatientForTask
                     .addIdentifier(createIdentifierToRemoteResource(remotePatientForTask, remoteStorePath));
 //                localForPatient.addLink(new PatientLinkComponent().setType(LinkType.SEEALSO).setOther(patient));
-            localPatient.setId(UUID.randomUUID().toString());
+//            localPatient.setId(UUID.randomUUID().toString());
             fhirOperations.updateResources.put(localPatient.getIdElement().getIdPart(), localPatient);
         } else {
             localPatient = existingLocalPatient.get();

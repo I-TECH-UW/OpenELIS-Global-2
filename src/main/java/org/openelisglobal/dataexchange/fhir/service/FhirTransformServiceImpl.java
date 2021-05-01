@@ -174,7 +174,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         Map<String, Specimen> specimens = new HashMap<>();
         Map<String, ServiceRequest> serviceRequests = new HashMap<>();
         Map<String, DiagnosticReport> diagnosticReports = new HashMap<>();
-        Map<String,Observation> observations = new HashMap<>();
+        Map<String, Observation> observations = new HashMap<>();
         for (String sampleId : sampleIds) {
             Sample sample = sampleService.get(sampleId);
             Patient patient = sampleHumanService.getPatientForSample(sample);
@@ -350,27 +350,21 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         if (eOrders.size() > 0 && ElectronicOrderType.FHIR.equals(eOrders.get(0).getType())) {
             Task referredTask = fhirPersistanceService.getTaskBasedOnServiceRequest(sample.getReferringId())
                     .orElseThrow();
-            task.addBasedOn(this.createReferenceFor(referredTask));
-            Task preCreatedTask = fhirPersistanceService.getTaskBasedOnTask(referredTask.getIdElement().getIdPart())
-                    .orElse(task);
-            sample.setFhirUuid(UUID.fromString(preCreatedTask.getIdElement().getIdPart()));
-            sampleService.save(sample);
-            task = preCreatedTask;
-            task.setStatus(TaskStatus.ACCEPTED);
+            task.addPartOf(this.createReferenceFor(referredTask));
             task.setIntent(TaskIntent.ORDER);
         } else {
             task.setIntent(TaskIntent.ORIGINALORDER);
-            if (sample.getStatusId().equals(statusService.getStatusID(OrderStatus.Entered))) {
-                task.setStatus(TaskStatus.READY);
-            } else if (sample.getStatusId().equals(statusService.getStatusID(OrderStatus.Started))) {
-                task.setStatus(TaskStatus.INPROGRESS);
-            } else if (sample.getStatusId().equals(statusService.getStatusID(OrderStatus.Finished))) {
-                task.setStatus(TaskStatus.COMPLETED);
-            } else {
-                task.setStatus(TaskStatus.NULL);
-            }
-            task.setAuthoredOn(sample.getEnteredDate());
         }
+        if (sample.getStatusId().equals(statusService.getStatusID(OrderStatus.Entered))) {
+            task.setStatus(TaskStatus.READY);
+        } else if (sample.getStatusId().equals(statusService.getStatusID(OrderStatus.Started))) {
+            task.setStatus(TaskStatus.INPROGRESS);
+        } else if (sample.getStatusId().equals(statusService.getStatusID(OrderStatus.Finished))) {
+            task.setStatus(TaskStatus.COMPLETED);
+        } else {
+            task.setStatus(TaskStatus.NULL);
+        }
+        task.setAuthoredOn(sample.getEnteredDate());
         task.setPriority(TaskPriority.ROUTINE);
         task.addIdentifier(
                 this.createIdentifier(fhirConfig.getOeFhirSystem() + "/order_uuid", sample.getFhirUuidAsString()));
