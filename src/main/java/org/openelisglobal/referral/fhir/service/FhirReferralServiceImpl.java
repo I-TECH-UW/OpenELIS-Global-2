@@ -172,7 +172,10 @@ public class FhirReferralServiceImpl implements FhirReferralService {
                         UUID.fromString(
                                 resultsImport.originalReferralObjects.serviceRequests.get(0).getIdElement()
                                         .getIdPart()))
-                .orElseThrow();
+                .orElseThrow(() -> {
+                    return new RuntimeException("no matching analysis with FhirUUID: " + resultsImport.originalReferralObjects.serviceRequests.get(0).getIdElement()
+                                    .getIdPart());
+                });
         List<Result> currentResults = resultService.getResultsByAnalysis(analysis);
 
         ResultsUpdateDataSet resultsUpdateDataSet = new ResultsUpdateDataSet("1");
@@ -202,7 +205,9 @@ public class FhirReferralServiceImpl implements FhirReferralService {
                 String inferredValue = ((StringType) observation.getValue()).getValueAsString();
                 List<TestResult> testResults = testResultService
                         .getAllActiveTestResultsPerTest(analysisService.getTest(analysis));
-                dictionaryService.getMatch("dictEntry", inferredValue).orElseThrow();
+                dictionaryService.getMatch("dictEntry", inferredValue).orElseThrow(() -> {
+                    return new RuntimeException("no matching result for dictEntry: " + inferredValue);
+                });
                 for (TestResult testResult : testResults) {
                     if (StringUtils.equals(inferredValue,
                             dictionaryService.get(testResult.getValue()).getDictEntry())) {
