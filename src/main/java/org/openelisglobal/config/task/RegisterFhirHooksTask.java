@@ -50,6 +50,12 @@ public class RegisterFhirHooksTask {
     @Value("${org.openelisglobal.fhirstore.uri}")
     private String localFhirStorePath;
 
+    @Value("${org.openelisglobal.fhir.subscriber.backup.interval:5}")
+    private Integer backupInterval;
+
+    @Value("${org.openelisglobal.fhir.subscriber.backup.timeout:60}")
+    private Integer backupTimeout;
+
     private static String fhirSubscriptionIdPrefix = "consolidatedServerSubscription";
 
     @Autowired
@@ -108,8 +114,8 @@ public class RegisterFhirHooksTask {
         dataExportTask.setFhirResources(Arrays.asList(fhirSubscriptionResources).stream()
                 .map(ResourceType::fromCode).collect(Collectors.toList()));
         dataExportTask.setHeaders(headers);
-        dataExportTask.setMaxDataExportInterval(60 * 24); // minutes
-        dataExportTask.setDataRequestAttemptTimeout(60 * 10); // seconds // currently unused
+        dataExportTask.setMaxDataExportInterval(backupInterval); // minutes
+        dataExportTask.setDataRequestAttemptTimeout(backupTimeout); // seconds // currently unused
         dataExportTask.setEndpoint(fhirSubscriber.get());
         dataExportTaskService.getDAO().save(dataExportTask);
     }
