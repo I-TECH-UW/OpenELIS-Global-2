@@ -205,14 +205,19 @@ public class FhirReferralServiceImpl implements FhirReferralService {
                 String inferredValue = ((StringType) observation.getValue()).getValueAsString();
                 List<TestResult> testResults = testResultService
                         .getAllActiveTestResultsPerTest(analysisService.getTest(analysis));
-                dictionaryService.getMatch("dictEntry", inferredValue).orElseThrow(() -> {
-                    return new RuntimeException("no matching result for dictEntry: " + inferredValue);
-                });
+                String resultValue = null;
                 for (TestResult testResult : testResults) {
                     if (StringUtils.equals(inferredValue,
                             dictionaryService.get(testResult.getValue()).getDictEntry())) {
-                        result.setValue(dictionaryService.get(testResult.getValue()).getId());
+                        LogEvent.logDebug(this.getClass().getName(), "setReferralResult",
+                                "found a matching dictionary value for '" + inferredValue + "'");
+                        resultValue = dictionaryService.get(testResult.getValue()).getId();
+                        result.setValue(resultValue);
                     }
+                }
+                if (resultValue == null) {
+                    LogEvent.logDebug(this.getClass().getName(), "setReferralResult",
+                            "no matching dictionary value for '" + inferredValue + "'");
                 }
             } else if (TypeOfTestResultServiceImpl.ResultType.isNumeric(result.getResultType())) {
                 result.setValue(((Quantity) observation.getValue()).getValue().toPlainString());
