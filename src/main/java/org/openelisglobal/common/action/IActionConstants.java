@@ -244,7 +244,7 @@ public interface IActionConstants {
 
     String RESULTS_SESSION_CACHE = "ResultsSessionCache";
     String RESULTS_PAGE_MAPPING_SESSION_CACHE = "ResultsPageMappingSessionCache";
-    int PAGING_SIZE = 200;
+    int PAGING_SIZE = 60;
     int VALIDATION_PAGING_SIZE = 99;
     /**
      * The system_module name used to determine if the current user is allowed to
