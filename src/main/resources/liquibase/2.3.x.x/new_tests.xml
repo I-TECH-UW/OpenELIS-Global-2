@@ -1074,6 +1074,19 @@
 			null,'f');
                 </sql>
         </changeSet>
+		
+        <changeSet author="csteele" id="331">
+		<preConditions onFail="MARK_RAN">
+                        <sqlCheck  expectedResult="1">SELECT count(*) FROM clinlims.test WHERE description = 'HIVINFANTVIRALLOAD(Plasma)'</sqlCheck> 
+                </preConditions>
+
+                <sql>
+			UPDATE clinlims.test 
+			SET reporting_name_localization_id = (select id from localization where description = 'test report name' and english = 'HIV-1 DNA by qRT-PCR' limit 1)
+			WHERE description = 'HIVINFANTVIRALLOAD(Plasma)';
+                </sql>
+        </changeSet>
+        
         
         <changeSet author="rossumg" id="340">
 		<preConditions onFail="MARK_RAN">
@@ -1153,6 +1166,18 @@
 			(select id from localization where description = 'test name' and english = 'HIV INFANT VIRAL LOAD' limit 1),
 			(select id from localization where description = 'test report name' and english = 'HIV INFANT VIRAL LOAD' limit 1),
 			null,'f');
+                </sql>
+        </changeSet>
+		
+        <changeSet author="csteele" id="336">
+		<preConditions onFail="MARK_RAN">
+                        <sqlCheck  expectedResult="1">SELECT count(*) FROM clinlims.test WHERE description = 'HIVINFANTVIRALLOAD(DBS)'</sqlCheck> 
+                </preConditions>
+
+                <sql>
+			UPDATE clinlims.test 
+			SET reporting_name_localization_id = (select id from localization where description = 'test report name' and english = 'HIV-1 DNA by qRT-PCR' limit 1)
+			WHERE description = 'HIVINFANTVIRALLOAD(DBS)';
                 </sql>
         </changeSet>
         
