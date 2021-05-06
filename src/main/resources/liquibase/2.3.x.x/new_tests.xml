@@ -1686,6 +1686,27 @@
 			null,null,'N',null,2,null,null,now(),null,1,'f','t','f');
                 </sql>
         </changeSet>
+
+        <changeSet author="rossumg" id="624">
+		<preConditions onFail="MARK_RAN">
+			<sqlCheck  expectedResult="0">SELECT count(*) FROM clinlims.dictionary WHERE dict_entry = 'SARS-COV-2 RNA NOT DETECTED' </sqlCheck> 
+                </preConditions>
+
+                <sql>
+                INSERT INTO clinlims.dictionary(id,is_active,dict_entry,lastupdated,local_abbrev,dictionary_category_id,display_key,sort_order,name_localization_id)
+			VALUES
+			(nextval('dictionary_seq'),'Y','SARS-COV-2 RNA NOT DETECTED',now(),'SARS-COV-2 RNA NOT DETECTED',
+			(select id from dictionary_category where name = 'Haiti Lab'),
+			'dictionary.result.sarscov2NotDetected',54510,null),
+			(nextval('dictionary_seq'),'Y','SARS-CoV-2 RNA DETECTED',now(),'SARS-CoV-2 RNA DETECTED',
+			(select id from dictionary_category where name = 'Haiti Lab'),
+			'dictionary.result.sarscov2Detected',54520,null),
+			
+			(nextval('dictionary_seq'),'Y','RETEST - INCONCLUSIVE',now(),'RETEST - INCONCLUSIVE',
+			(select id from dictionary_category where name = 'Haiti Lab'),
+			'dictionary.result.sarscov2Inconclusive',54530,null);
+                </sql>
+        </changeSet>
         
         <changeSet author="csteele" id="625">
 			<preConditions onFail="MARK_RAN">
