@@ -1077,7 +1077,7 @@
 		
         <changeSet author="csteele" id="331">
 		<preConditions onFail="MARK_RAN">
-                        <sqlCheck  expectedResult="1">SELECT count(*) FROM clinlims.test WHERE description = 'HIVINFANTVIRALLOAD(Plasma)'</sqlCheck> 
+                        <sqlCheck  expectedResult="1">SELECT count(*) FROM clinlims.test WHERE description = 'HIVINFANTVIRALLOAD(Plasma)' AND reporting_name_localization_id IS NULL</sqlCheck> 
                 </preConditions>
 
                 <sql>
@@ -1171,7 +1171,7 @@
 		
         <changeSet author="csteele" id="336">
 		<preConditions onFail="MARK_RAN">
-                        <sqlCheck  expectedResult="1">SELECT count(*) FROM clinlims.test WHERE description = 'HIVINFANTVIRALLOAD(DBS)'</sqlCheck> 
+                        <sqlCheck  expectedResult="1">SELECT count(*) FROM clinlims.test WHERE description = 'HIVINFANTVIRALLOAD(DBS)' AND reporting_name_localization_id IS NULL</sqlCheck> 
                 </preConditions>
 
                 <sql>
