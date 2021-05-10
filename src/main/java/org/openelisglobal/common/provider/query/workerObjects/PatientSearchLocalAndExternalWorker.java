@@ -91,7 +91,7 @@ public class PatientSearchLocalAndExternalWorker extends PatientSearchWorker {
 
         List<PatientSearchResults> localResults = new ArrayList<>();
         localResults = searchResultsService.getSearchResults(lastName, firstName, STNumber, subjectNumber, nationalID,
-                nationalID, patientID, guid, "", "");
+                guid, patientID, guid, "", "");
         allResults.addAll(localResults);
 
         if (config.getPropertyValue(Property.INFO_HIGHWAY_ENABLED).equals("true")) {
