@@ -19,6 +19,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.formfields.FormFields.Field;
@@ -274,6 +275,21 @@ public class LogbookResultsController extends LogbookResultsBaseController {
             return findForward(FWD_FAIL_INSERT, form);
         }
 
+//  gnr: shows current session records, can be current, stale/empty vs. other user
+//        ie: empty when another user saved and hasn't reloaded.
+        
+        List<Result> checkPagedResults = (List<Result>) request.getSession().getAttribute(IActionConstants.RESULTS_SESSION_CACHE);
+        List<Result> checkResults = (List<Result>) checkPagedResults.get(0);
+        if (checkResults.size() == 0) {
+            LogEvent.logDebug(this.getClass().getName(), "LogbookResults()", "Attempted save of stale page.");
+//            Errors errors = new BaseErrors();
+//            errors.reject("alert.error", "An error occured while saving");
+//            saveErrors(errors);
+            redirectAttributes.addFlashAttribute(FWD_FAIL_INSERT, true);
+            return findForward(FWD_SUCCESS_INSERT, form);
+//            return new ModelAndView("redirect:/LogbookResults.do?blank=true");
+        }
+        
         List<IResultUpdate> updaters = ResultUpdateRegister.getRegisteredUpdaters();
 
         ResultsPaging paging = new ResultsPaging();
