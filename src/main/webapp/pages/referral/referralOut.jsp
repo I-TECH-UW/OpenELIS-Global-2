@@ -45,7 +45,7 @@ jQuery(document).ready(function () {
 
 
 function /*void*/ markModified(index) {
-    $("modified_" + index).value = true;
+    $("modified_" + index).value = !jQuery('#saveToggle_' + index).length || jQuery('#saveToggle_' + index).is(':checked');
     $("saveButtonId").disabled = missingRequiredValues();
     makeDirty();
 }
@@ -313,62 +313,68 @@ function  /*void*/ setMyCancelAction(form, action, validate, parameters) {
     <td class="leftVertical" id='resultCell_${iter.index}'>
     	<c:set var="referredResultType" value="${referralItems.referredResultType}"/>
         <c:if test="${not empty referralItems.referredTestId}"> 
-        <div class='resultCell_${iter.index}'>
-        	<c:if test="${'N' == referredResultType || 'A' == referredResultType || 'R' == referredResultType}">
-	            <form:input path="referralItems[${iter.index}].referredResult"
-	                   class='referralResult_${iter.index}'
-	                   onchange='markModified("${iter.index}");'
-	                   id='numericResult_${iter.index}'
-	                    />
-	        </c:if> <c:if test="${'D' == referredResultType}" > 
-            <form:select path='referralItems[${iter.index}].referredDictionaryResult'
-                    class='referralResult_${iter.index}'
-                    id='dictionaryResult_${iter.index}'
-                    onchange='markModified("${iter.index}");'
-                    >
-                <option value="0"></option>
-                <form:options items="${referralItems.dictionaryResults}" itemValue="id" itemLabel="value"/>
-            </form:select>
-            </c:if><c:if test="${'M' == referredResultType}"> 
-            <form:select path='referralItems[${iter.index}].referredDictionaryResult'
-                    id='MultiSelect_${iter.index}'
-                    class='referralResult_${iter.index}'
-                    onchange='markModified("${iter.index}");'
-                    multiple="multiple"
-                    >
-                   	<form:options items="${referralItems.dictionaryResults}" itemValue="id" itemLabel="value"/>
-            </form:select>
-            <form:hidden path="referralItems[${iter.index}].multiSelectResultValues"
-                         id='multiresultId_${iter.index}' cssClass="multiSelectValues"/>
-            <form:hidden path="referralItems[${iter.index}].referredMultiDictionaryResult"
-                         id='resultMultiSelect_${iter.index}'/>
-            </c:if><c:if test="${'C' == referredResultType}"> 
-            <div id='cascadingMulti_${iter.index}_0'
-                 class='cascadingMulti_${iter.index} referralResult_${iter.index}'>
-                <form:hidden path="referralItems[${iter.index}].multiSelectResultValues"
-                             id='multiresultId_${iter.index}' cssClass="multiSelectValues"/>
-                <c:if test="${referralItems.dictionaryResults}">
-                    <input type="hidden" id='divCount_${iter.index}' value="0">
-                    <form:select path="testResult[${iter.index}].multiSelectResultValues"
-                     id='resultId_${iter.index}_0'
-                     multiple="multiple"
-                     onchange='markModified("${iter.index}");'
-                    >
-                    	<form:options items="${referralItems.dictionaryResults}" itemValue="id" itemLabel="value" />
-                    </form:select>
-                    <input class='addMultiSelect${iter.index}' type="button" value="+"
-                           onclick='addNewMultiSelect(${iter.index}, this);'/>
-                    <input class='removeMultiSelect${iter.index}' type="button" value="-"
-                           onclick="removeMultiSelect('target');" style="visibility: hidden"/>
-                    <form:input path='testResult[${iter.index}].qualifiedResultValue'
-                           id='qualifiedDict_${iter.index}'
-                           style='display:none'
-                           onchange='markModified("${iter.index}");'
-                            />
-                </c:if>
-            </div>
-            </c:if>
-        </div>
+	        <div class='resultCell_${iter.index}'>
+	        	<c:if test="${'N' == referredResultType || 'A' == referredResultType || 'R' == referredResultType}">
+		            <form:input path="referralItems[${iter.index}].referredResult"
+		                   class='referralResult_${iter.index}'
+		                   onchange='markModified("${iter.index}");'
+		                   id='numericResult_${iter.index}'
+		                    />
+		        </c:if> 
+		        <c:if test="${'D' == referredResultType}" > 
+	            	<form:select path='referralItems[${iter.index}].referredDictionaryResult'
+	                    class='referralResult_${iter.index}'
+	                    id='dictionaryResult_${iter.index}'
+	                    onchange='markModified("${iter.index}");'
+	                    >
+	                	<option value="0"></option>
+	                	<form:options items="${referralItems.dictionaryResults}" itemValue="id" itemLabel="value"/>
+	           		</form:select>
+	            </c:if>
+	            <c:if test="${'M' == referredResultType}"> 
+	            	<form:select path='referralItems[${iter.index}].referredDictionaryResult'
+	                    id='MultiSelect_${iter.index}'
+	                    class='referralResult_${iter.index}'
+	                    onchange='markModified("${iter.index}");'
+	                    multiple="multiple"
+	                    >
+	                   	<form:options items="${referralItems.dictionaryResults}" itemValue="id" itemLabel="value"/>
+	            	</form:select>
+	           		<form:hidden path="referralItems[${iter.index}].multiSelectResultValues"
+	                         id='multiresultId_${iter.index}' cssClass="multiSelectValues"/>
+	            	<form:hidden path="referralItems[${iter.index}].referredMultiDictionaryResult"
+	                         id='resultMultiSelect_${iter.index}'/>
+	            </c:if>
+	            <c:if test="${'C' == referredResultType}"> 
+	            	<div id='cascadingMulti_${iter.index}_0'
+	                 	class='cascadingMulti_${iter.index} referralResult_${iter.index}'>
+		                <form:hidden path="referralItems[${iter.index}].multiSelectResultValues"
+		                             id='multiresultId_${iter.index}' cssClass="multiSelectValues"/>
+		                <c:if test="${referralItems.dictionaryResults}">
+		                    <input type="hidden" id='divCount_${iter.index}' value="0">
+		                    <form:select path="testResult[${iter.index}].multiSelectResultValues"
+		                     id='resultId_${iter.index}_0'
+		                     multiple="multiple"
+		                     onchange='markModified("${iter.index}");'
+		                    >
+		                    	<form:options items="${referralItems.dictionaryResults}" itemValue="id" itemLabel="value" />
+		                    </form:select>
+		                    <input class='addMultiSelect${iter.index}' type="button" value="+"
+		                           onclick='addNewMultiSelect(${iter.index}, this);'/>
+		                    <input class='removeMultiSelect${iter.index}' type="button" value="-"
+		                           onclick="removeMultiSelect('target');" style="visibility: hidden"/>
+		                    <form:input path='testResult[${iter.index}].qualifiedResultValue'
+		                           id='qualifiedDict_${iter.index}'
+		                           style='display:none'
+		                           onchange='markModified("${iter.index}");'
+		                            />
+		                </c:if>
+	           	 	</div>
+	            </c:if>
+	            <c:if test="${referralItems.referredResult || referralItems.referredDictionaryResult || referralItems.multiSelectResultValues}">
+	            	<input type="checkbox" id="saveToggle_${iter.index}" onchange='markModified("${iter.index}");' checked />
+	            </c:if>
+	        </div>
         </c:if>
     </td>
     <td>

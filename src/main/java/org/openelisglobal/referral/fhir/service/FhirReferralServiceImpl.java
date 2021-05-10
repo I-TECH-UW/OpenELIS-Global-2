@@ -341,6 +341,8 @@ public class FhirReferralServiceImpl implements FhirReferralService {
         ReferralSet referralSet = new ReferralSet();
 
         Referral referral = referralService.getReferralByAnalysisId(analysis.getId());
+        List<ReferralResult> referralResults = referralResultService.getReferralResultsForReferral(referral.getId());
+        referralSet.setExistingReferralResults(referralResults == null ? new ArrayList<>() : referralResults);
         ReferralResult referralResult = referralSet.getNextReferralResult();
         referralResult.setSysUserId("1");
         referralResult.setReferralId(referral.getId());
