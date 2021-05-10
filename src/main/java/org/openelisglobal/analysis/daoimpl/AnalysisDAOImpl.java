@@ -33,15 +33,16 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.openelisglobal.analysis.dao.AnalysisDAO;
 import org.openelisglobal.analysis.valueholder.Analysis;
-import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.paging.PagingProperties;
 import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.result.valueholder.Result;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.sampleitem.valueholder.SampleItem;
+import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.test.valueholder.Test;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -425,7 +426,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
             query.setInteger("testSectionId", Integer.parseInt(testSectionId));
             query.setParameterList("statusIdList", statusIdList);
-            query.setMaxResults(IActionConstants.VALIDATION_PAGING_SIZE);
+            query.setMaxResults(SpringContext.getBean(PagingProperties.class).getValidationPageSize());
 
             return query.list();
         } catch (RuntimeException e) {
@@ -450,7 +451,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
             query.setParameter("accessionNumber", accessionNumber);
             query.setParameterList("statusIdList", statusIdList);
-            query.setMaxResults(IActionConstants.VALIDATION_PAGING_SIZE);
+            query.setMaxResults(SpringContext.getBean(PagingProperties.class).getValidationPageSize());
 
             return query.list();
         } catch (RuntimeException e) {
@@ -1495,7 +1496,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             query.setInteger("testSectionId", Integer.parseInt(testSectionId));
             query.setParameterList("analysisStatusList", analysisStatusList);
             query.setParameterList("sampleStatusList", sampleStatusList);
-            query.setMaxResults(IActionConstants.PAGING_SIZE);
+            query.setMaxResults(SpringContext.getBean(PagingProperties.class).getResultsPageSize());
 
             List<Analysis> analysisList = query.list();
 
