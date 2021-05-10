@@ -748,7 +748,6 @@ public class ReferredOutTestsController extends BaseController {
         String referredResultType = referredTest.getReferredResultType();
 
         if (!TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(referredResultType) && test != null) {
-            @SuppressWarnings("unchecked")
             List<TestResult> testResults = testResultService.getAllActiveTestResultsPerTest(test);
 
             if (!testResults.isEmpty()) {
