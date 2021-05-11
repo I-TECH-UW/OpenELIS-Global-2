@@ -536,7 +536,7 @@ function checkFinish(index) {
 <c:if test="${not empty referralItems.pastNotes}">
     <tr class='${rowColor}'>
         <td valign="top" align="right"><spring:message code="label.prior.note" />:</td>
-        <td colspan="3" align="left">
+        <td colspan="2" align="left">
 <%--         	pastNotes are escaped in an html context when they are fetched by the server before --%>
 <%--         	safe html tags are added in the controller, so this does not need to be escaped here as well --%>
             ${referralItems.pastNotes}
