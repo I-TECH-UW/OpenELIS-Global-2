@@ -27,9 +27,7 @@ import org.openelisglobal.organization.valueholder.Organization;
 public class Referral extends BaseObject<String> {
 
     // TODO move cancelled logic to use this enum as well
-    public enum ReferralStatus {
-        CREATED, OPEN, FINISHED, CANCELED
-    }
+
 
     private static final long serialVersionUID = 1L;
     private String id;
@@ -41,7 +39,7 @@ public class Referral extends BaseObject<String> {
     private String referralReasonId;
     private String referralTypeId;
     private String requesterName;
-    private ReferralStatus status = ReferralStatus.CREATED;
+    private ReferralStatus status;
 
     private ValueHolderInterface analysis = new ValueHolder();
     private ValueHolderInterface organization = new ValueHolder();

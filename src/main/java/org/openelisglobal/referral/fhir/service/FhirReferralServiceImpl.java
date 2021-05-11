@@ -55,6 +55,7 @@ import org.openelisglobal.referral.service.ReferralSetService;
 import org.openelisglobal.referral.valueholder.Referral;
 import org.openelisglobal.referral.valueholder.ReferralResult;
 import org.openelisglobal.referral.valueholder.ReferralSet;
+import org.openelisglobal.referral.valueholder.ReferralStatus;
 import org.openelisglobal.reports.service.DocumentTrackService;
 import org.openelisglobal.reports.service.DocumentTypeService;
 import org.openelisglobal.reports.valueholder.DocumentTrack;
@@ -341,6 +342,7 @@ public class FhirReferralServiceImpl implements FhirReferralService {
         ReferralSet referralSet = new ReferralSet();
 
         Referral referral = referralService.getReferralByAnalysisId(analysis.getId());
+        referral.setStatus(ReferralStatus.RECEIVED);
         List<ReferralResult> referralResults = referralResultService.getReferralResultsForReferral(referral.getId());
         referralSet.setExistingReferralResults(referralResults == null ? new ArrayList<>() : referralResults);
         ReferralResult referralResult = referralSet.getNextReferralResult();

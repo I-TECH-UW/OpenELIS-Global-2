@@ -28,6 +28,7 @@ import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.referral.dao.ReferralDAO;
 import org.openelisglobal.referral.valueholder.Referral;
+import org.openelisglobal.referral.valueholder.ReferralStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -96,10 +97,12 @@ public class ReferralDAOImpl extends BaseDAOImpl<Referral, String> implements Re
 
     @Transactional(readOnly = true)
     public List<Referral> getAllUncanceledOpenReferrals() throws LIMSRuntimeException {
-        String sql = "From Referral r where r.status = 'OPEN' order by r.id";
+        String sql = "From Referral r where r.status in (:status1, :status2) order by r.id";
 
         try {
             Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setParameter("status1", ReferralStatus.SENT.name());
+            query.setParameter("status2", ReferralStatus.CREATED.name());
             List<Referral> referrals = query.list();
             return referrals;
         } catch (HibernateException e) {

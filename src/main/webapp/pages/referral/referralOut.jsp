@@ -42,15 +42,17 @@ jQuery(document).ready(function () {
 
     jQuery(".asmContainer").css("display", "inline-block");
     
-    $('.saveToggle').each(function(i, obj) {
-    	setReferralStatus(obj.val());
+    jQuery('.saveToggle').each(function() {
+    	setReferralStatus(jQuery(this).val());
+    	checkFinish(jQuery(this).val());
     });
 });
 
 
 function /*void*/ markModified(index) {
-    $("modified_" + index).value = 'true';
-    $("saveButtonId").disabled = missingRequiredValues();
+	checkFinish(index);
+	jQuery("#modified_" + index).val('true');
+	jQuery("#saveButtonId").prop('disabled', missingRequiredValues());
     makeDirty();
 }
 
@@ -220,7 +222,17 @@ function  /*void*/ setMyCancelAction(form, action, validate, parameters) {
 
 function setReferralStatus(index) {
 	jQuery('#referralStatus_' + index).val(jQuery('#canceled_' + index).is(':checked') ? 'CANCELED' : jQuery('#finished_' + index).is(':checked') ? 'FINISHED' : 'OPEN')
-	markModified("${iter.index}");
+}
+
+function checkFinish(index) {
+	var hasNumericResult = jQuery("#numericResult_" + index).val() !== undefined && jQuery("#numericResult_" + index).val() !== "";
+	var hasDictionaryResult = jQuery("#dictionaryResult_" + index).val() !== undefined && jQuery("#dictionaryResult_" + index).val() !== "0";
+	var hasMultiSelectResult = jQuery("#resultMultiSelect_" + index).val() !== undefined && jQuery("#resultMultiSelect_" + index).val() !== "";
+	var hasResult = hasNumericResult ||  hasDictionaryResult || hasMultiSelectResult;
+	jQuery("#finished_" + index).prop('disabled', !hasResult);
+	if (!hasResult && jQuery('#finished_' + index).is(':checked')) {
+		jQuery("#finished_" + index).prop('checked', false);
+	}
 }
 
 
@@ -231,7 +243,7 @@ function setReferralStatus(index) {
 <table width="100%" border="0" cellspacing="0" cellpadding="1" id="mainTable">
 <tr>
     <th colspan="6" class="headerGroup"><spring:message code="referral.header.group.request"/></th>
-    <th colspan="2" class="leftVertical headerGroup"><spring:message code="referral.header.group.results"/></th>
+    <th colspan="3" class="leftVertical headerGroup"><spring:message code="referral.header.group.results"/></th>
 </tr>
 <tr>
     <th><spring:message code="referral.reason"/><span class="requiredlabel">*</span></th>
@@ -242,6 +254,7 @@ function setReferralStatus(index) {
     <th width="5%"><spring:message code="label.button.cancel.referral"/></th>
     <th width="15%" class="leftVertical"><spring:message code="result.result"/></th>
     <th><spring:message code="referral.report.date"/><br/><%=DateUtil.getDateUserPrompt()%></th>
+    <th width="5%"><spring:message code="referral.finish" text="Finish Referral"/></th>
 </tr>
 
 <c:forEach items="${form.referralItems}" var="referralItems" varStatus="iter">
@@ -264,7 +277,7 @@ function setReferralStatus(index) {
     <td colspan="4" class="HeadSeperator">
         <spring:message code="referral.request.date"/>: <b><c:out value="${referralItems.referralDate}"/></b>
     </td>
-    <td colspan='2' class="HeadSeperator leftVertical">
+    <td colspan='3' class="HeadSeperator leftVertical">
 </tr>
 <tr class='${rowColour}>Head' id='referralRow_${iter.index}'>
     <td colspan="2">
@@ -276,7 +289,7 @@ function setReferralStatus(index) {
     <td colspan="2">
         <spring:message code="result.original.result"/>: <b><c:out value="${referralItems.referralResults}"/></b>
     </td>
-    <td colspan="2" class="leftVertical">
+    <td colspan="3" class="leftVertical">
         &nbsp;
     </td>
 </tr>
@@ -318,11 +331,12 @@ function setReferralStatus(index) {
         </form:select>
     </td>
     <td>
-        <input type="checkbox" id="canceled_${iter.index}" onchange='setReferralStatus("${iter.index}");'/>
+        <input type="checkbox" id="canceled_${iter.index}" onchange='setReferralStatus("${iter.index}");markModified("${iter.index}");'/>
     </td>
     <td class="leftVertical" id='resultCell_${iter.index}'>
     	<c:set var="referredResultType" value="${referralItems.referredResultType}"/>
-        <c:if test="${not empty referralItems.referredTestId}"> 
+        <c:set var="referredResultAvailable" value="${not empty referralItems.referredTestId}" />
+        <c:if test="${referredResultAvailable}"> 
 	        <div class='resultCell_${iter.index}'>
 	        	<c:if test="${'N' == referredResultType || 'A' == referredResultType || 'R' == referredResultType}">
 		            <form:input path="referralItems[${iter.index}].referredResult"
@@ -381,12 +395,9 @@ function setReferralStatus(index) {
 		                </c:if>
 	           	 	</div>
 	            </c:if>
-	            	<form:hidden path='testResult[${iter.index}].referralStatus'
-		                           id='referralStatus_${iter.index}'/>
-	            	<spring:message code="label.input.referral.result.save" text="finish referral result" />
-	            	<input type="checkbox" class="saveToggle" id="finished_${iter.index}" onchange='setReferralStatus("${iter.index}");' value="${iter.index}" checked />
 	        </div>
         </c:if>
+        
     </td>
     <td>
         <div class='resultCell_${iter.index}'>
@@ -398,6 +409,13 @@ function setReferralStatus(index) {
 	                       onchange='markModified("${iter.index}");  validateDateFormat(this);'
 	                       id='reportDate_${iter.index}'/>
             </c:if>
+        </div>
+    </td>
+    <td>
+        <div style="display: ${referredResultAvailable ? 'block' : 'none'}">
+	            	<form:hidden path='referralItems[${iter.index}].referralStatus'
+		                           id='referralStatus_${iter.index}'/>
+	            	<input type="checkbox" class="saveToggle" id="finished_${iter.index}" onchange='setReferralStatus("${iter.index}");markModified("${iter.index}");' value="${iter.index}" />
         </div>
     </td>
 </tr>
@@ -513,7 +531,7 @@ function setReferralStatus(index) {
                 />
         <input type="hidden" id='hideShow_${iter.index}' value="hidden"/>
     </td>
-    <td colspan='2' class="leftVertical">&nbsp</td>
+    <td colspan='3' class="leftVertical">&nbsp</td>
 </tr>
 <c:if test="${not empty referralItems.pastNotes}">
     <tr class='${rowColor}'>

@@ -49,7 +49,7 @@ import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.referral.service.ReferralService;
 import org.openelisglobal.referral.service.ReferralTypeService;
 import org.openelisglobal.referral.valueholder.Referral;
-import org.openelisglobal.referral.valueholder.Referral.ReferralStatus;
+import org.openelisglobal.referral.valueholder.ReferralStatus;
 import org.openelisglobal.referral.valueholder.ReferralType;
 import org.openelisglobal.result.action.util.ResultSet;
 import org.openelisglobal.result.action.util.ResultUtil;

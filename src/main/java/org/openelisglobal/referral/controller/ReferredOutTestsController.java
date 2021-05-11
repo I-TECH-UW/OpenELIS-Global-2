@@ -42,9 +42,9 @@ import org.openelisglobal.referral.service.ReferralResultService;
 import org.openelisglobal.referral.service.ReferralService;
 import org.openelisglobal.referral.service.ReferralSetService;
 import org.openelisglobal.referral.valueholder.Referral;
-import org.openelisglobal.referral.valueholder.Referral.ReferralStatus;
 import org.openelisglobal.referral.valueholder.ReferralResult;
 import org.openelisglobal.referral.valueholder.ReferralSet;
+import org.openelisglobal.referral.valueholder.ReferralStatus;
 import org.openelisglobal.result.service.ResultServiceImpl;
 import org.openelisglobal.result.valueholder.Result;
 import org.openelisglobal.resultlimit.service.ResultLimitService;
@@ -204,19 +204,19 @@ public class ReferredOutTestsController extends BaseController {
     }
 
     private ReferralItem getReferralItem(Referral referral) {
-        boolean allReferralResultsHaveResults = true;
+//        boolean allReferralResultsHaveResults = true;
         List<ReferralResult> referralResults = referralResultService.getReferralResultsForReferral(referral.getId());
-        for (ReferralResult referralResult : referralResults) {
-            if (referralResult.getResult() == null
-                    || GenericValidator.isBlankOrNull(referralResult.getResult().getValue())) {
-                allReferralResultsHaveResults = false;
-                break;
-            }
-        }
-
-        if (allReferralResultsHaveResults) {
-            return null;
-        }
+//        for (ReferralResult referralResult : referralResults) {
+//            if (referralResult.getResult() == null
+//                    || GenericValidator.isBlankOrNull(referralResult.getResult().getValue())) {
+//                allReferralResultsHaveResults = false;
+//                break;
+//            }
+//        }
+//
+//        if (allReferralResultsHaveResults) {
+//            return null;
+//        }
 
         ReferralItem referralItem = new ReferralItem();
 
@@ -610,7 +610,8 @@ public class ReferredOutTestsController extends BaseController {
                 referralResultService.getReferralResultsForReferral(referralItem.getReferralId()));
 
         Referral referral = referralService.get(referralItem.getReferralId());
-        referral.setStatus(referralItem.getReferralStatus());
+        referral.setStatus(
+                referralItem.getReferralStatus() == null ? ReferralStatus.SENT : referralItem.getReferralStatus());
         referral.setSysUserId(getSysUserId(request));
         referral.setOrganization(organizationService.get(referralItem.getReferredInstituteId()));
         referral.setSentDate(DateUtil.convertStringDateToTruncatedTimestamp(referralItem.getReferredSendDate()));

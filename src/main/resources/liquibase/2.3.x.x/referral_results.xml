@@ -27,7 +27,7 @@
       	</update>
       	<update schemaName="clinlims"
       		tableName="referral">
-      		<column name="status" value="OPEN"/>
+      		<column name="status" value="SENT"/>
       		<where>result_recieved_date is NULL AND canceled = false</where>
       	</update>
 	</changeSet>

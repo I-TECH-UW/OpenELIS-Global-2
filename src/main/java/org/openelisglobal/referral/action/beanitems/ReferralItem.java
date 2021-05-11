@@ -27,7 +27,7 @@ import org.hibernate.validator.constraints.SafeHtml;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.referral.form.ReferredOutTestsForm;
-import org.openelisglobal.referral.valueholder.Referral.ReferralStatus;
+import org.openelisglobal.referral.valueholder.ReferralStatus;
 import org.openelisglobal.validation.annotations.ValidDate;
 
 public class ReferralItem implements IReferralResultTest, Serializable {

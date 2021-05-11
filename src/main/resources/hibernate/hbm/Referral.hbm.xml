@@ -33,8 +33,12 @@
 			length="30" not-null="false" />
 		<property name="requesterName" column="requester_name"
 			length="60" not-null="false" />
-		<property name="status" column="status"
-			length="255" not-null="true" />
+		<property name="status" column="status">
+            <type name="org.hibernate.type.EnumType">
+                <param name="enumClass">org.openelisglobal.referral.valueholder.ReferralStatus</param>
+                <param name="useNamed">true</param>
+            </type>
+        </property>
 		<many-to-one name="analysis"
 			class="org.openelisglobal.analysis.valueholder.Analysis"
 			fetch="select"
