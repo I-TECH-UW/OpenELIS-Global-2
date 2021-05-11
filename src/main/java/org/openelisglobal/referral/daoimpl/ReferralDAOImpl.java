@@ -103,6 +103,7 @@ public class ReferralDAOImpl extends BaseDAOImpl<Referral, String> implements Re
             Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setParameter("status1", ReferralStatus.SENT.name());
             query.setParameter("status2", ReferralStatus.CREATED.name());
+            query.setParameter("status2", ReferralStatus.RECEIVED.name());
             List<Referral> referrals = query.list();
             return referrals;
         } catch (HibernateException e) {
