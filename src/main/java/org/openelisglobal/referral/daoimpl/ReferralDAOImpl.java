@@ -97,13 +97,13 @@ public class ReferralDAOImpl extends BaseDAOImpl<Referral, String> implements Re
 
     @Transactional(readOnly = true)
     public List<Referral> getAllUncanceledOpenReferrals() throws LIMSRuntimeException {
-        String sql = "From Referral r where r.status in (:status1, :status2) order by r.id";
+        String sql = "From Referral r where r.status in (:status1, :status2, :status3) order by r.id";
 
         try {
             Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setParameter("status1", ReferralStatus.SENT.name());
             query.setParameter("status2", ReferralStatus.CREATED.name());
-            query.setParameter("status2", ReferralStatus.RECEIVED.name());
+            query.setParameter("status3", ReferralStatus.RECEIVED.name());
             List<Referral> referrals = query.list();
             return referrals;
         } catch (HibernateException e) {
