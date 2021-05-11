@@ -33,7 +33,8 @@
 			length="30" not-null="false" />
 		<property name="requesterName" column="requester_name"
 			length="60" not-null="false" />
-		<property name="canceled" column="canceled" type="boolean" />
+		<property name="status" column="status"
+			length="255" not-null="true" />
 		<many-to-one name="analysis"
 			class="org.openelisglobal.analysis.valueholder.Analysis"
 			fetch="select"

@@ -80,7 +80,7 @@ public class ReferralItemServiceImpl implements ReferralItemService {
 
         Analysis analysis = referral.getAnalysis();
 
-        referralItem.setCanceled(false);
+        referralItem.setReferralStatus(referral.getStatus());
         referralItem.setReferredResultType("N");
         referralItem.setAccessionNumber(analysisService.getOrderAccessionNumber(analysis));
 

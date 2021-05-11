@@ -42,6 +42,7 @@ import org.openelisglobal.referral.service.ReferralResultService;
 import org.openelisglobal.referral.service.ReferralService;
 import org.openelisglobal.referral.service.ReferralSetService;
 import org.openelisglobal.referral.valueholder.Referral;
+import org.openelisglobal.referral.valueholder.Referral.ReferralStatus;
 import org.openelisglobal.referral.valueholder.ReferralResult;
 import org.openelisglobal.referral.valueholder.ReferralSet;
 import org.openelisglobal.result.service.ResultServiceImpl;
@@ -79,7 +80,8 @@ public class ReferredOutTestsController extends BaseController {
             "referralItems*.referralResultId", "referralItems*.referralId", "referralItems*.referredResultType",
             "referralItems*.modified", "referralItems*.inLabResultId", "referralItems*.referralReasonId",
             "referralItems*.referrer", "referralItems*.referredInstituteId", "referralItems*.referredSendDate",
-            "referralItems*.referredTestId", "referralItems*.canceled", "referralItems*.referredResult",
+            "referralItems*.referredTestId", "referralItems*.canceled", "referralItems*.referralStatus",
+            "referralItems*.referredResult",
             "referralItems*.referredDictionaryResult", "referralItems*.referredDictionaryResult",
             "referralItems*.multiSelectResultValues", "referralItems*.referredMultiDictionaryResult",
             "referralItems*.multiSelectResultValues", "testResult*.multiSelectResultValues",
@@ -219,7 +221,7 @@ public class ReferredOutTestsController extends BaseController {
         ReferralItem referralItem = new ReferralItem();
 
         Analysis analysis = referral.getAnalysis();
-        referralItem.setCanceled(false);
+        referralItem.setReferralStatus(referral.getStatus());
         referralItem.setReferredResultType("N");
         referralItem.setAccessionNumber(analysisService.getOrderAccessionNumber(analysis));
 
@@ -513,7 +515,7 @@ public class ReferredOutTestsController extends BaseController {
     private void selectModifiedAndCanceledItems(List<ReferralItem> referralItems, List<ReferralItem> modifiedItems,
             List<ReferralItem> canceledItems) {
         for (ReferralItem item : referralItems) {
-            if (item.isCanceled()) {
+            if (ReferralStatus.CANCELED.equals(item.getReferralStatus())) {
                 canceledItems.add(item);
             } else if (item.isModified()) {
                 modifiedItems.add(item);
@@ -583,7 +585,7 @@ public class ReferredOutTestsController extends BaseController {
 
         referralSet.setReferral(referral);
         referral.setSysUserId(getSysUserId(request));
-        referral.setCanceled(true);
+        referral.setStatus(ReferralStatus.CANCELED);
 
         setStatusForCanceledReferrals(referral, parentSamples);
 
@@ -608,7 +610,7 @@ public class ReferredOutTestsController extends BaseController {
                 referralResultService.getReferralResultsForReferral(referralItem.getReferralId()));
 
         Referral referral = referralService.get(referralItem.getReferralId());
-        referral.setCanceled(false);
+        referral.setStatus(referralItem.getReferralStatus());
         referral.setSysUserId(getSysUserId(request));
         referral.setOrganization(organizationService.get(referralItem.getReferredInstituteId()));
         referral.setSentDate(DateUtil.convertStringDateToTruncatedTimestamp(referralItem.getReferredSendDate()));

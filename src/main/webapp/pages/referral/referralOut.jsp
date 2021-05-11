@@ -41,11 +41,15 @@ jQuery(document).ready(function () {
     });
 
     jQuery(".asmContainer").css("display", "inline-block");
+    
+    $('.saveToggle').each(function(i, obj) {
+    	setReferralStatus(obj.val());
+    });
 });
 
 
 function /*void*/ markModified(index) {
-    $("modified_" + index).value = !jQuery('#saveToggle_' + index).length || jQuery('#saveToggle_' + index).is(':checked');
+    $("modified_" + index).value = 'true';
     $("saveButtonId").disabled = missingRequiredValues();
     makeDirty();
 }
@@ -213,6 +217,13 @@ function  /*void*/ setMyCancelAction(form, action, validate, parameters) {
     //first turn off any further validation
     setAction(document.getElementById("mainForm"), 'Cancel', 'no', '');
 }
+
+function setReferralStatus(index) {
+	jQuery('#referralStatus_' + index).val(jQuery('#canceled_' + index).is(':checked') ? 'CANCELED' : jQuery('#finished_' + index).is(':checked') ? 'FINISHED' : 'OPEN')
+	markModified("${iter.index}");
+}
+
+
 </script>
 
 <c:if test="${not empty form.referralItems}">
@@ -307,8 +318,7 @@ function  /*void*/ setMyCancelAction(form, action, validate, parameters) {
         </form:select>
     </td>
     <td>
-        <form:checkbox path="referralItems[${iter.index}].canceled"
-                       onchange='markModified("${iter.index}");'/>
+        <input type="checkbox" id="canceled_${iter.index}" onchange='setReferralStatus("${iter.index}");'/>
     </td>
     <td class="leftVertical" id='resultCell_${iter.index}'>
     	<c:set var="referredResultType" value="${referralItems.referredResultType}"/>
@@ -371,9 +381,10 @@ function  /*void*/ setMyCancelAction(form, action, validate, parameters) {
 		                </c:if>
 	           	 	</div>
 	            </c:if>
-	            <c:if test="${referralItems.referredResult || referralItems.referredDictionaryResult || referralItems.multiSelectResultValues}">
-	            	<input type="checkbox" id="saveToggle_${iter.index}" onchange='markModified("${iter.index}");' checked />
-	            </c:if>
+	            	<form:hidden path='testResult[${iter.index}].referralStatus'
+		                           id='referralStatus_${iter.index}'/>
+	            	<spring:message code="label.input.referral.result.save" text="finish referral result" />
+	            	<input type="checkbox" class="saveToggle" id="finished_${iter.index}" onchange='setReferralStatus("${iter.index}");' value="${iter.index}" checked />
 	        </div>
         </c:if>
     </td>

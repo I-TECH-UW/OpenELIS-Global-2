@@ -49,6 +49,7 @@ import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.referral.service.ReferralService;
 import org.openelisglobal.referral.service.ReferralTypeService;
 import org.openelisglobal.referral.valueholder.Referral;
+import org.openelisglobal.referral.valueholder.Referral.ReferralStatus;
 import org.openelisglobal.referral.valueholder.ReferralType;
 import org.openelisglobal.result.action.util.ResultSet;
 import org.openelisglobal.result.action.util.ResultUtil;
@@ -282,7 +283,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 
 //  gnr: shows current session records, can be current, stale/empty vs. other user
 //        ie: empty when another user saved and hasn't reloaded.
-        
+
         List<Result> checkPagedResults = (List<Result>) request.getSession().getAttribute(IActionConstants.RESULTS_SESSION_CACHE);
         List<Result> checkResults = (List<Result>) checkPagedResults.get(0);
         if (checkResults.size() == 0) {
@@ -294,7 +295,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
             return findForward(FWD_SUCCESS_INSERT, form);
 //            return new ModelAndView("redirect:/LogbookResults.do?blank=true");
         }
-        
+
         List<IResultUpdate> updaters = ResultUpdateRegister.getRegisteredUpdaters();
 
         ResultsPaging paging = new ResultsPaging();
@@ -436,6 +437,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
             if (testResultItem.getResultId() == null
                     || GenericValidator.isBlankOrNull(testResultItem.getReferralId())) {
                 referral = new Referral();
+                referral.setStatus(ReferralStatus.CREATED);
                 referral.setReferralTypeId(REFERRAL_CONFORMATION_ID);
                 referral.setSysUserId(getSysUserId(request));
                 referral.setRequestDate(new Timestamp(new Date().getTime()));
@@ -444,7 +446,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
                 referral.setReferralReasonId(testResultItem.getReferralReasonId());
             } else if (testResultItem.isReferralCanceled()) {
                 referral = referralService.get(testResultItem.getReferralId());
-                referral.setCanceled(false);
+                referral.setStatus(ReferralStatus.CREATED);
                 referral.setSysUserId(getSysUserId(request));
                 referral.setRequesterName(testResultItem.getTechnician());
                 referral.setReferralReasonId(testResultItem.getReferralReasonId());

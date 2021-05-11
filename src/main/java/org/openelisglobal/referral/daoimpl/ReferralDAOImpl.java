@@ -96,7 +96,7 @@ public class ReferralDAOImpl extends BaseDAOImpl<Referral, String> implements Re
 
     @Transactional(readOnly = true)
     public List<Referral> getAllUncanceledOpenReferrals() throws LIMSRuntimeException {
-        String sql = "From Referral r where r.resultRecievedDate is NULL and r.canceled = 'false' order by r.id";
+        String sql = "From Referral r where r.status = 'OPEN' order by r.id";
 
         try {
             Query query = entityManager.unwrap(Session.class).createQuery(sql);
