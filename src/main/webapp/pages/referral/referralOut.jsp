@@ -118,7 +118,7 @@ function insertNewTestRequest(button, index) {
 
     newRow.insertCell(3);
     cell = newRow.insertCell(4);
-    cell.colSpan = 2;
+    cell.colSpan = 3;
     cell.className = "leftVertical";
 
     $("saveButtonId").disabled = true;
@@ -541,7 +541,7 @@ function checkFinish(index) {
 <%--         	safe html tags are added in the controller, so this does not need to be escaped here as well --%>
             ${referralItems.pastNotes}
         </td>
-        <td colspan="2" align="left" valign="top">
+        <td colspan="3" align="left" valign="top">
         	<span id='noteRow_${iter.index}' style="display: none;">
         	<spring:message code="note.note"/>:
         	<form:textarea path="referralItems[${iter.index}].note"
@@ -551,7 +551,7 @@ function checkFinish(index) {
                        rows="3"/>
             </span>
         </td>
-        <td colspan='2' class="leftVertical">
+        <td colspan='3' class="leftVertical">
     </tr>
 </c:if>
 <c:if test="${empty referralItems.pastNotes}">
