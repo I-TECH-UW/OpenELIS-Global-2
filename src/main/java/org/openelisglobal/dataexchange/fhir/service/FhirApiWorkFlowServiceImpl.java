@@ -23,6 +23,7 @@ import org.hl7.fhir.r4.model.Resource;
 import org.hl7.fhir.r4.model.ResourceType;
 import org.hl7.fhir.r4.model.ServiceRequest;
 import org.hl7.fhir.r4.model.ServiceRequest.ServiceRequestStatus;
+import org.hl7.fhir.r4.model.Specimen;
 import org.hl7.fhir.r4.model.Task;
 import org.hl7.fhir.r4.model.Task.TaskStatus;
 import org.openelisglobal.common.log.LogEvent;
@@ -439,6 +440,8 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         FhirOperations fhirOperations = new FhirOperations();
 
         List<ServiceRequest> remoteServiceRequests = getBasedOnServiceRequestsFromServer(sourceFhirClient, remoteTask);
+        List<Specimen> remoteSpecimens = getSpecimenForServiceRequestsFromServer(sourceFhirClient,
+                remoteServiceRequests);
         Patient remotePatientForTask = getForPatientFromServer(sourceFhirClient, remoteTask);
         if (remotePatientForTask == null) {
             remotePatientForTask = getForPatientFromServer(sourceFhirClient, remoteServiceRequests);
@@ -464,7 +467,6 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
 
         // ServiceRequests
         List<ServiceRequest> localServiceRequests = new ArrayList<>();
-        localTask.setBasedOn(new ArrayList<>());
         for (ServiceRequest remoteBasedOn : remoteServiceRequests) {
             ServiceRequest localServiceRequest;
             Optional<ServiceRequest> existingLocalBasedOn = getServiceRequestWithSameIdentifier(remoteBasedOn,
@@ -472,14 +474,31 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
             if (existingLocalBasedOn.isEmpty()) {
                 localServiceRequest = remoteBasedOn
                         .addIdentifier(createIdentifierToRemoteResource(remoteBasedOn, remoteStorePath));
-//                localServiceRequest.setId(UUID.randomUUID().toString());
+//                fhirOperations.createResources.add(localServiceRequest);
                 fhirOperations.updateResources.put(localServiceRequest.getIdElement().getIdPart(), localServiceRequest);
             } else {
                 localServiceRequest = existingLocalBasedOn.get();
             }
 
-            localTask.addBasedOn(fhirTransformService.createReferenceFor(localServiceRequest));
+//            localTask.addBasedOn(fhirTransformService.createReferenceFor(localServiceRequest));
             localServiceRequests.add(localServiceRequest);
+        }
+
+        // Specimen
+        List<Specimen> localSpecimens = new ArrayList<>();
+        for (Specimen remoteSpecimen : remoteSpecimens) {
+            Specimen localSpecimen;
+            Optional<Specimen> existingLocalSpecimen = getSpecimenWithSameIdentifier(remoteSpecimen,
+                    remoteStorePath);
+            if (existingLocalSpecimen.isEmpty()) {
+                localSpecimen = remoteSpecimen
+                        .addIdentifier(createIdentifierToRemoteResource(remoteSpecimen, remoteStorePath));
+//              fhirOperations.createResources.add(localSpecimen);
+                fhirOperations.updateResources.put(localSpecimen.getIdElement().getIdPart(), localSpecimen);
+            } else {
+                localSpecimen = existingLocalSpecimen.get();
+            }
+            localSpecimens.add(localSpecimen);
         }
 
         // Patient
@@ -491,7 +510,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
             localPatient = remotePatientForTask
                     .addIdentifier(createIdentifierToRemoteResource(remotePatientForTask, remoteStorePath));
 //                localForPatient.addLink(new PatientLinkComponent().setType(LinkType.SEEALSO).setOther(patient));
-//            localPatient.setId(UUID.randomUUID().toString());
+//          fhirOperations.createResources.add(localPatient);
             fhirOperations.updateResources.put(localPatient.getIdElement().getIdPart(), localPatient);
         } else {
             localPatient = existingLocalPatient.get();
@@ -511,6 +530,37 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         objects.patient = localPatient;
         objects.serviceRequests = localServiceRequests;
         return objects;
+    }
+
+    private Optional<Specimen> getSpecimenWithSameIdentifier(Specimen specimen, String remoteStorePath) {
+        IGenericClient localFhirClient = fhirUtil.getFhirClient(localFhirStorePath);
+        Bundle localBundle = localFhirClient.search()//
+                .forResource(Specimen.class)//
+                .where(Specimen.IDENTIFIER.exactly().systemAndIdentifier(remoteStorePath,
+                        specimen.getIdElement().getIdPart()))//
+                .returnBundle(Bundle.class).execute();
+        for (BundleEntryComponent entry : localBundle.getEntry()) {
+            if (entry.hasResource() && ResourceType.Specimen.equals(entry.getResource().getResourceType())) {
+                LogEvent.logDebug(this.getClass().getName(), "",
+                        "found specimen with same identifier as " + specimen.getIdElement().getIdPart());
+                return Optional.of((Specimen) localBundle.getEntryFirstRep().getResource());
+            }
+        }
+        LogEvent.logDebug(this.getClass().getName(), "",
+                "no specimen with same identifier " + specimen.getIdElement().getIdPart());
+        return Optional.empty();
+    }
+
+    private List<Specimen> getSpecimenForServiceRequestsFromServer(IGenericClient fhirClient,
+            List<ServiceRequest> remoteServiceRequests) {
+        List<Specimen> specimens = new ArrayList<>();
+        for (ServiceRequest serviceRequest : remoteServiceRequests) {
+            for (Reference specimenReference : serviceRequest.getSpecimen()) {
+                specimens.add(fhirClient.read().resource(Specimen.class)
+                        .withId(specimenReference.getReferenceElement().getIdPart()).execute());
+            }
+        }
+        return specimens;
     }
 
     private Patient getForPatientFromServer(IGenericClient fhirClient, List<ServiceRequest> serviceRequests) {
@@ -618,6 +668,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
     public class OriginalReferralObjects {
         public Task task;
         public List<ServiceRequest> serviceRequests;
+        public List<Specimen> specimens;
         public Patient patient;
     }
 

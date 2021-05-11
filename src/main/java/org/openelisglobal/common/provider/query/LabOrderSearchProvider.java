@@ -29,10 +29,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.validator.GenericValidator;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Bundle.BundleEntryComponent;
+import org.hl7.fhir.r4.model.Coding;
 import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Patient;
 import org.hl7.fhir.r4.model.ResourceType;
 import org.hl7.fhir.r4.model.ServiceRequest;
+import org.hl7.fhir.r4.model.Specimen;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.ExternalOrderStatus;
@@ -84,6 +86,7 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
     private Map<String, List<TestSampleType>> testNameTestSampleTypeMap;
 
     private ServiceRequest serviceRequest = null;
+    private Specimen specimen = null;
     private Patient patient = null;
     private String patientGuid;
 
@@ -118,11 +121,16 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
             for (String remotePath : fhirConfig.getRemoteStorePaths()) {
                 Bundle srBundle = (Bundle) localFhirClient.search().forResource(ServiceRequest.class)
                         .where(ServiceRequest.IDENTIFIER.exactly().systemAndIdentifier(remotePath, orderNumber))
-                        .execute();
+                        .include(ServiceRequest.INCLUDE_SPECIMEN).execute();
                 for (BundleEntryComponent bundleComponent : srBundle.getEntry()) {
                     if (bundleComponent.hasResource()
                             && ResourceType.ServiceRequest.equals(bundleComponent.getResource().getResourceType())) {
                         serviceRequest = (ServiceRequest) bundleComponent.getResource();
+
+                    }
+                    if (bundleComponent.hasResource()
+                            && ResourceType.Specimen.equals(bundleComponent.getResource().getResourceType())) {
+                        specimen = (Specimen) bundleComponent.getResource();
 
                     }
                 }
@@ -237,18 +245,23 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
 
         // pass loinc
         String loinc = "";
-        String system = "";
-        Integer i = 0;
-        while (i < serviceRequest.getCode().getCoding().size()) {
-            system = serviceRequest.getCode().getCoding().get(i).getSystemElement().toString();
-            if (system.equalsIgnoreCase("UriType[http://loinc.org]")) {
-                loinc = serviceRequest.getCode().getCoding().get(i).getCodeElement().toString();
+        String sampleTypeAbbreviation = "";
+        for (Coding code : serviceRequest.getCode().getCoding()) {
+            if (code.getSystem().equalsIgnoreCase("http://loinc.org")) {
+                loinc = code.getCode();
                 break;
             }
-            i++;
+        }
+        if (specimen != null) {
+            for (Coding type : specimen.getType().getCoding()) {
+                if (type.getSystem().equals(fhirConfig.getOeFhirSystem() + "/sampleType")) {
+                    sampleTypeAbbreviation = type.getCode();
+                    break;
+                }
+            }
         }
 
-        addToTestOrPanel(tests, loinc);
+        addToTestOrPanel(tests, loinc, sampleTypeAbbreviation);
 
     }
 
@@ -274,14 +287,23 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
 //
 //    }
 
-    private void addToTestOrPanel(List<Request> tests, String loinc) {
-        List<Test> testList = testService.getActiveTestsByLoinc(loinc);
-        String testName = testList.get(0).getName();
-        String testId = testList.get(0).getId();
-
-        TypeOfSample typeOfSample = typeOfSampleService.getTypeOfSampleForTest(testId);
-        String sampleName = typeOfSampleService.getTypeOfSampleNameForId(typeOfSample.getId());
-        tests.add(new Request(testName, loinc, sampleName));
+    private void addToTestOrPanel(List<Request> tests, String loinc, String sampleTypeAbbreviation) {
+        Test test = null;
+        TypeOfSample typeOfSample = null;
+        if (!GenericValidator.isBlankOrNull(sampleTypeAbbreviation)) {
+            typeOfSample = typeOfSampleService
+                    .get(typeOfSampleService.getTypeOfSampleIdForLocalAbbreviation(sampleTypeAbbreviation));
+            if (typeOfSample != null) {
+                test = testService.getActiveTestByLoincCodeAndSampleType(loinc, typeOfSample.getId()).orElse(null);
+            }
+        }
+        if (test == null) {
+            test = testService.getActiveTestsByLoinc(loinc).get(0);
+        }
+        if (typeOfSample == null) {
+            typeOfSample = typeOfSampleService.getTypeOfSampleForTest(test.getId());
+        }
+        tests.add(new Request(test.getName(), loinc, typeOfSample.getLocalizedName()));
     }
 
     private void createMaps(List<Request> testRequests, List<Request> panelNames) {

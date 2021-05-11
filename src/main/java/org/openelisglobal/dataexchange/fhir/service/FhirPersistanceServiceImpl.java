@@ -37,6 +37,8 @@ import ca.uhn.fhir.rest.client.api.IGenericClient;
 public class FhirPersistanceServiceImpl implements FhirPersistanceService {
 
     public static class FhirOperations {
+        // theses are maps so you can see if the resources you're creating will collide,
+        // the map key is not used otherwise
         Map<String, Resource> createResources; // will do a put with a new uuid
         Map<String, Resource> updateResources; // will do a put with the id used in the resource
 
