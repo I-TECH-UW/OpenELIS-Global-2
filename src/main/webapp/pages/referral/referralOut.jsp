@@ -221,7 +221,7 @@ function  /*void*/ setMyCancelAction(form, action, validate, parameters) {
 }
 
 function setReferralStatus(index) {
-	jQuery('#referralStatus_' + index).val(jQuery('#canceled_' + index).is(':checked') ? 'CANCELED' : jQuery('#finished_' + index).is(':checked') ? 'FINISHED' : 'OPEN')
+	jQuery('#referralStatus_' + index).val(jQuery('#canceled_' + index).is(':checked') ? 'CANCELED' : jQuery('#finished_' + index).is(':checked') ? 'FINISHED' : 'SENT')
 }
 
 function checkFinish(index) {
