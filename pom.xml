@@ -31,7 +31,7 @@
 		<log4j.version>2.13.3</log4j.version>
 		<postgresql.version>42.2.9</postgresql.version>
 		<springframework.version>5.2.3.RELEASE</springframework.version>
-		<springsecurity.version>5.2.1.RELEASE</springsecurity.version>
+		<springsecurity.version>5.2.10.RELEASE</springsecurity.version>
 	</properties>
 
 	<dependencies>
