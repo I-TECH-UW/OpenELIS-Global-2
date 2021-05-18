@@ -40,6 +40,8 @@ import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.dataexchange.fhir.exception.FhirPersistanceException;
 import org.openelisglobal.dataexchange.fhir.exception.FhirTransformationException;
 import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
+import org.openelisglobal.dictionary.service.DictionaryService;
+import org.openelisglobal.dictionary.valueholder.Dictionary;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.inventory.action.InventoryUtility;
 import org.openelisglobal.inventory.form.InventoryKitItem;
@@ -106,6 +108,8 @@ public class LogbookResultsController extends LogbookResultsBaseController {
             "testResult*.shadowRejected", "testResult*.rejected", "testResult*.rejectReasonId", "testResult*.note",
             "paging.currentPage" };
 
+    @Autowired
+    private DictionaryService dictionaryService;
     @Autowired
     private ResultSignatureService resultSigService;
     @Autowired
@@ -284,7 +288,8 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 //  gnr: shows current session records, can be current, stale/empty vs. other user
 //        ie: empty when another user saved and hasn't reloaded.
 
-        List<Result> checkPagedResults = (List<Result>) request.getSession().getAttribute(IActionConstants.RESULTS_SESSION_CACHE);
+        List<Result> checkPagedResults = (List<Result>) request.getSession()
+                .getAttribute(IActionConstants.RESULTS_SESSION_CACHE);
         List<Result> checkResults = (List<Result>) checkPagedResults.get(0);
         if (checkResults.size() == 0) {
             LogEvent.logDebug(this.getClass().getName(), "LogbookResults()", "Attempted save of stale page.");
@@ -452,7 +457,23 @@ public class LogbookResultsController extends LogbookResultsBaseController {
                 referral.setReferralReasonId(testResultItem.getReferralReasonId());
             }
 
+            String originalResultNote = MessageUtil.getMessage("referral.original.result") + ": ";
+            if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(testResultItem.getResultType())
+                    || TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(testResultItem.getResultType())) {
+                Dictionary dictionary = dictionaryService.get(testResultItem.getResultValue());
+                if (dictionary.getLocalizedDictionaryName() == null) {
+                    originalResultNote = originalResultNote + dictionary.getDictEntry();
+                } else {
+                    originalResultNote = originalResultNote
+                            + dictionary.getLocalizedDictionaryName().getLocalizedValue();
+                }
+            } else {
+                originalResultNote = originalResultNote + testResultItem.getResult().getValue();
+            }
+
             actionDataSet.getSavableReferrals().add(referral);
+            actionDataSet.addToNoteList(noteService.createSavableNote(analysis, NoteType.INTERNAL, originalResultNote,
+                    RESULT_SUBJECT, this.getSysUserId(request)));
 
         }
     }

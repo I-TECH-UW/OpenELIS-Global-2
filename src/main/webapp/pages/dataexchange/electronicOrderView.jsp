@@ -54,6 +54,20 @@ jQuery(window).load(function(){
 	jQuery('button.nextButton').each(function(){
 		jQuery(this).prop('disabled', lastPage);
 	});
+	
+	// Get the input field
+	var input = document.getElementById("searchValue");
+
+	// Execute a function when the user releases a key on the keyboard
+	input.addEventListener("keyup", function(event) {
+	  // Number 13 is the "Enter" key on the keyboard
+	  if (event.keyCode === 13) {
+	    // Cancel the default action, if needed
+	    event.preventDefault();
+	    // Trigger the button element with a click
+	    document.getElementById("searchButton").click();
+	  }
+	}); 
 });
 </script>
 <b><spring:message code="eorder.instruction"/></b><br>
@@ -83,7 +97,7 @@ jQuery(window).load(function(){
 					<h3>
 						<span><spring:message code="eorder.externalid"/>: 
 						<c:out value="${eOrder.externalId}"/>
-						<input type="button" 
+						<input type="button" id="searchButton"
 							onclick="location.href='SamplePatientEntry.do?ID=${eOrder.externalId}';" 
 							value="<spring:message code="eorder.enterorder"/>" /></span>
 						<span style="float:right"><spring:message code="eorder.lastupdated"/>: 

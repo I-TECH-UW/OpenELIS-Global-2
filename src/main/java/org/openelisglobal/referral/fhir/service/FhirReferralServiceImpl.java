@@ -258,7 +258,7 @@ public class FhirReferralServiceImpl implements FhirReferralService {
         }
 
         try {
-            referralSetService.updateRefreralSets(referralSets, new ArrayList<>(), new HashSet<>(), new ArrayList<>(),
+            referralSetService.updateReferralSets(referralSets, new ArrayList<>(), new HashSet<>(), new ArrayList<>(),
                     "1");
             resultValidationService.persistdata(new ArrayList<>(), analysisUpdateList, resultUpdateList, resultItemList,
                     sampleUpdateList, noteUpdateList, resultSaveService, new ArrayList<>(), "1");
@@ -354,7 +354,7 @@ public class FhirReferralServiceImpl implements FhirReferralService {
 
         NoteService noteService = SpringContext.getBean(NoteService.class);
         referralSet.setNote(noteService.createSavableNote(referral.getAnalysis(), NoteServiceImpl.NoteType.INTERNAL,
-                "imported automatically", RESULT_SUBJECT, "1"));
+                "referral result imported automatically", RESULT_SUBJECT, "1"));
         referralSet.setReferral(referral);
 
         referralSets.add(referralSet);

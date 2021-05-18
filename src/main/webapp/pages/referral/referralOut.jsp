@@ -287,39 +287,39 @@ function checkFinish(index) {
         <spring:message code="test.testName"/>: <b><c:out value="${referralItems.referringTestName}"/></b>
     </td>
     <td colspan="2">
-        <spring:message code="result.original.result"/>: <b><c:out value="${referralItems.referralResults}"/></b>
+<%--         <spring:message code="result.original.result"/>: <b><c:out value="${referralItems.referralResults}"/></b> --%>
     </td>
     <td colspan="3" class="leftVertical">
         &nbsp;
     </td>
 </tr>
 <tr class='${rowColor} requiredRow' id='referralRow_${iter.index}'>
-    <td>
+    <td style="text-align:center">
         <form:select path="referralItems[${iter.index}].referralReasonId"
                 id='referralReasonId_${iter.index}'
                 onchange='markModified("${iter.index}");'>
             <form:options items="${form.referralReasons}" itemValue="id" itemLabel="value"/>
         </form:select>
     </td>
-    <td>
+    <td style="text-align:center">
         <form:input path="referralItems[${iter.index}].referrer"
                    onchange='markModified("${iter.index}");'/>
     </td>
-    <td>
+    <td style="text-align:center">
         <form:select path='referralItems[${iter.index}].referredInstituteId'
                 class="required"
                 onchange='markModified("${iter.index}");'>
                 <form:options items="${form.referralOrganizations}" itemValue="id" itemLabel="value"/>
         </form:select>
     </td>
-    <td>
+    <td style="text-align:center">
         <form:input path="referralItems[${iter.index}].referredSendDate"
                    size="8"
                    maxlength="10"
                    onchange='markModified("${iter.index}"); validateDateFormat(this);'
                    id='sendDate_${iter.index}'/>
     </td>
-    <td>
+    <td style="text-align:center">
         <input type="hidden" name="_referralItems[${iter.index}].referredTestId"
                      id='shadowReferredTest_${iter.index}'/>
         <form:select path='referralItems[${iter.index}].referredTestId'
@@ -330,10 +330,10 @@ function checkFinish(index) {
 			<form:options items="${referralItems.testSelectionList}" itemValue="id" itemLabel="value"/>
         </form:select>
     </td>
-    <td>
+    <td style="text-align:center">
         <input type="checkbox" id="canceled_${iter.index}" onchange='setReferralStatus("${iter.index}");markModified("${iter.index}");'/>
     </td>
-    <td class="leftVertical" id='resultCell_${iter.index}'>
+    <td class="leftVertical" id='resultCell_${iter.index}' style="text-align:center">
     	<c:set var="referredResultType" value="${referralItems.referredResultType}"/>
         <c:set var="referredResultAvailable" value="${not empty referralItems.referredTestId}" />
         <c:if test="${referredResultAvailable}"> 
@@ -399,7 +399,7 @@ function checkFinish(index) {
         </c:if>
         
     </td>
-    <td>
+    <td style="text-align:center">
         <div class='resultCell_${iter.index}'>
             <c:if test="${referralItems.referredTestId != null}">
 	            <form:input path='referralItems[${iter.index}].referredReportDate'
@@ -411,7 +411,7 @@ function checkFinish(index) {
             </c:if>
         </div>
     </td>
-    <td>
+    <td style="text-align:center">
         <div style="display: ${referredResultAvailable ? 'block' : 'none'}">
 	            	<form:hidden path='referralItems[${iter.index}].referralStatus'
 		                           id='referralStatus_${iter.index}'/>

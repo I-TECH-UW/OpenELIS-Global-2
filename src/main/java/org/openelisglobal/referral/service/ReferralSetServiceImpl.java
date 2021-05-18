@@ -48,7 +48,7 @@ public class ReferralSetServiceImpl implements ReferralSetService {
 
     @Transactional
     @Override
-    public void updateRefreralSets(List<ReferralSet> referralSetList, List<Sample> modifiedSamples,
+    public void updateReferralSets(List<ReferralSet> referralSetList, List<Sample> modifiedSamples,
             Set<Sample> parentSamples, List<ReferralResult> removableReferralResults, String sysUserId) {
         for (ReferralSet referralSet : referralSetList) {
             referralService.update(referralSet.getReferral());

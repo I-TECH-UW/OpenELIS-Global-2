@@ -490,7 +490,7 @@ public class ReferredOutTestsController extends BaseController {
         }
 
         try {
-            referralSetService.updateRefreralSets(referralSetList, modifiedSamples, parentSamples,
+            referralSetService.updateReferralSets(referralSetList, modifiedSamples, parentSamples,
                     removableReferralResults, getSysUserId(request));
         } catch (LIMSRuntimeException e) {
             String errorMsg;
