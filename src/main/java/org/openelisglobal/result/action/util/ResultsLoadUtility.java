@@ -53,10 +53,13 @@ import org.openelisglobal.dictionary.valueholder.Dictionary;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.inventory.action.InventoryUtility;
 import org.openelisglobal.inventory.form.InventoryKitItem;
+import org.openelisglobal.localization.service.LocalizationService;
+import org.openelisglobal.localization.valueholder.Localization;
 import org.openelisglobal.note.service.NoteService;
 import org.openelisglobal.note.service.NoteServiceImpl.NoteType;
 import org.openelisglobal.observationhistory.service.ObservationHistoryService;
 import org.openelisglobal.observationhistory.valueholder.ObservationHistory;
+import org.openelisglobal.observationhistory.valueholder.ObservationHistory.ValueType;
 import org.openelisglobal.patient.form.PatientInfoForm;
 import org.openelisglobal.patient.service.PatientService;
 import org.openelisglobal.patient.util.PatientUtil;
@@ -128,6 +131,8 @@ public class ResultsLoadUtility {
     private ResultService resultService;
     @Autowired
     private DictionaryService dictionaryService;
+    @Autowired
+    private LocalizationService localizationService;
     @Autowired
     private ResultSignatureService resultSignatureService;
     @Autowired
@@ -472,9 +477,18 @@ public class ResultsLoadUtility {
             StringBuilder conditions = new StringBuilder();
 
             for (ObservationHistory observation : observationList) {
-                Dictionary dictionary = dictionaryService.getDictionaryById(observation.getValue());
-                if (dictionary != null) {
-                    conditions.append(dictionary.getLocalizedName());
+                if (ValueType.DICTIONARY.getCode().equals(observation.getValueType())) {
+                    Dictionary dictionary = dictionaryService.getDictionaryById(observation.getValue());
+                    if (dictionary != null) {
+                        conditions.append(dictionary.getLocalizedName());
+                        conditions.append(", ");
+                    }
+                } else if (ValueType.LITERAL.getCode().equals(observation.getValueType())) {
+                    conditions.append(observation.getValue());
+                    conditions.append(", ");
+                } else if (ValueType.KEY.getCode().equals(observation.getValueType())) {
+                    Localization localization = localizationService.get(observation.getValue());
+                    conditions.append(localization.getLocalizedValue());
                     conditions.append(", ");
                 }
             }

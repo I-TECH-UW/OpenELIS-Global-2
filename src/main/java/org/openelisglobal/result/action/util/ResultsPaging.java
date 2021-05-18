@@ -27,9 +27,11 @@ import org.openelisglobal.common.paging.IPageDivider;
 import org.openelisglobal.common.paging.IPageFlattener;
 import org.openelisglobal.common.paging.IPageUpdater;
 import org.openelisglobal.common.paging.PagingBean;
+import org.openelisglobal.common.paging.PagingProperties;
 import org.openelisglobal.common.paging.PagingUtility;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.result.form.ResultsPagingForm;
+import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.test.beanItems.TestResultItem;
 
 public class ResultsPaging {
@@ -98,7 +100,7 @@ public class ResultsPaging {
                     pagedResults.add(page);
                     page = new ArrayList<>();
                 }
-                if (resultCount >= IActionConstants.PAGING_SIZE) {
+                if (resultCount >= SpringContext.getBean(PagingProperties.class).getResultsPageSize()) {
                     accessionSequenceNumber = item.getSequenceAccessionNumber();
                 }
 
