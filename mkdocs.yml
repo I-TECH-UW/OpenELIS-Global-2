@@ -10,6 +10,7 @@ nav:
        - Backup Script Configuration: backups.md
        - Update From OpenELIS Global 1.x to 2.x: upgrade1to2.md
        - Password Migration: password.md
+       - Examples of FHIR messages used: messages.md
     - Develop: 
        - Developers: dev.md
        - Adding facilities to the Consolidated Server: addingfacilities.md
