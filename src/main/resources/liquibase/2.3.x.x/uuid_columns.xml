@@ -78,4 +78,28 @@
 		</addColumn>
 	</changeSet>
 
+	<changeSet author="csteele" id="4">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists schemaName="clinlims"
+					tableName="provider" columnName="fhir_uuid" />
+			</not>
+		</preConditions>
+		<addColumn schemaName="clinlims" tableName="provider">
+			<column name="fhir_uuid" position="2" type="uuid" />
+		</addColumn>
+		<createIndex indexName="provider_fhir_uuid_index"
+			tableName="provider">
+			<column name="fhir_uuid"/>
+		</createIndex>
+		
+		<addColumn schemaName="clinlims" tableName="referral">
+			<column name="fhir_uuid" position="2" type="uuid" />
+		</addColumn>
+		<createIndex indexName="referral_fhir_uuid_index"
+			tableName="referral">
+			<column name="fhir_uuid"/>
+		</createIndex>
+	</changeSet>
+
 </databaseChangeLog>

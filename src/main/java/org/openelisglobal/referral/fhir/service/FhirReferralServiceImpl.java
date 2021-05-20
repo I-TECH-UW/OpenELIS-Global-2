@@ -1,13 +1,13 @@
 package org.openelisglobal.referral.fhir.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
@@ -20,12 +20,14 @@ import org.hl7.fhir.r4.model.Coding;
 import org.hl7.fhir.r4.model.Observation;
 import org.hl7.fhir.r4.model.Organization;
 import org.hl7.fhir.r4.model.Patient;
+import org.hl7.fhir.r4.model.Practitioner;
 import org.hl7.fhir.r4.model.Quantity;
 import org.hl7.fhir.r4.model.Reference;
 import org.hl7.fhir.r4.model.Resource;
 import org.hl7.fhir.r4.model.ServiceRequest;
 import org.hl7.fhir.r4.model.StringType;
 import org.hl7.fhir.r4.model.Task;
+import org.hl7.fhir.r4.model.Task.TaskRestrictionComponent;
 import org.hl7.fhir.r4.model.Task.TaskStatus;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
@@ -39,6 +41,7 @@ import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.dataexchange.fhir.FhirConfig;
 import org.openelisglobal.dataexchange.fhir.exception.FhirLocalPersistingException;
 import org.openelisglobal.dataexchange.fhir.exception.FhirPersistanceException;
+import org.openelisglobal.dataexchange.fhir.service.CountingTempIdGenerator;
 import org.openelisglobal.dataexchange.fhir.service.FhirApiWorkFlowServiceImpl.ReferralResultsImportObjects;
 import org.openelisglobal.dataexchange.fhir.service.FhirPersistanceService;
 import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
@@ -153,8 +156,11 @@ public class FhirReferralServiceImpl implements FhirReferralService {
 
     @Override
     @Transactional
-    public Bundle referAnalysisesToOrganization(String referralOrganizationId, String sampleId,
-            List<String> analysisIds) throws FhirLocalPersistingException {
+    public Bundle referAnalysisesToOrganization(Referral referral) throws FhirLocalPersistingException {
+        String referralOrganizationId = referral.getOrganization().getId();
+        String sampleId = referral.getAnalysis().getSampleItem().getSample().getId();
+        String analysisId = referral.getAnalysis().getId();
+
         org.openelisglobal.organization.valueholder.Organization referralOrganization = organizationService
                 .get(referralOrganizationId);
         Organization fhirOrg = getFhirOrganization(referralOrganization);
@@ -164,28 +170,29 @@ public class FhirReferralServiceImpl implements FhirReferralService {
             // organization doesn't exist as fhir organization, cannot refer automatically
             return new Bundle();
         }
-        Map<String, Resource> newResources = new HashMap<>();
+        Map<String, Resource> updateResources = new HashMap<>();
         Sample sample = sampleService.get(sampleId);
 
-        List<Analysis> analysises = analysisService.get(analysisIds);
-        List<ServiceRequest> serviceRequests = new ArrayList<>();
-        for (Analysis analysis : analysises) {
-            serviceRequests.add(fhirPersistanceService.getServiceRequestByAnalysisUuid(analysis.getFhirUuidAsString())
-                    .orElseThrow());
-        }
+        Analysis analysis = analysisService.get(analysisId);
+        ServiceRequest serviceRequest = fhirPersistanceService
+                .getServiceRequestByAnalysisUuid(analysis.getFhirUuidAsString()).orElseThrow();
+        Practitioner requester = fhirTransformService.transformNameToPractitioner(referral.getRequesterName());
+        fhirTransformService.setTempIdIfMissing(requester, new CountingTempIdGenerator());
         Task task = createReferralTask(fhirOrg, fhirPersistanceService
                 .getPatientByUuid(sampleHumanService.getPatientForSample(sample).getFhirUuidAsString()).orElseThrow(),
-                serviceRequests);
+                serviceRequest, requester, sample);
+        updateResources.put(requester.getId(), requester);
+        updateResources.put(analysis.getFhirUuidAsString(), task);
 
-        return fhirPersistanceService.createFhirResourceInFhirStore(task);
+        return fhirPersistanceService.updateFhirResourcesInFhirStore(updateResources);
     }
 
     private Organization getFhirOrganization(org.openelisglobal.organization.valueholder.Organization organization) {
         return fhirPersistanceService.getFhirOrganizationByName(organization.getOrganizationName()).orElseThrow();
     }
 
-    public Task createReferralTask(Organization referralOrganization, Patient patient,
-            List<ServiceRequest> serviceRequests) {
+    public Task createReferralTask(Organization referralOrganization, Patient patient, ServiceRequest serviceRequest,
+            Practitioner requester, Sample sample) {
         Bundle bundle = new Bundle();
         Task task = new Task();
 //        task.setGroupIdentifier(
@@ -194,14 +201,18 @@ public class FhirReferralServiceImpl implements FhirReferralService {
         task.setReasonCode(new CodeableConcept()
                 .addCoding(new Coding().setSystem(fhirConfig.getOeFhirSystem() + "/refer_reason")));
         task.setOwner(fhirTransformService.createReferenceFor(referralOrganization));
+        task.setRequester(fhirTransformService.createReferenceFor(requester));
         if (!remoteStoreIdentifier.isEmpty()) {
-            task.setRequester(new Reference(remoteStoreIdentifier.get(0)));
+            task.setRestriction(new TaskRestrictionComponent()
+                    .setRecipient(Arrays.asList(new Reference(remoteStoreIdentifier.get(0)))));
         }
         task.setAuthoredOn(new Date());
         task.setStatus(TaskStatus.REQUESTED);
         task.setFor(fhirTransformService.createReferenceFor(patient));
-        task.setBasedOn(serviceRequests.stream().map(e -> fhirTransformService.createReferenceFor(e))
-                .collect(Collectors.toList()));
+        task.setBasedOn(Arrays.asList(fhirTransformService.createReferenceFor(serviceRequest)));
+        task.setFocus(fhirTransformService.createReferenceFor(serviceRequest));
+        task.setDescription("referring accession number " + sample.getAccessionNumber() + " from "
+                + task.getRequester().getReference() + " to " + task.getOwner().getReference());
 
         bundle.addEntry(new BundleEntryComponent().setResource(task));
         return task;
@@ -212,9 +223,8 @@ public class FhirReferralServiceImpl implements FhirReferralService {
     public void setReferralResult(ReferralResultsImportObjects resultsImport) {
         // TODO make this work for multiple service requests
         Analysis analysis = analysisService
-                .getMatch("fhirUuid",
-                        UUID.fromString(resultsImport.originalReferralObjects.serviceRequests.get(0).getIdElement()
-                                .getIdPart()))
+                .getMatch("fhirUuid", UUID.fromString(
+                        resultsImport.originalReferralObjects.serviceRequests.get(0).getIdElement().getIdPart()))
                 .orElseThrow(() -> {
                     return new RuntimeException("no matching analysis with FhirUUID: "
                             + resultsImport.originalReferralObjects.serviceRequests.get(0).getIdElement().getIdPart());
@@ -289,7 +299,7 @@ public class FhirReferralServiceImpl implements FhirReferralService {
 
         if (TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(result.getResultType())
                 || TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(result.getResultType())) {
-            String inferredValue = ((StringType) observation.getValue()).getValueAsString();
+            String inferredValue = ((CodeableConcept) observation.getValue()).getCodingFirstRep().getCode();
             List<TestResult> testResults = testResultService
                     .getAllActiveTestResultsPerTest(analysisService.getTest(analysis));
             String resultValue = null;

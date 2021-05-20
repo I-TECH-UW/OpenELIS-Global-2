@@ -19,6 +19,8 @@ import org.hl7.fhir.r4.model.Annotation;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.CodeableConcept;
 import org.hl7.fhir.r4.model.Coding;
+import org.hl7.fhir.r4.model.ContactPoint;
+import org.hl7.fhir.r4.model.ContactPoint.ContactPointSystem;
 import org.hl7.fhir.r4.model.DateTimeType;
 import org.hl7.fhir.r4.model.DateType;
 import org.hl7.fhir.r4.model.DiagnosticReport;
@@ -61,10 +63,12 @@ import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder;
 import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrderType;
 import org.openelisglobal.dataexchange.service.order.ElectronicOrderService;
 import org.openelisglobal.dictionary.service.DictionaryService;
+import org.openelisglobal.dictionary.valueholder.Dictionary;
 import org.openelisglobal.localization.service.LocalizationService;
 import org.openelisglobal.note.service.NoteService;
 import org.openelisglobal.note.valueholder.Note;
 import org.openelisglobal.observationhistory.service.ObservationHistoryService;
+import org.openelisglobal.observationhistory.service.ObservationHistoryServiceImpl.ObservationType;
 import org.openelisglobal.observationhistory.valueholder.ObservationHistory;
 import org.openelisglobal.observationhistory.valueholder.ObservationHistory.ValueType;
 import org.openelisglobal.organization.valueholder.Organization;
@@ -72,6 +76,9 @@ import org.openelisglobal.organization.valueholder.OrganizationType;
 import org.openelisglobal.patient.action.bean.PatientManagementInfo;
 import org.openelisglobal.patient.service.PatientService;
 import org.openelisglobal.patient.valueholder.Patient;
+import org.openelisglobal.person.valueholder.Person;
+import org.openelisglobal.provider.service.ProviderService;
+import org.openelisglobal.provider.valueholder.Provider;
 import org.openelisglobal.result.action.util.ResultSet;
 import org.openelisglobal.result.action.util.ResultsUpdateDataSet;
 import org.openelisglobal.result.service.ResultService;
@@ -131,6 +138,8 @@ public class FhirTransformServiceImpl implements FhirTransformService {
     private ObservationHistoryService observationHistoryService;
     @Autowired
     private IStatusService statusService;
+    @Autowired
+    private ProviderService providerService;
 
     @Transactional
     @Async
@@ -306,6 +315,10 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         this.addToOperations(fhirOperations, tempIdGenerator, patient);
         orderEntryObjects.patient = patient;
 
+        Practitioner requester = transformProviderToPractitioner(updateData.getProvider().getId());
+        this.addToOperations(fhirOperations, tempIdGenerator, requester);
+        orderEntryObjects.requester = requester;
+
         // Specimens and service requests
         for (SampleTestCollection sampleTest : updateData.getSampleItemsTests()) {
             FhirSampleEntryObjects fhirSampleEntryObjects = new FhirSampleEntryObjects();
@@ -328,12 +341,28 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         // TODO location?
         // TODO create encounter?
 
-        // TODO requester
-//        Practitioner requester = transformRequesterToPractitioner(patientInfo);
-//        this.addToOperations(fhirOperations, tempIdGenerator, fhirSampleEntryObjects.requester);
-//        orderEntryObjects.requester = requester;
-
         Bundle responseBundle = fhirPersistanceService.createUpdateFhirResourcesInFhirStore(fhirOperations);
+    }
+
+    private Practitioner transformProviderToPractitioner(String providerId) {
+        return transformProviderToPractitioner(providerService.get(providerId));
+    }
+
+    private Practitioner transformProviderToPractitioner(Provider provider) {
+        Practitioner practitioner = new Practitioner();
+        practitioner.setId(provider.getFhirUuidAsString());
+        practitioner.addName(new HumanName().setFamily(provider.getPerson().getLastName())
+                .addGiven(provider.getPerson().getFirstName()));
+        practitioner.setTelecom(transformToTelcom(provider.getPerson()));
+        return practitioner;
+    }
+
+    private List<ContactPoint> transformToTelcom(Person person) {
+        List<ContactPoint> contactPoints = new ArrayList<>();
+        contactPoints.add(new ContactPoint().setSystem(ContactPointSystem.PHONE).setValue(person.getPrimaryPhone()));
+        contactPoints.add(new ContactPoint().setSystem(ContactPointSystem.EMAIL).setValue(person.getEmail()));
+        contactPoints.add(new ContactPoint().setSystem(ContactPointSystem.FAX).setValue(person.getFax()));
+        return contactPoints;
     }
 
     private Task transformToTask(String sampleId) {
@@ -368,6 +397,8 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         task.setPriority(TaskPriority.ROUTINE);
         task.addIdentifier(
                 this.createIdentifier(fhirConfig.getOeFhirSystem() + "/order_uuid", sample.getFhirUuidAsString()));
+        task.addIdentifier(this.createIdentifier(fhirConfig.getOeFhirSystem() + "/order_accessionNumber",
+                sample.getAccessionNumber()));
 
         for (Analysis analysis : analysises) {
             task.addBasedOn(this.createReferenceFor(ResourceType.ServiceRequest, analysis.getFhirUuidAsString()));
@@ -438,6 +469,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         } else {
             fhirPatient.setGender(AdministrativeGender.FEMALE);
         }
+        fhirPatient.setTelecom(transformToTelcom(patient.getPerson()));
 
         return fhirPatient;
     }
@@ -480,6 +512,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
     private ServiceRequest transformToServiceRequest(Analysis analysis) {
         Sample sample = analysis.getSampleItem().getSample();
         Patient patient = sampleHumanService.getPatientForSample(sample);
+        Provider provider = sampleHumanService.getProviderForSample(sample);
         Test test = analysis.getTest();
         ServiceRequest serviceRequest = new ServiceRequest();
         serviceRequest.setId(analysis.getFhirUuidAsString());
@@ -512,8 +545,9 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         } else {
             serviceRequest.setStatus(ServiceRequestStatus.UNKNOWN);
         }
-        // TODO add snomed lab procedure code?
-//        serviceRequest.addCategory(new CodeableConcept());
+        serviceRequest.addCategory(transformSampleProgramToCodeableConcept(
+                observationHistoryService.getObservationHistoriesBySampleIdAndType(sample.getId(),
+                        observationHistoryService.getObservationTypeIdForType(ObservationType.PROGRAM))));
         serviceRequest.setPriority(ServiceRequestPriority.ROUTINE);
         serviceRequest.setCode(transformTestToCodeableConcept(test.getId()));
         serviceRequest.setAuthoredOn(new Date());
@@ -525,8 +559,19 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         serviceRequest.addSpecimen(
                 this.createReferenceFor(ResourceType.Specimen, analysis.getSampleItem().getFhirUuidAsString()));
         serviceRequest.setSubject(this.createReferenceFor(ResourceType.Patient, patient.getFhirUuidAsString()));
+        if (provider != null && provider.getFhirUuid() != null) {
+            serviceRequest
+                    .setRequester(this.createReferenceFor(ResourceType.Practitioner, provider.getFhirUuidAsString()));
+        }
 
         return serviceRequest;
+    }
+
+    private CodeableConcept transformSampleProgramToCodeableConcept(ObservationHistory program) {
+        CodeableConcept codeableConcept = new CodeableConcept();
+        codeableConcept.addCoding(
+                new Coding(fhirConfig.getOeFhirSystem() + "/sample_program", program.getValue(), program.getValue()));
+        return codeableConcept;
     }
 
     private CodeableConcept transformTestToCodeableConcept(String testId) {
@@ -773,9 +818,13 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 
         if (!GenericValidator.isBlankOrNull(result.getValue())) {
             if (TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(result.getResultType())) {
-                observation.setValue(new StringType(dictionaryService.getDataForId(result.getValue()).getDictEntry()));
+                Dictionary dictionary = dictionaryService.getDataForId(result.getValue());
+                observation.setValue(new CodeableConcept(new Coding(fhirConfig.getOeFhirSystem() + "/dictionary_entry",
+                        dictionary.getDictEntry(), dictionary.getLocalizedDictionaryName().getEnglish())));
             } else if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(result.getResultType())) {
-                observation.setValue(new StringType(dictionaryService.getDataForId(result.getValue()).getDictEntry()));
+                Dictionary dictionary = dictionaryService.getDataForId(result.getValue());
+                observation.setValue(new CodeableConcept(new Coding(fhirConfig.getOeFhirSystem() + "/dictionary_entry",
+                        dictionary.getDictEntry(), dictionary.getLocalizedDictionaryName().getEnglish())));
             } else if (TypeOfTestResultServiceImpl.ResultType.isNumeric(result.getResultType())) {
                 Quantity quantity = new Quantity();
                 quantity.setValue(new BigDecimal(result.getValue()));
@@ -792,11 +841,18 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         return observation;
     }
 
-    private Identifier createIdentifier(String system, String value) {
-        Identifier identifier = new Identifier();
-        identifier.setSystem(system);
-        identifier.setValue(value);
-        return identifier;
+    @Override
+    public Practitioner transformNameToPractitioner(String practitionerName) {
+        Practitioner practitioner = new Practitioner();
+        String[] names = practitionerName.split(" ", 2);
+        HumanName name = practitioner.addName();
+        if (names.length >= 1) {
+            name.addGiven(names[0]);
+        }
+        if (names.length >= 2) {
+            name.setFamily(names[1]);
+        }
+        return practitioner;
     }
 
     @Override
@@ -927,7 +983,8 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         return annotation;
     }
 
-    private boolean setTempIdIfMissing(Resource resource, TempIdGenerator tempIdGenerator) {
+    @Override
+    public boolean setTempIdIfMissing(Resource resource, TempIdGenerator tempIdGenerator) {
         if (GenericValidator.isBlankOrNull(resource.getId())) {
             resource.setId(tempIdGenerator.getNextId());
             return true;
@@ -945,7 +1002,8 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         return reference;
     }
 
-    private Reference createReferenceFor(ResourceType resourceType, String id) {
+    @Override
+    public Reference createReferenceFor(ResourceType resourceType, String id) {
         Reference reference = new Reference();
         reference.setReference(resourceType + "/" + id);
         return reference;
@@ -958,6 +1016,14 @@ public class FhirTransformServiceImpl implements FhirTransformService {
             id = id.substring(0, id.lastIndexOf("/"));
         }
         return id;
+    }
+
+    @Override
+    public Identifier createIdentifier(String system, String value) {
+        Identifier identifier = new Identifier();
+        identifier.setSystem(system);
+        identifier.setValue(value);
+        return identifier;
     }
 
     private class FhirOrderEntryObjects {

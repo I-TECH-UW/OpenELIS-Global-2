@@ -40,4 +40,7 @@ public interface ElectronicOrderDAO extends BaseDAO<ElectronicOrder, String> {
     List<ElectronicOrder> getAllElectronicOrdersContainingValuesOrderedBy(String accessionNumber,
             String patientLastName, String patientFirstName, String gender, SortOrder order);
 
+    public List<ElectronicOrder> getElectronicOrdersContainingValueExludedByOrderedBy(String searchValue,
+            List<Integer> exludedStatusIds, SortOrder sortOrder);
+
 }

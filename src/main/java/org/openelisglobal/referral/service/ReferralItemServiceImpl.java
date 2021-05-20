@@ -46,7 +46,7 @@ public class ReferralItemServiceImpl implements ReferralItemService {
     public List<ReferralItem> getReferralItems() {
         List<ReferralItem> referralItems = new ArrayList<>();
 
-        List<Referral> referralList = referralService.getAllUncanceledOpenReferrals();
+        List<Referral> referralList = referralService.getUncanceledOpenReferrals();
 
         for (Referral referral : referralList) {
             ReferralItem referralItem = getReferralItem(referral);

@@ -17,6 +17,7 @@
 package org.openelisglobal.referral.valueholder;
 
 import java.sql.Timestamp;
+import java.util.UUID;
 
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.valueholder.BaseObject;
@@ -25,9 +26,6 @@ import org.openelisglobal.common.valueholder.ValueHolderInterface;
 import org.openelisglobal.organization.valueholder.Organization;
 
 public class Referral extends BaseObject<String> {
-
-    // TODO move cancelled logic to use this enum as well
-
 
     private static final long serialVersionUID = 1L;
     private String id;
@@ -40,6 +38,7 @@ public class Referral extends BaseObject<String> {
     private String referralTypeId;
     private String requesterName;
     private ReferralStatus status;
+    private UUID fhirUuid;
 
     private ValueHolderInterface analysis = new ValueHolder();
     private ValueHolderInterface organization = new ValueHolder();
@@ -144,5 +143,17 @@ public class Referral extends BaseObject<String> {
 
     public void setStatus(ReferralStatus status) {
         this.status = status;
+    }
+
+    public UUID getFhirUuid() {
+        return fhirUuid;
+    }
+
+    public String getFhirUuidAsString() {
+        return fhirUuid == null ? "" : fhirUuid.toString();
+    }
+
+    public void setFhirUuid(UUID fhirUuid) {
+        this.fhirUuid = fhirUuid;
     }
 }

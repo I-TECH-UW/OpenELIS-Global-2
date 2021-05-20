@@ -18,6 +18,7 @@ package org.openelisglobal.sample.action.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.address.valueholder.OrganizationAddress;
@@ -339,6 +340,7 @@ public class SamplePatientUpdateData {
         } else {
             providerPerson = new Person();
             provider = new Provider();
+            provider.setFhirUuid(UUID.randomUUID());
 
             providerPerson.setFirstName(sampleOrder.getProviderFirstName());
             providerPerson.setLastName(sampleOrder.getProviderLastName());

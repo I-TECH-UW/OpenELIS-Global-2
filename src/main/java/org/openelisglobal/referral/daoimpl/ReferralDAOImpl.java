@@ -19,6 +19,7 @@ package org.openelisglobal.referral.daoimpl;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.HibernateException;
@@ -90,25 +91,6 @@ public class ReferralDAOImpl extends BaseDAOImpl<Referral, String> implements Re
             }
         }
 
-        return null;
-    }
-
-    @Override
-
-    @Transactional(readOnly = true)
-    public List<Referral> getAllUncanceledOpenReferrals() throws LIMSRuntimeException {
-        String sql = "From Referral r where r.status in (:status1, :status2, :status3) order by r.id";
-
-        try {
-            Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            query.setParameter("status1", ReferralStatus.SENT.name());
-            query.setParameter("status2", ReferralStatus.CREATED.name());
-            query.setParameter("status3", ReferralStatus.RECEIVED.name());
-            List<Referral> referrals = query.list();
-            return referrals;
-        } catch (HibernateException e) {
-            handleException(e, "getAllUncanceledOpenReferrals");
-        }
         return null;
     }
 
@@ -193,6 +175,21 @@ public class ReferralDAOImpl extends BaseDAOImpl<Referral, String> implements Re
             handleException(e, "getAllReferralsByOrganization");
         }
         return new ArrayList<>();
+    }
+
+    @Override
+    public List<Referral> getReferralsByStatus(List<ReferralStatus> statuses) {
+        String sql = "From Referral r where r.status in (:statuses) order by r.id";
+
+        try {
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setParameter("statuses", statuses.stream().map(e -> e.name()).collect(Collectors.toList()));
+            List<Referral> referrals = query.list();
+            return referrals;
+        } catch (HibernateException e) {
+            handleException(e, "getAllReferralsByStatus");
+        }
+        return null;
     }
 
 }

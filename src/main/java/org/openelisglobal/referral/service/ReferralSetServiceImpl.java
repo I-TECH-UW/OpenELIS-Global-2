@@ -1,7 +1,6 @@
 package org.openelisglobal.referral.service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -110,9 +109,7 @@ public class ReferralSetServiceImpl implements ReferralSetService {
 //                }
             } else {
                 try {
-                fhirReferralService.referAnalysisesToOrganization(referralSet.getReferral().getOrganization().getId(),
-                        referralSet.getReferral().getAnalysis().getSampleItem().getSample().getId(),
-                        Arrays.asList(referralSet.getReferral().getAnalysis().getId()));
+                    fhirReferralService.referAnalysisesToOrganization(referralSet.getReferral());
                 } catch (TestNotFullyConfiguredException e) {
                     LogEvent.logError(this.getClass().getName(), "updateRefreralSets",
                             "unable to automatically refer a test that does not have a loinc code set");

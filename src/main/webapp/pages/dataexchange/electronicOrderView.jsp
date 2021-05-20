@@ -78,6 +78,7 @@ jQuery(window).load(function(){
 	<form:options items="${form.sortOrderOptions}" itemValue="value" itemLabel="label" />
 </form:select>
 <form:hidden path="page"/>
+<form:hidden path="excludedStatuses" />
 
 <c:if test="${empty form.EOrders}">
 	<h2><spring:message code="eorder.noresults"/></h2>

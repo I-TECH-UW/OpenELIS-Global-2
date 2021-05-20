@@ -353,6 +353,11 @@ function processLabOrderSuccess(xhr){
             parseRequester(requester);
         }
 
+        var requestingOrg = order.getElementsByTagName('requestingOrg');
+        if (requestingOrg) {
+            parseRequestingOrg(requestingOrg);
+        }
+
         var useralert = order.getElementsByTagName("user_alert");
         var alertMessage = "";
         if (useralert) {
@@ -408,7 +413,7 @@ function parsePatient(patienttag) {
 function clearRequester() {
 
 //    $("providerFirstName").value = '';
-    $("providerLastNameID").value = 'dname';
+    $("providerLastNameID").value = '';
     $("labNo").value = '';
     $("receivedDateForDisplay").value = '${entryDate}';
     $("receivedTime").value = '';
@@ -438,6 +443,11 @@ function parseRequester(requester) {
             $("providerWorkPhoneID").value = phone;
         }
     }
+}
+
+function parseRequestingOrg(requestingOrg) {
+	var id = requestingOrg.item(0).getElementsByTagName("id");
+	jQuery("#requesterId").val(id);
 }
 
 function parseSampletypes(sampletypes, SampleTypes) {

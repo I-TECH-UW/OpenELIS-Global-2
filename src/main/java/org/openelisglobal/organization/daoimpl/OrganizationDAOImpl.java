@@ -18,6 +18,7 @@ package org.openelisglobal.organization.daoimpl;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
@@ -633,6 +634,27 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
             return orgs;
         } catch (HibernateException e) {
             handleException(e, "getOrganizationsByParentId");
+        }
+
+        return null;
+    }
+
+    @Override
+    public Organization getOrganizationByFhirId(String uuid) {
+        if (GenericValidator.isBlankOrNull(uuid)) {
+            return null;
+        }
+
+        String sql = "from Organization o where o.fhirUuid = :uuid";
+
+        try {
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setParameter("uuid", UUID.fromString(uuid));
+            Organization org = (Organization) query.getSingleResult();
+
+            return org;
+        } catch (HibernateException e) {
+            handleException(e, "getOrganizationByFhirId");
         }
 
         return null;

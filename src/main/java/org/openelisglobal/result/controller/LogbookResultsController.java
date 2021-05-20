@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -442,6 +443,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
             if (testResultItem.getResultId() == null
                     || GenericValidator.isBlankOrNull(testResultItem.getReferralId())) {
                 referral = new Referral();
+                referral.setFhirUuid(UUID.randomUUID());
                 referral.setStatus(ReferralStatus.CREATED);
                 referral.setReferralTypeId(REFERRAL_CONFORMATION_ID);
                 referral.setSysUserId(getSysUserId(request));

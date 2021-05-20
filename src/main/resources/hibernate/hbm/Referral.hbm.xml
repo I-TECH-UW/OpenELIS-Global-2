@@ -50,5 +50,7 @@
 			fetch="select">
 			<column name="organization_id" precision="10" scale="0" />
 		</many-to-one>
+		<property name="fhirUuid"
+			column="fhir_uuid" type="java.util.UUID" />
 	</class>
 </hibernate-mapping>

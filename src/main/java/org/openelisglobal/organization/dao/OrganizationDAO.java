@@ -85,4 +85,6 @@ public interface OrganizationDAO extends BaseDAO<Organization, String> {
 
     List<Organization> getActiveOrganizations() throws LIMSRuntimeException;
 
+    Organization getOrganizationByFhirId(String uuid);
+
 }
