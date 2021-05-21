@@ -6,12 +6,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class PagingProperties {
 
-//    @Value("${org.openelisglobal.paging.results.pageSize:99}")
-    @Value("${org.openelisglobal.paging.results.pageSize:2}")
+    @Value("${org.openelisglobal.paging.results.pageSize:99}")
     private Integer resultsPageSize;
 
-//    @Value("${org.openelisglobal.paging.validation.pageSize:99}")
-    @Value("${org.openelisglobal.paging.validation.pageSize:2}")
+    @Value("${org.openelisglobal.paging.validation.pageSize:99}")
     private Integer validationPageSize;
 
     public Integer getResultsPageSize() {
