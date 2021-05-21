@@ -446,8 +446,12 @@ function parseRequester(requester) {
 }
 
 function parseRequestingOrg(requestingOrg) {
-	var id = requestingOrg.item(0).getElementsByTagName("id");
-	jQuery("#requesterId").val(id);
+	var requestingOrgId = requestingOrg.item(0).getElementsByTagName("id");
+    var id = "";
+    if (requestingOrgId.length > 0) {
+            first = requestingOrgId[0].firstChild.nodeValue;
+    }
+	jQuery("#requesterId").val(id).change();
 }
 
 function parseSampletypes(sampletypes, SampleTypes) {

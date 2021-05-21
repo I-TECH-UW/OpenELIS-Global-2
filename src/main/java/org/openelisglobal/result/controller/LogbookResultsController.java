@@ -453,6 +453,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
                 referral.setReferralReasonId(testResultItem.getReferralReasonId());
             } else if (testResultItem.isReferralCanceled()) {
                 referral = referralService.get(testResultItem.getReferralId());
+                referral.setFhirUuid(UUID.randomUUID());
                 referral.setStatus(ReferralStatus.CREATED);
                 referral.setSysUserId(getSysUserId(request));
                 referral.setRequesterName(testResultItem.getTechnician());

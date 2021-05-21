@@ -176,12 +176,12 @@ public class FhirReferralServiceImpl implements FhirReferralService {
         ServiceRequest serviceRequest = fhirPersistanceService
                 .getServiceRequestByAnalysisUuid(analysis.getFhirUuidAsString()).orElseThrow();
         Practitioner requester = fhirTransformService.transformNameToPractitioner(referral.getRequesterName());
-        requester.setId(UUID.randomUUID().toString());
+        requester.setId(referral.getFhirUuidAsString());
         Task task = createReferralTask(fhirOrg, fhirPersistanceService
                 .getPatientByUuid(sampleHumanService.getPatientForSample(sample).getFhirUuidAsString()).orElseThrow(),
                 serviceRequest, requester, sample);
         task.setId(referral.getFhirUuidAsString());
-        updateResources.put(requester.getId(), requester);
+        updateResources.put(requester.getIdElement().getIdPart(), requester);
         updateResources.put(task.getIdElement().getIdPart(), task);
 
         return fhirPersistanceService.updateFhirResourcesInFhirStore(updateResources);
