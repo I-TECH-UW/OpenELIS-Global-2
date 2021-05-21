@@ -545,9 +545,11 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         } else {
             serviceRequest.setStatus(ServiceRequestStatus.UNKNOWN);
         }
-        serviceRequest.addCategory(transformSampleProgramToCodeableConcept(
-                observationHistoryService.getObservationHistoriesBySampleIdAndType(sample.getId(),
-                        observationHistoryService.getObservationTypeIdForType(ObservationType.PROGRAM))));
+        ObservationHistory program = observationHistoryService.getObservationHistoriesBySampleIdAndType(sample.getId(),
+                observationHistoryService.getObservationTypeIdForType(ObservationType.PROGRAM));
+        if (program != null) {
+            serviceRequest.addCategory(transformSampleProgramToCodeableConcept(program));
+        }
         serviceRequest.setPriority(ServiceRequestPriority.ROUTINE);
         serviceRequest.setCode(transformTestToCodeableConcept(test.getId()));
         serviceRequest.setAuthoredOn(new Date());
@@ -820,17 +822,17 @@ public class FhirTransformServiceImpl implements FhirTransformService {
             if (TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(result.getResultType())
                     && !"0".equals(result.getValue())) {
                 Dictionary dictionary = dictionaryService.getDataForId(result.getValue());
-                observation.setValue(new CodeableConcept(new Coding(fhirConfig.getOeFhirSystem() + "/dictionary_entry",
-                        dictionary.getDictEntry(),
-                        dictionary.getLocalizedDictionaryName() == null ? dictionary.getDictEntry()
-                                : dictionary.getLocalizedDictionaryName().getEnglish())));
+                observation.setValue(new CodeableConcept(
+                        new Coding(fhirConfig.getOeFhirSystem() + "/dictionary_entry", dictionary.getDictEntry(),
+                                dictionary.getLocalizedDictionaryName() == null ? dictionary.getDictEntry()
+                                        : dictionary.getLocalizedDictionaryName().getEnglish())));
             } else if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(result.getResultType())
                     && !"0".equals(result.getValue())) {
                 Dictionary dictionary = dictionaryService.getDataForId(result.getValue());
-                observation.setValue(new CodeableConcept(new Coding(fhirConfig.getOeFhirSystem() + "/dictionary_entry",
-                        dictionary.getDictEntry(),
-                        dictionary.getLocalizedDictionaryName() == null ? dictionary.getDictEntry()
-                                : dictionary.getLocalizedDictionaryName().getEnglish())));
+                observation.setValue(new CodeableConcept(
+                        new Coding(fhirConfig.getOeFhirSystem() + "/dictionary_entry", dictionary.getDictEntry(),
+                                dictionary.getLocalizedDictionaryName() == null ? dictionary.getDictEntry()
+                                        : dictionary.getLocalizedDictionaryName().getEnglish())));
             } else if (TypeOfTestResultServiceImpl.ResultType.isNumeric(result.getResultType())) {
                 Quantity quantity = new Quantity();
                 quantity.setValue(new BigDecimal(result.getValue()));
