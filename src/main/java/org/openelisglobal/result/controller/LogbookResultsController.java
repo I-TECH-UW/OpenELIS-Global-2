@@ -462,15 +462,19 @@ public class LogbookResultsController extends LogbookResultsBaseController {
             String originalResultNote = MessageUtil.getMessage("referral.original.result") + ": ";
             if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(testResultItem.getResultType())
                     || TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(testResultItem.getResultType())) {
-                Dictionary dictionary = dictionaryService.get(testResultItem.getResultValue());
-                if (dictionary.getLocalizedDictionaryName() == null) {
-                    originalResultNote = originalResultNote + dictionary.getDictEntry();
+                if ("0".equals(testResultItem.getResultValue())) {
+                    originalResultNote = originalResultNote + "";
                 } else {
-                    originalResultNote = originalResultNote
-                            + dictionary.getLocalizedDictionaryName().getLocalizedValue();
+                    Dictionary dictionary = dictionaryService.get(testResultItem.getResultValue());
+                    if (dictionary.getLocalizedDictionaryName() == null) {
+                        originalResultNote = originalResultNote + dictionary.getDictEntry();
+                    } else {
+                        originalResultNote = originalResultNote
+                                + dictionary.getLocalizedDictionaryName().getLocalizedValue();
+                    }
                 }
             } else {
-                originalResultNote = originalResultNote + testResultItem.getResult().getValue();
+                originalResultNote = originalResultNote + testResultItem.getResultValue();
             }
 
             actionDataSet.getSavableReferrals().add(referral);
