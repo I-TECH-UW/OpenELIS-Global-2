@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.apache.commons.validator.GenericValidator;
 import org.hl7.fhir.instance.model.api.IDomainResource;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Bundle.BundleEntryComponent;
@@ -470,10 +471,10 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         List<Specimen> remoteSpecimens = getSpecimenForServiceRequestsFromServer(sourceFhirClient,
                 remoteServiceRequests);
         Patient remotePatientForTask = getForPatientFromServer(sourceFhirClient, remoteTask);
-        Practitioner remotePractitionerForTask = getPractitionerFromServer(sourceFhirClient, remoteTask);
         if (remotePatientForTask == null) {
             remotePatientForTask = getForPatientFromServer(sourceFhirClient, remoteServiceRequests);
         }
+        Practitioner remotePractitionerForTask = getPractitionerFromServer(sourceFhirClient, remoteTask);
         String originalRemoteTaskId = remoteTask.getIdElement().getIdPart();
         Optional<Task> existingLocalTask = getTaskWithSameIdentifier(remoteTask, remoteStorePath);
         Task localTask;
@@ -732,7 +733,8 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
 
     private Practitioner getPractitionerFromServer(IGenericClient fhirClient, Task remoteTask) {
         Practitioner practitioner = null;
-        if (!(remoteTask.getRequester() == null || remoteTask.getRequester().getReference() == null)) {
+        if (!GenericValidator.isBlankOrNull(remoteTask.getRequester().getReferenceElement().getIdPart())
+                && remoteTask.getRequester().getReference().contains(ResourceType.Practitioner.toString())) {
             practitioner = fhirClient.read().resource(Practitioner.class)
                     .withId(remoteTask.getRequester().getReferenceElement().getIdPart()).execute();
         }
