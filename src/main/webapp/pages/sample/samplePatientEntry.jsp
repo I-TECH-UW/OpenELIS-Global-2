@@ -66,9 +66,6 @@ if( requesterLastNameRequired ){
 <% if( FormFields.getInstance().useField(Field.SampleEntryUseRequestDate)){ %>
     requiredFields.push("requestDate");
 <% } %>
-<%  if (requesterLastNameRequired) { %>
-    requiredFields.push("providerLastNameID");
-<% } %>
 
  
 function isFieldValid(fieldname)
@@ -412,7 +409,7 @@ function parsePatient(patienttag) {
 
 function clearRequester() {
 
-//    $("providerFirstName").value = '';
+    $("providerFirstNameID").value = '';
     $("providerLastNameID").value = '';
     $("labNo").value = '';
     $("receivedDateForDisplay").value = '${entryDate}';
@@ -426,7 +423,7 @@ function parseRequester(requester) {
     var first = "";
     if (firstName.length > 0) {
             first = firstName[0].firstChild.nodeValue;
-            //$("providerFirstName").value = first;
+            $("providerFirstNameID").value = first;
     }
     var lastName = requester.item(0).getElementsByTagName("lastName");
     var last = "";
@@ -449,7 +446,7 @@ function parseRequestingOrg(requestingOrg) {
 	var requestingOrgId = requestingOrg.item(0).getElementsByTagName("id");
     var id = "";
     if (requestingOrgId.length > 0) {
-            first = requestingOrgId[0].firstChild.nodeValue;
+            id = requestingOrgId[0].firstChild.nodeValue;
     }
 	jQuery("#requesterId").val(id).change();
 }
