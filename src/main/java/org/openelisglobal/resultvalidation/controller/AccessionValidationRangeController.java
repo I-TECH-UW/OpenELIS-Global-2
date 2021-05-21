@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.DisplayListService;
@@ -209,6 +210,18 @@ public class AccessionValidationRangeController extends BaseResultValidationCont
         boolean areListeners = !updaters.isEmpty();
 
         request.getSession().setAttribute(SAVE_DISABLED, "true");
+        
+        List<Result> checkPagedResults = (List<Result>) request.getSession().getAttribute(IActionConstants.RESULTS_SESSION_CACHE);
+        List<Result> checkResults = (List<Result>) checkPagedResults.get(0);
+        if (checkResults.size() == 0) {
+            LogEvent.logDebug(this.getClass().getName(), "ResultValidation()", "Attempted save of stale page.");
+//            Errors errors = new BaseErrors();
+//            errors.reject("alert.error", "An error occured while saving");
+//            saveErrors(errors);
+            redirectAttributes.addFlashAttribute(FWD_FAIL_INSERT, true);
+            return findForward(FWD_SUCCESS_INSERT, form);
+//            return new ModelAndView("redirect:/ResultValidation.do?blank=true");
+        }
 
         ResultValidationPaging paging = new ResultValidationPaging();
         paging.updatePagedResults(request, form);

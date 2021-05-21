@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.DisplayListService;
@@ -213,6 +214,29 @@ public class ResultValidationController extends BaseResultValidationController {
 
         request.getSession().setAttribute(SAVE_DISABLED, "true");
 
+        List<Result> checkPagedResults = (List<Result>) request.getSession().getAttribute(IActionConstants.RESULTS_SESSION_CACHE);
+        List<Result> checkResults = (List<Result>) checkPagedResults.get(0);
+        if (checkResults.size() == 0) {
+            LogEvent.logDebug(this.getClass().getName(), "ResultValidation()", "Attempted save of stale page.");
+            List<AnalysisItem> staleItemList = form.getResultList();
+            
+            Errors staleErrors = new BaseErrors();
+
+            for (AnalysisItem item : staleItemList) {
+                Errors staleErrorList = new BaseErrors();
+                validateQuantifiableItems(item, staleErrorList);
+
+                if (true) {
+                    StringBuilder augmentedAccession = new StringBuilder(item.getAccessionNumber());
+                    String errorMsg = "errors.resultValidated";
+                    staleErrors.reject(errorMsg, new String[] { augmentedAccession.toString() }, errorMsg);
+                    staleErrors.addAllErrors(staleErrorList);
+                }
+            }
+            saveErrors(staleErrors);
+            return findForward(FWD_VALIDATION_ERROR, form);
+        }
+        
         ResultValidationPaging paging = new ResultValidationPaging();
         paging.updatePagedResults(request, form);
         List<AnalysisItem> resultItemList = paging.getResults(request);
@@ -222,7 +246,7 @@ public class ResultValidationController extends BaseResultValidationController {
         setRequestType(testSectionName);
         // ----------------------
         String url = request.getRequestURL().toString();
-
+        
         Errors errors = validateModifiedItems(resultItemList);
 
         if (errors.hasErrors()) {
