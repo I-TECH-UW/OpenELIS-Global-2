@@ -817,11 +817,13 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         }
 
         if (!GenericValidator.isBlankOrNull(result.getValue())) {
-            if (TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(result.getResultType())) {
+            if (TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(result.getResultType())
+                    && !"0".equals(result.getValue())) {
                 Dictionary dictionary = dictionaryService.getDataForId(result.getValue());
                 observation.setValue(new CodeableConcept(new Coding(fhirConfig.getOeFhirSystem() + "/dictionary_entry",
                         dictionary.getDictEntry(), dictionary.getLocalizedDictionaryName().getEnglish())));
-            } else if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(result.getResultType())) {
+            } else if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(result.getResultType())
+                    && !"0".equals(result.getValue())) {
                 Dictionary dictionary = dictionaryService.getDataForId(result.getValue());
                 observation.setValue(new CodeableConcept(new Coding(fhirConfig.getOeFhirSystem() + "/dictionary_entry",
                         dictionary.getDictEntry(), dictionary.getLocalizedDictionaryName().getEnglish())));

@@ -41,7 +41,6 @@ import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.dataexchange.fhir.FhirConfig;
 import org.openelisglobal.dataexchange.fhir.exception.FhirLocalPersistingException;
 import org.openelisglobal.dataexchange.fhir.exception.FhirPersistanceException;
-import org.openelisglobal.dataexchange.fhir.service.CountingTempIdGenerator;
 import org.openelisglobal.dataexchange.fhir.service.FhirApiWorkFlowServiceImpl.ReferralResultsImportObjects;
 import org.openelisglobal.dataexchange.fhir.service.FhirPersistanceService;
 import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
@@ -177,7 +176,7 @@ public class FhirReferralServiceImpl implements FhirReferralService {
         ServiceRequest serviceRequest = fhirPersistanceService
                 .getServiceRequestByAnalysisUuid(analysis.getFhirUuidAsString()).orElseThrow();
         Practitioner requester = fhirTransformService.transformNameToPractitioner(referral.getRequesterName());
-        fhirTransformService.setTempIdIfMissing(requester, new CountingTempIdGenerator());
+        requester.setId(UUID.randomUUID().toString());
         Task task = createReferralTask(fhirOrg, fhirPersistanceService
                 .getPatientByUuid(sampleHumanService.getPatientForSample(sample).getFhirUuidAsString()).orElseThrow(),
                 serviceRequest, requester, sample);
