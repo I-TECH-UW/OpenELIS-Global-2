@@ -29,9 +29,11 @@ import org.openelisglobal.common.paging.IPageDivider;
 import org.openelisglobal.common.paging.IPageFlattener;
 import org.openelisglobal.common.paging.IPageUpdater;
 import org.openelisglobal.common.paging.PagingBean;
+import org.openelisglobal.common.paging.PagingProperties;
 import org.openelisglobal.common.paging.PagingUtility;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.result.form.AnalyzerResultsForm;
+import org.openelisglobal.spring.util.SpringContext;
 
 public class AnalyzerResultsPaging {
 
@@ -103,7 +105,7 @@ public class AnalyzerResultsPaging {
                     pagedResults.add(page);
                     page = new ArrayList<>();
                 }
-                if (resultCount >= IActionConstants.PAGING_SIZE) {
+                if (resultCount >= SpringContext.getBean(PagingProperties.class).getResultsPageSize()) {
                     sampleGroupingNumber = item.getSampleGroupingNumber();
                 }
 

@@ -99,8 +99,11 @@ public class PatientManagementUpdate implements IPatientUpdate {
 
     private Errors validatePatientInfo(PatientManagementInfo patientInfo) {
         Errors errors = new BaseErrors();
-        if (ConfigurationProperties.getInstance()
-                .isPropertyValueEqual(ConfigurationProperties.Property.ALLOW_DUPLICATE_SUBJECT_NUMBERS, "false")) {
+        boolean disallowDuplicateSubjectNumbers = ConfigurationProperties.getInstance()
+                .isPropertyValueEqual(ConfigurationProperties.Property.ALLOW_DUPLICATE_SUBJECT_NUMBERS, "false");
+        boolean disallowDuplicateNationalIds = ConfigurationProperties.getInstance()
+                .isPropertyValueEqual(ConfigurationProperties.Property.ALLOW_DUPLICATE_NATIONAL_IDS, "false");
+        if (disallowDuplicateSubjectNumbers || disallowDuplicateNationalIds) {
             String newSTNumber = GenericValidator.isBlankOrNull(patientInfo.getSTnumber()) ? null
                     : patientInfo.getSTnumber();
             String newSubjectNumber = GenericValidator.isBlankOrNull(patientInfo.getSubjectNumber()) ? null
@@ -115,13 +118,16 @@ public class PatientManagementUpdate implements IPatientUpdate {
 
                 for (PatientSearchResults result : results) {
                     if (!result.getPatientID().equals(patientInfo.getPatientPK())) {
-                        if (newSTNumber != null && newSTNumber.equals(result.getSTNumber())) {
+                        if (disallowDuplicateSubjectNumbers && newSTNumber != null
+                                && newSTNumber.equals(result.getSTNumber())) {
                             errors.reject("error.duplicate.STNumber", null, null);
                         }
-                        if (newSubjectNumber != null && newSubjectNumber.equals(result.getSubjectNumber())) {
+                        if (disallowDuplicateSubjectNumbers && newSubjectNumber != null
+                                && newSubjectNumber.equals(result.getSubjectNumber())) {
                             errors.reject("error.duplicate.subjectNumber", null, null);
                         }
-                        if (newNationalId != null && newNationalId.equals(result.getNationalId())) {
+                        if (disallowDuplicateNationalIds && newNationalId != null
+                                && newNationalId.equals(result.getNationalId())) {
                             errors.reject("error.duplicate.nationalId", null, null);
                         }
                     }

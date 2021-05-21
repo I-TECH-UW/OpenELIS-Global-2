@@ -27,10 +27,12 @@ import org.openelisglobal.common.paging.IPageDivider;
 import org.openelisglobal.common.paging.IPageFlattener;
 import org.openelisglobal.common.paging.IPageUpdater;
 import org.openelisglobal.common.paging.PagingBean;
+import org.openelisglobal.common.paging.PagingProperties;
 import org.openelisglobal.common.paging.PagingUtility;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.resultvalidation.bean.AnalysisItem;
 import org.openelisglobal.resultvalidation.form.ValidationPagingForm;
+import org.openelisglobal.spring.util.SpringContext;
 
 public class ResultValidationPaging {
     private PagingUtility<List<AnalysisItem>> paging = new PagingUtility<>();
@@ -100,7 +102,7 @@ public class ResultValidationPaging {
                     pagedResults.add(page);
                     page = new ArrayList<>();
                 }
-                if (resultCount >= IActionConstants.VALIDATION_PAGING_SIZE) {
+                if (resultCount >= SpringContext.getBean(PagingProperties.class).getValidationPageSize()) {
                     currentAccessionNumber = item.getAccessionNumber();
                 }
 
