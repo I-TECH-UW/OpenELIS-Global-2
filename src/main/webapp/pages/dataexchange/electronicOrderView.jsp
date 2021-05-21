@@ -65,14 +65,14 @@ jQuery(window).load(function(){
 	    // Cancel the default action, if needed
 	    event.preventDefault();
 	    // Trigger the button element with a click
-	    document.getElementById("searchButton").click();
+	    document.getElementById("searchElectronicOrderButton").click();
 	  }
 	}); 
 });
 </script>
 <b><spring:message code="eorder.instruction"/></b><br>
 <form:input path="searchValue" id="searchValue" />
-<button type="button" onClick="searchElectronicOrders()"><spring:message code="label.button.search" /> </button><br>
+<button id="searchElectronicOrderButton" type="button" onClick="searchElectronicOrders()"><spring:message code="label.button.search" /> </button><br>
 <spring:message code="eorder.sort"/>: 
 <form:select path="sortOrder" id="sortOption" onchange="searchElectronicOrders()">
 	<form:options items="${form.sortOrderOptions}" itemValue="value" itemLabel="label" />
