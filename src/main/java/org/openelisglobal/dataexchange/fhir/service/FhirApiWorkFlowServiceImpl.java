@@ -241,43 +241,45 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
                         }
                     }
                 }
-                if (originalReferralObjectsByServiceRequest.size() <= 0) {
-                    return;
-                }
+                if (originalReferralObjectsByServiceRequest.size() > 0) {
+                    searchQuery = sourceFhirClient.search()//
+                            .forResource(ServiceRequest.class)//
+                            .returnBundle(Bundle.class)//
+//                    .revInclude(Task.INCLUDE_BASED_ON)//
+//                    .include(ServiceRequest.INCLUDE_SPECIMEN) // specimen
+                            .revInclude(Observation.INCLUDE_BASED_ON.asRecursive())//
+                            .revInclude(DiagnosticReport.INCLUDE_BASED_ON.asRecursive())//
+                            .where(ServiceRequest.STATUS.exactly().code(ServiceRequestStatus.COMPLETED.toCode()))
+                            .where(ServiceRequest.BASED_ON
+                                    .hasAnyOfIds(originalReferralObjectsByServiceRequest.keySet()));
+                    originalTasksBundle = searchQuery.execute();
+                    Map<String, ReferralResultsImportObjects> resultImportByServiceRequest = new HashMap<>();
+                    for (BundleEntryComponent bundleEntry : originalTasksBundle.getEntry()) {
+                        if (bundleEntry.hasResource()) {
+                            try {
+                                addResultImportObject(bundleEntry, resultImportByServiceRequest,
+                                        originalReferralObjectsByServiceRequest);
+                            } catch (RuntimeException e) {
+                                LogEvent.logError(e);
+                                LogEvent.logError("could not import result for: " + bundleEntry.getResource().getId(),
+                                        e);
+                            }
+                        }
+                    }
 
-                searchQuery = sourceFhirClient.search()//
-                        .forResource(ServiceRequest.class)//
-                        .returnBundle(Bundle.class)//
-//                .revInclude(Task.INCLUDE_BASED_ON)//
-//                .include(ServiceRequest.INCLUDE_SPECIMEN) // specimen
-                        .revInclude(Observation.INCLUDE_BASED_ON.asRecursive())//
-                        .revInclude(DiagnosticReport.INCLUDE_BASED_ON.asRecursive())//
-                        .where(ServiceRequest.STATUS.exactly().code(ServiceRequestStatus.COMPLETED.toCode()))
-                        .where(ServiceRequest.BASED_ON.hasAnyOfIds(originalReferralObjectsByServiceRequest.keySet()));
-                originalTasksBundle = searchQuery.execute();
-                Map<String, ReferralResultsImportObjects> resultImportByServiceRequest = new HashMap<>();
-                for (BundleEntryComponent bundleEntry : originalTasksBundle.getEntry()) {
-                    if (bundleEntry.hasResource()) {
+                    for (Entry<String, ReferralResultsImportObjects> resultsImportEntry : resultImportByServiceRequest
+                            .entrySet()) {
                         try {
-                            addResultImportObject(bundleEntry, resultImportByServiceRequest,
-                                    originalReferralObjectsByServiceRequest);
+                            fhirReferralService.setReferralResult(resultsImportEntry.getValue());
                         } catch (RuntimeException e) {
                             LogEvent.logError(e);
-                            LogEvent.logError("could not import result for: " + bundleEntry.getResource().getId(), e);
+                            LogEvent.logError(
+                                    "could not import result for ServiceRequest: " + resultsImportEntry.getKey(), e);
                         }
                     }
                 }
 
-                for (Entry<String, ReferralResultsImportObjects> resultsImportEntry : resultImportByServiceRequest
-                        .entrySet()) {
-                    try {
-                        fhirReferralService.setReferralResult(resultsImportEntry.getValue());
-                    } catch (RuntimeException e) {
-                        LogEvent.logError(e);
-                        LogEvent.logError("could not import result for ServiceRequest: " + resultsImportEntry.getKey(),
-                                e);
-                    }
-                }
+
 
             } catch (RuntimeException e) {
                 LogEvent.logError(e);
