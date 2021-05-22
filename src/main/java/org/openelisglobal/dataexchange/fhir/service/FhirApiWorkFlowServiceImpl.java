@@ -131,7 +131,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
                         .forResource(Task.class)//
                         .returnBundle(Bundle.class)//
                         .include(Task.INCLUDE_BASED_ON) // serviceRequest
-                        .where(Task.STATUS.exactly().code(TaskStatus.ACCEPTED.toCode()))//
+                        .where(Task.STATUS.exactly().codes(TaskStatus.REQUESTED.toCode(), TaskStatus.RECEIVED.toCode()))//
                         .where(Task.RES_ID.exactly().identifier(referralTaskUuid.toString()));
                 Bundle originalTasksBundle = searchQuery.execute();
                 if (originalTasksBundle.hasEntry()) {
@@ -212,6 +212,8 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
 //                .where(Task.STATUS.exactly().code(TaskStatus.ACCEPTED.toCode()))//
 //                .where(Task.REQUESTER.hasAnyOfIds(remoteStoreIdentifier));
         for (UUID referralTaskUuid : referralService.getSentReferralUuids()) {
+            LogEvent.logDebug(this.getClass().getName(), "beginTaskImportResultsPath",
+                    "searching for results for Task ID " + referralTaskUuid);
             try {
                 IQuery<Bundle> searchQuery = sourceFhirClient.search()//
                         .forResource(Task.class)//
@@ -222,10 +224,11 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
                 Bundle originalTasksBundle = searchQuery.execute();
                 if (originalTasksBundle.hasEntry()) {
                     LogEvent.logDebug(this.getClass().getName(), "beginTaskImportResultsPath",
-                            "received bundle with " + originalTasksBundle.getEntry().size() + " entries");
+                            "received bundle with " + originalTasksBundle.getEntry().size() + " entries for Task ID "
+                                    + referralTaskUuid);
                 } else {
                     LogEvent.logDebug(this.getClass().getName(), "beginTaskImportResultsPath",
-                            "received bundle with 0 entries");
+                            "received bundle with 0 entries for Task ID " + referralTaskUuid);
                 }
                 Map<String, OriginalReferralObjects> originalReferralObjectsByServiceRequest = new HashMap<>();
                 for (BundleEntryComponent bundleEntry : originalTasksBundle.getEntry()) {
