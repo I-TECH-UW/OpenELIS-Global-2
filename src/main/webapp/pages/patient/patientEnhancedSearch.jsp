@@ -76,8 +76,12 @@ function searchPatients()
 	patientSearch(lastName, firstName, STNumber, subjectNumber, nationalID, labNumber, "", "", "", false, processSearchSuccess);
 }
 
-function enhancedSearchPatients()
-{
+function smartSearchPatients() {
+	jQuery("#loading").addClass('local-search');
+	enhancedSearchPatients(true, true);
+}
+
+function enhancedSearchPatients(localSearch, twoPartSearch) {
     var criteria = jQuery("#searchCriteria").val();
     var genders = jQuery("#genders").val();
     var value = jQuery("#firstNameSearchValue").val().trim();
@@ -96,7 +100,6 @@ function enhancedSearchPatients()
 	newSearchInfo = false;
     jQuery("#resultsDiv").hide();
     jQuery("#searchLabNumber").val('');
-	jQuery("#loading").show();
     
     firstName = jQuery("#firstNameSearchValue").val().trim();
     lastName = jQuery("#lastNameSearchValue").val().trim();
@@ -114,20 +117,21 @@ function enhancedSearchPatients()
 		altAccessionSearchFunction(labNumber);
 		return;
 	}
-    
-
-	patientSearch(lastName, firstName, STNumber, subjectNumber, nationalID, labNumber, "", dateOfBirth, gender, false, processSearchSuccess);
+	var table = $("searchResultTable");
+	$("searchResultsDiv").hide();
+	clearTable(table);
+	clearPatientInfoCache();
+	jQuery("#loading").show();
+	patientSearch(lastName, firstName, STNumber, subjectNumber, nationalID, labNumber, "", dateOfBirth, gender, localSearch, processSearchSuccess, processSearchFailure, twoPartSearch);
 }
 
-function processSearchFailure(xhr)
-{
+function processSearchFailure(xhr) {
 	//alert( xhr.responseText );
 	jQuery("#loading").hide();
 	alert("<spring:message code="error.system"/>");
 }
 
-function processSearchSuccess(xhr)
-{
+function processSearchSuccess(xhr, twoPartSearch) {
 	jQuery("#loading").hide();
 	//alert( xhr.responseText );
 	var formField = xhr.responseXML.getElementsByTagName("formfield").item(0);
@@ -153,6 +157,10 @@ function processSearchSuccess(xhr)
 			handleSelectedPatient();
 		}
 		</c:if>
+	} else if (twoPartSearch){
+		jQuery("#loading").removeClass('local-search');
+		jQuery("#loading").addClass('external-search');
+		enhancedSearchPatients(false, false);
 	} else {
 		$("searchResultsDiv").hide();
 		$("noPatientFound").show();
@@ -518,7 +526,7 @@ function handleSelectedPatient(){
 			<td><input type="button" name="enhancedSearchButton"
 				class="patientEnhancedSearch"
 				value="<%=MessageUtil.getMessage("label.patient.search")%>"
-				id="enhancedSearchButton" onclick="enhancedSearchPatients()"
+				id="enhancedSearchButton" onclick="smartSearchPatients()"
 				disabled="disabled"></td>
 		</tr>
 		<tr>

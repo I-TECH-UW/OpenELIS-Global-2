@@ -1432,3 +1432,12 @@ view-non-conforming-section-1 > td {
 .column-right-text {
 	float: right;
 }
+
+
+.local-search {
+  color: #66b947;
+}
+
+.external-search {
+  color: #3c74b6;
+}
