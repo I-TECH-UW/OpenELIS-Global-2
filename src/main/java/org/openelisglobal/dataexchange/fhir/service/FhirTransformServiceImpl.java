@@ -867,7 +867,8 @@ public class FhirTransformServiceImpl implements FhirTransformService {
     @Transactional(readOnly = true)
     public org.hl7.fhir.r4.model.Organization transformToFhirOrganization(Organization organization) {
         org.hl7.fhir.r4.model.Organization fhirOrganization = new org.hl7.fhir.r4.model.Organization();
-        fhirOrganization.setId(organization.getId());
+        fhirOrganization
+                .setId(organization.getFhirUuid() == null ? organization.getId() : organization.getFhirUuidAsString());
         fhirOrganization.setName(organization.getOrganizationName());
         this.setFhirOrganizationIdentifiers(fhirOrganization, organization);
         this.setFhirAddressInfo(fhirOrganization, organization);
