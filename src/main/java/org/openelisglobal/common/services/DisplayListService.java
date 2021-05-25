@@ -411,6 +411,9 @@ public class DisplayListService implements LocaleChangeListener {
 
         List<Organization> orgList = organizationService.getOrganizationsByTypeName("shortName",
                 RequesterService.REFERRAL_ORG_TYPE);
+        orgList.sort((e, f) -> {
+            return e.getOrganizationName().compareTo(f.getOrganizationName());
+        });
 
         for (Organization organization : orgList) {
             if (GenericValidator.isBlankOrNull(organization.getShortName())) {
@@ -450,7 +453,9 @@ public class DisplayListService implements LocaleChangeListener {
         List<IdValuePair> pairs = new ArrayList<>();
 
         List<Organization> orgs = organizationService.getOrganizationsByTypeName("organizationName", "referralLab");
-
+        orgs.sort((e, f) -> {
+            return e.getOrganizationName().compareTo(f.getOrganizationName());
+        });
         for (Organization org : orgs) {
             pairs.add(new IdValuePair(org.getId(), org.getOrganizationName()));
         }
@@ -510,6 +515,9 @@ public class DisplayListService implements LocaleChangeListener {
     private List<IdValuePair> createPatientHealthRegions() {
         List<IdValuePair> regionList = new ArrayList<>();
         List<Organization> orgList = organizationService.getOrganizationsByTypeName("id", "Health Region");
+        orgList.sort((e, f) -> {
+            return e.getOrganizationName().compareTo(f.getOrganizationName());
+        });
         for (Organization org : orgList) {
             regionList.add(new IdValuePair(org.getId(), org.getOrganizationName()));
         }
