@@ -76,12 +76,7 @@ function searchPatients()
 	patientSearch(lastName, firstName, STNumber, subjectNumber, nationalID, labNumber, "", "", "", false, processSearchSuccess);
 }
 
-function smartSearchPatients() {
-	jQuery("#loading").addClass('local-search');
-	enhancedSearchPatients(true, true);
-}
-
-function enhancedSearchPatients(localSearch, twoPartSearch) {
+function enhancedSearchPatients(localSearch) {
     var criteria = jQuery("#searchCriteria").val();
     var genders = jQuery("#genders").val();
     var value = jQuery("#firstNameSearchValue").val().trim();
@@ -121,18 +116,29 @@ function enhancedSearchPatients(localSearch, twoPartSearch) {
 	$("searchResultsDiv").hide();
 	clearTable(table);
 	clearPatientInfoCache();
+	if (localSearch) {
+		jQuery("#loading").addClass('local-search');
+		jQuery("#loading").removeClass('external-search');
+		jQuery("#enhancedExternalSearchButton").hide();
+	} else {
+		jQuery("#loading").removeClass('local-search');
+		jQuery("#loading").addClass('external-search');
+	}
 	jQuery("#loading").show();
-	patientSearch(lastName, firstName, STNumber, subjectNumber, nationalID, labNumber, "", dateOfBirth, gender, localSearch, processSearchSuccess, processSearchFailure, twoPartSearch);
+
+	patientSearch(lastName, firstName, STNumber, subjectNumber, nationalID, labNumber, "", dateOfBirth, gender, localSearch, processSearchSuccess, processSearchFailure, localSearch);
 }
 
 function processSearchFailure(xhr) {
 	//alert( xhr.responseText );
 	jQuery("#loading").hide();
+	jQuery("#PatientDetail").show();
 	alert("<spring:message code="error.system"/>");
 }
 
-function processSearchSuccess(xhr, twoPartSearch) {
+function processSearchSuccess(xhr, localSearch) {
 	jQuery("#loading").hide();
+	jQuery("#PatientDetail").show();
 	//alert( xhr.responseText );
 	var formField = xhr.responseXML.getElementsByTagName("formfield").item(0);
 	var message = xhr.responseXML.getElementsByTagName("message").item(0);
@@ -157,15 +163,18 @@ function processSearchSuccess(xhr, twoPartSearch) {
 			handleSelectedPatient();
 		}
 		</c:if>
-	} else if (twoPartSearch){
-		jQuery("#loading").removeClass('local-search');
-		jQuery("#loading").addClass('external-search');
-		enhancedSearchPatients(false, false);
+		showExternalSearchButton();
+	} else if (localSearch){
+		enhancedSearchPatients(false);
 	} else {
 		$("searchResultsDiv").hide();
 		$("noPatientFound").show();
 		selectPatient( null );
 	}
+}
+
+function showExternalSearchButton() {
+	jQuery("#enhancedExternalSearchButton").show();
 }
 
 function clearSearchResultTable() {
@@ -526,8 +535,13 @@ function handleSelectedPatient(){
 			<td><input type="button" name="enhancedSearchButton"
 				class="patientEnhancedSearch"
 				value="<%=MessageUtil.getMessage("label.patient.search")%>"
-				id="enhancedSearchButton" onclick="smartSearchPatients()"
-				disabled="disabled"></td>
+				id="enhancedSearchButton" onclick="enhancedSearchPatients(true);"
+				disabled="disabled">
+				<input type="button" name="enhancedExternalSearchButton"
+				class="patientEnhancedSearch"
+				value="<%=MessageUtil.getMessage("label.patient.search.external")%>"
+				id="enhancedExternalSearchButton" onclick="enhancedSearchPatients(false);"
+				style="display:none"></td>
 		</tr>
 		<tr>
 			<td>

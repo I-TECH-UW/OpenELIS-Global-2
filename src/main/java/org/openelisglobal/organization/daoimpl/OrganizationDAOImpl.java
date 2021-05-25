@@ -650,7 +650,11 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
         try {
             Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setParameter("uuid", UUID.fromString(uuid));
-            Organization org = (Organization) query.getSingleResult();
+            List<Organization> list = query.list();
+            Organization org = null;
+            if (list.size() > 0) {
+                org = list.get(0);
+            }
 
             return org;
         } catch (HibernateException e) {
