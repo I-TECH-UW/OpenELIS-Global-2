@@ -71,6 +71,7 @@ import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.samplehuman.service.SampleHumanService;
 import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.testresult.service.TestResultService;
 import org.openelisglobal.testresult.valueholder.TestResult;
 import org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl;
@@ -113,6 +114,8 @@ public class FhirReferralServiceImpl implements FhirReferralService {
     private DictionaryService dictionaryService;
     @Autowired
     private TestResultService testResultService;
+    @Autowired
+    private TestService testService;
     @Autowired
     private FhirConfig fhirConfig;
     @Value("${org.openelisglobal.remote.source.identifier:}#{T(java.util.Collections).emptyList()}")
@@ -288,13 +291,12 @@ public class FhirReferralServiceImpl implements FhirReferralService {
     }
 
     private Result getResultFromObservation(Observation observation, List<Result> currentResults, Analysis analysis) {
-        Result result = new Result();
+        Result result;
         if (currentResults.size() == 1) {
             result = currentResults.get(0);
         } else {
             result = new Result();
-            TestResult testResult = result.getTestResult();
-            String testResultType = testResult.getTestResultType();
+            String testResultType = testService.getResultType(analysis.getTest());
             result.setResultType(testResultType);
             result.setAnalysis(analysis);
             currentResults.stream().forEach(e -> {
