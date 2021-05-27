@@ -20,6 +20,7 @@ import org.openelisglobal.referral.valueholder.ReferralResult;
 import org.openelisglobal.result.service.ResultServiceImpl;
 import org.openelisglobal.result.valueholder.Result;
 import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.test.service.TestServiceImpl;
 import org.openelisglobal.test.valueholder.Test;
 import org.openelisglobal.typeofsample.service.TypeOfSampleService;
@@ -40,6 +41,8 @@ public class ReferralItemServiceImpl implements ReferralItemService {
     ReferralResultService referralResultService;
     @Autowired
     AnalysisService analysisService;
+    @Autowired
+    TestService testService;
 
     @Override
     @Transactional(readOnly = true)
@@ -172,7 +175,13 @@ public class ReferralItemServiceImpl implements ReferralItemService {
         // analysis, not a referral
         Result result = nextTestFirstResult.getResult();
 
-        String resultType = (result != null) ? result.getResultType() : "N";
+        String resultType;
+        if (!GenericValidator.isBlankOrNull(referralItem.getReferredTestId())) {
+            Test test = testService.get(referralItem.getReferredTestId());
+            resultType = testService.getResultType(test);
+        } else {
+            resultType = (result != null) ? result.getResultType() : "N";
+        }
         referralItem.setReferredResultType(resultType);
         if (!TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(resultType)) {
             if (result != null) {

@@ -81,14 +81,13 @@ public class ReferredOutTestsController extends BaseController {
             "referralItems*.modified", "referralItems*.inLabResultId", "referralItems*.referralReasonId",
             "referralItems*.referrer", "referralItems*.referredInstituteId", "referralItems*.referredSendDate",
             "referralItems*.referredTestId", "referralItems*.canceled", "referralItems*.referralStatus",
-            "referralItems*.referredResult",
-            "referralItems*.referredDictionaryResult", "referralItems*.referredDictionaryResult",
-            "referralItems*.multiSelectResultValues", "referralItems*.referredMultiDictionaryResult",
-            "referralItems*.multiSelectResultValues", "testResult*.multiSelectResultValues",
-            "testResult*.qualifiedResultValue", "referralItems*.referredReportDate",
-            "referralItems*.additionalTests*.referralResultId", "referralItems*.additionalTests*.referredResultType",
-            "referralItems*.additionalTests*.remove", "referralItems*.additionalTests*.referredTestId",
-            "referralItems*.additionalTests*.referredResult",
+            "referralItems*.referredResult", "referralItems*.referredDictionaryResult",
+            "referralItems*.referredDictionaryResult", "referralItems*.multiSelectResultValues",
+            "referralItems*.referredMultiDictionaryResult", "referralItems*.multiSelectResultValues",
+            "testResult*.multiSelectResultValues", "testResult*.qualifiedResultValue",
+            "referralItems*.referredReportDate", "referralItems*.additionalTests*.referralResultId",
+            "referralItems*.additionalTests*.referredResultType", "referralItems*.additionalTests*.remove",
+            "referralItems*.additionalTests*.referredTestId", "referralItems*.additionalTests*.referredResult",
             "referralItems*.additionalTests*.referredDictionaryResult",
             "referralItems*.additionalTests*.multiSelectResultValues",
             "referralItems*.additionalTests*.referredDictionaryResult",
@@ -224,6 +223,7 @@ public class ReferredOutTestsController extends BaseController {
         referralItem.setReferralStatus(referral.getStatus());
         referralItem.setReferredResultType("N");
         referralItem.setAccessionNumber(analysisService.getOrderAccessionNumber(analysis));
+        referralItem.setReferredTestId(analysis.getTest().getId());
 
         TypeOfSample typeOfSample = analysisService.getTypeOfSample(analysis);
         referralItem.setSampleType(typeOfSample.getLocalizedName());
@@ -312,8 +312,13 @@ public class ReferredOutTestsController extends BaseController {
         // We can not use ResultService because that assumes the result is for an
         // analysis, not a referral
         Result result = nextTestFirstResult.getResult();
-
-        String resultType = (result != null) ? result.getResultType() : "N";
+        String resultType;
+        if (!GenericValidator.isBlankOrNull(referralItem.getReferredTestId())) {
+            Test test = testService.get(referralItem.getReferredTestId());
+            resultType = testService.getResultType(test);
+        } else {
+            resultType = (result != null) ? result.getResultType() : "N";
+        }
         referralItem.setReferredResultType(resultType);
         if (!TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(resultType)) {
             if (result != null) {

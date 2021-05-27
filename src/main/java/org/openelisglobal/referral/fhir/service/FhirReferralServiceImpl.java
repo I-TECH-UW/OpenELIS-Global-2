@@ -174,7 +174,11 @@ public class FhirReferralServiceImpl implements FhirReferralService {
 
         Analysis analysis = analysisService.get(analysisId);
         ServiceRequest serviceRequest = fhirPersistanceService
-                .getServiceRequestByAnalysisUuid(analysis.getFhirUuidAsString()).orElseThrow();
+                .getServiceRequestByAnalysisUuid(analysis.getFhirUuidAsString()).orElseGet(() -> {
+                    ServiceRequest sr = new ServiceRequest();
+                    sr.setId(analysis.getFhirUuidAsString());
+                    return sr;
+                });
         Practitioner requester = fhirTransformService.transformNameToPractitioner(referral.getRequesterName());
         requester.setId(UUID.randomUUID().toString());
         Task task = createReferralTask(fhirOrg, fhirPersistanceService
@@ -183,6 +187,7 @@ public class FhirReferralServiceImpl implements FhirReferralService {
         task.setId(referral.getFhirUuidAsString());
         updateResources.put(requester.getIdElement().getIdPart(), requester);
         updateResources.put(task.getIdElement().getIdPart(), task);
+        updateResources.put(serviceRequest.getIdElement().getIdPart(), serviceRequest);
 
         return fhirPersistanceService.updateFhirResourcesInFhirStore(updateResources);
     }

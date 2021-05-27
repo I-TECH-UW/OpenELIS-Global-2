@@ -267,6 +267,10 @@ function /*bool*/ requiredSampleEntryFieldsValid(){
     if( acceptExternalOrders){ 
         if (missingRequiredValues())
             return false;
+    } 
+
+    if( jQuery("#useReferral").prop('checked') && typeof(missingRequiredReferralValues) === 'function' ){
+    	return !missingRequiredReferralValues();
     }
         
     for( var i = 0; i < requiredFields.length; ++i ){
@@ -574,6 +578,10 @@ function  processPhoneSuccess(xhr){
 
     setSave();
 }
+
+function toggleReferral() {
+	jQuery("#referTestSection").toggle();
+}
 </script>
 
 <%-- This define may not be needed, look at usages (not in any other jsp or js page--%>
@@ -606,6 +614,11 @@ function  processPhoneSuccess(xhr){
 
 <div id="samplesDisplay" class="colorFill" >
     <tiles:insertAttribute name="addSample"/>
+	<form:checkbox path="useReferral" id="useReferral" onclick="toggleReferral()" value="true"/> <spring:message code="sample.entry.referral.toggle" />
+</div>
+
+<div id="referTestSection" style="display:none;">
+    <tiles:insertAttribute name="referralInfo" />
 </div>
 
 <br />
@@ -761,6 +774,8 @@ jQuery(document).ready(function() {
 		checkOrderReferral();
 	}
 	<% } %>
+	
+	jQuery("#useReferral").prop('checked', false);
 })
 
 </script>

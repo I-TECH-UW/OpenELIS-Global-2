@@ -16,6 +16,7 @@ import org.openelisglobal.patient.action.bean.PatientEnhancedSearch;
 import org.openelisglobal.patient.action.bean.PatientManagementInfo;
 import org.openelisglobal.patient.action.bean.PatientSearch;
 import org.openelisglobal.project.valueholder.Project;
+import org.openelisglobal.referral.action.beanitems.ReferralItem;
 import org.openelisglobal.sample.bean.SampleOrderItem;
 import org.openelisglobal.validation.annotations.ValidDate;
 
@@ -45,6 +46,14 @@ public class SamplePatientEntryForm extends BaseForm {
     private List<@Pattern(regexp = ValidationHelper.ID_REGEX) String> providerSMSNotificationTestIds;
 
     private PatientUpdateStatus patientUpdateStatus = PatientUpdateStatus.ADD;
+
+    private List<ReferralItem> referralItems;
+
+    // for display
+    private List<IdValuePair> referralOrganizations;
+
+    // for display
+    private List<IdValuePair> referralReasons;
 
     // for display
     private List<IdValuePair> sampleTypes;
@@ -78,6 +87,8 @@ public class SamplePatientEntryForm extends BaseForm {
 
     @NotNull(groups = { SamplePatientEntry.class })
     private Boolean warning = false;
+
+    private boolean useReferral;
 
     public SamplePatientEntryForm() {
         setFormName("samplePatientEntryForm");
@@ -233,6 +244,38 @@ public class SamplePatientEntryForm extends BaseForm {
 
     public void setCustomNotificationLogic(boolean customNotificationLogic) {
         this.customNotificationLogic = customNotificationLogic;
+    }
+
+    public List<ReferralItem> getReferralItems() {
+        return referralItems;
+    }
+
+    public void setReferralItems(List<ReferralItem> referralItems) {
+        this.referralItems = referralItems;
+    }
+
+    public List<IdValuePair> getReferralOrganizations() {
+        return referralOrganizations;
+    }
+
+    public void setReferralOrganizations(List<IdValuePair> referralOrganizations) {
+        this.referralOrganizations = referralOrganizations;
+    }
+
+    public List<IdValuePair> getReferralReasons() {
+        return referralReasons;
+    }
+
+    public void setReferralReasons(List<IdValuePair> referralReasons) {
+        this.referralReasons = referralReasons;
+    }
+
+    public boolean getUseReferral() {
+        return useReferral;
+    }
+
+    public void setUseReferral(boolean useReferral) {
+        this.useReferral = useReferral;
     }
 
 }

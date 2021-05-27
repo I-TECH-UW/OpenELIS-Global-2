@@ -1,10 +1,15 @@
 package org.openelisglobal.sample.service;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.validator.GenericValidator;
@@ -15,6 +20,7 @@ import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.formfields.FormFields.Field;
 import org.openelisglobal.common.services.IStatusService;
+import org.openelisglobal.common.services.ResultSaveService;
 import org.openelisglobal.common.services.SampleAddService.SampleTestCollection;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.TableIdService;
@@ -37,6 +43,16 @@ import org.openelisglobal.panel.valueholder.Panel;
 import org.openelisglobal.patient.action.bean.PatientManagementInfo;
 import org.openelisglobal.person.service.PersonService;
 import org.openelisglobal.provider.service.ProviderService;
+import org.openelisglobal.referral.action.beanitems.ReferralItem;
+import org.openelisglobal.referral.service.ReferralResultService;
+import org.openelisglobal.referral.service.ReferralService;
+import org.openelisglobal.referral.service.ReferralSetService;
+import org.openelisglobal.referral.service.ReferralTypeService;
+import org.openelisglobal.referral.valueholder.Referral;
+import org.openelisglobal.referral.valueholder.ReferralResult;
+import org.openelisglobal.referral.valueholder.ReferralSet;
+import org.openelisglobal.referral.valueholder.ReferralStatus;
+import org.openelisglobal.referral.valueholder.ReferralType;
 import org.openelisglobal.requester.service.SampleRequesterService;
 import org.openelisglobal.requester.valueholder.SampleRequester;
 import org.openelisglobal.sample.action.util.SamplePatientUpdateData;
@@ -88,6 +104,28 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
     private TestNotificationConfigService testNotificationConfigService;
     @Autowired
     private AnalysisNotificationConfigService analysisNotificationConfigService;
+    @Autowired
+    private ReferralSetService referralSetService;
+    @Autowired
+    private ReferralService referralService;
+    @Autowired
+    private ReferralResultService referralResultService;
+    @Autowired
+    private ReferralTypeService referralTypeService;
+    @Autowired
+    private ResultSaveService resultSaveService;
+
+    private String REFERRAL_CONFORMATION_ID;
+
+    @PostConstruct
+    public void init() {
+        ReferralType referralType = referralTypeService.getReferralTypeByName("Confirmation");
+        if (referralType != null) {
+            REFERRAL_CONFORMATION_ID = referralType.getId();
+        } else {
+            REFERRAL_CONFORMATION_ID = null;
+        }
+    }
 
     @Transactional
     @Override
@@ -115,6 +153,47 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
         }
 
         persistObservations(updateData);
+
+        if (form.getUseReferral()) {
+            List<Referral> referrals = new ArrayList<>();
+            List<ReferralSet> referralSets = new ArrayList<>();
+            for (ReferralItem referralItem: form.getReferralItems()) {
+                Referral referral = new Referral();
+                referral.setFhirUuid(UUID.randomUUID());
+                referral.setStatus(ReferralStatus.SENT);
+                referral.setSysUserId(updateData.getCurrentUserId());
+                referral.setReferralTypeId(REFERRAL_CONFORMATION_ID);
+
+                referral.setRequestDate(new Timestamp(new Date().getTime()));
+                referral.setSentDate(
+                        DateUtil.convertStringDateToTruncatedTimestamp(referralItem.getReferredSendDate()));
+                referral.setRequesterName(referralItem.getReferrer());
+                referral.setOrganization(organizationService.get(referralItem.getReferredInstituteId()));
+                for (SampleTestCollection sampleItemTest : updateData.getSampleItemsTests()) {
+                    for (Analysis analysis : sampleItemTest.analysises) {
+                        if (referralItem.getReferredTestId().equals(analysis.getTest().getId())) {
+                            referral.setAnalysis(analysis);
+                        }
+                    }
+                }
+                referral.setReferralReasonId(referralItem.getReferralReasonId());
+
+                referralService.insert(referral);
+                referrals.add(referral);
+                ReferralResult referralResult = new ReferralResult();
+                referralResult.setReferralId(referral.getId());
+                referralResult.setSysUserId(updateData.getCurrentUserId());
+                referralResult.setTestId(referralItem.getReferredTestId());
+                referralResultService.insert(referralResult);
+
+                ReferralSet referralSet = new ReferralSet();
+                referralSet.setReferral(referral);
+                referralSet.setExistingReferralResults(Arrays.asList(referralResult));
+                referralSets.add(referralSet);
+            }
+            referralSetService.updateReferralSets(referralSets, new ArrayList<>(), new HashSet<>(), new ArrayList<>(),
+                    updateData.getCurrentUserId());
+        }
 
         request.getSession().setAttribute("lastAccessionNumber", updateData.getAccessionNumber());
         request.getSession().setAttribute("lastPatientId", updateData.getPatientId());
