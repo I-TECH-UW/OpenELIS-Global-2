@@ -292,9 +292,14 @@ public class FhirReferralServiceImpl implements FhirReferralService {
 
     private Result getResultFromObservation(Observation observation, List<Result> currentResults, Analysis analysis) {
         Result result;
+        LogEvent.logDebug(this.getClass().getName(), "getResultFromObservation", "creating result from observation");
         if (currentResults.size() == 1) {
+            LogEvent.logDebug(this.getClass().getName(), "getResultFromObservation",
+                    "previous result found, writing new result to result");
             result = currentResults.get(0);
         } else {
+            LogEvent.logDebug(this.getClass().getName(), "getResultFromObservation",
+                    "creating new result from observation");
             result = new Result();
             String testResultType = testService.getResultType(analysis.getTest());
             result.setResultType(testResultType);
@@ -306,16 +311,22 @@ public class FhirReferralServiceImpl implements FhirReferralService {
 
         if (TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(result.getResultType())
                 || TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(result.getResultType())) {
+            LogEvent.logDebug(this.getClass().getName(), "getResultFromObservation", "multi/dictionary result type");
+
             String inferredValue = ((CodeableConcept) observation.getValue()).getCodingFirstRep().getCode();
             List<TestResult> testResults = testResultService
                     .getAllActiveTestResultsPerTest(analysisService.getTest(analysis));
             String resultValue = null;
+            LogEvent.logDebug(this.getClass().getName(), "getResultFromObservation",
+                    "matching result to dictionary entry");
             for (TestResult testResult : testResults) {
                 if (StringUtils.equals(inferredValue, dictionaryService.get(testResult.getValue()).getDictEntry())) {
                     LogEvent.logDebug(this.getClass().getName(), "setReferralResult",
-                            "found a matching dictionary value for '" + inferredValue + "'");
+                            "found a matching dictionary value for: " + inferredValue + "");
                     resultValue = dictionaryService.get(testResult.getValue()).getId();
                     result.setValue(resultValue);
+                    LogEvent.logDebug(this.getClass().getName(), "setReferralResult",
+                            "value set as: " + resultValue + "");
                 }
             }
             if (resultValue == null) {
@@ -323,8 +334,10 @@ public class FhirReferralServiceImpl implements FhirReferralService {
                         "no matching dictionary value for '" + inferredValue + "'");
             }
         } else if (TypeOfTestResultServiceImpl.ResultType.isNumeric(result.getResultType())) {
+            LogEvent.logDebug(this.getClass().getName(), "getResultFromObservation", "numeric result type");
             result.setValue(((Quantity) observation.getValue()).getValue().toPlainString());
         } else if (TypeOfTestResultServiceImpl.ResultType.isTextOnlyVariant(result.getResultType())) {
+            LogEvent.logDebug(this.getClass().getName(), "getResultFromObservation", "text result type");
             result.setValue(((StringType) observation.getValue()).getValueAsString());
         }
 
