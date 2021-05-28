@@ -363,6 +363,7 @@ public class FhirReferralServiceImpl implements FhirReferralService {
             result.setResultEvent(Event.FINAL_RESULT);
             resultValidationSave.getNewResults().add(new ResultSet(result, null, null, patient, sample, null, false));
         }
+        LogEvent.logDebug(this.getClass().getName(), "addResultSets", "referral result added to set");
     }
 
     // TO DO bug falsely triggered when preliminary result is sent, fails, retries
@@ -380,8 +381,10 @@ public class FhirReferralServiceImpl implements FhirReferralService {
         ReferralSet referralSet = new ReferralSet();
 
         Referral referral = referralService.getReferralByAnalysisId(analysis.getId());
+        LogEvent.logDebug(this.getClass().getName(), "recordResultForReferral", "got referral for analysis");
         referral.setStatus(ReferralStatus.RECEIVED);
         List<ReferralResult> referralResults = referralResultService.getReferralResultsForReferral(referral.getId());
+        LogEvent.logDebug(this.getClass().getName(), "recordResultForReferral", "got referralresults for referral");
         referralSet.setExistingReferralResults(referralResults == null ? new ArrayList<>() : referralResults);
         ReferralResult referralResult = referralSet.getNextReferralResult();
         referralResult.setSysUserId("1");
@@ -393,6 +396,7 @@ public class FhirReferralServiceImpl implements FhirReferralService {
         NoteService noteService = SpringContext.getBean(NoteService.class);
         referralSet.setNote(noteService.createSavableNote(referral.getAnalysis(), NoteServiceImpl.NoteType.INTERNAL,
                 "referral result imported automatically", RESULT_SUBJECT, "1"));
+        LogEvent.logDebug(this.getClass().getName(), "recordResultForReferral", "created referral result import note");
         referralSet.setReferral(referral);
 
         referralSets.add(referralSet);
