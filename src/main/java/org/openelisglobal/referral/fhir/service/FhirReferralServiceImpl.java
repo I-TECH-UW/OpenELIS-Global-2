@@ -276,13 +276,19 @@ public class FhirReferralServiceImpl implements FhirReferralService {
         }
 
         try {
+            LogEvent.logDebug(this.getClass().getName(), "setReferralResult", "referralSetService.updateReferralSets");
             referralSetService.updateReferralSets(referralSets, new ArrayList<>(), new HashSet<>(), new ArrayList<>(),
                     "1");
+            LogEvent.logDebug(this.getClass().getName(), "setReferralResult", "resultValidationService.persistdata");
             resultValidationService.persistdata(new ArrayList<>(), analysisUpdateList, resultUpdateList, resultItemList,
                     sampleUpdateList, noteUpdateList, resultSaveService, new ArrayList<>(), "1");
+            LogEvent.logDebug(this.getClass().getName(), "setReferralResult",
+                    "fhirTransformService.transformPersistResultValidationFhirObjects");
             fhirTransformService.transformPersistResultValidationFhirObjects(deletableList, analysisUpdateList,
                     resultUpdateList, resultItemList, sampleUpdateList, noteUpdateList);
             resultsImport.originalReferralObjects.task.setStatus(TaskStatus.COMPLETED);
+            LogEvent.logDebug(this.getClass().getName(), "setReferralResult",
+                    "fhirPersistanceService.updateFhirResourceInFhirStore");
             fhirPersistanceService.updateFhirResourceInFhirStore(resultsImport.originalReferralObjects.task);
         } catch (FhirPersistanceException e) {
             LogEvent.logError(e);
@@ -342,6 +348,7 @@ public class FhirReferralServiceImpl implements FhirReferralService {
         }
 
         result.setSysUserId("1");
+        LogEvent.logDebug(this.getClass().getName(), "getResultFromObservation", "result made from observation");
         return result;
     }
 
@@ -368,6 +375,7 @@ public class FhirReferralServiceImpl implements FhirReferralService {
 
     private void recordResultForReferral(ReferralResultsImportObjects resultsImport, Analysis analysis, Result result,
             List<ReferralSet> referralSets) {
+        LogEvent.logDebug(this.getClass().getName(), "recordResultForReferral", "recording result for referral");
 
         ReferralSet referralSet = new ReferralSet();
 
@@ -388,6 +396,7 @@ public class FhirReferralServiceImpl implements FhirReferralService {
         referralSet.setReferral(referral);
 
         referralSets.add(referralSet);
+        LogEvent.logDebug(this.getClass().getName(), "recordResultForReferral", "referral result added for referral");
     }
 
 }
