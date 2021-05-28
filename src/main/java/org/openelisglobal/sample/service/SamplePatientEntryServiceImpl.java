@@ -20,7 +20,6 @@ import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.formfields.FormFields.Field;
 import org.openelisglobal.common.services.IStatusService;
-import org.openelisglobal.common.services.ResultSaveService;
 import org.openelisglobal.common.services.SampleAddService.SampleTestCollection;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.TableIdService;
@@ -55,6 +54,8 @@ import org.openelisglobal.referral.valueholder.ReferralStatus;
 import org.openelisglobal.referral.valueholder.ReferralType;
 import org.openelisglobal.requester.service.SampleRequesterService;
 import org.openelisglobal.requester.valueholder.SampleRequester;
+import org.openelisglobal.result.service.ResultService;
+import org.openelisglobal.result.valueholder.Result;
 import org.openelisglobal.sample.action.util.SamplePatientUpdateData;
 import org.openelisglobal.sample.form.SamplePatientEntryForm;
 import org.openelisglobal.sample.valueholder.SampleAdditionalField;
@@ -113,7 +114,7 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
     @Autowired
     private ReferralTypeService referralTypeService;
     @Autowired
-    private ResultSaveService resultSaveService;
+    private ResultService resultService;
 
     private String REFERRAL_CONFORMATION_ID;
 
@@ -158,6 +159,9 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
             List<Referral> referrals = new ArrayList<>();
             List<ReferralSet> referralSets = new ArrayList<>();
             for (ReferralItem referralItem: form.getReferralItems()) {
+                Result result = new Result();
+                result.setSysUserId("1");
+
                 Referral referral = new Referral();
                 referral.setFhirUuid(UUID.randomUUID());
                 referral.setStatus(ReferralStatus.SENT);
@@ -173,17 +177,23 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
                     for (Analysis analysis : sampleItemTest.analysises) {
                         if (referralItem.getReferredTestId().equals(analysis.getTest().getId())) {
                             referral.setAnalysis(analysis);
+
+                            String testResultType = testService.getResultType(analysis.getTest());
+                            result.setResultType(testResultType);
+                            result.setAnalysis(analysis);
                         }
                     }
                 }
                 referral.setReferralReasonId(referralItem.getReferralReasonId());
 
                 referralService.insert(referral);
+                resultService.insert(result);
                 referrals.add(referral);
                 ReferralResult referralResult = new ReferralResult();
                 referralResult.setReferralId(referral.getId());
                 referralResult.setSysUserId(updateData.getCurrentUserId());
                 referralResult.setTestId(referralItem.getReferredTestId());
+                referralResult.setResult(result);
                 referralResultService.insert(referralResult);
 
                 ReferralSet referralSet = new ReferralSet();
