@@ -314,6 +314,7 @@ public class FhirReferralServiceImpl implements FhirReferralService {
             currentResults.stream().forEach(e -> {
                 resultService.delete(e);
             });
+            result = resultService.save(result);
         }
 
         if (TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(result.getResultType())

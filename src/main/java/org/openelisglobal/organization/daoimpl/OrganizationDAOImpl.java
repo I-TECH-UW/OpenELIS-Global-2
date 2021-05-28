@@ -440,12 +440,8 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
             if (organization.getIsActive().equalsIgnoreCase(IActionConstants.YES)) {
                 // not case sensitive hemolysis and Hemolysis are considered
                 // duplicates
-                String sql = "from Organization o where ((trim(lower(o.organizationName))) = :orgName and o.isActive='Y' and o.id != :orgId)"
-                        + " or "
-                        + "((trim(lower(o.organizationLocalAbbreviation))) = :orgAbrv and o.isActive='Y' and o.id != :orgId)";
+                String sql = "from Organization o where ((trim(lower(o.organizationLocalAbbreviation))) = :orgAbrv and o.isActive='Y' and o.id != :orgId)";
                 org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-                query.setParameter("orgName", organization.getOrganizationName().toLowerCase().trim());
-
                 // initialize with 0 (for new records where no id has been generated yet
                 String orgId = "0";
                 if (!StringUtil.isNullorNill(organization.getId())) {
