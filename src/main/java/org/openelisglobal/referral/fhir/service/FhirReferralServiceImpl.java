@@ -353,13 +353,17 @@ public class FhirReferralServiceImpl implements FhirReferralService {
     }
 
     private void addResultSets(Analysis analysis, Result result, IResultSaveService resultValidationSave) {
+        LogEvent.logDebug(this.getClass().getName(), "addResultSets", "creating resultSet for referral");
         Sample sample = analysis.getSampleItem().getSample();
         org.openelisglobal.patient.valueholder.Patient patient = sampleHumanService.getPatientForSample(sample);
+        LogEvent.logDebug(this.getClass().getName(), "addResultSets", "got patient for referral");
         if (finalResultAlreadySent(result)) {
+            LogEvent.logDebug(this.getClass().getName(), "addResultSets", "final results already sent");
             result.setResultEvent(Event.CORRECTION);
             resultValidationSave.getModifiedResults()
                     .add(new ResultSet(result, null, null, patient, sample, null, false));
         } else {
+            LogEvent.logDebug(this.getClass().getName(), "addResultSets", "final results not already sent");
             result.setResultEvent(Event.FINAL_RESULT);
             resultValidationSave.getNewResults().add(new ResultSet(result, null, null, patient, sample, null, false));
         }
