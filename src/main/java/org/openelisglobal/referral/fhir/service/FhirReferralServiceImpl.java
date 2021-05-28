@@ -13,6 +13,7 @@ import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.validator.GenericValidator;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Bundle.BundleEntryComponent;
 import org.hl7.fhir.r4.model.CodeableConcept;
@@ -373,6 +374,9 @@ public class FhirReferralServiceImpl implements FhirReferralService {
     // TO DO bug falsely triggered when preliminary result is sent, fails, retries
     // and succeeds
     private boolean finalResultAlreadySent(Result result) {
+        if (GenericValidator.isBlankOrNull(result.getId())) {
+            return false;
+        }
         List<DocumentTrack> documents = documentTrackService.getByTypeRecordAndTable(RESULT_REPORT_ID, RESULT_TABLE_ID,
                 result.getId());
         return documents.size() > 0;
