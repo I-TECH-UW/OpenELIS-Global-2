@@ -314,6 +314,7 @@ public class FhirReferralServiceImpl implements FhirReferralService {
             currentResults.stream().forEach(e -> {
                 resultService.delete(e);
             });
+            result.setSysUserId("1");
             result = resultService.save(result);
         }
 
