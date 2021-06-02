@@ -294,12 +294,22 @@ public class LogbookResultsController extends LogbookResultsBaseController {
         List<Result> checkResults = (List<Result>) checkPagedResults.get(0);
         if (checkResults.size() == 0) {
             LogEvent.logDebug(this.getClass().getName(), "LogbookResults()", "Attempted save of stale page.");
-//            Errors errors = new BaseErrors();
-//            errors.reject("alert.error", "An error occured while saving");
-//            saveErrors(errors);
-            redirectAttributes.addFlashAttribute(FWD_FAIL_INSERT, true);
-            return findForward(FWD_SUCCESS_INSERT, form);
-//            return new ModelAndView("redirect:/LogbookResults.do?blank=true");
+            
+            List<TestResultItem> resultList = form.getTestResult();
+            for (TestResultItem item : resultList) {
+                item.setFailedValidation(true);
+                item.setNote("Result has been saved by another user.");
+            }
+            
+            ResultsUpdateDataSet actionDataSet = new ResultsUpdateDataSet(getSysUserId(request));
+            actionDataSet.filterModifiedItems(form.getTestResult());
+
+            Errors errors = actionDataSet.validateModifiedItems();
+            
+            if (true) {
+                saveErrors(errors);
+                return findForward(FWD_VALIDATION_ERROR, form);
+            }
         }
 
         List<IResultUpdate> updaters = ResultUpdateRegister.getRegisteredUpdaters();
