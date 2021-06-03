@@ -50,38 +50,21 @@ jQuery(document).ready(function () {
 });
 
 function referralTestSelected(e) {
-	var testTable = $("addTestTable");
-	var chosenTests = [];
-	var chosenIds = [];
-	var i, row,nameNode;
-	var displayTests = "";
-	var testIds = "";
-	
-	var inputs = testTable.getElementsByClassName("testCheckbox");
-
-    jQuery("#testSelection_0").find('option').remove();
-    jQuery("#testSelection_0").append(jQuery('<option/>', {
-    	value: 0,
-    	text: ""
-    }));
-	for( i = 0; i < inputs.length; i++ ){
-		if( inputs[i].checked ){
-            row = inputs[i].id.split("_")[1];
-            nameNode = $("testName_" + row);
-            chosenTest = nameNode.nextSibling.nodeValue;
-            chosenId = nameNode.value;
-            
-            jQuery("#testSelection_0").append(jQuery('<option/>', {
-            	value: chosenId,
-            	text: chosenTest
-            }));
-            if ( jQuery("#testSelection_0").val() === "0") {
-                jQuery("#testSelection_0").val(chosenId);
-            }
+	var index = 0;
+	jQuery('#mainTable .referralRow').addClass('deleteReferralRow');
+	var samples = jQuery('#samplesAddedTable .sampleId');
+	samples.each(function(index, value) {
+		var sampleNum = jQuery(this).val();
+		var testNames = document.getElementById("tests_" + sampleNum).value.split(",");
+		var testIds = document.getElementById("testIds_" + sampleNum).value.split(",");
+		for (var j = 0; j < testIds.length; ++j) {
+			if (testIds[j] !== "") {
+				createReferralOption(sampleNum, testIds[j], testIds[j], testNames[j], index++);
+			}
 		}
-	}
+	});
+	jQuery('.deleteReferralRow').remove();
 }
-
 
 function /*void*/ markModified(index) {
 	checkFinish(index);
@@ -140,12 +123,106 @@ function checkFinish(index) {
 	}
 }
 
+function createReferralOption(sampleNum, testNum, testId, testName, index) {
+	var table, tableBody, row, cell1, cell2, cell3, cell4, cell5;
+	var select, option;
+	
+	table = document.getElementById("mainTable");
+	tableBody = table.getElementsByTagName('tbody')[0];
+	
+	if (jQuery('#sample_' + sampleNum + '_test_' + testNum).length) {
+		document.getElementById('sample_' + sampleNum + '_test_' + testNum).className = "referralRow";
+		return;
+	}
+	
+	row = tableBody.insertRow(-1);
+	row.setAttribute('id', 'sample_' + sampleNum + '_test_' + testNum);
+	row.setAttribute('class', 'referralRow');
+	cell1 = row.insertCell(-1);
+	cell2 = row.insertCell(-1);
+	cell3 = row.insertCell(-1);
+	cell4 = row.insertCell(-1);
+	cell5 = row.insertCell(-1);
+
+	cell1.className = "center-text";
+	cell2.className = "center-text";
+	cell3.className = "center-text";
+	cell4.className = "center-text";
+	cell5.className = "center-text";
+	
+	var referralReasonSelect = document.createElement("select");
+	referralReasonSelect.setAttribute('name','referralItems[' + index + '].referralReasonId');
+	referralReasonSelect.setAttribute('id', 'referralReasonId_' + index);
+	referralReasonSelect.setAttribute('onchange', 'markModified("' + index + '");');
+	<c:forEach items="${form.referralReasons}" var="referralReason" varStatus="iter">
+	option = document.createElement('option');
+	option.value = '${referralReason.id}';
+	option.innerHTML = '${referralReason.value}';
+	referralReasonSelect.appendChild(option);
+	</c:forEach>
+	cell1.appendChild(referralReasonSelect);
+
+	var referrerInput = document.createElement("input");
+	referrerInput.setAttribute('type','text');
+	referrerInput.setAttribute('name','referralItems[' + index + '].referrer');
+	referrerInput.setAttribute('id', 'referrer_' + index);
+	referrerInput.setAttribute('onchange', 'markModified("' + index + '");');
+	referrerInput.value = '${userSessionData.elisUserName}';
+	cell2.appendChild(referrerInput);
+	
+	var referralOrgSelect = document.createElement("select");
+	referralOrgSelect.setAttribute('class','requiredReferral');
+	referralOrgSelect.setAttribute('name','referralItems[' + index + '].referredInstituteId');
+	referralOrgSelect.setAttribute('id', 'referredInstituteId_' + index);
+	referralOrgSelect.setAttribute('onchange', 'markModified("' + index + '");');
+    <c:if test="${form.referralOrganizations.size() != 1}" >
+    option = document.createElement('option');
+	option.value = '0';
+    </c:if>
+	<c:forEach items="${form.referralOrganizations}" var="referralOrganization" varStatus="iter">
+	option = document.createElement('option');
+	option.value = '${referralOrganization.id}';
+	option.innerHTML = '${referralOrganization.value}';
+	referralOrgSelect.appendChild(option);
+	</c:forEach>
+	cell3.appendChild(referralOrgSelect);
+
+	var referrerInput = document.createElement("input");
+	referrerInput.setAttribute('type','text');
+	referrerInput.setAttribute('name','referralItems[' + index + '].referredSendDate');
+	referrerInput.setAttribute('id', 'sendDate_' + index);
+	referrerInput.setAttribute('size', '8');
+	referrerInput.setAttribute('maxLength', '10');
+	referrerInput.setAttribute('onchange', 'markModified("' + index + '");');
+	cell4.appendChild(referrerInput);
+
+	var shadowReferredTestInput = document.createElement("hidden");
+// 	shadowReferredTestInput.setAttribute('type','hidden');
+	shadowReferredTestInput.setAttribute('name','_referralItems[' + index + '].referredTestId');
+	shadowReferredTestInput.setAttribute('id', 'shadowReferredTest_' + index);
+	cell5.appendChild(shadowReferredTestInput);
+	
+	var referredTestSelect = document.createElement("select");
+	referredTestSelect.setAttribute('class','requiredReferral');
+	referredTestSelect.setAttribute('name','referralItems[' + index + '].referredTestId');
+	referredTestSelect.setAttribute('id', 'testSelection_' + index);
+	referredTestSelect.setAttribute('onchange', 'markModified("' + index + '");');
+	option = document.createElement('option');
+	option.value = 0;
+	referredTestSelect.appendChild(option);
+	option = document.createElement('option');
+	option.value = testId;
+	option.innerHTML = testName;
+	referredTestSelect.appendChild(option);
+	cell5.appendChild(referredTestSelect);
+}
 
 </script>
 
 <c:if test="${not empty form.referralItems}">
 
 <table width="75%" border="0" cellspacing="0" cellpadding="1" id="mainTable">
+<thead>
 <tr>
     <th colspan="6" class="headerGroup"><spring:message code="referral.header.group.request"/></th>
 </tr>
@@ -156,58 +233,9 @@ function checkFinish(index) {
     <th><spring:message code="referral.sent.date"/><br/><%=DateUtil.getDateUserPrompt()%></th>
     <th><spring:message code="test.testName"/><span class="requiredlabel">*</span></th>
 </tr>
-
-<c:forEach items="${form.referralItems}" var="referralItems" varStatus="iter">
-<form:hidden id='referralResultId_${iter.index}' path="referralItems[${iter.index}].referralResultId" />
-<form:hidden id='referralId_${iter.index}' path="referralItems[${iter.index}].referralId" indexed="true" />
-<form:hidden id='referredType_${iter.index}' path="referralItems[${iter.index}].referredResultType" />
-<form:hidden id='modified_${iter.index}' path="referralItems[${iter.index}].modified" />
-<form:hidden id='causalResultId_${iter.index}' path="referralItems[${iter.index}].inLabResultId" />
-<c:set var="rowColor" value="${(iter.index % 2 == 0) ? 'oddRow' :'evenRow'}"/>
-
-<tr class='${rowColor} requiredRow' id='referralRow_${iter.index}'>
-    <td style="text-align:center">
-        <form:select path="referralItems[${iter.index}].referralReasonId"
-                id='referralReasonId_${iter.index}'
-                onchange='markModified("${iter.index}");'>
-            <form:options items="${form.referralReasons}" itemValue="id" itemLabel="value"/>
-        </form:select>
-    </td>
-    <td style="text-align:center">
-        <form:input path="referralItems[${iter.index}].referrer"
-                   onchange='markModified("${iter.index}");'/>
-    </td>
-    <td style="text-align:center">
-        <form:select path='referralItems[${iter.index}].referredInstituteId'
-                class="requiredReferral"
-                onchange='markModified("${iter.index}");'>
-                <c:if test="${form.referralOrganizations.size() != 1}" >
-            	<option value='0'></option>
-                </c:if>
-                <form:options items="${form.referralOrganizations}" itemValue="id" itemLabel="value"/>
-        </form:select>
-    </td>
-    <td style="text-align:center">
-        <form:input path="referralItems[${iter.index}].referredSendDate"
-                   size="8"
-                   maxlength="10"
-                   onchange='markModified("${iter.index}"); validateDateFormat(this);'
-                   id='sendDate_${iter.index}'/>
-    </td>
-    <td style="text-align:center">
-        <input type="hidden" name="_referralItems[${iter.index}].referredTestId"
-                     id='shadowReferredTest_${iter.index}'/>
-        <form:select path='referralItems[${iter.index}].referredTestId'
-                onchange='markModified("${iter.index}");'
-                id='testSelection_${iter.index}' 
-                class="requiredReferral">
-            <option value='0'></option>
-			<form:options items="${referralItems.testSelectionList}" itemValue="id" itemLabel="value"/>
-        </form:select>
-    </td>
-</tr>
-
-</c:forEach>
+</thead>
+<tbody>
+</tbody>
 </table>
 </c:if>
 <c:if test="${empty form.referralItems}">

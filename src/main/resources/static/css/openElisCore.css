@@ -1441,3 +1441,7 @@ view-non-conforming-section-1 > td {
 .external-search {
   color: #3c74b6;
 }
+
+.center-text {
+	text-align: center;
+}
