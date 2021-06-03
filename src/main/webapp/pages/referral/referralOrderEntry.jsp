@@ -69,14 +69,14 @@ function referralTestSelected(e) {
 function /*void*/ markModified(index) {
 	checkFinish(index);
 	jQuery("#modified_" + index).val('true');
-	jQuery("#saveButtonId").prop('disabled', missingRequiredValues());
+	setSave();
     makeDirty();
 }
 
 function missingRequiredReferralValues() {
     var missing = false;
 
-    jQuery(".requiredRow").each(function (index, element) {
+    jQuery(".referralRow").each(function (index, element) {
         var children = jQuery(element).find(".requiredReferral");
         if (!((children[1].value == 0 && children[0].value == 0) ||
                 (children[1].value != 0 && children[0].value != 0))) {
@@ -97,20 +97,6 @@ function /*void*/ validateDateFormat(dateElement) {
 
     dateElement.style.borderColor = valid ? "" : "red";
 }
-
-// function /*void*/ savePage() {
-//     setXMLWads();
-
-//     window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
-//     var form = document.getElementById("mainForm");
-//     form.action = "ReferredOutTests.do";
-//     form.submit();
-// }
-
-// function  /*void*/ setMyCancelAction(form, action, validate, parameters) {
-//     //first turn off any further validation
-//     setAction(document.getElementById("mainForm"), 'Cancel', 'no', '');
-// }
 
 function checkFinish(index) {
 	var hasNumericResult = jQuery("#numericResult_" + index).val() !== undefined && jQuery("#numericResult_" + index).val() !== "";
@@ -167,7 +153,7 @@ function createReferralOption(sampleNum, testNum, testId, testName, index) {
 	referrerInput.setAttribute('name','referralItems[' + index + '].referrer');
 	referrerInput.setAttribute('id', 'referrer_' + index);
 	referrerInput.setAttribute('onchange', 'markModified("' + index + '");');
-	referrerInput.value = '${userSessionData.elisUserName}';
+	referrerInput.setAttribute('value', '${userSessionData.elisUserName}');
 	cell2.appendChild(referrerInput);
 	
 	var referralOrgSelect = document.createElement("select");

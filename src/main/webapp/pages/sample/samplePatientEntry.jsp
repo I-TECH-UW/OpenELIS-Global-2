@@ -689,7 +689,7 @@ function  /*void*/ savePage()
 {
     loadSamples(); //in addSample tile
 
-  window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
+    window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
     var form = document.getElementById("mainForm");
     form.action = "SamplePatientEntry.do";
     form.submit();
@@ -776,6 +776,12 @@ jQuery(document).ready(function() {
 	<% } %>
 	
 	jQuery("#useReferral").prop('checked', false);
+	
+	jQuery("#saveButtonId").click(
+		      function(event) {
+		         event.preventDefault();
+		      }
+		   );
 })
 
 </script>
