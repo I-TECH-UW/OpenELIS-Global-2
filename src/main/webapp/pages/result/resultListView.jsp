@@ -165,8 +165,7 @@ function markUpdated( index, userChoiceReflex, siblingReflexKey ){
 	$("modified_" + index).value = "true";
 
 	makeDirty();
-
-    jQuery("#saveButtonId").removeAttr("disabled");
+	setSave();
 }
 
 function updateLogValue(element, index ){
@@ -180,6 +179,15 @@ function updateLogValue(element, index ){
 		}else{
 			logField.value = logValue;
 		}
+	}
+}
+
+function setSave() {
+	var valid = validateForm();
+	if (valid) {
+		jQuery("#saveButtonId").removeAttr("disabled");
+	} else {
+		jQuery("#saveButtonId").attr("disabled");
 	}
 }
 
@@ -554,7 +562,7 @@ function altAccessionHighlightSearch(accessionNumber) {
 		<% if( useTechnicianName ){ %>
 		<th style="text-align: left">
 			<spring:message code="result.technician"/>
-			<span class="requiredlabel">*</span><br/>
+			<br/>
 			<% if(autofillTechBox){ %>
 			Autofill:<input type="text" size='10em' onchange="autofill( this )">
 			<% } %>

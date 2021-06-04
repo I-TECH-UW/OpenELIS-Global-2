@@ -164,6 +164,7 @@ function createReferralOption(sampleNum, testNum, testId, testName, index) {
     <c:if test="${form.referralOrganizations.size() != 1}" >
     option = document.createElement('option');
 	option.value = '0';
+	referralOrgSelect.appendChild(option);
     </c:if>
 	<c:forEach items="${form.referralOrganizations}" var="referralOrganization" varStatus="iter">
 	option = document.createElement('option');
