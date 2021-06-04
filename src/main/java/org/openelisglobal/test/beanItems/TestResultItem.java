@@ -33,6 +33,8 @@ import org.openelisglobal.result.form.LogbookResultsForm;
 import org.openelisglobal.result.valueholder.Result;
 import org.openelisglobal.validation.annotations.ValidAccessionNumber;
 import org.openelisglobal.validation.annotations.ValidDate;
+import org.openelisglobal.validation.annotations.ValidName;
+import org.openelisglobal.validation.constraintvalidator.NameValidator.NameType;
 import org.openelisglobal.workplan.form.WorkplanForm;
 
 public class TestResultItem implements ResultItem, Serializable {
@@ -115,7 +117,7 @@ public class TestResultItem implements ResultItem, Serializable {
     private String resultValue;
     private String remarks;
 
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { LogbookResultsForm.LogbookResults.class })
+    @ValidName(nameType = NameType.FULL_NAME)
     private String technician;
     private boolean reportable;
     private String patientName;
