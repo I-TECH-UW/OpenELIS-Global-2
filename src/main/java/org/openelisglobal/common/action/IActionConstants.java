@@ -1,5 +1,5 @@
 /**
-* The contents of this file are subject to the Mozilla Public License
+/* The contents of this file are subject to the Mozilla Public License
 * Version 1.1 (the "License"); you may not use this file except in
 * compliance with the License. You may obtain a copy of the License at
 * http://www.mozilla.org/MPL/
@@ -60,6 +60,7 @@ public interface IActionConstants {
     String FWD_CLOSE = "close";
     String FWD_FAIL = "fail";
     String FWD_VALIDATION_ERROR = "error";
+    String FWD_STALE_DATA_ERROR = "stale";
     String FWD_SUCCESS = "success";
     String FWD_SUCCESS_INSERT = "insertSuccess";
     String FWD_SUCCESS_DELETE = "deleteSuccess";
@@ -243,8 +244,7 @@ public interface IActionConstants {
 
     String RESULTS_SESSION_CACHE = "ResultsSessionCache";
     String RESULTS_PAGE_MAPPING_SESSION_CACHE = "ResultsPageMappingSessionCache";
-    int PAGING_SIZE = 60;
-    int VALIDATION_PAGING_SIZE = 99;
+
     /**
      * The system_module name used to determine if the current user is allowed to
      * edit primary patient IDs (subject number & site subject number).

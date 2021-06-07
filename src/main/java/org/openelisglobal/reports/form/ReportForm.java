@@ -8,6 +8,7 @@ import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.organization.valueholder.Organization;
+import org.openelisglobal.patient.action.bean.PatientSearch;
 import org.openelisglobal.project.valueholder.Project;
 import org.openelisglobal.reports.action.implementation.ReportSpecificationList;
 import org.openelisglobal.validation.annotations.ValidDate;
@@ -98,6 +99,12 @@ public class ReportForm extends BaseForm {
     private String instructions = "";
 
     private Integer experimentId;
+
+    private boolean usePatientSearch;
+
+    private PatientSearch patientSearch;
+
+    private String selPatient;
 
     public ReportForm() {
         setFormName("ReportForm");
@@ -388,5 +395,29 @@ public class ReportForm extends BaseForm {
 
     public void setExperimentId(Integer experimentId) {
         this.experimentId = experimentId;
+    }
+
+    public boolean isUsePatientSearch() {
+        return usePatientSearch;
+    }
+
+    public void setUsePatientSearch(boolean usePatientSearch) {
+        this.usePatientSearch = usePatientSearch;
+    }
+
+    public PatientSearch getPatientSearch() {
+        return patientSearch;
+    }
+
+    public void setPatientSearch(PatientSearch patientSearch) {
+        this.patientSearch = patientSearch;
+    }
+
+    public String getSelPatient() {
+        return selPatient;
+    }
+
+    public void setSelPatient(String selPatient) {
+        this.selPatient = selPatient;
     }
 }

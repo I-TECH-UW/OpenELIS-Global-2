@@ -162,7 +162,7 @@ function getCheckBoxHtml( row, selectRow ){
 }
 
 function getSampleIdHtml(row){
-	return "<input name='sequence' size ='4' value='" + (parseInt(row) + parseInt(sampleIdStart) ) + "' id='sequence_" + row + "' class='text' type='text'  disabled='disabled' >";
+	return "<input name='sequence' size ='4' value='" + (parseInt(row) + parseInt(sampleIdStart) ) + "' id='sequence_" + row + "' class='text sampleId' type='text'  disabled='disabled' >";
 }
 
 function getSampleTypeHtml(  row, sampleDescription, sampleType ){
@@ -235,6 +235,13 @@ function removeRow( row ){
 	}else if( checkedRowRemoved){
 		$("select" + rows[1].id).checked = true;
 		sampleClicked( rows[1].id.sub('_', '') );
+	}
+
+    if (typeof(referralTestSelected) === 'function') {
+    	referralTestSelected();
+	}
+    if (typeof(assignTestsToSelected) === 'function') {
+    	assignTestsToSelected();
 	}
 	
 	testAndSetSave();
@@ -555,54 +562,105 @@ function assignTestsToSelected(checkbox, panelId){
 		}		
 	}
 	getNotificationsForTests(chosenIds, addNotificationConfigurations);
-	addNotificationsOptions(chosenIds, chosenTests);
+	addNotificationsOptions();
 	testAndSetSave();
 }
 
-function addNotificationsOptions(testIds, testNames) {
+function addNotificationsOptions() {
 	var resultReportingSection = document.getElementById("resultReportingSection");
 	if (resultReportingSection == null ) {
 		return;
 	}
-	resultReportingSection.innerHTML = '<hr style="width:100%; height:5px;" />';
+	if (!jQuery('.reportingHeader').length) {
+		var resultsSectionHeader  = document.createElement("h2");
+		resultsSectionHeader.setAttribute('class', 'reportingHeader');
+		resultsSectionHeader.appendChild(document.createTextNode("<spring:message code='testnotification.patiententry.header'/>"));
+		resultReportingSection.appendChild(resultsSectionHeader);
+	}
+
+	jQuery('#resultReportingSection .referralRow').addClass('deleteReferralRow');
+	
+	var reportingRows = jQuery('.reportingRow');
+	reportingRows.addClass('deleteReportingRow');
+	var reportingDivs = jQuery('.reportingDiv');
+	reportingDivs.addClass('deleteReportingRow');
+
+	var samples = jQuery('#samplesAddedTable .sampleId');
+	samples.each(function(index, value) {
+		var sampleNum = jQuery(this).val();
+		var testNames = document.getElementById("tests_" + sampleNum).value.split(",");
+		var testIds = document.getElementById("testIds_" + sampleNum).value.split(",");
+		addNotificationOptionForRow(resultReportingSection, "<spring:message code='' text='Sample'/> " + sampleNum, sampleNum, testIds, testNames);
+	});
+	
+	jQuery('.deleteReportingRow').remove();
+}
+
+function addNotificationOptionForRow(resultReportingSection, rowLabel, sampleNum, testIds, testNames) {
+	var table, div;
 	if (testIds.length === 0) {
 		return;
 	}
-	var resultsSectionHeader  = document.createElement("h2");
-	resultsSectionHeader.appendChild(document.createTextNode("<spring:message code='testnotification.patiententry.header'/>"));
-	resultReportingSection.appendChild(resultsSectionHeader)
-	
-	var table = document.createElement("table");
-	var row = document.createElement("tr");
-	var col = document.createElement("td");
-	row.appendChild(col);
-	col = document.createElement("td");
-	col.colSpan = "2";
-	col.style.textAlign = "center";
-	col.style.fontWeight = "bold";
-	col.appendChild(document.createTextNode("<spring:message code='label.patient'/>"))
-	row.appendChild(col);
-	col = document.createElement("td");
-	col.colSpan = "2";
-	col.style.textAlign = "center";
-	col.style.fontWeight = "bold";
-	col.appendChild(document.createTextNode("<spring:message code='label.requester'/>"))
-	row.appendChild(col);
-	table.appendChild(row)
-	resultReportingSection.appendChild(table)
+	if (jQuery('#reportingDiv_sample_' + sampleNum).length) {
+		div = document.getElementById('reportingDiv_sample_' + sampleNum);
+		div.setAttribute('class', 'reportingDiv');
+		table = document.getElementById('reportingTable_sample_' + sampleNum);
+		table.setAttribute('class', 'reportingTable');
+	} else {
+		var div = document.createElement('div');
+		div.setAttribute('id', 'reportingDiv_sample_' + sampleNum);
+		div.setAttribute('class', 'reportingDiv');
+		resultReportingSection.appendChild(div)
+		
+		var sampleSectionHeader  = document.createElement("h3");
+		sampleSectionHeader.appendChild(document.createTextNode(rowLabel));
+		div.appendChild(sampleSectionHeader)
+		
+		table = document.createElement("table");
+		table.setAttribute('id', 'reportingTable_sample_' + sampleNum);
+		table.setAttribute('class', 'reportingTable');
+		var row = document.createElement("tr");
+		row.setAttribute('class', 'reportingRowHeader');
+		row.setAttribute('id', 'reportingRowHeader_sample_' + sampleNum);
+		var col = document.createElement("td");
+		row.appendChild(col);
+		col = document.createElement("td");
+		col.colSpan = "2";
+		col.style.textAlign = "center";
+		col.style.fontWeight = "bold";
+		col.appendChild(document.createTextNode("<spring:message code='label.patient'/>"))
+		row.appendChild(col);
+		col = document.createElement("td");
+		col.colSpan = "2";
+		col.style.textAlign = "center";
+		col.style.fontWeight = "bold";
+		col.appendChild(document.createTextNode("<spring:message code='label.requester'/>"))
+		row.appendChild(col);
+		table.appendChild(row)
+		div.appendChild(table);
+	}
 
 	
 	for (var i = 0; i < testIds.length; ++i) {
-		addNotificationsOption(testIds[i], testNames[i], table);
+		if (testIds[i] !== "") {
+			addNotificationsOption(sampleNum, testIds[i], testIds[i], testNames[i], table);
+		}
 	}
 }
 
-function addNotificationsOption(testId, testName, table) {
+function addNotificationsOption(sampleNum, testNum, testId, testName, table) {
 	var resultReportingSection = document.getElementById("resultReportingSection");
 	if (resultReportingSection == null ) {
 		return;
 	}
+	if (jQuery('#reportingRow_sample_' + sampleNum + '_test_' + testNum).length) {
+		document.getElementById('reportingRow_sample_' + sampleNum + '_test_' + testNum).setAttribute("class", "referralRow");
+		return;
+	}
+	
 	var row = document.createElement("tr");
+	row.setAttribute('id', 'reportingRow_sample_' + sampleNum + '_test_' + testNum);
+	row.setAttribute('class', 'reportingRow');
 	var col = document.createElement("td");
 	var emailNote = "<spring:message code='externalconnections.email'/>";
 	var smsNote = "<spring:message code='externalconnections.sms'/>";

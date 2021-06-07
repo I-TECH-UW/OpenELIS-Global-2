@@ -5,8 +5,11 @@ import java.util.List;
 import java.util.concurrent.Future;
 
 import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.Identifier;
+import org.hl7.fhir.r4.model.Practitioner;
 import org.hl7.fhir.r4.model.Reference;
 import org.hl7.fhir.r4.model.Resource;
+import org.hl7.fhir.r4.model.ResourceType;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.dataexchange.fhir.exception.FhirLocalPersistingException;
 import org.openelisglobal.dataexchange.fhir.exception.FhirPersistanceException;
@@ -50,5 +53,13 @@ public interface FhirTransformService {
     Future<Bundle> transformPersistObjectsUnderSamples(List<String> sampleIds) throws FhirLocalPersistingException;
 
     Future<Bundle> transformPersistPatients(List<String> patientIds) throws FhirLocalPersistingException;
+
+    Practitioner transformNameToPractitioner(String practitionerName);
+
+    Reference createReferenceFor(ResourceType resourceType, String id);
+
+    Identifier createIdentifier(String system, String value);
+
+    boolean setTempIdIfMissing(Resource resource, TempIdGenerator tempIdGenerator);
 
 }

@@ -172,5 +172,4 @@ public class AppConfig implements WebMvcConfigurer {
 
         return mailSender;
     }
-
 }

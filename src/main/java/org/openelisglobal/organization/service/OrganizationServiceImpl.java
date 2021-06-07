@@ -218,4 +218,9 @@ public class OrganizationServiceImpl extends BaseObjectServiceImpl<Organization,
         activateOrganizations(organizationNames);
     }
 
+    @Override
+    public Organization getOrganizationByFhirId(String uuid) {
+        return baseObjectDAO.getOrganizationByFhirId(uuid);
+    }
+
 }

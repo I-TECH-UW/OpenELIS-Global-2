@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.parser.IParser;
 import ca.uhn.fhir.rest.client.api.IClientInterceptor;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.client.interceptor.BasicAuthInterceptor;
@@ -29,6 +30,10 @@ public class FhirUtil implements FhirClientFetcher {
         }
 
         return fhirClient;
+    }
+
+    public IParser getFhirParser() {
+        return fhirContext.newJsonParser();
     }
 
 }

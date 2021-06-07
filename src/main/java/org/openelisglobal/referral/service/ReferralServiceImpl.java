@@ -1,11 +1,15 @@
 package org.openelisglobal.referral.service;
 
 import java.sql.Date;
+import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
 import org.openelisglobal.referral.dao.ReferralDAO;
 import org.openelisglobal.referral.valueholder.Referral;
+import org.openelisglobal.referral.valueholder.ReferralStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,8 +36,9 @@ public class ReferralServiceImpl extends BaseObjectServiceImpl<Referral, String>
 
     @Override
     @Transactional(readOnly = true)
-    public List<Referral> getAllUncanceledOpenReferrals() {
-        return baseObjectDAO.getAllUncanceledOpenReferrals();
+    public List<Referral> getUncanceledOpenReferrals() {
+        return getBaseObjectDAO().getReferralsByStatus(
+                Arrays.asList(ReferralStatus.CREATED, ReferralStatus.SENT, ReferralStatus.RECEIVED));
     }
 
     @Override
@@ -44,13 +49,24 @@ public class ReferralServiceImpl extends BaseObjectServiceImpl<Referral, String>
 
     @Override
     @Transactional(readOnly = true)
-    public List<Referral> getAllReferralsBySampleId(String id) {
+    public List<Referral> getReferralsBySampleId(String id) {
         return getBaseObjectDAO().getAllReferralsBySampleId(id);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<Referral> getAllReferralsByOrganization(String organizationId, Date lowDate, Date highDate) {
+    public List<Referral> getReferralsByOrganization(String organizationId, Date lowDate, Date highDate) {
         return getBaseObjectDAO().getAllReferralsByOrganization(organizationId, lowDate, highDate);
+    }
+
+    @Override
+    public List<Referral> getSentReferrals() {
+        return getBaseObjectDAO().getReferralsByStatus(Arrays.asList(ReferralStatus.SENT));
+    }
+
+    @Override
+    public List<UUID> getSentReferralUuids() {
+        return getBaseObjectDAO().getReferralsByStatus(Arrays.asList(ReferralStatus.SENT)).stream()
+                .map(e -> e.getFhirUuid()).filter(e -> e != null).collect(Collectors.toList());
     }
 }

@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -19,6 +20,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.formfields.FormFields.Field;
@@ -39,6 +41,8 @@ import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.dataexchange.fhir.exception.FhirPersistanceException;
 import org.openelisglobal.dataexchange.fhir.exception.FhirTransformationException;
 import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
+import org.openelisglobal.dictionary.service.DictionaryService;
+import org.openelisglobal.dictionary.valueholder.Dictionary;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.inventory.action.InventoryUtility;
 import org.openelisglobal.inventory.form.InventoryKitItem;
@@ -48,6 +52,7 @@ import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.referral.service.ReferralService;
 import org.openelisglobal.referral.service.ReferralTypeService;
 import org.openelisglobal.referral.valueholder.Referral;
+import org.openelisglobal.referral.valueholder.ReferralStatus;
 import org.openelisglobal.referral.valueholder.ReferralType;
 import org.openelisglobal.result.action.util.ResultSet;
 import org.openelisglobal.result.action.util.ResultUtil;
@@ -104,6 +109,8 @@ public class LogbookResultsController extends LogbookResultsBaseController {
             "testResult*.shadowRejected", "testResult*.rejected", "testResult*.rejectReasonId", "testResult*.note",
             "paging.currentPage" };
 
+    @Autowired
+    private DictionaryService dictionaryService;
     @Autowired
     private ResultSignatureService resultSigService;
     @Autowired
@@ -279,6 +286,32 @@ public class LogbookResultsController extends LogbookResultsBaseController {
             return findForward(FWD_FAIL_INSERT, form);
         }
 
+//  gnr: shows current session records, can be current, stale/empty vs. other user
+//        ie: empty when another user saved and hasn't reloaded.
+
+        List<Result> checkPagedResults = (List<Result>) request.getSession()
+                .getAttribute(IActionConstants.RESULTS_SESSION_CACHE);
+        List<Result> checkResults = (List<Result>) checkPagedResults.get(0);
+        if (checkResults.size() == 0) {
+            LogEvent.logDebug(this.getClass().getName(), "LogbookResults()", "Attempted save of stale page.");
+            
+            List<TestResultItem> resultList = form.getTestResult();
+            for (TestResultItem item : resultList) {
+                item.setFailedValidation(true);
+                item.setNote("Result has been saved by another user.");
+            }
+            
+            ResultsUpdateDataSet actionDataSet = new ResultsUpdateDataSet(getSysUserId(request));
+            actionDataSet.filterModifiedItems(form.getTestResult());
+
+            Errors errors = actionDataSet.validateModifiedItems();
+            
+            if (true) {
+                saveErrors(errors);
+                return findForward(FWD_VALIDATION_ERROR, form);
+            }
+        }
+
         List<IResultUpdate> updaters = ResultUpdateRegister.getRegisteredUpdaters();
 
         ResultsPaging paging = new ResultsPaging();
@@ -420,6 +453,8 @@ public class LogbookResultsController extends LogbookResultsBaseController {
             if (testResultItem.getResultId() == null
                     || GenericValidator.isBlankOrNull(testResultItem.getReferralId())) {
                 referral = new Referral();
+                referral.setFhirUuid(UUID.randomUUID());
+                referral.setStatus(ReferralStatus.CREATED);
                 referral.setReferralTypeId(REFERRAL_CONFORMATION_ID);
                 referral.setSysUserId(getSysUserId(request));
                 referral.setRequestDate(new Timestamp(new Date().getTime()));
@@ -428,13 +463,34 @@ public class LogbookResultsController extends LogbookResultsBaseController {
                 referral.setReferralReasonId(testResultItem.getReferralReasonId());
             } else if (testResultItem.isReferralCanceled()) {
                 referral = referralService.get(testResultItem.getReferralId());
-                referral.setCanceled(false);
+                referral.setFhirUuid(UUID.randomUUID());
+                referral.setStatus(ReferralStatus.CREATED);
                 referral.setSysUserId(getSysUserId(request));
                 referral.setRequesterName(testResultItem.getTechnician());
                 referral.setReferralReasonId(testResultItem.getReferralReasonId());
             }
 
+            String originalResultNote = MessageUtil.getMessage("referral.original.result") + ": ";
+            if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(testResultItem.getResultType())
+                    || TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(testResultItem.getResultType())) {
+                if ("0".equals(testResultItem.getResultValue())) {
+                    originalResultNote = originalResultNote + "";
+                } else {
+                    Dictionary dictionary = dictionaryService.get(testResultItem.getResultValue());
+                    if (dictionary.getLocalizedDictionaryName() == null) {
+                        originalResultNote = originalResultNote + dictionary.getDictEntry();
+                    } else {
+                        originalResultNote = originalResultNote
+                                + dictionary.getLocalizedDictionaryName().getLocalizedValue();
+                    }
+                }
+            } else {
+                originalResultNote = originalResultNote + testResultItem.getResultValue();
+            }
+
             actionDataSet.getSavableReferrals().add(referral);
+            actionDataSet.addToNoteList(noteService.createSavableNote(analysis, NoteType.INTERNAL, originalResultNote,
+                    RESULT_SUBJECT, this.getSysUserId(request)));
 
         }
     }

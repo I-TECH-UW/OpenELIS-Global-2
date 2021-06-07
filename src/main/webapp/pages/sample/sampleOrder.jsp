@@ -431,7 +431,9 @@
         <spring:message code="sample.entry.provider.firstName"/>:
 	</td>
     <td>
-        <form:input path="sampleOrderItems.providerFirstName" onchange="setOrderModified();"
+        <form:input path="sampleOrderItems.providerFirstName"
+                   id="providerFirstNameID" 
+                   onchange="setOrderModified();"
                    size="30"/>
     </td>
 </tr>

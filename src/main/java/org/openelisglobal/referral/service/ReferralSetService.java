@@ -9,7 +9,7 @@ import org.openelisglobal.sample.valueholder.Sample;
 
 public interface ReferralSetService {
 
-    void updateRefreralSets(List<ReferralSet> referralSetList, List<Sample> modifiedSamples, Set<Sample> parentSamples,
+    void updateReferralSets(List<ReferralSet> referralSetList, List<Sample> modifiedSamples, Set<Sample> parentSamples,
             List<ReferralResult> removableReferralResults, String sysUserId);
 
 }

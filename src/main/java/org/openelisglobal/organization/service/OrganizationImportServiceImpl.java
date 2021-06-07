@@ -170,7 +170,7 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
     }
 
     private Organization insertOrUpdateOrganization(Organization organization) {
-        Organization dbOrg = organizationService.getOrganizationByName(organization, true);
+        Organization dbOrg = organizationService.getOrganizationByFhirId(organization.getFhirUuidAsString());
         if (dbOrg != null) {
             dbOrg.setOrganizationName(organization.getOrganizationName());
             dbOrg.setFhirUuid(organization.getFhirUuid());

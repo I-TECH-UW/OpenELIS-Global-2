@@ -804,6 +804,7 @@ function  /*void*/  addPatient(){
 	if(supportSubjectNumber){$("subjectNumberID").disabled = false;}
 	if(supportNationalID){$("nationalID").disabled = false;}
 	setUpdateStatus( "ADD" );
+	jQuery("#PatientDetail").show();
 	
 	for(var i = 0; i < patientInfoChangeListeners.length; i++){
 			patientInfoChangeListeners[i]("", "", "", "", "", "", "", "", "");
@@ -951,7 +952,7 @@ function  processSubjectNumberSuccess(xhr){
 	</div>
     <%-- </logic:equal> --%>
     </c:if>
-	<div id="PatientDetail"   >
+	<div id="PatientDetail" style="display:none;"  >
 	<h2><spring:message code="patient.information"/></h2>
 	<table style="width:80%" border="0">
     <tr>

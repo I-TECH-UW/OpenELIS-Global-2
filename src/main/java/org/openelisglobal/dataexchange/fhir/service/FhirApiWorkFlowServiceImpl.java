@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.apache.commons.validator.GenericValidator;
 import org.hl7.fhir.instance.model.api.IDomainResource;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Bundle.BundleEntryComponent;
@@ -18,11 +19,13 @@ import org.hl7.fhir.r4.model.DiagnosticReport;
 import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Observation;
 import org.hl7.fhir.r4.model.Patient;
+import org.hl7.fhir.r4.model.Practitioner;
 import org.hl7.fhir.r4.model.Reference;
 import org.hl7.fhir.r4.model.Resource;
 import org.hl7.fhir.r4.model.ResourceType;
 import org.hl7.fhir.r4.model.ServiceRequest;
 import org.hl7.fhir.r4.model.ServiceRequest.ServiceRequestStatus;
+import org.hl7.fhir.r4.model.Specimen;
 import org.hl7.fhir.r4.model.Task;
 import org.hl7.fhir.r4.model.Task.TaskStatus;
 import org.openelisglobal.common.log.LogEvent;
@@ -34,6 +37,7 @@ import org.openelisglobal.dataexchange.fhir.service.TaskWorker.TaskResult;
 import org.openelisglobal.dataexchange.order.action.DBOrderExistanceChecker;
 import org.openelisglobal.dataexchange.order.action.IOrderPersister;
 import org.openelisglobal.referral.fhir.service.FhirReferralService;
+import org.openelisglobal.referral.service.ReferralService;
 import org.openelisglobal.spring.util.SpringContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -59,6 +63,8 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
     private FhirPersistanceService fhirPersistanceService;
     @Autowired
     private FhirReferralService fhirReferralService;
+    @Autowired
+    private ReferralService referralService;
     @Autowired
     private FhirTransformService fhirTransformService;
 
@@ -119,65 +125,74 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         Map<String, Resource> updateResources = new HashMap<>();
 
         IGenericClient sourceFhirClient = fhirUtil.getFhirClient(remoteStorePath);
-        Bundle originalTasksBundle = sourceFhirClient.search()//
-                .forResource(Task.class)//
-                .returnBundle(Bundle.class)//
-//                .revInclude(Task.INCLUDE_BASED_ON)//
-                .where(Task.STATUS.exactly().codes(TaskStatus.REQUESTED.toCode(), TaskStatus.RECEIVED.toCode()))//
-                .where(Task.REQUESTER.hasAnyOfIds(remoteStoreIdentifier))//
-                .execute();
-        if (originalTasksBundle.hasEntry()) {
-            LogEvent.logDebug(this.getClass().getName(), "beginTaskCheckIfAcceptedPath",
-                    "received bundle with " + originalTasksBundle.getEntry().size() + " entries");
-        } else {
-            LogEvent.logDebug(this.getClass().getName(), "beginTaskCheckIfAcceptedPath",
-                    "received bundle with 0 entries");
-        }
-        Map<String, Task> originalTasksById = new HashMap<>();
-        for (BundleEntryComponent bundleEntry : originalTasksBundle.getEntry()) {
-            if (bundleEntry.hasResource() && bundleEntry.getResource().getResourceType().equals(ResourceType.Task)) {
-                Task originalTask = (Task) bundleEntry.getResource();
-                originalTasksById.put(originalTask.getIdElement().getIdPart(), originalTask);
-            }
-        }
-        if (originalTasksById.size() <= 0) {
-            return;
-        }
+        for (UUID referralTaskUuid : referralService.getSentReferralUuids()) {
+            try {
+                IQuery<Bundle> searchQuery = sourceFhirClient.search()//
+                        .forResource(Task.class)//
+                        .returnBundle(Bundle.class)//
+                        .include(Task.INCLUDE_BASED_ON) // serviceRequest
+                        .where(Task.STATUS.exactly().codes(TaskStatus.REQUESTED.toCode(), TaskStatus.RECEIVED.toCode()))//
+                        .where(Task.RES_ID.exactly().identifier(referralTaskUuid.toString()));
+                Bundle originalTasksBundle = searchQuery.execute();
+                if (originalTasksBundle.hasEntry()) {
+                    LogEvent.logDebug(this.getClass().getName(), "beginTaskCheckIfAcceptedPath",
+                            "received bundle with " + originalTasksBundle.getEntry().size() + " entries");
+                } else {
+                    LogEvent.logDebug(this.getClass().getName(), "beginTaskCheckIfAcceptedPath",
+                            "received bundle with 0 entries");
+                }
+                Map<String, Task> originalTasksById = new HashMap<>();
+                for (BundleEntryComponent bundleEntry : originalTasksBundle.getEntry()) {
+                    if (bundleEntry.hasResource()
+                            && bundleEntry.getResource().getResourceType().equals(ResourceType.Task)) {
+                        Task originalTask = (Task) bundleEntry.getResource();
+                        originalTasksById.put(originalTask.getIdElement().getIdPart(), originalTask);
+                    }
+                }
+                if (originalTasksById.size() <= 0) {
+                    return;
+                }
 
-        List<Task> receivedTasks = new ArrayList<>();
-        List<Task> acceptedTasks = new ArrayList<>();
-        List<Task> rejectedTasks = new ArrayList<>();
-        for (Entry<String, Task> taskEntry : originalTasksById.entrySet()) {
-            Optional<Task> task = fhirPersistanceService.getTaskBasedOnTask(taskEntry.getKey());
-            if (task.isPresent()) {
-                LogEvent.logDebug(FhirApiWorkFlowServiceImpl.class.getName(), "beginTaskCheckIfAcceptedPath", "task "
-                        + task.get().getIdElement().getIdPart() + " has been detected as " + task.get().getStatus());
-                LogEvent.logDebug(FhirApiWorkFlowServiceImpl.class.getName(), "beginTaskCheckIfAcceptedPath",
-                        "changing task " + taskEntry.getKey() + " to " + task.get().getStatus());
-                if (TaskStatus.RECEIVED.equals(task.get().getStatus())) {
-                    Task taskBasedOnOrginalTask = task.get();
-                    Task originalTask = taskEntry.getValue();
-                    originalTask.setStatus(TaskStatus.RECEIVED);
-                    updateResources.put(originalTask.getIdElement().getIdPart(), originalTask);
-                    receivedTasks.add(originalTasksById
-                            .get(taskBasedOnOrginalTask.getBasedOnFirstRep().getReferenceElement().getIdPart()));
+                List<Task> receivedTasks = new ArrayList<>();
+                List<Task> acceptedTasks = new ArrayList<>();
+                List<Task> rejectedTasks = new ArrayList<>();
+                for (Entry<String, Task> taskEntry : originalTasksById.entrySet()) {
+                    Optional<Task> task = fhirPersistanceService.getTaskBasedOnTask(taskEntry.getKey());
+                    if (task.isPresent()) {
+                        LogEvent.logDebug(FhirApiWorkFlowServiceImpl.class.getName(), "beginTaskCheckIfAcceptedPath",
+                                "task " + task.get().getIdElement().getIdPart() + " has been detected as "
+                                        + task.get().getStatus());
+                        LogEvent.logDebug(FhirApiWorkFlowServiceImpl.class.getName(), "beginTaskCheckIfAcceptedPath",
+                                "changing task " + taskEntry.getKey() + " to " + task.get().getStatus());
+                        if (TaskStatus.RECEIVED.equals(task.get().getStatus())) {
+                            Task taskBasedOnOrginalTask = task.get();
+                            Task originalTask = taskEntry.getValue();
+                            originalTask.setStatus(TaskStatus.RECEIVED);
+                            updateResources.put(originalTask.getIdElement().getIdPart(), originalTask);
+                            receivedTasks.add(originalTasksById.get(
+                                    taskBasedOnOrginalTask.getBasedOnFirstRep().getReferenceElement().getIdPart()));
+                        }
+                        if (TaskStatus.ACCEPTED.equals(task.get().getStatus())) {
+                            Task taskBasedOnOrginalTask = task.get();
+                            Task originalTask = taskEntry.getValue();
+                            originalTask.setStatus(TaskStatus.ACCEPTED);
+                            updateResources.put(originalTask.getIdElement().getIdPart(), originalTask);
+                            acceptedTasks.add(originalTasksById.get(
+                                    taskBasedOnOrginalTask.getBasedOnFirstRep().getReferenceElement().getIdPart()));
+                        }
+                        if (TaskStatus.REJECTED.equals(task.get().getStatus())) {
+                            Task taskBasedOnOrginalTask = task.get();
+                            Task originalTask = taskEntry.getValue();
+                            originalTask.setStatus(TaskStatus.REJECTED);
+                            updateResources.put(originalTask.getIdElement().getIdPart(), originalTask);
+                            rejectedTasks.add(originalTasksById.get(
+                                    taskBasedOnOrginalTask.getBasedOnFirstRep().getReferenceElement().getIdPart()));
+                        }
+                    }
                 }
-                if (TaskStatus.ACCEPTED.equals(task.get().getStatus())) {
-                    Task taskBasedOnOrginalTask = task.get();
-                    Task originalTask = taskEntry.getValue();
-                    originalTask.setStatus(TaskStatus.ACCEPTED);
-                    updateResources.put(originalTask.getIdElement().getIdPart(), originalTask);
-                    acceptedTasks.add(originalTasksById
-                            .get(taskBasedOnOrginalTask.getBasedOnFirstRep().getReferenceElement().getIdPart()));
-                }
-                if (TaskStatus.REJECTED.equals(task.get().getStatus())) {
-                    Task taskBasedOnOrginalTask = task.get();
-                    Task originalTask = taskEntry.getValue();
-                    originalTask.setStatus(TaskStatus.REJECTED);
-                    updateResources.put(originalTask.getIdElement().getIdPart(), originalTask);
-                    rejectedTasks.add(originalTasksById
-                            .get(taskBasedOnOrginalTask.getBasedOnFirstRep().getReferenceElement().getIdPart()));
-                }
+            } catch (RuntimeException e) {
+                LogEvent.logError(e);
+                LogEvent.logError("could not check/update state of referral with UUID: " + referralTaskUuid, e);
             }
         }
 
@@ -190,68 +205,87 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         }
 
         IGenericClient sourceFhirClient = fhirUtil.getFhirClient(remoteStorePath);
-        IQuery<Bundle> searchQuery = sourceFhirClient.search()//
-                .forResource(Task.class)//
-                .returnBundle(Bundle.class)//
-//                .revInclude(Task.INCLUDE_BASED_ON)//
-                .include(Task.INCLUDE_BASED_ON) // serviceRequest
-                .where(Task.STATUS.exactly().code(TaskStatus.ACCEPTED.toCode()))//
-                .where(Task.REQUESTER.hasAnyOfIds(remoteStoreIdentifier));
-        Bundle originalTasksBundle = searchQuery.execute();
-        if (originalTasksBundle.hasEntry()) {
+//        IQuery<Bundle> searchQuery = sourceFhirClient.search()//
+//                .forResource(Task.class)//
+//                .returnBundle(Bundle.class)//
+//                .include(Task.INCLUDE_BASED_ON) // serviceRequest
+//                .where(Task.STATUS.exactly().code(TaskStatus.ACCEPTED.toCode()))//
+//                .where(Task.REQUESTER.hasAnyOfIds(remoteStoreIdentifier));
+        for (UUID referralTaskUuid : referralService.getSentReferralUuids()) {
             LogEvent.logDebug(this.getClass().getName(), "beginTaskImportResultsPath",
-                    "received bundle with " + originalTasksBundle.getEntry().size() + " entries");
-        } else {
-            LogEvent.logDebug(this.getClass().getName(), "beginTaskImportResultsPath",
-                    "received bundle with 0 entries");
-        }
-        Map<String, OriginalReferralObjects> originalReferralObjectsByServiceRequest = new HashMap<>();
-        for (BundleEntryComponent bundleEntry : originalTasksBundle.getEntry()) {
-            if (bundleEntry.hasResource()) {
-                try {
-                    addOriginalReferralObject(bundleEntry, originalReferralObjectsByServiceRequest);
-                } catch (RuntimeException e) {
-                    LogEvent.logError(e);
-                    LogEvent.logError("could not import result for: " + bundleEntry.getResource().getId(), e);
-                }
-            }
-        }
-        if (originalReferralObjectsByServiceRequest.size() <= 0) {
-            return;
-        }
-
-        searchQuery = sourceFhirClient.search()//
-                .forResource(ServiceRequest.class)//
-                .returnBundle(Bundle.class)//
-//                .revInclude(Task.INCLUDE_BASED_ON)//
-//                .include(ServiceRequest.INCLUDE_SPECIMEN) // specimen
-                .revInclude(Observation.INCLUDE_BASED_ON.asRecursive())//
-                .revInclude(DiagnosticReport.INCLUDE_BASED_ON.asRecursive())//
-                .where(ServiceRequest.STATUS.exactly().code(ServiceRequestStatus.COMPLETED.toCode()))
-                .where(ServiceRequest.BASED_ON.hasAnyOfIds(originalReferralObjectsByServiceRequest.keySet()));
-        originalTasksBundle = searchQuery.execute();
-        Map<String, ReferralResultsImportObjects> resultImportByServiceRequest = new HashMap<>();
-        for (BundleEntryComponent bundleEntry : originalTasksBundle.getEntry()) {
-            if (bundleEntry.hasResource()) {
-                try {
-                    addResultImportObject(bundleEntry, resultImportByServiceRequest,
-                            originalReferralObjectsByServiceRequest);
-                } catch (RuntimeException e) {
-                    LogEvent.logError(e);
-                    LogEvent.logError("could not import result for: " + bundleEntry.getResource().getId(), e);
-                }
-            }
-        }
-
-        for (Entry<String, ReferralResultsImportObjects> resultsImportEntry : resultImportByServiceRequest.entrySet()) {
+                    "searching for results for Task ID " + referralTaskUuid);
             try {
-                fhirReferralService.setReferralResult(resultsImportEntry.getValue());
+                IQuery<Bundle> searchQuery = sourceFhirClient.search()//
+                        .forResource(Task.class)//
+                        .returnBundle(Bundle.class)//
+                        .include(Task.INCLUDE_BASED_ON) // serviceRequest
+                        .where(Task.STATUS.exactly().code(TaskStatus.ACCEPTED.toCode()))//
+                        .where(Task.RES_ID.exactly().identifier(referralTaskUuid.toString()));
+                Bundle originalTasksBundle = searchQuery.execute();
+                if (originalTasksBundle.hasEntry()) {
+                    LogEvent.logDebug(this.getClass().getName(), "beginTaskImportResultsPath",
+                            "received bundle with " + originalTasksBundle.getEntry().size() + " entries for Task ID "
+                                    + referralTaskUuid);
+                } else {
+                    LogEvent.logDebug(this.getClass().getName(), "beginTaskImportResultsPath",
+                            "received bundle with 0 entries for Task ID " + referralTaskUuid);
+                }
+                Map<String, OriginalReferralObjects> originalReferralObjectsByServiceRequest = new HashMap<>();
+                for (BundleEntryComponent bundleEntry : originalTasksBundle.getEntry()) {
+                    if (bundleEntry.hasResource()) {
+                        try {
+                            addOriginalReferralObject(bundleEntry, originalReferralObjectsByServiceRequest);
+                        } catch (RuntimeException e) {
+                            LogEvent.logError(e);
+                            LogEvent.logError("could not import result for: " + bundleEntry.getResource().getId(), e);
+                        }
+                    }
+                }
+                if (originalReferralObjectsByServiceRequest.size() > 0) {
+                    searchQuery = sourceFhirClient.search()//
+                            .forResource(ServiceRequest.class)//
+                            .returnBundle(Bundle.class)//
+//                    .revInclude(Task.INCLUDE_BASED_ON)//
+//                    .include(ServiceRequest.INCLUDE_SPECIMEN) // specimen
+                            .revInclude(Observation.INCLUDE_BASED_ON.asRecursive())//
+                            .revInclude(DiagnosticReport.INCLUDE_BASED_ON.asRecursive())//
+                            .where(ServiceRequest.STATUS.exactly().code(ServiceRequestStatus.COMPLETED.toCode()))
+                            .where(ServiceRequest.BASED_ON
+                                    .hasAnyOfIds(originalReferralObjectsByServiceRequest.keySet()));
+                    originalTasksBundle = searchQuery.execute();
+                    Map<String, ReferralResultsImportObjects> resultImportByServiceRequest = new HashMap<>();
+                    for (BundleEntryComponent bundleEntry : originalTasksBundle.getEntry()) {
+                        if (bundleEntry.hasResource()) {
+                            try {
+                                addResultImportObject(bundleEntry, resultImportByServiceRequest,
+                                        originalReferralObjectsByServiceRequest);
+                            } catch (RuntimeException e) {
+                                LogEvent.logError(e);
+                                LogEvent.logError("could not import result for: " + bundleEntry.getResource().getId(),
+                                        e);
+                            }
+                        }
+                    }
+
+                    for (Entry<String, ReferralResultsImportObjects> resultsImportEntry : resultImportByServiceRequest
+                            .entrySet()) {
+                        try {
+                            fhirReferralService.setReferralResult(resultsImportEntry.getValue());
+                        } catch (RuntimeException e) {
+                            LogEvent.logError(e);
+                            LogEvent.logError(
+                                    "could not import result for ServiceRequest: " + resultsImportEntry.getKey(), e);
+                        }
+                    }
+                }
+
+
+
             } catch (RuntimeException e) {
                 LogEvent.logError(e);
-                LogEvent.logError("could not import result for ServiceRequest: " + resultsImportEntry.getKey(), e);
+                LogEvent.logError("could not import result for referral with UUID: " + referralTaskUuid, e);
             }
         }
-
     }
 
     private void addOriginalReferralObject(BundleEntryComponent bundleEntry,
@@ -437,22 +471,25 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
     private OriginalReferralObjects saveRemoteTaskAsLocalTask(IGenericClient sourceFhirClient, Task remoteTask,
             Bundle bundle, String remoteStorePath) throws FhirLocalPersistingException {
         FhirOperations fhirOperations = new FhirOperations();
+        OriginalReferralObjects objects = new OriginalReferralObjects();
 
         List<ServiceRequest> remoteServiceRequests = getBasedOnServiceRequestsFromServer(sourceFhirClient, remoteTask);
+        List<Specimen> remoteSpecimens = getSpecimenForServiceRequestsFromServer(sourceFhirClient,
+                remoteServiceRequests);
         Patient remotePatientForTask = getForPatientFromServer(sourceFhirClient, remoteTask);
         if (remotePatientForTask == null) {
             remotePatientForTask = getForPatientFromServer(sourceFhirClient, remoteServiceRequests);
         }
+        Practitioner remotePractitionerForTask = getPractitionerFromServer(sourceFhirClient, remoteTask);
         String originalRemoteTaskId = remoteTask.getIdElement().getIdPart();
         Optional<Task> existingLocalTask = getTaskWithSameIdentifier(remoteTask, remoteStorePath);
-        Task localTask;
         if (existingLocalTask.isEmpty()) {
-            localTask = remoteTask.addIdentifier(createIdentifierToRemoteResource(remoteTask, remoteStorePath));
+            objects.task = remoteTask.addIdentifier(createIdentifierToRemoteResource(remoteTask, remoteStorePath));
 //            localTask.setStatus(TaskStatus.ACCEPTED);
 //            localTask.setId(UUID.randomUUID().toString());
-            fhirOperations.updateResources.put(localTask.getIdElement().getIdPart(), localTask);
+            fhirOperations.updateResources.put(objects.task.getIdElement().getIdPart(), objects.task);
         } else {
-            localTask = existingLocalTask.get();
+            objects.task = existingLocalTask.get();
         }
 
 //        if (localTask.hasEncounter()) {
@@ -463,8 +500,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
 //        }
 
         // ServiceRequests
-        List<ServiceRequest> localServiceRequests = new ArrayList<>();
-        localTask.setBasedOn(new ArrayList<>());
+        objects.serviceRequests = new ArrayList<>();
         for (ServiceRequest remoteBasedOn : remoteServiceRequests) {
             ServiceRequest localServiceRequest;
             Optional<ServiceRequest> existingLocalBasedOn = getServiceRequestWithSameIdentifier(remoteBasedOn,
@@ -472,45 +508,105 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
             if (existingLocalBasedOn.isEmpty()) {
                 localServiceRequest = remoteBasedOn
                         .addIdentifier(createIdentifierToRemoteResource(remoteBasedOn, remoteStorePath));
-//                localServiceRequest.setId(UUID.randomUUID().toString());
+//                fhirOperations.createResources.add(localServiceRequest);
                 fhirOperations.updateResources.put(localServiceRequest.getIdElement().getIdPart(), localServiceRequest);
             } else {
                 localServiceRequest = existingLocalBasedOn.get();
             }
 
-            localTask.addBasedOn(fhirTransformService.createReferenceFor(localServiceRequest));
-            localServiceRequests.add(localServiceRequest);
+//            localTask.addBasedOn(fhirTransformService.createReferenceFor(localServiceRequest));
+            objects.serviceRequests.add(localServiceRequest);
+        }
+
+        // Specimen
+        objects.specimens = new ArrayList<>();
+        for (Specimen remoteSpecimen : remoteSpecimens) {
+            Specimen localSpecimen;
+            Optional<Specimen> existingLocalSpecimen = getSpecimenWithSameIdentifier(remoteSpecimen, remoteStorePath);
+            if (existingLocalSpecimen.isEmpty()) {
+                localSpecimen = remoteSpecimen
+                        .addIdentifier(createIdentifierToRemoteResource(remoteSpecimen, remoteStorePath));
+//              fhirOperations.createResources.add(localSpecimen);
+                fhirOperations.updateResources.put(localSpecimen.getIdElement().getIdPart(), localSpecimen);
+            } else {
+                localSpecimen = existingLocalSpecimen.get();
+            }
+            objects.specimens.add(localSpecimen);
         }
 
         // Patient
 //      Patient forPatient = getForPatientFromBundle(bundle, remoteTask);
         Optional<Patient> existingLocalPatient = getPatientWithSameServiceIdentifier(remotePatientForTask,
                 remoteStorePath);
-        Patient localPatient;
         if (existingLocalPatient.isEmpty()) {
-            localPatient = remotePatientForTask
+            objects.patient = remotePatientForTask
                     .addIdentifier(createIdentifierToRemoteResource(remotePatientForTask, remoteStorePath));
 //                localForPatient.addLink(new PatientLinkComponent().setType(LinkType.SEEALSO).setOther(patient));
-//            localPatient.setId(UUID.randomUUID().toString());
-            fhirOperations.updateResources.put(localPatient.getIdElement().getIdPart(), localPatient);
+//          fhirOperations.createResources.add(localPatient);
+            fhirOperations.updateResources.put(objects.patient.getIdElement().getIdPart(), objects.patient);
         } else {
-            localPatient = existingLocalPatient.get();
+            objects.patient = existingLocalPatient.get();
             // patient already exists so we should update the reference to ours
         }
-        localTask.setFor(fhirTransformService.createReferenceFor(localPatient));
-        for (ServiceRequest serviceRequest : localServiceRequests) {
-            serviceRequest.setSubject(fhirTransformService.createReferenceFor(localPatient));
+        objects.task.setFor(fhirTransformService.createReferenceFor(objects.patient));
+        for (ServiceRequest serviceRequest : objects.serviceRequests) {
+            serviceRequest.setSubject(fhirTransformService.createReferenceFor(objects.patient));
+        }
+
+        // Practitioner
+//      Patient forPatient = getForPatientFromBundle(bundle, remoteTask);
+        if (remotePractitionerForTask != null) {
+            Optional<Practitioner> existingLocalPractitioner = getPractitionerWithSameServiceIdentifier(
+                    remotePractitionerForTask, remoteStorePath);
+            if (existingLocalPractitioner.isEmpty()) {
+                objects.practitioner = remotePractitionerForTask
+                        .addIdentifier(createIdentifierToRemoteResource(remotePractitionerForTask, remoteStorePath));
+//          fhirOperations.createResources.add(localPractitioner);
+                fhirOperations.updateResources.put(objects.practitioner.getIdElement().getIdPart(),
+                        objects.practitioner);
+            } else {
+                objects.practitioner = existingLocalPractitioner.get();
+                // Practitioner already exists so we should update the reference to ours
+            }
+            objects.task.setRequester(fhirTransformService.createReferenceFor(objects.practitioner));
         }
 
         LogEvent.logDebug(this.getClass().getName(), "",
                 "creating local copies of the remote fhir objects relating to Task: " + originalRemoteTaskId);
         // Run the transaction
         fhirPersistanceService.createUpdateFhirResourcesInFhirStore(fhirOperations);
-        OriginalReferralObjects objects = new OriginalReferralObjects();
-        objects.task = localTask;
-        objects.patient = localPatient;
-        objects.serviceRequests = localServiceRequests;
         return objects;
+    }
+
+    private Optional<Specimen> getSpecimenWithSameIdentifier(Specimen specimen, String remoteStorePath) {
+        IGenericClient localFhirClient = fhirUtil.getFhirClient(localFhirStorePath);
+        Bundle localBundle = localFhirClient.search()//
+                .forResource(Specimen.class)//
+                .where(Specimen.IDENTIFIER.exactly().systemAndIdentifier(remoteStorePath,
+                        specimen.getIdElement().getIdPart()))//
+                .returnBundle(Bundle.class).execute();
+        for (BundleEntryComponent entry : localBundle.getEntry()) {
+            if (entry.hasResource() && ResourceType.Specimen.equals(entry.getResource().getResourceType())) {
+                LogEvent.logDebug(this.getClass().getName(), "",
+                        "found specimen with same identifier as " + specimen.getIdElement().getIdPart());
+                return Optional.of((Specimen) localBundle.getEntryFirstRep().getResource());
+            }
+        }
+        LogEvent.logDebug(this.getClass().getName(), "",
+                "no specimen with same identifier " + specimen.getIdElement().getIdPart());
+        return Optional.empty();
+    }
+
+    private List<Specimen> getSpecimenForServiceRequestsFromServer(IGenericClient fhirClient,
+            List<ServiceRequest> remoteServiceRequests) {
+        List<Specimen> specimens = new ArrayList<>();
+        for (ServiceRequest serviceRequest : remoteServiceRequests) {
+            for (Reference specimenReference : serviceRequest.getSpecimen()) {
+                specimens.add(fhirClient.read().resource(Specimen.class)
+                        .withId(specimenReference.getReferenceElement().getIdPart()).execute());
+            }
+        }
+        return specimens;
     }
 
     private Patient getForPatientFromServer(IGenericClient fhirClient, List<ServiceRequest> serviceRequests) {
@@ -592,6 +688,27 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         return Optional.empty();
     }
 
+    private Optional<Practitioner> getPractitionerWithSameServiceIdentifier(Practitioner remotePractitioner,
+            String remoteStorePath) {
+        IGenericClient localFhirClient = fhirUtil.getFhirClient(localFhirStorePath);
+
+        Bundle localBundle = localFhirClient.search()//
+                .forResource(Practitioner.class)//
+                .where(Practitioner.IDENTIFIER.exactly().systemAndIdentifier(remoteStorePath,
+                        remotePractitioner.getIdElement().getIdPart()))//
+                .returnBundle(Bundle.class).execute();
+        for (BundleEntryComponent entry : localBundle.getEntry()) {
+            if (entry.hasResource() && ResourceType.Practitioner.equals(entry.getResource().getResourceType())) {
+                LogEvent.logDebug(this.getClass().getName(), "",
+                        "found Practitioner with same identifier as " + remotePractitioner.getIdElement().getIdPart());
+                return Optional.of((Practitioner) localBundle.getEntryFirstRep().getResource());
+            }
+        }
+        LogEvent.logDebug(this.getClass().getName(), "",
+                "no Practitioner with same identifier " + remotePractitioner.getIdElement().getIdPart());
+        return Optional.empty();
+    }
+
     private List<ServiceRequest> getBasedOnServiceRequestsFromServer(IGenericClient fhirClient, Task remoteTask) {
         List<ServiceRequest> basedOn = new ArrayList<>();
         for (Reference basedOnElement : remoteTask.getBasedOn()) {
@@ -615,9 +732,26 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         return forPatient;
     }
 
+    private Practitioner getPractitionerFromServer(IGenericClient fhirClient, Task remoteTask) {
+        Practitioner practitioner = null;
+        if (!GenericValidator.isBlankOrNull(remoteTask.getRequester().getReferenceElement().getIdPart())
+                && remoteTask.getRequester().getReference().contains(ResourceType.Practitioner.toString())) {
+            practitioner = fhirClient.read().resource(Practitioner.class)
+                    .withId(remoteTask.getRequester().getReferenceElement().getIdPart()).execute();
+        }
+
+        if (practitioner == null) {
+            LogEvent.logWarn(this.getClass().getName(), "getForPractitionerFromServer",
+                    "remoteTask doesn't reference a Practitioner, or referenced Practitioner returned null");
+        }
+        return practitioner;
+    }
+
     public class OriginalReferralObjects {
+        public Practitioner practitioner;
         public Task task;
         public List<ServiceRequest> serviceRequests;
+        public List<Specimen> specimens;
         public Patient patient;
     }
 

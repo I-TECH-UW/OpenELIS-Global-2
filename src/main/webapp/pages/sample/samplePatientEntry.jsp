@@ -66,9 +66,6 @@ if( requesterLastNameRequired ){
 <% if( FormFields.getInstance().useField(Field.SampleEntryUseRequestDate)){ %>
     requiredFields.push("requestDate");
 <% } %>
-<%  if (requesterLastNameRequired) { %>
-    requiredFields.push("providerLastNameID");
-<% } %>
 
  
 function isFieldValid(fieldname)
@@ -270,6 +267,10 @@ function /*bool*/ requiredSampleEntryFieldsValid(){
     if( acceptExternalOrders){ 
         if (missingRequiredValues())
             return false;
+    } 
+
+    if( jQuery("#useReferral").prop('checked') && typeof(missingRequiredReferralValues) === 'function' ){
+    	return !missingRequiredReferralValues();
     }
         
     for( var i = 0; i < requiredFields.length; ++i ){
@@ -353,6 +354,11 @@ function processLabOrderSuccess(xhr){
             parseRequester(requester);
         }
 
+        var requestingOrg = order.getElementsByTagName('requestingOrg');
+        if (requestingOrg) {
+            parseRequestingOrg(requestingOrg);
+        }
+
         var useralert = order.getElementsByTagName("user_alert");
         var alertMessage = "";
         if (useralert) {
@@ -407,8 +413,8 @@ function parsePatient(patienttag) {
 
 function clearRequester() {
 
-//    $("providerFirstName").value = '';
-    $("providerLastNameID").value = 'dname';
+    $("providerFirstNameID").value = '';
+    $("providerLastNameID").value = '';
     $("labNo").value = '';
     $("receivedDateForDisplay").value = '${entryDate}';
     $("receivedTime").value = '';
@@ -421,7 +427,7 @@ function parseRequester(requester) {
     var first = "";
     if (firstName.length > 0) {
             first = firstName[0].firstChild.nodeValue;
-            //$("providerFirstName").value = first;
+            $("providerFirstNameID").value = first;
     }
     var lastName = requester.item(0).getElementsByTagName("lastName");
     var last = "";
@@ -438,6 +444,15 @@ function parseRequester(requester) {
             $("providerWorkPhoneID").value = phone;
         }
     }
+}
+
+function parseRequestingOrg(requestingOrg) {
+	var requestingOrgId = requestingOrg.item(0).getElementsByTagName("id");
+    var id = "";
+    if (requestingOrgId.length > 0) {
+            id = requestingOrgId[0].firstChild.nodeValue;
+    }
+	jQuery("#requesterId").val(id).change();
 }
 
 function parseSampletypes(sampletypes, SampleTypes) {
@@ -563,6 +578,10 @@ function  processPhoneSuccess(xhr){
 
     setSave();
 }
+
+function toggleReferral() {
+	jQuery("#referTestSection").toggle();
+}
 </script>
 
 <%-- This define may not be needed, look at usages (not in any other jsp or js page--%>
@@ -595,6 +614,11 @@ function  processPhoneSuccess(xhr){
 
 <div id="samplesDisplay" class="colorFill" >
     <tiles:insertAttribute name="addSample"/>
+	<form:checkbox path="useReferral" id="useReferral" onclick="toggleReferral()" value="true"/> <spring:message code="sample.entry.referral.toggle" />
+</div>
+
+<div id="referTestSection" style="display:none;">
+    <tiles:insertAttribute name="referralInfo" />
 </div>
 
 <br />
@@ -665,7 +689,7 @@ function  /*void*/ savePage()
 {
     loadSamples(); //in addSample tile
 
-  window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
+    window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
     var form = document.getElementById("mainForm");
     form.action = "SamplePatientEntry.do";
     form.submit();
@@ -750,6 +774,14 @@ jQuery(document).ready(function() {
 		checkOrderReferral();
 	}
 	<% } %>
+	
+	jQuery("#useReferral").prop('checked', false);
+	
+	jQuery("#saveButtonId").click(
+		      function(event) {
+		         event.preventDefault();
+		      }
+		   );
 })
 
 </script>

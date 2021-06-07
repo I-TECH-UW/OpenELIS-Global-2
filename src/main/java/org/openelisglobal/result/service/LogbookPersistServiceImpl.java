@@ -24,6 +24,7 @@ import org.openelisglobal.result.action.util.ResultSet;
 import org.openelisglobal.result.action.util.ResultsUpdateDataSet;
 import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.valueholder.Sample;
+import org.openelisglobal.sampleitem.valueholder.SampleItem;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.testreflex.action.util.TestReflexBean;
 import org.openelisglobal.testreflex.action.util.TestReflexUtil;
@@ -58,10 +59,31 @@ public class LogbookPersistServiceImpl implements LogbookResultsPersistService {
             noteService.insert(note);
         }
 
+        List<org.openelisglobal.result.valueholder.Result> checkResult = null;
+        Analysis checkAnalysis = null;
+        SampleItem checkSampleItem = null;
+        Sample checkSample = null;
         for (ResultSet resultSet : actionDataSet.getNewResults()) {
             resultSet.result.setResultEvent(Event.PRELIMINARY_RESULT);
             resultSet.result.setFhirUuid(UUID.randomUUID());
             String resultId = resultService.insert(resultSet.result);
+            
+            checkAnalysis = resultSet.result.getAnalysis();
+            checkSampleItem = checkAnalysis.getSampleItem();
+            checkSample = checkSampleItem.getSample();
+//            System.out.println(">>>: " + 
+//                    checkAnalysis.getId() + " " + 
+//                    checkSampleItem.getId() + " " +
+//                    checkSample.getId() + " " +
+//                    checkSample.getAccessionNumber());
+
+            checkResult = resultService.getResultsForTestAndSample(checkSample.getId(), checkAnalysis.getTest().getId());
+            if (checkResult.size() == 0 ) {
+                resultService.insert(resultSet.result);
+            } else {
+                continue;
+            }
+            
             if (resultSet.signature != null) {
                 resultSet.signature.setResultId(resultSet.result.getId());
                 resultSigService.insert(resultSet.signature);
