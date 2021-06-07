@@ -165,6 +165,7 @@ function processSearchSuccess(xhr, localSearch) {
 		</c:if>
 		showExternalSearchButton();
 	} else if (localSearch){
+		showExternalSearchButton();
 		enhancedSearchPatients(false);
 	} else {
 		$("searchResultsDiv").hide();
