@@ -93,6 +93,7 @@ public class ResultValidationServiceImpl implements ResultValidationService {
         for (IResultUpdate updater : updaters) {
             updater.transactionalUpdate(resultSaveService);
         }
+
     }
 
     private boolean isResultAnalysisFinalized(Result result, List<Analysis> analysisUpdateList) {

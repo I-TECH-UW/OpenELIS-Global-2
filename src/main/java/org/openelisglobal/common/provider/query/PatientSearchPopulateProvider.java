@@ -136,6 +136,7 @@ public class PatientSearchPopulateProvider extends BaseQueryProvider {
         String dept = getAddress(person, ADDRESS_PART_DEPT_ID);
 
         XMLUtil.appendKeyValue("ID", patient.getId(), xml);
+        XMLUtil.appendKeyValue("fhirUuid", patient.getFhirUuidAsString(), xml);
         XMLUtil.appendKeyValue("nationalID", patient.getNationalId(), xml);
         XMLUtil.appendKeyValue("ST_ID", identityMap.getIdentityValue(identityList, "ST"), xml);
         XMLUtil.appendKeyValue("subjectNumber", identityMap.getIdentityValue(identityList, "SUBJECT"), xml);

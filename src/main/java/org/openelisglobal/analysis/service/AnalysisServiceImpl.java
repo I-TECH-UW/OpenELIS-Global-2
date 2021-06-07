@@ -5,6 +5,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 
@@ -74,6 +75,14 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
 
     public static String getTableReferenceId() {
         return TABLE_REFERENCE_ID;
+    }
+
+    @Override
+    public String insert(Analysis analysis) {
+        if (analysis.getFhirUuid() == null) {
+            analysis.setFhirUuid(UUID.randomUUID());
+        }
+        return super.insert(analysis);
     }
 
     @Override
@@ -381,7 +390,7 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
             boolean sortedByDateAndAccession) {
         return baseObjectDAO.getAllAnalysisByTestSectionAndStatus(sectionId, statusList, sortedByDateAndAccession);
     }
-    
+
     @Override
     @Transactional(readOnly = true)
     public List<Analysis> getPageAnalysisByTestSectionAndStatus(String sectionId, List<Integer> statusList,

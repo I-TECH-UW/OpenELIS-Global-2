@@ -2,18 +2,20 @@
 * The contents of this file are subject to the Mozilla Public License
 * Version 1.1 (the "License"); you may not use this file except in
 * compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/ 
-* 
+* http://www.mozilla.org/MPL/
+*
 * Software distributed under the License is distributed on an "AS IS"
 * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
 * License for the specific language governing rights and limitations under
 * the License.
-* 
+*
 * The Original Code is OpenELIS code.
-* 
+*
 * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
 */
 package org.openelisglobal.provider.valueholder;
+
+import java.util.UUID;
 
 import org.openelisglobal.common.valueholder.BaseObject;
 import org.openelisglobal.common.valueholder.ValueHolder;
@@ -25,6 +27,8 @@ public class Provider extends BaseObject<String> {
     private String id;
 
     private String externalId;
+
+    private UUID fhirUuid;
 
     private String npi;
 
@@ -40,10 +44,12 @@ public class Provider extends BaseObject<String> {
 
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }
 
+    @Override
     public String getId() {
         return id;
     }
@@ -94,6 +100,18 @@ public class Provider extends BaseObject<String> {
 
     public String getSelectedPersonId() {
         return this.selectedPersonId;
+    }
+
+    public UUID getFhirUuid() {
+        return fhirUuid;
+    }
+
+    public String getFhirUuidAsString() {
+        return fhirUuid == null ? "" : fhirUuid.toString();
+    }
+
+    public void setFhirUuid(UUID fhirUuid) {
+        this.fhirUuid = fhirUuid;
     }
 
 }

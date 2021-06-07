@@ -209,6 +209,54 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder, String>
     }
 
     @Override
+    public List<ElectronicOrder> getElectronicOrdersContainingValueExludedByOrderedBy(String searchValue,
+            List<Integer> excludedStatuses, SortOrder sortOrder) {
+
+        String sql = "from ElectronicOrder eo " + "join eo.patient patient " + "join patient.person person  "
+                + "where lower(eo.data) like concat('%', lower(:searchValue), '%') "
+                + "or lower(person.firstName) like concat('%', lower(:searchValue), '%') "
+                + "or lower(person.lastName) like concat('%', lower(:searchValue), '%') "
+                + "or lower(concat(person.firstName, ' ', person.lastName)) like concat('%', lower(:searchValue), '%')"
+                + "and eo.statusId not in (:excludedStatuses) order by ";
+
+        switch (sortOrder) {
+        case STATUS_ID:
+            sql = sql + "eo.statusId asc";
+            break;
+        case LAST_UPDATED_ASC:
+            sql = sql + "eo.statusId asc, eo.lastupdated asc";
+            break;
+        case LAST_UPDATED_DESC:
+            sql = sql + "eo.statusId asc, eo.lastupdated desc";
+            break;
+        case EXTERNAL_ID:
+            sql = sql + "eo.externalId asc";
+            break;
+        default:
+            //
+            break;
+        }
+        try {
+
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setString("searchValue", searchValue);
+            query.setParameter("excludedStatuses", excludedStatuses);
+            // query.setString("order", order.getValue());
+            List<Object> records = query.list();
+            List<ElectronicOrder> eOrders = new ArrayList<>();
+            for (int i = 0; i < records.size(); i++) {
+                Object[] oArray = (Object[]) records.get(i);
+                ElectronicOrder eo = (ElectronicOrder) oArray[0];
+                eOrders.add(eo);
+            }
+            return eOrders;
+        } catch (HibernateException e) {
+            handleException(e, "getAllElectronicOrdersContainingValue");
+        }
+        return null;
+    }
+
+    @Override
     public List<ElectronicOrder> getAllElectronicOrdersContainingValuesOrderedBy(String accessionNumber,
             String patientLastName, String patientFirstName, String gender, SortOrder order) {
         String sql = "from ElectronicOrder eo " + "join eo.patient patient " + "join patient.person person  ";

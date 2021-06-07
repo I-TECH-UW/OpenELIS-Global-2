@@ -18,6 +18,7 @@
 package org.openelisglobal.samplehuman.daoimpl;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.beanutils.PropertyUtils;
@@ -260,5 +261,35 @@ public class SampleHumanDAOImpl extends BaseDAOImpl<SampleHuman, String> impleme
         }
 
         return samples;
+    }
+
+    @Override
+    public List<Patient> getAllPatientsWithSampleEntered() {
+        List<Patient> patients = new ArrayList<>();
+        try {
+            String sql = "select distinct patient from Patient as patient, SampleHuman as sampleHuman where sampleHuman.patientId = patient.id";
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            patients = query.getResultList();
+        } catch (HibernateException e) {
+            LogEvent.logError(e.toString(), e);
+            throw new LIMSRuntimeException("Error in SampleHuman getAllPatientsWithSampleEntered()", e);
+        }
+
+        return patients;
+    }
+
+    @Override
+    public List<Patient> getAllPatientsWithSampleEnteredMissingFhirUuid() {
+        List<Patient> patients = new ArrayList<>();
+        try {
+            String sql = "select distinct patient from Patient as patient, SampleHuman as sampleHuman where sampleHuman.patientId = patient.id AND patient.fhirUuid is null";
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            patients = query.getResultList();
+        } catch (HibernateException e) {
+            LogEvent.logError(e.toString(), e);
+            throw new LIMSRuntimeException("Error in SampleHuman getAllPatientsWithSampleEntered()", e);
+        }
+
+        return patients;
     }
 }

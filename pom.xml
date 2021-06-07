@@ -17,7 +17,8 @@
 		<major.version>2</major.version>
 		<minor.version>3</minor.version>
 		<state.version>3</state.version><!-- 0 = alpha, 1 = beta, 2 = rc, 3 = deployable -->
-		<fix.version>17</fix.version>
+		<fix.version>18</fix.version>
+
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 		<liquibase.propertyFile>${project.basedir}/liquibase/liquibase.properties</liquibase.propertyFile>
@@ -42,7 +43,7 @@
 		<dependency>
 			<groupId>org.itech</groupId>
 			<artifactId>dataexport-api</artifactId>
-			<version>0.0.0.2</version>
+			<version>0.0.0.4</version>
 		</dependency>
 		<dependency>
 			<groupId>ca.uhn.hapi.fhir</groupId>

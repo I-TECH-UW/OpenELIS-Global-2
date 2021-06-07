@@ -33,7 +33,12 @@
 			length="30" not-null="false" />
 		<property name="requesterName" column="requester_name"
 			length="60" not-null="false" />
-		<property name="canceled" column="canceled" type="boolean" />
+		<property name="status" column="status">
+            <type name="org.hibernate.type.EnumType">
+                <param name="enumClass">org.openelisglobal.referral.valueholder.ReferralStatus</param>
+                <param name="useNamed">true</param>
+            </type>
+        </property>
 		<many-to-one name="analysis"
 			class="org.openelisglobal.analysis.valueholder.Analysis"
 			fetch="select"
@@ -45,5 +50,7 @@
 			fetch="select">
 			<column name="organization_id" precision="10" scale="0" />
 		</many-to-one>
+		<property name="fhirUuid"
+			column="fhir_uuid" type="java.util.UUID" />
 	</class>
 </hibernate-mapping>

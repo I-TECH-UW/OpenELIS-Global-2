@@ -16,6 +16,7 @@
 package org.openelisglobal.sampleitem.valueholder;
 
 import java.sql.Timestamp;
+import java.util.UUID;
 
 import org.openelisglobal.common.valueholder.BaseObject;
 import org.openelisglobal.common.valueholder.ValueHolder;
@@ -36,6 +37,7 @@ public class SampleItem extends BaseObject<String> implements NoteObject {
 
     private String quantity;
 
+    private UUID fhirUuid;
     private ValueHolderInterface sample;
     private String sampleItemId;
     private String sortOrder;
@@ -209,6 +211,18 @@ public class SampleItem extends BaseObject<String> implements NoteObject {
     @Override
     public BoundTo getBoundTo() {
         return BoundTo.SAMPLE_ITEM;
+    }
+
+    public UUID getFhirUuid() {
+        return fhirUuid;
+    }
+
+    public void setFhirUuid(UUID fhirUuid) {
+        this.fhirUuid = fhirUuid;
+    }
+
+    public String getFhirUuidAsString() {
+        return fhirUuid == null ? "" : fhirUuid.toString();
     }
 
 }

@@ -44,6 +44,7 @@ import org.openelisglobal.referral.service.ReferralSetService;
 import org.openelisglobal.referral.valueholder.Referral;
 import org.openelisglobal.referral.valueholder.ReferralResult;
 import org.openelisglobal.referral.valueholder.ReferralSet;
+import org.openelisglobal.referral.valueholder.ReferralStatus;
 import org.openelisglobal.result.service.ResultServiceImpl;
 import org.openelisglobal.result.valueholder.Result;
 import org.openelisglobal.resultlimit.service.ResultLimitService;
@@ -79,14 +80,14 @@ public class ReferredOutTestsController extends BaseController {
             "referralItems*.referralResultId", "referralItems*.referralId", "referralItems*.referredResultType",
             "referralItems*.modified", "referralItems*.inLabResultId", "referralItems*.referralReasonId",
             "referralItems*.referrer", "referralItems*.referredInstituteId", "referralItems*.referredSendDate",
-            "referralItems*.referredTestId", "referralItems*.canceled", "referralItems*.referredResult",
-            "referralItems*.referredDictionaryResult", "referralItems*.referredDictionaryResult",
-            "referralItems*.multiSelectResultValues", "referralItems*.referredMultiDictionaryResult",
-            "referralItems*.multiSelectResultValues", "testResult*.multiSelectResultValues",
-            "testResult*.qualifiedResultValue", "referralItems*.referredReportDate",
-            "referralItems*.additionalTests*.referralResultId", "referralItems*.additionalTests*.referredResultType",
-            "referralItems*.additionalTests*.remove", "referralItems*.additionalTests*.referredTestId",
-            "referralItems*.additionalTests*.referredResult",
+            "referralItems*.referredTestId", "referralItems*.canceled", "referralItems*.referralStatus",
+            "referralItems*.referredResult", "referralItems*.referredDictionaryResult",
+            "referralItems*.referredDictionaryResult", "referralItems*.multiSelectResultValues",
+            "referralItems*.referredMultiDictionaryResult", "referralItems*.multiSelectResultValues",
+            "testResult*.multiSelectResultValues", "testResult*.qualifiedResultValue",
+            "referralItems*.referredReportDate", "referralItems*.additionalTests*.referralResultId",
+            "referralItems*.additionalTests*.referredResultType", "referralItems*.additionalTests*.remove",
+            "referralItems*.additionalTests*.referredTestId", "referralItems*.additionalTests*.referredResult",
             "referralItems*.additionalTests*.referredDictionaryResult",
             "referralItems*.additionalTests*.multiSelectResultValues",
             "referralItems*.additionalTests*.referredDictionaryResult",
@@ -172,7 +173,7 @@ public class ReferredOutTestsController extends BaseController {
     private List<ReferralItem> getReferralItems() {
         List<ReferralItem> referralItems = new ArrayList<>();
 
-        List<Referral> referralList = referralService.getAllUncanceledOpenReferrals();
+        List<Referral> referralList = referralService.getUncanceledOpenReferrals();
 
         for (Referral referral : referralList) {
             ReferralItem referralItem = getReferralItem(referral);
@@ -202,26 +203,27 @@ public class ReferredOutTestsController extends BaseController {
     }
 
     private ReferralItem getReferralItem(Referral referral) {
-        boolean allReferralResultsHaveResults = true;
+//        boolean allReferralResultsHaveResults = true;
         List<ReferralResult> referralResults = referralResultService.getReferralResultsForReferral(referral.getId());
-        for (ReferralResult referralResult : referralResults) {
-            if (referralResult.getResult() == null
-                    || GenericValidator.isBlankOrNull(referralResult.getResult().getValue())) {
-                allReferralResultsHaveResults = false;
-                break;
-            }
-        }
-
-        if (allReferralResultsHaveResults) {
-            return null;
-        }
+//        for (ReferralResult referralResult : referralResults) {
+//            if (referralResult.getResult() == null
+//                    || GenericValidator.isBlankOrNull(referralResult.getResult().getValue())) {
+//                allReferralResultsHaveResults = false;
+//                break;
+//            }
+//        }
+//
+//        if (allReferralResultsHaveResults) {
+//            return null;
+//        }
 
         ReferralItem referralItem = new ReferralItem();
 
         Analysis analysis = referral.getAnalysis();
-        referralItem.setCanceled(false);
+        referralItem.setReferralStatus(referral.getStatus());
         referralItem.setReferredResultType("N");
         referralItem.setAccessionNumber(analysisService.getOrderAccessionNumber(analysis));
+        referralItem.setReferredTestId(analysis.getTest().getId());
 
         TypeOfSample typeOfSample = analysisService.getTypeOfSample(analysis);
         referralItem.setSampleType(typeOfSample.getLocalizedName());
@@ -310,8 +312,13 @@ public class ReferredOutTestsController extends BaseController {
         // We can not use ResultService because that assumes the result is for an
         // analysis, not a referral
         Result result = nextTestFirstResult.getResult();
-
-        String resultType = (result != null) ? result.getResultType() : "N";
+        String resultType;
+        if (!GenericValidator.isBlankOrNull(referralItem.getReferredTestId())) {
+            Test test = testService.get(referralItem.getReferredTestId());
+            resultType = testService.getResultType(test);
+        } else {
+            resultType = (result != null) ? result.getResultType() : "N";
+        }
         referralItem.setReferredResultType(resultType);
         if (!TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(resultType)) {
             if (result != null) {
@@ -350,20 +357,24 @@ public class ReferredOutTestsController extends BaseController {
 
     private String getAppropriateResultValue(List<Result> results) {
         Result result = results.get(0);
-        if (TypeOfTestResultServiceImpl.ResultType.DICTIONARY.matches(result.getResultType())) {
-            Dictionary dictionary = dictionaryService.get(result.getValue());
-            if (dictionary != null) {
-                return dictionary.getLocalizedName();
+        if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(result.getResultType())) {
+            if (!GenericValidator.isBlankOrNull(result.getValue()) && !"0".equals(result.getValue())) {
+                Dictionary dictionary = dictionaryService.get(result.getValue());
+                if (dictionary != null) {
+                    return dictionary.getLocalizedName();
+                }
             }
         } else if (TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(result.getResultType())) {
             StringBuilder multiResult = new StringBuilder();
 
             for (Result subResult : results) {
-                Dictionary dictionary = dictionaryService.get(subResult.getValue());
+                if (!GenericValidator.isBlankOrNull(result.getValue()) && !"0".equals(result.getValue())) {
+                    Dictionary dictionary = dictionaryService.get(subResult.getValue());
 
-                if (dictionary.getId() != null) {
-                    multiResult.append(dictionary.getLocalizedName());
-                    multiResult.append(", ");
+                    if (dictionary.getId() != null) {
+                        multiResult.append(dictionary.getLocalizedName());
+                        multiResult.append(", ");
+                    }
                 }
             }
 
@@ -484,7 +495,7 @@ public class ReferredOutTestsController extends BaseController {
         }
 
         try {
-            referralSetService.updateRefreralSets(referralSetList, modifiedSamples, parentSamples,
+            referralSetService.updateReferralSets(referralSetList, modifiedSamples, parentSamples,
                     removableReferralResults, getSysUserId(request));
         } catch (LIMSRuntimeException e) {
             String errorMsg;
@@ -509,7 +520,7 @@ public class ReferredOutTestsController extends BaseController {
     private void selectModifiedAndCanceledItems(List<ReferralItem> referralItems, List<ReferralItem> modifiedItems,
             List<ReferralItem> canceledItems) {
         for (ReferralItem item : referralItems) {
-            if (item.isCanceled()) {
+            if (ReferralStatus.CANCELED.equals(item.getReferralStatus())) {
                 canceledItems.add(item);
             } else if (item.isModified()) {
                 modifiedItems.add(item);
@@ -579,7 +590,7 @@ public class ReferredOutTestsController extends BaseController {
 
         referralSet.setReferral(referral);
         referral.setSysUserId(getSysUserId(request));
-        referral.setCanceled(true);
+        referral.setStatus(ReferralStatus.CANCELED);
 
         setStatusForCanceledReferrals(referral, parentSamples);
 
@@ -604,7 +615,8 @@ public class ReferredOutTestsController extends BaseController {
                 referralResultService.getReferralResultsForReferral(referralItem.getReferralId()));
 
         Referral referral = referralService.get(referralItem.getReferralId());
-        referral.setCanceled(false);
+        referral.setStatus(
+                referralItem.getReferralStatus() == null ? ReferralStatus.SENT : referralItem.getReferralStatus());
         referral.setSysUserId(getSysUserId(request));
         referral.setOrganization(organizationService.get(referralItem.getReferredInstituteId()));
         referral.setSentDate(DateUtil.convertStringDateToTruncatedTimestamp(referralItem.getReferredSendDate()));
@@ -744,7 +756,6 @@ public class ReferredOutTestsController extends BaseController {
         String referredResultType = referredTest.getReferredResultType();
 
         if (!TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(referredResultType) && test != null) {
-            @SuppressWarnings("unchecked")
             List<TestResult> testResults = testResultService.getAllActiveTestResultsPerTest(test);
 
             if (!testResults.isEmpty()) {

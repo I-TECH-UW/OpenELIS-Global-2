@@ -298,7 +298,7 @@
 
                 <sql>
 			INSERT INTO clinlims.dictionary(id,is_active,dict_entry,lastupdated,local_abbrev,dictionary_category_id,display_key,sort_order,name_localization_id)
-			VALUES
+			VALUES 
 			(nextval('dictionary_seq'),'Y','IgM DETECTED',now(),'IgM DETECTED',
 			(select id from dictionary_category where name = 'Haiti Lab'),
 			'dictionary.result.IgmDetected',54400,null),
@@ -347,7 +347,7 @@
                 <sql>
 			INSERT INTO clinlims.localization(
         		id, description, english, french, lastupdated)
-        		VALUES
+        		VALUES 
          		(nextval('localization_seq'),'test name','COVID-19 ANTIBODY IgM','COVID-19 ANITBODY IgM', now()),
          		(nextval('localization_seq'),'test report name','IgM to SARS-CoV-2 by EIA or LFA','IgM to SARS-CoV-2 by EIA or LFA', now());
                 </sql>
@@ -1074,6 +1074,19 @@
 			null,'f');
                 </sql>
         </changeSet>
+		
+        <changeSet author="csteele" id="331">
+		<preConditions onFail="MARK_RAN">
+                        <sqlCheck  expectedResult="1">SELECT count(*) FROM clinlims.test WHERE description = 'HIVINFANTVIRALLOAD(Plasma)' AND reporting_name_localization_id IS NULL</sqlCheck> 
+                </preConditions>
+
+                <sql>
+			UPDATE clinlims.test 
+			SET reporting_name_localization_id = (select id from localization where description = 'test report name' and english = 'HIV-1 DNA by qRT-PCR' limit 1)
+			WHERE description = 'HIVINFANTVIRALLOAD(Plasma)';
+                </sql>
+        </changeSet>
+        
         
         <changeSet author="rossumg" id="340">
 		<preConditions onFail="MARK_RAN">
@@ -1153,6 +1166,18 @@
 			(select id from localization where description = 'test name' and english = 'HIV INFANT VIRAL LOAD' limit 1),
 			(select id from localization where description = 'test report name' and english = 'HIV INFANT VIRAL LOAD' limit 1),
 			null,'f');
+                </sql>
+        </changeSet>
+		
+        <changeSet author="csteele" id="336">
+		<preConditions onFail="MARK_RAN">
+                        <sqlCheck  expectedResult="1">SELECT count(*) FROM clinlims.test WHERE description = 'HIVINFANTVIRALLOAD(DBS)' AND reporting_name_localization_id IS NULL</sqlCheck> 
+                </preConditions>
+
+                <sql>
+			UPDATE clinlims.test 
+			SET reporting_name_localization_id = (select id from localization where description = 'test report name' and english = 'HIV-1 DNA by qRT-PCR' limit 1)
+			WHERE description = 'HIVINFANTVIRALLOAD(DBS)';
                 </sql>
         </changeSet>
         
@@ -1686,6 +1711,453 @@
 			null,null,'N',null,2,null,null,now(),null,1,'f','t','f');
                 </sql>
         </changeSet>
-		
 
+        <changeSet author="rossumg" id="624">
+		<preConditions onFail="MARK_RAN">
+			<sqlCheck  expectedResult="0">SELECT count(*) FROM clinlims.dictionary WHERE dict_entry = 'SARS-COV-2 RNA NOT DETECTED' </sqlCheck> 
+                </preConditions>
+
+                <sql>
+                INSERT INTO clinlims.dictionary(id,is_active,dict_entry,lastupdated,local_abbrev,dictionary_category_id,display_key,sort_order,name_localization_id)
+			VALUES
+			(nextval('dictionary_seq'),'Y','SARS-COV-2 RNA NOT DETECTED',now(),'SARS-COV-2 RNA NOT DETECTED',
+			(select id from dictionary_category where name = 'Haiti Lab'),
+			'dictionary.result.sarscov2NotDetected',54510,null),
+			(nextval('dictionary_seq'),'Y','SARS-CoV-2 RNA DETECTED',now(),'SARS-CoV-2 RNA DETECTED',
+			(select id from dictionary_category where name = 'Haiti Lab'),
+			'dictionary.result.sarscov2Detected',54520,null),
+			
+			(nextval('dictionary_seq'),'Y','RETEST - INCONCLUSIVE',now(),'RETEST - INCONCLUSIVE',
+			(select id from dictionary_category where name = 'Haiti Lab'),
+			'dictionary.result.sarscov2Inconclusive',54530,null);
+                </sql>
+        </changeSet>
+        
+        <changeSet author="csteele" id="625">
+			<preConditions onFail="MARK_RAN">
+				<sqlCheck  expectedResult="1">
+				SELECT count(*) 
+				FROM clinlims.test_result 
+				WHERE tst_rslt_type = 'N'
+				AND test_id = (select id from test where description = 'COVIDPCR(Respiratory Swab)' limit 1)
+				</sqlCheck> 
+	        </preConditions>
+	        <sql splitStatements="true">
+	        	DELETE FROM clinlims.test_result 
+	        	WHERE tst_rslt_type = 'N' AND test_id = (select id from test where description = 'COVIDPCR(Respiratory Swab)' limit 1);
+				
+				INSERT INTO clinlims.test_result(id,test_id,result_group,flags,tst_rslt_type,value,significant_digits,quant_limit,cont_level,lastupdated,scriptlet_id,sort_order,is_quantifiable,is_active,is_normal)
+				VALUES 
+					(nextval('test_result_seq'),
+					(select id from test where description = 'COVIDPCR(Respiratory Swab)' limit 1),
+					null,null,'D',
+					(select id from dictionary where dict_entry = 'SARS-COV-2 RNA NOT DETECTED' limit 1),
+					null,null,null,now(),null,1,'f','t','f'),
+					(nextval('test_result_seq'),
+					(select id from test where description = 'COVIDPCR(Respiratory Swab)' limit 1),
+					null,null,'D',
+					(select id from dictionary where dict_entry = 'SARS-CoV-2 RNA DETECTED' limit 1),
+					null,null,null,now(),null,1,'f','t','f'),
+					(nextval('test_result_seq'),
+					(select id from test where description = 'COVIDPCR(Respiratory Swab)' limit 1),
+					null,null,'D',
+					(select id from dictionary where dict_entry = 'RETEST - INCONCLUSIVE' limit 1),
+					null,null,null,now(),null,1,'f','t','f'),
+					(nextval('test_result_seq'),
+					(select id from test where description = 'COVIDPCR(Respiratory Swab)' limit 1),
+					null,null,'D',
+					(select id from dictionary where dict_entry = 'Invalid' limit 1),
+					null,null,null,now(),null,1,'f','t','f');
+	        	
+	        	UPDATE clinlims.test t
+				SET default_test_result_id = (
+					SELECT tr.id 
+					FROM clinlims.test_result tr
+					WHERE CAST (tr.value as NUMERIC) in (
+						SELECT d.id FROM clinlims.dictionary d
+						WHERE d.dict_entry = 'SARS-COV-2 RNA NOT DETECTED'
+					)
+					AND tr.test_id = t.id
+				)
+				WHERE description = 'COVIDPCR(Respiratory Swab)';
+				
+				UPDATE clinlims.result_limits rl 
+				SET normal_dictionary_id = (
+					SELECT d.id FROM clinlims.dictionary d
+					WHERE d.dict_entry = 'SARS-COV-2 RNA NOT DETECTED'
+				)
+				WHERE rl.test_id in (
+					SELECT id FROM clinlims.test
+					WHERE description = 'COVIDPCR(Respiratory Swab)'
+				);
+	        </sql>
+        </changeSet>
+        
+        <changeSet author="csteele" id="630">
+			<preConditions onFail="MARK_RAN">
+				<sqlCheck  expectedResult="1">
+				SELECT count(*) 
+				FROM clinlims.test_result 
+				WHERE tst_rslt_type = 'N'
+				AND test_id = (select id from test where description = 'COVIDPCR(Sputum)' limit 1)
+				</sqlCheck> 
+	        </preConditions>
+	        <sql splitStatements="true">
+	        	DELETE FROM clinlims.test_result 
+	        	WHERE tst_rslt_type = 'N' AND test_id = (select id from test where description = 'COVIDPCR(Sputum)' limit 1);
+	        	
+				INSERT INTO clinlims.test_result(id,test_id,result_group,flags,tst_rslt_type,value,significant_digits,quant_limit,cont_level,lastupdated,scriptlet_id,sort_order,is_quantifiable,is_active,is_normal)
+				VALUES 
+					(nextval('test_result_seq'),
+					(select id from test where description = 'COVIDPCR(Sputum)' limit 1),
+					null,null,'D',
+					(select id from dictionary where dict_entry = 'SARS-COV-2 RNA NOT DETECTED' limit 1),
+					null,null,null,now(),null,1,'f','t','f'),
+					(nextval('test_result_seq'),
+					(select id from test where description = 'COVIDPCR(Sputum)' limit 1),
+					null,null,'D',
+					(select id from dictionary where dict_entry = 'SARS-CoV-2 RNA DETECTED' limit 1),
+					null,null,null,now(),null,1,'f','t','f'),
+					(nextval('test_result_seq'),
+					(select id from test where description = 'COVIDPCR(Sputum)' limit 1),
+					null,null,'D',
+					(select id from dictionary where dict_entry = 'RETEST - INCONCLUSIVE' limit 1),
+					null,null,null,now(),null,1,'f','t','f'),
+					(nextval('test_result_seq'),
+					(select id from test where description = 'COVIDPCR(Sputum)' limit 1),
+					null,null,'D',
+					(select id from dictionary where dict_entry = 'Invalid' limit 1),
+					null,null,null,now(),null,1,'f','t','f');
+	        	
+	        	UPDATE clinlims.test t
+				SET default_test_result_id = (
+					SELECT tr.id 
+					FROM clinlims.test_result tr
+					WHERE CAST (tr.value as NUMERIC) in (
+						SELECT d.id FROM clinlims.dictionary d
+						WHERE d.dict_entry = 'SARS-COV-2 RNA NOT DETECTED'
+					)
+					AND tr.test_id = t.id
+				)
+				WHERE description = 'COVIDPCR(Sputum)';
+				
+				UPDATE clinlims.result_limits rl 
+				SET normal_dictionary_id = (
+					SELECT d.id FROM clinlims.dictionary d
+					WHERE d.dict_entry = 'SARS-COV-2 RNA NOT DETECTED'
+				)
+				WHERE rl.test_id in (
+					SELECT id FROM clinlims.test
+					WHERE description = 'COVIDPCR(Sputum)'
+				);
+	        </sql>
+        </changeSet>
+        
+        <changeSet author="csteele" id="631">
+			<preConditions onFail="MARK_RAN">
+				<sqlCheck  expectedResult="1">
+				SELECT count(*) 
+				FROM clinlims.test_result 
+				WHERE tst_rslt_type = 'N'
+				AND test_id = (select id from test where description = 'COVIDPCR(Fluid)' limit 1)
+				</sqlCheck> 
+	        </preConditions>
+	        <sql splitStatements="true">
+	        	DELETE FROM clinlims.test_result 
+	        	WHERE tst_rslt_type = 'N' AND test_id = (select id from test where description = 'COVIDPCR(Fluid)' limit 1);
+	        	INSERT INTO clinlims.test_result(id,test_id,result_group,flags,tst_rslt_type,value,significant_digits,quant_limit,cont_level,lastupdated,scriptlet_id,sort_order,is_quantifiable,is_active,is_normal)
+				VALUES 
+					(nextval('test_result_seq'),
+					(select id from test where description = 'COVIDPCR(Fluid)' limit 1),
+					null,null,'D',
+					(select id from dictionary where dict_entry = 'SARS-COV-2 RNA NOT DETECTED' limit 1),
+					null,null,null,now(),null,1,'f','t','f'),
+					(nextval('test_result_seq'),
+					(select id from test where description = 'COVIDPCR(Fluid)' limit 1),
+					null,null,'D',
+					(select id from dictionary where dict_entry = 'SARS-CoV-2 RNA DETECTED' limit 1),
+					null,null,null,now(),null,1,'f','t','f'),
+					(nextval('test_result_seq'),
+					(select id from test where description = 'COVIDPCR(Fluid)' limit 1),
+					null,null,'D',
+					(select id from dictionary where dict_entry = 'RETEST - INCONCLUSIVE' limit 1),
+					null,null,null,now(),null,1,'f','t','f'),
+					(nextval('test_result_seq'),
+					(select id from test where description = 'COVIDPCR(Fluid)' limit 1),
+					null,null,'D',
+					(select id from dictionary where dict_entry = 'Invalid' limit 1),
+					null,null,null,now(),null,1,'f','t','f');
+	        	
+	        	UPDATE clinlims.test t
+				SET default_test_result_id = (
+					SELECT tr.id 
+					FROM clinlims.test_result tr
+					WHERE CAST (tr.value as NUMERIC) in (
+						SELECT d.id FROM clinlims.dictionary d
+						WHERE d.dict_entry = 'SARS-COV-2 RNA NOT DETECTED'
+					)
+					AND tr.test_id = t.id
+				)
+				WHERE description = 'COVIDPCR(Fluid)';
+				
+				UPDATE clinlims.result_limits rl 
+				SET normal_dictionary_id = (
+					SELECT d.id FROM clinlims.dictionary d
+					WHERE d.dict_entry = 'SARS-COV-2 RNA NOT DETECTED'
+				)
+				WHERE rl.test_id in (
+					SELECT id FROM clinlims.test
+					WHERE description = 'COVIDPCR(Fluid)'
+				);
+	        </sql>
+        </changeSet>
+        
+        <changeSet author="csteele" id="635">
+			<preConditions onFail="MARK_RAN">
+				<sqlCheck  expectedResult="1">
+				SELECT count(*) 
+				FROM clinlims.test t 
+				WHERE description = 'COVID-19ANTIBODYIgM(Serum)'
+				AND default_test_result_id is NULL
+				</sqlCheck> 
+	        </preConditions>
+	        <sql splitStatements="true">
+	        	UPDATE clinlims.test t
+				SET default_test_result_id = (
+					SELECT tr.id 
+					FROM clinlims.test_result tr
+					WHERE CAST (tr.value as NUMERIC) in (
+						SELECT d.id FROM clinlims.dictionary d
+						WHERE d.dict_entry = 'IgM NOT DETECTED'
+					)
+					AND tr.test_id = t.id
+				)
+				WHERE description = 'COVID-19ANTIBODYIgM(Serum)';
+				
+				UPDATE clinlims.result_limits rl 
+				SET normal_dictionary_id = (
+					SELECT d.id FROM clinlims.dictionary d
+					WHERE d.dict_entry = 'IgM NOT DETECTED'
+				)
+				WHERE rl.test_id in (
+				SELECT id FROM clinlims.test
+				WHERE description = 'COVID-19ANTIBODYIgM(Serum)'
+				);
+	        </sql>
+        </changeSet>
+        
+        <changeSet author="csteele" id="640">
+			<preConditions onFail="MARK_RAN">
+				<sqlCheck  expectedResult="1">
+				SELECT count(*) 
+				FROM clinlims.test t 
+				WHERE description = 'COVID-19ANTIBODYIgM(Plasma)'
+				AND default_test_result_id is NULL
+				</sqlCheck> 
+	        </preConditions>
+	        <sql splitStatements="true">
+	        	UPDATE clinlims.test t
+				SET default_test_result_id = (
+					SELECT tr.id 
+					FROM clinlims.test_result tr
+					WHERE CAST (tr.value as NUMERIC) in (
+						SELECT d.id FROM clinlims.dictionary d
+						WHERE d.dict_entry = 'IgM NOT DETECTED'
+					)
+					AND tr.test_id = t.id
+				)
+				WHERE description = 'COVID-19ANTIBODYIgM(Plasma)';
+				
+				UPDATE clinlims.result_limits rl 
+				SET normal_dictionary_id = (
+					SELECT d.id FROM clinlims.dictionary d
+					WHERE d.dict_entry = 'IgM NOT DETECTED'
+				)
+				WHERE rl.test_id in (
+				SELECT id FROM clinlims.test
+				WHERE description = 'COVID-19ANTIBODYIgM(Plasma)'
+				);
+	        </sql>
+        </changeSet>
+        
+        <changeSet author="csteele" id="645">
+			<preConditions onFail="MARK_RAN">
+				<sqlCheck  expectedResult="1">
+				SELECT count(*) 
+				FROM clinlims.test t 
+				WHERE description = 'COVID-19ANTIBODYIgG(Serum)'
+				AND default_test_result_id is NULL
+				</sqlCheck> 
+	        </preConditions>
+	        <sql splitStatements="true">
+	        	UPDATE clinlims.test t
+				SET default_test_result_id = (
+					SELECT tr.id 
+					FROM clinlims.test_result tr
+					WHERE CAST (tr.value as NUMERIC) in (
+						SELECT d.id FROM clinlims.dictionary d
+						WHERE d.dict_entry = 'IgG NOT DETECTED'
+					)
+					AND tr.test_id = t.id
+				)
+				WHERE description = 'COVID-19ANTIBODYIgG(Serum)';
+				
+				UPDATE clinlims.result_limits rl 
+				SET normal_dictionary_id = (
+					SELECT d.id FROM clinlims.dictionary d
+					WHERE d.dict_entry = 'IgG NOT DETECTED'
+				)
+				WHERE rl.test_id in (
+				SELECT id FROM clinlims.test
+				WHERE description = 'COVID-19ANTIBODYIgG(Serum)'
+				);
+	        </sql>
+        </changeSet>
+        
+        <changeSet author="csteele" id="650">
+			<preConditions onFail="MARK_RAN">
+				<sqlCheck  expectedResult="1">
+				SELECT count(*) 
+				FROM clinlims.test t 
+				WHERE description = 'COVID-19ANTIBODYIgG(Plasma)'
+				AND default_test_result_id is NULL
+				</sqlCheck> 
+	        </preConditions>
+	        <sql splitStatements="true">
+	        	UPDATE clinlims.test t
+				SET default_test_result_id = (
+					SELECT tr.id 
+					FROM clinlims.test_result tr
+					WHERE CAST (tr.value as NUMERIC) in (
+						SELECT d.id FROM clinlims.dictionary d
+						WHERE d.dict_entry = 'IgG NOT DETECTED'
+					)
+					AND tr.test_id = t.id
+				)
+				WHERE description = 'COVID-19ANTIBODYIgG(Plasma)';
+				
+				UPDATE clinlims.result_limits rl 
+				SET normal_dictionary_id = (
+					SELECT d.id FROM clinlims.dictionary d
+					WHERE d.dict_entry = 'IgG NOT DETECTED'
+				)
+				WHERE rl.test_id in (
+				SELECT id FROM clinlims.test
+				WHERE description = 'COVID-19ANTIBODYIgG(Plasma)'
+				);
+	        </sql>
+        </changeSet>
+        
+        <changeSet author="csteele" id="655">
+			<preConditions onFail="MARK_RAN">
+				<sqlCheck  expectedResult="0">
+				SELECT count(*) 
+				FROM clinlims.test 
+				WHERE description like 'COVID-19ANTIBODYIgG(%)'
+				AND loinc = '94547-7'
+				</sqlCheck> 
+	        </preConditions>
+	        <sql >
+        		UPDATE clinlims.test 
+        		SET loinc = '94547-7'
+        		WHERE description like 'COVID-19ANTIBODYIgG(%)'
+        	</sql>
+        </changeSet>
+        
+        <changeSet author="csteele" id="660">
+			<preConditions onFail="MARK_RAN">
+				<sqlCheck  expectedResult="0">
+				SELECT count(*) 
+				FROM clinlims.test 
+				WHERE description like 'COVID-19ANTIBODYIgM(%)'
+				AND loinc = '94547-7'
+				</sqlCheck> 
+	        </preConditions>
+	        <sql>
+        		UPDATE clinlims.test 
+        		SET loinc = '94547-7'
+        		WHERE description like 'COVID-19ANTIBODYIgM(%)'
+        	</sql>
+        </changeSet>
+        
+        <changeSet author="csteele" id="665">
+			<preConditions onFail="MARK_RAN">
+				<sqlCheck  expectedResult="0">
+				SELECT count(*) 
+				FROM clinlims.test 
+				WHERE description like 'DENGUEPCR(%)'
+				AND loinc = '7855-0'
+				</sqlCheck> 
+	        </preConditions>
+	        <sql>
+        		UPDATE clinlims.test 
+        		SET loinc = '7855-0'
+        		WHERE description like 'DENGUEPCR(%)'
+        	</sql>
+        </changeSet>
+        
+        <changeSet author="csteele" id="670">
+			<preConditions onFail="MARK_RAN">
+				<sqlCheck  expectedResult="0">
+				SELECT count(*) 
+				FROM clinlims.test 
+				WHERE description like 'HIVVIRALLOAD(%)'
+				AND loinc = '10351-5'
+				</sqlCheck> 
+	        </preConditions>
+	        <sql>
+        		UPDATE clinlims.test 
+        		SET loinc = '10351-5'
+        		WHERE description like 'HIVVIRALLOAD(%)'
+        	</sql>
+        </changeSet>
+        
+        <changeSet author="csteele" id="675">
+			<preConditions onFail="MARK_RAN">
+				<sqlCheck  expectedResult="0">
+				SELECT count(*) 
+				FROM clinlims.test 
+				WHERE description like 'HEPATITISCVIRALLOAD(%)'
+				AND loinc = '11011-4'
+				</sqlCheck> 
+	        </preConditions>
+	        <sql>
+        		UPDATE clinlims.test 
+        		SET loinc = '11011-4'
+        		WHERE description like 'HEPATITISCVIRALLOAD(%)'
+        	</sql>
+        </changeSet>
+        
+        <changeSet author="csteele" id="680">
+			<preConditions onFail="MARK_RAN">
+				<sqlCheck  expectedResult="0">
+				SELECT count(*) 
+				FROM clinlims.test 
+				WHERE description like 'HEPATITISBVIRALLOAD(%)'
+				AND loinc = '29615-2'
+				</sqlCheck> 
+	        </preConditions>
+	        <sql>
+        		UPDATE clinlims.test 
+        		SET loinc = '29615-2'
+        		WHERE description like 'HEPATITISBVIRALLOAD(%)'
+        	</sql>
+        </changeSet>
+        
+        <changeSet author="csteele" id="685">
+			<preConditions onFail="MARK_RAN">
+				<sqlCheck  expectedResult="0">
+				SELECT count(*) 
+				FROM clinlims.test 
+				WHERE description like 'HIVINFANTVIRALLOAD(%)'
+				AND loinc = ''
+				</sqlCheck> 
+	        </preConditions>
+	        <sql>
+        		UPDATE clinlims.test 
+        		SET loinc = ''
+        		WHERE description like 'HIVINFANTVIRALLOAD(%)'
+        	</sql>
+        </changeSet>
+        
 </databaseChangeLog>

@@ -92,7 +92,7 @@ bash ${INSTALL_DIR}/createDefaultPassword.sh
 
 echo "creating docker images"
 #create jpaserver docker image
-bash ${INSTALL_DIR}/buildProject.sh -dl ${JPA_SERVER_DIR}
+#bash ${INSTALL_DIR}/buildProject.sh -dl ${JPA_SERVER_DIR}
 #create dataexport jar so it can be used in OpenELIS
 bash ${INSTALL_DIR}/buildProject.sh -l ${DATA_EXPORT_DIR}
 #create data import docker image
@@ -143,7 +143,9 @@ then
 	docker pull postgres:9.5
 	docker save postgres:9.5 | gzip > Postgres_DockerImage.tar.gz
 	echo "saving JPA Server docker image"
-	docker save hapi-fhir-jpaserver-starter:latest | gzip > JPAServer_DockerImage.tar.gz
+	docker pull hapiproject/hapi:v5.4.0
+	docker save hapiproject/hapi:v5.4.0 | gzip > JPAServer_DockerImage.tar.gz
+#	docker save hapi-fhir-jpaserver-starter:latest | gzip > JPAServer_DockerImage.tar.gz
 #	echo "saving Data Importer docker image"
 #	docker save dataimport-webapp:latest | gzip > DataImporter_DockerImage.tar.gz
 #	echo "saving Data Subscriber docker image"

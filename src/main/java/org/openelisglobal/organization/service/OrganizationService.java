@@ -51,4 +51,6 @@ public interface OrganizationService extends BaseObjectService<Organization, Str
     Organization getOrganizationByName(Organization organization, boolean ignoreCase);
 
     List<Organization> getActiveOrganizations();
+
+    Organization getOrganizationByFhirId(String idPart);
 }

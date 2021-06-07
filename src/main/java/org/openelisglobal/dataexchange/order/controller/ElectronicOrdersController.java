@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.openelisglobal.common.controller.BaseController;
+import org.openelisglobal.common.services.StatusService.ExternalOrderStatus;
 import org.openelisglobal.dataexchange.order.ElectronicOrderSortOrderCategoryConvertor;
 import org.openelisglobal.dataexchange.order.form.ElectronicOrderViewForm;
 import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder;
@@ -24,7 +25,8 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class ElectronicOrdersController extends BaseController {
 
-    private static final String[] ALLOWED_FIELDS = new String[] { "searchValue", "page", "sortOrder" };
+    private static final String[] ALLOWED_FIELDS = new String[] { "searchValue", "page", "sortOrder",
+            "excludedStatuses" };
 
     @Autowired
     private StatusOfSampleService statusOfSampleService;
@@ -49,8 +51,12 @@ public class ElectronicOrdersController extends BaseController {
             form.setPage(1);
         }
         List<ElectronicOrder> eOrders;
+        form.getExcludedStatuses().add(ExternalOrderStatus.Realized);
+        form.getExcludedStatuses().add(ExternalOrderStatus.NonConforming);
 
-        eOrders = electronicOrderService.getAllElectronicOrdersContainingValueOrderedBy(form.getSearchValue(),
+
+        eOrders = electronicOrderService.getElectronicOrdersContainingValueExludedByOrderedBy(form.getSearchValue(),
+                form.getExcludedStatuses(),
                 form.getSortOrder());
         // correct for proper bounds
         int startIndex = (form.getPage() - 1) * 50;

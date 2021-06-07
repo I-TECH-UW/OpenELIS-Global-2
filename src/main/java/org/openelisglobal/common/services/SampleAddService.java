@@ -28,6 +28,7 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.formfields.FormFields.Field;
 import org.openelisglobal.common.log.LogEvent;
@@ -249,12 +250,16 @@ public class SampleAddService {
 
     public final class SampleTestCollection {
         public SampleItem item;
+
         public List<Test> tests;
         public String collectionDate;
         public List<ObservationHistory> initialSampleConditionIdList;
         public Map<String, String> testIdToUserSectionMap;
         public Map<String, String> testIdToUserSampleTypeMap;
         public ObservationHistory sampleNature;
+
+        // gets added as they are persisted
+        public List<Analysis> analysises;
 
         public SampleTestCollection(SampleItem item, List<Test> tests, String collectionDate,
                 List<ObservationHistory> initialConditionList, Map<String, String> testIdToUserSectionMap,

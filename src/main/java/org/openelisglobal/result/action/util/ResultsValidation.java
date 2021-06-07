@@ -14,6 +14,7 @@ import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.formfields.FormFields.Field;
 import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.util.ConfigurationListener;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.validator.CustomDateValidator;
@@ -28,20 +29,22 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.Errors;
 
 @Service
-public class ResultsValidation {
+public class ResultsValidation implements ConfigurationListener {
 
     private static final String SPECIAL_CASE = "XXXX";
-    private boolean supportReferrals = FormFields.getInstance().useField(Field.ResultsReferral);
-    private boolean useTechnicianName = ConfigurationProperties.getInstance()
-            .isPropertyValueEqual(Property.resultTechnicianName, "true");
-    private boolean noteRequiredForChangedResults = false;
-    private boolean useRejected = ConfigurationProperties.getInstance()
-            .isPropertyValueEqual(Property.allowResultRejection, "true");
+    private boolean supportReferrals;
+    private boolean useTechnicianName;
+    private boolean noteRequiredForChangedResults;
+    private boolean useRejected;
 
     @Autowired
     private ResultService resultService;
     @Autowired
     private AnalysisService analysisService;
+
+    public ResultsValidation() {
+        refreshConfiguration();
+    }
 
     public Errors validateItem(TestResultItem item) {
         Errors errors = new BaseErrors();
@@ -70,9 +73,6 @@ public class ResultsValidation {
     }
 
     public Errors validateModifiedItems(List<TestResultItem> modifiedItems) {
-        noteRequiredForChangedResults = "true"
-                .equals(ConfigurationProperties.getInstance().getPropertyValue(Property.notesRequiredForModifyResults));
-
         Errors errors = new BaseErrors();
 
         for (TestResultItem item : modifiedItems) {
@@ -216,15 +216,22 @@ public class ResultsValidation {
                 return;
             }
         }
-
-        if (GenericValidator.isBlankOrNull(item.getTechnician())) {
-            errors.reject("errors.signature.required");
-        }
     }
 
     private void validateRejection(TestResultItem item, Errors errors) {
         if (item.isRejected() && "0".equals(item.getRejectReasonId())) {
             errors.reject("error.reject.noReason");
         }
+    }
+
+    @Override
+    public void refreshConfiguration() {
+        supportReferrals = FormFields.getInstance().useField(Field.ResultsReferral);
+        useTechnicianName = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.resultTechnicianName,
+                "true");
+        noteRequiredForChangedResults = "true"
+                .equals(ConfigurationProperties.getInstance().getPropertyValue(Property.notesRequiredForModifyResults));
+        useRejected = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.allowResultRejection, "true");
+
     }
 }

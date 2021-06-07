@@ -1,12 +1,14 @@
 package org.openelisglobal.organization.service;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Endpoint;
 import org.hl7.fhir.r4.model.Resource;
 import org.openelisglobal.common.util.validator.GenericValidator;
+import org.openelisglobal.dataexchange.fhir.exception.FhirTransformationException;
 import org.openelisglobal.dataexchange.fhir.service.FhirPersistanceService;
 import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
 import org.openelisglobal.organization.valueholder.Organization;
@@ -30,7 +32,7 @@ public class OrganizationExportServiceImpl implements OrganizationExportService 
 
     @Transactional(readOnly = true)
     @Override
-    public String exportFhirOrganizationsFromOrganizations(boolean active) {
+    public String exportFhirOrganizationsFromOrganizations(boolean active) throws FhirTransformationException {
         List<Organization> organizations;
         if (active) {
             organizations = organizationService.getActiveOrganizations();
@@ -39,21 +41,23 @@ public class OrganizationExportServiceImpl implements OrganizationExportService 
         }
         int i = 0;
 
-        List<Resource> resources = new ArrayList<>();
+        Map<String, Resource> resources = new HashMap<>();
         for (Organization organization : organizations) {
             org.hl7.fhir.r4.model.Organization fhirOrganization = fhirTransformService
-                    .organizationToFhirOrganization(organization);
-            resources.add(fhirOrganization);
+                    .transformToFhirOrganization(organization);
+            if (!resources.containsKey(fhirOrganization.getIdElement().getIdPart())) {
+                resources.put(fhirOrganization.getIdElement().getIdPart(), fhirOrganization);
+            }
 
             if (!GenericValidator.isBlankOrNull(organization.getInternetAddress())) {
                 Endpoint endpoint = addFhirConnectionInfo(fhirOrganization, organization, String.valueOf(++i));
-                resources.add(endpoint);
+                resources.put(endpoint.getIdElement().getIdPart(), endpoint);
             }
             if (organization.getOrganization() != null) {
                 org.hl7.fhir.r4.model.Organization parentFhirOrganization = addFhirParentOrg(fhirOrganization,
                         organization);
-                if (resources.stream().noneMatch(e -> e.getId().equals(parentFhirOrganization.getId()))) {
-                    resources.add(parentFhirOrganization);
+                if (!resources.containsKey(parentFhirOrganization.getIdElement().getIdPart())) {
+                    resources.put(parentFhirOrganization.getIdElement().getIdPart(), parentFhirOrganization);
                 }
             }
         }
@@ -71,9 +75,9 @@ public class OrganizationExportServiceImpl implements OrganizationExportService 
     }
 
     private org.hl7.fhir.r4.model.Organization addFhirParentOrg(org.hl7.fhir.r4.model.Organization fhirOrganization,
-            Organization organization) {
+            Organization organization) throws FhirTransformationException {
         org.hl7.fhir.r4.model.Organization partOfOrg = fhirTransformService
-                .organizationToFhirOrganization(organization.getOrganization());
+                .transformToFhirOrganization(organization.getOrganization());
         fhirOrganization.setPartOf(fhirTransformService.createReferenceFor(partOfOrg));
         return partOfOrg;
     }

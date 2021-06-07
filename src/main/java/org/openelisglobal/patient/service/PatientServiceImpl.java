@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 
@@ -17,7 +18,6 @@ import org.openelisglobal.common.service.BaseObjectServiceImpl;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.validator.GenericValidator;
 import org.openelisglobal.dataexchange.fhir.service.FhirPersistanceService;
-import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
 import org.openelisglobal.gender.service.GenderService;
 import org.openelisglobal.gender.valueholder.Gender;
 import org.openelisglobal.patient.action.IPatientUpdate.PatientUpdateStatus;
@@ -91,8 +91,6 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String> i
     private PatientPatientTypeService patientPatientTypeService;
     @Autowired
     private PersonService personService;
-    @Autowired
-    protected FhirTransformService fhirTransformService;
     @Autowired
     protected FhirPersistanceService fhirPersistanceService;
 
@@ -202,6 +200,14 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String> i
     @Override
     protected PatientDAO getBaseObjectDAO() {
         return baseObjectDAO;
+    }
+
+    @Override
+    public String insert(Patient patient) {
+        if (patient.getFhirUuid() == null) {
+            patient.setFhirUuid(UUID.randomUUID());
+        }
+        return super.insert(patient);
     }
 
     public static String getPatientSTIdentity() {
@@ -613,22 +619,19 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String> i
         }
         patient.setPerson(patient.getPerson());
 
-        org.hl7.fhir.r4.model.Patient fhirPatient = fhirTransformService.CreateFhirPatientFromOEPatient(patientInfo);
         if (patientInfo.getPatientUpdateStatus() == PatientUpdateStatus.ADD) {
+            UUID uuid = UUID.randomUUID();
+//            patientInfo.setFhirUuid(uuid);
+            patientInfo.setGuid(uuid.toString());
+            patient.setFhirUuid(uuid);
             insert(patient);
-            org.hl7.fhir.r4.model.Bundle pBundle = fhirPersistanceService.createFhirResourceInFhirStore(fhirPatient);
-            patientInfo.setGuid(
-                    fhirTransformService.getIdFromLocation(pBundle.getEntryFirstRep().getResponse().getLocation()));
         } else if (patientInfo.getPatientUpdateStatus() == PatientUpdateStatus.UPDATE) {
-            org.hl7.fhir.r4.model.Patient oldFhirPatient = fhirTransformService.getFhirPatientOrCreate(patientInfo);
-            fhirPatient.setId(oldFhirPatient.getIdElement());
             update(patient);
-            patientInfo.setGuid(fhirPatient.getIdElement().getIdPart());
-            org.hl7.fhir.r4.model.Bundle pBundle = fhirPersistanceService.updateFhirResourceInFhirStore(fhirPatient);
         }
 
         persistContact(patientInfo, patient);
         persistPatientRelatedInformation(patientInfo, patient, sysUserId);
+        patientInfo.setPatientPK(patient.getId());
     }
 
     private void persistContact(PatientManagementInfo patientInfo, Patient patient) {
@@ -817,6 +820,11 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String> i
                 patientPatientTypeService.update(patientPatientType);
             }
         }
+    }
+
+    @Override
+    public List<Patient> getAllMissingFhirUuid() {
+        return baseObjectDAO.getAllMissingFhirUuid();
     }
 
 }

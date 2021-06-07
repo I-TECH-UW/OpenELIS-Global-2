@@ -54,16 +54,31 @@ jQuery(window).load(function(){
 	jQuery('button.nextButton').each(function(){
 		jQuery(this).prop('disabled', lastPage);
 	});
+	
+	// Get the input field
+	var input = document.getElementById("searchValue");
+
+	// Execute a function when the user releases a key on the keyboard
+	input.addEventListener("keyup", function(event) {
+	  // Number 13 is the "Enter" key on the keyboard
+	  if (event.keyCode === 13) {
+	    // Cancel the default action, if needed
+	    event.preventDefault();
+	    // Trigger the button element with a click
+	    document.getElementById("searchElectronicOrderButton").click();
+	  }
+	}); 
 });
 </script>
 <b><spring:message code="eorder.instruction"/></b><br>
 <form:input path="searchValue" id="searchValue" />
-<button type="button" onClick="searchElectronicOrders()"><spring:message code="label.button.search" /> </button><br>
+<button id="searchElectronicOrderButton" type="button" onClick="searchElectronicOrders()"><spring:message code="label.button.search" /> </button><br>
 <spring:message code="eorder.sort"/>: 
 <form:select path="sortOrder" id="sortOption" onchange="searchElectronicOrders()">
 	<form:options items="${form.sortOrderOptions}" itemValue="value" itemLabel="label" />
 </form:select>
 <form:hidden path="page"/>
+<form:hidden path="excludedStatuses" />
 
 <c:if test="${empty form.EOrders}">
 	<h2><spring:message code="eorder.noresults"/></h2>
@@ -83,7 +98,7 @@ jQuery(window).load(function(){
 					<h3>
 						<span><spring:message code="eorder.externalid"/>: 
 						<c:out value="${eOrder.externalId}"/>
-						<input type="button" 
+						<input type="button" id="searchButton"
 							onclick="location.href='SamplePatientEntry.do?ID=${eOrder.externalId}';" 
 							value="<spring:message code="eorder.enterorder"/>" /></span>
 						<span style="float:right"><spring:message code="eorder.lastupdated"/>: 

@@ -54,10 +54,10 @@ services:
             - source: datasource.password
             - source: common.properties
             - source: extra.properties
-            
+    
     fhir.openelis.org:
         container_name: [% fhir_api_name %]
-        image: hapi-fhir-jpaserver-starter
+        image: hapiproject/hapi:v5.4.0
 #db        depends_on:
 #db            - db.openelis.org
         ports:
@@ -67,12 +67,19 @@ services:
             - default
         restart: always
         environment:
-            - TZ=[% timezone %]
-            - JAVA_OPTS= -Dhapi.properties=/run/secrets/hapi.properties
+          SPRING_CONFIG_LOCATION: file:///run/secrets/hapi_application.yaml
+          TZ: [% timezone %]
+          JAVA_OPTS: "-Djavax.net.ssl.trustStore=/run/secrets/truststore 
+                      -Djavax.net.ssl.trustStorePassword=[% truststore_password %] 
+                      -Djavax.net.ssl.trustStoreType=pkcs12 
+                      -Djavax.net.ssl.keyStore=/run/secrets/keystore 
+                      -Djavax.net.ssl.keyStorePassword=[% keystore_password %] 
+                      -Djavax.net.ssl.keyStoreType=pkcs12"
+          
         volumes:
             - [% etc_dir %]hapi_server.xml:/usr/local/tomcat/conf/server.xml
         secrets:
-            - source: hapi.properties
+            - source: hapi_application.yaml
             - source: common.properties
             - source: keystore
             - source: truststore
@@ -84,8 +91,10 @@ secrets:
     file: [% secrets_dir %]common.properties  
   extra.properties:
     file: [% secrets_dir %]extra.properties  
-  hapi.properties:
-    file: [% secrets_dir %]hapi.properties
+#  hapi.properties:
+#    file: [% secrets_dir %]hapi.properties
+  hapi_application.yaml:
+     file: [% secrets_dir %]hapi_application.yaml
   client_facing_keystore:
     file: [% etc_dir %]client_facing_keystore
   keystore:

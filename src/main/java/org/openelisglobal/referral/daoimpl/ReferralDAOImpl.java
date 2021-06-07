@@ -19,6 +19,7 @@ package org.openelisglobal.referral.daoimpl;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.HibernateException;
@@ -28,6 +29,7 @@ import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.referral.dao.ReferralDAO;
 import org.openelisglobal.referral.valueholder.Referral;
+import org.openelisglobal.referral.valueholder.ReferralStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -89,22 +91,6 @@ public class ReferralDAOImpl extends BaseDAOImpl<Referral, String> implements Re
             }
         }
 
-        return null;
-    }
-
-    @Override
-
-    @Transactional(readOnly = true)
-    public List<Referral> getAllUncanceledOpenReferrals() throws LIMSRuntimeException {
-        String sql = "From Referral r where r.resultRecievedDate is NULL and r.canceled = 'false' order by r.id";
-
-        try {
-            Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            List<Referral> referrals = query.list();
-            return referrals;
-        } catch (HibernateException e) {
-            handleException(e, "getAllUncanceledOpenReferrals");
-        }
         return null;
     }
 
@@ -189,6 +175,21 @@ public class ReferralDAOImpl extends BaseDAOImpl<Referral, String> implements Re
             handleException(e, "getAllReferralsByOrganization");
         }
         return new ArrayList<>();
+    }
+
+    @Override
+    public List<Referral> getReferralsByStatus(List<ReferralStatus> statuses) {
+        String sql = "From Referral r where r.status in (:statuses) order by r.id";
+
+        try {
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setParameter("statuses", statuses.stream().map(e -> e.name()).collect(Collectors.toList()));
+            List<Referral> referrals = query.list();
+            return referrals;
+        } catch (HibernateException e) {
+            handleException(e, "getAllReferralsByStatus");
+        }
+        return null;
     }
 
 }

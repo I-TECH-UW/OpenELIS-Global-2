@@ -96,7 +96,7 @@ SITE_ID = ''
 KEYSTORE_PWD = ''
 TRUSTSTORE_PWD = ''
 ENCRYPTION_KEY = ''
-LOCAL_FHIR_SERVER_ADDRESS = 'https://fhir.openelis.org:8443/hapi-fhir-jpaserver/fhir/'
+LOCAL_FHIR_SERVER_ADDRESS = 'https://fhir.openelis.org:8443/fhir/'
 REMOTE_FHIR_SOURCE = 'https://isanteplusdemo.com/openmrs/ws/fhir2/'
 REMOTE_FHIR_SOURCE_UPDATE_STATUS = "false"
 CONSOLIDATED_SERVER_ADDRESS = 'https://hub.openelisci.org:8444/fhir'
@@ -319,6 +319,10 @@ def create_docker_compose_file():
             line = line.replace("[% fhir_api_name %]", DOCKER_FHIR_API_CONTAINER_NAME )
         if line.find("[% timezone %]")  >= 0:
             line = line.replace("[% timezone %]", TIMEZONE )
+        if line.find("[% truststore_password %]")  >= 0:
+            line = line.replace("[% truststore_password %]", TRUSTSTORE_PWD )
+        if line.find("[% keystore_password %]")  >= 0:
+            line = line.replace("[% keystore_password %]", KEYSTORE_PWD )
         
         output_file.write(line)
 
@@ -366,8 +370,8 @@ def create_properties_files():
     os.chmod(SECRETS_DIR + "extra.properties", 0640)   
     os.chown(SECRETS_DIR + 'extra.properties', 8443, 8443) 
     
-    template_file = open(INSTALLER_TEMPLATE_DIR + "hapi.properties", "r")
-    output_file = open(SECRETS_DIR + "hapi.properties", "w")
+    template_file = open(INSTALLER_TEMPLATE_DIR + "hapi_application.yaml", "r")
+    output_file = open(SECRETS_DIR + "hapi_application.yaml", "w")
 
     for line in template_file:
         #common attributes
@@ -388,8 +392,8 @@ def create_properties_files():
 
     template_file.close()
     output_file.close()
-    os.chmod(SECRETS_DIR + "hapi.properties", 0640)  
-    os.chown(SECRETS_DIR + 'hapi.properties', 8443, 8443)   
+    os.chmod(SECRETS_DIR + "hapi_application.yaml", 0640)  
+    os.chown(SECRETS_DIR + 'hapi_application.yaml', 8443, 8443)   
     
 
 def create_server_xml_files():

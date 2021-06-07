@@ -1,17 +1,21 @@
 package org.openelisglobal.dataexchange.order.form;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import org.openelisglobal.common.form.BaseForm;
+import org.openelisglobal.common.services.StatusService.ExternalOrderStatus;
 import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder;
 import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder.SortOrder;
 
 public class ElectronicOrderViewForm extends BaseForm {
     @NotNull
     private ElectronicOrder.SortOrder sortOrder = ElectronicOrder.SortOrder.STATUS_ID;
+
+    private List<ExternalOrderStatus> excludedStatuses = new ArrayList<>();
 
     @Min(1)
     private int page = 1;
@@ -66,5 +70,13 @@ public class ElectronicOrderViewForm extends BaseForm {
 
     public void setSearchValue(String searchValue) {
         this.searchValue = searchValue;
+    }
+
+    public List<ExternalOrderStatus> getExcludedStatuses() {
+        return excludedStatuses;
+    }
+
+    public void setExcludedStatuses(List<ExternalOrderStatus> excludedStatuses) {
+        this.excludedStatuses = excludedStatuses;
     }
 }

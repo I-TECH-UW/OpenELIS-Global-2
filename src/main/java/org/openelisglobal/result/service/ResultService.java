@@ -72,4 +72,6 @@ public interface ResultService extends BaseObjectService<Result, String> {
     String getResultValue(Result result, boolean printable);
 
     String getResultValueForDisplay(Result result, String string, boolean b, boolean c);
+
+    String getUOM(Result result);
 }

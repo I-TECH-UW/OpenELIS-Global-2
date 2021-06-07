@@ -1,14 +1,13 @@
 package org.openelisglobal.dataexchange.fhir.service;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.validator.GenericValidator;
 import org.hl7.fhir.r4.model.Address;
 import org.hl7.fhir.r4.model.ContactPoint;
+import org.hl7.fhir.r4.model.DateType;
 import org.hl7.fhir.r4.model.Enumerations.AdministrativeGender;
 import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Patient;
@@ -32,7 +31,6 @@ import org.springframework.stereotype.Service;
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.v251.segment.OBR;
-import ca.uhn.hl7v2.model.v251.segment.PID;
 
 @Service
 @Scope("prototype")
@@ -133,7 +131,7 @@ public class TaskInterpreterImpl implements TaskInterpreter {
     }
 
     private Test createTestFromFHIR(ServiceRequest serviceRequest) throws HL7Exception {
-        LogEvent.logDebug(this.getClass().getName(), "createTestFromFHIR", "TaskInterpreter:createTestFromFHIR:");
+        LogEvent.logDebug(this.getClass().getName(), "createTestFromFHIR", "start");
 
         String loincCode = "";
         String system = "";
@@ -152,6 +150,8 @@ public class TaskInterpreterImpl implements TaskInterpreter {
             i++;
         }
 
+        LogEvent.logError(this.getClass().getName(), "createTestFromFHIR",
+                "no test found for SR: " + serviceRequest.getIdElement().getIdPart());
         return null;
     }
 
@@ -174,12 +174,19 @@ public class TaskInterpreterImpl implements TaskInterpreter {
                 messagePatient.setStNumber(identifier.getValue());
             }
         }
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        Date birthDate = new Date();
-        birthDate = patient.getBirthDate();
-        String strDate = sdf.format(birthDate);
-        messagePatient.setDisplayDOB(strDate);
+        // TODO set fhirUUID of message patient
+        DateType birthDate = patient.getBirthDateElement();
+        if (birthDate != null) {
+            String day = birthDate.getDay() == null ? DateUtil.AMBIGUOUS_DATE_SEGMENT
+                    : String.format("%02d", birthDate.getDay());
+            String month = birthDate.getMonth() == null ? DateUtil.AMBIGUOUS_DATE_SEGMENT
+                    : String.format("%02d", birthDate.getMonth() + 1);
+            String year = birthDate.getYear() == null
+                    ? DateUtil.AMBIGUOUS_DATE_SEGMENT + DateUtil.AMBIGUOUS_DATE_SEGMENT
+                    : String.format("%04d", birthDate.getYear());
 
+            messagePatient.setDisplayDOB(day + "/" + month + "/" + year);
+        }
         if (AdministrativeGender.MALE.equals(patient.getGender())) {
             messagePatient.setGender("M");
         } else if (AdministrativeGender.FEMALE.equals(patient.getGender())) {
@@ -238,27 +245,6 @@ public class TaskInterpreterImpl implements TaskInterpreter {
         return messagePatient;
     }
 
-    private void setDOB(MessagePatient patient, PID pid) throws HL7Exception {
-        String dob = pid.getDateTimeOfBirth().encode();
-
-        if (dob.length() >= 4) {
-            String year = null;
-            String month = DateUtil.AMBIGUOUS_DATE_SEGMENT;
-            String date = DateUtil.AMBIGUOUS_DATE_SEGMENT;
-
-            year = dob.substring(0, 4);
-
-            if (dob.length() >= 6) {
-                month = dob.substring(4, 6);
-            }
-
-            if (dob.length() >= 8) {
-                date = dob.substring(6, 8);
-            }
-
-            patient.setDisplayDOB(date + "/" + month + "/" + year);
-        }
-    }
 
     private List<InterpreterResults> buildResultList(boolean exceptionThrown) {
         LogEvent.logDebug(this.getClass().getName(), "buildResultList", "buildResultList: " + exceptionThrown);
@@ -289,9 +275,9 @@ public class TaskInterpreterImpl implements TaskInterpreter {
                     results.add(InterpreterResults.MISSING_PATIENT_GENDER);
                 }
 
-//              if(getMessagePatient().getDob() == null){
-//                  results.add(InterpreterResults.MISSING_PATIENT_DOB);
-//              }
+                if (getMessagePatient().getDisplayDOB() == null) {
+                    results.add(InterpreterResults.MISSING_PATIENT_DOB);
+                }
 
                 if (getMessagePatient().getNationalId() == null && getMessagePatient().getObNumber() == null
                         && getMessagePatient().getPcNumber() == null && getMessagePatient().getStNumber() == null

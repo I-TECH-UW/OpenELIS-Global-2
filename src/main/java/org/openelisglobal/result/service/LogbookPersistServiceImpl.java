@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
@@ -64,6 +65,8 @@ public class LogbookPersistServiceImpl implements LogbookResultsPersistService {
         Sample checkSample = null;
         for (ResultSet resultSet : actionDataSet.getNewResults()) {
             resultSet.result.setResultEvent(Event.PRELIMINARY_RESULT);
+            resultSet.result.setFhirUuid(UUID.randomUUID());
+            String resultId = resultService.insert(resultSet.result);
             
             checkAnalysis = resultSet.result.getAnalysis();
             checkSampleItem = checkAnalysis.getSampleItem();
@@ -90,6 +93,7 @@ public class LogbookPersistServiceImpl implements LogbookResultsPersistService {
                 resultSet.testKit.setResultId(resultSet.result.getId());
                 resultInventoryService.insert(resultSet.testKit);
             }
+            resultSet.result.setId(resultId);
         }
 
         for (Referral referral : actionDataSet.getSavableReferrals()) {

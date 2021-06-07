@@ -99,7 +99,7 @@ public abstract class CovidResultsBuilderImpl implements CovidResultsBuilder {
 //                && analysis.getStartedDate().before(this.dateRange.getHighDate())).collect(Collectors.toList());
     }
 
-    protected Optional<Task> getTaskForAnalysis(Analysis analysis) {
+    protected Optional<Task> getReferringTaskForAnalysis(Analysis analysis) {
         IGenericClient client = fhirUtil.getFhirClient(fhirConfig.getLocalFhirStorePath());
         String serviceRequestId = analysis.getSampleItem().getSample().getReferringId();
         if (GenericValidator.isBlankOrNull(serviceRequestId)) {
@@ -107,19 +107,23 @@ public abstract class CovidResultsBuilderImpl implements CovidResultsBuilder {
         }
 
         ServiceRequest serviceRequest = null;
+        for (String remotePath : fhirConfig.getRemoteStorePaths()) {
         Bundle responseBundle = client.search().forResource(ServiceRequest.class)
-                .where(ServiceRequest.IDENTIFIER.exactly().code(serviceRequestId)).returnBundle(Bundle.class).execute();
+                    .where(ServiceRequest.IDENTIFIER.exactly().systemAndIdentifier(remotePath, serviceRequestId))
+                    .returnBundle(Bundle.class)
+                .execute();
         for (BundleEntryComponent bundleComponent : responseBundle.getEntry()) {
             if (bundleComponent.hasResource()
                     && ResourceType.ServiceRequest.equals(bundleComponent.getResource().getResourceType())) {
                 serviceRequest = (ServiceRequest) bundleComponent.getResource();
             }
         }
+        }
 
         if (serviceRequest == null) {
             return Optional.empty();
         }
-        responseBundle = client.search().forResource(Task.class)
+        Bundle responseBundle = client.search().forResource(Task.class)
                 .where(Task.BASED_ON.hasId(serviceRequest.getIdElement().getIdPart()))
                 .returnBundle(Bundle.class).execute();
         for (BundleEntryComponent bundleComponent : responseBundle.getEntry()) {

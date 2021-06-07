@@ -76,8 +76,7 @@ function searchPatients()
 	patientSearch(lastName, firstName, STNumber, subjectNumber, nationalID, labNumber, "", "", "", false, processSearchSuccess);
 }
 
-function enhancedSearchPatients()
-{
+function enhancedSearchPatients(localSearch) {
     var criteria = jQuery("#searchCriteria").val();
     var genders = jQuery("#genders").val();
     var value = jQuery("#firstNameSearchValue").val().trim();
@@ -96,7 +95,6 @@ function enhancedSearchPatients()
 	newSearchInfo = false;
     jQuery("#resultsDiv").hide();
     jQuery("#searchLabNumber").val('');
-	jQuery("#loading").show();
     
     firstName = jQuery("#firstNameSearchValue").val().trim();
     lastName = jQuery("#lastNameSearchValue").val().trim();
@@ -114,21 +112,33 @@ function enhancedSearchPatients()
 		altAccessionSearchFunction(labNumber);
 		return;
 	}
-    
+	var table = $("searchResultTable");
+	$("searchResultsDiv").hide();
+	clearTable(table);
+	clearPatientInfoCache();
+	if (localSearch) {
+		jQuery("#loading").addClass('local-search');
+		jQuery("#loading").removeClass('external-search');
+		jQuery("#enhancedExternalSearchButton").hide();
+	} else {
+		jQuery("#loading").removeClass('local-search');
+		jQuery("#loading").addClass('external-search');
+	}
+	jQuery("#loading").show();
 
-	patientSearch(lastName, firstName, STNumber, subjectNumber, nationalID, labNumber, "", dateOfBirth, gender, false, processSearchSuccess);
+	patientSearch(lastName, firstName, STNumber, subjectNumber, nationalID, labNumber, "", dateOfBirth, gender, localSearch, processSearchSuccess, processSearchFailure, localSearch);
 }
 
-function processSearchFailure(xhr)
-{
+function processSearchFailure(xhr) {
 	//alert( xhr.responseText );
 	jQuery("#loading").hide();
+	jQuery("#PatientDetail").show();
 	alert("<spring:message code="error.system"/>");
 }
 
-function processSearchSuccess(xhr)
-{
+function processSearchSuccess(xhr, localSearch) {
 	jQuery("#loading").hide();
+	jQuery("#PatientDetail").show();
 	//alert( xhr.responseText );
 	var formField = xhr.responseXML.getElementsByTagName("formfield").item(0);
 	var message = xhr.responseXML.getElementsByTagName("message").item(0);
@@ -153,11 +163,19 @@ function processSearchSuccess(xhr)
 			handleSelectedPatient();
 		}
 		</c:if>
+		showExternalSearchButton();
+	} else if (localSearch){
+		showExternalSearchButton();
+		enhancedSearchPatients(false);
 	} else {
 		$("searchResultsDiv").hide();
 		$("noPatientFound").show();
 		selectPatient( null );
 	}
+}
+
+function showExternalSearchButton() {
+	jQuery("#enhancedExternalSearchButton").show();
 }
 
 function clearSearchResultTable() {
@@ -518,8 +536,13 @@ function handleSelectedPatient(){
 			<td><input type="button" name="enhancedSearchButton"
 				class="patientEnhancedSearch"
 				value="<%=MessageUtil.getMessage("label.patient.search")%>"
-				id="enhancedSearchButton" onclick="enhancedSearchPatients()"
-				disabled="disabled"></td>
+				id="enhancedSearchButton" onclick="enhancedSearchPatients(true);"
+				disabled="disabled">
+				<input type="button" name="enhancedExternalSearchButton"
+				class="patientEnhancedSearch"
+				value="<%=MessageUtil.getMessage("label.patient.search.external")%>"
+				id="enhancedExternalSearchButton" onclick="enhancedSearchPatients(false);"
+				style="display:none"></td>
 		</tr>
 		<tr>
 			<td>

@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -176,7 +177,6 @@ public class PatientManagementUpdate implements IPatientUpdate {
 
     private void copyFormBeanToValueHolders(PatientManagementInfo patientInfo)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-
         PropertyUtils.copyProperties(patient, patientInfo);
         PropertyUtils.copyProperties(person, patientInfo);
     }
@@ -401,6 +401,10 @@ public class PatientManagementUpdate implements IPatientUpdate {
         patient.setPerson(person);
 
         if (patientUpdateStatus == PatientUpdateStatus.ADD) {
+            UUID uuid = UUID.randomUUID();
+//            patientInfo.setFhirUuid(uuid);
+            patientInfo.setGuid(uuid.toString());
+            patient.setFhirUuid(uuid);
             patientService.insert(patient);
         } else if (patientUpdateStatus == PatientUpdateStatus.UPDATE) {
             patientService.update(patient);
@@ -408,6 +412,7 @@ public class PatientManagementUpdate implements IPatientUpdate {
 
         persistPatientRelatedInformation(patientInfo);
         patientID = patient.getId();
+        patientInfo.setPatientPK(patientID);
 
     }
 

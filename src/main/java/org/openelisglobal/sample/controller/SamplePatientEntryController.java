@@ -1,6 +1,7 @@
 package org.openelisglobal.sample.controller;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Pattern;
@@ -17,11 +18,15 @@ import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.validator.BaseErrors;
+import org.openelisglobal.dataexchange.fhir.exception.FhirPersistanceException;
+import org.openelisglobal.dataexchange.fhir.exception.FhirTransformationException;
 import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
+import org.openelisglobal.login.valueholder.UserSessionData;
 import org.openelisglobal.patient.action.IPatientUpdate;
 import org.openelisglobal.patient.action.IPatientUpdate.PatientUpdateStatus;
 import org.openelisglobal.patient.action.bean.PatientManagementInfo;
 import org.openelisglobal.patient.action.bean.PatientSearch;
+import org.openelisglobal.referral.action.beanitems.ReferralItem;
 import org.openelisglobal.sample.action.util.SamplePatientUpdateData;
 import org.openelisglobal.sample.bean.SampleOrderItem;
 import org.openelisglobal.sample.form.SamplePatientEntryForm;
@@ -62,6 +67,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
             "patientProperties.currentDate",
             "patientProperties.patientLastUpdated", "patientProperties.personLastUpdated",
             "patientProperties.patientUpdateStatus", "patientProperties.patientPK", "patientProperties.guid",
+            "patientProperties.fhirUuid",
             "patientProperties.STnumber", "patientProperties.subjectNumber", "patientProperties.nationalId",
             "patientProperties.lastName", "patientProperties.firstName", "patientProperties.aka",
             "patientProperties.mothersName", "patientProperties.mothersInitial", "patientProperties.streetAddress",
@@ -104,15 +110,20 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
             "sampleOrderItems.otherLocationCode",
             "sampleOrderItems.contactTracingIndexName", "sampleOrderItems.contactTracingIndexRecordNumber",
             //
-            "currentDate", "sampleOrderItems.newRequesterName", "sampleOrderItems.externalOrderNumber" };
+            "currentDate", "sampleOrderItems.newRequesterName", "sampleOrderItems.externalOrderNumber",
+            // referral
+            "referralItems*.additionalTestsXMLWad", "referralItems*.referralResultId", "referralItems*.referralId",
+            "referralItems*.referredResultType", "referralItems*.modified", "referralItems*.inLabResultId",
+            "referralItems*.referralReasonId", "referralItems*.referrer", "referralItems*.referredInstituteId",
+            "referralItems*.referredSendDate", "referralItems*.referredTestId", "referralItems*.referredReportDate",
+            "referralItems*.note", "useReferral" };
 
     @Autowired
-    SamplePatientEntryFormValidator formValidator;
-
+    private SamplePatientEntryFormValidator formValidator;
     @Autowired
     private SamplePatientEntryService samplePatientService;
-
-    protected FhirTransformService fhirTransformService = SpringContext.getBean(FhirTransformService.class);
+    @Autowired
+    private FhirTransformService fhirTransformService;
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -140,6 +151,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
         form.setTestSectionList(DisplayListService.getInstance().getList(ListType.TEST_SECTION));
         form.setCurrentDate(DateUtil.getCurrentDateAsText());
 
+        setupReferralOption(form);
         // for (Object program : form.getSampleOrderItems().getProgramList()) {
         // LogEvent.logInfo(this.getClass().getName(), "method unkown", ((IdValuePair)
         // program).getValue());
@@ -158,6 +170,18 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 
         addFlashMsgsToRequest(request);
         return findForward(FWD_SUCCESS, form);
+    }
+
+    private void setupReferralOption(SamplePatientEntryForm form) {
+        ReferralItem referral = new ReferralItem();
+        referral.setReferredSendDate(DateUtil.getCurrentDateAsText());
+        UserSessionData usd = (UserSessionData) request.getSession().getAttribute(USER_SESSION_DATA);
+        if (usd != null) {
+            referral.setReferrer(usd.getElisUserName());
+        }
+        form.setReferralItems(Arrays.asList(referral));
+        form.setReferralOrganizations(DisplayListService.getInstance().getList(ListType.REFERRAL_ORGANIZATIONS));
+        form.setReferralReasons(DisplayListService.getInstance().getList(ListType.REFERRAL_REASONS));
     }
 
     @RequestMapping(value = "/SamplePatientEntry", method = RequestMethod.POST)
@@ -216,7 +240,13 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 
         try {
             samplePatientService.persistData(updateData, patientUpdate, patientInfo, form, request);
-//            String fhir_json = fhirTransformService.CreateFhirFromOESample(updateData, patientUpdate, patientInfo, form, request);
+            try {
+                fhirTransformService.transformPersistOrderEntryFhirObjects(updateData, patientInfo);
+            } catch (FhirTransformationException | FhirPersistanceException e) {
+                LogEvent.logError(e);
+            }
+            // String fhir_json = fhirTransformService.CreateFhirFromOESample(updateData,
+            // patientUpdate, patientInfo, form, request);
         } catch (LIMSRuntimeException e) {
             // ActionError error;
             if (e.getException() instanceof StaleObjectStateException) {

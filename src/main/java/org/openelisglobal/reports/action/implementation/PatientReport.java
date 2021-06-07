@@ -58,6 +58,7 @@ import org.openelisglobal.observationhistory.service.ObservationHistoryService;
 import org.openelisglobal.observationhistory.service.ObservationHistoryServiceImpl.ObservationType;
 import org.openelisglobal.organization.service.OrganizationService;
 import org.openelisglobal.organization.valueholder.Organization;
+import org.openelisglobal.patient.action.bean.PatientSearch;
 import org.openelisglobal.patient.service.PatientService;
 import org.openelisglobal.patient.service.PatientServiceImpl;
 import org.openelisglobal.patient.valueholder.Patient;
@@ -178,15 +179,19 @@ public abstract class PatientReport extends Report {
     public void setRequestParameters(ReportForm form) {
         form.setReportName(getReportNameForParameterPage());
 
+        form.setUsePatientSearch(true);
+        form.setPatientSearch(new PatientSearch());
         form.setUseAccessionDirect(Boolean.TRUE);
         form.setUseHighAccessionDirect(Boolean.TRUE);
         form.setUsePatientNumberDirect(Boolean.TRUE);
+
     }
 
     @Override
     public void initializeReport(ReportForm form) {
         super.initializeReport();
         errorFound = false;
+
         lowerNumber = form.getAccessionDirect();
         upperNumber = form.getHighAccessionDirect();
         String patientNumber = form.getPatientNumberDirect();
@@ -198,7 +203,14 @@ public abstract class PatientReport extends Report {
         boolean valid;
         List<Sample> reportSampleList = new ArrayList<>();
 
-        if (GenericValidator.isBlankOrNull(lowerNumber) && GenericValidator.isBlankOrNull(upperNumber)) {
+        if (!GenericValidator.isBlankOrNull(form.getSelPatient())) {
+            List<Patient> patientList = new ArrayList<>();
+            valid = findPatientById(form.getSelPatient(), patientList);
+            if (valid) {
+                reportSampleList = findReportSamplesForReportPatient(patientList);
+            }
+        } else if (GenericValidator.isBlankOrNull(lowerNumber) && GenericValidator.isBlankOrNull(upperNumber)) {
+
             List<Patient> patientList = new ArrayList<>();
             valid = findPatientByPatientNumber(patientNumber, patientList);
 
@@ -246,6 +258,11 @@ public abstract class PatientReport extends Report {
                 LogEvent.logErrorStack(e);
             }
         }
+    }
+
+    private boolean findPatientById(String patientId, List<Patient> patientList) {
+        patientList.add(patientService.get(patientId));
+        return !patientList.isEmpty();
     }
 
     private void findCompletionDate() {
@@ -940,7 +957,7 @@ public abstract class PatientReport extends Report {
             return "";
         }
 
-        dob = dob.replaceAll("xx", "01");
+        dob = dob.replaceAll(DateUtil.AMBIGUOUS_DATE_SEGMENT, "01");
         Date dobDate = DateUtil.convertStringDateToSqlDate(dob);
         int months = DateUtil.getAgeInMonths(dobDate, DateUtil.getNowAsSqlDate());
         if (months > 35) {
