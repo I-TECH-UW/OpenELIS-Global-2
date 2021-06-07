@@ -92,14 +92,14 @@
 var compactHozSpace = '<%=compactHozSpace%>';
 var dirty = false;
 
-var pager = new OEPager('${form.formName}', '&type=' + encodeURIComponent('<spring:escapeBody javaScriptEscape="true">${type}</spring:escapeBody>'));
+var pager = new OEPager('<c:out value="${form.formName}" />', '&type=' + encodeURIComponent('<spring:escapeBody javaScriptEscape="true">${type}</spring:escapeBody>'));
 pager.setCurrentPageNumber('<spring:escapeBody javaScriptEscape="true">${form.paging.currentPage}</spring:escapeBody>');
 
 var pageSearch; //assigned in post load function
 
 var pagingSearch = {};
 <c:forEach items="${pagingSearch}" var="paging">
-pagingSearch['${paging.id}'] = '${paging.value}';
+pagingSearch['<spring:escapeBody javaScriptEscape="true">${paging.id}</spring:escapeBody>'] = '<spring:escapeBody javaScriptEscape="true">${paging.value}</spring:escapeBody>';
 </c:forEach>
 
 jQuery(document).ready( function() {
@@ -237,7 +237,7 @@ function  /*void*/ savePage()
 	jQuery( "#saveButtonId" ).prop("disabled",true);
 	window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
 	var form = document.getElementById("mainForm");
-	form.action = '${form.formName}'.sub('Form','') + ".do"  + '?type=' + encodeURIComponent('<spring:escapeBody javaScriptEscape="true">${type}</spring:escapeBody>');
+	form.action = '<spring:escapeBody javaScriptEscape="true">${form.formName}</spring:escapeBody>'.sub('Form','') + ".do"  + '?type=' + encodeURIComponent('<spring:escapeBody javaScriptEscape="true">${type}</spring:escapeBody>');
 	form.submit();
 }
 
