@@ -27,6 +27,7 @@ import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.sample.service.SampleService;
+import org.openelisglobal.sample.util.AccessionNumberUtil;
 import org.openelisglobal.spring.util.SpringContext;
 
 public abstract class BaseSiteYearAccessionValidator {
@@ -91,15 +92,7 @@ public abstract class BaseSiteYearAccessionValidator {
     public ValidationResults checkAccessionNumberValidity(String accessionNumber, String recordType, String isRequired,
             String projectFormName) {
 
-        ValidationResults results;
-        boolean validateAccessionNumber = ConfigurationProperties.getInstance()
-                .isPropertyValueEqual(Property.ACCESSION_NUMBER_VALIDATE, "true");
-        if (validateAccessionNumber) {
-            results = validFormat(accessionNumber, true);
-        } else {
-            results = ValidationResults.SUCCESS;
-
-        }
+        ValidationResults results = validFormat(accessionNumber, true);
         // TODO refactor accessionNumberIsUsed into two methods so the null isn't
         // needed. (Its only used for program accession number)
         if (results == ValidationResults.SUCCESS && accessionNumberIsUsed(accessionNumber, null)) {
@@ -110,6 +103,11 @@ public abstract class BaseSiteYearAccessionValidator {
     }
 
     public ValidationResults validFormat(String accessionNumber, boolean checkDate) {
+        if (!Boolean
+                .valueOf(ConfigurationProperties.getInstance().getPropertyValue(Property.ACCESSION_NUMBER_VALIDATE))) {
+            return AccessionNumberUtil.containsBlackListCharacters(accessionNumber) ? ValidationResults.FORMAT_FAIL
+                    : ValidationResults.SUCCESS;
+        }
         if (accessionNumber.length() > MAX_LENGTH) {
             return ValidationResults.LENGTH_FAIL;
         }

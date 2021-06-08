@@ -131,7 +131,6 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
     }
 
     @RequestMapping(value = "/SamplePatientEntry", method = RequestMethod.GET)
-
     public ModelAndView showSamplePatientEntry(HttpServletRequest request,
             @RequestParam(value = ID, required = false) @Pattern(regexp = "[a-zA-Z0-9 -]*") String externalOrderNumber)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
@@ -139,34 +138,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
         SamplePatientEntryForm form = new SamplePatientEntryForm();
 
         request.getSession().setAttribute(SAVE_DISABLED, TRUE);
-        SampleOrderService sampleOrderService = new SampleOrderService();
-        form.setSampleOrderItems(sampleOrderService.getSampleOrderItem());
-        form.getSampleOrderItems().setProviderLastName(requesterLastName);
-        form.getSampleOrderItems().setProviderFirstName(requesterFirstName);
-        form.getSampleOrderItems().setProviderWorkPhone(requesterPhone);
-        form.getSampleOrderItems().setExternalOrderNumber(externalOrderNumber);
-        form.setPatientProperties(new PatientManagementInfo());
-        form.setPatientSearch(new PatientSearch());
-        form.setSampleTypes(DisplayListService.getInstance().getList(ListType.SAMPLE_TYPE_ACTIVE));
-        form.setTestSectionList(DisplayListService.getInstance().getList(ListType.TEST_SECTION));
-        form.setCurrentDate(DateUtil.getCurrentDateAsText());
-
-        setupReferralOption(form);
-        // for (Object program : form.getSampleOrderItems().getProgramList()) {
-        // LogEvent.logInfo(this.getClass().getName(), "method unkown", ((IdValuePair)
-        // program).getValue());
-        // }
-
-        addProjectList(form);
-        addBillingLabel();
-
-        if (FormFields.getInstance().useField(FormFields.Field.InitialSampleCondition)) {
-            form.setInitialSampleConditionList(
-                    DisplayListService.getInstance().getList(ListType.INITIAL_SAMPLE_CONDITION));
-        }
-        if (FormFields.getInstance().useField(FormFields.Field.SampleNature)) {
-            form.setSampleNatureList(DisplayListService.getInstance().getList(ListType.SAMPLE_NATURE));
-        }
+        setupForm(form, externalOrderNumber);
 
         addFlashMsgsToRequest(request);
         return findForward(FWD_SUCCESS, form);
@@ -193,6 +165,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
         formValidator.validate(form, result);
         if (result.hasErrors()) {
             saveErrors(result);
+            setupForm(form, "");
             return findForward(FWD_FAIL_INSERT, form);
         }
         SamplePatientUpdateData updateData = new SamplePatientUpdateData(getSysUserId(request));
@@ -234,6 +207,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 
         if (result.hasErrors()) {
             saveErrors(result);
+            setupForm(form, "");
             // setSuccessFlag(request, true);
             return findForward(FWD_FAIL_INSERT, form);
         }
@@ -261,6 +235,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 
             // errors.add(ActionMessages.GLOBAL_MESSAGE, error);
             saveErrors(result);
+            setupForm(form, "");
             request.setAttribute(ALLOW_EDITS_KEY, "false");
             return findForward(FWD_FAIL_INSERT, form);
 
@@ -268,6 +243,39 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 
         redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
         return findForward(FWD_SUCCESS_INSERT, form);
+    }
+
+    private void setupForm(SamplePatientEntryForm form, String externalOrderNumber)
+            throws LIMSRuntimeException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        SampleOrderService sampleOrderService = new SampleOrderService();
+        form.setSampleOrderItems(sampleOrderService.getSampleOrderItem());
+        form.getSampleOrderItems().setProviderLastName(requesterLastName);
+        form.getSampleOrderItems().setProviderFirstName(requesterFirstName);
+        form.getSampleOrderItems().setProviderWorkPhone(requesterPhone);
+        form.getSampleOrderItems().setExternalOrderNumber(externalOrderNumber);
+        form.setPatientProperties(new PatientManagementInfo());
+        form.setPatientSearch(new PatientSearch());
+        form.setSampleTypes(DisplayListService.getInstance().getList(ListType.SAMPLE_TYPE_ACTIVE));
+        form.setTestSectionList(DisplayListService.getInstance().getList(ListType.TEST_SECTION));
+        form.setCurrentDate(DateUtil.getCurrentDateAsText());
+
+        setupReferralOption(form);
+        // for (Object program : form.getSampleOrderItems().getProgramList()) {
+        // LogEvent.logInfo(this.getClass().getName(), "method unkown", ((IdValuePair)
+        // program).getValue());
+        // }
+
+        addProjectList(form);
+        addBillingLabel();
+
+        if (FormFields.getInstance().useField(FormFields.Field.InitialSampleCondition)) {
+            form.setInitialSampleConditionList(
+                    DisplayListService.getInstance().getList(ListType.INITIAL_SAMPLE_CONDITION));
+        }
+        if (FormFields.getInstance().useField(FormFields.Field.SampleNature)) {
+            form.setSampleNatureList(DisplayListService.getInstance().getList(ListType.SAMPLE_NATURE));
+        }
+
     }
 
     private void setContactTracingInfo(SamplePatientUpdateData updateData, SampleOrderItem sampleOrder) {

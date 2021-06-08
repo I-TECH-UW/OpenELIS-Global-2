@@ -230,6 +230,8 @@ public class LabelMakerServlet extends HttpServlet implements IActionConstants {
                     .validFormat(accessionNumber, false))) {
                 errors.reject("barcode.label.error.accession.invalid", "barcode.label.error.accession.invalid");
             }
+        } else if (AccessionNumberUtil.containsBlackListCharacters(labNo)) {
+            errors.reject("barcode.label.error.accession.invalid", "barcode.label.error.accession.invalid");
         }
         SampleService sampleService = SpringContext.getBean(SampleService.class);
         if (sampleService.getSampleByAccessionNumber(labNo) == null) {
