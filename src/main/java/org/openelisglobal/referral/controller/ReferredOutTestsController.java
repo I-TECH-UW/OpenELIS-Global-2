@@ -251,6 +251,7 @@ public class ReferredOutTestsController extends BaseController {
         referralItem.setReferrer(referral.getRequesterName());
         referralItem.setReferralReasonId(referral.getReferralReasonId());
         referralItem.setTestSelectionList(getTestsForTypeOfSample(typeOfSample));
+        referralItem.setReferredTestId(analysis.getTest().getId());
         referralItem.setReferralId(referral.getId());
         if (referral.getOrganization() != null) {
             referralItem.setReferredInstituteId(referral.getOrganization().getId());
