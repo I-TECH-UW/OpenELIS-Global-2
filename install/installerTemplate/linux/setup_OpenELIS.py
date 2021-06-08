@@ -102,6 +102,8 @@ REMOTE_FHIR_SOURCE_UPDATE_STATUS = "false"
 CONSOLIDATED_SERVER_ADDRESS = 'https://hub.openelisci.org:8444/fhir'
 TIMEZONE = ''
 
+EXTERNAL_HOSTS = []
+
 #Stateful objects
 LOG_FILE = ''
 
@@ -323,6 +325,12 @@ def create_docker_compose_file():
             line = line.replace("[% truststore_password %]", TRUSTSTORE_PWD )
         if line.find("[% keystore_password %]")  >= 0:
             line = line.replace("[% keystore_password %]", KEYSTORE_PWD )
+            
+        if len(EXTERNAL_HOSTS) > 0:
+            if line.find("#eh") >= 0:
+                line = line.replace("#eh", "")
+            docker_external_hosts = "            - " + "\n            - ".join(EXTERNAL_HOSTS)
+            line = line.replace("[% extra_hosts %]", docker_external_hosts )
         
         output_file.write(line)
 
@@ -940,12 +948,19 @@ def get_stored_user_values():
     ensure_dir_exists(CONFIG_DIR)
     os.chmod(CONFIG_DIR, 0777) 
     get_set_timezone()
+    get_set_extra_hosts()
 
 
 def get_set_timezone():
     if (not is_timezone_set()):
         set_timezone()
     get_timezone()
+
+
+def get_set_extra_hosts():
+    if (not is_external_hosts_set()):
+        set_external_hosts()
+    get_external_hosts()
 
 
 def get_keystore_password():
@@ -1056,7 +1071,23 @@ def get_timezone():
 def set_timezone():
     cmd = "tzselect >" + CONFIG_DIR + 'TZ'
     os.system(cmd)
-        
+    
+
+def is_external_hosts_set():
+    return os.path.isfile(CONFIG_DIR + 'EXTERNAL_HOSTS')
+    
+
+def get_external_hosts():
+    global EXTERNAL_HOSTS
+    with open(CONFIG_DIR + 'EXTERNAL_HOSTS') as file:
+        for line in file.readlines():
+            EXTERNAL_HOSTS.append(line.strip())
+    
+
+def set_external_hosts(): 
+    extra_hosts = raw_input("type a comma delimited list of extra hosts (format DNS_ENTRY1:IP_ADDRESS1,DNS_ENTRY2:IP_ADDRESS2...): ").split(',')
+    with open(CONFIG_DIR + 'EXTERNAL_HOSTS', mode='wt') as file:
+        file.write('\n'.join(extra_hosts))
         
                 
 #---------------------------------------------------------------------

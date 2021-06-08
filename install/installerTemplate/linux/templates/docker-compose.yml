@@ -37,6 +37,8 @@ services:
         networks:
             default:
                 ipv4_address: 172.20.1.121
+#eh        extra_hosts: 
+#eh[% extra_hosts %]
         restart: always
         environment:
             - TZ=[% timezone %]
