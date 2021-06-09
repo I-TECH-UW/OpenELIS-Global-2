@@ -170,6 +170,8 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder, String>
                 + "where lower(eo.data) like concat('%', lower(:searchValue), '%') "
                 + "or lower(person.firstName) like concat('%', lower(:searchValue), '%') "
                 + "or lower(person.lastName) like concat('%', lower(:searchValue), '%') "
+                + "or patient.id in (SELECT identity.patientId FROM PatientIdentity identity WHERE identity.identityData like concat('%', :searchValue, '%')) "
+                + "or patient.nationalId like concat('%', :searchValue, '%') "
                 + "or lower(concat(person.firstName, ' ', person.lastName)) like concat('%', lower(:searchValue), '%') order by ";
 
         switch (order.getValue()) {
@@ -212,11 +214,15 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder, String>
     public List<ElectronicOrder> getElectronicOrdersContainingValueExludedByOrderedBy(String searchValue,
             List<Integer> excludedStatuses, SortOrder sortOrder) {
 
-        String sql = "from ElectronicOrder eo " + "join eo.patient patient " + "join patient.person person  "
+        String sql = "from ElectronicOrder eo "
+                + "join eo.patient patient "
+                + "join patient.person person  "
                 + "where lower(eo.data) like concat('%', lower(:searchValue), '%') "
                 + "or lower(person.firstName) like concat('%', lower(:searchValue), '%') "
                 + "or lower(person.lastName) like concat('%', lower(:searchValue), '%') "
                 + "or lower(concat(person.firstName, ' ', person.lastName)) like concat('%', lower(:searchValue), '%')"
+                + "or patient.id in (SELECT identity.patientId FROM PatientIdentity identity WHERE identity.identityData like concat('%', :searchValue, '%')) "
+                + "or patient.nationalId like concat('%', :searchValue, '%') "
                 + "and eo.statusId not in (:excludedStatuses) order by ";
 
         switch (sortOrder) {
