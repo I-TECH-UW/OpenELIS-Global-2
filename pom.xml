@@ -30,7 +30,7 @@
 		<hibernate-validator.version>6.1.1.Final</hibernate-validator.version>
 		<log4j.version>2.13.3</log4j.version>
 		<postgresql.version>42.2.9</postgresql.version>
-		<springframework.version>5.2.3.RELEASE</springframework.version>
+		<springframework.version>5.2.4.RELEASE</springframework.version>
 		<springsecurity.version>5.2.1.RELEASE</springsecurity.version>
 	</properties>
 
