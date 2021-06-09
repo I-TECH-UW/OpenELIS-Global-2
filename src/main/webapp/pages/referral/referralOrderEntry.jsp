@@ -177,10 +177,12 @@ function createReferralOption(sampleNum, testNum, testId, testName, index) {
 	var referrerInput = document.createElement("input");
 	referrerInput.setAttribute('type','text');
 	referrerInput.setAttribute('name','referralItems[' + index + '].referredSendDate');
+	referrerInput.value = jQuery('#requestDate').val();
 	referrerInput.setAttribute('id', 'sendDate_' + index);
 	referrerInput.setAttribute('size', '8');
 	referrerInput.setAttribute('maxLength', '10');
-	referrerInput.setAttribute('onchange', 'markModified("' + index + '");');
+	referrerInput.setAttribute('onchange', 'markModified("' + index + '");checkValidEntryDate(this, \'past\')');
+	referrerInput.setAttribute('onkeyup', 'addDateSlashes(this, event);');
 	cell4.appendChild(referrerInput);
 
 	var shadowReferredTestInput = document.createElement("hidden");
@@ -206,8 +208,6 @@ function createReferralOption(sampleNum, testNum, testId, testName, index) {
 
 </script>
 
-<c:if test="${not empty form.referralItems}">
-
 <table width="75%" border="0" cellspacing="0" cellpadding="1" id="mainTable">
 <thead>
 <tr>
@@ -224,8 +224,3 @@ function createReferralOption(sampleNum, testNum, testId, testName, index) {
 <tbody>
 </tbody>
 </table>
-</c:if>
-<c:if test="${empty form.referralItems}">
-    <h2><spring:message code="referral.noReferralItems"/></h2>
-</c:if>
-

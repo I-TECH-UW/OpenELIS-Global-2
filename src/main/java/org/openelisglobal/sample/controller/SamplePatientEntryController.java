@@ -1,7 +1,6 @@
 package org.openelisglobal.sample.controller;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Pattern;
@@ -21,12 +20,10 @@ import org.openelisglobal.common.validator.BaseErrors;
 import org.openelisglobal.dataexchange.fhir.exception.FhirPersistanceException;
 import org.openelisglobal.dataexchange.fhir.exception.FhirTransformationException;
 import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
-import org.openelisglobal.login.valueholder.UserSessionData;
 import org.openelisglobal.patient.action.IPatientUpdate;
 import org.openelisglobal.patient.action.IPatientUpdate.PatientUpdateStatus;
 import org.openelisglobal.patient.action.bean.PatientManagementInfo;
 import org.openelisglobal.patient.action.bean.PatientSearch;
-import org.openelisglobal.referral.action.beanitems.ReferralItem;
 import org.openelisglobal.sample.action.util.SamplePatientUpdateData;
 import org.openelisglobal.sample.bean.SampleOrderItem;
 import org.openelisglobal.sample.form.SamplePatientEntryForm;
@@ -145,13 +142,6 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
     }
 
     private void setupReferralOption(SamplePatientEntryForm form) {
-        ReferralItem referral = new ReferralItem();
-        referral.setReferredSendDate(DateUtil.getCurrentDateAsText());
-        UserSessionData usd = (UserSessionData) request.getSession().getAttribute(USER_SESSION_DATA);
-        if (usd != null) {
-            referral.setReferrer(usd.getElisUserName());
-        }
-        form.setReferralItems(Arrays.asList(referral));
         form.setReferralOrganizations(DisplayListService.getInstance().getList(ListType.REFERRAL_ORGANIZATIONS));
         form.setReferralReasons(DisplayListService.getInstance().getList(ListType.REFERRAL_REASONS));
     }

@@ -316,7 +316,8 @@ function checkFinish(index) {
         <form:input path="referralItems[${iter.index}].referredSendDate"
                    size="8"
                    maxlength="10"
-                   onchange='markModified("${iter.index}"); validateDateFormat(this);'
+                   onchange='markModified("${iter.index}"); validateDateFormat(this);checkValidEntryDate(this, "past")'
+                   onkeyup="addDateSlashes(this, event);"
                    id='sendDate_${iter.index}'/>
     </td>
     <td style="text-align:center">
