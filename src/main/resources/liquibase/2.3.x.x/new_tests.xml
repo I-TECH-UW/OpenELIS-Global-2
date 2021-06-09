@@ -104,6 +104,16 @@
                 </sql>
         </changeSet>
         
+        <changeSet author="rossumg" id="31">
+		<preConditions onFail="MARK_RAN">
+                        <sqlCheck  expectedResult="1">SELECT count(*) FROM clinlims.type_of_sample WHERE description = 'Respiratory Swab'</sqlCheck> 
+                </preConditions>
+
+                <sql>
+                UPDATE clinlims.type_of_sample SET local_abbrev = 'Resp Swab' WHERE description = 'Respiratory Swab';
+                </sql>
+        </changeSet>
+        
         <changeSet author="rossumg" id="35">
 		<preConditions onFail="MARK_RAN">
 			<sqlCheck  expectedResult="0">SELECT count(*) FROM clinlims.sampletype_test WHERE test_id = 
