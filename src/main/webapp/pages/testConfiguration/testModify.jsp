@@ -1342,7 +1342,7 @@
         
         	console.log(JSON.stringify(jsonObj.dictionary));
         	//dictionary from defaults if empty
-        	if(JSON.stringify(jsonObj.dictionary == "[]")) {
+        	if(JSON.stringify(jsonObj.dictionary) == "[]") {
         		console.log(JSON.stringify(jsonObj.dictionaryReference));
         		var significantDigits = null;
 				var dictionaryValues = null;
