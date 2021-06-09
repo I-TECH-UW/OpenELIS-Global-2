@@ -367,10 +367,12 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
         Test test = null;
         TypeOfSample typeOfSample = null;
         if (!GenericValidator.isBlankOrNull(sampleTypeAbbreviation)) {
-            typeOfSample = typeOfSampleService
-                    .get(typeOfSampleService.getTypeOfSampleIdForLocalAbbreviation(sampleTypeAbbreviation));
-            if (typeOfSample != null) {
-                test = testService.getActiveTestByLoincCodeAndSampleType(loinc, typeOfSample.getId()).orElse(null);
+            String typeOfSampleId = typeOfSampleService.getTypeOfSampleIdForLocalAbbreviation(sampleTypeAbbreviation);
+            if (!GenericValidator.isBlankOrNull(typeOfSampleId)) {
+                typeOfSample = typeOfSampleService.get(typeOfSampleId);
+                if (typeOfSample != null) {
+                    test = testService.getActiveTestByLoincCodeAndSampleType(loinc, typeOfSample.getId()).orElse(null);
+                }
             }
         }
         if (test == null) {
