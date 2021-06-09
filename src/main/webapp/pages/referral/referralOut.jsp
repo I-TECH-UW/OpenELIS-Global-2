@@ -221,7 +221,7 @@ function  /*void*/ setMyCancelAction(form, action, validate, parameters) {
 }
 
 function setReferralStatus(index) {
-	jQuery('#referralStatus_' + index).val(jQuery('#canceled_' + index).is(':checked') ? 'CANCELED' : jQuery('#finished_' + index).is(':checked') ? 'FINISHED' : 'SENT')
+	jQuery('#referralStatus_' + index).val(jQuery('#canceled_' + index).is(':checked') ? 'CANCELED' : jQuery('#finished_' + index).is(':checked') ? 'FINISHED' : 'SENT');
 }
 
 function checkFinish(index) {
@@ -336,7 +336,7 @@ function checkFinish(index) {
     </td>
     <td class="leftVertical" id='resultCell_${iter.index}' style="text-align:center">
     	<c:set var="referredResultType" value="${referralItems.referredResultType}"/>
-        <c:set var="referredResultAvailable" value="${not empty referralItems.referredTestId}" />
+        <c:set var="referredResultAvailable" value="${referralItems.referralStatus == 'SENT'}" />
         <c:if test="${referredResultAvailable}"> 
 	        <div class='resultCell_${iter.index}'>
 	        	<c:if test="${'N' == referredResultType || 'A' == referredResultType || 'R' == referredResultType}">
@@ -402,7 +402,7 @@ function checkFinish(index) {
     </td>
     <td style="text-align:center">
         <div class='resultCell_${iter.index}'>
-            <c:if test="${referralItems.referredTestId != null}">
+            <c:if test="${referralItems.referralStatus == 'SENT'}">
 	            <form:input path='referralItems[${iter.index}].referredReportDate'
 	                       cssClass='referralResult_${iter.index}'
 	                       size="8"
