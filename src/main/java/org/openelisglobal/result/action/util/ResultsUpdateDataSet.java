@@ -22,7 +22,7 @@ import java.util.List;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.services.IResultSaveService;
 import org.openelisglobal.note.valueholder.Note;
-import org.openelisglobal.referral.valueholder.Referral;
+import org.openelisglobal.referral.valueholder.ReferralSet;
 import org.openelisglobal.result.valueholder.Result;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.test.beanItems.TestResultItem;
@@ -37,7 +37,7 @@ public class ResultsUpdateDataSet implements IResultSaveService {
     private List<ResultSet> newResults = new ArrayList<>();
     private List<Analysis> modifiedAnalysis = new ArrayList<>();
     private List<Result> deletableResults = new ArrayList<>();
-    private List<Referral> savableReferrals = new ArrayList<>();
+    private List<ReferralSet> savableReferralSets = new ArrayList<>();
     private List<String> referredAnalysisIds = new ArrayList<>();
     private Analysis previousAnalysis = new Analysis();
     private ResultsValidation resultValidation = SpringContext.getBean(ResultsValidation.class);
@@ -84,8 +84,8 @@ public class ResultsUpdateDataSet implements IResultSaveService {
         return deletableResults;
     }
 
-    public List<Referral> getSavableReferrals() {
-        return savableReferrals;
+    public List<ReferralSet> getSavableReferralSets() {
+        return savableReferralSets;
     }
 
     public List<String> getReferredAnalysisIds() {

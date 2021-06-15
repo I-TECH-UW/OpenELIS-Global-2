@@ -48,10 +48,14 @@ import org.openelisglobal.inventory.action.InventoryUtility;
 import org.openelisglobal.inventory.form.InventoryKitItem;
 import org.openelisglobal.note.service.NoteService;
 import org.openelisglobal.note.service.NoteServiceImpl.NoteType;
+import org.openelisglobal.organization.service.OrganizationService;
 import org.openelisglobal.patient.valueholder.Patient;
+import org.openelisglobal.referral.action.beanitems.ReferralItem;
 import org.openelisglobal.referral.service.ReferralService;
 import org.openelisglobal.referral.service.ReferralTypeService;
 import org.openelisglobal.referral.valueholder.Referral;
+import org.openelisglobal.referral.valueholder.ReferralResult;
+import org.openelisglobal.referral.valueholder.ReferralSet;
 import org.openelisglobal.referral.valueholder.ReferralStatus;
 import org.openelisglobal.referral.valueholder.ReferralType;
 import org.openelisglobal.result.action.util.ResultSet;
@@ -107,7 +111,10 @@ public class LogbookResultsController extends LogbookResultsBaseController {
             "testResult*.qualifiedResultValue", "testResult*.qualifiedResultValue", "testResult*.shadowReferredOut",
             "testResult*.referredOut", "testResult*.referralReasonId", "testResult*.technician",
             "testResult*.shadowRejected", "testResult*.rejected", "testResult*.rejectReasonId", "testResult*.note",
-            "paging.currentPage" };
+            "paging.currentPage", //
+            "testResult*.refer", "testResult*.referralItem.referralReasonId",
+            "testResult*.referralItem.referredInstituteId",
+            "testResult*.referralItem.referredTestId", "testResult*.referralItem.referredSendDate" };
 
     @Autowired
     private DictionaryService dictionaryService;
@@ -117,6 +124,8 @@ public class LogbookResultsController extends LogbookResultsBaseController {
     private ResultInventoryService resultInventoryService;
     @Autowired
     private ReferralService referralService;
+    @Autowired
+    private OrganizationService organizationService;
     @Autowired
     private ResultLimitService resultLimitService;
     @Autowired
@@ -253,6 +262,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
         form.setHivKits(hivKits);
         form.setSyphilisKits(syphilisKits);
         form.setInventoryItems(inventoryList);
+        form.setReferralOrganizations(DisplayListService.getInstance().getList(ListType.REFERRAL_ORGANIZATIONS));
 
         addFlashMsgsToRequest(request);
         return findForward(FWD_SUCCESS, form);
@@ -294,18 +304,18 @@ public class LogbookResultsController extends LogbookResultsBaseController {
         List<Result> checkResults = (List<Result>) checkPagedResults.get(0);
         if (checkResults.size() == 0) {
             LogEvent.logDebug(this.getClass().getName(), "LogbookResults()", "Attempted save of stale page.");
-            
+
             List<TestResultItem> resultList = form.getTestResult();
             for (TestResultItem item : resultList) {
                 item.setFailedValidation(true);
                 item.setNote("Result has been saved by another user.");
             }
-            
+
             ResultsUpdateDataSet actionDataSet = new ResultsUpdateDataSet(getSysUserId(request));
             actionDataSet.filterModifiedItems(form.getTestResult());
 
             Errors errors = actionDataSet.validateModifiedItems();
-            
+
             if (true) {
                 saveErrors(errors);
                 return findForward(FWD_VALIDATION_ERROR, form);
@@ -394,9 +404,6 @@ public class LogbookResultsController extends LogbookResultsBaseController {
             Analysis analysis = analysisService.get(testResultItem.getAnalysisId());
             analysis.setStatusId(getStatusForTestResult(testResultItem, alwaysValidate));
             analysis.setSysUserId(getSysUserId(request));
-            if (supportReferrals) {
-                handleReferrals(testResultItem, analysis, actionDataSet);
-            }
             actionDataSet.getModifiedAnalysis().add(analysis);
 
             actionDataSet.addToNoteList(noteService.createSavableNote(analysis, NoteType.INTERNAL,
@@ -436,63 +443,69 @@ public class LogbookResultsController extends LogbookResultsBaseController {
                     updateAnalysis(testResultItem, testResultItem.getTestDate(), analysis, statusRuleSet);
                 }
             }
+            if (supportReferrals && testResultItem.isRefer()) {
+                handleReferrals(testResultItem, testResultItem.getReferralItem(), results, analysis, actionDataSet);
+            }
         }
     }
 
-    private void handleReferrals(TestResultItem testResultItem, Analysis analysis, ResultsUpdateDataSet actionDataSet) {
+    private void handleReferrals(TestResultItem testResultItem, ReferralItem referralItem, List<Result> results,
+            Analysis analysis,
+            ResultsUpdateDataSet actionDataSet) {
+//        List<Referral> referrals = new ArrayList<>();
+        Referral referral = new Referral();
+        referral.setFhirUuid(UUID.randomUUID());
+        referral.setStatus(ReferralStatus.SENT);
+        referral.setSysUserId(actionDataSet.getCurrentUserId());
+        referral.setReferralTypeId(REFERRAL_CONFORMATION_ID);
+        referral.setRequesterName(testResultItem.getTechnician());
 
-        Referral referral = null;
-        // referredOut means the referral checkbox was checked, repeating
-        // analysis means that we have multi-select results, so only do one.
-        if (testResultItem.isShadowReferredOut()
-                && !actionDataSet.getReferredAnalysisIds().contains(analysis.getId())) {
-            actionDataSet.getReferredAnalysisIds().add(analysis.getId());
-            // If it is a new result or there is no referral ID that means
-            // that a new referral has to be created if it was checked and
-            // it was canceled then we are un-canceling a canceled referral
-            if (testResultItem.getResultId() == null
-                    || GenericValidator.isBlankOrNull(testResultItem.getReferralId())) {
-                referral = new Referral();
-                referral.setFhirUuid(UUID.randomUUID());
-                referral.setStatus(ReferralStatus.CREATED);
-                referral.setReferralTypeId(REFERRAL_CONFORMATION_ID);
-                referral.setSysUserId(getSysUserId(request));
-                referral.setRequestDate(new Timestamp(new Date().getTime()));
-                referral.setRequesterName(testResultItem.getTechnician());
-                referral.setAnalysis(analysis);
-                referral.setReferralReasonId(testResultItem.getReferralReasonId());
-            } else if (testResultItem.isReferralCanceled()) {
-                referral = referralService.get(testResultItem.getReferralId());
-                referral.setFhirUuid(UUID.randomUUID());
-                referral.setStatus(ReferralStatus.CREATED);
-                referral.setSysUserId(getSysUserId(request));
-                referral.setRequesterName(testResultItem.getTechnician());
-                referral.setReferralReasonId(testResultItem.getReferralReasonId());
-            }
+        referral.setRequestDate(new Timestamp(new Date().getTime()));
+        referral.setSentDate(DateUtil.convertStringDateToTruncatedTimestamp(referralItem.getReferredSendDate()));
+        referral.setRequesterName(referralItem.getReferrer());
+        referral.setOrganization(organizationService.get(referralItem.getReferredInstituteId()));
+        referral.setAnalysis(analysis);
 
-            String originalResultNote = MessageUtil.getMessage("referral.original.result") + ": ";
-            if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(testResultItem.getResultType())
-                    || TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(testResultItem.getResultType())) {
-                if ("0".equals(testResultItem.getResultValue())) {
-                    originalResultNote = originalResultNote + "";
-                } else {
-                    Dictionary dictionary = dictionaryService.get(testResultItem.getResultValue());
-                    if (dictionary.getLocalizedDictionaryName() == null) {
-                        originalResultNote = originalResultNote + dictionary.getDictEntry();
-                    } else {
-                        originalResultNote = originalResultNote
-                                + dictionary.getLocalizedDictionaryName().getLocalizedValue();
-                    }
-                }
-            } else {
-                originalResultNote = originalResultNote + testResultItem.getResultValue();
-            }
+        referral.setReferralReasonId(referralItem.getReferralReasonId());
 
-            actionDataSet.getSavableReferrals().add(referral);
-            actionDataSet.addToNoteList(noteService.createSavableNote(analysis, NoteType.INTERNAL, originalResultNote,
-                    RESULT_SUBJECT, this.getSysUserId(request)));
-
+//            referralService.insert(referral);
+//        referrals.add(referral);
+        ReferralResult referralResult = new ReferralResult();
+        referralResult.setReferralId(referral.getId());
+        referralResult.setSysUserId(actionDataSet.getCurrentUserId());
+        referralResult.setTestId(referralItem.getReferredTestId());
+        if (results.size() == 1) {
+            referralResult.setResult(results.get(0));
         }
+//            referralResult.setResult(result);
+//            referralResultService.insert(referralResult);
+
+        ReferralSet referralSet = new ReferralSet();
+        referralSet.setReferral(referral);
+        referralSet.getExistingReferralResults().add(referralResult);
+        actionDataSet.getSavableReferralSets().add(referralSet);
+
+        String originalResultNote = MessageUtil.getMessage("referral.original.result") + ": ";
+        if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(testResultItem.getResultType())
+                || TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(testResultItem.getResultType())) {
+            if ("0".equals(testResultItem.getResultValue())) {
+                originalResultNote = originalResultNote + "";
+            } else {
+                Dictionary dictionary = dictionaryService.get(testResultItem.getResultValue());
+                if (dictionary.getLocalizedDictionaryName() == null) {
+                    originalResultNote = originalResultNote + dictionary.getDictEntry();
+                } else {
+                    originalResultNote = originalResultNote
+                            + dictionary.getLocalizedDictionaryName().getLocalizedValue();
+                }
+            }
+        } else {
+            originalResultNote = originalResultNote + testResultItem.getResultValue();
+        }
+
+        actionDataSet.addToNoteList(noteService.createSavableNote(analysis, NoteType.INTERNAL, originalResultNote,
+                RESULT_SUBJECT, this.getSysUserId(request)));
+
     }
 
     protected boolean analysisShouldBeUpdated(TestResultItem testResultItem, Result result, boolean supportReferrals) {
