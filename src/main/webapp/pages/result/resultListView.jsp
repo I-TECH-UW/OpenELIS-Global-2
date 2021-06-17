@@ -244,6 +244,17 @@ function  /*void*/ savePage()
 	
 	jQuery( "#saveButtonId" ).prop("disabled",true);
 	window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
+	var overwrite = false;
+	jQuery('.hasDefaultValue').each(function() {
+		var curValue = jQuery(this).find('.curresult').val();
+		if (curValue !== '0' && curValue !== '' && curValue !== null) {
+			overwrite = true;
+		}
+	})
+	if (overwrite && !confirm('This save will overwrite previously recorded values')) {
+		jQuery( "#saveButtonId" ).prop("disabled",false);
+		return;
+	}
 	var form = document.getElementById("mainForm");
 	form.action = '<spring:escapeBody javaScriptEscape="true">${form.formName}</spring:escapeBody>'.sub('Form','') + ".do"  + '?type=' + encodeURIComponent('<spring:escapeBody javaScriptEscape="true">${type}</spring:escapeBody>');
 	form.submit();
@@ -1109,6 +1120,7 @@ function createReferralOption(sampleNum, testNum, testId, testName, index) {
 							<%-- dictionary results --%>
 							<form:select path="testResult[${iter.index}].resultValue"
 								id="curresultId_${iter.index}"
+								cssClass="curresult"
 								disabled='true'>
 								<option value="0"></option>
 								<form:options items="${testResult.dictionaryResults}"
@@ -1124,6 +1136,7 @@ function createReferralOption(sampleNum, testNum, testId, testName, index) {
 							<%-- multiple results --%>
 							<form:select
 								path="testResult[${iter.index}].multiSelectResultValues"
+								cssClass="curresult"
 								id="curresultId_${iter.index}_0" multiple="multiple"
 								disabled='true'
 								>
@@ -1146,7 +1159,7 @@ function createReferralOption(sampleNum, testNum, testId, testName, index) {
 								<form:select
 									path="testResult[${iter.index}].multiSelectResultValues"
 									id="curresultId_${iter.index}_0"
-									cssClass="${testResult.userChoiceReflex}" multiple="multiple"
+									cssClass="${testResult.userChoiceReflex} curresult" multiple="multiple"
 									disabled='true'
 									>
 									<form:options items="${testResult.dictionaryResults}"

@@ -52,6 +52,7 @@ public class ReferredOutTestsController extends BaseController {
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         if (form.getSearchType() != null) {
             form.setReferralDisplayItems(referralService.getReferralItems(form));
+            form.setSearchFinished(true);
         }
         form.setTestSelectionList(DisplayListService.getInstance().getList(ListType.ALL_TESTS));
         form.setTestUnitSelectionList(DisplayListService.getInstance().getList(ListType.TEST_SECTION_BY_NAME));

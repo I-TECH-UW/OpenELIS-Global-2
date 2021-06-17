@@ -51,6 +51,8 @@ public class ReferredOutTestsForm extends BaseForm {
 
     private List<String> analysisIds;
 
+    private boolean searchFinished;
+
     public ReferredOutTestsForm() {
         setFormName("referredOutTestsForm");
     }
@@ -157,5 +159,13 @@ public class ReferredOutTestsForm extends BaseForm {
 
     public void setAnalysisIds(List<String> analysisIds) {
         this.analysisIds = analysisIds;
+    }
+
+    public boolean isSearchFinished() {
+        return searchFinished;
+    }
+
+    public void setSearchFinished(boolean searchFinished) {
+        this.searchFinished = searchFinished;
     }
 }

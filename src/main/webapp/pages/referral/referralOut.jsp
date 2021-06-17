@@ -78,7 +78,7 @@ function printPatientReports() {
 <button class="patientFinishSearchShow" hidden="hidden" type="button" onclick="search('PATIENT')">Search referrals by patient</button>
 <hr>
 
-<c:if test="${empty form.referralDisplayItems}">
+<c:if test="${empty form.referralDisplayItems && form.searchFinished}">
     <h2><spring:message code="referral.noreferralDisplayItem"/></h2>
 </c:if>
 <c:if test="${not empty form.referralDisplayItems}">
