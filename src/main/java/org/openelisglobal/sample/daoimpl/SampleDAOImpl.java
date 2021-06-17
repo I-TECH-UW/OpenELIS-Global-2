@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
@@ -804,6 +805,20 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
             List<Sample> sampleList = query.list();
 
             return sampleList;
+        } catch (HibernateException e) {
+            handleException(e, "getSamplesBySampleItem");
+        }
+        return new ArrayList<>();
+    }
+
+    @Override
+    public List<Sample> getSamplesByAnalysisIds(List<String> analysisIds) {
+        String hql = "FROM Sample s WHERE s.id IN (SELECT si.id FROM SampleItem si WHERE si.id IN (SELECT a.id FROM Analysis a WHERE a.id IN (:analysisIds)))";
+        try {
+            Query query = entityManager.unwrap(Session.class).createQuery(hql);
+            query.setParameter("analysisIds",
+                    analysisIds.stream().map(e -> Integer.parseInt(e)).collect(Collectors.toList()));
+            return query.list();
         } catch (HibernateException e) {
             handleException(e, "getSamplesBySampleItem");
         }

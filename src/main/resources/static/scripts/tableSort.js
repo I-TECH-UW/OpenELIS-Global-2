@@ -12,6 +12,28 @@
 // always sorted in ascending order.
 //-----------------------------------------------------------------------------
 
+function sortTableJquery(id, col, rev) {
+	jQuery("#" + id + ' th').each(function(index, value){ 
+		if (index != col ) {
+			jQuery(this).attr('class', '');
+		} else {
+			jQuery(this).attr('class', rev ? 'highlight-header-rev' : 'highlight-header');
+		}
+	});
+	$tbody = jQuery("#" + id + ' tbody'); 
+	$tbody.find('tr').sort(function(a,b){ 
+	    var tda = jQuery(a).find('td:eq(' + col +')').text(); // can replace 1 with the column you want to sort on
+	    var tdb = jQuery(b).find('td:eq(' + col + ')').text(); // this will sort on the second column
+	            // if a < b return 1
+	    return tda < tdb ? (rev ? -1 : 1 )
+	           // else if a > b return -1
+	           : tda > tdb ? (rev ? 1 : -1 )
+	           // else they are equal - return 0    
+	           : 0;           
+	}).appendTo($tbody);
+}
+
+
 function sortTable(id, col, rev) {
 
   // Get the table or table section to sort.

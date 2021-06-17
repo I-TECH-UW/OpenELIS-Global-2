@@ -203,7 +203,9 @@ public abstract class PatientReport extends Report {
         boolean valid;
         List<Sample> reportSampleList = new ArrayList<>();
 
-        if (!GenericValidator.isBlankOrNull(form.getSelPatient())) {
+        if (form.getAnalysisIds() != null && form.getAnalysisIds().size() > 0) {
+            reportSampleList = findReportSamples(form.getAnalysisIds());
+        } else if (!GenericValidator.isBlankOrNull(form.getSelPatient())) {
             List<Patient> patientList = new ArrayList<>();
             valid = findPatientById(form.getSelPatient(), patientList);
             if (valid) {
@@ -389,6 +391,11 @@ public abstract class PatientReport extends Report {
 
     private List<Sample> findReportSamples(String lowerNumber, String upperNumber) {
         List<Sample> sampleList = sampleService.getSamplesByAccessionRange(lowerNumber, upperNumber);
+        return sampleList == null ? new ArrayList<>() : sampleList;
+    }
+
+    private List<Sample> findReportSamples(List<String> analysisIds) {
+        List<Sample> sampleList = sampleService.getSamplesByAnalysisIds(analysisIds);
         return sampleList == null ? new ArrayList<>() : sampleList;
     }
 

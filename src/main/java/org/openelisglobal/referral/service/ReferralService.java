@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.UUID;
 
 import org.openelisglobal.common.service.BaseObjectService;
+import org.openelisglobal.referral.action.beanitems.ReferralDisplayItem;
+import org.openelisglobal.referral.form.ReferredOutTestsForm;
+import org.openelisglobal.referral.form.ReferredOutTestsForm.ReferDateType;
 import org.openelisglobal.referral.valueholder.Referral;
 
 public interface ReferralService extends BaseObjectService<Referral, String> {
@@ -22,4 +25,15 @@ public interface ReferralService extends BaseObjectService<Referral, String> {
     List<UUID> getSentReferralUuids();
 
     List<Referral> getReferralsByOrganization(String organizationId, Date lowDate, Date highDate);
+
+    List<Referral> getReferralsByAccessionNumber(String labNumber);
+
+    List<Referral> getReferralByPatientId(String selPatient);
+
+    ReferralDisplayItem convertToDisplayItem(Referral referral);
+
+    List<ReferralDisplayItem> getReferralItems(ReferredOutTestsForm form);
+
+    List<Referral> getReferralsByTestAndDate(ReferDateType dateType, Date startDate, Date endDate,
+            List<String> testUnitIds, List<String> testIds);
 }

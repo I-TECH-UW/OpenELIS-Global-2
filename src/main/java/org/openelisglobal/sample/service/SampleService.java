@@ -106,4 +106,6 @@ public interface SampleService extends BaseObjectService<Sample, String> {
     SampleRequester getOrganizationSampleRequester(Sample sample, String orgTypeId);
 
     List<Sample> getAllMissingFhirUuid();
+
+    List<Sample> getSamplesByAnalysisIds(List<String> analysisIds);
 }

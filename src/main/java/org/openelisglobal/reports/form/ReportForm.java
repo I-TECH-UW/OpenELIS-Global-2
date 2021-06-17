@@ -69,6 +69,8 @@ public class ReportForm extends BaseForm {
     @Pattern(regexp = ValidationHelper.ID_REGEX)
     private String projectCode = "";
 
+    private List<@Pattern(regexp = ValidationHelper.ID_REGEX) String> analysisIds;
+
     private boolean usePredefinedDateRanges = false;
 
     @Pattern(regexp = "^$|^year$|^months3$|^months6$|^months12$|^custom$")
@@ -419,5 +421,13 @@ public class ReportForm extends BaseForm {
 
     public void setSelPatient(String selPatient) {
         this.selPatient = selPatient;
+    }
+
+    public List<@Pattern(regexp = ValidationHelper.ID_REGEX) String> getAnalysisIds() {
+        return analysisIds;
+    }
+
+    public void setAnalysisIds(List<@Pattern(regexp = ValidationHelper.ID_REGEX) String> analysisIds) {
+        this.analysisIds = analysisIds;
     }
 }

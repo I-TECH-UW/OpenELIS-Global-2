@@ -1445,3 +1445,25 @@ view-non-conforming-section-1 > td {
 .center-text {
 	text-align: center;
 }
+
+.alt-color-table th, .alt-color-table td {
+	padding: 0px 5px;
+}
+
+.alt-color-table tr:nth-child(even) {
+	background-color: #C8DADA;
+}
+
+.alt-color-table tr:nth-child(odd) {
+	background-color: #F0F3F3;
+}
+
+th.highlight-header {
+	color: #FFFFFF;
+	background-color: #3c74b6;
+}
+
+th.highlight-header-rev {
+	color: #FFFFFF;
+	background-color: #3c74b6;
+}
