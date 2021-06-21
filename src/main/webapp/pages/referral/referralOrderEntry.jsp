@@ -196,9 +196,9 @@ function createReferralOption(sampleNum, testNum, testId, testName, index) {
 	referredTestSelect.setAttribute('name','referralItems[' + index + '].referredTestId');
 	referredTestSelect.setAttribute('id', 'testSelection_' + index);
 	referredTestSelect.setAttribute('onchange', 'markModified("' + index + '");');
-	option = document.createElement('option');
-	option.value = 0;
-	referredTestSelect.appendChild(option);
+// 	option = document.createElement('option');
+// 	option.value = 0;
+// 	referredTestSelect.appendChild(option);
 	option = document.createElement('option');
 	option.value = testId;
 	option.innerHTML = testName;
