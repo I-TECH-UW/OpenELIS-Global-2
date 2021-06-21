@@ -566,17 +566,26 @@
 		<put-attribute name="footer"
 			value="/pages/common/saveCancelFooterButtons.jsp" />
 	</definition>
+	
+	
 	<definition name="referredOutDefinition"
 		extends="baseDefinition">
 		<put-attribute name="preSelectionHeader"
 			value="/pages/common/actionSuccess.jsp" />
 		<put-attribute name="body"
-			value="/pages/referral/referralOut.jsp" />
+			value="referredOutBodyDefinition" />
 		<put-attribute name="footer"
-			value="/pages/common/saveCancelFooterButtons.jsp" />
+			value="/pages/common/emptyPlaceHolder.jsp" />
 	</definition>
-
-
+	
+	<definition name="referredOutBodyDefinition"
+		template="/pages/referral/referralOut.jsp">
+		<put-attribute name="referredTestSearch"
+			value="/pages/referral/referralSearch.jsp" />
+		<put-attribute name="patientEnhancedSearch"
+			value="/pages/patient/patientEnhancedSearch.jsp" />
+	</definition>
+	
 	<!-- MasterPageLists -->
 	<definition name="haitiMasterListsPageDefinition"
 		extends="masterListsPageDefinition">

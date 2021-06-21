@@ -59,6 +59,8 @@ public class PatientResultsForm extends BaseForm implements PatientInfoForm, Res
 
     private Boolean warning;
 
+    private List<IdValuePair> referralOrganizations;
+
     public PatientResultsForm() {
         setFormName("PatientResultsForm");
     }
@@ -265,6 +267,14 @@ public class PatientResultsForm extends BaseForm implements PatientInfoForm, Res
 
     public void setWarning(Boolean warning) {
         this.warning = warning;
+    }
+
+    public void setReferralOrganizations(List<IdValuePair> referralOrganizations) {
+        this.referralOrganizations = referralOrganizations;
+    }
+
+    public List<IdValuePair> getReferralOrganizations() {
+        return referralOrganizations;
     }
 
 }

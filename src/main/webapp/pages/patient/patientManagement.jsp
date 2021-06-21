@@ -952,7 +952,7 @@ function  processSubjectNumberSuccess(xhr){
 	</div>
     <%-- </logic:equal> --%>
     </c:if>
-	<div id="PatientDetail" style="display:none;"  >
+	<div id="PatientDetail" class="patientFinishSearchShow" style="display:none;"  >
 	<h2><spring:message code="patient.information"/></h2>
 	<table style="width:80%" border="0">
     <tr>

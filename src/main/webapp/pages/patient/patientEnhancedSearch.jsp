@@ -132,13 +132,13 @@ function enhancedSearchPatients(localSearch) {
 function processSearchFailure(xhr) {
 	//alert( xhr.responseText );
 	jQuery("#loading").hide();
-	jQuery("#PatientDetail").show();
+	jQuery(".patientFinishSearchShow").show();
 	alert("<spring:message code="error.system"/>");
 }
 
 function processSearchSuccess(xhr, localSearch) {
 	jQuery("#loading").hide();
-	jQuery("#PatientDetail").show();
+	jQuery(".patientFinishSearchShow").show();
 	//alert( xhr.responseText );
 	var formField = xhr.responseXML.getElementsByTagName("formfield").item(0);
 	var message = xhr.responseXML.getElementsByTagName("message").item(0);

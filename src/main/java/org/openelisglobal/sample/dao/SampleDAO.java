@@ -79,4 +79,6 @@ public interface SampleDAO extends BaseDAO<Sample, String> {
     String getNextAccessionNumber();
 
     List<Sample> getAllMissingFhirUuid();
+
+    List<Sample> getSamplesByAnalysisIds(List<String> analysisIds);
 }

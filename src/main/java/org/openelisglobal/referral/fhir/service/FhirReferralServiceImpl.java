@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import javax.annotation.PostConstruct;
@@ -183,13 +184,19 @@ public class FhirReferralServiceImpl implements FhirReferralService {
                     sr.setId(analysis.getFhirUuidAsString());
                     return sr;
                 });
-        Practitioner requester = fhirTransformService.transformNameToPractitioner(referral.getRequesterName());
-        requester.setId(UUID.randomUUID().toString());
+        Optional<Practitioner> requester = Optional.empty();
+        if (!GenericValidator.isBlankOrNull(referral.getRequesterName())) {
+            requester = Optional.of(fhirTransformService.transformNameToPractitioner(referral.getRequesterName()));
+            requester.get().setId(UUID.randomUUID().toString());
+        }
+
         Task task = createReferralTask(fhirOrg, fhirPersistanceService
                 .getPatientByUuid(sampleHumanService.getPatientForSample(sample).getFhirUuidAsString()).orElseThrow(),
                 serviceRequest, requester, sample);
         task.setId(referral.getFhirUuidAsString());
-        updateResources.put(requester.getIdElement().getIdPart(), requester);
+        if (requester.isPresent()) {
+            updateResources.put(requester.get().getIdElement().getIdPart(), requester.get());
+        }
         updateResources.put(task.getIdElement().getIdPart(), task);
         updateResources.put(serviceRequest.getIdElement().getIdPart(), serviceRequest);
 
@@ -201,7 +208,7 @@ public class FhirReferralServiceImpl implements FhirReferralService {
     }
 
     public Task createReferralTask(Organization referralOrganization, Patient patient, ServiceRequest serviceRequest,
-            Practitioner requester, Sample sample) {
+            Optional<Practitioner> requester, Sample sample) {
         Bundle bundle = new Bundle();
         Task task = new Task();
 //        task.setGroupIdentifier(
@@ -210,7 +217,9 @@ public class FhirReferralServiceImpl implements FhirReferralService {
         task.setReasonCode(new CodeableConcept()
                 .addCoding(new Coding().setSystem(fhirConfig.getOeFhirSystem() + "/refer_reason")));
         task.setOwner(fhirTransformService.createReferenceFor(referralOrganization));
-        task.setRequester(fhirTransformService.createReferenceFor(requester));
+        if (requester.isPresent()) {
+            task.setRequester(fhirTransformService.createReferenceFor(requester.get()));
+        }
         if (!remoteStoreIdentifier.isEmpty()) {
             task.setRestriction(new TaskRestrictionComponent()
                     .setRecipient(Arrays.asList(new Reference(remoteStoreIdentifier.get(0)))));

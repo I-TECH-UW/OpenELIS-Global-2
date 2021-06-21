@@ -28,6 +28,7 @@ import org.openelisglobal.common.provider.validation.AccessionNumberValidatorFac
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.util.validator.CustomDateValidator.DateRelation;
 import org.openelisglobal.common.validator.ValidationHelper;
+import org.openelisglobal.referral.action.beanitems.ReferralItem;
 import org.openelisglobal.result.action.util.ResultItem;
 import org.openelisglobal.result.form.LogbookResultsForm;
 import org.openelisglobal.result.valueholder.Result;
@@ -204,6 +205,12 @@ public class TestResultItem implements ResultItem, Serializable {
 
     @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { LogbookResultsForm.LogbookResults.class })
     private String considerRejectReason;
+
+    private boolean refer;
+
+    private String defaultResultValue;
+
+    private ReferralItem referralItem;
 
     public String getConsiderRejectReason() {
         return considerRejectReason;
@@ -870,6 +877,30 @@ public class TestResultItem implements ResultItem, Serializable {
 
     public void setNationalId(String nationalId) {
         this.nationalId = nationalId;
+    }
+
+    public boolean isRefer() {
+        return refer;
+    }
+
+    public void setRefer(boolean refer) {
+        this.refer = refer;
+    }
+
+    public String getDefaultResultValue() {
+        return defaultResultValue;
+    }
+
+    public void setDefaultResultValue(String defaultResultValue) {
+        this.defaultResultValue = defaultResultValue;
+    }
+
+    public ReferralItem getReferralItem() {
+        return referralItem;
+    }
+
+    public void setReferralItem(ReferralItem referralItem) {
+        this.referralItem = referralItem;
     }
 
 }

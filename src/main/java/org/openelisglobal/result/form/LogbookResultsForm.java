@@ -12,6 +12,7 @@ import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.util.validator.CustomDateValidator.DateRelation;
 import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.inventory.form.InventoryKitItem;
+import org.openelisglobal.referral.action.beanitems.ReferralItem;
 import org.openelisglobal.test.beanItems.TestResultItem;
 import org.openelisglobal.validation.annotations.ValidDate;
 
@@ -38,6 +39,9 @@ public class LogbookResultsForm extends BaseForm implements ResultsPagingForm {
     @Valid
     private List<TestResultItem> testResult;
 
+    @Valid
+    private List<ReferralItem> referralItems;
+
     // for display
     private List<InventoryKitItem> inventoryItems;
 
@@ -61,6 +65,9 @@ public class LogbookResultsForm extends BaseForm implements ResultsPagingForm {
 
     // for display
     private List<IdValuePair> testSectionsByName;
+
+    // for display
+    private List<IdValuePair> referralOrganizations;
 
     @Pattern(regexp = ValidationHelper.ID_REGEX, groups = { LogbookResults.class })
     private String testSectionId;
@@ -204,6 +211,22 @@ public class LogbookResultsForm extends BaseForm implements ResultsPagingForm {
 
     public void setDisplayTestSections(Boolean displayTestSections) {
         this.displayTestSections = displayTestSections;
+    }
+
+    public List<IdValuePair> getReferralOrganizations() {
+        return referralOrganizations;
+    }
+
+    public void setReferralOrganizations(List<IdValuePair> referralOrganizations) {
+        this.referralOrganizations = referralOrganizations;
+    }
+
+    public List<ReferralItem> getReferralItems() {
+        return referralItems;
+    }
+
+    public void setReferralItems(List<ReferralItem> referralItems) {
+        this.referralItems = referralItems;
     }
 
 }

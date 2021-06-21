@@ -129,6 +129,7 @@ public class AppConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         // Register resource handlers for css, js, etc.
+        registry.addResourceHandler("select2/**").addResourceLocations("classpath:static/select2/");
         registry.addResourceHandler("scripts/**").addResourceLocations("classpath:static/scripts/");
         registry.addResourceHandler("css/**").addResourceLocations("classpath:static/css/");
         registry.addResourceHandler("images/**").addResourceLocations("/static/images/");

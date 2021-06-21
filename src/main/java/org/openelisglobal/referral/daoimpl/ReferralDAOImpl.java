@@ -28,6 +28,7 @@ import org.hibernate.Session;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.referral.dao.ReferralDAO;
+import org.openelisglobal.referral.form.ReferredOutTestsForm.ReferDateType;
 import org.openelisglobal.referral.valueholder.Referral;
 import org.openelisglobal.referral.valueholder.ReferralStatus;
 import org.springframework.stereotype.Component;
@@ -73,7 +74,6 @@ public class ReferralDAOImpl extends BaseDAOImpl<Referral, String> implements Re
     }
 
     @Override
-
     @Transactional(readOnly = true)
     public Referral getReferralByAnalysisId(String analysisId) throws LIMSRuntimeException {
 
@@ -188,6 +188,86 @@ public class ReferralDAOImpl extends BaseDAOImpl<Referral, String> implements Re
             return referrals;
         } catch (HibernateException e) {
             handleException(e, "getAllReferralsByStatus");
+        }
+        return null;
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<Referral> getReferralsByAnalysisIds(List<String> analysisIds) {
+        String sql = "From Referral r where r.analysis.id in (:analysisIds)";
+        try {
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setParameterList("analysisIds",
+                    analysisIds.stream().map(e -> Integer.parseInt(e)).collect(Collectors.toList()));
+            return query.list();
+        } catch (HibernateException e) {
+            handleException(e, "getReferralsByAnalysisIds");
+        }
+        return null;
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<Referral> getReferralsByTestAndDate(ReferDateType dateType, Date startDate, Date endDate,
+            List<String> testUnitIds, List<String> testIds) {
+        String hql = "From Referral r WHERE ";
+        String subHQL = "SELECT a.id FROM Analysis a WHERE ";
+        boolean and = false;
+        if (ReferDateType.RESULT.equals(dateType) && startDate != null) {
+            if (and) {
+                subHQL += "AND ";
+            }
+            subHQL += "a.completedDate BETWEEN :startDate AND :endDate ";
+            and = true;
+        }
+        if (testUnitIds != null && testUnitIds.size() > 0) {
+            if (and) {
+                subHQL += "AND ";
+            }
+            subHQL += "a.testSection.id in (:testUnitIds) ";
+            and = true;
+        }
+        if (testIds != null && testIds.size() > 0) {
+            if (and) {
+                subHQL += "AND ";
+            }
+            subHQL += "a.test.id in (:testIds) ";
+            and = true;
+        }
+
+        and = false;
+        if (!subHQL.endsWith("WHERE ")) {
+            if (and) {
+                hql += "AND ";
+            }
+            hql += "r.analysis.id in (" + subHQL + ") ";
+            and = true;
+        }
+        if (ReferDateType.SENT.equals(dateType) && startDate != null) {
+            if (and) {
+                hql += "AND ";
+            }
+            hql += "r.sentDate BETWEEN :startDate AND :endDate ";
+        }
+
+        try {
+            Query query = entityManager.unwrap(Session.class).createQuery(hql);
+            if (startDate != null) {
+                query.setDate("startDate", startDate);
+                query.setDate("endDate", endDate);
+            }
+            if (testUnitIds != null && testUnitIds.size() > 0) {
+                query.setParameter("testUnitIds",
+                        testUnitIds.stream().map(e -> Integer.parseInt(e)).collect(Collectors.toList()));
+            }
+            if (testIds != null && testIds.size() > 0) {
+                query.setParameter("testIds",
+                        testIds.stream().map(e -> Integer.parseInt(e)).collect(Collectors.toList()));
+            }
+            return query.list();
+        } catch (HibernateException e) {
+            handleException(e, "getReferralsByAnalysisIds");
         }
         return null;
     }

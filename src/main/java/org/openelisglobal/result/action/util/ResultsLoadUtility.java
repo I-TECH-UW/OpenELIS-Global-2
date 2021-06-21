@@ -758,8 +758,7 @@ public class ResultsLoadUtility {
         }
 
         if (test.getDefaultTestResult() != null) {
-            testItem.setResultValue(test.getDefaultTestResult().getValue());
-            testItem.setShadowResultValue(testItem.getResultValue());
+            testItem.setDefaultResultValue(test.getDefaultTestResult().getValue());
         }
         return testItem;
     }

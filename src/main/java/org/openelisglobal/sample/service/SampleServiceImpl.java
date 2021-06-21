@@ -536,4 +536,9 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
         return sampleDAO.getAllMissingFhirUuid();
     }
 
+    @Override
+    public List<Sample> getSamplesByAnalysisIds(List<String> analysisIds) {
+        return sampleDAO.getSamplesByAnalysisIds(analysisIds);
+    }
+
 }
