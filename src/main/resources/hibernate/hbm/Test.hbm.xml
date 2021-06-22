@@ -118,6 +118,8 @@
 			class="org.openelisglobal.testresult.valueholder.TestResult" fetch="select" lazy="false">
 			<column name="default_test_result_id" precision="10" scale="0" />
 		</many-to-one>
+		<property name="inLabOnly" type="java.lang.Boolean"
+			column="in_lab_only" />
 	</class>
 <!-- 	<query name="test.getNext"> -->
 <!-- 		from Test t order by t.testSection.testSectionName, t.testName -->

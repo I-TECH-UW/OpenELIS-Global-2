@@ -149,6 +149,7 @@ public class TestModifyEntryController extends BaseController {
             bean.setSampleType(typeOfSample != null ? typeOfSample.getLocalizedName() : "n/a");
             bean.setOrderable(test.getOrderable() ? "Orderable" : "Not orderable");
             bean.setNotifyResults(test.isNotifyResults());
+            bean.setInLabOnly(test.isInLabOnly());
             bean.setLoinc(test.getLoinc());
             bean.setActive(test.isActive() ? "Active" : "Not active");
             bean.setUom(testService.getUOM(test, false));
@@ -551,6 +552,7 @@ public class TestModifyEntryController extends BaseController {
             test.setIsActive(testAddParams.active);
             test.setOrderable("Y".equals(testAddParams.orderable));
             test.setNotifyResults("Y".equals(testAddParams.notifyResults));
+            test.setInLabOnly("Y".equals(testAddParams.inLabOnly));
             test.setIsReportable("N");
             test.setTestSection(testSection);
             if (GenericValidator.isBlankOrNull(test.getGuid())) {
@@ -644,6 +646,7 @@ public class TestModifyEntryController extends BaseController {
             testAddParams.active = (String) obj.get("active");
             testAddParams.orderable = (String) obj.get("orderable");
             testAddParams.notifyResults = (String) obj.get("notifyResults");
+            testAddParams.inLabOnly = (String) obj.get("inLabOnly");
             if (TypeOfTestResultServiceImpl.ResultType.isNumericById(testAddParams.resultTypeId)) {
                 testAddParams.lowValid = (String) obj.get("lowValid");
                 testAddParams.highValid = (String) obj.get("highValid");
@@ -766,6 +769,7 @@ public class TestModifyEntryController extends BaseController {
         String active;
         String orderable;
         public String notifyResults;
+        public String inLabOnly;
         String lowValid;
         String highValid;
         public String significantDigits;

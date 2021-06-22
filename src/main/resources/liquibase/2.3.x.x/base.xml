@@ -17,5 +17,6 @@
 	<include file="liquibase/2.3.x.x/accession_validation_range_access.xml"/>
 	<include file="liquibase/2.3.x.x/accession_sequencing.xml"/>
 	<include file="liquibase/2.3.x.x/referral_results.xml"/>
+	<include file="liquibase/2.3.x.x/in_lab_tests.xml"/>
 
 </databaseChangeLog>

@@ -60,17 +60,20 @@ public class PatientCILNSPClinical_vreduit extends PatientReport implements IRep
 
     static {
         analysisStatusIds = new HashSet<>();
-        analysisStatusIds
-                .add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.BiologistRejected)));
-        analysisStatusIds.add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized)));
+        analysisStatusIds.add(Integer
+                .parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.BiologistRejected)));
         analysisStatusIds.add(
-                Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NonConforming_depricated)));
-        analysisStatusIds.add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NotStarted)));
-        analysisStatusIds
-                .add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalAcceptance)));
-        analysisStatusIds.add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Canceled)));
-        analysisStatusIds
-                .add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalRejected)));
+                Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized)));
+        analysisStatusIds.add(Integer.parseInt(
+                SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NonConforming_depricated)));
+        analysisStatusIds.add(
+                Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NotStarted)));
+        analysisStatusIds.add(Integer
+                .parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalAcceptance)));
+        analysisStatusIds.add(
+                Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Canceled)));
+        analysisStatusIds.add(Integer
+                .parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalRejected)));
 
     }
 
@@ -100,7 +103,8 @@ public class PatientCILNSPClinical_vreduit extends PatientReport implements IRep
                     new ByteArrayInputStream(labDirectorSignature.get().getImage()));
         }
 
-        reportParameters.put("labDirectorName", ConfigurationProperties.getInstance().getPropertyValue(Property.LAB_DIRECTOR_NAME));
+        reportParameters.put("labDirectorName",
+                ConfigurationProperties.getInstance().getPropertyValue(Property.LAB_DIRECTOR_NAME));
         reportParameters.put("labDirectorTitle",
                 ConfigurationProperties.getInstance().getPropertyValue(Property.LAB_DIRECTOR_TITLE));
     }
@@ -128,34 +132,36 @@ public class PatientCILNSPClinical_vreduit extends PatientReport implements IRep
         List<ClinicalPatientData> currentSampleReportItems = new ArrayList<>(analysisList.size());
         currentConclusion = null;
         for (Analysis analysis : analysisList) {
-            boolean hasParentResult = analysis.getParentResult() != null;
-            sampleSet.add(analysis.getSampleItem());
-            if (analysis.getTest() != null) {
-                currentAnalysis = analysis;
-                ClinicalPatientData resultsData = buildClinicalPatientData(hasParentResult);
-                if (isConfirmationSample) {
-                    String alerts = resultsData.getAlerts();
-                    if (!GenericValidator.isBlankOrNull(alerts)) {
-                        alerts += ", C";
+            if (!analysis.getTest().isInLabOnly()) {
+                boolean hasParentResult = analysis.getParentResult() != null;
+                sampleSet.add(analysis.getSampleItem());
+                if (analysis.getTest() != null) {
+                    currentAnalysis = analysis;
+                    ClinicalPatientData resultsData = buildClinicalPatientData(hasParentResult);
+                    if (isConfirmationSample) {
+                        String alerts = resultsData.getAlerts();
+                        if (!GenericValidator.isBlankOrNull(alerts)) {
+                            alerts += ", C";
+                        } else {
+                            alerts = "C";
+                        }
+
+                        resultsData.setAlerts(alerts);
+                    }
+
+                    if (currentAnalysis.isReferredOut()) {
+                        Referral referral = referralService.getReferralByAnalysisId(currentAnalysis.getId());
+                        if (referral != null) {
+                            // addReferredTests method in both PatientClinical and PatientCILNSPClinical are
+                            // nearly identical and
+                            // should be refactored to use the same code.
+                            List<ClinicalPatientData> referredData = addReferredTests(referral, resultsData);
+                            currentSampleReportItems.addAll(referredData);
+                        }
                     } else {
-                        alerts = "C";
+                        reportItems.add(resultsData);
+                        currentSampleReportItems.add(resultsData);
                     }
-
-                    resultsData.setAlerts(alerts);
-                }
-
-                if (currentAnalysis.isReferredOut()) {
-                    Referral referral = referralService.getReferralByAnalysisId(currentAnalysis.getId());
-                    if (referral != null) {
-                        // addReferredTests method in both PatientClinical and PatientCILNSPClinical are
-                        // nearly identical and
-                        // should be refactored to use the same code.
-                        List<ClinicalPatientData> referredData = addReferredTests(referral, resultsData);
-                        currentSampleReportItems.addAll(referredData);
-                    }
-                } else {
-                    reportItems.add(resultsData);
-                    currentSampleReportItems.add(resultsData);
                 }
             }
         }

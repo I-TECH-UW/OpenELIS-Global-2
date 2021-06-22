@@ -62,6 +62,10 @@ public class TestAddFormValidator implements Validator {
                 ValidationHelper.validateYNField(StringUtil.nullSafeToString(newTest.get("active")), "JsonWad",
                         "active", errors);
 
+                ValidationHelper.validateYNField(StringUtil.nullSafeToString(newTest.get("inLabOnly")), "JsonWad",
+                        "inLabOnly",
+                        errors);
+
                 JSONArray sampleTypes = JSONUtils.getAsArray(newTest.get("sampleTypes"));
                 for (int i = 0; i < sampleTypes.size(); ++i) {
                     JSONObject sampleType = JSONUtils.getAsObject(sampleTypes.get(i));

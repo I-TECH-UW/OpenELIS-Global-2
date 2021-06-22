@@ -245,8 +245,11 @@ public abstract class PatientReport extends Report {
                 findPatientInfo();
                 createReportItems();
             }
-
-            postSampleBuild();
+            if (reportItems.size() == 0) {
+                add1LineErrorMessage("report.error.message.noPrintableItems");
+            } else {
+                postSampleBuild();
+            }
         }
 
         if (!updatedAnalysis.isEmpty()) {
