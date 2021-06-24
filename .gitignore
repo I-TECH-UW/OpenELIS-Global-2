@@ -12,6 +12,7 @@ liqubase.properties
 .classpath
 .settings/
 .project
+.factorypath
 
 # Maven Files #
 *target/
