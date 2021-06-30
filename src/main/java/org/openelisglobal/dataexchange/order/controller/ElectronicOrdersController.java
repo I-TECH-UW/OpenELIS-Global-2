@@ -109,70 +109,75 @@ public class ElectronicOrdersController extends BaseController {
         IGenericClient fhirClient = fhirUtil.getFhirClient(fhirConfig.getLocalFhirStorePath());
 
         try {
-        ServiceRequest serviceRequest = fhirClient.read().resource(ServiceRequest.class)
-                .withId(electronicOrder.getExternalId()).execute();
+            ServiceRequest serviceRequest = fhirClient.read().resource(ServiceRequest.class)
+                    .withId(electronicOrder.getExternalId()).execute();
 
-        Test test = null;
-        for (Coding coding : serviceRequest.getCode().getCoding()) {
-            if (coding.getSystem().equalsIgnoreCase("http://loinc.org")) {
-                List<Test> tests = testService.getActiveTestsByLoinc(coding.getCode());
-                if (tests.size() != 0) {
-                    test = tests.get(0);
-                    break;
+            Test test = null;
+            for (Coding coding : serviceRequest.getCode().getCoding()) {
+                if (coding.getSystem().equalsIgnoreCase("http://loinc.org")) {
+                    List<Test> tests = testService.getActiveTestsByLoinc(coding.getCode());
+                    if (tests.size() != 0) {
+                        test = tests.get(0);
+                        break;
+                    }
                 }
             }
-        }
-        Task task = fhirUtil.getFhirParser().parseResource(Task.class, electronicOrder.getData());
+            Task task = fhirUtil.getFhirParser().parseResource(Task.class, electronicOrder.getData());
 
 //       Patient patient =  fhirClient.read().resource(Patient.class).withId(serviceRequest.getSubject().getReference()).execute();
-        Patient patient = patientService.getByExternalId(serviceRequest.getSubject().getReferenceElement().getIdPart());
-        org.hl7.fhir.r4.model.Patient fhirPatient = fhirClient.read().resource(org.hl7.fhir.r4.model.Patient.class)
-                .withId(serviceRequest.getSubject().getReferenceElement().getIdPart()).execute();
+            Patient patient = patientService
+                    .getByExternalId(serviceRequest.getSubject().getReferenceElement().getIdPart());
+            org.hl7.fhir.r4.model.Patient fhirPatient = fhirClient.read().resource(org.hl7.fhir.r4.model.Patient.class)
+                    .withId(patient.getFhirUuidAsString()).execute();
 
-        String passportNumber = "";
-        String subjectNumber = patientService.getSubjectNumber(patient);
-        for (Identifier identifier : fhirPatient.getIdentifier()) {
-            if ("passport".equals(identifier.getSystem())) {
-                passportNumber = GenericValidator.isBlankOrNull(identifier.getId()) ? passportNumber
-                        : identifier.getId();
+            String passportNumber = "";
+            String subjectNumber = patientService.getSubjectNumber(patient);
+            for (Identifier identifier : fhirPatient.getIdentifier()) {
+                if ("passport".equals(identifier.getSystem())) {
+                    passportNumber = GenericValidator.isBlankOrNull(identifier.getId()) ? passportNumber
+                            : identifier.getId();
+                }
+                if ((fhirConfig.getOeFhirSystem() + "/pat_subjectNumber").equals(identifier.getSystem())) {
+                    subjectNumber = GenericValidator.isBlankOrNull(identifier.getId()) ? subjectNumber
+                            : identifier.getId();
+                }
             }
-            if ((fhirConfig.getOeFhirSystem() + "/pat_subjectNumber").equals(identifier.getSystem())) {
-                subjectNumber = GenericValidator.isBlankOrNull(identifier.getId()) ? subjectNumber : identifier.getId();
+
+            Organization organization = organizationService
+                    .getOrganizationByFhirId(task.getRestriction().getRecipientFirstRep().getIdElement().getId());
+
+            Sample sample = sampleService.getSampleByReferringId(electronicOrder.getExternalId());
+            displayItem.setElectronicOrderId(electronicOrder.getId());
+            displayItem.setExternalOrderId(electronicOrder.getExternalId());
+            displayItem.setRequestDateDisplay(DateUtil.formatDateTimeAsText(task.getAuthoredOn()));
+            if (patient != null && patient.getPerson() != null) {
+                displayItem.setPatientLastName(patient.getPerson().getLastName());
+                displayItem.setPatientFirstName(patient.getPerson().getFirstName());
+                displayItem.setPatientNationalId(patient.getNationalId());
             }
-        }
-
-        Organization organization = organizationService
-                .getOrganizationByFhirId(task.getRestriction().getRecipientFirstRep().getIdElement().getId());
-
-        Sample sample = sampleService.getSampleByReferringId(electronicOrder.getExternalId());
-        displayItem.setElectronicOrderId(electronicOrder.getId());
-        displayItem.setExternalOrderId(electronicOrder.getExternalId());
-        displayItem.setRequestDateDisplay(DateUtil.formatDateTimeAsText(task.getAuthoredOn()));
-        if (patient != null && patient.getPerson() != null) {
-            displayItem.setPatientLastName(patient.getPerson().getLastName());
-            displayItem.setPatientFirstName(patient.getPerson().getFirstName());
-            displayItem.setPatientNationalId(patient.getNationalId());
-        }
-        if (organization != null) {
-            displayItem.setRequestingFacility(organization.getOrganizationName());
-        }
-        displayItem.setStatus(statusOfSampleService.get(electronicOrder.getStatusId()).getDefaultLocalizedName());
-        if (test != null) {
-            displayItem.setTestName(test.getLocalizedTestName().getLocalizedValue());
-        }
-        if (serviceRequest.getRequisition() != null) {
-            displayItem.setReferringLabNumber(serviceRequest.getRequisition().getValue());
-        }
-        displayItem.setPassportNumber(passportNumber);
-        displayItem.setSubjectNumber(subjectNumber);
-        if (sample != null) {
-            displayItem.setLabNumber(sample.getAccessionNumber());
-        }
+            if (organization != null) {
+                displayItem.setRequestingFacility(organization.getOrganizationName());
+            }
+            displayItem.setStatus(statusOfSampleService.get(electronicOrder.getStatusId()).getDefaultLocalizedName());
+            if (test != null) {
+                displayItem.setTestName(test.getLocalizedTestName().getLocalizedValue());
+            }
+            if (serviceRequest.getRequisition() != null) {
+                displayItem.setReferringLabNumber(serviceRequest.getRequisition().getValue());
+            }
+            displayItem.setPassportNumber(passportNumber);
+            displayItem.setSubjectNumber(subjectNumber);
+            if (sample != null) {
+                displayItem.setLabNumber(sample.getAccessionNumber());
+            }
         } catch (ResourceNotFoundException e) {
             String errorMsg = "error in data collection - FHIR resource not found";
             displayItem.setWarnings(Arrays.asList(errorMsg));
         } catch (NullPointerException e) {
             String errorMsg = "error in data collection - null data";
+            displayItem.setWarnings(Arrays.asList(errorMsg));
+        } catch (RuntimeException e) {
+            String errorMsg = "error in data collection - unknown exception";
             displayItem.setWarnings(Arrays.asList(errorMsg));
         }
 
@@ -190,7 +195,7 @@ public class ElectronicOrdersController extends BaseController {
             Date endDate = GenericValidator.isBlankOrNull(form.getEndDate()) ? null
                     : DateUtil.convertStringDateToSqlDate(form.getEndDate());
             return electronicOrderService.getAllElectronicOrdersByDateAndStatus(startDate, endDate, form.getStatusId(),
-                    SortOrder.LAST_UPDATED_ASC);
+                    SortOrder.STATUS_ID);
         default:
             return null;
         }
