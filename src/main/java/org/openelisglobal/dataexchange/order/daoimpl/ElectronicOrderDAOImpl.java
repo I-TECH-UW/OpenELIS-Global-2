@@ -366,7 +366,7 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder, String>
             if (and) {
                 hql += "AND ";
             }
-            hql += "eo.statusId.id = :statusId ";
+            hql += "eo.statusId = :statusId ";
             and = true;
         }
 
@@ -395,7 +395,7 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder, String>
                 query.setDate("endDate", endDate);
             }
             if (!GenericValidator.isBlankOrNull(statusId)) {
-                query.setParameter("statusId", statusId);
+                query.setParameter("statusId", Integer.parseInt(statusId));
             }
             return query.list();
         } catch (HibernateException e) {

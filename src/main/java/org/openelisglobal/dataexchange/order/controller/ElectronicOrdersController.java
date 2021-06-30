@@ -144,9 +144,11 @@ public class ElectronicOrdersController extends BaseController {
         displayItem.setElectronicOrderId(electronicOrder.getId());
         displayItem.setExternalOrderId(electronicOrder.getExternalId());
         displayItem.setRequestDateDisplay(DateUtil.formatDateTimeAsText(task.getAuthoredOn()));
-        displayItem.setPatientLastName(patient.getPerson().getLastName());
-        displayItem.setPatientFirstName(patient.getPerson().getFirstName());
-        displayItem.setPatientNationalId(patient.getNationalId());
+        if (patient != null && patient.getPerson() != null) {
+            displayItem.setPatientLastName(patient.getPerson().getLastName());
+            displayItem.setPatientFirstName(patient.getPerson().getFirstName());
+            displayItem.setPatientNationalId(patient.getNationalId());
+        }
         if (organization != null) {
             displayItem.setRequestingFacility(organization.getOrganizationName());
         }
@@ -176,8 +178,8 @@ public class ElectronicOrdersController extends BaseController {
                     : DateUtil.convertStringDateToSqlDate(form.getStartDate());
             Date endDate = GenericValidator.isBlankOrNull(form.getEndDate()) ? null
                     : DateUtil.convertStringDateToSqlDate(form.getEndDate());
-            return electronicOrderService.getAllElectronicOrdersByDateAndStatus(startDate, endDate,
-                    form.getStatusId(), SortOrder.LAST_UPDATED_ASC);
+            return electronicOrderService.getAllElectronicOrdersByDateAndStatus(startDate, endDate, form.getStatusId(),
+                    SortOrder.LAST_UPDATED_ASC);
         default:
             return null;
         }
