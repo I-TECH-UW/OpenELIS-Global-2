@@ -1467,3 +1467,7 @@ th.highlight-header-rev {
 	color: #FFFFFF;
 	background-color: #3c74b6;
 }
+
+.unsynced-resource td {
+	background-color: #ffcac8;
+}

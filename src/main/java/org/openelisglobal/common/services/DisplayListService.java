@@ -45,6 +45,8 @@ import org.openelisglobal.qaevent.service.QaEventService;
 import org.openelisglobal.qaevent.valueholder.QaEvent;
 import org.openelisglobal.referral.service.ReferralReasonService;
 import org.openelisglobal.referral.valueholder.ReferralReason;
+import org.openelisglobal.statusofsample.service.StatusOfSampleService;
+import org.openelisglobal.statusofsample.valueholder.StatusOfSample;
 import org.openelisglobal.test.service.TestSectionService;
 import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.test.service.TestServiceImpl;
@@ -74,7 +76,7 @@ public class DisplayListService implements LocaleChangeListener {
         ORDERABLE_TESTS, ALL_TESTS, REJECTION_REASONS, REFERRAL_REASONS, REFERRAL_ORGANIZATIONS, TEST_LOCATION_CODE,
         PROGRAM, RESULT_TYPE_LOCALIZED, RESULT_TYPE_RAW, UNIT_OF_MEASURE, UNIT_OF_MEASURE_ACTIVE,
         UNIT_OF_MEASURE_INACTIVE, DICTIONARY_TEST_RESULTS, LAB_COMPONENT, SEVERITY_CONSEQUENCES_LIST,
-        SEVERITY_RECURRENCE_LIST, ACTION_TYPE_LIST, LABORATORY_COMPONENT, SAMPLE_NATURE
+        SEVERITY_RECURRENCE_LIST, ACTION_TYPE_LIST, LABORATORY_COMPONENT, SAMPLE_NATURE, ELECTRONIC_ORDER_STATUSES
     }
 
     private static Map<ListType, List<IdValuePair>> typeToListMap;
@@ -102,6 +104,8 @@ public class DisplayListService implements LocaleChangeListener {
     private DictionaryService dictionaryService;
     @Autowired
     private TypeOfTestResultService typeOfTestResultService;
+    @Autowired
+    private StatusOfSampleService statusOfSampleService;
 
     @PostConstruct
     private void setupGlobalVariables() {
@@ -223,6 +227,18 @@ public class DisplayListService implements LocaleChangeListener {
         return list;
     }
 
+    private List<IdValuePair> createElectronicOrderStatusList() {
+        List<IdValuePair> list = new ArrayList<>();
+        List<StatusOfSample> statusList = statusOfSampleService.getAllStatusOfSamples();
+
+        for (StatusOfSample status : statusList) {
+            if (status.getStatusType().equals("EXTERNAL_ORDER")) {
+                list.add(new IdValuePair(status.getId(), status.getDefaultLocalizedName()));
+            }
+        }
+        return list;
+    }
+
     private List<IdValuePair> createLocalizedResultTypeList() {
         List<IdValuePair> typeList = new ArrayList<>();
 
@@ -334,6 +350,8 @@ public class DisplayListService implements LocaleChangeListener {
         typeToListMap.put(ListType.SEVERITY_RECURRENCE_LIST, createRecurrenceList());
         typeToListMap.put(ListType.ACTION_TYPE_LIST, createActionTypeList());
         typeToListMap.put(ListType.LABORATORY_COMPONENT, createLaboratoryComponentList());
+        typeToListMap.put(ListType.ELECTRONIC_ORDER_STATUSES, createElectronicOrderStatusList());
+
     }
 
     public void refreshList(ListType listType) {

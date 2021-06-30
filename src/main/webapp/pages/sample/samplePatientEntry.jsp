@@ -332,6 +332,19 @@ function processLabOrderSuccess(xhr){
     //alert(xhr.responseText);
 
     clearOrderData();
+    
+    <c:if test="${param.attemptAutoSave}">
+	<c:choose>
+	<c:when test="${not empty param.labNumber}">
+		jQuery('#labNo').val('${param.labNumber}');
+		setOrderModified();
+	</c:when>
+	<c:otherwise>
+		setOrderModified();
+		getNextAccessionNumber();
+	</c:otherwise>
+	</c:choose>
+	</c:if>
 
     var message = xhr.responseXML.getElementsByTagName("message").item(0);
     var formField = xhr.responseXML.getElementsByTagName("formfield").item(0);
@@ -396,6 +409,12 @@ function processLabOrderSuccess(xhr){
             alert(message.firstChild.nodeValue);
         }
 
+    <c:if test="${param.attemptAutoSave}">
+	var validToSave =  patientFormValid() && sampleEntryTopValid();
+	if (validToSave) {
+		savePage();
+	}
+	</c:if>
 }
 
 function parsePatient(patienttag) {

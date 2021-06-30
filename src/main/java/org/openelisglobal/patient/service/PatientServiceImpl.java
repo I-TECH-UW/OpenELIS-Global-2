@@ -827,4 +827,9 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String> i
         return baseObjectDAO.getAllMissingFhirUuid();
     }
 
+    @Override
+    public Patient getByExternalId(String id) {
+        return baseObjectDAO.getByExternalId(id);
+    }
+
 }

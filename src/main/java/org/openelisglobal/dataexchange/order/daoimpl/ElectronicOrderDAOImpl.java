@@ -16,6 +16,7 @@
  */
 package org.openelisglobal.dataexchange.order.daoimpl;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -348,4 +349,59 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder, String>
             return " and ";
         }
     }
+
+    @Override
+    public List<ElectronicOrder> getAllElectronicOrdersByDateAndStatus(Date startDate, Date endDate,
+            String statusId, SortOrder sortOrder) {
+        String hql = "From ElectronicOrder eo WHERE ";
+        boolean and = false;
+        if (startDate != null) {
+            if (and) {
+                hql += "AND ";
+            }
+            hql += "eo.orderTimestamp BETWEEN :startDate AND :endDate ";
+            and = true;
+        }
+        if (!GenericValidator.isBlankOrNull(statusId)) {
+            if (and) {
+                hql += "AND ";
+            }
+            hql += "eo.statusId.id = :statusId ";
+            and = true;
+        }
+
+        switch (sortOrder) {
+        case STATUS_ID:
+            hql += "ORDER BY eo.statusId asc ";
+            break;
+        case LAST_UPDATED_ASC:
+            hql += "ORDER BY eo.statusId asc, eo.lastupdated asc ";
+            break;
+        case LAST_UPDATED_DESC:
+            hql += "ORDER BY eo.statusId asc, eo.lastupdated desc ";
+            break;
+        case EXTERNAL_ID:
+            hql += "ORDER BY eo.externalId asc ";
+            break;
+        default:
+            //
+            break;
+        }
+
+        try {
+            Query query = entityManager.unwrap(Session.class).createQuery(hql);
+            if (startDate != null) {
+                query.setDate("startDate", startDate);
+                query.setDate("endDate", endDate);
+            }
+            if (!GenericValidator.isBlankOrNull(statusId)) {
+                query.setParameter("statusId", statusId);
+            }
+            return query.list();
+        } catch (HibernateException e) {
+            handleException(e, "getAllElectronicOrdersByDateAndStatus");
+        }
+        return null;
+    }
+
 }

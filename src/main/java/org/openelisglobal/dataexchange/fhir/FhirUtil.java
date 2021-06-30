@@ -32,6 +32,11 @@ public class FhirUtil implements FhirClientFetcher {
         return fhirClient;
     }
 
+    public IGenericClient getLocalFhirClient() {
+        IGenericClient fhirClient = fhirContext.newRestfulGenericClient(fhirConfig.getLocalFhirStorePath());
+        return fhirClient;
+    }
+
     public IParser getFhirParser() {
         return fhirContext.newJsonParser();
     }

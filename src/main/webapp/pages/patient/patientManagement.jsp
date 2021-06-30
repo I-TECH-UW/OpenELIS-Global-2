@@ -643,9 +643,10 @@ function  /*void*/ processSearchPopulateSuccess(xhr)
 					fhirUuidValue);
 
 	<c:if test="${param.attemptAutoSave}">
-//		jQuery("#generateAccessionButton").click();
-		setOrderModified();
-		getNextAccessionNumber();
+		var validToSave =  patientFormValid() && sampleEntryTopValid();
+		if (validToSave) {
+			savePage();
+		}
 	</c:if>
 
 }

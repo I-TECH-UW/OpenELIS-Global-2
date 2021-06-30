@@ -395,4 +395,17 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
         return new ArrayList<>();
     }
 
+    @Override
+    public Patient getByExternalId(String id) {
+        String sql = "from Patient p where p.externalId = :id";
+        try {
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setParameter("id", id);
+            return (Patient) query.uniqueResult();
+        } catch (HibernateException e) {
+            handleException(e, "getByExternalId");
+        }
+        return null;
+    }
+
 }

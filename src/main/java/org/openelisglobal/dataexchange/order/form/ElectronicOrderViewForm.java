@@ -1,67 +1,51 @@
 package org.openelisglobal.dataexchange.order.form;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-
 import org.openelisglobal.common.form.BaseForm;
-import org.openelisglobal.common.services.StatusService.ExternalOrderStatus;
-import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder;
-import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder.SortOrder;
+import org.openelisglobal.common.util.IdValuePair;
+import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrderDisplayItem;
 
 public class ElectronicOrderViewForm extends BaseForm {
-    @NotNull
-    private ElectronicOrder.SortOrder sortOrder = ElectronicOrder.SortOrder.STATUS_ID;
 
-    private List<ExternalOrderStatus> excludedStatuses = new ArrayList<>();
+    public enum SearchType {
+        IDENTIFIER, DATE_STATUS
+    }
 
-    @Min(1)
-    private int page = 1;
+    private SearchType searchType;
+
+    private boolean searchFinished;
 
     private String searchValue;
 
-    // for display
-    private List<ElectronicOrder> eOrders;
+    private String startDate;
 
-    // for display
-    private SortOrder[] sortOrderOptions = ElectronicOrder.SortOrder.values();
+    private String endDate;
+
+    private List<String> facilityIds;
+
+    private List<String> testIds;
+
+    private String statusId;
+
+    private List<ElectronicOrderDisplayItem> eOrders;
+
+    private List<IdValuePair> referralFacilitySelectionList;
+
+    private List<IdValuePair> testSelectionList;
+
+    private List<IdValuePair> statusSelectionList;
 
     public ElectronicOrderViewForm() {
         setFormName("ElectronicOrderViewForm");
     }
 
-    public ElectronicOrder.SortOrder getSortOrder() {
-        return sortOrder;
-    }
-
-    public void setSortOrder(ElectronicOrder.SortOrder sortBy) {
-        sortOrder = sortBy;
-    }
-
-    public int getPage() {
-        return page;
-    }
-
-    public void setPage(int page) {
-        this.page = page;
-    }
-
-    public List<ElectronicOrder> getEOrders() {
+    public List<ElectronicOrderDisplayItem> getEOrders() {
         return eOrders;
     }
 
-    public void setEOrders(List<ElectronicOrder> eOrders) {
+    public void setEOrders(List<ElectronicOrderDisplayItem> eOrders) {
         this.eOrders = eOrders;
-    }
-
-    public SortOrder[] getSortOrderOptions() {
-        return sortOrderOptions;
-    }
-
-    public void setSortOrderOptions(SortOrder[] sortOrderOptions) {
-        this.sortOrderOptions = sortOrderOptions;
     }
 
     public String getSearchValue() {
@@ -72,11 +56,95 @@ public class ElectronicOrderViewForm extends BaseForm {
         this.searchValue = searchValue;
     }
 
-    public List<ExternalOrderStatus> getExcludedStatuses() {
-        return excludedStatuses;
+    public List<IdValuePair> getReferralFacilitySelectionList() {
+        return referralFacilitySelectionList;
     }
 
-    public void setExcludedStatuses(List<ExternalOrderStatus> excludedStatuses) {
-        this.excludedStatuses = excludedStatuses;
+    public void setReferralFacilitySelectionList(List<IdValuePair> referralFacilitySelectionList) {
+        this.referralFacilitySelectionList = referralFacilitySelectionList;
+    }
+
+    public List<IdValuePair> getTestSelectionList() {
+        return testSelectionList;
+    }
+
+    public void setTestSelectionList(List<IdValuePair> testSelectionList) {
+        this.testSelectionList = testSelectionList;
+    }
+
+    public List<IdValuePair> getStatusSelectionList() {
+        return statusSelectionList;
+    }
+
+    public void setStatusSelectionList(List<IdValuePair> statusSelectionList) {
+        this.statusSelectionList = statusSelectionList;
+    }
+
+    public List<String> getTestIds() {
+        return testIds;
+    }
+
+    public void setTestIds(List<String> testIds) {
+        this.testIds = testIds;
+    }
+
+    public String getStatusId() {
+        return statusId;
+    }
+
+    public void setStatus(String status) {
+        this.statusId = status;
+    }
+
+    public List<String> getFacilityIds() {
+        return facilityIds;
+    }
+
+    public void setFacilityIds(List<String> facilityIds) {
+        this.facilityIds = facilityIds;
+    }
+
+    public boolean isSearchFinished() {
+        return searchFinished;
+    }
+
+    public void setSearchFinished(boolean searchFinished) {
+        this.searchFinished = searchFinished;
+    }
+
+    public SearchType getSearchType() {
+        return searchType;
+    }
+
+    public void setSearchType(SearchType searchType) {
+        this.searchType = searchType;
+    }
+
+    public String getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(String startDate) {
+        this.startDate = startDate;
+    }
+
+    public String getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(String endDate) {
+        this.endDate = endDate;
+    }
+
+    public List<ElectronicOrderDisplayItem> geteOrders() {
+        return eOrders;
+    }
+
+    public void seteOrders(List<ElectronicOrderDisplayItem> eOrders) {
+        this.eOrders = eOrders;
+    }
+
+    public void setStatusId(String statusId) {
+        this.statusId = statusId;
     }
 }

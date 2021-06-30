@@ -116,11 +116,14 @@
         setValidIndicaterOnField(success, "labNo");
 
         setCorrectSave();
-		
-        <c:if test="${param.attemptAutoSave}">
-//		jQuery("#generateAccessionButton").click();
-	    	savePage();
-		</c:if>
+
+
+    	<c:if test="${param.attemptAutoSave}">
+    		var validToSave =  patientFormValid() && sampleEntryTopValid();
+    		if (validToSave) {
+    			savePage();
+    		}
+    	</c:if>
     }
 
     function siteListChanged(siteList) {
@@ -128,7 +131,7 @@
         //if the index is 0 it is a new entry, if it is not then the textValue may include the index value
         // create new entry has been removed gnr
         if (siteList.selectedIndex == 0) {
-            $("newRequesterName").value = textValue;
+//             $("newRequesterName").value = textValue;
         } else if (useReferralSiteCode) {
             getCodeForOrganization(siteList.options[siteList.selectedIndex].value, processCodeSuccess);
         }

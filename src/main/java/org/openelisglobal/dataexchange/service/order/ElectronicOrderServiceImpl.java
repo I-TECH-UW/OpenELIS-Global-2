@@ -1,5 +1,6 @@
 package org.openelisglobal.dataexchange.service.order;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,9 +8,12 @@ import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.ExternalOrderStatus;
+import org.openelisglobal.dataexchange.fhir.FhirUtil;
 import org.openelisglobal.dataexchange.order.dao.ElectronicOrderDAO;
 import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder;
 import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder.SortOrder;
+import org.openelisglobal.organization.service.OrganizationService;
+import org.openelisglobal.test.service.TestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +25,12 @@ public class ElectronicOrderServiceImpl extends BaseObjectServiceImpl<Electronic
     protected ElectronicOrderDAO baseObjectDAO;
     @Autowired
     protected IStatusService statusService;
+    @Autowired
+    protected OrganizationService organizationService;
+    @Autowired
+    protected TestService testService;
+    @Autowired
+    protected FhirUtil fhirUtil;
 
     ElectronicOrderServiceImpl() {
         super(ElectronicOrder.class);
@@ -68,6 +78,12 @@ public class ElectronicOrderServiceImpl extends BaseObjectServiceImpl<Electronic
 
         return getBaseObjectDAO().getElectronicOrdersContainingValueExludedByOrderedBy(searchValue, exludedStatusIds,
                 sortOrder);
+    }
+
+    @Override
+    public List<ElectronicOrder> getAllElectronicOrdersByDateAndStatus(Date startDate, Date endDate, String statusId,
+            SortOrder sortOrder) {
+        return getBaseObjectDAO().getAllElectronicOrdersByDateAndStatus(startDate, endDate, statusId, sortOrder);
     }
 
 }

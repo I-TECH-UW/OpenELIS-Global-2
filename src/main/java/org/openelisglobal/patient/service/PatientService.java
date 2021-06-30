@@ -108,4 +108,6 @@ public interface PatientService extends BaseObjectService<Patient, String> {
 
     List<Patient> getAllMissingFhirUuid();
 
+    Patient getByExternalId(String idPart);
+
 }

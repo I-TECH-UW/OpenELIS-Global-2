@@ -56,7 +56,7 @@ function getSampleForLabOrderOrPatient( orderNumber, patientPK, success, failure
 				requestHeaders : {
 					"X-CSRF-Token" : getCsrfToken()
 				},
-				onSuccess : additionalSuccessParams ? function (xhr) {
+				onSuccess : additionalSuccessParams !== undefined ? function (xhr) {
 				 	success(xhr, additionalSuccessParams);
 				} : success,
 				onFailure : failure
@@ -77,7 +77,7 @@ function getSampleForLabOrderOrPatientWithTest( orderNumber, patientPK, testId, 
 				requestHeaders : {
 					"X-CSRF-Token" : getCsrfToken()
 				},
-				onSuccess : additionalSuccessParams ? function (xhr) {
+				onSuccess : additionalSuccessParams !== undefined ? function (xhr) {
 				 	success(xhr, additionalSuccessParams);
 				} : success,
 				onFailure : failure
@@ -288,7 +288,7 @@ function validateProjectAccessionNumberOnServer(fieldId, recordType, parseForPro
 
 //sensitive data is being transmitted, therefore a token check should be done even on GET. 
 //Otherwise this should be moved to a POST request and rely on regular csrf functionality
-function generateNextScanNumber(success, failure){
+function generateNextScanNumber(success, failure, additionalSuccessParams ){
     if( !failure ){	failure = defaultFailure;}
 
     new Ajax.Request (
@@ -299,8 +299,10 @@ function generateNextScanNumber(success, failure){
             //indicator: 'throbbing'
 			requestHeaders : {
 				"X-CSRF-Token" : getCsrfToken()
-			},
-            onSuccess:  success,
+			}
+			,onSuccess : additionalSuccessParams !== undefined ? function (xhr) {
+				 	success(xhr, additionalSuccessParams);
+				} : success,
             onFailure:  failure
         }
     );
@@ -404,7 +406,7 @@ function patientSearch(lastName, firstName, STNumber, subjectNumber, nationalId,
           		requestHeaders : {
         					"X-CSRF-Token" : getCsrfToken()
         				},
-				onSuccess : additionalSuccessParams ? function (xhr) {
+				onSuccess : additionalSuccessParams !== undefined ? function (xhr) {
 				 	success(xhr, additionalSuccessParams);
 				} : success,
                onFailure:  failure
