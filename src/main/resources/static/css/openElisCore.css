@@ -1471,3 +1471,13 @@ th.highlight-header-rev {
 .unsynced-resource td {
 	background-color: #ffcac8;
 }
+
+.hidden-text {
+	display: none;
+}
+
+.show-text-hover:hover .hidden-text {
+	display: inline;
+}
+
+
