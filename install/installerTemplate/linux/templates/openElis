@@ -1,6 +1,6 @@
 # m h  dom mon dow   command
 01 14 * * * root cd [% backups_dir %]; ./DatabaseBackup.pl 
-00 00 * * * find /var/lib/openelis-global/data/pg_log/ -type f -mtime +7 | xargs rm
-00 00 * * * find /var/lib/openelis-global/logs/ -type f -mtime +30 | xargs rm
-00 00 * * * find /var/lib/openelis-global/tomcatLogs/ -type f -mtime +30 | xargs rm
+00 00 * * * root find /var/lib/openelis-global/data/pg_log/ -type f -mtime +7 | xargs rm
+00 00 * * * root find /var/lib/openelis-global/logs/ -type f -mtime +30 | xargs rm
+00 00 * * * root find /var/lib/openelis-global/tomcatLogs/ -type f -mtime +30 | xargs rm
 
