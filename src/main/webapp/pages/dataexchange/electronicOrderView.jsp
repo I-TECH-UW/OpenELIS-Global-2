@@ -172,6 +172,7 @@ highlighted rows specifies a resource that is likely out of sync with the server
 <thead>
 <tr>
 	<th style="background-color:white;"></th>
+	<th style="background-color:white;"></th>
     <th class='split-content'>
     	Request Date
     	<span class="fa" onclick='sort(1)'><i class="fas fa-sort"></i></span>
@@ -223,11 +224,17 @@ highlighted rows specifies a resource that is likely out of sync with the server
 		<c:set var="entered" value="${not empty eOrder.labNumber}"/>
 		<tr id='eOrderRow_${iter.index}'> 
 	    <td style="background-color:white;">
-	    
+			<c:if test="${not empty eOrder.warnings}">
+				<img src="./images/nonconforming.gif">
+				<c:forEach items="${eOrder.warnings}" var="warning">
+	       			<c:out value="${warning}"/>
+				</c:forEach> 
+			</c:if>
+		</td>
+	    <td style="background-color:white;">
 	    	<form:hidden id="externalOrderId_${iter.index}" path="eOrders[${iter.index}].externalOrderId"  />
 	    	<button type="button" id="enterButton_${iter.index}" onclick="enterOrder('${iter.index}')" ${entered ? 'disabled="disabled"' : '' }>Enter</button>
 		    <button type="button" id="editButton_${iter.index}" onclick="editOrder('${iter.index}')" ${entered ? 'disabled="disabled"' : '' }>Edit</button>
-	    	
 	    </td>
 	    <td>
 	       <c:out value="${eOrder.requestDateDisplay}"/>

@@ -1,6 +1,7 @@
 package org.openelisglobal.dataexchange.order.controller;
 
 import java.sql.Date;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -44,6 +45,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import ca.uhn.fhir.rest.client.api.IGenericClient;
+import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 
 @Controller
 public class ElectronicOrdersController extends BaseController {
@@ -106,8 +108,10 @@ public class ElectronicOrdersController extends BaseController {
 
         IGenericClient fhirClient = fhirUtil.getFhirClient(fhirConfig.getLocalFhirStorePath());
 
+        try {
         ServiceRequest serviceRequest = fhirClient.read().resource(ServiceRequest.class)
                 .withId(electronicOrder.getExternalId()).execute();
+
         Test test = null;
         for (Coding coding : serviceRequest.getCode().getCoding()) {
             if (coding.getSystem().equalsIgnoreCase("http://loinc.org")) {
@@ -163,6 +167,13 @@ public class ElectronicOrdersController extends BaseController {
         displayItem.setSubjectNumber(subjectNumber);
         if (sample != null) {
             displayItem.setLabNumber(sample.getAccessionNumber());
+        }
+        } catch (ResourceNotFoundException e) {
+            String errorMsg = "error in data collection - FHIR resource not found";
+            displayItem.setWarnings(Arrays.asList(errorMsg));
+        } catch (NullPointerException e) {
+            String errorMsg = "error in data collection - null data";
+            displayItem.setWarnings(Arrays.asList(errorMsg));
         }
 
         return displayItem;

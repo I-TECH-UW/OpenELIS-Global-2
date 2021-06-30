@@ -17,6 +17,8 @@
 
 package org.openelisglobal.dataexchange.order.valueholder;
 
+import java.util.List;
+
 public class ElectronicOrderDisplayItem {
 
     private String electronicOrderId;
@@ -44,6 +46,8 @@ public class ElectronicOrderDisplayItem {
     private String subjectNumber;
 
     private String labNumber;
+
+    private List<String> warnings;
 
     public String getElectronicOrderId() {
         return electronicOrderId;
@@ -147,6 +151,14 @@ public class ElectronicOrderDisplayItem {
 
     public void setExternalOrderId(String externalOrderId) {
         this.externalOrderId = externalOrderId;
+    }
+
+    public List<String> getWarnings() {
+        return warnings;
+    }
+
+    public void setWarnings(List<String> warnings) {
+        this.warnings = warnings;
     }
 
 }
