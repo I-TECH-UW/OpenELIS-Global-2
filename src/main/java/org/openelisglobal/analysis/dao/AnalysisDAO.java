@@ -181,6 +181,7 @@ public interface AnalysisDAO extends BaseDAO<Analysis, String> {
     List<Analysis> getAllAnalysisByTestsAndStatus(List<Integer> testIds, List<Integer> analysisStatusList,
             List<Integer> sampleStatusList);
 
+    @Override
     List<Analysis> get(List<String> value);
 
     List<Analysis> getAllAnalysisByTestsAndStatusAndCompletedDateRange(List<Integer> testIdList,
@@ -198,9 +199,15 @@ public interface AnalysisDAO extends BaseDAO<Analysis, String> {
 
     List<Analysis> getPageAnalysisByTestSectionAndStatus(String testSectionId, List<Integer> statusIdList,
             boolean sortedByDateAndAccession) throws LIMSRuntimeException;
-    
+
     List<Analysis> getPageAnalysisAtAccessionNumberAndStatus(String accessionNumber, List<Integer> statusIdList,
             boolean sortedByDateAndAccession) throws LIMSRuntimeException;
 
     int getCountAnalysisByTestSectionAndStatus(String testSectionId, List<Integer> analysisStatusList);
+
+    int getCountAnalysisByStatusFromAccession(List<Integer> analysisStatusList, List<Integer> sampleStatusList,
+            String accessionNumber);
+
+    List<Analysis> getPageAnalysisByStatusFromAccession(List<Integer> analysisStatusList,
+            List<Integer> sampleStatusList, String accessionNumber);
 }

@@ -490,6 +490,22 @@ function createReferralOption(sampleNum, testNum, testId, testName, index) {
 	cell4.appendChild(referrerInput);
 }
 
+function validateEntrySize( elementValue ){
+	$("retrieveTestsID").disabled = (elementValue.length == 0);
+}
+
+function doShowTests(){
+	var form = document.getElementById("mainForm");
+	window.location.href = "${requestScope['javax.servlet.forward.request_uri']}?accessionNumber="  + $("searchAccessionID").value;
+}
+
+function /*void*/ handleEnterEvent(  ){
+	if( $("searchAccessionID").value.length > 0){
+		doShowTests();
+	}
+	return false;
+}
+
 </script>
 
 <c:if test="${form.displayTestSections}">
@@ -513,6 +529,42 @@ function createReferralOption(sampleNum, testNum, testId, testName, index) {
 			<br />
 			<h1></h1>
 		</div>
+	</div>
+</c:if>
+
+<c:if test="${form.searchByRange}">
+	<div id="searchDiv" class="colorFill"  >
+	<div id="PatientPage" class="colorFill" style="display:inline" >
+	<h2><spring:message code="sample.entry.search"/></h2>
+		<table width="50%">
+			<tr >
+			<td width="50%" align="right" >
+				<%=MessageUtil.getContextualMessage("quick.entry.accession.range")%>
+			</td>
+			<td width="50%">
+				<input name="accessionNumber"
+				       size="20"
+				       id="searchAccessionID"
+				       maxlength="<%=Integer.toString(AccessionNumberUtil.getMaxAccessionLength())%>"
+				       onkeyup="validateEntrySize( this.value );"
+				       onblur="validateEntrySize( this.value );"
+				       class="text"
+				       type="text">
+				<spring:message code="sample.search.scanner.instructions"/>
+			</td>
+		</tr>
+			
+		</table>
+		<br/>
+		
+		<button type="button" name="retrieveTestsButton" id="retrieveTestsID"  onclick="doShowTests();" disabled="disabled" >
+			<%= MessageUtil.getContextualMessage("validationentry.accession.range") %>
+		</button>
+		
+		<h1>
+			
+		</h1>
+	</div>
 	</div>
 </c:if>
 
@@ -1300,15 +1352,7 @@ function createReferralOption(sampleNum, testNum, testId, testName, index) {
 
 
 <c:if test="${form.displayTestSections}">
-	<c:if test="${testCount == 0}">
-		<c:if test="${not empty form.testSectionId}">
-			<h2><%=MessageUtil.getContextualMessage("result.noTestsFound")%></h2>
-		</c:if>
-	</c:if>
-</c:if>
-
-<c:if test="${not form.displayTestSections}">
-	<c:if test="${testCount == 0}">
+	<c:if test="${testCount == 0 && form.searchFinished}">
 		<h2><%=MessageUtil.getContextualMessage("result.noTestsFound")%></h2>
 	</c:if>
 </c:if>

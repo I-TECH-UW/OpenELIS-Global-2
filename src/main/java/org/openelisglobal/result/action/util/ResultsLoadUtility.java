@@ -1027,4 +1027,16 @@ public class ResultsLoadUtility {
         return sampleQaEventService.getSampleQaEventsBySample(sample);
     }
 
+    public List<TestResultItem> getUnfinishedTestResultItemsByAccession(String accessionNumber) {
+        List<Analysis> analysisList = analysisService.getPageAnalysisByStatusFromAccession(analysisStatusList,
+                sampleStatusList, accessionNumber);
+
+        return getGroupedTestsForAnalysisList(analysisList, SORT_FORWARD);
+    }
+
+    public int getTotalCountAnalysisByAccessionAndStatus(String accessionNumber) {
+        return analysisService.getCountAnalysisByStatusFromAccession(analysisStatusList, sampleStatusList,
+                accessionNumber);
+    }
+
 }

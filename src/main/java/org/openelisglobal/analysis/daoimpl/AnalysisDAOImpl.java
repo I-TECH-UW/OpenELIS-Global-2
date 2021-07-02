@@ -1771,6 +1771,55 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         return 0;
     }
 
+    @Override
+    public List<Analysis> getPageAnalysisByStatusFromAccession(List<Integer> analysisStatusList,
+            List<Integer> sampleStatusList, String accessionNumber) {
+
+        String sql = "From Analysis a WHERE a.sampleItem.sample.accessionNumber >= :accessionNumber"//
+                + " AND length(a.sampleItem.sample.accessionNumber) = length(:accessionNumber)"//
+                + " AND a.statusId IN (:analysisStatusList)"//
+                + " AND a.sampleItem.sample.statusId IN (:sampleStatusList)"//
+                + " ORDER BY a.sampleItem.sample.accessionNumber";//
+        try {
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setParameter("accessionNumber", accessionNumber);
+            query.setParameterList("analysisStatusList", analysisStatusList);
+            query.setParameterList("sampleStatusList", sampleStatusList);
+            query.setMaxResults(SpringContext.getBean(PagingProperties.class).getResultsPageSize());
+
+            List<Analysis> analysisList = query.list();
+
+            return analysisList;
+
+        } catch (HibernateException e) {
+            handleException(e, "getPageAnalysisByStatusFromAccession");
+        }
+
+        return null;
+    }
+
+    @Override
+    public int getCountAnalysisByStatusFromAccession(List<Integer> analysisStatusList, List<Integer> sampleStatusList,
+            String accessionNumber) {
+
+        String hql = "SELECT COUNT(*) From Analysis a WHERE " + " a.statusId IN (:analysisStatusList)"
+                + " AND a.sampleItem.sample.statusId IN (:sampleStatusList)";
+        try {
+            Query<Long> query = entityManager.unwrap(Session.class).createQuery(hql);
+            query.setParameterList("analysisStatusList", analysisStatusList);
+            query.setParameterList("sampleStatusList", sampleStatusList);
+
+            Long analysisList = query.uniqueResult();
+
+            return analysisList.intValue();
+
+        } catch (HibernateException e) {
+            handleException(e, "getCountAnalysisByStatusFromAccession");
+        }
+
+        return 0;
+    }
+
 //  @Override
 //  public Analysis getPatientPreviousAnalysisForTestName(Patient patient, Sample currentSample, String testName) {
 //      Analysis previousAnalysis = null;

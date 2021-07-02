@@ -24,6 +24,8 @@ public class LogbookResultsForm extends BaseForm implements ResultsPagingForm {
     // for display
     private PagingBean paging;
 
+    private String accessionNumber;
+
     @NotNull(groups = { LogbookResults.class })
     private Boolean singlePatient = false;
 
@@ -74,6 +76,9 @@ public class LogbookResultsForm extends BaseForm implements ResultsPagingForm {
 
     @NotNull(groups = { LogbookResults.class })
     private Boolean displayTestSections = true;
+
+    private Boolean searchByRange;
+    private boolean searchFinished;
 
     public LogbookResultsForm() {
         setFormName("LogbookResultsForm");
@@ -227,6 +232,30 @@ public class LogbookResultsForm extends BaseForm implements ResultsPagingForm {
 
     public void setReferralItems(List<ReferralItem> referralItems) {
         this.referralItems = referralItems;
+    }
+
+    public String getAccessionNumber() {
+        return accessionNumber;
+    }
+
+    public void setAccessionNumber(String accessionNumber) {
+        this.accessionNumber = accessionNumber;
+    }
+
+    public boolean getSearchByRange() {
+        return searchByRange;
+    }
+
+    public void setSearchByRange(boolean searchByRange) {
+        this.searchByRange = searchByRange;
+    }
+
+    public boolean isSearchFinished() {
+        return searchFinished;
+    }
+
+    public void setSearchFinished(boolean searchFinished) {
+        this.searchFinished = searchFinished;
     }
 
 }

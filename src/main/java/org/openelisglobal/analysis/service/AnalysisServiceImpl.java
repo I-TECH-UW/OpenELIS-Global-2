@@ -397,7 +397,7 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
             boolean sortedByDateAndAccession) {
         return baseObjectDAO.getPageAnalysisByTestSectionAndStatus(sectionId, statusList, sortedByDateAndAccession);
     }
-    
+
     @Override
     @Transactional(readOnly = true)
     public List<Analysis> getPageAnalysisAtAccessionNumberAndStatus(String accessionNumber, List<Integer> statusList,
@@ -671,5 +671,19 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
     @Override
     public int getCountAnalysisByTestSectionAndStatus(String testSectionId, List<Integer> analysisStatusList) {
         return baseObjectDAO.getCountAnalysisByTestSectionAndStatus(testSectionId, analysisStatusList);
+    }
+
+    @Override
+    public int getCountAnalysisByStatusFromAccession(List<Integer> analysisStatusList, List<Integer> sampleStatusList,
+            String accessionNumber) {
+        return baseObjectDAO.getCountAnalysisByStatusFromAccession(analysisStatusList, sampleStatusList,
+                accessionNumber);
+    }
+
+    @Override
+    public List<Analysis> getPageAnalysisByStatusFromAccession(List<Integer> analysisStatusList,
+            List<Integer> sampleStatusList, String accessionNumber) {
+        return baseObjectDAO.getPageAnalysisByStatusFromAccession(analysisStatusList, sampleStatusList,
+                accessionNumber);
     }
 }

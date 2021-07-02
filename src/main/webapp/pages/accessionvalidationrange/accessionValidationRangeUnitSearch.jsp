@@ -6,7 +6,6 @@
 			org.openelisglobal.common.util.IdValuePair,
 			org.openelisglobal.internationalization.MessageUtil,
 			org.openelisglobal.common.util.Versioning,
-			org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl.ResultType,
 		    java.text.DecimalFormat,
 			java.util.List,
 			org.openelisglobal.resultvalidation.bean.AnalysisItem,
@@ -22,35 +21,13 @@
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
-
-<c:set var="testSection"	value='${form.testSection}' />
-<c:set var="results" value="${form.resultList}" />
-<c:set var="pagingSearch" value='${form.paging.searchTermToPage}'/>
-<c:set var="testSectionsByName" value='${form.testSectionsByName}' />
-<c:set var="resultCount" value="${fn:length(results)}" />
-<c:set var="rowColorIndex" value="${2}" />
-
 <script type="text/javascript" src="scripts/OEPaging.js?"></script>
 
 <%
-	int rowColorIndex = 2;
-	String searchTerm = request.getParameter("searchTerm");
 	String url = request.getAttribute("javax.servlet.forward.servlet_path").toString();	
-	//boolean showTestSectionSelect = !ConfigurationProperties.getInstance().isPropertyValueEqual(Property.configurationName, "CI RetroCI");
 %>
 
 <script>
-
-function submitTestSectionSelect( element ) {
-	
-	var testSectionNameIdHash = [];
-
-	<c:forEach items="${testSectionsByName}" var="testSection">
-		testSectionNameIdHash["${testSection.id}"] = "${testSection.value}";
-	</c:forEach>
-		window.location.href = "ResultValidation.do?testSectionId=" + element.value + "&test=&type=" + testSectionNameIdHash[element.value];
-	
-}
 
 function validateEntrySize( elementValue ){
 	$("retrieveTestsID").disabled = (elementValue.length == 0);
@@ -58,7 +35,7 @@ function validateEntrySize( elementValue ){
 
 function doShowTests(){
 	var form = document.getElementById("mainForm");
-	window.location.href = "AccessionValidationRange.do?accessionNumber="  + $("searchAccessionID").value;
+	window.location.href = "${requestScope['javax.servlet.forward.request_uri']}?accessionNumber="  + $("searchAccessionID").value;
 }
 
 function /*void*/ handleEnterEvent(  ){
