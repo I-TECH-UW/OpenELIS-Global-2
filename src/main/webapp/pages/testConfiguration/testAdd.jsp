@@ -1129,9 +1129,9 @@ td {
                     <label for="orderable"><spring:message code="label.orderable"/></label>
                     <input type="checkbox" id="orderable" checked="checked"/><br/>
                     <label for="notifyResults"> <spring:message code="test.notifyResults" /></label>
-                    <input type="checkbox" id='notifyResults'/>
+                    <input type="checkbox" id='notifyResults'/><br/>
                     <label for="inLabOnly"> <spring:message code="test.inLabOnly" /></label>
-                    <input type="checkbox" id='inLabOnly'/>
+                    <input type="checkbox" id='inLabOnly'/><br/>
                 </td>
             </tr>
         </table>
