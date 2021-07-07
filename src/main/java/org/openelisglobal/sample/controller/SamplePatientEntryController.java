@@ -24,6 +24,7 @@ import org.openelisglobal.patient.action.IPatientUpdate;
 import org.openelisglobal.patient.action.IPatientUpdate.PatientUpdateStatus;
 import org.openelisglobal.patient.action.bean.PatientManagementInfo;
 import org.openelisglobal.patient.action.bean.PatientSearch;
+import org.openelisglobal.referral.service.ReferralSetService;
 import org.openelisglobal.sample.action.util.SamplePatientUpdateData;
 import org.openelisglobal.sample.bean.SampleOrderItem;
 import org.openelisglobal.sample.form.SamplePatientEntryForm;
@@ -121,6 +122,8 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
     private SamplePatientEntryService samplePatientService;
     @Autowired
     private FhirTransformService fhirTransformService;
+    @Autowired
+    private ReferralSetService referralSetService;
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -209,6 +212,15 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
             } catch (FhirTransformationException | FhirPersistanceException e) {
                 LogEvent.logError(e);
             }
+
+            try {
+                if (form.getUseReferral()) {
+                    referralSetService.createSaveReferralSetsSamplePatientEntry(form, updateData);
+                }
+            } catch (RuntimeException e) {
+                LogEvent.logError(e);
+            }
+
             // String fhir_json = fhirTransformService.CreateFhirFromOESample(updateData,
             // patientUpdate, patientInfo, form, request);
         } catch (LIMSRuntimeException e) {

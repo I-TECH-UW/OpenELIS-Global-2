@@ -195,6 +195,9 @@ public class ReferralDAOImpl extends BaseDAOImpl<Referral, String> implements Re
     @Transactional(readOnly = true)
     @Override
     public List<Referral> getReferralsByAnalysisIds(List<String> analysisIds) {
+        if (analysisIds == null || analysisIds.size() == 0) {
+            return new ArrayList<>();
+        }
         String sql = "From Referral r where r.analysis.id in (:analysisIds)";
         try {
             Query query = entityManager.unwrap(Session.class).createQuery(sql);
