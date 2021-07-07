@@ -18,5 +18,6 @@
 	<include file="liquibase/2.3.x.x/accession_sequencing.xml"/>
 	<include file="liquibase/2.3.x.x/referral_results.xml"/>
 	<include file="liquibase/2.3.x.x/in_lab_tests.xml"/>
+	<include file="liquibase/2.3.x.x/results_range.xml"/>
 
 </databaseChangeLog>
