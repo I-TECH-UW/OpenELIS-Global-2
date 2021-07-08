@@ -266,4 +266,8 @@ public class StatusResultsForm extends BaseForm implements ResultsPagingForm {
         return referralOrganizations;
     }
 
+    public boolean getSearchByRange() {
+        return false;
+    }
+
 }

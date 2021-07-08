@@ -275,4 +275,8 @@ public class AccessionResultsForm extends BaseForm implements PatientInfoForm, R
         return referralOrganizations;
     }
 
+    public boolean getSearchByRange() {
+        return false;
+    }
+
 }

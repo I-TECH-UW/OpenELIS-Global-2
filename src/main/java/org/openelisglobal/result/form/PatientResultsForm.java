@@ -277,4 +277,8 @@ public class PatientResultsForm extends BaseForm implements PatientInfoForm, Res
         return referralOrganizations;
     }
 
+    public boolean getSearchByRange() {
+        return false;
+    }
+
 }
