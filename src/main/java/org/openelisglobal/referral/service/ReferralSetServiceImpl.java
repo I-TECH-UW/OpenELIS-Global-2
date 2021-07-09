@@ -34,7 +34,6 @@ import org.openelisglobal.referral.valueholder.ReferralType;
 import org.openelisglobal.result.service.ResultService;
 import org.openelisglobal.result.valueholder.Result;
 import org.openelisglobal.sample.action.util.SamplePatientUpdateData;
-import org.openelisglobal.sample.form.SamplePatientEntryForm;
 import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.spring.util.SpringContext;
@@ -203,11 +202,11 @@ public class ReferralSetServiceImpl implements ReferralSetService {
 
     @Override
     @Transactional
-    public void createSaveReferralSetsSamplePatientEntry(SamplePatientEntryForm form,
+    public void createSaveReferralSetsSamplePatientEntry(List<ReferralItem> referralItems,
             SamplePatientUpdateData updateData) {
         List<Referral> referrals = new ArrayList<>();
         List<ReferralSet> referralSets = new ArrayList<>();
-        for (ReferralItem referralItem : form.getReferralItems()) {
+        for (ReferralItem referralItem : referralItems) {
             Result result = new Result();
             result.setSysUserId("1");
 
