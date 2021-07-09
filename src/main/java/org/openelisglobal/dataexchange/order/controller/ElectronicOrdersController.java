@@ -14,6 +14,7 @@ import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.ServiceRequest;
 import org.hl7.fhir.r4.model.Task;
 import org.openelisglobal.common.controller.BaseController;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.DisplayListService.ListType;
 import org.openelisglobal.common.util.DateUtil;
@@ -173,12 +174,15 @@ public class ElectronicOrdersController extends BaseController {
         } catch (ResourceNotFoundException e) {
             String errorMsg = "error in data collection - FHIR resource not found";
             displayItem.setWarnings(Arrays.asList(errorMsg));
+            LogEvent.logErrorStack(e);
         } catch (NullPointerException e) {
             String errorMsg = "error in data collection - null data";
             displayItem.setWarnings(Arrays.asList(errorMsg));
+            LogEvent.logErrorStack(e);
         } catch (RuntimeException e) {
             String errorMsg = "error in data collection - unknown exception";
             displayItem.setWarnings(Arrays.asList(errorMsg));
+            LogEvent.logErrorStack(e);
         }
 
         return displayItem;

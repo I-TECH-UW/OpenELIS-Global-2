@@ -23,6 +23,7 @@ public class MessagePatient {
     private String pcNumber;
     private String stNumber;
     private String externalId;
+    private String fhirUuid;
 
     private String gender;
     private String displayDOB;
@@ -218,6 +219,14 @@ public class MessagePatient {
 
     public void setAddressCountry(String addressCountry) {
         this.addressCountry = addressCountry;
+    }
+
+    public String getFhirUuid() {
+        return fhirUuid;
+    }
+
+    public void setFhirUuid(String fhirUuid) {
+        this.fhirUuid = fhirUuid;
     }
 
 }

@@ -18,6 +18,7 @@ package org.openelisglobal.dataexchange.order.action;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 
@@ -137,6 +138,9 @@ public class DBOrderPersister implements IOrderPersister {
         patient.setPerson(person);
         patient.setSysUserId(SERVICE_USER_ID);
         patient.setExternalId(orderPatient.getExternalId());
+        if (!GenericValidator.isBlankOrNull(orderPatient.getFhirUuid())) {
+            patient.setFhirUuid(UUID.fromString(orderPatient.getFhirUuid()));
+        }
 
         if (GenericValidator.isBlankOrNull(orderPatient.getGuid())) {
             orderPatient.setGuid(java.util.UUID.randomUUID().toString());
