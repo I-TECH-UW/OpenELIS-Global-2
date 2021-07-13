@@ -556,7 +556,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         }
         ObservationHistory program = observationHistoryService.getObservationHistoriesBySampleIdAndType(sample.getId(),
                 observationHistoryService.getObservationTypeIdForType(ObservationType.PROGRAM));
-        if (program != null) {
+        if (program != null && !GenericValidator.isBlankOrNull(program.getValue())) {
             serviceRequest.addCategory(transformSampleProgramToCodeableConcept(program));
         }
         serviceRequest.setPriority(ServiceRequestPriority.ROUTINE);
@@ -582,14 +582,18 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         CodeableConcept codeableConcept = new CodeableConcept();
         String programDisplay = "";
         String programCode = "";
-        Dictionary dictionary = dictionaryService.get(program.getValue());
-        if (dictionary != null) {
-            programCode = dictionary.getDictEntry();
-            programDisplay = dictionary.getDictEntry();
-
+        if ("D".equals(program.getValueType())) {
+            Dictionary dictionary = dictionaryService.get(program.getValue());
+            if (dictionary != null) {
+                programCode = dictionary.getDictEntry();
+                programDisplay = dictionary.getDictEntry();
+            }
+        } else {
+            programCode = program.getValue();
+            programDisplay = program.getValue();
         }
-        codeableConcept.addCoding(
-                new Coding(fhirConfig.getOeFhirSystem() + "/sample_program", programCode, programDisplay));
+        codeableConcept
+                .addCoding(new Coding(fhirConfig.getOeFhirSystem() + "/sample_program", programCode, programDisplay));
         return codeableConcept;
     }
 
