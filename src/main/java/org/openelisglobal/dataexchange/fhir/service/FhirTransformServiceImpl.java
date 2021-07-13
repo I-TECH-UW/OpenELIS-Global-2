@@ -580,8 +580,16 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 
     private CodeableConcept transformSampleProgramToCodeableConcept(ObservationHistory program) {
         CodeableConcept codeableConcept = new CodeableConcept();
+        String programDisplay = "";
+        String programCode = "";
+        Dictionary dictionary = dictionaryService.get(program.getValue());
+        if (dictionary != null) {
+            programCode = dictionary.getDictEntry();
+            programDisplay = dictionary.getDictEntry();
+
+        }
         codeableConcept.addCoding(
-                new Coding(fhirConfig.getOeFhirSystem() + "/sample_program", program.getValue(), program.getValue()));
+                new Coding(fhirConfig.getOeFhirSystem() + "/sample_program", programCode, programDisplay));
         return codeableConcept;
     }
 

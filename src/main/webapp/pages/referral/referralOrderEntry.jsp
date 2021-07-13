@@ -45,8 +45,7 @@ jQuery(document).ready(function () {
 //     jQuery('.saveToggle').each(function() {
 //     	checkFinish(jQuery(this).val());
 //     });
-    
-   jQuery("#addTestTable").on("click", referralTestSelected);
+
 });
 
 function referralTestSelected(e) {
@@ -64,7 +63,8 @@ function referralTestSelected(e) {
 		}
 	});
 	jQuery('.deleteReferralRow').remove();
-}
+	setSave();
+	}
 
 function /*void*/ markModified(index) {
 	checkFinish(index);
@@ -204,6 +204,7 @@ function createReferralOption(sampleNum, testNum, testId, testName, index) {
 	option.innerHTML = testName;
 	referredTestSelect.appendChild(option);
 	cell5.appendChild(referredTestSelect);
+	
 }
 
 </script>
