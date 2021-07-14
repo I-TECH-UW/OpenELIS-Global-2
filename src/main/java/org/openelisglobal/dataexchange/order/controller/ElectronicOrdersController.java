@@ -145,7 +145,8 @@ public class ElectronicOrdersController extends BaseController {
             }
 
             Organization organization = organizationService
-                    .getOrganizationByFhirId(task.getRestriction().getRecipientFirstRep().getIdElement().getId());
+                    .getOrganizationByFhirId(
+                            task.getRestriction().getRecipientFirstRep().getReferenceElement().getIdPart());
 
             Sample sample = sampleService.getSampleByReferringId(electronicOrder.getExternalId());
             displayItem.setElectronicOrderId(electronicOrder.getId());
