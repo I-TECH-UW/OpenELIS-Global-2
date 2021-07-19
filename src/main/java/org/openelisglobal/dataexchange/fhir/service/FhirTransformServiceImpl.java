@@ -79,6 +79,8 @@ import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.person.valueholder.Person;
 import org.openelisglobal.provider.service.ProviderService;
 import org.openelisglobal.provider.valueholder.Provider;
+import org.openelisglobal.referral.action.beanitems.ReferralItem;
+import org.openelisglobal.referral.service.ReferralSetService;
 import org.openelisglobal.result.action.util.ResultSet;
 import org.openelisglobal.result.action.util.ResultsUpdateDataSet;
 import org.openelisglobal.result.service.ResultService;
@@ -140,6 +142,8 @@ public class FhirTransformServiceImpl implements FhirTransformService {
     private IStatusService statusService;
     @Autowired
     private ProviderService providerService;
+    @Autowired
+    private ReferralSetService referralSetService;
 
     @Transactional
     @Async
@@ -297,7 +301,8 @@ public class FhirTransformServiceImpl implements FhirTransformService {
     @Async
     @Transactional(readOnly = true)
     public void transformPersistOrderEntryFhirObjects(SamplePatientUpdateData updateData,
-            PatientManagementInfo patientInfo) throws FhirLocalPersistingException {
+            PatientManagementInfo patientInfo, boolean useReferral, List<ReferralItem> referralItems)
+            throws FhirLocalPersistingException {
         LogEvent.logTrace(this.getClass().getName(), "createFhirFromSamplePatient",
                 "accessionNumber - " + updateData.getAccessionNumber());
         CountingTempIdGenerator tempIdGenerator = new CountingTempIdGenerator();
@@ -342,6 +347,10 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         // TODO create encounter?
 
         Bundle responseBundle = fhirPersistanceService.createUpdateFhirResourcesInFhirStore(fhirOperations);
+
+        if (useReferral) {
+            referralSetService.createSaveReferralSetsSamplePatientEntry(referralItems, updateData);
+        }
     }
 
     private Practitioner transformProviderToPractitioner(String providerId) {
@@ -547,7 +556,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         }
         ObservationHistory program = observationHistoryService.getObservationHistoriesBySampleIdAndType(sample.getId(),
                 observationHistoryService.getObservationTypeIdForType(ObservationType.PROGRAM));
-        if (program != null) {
+        if (program != null && !GenericValidator.isBlankOrNull(program.getValue())) {
             serviceRequest.addCategory(transformSampleProgramToCodeableConcept(program));
         }
         serviceRequest.setPriority(ServiceRequestPriority.ROUTINE);
@@ -571,8 +580,20 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 
     private CodeableConcept transformSampleProgramToCodeableConcept(ObservationHistory program) {
         CodeableConcept codeableConcept = new CodeableConcept();
-        codeableConcept.addCoding(
-                new Coding(fhirConfig.getOeFhirSystem() + "/sample_program", program.getValue(), program.getValue()));
+        String programDisplay = "";
+        String programCode = "";
+        if ("D".equals(program.getValueType())) {
+            Dictionary dictionary = dictionaryService.get(program.getValue());
+            if (dictionary != null) {
+                programCode = dictionary.getDictEntry();
+                programDisplay = dictionary.getDictEntry();
+            }
+        } else {
+            programCode = program.getValue();
+            programDisplay = program.getValue();
+        }
+        codeableConcept
+                .addCoding(new Coding(fhirConfig.getOeFhirSystem() + "/sample_program", programCode, programDisplay));
         return codeableConcept;
     }
 
@@ -855,10 +876,10 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         String[] names = practitionerName.split(" ", 2);
         HumanName name = practitioner.addName();
         if (names.length >= 1) {
-            name.addGiven(names[0]);
+            name.setFamily(names[0]);
         }
-        if (names.length >= 2) {
-            name.setFamily(names[1]);
+        for (int i = 1; i < names.length; ++i) {
+            name.addGiven(names[i]);
         }
         return practitioner;
     }

@@ -201,7 +201,7 @@ public class SampleBatchEntryController extends BaseController {
         try {
             samplePatientEntryService.persistData(updateData, patientUpdate, patientInfo, form, request);
             try {
-                fhirTransformService.transformPersistOrderEntryFhirObjects(updateData, patientInfo);
+                fhirTransformService.transformPersistOrderEntryFhirObjects(updateData, patientInfo, false, null);
             } catch (FhirTransformationException | FhirPersistanceException e) {
                 LogEvent.logError(e);
             }

@@ -159,7 +159,7 @@ public class TaskInterpreterImpl implements TaskInterpreter {
 
         MessagePatient messagePatient = new MessagePatient();
 
-//        messagePatient.setExternalId(patient.getIdentifierFirstRep().getId());
+        messagePatient.setFhirUuid(patient.getIdElement().getIdPart());
         for (Identifier identifier : patient.getIdentifier()) {
             if (identifier.getType().hasCoding(fhirConfig.getOeFhirSystem() + "/genIdType", "externalId")) {
                 messagePatient.setExternalId(identifier.getValue());

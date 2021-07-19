@@ -563,6 +563,7 @@ function assignTestsToSelected(checkbox, panelId){
 	}
 	getNotificationsForTests(chosenIds, addNotificationConfigurations);
 	addNotificationsOptions();
+	referralTestSelected();
 	testAndSetSave();
 }
 

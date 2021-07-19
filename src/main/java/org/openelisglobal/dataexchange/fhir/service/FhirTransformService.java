@@ -17,6 +17,7 @@ import org.openelisglobal.dataexchange.fhir.exception.FhirTransformationExceptio
 import org.openelisglobal.note.valueholder.Note;
 import org.openelisglobal.organization.valueholder.Organization;
 import org.openelisglobal.patient.action.bean.PatientManagementInfo;
+import org.openelisglobal.referral.action.beanitems.ReferralItem;
 import org.openelisglobal.result.action.util.ResultsUpdateDataSet;
 import org.openelisglobal.result.valueholder.Result;
 import org.openelisglobal.resultvalidation.bean.AnalysisItem;
@@ -28,7 +29,8 @@ public interface FhirTransformService {
     void transformPersistPatient(PatientManagementInfo patientInfo)
             throws FhirTransformationException, FhirPersistanceException;
 
-    void transformPersistOrderEntryFhirObjects(SamplePatientUpdateData updateData, PatientManagementInfo patientInfo)
+    void transformPersistOrderEntryFhirObjects(SamplePatientUpdateData updateData, PatientManagementInfo patientInfo,
+            boolean useReferral, List<ReferralItem> referralItems)
             throws FhirTransformationException, FhirPersistanceException;
 
     void transformPersistResultsEntryFhirObjects(ResultsUpdateDataSet actionDataSet)

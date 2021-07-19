@@ -633,7 +633,7 @@ function toggleReferral() {
 
 <div id="samplesDisplay" class="colorFill" >
     <tiles:insertAttribute name="addSample"/>
-	<form:checkbox path="useReferral" id="useReferral" onclick="toggleReferral()" value="true"/> <spring:message code="sample.entry.referral.toggle" />
+	<form:checkbox path="useReferral" id="useReferral" onclick="toggleReferral();referralTestSelected();" value="true"/> <spring:message code="sample.entry.referral.toggle" />
 </div>
 
 <div id="referTestSection" style="display:none;">

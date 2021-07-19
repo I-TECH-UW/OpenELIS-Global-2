@@ -173,6 +173,9 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
         Organization dbOrg = organizationService.getOrganizationByFhirId(organization.getFhirUuidAsString());
         if (dbOrg != null) {
             dbOrg.setOrganizationName(organization.getOrganizationName());
+            dbOrg.setShortName(organization.getShortName());
+            dbOrg.setCode(organization.getCode());
+            dbOrg.setCliaNum(organization.getCliaNum());
             dbOrg.setFhirUuid(organization.getFhirUuid());
             dbOrg.setStreetAddress(organization.getStreetAddress());
             dbOrg.setCity(organization.getCity());
