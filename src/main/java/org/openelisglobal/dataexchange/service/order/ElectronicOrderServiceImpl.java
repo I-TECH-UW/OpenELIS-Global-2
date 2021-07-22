@@ -1,6 +1,7 @@
 package org.openelisglobal.dataexchange.service.order;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -84,6 +85,12 @@ public class ElectronicOrderServiceImpl extends BaseObjectServiceImpl<Electronic
     public List<ElectronicOrder> getAllElectronicOrdersByDateAndStatus(Date startDate, Date endDate, String statusId,
             SortOrder sortOrder) {
         return getBaseObjectDAO().getAllElectronicOrdersByDateAndStatus(startDate, endDate, statusId, sortOrder);
+    }
+
+    @Override
+    public List<ElectronicOrder> getAllElectronicOrdersByTimestampAndStatus(Timestamp startTimestamp,
+            Timestamp endTimestamp, String statusId, SortOrder sortOrder) {
+        return getBaseObjectDAO().getAllElectronicOrdersByTimestampAndStatus(startTimestamp, endTimestamp, statusId, sortOrder);
     }
 
 }

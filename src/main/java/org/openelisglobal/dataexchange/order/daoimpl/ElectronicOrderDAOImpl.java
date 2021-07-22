@@ -395,4 +395,50 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder, String>
         return null;
     }
 
+    @Override
+    public List<ElectronicOrder> getAllElectronicOrdersByTimestampAndStatus(java.sql.Timestamp startTimestamp, java.sql.Timestamp endTimestamp,
+            String statusId, SortOrder sortOrder) {
+        System.out.println("getByTimestamp: " + startTimestamp.toString() + " " + endTimestamp.toString());
+        String hql = "From ElectronicOrder eo WHERE 1 = 1 ";
+        if (startTimestamp != null) {
+            hql += "AND eo.orderTimestamp BETWEEN :startDate AND :endDate ";
+        }
+        if (!GenericValidator.isBlankOrNull(statusId)) {
+            hql += "AND eo.statusId = :statusId ";
+        }
+
+        switch (sortOrder) {
+        case STATUS_ID:
+            hql += "ORDER BY eo.statusId asc ";
+            break;
+        case LAST_UPDATED_ASC:
+            hql += "ORDER BY eo.lastUpdated asc ";
+            break;
+        case LAST_UPDATED_DESC:
+            hql += "ORDER BY eo.lastUpdated desc ";
+            break;
+        case EXTERNAL_ID:
+            hql += "ORDER BY eo.externalId asc ";
+            break;
+        default:
+            //
+            break;
+        }
+
+        try {
+            Query query = entityManager.unwrap(Session.class).createQuery(hql);
+            if (startTimestamp != null) {
+                query.setTimestamp("startDate", startTimestamp);
+                query.setTimestamp("endDate", endTimestamp);
+            }
+            if (!GenericValidator.isBlankOrNull(statusId)) {
+                query.setParameter("statusId", Integer.parseInt(statusId));
+            }
+            return query.list();
+        } catch (HibernateException e) {
+            handleException(e, "getAllElectronicOrdersByDateAndStatus");
+        }
+        return null;
+    }
+
 }

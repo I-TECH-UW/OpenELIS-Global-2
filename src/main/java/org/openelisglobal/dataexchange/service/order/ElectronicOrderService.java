@@ -1,6 +1,7 @@
 package org.openelisglobal.dataexchange.service.order;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.List;
 
 import org.openelisglobal.common.service.BaseObjectService;
@@ -24,5 +25,8 @@ public interface ElectronicOrderService extends BaseObjectService<ElectronicOrde
 
     List<ElectronicOrder> getAllElectronicOrdersByDateAndStatus(Date startDate, Date endDate, String statusId,
             SortOrder sortOrder);
+
+    List<ElectronicOrder> getAllElectronicOrdersByTimestampAndStatus(Timestamp startTimestamp, Timestamp endTimestamp,
+            String statusId, SortOrder statusId2);
 
 }
