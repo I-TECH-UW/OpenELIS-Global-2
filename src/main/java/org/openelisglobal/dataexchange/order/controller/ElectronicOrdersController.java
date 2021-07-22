@@ -1,6 +1,5 @@
 package org.openelisglobal.dataexchange.order.controller;
 
-import java.sql.Date;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -195,11 +194,13 @@ public class ElectronicOrdersController extends BaseController {
             return electronicOrderService.getAllElectronicOrdersContainingValueOrderedBy(form.getSearchValue(),
                     SortOrder.LAST_UPDATED_ASC);
         case DATE_STATUS:
-            Date startDate = GenericValidator.isBlankOrNull(form.getStartDate()) ? null
-                    : DateUtil.convertStringDateToSqlDate(form.getStartDate());
-            Date endDate = GenericValidator.isBlankOrNull(form.getEndDate()) ? null
-                    : DateUtil.convertStringDateToSqlDate(form.getEndDate());
-            return electronicOrderService.getAllElectronicOrdersByDateAndStatus(startDate, endDate, form.getStatusId(),
+            java.sql.Timestamp startTimestamp = GenericValidator.isBlankOrNull(form.getStartDate()) ? null
+                    : DateUtil.convertStringDateStringTimeToTimestamp(form.getStartDate(), "00:00:00.0");
+            java.sql.Timestamp endTimestamp = GenericValidator.isBlankOrNull(form.getEndDate()) 
+                    ? DateUtil.convertStringDateStringTimeToTimestamp(form.getStartDate(), "23:59:59.9")
+                    : DateUtil.convertStringDateStringTimeToTimestamp(form.getEndDate(), "23:59:59");
+            System.out.println("controller: " + startTimestamp.toString() + " " + endTimestamp.toString());
+            return electronicOrderService.getAllElectronicOrdersByTimestampAndStatus(startTimestamp, endTimestamp, form.getStatusId(),
                     SortOrder.STATUS_ID);
         default:
             return null;

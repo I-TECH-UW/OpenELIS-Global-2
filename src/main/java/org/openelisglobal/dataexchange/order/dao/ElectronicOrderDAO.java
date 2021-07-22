@@ -17,6 +17,7 @@
 package org.openelisglobal.dataexchange.order.dao;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.List;
 
 import org.openelisglobal.common.dao.BaseDAO;
@@ -46,5 +47,8 @@ public interface ElectronicOrderDAO extends BaseDAO<ElectronicOrder, String> {
 
     List<ElectronicOrder> getAllElectronicOrdersByDateAndStatus(Date startDate, Date endDate, String statusId,
             SortOrder sortOrder);
+
+    List<ElectronicOrder> getAllElectronicOrdersByTimestampAndStatus(Timestamp startTimestamp, Timestamp endTimestamp,
+            String statusId, SortOrder sortOrder);
 
 }
