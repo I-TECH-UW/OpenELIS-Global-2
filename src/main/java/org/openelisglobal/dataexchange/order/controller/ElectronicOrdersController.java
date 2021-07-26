@@ -160,7 +160,7 @@ public class ElectronicOrdersController extends BaseController {
             Sample sample = sampleService.getSampleByReferringId(electronicOrder.getExternalId());
             displayItem.setElectronicOrderId(electronicOrder.getId());
             displayItem.setExternalOrderId(electronicOrder.getExternalId());
-            displayItem.setRequestDateDisplay(DateUtil.formatDateTimeAsText(task.getAuthoredOn()));
+            displayItem.setRequestDateDisplay(DateUtil.formatDateAsText(task.getAuthoredOn()));
             if (organization != null) {
                 displayItem.setRequestingFacility(organization.getOrganizationName());
             }
@@ -197,12 +197,18 @@ public class ElectronicOrdersController extends BaseController {
             return electronicOrderService.getAllElectronicOrdersContainingValueOrderedBy(form.getSearchValue(),
                     SortOrder.LAST_UPDATED_ASC);
         case DATE_STATUS:
-            java.sql.Timestamp startTimestamp = GenericValidator.isBlankOrNull(form.getStartDate()) ? null
-                    : DateUtil.convertStringDateStringTimeToTimestamp(form.getStartDate(), "00:00:00.0");
-            java.sql.Timestamp endTimestamp = GenericValidator.isBlankOrNull(form.getEndDate())
-                    ? DateUtil.convertStringDateStringTimeToTimestamp(form.getStartDate(), "23:59:59.9")
-                    : DateUtil.convertStringDateStringTimeToTimestamp(form.getEndDate(), "23:59:59");
-            System.out.println("controller: " + startTimestamp.toString() + " " + endTimestamp.toString());
+            String startDate = form.getStartDate();
+            String endDate = form.getEndDate();
+            if (GenericValidator.isBlankOrNull(startDate) && !GenericValidator.isBlankOrNull(endDate)) {
+                startDate = endDate;
+            }
+            if (GenericValidator.isBlankOrNull(endDate) && !GenericValidator.isBlankOrNull(startDate)) {
+                endDate = startDate;
+            }
+            java.sql.Timestamp startTimestamp = GenericValidator.isBlankOrNull(startDate) ? null
+                    : DateUtil.convertStringDateStringTimeToTimestamp(startDate, "00:00:00.0");
+            java.sql.Timestamp endTimestamp = GenericValidator.isBlankOrNull(endDate) ? null
+                    : DateUtil.convertStringDateStringTimeToTimestamp(endDate, "23:59:59");
             return electronicOrderService.getAllElectronicOrdersByTimestampAndStatus(startTimestamp, endTimestamp,
                     form.getStatusId(), SortOrder.STATUS_ID);
         default:

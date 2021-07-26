@@ -398,7 +398,6 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder, String>
     @Override
     public List<ElectronicOrder> getAllElectronicOrdersByTimestampAndStatus(java.sql.Timestamp startTimestamp, java.sql.Timestamp endTimestamp,
             String statusId, SortOrder sortOrder) {
-        System.out.println("getByTimestamp: " + startTimestamp.toString() + " " + endTimestamp.toString());
         String hql = "From ElectronicOrder eo WHERE 1 = 1 ";
         if (startTimestamp != null) {
             hql += "AND eo.orderTimestamp BETWEEN :startDate AND :endDate ";

@@ -11,6 +11,7 @@
 <script src="select2/js/select2.min.js"></script>
 <script type="text/javascript" src="scripts/tableSort.js"></script>
 <script type="text/javascript" src="scripts/ajaxCalls.js"></script>
+<script type="text/javascript" src="scripts/jquery-ui.js?"></script>
 <script type="text/javascript">
 
 var colSort = [0,0,0,0,0,0,0,0,0,0,0];
@@ -228,7 +229,7 @@ highlighted rows specifies a resource that is likely out of sync with the server
 	    	<button type="button" id="enterButton_${iter.index}" onclick="enterOrder('${iter.index}')" ${entered ? 'disabled="disabled"' : '' }>Enter</button>
 		    <button type="button" id="editButton_${iter.index}" onclick="editOrder('${iter.index}')" ${entered ? 'disabled="disabled"' : '' }>Edit</button>
 	    </td>
-	    <td>
+	    <td class="dateCol">
 	       <c:out value="${eOrder.requestDateDisplay}"/>
 	    </td>
 	    <td>

@@ -22,14 +22,29 @@ function sortTableJquery(id, col, rev) {
 	});
 	$tbody = jQuery("#" + id + ' tbody'); 
 	$tbody.find('tr').sort(function(a,b){ 
-	    var tda = jQuery(a).find('td:eq(' + col +')').text(); // can replace 1 with the column you want to sort on
-	    var tdb = jQuery(b).find('td:eq(' + col + ')').text(); // this will sort on the second column
+	    var tda = jQuery.trim(jQuery(a).find('td:eq(' + col +')').text()); // can replace 1 with the column you want to sort on
+	    var tdb = jQuery.trim(jQuery(b).find('td:eq(' + col + ')').text()); // this will sort on the second column
+
+		var dateSort = jQuery(a).find('td:eq(' + col +')').hasClass('dateCol');
+		if (dateSort) {
+			var datea = jQuery.datepicker.parseDate("dd/mm/yy",  tda);
+			var dateb = jQuery.datepicker.parseDate("dd/mm/yy",  tdb);
+			
 	            // if a < b return 1
-	    return tda < tdb ? (rev ? -1 : 1 )
+	    	return datea < dateb ? (rev ? -1 : 1 )
+	           // else if a > b return -1
+	           : datea > dateb ? (rev ? 1 : -1 )
+	           // else they are equal - return 0    
+	           : 0;   
+			
+		} else {
+	            // if a < b return 1
+	    	return tda < tdb ? (rev ? -1 : 1 )
 	           // else if a > b return -1
 	           : tda > tdb ? (rev ? 1 : -1 )
 	           // else they are equal - return 0    
 	           : 0;           
+		}
 	}).appendTo($tbody);
 }
 
