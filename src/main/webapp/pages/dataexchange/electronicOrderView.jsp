@@ -10,6 +10,7 @@
 <link href="select2/css/select2.min.css" rel="stylesheet" />
 <script src="select2/js/select2.min.js"></script>
 <script type="text/javascript" src="scripts/tableSort.js"></script>
+<script type="text/javascript" src="scripts/utilities.js"></script>
 <script type="text/javascript" src="scripts/ajaxCalls.js"></script>
 <script type="text/javascript" src="scripts/jquery-ui.js?"></script>
 <script type="text/javascript">
@@ -145,9 +146,9 @@ Enter the date range for test requests. This will search by the date of the refe
 
 <br> 
 Start Date (dd/mm/yyyy)
-<form:input path="startDate"/>
+<form:input path="startDate" onkeyup="addDateSlashes(this,event); "/>
 End Date (dd/mm/yyyy)
-<form:input path="endDate"/>
+<form:input path="endDate"	onkeyup="addDateSlashes(this,event); "/>
 Status
 <form:select path="statusId">
 <option value="">All Statuses</option>
