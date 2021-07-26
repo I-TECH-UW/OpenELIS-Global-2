@@ -125,37 +125,42 @@ public class ElectronicOrdersController extends BaseController {
             Task task = fhirUtil.getFhirParser().parseResource(Task.class, electronicOrder.getData());
 
 //       Patient patient =  fhirClient.read().resource(Patient.class).withId(serviceRequest.getSubject().getReference()).execute();
-            Patient patient = patientService
-                    .getByExternalId(serviceRequest.getSubject().getReferenceElement().getIdPart());
+            String patientUuid = serviceRequest.getSubject().getReferenceElement().getIdPart();
+            Patient patient = electronicOrder.getPatient();
             org.hl7.fhir.r4.model.Patient fhirPatient = fhirClient.read().resource(org.hl7.fhir.r4.model.Patient.class)
-                    .withId(patient.getFhirUuidAsString()).execute();
+                    .withId(patientUuid).execute();
 
-            String passportNumber = "";
-            String subjectNumber = patientService.getSubjectNumber(patient);
-            for (Identifier identifier : fhirPatient.getIdentifier()) {
-                if ("passport".equals(identifier.getSystem())) {
-                    passportNumber = GenericValidator.isBlankOrNull(identifier.getId()) ? passportNumber
-                            : identifier.getId();
+            if (patient != null) {
+                String passportNumber = "";
+                String subjectNumber = patientService.getSubjectNumber(patient);
+                for (Identifier identifier : fhirPatient.getIdentifier()) {
+                    if ("passport".equals(identifier.getSystem())) {
+                        passportNumber = GenericValidator.isBlankOrNull(identifier.getId()) ? passportNumber
+                                : identifier.getId();
+                    }
+                    if ((fhirConfig.getOeFhirSystem() + "/pat_subjectNumber").equals(identifier.getSystem())) {
+                        subjectNumber = GenericValidator.isBlankOrNull(identifier.getId()) ? subjectNumber
+                                : identifier.getId();
+                    }
                 }
-                if ((fhirConfig.getOeFhirSystem() + "/pat_subjectNumber").equals(identifier.getSystem())) {
-                    subjectNumber = GenericValidator.isBlankOrNull(identifier.getId()) ? subjectNumber
-                            : identifier.getId();
-                }
+                displayItem.setPassportNumber(passportNumber);
+                displayItem.setSubjectNumber(subjectNumber);
+
+                displayItem.setPatientLastName(patient.getPerson().getLastName());
+                displayItem.setPatientFirstName(patient.getPerson().getFirstName());
+                displayItem.setPatientNationalId(patient.getNationalId());
+            } else {
+                String errorMsg = "error in data collection - Patient was a null resource";
+                displayItem.setWarnings(Arrays.asList(errorMsg));
             }
 
-            Organization organization = organizationService
-                    .getOrganizationByFhirId(
-                            task.getRestriction().getRecipientFirstRep().getReferenceElement().getIdPart());
+            Organization organization = organizationService.getOrganizationByFhirId(
+                    task.getRestriction().getRecipientFirstRep().getReferenceElement().getIdPart());
 
             Sample sample = sampleService.getSampleByReferringId(electronicOrder.getExternalId());
             displayItem.setElectronicOrderId(electronicOrder.getId());
             displayItem.setExternalOrderId(electronicOrder.getExternalId());
             displayItem.setRequestDateDisplay(DateUtil.formatDateTimeAsText(task.getAuthoredOn()));
-            if (patient != null && patient.getPerson() != null) {
-                displayItem.setPatientLastName(patient.getPerson().getLastName());
-                displayItem.setPatientFirstName(patient.getPerson().getFirstName());
-                displayItem.setPatientNationalId(patient.getNationalId());
-            }
             if (organization != null) {
                 displayItem.setRequestingFacility(organization.getOrganizationName());
             }
@@ -166,8 +171,6 @@ public class ElectronicOrdersController extends BaseController {
             if (serviceRequest.getRequisition() != null) {
                 displayItem.setReferringLabNumber(serviceRequest.getRequisition().getValue());
             }
-            displayItem.setPassportNumber(passportNumber);
-            displayItem.setSubjectNumber(subjectNumber);
             if (sample != null) {
                 displayItem.setLabNumber(sample.getAccessionNumber());
             }
@@ -196,12 +199,12 @@ public class ElectronicOrdersController extends BaseController {
         case DATE_STATUS:
             java.sql.Timestamp startTimestamp = GenericValidator.isBlankOrNull(form.getStartDate()) ? null
                     : DateUtil.convertStringDateStringTimeToTimestamp(form.getStartDate(), "00:00:00.0");
-            java.sql.Timestamp endTimestamp = GenericValidator.isBlankOrNull(form.getEndDate()) 
+            java.sql.Timestamp endTimestamp = GenericValidator.isBlankOrNull(form.getEndDate())
                     ? DateUtil.convertStringDateStringTimeToTimestamp(form.getStartDate(), "23:59:59.9")
                     : DateUtil.convertStringDateStringTimeToTimestamp(form.getEndDate(), "23:59:59");
             System.out.println("controller: " + startTimestamp.toString() + " " + endTimestamp.toString());
-            return electronicOrderService.getAllElectronicOrdersByTimestampAndStatus(startTimestamp, endTimestamp, form.getStatusId(),
-                    SortOrder.STATUS_ID);
+            return electronicOrderService.getAllElectronicOrdersByTimestampAndStatus(startTimestamp, endTimestamp,
+                    form.getStatusId(), SortOrder.STATUS_ID);
         default:
             return null;
         }
