@@ -873,13 +873,22 @@ public class FhirTransformServiceImpl implements FhirTransformService {
     @Override
     public Practitioner transformNameToPractitioner(String practitionerName) {
         Practitioner practitioner = new Practitioner();
-        String[] names = practitionerName.split(" ", 2);
         HumanName name = practitioner.addName();
-        if (names.length >= 1) {
+
+        if (practitionerName.contains(",")) {
+            String[] names = practitionerName.split(",", 2);
             name.setFamily(names[0]);
-        }
-        for (int i = 1; i < names.length; ++i) {
-            name.addGiven(names[i]);
+            for (int i = 1; i < names.length; ++i) {
+                name.addGiven(names[i]);
+            }
+        } else {
+            String[] names = practitionerName.split(" ");
+            if (names.length >= 1) {
+                name.setFamily(names[names.length - 1]);
+                for (int i = 0; i < names.length - 1; ++i) {
+                    name.addGiven(names[i]);
+                }
+            }
         }
         return practitioner;
     }
