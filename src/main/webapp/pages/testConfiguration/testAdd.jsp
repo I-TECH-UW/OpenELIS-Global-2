@@ -876,7 +876,7 @@
 
             upperAge = jQuery("#upperAgeSetter_" + rowIndex).val();
             if (upperAge != "Infinity") {
-                limit.highAgeRange = yearMonth == "<%=MessageUtil.getContextualMessage("abbreviation.year.single")%>" ? (upperAge * 12).toString() : upperAge;
+                limit.highAgeRange = yearMonth == '<%=MessageUtil.getMessage("abbreviation.day.single")%>' ? upperAge : yearMonth == '<%=MessageUtil.getMessage("abbreviation.month.single")%>' ? Math.floor(upperAge * 365/12).toString() : (365 * upperAge).toString();
             } else {
                 limit.highAgeRange = upperAge;
             }

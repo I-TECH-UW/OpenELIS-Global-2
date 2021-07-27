@@ -1441,13 +1441,13 @@
         for (var rowIndex = 0; rowIndex < defaultResultLimits.length; rowIndex++) {
             
             //yearMonth = monthYear = jQuery(".yearMonthSelect_" + rowIndex + ":checked").val();
-            yearMonth = 'M'; // always month regardless
+            yearMonth = 'D'; // always month regardless
             limit = {};
 
             upperAge = defaultResultLimits[rowIndex][1][1];
             if (upperAge != "Infinity") {
                 //limit.highAgeRange = yearMonth == "<%=MessageUtil.getContextualMessage("abbreviation.year.single")%>" ? (upperAge * 12).toString() : upperAge;
-            	limit.highAgeRange = upperAge;
+            	 limit.highAgeRange = yearMonth == '<%=MessageUtil.getMessage("abbreviation.day.single")%>' ? upperAge : yearMonth == '<%=MessageUtil.getMessage("abbreviation.month.single")%>' ? Math.floor(upperAge * 365/12) : 365 * upperAge;
             } else {
                 limit.highAgeRange = "Infinity";
             }
@@ -1491,7 +1491,8 @@
 
             upperAge = jQuery("#upperAgeSetter_" + rowIndex).val();
             if (upperAge != "Infinity") {
-                limit.highAgeRange = yearMonth == "<%=MessageUtil.getContextualMessage("abbreviation.year.single")%>" ? (upperAge * 12).toString() : upperAge;
+<%--                 limit.highAgeRange = yearMonth == "<%=MessageUtil.getContextualMessage("abbreviation.year.single")%>" ? (upperAge * 365).toString() : upperAge; --%>
+                limit.highAgeRange = yearMonth == '<%=MessageUtil.getMessage("abbreviation.day.single")%>' ? upperAge : yearMonth == '<%=MessageUtil.getMessage("abbreviation.month.single")%>' ? Math.floor(upperAge * 365/12).toString() : (365 * upperAge).toString();
             } else {
                 limit.highAgeRange = upperAge;
             }
@@ -1743,7 +1744,7 @@ td {
 				</tr>
 				<tr>
 					<td><span class="catalog-label"><spring:message code="label.sex" /></span></td>
-					<td><span class="catalog-label"><spring:message code="configuration.test.catalog.age.range.days" /></span></td>
+					<td><span class="catalog-label"><spring:message code="configuration.test.catalog.age.range" /></span></td>
 					<td><span class="catalog-label"><spring:message code="configuration.test.catalog.normal.range" /></span></td>
 					<td><span class="catalog-label"><spring:message code="configuration.test.catalog.valid.range" /></span></td>
 				</tr>

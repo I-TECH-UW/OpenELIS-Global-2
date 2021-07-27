@@ -213,7 +213,7 @@ which closes it the last time through--%>
         </tr>
         <tr>
             <td><span class="catalog-label"><spring:message code="label.sex" /></span></td>
-            <td><span class="catalog-label"><spring:message code="configuration.test.catalog.age.range.days" /></span></td>
+            <td><span class="catalog-label"><spring:message code="configuration.test.catalog.age.range" /></span></td>
             <td><span class="catalog-label"><spring:message code="configuration.test.catalog.normal.range" /></span></td>
             <td><span class="catalog-label"><spring:message code="configuration.test.catalog.valid.range" /></span></td>
         </tr>

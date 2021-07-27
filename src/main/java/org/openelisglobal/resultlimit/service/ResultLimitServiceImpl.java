@@ -1,5 +1,7 @@
 package org.openelisglobal.resultlimit.service;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -284,11 +286,32 @@ public class ResultLimitServiceImpl extends BaseObjectServiceImpl<ResultLimit, S
             return MessageUtil.getMessage("age.anyAge");
         }
 
+        NumberFormat nf = DecimalFormat.getInstance();
+        nf.setMaximumFractionDigits(0);
+        double minDays = resultLimit.getMinAge();
+        double minYears = Math.floor(minDays / 365);
+        minDays = minDays - (minYears * 365);
+        double minMonths = Math.floor(minDays / (365 / 12));
+        minDays = minDays - Math.floor(minMonths * (365 / 12));
+
         if (resultLimit.getMaxAge() == Float.POSITIVE_INFINITY) {
-            return ">" + resultLimit.getMinAge();
+            return ">" + nf.format(minYears) + MessageUtil.getContextualMessage("abbreviation.year.single")
+                    + nf.format(minMonths) + MessageUtil.getContextualMessage("abbreviation.month.single")
+                    + nf.format(minDays) + MessageUtil.getContextualMessage("abbreviation.day.single");
         }
 
-        return resultLimit.getMinAge() + separator + resultLimit.getMaxAge();
+        double maxDays = resultLimit.getMaxAge();
+        double maxYears = Math.floor(maxDays / 365);
+        maxDays = maxDays - (maxYears * 365);
+        double maxMonths = Math.floor(maxDays / (365 / 12));
+        maxDays = maxDays - Math.floor(maxMonths * (365 / 12));
+
+        return nf.format(minDays) + MessageUtil.getContextualMessage("abbreviation.day.single") + "/"
+                + nf.format(minMonths) + MessageUtil.getContextualMessage("abbreviation.month.single") + "/"
+                + nf.format(minYears) + MessageUtil.getContextualMessage("abbreviation.year.single") + separator
+                + nf.format(maxDays) + MessageUtil.getContextualMessage("abbreviation.day.single") + "/"
+                + nf.format(maxMonths) + MessageUtil.getContextualMessage("abbreviation.month.single") + "/"
+                + nf.format(maxYears) + MessageUtil.getContextualMessage("abbreviation.year.single");
     }
 
     @Override
