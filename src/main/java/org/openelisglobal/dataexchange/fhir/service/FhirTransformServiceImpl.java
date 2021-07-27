@@ -55,6 +55,7 @@ import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.SampleAddService.SampleTestCollection;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.StatusService.OrderStatus;
+import org.openelisglobal.common.services.TableIdService;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.dataexchange.fhir.FhirConfig;
 import org.openelisglobal.dataexchange.fhir.exception.FhirLocalPersistingException;
@@ -357,7 +358,8 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         return transformProviderToPractitioner(providerService.get(providerId));
     }
 
-    private Practitioner transformProviderToPractitioner(Provider provider) {
+    @Override
+    public Practitioner transformProviderToPractitioner(Provider provider) {
         Practitioner practitioner = new Practitioner();
         practitioner.setId(provider.getFhirUuidAsString());
         practitioner.addName(new HumanName().setFamily(provider.getPerson().getLastName())
@@ -522,6 +524,12 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         Sample sample = analysis.getSampleItem().getSample();
         Patient patient = sampleHumanService.getPatientForSample(sample);
         Provider provider = sampleHumanService.getProviderForSample(sample);
+
+        Organization organization = sampleService.getOrganizationRequester(sample,
+                TableIdService.getInstance().REFERRING_ORG_TYPE_ID);
+        Organization organizationDepartment = sampleService.getOrganizationRequester(sample,
+                TableIdService.getInstance().REFERRING_ORG_DEPARTMENT_TYPE_ID);
+
         Test test = analysis.getTest();
         ServiceRequest serviceRequest = new ServiceRequest();
         serviceRequest.setId(analysis.getFhirUuidAsString());
@@ -529,6 +537,14 @@ public class FhirTransformServiceImpl implements FhirTransformService {
                 this.createIdentifier(fhirConfig.getOeFhirSystem() + "/analysis_uuid", analysis.getFhirUuidAsString()));
         serviceRequest.setRequisition(this.createIdentifier(fhirConfig.getOeFhirSystem() + "/samp_labNo",
                 analysis.getSampleItem().getSample().getAccessionNumber()));
+        if (organization != null) {
+            serviceRequest.addLocationReference(
+                    this.createReferenceFor(ResourceType.Location, organization.getFhirUuidAsString()));
+        }
+        if (organizationDepartment != null) {
+            serviceRequest.addLocationReference(
+                    this.createReferenceFor(ResourceType.Location, organizationDepartment.getFhirUuidAsString()));
+        }
 
         List<ElectronicOrder> eOrders = electronicOrderService.getElectronicOrdersByExternalId(sample.getReferringId());
 

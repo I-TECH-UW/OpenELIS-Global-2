@@ -271,9 +271,10 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
 
     @Override
     @Transactional(readOnly = true)
-    public Organization getOrganizationRequester(Sample sample) {
+    public List<Organization> getOrganizationRequesters(Sample sample) {
+        List<Organization> orgs = new ArrayList<>();
         if (sample == null) {
-            return null;
+            return orgs;
         }
 
         List<SampleRequester> requesters = sampleRequesterService.getRequestersForSampleId(sample.getId());
@@ -283,12 +284,12 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
                 Organization org = organizationService.getOrganizationById(String.valueOf(requester.getRequesterId()));
                 if (org != null && org.getOrganizationTypes().stream()
                         .anyMatch(e -> e.getId().equals(TableIdService.getInstance().REFERRING_ORG_TYPE_ID))) {
-                    return org;
+                    orgs.add(org);
                 }
             }
         }
 
-        return null;
+        return orgs;
     }
 
     @Override

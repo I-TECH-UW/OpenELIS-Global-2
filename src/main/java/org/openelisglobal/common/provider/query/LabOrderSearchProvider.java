@@ -197,11 +197,11 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
                 }
             }
 
-            if (!GenericValidator.isBlankOrNull(task.getRequester().getReferenceElement().getIdPart())
-                    && task.getRequester().getReference().contains(ResourceType.Practitioner.toString())) {
+            if (!GenericValidator.isBlankOrNull(serviceRequest.getRequester().getReferenceElement().getIdPart())
+                    && serviceRequest.getRequester().getReference().contains(ResourceType.Practitioner.toString())) {
                 requesterPerson = localFhirClient.read()//
                         .resource(Practitioner.class)//
-                        .withId(task.getRequester().getReferenceElement().getIdPart())//
+                        .withId(serviceRequest.getRequester().getReferenceElement().getIdPart())//
                         .execute();
 
                 if (requesterPerson != null) {

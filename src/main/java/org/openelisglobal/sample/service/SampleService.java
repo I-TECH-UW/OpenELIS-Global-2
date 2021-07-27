@@ -61,8 +61,6 @@ public interface SampleService extends BaseObjectService<Sample, String> {
 
     String generateAccessionNumberAndInsert(Sample sample);
 
-    Organization getOrganizationRequester(Sample sample);
-
     Organization getOrganizationRequester(Sample sample, String orgTypeId);
 
     Person getPersonRequester(Sample sample);
@@ -108,4 +106,6 @@ public interface SampleService extends BaseObjectService<Sample, String> {
     List<Sample> getAllMissingFhirUuid();
 
     List<Sample> getSamplesByAnalysisIds(List<String> analysisIds);
+
+    List<Organization> getOrganizationRequesters(Sample sample);
 }

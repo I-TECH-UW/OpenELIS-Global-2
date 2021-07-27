@@ -69,14 +69,34 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
                 responseBundles.add(responseBundle);
             }
             organizationService.deactivateAllOrganizations();
-            importFromBundle(client, responseBundles);
+            importOrgsFromBundle(client, responseBundles);
+
+            responseBundle = client.search().forResource(org.hl7.fhir.r4.model.Location.class)
+                    .returnBundle(Bundle.class).execute();
+            importLocationsFromBundle(client, responseBundles);
         }
         DisplayListService.getInstance().refreshList(ListType.REFERRAL_ORGANIZATIONS);
         DisplayListService.getInstance().refreshList(ListType.SAMPLE_PATIENT_REFERRING_CLINIC);
         DisplayListService.getInstance().refreshList(ListType.PATIENT_HEALTH_REGIONS);
     }
 
-    private void importFromBundle(IGenericClient client, List<Bundle> responseBundles) throws FhirGeneralException {
+    private void importLocationsFromBundle(IGenericClient client, List<Bundle> responseBundles)
+            throws FhirGeneralException {
+        Map<String, Resource> remoteFhirLocations = new HashMap<>();
+        for (Bundle responseBundle : responseBundles) {
+            for (BundleEntryComponent entry : responseBundle.getEntry()) {
+                if (entry.hasResource() && entry.getResource().getResourceType().equals(ResourceType.Location)) {
+                    org.hl7.fhir.r4.model.Location fhirLocation = (org.hl7.fhir.r4.model.Location) entry.getResource();
+                    remoteFhirLocations.put(fhirLocation.getIdElement().getIdPart(), fhirLocation);
+                }
+            }
+        }
+
+        // import fhir locations as is
+        fhirPersistanceService.updateFhirResourcesInFhirStore(remoteFhirLocations);
+    }
+
+    private void importOrgsFromBundle(IGenericClient client, List<Bundle> responseBundles) throws FhirGeneralException {
         Map<String, Resource> remoteFhirOrganizations = new HashMap<>();
 
         Map<String, OrganizationObjects> organizationObjectsByOrgUUID = new HashMap<>();

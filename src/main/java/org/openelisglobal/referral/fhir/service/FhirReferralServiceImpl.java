@@ -52,6 +52,7 @@ import org.openelisglobal.note.service.NoteService;
 import org.openelisglobal.note.service.NoteServiceImpl;
 import org.openelisglobal.note.valueholder.Note;
 import org.openelisglobal.organization.service.OrganizationService;
+import org.openelisglobal.provider.valueholder.Provider;
 import org.openelisglobal.referencetables.service.ReferenceTablesService;
 import org.openelisglobal.referral.service.ReferralResultService;
 import org.openelisglobal.referral.service.ReferralService;
@@ -176,6 +177,7 @@ public class FhirReferralServiceImpl implements FhirReferralService {
         }
         Map<String, Resource> updateResources = new HashMap<>();
         Sample sample = sampleService.get(sampleId);
+        Provider provider = sampleHumanService.getProviderForSample(sample);
 
         Analysis analysis = analysisService.get(analysisId);
         ServiceRequest serviceRequest = fhirPersistanceService
@@ -185,8 +187,8 @@ public class FhirReferralServiceImpl implements FhirReferralService {
                     return sr;
                 });
         Optional<Practitioner> requester = Optional.empty();
-        if (!GenericValidator.isBlankOrNull(referral.getRequesterName())) {
-            requester = Optional.of(fhirTransformService.transformNameToPractitioner(referral.getRequesterName()));
+        if (provider != null) {
+            requester = Optional.of(fhirTransformService.transformProviderToPractitioner(provider));
             requester.get().setId(UUID.randomUUID().toString());
         }
 
