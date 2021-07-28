@@ -1,4 +1,69 @@
+##
+# Build Stage
+#
+FROM ubuntu:focal as build
+
+ENV KEYSTORE_PW="kspass"
+ENV TRUSTSTORE_PW="tspass"
+ENV DEFAULT_PW="oepass"
+ENV INSTALLER_CREATION_DIR="OEInstaller"
+ENV STAGING_DIR="OEInstaller_stagingDir"
+ENV OE_BRANCH="master"
+
+##
+# Prerequesites
+#
+RUN apt-get update && sudo apt-get upgrade \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y \
+      openssl net-tools python default-jdk maven \ 
+      apache2-utils git printf apt-transport-https \
+      ca-certificates curl gnupg-agent software-properties-common\
+    && apt-get clean
+RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+RUN sudo add-apt-repository \
+    "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+    $(lsb_release -cs) \
+    stable"
+RUN sudo apt update
+RUN sudo apt install docker-ce docker-ce-cli containerd.io
+
+##
+# Certificates
+#
+
+# Self-signed Certs
+RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/apache-selfsigned.key -out /etc/ssl/certs/apache-selfsigned.crt
+RUN mkdir /etc/openelis-global/
+# Keystore
+RUN openssl pkcs12 -inkey /etc/ssl/private/apache-selfsigned.key -in /etc/ssl/certs/apache-selfsigned.crt -export -out /etc/openelis-global/keystore --passin env:KEYSTORE_PW
+# Client-facing Keystore
+RUN cp /etc/openelis-global/keystore /etc/openelis-global/client_facing_keystore
+# Truststore
+RUN sudo keytool -import -alias oeCert -file /etc/ssl/certs/apache-selfsigned.crt -storetype pkcs12 -keystore /etc/openelis-global/truststore -storepass ${TRUSTSTORE_PW}}
+
+##
+# Copy Source Code
+#
+ADD ./pom.xml /build
+ADD ./tools /build/tools
+ADD ./src /build/src
+ADD ./install /build/install
+ADD ./dev /build/dev
+
+WORKDIR /build
+
+# OE Default Password
+RUN ${DEFAULT_PW} | ./install/createDefaultPassword.sh
+
+RUN	mvn clean install -DskipTests
+
+##
+# Run Stage
+#
 FROM tomcat:8.5-jdk11
+
+
+
 
 #Clean out unneccessary files from tomcat (especially pre-existing applications) 
 RUN rm -rf /usr/local/tomcat/webapps/* \ 
@@ -6,7 +71,7 @@ RUN rm -rf /usr/local/tomcat/webapps/* \
     
 #Deploy the war into tomcat image and point root to it
 ADD install/tomcat-resources/ROOT.war /usr/local/tomcat/webapps/ROOT.war
-ADD target/OpenELIS-Global.war /usr/local/tomcat/webapps/OpenELIS-Global.war
+COPY --from=build /build/target/OpenELIS-Global.war /usr/local/tomcat/webapps/OpenELIS-Global.war
     
 #contains sensitive data, so being mounted at runtime
 #ADD ./install/tomcat-resources/server.xml /usr/local/tomcat/conf/server.xml
