@@ -13,19 +13,19 @@ ENV OE_BRANCH="master"
 ##
 # Prerequesites
 #
-RUN apt-get update && sudo apt-get upgrade \
+RUN apt-get update && apt-get upgrade && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y \
       openssl net-tools python default-jdk maven \ 
-      apache2-utils git printf apt-transport-https \
+      apache2-utils git apt-transport-https \
       ca-certificates curl gnupg-agent software-properties-common\
     && apt-get clean
-RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-RUN sudo add-apt-repository \
+RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+RUN add-apt-repository \
     "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
     $(lsb_release -cs) \
     stable"
-RUN sudo apt update
-RUN sudo apt install docker-ce docker-ce-cli containerd.io
+RUN apt-get update
+RUN apt-get install docker-ce docker-ce-cli containerd.io
 
 ##
 # Certificates
