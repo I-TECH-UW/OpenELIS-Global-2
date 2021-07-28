@@ -47,6 +47,20 @@ ADD ./dev /build/dev
 
 WORKDIR /build
 
+##
+# Checkout Dependencies
+#
+RUN git clone https://github.com/I-TECH-UW/dataexport.git --branch develop
+RUN git clone https://github.com/openelisglobal/openelisglobal-plugins.git plugins --branch master
+
+##
+# Build DataExport
+#
+WORKDIR /build/dataexport
+RUN mvn clean install -DskipTests
+
+WORKDIR /build
+
 # OE Default Password
 RUN ${DEFAULT_PW} | ./install/createDefaultPassword.sh
 
