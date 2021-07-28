@@ -3,7 +3,7 @@
 #
 FROM ubuntu:focal as build
 
-ENV KEYSTORE_PW="kspass"
+ENV KEYSTORE_PW="pass:kspass"
 ENV TRUSTSTORE_PW="tspass"
 ENV DEFAULT_PW="oepass"
 ENV INSTALLER_CREATION_DIR="OEInstaller"
@@ -13,42 +13,51 @@ ENV OE_BRANCH="master"
 ##
 # Prerequesites
 #
-RUN apt-get update && sudo apt-get upgrade \
+RUN apt-get update && apt-get upgrade && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y \
       openssl net-tools python default-jdk maven \ 
-      apache2-utils git printf apt-transport-https \
-      ca-certificates curl gnupg-agent software-properties-common\
+      apache2-utils git apt-transport-https \
+      ca-certificates curl gnupg lsb-release software-properties-common\
     && apt-get clean
-RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-RUN sudo add-apt-repository \
-    "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
-    $(lsb_release -cs) \
-    stable"
-RUN sudo apt update
-RUN sudo apt install docker-ce docker-ce-cli containerd.io
 
 ##
 # Certificates
 #
 
 # Self-signed Certs
-RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/apache-selfsigned.key -out /etc/ssl/certs/apache-selfsigned.crt
+RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/apache-selfsigned.key -out /etc/ssl/certs/apache-selfsigned.crt \ 
+    -subj "/C=US/ST=WA/L=Seattle/O=I-TECH-UW/OU=DIGI/CN=localhost"
+
 RUN mkdir /etc/openelis-global/
 # Keystore
-RUN openssl pkcs12 -inkey /etc/ssl/private/apache-selfsigned.key -in /etc/ssl/certs/apache-selfsigned.crt -export -out /etc/openelis-global/keystore --passin env:KEYSTORE_PW
-# Client-facing Keystore
+RUN openssl pkcs12 -inkey /etc/ssl/private/apache-selfsigned.key -in /etc/ssl/certs/apache-selfsigned.crt -export -out /etc/openelis-global/keystore --passin ${KEYSTORE_PW} --passout ${KEYSTORE_PW}
+# # Client-facing Keystore
 RUN cp /etc/openelis-global/keystore /etc/openelis-global/client_facing_keystore
-# Truststore
-RUN sudo keytool -import -alias oeCert -file /etc/ssl/certs/apache-selfsigned.crt -storetype pkcs12 -keystore /etc/openelis-global/truststore -storepass ${TRUSTSTORE_PW}}
+# # Truststore
+RUN keytool -import -alias oeCert -file /etc/ssl/certs/apache-selfsigned.crt -storetype pkcs12 -keystore /etc/openelis-global/truststore -storepass ${TRUSTSTORE_PW} -noprompt
 
 ##
 # Copy Source Code
 #
-ADD ./pom.xml /build
+ADD ./pom.xml /build/pom.xml
 ADD ./tools /build/tools
 ADD ./src /build/src
 ADD ./install /build/install
 ADD ./dev /build/dev
+
+WORKDIR /build
+
+##
+# Checkout Dependencies
+#
+RUN git clone https://github.com/I-TECH-UW/dataexport.git --branch develop
+RUN git clone https://github.com/openelisglobal/openelisglobal-plugins.git plugins --branch master
+
+##
+# Build DataExport
+#
+WORKDIR /build/dataexport
+RUN mvn clean install -DskipTests
 
 WORKDIR /build
 
@@ -61,9 +70,6 @@ RUN	mvn clean install -DskipTests
 # Run Stage
 #
 FROM tomcat:8.5-jdk11
-
-
-
 
 #Clean out unneccessary files from tomcat (especially pre-existing applications) 
 RUN rm -rf /usr/local/tomcat/webapps/* \ 
