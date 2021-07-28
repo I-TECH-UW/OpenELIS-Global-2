@@ -132,6 +132,21 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
 
             for (String remotePath : fhirConfig.getRemoteStorePaths()) {
                 Bundle srBundle = (Bundle) localFhirClient.search().forResource(ServiceRequest.class)
+                        .where(ServiceRequest.RES_ID.exactly().code(orderNumber))
+                        .include(ServiceRequest.INCLUDE_SPECIMEN).execute();
+                for (BundleEntryComponent bundleComponent : srBundle.getEntry()) {
+                    if (bundleComponent.hasResource()
+                            && ResourceType.ServiceRequest.equals(bundleComponent.getResource().getResourceType())) {
+                        serviceRequest = (ServiceRequest) bundleComponent.getResource();
+
+                    }
+                    if (bundleComponent.hasResource()
+                            && ResourceType.Specimen.equals(bundleComponent.getResource().getResourceType())) {
+                        specimen = (Specimen) bundleComponent.getResource();
+
+                    }
+                }
+                srBundle = (Bundle) localFhirClient.search().forResource(ServiceRequest.class)
                         .where(ServiceRequest.IDENTIFIER.exactly().systemAndIdentifier(remotePath, orderNumber))
                         .include(ServiceRequest.INCLUDE_SPECIMEN).execute();
                 for (BundleEntryComponent bundleComponent : srBundle.getEntry()) {
@@ -198,7 +213,7 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
             }
 
             if (!GenericValidator.isBlankOrNull(serviceRequest.getRequester().getReferenceElement().getIdPart())
-                    && serviceRequest.getRequester().getReference().contains(ResourceType.Practitioner.toString())) {
+                    && task.getRequester().getReference().contains(ResourceType.Practitioner.toString())) {
                 requesterPerson = localFhirClient.read()//
                         .resource(Practitioner.class)//
                         .withId(serviceRequest.getRequester().getReferenceElement().getIdPart())//
