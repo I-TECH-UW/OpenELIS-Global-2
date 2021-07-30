@@ -219,13 +219,13 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
                         .forResource(Task.class)//
                         .returnBundle(Bundle.class)//
                         .include(Task.INCLUDE_BASED_ON) // serviceRequest
+                        .include(ServiceRequest.INCLUDE_REQUESTER.asRecursive()) // serviceRequest
                         .where(Task.STATUS.exactly().code(TaskStatus.ACCEPTED.toCode()))//
                         .where(Task.RES_ID.exactly().identifier(referralTaskUuid.toString()));
                 Bundle originalTasksBundle = searchQuery.execute();
                 if (originalTasksBundle.hasEntry()) {
-                    LogEvent.logDebug(this.getClass().getName(), "beginTaskImportResultsPath",
-                            "received bundle with " + originalTasksBundle.getEntry().size() + " entries for Task ID "
-                                    + referralTaskUuid);
+                    LogEvent.logDebug(this.getClass().getName(), "beginTaskImportResultsPath", "received bundle with "
+                            + originalTasksBundle.getEntry().size() + " entries for Task ID " + referralTaskUuid);
                 } else {
                     LogEvent.logDebug(this.getClass().getName(), "beginTaskImportResultsPath",
                             "received bundle with 0 entries for Task ID " + referralTaskUuid);
@@ -279,8 +279,6 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
                     }
                 }
 
-
-
             } catch (RuntimeException e) {
                 LogEvent.logError(e);
                 LogEvent.logError("could not import result for referral with UUID: " + referralTaskUuid, e);
@@ -297,6 +295,14 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
                     .getOrDefault(serviceRequestId, new OriginalReferralObjects());
             referralObjects.serviceRequests = Arrays.asList(originalServiceRequest);
             originalReferralObjectsByServiceRequest.put(serviceRequestId, referralObjects);
+        }
+        if (bundleEntry.getResource().getResourceType().equals(ResourceType.Practitioner)) {
+            Practitioner originalPractitioner = (Practitioner) bundleEntry.getResource();
+            String practitionerId = originalPractitioner.getIdElement().getIdPart();
+            OriginalReferralObjects referralObjects = originalReferralObjectsByServiceRequest
+                    .getOrDefault(practitionerId, new OriginalReferralObjects());
+            referralObjects.requestors = Arrays.asList(originalPractitioner);
+            originalReferralObjectsByServiceRequest.put(practitionerId, referralObjects);
         }
         if (bundleEntry.getResource().getResourceType().equals(ResourceType.Task)) {
             Task referralTask = (Task) bundleEntry.getResource();
@@ -476,6 +482,8 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         List<ServiceRequest> remoteServiceRequests = getBasedOnServiceRequestsFromServer(sourceFhirClient, remoteTask);
         List<Specimen> remoteSpecimens = getSpecimenForServiceRequestsFromServer(sourceFhirClient,
                 remoteServiceRequests);
+        List<Practitioner> remoteRequesters = getRequestorsForServiceRequestsFromServer(sourceFhirClient,
+                remoteServiceRequests);
         Patient remotePatientForTask = getForPatientFromServer(sourceFhirClient, remoteTask);
         if (remotePatientForTask == null) {
             remotePatientForTask = getForPatientFromServer(sourceFhirClient, remoteServiceRequests);
@@ -553,7 +561,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
             serviceRequest.setSubject(fhirTransformService.createReferenceFor(objects.patient));
         }
 
-        // Practitioner
+        // Task Practitioner
 //      Patient forPatient = getForPatientFromBundle(bundle, remoteTask);
         if (remotePractitionerForTask != null) {
             Optional<Practitioner> existingLocalPractitioner = getPractitionerWithSameServiceIdentifier(
@@ -569,6 +577,23 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
                 // Practitioner already exists so we should update the reference to ours
             }
             objects.task.setRequester(fhirTransformService.createReferenceFor(objects.practitioner));
+        }
+
+        // ServiceRequest Requester
+        objects.requestors = new ArrayList<>();
+        for (Practitioner remotePractitioner : remoteRequesters) {
+            Practitioner localPractitioner;
+            Optional<Practitioner> existingLocalRequester = getProviderWithSameIdentifier(remotePractitioner,
+                    remoteStorePath);
+            if (existingLocalRequester.isEmpty()) {
+                localPractitioner = remotePractitioner
+                        .addIdentifier(createIdentifierToRemoteResource(remotePractitioner, remoteStorePath));
+//              fhirOperations.createResources.add(localSpecimen);
+                fhirOperations.updateResources.put(localPractitioner.getIdElement().getIdPart(), localPractitioner);
+            } else {
+                localPractitioner = existingLocalRequester.get();
+            }
+            objects.requestors.add(localPractitioner);
         }
 
         LogEvent.logDebug(this.getClass().getName(), "",
@@ -597,6 +622,25 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         return Optional.empty();
     }
 
+    private Optional<Practitioner> getProviderWithSameIdentifier(Practitioner provider, String remoteStorePath) {
+        IGenericClient localFhirClient = fhirUtil.getFhirClient(localFhirStorePath);
+        Bundle localBundle = localFhirClient.search()//
+                .forResource(Specimen.class)//
+                .where(Specimen.IDENTIFIER.exactly().systemAndIdentifier(remoteStorePath,
+                        provider.getIdElement().getIdPart()))//
+                .returnBundle(Bundle.class).execute();
+        for (BundleEntryComponent entry : localBundle.getEntry()) {
+            if (entry.hasResource() && ResourceType.Practitioner.equals(entry.getResource().getResourceType())) {
+                LogEvent.logDebug(this.getClass().getName(), "",
+                        "found provider with same identifier as " + provider.getIdElement().getIdPart());
+                return Optional.of((Practitioner) localBundle.getEntryFirstRep().getResource());
+            }
+        }
+        LogEvent.logDebug(this.getClass().getName(), "",
+                "no provider with same identifier " + provider.getIdElement().getIdPart());
+        return Optional.empty();
+    }
+
     private List<Specimen> getSpecimenForServiceRequestsFromServer(IGenericClient fhirClient,
             List<ServiceRequest> remoteServiceRequests) {
         List<Specimen> specimens = new ArrayList<>();
@@ -605,6 +649,17 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
                 specimens.add(fhirClient.read().resource(Specimen.class)
                         .withId(specimenReference.getReferenceElement().getIdPart()).execute());
             }
+        }
+        return specimens;
+    }
+
+    private List<Practitioner> getRequestorsForServiceRequestsFromServer(IGenericClient fhirClient,
+            List<ServiceRequest> remoteServiceRequests) {
+        List<Practitioner> specimens = new ArrayList<>();
+        for (ServiceRequest serviceRequest : remoteServiceRequests) {
+            Reference requesterReference = serviceRequest.getRequester();
+            specimens.add(fhirClient.read().resource(Practitioner.class)
+                    .withId(requesterReference.getReferenceElement().getIdPart()).execute());
         }
         return specimens;
     }
@@ -751,6 +806,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         public Practitioner practitioner;
         public Task task;
         public List<ServiceRequest> serviceRequests;
+        public List<Practitioner> requestors;
         public List<Specimen> specimens;
         public Patient patient;
     }
