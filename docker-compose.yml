@@ -5,12 +5,10 @@ services:
         build:
             context: ./certs
         image: oe-certs
-
         restart: always
         environment:
             - KEYSTORE_PW="kspass"
             - TRUSTSTORE_PW="tspass"
-            - DEFAULT_PW="oepass"
         volumes:
             -  cert-volume:/etc/openelis-global
     database:
