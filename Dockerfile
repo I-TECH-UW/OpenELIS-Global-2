@@ -3,6 +3,8 @@
 #
 FROM ubuntu:focal as build
 
+ENV DEFAULT_PW="adminADMIN!"
+
 ##
 # Copy Source Code
 #
