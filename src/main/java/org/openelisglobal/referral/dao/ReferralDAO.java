@@ -17,6 +17,7 @@
 package org.openelisglobal.referral.dao;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.List;
 
 import org.openelisglobal.common.dao.BaseDAO;
@@ -49,7 +50,7 @@ public interface ReferralDAO extends BaseDAO<Referral, String> {
 
     public List<Referral> getReferralsByAnalysisIds(List<String> analysisIds);
 
-    List<Referral> getReferralsByTestAndDate(ReferDateType dateType, Date startDate, Date endDate,
-            List<String> testUnitIds, List<String> testIds);
+    public List<Referral> getReferralsByTestAndDate(ReferDateType dateType, Timestamp startTimestamp,
+            Timestamp endTimestamp, List<String> testUnitIds, List<String> testIds);
 
 }

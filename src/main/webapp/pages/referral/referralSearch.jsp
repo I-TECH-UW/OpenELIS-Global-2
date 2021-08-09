@@ -73,8 +73,8 @@ Date Type:
 Note if searching by result date, only tests with results will appear
 <br><br>
 
-Start Date (dd/mm/yyyy) <form:input path="startDate" onkeyup="addDateSlashes(this, event);" onchange="checkValidEntryDate(this, 'any', true);"/> 
-End Date (dd/mm/yyyy) <form:input path="endDate" onkeyup="addDateSlashes(this, event);" onchange="checkValidEntryDate(this, 'any', true);"/>
+Start Date (dd/mm/yyyy) <form:input id='startDate' path="startDate" onkeyup="addDateSlashes(this, event);" onchange="checkValidEntryDate(this, 'any', true);"/> 
+End Date (dd/mm/yyyy) <form:input id='endDate' path="endDate" onkeyup="addDateSlashes(this, event);" onchange="checkValidEntryDate(this, 'any', true);"/>
 <br><br>
 
 Unit(s) 

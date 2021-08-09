@@ -1,6 +1,7 @@
 package org.openelisglobal.referral.service;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -97,9 +98,10 @@ public class ReferralServiceImpl extends BaseObjectServiceImpl<Referral, String>
     }
 
     @Override
-    public List<Referral> getReferralsByTestAndDate(ReferDateType dateType, Date startDate, Date endDate,
+    public List<Referral> getReferralsByTestAndDate(ReferDateType dateType, Timestamp startTimestamp,
+            Timestamp endTimestamp,
             List<String> testUnitIds, List<String> testIds) {
-        return baseObjectDAO.getReferralsByTestAndDate(dateType, startDate, endDate, testUnitIds, testIds);
+        return baseObjectDAO.getReferralsByTestAndDate(dateType, startTimestamp, endTimestamp, testUnitIds, testIds);
     }
 
     @Override
@@ -152,11 +154,19 @@ public class ReferralServiceImpl extends BaseObjectServiceImpl<Referral, String>
     }
 
     private List<Referral> getReferralsByTestAndDate(ReferredOutTestsForm form) {
-        Date startDate = GenericValidator.isBlankOrNull(form.getStartDate()) ? null
-                : DateUtil.convertStringDateToSqlDate(form.getStartDate());
-        Date endDate = GenericValidator.isBlankOrNull(form.getEndDate()) ? null
-                : DateUtil.convertStringDateToSqlDate(form.getEndDate());
-        return getReferralsByTestAndDate(form.getDateType(), startDate, endDate,
+        String startDate = form.getStartDate();
+        String endDate = form.getEndDate();
+        if (GenericValidator.isBlankOrNull(startDate) && !GenericValidator.isBlankOrNull(endDate)) {
+            startDate = endDate;
+        }
+        if (GenericValidator.isBlankOrNull(endDate) && !GenericValidator.isBlankOrNull(startDate)) {
+            endDate = startDate;
+        }
+        java.sql.Timestamp startTimestamp = GenericValidator.isBlankOrNull(startDate) ? null
+                : DateUtil.convertStringDateStringTimeToTimestamp(startDate, "00:00:00.0");
+        java.sql.Timestamp endTimestamp = GenericValidator.isBlankOrNull(endDate) ? null
+                : DateUtil.convertStringDateStringTimeToTimestamp(endDate, "23:59:59");
+        return getReferralsByTestAndDate(form.getDateType(), startTimestamp, endTimestamp,
                 form.getTestUnitIds(), form.getTestIds());
     }
 

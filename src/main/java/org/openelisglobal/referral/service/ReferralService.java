@@ -1,6 +1,7 @@
 package org.openelisglobal.referral.service;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.UUID;
 
@@ -34,6 +35,6 @@ public interface ReferralService extends BaseObjectService<Referral, String> {
 
     List<ReferralDisplayItem> getReferralItems(ReferredOutTestsForm form);
 
-    List<Referral> getReferralsByTestAndDate(ReferDateType dateType, Date startDate, Date endDate,
+    List<Referral> getReferralsByTestAndDate(ReferDateType dateType, Timestamp startTimestamp, Timestamp endTimestamp,
             List<String> testUnitIds, List<String> testIds);
 }

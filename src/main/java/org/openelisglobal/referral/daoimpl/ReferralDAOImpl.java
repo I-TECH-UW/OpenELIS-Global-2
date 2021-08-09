@@ -17,6 +17,7 @@
 package org.openelisglobal.referral.daoimpl;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -212,53 +213,32 @@ public class ReferralDAOImpl extends BaseDAOImpl<Referral, String> implements Re
 
     @Transactional(readOnly = true)
     @Override
-    public List<Referral> getReferralsByTestAndDate(ReferDateType dateType, Date startDate, Date endDate,
+    public List<Referral> getReferralsByTestAndDate(ReferDateType dateType, Timestamp startDate, Timestamp endDate,
             List<String> testUnitIds, List<String> testIds) {
-        String hql = "From Referral r WHERE ";
-        String subHQL = "SELECT a.id FROM Analysis a WHERE ";
-        boolean and = false;
+        String hql = "From Referral r WHERE 1 = 1 ";
+        String subHQL = "SELECT a.id FROM Analysis a WHERE 1 = 1 ";
         if (ReferDateType.RESULT.equals(dateType) && startDate != null) {
-            if (and) {
-                subHQL += "AND ";
-            }
-            subHQL += "a.completedDate BETWEEN :startDate AND :endDate ";
-            and = true;
+            subHQL += "AND a.completedDate BETWEEN :startDate AND :endDate ";
         }
         if (testUnitIds != null && testUnitIds.size() > 0) {
-            if (and) {
-                subHQL += "AND ";
-            }
-            subHQL += "a.testSection.id in (:testUnitIds) ";
-            and = true;
+            subHQL += "AND a.testSection.id in (:testUnitIds) ";
         }
         if (testIds != null && testIds.size() > 0) {
-            if (and) {
-                subHQL += "AND ";
-            }
-            subHQL += "a.test.id in (:testIds) ";
-            and = true;
+            subHQL += "AND a.test.id in (:testIds) ";
         }
 
-        and = false;
-        if (!subHQL.endsWith("WHERE ")) {
-            if (and) {
-                hql += "AND ";
-            }
-            hql += "r.analysis.id in (" + subHQL + ") ";
-            and = true;
+        if (!subHQL.endsWith("1 = 1 ")) {
+            hql += "AND r.analysis.id in (" + subHQL + ") ";
         }
         if (ReferDateType.SENT.equals(dateType) && startDate != null) {
-            if (and) {
-                hql += "AND ";
-            }
-            hql += "r.sentDate BETWEEN :startDate AND :endDate ";
+            hql += "AND r.sentDate BETWEEN :startDate AND :endDate ";
         }
 
         try {
             Query query = entityManager.unwrap(Session.class).createQuery(hql);
             if (startDate != null) {
-                query.setDate("startDate", startDate);
-                query.setDate("endDate", endDate);
+                query.setTimestamp("startDate", startDate);
+                query.setTimestamp("endDate", endDate);
             }
             if (testUnitIds != null && testUnitIds.size() > 0) {
                 query.setParameter("testUnitIds",
