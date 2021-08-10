@@ -21,7 +21,9 @@ import org.openelisglobal.role.valueholder.Role;
 import org.openelisglobal.rolemodule.service.RoleModuleService;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.systemmodule.service.SystemModuleService;
+import org.openelisglobal.systemmodule.service.SystemModuleUrlService;
 import org.openelisglobal.systemmodule.valueholder.SystemModule;
+import org.openelisglobal.systemmodule.valueholder.SystemModuleUrl;
 import org.openelisglobal.systemusermodule.valueholder.RoleModule;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
@@ -34,6 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class PluginPermissionService implements IPluginPermissionService {
 
     private SystemModuleService moduleService = SpringContext.getBean(SystemModuleService.class);
+    private SystemModuleUrlService moduleUrlService = SpringContext.getBean(SystemModuleUrlService.class);
     private RoleService roleService = SpringContext.getBean(RoleService.class);
     private RoleModuleService roleModuleService = SpringContext.getBean(RoleModuleService.class);
 
@@ -68,12 +71,27 @@ public class PluginPermissionService implements IPluginPermissionService {
     }
 
     @Override
+    public SystemModuleUrl getOrCreateSystemModuleUrl(SystemModule systemModule, String urlPath) {
+        SystemModuleUrl moduleUrl = moduleUrlService.getByModuleAndUrl(systemModule.getId(), urlPath);
+
+        if (moduleUrl == null || moduleUrl.getId() == null) {
+            moduleUrl = new SystemModuleUrl();
+            moduleUrl.setUrlPath(urlPath);
+            moduleUrl.setSystemModule(systemModule);
+            moduleUrl.setSysUserId("1");
+        }
+        return moduleUrl;
+
+    }
+
+    @Override
     public Role getSystemRole(String name) {
         return roleService.getRoleByName(name);
     }
 
     @Override
     @Transactional
+    @Deprecated
     public boolean bindRoleToModule(Role role, SystemModule module) {
         if (role == null || module == null) {
             return false;
@@ -89,6 +107,45 @@ public class PluginPermissionService implements IPluginPermissionService {
 
         if (module.getId() == null) {
             moduleService.insert(module);
+        }
+
+        RoleModule roleModule = roleModuleService.getRoleModuleByRoleAndModuleId(role.getId(), module.getId());
+
+        if (roleModule.getId() == null) {
+            roleModule.setRole(role);
+            roleModule.setSystemModule(module);
+            roleModule.setSysUserId("1");
+            roleModule.setHasAdd("Y");
+            roleModule.setHasDelete("Y");
+            roleModule.setHasSelect("Y");
+            roleModule.setHasUpdate("Y");
+            roleModuleService.insert(roleModule);
+        }
+
+        return true;
+    }
+
+    @Override
+    @Transactional
+    public boolean bindRoleToModule(Role role, SystemModule module, SystemModuleUrl moduleUrl) {
+        if (role == null || module == null || moduleUrl == null) {
+            return false;
+        }
+
+        if (role.getId() == null) {
+            role.setActive(true);
+            roleService.insert(role);
+        } else if (!role.isActive()) {
+            role.setActive(true);
+            roleService.update(role);
+        }
+
+        if (module.getId() == null) {
+            moduleService.insert(module);
+        }
+
+        if (moduleUrl.getId() == null) {
+            moduleUrlService.insert(moduleUrl);
         }
 
         RoleModule roleModule = roleModuleService.getRoleModuleByRoleAndModuleId(role.getId(), module.getId());

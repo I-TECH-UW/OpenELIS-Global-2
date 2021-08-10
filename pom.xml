@@ -9,7 +9,7 @@
 	<!-- <version>${major.version}.${minor.version}.${fix.version}</version> -->
 	<!-- for development cycles -->
 	<version>${major.version}.${minor.version}.${state.version}.${fix.version}</version>
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
 
 	<properties>
 		<maven.java.release>11</maven.java.release>
@@ -17,7 +17,7 @@
 		<major.version>2</major.version>
 		<minor.version>4</minor.version>
 		<state.version>2</state.version><!-- 0 = alpha, 1 = beta, 2 = rc, 3 = deployable -->
-		<fix.version>1</fix.version>
+		<fix.version>2</fix.version>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
