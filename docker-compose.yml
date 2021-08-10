@@ -2,9 +2,7 @@ version: '3.3'
 services:
     certs:
         container_name: oe-certs 
-        build:
-            context: ./certs
-        image: oe-certs
+        image: ghcr.io/i-tech-uw/certgen:latest
         restart: always
         environment:
             - KEYSTORE_PW="kspass"
