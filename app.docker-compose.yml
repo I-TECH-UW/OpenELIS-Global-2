@@ -11,9 +11,9 @@ services:
             - ./dev/tomcat/oe_server.xml:/usr/local/tomcat/conf/server.xml
         secrets:
             - source: common.properties
-        tty: true
-        stdin_open: true
-        entrypoint: bash
+        # tty: true
+        # stdin_open: true
+        # entrypoint: bash
 secrets:
   common.properties:
     file: ./dev/properties/common.properties  
