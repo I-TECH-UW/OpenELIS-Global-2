@@ -9,7 +9,7 @@
 	<!-- <version>${major.version}.${minor.version}.${fix.version}</version> -->
 	<!-- for development cycles -->
 	<version>${major.version}.${minor.version}.${state.version}.${fix.version}</version>
-	<packaging>jar</packaging>
+	<packaging>war</packaging>
 
 	<properties>
 		<maven.java.release>11</maven.java.release>
