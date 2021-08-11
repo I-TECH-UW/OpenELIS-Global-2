@@ -114,6 +114,9 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
     @Override
     @Transactional(readOnly = true)
     public Sample getSampleByAccessionNumber(String labNumber) {
+        if (labNumber != null && labNumber.contains(".")) {
+            labNumber = labNumber.substring(0, labNumber.indexOf('.'));
+        }
         return getMatch("accessionNumber", labNumber).orElse(null);
     }
 

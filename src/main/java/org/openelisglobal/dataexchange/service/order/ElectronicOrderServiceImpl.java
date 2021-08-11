@@ -56,6 +56,18 @@ public class ElectronicOrderServiceImpl extends BaseObjectServiceImpl<Electronic
 
     @Override
     public List<ElectronicOrder> getAllElectronicOrdersContainingValueOrderedBy(String searchValue, SortOrder order) {
+
+        List<ElectronicOrder> searchResult = getBaseObjectDAO()
+                .getAllElectronicOrdersContainingValueOrderedBy(searchValue, order);
+
+        if (searchResult != null && searchResult.size() > 0) {
+            return searchResult;
+        }
+        // this is done in case sample lab number was used to search instead of the
+        // order lab number
+        if (searchValue != null && searchValue.contains(".")) {
+            searchValue = searchValue.substring(0, searchValue.indexOf('.'));
+        }
         return getBaseObjectDAO().getAllElectronicOrdersContainingValueOrderedBy(searchValue, order);
     }
 
@@ -90,7 +102,8 @@ public class ElectronicOrderServiceImpl extends BaseObjectServiceImpl<Electronic
     @Override
     public List<ElectronicOrder> getAllElectronicOrdersByTimestampAndStatus(Timestamp startTimestamp,
             Timestamp endTimestamp, String statusId, SortOrder sortOrder) {
-        return getBaseObjectDAO().getAllElectronicOrdersByTimestampAndStatus(startTimestamp, endTimestamp, statusId, sortOrder);
+        return getBaseObjectDAO().getAllElectronicOrdersByTimestampAndStatus(startTimestamp, endTimestamp, statusId,
+                sortOrder);
     }
 
 }

@@ -321,6 +321,9 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
     @Override
     @Transactional(readOnly = true)
     public List<Analysis> getAnalysisByAccessionAndTestId(String accessionNumber, String testId) {
+        if (accessionNumber != null && accessionNumber.contains(".")) {
+            accessionNumber = accessionNumber.substring(0, accessionNumber.indexOf('.'));
+        }
         return baseObjectDAO.getAnalysisByAccessionAndTestId(accessionNumber, testId);
     }
 
@@ -402,6 +405,9 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
     @Transactional(readOnly = true)
     public List<Analysis> getPageAnalysisAtAccessionNumberAndStatus(String accessionNumber, List<Integer> statusList,
             boolean sortedByDateAndAccession) {
+        if (accessionNumber != null && accessionNumber.contains(".")) {
+            accessionNumber = accessionNumber.substring(0, accessionNumber.indexOf('.'));
+        }
         return baseObjectDAO.getPageAnalysisAtAccessionNumberAndStatus(accessionNumber, statusList, sortedByDateAndAccession);
     }
 
@@ -676,6 +682,9 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
     @Override
     public int getCountAnalysisByStatusFromAccession(List<Integer> analysisStatusList, List<Integer> sampleStatusList,
             String accessionNumber) {
+        if (accessionNumber != null && accessionNumber.contains(".")) {
+            accessionNumber = accessionNumber.substring(0, accessionNumber.indexOf('.'));
+        }
         return baseObjectDAO.getCountAnalysisByStatusFromAccession(analysisStatusList, sampleStatusList,
                 accessionNumber);
     }
@@ -683,6 +692,9 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
     @Override
     public List<Analysis> getPageAnalysisByStatusFromAccession(List<Integer> analysisStatusList,
             List<Integer> sampleStatusList, String accessionNumber) {
+        if (accessionNumber != null && accessionNumber.contains(".")) {
+            accessionNumber = accessionNumber.substring(0, accessionNumber.indexOf('.'));
+        }
         return baseObjectDAO.getPageAnalysisByStatusFromAccession(analysisStatusList, sampleStatusList,
                 accessionNumber);
     }

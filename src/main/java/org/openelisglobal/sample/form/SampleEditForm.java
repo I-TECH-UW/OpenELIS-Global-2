@@ -48,7 +48,7 @@ public class SampleEditForm extends BaseForm {
     @Pattern(regexp = ValidationHelper.PATIENT_ID_REGEX, groups = { SampleEdit.class })
     private String nationalId = "";
 
-    @ValidAccessionNumber(groups = { SampleEdit.class })
+    @ValidAccessionNumber(groups = { SampleEdit.class }, searchValue = true)
     private String accessionNumber;
 
     @ValidAccessionNumber(groups = { SampleEdit.class })

@@ -118,6 +118,7 @@ public class PrintBarcodeController extends BaseController {
         String accessionNumber = form.getAccessionNumber();
         Sample sample = getSample(accessionNumber);
         if (sample != null && !org.apache.commons.validator.GenericValidator.isBlankOrNull(sample.getId())) {
+            form.setAccessionNumber(sample.getAccessionNumber());
             List<SampleItem> sampleItemList = getSampleItems(sample);
             setPatientInfo(displayObjects, sample);
             List<SampleEditItem> currentTestList = getCurrentTestInfo(sampleItemList, accessionNumber, false);
