@@ -615,8 +615,11 @@ public class LogbookResultsController extends LogbookResultsBaseController {
     }
 
     private String getStatusForTestResult(TestResultItem testResult, boolean alwaysValidate) {
-        if (testResult.isShadowRejected()) {
+        if (testResult.isShadowRejected() && ConfigurationProperties.getInstance()
+                .isPropertyValueEqual(Property.VALIDATE_REJECTED_TESTS, "true")) {
             return SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalRejected);
+        } else if (testResult.isShadowRejected()) {
+            return SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Canceled);
         } else if (alwaysValidate || !testResult.isValid() || ResultUtil.isForcedToAcceptance(testResult)) {
             return SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalAcceptance);
         } else if (noResults(testResult.getShadowResultValue(), testResult.getMultiSelectResultValues(),
