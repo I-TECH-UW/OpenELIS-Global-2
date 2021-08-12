@@ -125,8 +125,14 @@ public class ResultsValidationUtility {
     private void initilaizeGlobalVariables() {
         notValidStatus.add(
                 Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized)));
+        notValidStatus.add(
+                Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Canceled)));
         notValidStatus.add(Integer
-                .parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalRejected)));
+                .parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.BiologistRejected)));
+        notValidStatus.add(
+                Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NotStarted)));
+        notValidStatus.add(Integer.parseInt(
+                SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NonConforming_depricated)));
         Analyte analyte = new Analyte();
         analyte.setAnalyteName("Conclusion");
         analyte = analyteService.getAnalyteByName(analyte, false);
@@ -148,7 +154,7 @@ public class ResultsValidationUtility {
     }
 
     public List<AnalysisItem> getResultValidationList(List<Integer> statusList, String testSectionId, String accessionNumber) {
-        
+
         List<AnalysisItem> resultList = new ArrayList<>();
 
         if (!GenericValidator.isBlankOrNull(testSectionId)) {
@@ -207,7 +213,7 @@ public class ResultsValidationUtility {
                 false);
         return getGroupedTestsForAnalysisList(analysisList, !StatusRules.useRecordStatusForValidation());
     }
-    
+
     @SuppressWarnings("unchecked")
     public final int getCountUnValidatedTestResultItemsInTestSection(String sectionId, List<Integer> statusList) {
         return analysisService.getCountAnalysisByTestSectionAndStatus(sectionId, statusList);
