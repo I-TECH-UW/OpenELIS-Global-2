@@ -118,10 +118,10 @@ public class FhirPersistanceServiceImpl implements FhirPersistanceService {
         addCreateToTransactionBundle(createResources, transactionBundle);
         Bundle transactionResponseBundle = new Bundle();
         try {
-            LogEvent.logDebug(this.getClass().getName(), "",
+            LogEvent.logTrace(this.getClass().getName(), "",
                     "creating resources: " + fhirContext.newJsonParser().encodeResourceToString(transactionBundle));
             transactionResponseBundle = localFhirClient.transaction().withBundle(transactionBundle).execute();
-            LogEvent.logDebug(this.getClass().getName(), "", "created resources: "
+            LogEvent.logTrace(this.getClass().getName(), "", "created resources: "
                     + fhirContext.newJsonParser().encodeResourceToString(transactionResponseBundle));
         } catch (Exception e) {
             LogEvent.logError(e);
@@ -148,10 +148,10 @@ public class FhirPersistanceServiceImpl implements FhirPersistanceService {
         }
         Bundle transactionResponseBundle = new Bundle();
         try {
-            LogEvent.logDebug(this.getClass().getName(), "",
+            LogEvent.logTrace(this.getClass().getName(), "",
                     "creating resources: " + fhirContext.newJsonParser().encodeResourceToString(transactionBundle));
             transactionResponseBundle = localFhirClient.transaction().withBundle(transactionBundle).execute();
-            LogEvent.logDebug(this.getClass().getName(), "", "created resources: "
+            LogEvent.logTrace(this.getClass().getName(), "", "created resources: "
                     + fhirContext.newJsonParser().encodeResourceToString(transactionResponseBundle));
         } catch (Exception e) {
             LogEvent.logError(e);
