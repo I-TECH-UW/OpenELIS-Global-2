@@ -17,6 +17,7 @@ import random
 import ConfigParser
 from string import letters
 from getpass import getpass
+import tarfile
 
 #About
 VERSION = ""
@@ -101,6 +102,7 @@ REMOTE_FHIR_SOURCE = 'https://isanteplusdemo.com/openmrs/ws/fhir2/'
 REMOTE_FHIR_SOURCE_UPDATE_STATUS = "false"
 CONSOLIDATED_SERVER_ADDRESS = 'https://hub.openelisci.org:8444/fhir'
 TIMEZONE = ''
+FHIR_IDENTIFIER = ''
 
 EXTERNAL_HOSTS = []
 
@@ -114,7 +116,7 @@ setup_OpenELIS.py <options>
     This script must be run as sudo or else it will fail due to permission problems.
 
     <options>
-        -m --mode <mode>        -   chose what mode you want to run in, default is install
+        -m --mode <mode>        -   Choose what mode you want to run in, default is install
         <mode>
             update-install      - Installs OpenELIS or updates if already installed (default option)
             
@@ -127,6 +129,8 @@ setup_OpenELIS.py <options>
             uninstall           - Removes OpenELIS from the system optionally including the database. Make sure you have the clinlims password written down someplace
             
             recover             - Will try to recover the system if somebody has tried to fix the system manually.  It will reset the database password
+            
+        -f --file-config        -   file that contains configuration settings
             
         -v --version            -   run in version mode
         
@@ -150,6 +154,8 @@ def main(argv):
     for opt, arg in opts:
         if opt in ("-m","--mode"):
             MODE = arg
+        elif opt in ("-f","--file-config"):
+            read_config_file(arg)
         elif opt in ("-v","--version"):
             write_version()
             return
@@ -226,12 +232,8 @@ def do_install():
     
     generate_passwords()
     
-    get_install_user_values()
-    
     get_stored_user_values()
     
-    get_non_stored_user_values()
-
     install_docker()
     
     install_files_from_templates()
@@ -365,6 +367,8 @@ def create_properties_files():
             line = line.replace("[% remote_source_update_status %]", REMOTE_FHIR_SOURCE_UPDATE_STATUS) 
         if line.find("[% consolidated_server_address %]")  >= 0:
             line = line.replace("[% consolidated_server_address %]", CONSOLIDATED_SERVER_ADDRESS) 
+        if line.find("[% fhir_identifier %]")  >= 0:
+            line = line.replace("[% fhir_identifier %]", FHIR_IDENTIFIER) 
 
         output_file.write(line)
 
@@ -691,8 +695,6 @@ def do_update():
     
     get_stored_user_values()
     
-    get_non_stored_user_values()
-    
     create_docker_compose_file()
     
     create_properties_files()
@@ -933,22 +935,48 @@ def get_action_time():
     return ACTION_TIME
 
 
-def get_non_stored_user_values():
-    get_keystore_password()
-    get_truststore_password()
-    get_encryption_key()
-    get_server_addresses()
-    
+def get_stored_user_values():
+    ensure_dir_exists(CONFIG_DIR)
+    os.chmod(CONFIG_DIR, 0640) 
+    get_set_site_id()
+    get_set_keystore_password()
+    get_set_truststore_password()
+    get_set_encryption_key()
+    get_set_remote_fhir_source()
+    get_set_remote_fhir_source()
+    get_set_timezone()
+    get_set_extra_hosts()
+    get_set_fhir_identifier()
 
-def get_install_user_values():
+
+def get_set_site_id():
+    if (not is_site_id_set()):
+        set_site_id()
     get_site_id()
 
 
-def get_stored_user_values():
-    ensure_dir_exists(CONFIG_DIR)
-    os.chmod(CONFIG_DIR, 0777) 
-    get_set_timezone()
-    get_set_extra_hosts()
+def get_set_keystore_password():
+    if (not is_keystore_password_set()):
+        set_keystore_password()
+    get_keystore_password()
+
+
+def get_set_truststore_password():
+    if (not is_truststore_password_set()):
+        set_truststore_password()
+    get_truststore_password()
+
+
+def get_set_remote_fhir_source():
+    if (not is_remote_fhir_source_set()):
+        set_remote_fhir_source()
+    get_remote_fhir_source()
+
+
+def get_set_cs_server():
+    if (not is_cs_server_set()):
+        set_cs_server()
+    get_cs_server()
 
 
 def get_set_timezone():
@@ -963,31 +991,23 @@ def get_set_extra_hosts():
     get_external_hosts()
 
 
-def get_keystore_password():
-    global KEYSTORE_PWD
-    print "keystore location: " + KEYSTORE_PATH
-    KEYSTORE_PWD = getpass("keystore password: ")
-    cmd = "openssl pkcs12 -info -in " + KEYSTORE_PATH + " -nokeys -passin pass:" + KEYSTORE_PWD
-    status = os.system(cmd)
-    if not status == 0:
-        print "password for the keystore is incorrect. Please try again"
-        get_keystore_password()
-
-
-def  get_truststore_password():
-    global TRUSTSTORE_PWD
-    print "truststore location: " + TRUSTSTORE_PATH
-    TRUSTSTORE_PWD = getpass("truststore password: ")
-    cmd = "openssl pkcs12 -info -in " + TRUSTSTORE_PATH + " -nokeys -passin pass:" + TRUSTSTORE_PWD
-    status = os.system(cmd)
-    if not status == 0:
-        print "password for the truststore is incorrect. Please try again"
-        get_truststore_password()
+def get_set_fhir_identifier():
+    if (not is_fhir_identifier_set()):
+        set_fhir_identifier()
+    get_fhir_identifier()
     
         
+def is_site_id_set():
+    return os.path.isfile(CONFIG_DIR + 'KEYSTORE_PASSWORD')
+
+
 def get_site_id():
     global SITE_ID
-
+    file = open(CONFIG_DIR + 'SITE_ID')
+    SITE_ID = file.readline()  
+    
+    
+def set_site_id():
     # Get site specific information
     print """
     Some installations require configuration.  
@@ -995,68 +1015,130 @@ def get_site_id():
         If you do not know if it is needed or you do not know the correct value it may be left blank.
         You can set the values after the installation is complete.
     """
-    SITE_ID = raw_input("site number for this lab (5 character): ")
+    site_id = raw_input("site number for this lab (5 character): ")
+    with open(CONFIG_DIR + 'SITE_ID', mode='wt') as file:
+        file.write(site_id)   
+    
+    
+def is_keystore_password_set():
+    return os.path.isfile(CONFIG_DIR + 'KEYSTORE_PASSWORD')
+
+
+def get_keystore_password():
+    global KEYSTORE_PWD
+    file = open(CONFIG_DIR + 'KEYSTORE_PASSWORD')
+    KEYSTORE_PASSWORD = file.readline()  
+    
+    
+def set_keystore_password():
+    print "keystore location: " + KEYSTORE_PATH
+    k_password = getpass("keystore password: ")
+    cmd = "openssl pkcs12 -info -in " + KEYSTORE_PATH + " -nokeys -passin pass:" + k_password
+    status = os.system(cmd)
+    if not status == 0:
+        print "password for the keystore is incorrect. Please try again"
+        set_keystore_password()
+    else:
+        with open(CONFIG_DIR + 'KEYSTORE_PASSWORD', mode='wt') as file:
+            file.write(t_password)    
+    
+    
+def is_truststore_password_set():
+    return os.path.isfile(CONFIG_DIR + 'TRUSTSTORE_PASSWORD')
+
+
+def get_truststore_password():
+    global TRUSTSTORE_PWD
+    file = open(CONFIG_DIR + 'TRUSTSTORE_PASSWORD')
+    TRUSTSTORE_PWD = file.readline()
+
+
+def set_truststore_password():
+    print "truststore location: " + TRUSTSTORE_PATH
+    t_password = getpass("truststore password: ")
+    cmd = "openssl pkcs12 -info -in " + TRUSTSTORE_PATH + " -nokeys -passin pass:" + t_password
+    status = os.system(cmd)
+    if not status == 0:
+        print "password for the truststore is incorrect. Please try again"
+        set_truststore_password()
+    else:
+        with open(CONFIG_DIR + 'TRUSTSTORE_PASSWORD', mode='wt') as file:
+            file.write(t_password)    
+
+
+def is_encryption_key_set():
+    return os.path.isfile(CONFIG_DIR + 'ENCRYPTION_KEY')
         
         
 def get_encryption_key():
     global ENCRYPTION_KEY
-
+    file = open(CONFIG_DIR + 'ENCRYPTION_KEY')
+    ENCRYPTION_KEY = file.readline()
+        
+        
+def set_encryption_key():
     print """
     Enter an encryption key that will be used to encrypt sensitive data.
     This value must stay the same between installations or the program will lose all encrypted data.
     Record this value somewhere secure.
     """
-    ENCRYPTION_KEY = getpass("encryption key: ")
+    e_key = getpass("encryption key: ")
     confirm_encryption_key = getpass("confirm encryption key: ")
-    while (not confirm_encryption_key == ENCRYPTION_KEY):
+    while (not confirm_encryption_key == e_key):
         print "encryption key did not match. Please re-enter the encryption key"
-        ENCRYPTION_KEY = getpass("encryption key: ")
+        e_key = getpass("encryption key: ")
         confirm_encryption_key = getpass("confirm encryption key: ")
+    with open(CONFIG_DIR + 'ENCRYPTION_KEY', mode='wt') as file:
+        file.write(e_key)
+
+
+def is_remote_fhir_source_set():
+    return os.path.isfile(CONFIG_DIR + 'REMOTE_FHIR_SOURCE')
         
         
-def get_server_addresses():
-    global LOCAL_FHIR_SERVER_ADDRESS, REMOTE_FHIR_SOURCE, CONSOLIDATED_SERVER_ADDRESS, REMOTE_FHIR_SOURCE_UPDATE_STATUS
-#    should be no longer neccessary since we use *.openelis.org in all our backend certs
-#    print """
-#    Enter the full server path to the local fhir store 
-#    (most likely the address of this server on port 8444)
-#    """
-#    fhir_server_address = raw_input("local fhir store path (default  " + LOCAL_FHIR_SERVER_ADDRESS + ") : ")
-#    if fhir_server_address:
-#        if not fhir_server_address.startswith("https://"):
-#            LOCAL_FHIR_SERVER_ADDRESS = "https://" + fhir_server_address
-#        else:
-#            LOCAL_FHIR_SERVER_ADDRESS = fhir_server_address
-    
+def get_remote_fhir_source():
+    global REMOTE_FHIR_SOURCE
+    file = open(CONFIG_DIR + 'REMOTE_FHIR_SOURCE')
+    REMOTE_FHIR_SOURCE = file.readline()
+        
+        
+def set_remote_fhir_source():
     print """
     Enter the full server path to the remote fhir instance you'd like to poll for Fhir Tasks (eg. OpenMRS) . 
     Leave blank to disable polling a remote instance
     """
-    REMOTE_FHIR_SOURCE = raw_input("Remote Fhir Address: ")
-    if REMOTE_FHIR_SOURCE:
-        if not REMOTE_FHIR_SOURCE.startswith("https://"):
-            REMOTE_FHIR_SOURCE = "https://" + REMOTE_FHIR_SOURCE
-    
-    if REMOTE_FHIR_SOURCE:
-        while True: 
-            statusResponse = raw_input("Should OpenELIS update the status of the remote fhir source? [Y]es [N]o: ")
-            updateStatus = statusResponse[0].lower() 
-            if statusResponse == '' or not updateStatus in ['y','n']: 
-                print('Please answer with yes or no!') 
-            else:
-                if updateStatus == 'y':
-                    REMOTE_FHIR_SOURCE_UPDATE_STATUS = "true"
-                break 
+    remote_fhir_source = raw_input("Remote Fhir Address: ")
+    if remote_fhir_source:
+        if not remote_fhir_source.startswith("https://"):
+            remote_fhir_source = "https://" + remote_fhir_source
             
+    with open(CONFIG_DIR + 'REMOTE_FHIR_SOURCE', mode='wt') as file:
+        file.write(remote_fhir_source)
+
+
+def is_cs_server_set():
+    return os.path.isfile(CONFIG_DIR + 'CS_SERVER')
+        
+        
+def get_cs_server_source():
+    global CONSOLIDATED_SERVER_ADDRESS
+    file = open(CONFIG_DIR + 'CS_SERVER')
+    CONSOLIDATED_SERVER_ADDRESS = file.readline()
+        
+        
+def set_cs_server_source():
     print """
     Enter the full server path to the consolidated server to send data to. 
     Leave blank to disable sending data to the Consolidated server
     """
-    CONSOLIDATED_SERVER_ADDRESS = raw_input("Consolidated server address: ")
-    if CONSOLIDATED_SERVER_ADDRESS:
-        if not CONSOLIDATED_SERVER_ADDRESS.startswith("https://"):
-            CONSOLIDATED_SERVER_ADDRESS = "https://" + CONSOLIDATED_SERVER_ADDRESS
-    
+    cs_address = raw_input("Consolidated server address: ")
+    if cs_address:
+        if not cs_address.startswith("https://"):
+            cs_address = "https://" + cs_address
+            
+    with open(CONFIG_DIR + 'CS_SERVER', mode='wt') as file:
+        file.write(cs_address)
+
 
 def is_timezone_set():
     return os.path.isfile(CONFIG_DIR + 'TZ')
@@ -1088,6 +1170,23 @@ def set_external_hosts():
     extra_hosts = raw_input("type a comma delimited list of extra hosts (format DNS_ENTRY1:IP_ADDRESS1,DNS_ENTRY2:IP_ADDRESS2...): ").split(',')
     with open(CONFIG_DIR + 'EXTERNAL_HOSTS', mode='wt') as file:
         file.write('\n'.join(extra_hosts))
+    
+
+def is_fhir_identifier_set():
+    return os.path.isfile(CONFIG_DIR + 'FHIR_IDENTIFIER')
+    
+
+def get_fhir_identifier():
+    global FHIR_IDENTIFIER
+    with open(CONFIG_DIR + 'FHIR_IDENTIFIER') as file:
+        for line in file.readlines():
+            FHIR_IDENTIFIER.append(line.strip())
+    
+
+def set_fhir_identifier(): 
+    identifier = raw_input("type a comma delimited list of fhir identifiers (format Practitioner/id1,Organization/id2...): ").split(',')
+    with open(CONFIG_DIR + 'FHIR_IDENTIFIER', mode='wt') as file:
+        file.write(','.join(extra_hosts))
         
                 
 #---------------------------------------------------------------------
@@ -1361,7 +1460,25 @@ def write_version():
     log("\n", PRINT_TO_CONSOLE)
     log("------------------------------------", not PRINT_TO_CONSOLE)
     log("OpenELIS installer Version " + VERSION, PRINT_TO_CONSOLE)
+    
 
+def read_config_file(file_path):
+    file_type = ""
+    log("\n", PRINT_TO_CONSOLE)
+    log("configuring system from file", PRINT_TO_CONSOLE)
+    if (file_path.endswith(".tar.gz")):
+       file_type = "tarball" 
+    
+    log("config file is of type: " + filetype, PRINT_TO_CONSOLE)
+    
+    if (filetype == "tarball"):
+       read_tarball_config_file(file_path)
+    
+    
+def read_tarball_config_file(file_path):
+    file = tarfile.open(file_path)
+    file.extractall(CONFIG_DIR)
+    
 
 def open_log_file():
     global LOG_FILE
