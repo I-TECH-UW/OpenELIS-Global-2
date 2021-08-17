@@ -181,9 +181,9 @@ public abstract class PatientReport extends Report {
 
         form.setUsePatientSearch(true);
         form.setPatientSearch(new PatientSearch());
+        form.getPatientSearch().setDefaultHeader(false);
         form.setUseAccessionDirect(Boolean.TRUE);
         form.setUseHighAccessionDirect(Boolean.TRUE);
-        form.setUsePatientNumberDirect(Boolean.TRUE);
 
     }
 

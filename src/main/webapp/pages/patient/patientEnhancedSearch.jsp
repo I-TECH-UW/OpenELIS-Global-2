@@ -1,3 +1,4 @@
+
 <%@ page language="java" contentType="text/html; charset=UTF-8" %>
 <%@ page import="org.openelisglobal.common.action.IActionConstants,
 			     org.openelisglobal.common.formfields.FormFields,
@@ -465,7 +466,9 @@ function handleSelectedPatient(){
 	    <input
            id="searchValue"
            type="hidden"/>
+    <c:if test="${patientEnhancedSearch.defaultHeader}">
 	<h2><spring:message code="sample.entry.search" /></h2>
+	</c:if>
 	<table>
 		<tr>
 			<td style="text-align: left;"><spring:message
