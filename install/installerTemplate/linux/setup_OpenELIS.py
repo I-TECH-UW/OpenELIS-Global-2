@@ -98,11 +98,11 @@ KEYSTORE_PWD = ''
 TRUSTSTORE_PWD = ''
 ENCRYPTION_KEY = ''
 LOCAL_FHIR_SERVER_ADDRESS = 'https://fhir.openelis.org:8443/fhir/'
-REMOTE_FHIR_SOURCE = 'https://isanteplusdemo.com/openmrs/ws/fhir2/'
+REMOTE_FHIR_SOURCE = []
 REMOTE_FHIR_SOURCE_UPDATE_STATUS = "false"
-CONSOLIDATED_SERVER_ADDRESS = 'https://hub.openelisci.org:8444/fhir'
+CONSOLIDATED_SERVER_ADDRESS = []
+FHIR_IDENTIFIER = []
 TIMEZONE = ''
-FHIR_IDENTIFIER = ''
 
 EXTERNAL_HOSTS = []
 
@@ -116,25 +116,25 @@ setup_OpenELIS.py <options>
     This script must be run as sudo or else it will fail due to permission problems.
 
     <options>
-        -m --mode <mode>        -   Choose what mode you want to run in, default is install
+        -m --mode <mode>        - Choose what mode you want to run in, default is install
         <mode>
-            update-install      - Installs OpenELIS or updates if already installed (default option)
+            update-install          - Installs OpenELIS or updates if already installed (default option)
             
-            install             - Installs OpenELIS.  Assumes that there is not a partial install
+            install                 - Installs OpenELIS.  Assumes that there is not a partial install
             
-            installBackup       - Installs just the backup.  Will overwrite any existing backup
+            installBackup           - Installs just the backup.  Will overwrite any existing backup
             
-            update              - Updates OpenElis.  Checks to insure that the instance being updated is the same as the installed
+            update                  - Updates OpenElis.  Checks to insure that the instance being updated is the same as the installed
             
-            uninstall           - Removes OpenELIS from the system optionally including the database. Make sure you have the clinlims password written down someplace
+            uninstall               - Removes OpenELIS from the system optionally including the database. Make sure you have the clinlims password written down someplace
             
-            recover             - Will try to recover the system if somebody has tried to fix the system manually.  It will reset the database password
+            recover                 - Will try to recover the system if somebody has tried to fix the system manually.  It will reset the database password
             
-        -f --file-config        -   file that contains configuration settings
+        -f --file-config        - file that contains configuration settings
             
-        -v --version            -   run in version mode
+        -v --version            - run in version mode
         
-        -h --help               -   print help
+        -h --help               - print help
         """
 
 
@@ -362,13 +362,13 @@ def create_properties_files():
         if line.find("[% local_fhir_server_address %]")  >= 0:
             line = line.replace("[% local_fhir_server_address %]", LOCAL_FHIR_SERVER_ADDRESS) 
         if line.find("[% remote_fhir_server_address %]")  >= 0:
-            line = line.replace("[% remote_fhir_server_address %]", REMOTE_FHIR_SOURCE) 
+            line = line.replace("[% remote_fhir_server_address %]", ','.join(REMOTE_FHIR_SOURCE)) 
         if line.find("[% remote_source_update_status %]")  >= 0:
             line = line.replace("[% remote_source_update_status %]", REMOTE_FHIR_SOURCE_UPDATE_STATUS) 
         if line.find("[% consolidated_server_address %]")  >= 0:
-            line = line.replace("[% consolidated_server_address %]", CONSOLIDATED_SERVER_ADDRESS) 
+            line = line.replace("[% consolidated_server_address %]", ','.join(CONSOLIDATED_SERVER_ADDRESS)) 
         if line.find("[% fhir_identifier %]")  >= 0:
-            line = line.replace("[% fhir_identifier %]", FHIR_IDENTIFIER) 
+            line = line.replace("[% fhir_identifier %]", ','.join(FHIR_IDENTIFIER)) 
 
         output_file.write(line)
 
@@ -998,7 +998,7 @@ def get_set_fhir_identifier():
     
         
 def is_site_id_set():
-    return os.path.isfile(CONFIG_DIR + 'KEYSTORE_PASSWORD')
+    return os.path.isfile(CONFIG_DIR + 'SITE_ID')
 
 
 def get_site_id():
@@ -1049,8 +1049,8 @@ def is_truststore_password_set():
 
 def get_truststore_password():
     global TRUSTSTORE_PWD
-    file = open(CONFIG_DIR + 'TRUSTSTORE_PASSWORD')
-    TRUSTSTORE_PWD = file.readline()
+    with open(CONFIG_DIR + 'TRUSTSTORE_PASSWORD') as file:
+        TRUSTSTORE_PWD = file.readline()
 
 
 def set_truststore_password():
@@ -1072,8 +1072,8 @@ def is_encryption_key_set():
         
 def get_encryption_key():
     global ENCRYPTION_KEY
-    file = open(CONFIG_DIR + 'ENCRYPTION_KEY')
-    ENCRYPTION_KEY = file.readline()
+    with open(CONFIG_DIR + 'ENCRYPTION_KEY') as file:
+        ENCRYPTION_KEY = file.readline()
         
         
 def set_encryption_key():
@@ -1098,22 +1098,27 @@ def is_remote_fhir_source_set():
         
 def get_remote_fhir_source():
     global REMOTE_FHIR_SOURCE
-    file = open(CONFIG_DIR + 'REMOTE_FHIR_SOURCE')
-    REMOTE_FHIR_SOURCE = file.readline()
+    with open(CONFIG_DIR + 'REMOTE_FHIR_SOURCE') as file:
+        for line in file.readlines():
+            REMOTE_FHIR_SOURCE.append(line.strip())
         
         
 def set_remote_fhir_source():
     print """
-    Enter the full server path to the remote fhir instance you'd like to poll for Fhir Tasks (eg. OpenMRS) . 
+    Enter the full server path(s) to the remote fhir instance you'd like to poll for Fhir Tasks (eg. OpenMRS) . 
     Leave blank to disable polling a remote instance
+    (entries should be comma delimited)
     """
-    remote_fhir_source = raw_input("Remote Fhir Address: ")
-    if remote_fhir_source:
+    remote_fhir_sources = raw_input("Remote Fhir Address: ").split(',')
+    remote_fhir_sources_with_protocol = []
+    for remote_fhir_source in remote_fhir_sources:
         if not remote_fhir_source.startswith("https://"):
-            remote_fhir_source = "https://" + remote_fhir_source
+            remote_fhir_sources_with_protocol.append("https://" + remote_fhir_source)
+        else:
+            remote_fhir_sources_with_protocol.append(remote_fhir_source)
             
     with open(CONFIG_DIR + 'REMOTE_FHIR_SOURCE', mode='wt') as file:
-        file.write(remote_fhir_source)
+        file.write('\n'.join(remote_fhir_sources_with_protocol))
 
 
 def is_cs_server_set():
@@ -1122,8 +1127,9 @@ def is_cs_server_set():
         
 def get_cs_server_source():
     global CONSOLIDATED_SERVER_ADDRESS
-    file = open(CONFIG_DIR + 'CS_SERVER')
-    CONSOLIDATED_SERVER_ADDRESS = file.readline()
+    with open(CONFIG_DIR + 'CS_SERVER') as file:
+        for line in file.readlines():
+            CONSOLIDATED_SERVER_ADDRESS.append(line.strip())
         
         
 def set_cs_server_source():
@@ -1131,13 +1137,16 @@ def set_cs_server_source():
     Enter the full server path to the consolidated server to send data to. 
     Leave blank to disable sending data to the Consolidated server
     """
-    cs_address = raw_input("Consolidated server address: ")
-    if cs_address:
+    cs_addresses = raw_input("Consolidated server address(es) (comma delimited): ").split(',')
+    cs_addresses_with_protocol = []
+    for cs_address in cs_addresses:
         if not cs_address.startswith("https://"):
-            cs_address = "https://" + cs_address
+            cs_addresses_with_protocol.append("https://" + cs_address)
+        else:
+            cs_addresses_with_protocol.append(cs_address)
             
     with open(CONFIG_DIR + 'CS_SERVER', mode='wt') as file:
-        file.write(cs_address)
+        file.write('\n'.join(cs_addresses_with_protocol))
 
 
 def is_timezone_set():
@@ -1146,8 +1155,8 @@ def is_timezone_set():
         
 def get_timezone():
     global TIMEZONE
-    tz_file = open(CONFIG_DIR + 'TZ')
-    TIMEZONE = tz_file.readline()
+    with open(CONFIG_DIR + 'TZ') as file:
+        TIMEZONE = file.readline()
 
     
 def set_timezone():
@@ -1463,6 +1472,7 @@ def write_version():
     
 
 def read_config_file(file_path):
+    ensure_dir_exists(CONFIG_DIR)
     file_type = ""
     log("\n", PRINT_TO_CONSOLE)
     log("configuring system from file", PRINT_TO_CONSOLE)
