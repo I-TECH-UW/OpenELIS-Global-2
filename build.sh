@@ -64,7 +64,7 @@ cd ${PROJECT_DIR}
 echo Will build from $branch
 #cd source/openelisglobal-core
 #git checkout -- app/src/build.properties
-git checkout $branch
+git checkout -B $branch
 if [ $? != 0 ]
 then
     echo
