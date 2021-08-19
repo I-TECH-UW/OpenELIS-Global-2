@@ -121,9 +121,9 @@ jQuery(document).ready(function () {
 	</tr>
 	<tr>
 		<td>Number of order labels per set:</td>
-		<td><input id="numOrderLabelsPerSet" name="numOrderLabelsPerSet" type="number" value="2" size ="1" onchange="calculateTotal()"/></td>
+		<td><input id="numOrderLabelsPerSet" name="numOrderLabelsPerSet" type="number" value="${numDefaultOrderLabels}" size ="1" onchange="calculateTotal()"/></td>
 		<td>Number of specimen labels per set:</td>
-		<td><input id="numSpecimenLabelsPerSet" name="numSpecimenLabelsPerSet" type="number" value="1" size="1" onchange="calculateTotal()"/></td>
+		<td><input id="numSpecimenLabelsPerSet" name="numSpecimenLabelsPerSet" type="number" value="${numDefaultSpecimenLabels}" size="1" onchange="calculateTotal()"/></td>
 	</tr>
 	<tr></tr>
 <!-- 	<tr> -->

@@ -35,7 +35,8 @@ function checkFieldInt(field) {
 </script>
 
 <h2><spring:message code="siteInfo.section.number"/></h2>
-<p><spring:message code="siteInfo.description.max"/></p>
+<h3><spring:message code="siteInfo.title.default.barcode"/></h3>
+<p><spring:message code="siteInfo.description.default.barcode"/></p>
 <table width="80%">
 	<tr>
 		<td>
@@ -47,13 +48,38 @@ function checkFieldInt(field) {
 	</tr>
 	<tr>
 		<td>
-			<form:input path="numOrderLabels" 
-				id="numOrderLabels"
+			<form:input path="numDefaultOrderLabels" 
+				id="numDefaultOrderLabels"
 				onchange="checkFieldInt(this)"/>
 		</td>
 		<td>
-			<form:input path="numSpecimenLabels"
-				id="numSpecimenLabels"
+			<form:input path="numDefaultSpecimenLabels"
+				id="numDefaultSpecimenLabels"
+				onchange="checkFieldInt(this)"/>
+		</td>
+	</tr>
+</table>
+
+<h3><spring:message code="siteInfo.title.max.barcode"/></h3>
+<p><spring:message code="siteInfo.description.max.barcode"/></p>
+<table width="80%">
+	<tr>
+		<td>
+			<spring:message code="barcode.label.type.order"/>
+		</td>
+		<td>
+			<spring:message code="barcode.label.type.specimen"/>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<form:input path="numMaxOrderLabels" 
+				id="numMaxOrderLabels"
+				onchange="checkFieldInt(this)"/>
+		</td>
+		<td>
+			<form:input path="numMaxSpecimenLabels"
+				id="numMaxSpecimenLabels"
 				onchange="checkFieldInt(this)"/>
 		</td>
 	</tr>

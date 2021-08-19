@@ -28,7 +28,8 @@ public class BarcodeConfigurationController extends BaseController {
 
     private static final String[] ALLOWED_FIELDS = new String[] { "heightOrderLabels", "heightSpecimenLabels",
             "widthOrderLabels", "widthSpecimenLabels", "collectionDateCheck", "testsCheck", "patientSexCheck",
-            "numOrderLabels", "numSpecimenLabels", "prePrintDontUseAltAccession", "prePrintAltAccessionPrefix" };
+            "numMaxOrderLabels", "numMaxSpecimenLabels", "numDefaultOrderLabels", "numDefaultSpecimenLabels",
+            "prePrintDontUseAltAccession", "prePrintAltAccessionPrefix" };
 
     @Autowired
     private BarcodeInformationService barcodeInformationService;
@@ -79,14 +80,27 @@ public class BarcodeConfigurationController extends BaseController {
         form.setWidthSpecimenLabels(Float.parseFloat(widthSpecimenLabels));
 
         // get the maximum print values
-        String numOrderLabels = ConfigurationProperties.getInstance().getPropertyValue(Property.MAX_ORDER_PRINTED);
-        String numSpecimenLabels = ConfigurationProperties.getInstance()
+        String numMaxOrderLabels = ConfigurationProperties.getInstance().getPropertyValue(Property.MAX_ORDER_PRINTED);
+        String numMaxSpecimenLabels = ConfigurationProperties.getInstance()
                 .getPropertyValue(Property.MAX_SPECIMEN_PRINTED);
-        String numAliquotLabels = ConfigurationProperties.getInstance().getPropertyValue(Property.MAX_ALIQUOT_PRINTED);
+        String numMaxAliquotLabels = ConfigurationProperties.getInstance()
+                .getPropertyValue(Property.MAX_ALIQUOT_PRINTED);
         // set the maximum print values
-        form.setNumOrderLabels(Integer.parseInt(numOrderLabels));
-        form.setNumSpecimenLabels(Integer.parseInt(numSpecimenLabels));
-        form.setNumAliquotLabels(Integer.parseInt(numAliquotLabels));
+        form.setNumMaxOrderLabels(Integer.parseInt(numMaxOrderLabels));
+        form.setNumMaxSpecimenLabels(Integer.parseInt(numMaxSpecimenLabels));
+        form.setNumMaxAliquotLabels(Integer.parseInt(numMaxAliquotLabels));
+
+        // get the default print values
+        String numDefaultOrderLabels = ConfigurationProperties.getInstance()
+                .getPropertyValue(Property.DEFAULT_ORDER_PRINTED);
+        String numDefaultSpecimenLabels = ConfigurationProperties.getInstance()
+                .getPropertyValue(Property.DEFAULT_SPECIMEN_PRINTED);
+        String numDefaultAliquotLabels = ConfigurationProperties.getInstance()
+                .getPropertyValue(Property.DEFAULT_ALIQUOT_PRINTED);
+        // set the maximum print values
+        form.setNumDefaultOrderLabels(Integer.parseInt(numDefaultOrderLabels));
+        form.setNumDefaultSpecimenLabels(Integer.parseInt(numDefaultSpecimenLabels));
+        form.setNumDefaultAliquotLabels(Integer.parseInt(numDefaultAliquotLabels));
 
         // get the optional specimen values
         String collectionDateCheck = ConfigurationProperties.getInstance()

@@ -111,6 +111,11 @@ public class PrintBarcodeController extends BaseController {
         addPrePrintFields(form);
         addPatientSearch(displayObjects);
 
+        request.setAttribute("numDefaultOrderLabels",
+                ConfigurationProperties.getInstance().getPropertyValue(Property.DEFAULT_ORDER_PRINTED));
+        request.setAttribute("numDefaultSpecimenLabels",
+                ConfigurationProperties.getInstance().getPropertyValue(Property.DEFAULT_SPECIMEN_PRINTED));
+
         if (org.apache.commons.validator.GenericValidator.isBlankOrNull(request.getParameter("accessionNumber"))) {
             return findForward(FWD_SUCCESS, displayObjects, form);
         }

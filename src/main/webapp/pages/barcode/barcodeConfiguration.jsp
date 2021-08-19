@@ -14,7 +14,7 @@
 <script type="text/javascript" src="scripts/utilities.js?" ></script>
 <script type="text/javascript">
 var validator = new FieldValidator();
-validator.setRequiredFields( new Array("heightOrderLabels", "widthOrderLabels", "heightSpecimenLabels", "widthSpecimenLabels", "numOrderLabels", "numSpecimenLabels") );
+validator.setRequiredFields( new Array("heightOrderLabels", "widthOrderLabels", "heightSpecimenLabels", "widthSpecimenLabels", "numMaxOrderLabels", "numMaxSpecimenLabels", "numDefaultOrderLabels", "numDefaultSpecimenLabels") );
 
 function savePage() {
 	document.getElementById("mainForm").action = "BarcodeConfiguration.do"

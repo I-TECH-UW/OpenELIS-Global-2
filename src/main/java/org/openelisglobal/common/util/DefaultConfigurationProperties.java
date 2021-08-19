@@ -164,6 +164,11 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
         setDBPropertyMappingAndDefault(Property.MAX_ORDER_PRINTED, Property.MAX_ORDER_PRINTED.getName(), "10");
         setDBPropertyMappingAndDefault(Property.MAX_SPECIMEN_PRINTED, Property.MAX_SPECIMEN_PRINTED.getName(), "1");
         setDBPropertyMappingAndDefault(Property.MAX_ALIQUOT_PRINTED, Property.MAX_ALIQUOT_PRINTED.getName(), "1");
+        setDBPropertyMappingAndDefault(Property.DEFAULT_ORDER_PRINTED, Property.DEFAULT_ORDER_PRINTED.getName(), "2");
+        setDBPropertyMappingAndDefault(Property.DEFAULT_SPECIMEN_PRINTED, Property.DEFAULT_SPECIMEN_PRINTED.getName(),
+                "1");
+        setDBPropertyMappingAndDefault(Property.DEFAULT_ALIQUOT_PRINTED, Property.DEFAULT_ALIQUOT_PRINTED.getName(),
+                "1");
         setDBPropertyMappingAndDefault(Property.ORDER_BARCODE_HEIGHT, Property.ORDER_BARCODE_HEIGHT.getName(), "25.4");
         setDBPropertyMappingAndDefault(Property.ORDER_BARCODE_WIDTH, Property.ORDER_BARCODE_WIDTH.getName(), "76.2");
         setDBPropertyMappingAndDefault(Property.SPECIMEN_BARCODE_HEIGHT, Property.SPECIMEN_BARCODE_HEIGHT.getName(),

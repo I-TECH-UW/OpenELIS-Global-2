@@ -157,7 +157,8 @@ public class BarcodeLabelMaker {
             // add 2 order label per default
             Sample sample = sampleService.getSampleByAccessionNumber(labNo);
             OrderLabel orderLabel = new OrderLabel(sampleService.getPatient(sample), sample, labNo);
-            orderLabel.setNumLabels(2);
+            orderLabel.setNumLabels(Integer
+                    .parseInt(ConfigurationProperties.getInstance().getPropertyValue(Property.DEFAULT_ORDER_PRINTED)));
             orderLabel.linkBarcodeLabelInfo();
             // get sysUserId from login module
             orderLabel.setSysUserId(sysUserId);
@@ -171,7 +172,8 @@ public class BarcodeLabelMaker {
             for (SampleItem sampleItem : sampleItemList) {
                 SpecimenLabel specLabel = new SpecimenLabel(sampleService.getPatient(sample), sample, sampleItem,
                         labNo);
-                specLabel.setNumLabels(1);
+                specLabel.setNumLabels(Integer.parseInt(
+                        ConfigurationProperties.getInstance().getPropertyValue(Property.DEFAULT_SPECIMEN_PRINTED)));
                 specLabel.linkBarcodeLabelInfo();
                 // get sysUserId from login module
                 specLabel.setSysUserId(sysUserId);

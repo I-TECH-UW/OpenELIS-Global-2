@@ -111,9 +111,12 @@ public abstract class ConfigurationProperties {
         PATIENT_SUBJECT_NUMBER_REQUIRED("Subject number required"), //True if patient subject number is required for new patient
         PATIENT_NATIONAL_ID_REQUIRED("National ID required"), // True if patient national id is required for new patient
         QA_SAMPLE_ID_REQUIRED("sample id required"),  //True if sample id required from referring lab
-        MAX_ORDER_PRINTED("numOrderLabels"),    //Max number of order labels that can be printed
-        MAX_SPECIMEN_PRINTED("numSpecimenLabels"),  //Max number of specimen labels that can be printed
-        MAX_ALIQUOT_PRINTED("numAliquotLabels"),    //Max number of aliquots that can be printed
+        MAX_ORDER_PRINTED("numMaxOrderLabels"), // Max number of order labels that can be printed
+        MAX_SPECIMEN_PRINTED("numMaxSpecimenLabels"), // Max number of specimen labels that can be printed
+        MAX_ALIQUOT_PRINTED("numMaxAliquotLabels"), // Max number of aliquots that can be printed
+        DEFAULT_ORDER_PRINTED("numDefaultOrderLabels"), // Max number of order labels that can be printed
+        DEFAULT_SPECIMEN_PRINTED("numDefaultSpecimenLabels"), // Max number of specimen labels that can be printed
+        DEFAULT_ALIQUOT_PRINTED("numDefaultAliquotLabels"), // Max number of aliquots that can be printed
         ORDER_BARCODE_HEIGHT("heightOrderLabels"),  //Height of the order barcode
         ORDER_BARCODE_WIDTH("widthOrderLabels"),    //Width of the order barcode
         SPECIMEN_BARCODE_HEIGHT("heightSpecimenLabels"),    //Height of the specimen barcode

@@ -10,13 +10,22 @@ import org.openelisglobal.common.validator.ValidationHelper;
 public class BarcodeConfigurationForm extends BaseForm {
 
     @Range(min = 0, max = 2000)
-    private int numOrderLabels;
+    private int numMaxOrderLabels;
 
     @Range(min = 0, max = 2000)
-    private int numSpecimenLabels;
+    private int numMaxSpecimenLabels;
 
     @Range(min = 0, max = 2000)
-    private int numAliquotLabels;
+    private int numMaxAliquotLabels;
+
+    @Range(min = 0, max = 2000)
+    private int numDefaultOrderLabels;
+
+    @Range(min = 0, max = 2000)
+    private int numDefaultSpecimenLabels;
+
+    @Range(min = 0, max = 2000)
+    private int numDefaultAliquotLabels;
 
     @Range(min = 0, max = 1000)
     private float heightOrderLabels;
@@ -49,28 +58,28 @@ public class BarcodeConfigurationForm extends BaseForm {
         setFormName("BarcodeConfigurationForm");
     }
 
-    public int getNumOrderLabels() {
-        return numOrderLabels;
+    public int getNumMaxOrderLabels() {
+        return numMaxOrderLabels;
     }
 
-    public void setNumOrderLabels(int numOrderLabels) {
-        this.numOrderLabels = numOrderLabels;
+    public void setNumMaxOrderLabels(int numMaxOrderLabels) {
+        this.numMaxOrderLabels = numMaxOrderLabels;
     }
 
-    public int getNumSpecimenLabels() {
-        return numSpecimenLabels;
+    public int getNumMaxSpecimenLabels() {
+        return numMaxSpecimenLabels;
     }
 
-    public void setNumSpecimenLabels(int numSpecimenLabels) {
-        this.numSpecimenLabels = numSpecimenLabels;
+    public void setNumMaxSpecimenLabels(int numMaxSpecimenLabels) {
+        this.numMaxSpecimenLabels = numMaxSpecimenLabels;
     }
 
-    public int getNumAliquotLabels() {
-        return numAliquotLabels;
+    public int getNumMaxAliquotLabels() {
+        return numMaxAliquotLabels;
     }
 
-    public void setNumAliquotLabels(int numAliquotLabels) {
-        this.numAliquotLabels = numAliquotLabels;
+    public void setMaxNumAliquotLabels(int numMaxAliquotLabels) {
+        this.numMaxAliquotLabels = numMaxAliquotLabels;
     }
 
     public float getHeightOrderLabels() {
@@ -151,5 +160,33 @@ public class BarcodeConfigurationForm extends BaseForm {
 
     public void setSitePrefix(String sitePrefix) {
         this.sitePrefix = sitePrefix;
+    }
+
+    public int getNumDefaultOrderLabels() {
+        return numDefaultOrderLabels;
+    }
+
+    public void setNumDefaultOrderLabels(int numDefaultOrderLabels) {
+        this.numDefaultOrderLabels = numDefaultOrderLabels;
+    }
+
+    public int getNumDefaultSpecimenLabels() {
+        return numDefaultSpecimenLabels;
+    }
+
+    public void setNumDefaultSpecimenLabels(int numDefaultSpecimenLabels) {
+        this.numDefaultSpecimenLabels = numDefaultSpecimenLabels;
+    }
+
+    public int getNumDefaultAliquotLabels() {
+        return numDefaultAliquotLabels;
+    }
+
+    public void setNumDefaultAliquotLabels(int numDefaultAliquotLabels) {
+        this.numDefaultAliquotLabels = numDefaultAliquotLabels;
+    }
+
+    public void setNumMaxAliquotLabels(int numMaxAliquotLabels) {
+        this.numMaxAliquotLabels = numMaxAliquotLabels;
     }
 }
