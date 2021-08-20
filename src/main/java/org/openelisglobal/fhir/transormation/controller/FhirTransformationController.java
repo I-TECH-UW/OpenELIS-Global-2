@@ -104,7 +104,6 @@ public class FhirTransformationController extends BaseController {
                     sampleIds = new ArrayList<>();
                     if (promises.size() >= threads) {
                         waitForResults(promises);
-                        promises = new ArrayList<>();
                     }
                 } catch (FhirPersistanceException e) {
                     ++batchFailure;
@@ -116,6 +115,8 @@ public class FhirTransformationController extends BaseController {
                     LogEvent.logError(e);
                     LogEvent.logError(this.getClass().getName(), "transformPersistMissingFhirObjects",
                             "error with batch " + (i - batchSize + 1) + "-" + i);
+                } finally {
+                    promises = new ArrayList<>();
                 }
             }
         }

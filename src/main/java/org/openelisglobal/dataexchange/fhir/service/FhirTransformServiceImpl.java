@@ -190,6 +190,8 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         Map<String, DiagnosticReport> diagnosticReports = new HashMap<>();
         Map<String, Observation> observations = new HashMap<>();
         for (String sampleId : sampleIds) {
+            LogEvent.logDebug(this.getClass().getName(), "transformPersistObjectsUnderSamples",
+                    "transforming sampleId: " + sampleId);
             Sample sample = sampleService.get(sampleId);
             Patient patient = sampleHumanService.getPatientForSample(sample);
             List<SampleItem> sampleItems = sampleItemService.getSampleItemsBySampleId(sampleId);
