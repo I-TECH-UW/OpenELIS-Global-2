@@ -58,7 +58,9 @@
 
 
 <script type="text/javascript"
-	src="scripts/ajaxCalls.js?"></script>
+	src="scripts/ajaxCalls.js?"></script>	
+<script type="text/javascript"
+	src="scripts/utilities.js"></script>
 
 
 <%--
@@ -112,6 +114,7 @@
     }
 
     function setForEditing(testId, name) {
+    	jQuery("#testId").val(testId);
     	jQuery("#catDiv").show();
         jQuery("#testName").text(name);
         jQuery(".error").each(function (index, value) {
@@ -886,6 +889,7 @@
 
     function nextStep() {
         var resultTypeId;
+        var testId = jQuery("#testId").val() 
 		//alert(step);
         if (step == 'step1') {
             step = 'step2';
@@ -973,7 +977,7 @@
         	jQuery("#normalRangeDiv").show();
             jQuery("#sampleTypeSelectionDiv").hide();
             jQuery(".resultLimits").show();
-            resetResultLimits();
+    		getTestResultLimits(testId, testResultLimitsSuccess);
         } else if (step == "step3Numeric") {
         	
         	var defaultLimitsString = null;
@@ -1228,7 +1232,7 @@
         jQuery("#normalRangeDiv").show();
         jQuery(".resultLimits").show();
         jQuery("#normalRangeDiv input,select").removeAttr("disabled");
-        resetResultLimits();
+		getTestResultLimits(testId, testResultLimitsSuccess);
     }
 
     function doLims(item, index){
@@ -1256,7 +1260,61 @@
     	//ageRangeSelected();
     }
     
-    function resetResultLimits(){
+    function testResultLimitsSuccess(xhr) {
+        var formField = xhr.responseXML.getElementsByTagName("formfield").item(0);
+        var message = xhr.responseXML.getElementsByTagName("message").item(0);
+//     	alert(formField.firstChild.nodeValue);
+//     	alert(message.firstChild.nodeValue);
+        
+        resultLimitsJson = JSON.parse(formField.firstChild.nodeValue).resultLimits;
+        resetResultLimits();
+        
+        var row = 0;
+        for ( var x=0; x < resultLimitsJson.length ; ++x ) {
+            var resultLimit = resultLimitsJson[x];
+
+            var highValid = resultLimit.highValid;
+            var lowValid = resultLimit.lowValid;
+            var highNormal = resultLimit.highNormal;
+            var lowNormal = resultLimit.lowNormal;
+            var gender = resultLimit.gender;
+            var minAge = resultLimit.minAge;
+            var maxAge = resultLimit.maxAge == null ? 'Infinity' : resultLimit.maxAge;
+            
+            if (isNullOrWhitespace(gender)) {
+            	jQuery('#highValid').val(highValid);
+            	jQuery('#lowValid').val(lowValid);
+            	jQuery('#highNormal_' + row).val(highNormal);
+            	jQuery('#lowNormal_' + row).val(lowNormal);
+            	
+            	jQuery('input:radio[name=time_' + row + ']:nth(2)').attr('checked',true);
+            	jQuery('#upperAgeSetter_' + row).val(maxAge);
+            	upperAgeRangeChanged(row);
+            	++row;
+            } else if (gender == 'M') {
+            	jQuery('#genderCheck_' + row).prop('checked', true);
+            	genderMatersForRange(true, row)
+            	jQuery('#highValid').val(highValid);
+            	jQuery('#lowValid').val(lowValid);
+            	jQuery('#highNormal_' + row).val(highNormal);
+            	jQuery('#lowNormal_' + row).val(lowNormal);
+            } else if (gender == 'F') {
+            	jQuery('#highValid').val(highValid);
+            	jQuery('#lowValid').val(lowValid);
+            	jQuery('#highNormal_G_' + row).val(highNormal);
+            	jQuery('#lowNormal_G_' + row).val(lowNormal);
+            	
+            	jQuery('input:radio[name=time_' + row + ']:nth(2)').attr('checked',true);
+            	jQuery('#upperAgeSetter_' + row).val(maxAge);
+            	upperAgeRangeChanged(row);
+            	++row;
+            }
+            
+            
+        }
+    }
+    
+    function setResultLimits(){
         genderMatersForRange(false,'0');
         jQuery("#normalRangeDiv .createdFromTemplate").remove();
 

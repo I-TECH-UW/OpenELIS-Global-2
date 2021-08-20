@@ -121,6 +121,22 @@ function getTestEntities( testId, success, failure){
         });
 }
 
+function getTestResultLimits(testId, success, failure){
+	if( !failure ){	failure = defaultFailure;}
+
+    new Ajax.Request('ajaxQueryXML',
+        {
+            method : 'get',
+            parameters : "provider=TestResultLimitsProvider&testId=" + testId ,
+            //indicator: 'throbbing',
+			requestHeaders : {
+				"X-CSRF-Token" : getCsrfToken()
+			},
+            onSuccess : success,
+            onFailure : failure
+        });
+}
+
 /**
  * A generic way to get localized names for a given entity rather than a new call for each type.  Expand and document as needed
  * @param entitiyId
