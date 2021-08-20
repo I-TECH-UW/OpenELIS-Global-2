@@ -89,6 +89,7 @@ public class FhirTransformationController extends BaseController {
                 }
             }
 
+<<<<<<< HEAD
             List<Sample> samples;
             if (checkAll) {
                 samples = sampleService.getAll();
@@ -126,6 +127,45 @@ public class FhirTransformationController extends BaseController {
                         LogEvent.logError(this.getClass().getName(), "transformPersistMissingFhirObjects",
                                 "error with batch " + (i - batchSize + 1) + "-" + i);
                     }
+=======
+        List<Sample> samples;
+        if (checkAll) {
+            samples = sampleService.getAll();
+        } else {
+            samples = sampleService.getAllMissingFhirUuid();
+        }
+        LogEvent.logDebug(this.getClass().getName(), "transformPersistMissingFhirObjects",
+                "samples to convert: " + samples.size());
+
+        int batches = 0;
+        int batchFailure = 0;
+        List<String> sampleIds = new ArrayList<>();
+        promises = new ArrayList<>();
+        for (int i = 0; i < samples.size(); ++i) {
+            sampleIds.add(samples.get(i).getId());
+            if (i % batchSize == batchSize - 1 || i + 1 == samples.size()) {
+                LogEvent.logDebug(this.getClass().getName(), "",
+                        "persisting batch " + (i - batchSize + 1) + "-" + i + " of " + samples.size());
+                try {
+                    promises.add(fhirTransformService.transformPersistObjectsUnderSamples(sampleIds));
+                    ++batches;
+                    sampleIds = new ArrayList<>();
+                    if (promises.size() >= threads) {
+                        waitForResults(promises);
+                    }
+                } catch (FhirPersistanceException e) {
+                    ++batchFailure;
+                    LogEvent.logError(e);
+                    LogEvent.logError(this.getClass().getName(), "transformPersistMissingFhirObjects",
+                            "error persisting batch " + (i - batchSize + 1) + "-" + i);
+                } catch (Exception e) {
+                    ++batchFailure;
+                    LogEvent.logError(e);
+                    LogEvent.logError(this.getClass().getName(), "transformPersistMissingFhirObjects",
+                            "error with batch " + (i - batchSize + 1) + "-" + i);
+                } finally {
+                    promises = new ArrayList<>();
+>>>>>>> develop
                 }
             }
             LogEvent.logDebug(this.getClass().getName(), "transformPersistMissingFhirObjects", "finished all batches");
