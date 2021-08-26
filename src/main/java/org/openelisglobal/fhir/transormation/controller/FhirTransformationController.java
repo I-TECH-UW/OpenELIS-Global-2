@@ -75,7 +75,6 @@ public class FhirTransformationController extends BaseController {
                         patientIds = new ArrayList<>();
                         if (promises.size() >= threads || i + 1 == patients.size()) {
                             waitForResults(promises);
-                            promises = new ArrayList<>();
                         }
                     } catch (FhirPersistanceException e) {
                         LogEvent.logError(e);
@@ -89,7 +88,6 @@ public class FhirTransformationController extends BaseController {
                 }
             }
 
-<<<<<<< HEAD
             List<Sample> samples;
             if (checkAll) {
                 samples = sampleService.getAll();
@@ -114,58 +112,18 @@ public class FhirTransformationController extends BaseController {
                         sampleIds = new ArrayList<>();
                         if (promises.size() >= threads) {
                             waitForResults(promises);
-                            promises = new ArrayList<>();
                         }
                     } catch (FhirPersistanceException e) {
                         ++batchFailure;
-                        LogEvent.logError(e);
+                        LogEvent.logErrorStack(e);
                         LogEvent.logError(this.getClass().getName(), "transformPersistMissingFhirObjects",
                                 "error persisting batch " + (i - batchSize + 1) + "-" + i);
                     } catch (Exception e) {
                         ++batchFailure;
-                        LogEvent.logError(e);
+                        LogEvent.logErrorStack(e);
                         LogEvent.logError(this.getClass().getName(), "transformPersistMissingFhirObjects",
                                 "error with batch " + (i - batchSize + 1) + "-" + i);
                     }
-=======
-        List<Sample> samples;
-        if (checkAll) {
-            samples = sampleService.getAll();
-        } else {
-            samples = sampleService.getAllMissingFhirUuid();
-        }
-        LogEvent.logDebug(this.getClass().getName(), "transformPersistMissingFhirObjects",
-                "samples to convert: " + samples.size());
-
-        int batches = 0;
-        int batchFailure = 0;
-        List<String> sampleIds = new ArrayList<>();
-        promises = new ArrayList<>();
-        for (int i = 0; i < samples.size(); ++i) {
-            sampleIds.add(samples.get(i).getId());
-            if (i % batchSize == batchSize - 1 || i + 1 == samples.size()) {
-                LogEvent.logDebug(this.getClass().getName(), "",
-                        "persisting batch " + (i - batchSize + 1) + "-" + i + " of " + samples.size());
-                try {
-                    promises.add(fhirTransformService.transformPersistObjectsUnderSamples(sampleIds));
-                    ++batches;
-                    sampleIds = new ArrayList<>();
-                    if (promises.size() >= threads) {
-                        waitForResults(promises);
-                    }
-                } catch (FhirPersistanceException e) {
-                    ++batchFailure;
-                    LogEvent.logError(e);
-                    LogEvent.logError(this.getClass().getName(), "transformPersistMissingFhirObjects",
-                            "error persisting batch " + (i - batchSize + 1) + "-" + i);
-                } catch (Exception e) {
-                    ++batchFailure;
-                    LogEvent.logError(e);
-                    LogEvent.logError(this.getClass().getName(), "transformPersistMissingFhirObjects",
-                            "error with batch " + (i - batchSize + 1) + "-" + i);
-                } finally {
-                    promises = new ArrayList<>();
->>>>>>> develop
                 }
             }
             LogEvent.logDebug(this.getClass().getName(), "transformPersistMissingFhirObjects", "finished all batches");
@@ -180,9 +138,9 @@ public class FhirTransformationController extends BaseController {
     }
 
     private void waitForResults(List<Future<Bundle>> promises) throws Exception {
-        for (Future<Bundle> promise : promises) {
+        for (int i = promises.size() - 1; i >= 0; i--) {
             try {
-                promise.get();
+                promises.remove(i).get();
             } catch (InterruptedException | ExecutionException e) {
                 LogEvent.logError(e);
                 LogEvent.logError(this.getClass().getName(), "waitForResults", "Error getting value from thread");
