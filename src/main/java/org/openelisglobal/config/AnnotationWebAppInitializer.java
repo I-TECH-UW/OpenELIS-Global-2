@@ -20,6 +20,8 @@ import org.springframework.web.servlet.DispatcherServlet;
 
 public class AnnotationWebAppInitializer implements WebApplicationInitializer {
 
+    int startupOrder = 0;
+
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
         AnnotationConfigWebApplicationContext rootContext = new AnnotationConfigWebApplicationContext();
@@ -31,7 +33,6 @@ public class AnnotationWebAppInitializer implements WebApplicationInitializer {
     }
 
     private void setupServlets(ServletContext servletContext, AnnotationConfigWebApplicationContext rootContext) {
-        int startupOrder = 0;
         ServletRegistration.Dynamic dispatcher = servletContext.addServlet("dispatcher",
                 new DispatcherServlet(rootContext));
         dispatcher.setLoadOnStartup(++startupOrder);
@@ -103,6 +104,7 @@ public class AnnotationWebAppInitializer implements WebApplicationInitializer {
                 LabelMakerServlet.class);
         labelMakerServlet.setLoadOnStartup(++startupOrder);
         labelMakerServlet.addMapping("/LabelMakerServlet");
+
     }
 
 }
