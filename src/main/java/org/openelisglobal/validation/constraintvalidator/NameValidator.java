@@ -23,17 +23,17 @@ public class NameValidator implements ConstraintValidator<ValidName, String>, Co
     private NameType nameType;
 
     SiteInformationService siteInformationService = SpringContext.getBean(SiteInformationService.class);
-    
+
     private String escapeRegexChars(String regex) {
         // TODO Auto-generated method stub
         return regex;
     }
-    
+
     @PostConstruct
     public void initSpring() {
-        refreshConfiguration();  
+        refreshConfiguration();
     }
-    
+
     @Override
     public void initialize(ValidName constraint) {
         nameType = constraint.nameType();
@@ -70,19 +70,19 @@ public class NameValidator implements ConstraintValidator<ValidName, String>, Co
     }
     @Override
     public void refreshConfiguration() {
-        
-        FIRST_NAME_REGEX = "(?i)^[" + escapeRegexChars(
+
+        FIRST_NAME_REGEX = "(?iu)^[" + escapeRegexChars(
                 siteInformationService.getMatch("name", "firstNameCharset").orElse(DEFAULT_SITE_INFORATION).getValue())
                 + "]*$";
-        LAST_NAME_REGEX = "(?i)^[" + escapeRegexChars(
+        LAST_NAME_REGEX = "(?iu)^[" + escapeRegexChars(
                 siteInformationService.getMatch("name", "lastNameCharset").orElse(DEFAULT_SITE_INFORATION).getValue())
                 + "]*$";
-        FULL_NAME_REGEX = "(?i)^["
+        FULL_NAME_REGEX = "(?iu)^["
                 + escapeRegexChars(siteInformationService.getMatch("name", "firstNameCharset")
                         .orElse(new SiteInformation()).getValue())
                 + "]*([ ]*[" + escapeRegexChars(siteInformationService.getMatch("name", "lastNameCharset").orElse(DEFAULT_SITE_INFORATION).getValue())
                 + "])?$";
-        USER_NAME_REGEX = "(?i)^[" + escapeRegexChars(
+        USER_NAME_REGEX = "(?iu)^[" + escapeRegexChars(
                 siteInformationService.getMatch("name", "userNameCharset").orElse(DEFAULT_SITE_INFORATION).getValue())
                 + "]*$";
     }
