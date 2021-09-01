@@ -125,6 +125,7 @@ public class DBOrderPersister implements IOrderPersister {
         person.setLastName(orderPatient.getLastName());
         person.setStreetAddress(orderPatient.getAddressStreet());
         person.setCity(orderPatient.getAddressVillage());
+        person.setState(orderPatient.getAddressDepartment());
         person.setCountry(orderPatient.getAddressCountry());
         person.setEmail(orderPatient.getEmail());
         person.setPrimaryPhone(orderPatient.getMobilePhone());
@@ -270,6 +271,26 @@ public class DBOrderPersister implements IOrderPersister {
         }
         if (needsUpdating(orderPatient.getAddressVillage(), patientService.getPerson(patient).getCity())) {
             person.setCity(orderPatient.getAddressVillage());
+            updatePerson = true;
+        }
+        if (needsUpdating(orderPatient.getAddressDepartment(), patientService.getPerson(patient).getState())) {
+            person.setState(orderPatient.getAddressDepartment());
+            updatePerson = true;
+        }
+        if (needsUpdating(orderPatient.getAddressCountry(), patientService.getPerson(patient).getCountry())) {
+            person.setCountry(orderPatient.getAddressCountry());
+            updatePerson = true;
+        }
+        if (needsUpdating(orderPatient.getEmail(), patientService.getPerson(patient).getEmail())) {
+            person.setEmail(orderPatient.getEmail());
+            updatePerson = true;
+        }
+        if (needsUpdating(orderPatient.getWorkPhone(), patientService.getPerson(patient).getPrimaryPhone())) {
+            person.setPrimaryPhone(orderPatient.getWorkPhone());
+            updatePerson = true;
+        }
+        if (needsUpdating(orderPatient.getMobilePhone(), patientService.getPerson(patient).getPrimaryPhone())) {
+            person.setPrimaryPhone(orderPatient.getMobilePhone());
             updatePerson = true;
         }
 

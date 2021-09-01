@@ -221,13 +221,11 @@ public class TaskInterpreterImpl implements TaskInterpreter {
             }
         }
         for (Address address : patient.getAddress()) {
-            if (Address.AddressUse.TEMP.equals(address.getUse())) {
-                messagePatient.setAddressStreet(address.getLine().stream().map(line -> line.getValue())
-                        .collect(Collectors.toList()).stream().collect(Collectors.joining(", ")));
-                messagePatient.setAddressVillage(address.getCity());
-                messagePatient.setAddressDepartment(address.getState());
-                messagePatient.setAddressCountry(address.getCountry());
-            }
+            messagePatient.setAddressStreet(address.getLine().stream().map(line -> line.getValue())
+                    .collect(Collectors.toList()).stream().collect(Collectors.joining(", ")));
+            messagePatient.setAddressVillage(address.getCity());
+            messagePatient.setAddressDepartment(address.getState());
+            messagePatient.setAddressCountry(address.getCountry());
         }
 
         ContactComponent contact = patient.getContactFirstRep();
@@ -247,7 +245,6 @@ public class TaskInterpreterImpl implements TaskInterpreter {
 
         return messagePatient;
     }
-
 
     private List<InterpreterResults> buildResultList(boolean exceptionThrown) {
         LogEvent.logDebug(this.getClass().getName(), "buildResultList", "buildResultList: " + exceptionThrown);

@@ -5,6 +5,7 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -15,6 +16,8 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.apache.commons.validator.GenericValidator;
+import org.hl7.fhir.r4.model.Address;
+import org.hl7.fhir.r4.model.Address.AddressUse;
 import org.hl7.fhir.r4.model.Annotation;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.CodeableConcept;
@@ -366,11 +369,11 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         practitioner.setId(provider.getFhirUuidAsString());
         practitioner.addName(new HumanName().setFamily(provider.getPerson().getLastName())
                 .addGiven(provider.getPerson().getFirstName()));
-        practitioner.setTelecom(transformToTelcom(provider.getPerson()));
+        practitioner.setTelecom(transformToTelecom(provider.getPerson()));
         return practitioner;
     }
 
-    private List<ContactPoint> transformToTelcom(Person person) {
+    private List<ContactPoint> transformToTelecom(Person person) {
         List<ContactPoint> contactPoints = new ArrayList<>();
         contactPoints.add(new ContactPoint().setSystem(ContactPointSystem.PHONE).setValue(person.getPrimaryPhone()));
         contactPoints.add(new ContactPoint().setSystem(ContactPointSystem.EMAIL).setValue(person.getEmail()));
@@ -482,9 +485,20 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         } else {
             fhirPatient.setGender(AdministrativeGender.FEMALE);
         }
-        fhirPatient.setTelecom(transformToTelcom(patient.getPerson()));
+        fhirPatient.setTelecom(transformToTelecom(patient.getPerson()));
+
+        fhirPatient.addAddress(transformToAddress(patient.getPerson()));
 
         return fhirPatient;
+    }
+
+    private Address transformToAddress(Person person) {
+        return new Address()//
+                .setUse(AddressUse.NULL)//
+                .setCountry(person.getCountry())//
+                .setCity(person.getCity())//
+                .setState(person.getState())//
+                .setLine(Arrays.asList(new StringType(person.getStreetAddress())));
     }
 
     private List<Identifier> createPatientIdentifiers(String subjectNumber, String nationalId, String stNumber,
