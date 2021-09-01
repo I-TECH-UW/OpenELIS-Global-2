@@ -61,6 +61,11 @@ public class DateUtil {
         return format.format(date);
     }
 
+    public static String formatTimeAsText(Date date) {
+        SimpleDateFormat format = new SimpleDateFormat(getTimeFormat());
+        return format.format(date);
+    }
+
     public static String formatDateAsText(Date date) {
         SimpleDateFormat format = new SimpleDateFormat(getDateFormat());
         return format.format(date);
@@ -644,6 +649,11 @@ public class DateUtil {
     public static String getDateFormat() {
         Locale locale = getDateFormatLocale();
         return MessageUtil.getMessage("date.format.formatKey", locale);
+    }
+
+    public static String getTimeFormat() {
+        Locale locale = getDateFormatLocale();
+        return MessageUtil.getMessage("time.format.formatKey", locale);
     }
 
     public static String getDateTimeFormat() {

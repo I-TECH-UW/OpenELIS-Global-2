@@ -17,6 +17,7 @@
 package org.openelisglobal.common.provider.query;
 
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -43,6 +44,7 @@ import org.hl7.fhir.r4.model.Task;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.ExternalOrderStatus;
+import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.XMLUtil;
 import org.openelisglobal.dataexchange.fhir.FhirConfig;
 import org.openelisglobal.dataexchange.fhir.FhirUtil;
@@ -96,6 +98,7 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
 
     private Task task = null;
     private Practitioner requesterPerson = null;
+    private Practitioner collector = null;
     private Organization referringOrganization = null;
     private ServiceRequest serviceRequest = null;
     private Specimen specimen = null;
@@ -224,6 +227,21 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
                             "found matching requester " + requesterPerson.getIdElement().getIdPart());
                 } else {
                     LogEvent.logDebug(this.getClass().getName(), "processRequest", "no matching requester");
+                }
+            }
+
+            if (specimen != null && !GenericValidator
+                    .isBlankOrNull(specimen.getCollection().getCollector().getReferenceElement().getIdPart())) {
+                collector = localFhirClient.read()//
+                        .resource(Practitioner.class)//
+                        .withId(specimen.getCollection().getCollector().getReferenceElement().getIdPart())//
+                        .execute();
+
+                if (collector != null) {
+                    LogEvent.logDebug(this.getClass().getName(), "processRequest",
+                            "found matching collector " + collector.getIdElement().getIdPart());
+                } else {
+                    LogEvent.logDebug(this.getClass().getName(), "processRequest", "no matching collector");
                 }
             }
         }
@@ -515,7 +533,27 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
         XMLUtil.appendKeyValue("name", typeOfSample.getLocalizedName(), xml);
         addPanels(xml, panelTestLists.getPanels(), typeOfSample.getId());
         addTests(xml, "tests", panelTestLists.getTests());
+        addCollection(xml, "collection", specimen, collector);
         xml.append("</sampleType>");
+    }
+
+    private void addCollection(StringBuilder xml, String parent, Specimen specimen, Practitioner collector) {
+        xml.append(XMLUtil.makeStartTag(parent));
+        if (specimen != null) {
+            XMLUtil.appendKeyValue("date",
+                    DateUtil.formatDateAsText(specimen.getCollection().getCollectedDateTimeType().getValue()), xml);
+            XMLUtil.appendKeyValue("time",
+                    DateUtil.formatTimeAsText(specimen.getCollection().getCollectedDateTimeType().getValue()), xml);
+            XMLUtil.appendKeyValue("dateTime", specimen.getCollection().getCollectedDateTimeType().getValueAsString(),
+                    xml);
+        }
+        if (collector != null) {
+            XMLUtil.appendKeyValue("collector",
+                    collector.getNameFirstRep().getGivenAsSingleString() + collector.getNameFirstRep().getFamily(),
+                    xml);
+        }
+        xml.append(XMLUtil.makeEndTag(parent));
+
     }
 
     private void addPanels(StringBuilder xml, List<Panel> panels, String sampleTypeId) {
@@ -639,6 +677,8 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
     public class PanelTestLists {
         private List<Test> tests = new ArrayList<>();
         private List<Panel> panels = new ArrayList<>();
+        private Timestamp collectionTime;
+        private String collector;
 
         public List<Test> getTests() {
             return tests;
@@ -658,6 +698,22 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
             if (test != null) {
                 tests.add(test);
             }
+        }
+
+        public Timestamp getCollectionTime() {
+            return collectionTime;
+        }
+
+        public void setCollectionTime(Timestamp collectionTime) {
+            this.collectionTime = collectionTime;
+        }
+
+        public String getCollector() {
+            return collector;
+        }
+
+        public void setCollector(String collector) {
+            this.collector = collector;
         }
 
     }
