@@ -24,6 +24,7 @@ public class MessagePatient {
     private String stNumber;
     private String externalId;
     private String fhirUuid;
+    private String subjectNumber;
 
     private String gender;
     private String displayDOB;
@@ -227,6 +228,14 @@ public class MessagePatient {
 
     public void setFhirUuid(String fhirUuid) {
         this.fhirUuid = fhirUuid;
+    }
+
+    public String getSubjectNumber() {
+        return subjectNumber;
+    }
+
+    public void setSubjectNumber(String subjectNumber) {
+        this.subjectNumber = subjectNumber;
     }
 
 }

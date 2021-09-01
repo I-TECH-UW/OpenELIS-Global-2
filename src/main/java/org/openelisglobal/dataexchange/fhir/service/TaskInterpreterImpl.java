@@ -173,6 +173,9 @@ public class TaskInterpreterImpl implements TaskInterpreter {
             if ((fhirConfig.getOeFhirSystem() + "/pat_stNumber").equals(identifier.getSystem())) {
                 messagePatient.setStNumber(identifier.getValue());
             }
+            if ((fhirConfig.getOeFhirSystem() + "/pat_subjectNumber").equals(identifier.getSystem())) {
+                messagePatient.setSubjectNumber(identifier.getValue());
+            }
         }
         // TODO set fhirUUID of message patient
         DateType birthDate = patient.getBirthDateElement();

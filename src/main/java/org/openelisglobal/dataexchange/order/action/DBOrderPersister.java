@@ -56,6 +56,7 @@ public class DBOrderPersister implements IOrderPersister {
     private String IDENTITY_STNUMBER_ID;
     private String IDENTITY_OBNUMBER_ID;
     private String IDENTITY_PCNUMBER_ID;
+    private String IDENTITY_SUBJECTNUMBER_ID;
 
     @Autowired
     private ElectronicOrderService eOrderService;
@@ -83,6 +84,7 @@ public class DBOrderPersister implements IOrderPersister {
         IDENTITY_STNUMBER_ID = getIdentityType(identityTypeService, "ST");
         IDENTITY_OBNUMBER_ID = getIdentityType(identityTypeService, "OB_NUMBER");
         IDENTITY_PCNUMBER_ID = getIdentityType(identityTypeService, "PC_NUMBER");
+        IDENTITY_SUBJECTNUMBER_ID = getIdentityType(identityTypeService, "SUBJECT");
     }
 
     private String getIdentityType(PatientIdentityTypeService identityTypeService, String name) {
@@ -156,6 +158,7 @@ public class DBOrderPersister implements IOrderPersister {
         addIdentityIfAppropriate(IDENTITY_STNUMBER_ID, orderPatient.getStNumber(), identities);
         addIdentityIfAppropriate(IDENTITY_OBNUMBER_ID, orderPatient.getObNumber(), identities);
         addIdentityIfAppropriate(IDENTITY_PCNUMBER_ID, orderPatient.getPcNumber(), identities);
+        addIdentityIfAppropriate(IDENTITY_SUBJECTNUMBER_ID, orderPatient.getSubjectNumber(), identities);
 
         personService.insert(person);
         patientService.insert(patient);
@@ -193,6 +196,8 @@ public class DBOrderPersister implements IOrderPersister {
                 identityService);
         updateIdentityIfNeeded(IDENTITY_GUID_ID, orderPatient.getGuid(), patient.getId(), identityList,
                 identityService);
+        updateIdentityIfNeeded(IDENTITY_SUBJECTNUMBER_ID, orderPatient.getSubjectNumber(), patient.getId(),
+                identityList, identityService);
     }
 
     private void updateIdentityIfNeeded(String identityTypeId, String newIdentityValue, String patientId,
