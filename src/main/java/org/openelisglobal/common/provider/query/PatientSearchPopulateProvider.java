@@ -79,7 +79,7 @@ public class PatientSearchPopulateProvider extends BaseQueryProvider {
         String patientKey = request.getParameter("personKey");
         StringBuilder xml = new StringBuilder();
         String result = null;
-        if (GenericValidator.isBlankOrNull(patientKey)) {
+        if (!GenericValidator.isBlankOrNull(patientKey)) {
             result = createSearchResultXML(getPatientForID(patientKey), xml);
         } else if (externalId != null) {
             result = createSearchResultXML(patientService.getPatientByExternalId(externalId), xml);
