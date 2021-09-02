@@ -141,7 +141,7 @@ function addTypeToTable(table, sampleDescription, sampleType, currentTime, curre
 		sampleId.innerHTML = getSampleIdHtml(rowLabel);
 		type.innerHTML = getSampleTypeHtml( rowLabel, sampleDescription, sampleType );
 		if( useCollectionDate ){
-			if (sampleType.collectionDate !== 'undefined') {
+			if (typeof sampleType.collectionDate !== 'undefined') {
 				collectionDate.innerHTML = getCollectionDateHtml( rowLabel, sampleType.collectionDate);
 				collectionTime.innerHTML = getCollectionTimeHtml( rowLabel, sampleType.collectionTime);
 			} else {
