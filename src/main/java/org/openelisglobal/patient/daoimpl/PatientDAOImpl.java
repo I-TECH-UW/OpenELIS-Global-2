@@ -18,6 +18,7 @@ package org.openelisglobal.patient.daoimpl;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
@@ -136,6 +137,15 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
 //			throw new LIMSRuntimeException("Error in Patient updateData()", e);
 //		}
 //	}
+
+    @Override
+    public Optional<Patient> get(String patientId) {
+        Optional<Patient> patient = super.get(patientId);
+        if (patient.isPresent()) {
+            updateDisplayValues(patient.get());
+        }
+        return patient;
+    }
 
     @Override
     @Transactional(readOnly = true)
