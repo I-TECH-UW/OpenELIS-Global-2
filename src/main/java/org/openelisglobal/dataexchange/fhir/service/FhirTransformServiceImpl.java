@@ -5,7 +5,6 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -14,6 +13,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+import javax.annotation.PostConstruct;
 
 import org.apache.commons.validator.GenericValidator;
 import org.hl7.fhir.r4.model.Address;
@@ -49,6 +50,10 @@ import org.hl7.fhir.r4.model.Task;
 import org.hl7.fhir.r4.model.Task.TaskIntent;
 import org.hl7.fhir.r4.model.Task.TaskPriority;
 import org.hl7.fhir.r4.model.Task.TaskStatus;
+import org.openelisglobal.address.service.AddressPartService;
+import org.openelisglobal.address.service.PersonAddressService;
+import org.openelisglobal.address.valueholder.AddressPart;
+import org.openelisglobal.address.valueholder.PersonAddress;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.action.IActionConstants;
@@ -147,6 +152,29 @@ public class FhirTransformServiceImpl implements FhirTransformService {
     private ProviderService providerService;
     @Autowired
     private ReferralSetService referralSetService;
+    @Autowired
+    private PersonAddressService personAddressService;
+    @Autowired
+    private AddressPartService addressPartService;
+
+    private String ADDRESS_PART_VILLAGE_ID;
+    private String ADDRESS_PART_COMMUNE_ID;
+    private String ADDRESS_PART_DEPT_ID;
+
+    @PostConstruct
+    public void initializeGlobalVariables() {
+        List<AddressPart> partList = addressPartService.getAll();
+        for (AddressPart addressPart : partList) {
+            if ("department".equals(addressPart.getPartName())) {
+                ADDRESS_PART_DEPT_ID = addressPart.getId();
+            } else if ("commune".equals(addressPart.getPartName())) {
+                ADDRESS_PART_COMMUNE_ID = addressPart.getId();
+            } else if ("village".equals(addressPart.getPartName())) {
+                ADDRESS_PART_VILLAGE_ID = addressPart.getId();
+            }
+        }
+
+    }
 
     @Transactional
     @Async
@@ -492,11 +520,34 @@ public class FhirTransformServiceImpl implements FhirTransformService {
     }
 
     private Address transformToAddress(Person person) {
-        return new Address()//
-                .setCountry(person.getCountry())//
+        @SuppressWarnings("unused")
+        PersonAddress village = null;
+        PersonAddress commune = null;
+        @SuppressWarnings("unused")
+        PersonAddress dept = null;
+        List<PersonAddress> personAddressList = personAddressService.getAddressPartsByPersonId(person.getId());
+
+        for (PersonAddress address : personAddressList) {
+            if (address.getAddressPartId().equals(ADDRESS_PART_COMMUNE_ID)) {
+                commune = address;
+            } else if (address.getAddressPartId().equals(ADDRESS_PART_VILLAGE_ID)) {
+                village = address;
+            } else if (address.getAddressPartId().equals(ADDRESS_PART_DEPT_ID)) {
+                dept = address;
+            }
+        }
+        Address address = new Address()//
+                .addLine(person.getStreetAddress())//
                 .setCity(person.getCity())//
+//                .setDistrict(value)
                 .setState(person.getState())//
-                .setLine(Arrays.asList(new StringType(person.getStreetAddress())));
+//                .setPostalCode(value)
+                .setCountry(person.getCountry())//
+        ;
+        if (commune != null) {
+            address.addLine("commune: " + commune.getValue());
+        }
+        return address;
     }
 
     private List<Identifier> createPatientIdentifiers(String subjectNumber, String nationalId, String stNumber,

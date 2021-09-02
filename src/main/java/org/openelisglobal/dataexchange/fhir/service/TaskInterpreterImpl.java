@@ -2,7 +2,6 @@ package org.openelisglobal.dataexchange.fhir.service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.commons.validator.GenericValidator;
 import org.hl7.fhir.r4.model.Address;
@@ -13,6 +12,7 @@ import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Patient;
 import org.hl7.fhir.r4.model.Patient.ContactComponent;
 import org.hl7.fhir.r4.model.ServiceRequest;
+import org.hl7.fhir.r4.model.StringType;
 import org.hl7.fhir.r4.model.Task;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.ITestIdentityService;
@@ -221,8 +221,20 @@ public class TaskInterpreterImpl implements TaskInterpreter {
             }
         }
         for (Address address : patient.getAddress()) {
-            messagePatient.setAddressStreet(address.getLine().stream().map(line -> line.getValue())
-                    .collect(Collectors.toList()).stream().collect(Collectors.joining(", ")));
+            for (StringType line : address.getLine()) {
+                String lineValue = line.asStringValue();
+                if (lineValue.startsWith("commune:")) {
+                    messagePatient.setAddressCommune(lineValue.substring("commune:".length()).trim());
+                } else {
+                    if (GenericValidator.isBlankOrNull(messagePatient.getAddressStreet())) {
+                        messagePatient.setAddressStreet(lineValue);
+                    } else {
+                        messagePatient.setAddressStreet(messagePatient.getAddressStreet() + ", " + lineValue);
+                    }
+
+                }
+            }
+
             messagePatient.setAddressVillage(address.getCity());
             messagePatient.setAddressDepartment(address.getState());
             messagePatient.setAddressCountry(address.getCountry());

@@ -23,6 +23,10 @@ import java.util.UUID;
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.validator.GenericValidator;
+import org.openelisglobal.address.service.AddressPartService;
+import org.openelisglobal.address.service.PersonAddressService;
+import org.openelisglobal.address.valueholder.AddressPart;
+import org.openelisglobal.address.valueholder.PersonAddress;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.ExternalOrderStatus;
@@ -72,8 +76,16 @@ public class DBOrderPersister implements IOrderPersister {
     private PatientService patientService;
     @Autowired
     private PatientContactService patientContactService;
+    @Autowired
+    private PersonAddressService personAddressService;
+    @Autowired
+    private AddressPartService addressPartService;
 
     private Patient patient;
+
+    private String ADDRESS_PART_VILLAGE_ID;
+    private String ADDRESS_PART_COMMUNE_ID;
+    private String ADDRESS_PART_DEPT_ID;
 
     @PostConstruct
     public void initializeGlobalVariables() {
@@ -85,6 +97,16 @@ public class DBOrderPersister implements IOrderPersister {
         IDENTITY_OBNUMBER_ID = getIdentityType(identityTypeService, "OB_NUMBER");
         IDENTITY_PCNUMBER_ID = getIdentityType(identityTypeService, "PC_NUMBER");
         IDENTITY_SUBJECTNUMBER_ID = getIdentityType(identityTypeService, "SUBJECT");
+        List<AddressPart> partList = addressPartService.getAll();
+        for (AddressPart addressPart : partList) {
+            if ("department".equals(addressPart.getPartName())) {
+                ADDRESS_PART_DEPT_ID = addressPart.getId();
+            } else if ("commune".equals(addressPart.getPartName())) {
+                ADDRESS_PART_COMMUNE_ID = addressPart.getId();
+            } else if ("village".equals(addressPart.getPartName())) {
+                ADDRESS_PART_VILLAGE_ID = addressPart.getId();
+            }
+        }
     }
 
     private String getIdentityType(PatientIdentityTypeService identityTypeService, String name) {
@@ -170,6 +192,12 @@ public class DBOrderPersister implements IOrderPersister {
         }
 
         persistContact(orderPatient, patient);
+        insertPatientAddress(orderPatient, patient);
+    }
+
+    private void insertPatientAddress(MessagePatient orderPatient, Patient patient) {
+        insertNewPatientInfo(ADDRESS_PART_COMMUNE_ID, orderPatient.getAddressCommune(), "T",
+                patient.getPerson().getId());
     }
 
     private void addIdentityIfAppropriate(String typeId, String value, List<PatientIdentity> identities) {
@@ -199,6 +227,19 @@ public class DBOrderPersister implements IOrderPersister {
                 identityService);
         updateIdentityIfNeeded(IDENTITY_SUBJECTNUMBER_ID, orderPatient.getSubjectNumber(), patient.getId(),
                 identityList, identityService);
+
+        updateAddressPartsIfNeeded(orderPatient, person.getId());
+    }
+
+    private void updateAddressPartsIfNeeded(MessagePatient orderPatient, String personId) {
+        List<PersonAddress> personAddressList = personAddressService.getAddressPartsByPersonId(personId);
+        for (PersonAddress address : personAddressList) {
+            if (address.getAddressPartId().equals(ADDRESS_PART_COMMUNE_ID)) {
+                address.setValue(orderPatient.getAddressCommune());
+                address.setSysUserId(SERVICE_USER_ID);
+                personAddressService.update(address);
+            }
+        }
     }
 
     private void updateIdentityIfNeeded(String identityTypeId, String newIdentityValue, String patientId,
@@ -303,6 +344,17 @@ public class DBOrderPersister implements IOrderPersister {
     private boolean needsUpdating(String orderPatientValue, String currentPatientValue) {
         return !GenericValidator.isBlankOrNull(orderPatientValue)
                 && StringUtil.compareWithNulls(currentPatientValue, orderPatientValue) != 0;
+    }
+
+    private void insertNewPatientInfo(String partId, String value, String type, String personId) {
+        PersonAddress address;
+        address = new PersonAddress();
+        address.setPersonId(personId);
+        address.setAddressPartId(partId);
+        address.setType(type);
+        address.setValue(value);
+        address.setSysUserId(SERVICE_USER_ID);
+        personAddressService.insert(address);
     }
 
     @Override

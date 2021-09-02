@@ -502,8 +502,8 @@ function parseSampletypes(sampletypes, SampleTypes) {
             }
             var panelnodes = getNodeNamesByTagName(panels, "panel");
             var testnodes  = getNodeNamesByTagName(tests, "test");
-            var collectionDate = getNodeNamesByTagName(collection, "date");
-            var collectionTime = getNodeNamesByTagName(collection, "time");
+            var collectionDate = collection.getElementsByTagName("date");
+            var collectionTime = collection.getElementsByTagName("time");
             
             addPanelsToSampleType(sampleTypeInList, panelnodes);
             addTestsToSampleType(sampleTypeInList, testnodes);
@@ -527,10 +527,10 @@ function addTestsToSampleType(sampleType, testNodes) {
 
 function addCollectionToSampleType(sampleType, collectionDate, collectionTime) {
     for (var i=0; i<collectionDate.length; i++) {
-        sampleType.collectionDate = collectionDate[i];
+        sampleType.collectionDate = collectionDate[i].firstChild.nodeValue;
      }
     for (var i=0; i<collectionTime.length; i++) {
-        sampleType.collectionTime = collectionTime[i];
+        sampleType.collectionTime = collectionTime[i].firstChild.nodeValue;
      }
  }
 
