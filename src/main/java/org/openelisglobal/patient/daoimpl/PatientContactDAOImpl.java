@@ -27,7 +27,7 @@ public class PatientContactDAOImpl extends BaseDAOImpl<PatientContact, String> i
         try {
             String sql = "From PatientContact p where p.patientId = :patientId";
             Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            query.setString("patientId", patientId);
+            query.setParameter("patientId", Integer.parseInt(patientId));
             patients = query.list();
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
