@@ -126,7 +126,7 @@ public class PatientSearchPopulateProvider extends BaseQueryProvider {
         PatientIdentityTypeMap identityMap = PatientIdentityTypeMap.getInstance();
 
         List<PatientIdentity> identityList = PatientUtil.getIdentityListForPatient(patient.getId());
-        List<PatientContact> patientContacts = patientContactService.getAllMatching("patientId", patient.getId());
+        List<PatientContact> patientContacts = patientContactService.getForPatient(patient.getId());
 
         String city = getAddress(person, ADDRESS_PART_VILLAGE_ID);
         if (GenericValidator.isBlankOrNull(city)) {
