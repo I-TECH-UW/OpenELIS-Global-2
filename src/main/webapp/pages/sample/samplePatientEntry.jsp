@@ -372,6 +372,11 @@ function processLabOrderSuccess(xhr){
             parseRequestingOrg(requestingOrg);
         }
 
+        var location = order.getElementsByTagName('location');
+        if (location && !jQuery("#requesterId").val()) {
+            parseLocation(location);
+        }
+
         var useralert = order.getElementsByTagName("user_alert");
         var alertMessage = "";
         if (useralert) {
@@ -470,6 +475,15 @@ function parseRequestingOrg(requestingOrg) {
     var id = "";
     if (requestingOrgId.length > 0) {
             id = requestingOrgId[0].firstChild.nodeValue;
+    }
+	jQuery("#requesterId").val(id).change();
+}
+
+function parseLocation(location) {
+	var locationId = location.item(0).getElementsByTagName("id");
+    var id = "";
+    if (locationId.length > 0) {
+            id = locationId[0].firstChild.nodeValue;
     }
 	jQuery("#requesterId").val(id).change();
 }

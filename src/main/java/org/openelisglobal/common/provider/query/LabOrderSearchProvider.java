@@ -34,6 +34,7 @@ import org.hl7.fhir.r4.model.Coding;
 import org.hl7.fhir.r4.model.ContactPoint;
 import org.hl7.fhir.r4.model.ContactPoint.ContactPointSystem;
 import org.hl7.fhir.r4.model.Identifier;
+import org.hl7.fhir.r4.model.Location;
 import org.hl7.fhir.r4.model.Organization;
 import org.hl7.fhir.r4.model.Patient;
 import org.hl7.fhir.r4.model.Practitioner;
@@ -100,6 +101,7 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
     private Practitioner requesterPerson = null;
     private Practitioner collector = null;
     private Organization referringOrganization = null;
+    private Location location = null;
     private ServiceRequest serviceRequest = null;
     private Specimen specimen = null;
     private Patient patient = null;
@@ -215,6 +217,21 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
                 }
             }
 
+            if (!GenericValidator
+                    .isBlankOrNull(serviceRequest.getLocationReferenceFirstRep().getReferenceElement().getIdPart())) {
+                location = localFhirClient.read()//
+                        .resource(Location.class)//
+                        .withId(serviceRequest.getLocationReferenceFirstRep().getReferenceElement().getIdPart())//
+                        .execute();
+
+                if (location != null) {
+                    LogEvent.logDebug(this.getClass().getName(), "processRequest",
+                            "found matching location " + location.getIdElement().getIdPart());
+                } else {
+                    LogEvent.logDebug(this.getClass().getName(), "processRequest", "no matching location");
+                }
+            }
+
             if (!GenericValidator.isBlankOrNull(serviceRequest.getRequester().getReferenceElement().getIdPart())
                     && task.getRequester().getReference().contains(ResourceType.Practitioner.toString())) {
                 requesterPerson = localFhirClient.read()//
@@ -308,6 +325,7 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
         xml.append("<order>");
         addRequester(xml);
         addRequestingOrg(xml);
+        addLocation(xml);
         addPatientGuid(xml, patientGuid);
         addSampleTypes(xml);
         addCrossPanels(xml);
@@ -325,6 +343,18 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
             XMLUtil.appendKeyValue("id", organization.getId(), xml);
         }
         xml.append("</requestingOrg>");
+
+    }
+
+    private void addLocation(StringBuilder xml) {
+        xml.append("<location>");
+        if (location != null) {
+            org.openelisglobal.organization.valueholder.Organization organization = organizationService
+                    .getOrganizationByFhirId(location.getIdElement().getIdPart());
+            XMLUtil.appendKeyValue("fhir-id", location.getIdElement().getIdPart(), xml);
+            XMLUtil.appendKeyValue("id", organization.getId(), xml);
+        }
+        xml.append("</location>");
 
     }
 
