@@ -17,7 +17,6 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.validator.GenericValidator;
 import org.hl7.fhir.r4.model.Address;
-import org.hl7.fhir.r4.model.Address.AddressUse;
 import org.hl7.fhir.r4.model.Annotation;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.CodeableConcept;
@@ -494,7 +493,6 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 
     private Address transformToAddress(Person person) {
         return new Address()//
-                .setUse(AddressUse.NULL)//
                 .setCountry(person.getCountry())//
                 .setCity(person.getCity())//
                 .setState(person.getState())//

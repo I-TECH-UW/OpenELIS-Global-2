@@ -539,7 +539,8 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
 
     private void addCollection(StringBuilder xml, String parent, Specimen specimen, Practitioner collector) {
         xml.append(XMLUtil.makeStartTag(parent));
-        if (specimen != null) {
+        if (specimen != null && !GenericValidator
+                .isBlankOrNull(specimen.getCollection().getCollectedDateTimeType().getValueAsString())) {
             XMLUtil.appendKeyValue("date",
                     DateUtil.formatDateAsText(specimen.getCollection().getCollectedDateTimeType().getValue()), xml);
             XMLUtil.appendKeyValue("time",
