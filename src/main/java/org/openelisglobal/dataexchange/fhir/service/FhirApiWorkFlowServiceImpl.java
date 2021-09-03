@@ -10,6 +10,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.apache.commons.validator.GenericValidator;
+import org.hl7.fhir.instance.model.api.IBaseBundle;
 import org.hl7.fhir.instance.model.api.IDomainResource;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Bundle.BundleEntryComponent;
@@ -353,6 +354,8 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         if (remoteStoreIdentifier.isEmpty()) {
             return;
         }
+
+        List<Bundle> importBundles = new ArrayList<>();
         LogEvent.logDebug(this.getClass().getName(), "beginTaskImportOrderPath", "searching for Tasks");
         IGenericClient sourceFhirClient = fhirUtil.getFhirClient(remoteStorePath);
         IQuery<Bundle> searchQuery = sourceFhirClient.search()//
@@ -363,28 +366,43 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
 //                .include(Task.INCLUDE_BASED_ON)//
                 .where(Task.STATUS.exactly().code(TaskStatus.REQUESTED.toCode()))//
                 .where(Task.OWNER.hasAnyOfIds(remoteStoreIdentifier));
-        Bundle bundle = searchQuery.execute();
-
-        if (bundle.hasEntry()) {
+        Bundle importBundle = searchQuery.execute();
+        importBundles.add(importBundle);
+        if (importBundle.hasEntry()) {
             LogEvent.logDebug(this.getClass().getName(), "beginTaskImportOrderPath",
-                    "received bundle with " + bundle.getEntry().size() + " entries");
+                    "received bundle with " + importBundle.getEntry().size() + " entries");
         } else {
             LogEvent.logDebug(this.getClass().getName(), "beginTaskImportOrderPath", "received bundle with 0 entries");
         }
-        for (BundleEntryComponent bundleComponent : bundle.getEntry()) {
 
-            if (bundleComponent.hasResource()
-                    && ResourceType.Task.equals(bundleComponent.getResource().getResourceType())) {
+        while (importBundle.getLink(IBaseBundle.LINK_NEXT) != null) {
+            LogEvent.logDebug(this.getClass().getName(), "beginTaskImportOrderPath", "following next link");
+            importBundle = sourceFhirClient.loadPage().next(importBundle).execute();
+            importBundles.add(importBundle);
+            if (importBundle.hasEntry()) {
+                LogEvent.logDebug(this.getClass().getName(), "beginTaskImportOrderPath",
+                        "received bundle with " + importBundle.getEntry().size() + " entries");
+            } else {
+                LogEvent.logDebug(this.getClass().getName(), "beginTaskImportOrderPath",
+                        "received bundle with 0 entries");
+            }
+        }
 
-                Task remoteTask = (Task) bundleComponent.getResource();
-                try {
-                    processTaskImportOrder(remoteTask, remoteStorePath, sourceFhirClient, bundle);
-                } catch (RuntimeException | FhirLocalPersistingException e) {
-                    LogEvent.logError(e);
-                    LogEvent.logError(this.getClass().getName(), "beginTaskImportOrderPath",
-                            "could not process Task with identifier : " + remoteTask.getId());
+        for (Bundle bundle : importBundles) {
+            for (BundleEntryComponent bundleComponent : bundle.getEntry()) {
+                if (bundleComponent.hasResource()
+                        && ResourceType.Task.equals(bundleComponent.getResource().getResourceType())) {
+
+                    Task remoteTask = (Task) bundleComponent.getResource();
+                    try {
+                        processTaskImportOrder(remoteTask, remoteStorePath, sourceFhirClient, bundle);
+                    } catch (RuntimeException | FhirLocalPersistingException e) {
+                        LogEvent.logError(e);
+                        LogEvent.logError(this.getClass().getName(), "beginTaskImportOrderPath",
+                                "could not process Task with identifier : " + remoteTask.getId());
+                    }
+
                 }
-
             }
         }
     }
