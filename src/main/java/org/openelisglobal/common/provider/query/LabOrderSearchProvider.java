@@ -17,6 +17,7 @@
 package org.openelisglobal.common.provider.query;
 
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,6 +34,7 @@ import org.hl7.fhir.r4.model.Coding;
 import org.hl7.fhir.r4.model.ContactPoint;
 import org.hl7.fhir.r4.model.ContactPoint.ContactPointSystem;
 import org.hl7.fhir.r4.model.Identifier;
+import org.hl7.fhir.r4.model.Location;
 import org.hl7.fhir.r4.model.Organization;
 import org.hl7.fhir.r4.model.Patient;
 import org.hl7.fhir.r4.model.Practitioner;
@@ -43,6 +45,7 @@ import org.hl7.fhir.r4.model.Task;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.ExternalOrderStatus;
+import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.XMLUtil;
 import org.openelisglobal.dataexchange.fhir.FhirConfig;
 import org.openelisglobal.dataexchange.fhir.FhirUtil;
@@ -96,7 +99,9 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
 
     private Task task = null;
     private Practitioner requesterPerson = null;
+    private Practitioner collector = null;
     private Organization referringOrganization = null;
+    private Location location = null;
     private ServiceRequest serviceRequest = null;
     private Specimen specimen = null;
     private Patient patient = null;
@@ -212,6 +217,21 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
                 }
             }
 
+            if (!GenericValidator
+                    .isBlankOrNull(serviceRequest.getLocationReferenceFirstRep().getReferenceElement().getIdPart())) {
+                location = localFhirClient.read()//
+                        .resource(Location.class)//
+                        .withId(serviceRequest.getLocationReferenceFirstRep().getReferenceElement().getIdPart())//
+                        .execute();
+
+                if (location != null) {
+                    LogEvent.logDebug(this.getClass().getName(), "processRequest",
+                            "found matching location " + location.getIdElement().getIdPart());
+                } else {
+                    LogEvent.logDebug(this.getClass().getName(), "processRequest", "no matching location");
+                }
+            }
+
             if (!GenericValidator.isBlankOrNull(serviceRequest.getRequester().getReferenceElement().getIdPart())
                     && task.getRequester().getReference().contains(ResourceType.Practitioner.toString())) {
                 requesterPerson = localFhirClient.read()//
@@ -224,6 +244,21 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
                             "found matching requester " + requesterPerson.getIdElement().getIdPart());
                 } else {
                     LogEvent.logDebug(this.getClass().getName(), "processRequest", "no matching requester");
+                }
+            }
+
+            if (specimen != null && !GenericValidator
+                    .isBlankOrNull(specimen.getCollection().getCollector().getReferenceElement().getIdPart())) {
+                collector = localFhirClient.read()//
+                        .resource(Practitioner.class)//
+                        .withId(specimen.getCollection().getCollector().getReferenceElement().getIdPart())//
+                        .execute();
+
+                if (collector != null) {
+                    LogEvent.logDebug(this.getClass().getName(), "processRequest",
+                            "found matching collector " + collector.getIdElement().getIdPart());
+                } else {
+                    LogEvent.logDebug(this.getClass().getName(), "processRequest", "no matching collector");
                 }
             }
         }
@@ -290,6 +325,7 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
         xml.append("<order>");
         addRequester(xml);
         addRequestingOrg(xml);
+        addLocation(xml);
         addPatientGuid(xml, patientGuid);
         addSampleTypes(xml);
         addCrossPanels(xml);
@@ -307,6 +343,18 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
             XMLUtil.appendKeyValue("id", organization.getId(), xml);
         }
         xml.append("</requestingOrg>");
+
+    }
+
+    private void addLocation(StringBuilder xml) {
+        xml.append("<location>");
+        if (location != null) {
+            org.openelisglobal.organization.valueholder.Organization organization = organizationService
+                    .getOrganizationByFhirId(location.getIdElement().getIdPart());
+            XMLUtil.appendKeyValue("fhir-id", location.getIdElement().getIdPart(), xml);
+            XMLUtil.appendKeyValue("id", organization.getId(), xml);
+        }
+        xml.append("</location>");
 
     }
 
@@ -515,7 +563,28 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
         XMLUtil.appendKeyValue("name", typeOfSample.getLocalizedName(), xml);
         addPanels(xml, panelTestLists.getPanels(), typeOfSample.getId());
         addTests(xml, "tests", panelTestLists.getTests());
+        addCollection(xml, "collection", specimen, collector);
         xml.append("</sampleType>");
+    }
+
+    private void addCollection(StringBuilder xml, String parent, Specimen specimen, Practitioner collector) {
+        xml.append(XMLUtil.makeStartTag(parent));
+        if (specimen != null && !GenericValidator
+                .isBlankOrNull(specimen.getCollection().getCollectedDateTimeType().getValueAsString())) {
+            XMLUtil.appendKeyValue("date",
+                    DateUtil.formatDateAsText(specimen.getCollection().getCollectedDateTimeType().getValue()), xml);
+            XMLUtil.appendKeyValue("time",
+                    DateUtil.formatTimeAsText(specimen.getCollection().getCollectedDateTimeType().getValue()), xml);
+            XMLUtil.appendKeyValue("dateTime", specimen.getCollection().getCollectedDateTimeType().getValueAsString(),
+                    xml);
+        }
+        if (collector != null) {
+            XMLUtil.appendKeyValue("collector",
+                    collector.getNameFirstRep().getGivenAsSingleString() + collector.getNameFirstRep().getFamily(),
+                    xml);
+        }
+        xml.append(XMLUtil.makeEndTag(parent));
+
     }
 
     private void addPanels(StringBuilder xml, List<Panel> panels, String sampleTypeId) {
@@ -639,6 +708,8 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
     public class PanelTestLists {
         private List<Test> tests = new ArrayList<>();
         private List<Panel> panels = new ArrayList<>();
+        private Timestamp collectionTime;
+        private String collector;
 
         public List<Test> getTests() {
             return tests;
@@ -658,6 +729,22 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
             if (test != null) {
                 tests.add(test);
             }
+        }
+
+        public Timestamp getCollectionTime() {
+            return collectionTime;
+        }
+
+        public void setCollectionTime(Timestamp collectionTime) {
+            this.collectionTime = collectionTime;
+        }
+
+        public String getCollector() {
+            return collector;
+        }
+
+        public void setCollector(String collector) {
+            this.collector = collector;
         }
 
     }

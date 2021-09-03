@@ -43,6 +43,59 @@ public class FhirTransformationController extends BaseController {
 
     private static boolean running = false;
 
+    @GetMapping("/PatientToFhir")
+    public void transformPersistFhirPatients(@RequestParam(defaultValue = "false") Boolean checkAll,
+            @RequestParam(defaultValue = "100") int batchSize, @RequestParam(defaultValue = "1") int threads,
+            HttpServletResponse response) throws FhirLocalPersistingException, IOException {
+
+        List<Patient> patients;
+        int batches = 0;
+        int batchFailure = 0;
+        if (checkAll) {
+            patients = sampleHumanService.getAllPatientsWithSampleEntered();
+        } else {
+            patients = sampleHumanService.getAllPatientsWithSampleEnteredMissingFhirUuid();
+        }
+        LogEvent.logDebug(this.getClass().getName(), "transformPersistFhirPatients",
+                "patients to convert: " + patients.size());
+        List<String> patientIds = new ArrayList<>();
+        List<Future<Bundle>> promises = new ArrayList<>();
+        for (int i = 0; i < patients.size(); ++i) {
+            patientIds.add(patients.get(i).getId());
+            if (i % batchSize == batchSize - 1 || i + 1 == patients.size()) {
+                LogEvent.logDebug(this.getClass().getName(), "",
+                        "persisting batch " + (i - batchSize + 1) + "-" + i + " of " + patients.size());
+                try {
+                    promises.add(fhirTransformService.transformPersistPatients(patientIds));
+                    ++batches;
+                    patientIds = new ArrayList<>();
+                    if (promises.size() >= threads || i + 1 == patients.size()) {
+                        waitForResults(promises);
+                        promises = new ArrayList<>();
+                    }
+                } catch (FhirPersistanceException e) {
+                    ++batchFailure;
+                    LogEvent.logError(e);
+                    LogEvent.logError(this.getClass().getName(), "transformPersistFhirPatients",
+                            "error persisting batch " + (i - batchSize + 1) + "-" + i);
+                } catch (Exception e) {
+                    ++batchFailure;
+                    LogEvent.logError(e);
+                    LogEvent.logError(this.getClass().getName(), "transformPersistFhirPatients",
+                            "error with batch " + (i - batchSize + 1) + "-" + i);
+                } finally {
+                    if (promises.size() >= threads || i + 1 == patients.size()) {
+                        promises = new ArrayList<>();
+                    }
+                }
+            }
+        }
+        LogEvent.logDebug(this.getClass().getName(), "transformPersistFhirPatients", "finished all batches");
+
+        response.getWriter().println("patient batches total: " + batches);
+        response.getWriter().println("patient batches failed: " + batchFailure);
+    }
+
     @GetMapping("/OEToFhir")
     public void transformPersistMissingFhirObjects(@RequestParam(defaultValue = "false") Boolean checkAll,
             @RequestParam(defaultValue = "100") int batchSize, @RequestParam(defaultValue = "1") int threads,

@@ -141,8 +141,14 @@ function addTypeToTable(table, sampleDescription, sampleType, currentTime, curre
 		sampleId.innerHTML = getSampleIdHtml(rowLabel);
 		type.innerHTML = getSampleTypeHtml( rowLabel, sampleDescription, sampleType );
 		if( useCollectionDate ){
-			collectionDate.innerHTML = getCollectionDateHtml( rowLabel, autoFillCollectionDate ? currentDate : "" );
-			collectionTime.innerHTML = getCollectionTimeHtml( rowLabel, autoFillCollectionDate ? currentTime : "" );
+			var sampleTypeEntry = getSampleTypeMapEntry(sampleType);
+			if (sampleTypeEntry && typeof sampleTypeEntry.collectionDate !== 'undefined') {
+				collectionDate.innerHTML = getCollectionDateHtml( rowLabel, sampleTypeEntry.collectionDate);
+				collectionTime.innerHTML = getCollectionTimeHtml( rowLabel, sampleTypeEntry.collectionTime);
+			} else {
+				collectionDate.innerHTML = getCollectionDateHtml( rowLabel, autoFillCollectionDate ? currentDate : "" );
+				collectionTime.innerHTML = getCollectionTimeHtml( rowLabel, autoFillCollectionDate ? currentTime : "" );
+			}
 		}
 		if( useCollector ) {
 			collector.innerHTML = getCollectorHtml( rowLabel);

@@ -372,6 +372,11 @@ function processLabOrderSuccess(xhr){
             parseRequestingOrg(requestingOrg);
         }
 
+        var location = order.getElementsByTagName('location');
+        if (location && !jQuery("#requesterId").val()) {
+            parseLocation(location);
+        }
+
         var useralert = order.getElementsByTagName("user_alert");
         var alertMessage = "";
         if (useralert) {
@@ -474,6 +479,15 @@ function parseRequestingOrg(requestingOrg) {
 	jQuery("#requesterId").val(id).change();
 }
 
+function parseLocation(location) {
+	var locationId = location.item(0).getElementsByTagName("id");
+    var id = "";
+    if (locationId.length > 0) {
+            id = locationId[0].firstChild.nodeValue;
+    }
+	jQuery("#requesterId").val(id).change();
+}
+
 function parseSampletypes(sampletypes, SampleTypes) {
         
         var index = 0;
@@ -483,6 +497,7 @@ function parseSampletypes(sampletypes, SampleTypes) {
             var sampleTypeId   = sampletypes.item(i).getElementsByTagName("id")[0].firstChild.nodeValue;
             var panels         = sampletypes.item(i).getElementsByTagName("panels")[0];
             var tests          = sampletypes.item(i).getElementsByTagName("tests")[0];
+            var collection     = sampletypes.item(i).getElementsByTagName("collection")[0];
             var sampleTypeInList = getSampleTypeMapEntry(sampleTypeId);
             if (!sampleTypeInList) {
                 index++;
@@ -501,9 +516,12 @@ function parseSampletypes(sampletypes, SampleTypes) {
             }
             var panelnodes = getNodeNamesByTagName(panels, "panel");
             var testnodes  = getNodeNamesByTagName(tests, "test");
+            var collectionDate = collection.getElementsByTagName("date");
+            var collectionTime = collection.getElementsByTagName("time");
             
             addPanelsToSampleType(sampleTypeInList, panelnodes);
             addTestsToSampleType(sampleTypeInList, testnodes);
+            addCollectionToSampleType(sampleTypeInList, collectionDate, collectionTime);
            
         }
 
@@ -520,6 +538,15 @@ function addTestsToSampleType(sampleType, testNodes) {
        sampleType.tests[sampleType.tests.length] = new Test(testNodes[i].id, testNodes[i].name);
     }
 }
+
+function addCollectionToSampleType(sampleType, collectionDate, collectionTime) {
+    for (var i=0; i<collectionDate.length; i++) {
+        sampleType.collectionDate = collectionDate[i].firstChild.nodeValue;
+     }
+    for (var i=0; i<collectionTime.length; i++) {
+        sampleType.collectionTime = collectionTime[i].firstChild.nodeValue;
+     }
+ }
 
 
 function parseCrossPanels(crosspanels, crossSampleTypeMap, crossSampleTypeOrderMap) {

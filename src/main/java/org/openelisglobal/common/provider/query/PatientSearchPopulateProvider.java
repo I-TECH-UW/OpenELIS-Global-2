@@ -79,12 +79,12 @@ public class PatientSearchPopulateProvider extends BaseQueryProvider {
         String patientKey = request.getParameter("personKey");
         StringBuilder xml = new StringBuilder();
         String result = null;
-        if (nationalId != null) {
-            result = createSearchResultXML(patientService.getPatientByNationalId(nationalId), xml);
+        if (!GenericValidator.isBlankOrNull(patientKey)) {
+            result = createSearchResultXML(getPatientForID(patientKey), xml);
         } else if (externalId != null) {
             result = createSearchResultXML(patientService.getPatientByExternalId(externalId), xml);
-        } else {
-            result = createSearchResultXML(getPatientForID(patientKey), xml);
+        } else if (nationalId != null) {
+            result = createSearchResultXML(patientService.getPatientByNationalId(nationalId), xml);
         }
         if (!result.equals(VALID)) {
             result = MessageUtil.getMessage("patient.message.patientNotFound");
@@ -126,7 +126,7 @@ public class PatientSearchPopulateProvider extends BaseQueryProvider {
         PatientIdentityTypeMap identityMap = PatientIdentityTypeMap.getInstance();
 
         List<PatientIdentity> identityList = PatientUtil.getIdentityListForPatient(patient.getId());
-        List<PatientContact> patientContacts = patientContactService.getAllMatching("patientId", patient.getId());
+        List<PatientContact> patientContacts = patientContactService.getForPatient(patient.getId());
 
         String city = getAddress(person, ADDRESS_PART_VILLAGE_ID);
         if (GenericValidator.isBlankOrNull(city)) {

@@ -71,8 +71,14 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
             organizationService.deactivateAllOrganizations();
             importOrgsFromBundle(client, responseBundles);
 
+            responseBundles = new ArrayList<>();
             responseBundle = client.search().forResource(org.hl7.fhir.r4.model.Location.class)
                     .returnBundle(Bundle.class).execute();
+            responseBundles.add(responseBundle);
+            while (responseBundle.getLink(IBaseBundle.LINK_NEXT) != null) {
+                responseBundle = client.loadPage().next(responseBundle).execute();
+                responseBundles.add(responseBundle);
+            }
             importLocationsFromBundle(client, responseBundles);
         }
         DisplayListService.getInstance().refreshList(ListType.REFERRAL_ORGANIZATIONS);
