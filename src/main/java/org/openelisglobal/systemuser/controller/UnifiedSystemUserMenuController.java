@@ -39,7 +39,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class UnifiedSystemUserMenuController extends BaseMenuController<UnifiedSystemUser> {
 
-    private static final String[] ALLOWED_FIELDS = new String[] { "selectedIds*" };
+    private static final String[] ALLOWED_FIELDS = new String[] { "selectedIDs*" };
 
     @Autowired
     SystemUserService systemUserService;
