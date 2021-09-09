@@ -2,8 +2,7 @@
 	contentType="text/html; charset=UTF-8"
 	import="org.apache.commons.validator.GenericValidator, 
 			org.openelisglobal.common.action.IActionConstants,
-			org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory,
-			org.openelisglobal.common.provider.validation.IAccessionNumberValidator,
+			org.openelisglobal.sample.util.AccessionNumberUtil,
 			org.openelisglobal.common.util.IdValuePair,
 			org.openelisglobal.internationalization.MessageUtil,
 			org.openelisglobal.common.util.Versioning,
@@ -31,12 +30,8 @@
 <c:set var="resultCount" value="${fn:length(results)}" />
 <c:set var="rowColorIndex" value="${2}" />
 
-<%!
-	AccessionNumberValidatorFactory accessionNumberValidatorFactory = new AccessionNumberValidatorFactory();
-%>
 <%
 	int rowColorIndex = 2;
-	IAccessionNumberValidator accessionNumberValidator = accessionNumberValidatorFactory.getValidator();
 	String searchTerm = request.getParameter("searchTerm");
 	String url = request.getAttribute("javax.servlet.forward.servlet_path").toString();	
 	//boolean showTestSectionSelect = !ConfigurationProperties.getInstance().isPropertyValueEqual(Property.configurationName, "CI RetroCI");
@@ -162,21 +157,10 @@ function savePage() {
         return;
     }
 
-  window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
+    window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
 	var form = document.getElementById("mainForm");
 	form.action = "ResultValidation.do" + '?type=<spring:escapeBody javaScriptEscape="true">${testSection}</spring:escapeBody>&test=<spring:escapeBody javaScriptEscape="true">${testName}</spring:escapeBody>&';
 	form.submit();
-}
-
-function submitTestSectionSelect( element ) {
-	
-	var testSectionNameIdHash = [];
-
-	<c:forEach items="${testSectionsByName}" var="testSection">
-		testSectionNameIdHash["${testSection.id}"] = "${testSection.value}";
-	</c:forEach>
-		window.location.href = "ResultValidation.do?testSectionId=" + element.value + "&test=&type=" + testSectionNameIdHash[element.value];
-	
 }
 
 function toggleSelectAll( element ) {
@@ -299,40 +283,26 @@ function /*boolean*/ handleEnterEvent(){
 	return false;
 }
 
-</script>
+function altAccessionHighlightSearch(accessionNumber) {
+	if (confirm('Searching for an individual Lab no will take you to a new page.\n\nUnsaved data on this page will be lost.\n\nWould you like to continue?')) {
+		window.onbeforeunload = null;
+		var params = new URLSearchParams("accessionNumber=" + accessionNumber);
+		window.location = "AccessionValidation.do?" + params.toString();
+	}
+}
 
-<% if( !(url.contains("RetroC"))){ %>
-<div id="searchDiv" class="colorFill"  >
-<div id="PatientPage" class="colorFill" style="display:inline" >
-<h2><spring:message code="sample.entry.search"/></h2>
-	<table width="30%">
-		<tr>
-			<td width="50%" align="right" >
-				<%= MessageUtil.getMessage("workplan.unit.types") %>
-			</td>
-			<td>			
-				<form:select path="testSectionId" 
-					 onchange="submitTestSectionSelect(this);" >
-					<option value=""></option>
-					<form:options items="${form.testSections}" itemLabel="value" itemValue="id" />
-				</form:select>
-		   	</td>
-		</tr>
-	</table>
-	<br/>
-	<h1>
-		
-	</h1>
-</div>
-</div>
-	<% }%>
+</script>
 
 <c:if test="${resultCount != 0}">
 <div  style="width:80%" >
 	<form:hidden path="paging.currentPage" id="currentPageID" />
 	<c:set var="total" value="${form.paging.totalPages}"/>
 	<c:set var="currentPage" value="${form.paging.currentPage}"/>
-	
+	1- <c:out value="${pageSize}"/>
+	<c:if test="${analysisCount != 0}">
+		 of <c:out value="${analysisCount}"/>
+	</c:if>
+	<c:if test="${empty analysisCount}">
 	<button type="button" style="width:100px;" onclick="pager.pageBack();" <c:if test="${currentPage == 1}">disabled="disabled"</c:if>>
 		<spring:message code="label.button.previous"/>
 	</button>
@@ -342,13 +312,14 @@ function /*boolean*/ handleEnterEvent(){
 	&nbsp;
 	<c:out value="${form.paging.currentPage}"/> <spring:message code="report.pageNumberOf" />
 	<c:out value="${form.paging.totalPages}"/>
+	</c:if>
 	<span style="float : right" >
 	<span style="visibility: hidden" id="searchNotFound"><em><%= MessageUtil.getMessage("search.term.notFound") %></em></span>
 	<%=MessageUtil.getContextualMessage("result.sample.id")%> : &nbsp;
 	<input type="text"
 	       id="labnoSearch"
 	       placeholder='<spring:message code="sample.search.scanner.instructions"/>'
-	       maxlength='<%= Integer.toString(accessionNumberValidator.getMaxAccessionLength())%>' />
+	       maxlength='<%= Integer.toString(AccessionNumberUtil.getMaxAccessionLength())%>' />
 	<input type="button" onclick="pageSearch.doLabNoSearch(document.getElementById('labnoSearch'))" value='<%= MessageUtil.getMessage("label.button.search") %>'>
 	</span>
 </div>
@@ -662,19 +633,22 @@ function /*boolean*/ handleEnterEvent(){
 	
 	  	
 </Table>
-
-<c:if test="${resultCount != 0}">
+<c:if test="${not (form.paging.totalPages == 0)}">
+	1- <c:out value="${pageSize}"/>
+	<c:if test="${analysisCount != 0}">
+		 of <c:out value="${analysisCount}"/>
+	</c:if>
+	<c:if test="${empty analysisCount}">
 	<c:set var="total" value="${form.paging.totalPages}"/>
 	<c:set var="currentPage" value="${form.paging.currentPage}"/>
-
 	<button type="button" style="width:100px;" onclick="pager.pageBack();" <c:if test="${currentPage == 1}">disabled="disabled"</c:if>>
 		<spring:message code="label.button.previous"/>
 	</button>
 	<button type="button" style="width:100px;" onclick="pager.pageFoward();" <c:if test="${currentPage == total}">disabled="disabled"</c:if>>
 		<spring:message code="label.button.next"/>
 	</button>
-
 	&nbsp;
 	<c:out value="${form.paging.currentPage}"/> of
 	<c:out value="${form.paging.totalPages}"/>
+	</c:if>
 </c:if>

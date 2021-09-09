@@ -168,7 +168,7 @@ public class ReferredOutReport extends PatientReport implements IReportParameter
 
     @Override
     protected void createReportItems() {
-        List<Referral> referrals = referralService.getAllReferralsByOrganization(locationId, dateRange.getLowDate(),
+        List<Referral> referrals = referralService.getReferralsByOrganization(locationId, dateRange.getLowDate(),
                 dateRange.getHighDateAtEndOfDay());
 
         for (Referral referral : referrals) {

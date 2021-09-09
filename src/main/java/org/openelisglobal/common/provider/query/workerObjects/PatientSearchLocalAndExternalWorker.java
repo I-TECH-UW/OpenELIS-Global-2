@@ -36,7 +36,6 @@ import org.openelisglobal.common.provider.query.ExtendedPatientSearchResults;
 import org.openelisglobal.common.provider.query.PatientSearchResults;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
-import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.patient.service.PatientService;
 import org.openelisglobal.patient.valueholder.Patient;
@@ -92,7 +91,8 @@ public class PatientSearchLocalAndExternalWorker extends PatientSearchWorker {
 
         List<PatientSearchResults> localResults = new ArrayList<>();
         localResults = searchResultsService.getSearchResults(lastName, firstName, STNumber, subjectNumber, nationalID,
-                nationalID, patientID, guid, "", "");
+                guid, patientID, guid, "", "");
+        localResults.forEach(e -> e.setDataSourceName(MessageUtil.getMessage("patient.local.source")));
         allResults.addAll(localResults);
 
         if (config.getPropertyValue(Property.INFO_HIGHWAY_ENABLED).equals("true")) {
@@ -100,8 +100,7 @@ public class PatientSearchLocalAndExternalWorker extends PatientSearchWorker {
             externalSearch.setSearchCriteria(lastName, firstName, STNumber, subjectNumber, nationalID, guid);
             externalSearch.setConnectionCredentials(config.getPropertyValue(Property.INFO_HIGHWAY_ADDRESS),
                     config.getPropertyValue(Property.INFO_HIGHWAY_USERNAME),
-                    config.getPropertyValue(Property.INFO_HIGHWAY_PASSWORD),
-                    (int) SystemConfiguration.getInstance().getSearchTimeLimit());
+                    config.getPropertyValue(Property.INFO_HIGHWAY_PASSWORD));
 
             externalSearches.add(externalSearch);
         }
@@ -111,8 +110,7 @@ public class PatientSearchLocalAndExternalWorker extends PatientSearchWorker {
             externalSearch.setSearchCriteria(lastName, firstName, STNumber, subjectNumber, nationalID, guid);
             externalSearch.setConnectionCredentials(config.getPropertyValue(Property.PatientSearchURL),
                     config.getPropertyValue(Property.PatientSearchUserName),
-                    config.getPropertyValue(Property.PatientSearchPassword),
-                    (int) SystemConfiguration.getInstance().getSearchTimeLimit());
+                    config.getPropertyValue(Property.PatientSearchPassword));
 
             externalSearches.add(externalSearch);
         }
@@ -124,7 +122,7 @@ public class PatientSearchLocalAndExternalWorker extends PatientSearchWorker {
             try {
                 Future<Integer> futureExternalSearchResult = externalSearch.runExternalSearch();
                 Integer externalSearchResult = futureExternalSearchResult
-                        .get(SystemConfiguration.getInstance().getSearchTimeLimit() + 500, TimeUnit.MILLISECONDS);
+                        .get(externalSearch.getTimeout(), TimeUnit.MILLISECONDS);
 
                 if (externalSearchResult == 200) {
                     externalResults = externalSearch.getSearchResults();
@@ -134,15 +132,15 @@ public class PatientSearchLocalAndExternalWorker extends PatientSearchWorker {
                                     + " - failed response");
                 }
             } catch (InterruptedException | ExecutionException | TimeoutException | IllegalStateException e) {
-                LogEvent.logError(e.getMessage(), e);
+                LogEvent.logErrorStack(e);
             }
 
             findNewPatients(localResults, externalResults, newPatientsFromExternalSearch);
             insertNewPatients(newPatientsFromExternalSearch);
+            newPatientsFromExternalSearch
+                    .forEach(e -> e.setDataSourceName(MessageUtil.getMessage("patient.imported.source")));
             allResults.addAll(newPatientsFromExternalSearch);
         }
-        setSourceIndicators(allResults);
-
         sortPatients(allResults);
 
         if (allResults != null && allResults.size() > 0) {
@@ -255,14 +253,6 @@ public class PatientSearchLocalAndExternalWorker extends PatientSearchWorker {
                     newPatientsFromExternalSearch.add(externalResult);
                 }
             }
-        }
-    }
-
-    private void setSourceIndicators(List<PatientSearchResults> results) {
-        for (PatientSearchResults result : results) {
-            String messageKey = GenericValidator.isBlankOrNull(result.getGUID()) ? "patient.local.source"
-                    : "patient.imported.source";
-            result.setDataSourceName(MessageUtil.getMessage(messageKey));
         }
     }
 }

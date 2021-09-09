@@ -31,5 +31,7 @@
 		<property name="providerType" type="java.lang.String">
 			<column name="PROVIDER_TYPE" length="1" />
 		</property>
+		<property name="fhirUuid"
+			column="fhir_uuid" type="java.util.UUID" />
 	</class>
 </hibernate-mapping>

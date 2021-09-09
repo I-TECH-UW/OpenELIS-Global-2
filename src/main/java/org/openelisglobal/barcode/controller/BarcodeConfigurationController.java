@@ -5,6 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.barcode.form.BarcodeConfigurationForm;
 import org.openelisglobal.barcode.service.BarcodeInformationService;
 import org.openelisglobal.common.controller.BaseController;
@@ -27,7 +28,7 @@ public class BarcodeConfigurationController extends BaseController {
 
     private static final String[] ALLOWED_FIELDS = new String[] { "heightOrderLabels", "heightSpecimenLabels",
             "widthOrderLabels", "widthSpecimenLabels", "collectionDateCheck", "testsCheck", "patientSexCheck",
-            "numOrderLabels", "numSpecimenLabels" };
+            "numOrderLabels", "numSpecimenLabels", "prePrintDontUseAltAccession", "prePrintAltAccessionPrefix" };
 
     @Autowired
     private BarcodeInformationService barcodeInformationService;
@@ -96,12 +97,24 @@ public class BarcodeConfigurationController extends BaseController {
         form.setCollectionDateCheck(Boolean.valueOf(collectionDateCheck));
         form.setTestsCheck(Boolean.valueOf(testsCheck));
         form.setPatientSexCheck(Boolean.valueOf(patientSexCheck));
+
+        Boolean prePrintUseAltAccession = Boolean
+                .valueOf(ConfigurationProperties.getInstance().getPropertyValue(Property.USE_ALT_ACCESSION_PREFIX));
+        String prePrintAltAccessionPrefix = ConfigurationProperties.getInstance()
+                .getPropertyValue(Property.ALT_ACCESSION_PREFIX);
+        form.setPrePrintDontUseAltAccession(!prePrintUseAltAccession);
+        form.setPrePrintAltAccessionPrefix(prePrintAltAccessionPrefix);
+        form.setSitePrefix(ConfigurationProperties.getInstance().getPropertyValue(Property.ACCESSION_NUMBER_PREFIX));
     }
 
     @RequestMapping(value = "/BarcodeConfiguration", method = RequestMethod.POST)
     public ModelAndView barcodeConfigurationSave(HttpServletRequest request,
             @ModelAttribute("form") @Valid BarcodeConfigurationForm form, BindingResult result,
             RedirectAttributes redirectAttributes) {
+        if (!form.getPrePrintDontUseAltAccession()
+                && GenericValidator.isBlankOrNull(form.getPrePrintAltAccessionPrefix())) {
+            result.rejectValue("prePrintAltAccessionPrefix", "error.altaccession.required");
+        }
         if (result.hasErrors()) {
             saveErrors(result);
             form.setCancelAction("MasterListsPage.do");

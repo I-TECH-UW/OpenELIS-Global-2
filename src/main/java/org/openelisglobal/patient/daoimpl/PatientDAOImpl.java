@@ -18,6 +18,7 @@ package org.openelisglobal.patient.daoimpl;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
@@ -136,6 +137,15 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
 //			throw new LIMSRuntimeException("Error in Patient updateData()", e);
 //		}
 //	}
+
+    @Override
+    public Optional<Patient> get(String patientId) {
+        Optional<Patient> patient = super.get(patientId);
+        if (patient.isPresent()) {
+            updateDisplayValues(patient.get());
+        }
+        return patient;
+    }
 
     @Override
     @Transactional(readOnly = true)
@@ -379,6 +389,33 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
     @Transactional(readOnly = true)
     public Patient getPatientBySubjectNumber(String subjectNumber) {
         return getPatientByStringProperty("subjectNumber", subjectNumber);
+    }
+
+    @Override
+    public List<Patient> getAllMissingFhirUuid() {
+        String sql = "from Patient p where p.fhirUuid is NULL";
+        try {
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            List<Patient> patientList = query.list();
+
+            return patientList;
+        } catch (HibernateException e) {
+            handleException(e, "getAllMissingFhirUuid");
+        }
+        return new ArrayList<>();
+    }
+
+    @Override
+    public Patient getByExternalId(String id) {
+        String sql = "from Patient p where p.externalId = :id";
+        try {
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setParameter("id", id);
+            return (Patient) query.uniqueResult();
+        } catch (HibernateException e) {
+            handleException(e, "getByExternalId");
+        }
+        return null;
     }
 
 }

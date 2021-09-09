@@ -18,6 +18,7 @@ package org.openelisglobal.organization.daoimpl;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
@@ -300,7 +301,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 
     @Override
     @Transactional(readOnly = true)
-    public Organization getOrganizationByName(Organization organization, boolean ignoreCase)
+    public Organization getActiveOrganizationByName(Organization organization, boolean ignoreCase)
             throws LIMSRuntimeException {
         String sql = null;
         try {
@@ -318,8 +319,59 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
             }
 
             List<Organization> list = query.list();
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+            Organization org = null;
+            if (list.size() > 0) {
+                org = list.get(0);
+            }
+
+            return org;
+
+        } catch (RuntimeException e) {
+            // bugzilla 2154
+            LogEvent.logError(e.toString(), e);
+            throw new LIMSRuntimeException("Error in Organization getActiveOrganizationByName()", e);
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Organization> getActiveOrganizations() throws LIMSRuntimeException {
+        String sql = null;
+        try {
+            sql = "from Organization o where o.isActive='Y'";
+
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            List<Organization> list = query.list();
+
+            return list;
+
+        } catch (RuntimeException e) {
+            // bugzilla 2154
+            LogEvent.logError(e.toString(), e);
+            throw new LIMSRuntimeException("Error in Organization getActiveOrganizations()", e);
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Organization getOrganizationByName(Organization organization, boolean ignoreCase)
+            throws LIMSRuntimeException {
+        String sql = null;
+        try {
+            if (ignoreCase) {
+                sql = "from Organization o where trim(lower(o.organizationName)) = :param";
+            } else {
+                sql = "from Organization o where o.organizationName = :param";
+            }
+
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            if (ignoreCase) {
+                query.setString("param", organization.getOrganizationName().trim().toLowerCase());
+            } else {
+                query.setString("param", organization.getOrganizationName());
+            }
+
+            List<Organization> list = query.list();
             Organization org = null;
             if (list.size() > 0) {
                 org = list.get(0);
@@ -388,12 +440,8 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
             if (organization.getIsActive().equalsIgnoreCase(IActionConstants.YES)) {
                 // not case sensitive hemolysis and Hemolysis are considered
                 // duplicates
-                String sql = "from Organization o where ((trim(lower(o.organizationName))) = :orgName and o.isActive='Y' and o.id != :orgId)"
-                        + " or "
-                        + "((trim(lower(o.organizationLocalAbbreviation))) = :orgAbrv and o.isActive='Y' and o.id != :orgId)";
+                String sql = "from Organization o where ((trim(lower(o.organizationLocalAbbreviation))) = :orgAbrv and o.isActive='Y' and o.id != :orgId)";
                 org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-                query.setParameter("orgName", organization.getOrganizationName().toLowerCase().trim());
-
                 // initialize with 0 (for new records where no id has been generated yet
                 String orgId = "0";
                 if (!StringUtil.isNullorNill(organization.getId())) {
@@ -582,6 +630,31 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
             return orgs;
         } catch (HibernateException e) {
             handleException(e, "getOrganizationsByParentId");
+        }
+
+        return null;
+    }
+
+    @Override
+    public Organization getOrganizationByFhirId(String uuid) {
+        if (GenericValidator.isBlankOrNull(uuid)) {
+            return null;
+        }
+
+        String sql = "from Organization o where o.fhirUuid = :uuid";
+
+        try {
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setParameter("uuid", UUID.fromString(uuid));
+            List<Organization> list = query.list();
+            Organization org = null;
+            if (list.size() > 0) {
+                org = list.get(0);
+            }
+
+            return org;
+        } catch (HibernateException e) {
+            handleException(e, "getOrganizationByFhirId");
         }
 
         return null;

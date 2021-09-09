@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -19,6 +20,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.formfields.FormFields.Field;
@@ -36,15 +38,25 @@ import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.IdValuePair;
+import org.openelisglobal.dataexchange.fhir.exception.FhirPersistanceException;
+import org.openelisglobal.dataexchange.fhir.exception.FhirTransformationException;
+import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
+import org.openelisglobal.dictionary.service.DictionaryService;
+import org.openelisglobal.dictionary.valueholder.Dictionary;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.inventory.action.InventoryUtility;
 import org.openelisglobal.inventory.form.InventoryKitItem;
 import org.openelisglobal.note.service.NoteService;
 import org.openelisglobal.note.service.NoteServiceImpl.NoteType;
+import org.openelisglobal.organization.service.OrganizationService;
 import org.openelisglobal.patient.valueholder.Patient;
+import org.openelisglobal.referral.action.beanitems.ReferralItem;
 import org.openelisglobal.referral.service.ReferralService;
 import org.openelisglobal.referral.service.ReferralTypeService;
 import org.openelisglobal.referral.valueholder.Referral;
+import org.openelisglobal.referral.valueholder.ReferralResult;
+import org.openelisglobal.referral.valueholder.ReferralSet;
+import org.openelisglobal.referral.valueholder.ReferralStatus;
 import org.openelisglobal.referral.valueholder.ReferralType;
 import org.openelisglobal.result.action.util.ResultSet;
 import org.openelisglobal.result.action.util.ResultUtil;
@@ -85,8 +97,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class LogbookResultsController extends LogbookResultsBaseController {
 
-    private final String[] ALLOWED_FIELDS = new String[] { "collectionDate", "recievedDate", "selectedTest",
-            "selectedAnalysisStatus", "selectedSampleStatus", "testSectionId", "type", "currentPageID",
+    private final String[] ALLOWED_FIELDS = new String[] { "accessionNumber", "collectionDate", "recievedDate",
+            "selectedTest", "selectedAnalysisStatus", "selectedSampleStatus", "testSectionId", "type", "currentPageID",
             "testResult*.accessionNumber", "testResult*.isModified", "testResult*.analysisId", "testResult*.resultId",
             "testResult*.testId", "testResult*.technicianSignatureId", "testResult*.testKitId",
             "testResult*.resultLimitId", "testResult*.resultType", "testResult*.valid", "testResult*.referralId",
@@ -99,14 +111,21 @@ public class LogbookResultsController extends LogbookResultsBaseController {
             "testResult*.qualifiedResultValue", "testResult*.qualifiedResultValue", "testResult*.shadowReferredOut",
             "testResult*.referredOut", "testResult*.referralReasonId", "testResult*.technician",
             "testResult*.shadowRejected", "testResult*.rejected", "testResult*.rejectReasonId", "testResult*.note",
-            "paging.currentPage" };
+            "paging.currentPage", //
+            "testResult*.refer", "testResult*.referralItem.referralReasonId",
+            "testResult*.referralItem.referredInstituteId", "testResult*.referralItem.referredTestId",
+            "testResult*.referralItem.referredSendDate" };
 
+    @Autowired
+    private DictionaryService dictionaryService;
     @Autowired
     private ResultSignatureService resultSigService;
     @Autowired
     private ResultInventoryService resultInventoryService;
     @Autowired
     private ReferralService referralService;
+    @Autowired
+    private OrganizationService organizationService;
     @Autowired
     private ResultLimitService resultLimitService;
     @Autowired
@@ -117,6 +136,8 @@ public class LogbookResultsController extends LogbookResultsBaseController {
     private AnalysisService analysisService;
     @Autowired
     private NoteService noteService;
+    @Autowired
+    private FhirTransformService fhirTransformService;
 
     private final String RESULT_SUBJECT = "Result Note";
     private final String REFERRAL_CONFORMATION_ID;
@@ -140,10 +161,49 @@ public class LogbookResultsController extends LogbookResultsBaseController {
             @Validated(LogbookResults.class) @ModelAttribute("form") LogbookResultsForm form, BindingResult result)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         LogbookResultsForm newForm = new LogbookResultsForm();
-        if (!(result.hasFieldErrors("type") || result.hasFieldErrors("testSectionId"))) {
+        if (!(result.hasFieldErrors("type") || result.hasFieldErrors("testSectionId")
+                || result.hasFieldErrors("accessionNumber"))) {
             newForm.setType(form.getType());
             newForm.setTestSectionId(form.getTestSectionId());
+
+            String currentDate = getCurrentDate();
+            newForm.setCurrentDate(currentDate);
+            newForm.setReferralReasons(
+                    DisplayListService.getInstance().getList(DisplayListService.ListType.REFERRAL_REASONS));
+            newForm.setRejectReasons(DisplayListService.getInstance()
+                    .getNumberedListWithLeadingBlank(DisplayListService.ListType.REJECTION_REASONS));
+
+            // load testSections for drop down
+            List<IdValuePair> testSections = DisplayListService.getInstance().getList(ListType.TEST_SECTION);
+            newForm.setTestSections(testSections);
+            newForm.setTestSectionsByName(DisplayListService.getInstance().getList(ListType.TEST_SECTION_BY_NAME));
         }
+        newForm.setDisplayTestSections(true);
+        newForm.setSearchByRange(false);
+
+        return getLogbookResults(request, newForm);
+    }
+
+    @RequestMapping(value = "/RangeResults", method = RequestMethod.GET)
+    public ModelAndView showLogbookResultsByRange(HttpServletRequest request,
+            @Validated(LogbookResults.class) @ModelAttribute("form") LogbookResultsForm form, BindingResult result)
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        LogbookResultsForm newForm = new LogbookResultsForm();
+        if (!(result.hasFieldErrors("type") || result.hasFieldErrors("accessionNumber"))) {
+            newForm.setType(form.getType());
+            newForm.setAccessionNumber(form.getAccessionNumber());
+
+            String currentDate = getCurrentDate();
+            newForm.setCurrentDate(currentDate);
+            newForm.setReferralReasons(
+                    DisplayListService.getInstance().getList(DisplayListService.ListType.REFERRAL_REASONS));
+            newForm.setRejectReasons(DisplayListService.getInstance()
+                    .getNumberedListWithLeadingBlank(DisplayListService.ListType.REJECTION_REASONS));
+
+            // load testSections for drop down
+        }
+        newForm.setDisplayTestSections(false);
+        newForm.setSearchByRange(true);
         return getLogbookResults(request, newForm);
     }
 
@@ -159,27 +219,10 @@ public class LogbookResultsController extends LogbookResultsBaseController {
         // String statusRuleSet =
         // ConfigurationProperties.getInstance().getPropertyValueUpperCase(Property.StatusRules);
 
-        String testSectionId = form.getTestSectionId();
+
         request.getSession().setAttribute(SAVE_DISABLED, TRUE);
 
-        TestSection ts = null;
 
-        String currentDate = getCurrentDate();
-        form.setCurrentDate(currentDate);
-        form.setReferralReasons(DisplayListService.getInstance().getList(DisplayListService.ListType.REFERRAL_REASONS));
-        form.setRejectReasons(DisplayListService.getInstance()
-                .getNumberedListWithLeadingBlank(DisplayListService.ListType.REJECTION_REASONS));
-
-        // load testSections for drop down
-        List<IdValuePair> testSections = DisplayListService.getInstance().getList(ListType.TEST_SECTION);
-        form.setTestSections(testSections);
-        form.setTestSectionsByName(DisplayListService.getInstance().getList(ListType.TEST_SECTION_BY_NAME));
-
-        if (!GenericValidator.isBlankOrNull(testSectionId)) {
-            ts = testSectionService.get(testSectionId);
-        }
-
-        setRequestType(ts == null ? MessageUtil.getMessage("workplan.unit.types") : ts.getLocalizedName());
         List<TestResultItem> tests;
 
         ResultsPaging paging = new ResultsPaging();
@@ -193,8 +236,37 @@ public class LogbookResultsController extends LogbookResultsBaseController {
             requestedPage = "1";
             new StatusRules().setAllowableStatusForLoadingResults(resultsLoadUtility);
 
-            if (!GenericValidator.isBlankOrNull(testSectionId)) {
-                tests = resultsLoadUtility.getUnfinishedTestResultItemsInTestSection(testSectionId);
+            if (!GenericValidator.isBlankOrNull(form.getTestSectionId())) {
+                tests = resultsLoadUtility.getUnfinishedTestResultItemsInTestSection(form.getTestSectionId());
+                int count = resultsLoadUtility.getTotalCountAnalysisByTestSectionAndStatus(form.getTestSectionId());
+                request.setAttribute("analysisCount", count);
+                request.setAttribute("pageSize", tests.size());
+
+                TestSection ts = null;
+                if (!GenericValidator.isBlankOrNull(form.getTestSectionId())) {
+                    ts = testSectionService.get(form.getTestSectionId());
+                }
+                setRequestType(ts == null ? MessageUtil.getMessage("workplan.unit.types") : ts.getLocalizedName());
+
+                if (ts != null) {
+                    // this does not look right what happens after a new page!!!
+                    boolean isHaitiClinical = ConfigurationProperties.getInstance()
+                            .isPropertyValueEqual(Property.configurationName, "Haiti Clinical");
+                    if (resultsLoadUtility.inventoryNeeded()
+                            || (isHaitiClinical && ("VCT").equals(ts.getTestSectionName()))) {
+                        InventoryUtility inventoryUtility = SpringContext.getBean(InventoryUtility.class);
+                        inventoryList = inventoryUtility.getExistingActiveInventory();
+
+                        form.setDisplayTestKit(true);
+                    }
+                }
+                form.setSearchFinished(true);
+            } else if (!GenericValidator.isBlankOrNull(form.getAccessionNumber())) {
+                tests = resultsLoadUtility.getUnfinishedTestResultItemsByAccession(form.getAccessionNumber());
+                int count = resultsLoadUtility.getTotalCountAnalysisByAccessionAndStatus(form.getAccessionNumber());
+                request.setAttribute("analysisCount", count);
+                request.setAttribute("pageSize", tests.size());
+                form.setSearchFinished(true);
             } else {
                 tests = new ArrayList<>();
             }
@@ -204,7 +276,6 @@ public class LogbookResultsController extends LogbookResultsBaseController {
                 for (TestResultItem resultItem : tests) {
                     resultItem.setPatientInfo("---");
                 }
-
             }
 
             paging.setDatabaseResults(request, form, tests);
@@ -214,17 +285,6 @@ public class LogbookResultsController extends LogbookResultsBaseController {
             paging.page(request, form, requestedPageNumber);
         }
         form.setDisplayTestKit(false);
-        if (ts != null) {
-            // this does not look right what happens after a new page!!!
-            boolean isHaitiClinical = ConfigurationProperties.getInstance()
-                    .isPropertyValueEqual(Property.configurationName, "Haiti Clinical");
-            if (resultsLoadUtility.inventoryNeeded() || (isHaitiClinical && ("VCT").equals(ts.getTestSectionName()))) {
-                InventoryUtility inventoryUtility = SpringContext.getBean(InventoryUtility.class);
-                inventoryList = inventoryUtility.getExistingActiveInventory();
-
-                form.setDisplayTestKit(true);
-            }
-        }
         List<String> hivKits = new ArrayList<>();
         List<String> syphilisKits = new ArrayList<>();
 
@@ -238,6 +298,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
         form.setHivKits(hivKits);
         form.setSyphilisKits(syphilisKits);
         form.setInventoryItems(inventoryList);
+        form.setReferralOrganizations(DisplayListService.getInstance().getList(ListType.REFERRAL_ORGANIZATIONS));
 
         addFlashMsgsToRequest(request);
         return findForward(FWD_SUCCESS, form);
@@ -271,6 +332,32 @@ public class LogbookResultsController extends LogbookResultsBaseController {
             return findForward(FWD_FAIL_INSERT, form);
         }
 
+//  gnr: shows current session records, can be current, stale/empty vs. other user
+//        ie: empty when another user saved and hasn't reloaded.
+
+        List<Result> checkPagedResults = (List<Result>) request.getSession()
+                .getAttribute(IActionConstants.RESULTS_SESSION_CACHE);
+        List<Result> checkResults = (List<Result>) checkPagedResults.get(0);
+        if (checkResults.size() == 0) {
+            LogEvent.logDebug(this.getClass().getName(), "LogbookResults()", "Attempted save of stale page.");
+
+            List<TestResultItem> resultList = form.getTestResult();
+            for (TestResultItem item : resultList) {
+                item.setFailedValidation(true);
+                item.setNote("Result has been saved by another user.");
+            }
+
+            ResultsUpdateDataSet actionDataSet = new ResultsUpdateDataSet(getSysUserId(request));
+            actionDataSet.filterModifiedItems(form.getTestResult());
+
+            Errors errors = actionDataSet.validateModifiedItems();
+
+            if (true) {
+                saveErrors(errors);
+                return findForward(FWD_VALIDATION_ERROR, form);
+            }
+        }
+
         List<IResultUpdate> updaters = ResultUpdateRegister.getRegisteredUpdaters();
 
         ResultsPaging paging = new ResultsPaging();
@@ -292,6 +379,11 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 
         try {
             logbookPersistService.persistDataSet(actionDataSet, updaters, getSysUserId(request));
+            try {
+                fhirTransformService.transformPersistResultsEntryFhirObjects(actionDataSet);
+            } catch (FhirTransformationException | FhirPersistanceException e) {
+                LogEvent.logError(e);
+            }
         } catch (LIMSRuntimeException e) {
             String errorMsg;
             if (e.getException() instanceof StaleObjectStateException) {
@@ -308,7 +400,13 @@ public class LogbookResultsController extends LogbookResultsBaseController {
         }
 
         for (IResultUpdate updater : updaters) {
-            updater.postTransactionalCommitUpdate(actionDataSet);
+            try {
+                updater.postTransactionalCommitUpdate(actionDataSet);
+            } catch (Exception e) {
+                LogEvent.logError(this.getClass().getName(), "showLogbookResultsUpdate",
+                        "error doing a post transactional commit");
+                LogEvent.logError(e);
+            }
         }
 
         redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
@@ -342,9 +440,6 @@ public class LogbookResultsController extends LogbookResultsBaseController {
             Analysis analysis = analysisService.get(testResultItem.getAnalysisId());
             analysis.setStatusId(getStatusForTestResult(testResultItem, alwaysValidate));
             analysis.setSysUserId(getSysUserId(request));
-            if (supportReferrals) {
-                handleReferrals(testResultItem, analysis, actionDataSet);
-            }
             actionDataSet.getModifiedAnalysis().add(analysis);
 
             actionDataSet.addToNoteList(noteService.createSavableNote(analysis, NoteType.INTERNAL,
@@ -384,40 +479,68 @@ public class LogbookResultsController extends LogbookResultsBaseController {
                     updateAnalysis(testResultItem, testResultItem.getTestDate(), analysis, statusRuleSet);
                 }
             }
+            if (supportReferrals && testResultItem.isRefer()) {
+                handleReferrals(testResultItem, testResultItem.getReferralItem(), results, analysis, actionDataSet);
+            }
         }
     }
 
-    private void handleReferrals(TestResultItem testResultItem, Analysis analysis, ResultsUpdateDataSet actionDataSet) {
+    private void handleReferrals(TestResultItem testResultItem, ReferralItem referralItem, List<Result> results,
+            Analysis analysis, ResultsUpdateDataSet actionDataSet) {
+//        List<Referral> referrals = new ArrayList<>();
+        Referral referral = new Referral();
+        referral.setFhirUuid(UUID.randomUUID());
+        referral.setStatus(ReferralStatus.SENT);
+        referral.setSysUserId(actionDataSet.getCurrentUserId());
+        referral.setReferralTypeId(REFERRAL_CONFORMATION_ID);
+        referral.setRequesterName(testResultItem.getTechnician());
 
-        Referral referral = null;
-        // referredOut means the referral checkbox was checked, repeating
-        // analysis means that we have multi-select results, so only do one.
-        if (testResultItem.isShadowReferredOut()
-                && !actionDataSet.getReferredAnalysisIds().contains(analysis.getId())) {
-            actionDataSet.getReferredAnalysisIds().add(analysis.getId());
-            // If it is a new result or there is no referral ID that means
-            // that a new referral has to be created if it was checked and
-            // it was canceled then we are un-canceling a canceled referral
-            if (testResultItem.getResultId() == null
-                    || GenericValidator.isBlankOrNull(testResultItem.getReferralId())) {
-                referral = new Referral();
-                referral.setReferralTypeId(REFERRAL_CONFORMATION_ID);
-                referral.setSysUserId(getSysUserId(request));
-                referral.setRequestDate(new Timestamp(new Date().getTime()));
-                referral.setRequesterName(testResultItem.getTechnician());
-                referral.setAnalysis(analysis);
-                referral.setReferralReasonId(testResultItem.getReferralReasonId());
-            } else if (testResultItem.isReferralCanceled()) {
-                referral = referralService.get(testResultItem.getReferralId());
-                referral.setCanceled(false);
-                referral.setSysUserId(getSysUserId(request));
-                referral.setRequesterName(testResultItem.getTechnician());
-                referral.setReferralReasonId(testResultItem.getReferralReasonId());
-            }
+        referral.setRequestDate(new Timestamp(new Date().getTime()));
+        referral.setSentDate(DateUtil.convertStringDateToTruncatedTimestamp(referralItem.getReferredSendDate()));
+        referral.setRequesterName(referralItem.getReferrer());
+        referral.setOrganization(organizationService.get(referralItem.getReferredInstituteId()));
+        referral.setAnalysis(analysis);
 
-            actionDataSet.getSavableReferrals().add(referral);
+        referral.setReferralReasonId(referralItem.getReferralReasonId());
 
+//            referralService.insert(referral);
+//        referrals.add(referral);
+        ReferralResult referralResult = new ReferralResult();
+        referralResult.setReferralId(referral.getId());
+        referralResult.setSysUserId(actionDataSet.getCurrentUserId());
+        referralResult.setTestId(referralItem.getReferredTestId());
+        if (results.size() == 1) {
+            referralResult.setResult(results.get(0));
         }
+//            referralResult.setResult(result);
+//            referralResultService.insert(referralResult);
+
+        ReferralSet referralSet = new ReferralSet();
+        referralSet.setReferral(referral);
+        referralSet.getExistingReferralResults().add(referralResult);
+        actionDataSet.getSavableReferralSets().add(referralSet);
+
+        String originalResultNote = MessageUtil.getMessage("referral.original.result") + ": ";
+        if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(testResultItem.getResultType())
+                || TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(testResultItem.getResultType())) {
+            if ("0".equals(testResultItem.getResultValue())) {
+                originalResultNote = originalResultNote + "";
+            } else {
+                Dictionary dictionary = dictionaryService.get(testResultItem.getResultValue());
+                if (dictionary.getLocalizedDictionaryName() == null) {
+                    originalResultNote = originalResultNote + dictionary.getDictEntry();
+                } else {
+                    originalResultNote = originalResultNote
+                            + dictionary.getLocalizedDictionaryName().getLocalizedValue();
+                }
+            }
+        } else {
+            originalResultNote = originalResultNote + testResultItem.getResultValue();
+        }
+
+        actionDataSet.addToNoteList(noteService.createSavableNote(analysis, NoteType.INTERNAL, originalResultNote,
+                RESULT_SUBJECT, this.getSysUserId(request)));
+
     }
 
     protected boolean analysisShouldBeUpdated(TestResultItem testResultItem, Result result, boolean supportReferrals) {
@@ -492,8 +615,11 @@ public class LogbookResultsController extends LogbookResultsBaseController {
     }
 
     private String getStatusForTestResult(TestResultItem testResult, boolean alwaysValidate) {
-        if (testResult.isShadowRejected()) {
+        if (testResult.isShadowRejected() && ConfigurationProperties.getInstance()
+                .isPropertyValueEqual(Property.VALIDATE_REJECTED_TESTS, "true")) {
             return SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalRejected);
+        } else if (testResult.isShadowRejected()) {
+            return SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Canceled);
         } else if (alwaysValidate || !testResult.isValid() || ResultUtil.isForcedToAcceptance(testResult)) {
             return SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalAcceptance);
         } else if (noResults(testResult.getShadowResultValue(), testResult.getMultiSelectResultValues(),
@@ -598,7 +724,9 @@ public class LogbookResultsController extends LogbookResultsBaseController {
     }
 
     private String findLogBookForward(String forward) {
-        if (FWD_SUCCESS_INSERT.equals(forward)) {
+        if (FWD_SUCCESS.equals(forward)) {
+            return "resultsLogbookDefinition";
+        } else if (FWD_SUCCESS_INSERT.equals(forward)) {
             return "redirect:/LogbookResults.do";
         } else if (FWD_VALIDATION_ERROR.equals(forward)) {
             return "resultsLogbookDefinition";
@@ -645,10 +773,24 @@ public class LogbookResultsController extends LogbookResultsBaseController {
         }
     }
 
-    @Override
-    protected String findLocalForward(String forward) {
+    private String findRangeForward(String forward) {
         if (FWD_SUCCESS.equals(forward)) {
             return "resultsLogbookDefinition";
+        } else if (FWD_SUCCESS_INSERT.equals(forward)) {
+            return "redirect:/RangeResults.do";
+        } else if (FWD_VALIDATION_ERROR.equals(forward)) {
+            return "resultsLogbookDefinition";
+        } else if (FWD_FAIL_INSERT.equals(forward)) {
+            return "resultsLogbookDefinition";
+        } else {
+            return "PageNotFound";
+        }
+    }
+
+    @Override
+    protected String findLocalForward(String forward) {
+        if (request.getRequestURL().indexOf("RangeResults") >= 0) {
+            return findRangeForward(forward);
         } else if (request.getRequestURL().indexOf("LogbookResults") >= 0) {
             return findLogBookForward(forward);
         } else if (request.getRequestURL().indexOf("AccessionResults") >= 0) {

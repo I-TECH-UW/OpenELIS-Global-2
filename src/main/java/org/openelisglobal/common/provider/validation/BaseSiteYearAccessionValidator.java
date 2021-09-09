@@ -18,44 +18,40 @@ package org.openelisglobal.common.provider.validation;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.HashSet;
-import java.util.Set;
 
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.provider.validation.IAccessionNumberValidator.ValidationResults;
+import org.openelisglobal.common.service.AccessionService;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.sample.service.SampleService;
+import org.openelisglobal.sample.util.AccessionNumberUtil;
 import org.openelisglobal.spring.util.SpringContext;
 
 public abstract class BaseSiteYearAccessionValidator {
 
     protected SampleService sampleService = SpringContext.getBean(SampleService.class);
+    protected AccessionService accessionService = SpringContext.getBean(AccessionService.class);
 
-    protected static final String INCREMENT_STARTING_VALUE = "000001";
-    protected static final int UPPER_INC_RANGE = 999999;
+    protected static final long UPPER_INC_RANGE = 9999999999999L;
     protected static final int SITE_START = 0;
     protected int SITE_END = getSiteEndIndex();
     protected int YEAR_START = getYearStartIndex();
     protected int YEAR_END = getYearEndIndex();
     protected int INCREMENT_START = getIncrementStartIndex();
     protected int INCREMENT_END = getMaxAccessionLength();
-    protected int LENGTH = getMaxAccessionLength();
+    protected int MAX_LENGTH = getMaxAccessionLength();
+    protected int MIN_LENGTH = getMinAccessionLength();
     protected static final boolean NEED_PROGRAM_CODE = false;
-    private static Set<String> REQUESTED_NUMBERS = new HashSet<>();
 
     public boolean needProgramCode() {
         return NEED_PROGRAM_CODE;
     }
 
-    // input parameter is not used in this case
-    public String createFirstAccessionNumber(String nullPrefix) {
-        return getPrefix() + DateUtil.getTwoDigitYear() + INCREMENT_STARTING_VALUE;
-    }
-
     public String getInvalidMessage(ValidationResults results) {
-        String suggestedAccessionNumber = getNextAvailableAccessionNumber(null);
+        String suggestedAccessionNumber = getNextAvailableAccessionNumber(null, true);
 
         return MessageUtil.getMessage("sample.entry.invalid.accession.number.suggestion") + " "
                 + suggestedAccessionNumber;
@@ -63,62 +59,33 @@ public abstract class BaseSiteYearAccessionValidator {
     }
 
     // input parameter is not used in this case
-    public String getNextAvailableAccessionNumber(String nullPrefix) {
-
+    public String getNextAvailableAccessionNumber(String nullPrefix, boolean reserve) {
         String nextAccessionNumber;
-
-        String curLargestAccessionNumber = sampleService.getLargestAccessionNumberMatchingPattern(
-                ConfigurationProperties.getInstance().getPropertyValue(Property.ACCESSION_NUMBER_PREFIX),
-                getMaxAccessionLength());
-
-        if (curLargestAccessionNumber == null) {
-            if (REQUESTED_NUMBERS.isEmpty()) {
-                nextAccessionNumber = createFirstAccessionNumber(null);
+        do {
+            if (reserve) {
+                nextAccessionNumber = incrementAccessionNumber();
             } else {
-                nextAccessionNumber = REQUESTED_NUMBERS.iterator().next();
+                nextAccessionNumber = incrementAccessionNumberNoReserve();
             }
-        } else {
-            nextAccessionNumber = incrementAccessionNumber(curLargestAccessionNumber);
-        }
-
-        while (REQUESTED_NUMBERS.contains(nextAccessionNumber)) {
-            nextAccessionNumber = incrementAccessionNumber(nextAccessionNumber);
-        }
-
-        REQUESTED_NUMBERS.add(nextAccessionNumber);
-
+        } while (accessionNumberIsUsed(nextAccessionNumber, null));
         return nextAccessionNumber;
     }
 
-    public String incrementAccessionNumber(String currentHighAccessionNumber) throws IllegalArgumentException {
-        // if the year differs then start the sequence again. If not then
-        // increment but check for overflow into year
-        int year = new GregorianCalendar().get(Calendar.YEAR) - 2000;
-
-        try {
-            if (year != Integer.parseInt(currentHighAccessionNumber.substring(YEAR_START, YEAR_END))) {
-                return createFirstAccessionNumber(null);
-            }
-        } catch (NumberFormatException e) {
-            return createFirstAccessionNumber(null);
+    // input parameter is not used in this case
+    public String getNextAccessionNumber(String nullPrefix, boolean reserve) {
+        if (!reserve) {
+            LogEvent.logWarn(BaseSiteYearAccessionValidator.class.getName(), "getNextAvailableAccessionNumber",
+                    "this generator always reserves");
         }
-
-        int increment = Integer.parseInt(currentHighAccessionNumber.substring(INCREMENT_START));
-        String incrementAsString;
-
-        if (increment < UPPER_INC_RANGE) {
-            increment++;
-            incrementAsString = String.format("%06d", increment);
-        } else {
-            throw new IllegalArgumentException("AccessionNumber has no next value");
-        }
-
-        return currentHighAccessionNumber.substring(SITE_START, YEAR_END) + incrementAsString;
+        return incrementAccessionNumber();
     }
+
+    public abstract String incrementAccessionNumber() throws IllegalArgumentException;
+
+    public abstract String incrementAccessionNumberNoReserve() throws IllegalArgumentException;
 
     // recordType parameter is not used in this case
     public boolean accessionNumberIsUsed(String accessionNumber, String recordType) {
-
         return sampleService.getSampleByAccessionNumber(accessionNumber) != null;
     }
 
@@ -136,7 +103,15 @@ public abstract class BaseSiteYearAccessionValidator {
     }
 
     public ValidationResults validFormat(String accessionNumber, boolean checkDate) {
-        if (accessionNumber.length() != LENGTH) {
+        if (!Boolean
+                .valueOf(ConfigurationProperties.getInstance().getPropertyValue(Property.ACCESSION_NUMBER_VALIDATE))) {
+            return AccessionNumberUtil.containsBlackListCharacters(accessionNumber) ? ValidationResults.FORMAT_FAIL
+                    : ValidationResults.SUCCESS;
+        }
+        if (accessionNumber.length() > MAX_LENGTH) {
+            return ValidationResults.LENGTH_FAIL;
+        }
+        if (accessionNumber.length() < MIN_LENGTH) {
             return ValidationResults.LENGTH_FAIL;
         }
 
@@ -162,7 +137,7 @@ public abstract class BaseSiteYearAccessionValidator {
         }
 
         try {
-            Integer.parseInt(accessionNumber.substring(INCREMENT_START));
+            Long.parseLong(accessionNumber.substring(INCREMENT_START));
         } catch (NumberFormatException e) {
             return ValidationResults.FORMAT_FAIL;
         }
@@ -196,6 +171,8 @@ public abstract class BaseSiteYearAccessionValidator {
         return format.toString();
     }
 
+//    protected abstract Set<String> getReservedNumbers();
+
     protected abstract String getPrefix();
 
     protected abstract int getIncrementStartIndex();
@@ -208,5 +185,8 @@ public abstract class BaseSiteYearAccessionValidator {
 
     protected abstract int getMaxAccessionLength();
 
+    protected abstract int getMinAccessionLength();
+
     protected abstract int getChangeableLength();
+
 }

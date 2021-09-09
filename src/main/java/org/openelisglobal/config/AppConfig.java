@@ -28,7 +28,6 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
-import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.LocaleResolver;
@@ -44,12 +43,12 @@ import org.springframework.web.servlet.view.tiles3.TilesConfigurer;
 import org.springframework.web.servlet.view.tiles3.TilesView;
 
 @EnableWebMvc
-@EnableAsync
 @Configuration
 @EnableJpaRepositories(basePackages = { "org.itech", "org.ozeki.sms" })
-@PropertySource(value = { "classpath:application.properties",
-        "file:/run/secrets/common.properties" })
-@ComponentScan(basePackages = { "spring", "org.openelisglobal", "org.itech", "org.ozeki.sms" })
+@PropertySource("classpath:application.properties")
+@PropertySource("file:/run/secrets/common.properties")
+@PropertySource(value = "file:/run/secrets/extra.properties", ignoreResourceNotFound = true)
+@ComponentScan(basePackages = { "spring", "org.openelisglobal", "org.itech", "org.ozeki.sms", "oe.plugin" })
 public class AppConfig implements WebMvcConfigurer {
 
     @Autowired
@@ -110,6 +109,7 @@ public class AppConfig implements WebMvcConfigurer {
         CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver();
         multipartResolver.setDefaultEncoding("utf-8");
         multipartResolver.setMaxUploadSize(20848820);
+        multipartResolver.setResolveLazily(false);
         return multipartResolver;
     }
 
@@ -129,6 +129,7 @@ public class AppConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         // Register resource handlers for css, js, etc.
+        registry.addResourceHandler("select2/**").addResourceLocations("classpath:static/select2/");
         registry.addResourceHandler("scripts/**").addResourceLocations("classpath:static/scripts/");
         registry.addResourceHandler("css/**").addResourceLocations("classpath:static/css/");
         registry.addResourceHandler("images/**").addResourceLocations("/static/images/");
@@ -166,10 +167,10 @@ public class AppConfig implements WebMvcConfigurer {
             mailSender.setUsername(username);
             mailSender.setPassword(password);
             props.put("mail.smtp.auth", "true");
+        } else {
+            props.put("mail.smtp.auth", "false");
         }
 
         return mailSender;
     }
-
-
 }

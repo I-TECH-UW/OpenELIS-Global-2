@@ -54,9 +54,7 @@ sub sendToServer{
 	next if basename($file) eq $timeTagFile1 ||  basename($file) eq $timeTagFile2;
 	my $command = $curlExe . ' -k --user ' . $upLoadUserName . ':' . $upLoadPassword
 	    . ' --url ' . $upLoadtargetURL 
-	    . ' --form  user='. $upLoadUserName 
-	    . ' --form password=' . $upLoadPassword 
-	    . ' --form dataFileName=@' . '"' .$file . '"' ;
+	    . ' --form file=@' . '"' .$file . '"' ;
 	
 	
 	print $command . "\n";
@@ -101,7 +99,7 @@ sub printTime{
 }
 
 #my $upLoadtargetURL = 'http://54.191.189.60:8080/CDIOpenElis/importAnalyzer';
-my $upLoadtargetURL = 'http://localhost:8080/openElisGlobal/importAnalyzer';
+my $upLoadtargetURL = 'https://localhost:8443/OpenELIS-Global/importAnalyzer';
 
 my $stagingDir1 = ".\\staging";
 #my $stagingDir2 = "Y:";

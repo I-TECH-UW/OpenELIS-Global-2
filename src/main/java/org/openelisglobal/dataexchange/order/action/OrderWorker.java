@@ -25,6 +25,7 @@ import org.openelisglobal.dataexchange.order.action.IOrderExistanceChecker.Check
 import org.openelisglobal.dataexchange.order.action.IOrderInterpreter.InterpreterResults;
 import org.openelisglobal.dataexchange.order.action.IOrderInterpreter.OrderType;
 import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder;
+import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrderType;
 import org.openelisglobal.spring.util.SpringContext;
 
 import ca.uhn.hl7v2.model.Message;
@@ -144,6 +145,7 @@ public class OrderWorker {
         eOrder.setStatusId(getStatusService().getStatusID(ExternalOrderStatus.Entered));
         eOrder.setOrderTimestamp(DateUtil.getNowAsTimestamp());
         eOrder.setSysUserId(persister.getServiceUserId());
+        eOrder.setType(ElectronicOrderType.HL7_V2);
 
         persister.persist(patient, eOrder);
     }

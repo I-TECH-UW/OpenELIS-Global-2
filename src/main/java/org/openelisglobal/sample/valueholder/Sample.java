@@ -19,6 +19,7 @@ import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.util.DateUtil;
@@ -36,6 +37,7 @@ public class Sample extends EnumValueItemImpl implements NoteObject {
     private static final long serialVersionUID = 1407388492068629053L;
 
     private String id;
+    private UUID fhirUuid;
     private String accessionNumber;
     private String packageId;
     private String domain;
@@ -392,5 +394,17 @@ public class Sample extends EnumValueItemImpl implements NoteObject {
     @Override
     public BoundTo getBoundTo() {
         return BoundTo.SAMPLE;
+    }
+
+    public UUID getFhirUuid() {
+        return fhirUuid;
+    }
+
+    public void setFhirUuid(UUID fhirUuid) {
+        this.fhirUuid = fhirUuid;
+    }
+
+    public String getFhirUuidAsString() {
+        return fhirUuid == null ? "" : fhirUuid.toString();
     }
 }

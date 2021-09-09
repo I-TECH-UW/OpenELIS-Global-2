@@ -1432,3 +1432,52 @@ view-non-conforming-section-1 > td {
 .column-right-text {
 	float: right;
 }
+
+
+.local-search {
+  color: #66b947;
+}
+
+.external-search {
+  color: #3c74b6;
+}
+
+.center-text {
+	text-align: center;
+}
+
+.alt-color-table th, .alt-color-table td {
+	padding: 0px 5px;
+}
+
+.alt-color-table tr:nth-child(even) {
+	background-color: #C8DADA;
+}
+
+.alt-color-table tr:nth-child(odd) {
+	background-color: #F0F3F3;
+}
+
+th.highlight-header {
+	color: #FFFFFF;
+	background-color: #3c74b6;
+}
+
+th.highlight-header-rev {
+	color: #FFFFFF;
+	background-color: #3c74b6;
+}
+
+.unsynced-resource td {
+	background-color: #ffcac8;
+}
+
+.hidden-text {
+	display: none;
+}
+
+.show-text-hover:hover .hidden-text {
+	display: inline;
+}
+
+

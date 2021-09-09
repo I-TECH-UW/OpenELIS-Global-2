@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.apache.commons.validator.GenericValidator;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Bundle.BundleEntryComponent;
 import org.hl7.fhir.r4.model.ResourceType;
@@ -19,7 +20,8 @@ import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.StatusService.OrderStatus;
-import org.openelisglobal.dataexchange.fhir.service.FhirApiWorkflowService;
+import org.openelisglobal.dataexchange.fhir.FhirConfig;
+import org.openelisglobal.dataexchange.fhir.FhirUtil;
 import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.reports.action.implementation.Report.DateRange;
@@ -43,6 +45,8 @@ public abstract class CovidResultsBuilderImpl implements CovidResultsBuilder {
     protected AnalysisService analysisService = SpringContext.getBean(AnalysisService.class);
     protected TestService testService = SpringContext.getBean(TestService.class);
     protected FhirContext fhirContext = SpringContext.getBean(FhirContext.class);
+    protected FhirConfig fhirConfig = SpringContext.getBean(FhirConfig.class);
+    protected FhirUtil fhirUtil = SpringContext.getBean(FhirUtil.class);
     protected DictionaryService dictionaryService = SpringContext.getBean(DictionaryService.class);
     protected SampleHumanService sampleHumanService = SpringContext.getBean(SampleHumanService.class);
 
@@ -54,7 +58,14 @@ public abstract class CovidResultsBuilderImpl implements CovidResultsBuilder {
     protected static final String PATIENT_LAST_NAME_PROPERTY_NAME = "family name";
     protected static final String PATIENT_FIRST_NAME_PROPERTY_NAME = "given name";
     protected static final String PATIENT_DATE_OF_BIRTH_PROPERTY_NAME = "date of birth";
+    protected static final String PATIENT_PHONE_NO_PROPERTY_NAME = "phone number";
+    protected static final String SAMPLE_STATUS_PROPERTY_NAME = "sample status";
+    protected static final String SAMPLE_RECEIVED_DATE_PROPERTY_NAME = "sample received date";
+    protected static final String SITE_PROPERTY_NAME = "site code";
     protected static final String LOCATOR_FORM_PROPERTY_NAME = "locatorForm";
+    protected static final String CONTACT_TRACING_INDEX_NAME = "contact tracing index name";
+    protected static final String CONTACT_TRACING_INDEX_RECORD_NUMBER = "contact tracing dossier number";
+
 
     protected static final String EMPTY_VALUE = "";
 
@@ -74,43 +85,54 @@ public abstract class CovidResultsBuilderImpl implements CovidResultsBuilder {
     protected List<Analysis> getCovidAnalysisWithinDate() {
 
         List<Test> tests = testService.getActiveTestsByLoinc(COVID_LOINC_CODES);
-        List<Analysis> analysises = analysisService.getAllAnalysisByTestsAndStatus(
+
+        List<Analysis> analysises = analysisService.getAllAnalysisByTestsAndStatusAndCompletedDateRange(
                 tests.stream().map(test -> Integer.parseInt(test.getId())).collect(Collectors.toList()),
                 ANALYSIS_STATUS_IDS.stream().map(val -> Integer.parseInt(val)).collect(Collectors.toList()),
-                SAMPLE_STATUS_IDS.stream().map(val -> Integer.parseInt(val)).collect(Collectors.toList()));
+                SAMPLE_STATUS_IDS.stream().map(val -> Integer.parseInt(val)).collect(Collectors.toList()),
+                this.dateRange.getLowDate(),
+                this.dateRange.getHighDate());
 
-        return analysises.stream().filter(analysis -> analysis.getStartedDate().after(this.dateRange.getLowDate())
-                && analysis.getStartedDate().before(this.dateRange.getHighDate())).collect(Collectors.toList());
+        return analysises;
+
+//        return analysises.stream().filter(analysis -> analysis.getStartedDate().after(this.dateRange.getLowDate())
+//                && analysis.getStartedDate().before(this.dateRange.getHighDate())).collect(Collectors.toList());
     }
 
-    protected Task getTaskForAnalysis(Analysis analysis) {
-        IGenericClient client = fhirContext
-                .newRestfulGenericClient(SpringContext.getBean(FhirApiWorkflowService.class).getLocalFhirStorePath());
+    protected Optional<Task> getReferringTaskForAnalysis(Analysis analysis) {
+        IGenericClient client = fhirUtil.getFhirClient(fhirConfig.getLocalFhirStorePath());
         String serviceRequestId = analysis.getSampleItem().getSample().getReferringId();
+        if (GenericValidator.isBlankOrNull(serviceRequestId)) {
+            return Optional.empty();
+        }
 
         ServiceRequest serviceRequest = null;
+        for (String remotePath : fhirConfig.getRemoteStorePaths()) {
         Bundle responseBundle = client.search().forResource(ServiceRequest.class)
-                .where(ServiceRequest.IDENTIFIER.exactly().code(serviceRequestId)).returnBundle(Bundle.class).execute();
+                    .where(ServiceRequest.IDENTIFIER.exactly().systemAndIdentifier(remotePath, serviceRequestId))
+                    .returnBundle(Bundle.class)
+                .execute();
         for (BundleEntryComponent bundleComponent : responseBundle.getEntry()) {
             if (bundleComponent.hasResource()
                     && ResourceType.ServiceRequest.equals(bundleComponent.getResource().getResourceType())) {
                 serviceRequest = (ServiceRequest) bundleComponent.getResource();
             }
         }
+        }
 
         if (serviceRequest == null) {
-            throw new IllegalStateException("could not find service request for analysis");
+            return Optional.empty();
         }
-        responseBundle = client.search().forResource(Task.class)
+        Bundle responseBundle = client.search().forResource(Task.class)
                 .where(Task.BASED_ON.hasId(serviceRequest.getIdElement().getIdPart()))
                 .returnBundle(Bundle.class).execute();
         for (BundleEntryComponent bundleComponent : responseBundle.getEntry()) {
             if (bundleComponent.hasResource()
                     && ResourceType.Task.equals(bundleComponent.getResource().getResourceType())) {
-                return (Task) bundleComponent.getResource();
+                return Optional.of((Task) bundleComponent.getResource());
             }
         }
-        throw new IllegalStateException("could not find task for analysis");
+        throw new IllegalStateException("could not find task for analysis with serviceRequestId: " + serviceRequestId);
     }
 
     protected Optional<Result> getResultForAnalysis(Analysis analysis) {

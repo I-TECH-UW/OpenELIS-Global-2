@@ -27,6 +27,7 @@ import org.hibernate.validator.constraints.SafeHtml;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.referral.form.ReferredOutTestsForm;
+import org.openelisglobal.referral.valueholder.ReferralStatus;
 import org.openelisglobal.validation.annotations.ValidDate;
 
 public class ReferralItem implements IReferralResultTest, Serializable {
@@ -39,6 +40,7 @@ public class ReferralItem implements IReferralResultTest, Serializable {
     private String sampleType;
     private String referringTestName = "";
     private String referralResults = "";
+    private ReferralStatus referralStatus;
 
     @ValidDate(groups = { ReferredOutTestsForm.ReferredOut.class })
     private String referralDate;
@@ -81,8 +83,6 @@ public class ReferralItem implements IReferralResultTest, Serializable {
     // is meant to be parsed
     // @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { ReferredOutTestsForm.ReferredOut.class })
     private String additionalTestsXMLWad;
-
-    private boolean canceled = false;
 
     @Pattern(regexp = ValidationHelper.ID_REGEX, groups = { ReferredOutTestsForm.ReferredOut.class })
     private String referralReasonId;
@@ -256,14 +256,6 @@ public class ReferralItem implements IReferralResultTest, Serializable {
         this.additionalTestsXMLWad = additionalTestsXMLWad;
     }
 
-    public boolean isCanceled() {
-        return canceled;
-    }
-
-    public void setCanceled(boolean cancel) {
-        canceled = cancel;
-    }
-
     public void setReferralReasonId(String referralReasonId) {
         this.referralReasonId = referralReasonId;
     }
@@ -354,5 +346,13 @@ public class ReferralItem implements IReferralResultTest, Serializable {
 
     public void setQualifiedResultValue(String qualifiedResultValue) {
         this.qualifiedResultValue = qualifiedResultValue;
+    }
+
+    public ReferralStatus getReferralStatus() {
+        return referralStatus;
+    }
+
+    public void setReferralStatus(ReferralStatus referralStatus) {
+        this.referralStatus = referralStatus;
     }
 }

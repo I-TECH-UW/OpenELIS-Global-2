@@ -16,18 +16,21 @@
  */
 package org.openelisglobal.common.provider.validation;
 
+import org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory.AccessionFormat;
 import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.common.util.DateUtil;
 
-public class SiteYearAccessionValidator extends BaseSiteYearAccessionValidator implements IAccessionNumberValidator {
+public class SiteYearAccessionValidator extends BaseSiteYearAccessionValidator implements IAccessionNumberGenerator {
 
     @Override
     public int getMaxAccessionLength() {
-        return getSiteEndIndex() + 8;
+        return getSiteEndIndex() + 15;
     }
 
     @Override
     public int getMinAccessionLength() {
-        return getMaxAccessionLength();
+//      return getSiteEndIndex() + 7;
+        return getSiteEndIndex() + 15;
     }
 
     @Override
@@ -66,4 +69,21 @@ public class SiteYearAccessionValidator extends BaseSiteYearAccessionValidator i
                 .getPropertyValue(ConfigurationProperties.Property.ACCESSION_NUMBER_PREFIX);
     }
 
+    @Override
+    public String incrementAccessionNumber() throws IllegalArgumentException {
+        String year = DateUtil.getTwoDigitYear();
+        long nextNum = accessionService.getNextNumberIncrement(this.getPrefix() + year, AccessionFormat.SITE_YEAR);
+        String incrementAsString;
+        incrementAsString = String.format("%013d", nextNum);
+        return getPrefix() + year + incrementAsString;
+    }
+
+    @Override
+    public String incrementAccessionNumberNoReserve() throws IllegalArgumentException {
+        String year = DateUtil.getTwoDigitYear();
+        long nextNum = accessionService.getNextNumberNoIncrement(this.getPrefix() + year, AccessionFormat.ALT_YEAR);
+        String incrementAsString;
+        incrementAsString = String.format("%013d", nextNum);
+        return getPrefix() + year + incrementAsString;
+    }
 }

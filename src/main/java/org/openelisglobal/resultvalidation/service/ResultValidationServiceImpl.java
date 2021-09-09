@@ -14,7 +14,8 @@ import org.openelisglobal.common.services.StatusService.OrderStatus;
 import org.openelisglobal.common.services.registration.interfaces.IResultUpdate;
 import org.openelisglobal.note.service.NoteService;
 import org.openelisglobal.note.valueholder.Note;
-import org.openelisglobal.notification.service.ClientNotificationService;
+import org.openelisglobal.notification.service.TestNotificationService;
+import org.openelisglobal.notification.valueholder.NotificationConfigOption.NotificationNature;
 import org.openelisglobal.result.service.ResultService;
 import org.openelisglobal.result.valueholder.Result;
 import org.openelisglobal.resultvalidation.bean.AnalysisItem;
@@ -31,15 +32,15 @@ public class ResultValidationServiceImpl implements ResultValidationService {
     private ResultService resultService;
     private NoteService noteService;
     private SampleService sampleService;
-    private ClientNotificationService clientNotificationService;
+    private TestNotificationService testNotificationService;
 
     public ResultValidationServiceImpl(AnalysisService analysisService, ResultService resultService,
-            NoteService noteService, SampleService sampleService, ClientNotificationService clientNotificationService) {
+            NoteService noteService, SampleService sampleService, TestNotificationService testNotificationService) {
         this.analysisService = analysisService;
         this.resultService = resultService;
         this.noteService = noteService;
         this.sampleService = sampleService;
-        this.clientNotificationService = clientNotificationService;
+        this.testNotificationService = testNotificationService;
     }
 
     @Override
@@ -63,9 +64,8 @@ public class ResultValidationServiceImpl implements ResultValidationService {
             }
             if (isResultAnalysisFinalized(resultUpdate, analysisUpdateList)) {
                 try {
-                    if (clientNotificationService.shouldSendNotification(resultUpdate)) {
-                        clientNotificationService.createAndSendClientNotification(resultUpdate);
-                    }
+                    testNotificationService.createAndSendNotificationsToConfiguredSources(
+                            NotificationNature.RESULT_VALIDATION, resultUpdate);
                 } catch (RuntimeException e) {
                     LogEvent.logError(e);
                 }
@@ -93,6 +93,7 @@ public class ResultValidationServiceImpl implements ResultValidationService {
         for (IResultUpdate updater : updaters) {
             updater.transactionalUpdate(resultSaveService);
         }
+
     }
 
     private boolean isResultAnalysisFinalized(Result result, List<Analysis> analysisUpdateList) {
@@ -101,8 +102,6 @@ public class ResultValidationServiceImpl implements ResultValidationService {
             if (analysis.getId().equals(analysisId)) {
                 return analysis.getStatusId()
                         .equals(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized));
-            } else {
-                return false;
             }
         }
         return false;
@@ -113,8 +112,9 @@ public class ResultValidationServiceImpl implements ResultValidationService {
         boolean sampleFinished = true;
         List<Integer> sampleFinishedStatus = getSampleFinishedStatuses();
 
+//        System.out.println("checkIfSamplesFinished:");
         for (AnalysisItem analysisItem : resultItemList) {
-
+//            System.out.println("checkIfSamplesFinished:" + analysisItem.getAccessionNumber());
             String analysisSampleId = sampleService.getSampleByAccessionNumber(analysisItem.getAccessionNumber())
                     .getId();
             if (!analysisSampleId.equals(currentSampleId)) {

@@ -57,4 +57,14 @@ public class SampleHumanServiceImpl extends BaseObjectServiceImpl<SampleHuman, S
         return getBaseObjectDAO().getSamplesForPatient(patientID);
     }
 
+    @Override
+    public List<Patient> getAllPatientsWithSampleEntered() {
+        return baseObjectDAO.getAllPatientsWithSampleEntered();
+    }
+
+    @Override
+    public List<Patient> getAllPatientsWithSampleEnteredMissingFhirUuid() {
+        return baseObjectDAO.getAllPatientsWithSampleEnteredMissingFhirUuid();
+    }
+
 }

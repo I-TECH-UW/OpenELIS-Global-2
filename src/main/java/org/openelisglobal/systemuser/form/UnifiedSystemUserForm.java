@@ -44,6 +44,7 @@ public class UnifiedSystemUserForm extends BaseForm {
 
     private List<@Pattern(regexp = ValidationHelper.ID_REGEX) String> selectedRoles;
 
+    @NotBlank
     @ValidDate(relative = DateRelation.FUTURE)
     private String expirationDate;
 

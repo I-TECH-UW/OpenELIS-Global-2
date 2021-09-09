@@ -39,7 +39,7 @@ public class TestResultServiceImpl extends BaseObjectServiceImpl<TestResult, Str
         propertyValues.put("isActive", true);
         orderProperties.add("resultGroup");
         orderProperties.add("id");
-        return baseObjectDAO.getAllMatchingOrdered(propertyValues, orderProperties, false);
+        return baseObjectDAO.getAllMatchingOrdered(propertyValues, orderProperties, true);
     }
 
     @Override

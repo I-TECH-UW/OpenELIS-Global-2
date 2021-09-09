@@ -5,7 +5,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
 
-import org.openelisglobal.analyzerimport.action.AnalyzerImportServlet;
 import org.openelisglobal.common.servlet.barcode.LabelMakerServlet;
 import org.openelisglobal.common.servlet.query.AjaxQueryXMLServlet;
 import org.openelisglobal.common.servlet.reports.ReportsServlet;
@@ -85,10 +84,10 @@ public class AnnotationWebAppInitializer implements WebApplicationInitializer {
         ajaxDataXMLLServlet.setLoadOnStartup(++startupOrder);
         ajaxDataXMLLServlet.addMapping("/ajaxDataXML");
 
-        ServletRegistration.Dynamic importAnalyzerServlet = servletContext.addServlet("importAnalyzer",
-                AnalyzerImportServlet.class);
-        importAnalyzerServlet.setLoadOnStartup(++startupOrder);
-        importAnalyzerServlet.addMapping("/importAnalyzer");
+//        ServletRegistration.Dynamic importAnalyzerServlet = servletContext.addServlet("importAnalyzer",
+//                AnalyzerImportServlet.class);
+//        importAnalyzerServlet.setLoadOnStartup(++startupOrder);
+//        importAnalyzerServlet.addMapping("/importAnalyzer");
 
         ServletRegistration.Dynamic metricServicesServlet = servletContext.addServlet("MetricServicesServlet",
                 MetricServicesServlet.class);

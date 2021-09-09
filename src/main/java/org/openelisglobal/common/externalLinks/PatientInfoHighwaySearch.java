@@ -25,6 +25,8 @@ import org.apache.http.HttpStatus;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.provider.query.ExtendedPatientSearchResults;
 import org.openelisglobal.common.util.DateUtil;
+import org.openelisglobal.internationalization.MessageUtil;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
@@ -38,6 +40,9 @@ import org.w3c.dom.NodeList;
 @Service("InfoHighwaySearch")
 @Scope("prototype")
 public class PatientInfoHighwaySearch implements IExternalPatientSearch {
+
+    @Value("${org.openelisglobal.externalSearch.infohighway.timeout:50000}")
+    private Integer timeout;
 
     public static final String MALFORMED_REPLY = "Malformed reply";
     public static final String URI_BUILD_FAILURE = "Failed to build URI";
@@ -53,7 +58,6 @@ public class PatientInfoHighwaySearch implements IExternalPatientSearch {
     private String connectionString;
     private String connectionName;
     private String connectionPassword;
-    private int timeout = 0;
 
     protected String resultXML;
     protected List<ExtendedPatientSearchResults> searchResults = new ArrayList<>();
@@ -77,8 +81,7 @@ public class PatientInfoHighwaySearch implements IExternalPatientSearch {
     }
 
     @Override
-    synchronized public void setConnectionCredentials(String connectionString, String name, String password,
-            int timeout_Mil) {
+    synchronized public void setConnectionCredentials(String connectionString, String name, String password) {
         if (finished) {
             throw new IllegalStateException("ServiceCredentials set after ExternalPatientSearch thread was started");
         }
@@ -86,7 +89,6 @@ public class PatientInfoHighwaySearch implements IExternalPatientSearch {
         this.connectionString = connectionString;
         connectionName = name;
         connectionPassword = password;
-        timeout = timeout_Mil;
     }
 
     @Override
@@ -305,6 +307,7 @@ public class PatientInfoHighwaySearch implements IExternalPatientSearch {
     private void addPatient(NodeList fieldsList, NodeList valueList) {
         try {
             ExtendedPatientSearchResults patient = new ExtendedPatientSearchResults();
+            patient.setDataSourceName(MessageUtil.getMessage("externalconnections.infohighway"));
             for (int i = 0; i < fieldsList.getLength(); ++i) {
                 addField(patient, fieldsList.item(i).getTextContent(), valueList.item(i).getTextContent());
             }
@@ -384,6 +387,11 @@ public class PatientInfoHighwaySearch implements IExternalPatientSearch {
     @Override
     public String getConnectionString() {
         return connectionString;
+    }
+
+    @Override
+    public int getTimeout() {
+        return timeout;
     }
 
 }

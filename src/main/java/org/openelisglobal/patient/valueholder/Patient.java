@@ -17,6 +17,7 @@ package org.openelisglobal.patient.valueholder;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.UUID;
 
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.valueholder.BaseObject;
@@ -71,6 +72,8 @@ public class Patient extends BaseObject<String> {
     private String selectedPersonId;
 
     private String chartNumber;
+
+    private UUID fhirUuid;
 
     public String getChartNumber() {
         return chartNumber;
@@ -271,5 +274,17 @@ public class Patient extends BaseObject<String> {
 
     public String getSelectedPersonId() {
         return this.selectedPersonId;
+    }
+
+    public UUID getFhirUuid() {
+        return fhirUuid;
+    }
+
+    public String getFhirUuidAsString() {
+        return fhirUuid == null ? "" : fhirUuid.toString();
+    }
+
+    public void setFhirUuid(UUID fhirUuid) {
+        this.fhirUuid = fhirUuid;
     }
 }

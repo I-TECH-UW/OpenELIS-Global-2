@@ -16,8 +16,10 @@ import org.openelisglobal.common.valueholder.BaseObject;
 @Table(name = "notification_payload_template")
 public class NotificationPayloadTemplate extends BaseObject<Integer> {
 
+    private static final long serialVersionUID = 3273600381468746329L;
+
     public enum NotificationPayloadType {
-        CLIENT_RESULTS
+        TEST_RESULT
     }
 
     @Id
@@ -25,15 +27,16 @@ public class NotificationPayloadTemplate extends BaseObject<Integer> {
     @SequenceGenerator(name = "notification_payload_template_generator", sequenceName = "notification_payload_template_seq", allocationSize = 1)
     private Integer id;
 
+    @Column(unique = true)
+    @Enumerated(EnumType.STRING)
+    private NotificationPayloadType type;
+
     @Column(name = "message_template")
     private String messageTemplate;
 
     @Column(name = "subject_template")
     private String subjectTemplate;
 
-    @Column(unique = true)
-    @Enumerated(EnumType.STRING)
-    private NotificationPayloadType type;
 
     public String getMessageTemplate() {
         return messageTemplate;
@@ -68,5 +71,4 @@ public class NotificationPayloadTemplate extends BaseObject<Integer> {
     public void setId(Integer id) {
         this.id = id;
     }
-
 }

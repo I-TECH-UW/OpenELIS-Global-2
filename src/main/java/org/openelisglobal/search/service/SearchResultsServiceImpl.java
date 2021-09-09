@@ -22,4 +22,13 @@ public class SearchResultsServiceImpl implements SearchResultsService {
                 patientID, guid, dateOfBirth, gender);
     }
 
+    @Override
+    @Transactional
+    public List<PatientSearchResults> getSearchResultsExact(String lastName, String firstName, String STNumber,
+            String subjectNumber, String nationalID, String externalID, String patientID, String guid,
+            String dateOfBirth, String gender) {
+        return searchResultsDAO.getSearchResultsExact(lastName, firstName, STNumber, subjectNumber, nationalID,
+                externalID, patientID, guid, dateOfBirth, gender);
+    }
+
 }

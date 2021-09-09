@@ -141,8 +141,14 @@ function addTypeToTable(table, sampleDescription, sampleType, currentTime, curre
 		sampleId.innerHTML = getSampleIdHtml(rowLabel);
 		type.innerHTML = getSampleTypeHtml( rowLabel, sampleDescription, sampleType );
 		if( useCollectionDate ){
-			collectionDate.innerHTML = getCollectionDateHtml( rowLabel, autoFillCollectionDate ? currentDate : "" );
-			collectionTime.innerHTML = getCollectionTimeHtml( rowLabel, autoFillCollectionDate ? currentTime : "" );
+			var sampleTypeEntry = getSampleTypeMapEntry(sampleType);
+			if (sampleTypeEntry && typeof sampleTypeEntry.collectionDate !== 'undefined') {
+				collectionDate.innerHTML = getCollectionDateHtml( rowLabel, sampleTypeEntry.collectionDate);
+				collectionTime.innerHTML = getCollectionTimeHtml( rowLabel, sampleTypeEntry.collectionTime);
+			} else {
+				collectionDate.innerHTML = getCollectionDateHtml( rowLabel, autoFillCollectionDate ? currentDate : "" );
+				collectionTime.innerHTML = getCollectionTimeHtml( rowLabel, autoFillCollectionDate ? currentTime : "" );
+			}
 		}
 		if( useCollector ) {
 			collector.innerHTML = getCollectorHtml( rowLabel);
@@ -162,7 +168,7 @@ function getCheckBoxHtml( row, selectRow ){
 }
 
 function getSampleIdHtml(row){
-	return "<input name='sequence' size ='4' value='" + (parseInt(row) + parseInt(sampleIdStart) ) + "' id='sequence_" + row + "' class='text' type='text'  disabled='disabled' >";
+	return "<input name='sequence' size ='4' value='" + (parseInt(row) + parseInt(sampleIdStart) ) + "' id='sequence_" + row + "' class='text sampleId' type='text'  disabled='disabled' >";
 }
 
 function getSampleTypeHtml(  row, sampleDescription, sampleType ){
@@ -235,6 +241,13 @@ function removeRow( row ){
 	}else if( checkedRowRemoved){
 		$("select" + rows[1].id).checked = true;
 		sampleClicked( rows[1].id.sub('_', '') );
+	}
+
+    if (typeof(referralTestSelected) === 'function') {
+    	referralTestSelected();
+	}
+    if (typeof(assignTestsToSelected) === 'function') {
+    	assignTestsToSelected();
 	}
 	
 	testAndSetSave();
@@ -554,8 +567,198 @@ function assignTestsToSelected(checkbox, panelId){
 			panelIdElement.value = panelIdArray.join(",");
 		}		
 	}
+	getNotificationsForTests(chosenIds, addNotificationConfigurations);
+	addNotificationsOptions();
+	referralTestSelected();
 	testAndSetSave();
 }
+
+function addNotificationsOptions() {
+	var resultReportingSection = document.getElementById("resultReportingSection");
+	if (resultReportingSection == null ) {
+		return;
+	}
+	if (!jQuery('.reportingHeader').length) {
+		var resultsSectionHeader  = document.createElement("h2");
+		resultsSectionHeader.setAttribute('class', 'reportingHeader');
+		resultsSectionHeader.appendChild(document.createTextNode("<spring:message code='testnotification.patiententry.header'/>"));
+		resultReportingSection.appendChild(resultsSectionHeader);
+	}
+
+	jQuery('#resultReportingSection .referralRow').addClass('deleteReferralRow');
+	
+	var reportingRows = jQuery('.reportingRow');
+	reportingRows.addClass('deleteReportingRow');
+	var reportingDivs = jQuery('.reportingDiv');
+	reportingDivs.addClass('deleteReportingRow');
+
+	var samples = jQuery('#samplesAddedTable .sampleId');
+	samples.each(function(index, value) {
+		var sampleNum = jQuery(this).val();
+		var testNames = document.getElementById("tests_" + sampleNum).value.split(",");
+		var testIds = document.getElementById("testIds_" + sampleNum).value.split(",");
+		addNotificationOptionForRow(resultReportingSection, "<spring:message code='' text='Sample'/> " + sampleNum, sampleNum, testIds, testNames);
+	});
+	
+	jQuery('.deleteReportingRow').remove();
+}
+
+function addNotificationOptionForRow(resultReportingSection, rowLabel, sampleNum, testIds, testNames) {
+	var table, div;
+	if (testIds.length === 0) {
+		return;
+	}
+	if (jQuery('#reportingDiv_sample_' + sampleNum).length) {
+		div = document.getElementById('reportingDiv_sample_' + sampleNum);
+		div.setAttribute('class', 'reportingDiv');
+		table = document.getElementById('reportingTable_sample_' + sampleNum);
+		table.setAttribute('class', 'reportingTable');
+	} else {
+		var div = document.createElement('div');
+		div.setAttribute('id', 'reportingDiv_sample_' + sampleNum);
+		div.setAttribute('class', 'reportingDiv');
+		resultReportingSection.appendChild(div)
+		
+		var sampleSectionHeader  = document.createElement("h3");
+		sampleSectionHeader.appendChild(document.createTextNode(rowLabel));
+		div.appendChild(sampleSectionHeader)
+		
+		table = document.createElement("table");
+		table.setAttribute('id', 'reportingTable_sample_' + sampleNum);
+		table.setAttribute('class', 'reportingTable');
+		var row = document.createElement("tr");
+		row.setAttribute('class', 'reportingRowHeader');
+		row.setAttribute('id', 'reportingRowHeader_sample_' + sampleNum);
+		var col = document.createElement("td");
+		row.appendChild(col);
+		col = document.createElement("td");
+		col.colSpan = "2";
+		col.style.textAlign = "center";
+		col.style.fontWeight = "bold";
+		col.appendChild(document.createTextNode("<spring:message code='label.patient'/>"))
+		row.appendChild(col);
+		col = document.createElement("td");
+		col.colSpan = "2";
+		col.style.textAlign = "center";
+		col.style.fontWeight = "bold";
+		col.appendChild(document.createTextNode("<spring:message code='label.requester'/>"))
+		row.appendChild(col);
+		table.appendChild(row)
+		div.appendChild(table);
+	}
+
+	
+	for (var i = 0; i < testIds.length; ++i) {
+		if (testIds[i] !== "") {
+			addNotificationsOption(sampleNum, testIds[i], testIds[i], testNames[i], table);
+		}
+	}
+}
+
+function addNotificationsOption(sampleNum, testNum, testId, testName, table) {
+	var resultReportingSection = document.getElementById("resultReportingSection");
+	if (resultReportingSection == null ) {
+		return;
+	}
+	if (jQuery('#reportingRow_sample_' + sampleNum + '_test_' + testNum).length) {
+		document.getElementById('reportingRow_sample_' + sampleNum + '_test_' + testNum).setAttribute("class", "referralRow");
+		return;
+	}
+	
+	var row = document.createElement("tr");
+	row.setAttribute('id', 'reportingRow_sample_' + sampleNum + '_test_' + testNum);
+	row.setAttribute('class', 'reportingRow');
+	var col = document.createElement("td");
+	var emailNote = "<spring:message code='externalconnections.email'/>";
+	var smsNote = "<spring:message code='externalconnections.sms'/>";
+	col.appendChild(document.createTextNode(testName));
+	col.style.fontWeight = "bold";
+	row.appendChild(col);
+	col = document.createElement("td");
+	var checkbox = document.createElement("input");
+	checkbox.type = "checkbox";
+	checkbox.classList.add("patientEmailInput");
+	checkbox.setAttribute("onchange","editNotificationValue(\"" + testId+ "\", \"" + testName + "\")");
+	checkbox.value = testId;
+	checkbox.id = "patientEmail_" + testId;
+	col.appendChild(checkbox);
+	col.appendChild(document.createTextNode(emailNote));
+	row.appendChild(col);
+	col = document.createElement("td");
+	checkbox = document.createElement("input");
+	checkbox.type = "checkbox";
+	checkbox.classList.add("patientSMSInput");
+	checkbox.setAttribute("onchange","editNotificationValue(\"" + testId+ "\", \"" + testName + "\")");
+	checkbox.value = testId;
+	checkbox.id = "patientSMS_" + testId;
+	col.appendChild(checkbox);
+	col.appendChild(document.createTextNode(smsNote));
+	row.appendChild(col);
+	col = document.createElement("td");
+	checkbox = document.createElement("input");
+	checkbox.type = "checkbox";
+	checkbox.classList.add("providerEmailInput");
+	checkbox.setAttribute("onchange","editNotificationValue(\"" + testId+ "\", \"" + testName + "\")");
+	checkbox.value = testId;
+	checkbox.id = "providerEmail_" + testId;
+	col.appendChild(checkbox);
+	col.appendChild(document.createTextNode(emailNote));
+	row.appendChild(col);
+	col = document.createElement("td");
+	checkbox = document.createElement("input");
+	checkbox.type = "checkbox";
+	checkbox.classList.add("providerSMSInput");
+	checkbox.setAttribute("onchange","editNotificationValue(\"" + testId+ "\", \"" + testName + "\")");
+	checkbox.value = testId;
+	checkbox.id = "providerSMS_" + testId;
+	col.appendChild(checkbox);
+	col.appendChild(document.createTextNode(smsNote));
+	row.appendChild(col);
+	table.appendChild(row);
+	
+}
+
+function addNotificationConfigurations(xhr) {
+	var jsonObj = JSON.parse(xhr.response);
+	for (var i = 0; i < jsonObj.length; ++i) {
+		var testId = jsonObj[i].testId;
+		var patientEmail = jsonObj[i].patientEmail.active;
+		var patientSMS = jsonObj[i].patientSMS.active;
+		var providerEmail = jsonObj[i].providerEmail.active;
+		var providerSMS = jsonObj[i].providerSMS.active;
+
+		document.getElementById("patientEmail_" + testId).checked = patientEmail;
+		document.getElementById("patientSMS_" + testId).checked = patientSMS;
+		document.getElementById("providerEmail_" + testId).checked = providerEmail;
+		document.getElementById("providerSMS_" + testId).checked = providerSMS;
+	}
+}
+
+function editNotificationValue(testId, testName) {
+	
+	var notificationVals = jQuery('input[class="patientEmailInput"]:checked').map(function(){
+        return jQuery(this).val();
+    }).get().join(',');
+	document.getElementById("patientEmailNotificationTestIds").value = notificationVals;
+	
+	notificationVals = jQuery('input[class="patientSMSInput"]:checked').map(function(){
+        return jQuery(this).val();
+     }).get().join(',');
+	document.getElementById("patientSMSNotificationTestIds").value = notificationVals;
+	
+	notificationVals = jQuery('input[class="providerEmailInput"]:checked').map(function(){
+        return jQuery(this).val();
+     }).get().join(',');
+	document.getElementById("providerEmailNotificationTestIds").value = notificationVals;
+	
+	notificationVals = jQuery('input[class="providerSMSInput"]:checked').map(function(){
+        return jQuery(this).val();
+     }).get().join(',');
+	document.getElementById("providerSMSNotificationTestIds").value = notificationVals;
+
+	document.getElementById("customNotificationLogic").value = "true";
+}
+
 
 function addIdToUniqueIdList(id, list) {
 	if (list) {
@@ -775,7 +978,7 @@ function sampleTypeQualifierChanged(element){
 <div id="sampleConditionPrototype" style="display: none" >
 <form:select path="initialSampleConditionList"
 			 multiple="true"
-			 title='<%= MessageUtil.getMessage("result.multiple_select")%>'
+             title='<spring:message/>'
 			 id= 'prototypeID'>
 			<c:forEach var="optionValue" items="${form.initialSampleConditionList}">
 						<option value='${optionValue.id}' >
@@ -824,6 +1027,12 @@ function sampleTypeQualifierChanged(element){
 </div>
 
 <form:hidden  path="sampleXML"  id="sampleXML"/>
+<form:hidden path="patientEmailNotificationTestIds" id="patientEmailNotificationTestIds"/>
+<form:hidden path="patientSMSNotificationTestIds" id="patientSMSNotificationTestIds"/>
+<form:hidden path="providerEmailNotificationTestIds" id="providerEmailNotificationTestIds"/>
+<form:hidden path="providerSMSNotificationTestIds" id="providerSMSNotificationTestIds"/>
+<form:hidden path="customNotificationLogic" id="customNotificationLogic" value="false"/>
+
 	<Table style="width:100%">
 		<tr>
 			<td>

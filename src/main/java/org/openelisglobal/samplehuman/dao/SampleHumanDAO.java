@@ -49,4 +49,8 @@ public interface SampleHumanDAO extends BaseDAO<SampleHuman, String> {
 
     public List<Sample> getSamplesForPatient(String patientID) throws LIMSRuntimeException;
 
+    public List<Patient> getAllPatientsWithSampleEntered();
+
+    public List<Patient> getAllPatientsWithSampleEnteredMissingFhirUuid();
+
 }

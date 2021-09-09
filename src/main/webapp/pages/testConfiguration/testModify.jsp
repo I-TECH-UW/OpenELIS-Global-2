@@ -104,6 +104,7 @@
 %>
 
 	<script type="text/javascript">
+	var valueChanged = true;
 
 	
     function makeDirty(){
@@ -111,7 +112,7 @@
     }
 
     function setForEditing(testId, name) {
-        jQuery("#catDiv").show();
+    	jQuery("#catDiv").show();
         jQuery("#testName").text(name);
         jQuery(".error").each(function (index, value) {
             value.value = "";
@@ -162,8 +163,9 @@
 				panelOption.forEach(function(elem) {
 					jQuery(elem).attr("selected", true)
 				});
-				
+
 				jQuery("#notifyResults").prop('checked', jQuery(elem).attr('fNotifyResults') === 'true');
+				jQuery("#inLabOnly").prop('checked', jQuery(elem).attr('fInLabOnly') === 'true');
 				
 				jQuery("#panelSelection").change();
 							
@@ -507,31 +509,32 @@
         var test, name, modName, id, modId;
         var ul = jQuery(document.createElement("ul"));
         var length = tests.length;
+        var testId = jQuery("#testId").val() 
         ul.addClass("sortable sortable-tag");
 
         for (var i = 0; i < length; ++i) {
             test = tests[i];
             name = getValueFromXmlElement(test, "name");
             
-            <%if (locale.equals("en_US")) {%>
+            <%if (locale.equals("en_US") || locale.equals("en")) {%>
             modName = jQuery("#testNameEnglish").val();
             <%} else {%>
             modName = jQuery("#testNameFrench").val();
             <%}%>
             
             id = getValueFromXmlElement(test, "id");
-            if (name != modName ) {
+            if (id != testId ) {
             	ul.append(createLI(id, name, false));
             } else {
-            	//ul.append(createLI(id, name, true));
+            	ul.append(createLI(id, modName, true));
             }
         }
 
-        <%if (locale.equals("en_US")) {%>
-        ul.append( createLI(modId, jQuery("#testNameEnglish").val(), true) );
-        <%} else { %>
-        ul.append( createLI(modId, jQuery("#testNameFrench").val(), true) );
-        <% } %>
+<%--         <%if (locale.equals("en_US") || locale.equals("en")) {%> --%>
+//         	ul.append( createLI(modId, jQuery("#testNameEnglish").val(), true) );
+<%--         <%} else { %> --%>
+//         	ul.append( createLI(modId, jQuery("#testNameFrench").val(), true) );
+<%--         <% } %> --%>
 
         jQuery("#sort" + sampleTypeId).append(ul);
 
@@ -593,7 +596,7 @@
     }
 
     function upperAgeRangeChanged(index) {
-        var copy, htmlCopy, monthYear, lowAge, lowAgeValue, highAgeValue, lowAgeModifier, newMonthValue;
+        var copy, htmlCopy, monthYear, lowAge, lowAgeValue, highAgeValue, lowAgeModifier, newDayValue;
         var element = jQuery("#upperAgeSetter_" + index);
 
         element.removeClass("error");
@@ -604,7 +607,8 @@
                 lowAge = jQuery("#lowerAge_" + index).text();
                 lowAgeModifier = lowAge.charAt(lowAge.length - 1);
                 lowAgeValue = lowAge.substring(0, lowAge.length - 1);
-                lowAgeValue = lowAgeModifier == "<%=MessageUtil.getContextualMessage("abbreviation.year.single")%>" ? lowAgeValue *= 12 : +lowAgeValue;
+                lowAgeValue = lowAgeModifier == '<%=MessageUtil.getMessage("abbreviation.day.single")%>' ? +lowAgeValue : lowAgeModifier == '<%=MessageUtil.getMessage("abbreviation.month.single")%>' ? Math.floor(lowAgeValue * 365/12) : lowAgeValue *= 365;
+<%--                 lowAgeValue = lowAgeModifier == "<%=MessageUtil.getContextualMessage("abbreviation.year.single")%>" ? lowAgeValue *= 12 : +lowAgeValue; --%>
                 highAgeValue = +element.val();
                 if (highAgeValue != element.val()) {
                     alert("<%=MessageUtil.getContextualMessage("error.age.value")%>");
@@ -612,9 +616,11 @@
                     return;
                 }
 
-                newMonthValue = monthYear == '<%=MessageUtil.getMessage("abbreviation.month.single")%>' ? highAgeValue : 12 * highAgeValue;
+<%--                 newMonthValue = monthYear == '<%=MessageUtil.getMessage("abbreviation.month.single")%>' ? highAgeValue : 12 * highAgeValue; --%>
+                newDayValue = monthYear == '<%=MessageUtil.getMessage("abbreviation.day.single")%>' ? highAgeValue : monthYear == '<%=MessageUtil.getMessage("abbreviation.month.single")%>' ? Math.floor(highAgeValue * 365/12) : 365 * highAgeValue;
+<%--                 newDayValue = monthYear == '<%=MessageUtil.getMessage("abbreviation.day.single")%>' ? highAgeValue : monthYear == '<%=MessageUtil.getMessage("abbreviation.month.single")%>' ? Math.floor(highAgeValue * 30.44) : Math.floor(365.25 * highAgeValue); --%>
 
-                if (newMonthValue <= lowAgeValue) {
+                if (newDayValue <= lowAgeValue) {
                     element.addClass("error");
                     alert("<%=MessageUtil.getContextualMessage("error.age.begining.ending.order")%>");
                     return;
@@ -1074,12 +1080,14 @@
     			ageHigh = (lowHigh.length == 2) ? lowHigh[1] : "Infinity";
     			age = [ ageLow, ageHigh];
     			
-    			normalLow = "-Infinity"; 
-    			normalHigh = "Infinity"; 
+    			var normalLowHigh = tmpRangeArray[2].split("-");
+    			normalLow = (normalLowHigh.length == 2) ? normalLowHigh[0] : "-Infinity";
+    			normalHigh = (normalLowHigh.length == 2) ? normalLowHigh[1] : "Infinity";
     			normal = [normalLow, normalHigh];
-    			
-    			validLow = "-Infinity"; 
-    			validHigh = "Infinity"; 
+
+    			var validLowHigh = tmpRangeArray[3].split("-");
+    			validLow = (validLowHigh.length == 2) ? validLowHigh[0] : "-Infinity";
+    			validHigh = (validLowHigh.length == 2) ? validLowHigh[1] : "Infinity";
     			valid = [validLow, validHigh];
     			
     			resultLimits.push([gender, age, normal, valid]);
@@ -1295,6 +1303,7 @@
         jQuery("#activeRO").text(jQuery("#active").attr("checked") ? "Y" : "N");
         jQuery("#orderableRO").text(jQuery("#orderable").attr("checked") ? "Y" : "N");
         jQuery("#notifyResultsRO").text(jQuery("#notifyResults").attr("checked") ? "Y" : "N");
+        jQuery("#inLabOnlyRO").text(jQuery("#inLabOnly").attr("checked") ? "Y" : "N");
     }
 
     function createJSON() {
@@ -1312,6 +1321,7 @@
         jsonObj.resultType = jQuery("#resultTypeSelection").val();
         jsonObj.orderable = jQuery("#orderable").attr("checked") ? 'Y' : 'N';
         jsonObj.notifyResults = jQuery("#notifyResults").attr("checked") ? 'Y' : 'N';
+        jsonObj.inLabOnly = jQuery("#inLabOnly").attr("checked") ? 'Y' : 'N';
         jsonObj.active = jQuery("#active").attr("checked") ? 'Y' : 'N';
         
         jQuery(".resultClass").each(function (i,elem) {
@@ -1335,7 +1345,7 @@
         
         	console.log(JSON.stringify(jsonObj.dictionary));
         	//dictionary from defaults if empty
-        	if(JSON.stringify(jsonObj.dictionary == "[]")) {
+        	if(JSON.stringify(jsonObj.dictionary) == "[]") {
         		console.log(JSON.stringify(jsonObj.dictionaryReference));
         		var significantDigits = null;
 				var dictionaryValues = null;
@@ -1431,13 +1441,13 @@
         for (var rowIndex = 0; rowIndex < defaultResultLimits.length; rowIndex++) {
             
             //yearMonth = monthYear = jQuery(".yearMonthSelect_" + rowIndex + ":checked").val();
-            yearMonth = 'M'; // always month regardless
+            yearMonth = 'D'; // always month regardless
             limit = {};
 
             upperAge = defaultResultLimits[rowIndex][1][1];
             if (upperAge != "Infinity") {
                 //limit.highAgeRange = yearMonth == "<%=MessageUtil.getContextualMessage("abbreviation.year.single")%>" ? (upperAge * 12).toString() : upperAge;
-            	limit.highAgeRange = upperAge;
+            	 limit.highAgeRange = yearMonth == '<%=MessageUtil.getMessage("abbreviation.day.single")%>' ? upperAge : yearMonth == '<%=MessageUtil.getMessage("abbreviation.month.single")%>' ? Math.floor(upperAge * 365/12) : 365 * upperAge;
             } else {
                 limit.highAgeRange = "Infinity";
             }
@@ -1481,7 +1491,8 @@
 
             upperAge = jQuery("#upperAgeSetter_" + rowIndex).val();
             if (upperAge != "Infinity") {
-                limit.highAgeRange = yearMonth == "<%=MessageUtil.getContextualMessage("abbreviation.year.single")%>" ? (upperAge * 12).toString() : upperAge;
+<%--                 limit.highAgeRange = yearMonth == "<%=MessageUtil.getContextualMessage("abbreviation.year.single")%>" ? (upperAge * 365).toString() : upperAge; --%>
+                limit.highAgeRange = yearMonth == '<%=MessageUtil.getMessage("abbreviation.day.single")%>' ? upperAge : yearMonth == '<%=MessageUtil.getMessage("abbreviation.month.single")%>' ? Math.floor(upperAge * 365/12).toString() : (365 * upperAge).toString();
             } else {
                 limit.highAgeRange = upperAge;
             }
@@ -1638,6 +1649,7 @@ td {
 					fReferenceValue='<%=bean.getReferenceValue()%>'
 					fReferenceId='<%=bean.getReferenceId()%>'
 					fNotifyResults='<%=bean.getNotifyResults()%>'
+					fInLabOnly='<%=bean.getInLabOnly()%>'
 				class='resultClass'>
 				
 				<tr>
@@ -1679,6 +1691,7 @@ td {
 					<td><b><%=bean.getActive()%></b></td>
 					<td><b><%=bean.getOrderable()%></b></td>
 					<%if (bean.getNotifyResults()) { %><td><b><spring:message code="test.notifyResults"/></b></td><%} %>
+					<%if (bean.getInLabOnly()) { %><td><b><spring:message code="test.inLabOnly"/></b></td><%} %>
 				</tr>
 				<tr>
 					<td><span class="catalog-label"><spring:message code="label.test.unit" /></span> <b><%=bean.getTestUnit()%></b></td>
@@ -1716,9 +1729,11 @@ td {
 					<%
 						}
 								}
+							%>
+				</tr>
+					<%
 							}
 					%>
-				</tr>
 
 				<%
 					if (bean.isHasLimitValues()) {
@@ -1729,7 +1744,7 @@ td {
 				</tr>
 				<tr>
 					<td><span class="catalog-label"><spring:message code="label.sex" /></span></td>
-					<td><span class="catalog-label"><spring:message code="configuration.test.catalog.age.range.months" /></span></td>
+					<td><span class="catalog-label"><spring:message code="configuration.test.catalog.age.range" /></span></td>
 					<td><span class="catalog-label"><spring:message code="configuration.test.catalog.normal.range" /></span></td>
 					<td><span class="catalog-label"><spring:message code="configuration.test.catalog.valid.range" /></span></td>
 				</tr>
@@ -1750,8 +1765,10 @@ td {
 				<%
 					}
 					%>
+					<tr><td>
 					<%--<input id="fLimit" type="hidden" value='<%=fLimitString%>' />  --%>
 					<input id="fLimit" type="hidden" value='<%=fLimitString%>' />
+					</td></tr>
 					<%
 						}
 					}
@@ -1939,7 +1956,10 @@ td {
 				<label for="orderable"><spring:message code="label.orderable" /></label>
 				<input type="checkbox" id="orderable" checked="checked" /><br/>
 				<label for="notifyResults"><spring:message code="test.notifyResults" /></label>
-				<input type="checkbox" id="notifyResults"/></td>
+				<input type="checkbox" id="notifyResults"/><br/>
+				<label for="inLabOnly"><spring:message code="test.inLabOnly" /></label>
+				<input type="checkbox" id="inLabOnly"/>
+				</td>
 			</tr>
 		</table>
 	</div>
@@ -1985,6 +2005,9 @@ td {
 			<br />
 			<spring:message code="test.notifyResults" />
 			<div class="tab" id="notifyResultsRO"></div>
+			<br />
+			<spring:message code="test.inLabOnly" />
+			<div class="tab" id="inLabOnlyRO"></div>
 			<br />
 		</div>
 		<div class="step2" style="float: right; width: 80%; display: none">
@@ -2125,15 +2148,22 @@ td {
 				<td><span class="sexRange_index" style="display: none">
 						<spring:message code="sex.male" />
 				</span></td>
-				<td><input class="yearMonthSelect_index" type="radio"
+				<td>
+				<input class="yearMonthSelect_index" type="radio"
 					name="time_index"
 					value="<%=MessageUtil.getContextualMessage("abbreviation.year.single")%>"
 					onchange="upperAgeRangeChanged( 'index' )" checked>
-				<spring:message code="abbreviation.year.single" /> <input
+				<spring:message code="abbreviation.year.single" /> 
+				<input
 					class="yearMonthSelect_index" type="radio" name="time_index"
 					value="<%=MessageUtil.getContextualMessage("abbreviation.month.single")%>"
 					onchange="upperAgeRangeChanged( 'index' )">
-				<spring:message code="abbreviation.month.single" />&nbsp;</td>
+				<spring:message code="abbreviation.month.single" />
+				<input
+					class="yearMonthSelect_index" type="radio" name="time_index"
+					value="<%=MessageUtil.getContextualMessage("abbreviation.day.single")%>"
+					onchange="upperAgeRangeChanged('index')">
+				<spring:message code="abbreviation.day.single" />&nbsp;</td>
 				<td id="lowerAge_index">0</td>
 				<td><input type="text" id="upperAgeSetter_index"
 					value="Infinity" size="10"
@@ -2218,7 +2248,11 @@ td {
 					class="yearMonthSelect_0" type="radio" name="time_0"
 					value="<%=MessageUtil.getContextualMessage("abbreviation.month.single")%>"
 					onchange="upperAgeRangeChanged('0')">
-				<spring:message code="abbreviation.month.single" />&nbsp;</td>
+				<spring:message code="abbreviation.month.single" /><input
+					class="yearMonthSelect_0" type="radio" name="time_0"
+					value="<%=MessageUtil.getContextualMessage("abbreviation.day.single")%>"
+					onchange="upperAgeRangeChanged('0')">
+				<spring:message code="abbreviation.day.single" />&nbsp;</td>
 				<td id="lowerAge_0">0&nbsp;</td>
 				<td><input type="text" id="upperAgeSetter_0" value="Infinity"
 					size="10" onchange="upperAgeRangeChanged('0')"><span
@@ -2290,9 +2324,10 @@ td {
 			value="<%=MessageUtil.getContextualMessage("label.button.back")%>"
 			onclick="navigateBackFromConfirm()" />
 	</div>
-
 	<table>
 		<%
+			testCount = 0;
+			columnCount = 1;
 			while (testCount < testList.size()) {
 		%>
 		<tr>
@@ -2301,7 +2336,7 @@ td {
 				onclick="setForEditing( '<%=((IdValuePair) testList.get(testCount)).getId() + "', '"
 						+ ((IdValuePair) testList.get(testCount)).getValue()%>');"
 				class="textButton test" /> <%
- 	testCount++;
+ 		testCount++;
  		columnCount = 1;
  %></td>
 			<%
@@ -2312,8 +2347,8 @@ td {
 				onclick="setForEditing( '<%=((IdValuePair) testList.get(testCount)).getId() + "', '"
 							+ ((IdValuePair) testList.get(testCount)).getValue()%>' );"
 				class="textButton test" /> <%
- 	testCount++;
- 			columnCount++;
+ 		testCount++;
+ 		columnCount++;
  %></td>
 			<%
 				}

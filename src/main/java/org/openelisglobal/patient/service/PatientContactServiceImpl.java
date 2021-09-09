@@ -1,5 +1,7 @@
 package org.openelisglobal.patient.service;
 
+import java.util.List;
+
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
 import org.openelisglobal.patient.dao.PatientContactDAO;
 import org.openelisglobal.patient.valueholder.PatientContact;
@@ -20,6 +22,11 @@ public class PatientContactServiceImpl extends BaseObjectServiceImpl<PatientCont
     @Override
     protected PatientContactDAO getBaseObjectDAO() {
         return baseObjectDAO;
+    }
+
+    @Override
+    public List<PatientContact> getForPatient(String patientId) {
+        return baseObjectDAO.getForPatient(patientId);
     }
 
 }

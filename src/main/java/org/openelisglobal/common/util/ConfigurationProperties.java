@@ -76,6 +76,7 @@ public abstract class ConfigurationProperties {
         failedValidationMarker("showValidationFailureIcon"),      //If true results that failed validation will have icon next to them
         resultsResendTime("results.send.retry.time"),           //How much time between trying to resend results that failed to reach their destination
         TRACK_PATIENT_PAYMENT("trackPayment"),       //If true then patient payment status can be entered
+        ACCESSION_NUMBER_VALIDATE("validateAccessionNumber"),       //If true then validate the accession number
         ALERT_FOR_INVALID_RESULTS("alertWhenInvalidResult"),   //If true then technician will get an alert for results outside of the valid range
         DEFAULT_LANG_LOCALE("default language locale"),         //Default language locale
         DEFAULT_DATE_LOCALE("default date locale"),         //Date local
@@ -97,6 +98,7 @@ public abstract class ConfigurationProperties {
         PHONE_FORMAT("phone format"),                //Format of phone number
         VALIDATE_PHONE_FORMAT("validate phone format"),       //If true then entered phone numbers will be validated against format
         ALLOW_DUPLICATE_SUBJECT_NUMBERS("Allow duplicate subject number"), //If true then duplicate subject numbers are allowed
+        ALLOW_DUPLICATE_NATIONAL_IDS("Allow duplicate national ids"), // If true then duplicate national ids are allowed
         VALIDATE_REJECTED_TESTS("validateTechnicalRejection"), //If true then if the technician rejects a test the next step is validation
         TEST_NAME_AUGMENTED("augmentTestNameWithType"),   //If true then in some places the test name will be suffixed with the sample type
         USE_BILLING_REFERENCE_NUMBER("billingRefNumber"),       //If true then the user can enter billing codes for latter reporting
@@ -107,6 +109,7 @@ public abstract class ConfigurationProperties {
         PATIENT_NATIONALITY("supportPatientNationality"), //True if patient nationality should be collected with patient information
         PATIENT_ID_REQUIRED("Patient ID required"), //True if patient id is required for new patient
         PATIENT_SUBJECT_NUMBER_REQUIRED("Subject number required"), //True if patient subject number is required for new patient
+        PATIENT_NATIONAL_ID_REQUIRED("National ID required"), // True if patient national id is required for new patient
         QA_SAMPLE_ID_REQUIRED("sample id required"),  //True if sample id required from referring lab
         MAX_ORDER_PRINTED("numOrderLabels"),    //Max number of order labels that can be printed
         MAX_SPECIMEN_PRINTED("numSpecimenLabels"),  //Max number of specimen labels that can be printed
@@ -118,17 +121,27 @@ public abstract class ConfigurationProperties {
         SPECIMEN_FIELD_DATE("collectionDateCheck"), //
         SPECIMEN_FIELD_SEX("patientSexCheck"), //
         SPECIMEN_FIELD_TESTS("testsCheck"), //
+        ALT_ACCESSION_PREFIX("prePrintAltAccessionPrefix"), //
+        USE_ALT_ACCESSION_PREFIX("prePrintUseAltAccession"), //
         LAB_DIRECTOR_NAME("labDirectorName"), //
         LAB_DIRECTOR_TITLE("labDirectorTitle"), //
         INFO_HIGHWAY_USERNAME("infoHighway.username"), //
         INFO_HIGHWAY_PASSWORD("infoHighway.password"), //
         INFO_HIGHWAY_ADDRESS("infoHighway.uri"), //
         INFO_HIGHWAY_ENABLED("infoHighway.enabled"), //
-        PATIENT_RESULTS_SMS_ENABLED("patientresultssms.enabled"), //
+        PATIENT_RESULTS_BMP_SMS_USERNAME("patientresultsbmpsms.username"), //
+        PATIENT_RESULTS_BMP_SMS_PASSWORD("patientresultsbmpsms.password"), //
+        PATIENT_RESULTS_BMP_SMS_ADDRESS("patientresultsbmpsms.uri"), //
+        PATIENT_RESULTS_BMP_SMS_ENABLED("patientresultsbmpsms.enabled"), //
+        PATIENT_RESULTS_SMPP_SMS_USERNAME("patientresultssmpp.username"), //
+        PATIENT_RESULTS_SMPP_SMS_PASSWORD("patientresultssmpp.password"), //
+        PATIENT_RESULTS_SMPP_SMS_ADDRESS("patientresultssmpp.uri"), //
+        PATIENT_RESULTS_SMPP_SMS_ENABLED("patientresultssmpp.enabled"), //
         PATIENT_RESULTS_SMTP_USERNAME("patientresultssmtp.username"), //
         PATIENT_RESULTS_SMTP_PASSWORD("patientresultssmtp.password"), //
         PATIENT_RESULTS_SMTP_ADDRESS("patientresultssmtp.uri"), //
-        PATIENT_RESULTS_SMTP_ENABLED("patientresultssmtp.enabled"); //
+        PATIENT_RESULTS_SMTP_ENABLED("patientresultssmtp.enabled"), //
+        CONTACT_TRACING("contactTracingEnabled"); //
 
         private String name;
 

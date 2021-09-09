@@ -53,10 +53,13 @@ import org.openelisglobal.dictionary.valueholder.Dictionary;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.inventory.action.InventoryUtility;
 import org.openelisglobal.inventory.form.InventoryKitItem;
+import org.openelisglobal.localization.service.LocalizationService;
+import org.openelisglobal.localization.valueholder.Localization;
 import org.openelisglobal.note.service.NoteService;
 import org.openelisglobal.note.service.NoteServiceImpl.NoteType;
 import org.openelisglobal.observationhistory.service.ObservationHistoryService;
 import org.openelisglobal.observationhistory.valueholder.ObservationHistory;
+import org.openelisglobal.observationhistory.valueholder.ObservationHistory.ValueType;
 import org.openelisglobal.patient.form.PatientInfoForm;
 import org.openelisglobal.patient.service.PatientService;
 import org.openelisglobal.patient.util.PatientUtil;
@@ -128,6 +131,8 @@ public class ResultsLoadUtility {
     private ResultService resultService;
     @Autowired
     private DictionaryService dictionaryService;
+    @Autowired
+    private LocalizationService localizationService;
     @Autowired
     private ResultSignatureService resultSignatureService;
     @Autowired
@@ -252,10 +257,19 @@ public class ResultsLoadUtility {
 
     public List<TestResultItem> getUnfinishedTestResultItemsInTestSection(String testSectionId) {
 
-        List<Analysis> analysisList = analysisService.getAllAnalysisByTestSectionAndStatus(testSectionId,
+//      List<Analysis> fullAnalysisList = analysisService.getAllAnalysisByTestSectionAndStatus(testSectionId,
+//          analysisStatusList, sampleStatusList);
+//      request.setAttribute("analysisesSize", fullAnalysisList.size());
+        List<Analysis> analysisList = analysisService.getPageAnalysisByTestSectionAndStatus(testSectionId,
                 analysisStatusList, sampleStatusList);
 
         return getGroupedTestsForAnalysisList(analysisList, SORT_FORWARD);
+    }
+
+    public int getTotalCountAnalysisByTestSectionAndStatus(String testSectionId) {
+        return analysisService.getCountAnalysisByTestSectionAndStatus(testSectionId, analysisStatusList,
+                sampleStatusList);
+
     }
 
     public List<TestResultItem> getGroupedTestsForAnalysisList(List<Analysis> filteredAnalysisList, boolean forwardSort)
@@ -463,9 +477,18 @@ public class ResultsLoadUtility {
             StringBuilder conditions = new StringBuilder();
 
             for (ObservationHistory observation : observationList) {
-                Dictionary dictionary = dictionaryService.getDictionaryById(observation.getValue());
-                if (dictionary != null) {
-                    conditions.append(dictionary.getLocalizedName());
+                if (ValueType.DICTIONARY.getCode().equals(observation.getValueType())) {
+                    Dictionary dictionary = dictionaryService.getDictionaryById(observation.getValue());
+                    if (dictionary != null) {
+                        conditions.append(dictionary.getLocalizedName());
+                        conditions.append(", ");
+                    }
+                } else if (ValueType.LITERAL.getCode().equals(observation.getValueType())) {
+                    conditions.append(observation.getValue());
+                    conditions.append(", ");
+                } else if (ValueType.KEY.getCode().equals(observation.getValueType())) {
+                    Localization localization = localizationService.get(observation.getValue());
+                    conditions.append(localization.getLocalizedValue());
                     conditions.append(", ");
                 }
             }
@@ -715,8 +738,9 @@ public class ResultsLoadUtility {
                 analysisService.getTriggeredReflex(analysis) && analysisService.resultIsConclusion(result, analysis));
         testItem.setPastNotes(notes);
         testItem.setDisplayResultAsLog(hasLogValue(test));
-        testItem.setNonconforming(analysisService.isParentNonConforming(analysis) || SpringContext.getBean(IStatusService.class)
-                .matches(analysisService.getStatusId(analysis), AnalysisStatus.TechnicalRejected));
+        testItem.setNonconforming(
+                analysisService.isParentNonConforming(analysis) || SpringContext.getBean(IStatusService.class)
+                        .matches(analysisService.getStatusId(analysis), AnalysisStatus.TechnicalRejected));
         if (FormFields.getInstance().useField(Field.QaEventsBySection)) {
             testItem.setNonconforming(testItem.isNonconforming() || getQaEventByTestSection(analysis));
         }
@@ -734,8 +758,7 @@ public class ResultsLoadUtility {
         }
 
         if (test.getDefaultTestResult() != null) {
-            testItem.setResultValue(test.getDefaultTestResult().getValue());
-            testItem.setShadowResultValue(testItem.getResultValue());
+            testItem.setDefaultResultValue(test.getDefaultTestResult().getValue());
         }
         return testItem;
     }
@@ -1002,6 +1025,18 @@ public class ResultsLoadUtility {
 
     public List<SampleQaEvent> getSampleQaEvents(Sample sample) {
         return sampleQaEventService.getSampleQaEventsBySample(sample);
+    }
+
+    public List<TestResultItem> getUnfinishedTestResultItemsByAccession(String accessionNumber) {
+        List<Analysis> analysisList = analysisService.getPageAnalysisByStatusFromAccession(analysisStatusList,
+                sampleStatusList, accessionNumber);
+
+        return getGroupedTestsForAnalysisList(analysisList, SORT_FORWARD);
+    }
+
+    public int getTotalCountAnalysisByAccessionAndStatus(String accessionNumber) {
+        return analysisService.getCountAnalysisByStatusFromAccession(analysisStatusList, sampleStatusList,
+                accessionNumber);
     }
 
 }

@@ -1,6 +1,7 @@
 package org.openelisglobal.analyzerimport.service;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.openelisglobal.analyzerimport.dao.AnalyzerTestMappingDAO;
 import org.openelisglobal.analyzerimport.valueholder.AnalyzerTestMapping;
@@ -23,6 +24,11 @@ public class AnalyzerTestMappingServiceImpl extends BaseObjectServiceImpl<Analyz
     @Override
     protected AnalyzerTestMappingDAO getBaseObjectDAO() {
         return baseObjectDAO;
+    }
+
+    @Override
+    public List<AnalyzerTestMapping> getAllForAnalyzer(String analyzerId) {
+        return baseObjectDAO.getAllForAnalyzer(analyzerId);
     }
 
 }

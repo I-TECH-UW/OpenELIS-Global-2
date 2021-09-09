@@ -62,6 +62,8 @@ public class StatusResultsForm extends BaseForm implements ResultsPagingForm {
 
     private String testSectionId;
 
+    private List<IdValuePair> referralOrganizations;
+
     public StatusResultsForm() {
         setFormName("StatusResultsForm");
     }
@@ -254,6 +256,18 @@ public class StatusResultsForm extends BaseForm implements ResultsPagingForm {
     @Override
     public void setTestSectionId(String testSectionId) {
         this.testSectionId = testSectionId;
+    }
+
+    public void setReferralOrganizations(List<IdValuePair> referralOrganizations) {
+        this.referralOrganizations = referralOrganizations;
+    }
+
+    public List<IdValuePair> getReferralOrganizations() {
+        return referralOrganizations;
+    }
+
+    public boolean getSearchByRange() {
+        return false;
     }
 
 }

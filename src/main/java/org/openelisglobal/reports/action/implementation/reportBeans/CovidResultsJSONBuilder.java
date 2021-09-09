@@ -44,12 +44,13 @@ public class CovidResultsJSONBuilder extends CovidResultsBuilderImpl {
         resultJSON.append(PATIENT_LAST_NAME_PROPERTY_NAME, patient.getPerson().getLastName());
         resultJSON.append(PATIENT_FIRST_NAME_PROPERTY_NAME, patient.getPerson().getFirstName());
         resultJSON.append(PATIENT_DATE_OF_BIRTH_PROPERTY_NAME, patient.getBirthDateForDisplay());
+        resultJSON.append(PATIENT_PHONE_NO_PROPERTY_NAME, patient.getPerson().getPrimaryPhone());
 
-        Task task = getTaskForAnalysis(analysis);
+        Optional<Task> task = getReferringTaskForAnalysis(analysis);
 
-        if (!GenericValidator.isBlankOrNull(task.getDescription())) {
+        if (task.isPresent() && !GenericValidator.isBlankOrNull(task.get().getDescription())) {
             try {
-                resultJSON.append(LOCATOR_FORM_PROPERTY_NAME, new JSONObject(task.getDescription()));
+                resultJSON.append(LOCATOR_FORM_PROPERTY_NAME, new JSONObject(task.get().getDescription()));
             } catch (JSONException e) {
                 LogEvent.logError(this.getClass().getName(), "getResultJSON",
                         "could not make json from task description");

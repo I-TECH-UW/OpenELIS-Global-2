@@ -1,7 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
          import="org.openelisglobal.common.formfields.FormFields.Field,
-                 org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory,
-                 org.openelisglobal.common.provider.validation.IAccessionNumberValidator,
+				 org.openelisglobal.sample.util.AccessionNumberUtil,
                  org.openelisglobal.common.services.PhoneNumberService,
                  org.openelisglobal.common.util.ConfigurationProperties,
                  org.openelisglobal.common.util.ConfigurationProperties.Property,
@@ -22,10 +21,6 @@
 <c:set var="formName" value="${form.formName}" />
 
 
-<%!
-	AccessionNumberValidatorFactory accessionNumberValidatorFactory = new AccessionNumberValidatorFactory();
-%>
-
 <%
 	boolean useCollectionDate = FormFields.getInstance().useField( Field.CollectionDate );
     boolean useInitialSampleCondition = FormFields.getInstance().useField( Field.InitialSampleCondition );
@@ -39,8 +34,7 @@
     boolean requesterLastNameRequired = FormFields.getInstance().useField( Field.SampleEntryRequesterLastNameRequired );
     boolean acceptExternalOrders = ConfigurationProperties.getInstance().isPropertyValueEqual( Property.ACCEPT_EXTERNAL_ORDERS, "true" );
     boolean restrictNewReferringSiteEntries = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.restrictFreeTextRefSiteEntry, "true");
-
-    IAccessionNumberValidator accessionNumberValidator = accessionNumberValidatorFactory.getValidator();
+	boolean useSiteDepartment = FormFields.getInstance().useField(Field.SITE_DEPARTMENT );
 %>
 
 <script type="text/javascript" src="scripts/additional_utilities.js"></script>
@@ -56,6 +50,7 @@
 <script type="text/javascript">
     var useReferralSiteList = <%= useReferralSiteList%>;
     var useReferralSiteCode = <%= useReferralSiteCode %>;
+    var useSiteDepartment = <%= useSiteDepartment %>;
 
     function checkAccessionNumber(accessionNumber) {
         //check if empty
@@ -121,17 +116,31 @@
         setValidIndicaterOnField(success, "labNo");
 
         setCorrectSave();
+
+
+    	<c:if test="${param.attemptAutoSave}">
+    		var validToSave =  patientFormValid() && sampleEntryTopValid();
+    		if (validToSave) {
+    			savePage();
+    		}
+    	</c:if>
     }
 
-    function siteListChanged(textValue) {
+    function siteListChanged(siteList) {
         var siteList = $("requesterId");
-
         //if the index is 0 it is a new entry, if it is not then the textValue may include the index value
-        if (siteList.selectedIndex == 0 || siteList.options[siteList.selectedIndex].label != textValue) {
-            $("newRequesterName").value = textValue;
+        // create new entry has been removed gnr
+        if (siteList.selectedIndex == 0) {
+//             $("newRequesterName").value = textValue;
         } else if (useReferralSiteCode) {
             getCodeForOrganization(siteList.options[siteList.selectedIndex].value, processCodeSuccess);
         }
+
+    	if ( useSiteDepartment ) {
+    		if(document.getElementById("requesterId").selectedIndex != 0){
+    			getDepartmentsForSiteClinic( document.getElementById("requesterId").value, "", siteDepartmentSuccess, null);
+    		} 
+    	}
     }
 
     function processCodeSuccess(xhr) {
@@ -142,6 +151,32 @@
         if (success) {
             jQuery("#requesterCodeId").val(code.getAttribute("value"));
         }
+    }
+    
+    function siteDepartmentSuccess (xhr) {
+        console.log(xhr.responseText);
+        var message = xhr.responseXML.getElementsByTagName("message").item(0).firstChild.nodeValue;
+    	var departments = xhr.responseXML.getElementsByTagName("formfield").item(0).childNodes[0].childNodes;
+    	var selected = xhr.responseXML.getElementsByTagName("formfield").item(0).childNodes[1];
+    	var isValid = message == "<%=IActionConstants.VALID%>";
+    	var requesterDepartment = jQuery("#requesterDepartmentId");
+    	var i = 0;
+
+    	requesterDepartment.disabled = "";
+    	if( isValid ){
+    		requesterDepartment.children('option').remove();
+    		requesterDepartment.append(new Option('', ''));
+    		for( ;i < departments.length; ++i){
+//     						is this supposed to be value value or value id?
+    		requesterDepartment.append(
+    				new Option(departments[i].attributes.getNamedItem("value").value, 
+    					departments[i].attributes.getNamedItem("id").value));
+    		}
+    	}
+    	
+    	if( selected){
+    		requesterDepartment.selectedIndex = getSelectIndexFor( "requesterDepartmentId", selected.childNodes[0].nodeValue);
+    	}
     }
 
     function testLocationCodeChanged(element) {
@@ -167,11 +202,11 @@
 <%-- This define may not be needed, look at usages (not in any other jsp or js page may be radio buttons for ci LNSP--%>
 <c:set var="sampleOrderItem" value="${sampleOrderItems}"/>
 
-<form:hidden path="sampleOrderItems.newRequesterName" id="newRequesterId" />
+<form:hidden path="sampleOrderItems.newRequesterName" id="newRequesterName" />
 <form:hidden path="sampleOrderItems.modified" id="orderModified"/>
 <form:hidden path="sampleOrderItems.sampleId" id="sampleId"/>
 
-<div id=orderDisplay <%= acceptExternalOrders? "style='display:none'" : ""  %> >
+<div id="orderDisplay" >
 <table style="width:100%">
 
 <tr>
@@ -182,17 +217,16 @@
         <td style="width:35%">
             <%=MessageUtil.getContextualMessage( "quick.entry.accession.number" )%>
             :
-            <span class="requiredlabel">*</span>
         </td>
         <td style="width:65%">
             <form:input path="sampleOrderItems.labNo"
-                      maxlength='<%= Integer.toString(accessionNumberValidator.getMaxAccessionLength())%>'
+                      maxlength='<%= Integer.toString(AccessionNumberUtil.getMaxAccessionLength())%>'
                       onchange="checkAccessionNumber(this);"
                       cssClass="text"
                       id="labNo"/>
 
             <spring:message code="sample.entry.scanner.instructions" htmlEscape="false"/>
-            <input type="button" value='<%=MessageUtil.getMessage("sample.entry.scanner.generate")%>'
+            <input type="button" id="generateAccessionButton" value='<%=MessageUtil.getMessage("sample.entry.scanner.generate")%>'
                    onclick="setOrderModified();getNextAccessionNumber(); " class="textButton">
         </td>
     </tr>
@@ -309,31 +343,40 @@
     				 id="requesterId" 
                      onchange="setOrderModified();siteListChanged(this);setCorrectSave();"
                      onkeyup="capitalizeValue( this.value );" >
-            <option value=""></option>
+            <option ></option>
             <form:options items="${form.sampleOrderItems.referringSiteList}" itemValue="id" itemLabel="value"/>
             </form:select>
     	</c:if>
     	<c:if test="${form.sampleOrderItems.readOnly}" >
             <form:input path="sampleOrderItems.referringSiteName"  style="width:300px" />
     	</c:if>
-        <%-- <logic:equal value="false" name='${formName}' property="sampleOrderItems.readOnly" >
-        <html:select id="requesterId"
-                     name="${formName}"
-                     property="sampleOrderItems.referringSiteId"
-                     onchange="setOrderModified();siteListChanged(this);setCorrectSave();"
-                     onkeyup="capitalizeValue( this.value );"
-                     
-                >
-            <option value=""></option>
-            <html:optionsCollection name="${formName}" property="sampleOrderItems.referringSiteList" label="value"
-                                    value="id"/>
-        </html:select>
-        </logic:equal>
-        <logic:equal value="true" name='${formName}' property="sampleOrderItems.readOnly" >
-            <html:text property="sampleOrderItems.referringSiteName" name="${formName}" style="width:300px" />
-        </logic:equal> --%>
     </td>
 </tr>
+
+	<% if( useSiteDepartment ){ %>
+	<tr>
+	    <td>
+	        <%= MessageUtil.getContextualMessage( "sample.entry.project.siteDepartmentName" ) %>:
+	        <% if( FormFields.getInstance().requireField( Field.SITE_DEPARTMENT ) ){%>
+	        <span class="requiredlabel">*</span>
+	        <% } %>
+	    </td>
+	    <td colspan="3" >
+	    	<c:if test="${form.sampleOrderItems.readOnly == false}" >
+	    		<form:select path="sampleOrderItems.referringSiteDepartmentId" 
+	    				 id="requesterDepartmentId" 
+	                     onchange="setOrderModified();setCorrectSave();"
+	                     onkeyup="capitalizeValue( this.value );" >
+	            <option value="0" ></option>
+	            <form:options items="${form.sampleOrderItems.referringSiteDepartmentList}" itemValue="id" itemLabel="value"/>
+	            </form:select>
+	    	</c:if>
+	    	<c:if test="${form.sampleOrderItems.readOnly}" >
+	            <form:input path="sampleOrderItems.referringSiteDepartmentName"  style="width:300px" />
+	    	</c:if>
+	    </td>
+	</tr>
+	<% } %>
 <% } %>
 <% if( useReferralSiteCode ){ %>
 <tr>
@@ -384,10 +427,17 @@
                    id="providerLastNameID"
                    onchange="setOrderModified();setCorrectSave();"
                    size="30"/>
-        <spring:message code="humansampleone.provider.firstName.short"/>:
-        <form:input path="sampleOrderItems.providerFirstName" onchange="setOrderModified();"
+    </td> 
+</tr>              
+<tr>
+    <td>
+        <spring:message code="sample.entry.provider.firstName"/>:
+	</td>
+    <td>
+        <form:input path="sampleOrderItems.providerFirstName"
+                   id="providerFirstNameID" 
+                   onchange="setOrderModified();"
                    size="30"/>
-
     </td>
 </tr>
 <tr>
@@ -488,7 +538,8 @@
 </tr>
 <% } %>
 <tr>
-<% if( ConfigurationProperties.getInstance().isPropertyValueEqual( Property.USE_BILLING_REFERENCE_NUMBER, "true" )){ %>
+<!-- turn off for release 2.2.3.1 gnr -->
+<% if( !ConfigurationProperties.getInstance().isPropertyValueEqual( Property.USE_BILLING_REFERENCE_NUMBER, "true" )){ %>
     <td><label for="billingReferenceNumber">
     	<c:out value="${billingReferenceNumberLabel}"/>
     </label>
@@ -497,6 +548,32 @@
         <form:input path="sampleOrderItems.billingReferenceNumber"
                     cssClass="text"
                     id="billingReferenceNumber"
+                    onchange="setOrderModified();makeDirty()" />
+    </td>
+</tr>
+<% } %>
+<% if( ConfigurationProperties.getInstance().isPropertyValueEqual( Property.CONTACT_TRACING, "true" )){ %>
+<tr>
+    <td><label for="contactTracingIndexName">
+    	<spring:message code="field.contacttracing.indexname.label" />
+    </label>
+    </td>
+    <td>
+        <form:input path="sampleOrderItems.contactTracingIndexName"
+                    cssClass="text"
+                    id="contactTracingIndexName"
+                    onchange="setOrderModified();makeDirty()" />
+    </td>
+</tr>
+<tr>
+    <td><label for="contactTracingIndexRecordNumber">
+    	<spring:message code="field.contacttracing.indexrecordnumber.label" />
+    </label>
+    </td>
+    <td>
+        <form:input path="sampleOrderItems.contactTracingIndexRecordNumber"
+                    cssClass="text"
+                    id="contactTracingIndexRecordNumber"
                     onchange="setOrderModified();makeDirty()" />
     </td>
 </tr>
@@ -556,8 +633,8 @@
         invalidLabID = '<spring:message code="error.site.invalid"/>'; // Alert if value is typed that's not on list. FIX - add bad message icon
         maxRepMsg = '<spring:message code="sample.entry.project.siteMaxMsg"/>';
 
-        resultCallBack = function (textValue) {
-            siteListChanged(textValue);
+        resultCallBack = function (siteList) {
+            siteListChanged(siteList);
             setOrderModified();
             setCorrectSave();
         };

@@ -52,6 +52,7 @@ public class SampleEntryAccessionNumberValidationProvider extends BaseValidation
         String recordType = request.getParameter("recordType");
         String isRequired = request.getParameter("isRequired");
         String projectFormName = request.getParameter("projectFormName");
+        boolean altAccession = "true".equalsIgnoreCase(request.getParameter("altAccession"));
         boolean parseForProjectFormName = "true".equalsIgnoreCase(request.getParameter("parseForProjectFormName"));
         boolean ignoreYear = "true".equals(request.getParameter("ignoreYear"));
         boolean ignoreUsage = "true".equals(request.getParameter("ignoreUsage"));
@@ -65,7 +66,8 @@ public class SampleEntryAccessionNumberValidationProvider extends BaseValidation
 
         if (ignoreYear || ignoreUsage) {
             result = projectFormNameUsed ? new ProgramAccessionValidator().validFormat(accessionNumber, !ignoreYear)
-                    : AccessionNumberUtil.correctFormat(accessionNumber, !ignoreYear);
+                    : AccessionNumberUtil.getGeneralAccessionNumberValidator().validFormat(accessionNumber,
+                            !ignoreYear);
             if (result == ValidationResults.SUCCESS && !ignoreUsage) {
                 result = AccessionNumberUtil.isUsed(accessionNumber) ? ValidationResults.SAMPLE_FOUND
                         : ValidationResults.SAMPLE_NOT_FOUND;
@@ -75,12 +77,16 @@ public class SampleEntryAccessionNumberValidationProvider extends BaseValidation
             result = projectFormNameUsed
                     ? new ProgramAccessionValidator().checkAccessionNumberValidity(accessionNumber, recordType,
                             isRequired, projectFormName)
-                    : AccessionNumberUtil.checkAccessionNumberValidity(accessionNumber, recordType, isRequired,
-                            projectFormName);
-
+                    : AccessionNumberUtil.getGeneralAccessionNumberValidator()
+                            .checkAccessionNumberValidity(accessionNumber, recordType, isRequired, projectFormName);
         }
 
         String returnData;
+
+//       if( !Boolean.valueOf(ConfigurationProperties.getInstance()
+//                .getPropertyValue(Property.ACCESSION_NUMBER_VALIDATE))) {
+//            result = ValidationResults.SUCCESS;
+//        }
 
         switch (result) {
         case SUCCESS:
@@ -95,8 +101,12 @@ public class SampleEntryAccessionNumberValidationProvider extends BaseValidation
                 returnData = !ignoreUsage ? new ProgramAccessionValidator().getInvalidMessage(result)
                         : new ProgramAccessionValidator().getInvalidFormatMessage(result);
             } else {
-                returnData = !ignoreUsage ? AccessionNumberUtil.getInvalidMessage(result)
-                        : AccessionNumberUtil.getInvalidFormatMessage(result);
+                returnData = !ignoreUsage ? altAccession //
+                                 ? AccessionNumberUtil.getAltAccessionNumberValidator().getInvalidMessage(result)
+                                 : AccessionNumberUtil.getMainAccessionNumberValidator().getInvalidMessage(result)
+                        : altAccession
+                                ? AccessionNumberUtil.getAltAccessionNumberValidator().getInvalidFormatMessage(result)
+                                : AccessionNumberUtil.getMainAccessionNumberValidator().getInvalidFormatMessage(result);
             }
         }
 

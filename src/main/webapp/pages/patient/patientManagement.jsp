@@ -36,6 +36,7 @@
 	boolean supportSubjectNumber = FormFields.getInstance().useField(Field.SubjectNumber);
 	boolean subjectNumberRequired = ConfigurationProperties.getInstance().isPropertyValueEqual(ConfigurationProperties.Property.PATIENT_SUBJECT_NUMBER_REQUIRED, "true");
 	boolean supportNationalID = FormFields.getInstance().useField(Field.NationalID);
+	boolean nationalIDRequired = ConfigurationProperties.getInstance().isPropertyValueEqual(ConfigurationProperties.Property.PATIENT_NATIONAL_ID_REQUIRED, "true");
 	boolean supportOccupation = FormFields.getInstance().useField(Field.Occupation);
 	boolean supportCommune = FormFields.getInstance().useField(Field.ADDRESS_COMMUNE);
 	boolean supportMothersInitial = FormFields.getInstance().useField(Field.MotherInitial);
@@ -78,6 +79,7 @@ var supportInsurance = <%= supportInsurance %>;
 var supportSubjectNumber = <%= supportSubjectNumber %>;
 var subjectNumberRequired = <%= subjectNumberRequired %>;
 var supportNationalID = <%= supportNationalID %>;
+var nationalIDRequired = <%= nationalIDRequired %>;
 var supportMothersInitial = <%= supportMothersInitial %>;
 var supportCommune = <%= supportCommune %>;
 var supportCity = <%= FormFields.getInstance().useField(Field.ADDRESS_VILLAGE) %>;
@@ -115,12 +117,16 @@ if( patientIDRequired){
 	if (supportSTNumber) {
 		pt_requiredOneOfFields.push("ST_ID");
 	} else if (supportSubjectNumber && subjectNumberRequired){
-		pt_requiredOneOfFields = new Array("subjectNumberID");
+		pt_requiredOneOfFields.push("subjectNumberID");
 	}
 }
 
 if (supportSubjectNumber && subjectNumberRequired){
 	pt_requiredFields.push("subjectNumberID");
+}
+
+if (supportNationalID && nationalIDRequired) {
+	pt_requiredFields.push("nationalID");
 }
 
 var updateStatus = "ADD";
@@ -362,7 +368,9 @@ function  /*void*/ checkValidAgeDate(dateElement)
 		setValidIndicaterOnField(dateElement.value.blank(), dateElement.name);
 	    pt_setFieldValidity( dateElement.value.blank(),  dateElement.name);
 		pt_setSave();
-		$("age").value = null;
+		$("ageYears").value = null;
+		$("ageMonths").value = null;
+		$("ageDays").value = null;
 	}
 }
 
@@ -393,42 +401,45 @@ function  /*void*/ updatePatientAge( DOB )
 	var dayDOB = splitDOB[dayIndex];
 	var yearDOB = splitDOB[yearIndex];
 
+	var birthdate = new Date(yearDOB, monthDOB - 1, dayDOB);
 	var today = new Date();
+	var ageDate  = new Date(today - birthdate);
+	
+	var diffJSON = dateDiffToday(yearDOB + "-" + monthDOB + "-" + dayDOB);
+	
+	var ageYears = diffJSON['years'];
+	var ageMonths = diffJSON['months'];
+	var ageDays = diffJSON['days'];
 
-	var adjustment = 0;
+	jQuery("#ageYears").val(ageYears);
+	jQuery("#ageMonths").val(ageMonths);
+	jQuery("#ageDays").val(ageDays);
 
-	if( !monthDOB.match( /^\d+$/ ) ){
-		monthDOB = "01";
-	}
-
-	if( !dayDOB.match( /^\d+$/ ) ){
-		dayDOB = "01";
-	}
-
-	//months start at 0, January is month 0
-	var monthToday = today.getMonth() + 1;
-
-	if( monthToday < monthDOB ||
-	    (monthToday == monthDOB && today.getDate() < dayDOB  ))
-	    {
-	    	adjustment = -1;
-	    }
-
-	var calculatedAge = today.getFullYear() - yearDOB + adjustment;
-
-	var age = document.getElementById("age");
-	age.value = calculatedAge;
-
-    setValidIndicaterOnField( true, $("age").name);
-    pt_setFieldValid( $("age").name );
+    setValidIndicaterOnField( true, jQuery("#ageYears").attr('id'));
+    setValidIndicaterOnField( true, jQuery("#ageMonths").attr('id'));
+    setValidIndicaterOnField( true, jQuery("#ageDays").attr('id'));
+    pt_setFieldValid( $("ageYears").name );
+    pt_setFieldValid( $("ageMonths").name );
+    pt_setFieldValid( $("ageDays").name );
 }
 
-function /*void*/ handleAgeChange( age )
+function /*void*/ handleAgeChange()
 {
-	if( pt_checkValidAge( age ) )
+	var ageYears = jQuery("#ageYears").val();
+	var ageMonths = jQuery("#ageMonths").val();
+	var ageDays = jQuery("#ageDays").val();
+// 	if (ageMonths) {
+// 		if (ageYears) {
+// 			ageYears = ageYears + Math.floor(ageMonths / 12);
+// 		} else {
+// 			ageYears = Math.floor(ageMonths / 12);
+// 		}
+// 	}
+// 	ageMonths = ageMonths % 12;
+	if( pt_checkValidAge() )
 	{
-		pt_updateDOB( age );
-		if (age.value > 1) {
+		pt_updateDOB( ageYears, ageMonths, ageDays );
+		if (ageYears >= 1 || ageMonths >= 1 || ageDays >= 1) {
 			setValidIndicaterOnField( true, $("dateOfBirthID").name);
 			pt_setFieldValid( $("dateOfBirthID").name );
 		} else {
@@ -440,31 +451,73 @@ function /*void*/ handleAgeChange( age )
 	pt_setSave();
 }
 
-function  /*bool*/ pt_checkValidAge( age )
+function  /*bool*/ pt_checkValidAge()
 {
-	var valid = age.value.blank();
-
-	if( !valid ){
+	var valid = true;
+	var ageYears = jQuery("#ageYears");
+	var ageMonths = jQuery("#ageMonths");
+	var ageDays = jQuery("#ageDays");
+	if( !ageYears.val().blank() ){
 		var regEx = new RegExp("^\\s*\\d{1,2}\\s*$");
-	 	valid =  regEx.test(age.value);
+		var yearValid = regEx.test(ageYears.val());
+	 	valid = valid && yearValid;
+		setValidIndicaterOnField(  yearValid , ageYears.attr('id') );
+	} else {
+		setValidIndicaterOnField(  true , ageYears.attr('id') );
 	}
 
-	setValidIndicaterOnField(  valid , age.name );
-	pt_setFieldValidity( valid, age.name );
+	if( !ageMonths.val().blank() ){
+		var regEx = new RegExp("^\\s*\\d{1,2}\\s*$");
+		var monthValid = regEx.test(ageMonths.val());
+	 	valid = valid && monthValid;
+		setValidIndicaterOnField(  monthValid , ageMonths.attr('id') );
+	} else {
+		setValidIndicaterOnField(  true , ageMonths.attr('id') );
+	}
+
+	if( !ageDays.val().blank() ){
+		var regEx = new RegExp("^\\s*\\d{1,2}\\s*$");
+		var dayValid = regEx.test(ageDays.val());
+	 	valid = valid && dayValid;
+		setValidIndicaterOnField(  dayValid , ageDays.attr('id') );
+	} else {
+		setValidIndicaterOnField(  true , ageDays.attr('id') );
+	}
+
+// 	pt_setFieldValidity( valid, age.name );
 
 	return valid;
 }
 
-function  /*void*/ pt_updateDOB( age )
+function  /*void*/ pt_updateDOB( ageYears, ageMonths, ageDays )
 {
-	if( age.value.blank() ){
+	if( ageYears.blank() && ageMonths.blank() && ageDays.blank() ){
 		$("dateOfBirthID").value = null;
-	}else{
-		var today = new Date();
+	} else {
+		
+		var date = new Date();
+		if ( !ageDays.blank() ) {
+			date.setDate( date.getDate() - parseInt(ageDays));
+		}
+		if ( !ageMonths.blank() ) {
+			date.setMonth( date.getMonth() - parseInt(ageMonths));
+		}
+		if ( !ageYears.blank() ) {
+			date.setFullYear( date.getFullYear() - parseInt(ageYears));
+		}
+		
 
 		var day = "xx";
 		var month = "xx";
-		var year = today.getFullYear() - age.value;
+		var year = "xxxx";
+		if (!ageDays.blank() ) {
+			day = date.getDate();
+		}
+		if (!ageMonths.blank() || !ageDays.blank() ) {
+			//month is normally index based
+			month = date.getMonth() + 1;
+		}
+		year = date.getFullYear();
 
 		var datePattern = '<%=SystemConfiguration.getInstance().getPatternForDateLocale() %>';
 		var splitPattern = datePattern.split("/");
@@ -473,9 +526,9 @@ function  /*void*/ pt_updateDOB( age )
 
 		for( var i = 0; i < 3; i++ ){
 			if(splitPattern[i] == "DD"){
-				DOB = DOB + day + "/";
+				DOB = DOB + day.toLocaleString('en', {minimumIntegerDigits:2}) + "/";
 			}else if(splitPattern[i] == "MM" ){
-				DOB = DOB + month + "/";
+				DOB = DOB + month.toLocaleString('en', {minimumIntegerDigits:2}) + "/";
 			}else if(splitPattern[i] == "YYYY" ){
 				DOB = DOB + year + "/";
 			}
@@ -518,7 +571,8 @@ function  /*void*/ processSearchPopulateSuccess(xhr)
 	setUpdateStatus("NO_ACTION");
     //alert(xhr.responseText);
 	var response = xhr.responseXML.getElementsByTagName("formfield").item(0);
-
+	
+	var fhirUuidValue = getXMLValue(response, "fhirUuid");
 	var nationalIDValue = getXMLValue(response, "nationalID");
 	var STValue = getXMLValue(response, "ST_ID");
 	var subjectNumberValue = getXMLValue(response, "subjectNumber");
@@ -585,7 +639,15 @@ function  /*void*/ processSearchPopulateSuccess(xhr)
 					contactFirstName,
 					contactPhone,
 					contactEmail,
-					contactPK);
+					contactPK,
+					fhirUuidValue);
+
+	<c:if test="${param.attemptAutoSave}">
+		var validToSave =  patientFormValid() && sampleEntryTopValid();
+		if (validToSave) {
+			savePage();
+		}
+	</c:if>
 
 }
 
@@ -623,10 +685,11 @@ function /*void*/ clearErrors(){
 
 function  /*void*/ setPatientInfo(nationalID, ST_ID, subjectNumber, lastName, firstName, aka, mother, street, city, dob, gender,
 		patientType, insurance, occupation, patientUpdated, personUpdated, motherInitial, commune, addressDept, educationId, nationalId, nationalOther,
-		maritialStatusId, healthRegionId, healthDistrictId, guid, phoneNumber, email, contactLastName, contactFirstName, contactPhone, contactEmail, contactPK ) {
+		maritialStatusId, healthRegionId, healthDistrictId, guid, phoneNumber, email, contactLastName, contactFirstName, contactPhone, contactEmail, contactPK,fhirUuidValue ) {
 
 	clearErrors();
 
+// 	jQuery("patientFhirUuid").val(fhirUuidValue == undefined ? "" : fhirUuidValue);
 	if ( supportNationalID) { $("nationalID").value = nationalID == undefined ? "" : nationalID; }
 	if(supportSTNumber){ $("ST_ID").value = ST_ID == undefined ? "" : ST_ID; }
 	if(supportSubjectNumber){ $("subjectNumberID").value = subjectNumber == undefined ? "" : subjectNumber; }
@@ -644,7 +707,9 @@ function  /*void*/ setPatientInfo(nationalID, ST_ID, subjectNumber, lastName, fi
 	$("personLastUpdated").value = personUpdated == undefined ? "" : personUpdated;
 	$("patientGUID_ID").value = guid == undefined ? "" : guid;
 	$("patientPhone").value = phoneNumber == undefined ? "" : phoneNumber;
+	<% if( FormFields.getInstance().useField(Field.PatientEmail)){ %> 
 	$("patientEmail").value = email == undefined ? "" : email;
+	<% } %>
 	$("genderID").selectedIndex = gender == undefined ? 0 : gender;
 	if(supportPatientNationality){
 		$("nationalityID").selectedIndex = nationalId == undefined ? 0 : nationalId; 
@@ -676,7 +741,9 @@ function  /*void*/ setPatientInfo(nationalID, ST_ID, subjectNumber, lastName, fi
 	}
 	if (dob == undefined) {
 		document.getElementById("dateOfBirthID").value = "";
-		document.getElementById("age").value = "";
+		document.getElementById("ageYears").value = "";
+		document.getElementById("ageMonths").value = "";
+		document.getElementById("ageDays").value = "";
 	} else {
 		var dobElement = document.getElementById("dateOfBirthID").value = dob;
 		updatePatientAge( $("dateOfBirthID") );
@@ -738,6 +805,7 @@ function  /*void*/  addPatient(){
 	if(supportSubjectNumber){$("subjectNumberID").disabled = false;}
 	if(supportNationalID){$("nationalID").disabled = false;}
 	setUpdateStatus( "ADD" );
+	jQuery("#PatientDetail").show();
 	
 	for(var i = 0; i < patientInfoChangeListeners.length; i++){
 			patientInfoChangeListeners[i]("", "", "", "", "", "", "", "", "");
@@ -816,7 +884,7 @@ function  processPhoneSuccess(xhr){
 }
 
 function validateEmail( emailElement) {
-	var valid = validEmail(emailElement.value);
+	var valid = emailElement.value === "" || validEmail(emailElement.value);
 	
 	setValidIndicaterOnField(valid, emailElement.id);
     pt_setFieldValidity( valid, emailElement.id );
@@ -874,6 +942,7 @@ function  processSubjectNumberSuccess(xhr){
 <form:hidden path="patientProperties.patientPK" id="patientPK_ID"/>
 <form:hidden path="patientProperties.guid" id="patientGUID_ID"/>
 <form:hidden path="patientProperties.patientContact.id" id="contactPK_ID"/>
+<%-- <form:hidden path="patientProperties.fhirUuid" id="patientFhirUuid"/> --%>
 	
    <%--  <logic:equal value="false" name="${form.formName}" property="patientProperties.readOnly" > --%>
    <c:if test="${form.patientProperties.readOnly == false }" >
@@ -884,7 +953,7 @@ function  processSubjectNumberSuccess(xhr){
 	</div>
     <%-- </logic:equal> --%>
     </c:if>
-	<div id="PatientDetail"   >
+	<div id="PatientDetail" class="patientFinishSearchShow" style="display:none;"  >
 	<h2><spring:message code="patient.information"/></h2>
 	<table style="width:80%" border="0">
     <tr>
@@ -943,6 +1012,9 @@ function  processSubjectNumberSuccess(xhr){
         <% if( supportNationalID ){ %>
         <td style="text-align:right;">
             <%=MessageUtil.getContextualMessage("patient.NationalID") %>:
+            <% if(nationalIDRequired){ %>
+            <span class="requiredlabel">*</span>
+            <% } %>
 
         </td>
         <td >
@@ -1054,7 +1126,7 @@ function  processSubjectNumberSuccess(xhr){
 	<tr class="spacerRow" ><td colspan="2">&nbsp;</td></tr>
 	<tr>
 		<td style="width: 220px">
-			<spring:message code="patient.contact" />
+			<spring:message code="emergency.contact" />
 		</td>
 		<td style="text-align:right;">
 			<spring:message code="patient.contactLastName" />:
@@ -1189,7 +1261,7 @@ function  processSubjectNumberSuccess(xhr){
 			<td>&nbsp;</td>
 			<td style="text-align:right;"><%= MessageUtil.getContextualMessage("person.phone") %>: <%=" " + PhoneNumberService.getPhoneFormat() %></td>
 			<td>
-				<form:input id="patientPhone" path="patientProperties.primaryPhone" onchange="validatePhoneNumber( this );" maxLength="35"/>
+				<form:input id="patientPhone" path="patientProperties.primaryPhone" onchange="updatePatientEditStatus();validatePhoneNumber( this );" maxLength="35"/>
 <%-- 				<html:text id="patientPhone" name='${form.formName}' property="patientProperties.phone" maxlength="35" onchange="validatePhoneNumber( this );" />
  --%>			</td>
 		</tr>
@@ -1199,7 +1271,7 @@ function  processSubjectNumberSuccess(xhr){
 			<td>&nbsp;</td>
 			<td style="text-align:right;"><%= MessageUtil.getContextualMessage("person.email") %>:</td>
 			<td>
-				<form:input id="patientEmail" path="patientProperties.email" onchange="validateEmail( this );" maxLength="35"/>			</td>
+				<form:input id="patientEmail" path="patientProperties.email" onchange="updatePatientEditStatus();validateEmail( this );" maxLength="35"/>			</td>
 		</tr>
 	<% } %>
 	<tr class="spacerRow"><td >&nbsp;</td></tr>
@@ -1286,14 +1358,36 @@ function  processSubjectNumberSuccess(xhr){
                        onchange="handleAgeChange( this ); updatePatientEditStatus();"
                        styleClass="text"
                     id="age"/> --%>
-           <form:input path="patientProperties.age" 
-           			  onchange="handleAgeChange( this ); updatePatientEditStatus();"
-           			  id="age"
+           <form:input path="patientProperties.ageYears" 
+           			  onchange="handleAgeChange(); updatePatientEditStatus();"
+           			  id="ageYears"
                       cssClass="text"
                       size="3"
                       maxlength="3"
+                      placeholder="years"
                         />
-			<div id="patientProperties.ageMessage" class="blank" ></div>
+			<div  class="blank" ><spring:message code="years.label"/></div>
+			<div id="ageYearsMessage" class="blank" ></div>
+           <form:input path="patientProperties.ageMonths" 
+           			  onchange="handleAgeChange(); updatePatientEditStatus();"
+           			  id="ageMonths"
+                      cssClass="text"
+                      size="2"
+                      maxlength="2"
+                      placeholder="months"
+                        />
+			<div  class="blank" ><spring:message code="months.label"/></div>
+			<div id="ageMonthsMessage" class="blank" ></div>
+           <form:input path="patientProperties.ageDays" 
+           			  onchange="handleAgeChange(); updatePatientEditStatus();"
+           			  id="ageDays"
+                      cssClass="text"
+                      size="2"
+                      maxlength="2"
+                      placeholder="days"
+                        />
+			<div  class="blank" ><spring:message code="days.label"/></div>
+			<div id="ageDaysMessage" class="blank" ></div>
 		</td>
 		<td style="text-align:right;">
 			<spring:message code="patient.gender" />:

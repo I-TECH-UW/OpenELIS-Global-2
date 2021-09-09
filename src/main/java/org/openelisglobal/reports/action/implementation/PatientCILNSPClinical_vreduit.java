@@ -16,12 +16,13 @@
  */
 package org.openelisglobal.reports.action.implementation;
 
-import java.io.File;
+import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.validator.GenericValidator;
@@ -31,6 +32,7 @@ import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.image.service.ImageService;
+import org.openelisglobal.image.valueholder.Image;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.localization.service.LocalizationService;
 import org.openelisglobal.note.service.NoteService;
@@ -41,6 +43,7 @@ import org.openelisglobal.result.service.ResultService;
 import org.openelisglobal.result.valueholder.Result;
 import org.openelisglobal.sample.util.AccessionNumberUtil;
 import org.openelisglobal.sampleitem.valueholder.SampleItem;
+import org.openelisglobal.siteinformation.service.SiteInformationService;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.test.service.TestServiceImpl;
 import org.openelisglobal.test.valueholder.Test;
@@ -53,20 +56,24 @@ public class PatientCILNSPClinical_vreduit extends PatientReport implements IRep
     private static Set<Integer> analysisStatusIds;
     protected List<ClinicalPatientData> clinicalReportItems;
     private ImageService imageService = SpringContext.getBean(ImageService.class);
+    private SiteInformationService siteInformationService = SpringContext.getBean(SiteInformationService.class);
 
     static {
         analysisStatusIds = new HashSet<>();
-        analysisStatusIds
-                .add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.BiologistRejected)));
-        analysisStatusIds.add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized)));
+        analysisStatusIds.add(Integer
+                .parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.BiologistRejected)));
         analysisStatusIds.add(
-                Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NonConforming_depricated)));
-        analysisStatusIds.add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NotStarted)));
-        analysisStatusIds
-                .add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalAcceptance)));
-        analysisStatusIds.add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Canceled)));
-        analysisStatusIds
-                .add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalRejected)));
+                Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized)));
+        analysisStatusIds.add(Integer.parseInt(
+                SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NonConforming_depricated)));
+        analysisStatusIds.add(
+                Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NotStarted)));
+        analysisStatusIds.add(Integer
+                .parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalAcceptance)));
+        analysisStatusIds.add(
+                Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Canceled)));
+        analysisStatusIds.add(Integer
+                .parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalRejected)));
 
     }
 
@@ -89,16 +96,17 @@ public class PatientCILNSPClinical_vreduit extends PatientReport implements IRep
                 SpringContext.getBean(LocalizationService.class).getLocalizedValueById(ConfigurationProperties
                         .getInstance().getPropertyValue(Property.BILLING_REFERENCE_NUMBER_LABEL)));
         reportParameters.put("footerName", getFooterName());
-        reportParameters.put("useLabDirectorSignature", labDirectorSignatureExists());
-        reportParameters.put("labDirectorName", ConfigurationProperties.getInstance().getPropertyValue(Property.LAB_DIRECTOR_NAME));
+        Optional<Image> labDirectorSignature = imageService.getImageBySiteInfoName("labDirectorSignature");
+        reportParameters.put("useLabDirectorSignature", labDirectorSignature.isPresent());
+        if (labDirectorSignature.isPresent()) {
+            reportParameters.put("labDirectorSignature",
+                    new ByteArrayInputStream(labDirectorSignature.get().getImage()));
+        }
+
+        reportParameters.put("labDirectorName",
+                ConfigurationProperties.getInstance().getPropertyValue(Property.LAB_DIRECTOR_NAME));
         reportParameters.put("labDirectorTitle",
                 ConfigurationProperties.getInstance().getPropertyValue(Property.LAB_DIRECTOR_TITLE));
-    }
-
-    private Object labDirectorSignatureExists() {
-        File labDirectorSignature = new File(
-                imageService.getFullPreviewPath() + imageService.getImageNameFilePath("labDirectorSignature"));
-        return labDirectorSignature.exists();
     }
 
     private Object getFooterName() {
@@ -124,34 +132,36 @@ public class PatientCILNSPClinical_vreduit extends PatientReport implements IRep
         List<ClinicalPatientData> currentSampleReportItems = new ArrayList<>(analysisList.size());
         currentConclusion = null;
         for (Analysis analysis : analysisList) {
-            boolean hasParentResult = analysis.getParentResult() != null;
-            sampleSet.add(analysis.getSampleItem());
-            if (analysis.getTest() != null) {
-                currentAnalysis = analysis;
-                ClinicalPatientData resultsData = buildClinicalPatientData(hasParentResult);
-                if (isConfirmationSample) {
-                    String alerts = resultsData.getAlerts();
-                    if (!GenericValidator.isBlankOrNull(alerts)) {
-                        alerts += ", C";
+            if (!analysis.getTest().isInLabOnly()) {
+                boolean hasParentResult = analysis.getParentResult() != null;
+                sampleSet.add(analysis.getSampleItem());
+                if (analysis.getTest() != null) {
+                    currentAnalysis = analysis;
+                    ClinicalPatientData resultsData = buildClinicalPatientData(hasParentResult);
+                    if (isConfirmationSample) {
+                        String alerts = resultsData.getAlerts();
+                        if (!GenericValidator.isBlankOrNull(alerts)) {
+                            alerts += ", C";
+                        } else {
+                            alerts = "C";
+                        }
+
+                        resultsData.setAlerts(alerts);
+                    }
+
+                    if (currentAnalysis.isReferredOut()) {
+                        Referral referral = referralService.getReferralByAnalysisId(currentAnalysis.getId());
+                        if (referral != null) {
+                            // addReferredTests method in both PatientClinical and PatientCILNSPClinical are
+                            // nearly identical and
+                            // should be refactored to use the same code.
+                            List<ClinicalPatientData> referredData = addReferredTests(referral, resultsData);
+                            currentSampleReportItems.addAll(referredData);
+                        }
                     } else {
-                        alerts = "C";
+                        reportItems.add(resultsData);
+                        currentSampleReportItems.add(resultsData);
                     }
-
-                    resultsData.setAlerts(alerts);
-                }
-
-                if (currentAnalysis.isReferredOut()) {
-                    Referral referral = referralService.getReferralByAnalysisId(currentAnalysis.getId());
-                    if (referral != null) {
-                        // addReferredTests method in both PatientClinical and PatientCILNSPClinical are
-                        // nearly identical and
-                        // should be refactored to use the same code.
-                        List<ClinicalPatientData> referredData = addReferredTests(referral, resultsData);
-                        currentSampleReportItems.addAll(referredData);
-                    }
-                } else {
-                    reportItems.add(resultsData);
-                    currentSampleReportItems.add(resultsData);
                 }
             }
         }

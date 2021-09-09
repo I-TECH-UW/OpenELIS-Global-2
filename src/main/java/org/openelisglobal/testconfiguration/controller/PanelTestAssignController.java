@@ -56,8 +56,7 @@ public class PanelTestAssignController extends BaseController {
 
     @RequestMapping(value = "/PanelTestAssign", method = RequestMethod.GET)
     public ModelAndView showPanelTestAssign(@Valid @ModelAttribute("form") PanelTestAssignForm oldForm,
-            BindingResult result,
-            HttpServletRequest request) {
+            BindingResult result, HttpServletRequest request) {
         PanelTestAssignForm form = new PanelTestAssignForm();
 
         if (!result.hasFieldErrors("panelId")) {
@@ -86,7 +85,7 @@ public class PanelTestAssignController extends BaseController {
 
             List<IdValuePair> tests = new ArrayList<>();
 
-            List<Test> testList = getAllTestsByPanelId(panel.getId());
+            List<Test> testList = getAllTestsByPanelId(panel.getId(), false);
 
             PanelTests panelTests = new PanelTests(panelPair);
             HashSet<String> testIdSet = new HashSet<>();
@@ -103,7 +102,7 @@ public class PanelTestAssignController extends BaseController {
         }
     }
 
-    public List<Test> getAllTestsByPanelId(String panelId) {
+    public List<Test> getAllTestsByPanelId(String panelId, boolean alphabetical) {
         List<Test> testList = new ArrayList<>();
 
         List<PanelItem> testLinks = panelItemService.getPanelItemsForPanel(panelId);
@@ -112,14 +111,16 @@ public class PanelTestAssignController extends BaseController {
             testList.add(link.getTest());
         }
 
-        Collections.sort(testList, TestComparator.NAME_COMPARATOR);
+        if (alphabetical) {
+            Collections.sort(testList, TestComparator.NAME_COMPARATOR);
+        }
         return testList;
     }
 
     @RequestMapping(value = "/PanelTestAssign", method = RequestMethod.POST)
     public ModelAndView postPanelTestAssign(HttpServletRequest request,
             @ModelAttribute("form") @Valid PanelTestAssignForm form, BindingResult result,
-            RedirectAttributes redirectAttributes)  {
+            RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
             saveErrors(result);
             setupDisplayItems(form);

@@ -47,9 +47,19 @@ public class StringUtil {
     private static final Character CHAR_QUOTE = '"';
 //    private static String STRING_KEY_SUFFIX = null;
     private static Pattern INTEGER_REG_EX = Pattern.compile("^-?\\d+$");
+    private static Pattern ALL_NUMERIC_REG_EX = Pattern.compile("^\\d+$");
 
     public enum EncodeContext {
         JAVASCRIPT, HTML
+    }
+
+    public static <T extends Enum<?>> T searchEnum(Class<T> enumeration, String search) {
+        for (T each : enumeration.getEnumConstants()) {
+            if (each.name().compareToIgnoreCase(search) == 0) {
+                return each;
+            }
+        }
+        return null;
     }
 
     // private static SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
@@ -313,6 +323,10 @@ public class StringUtil {
      */
     public static boolean isInteger(String result) {
         return INTEGER_REG_EX.matcher(result).matches();
+    }
+
+    public static boolean isAllNumeric(String result) {
+        return ALL_NUMERIC_REG_EX.matcher(result).matches();
     }
 
     public static boolean textInCommaSeperatedValues(String target, String csv) {

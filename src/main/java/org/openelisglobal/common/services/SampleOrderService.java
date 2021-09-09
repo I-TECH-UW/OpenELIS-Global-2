@@ -83,7 +83,6 @@ public class SampleOrderService {
         SampleOrderItem orderItems = new SampleOrderItem();
 
         String dateAsText = DateUtil.getCurrentDateAsText();
-
         orderItems.setReceivedDateForDisplay(dateAsText);
         orderItems.setRequestDate(dateAsText);
         orderItems.setReceivedTime(DateUtil.convertTimestampToStringHourTime(DateUtil.getNowAsTimestamp()));
@@ -221,8 +220,10 @@ public class SampleOrderService {
 
         if (providerPerson == null) {
             providerPerson = new Person();
-            SampleRequester samplePersonRequester = requesterService
-                    .getSampleRequesterByType(RequesterService.Requester.PERSON, true);
+            List<SampleRequester> personSampleRequesters = requesterService
+                    .getSampleRequestersByType(RequesterService.Requester.PERSON, true);
+            SampleRequester samplePersonRequester = personSampleRequesters.size() > 0 ? personSampleRequesters.get(0)
+                            : null;
             samplePersonRequester.setSysUserId(currentUserId);
             artifacts.setSamplePersonRequester(samplePersonRequester);
         }
@@ -313,8 +314,11 @@ public class SampleOrderService {
          * referring code is blank -- nothing to do ii referring code is different from
          * organization -- update organization
          */
-        SampleRequester orgRequester = requesterService
-                .getSampleRequesterByType(RequesterService.Requester.ORGANIZATION, false);
+        SampleRequester orgRequester = sampleService.getOrganizationSampleRequester(sample,
+                TableIdService.getInstance().REFERRING_ORG_TYPE_ID);
+
+//        SampleRequester orgRequester = requesterService
+//                .getSampleRequesterByType(RequesterService.Requester.ORGANIZATION, false);
 
         if (orgRequester == null) {
             handleNoExistingOrganizationRequester(sampleOrder, currentUserId, artifacts);

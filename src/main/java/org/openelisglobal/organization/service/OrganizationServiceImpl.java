@@ -31,6 +31,18 @@ public class OrganizationServiceImpl extends BaseObjectServiceImpl<Organization,
 
     @Override
     @Transactional(readOnly = true)
+    public Organization getActiveOrganizationByName(Organization organization, boolean ignoreCase) {
+        return baseObjectDAO.getActiveOrganizationByName(organization, ignoreCase);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Organization> getActiveOrganizations() {
+        return baseObjectDAO.getActiveOrganizations();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public Organization getOrganizationByName(Organization organization, boolean ignoreCase) {
         return baseObjectDAO.getOrganizationByName(organization, ignoreCase);
     }
@@ -178,6 +190,18 @@ public class OrganizationServiceImpl extends BaseObjectServiceImpl<Organization,
 
     @Override
     @Transactional
+    public void deactivateOrganizations(List<Organization> deactivateOrganizations) {
+        for (Organization organization : getBaseObjectDAO().getAll()) {
+            for (Organization deactivateOrganization : deactivateOrganizations)  {
+                if (deactivateOrganization.getId().equals(organization.getId()) ) {
+                    organization.setIsActive("N");
+                }
+            }
+        }
+    }
+
+    @Override
+    @Transactional
     public void activateOrganizations(List<String> organizationNames) {
         for (Organization organization : getBaseObjectDAO().getAll()) {
             if (organizationNames.contains(organization.getName())
@@ -192,6 +216,11 @@ public class OrganizationServiceImpl extends BaseObjectServiceImpl<Organization,
     public void activateOrganizationsAndDeactivateOthers(List<String> organizationNames) {
         deactivateAllOrganizations();
         activateOrganizations(organizationNames);
+    }
+
+    @Override
+    public Organization getOrganizationByFhirId(String uuid) {
+        return baseObjectDAO.getOrganizationByFhirId(uuid);
     }
 
 }

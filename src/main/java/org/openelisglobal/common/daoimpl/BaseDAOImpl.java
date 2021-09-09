@@ -27,8 +27,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaBuilder.In;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.From;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
@@ -85,6 +85,21 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
         } catch (HibernateException e) {
             throw new LIMSRuntimeException("Error in " + this.getClass().getSimpleName() + " " + "get", e);
         }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<T> get(List<PK> ids) {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(this.classType);
+        Root<T> root = criteriaQuery.from(this.classType);
+        criteriaQuery.select(root);
+        List<PropertyValueComparison> whereComparisonOperations = new ArrayList<>();
+        whereComparisonOperations.add(new PropertyValueComparison("id", ids, DBComparison.IN));
+        this.addWhere(criteriaBuilder, criteriaQuery, root, whereComparisonOperations);
+
+        return entityManager.createQuery(criteriaQuery).getResultList();
+
     }
 
     @Override
@@ -304,9 +319,9 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
     @Override
     @Transactional(readOnly = true)
     public List<T> getLikePage(String propertyName, String propertyValue, int startingRecNo) {
-        Map<String, Object> propertyValues = new HashMap<>();
+        Map<String, String> propertyValues = new HashMap<>();
         propertyValues.put(propertyName, propertyValue);
-        return getMatchingPage(propertyValues, startingRecNo);
+        return getLikePage(propertyValues, startingRecNo);
     }
 
     @Override
@@ -653,7 +668,15 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
                 predicate = criteriaBuilder.equal(pathToProperty, propertyValue);
                 break;
             case LIKE:
-                predicate = criteriaBuilder.like((Expression<String>) pathToProperty, (String) propertyValue);
+                predicate = criteriaBuilder.like(criteriaBuilder.lower(pathToProperty),
+                        "%" + ((String) propertyValue).toLowerCase() + "%");
+                break;
+            case IN:
+                In<String> inClause = criteriaBuilder.in(root.get(propertyName));
+                for (String id : (List<String>) propertyValue) {
+                    inClause.value(id);
+                }
+                predicate = inClause;
                 break;
             default:
                 throw new UnsupportedOperationException();

@@ -79,12 +79,12 @@ public class PatientSearchPopulateProvider extends BaseQueryProvider {
         String patientKey = request.getParameter("personKey");
         StringBuilder xml = new StringBuilder();
         String result = null;
-        if (nationalId != null) {
-            result = createSearchResultXML(patientService.getPatientByNationalId(nationalId), xml);
+        if (!GenericValidator.isBlankOrNull(patientKey)) {
+            result = createSearchResultXML(getPatientForID(patientKey), xml);
         } else if (externalId != null) {
             result = createSearchResultXML(patientService.getPatientByExternalId(externalId), xml);
-        } else {
-            result = createSearchResultXML(getPatientForID(patientKey), xml);
+        } else if (nationalId != null) {
+            result = createSearchResultXML(patientService.getPatientByNationalId(nationalId), xml);
         }
         if (!result.equals(VALID)) {
             result = MessageUtil.getMessage("patient.message.patientNotFound");
@@ -126,9 +126,17 @@ public class PatientSearchPopulateProvider extends BaseQueryProvider {
         PatientIdentityTypeMap identityMap = PatientIdentityTypeMap.getInstance();
 
         List<PatientIdentity> identityList = PatientUtil.getIdentityListForPatient(patient.getId());
-        List<PatientContact> patientContacts = patientContactService.getAllMatching("patientId", patient.getId());
+        List<PatientContact> patientContacts = patientContactService.getForPatient(patient.getId());
+
+        String city = getAddress(person, ADDRESS_PART_VILLAGE_ID);
+        if (GenericValidator.isBlankOrNull(city)) {
+            city = person.getCity();
+        }
+        String commune = getAddress(person, ADDRESS_PART_COMMUNE_ID);
+        String dept = getAddress(person, ADDRESS_PART_DEPT_ID);
 
         XMLUtil.appendKeyValue("ID", patient.getId(), xml);
+        XMLUtil.appendKeyValue("fhirUuid", patient.getFhirUuidAsString(), xml);
         XMLUtil.appendKeyValue("nationalID", patient.getNationalId(), xml);
         XMLUtil.appendKeyValue("ST_ID", identityMap.getIdentityValue(identityList, "ST"), xml);
         XMLUtil.appendKeyValue("subjectNumber", identityMap.getIdentityValue(identityList, "SUBJECT"), xml);
@@ -137,7 +145,7 @@ public class PatientSearchPopulateProvider extends BaseQueryProvider {
         XMLUtil.appendKeyValue("mother", identityMap.getIdentityValue(identityList, "MOTHER"), xml);
         XMLUtil.appendKeyValue("aka", identityMap.getIdentityValue(identityList, "AKA"), xml);
         XMLUtil.appendKeyValue("street", person.getStreetAddress(), xml);
-        XMLUtil.appendKeyValue("city", getAddress(person, ADDRESS_PART_VILLAGE_ID), xml);
+        XMLUtil.appendKeyValue("city", city, xml);
         XMLUtil.appendKeyValue("birthplace", patient.getBirthPlace(), xml);
         XMLUtil.appendKeyValue("faxNumber", person.getFax(), xml);
         XMLUtil.appendKeyValue("phoneNumber", person.getPrimaryPhone(), xml);
@@ -147,8 +155,8 @@ public class PatientSearchPopulateProvider extends BaseQueryProvider {
         XMLUtil.appendKeyValue("insurance", identityMap.getIdentityValue(identityList, "INSURANCE"), xml);
         XMLUtil.appendKeyValue("occupation", identityMap.getIdentityValue(identityList, "OCCUPATION"), xml);
         XMLUtil.appendKeyValue("dob", patient.getBirthDateForDisplay(), xml);
-        XMLUtil.appendKeyValue("commune", getAddress(person, ADDRESS_PART_COMMUNE_ID), xml);
-        XMLUtil.appendKeyValue("addressDept", getAddress(person, ADDRESS_PART_DEPT_ID), xml);
+        XMLUtil.appendKeyValue("commune", commune, xml);
+        XMLUtil.appendKeyValue("addressDept", dept, xml);
         XMLUtil.appendKeyValue("motherInitial", identityMap.getIdentityValue(identityList, "MOTHERS_INITIAL"), xml);
         XMLUtil.appendKeyValue("externalID", patient.getExternalId(), xml);
         XMLUtil.appendKeyValue("education", identityMap.getIdentityValue(identityList, "EDUCATION"), xml);

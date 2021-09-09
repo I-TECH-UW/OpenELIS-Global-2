@@ -12,9 +12,9 @@ import org.openelisglobal.externalconnections.valueholder.ExternalConnectionAuth
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -44,9 +44,9 @@ public class ExternalConnectionTestController {
 
 	}
 
-	@GetMapping("/TestExternalConnection/{id}")
+    @GetMapping("/TestExternalConnection")
 	public ResponseEntity<Map<RequestMethod, Integer>> testConnection(
-			@PathVariable("id") Integer externalConnectionId) {
+            @RequestParam("id") Integer externalConnectionId) {
 
 		ExternalConnection connection = externalConnectionService.get(externalConnectionId);
 		Map<AuthType, ExternalConnectionAuthenticationData> connectionAuthDataMap = externalConnectionAuthDataService

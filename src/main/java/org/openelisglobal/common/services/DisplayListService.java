@@ -45,6 +45,8 @@ import org.openelisglobal.qaevent.service.QaEventService;
 import org.openelisglobal.qaevent.valueholder.QaEvent;
 import org.openelisglobal.referral.service.ReferralReasonService;
 import org.openelisglobal.referral.valueholder.ReferralReason;
+import org.openelisglobal.statusofsample.service.StatusOfSampleService;
+import org.openelisglobal.statusofsample.valueholder.StatusOfSample;
 import org.openelisglobal.test.service.TestSectionService;
 import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.test.service.TestServiceImpl;
@@ -68,12 +70,13 @@ public class DisplayListService implements LocaleChangeListener {
     public enum ListType {
         HOURS, MINS, SAMPLE_TYPE_ACTIVE, SAMPLE_TYPE_INACTIVE, SAMPLE_TYPE, INITIAL_SAMPLE_CONDITION,
         SAMPLE_PATIENT_PAYMENT_OPTIONS, PATIENT_HEALTH_REGIONS, PATIENT_MARITAL_STATUS, PATIENT_NATIONALITY,
-        PATIENT_EDUCATION, GENDERS, SAMPLE_PATIENT_REFERRING_CLINIC, QA_EVENTS, TEST_SECTION, TEST_SECTION_INACTIVE,
+        PATIENT_EDUCATION, GENDERS, SAMPLE_PATIENT_REFERRING_CLINIC, SAMPLE_PATIENT_CLINIC_DEPARTMENT, QA_EVENTS,
+        TEST_SECTION, TEST_SECTION_INACTIVE,
         TEST_SECTION_BY_NAME, HAITI_DEPARTMENTS, PATIENT_SEARCH_CRITERIA, PANELS, PANELS_ACTIVE, PANELS_INACTIVE,
         ORDERABLE_TESTS, ALL_TESTS, REJECTION_REASONS, REFERRAL_REASONS, REFERRAL_ORGANIZATIONS, TEST_LOCATION_CODE,
         PROGRAM, RESULT_TYPE_LOCALIZED, RESULT_TYPE_RAW, UNIT_OF_MEASURE, UNIT_OF_MEASURE_ACTIVE,
         UNIT_OF_MEASURE_INACTIVE, DICTIONARY_TEST_RESULTS, LAB_COMPONENT, SEVERITY_CONSEQUENCES_LIST,
-        SEVERITY_RECURRENCE_LIST, ACTION_TYPE_LIST, LABORATORY_COMPONENT, SAMPLE_NATURE
+        SEVERITY_RECURRENCE_LIST, ACTION_TYPE_LIST, LABORATORY_COMPONENT, SAMPLE_NATURE, ELECTRONIC_ORDER_STATUSES
     }
 
     private static Map<ListType, List<IdValuePair>> typeToListMap;
@@ -101,6 +104,8 @@ public class DisplayListService implements LocaleChangeListener {
     private DictionaryService dictionaryService;
     @Autowired
     private TypeOfTestResultService typeOfTestResultService;
+    @Autowired
+    private StatusOfSampleService statusOfSampleService;
 
     @PostConstruct
     private void setupGlobalVariables() {
@@ -127,7 +132,7 @@ public class DisplayListService implements LocaleChangeListener {
         Collections.sort(testResults, new Comparator<IdValuePair>() {
             @Override
             public int compare(IdValuePair o1, IdValuePair o2) {
-                return o1.getValue().compareTo(o2.getValue());
+                return o1.getValue().toLowerCase().compareTo(o2.getValue().toLowerCase());
             }
         });
         return testResults;
@@ -219,6 +224,18 @@ public class DisplayListService implements LocaleChangeListener {
             list.add(new IdValuePair(uom.getId(), uom.getLocalizedName()));
         }
 
+        return list;
+    }
+
+    private List<IdValuePair> createElectronicOrderStatusList() {
+        List<IdValuePair> list = new ArrayList<>();
+        List<StatusOfSample> statusList = statusOfSampleService.getAllStatusOfSamples();
+
+        for (StatusOfSample status : statusList) {
+            if (status.getStatusType().equals("EXTERNAL_ORDER")) {
+                list.add(new IdValuePair(status.getId(), status.getDefaultLocalizedName()));
+            }
+        }
         return list;
     }
 
@@ -333,6 +350,8 @@ public class DisplayListService implements LocaleChangeListener {
         typeToListMap.put(ListType.SEVERITY_RECURRENCE_LIST, createRecurrenceList());
         typeToListMap.put(ListType.ACTION_TYPE_LIST, createActionTypeList());
         typeToListMap.put(ListType.LABORATORY_COMPONENT, createLaboratoryComponentList());
+        typeToListMap.put(ListType.ELECTRONIC_ORDER_STATUSES, createElectronicOrderStatusList());
+
     }
 
     public void refreshList(ListType listType) {
@@ -395,6 +414,13 @@ public class DisplayListService implements LocaleChangeListener {
             typeToListMap.put(ListType.UNIT_OF_MEASURE, createUnitOfMeasureList());
             break;
         }
+        case PATIENT_HEALTH_REGIONS: {
+            typeToListMap.put(ListType.PATIENT_HEALTH_REGIONS, createPatientHealthRegions());
+            break;
+        }
+        case DICTIONARY_TEST_RESULTS: {
+            typeToListMap.put(ListType.DICTIONARY_TEST_RESULTS, createDictionaryTestResults());
+        }
         }
     }
 
@@ -403,6 +429,9 @@ public class DisplayListService implements LocaleChangeListener {
 
         List<Organization> orgList = organizationService.getOrganizationsByTypeName("shortName",
                 RequesterService.REFERRAL_ORG_TYPE);
+        orgList.sort((e, f) -> {
+            return e.getOrganizationName().compareTo(f.getOrganizationName());
+        });
 
         for (Organization organization : orgList) {
             if (GenericValidator.isBlankOrNull(organization.getShortName())) {
@@ -442,7 +471,9 @@ public class DisplayListService implements LocaleChangeListener {
         List<IdValuePair> pairs = new ArrayList<>();
 
         List<Organization> orgs = organizationService.getOrganizationsByTypeName("organizationName", "referralLab");
-
+        orgs.sort((e, f) -> {
+            return e.getOrganizationName().compareTo(f.getOrganizationName());
+        });
         for (Organization org : orgs) {
             pairs.add(new IdValuePair(org.getId(), org.getOrganizationName()));
         }
@@ -502,6 +533,9 @@ public class DisplayListService implements LocaleChangeListener {
     private List<IdValuePair> createPatientHealthRegions() {
         List<IdValuePair> regionList = new ArrayList<>();
         List<Organization> orgList = organizationService.getOrganizationsByTypeName("id", "Health Region");
+        orgList.sort((e, f) -> {
+            return e.getOrganizationName().compareTo(f.getOrganizationName());
+        });
         for (Organization org : orgList) {
             regionList.add(new IdValuePair(org.getId(), org.getOrganizationName()));
         }

@@ -12,9 +12,14 @@ import org.openelisglobal.barcode.labeltype.Label;
 import org.openelisglobal.barcode.labeltype.OrderLabel;
 import org.openelisglobal.barcode.labeltype.SpecimenLabel;
 import org.openelisglobal.barcode.service.BarcodeLabelInfoService;
+import org.openelisglobal.common.exception.LIMSInvalidConfigurationException;
 import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.provider.validation.AltYearAccessionValidator;
+import org.openelisglobal.common.provider.validation.IAccessionNumberGenerator;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.SampleStatus;
+import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.patient.service.PatientService;
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.sample.service.SampleService;
@@ -66,7 +71,8 @@ public class BarcodeLabelMaker {
 
     private static final Set<Integer> ENTERED_STATUS_SAMPLE_LIST = new HashSet<>();
     static {
-        ENTERED_STATUS_SAMPLE_LIST.add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(SampleStatus.Entered)));
+        ENTERED_STATUS_SAMPLE_LIST
+                .add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(SampleStatus.Entered)));
     }
 
     public BarcodeLabelMaker() {
@@ -83,9 +89,16 @@ public class BarcodeLabelMaker {
     }
 
     public void generatePrePrintLabels(Integer numSetsOfLabels, Integer numOrderLabelsPerSet,
-            Integer numSpecimenLabelsPerSet, String facilityName, List<Test> tests) {
+            Integer numSpecimenLabelsPerSet, String facilityName, List<Test> tests, String startingAt)
+            throws LIMSInvalidConfigurationException {
+        IAccessionNumberGenerator accessionValidator = null;
+        if (Boolean
+                .valueOf(ConfigurationProperties.getInstance().getPropertyValue(Property.USE_ALT_ACCESSION_PREFIX))) {
+            accessionValidator = AccessionNumberUtil.getAltAccessionNumberGenerator();
+            ((AltYearAccessionValidator) accessionValidator).setOverrideStartingAt(startingAt);
+        }
         for (int i = 0; i < numSetsOfLabels; ++i) {
-            String accessionNumber = genNextPrePrintedAccessionNumber();
+            String accessionNumber = genNextPrePrintedAccessionNumber(accessionValidator, startingAt);
             OrderLabel orderLabel = new OrderLabel(accessionNumber, facilityName);
             orderLabel.setNumLabels(numOrderLabelsPerSet);
 //          orderLabel.linkBarcodeLabelInfo();
@@ -106,8 +119,16 @@ public class BarcodeLabelMaker {
         }
     }
 
-    private String genNextPrePrintedAccessionNumber() {
-        return AccessionNumberUtil.getNextAccessionNumber("");
+    private String genNextPrePrintedAccessionNumber(IAccessionNumberGenerator accessionValidator, String startingAt)
+            throws LIMSInvalidConfigurationException {
+        if (accessionValidator == null) {
+            accessionValidator = AccessionNumberUtil.getMainAccessionNumberGenerator();
+        }
+//        if (GenericValidator.isBlankOrNull(startingAt)) {
+        return accessionValidator.getNextAvailableAccessionNumber("", true);
+//        } else {
+//            return accessionValidator.getNextAccessionNumber("", true);
+//        }
     }
 
     /**

@@ -22,7 +22,6 @@ import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.provider.validation.PasswordValidationFactory;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.StringUtil;
-import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.common.validator.BaseErrors;
 import org.openelisglobal.login.dao.UserModuleService;
 import org.openelisglobal.login.service.LoginUserService;
@@ -46,6 +45,7 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -94,13 +94,13 @@ public class UnifiedSystemUserController extends BaseController {
     }
 
     @RequestMapping(value = "/UnifiedSystemUser", method = RequestMethod.GET)
-    public ModelAndView showUnifiedSystemUser(HttpServletRequest request)
+    public ModelAndView showUnifiedSystemUser(HttpServletRequest request,
+            @RequestParam(name = "ID", defaultValue = "") String id)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         UnifiedSystemUserForm form = new UnifiedSystemUserForm();
         form.setFormAction("UnifiedSystemUser.do");
         form.setCancelAction("UnifiedSystemUserMenu.do");
 
-        String id = request.getParameter(ID);
         boolean doFiltering = true;
         request.setAttribute(ALLOW_EDITS_KEY, "true");
         request.setAttribute(PREVIOUS_DISABLED, "true");
@@ -482,11 +482,6 @@ public class UnifiedSystemUserController extends BaseController {
             } else if (!passwordValid(form.getUserPassword())) { // validity
                 errors.reject("login.error.password.requirement");
             }
-        }
-
-        // check expiration date
-        if (!GenericValidator.isDate(form.getExpirationDate(), SystemConfiguration.getInstance().getDateLocale())) {
-            errors.reject("errors.date");
         }
 
         // check timeout

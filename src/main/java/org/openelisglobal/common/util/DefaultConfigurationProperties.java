@@ -90,7 +90,7 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
         setDBPropertyMappingAndDefault(Property.SiteName, Property.SiteName.getName(), "");
         setDBPropertyMappingAndDefault(Property.PasswordRequirments, Property.PasswordRequirments.getName(), "MINN");
         setDBPropertyMappingAndDefault(Property.FormFieldSet, Property.FormFieldSet.getName(),
-                IActionConstants.FORM_FIELD_SET_CI_GENERAL);
+                IActionConstants.FORM_FIELD_SET_MAURITIUS);
         setDBPropertyMappingAndDefault(Property.StringContext, Property.StringContext.getName(), "");
         setDBPropertyMappingAndDefault(Property.StatusRules, Property.StatusRules.getName(), "CI");
         setDBPropertyMappingAndDefault(Property.ReflexAction, Property.ReflexAction.getName(), "Haiti");
@@ -100,6 +100,8 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
         // DB
         setDBPropertyMappingAndDefault(Property.TRACK_PATIENT_PAYMENT, Property.TRACK_PATIENT_PAYMENT.getName(),
                 "false");
+        setDBPropertyMappingAndDefault(Property.ACCESSION_NUMBER_VALIDATE, Property.ACCESSION_NUMBER_VALIDATE.getName(),
+                "true");
         setDBPropertyMappingAndDefault(Property.ALERT_FOR_INVALID_RESULTS, Property.ALERT_FOR_INVALID_RESULTS.getName(),
                 "false");
         setDBPropertyMappingAndDefault(Property.DEFAULT_DATE_LOCALE, Property.DEFAULT_DATE_LOCALE.getName(), "fr-FR");
@@ -137,6 +139,9 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
                 "true");
         setDBPropertyMappingAndDefault(Property.ALLOW_DUPLICATE_SUBJECT_NUMBERS,
                 Property.ALLOW_DUPLICATE_SUBJECT_NUMBERS.getName(), "true");
+        setDBPropertyMappingAndDefault(Property.ALLOW_DUPLICATE_NATIONAL_IDS,
+                Property.ALLOW_DUPLICATE_NATIONAL_IDS.getName(), "false");
+
         setDBPropertyMappingAndDefault(Property.VALIDATE_REJECTED_TESTS, Property.VALIDATE_REJECTED_TESTS.getName(),
                 "false");
         setDBPropertyMappingAndDefault(Property.TEST_NAME_AUGMENTED, Property.TEST_NAME_AUGMENTED.getName(), "true");
@@ -151,6 +156,9 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
         setDBPropertyMappingAndDefault(Property.PATIENT_ID_REQUIRED, Property.PATIENT_ID_REQUIRED.getName(), "true");
         setDBPropertyMappingAndDefault(Property.PATIENT_SUBJECT_NUMBER_REQUIRED,
                 Property.PATIENT_SUBJECT_NUMBER_REQUIRED.getName(), "true");
+        setDBPropertyMappingAndDefault(Property.PATIENT_NATIONAL_ID_REQUIRED,
+                Property.PATIENT_NATIONAL_ID_REQUIRED.getName(), "true");
+
         setDBPropertyMappingAndDefault(Property.QA_SAMPLE_ID_REQUIRED, Property.QA_SAMPLE_ID_REQUIRED.getName(),
                 "false");
         setDBPropertyMappingAndDefault(Property.MAX_ORDER_PRINTED, Property.MAX_ORDER_PRINTED.getName(), "10");
@@ -166,16 +174,18 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
         setDBPropertyMappingAndDefault(Property.SPECIMEN_FIELD_SEX, Property.SPECIMEN_FIELD_SEX.getName(), "true");
         setDBPropertyMappingAndDefault(Property.SPECIMEN_FIELD_TESTS, Property.SPECIMEN_FIELD_TESTS.getName(), "true");
 
+        setDBPropertyMappingAndDefault(Property.ALT_ACCESSION_PREFIX, Property.ALT_ACCESSION_PREFIX.getName(), "");
+        setDBPropertyMappingAndDefault(Property.USE_ALT_ACCESSION_PREFIX, Property.USE_ALT_ACCESSION_PREFIX.getName(),
+                "false");
+
         setDBPropertyMappingAndDefault(Property.LAB_DIRECTOR_NAME, Property.LAB_DIRECTOR_NAME.getName(), "");
         setDBPropertyMappingAndDefault(Property.LAB_DIRECTOR_TITLE, Property.LAB_DIRECTOR_TITLE.getName(), "");
+        setDBPropertyMappingAndDefault(Property.CONTACT_TRACING, Property.CONTACT_TRACING.getName(), "false");
         // these are set through external connection now
 //        setDBPropertyMappingAndDefault(Property.INFO_HIGHWAY_ADDRESS, Property.INFO_HIGHWAY_ADDRESS.getName(), "");
 //        setDBPropertyMappingAndDefault(Property.INFO_HIGHWAY_USERNAME, Property.INFO_HIGHWAY_USERNAME.getName(), "");
 //        setDBPropertyMappingAndDefault(Property.INFO_HIGHWAY_PASSWORD, Property.INFO_HIGHWAY_PASSWORD.getName(), "");
 //        setDBPropertyMappingAndDefault(Property.INFO_HIGHWAY_ENABLED, Property.INFO_HIGHWAY_ENABLED.getName(), "");
-        setDBPropertyMappingAndDefault(Property.PATIENT_RESULTS_SMS_ENABLED,
-                Property.PATIENT_RESULTS_SMS_ENABLED.getName(), Boolean.TRUE.toString());
-
     }
 
     private void setDBPropertyMappingAndDefault(Property property, String dbName, String defaultValue) {
@@ -234,6 +244,46 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
             if (smtpConnection.get().getActive() != null) {
                 propertiesValueMap.put(Property.PATIENT_RESULTS_SMTP_ENABLED,
                         smtpConnection.get().getActive().toString());
+            }
+        }
+
+        Optional<ExternalConnection> bmpSmsConnection = externalConnectionsService.getMatch("programmedConnection",
+                ProgrammedConnection.BMP_SMS_SERVER.name());
+        propertiesValueMap.put(Property.PATIENT_RESULTS_BMP_SMS_ENABLED, Boolean.FALSE.toString());
+        if (bmpSmsConnection.isPresent()) {
+            Optional<BasicAuthenticationData> basicAuthData = basicAuthenticationDataService
+                    .getByExternalConnection(bmpSmsConnection.get().getId());
+            propertiesValueMap.put(Property.PATIENT_RESULTS_BMP_SMS_ADDRESS,
+                    bmpSmsConnection.get().getUri().toString());
+            // basic auth only required if bmp sms server has username password
+            if (basicAuthData.isPresent()) {
+                propertiesValueMap.put(Property.PATIENT_RESULTS_BMP_SMS_USERNAME, basicAuthData.get().getUsername());
+                propertiesValueMap.put(Property.PATIENT_RESULTS_BMP_SMS_PASSWORD, basicAuthData.get().getPassword());
+
+            }
+            if (bmpSmsConnection.get().getActive() != null) {
+                propertiesValueMap.put(Property.PATIENT_RESULTS_BMP_SMS_ENABLED,
+                        bmpSmsConnection.get().getActive().toString());
+            }
+        }
+
+        Optional<ExternalConnection> smppSmsConnection = externalConnectionsService.getMatch("programmedConnection",
+                ProgrammedConnection.SMPP_SERVER.name());
+        propertiesValueMap.put(Property.PATIENT_RESULTS_SMPP_SMS_ENABLED, Boolean.FALSE.toString());
+        if (smppSmsConnection.isPresent()) {
+            Optional<BasicAuthenticationData> basicAuthData = basicAuthenticationDataService
+                    .getByExternalConnection(smppSmsConnection.get().getId());
+            propertiesValueMap.put(Property.PATIENT_RESULTS_SMPP_SMS_ADDRESS,
+                    smppSmsConnection.get().getUri().toString());
+            // basic auth only required if smpp server has username password
+            if (basicAuthData.isPresent()) {
+                propertiesValueMap.put(Property.PATIENT_RESULTS_SMPP_SMS_USERNAME, basicAuthData.get().getUsername());
+                propertiesValueMap.put(Property.PATIENT_RESULTS_SMPP_SMS_PASSWORD, basicAuthData.get().getPassword());
+
+            }
+            if (smppSmsConnection.get().getActive() != null) {
+                propertiesValueMap.put(Property.PATIENT_RESULTS_SMPP_SMS_ENABLED,
+                        smppSmsConnection.get().getActive().toString());
             }
         }
 

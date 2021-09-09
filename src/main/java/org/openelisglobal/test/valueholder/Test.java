@@ -111,6 +111,8 @@ public class Test extends EnumValueItemImpl {
 
     private ValueHolder defaultTestResult;
 
+    private boolean inLabOnly;
+
     // should we notify patient of a finalized result
     private Boolean notifyResults;
 
@@ -489,5 +491,17 @@ public class Test extends EnumValueItemImpl {
 
     public void setNotifyResults(boolean notifyResults) {
         this.notifyResults = notifyResults;
+    }
+
+    public String getAugmentedTestName() {
+        return TestServiceImpl.getLocalizedTestNameWithType(this.id);
+    }
+
+    public boolean isInLabOnly() {
+        return inLabOnly;
+    }
+
+    public void setInLabOnly(boolean inLabOnly) {
+        this.inLabOnly = inLabOnly;
     }
 }

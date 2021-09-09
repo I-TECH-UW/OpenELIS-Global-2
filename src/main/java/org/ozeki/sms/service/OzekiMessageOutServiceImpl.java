@@ -1,6 +1,5 @@
 package org.ozeki.sms.service;
 
-import org.openelisglobal.notification.service.sender.ClientNotificationSender;
 import org.openelisglobal.notification.valueholder.SMSNotification;
 import org.ozeki.sms.dao.OzekiMessageOutDAO;
 import org.ozeki.sms.valueholder.OzekiMessageOut;
@@ -10,15 +9,10 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class OzekiMessageOutServiceImpl implements OzekiMessageOutService, ClientNotificationSender<SMSNotification> {
+public class OzekiMessageOutServiceImpl implements OzekiMessageOutService {
 
     @Autowired
     private OzekiMessageOutDAO dao;
-
-    @Override
-    public Class<SMSNotification> forClass() {
-        return SMSNotification.class;
-    }
 
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)

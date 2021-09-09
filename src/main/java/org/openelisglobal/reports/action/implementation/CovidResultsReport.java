@@ -5,7 +5,7 @@ import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
 import java.text.ParseException;
 
-import org.jfree.util.Log;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.reports.action.implementation.reportBeans.CovidResultsBuilder;
 import org.openelisglobal.reports.action.implementation.reportBeans.CovidResultsBuilderImpl.CovidReportType;
@@ -37,7 +37,8 @@ public class CovidResultsReport extends Report implements IReportParameterSetter
             form.setUseLowerDateRange(Boolean.TRUE);
             form.setUseUpperDateRange(Boolean.TRUE);
         } catch (RuntimeException e) {
-            Log.error("Error in ExportRoutineByDate.setRequestParemeters: ", e);
+            LogEvent.logError(this.getClass().getName(), "setRequestParameters",
+                    "Runtime exception occured while setting params");
         }
     }
 
