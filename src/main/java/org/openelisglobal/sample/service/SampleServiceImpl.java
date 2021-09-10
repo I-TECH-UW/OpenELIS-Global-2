@@ -405,6 +405,12 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
     @Transactional(readOnly = true)
     public List<Sample> getSamplesByProjectAndStatusIDAndAccessionRange(List<Integer> inclusiveProjectIdList,
             List<Integer> inclusiveStatusIdList, String minAccession, String maxAccession) {
+        if (minAccession != null && minAccession.contains(".")) {
+            minAccession = minAccession.substring(0, minAccession.indexOf('.'));
+        }
+        if (maxAccession != null && maxAccession.contains(".")) {
+            maxAccession = maxAccession.substring(0, maxAccession.indexOf('.'));
+        }
         return getBaseObjectDAO().getSamplesByProjectAndStatusIDAndAccessionRange(inclusiveProjectIdList,
                 inclusiveStatusIdList, minAccession, maxAccession);
     }
@@ -413,6 +419,12 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
     @Transactional(readOnly = true)
     public List<Sample> getSamplesByProjectAndStatusIDAndAccessionRange(String projectId,
             List<Integer> inclusiveStatusIdList, String minAccession, String maxAccession) {
+        if (minAccession != null && minAccession.contains(".")) {
+            minAccession = minAccession.substring(0, minAccession.indexOf('.'));
+        }
+        if (maxAccession != null && maxAccession.contains(".")) {
+            maxAccession = maxAccession.substring(0, maxAccession.indexOf('.'));
+        }
         return getBaseObjectDAO().getSamplesByProjectAndStatusIDAndAccessionRange(projectId, inclusiveStatusIdList,
                 minAccession, maxAccession);
     }
@@ -476,12 +488,22 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
     @Override
     @Transactional(readOnly = true)
     public List<Sample> getSamplesByAccessionRange(String minAccession, String maxAccession) {
+        if (minAccession != null && minAccession.contains(".")) {
+            minAccession = minAccession.substring(0, minAccession.indexOf('.'));
+        }
+        if (maxAccession != null && maxAccession.contains(".")) {
+            maxAccession = maxAccession.substring(0, maxAccession.indexOf('.'));
+        }
         return getBaseObjectDAO().getSamplesByAccessionRange(minAccession, maxAccession);
     }
 
     @Override
     @Transactional(readOnly = true)
     public void getSampleByAccessionNumber(Sample sample) {
+        if (sample.getAccessionNumber() != null && sample.getAccessionNumber().contains(".")) {
+            sample.setAccessionNumber(
+                    sample.getAccessionNumber().substring(0, sample.getAccessionNumber().indexOf('.')));
+        }
         getBaseObjectDAO().getSampleByAccessionNumber(sample);
 
     }
