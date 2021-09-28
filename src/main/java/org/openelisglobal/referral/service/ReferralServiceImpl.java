@@ -187,7 +187,6 @@ public class ReferralServiceImpl extends BaseObjectServiceImpl<Referral, String>
         List<Result> resultList = analysisService.getResults(analysis);
         Patient patient = sampleHumanService.getPatientForSample(analysis.getSampleItem().getSample());
 
-        referralItem.setResultDate(analysis.getCompletedDateForDisplay());
         referralItem.setAccessionNumber(analysis.getSampleItem().getSample().getAccessionNumber());
         referralItem.setReferredSendDate(DateUtil.convertTimestampToStringDate(referral.getSentDate()));
         referralItem.setReferralStatus(referral.getStatus());
@@ -197,6 +196,7 @@ public class ReferralServiceImpl extends BaseObjectServiceImpl<Referral, String>
         referralItem.setReferringTestName(analysis.getTest().getLocalizedTestName().getLocalizedValue());
         if (!resultList.isEmpty()) {
             referralItem.setReferralResultsDisplay(getAppropriateResultValue(resultList));
+            referralItem.setResultDate(analysis.getCompletedDateForDisplay());
         }
         Organization organization = referral.getOrganization();
         if (organization != null) {
