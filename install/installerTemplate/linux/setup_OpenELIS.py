@@ -634,7 +634,7 @@ def install_crosstab():
         result.close()
         os.chmod(INSTALLER_STAGING_DIR + 'crosstabResult.txt', stat.S_IROTH | stat.S_IWOTH)
     
-        cmd = cmd = 'sudo -u postgres psql -d clinlims -L ' + INSTALLER_STAGING_DIR + 'crosstabResult.txt  -f' + INSTALLER_CROSSTAB_DIR + 'crosstabCheck.sql'
+        cmd = cmd = 'sudo -u postgres psql -d clinlims -o ' + INSTALLER_STAGING_DIR + 'crosstabResult.txt  -f' + INSTALLER_CROSSTAB_DIR + 'crosstabCheck.sql'
         os.system(cmd)
     
         check_file = open(INSTALLER_STAGING_DIR + 'crosstabResult.txt')
