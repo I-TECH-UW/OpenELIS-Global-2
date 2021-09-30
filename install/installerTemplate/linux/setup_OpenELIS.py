@@ -1201,7 +1201,7 @@ def get_fhir_identifier():
 def set_fhir_identifier(): 
     identifier = raw_input("type a comma delimited list of fhir identifiers (format Practitioner/id1,Organization/id2...): ").split(',')
     with open(CONFIG_DIR + 'FHIR_IDENTIFIER', mode='wt') as file:
-        file.write(','.join(extra_hosts))
+        file.write(','.join(identifier))
         
                 
 #---------------------------------------------------------------------
