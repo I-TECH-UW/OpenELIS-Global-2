@@ -813,7 +813,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
 
     @Override
     public List<Sample> getSamplesByAnalysisIds(List<String> analysisIds) {
-        String hql = "FROM Sample s WHERE s.id IN (SELECT si.id FROM SampleItem si WHERE si.id IN (SELECT a.id FROM Analysis a WHERE a.id IN (:analysisIds)))";
+        String hql = "FROM Sample s WHERE s.id IN (SELECT si.sample.id FROM SampleItem si WHERE si.id IN (SELECT a.sampleItem.id FROM Analysis a WHERE a.id IN (:analysisIds)))";
         try {
             Query query = entityManager.unwrap(Session.class).createQuery(hql);
             query.setParameter("analysisIds",

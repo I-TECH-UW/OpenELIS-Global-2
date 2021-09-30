@@ -16,9 +16,6 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
-import org.apache.commons.validator.GenericValidator;
-import org.hl7.fhir.r4.model.Address;
-import org.hl7.fhir.r4.model.Annotation;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.CodeableConcept;
 import org.hl7.fhir.r4.model.Coding;
@@ -30,13 +27,10 @@ import org.hl7.fhir.r4.model.DiagnosticReport;
 import org.hl7.fhir.r4.model.DiagnosticReport.DiagnosticReportStatus;
 import org.hl7.fhir.r4.model.Enumerations.AdministrativeGender;
 import org.hl7.fhir.r4.model.HumanName;
-import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Observation;
 import org.hl7.fhir.r4.model.Observation.ObservationStatus;
 import org.hl7.fhir.r4.model.Practitioner;
 import org.hl7.fhir.r4.model.Quantity;
-import org.hl7.fhir.r4.model.Reference;
-import org.hl7.fhir.r4.model.Resource;
 import org.hl7.fhir.r4.model.ResourceType;
 import org.hl7.fhir.r4.model.ServiceRequest;
 import org.hl7.fhir.r4.model.ServiceRequest.ServiceRequestIntent;
@@ -45,8 +39,6 @@ import org.hl7.fhir.r4.model.ServiceRequest.ServiceRequestStatus;
 import org.hl7.fhir.r4.model.Specimen;
 import org.hl7.fhir.r4.model.Specimen.SpecimenCollectionComponent;
 import org.hl7.fhir.r4.model.Specimen.SpecimenStatus;
-import org.hl7.fhir.r4.model.StringType;
-import org.hl7.fhir.r4.model.Task;
 import org.hl7.fhir.r4.model.Task.TaskIntent;
 import org.hl7.fhir.r4.model.Task.TaskPriority;
 import org.hl7.fhir.r4.model.Task.TaskStatus;
@@ -64,6 +56,7 @@ import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.StatusService.OrderStatus;
 import org.openelisglobal.common.services.TableIdService;
 import org.openelisglobal.common.util.DateUtil;
+import org.openelisglobal.common.util.validator.GenericValidator;
 import org.openelisglobal.dataexchange.fhir.FhirConfig;
 import org.openelisglobal.dataexchange.fhir.exception.FhirLocalPersistingException;
 import org.openelisglobal.dataexchange.fhir.service.FhirPersistanceServiceImpl.FhirOperations;
@@ -111,7 +104,11 @@ import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.sun.org.apache.xalan.internal.xsltc.compiler.util.StringType;
+
 import ca.uhn.fhir.model.api.TemporalPrecisionEnum;
+import jdk.internal.loader.Resource;
+import jdk.internal.org.jline.utils.ShutdownHooks.Task;
 
 @Service
 public class FhirTransformServiceImpl implements FhirTransformService {
@@ -219,10 +216,13 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         Map<String, ServiceRequest> serviceRequests = new HashMap<>();
         Map<String, DiagnosticReport> diagnosticReports = new HashMap<>();
         Map<String, Observation> observations = new HashMap<>();
-        for (String sampleId : sampleIds) {        
-            LogEvent.logDebug(this.getClass().getName(), "transformPersistObjectsUnderSamples", "transforming sampleId: " + sampleId);
+        Map<String, Practitioner> requesters = new HashMap<>();
+        for (String sampleId : sampleIds) {
+            LogEvent.logDebug(this.getClass().getName(), "transformPersistObjectsUnderSamples",
+                    "transforming sampleId: " + sampleId);
             Sample sample = sampleService.get(sampleId);
             Patient patient = sampleHumanService.getPatientForSample(sample);
+            Provider provider = sampleHumanService.getProviderForSample(sample);
             List<SampleItem> sampleItems = sampleItemService.getSampleItemsBySampleId(sampleId);
             List<Analysis> analysises = analysisService.getAnalysesBySampleId(sampleId);
             List<Result> results = resultService.getResultsForSample(sample);
@@ -232,6 +232,9 @@ public class FhirTransformServiceImpl implements FhirTransformService {
             }
             if (patient.getFhirUuid() == null) {
                 patient.setFhirUuid(UUID.randomUUID());
+            }
+            if (provider.getFhirUuid() == null) {
+                provider.setFhirUuid(UUID.randomUUID());
             }
             sampleItems.stream().forEach((e) -> {
                 if (e.getFhirUuid() == null) {
@@ -261,6 +264,12 @@ public class FhirTransformServiceImpl implements FhirTransformService {
                 LogEvent.logWarn("", "", "patient collision with id: " + fhirPatient.getIdElement().getIdPart());
             }
             fhirPatients.put(fhirPatient.getIdElement().getIdPart(), fhirPatient);
+
+            Practitioner requester = transformProviderToPractitioner(provider);
+            if (requesters.containsKey(requester.getIdElement().getIdPart())) {
+                LogEvent.logWarn("", "", "practitioner collision with id: " + fhirPatient.getIdElement().getIdPart());
+            }
+            requesters.put(requester.getIdElement().getIdPart(), requester);
 
             for (SampleItem sampleItem : sampleItems) {
                 Specimen specimen = this.transformToSpecimen(sampleItem);
@@ -314,6 +323,10 @@ public class FhirTransformServiceImpl implements FhirTransformService {
             this.addToOperations(fhirOperations, tempIdGenerator, diagnosticReport);
         }
 
+        for (Practitioner requester : requesters.values()) {
+            this.addToOperations(fhirOperations, tempIdGenerator, requester);
+        }
+
         Bundle responseBundle = fhirPersistanceService.createUpdateFhirResourcesInFhirStore(fhirOperations);
         return new AsyncResult<>(responseBundle);
     }
@@ -352,6 +365,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         this.addToOperations(fhirOperations, tempIdGenerator, patient);
         orderEntryObjects.patient = patient;
 
+        // requester
         Practitioner requester = transformProviderToPractitioner(updateData.getProvider().getId());
         this.addToOperations(fhirOperations, tempIdGenerator, requester);
         orderEntryObjects.requester = requester;
@@ -947,6 +961,9 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         observation.addBasedOn(this.createReferenceFor(ResourceType.ServiceRequest, analysis.getFhirUuidAsString()));
         observation.setSpecimen(this.createReferenceFor(ResourceType.Specimen, sampleItem.getFhirUuidAsString()));
         observation.setSubject(this.createReferenceFor(ResourceType.Patient, patient.getFhirUuidAsString()));
+//        observation.setIssued(result.getOriginalLastupdated());
+        observation.setIssued(result.getLastupdated());
+//      observation.setIssued(new Date());
         return observation;
     }
 

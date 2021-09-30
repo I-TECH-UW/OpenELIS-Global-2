@@ -107,7 +107,7 @@ public class UnifiedSystemUser {
     public static Integer getLoginUserIDFromCombinedID(String combinedId) {
         int separatorIndex = combinedId.indexOf(ID_SEPARATOR);
 
-        return separatorIndex == combinedId.length() - 1 ? null
+        return separatorIndex == combinedId.length() - 1 || combinedId.endsWith(ID_SEPARATOR) ? null
                 : Integer.parseInt(combinedId.substring(separatorIndex + 1));
     }
 }
