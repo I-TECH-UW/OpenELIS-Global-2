@@ -965,6 +965,12 @@ def get_set_truststore_password():
     if (not is_truststore_password_set()):
         set_truststore_password()
     get_truststore_password()
+    
+
+def get_set_encryption_key():
+    if (not is_encryption_key_set()):
+        set_encryption_key()
+    get_encryption_key()
 
 
 def get_set_remote_fhir_source():
