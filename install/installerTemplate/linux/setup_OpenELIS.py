@@ -1033,7 +1033,7 @@ def is_keystore_password_set():
 def get_keystore_password():
     global KEYSTORE_PWD
     file = open(CONFIG_DIR + 'KEYSTORE_PASSWORD')
-    KEYSTORE_PASSWORD = file.readline()  
+    KEYSTORE_PWD = file.readline()  
     
     
 def set_keystore_password():
