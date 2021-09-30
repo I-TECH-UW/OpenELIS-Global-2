@@ -1040,7 +1040,7 @@ def set_keystore_password():
         set_keystore_password()
     else:
         with open(CONFIG_DIR + 'KEYSTORE_PASSWORD', mode='wt') as file:
-            file.write(t_password)    
+            file.write(k_password)    
     
     
 def is_truststore_password_set():
