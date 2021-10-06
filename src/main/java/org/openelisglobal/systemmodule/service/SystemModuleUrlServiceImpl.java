@@ -37,4 +37,9 @@ public class SystemModuleUrlServiceImpl extends BaseObjectServiceImpl<SystemModu
     public List<SystemModuleUrl> getByUrlPath(String urlPath) {
         return getBaseObjectDAO().getByUrlPath(urlPath);
     }
+
+    @Override
+    public SystemModuleUrl getByModuleAndUrl(String moduleId, String urlPath) {
+        return getBaseObjectDAO().getByModuleAndUrl(moduleId, urlPath);
+    }
 }

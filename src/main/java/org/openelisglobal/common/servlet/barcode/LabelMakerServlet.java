@@ -13,6 +13,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.openelisglobal.barcode.BarcodeLabelMaker;
 import org.openelisglobal.common.action.IActionConstants;
+import org.openelisglobal.common.exception.LIMSInvalidConfigurationException;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.provider.validation.IAccessionNumberValidator;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
@@ -60,7 +62,16 @@ public class LabelMakerServlet extends HttpServlet implements IActionConstants {
 
         if ("true".equalsIgnoreCase(request.getParameter("prePrinting"))) {
             // writes to response
-            prePrintLabels(request, response);
+            try {
+                prePrintLabels(request, response);
+            } catch (NumberFormatException | LIMSInvalidConfigurationException e) {
+                LogEvent.logError(this.getClass().getName(), "doGet",
+                        "invalid configuration, could not generate a pre-printed accession number");
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                response.setContentType("text/html; charset=utf-8");
+                response.getWriter().println(MessageUtil.getMessage("error.accession.no.error"));
+                return;
+            }
         } else {
             // writes to response
             printExistingOrder(request, response);
@@ -68,7 +79,8 @@ public class LabelMakerServlet extends HttpServlet implements IActionConstants {
 
     }
 
-    private void prePrintLabels(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    private void prePrintLabels(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, NumberFormatException, LIMSInvalidConfigurationException {
         // get tests for request
 
         String testIds = request.getParameter("testIds");
@@ -83,10 +95,16 @@ public class LabelMakerServlet extends HttpServlet implements IActionConstants {
         UserSessionData usd = (UserSessionData) request.getSession().getAttribute(USER_SESSION_DATA);
         labelMaker.setSysUserId(String.valueOf(usd.getSystemUserId()));
 
+        String startingAt = request.getParameter("startingAt");
+        if (GenericValidator.isBlankOrNull(startingAt) || startingAt.trim().equals("null")
+                || startingAt.trim().equals("undefined")) {
+            startingAt = "";
+
+        }
         labelMaker.generatePrePrintLabels(Integer.parseInt(request.getParameter("numSetsOfLabels")),
                 Integer.parseInt(request.getParameter("numOrderLabelsPerSet")),
                 Integer.parseInt(request.getParameter("numSpecimenLabelsPerSet")), request.getParameter("facilityName"),
-                tests);
+                tests, startingAt);
         ByteArrayOutputStream labelAsOutputStream = labelMaker.createPrePrintedLabelsAsStream();
 
         // if empty stream, assume at max printing
@@ -198,7 +216,7 @@ public class LabelMakerServlet extends HttpServlet implements IActionConstants {
                 .isPropertyValueEqual(Property.ACCESSION_NUMBER_VALIDATE, "true");
         if (validateAccessionNumber) {
             IAccessionNumberValidator accessionNumberValidator = AccessionNumberUtil
-                    .getAccessionNumberValidator(programCode);
+                    .getGeneralAccessionNumberValidator();
             String accessionNumber;
 //        String sampleItemNumber;
             if (labNo.indexOf(".") > 0) {
@@ -212,6 +230,8 @@ public class LabelMakerServlet extends HttpServlet implements IActionConstants {
                     .validFormat(accessionNumber, false))) {
                 errors.reject("barcode.label.error.accession.invalid", "barcode.label.error.accession.invalid");
             }
+        } else if (AccessionNumberUtil.containsBlackListCharacters(labNo)) {
+            errors.reject("barcode.label.error.accession.invalid", "barcode.label.error.accession.invalid");
         }
         SampleService sampleService = SpringContext.getBean(SampleService.class);
         if (sampleService.getSampleByAccessionNumber(labNo) == null) {

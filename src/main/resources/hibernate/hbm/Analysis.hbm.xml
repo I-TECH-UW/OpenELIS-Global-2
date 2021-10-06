@@ -106,6 +106,8 @@
 			type="java.lang.String" />
 		<property name="correctedSincePatientReport"
 			column="corrected" type="java.lang.Boolean" />
+		<property name="fhirUuid"
+			column="fhir_uuid" type="java.util.UUID" />
 	</class>
 
 <!-- 	<!- bugzilla 1993 get sample analyses as reported on in results report  -->

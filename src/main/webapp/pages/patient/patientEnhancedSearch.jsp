@@ -2,8 +2,7 @@
 <%@ page import="org.openelisglobal.common.action.IActionConstants,
 			     org.openelisglobal.common.formfields.FormFields,
 			     org.openelisglobal.common.formfields.FormFields.Field,
-			     org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory,
-			     org.openelisglobal.common.provider.validation.IAccessionNumberValidator,
+				 org.openelisglobal.sample.util.AccessionNumberUtil,
 			     org.openelisglobal.common.util.ConfigurationProperties.Property,
 			     org.openelisglobal.common.util.*, org.openelisglobal.internationalization.MessageUtil" %>
 <%@ page isELIgnored="false" %>
@@ -19,19 +18,12 @@
 <c:set var="localDBOnly" value='<%=Boolean.toString(ConfigurationProperties.getInstance().getPropertyValueLowerCase(Property.UseExternalPatientInfo).equals("false"))%>'/>
 <c:set var="patientEnhancedSearch" value="${form.patientSearch}"/>
 
-<%!
-	AccessionNumberValidatorFactory accessionNumberValidatorFactory = new AccessionNumberValidatorFactory();
- %>
-
  <%
-	 boolean supportSTNumber = FormFields.getInstance().useField(Field.StNumber);
-	 boolean supportMothersName = FormFields.getInstance().useField(Field.MothersName);
-	 boolean supportSubjectNumber = FormFields.getInstance().useField(Field.SubjectNumber);
-	 boolean supportNationalID = FormFields.getInstance().useField(Field.NationalID);
-	 boolean supportLabNumber = FormFields.getInstance().useField(Field.SEARCH_PATIENT_WITH_LAB_NO);
-  	
-  	IAccessionNumberValidator accessionNumberValidator = accessionNumberValidatorFactory.getValidator();
- 
+ 	boolean supportSTNumber = FormFields.getInstance().useField(Field.StNumber);
+  	 boolean supportMothersName = FormFields.getInstance().useField(Field.MothersName);
+  	 boolean supportSubjectNumber = FormFields.getInstance().useField(Field.SubjectNumber);
+  	 boolean supportNationalID = FormFields.getInstance().useField(Field.NationalID);
+  	 boolean supportLabNumber = FormFields.getInstance().useField(Field.SEARCH_PATIENT_WITH_LAB_NO);
  %>
 
 <script type="text/javascript" src="scripts/ajaxCalls.js?" ></script>
@@ -84,8 +76,7 @@ function searchPatients()
 	patientSearch(lastName, firstName, STNumber, subjectNumber, nationalID, labNumber, "", "", "", false, processSearchSuccess);
 }
 
-function enhancedSearchPatients()
-{
+function enhancedSearchPatients(localSearch) {
     var criteria = jQuery("#searchCriteria").val();
     var genders = jQuery("#genders").val();
     var value = jQuery("#firstNameSearchValue").val().trim();
@@ -117,18 +108,37 @@ function enhancedSearchPatients()
     
     labNumber = jQuery("#patientLabNoSearchValue").val().trim();
     
+	if (typeof altAccessionSearchFunction === "function" && labNumber !== "") {
+		altAccessionSearchFunction(labNumber);
+		return;
+	}
+	var table = $("searchResultTable");
+	$("searchResultsDiv").hide();
+	clearTable(table);
+	clearPatientInfoCache();
+	if (localSearch) {
+		jQuery("#loading").addClass('local-search');
+		jQuery("#loading").removeClass('external-search');
+		jQuery("#enhancedExternalSearchButton").hide();
+	} else {
+		jQuery("#loading").removeClass('local-search');
+		jQuery("#loading").addClass('external-search');
+	}
+	jQuery("#loading").show();
 
-	patientSearch(lastName, firstName, STNumber, subjectNumber, nationalID, labNumber, "", dateOfBirth, gender, false, processSearchSuccess);
+	patientSearch(lastName, firstName, STNumber, subjectNumber, nationalID, labNumber, "", dateOfBirth, gender, localSearch, processSearchSuccess, processSearchFailure, localSearch);
 }
 
-function processSearchFailure(xhr)
-{
+function processSearchFailure(xhr) {
 	//alert( xhr.responseText );
+	jQuery("#loading").hide();
+	jQuery(".patientFinishSearchShow").show();
 	alert("<spring:message code="error.system"/>");
 }
 
-function processSearchSuccess(xhr)
-{
+function processSearchSuccess(xhr, localSearch) {
+	jQuery("#loading").hide();
+	jQuery(".patientFinishSearchShow").show();
 	//alert( xhr.responseText );
 	var formField = xhr.responseXML.getElementsByTagName("formfield").item(0);
 	var message = xhr.responseXML.getElementsByTagName("message").item(0);
@@ -153,12 +163,19 @@ function processSearchSuccess(xhr)
 			handleSelectedPatient();
 		}
 		</c:if>
-	}else
-	{
+		showExternalSearchButton();
+	} else if (localSearch){
+		showExternalSearchButton();
+		enhancedSearchPatients(false);
+	} else {
 		$("searchResultsDiv").hide();
 		$("noPatientFound").show();
 		selectPatient( null );
 	}
+}
+
+function showExternalSearchButton() {
+	jQuery("#enhancedExternalSearchButton").show();
 }
 
 function clearSearchResultTable() {
@@ -314,7 +331,7 @@ function checkIndex(select) {
     var valueElem = jQuery("#searchValue");
 	if (indexVal == "5") {
 		jQuery("#scanInstruction").show();
-        valueElem.attr("maxlength","<%= Integer.toString(accessionNumberValidator.getMaxAccessionLength()) %>");
+        valueElem.attr("maxlength","<%= Integer.toString(AccessionNumberUtil.getMaxAccessionLength()) %>");
 	} else {
 		jQuery("#scanInstruction").hide();
         valueElem.attr("maxlength","120");
@@ -332,7 +349,7 @@ function enableSearchButton(eventCode){
             searchButton.click();
         }
     }else if(criteriaElem.val() == "5"){
-    	if (valueElem.val().length >= <%= Integer.toString(accessionNumberValidator.getMinAccessionLength()) %>) {
+    	if (valueElem.val().length >= <%= Integer.toString(AccessionNumberUtil.getMinAccessionLength()) %>) {
         	searchButton.removeAttr("disabled");
             if( eventCode == 13 ){
                 searchButton.click();
@@ -384,6 +401,10 @@ function enableEnhancedSearchButton(eventCode){
 }
 
 function handleSelectedPatient(){
+	if (typeof(handleSelectedPatientAlt) === 'function') {
+		handleSelectedPatientAlt();
+		return;
+	}
     var accessionNumber = "";
     if(jQuery("#searchCriteria").val() == 5){//lab number
         accessionNumber = jQuery("#searchValue").val();
@@ -403,6 +424,7 @@ function handleSelectedPatient(){
     }
     window.onbeforeunload = null;
     window.location = searchUrl;
+
 }
 </script>
 
@@ -451,7 +473,7 @@ function handleSelectedPatient(){
 			<td><input
 					id="patientLabNoSearchValue" 
 					size="40"
-					maxlength="<%= Integer.toString(accessionNumberValidator.getMaxAccessionLength()) %>"
+					maxlength="<%= Integer.toString(AccessionNumberUtil.getMaxAccessionLength()) %>"
 					oninput="enableEnhancedSearchButton(event.which);"
 					placeholder='<%=MessageUtil.getMessage("label.select.search.here")%>' />
 			</td>
@@ -493,12 +515,13 @@ function handleSelectedPatient(){
 					code="patient.birthDate" />&nbsp;<%=DateUtil.getDateUserPrompt()%>:	</td>
 			<td><input
 				id="dateOfBirthSearchValue"
+				name="dateOfBirthSearchValue"
 				size="20"
-				onkeyup="addDateSlashes(this,event); normalizeDateFormat(this);"
+				onkeyup="addDateSlashes(this,event); "
                 onchange="checkValidAgeDate( this );"
 				oninput="enableEnhancedSearchButton(event.which);"
 				placeholder='<%=MessageUtil.getMessage("label.select.search.here")%>' />
-				<div id="patientProperties.birthDateForDisplayMessage" class="blank"
+				<div id="dateOfBirthSearchValueMessage" class="blank"
 					style="text-align: left;"></div></td>
 <%-- 			<td style="text-align: left;"><spring:message code="patient.age" />:</td> --%>
 			<td style="text-align: left;"><spring:message code="patient.gender" />:</td>
@@ -513,8 +536,18 @@ function handleSelectedPatient(){
 			<td><input type="button" name="enhancedSearchButton"
 				class="patientEnhancedSearch"
 				value="<%=MessageUtil.getMessage("label.patient.search")%>"
-				id="enhancedSearchButton" onclick="enhancedSearchPatients()"
-				disabled="disabled"></td>
+				id="enhancedSearchButton" onclick="enhancedSearchPatients(true);"
+				disabled="disabled">
+				<input type="button" name="enhancedExternalSearchButton"
+				class="patientEnhancedSearch"
+				value="<%=MessageUtil.getMessage("label.patient.search.external")%>"
+				id="enhancedExternalSearchButton" onclick="enhancedSearchPatients(false);"
+				style="display:none"></td>
+		</tr>
+		<tr>
+			<td>
+			<span id="loading" class="fa-2x" hidden="hidden"><i class="fas fa-spinner fa-pulse"></i></span>
+			</td>
 		</tr>
 	</table>
 </div>

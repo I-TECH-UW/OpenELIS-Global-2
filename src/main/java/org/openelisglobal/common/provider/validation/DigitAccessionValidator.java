@@ -24,7 +24,7 @@ import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.spring.util.SpringContext;
 
-public class DigitAccessionValidator implements IAccessionNumberValidator {
+public class DigitAccessionValidator implements IAccessionNumberGenerator {
 
     protected SampleService sampleService = SpringContext.getBean(SampleService.class);
 
@@ -48,12 +48,10 @@ public class DigitAccessionValidator implements IAccessionNumberValidator {
         return NEED_PROGRAM_CODE;
     }
 
-    @Override
     public String createFirstAccessionNumber(String programCode) {
         return incrementStartingValue;
     }
 
-    @Override
     public String incrementAccessionNumber(String currentHighAccessionNumber) throws IllegalStateException {
 
         int increment = Integer.parseInt(currentHighAccessionNumber);
@@ -90,7 +88,7 @@ public class DigitAccessionValidator implements IAccessionNumberValidator {
             return MessageUtil.getMessage("sample.entry.invalid.accession.number.length");
         case USED_FAIL:
             return MessageUtil.getMessage("sample.entry.invalid.accession.number.suggestion") + " "
-                    + getNextAvailableAccessionNumber(null);
+                    + getNextAvailableAccessionNumber(null, true);
         case FORMAT_FAIL:
             return getInvalidFormatMessage(results);
         default:
@@ -113,7 +111,7 @@ public class DigitAccessionValidator implements IAccessionNumberValidator {
     }
 
     @Override
-    public String getNextAvailableAccessionNumber(String prefix) throws IllegalStateException {
+    public String getNextAvailableAccessionNumber(String prefix, boolean reserve) throws IllegalStateException {
         String nextAccessionNumber;
         String curLargestAccessionNumber = sampleService.getLargestAccessionNumber();
 
@@ -176,4 +174,10 @@ public class DigitAccessionValidator implements IAccessionNumberValidator {
     public String getPrefix() {
         return null; // no fixed prefix
     }
+
+    @Override
+    public String getNextAccessionNumber(String programCode, boolean reserve) {
+        return this.getNextAvailableAccessionNumber(programCode, reserve);
+    }
+
 }

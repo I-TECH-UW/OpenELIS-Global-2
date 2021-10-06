@@ -1,10 +1,12 @@
 package org.openelisglobal.result.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
@@ -17,12 +19,14 @@ import org.openelisglobal.note.service.NoteService;
 import org.openelisglobal.note.valueholder.Note;
 import org.openelisglobal.referral.service.ReferralResultService;
 import org.openelisglobal.referral.service.ReferralService;
-import org.openelisglobal.referral.valueholder.Referral;
+import org.openelisglobal.referral.service.ReferralSetService;
 import org.openelisglobal.referral.valueholder.ReferralResult;
+import org.openelisglobal.referral.valueholder.ReferralSet;
 import org.openelisglobal.result.action.util.ResultSet;
 import org.openelisglobal.result.action.util.ResultsUpdateDataSet;
 import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.valueholder.Sample;
+import org.openelisglobal.sampleitem.valueholder.SampleItem;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.testreflex.action.util.TestReflexBean;
 import org.openelisglobal.testreflex.action.util.TestReflexUtil;
@@ -49,6 +53,8 @@ public class LogbookPersistServiceImpl implements LogbookResultsPersistService {
     private ReferralService referralService;
     @Autowired
     private ReferralResultService referralResultService;
+    @Autowired
+    private ReferralSetService referralSetService;
 
     @Override
     @Transactional
@@ -57,9 +63,31 @@ public class LogbookPersistServiceImpl implements LogbookResultsPersistService {
             noteService.insert(note);
         }
 
+        List<org.openelisglobal.result.valueholder.Result> checkResult = null;
+        Analysis checkAnalysis = null;
+        SampleItem checkSampleItem = null;
+        Sample checkSample = null;
         for (ResultSet resultSet : actionDataSet.getNewResults()) {
             resultSet.result.setResultEvent(Event.PRELIMINARY_RESULT);
-            resultService.insert(resultSet.result);
+            resultSet.result.setFhirUuid(UUID.randomUUID());
+            String resultId = resultService.insert(resultSet.result);
+
+            checkAnalysis = resultSet.result.getAnalysis();
+            checkSampleItem = checkAnalysis.getSampleItem();
+            checkSample = checkSampleItem.getSample();
+//            System.out.println(">>>: " +
+//                    checkAnalysis.getId() + " " +
+//                    checkSampleItem.getId() + " " +
+//                    checkSample.getId() + " " +
+//                    checkSample.getAccessionNumber());
+
+            checkResult = resultService.getResultsForTestAndSample(checkSample.getId(), checkAnalysis.getTest().getId());
+            if (checkResult.size() == 0 ) {
+                resultService.insert(resultSet.result);
+            } else {
+                continue;
+            }
+
             if (resultSet.signature != null) {
                 resultSet.signature.setResultId(resultSet.result.getId());
                 resultSigService.insert(resultSet.signature);
@@ -69,11 +97,13 @@ public class LogbookPersistServiceImpl implements LogbookResultsPersistService {
                 resultSet.testKit.setResultId(resultSet.result.getId());
                 resultInventoryService.insert(resultSet.testKit);
             }
+            resultSet.result.setId(resultId);
+
         }
 
-        for (Referral referral : actionDataSet.getSavableReferrals()) {
-            if (referral != null) {
-                saveReferralsWithRequiredObjects(referral, sysUserId);
+        for (ReferralSet referralSet : actionDataSet.getSavableReferralSets()) {
+            if (referralSet != null) {
+                saveReferralsWithRequiredObjects(referralSet, sysUserId);
             }
         }
 
@@ -115,16 +145,20 @@ public class LogbookPersistServiceImpl implements LogbookResultsPersistService {
         }
     }
 
-    private void saveReferralsWithRequiredObjects(Referral referral, String sysUserId) {
-        if (referral.getId() != null) {
-            referralService.update(referral);
+    private void saveReferralsWithRequiredObjects(ReferralSet referralSet, String sysUserId) {
+
+        if (referralSet.getReferral().getId() != null) {
+            referralService.update(referralSet.getReferral());
         } else {
-            referralService.insert(referral);
-            ReferralResult referralResult = new ReferralResult();
-            referralResult.setReferralId(referral.getId());
+            referralService.insert(referralSet.getReferral());
+            ReferralResult referralResult = referralSet.getNextReferralResult();
+            referralResult.setReferralId(referralSet.getReferral().getId());
             referralResult.setSysUserId(sysUserId);
             referralResultService.insert(referralResult);
         }
+
+        referralSetService.updateReferralSets(Arrays.asList(referralSet), new ArrayList<>(), new HashSet<>(),
+                new ArrayList<>(), sysUserId);
     }
 
     protected void setTestReflexes(ResultsUpdateDataSet actionDataSet, String sysUserId) {

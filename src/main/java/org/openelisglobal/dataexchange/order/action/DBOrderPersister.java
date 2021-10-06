@@ -18,10 +18,15 @@ package org.openelisglobal.dataexchange.order.action;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.validator.GenericValidator;
+import org.openelisglobal.address.service.AddressPartService;
+import org.openelisglobal.address.service.PersonAddressService;
+import org.openelisglobal.address.valueholder.AddressPart;
+import org.openelisglobal.address.valueholder.PersonAddress;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.ExternalOrderStatus;
@@ -42,12 +47,14 @@ import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.systemuser.service.SystemUserService;
 import org.openelisglobal.systemuser.valueholder.SystemUser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Scope("prototype")
+@Primary
 public class DBOrderPersister implements IOrderPersister {
 
     private String SERVICE_USER_ID;
@@ -55,6 +62,7 @@ public class DBOrderPersister implements IOrderPersister {
     private String IDENTITY_STNUMBER_ID;
     private String IDENTITY_OBNUMBER_ID;
     private String IDENTITY_PCNUMBER_ID;
+    private String IDENTITY_SUBJECTNUMBER_ID;
 
     @Autowired
     private ElectronicOrderService eOrderService;
@@ -70,8 +78,16 @@ public class DBOrderPersister implements IOrderPersister {
     private PatientService patientService;
     @Autowired
     private PatientContactService patientContactService;
+    @Autowired
+    private PersonAddressService personAddressService;
+    @Autowired
+    private AddressPartService addressPartService;
 
     private Patient patient;
+
+    private String ADDRESS_PART_VILLAGE_ID;
+    private String ADDRESS_PART_COMMUNE_ID;
+    private String ADDRESS_PART_DEPT_ID;
 
     @PostConstruct
     public void initializeGlobalVariables() {
@@ -82,6 +98,17 @@ public class DBOrderPersister implements IOrderPersister {
         IDENTITY_STNUMBER_ID = getIdentityType(identityTypeService, "ST");
         IDENTITY_OBNUMBER_ID = getIdentityType(identityTypeService, "OB_NUMBER");
         IDENTITY_PCNUMBER_ID = getIdentityType(identityTypeService, "PC_NUMBER");
+        IDENTITY_SUBJECTNUMBER_ID = getIdentityType(identityTypeService, "SUBJECT");
+        List<AddressPart> partList = addressPartService.getAll();
+        for (AddressPart addressPart : partList) {
+            if ("department".equals(addressPart.getPartName())) {
+                ADDRESS_PART_DEPT_ID = addressPart.getId();
+            } else if ("commune".equals(addressPart.getPartName())) {
+                ADDRESS_PART_COMMUNE_ID = addressPart.getId();
+            } else if ("village".equals(addressPart.getPartName())) {
+                ADDRESS_PART_VILLAGE_ID = addressPart.getId();
+            }
+        }
     }
 
     private String getIdentityType(PatientIdentityTypeService identityTypeService, String name) {
@@ -90,7 +117,8 @@ public class DBOrderPersister implements IOrderPersister {
     }
 
     private void persist(MessagePatient orderPatient) {
-        patient = patientService.getPatientByExternalId(orderPatient.getExternalId());
+        patient = patientService.getPatientForGuid(orderPatient.getGuid());
+        patient = patient == null ? patientService.getPatientByExternalId(orderPatient.getExternalId()) : patient;
         if (patient == null) {
             createNewPatient(orderPatient);
         } else {
@@ -116,11 +144,13 @@ public class DBOrderPersister implements IOrderPersister {
     }
 
     private void createNewPatient(MessagePatient orderPatient) {
+
         Person person = new Person();
         person.setFirstName(orderPatient.getFirstName());
         person.setLastName(orderPatient.getLastName());
         person.setStreetAddress(orderPatient.getAddressStreet());
         person.setCity(orderPatient.getAddressVillage());
+        person.setState(orderPatient.getAddressDepartment());
         person.setCountry(orderPatient.getAddressCountry());
         person.setEmail(orderPatient.getEmail());
         person.setPrimaryPhone(orderPatient.getMobilePhone());
@@ -136,13 +166,16 @@ public class DBOrderPersister implements IOrderPersister {
         patient.setPerson(person);
         patient.setSysUserId(SERVICE_USER_ID);
         patient.setExternalId(orderPatient.getExternalId());
+        if (!GenericValidator.isBlankOrNull(orderPatient.getFhirUuid())) {
+            patient.setFhirUuid(UUID.fromString(orderPatient.getFhirUuid()));
+        }
 
         if (GenericValidator.isBlankOrNull(orderPatient.getGuid())) {
             orderPatient.setGuid(java.util.UUID.randomUUID().toString());
         }
 
         List<PatientIdentity> identities = new ArrayList<>();
-        if (orderPatient.getExternalId().length() == 0) {
+        if (!GenericValidator.isBlankOrNull(orderPatient.getGuid())) {
             addIdentityIfAppropriate(IDENTITY_GUID_ID, orderPatient.getGuid(), identities);
         } else {
             addIdentityIfAppropriate(IDENTITY_GUID_ID, orderPatient.getExternalId(), identities);
@@ -151,6 +184,7 @@ public class DBOrderPersister implements IOrderPersister {
         addIdentityIfAppropriate(IDENTITY_STNUMBER_ID, orderPatient.getStNumber(), identities);
         addIdentityIfAppropriate(IDENTITY_OBNUMBER_ID, orderPatient.getObNumber(), identities);
         addIdentityIfAppropriate(IDENTITY_PCNUMBER_ID, orderPatient.getPcNumber(), identities);
+        addIdentityIfAppropriate(IDENTITY_SUBJECTNUMBER_ID, orderPatient.getSubjectNumber(), identities);
 
         personService.insert(person);
         patientService.insert(patient);
@@ -161,6 +195,12 @@ public class DBOrderPersister implements IOrderPersister {
         }
 
         persistContact(orderPatient, patient);
+        insertPatientAddress(orderPatient, patient);
+    }
+
+    private void insertPatientAddress(MessagePatient orderPatient, Patient patient) {
+        insertNewPatientInfo(ADDRESS_PART_COMMUNE_ID, orderPatient.getAddressCommune(), "T",
+                patient.getPerson().getId());
     }
 
     private void addIdentityIfAppropriate(String typeId, String value, List<PatientIdentity> identities) {
@@ -186,6 +226,23 @@ public class DBOrderPersister implements IOrderPersister {
                 identityService);
         updateIdentityIfNeeded(IDENTITY_PCNUMBER_ID, orderPatient.getPcNumber(), patient.getId(), identityList,
                 identityService);
+        updateIdentityIfNeeded(IDENTITY_GUID_ID, orderPatient.getGuid(), patient.getId(), identityList,
+                identityService);
+        updateIdentityIfNeeded(IDENTITY_SUBJECTNUMBER_ID, orderPatient.getSubjectNumber(), patient.getId(),
+                identityList, identityService);
+
+        updateAddressPartsIfNeeded(orderPatient, person.getId());
+    }
+
+    private void updateAddressPartsIfNeeded(MessagePatient orderPatient, String personId) {
+        List<PersonAddress> personAddressList = personAddressService.getAddressPartsByPersonId(personId);
+        for (PersonAddress address : personAddressList) {
+            if (address.getAddressPartId().equals(ADDRESS_PART_COMMUNE_ID)) {
+                address.setValue(orderPatient.getAddressCommune());
+                address.setSysUserId(SERVICE_USER_ID);
+                personAddressService.update(address);
+            }
+        }
     }
 
     private void updateIdentityIfNeeded(String identityTypeId, String newIdentityValue, String patientId,
@@ -260,6 +317,26 @@ public class DBOrderPersister implements IOrderPersister {
             person.setCity(orderPatient.getAddressVillage());
             updatePerson = true;
         }
+        if (needsUpdating(orderPatient.getAddressDepartment(), patientService.getPerson(patient).getState())) {
+            person.setState(orderPatient.getAddressDepartment());
+            updatePerson = true;
+        }
+        if (needsUpdating(orderPatient.getAddressCountry(), patientService.getPerson(patient).getCountry())) {
+            person.setCountry(orderPatient.getAddressCountry());
+            updatePerson = true;
+        }
+        if (needsUpdating(orderPatient.getEmail(), patientService.getPerson(patient).getEmail())) {
+            person.setEmail(orderPatient.getEmail());
+            updatePerson = true;
+        }
+        if (needsUpdating(orderPatient.getWorkPhone(), patientService.getPerson(patient).getPrimaryPhone())) {
+            person.setPrimaryPhone(orderPatient.getWorkPhone());
+            updatePerson = true;
+        }
+        if (needsUpdating(orderPatient.getMobilePhone(), patientService.getPerson(patient).getPrimaryPhone())) {
+            person.setPrimaryPhone(orderPatient.getMobilePhone());
+            updatePerson = true;
+        }
 
         if (updatePerson) {
             person.setSysUserId(SERVICE_USER_ID);
@@ -270,6 +347,17 @@ public class DBOrderPersister implements IOrderPersister {
     private boolean needsUpdating(String orderPatientValue, String currentPatientValue) {
         return !GenericValidator.isBlankOrNull(orderPatientValue)
                 && StringUtil.compareWithNulls(currentPatientValue, orderPatientValue) != 0;
+    }
+
+    private void insertNewPatientInfo(String partId, String value, String type, String personId) {
+        PersonAddress address;
+        address = new PersonAddress();
+        address.setPersonId(personId);
+        address.setAddressPartId(partId);
+        address.setType(type);
+        address.setValue(value);
+        address.setSysUserId(SERVICE_USER_ID);
+        personAddressService.insert(address);
     }
 
     @Override

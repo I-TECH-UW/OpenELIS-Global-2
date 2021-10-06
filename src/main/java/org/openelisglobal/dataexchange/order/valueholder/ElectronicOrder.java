@@ -68,6 +68,7 @@ public class ElectronicOrder extends BaseObject<String> {
     private StatusOfSample status; // not persisted
     private Timestamp orderTimestamp;
     private String data;
+    private ElectronicOrderType type;
 
     public ElectronicOrder() {
         patient = new ValueHolder();
@@ -129,5 +130,13 @@ public class ElectronicOrder extends BaseObject<String> {
 
     public void setData(String data) {
         this.data = data;
+    }
+
+    public ElectronicOrderType getType() {
+        return type;
+    }
+
+    public void setType(ElectronicOrderType type) {
+        this.type = type;
     }
 }

@@ -16,10 +16,12 @@
  */
 package org.openelisglobal.dataexchange.order.daoimpl;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
+import org.apache.commons.validator.GenericValidator;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -140,7 +142,6 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder, String>
 //
 //	}
 
-
     @Override
     @Transactional(readOnly = true)
     public List<ElectronicOrder> getAllElectronicOrdersOrderedBy(SortOrder order) {
@@ -165,40 +166,39 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder, String>
 
     @Override
     public List<ElectronicOrder> getAllElectronicOrdersContainingValueOrderedBy(String searchValue, SortOrder order) {
-        
-        String sql = 
-                "from ElectronicOrder eo "
-               + "join eo.patient patient "
-               + "join patient.person person  "
-               + "where lower(eo.data) like concat('%', lower(:searchValue), '%') "
-               + "or lower(person.firstName) like concat('%', lower(:searchValue), '%') "
-               + "or lower(person.lastName) like concat('%', lower(:searchValue), '%') "
-               + "or lower(concat(person.firstName, ' ', person.lastName)) like concat('%', lower(:searchValue), '%') order by ";
-               
+
+        String sql = "from ElectronicOrder eo " + "join eo.patient patient " + "join patient.person person  "
+                + "where lower(eo.data) like concat('%', lower(:searchValue), '%') "
+                + "or lower(person.firstName) like concat('%', lower(:searchValue), '%') "
+                + "or lower(person.lastName) like concat('%', lower(:searchValue), '%') "
+                + "or patient.id in (SELECT identity.patientId FROM PatientIdentity identity WHERE identity.identityData like concat('%', :searchValue, '%')) "
+                + "or patient.nationalId like concat('%', :searchValue, '%') "
+                + "or lower(concat(person.firstName, ' ', person.lastName)) like concat('%', lower(:searchValue), '%') order by ";
+
         switch (order.getValue()) {
-            case "statusId":
-                sql = sql + "eo.statusId asc";
-                break;
-            case "lastupdatedasc":
-                sql = sql + "eo.statusId asc, eo.lastupdated asc";
-                break;
-            case "lastupdateddesc":
-                sql = sql + "eo.statusId asc, eo.lastupdated desc";
-                break;
-            case "externalId":
-                sql = sql + "eo.externalId asc";
-                break;
-            default:
-                //
-                break;
+        case "statusId":
+            sql = sql + "eo.statusId asc";
+            break;
+        case "lastupdatedasc":
+            sql = sql + "eo.statusId asc, eo.lastupdated asc";
+            break;
+        case "lastupdateddesc":
+            sql = sql + "eo.statusId asc, eo.lastupdated desc";
+            break;
+        case "externalId":
+            sql = sql + "eo.externalId asc";
+            break;
+        default:
+            //
+            break;
         }
         try {
-            
+
             Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setString("searchValue", searchValue);
-            //query.setString("order", order.getValue());
+            // query.setString("order", order.getValue());
             List<Object> records = query.list();
-            List<ElectronicOrder> eOrders = new ArrayList<ElectronicOrder>();
+            List<ElectronicOrder> eOrders = new ArrayList<>();
             for (int i = 0; i < records.size(); i++) {
                 Object[] oArray = (Object[]) records.get(i);
                 ElectronicOrder eo = (ElectronicOrder) oArray[0];
@@ -210,4 +210,234 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder, String>
         }
         return null;
     }
+
+    @Override
+    public List<ElectronicOrder> getElectronicOrdersContainingValueExludedByOrderedBy(String searchValue,
+            List<Integer> excludedStatuses, SortOrder sortOrder) {
+
+        String sql = "from ElectronicOrder eo "
+                + "join eo.patient patient "
+                + "join patient.person person  "
+                + "where lower(eo.data) like concat('%', lower(:searchValue), '%') "
+                + "or lower(person.firstName) like concat('%', lower(:searchValue), '%') "
+                + "or lower(person.lastName) like concat('%', lower(:searchValue), '%') "
+                + "or lower(concat(person.firstName, ' ', person.lastName)) like concat('%', lower(:searchValue), '%')"
+                + "or patient.id in (SELECT identity.patientId FROM PatientIdentity identity WHERE identity.identityData like concat('%', :searchValue, '%')) "
+                + "or patient.nationalId like concat('%', :searchValue, '%') "
+                + "and eo.statusId not in (:excludedStatuses) order by ";
+
+        switch (sortOrder) {
+        case STATUS_ID:
+            sql = sql + "eo.statusId asc";
+            break;
+        case LAST_UPDATED_ASC:
+            sql = sql + "eo.statusId asc, eo.lastupdated asc";
+            break;
+        case LAST_UPDATED_DESC:
+            sql = sql + "eo.statusId asc, eo.lastupdated desc";
+            break;
+        case EXTERNAL_ID:
+            sql = sql + "eo.externalId asc";
+            break;
+        default:
+            //
+            break;
+        }
+        try {
+
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setString("searchValue", searchValue);
+            query.setParameter("excludedStatuses", excludedStatuses);
+            // query.setString("order", order.getValue());
+            List<Object> records = query.list();
+            List<ElectronicOrder> eOrders = new ArrayList<>();
+            for (int i = 0; i < records.size(); i++) {
+                Object[] oArray = (Object[]) records.get(i);
+                ElectronicOrder eo = (ElectronicOrder) oArray[0];
+                eOrders.add(eo);
+            }
+            return eOrders;
+        } catch (HibernateException e) {
+            handleException(e, "getAllElectronicOrdersContainingValue");
+        }
+        return null;
+    }
+
+    @Override
+    public List<ElectronicOrder> getAllElectronicOrdersContainingValuesOrderedBy(String accessionNumber,
+            String patientLastName, String patientFirstName, String gender, SortOrder order) {
+        String sql = "from ElectronicOrder eo " + "join eo.patient patient " + "join patient.person person  ";
+        boolean whereClauseStarted = false;
+        if (!GenericValidator.isBlankOrNull(accessionNumber)) {
+            sql += getWherePrefix(whereClauseStarted)
+                    + " lower(eo.data) like concat('%', lower(:accessionNumber), '%') ";
+            whereClauseStarted = true;
+        }
+//        if (!GenericValidator.isBlankOrNull(patientId)) {
+//            sql += getWherePrefix(whereClauseStarted) + "and lower(eo.data) like concat('%', lower(:patientId), '%') ";
+//     }
+        if (!GenericValidator.isBlankOrNull(patientLastName)) {
+            sql += getWherePrefix(whereClauseStarted)
+                    + " lower(person.lastName) like concat('%', lower(:patientLastName), '%') ";
+            whereClauseStarted = true;
+        }
+        if (!GenericValidator.isBlankOrNull(patientFirstName)) {
+            sql += getWherePrefix(whereClauseStarted)
+                    + " lower(person.firstName) like concat('%', lower(:patientFirstName), '%') ";
+            whereClauseStarted = true;
+        }
+//        if (!GenericValidator.isBlankOrNull(dateOfBirth)) {
+//            sql += getWherePrefix(whereClauseStarted) + "lower(patient.birthDate) like concat('%', lower(:dateOfBirth), '%') ";
+//        }
+        if (!GenericValidator.isBlankOrNull(gender)) {
+            sql += getWherePrefix(whereClauseStarted) + " lower(patient.gender) = lower(:gender) ";
+            whereClauseStarted = true;
+        }
+        sql += " order by ";
+
+        switch (order.getValue()) {
+        case "statusId":
+            sql = sql + "eo.statusId asc";
+            break;
+        case "lastupdatedasc":
+            sql = sql + "eo.statusId asc, eo.lastupdated asc";
+            break;
+        case "lastupdateddesc":
+            sql = sql + "eo.statusId asc, eo.lastupdated desc";
+            break;
+        case "externalId":
+            sql = sql + "eo.externalId asc";
+            break;
+        default:
+            //
+            break;
+        }
+        try {
+
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            if (!GenericValidator.isBlankOrNull(accessionNumber)) {
+                query.setString("accessionNumber", accessionNumber);
+            }
+            if (!GenericValidator.isBlankOrNull(patientLastName)) {
+                query.setString("patientLastName", patientLastName);
+            }
+            if (!GenericValidator.isBlankOrNull(patientFirstName)) {
+                query.setString("patientFirstName", patientFirstName);
+            }
+            if (!GenericValidator.isBlankOrNull(gender)) {
+                query.setString("gender", gender);
+            }
+            // query.setString("order", order.getValue());
+            List<Object> records = query.list();
+            List<ElectronicOrder> eOrders = new ArrayList<>();
+            for (int i = 0; i < records.size(); i++) {
+                Object[] oArray = (Object[]) records.get(i);
+                ElectronicOrder eo = (ElectronicOrder) oArray[0];
+                eOrders.add(eo);
+            }
+            return eOrders;
+        } catch (HibernateException e) {
+            handleException(e, "getAllElectronicOrdersContainingValue");
+        }
+        return null;
+    }
+
+    private String getWherePrefix(boolean whereClauseStarted) {
+        if (!whereClauseStarted) {
+            return " where ";
+        } else {
+            return " and ";
+        }
+    }
+
+    @Override
+    public List<ElectronicOrder> getAllElectronicOrdersByDateAndStatus(Date startDate, Date endDate,
+            String statusId, SortOrder sortOrder) {
+        String hql = "From ElectronicOrder eo WHERE 1 = 1 ";
+        if (startDate != null) {
+            hql += "AND eo.orderTimestamp BETWEEN :startDate AND :endDate ";
+        }
+        if (!GenericValidator.isBlankOrNull(statusId)) {
+            hql += "AND eo.statusId = :statusId ";
+        }
+
+        switch (sortOrder) {
+        case STATUS_ID:
+            hql += "ORDER BY eo.statusId asc ";
+            break;
+        case LAST_UPDATED_ASC:
+            hql += "ORDER BY eo.lastUpdated asc ";
+            break;
+        case LAST_UPDATED_DESC:
+            hql += "ORDER BY eo.lastUpdated desc ";
+            break;
+        case EXTERNAL_ID:
+            hql += "ORDER BY eo.externalId asc ";
+            break;
+        default:
+            //
+            break;
+        }
+
+        try {
+            Query query = entityManager.unwrap(Session.class).createQuery(hql);
+            if (startDate != null) {
+                query.setDate("startDate", startDate);
+                query.setDate("endDate", endDate);
+            }
+            if (!GenericValidator.isBlankOrNull(statusId)) {
+                query.setParameter("statusId", Integer.parseInt(statusId));
+            }
+            return query.list();
+        } catch (HibernateException e) {
+            handleException(e, "getAllElectronicOrdersByDateAndStatus");
+        }
+        return null;
+    }
+
+    @Override
+    public List<ElectronicOrder> getAllElectronicOrdersByTimestampAndStatus(java.sql.Timestamp startTimestamp, java.sql.Timestamp endTimestamp,
+            String statusId, SortOrder sortOrder) {
+        String hql = "From ElectronicOrder eo WHERE 1 = 1 ";
+        if (startTimestamp != null) {
+            hql += "AND eo.orderTimestamp BETWEEN :startDate AND :endDate ";
+        }
+        if (!GenericValidator.isBlankOrNull(statusId)) {
+            hql += "AND eo.statusId = :statusId ";
+        }
+
+        switch (sortOrder) {
+        case STATUS_ID:
+            hql += "ORDER BY eo.statusId asc ";
+            break;
+        case LAST_UPDATED_ASC:
+            hql += "ORDER BY eo.lastUpdated asc ";
+            break;
+        case LAST_UPDATED_DESC:
+            hql += "ORDER BY eo.lastUpdated desc ";
+            break;
+        case EXTERNAL_ID:
+            hql += "ORDER BY eo.externalId asc ";
+            break;
+        default:
+            //
+            break;
+        }
+
+        try {
+            Query query = entityManager.unwrap(Session.class).createQuery(hql);
+            if (startTimestamp != null) {
+                query.setTimestamp("startDate", startTimestamp);
+                query.setTimestamp("endDate", endTimestamp);
+            }
+            if (!GenericValidator.isBlankOrNull(statusId)) {
+                query.setParameter("statusId", Integer.parseInt(statusId));
+            }
+            return query.list();
+        } catch (HibernateException e) {
+            handleException(e, "getAllElectronicOrdersByDateAndStatus");
+        }
+        return null;
+    }
+
 }

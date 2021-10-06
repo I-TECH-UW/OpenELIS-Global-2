@@ -1,9 +1,13 @@
 package org.openelisglobal.sample.service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.address.service.OrganizationAddressService;
 import org.openelisglobal.address.valueholder.OrganizationAddress;
 import org.openelisglobal.analysis.service.AnalysisService;
@@ -16,8 +20,15 @@ import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.TableIdService;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.SystemConfiguration;
-import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
 import org.openelisglobal.dataexchange.service.order.ElectronicOrderService;
+import org.openelisglobal.notification.service.AnalysisNotificationConfigService;
+import org.openelisglobal.notification.service.TestNotificationConfigService;
+import org.openelisglobal.notification.valueholder.AnalysisNotificationConfig;
+import org.openelisglobal.notification.valueholder.NotificationConfigOption;
+import org.openelisglobal.notification.valueholder.NotificationConfigOption.NotificationMethod;
+import org.openelisglobal.notification.valueholder.NotificationConfigOption.NotificationNature;
+import org.openelisglobal.notification.valueholder.NotificationConfigOption.NotificationPersonType;
+import org.openelisglobal.notification.valueholder.TestNotificationConfig;
 import org.openelisglobal.observationhistory.service.ObservationHistoryService;
 import org.openelisglobal.observationhistory.valueholder.ObservationHistory;
 import org.openelisglobal.organization.service.OrganizationService;
@@ -30,6 +41,7 @@ import org.openelisglobal.requester.service.SampleRequesterService;
 import org.openelisglobal.requester.valueholder.SampleRequester;
 import org.openelisglobal.sample.action.util.SamplePatientUpdateData;
 import org.openelisglobal.sample.form.SamplePatientEntryForm;
+import org.openelisglobal.sample.valueholder.SampleAdditionalField;
 import org.openelisglobal.samplehuman.service.SampleHumanService;
 import org.openelisglobal.sampleitem.service.SampleItemService;
 import org.openelisglobal.spring.util.SpringContext;
@@ -73,7 +85,9 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
     @Autowired
     private OrganizationService organizationService;
     @Autowired
-    private FhirTransformService fhirTransformService;
+    private TestNotificationConfigService testNotificationConfigService;
+    @Autowired
+    private AnalysisNotificationConfigService analysisNotificationConfigService;
 
     @Transactional
     @Override
@@ -105,8 +119,6 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
         request.getSession().setAttribute("lastAccessionNumber", updateData.getAccessionNumber());
         request.getSession().setAttribute("lastPatientId", updateData.getPatientId());
 
-        String fhir_json = fhirTransformService.CreateFhirFromOESample(updateData, patientUpdate, patientInfo, form,
-                request);
     }
 
     private void persistObservations(SamplePatientUpdateData updateData) {
@@ -137,6 +149,24 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
         if (updateData.getCurrentOrganization() != null) {
             organizationService.update(updateData.getCurrentOrganization());
         }
+//        newOrganization = updateData.getNewOrganizationDepartment();
+//        if (newOrganization != null) {
+//            organizationService.insert(newOrganization);
+//            organizationService.linkOrganizationAndType(newOrganization,
+//                    TableIdService.getInstance().REFERRING_ORG_TYPE_ID);
+//            if (updateData.getRequesterSite() != null) {
+//                updateData.getRequesterSite().setRequesterId(newOrganization.getId());
+//            }
+//
+//            for (OrganizationAddress address : updateData.getOrgAddressExtra()) {
+//                address.setOrganizationId(newOrganization.getId());
+//                organizationAddressService.insert(address);
+//            }
+//        }
+//
+//        if (updateData.getCurrentOrganizationDepartment() != null) {
+//            organizationService.update(updateData.getCurrentOrganizationDepartment());
+//        }
 
     }
 
@@ -153,16 +183,23 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
     private void persistSampleData(SamplePatientUpdateData updateData) {
         String analysisRevision = SystemConfiguration.getInstance().getAnalysisDefaultRevision();
 
+        updateData.getSample().setFhirUuid(UUID.randomUUID());
         sampleService.insertDataWithAccessionNumber(updateData.getSample());
 
+        for (SampleAdditionalField field : updateData.getSampleFields()) {
+            field.setSample(updateData.getSample());
+            sampleService.saveSampleAdditionalField(field);
+        }
         // if (!GenericValidator.isBlankOrNull(projectId)) {
         // persistSampleProject();
         // }
 
         for (SampleTestCollection sampleTestCollection : updateData.getSampleItemsTests()) {
-
+            if (GenericValidator.isBlankOrNull(sampleTestCollection.item.getFhirUuidAsString())) {
+                sampleTestCollection.item.setFhirUuid(UUID.randomUUID());
+            }
             sampleItemService.insert(sampleTestCollection.item);
-
+            sampleTestCollection.analysises = new ArrayList<>();
             for (Test test : sampleTestCollection.tests) {
                 test = testService.get(test.getId());
 
@@ -170,6 +207,11 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
                         sampleTestCollection.testIdToUserSectionMap.get(test.getId()),
                         sampleTestCollection.testIdToUserSampleTypeMap.get(test.getId()), updateData);
                 analysisService.insert(analysis);
+                sampleTestCollection.analysises.add(analysis);
+
+                if (updateData.getCustomNotificationLogic()) {
+                    persistAnalysisNotificationConfigs(analysis, updateData);
+                }
             }
 
         }
@@ -195,6 +237,56 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
      * sampleProjectDAO.insertData(sampleProject); }
      */
 
+    private void persistAnalysisNotificationConfigs(Analysis analysis, SamplePatientUpdateData updateData) {
+        Optional<TestNotificationConfig> testNotificationConfig = testNotificationConfigService
+                .getTestNotificationConfigForTestId(analysis.getTest().getId());
+        AnalysisNotificationConfig analysisNotificationConfig = new AnalysisNotificationConfig();
+        analysisNotificationConfig.setAnalysis(analysis);
+        if (testNotificationConfig.isPresent()) {
+            analysisNotificationConfig
+                    .setDefaultPayloadTemplate(testNotificationConfig.get().getDefaultPayloadTemplate());
+        }
+
+        this.persistAnalysisNotificationConfig(analysis, updateData.getPatientEmailNotificationTestIds(),
+                analysisNotificationConfig, testNotificationConfig, NotificationMethod.EMAIL,
+                NotificationPersonType.PATIENT);
+        this.persistAnalysisNotificationConfig(analysis, updateData.getPatientSMSNotificationTestIds(),
+                analysisNotificationConfig, testNotificationConfig, NotificationMethod.SMS,
+                NotificationPersonType.PATIENT);
+        this.persistAnalysisNotificationConfig(analysis, updateData.getProviderEmailNotificationTestIds(),
+                analysisNotificationConfig, testNotificationConfig, NotificationMethod.EMAIL,
+                NotificationPersonType.PROVIDER);
+        this.persistAnalysisNotificationConfig(analysis, updateData.getProviderSMSNotificationTestIds(),
+                analysisNotificationConfig, testNotificationConfig, NotificationMethod.SMS,
+                NotificationPersonType.PROVIDER);
+        analysisNotificationConfigService.save(analysisNotificationConfig);
+    }
+
+    private void persistAnalysisNotificationConfig(Analysis analysis, List<String> testIds,
+            AnalysisNotificationConfig analysisNotificationConfig,
+            Optional<TestNotificationConfig> testNotificationConfig, NotificationMethod method,
+            NotificationPersonType personType) {
+        NotificationNature notificationNature = NotificationNature.RESULT_VALIDATION;
+        NotificationConfigOption nto = analysisNotificationConfig.getOptionFor(notificationNature, method, personType);
+        nto.setNotificationMethod(method);
+        nto.setNotificationNature(notificationNature);
+        nto.setNotificationPersonType(personType);
+        if (testIds.contains(analysis.getTest().getId())) {
+            nto.setActive(true);
+        } else {
+            nto.setActive(false);
+        }
+
+        if (testNotificationConfig.isPresent()) {
+            NotificationConfigOption nto2 = testNotificationConfig.get().getOptionFor(notificationNature, method,
+                    personType);
+            nto.setPayloadTemplate(nto2.getPayloadTemplate());
+            nto.setAdditionalContacts(new ArrayList<>());
+            nto.getAdditionalContacts().addAll(nto2.getAdditionalContacts());
+        }
+
+    }
+
     private void persistRequesterData(SamplePatientUpdateData updateData) {
         if (updateData.getProviderPerson() != null && !org.apache.commons.validator.GenericValidator
                 .isBlankOrNull(updateData.getProviderPerson().getId())) {
@@ -212,6 +304,14 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
                 updateData.getRequesterSite().setRequesterId(updateData.getNewOrganization().getId());
             }
             sampleRequesterService.insert(updateData.getRequesterSite());
+        }
+
+        if (updateData.getRequesterSiteDepartment() != null) {
+            updateData.getRequesterSiteDepartment().setSampleId(Long.parseLong(updateData.getSample().getId()));
+//            if (updateData.getNewOrganizationDepartment() != null) {
+//                updateData.getRequesterSite().setRequesterId(updateData.getNewOrganizationDepartment().getId());
+//            }
+            sampleRequesterService.insert(updateData.getRequesterSiteDepartment());
         }
     }
 
@@ -271,6 +371,8 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
             analysis.setSampleTypeName(sampleTypeName);
         }
         analysis.setTestSection(testSection);
+        // this will be used as an identifier for the service request as well
+        analysis.setFhirUuid(UUID.randomUUID());
         return analysis;
     }
 }

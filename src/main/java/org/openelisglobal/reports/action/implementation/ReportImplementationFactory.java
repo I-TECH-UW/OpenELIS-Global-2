@@ -261,6 +261,8 @@ public class ReportImplementationFactory {
                 return new ExportStudyProjectByDate();
             } else if (report.equals("Trends")) {
                 return new ExportTrendsByDate();
+            } else if (report.equals("MauritiusProtocolSheet")) {
+                return new MauritiusProtocolSheet();
             }
 
             else if (report.equals("covidResultsReport")) {

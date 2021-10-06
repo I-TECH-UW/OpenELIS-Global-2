@@ -5,6 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Pattern;
 
+import org.apache.commons.validator.GenericValidator;
 import org.hibernate.StaleObjectStateException;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.formfields.FormFields;
@@ -16,6 +17,8 @@ import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.validator.BaseErrors;
+import org.openelisglobal.dataexchange.fhir.exception.FhirPersistanceException;
+import org.openelisglobal.dataexchange.fhir.exception.FhirTransformationException;
 import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
 import org.openelisglobal.patient.action.IPatientUpdate;
 import org.openelisglobal.patient.action.IPatientUpdate.PatientUpdateStatus;
@@ -27,6 +30,8 @@ import org.openelisglobal.sample.form.SamplePatientEntryForm;
 import org.openelisglobal.sample.service.PatientManagementUpdate;
 import org.openelisglobal.sample.service.SamplePatientEntryService;
 import org.openelisglobal.sample.validator.SamplePatientEntryFormValidator;
+import org.openelisglobal.sample.valueholder.SampleAdditionalField;
+import org.openelisglobal.sample.valueholder.SampleAdditionalField.AdditionalFieldName;
 import org.openelisglobal.spring.util.SpringContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -53,9 +58,13 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
     @Value("${org.openelisglobal.requester.phone:}")
     private String requesterPhone;
 
-    private static final String[] ALLOWED_FIELDS = new String[] { "patientProperties.currentDate",
+    private static final String[] ALLOWED_FIELDS = new String[] { "customNotificationLogic",
+            "patientEmailNotificationTestIds",
+            "patientSMSNotificationTestIds", "providerEmailNotificationTestIds", "providerSMSNotificationTestIds",
+            "patientProperties.currentDate",
             "patientProperties.patientLastUpdated", "patientProperties.personLastUpdated",
             "patientProperties.patientUpdateStatus", "patientProperties.patientPK", "patientProperties.guid",
+            "patientProperties.fhirUuid",
             "patientProperties.STnumber", "patientProperties.subjectNumber", "patientProperties.nationalId",
             "patientProperties.lastName", "patientProperties.firstName", "patientProperties.aka",
             "patientProperties.mothersName", "patientProperties.mothersInitial", "patientProperties.streetAddress",
@@ -88,6 +97,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
             "sampleOrderItems.labNo", "sampleOrderItems.requestDate", "sampleOrderItems.receivedDateForDisplay",
             "sampleOrderItems.receivedTime", "sampleOrderItems.nextVisitDate", "sampleOrderItems.requesterSampleID",
             "sampleOrderItems.referringPatientNumber", "sampleOrderItems.referringSiteId",
+            "referringSiteDepartmentName", "sampleOrderItems.referringSiteDepartmentId",
             "sampleOrderItems.referringSiteName", "sampleOrderItems.referringSiteCode", "sampleOrderItems.program",
             "sampleOrderItems.providerLastName", "sampleOrderItems.providerFirstName",
             "sampleOrderItems.providerWorkPhone", "sampleOrderItems.providerFax", "sampleOrderItems.providerEmail",
@@ -95,16 +105,22 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
             "sampleOrderItems.facilityPhone", "sampleOrderItems.facilityFax", "sampleOrderItems.paymentOptionSelection",
             "sampleOrderItems.billingReferenceNumber", "sampleOrderItems.testLocationCode",
             "sampleOrderItems.otherLocationCode",
+            "sampleOrderItems.contactTracingIndexName", "sampleOrderItems.contactTracingIndexRecordNumber",
             //
-            "currentDate", "sampleOrderItems.newRequesterName", "sampleOrderItems.externalOrderNumber" };
+            "currentDate", "sampleOrderItems.newRequesterName", "sampleOrderItems.externalOrderNumber",
+            // referral
+            "referralItems*.additionalTestsXMLWad", "referralItems*.referralResultId", "referralItems*.referralId",
+            "referralItems*.referredResultType", "referralItems*.modified", "referralItems*.inLabResultId",
+            "referralItems*.referralReasonId", "referralItems*.referrer", "referralItems*.referredInstituteId",
+            "referralItems*.referredSendDate", "referralItems*.referredTestId", "referralItems*.referredReportDate",
+            "referralItems*.note", "useReferral" };
 
     @Autowired
-    SamplePatientEntryFormValidator formValidator;
-
+    private SamplePatientEntryFormValidator formValidator;
     @Autowired
     private SamplePatientEntryService samplePatientService;
-
-    protected FhirTransformService fhirTransformService = SpringContext.getBean(FhirTransformService.class);
+    @Autowired
+    private FhirTransformService fhirTransformService;
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -112,7 +128,6 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
     }
 
     @RequestMapping(value = "/SamplePatientEntry", method = RequestMethod.GET)
-
     public ModelAndView showSamplePatientEntry(HttpServletRequest request,
             @RequestParam(value = ID, required = false) @Pattern(regexp = "[a-zA-Z0-9 -]*") String externalOrderNumber)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
@@ -120,36 +135,15 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
         SamplePatientEntryForm form = new SamplePatientEntryForm();
 
         request.getSession().setAttribute(SAVE_DISABLED, TRUE);
-        SampleOrderService sampleOrderService = new SampleOrderService();
-        form.setSampleOrderItems(sampleOrderService.getSampleOrderItem());
-        form.getSampleOrderItems().setProviderLastName(requesterLastName);
-        form.getSampleOrderItems().setProviderFirstName(requesterFirstName);
-        form.getSampleOrderItems().setProviderWorkPhone(requesterPhone);
-        form.getSampleOrderItems().setExternalOrderNumber(externalOrderNumber);
-        form.setPatientProperties(new PatientManagementInfo());
-        form.setPatientSearch(new PatientSearch());
-        form.setSampleTypes(DisplayListService.getInstance().getList(ListType.SAMPLE_TYPE_ACTIVE));
-        form.setTestSectionList(DisplayListService.getInstance().getList(ListType.TEST_SECTION));
-        form.setCurrentDate(DateUtil.getCurrentDateAsText());
-
-        // for (Object program : form.getSampleOrderItems().getProgramList()) {
-        // LogEvent.logInfo(this.getClass().getName(), "method unkown", ((IdValuePair)
-        // program).getValue());
-        // }
-
-        addProjectList(form);
-        addBillingLabel();
-
-        if (FormFields.getInstance().useField(FormFields.Field.InitialSampleCondition)) {
-            form.setInitialSampleConditionList(
-                    DisplayListService.getInstance().getList(ListType.INITIAL_SAMPLE_CONDITION));
-        }
-        if (FormFields.getInstance().useField(FormFields.Field.SampleNature)) {
-            form.setSampleNatureList(DisplayListService.getInstance().getList(ListType.SAMPLE_NATURE));
-        }
+        setupForm(form, externalOrderNumber);
 
         addFlashMsgsToRequest(request);
         return findForward(FWD_SUCCESS, form);
+    }
+
+    private void setupReferralOption(SamplePatientEntryForm form) {
+        form.setReferralOrganizations(DisplayListService.getInstance().getList(ListType.REFERRAL_ORGANIZATIONS));
+        form.setReferralReasons(DisplayListService.getInstance().getList(ListType.REFERRAL_REASONS));
     }
 
     @RequestMapping(value = "/SamplePatientEntry", method = RequestMethod.POST)
@@ -161,6 +155,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
         formValidator.validate(form, result);
         if (result.hasErrors()) {
             saveErrors(result);
+            setupForm(form, "");
             return findForward(FWD_FAIL_INSERT, form);
         }
         SamplePatientUpdateData updateData = new SamplePatientUpdateData(getSysUserId(request));
@@ -170,7 +165,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 
         boolean trackPayments = ConfigurationProperties.getInstance()
                 .isPropertyValueEqual(Property.TRACK_PATIENT_PAYMENT, "true");
-        
+
         String receivedDateForDisplay = sampleOrder.getReceivedDateForDisplay();
 
         if (!org.apache.commons.validator.GenericValidator.isBlankOrNull(sampleOrder.getReceivedTime())) {
@@ -190,17 +185,34 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
         updateData.setReferringId(sampleOrder.getExternalOrderNumber());
         updateData.initProvider(sampleOrder);
         updateData.initSampleData(form.getSampleXML(), receivedDateForDisplay, trackPayments, sampleOrder);
+        updateData.setPatientEmailNotificationTestIds(form.getPatientEmailNotificationTestIds());
+        updateData.setPatientSMSNotificationTestIds(form.getPatientSMSNotificationTestIds());
+        updateData.setProviderEmailNotificationTestIds(form.getProviderEmailNotificationTestIds());
+        updateData.setProviderSMSNotificationTestIds(form.getProviderSMSNotificationTestIds());
+        updateData.setCustomNotificationLogic(form.getCustomNotificationLogic());
+        if (Boolean.valueOf(ConfigurationProperties.getInstance().getPropertyValue(Property.CONTACT_TRACING))) {
+            setContactTracingInfo(updateData, sampleOrder);
+        }
         updateData.validateSample(result);
 
         if (result.hasErrors()) {
             saveErrors(result);
+            setupForm(form, "");
             // setSuccessFlag(request, true);
             return findForward(FWD_FAIL_INSERT, form);
         }
 
         try {
             samplePatientService.persistData(updateData, patientUpdate, patientInfo, form, request);
-//            String fhir_json = fhirTransformService.CreateFhirFromOESample(updateData, patientUpdate, patientInfo, form, request);
+            try {
+                fhirTransformService.transformPersistOrderEntryFhirObjects(updateData, patientInfo,
+                        form.getUseReferral(), form.getReferralItems());
+            } catch (FhirTransformationException | FhirPersistanceException e) {
+                LogEvent.logError(e);
+            }
+
+            // String fhir_json = fhirTransformService.CreateFhirFromOESample(updateData,
+            // patientUpdate, patientInfo, form, request);
         } catch (LIMSRuntimeException e) {
             // ActionError error;
             if (e.getException() instanceof StaleObjectStateException) {
@@ -215,6 +227,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 
             // errors.add(ActionMessages.GLOBAL_MESSAGE, error);
             saveErrors(result);
+            setupForm(form, "");
             request.setAttribute(ALLOW_EDITS_KEY, "false");
             return findForward(FWD_FAIL_INSERT, form);
 
@@ -222,6 +235,55 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 
         redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
         return findForward(FWD_SUCCESS_INSERT, form);
+    }
+
+    private void setupForm(SamplePatientEntryForm form, String externalOrderNumber)
+            throws LIMSRuntimeException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        SampleOrderService sampleOrderService = new SampleOrderService();
+        form.setSampleOrderItems(sampleOrderService.getSampleOrderItem());
+        form.getSampleOrderItems().setProviderLastName(requesterLastName);
+        form.getSampleOrderItems().setProviderFirstName(requesterFirstName);
+        form.getSampleOrderItems().setProviderWorkPhone(requesterPhone);
+        form.getSampleOrderItems().setExternalOrderNumber(externalOrderNumber);
+        form.setPatientProperties(new PatientManagementInfo());
+        form.setPatientSearch(new PatientSearch());
+        form.setSampleTypes(DisplayListService.getInstance().getList(ListType.SAMPLE_TYPE_ACTIVE));
+        form.setTestSectionList(DisplayListService.getInstance().getList(ListType.TEST_SECTION));
+        form.setCurrentDate(DateUtil.getCurrentDateAsText());
+
+        setupReferralOption(form);
+        // for (Object program : form.getSampleOrderItems().getProgramList()) {
+        // LogEvent.logInfo(this.getClass().getName(), "method unkown", ((IdValuePair)
+        // program).getValue());
+        // }
+
+        addProjectList(form);
+        addBillingLabel();
+
+        if (FormFields.getInstance().useField(FormFields.Field.InitialSampleCondition)) {
+            form.setInitialSampleConditionList(
+                    DisplayListService.getInstance().getList(ListType.INITIAL_SAMPLE_CONDITION));
+        }
+        if (FormFields.getInstance().useField(FormFields.Field.SampleNature)) {
+            form.setSampleNatureList(DisplayListService.getInstance().getList(ListType.SAMPLE_NATURE));
+        }
+
+    }
+
+    private void setContactTracingInfo(SamplePatientUpdateData updateData, SampleOrderItem sampleOrder) {
+        SampleAdditionalField field;
+        if (!GenericValidator.isBlankOrNull(sampleOrder.getContactTracingIndexName())) {
+            field = new SampleAdditionalField();
+            field.setFieldName(AdditionalFieldName.CONTACT_TRACING_INDEX_NAME);
+            field.setFieldValue(sampleOrder.getContactTracingIndexName());
+            updateData.addSampleField(field);
+        }
+        if (!GenericValidator.isBlankOrNull(sampleOrder.getContactTracingIndexRecordNumber())) {
+            field = new SampleAdditionalField();
+            field.setFieldName(AdditionalFieldName.CONTACT_TRACING_INDEX_RECORD_NUMBER);
+            field.setFieldValue(sampleOrder.getContactTracingIndexRecordNumber());
+            updateData.addSampleField(field);
+        }
     }
 
     private void testAndInitializePatientForSaving(HttpServletRequest request, PatientManagementInfo patientInfo,

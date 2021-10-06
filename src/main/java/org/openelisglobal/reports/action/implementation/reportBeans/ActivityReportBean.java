@@ -29,8 +29,15 @@ public class ActivityReportBean {
     private String patientOrTestName;
     private String technician;
     private String resultValue;
-    private String resultStatus;
+    private String sampleStatus;
     private String nonPrintingPatient;
+
+    private String patientLastName;
+    private String patientFirstName;
+    private String patientId;
+    private String turnaroundDays;
+    private String turnaroundHours;
+    
     private Timestamp activityTime;
 
     public String getAccessionNumber() {
@@ -89,12 +96,12 @@ public class ActivityReportBean {
         this.resultValue = resultValue;
     }
 
-    public String getResultStatus() {
-        return resultStatus;
+    public String getSampleStatus() {
+        return sampleStatus;
     }
 
-    public void setResultStatus(String resultStatus) {
-        this.resultStatus = resultStatus;
+    public void setSampleStatus(String sampleStatus) {
+        this.sampleStatus = sampleStatus;
     }
 
     public String getNonPrintingPatient() {
@@ -111,5 +118,45 @@ public class ActivityReportBean {
 
     public void setActivityTime(Timestamp activityTime) {
         this.activityTime = activityTime;
+    }
+    
+    public String getPatientLastName() {
+        return patientLastName;
+    }
+
+    public void setPatientLastName(String patientLastName) {
+        this.patientLastName = patientLastName;
+    }
+
+    public String getPatientFirstName() {
+        return patientFirstName;
+    }
+
+    public void setPatientFirstName(String patientFirstName) {
+        this.patientFirstName = patientFirstName;
+    }
+
+    public String getPatientId() {
+        return patientId;
+    }
+
+    public void setPatientId(String patientId) {
+        this.patientId = patientId;
+    }
+
+    public String getTurnaroundDays() {
+        return turnaroundDays;
+    }
+
+    public void setTurnaroundDays(String turnaroundDays) {
+        this.turnaroundDays = turnaroundDays;
+    }
+
+    public String getTurnaroundHours() {
+        return turnaroundHours;
+    }
+
+    public void setTurnaroundHours(String turnaroundHours) {
+        this.turnaroundHours = turnaroundHours;
     }
 }

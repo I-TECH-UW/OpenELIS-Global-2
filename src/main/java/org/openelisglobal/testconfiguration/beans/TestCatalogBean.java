@@ -42,6 +42,7 @@ public class TestCatalogBean {
     private boolean hasLimitValues = false;
     private List<ResultLimitBean> resultLimits;
     private int testSortOrder = Integer.MAX_VALUE;
+    private boolean inLabOnly;
 
     public String getId() {
         return id;
@@ -209,5 +210,13 @@ public class TestCatalogBean {
 
     public void setNotifyResults(Boolean notifyResults) {
         this.notifyResults = notifyResults;
+    }
+
+    public Boolean getInLabOnly() {
+        return inLabOnly;
+    }
+
+    public void setInLabOnly(boolean inLabOnly) {
+        this.inLabOnly = inLabOnly;
     }
 }

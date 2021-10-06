@@ -62,14 +62,23 @@ public class SubjectNumberValidationProvider extends BaseValidationProvider {
         // We just care about duplicates but blank values do not count as duplicates
         if (!(GenericValidator.isBlankOrNull(STNumber) && GenericValidator.isBlankOrNull(subjectNumber)
                 && GenericValidator.isBlankOrNull(nationalId))) {
-            List<PatientSearchResults> results = searchResultsService.getSearchResults(null, null, STNumber,
+            List<PatientSearchResults> results = searchResultsService.getSearchResultsExact(null, null, STNumber,
                     subjectNumber, nationalId, null, null, null, null, null);
 
-            boolean allowDuplicates = ConfigurationProperties.getInstance()
+            boolean allowDuplicateSubjectNumber = ConfigurationProperties.getInstance()
                     .isPropertyValueEqual(ConfigurationProperties.Property.ALLOW_DUPLICATE_SUBJECT_NUMBERS, "true");
-            if (!results.isEmpty()) {
-                queryResponse = (allowDuplicates ? "warning#" + MessageUtil.getMessage("alert.warning")
+            boolean allowDuplicateNationalId = ConfigurationProperties.getInstance()
+                    .isPropertyValueEqual(ConfigurationProperties.Property.ALLOW_DUPLICATE_NATIONAL_IDS, "true");
+            if (!results.isEmpty() && !GenericValidator.isBlankOrNull(subjectNumber)) {
+                queryResponse = (allowDuplicateSubjectNumber ? "warning#" + MessageUtil.getMessage("alert.warning")
                         : "fail#" + MessageUtil.getMessage("alert.error")) + ": "
+                        + MessageUtil.getMessage("error.duplicate.subjectNumber.warning");
+            } else if (!results.isEmpty() && !GenericValidator.isBlankOrNull(nationalId)) {
+                queryResponse = (allowDuplicateNationalId ? "warning#" + MessageUtil.getMessage("alert.warning")
+                        : "fail#" + MessageUtil.getMessage("alert.error")) + ": "
+                        + MessageUtil.getMessage("error.duplicate.subjectNumber.warning");
+            } else if (!results.isEmpty()) {
+                queryResponse = "fail#" + MessageUtil.getMessage("alert.error") + ": "
                         + MessageUtil.getMessage("error.duplicate.subjectNumber.warning");
             }
         }

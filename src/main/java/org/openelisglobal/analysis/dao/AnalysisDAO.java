@@ -181,5 +181,33 @@ public interface AnalysisDAO extends BaseDAO<Analysis, String> {
     List<Analysis> getAllAnalysisByTestsAndStatus(List<Integer> testIds, List<Integer> analysisStatusList,
             List<Integer> sampleStatusList);
 
+    @Override
+    List<Analysis> get(List<String> value);
+
+    List<Analysis> getAllAnalysisByTestsAndStatusAndCompletedDateRange(List<Integer> testIdList,
+            List<Integer> analysisStatusList, List<Integer> sampleStatusList, Date lowDate, Date highDate);
+
+    List<Analysis> getAllAnalysisByTestsAndStatusAndCompletedDateRange(List<String> nfsTestIdList,
+            List<Integer> statusList, Date lowDate, Date highDate);
+
+    List<Analysis> getPageAnalysisByTestSectionAndStatus(String testSectionId, List<Integer> analysisStatusList,
+            List<Integer> sampleStatusList);
+
+    int getCountAnalysisByTestSectionAndStatus(String testSectionId, List<Integer> analysisStatusList,
+            List<Integer> sampleStatusList);
 //	void updateData(Analysis analysis, boolean skipAuditTrail) throws LIMSRuntimeException;
+
+    List<Analysis> getPageAnalysisByTestSectionAndStatus(String testSectionId, List<Integer> statusIdList,
+            boolean sortedByDateAndAccession) throws LIMSRuntimeException;
+
+    List<Analysis> getPageAnalysisAtAccessionNumberAndStatus(String accessionNumber, List<Integer> statusIdList,
+            boolean sortedByDateAndAccession) throws LIMSRuntimeException;
+
+    int getCountAnalysisByTestSectionAndStatus(String testSectionId, List<Integer> analysisStatusList);
+
+    int getCountAnalysisByStatusFromAccession(List<Integer> analysisStatusList, List<Integer> sampleStatusList,
+            String accessionNumber);
+
+    List<Analysis> getPageAnalysisByStatusFromAccession(List<Integer> analysisStatusList,
+            List<Integer> sampleStatusList, String accessionNumber);
 }

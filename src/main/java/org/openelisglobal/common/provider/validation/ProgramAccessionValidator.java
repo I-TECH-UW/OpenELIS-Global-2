@@ -40,7 +40,7 @@ import org.openelisglobal.sample.util.AccessionNumberUtil;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.spring.util.SpringContext;
 
-public class ProgramAccessionValidator implements IAccessionNumberValidator {
+public class ProgramAccessionValidator implements IAccessionNumberGenerator {
 
     protected SampleService sampleService = SpringContext.getBean(SampleService.class);
     protected ProjectService projectService = SpringContext.getBean(ProjectService.class);
@@ -60,12 +60,10 @@ public class ProgramAccessionValidator implements IAccessionNumberValidator {
         return NEED_PROGRAM_CODE;
     }
 
-    @Override
     public String createFirstAccessionNumber(String programCode) {
         return programCode + INCREMENT_STARTING_VALUE;
     }
 
-    @Override
     public String incrementAccessionNumber(String currentHighAccessionNumber) {
 
         int increment = Integer.parseInt(currentHighAccessionNumber.substring(INCREMENT_START));
@@ -148,7 +146,7 @@ public class ProgramAccessionValidator implements IAccessionNumberValidator {
     }
 
     @Override
-    public String getNextAvailableAccessionNumber(String prefix) {
+    public String getNextAvailableAccessionNumber(String prefix, boolean reserve) {
         String nextAccessionNumber = null;
 
         String curLargestAccessionNumber = sampleService.getLargestAccessionNumberWithPrefix(prefix);
@@ -239,7 +237,7 @@ public class ProgramAccessionValidator implements IAccessionNumberValidator {
     @Override
     public ValidationResults checkAccessionNumberValidity(String accessionNumber, String recordType, String isRequired,
             String studyFormName) {
-        
+
         ValidationResults results = validFormat(accessionNumber, true);
         boolean accessionUsed = (sampleService.getSampleByAccessionNumber(accessionNumber) != null);
         if (results == ValidationResults.SUCCESS) {
@@ -350,4 +348,10 @@ public class ProgramAccessionValidator implements IAccessionNumberValidator {
     public String getPrefix() {
         return null; // no single prefix
     }
+
+    @Override
+    public String getNextAccessionNumber(String programCode, boolean reserve) {
+        return this.getNextAvailableAccessionNumber(programCode, reserve);
+    }
+
 }

@@ -53,7 +53,7 @@ public class DictionaryCategoryServiceImpl extends BaseObjectServiceImpl<Diction
     @Override
     @Transactional(readOnly = true)
     public DictionaryCategory getDictionaryCategoryByName(String name) {
-        return getMatch("categoryName", name).orElse(null);
+        return getBaseObjectDAO().getDictionaryCategoryByName(name);
     }
 
 }

@@ -70,9 +70,13 @@ public class ModuleAuthenticationInterceptor extends HandlerInterceptorAdapter {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private boolean hasPermissionForUrl(HttpServletRequest request, boolean useParameters) {
-        @SuppressWarnings("rawtypes")
-        HashSet accessMap = (HashSet) request.getSession().getAttribute(IActionConstants.PERMITTED_ACTIONS_MAP);
+        HashSet<String> accessMap = (HashSet<String>) request.getSession()
+                .getAttribute(IActionConstants.PERMITTED_ACTIONS_MAP);
+        if (accessMap == null) {
+            accessMap = (HashSet<String>) request.getAttribute(IActionConstants.PERMITTED_ACTIONS_MAP);
+        }
         List<SystemModuleUrl> sysModsByUrl = systemModuleUrlService.getByRequest(request);
 
         if (useParameters) {

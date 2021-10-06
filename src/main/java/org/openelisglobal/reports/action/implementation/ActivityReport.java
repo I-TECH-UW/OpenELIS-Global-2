@@ -16,6 +16,8 @@
 
 package org.openelisglobal.reports.action.implementation;
 
+import java.sql.Timestamp;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +31,7 @@ import org.openelisglobal.observationhistory.service.ObservationHistoryService;
 import org.openelisglobal.observationhistory.service.ObservationHistoryServiceImpl.ObservationType;
 import org.openelisglobal.patient.service.PatientService;
 import org.openelisglobal.patient.valueholder.Patient;
+import org.openelisglobal.person.valueholder.Person;
 import org.openelisglobal.reports.action.implementation.reportBeans.ActivityReportBean;
 import org.openelisglobal.reports.form.ReportForm;
 import org.openelisglobal.result.service.ResultService;
@@ -43,7 +46,7 @@ import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 public abstract class ActivityReport extends Report implements IReportCreator {
-    private int PREFIX_LENGTH = AccessionNumberUtil.getAccessionNumberValidator().getInvarientLength();
+    private int PREFIX_LENGTH = AccessionNumberUtil.getMainAccessionNumberGenerator().getInvarientLength();
     protected List<ActivityReportBean> testsResults;
     protected String reportPath = "";
     protected DateRange dateRange;
@@ -56,7 +59,7 @@ public abstract class ActivityReport extends Report implements IReportCreator {
     @Override
     protected void createReportParameters() {
         reportParameters.put("activityLabel", getActivityLabel());
-        reportParameters.put("accessionPrefix", AccessionNumberUtil.getAccessionNumberValidator().getPrefix());
+        reportParameters.put("accessionPrefix", AccessionNumberUtil.getMainAccessionNumberGenerator().getPrefix());
         reportParameters.put("labNumberTitle", MessageUtil.getContextualMessage("quick.entry.accession.number"));
         reportParameters.put("labName", ConfigurationProperties.getInstance().getPropertyValue(Property.SiteName));
         reportParameters.put("SUBREPORT_DIR", reportPath);
@@ -87,6 +90,7 @@ public abstract class ActivityReport extends Report implements IReportCreator {
         }
 
         buildReportContent(selection);
+//        System.out.println("ActivityReport:" + "after buildReportContent " + testsResults.size());
         if (testsResults.size() == 0) {
             add1LineErrorMessage("report.error.message.noPrintableItems");
         }
@@ -118,14 +122,35 @@ public abstract class ActivityReport extends Report implements IReportCreator {
         PatientService patientService = SpringContext.getBean(PatientService.class);
         SampleHumanService sampleHumanService = SpringContext.getBean(SampleHumanService.class);
         Patient patient = sampleHumanService.getPatientForSample(sample);
+        Person person = patient.getPerson();
         item.setResultValue(resultService.getResultValueForDisplay(result, "\n", true, true));
+        item.setSampleStatus(sampleService.getSampleStatusForDisplay(sample));
         item.setTechnician(resultService.getSignature(result));
-        item.setAccessionNumber(sampleService.getAccessionNumber(sample).substring(PREFIX_LENGTH));
+        
+        //item.setAccessionNumber(sampleService.getAccessionNumber(sample).substring(PREFIX_LENGTH));
+        item.setAccessionNumber(sampleService.getAccessionNumber(sample));
+        
         item.setReceivedDate(sampleService.getReceivedDateWithTwoYearDisplay(sample));
-        item.setResultDate(DateUtil.convertTimestampToTwoYearStringDate(result.getLastupdated()));
+        Timestamp start = sample.getReceivedTimestamp();
+        Timestamp stop = result.getLastupdated();
+        float diff = stop.getTime() - start.getTime();
+        float diffSeconds = diff / 1000;
+        float diffMinutes = diff/ (60 * 1000);
+        float diffHours = diff / (60 * 60 * 1000);
+        float diffDays = diffHours / 24;
+        DecimalFormat df = new DecimalFormat("0.00");
+        
+        item.setTurnaroundHours(df.format(diffHours));
+        item.setTurnaroundDays(df.format(diffDays));
+
+        item.setResultDate(DateUtil.convertTimestampToStringDateAndTime(result.getLastupdated()));
         item.setCollectionDate(
                 DateUtil.convertTimestampToTwoYearStringDate(result.getAnalysis().getSampleItem().getCollectionDate()));
-
+        
+        item.setPatientLastName(person.getLastName() == null ? "" : person.getLastName());
+        item.setPatientFirstName(person.getFirstName() == null ? "" : person.getFirstName());
+        item.setPatientId(patient.getStringId() == null ? "" : patient.getStringId());
+       
         List<String> values = new ArrayList<>();
         values.add(
                 patientService.getLastName(patient) == null ? "" : patientService.getLastName(patient).toUpperCase());

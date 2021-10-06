@@ -81,6 +81,8 @@ public abstract class PatientVLReport extends RetroCIPatientReport {
 
         for (Analysis analysis : analysisList) {
 
+            data.setSampleTypeName(analysis.getSampleTypeName());
+
             if (analysis.getCompletedDate() != null) {
                 if (analysis.getCompletedDate().getTime() > maxCompleationTime) {
                     maxCompleationDate = analysis.getCompletedDate();

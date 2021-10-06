@@ -1,8 +1,7 @@
 <%@ page language="java"
 	contentType="text/html; charset=UTF-8"
 	import="org.openelisglobal.common.action.IActionConstants,
-			org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory,
-			org.openelisglobal.common.provider.validation.IAccessionNumberValidator,
+            org.openelisglobal.sample.util.AccessionNumberUtil,
 		    org.openelisglobal.common.util.DateUtil,
 			org.openelisglobal.internationalization.MessageUtil,
 			org.openelisglobal.common.util.Versioning,
@@ -12,16 +11,9 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="tiles" uri="http://tiles.apache.org/tags-tiles" %>
 
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
-
-<%!
-	AccessionNumberValidatorFactory accessionValidatorFactory = new AccessionNumberValidatorFactory();
- %>
-
-<%
-	IAccessionNumberValidator accessionValidator = accessionValidatorFactory.getValidator();
-%>
 
 <%-- Creates updated UI. Removing for current release 
 <link rel="stylesheet" media="screen" type="text/css" href="css/bootstrap.min.css?" />
@@ -154,6 +146,48 @@ function onPrint(){
 	return true;
 }
 
+function checkValidEntryDate(date, dateRange, blankAllowed)
+{
+    if((!date.value || date.value == "") && !blankAllowed){
+        setSaveButton();
+        return;
+    } else if ((!date.value || date.value == "") && blankAllowed) {
+        setValidIndicaterOnField(true, date.id);
+        setSaveButton();
+        return;
+    }
+
+
+    if( !dateRange || dateRange == ""){
+        dateRange = 'past';
+    }
+
+    //ajax call from utilites.js
+    isValidDate( date.value, validateDateSuccessCallback, date.id, dateRange );
+}
+
+function validateDateSuccessCallback(xhr) {
+    var message = xhr.responseXML.getElementsByTagName("message").item(0).firstChild.nodeValue;
+    var formField = xhr.responseXML.getElementsByTagName("formfield").item(0).firstChild.nodeValue;
+
+    var isValid = message == "<%=IActionConstants.VALID%>";
+
+    //utilites.js
+    selectFieldErrorDisplay( isValid, $(formField));
+    setSaveButton();
+
+    if( message == '<%=IActionConstants.INVALID_TO_LARGE%>' ){
+        alert( "<spring:message code="error.date.inFuture"/>" );
+    }else if( message == '<%=IActionConstants.INVALID_TO_SMALL%>' ){
+        alert( "<spring:message code="error.date.inPast"/>" );
+    }
+	
+}
+
+function setSaveButton() {
+	jQuery('#printNew').attr('disabled', errorsOnForm());
+}
+
 </script>
 
 <h2><c:out value="${form.reportName}"/></h2>
@@ -164,6 +198,10 @@ function onPrint(){
 <form:hidden path="type" id="reportType"/>
 
 <c:if test="${not form.noRequestSpecifications}">
+
+  <c:if test="${form.usePatientSearch}">
+	<tiles:insertAttribute name="patientEnhancedSearch" />
+  </c:if>
 
   <c:if test="${form.useAccessionDirect}">
 	  <div><strong><%= MessageUtil.getContextualMessage("report.enter.labNumber.headline") %></strong></div>
@@ -177,14 +215,14 @@ function onPrint(){
 		</span>
 		<form:input path="accessionDirect"
 				   cssClass="input-medium" 
-				   maxlength='<%= Integer.toString(accessionValidator.getMaxAccessionLength())%>'
+				   maxlength='<%= Integer.toString(AccessionNumberUtil.getMaxAccessionLength())%>'
 				   />
 	  </c:if>
 	  <c:if test="${form.useHighAccessionDirect}">
 		<span style="padding-left: 10px"><%= MessageUtil.getContextualMessage("report.to") %></span>
 			<form:input path="highAccessionDirect"
 			           cssClass="input-medium"
-			           maxlength='<%= Integer.toString(accessionValidator.getMaxAccessionLength())%>'/>
+			           maxlength='<%= Integer.toString(AccessionNumberUtil.getMaxAccessionLength())%>'/>
 	  </c:if>
 	  <c:if test="${form.useAccessionDirect}">
 	  
@@ -218,11 +256,11 @@ function onPrint(){
   <div>
 	  <c:if test="${form.useLowerDateRange}">
 	  	<span style="padding-left: 10px"><spring:message code="report.date.start"/>&nbsp;<%=DateUtil.getDateUserPrompt()%></span>
-		<form:input path="lowerDateRange" cssClass="input-medium" onkeyup="addDateSlashes(this, event);" maxlength="10"/>
+		<form:input path="lowerDateRange" cssClass="input-medium" onkeyup="addDateSlashes(this, event);" onchange="checkValidEntryDate(this, 'any', true);" maxlength="10"/>
 	  </c:if>
 	  <c:if test="${form.useUpperDateRange}">
 	  	<span style="padding-left: 10px"><spring:message code="report.date.end"/>&nbsp;<%=DateUtil.getDateUserPrompt()%></span>
-	  	<form:input path="upperDateRange" cssClass="input-medium" maxlength="10" onkeyup="addDateSlashes(this, event);"/>
+	  	<form:input path="upperDateRange" cssClass="input-medium" maxlength="10" onkeyup="addDateSlashes(this, event);" onchange="checkValidEntryDate(this, 'any', true);"/>
 	  </c:if>
   </div>
  
@@ -308,7 +346,7 @@ function onPrint(){
 </c:if>
 </div>
 <div style="margin-left: 50px">
-	<input type="button" class="btn" name="printNew" onclick="onPrint();" value="<%=MessageUtil.getMessage("label.button.print.new.window") %>">
+	<input id="printNew" type="button" class="btn" name="printNew" onclick="onPrint();" value="<%=MessageUtil.getMessage("label.button.print.new.window") %>">
 </div>
 
 </div>

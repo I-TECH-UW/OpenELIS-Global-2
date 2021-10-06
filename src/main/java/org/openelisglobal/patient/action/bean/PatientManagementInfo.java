@@ -31,6 +31,7 @@ import org.hibernate.validator.constraints.SafeHtml;
 import org.openelisglobal.common.formfields.FormFields.Field;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.DisplayListService.ListType;
+import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.util.validator.CustomDateValidator.DateRelation;
 import org.openelisglobal.common.validator.ValidationHelper;
@@ -72,15 +73,21 @@ public class PatientManagementInfo implements Serializable {
     @Pattern(regexp = ValidationHelper.PATIENT_ID_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
             SamplePatientEntryBatch.class })
     private String STnumber;
+
+    @OptionalNotBlank(properties = { Property.PATIENT_SUBJECT_NUMBER_REQUIRED }, groups = {
+            SamplePatientEntryForm.SamplePatientEntry.class })
     @Pattern(regexp = ValidationHelper.PATIENT_ID_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
             SamplePatientEntryBatch.class })
     private String subjectNumber;
+    @OptionalNotBlank(properties = { Property.PATIENT_NATIONAL_ID_REQUIRED }, groups = {
+            SamplePatientEntryForm.SamplePatientEntry.class })
     @Pattern(regexp = ValidationHelper.PATIENT_ID_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
             SamplePatientEntryBatch.class })
     private String nationalId;
     @Pattern(regexp = ValidationHelper.PATIENT_ID_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
             SamplePatientEntryBatch.class })
     private String guid;
+//    private UUID fhirUuid;
 
     @OptionalNotBlank(formFields = { Field.PatientNameRequired }, groups = {
             SamplePatientEntryForm.SamplePatientEntry.class })
@@ -115,11 +122,10 @@ public class PatientManagementInfo implements Serializable {
     @Pattern(regexp = ValidationHelper.GENDER_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
             SamplePatientEntryBatch.class })
     private String gender;
-    @NotBlank(groups = { SamplePatientEntryForm.SamplePatientEntry.class })
-    @Size(max = 3, groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class })
-    @Pattern(regexp = "^[0-9]*$", groups = { SamplePatientEntryForm.SamplePatientEntry.class,
-            SamplePatientEntryBatch.class })
-    private String age;
+    // ages are display only
+    private String ageYears;
+    private String ageMonths;
+    private String ageDays;
     @ValidDate(relative = DateRelation.PAST, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
             SamplePatientEntryBatch.class })
     private String birthDateForDisplay = "";
@@ -466,12 +472,28 @@ public class PatientManagementInfo implements Serializable {
         this.readOnly = readOnly;
     }
 
-    public String getAge() {
-        return age;
+    public String getAgeYears() {
+        return ageYears;
     }
 
-    public void setAge(String age) {
-        this.age = age;
+    public void setAgeYears(String ageYears) {
+        this.ageYears = ageYears;
+    }
+
+    public String getAgeMonths() {
+        return ageMonths;
+    }
+
+    public void setAgeMonths(String ageMonths) {
+        this.ageMonths = ageMonths;
+    }
+
+    public String getAgeDays() {
+        return ageDays;
+    }
+
+    public void setAgeDays(String ageDays) {
+        this.ageDays = ageDays;
     }
 
     public PatientUpdateStatus getPatientUpdateStatus() {
@@ -498,4 +520,16 @@ public class PatientManagementInfo implements Serializable {
     public void setPatientContact(PatientContact patientContact) {
         this.patientContact = patientContact;
     }
+
+//    public UUID getFhirUuid() {
+//        return fhirUuid;
+//    }
+//
+//    public void setFhirUuid(UUID fhirUuid) {
+//        this.fhirUuid = fhirUuid;
+//    }
+//
+//    public String getFhirUuidAsString() {
+//        return fhirUuid == null ? "" : fhirUuid.toString();
+//    }
 }

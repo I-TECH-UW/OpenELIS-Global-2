@@ -27,6 +27,7 @@ import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.test.valueholder.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
@@ -42,6 +43,7 @@ import ca.uhn.hl7v2.model.v251.segment.PID;
 
 @Service
 @Scope("prototype")
+@Primary
 public class HL7OrderInterpreter implements IOrderInterpreter {
 
     public enum IdentityType {

@@ -1,23 +1,24 @@
 package org.openelisglobal.dataexchange.fhir.service;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.commons.validator.GenericValidator;
 import org.hl7.fhir.r4.model.Address;
 import org.hl7.fhir.r4.model.ContactPoint;
+import org.hl7.fhir.r4.model.DateType;
+import org.hl7.fhir.r4.model.Enumerations.AdministrativeGender;
 import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Patient;
 import org.hl7.fhir.r4.model.Patient.ContactComponent;
 import org.hl7.fhir.r4.model.ServiceRequest;
+import org.hl7.fhir.r4.model.StringType;
 import org.hl7.fhir.r4.model.Task;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.ITestIdentityService;
 import org.openelisglobal.common.services.TestIdentityService;
 import org.openelisglobal.common.util.DateUtil;
+import org.openelisglobal.dataexchange.fhir.FhirConfig;
 import org.openelisglobal.dataexchange.order.action.IOrderInterpreter.InterpreterResults;
 import org.openelisglobal.dataexchange.order.action.IOrderInterpreter.OrderType;
 import org.openelisglobal.dataexchange.order.action.MessagePatient;
@@ -30,7 +31,6 @@ import org.springframework.stereotype.Service;
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.v251.segment.OBR;
-import ca.uhn.hl7v2.model.v251.segment.PID;
 
 @Service
 @Scope("prototype")
@@ -38,6 +38,8 @@ public class TaskInterpreterImpl implements TaskInterpreter {
 
     @Autowired
     private FhirContext fhirContext;
+    @Autowired
+    private FhirConfig fhirConfig;
 
     public enum IdentityType {
         GUID("GU"), ST_NUMBER("ST"), NATIONAL_ID("NA"), OB_NUMBER("OB"), PC_NUMBER("PC");
@@ -129,7 +131,7 @@ public class TaskInterpreterImpl implements TaskInterpreter {
     }
 
     private Test createTestFromFHIR(ServiceRequest serviceRequest) throws HL7Exception {
-        LogEvent.logDebug(this.getClass().getName(), "createTestFromFHIR", "TaskInterpreter:createTestFromFHIR:");
+        LogEvent.logDebug(this.getClass().getName(), "createTestFromFHIR", "start");
 
         String loincCode = "";
         String system = "";
@@ -148,6 +150,8 @@ public class TaskInterpreterImpl implements TaskInterpreter {
             i++;
         }
 
+        LogEvent.logError(this.getClass().getName(), "createTestFromFHIR",
+                "no test found for SR: " + serviceRequest.getIdElement().getIdPart());
         return null;
     }
 
@@ -155,16 +159,40 @@ public class TaskInterpreterImpl implements TaskInterpreter {
 
         MessagePatient messagePatient = new MessagePatient();
 
-        messagePatient.setExternalId(patient.getIdentifierFirstRep().getId());
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        Date birthDate = new Date();
-        birthDate = patient.getBirthDate();
-        String strDate = sdf.format(birthDate);
-        messagePatient.setDisplayDOB(strDate);
+        messagePatient.setFhirUuid(patient.getIdElement().getIdPart());
+        for (Identifier identifier : patient.getIdentifier()) {
+            if (identifier.getType().hasCoding(fhirConfig.getOeFhirSystem() + "/genIdType", "externalId")) {
+                messagePatient.setExternalId(identifier.getValue());
+            }
+            if ((fhirConfig.getOeFhirSystem() + "/pat_nationalId").equals(identifier.getSystem())) {
+                messagePatient.setNationalId(identifier.getValue());
+            }
+            if ((fhirConfig.getOeFhirSystem() + "/pat_guid").equals(identifier.getSystem())) {
+                messagePatient.setGuid(identifier.getValue());
+            }
+            if ((fhirConfig.getOeFhirSystem() + "/pat_stNumber").equals(identifier.getSystem())) {
+                messagePatient.setStNumber(identifier.getValue());
+            }
+            if ((fhirConfig.getOeFhirSystem() + "/pat_subjectNumber").equals(identifier.getSystem())) {
+                messagePatient.setSubjectNumber(identifier.getValue());
+            }
+        }
+        // TODO set fhirUUID of message patient
+        DateType birthDate = patient.getBirthDateElement();
+        if (birthDate != null) {
+            String day = birthDate.getDay() == null ? DateUtil.AMBIGUOUS_DATE_SEGMENT
+                    : String.format("%02d", birthDate.getDay());
+            String month = birthDate.getMonth() == null ? DateUtil.AMBIGUOUS_DATE_SEGMENT
+                    : String.format("%02d", birthDate.getMonth() + 1);
+            String year = birthDate.getYear() == null
+                    ? DateUtil.AMBIGUOUS_DATE_SEGMENT + DateUtil.AMBIGUOUS_DATE_SEGMENT
+                    : String.format("%04d", birthDate.getYear());
 
-        if (patient.getGender().toString() == "MALE") {
+            messagePatient.setDisplayDOB(day + "/" + month + "/" + year);
+        }
+        if (AdministrativeGender.MALE.equals(patient.getGender())) {
             messagePatient.setGender("M");
-        } else {
+        } else if (AdministrativeGender.FEMALE.equals(patient.getGender())) {
             messagePatient.setGender("F");
         }
 
@@ -193,13 +221,23 @@ public class TaskInterpreterImpl implements TaskInterpreter {
             }
         }
         for (Address address : patient.getAddress()) {
-            if (Address.AddressUse.TEMP.equals(address.getUse())) {
-                messagePatient.setAddressStreet(address.getLine().stream().map(line -> line.getValue())
-                        .collect(Collectors.toList()).stream().collect(Collectors.joining(", ")));
-                messagePatient.setAddressVillage(address.getCity());
-                messagePatient.setAddressDepartment(address.getState());
-                messagePatient.setAddressCountry(address.getCountry());
+            for (StringType line : address.getLine()) {
+                String lineValue = line.asStringValue();
+                if (lineValue.startsWith("commune:")) {
+                    messagePatient.setAddressCommune(lineValue.substring("commune:".length()).trim());
+                } else {
+                    if (GenericValidator.isBlankOrNull(messagePatient.getAddressStreet())) {
+                        messagePatient.setAddressStreet(lineValue);
+                    } else {
+                        messagePatient.setAddressStreet(messagePatient.getAddressStreet() + ", " + lineValue);
+                    }
+
+                }
             }
+
+            messagePatient.setAddressVillage(address.getCity());
+            messagePatient.setAddressDepartment(address.getState());
+            messagePatient.setAddressCountry(address.getCountry());
         }
 
         ContactComponent contact = patient.getContactFirstRep();
@@ -218,28 +256,6 @@ public class TaskInterpreterImpl implements TaskInterpreter {
         }
 
         return messagePatient;
-    }
-
-    private void setDOB(MessagePatient patient, PID pid) throws HL7Exception {
-        String dob = pid.getDateTimeOfBirth().encode();
-
-        if (dob.length() >= 4) {
-            String year = null;
-            String month = DateUtil.AMBIGUOUS_DATE_SEGMENT;
-            String date = DateUtil.AMBIGUOUS_DATE_SEGMENT;
-
-            year = dob.substring(0, 4);
-
-            if (dob.length() >= 6) {
-                month = dob.substring(4, 6);
-            }
-
-            if (dob.length() >= 8) {
-                date = dob.substring(6, 8);
-            }
-
-            patient.setDisplayDOB(date + "/" + month + "/" + year);
-        }
     }
 
     private List<InterpreterResults> buildResultList(boolean exceptionThrown) {
@@ -271,9 +287,9 @@ public class TaskInterpreterImpl implements TaskInterpreter {
                     results.add(InterpreterResults.MISSING_PATIENT_GENDER);
                 }
 
-//              if(getMessagePatient().getDob() == null){
-//                  results.add(InterpreterResults.MISSING_PATIENT_DOB);
-//              }
+                if (getMessagePatient().getDisplayDOB() == null) {
+                    results.add(InterpreterResults.MISSING_PATIENT_DOB);
+                }
 
                 if (getMessagePatient().getNationalId() == null && getMessagePatient().getObNumber() == null
                         && getMessagePatient().getPcNumber() == null && getMessagePatient().getStNumber() == null

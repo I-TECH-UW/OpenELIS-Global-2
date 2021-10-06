@@ -91,7 +91,8 @@ public class PatientSearchLocalAndExternalWorker extends PatientSearchWorker {
 
         List<PatientSearchResults> localResults = new ArrayList<>();
         localResults = searchResultsService.getSearchResults(lastName, firstName, STNumber, subjectNumber, nationalID,
-                nationalID, patientID, guid, "", "");
+                guid, patientID, guid, "", "");
+        localResults.forEach(e -> e.setDataSourceName(MessageUtil.getMessage("patient.local.source")));
         allResults.addAll(localResults);
 
         if (config.getPropertyValue(Property.INFO_HIGHWAY_ENABLED).equals("true")) {
@@ -136,10 +137,10 @@ public class PatientSearchLocalAndExternalWorker extends PatientSearchWorker {
 
             findNewPatients(localResults, externalResults, newPatientsFromExternalSearch);
             insertNewPatients(newPatientsFromExternalSearch);
+            newPatientsFromExternalSearch
+                    .forEach(e -> e.setDataSourceName(MessageUtil.getMessage("patient.imported.source")));
             allResults.addAll(newPatientsFromExternalSearch);
         }
-        setSourceIndicators(allResults);
-
         sortPatients(allResults);
 
         if (allResults != null && allResults.size() > 0) {
@@ -252,14 +253,6 @@ public class PatientSearchLocalAndExternalWorker extends PatientSearchWorker {
                     newPatientsFromExternalSearch.add(externalResult);
                 }
             }
-        }
-    }
-
-    private void setSourceIndicators(List<PatientSearchResults> results) {
-        for (PatientSearchResults result : results) {
-            String messageKey = GenericValidator.isBlankOrNull(result.getGUID()) ? "patient.local.source"
-                    : "patient.imported.source";
-            result.setDataSourceName(MessageUtil.getMessage(messageKey));
         }
     }
 }

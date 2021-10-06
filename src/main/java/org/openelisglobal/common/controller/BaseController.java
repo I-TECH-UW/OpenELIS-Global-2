@@ -9,6 +9,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.form.BaseForm;
@@ -218,7 +219,12 @@ public abstract class BaseController implements IActionConstants {
         if (HOME_PAGE.equals(forward)) {
             return "redirect:Home.do";
         }
-        return findLocalForward(forward);
+        String forwardView = findLocalForward(forward);
+        if (GenericValidator.isBlankOrNull(forwardView)) {
+            forwardView = "PageNotFound";
+        }
+
+        return forwardView;
     }
 
     protected ModelAndView findForward(String forward, BaseForm form) {

@@ -33,6 +33,9 @@
 		<property name="type" type="java.lang.String">
 			<column name="analyzer_type" length="30" />
 		</property>
+		<property name="hasSetupPage" type="java.lang.Boolean">
+			<column name="has_setup_page" length="1" />
+		</property>
 
 
 		<property name="active" type="java.lang.Boolean">

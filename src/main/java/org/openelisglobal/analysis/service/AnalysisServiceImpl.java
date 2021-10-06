@@ -5,6 +5,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 
@@ -74,6 +75,14 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
 
     public static String getTableReferenceId() {
         return TABLE_REFERENCE_ID;
+    }
+
+    @Override
+    public String insert(Analysis analysis) {
+        if (analysis.getFhirUuid() == null) {
+            analysis.setFhirUuid(UUID.randomUUID());
+        }
+        return super.insert(analysis);
     }
 
     @Override
@@ -312,6 +321,9 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
     @Override
     @Transactional(readOnly = true)
     public List<Analysis> getAnalysisByAccessionAndTestId(String accessionNumber, String testId) {
+        if (accessionNumber != null && accessionNumber.contains(".")) {
+            accessionNumber = accessionNumber.substring(0, accessionNumber.indexOf('.'));
+        }
         return baseObjectDAO.getAnalysisByAccessionAndTestId(accessionNumber, testId);
     }
 
@@ -371,8 +383,8 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
 
     @Override
     @Transactional(readOnly = true)
-    public List<Analysis> getAllAnalysisByTestsAndStatus(List<String> nfsTestIdList, List<Integer> statusList) {
-        return baseObjectDAO.getAllAnalysisByTestsAndStatus(nfsTestIdList, statusList);
+    public List<Analysis> getAllAnalysisByTestsAndStatusAndCompletedDateRange(List<Integer> testIdList, List<Integer> analysisStatusList, List<Integer> sampleStatusList, Date lowDate, Date highDate) {
+        return baseObjectDAO.getAllAnalysisByTestsAndStatusAndCompletedDateRange(testIdList, analysisStatusList, sampleStatusList, lowDate, highDate);
     }
 
     @Override
@@ -380,6 +392,23 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
     public List<Analysis> getAllAnalysisByTestSectionAndStatus(String sectionId, List<Integer> statusList,
             boolean sortedByDateAndAccession) {
         return baseObjectDAO.getAllAnalysisByTestSectionAndStatus(sectionId, statusList, sortedByDateAndAccession);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Analysis> getPageAnalysisByTestSectionAndStatus(String sectionId, List<Integer> statusList,
+            boolean sortedByDateAndAccession) {
+        return baseObjectDAO.getPageAnalysisByTestSectionAndStatus(sectionId, statusList, sortedByDateAndAccession);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Analysis> getPageAnalysisAtAccessionNumberAndStatus(String accessionNumber, List<Integer> statusList,
+            boolean sortedByDateAndAccession) {
+        if (accessionNumber != null && accessionNumber.contains(".")) {
+            accessionNumber = accessionNumber.substring(0, accessionNumber.indexOf('.'));
+        }
+        return baseObjectDAO.getPageAnalysisAtAccessionNumberAndStatus(accessionNumber, statusList, sortedByDateAndAccession);
     }
 
     @Override
@@ -449,6 +478,13 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
     public List<Analysis> getAllAnalysisByTestSectionAndStatus(String testSectionId, List<Integer> analysisStatusList,
             List<Integer> sampleStatusList) {
         return getBaseObjectDAO().getAllAnalysisByTestSectionAndStatus(testSectionId, analysisStatusList,
+                sampleStatusList);
+    }
+
+    @Override
+    public List<Analysis> getPageAnalysisByTestSectionAndStatus(String testSectionId, List<Integer> analysisStatusList,
+            List<Integer> sampleStatusList) {
+        return getBaseObjectDAO().getPageAnalysisByTestSectionAndStatus(testSectionId, analysisStatusList,
                 sampleStatusList);
     }
 
@@ -619,5 +655,47 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
         for (Analysis analysis : updatedAnalysis) {
             updateNoAuditTrail(analysis);
         }
+    }
+
+    @Override
+    public List<Analysis> get(List<String> value) {
+        return baseObjectDAO.get(value);
+    }
+
+    @Override
+    public List<Analysis> getAllAnalysisByTestsAndStatus(List<String> testIdList, List<Integer> statusIdList) {
+        return baseObjectDAO.getAllAnalysisByTestsAndStatus(testIdList, statusIdList);
+    }
+
+    @Override
+    public int getCountAnalysisByTestSectionAndStatus(String testSectionId, List<Integer> analysisStatusList,
+            List<Integer> sampleStatusList) {
+        return baseObjectDAO.getCountAnalysisByTestSectionAndStatus(testSectionId, analysisStatusList,
+                sampleStatusList);
+    }
+
+    @Override
+    public int getCountAnalysisByTestSectionAndStatus(String testSectionId, List<Integer> analysisStatusList) {
+        return baseObjectDAO.getCountAnalysisByTestSectionAndStatus(testSectionId, analysisStatusList);
+    }
+
+    @Override
+    public int getCountAnalysisByStatusFromAccession(List<Integer> analysisStatusList, List<Integer> sampleStatusList,
+            String accessionNumber) {
+        if (accessionNumber != null && accessionNumber.contains(".")) {
+            accessionNumber = accessionNumber.substring(0, accessionNumber.indexOf('.'));
+        }
+        return baseObjectDAO.getCountAnalysisByStatusFromAccession(analysisStatusList, sampleStatusList,
+                accessionNumber);
+    }
+
+    @Override
+    public List<Analysis> getPageAnalysisByStatusFromAccession(List<Integer> analysisStatusList,
+            List<Integer> sampleStatusList, String accessionNumber) {
+        if (accessionNumber != null && accessionNumber.contains(".")) {
+            accessionNumber = accessionNumber.substring(0, accessionNumber.indexOf('.'));
+        }
+        return baseObjectDAO.getPageAnalysisByStatusFromAccession(analysisStatusList, sampleStatusList,
+                accessionNumber);
     }
 }

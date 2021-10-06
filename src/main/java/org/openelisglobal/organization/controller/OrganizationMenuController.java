@@ -15,19 +15,24 @@ import org.openelisglobal.common.form.AdminOptionMenuForm;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.common.validator.BaseErrors;
+import org.openelisglobal.dataexchange.fhir.exception.FhirTransformationException;
 import org.openelisglobal.organization.form.OrganizationMenuForm;
+import org.openelisglobal.organization.service.OrganizationExportService;
 import org.openelisglobal.organization.service.OrganizationService;
 import org.openelisglobal.organization.valueholder.Organization;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -37,7 +42,9 @@ public class OrganizationMenuController extends BaseMenuController<Organization>
     private static final String[] ALLOWED_FIELDS = new String[] { "selectedIds*", "searchString" };
 
     @Autowired
-    OrganizationService organizationService;
+    private OrganizationService organizationService;
+    @Autowired
+    private OrganizationExportService organizationExportService;
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -61,6 +68,12 @@ public class OrganizationMenuController extends BaseMenuController<Organization>
             addFlashMsgsToRequest(request);
             return findForward(forward, form);
         }
+    }
+
+    @GetMapping(value = "/OrganizationExport", produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody byte[] exportOrganizations(
+            @RequestParam(name = "active", defaultValue = "true") String active) throws FhirTransformationException {
+        return organizationExportService.exportFhirOrganizationsFromOrganizations(Boolean.valueOf(active)).getBytes();
     }
 
     @Override
@@ -142,7 +155,7 @@ public class OrganizationMenuController extends BaseMenuController<Organization>
         }
 
         String[] IDs = id.split(",");
-        List<String> selectedIDs = new ArrayList<String>();
+        List<String> selectedIDs = new ArrayList<>();
         for (int i = 0; i < IDs.length; i++) {
             selectedIDs.add(IDs[i]);
         }

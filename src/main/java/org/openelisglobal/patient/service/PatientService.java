@@ -106,4 +106,8 @@ public interface PatientService extends BaseObjectService<Patient, String> {
 
     void insertNewPatientAddressInfo(String partId, String value, String type, Patient patient, String sysUserId);
 
+    List<Patient> getAllMissingFhirUuid();
+
+    Patient getByExternalId(String idPart);
+
 }

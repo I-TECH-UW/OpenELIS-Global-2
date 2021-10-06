@@ -17,11 +17,14 @@
 package org.openelisglobal.referral.dao;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.List;
 
 import org.openelisglobal.common.dao.BaseDAO;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.referral.form.ReferredOutTestsForm.ReferDateType;
 import org.openelisglobal.referral.valueholder.Referral;
+import org.openelisglobal.referral.valueholder.ReferralStatus;
 
 public interface ReferralDAO extends BaseDAO<Referral, String> {
 
@@ -31,7 +34,7 @@ public interface ReferralDAO extends BaseDAO<Referral, String> {
 
     public Referral getReferralByAnalysisId(String analysisId) throws LIMSRuntimeException;
 
-    public List<Referral> getAllUncanceledOpenReferrals() throws LIMSRuntimeException;
+    public List<Referral> getReferralsByStatus(List<ReferralStatus> status);
 
 //	public void updateData(Referral referral) throws LIMSRuntimeException;
 
@@ -44,4 +47,10 @@ public interface ReferralDAO extends BaseDAO<Referral, String> {
      * @return a list in the of referrals
      */
     public List<Referral> getAllReferralsByOrganization(String organizationId, Date lowDate, Date highDate);
+
+    public List<Referral> getReferralsByAnalysisIds(List<String> analysisIds);
+
+    public List<Referral> getReferralsByTestAndDate(ReferDateType dateType, Timestamp startTimestamp,
+            Timestamp endTimestamp, List<String> testUnitIds, List<String> testIds);
+
 }

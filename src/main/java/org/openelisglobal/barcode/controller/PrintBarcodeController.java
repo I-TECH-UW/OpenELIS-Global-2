@@ -19,13 +19,17 @@ import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.barcode.form.PrintBarcodeForm;
 import org.openelisglobal.common.controller.BaseController;
+import org.openelisglobal.common.exception.LIMSInvalidConfigurationException;
 import org.openelisglobal.common.formfields.FormFields;
+import org.openelisglobal.common.provider.validation.AltYearAccessionValidator;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.DisplayListService.ListType;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.SampleOrderService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.StatusService.SampleStatus;
+import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.patient.action.bean.PatientSearch;
@@ -35,6 +39,7 @@ import org.openelisglobal.person.service.PersonService;
 import org.openelisglobal.sample.bean.SampleEditItem;
 import org.openelisglobal.sample.form.ProjectData;
 import org.openelisglobal.sample.service.SampleService;
+import org.openelisglobal.sample.util.AccessionNumberUtil;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.samplehuman.service.SampleHumanService;
 import org.openelisglobal.sampleitem.service.SampleItemService;
@@ -97,7 +102,8 @@ public class PrintBarcodeController extends BaseController {
     @RequestMapping(value = "/PrintBarcode", method = RequestMethod.GET)
     public ModelAndView setupPrintBarcode(HttpServletRequest request,
             @Valid @ModelAttribute("form") PrintBarcodeForm form, BindingResult result)
-            throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+            throws InvocationTargetException, NoSuchMethodException, IllegalAccessException,
+            LIMSInvalidConfigurationException {
 
         form.setFormAction("PrintBarcode");
         form.setFormMethod(RequestMethod.GET);
@@ -112,6 +118,7 @@ public class PrintBarcodeController extends BaseController {
         String accessionNumber = form.getAccessionNumber();
         Sample sample = getSample(accessionNumber);
         if (sample != null && !org.apache.commons.validator.GenericValidator.isBlankOrNull(sample.getId())) {
+            form.setAccessionNumber(sample.getAccessionNumber());
             List<SampleItem> sampleItemList = getSampleItems(sample);
             setPatientInfo(displayObjects, sample);
             List<SampleEditItem> currentTestList = getCurrentTestInfo(sampleItemList, accessionNumber, false);
@@ -125,7 +132,7 @@ public class PrintBarcodeController extends BaseController {
         return findForward(FWD_SUCCESS, displayObjects, form);
     }
 
-    private void addPrePrintFields(@Valid PrintBarcodeForm form) {
+    private void addPrePrintFields(@Valid PrintBarcodeForm form) throws LIMSInvalidConfigurationException {
         form.setSampleOrderItems(sampleOrderService.getSampleOrderItem());
         form.setSampleTypes(displayListService.getList(ListType.SAMPLE_TYPE_ACTIVE));
         form.setTestSectionList(displayListService.getList(ListType.TEST_SECTION));
@@ -134,6 +141,14 @@ public class PrintBarcodeController extends BaseController {
         form.getSampleOrderItems().setReceivedTime(DateUtil.getCurrentTimeAsText());
         form.setProjectDataVL(new ProjectData());
         form.setProjectDataEID(new ProjectData());
+
+        if (Boolean
+                .valueOf(ConfigurationProperties.getInstance().getPropertyValue(Property.USE_ALT_ACCESSION_PREFIX))) {
+            form.setStartingAtAccession(
+                    ((AltYearAccessionValidator) AccessionNumberUtil.getAltAccessionNumberGenerator())
+                            .getNextAvailableAccessionNumber(ConfigurationProperties.getInstance()
+                                    .getPropertyValue(Property.ALT_ACCESSION_PREFIX), false));
+        }
 
         if (FormFields.getInstance().useField(FormFields.Field.InitialSampleCondition)) {
             form.setInitialSampleConditionList(displayListService.getList(ListType.INITIAL_SAMPLE_CONDITION));

@@ -28,12 +28,15 @@ import org.itech.fhir.dataexport.core.service.DataExportTaskService;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
+import org.openelisglobal.dataexchange.fhir.FhirUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.parser.DataFormatException;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
+import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
 
 @Component
 public class RegisterFhirHooksTask {
@@ -47,10 +50,18 @@ public class RegisterFhirHooksTask {
     @Value("${org.openelisglobal.fhirstore.uri}")
     private String localFhirStorePath;
 
+    @Value("${org.openelisglobal.fhir.subscriber.backup.interval:5}")
+    private Integer backupInterval;
+
+    @Value("${org.openelisglobal.fhir.subscriber.backup.timeout:60}")
+    private Integer backupTimeout;
+
     private static String fhirSubscriptionIdPrefix = "consolidatedServerSubscription";
 
     @Autowired
     FhirContext fhirContext;
+    @Autowired
+    private FhirUtil fhirUtil;
 
     @Autowired
     private DataExportTaskService dataExportTaskService;
@@ -67,7 +78,7 @@ public class RegisterFhirHooksTask {
             fhirSubscriber = Optional.of("https://" + fhirSubscriber.get());
         }
 
-        IGenericClient fhirClient = fhirContext.newRestfulGenericClient(localFhirStorePath);
+        IGenericClient fhirClient = fhirUtil.getFhirClient(localFhirStorePath);
 
         removeOldSubscription();
 
@@ -85,14 +96,14 @@ public class RegisterFhirHooksTask {
             subscriptionBundle.addEntry(bundleEntry);
 
         }
-//        try {
-//            Bundle returnedBundle = fhirClient.transaction().withBundle(subscriptionBundle).encodedJson().execute();
-//            LogEvent.logDebug(this.getClass().getName(), "startTask", "subscription bundle returned:\n"
-//                    + fhirContext.newJsonParser().encodeResourceToString(returnedBundle));
-//        } catch (UnprocessableEntityException | DataFormatException e) {
-//            LogEvent.logError("error while communicating subscription bundle to " + localFhirStorePath + " for "
-//                    + fhirSubscriber.get(), e);
-//        }
+        try {
+            Bundle returnedBundle = fhirClient.transaction().withBundle(subscriptionBundle).encodedJson().execute();
+            LogEvent.logDebug(this.getClass().getName(), "startTask", "subscription bundle returned:\n"
+                    + fhirContext.newJsonParser().encodeResourceToString(returnedBundle));
+        } catch (UnprocessableEntityException | DataFormatException e) {
+            LogEvent.logError("error while communicating subscription bundle to " + localFhirStorePath + " for "
+                    + fhirSubscriber.get(), e);
+        }
 
         DataExportTask dataExportTask = dataExportTaskService.getDAO().findByEndpoint(fhirSubscriber.get())
                 .orElse(new DataExportTask());
@@ -103,14 +114,14 @@ public class RegisterFhirHooksTask {
         dataExportTask.setFhirResources(Arrays.asList(fhirSubscriptionResources).stream()
                 .map(ResourceType::fromCode).collect(Collectors.toList()));
         dataExportTask.setHeaders(headers);
-        dataExportTask.setMaxDataExportInterval(60 * 24); // minutes
-        dataExportTask.setDataRequestAttemptTimeout(60 * 10); // seconds // currently unused
+        dataExportTask.setMaxDataExportInterval(backupInterval); // minutes
+        dataExportTask.setDataRequestAttemptTimeout(backupTimeout); // seconds // currently unused
         dataExportTask.setEndpoint(fhirSubscriber.get());
         dataExportTaskService.getDAO().save(dataExportTask);
     }
 
     private void removeOldSubscription() {
-        IGenericClient fhirClient = fhirContext.newRestfulGenericClient(localFhirStorePath);
+        IGenericClient fhirClient = fhirUtil.getFhirClient(localFhirStorePath);
 
         Bundle deleteTransactionBundle = new Bundle();
         deleteTransactionBundle.setType(BundleType.TRANSACTION);

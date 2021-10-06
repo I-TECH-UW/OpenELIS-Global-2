@@ -1134,4 +1134,27 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
         }
         return null;
     }
+
+//    @Override
+//    public void deactivateAllTests() {
+//        String sql = "UPDATE Test Set isActive = 'N' where isActive = 'Y'";
+//        try {
+//            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+//            query.executeUpdate();
+//        } catch (HibernateException e) {
+//            handleException(e, "deactivateAllTests");
+//        }
+//    }
+
+//    @Override
+//    public void activateTests(List<String> testNames) {
+//        String sql = "UPDATE Test Set isActive = 'Y' where localizedTestName.english in (:testNames) OR localizedTestName.french in (:testNames)";
+//        try {
+//            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+//            query.setParameter("testNames", testNames);
+//            query.executeUpdate();
+//        } catch (HibernateException e) {
+//            handleException(e, "activateTests");
+//        }
+//    }
 }

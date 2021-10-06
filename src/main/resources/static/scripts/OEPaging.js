@@ -66,7 +66,11 @@ function OEPageSearch( notFoundElement, targetElementTag, oePager ){
 		this.notFoundElement.style.visibility = "hidden";
 		
 		if( searchElement.value.length > 0){
-			this.highlightSearch( searchElement.value, true);
+			if (typeof altAccessionHighlightSearch  === 'function') {
+				altAccessionHighlightSearch(searchElement.value);
+			} else {
+				this.highlightSearch( searchElement.value, true);
+			}
 		}
 	};
 	

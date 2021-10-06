@@ -39,6 +39,7 @@ CRON_FILE_NAME = "openElis"
 LOG_FILE_NAME = "installer.log"
 POSTGRES_ROLE_UPDATE_FILE_NAME = "updateDBPassword.sql"
 SETUP_CONFIG_FILE_NAME = "setup.ini"
+CLIENT_FACING_KEYSTORE = "client_facing_keystore"
 KEYSTORE = "keystore"
 TRUSTSTORE = "truststore"
 
@@ -52,10 +53,13 @@ DB_ENVIRONMENT_DIR = OE_VAR_DIR + "database/env/"
 DB_INIT_DIR = OE_VAR_DIR + "initDB/"
 SECRETS_DIR = OE_VAR_DIR + "secrets/"
 PLUGINS_DIR = OE_VAR_DIR + "plugins/"
+CONFIG_DIR = OE_VAR_DIR + "config/"
 LOGS_DIR = OE_VAR_DIR + "logs/"
+TOMCAT_LOGS_DIR = OE_VAR_DIR + "tomcatLogs/"
 CRON_INSTALL_DIR = "/etc/cron.d/"
 
 #full file paths
+CLIENT_FACING_KEYSTORE_PATH = OE_ETC_DIR + CLIENT_FACING_KEYSTORE
 KEYSTORE_PATH = OE_ETC_DIR + KEYSTORE
 TRUSTSTORE_PATH = OE_ETC_DIR + TRUSTSTORE
 
@@ -78,8 +82,8 @@ LOCAL_DB = True
 PRINT_TO_CONSOLE = True
 MODE = "update-install"
 
-POSTGRES_LIB_DIR = "/usr/lib/postgresql/8.3/lib/"
-POSTGRES_MAIN_DIR = "/etc/postgresql/9.6/main/"
+POSTGRES_LIB_DIR = "/usr/lib/postgresql/12/lib/"
+POSTGRES_MAIN_DIR = "/etc/postgresql/12/main/"
 EXPECTED_CROSSTAB_FUNCTIONS = "3"
 
 #Generated values
@@ -92,10 +96,13 @@ SITE_ID = ''
 KEYSTORE_PWD = ''
 TRUSTSTORE_PWD = ''
 ENCRYPTION_KEY = ''
-LOCAL_FHIR_SERVER_ADDRESS = 'https://fhir.openelisci.org:8443/hapi-fhir-jpaserver/fhir/'
+LOCAL_FHIR_SERVER_ADDRESS = 'https://fhir.openelis.org:8443/fhir/'
 REMOTE_FHIR_SOURCE = 'https://isanteplusdemo.com/openmrs/ws/fhir2/'
 REMOTE_FHIR_SOURCE_UPDATE_STATUS = "false"
 CONSOLIDATED_SERVER_ADDRESS = 'https://hub.openelisci.org:8444/fhir'
+TIMEZONE = ''
+
+EXTERNAL_HOSTS = []
 
 #Stateful objects
 LOG_FILE = ''
@@ -219,6 +226,8 @@ def do_install():
     
     generate_passwords()
     
+    get_install_user_values()
+    
     get_stored_user_values()
     
     get_non_stored_user_values()
@@ -242,6 +251,10 @@ def do_install():
     ensure_dir_exists(LOGS_DIR)
     os.chmod(LOGS_DIR, 0777) 
     os.chown(LOGS_DIR, 8443, 8443)  
+    ensure_dir_exists(TOMCAT_LOGS_DIR)
+    os.chmod(TOMCAT_LOGS_DIR, 0777) 
+    os.chown(TOMCAT_LOGS_DIR, 8443, 8443)  
+    
 
     start_docker_containers()
 
@@ -263,7 +276,7 @@ def create_docker_compose_file():
     output_file = open("docker-compose.yml", "w")
     
     if DOCKER_DB:
-        DB_HOST_FOR_DOCKER_SERVICES = "database" #use docker network to connect by service name
+        DB_HOST_FOR_DOCKER_SERVICES = "db.openelis.org" #use docker network to connect by service name
     if DB_HOST == "localhost" or DB_HOST == "127.0.0.1":
         DB_HOST_FOR_DOCKER_SERVICES = get_docker_host_ip() #get docker host loopback
     
@@ -298,12 +311,26 @@ def create_docker_compose_file():
             line = line.replace("[% plugins_dir %]", PLUGINS_DIR)
         if line.find("[% logs_dir %]")  >= 0:
             line = line.replace("[% logs_dir %]", LOGS_DIR)
+        if line.find("[% tomcat_logs_dir %]")  >= 0:
+            line = line.replace("[% tomcat_logs_dir %]", TOMCAT_LOGS_DIR)
         if line.find("[% etc_dir %]")  >= 0:
             line = line.replace("[% etc_dir %]", OE_ETC_DIR )
         if line.find("[% oe_name %]")  >= 0:
             line = line.replace("[% oe_name %]", DOCKER_OE_CONTAINER_NAME )
         if line.find("[% fhir_api_name %]")  >= 0:
             line = line.replace("[% fhir_api_name %]", DOCKER_FHIR_API_CONTAINER_NAME )
+        if line.find("[% timezone %]")  >= 0:
+            line = line.replace("[% timezone %]", TIMEZONE )
+        if line.find("[% truststore_password %]")  >= 0:
+            line = line.replace("[% truststore_password %]", TRUSTSTORE_PWD )
+        if line.find("[% keystore_password %]")  >= 0:
+            line = line.replace("[% keystore_password %]", KEYSTORE_PWD )
+            
+        if len(EXTERNAL_HOSTS) > 0:
+            if line.find("#eh") >= 0:
+                line = line.replace("#eh", "")
+            docker_external_hosts = "            - " + "\n            - ".join(EXTERNAL_HOSTS)
+            line = line.replace("[% extra_hosts %]", docker_external_hosts )
         
         output_file.write(line)
 
@@ -351,8 +378,8 @@ def create_properties_files():
     os.chmod(SECRETS_DIR + "extra.properties", 0640)   
     os.chown(SECRETS_DIR + 'extra.properties', 8443, 8443) 
     
-    template_file = open(INSTALLER_TEMPLATE_DIR + "hapi.properties", "r")
-    output_file = open(SECRETS_DIR + "hapi.properties", "w")
+    template_file = open(INSTALLER_TEMPLATE_DIR + "hapi_application.yaml", "r")
+    output_file = open(SECRETS_DIR + "hapi_application.yaml", "w")
 
     for line in template_file:
         #common attributes
@@ -373,8 +400,8 @@ def create_properties_files():
 
     template_file.close()
     output_file.close()
-    os.chmod(SECRETS_DIR + "hapi.properties", 0640)  
-    os.chown(SECRETS_DIR + 'hapi.properties', 8443, 8443)   
+    os.chmod(SECRETS_DIR + "hapi_application.yaml", 0640)  
+    os.chown(SECRETS_DIR + 'hapi_application.yaml', 8443, 8443)   
     
 
 def create_server_xml_files():
@@ -558,7 +585,9 @@ def install_db():
         #every .sql and .sh in db_init_dir will be auto run by docker on install
         shutil.copytree(INSTALLER_DB_INIT_DIR, DB_INIT_DIR)
         #make sure docker can read this file to run it
-        os.chown(DB_INIT_DIR + '1-pgsqlPermissions.sql', 0, grp.getgrnam('docker')[2])
+        os.chown(DB_INIT_DIR + '1-pgsqlPermissions.sql', 0, 0)
+        #TODO not the best for security. consider revisiting
+        os.chmod(DB_INIT_DIR + '1-pgsqlPermissions.sql', 0644)  
     elif LOCAL_DB:
         #configure the postgres installation to make sure it can be connected to from the docker container
         cmd = 'sudo ' + INSTALLER_SCRIPTS_DIR + 'configureHostPostgres.sh ' + POSTGRES_MAIN_DIR
@@ -655,7 +684,12 @@ def do_update():
     
     ensure_dir_exists(LOGS_DIR)
     os.chmod(LOGS_DIR, 0777) 
-    os.chown(LOGS_DIR, 8443, 8443)  
+    os.chown(LOGS_DIR, 8443, 8443)
+    ensure_dir_exists(TOMCAT_LOGS_DIR)
+    os.chmod(TOMCAT_LOGS_DIR, 0777) 
+    os.chown(TOMCAT_LOGS_DIR, 8443, 8443)  
+    
+    get_stored_user_values()
     
     get_non_stored_user_values()
     
@@ -906,15 +940,34 @@ def get_non_stored_user_values():
     get_server_addresses()
     
 
-def get_stored_user_values():
+def get_install_user_values():
     get_site_id()
+
+
+def get_stored_user_values():
+    ensure_dir_exists(CONFIG_DIR)
+    os.chmod(CONFIG_DIR, 0777) 
+    get_set_timezone()
+    get_set_extra_hosts()
+
+
+def get_set_timezone():
+    if (not is_timezone_set()):
+        set_timezone()
+    get_timezone()
+
+
+def get_set_extra_hosts():
+    if (not is_external_hosts_set()):
+        set_external_hosts()
+    get_external_hosts()
 
 
 def get_keystore_password():
     global KEYSTORE_PWD
     print "keystore location: " + KEYSTORE_PATH
     KEYSTORE_PWD = getpass("keystore password: ")
-    cmd = "keytool -list -keystore " + KEYSTORE_PATH + " -storepass " + KEYSTORE_PWD
+    cmd = "openssl pkcs12 -info -in " + KEYSTORE_PATH + " -nokeys -passin pass:" + KEYSTORE_PWD
     status = os.system(cmd)
     if not status == 0:
         print "password for the keystore is incorrect. Please try again"
@@ -925,7 +978,7 @@ def  get_truststore_password():
     global TRUSTSTORE_PWD
     print "truststore location: " + TRUSTSTORE_PATH
     TRUSTSTORE_PWD = getpass("truststore password: ")
-    cmd = "keytool -list -keystore " + TRUSTSTORE_PATH + " -storepass " + TRUSTSTORE_PWD
+    cmd = "openssl pkcs12 -info -in " + TRUSTSTORE_PATH + " -nokeys -passin pass:" + TRUSTSTORE_PWD
     status = os.system(cmd)
     if not status == 0:
         print "password for the truststore is incorrect. Please try again"
@@ -963,17 +1016,17 @@ def get_encryption_key():
         
 def get_server_addresses():
     global LOCAL_FHIR_SERVER_ADDRESS, REMOTE_FHIR_SOURCE, CONSOLIDATED_SERVER_ADDRESS, REMOTE_FHIR_SOURCE_UPDATE_STATUS
-
-    print """
-    Enter the full server path to the local fhir store 
-    (most likely the address of this server on port 8444)
-    """
-    fhir_server_address = raw_input("local fhir store path (default  " + LOCAL_FHIR_SERVER_ADDRESS + ") : ")
-    if fhir_server_address:
-        if not fhir_server_address.startswith("https://"):
-            LOCAL_FHIR_SERVER_ADDRESS = "https://" + fhir_server_address
-        else:
-            LOCAL_FHIR_SERVER_ADDRESS = fhir_server_address
+#    should be no longer neccessary since we use *.openelis.org in all our backend certs
+#    print """
+#    Enter the full server path to the local fhir store 
+#    (most likely the address of this server on port 8444)
+#    """
+#    fhir_server_address = raw_input("local fhir store path (default  " + LOCAL_FHIR_SERVER_ADDRESS + ") : ")
+#    if fhir_server_address:
+#        if not fhir_server_address.startswith("https://"):
+#            LOCAL_FHIR_SERVER_ADDRESS = "https://" + fhir_server_address
+#        else:
+#            LOCAL_FHIR_SERVER_ADDRESS = fhir_server_address
     
     print """
     Enter the full server path to the remote fhir instance you'd like to poll for Fhir Tasks (eg. OpenMRS) . 
@@ -1004,8 +1057,39 @@ def get_server_addresses():
         if not CONSOLIDATED_SERVER_ADDRESS.startswith("https://"):
             CONSOLIDATED_SERVER_ADDRESS = "https://" + CONSOLIDATED_SERVER_ADDRESS
     
+
+def is_timezone_set():
+    return os.path.isfile(CONFIG_DIR + 'TZ')
         
         
+def get_timezone():
+    global TIMEZONE
+    tz_file = open(CONFIG_DIR + 'TZ')
+    TIMEZONE = tz_file.readline()
+
+    
+def set_timezone():
+    cmd = "tzselect >" + CONFIG_DIR + 'TZ'
+    os.system(cmd)
+    
+
+def is_external_hosts_set():
+    return os.path.isfile(CONFIG_DIR + 'EXTERNAL_HOSTS')
+    
+
+def get_external_hosts():
+    global EXTERNAL_HOSTS
+    with open(CONFIG_DIR + 'EXTERNAL_HOSTS') as file:
+        for line in file.readlines():
+            EXTERNAL_HOSTS.append(line.strip())
+    
+
+def set_external_hosts(): 
+    extra_hosts = raw_input("type a comma delimited list of extra hosts (format DNS_ENTRY1:IP_ADDRESS1,DNS_ENTRY2:IP_ADDRESS2...): ").split(',')
+    with open(CONFIG_DIR + 'EXTERNAL_HOSTS', mode='wt') as file:
+        file.write('\n'.join(extra_hosts))
+        
+                
 #---------------------------------------------------------------------
 #             PASSWORD GENERATION
 #---------------------------------------------------------------------
@@ -1050,6 +1134,10 @@ def check_preconditions(goal):
             log("\ncould not find a readable keystore. Check that file exists and is readable by the current user", PRINT_TO_CONSOLE)
             log("\nkeystore should exist at: " + KEYSTORE_PATH, PRINT_TO_CONSOLE)
             return False
+        if (not os.path.isfile(CLIENT_FACING_KEYSTORE_PATH) or not os.access(CLIENT_FACING_KEYSTORE_PATH, os.R_OK)):
+            log("\ncould not find a readable client facing keystore. Check that file exists and is readable by the current user", PRINT_TO_CONSOLE)
+            log("\nkeystore should exist at: " + CLIENT_FACING_KEYSTORE_PATH, PRINT_TO_CONSOLE)
+            return False
         if (not os.path.isfile(TRUSTSTORE_PATH) or not os.access(TRUSTSTORE_PATH, os.R_OK)):
             log("\ncould not find a readable trsutstore. Check that file exists and is readable by the current user", PRINT_TO_CONSOLE)
             log("\ntruststore should exist at: " + TRUSTSTORE_PATH, PRINT_TO_CONSOLE)
@@ -1062,6 +1150,10 @@ def check_preconditions(goal):
         if (not os.path.isfile(KEYSTORE_PATH) or not os.access(KEYSTORE_PATH, os.R_OK)):
             log("\ncould not find a readable keystore. Check that file exists and is readable by the current user", PRINT_TO_CONSOLE)
             log("\nkeystore should exist at: " + KEYSTORE_PATH, PRINT_TO_CONSOLE)
+            return False
+        if (not os.path.isfile(CLIENT_FACING_KEYSTORE_PATH) or not os.access(CLIENT_FACING_KEYSTORE_PATH, os.R_OK)):
+            log("\ncould not find a readable client facing keystore. Check that file exists and is readable by the current user", PRINT_TO_CONSOLE)
+            log("\nkeystore should exist at: " + CLIENT_FACING_KEYSTORE_PATH, PRINT_TO_CONSOLE)
             return False
         if (not os.path.isfile(TRUSTSTORE_PATH) or not os.access(TRUSTSTORE_PATH, os.R_OK)):
             log("\ncould not find a readable trsutstore. Check that file exists and is readable by the current user", PRINT_TO_CONSOLE)
@@ -1090,7 +1182,6 @@ def db_installed(db_name):
 
 def check_postgres_preconditions():
     global POSTGRES_LIB_DIR, POSTGRES_MAIN_DIR
-    log("Checking for Postgres 8.3 or later installation", PRINT_TO_CONSOLE)
     os.system('psql --version > tmp')
     tmp_file = open('tmp')
     first_line = tmp_file.readline()
@@ -1114,8 +1205,20 @@ def check_postgres_preconditions():
 
     if valid:
         log("Postgres" + str(major) + "." + str(minor) + " found!\n", PRINT_TO_CONSOLE)
-        POSTGRES_LIB_DIR = "/usr/lib/postgresql/" + str(major) + "." + str(minor) + "/lib/"
-        POSTGRES_MAIN_DIR = "/etc/postgresql/" + str(major) + "." + str(minor) + "/main/"
+        if os.path.isdir("/usr/lib/postgresql/" + str(major) + "." + str(minor) + "/lib/"):
+            POSTGRES_LIB_DIR = "/usr/lib/postgresql/" + str(major) + "." + str(minor) + "/lib/"
+        elif os.path.isdir("/usr/lib/postgresql/" + str(major) + "/lib/"):
+            POSTGRES_LIB_DIR = "/usr/lib/postgresql/" + str(major) + "/lib/"
+        else:
+            log("Could not find postgres installation folders\n", PRINT_TO_CONSOLE)
+            return False
+        if os.path.isdir("/etc/postgresql/" + str(major) + "." + str(minor) + "/main/"):
+            POSTGRES_MAIN_DIR = "/etc/postgresql/" + str(major) + "." + str(minor) + "/main/"
+        elif os.path.isdir("/etc/postgresql/" + str(major) + "/main/"):
+            POSTGRES_MAIN_DIR = "/etc/postgresql/" + str(major) + "/main/"
+        else:
+            log("Could not find postgres installation folders\n", PRINT_TO_CONSOLE)
+            return False
         return True
     else:
         log("Postgres must be 8.3 or later\n", PRINT_TO_CONSOLE)

@@ -25,9 +25,10 @@ function testConnectionById(id) {
 	jQuery("#connect-partial-" + id).hide();
 	jQuery("#connect-fail-" + id).hide();
 		
-	new Ajax.Request('TestExternalConnection/' + encodeURIComponent(id),
+	new Ajax.Request('TestExternalConnection',
 			{
 				method : 'get', 
+				parameters: encodeURIComponent(id),
 				onSuccess : function (xhr) { testConnectionSuccess(xhr, id)},
 				onFailure : function () { testConnectionFailure(id)}
 			});

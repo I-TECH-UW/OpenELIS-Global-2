@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.services.DisplayListService;
+import org.openelisglobal.common.services.DisplayListService.ListType;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
@@ -48,6 +49,7 @@ public class PatientResultsController extends BaseController {
     public ModelAndView showPatientResults(HttpServletRequest request)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         PatientResultsForm form = new PatientResultsForm();
+        form.setReferralOrganizations(DisplayListService.getInstance().getList(ListType.REFERRAL_ORGANIZATIONS));
 
         ResultsLoadUtility resultsUtility = SpringContext.getBean(ResultsLoadUtility.class);
         resultsUtility.setSysUser(getSysUserId(request));

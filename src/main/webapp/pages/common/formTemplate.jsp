@@ -201,17 +201,17 @@ if (document.layers) {
 <%-- check_width()--%>
 <body onLoad="focusOnFirstInputField();check_width();onLoad()">
 
+<form:form name="${form.formName}" 
+		   action="${form.formAction}" 
+		   modelAttribute="form" 
+		   onSubmit="return submitForm(this);" 
+		   method="${form.formMethod}"
+		   id="mainForm">
 	<%-- for optimistic locking--%>
 	<table cellpadding="0" cellspacing="1" width="100%">
 		<tr>
 			<td><tiles:insertAttribute name="error" /></td>
 		</tr>
-		<form:form name="${form.formName}" 
-				   action="${form.formAction}" 
-				   modelAttribute="form" 
-				   onSubmit="return submitForm(this);" 
-				   method="${form.formMethod}"
-				   id="mainForm">
 		<tr>
 			<td><tiles:insertAttribute name="header" /></td>
 		</tr>
@@ -224,8 +224,8 @@ if (document.layers) {
 		<tr>
 			<td><tiles:insertAttribute name="footer" /></td>
 		</tr>
-		</form:form>
 	</table>
+</form:form>
 
 </body>
 

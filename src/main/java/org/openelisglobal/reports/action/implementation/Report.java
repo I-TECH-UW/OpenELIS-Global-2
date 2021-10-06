@@ -18,6 +18,7 @@ package org.openelisglobal.reports.action.implementation;
 
 import static org.apache.commons.validator.GenericValidator.isBlankOrNull;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.sql.Date;
@@ -26,7 +27,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
@@ -34,6 +35,8 @@ import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.DateUtil;
+import org.openelisglobal.image.service.ImageService;
+import org.openelisglobal.image.valueholder.Image;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.organization.service.OrganizationService;
 import org.openelisglobal.organization.valueholder.Organization;
@@ -48,6 +51,7 @@ import net.sf.jasperreports.engine.JasperRunManager;
 
 public abstract class Report implements IReportCreator {
 
+    private ImageService imageService = SpringContext.getBean(ImageService.class);
     private OrganizationService organizationService = SpringContext.getBean(OrganizationService.class);
     public static final String ERROR_REPORT = "NoticeOfReportError";
 
@@ -101,121 +105,17 @@ public abstract class Report implements IReportCreator {
                 ConfigurationProperties.getInstance().getPropertyValue(Property.ADDITIONAL_SITE_INFO));
         reportParameters.put("usePageNumbers",
                 ConfigurationProperties.getInstance().getPropertyValue(Property.USE_PAGE_NUMBERS_ON_REPORTS));
-        reportParameters.put("localization", createLocalizationMap());
-        // reportParameters.put("leftHeaderImage", getImage("headerLeftImage"));
-        // reportParameters.put("rightHeaderImage", getImage("headerRightImage"));
+        // reportParameters.put("localization", createLocalizationMap());
+        Optional<Image> leftLogo = imageService.getImageBySiteInfoName("headerLeftImage");
+        Optional<Image> rightLogo = imageService.getImageBySiteInfoName("headerRightImage");
+        if (leftLogo.isPresent()) {
+            reportParameters.put("leftHeaderImage", new ByteArrayInputStream(leftLogo.get().getImage()));
+        }
+        if (rightLogo.isPresent()) {
+            reportParameters.put("rightHeaderImage", new ByteArrayInputStream(rightLogo.get().getImage()));
+        }
         reportParameters.put(JRParameter.REPORT_LOCALE, LocaleContextHolder.getLocale());
         reportParameters.put(JRParameter.REPORT_RESOURCE_BUNDLE, MessageUtil.getMessageSourceAsResourceBundle());
-    }
-
-    /**
-     *
-     * @return map The correct way to localize JasperReports is to us $R{key}. This
-     *         was put in before the correct way was understood. Do not add to this
-     *         list. It will eventually be moved to the correct way although this
-     *         way is functional
-     */
-    // TODO csl see above note
-    protected Map<String, String> createLocalizationMap() {
-        HashMap<String, String> localizationMap = new HashMap<>();
-        localizationMap.put("requestOrderNumber", MessageUtil.getMessage("report.requestOrderNumber"));
-        localizationMap.put("confirmationOrderNumber", MessageUtil.getMessage("report.confirmationOrderNumber"));
-        localizationMap.put("sampleType", MessageUtil.getMessage("report.sampleType"));
-        localizationMap.put("reception", MessageUtil.getMessage("report.reception"));
-        localizationMap.put("initialResults", MessageUtil.getMessage("report.initialResults"));
-        localizationMap.put("results", MessageUtil.getMessage("report.results"));
-        localizationMap.put("confirmationResults", MessageUtil.getMessage("report.confirmationResult"));
-        localizationMap.put("requesterContact", MessageUtil.getMessage("report.requesterContact"));
-        localizationMap.put("telephoneAbv", MessageUtil.getMessage("report.telephoneAbv"));
-        localizationMap.put("completionDate", MessageUtil.getMessage("report.completionDate"));
-        localizationMap.put("site", MessageUtil.getMessage("report.site"));
-        localizationMap.put("fax", MessageUtil.getMessage("report.fax"));
-        localizationMap.put("email", MessageUtil.getMessage("report.email"));
-        localizationMap.put("test", MessageUtil.getMessage("report.test"));
-        localizationMap.put("result", MessageUtil.getMessage("report.result"));
-        localizationMap.put("note", MessageUtil.getMessage("report.note"));
-        // localizationMap.put("pageNumberOf",
-        // MessageUtil.getMessage("report.pageNumberOf"));
-        localizationMap.put("collectionDate", MessageUtil.getMessage("report.collectionDate"));
-        /* For patient report CDI */
-        localizationMap.put("patientCode", MessageUtil.getMessage("report.patientCode"));
-        localizationMap.put("prescriber", MessageUtil.getMessage("report.prescriber"));
-        localizationMap.put("districtFacility", MessageUtil.getMessage("report.districtFacility"));
-        localizationMap.put("regionFacility", MessageUtil.getMessage("report.regionFacility"));
-        localizationMap.put("referringSite", MessageUtil.getMessage("report.referringSite"));
-        localizationMap.put("ordinanceNo", MessageUtil.getMessage("report.ordinanceNo"));
-        localizationMap.put("orderDate", MessageUtil.getMessage("report.orderDate"));
-        localizationMap.put("receiptDate", MessageUtil.getMessage("report.receiptDate"));
-        localizationMap.put("specimenAndNo", MessageUtil.getMessage("report.specimenAndNo"));
-        localizationMap.put("collectionDate", MessageUtil.getMessage("report.collectionDate"));
-        localizationMap.put("outcome", MessageUtil.getMessage("report.outcome"));
-        localizationMap.put("referenceValue", MessageUtil.getMessage("report.referenceValue"));
-        localizationMap.put("unit", MessageUtil.getMessage("report.unit"));
-        localizationMap.put("labInfomation", MessageUtil.getMessage("report.labInfomation"));
-        localizationMap.put("serviceHead", MessageUtil.getMessage("report.serviceHead"));
-        localizationMap.put("associateProfessor", MessageUtil.getMessage("report.associateProfessor"));
-        localizationMap.put("assHeadOfBioclinicque", MessageUtil.getMessage("report.assHeadOfBioclinicque"));
-        localizationMap.put("reportDate", MessageUtil.getMessage("report.reportDate"));
-        localizationMap.put("about", MessageUtil.getMessage("report.about"));
-        localizationMap.put("idNational", MessageUtil.getMessage("report.idNational"));
-        localizationMap.put("program", MessageUtil.getMessage("report.program"));
-        localizationMap.put("status", MessageUtil.getMessage("report.status"));
-        localizationMap.put("alert", MessageUtil.getMessage("report.alert"));
-        localizationMap.put("correctedReport", MessageUtil.getMessage("report.correctedReport"));
-        localizationMap.put("signValidation", MessageUtil.getMessage("report.signValidation"));
-        localizationMap.put("date", MessageUtil.getMessage("report.date"));
-        localizationMap.put("analysisReport", MessageUtil.getMessage("report.analysisReport"));
-        localizationMap.put("specimen", MessageUtil.getMessage("report.specimen"));
-        localizationMap.put("specimenCollectTimes", MessageUtil.getMessage("report.specimenCollectTimes"));
-
-        /* HIV summary */
-        localizationMap.put("total", MessageUtil.getMessage("report.total"));
-        localizationMap.put("children", MessageUtil.getMessage("report.children"));
-        localizationMap.put("women", MessageUtil.getMessage("report.women"));
-        localizationMap.put("men", MessageUtil.getMessage("report.men"));
-        localizationMap.put("population", MessageUtil.getMessage("report.population"));
-        localizationMap.put("account", MessageUtil.getMessage("report.total"));
-        localizationMap.put("accounTestsByAgeAndSex", MessageUtil.getMessage("report.accounTestsByAgeAndSex"));
-        localizationMap.put("positive", MessageUtil.getMessage("report.positive"));
-        localizationMap.put("accountHivTypeTest", MessageUtil.getMessage("report.accountHivTypeTest"));
-        localizationMap.put("negative", MessageUtil.getMessage("report.negative"));
-        localizationMap.put("undetermined", MessageUtil.getMessage("report.undetermined"));
-        localizationMap.put("percentage", MessageUtil.getMessage("report.percentage"));
-        localizationMap.put("waiting", MessageUtil.getMessage("report.percentage"));
-
-        localizationMap.put("reception", MessageUtil.getMessage("report.reception"));
-        /* activity report */
-        localizationMap.put("activity", MessageUtil.getMessage("report.activity"));
-        localizationMap.put("from", MessageUtil.getMessage("report.from"));
-        localizationMap.put("to", MessageUtil.getMessage("report.to"));
-        localizationMap.put("of", MessageUtil.getMessage("report.of"));
-        localizationMap.put("printed", MessageUtil.getMessage("report.printed"));
-        localizationMap.put("techId", MessageUtil.getMessage("report.techId"));
-        localizationMap.put("collection", MessageUtil.getMessage("report.collection"));
-        localizationMap.put("patientNameCode", MessageUtil.getMessage("report.patientNameCode"));
-        localizationMap.put("status", MessageUtil.getMessage("report.status"));
-        localizationMap.put("testName", MessageUtil.getMessage("report.testName"));
-        localizationMap.put("dateFormat", MessageUtil.getMessage("report.dateFormat"));
-        localizationMap.put("dateReviewedReceived", MessageUtil.getMessage("report.dateReviewedReceived"));
-        /* Non Conformity by group/date */
-        localizationMap.put("supervisorSign", MessageUtil.getMessage("report.supervisorSign"));
-        localizationMap.put("for", MessageUtil.getMessage("report.for"));
-        localizationMap.put("comments", MessageUtil.getMessage("report.comments"));
-        localizationMap.put("biologist", MessageUtil.getMessage("report.biologist"));
-        localizationMap.put("typeOfSample", MessageUtil.getMessage("report.typeOfSample"));
-        localizationMap.put("reasonForRejection", MessageUtil.getMessage("report.reasonForRejection"));
-        localizationMap.put("section", MessageUtil.getMessage("report.section"));
-        localizationMap.put("service", MessageUtil.getMessage("report.service"));
-        localizationMap.put("study", MessageUtil.getMessage("report.study"));
-        localizationMap.put("siteSubjectNo", MessageUtil.getMessage("report.siteSubjectNo"));
-        localizationMap.put("subjectNo", MessageUtil.getMessage("report.subjectNo"));
-        /* Validation Report */
-        localizationMap.put("validationReport", MessageUtil.getMessage("report.validationReport"));
-        localizationMap.put("testSection", MessageUtil.getMessage("report.testSection"));
-        /* No Report report */
-        localizationMap.put("noReportMessage", MessageUtil.getMessage("report.noReportMessage"));
-
-        return localizationMap;
     }
 
     @Override

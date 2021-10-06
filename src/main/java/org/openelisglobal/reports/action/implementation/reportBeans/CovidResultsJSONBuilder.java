@@ -46,7 +46,7 @@ public class CovidResultsJSONBuilder extends CovidResultsBuilderImpl {
         resultJSON.append(PATIENT_DATE_OF_BIRTH_PROPERTY_NAME, patient.getBirthDateForDisplay());
         resultJSON.append(PATIENT_PHONE_NO_PROPERTY_NAME, patient.getPerson().getPrimaryPhone());
 
-        Optional<Task> task = getTaskForAnalysis(analysis);
+        Optional<Task> task = getReferringTaskForAnalysis(analysis);
 
         if (task.isPresent() && !GenericValidator.isBlankOrNull(task.get().getDescription())) {
             try {

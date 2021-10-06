@@ -241,6 +241,12 @@ public class NoteServiceImpl extends BaseObjectServiceImpl<Note, String> impleme
 
     @Transactional(readOnly = true)
     @Override
+    public List<Note> getNotes(NoteObject noteObject) {
+        return getNotesChronologicallyByRefIdAndRefTable(noteObject.getObjectId(), noteObject.getTableId());
+    }
+
+    @Transactional(readOnly = true)
+    @Override
     public String getNotesAsString(NoteObject noteObject, String prefix, String noteSeparator) {
         List<Note> noteList = getNotesChronologicallyByRefIdAndRefTable(noteObject.getObjectId(),
                 noteObject.getTableId());

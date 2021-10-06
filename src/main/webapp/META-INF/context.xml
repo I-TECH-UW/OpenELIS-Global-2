@@ -11,4 +11,3 @@
         password="${datasource.password}" />
 </Context>
 
-<!-- clinlims  -->

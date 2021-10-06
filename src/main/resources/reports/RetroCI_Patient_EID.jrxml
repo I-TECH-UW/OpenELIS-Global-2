@@ -40,7 +40,7 @@
 	<field name="allQaEvents" class="java.lang.String"/>
 	<field name="virologyEidQaEvent" class="java.lang.String"/>
 	<variable name="studyName" class="java.lang.String">
-		<initialValueExpression><![CDATA["Diagnostic des enfants par DBS-PCR"]]></initialValueExpression>
+		<initialValueExpression><![CDATA[$R{report.infant.diagnosis}]]></initialValueExpression>
 	</variable>
 	<background>
 		<band splitType="Stretch"/>

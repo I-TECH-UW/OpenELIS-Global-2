@@ -2,9 +2,8 @@
 	contentType="text/html; charset=UTF-8"
 	import="org.openelisglobal.common.action.IActionConstants,
 	org.openelisglobal.internationalization.MessageUtil,
-	org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory,
-    org.openelisglobal.common.util.Versioning,
-	org.openelisglobal.common.provider.validation.IAccessionNumberValidator"
+	org.openelisglobal.sample.util.AccessionNumberUtil,
+    org.openelisglobal.common.util.Versioning"
 %>
 
 <%@ page isELIgnored="false" %>
@@ -44,7 +43,7 @@ function search(){
 		<form:input path="accessionNumberSearch"
 					id="accessionNumberSearch"
 				   cssClass="input-medium" 
-	        	   maxlength="<%= Integer.toString(new AccessionNumberValidatorFactory().getValidator().getMaxAccessionLength()) %>" />
+	        	   maxlength="<%=Integer.toString(AccessionNumberUtil.getMaxAccessionLength())%>" />
 		<input class="btn" type="button" onclick="search();" value='<%=MessageUtil.getMessage("label.button.view") %>'>
 		</div>
 	</div>

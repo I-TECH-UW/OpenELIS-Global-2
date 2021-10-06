@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -99,8 +100,11 @@ public class PatientManagementUpdate implements IPatientUpdate {
 
     private Errors validatePatientInfo(PatientManagementInfo patientInfo) {
         Errors errors = new BaseErrors();
-        if (ConfigurationProperties.getInstance()
-                .isPropertyValueEqual(ConfigurationProperties.Property.ALLOW_DUPLICATE_SUBJECT_NUMBERS, "false")) {
+        boolean disallowDuplicateSubjectNumbers = ConfigurationProperties.getInstance()
+                .isPropertyValueEqual(ConfigurationProperties.Property.ALLOW_DUPLICATE_SUBJECT_NUMBERS, "false");
+        boolean disallowDuplicateNationalIds = ConfigurationProperties.getInstance()
+                .isPropertyValueEqual(ConfigurationProperties.Property.ALLOW_DUPLICATE_NATIONAL_IDS, "false");
+        if (disallowDuplicateSubjectNumbers || disallowDuplicateNationalIds) {
             String newSTNumber = GenericValidator.isBlankOrNull(patientInfo.getSTnumber()) ? null
                     : patientInfo.getSTnumber();
             String newSubjectNumber = GenericValidator.isBlankOrNull(patientInfo.getSubjectNumber()) ? null
@@ -115,13 +119,16 @@ public class PatientManagementUpdate implements IPatientUpdate {
 
                 for (PatientSearchResults result : results) {
                     if (!result.getPatientID().equals(patientInfo.getPatientPK())) {
-                        if (newSTNumber != null && newSTNumber.equals(result.getSTNumber())) {
+                        if (disallowDuplicateSubjectNumbers && newSTNumber != null
+                                && newSTNumber.equals(result.getSTNumber())) {
                             errors.reject("error.duplicate.STNumber", null, null);
                         }
-                        if (newSubjectNumber != null && newSubjectNumber.equals(result.getSubjectNumber())) {
+                        if (disallowDuplicateSubjectNumbers && newSubjectNumber != null
+                                && newSubjectNumber.equals(result.getSubjectNumber())) {
                             errors.reject("error.duplicate.subjectNumber", null, null);
                         }
-                        if (newNationalId != null && newNationalId.equals(result.getNationalId())) {
+                        if (disallowDuplicateNationalIds && newNationalId != null
+                                && newNationalId.equals(result.getNationalId())) {
                             errors.reject("error.duplicate.nationalId", null, null);
                         }
                     }
@@ -170,7 +177,6 @@ public class PatientManagementUpdate implements IPatientUpdate {
 
     private void copyFormBeanToValueHolders(PatientManagementInfo patientInfo)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-
         PropertyUtils.copyProperties(patient, patientInfo);
         PropertyUtils.copyProperties(person, patientInfo);
     }
@@ -219,6 +225,7 @@ public class PatientManagementUpdate implements IPatientUpdate {
         persistIdentityType(patientInfo.getHealthDistrict(), "HEALTH DISTRICT");
         persistIdentityType(patientInfo.getHealthRegion(), "HEALTH REGION");
         persistIdentityType(patientInfo.getOtherNationality(), "OTHER NATIONALITY");
+        persistIdentityType(patientInfo.getGuid(), "GUID");
     }
 
     private void persistExtraPatientAddressInfo(PatientManagementInfo patientInfo) {
@@ -394,6 +401,10 @@ public class PatientManagementUpdate implements IPatientUpdate {
         patient.setPerson(person);
 
         if (patientUpdateStatus == PatientUpdateStatus.ADD) {
+            UUID uuid = UUID.randomUUID();
+//            patientInfo.setFhirUuid(uuid);
+            patientInfo.setGuid(uuid.toString());
+            patient.setFhirUuid(uuid);
             patientService.insert(patient);
         } else if (patientUpdateStatus == PatientUpdateStatus.UPDATE) {
             patientService.update(patient);
@@ -401,6 +412,7 @@ public class PatientManagementUpdate implements IPatientUpdate {
 
         persistPatientRelatedInformation(patientInfo);
         patientID = patient.getId();
+        patientInfo.setPatientPK(patientID);
 
     }
 
