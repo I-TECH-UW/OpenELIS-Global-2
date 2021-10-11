@@ -24,7 +24,7 @@ WORKDIR /build
 #
 RUN git submodule update --init --recursive
 
-ENV DEFAULT_PW="adminADMIN!"
+ARG DEFAULT_PW="adminADMIN!"
 
 # OE Default Password
 RUN ./install/createDefaultPassword.sh -c -p ${DEFAULT_PW}
@@ -33,6 +33,7 @@ RUN ./install/createDefaultPassword.sh -c -p ${DEFAULT_PW}
 # Build DataExport
 #
 WORKDIR /build/dataexport
+
 RUN mvn clean install -DskipTests
 
 WORKDIR /build
