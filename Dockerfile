@@ -24,6 +24,11 @@ WORKDIR /build
 #
 RUN git submodule update --init --recursive
 
+ENV DEFAULT_PW="adminADMIN!"
+
+# OE Default Password
+RUN ./install/createDefaultPassword.sh -c -p ${DEFAULT_PW}
+
 ##
 # Build DataExport
 #
@@ -39,12 +44,8 @@ RUN	mvn clean install -DskipTests
 #
 FROM tomcat:8.5-jdk11
 
-ENV DEFAULT_PW="adminADMIN!"
-
 ADD install/createDefaultPassword.sh ./
 
-# OE Default Password
-RUN echo "${DEFAULT_PW}" | ./createDefaultPassword.sh
 
 #Clean out unneccessary files from tomcat (especially pre-existing applications) 
 RUN rm -rf /usr/local/tomcat/webapps/* \ 
