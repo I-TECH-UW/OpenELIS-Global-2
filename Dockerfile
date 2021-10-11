@@ -1,13 +1,16 @@
 ##
 # Build Stage
 #
-FROM ubuntu:focal as build
+FROM maven:3-jdk-11 as build
 
-ENV DEFAULT_PW="adminADMIN!"
+RUN apt-get -y update
+RUN apt-get -y install git apache2-utils
 
 ##
 # Copy Source Code
 #
+ADD .git /build/.git
+ADD .gitmodules /build/.gitmodules
 ADD ./pom.xml /build/pom.xml
 ADD ./tools /build/tools
 ADD ./src /build/src
@@ -19,8 +22,7 @@ WORKDIR /build
 ##
 # Checkout Dependencies
 #
-RUN git clone https://github.com/I-TECH-UW/dataexport.git --branch develop
-RUN git clone https://github.com/openelisglobal/openelisglobal-plugins.git plugins --branch master
+RUN git submodule update --init --recursive
 
 ##
 # Build DataExport
@@ -30,15 +32,19 @@ RUN mvn clean install -DskipTests
 
 WORKDIR /build
 
-# OE Default Password
-RUN ${DEFAULT_PW} | ./install/createDefaultPassword.sh
-
 RUN	mvn clean install -DskipTests
 
 ##
 # Run Stage
 #
 FROM tomcat:8.5-jdk11
+
+ENV DEFAULT_PW="adminADMIN!"
+
+ADD install/createDefaultPassword.sh ./
+
+# OE Default Password
+RUN echo "${DEFAULT_PW}" | ./createDefaultPassword.sh
 
 #Clean out unneccessary files from tomcat (especially pre-existing applications) 
 RUN rm -rf /usr/local/tomcat/webapps/* \ 

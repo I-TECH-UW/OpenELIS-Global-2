@@ -29,7 +29,6 @@ services:
             retries: 10 
             
     oe.openelis.org:
-        # to build a new image form source code , un comment line 24-26 and comment line 28
         # build:
         #   context: .
         # image: openelis-global-2

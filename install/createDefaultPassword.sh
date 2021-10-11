@@ -18,8 +18,12 @@ echo "Please enter a default password that can be used to login into the default
 echo "This password will be stored in the created project war as a hash. "
 echo "This is technically secure, but it is recommended to change the password on installation"
 
+echo ${resourcesDir}
+
 htpasswd -cBC 12 ${resourcesDir}/adminPassword.txt admin 
 result=$?
+
+echo $result
 while [ $result != 0 ]; do
   if [ $result == 3 ]
   then 
