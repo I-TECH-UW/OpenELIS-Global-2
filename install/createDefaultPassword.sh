@@ -1,5 +1,21 @@
 #!/bin/bash
 PROGNAME=$0
+pw=''
+
+cli_flag=false
+
+print_usage() {
+  printf "./createDefaultPassword.sh -c -p <password>"
+}
+
+while getopts 'cp:' flag; do
+  case "${flag}" in
+    c) cli_flag=true ;;
+    p) pw=${OPTARG} ;;
+    *) print_usage
+       exit 1 ;;
+  esac
+done
 
 #get location of this script
 SOURCE="${BASH_SOURCE[0]}"
@@ -18,8 +34,19 @@ echo "Please enter a default password that can be used to login into the default
 echo "This password will be stored in the created project war as a hash. "
 echo "This is technically secure, but it is recommended to change the password on installation"
 
-htpasswd -cBC 12 ${resourcesDir}/adminPassword.txt admin 
+echo "Output location: ${resourcesDir}"
+
+if [ $cli_flag == true ]
+then
+  htpasswd -bcBC 12 ${resourcesDir}/adminPassword.txt admin ${pw}
+else
+  htpasswd -cBC 12 ${resourcesDir}/adminPassword.txt admin
+fi
+
 result=$?
+
+echo "Result (for debugging): ${result}"
+
 while [ $result != 0 ]; do
   if [ $result == 3 ]
   then 
@@ -27,7 +54,7 @@ while [ $result != 0 ]; do
   else 
     echo "an error occured creating the password"
   fi
-  while true; do
+  while [ $cli_flag == false ]; do
     read -p "try again? [Y]es [N]o: " yn
     case $yn in
       [Yy][Ee][Ss]|[Yy] ) break;;
@@ -35,7 +62,12 @@ while [ $result != 0 ]; do
         * ) echo "Please answer yes or no.";;
     esac
   done
-  htpasswd -cBC 12 ${resourcesDir}/adminPassword.txt admin 
+  if [ $cli_flag == true ]
+  then
+    htpasswd -bcBC 12 ${resourcesDir}/adminPassword.txt admin ${pw}
+  else
+    htpasswd -cBC 12 ${resourcesDir}/adminPassword.txt admin
+  fi  
   result=$?
 done
 	

@@ -1,4 +1,52 @@
+##
+# Build Stage
+#
+FROM maven:3-jdk-11 as build
+
+RUN apt-get -y update
+RUN apt-get -y install git apache2-utils
+
+##
+# Copy Source Code
+#
+ADD .git /build/.git
+ADD .gitmodules /build/.gitmodules
+ADD ./pom.xml /build/pom.xml
+ADD ./tools /build/tools
+ADD ./src /build/src
+ADD ./install /build/install
+ADD ./dev /build/dev
+
+WORKDIR /build
+
+##
+# Checkout Dependencies
+#
+RUN git submodule update --init --recursive
+
+ARG DEFAULT_PW="adminADMIN!"
+
+# OE Default Password
+RUN ./install/createDefaultPassword.sh -c -p ${DEFAULT_PW}
+
+##
+# Build DataExport
+#
+WORKDIR /build/dataexport
+
+RUN mvn clean install -DskipTests
+
+WORKDIR /build
+
+RUN	mvn clean install -DskipTests
+
+##
+# Run Stage
+#
 FROM tomcat:8.5-jdk11
+
+ADD install/createDefaultPassword.sh ./
+
 
 #Clean out unneccessary files from tomcat (especially pre-existing applications) 
 RUN rm -rf /usr/local/tomcat/webapps/* \ 
@@ -6,7 +54,7 @@ RUN rm -rf /usr/local/tomcat/webapps/* \
     
 #Deploy the war into tomcat image and point root to it
 ADD install/tomcat-resources/ROOT.war /usr/local/tomcat/webapps/ROOT.war
-ADD target/OpenELIS-Global.war /usr/local/tomcat/webapps/OpenELIS-Global.war
+COPY --from=build /build/target/OpenELIS-Global.war /usr/local/tomcat/webapps/OpenELIS-Global.war
     
 #contains sensitive data, so being mounted at runtime
 #ADD ./install/tomcat-resources/server.xml /usr/local/tomcat/conf/server.xml
