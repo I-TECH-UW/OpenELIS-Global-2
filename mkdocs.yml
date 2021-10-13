@@ -12,7 +12,8 @@ nav:
        - Password Migration: password.md
        - Examples of FHIR messages used: messages.md
     - Develop: 
-       - Developers: dev.md
+       - Dev Environment Setup Instructions: dev_setup.md
+       - Developers Notes: dev.md
        - Adding facilities to the Consolidated Server: addingfacilities.md
        - Database Profiles Mass facility and test catalog updates: dbprofiles.md
     - Website: http://openelis-global.org
