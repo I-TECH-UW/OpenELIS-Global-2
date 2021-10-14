@@ -77,7 +77,7 @@ Creation Steps
 .. _SourceTree: http://www.sourcetreeapp.com/
 
 
-# How to add Analyzer on the main OpenELIS project?
+# How to install analyzer plugins for OpenELIS?
 1. The plugins must be compiled into a jar file
 2. the jar file must be uploaded to the OE server in the folder: /var/lib/openelis-global/plugins/
 3. the main project will be recompiled including the jar file, you can tell the plugin is properly installed when its available in the menu.
