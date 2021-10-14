@@ -46,7 +46,8 @@ import org.springframework.web.servlet.view.tiles3.TilesView;
 @Configuration
 @EnableJpaRepositories(basePackages = { "org.itech", "org.ozeki.sms" })
 @PropertySource("classpath:application.properties")
-@PropertySource("file:/run/secrets/common.properties")
+@PropertySource("classpath:common.properties")
+@PropertySource(value ="file:/run/secrets/common.properties", ignoreResourceNotFound = true)
 @PropertySource(value = "file:/run/secrets/extra.properties", ignoreResourceNotFound = true)
 @ComponentScan(basePackages = { "spring", "org.openelisglobal", "org.itech", "org.ozeki.sms", "oe.plugin" })
 public class AppConfig implements WebMvcConfigurer {
