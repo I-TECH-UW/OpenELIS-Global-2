@@ -1125,10 +1125,14 @@ td {
                         <option value='<%=pair.getId()%>'><%=pair.getValue()%>
                         </option>
                         <% } %>
-                    </select><br/><br/><br/>
-                    <br /> <spring:message code="label.loinc" /><br />
+                    </select> 
+                    <br /> 
+                    <br/>
+                    <br/>
+                    <spring:message code="label.loinc" /><br />
 					<form:input path="loinc" type="text" id="loinc"
-					onchange="checkReadyForNextStep()" /></td>
+					onchange="checkReadyForNextStep()" />
+					<br/>
                     <br/><br/>
                     <label for="orderable"><spring:message code="test.isActive"/></label>
                     <input type="checkbox" id="active" checked="checked"/><br/>
