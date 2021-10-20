@@ -56,9 +56,6 @@ RUN rm -rf /usr/local/tomcat/webapps/* \
 ADD install/tomcat-resources/ROOT.war /usr/local/tomcat/webapps/ROOT.war
 COPY --from=build /build/target/OpenELIS-Global.war /usr/local/tomcat/webapps/OpenELIS-Global.war
     
-#contains sensitive data, so being mounted at runtime
-#ADD ./install/tomcat-resources/server.xml /usr/local/tomcat/conf/server.xml
-
 #rewrite cataline.properties with our catalina.properties so it contains:
 #    org.apache.catalina.STRICT_SERVLET_COMPLIANCE=true
 #    org.apache.catalina.connector.RECYCLE_FACADES=true

@@ -88,8 +88,6 @@ git submodule update --recursive
 #sed '2!d' source/openelisglobal-core/app/src/build.properties  > build.txt
 cd ${CALL_DIR}
 
-bash ${INSTALL_DIR}/createDefaultPassword.sh
-
 echo "creating docker images"
 #create jpaserver docker image
 #bash ${INSTALL_DIR}/buildProject.sh -dl ${JPA_SERVER_DIR}
