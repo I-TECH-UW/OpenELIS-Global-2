@@ -144,8 +144,8 @@ then
 	docker pull postgres:9.5
 	docker save postgres:9.5 | gzip > Postgres_DockerImage.tar.gz
 	echo "saving JPA Server docker image"
-	docker pull hapiproject/hapi:v5.4.0
-	docker save hapiproject/hapi:v5.4.0 | gzip > JPAServer_DockerImage.tar.gz
+	docker pull hapiproject/hapi:v5.4.1
+	docker save hapiproject/hapi:v5.4.1 | gzip > JPAServer_DockerImage.tar.gz
 	echo "saving Autoheal docker image"
 	docker pull willfarrell/autoheal:1.2.0
 	docker save willfarrell/autoheal:1.2.0 | gzip > AutoHeal_DockerImage.tar.gz

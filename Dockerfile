@@ -44,10 +44,13 @@ RUN groupadd tomcat; \
     chmod g-w,o-rwx $CATALINA_HOME/conf/tomcat-users.xml; \
     chmod g-w,o-rwx $CATALINA_HOME/conf/web.xml
 
+ADD install/openelis_healthcheck.sh /healthcheck.sh
+RUN chown tomcat_admin:tomcat /healthcheck.sh; \
+    chmod 770 /healthcheck.sh;  
+
 ADD install/docker-entrypoint.sh /docker-entrypoint.sh
 RUN chown tomcat_admin:tomcat /docker-entrypoint.sh; \
-    chmod 770 /docker-entrypoint.sh;
-    
+    chmod 770 /docker-entrypoint.sh; 
 USER tomcat_admin
 
 ENTRYPOINT [ "/docker-entrypoint.sh" ]
