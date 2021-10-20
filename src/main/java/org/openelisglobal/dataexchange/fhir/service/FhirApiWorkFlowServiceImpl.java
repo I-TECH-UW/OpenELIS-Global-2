@@ -698,7 +698,8 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         for (ServiceRequest serviceRequest : remoteServiceRequests) {
             Bundle searchBundle = fhirClient.search()//
                     .forResource(QuestionnaireResponse.class)//
-                    .where(QuestionnaireResponse.BASED_ON.hasId(serviceRequest.getIdElement().getIdPart()))
+                    .where(QuestionnaireResponse.BASED_ON
+                            .hasId(ResourceType.ServiceRequest + "/" + serviceRequest.getIdElement().getIdPart()))
                     .returnBundle(Bundle.class).execute();
             for (BundleEntryComponent entry : searchBundle.getEntry()) {
                 if (entry.hasResource()
