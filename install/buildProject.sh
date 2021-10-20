@@ -30,7 +30,7 @@ fi
 if [ $dockerBuild == true ]
 then
 	#build the war, and create the docker image
-	mvn clean install dockerfile:build -DskipTests
+	docker build .
 else
 	mvn clean install -DskipTests
 fi
