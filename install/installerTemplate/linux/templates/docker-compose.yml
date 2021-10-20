@@ -57,14 +57,14 @@ services:
             - source: common.properties
             - source: extra.properties
         healthcheck:
-            test: ["CMD", "curl", "-k", "--fail", "--silent", "-o", "/dev/null", "https://oe.openelis.org:8443/OpenELIS-Global/LoginPage.do"]
+            test: ["CMD", "/healthcheck.sh"]
             timeout: 10s
             interval: 60s
             retries: 3
 
     fhir.openelis.org:
         container_name: [% fhir_api_name %]
-        image: hapiproject/hapi:v5.4.0
+        image: hapiproject/hapi:v5.4.1
 #db        depends_on:
 #db            - db.openelis.org
         ports:
