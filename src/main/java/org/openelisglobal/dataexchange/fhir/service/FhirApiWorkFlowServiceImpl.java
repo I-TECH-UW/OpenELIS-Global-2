@@ -21,6 +21,7 @@ import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Observation;
 import org.hl7.fhir.r4.model.Patient;
 import org.hl7.fhir.r4.model.Practitioner;
+import org.hl7.fhir.r4.model.QuestionnaireResponse;
 import org.hl7.fhir.r4.model.Reference;
 import org.hl7.fhir.r4.model.Resource;
 import org.hl7.fhir.r4.model.ResourceType;
@@ -297,14 +298,23 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
             referralObjects.serviceRequests = Arrays.asList(originalServiceRequest);
             originalReferralObjectsByServiceRequest.put(serviceRequestId, referralObjects);
         }
-        if (bundleEntry.getResource().getResourceType().equals(ResourceType.Practitioner)) {
-            Practitioner originalPractitioner = (Practitioner) bundleEntry.getResource();
-            String practitionerId = originalPractitioner.getIdElement().getIdPart();
+        if (bundleEntry.getResource().getResourceType().equals(ResourceType.QuestionnaireResponse)) {
+            QuestionnaireResponse originalQResponse = (QuestionnaireResponse) bundleEntry.getResource();
+            String serviceRequestId = originalQResponse.getBasedOnFirstRep().getReferenceElement().getIdPart();
             OriginalReferralObjects referralObjects = originalReferralObjectsByServiceRequest
-                    .getOrDefault(practitionerId, new OriginalReferralObjects());
-            referralObjects.requestors = Arrays.asList(originalPractitioner);
-            originalReferralObjectsByServiceRequest.put(practitionerId, referralObjects);
+                    .getOrDefault(serviceRequestId, new OriginalReferralObjects());
+            referralObjects.questionnaireResponses = Arrays.asList(originalQResponse);
+            originalReferralObjectsByServiceRequest.put(serviceRequestId, referralObjects);
         }
+        // used wrong id to match so commented out
+//        if (bundleEntry.getResource().getResourceType().equals(ResourceType.Practitioner)) {
+//            Practitioner originalPractitioner = (Practitioner) bundleEntry.getResource();
+//            String practitionerId = originalPractitioner.getIdElement().getIdPart();
+//            OriginalReferralObjects referralObjects = originalReferralObjectsByServiceRequest
+//                    .getOrDefault(practitionerId, new OriginalReferralObjects());
+//            referralObjects.requestors = Arrays.asList(originalPractitioner);
+//            originalReferralObjectsByServiceRequest.put(practitionerId, referralObjects);
+//        }
         if (bundleEntry.getResource().getResourceType().equals(ResourceType.Task)) {
             Task referralTask = (Task) bundleEntry.getResource();
             String serviceRequestId = referralTask.getBasedOnFirstRep().getReferenceElement().getIdPart();
@@ -498,6 +508,8 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         OriginalReferralObjects objects = new OriginalReferralObjects();
 
         List<ServiceRequest> remoteServiceRequests = getBasedOnServiceRequestsFromServer(sourceFhirClient, remoteTask);
+        List<QuestionnaireResponse> remoteQResponses = getQuestionnaireResponsesForServiceRequestsFromServer(
+                sourceFhirClient, remoteServiceRequests);
         List<Specimen> remoteSpecimens = getSpecimenForServiceRequestsFromServer(sourceFhirClient,
                 remoteServiceRequests);
         List<Practitioner> remoteRequesters = getRequestorsForServiceRequestsFromServer(sourceFhirClient,
@@ -542,6 +554,27 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
 
 //            localTask.addBasedOn(fhirTransformService.createReferenceFor(localServiceRequest));
             objects.serviceRequests.add(localServiceRequest);
+        }
+
+        // QuestionnaireResponse
+        objects.questionnaireResponses = new ArrayList<>();
+        for (QuestionnaireResponse qResponse : remoteQResponses) {
+            QuestionnaireResponse localQResponse = qResponse;
+            fhirOperations.updateResources.put(localQResponse.getIdElement().getIdPart(), localQResponse);
+//            questionnaireResponse only has one identifier so we can't add identifiers to the list like other objects
+//            Optional<QuestionnaireResponse> existingLocalBasedOn = getQuestionnaireResponseWithSameIdentifier(qResponse,
+//                    remoteStorePath);
+//            if (existingLocalBasedOn.isEmpty()) {
+//                localQResponse = qResponse
+//                        .addIdentifier(createIdentifierToRemoteResource(qResponse, remoteStorePath));
+////                fhirOperations.createResources.add(localServiceRequest);
+//                fhirOperations.updateResources.put(localQResponse.getIdElement().getIdPart(), localQResponse);
+//            } else {
+//                localQResponse = existingLocalBasedOn.get();
+//            }
+
+//            localTask.addBasedOn(fhirTransformService.createReferenceFor(localServiceRequest));
+            objects.questionnaireResponses.add(localQResponse);
         }
 
         // Specimen
@@ -657,6 +690,24 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         LogEvent.logDebug(this.getClass().getName(), "",
                 "no provider with same identifier " + provider.getIdElement().getIdPart());
         return Optional.empty();
+    }
+
+    private List<QuestionnaireResponse> getQuestionnaireResponsesForServiceRequestsFromServer(IGenericClient fhirClient,
+            List<ServiceRequest> remoteServiceRequests) {
+        List<QuestionnaireResponse> questionnaireResponses = new ArrayList<>();
+        for (ServiceRequest serviceRequest : remoteServiceRequests) {
+            Bundle searchBundle = fhirClient.search()//
+                    .forResource(QuestionnaireResponse.class)//
+                    .where(QuestionnaireResponse.BASED_ON.hasId(serviceRequest.getIdElement().getIdPart()))
+                    .returnBundle(Bundle.class).execute();
+            for (BundleEntryComponent entry : searchBundle.getEntry()) {
+                if (entry.hasResource()
+                        && ResourceType.QuestionnaireResponse.equals(entry.getResource().getResourceType())) {
+                    questionnaireResponses.add((QuestionnaireResponse) entry.getResource());
+                }
+            }
+        }
+        return questionnaireResponses;
     }
 
     private List<Specimen> getSpecimenForServiceRequestsFromServer(IGenericClient fhirClient,
@@ -820,7 +871,9 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         return practitioner;
     }
 
+    // may be incomplete
     public class OriginalReferralObjects {
+        public List<QuestionnaireResponse> questionnaireResponses;
         public Practitioner practitioner;
         public Task task;
         public List<ServiceRequest> serviceRequests;
