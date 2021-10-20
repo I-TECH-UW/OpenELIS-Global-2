@@ -92,11 +92,11 @@ echo "creating docker images"
 #create jpaserver docker image
 #bash ${INSTALL_DIR}/buildProject.sh -dl ${JPA_SERVER_DIR}
 #create dataexport jar so it can be used in OpenELIS
-bash ${INSTALL_DIR}/buildProject.sh -l ${DATA_EXPORT_DIR}
+#bash ${INSTALL_DIR}/buildProject.sh -l ${DATA_EXPORT_DIR}
 #create data import docker image
 #bash ${INSTALL_DIR}/buildProject.sh -dl ${CONSOLIDATED_SERVER_DIR}
-#create the docker image
-bash ${INSTALL_DIR}/buildProject.sh -dl ${PROJECT_DIR}
+#create the docker image 
+bash ${INSTALL_DIR}/buildProject.sh -dl ${PROJECT_DIR} -t openelisglobal
 
 createLinuxInstaller() {
 	context=$1
@@ -137,7 +137,7 @@ then
 	cd ${CALL_DIR}
 	
 	echo "saving docker image as OpenELIS-Global_DockerImage.tar.gz"
-	docker save ${artifactId}:latest | gzip > OpenELIS-Global_DockerImage.tar.gz
+	docker save openelisglobal:latest | gzip > OpenELIS-Global_DockerImage.tar.gz
 	echo "saving Postgres docker image"
 	docker pull postgres:9.5
 	docker save postgres:9.5 | gzip > Postgres_DockerImage.tar.gz
