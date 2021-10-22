@@ -322,7 +322,7 @@ def create_docker_compose_file():
             line = line.replace("[% oe_name %]", DOCKER_OE_CONTAINER_NAME )
         if line.find("[% fhir_api_name %]")  >= 0:
             line = line.replace("[% fhir_api_name %]", DOCKER_FHIR_API_CONTAINER_NAME )
-        if line.find("[% fhir_api_name %]")  >= 0:
+        if line.find("[% autoheal_name %]")  >= 0:
             line = line.replace("[% autoheal_name %]", DOCKER_AUTOHEAL_CONTAINER_NAME )
         if line.find("[% timezone %]")  >= 0:
             line = line.replace("[% timezone %]", TIMEZONE )
