@@ -73,6 +73,7 @@ DB_PORT="5432"
 DOCKER_OE_REPO_NAME = "openelisglobal" #must match docker image name (not container name)
 DOCKER_OE_CONTAINER_NAME = "openelisglobal-webapp" 
 DOCKER_FHIR_API_CONTAINER_NAME = "external-fhir-api"
+DOCKER_AUTOHEAL_CONTAINER_NAME = "autoheal-oe"
 DOCKER_DB_CONTAINER_NAME = "openelisglobal-database" 
 DOCKER_DB_BACKUPS_DIR = "/backups/"  # path in docker container
 DOCKER_DB_HOST_PORT = "5432"
@@ -321,6 +322,8 @@ def create_docker_compose_file():
             line = line.replace("[% oe_name %]", DOCKER_OE_CONTAINER_NAME )
         if line.find("[% fhir_api_name %]")  >= 0:
             line = line.replace("[% fhir_api_name %]", DOCKER_FHIR_API_CONTAINER_NAME )
+        if line.find("[% fhir_api_name %]")  >= 0:
+            line = line.replace("[% autoheal_name %]", DOCKER_AUTOHEAL_CONTAINER_NAME )
         if line.find("[% timezone %]")  >= 0:
             line = line.replace("[% timezone %]", TIMEZONE )
         if line.find("[% truststore_password %]")  >= 0:
@@ -770,6 +773,10 @@ def uninstall_docker_images():
     
     log("removing fhir api image...", PRINT_TO_CONSOLE)
     cmd = 'docker rm $(docker stop $(docker ps -a -q --filter="name=' + DOCKER_FHIR_API_CONTAINER_NAME + '" --format="{{.ID}}"))'
+    os.system(cmd)
+    
+    log("removing autoheal image...", PRINT_TO_CONSOLE)
+    cmd = 'docker rm $(docker stop $(docker ps -a -q --filter="name=' + DOCKER_AUTOHEAL_CONTAINER_NAME + '" --format="{{.ID}}"))'
     os.system(cmd)
     
 
