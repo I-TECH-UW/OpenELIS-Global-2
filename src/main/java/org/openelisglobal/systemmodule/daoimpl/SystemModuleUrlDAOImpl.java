@@ -64,7 +64,7 @@ public class SystemModuleUrlDAOImpl extends BaseDAOImpl<SystemModuleUrl, String>
             Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setString("urlPath", urlPath);
             query.setInteger("systemModuleId", Integer.parseInt(moduleId));
-            moduleUrl = (SystemModuleUrl) query.getSingleResult();
+            moduleUrl = (SystemModuleUrl) query.getResultStream().findFirst().orElse(null);
         } catch (RuntimeException e) {
             LogEvent.logDebug(e);
             LogEvent.logError(e.toString(), e);
