@@ -50,6 +50,7 @@ import org.openelisglobal.unitofmeasure.valueholder.UnitOfMeasure;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -60,7 +61,7 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class TestAddController extends BaseController {
 
-    private static final String[] ALLOWED_FIELDS = new String[] { "jsonWad" };
+    private static final String[] ALLOWED_FIELDS = new String[] { "jsonWad", "loinc" };
 
     @Autowired
     private TestAddFormValidator formValidator;
@@ -95,6 +96,7 @@ public class TestAddController extends BaseController {
                 "Hibernate Version: " + org.hibernate.Version.getVersionString());
 
         TestAddForm form = new TestAddForm();
+        Test test = new Test();
 
         List<IdValuePair> allSampleTypesList = new ArrayList<>();
         allSampleTypesList.addAll(DisplayListService.getInstance().getList(ListType.SAMPLE_TYPE_ACTIVE));
@@ -108,6 +110,7 @@ public class TestAddController extends BaseController {
         form.setAgeRangeList(SpringContext.getBean(ResultLimitService.class).getPredefinedAgeRanges());
         form.setDictionaryList(DisplayListService.getInstance().getList(ListType.DICTIONARY_TEST_RESULTS));
         form.setGroupedDictionaryList(createGroupedDictionaryList());
+        form.setLoinc(test.getLoinc());
 
         return findForward(FWD_SUCCESS, form);
     }
@@ -133,6 +136,7 @@ public class TestAddController extends BaseController {
             LogEvent.logError(e.getMessage(), e);
         }
         TestAddParams testAddParams = extractTestAddParms(obj, parser);
+        validateLoinc(testAddParams.loinc, result);
         List<TestSet> testSets = createTestSets(testAddParams);
         Localization nameLocalization = createNameLocalization(testAddParams);
         Localization reportingNameLocalization = createReportingNameLocalization(testAddParams);
@@ -150,6 +154,18 @@ public class TestAddController extends BaseController {
 
         return findForward(FWD_SUCCESS_INSERT, form);
     }
+
+    private Errors validateLoinc(String loincCode, Errors errors) {
+        List<Test> tests = testService.getTestsByLoincCode(loincCode);
+        for (Test test : tests) {
+            if(test.getLoinc().equals(loincCode)){
+                errors.reject("entry.invalid.loinc.number.used", 
+                "entry.invalid.loinc.number.used");
+            }
+        }
+        return errors;  
+    }
+
 
     private Localization createNameLocalization(TestAddParams testAddParams) {
         return LocalizationServiceImpl.createNewLocalization(testAddParams.testNameEnglish,

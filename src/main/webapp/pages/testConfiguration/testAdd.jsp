@@ -792,6 +792,7 @@
         jQuery("#panelRO").append(panelNames);
         jQuery("#uomRO").empty();
         jQuery("#uomRO").append(jQuery("#uomSelection  option:selected").text());
+        jQuery("#loincRO").text(jQuery("#loinc").val());
         jQuery("#resultTypeRO").text(jQuery("#resultTypeSelection  option:selected").text());
         jQuery("#activeRO").text(jQuery("#active").attr("checked") ? "Y" : "N");
         jQuery("#orderableRO").text(jQuery("#orderable").attr("checked") ? "Y" : "N");
@@ -810,6 +811,7 @@
         addJsonPanels(jsonObj);
         jQuery("#panelSelection").val();
         jsonObj.uom = jQuery("#uomSelection").val();
+        jsonObj.loinc = jQuery("#loinc").val();
         jsonObj.resultType = jQuery("#resultTypeSelection").val();
         jsonObj.orderable = jQuery("#orderable").attr("checked") ? 'Y' : 'N';
         jsonObj.notifyResults = jQuery("#notifyResults").attr("checked") ? 'Y' : 'N';
@@ -1123,7 +1125,15 @@ td {
                         <option value='<%=pair.getId()%>'><%=pair.getValue()%>
                         </option>
                         <% } %>
-                    </select><br/><br/><br/><br/><br/>
+                    </select> 
+                    <br /> 
+                    <br/>
+                    <br/>
+                    <spring:message code="label.loinc" /><br />
+					<form:input path="loinc" type="text" id="loinc"
+					onchange="checkReadyForNextStep()" />
+					<br/>
+                    <br/><br/>
                     <label for="orderable"><spring:message code="test.isActive"/></label>
                     <input type="checkbox" id="active" checked="checked"/><br/>
                     <label for="orderable"><spring:message code="label.orderable"/></label>
@@ -1157,6 +1167,11 @@ td {
             <spring:message code="label.unitofmeasure"/>
             <div class="tab" id="uomRO"><spring:message code="label.none"/></div>
             <br/>
+            <spring:message code="label.loinc" />
+			<div class="tab" id="loincRO">
+				<spring:message code="label.none" />
+			</div>
+			<br />
             <spring:message code="result.resultType"/>
             <div class="tab" id="resultTypeRO"></div>
             <br/>

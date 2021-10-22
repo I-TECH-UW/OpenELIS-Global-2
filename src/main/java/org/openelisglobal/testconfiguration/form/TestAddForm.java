@@ -3,6 +3,7 @@ package org.openelisglobal.testconfiguration.form;
 import java.util.List;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 
 import org.openelisglobal.common.form.BaseForm;
 
@@ -36,6 +37,9 @@ public class TestAddForm extends BaseForm {
     // for display
     private List groupedDictionaryList;
 
+    @Pattern(regexp = "^[0-9-]*$")
+    private String loinc;
+
     public TestAddForm() {
         setFormName("testAddForm");
     }
@@ -62,6 +66,14 @@ public class TestAddForm extends BaseForm {
 
     public void setPanelList(List panelList) {
         this.panelList = panelList;
+    }
+
+    public String getLoinc() {
+        return loinc;
+    }
+
+    public void setLoinc(String loinc) {
+        this.loinc = loinc;
     }
 
     public List getUomList() {
