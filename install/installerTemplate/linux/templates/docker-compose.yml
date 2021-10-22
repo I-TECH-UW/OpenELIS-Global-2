@@ -91,6 +91,7 @@ services:
             - source: truststore
 
     autoheal:
+        container_name: [% autoheal_name %]
         image: willfarrell/autoheal:1.2.0
         tty: true
         container_name: autoheal
