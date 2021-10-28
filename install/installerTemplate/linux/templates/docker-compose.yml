@@ -94,7 +94,6 @@ services:
         container_name: [% autoheal_name %]
         image: willfarrell/autoheal:1.2.0
         tty: true
-        container_name: autoheal
         restart: always
         environment:
           - AUTOHEAL_CONTAINER_LABEL=all
