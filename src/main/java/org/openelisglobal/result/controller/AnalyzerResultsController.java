@@ -781,9 +781,10 @@ public class AnalyzerResultsController extends BaseController {
         SampleGrouping sampleGrouping = createRecordsForNewResult(groupedResultList);
         // TODO currently there are no user selections of reflexes on the analyzer
         // result page so for now this is ok
-        sampleGrouping.triggersToSelectedReflexesMap = new HashMap<>();
-
-        sampleGroupList.add(sampleGrouping);
+        if (sampleGrouping != null) {
+            sampleGrouping.triggersToSelectedReflexesMap = new HashMap<>();
+            sampleGroupList.add(sampleGrouping);
+        }
 
     }
 
