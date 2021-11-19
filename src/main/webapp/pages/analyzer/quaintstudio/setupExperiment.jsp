@@ -45,7 +45,7 @@ function getAnalyzerId() {
 	return jQuery("#analyzerId").val();
 }
 
-function getTestId() {
+function getTestLOINC() {
 	return jQuery("#analyzerTests_" + getAnalyzerId() + "_testSelect").val();;
 }
 
@@ -212,16 +212,16 @@ function handleSelectedPatientAlt(identifier, accessionNumber) {
 		identifier = getCurActiveIdentifier();
 	}
 	if (!accessionNumber) {
-	    if(jQuery("#searchCriteria").val() == 5){//lab number
-	        accessionNumber = jQuery("#searchValue").val();
+	    if(jQuery("#patientLabNoSearchValue").val()){//lab number
+	        accessionNumber = jQuery("#patientLabNoSearchValue").val();
 	    }
 	}
     var patientID = patientSelectID ? patientSelectID : "";
-    var searchUrl = '${form.formAction}'.sub('Form','') + "?accessionNumber=" + accessionNumber + "&patientID=" + patientID;
-    if( !(typeof requestType === 'undefined') ){
-    	searchUrl += "&type=" + requestType;
-    }
-    getSampleForLabOrderOrPatientWithTest(accessionNumber, patientID, getTestId(), true, selectedPatientGetSampleSuccess, null, identifier);
+//     var searchUrl = '${form.formAction}'.sub('Form','') + "?accessionNumber=" + accessionNumber + "&patientID=" + patientID;
+//     if( !(typeof requestType === 'undefined') ){
+//     	searchUrl += "&type=" + requestType;
+//     }
+    getSampleForLabOrderOrPatientWithTestLOINC(accessionNumber, patientID, getTestLOINC(), true, selectedPatientGetSampleSuccess, null, identifier);
 }
 
 function selectedPatientGetSampleSuccess(xhr, identifier) {
@@ -265,6 +265,7 @@ function saveExperimentSuccess(xhr) {
 }
 
 function downloadSetupFile() {
+	const params = new URLSearchParams();
 	params.append('report', 'MauritiusProtocolSheet');
 	params.append('filename', jQuery("#filename").val());
 	params.append('experimentId', jQuery("#experimentId").val());
@@ -278,7 +279,7 @@ function printSetupFile() {
 	params.append('reportName', jQuery("#filename").val());
 	params.append('experimentId', jQuery("#experimentId").val());
 	
-	window.open("ReportPrint/?" + params.toString(), '_blank');
+	window.open("ReportPrint?" + params.toString(), '_blank');
 }
 
 function setPositive(identifier) {

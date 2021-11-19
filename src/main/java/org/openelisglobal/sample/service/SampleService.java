@@ -108,4 +108,6 @@ public interface SampleService extends BaseObjectService<Sample, String> {
     List<Sample> getSamplesByAnalysisIds(List<String> analysisIds);
 
     List<Organization> getOrganizationRequesters(Sample sample);
+
+    boolean sampleContainsTestWithLoinc(String id, String loinc);
 }

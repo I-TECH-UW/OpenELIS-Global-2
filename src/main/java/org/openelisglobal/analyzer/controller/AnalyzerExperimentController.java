@@ -62,7 +62,8 @@ public class AnalyzerExperimentController extends BaseController {
             analyzersWellInfo.put(analyzer.getId(), new WellInfo(12, 8));
             analyzersTests.put(analyzer.getId(), analyzerMappingService.getAllForAnalyzer(analyzer.getId()).stream()
                     .map(e -> new LabelValuePair(
-                            testService.get(e.getTestId()).getLocalizedTestName().getLocalizedValue(), e.getTestId()))
+                            testService.get(e.getTestId()).getLocalizedTestName().getLocalizedValue(),
+                            testService.get(e.getTestId()).getLoinc()))
                     .collect(Collectors.toList()));
 //            analyzerTests.put(analyzer.getId(),
 //                    analyzerMappingService.getAllForAnalyzer(analyzer.getId()).stream()

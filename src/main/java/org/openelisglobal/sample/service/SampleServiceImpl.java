@@ -558,6 +558,17 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
 
     @Override
     @Transactional(readOnly = true)
+    public boolean sampleContainsTestWithLoinc(String sampleId, String loinc) {
+        for (Analysis curAnalysis : analysisService.getAnalysesBySampleId(sampleId)) {
+            if (curAnalysis.getTest().getLoinc().equals(loinc)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public List<Sample> getAllMissingFhirUuid() {
         return sampleDAO.getAllMissingFhirUuid();
     }
