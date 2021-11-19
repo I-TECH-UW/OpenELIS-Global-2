@@ -18,7 +18,6 @@ package org.openelisglobal.analyzerimport.action;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -52,10 +51,10 @@ public class AnalyzerImportController implements IActionConstants {
         boolean fileRead = false;
         InputStream stream = file.getInputStream();
 
-        reader = AnalyzerReaderFactory.getReaderFor(file.getName());
+        reader = AnalyzerReaderFactory.getReaderFor(file.getOriginalFilename());
 
         if (reader != null) {
-            fileRead = reader.readStream(new InputStreamReader(stream));
+            fileRead = reader.readStream(stream);
         }
 
 //        try {

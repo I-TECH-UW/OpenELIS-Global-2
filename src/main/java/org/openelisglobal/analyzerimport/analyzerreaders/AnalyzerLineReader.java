@@ -18,6 +18,7 @@ package org.openelisglobal.analyzerimport.analyzerreaders;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,12 +52,12 @@ public class AnalyzerLineReader extends AnalyzerReader {
     }
 
     @Override
-    public boolean readStream(InputStreamReader reader) {
+    public boolean readStream(InputStream stream) {
         error = null;
         inserter = null;
         lines = new ArrayList<>();
 
-        BufferedReader bufferedReader = new BufferedReader(reader);
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(stream));
 
         try {
             for (String line = bufferedReader.readLine(); line != null; line = bufferedReader.readLine()) {

@@ -79,6 +79,11 @@
 			<artifactId>httpclient</artifactId>
 			<version>4.5.13</version>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+			<version>3.10-FINAL</version>
+		</dependency>
 		<!-- APACHE COMMONS DEPENDENCIES -->
 		<dependency>
 			<groupId>org.apache.commons</groupId>
@@ -340,17 +345,17 @@
 			<version>${springframework.version}</version>
 		</dependency>
 		<dependency>
-         	<groupId>org.mockito</groupId>
-         	<artifactId>mockito-core</artifactId>
-			 <scope>test</scope>
-        	<version>2.21.0</version>
-       	</dependency>	
-	    <dependency>
-            <groupId>org.testcontainers</groupId>
-            <artifactId>postgresql</artifactId>
-            <version>${testContainersVersion}</version>
-            <scope>test</scope>
-       </dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<scope>test</scope>
+			<version>2.21.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.testcontainers</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>${testContainersVersion}</version>
+			<scope>test</scope>
+		</dependency>
 		<!-- ASSORTED DEPENDENCIES (Sorted by artifactId) -->
 		<dependency>
 			<groupId>org.ajaxtags</groupId>
@@ -477,7 +482,7 @@
 			<id>jaspersoft-third-party</id>
 			<url>https://jaspersoft.jfrog.io/jaspersoft/third-party-ce-artifacts/</url>
 		</repository>
-	</repositories>	
+	</repositories>
 	<build>
 		<finalName>OpenELIS-Global</finalName>
 		<resources>
