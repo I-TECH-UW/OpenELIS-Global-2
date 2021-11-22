@@ -43,6 +43,7 @@ SETUP_CONFIG_FILE_NAME = "setup.ini"
 CLIENT_FACING_KEYSTORE = "client_facing_keystore"
 KEYSTORE = "keystore"
 TRUSTSTORE = "truststore"
+CLEANUP_SCRIPT_NAME = "logCleanup.sh"
 
 #install directories
 OE_VAR_DIR = "/var/lib/openelis-global/"
@@ -55,6 +56,7 @@ DB_INIT_DIR = OE_VAR_DIR + "initDB/"
 SECRETS_DIR = OE_VAR_DIR + "secrets/"
 PLUGINS_DIR = OE_VAR_DIR + "plugins/"
 CONFIG_DIR = OE_VAR_DIR + "config/"
+LIBRARY_DIR = OE_VAR_DIR + "lib/"
 LOGS_DIR = OE_VAR_DIR + "logs/"
 TOMCAT_LOGS_DIR = OE_VAR_DIR + "tomcatLogs/"
 CRON_INSTALL_DIR = "/etc/cron.d/"
@@ -201,7 +203,7 @@ def main(argv):
     elif MODE == "installBackup":
         log("installBackup " + strftime("%a, %d %b %Y %H:%M:%S", gmtime()), not PRINT_TO_CONSOLE)
         find_password()
-        install_backup_task()
+        install_cron_tasks()
     
     elif MODE == "recover":
         log("recover " + strftime("%a, %d %b %Y %H:%M:%S", gmtime()), not PRINT_TO_CONSOLE)
@@ -267,7 +269,7 @@ def install_files_from_templates():
     create_docker_compose_file()
     create_properties_files()
     create_server_xml_files()
-    install_backup_task()
+    install_cron_tasks()
     install_permissions_file()
     if DOCKER_DB:
         install_environment_file()
@@ -446,10 +448,10 @@ def create_server_xml_files():
     os.chown(OE_ETC_DIR + 'hapi_server.xml', 8443, 8443)      
     
 
-def install_backup_task():
+def install_cron_tasks():
     install_backup_script()
+    install_log_cleanup_script()
     install_cron_file()
-        
         
 def install_backup_script():
     if os.path.exists(DB_BACKUPS_DIR + BACKUP_SCRIPT_NAME):
@@ -515,6 +517,11 @@ def install_backup_script():
 
     shutil.copy(INSTALLER_STAGING_DIR + BACKUP_SCRIPT_NAME, DB_BACKUPS_DIR + BACKUP_SCRIPT_NAME)
     os.chmod(DB_BACKUPS_DIR + BACKUP_SCRIPT_NAME, 0744)    
+    
+    
+def install_log_cleanup_script():
+    ensure_dir_exists(LIBRARY_DIR)
+    shutil.copy(INSTALLER_SCRIPTS_DIR + CLEANUP_SCRIPT_NAME, LIBRARY_DIR)
 
 
 def install_cron_file():
@@ -706,7 +713,7 @@ def do_update():
 
     start_docker_containers()
 
-    install_backup_task()
+    install_cron_tasks()
 
     time.sleep(10)
 
@@ -734,7 +741,7 @@ def do_uninstall():
     
     delete_database()
     
-    uninstall_backup_task()
+    uninstall_cron_tasks()
     
     do_uninstall_backups = raw_input("Do you want to remove backupfiles from this machines y/n ")
     if do_uninstall_backups.lower() == 'y':
@@ -780,7 +787,7 @@ def uninstall_docker_images():
     os.system(cmd)
     
 
-def uninstall_backup_task():
+def uninstall_cron_tasks():
     log("removing backup task " + APP_NAME, PRINT_TO_CONSOLE)
     if os.path.exists(DB_BACKUPS_DIR + BACKUP_SCRIPT_NAME):
         os.remove(DB_BACKUPS_DIR + BACKUP_SCRIPT_NAME)
