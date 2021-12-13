@@ -1,5 +1,6 @@
 package org.openelisglobal.organization.service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -41,6 +42,18 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
     @Value("${org.openelisglobal.facilitylist.fhirstore:}")
     private String facilityFhirStore;
 
+    @Value("${org.openelisglobal.facilitylist.authurl:}")
+    private String facilityAuthUrl;
+
+    @Value("${org.openelisglobal.facilitylist.username:}")
+    private String facilityUserName;
+
+    @Value("${org.openelisglobal.facilitylist.password:}")
+    private String facilityPassword;
+
+    @Value("${org.openelisglobal.facilitylist.auth:basic}")
+    private String facilityAuth;
+
     @Autowired
     private FhirContext fhirContext;
     @Autowired
@@ -56,10 +69,17 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
 
     @Override
     @Transactional
-    @Scheduled(initialDelay = 1000, fixedRate = 24 * 60 * 60 * 1000)
-    public void importOrganizationList() throws FhirGeneralException {
+    @Scheduled(initialDelay = 1000, fixedRateString = "${schedule.fixedRate}")
+    public void importOrganizationList() throws FhirGeneralException, IOException {
         if (!GenericValidator.isBlankOrNull(facilityFhirStore)) {
-            IGenericClient client = fhirUtil.getFhirClient(facilityFhirStore);
+            IGenericClient client ;
+            if (facilityAuth.equals("token")) {
+                String token = fhirUtil.getAccesToken(facilityAuthUrl, facilityUserName, facilityPassword);
+                client = fhirUtil.getFhirClient(facilityFhirStore, token);
+            } else {
+                client = fhirUtil.getFhirClient(facilityFhirStore);
+            }
+
             List<Bundle> responseBundles = new ArrayList<>();
             Bundle responseBundle = client.search().forResource(org.hl7.fhir.r4.model.Organization.class)
                     .returnBundle(Bundle.class).execute();
