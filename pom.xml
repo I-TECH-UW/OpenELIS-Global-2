@@ -17,7 +17,7 @@
 		<major.version>2</major.version>
 		<minor.version>5</minor.version>
 		<state.version>3</state.version><!-- 0 = alpha, 1 = beta, 2 = rc, 3 = deployable -->
-		<fix.version>1</fix.version>
+		<fix.version>2</fix.version>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
@@ -28,7 +28,7 @@
 		<hapi.version>2.3</hapi.version>
 		<hibernate.version>5.4.3.Final</hibernate.version>
 		<hibernate-validator.version>6.1.5.Final</hibernate-validator.version>
-		<log4j.version>2.13.3</log4j.version>
+		<log4j.version>2.15.0</log4j.version>
 		<postgresql.version>42.2.9</postgresql.version>
 		<springframework.version>5.2.4.RELEASE</springframework.version>
 		<springsecurity.version>5.2.10.RELEASE</springsecurity.version>
@@ -44,7 +44,7 @@
 		<dependency>
 			<groupId>org.itech</groupId>
 			<artifactId>dataexport-api</artifactId>
-			<version>0.0.0.4</version>
+			<version>0.0.0.5</version>
 		</dependency>
 		<dependency>
 			<groupId>ca.uhn.hapi.fhir</groupId>
