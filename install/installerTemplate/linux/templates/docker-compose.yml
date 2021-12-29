@@ -7,7 +7,7 @@ services:
 #db        ports:
 #db            - "[% db_host_port %]:5432"
 #db        networks:
-#db            - default
+#db            - openelis-network
 #db        restart: always
 #db        env_file:
 #db            - [% db_env_dir %]database.env
@@ -40,7 +40,7 @@ services:
             - "8080:8080"
             - "8443:8443"
         networks:
-            default:
+            openelis-network:
                 ipv4_address: 172.20.1.121
 #eh        extra_hosts: 
 #eh[% extra_hosts %]
@@ -81,7 +81,7 @@ services:
             - "8081:8080"
             - "8444:8443"
         networks:
-            - default
+            - openelis-network
         restart: always
         environment:
           SPRING_CONFIG_LOCATION: file:///run/secrets/hapi_application.yaml
@@ -110,6 +110,8 @@ services:
         image: willfarrell/autoheal:1.2.0
         tty: true
         restart: always
+        networks:
+          - openelis-network
         environment:
           - AUTOHEAL_CONTAINER_LABEL=all
         volumes:
@@ -139,8 +141,7 @@ secrets:
     file: [% etc_dir %]truststore
     
 networks:
-  default:
-    name: openelis-network
+  openelis-network:
     driver: bridge
     ipam:
       config:
