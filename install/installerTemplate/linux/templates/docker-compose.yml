@@ -19,7 +19,12 @@ services:
 #db              # files here will run on install
 #db            - [% db_init_dir %]:/docker-entrypoint-initdb.d    
 #db              # values must match values in DatabaseBackup.pl
-#db            - [% db_backups_dir %]:[% docker_backups_dir %]   
+#db            - [% db_backups_dir %]:[% docker_backups_dir %] 
+#db        logging:
+#db            driver: "local"
+#db            options:
+#db              max-size: "20m"
+#db              max-file: "50"
 #db        healthcheck:
 #db            test: [ "CMD", "pg_isready", "-q", "-d", "clinlims", "-U", "clinlims" ]
 #db            timeout: 45s
@@ -56,6 +61,11 @@ services:
             - source: datasource.password
             - source: common.properties
             - source: extra.properties
+        logging:
+            driver: "local"
+            options:
+              max-size: "20m"
+              max-file: "50"
         healthcheck:
             test: ["CMD", "/healthcheck.sh"]
             timeout: 10s
@@ -89,6 +99,11 @@ services:
             - source: common.properties
             - source: keystore
             - source: truststore
+        logging:
+            driver: "local"
+            options:
+              max-size: "20m"
+              max-file: "50"
 
     autoheal:
         container_name: [% autoheal_name %]
@@ -99,6 +114,11 @@ services:
           - AUTOHEAL_CONTAINER_LABEL=all
         volumes:
           - /var/run/docker.sock:/var/run/docker.sock
+        logging:
+            driver: "local"
+            options:
+              max-size: "20m"
+              max-file: "50"
             
 secrets:
   datasource.password:
