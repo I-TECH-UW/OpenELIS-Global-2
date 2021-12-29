@@ -62,10 +62,6 @@ make sure to record the password somewhere secure as you will need to enter it e
     
 enter an export password 
 
-copy the keystore to be your client facing keystore as well
-
-    cp /etc/openelis-global/keystore /etc/openelis-global/client_facing_keystore
-	
 **Be sure to remember your keystore password, you will need it later**
 	
 For the self-signed certificate above, you would use:
@@ -179,7 +175,9 @@ OpenELIS uses FHIR for much of its internal and external communication, if you d
 
 Wait while install procedure completes
 
+Finally, copy the keystore to be your client facing keystore
 
+    cp /etc/openelis-global/keystore /etc/openelis-global/client_facing_keystore
 
 Please note: OpenELIS Global 2.x is designed for and is testing on Chrome only. Please be sure to use Chrome for OpenELIS. 
 
