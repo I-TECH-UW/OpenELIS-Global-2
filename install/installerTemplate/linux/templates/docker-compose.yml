@@ -140,6 +140,7 @@ secrets:
     
 networks:
   default:
+    name: openelis-network
     driver: bridge
     ipam:
       config:
