@@ -17,12 +17,14 @@
 			type="timestamp" access="field" />
 
 		<many-to-one name="parentResult"
-			class="org.openelisglobal.result.valueholder.Result" fetch="select">
+			class="org.openelisglobal.result.valueholder.Result" fetch="select"
+			lazy="false">
 			<column name="PARENT_RESULT_ID" precision="10" scale="0" />
 		</many-to-one>
 		<many-to-one name="parentAnalysis"
 			class="org.openelisglobal.analysis.valueholder.Analysis"
-			fetch="select">
+			fetch="select"
+			lazy="false">
 			<column name="PARENT_ANALYSIS_ID" precision="10" scale="0" />
 		</many-to-one>
 		<many-to-one name="test"
