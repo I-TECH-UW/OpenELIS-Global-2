@@ -69,7 +69,7 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
 
     @Override
     @Transactional
-    @Scheduled(initialDelay = 1000, fixedRateString = "${schedule.fixedRate}")
+    @Scheduled(initialDelay = 1000, fixedRateString = "864000000")
     public void importOrganizationList() throws FhirGeneralException, IOException {
         if (!GenericValidator.isBlankOrNull(facilityFhirStore)) {
             IGenericClient client ;
