@@ -92,9 +92,11 @@ Detailed instructions found [here](https://www.digitalocean.com/community/tutori
 4. Might need to dismiss a security warning
 
 
-##Developing in Eclipse
+## Developing in Eclipse
 
-## Install Maven
+
+### Install Maven
+
 
 Detailed instructions [here](https://linuxize.com/post/how-to-install-apache-maven-on-ubuntu-18-04/)
 
@@ -104,8 +106,7 @@ Detailed instructions [here](https://linuxize.com/post/how-to-install-apache-mav
 2. `mvn -version`
 
 
-## Install Eclipse
-
+### Install Eclipse
 
 
 1. Navigate to Eclipse download website (https://www.eclipse.org/downloads/)
@@ -113,26 +114,28 @@ Detailed instructions [here](https://linuxize.com/post/how-to-install-apache-mav
 3. Run the installer, choosing the Java ee version of eclipse
 
 
-## Optionally Install Eclipse Plugins
+### Optionally Install Eclipse Plugins
+
 
 1. Jaspersoft Reports
 2. eGit    
 
 
-## Install Lombok in eclipse
+### Install Lombok in Eclipse
+
 
  Instructions are here https://projectlombok.org/setup/eclipse
  
 
-## Setup Project in Eclipse
+### Setup Project in Eclipse
 
-. Import project into Eclipse
-    1. File > Import > Projects from Folder or Archive
-    2. ensure OpenELIS-Global-2 is selected (and dataexport-core and dataexport-api which are under eclipse)
-    3. ensure detect and configure project natures is selected
-    4. finish
-    5. right click OpenELIS-Global-2 project > properties > Java Build Path > Projects > classpath > add
-    6. add dataexport-core and dataexport-api
+
+1. File > Import > Projects from Folder or Archive
+2. ensure OpenELIS-Global-2 is selected (and dataexport-core and dataexport-api which are under eclipse)
+3. ensure detect and configure project natures is selected
+4. finish
+5. right click OpenELIS-Global-2 project > properties > Java Build Path > Projects > classpath > add
+6. add dataexport-core and dataexport-api
 
 
 
