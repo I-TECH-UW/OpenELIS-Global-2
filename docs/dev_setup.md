@@ -58,7 +58,7 @@ Detailed instructions found [here](https://www.digitalocean.com/community/tutori
 
 
 
-1. `sudo curl -L https://github.com/docker/compose/releases/download/1.21.2/docker-compose-\`uname -s\`-\`uname -m\` -o /usr/local/bin/docker-compose`
+1. ``sudo curl -L https://github.com/docker/compose/releases/download/1.21.2/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose``
 2. `sudo chmod +x /usr/local/bin/docker-compose`
 3. `docker-compose --version`
 
