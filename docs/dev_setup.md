@@ -10,10 +10,10 @@
 1. Boot to a live version of Ubuntu on a cd or a usb key
 2. Install Ubuntu on the target hard drive 
 3. Update ubuntu once it is finished installing
-    1. sudo apt update
-    2. sudo apt upgrade
-    3. sudo apt full-upgrade
-    4. sudo apt autoremove
+    1. `sudo apt update`
+    2. `sudo apt upgrade`
+    3. `sudo apt full-upgrade`
+    4. `sudo apt autoremove`
 
 
 ## Install Java (cur ver11)
@@ -22,9 +22,9 @@ Detailed instructions found [here](https://www.digitalocean.com/community/tutori
 
 
 
-1. sudo apt install default-jdk
-2. java -version
-3. javac -version
+1. `sudo apt install default-jdk`
+2. `java -version`
+3. `javac -version`
 
 
 ## Install Docker 
@@ -33,12 +33,12 @@ Detailed instructions found [here](https://www.digitalocean.com/community/tutori
 
 
 
-1. curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-2. sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-3. sudo apt-get update
-4. apt-cache policy docker-ce
-5. sudo apt-get install -y docker-ce
-6. sudo systemctl status docker
+1. `curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -`
+2. `sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"`
+3. `sudo apt-get update`
+4. `apt-cache policy docker-ce`
+5. `sudo apt-get install -y docker-ce`
+6. `sudo systemctl status docker`
 
 
 ## Setup Docker (Optional)
@@ -47,9 +47,9 @@ Detailed instructions found [here](https://www.digitalocean.com/community/tutori
 
 
 
-1. sudo usermod -aG docker ${USER} 
-2. su - ${USER}
-3. id -nG
+1. `sudo usermod -aG docker ${USER} `
+2. `su - ${USER}`
+3. `id -nG`
 
 
 ## Install Docker-Compose
@@ -58,57 +58,9 @@ Detailed instructions found [here](https://www.digitalocean.com/community/tutori
 
 
 
-1. sudo curl -L https://github.com/docker/compose/releases/download/1.21.2/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
-2. sudo chmod +x /usr/local/bin/docker-compose
-3. docker-compose --version
-
-
-## Install Maven
-
-Detailed instructions [here](https://linuxize.com/post/how-to-install-apache-maven-on-ubuntu-18-04/)
-
-
-
-1. sudo apt install maven
-2. mvn -version
-
-
-## Install Eclipse
-
-
-
-1. Navigate to Eclipse download website (https://www.eclipse.org/downloads/)
-2. Download the installer
-3. Run the installer, choosing the Java ee version of eclipse
-4. Create desktop icon for eclipse
-    1. nano ~/.local/share/applications/.desktop
-    2. paste into the file the following, replacing the path to your eclipse
-
-            [Desktop Entry]
-
-
-            Comment=Eclipse
-
-
-            Terminal=false
-
-
-            Name=Eclipse
-
-
-            Exec=/path/to/your/version/eclipse/eclipse
-
-
-            Type=Application
-
-
-            Icon=/path/to/your/version/eclipse/icon.xpm
-
-
-            StartupWMClass=Eclipse
-
-    3. save the file
-    4. chmod a+x ~/.local/share/applications/.desktop
+1. `sudo curl -L https://github.com/docker/compose/releases/download/1.21.2/docker-compose-\`uname -s\`-\`uname -m\` -o /usr/local/bin/docker-compose`
+2. `sudo chmod +x /usr/local/bin/docker-compose`
+3. `docker-compose --version`
 
 
 ## Install Chrome
@@ -125,13 +77,9 @@ Detailed instructions [here](https://linuxize.com/post/how-to-install-apache-mav
 
 
 1. Fork the repo at [https://github.com/I-TECH-UW/OpenELIS-Global-2](https://github.com/I-TECH-UW/OpenELIS-Global-2) 
-2. cd /path/to/eclipse/workspace
-3. git clone [git@github.com](mailto:git@github.com):{Your_Github_Account}/OpenELIS-Global-2.git
-4. Import into Eclipse
-    1. File > Import > Projects from Folder or Archive
-    2. ensure OpenELIS-Global-2 is selected 
-    3. ensure detect and configure project natures is selected
-    4. finish
+2. `cd /path/to/eclipse/workspace`
+3. `git clone [git@github.com](mailto:git@github.com):{Your_Github_Account}/OpenELIS-Global-2.git --recurse-submodules`
+
 
 
 ## Test If OpenELIS-Global-2 Deploys
@@ -139,37 +87,56 @@ Detailed instructions [here](https://linuxize.com/post/how-to-install-apache-mav
 
 
 1. Open terminal to the OpenELIS-Global-2 directory
-2. docker-compose up -d --build
+2. `docker-compose up -d --build`
 3. Access the application at [https://localhost:8443/OpenELIS-Global](https://localhost:8443/OpenELIS-Global)
 4. Might need to dismiss a security warning
 
 
+##Developing in Eclipse
+
+## Install Maven
+
+Detailed instructions [here](https://linuxize.com/post/how-to-install-apache-maven-on-ubuntu-18-04/)
+
+
+
+1. `sudo apt install maven`
+2. `mvn -version`
+
+
+## Install Eclipse
+
+
+
+1. Navigate to Eclipse download website (https://www.eclipse.org/downloads/)
+2. Download the installer
+3. Run the installer, choosing the Java ee version of eclipse
+
+
 ## Optionally Install Eclipse Plugins
 
-
-
 1. Jaspersoft Reports
-2. eGit
+2. eGit    
 
 
-## Setup Tomcat in Eclipse
+## Install Lombok in eclipse
 
+ Instructions are here https://projectlombok.org/setup/eclipse
+ 
 
-### Configure Eclipse to use Currently Supported Java
+## Setup Project in Eclipse
 
+. Import project into Eclipse
+    1. File > Import > Projects from Folder or Archive
+    2. ensure OpenELIS-Global-2 is selected (and dataexport-core and dataexport-api which are under eclipse)
+    3. ensure detect and configure project natures is selected
+    4. finish
+    5. right click OpenELIS-Global-2 project > properties > Java Build Path > Projects > classpath > add
+    6. add dataexport-core and dataexport-api
 
-
-1. In terminal 
-    1. sudo apt install openjdk-8-jre-headless
-2. In eclipse
-    2. Window > Preferences > Java > Installed JREs > Add > Next
-    3. Specify your java 8 JRE directory (normally /usr/lib/jvm/java-8-openjdk-amd64)
-    4. Finish
-    5. Select java-8 and hit Apply
 
 
 ### Setup Tomcat Server
-
 
 
 1. [Download tomcat](https://tomcat.apache.org/download-90.cgi) as tar.gz (cur ver 9)
@@ -185,42 +152,54 @@ Detailed instructions [here](https://linuxize.com/post/how-to-install-apache-mav
 ### Configure Tomcat server
 
 
-
 1. Double click on the tomcat 9.0 server in the servers tab
 2. Click ‘Open launch configuration’
 3. Navigate to the Arguments tab
 4. Add the following 3 arguments to the VM arguments section, substituting whatever your local arguments are for your database
-    1. -Ddatasource.password=clinlims
-    2. -Ddatasource.username=clinlims
-    3. -Ddatasource.url=jdbc:postgresql://localhost:15432/clinlims?currentSchema=clinlims
+    1. -Ddatasource.password=clinlims -Ddatasource.username=clinlims -Ddatasource.url=jdbc:postgresql://localhost:15432/clinlims?currentSchema=clinlims
 5. click OK to finish
+6. optionally, extend the server timeout to 200 seconds
 
 
 ### Configure Tomcat to Support ssl
-
 
 
 1. Expand the Servers folder in the projects tab
 2. Expand the server that runs OE
 3. Copy the contents of OpenELIS-Global-2/dev/tomcat/server.xml into Tomcat v9.0 Server at localhost-config/server.xml
 4. Edit Tomcat v9.0 Server at localhost-config/server.xml, substituting your paths
-    1. replace &lt;Server port=”-1” shutdown=”SHUTDOWN”> with &lt;Server port=”8005” shutdown=”SHUTDOWN”>
+    1. replace &lt;Server port="-1" shutdown="SHUTDOWN"> with &lt;Server port="8005" shutdown="SHUTDOWN">
     2. replace keystoreFile=”/run/secrets/keystore” with keystoreFile=”/path/to/openelis_global_2/dev/https/oe_selfsigned.keystore”
     3. replace truststoreFile="/run/secrets/truststore" with truststoreFile="/path/to/openelis_global_2/dev/https/oe_selfsigned.truststore"
     4. save
 
 
-### Run Database in Docker
+### Point to your dev common.properties 
 
+
+1. `sudo mkdir /run/secrets`
+2. `sudo ln -s /path/to/project/dev/eclipse_common.properties /run/secrets/common.properties`
+3. this is the file that will allow you to configure OE while running in eclipse. Ensure values filled out work for your dev environment. do not commit changes made for your deve environement.
+
+
+### create directory for logs
+
+
+1. `sudo mkdir /var/lib/openelis-global/logs/`
+2. `sudo chmod 777 /var/lib/openelis-global/logs/`
+
+
+
+### Run Everything but OE in docker
 
 
 1. Comment out the oe.openelisci.org service in docker-compose.yml
-2. docker-compose up -d
+2. `docker-compose up -d`
+3. if oe is already running in docker, kill the container
 
 
 ### Start Tomcat in Eclipse
 
 
-
-1. Make sure your project builds
+1. Make sure your project builds (project clean will normally trigger this)
 2. Click start server in normal, or debug mode
