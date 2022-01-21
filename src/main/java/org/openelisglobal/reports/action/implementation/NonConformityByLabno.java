@@ -95,8 +95,8 @@ public abstract class NonConformityByLabno extends Report implements IReportCrea
     @Override
     public void initializeReport(ReportForm form) {
         super.initializeReport();
-        lowerNumber = form.getAccessionDirect();
-        upperNumber = form.getHighAccessionDirect();
+        lowerNumber = form.getAccessionDirectNoSuffix();
+        upperNumber = form.getHighAccessionDirectNoSuffix();
 //        dateRange = new DateRange(lowDateStr, highDateStr);
         createReportParameters();
         errorFound = !validateAccessionNumbers();
