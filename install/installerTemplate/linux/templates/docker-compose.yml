@@ -74,7 +74,7 @@ services:
 
     fhir.openelis.org:
         container_name: [% fhir_api_name %]
-        image: hapiproject/hapi:v5.4.1
+        image: hapi-fhir-jpaserver
 #db        depends_on:
 #db            - db.openelis.org
         ports:

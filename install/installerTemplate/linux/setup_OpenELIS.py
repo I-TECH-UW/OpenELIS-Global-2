@@ -460,7 +460,7 @@ def create_server_xml_files():
 
     template_file.close()
     output_file.close()
-    os.chmod(OE_ETC_DIR + "healthcheck.sh", 0640) 
+    os.chmod(OE_ETC_DIR + "healthcheck.sh", 0750) 
     os.chown(OE_ETC_DIR + 'healthcheck.sh', 8443, 8443)      
     
 
