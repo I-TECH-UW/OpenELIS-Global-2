@@ -445,7 +445,23 @@ def create_server_xml_files():
     template_file.close()
     output_file.close()
     os.chmod(OE_ETC_DIR + "hapi_server.xml", 0640) 
-    os.chown(OE_ETC_DIR + 'hapi_server.xml', 8443, 8443)      
+    os.chown(OE_ETC_DIR + 'hapi_server.xml', 8443, 8443)   
+    
+    template_file = open(INSTALLER_TEMPLATE_DIR + "healthcheck.sh", "r")
+    output_file = open(OE_ETC_DIR + "healthcheck.sh", "w")
+
+    for line in template_file:
+        if line.find("[% truststore_password %]")  >= 0:
+            line = line.replace("[% truststore_password %]", TRUSTSTORE_PWD)
+        if line.find("[% keystore_password %]")  >= 0:
+            line = line.replace("[% keystore_password %]", KEYSTORE_PWD) 
+        
+        output_file.write(line)
+
+    template_file.close()
+    output_file.close()
+    os.chmod(OE_ETC_DIR + "healthcheck.sh", 0640) 
+    os.chown(OE_ETC_DIR + 'healthcheck.sh', 8443, 8443)      
     
 
 def install_cron_tasks():
