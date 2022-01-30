@@ -127,7 +127,7 @@ public class RetroCINonConformityNotification extends RetroCIReport implements I
         sampleQaEventIds = new ArrayList<>();
         checkIdsForPriorPrintRecord = new HashSet<>();
         errorFound = false;
-        requestedAccessionNumber = form.getAccessionDirect();
+        requestedAccessionNumber = form.getAccessionDirectNoSuffix();
         ReportSpecificationList specificationList = form.getSelectList();
 
         createReportParameters();

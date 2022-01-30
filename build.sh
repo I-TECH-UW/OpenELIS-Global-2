@@ -38,8 +38,6 @@ INSTALL_DIR="${BUILD_SCRIPT_DIR}/install"
 
 #and other important locations
 PROJECT_DIR="${BUILD_SCRIPT_DIR}"
-JPA_SERVER_DIR="${PROJECT_DIR}/hapi-fhir-jpaserver-starter/"
-DATA_EXPORT_DIR="${PROJECT_DIR}/dataexport/"
 #CONSOLIDATED_SERVER_DIR="${PROJECT_DIR}/Consolidated-Server/"
 
 if [ $createInstaller == true ]
@@ -97,6 +95,7 @@ echo "creating docker images"
 #bash ${INSTALL_DIR}/buildProject.sh -dl ${CONSOLIDATED_SERVER_DIR}
 #create the docker image 
 bash ${INSTALL_DIR}/buildProject.sh -dl ${PROJECT_DIR} -t openelisglobal
+bash ${INSTALL_DIR}/buildProject.sh -dl ${PROJECT_DIR}/fhir -t hapi-fhir-jpaserver
 
 createLinuxInstaller() {
 	context=$1
@@ -142,8 +141,8 @@ then
 	docker pull postgres:9.5
 	docker save postgres:9.5 | gzip > Postgres_DockerImage.tar.gz
 	echo "saving JPA Server docker image"
-	docker pull hapiproject/hapi:v5.4.1
-	docker save hapiproject/hapi:v5.4.1 | gzip > JPAServer_DockerImage.tar.gz
+	
+	docker save hapi-fhir-jpaserver:latest | gzip > JPAServer_DockerImage.tar.gz
 	echo "saving Autoheal docker image"
 	docker pull willfarrell/autoheal:1.2.0
 	docker save willfarrell/autoheal:1.2.0 | gzip > AutoHeal_DockerImage.tar.gz

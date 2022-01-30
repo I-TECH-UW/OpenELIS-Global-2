@@ -67,8 +67,8 @@ public abstract class RetroCIPatientReport extends RetroCIReport {
         super.initializeReport();
         errorFound = false;
 
-        lowerNumber = form.getAccessionDirect();
-        upperNumber = form.getHighAccessionDirect();
+        lowerNumber = form.getAccessionDirectNoSuffix();
+        upperNumber = form.getHighAccessionDirectNoSuffix();
 
         handledOrders = new ArrayList<>();
 

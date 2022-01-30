@@ -2,11 +2,13 @@ version: '3.3'
 services:
     certs:
         container_name: oe-certs 
-        image: ghcr.io/i-tech-uw/certgen:latest
+        image: ghcr.io/i-tech-uw/certgen:main
         restart: always
         environment:
             - KEYSTORE_PW="kspass"
             - TRUSTSTORE_PW="tspass"
+        networks:
+            - default
         volumes:
             -  cert-volume:/etc/openelis-global
     database:
@@ -22,6 +24,8 @@ services:
              - db-data:/var/lib/postgresql/data                
               # files here will run on install
              - ./volume/database/dbInit:/docker-entrypoint-initdb.d
+        networks:
+            - default
         healthcheck:
             test: [ "CMD", "pg_isready", "-q", "-d", "clinlims", "-U", "clinlims" ]
             timeout: 45s
@@ -29,8 +33,8 @@ services:
             retries: 10 
             
     oe.openelis.org:
-        # build:
-        #   context: .
+        build:
+          context: .
         # image: openelis-global-2
         container_name: openelisglobal-webapp 
         image: ghcr.io/i-tech-uw/openelis-global-2:pr-281      

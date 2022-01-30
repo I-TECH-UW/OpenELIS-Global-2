@@ -484,7 +484,7 @@ public class TestReflexUtil {
         for (Analysis analysis : parentAnalysisList) {
             analysis.setSysUserId(sysUserId);
             analysis.setTriggeredReflex(Boolean.TRUE);
-            analysisService.update(analysis);
+//            analysisService.update(analysis);
         }
 
     }

@@ -192,8 +192,8 @@ public abstract class PatientReport extends Report {
         super.initializeReport();
         errorFound = false;
 
-        lowerNumber = form.getAccessionDirect();
-        upperNumber = form.getHighAccessionDirect();
+        lowerNumber = form.getAccessionDirectNoSuffix();
+        upperNumber = form.getHighAccessionDirectNoSuffix();
         String patientNumber = form.getPatientNumberDirect();
 
         handledOrders = new ArrayList<>();

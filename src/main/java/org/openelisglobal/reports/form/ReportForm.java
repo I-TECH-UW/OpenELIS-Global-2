@@ -156,6 +156,14 @@ public class ReportForm extends BaseForm {
         return accessionDirect;
     }
 
+    public String getAccessionDirectNoSuffix() {
+        if (accessionDirect == null || !accessionDirect.contains(".")) {
+            return accessionDirect;
+        } else {
+            return accessionDirect.substring(0, accessionDirect.indexOf('.'));
+        }
+    }
+
     public void setAccessionDirect(String accessionDirect) {
         this.accessionDirect = accessionDirect;
     }
@@ -178,6 +186,14 @@ public class ReportForm extends BaseForm {
 
     public String getHighAccessionDirect() {
         return highAccessionDirect;
+    }
+
+    public String getHighAccessionDirectNoSuffix() {
+        if (highAccessionDirect == null || !highAccessionDirect.contains(".")) {
+            return highAccessionDirect;
+        } else {
+            return highAccessionDirect.substring(0, highAccessionDirect.indexOf('.'));
+        }
     }
 
     public void setHighAccessionDirect(String highAccessionDirect) {

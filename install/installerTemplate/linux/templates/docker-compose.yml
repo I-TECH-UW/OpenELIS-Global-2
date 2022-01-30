@@ -26,7 +26,7 @@ services:
 #db              max-size: "20m"
 #db              max-file: "50"
 #db        healthcheck:
-#db            test: [ "CMD", "pg_isready", "-q", "-d", "clinlims", "-U", "clinlims" ]
+#db            test: [ "CMD", "pg_isready" ]
 #db            timeout: 45s
 #db            interval: 10s
 #db            retries: 10 
@@ -74,7 +74,7 @@ services:
 
     fhir.openelis.org:
         container_name: [% fhir_api_name %]
-        image: hapiproject/hapi:v5.4.1
+        image: hapi-fhir-jpaserver
 #db        depends_on:
 #db            - db.openelis.org
         ports:
@@ -94,6 +94,7 @@ services:
                       -Djavax.net.ssl.keyStoreType=pkcs12"
         volumes:
             - [% etc_dir %]hapi_server.xml:/usr/local/tomcat/conf/server.xml
+            - [% etc_dir %]healthcheck.sh:/healthcheck.sh
         secrets:
             - source: hapi_application.yaml
             - source: common.properties
@@ -104,6 +105,11 @@ services:
             options:
               max-size: "20m"
               max-file: "50"
+        healthcheck:
+            test: ["CMD", "/healthcheck.sh"]
+            timeout: 10s
+            interval: 30s
+            retries: 2
 
     autoheal:
         container_name: [% autoheal_name %]
