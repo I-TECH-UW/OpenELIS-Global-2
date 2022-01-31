@@ -118,7 +118,6 @@
 		SELECT setval('clinlims.system_module_url_seq', CAST ((SELECT coalesce(MAX(id),0) FROM clinlims.system_module_url) AS BIGINT) + 1);
 		SELECT setval('clinlims.system_role_module_seq', CAST ((SELECT coalesce(MAX(id),0) FROM clinlims.system_role_module) AS BIGINT) + 1);
 		SELECT setval('clinlims.system_role_seq', CAST ((SELECT coalesce(MAX(id),0) FROM clinlims.system_role) AS BIGINT) + 1);
-		SELECT setval('clinlims.system_user_module_seq', CAST ((SELECT coalesce(MAX(id),0) FROM clinlims.system_user_module) AS BIGINT) + 1);
 		SELECT setval('clinlims.system_user_section_seq', CAST ((SELECT coalesce(MAX(id),0) FROM clinlims.system_user_section) AS BIGINT) + 1);
 		SELECT setval('clinlims.system_user_seq', CAST ((SELECT coalesce(MAX(id),0) FROM clinlims.system_user) AS BIGINT) + 1);
 		SELECT setval('clinlims.test_analyte_seq', CAST ((SELECT coalesce(MAX(id),0) FROM clinlims.test_analyte) AS BIGINT) + 1);
@@ -134,6 +133,7 @@
 		SELECT setval('clinlims.type_of_test_result_seq', CAST ((SELECT coalesce(MAX(id),0) FROM clinlims.type_of_test_result) AS BIGINT) + 1);
 		SELECT setval('clinlims.unit_of_measure_seq', CAST ((SELECT coalesce(MAX(id),0) FROM clinlims.unit_of_measure) AS BIGINT) + 1);
 		SELECT setval('clinlims.external_connection_authentication_data_seq', CAST ((SELECT coalesce(MAX(a.id),0) FROM (SELECT id FROM clinlims.basic_authentication_data UNION SELECT id FROM clinlims.certificate_authentication_data) AS a) AS BIGINT) + 1);
+		SELECT setval('clinlims.system_user_module_seq', CAST ((SELECT coalesce(MAX(a.id),0) FROM (SELECT id FROM clinlims.system_user_module UNION SELECT id FROM clinlims.system_role_module) AS a) AS BIGINT) + 1);
 		</sql>
 		
 	</changeSet>
