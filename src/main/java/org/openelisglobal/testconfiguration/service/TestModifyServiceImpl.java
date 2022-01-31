@@ -6,6 +6,8 @@ import java.util.Locale;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.localization.service.LocalizationService;
 import org.openelisglobal.localization.valueholder.Localization;
+import org.openelisglobal.panel.service.PanelService;
+import org.openelisglobal.panel.valueholder.Panel;
 import org.openelisglobal.panelitem.service.PanelItemService;
 import org.openelisglobal.panelitem.valueholder.PanelItem;
 import org.openelisglobal.resultlimit.service.ResultLimitService;
@@ -48,6 +50,8 @@ public class TestModifyServiceImpl implements TestModifyService {
     private LocalizationService localizationService;
     @Autowired
     private UnitOfMeasureService unitOfMeasureService;
+    @Autowired
+    private PanelService panelService;
 
     @Override
     @Transactional
@@ -107,6 +111,12 @@ public class TestModifyServiceImpl implements TestModifyService {
                         tosp.setPanelId(item.getPanel().getId());
                         tosp.setTypeOfSampleId(sampleType.getId());
                         typeOfSamplePanelService.insert(tosp);
+                    }
+                    Panel panel = item.getPanel();
+                    if ("N".equals(panel.getIsActive())) {
+                        panel.setIsActive("Y");
+                        panel.setSysUserId(currentUserId);
+                        panelService.update(panel);
                     }
                 }
             }

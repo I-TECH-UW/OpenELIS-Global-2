@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.openelisglobal.localization.service.LocalizationService;
 import org.openelisglobal.localization.valueholder.Localization;
+import org.openelisglobal.panel.service.PanelService;
+import org.openelisglobal.panel.valueholder.Panel;
 import org.openelisglobal.panelitem.service.PanelItemService;
 import org.openelisglobal.panelitem.valueholder.PanelItem;
 import org.openelisglobal.resultlimit.service.ResultLimitService;
@@ -36,6 +38,8 @@ public class TestAddServiceImpl implements TestAddService {
     private TestResultService testResultService;
     @Autowired
     private TypeOfSampleService typeOfSampleService;
+    @Autowired
+    private PanelService panelService;
 
     @Override
     @Transactional
@@ -68,6 +72,14 @@ public class TestAddServiceImpl implements TestAddService {
                 item.setSysUserId(currentUserId);
                 item.setTest(set.test);
                 panelItemService.insert(item);
+                if (item.getPanel() != null) {
+                    Panel panel = item.getPanel();
+                    if ("N".equals(panel.getIsActive())) {
+                        panel.setIsActive("Y");
+                        panel.setSysUserId(currentUserId);
+                        panelService.update(panel);
+                    }
+                }
             }
 
             for (TestResult testResult : set.testResults) {
