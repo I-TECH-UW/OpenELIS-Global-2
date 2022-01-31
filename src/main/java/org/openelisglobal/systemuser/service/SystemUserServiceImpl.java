@@ -1,7 +1,9 @@
 package org.openelisglobal.systemuser.service;
 
 import java.util.List;
+import java.util.ArrayList;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
@@ -100,6 +102,31 @@ public class SystemUserServiceImpl extends BaseObjectServiceImpl<SystemUser, Str
 
     private boolean duplicateSystemUserExists(SystemUser systemUser) {
         return baseObjectDAO.duplicateSystemUserExists(systemUser);
+    }
+
+    @Override
+    public List<SystemUser> getPagesOfSearchedUsers(int startRecNo, String searchString) {
+        List<SystemUser> systemUsers = new ArrayList<>();
+        systemUsers = baseObjectDAO.getLikePage("loginName", searchString, startRecNo);
+        if (systemUsers.isEmpty()) {
+            systemUsers = baseObjectDAO.getLikePage("firstName", searchString, startRecNo);
+        }
+        if (systemUsers.isEmpty()) {
+            systemUsers = baseObjectDAO.getLikePage("lastName", searchString, startRecNo);
+        }
+        return systemUsers;
+    }
+
+    @Override
+    public Integer getTotalSearchedUserCount(String searchString) {
+        Integer count = getCountLike("loginName", searchString);
+        if (ObjectUtils.defaultIfNull(count, 0) == 0) {
+            count = getCountLike("firstName", searchString);
+        }
+        if (ObjectUtils.defaultIfNull(count, 0) == 0) {
+            count = getCountLike("lastName", searchString);
+        }
+        return ObjectUtils.defaultIfNull(count, 0);
     }
 
 }

@@ -19,6 +19,10 @@
 	String fromCount = "0";
 	String toCount = "0";
 	boolean allowDeactivate = false;
+	String formName =  "";
+	String searchColumn="";
+	String pageInstruction ="";
+	String objectToAdd ="";
 
        if (request.getAttribute(IActionConstants.DEACTIVATE_DISABLED) != null) {
 	      allowDeactivate = request.getAttribute(IActionConstants.DEACTIVATE_DISABLED) != "true";
@@ -48,30 +52,40 @@
           notAllowSearching = "false";
 
        }
-
-       String searchColumn="";
        if (request.getAttribute(IActionConstants.MENU_SEARCH_BY_TABLE_COLUMN) != null )  {
           {
              searchColumn = (String) request.getAttribute(IActionConstants.MENU_SEARCH_BY_TABLE_COLUMN);
           }
        }
+
+	   if(request.getAttribute(IActionConstants.FORM_NAME) != null){
+           formName = request.getAttribute(IActionConstants.FORM_NAME).toString();
+	   }
+
+	   if(request.getAttribute(IActionConstants.MENU_PAGE_INSTRUCTION) != null){
+           pageInstruction = request.getAttribute(IActionConstants.MENU_PAGE_INSTRUCTION).toString();
+	   }
+
+	   if(request.getAttribute(IActionConstants.MENU_OBJECT_TO_ADD) != null){
+           objectToAdd = request.getAttribute(IActionConstants.MENU_OBJECT_TO_ADD).toString();
+	   }
 %>
-<%
+<%  
 	if(null != request.getAttribute(IActionConstants.FORM_NAME))
 	{
 %>
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0" >
 	<tr>
-		<td class="pageTitle" align="center">
-			<b> &nbsp;&nbsp;&nbsp;&nbsp;
+		<td class="pageTitle" align="center" >
+			<h2> &nbsp;&nbsp;&nbsp;&nbsp;
 				<c:if test="${not empty subtitle}">
 					<c:out value="${subtitle}" />
 				</c:if>
 		 	&nbsp;&nbsp;
-		 	</b>
+		 	</h2>
 		</td>
-	</tr>
+	</tr>	  
 </table>
 <%
 	}
@@ -101,8 +115,20 @@ function submitSearchForClick(button){
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 	<tbody >
 	<tr>
-			<td>&nbsp;</td>
-  	</tr>
+	   <%
+	     if(!pageInstruction.isEmpty()){
+       %>	 
+			<td colspan="3">
+				<spring:message code="<%=pageInstruction%>" />
+			</td>	
+	 <%
+	    }else {
+     %>
+        <td>&nbsp;</td>
+	 <%
+	    }
+     %>
+	 </tr>
   	<tr>
 
 			<%
@@ -126,7 +152,7 @@ function submitSearchForClick(button){
 						+ " " + msgOf + " " + totalCount;
 			%>
 
-			<td><spring:message code="label.form.selectand" /></td>
+		    <td>&nbsp;</td>	
 
 
 			<td colspan="4" align="right"><%=paginationMessage%></td>
@@ -155,7 +181,7 @@ function submitSearchForClick(button){
 					<%if ( !disableEdit ) {%>
 					disabled="disabled"
 					<%} %>>
-					<spring:message code="label.button.edit" />
+					<spring:message code="label.button.modify" />
 				</button> &nbsp; 
 				<button type="button" id="deactivate"
 					onclick="setMenuAction(this, document.getElementById('menuForm'), 'Delete', 'yes', '?ID=');return false;"
@@ -164,8 +190,7 @@ function submitSearchForClick(button){
 					<spring:message code="label.button.deactivate" />
   			</button>
 				
-				&nbsp;
-				<spring:message code="label.form.or" />&nbsp; 
+				&nbsp;&nbsp;
 				
 				<button type="button" id="add"
 					onclick="setMenuAction(this, document.getElementById('menuForm'), '', 'yes', '?ID=0');return false;"
@@ -174,7 +199,8 @@ function submitSearchForClick(button){
 					disabled="disabled"
 					<%} %>
 					>
-					<spring:message code="label.button.add" />
+					  <spring:message code="label.button.add" /> <spring:message code="<%=objectToAdd%>"/>
+					
   			</button>
 	   </td>
 

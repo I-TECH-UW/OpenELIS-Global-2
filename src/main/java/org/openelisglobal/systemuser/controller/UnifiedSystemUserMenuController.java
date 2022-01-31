@@ -8,6 +8,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.validator.GenericValidator;
+import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.controller.BaseMenuController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
@@ -55,7 +56,7 @@ public class UnifiedSystemUserMenuController extends BaseMenuController<UnifiedS
         binder.setAllowedFields(ALLOWED_FIELDS);
     }
 
-    @RequestMapping(value = "/UnifiedSystemUserMenu", method = RequestMethod.GET)
+    @RequestMapping(value = {"/UnifiedSystemUserMenu", "/SearchUnifiedSystemUserMenu"} ,method = RequestMethod.GET)
     public ModelAndView showUnifiedSystemUserMenu(HttpServletRequest request, RedirectAttributes redirectAttributes)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         String forward = FWD_SUCCESS;
@@ -63,6 +64,9 @@ public class UnifiedSystemUserMenuController extends BaseMenuController<UnifiedS
 
         form.setFormAction("UnifiedSystemUserMenu.do");
         forward = performMenuAction(form, request);
+        request.setAttribute(IActionConstants.FORM_NAME, "unifiedSystemUserMenu");
+        request.setAttribute(IActionConstants.MENU_PAGE_INSTRUCTION, "user.select.instruction");
+        request.setAttribute(IActionConstants.MENU_OBJECT_TO_ADD, "label.button.new.user");
         if (FWD_FAIL.equals(forward)) {
             Errors errors = new BaseErrors();
             errors.reject("error.generic");
@@ -78,14 +82,26 @@ public class UnifiedSystemUserMenuController extends BaseMenuController<UnifiedS
             HttpServletRequest request) {
         List<SystemUser> systemUsers = new ArrayList<>();
 
-        String stringStartingRecNo = (String) request.getAttribute("startingRecNo");
-        int startingRecNo = Integer.parseInt(stringStartingRecNo);
+        int startingRecNo = this.getCurrentStartingRecNo(request);
 
         systemUsers = systemUserService.getPage(startingRecNo);
 
+        if (YES.equals(request.getParameter("search"))) {
+            systemUsers = systemUserService.getPagesOfSearchedUsers(startingRecNo,request.getParameter("searchString"));
+        } else {
+            systemUsers = systemUserService.getOrderedPage("loginName", false, startingRecNo);
+        }
         List<UnifiedSystemUser> unifiedUsers = getUnifiedUsers(systemUsers);
 
         request.setAttribute("menuDefinition", "UnifiedSystemUserMenuDefinition");
+
+        if (YES.equals(request.getParameter("search"))) {
+            request.setAttribute(MENU_TOTAL_RECORDS,
+                    String.valueOf(systemUserService
+                            .getTotalSearchedUserCount(request.getParameter("searchString"))));
+        } else {
+            request.setAttribute(MENU_TOTAL_RECORDS, String.valueOf(systemUserService.getCount()));
+        }
 
         request.setAttribute(MENU_TOTAL_RECORDS, String.valueOf(systemUserService.getCount()));
         request.setAttribute(MENU_FROM_RECORD, String.valueOf(startingRecNo));
@@ -99,6 +115,12 @@ public class UnifiedSystemUserMenuController extends BaseMenuController<UnifiedS
 
         int endingRecNo = startingRecNo + numOfRecs;
         request.setAttribute(MENU_TO_RECORD, String.valueOf(endingRecNo));
+
+        request.setAttribute(MENU_SEARCH_BY_TABLE_COLUMN, "user.userName");
+
+        if (YES.equals(request.getParameter("search"))) {
+            request.setAttribute(IN_MENU_SELECT_LIST_HEADER_SEARCH, "true");
+        }
 
         return unifiedUsers;
     }
