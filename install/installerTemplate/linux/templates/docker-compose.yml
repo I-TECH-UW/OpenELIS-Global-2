@@ -1,4 +1,4 @@
-version: '3.3'
+version: '3.6'
 # lines starting with a #db and #port will be uncommented when setup with a docker database
 services:
 #db    db.openelis.org:
@@ -30,6 +30,7 @@ services:
 #db            timeout: 45s
 #db            interval: 10s
 #db            retries: 10 
+#db            start_period: 1m
             
     oe.openelis.org:
         container_name: [% oe_name %]
@@ -70,7 +71,8 @@ services:
             test: ["CMD", "/healthcheck.sh"]
             timeout: 10s
             interval: 30s
-            retries: 2
+            retries: 3
+            start_period: 2m
 
     fhir.openelis.org:
         container_name: [% fhir_api_name %]
@@ -109,7 +111,8 @@ services:
             test: ["CMD", "/healthcheck.sh"]
             timeout: 10s
             interval: 30s
-            retries: 2
+            retries: 3
+            start_period: 2m
 
     autoheal:
         container_name: [% autoheal_name %]
