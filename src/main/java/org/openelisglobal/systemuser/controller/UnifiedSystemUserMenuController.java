@@ -116,7 +116,7 @@ public class UnifiedSystemUserMenuController extends BaseMenuController<UnifiedS
         int endingRecNo = startingRecNo + numOfRecs;
         request.setAttribute(MENU_TO_RECORD, String.valueOf(endingRecNo));
 
-        request.setAttribute(MENU_SEARCH_BY_TABLE_COLUMN, "user.userName");
+        request.setAttribute(MENU_SEARCH_BY_TABLE_COLUMN, "user.userSearch");
 
         if (YES.equals(request.getParameter("search"))) {
             request.setAttribute(IN_MENU_SELECT_LIST_HEADER_SEARCH, "true");
