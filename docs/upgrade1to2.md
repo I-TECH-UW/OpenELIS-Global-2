@@ -2,7 +2,7 @@
 
 
 # Notes:
-
+Be sure to create a backup BEFORE attempting this!
 
 ## Choosing a Path
 

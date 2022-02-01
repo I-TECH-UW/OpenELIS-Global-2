@@ -395,11 +395,15 @@ function  /*void*/ updatePatientAge( DOB )
 		}
 	}
 
-
 	var splitDOB = date.split("/");
 	var monthDOB = splitDOB[monthIndex];
 	var dayDOB = splitDOB[dayIndex];
 	var yearDOB = splitDOB[yearIndex];
+
+	if(monthDOB == "xx" || monthDOB == "XX" || dayDOB == "xx" || dayDOB == "XX" ){
+		monthDOB = "01";
+		dayDOB = "01";
+	}
 
 	var birthdate = new Date(yearDOB, monthDOB - 1, dayDOB);
 	var today = new Date();
