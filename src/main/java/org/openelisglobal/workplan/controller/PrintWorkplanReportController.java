@@ -14,7 +14,6 @@ import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.test.service.TestServiceImpl;
 import org.openelisglobal.workplan.form.WorkplanForm;
 import org.openelisglobal.workplan.form.WorkplanForm.PrintWorkplan;
-import org.openelisglobal.workplan.reports.ElisaWorkplanReport;
 import org.openelisglobal.workplan.reports.IWorkplanReport;
 import org.openelisglobal.workplan.reports.TestSectionWorkplanReport;
 import org.openelisglobal.workplan.reports.TestWorkplanReport;
@@ -37,7 +36,8 @@ public class PrintWorkplanReportController extends BaseController {
 
     private static final String[] ALLOWED_FIELDS = new String[] { "selectedSearchID", "type", "testTypeID",
             "testSectionId", "testName", "workplanTests*.accessionNumber", "workplanTests*.patientInfo",
-            "workplanTests*.receivedDate", "workplanTests*.testName", "workplanTests*.notIncludedInWorkplan" };
+            "workplanTests*.receivedDate", "workplanTests*.testName", "workplanTests*.notIncludedInWorkplan",
+            "resultList" };
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -124,8 +124,8 @@ public class PrintWorkplanReportController extends BaseController {
 
         if ("test".equals(testType)) {
             workplan = new TestWorkplanReport(name);
-        } else if ("Serology".equals(testType)) {
-            workplan = new ElisaWorkplanReport(name);
+//        } else if ("Serology".equals(testType)) {
+//            workplan = new ElisaWorkplanReport(name);
         } else {
             workplan = new TestSectionWorkplanReport(name);
         }

@@ -3,9 +3,11 @@ package org.openelisglobal.sample.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.address.service.OrganizationAddressService;
 import org.openelisglobal.address.valueholder.OrganizationAddress;
 import org.openelisglobal.analysis.service.AnalysisService;
@@ -18,7 +20,6 @@ import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.TableIdService;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.SystemConfiguration;
-import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
 import org.openelisglobal.dataexchange.service.order.ElectronicOrderService;
 import org.openelisglobal.notification.service.AnalysisNotificationConfigService;
 import org.openelisglobal.notification.service.TestNotificationConfigService;
@@ -40,6 +41,7 @@ import org.openelisglobal.requester.service.SampleRequesterService;
 import org.openelisglobal.requester.valueholder.SampleRequester;
 import org.openelisglobal.sample.action.util.SamplePatientUpdateData;
 import org.openelisglobal.sample.form.SamplePatientEntryForm;
+import org.openelisglobal.sample.valueholder.SampleAdditionalField;
 import org.openelisglobal.samplehuman.service.SampleHumanService;
 import org.openelisglobal.sampleitem.service.SampleItemService;
 import org.openelisglobal.spring.util.SpringContext;
@@ -83,8 +85,6 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
     @Autowired
     private OrganizationService organizationService;
     @Autowired
-    private FhirTransformService fhirTransformService;
-    @Autowired
     private TestNotificationConfigService testNotificationConfigService;
     @Autowired
     private AnalysisNotificationConfigService analysisNotificationConfigService;
@@ -119,8 +119,6 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
         request.getSession().setAttribute("lastAccessionNumber", updateData.getAccessionNumber());
         request.getSession().setAttribute("lastPatientId", updateData.getPatientId());
 
-        String fhir_json = fhirTransformService.CreateFhirFromOESample(updateData, patientUpdate, patientInfo, form,
-                request);
     }
 
     private void persistObservations(SamplePatientUpdateData updateData) {
@@ -151,6 +149,24 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
         if (updateData.getCurrentOrganization() != null) {
             organizationService.update(updateData.getCurrentOrganization());
         }
+//        newOrganization = updateData.getNewOrganizationDepartment();
+//        if (newOrganization != null) {
+//            organizationService.insert(newOrganization);
+//            organizationService.linkOrganizationAndType(newOrganization,
+//                    TableIdService.getInstance().REFERRING_ORG_TYPE_ID);
+//            if (updateData.getRequesterSite() != null) {
+//                updateData.getRequesterSite().setRequesterId(newOrganization.getId());
+//            }
+//
+//            for (OrganizationAddress address : updateData.getOrgAddressExtra()) {
+//                address.setOrganizationId(newOrganization.getId());
+//                organizationAddressService.insert(address);
+//            }
+//        }
+//
+//        if (updateData.getCurrentOrganizationDepartment() != null) {
+//            organizationService.update(updateData.getCurrentOrganizationDepartment());
+//        }
 
     }
 
@@ -167,16 +183,23 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
     private void persistSampleData(SamplePatientUpdateData updateData) {
         String analysisRevision = SystemConfiguration.getInstance().getAnalysisDefaultRevision();
 
+        updateData.getSample().setFhirUuid(UUID.randomUUID());
         sampleService.insertDataWithAccessionNumber(updateData.getSample());
 
+        for (SampleAdditionalField field : updateData.getSampleFields()) {
+            field.setSample(updateData.getSample());
+            sampleService.saveSampleAdditionalField(field);
+        }
         // if (!GenericValidator.isBlankOrNull(projectId)) {
         // persistSampleProject();
         // }
 
         for (SampleTestCollection sampleTestCollection : updateData.getSampleItemsTests()) {
-
+            if (GenericValidator.isBlankOrNull(sampleTestCollection.item.getFhirUuidAsString())) {
+                sampleTestCollection.item.setFhirUuid(UUID.randomUUID());
+            }
             sampleItemService.insert(sampleTestCollection.item);
-
+            sampleTestCollection.analysises = new ArrayList<>();
             for (Test test : sampleTestCollection.tests) {
                 test = testService.get(test.getId());
 
@@ -184,6 +207,8 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
                         sampleTestCollection.testIdToUserSectionMap.get(test.getId()),
                         sampleTestCollection.testIdToUserSampleTypeMap.get(test.getId()), updateData);
                 analysisService.insert(analysis);
+                sampleTestCollection.analysises.add(analysis);
+
                 if (updateData.getCustomNotificationLogic()) {
                     persistAnalysisNotificationConfigs(analysis, updateData);
                 }
@@ -239,8 +264,8 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
 
     private void persistAnalysisNotificationConfig(Analysis analysis, List<String> testIds,
             AnalysisNotificationConfig analysisNotificationConfig,
-            Optional<TestNotificationConfig> testNotificationConfig,
-            NotificationMethod method, NotificationPersonType personType) {
+            Optional<TestNotificationConfig> testNotificationConfig, NotificationMethod method,
+            NotificationPersonType personType) {
         NotificationNature notificationNature = NotificationNature.RESULT_VALIDATION;
         NotificationConfigOption nto = analysisNotificationConfig.getOptionFor(notificationNature, method, personType);
         nto.setNotificationMethod(method);
@@ -279,6 +304,14 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
                 updateData.getRequesterSite().setRequesterId(updateData.getNewOrganization().getId());
             }
             sampleRequesterService.insert(updateData.getRequesterSite());
+        }
+
+        if (updateData.getRequesterSiteDepartment() != null) {
+            updateData.getRequesterSiteDepartment().setSampleId(Long.parseLong(updateData.getSample().getId()));
+//            if (updateData.getNewOrganizationDepartment() != null) {
+//                updateData.getRequesterSite().setRequesterId(updateData.getNewOrganizationDepartment().getId());
+//            }
+            sampleRequesterService.insert(updateData.getRequesterSiteDepartment());
         }
     }
 
@@ -338,6 +371,8 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
             analysis.setSampleTypeName(sampleTypeName);
         }
         analysis.setTestSection(testSection);
+        // this will be used as an identifier for the service request as well
+        analysis.setFhirUuid(UUID.randomUUID());
         return analysis;
     }
 }

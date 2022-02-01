@@ -42,4 +42,6 @@ public interface NoteService extends BaseObjectService<Note, String> {
 
     List<Note> getNotesChronologicallyByRefIdAndRefTableAndType(String objectId, String tableId, List<String> filter);
 
+    List<Note> getNotes(NoteObject noteObject);
+
 }

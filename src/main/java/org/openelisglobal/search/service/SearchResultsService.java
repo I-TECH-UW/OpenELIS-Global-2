@@ -9,4 +9,8 @@ public interface SearchResultsService {
     List<PatientSearchResults> getSearchResults(String lastName, String firstName, String STNumber,
             String subjectNumber, String nationalID, String externalID, String patientID, String guid, String dateOfBirth, String gender);
 
+    List<PatientSearchResults> getSearchResultsExact(String lastName, String firstName, String STNumber,
+            String subjectNumber, String nationalID, String externalID, String patientID, String guid,
+            String dateOfBirth, String gender);
+
 }

@@ -51,17 +51,20 @@ public class PatientClinicalReport extends PatientReport implements IReportCreat
 
     static {
         analysisStatusIds = new HashSet<>();
-        analysisStatusIds
-                .add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.BiologistRejected)));
-        analysisStatusIds.add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized)));
+        analysisStatusIds.add(Integer
+                .parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.BiologistRejected)));
         analysisStatusIds.add(
-                Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NonConforming_depricated)));
-        analysisStatusIds.add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NotStarted)));
-        analysisStatusIds
-                .add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalAcceptance)));
-        analysisStatusIds.add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Canceled)));
-        analysisStatusIds
-                .add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalRejected)));
+                Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized)));
+        analysisStatusIds.add(Integer.parseInt(
+                SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NonConforming_depricated)));
+        analysisStatusIds.add(
+                Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NotStarted)));
+        analysisStatusIds.add(Integer
+                .parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalAcceptance)));
+        analysisStatusIds.add(
+                Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Canceled)));
+        analysisStatusIds.add(Integer
+                .parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalRejected)));
 
     }
 
@@ -88,21 +91,23 @@ public class PatientClinicalReport extends PatientReport implements IReportCreat
         Set<SampleItem> sampleSet = new HashSet<>();
         List<ClinicalPatientData> currentSampleReportItems = new ArrayList<>(analysisList.size());
         for (Analysis analysis : analysisList) {
-            sampleSet.add(analysis.getSampleItem());
-            boolean hasParentResult = analysis.getParentResult() != null;
+            if (!analysis.getTest().isInLabOnly()) {
+                sampleSet.add(analysis.getSampleItem());
+                boolean hasParentResult = analysis.getParentResult() != null;
 
-            if (analysis.getTest() != null) {
-                currentAnalysis = analysis;
-                ClinicalPatientData resultsData = buildClinicalPatientData(hasParentResult);
+                if (analysis.getTest() != null) {
+                    currentAnalysis = analysis;
+                    ClinicalPatientData resultsData = buildClinicalPatientData(hasParentResult);
 
-                if (currentAnalysis.isReferredOut()) {
-                    Referral referral = referralService.getReferralByAnalysisId(currentAnalysis.getId());
-                    if (referral != null) {
-                        List<ClinicalPatientData> referredData = addReferredTests(referral, resultsData);
-                        currentSampleReportItems.addAll(referredData);
+                    if (currentAnalysis.isReferredOut()) {
+                        Referral referral = referralService.getReferralByAnalysisId(currentAnalysis.getId());
+                        if (referral != null) {
+                            List<ClinicalPatientData> referredData = addReferredTests(referral, resultsData);
+                            currentSampleReportItems.addAll(referredData);
+                        }
+                    } else {
+                        currentSampleReportItems.add(resultsData);
                     }
-                } else {
-                    currentSampleReportItems.add(resultsData);
                 }
             }
         }

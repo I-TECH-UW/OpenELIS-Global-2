@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 
@@ -73,6 +74,14 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
     @Override
     protected ResultDAO getBaseObjectDAO() {
         return baseObjectDAO;
+    }
+
+    @Override
+    public String insert(Result result) {
+        if (result.getFhirUuid() == null) {
+            result.setFhirUuid(UUID.randomUUID());
+        }
+        return super.insert(result);
     }
 
     public static String getTableReferenceId() {
@@ -446,6 +455,7 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
         return "";
     }
 
+    @Override
     @Transactional(readOnly = true)
     public String getUOM(Result result) {
         Test test = result.getAnalysis() != null ? result.getAnalysis().getTest() : null;

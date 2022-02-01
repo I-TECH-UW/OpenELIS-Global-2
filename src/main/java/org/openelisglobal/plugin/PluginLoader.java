@@ -44,23 +44,26 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class PluginLoader {
-    private static final String PLUGIN_ANALYZER = "/var/lib/openelis-global/plugins/";
-    private static final String VERSION = "version";
-    private static final String SUPPORTED_VERSION = "1.0";
-    private static final String PATH = "path";
-    private static final String ANALYZER_IMPORTER = "analyzerImporter";
-    private static final String MENU = "menu";
-    private static final String PERMISSION = "permission";
-    private static final String EXTENSION_POINT = "extension_point";
-    private static final String EXTENSION = "extension";
-    private static final String DESCRIPTION = "description";
-    private static final String VALUE = "value";
-    private final int JDK_VERSION_MAJOR;
-    private final int JDK_VERSION_MINOR;
+    public static final String PLUGIN_ANALYZER = "/var/lib/openelis-global/plugins/";
+    public static final String VERSION = "version";
+    public static final String SUPPORTED_VERSION = "1.0";
+    public static final String PATH = "path";
+    public static final String ANALYZER_IMPORTER = "analyzerImporter";
+    public static final String MENU = "menu";
+    public static final String PERMISSION = "permission";
+    public static final String EXTENSION_POINT = "extension_point";
+    public static final String EXTENSION = "extension";
+    public static final String DESCRIPTION = "description";
+    public static final String VALUE = "value";
+    public static final String SERVLET = "servlet";
+    public static final String SERVLET_PATH = "servlet-path";
+    public static final String SERVLET_NAME = "servlet-name";
+    public static final int JDK_VERSION_MAJOR;
+    public static final int JDK_VERSION_MINOR;
 
     private static List<String> currentPlugins;
 
-    public PluginLoader() {
+    static {
         String[] version = System.getProperty("java.version").split("\\.");
         JDK_VERSION_MAJOR = Integer.parseInt(version[0]);
         JDK_VERSION_MINOR = Integer.parseInt(version[1]);
@@ -72,7 +75,7 @@ public class PluginLoader {
 
         loadDirectory(pluginDir);
 
-        LogEvent.logInfo(this.getClass().getName(), "load", "Plugins loaded");
+        LogEvent.logInfo(PluginLoader.class.getName(), "load", "Plugins loaded");
     }
 
     private void loadDirectory(File pluginDir) {
@@ -86,7 +89,7 @@ public class PluginLoader {
                     loadPlugin(file);
                     pluginList.add(file.getName());
                 } else if (file.isDirectory()) {
-                    LogEvent.logInfo(this.getClass().getName(), "method unkown",
+                    LogEvent.logInfo(PluginLoader.class.getName(), "method unkown",
                             "Checking plugin subfolder: " + file.getName());
                     loadDirectory(file);
                 }
@@ -129,21 +132,21 @@ public class PluginLoader {
 
     }
 
-    private boolean checkJDKVersions(String fileName, JarFile jar) throws IOException {
+    public static boolean checkJDKVersions(String fileName, JarFile jar) throws IOException {
         Manifest manifest = jar.getManifest();
         if (manifest == null) {
-            LogEvent.logError(this.getClass().getName(), "checkJDKVersion",
+            LogEvent.logError(PluginLoader.class.getName(), "checkJDKVersion",
                     "Manifest file not in jar file, unable to check jdk versions");
-            LogEvent.logInfo(this.getClass().getName(), "method unkown",
+            LogEvent.logInfo(PluginLoader.class.getName(), "method unkown",
                     "Manifest file not in jar file, unable to check jdk versions");
             return true;
         }
 
         String buildJdk = manifest.getMainAttributes().getValue("Build-Jdk");
         if (buildJdk == null) {
-            LogEvent.logError(this.getClass().getName(), "checkJDKVersion",
+            LogEvent.logError(PluginLoader.class.getName(), "checkJDKVersion",
                     "JDK version not found in manifest file, unable to check jdk versions");
-            LogEvent.logInfo(this.getClass().getName(), "method unkown",
+            LogEvent.logInfo(PluginLoader.class.getName(), "method unkown",
                     "JDK version not found in manifest file, unable to check jdk versions");
             return true;
         }
@@ -153,11 +156,11 @@ public class PluginLoader {
         int jarVersionMinor = Integer.parseInt(jarVersion[1]);
         if (jarVersionMajor > JDK_VERSION_MAJOR
                 || (jarVersionMajor == JDK_VERSION_MAJOR && jarVersionMinor > JDK_VERSION_MINOR)) {
-            LogEvent.logError(this.getClass().getName(), "checkJDKVersion",
+            LogEvent.logError(PluginLoader.class.getName(), "checkJDKVersion",
                     "The plugin " + fileName + " was compiled with a higher JDK version ("
                             + getVersion(jarVersionMajor, jarVersionMinor) + ") than the runtime JDK ("
                             + getVersion(JDK_VERSION_MAJOR, JDK_VERSION_MINOR) + ")");
-            LogEvent.logInfo(this.getClass().getName(), "method unkown",
+            LogEvent.logInfo(PluginLoader.class.getName(), "method unkown",
                     "The plugin " + fileName + " was compiled with a higher JDK version ("
                             + getVersion(jarVersionMajor, jarVersionMinor) + ") than the runtime JDK ("
                             + getVersion(JDK_VERSION_MAJOR, JDK_VERSION_MINOR) + ")");
@@ -166,7 +169,7 @@ public class PluginLoader {
         return true;
     }
 
-    private String getVersion(int major, int minor) {
+    private static String getVersion(int major, int minor) {
         return major + "." + minor;
     }
 
@@ -178,21 +181,21 @@ public class PluginLoader {
 
             String xml = IOUtils.toString(input, "UTF-8");
 
-            // LogEvent.logInfo(this.getClass().getName(), "method unkown", xml);
+            // LogEvent.logInfo(PluginLoader.class.getName(), "method unkown", xml);
 
             Document doc = DocumentHelper.parseText(xml);
 
             Element versionElement = doc.getRootElement().element(VERSION);
 
             if (versionElement == null) {
-                LogEvent.logError(this.getClass().getName(), "loadFromXml", "Missing version number in plugin");
-                LogEvent.logInfo(this.getClass().getName(), "method unkown", "Missing version number in plugin");
+                LogEvent.logError(PluginLoader.class.getName(), "loadFromXml", "Missing version number in plugin");
+                LogEvent.logInfo(PluginLoader.class.getName(), "method unkown", "Missing version number in plugin");
                 return false;
             }
             if (!SUPPORTED_VERSION.equals(versionElement.getData())) {
-                LogEvent.logError(this.getClass().getName(), "loadFromXml", "Unsupported version number.  Expected "
+                LogEvent.logError(PluginLoader.class.getName(), "loadFromXml", "Unsupported version number.  Expected "
                         + SUPPORTED_VERSION + " got " + versionElement.getData());
-                LogEvent.logInfo(this.getClass().getName(), "method unkown", "Unsupported version number.  Expected "
+                LogEvent.logInfo(PluginLoader.class.getName(), "method unkown", "Unsupported version number.  Expected "
                         + SUPPORTED_VERSION + " got " + versionElement.getData());
                 return false;
             }
@@ -203,7 +206,7 @@ public class PluginLoader {
                 description = analyzerImporter.element(EXTENSION_POINT).element(DESCRIPTION).attribute(VALUE);
                 Attribute path = analyzerImporter.element(EXTENSION_POINT).element(EXTENSION).attribute(PATH);
                 loadActualPlugin(url, path.getValue());
-                LogEvent.logInfo(this.getClass().getName(), "method unkown", "Loaded: " + description.getValue());
+                LogEvent.logInfo(PluginLoader.class.getName(), "method unkown", "Loaded: " + description.getValue());
             }
 
             Element menu = doc.getRootElement().element(MENU);
@@ -212,7 +215,7 @@ public class PluginLoader {
                 description = menu.element(EXTENSION_POINT).element(DESCRIPTION).attribute(VALUE);
                 Attribute path = menu.element(EXTENSION_POINT).element(EXTENSION).attribute(PATH);
                 loadActualPlugin(url, path.getValue());
-                LogEvent.logInfo(this.getClass().getName(), "method unkown", "Loaded: " + description.getValue());
+                LogEvent.logInfo(PluginLoader.class.getName(), "method unkown", "Loaded: " + description.getValue());
             }
 
             Element permissions = doc.getRootElement().element(PERMISSION);
@@ -221,7 +224,7 @@ public class PluginLoader {
                 description = permissions.element(EXTENSION_POINT).element(DESCRIPTION).attribute(VALUE);
                 Attribute path = permissions.element(EXTENSION_POINT).element(EXTENSION).attribute(PATH);
                 loadActualPlugin(url, path.getValue());
-                LogEvent.logInfo(this.getClass().getName(), "method unkown", "Loaded: " + description.getValue());
+                LogEvent.logInfo(PluginLoader.class.getName(), "method unkown", "Loaded: " + description.getValue());
             }
 
         } catch (MalformedURLException e) {
@@ -236,7 +239,7 @@ public class PluginLoader {
         } catch (LIMSException e) {
             if (description != null) {
                 LogEvent.logError("Failed Loading: " + description.getValue(), e);
-                LogEvent.logInfo(this.getClass().getName(), "method unkown",
+                LogEvent.logInfo(PluginLoader.class.getName(), "method unkown",
                         "Failed Loading: " + description.getValue());
             }
             return false;

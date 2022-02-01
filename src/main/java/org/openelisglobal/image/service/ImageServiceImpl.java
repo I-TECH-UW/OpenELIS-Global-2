@@ -1,13 +1,17 @@
 package org.openelisglobal.image.service;
 
 import java.io.File;
+import java.util.Optional;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
 
+import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
 import org.openelisglobal.image.dao.ImageDAO;
 import org.openelisglobal.image.valueholder.Image;
+import org.openelisglobal.siteinformation.service.SiteInformationService;
+import org.openelisglobal.siteinformation.valueholder.SiteInformation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +19,8 @@ import org.springframework.stereotype.Service;
 public class ImageServiceImpl extends BaseObjectServiceImpl<Image, String> implements ImageService {
     @Autowired
     protected ImageDAO baseObjectDAO;
+    @Autowired
+    private SiteInformationService siteInformationService;
     @Autowired
     private ServletContext servletContext;
 
@@ -52,6 +58,23 @@ public class ImageServiceImpl extends BaseObjectServiceImpl<Image, String> imple
         default:
             return "rightLabLogo.jpg";
         }
+    }
+
+    @Override
+    public Image getImageByDescription(String imageDescription) {
+        return baseObjectDAO.getImageByDescription(imageDescription);
+    }
+
+    @Override
+    public Optional<Image> getImageBySiteInfoName(String imageName) {
+        SiteInformation logoInformation = siteInformationService.getSiteInformationByName(imageName);
+        if (logoInformation == null || logoInformation.getValue() == null
+                || GenericValidator.isBlankOrNull(logoInformation.getValue().trim())) {
+            return Optional.empty();
+        }
+        Image image = get(logoInformation.getValue());
+        return Optional.ofNullable(image);
+
     }
 
 }

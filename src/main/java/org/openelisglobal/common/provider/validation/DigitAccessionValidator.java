@@ -48,12 +48,10 @@ public class DigitAccessionValidator implements IAccessionNumberGenerator {
         return NEED_PROGRAM_CODE;
     }
 
-    @Override
     public String createFirstAccessionNumber(String programCode) {
         return incrementStartingValue;
     }
 
-    @Override
     public String incrementAccessionNumber(String currentHighAccessionNumber) throws IllegalStateException {
 
         int increment = Integer.parseInt(currentHighAccessionNumber);
@@ -175,6 +173,11 @@ public class DigitAccessionValidator implements IAccessionNumberGenerator {
     @Override
     public String getPrefix() {
         return null; // no fixed prefix
+    }
+
+    @Override
+    public String getNextAccessionNumber(String programCode, boolean reserve) {
+        return this.getNextAvailableAccessionNumber(programCode, reserve);
     }
 
 }

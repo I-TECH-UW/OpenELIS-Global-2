@@ -1,26 +1,43 @@
 package org.openelisglobal.referral.service;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
+
+import javax.annotation.PostConstruct;
 
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.IStatusService;
+import org.openelisglobal.common.services.SampleAddService.SampleTestCollection;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.StatusService.OrderStatus;
+import org.openelisglobal.common.util.DateUtil;
+import org.openelisglobal.dataexchange.fhir.exception.FhirLocalPersistingException;
 import org.openelisglobal.note.service.NoteService;
+import org.openelisglobal.organization.service.OrganizationService;
+import org.openelisglobal.referral.action.beanitems.ReferralItem;
 import org.openelisglobal.referral.fhir.service.FhirReferralService;
+import org.openelisglobal.referral.fhir.service.TestNotFullyConfiguredException;
 import org.openelisglobal.referral.valueholder.Referral;
 import org.openelisglobal.referral.valueholder.ReferralResult;
 import org.openelisglobal.referral.valueholder.ReferralSet;
+import org.openelisglobal.referral.valueholder.ReferralStatus;
+import org.openelisglobal.referral.valueholder.ReferralType;
 import org.openelisglobal.result.service.ResultService;
 import org.openelisglobal.result.valueholder.Result;
+import org.openelisglobal.sample.action.util.SamplePatientUpdateData;
 import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.test.service.TestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,10 +59,28 @@ public class ReferralSetServiceImpl implements ReferralSetService {
     private NoteService noteService;
     @Autowired
     private FhirReferralService fhirReferralService;
+    @Autowired
+    private TestService testService;
+    @Autowired
+    private OrganizationService organizationService;
+    @Autowired
+    private ReferralTypeService referralTypeService;
+
+    private String REFERRAL_CONFORMATION_ID;
+
+    @PostConstruct
+    public void init() {
+        ReferralType referralType = referralTypeService.getReferralTypeByName("Confirmation");
+        if (referralType != null) {
+            REFERRAL_CONFORMATION_ID = referralType.getId();
+        } else {
+            REFERRAL_CONFORMATION_ID = null;
+        }
+    }
 
     @Transactional
     @Override
-    public void updateRefreralSets(List<ReferralSet> referralSetList, List<Sample> modifiedSamples,
+    public void updateReferralSets(List<ReferralSet> referralSetList, List<Sample> modifiedSamples,
             Set<Sample> parentSamples, List<ReferralResult> removableReferralResults, String sysUserId) {
         for (ReferralSet referralSet : referralSetList) {
             referralService.update(referralSet.getReferral());
@@ -96,13 +131,25 @@ public class ReferralSetServiceImpl implements ReferralSetService {
 
         for (ReferralSet referralSet : referralSetList) {
             if (referralSet.getReferral().isCanceled()) {
-                fhirReferralService.cancelReferralToOrganization(referralSet.getReferral().getOrganization().getId(),
-                        referralSet.getReferral().getAnalysis().getSampleItem().getSample().getId(),
-                        Arrays.asList(referralSet.getReferral().getAnalysis().getId()));
+//                try {
+//                    fhirReferralService.cancelReferralToOrganization(
+//                            referralSet.getReferral().getOrganization().getId(),
+//                            referralSet.getReferral().getAnalysis().getSampleItem().getSample().getId(),
+//                            Arrays.asList(referralSet.getReferral().getAnalysis().getId()));
+//                } catch (FhirLocalPersistingException e) {
+//                    // TODO don't catch since this is a considerable error in OE world going ahead?
+//                    LogEvent.logError(e);
+//                }
             } else {
-                fhirReferralService.referAnalysisesToOrganization(referralSet.getReferral().getOrganization().getId(),
-                        referralSet.getReferral().getAnalysis().getSampleItem().getSample().getId(),
-                        Arrays.asList(referralSet.getReferral().getAnalysis().getId()));
+                try {
+                    fhirReferralService.referAnalysisesToOrganization(referralSet.getReferral());
+                } catch (TestNotFullyConfiguredException e) {
+                    LogEvent.logError(this.getClass().getName(), "updateRefreralSets",
+                            "unable to automatically refer a test that does not have a loinc code set");
+                } catch (FhirLocalPersistingException e) {
+                    LogEvent.logError(this.getClass().getName(), "updateRefreralSets",
+                            "had a problem saving the referral locally in fhir");
+                }
             }
         }
 
@@ -151,6 +198,58 @@ public class ReferralSetServiceImpl implements ReferralSetService {
                 modifiedSamples.add(sample);
             }
         }
+    }
+
+    @Override
+    @Transactional
+    public void createSaveReferralSetsSamplePatientEntry(List<ReferralItem> referralItems,
+            SamplePatientUpdateData updateData) {
+        List<Referral> referrals = new ArrayList<>();
+        List<ReferralSet> referralSets = new ArrayList<>();
+        for (ReferralItem referralItem : referralItems) {
+            Result result = new Result();
+            result.setSysUserId("1");
+
+            Referral referral = new Referral();
+            referral.setFhirUuid(UUID.randomUUID());
+            referral.setStatus(ReferralStatus.SENT);
+            referral.setSysUserId(updateData.getCurrentUserId());
+            referral.setReferralTypeId(REFERRAL_CONFORMATION_ID);
+
+            referral.setRequestDate(new Timestamp(new Date().getTime()));
+            referral.setSentDate(DateUtil.convertStringDateToTruncatedTimestamp(referralItem.getReferredSendDate()));
+            referral.setRequesterName(referralItem.getReferrer());
+            referral.setOrganization(organizationService.get(referralItem.getReferredInstituteId()));
+            for (SampleTestCollection sampleItemTest : updateData.getSampleItemsTests()) {
+                for (Analysis analysis : sampleItemTest.analysises) {
+                    if (referralItem.getReferredTestId().equals(analysis.getTest().getId())) {
+                        referral.setAnalysis(analysis);
+
+                        String testResultType = testService.getResultType(analysis.getTest());
+                        result.setResultType(testResultType);
+                        result.setAnalysis(analysis);
+                    }
+                }
+            }
+            referral.setReferralReasonId(referralItem.getReferralReasonId());
+
+            referralService.insert(referral);
+            resultService.insert(result);
+            referrals.add(referral);
+            ReferralResult referralResult = new ReferralResult();
+            referralResult.setReferralId(referral.getId());
+            referralResult.setSysUserId(updateData.getCurrentUserId());
+            referralResult.setTestId(referralItem.getReferredTestId());
+            referralResult.setResult(result);
+            referralResultService.insert(referralResult);
+
+            ReferralSet referralSet = new ReferralSet();
+            referralSet.setReferral(referral);
+            referralSet.setExistingReferralResults(Arrays.asList(referralResult));
+            referralSets.add(referralSet);
+        }
+        updateReferralSets(referralSets, new ArrayList<>(), new HashSet<>(), new ArrayList<>(),
+                updateData.getCurrentUserId());
     }
 
 }

@@ -1,15 +1,17 @@
 package org.openelisglobal.referral.fhir.service;
 
-import java.util.List;
-
 import org.hl7.fhir.r4.model.Bundle;
+import org.openelisglobal.dataexchange.fhir.exception.FhirLocalPersistingException;
+import org.openelisglobal.dataexchange.fhir.service.FhirApiWorkFlowServiceImpl.ReferralResultsImportObjects;
+import org.openelisglobal.referral.valueholder.Referral;
 
 public interface FhirReferralService {
 
-    Bundle referAnalysisesToOrganization(String organizationId, String sampleId, List<String> analysisIds);
+    void setReferralResult(ReferralResultsImportObjects resultsImport);
 
-    Bundle referAnalysisesToOrganization(String organizationId, String analysisId);
+    Bundle referAnalysisesToOrganization(Referral referral) throws FhirLocalPersistingException;
 
-    Bundle cancelReferralToOrganization(String organizationId, String sampleId, List<String> analysisIds);
+//    Bundle cancelReferralToOrganization(String organizationId, String sampleId, List<String> analysisIds)
+//            throws FhirLocalPersistingException;
 
 }

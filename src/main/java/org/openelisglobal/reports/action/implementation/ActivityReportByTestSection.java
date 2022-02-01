@@ -59,7 +59,7 @@ public class ActivityReportByTestSection extends ActivityReport implements IRepo
 
         String currentAnalysisId = "-1";
         for (Result result : resultList) {
-            if (result.getAnalysis() != null) {
+            if (result.getAnalysis() != null && result.getAnalysis().getId() != null) {
                 if (!currentAnalysisId.equals(result.getAnalysis().getId())) {
                     rawResults.add(createActivityReportBean(result, true));
                     currentAnalysisId = result.getAnalysis().getId();

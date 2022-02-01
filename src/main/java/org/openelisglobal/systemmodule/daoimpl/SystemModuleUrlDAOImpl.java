@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.validator.GenericValidator;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
@@ -50,6 +51,27 @@ public class SystemModuleUrlDAOImpl extends BaseDAOImpl<SystemModuleUrl, String>
 
         return list;
 
+    }
+
+    @Override
+    public SystemModuleUrl getByModuleAndUrl(String moduleId, String urlPath) {
+        SystemModuleUrl moduleUrl = null;
+        if (GenericValidator.isBlankOrNull(moduleId)) {
+            return moduleUrl;
+        }
+        try {
+            String sql = "From SystemModuleUrl smu where smu.urlPath = :urlPath AND smu.systemModule = :systemModuleId";
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setString("urlPath", urlPath);
+            query.setInteger("systemModuleId", Integer.parseInt(moduleId));
+            moduleUrl = (SystemModuleUrl) query.getResultStream().findFirst().orElse(null);
+        } catch (RuntimeException e) {
+            LogEvent.logDebug(e);
+            LogEvent.logError(e.toString(), e);
+            throw new LIMSRuntimeException("Error in SystemModuleUrl getByUrlPath()", e);
+        }
+
+        return moduleUrl;
     }
 
 //	@Override

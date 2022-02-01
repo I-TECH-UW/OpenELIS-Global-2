@@ -23,6 +23,8 @@ public class MessagePatient {
     private String pcNumber;
     private String stNumber;
     private String externalId;
+    private String fhirUuid;
+    private String subjectNumber;
 
     private String gender;
     private String displayDOB;
@@ -40,6 +42,7 @@ public class MessagePatient {
     private String contactEmail;
 
     private String addressStreet;
+    private String addressCommune;
     private String addressVillage;
     private String addressDepartment;
     private String addressCountry;
@@ -218,6 +221,30 @@ public class MessagePatient {
 
     public void setAddressCountry(String addressCountry) {
         this.addressCountry = addressCountry;
+    }
+
+    public String getFhirUuid() {
+        return fhirUuid;
+    }
+
+    public void setFhirUuid(String fhirUuid) {
+        this.fhirUuid = fhirUuid;
+    }
+
+    public String getSubjectNumber() {
+        return subjectNumber;
+    }
+
+    public void setSubjectNumber(String subjectNumber) {
+        this.subjectNumber = subjectNumber;
+    }
+
+    public String getAddressCommune() {
+        return addressCommune;
+    }
+
+    public void setAddressCommune(String addressCommune) {
+        this.addressCommune = addressCommune;
     }
 
 }

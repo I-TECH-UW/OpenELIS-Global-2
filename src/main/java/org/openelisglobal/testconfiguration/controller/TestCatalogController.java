@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.openelisglobal.common.controller.BaseController;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
 import org.openelisglobal.localization.service.LocalizationService;
@@ -112,7 +113,15 @@ public class TestCatalogController extends BaseController {
             catalog.setActive(test.isActive() ? "Active" : "Not active");
             catalog.setUom(testService.getUOM(test, false));
             if (TypeOfTestResultServiceImpl.ResultType.NUMERIC.matches(resultType)) {
-                catalog.setSignificantDigits(testService.getPossibleTestResults(test).get(0).getSignificantDigits());
+                List<TestResult> testResults = testService.getPossibleTestResults(test);
+                if (testResults.size() > 0) {
+                    catalog.setSignificantDigits(
+                            testService.getPossibleTestResults(test).get(0).getSignificantDigits());
+                } else {
+                    LogEvent.logWarn(TestCatalogController.class.getName(), "createTestList",
+                            "test that doesn't have an active test result found. Possibly issue with data in database");
+                    catalog.setSignificantDigits("0");
+                }
                 catalog.setHasLimitValues(true);
                 catalog.setResultLimits(getResultLimits(test, catalog.getSignificantDigits()));
             }

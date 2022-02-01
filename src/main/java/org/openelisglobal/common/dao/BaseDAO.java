@@ -35,6 +35,8 @@ public interface BaseDAO<T extends BaseObject<PK>, PK extends Serializable> {
      */
     Optional<T> get(PK id);
 
+    List<T> get(List<PK> ids);
+
     /**
      * @return all data type for the object type
      */

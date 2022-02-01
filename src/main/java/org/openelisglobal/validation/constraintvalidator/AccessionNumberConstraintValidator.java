@@ -22,12 +22,19 @@ public class AccessionNumberConstraintValidator implements ConstraintValidator<V
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-
-        if( !Boolean.valueOf(ConfigurationProperties.getInstance().getPropertyValue(Property.ACCESSION_NUMBER_VALIDATE))) {
-            return true;
-        }
         if (org.apache.commons.validator.GenericValidator.isBlankOrNull(value)) {
             return true;
+        }
+        if (value.contains(".") && validateAccessionNumberConstraint.searchValue()) {
+            int dotIndex = value.indexOf('.');
+            if (!value.substring(dotIndex + 1).matches("[0-9]*")) {
+                return false;
+            }
+            value = value.substring(0, dotIndex);
+        }
+        if (!Boolean
+                .valueOf(ConfigurationProperties.getInstance().getPropertyValue(Property.ACCESSION_NUMBER_VALIDATE))) {
+            return !AccessionNumberUtil.containsBlackListCharacters(value);
         }
         if (AccessionFormat.ALPHANUM_DASH.equals(validateAccessionNumberConstraint.format())) {
             return value.matches("^[a-zA-Z0-9-]*$");

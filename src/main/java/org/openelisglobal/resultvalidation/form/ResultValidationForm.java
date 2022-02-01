@@ -14,9 +14,11 @@ import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.resultvalidation.bean.AnalysisItem;
 import org.openelisglobal.validation.annotations.ValidDate;
 
-public class ResultValidationForm extends BaseForm {
+public class ResultValidationForm extends BaseForm implements ValidationPagingForm {
     public interface ResultValidation {
     }
+
+    private boolean searchFinished;
 
     // for display
     private PagingBean paging;
@@ -29,6 +31,18 @@ public class ResultValidationForm extends BaseForm {
 
     @Pattern(regexp = "^[a-zA-Z -]*$", groups = { ResultValidation.class })
     private String testSection = "";
+    
+    private String accessionNumber = "";
+    
+    
+
+    public String getAccessionNumber() {
+        return accessionNumber;
+    }
+
+    public void setAccessionNumber(String accessionNumber) {
+        this.accessionNumber = accessionNumber;
+    }
 
     // for display
     private String testName = "";
@@ -49,10 +63,12 @@ public class ResultValidationForm extends BaseForm {
         setFormName("ResultValidationForm");
     }
 
+    @Override
     public PagingBean getPaging() {
         return paging;
     }
 
+    @Override
     public void setPaging(PagingBean paging) {
         this.paging = paging;
     }
@@ -65,10 +81,12 @@ public class ResultValidationForm extends BaseForm {
         this.currentDate = currentDate;
     }
 
+    @Override
     public List<AnalysisItem> getResultList() {
         return resultList;
     }
 
+    @Override
     public void setResultList(List<AnalysisItem> resultList) {
         this.resultList = resultList;
     }
@@ -80,7 +98,7 @@ public class ResultValidationForm extends BaseForm {
     public void setTestSection(String testSection) {
         this.testSection = testSection;
     }
-
+    
     public String getTestName() {
         return testName;
     }
@@ -105,10 +123,12 @@ public class ResultValidationForm extends BaseForm {
         this.testSectionsByName = testSectionsByName;
     }
 
+    @Override
     public String getTestSectionId() {
         return testSectionId;
     }
 
+    @Override
     public void setTestSectionId(String testSectionId) {
         this.testSectionId = testSectionId;
     }
@@ -120,4 +140,14 @@ public class ResultValidationForm extends BaseForm {
     public void setDisplayTestSections(Boolean displayTestSections) {
         this.displayTestSections = displayTestSections;
     }
+
+    public void setSearchFinished(boolean searchFinished) {
+        this.searchFinished = searchFinished;
+    }
+
+    @Override
+    public boolean getSearchFinished() {
+        return searchFinished;
+    }
+
 }

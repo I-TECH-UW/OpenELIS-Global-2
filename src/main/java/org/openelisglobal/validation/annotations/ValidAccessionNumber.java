@@ -24,6 +24,8 @@ public @interface ValidAccessionNumber {
 
     AccessionFormat format() default AccessionFormat.GENERAL;
 
+    boolean searchValue() default false;
+
     boolean dateValidate() default false;
 
     Class<? extends Payload>[] payload() default {};

@@ -21,6 +21,7 @@ package org.openelisglobal.dictionarycategory.daoimpl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
@@ -383,26 +384,26 @@ public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory, S
 //		return results;
 //	}
 
-//	@Override
-//
-//	public DictionaryCategory getDictionaryCategoryByName(String name) throws LIMSRuntimeException {
-//
-//		String sql = "from DictionaryCategory dc where dc.categoryName = :name";
-//		try {
-//			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-//			query.setString("name", name);
-//
-//			List<DictionaryCategory> categoryList = query.list();
-//			// closeSession(); // CSL remove old
-//
-//			if (categoryList.size() > 0) {
-//				return categoryList.get(0);
-//			}
-//		} catch (RuntimeException e) {
-//			handleException(e, "getDictonaryCategoryByName");
-//		}
-//
-//		return null;
-//	}
+    @Override
+
+    public DictionaryCategory getDictionaryCategoryByName(String name) throws LIMSRuntimeException {
+
+        String sql = "from DictionaryCategory dc where dc.categoryName = :name";
+        try {
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setString("name", name);
+
+            List<DictionaryCategory> categoryList = query.list();
+            // closeSession(); // CSL remove old
+
+            if (categoryList.size() > 0) {
+                return categoryList.get(0);
+            }
+        } catch (RuntimeException e) {
+            handleException(e, "getDictonaryCategoryByName");
+        }
+
+        return null;
+    }
 
 }

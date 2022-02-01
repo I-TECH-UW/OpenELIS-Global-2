@@ -18,6 +18,7 @@ package org.openelisglobal.reports.action.implementation;
 
 import static org.apache.commons.validator.GenericValidator.isBlankOrNull;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.sql.Date;
@@ -26,7 +27,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
@@ -34,6 +35,8 @@ import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.DateUtil;
+import org.openelisglobal.image.service.ImageService;
+import org.openelisglobal.image.valueholder.Image;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.organization.service.OrganizationService;
 import org.openelisglobal.organization.valueholder.Organization;
@@ -48,6 +51,7 @@ import net.sf.jasperreports.engine.JasperRunManager;
 
 public abstract class Report implements IReportCreator {
 
+    private ImageService imageService = SpringContext.getBean(ImageService.class);
     private OrganizationService organizationService = SpringContext.getBean(OrganizationService.class);
     public static final String ERROR_REPORT = "NoticeOfReportError";
 
@@ -102,8 +106,14 @@ public abstract class Report implements IReportCreator {
         reportParameters.put("usePageNumbers",
                 ConfigurationProperties.getInstance().getPropertyValue(Property.USE_PAGE_NUMBERS_ON_REPORTS));
         // reportParameters.put("localization", createLocalizationMap());
-        // reportParameters.put("leftHeaderImage", getImage("headerLeftImage"));
-        // reportParameters.put("rightHeaderImage", getImage("headerRightImage"));
+        Optional<Image> leftLogo = imageService.getImageBySiteInfoName("headerLeftImage");
+        Optional<Image> rightLogo = imageService.getImageBySiteInfoName("headerRightImage");
+        if (leftLogo.isPresent()) {
+            reportParameters.put("leftHeaderImage", new ByteArrayInputStream(leftLogo.get().getImage()));
+        }
+        if (rightLogo.isPresent()) {
+            reportParameters.put("rightHeaderImage", new ByteArrayInputStream(rightLogo.get().getImage()));
+        }
         reportParameters.put(JRParameter.REPORT_LOCALE, LocaleContextHolder.getLocale());
         reportParameters.put(JRParameter.REPORT_RESOURCE_BUNDLE, MessageUtil.getMessageSourceAsResourceBundle());
     }

@@ -149,6 +149,7 @@ public class TestModifyEntryController extends BaseController {
             bean.setSampleType(typeOfSample != null ? typeOfSample.getLocalizedName() : "n/a");
             bean.setOrderable(test.getOrderable() ? "Orderable" : "Not orderable");
             bean.setNotifyResults(test.isNotifyResults());
+            bean.setInLabOnly(test.isInLabOnly());
             bean.setLoinc(test.getLoinc());
             bean.setActive(test.isActive() ? "Active" : "Not active");
             bean.setUom(testService.getUOM(test, false));
@@ -551,6 +552,7 @@ public class TestModifyEntryController extends BaseController {
             test.setIsActive(testAddParams.active);
             test.setOrderable("Y".equals(testAddParams.orderable));
             test.setNotifyResults("Y".equals(testAddParams.notifyResults));
+            test.setInLabOnly("Y".equals(testAddParams.inLabOnly));
             test.setIsReportable("N");
             test.setTestSection(testSection);
             if (GenericValidator.isBlankOrNull(test.getGuid())) {
@@ -560,6 +562,7 @@ public class TestModifyEntryController extends BaseController {
             for (int j = 0; j < orderedTests.size(); j++) {
                 if ("0".equals(orderedTests.get(j))) {
                     test.setSortOrder(String.valueOf(j));
+                    testSet.sortedTests.add(test);
                 } else {
                     Test orderedTest = SpringContext.getBean(TestService.class).get(orderedTests.get(j));
                     orderedTest.setSortOrder(String.valueOf(j));
@@ -588,13 +591,13 @@ public class TestModifyEntryController extends BaseController {
     }
 
     private ArrayList<ResultLimit> createDictionaryResultLimit(TestAddParams testAddParams) {
-        
+
         List<TestResult> testResults = testResultService.getActiveTestResultsByTest(testAddParams.testId);
         for (int i = 0; i < testResults.size(); i++) {
             testResults.get(i).setIsActive(false);
         }
         testResultService.updateAll(testResults);
-        
+
         ArrayList<ResultLimit> resultLimits = new ArrayList<>();
         if (!org.apache.commons.validator.GenericValidator.isBlankOrNull(testAddParams.dictionaryReferenceId)) {
             ResultLimit limit = new ResultLimit();
@@ -643,6 +646,7 @@ public class TestModifyEntryController extends BaseController {
             testAddParams.active = (String) obj.get("active");
             testAddParams.orderable = (String) obj.get("orderable");
             testAddParams.notifyResults = (String) obj.get("notifyResults");
+            testAddParams.inLabOnly = (String) obj.get("inLabOnly");
             if (TypeOfTestResultServiceImpl.ResultType.isNumericById(testAddParams.resultTypeId)) {
                 testAddParams.lowValid = (String) obj.get("lowValid");
                 testAddParams.highValid = (String) obj.get("highValid");
@@ -765,6 +769,7 @@ public class TestModifyEntryController extends BaseController {
         String active;
         String orderable;
         public String notifyResults;
+        public String inLabOnly;
         String lowValid;
         String highValid;
         public String significantDigits;

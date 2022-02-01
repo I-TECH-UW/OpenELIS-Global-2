@@ -21,6 +21,7 @@ package org.openelisglobal.analysis.valueholder;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.UUID;
 
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisServiceImpl;
@@ -42,6 +43,7 @@ public class Analysis extends BaseObject<String> implements NoteObject {
     private static final long serialVersionUID = 1L;
 
     private String id;
+    private UUID fhirUuid;
     private ValueHolderInterface sampleItem;
     private String analysisType;
     private ValueHolderInterface testSection;
@@ -477,5 +479,17 @@ public class Analysis extends BaseObject<String> implements NoteObject {
     @Override
     public BoundTo getBoundTo() {
         return BoundTo.ANALYSIS;
+    }
+
+    public String getFhirUuidAsString() {
+        return fhirUuid == null ? "" : fhirUuid.toString();
+    }
+
+    public UUID getFhirUuid() {
+        return fhirUuid;
+    }
+
+    public void setFhirUuid(UUID fhirUuid) {
+        this.fhirUuid = fhirUuid;
     }
 }

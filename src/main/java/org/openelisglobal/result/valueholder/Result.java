@@ -15,6 +15,8 @@
 */
 package org.openelisglobal.result.valueholder;
 
+import java.util.UUID;
+
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.analyte.valueholder.Analyte;
 import org.openelisglobal.common.valueholder.EnumValueItemImpl;
@@ -28,6 +30,7 @@ public class Result extends EnumValueItemImpl {
     private static final long serialVersionUID = 1L;
 
     private String id;
+    private UUID fhirUuid;
     private ValueHolderInterface analysis;
     private ValueHolderInterface analyte;
     private ValueHolderInterface testResult;
@@ -109,10 +112,12 @@ public class Result extends EnumValueItemImpl {
         this.value = value;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }
 
+    @Override
     public String getId() {
         return this.id;
     }
@@ -163,5 +168,17 @@ public class Result extends EnumValueItemImpl {
 
     public void setResultEvent(Event resultEvent) {
         this.resultEvent = resultEvent;
+    }
+
+    public UUID getFhirUuid() {
+        return fhirUuid;
+    }
+
+    public void setFhirUuid(UUID fhirUuid) {
+        this.fhirUuid = fhirUuid;
+    }
+
+    public String getFhirUuidAsString() {
+        return fhirUuid == null ? "" : fhirUuid.toString();
     }
 }

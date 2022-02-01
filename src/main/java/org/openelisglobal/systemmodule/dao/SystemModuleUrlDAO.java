@@ -13,4 +13,6 @@ public interface SystemModuleUrlDAO extends BaseDAO<SystemModuleUrl, String> {
 
     public List<SystemModuleUrl> getByUrlPath(String urlPath);
 
+    public SystemModuleUrl getByModuleAndUrl(String moduleId, String urlPath);
+
 }

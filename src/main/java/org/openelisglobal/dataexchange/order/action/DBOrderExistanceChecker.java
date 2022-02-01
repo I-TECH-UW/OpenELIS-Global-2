@@ -36,19 +36,21 @@ public class DBOrderExistanceChecker implements IOrderExistanceChecker {
 
     @Override
     public CheckResult check(String orderId) {
-        LogEvent.logDebug(this.getClass().getName(), "check", "DBOrderExistanceChecker:check: " + orderId);
         if (GenericValidator.isBlankOrNull(orderId)) {
+            LogEvent.logDebug(this.getClass().getName(), "check", "order not found: " + orderId);
             return CheckResult.NOT_FOUND;
         }
 
         List<ElectronicOrder> eOrders = eOrderService.getElectronicOrdersByExternalId(orderId);
         if (eOrders == null || eOrders.isEmpty()) {
+            LogEvent.logDebug(this.getClass().getName(), "check", "order not found: " + orderId);
             return CheckResult.NOT_FOUND;
         }
 
         ElectronicOrder eOrder = eOrders.get(eOrders.size() - 1);
         if (SpringContext.getBean(IStatusService.class).getStatusID(ExternalOrderStatus.Cancelled)
                 .equals(eOrder.getStatusId())) {
+            LogEvent.logDebug(this.getClass().getName(), "check", "order found cancelled: " + orderId);
             return CheckResult.ORDER_FOUND_CANCELED;
         }
 
@@ -56,9 +58,11 @@ public class DBOrderExistanceChecker implements IOrderExistanceChecker {
                 .equals(eOrder.getStatusId()) ||
             SpringContext.getBean(IStatusService.class).getStatusID(ExternalOrderStatus.NonConforming)
                 .equals(eOrder.getStatusId())) {
+            LogEvent.logDebug(this.getClass().getName(), "check", "order queued: " + orderId);
             return CheckResult.ORDER_FOUND_QUEUED;
         }
 
+        LogEvent.logDebug(this.getClass().getName(), "check", "order inb progress: " + orderId);
         return CheckResult.ORDER_FOUND_INPROGRESS;
     }
 

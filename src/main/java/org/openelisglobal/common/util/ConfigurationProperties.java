@@ -98,6 +98,7 @@ public abstract class ConfigurationProperties {
         PHONE_FORMAT("phone format"),                //Format of phone number
         VALIDATE_PHONE_FORMAT("validate phone format"),       //If true then entered phone numbers will be validated against format
         ALLOW_DUPLICATE_SUBJECT_NUMBERS("Allow duplicate subject number"), //If true then duplicate subject numbers are allowed
+        ALLOW_DUPLICATE_NATIONAL_IDS("Allow duplicate national ids"), // If true then duplicate national ids are allowed
         VALIDATE_REJECTED_TESTS("validateTechnicalRejection"), //If true then if the technician rejects a test the next step is validation
         TEST_NAME_AUGMENTED("augmentTestNameWithType"),   //If true then in some places the test name will be suffixed with the sample type
         USE_BILLING_REFERENCE_NUMBER("billingRefNumber"),       //If true then the user can enter billing codes for latter reporting
@@ -108,10 +109,14 @@ public abstract class ConfigurationProperties {
         PATIENT_NATIONALITY("supportPatientNationality"), //True if patient nationality should be collected with patient information
         PATIENT_ID_REQUIRED("Patient ID required"), //True if patient id is required for new patient
         PATIENT_SUBJECT_NUMBER_REQUIRED("Subject number required"), //True if patient subject number is required for new patient
+        PATIENT_NATIONAL_ID_REQUIRED("National ID required"), // True if patient national id is required for new patient
         QA_SAMPLE_ID_REQUIRED("sample id required"),  //True if sample id required from referring lab
-        MAX_ORDER_PRINTED("numOrderLabels"),    //Max number of order labels that can be printed
-        MAX_SPECIMEN_PRINTED("numSpecimenLabels"),  //Max number of specimen labels that can be printed
-        MAX_ALIQUOT_PRINTED("numAliquotLabels"),    //Max number of aliquots that can be printed
+        MAX_ORDER_PRINTED("numMaxOrderLabels"), // Max number of order labels that can be printed
+        MAX_SPECIMEN_PRINTED("numMaxSpecimenLabels"), // Max number of specimen labels that can be printed
+        MAX_ALIQUOT_PRINTED("numMaxAliquotLabels"), // Max number of aliquots that can be printed
+        DEFAULT_ORDER_PRINTED("numDefaultOrderLabels"), // Max number of order labels that can be printed
+        DEFAULT_SPECIMEN_PRINTED("numDefaultSpecimenLabels"), // Max number of specimen labels that can be printed
+        DEFAULT_ALIQUOT_PRINTED("numDefaultAliquotLabels"), // Max number of aliquots that can be printed
         ORDER_BARCODE_HEIGHT("heightOrderLabels"),  //Height of the order barcode
         ORDER_BARCODE_WIDTH("widthOrderLabels"),    //Width of the order barcode
         SPECIMEN_BARCODE_HEIGHT("heightSpecimenLabels"),    //Height of the specimen barcode
@@ -138,7 +143,8 @@ public abstract class ConfigurationProperties {
         PATIENT_RESULTS_SMTP_USERNAME("patientresultssmtp.username"), //
         PATIENT_RESULTS_SMTP_PASSWORD("patientresultssmtp.password"), //
         PATIENT_RESULTS_SMTP_ADDRESS("patientresultssmtp.uri"), //
-        PATIENT_RESULTS_SMTP_ENABLED("patientresultssmtp.enabled"); //
+        PATIENT_RESULTS_SMTP_ENABLED("patientresultssmtp.enabled"), //
+        CONTACT_TRACING("contactTracingEnabled"); //
 
         private String name;
 

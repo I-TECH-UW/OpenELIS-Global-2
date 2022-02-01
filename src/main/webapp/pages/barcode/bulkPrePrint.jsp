@@ -54,9 +54,16 @@ function preprintLabels() {
 		alert("missing tests");
 		return;
 	}
+	var startingAt;
+	var startingAtValue ;
+	if (jQuery("#useStartingAt").prop("checked")) {
+		startingAtValue = String(jQuery("#startingAtValue").val()).padStart(${altAccessionValueLength}, "0");
+		startingAt = '${altAccessionPrefix}' + startingAtValue;
+	} else {
+		startingAtValue = '';
+		startingAt = ''; 
+	}
 	
-	var startingAtValue = String(jQuery("#startingAtValue").val()).padStart(${altAccessionValueLength}, "0");
-	var startingAt = '${altAccessionPrefix}' + startingAtValue;
 
 	//label info
 	const params = new URLSearchParams({
@@ -80,8 +87,8 @@ function getTestIds() {
 	}
 }
 
-function enableStartingAt() {
-	jQuery("#startingAtValue").prop("disabled", false);
+function setStartingAt() {
+	jQuery("#startingAtValue").prop('disabled', !jQuery("#useStartingAt").prop('checked'));
 }
 
 jQuery(document).ready(function () {
@@ -101,6 +108,7 @@ jQuery(document).ready(function () {
        // setOrderModified();
         //setCorrectSave();
     };
+    setStartingAt();
 });
 </script>
 
@@ -113,9 +121,9 @@ jQuery(document).ready(function () {
 	</tr>
 	<tr>
 		<td>Number of order labels per set:</td>
-		<td><input id="numOrderLabelsPerSet" name="numOrderLabelsPerSet" type="number" value="2" size ="1" onchange="calculateTotal()"/></td>
+		<td><input id="numOrderLabelsPerSet" name="numOrderLabelsPerSet" type="number" value="${numDefaultOrderLabels}" size ="1" onchange="calculateTotal()"/></td>
 		<td>Number of specimen labels per set:</td>
-		<td><input id="numSpecimenLabelsPerSet" name="numSpecimenLabelsPerSet" type="number" value="1" size="1" onchange="calculateTotal()"/></td>
+		<td><input id="numSpecimenLabelsPerSet" name="numSpecimenLabelsPerSet" type="number" value="${numDefaultSpecimenLabels}" size="1" onchange="calculateTotal()"/></td>
 	</tr>
 	<tr></tr>
 <!-- 	<tr> -->
@@ -163,15 +171,14 @@ jQuery(document).ready(function () {
 		    </c:if>
 		</div></td>
 	</tr>
-	<c:if test="${not (empty form.startingAtAccession)}" >
-		<tr>
+	<tr <c:if test="${empty form.startingAtAccession}" >style="display:none;"</c:if>>
 		<td>
 			<spring:message code="labno.alt.startAt" />: <c:out value="${altAccessionPrefix}"/>
 			<input id="startingAtValue" disabled="disabled" maxLength="${altAccessionValueLength}" value="${fn:substring(form.startingAtAccession, altAccessionPrefixLength, altAccessionLength)}"/>
-			<button type="button" onClick="enableStartingAt()"><spring:message code="button.label.edit" /></button>
+			<input id="useStartingAt" type="checkbox" onChange="setStartingAt()"/><spring:message code="input.label.startat.toggle" />
+<!-- 			<button type="button" onClick="enableStartingAt()"></button> -->
 		</td>
 		</tr>
-	</c:if>
 </table>
 </div>
 <div>

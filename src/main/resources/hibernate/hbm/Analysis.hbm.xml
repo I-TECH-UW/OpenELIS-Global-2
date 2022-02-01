@@ -17,12 +17,14 @@
 			type="timestamp" access="field" />
 
 		<many-to-one name="parentResult"
-			class="org.openelisglobal.result.valueholder.Result" fetch="select">
+			class="org.openelisglobal.result.valueholder.Result" fetch="select"
+			lazy="false">
 			<column name="PARENT_RESULT_ID" precision="10" scale="0" />
 		</many-to-one>
 		<many-to-one name="parentAnalysis"
 			class="org.openelisglobal.analysis.valueholder.Analysis"
-			fetch="select">
+			fetch="select"
+			lazy="false">
 			<column name="PARENT_ANALYSIS_ID" precision="10" scale="0" />
 		</many-to-one>
 		<many-to-one name="test"
@@ -106,6 +108,8 @@
 			type="java.lang.String" />
 		<property name="correctedSincePatientReport"
 			column="corrected" type="java.lang.Boolean" />
+		<property name="fhirUuid"
+			column="fhir_uuid" type="java.util.UUID" />
 	</class>
 
 <!-- 	<!- bugzilla 1993 get sample analyses as reported on in results report  -->

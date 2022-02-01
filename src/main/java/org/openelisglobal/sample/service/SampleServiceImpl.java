@@ -4,6 +4,7 @@ import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 
@@ -13,6 +14,7 @@ import org.openelisglobal.common.service.BaseObjectServiceImpl;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
+import org.openelisglobal.common.services.TableIdService;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.observationhistory.service.ObservationHistoryService;
 import org.openelisglobal.observationhistory.service.ObservationHistoryServiceImpl;
@@ -27,8 +29,11 @@ import org.openelisglobal.requester.service.RequesterTypeService;
 import org.openelisglobal.requester.service.SampleRequesterService;
 import org.openelisglobal.requester.valueholder.RequesterType;
 import org.openelisglobal.requester.valueholder.SampleRequester;
+import org.openelisglobal.sample.dao.SampleAdditionalFieldDAO;
 import org.openelisglobal.sample.dao.SampleDAO;
 import org.openelisglobal.sample.valueholder.Sample;
+import org.openelisglobal.sample.valueholder.SampleAdditionalField;
+import org.openelisglobal.sample.valueholder.SampleAdditionalField.AdditionalFieldName;
 import org.openelisglobal.samplehuman.service.SampleHumanService;
 import org.openelisglobal.sampleqaevent.service.SampleQaEventService;
 import org.openelisglobal.sampleqaevent.valueholder.SampleQaEvent;
@@ -71,6 +76,8 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
     @Autowired
     private TestService testService;
     @Autowired
+    private SampleAdditionalFieldDAO sampleAdditionalFieldDAO;
+    @Autowired
     private StatusOfSampleService statusOfSampleService;
 
     @PostConstruct
@@ -88,6 +95,14 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
     }
 
     @Override
+    public String insert(Sample sample) {
+        if (sample.getFhirUuid() == null) {
+            sample.setFhirUuid(UUID.randomUUID());
+        }
+        return super.insert(sample);
+    }
+
+    @Override
     protected SampleDAO getBaseObjectDAO() {
         return sampleDAO;
     }
@@ -99,6 +114,9 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
     @Override
     @Transactional(readOnly = true)
     public Sample getSampleByAccessionNumber(String labNumber) {
+        if (labNumber != null && labNumber.contains(".")) {
+            labNumber = labNumber.substring(0, labNumber.indexOf('.'));
+        }
         return getMatch("accessionNumber", labNumber).orElse(null);
     }
 
@@ -256,7 +274,30 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
 
     @Override
     @Transactional(readOnly = true)
-    public Organization getOrganizationRequester(Sample sample) {
+    public List<Organization> getOrganizationRequesters(Sample sample) {
+        List<Organization> orgs = new ArrayList<>();
+        if (sample == null) {
+            return orgs;
+        }
+
+        List<SampleRequester> requesters = sampleRequesterService.getRequestersForSampleId(sample.getId());
+
+        for (SampleRequester requester : requesters) {
+            if (ORGANIZATION_REQUESTER_TYPE_ID == requester.getRequesterTypeId()) {
+                Organization org = organizationService.getOrganizationById(String.valueOf(requester.getRequesterId()));
+                if (org != null && org.getOrganizationTypes().stream()
+                        .anyMatch(e -> e.getId().equals(TableIdService.getInstance().REFERRING_ORG_TYPE_ID))) {
+                    orgs.add(org);
+                }
+            }
+        }
+
+        return orgs;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public SampleRequester getOrganizationSampleRequester(Sample sample, String orgTypeId) {
         if (sample == null) {
             return null;
         }
@@ -266,7 +307,31 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
         for (SampleRequester requester : requesters) {
             if (ORGANIZATION_REQUESTER_TYPE_ID == requester.getRequesterTypeId()) {
                 Organization org = organizationService.getOrganizationById(String.valueOf(requester.getRequesterId()));
-                return org != null ? org : null;
+                if (org != null && org.getOrganizationTypes().stream().anyMatch(e -> e.getId().equals(orgTypeId))) {
+                    return requester;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Organization getOrganizationRequester(Sample sample, String orgTypeId) {
+        if (sample == null) {
+            return null;
+        }
+
+        List<SampleRequester> requesters = sampleRequesterService.getRequestersForSampleId(sample.getId());
+
+        for (SampleRequester requester : requesters) {
+
+            if (ORGANIZATION_REQUESTER_TYPE_ID == requester.getRequesterTypeId()) {
+                Organization org = organizationService.getOrganizationById(String.valueOf(requester.getRequesterId()));
+                if (org != null && org.getOrganizationTypes().stream().anyMatch(e -> e.getId().equals(orgTypeId))) {
+                    return org;
+                }
             }
         }
 
@@ -291,7 +356,8 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
         }
 
         List<Integer> statusList = new ArrayList<>();
-        statusList.add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized)));
+        statusList.add(
+                Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized)));
 
         List<Analysis> analysisList = analysisService.getAnalysesBySampleIdTestIdAndStatusId(sampIDList, testIDList,
                 statusList);
@@ -339,6 +405,12 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
     @Transactional(readOnly = true)
     public List<Sample> getSamplesByProjectAndStatusIDAndAccessionRange(List<Integer> inclusiveProjectIdList,
             List<Integer> inclusiveStatusIdList, String minAccession, String maxAccession) {
+        if (minAccession != null && minAccession.contains(".")) {
+            minAccession = minAccession.substring(0, minAccession.indexOf('.'));
+        }
+        if (maxAccession != null && maxAccession.contains(".")) {
+            maxAccession = maxAccession.substring(0, maxAccession.indexOf('.'));
+        }
         return getBaseObjectDAO().getSamplesByProjectAndStatusIDAndAccessionRange(inclusiveProjectIdList,
                 inclusiveStatusIdList, minAccession, maxAccession);
     }
@@ -347,6 +419,12 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
     @Transactional(readOnly = true)
     public List<Sample> getSamplesByProjectAndStatusIDAndAccessionRange(String projectId,
             List<Integer> inclusiveStatusIdList, String minAccession, String maxAccession) {
+        if (minAccession != null && minAccession.contains(".")) {
+            minAccession = minAccession.substring(0, minAccession.indexOf('.'));
+        }
+        if (maxAccession != null && maxAccession.contains(".")) {
+            maxAccession = maxAccession.substring(0, maxAccession.indexOf('.'));
+        }
         return getBaseObjectDAO().getSamplesByProjectAndStatusIDAndAccessionRange(projectId, inclusiveStatusIdList,
                 minAccession, maxAccession);
     }
@@ -410,12 +488,22 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
     @Override
     @Transactional(readOnly = true)
     public List<Sample> getSamplesByAccessionRange(String minAccession, String maxAccession) {
+        if (minAccession != null && minAccession.contains(".")) {
+            minAccession = minAccession.substring(0, minAccession.indexOf('.'));
+        }
+        if (maxAccession != null && maxAccession.contains(".")) {
+            maxAccession = maxAccession.substring(0, maxAccession.indexOf('.'));
+        }
         return getBaseObjectDAO().getSamplesByAccessionRange(minAccession, maxAccession);
     }
 
     @Override
     @Transactional(readOnly = true)
     public void getSampleByAccessionNumber(Sample sample) {
+        if (sample.getAccessionNumber() != null && sample.getAccessionNumber().contains(".")) {
+            sample.setAccessionNumber(
+                    sample.getAccessionNumber().substring(0, sample.getAccessionNumber().indexOf('.')));
+        }
         getBaseObjectDAO().getSampleByAccessionNumber(sample);
 
     }
@@ -431,11 +519,63 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
         sample.setAccessionNumber(getBaseObjectDAO().getNextAccessionNumber());
         return insert(sample);
     }
-    
+
     @Override
     public String getSampleStatusForDisplay(Sample sample) {
         StatusOfSample statusOfSample = statusOfSampleService.get(sample.getStatusId());
         return statusOfSample.getStatusOfSampleName();
+    }
+
+    @Override
+    public List<SampleAdditionalField> getSampleAdditionalFieldsForSample(String sampleId) {
+        return sampleAdditionalFieldDAO.getAllForSample(sampleId);
+    }
+
+    @Override
+    public SampleAdditionalField getSampleAdditionalFieldForSample(String sampleId, AdditionalFieldName fieldName) {
+        return sampleAdditionalFieldDAO.getFieldForSample(fieldName, sampleId).orElse(new SampleAdditionalField());
+    }
+
+    @Override
+    public SampleAdditionalField saveSampleAdditionalField(SampleAdditionalField sampleAdditionalField) {
+        if (sampleAdditionalField.getLastupdated() == null) {
+            return sampleAdditionalFieldDAO.get(sampleAdditionalFieldDAO.insert(sampleAdditionalField)).get();
+        } else {
+            return sampleAdditionalFieldDAO.update(sampleAdditionalField);
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public boolean sampleContainsTest(String sampleId, String testId) {
+        for (Analysis curAnalysis : analysisService.getAnalysesBySampleId(sampleId)) {
+            if (curAnalysis.getTest().getId().equals(testId)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public boolean sampleContainsTestWithLoinc(String sampleId, String loinc) {
+        for (Analysis curAnalysis : analysisService.getAnalysesBySampleId(sampleId)) {
+            if (curAnalysis.getTest().getLoinc().equals(loinc)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Sample> getAllMissingFhirUuid() {
+        return sampleDAO.getAllMissingFhirUuid();
+    }
+
+    @Override
+    public List<Sample> getSamplesByAnalysisIds(List<String> analysisIds) {
+        return sampleDAO.getSamplesByAnalysisIds(analysisIds);
     }
 
 }

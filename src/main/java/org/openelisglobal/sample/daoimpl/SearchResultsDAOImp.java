@@ -223,6 +223,90 @@ public class SearchResultsDAOImp implements SearchResultsDAO {
         return results;
     }
 
+    @Override
+    @SuppressWarnings("rawtypes")
+    @Transactional
+    public List<PatientSearchResults> getSearchResultsExact(String lastName, String firstName, String STNumber,
+            String subjectNumber, String nationalID, String externalID, String patientID, String guid,
+            String dateOfBirth, String gender) throws LIMSRuntimeException {
+
+        List queryResults;
+
+        try {
+            boolean queryFirstName = !GenericValidator.isBlankOrNull(firstName);
+            boolean queryLastName = !GenericValidator.isBlankOrNull(lastName);
+            boolean queryNationalId = !GenericValidator.isBlankOrNull(nationalID);
+            boolean querySTNumber = !GenericValidator.isBlankOrNull(STNumber);
+            boolean querySubjectNumber = !GenericValidator.isBlankOrNull(subjectNumber);
+            boolean queryExternalId = !GenericValidator.isBlankOrNull(externalID);
+            boolean queryAnyID = queryExternalId && queryNationalId;
+            boolean queryPatientID = !GenericValidator.isBlankOrNull(patientID);
+            boolean queryGuid = !GenericValidator.isBlankOrNull(guid);
+            boolean queryDateOfBirth = !GenericValidator.isBlankOrNull(dateOfBirth);
+            boolean queryGender = !GenericValidator.isBlankOrNull(gender);
+
+            String sql = buildQueryString(queryLastName, queryFirstName, querySTNumber, querySubjectNumber,
+                    queryNationalId, queryExternalId, queryAnyID, queryPatientID, queryGuid, queryDateOfBirth,
+                    queryGender);
+
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createSQLQuery(sql);
+
+            query.setInteger(ID_TYPE_FOR_ST, Integer.valueOf(PatientIdentityTypeMap.getInstance().getIDForType("ST")));
+            query.setInteger(ID_TYPE_FOR_SUBJECT_NUMBER,
+                    Integer.valueOf(PatientIdentityTypeMap.getInstance().getIDForType("SUBJECT")));
+            query.setInteger(ID_TYPE_FOR_GUID,
+                    Integer.valueOf(PatientIdentityTypeMap.getInstance().getIDForType("GUID")));
+
+            if (queryFirstName) {
+                query.setString(FIRST_NAME_PARAM, firstName);
+            }
+            if (queryLastName) {
+                query.setText(LAST_NAME_PARAM, lastName);
+            }
+            if (queryNationalId) {
+                query.setString(NATIONAL_ID_PARAM, nationalID);
+            }
+            if (queryExternalId) {
+                query.setString(EXTERNAL_ID_PARAM, nationalID);
+            }
+            if (querySTNumber) {
+                query.setString(ST_NUMBER_PARAM, STNumber);
+            }
+            if (querySubjectNumber) {
+                query.setString(SUBJECT_NUMBER_PARAM, subjectNumber);
+            }
+            if (queryPatientID) {
+                query.setInteger(ID_PARAM, Integer.valueOf(patientID));
+            }
+            if (queryGuid) {
+                query.setString(GUID, guid);
+            }
+            if (queryDateOfBirth) {
+                query.setString(DATE_OF_BIRTH, dateOfBirth);
+            }
+            if (queryGender) {
+                query.setString(GENDER, gender);
+            }
+            queryResults = query.list();
+        } catch (RuntimeException e) {
+            LogEvent.logDebug(e);
+            throw new LIMSRuntimeException("Error in SearchResultsDAOImpl getSearchResultsExact()", e);
+        }
+
+        List<PatientSearchResults> results = new ArrayList<>();
+
+        for (Object resultLine : queryResults) {
+
+            Object[] line = (Object[]) resultLine;
+
+            results.add(new PatientSearchResults((BigDecimal) line[0], (String) line[1], (String) line[2],
+                    (String) line[3], (String) line[4], (String) line[5], (String) line[6], (String) line[7],
+                    (String) line[8], (String) line[9], null));
+        }
+
+        return results;
+    }
+
     /**
      * @param lastName
      * @param firstName

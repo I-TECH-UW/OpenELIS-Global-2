@@ -10,6 +10,7 @@ import javax.validation.Constraint;
 import javax.validation.Payload;
 
 import org.openelisglobal.common.formfields.FormFields;
+import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.validation.constraintvalidator.OptionalNotBlankConstraintValidator;
 
 @Target({ ElementType.FIELD })
@@ -22,7 +23,9 @@ public @interface OptionalNotBlank {
 
     Class<?>[] groups() default {};
 
-    FormFields.Field[] formFields();
+    FormFields.Field[] formFields() default {};
+
+    ConfigurationProperties.Property[] properties() default {};
 
     Class<? extends Payload>[] payload() default {};
 }

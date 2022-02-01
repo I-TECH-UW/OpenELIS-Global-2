@@ -1,3 +1,4 @@
+
 <%@ page language="java" contentType="text/html; charset=UTF-8" %>
 <%@ page import="org.openelisglobal.common.action.IActionConstants,
 			     org.openelisglobal.common.formfields.FormFields,
@@ -76,8 +77,7 @@ function searchPatients()
 	patientSearch(lastName, firstName, STNumber, subjectNumber, nationalID, labNumber, "", "", "", false, processSearchSuccess);
 }
 
-function enhancedSearchPatients()
-{
+function enhancedSearchPatients(localSearch) {
     var criteria = jQuery("#searchCriteria").val();
     var genders = jQuery("#genders").val();
     var value = jQuery("#firstNameSearchValue").val().trim();
@@ -96,7 +96,6 @@ function enhancedSearchPatients()
 	newSearchInfo = false;
     jQuery("#resultsDiv").hide();
     jQuery("#searchLabNumber").val('');
-	jQuery("#loading").show();
     
     firstName = jQuery("#firstNameSearchValue").val().trim();
     lastName = jQuery("#lastNameSearchValue").val().trim();
@@ -110,20 +109,37 @@ function enhancedSearchPatients()
     
     labNumber = jQuery("#patientLabNoSearchValue").val().trim();
     
+	if (typeof altAccessionSearchFunction === "function" && labNumber !== "") {
+		altAccessionSearchFunction(labNumber);
+		return;
+	}
+	var table = $("searchResultTable");
+	$("searchResultsDiv").hide();
+	clearTable(table);
+	clearPatientInfoCache();
+	if (localSearch) {
+		jQuery("#loading").addClass('local-search');
+		jQuery("#loading").removeClass('external-search');
+		jQuery("#enhancedExternalSearchButton").hide();
+	} else {
+		jQuery("#loading").removeClass('local-search');
+		jQuery("#loading").addClass('external-search');
+	}
+	jQuery("#loading").show();
 
-	patientSearch(lastName, firstName, STNumber, subjectNumber, nationalID, labNumber, "", dateOfBirth, gender, false, processSearchSuccess);
+	patientSearch(lastName, firstName, STNumber, subjectNumber, nationalID, labNumber, "", dateOfBirth, gender, localSearch, processSearchSuccess, processSearchFailure, localSearch);
 }
 
-function processSearchFailure(xhr)
-{
+function processSearchFailure(xhr) {
 	//alert( xhr.responseText );
 	jQuery("#loading").hide();
+	jQuery(".patientFinishSearchShow").show();
 	alert("<spring:message code="error.system"/>");
 }
 
-function processSearchSuccess(xhr)
-{
+function processSearchSuccess(xhr, localSearch) {
 	jQuery("#loading").hide();
+	jQuery(".patientFinishSearchShow").show();
 	//alert( xhr.responseText );
 	var formField = xhr.responseXML.getElementsByTagName("formfield").item(0);
 	var message = xhr.responseXML.getElementsByTagName("message").item(0);
@@ -148,11 +164,19 @@ function processSearchSuccess(xhr)
 			handleSelectedPatient();
 		}
 		</c:if>
+		showExternalSearchButton();
+	} else if (localSearch){
+		showExternalSearchButton();
+		enhancedSearchPatients(false);
 	} else {
 		$("searchResultsDiv").hide();
 		$("noPatientFound").show();
 		selectPatient( null );
 	}
+}
+
+function showExternalSearchButton() {
+	jQuery("#enhancedExternalSearchButton").show();
 }
 
 function clearSearchResultTable() {
@@ -378,6 +402,10 @@ function enableEnhancedSearchButton(eventCode){
 }
 
 function handleSelectedPatient(){
+	if (typeof(handleSelectedPatientAlt) === 'function') {
+		handleSelectedPatientAlt();
+		return;
+	}
     var accessionNumber = "";
     if(jQuery("#searchCriteria").val() == 5){//lab number
         accessionNumber = jQuery("#searchValue").val();
@@ -438,7 +466,9 @@ function handleSelectedPatient(){
 	    <input
            id="searchValue"
            type="hidden"/>
+    <c:if test="${patientEnhancedSearch.defaultHeader}">
 	<h2><spring:message code="sample.entry.search" /></h2>
+	</c:if>
 	<table>
 		<tr>
 			<td style="text-align: left;"><spring:message
@@ -488,12 +518,13 @@ function handleSelectedPatient(){
 					code="patient.birthDate" />&nbsp;<%=DateUtil.getDateUserPrompt()%>:	</td>
 			<td><input
 				id="dateOfBirthSearchValue"
+				name="dateOfBirthSearchValue"
 				size="20"
-				onkeyup="addDateSlashes(this,event); normalizeDateFormat(this);"
+				onkeyup="addDateSlashes(this,event); "
                 onchange="checkValidAgeDate( this );"
 				oninput="enableEnhancedSearchButton(event.which);"
 				placeholder='<%=MessageUtil.getMessage("label.select.search.here")%>' />
-				<div id="patientProperties.birthDateForDisplayMessage" class="blank"
+				<div id="dateOfBirthSearchValueMessage" class="blank"
 					style="text-align: left;"></div></td>
 <%-- 			<td style="text-align: left;"><spring:message code="patient.age" />:</td> --%>
 			<td style="text-align: left;"><spring:message code="patient.gender" />:</td>
@@ -508,8 +539,13 @@ function handleSelectedPatient(){
 			<td><input type="button" name="enhancedSearchButton"
 				class="patientEnhancedSearch"
 				value="<%=MessageUtil.getMessage("label.patient.search")%>"
-				id="enhancedSearchButton" onclick="enhancedSearchPatients()"
-				disabled="disabled"></td>
+				id="enhancedSearchButton" onclick="enhancedSearchPatients(true);"
+				disabled="disabled">
+				<input type="button" name="enhancedExternalSearchButton"
+				class="patientEnhancedSearch"
+				value="<%=MessageUtil.getMessage("label.patient.search.external")%>"
+				id="enhancedExternalSearchButton" onclick="enhancedSearchPatients(false);"
+				style="display:none"></td>
 		</tr>
 		<tr>
 			<td>

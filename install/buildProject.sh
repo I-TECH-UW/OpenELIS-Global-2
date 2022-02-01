@@ -6,15 +6,17 @@ usage() {
 Usage: $PROGNAME [-d] [-l]
          -d: build docker images on machine
          -l = <project-dir>: location of the project to build
+         -t = <tag>: tag the docker image
 EOF
   exit 1
 }
 
-dockerBuild=false DIR="./"
-while getopts :dl: opt; do
+dockerBuild=false DIR="./" TAG=""
+while getopts :dl:t: opt; do
   case $opt in
     (d) dockerBuild=true;;
     (l) DIR=${OPTARG};;
+    (t) TAG=${OPTARG};;
     (*) usage
   esac
 done
@@ -29,8 +31,12 @@ fi
 #build and package application
 if [ $dockerBuild == true ]
 then
-	#build the war, and create the docker image
-	mvn clean install dockerfile:build -DskipTests
+	if [ -z "${TAG}" ]
+	then
+		docker build . 
+	else
+		docker build -t ${TAG} . 
+	fi
 else
 	mvn clean install -DskipTests
 fi

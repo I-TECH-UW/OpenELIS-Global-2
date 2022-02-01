@@ -57,6 +57,8 @@ public class AccessionResultsForm extends BaseForm implements PatientInfoForm, R
 
     private Boolean displayTestSections = false;
 
+    private List<IdValuePair> referralOrganizations;
+
     public AccessionResultsForm() {
         setFormName("AccessionResultsForm");
     }
@@ -263,6 +265,18 @@ public class AccessionResultsForm extends BaseForm implements PatientInfoForm, R
 
     public void setDisplayTestSections(Boolean displayTestSections) {
         this.displayTestSections = displayTestSections;
+    }
+
+    public void setReferralOrganizations(List<IdValuePair> referralOrganizations) {
+        this.referralOrganizations = referralOrganizations;
+    }
+
+    public List<IdValuePair> getReferralOrganizations() {
+        return referralOrganizations;
+    }
+
+    public boolean getSearchByRange() {
+        return false;
     }
 
 }

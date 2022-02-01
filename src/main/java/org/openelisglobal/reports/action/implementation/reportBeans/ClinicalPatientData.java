@@ -76,6 +76,8 @@ public final class ClinicalPatientData {
     private String sampleId;
     private String sampleSortOrder;
     private String analysisStatus;
+    private String contactTracingIndexName;
+    private String contactTracingIndexRecordNumber;
 
     public ClinicalPatientData() {
     }
@@ -581,5 +583,21 @@ public final class ClinicalPatientData {
 
     public void setAnalysisStatus(String analysisStatus) {
         this.analysisStatus = analysisStatus;
+    }
+
+    public String getContactTracingIndexName() {
+        return contactTracingIndexName;
+    }
+
+    public void setContactTracingIndexName(String contactTracingIndexName) {
+        this.contactTracingIndexName = contactTracingIndexName;
+    }
+
+    public String getContactTracingIndexRecordNumber() {
+        return contactTracingIndexRecordNumber;
+    }
+
+    public void setContactTracingIndexRecordNumber(String contactTracingIndexRecordNumber) {
+        this.contactTracingIndexRecordNumber = contactTracingIndexRecordNumber;
     }
 }

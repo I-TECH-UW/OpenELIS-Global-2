@@ -66,9 +66,6 @@ if( requesterLastNameRequired ){
 <% if( FormFields.getInstance().useField(Field.SampleEntryUseRequestDate)){ %>
     requiredFields.push("requestDate");
 <% } %>
-<%  if (requesterLastNameRequired) { %>
-    requiredFields.push("providerLastNameID");
-<% } %>
 
  
 function isFieldValid(fieldname)
@@ -270,6 +267,10 @@ function /*bool*/ requiredSampleEntryFieldsValid(){
     if( acceptExternalOrders){ 
         if (missingRequiredValues())
             return false;
+    } 
+
+    if( jQuery("#useReferral").prop('checked') && typeof(missingRequiredReferralValues) === 'function' ){
+    	return !missingRequiredReferralValues();
     }
         
     for( var i = 0; i < requiredFields.length; ++i ){
@@ -331,6 +332,19 @@ function processLabOrderSuccess(xhr){
     //alert(xhr.responseText);
 
     clearOrderData();
+    
+    <c:if test="${param.attemptAutoSave}">
+	<c:choose>
+	<c:when test="${not empty param.labNumber}">
+		jQuery('#labNo').val('${param.labNumber}');
+		setOrderModified();
+	</c:when>
+	<c:otherwise>
+		setOrderModified();
+		getNextAccessionNumber();
+	</c:otherwise>
+	</c:choose>
+	</c:if>
 
     var message = xhr.responseXML.getElementsByTagName("message").item(0);
     var formField = xhr.responseXML.getElementsByTagName("formfield").item(0);
@@ -351,6 +365,16 @@ function processLabOrderSuccess(xhr){
         var requester = order.getElementsByTagName('requester');
         if (requester) {
             parseRequester(requester);
+        }
+
+        var requestingOrg = order.getElementsByTagName('requestingOrg');
+        if (requestingOrg) {
+            parseRequestingOrg(requestingOrg);
+        }
+
+        var location = order.getElementsByTagName('location');
+        if (location && !jQuery("#requesterId").val()) {
+            parseLocation(location);
         }
 
         var useralert = order.getElementsByTagName("user_alert");
@@ -390,6 +414,12 @@ function processLabOrderSuccess(xhr){
             alert(message.firstChild.nodeValue);
         }
 
+    <c:if test="${param.attemptAutoSave}">
+	var validToSave =  patientFormValid() && sampleEntryTopValid();
+	if (validToSave) {
+		savePage();
+	}
+	</c:if>
 }
 
 function parsePatient(patienttag) {
@@ -407,8 +437,8 @@ function parsePatient(patienttag) {
 
 function clearRequester() {
 
-//    $("providerFirstName").value = '';
-    $("providerLastNameID").value = 'dname';
+    $("providerFirstNameID").value = '';
+    $("providerLastNameID").value = '';
     $("labNo").value = '';
     $("receivedDateForDisplay").value = '${entryDate}';
     $("receivedTime").value = '';
@@ -421,7 +451,7 @@ function parseRequester(requester) {
     var first = "";
     if (firstName.length > 0) {
             first = firstName[0].firstChild.nodeValue;
-            //$("providerFirstName").value = first;
+            $("providerFirstNameID").value = first;
     }
     var lastName = requester.item(0).getElementsByTagName("lastName");
     var last = "";
@@ -440,6 +470,24 @@ function parseRequester(requester) {
     }
 }
 
+function parseRequestingOrg(requestingOrg) {
+	var requestingOrgId = requestingOrg.item(0).getElementsByTagName("id");
+    var id = "";
+    if (requestingOrgId.length > 0) {
+            id = requestingOrgId[0].firstChild.nodeValue;
+    }
+	jQuery("#requesterId").val(id).change();
+}
+
+function parseLocation(location) {
+	var locationId = location.item(0).getElementsByTagName("id");
+    var id = "";
+    if (locationId.length > 0) {
+            id = locationId[0].firstChild.nodeValue;
+    }
+	jQuery("#requesterId").val(id).change();
+}
+
 function parseSampletypes(sampletypes, SampleTypes) {
         
         var index = 0;
@@ -449,6 +497,7 @@ function parseSampletypes(sampletypes, SampleTypes) {
             var sampleTypeId   = sampletypes.item(i).getElementsByTagName("id")[0].firstChild.nodeValue;
             var panels         = sampletypes.item(i).getElementsByTagName("panels")[0];
             var tests          = sampletypes.item(i).getElementsByTagName("tests")[0];
+            var collection     = sampletypes.item(i).getElementsByTagName("collection")[0];
             var sampleTypeInList = getSampleTypeMapEntry(sampleTypeId);
             if (!sampleTypeInList) {
                 index++;
@@ -467,9 +516,12 @@ function parseSampletypes(sampletypes, SampleTypes) {
             }
             var panelnodes = getNodeNamesByTagName(panels, "panel");
             var testnodes  = getNodeNamesByTagName(tests, "test");
+            var collectionDate = collection.getElementsByTagName("date");
+            var collectionTime = collection.getElementsByTagName("time");
             
             addPanelsToSampleType(sampleTypeInList, panelnodes);
             addTestsToSampleType(sampleTypeInList, testnodes);
+            addCollectionToSampleType(sampleTypeInList, collectionDate, collectionTime);
            
         }
 
@@ -486,6 +538,15 @@ function addTestsToSampleType(sampleType, testNodes) {
        sampleType.tests[sampleType.tests.length] = new Test(testNodes[i].id, testNodes[i].name);
     }
 }
+
+function addCollectionToSampleType(sampleType, collectionDate, collectionTime) {
+    for (var i=0; i<collectionDate.length; i++) {
+        sampleType.collectionDate = collectionDate[i].firstChild.nodeValue;
+     }
+    for (var i=0; i<collectionTime.length; i++) {
+        sampleType.collectionTime = collectionTime[i].firstChild.nodeValue;
+     }
+ }
 
 
 function parseCrossPanels(crosspanels, crossSampleTypeMap, crossSampleTypeOrderMap) {
@@ -563,6 +624,10 @@ function  processPhoneSuccess(xhr){
 
     setSave();
 }
+
+function toggleReferral() {
+	jQuery("#referTestSection").toggle();
+}
 </script>
 
 <%-- This define may not be needed, look at usages (not in any other jsp or js page--%>
@@ -582,19 +647,24 @@ function  processPhoneSuccess(xhr){
 <% } %>
             
 <div id=sampleEntryPage >
-<input type="button" name="showHide" value='<%= acceptExternalOrders ? "+" : "-" %>' onclick="showHideSection(this, 'orderDisplay');" id="orderSectionId">
+<input type="button" name="showHide" value='-' onclick="showHideSection(this, 'orderDisplay');" id="orderSectionId">
 <%= MessageUtil.getContextualMessage("sample.entry.order.label") %>
 <span class="requiredlabel">*</span>
 
 <tiles:insertAttribute name="sampleOrder" />
 
 <hr style="width:100%;height:5px" />
-<input type="button" name="showHide" value="+" onclick="showHideSection(this, 'samplesDisplay');" id="samplesSectionId">
+<input type="button" name="showHide" value="-" onclick="showHideSection(this, 'samplesDisplay');" id="samplesSectionId">
 <%= MessageUtil.getContextualMessage("sample.entry.sampleList.label") %>
 <span class="requiredlabel">*</span>
 
-<div id="samplesDisplay" class="colorFill" style="display:none;" >
+<div id="samplesDisplay" class="colorFill" >
     <tiles:insertAttribute name="addSample"/>
+	<form:checkbox path="useReferral" id="useReferral" onclick="toggleReferral();referralTestSelected();" value="true"/> <spring:message code="sample.entry.referral.toggle" />
+</div>
+
+<div id="referTestSection" style="display:none;">
+    <tiles:insertAttribute name="referralInfo" />
 </div>
 
 <br />
@@ -603,7 +673,7 @@ function  processPhoneSuccess(xhr){
 <table style="width:100%">
     <tr>
         <td style="width:15%;text-align:left">
-            <input type="button" name="showHide" value="+" onclick="showHideSection(this, 'patientInfo');" id="orderSectionId">
+            <input type="button" name="showHide" value="-" onclick="showHideSection(this, 'patientInfo');" id="orderSectionId">
             <spring:message code="sample.entry.patient" />:
             <% if ( patientRequired ) { %><span class="requiredlabel">*</span><% } %>
         </td>
@@ -636,7 +706,7 @@ function  processPhoneSuccess(xhr){
     </tr>
 </table>
 
-<div id="patientInfo"  style="display:none;" >
+<div id="patientInfo"  >
     <tiles:insertAttribute name="patientInfo" />
     <tiles:insertAttribute name="patientClinicalInfo" />
 </div>
@@ -665,7 +735,7 @@ function  /*void*/ savePage()
 {
     loadSamples(); //in addSample tile
 
-  window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
+    window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
     var form = document.getElementById("mainForm");
     form.action = "SamplePatientEntry.do";
     form.submit();
@@ -744,11 +814,20 @@ registerPatientChangedForSampleEntry();
 registerSampleChangedForSampleEntry();
 
 jQuery(document).ready(function() {
+	
 	<% if( acceptExternalOrders){ %>
 	if (jQuery("#externalOrderNumber").val()) {
 		checkOrderReferral();
 	}
 	<% } %>
+	
+	jQuery("#useReferral").prop('checked', false);
+	
+	jQuery("#saveButtonId").click(
+		      function(event) {
+		         event.preventDefault();
+		      }
+		   );
 })
 
 </script>

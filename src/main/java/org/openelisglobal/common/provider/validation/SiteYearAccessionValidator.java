@@ -16,14 +16,11 @@
  */
 package org.openelisglobal.common.provider.validation;
 
-import java.util.HashSet;
-import java.util.Set;
-
+import org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory.AccessionFormat;
 import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.common.util.DateUtil;
 
 public class SiteYearAccessionValidator extends BaseSiteYearAccessionValidator implements IAccessionNumberGenerator {
-
-    private static Set<String> REQUESTED_NUMBERS = new HashSet<>();
 
     @Override
     public int getMaxAccessionLength() {
@@ -73,13 +70,20 @@ public class SiteYearAccessionValidator extends BaseSiteYearAccessionValidator i
     }
 
     @Override
-    protected Set<String> getReservedNumbers() {
-        return REQUESTED_NUMBERS;
+    public String incrementAccessionNumber() throws IllegalArgumentException {
+        String year = DateUtil.getTwoDigitYear();
+        long nextNum = accessionService.getNextNumberIncrement(this.getPrefix() + year, AccessionFormat.SITE_YEAR);
+        String incrementAsString;
+        incrementAsString = String.format("%013d", nextNum);
+        return getPrefix() + year + incrementAsString;
     }
 
     @Override
-    protected String getOverrideStartingAt() {
-        return null;
+    public String incrementAccessionNumberNoReserve() throws IllegalArgumentException {
+        String year = DateUtil.getTwoDigitYear();
+        long nextNum = accessionService.getNextNumberNoIncrement(this.getPrefix() + year, AccessionFormat.ALT_YEAR);
+        String incrementAsString;
+        incrementAsString = String.format("%013d", nextNum);
+        return getPrefix() + year + incrementAsString;
     }
-
 }

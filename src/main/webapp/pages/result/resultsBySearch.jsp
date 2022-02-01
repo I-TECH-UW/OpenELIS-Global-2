@@ -27,6 +27,14 @@ function doSelectPatientForResults(){
 	form.submit();
 }
 
+function altAccessionSearchFunction(labNumber) {
+	jQuery("#loading").hide();
+	var url = new URL(window.location.href);
+	url.searchParams.set('accessionNumber', labNumber);
+	
+	window.location.href = url.toString();
+}
+
 </script>
 
 <div id="searchDiv" class="colorFill"  >

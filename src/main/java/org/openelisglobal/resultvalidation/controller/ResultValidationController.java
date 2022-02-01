@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.DisplayListService;
@@ -31,6 +32,8 @@ import org.openelisglobal.common.services.registration.interfaces.IResultUpdate;
 import org.openelisglobal.common.services.serviceBeans.ResultSaveBean;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.validator.BaseErrors;
+import org.openelisglobal.dataexchange.fhir.exception.FhirLocalPersistingException;
+import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
 import org.openelisglobal.dataexchange.orderresult.OrderResponseWorker.Event;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.note.service.NoteService;
@@ -91,6 +94,7 @@ public class ResultValidationController extends BaseResultValidationController {
     private SystemUserService systemUserService;
     private ResultValidationService resultValidationService;
     private NoteService noteService;
+    private FhirTransformService fhirTransformService;
 
     private final String RESULT_SUBJECT = "Result Note";
     private final String RESULT_TABLE_ID;
@@ -100,7 +104,8 @@ public class ResultValidationController extends BaseResultValidationController {
             SampleHumanService sampleHumanService, DocumentTrackService documentTrackService,
             TestSectionService testSectionService, SystemUserService systemUserService,
             ReferenceTablesService referenceTablesService, DocumentTypeService documentTypeService,
-            ResultValidationService resultValidationService, NoteService noteService) {
+            ResultValidationService resultValidationService, NoteService noteService,
+            FhirTransformService fhirTransformService) {
 
         this.analysisService = analysisService;
         this.testResultService = testResultService;
@@ -110,6 +115,7 @@ public class ResultValidationController extends BaseResultValidationController {
         this.systemUserService = systemUserService;
         this.resultValidationService = resultValidationService;
         this.noteService = noteService;
+        this.fhirTransformService = fhirTransformService;
 
         RESULT_TABLE_ID = referenceTablesService.getReferenceTableByName("RESULT").getId();
         RESULT_REPORT_ID = documentTypeService.getDocumentTypeByName("resultExport").getId();
@@ -125,9 +131,11 @@ public class ResultValidationController extends BaseResultValidationController {
             @ModelAttribute("form") @Validated(ResultValidationForm.ResultValidation.class) ResultValidationForm oldForm)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
+        String accessionNumber = request.getParameter("accessionNumber");
         ResultValidationForm newForm = new ResultValidationForm();
         newForm.setTestSectionId(oldForm.getTestSectionId());
         newForm.setTestSection(oldForm.getTestSection());
+        newForm.setAccessionNumber(accessionNumber);
         return getResultValidation(request, newForm);
     }
 
@@ -140,6 +148,7 @@ public class ResultValidationController extends BaseResultValidationController {
         String newPage = request.getParameter("page");
 
         TestSection ts = null;
+        form.setSearchFinished(false);
 
         if (GenericValidator.isBlankOrNull(newPage)) {
 
@@ -154,15 +163,21 @@ public class ResultValidationController extends BaseResultValidationController {
             List<AnalysisItem> resultList;
             ResultsValidationUtility resultsValidationUtility = SpringContext.getBean(ResultsValidationUtility.class);
             setRequestType(ts == null ? MessageUtil.getMessage("workplan.unit.types") : ts.getLocalizedName());
-            if (!GenericValidator.isBlankOrNull(form.getTestSectionId())) {
+            
+            if ( !(GenericValidator.isBlankOrNull(form.getTestSectionId()) &&
+                    GenericValidator.isBlankOrNull(form.getAccessionNumber())) )  {
+                
                 resultList = resultsValidationUtility.getResultValidationList(getValidationStatus(),
+                        form.getTestSectionId(), form.getAccessionNumber());
+                int count = resultsValidationUtility.getCountResultValidationList(getValidationStatus(),
                         form.getTestSectionId());
-
-            } else {
+                request.setAttribute("analysisCount", count);
+                request.setAttribute("pageSize", resultList.size());
+                form.setSearchFinished(true);
+                } else {
                 resultList = new ArrayList<>();
             }
             paging.setDatabaseResults(request, form, resultList);
-
         } else {
             paging.page(request, form, Integer.parseInt(newPage));
         }
@@ -192,6 +207,7 @@ public class ResultValidationController extends BaseResultValidationController {
         if ("true".equals(request.getParameter("pageResults"))) {
             return getResultValidation(request, form);
         }
+        form.setSearchFinished(false);
 
         if (result.hasErrors()) {
             saveErrors(result);
@@ -203,6 +219,29 @@ public class ResultValidationController extends BaseResultValidationController {
 
         request.getSession().setAttribute(SAVE_DISABLED, "true");
 
+        List<Result> checkPagedResults = (List<Result>) request.getSession().getAttribute(IActionConstants.RESULTS_SESSION_CACHE);
+        List<Result> checkResults = (List<Result>) checkPagedResults.get(0);
+        if (checkResults.size() == 0) {
+            LogEvent.logDebug(this.getClass().getName(), "ResultValidation()", "Attempted save of stale page.");
+            List<AnalysisItem> staleItemList = form.getResultList();
+            
+            Errors staleErrors = new BaseErrors();
+
+            for (AnalysisItem item : staleItemList) {
+                Errors staleErrorList = new BaseErrors();
+                validateQuantifiableItems(item, staleErrorList);
+
+                if (true) {
+                    StringBuilder augmentedAccession = new StringBuilder(item.getAccessionNumber());
+                    String errorMsg = "errors.resultValidated";
+                    staleErrors.reject(errorMsg, new String[] { augmentedAccession.toString() }, errorMsg);
+                    staleErrors.addAllErrors(staleErrorList);
+                }
+            }
+            saveErrors(staleErrors);
+            return findForward(FWD_VALIDATION_ERROR, form);
+        }
+        
         ResultValidationPaging paging = new ResultValidationPaging();
         paging.updatePagedResults(request, form);
         List<AnalysisItem> resultItemList = paging.getResults(request);
@@ -212,7 +251,7 @@ public class ResultValidationController extends BaseResultValidationController {
         setRequestType(testSectionName);
         // ----------------------
         String url = request.getRequestURL().toString();
-
+        
         Errors errors = validateModifiedItems(resultItemList);
 
         if (errors.hasErrors()) {
@@ -232,23 +271,29 @@ public class ResultValidationController extends BaseResultValidationController {
         // wrapper object for holding modifedResultSet and newResultSet
         IResultSaveService resultSaveService = new ResultValidationSaveService();
 
-        if (testSectionName.equals("serology")) {
-            createUpdateElisaList(resultItemList, analysisUpdateList);
-        } else {
+//        if (testSectionName.equals("serology")) {
+//            createUpdateElisaList(resultItemList, analysisUpdateList);
+//        } else {
             createUpdateList(resultItemList, analysisUpdateList, resultUpdateList, noteUpdateList, deletableList,
                     resultSaveService, areListeners);
-        }
+//        }
 
         try {
             resultValidationService.persistdata(deletableList, analysisUpdateList, resultUpdateList, resultItemList,
                     sampleUpdateList, noteUpdateList, resultSaveService, updaters, getSysUserId(request));
+            try {
+                fhirTransformService.transformPersistResultValidationFhirObjects(deletableList, analysisUpdateList,
+                        resultUpdateList, resultItemList, sampleUpdateList, noteUpdateList);
+            } catch (FhirLocalPersistingException e) {
+                LogEvent.logError(e);
+            }
         } catch (LIMSRuntimeException e) {
             LogEvent.logErrorStack(e);
         }
 
         for (IResultUpdate updater : updaters) {
 
-            updater.postTransactionalCommitUpdate(resultSaveService);
+//            updater.postTransactionalCommitUpdate(resultSaveService);
         }
 
         // route save back to RetroC specific ResultValidationRetroCAction

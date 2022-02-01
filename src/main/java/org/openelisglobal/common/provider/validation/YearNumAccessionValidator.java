@@ -25,6 +25,7 @@ import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.sample.service.SampleService;
+import org.openelisglobal.sample.util.AccessionNumberUtil;
 import org.openelisglobal.spring.util.SpringContext;
 
 public class YearNumAccessionValidator implements IAccessionNumberGenerator {
@@ -60,12 +61,10 @@ public class YearNumAccessionValidator implements IAccessionNumberGenerator {
         return NEED_PROGRAM_CODE;
     }
 
-    @Override
     public String createFirstAccessionNumber(String programCode) {
         return DateUtil.getTwoDigitYear() + separator + incrementStartingValue;
     }
 
-    @Override
     public String incrementAccessionNumber(String currentHighAccessionNumber) {
 
         int increment = Integer.parseInt(currentHighAccessionNumber.substring(INCREMENT_START + separatorLength));
@@ -86,6 +85,11 @@ public class YearNumAccessionValidator implements IAccessionNumberGenerator {
 
     @Override
     public ValidationResults validFormat(String accessionNumber, boolean checkDate) {
+        if (!Boolean
+                .valueOf(ConfigurationProperties.getInstance().getPropertyValue(Property.ACCESSION_NUMBER_VALIDATE))) {
+            return AccessionNumberUtil.containsBlackListCharacters(accessionNumber) ? ValidationResults.FORMAT_FAIL
+                    : ValidationResults.SUCCESS;
+        }
         // The rule is 2 digit year code and incremented numbers
         if (accessionNumber.length() != acccessionLength) {
             return ValidationResults.LENGTH_FAIL;
@@ -170,12 +174,7 @@ public class YearNumAccessionValidator implements IAccessionNumberGenerator {
     public ValidationResults checkAccessionNumberValidity(String accessionNumber, String recordType, String isRequired,
             String projectFormName) {
 
-        ValidationResults results;
-        if( !Boolean.valueOf(ConfigurationProperties.getInstance().getPropertyValue(Property.ACCESSION_NUMBER_VALIDATE))) {
-            results = ValidationResults.SUCCESS;
-        } else {
-            results = validFormat(accessionNumber, true);
-        }
+        ValidationResults results = validFormat(accessionNumber, true);
         // TODO refactor accessionNumberIsUsed into two methods so the null isn't
         // needed. (Its only used for program accession number)
         if (results == ValidationResults.SUCCESS && accessionNumberIsUsed(accessionNumber, null)) {
@@ -227,6 +226,11 @@ public class YearNumAccessionValidator implements IAccessionNumberGenerator {
     @Override
     public String getPrefix() {
         return null; // no single prefix
+    }
+
+    @Override
+    public String getNextAccessionNumber(String programCode, boolean reserve) {
+        return this.getNextAvailableAccessionNumber(programCode, reserve);
     }
 
 }

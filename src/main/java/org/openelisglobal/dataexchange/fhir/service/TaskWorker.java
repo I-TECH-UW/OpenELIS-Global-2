@@ -16,6 +16,7 @@ import org.openelisglobal.dataexchange.order.action.IOrderInterpreter.OrderType;
 import org.openelisglobal.dataexchange.order.action.IOrderPersister;
 import org.openelisglobal.dataexchange.order.action.MessagePatient;
 import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder;
+import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrderType;
 import org.openelisglobal.spring.util.SpringContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -41,7 +42,8 @@ public class TaskWorker {
     private List<InterpreterResults> interpretResults;
     private CheckResult checkResult;
 
-    public TaskWorker(Task incomingTask, String incomingMessage, ServiceRequest incomingServiceRequest, Patient incomingPatient) {
+    public TaskWorker(Task incomingTask, String incomingMessage, ServiceRequest incomingServiceRequest,
+            Patient incomingPatient) {
         task = incomingTask;
         message = incomingMessage;
         serviceRequest = incomingServiceRequest;
@@ -104,53 +106,81 @@ public class TaskWorker {
             switch (checkResult) {
             case ORDER_FOUND_QUEUED:
                 if (orderType == OrderType.CANCEL) {
+                    LogEvent.logDebug(this.getClass().getName(), "handleOrderRequest",
+                            "cancelling order: " + referringOrderNumber);
                     cancelOrder(referringOrderNumber);
                     return TaskResult.OK;
                 } else {
-                    LogEvent.logDebug(this.getClass().getName(), "handleOrderRequest", "TaskWorker:0");
+                    LogEvent.logDebug(this.getClass().getName(), "handleOrderRequest",
+                            "duplicate order found: " + referringOrderNumber);
                     return TaskResult.DUPLICATE_ORDER;
                 }
             case ORDER_FOUND_INPROGRESS:
-                LogEvent.logDebug(this.getClass().getName(), "handleOrderRequest", "TaskWorker:1");
+                LogEvent.logDebug(this.getClass().getName(), "handleOrderRequest",
+                        "order: " + referringOrderNumber + " is duplicate or already in progress");
                 return orderType == OrderType.CANCEL ? TaskResult.NON_CANCELABLE_ORDER : TaskResult.DUPLICATE_ORDER;
             case NOT_FOUND:
                 if (orderType == OrderType.CANCEL) {
-                    LogEvent.logDebug(this.getClass().getName(), "handleOrderRequest", "TaskWorker:2");
+                    LogEvent.logDebug(this.getClass().getName(), "handleOrderRequest", "cant cancel order not found");
                     return TaskResult.NON_CANCELABLE_ORDER;
                 } else {
-                    LogEvent.logDebug(this.getClass().getName(), "handleOrderRequest", "TaskWorker:3");
+                    LogEvent.logDebug(this.getClass().getName(), "handleOrderRequest",
+                            "no order found, entering order: " + referringOrderNumber);
                     insertNewOrder(referringOrderNumber, message, patient, ExternalOrderStatus.Entered);
+                    return TaskResult.OK;
                 }
-                break;
             case ORDER_FOUND_CANCELED:
                 if (orderType == OrderType.CANCEL) {
-                    LogEvent.logDebug(this.getClass().getName(), "handleOrderRequest", "TaskWorker:4");
+                    LogEvent.logDebug(this.getClass().getName(), "handleOrderRequest",
+                            "can't cancel already cancelled order: " + referringOrderNumber);
                     return TaskResult.NON_CANCELABLE_ORDER;
                 } else {
-                    LogEvent.logDebug(this.getClass().getName(), "handleOrderRequest", "TaskWorker:5");
+                    LogEvent.logDebug(this.getClass().getName(), "handleOrderRequest",
+                            "order found cancelled, entering order: " + referringOrderNumber);
                     insertNewOrder(referringOrderNumber, message, patient, ExternalOrderStatus.Entered);
+                    return TaskResult.OK;
                 }
-                break;
+            default:
+                LogEvent.logDebug(this.getClass().getName(), "handleOrderRequest",
+                        "undetermined issue in correctly interpreted request: "
+                                + interpretResults.get(0).toString() + " check result: " + checkResult + " for: "
+                                + referringOrderNumber + " " + orderType + " ");
+                insertNewOrder(referringOrderNumber, message, patient, ExternalOrderStatus.NonConforming);
+                return TaskResult.MESSAGE_ERROR;
             }
 
-        } else if (interpretResults.get(0) == InterpreterResults.UNSUPPORTED_TESTS && checkResult == CheckResult.ORDER_FOUND_QUEUED ) {
+        } else if (interpretResults.get(0) == InterpreterResults.UNSUPPORTED_TESTS
+                && checkResult == CheckResult.ORDER_FOUND_QUEUED) {
             if (orderType == OrderType.CANCEL) {
-                LogEvent.logDebug(this.getClass().getName(), "handleOrderRequest", "TaskWorker:6");
+                LogEvent.logDebug(this.getClass().getName(), "handleOrderRequest",
+                        "cancelling order: " + referringOrderNumber + " despite wrong test specified");
                 cancelOrder(referringOrderNumber);
                 return TaskResult.OK;
             } else {
-                LogEvent.logDebug(this.getClass().getName(), "handleOrderRequest", "TaskWorker:7");
+                LogEvent.logDebug(this.getClass().getName(), "handleOrderRequest",
+                        "order: " + referringOrderNumber + " already entered");
                 return TaskResult.DUPLICATE_ORDER;
             }
         } else if (interpretResults.get(0) == InterpreterResults.UNSUPPORTED_TESTS) {
-            LogEvent.logDebug(this.getClass().getName(), "handleOrderRequest", "TaskWorker:8");
             LogEvent.logDebug(this.getClass().getName(), "handleOrderRequest",
                     "TaskWorker:unsupported tests: " + referringOrderNumber + orderType);
             insertNewOrder(referringOrderNumber, message, patient, ExternalOrderStatus.NonConforming);
             return TaskResult.MESSAGE_ERROR;
+        } else if (interpretResults.get(0) == InterpreterResults.MISSING_PATIENT_GUID
+                || interpretResults.get(0) == InterpreterResults.MISSING_PATIENT_DOB
+                || interpretResults.get(0) == InterpreterResults.MISSING_PATIENT_GENDER
+                || interpretResults.get(0) == InterpreterResults.MISSING_PATIENT_IDENTIFIER) {
+            LogEvent.logDebug(this.getClass().getName(), "handleOrderRequest", "missing patient info: "
+                    + interpretResults.get(0).toString() + "for" + referringOrderNumber + " " + orderType + " ");
+            insertNewOrder(referringOrderNumber, message, patient, ExternalOrderStatus.NonConforming);
+            return TaskResult.MESSAGE_ERROR;
+        } else {
+            LogEvent.logDebug(this.getClass().getName(), "handleOrderRequest", "undetermined issue: "
+                    + interpretResults.get(0).toString() + " for: " + referringOrderNumber + " " + orderType + " ");
+            insertNewOrder(referringOrderNumber, message, patient, ExternalOrderStatus.NonConforming);
+            return TaskResult.MESSAGE_ERROR;
         }
 
-        return TaskResult.OK;
     }
 
     private void cancelOrder(String referringOrderNumber) {
@@ -158,7 +188,8 @@ public class TaskWorker {
         persister.cancelOrder(referringOrderNumber);
     }
 
-    private void insertNewOrder(String referringOrderNumber, String message, MessagePatient patient, ExternalOrderStatus eoStatus) {
+    private void insertNewOrder(String referringOrderNumber, String message, MessagePatient patient,
+            ExternalOrderStatus eoStatus) {
         LogEvent.logDebug(this.getClass().getName(), "insertNewOrder",
                 "TaskWorker:insertNewOrder: " + referringOrderNumber);
         ElectronicOrder eOrder = new ElectronicOrder();
@@ -167,6 +198,7 @@ public class TaskWorker {
         eOrder.setStatusId(getStatusService().getStatusID(eoStatus));
         eOrder.setOrderTimestamp(DateUtil.getNowAsTimestamp());
         eOrder.setSysUserId(persister.getServiceUserId());
+        eOrder.setType(ElectronicOrderType.FHIR);
 
         persister.persist(patient, eOrder);
     }

@@ -52,6 +52,7 @@ public class TableIdService {
 
     // organization type
     public String REFERRING_ORG_TYPE_ID;
+    public String REFERRING_ORG_DEPARTMENT_TYPE_ID;
 
     // Observations types
     public String DOCTOR_OBSERVATION_TYPE_ID;
@@ -90,6 +91,9 @@ public class TableIdService {
 
         OrganizationType orgType = organizationTypeService.getOrganizationTypeByName("referring clinic");
         REFERRING_ORG_TYPE_ID = orgType != null ? orgType.getId() : "";
+
+        orgType = organizationTypeService.getOrganizationTypeByName("dept");
+        REFERRING_ORG_DEPARTMENT_TYPE_ID = orgType != null ? orgType.getId() : "";
 
         AddressPart part = addressPartService.getAddresPartByName("commune");
         ADDRESS_COMMUNE_ID = part == null ? "" : part.getId();

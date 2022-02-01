@@ -13,6 +13,7 @@ import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
+import org.openelisglobal.dictionarycategory.service.DictionaryCategoryService;
 import org.openelisglobal.localization.service.LocalizationService;
 import org.openelisglobal.localization.valueholder.Localization;
 import org.openelisglobal.test.service.TestService;
@@ -30,6 +31,8 @@ public class ResultSelectListServiceImpl implements ResultSelectListService {
 
     @Autowired
     private DictionaryService dictionaryService;
+    @Autowired
+    private DictionaryCategoryService dictionaryCategoryService;
     @Autowired
     private TestService testService;
     @Autowired
@@ -98,6 +101,7 @@ public class ResultSelectListServiceImpl implements ResultSelectListService {
         dictionary.setDictEntry(form.getNameEnglish());
         dictionary.setLocalAbbreviation(form.getNameEnglish());
         dictionary.setSysUserId(currentUserId);
+        dictionary.setDictionaryCategory(dictionaryCategoryService.getDictionaryCategoryByName("Test Result"));
 
         Localization localization = new Localization();
         localization.setEnglish(form.getNameEnglish());
@@ -176,7 +180,7 @@ public class ResultSelectListServiceImpl implements ResultSelectListService {
             dictionaryService.save(dictionary);
             return true;
         } catch (RuntimeException e) {
-            LogEvent.logDebug(e);
+            LogEvent.logError(e);
         }
         return false;
     }

@@ -12,6 +12,7 @@ import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.util.validator.CustomDateValidator.DateRelation;
 import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.inventory.form.InventoryKitItem;
+import org.openelisglobal.referral.action.beanitems.ReferralItem;
 import org.openelisglobal.test.beanItems.TestResultItem;
 import org.openelisglobal.validation.annotations.ValidDate;
 
@@ -22,6 +23,8 @@ public class LogbookResultsForm extends BaseForm implements ResultsPagingForm {
 
     // for display
     private PagingBean paging;
+
+    private String accessionNumber;
 
     @NotNull(groups = { LogbookResults.class })
     private Boolean singlePatient = false;
@@ -37,6 +40,9 @@ public class LogbookResultsForm extends BaseForm implements ResultsPagingForm {
 
     @Valid
     private List<TestResultItem> testResult;
+
+    @Valid
+    private List<ReferralItem> referralItems;
 
     // for display
     private List<InventoryKitItem> inventoryItems;
@@ -62,11 +68,17 @@ public class LogbookResultsForm extends BaseForm implements ResultsPagingForm {
     // for display
     private List<IdValuePair> testSectionsByName;
 
+    // for display
+    private List<IdValuePair> referralOrganizations;
+
     @Pattern(regexp = ValidationHelper.ID_REGEX, groups = { LogbookResults.class })
     private String testSectionId;
 
     @NotNull(groups = { LogbookResults.class })
     private Boolean displayTestSections = true;
+
+    private Boolean searchByRange;
+    private boolean searchFinished;
 
     public LogbookResultsForm() {
         setFormName("LogbookResultsForm");
@@ -204,6 +216,46 @@ public class LogbookResultsForm extends BaseForm implements ResultsPagingForm {
 
     public void setDisplayTestSections(Boolean displayTestSections) {
         this.displayTestSections = displayTestSections;
+    }
+
+    public List<IdValuePair> getReferralOrganizations() {
+        return referralOrganizations;
+    }
+
+    public void setReferralOrganizations(List<IdValuePair> referralOrganizations) {
+        this.referralOrganizations = referralOrganizations;
+    }
+
+    public List<ReferralItem> getReferralItems() {
+        return referralItems;
+    }
+
+    public void setReferralItems(List<ReferralItem> referralItems) {
+        this.referralItems = referralItems;
+    }
+
+    public String getAccessionNumber() {
+        return accessionNumber;
+    }
+
+    public void setAccessionNumber(String accessionNumber) {
+        this.accessionNumber = accessionNumber;
+    }
+
+    public boolean getSearchByRange() {
+        return searchByRange;
+    }
+
+    public void setSearchByRange(boolean searchByRange) {
+        this.searchByRange = searchByRange;
+    }
+
+    public boolean isSearchFinished() {
+        return searchFinished;
+    }
+
+    public void setSearchFinished(boolean searchFinished) {
+        this.searchFinished = searchFinished;
     }
 
 }

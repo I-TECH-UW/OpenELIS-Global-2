@@ -44,6 +44,7 @@ import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.provider.validation.IAccessionNumberValidator;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
+import org.openelisglobal.common.services.TableIdService;
 import org.openelisglobal.common.services.TestIdentityService;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
@@ -55,7 +56,9 @@ import org.openelisglobal.note.service.NoteService;
 import org.openelisglobal.note.service.NoteServiceImpl.NoteType;
 import org.openelisglobal.observationhistory.service.ObservationHistoryService;
 import org.openelisglobal.observationhistory.service.ObservationHistoryServiceImpl.ObservationType;
+import org.openelisglobal.organization.service.OrganizationService;
 import org.openelisglobal.organization.valueholder.Organization;
+import org.openelisglobal.patient.action.bean.PatientSearch;
 import org.openelisglobal.patient.service.PatientService;
 import org.openelisglobal.patient.service.PatientServiceImpl;
 import org.openelisglobal.patient.valueholder.Patient;
@@ -76,6 +79,7 @@ import org.openelisglobal.result.valueholder.Result;
 import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.util.AccessionNumberUtil;
 import org.openelisglobal.sample.valueholder.Sample;
+import org.openelisglobal.sample.valueholder.SampleAdditionalField.AdditionalFieldName;
 import org.openelisglobal.samplehuman.service.SampleHumanService;
 import org.openelisglobal.sampleitem.valueholder.SampleItem;
 import org.openelisglobal.spring.util.SpringContext;
@@ -109,6 +113,7 @@ public abstract class PatientReport extends Report {
     protected NoteService noteService = SpringContext.getBean(NoteService.class);
     protected PersonAddressService addressService = SpringContext.getBean(PersonAddressService.class);
     protected AddressPartService addressPartService = SpringContext.getBean(AddressPartService.class);
+    protected OrganizationService organizationService = SpringContext.getBean(OrganizationService.class);
 
     private List<String> handledOrders;
     private List<Analysis> updatedAnalysis = new ArrayList<>();
@@ -174,17 +179,21 @@ public abstract class PatientReport extends Report {
     public void setRequestParameters(ReportForm form) {
         form.setReportName(getReportNameForParameterPage());
 
+        form.setUsePatientSearch(true);
+        form.setPatientSearch(new PatientSearch());
+        form.getPatientSearch().setDefaultHeader(false);
         form.setUseAccessionDirect(Boolean.TRUE);
         form.setUseHighAccessionDirect(Boolean.TRUE);
-        form.setUsePatientNumberDirect(Boolean.TRUE);
+
     }
 
     @Override
     public void initializeReport(ReportForm form) {
         super.initializeReport();
         errorFound = false;
-        lowerNumber = form.getAccessionDirect();
-        upperNumber = form.getHighAccessionDirect();
+
+        lowerNumber = form.getAccessionDirectNoSuffix();
+        upperNumber = form.getHighAccessionDirectNoSuffix();
         String patientNumber = form.getPatientNumberDirect();
 
         handledOrders = new ArrayList<>();
@@ -194,7 +203,16 @@ public abstract class PatientReport extends Report {
         boolean valid;
         List<Sample> reportSampleList = new ArrayList<>();
 
-        if (GenericValidator.isBlankOrNull(lowerNumber) && GenericValidator.isBlankOrNull(upperNumber)) {
+        if (form.getAnalysisIds() != null && form.getAnalysisIds().size() > 0) {
+            reportSampleList = findReportSamples(form.getAnalysisIds());
+        } else if (!GenericValidator.isBlankOrNull(form.getSelPatient())) {
+            List<Patient> patientList = new ArrayList<>();
+            valid = findPatientById(form.getSelPatient(), patientList);
+            if (valid) {
+                reportSampleList = findReportSamplesForReportPatient(patientList);
+            }
+        } else if (GenericValidator.isBlankOrNull(lowerNumber) && GenericValidator.isBlankOrNull(upperNumber)) {
+
             List<Patient> patientList = new ArrayList<>();
             valid = findPatientByPatientNumber(patientNumber, patientList);
 
@@ -227,8 +245,11 @@ public abstract class PatientReport extends Report {
                 findPatientInfo();
                 createReportItems();
             }
-
-            postSampleBuild();
+            if (reportItems.size() == 0) {
+                add1LineErrorMessage("report.error.message.noPrintableItems");
+            } else {
+                postSampleBuild();
+            }
         }
 
         if (!updatedAnalysis.isEmpty()) {
@@ -242,6 +263,11 @@ public abstract class PatientReport extends Report {
                 LogEvent.logErrorStack(e);
             }
         }
+    }
+
+    private boolean findPatientById(String patientId, List<Patient> patientList) {
+        patientList.add(patientService.get(patientId));
+        return !patientList.isEmpty();
     }
 
     private void findCompletionDate() {
@@ -281,10 +307,14 @@ public abstract class PatientReport extends Report {
         currentSiteInfo = "";
         currentProvider = null;
 
-        Organization org = sampleService.getOrganizationRequester(currentSample);
-        if (org != null) {
-            currentSiteInfo = org.getOrganizationName();
-        }
+//        sampleService.getOrganizationRequester(currentSample);
+        Organization referringOrg = sampleService.getOrganizationRequester(currentSample,
+                TableIdService.getInstance().REFERRING_ORG_TYPE_ID);
+        Organization referringDepartmentOrg = sampleService.getOrganizationRequester(currentSample,
+                TableIdService.getInstance().REFERRING_ORG_DEPARTMENT_TYPE_ID);
+
+        currentSiteInfo += referringOrg == null ? "" : referringOrg.getOrganizationName();
+        currentSiteInfo += "|" + (referringDepartmentOrg == null ? "" : referringDepartmentOrg.getOrganizationName());
 
         Person person = sampleService.getPersonRequester(currentSample);
         if (person != null) {
@@ -367,6 +397,11 @@ public abstract class PatientReport extends Report {
         return sampleList == null ? new ArrayList<>() : sampleList;
     }
 
+    private List<Sample> findReportSamples(List<String> analysisIds) {
+        List<Sample> sampleList = sampleService.getSamplesByAnalysisIds(analysisIds);
+        return sampleList == null ? new ArrayList<>() : sampleList;
+    }
+
     protected void findPatientFromSample() {
         Patient patient = sampleHumanService.getPatientForSample(currentSample);
 
@@ -389,15 +424,24 @@ public abstract class PatientReport extends Report {
         } else {
             reportParameters.put("useSTNumber", Boolean.TRUE);
         }
-        if (ConfigurationProperties.getInstance().isCaseInsensitivePropertyValueEqual(Property.configurationName, "CI LNSP") || 
-            ConfigurationProperties.getInstance().isCaseInsensitivePropertyValueEqual(Property.configurationName, "CI IPCI") ||
-            ConfigurationProperties.getInstance().isCaseInsensitivePropertyValueEqual(Property.configurationName, "CI_REGIONAL") ||
-            ConfigurationProperties.getInstance().isCaseInsensitivePropertyValueEqual(Property.configurationName, "RETROCI") ||
-            ConfigurationProperties.getInstance().isCaseInsensitivePropertyValueEqual(Property.configurationName, "CI_GENERAL")
-                ) {
+        if (ConfigurationProperties.getInstance().isCaseInsensitivePropertyValueEqual(Property.configurationName,
+                "CI LNSP")
+                || ConfigurationProperties.getInstance().isCaseInsensitivePropertyValueEqual(Property.configurationName,
+                        "CI IPCI")
+                || ConfigurationProperties.getInstance().isCaseInsensitivePropertyValueEqual(Property.configurationName,
+                        "CI_REGIONAL")
+                || ConfigurationProperties.getInstance().isCaseInsensitivePropertyValueEqual(Property.configurationName,
+                        "RETROCI")
+                || ConfigurationProperties.getInstance().isCaseInsensitivePropertyValueEqual(Property.configurationName,
+                        "CI_GENERAL")) {
             reportParameters.put("useBillingNumber", Boolean.TRUE);
         } else {
             reportParameters.put("useBillingNumber", Boolean.FALSE);
+        }
+        if (Boolean.valueOf(ConfigurationProperties.getInstance().getPropertyValue(Property.CONTACT_TRACING))) {
+            reportParameters.put("useContactTracing", Boolean.TRUE);
+        } else {
+            reportParameters.put("useContactTracing", Boolean.FALSE);
         }
     }
 
@@ -460,7 +504,11 @@ public abstract class PatientReport extends Report {
              * resultList.get( 0 ) ); setNormalRange( data, test, resultList.get( 0 ) ); }
              */
         } else if (!SpringContext.getBean(IStatusService.class).matches(analysisService.getStatusId(currentAnalysis),
-                AnalysisStatus.Finalized)) {
+                AnalysisStatus.Finalized)
+                && !(SpringContext.getBean(IStatusService.class).matches(analysisService.getStatusId(currentAnalysis),
+                        AnalysisStatus.TechnicalRejected)
+                        && ConfigurationProperties.getInstance().isPropertyValueEqual(
+                                ConfigurationProperties.Property.VALIDATE_REJECTED_TESTS, "false"))) {
             sampleCompleteMap.put(sampleService.getAccessionNumber(currentSample), Boolean.FALSE);
             setEmptyResult(data);
         } else {
@@ -500,7 +548,9 @@ public abstract class PatientReport extends Report {
 
     private void setNormalRange(ClinicalPatientData data, Test test, Result result) {
         String uom = getUnitOfMeasure(test);
-        data.setTestRefRange(addIfNotEmpty(getRange(result), appendUOMToRange() ? uom : null));
+        if(!result.getResultType().equalsIgnoreCase("D")) {
+            data.setTestRefRange(addIfNotEmpty(getRange(result), appendUOMToRange() ? uom : null));
+        }
         data.setUom(uom);
     }
 
@@ -831,6 +881,14 @@ public abstract class PatientReport extends Report {
         if (doAnalysis) {
             reportResultAndConclusion(data);
         }
+        if (Boolean.valueOf(ConfigurationProperties.getInstance().getPropertyValue(Property.CONTACT_TRACING))) {
+            data.setContactTracingIndexName(
+                    sampleService.getSampleAdditionalFieldForSample(sampleService.getId(currentSample),
+                            AdditionalFieldName.CONTACT_TRACING_INDEX_NAME).getFieldValue());
+            data.setContactTracingIndexRecordNumber(
+                    sampleService.getSampleAdditionalFieldForSample(sampleService.getId(currentSample),
+                            AdditionalFieldName.CONTACT_TRACING_INDEX_RECORD_NUMBER).getFieldValue());
+        }
 
         return data;
     }
@@ -915,7 +973,7 @@ public abstract class PatientReport extends Report {
             return "";
         }
 
-        dob = dob.replaceAll("xx", "01");
+        dob = dob.replaceAll(DateUtil.AMBIGUOUS_DATE_SEGMENT, "01");
         Date dobDate = DateUtil.convertStringDateToSqlDate(dob);
         int months = DateUtil.getAgeInMonths(dobDate, DateUtil.getNowAsSqlDate());
         if (months > 35) {

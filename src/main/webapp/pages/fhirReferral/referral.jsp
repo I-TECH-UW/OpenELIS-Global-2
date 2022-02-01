@@ -4,8 +4,7 @@
 			org.openelisglobal.internationalization.MessageUtil,
 			     org.openelisglobal.common.formfields.FormFields,
 			     org.openelisglobal.common.formfields.FormFields.Field,
-			     org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory,
-			     org.openelisglobal.common.provider.validation.IAccessionNumberValidator,
+			     org.openelisglobal.sample.util.AccessionNumberUtil,
 			     org.openelisglobal.common.util.ConfigurationProperties.Property,
 			     org.openelisglobal.common.util.*" %>
 
@@ -14,9 +13,6 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%!
-	AccessionNumberValidatorFactory accessionNumberValidatorFactory = new AccessionNumberValidatorFactory();
- %>
 
  <%
 	 boolean supportSTNumber = FormFields.getInstance().useField(Field.StNumber);
@@ -24,9 +20,6 @@
 	 boolean supportSubjectNumber = FormFields.getInstance().useField(Field.SubjectNumber);
 	 boolean supportNationalID = FormFields.getInstance().useField(Field.NationalID);
 	 boolean supportLabNumber = FormFields.getInstance().useField(Field.SEARCH_PATIENT_WITH_LAB_NO);
-  	
-  	IAccessionNumberValidator accessionNumberValidator = accessionNumberValidatorFactory.getValidator();
- 
  %>
  
 <script>
@@ -213,7 +206,7 @@ jQuery(window).load(function(){
 					path="externalAccessionNumber"
 					id="externalAccessionNumber" 
 					size="40"
-					maxlength="<%= Integer.toString(accessionNumberValidator.getMaxAccessionLength()) %>"
+					maxlength="<%= Integer.toString(AccessionNumberUtil.getMaxAccessionLength()) %>"
 					oninput="enableEnhancedSearchButton(event.which);"
 					placeholder='<%=MessageUtil.getMessage("label.select.search.here")%>' />
 			</td>

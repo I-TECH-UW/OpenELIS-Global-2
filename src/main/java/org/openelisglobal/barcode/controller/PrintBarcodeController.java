@@ -21,6 +21,7 @@ import org.openelisglobal.barcode.form.PrintBarcodeForm;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSInvalidConfigurationException;
 import org.openelisglobal.common.formfields.FormFields;
+import org.openelisglobal.common.provider.validation.AltYearAccessionValidator;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.DisplayListService.ListType;
 import org.openelisglobal.common.services.IStatusService;
@@ -110,6 +111,11 @@ public class PrintBarcodeController extends BaseController {
         addPrePrintFields(form);
         addPatientSearch(displayObjects);
 
+        request.setAttribute("numDefaultOrderLabels",
+                ConfigurationProperties.getInstance().getPropertyValue(Property.DEFAULT_ORDER_PRINTED));
+        request.setAttribute("numDefaultSpecimenLabels",
+                ConfigurationProperties.getInstance().getPropertyValue(Property.DEFAULT_SPECIMEN_PRINTED));
+
         if (org.apache.commons.validator.GenericValidator.isBlankOrNull(request.getParameter("accessionNumber"))) {
             return findForward(FWD_SUCCESS, displayObjects, form);
         }
@@ -117,6 +123,7 @@ public class PrintBarcodeController extends BaseController {
         String accessionNumber = form.getAccessionNumber();
         Sample sample = getSample(accessionNumber);
         if (sample != null && !org.apache.commons.validator.GenericValidator.isBlankOrNull(sample.getId())) {
+            form.setAccessionNumber(sample.getAccessionNumber());
             List<SampleItem> sampleItemList = getSampleItems(sample);
             setPatientInfo(displayObjects, sample);
             List<SampleEditItem> currentTestList = getCurrentTestInfo(sampleItemList, accessionNumber, false);
@@ -143,8 +150,9 @@ public class PrintBarcodeController extends BaseController {
         if (Boolean
                 .valueOf(ConfigurationProperties.getInstance().getPropertyValue(Property.USE_ALT_ACCESSION_PREFIX))) {
             form.setStartingAtAccession(
-                    AccessionNumberUtil.getAltAccessionNumberGenerator().getNextAvailableAccessionNumber(
-                    ConfigurationProperties.getInstance().getPropertyValue(Property.ALT_ACCESSION_PREFIX), false));
+                    ((AltYearAccessionValidator) AccessionNumberUtil.getAltAccessionNumberGenerator())
+                            .getNextAvailableAccessionNumber(ConfigurationProperties.getInstance()
+                                    .getPropertyValue(Property.ALT_ACCESSION_PREFIX), false));
         }
 
         if (FormFields.getInstance().useField(FormFields.Field.InitialSampleCondition)) {

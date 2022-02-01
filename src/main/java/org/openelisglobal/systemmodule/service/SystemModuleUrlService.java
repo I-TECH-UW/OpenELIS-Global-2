@@ -11,4 +11,6 @@ public interface SystemModuleUrlService extends BaseObjectService<SystemModuleUr
     List<SystemModuleUrl> getByUrlPath(String urlPath);
 
     List<SystemModuleUrl> getByRequest(HttpServletRequest request);
+
+    SystemModuleUrl getByModuleAndUrl(String moduleId, String urlPath);
 }

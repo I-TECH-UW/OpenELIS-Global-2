@@ -52,7 +52,7 @@ public class ReportController extends BaseController {
     private static final String[] ALLOWED_FIELDS = new String[] { "report", "reportType", "type", "accessionDirect",
             "highAccessionDirect", "patientNumberDirect", "patientUpperNumberDirect", "lowerDateRange",
             "upperDateRange", "locationCode", "projectCode", "datePeriod", "lowerMonth", "lowerYear", "upperMonth",
-            "upperYear", "selectList.selection", };
+            "upperYear", "selectList.selection", "experimentId", "reportName", "selPatient", "analysisIds" };
 
     @Autowired
     private ServletContext context;
@@ -97,7 +97,6 @@ public class ReportController extends BaseController {
         }
 
         LogEvent.logTrace("ReportController", "Log GET ", request.getParameter("report"));
-//        System.out.println("ReportController:" + "Out GET " + request.getParameter("report"));
         IReportCreator reportCreator = ReportImplementationFactory.getReportCreator(request.getParameter("report"));
 
         if (reportCreator != null) {

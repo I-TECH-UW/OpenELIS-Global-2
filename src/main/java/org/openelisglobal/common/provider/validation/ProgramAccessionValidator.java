@@ -60,12 +60,10 @@ public class ProgramAccessionValidator implements IAccessionNumberGenerator {
         return NEED_PROGRAM_CODE;
     }
 
-    @Override
     public String createFirstAccessionNumber(String programCode) {
         return programCode + INCREMENT_STARTING_VALUE;
     }
 
-    @Override
     public String incrementAccessionNumber(String currentHighAccessionNumber) {
 
         int increment = Integer.parseInt(currentHighAccessionNumber.substring(INCREMENT_START));
@@ -349,6 +347,11 @@ public class ProgramAccessionValidator implements IAccessionNumberGenerator {
     @Override
     public String getPrefix() {
         return null; // no single prefix
+    }
+
+    @Override
+    public String getNextAccessionNumber(String programCode, boolean reserve) {
+        return this.getNextAvailableAccessionNumber(programCode, reserve);
     }
 
 }

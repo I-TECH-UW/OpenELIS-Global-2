@@ -174,6 +174,8 @@
 			value="patientManagementCore" />
 		<put-attribute name="patientClinicalInfo"
 			value="/pages/patient/patientClinicalInfo.jsp" />
+		<put-attribute name="referralInfo"
+			value="/pages/referral/referralOrderEntry.jsp" />
 	</definition>
 
 	<definition name="sampleEntryByProjectDefinition"
@@ -282,7 +284,9 @@
 	<definition name="patientResultsCore"
 		template="/pages/result/resultsBySearch.jsp">
 		<put-attribute name="searchPanel"
-			value="/pages/patient/patientSearch.jsp" />
+			value="/pages/patient/patientEnhancedSearch.jsp" />
+<!-- 		<put-attribute name="searchPanel" -->
+<!-- 			value="/pages/patient/patientSearch.jsp" /> -->
 		<put-attribute name="resultsPanel"
 			value="resultListViewCore" />
 	</definition>
@@ -293,6 +297,14 @@
 			value="/pages/accession/accessionSearch.jsp" />
 		<put-attribute name="resultsPanel"
 			value="resultListViewCore" />
+	</definition>
+
+	<definition name="accessionValidationCore"
+		template="/pages/result/resultsBySearch.jsp">
+		<put-attribute name="searchPanel"
+			value="/pages/accession/accessionSearch.jsp" />
+		<put-attribute name="resultsPanel"
+			value="/pages/resultvalidation/resultValidation.jsp" />
 	</definition>
 
 	<definition name="accessionSampleEditCore"
@@ -377,9 +389,15 @@
 		<put-attribute name="preSelectionHeader"
 			value="/pages/common/actionSuccess.jsp" />
 		<put-attribute name="body"
-			value="/pages/reports/commonReportParameters.jsp" />
+			value="commonReportParametersDefinition" />
 		<put-attribute name="footer"
 			value="/pages/common/emptyPlaceHolder.jsp" />
+	</definition>
+
+	<definition name="commonReportParametersDefinition"
+		template="/pages/reports/commonReportParameters.jsp">
+		<put-attribute name="patientEnhancedSearch"
+			value="/pages/patient/patientEnhancedSearch.jsp" />
 	</definition>
 
 	<definition name="auditTrailCore"
@@ -435,6 +453,15 @@
 			value="/pages/common/saveCancelFooterButtons.jsp" />
 	</definition>
 
+	<definition name="accessionValidationDefinition"
+		extends="baseDefinition">
+		<put-attribute name="preSelectionHeader"
+			value="/pages/common/actionSuccess.jsp" />
+		<put-attribute name="body" value="accessionValidationCore" />
+		<put-attribute name="footer"
+			value="/pages/common/saveCancelFooterButtons.jsp" />
+	</definition>
+
 	<definition name="statusResultDefinition"
 		extends="baseDefinition">
 		<put-attribute name="preSelectionHeader"
@@ -453,15 +480,46 @@
 		<put-attribute name="footer"
 			value="/pages/common/saveCancelFooterButtons.jsp" />
 	</definition>
+	
+
+	<definition name="resultValidationCoreDefinition"
+		template="/pages/result/resultsBySearch.jsp">
+		<put-attribute name="searchPanel"
+			value="/pages/resultvalidation/resultValidationUnitSearch.jsp" />
+		<put-attribute name="resultsPanel"
+			value="/pages/resultvalidation/resultValidation.jsp" />
+	</definition>
+	
+	<definition name="accessionValidationRangeCoreDefinition"
+		template="/pages/result/resultsBySearch.jsp">
+		<put-attribute name="searchPanel"
+			value="/pages/accessionvalidationrange/accessionValidationRangeUnitSearch.jsp" />
+		<put-attribute name="resultsPanel"
+			value="/pages/accessionvalidationrange/accessionValidationRange.jsp" />
+	</definition>
+	
+	<definition name="accessionValidationRangeDefinition"
+		extends="baseDefinition">
+		<put-attribute name="preSelectionHeader"
+			value="/pages/common/actionSuccess.jsp" />
+		<put-attribute name="body"
+			value="accessionValidationRangeCoreDefinition" />
+		<put-attribute name="footer"
+			value="/pages/common/saveCancelFooterButtons.jsp" />
+	</definition>
+	
+	
 	<definition name="resultValidationDefinition"
 		extends="baseDefinition">
 		<put-attribute name="preSelectionHeader"
 			value="/pages/common/actionSuccess.jsp" />
 		<put-attribute name="body"
-			value="/pages/resultvalidation/resultValidation.jsp" />
+			value="resultValidationCoreDefinition" />
 		<put-attribute name="footer"
 			value="/pages/common/saveCancelFooterButtons.jsp" />
 	</definition>
+
+	
 	<definition name="elisaAlgorithmResultValidationDefinition"
 		extends="baseDefinition">
 		<put-attribute name="preSelectionHeader"
@@ -508,17 +566,26 @@
 		<put-attribute name="footer"
 			value="/pages/common/saveCancelFooterButtons.jsp" />
 	</definition>
+	
+	
 	<definition name="referredOutDefinition"
 		extends="baseDefinition">
 		<put-attribute name="preSelectionHeader"
 			value="/pages/common/actionSuccess.jsp" />
 		<put-attribute name="body"
-			value="/pages/referral/referralOut.jsp" />
+			value="referredOutBodyDefinition" />
 		<put-attribute name="footer"
-			value="/pages/common/saveCancelFooterButtons.jsp" />
+			value="/pages/common/emptyPlaceHolder.jsp" />
 	</definition>
-
-
+	
+	<definition name="referredOutBodyDefinition"
+		template="/pages/referral/referralOut.jsp">
+		<put-attribute name="referredTestSearch"
+			value="/pages/referral/referralSearch.jsp" />
+		<put-attribute name="patientEnhancedSearch"
+			value="/pages/patient/patientEnhancedSearch.jsp" />
+	</definition>
+	
 	<!-- MasterPageLists -->
 	<definition name="haitiMasterListsPageDefinition"
 		extends="masterListsPageDefinition">
@@ -969,6 +1036,20 @@
 			value="/pages/notificationcenter/notificationCenter.jsp" />
 		<put-attribute name="footer"
 			value="/pages/common/emptyPlaceHolder.jsp" />
+	</definition>
+
+	<definition name="quantStudioSetupDefinition"
+		extends="baseDefinition">
+		<put-attribute name="body"
+			value="quantStudioSetupBodyDefinition" />
+		<put-attribute name="footer"
+			value="/pages/common/emptyPlaceHolder.jsp" />
+	</definition>
+
+	<definition name="quantStudioSetupBodyDefinition"
+		template="/pages/analyzer/quaintstudio/setupExperiment.jsp">
+		<put-attribute name="patientEnhancedSearch"
+			value="/pages/patient/patientEnhancedSearch.jsp" />
 	</definition>
 </tiles-definitions>
 

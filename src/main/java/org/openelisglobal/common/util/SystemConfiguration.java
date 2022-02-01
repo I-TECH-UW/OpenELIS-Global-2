@@ -37,6 +37,7 @@ import org.openelisglobal.internationalization.MessageUtil;
  */
 
 public class SystemConfiguration {
+
     private static final String propertyFile = "/SystemConfiguration.properties";
 
     private static class SingletonHelper {

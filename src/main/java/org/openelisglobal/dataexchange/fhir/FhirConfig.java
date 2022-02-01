@@ -18,6 +18,12 @@ public class FhirConfig {
     private String oeFhirSystem;
     @Value("${org.openelisglobal.fhirstore.uri}")
     private String localFhirStorePath;
+    @Value("${org.openelisglobal.remote.source.uri}")
+    private String[] remoteStorePaths;
+    @Value("${org.openelisglobal.fhirstore.username:}")
+    private String username;
+    @Value("${org.openelisglobal.fhirstore.password:}")
+    private String password;
 
     @Autowired
     CloseableHttpClient httpClient;
@@ -25,6 +31,7 @@ public class FhirConfig {
     public String getLocalFhirStorePath() {
         return localFhirStorePath;
     }
+
     @Bean
     public FhirContext fhirContext() {
         FhirContext fhirContext = new FhirContext(FhirVersionEnum.R4);
@@ -44,8 +51,16 @@ public class FhirConfig {
         return oeFhirSystem;
     }
 
-    public void setOeFhirSystem(String oeFhirSystem) {
-        this.oeFhirSystem = oeFhirSystem;
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public String[] getRemoteStorePaths() {
+        return remoteStorePaths;
     }
 
 }
