@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -67,6 +68,7 @@ public class UnifiedSystemUserMenuController extends BaseMenuController<UnifiedS
         request.setAttribute(IActionConstants.FORM_NAME, "unifiedSystemUserMenu");
         request.setAttribute(IActionConstants.MENU_PAGE_INSTRUCTION, "user.select.instruction");
         request.setAttribute(IActionConstants.MENU_OBJECT_TO_ADD, "label.button.new.user");
+        request.setAttribute(IActionConstants.APPLY_FILTER, "true");
         if (FWD_FAIL.equals(forward)) {
             Errors errors = new BaseErrors();
             errors.reject("error.generic");
@@ -93,22 +95,25 @@ public class UnifiedSystemUserMenuController extends BaseMenuController<UnifiedS
         }
         List<UnifiedSystemUser> unifiedUsers = getUnifiedUsers(systemUsers);
 
-        request.setAttribute("menuDefinition", "UnifiedSystemUserMenuDefinition");
-
-        if (YES.equals(request.getParameter("search"))) {
-            request.setAttribute(MENU_TOTAL_RECORDS,
-                    String.valueOf(systemUserService
-                            .getTotalSearchedUserCount(request.getParameter("searchString"))));
-        } else {
-            request.setAttribute(MENU_TOTAL_RECORDS, String.valueOf(systemUserService.getCount()));
+        if (request.getParameter("filter") != null) {
+            if (request.getParameter("filter").contains("isActive")) {
+                request.setAttribute(IActionConstants.FILTER_CHECK_ACTIVE, "true");
+                unifiedUsers = unifiedUsers.stream().filter(user -> user.getActive().equals("Y")).collect(Collectors.toList());
+            }      
+            if (request.getParameter("filter").contains("isAdmin")) {
+                request.setAttribute(IActionConstants.FILTER_CHECK_ADMIN, "true");
+                unifiedUsers = filterUnifiedUsers(unifiedUsers);
+            } 
         }
 
-        request.setAttribute(MENU_TOTAL_RECORDS, String.valueOf(systemUserService.getCount()));
+        request.setAttribute("menuDefinition", "UnifiedSystemUserMenuDefinition");
+        
+        request.setAttribute(MENU_TOTAL_RECORDS, String.valueOf(unifiedUsers.size()));
         request.setAttribute(MENU_FROM_RECORD, String.valueOf(startingRecNo));
 
         int numOfRecs = 0;
-        if (systemUsers.size() != 0) {
-            numOfRecs = Math.min(systemUsers.size(), getPageSize());
+        if (unifiedUsers != null) {
+            numOfRecs = Math.min(unifiedUsers.size(), getPageSize());
 
             numOfRecs--;
         }
@@ -125,13 +130,26 @@ public class UnifiedSystemUserMenuController extends BaseMenuController<UnifiedS
         return unifiedUsers;
     }
 
+    private List<UnifiedSystemUser> filterUnifiedUsers(List<UnifiedSystemUser> users) {
+        List<UnifiedSystemUser> unifiedUsers = new ArrayList<>();
+        List<LoginUser> loginUsers = loginService.getAll();
+        HashMap<String, LoginUser> loginMap = createLoginMap(loginUsers ,true);
+
+        for (UnifiedSystemUser user : users) {
+            if(loginMap.containsKey(user.getLoginName())){
+                unifiedUsers.add(user);
+            }
+        }
+        return unifiedUsers  ;
+    }
+
     private List<UnifiedSystemUser> getUnifiedUsers(List<SystemUser> systemUsers) {
 
         List<UnifiedSystemUser> unifiedUsers = new ArrayList<>();
 
         List<LoginUser> loginUsers = loginService.getAll();
 
-        HashMap<String, LoginUser> loginMap = createLoginMap(loginUsers);
+        HashMap<String, LoginUser> loginMap = createLoginMap(loginUsers ,false);
 
         for (SystemUser user : systemUsers) {
             UnifiedSystemUser unifiedUser = createUnifiedSystemUser(loginMap, user);
@@ -162,13 +180,18 @@ public class UnifiedSystemUserMenuController extends BaseMenuController<UnifiedS
         return unifiedUser;
     }
 
-    private HashMap<String, LoginUser> createLoginMap(List<LoginUser> loginUsers) {
+    private HashMap<String, LoginUser> createLoginMap(List<LoginUser> loginUsers ,Boolean filter) {
         HashMap<String, LoginUser> loginMap = new HashMap<>();
 
         for (LoginUser login : loginUsers) {
-            loginMap.put(login.getLoginName(), login);
+            if (filter) {
+                if (login.getIsAdmin().equals("Y")) {
+                    loginMap.put(login.getLoginName(), login);
+                }
+            } else {
+                loginMap.put(login.getLoginName(), login);
+            }
         }
-
         return loginMap;
     }
 

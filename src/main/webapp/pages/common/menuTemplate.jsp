@@ -152,8 +152,26 @@ function setMenuAction(button, form, action, validate, parameters) {
         parameters += "&searchString=" + searchString; 
     }
   }
-   
 
+   var adminFilterCheckBox = document.getElementById("isAdmin");
+      if(adminFilterCheckBox != null){   
+         if (adminFilterCheckBox.checked == true){
+         parameters += "&filter=isAdmin";
+      }
+   }
+
+   var activeFilterCheckBox = document.getElementById("isActive");
+      if(activeFilterCheckBox != null){   
+         if (activeFilterCheckBox.checked == true){     
+         if(parameters.includes("filter=isAdmin")){
+             parameters += ",isActive"
+         }else{
+             parameters += "&filter=isActive";
+         }
+        }
+     }
+
+   
   form.action = context + '/' + action + parsedFormName + '.do' + sessionid + parameters;
   form.selectedIDs = parameters;
   

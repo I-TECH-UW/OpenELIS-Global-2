@@ -23,6 +23,8 @@
 	String searchColumn="";
 	String pageInstruction ="";
 	String objectToAdd ="";
+	String adminFilterCheck ="";
+	String activeFilterCheck ="";
 
        if (request.getAttribute(IActionConstants.DEACTIVATE_DISABLED) != null) {
 	      allowDeactivate = request.getAttribute(IActionConstants.DEACTIVATE_DISABLED) != "true";
@@ -69,6 +71,14 @@
 	   if(request.getAttribute(IActionConstants.MENU_OBJECT_TO_ADD) != null){
            objectToAdd = request.getAttribute(IActionConstants.MENU_OBJECT_TO_ADD).toString();
 	   }
+
+	   if(request.getAttribute(IActionConstants.FILTER_CHECK_ADMIN) != null){
+           adminFilterCheck = "checked";
+	   }
+
+	   if(request.getAttribute(IActionConstants.FILTER_CHECK_ACTIVE) != null){
+           activeFilterCheck = "checked";
+	   }
 %>
 <%  
 	if(null != request.getAttribute(IActionConstants.FORM_NAME))
@@ -110,6 +120,27 @@ function submitSearchForClick(button){
 	
      setMenuAction( button, document.getElementById("searchForm"), 'Search', 'yes', '?search=Y');
 }
+// to filter all results without first clicking the search button
+function submitFilterForClick(button){
+	var adminFilterCheckBox = document.getElementById("isAdmin");
+	var activeFilterCheckBox = document.getElementById("isActive");
+	var param = "?startingRecNo=1";
+      if(adminFilterCheckBox != null){   
+         if (adminFilterCheckBox.checked == true){
+		 	param += "&filter=isAdmin";      
+        }
+	  }
+	  if(activeFilterCheckBox != null){   
+         if (activeFilterCheckBox.checked == true){
+			 if(param.includes("isAdmin")){
+              param += ",isActive";
+			 }else{
+               param += "&filter=isActive";
+			 }
+      }
+   }
+   setMenuAction( button, document.getElementById("searchForm"), 'Search', 'yes', param);
+}
 </script>
 
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
@@ -118,7 +149,7 @@ function submitSearchForClick(button){
 	   <%
 	     if(!pageInstruction.isEmpty()){
        %>	 
-			<td colspan="3">
+			<td colspan="6">
 				<spring:message code="<%=pageInstruction%>" />
 			</td>	
 	 <%
@@ -155,7 +186,7 @@ function submitSearchForClick(button){
 		    <td>&nbsp;</td>	
 
 
-			<td colspan="4" align="right"><%=paginationMessage%></td>
+			<td colspan="5" align="right"><%=paginationMessage%></td>
 
 	    <%
 		    String previousDisabled = "false";
@@ -203,6 +234,16 @@ function submitSearchForClick(button){
 					
   			</button>
 	   </td>
+	   <%-- to apply filters to reasults --%>
+	   <c:if test="${not empty filter}">
+			<td>  
+				 <spring:message code="menu.label.filter" />
+				<label for="isAdmin"><spring:message code="menu.label.filter.admin" /></label>
+				<input <%=adminFilterCheck%> type="checkbox" id="isAdmin" name="isAdmin" onclick="submitFilterForClick(this);return false;" />
+				<label for="isActive"> <spring:message code="menu.label.filter.active" /></label>
+				<input <%=activeFilterCheck%> type="checkbox" id="isActive" name="isActive"  onclick="submitFilterForClick(this);return false;"/>  
+			</td>
+		 </c:if>
 
 			<c:if test="${not empty menuSearchByTableColumn}">
 			<form:form name="${form.formName}" 
@@ -233,10 +274,10 @@ function submitSearchForClick(button){
 
        </c:if>
 
-			<td></td>
+	   <td></td>
 
 
-      
+
 			<td align="right">
 			   <button type="button" id="previous"
 					onclick="setMenuAction(this, document.getElementById('menuForm'), '', 'yes', '?paging=1');return false;"
