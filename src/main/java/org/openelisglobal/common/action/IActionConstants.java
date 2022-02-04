@@ -94,6 +94,16 @@ public interface IActionConstants {
     String IN_MENU_SELECT_LIST_HEADER_SEARCH = "inMenuSelectListHeaderSearch";
     String MENU_SEARCH_BY_TABLE_COLUMN = "menuSearchByTableColumn";
 
+    String MENU_PAGE_INSTRUCTION = "menuPageInstruction";
+
+    String MENU_OBJECT_TO_ADD = "menuObjectToAdd";
+
+    String FILTER_CHECK_ADMIN = "filterCheckAdmin";
+
+    String FILTER_CHECK_ACTIVE = "filterCheckActive";
+
+    String APPLY_FILTER = "filter";
+
     String POPUPFORM_FILTER_BY_TABLE_COLUMN = "popupFormFilterByTableColumn";
     String IN_POPUP_FORM_SEARCH = "inPopupFormSearch";
     String POPUP_FORM_SEARCH_STRING = "popupFormSearchString";

@@ -19,6 +19,12 @@
 	String fromCount = "0";
 	String toCount = "0";
 	boolean allowDeactivate = false;
+	String formName =  "";
+	String searchColumn="";
+	String pageInstruction ="";
+	String objectToAdd ="";
+	String adminFilterCheck ="";
+	String activeFilterCheck ="";
 
        if (request.getAttribute(IActionConstants.DEACTIVATE_DISABLED) != null) {
 	      allowDeactivate = request.getAttribute(IActionConstants.DEACTIVATE_DISABLED) != "true";
@@ -48,30 +54,48 @@
           notAllowSearching = "false";
 
        }
-
-       String searchColumn="";
        if (request.getAttribute(IActionConstants.MENU_SEARCH_BY_TABLE_COLUMN) != null )  {
           {
              searchColumn = (String) request.getAttribute(IActionConstants.MENU_SEARCH_BY_TABLE_COLUMN);
           }
        }
+
+	   if(request.getAttribute(IActionConstants.FORM_NAME) != null){
+           formName = request.getAttribute(IActionConstants.FORM_NAME).toString();
+	   }
+
+	   if(request.getAttribute(IActionConstants.MENU_PAGE_INSTRUCTION) != null){
+           pageInstruction = request.getAttribute(IActionConstants.MENU_PAGE_INSTRUCTION).toString();
+	   }
+
+	   if(request.getAttribute(IActionConstants.MENU_OBJECT_TO_ADD) != null){
+           objectToAdd = request.getAttribute(IActionConstants.MENU_OBJECT_TO_ADD).toString();
+	   }
+
+	   if(request.getAttribute(IActionConstants.FILTER_CHECK_ADMIN) != null){
+           adminFilterCheck = "checked";
+	   }
+
+	   if(request.getAttribute(IActionConstants.FILTER_CHECK_ACTIVE) != null){
+           activeFilterCheck = "checked";
+	   }
 %>
-<%
+<%  
 	if(null != request.getAttribute(IActionConstants.FORM_NAME))
 	{
 %>
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0" >
 	<tr>
-		<td class="pageTitle" align="center">
-			<b> &nbsp;&nbsp;&nbsp;&nbsp;
+		<td class="pageTitle" align="center" >
+			<h2> &nbsp;&nbsp;&nbsp;&nbsp;
 				<c:if test="${not empty subtitle}">
 					<c:out value="${subtitle}" />
 				</c:if>
 		 	&nbsp;&nbsp;
-		 	</b>
+		 	</h2>
 		</td>
-	</tr>
+	</tr>	  
 </table>
 <%
 	}
@@ -96,13 +120,46 @@ function submitSearchForClick(button){
 	
      setMenuAction( button, document.getElementById("searchForm"), 'Search', 'yes', '?search=Y');
 }
+// to filter all results without first clicking the search button
+function submitFilterForClick(button){
+	var adminFilterCheckBox = document.getElementById("isAdmin");
+	var activeFilterCheckBox = document.getElementById("isActive");
+	var param = "?startingRecNo=1";
+      if(adminFilterCheckBox != null){   
+         if (adminFilterCheckBox.checked == true){
+		 	param += "&filter=isAdmin";      
+        }
+	  }
+	  if(activeFilterCheckBox != null){   
+         if (activeFilterCheckBox.checked == true){
+			 if(param.includes("isAdmin")){
+              param += ",isActive";
+			 }else{
+               param += "&filter=isActive";
+			 }
+      }
+   }
+   setMenuAction( button, document.getElementById("searchForm"), 'Search', 'yes', param);
+}
 </script>
 
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 	<tbody >
 	<tr>
-			<td>&nbsp;</td>
-  	</tr>
+	   <%
+	     if(!pageInstruction.isEmpty()){
+       %>	 
+			<td colspan="6">
+				<spring:message code="<%=pageInstruction%>" />
+			</td>	
+	 <%
+	    }else {
+     %>
+        <td>&nbsp;</td>
+	 <%
+	    }
+     %>
+	 </tr>
   	<tr>
 
 			<%
@@ -126,10 +183,10 @@ function submitSearchForClick(button){
 						+ " " + msgOf + " " + totalCount;
 			%>
 
-			<td><spring:message code="label.form.selectand" /></td>
+		    <td>&nbsp;</td>	
 
 
-			<td colspan="4" align="right"><%=paginationMessage%></td>
+			<td colspan="5" align="right"><%=paginationMessage%></td>
 
 	    <%
 		    String previousDisabled = "false";
@@ -155,7 +212,7 @@ function submitSearchForClick(button){
 					<%if ( !disableEdit ) {%>
 					disabled="disabled"
 					<%} %>>
-					<spring:message code="label.button.edit" />
+					<spring:message code="label.button.modify" />
 				</button> &nbsp; 
 				<button type="button" id="deactivate"
 					onclick="setMenuAction(this, document.getElementById('menuForm'), 'Delete', 'yes', '?ID=');return false;"
@@ -164,8 +221,7 @@ function submitSearchForClick(button){
 					<spring:message code="label.button.deactivate" />
   			</button>
 				
-				&nbsp;
-				<spring:message code="label.form.or" />&nbsp; 
+				&nbsp;&nbsp;
 				
 				<button type="button" id="add"
 					onclick="setMenuAction(this, document.getElementById('menuForm'), '', 'yes', '?ID=0');return false;"
@@ -174,9 +230,20 @@ function submitSearchForClick(button){
 					disabled="disabled"
 					<%} %>
 					>
-					<spring:message code="label.button.add" />
+					  <spring:message code="label.button.add" /> <spring:message code="<%=objectToAdd%>"/>
+					
   			</button>
 	   </td>
+	   <%-- to apply filters to reasults --%>
+	   <c:if test="${not empty filter}">
+			<td>  
+				 <spring:message code="menu.label.filter" />
+				<label for="isAdmin"><spring:message code="menu.label.filter.admin" /></label>
+				<input <%=adminFilterCheck%> type="checkbox" id="isAdmin" name="isAdmin" onclick="submitFilterForClick(this);return false;" />
+				<label for="isActive"> <spring:message code="menu.label.filter.active" /></label>
+				<input <%=activeFilterCheck%> type="checkbox" id="isActive" name="isActive"  onclick="submitFilterForClick(this);return false;"/>  
+			</td>
+		 </c:if>
 
 			<c:if test="${not empty menuSearchByTableColumn}">
 			<form:form name="${form.formName}" 
@@ -207,10 +274,10 @@ function submitSearchForClick(button){
 
        </c:if>
 
-			<td></td>
+	   <td></td>
 
 
-      
+
 			<td align="right">
 			   <button type="button" id="previous"
 					onclick="setMenuAction(this, document.getElementById('menuForm'), '', 'yes', '?paging=1');return false;"
