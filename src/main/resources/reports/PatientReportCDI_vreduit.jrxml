@@ -771,7 +771,7 @@
 		<groupExpression><![CDATA[$F{testSection}]]></groupExpression>
 		<groupHeader>
 			<band height="25" splitType="Prevent">
-				<textField>
+				<textField isStretchWithOverflow="true">
 					<reportElement mode="Transparent" x="1" y="13" width="110" height="12" backcolor="#FFFFFF" uuid="c2ce697f-d1af-46c1-9ed8-b445bab34ef9"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="7"/>
