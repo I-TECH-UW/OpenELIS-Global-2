@@ -140,7 +140,7 @@ public class PatientEntryByProjectController extends BasePatientEntryByProject {
         } else if (FWD_FAIL.equals(forward)) {
             return "homePageDefinition";
         } else if (FWD_SUCCESS_INSERT.equals(forward)) {
-            String redirectURL = "/PatientEntryByProject.do?type="
+            String redirectURL = "/PatientEntryByProject?type="
                     + Encode.forUriComponent(request.getParameter("type"));
             return "redirect:" + redirectURL;
         } else if (FWD_FAIL_INSERT.equals(forward)) {

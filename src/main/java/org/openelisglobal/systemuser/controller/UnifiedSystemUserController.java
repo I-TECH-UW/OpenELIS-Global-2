@@ -98,8 +98,8 @@ public class UnifiedSystemUserController extends BaseController {
             @RequestParam(name = "ID", defaultValue = "") String id)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         UnifiedSystemUserForm form = new UnifiedSystemUserForm();
-        form.setFormAction("UnifiedSystemUser.do");
-        form.setCancelAction("UnifiedSystemUserMenu.do");
+        form.setFormAction("UnifiedSystemUser");
+        form.setCancelAction("UnifiedSystemUserMenu");
 
         boolean doFiltering = true;
         request.setAttribute(ALLOW_EDITS_KEY, "true");
@@ -572,9 +572,9 @@ public class UnifiedSystemUserController extends BaseController {
         if (FWD_SUCCESS.equals(forward)) {
             return "unifiedSystemUserDefinition";
         } else if (FWD_FAIL.equals(forward)) {
-            return "redirect:/MasterListsPage.do";
+            return "redirect:/MasterListsPage";
         } else if (FWD_SUCCESS_INSERT.equals(forward)) {
-            return "redirect:/UnifiedSystemUser.do";
+            return "redirect:/UnifiedSystemUser";
         } else if (FWD_FAIL_INSERT.equals(forward)) {
             return "unifiedSystemUserDefinition";
         } else {

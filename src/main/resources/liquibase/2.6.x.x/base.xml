@@ -6,5 +6,6 @@
 	  http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
 	<include file="liquibase/2.6.x.x/fix_sequences.xml"/>
+	<include file="liquibase/2.6.x.x/remove_do_suffix.xml"/>
 
 </databaseChangeLog>

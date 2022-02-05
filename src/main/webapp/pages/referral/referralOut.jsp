@@ -71,7 +71,7 @@ function printPatientReports() {
 	jQuery("#mainForm input[name=analysisIds]:checked").each(function () {
 		analysisIds.push(this.value);
 	});
-	window.open('ReportPrint.do?report=patientCILNSP_vreduit&type=patient&analysisIds=' + analysisIds); 
+	window.open('ReportPrint?report=patientCILNSP_vreduit&type=patient&analysisIds=' + analysisIds); 
 }
 
 </script>

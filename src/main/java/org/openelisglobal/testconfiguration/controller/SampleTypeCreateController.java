@@ -170,7 +170,7 @@ public class SampleTypeCreateController extends BaseController {
         if (FWD_SUCCESS.equals(forward)) {
             return "sampleTypeCreateDefinition";
         } else if (FWD_SUCCESS_INSERT.equals(forward)) {
-            return "redirect:/SampleTypeCreate.do";
+            return "redirect:/SampleTypeCreate";
         } else if (FWD_FAIL_INSERT.equals(forward)) {
             return "sampleTypeCreateDefinition";
         } else {

@@ -209,7 +209,7 @@ public class SiteInformationController extends BaseController {
             form.setFormAction("SiteInformation");
         }
 
-        form.setCancelAction("Cancel" + form.getFormAction() + ".do");
+        form.setCancelAction("Cancel" + form.getFormAction());
     }
 
     private String getInstruction(SiteInformation siteInformation) {
@@ -463,16 +463,16 @@ public class SiteInformationController extends BaseController {
         if (FWD_SUCCESS.equals(forward)) {
             return "siteInformationDefinition";
         } else if (FWD_FAIL.equals(forward)) {
-            return "redirect:/MasterListsPage.do";
+            return "redirect:/MasterListsPage";
         } else if (FWD_SUCCESS_INSERT.equals(forward)) {
-            String url = pathNoSuffix + "Menu.do";
+            String url = pathNoSuffix + "Menu";
             return "redirect:" + url;
         } else if (FWD_FAIL_INSERT.equals(forward)) {
-            String url = pathNoSuffix + ".do";
+            String url = pathNoSuffix;
             return "redirect:" + url;
         } else if (FWD_CANCEL.equals(forward)) {
             String prefix = "Cancel";
-            String url = pathNoSuffix.substring(pathNoSuffix.indexOf(prefix) + prefix.length()) + "Menu.do";
+            String url = pathNoSuffix.substring(pathNoSuffix.indexOf(prefix) + prefix.length()) + "Menu";
             return "redirect:" + url;
         } else {
             return "PageNotFound";

@@ -307,7 +307,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
         } else if (FWD_FAIL.equals(forward)) {
             return "homePageDefinition";
         } else if (FWD_SUCCESS_INSERT.equals(forward)) {
-            return "redirect:/SamplePatientEntry.do";
+            return "redirect:/SamplePatientEntry";
         } else if (FWD_FAIL_INSERT.equals(forward)) {
             return "samplePatientEntryDefinition";
         } else {

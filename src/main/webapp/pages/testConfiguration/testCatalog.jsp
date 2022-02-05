@@ -92,10 +92,10 @@
 
 <form id="mainForm">
     <input type="button" value="<%= MessageUtil.getContextualMessage("banner.menu.administration") %>"
-           onclick="submitAction('MasterListsPage.do');"
+           onclick="submitAction('MasterListsPage');"
            class="textButton"/> &rarr;
     <input type="button" value="<%= MessageUtil.getContextualMessage("configuration.test.management") %>"
-           onclick="submitAction('TestManagementConfigMenu.do');"
+           onclick="submitAction('TestManagementConfigMenu');"
            class="textButton"/>&rarr;
     <spring:message code="configuration.test.catalog" />
 </form>

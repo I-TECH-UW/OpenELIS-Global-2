@@ -53,13 +53,13 @@ function disableEnableTest(checkbox, index){
 
 function submitTestSectionSelect( element ) {
 
-	window.location.href = "WorkPlanByTestSection.do?testSectionId=" + element.value + "&type=" + testSectionNameIdHash[element.value] ;
+	window.location.href = "WorkPlanByTestSection?testSectionId=" + element.value + "&type=" + testSectionNameIdHash[element.value] ;
 }
 
 function printWorkplan() {
 
 	var form = document.getElementById("mainForm");
-	form.action = "PrintWorkplanReport.do";
+	form.action = "PrintWorkplanReport";
 	form.target = "_blank";
 	form.submit();
 }

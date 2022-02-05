@@ -51,7 +51,7 @@ public class WorkplanForm extends BaseForm {
     @Pattern(regexp = "^[ a-zA-Z-]*", groups = { PrintWorkplan.class })
     private String type = "";
 
-    @Pattern(regexp = "^$|^WorkPlanByPanel.do$|^WorkPlanByTest.do$", groups = { PrintWorkplan.class })
+    @Pattern(regexp = "^$|^WorkPlanByPanel$|^WorkPlanByTest$", groups = { PrintWorkplan.class })
     private String searchAction = "";
 
     // for display

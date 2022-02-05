@@ -92,7 +92,7 @@ public class WorkplanByPanelController extends BaseWorkplanController {
         form.setType("panel");
         form.setSearchTypes(DisplayListService.getInstance().getList(DisplayListService.ListType.PANELS));
         form.setSearchLabel(MessageUtil.getMessage("workplan.panel.types"));
-        form.setSearchAction("WorkPlanByPanel.do");
+        form.setSearchAction("WorkPlanByPanel");
 
         return findForward(FWD_SUCCESS, form);
     }

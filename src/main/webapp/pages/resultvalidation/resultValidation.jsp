@@ -159,7 +159,7 @@ function savePage() {
 
     window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
 	var form = document.getElementById("mainForm");
-	form.action = "ResultValidation.do" + '?type=<spring:escapeBody javaScriptEscape="true">${testSection}</spring:escapeBody>&test=<spring:escapeBody javaScriptEscape="true">${testName}</spring:escapeBody>&';
+	form.action = "ResultValidation" + '?type=<spring:escapeBody javaScriptEscape="true">${testSection}</spring:escapeBody>&test=<spring:escapeBody javaScriptEscape="true">${testName}</spring:escapeBody>&';
 	form.submit();
 }
 
@@ -287,7 +287,7 @@ function altAccessionHighlightSearch(accessionNumber) {
 	if (confirm('Searching for an individual Lab no will take you to a new page.\n\nUnsaved data on this page will be lost.\n\nWould you like to continue?')) {
 		window.onbeforeunload = null;
 		var params = new URLSearchParams("accessionNumber=" + accessionNumber);
-		window.location = "AccessionValidation.do?" + params.toString();
+		window.location = "AccessionValidation?" + params.toString();
 	}
 }
 

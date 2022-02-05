@@ -10,13 +10,13 @@
 
 function /*void*/ cancel(){
 	var form = window.document.forms[0];
-	form.action = "Cancel.do";
+	form.action = "Cancel";
 	form.submit();
 }
 
 function /*void*/ deleteData(){
 	var form = window.document.forms[0];
-	form.action = "DatabaseCleaningRequest.do";
+	form.action = "DatabaseCleaningRequest";
 	form.submit();
 }
 

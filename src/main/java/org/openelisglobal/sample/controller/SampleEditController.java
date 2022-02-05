@@ -146,7 +146,7 @@ public class SampleEditController extends BaseController {
             oldForm.getExistingTests().get(0).isCanceled();
         }
         SampleEditForm form = new SampleEditForm();
-        form.setFormAction("SampleEdit.do");
+        form.setFormAction("SampleEdit");
 
         request.getSession().setAttribute(SAVE_DISABLED, TRUE);
 
@@ -479,7 +479,7 @@ public class SampleEditController extends BaseController {
         } else if (FWD_FAIL.equals(forward)) {
             return "homePageDefinition";
         } else if (FWD_SUCCESS_INSERT.equals(forward)) {
-            return "redirect:/SampleEdit.do";
+            return "redirect:/SampleEdit";
         } else if (FWD_FAIL_INSERT.equals(forward)) {
             return "sampleEditDefinition";
         } else {

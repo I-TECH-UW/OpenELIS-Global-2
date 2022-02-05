@@ -92,7 +92,7 @@ function /*void*/ makeDirty(){
 function printWorkplan() {
 
 	var form = document.getElementById("mainForm");
-	form.action = "PrintWorkplanReport.do";
+	form.action = "PrintWorkplanReport";
 	form.target = "_blank";
 	form.submit();
 }
@@ -101,7 +101,7 @@ function savePage() {
 
   window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
 	var form = document.getElementById("mainForm");
-	form.action = "ResultValidation.do";
+	form.action = "ResultValidation";
 	form.submit();
 }
 

@@ -220,7 +220,7 @@ public class AccessionValidationRangeController extends BaseResultValidationCont
 //            saveErrors(errors);
             redirectAttributes.addFlashAttribute(FWD_FAIL_INSERT, true);
             return findForward(FWD_SUCCESS_INSERT, form);
-//            return new ModelAndView("redirect:/ResultValidation.do?blank=true");
+//            return new ModelAndView("redirect:/ResultValidation?blank=true");
         }
 
         ResultValidationPaging paging = new ResultValidationPaging();
@@ -559,7 +559,7 @@ public class AccessionValidationRangeController extends BaseResultValidationCont
         } else if (FWD_FAIL.equals(forward)) {
             return "homePageDefinition";
         } else if (FWD_SUCCESS_INSERT.equals(forward)) {
-            return "redirect:/AccessionValidationRange.do";
+            return "redirect:/AccessionValidationRange";
         } else if (FWD_FAIL_INSERT.equals(forward)) {
             return "homePageDefinition";
         } else if (FWD_VALIDATION_ERROR.equals(forward)) {

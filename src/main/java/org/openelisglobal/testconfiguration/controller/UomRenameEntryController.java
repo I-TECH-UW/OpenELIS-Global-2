@@ -46,7 +46,7 @@ public class UomRenameEntryController extends BaseController {
         if (FWD_SUCCESS.equals(forward)) {
             return "uomRenameDefinition";
         } else if (FWD_SUCCESS_INSERT.equals(forward)) {
-            return "redirect:/UomRenameEntry.do";
+            return "redirect:/UomRenameEntry";
         } else if (FWD_FAIL_INSERT.equals(forward)) {
             return "uomRenameDefinition";
         } else {

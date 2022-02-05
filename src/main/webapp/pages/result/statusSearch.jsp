@@ -24,7 +24,7 @@ var newSearchInfo = false;
 function doShowTests(){
     newSearchInfo = false;
 //     make get request of the search fields only
-	window.location.href = "StatusResults.do" 
+	window.location.href = "StatusResults" 
 			+ "?collectionDate=" + encodeURIComponent($("collectionDate").value ) 
 			+ "&recievedDate=" + encodeURIComponent($("recievedDate").value )
 			+ "&selectedTest=" + encodeURIComponent($("selectedTest").value ) 

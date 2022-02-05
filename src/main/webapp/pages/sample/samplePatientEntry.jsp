@@ -737,7 +737,7 @@ function  /*void*/ savePage()
 
     window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
     var form = document.getElementById("mainForm");
-    form.action = "SamplePatientEntry.do";
+    form.action = "SamplePatientEntry";
     form.submit();
 }
 

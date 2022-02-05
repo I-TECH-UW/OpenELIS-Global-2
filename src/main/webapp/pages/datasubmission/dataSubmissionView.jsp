@@ -16,7 +16,7 @@ function saveAndSubmit() {
 		if (confirmSentWarning()) {
 			showsubmitting();
 			var form = document.getElementById("mainForm");
-			form.action = "DataSubmission.do?submit=true";
+			form.action = "DataSubmission?submit=true";
 			form.submit();
 		}
 	} else {
@@ -26,14 +26,14 @@ function saveAndSubmit() {
 
 function saveAndExit() {
 	var form = document.getElementById("mainForm");
-	form.action = "DataSubmission.do";
+	form.action = "DataSubmission";
 	form.submit();
 }
 
 function dateChange() {
 	var month = jQuery("#month").val();
 	var year = jQuery("#year").val();
-	window.location.replace("DataSubmission.do?month=" + month + "&year=" + year);
+	window.location.replace("DataSubmission?month=" + month + "&year=" + year);
 }
 
 function editUrl() {

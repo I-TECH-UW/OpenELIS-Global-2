@@ -38,77 +38,77 @@
     </script>
     <br>
     <input type="button" value="<%= MessageUtil.getMessage("banner.menu.administration") %>"
-           onclick="submitAction('MasterListsPage.do');"
+           onclick="submitAction('MasterListsPage');"
            class="textButton"/> &rarr; <%=MessageUtil.getMessage( "configuration.test.management" )%>
 
     <h3><spring:message code="configuration.test.management.spelling" /></h3>
     <ul>
         <li><input type="button" value="<%= MessageUtil.getMessage("configuration.test.rename") %>"
-                   onclick="submitAction('TestRenameEntry.do');"
+                   onclick="submitAction('TestRenameEntry');"
                    class="textButton"/><br>
             &nbsp;&nbsp;&nbsp;&nbsp;<%=MessageUtil.getMessage("configuration.test.rename.explain")%></li>
         <li><input type="button" value="<%= MessageUtil.getMessage("configuration.panel.rename") %>"
-                   onclick="submitAction('PanelRenameEntry.do');"
+                   onclick="submitAction('PanelRenameEntry');"
                    class="textButton"/><br>
             &nbsp;&nbsp;&nbsp;&nbsp;<%=MessageUtil.getMessage("configuration.panel.rename.explain")%></li>
         <li><input type="button" value="<%= MessageUtil.getMessage("configuration.type.rename") %>"
-                   onclick="submitAction('SampleTypeRenameEntry.do');"
+                   onclick="submitAction('SampleTypeRenameEntry');"
                    class="textButton"/><br>
             &nbsp;&nbsp;&nbsp;&nbsp;<%=MessageUtil.getMessage("configuration.type.rename.explain")%></li>
         <li><input type="button" value="<%= MessageUtil.getMessage("configuration.testSection.rename") %>"
-                   onclick="submitAction('TestSectionRenameEntry.do');"
+                   onclick="submitAction('TestSectionRenameEntry');"
                    class="textButton"/><br>
             &nbsp;&nbsp;&nbsp;&nbsp;<%=MessageUtil.getMessage("configuration.testSection.rename.explain")%></li>   
         <li><input type="button" value="<%= MessageUtil.getMessage("configuration.uom.rename") %>"
-                   onclick="submitAction('UomRenameEntry.do');"
+                   onclick="submitAction('UomRenameEntry');"
                    class="textButton"/><br>
             &nbsp;&nbsp;&nbsp;&nbsp;<%=MessageUtil.getMessage("configuration.uom.rename.explain")%></li>
         <li><input type="button" value="<%= MessageUtil.getMessage("configuration.selectList.rename") %>"
-                   onclick="submitAction('SelectListRenameEntry.do');"
+                   onclick="submitAction('SelectListRenameEntry');"
                    class="textButton"/><br>
             &nbsp;&nbsp;&nbsp;&nbsp;<%=MessageUtil.getMessage("configuration.selectList.rename.explain")%></li>
     </ul>
     <h3><spring:message code="configuration.test.management.organization" /></h3>
     <ul>
         <li><input type="button" value="<%= MessageUtil.getMessage("configuration.test.catalog") %>"
-                   onclick="submitAction('TestCatalog.do');"
+                   onclick="submitAction('TestCatalog');"
                    class="textButton"/><br>
             &nbsp;&nbsp;&nbsp;&nbsp;<%=MessageUtil.getMessage("configuration.test.catalog.explain")%></li>
         <li><input type="button" value="<%= MessageUtil.getMessage("configuration.test.add") %>"
-                   onclick="submitAction('TestAdd.do');"
+                   onclick="submitAction('TestAdd');"
                    class="textButton"/><br>
             &nbsp;&nbsp;&nbsp;&nbsp;<%=MessageUtil.getMessage("configuration.test.add.explain")%></li>
         <li><input type="button" value="<%= MessageUtil.getMessage("configuration.test.modify") %>"
-                   onclick="submitAction('TestModifyEntry.do');"
+                   onclick="submitAction('TestModifyEntry');"
                    class="textButton"/><br>
             &nbsp;&nbsp;&nbsp;&nbsp;<%=MessageUtil.getMessage("configuration.test.modify.explain")%></li>
         <li><input type="button" value="<%= MessageUtil.getMessage("configuration.test.activate") %>"
-                   onclick="submitAction('TestActivation.do');"
+                   onclick="submitAction('TestActivation');"
                    class="textButton"/><br>
             &nbsp;&nbsp;&nbsp;&nbsp;<%=MessageUtil.getMessage("configuration.test.activate.explain")%></li>
         <li><input type="button" value="<%= MessageUtil.getMessage("configuration.test.orderable") %>"
-                   onclick="submitAction('TestOrderability.do');"
+                   onclick="submitAction('TestOrderability');"
                    class="textButton"/><br>
             &nbsp;&nbsp;&nbsp;&nbsp;<%=MessageUtil.getMessage("configuration.test.orderable.explain")%></li>
         <li><input type="button" value="<%= MessageUtil.getMessage("configuration.testUnit.manage") %>"
-                   onclick="submitAction('TestSectionManagement.do');"
+                   onclick="submitAction('TestSectionManagement');"
                    class="textButton"/><br>
             &nbsp;&nbsp;&nbsp;&nbsp;<%=MessageUtil.getMessage("configuration.testUnit.manage.explain")%></li>
         <li><input type="button" value="<%= MessageUtil.getMessage("configuration.sampleType.manage") %>"
-                   onclick="submitAction('SampleTypeManagement.do');"
+                   onclick="submitAction('SampleTypeManagement');"
                    class="textButton"/><br>
             &nbsp;&nbsp;&nbsp;&nbsp;<%=MessageUtil.getMessage("configuration.sampleType.manage.explain")%></li>
         <li><input type="button" value="<%= MessageUtil.getMessage("configuration.uom.manage") %>"
-                   onclick="submitAction('UomManagement.do');"
+                   onclick="submitAction('UomManagement');"
                    class="textButton"/><br>
             &nbsp;&nbsp;&nbsp;&nbsp;<%=MessageUtil.getMessage("configuration.uom.manage.explain")%></li>
         <li><input type="button" value="<%= MessageUtil.getMessage("configuration.panel.manage") %>"
-                   onclick="submitAction('PanelManagement.do');"
+                   onclick="submitAction('PanelManagement');"
                    class="textButton"/><br>
             &nbsp;&nbsp;&nbsp;&nbsp;<%=MessageUtil.getMessage("configuration.panel.manage.explain")%></li>
 
         <li><input type="button" value="<%= MessageUtil.getMessage("configuration.selectList.add") %>"
-                   onclick="submitAction('ResultSelectListAdd.do');"
+                   onclick="submitAction('ResultSelectListAdd');"
                    class="textButton"/><br>
             &nbsp;&nbsp;&nbsp;&nbsp;<%=MessageUtil.getMessage("configuration.selectList.add.explain")%><br />
             &nbsp;&nbsp;&nbsp;&nbsp;<%=MessageUtil.getMessage("configuration.selectList.add.alert")%></li>

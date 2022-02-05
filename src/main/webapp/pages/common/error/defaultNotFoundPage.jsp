@@ -88,7 +88,7 @@
                 
                 <br />
                 <button class="btn" onclick="history.go( -1 );return true;"><i class="icon-chevron-left"></i> <spring:message code="errorpage.previous.button"/></button>
-                <a href="Dashboard.do" class="btn" style="margin-left: 20px"><i class="icon-home"></i> <spring:message code="errorpage.home.button"/></a>
+                <a href="Dashboard" class="btn" style="margin-left: 20px"><i class="icon-home"></i> <spring:message code="errorpage.home.button"/></a>
                 <br /><br />
 
             </div>

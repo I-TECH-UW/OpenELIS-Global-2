@@ -99,7 +99,7 @@ function /*void*/ savePage(){
 	loadSamples();
 	
 	var form = document.getElementById("mainForm");
-	form.action = "SampleEdit.do";
+	form.action = "SampleEdit";
 	form.submit();
 }
 

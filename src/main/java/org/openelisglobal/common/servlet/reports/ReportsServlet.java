@@ -101,7 +101,7 @@ public class ReportsServlet extends HttpServlet {
         // if unsuccessful route back to reports menu
         if (!success) {
             ServletContext context = getServletContext();
-            RequestDispatcher dispatcher = context.getRequestDispatcher("/MainMenu.do");
+            RequestDispatcher dispatcher = context.getRequestDispatcher("/MainMenu");
             dispatcher.forward(request, response);
         }
 

@@ -63,7 +63,7 @@
 	function savePage() {
 		var id = jQuery("#externalConnectionId").val();
 		if (id) {
-			jQuery("#mainForm").attr('action', 'ExternalConnection.do?ID=' + jQuery("#externalConnectionId").val())
+			jQuery("#mainForm").attr('action', 'ExternalConnection?ID=' + jQuery("#externalConnectionId").val())
 		}
 		jQuery("#mainForm").submit();
 	}

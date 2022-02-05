@@ -56,7 +56,7 @@ public class TestRenameEntryController extends BaseController {
         if (FWD_SUCCESS.equals(forward)) {
             return "testRenameDefinition";
         } else if (FWD_SUCCESS_INSERT.equals(forward)) {
-            return "redirect:/TestRenameEntry.do";
+            return "redirect:/TestRenameEntry";
         } else if (FWD_FAIL_INSERT.equals(forward)) {
             return "testRenameDefinition";
         } else {
@@ -73,7 +73,7 @@ public class TestRenameEntryController extends BaseController {
             return findForward(FWD_FAIL_INSERT, form);
         }
 
-        form.setCancelAction("CancelDictionary.do");
+        form.setCancelAction("CancelDictionary");
 
         String testId = form.getTestId();
         String nameEnglish = form.getNameEnglish();

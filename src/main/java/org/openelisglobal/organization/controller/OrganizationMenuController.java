@@ -198,11 +198,11 @@ public class OrganizationMenuController extends BaseMenuController<Organization>
         if (FWD_SUCCESS.equals(forward)) {
             return "masterListsPageDefinition";
         } else if (FWD_FAIL.equals(forward)) {
-            return "redirect:/MasterListsPage.do";
+            return "redirect:/MasterListsPage";
         } else if (FWD_SUCCESS_DELETE.equals(forward)) {
-            return "redirect:/OrganizationMenu.do";
+            return "redirect:/OrganizationMenu";
         } else if (FWD_FAIL_DELETE.equals(forward)) {
-            return "redirect:/OrganizationMenu.do";
+            return "redirect:/OrganizationMenu";
         } else {
             return "PageNotFound";
         }

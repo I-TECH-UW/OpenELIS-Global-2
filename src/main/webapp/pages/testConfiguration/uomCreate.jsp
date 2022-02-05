@@ -132,7 +132,7 @@
     function savePage() {
         window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
         var form = document.getElementById("mainForm");
-        form.action = "UomCreate.do";
+        form.action = "UomCreate";
         form.submit();
     }
 </script>
@@ -154,13 +154,13 @@ td {
 				   id="mainForm">
 
     <input type="button" value="<%= MessageUtil.getContextualMessage("banner.menu.administration") %>"
-           onclick="submitAction('MasterListsPage.do');"
+           onclick="submitAction('MasterListsPage');"
            class="textButton"/>&rarr;
     <input type="button" value="<%= MessageUtil.getContextualMessage("configuration.test.management") %>"
-           onclick="submitAction('TestManagementConfigMenu.do');"
+           onclick="submitAction('TestManagementConfigMenu');"
            class="textButton"/>&rarr;
     <input type="button" value="<%= MessageUtil.getContextualMessage("configuration.uom.manage") %>"
-           onclick="submitAction('UomManagement.do');"
+           onclick="submitAction('UomManagement');"
            class="textButton"/>&rarr;
 
 <%=MessageUtil.getContextualMessage( "configuration.uom.create" )%>
@@ -200,7 +200,7 @@ td {
         <input type="button" value="<%=MessageUtil.getContextualMessage("label.button.next")%>"
                onclick="confirmValues();"/>
         <input type="button" value="<%=MessageUtil.getContextualMessage("label.button.previous")%>"
-               onclick="submitAction('UomManagement.do');"/>
+               onclick="submitAction('UomManagement');"/>
     </div>
     <div style="text-align: center; display: none;" id="confirmationButtons">
         <input type="button" value="<%=MessageUtil.getContextualMessage("label.button.accept")%>"

@@ -727,7 +727,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
         if (FWD_SUCCESS.equals(forward)) {
             return "resultsLogbookDefinition";
         } else if (FWD_SUCCESS_INSERT.equals(forward)) {
-            return "redirect:/LogbookResults.do";
+            return "redirect:/LogbookResults";
         } else if (FWD_VALIDATION_ERROR.equals(forward)) {
             return "resultsLogbookDefinition";
         } else if (FWD_FAIL_INSERT.equals(forward)) {
@@ -739,7 +739,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 
     private String findAccessionForward(String forward) {
         if (FWD_SUCCESS_INSERT.equals(forward)) {
-            return "redirect:/AccessionResults.do";
+            return "redirect:/AccessionResults";
         } else if (FWD_VALIDATION_ERROR.equals(forward)) {
             return "accessionResultDefinition";
         } else if (FWD_FAIL_INSERT.equals(forward)) {
@@ -751,7 +751,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 
     private String findPatientForward(String forward) {
         if (FWD_SUCCESS_INSERT.equals(forward)) {
-            return "redirect:/PatientResults.do";
+            return "redirect:/PatientResults";
         } else if (FWD_VALIDATION_ERROR.equals(forward)) {
             return "patientResultDefinition";
         } else if (FWD_FAIL_INSERT.equals(forward)) {
@@ -763,7 +763,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 
     private String findStatusForward(String forward) {
         if (FWD_SUCCESS_INSERT.equals(forward)) {
-            return "redirect:/StatusResults.do?blank=true";
+            return "redirect:/StatusResults?blank=true";
         } else if (FWD_VALIDATION_ERROR.equals(forward)) {
             return "statusResultDefinition";
         } else if (FWD_FAIL_INSERT.equals(forward)) {
@@ -777,7 +777,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
         if (FWD_SUCCESS.equals(forward)) {
             return "resultsLogbookDefinition";
         } else if (FWD_SUCCESS_INSERT.equals(forward)) {
-            return "redirect:/RangeResults.do";
+            return "redirect:/RangeResults";
         } else if (FWD_VALIDATION_ERROR.equals(forward)) {
             return "resultsLogbookDefinition";
         } else if (FWD_FAIL_INSERT.equals(forward)) {

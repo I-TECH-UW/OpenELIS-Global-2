@@ -655,7 +655,7 @@
         jQuery(".confirmShow").hide();
         jQuery(".selectShow").show();
         if (step == 'step1') {
-            submitAction('TestManagementConfigMenu.do');
+            submitAction('TestManagementConfigMenu');
         } else if (step == 'step2') {
             goBackToStep1();
         } else if ( step == 'step3Dictionary' || step == 'step3Numeric' ){
@@ -955,10 +955,10 @@ td {
     <form:hidden id="jsonWad" name='${form.formName}' path="jsonWad"/>
 
     <input type="button" value="<%= MessageUtil.getContextualMessage("banner.menu.administration") %>"
-           onclick="submitAction('MasterListsPage.do');"
+           onclick="submitAction('MasterListsPage');"
            class="textButton"/> &rarr;
     <input type="button" value="<%= MessageUtil.getContextualMessage("configuration.test.management") %>"
-           onclick="submitAction('TestManagementConfigMenu.do');"
+           onclick="submitAction('TestManagementConfigMenu');"
            class="textButton"/>&rarr;
     <span class="step1">
             <spring:message code="configuration.test.add"/>
@@ -1435,7 +1435,7 @@ td {
     <div class="confirmShow" style="margin-left:auto; margin-right:auto;width: 40%; display: none">
         <input type="button"
                value="<%= MessageUtil.getContextualMessage("label.button.accept") %>"
-               onclick="submitAction('TestAdd.do');"/>
+               onclick="submitAction('TestAdd');"/>
         <input type="button" value="<%=MessageUtil.getContextualMessage("label.button.back")%>"
                onclick="navigateBackFromConfirm()"/>
     </div>

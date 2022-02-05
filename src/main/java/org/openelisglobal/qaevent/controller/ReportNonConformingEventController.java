@@ -162,9 +162,9 @@ public class ReportNonConformingEventController extends BaseController {
         if (FWD_SUCCESS.equals(forward)) {
             return "reportNonConformingEventDefiniton";
         } else if (FWD_FAIL.equals(forward)) {
-            return "redirect:/HomePage.do";
+            return "redirect:/HomePage";
         } else if (FWD_SUCCESS_INSERT.equals(forward)) {
-            return "redirect:/ReportNonConformingEvent.do";
+            return "redirect:/ReportNonConformingEvent";
         } else if (FWD_FAIL_INSERT.equals(forward)) {
             return "reportNonConformingEventDefiniton";
         } else {

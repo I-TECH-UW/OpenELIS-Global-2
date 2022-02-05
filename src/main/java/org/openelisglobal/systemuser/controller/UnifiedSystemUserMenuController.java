@@ -63,7 +63,7 @@ public class UnifiedSystemUserMenuController extends BaseMenuController<UnifiedS
         String forward = FWD_SUCCESS;
         UnifiedSystemUserMenuForm form = new UnifiedSystemUserMenuForm();
 
-        form.setFormAction("UnifiedSystemUserMenu.do");
+        form.setFormAction("UnifiedSystemUserMenu");
         forward = performMenuAction(form, request);
         request.setAttribute(IActionConstants.FORM_NAME, "unifiedSystemUserMenu");
         request.setAttribute(IActionConstants.MENU_PAGE_INSTRUCTION, "user.select.instruction");
@@ -274,11 +274,11 @@ public class UnifiedSystemUserMenuController extends BaseMenuController<UnifiedS
         if (FWD_SUCCESS.equals(forward)) {
             return "haitiMasterListsPageDefinition";
         } else if (FWD_FAIL.equals(forward)) {
-            return "redirect:/MasterListsPage.do";
+            return "redirect:/MasterListsPage";
         } else if (FWD_SUCCESS_DELETE.equals(forward)) {
-            return "redirect:/UnifiedSystemUserMenu.do";
+            return "redirect:/UnifiedSystemUserMenu";
         } else if (FWD_FAIL_DELETE.equals(forward)) {
-            return "redirect:/UnifiedSystemUserMenu.do";
+            return "redirect:/UnifiedSystemUserMenu";
         } else {
             return "PageNotFound";
         }

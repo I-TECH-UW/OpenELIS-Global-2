@@ -136,7 +136,7 @@
     function savePage() {
         window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
         var form = document.getElementById("mainForm");
-        form.action = "SampleTypeCreate.do";
+        form.action = "SampleTypeCreate";
         form.submit();
     }
 </script>
@@ -159,13 +159,13 @@ td {
 
 
     <input type="button" value="<%= MessageUtil.getContextualMessage("banner.menu.administration") %>"
-           onclick="submitAction('MasterListsPage.do');"
+           onclick="submitAction('MasterListsPage');"
            class="textButton"/>&rarr;
     <input type="button" value="<%= MessageUtil.getContextualMessage("configuration.test.management") %>"
-           onclick="submitAction('TestManagementConfigMenu.do');"
+           onclick="submitAction('TestManagementConfigMenu');"
            class="textButton"/>&rarr;
     <input type="button" value="<%= MessageUtil.getContextualMessage("configuration.sampleType.manage") %>"
-           onclick="submitAction('SampleTypeManagement.do');"
+           onclick="submitAction('SampleTypeManagement');"
            class="textButton"/>&rarr;
 
 <%=MessageUtil.getContextualMessage( "configuration.sampleType.create" )%>
@@ -199,7 +199,7 @@ td {
         <input type="button" value="<%=MessageUtil.getContextualMessage("label.button.next")%>"
                onclick="confirmValues();"/>
         <input type="button" value="<%=MessageUtil.getContextualMessage("label.button.previous")%>"
-               onclick="submitAction('SampleTypeManagement.do');"/>
+               onclick="submitAction('SampleTypeManagement');"/>
     </div>
     <div style="text-align: center; display: none;" id="confirmationButtons">
         <input type="button" value="<%=MessageUtil.getContextualMessage("label.button.accept")%>"

@@ -97,9 +97,9 @@ public class TestNotificationConfigController extends BaseController {
         if (FWD_SUCCESS.equals(forward)) {
             return "testNotificationConfigDefinition";
         } else if (FWD_FAIL.equals(forward)) {
-            return "redirect:/TestNotificationConfigMenu.do";
+            return "redirect:/TestNotificationConfigMenu";
         } else if (FWD_SUCCESS_INSERT.equals(forward)) {
-            return "redirect:/TestNotificationConfigMenu.do";
+            return "redirect:/TestNotificationConfigMenu";
         } else if (FWD_FAIL_INSERT.equals(forward)) {
             return "testNotificationConfigDefinition";
         } else {

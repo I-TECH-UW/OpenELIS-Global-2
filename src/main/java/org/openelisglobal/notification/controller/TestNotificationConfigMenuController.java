@@ -99,9 +99,9 @@ public class TestNotificationConfigMenuController extends BaseMenuController<Tes
         if (FWD_SUCCESS.equals(forward)) {
             return "haitiMasterListsPageDefinition";
         } else if (FWD_FAIL.equals(forward)) {
-            return "redirect:/MasterListsPage.do";
+            return "redirect:/MasterListsPage";
         } else if (FWD_SUCCESS_INSERT.equals(forward)) {
-            return "redirect:/TestNotificationConfigMenu.do";
+            return "redirect:/TestNotificationConfigMenu";
         } else if (FWD_FAIL_INSERT.equals(forward)) {
             return "haitiMasterListsPageDefinition";
         } else {

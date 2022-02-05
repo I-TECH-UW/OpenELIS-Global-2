@@ -214,10 +214,10 @@ public abstract class BaseController implements IActionConstants {
 
     protected String findForward(String forward) {
         if (LOGIN_PAGE.equals(forward)) {
-            return "redirect:LoginPage.do";
+            return "redirect:LoginPage";
         }
         if (HOME_PAGE.equals(forward)) {
-            return "redirect:Home.do";
+            return "redirect:Home";
         }
         String forwardView = findLocalForward(forward);
         if (GenericValidator.isBlankOrNull(forwardView)) {

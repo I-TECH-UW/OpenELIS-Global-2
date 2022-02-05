@@ -51,7 +51,7 @@ public class CustomFormAuthenticationSuccessHandler implements AuthenticationSuc
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
             Authentication authentication) throws IOException, ServletException {
-        String homePath = "/Dashboard.do";
+        String homePath = "/Dashboard";
         LoginUser loginInfo = loginService.getMatch("loginName", request.getParameter("loginName")).get();
         setupUserSession(request, loginInfo);
 

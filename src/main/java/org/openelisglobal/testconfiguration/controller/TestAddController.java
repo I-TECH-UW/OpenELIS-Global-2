@@ -501,7 +501,7 @@ public class TestAddController extends BaseController {
         if (FWD_SUCCESS.equals(forward)) {
             return "testAddDefinition";
         } else if (FWD_SUCCESS_INSERT.equals(forward)) {
-            return "redirect:/TestAdd.do";
+            return "redirect:/TestAdd";
         } else if (FWD_FAIL_INSERT.equals(forward)) {
             return "testAddDefinition";
         } else {

@@ -328,7 +328,7 @@
     function savePage() {
         window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
         var form = document.getElementById("mainForm");
-        form.action = "TestModifyEntry.do";
+        form.action = "TestModifyEntry";
         form.submit();
     }
     
@@ -1136,7 +1136,7 @@
         jQuery(".confirmShow").hide();
         jQuery(".selectShow").show();
         if (step == 'step1') {
-        	window.location.href = "TestManagementConfigMenu.do";
+        	window.location.href = "TestManagementConfigMenu";
         } else if (step == 'step2') {
             goBackToStep1();
         } else if ( step == 'step3Dictionary' || step == 'step3Numeric' || step == 'step3NumericAsk' || step == 'step3DictionaryAsk'){
@@ -1627,10 +1627,10 @@ td {
 
 	<input type="button"
 		value="<%=MessageUtil.getContextualMessage("banner.menu.administration")%>"
-		onclick="submitAction('MasterListsPage.do');" class="textButton" />
+		onclick="submitAction('MasterListsPage');" class="textButton" />
 	&rarr; <input type="button"
 		value="<%=MessageUtil.getContextualMessage("configuration.test.management")%>"
-		onclick="submitAction('TestManagementConfigMenu.do');"
+		onclick="submitAction('TestManagementConfigMenu');"
 		class="textButton" />&rarr; <span class="step1"> <spring:message code="configuration.test.modify" />
 	</span> <span class="step2 notStep1BreadCrumb" id="step2BreadCrumb"
 		style="display: none"> <input type="button"
@@ -2377,7 +2377,7 @@ td {
 		<input type="button"
 			id="acceptButton"
 			value="<%=MessageUtil.getContextualMessage("label.button.accept")%>"
-			onclick="submitAction('TestModifyEntry.do');" /> <input
+			onclick="submitAction('TestModifyEntry');" /> <input
 			type="button"
 			value="<%=MessageUtil.getContextualMessage("label.button.back")%>"
 			onclick="navigateBackFromConfirm()" />
@@ -2420,5 +2420,5 @@ td {
 
 	<br> <input type="button"
 		value='<%=MessageUtil.getContextualMessage("label.button.finished")%>'
-		onclick="submitAction('TestManagementConfigMenu.do');" />
+		onclick="submitAction('TestManagementConfigMenu');" />
 </form:form>

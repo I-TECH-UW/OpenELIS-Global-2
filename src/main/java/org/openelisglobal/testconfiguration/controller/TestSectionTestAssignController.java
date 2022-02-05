@@ -85,7 +85,7 @@ public class TestSectionTestAssignController extends BaseController {
         if (FWD_SUCCESS.equals(forward)) {
             return "testSectionAssignDefinition";
         } else if (FWD_SUCCESS_INSERT.equals(forward)) {
-            return "redirect:/TestSectionTestAssign.do";
+            return "redirect:/TestSectionTestAssign";
         } else if (FWD_FAIL_INSERT.equals(forward)) {
             return "testSectionAssignDefinition";
         } else {

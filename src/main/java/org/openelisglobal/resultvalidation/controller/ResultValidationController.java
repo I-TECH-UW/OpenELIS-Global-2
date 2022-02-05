@@ -586,9 +586,9 @@ public class ResultValidationController extends BaseResultValidationController {
         } else if (FWD_FAIL.equals(forward)) {
             return "homePageDefinition";
         } else if (FWD_SUCCESS_INSERT.equals(forward)) {
-            return "redirect:/ResultValidation.do";
+            return "redirect:/ResultValidation";
         } else if ("successRetroC".equals(forward)) {
-            return "redirect:/ResultValidationRetroC.do";
+            return "redirect:/ResultValidationRetroC";
         } else if (FWD_FAIL_INSERT.equals(forward)) {
             return "homePageDefinition";
         } else if (FWD_VALIDATION_ERROR.equals(forward)) {

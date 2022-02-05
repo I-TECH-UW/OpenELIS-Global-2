@@ -86,7 +86,7 @@ public class SampleTypeTestAssignController extends BaseController {
         if (FWD_SUCCESS.equals(forward)) {
             return "sampleTypeAssignDefinition";
         } else if (FWD_SUCCESS_INSERT.equals(forward)) {
-            return "redirect:/SampleTypeTestAssign.do";
+            return "redirect:/SampleTypeTestAssign";
         } else if (FWD_FAIL_INSERT.equals(forward)) {
             return "sampleTypeAssignDefinition";
         } else {

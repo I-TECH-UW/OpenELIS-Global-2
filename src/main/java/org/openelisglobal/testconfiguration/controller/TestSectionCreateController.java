@@ -170,7 +170,7 @@ public class TestSectionCreateController extends BaseController {
         if (FWD_SUCCESS.equals(forward)) {
             return "testSectionCreateDefinition";
         } else if (FWD_SUCCESS_INSERT.equals(forward)) {
-            return "redirect:/TestSectionCreate.do";
+            return "redirect:/TestSectionCreate";
         } else if (FWD_FAIL_INSERT.equals(forward)) {
             return "testSectionCreateDefinition";
         } else {

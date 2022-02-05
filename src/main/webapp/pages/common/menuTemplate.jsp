@@ -172,7 +172,7 @@ function setMenuAction(button, form, action, validate, parameters) {
      }
 
    
-  form.action = context + '/' + action + parsedFormName + '.do' + sessionid + parameters;
+  form.action = context + '/' + action + parsedFormName + sessionid + parameters;
   form.selectedIDs = parameters;
   
   if ((button.name == 'edit' && ID == '') || (button.name=='search' && searchString == '') ||(button.name=='searchString' && searchString == '') ) {

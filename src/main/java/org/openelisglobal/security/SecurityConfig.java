@@ -33,10 +33,9 @@ public class SecurityConfig {
     private UserDetailsService userDetailsService;
 
     // pages that have special security constraints
-    public static final String[] OPEN_PAGES = { "/ChangePasswordLogin.do",
-            "/UpdateLoginChangePassword.do" };
-    public static final String[] LOGIN_PAGES = { "/LoginPage.do", "/ValidateLogin.do" };
-    public static final String[] AUTH_OPEN_PAGES = { "/Home.do", "/Dashboard.do", "/Logout.do", "/MasterListsPage.do" };
+    public static final String[] OPEN_PAGES = { "/ChangePasswordLogin", "/UpdateLoginChangePassword" };
+    public static final String[] LOGIN_PAGES = { "/LoginPage", "/ValidateLogin" };
+    public static final String[] AUTH_OPEN_PAGES = { "/Home", "/Dashboard", "/Logout", "/MasterListsPage" };
     public static final String[] RESOURCE_PAGES = { "/css/**", "/favicon/**", "/images/**", "/documentation/**",
             "/scripts/**", "/jsp/**" };
     public static final String[] HTTP_BASIC_SERVLET_PAGES = { "/pluginServlet/**", "/importAnalyzer",
@@ -151,13 +150,13 @@ public class SecurityConfig {
                     // ensure all other requests are authenticated
                     .anyRequest().authenticated().and()
                     // setup login redirection and logic
-                    .formLogin().loginPage("/LoginPage.do").permitAll().loginProcessingUrl("/ValidateLogin.do")
+                    .formLogin().loginPage("/LoginPage").permitAll().loginProcessingUrl("/ValidateLogin")
                     .usernameParameter("loginName").passwordParameter("password")
                     .failureHandler(customAuthenticationFailureHandler())
                     .successHandler(customAuthenticationSuccessHandler()).and()
                     // setup logout
-                    .logout().logoutUrl("/Logout.do").logoutSuccessUrl("/LoginPage.do").invalidateHttpSession(true)
-                    .and().sessionManagement().invalidSessionUrl("/LoginPage.do").sessionFixation().migrateSession()
+                    .logout().logoutUrl("/Logout").logoutSuccessUrl("/LoginPage").invalidateHttpSession(true).and()
+                    .sessionManagement().invalidSessionUrl("/LoginPage").sessionFixation().migrateSession()
                     .and().csrf().and()
                     // add security headers
                     .headers().frameOptions().sameOrigin().contentSecurityPolicy(CONTENT_SECURITY_POLICY);

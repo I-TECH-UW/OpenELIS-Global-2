@@ -300,9 +300,9 @@ public class PatientManagementController extends BaseController {
         if (FWD_SUCCESS.equals(forward)) {
             return "patientManagementDefinition";
         } else if (FWD_FAIL.equals(forward)) {
-            return "redirect:/Dashboard.do";
+            return "redirect:/Dashboard";
         } else if (FWD_SUCCESS_INSERT.equals(forward)) {
-            return "redirect:/PatientManagement.do";
+            return "redirect:/PatientManagement";
         } else if (FWD_FAIL_INSERT.equals(forward)) {
             return "patientManagementDefinition";
         } else {

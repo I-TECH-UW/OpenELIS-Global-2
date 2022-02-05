@@ -192,7 +192,7 @@ public class PanelCreateController extends BaseController {
         if (FWD_SUCCESS.equals(forward)) {
             return "panelCreateDefinition";
         } else if (FWD_SUCCESS_INSERT.equals(forward)) {
-            return "redirect:/PanelCreate.do";
+            return "redirect:/PanelCreate";
         } else if (FWD_FAIL_INSERT.equals(forward)) {
             return "panelCreateDefinition";
         } else {

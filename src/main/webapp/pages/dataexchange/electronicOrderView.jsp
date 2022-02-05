@@ -91,7 +91,7 @@ function saveEntry(index) {
 	restoreRow(index);
 	markRowOutOfSync(index);
 	
-	window.open('SamplePatientEntry.do?ID=' + externalOrderId + '&labNumber=' + labNumber + '&attemptAutoSave=true', "_blank");
+	window.open('SamplePatientEntry?ID=' + externalOrderId + '&labNumber=' + labNumber + '&attemptAutoSave=true', "_blank");
 }
 
 function markRowOutOfSync(index) {
@@ -124,7 +124,7 @@ function processScanSuccess(xhr, index) {
 
 function editOrder(index) {
 	var externalOrderId = jQuery('#externalOrderId_' + index).val();
-	location.href='SamplePatientEntry.do?ID=' + externalOrderId;
+	location.href='SamplePatientEntry?ID=' + externalOrderId;
 }
 
 jQuery(document).ready( function() {

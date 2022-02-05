@@ -330,7 +330,7 @@
         var form = document.getElementById(id);
         window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
         jQuery('input[name="idOrder"]').val(idOrder.join(','));
-        form.action = "ReportConfiguration.do" + _csrf;
+        form.action = "ReportConfiguration" + _csrf;
         form.submit();
     }
 

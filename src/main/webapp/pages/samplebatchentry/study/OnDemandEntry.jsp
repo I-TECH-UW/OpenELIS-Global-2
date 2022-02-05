@@ -59,9 +59,9 @@ function processAccessionSuccessStudy(xhr) {
     var message = xhr.responseXML.getElementsByTagName("message").item(0);
     if (message.firstChild.nodeValue == "SAMPLE_NOT_FOUND") {
     	if (study == "viralLoad"){
-    		postBatchSampleByProject('SampleEntryVLSave.do?type=initial', onPostBatchSampleSuccess, defaultFailure);
+    		postBatchSampleByProject('SampleEntryVLSave?type=initial', onPostBatchSampleSuccess, defaultFailure);
     	} else if (study == "EID"){
-    		postBatchSampleByProject('SampleEntryEIDSave.do?type=initial', onPostBatchSampleSuccess, defaultFailure);
+    		postBatchSampleByProject('SampleEntryEIDSave?type=initial', onPostBatchSampleSuccess, defaultFailure);
     	}
     } else {
         alert(message.firstChild.nodeValue);

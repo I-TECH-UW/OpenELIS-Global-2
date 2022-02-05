@@ -170,7 +170,7 @@ public class ResultReportingConfigurationController extends BaseController {
         if (FWD_SUCCESS.equals(forward)) {
             return "resultReportingConfigurationDefinition";
         } else if (FWD_SUCCESS_INSERT.equals(forward)) {
-            return "redirect:/MasterListsPage.do";
+            return "redirect:/MasterListsPage";
         } else if (FWD_FAIL_INSERT.equals(forward)) {
             return "resultReportingConfigurationDefinition";
         } else {

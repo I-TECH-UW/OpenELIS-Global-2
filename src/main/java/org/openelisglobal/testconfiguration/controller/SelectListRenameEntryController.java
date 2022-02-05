@@ -46,7 +46,7 @@ public class SelectListRenameEntryController extends BaseController {
         if (FWD_SUCCESS.equals(forward)) {
             return "resultSelectListRenameDefinition";
         } else if (FWD_SUCCESS_INSERT.equals(forward)) {
-            return "redirect:/SelectListRenameEntry.do";
+            return "redirect:/SelectListRenameEntry";
         } else if (FWD_FAIL_INSERT.equals(forward)) {
             return "resultSelectListRenameDefinition";
         } else {

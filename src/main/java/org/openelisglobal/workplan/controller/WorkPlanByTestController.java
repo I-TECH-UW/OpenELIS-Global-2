@@ -108,7 +108,7 @@ public class WorkPlanByTestController extends BaseWorkplanController {
         }
         form.setType("test");
         form.setSearchLabel(MessageUtil.getMessage("workplan.test.types"));
-        form.setSearchAction("WorkPlanByTest.do");
+        form.setSearchAction("WorkPlanByTest");
 
         return findForward(FWD_SUCCESS, form);
     }

@@ -51,7 +51,7 @@ public class TestSectionRenameEntryController extends BaseController {
         if (FWD_SUCCESS.equals(forward)) {
             return "testSectionRenameDefinition";
         } else if (FWD_SUCCESS_INSERT.equals(forward)) {
-            return "redirect:/TestSectionRenameEntry.do";
+            return "redirect:/TestSectionRenameEntry";
         } else if (FWD_FAIL_INSERT.equals(forward)) {
             return "testSectionRenameDefinition";
         } else {

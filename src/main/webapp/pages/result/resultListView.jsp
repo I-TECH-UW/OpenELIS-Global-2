@@ -256,7 +256,7 @@ function  /*void*/ savePage()
 		return;
 	}
 	var form = document.getElementById("mainForm");
-	form.action = '<spring:escapeBody javaScriptEscape="true">${form.formName}</spring:escapeBody>'.sub('Form','') + ".do"  + '?type=' + encodeURIComponent('<spring:escapeBody javaScriptEscape="true">${type}</spring:escapeBody>');
+	form.action = '<spring:escapeBody javaScriptEscape="true">${form.formName}</spring:escapeBody>'.sub('Form','') + ""  + '?type=' + encodeURIComponent('<spring:escapeBody javaScriptEscape="true">${type}</spring:escapeBody>');
 	form.submit();
 }
 
@@ -321,7 +321,7 @@ function processTestReflexCD4Success(parameters)
 }
 
 function submitTestSectionSelect( element ) {
-	window.location.href = "LogbookResults.do?testSectionId=" + element.value + "&type=" + encodeURIComponent(testSectionNameIdHash[element.value]) ;	
+	window.location.href = "LogbookResults?testSectionId=" + element.value + "&type=" + encodeURIComponent(testSectionNameIdHash[element.value]) ;	
 }
 
 var showForceWarning = true;
@@ -370,7 +370,7 @@ function altAccessionHighlightSearch(accessionNumber) {
 	if (confirm('Searching for an individual Lab no will take you to a new page.\n\nUnsaved data on this page will be lost.\n\nWould you like to continue?')) {
 		window.onbeforeunload = null;
 		var params = new URLSearchParams("accessionNumber=" + accessionNumber);
-		window.location = "AccessionResults.do?" + params.toString();
+		window.location = "AccessionResults?" + params.toString();
 	}
 }
 

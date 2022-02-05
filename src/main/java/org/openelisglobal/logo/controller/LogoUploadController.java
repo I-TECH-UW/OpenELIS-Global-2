@@ -67,7 +67,7 @@ public class LogoUploadController {
             updateImage(form.getLogoFile(), whichLogo);
         }
 
-        return "redirect:/PrintedReportsConfigurationMenu.do";
+        return "redirect:/PrintedReportsConfigurationMenu";
     }
 
     private void removeImage(String logoName) {

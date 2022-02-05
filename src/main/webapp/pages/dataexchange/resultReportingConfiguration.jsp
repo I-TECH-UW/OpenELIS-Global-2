@@ -19,7 +19,7 @@
 	
 function setMyCancelAction(){
 	var form = document.getElementById("mainForm");
-	form.action = "CancelResultReportingConfiguration.do";
+	form.action = "CancelResultReportingConfiguration";
 	form.submit();
 	return true;	
 }
@@ -27,7 +27,7 @@ function setMyCancelAction(){
 function savePage(){
 	if( formValid() ){
 		var form = document.getElementById("mainForm");
-		form.action = "ResultReportingConfiguration.do";
+		form.action = "ResultReportingConfiguration";
 		form.submit();
 		return true;		
 	}

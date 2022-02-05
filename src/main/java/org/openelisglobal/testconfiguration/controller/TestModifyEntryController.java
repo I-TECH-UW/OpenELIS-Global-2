@@ -738,7 +738,7 @@ public class TestModifyEntryController extends BaseController {
         } else if (FWD_FAIL_INSERT.equals(forward)) {
             return "testModifyDefinition";
         } else if (FWD_SUCCESS_INSERT.equals(forward)) {
-            return "redirect:/TestModifyEntry.do";
+            return "redirect:/TestModifyEntry";
         } else {
             return "PageNotFound";
         }

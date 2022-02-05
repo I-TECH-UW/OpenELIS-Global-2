@@ -358,7 +358,7 @@
     }
 
     function selectBack(){
-        submitAction('TestManagementConfigMenu.do');
+        submitAction('TestManagementConfigMenu');
     }
 
     function sortBack(){
@@ -419,7 +419,7 @@
         window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
         var form = document.getElementById("mainForm");
         form.method = "POST";
-        form.action = "TestActivation.do";
+        form.action = "TestActivation";
         form.submit();
     }
 </script>
@@ -442,10 +442,10 @@ td {
 				   id="mainForm">
 				   
 <input type="button" value='<%= MessageUtil.getContextualMessage("banner.menu.administration") %>'
-       onclick="submitAction('MasterListsPage.do');"
+       onclick="submitAction('MasterListsPage');"
        class="textButton"/> &rarr;
 <input type="button" value='<%= MessageUtil.getContextualMessage("configuration.test.management") %>'
-       onclick="submitAction('TestManagementConfigMenu.do');"
+       onclick="submitAction('TestManagementConfigMenu');"
        class="textButton"/>&rarr;
 <span id="testActivationSelectionButton" class="selectHide sortShow confirmShow" style="display:none" >
 <input type="button" value='<%=MessageUtil.getContextualMessage("label.testActivate")%>'

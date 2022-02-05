@@ -22,7 +22,7 @@ function  /*void*/ setMyCancelAction(form, action, validate, parameters)
 function doSelectPatientForResults(){	
 	var form = document.getElementById("mainForm");
 
-	form.action = "PatientResults.do?patientID="  + patientSelectID;
+	form.action = "PatientResults?patientID="  + patientSelectID;
 
 	form.submit();
 }

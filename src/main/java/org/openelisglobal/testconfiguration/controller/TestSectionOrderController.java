@@ -61,7 +61,7 @@ public class TestSectionOrderController extends BaseController {
         if (FWD_SUCCESS.equals(forward)) {
             return "testSectionOrderDefinition";
         } else if (FWD_SUCCESS_INSERT.equals(forward)) {
-            return "redirect:/TestSectionOrder.do";
+            return "redirect:/TestSectionOrder";
         } else if (FWD_FAIL_INSERT.equals(forward)) {
             return "testSectionOrderDefinition";
         } else {

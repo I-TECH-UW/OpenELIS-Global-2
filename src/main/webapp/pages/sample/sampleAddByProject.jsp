@@ -216,13 +216,13 @@ function switchStudyForm( divId ){
         $("projectFormName").value = divId;
         switch (divId) {
         case "EID_Id":
-            //location.replace("SampleEntryByProject.do?type=initial");
-            //savePage__("SampleEntryByProject.do?type=" + type);
+            //location.replace("SampleEntryByProject?type=initial");
+            //savePage__("SampleEntryByProject?type=" + type);
             //return;
             break;
         case "VL_Id":
-            //location.replace("SampleEntryByProject.do?type=initial");
-            //savePage__("SampleEntryByProject.do?type=" + type);
+            //location.replace("SampleEntryByProject?type=initial");
+            //savePage__("SampleEntryByProject?type=" + type);
             //return;
         	break;
         }
@@ -273,7 +273,7 @@ function  /*void*/ savePage__(action) {
     window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
     var form = document.getElementById("mainForm");
     if (action == null) {
-        action = "SampleEntryByProject.do?type=" + type
+        action = "SampleEntryByProject?type=" + type
     }
     form.action = action;
     form.submit();

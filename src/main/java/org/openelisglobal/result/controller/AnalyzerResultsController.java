@@ -1370,7 +1370,7 @@ public class AnalyzerResultsController extends BaseController {
         } else if (FWD_FAIL.equals(forward)) {
             return "homePageDefinition";
         } else if (FWD_SUCCESS_INSERT.equals(forward)) {
-            return "redirect:/AnalyzerResults.do?type=" + Encode.forUriComponent(request.getParameter("type"));
+            return "redirect:/AnalyzerResults?type=" + Encode.forUriComponent(request.getParameter("type"));
         } else if (FWD_FAIL_INSERT.equals(forward)) {
             return "analyzerResultsDefinition";
         } else if (FWD_VALIDATION_ERROR.equals(forward)) {
@@ -1390,7 +1390,7 @@ public class AnalyzerResultsController extends BaseController {
         String key = analyzerNameToSubtitleKey.get(getAnalyzerNameFromRequest());
         if (key == null) {
             key = PluginMenuService.getInstance()
-                    .getKeyForAction("/AnalyzerResults.do?type=" + request.getParameter("type"));
+                    .getKeyForAction("/AnalyzerResults?type=" + request.getParameter("type"));
         }
         return key;
 

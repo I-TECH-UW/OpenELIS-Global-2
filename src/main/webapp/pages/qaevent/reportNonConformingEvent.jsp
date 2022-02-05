@@ -190,7 +190,7 @@
     function savePage() {
         var form = document.getElementById("mainForm");
         window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
-        form.action = "ReportNonConformingEvent.do";
+        form.action = "ReportNonConformingEvent";
         form.submit();
     }
 
@@ -205,14 +205,14 @@
             labNo = input.dataset.labordernumber
         }
         if (specimenId.length > 0 && labNo !== "") {
-            window.location = "ReportNonConformingEvent.do?labOrderNumber=" + labNo + "&specimenId=" + specimenId.join(",");
+            window.location = "ReportNonConformingEvent?labOrderNumber=" + labNo + "&specimenId=" + specimenId.join(",");
         }
         return false;
     }
 
     function cancelPage(e) {
         e.preventDefault();
-        window.location = "Home.do";
+        window.location = "Home";
         return false;
     }
     /**

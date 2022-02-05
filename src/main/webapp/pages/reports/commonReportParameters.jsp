@@ -128,7 +128,7 @@ function /*boolean*/ missingValue( id ){
 
 function onCancel(){
 	var form = document.getElementById("mainForm");
-	form.action = "CancelReport.do";
+	form.action = "CancelReport";
 	form.submit();
 	return true;
 }
@@ -136,7 +136,7 @@ function onCancel(){
 function onPrint(){
 	if( formCorrect()){
 		var form = document.getElementById("mainForm");
-		form.action = "ReportPrint.do";
+		form.action = "ReportPrint";
 		form.target = "_blank";
 		form.method = 'get';
 		form.submit();

@@ -99,7 +99,7 @@ public class CorrectiveActionController extends BaseController {
         if (FWD_SUCCESS.equals(forward)) {
             return "correctiveActionDefiniton";
         } else if (FWD_SUCCESS_INSERT.equals(forward)) {
-            return "redirect:/NCECorrectiveAction.do";
+            return "redirect:/NCECorrectiveAction";
         } else if (FWD_FAIL_INSERT.equals(forward)) {
             return "correctiveActionDefiniton";
         } else {

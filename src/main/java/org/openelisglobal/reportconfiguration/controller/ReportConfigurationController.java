@@ -117,7 +117,7 @@ public class ReportConfigurationController extends BaseController {
         if (FWD_SUCCESS.equals(forward)) {
             return "ReportManagementDefinition";
         } else if (FWD_SUCCESS_INSERT.equals(forward)) {
-            return "redirect:/ReportConfiguration.do";
+            return "redirect:/ReportConfiguration";
         } else if (FWD_FAIL.equals(forward)) {
             return "ReportManagementDefinition";
         } else {

@@ -16,7 +16,7 @@ function sortBy(sortOption) {
 	const params = new URLSearchParams({
 		"sortOrder": sortOption,
 		});
-	window.location.href = "portableorders.do?" + params.toString();
+	window.location.href = "portableorders?" + params.toString();
 }
 
 function nextPage() {
@@ -25,7 +25,7 @@ function nextPage() {
 		"sortOrder": sortOption,
 		"page": (pageNumber + 1),
 		});
-	window.location.href = "portableorders.do?" + params.toString();
+	window.location.href = "portableorders?" + params.toString();
 }
 
 function prevPage() {
@@ -34,7 +34,7 @@ function prevPage() {
 		"sortOrder": sortOption,
 		"page": (pageNumber -1),
 		});
-	window.location.href = "portableorders.do?" + params.toString();
+	window.location.href = "portableorders?" + params.toString();
 }
 
 jQuery(window).load(function(){	

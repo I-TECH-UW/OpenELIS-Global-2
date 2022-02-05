@@ -42,7 +42,7 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
         }
 
         request.getSession().setAttribute(Constants.LOGIN_ERRORS, errors);
-        redirectStrategy.sendRedirect(request, response, "/LoginPage.do");
+        redirectStrategy.sendRedirect(request, response, "/LoginPage");
     }
 
 }

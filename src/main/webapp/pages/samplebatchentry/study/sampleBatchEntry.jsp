@@ -37,7 +37,7 @@ var inPrintState = true;	//is entryMethod in a print state
 
 function finish() {
 	window.onbeforeunload = function(){};
-    window.location = "SampleBatchEntrySetup.do";
+    window.location = "SampleBatchEntrySetup";
 }
 
 //check fields, entryMethod printState, and then call patientManagement setSave

@@ -122,9 +122,9 @@ function /*void*/ nextPage() {
     var form = document.getElementById("mainForm");
     //decide page to navigate to based on method of labels
     if (document.getElementById('study').value == "routine") {
-		form.action = "SampleBatchEntry.do";
+		form.action = "SampleBatchEntry";
     } else {
-    	form.action = "SampleBatchEntryByProject.do";
+    	form.action = "SampleBatchEntryByProject";
     }
     form.submit();
 }
