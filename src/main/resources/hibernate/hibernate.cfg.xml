@@ -9,7 +9,6 @@
 	<session-factory>
 		<!-- ENABLE FOR DATASOURCE -->
 		<!--bugzilla 1908 modified for Vietnam: added prefix java:comp/env/ -->
-		<property name="connection.datasource">java:comp/env/jdbc/LimsDS</property>
 		<property name="hibernate.default_schema">clinlims</property>
 		<!-- <property name="dialect">org.hibernate.dialect.Oracle9Dialect</property> -->
 		<!-- use in Vietnam -->
@@ -25,8 +24,6 @@
 		<property name="hibernate.cache.use_second_level_cache">false</property>
 		<property name="hibernate.cache.use_query_cache">false</property>
 		<property name="hibernate.current_session_context_class">thread</property>
-		<property name="connection.url">jdbc:postgresql://localhost:5432/ci_general_9.6</property>
-		<property name="connection.driver_class">org.postgresql.Driver</property>
 
 
 		<mapping resource="hibernate/hbm/Action.hbm.xml" />
