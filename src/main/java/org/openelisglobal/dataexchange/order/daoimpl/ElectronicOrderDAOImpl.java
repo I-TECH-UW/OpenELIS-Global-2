@@ -221,8 +221,8 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder, String>
                 + "where lower(eo.externalId) in (:identifierValues) "
                 + "or lower(person.firstName) = lower(:patientValue) "
                 + "or lower(person.lastName) = lower(:patientValue) "
-                + "or patient.id in (SELECT identity.patientId FROM PatientIdentity identity WHERE identity.identityData = lower(:patientValue)) "
-                + "or patient.nationalId = lower(:patientValue) "
+                + "or patient.id in (SELECT identity.patientId FROM PatientIdentity identity WHERE lower(identity.identityData) = lower(:patientValue)) "
+                + "or lower(patient.nationalId) = lower(:patientValue) "
                 + "or lower(concat(person.firstName, ' ', person.lastName)) = lower(:patientValue) order by ";
 
         switch (order.getValue()) {
