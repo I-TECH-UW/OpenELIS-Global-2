@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.apache.commons.validator.GenericValidator;
 import org.hl7.fhir.r4.model.Coding;
 import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.ServiceRequest;
@@ -22,7 +21,6 @@ import org.openelisglobal.dataexchange.fhir.FhirUtil;
 import org.openelisglobal.dataexchange.order.ElectronicOrderSortOrderCategoryConvertor;
 import org.openelisglobal.dataexchange.order.form.ElectronicOrderViewForm;
 import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder;
-import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder.SortOrder;
 import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrderDisplayItem;
 import org.openelisglobal.dataexchange.service.order.ElectronicOrderService;
 import org.openelisglobal.organization.service.OrganizationService;
@@ -51,7 +49,7 @@ import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 public class ElectronicOrdersController extends BaseController {
 
     private static final String[] ALLOWED_FIELDS = new String[] { "searchType", "searchValue", "startDate", "endDate",
-            "testIds", "statusId" };
+            "testIds", "statusId", "useAllInfo" };
 
     @Autowired
     private StatusOfSampleService statusOfSampleService;
@@ -89,8 +87,8 @@ public class ElectronicOrdersController extends BaseController {
             List<ElectronicOrder> electronicOrders;
             List<ElectronicOrderDisplayItem> eOrderDisplayItems;
 
-            electronicOrders = searchForElectronicOrders(form);
-            eOrderDisplayItems = convertToDisplayItem(electronicOrders);
+            electronicOrders = electronicOrderService.searchForElectronicOrders(form);
+            eOrderDisplayItems = convertToDisplayItem(electronicOrders, form.getUseAllInfo());
 
             form.setSearchFinished(true);
             form.setEOrders(eOrderDisplayItems);
@@ -99,53 +97,23 @@ public class ElectronicOrdersController extends BaseController {
         return findForward(FWD_SUCCESS, form);
     }
 
-    private List<ElectronicOrderDisplayItem> convertToDisplayItem(List<ElectronicOrder> electronicOrders) {
-        return electronicOrders.stream().map(e -> convertToDisplayItem(e)).collect(Collectors.toList());
+    private List<ElectronicOrderDisplayItem> convertToDisplayItem(List<ElectronicOrder> electronicOrders,
+            boolean useAllInfo) {
+        return electronicOrders.stream().map(e -> convertToDisplayItem(e, useAllInfo)).collect(Collectors.toList());
     }
 
-    private ElectronicOrderDisplayItem convertToDisplayItem(ElectronicOrder electronicOrder) {
+    private ElectronicOrderDisplayItem convertToDisplayItem(ElectronicOrder electronicOrder, boolean useAllInfo) {
         ElectronicOrderDisplayItem displayItem = new ElectronicOrderDisplayItem();
 
-        IGenericClient fhirClient = fhirUtil.getFhirClient(fhirConfig.getLocalFhirStorePath());
-
         try {
-            ServiceRequest serviceRequest = fhirClient.read().resource(ServiceRequest.class)
-                    .withId(electronicOrder.getExternalId()).execute();
 
-            Test test = null;
-            for (Coding coding : serviceRequest.getCode().getCoding()) {
-                if (coding.getSystem().equalsIgnoreCase("http://loinc.org")) {
-                    List<Test> tests = testService.getActiveTestsByLoinc(coding.getCode());
-                    if (tests.size() != 0) {
-                        test = tests.get(0);
-                        break;
-                    }
-                }
-            }
-            Task task = fhirUtil.getFhirParser().parseResource(Task.class, electronicOrder.getData());
+            displayItem.setStatus(statusOfSampleService.get(electronicOrder.getStatusId()).getDefaultLocalizedName());
+            displayItem.setElectronicOrderId(electronicOrder.getId());
+            displayItem.setExternalOrderId(electronicOrder.getExternalId());
 
-//       Patient patient =  fhirClient.read().resource(Patient.class).withId(serviceRequest.getSubject().getReference()).execute();
-            String patientUuid = serviceRequest.getSubject().getReferenceElement().getIdPart();
             Patient patient = electronicOrder.getPatient();
-            org.hl7.fhir.r4.model.Patient fhirPatient = fhirClient.read().resource(org.hl7.fhir.r4.model.Patient.class)
-                    .withId(patientUuid).execute();
-
             if (patient != null) {
-                String passportNumber = "";
-                String subjectNumber = patientService.getSubjectNumber(patient);
-                for (Identifier identifier : fhirPatient.getIdentifier()) {
-                    if ("passport".equals(identifier.getSystem())) {
-                        passportNumber = GenericValidator.isBlankOrNull(identifier.getId()) ? passportNumber
-                                : identifier.getId();
-                    }
-                    if ((fhirConfig.getOeFhirSystem() + "/pat_subjectNumber").equals(identifier.getSystem())) {
-                        subjectNumber = GenericValidator.isBlankOrNull(identifier.getId()) ? subjectNumber
-                                : identifier.getId();
-                    }
-                }
-                displayItem.setPassportNumber(passportNumber);
-                displayItem.setSubjectNumber(subjectNumber);
-
+                displayItem.setSubjectNumber(patientService.getSubjectNumber(patient));
                 displayItem.setPatientLastName(patient.getPerson().getLastName());
                 displayItem.setPatientFirstName(patient.getPerson().getFirstName());
                 displayItem.setPatientNationalId(patient.getNationalId());
@@ -153,26 +121,55 @@ public class ElectronicOrdersController extends BaseController {
                 String errorMsg = "error in data collection - Patient was a null resource";
                 displayItem.setWarnings(Arrays.asList(errorMsg));
             }
+            Task task = fhirUtil.getFhirParser().parseResource(Task.class, electronicOrder.getData());
+            displayItem.setRequestDateDisplay(DateUtil.formatDateAsText(task.getAuthoredOn()));
 
             Organization organization = organizationService.getOrganizationByFhirId(
                     task.getRestriction().getRecipientFirstRep().getReferenceElement().getIdPart());
-
-            Sample sample = sampleService.getSampleByReferringId(electronicOrder.getExternalId());
-            displayItem.setElectronicOrderId(electronicOrder.getId());
-            displayItem.setExternalOrderId(electronicOrder.getExternalId());
-            displayItem.setRequestDateDisplay(DateUtil.formatDateAsText(task.getAuthoredOn()));
             if (organization != null) {
                 displayItem.setRequestingFacility(organization.getOrganizationName());
             }
-            displayItem.setStatus(statusOfSampleService.get(electronicOrder.getStatusId()).getDefaultLocalizedName());
-            if (test != null) {
-                displayItem.setTestName(test.getLocalizedTestName().getLocalizedValue());
-            }
-            if (serviceRequest.getRequisition() != null) {
-                displayItem.setReferringLabNumber(serviceRequest.getRequisition().getValue());
-            }
+
+            Sample sample = sampleService.getSampleByReferringId(electronicOrder.getExternalId());
             if (sample != null) {
                 displayItem.setLabNumber(sample.getAccessionNumber());
+            }
+
+            if (useAllInfo) {
+                IGenericClient fhirClient = fhirUtil.getFhirClient(fhirConfig.getLocalFhirStorePath());
+
+                ServiceRequest serviceRequest = fhirClient.read().resource(ServiceRequest.class)
+                        .withId(electronicOrder.getExternalId()).execute();
+                if (serviceRequest.getRequisition() != null) {
+                    displayItem.setReferringLabNumber(serviceRequest.getRequisition().getValue());
+                }
+
+                Test test = null;
+                for (Coding coding : serviceRequest.getCode().getCoding()) {
+                    if (coding.getSystem().equalsIgnoreCase("http://loinc.org")) {
+                        List<Test> tests = testService.getActiveTestsByLoinc(coding.getCode());
+                        if (tests.size() != 0) {
+                            test = tests.get(0);
+                            break;
+                        }
+                    }
+                }
+                if (test != null) {
+                    displayItem.setTestName(test.getLocalizedTestName().getLocalizedValue());
+                }
+
+                String patientUuid = serviceRequest.getSubject().getReferenceElement().getIdPart();
+                org.hl7.fhir.r4.model.Patient fhirPatient = fhirClient.read()
+                        .resource(org.hl7.fhir.r4.model.Patient.class).withId(patientUuid).execute();
+
+                for (Identifier identifier : fhirPatient.getIdentifier()) {
+                    if ("passport".equals(identifier.getSystem())) {
+                        displayItem.setPassportNumber(identifier.getId());
+                    }
+                    if ((fhirConfig.getOeFhirSystem() + "/pat_subjectNumber").equals(identifier.getSystem())) {
+                        displayItem.setSubjectNumber(identifier.getId());
+                    }
+                }
             }
         } catch (ResourceNotFoundException e) {
             String errorMsg = "error in data collection - FHIR resource not found";
@@ -189,32 +186,6 @@ public class ElectronicOrdersController extends BaseController {
         }
 
         return displayItem;
-    }
-
-    private List<ElectronicOrder> searchForElectronicOrders(ElectronicOrderViewForm form) {
-        switch (form.getSearchType()) {
-        case IDENTIFIER:
-            return electronicOrderService.getAllElectronicOrdersContainingValueOrderedBy(form.getSearchValue(),
-                    SortOrder.LAST_UPDATED_ASC);
-        case DATE_STATUS:
-            String startDate = form.getStartDate();
-            String endDate = form.getEndDate();
-            if (GenericValidator.isBlankOrNull(startDate) && !GenericValidator.isBlankOrNull(endDate)) {
-                startDate = endDate;
-            }
-            if (GenericValidator.isBlankOrNull(endDate) && !GenericValidator.isBlankOrNull(startDate)) {
-                endDate = startDate;
-            }
-            java.sql.Timestamp startTimestamp = GenericValidator.isBlankOrNull(startDate) ? null
-                    : DateUtil.convertStringDateStringTimeToTimestamp(startDate, "00:00:00.0");
-            java.sql.Timestamp endTimestamp = GenericValidator.isBlankOrNull(endDate) ? null
-                    : DateUtil.convertStringDateStringTimeToTimestamp(endDate, "23:59:59");
-            return electronicOrderService.getAllElectronicOrdersByTimestampAndStatus(startTimestamp, endTimestamp,
-                    form.getStatusId(), SortOrder.STATUS_ID);
-        default:
-            return null;
-        }
-
     }
 
     @Override

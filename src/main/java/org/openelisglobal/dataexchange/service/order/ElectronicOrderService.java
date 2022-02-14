@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.openelisglobal.common.service.BaseObjectService;
 import org.openelisglobal.common.services.StatusService.ExternalOrderStatus;
+import org.openelisglobal.dataexchange.order.form.ElectronicOrderViewForm;
 import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder;
 import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder.SortOrder;
 
@@ -28,5 +29,7 @@ public interface ElectronicOrderService extends BaseObjectService<ElectronicOrde
 
     List<ElectronicOrder> getAllElectronicOrdersByTimestampAndStatus(Timestamp startTimestamp, Timestamp endTimestamp,
             String statusId, SortOrder statusId2);
+
+    List<ElectronicOrder> searchForElectronicOrders(ElectronicOrderViewForm form);
 
 }
