@@ -1381,12 +1381,14 @@ public class AnalyzerResultsController extends BaseController {
     }
 
     private String redirectInsertSuccess() {
-        String baseSuccessUrl = "redirect:/AnalyzerResults?type=" + Encode.forUriComponent(request.getParameter("type"));
+        String successUrl = "redirect:/AnalyzerResults?type=" + Encode.forUriComponent(request.getParameter("type"));
         if (request.getParameter("page") != null) {
-            return baseSuccessUrl + "&page=" + Encode.forUriComponent(request.getParameter("page"));
-        } else {
-            return baseSuccessUrl;
+            successUrl += "&page=" + Encode.forUriComponent(request.getParameter("page"));
         }
+        if (request.getParameter("searchTerm") != null) {
+            successUrl += "&searchTerm=" + Encode.forUriComponent(request.getParameter("searchTerm"));
+        }
+        return successUrl;
     }
 
     @Override
