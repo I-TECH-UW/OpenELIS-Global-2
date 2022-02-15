@@ -90,8 +90,12 @@ public class UnifiedSystemUserMenuController extends BaseMenuController<UnifiedS
 
         if (YES.equals(request.getParameter("search"))) {
             systemUsers = systemUserService.getPagesOfSearchedUsers(startingRecNo,request.getParameter("searchString"));
+            request.setAttribute(MENU_TOTAL_RECORDS,
+                String.valueOf(systemUserService.getTotalSearchedUserCount(request.getParameter("searchString"))));
+            request.setAttribute(SEARCHED_STRING, request.getParameter("searchString"));
         } else {
             systemUsers = systemUserService.getOrderedPage("loginName", false, startingRecNo);
+            request.setAttribute(MENU_TOTAL_RECORDS, String.valueOf(systemUserService.getCount()));
         }
         List<UnifiedSystemUser> unifiedUsers = getUnifiedUsers(systemUsers);
 
@@ -108,7 +112,6 @@ public class UnifiedSystemUserMenuController extends BaseMenuController<UnifiedS
 
         request.setAttribute("menuDefinition", "UnifiedSystemUserMenuDefinition");
         
-        request.setAttribute(MENU_TOTAL_RECORDS, String.valueOf(unifiedUsers.size()));
         request.setAttribute(MENU_FROM_RECORD, String.valueOf(startingRecNo));
 
         int numOfRecs = 0;

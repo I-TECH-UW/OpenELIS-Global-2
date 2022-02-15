@@ -101,6 +101,7 @@ public class OrganizationMenuController extends BaseMenuController<Organization>
             request.setAttribute(MENU_TOTAL_RECORDS,
                     String.valueOf(organizationService
                             .getTotalSearchedOrganizationCount(request.getParameter("searchString"))));
+            request.setAttribute(SEARCHED_STRING, request.getParameter("searchString"));                
         } else {
             request.setAttribute(MENU_TOTAL_RECORDS, String.valueOf(organizationService.getCount()));
         }

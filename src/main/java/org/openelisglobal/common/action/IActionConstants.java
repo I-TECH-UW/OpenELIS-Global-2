@@ -102,6 +102,8 @@ public interface IActionConstants {
 
     String FILTER_CHECK_ACTIVE = "filterCheckActive";
 
+    String SEARCHED_STRING = "searchedString";
+
     String APPLY_FILTER = "filter";
 
     String POPUPFORM_FILTER_BY_TABLE_COLUMN = "popupFormFilterByTableColumn";
