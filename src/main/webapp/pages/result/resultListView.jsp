@@ -221,7 +221,9 @@ function /*void*/ autofill( sourceElement ){
 	}	
 }
 function validateForm(){
-	return !missingRequiredReferralValues();
+	var invalid = missingRequiredReferralValues();
+	invalid = invalid || missingRejectReason();
+	return !invalid;
 }
 
 function handleReferralCheckChange(checkbox,  index ){
@@ -407,6 +409,30 @@ function missingRequiredReferralValues() {
 
     return missing;
 
+}
+
+
+var rejectedIndexes = new Set();
+
+function addRemoveRejectedIndex(index) {
+	if (rejectedIndexes.has(index)) {
+		rejectedIndexes.delete(index);
+	} else {
+		rejectedIndexes.add(index);
+	}
+}
+
+function missingRejectReason() {
+	var missing = false;
+	for (var it = rejectedIndexes.values(), index= null; index=it.next().value; ) {
+		if (jQuery("#rejectReasonId_" + index).val() === "0") {
+			jQuery("#rejectReasonId_" + index).addClass('error');
+			missing = true;
+		} else {
+			jQuery("#rejectReasonId_" + index).removeClass('error');
+		}
+	}
+	return missing;
 }
 
 function createReferralOption(sampleNum, testNum, testId, testName, index) {
@@ -1250,10 +1276,11 @@ function /*void*/ handleEnterEvent(  ){
 							path="testResult[${iter.index}].shadowRejected"
 							id="shadowRejected_${iter.index}" /> <input type="hidden"
 						id="isRejected_${iter.index}" value="${testResult.rejected}" /> <spring:message
-							code="result.delete.confirm" var="deleteMsg" /> <form:checkbox
+							code="result.delete.confirm" var="deleteMsg" /> 
+							<form:checkbox
 							path="testResult[${iter.index}].rejected"
 							id="rejected_${iter.index}" tabindex='-1'
-							onchange="markUpdated(${iter.index}); showHideRejectionReasons(${iter.index}, '${deleteMsg}' );" />
+							onchange="addRemoveRejectedIndex(${iter.index}); markUpdated(${iter.index}); showHideRejectionReasons(${iter.index}, '${deleteMsg}' );" />
 					</td>
 					<%
 						}
@@ -1271,7 +1298,8 @@ function /*void*/ handleEnterEvent(  ){
 					<td colspan="6" style="text-align: right"><form:select
 							path="testResult[${iter.index}].rejectReasonId"
 							id="rejectReasonId_${iter.index}"
-							disabled='${testResult.readOnly}'>
+							disabled='${testResult.readOnly}'
+							onChange="markUpdated(${iter.index})">
 							<form:options items="${form.rejectReasons}" itemValue="id"
 								itemLabel="value" />
 						</form:select><br /></td>
