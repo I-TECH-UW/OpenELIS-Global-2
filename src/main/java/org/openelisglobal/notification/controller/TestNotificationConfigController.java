@@ -80,13 +80,11 @@ public class TestNotificationConfigController extends BaseController {
         }
         String sysUserId = this.getSysUserId(request);
 
-        testNotificationConfigService.saveTestNotificationConfigActiveStatuses(form.getConfig(), sysUserId);
+        testNotificationConfigService.saveStatusAndMessages(form.getConfig(), sysUserId);
         if (form.getEditSystemDefaultPayloadTemplate()) {
             payloadTemplateService.updatePayloadTemplateMessagesAndSubject(form.getSystemDefaultPayloadTemplate(),
                     sysUserId);
         }
-        testNotificationConfigService.updatePayloadTemplatesMessageAndSubject(form.getConfig(),
-                sysUserId);
         testNotificationConfigService.removeEmptyPayloadTemplates(form.getConfig(), sysUserId);
         redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
         return findForward(FWD_SUCCESS_INSERT, form);

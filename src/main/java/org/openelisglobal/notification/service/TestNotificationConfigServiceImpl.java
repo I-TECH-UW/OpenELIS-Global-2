@@ -44,7 +44,8 @@ public class TestNotificationConfigServiceImpl extends BaseObjectServiceImpl<Tes
 
     @Override
     @Transactional
-    public void saveTestNotificationConfigActiveStatuses(TestNotificationConfig targetTestNotificationConfig,
+    public TestNotificationConfig saveTestNotificationConfigActiveStatuses(
+            TestNotificationConfig targetTestNotificationConfig,
             String sysUserId) {
         TestNotificationConfig oldConfig;
         if (targetTestNotificationConfig.getId() != null) {
@@ -64,7 +65,7 @@ public class TestNotificationConfigServiceImpl extends BaseObjectServiceImpl<Tes
         oldConfig.getProviderEmail().setActive(targetTestNotificationConfig.getProviderEmail().getActive());
         oldConfig.getProviderSMS().setActive(targetTestNotificationConfig.getProviderSMS().getActive());
         oldConfig.setSysUserId(sysUserId);
-        save(oldConfig);
+        return save(oldConfig);
 
     }
 
@@ -160,6 +161,15 @@ public class TestNotificationConfigServiceImpl extends BaseObjectServiceImpl<Tes
     @Override
     public TestNotificationConfig getForConfigOption(Integer configOptionId) {
         return baseDAO.getForConfigOption(configOptionId);
+    }
+
+    @Override
+    @Transactional
+    public void saveStatusAndMessages(TestNotificationConfig config, String sysUserId) {
+        TestNotificationConfig savedConfig = saveTestNotificationConfigActiveStatuses(config, sysUserId);
+        config.setId(savedConfig.getId());
+        updatePayloadTemplatesMessageAndSubject(config, sysUserId);
+
     }
 
 }
