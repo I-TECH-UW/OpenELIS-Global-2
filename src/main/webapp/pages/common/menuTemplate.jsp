@@ -80,6 +80,7 @@ function setMenuAction(button, form, action, validate, parameters) {
   var searchString = '';
   var doSearch = '<%=request.getAttribute(IActionConstants.IN_MENU_SELECT_LIST_HEADER_SEARCH)%>';
   
+  var searchedString = '<%=request.getAttribute(IActionConstants.SEARCHED_STRING)%>';
   if (fieldObj != null) {
     //If only one checkbox
     if (fieldObj[0] == null) {
@@ -134,6 +135,9 @@ function setMenuAction(button, form, action, validate, parameters) {
          {  
             parameters += "&search=Y"; 
          }
+         if (searchedString != null) { 
+             parameters += "&searchString=" + searchedString;
+         }
     }
   }
   
@@ -170,6 +174,7 @@ function setMenuAction(button, form, action, validate, parameters) {
          }
         }
      }
+
 
    
   form.action = context + '/' + action + parsedFormName + sessionid + parameters;
