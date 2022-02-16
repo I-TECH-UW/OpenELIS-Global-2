@@ -25,6 +25,7 @@
 	String objectToAdd ="";
 	String adminFilterCheck ="";
 	String activeFilterCheck ="";
+	String pageSize ="0";
 
        if (request.getAttribute(IActionConstants.DEACTIVATE_DISABLED) != null) {
 	      allowDeactivate = request.getAttribute(IActionConstants.DEACTIVATE_DISABLED) != "true";
@@ -79,6 +80,10 @@
 	   if(request.getAttribute(IActionConstants.FILTER_CHECK_ACTIVE) != null){
            activeFilterCheck = "checked";
 	   }
+
+	   if(request.getAttribute(IActionConstants.PAGE_SIZE) != null){
+          pageSize = request.getAttribute(IActionConstants.PAGE_SIZE).toString();
+	   }
 %>
 <%  
 	if(null != request.getAttribute(IActionConstants.FORM_NAME))
@@ -122,24 +127,8 @@ function submitSearchForClick(button){
 }
 // to filter all results without first clicking the search button
 function submitFilterForClick(button){
-	var adminFilterCheckBox = document.getElementById("isAdmin");
-	var activeFilterCheckBox = document.getElementById("isActive");
-	var param = "?startingRecNo=1";
-      if(adminFilterCheckBox != null){   
-         if (adminFilterCheckBox.checked == true){
-		 	param += "&filter=isAdmin";      
-        }
-	  }
-	  if(activeFilterCheckBox != null){   
-         if (activeFilterCheckBox.checked == true){
-			 if(param.includes("isAdmin")){
-              param += ",isActive";
-			 }else{
-               param += "&filter=isActive";
-			 }
-      }
-   }
-   setMenuAction( button, document.getElementById("searchForm"), 'Search', 'yes', param);
+	var param = "?search=N";
+    setMenuAction( button, document.getElementById("searchForm"), 'Search', 'yes', param);
 }
 </script>
 
@@ -198,7 +187,18 @@ function submitFilterForClick(button){
             if (request.getAttribute(IActionConstants.NEXT_DISABLED) != null) {
                nextDisabled = (String)request.getAttribute(IActionConstants.NEXT_DISABLED);
             }
-
+			if(adminFilterCheck != "" || activeFilterCheck != ""){   	
+				 if((Integer.valueOf(fromCount) + Integer.valueOf(pageSize)-1) >= Integer.valueOf(totalCount)){
+                      nextDisabled = "true";
+				 }else {
+					  nextDisabled = "false";
+				 } 
+				 if(Integer.valueOf(fromCount) <= 1){
+			     	previousDisabled = "true";
+				 }else {
+					  previousDisabled = "false";
+				 } 	  
+			}
         %>
       </tr>
       <tr>

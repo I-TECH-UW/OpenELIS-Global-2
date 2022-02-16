@@ -106,6 +106,8 @@ public interface IActionConstants {
 
     String APPLY_FILTER = "filter";
 
+    String PAGE_SIZE = "pageSize";
+
     String POPUPFORM_FILTER_BY_TABLE_COLUMN = "popupFormFilterByTableColumn";
     String IN_POPUP_FORM_SEARCH = "inPopupFormSearch";
     String POPUP_FORM_SEARCH_STRING = "popupFormSearchString";

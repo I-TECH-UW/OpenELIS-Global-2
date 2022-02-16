@@ -100,6 +100,7 @@ public class UnifiedSystemUserMenuController extends BaseMenuController<UnifiedS
         List<UnifiedSystemUser> unifiedUsers = getUnifiedUsers(systemUsers);
 
         if (request.getParameter("filter") != null) {
+            request.setAttribute(PAGE_SIZE, getPageSize());
             if (request.getParameter("filter").contains("isActive")) {
                 request.setAttribute(IActionConstants.FILTER_CHECK_ACTIVE, "true");
                 unifiedUsers = unifiedUsers.stream().filter(user -> user.getActive().equals("Y")).collect(Collectors.toList());
@@ -117,10 +118,8 @@ public class UnifiedSystemUserMenuController extends BaseMenuController<UnifiedS
         int numOfRecs = 0;
         if (unifiedUsers != null) {
             numOfRecs = Math.min(unifiedUsers.size(), getPageSize());
-
             numOfRecs--;
         }
-
         int endingRecNo = startingRecNo + numOfRecs;
         request.setAttribute(MENU_TO_RECORD, String.valueOf(endingRecNo));
 

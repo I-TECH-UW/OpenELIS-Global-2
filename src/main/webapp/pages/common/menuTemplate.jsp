@@ -135,7 +135,7 @@ function setMenuAction(button, form, action, validate, parameters) {
          {  
             parameters += "&search=Y"; 
          }
-         if (searchedString != null) { 
+         if (searchedString != "null") { 
              parameters += "&searchString=" + searchedString;
          }
     }
