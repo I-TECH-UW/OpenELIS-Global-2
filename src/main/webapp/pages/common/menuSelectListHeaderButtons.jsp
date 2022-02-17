@@ -237,11 +237,15 @@ function submitFilterForClick(button){
 	   <%-- to apply filters to reasults --%>
 	   <c:if test="${not empty filter}">
 			<td>  
-				 <spring:message code="menu.label.filter" />
-				<label for="isAdmin"><spring:message code="menu.label.filter.admin" /></label>
+				<%-- <spring:message code="menu.label.filter" /> --%>
+				<select name="filterRoles" id="filterRoles">
+					<option value="all">All Lab Units</option>
+					<option value="Teception">Reception</option>
+                </select>
+                <input <%=activeFilterCheck%> type="checkbox" id="isActive" name="isActive"  onclick="submitFilterForClick(this);return false;"/> 
+				<label for="isActive"> <spring:message code="menu.label.filter.active" /></label>	
 				<input <%=adminFilterCheck%> type="checkbox" id="isAdmin" name="isAdmin" onclick="submitFilterForClick(this);return false;" />
-				<label for="isActive"> <spring:message code="menu.label.filter.active" /></label>
-				<input <%=activeFilterCheck%> type="checkbox" id="isActive" name="isActive"  onclick="submitFilterForClick(this);return false;"/>  
+				<label for="isAdmin"><spring:message code="menu.label.filter.admin" /></label>	 
 			</td>
 		 </c:if>
 

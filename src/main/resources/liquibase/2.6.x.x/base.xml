@@ -8,5 +8,5 @@
 	<include file="liquibase/2.6.x.x/fix_sequences.xml"/>
 	<include file="liquibase/2.6.x.x/remove_do_suffix.xml"/>
 	<include file="liquibase/2.6.x.x/eorder_search_enhancements.xml"/>
-
+	<include file="liquibase/2.6.x.x/update_roles.xml"/>
 </databaseChangeLog>
