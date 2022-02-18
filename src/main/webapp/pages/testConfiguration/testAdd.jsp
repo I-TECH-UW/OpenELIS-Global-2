@@ -554,6 +554,41 @@
             }
         });
     }
+
+    function reportingRangeCheck() {
+        var highReportingRangeValue, lowReportingRangeValue;
+        var lowReportingRange = jQuery("#lowReportingRange");
+        var highReportingRange = jQuery("#highReportingRange");
+        lowReportingRange.removeClass("error");
+        lowReportingRangeValue = +lowReportingRange.val();
+        if (lowReportingRangeValue != "-Infinity" &&
+                lowReportingRangeValue != lowReportingRange.val()) {
+            lowReportingRange.addClass("error");
+            alert("<%=MessageUtil.getContextualMessage("error.out.side.range")%>");
+            return;
+        }
+        highReportingRange.removeClass("error");
+        highReportingRangeValue = +highReportingRange.val();
+        if (highReportingRangeValue != "Infinity" &&
+                highReportingRangeValue != highReportingRange.val()) {
+            highReportingRange.addClass("error");
+            alert("<%=MessageUtil.getContextualMessage("error.out.side.range")%>");
+            return;
+        }
+        if (lowReportingRangeValue != "-Infinity" && highReportingRangeValue != "Infinity" &&
+                lowReportingRangeValue >= highReportingRangeValue) {
+            highReportingRange.addClass("error");
+            lowReportingRange.addClass("error");
+            alert("<%=MessageUtil.getContextualMessage("error.out.side.range")%>");
+            return;
+        }
+        jQuery(".rowKey").each(function () {
+            //index is in the template
+            if (jQuery(this).val() != "index") {
+                normalRangeCheck(jQuery(this).val());
+            }
+        });
+    }
     function checkReadyForNextStep() {
         var ready = true;
         if (step == "step1") {
@@ -1398,7 +1433,9 @@ td {
                            onchange="normalRangeCheck('0');"></td>
                 <td><input type="text" value="Infinity" size="10" id="highNormal_0" class="highNormal"
                            onchange="normalRangeCheck('0');"></td>
-                <td><input type="text" value="" size="12" id="reportingRange_0"></td>
+                <td><input type="text" value="-Infinity" size="10" id="lowReportingRange" onchange="reportingRangeCheck();"></td>
+                <td><input type="text" value="Infinity" size="10" id="highReportingRange" onchange="reportingRangeCheck();"></td>
+
                 <td><input type="text" value="-Infinity" size="10" id="lowValid" onchange="validRangeCheck();"></td>
                 <td><input type="text" value="Infinity" size="10" id="highValid" onchange="validRangeCheck();"></td>
             </tr>

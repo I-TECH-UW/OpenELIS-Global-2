@@ -698,12 +698,14 @@
     }
 
     function normalRangeCheck(index) {
-        var lowNormalValue, highNormalValue, lowValidValue, highValidValue;
+        var lowNormalValue, highNormalValue, lowValidValue, highValidValue,lowReportingRangeValue,highReportingRangeValue;
         var lowGenderNormalValue, highGenderNormalValue;
         var lowGenderNormal, highGenderNormal;
         var lowNormal = jQuery("#lowNormal_" + index);
         var highNormal = jQuery("#highNormal_" + index);
         var lowValid = jQuery("#lowValid");
+        var lowReportingRange = jQuery("#lowReportingRange");
+        var highReportingRange = jQuery("#highReportingRange");
         var highValid = jQuery("#highValid");
         var checkGenderValues = jQuery("#genderCheck_" + index).is(':checked');
 
@@ -767,10 +769,16 @@
             }
         }
 
-        //below we are testing against the valid values
+        //below we are testing against the valid and reporting range values
         lowValidValue = +lowValid.val();
         if (lowValidValue != "-Infinity" &&
                 lowValidValue != lowValid.val()) {
+            return;
+        }
+
+        lowReportingRangeValue = +lowReportingRange.val();
+        if (lowReportingRangeValue != "-Infinity" &&
+                lowReportingRangeValue != lowReportingRange.val()) {
             return;
         }
 
@@ -780,8 +788,14 @@
             return;
         }
 
+        highReportingRangeValue = +highReportingRange.val();
+        if (highReportingRangeValue != "-Infinity" &&
+                highReportingRangeValue != highReportingRange.val()) {
+            return;
+        }
 
-        if (lowValidValue == "-Infinity" && highValidValue == "Infinity") {
+
+        if (lowValidValue || lowReportingRange == "-Infinity" && highValidValue || highReportingRangeValue == "Infinity") {
             return;
         }
 
@@ -792,6 +806,12 @@
         }
 
         if (highValidValue != "Infinity" && highNormalValue > highValidValue) {
+            highNormal.addClass("error");
+            alert("<%=MessageUtil.getContextualMessage("error.high.normal.high.valid.order")%>");
+            return;
+        }
+
+        if (highReportingRangeValue != "Infinity" && highNormalValue > highReportingRangeValue) {
             highNormal.addClass("error");
             alert("<%=MessageUtil.getContextualMessage("error.high.normal.high.valid.order")%>");
             return;
@@ -849,6 +869,42 @@
             }
         });
     }
+
+    function reportingRangeCheck() {
+        var highReportingRangeValue, lowReportingRangeValue;
+        var lowReportingRange = jQuery("#lowReportingRange");
+        var highReportingRange = jQuery("#highReportingRange");
+        lowReportingRange.removeClass("error");
+        lowReportingRangeValue = +lowReportingRange.val();
+        if (lowReportingRangeValue != "-Infinity" &&
+                lowReportingRangeValue != lowReportingRange.val()) {
+            lowReportingRange.addClass("error");
+            alert("<%=MessageUtil.getContextualMessage("error.out.side.range")%>");
+            return;
+        }
+        highReportingRange.removeClass("error");
+        highReportingRangeValue = +highReportingRange.val();
+        if (highReportingRangeValue != "Infinity" &&
+                highReportingRangeValue != highReportingRange.val()) {
+            highReportingRange.addClass("error");
+            alert("<%=MessageUtil.getContextualMessage("error.out.side.range")%>");
+            return;
+        }
+        if (lowReportingRangeValue != "-Infinity" && highReportingRangeValue != "Infinity" &&
+                lowReportingRangeValue >= highReportingRangeValue) {
+            highReportingRange.addClass("error");
+            lowReportingRange.addClass("error");
+            alert("<%=MessageUtil.getContextualMessage("error.out.side.range")%>");
+            return;
+        }
+        jQuery(".rowKey").each(function () {
+            //index is in the template
+            if (jQuery(this).val() != "index") {
+                normalRangeCheck(jQuery(this).val());
+            }
+        });
+    }
+    
     function checkReadyForNextStep() {
         var ready = true;
         if (step == "step1") {
@@ -2333,7 +2389,8 @@ td {
 				<td><input type="text" value="Infinity" size="10"
 					id="highNormal_0" class="highNormal"
 					onchange="normalRangeCheck('0');"></td>
-				<td><input type="text" value="" size="12" id="reportingRange_0"></td>
+                <td><input type="text" value="-Infinity" size="10" id="lowReportingRange" onchange="reportingRangeCheck();"></td>
+                <td><input type="text" value="Infinity" size="10" id="highReportingRange" onchange="reportingRangeCheck();"></td>
 				<td><input type="text" value="-Infinity" size="10"
 					id="lowValid" onchange="validRangeCheck();"></td>
 				<td><input type="text" value="Infinity" size="10"

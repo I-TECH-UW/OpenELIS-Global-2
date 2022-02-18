@@ -26,6 +26,8 @@ public interface ResultLimitService extends BaseObjectService<ResultLimit, Strin
 
     String getDisplayValidRange(ResultLimit resultLimit, String significantDigits, String separator);
 
+    String getDisplayReportingRange(ResultLimit resultLimit, String significantDigits, String separator);
+
     String getDisplayReferenceRange(ResultLimit resultLimit, String significantDigits, String separator);
 
     String getDisplayNormalRange(double low, double high, String significantDigits, String separator);
