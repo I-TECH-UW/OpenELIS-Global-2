@@ -163,10 +163,10 @@ public class ResultValidationController extends BaseResultValidationController {
             List<AnalysisItem> resultList;
             ResultsValidationUtility resultsValidationUtility = SpringContext.getBean(ResultsValidationUtility.class);
             setRequestType(ts == null ? MessageUtil.getMessage("workplan.unit.types") : ts.getLocalizedName());
-            
+
             if ( !(GenericValidator.isBlankOrNull(form.getTestSectionId()) &&
                     GenericValidator.isBlankOrNull(form.getAccessionNumber())) )  {
-                
+
                 resultList = resultsValidationUtility.getResultValidationList(getValidationStatus(),
                         form.getTestSectionId(), form.getAccessionNumber());
                 int count = resultsValidationUtility.getCountResultValidationList(getValidationStatus(),
@@ -224,7 +224,7 @@ public class ResultValidationController extends BaseResultValidationController {
         if (checkResults.size() == 0) {
             LogEvent.logDebug(this.getClass().getName(), "ResultValidation()", "Attempted save of stale page.");
             List<AnalysisItem> staleItemList = form.getResultList();
-            
+
             Errors staleErrors = new BaseErrors();
 
             for (AnalysisItem item : staleItemList) {
@@ -241,7 +241,7 @@ public class ResultValidationController extends BaseResultValidationController {
             saveErrors(staleErrors);
             return findForward(FWD_VALIDATION_ERROR, form);
         }
-        
+
         ResultValidationPaging paging = new ResultValidationPaging();
         paging.updatePagedResults(request, form);
         List<AnalysisItem> resultItemList = paging.getResults(request);
@@ -251,7 +251,7 @@ public class ResultValidationController extends BaseResultValidationController {
         setRequestType(testSectionName);
         // ----------------------
         String url = request.getRequestURL().toString();
-        
+
         Errors errors = validateModifiedItems(resultItemList);
 
         if (errors.hasErrors()) {
@@ -289,6 +289,7 @@ public class ResultValidationController extends BaseResultValidationController {
             }
         } catch (LIMSRuntimeException e) {
             LogEvent.logErrorStack(e);
+            throw e;
         }
 
         for (IResultUpdate updater : updaters) {
