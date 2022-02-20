@@ -14,6 +14,7 @@ import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.controller.BaseMenuController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.form.AdminOptionMenuForm;
+import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.common.validator.BaseErrors;
@@ -26,6 +27,8 @@ import org.openelisglobal.systemuser.valueholder.SystemUser;
 import org.openelisglobal.systemuser.valueholder.UnifiedSystemUser;
 import org.openelisglobal.userrole.service.UserRoleService;
 import org.openelisglobal.userrole.valueholder.UserRole;
+import org.openelisglobal.common.services.DisplayListService.ListType;
+import org.openelisglobal.common.util.IdValuePair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -64,6 +67,8 @@ public class UnifiedSystemUserMenuController extends BaseMenuController<UnifiedS
         UnifiedSystemUserMenuForm form = new UnifiedSystemUserMenuForm();
 
         form.setFormAction("UnifiedSystemUserMenu");
+        List<IdValuePair> testSections = DisplayListService.getInstance().getList(ListType.TEST_SECTION);
+        form.setTestSections(testSections);
         forward = performMenuAction(form, request);
         request.setAttribute(IActionConstants.FORM_NAME, "unifiedSystemUserMenu");
         request.setAttribute(IActionConstants.MENU_PAGE_INSTRUCTION, "user.select.instruction");

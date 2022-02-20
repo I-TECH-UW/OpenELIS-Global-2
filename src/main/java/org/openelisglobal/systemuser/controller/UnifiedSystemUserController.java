@@ -10,6 +10,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -20,6 +21,7 @@ import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.provider.validation.PasswordValidationFactory;
+import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.common.validator.BaseErrors;
@@ -48,6 +50,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.openelisglobal.common.services.DisplayListService.ListType;
+import org.openelisglobal.common.util.IdValuePair;
 
 @Controller
 public class UnifiedSystemUserController extends BaseController {
@@ -114,6 +118,9 @@ public class UnifiedSystemUserController extends BaseController {
         }
         setupRoles(form, request, doFiltering);
 
+        // load testSections for drop down
+        List<IdValuePair> testSections = DisplayListService.getInstance().getList(ListType.TEST_SECTION);
+        form.setTestSections(testSections);
         addFlashMsgsToRequest(request);
         return findForward(FWD_SUCCESS, form);
     }
@@ -128,8 +135,11 @@ public class UnifiedSystemUserController extends BaseController {
 
         List<DisplayRole> displayRoles = convertToDisplayRoles(roles);
         displayRoles = sortAndGroupRoles(displayRoles);
-
-        form.setRoles(displayRoles);
+        
+        List<DisplayRole> globalRoles = displayRoles.stream().filter(role -> role.getParentRole() != null).filter(role -> role.getParentRole().equals("68")).collect(Collectors.toList());
+        List<DisplayRole> labUnitRoles = displayRoles.stream().filter(role -> role.getParentRole() != null).filter(role -> role.getParentRole().equals("69")).collect(Collectors.toList());
+        form.setGlobalRoles(globalRoles);
+        form.setLabUnitRoles(labUnitRoles);
     }
 
     private List<DisplayRole> convertToDisplayRoles(List<Role> roles) {

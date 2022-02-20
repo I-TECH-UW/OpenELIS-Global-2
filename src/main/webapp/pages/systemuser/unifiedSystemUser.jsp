@@ -230,8 +230,7 @@ function mySaveAction() {
 			<spring:message code="systemuserrole.roles.global" />
 		</td>
 	</tr>
-	<c:forEach items="${form.roles}" var="role">
-	<c:if test="${not empty role.parentRole && role.parentRole == '68'}">
+	<c:forEach items="${form.globalRoles}" var="role">
 		<tr>
 		<td>
 		<c:forEach begin="0" end="${role.nestingLevel}">
@@ -245,21 +244,21 @@ function mySaveAction() {
 			<c:out value="${role.roleName}" />
 		</td>
 		</tr>
-	</c:if>	
 	</c:forEach>
-	<tr> 
-	<select name="filterRoles" id="filterRoles">
-					<option value="all">All Lab Units</option>
-					<option value="Teception">Reception</option>
-    </select>
-	</tr>
 	<tr>
 		<td class="label" width="50%">
 			<spring:message code="systemuserrole.roles.labunit" />
 		</td>
 	</tr>
-	<c:forEach items="${form.roles}" var="role">
-	<c:if test="${not empty role.parentRole && role.parentRole == '69'}">
+	<tr> 
+		<td>
+			<form:select path="testSectionId">
+						<option value=""></option>
+						<form:options items="${form.testSections}" itemLabel="value" itemValue="id" />
+			</form:select>
+		</td>
+	</tr>
+	<c:forEach items="${form.labUnitRoles}" var="role">
 		<tr>
 		<td>
 		<c:forEach begin="0" end="${role.nestingLevel}">
@@ -273,7 +272,6 @@ function mySaveAction() {
 			<c:out value="${role.roleName}" />
 		</td>
 		</tr>
-	</c:if>	
 	</c:forEach>
 	<tr>
 		<td>&nbsp;

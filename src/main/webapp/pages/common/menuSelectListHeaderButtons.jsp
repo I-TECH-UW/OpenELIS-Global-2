@@ -234,20 +234,6 @@ function submitFilterForClick(button){
 					
   			</button>
 	   </td>
-	   <%-- to apply filters to reasults --%>
-	   <c:if test="${not empty filter}">
-			<td>  
-				<%-- <spring:message code="menu.label.filter" /> --%>
-				<select name="filterRoles" id="filterRoles">
-					<option value="all">All Lab Units</option>
-					<option value="Teception">Reception</option>
-                </select>
-                <input <%=activeFilterCheck%> type="checkbox" id="isActive" name="isActive"  onclick="submitFilterForClick(this);return false;"/> 
-				<label for="isActive"> <spring:message code="menu.label.filter.active" /></label>	
-				<input <%=adminFilterCheck%> type="checkbox" id="isAdmin" name="isAdmin" onclick="submitFilterForClick(this);return false;" />
-				<label for="isAdmin"><spring:message code="menu.label.filter.admin" /></label>	 
-			</td>
-		 </c:if>
 
 			<c:if test="${not empty menuSearchByTableColumn}">
 			<form:form name="${form.formName}" 
@@ -303,9 +289,29 @@ function submitFilterForClick(button){
 				</button>
        </td>
  	</tr>
-		<tr>
-			<td>&nbsp;</td>
-		</tr>
+	 <tr>
+		<td>&nbsp;</td>
+	</tr>
+	 <tr>
+		 <%-- to apply filters to reasults --%>
+	   <c:if test="${not empty filter}">
+			<td>  <spring:message code="menu.label.filter"/> : 			    
+				<select name="roleFilter" id="roleFilter">
+					<c:forEach items="${form.testSections}" var="role">
+                       <option value="${role.id}">${role.value}</option>
+                    </c:forEach>
+                </select>
+				<label for="roleFilter"> <spring:message code="menu.label.filter.role" /></label>&nbsp;	
+                <input <%=activeFilterCheck%> type="checkbox" id="isActive" name="isActive"  onclick="submitFilterForClick(this);return false;"/> 
+				<label for="isActive"> <spring:message code="menu.label.filter.active" /></label>&nbsp;
+				<input <%=adminFilterCheck%> type="checkbox" id="isAdmin" name="isAdmin" onclick="submitFilterForClick(this);return false;" />
+				<label for="isAdmin"><spring:message code="menu.label.filter.admin" /></label>	 
+			</td>
+		 </c:if>
+	</tr>
+	<tr>
+		<td>&nbsp;</td>
+	</tr>
    </tbody>
 </table>
 
