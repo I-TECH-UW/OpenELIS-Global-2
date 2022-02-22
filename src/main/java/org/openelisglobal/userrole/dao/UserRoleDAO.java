@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.openelisglobal.common.dao.BaseDAO;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.userrole.valueholder.UserLabUnitRoles;
 import org.openelisglobal.userrole.valueholder.UserRole;
 import org.openelisglobal.userrole.valueholder.UserRolePK;
 
@@ -51,4 +52,7 @@ public interface UserRoleDAO extends BaseDAO<UserRole, UserRolePK> {
 
     List<String> getRoleIdsForUser(String userId) throws LIMSRuntimeException;
 
+    void saveUserLabUnitRoles(UserLabUnitRoles labRoles);
+
+    UserLabUnitRoles getUserLabUnitRoles(String userId);
 }

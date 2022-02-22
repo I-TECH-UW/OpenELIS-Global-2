@@ -2,11 +2,14 @@ package org.openelisglobal.systemuser.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.openelisglobal.login.service.LoginUserService;
 import org.openelisglobal.login.valueholder.LoginUser;
 import org.openelisglobal.systemuser.valueholder.SystemUser;
 import org.openelisglobal.userrole.service.UserRoleService;
+import org.openelisglobal.userrole.valueholder.UserLabUnitRoles;
+import org.openelisglobal.userrole.valueholder.LabUnitRoleMap;
 import org.openelisglobal.userrole.valueholder.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -64,6 +67,29 @@ public class UserServiceImpl implements UserService {
         if (deletedUserRoles.size() > 0) {
             userRoleService.deleteAll(deletedUserRoles);
         }
+    }
+
+    @Override
+    public void saveUserLabUnitRoles(SystemUser systemUser, Map<String, List<String>> selectedLabUnitRolesMap) {
+        UserLabUnitRoles userLabUnitRoles = userRoleService.getUserLabUnitRoles(systemUser.getId());
+        if(userLabUnitRoles == null){
+            userLabUnitRoles  = new UserLabUnitRoles();
+            userLabUnitRoles.setId(Integer.valueOf(systemUser.getId()));
+        }         
+        List<LabUnitRoleMap> labUnitRoleMaps = new ArrayList();
+        for (String labUnit : selectedLabUnitRolesMap.keySet()) {
+            LabUnitRoleMap labUnitRoleMap = new LabUnitRoleMap();
+            labUnitRoleMap.setLabUnit(labUnit);
+            labUnitRoleMap.setRoles(selectedLabUnitRolesMap.get(labUnit));
+            labUnitRoleMaps.add(labUnitRoleMap);
+        }
+        userLabUnitRoles.setLabUnitRoleMap(labUnitRoleMaps); 
+        userRoleService.saveOrUpdateUserLabUnitRoles(userLabUnitRoles);  
+    }
+    
+    @Override
+    public UserLabUnitRoles getUserLabUnitRoles(String systemUserId) {
+        return userRoleService.getUserLabUnitRoles(systemUserId);
     }
 
 }

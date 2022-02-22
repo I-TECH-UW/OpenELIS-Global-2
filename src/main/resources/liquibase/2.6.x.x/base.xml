@@ -9,4 +9,5 @@
 	<include file="liquibase/2.6.x.x/remove_do_suffix.xml"/>
 	<include file="liquibase/2.6.x.x/eorder_search_enhancements.xml"/>
 	<include file="liquibase/2.6.x.x/update_roles.xml"/>
+	<include file="liquibase/2.6.x.x/add_lab_roles_map_table.xml"/>	
 </databaseChangeLog>

@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
 import org.openelisglobal.userrole.dao.UserRoleDAO;
+import org.openelisglobal.userrole.valueholder.UserLabUnitRoles;
 import org.openelisglobal.userrole.valueholder.UserRole;
 import org.openelisglobal.userrole.valueholder.UserRolePK;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,5 +43,15 @@ public class UserRoleServiceImpl extends BaseObjectServiceImpl<UserRole, UserRol
     @Override
     public boolean userInRole(String userId, String roleName) {
         return getBaseObjectDAO().userInRole(userId, roleName);
+    }
+
+    @Override
+    public void saveOrUpdateUserLabUnitRoles(UserLabUnitRoles labRoles) {
+        getBaseObjectDAO().saveUserLabUnitRoles(labRoles);
+    }
+
+    @Override
+    public UserLabUnitRoles getUserLabUnitRoles(String userId){
+        return  getBaseObjectDAO().getUserLabUnitRoles(userId);
     }
 }

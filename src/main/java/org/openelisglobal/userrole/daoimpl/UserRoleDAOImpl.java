@@ -28,6 +28,7 @@ import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.userrole.dao.UserRoleDAO;
+import org.openelisglobal.userrole.valueholder.UserLabUnitRoles;
 import org.openelisglobal.userrole.valueholder.UserRole;
 import org.openelisglobal.userrole.valueholder.UserRolePK;
 import org.springframework.stereotype.Component;
@@ -266,5 +267,23 @@ public class UserRoleDAOImpl extends BaseDAOImpl<UserRole, UserRolePK> implement
         }
 
         return inRole;
+    }
+
+    @Override
+    public void saveUserLabUnitRoles(UserLabUnitRoles userlabRoles) {
+        entityManager.unwrap(Session.class).saveOrUpdate(userlabRoles);
+    }
+
+    @Override
+    public UserLabUnitRoles getUserLabUnitRoles(String userId) {
+        UserLabUnitRoles userLabUnitRoles;
+        try {
+            userLabUnitRoles = entityManager.unwrap(Session.class).get(UserLabUnitRoles.class, Integer.parseInt(userId));
+        }
+        catch (RuntimeException e) {
+            LogEvent.logError(e.toString(), e);
+            throw new LIMSRuntimeException("Error in UserRoleDAOImpl getLabUnitRoleMap", e);
+        }
+        return userLabUnitRoles;
     }
 }
