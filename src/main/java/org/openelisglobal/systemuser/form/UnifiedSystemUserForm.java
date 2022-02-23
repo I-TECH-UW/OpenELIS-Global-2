@@ -53,6 +53,8 @@ public class UnifiedSystemUserForm extends BaseForm {
 
     private List<@Pattern(regexp = ValidationHelper.ID_REGEX) String> selectedRoles;
 
+    private List<String> selectedLabUnitRoles;
+
     @NotBlank
     @ValidDate(relative = DateRelation.FUTURE)
     private String expirationDate;
@@ -221,5 +223,13 @@ public class UnifiedSystemUserForm extends BaseForm {
  
     public void setTestSectionId(String testSectionId) {
         this.testSectionId = testSectionId;
+    }
+
+    public List<String> getSelectedLabUnitRoles() {
+        return selectedLabUnitRoles;
+    }
+
+    public void setSelectedLabUnitRoles(List<String> selectedLabUnitRoles) {
+        this.selectedLabUnitRoles = selectedLabUnitRoles;
     }
 }

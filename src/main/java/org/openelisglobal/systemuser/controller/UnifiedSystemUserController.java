@@ -58,7 +58,7 @@ public class UnifiedSystemUserController extends BaseController {
 
     private static final String[] ALLOWED_FIELDS = new String[] { "systemUserId", "loginUserId", "userLoginName",
             "userPassword", "confirmPassword", "userFirstName", "userLastName", "expirationDate", "timeout",
-            "accountLocked", "accountDisabled", "accountActive", "selectedRoles*" };
+            "accountLocked", "accountDisabled", "accountActive", "selectedRoles*" ,"selectedLabUnitRoles" ,"testSectionId" };
 
     @Autowired
     private UnifiedSystemUserFormValidator formValidator;
