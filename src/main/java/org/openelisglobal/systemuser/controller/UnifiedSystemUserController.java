@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -586,8 +587,8 @@ public class UnifiedSystemUserController extends BaseController {
     private void saveUserLabUnitRoles(SystemUser user, UnifiedSystemUserForm form) {
         if (StringUtils.isNotEmpty(form.getTestSectionId())) {
             if (CollectionUtils.isNotEmpty(form.getSelectedLabUnitRoles())) {
-                List<String> selectedLabUnitRolesId = form.getSelectedLabUnitRoles();
-                Map<String, List<String>> selectedLabUnitRolesMap = new HashMap<>();
+                Set<String> selectedLabUnitRolesId = form.getSelectedLabUnitRoles();
+                Map<String, Set<String>> selectedLabUnitRolesMap = new HashMap<>();
                 selectedLabUnitRolesMap.put(form.getTestSectionId(), selectedLabUnitRolesId);
                 userService.saveUserLabUnitRoles(user, selectedLabUnitRolesMap);
             }
@@ -597,7 +598,7 @@ public class UnifiedSystemUserController extends BaseController {
     private void setLabunitRolesForExistingUser(UnifiedSystemUserForm form) {
         UserLabUnitRoles roles = userService.getUserLabUnitRoles(form.getSystemUserId());
         if (roles != null) {
-            List<LabUnitRoleMap> roleMaps = roles.getLabUnitRoleMap();
+            Set<LabUnitRoleMap> roleMaps = roles.getLabUnitRoleMap();
             for (LabUnitRoleMap map : roleMaps) {
                 form.setTestSectionId(map.getLabUnit());
                 form.setSelectedLabUnitRoles(map.getRoles());

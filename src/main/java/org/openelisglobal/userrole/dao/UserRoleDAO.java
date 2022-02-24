@@ -58,4 +58,6 @@ public interface UserRoleDAO extends BaseDAO<UserRole, UserRolePK> {
     UserLabUnitRoles getUserLabUnitRoles(String userId);
 
     void deleteLabUnitRoleMap(LabUnitRoleMap roleMap);
+
+    List<UserLabUnitRoles> getAllUserLabUnitRoles();
 }

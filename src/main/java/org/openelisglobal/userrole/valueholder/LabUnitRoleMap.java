@@ -1,6 +1,6 @@
 package org.openelisglobal.userrole.valueholder;
 
-import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -31,7 +31,7 @@ public class LabUnitRoleMap {
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "lab_roles", joinColumns = { @JoinColumn(name = "lab_unit_role_map_id", referencedColumnName = "lab_unit_role_map_id") })
     @Column(name = "role")
-    List<String> roles;
+    Set<String> roles;
     
     public Integer getId() {
         return id;
@@ -49,11 +49,11 @@ public class LabUnitRoleMap {
         this.labUnit = labUnit;
     }
     
-    public List<String> getRoles() {
+    public Set<String> getRoles() {
         return roles;
     }
     
-    public void setRoles(List<String> roles) {
+    public void setRoles(Set<String> roles) {
         this.roles = roles;
     }
 }

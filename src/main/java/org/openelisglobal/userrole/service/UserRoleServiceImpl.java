@@ -60,4 +60,9 @@ public class UserRoleServiceImpl extends BaseObjectServiceImpl<UserRole, UserRol
     public void deleteLabUnitRoleMap(LabUnitRoleMap roleMap) {
         getBaseObjectDAO().deleteLabUnitRoleMap(roleMap);; 
     }
+
+    @Override
+    public List<UserLabUnitRoles> getAllUserLabUnitRoles() {
+        return getBaseObjectDAO().getAllUserLabUnitRoles();
+    }
 }

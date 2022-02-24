@@ -9,7 +9,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import java.util.List;
+import java.util.Set;
 
 import org.openelisglobal.common.valueholder.BaseObject;
 
@@ -26,7 +26,7 @@ public class UserLabUnitRoles extends BaseObject<Integer> {
     //we could do it simply by Map<String , List<String>> ie  <labUnit , List<roles>>  but there are issues mapping that with hibernate
     @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
     @JoinTable(name = "lab_unit_roles", joinColumns = @JoinColumn(name = "system_user_id"), inverseJoinColumns = @JoinColumn(name = "lab_unit_role_map_id"))
-    private List<LabUnitRoleMap> labUnitRoleMap;
+    private Set<LabUnitRoleMap> labUnitRoleMap;
     
     @Override
     public void setId(Integer id) {
@@ -38,11 +38,11 @@ public class UserLabUnitRoles extends BaseObject<Integer> {
         return id;
     }
 
-    public List<LabUnitRoleMap> getLabUnitRoleMap() {
+    public Set<LabUnitRoleMap> getLabUnitRoleMap() {
         return labUnitRoleMap;
     }
 
-    public void setLabUnitRoleMap(List<LabUnitRoleMap> labUnitRoleMap) {
+    public void setLabUnitRoleMap(Set<LabUnitRoleMap> labUnitRoleMap) {
         this.labUnitRoleMap = labUnitRoleMap;
     }
 

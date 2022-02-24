@@ -26,6 +26,7 @@
 	String adminFilterCheck ="";
 	String activeFilterCheck ="";
 	String pageSize ="0";
+	String filterRole = "";
 
        if (request.getAttribute(IActionConstants.DEACTIVATE_DISABLED) != null) {
 	      allowDeactivate = request.getAttribute(IActionConstants.DEACTIVATE_DISABLED) != "true";
@@ -83,6 +84,10 @@
 
 	   if(request.getAttribute(IActionConstants.PAGE_SIZE) != null){
           pageSize = request.getAttribute(IActionConstants.PAGE_SIZE).toString();
+	   }
+
+	   if(request.getAttribute(IActionConstants.FILTER_ROLE) != null){
+          filterRole = request.getAttribute(IActionConstants.FILTER_ROLE).toString();
 	   }
 %>
 <%  
@@ -187,7 +192,7 @@ function submitFilterForClick(button){
             if (request.getAttribute(IActionConstants.NEXT_DISABLED) != null) {
                nextDisabled = (String)request.getAttribute(IActionConstants.NEXT_DISABLED);
             }
-			if(adminFilterCheck != "" || activeFilterCheck != ""){   	
+			if(adminFilterCheck != "" || activeFilterCheck != "" || filterRole != ""){   	
 				 if((Integer.valueOf(fromCount) + Integer.valueOf(pageSize)-1) >= Integer.valueOf(totalCount)){
                       nextDisabled = "true";
 				 }else {
@@ -296,7 +301,7 @@ function submitFilterForClick(button){
 		 <%-- to apply filters to reasults --%>
 	   <c:if test="${not empty filter}">
 			<td>  <spring:message code="menu.label.filter"/> : 			    
-				<select name="roleFilter" id="roleFilter">
+				<select name="roleFilter" id="roleFilter" onclick="submitFilterForClick(this);return false;">
 				     <option value=""></option>
 					<c:forEach items="${form.testSections}" var="role">
                        <option value="${role.id}">${role.value}</option>
@@ -350,4 +355,7 @@ function output() {
     	 <% } %>		
      }
 }
+
+var roleFilter = document.getElementById("roleFilter");
+roleFilter.value='<%=filterRole%>';
 </script> 

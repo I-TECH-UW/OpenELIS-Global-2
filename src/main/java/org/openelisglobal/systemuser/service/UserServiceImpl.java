@@ -1,7 +1,9 @@
 package org.openelisglobal.systemuser.service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Map;
 
 import org.openelisglobal.login.service.LoginUserService;
@@ -71,13 +73,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void saveUserLabUnitRoles(SystemUser systemUser, Map<String, List<String>> selectedLabUnitRolesMap) {
+    public void saveUserLabUnitRoles(SystemUser systemUser, Map<String, Set<String>> selectedLabUnitRolesMap) {
         UserLabUnitRoles userLabUnitRoles = userRoleService.getUserLabUnitRoles(systemUser.getId());
-        List<LabUnitRoleMap> labUnitRoleMaps;
+        Set<LabUnitRoleMap> labUnitRoleMaps;
         if (userLabUnitRoles == null) {
             userLabUnitRoles = new UserLabUnitRoles();
             userLabUnitRoles.setId(Integer.valueOf(systemUser.getId()));
-            labUnitRoleMaps = new ArrayList();
+            labUnitRoleMaps = new HashSet<>();
         } else {
             labUnitRoleMaps = userLabUnitRoles.getLabUnitRoleMap();
             for (LabUnitRoleMap roleMap : labUnitRoleMaps) {
@@ -99,5 +101,11 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public UserLabUnitRoles getUserLabUnitRoles(String systemUserId) {
         return userRoleService.getUserLabUnitRoles(systemUserId);
+    }
+
+    @Override
+    @Transactional
+    public List<UserLabUnitRoles> getAllUserLabUnitRoles() {
+        return userRoleService.getAllUserLabUnitRoles();
     }
 }

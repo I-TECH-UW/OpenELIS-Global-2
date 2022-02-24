@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.constants.Constants;
@@ -26,9 +27,12 @@ import org.openelisglobal.systemuser.service.UnifiedSystemUserService;
 import org.openelisglobal.systemuser.valueholder.SystemUser;
 import org.openelisglobal.systemuser.valueholder.UnifiedSystemUser;
 import org.openelisglobal.userrole.service.UserRoleService;
+import org.openelisglobal.userrole.valueholder.LabUnitRoleMap;
+import org.openelisglobal.userrole.valueholder.UserLabUnitRoles;
 import org.openelisglobal.userrole.valueholder.UserRole;
 import org.openelisglobal.common.services.DisplayListService.ListType;
 import org.openelisglobal.common.util.IdValuePair;
+import org.openelisglobal.systemuser.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -54,6 +58,8 @@ public class UnifiedSystemUserMenuController extends BaseMenuController<UnifiedS
     UserRoleService userRoleService;
     @Autowired
     UnifiedSystemUserService unifiedSystemUserService;
+    @Autowired
+    private UserService userService;
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -112,8 +118,12 @@ public class UnifiedSystemUserMenuController extends BaseMenuController<UnifiedS
             }      
             if (request.getParameter("filter").contains("isAdmin")) {
                 request.setAttribute(IActionConstants.FILTER_CHECK_ADMIN, "true");
-                unifiedUsers = filterUnifiedUsers(unifiedUsers);
+                unifiedUsers = filterUnifiedUsersByAdmin(unifiedUsers);
             } 
+        }
+        if (StringUtils.isNotEmpty(request.getParameter("roleFilter"))) {
+            request.setAttribute(IActionConstants.FILTER_ROLE, request.getParameter("roleFilter").toString());
+            unifiedUsers = filterUnifiedUsersByLabUnitRole(unifiedUsers, request.getParameter("roleFilter"));
         }
 
         request.setAttribute("menuDefinition", "UnifiedSystemUserMenuDefinition");
@@ -137,7 +147,7 @@ public class UnifiedSystemUserMenuController extends BaseMenuController<UnifiedS
         return unifiedUsers;
     }
 
-    private List<UnifiedSystemUser> filterUnifiedUsers(List<UnifiedSystemUser> users) {
+    private List<UnifiedSystemUser> filterUnifiedUsersByAdmin(List<UnifiedSystemUser> users) {
         List<UnifiedSystemUser> unifiedUsers = new ArrayList<>();
         List<LoginUser> loginUsers = loginService.getAll();
         HashMap<String, LoginUser> loginMap = createLoginMap(loginUsers ,true);
@@ -148,6 +158,28 @@ public class UnifiedSystemUserMenuController extends BaseMenuController<UnifiedS
             }
         }
         return unifiedUsers  ;
+    }
+
+    private List<UnifiedSystemUser> filterUnifiedUsersByLabUnitRole(List<UnifiedSystemUser> users, String labUnit) {
+        List<UnifiedSystemUser> unifiedUsers = new ArrayList<>();
+        List<UserLabUnitRoles> allLabUnitRoles = userService.getAllUserLabUnitRoles();
+        List<Integer> systemUserIds = new ArrayList<>();
+        if (allLabUnitRoles != null && allLabUnitRoles.size() > 0) {
+            for (UserLabUnitRoles userRoles : allLabUnitRoles) {
+                for (LabUnitRoleMap roleMap : userRoles.getLabUnitRoleMap()) {
+                    if (roleMap.getLabUnit().trim().equals(labUnit.trim())) {
+                        systemUserIds.add(userRoles.getId());
+                        break;
+                    }
+                }
+            }
+            for (UnifiedSystemUser user : users) {
+                if (systemUserIds.contains(Integer.valueOf(user.getSystemUserId()))) {
+                    unifiedUsers.add(user);
+                }
+            }
+        }
+        return unifiedUsers;
     }
 
     private List<UnifiedSystemUser> getUnifiedUsers(List<SystemUser> systemUsers) {

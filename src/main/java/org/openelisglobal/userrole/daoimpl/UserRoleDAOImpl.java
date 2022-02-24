@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
@@ -303,5 +304,19 @@ public class UserRoleDAOImpl extends BaseDAOImpl<UserRole, UserRolePK> implement
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in UserRoleDAOImpl userInRole()", e);
         } 
+    }
+
+    @Override
+    public List<UserLabUnitRoles> getAllUserLabUnitRoles() {
+        List<UserLabUnitRoles> userRoles;
+        Criteria criteria;
+        try {
+            criteria = entityManager.unwrap(Session.class).createCriteria(UserLabUnitRoles.class);
+        }
+        catch (HibernateException e) {
+            LogEvent.logError(e.toString(), e);
+            throw new LIMSRuntimeException("Error in UserRoleDAOImpl userInRole()", e);
+        }
+        return criteria.list();
     }
 }

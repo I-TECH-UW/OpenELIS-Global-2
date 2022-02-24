@@ -22,4 +22,6 @@ public interface UserRoleService extends BaseObjectService<UserRole, UserRolePK>
     UserLabUnitRoles getUserLabUnitRoles(String userId);
 
     void deleteLabUnitRoleMap(LabUnitRoleMap roleMap);
+
+    List<UserLabUnitRoles> getAllUserLabUnitRoles();
 }

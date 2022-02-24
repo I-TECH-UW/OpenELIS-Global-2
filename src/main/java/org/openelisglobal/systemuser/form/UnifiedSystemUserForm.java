@@ -2,6 +2,7 @@ package org.openelisglobal.systemuser.form;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Set;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
@@ -53,7 +54,7 @@ public class UnifiedSystemUserForm extends BaseForm {
 
     private List<@Pattern(regexp = ValidationHelper.ID_REGEX) String> selectedRoles;
 
-    private List<String> selectedLabUnitRoles;
+    private Set<String> selectedLabUnitRoles;
 
     @NotBlank
     @ValidDate(relative = DateRelation.FUTURE)
@@ -225,11 +226,11 @@ public class UnifiedSystemUserForm extends BaseForm {
         this.testSectionId = testSectionId;
     }
 
-    public List<String> getSelectedLabUnitRoles() {
+    public Set<String> getSelectedLabUnitRoles() {
         return selectedLabUnitRoles;
     }
 
-    public void setSelectedLabUnitRoles(List<String> selectedLabUnitRoles) {
+    public void setSelectedLabUnitRoles(Set<String> selectedLabUnitRoles) {
         this.selectedLabUnitRoles = selectedLabUnitRoles;
     }
 }
