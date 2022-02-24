@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.openelisglobal.common.dao.BaseDAO;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.userrole.valueholder.LabUnitRoleMap;
 import org.openelisglobal.userrole.valueholder.UserLabUnitRoles;
 import org.openelisglobal.userrole.valueholder.UserRole;
 import org.openelisglobal.userrole.valueholder.UserRolePK;
@@ -55,4 +56,6 @@ public interface UserRoleDAO extends BaseDAO<UserRole, UserRolePK> {
     void saveUserLabUnitRoles(UserLabUnitRoles labRoles);
 
     UserLabUnitRoles getUserLabUnitRoles(String userId);
+
+    void deleteLabUnitRoleMap(LabUnitRoleMap roleMap);
 }

@@ -16,6 +16,8 @@ import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
@@ -38,6 +40,8 @@ import org.openelisglobal.systemuser.validator.UnifiedSystemUserFormValidator;
 import org.openelisglobal.systemuser.valueholder.SystemUser;
 import org.openelisglobal.systemuser.valueholder.UnifiedSystemUser;
 import org.openelisglobal.userrole.service.UserRoleService;
+import org.openelisglobal.userrole.valueholder.LabUnitRoleMap;
+import org.openelisglobal.userrole.valueholder.UserLabUnitRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -327,6 +331,7 @@ public class UnifiedSystemUserController extends BaseController {
 
             List<String> roleIds = userRoleService.getRoleIdsForUser(systemUser.getId());
             form.setSelectedRoles(roleIds);
+            setLabunitRolesForExistingUser(form);
 
             // is this meant to be returned?
 //            doFiltering = !roleIds.contains(MAINTENANCE_ADMIN_ID);
@@ -433,6 +438,7 @@ public class UnifiedSystemUserController extends BaseController {
 
         LoginUser loginUser = createLoginUser(form, loginUserId, loginUserNew, passwordUpdated, loggedOnUserId);
         SystemUser systemUser = createSystemUser(form, systemUserId, systemUserNew, loggedOnUserId);
+        saveUserLabUnitRoles(systemUser, form);
 
         try {
             userService.updateLoginUser(loginUser, loginUserNew, systemUser, systemUserNew, form.getSelectedRoles(),
@@ -575,6 +581,28 @@ public class UnifiedSystemUserController extends BaseController {
     private void disableNavigationButtons(HttpServletRequest request) {
         request.setAttribute(PREVIOUS_DISABLED, TRUE);
         request.setAttribute(NEXT_DISABLED, TRUE);
+    }
+
+    private void saveUserLabUnitRoles(SystemUser user, UnifiedSystemUserForm form) {
+        if (StringUtils.isNotEmpty(form.getTestSectionId())) {
+            if (CollectionUtils.isNotEmpty(form.getSelectedLabUnitRoles())) {
+                List<String> selectedLabUnitRolesId = form.getSelectedLabUnitRoles();
+                Map<String, List<String>> selectedLabUnitRolesMap = new HashMap<>();
+                selectedLabUnitRolesMap.put(form.getTestSectionId(), selectedLabUnitRolesId);
+                userService.saveUserLabUnitRoles(user, selectedLabUnitRolesMap);
+            }
+        }
+    }
+    
+    private void setLabunitRolesForExistingUser(UnifiedSystemUserForm form) {
+        UserLabUnitRoles roles = userService.getUserLabUnitRoles(form.getSystemUserId());
+        if (roles != null) {
+            List<LabUnitRoleMap> roleMaps = roles.getLabUnitRoleMap();
+            for (LabUnitRoleMap map : roleMaps) {
+                form.setTestSectionId(map.getLabUnit());
+                form.setSelectedLabUnitRoles(map.getRoles());
+            }
+        }
     }
 
     @Override

@@ -28,6 +28,7 @@ import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.userrole.dao.UserRoleDAO;
+import org.openelisglobal.userrole.valueholder.LabUnitRoleMap;
 import org.openelisglobal.userrole.valueholder.UserLabUnitRoles;
 import org.openelisglobal.userrole.valueholder.UserRole;
 import org.openelisglobal.userrole.valueholder.UserRolePK;
@@ -271,7 +272,13 @@ public class UserRoleDAOImpl extends BaseDAOImpl<UserRole, UserRolePK> implement
 
     @Override
     public void saveUserLabUnitRoles(UserLabUnitRoles userlabRoles) {
-        entityManager.unwrap(Session.class).saveOrUpdate(userlabRoles);
+        try {
+            entityManager.unwrap(Session.class).saveOrUpdate(userlabRoles);
+        }
+        catch (HibernateException e) {
+            LogEvent.logError(e.toString(), e);
+            throw new LIMSRuntimeException("Error in UserRoleDAOImpl userInRole()", e);
+        }
     }
 
     @Override
@@ -285,5 +292,16 @@ public class UserRoleDAOImpl extends BaseDAOImpl<UserRole, UserRolePK> implement
             throw new LIMSRuntimeException("Error in UserRoleDAOImpl getLabUnitRoleMap", e);
         }
         return userLabUnitRoles;
+    }
+
+    @Override
+    public void deleteLabUnitRoleMap(LabUnitRoleMap roleMap) {
+        try {
+            entityManager.unwrap(Session.class).delete(roleMap);
+        }
+        catch (HibernateException e) {
+            LogEvent.logError(e.toString(), e);
+            throw new LIMSRuntimeException("Error in UserRoleDAOImpl userInRole()", e);
+        } 
     }
 }

@@ -290,7 +290,8 @@ function mySaveAction() {
 	</tr>
 	<tr>
 		<td>
-		 <button type="button" name="addNewField" id="createSection" onClick="createField();">add new Permissions </button>
+		  &nbsp;
+		 <%-- <button type="button" name="addNewField" id="createSection" onClick="createField();">add new Permissions </button> --%>
 		</td>
 	</tr>
 
