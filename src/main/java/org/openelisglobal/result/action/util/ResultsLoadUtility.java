@@ -752,7 +752,7 @@ public class ResultsLoadUtility {
             testItem.setHasQualifiedResult(true);
         }
 
-        if (testResults.size() > 0 && NUMERIC_RESULT_TYPE.equals(testResults.get(0).getTestResultType())
+        if (!testResults.isEmpty() && NUMERIC_RESULT_TYPE.equals(testResults.get(0).getTestResultType())
                 && !GenericValidator.isBlankOrNull(testResults.get(0).getSignificantDigits())) {
             testItem.setSignificantDigits(Integer.parseInt(testResults.get(0).getSignificantDigits()));
         }
@@ -783,7 +783,7 @@ public class ResultsLoadUtility {
             testItem.setNormal(getIsNormal(testItem.getResultValue(), resultLimit));
             testItem.setNormalRange(SpringContext.getBean(ResultLimitService.class)
                     .getDisplayReferenceRange(resultLimit,
-                            testResults.size() == 0 ? "0" : testResults.get(0).getSignificantDigits(), " - "));
+                            testResults.isEmpty() ? "0" : testResults.get(0).getSignificantDigits(), " - "));
         }
     }
 
