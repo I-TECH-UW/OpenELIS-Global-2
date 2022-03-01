@@ -1,12 +1,17 @@
 package org.openelisglobal.systemuser.service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.Map;
 
 import org.openelisglobal.login.service.LoginUserService;
 import org.openelisglobal.login.valueholder.LoginUser;
 import org.openelisglobal.systemuser.valueholder.SystemUser;
 import org.openelisglobal.userrole.service.UserRoleService;
+import org.openelisglobal.userrole.valueholder.UserLabUnitRoles;
+import org.openelisglobal.userrole.valueholder.LabUnitRoleMap;
 import org.openelisglobal.userrole.valueholder.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -66,4 +71,41 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    @Transactional
+    public void saveUserLabUnitRoles(SystemUser systemUser, Map<String, Set<String>> selectedLabUnitRolesMap) {
+        UserLabUnitRoles userLabUnitRoles = userRoleService.getUserLabUnitRoles(systemUser.getId());
+        Set<LabUnitRoleMap> labUnitRoleMaps;
+        if (userLabUnitRoles == null) {
+            userLabUnitRoles = new UserLabUnitRoles();
+            userLabUnitRoles.setId(Integer.valueOf(systemUser.getId()));
+            labUnitRoleMaps = new HashSet<>();
+        } else {
+            labUnitRoleMaps = userLabUnitRoles.getLabUnitRoleMap();
+            for (LabUnitRoleMap roleMap : labUnitRoleMaps) {
+                userRoleService.deleteLabUnitRoleMap(roleMap);
+            }
+            labUnitRoleMaps.clear();
+        }
+        for (String labUnit : selectedLabUnitRolesMap.keySet()) {
+            LabUnitRoleMap labUnitRoleMap = new LabUnitRoleMap();
+            labUnitRoleMap.setLabUnit(labUnit);
+            labUnitRoleMap.setRoles(selectedLabUnitRolesMap.get(labUnit));
+            labUnitRoleMaps.add(labUnitRoleMap);
+        }
+        userLabUnitRoles.setLabUnitRoleMap(labUnitRoleMaps);
+        userRoleService.saveOrUpdateUserLabUnitRoles(userLabUnitRoles);
+    }
+    
+    @Override
+    @Transactional
+    public UserLabUnitRoles getUserLabUnitRoles(String systemUserId) {
+        return userRoleService.getUserLabUnitRoles(systemUserId);
+    }
+
+    @Override
+    @Transactional
+    public List<UserLabUnitRoles> getAllUserLabUnitRoles() {
+        return userRoleService.getAllUserLabUnitRoles();
+    }
 }

@@ -135,7 +135,7 @@ function setMenuAction(button, form, action, validate, parameters) {
          {  
             parameters += "&search=Y"; 
          }
-         if (searchedString != null) { 
+         if (searchedString != "null") { 
              parameters += "&searchString=" + searchedString;
          }
     }
@@ -175,8 +175,13 @@ function setMenuAction(button, form, action, validate, parameters) {
         }
      }
 
+     var roleFilter = document.getElementById("roleFilter");
+      if(roleFilter != null){    
+            var role = roleFilter.value;  
+            parameters += "&roleFilter="+ role
+     }
 
-   
+
   form.action = context + '/' + action + parsedFormName + sessionid + parameters;
   form.selectedIDs = parameters;
   
