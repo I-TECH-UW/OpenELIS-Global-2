@@ -1028,6 +1028,7 @@
 	            var tmpArray = tmpArray[0].split(", ");
 	            var valuesArray = jQuery.makeArray(tmpArray);
 	            dictionarySetDefaultForEditing(valuesArray);
+            }
             
             if (referenceValue == "n/a") {
                 jQuery("#referenceValue").text(referenceValue);
