@@ -140,9 +140,11 @@ public class UnifiedSystemUserController extends BaseController {
 
         List<DisplayRole> displayRoles = convertToDisplayRoles(roles);
         displayRoles = sortAndGroupRoles(displayRoles);
-        
-        List<DisplayRole> globalRoles = displayRoles.stream().filter(role -> role.getParentRole() != null).filter(role -> role.getParentRole().equals("68")).collect(Collectors.toList());
-        List<DisplayRole> labUnitRoles = displayRoles.stream().filter(role -> role.getParentRole() != null).filter(role -> role.getParentRole().equals("69")).collect(Collectors.toList());
+        String globalParentRoleId =  roleService.getRoleByName("Global Roles").getId();
+        String labUnitRoleId = roleService.getRoleByName("Lab Unit Roles").getId();
+   
+        List<DisplayRole> globalRoles = displayRoles.stream().filter(role -> role.getParentRole() != null).filter(role -> role.getParentRole().equals(globalParentRoleId)).collect(Collectors.toList());
+        List<DisplayRole> labUnitRoles = displayRoles.stream().filter(role -> role.getParentRole() != null).filter(role -> role.getParentRole().equals(labUnitRoleId)).collect(Collectors.toList());
         form.setGlobalRoles(globalRoles);
         form.setLabUnitRoles(labUnitRoles);
     }
