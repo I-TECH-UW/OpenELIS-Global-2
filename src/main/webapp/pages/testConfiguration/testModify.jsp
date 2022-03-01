@@ -949,13 +949,15 @@
             	referenceValue = jQuery(elem).attr("fReferenceValue")
             	referenceId = jQuery(elem).attr("fReferenceId")
             });
-            if( true ) {
-            	var tmpArray = dictionaryValues.split("[");
-            	var tmpArray = tmpArray[1].split("]");
-            	var tmpArray = tmpArray[0].split(", ");
-            	var valuesArray = jQuery.makeArray(tmpArray);
-            	dictionarySetDefault(valuesArray);
+            
+            if (dictionaryValues !== null && dictionaryValues !== "null") {
+                var tmpArray = dictionaryValues.split("[");
+                var tmpArray = tmpArray[1].split("]");
+                var tmpArray = tmpArray[0].split(", ");
+                var valuesArray = jQuery.makeArray(tmpArray);
+                dictionarySetDefault(valuesArray);
             }
+            
             resultTypeId = jQuery("#resultTypeSelection").val();
             jQuery("#sortTitleDiv").attr("align", "left");
             jQuery("#step2BreadCrumb").hide();
@@ -1020,11 +1022,12 @@
             	referenceId = jQuery(elem).attr("fReferenceId")
             });
 
-            var tmpArray = dictionaryIds.split("[");
-            var tmpArray = tmpArray[1].split("]");
-            var tmpArray = tmpArray[0].split(", ");
-            var valuesArray = jQuery.makeArray(tmpArray);
-            dictionarySetDefaultForEditing(valuesArray);
+            if (dictionaryValues !== null && dictionaryValues !== "null") {
+	            var tmpArray = dictionaryIds.split("[");
+	            var tmpArray = tmpArray[1].split("]");
+	            var tmpArray = tmpArray[0].split(", ");
+	            var valuesArray = jQuery.makeArray(tmpArray);
+	            dictionarySetDefaultForEditing(valuesArray);
             
             if (referenceValue == "n/a") {
                 jQuery("#referenceValue").text(referenceValue);
@@ -1120,10 +1123,14 @@
         var verifyList = jQuery("#dictionaryVerifyListId");
         var qualifyList = jQuery("#dictionaryQualify");
         var li, qualified;
-        var tmpArray = dictionaryValues.split("[");
-    	var tmpArray = tmpArray[1].split("]");
-    	var tmpArray = tmpArray[0].split(", ");
-    	dictionaryValues = jQuery.makeArray(tmpArray);
+        if (dictionaryValues !== null && dictionaryValues !== "null") {
+	        var tmpArray = dictionaryValues.split("[");
+	    	var tmpArray = tmpArray[1].split("]");
+	    	var tmpArray = tmpArray[0].split(", ");
+	    	dictionaryValues = jQuery.makeArray(tmpArray);
+        } else {
+        	dictionaryValues = [];
+        }
         verifyList.empty();
         for(var i=0; i < dictionaryValues.length; i++ ) {
             li = jQuery(document.createElement("li"));
