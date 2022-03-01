@@ -107,15 +107,6 @@ function mySaveAction() {
 }
 
 </script>
- <script>
- function createField(){
-	   var content = document.getElementById('rolesTable').innerHTML;
-	   console.log(content);
-	    var newTable = document.createElement('table');
-	    newTable.innerHTML = content;
-		document.getElementById('rolesRow').appendChild(newTable);
-       }
-  </script>
 <form:hidden path="systemUserId"/>
 <form:hidden path="loginUserId"/>
 <%-- <form:hidden path="systemUserLastupdated"/> --%>
@@ -234,64 +225,29 @@ function mySaveAction() {
 </table>
 <hr/>
 <table>
-	<tr>
-		<td class="label" width="50%">
-			<spring:message code="systemuserrole.roles.global" />
-		</td>
-	</tr>
-	<c:forEach items="${form.globalRoles}" var="role">
 		<tr>
-		<td>
-		<c:forEach begin="0" end="${role.nestingLevel}">
-			&nbsp;&nbsp;&nbsp;&nbsp;
-		</c:forEach>
-		<form:checkbox path="selectedRoles" 
-						id="role_${role.roleId}" 
-						onclick="selectChildren(this, ${role.childrenID});makeDirty();"
-						value="${role.roleId}"
-						/>
-			<c:out value="${role.roleName}" />
+		<td class="label" width="50%">
+			<spring:message code="systemuserrole.roles" />
 		</td>
 		</tr>
+	<c:forEach items="${form.roles}" var="role">
+	<tr>
+	<td>
+       <c:forEach begin="0" end="${role.nestingLevel}">
+      	&nbsp;&nbsp;&nbsp;&nbsp;
+       </c:forEach>
+       <form:checkbox path="selectedRoles" 
+       				  id="role_${role.roleId}" 
+       				  onclick="selectChildren(this, ${role.childrenID});makeDirty();"
+       				  value="${role.roleId}"
+       				  />
+		<c:out value="${role.roleName}" />
+	</td>
+	</tr>
 	</c:forEach>
 	<tr>
-		<td class="label" width="50%">
-			<spring:message code="systemuserrole.roles.labunit" />
-		</td>
-	</tr>
-	 <tr>
-		<td id="rolesRow">
-			<table id="rolesTable">
-			<tr> 
-				<td>
-					<form:select path="testSectionId">
-								<option value=""></option>
-								<form:options items="${form.testSections}" itemLabel="value" itemValue="id" />
-					</form:select>
-				</td>
-			</tr>
-			<c:forEach items="${form.labUnitRoles}" var="role">
-				<tr>
-				<td>
-				<c:forEach begin="0" end="${role.nestingLevel}">
-					&nbsp;&nbsp;&nbsp;&nbsp;
-				</c:forEach>
-				<form:checkbox path="selectedLabUnitRoles" 
-								id="role_${role.roleId}" 
-								onclick="selectChildren(this, ${role.childrenID});makeDirty();"
-								value="${role.roleId}"
-								/>		
-					<c:out value="${role.roleName}" />
-				</td>
-				</tr>
-			</c:forEach>
-			</table>
-		</td>	
-	</tr>
-	<tr>
-		<td>
-		  &nbsp;
-		 <%-- <button type="button" name="addNewField" id="createSection" onClick="createField();">add new Permissions </button> --%>
+		<td>&nbsp;
+			
 		</td>
 	</tr>
 
