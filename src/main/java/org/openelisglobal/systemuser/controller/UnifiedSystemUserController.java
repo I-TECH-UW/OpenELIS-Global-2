@@ -444,7 +444,7 @@ public class UnifiedSystemUserController extends BaseController {
         try {
             userService.updateLoginUser(loginUser, loginUserNew, systemUser, systemUserNew, form.getSelectedRoles(),
                     loggedOnUserId);
-            saveUserLabUnitRoles(systemUser, form);        
+            saveUserLabUnitRoles(systemUser, form ,loggedOnUserId);        
         } catch (LIMSRuntimeException e) {
             if (e.getException() instanceof org.hibernate.StaleObjectStateException) {
                 errors.reject("errors.OptimisticLockException", "errors.OptimisticLockException");
@@ -585,15 +585,11 @@ public class UnifiedSystemUserController extends BaseController {
         request.setAttribute(NEXT_DISABLED, TRUE);
     }
 
-    private void saveUserLabUnitRoles(SystemUser user, UnifiedSystemUserForm form) {
-        if (StringUtils.isNotEmpty(form.getTestSectionId())) {
-            if (CollectionUtils.isNotEmpty(form.getSelectedLabUnitRoles())) {
-                Set<String> selectedLabUnitRolesId = form.getSelectedLabUnitRoles();
-                Map<String, Set<String>> selectedLabUnitRolesMap = new HashMap<>();
-                selectedLabUnitRolesMap.put(form.getTestSectionId(), selectedLabUnitRolesId);
-                userService.saveUserLabUnitRoles(user, selectedLabUnitRolesMap);
-            }
-        }
+    private void saveUserLabUnitRoles(SystemUser user, UnifiedSystemUserForm form, String loggedOnUserId) {
+        Set<String> selectedLabUnitRolesId = form.getSelectedLabUnitRoles();
+        Map<String, Set<String>> selectedLabUnitRolesMap = new HashMap<>();
+        selectedLabUnitRolesMap.put(form.getTestSectionId(), selectedLabUnitRolesId);
+        userService.saveUserLabUnitRoles(user, selectedLabUnitRolesMap, loggedOnUserId);
     }
     
     private void setLabunitRolesForExistingUser(UnifiedSystemUserForm form) {

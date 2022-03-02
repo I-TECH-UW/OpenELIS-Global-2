@@ -13,7 +13,7 @@ public interface UserService {
     void updateLoginUser(LoginUser loginUser, boolean loginUserNew, SystemUser systemUser, boolean systemUserNew,
             List<String> selectedRoles, String loggedOnUserId);
 
-    void saveUserLabUnitRoles(SystemUser systemUser, Map<String , Set<String>> selectedLabUnitRolesMap);   
+    void saveUserLabUnitRoles(SystemUser systemUser, Map<String , Set<String>> selectedLabUnitRolesMap ,String loggedOnUserId);   
     
     UserLabUnitRoles getUserLabUnitRoles(String systemUserId );
 
