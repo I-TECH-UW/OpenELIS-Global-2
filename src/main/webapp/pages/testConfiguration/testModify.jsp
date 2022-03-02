@@ -107,7 +107,6 @@
 
 	<script type="text/javascript">
 	var valueChanged = true;
-
 	
     function makeDirty(){
         window.onbeforeunload = "<spring:message code="banner.menu.dataLossWarning"/>";
@@ -441,21 +440,35 @@
     }
 
   	
-    function dictionarySetDefault(valuesArray) {
+    function dictionarySetDefaultForEditing(valuesArray) {
+    	valuesArray.forEach(function(value) {
+            var dictionarySelect = jQuery("#dictionarySelectId .asmSelect option[value=" + value + "]");
+            dictionarySelect.attr("selected", "selected");
+            dictionarySelect.trigger('change');
+    	});
+    }
+
+  	
+    function dictionarySetDefault(valuesArray) {  
         var dictionaryOption;
         clearDictionaryLists();
         var optionArray = Array.from(jQuery("#dictionarySelection")[0]);
         
         for(var i = 0; i < valuesArray.length; i++) {
+            jQuery("#dictionarySelection").add
         	dictionaryOption = optionArray.filter(function(elem) { return elem.label === valuesArray[i] });
         	
         	for(var j=dictionaryOption.length; j>0; j--) {
         		dictionaryOption.splice(j,1);
         	}
-        	
+
+            
         	dictionaryOption.forEach(function(inner) {
             	jQuery(inner).attr("selected", "selected")
+                jQuery("#dictionarySelection").change();
         	});
+        	
+
         }
         jQuery("#dictionarySelection").change();
     }
@@ -937,15 +950,14 @@
             	referenceId = jQuery(elem).attr("fReferenceId")
             });
             
-            // format dictionary values
-            //if( dictionaryValues !== null) {
-            if( false ) {
-            	var tmpArray = dictionaryValues.split("[");
-            	var tmpArray = tmpArray[1].split("]");
-            	var tmpArray = tmpArray[0].split(", ");
-            	var valuesArray = jQuery.makeArray(tmpArray);
-            	dictionarySetDefault(valuesArray);
+            if (dictionaryValues !== null && dictionaryValues !== "null") {
+                var tmpArray = dictionaryValues.split("[");
+                var tmpArray = tmpArray[1].split("]");
+                var tmpArray = tmpArray[0].split(", ");
+                var valuesArray = jQuery.makeArray(tmpArray);
+                dictionarySetDefault(valuesArray);
             }
+            
             resultTypeId = jQuery("#resultTypeSelection").val();
             jQuery("#sortTitleDiv").attr("align", "left");
             jQuery("#step2BreadCrumb").hide();
@@ -1009,6 +1021,14 @@
             	referenceValue = jQuery(elem).attr("fReferenceValue")
             	referenceId = jQuery(elem).attr("fReferenceId")
             });
+
+            if (dictionaryValues !== null && dictionaryValues !== "null") {
+	            var tmpArray = dictionaryIds.split("[");
+	            var tmpArray = tmpArray[1].split("]");
+	            var tmpArray = tmpArray[0].split(", ");
+	            var valuesArray = jQuery.makeArray(tmpArray);
+	            dictionarySetDefaultForEditing(valuesArray);
+            }
             
             if (referenceValue == "n/a") {
                 jQuery("#referenceValue").text(referenceValue);
@@ -1104,10 +1124,14 @@
         var verifyList = jQuery("#dictionaryVerifyListId");
         var qualifyList = jQuery("#dictionaryQualify");
         var li, qualified;
-        var tmpArray = dictionaryValues.split("[");
-    	var tmpArray = tmpArray[1].split("]");
-    	var tmpArray = tmpArray[0].split(", ");
-    	dictionaryValues = jQuery.makeArray(tmpArray);
+        if (dictionaryValues !== null && dictionaryValues !== "null") {
+	        var tmpArray = dictionaryValues.split("[");
+	    	var tmpArray = tmpArray[1].split("]");
+	    	var tmpArray = tmpArray[0].split(", ");
+	    	dictionaryValues = jQuery.makeArray(tmpArray);
+        } else {
+        	dictionaryValues = [];
+        }
         verifyList.empty();
         for(var i=0; i < dictionaryValues.length; i++ ) {
             li = jQuery(document.createElement("li"));
