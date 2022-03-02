@@ -102,13 +102,9 @@ public interface IActionConstants {
 
     String FILTER_CHECK_ACTIVE = "filterCheckActive";
 
-    String FILTER_ROLE = "filterRole";
-
     String SEARCHED_STRING = "searchedString";
 
     String APPLY_FILTER = "filter";
-
-    String PAGE_SIZE = "pageSize";
 
     String POPUPFORM_FILTER_BY_TABLE_COLUMN = "popupFormFilterByTableColumn";
     String IN_POPUP_FORM_SEARCH = "inPopupFormSearch";
