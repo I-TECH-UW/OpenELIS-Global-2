@@ -25,6 +25,8 @@
 	String objectToAdd ="";
 	String adminFilterCheck ="";
 	String activeFilterCheck ="";
+	String pageSize ="0";
+	String filterRole = "";
 
        if (request.getAttribute(IActionConstants.DEACTIVATE_DISABLED) != null) {
 	      allowDeactivate = request.getAttribute(IActionConstants.DEACTIVATE_DISABLED) != "true";
@@ -79,6 +81,14 @@
 	   if(request.getAttribute(IActionConstants.FILTER_CHECK_ACTIVE) != null){
            activeFilterCheck = "checked";
 	   }
+
+	   if(request.getAttribute(IActionConstants.PAGE_SIZE) != null){
+          pageSize = request.getAttribute(IActionConstants.PAGE_SIZE).toString();
+	   }
+
+	   if(request.getAttribute(IActionConstants.FILTER_ROLE) != null){
+          filterRole = request.getAttribute(IActionConstants.FILTER_ROLE).toString();
+	   }
 %>
 <%  
 	if(null != request.getAttribute(IActionConstants.FORM_NAME))
@@ -122,24 +132,8 @@ function submitSearchForClick(button){
 }
 // to filter all results without first clicking the search button
 function submitFilterForClick(button){
-	var adminFilterCheckBox = document.getElementById("isAdmin");
-	var activeFilterCheckBox = document.getElementById("isActive");
-	var param = "?startingRecNo=1";
-      if(adminFilterCheckBox != null){   
-         if (adminFilterCheckBox.checked == true){
-		 	param += "&filter=isAdmin";      
-        }
-	  }
-	  if(activeFilterCheckBox != null){   
-         if (activeFilterCheckBox.checked == true){
-			 if(param.includes("isAdmin")){
-              param += ",isActive";
-			 }else{
-               param += "&filter=isActive";
-			 }
-      }
-   }
-   setMenuAction( button, document.getElementById("searchForm"), 'Search', 'yes', param);
+	var param = "?search=N";
+    setMenuAction( button, document.getElementById("searchForm"), 'Search', 'yes', param);
 }
 </script>
 
@@ -198,7 +192,18 @@ function submitFilterForClick(button){
             if (request.getAttribute(IActionConstants.NEXT_DISABLED) != null) {
                nextDisabled = (String)request.getAttribute(IActionConstants.NEXT_DISABLED);
             }
-
+			if(adminFilterCheck != "" || activeFilterCheck != "" || filterRole != ""){   	
+				 if((Integer.valueOf(fromCount) + Integer.valueOf(pageSize)-1) >= Integer.valueOf(totalCount)){
+                      nextDisabled = "true";
+				 }else {
+					  nextDisabled = "false";
+				 } 
+				 if(Integer.valueOf(fromCount) <= 1){
+			     	previousDisabled = "true";
+				 }else {
+					  previousDisabled = "false";
+				 } 	  
+			}
         %>
       </tr>
       <tr>
@@ -234,16 +239,6 @@ function submitFilterForClick(button){
 					
   			</button>
 	   </td>
-	   <%-- to apply filters to reasults --%>
-	   <c:if test="${not empty filter}">
-			<td>  
-				 <spring:message code="menu.label.filter" />
-				<label for="isAdmin"><spring:message code="menu.label.filter.admin" /></label>
-				<input <%=adminFilterCheck%> type="checkbox" id="isAdmin" name="isAdmin" onclick="submitFilterForClick(this);return false;" />
-				<label for="isActive"> <spring:message code="menu.label.filter.active" /></label>
-				<input <%=activeFilterCheck%> type="checkbox" id="isActive" name="isActive"  onclick="submitFilterForClick(this);return false;"/>  
-			</td>
-		 </c:if>
 
 			<c:if test="${not empty menuSearchByTableColumn}">
 			<form:form name="${form.formName}" 
@@ -299,9 +294,30 @@ function submitFilterForClick(button){
 				</button>
        </td>
  	</tr>
-		<tr>
-			<td>&nbsp;</td>
-		</tr>
+	 <tr>
+		<td>&nbsp;</td>
+	</tr>
+	 <tr>
+		 <%-- to apply filters to reasults --%>
+	   <c:if test="${not empty filter}">
+			<td>  <spring:message code="menu.label.filter"/> : 			    
+				<select name="roleFilter" id="roleFilter" onclick="submitFilterForClick(this);return false;">
+				     <option value=""></option>
+					<c:forEach items="${form.testSections}" var="role">
+                       <option value="${role.id}">${role.value}</option>
+                    </c:forEach>
+                </select>
+				<label for="roleFilter"> <spring:message code="menu.label.filter.role" /></label>&nbsp;	
+                <input <%=activeFilterCheck%> type="checkbox" id="isActive" name="isActive"  onclick="submitFilterForClick(this);return false;"/> 
+				<label for="isActive"> <spring:message code="menu.label.filter.active" /></label>&nbsp;
+				<input <%=adminFilterCheck%> type="checkbox" id="isAdmin" name="isAdmin" onclick="submitFilterForClick(this);return false;" />
+				<label for="isAdmin"><spring:message code="menu.label.filter.admin" /></label>	 
+			</td>
+		 </c:if>
+	</tr>
+	<tr>
+		<td>&nbsp;</td>
+	</tr>
    </tbody>
 </table>
 
@@ -339,4 +355,7 @@ function output() {
     	 <% } %>		
      }
 }
+
+var roleFilter = document.getElementById("roleFilter");
+roleFilter.value='<%=filterRole%>';
 </script> 
