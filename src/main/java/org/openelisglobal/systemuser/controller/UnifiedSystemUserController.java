@@ -9,17 +9,22 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.provider.validation.PasswordValidationFactory;
+import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.common.validator.BaseErrors;
@@ -36,6 +41,8 @@ import org.openelisglobal.systemuser.validator.UnifiedSystemUserFormValidator;
 import org.openelisglobal.systemuser.valueholder.SystemUser;
 import org.openelisglobal.systemuser.valueholder.UnifiedSystemUser;
 import org.openelisglobal.userrole.service.UserRoleService;
+import org.openelisglobal.userrole.valueholder.LabUnitRoleMap;
+import org.openelisglobal.userrole.valueholder.UserLabUnitRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -48,13 +55,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.openelisglobal.common.services.DisplayListService.ListType;
+import org.openelisglobal.common.util.IdValuePair;
 
 @Controller
 public class UnifiedSystemUserController extends BaseController {
 
     private static final String[] ALLOWED_FIELDS = new String[] { "systemUserId", "loginUserId", "userLoginName",
             "userPassword", "confirmPassword", "userFirstName", "userLastName", "expirationDate", "timeout",
-            "accountLocked", "accountDisabled", "accountActive", "selectedRoles*" };
+            "accountLocked", "accountDisabled", "accountActive", "selectedRoles*" ,"selectedLabUnitRoles" ,"testSectionId" };
 
     @Autowired
     private UnifiedSystemUserFormValidator formValidator;
@@ -73,16 +82,16 @@ public class UnifiedSystemUserController extends BaseController {
     private UserService userService;
     private static final String RESERVED_ADMIN_NAME = "admin";
 
-    private static final String MAINTENANCE_ADMIN = "Maintenance Admin";
-    private static String MAINTENANCE_ADMIN_ID;
+    private static final String GLOBAL_ADMIN = "Global Administrator";
+    private static String GLOBAL_ADMIN_ID;
     public static final char DEFAULT_OBFUSCATED_CHARACTER = '@';
 
     @PostConstruct
     private void initialize() {
         List<Role> roles = roleService.getAll();
         for (Role role : roles) {
-            if (MAINTENANCE_ADMIN.equals(role.getName().trim())) {
-                MAINTENANCE_ADMIN_ID = role.getId();
+            if (GLOBAL_ADMIN.equals(role.getName().trim())) {
+                GLOBAL_ADMIN_ID = role.getId();
                 break;
             }
         }
@@ -114,6 +123,9 @@ public class UnifiedSystemUserController extends BaseController {
         }
         setupRoles(form, request, doFiltering);
 
+        // load testSections for drop down
+        List<IdValuePair> testSections = DisplayListService.getInstance().getList(ListType.TEST_SECTION);
+        form.setTestSections(testSections);
         addFlashMsgsToRequest(request);
         return findForward(FWD_SUCCESS, form);
     }
@@ -128,8 +140,13 @@ public class UnifiedSystemUserController extends BaseController {
 
         List<DisplayRole> displayRoles = convertToDisplayRoles(roles);
         displayRoles = sortAndGroupRoles(displayRoles);
-
-        form.setRoles(displayRoles);
+        String globalParentRoleId =  roleService.getRoleByName("Global Roles").getId();
+        String labUnitRoleId = roleService.getRoleByName("Lab Unit Roles").getId();
+   
+        List<DisplayRole> globalRoles = displayRoles.stream().filter(role -> role.getParentRole() != null).filter(role -> role.getParentRole().equals(globalParentRoleId)).collect(Collectors.toList());
+        List<DisplayRole> labUnitRoles = displayRoles.stream().filter(role -> role.getParentRole() != null).filter(role -> role.getParentRole().equals(labUnitRoleId)).collect(Collectors.toList());
+        form.setGlobalRoles(globalRoles);
+        form.setLabUnitRoles(labUnitRoles);
     }
 
     private List<DisplayRole> convertToDisplayRoles(List<Role> roles) {
@@ -267,11 +284,11 @@ public class UnifiedSystemUserController extends BaseController {
 
         List<String> rolesForLoggedInUser = userRoleService.getRoleIdsForUser(loggedInUserId);
 
-        if (!rolesForLoggedInUser.contains(MAINTENANCE_ADMIN_ID)) {
+        if (!rolesForLoggedInUser.contains(GLOBAL_ADMIN_ID)) {
             List<Role> tmpRoles = new ArrayList<>();
 
             for (Role role : roles) {
-                if (!MAINTENANCE_ADMIN_ID.equals(role.getId())) {
+                if (!GLOBAL_ADMIN_ID.equals(role.getId())) {
                     tmpRoles.add(role);
                 }
             }
@@ -317,6 +334,7 @@ public class UnifiedSystemUserController extends BaseController {
 
             List<String> roleIds = userRoleService.getRoleIdsForUser(systemUser.getId());
             form.setSelectedRoles(roleIds);
+            setLabunitRolesForExistingUser(form);
 
             // is this meant to be returned?
 //            doFiltering = !roleIds.contains(MAINTENANCE_ADMIN_ID);
@@ -423,10 +441,10 @@ public class UnifiedSystemUserController extends BaseController {
 
         LoginUser loginUser = createLoginUser(form, loginUserId, loginUserNew, passwordUpdated, loggedOnUserId);
         SystemUser systemUser = createSystemUser(form, systemUserId, systemUserNew, loggedOnUserId);
-
         try {
             userService.updateLoginUser(loginUser, loginUserNew, systemUser, systemUserNew, form.getSelectedRoles(),
                     loggedOnUserId);
+            saveUserLabUnitRoles(systemUser, form);        
         } catch (LIMSRuntimeException e) {
             if (e.getException() instanceof org.hibernate.StaleObjectStateException) {
                 errors.reject("errors.OptimisticLockException", "errors.OptimisticLockException");
@@ -565,6 +583,28 @@ public class UnifiedSystemUserController extends BaseController {
     private void disableNavigationButtons(HttpServletRequest request) {
         request.setAttribute(PREVIOUS_DISABLED, TRUE);
         request.setAttribute(NEXT_DISABLED, TRUE);
+    }
+
+    private void saveUserLabUnitRoles(SystemUser user, UnifiedSystemUserForm form) {
+        if (StringUtils.isNotEmpty(form.getTestSectionId())) {
+            if (CollectionUtils.isNotEmpty(form.getSelectedLabUnitRoles())) {
+                Set<String> selectedLabUnitRolesId = form.getSelectedLabUnitRoles();
+                Map<String, Set<String>> selectedLabUnitRolesMap = new HashMap<>();
+                selectedLabUnitRolesMap.put(form.getTestSectionId(), selectedLabUnitRolesId);
+                userService.saveUserLabUnitRoles(user, selectedLabUnitRolesMap);
+            }
+        }
+    }
+    
+    private void setLabunitRolesForExistingUser(UnifiedSystemUserForm form) {
+        UserLabUnitRoles roles = userService.getUserLabUnitRoles(form.getSystemUserId());
+        if (roles != null) {
+            Set<LabUnitRoleMap> roleMaps = roles.getLabUnitRoleMap();
+            for (LabUnitRoleMap map : roleMaps) {
+                form.setTestSectionId(map.getLabUnit());
+                form.setSelectedLabUnitRoles(map.getRoles());
+            }
+        }
     }
 
     @Override

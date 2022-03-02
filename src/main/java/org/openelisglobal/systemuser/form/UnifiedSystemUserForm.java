@@ -2,6 +2,7 @@ package org.openelisglobal.systemuser.form;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Set;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
@@ -13,6 +14,7 @@ import org.openelisglobal.role.action.bean.DisplayRole;
 import org.openelisglobal.validation.annotations.ValidDate;
 import org.openelisglobal.validation.annotations.ValidName;
 import org.openelisglobal.validation.constraintvalidator.NameValidator.NameType;
+import org.openelisglobal.common.util.IdValuePair;
 
 public class UnifiedSystemUserForm extends BaseForm {
     @Pattern(regexp = ValidationHelper.ID_REGEX)
@@ -40,9 +42,19 @@ public class UnifiedSystemUserForm extends BaseForm {
     private String userLastName = "";
 
     // for display
-    private List<DisplayRole> roles;
+    private List<DisplayRole> globalRoles;
+    
+    // for display
+    private List<DisplayRole> labUnitRoles;
+
+    // for display
+    private List<IdValuePair> testSections;
+
+    private String testSectionId;
 
     private List<@Pattern(regexp = ValidationHelper.ID_REGEX) String> selectedRoles;
+
+    private Set<String> selectedLabUnitRoles;
 
     @NotBlank
     @ValidDate(relative = DateRelation.FUTURE)
@@ -126,12 +138,20 @@ public class UnifiedSystemUserForm extends BaseForm {
         this.userLastName = userLastName;
     }
 
-    public List<DisplayRole> getRoles() {
-        return roles;
+    public List<DisplayRole> getGlobalRoles() {
+        return globalRoles;
+    }
+  
+    public void setGlobalRoles(List<DisplayRole> globalRoles) {
+        this.globalRoles = globalRoles;
     }
 
-    public void setRoles(List<DisplayRole> roles) {
-        this.roles = roles;
+    public List<DisplayRole> getLabUnitRoles() {
+        return labUnitRoles;
+    }
+
+    public void setLabUnitRoles(List<DisplayRole> labUnitRoles) {
+        this.labUnitRoles = labUnitRoles;
     }
 
     public List<String> getSelectedRoles() {
@@ -188,5 +208,29 @@ public class UnifiedSystemUserForm extends BaseForm {
 
     public void setSystemUserLastupdated(Timestamp systemUserLastupdated) {
         this.systemUserLastupdated = systemUserLastupdated;
+    }
+ 
+    public List<IdValuePair> getTestSections() {
+        return testSections;
+    }
+
+    public void setTestSections(List<IdValuePair> testSections) {
+        this.testSections = testSections;
+    }
+
+    public String getTestSectionId() {
+        return testSectionId;
+    }
+ 
+    public void setTestSectionId(String testSectionId) {
+        this.testSectionId = testSectionId;
+    }
+
+    public Set<String> getSelectedLabUnitRoles() {
+        return selectedLabUnitRoles;
+    }
+
+    public void setSelectedLabUnitRoles(Set<String> selectedLabUnitRoles) {
+        this.selectedLabUnitRoles = selectedLabUnitRoles;
     }
 }
