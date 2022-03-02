@@ -82,16 +82,16 @@ public class UnifiedSystemUserController extends BaseController {
     private UserService userService;
     private static final String RESERVED_ADMIN_NAME = "admin";
 
-    private static final String MAINTENANCE_ADMIN = "Maintenance Admin";
-    private static String MAINTENANCE_ADMIN_ID;
+    private static final String GLOBAL_ADMIN = "Global Administrator";
+    private static String GLOBAL_ADMIN_ID;
     public static final char DEFAULT_OBFUSCATED_CHARACTER = '@';
 
     @PostConstruct
     private void initialize() {
         List<Role> roles = roleService.getAll();
         for (Role role : roles) {
-            if (MAINTENANCE_ADMIN.equals(role.getName().trim())) {
-                MAINTENANCE_ADMIN_ID = role.getId();
+            if (GLOBAL_ADMIN.equals(role.getName().trim())) {
+                GLOBAL_ADMIN_ID = role.getId();
                 break;
             }
         }
@@ -284,11 +284,11 @@ public class UnifiedSystemUserController extends BaseController {
 
         List<String> rolesForLoggedInUser = userRoleService.getRoleIdsForUser(loggedInUserId);
 
-        if (!rolesForLoggedInUser.contains(MAINTENANCE_ADMIN_ID)) {
+        if (!rolesForLoggedInUser.contains(GLOBAL_ADMIN_ID)) {
             List<Role> tmpRoles = new ArrayList<>();
 
             for (Role role : roles) {
-                if (!MAINTENANCE_ADMIN_ID.equals(role.getId())) {
+                if (!GLOBAL_ADMIN_ID.equals(role.getId())) {
                     tmpRoles.add(role);
                 }
             }
@@ -441,11 +441,10 @@ public class UnifiedSystemUserController extends BaseController {
 
         LoginUser loginUser = createLoginUser(form, loginUserId, loginUserNew, passwordUpdated, loggedOnUserId);
         SystemUser systemUser = createSystemUser(form, systemUserId, systemUserNew, loggedOnUserId);
-        saveUserLabUnitRoles(systemUser, form);
-
         try {
             userService.updateLoginUser(loginUser, loginUserNew, systemUser, systemUserNew, form.getSelectedRoles(),
                     loggedOnUserId);
+            saveUserLabUnitRoles(systemUser, form);        
         } catch (LIMSRuntimeException e) {
             if (e.getException() instanceof org.hibernate.StaleObjectStateException) {
                 errors.reject("errors.OptimisticLockException", "errors.OptimisticLockException");
