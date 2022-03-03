@@ -30,6 +30,9 @@ import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.analyte.service.AnalyteService;
 import org.openelisglobal.analyte.valueholder.Analyte;
+import org.openelisglobal.note.service.NoteService;
+import org.openelisglobal.note.service.NoteServiceImpl.NoteType;
+import org.openelisglobal.note.valueholder.Note;
 import org.openelisglobal.observationhistory.service.ObservationHistoryService;
 import org.openelisglobal.observationhistory.valueholder.ObservationHistory;
 import org.openelisglobal.result.service.ResultService;
@@ -67,6 +70,7 @@ public class TestReflexUtil {
     private static TestReflexService testReflexService = SpringContext.getBean(TestReflexService.class);
     private static AnalyteService analyteService = SpringContext.getBean(AnalyteService.class);
     private static ScriptletService scriptletService = SpringContext.getBean(ScriptletService.class);
+    private static NoteService noteService = SpringContext.getBean(NoteService.class);
 
     private TestReflexResolver reflexResolver = SpringContext.getBean(TestReflexResolver.class);
 
@@ -451,6 +455,20 @@ public class TestReflexUtil {
 
                 analysisService.insert(newAnalysis);
                 analysisService.update(currentAnalysis);
+
+                List<Note> notes = new ArrayList<>();
+                notes.add(noteService.createSavableNote(newAnalysis, NoteType.EXTERNAL,
+                        "Triggered by " + currentAnalysis.getTest().getLocalizedReportingName().getLocalizedValue(),
+                        "Reflex Test Note", "1"));
+                notes.add(noteService.createSavableNote(newAnalysis, NoteType.INTERNAL,
+                        "This is part of a set of tests, please ensure all tests are resulted before validation",
+                        "Reflex Test Note", "1"));
+                if (result.getParentResult() == null) {
+                    notes.add(noteService.createSavableNote(currentAnalysis, NoteType.INTERNAL,
+                            "This is part of a set of tests, please ensure all tests are resulted before validation",
+                            "Reflex Test Note", "1"));
+                }
+                noteService.saveAll(notes);
             }
         }
     }

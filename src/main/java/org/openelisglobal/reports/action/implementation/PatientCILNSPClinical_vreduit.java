@@ -39,7 +39,6 @@ import org.openelisglobal.note.service.NoteService;
 import org.openelisglobal.referral.valueholder.Referral;
 import org.openelisglobal.referral.valueholder.ReferralResult;
 import org.openelisglobal.reports.action.implementation.reportBeans.ClinicalPatientData;
-import org.openelisglobal.result.service.ResultService;
 import org.openelisglobal.result.valueholder.Result;
 import org.openelisglobal.sample.util.AccessionNumberUtil;
 import org.openelisglobal.sampleitem.valueholder.SampleItem;
@@ -327,25 +326,25 @@ public class PatientCILNSPClinical_vreduit extends PatientReport implements IRep
             }
         });
 
-        ArrayList<ClinicalPatientData> augmentedList = new ArrayList<>(reportItems.size());
-        HashSet<String> parentResults = new HashSet<>();
-        for (ClinicalPatientData data : reportItems) {
-            if (data.getParentResult() != null && !parentResults.contains(data.getParentResult().getId())) {
-                parentResults.add(data.getParentResult().getId());
-                ClinicalPatientData marker = new ClinicalPatientData(data);
-                ResultService resultResultService = SpringContext.getBean(ResultService.class);
-                Result result = (data.getParentResult());
-                marker.setTestName(resultResultService.getSimpleResultValue(result));
-                marker.setResult(null);
-                marker.setTestRefRange(null);
-                marker.setParentMarker(true);
-                augmentedList.add(marker);
-            }
-
-            augmentedList.add(data);
-        }
-
-        reportItems = augmentedList;
+//        ArrayList<ClinicalPatientData> augmentedList = new ArrayList<>(reportItems.size());
+//        HashSet<String> parentResults = new HashSet<>();
+//        for (ClinicalPatientData data : reportItems) {
+//            if (data.getParentResult() != null && !parentResults.contains(data.getParentResult().getId())) {
+//                parentResults.add(data.getParentResult().getId());
+//                ClinicalPatientData marker = new ClinicalPatientData(data);
+//                ResultService resultResultService = SpringContext.getBean(ResultService.class);
+//                Result result = (data.getParentResult());
+//                marker.setTestName(resultResultService.getSimpleResultValue(result));
+//                marker.setResult(null);
+//                marker.setTestRefRange(null);
+//                marker.setParentMarker(true);
+//                augmentedList.add(marker);
+//            }
+//
+//            augmentedList.add(data);
+//        }
+//
+//        reportItems = augmentedList;
 
         String currentPanelId = null;
         for (ClinicalPatientData reportItem : reportItems) {
