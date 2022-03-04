@@ -439,4 +439,9 @@ public class NoteServiceImpl extends BaseObjectServiceImpl<Note, String> impleme
         return super.update(note);
     }
 
+    @Override
+    public boolean duplicateNoteExists(Note note) {
+        return getBaseObjectDAO().duplicateNoteExists(note);
+    }
+
 }

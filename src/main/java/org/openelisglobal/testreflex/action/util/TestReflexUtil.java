@@ -464,9 +464,12 @@ public class TestReflexUtil {
                         "This is part of a set of tests, please ensure all tests are resulted before validation",
                         "Reflex Test Note", "1"));
                 if (result.getParentResult() == null) {
-                    notes.add(noteService.createSavableNote(currentAnalysis, NoteType.INTERNAL,
+                    Note note = noteService.createSavableNote(currentAnalysis, NoteType.INTERNAL,
                             "This is part of a set of tests, please ensure all tests are resulted before validation",
-                            "Reflex Test Note", "1"));
+                            "Reflex Test Note", "1");
+                    if (!noteService.duplicateNoteExists(note)) {
+                        notes.add(note);
+                    }
                 }
                 noteService.saveAll(notes);
             }
