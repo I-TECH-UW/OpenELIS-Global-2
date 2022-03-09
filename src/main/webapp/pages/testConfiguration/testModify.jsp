@@ -1861,6 +1861,7 @@ td {
 					<td><span class="catalog-label"><spring:message code="configuration.test.catalog.age.range" /></span></td>
 					<td><span class="catalog-label"><spring:message code="configuration.test.catalog.normal.range" /></span></td>
 					<td><span class="catalog-label"><spring:message code="configuration.test.catalog.valid.range" /></span></td>
+                    <td><span class="catalog-label"><spring:message code="configuration.test.catalog.reporting.range" /></span></td>
 				</tr>
 				<%
 					String fLimitString = "";
@@ -1869,12 +1870,16 @@ td {
 						fLimitString = fLimitString + limitBean.getAgeRange() + ",";
 						fLimitString = fLimitString + limitBean.getNormalRange() + ",";
 						fLimitString = fLimitString + limitBean.getValidRange() + "|";
+                        fLimitString = fLimitString + limitBean.getReportingRange() + "|";
+
 				%>
 				<tr>
 					<td><b><%=limitBean.getGender()%></b></td>
 					<td><b><%=limitBean.getAgeRange()%></b></td>
 					<td><b><%=limitBean.getNormalRange()%></b></td>
 					<td><b><%=limitBean.getValidRange()%></b></td>
+                    <td><b><%=limitBean.getReportingRange()%></b></td>
+
 				</tr>
 				<%
 					}

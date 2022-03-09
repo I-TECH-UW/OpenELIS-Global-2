@@ -627,8 +627,10 @@ public class TestModifyEntryController extends BaseController {
             limit.setHighNormal(StringUtil.doubleWithInfinity(params.highLimit));
             limit.setLowValid(lowValid);
             limit.setHighValid(highValid);
+            if(lowReportingRange != null && highReportingRange != null ){
             limit.setLowReportingRange(lowReportingRange);
             limit.setHighReportingRange(highReportingRange);
+            }
             resultLimits.add(limit);
         }
 

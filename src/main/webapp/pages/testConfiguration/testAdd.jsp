@@ -1399,7 +1399,7 @@ td {
                 <td><span class="sexRange" style="display: none"><spring:message code="label.sex" /> </span></td>
                 <td colspan="4" align="center"><spring:message code="label.age.range" /> </td>
                 <td colspan="2" align="center"><spring:message code="label.range" /></td>
-                <td align="center"><spring:message code="label.reporting.range" /></td>
+                <td colspan="2" align="center"><spring:message code="label.reporting.range" /></td>
                 <td colspan="2"></td>
             </tr>
             <tr class="row_0">
