@@ -54,8 +54,8 @@ public class ResultLimitBean {
         return validRange;
     }
 
-    public void setValidRange(String reportingRange) {
-        this.reportingRange = reportingRange;
+    public void setValidRange(String validRange) {
+        this.validRange = validRange;
     }
 
     public String getReportingRange() {

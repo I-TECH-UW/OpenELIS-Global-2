@@ -217,7 +217,7 @@ public class TestModifyEntryController extends BaseController {
                     significantDigits, "-"));
             bean.setValidRange(SpringContext.getBean(ResultLimitService.class).getDisplayValidRange(limit,
                     significantDigits, "-"));
-            bean.setValidRange(SpringContext.getBean(ResultLimitService.class).getDisplayReportingRange(limit,
+            bean.setReportingRange(SpringContext.getBean(ResultLimitService.class).getDisplayReportingRange(limit,
                     significantDigits, "-"));        
             bean.setGender(limit.getGender());
             bean.setAgeRange(SpringContext.getBean(ResultLimitService.class).getDisplayAgeRange(limit, "-"));
