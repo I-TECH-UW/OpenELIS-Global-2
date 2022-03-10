@@ -241,7 +241,7 @@
 		<dependency>
 			<groupId>org.liquibase</groupId>
 			<artifactId>liquibase-core</artifactId>
-			<version>3.8.5</version>
+			<version>4.8.0</version>
 			<!-- remove logback so our logging continues under log4j2 -->
 			<exclusions>
 				<exclusion>
