@@ -14,7 +14,7 @@
 			</not>
 		</preConditions>
 		<addColumn schemaName="clinlims" tableName="result_limits">
-			<column name="low_reporting_range " type="boolean" defaultValueBoolean="false"/>
+			<column name="low_reporting_range " type="double precision" defaultValueBoolean="false"/>
 		</addColumn>
 	</changeSet>
 
@@ -25,7 +25,7 @@
 			</not>
 		</preConditions>
 		<addColumn schemaName="clinlims" tableName="result_limits">
-			<column name="high_reporting_range " type="boolean" defaultValueBoolean="false"/>
+			<column name="high_reporting_range " type="double precision" defaultValueBoolean="false"/>
 		</addColumn>
 	</changeSet>
 
