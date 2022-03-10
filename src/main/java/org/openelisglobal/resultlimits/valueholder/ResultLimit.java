@@ -16,6 +16,8 @@ public class ResultLimit extends BaseObject<String> {
     private double highNormal = Double.POSITIVE_INFINITY;
     private double lowValid = Double.NEGATIVE_INFINITY;
     private double highValid = Double.POSITIVE_INFINITY;
+    private double lowReportingRange = Double.NEGATIVE_INFINITY;
+    private double highReportingRange = Double.POSITIVE_INFINITY;
     private String dictionaryNormalId;
     private boolean alwaysValidate;
 
@@ -78,6 +80,23 @@ public class ResultLimit extends BaseObject<String> {
     public double getHighNormal() {
         return highNormal;
     }
+
+    public void setLowReportingRange(double lowReportingRange) {
+        this.lowReportingRange = lowReportingRange;
+    }
+
+    public double getLowReportingRange() {
+        return lowReportingRange;
+    }
+
+    public void setHighReportingRange(double highReportingRange) {
+        this.highReportingRange = highReportingRange;
+    }
+
+    public double getHighReportingRange() {
+        return highReportingRange;
+    }
+
 
     public void setHighNormal(double highNormal) {
         this.highNormal = highNormal;

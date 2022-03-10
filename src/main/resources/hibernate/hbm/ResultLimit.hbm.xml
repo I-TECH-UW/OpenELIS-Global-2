@@ -59,6 +59,15 @@
 			type="org.hibernate.type.DoubleType">
 			<column name="high_valid" />
 		</property>
+		<property name="lowReportingRange"
+			type="org.hibernate.type.DoubleType">
+			<column name="low_reporting_range" />
+		</property>
+
+		<property name="highReportingRange"
+			type="org.hibernate.type.DoubleType">
+			<column name="high_reporting_range" />
+		</property>
 		<property name="dictionaryNormalId"
 			type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType"
 			column="normal_dictionary_id" />

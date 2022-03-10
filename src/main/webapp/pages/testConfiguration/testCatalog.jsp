@@ -216,6 +216,7 @@ which closes it the last time through--%>
             <td><span class="catalog-label"><spring:message code="configuration.test.catalog.age.range" /></span></td>
             <td><span class="catalog-label"><spring:message code="configuration.test.catalog.normal.range" /></span></td>
             <td><span class="catalog-label"><spring:message code="configuration.test.catalog.valid.range" /></span></td>
+            <td><span class="catalog-label"><spring:message code="configuration.test.catalog.reporting.range" /></span></td>
         </tr>
         <% for (ResultLimitBean limitBean : bean.getResultLimits()) {%>
         <tr>
@@ -226,6 +227,8 @@ which closes it the last time through--%>
             <td><b><%=limitBean.getNormalRange()%></b>
             </td>
             <td><b><%=limitBean.getValidRange()%></b>
+            </td>
+            <td><b><%=limitBean.getReportingRange()%></b>
             </td>
         </tr>
         <% } %>

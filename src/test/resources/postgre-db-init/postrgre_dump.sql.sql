@@ -6348,6 +6348,8 @@ CREATE TABLE clinlims.result_limits (
     high_normal double precision DEFAULT 'Infinity'::double precision,
     low_valid double precision DEFAULT '-Infinity'::double precision,
     high_valid double precision DEFAULT 'Infinity'::double precision,
+    low_reporting_range double precision DEFAULT '-Infinity'::double precision,
+    high_reporting_range double precision DEFAULT 'Infinity'::double precision,
     lastupdated timestamp(6) without time zone,
     normal_dictionary_id numeric(10,0),
     always_validate boolean DEFAULT false
