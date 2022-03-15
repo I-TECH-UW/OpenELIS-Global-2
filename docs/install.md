@@ -76,7 +76,7 @@ and then
 	
 #### Create truststore with OpenELIS-Global's cert (or a CA that signs OE certs)
 
-**Choose ONE of the two methods below to reate your truststore**
+**Choose ONE of the two methods below to create your truststore**
 
 1. using keytool (more reliable):
    
@@ -110,6 +110,12 @@ and then
 	
 	    openssl pkcs12 -export -nokeys -in /etc/ssl/certs/apache-selfsigned.crt -out /etc/openelis-global/truststore
 
+
+#### Ensure keystore/truststore permissions are all correct
+
+Ensure all keystores have global read permission
+
+    sudo chmod 644 /etc/openelis-global/keystore /etc/openelis-global/truststore /etc/openelis-global/client_facing_keystore
 	
 ### Download OpenELIS Global
 
@@ -165,13 +171,6 @@ OpenELIS uses FHIR for much of its internal and external communication, if you d
 
 Wait while install procedure completes
 
-Finally, copy the keystore to be your client facing keystore
-
-    cp /etc/openelis-global/keystore /etc/openelis-global/client_facing_keystore
-    
-Ensure all keystores have global read permission
-
-    sudo chmod 644 /etc/openelis-global/keystore /etc/openelis-global/truststore /etc/openelis-global/client_facing_keystore
 
 Please note: OpenELIS Global 2.x is designed for and is testing on Chrome only. Please be sure to use Chrome for OpenELIS. 
 
