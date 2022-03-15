@@ -37,7 +37,7 @@ This updates the system from the sources in the sources list. It updates what ne
 
 3. Install Python
 
-        sudo apt-get install python
+        sudo apt-get install python2
     
 ### Create and Load SSL Certificates
 
@@ -68,7 +68,9 @@ For the self-signed certificate above, you would use:
 	
     sudo openssl pkcs12 -inkey /etc/ssl/private/apache-selfsigned.key -in /etc/ssl/certs/apache-selfsigned.crt -export -out /etc/openelis-global/keystore
 
-    cp /etc/openelis-global/keystore /etc/openelis-global/client_facing_keystore
+and then
+
+    sudo cp /etc/openelis-global/keystore /etc/openelis-global/client_facing_keystore
 
 **Be sure to remember your keystore password, you will need it later **
 	
