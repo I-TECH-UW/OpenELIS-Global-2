@@ -8,6 +8,9 @@ import java.util.stream.Collectors;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.openelisglobal.common.services.DisplayListService;
+import org.openelisglobal.common.services.DisplayListService.ListType;
+import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.login.service.LoginUserService;
 import org.openelisglobal.login.valueholder.LoginUser;
 import org.openelisglobal.systemuser.valueholder.SystemUser;
@@ -129,5 +132,17 @@ public class UserServiceImpl implements UserService {
             userRoleService.deleteAll(deletedUserRoles);
         }
         
+    }
+
+    @Override
+    public List<IdValuePair> getUserTestSections(String systemUserId) {
+        List<String> userLabUnits = new ArrayList<>(); 
+        UserLabUnitRoles userLabRoles =  getUserLabUnitRoles(systemUserId);
+        if(userLabRoles != null){
+            userLabRoles.getLabUnitRoleMap().forEach(roles -> userLabUnits.add(roles.getLabUnit())); 
+        }    
+        List<IdValuePair> allTestSections = DisplayListService.getInstance().getList(ListType.TEST_SECTION);
+        List<IdValuePair> userTestSections = allTestSections.stream().filter(test -> userLabUnits.contains(test.getId())).collect(Collectors.toList());
+        return userTestSections;
     }
 }

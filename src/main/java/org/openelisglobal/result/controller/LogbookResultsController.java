@@ -46,6 +46,7 @@ import org.openelisglobal.dictionary.valueholder.Dictionary;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.inventory.action.InventoryUtility;
 import org.openelisglobal.inventory.form.InventoryKitItem;
+import org.openelisglobal.login.valueholder.UserSessionData;
 import org.openelisglobal.note.service.NoteService;
 import org.openelisglobal.note.service.NoteServiceImpl.NoteType;
 import org.openelisglobal.organization.service.OrganizationService;
@@ -77,6 +78,7 @@ import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.statusofsample.util.StatusRules;
+import org.openelisglobal.systemuser.service.UserService;
 import org.openelisglobal.test.beanItems.TestResultItem;
 import org.openelisglobal.test.service.TestSectionService;
 import org.openelisglobal.test.valueholder.TestSection;
@@ -138,6 +140,8 @@ public class LogbookResultsController extends LogbookResultsBaseController {
     private NoteService noteService;
     @Autowired
     private FhirTransformService fhirTransformService;
+    @Autowired
+    private UserService userService;
 
     private final String RESULT_SUBJECT = "Result Note";
     private final String REFERRAL_CONFORMATION_ID;
@@ -174,7 +178,8 @@ public class LogbookResultsController extends LogbookResultsBaseController {
                     .getNumberedListWithLeadingBlank(DisplayListService.ListType.REJECTION_REASONS));
 
             // load testSections for drop down
-            List<IdValuePair> testSections = DisplayListService.getInstance().getList(ListType.TEST_SECTION);
+            UserSessionData usd = (UserSessionData)request.getSession().getAttribute(IActionConstants.USER_SESSION_DATA);
+            List<IdValuePair> testSections = userService.getUserTestSections(String.valueOf(usd.getSystemUserId()));
             newForm.setTestSections(testSections);
             newForm.setTestSectionsByName(DisplayListService.getInstance().getList(ListType.TEST_SECTION_BY_NAME));
         }
