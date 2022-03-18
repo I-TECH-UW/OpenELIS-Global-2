@@ -17,7 +17,7 @@
 		<major.version>2</major.version>
 		<minor.version>6</minor.version>
 		<state.version>1</state.version><!-- 0 = alpha, 1 = beta, 2 = rc, 3 = deployable -->
-		<fix.version>14</fix.version>
+		<fix.version>15</fix.version>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
@@ -36,6 +36,13 @@
 	</properties>
 
 	<dependencies>
+	<!-- https://mvnrepository.com/artifact/org.jruby/jruby-complete -->
+<dependency>
+    <groupId>org.jruby</groupId>
+    <artifactId>jruby-complete</artifactId>
+    <version>9.3.3.0</version>
+</dependency>
+
 		<dependency>
 			<groupId>org.jsmpp</groupId>
 			<artifactId>jsmpp</artifactId>
