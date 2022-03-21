@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
@@ -91,6 +92,13 @@ public class TypeOfSampleServiceImpl extends BaseObjectServiceImpl<TypeOfSample,
         } else {
             return testList;
         }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public synchronized List<Test> getActiveTestsBySampleTypeIdAndTestUnit(String sampleType, boolean b ,List<String> testUnitIds){
+        List<Test> testList = getActiveTestsBySampleTypeId(sampleType , b);
+        return testList.stream().filter(test -> testUnitIds.contains(test.getTestSection().getId())).collect(Collectors.toList());
     }
 
     @Override
