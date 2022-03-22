@@ -58,6 +58,7 @@ public class StatusResultsController extends BaseController {
 
     private final InventoryUtility inventoryUtility = SpringContext.getBean(InventoryUtility.class);
     private static final ConfigurationProperties configProperties = ConfigurationProperties.getInstance();
+    private static final String ROLE_RESULTS = "Results";
 
     private static Set<Integer> excludedStatusIds;
 
@@ -78,7 +79,7 @@ public class StatusResultsController extends BaseController {
             BindingResult result) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         if (result.hasErrors()) {
             saveErrors(result);
-            setSelectionLists(form);
+            setSelectionLists(form ,request);
             return findForward(FWD_FAIL, form);
         }
 
@@ -99,22 +100,24 @@ public class StatusResultsController extends BaseController {
         String newPage = request.getParameter("page");
         if (GenericValidator.isBlankOrNull(newPage)) {
             List<TestResultItem> tests;
+            List<TestResultItem> filteredTests = new ArrayList();
             if (GenericValidator.isBlankOrNull(newRequest) || newRequest.equals("false")) {
                 tests = setSearchResults(form, resultsUtility);
+                filteredTests = filterResultsByLabUnitRoles(request, tests ,ROLE_RESULTS);
 
                 if (configProperties.isPropertyValueEqual(Property.PATIENT_DATA_ON_RESULTS_BY_ROLE, "true")
                         && !userHasPermissionForModule(request, "PatientResults")) {
-                    for (TestResultItem resultItem : tests) {
+                    for (TestResultItem resultItem : filteredTests) {
                         resultItem.setPatientInfo("---");
                     }
                 }
 
-                paging.setDatabaseResults(request, form, tests);
+                paging.setDatabaseResults(request, form, filteredTests);
             } else {
                 setEmptyResults(form);
             }
 
-            setSelectionLists(form);
+            setSelectionLists(form ,request);
         } else {
             paging.page(request, form, Integer.parseInt(newPage));
         }
@@ -161,14 +164,13 @@ public class StatusResultsController extends BaseController {
         form.setInventoryItems(new ArrayList<InventoryKitItem>());
     }
 
-    private void setSelectionLists(StatusResultsForm form)
+    private void setSelectionLists(StatusResultsForm form ,HttpServletRequest request)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
         List<DropPair> analysisStatusList = getAnalysisStatusTypes();
 
         form.setAnalysisStatusSelections(analysisStatusList);
-        form.setTestSelections(
-                DisplayListService.getInstance().getListWithLeadingBlank(DisplayListService.ListType.ALL_TESTS));
+        form.setTestSelections(getAllDisplayUserTestsByLabUnit(request , ROLE_RESULTS));
 
         List<DropPair> sampleStatusList = getSampleStatusTypes();
         form.setSampleStatusSelections(sampleStatusList);

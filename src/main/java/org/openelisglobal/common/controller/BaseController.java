@@ -1,9 +1,11 @@
 package org.openelisglobal.common.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -14,11 +16,19 @@ import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.services.DisplayListService;
+import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.login.dao.UserModuleService;
 import org.openelisglobal.login.valueholder.UserSessionData;
+import org.openelisglobal.resultvalidation.bean.AnalysisItem;
+import org.openelisglobal.role.service.RoleService;
+import org.openelisglobal.systemuser.service.UserService;
+import org.openelisglobal.test.beanItems.TestResultItem;
+import org.openelisglobal.test.valueholder.Test;
+import org.openelisglobal.typeofsample.service.TypeOfSampleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
@@ -37,6 +47,12 @@ public abstract class BaseController implements IActionConstants {
     // Spring's dependency injection into methods for accessing the request
     @Autowired
     protected HttpServletRequest request;
+    @Autowired
+    private RoleService roleService;
+    @Autowired
+    private TypeOfSampleService typeOfSampleService;
+    @Autowired
+    private UserService userService;
 
     @Autowired
     protected UserModuleService userModuleService;
@@ -336,4 +352,48 @@ public abstract class BaseController implements IActionConstants {
         }
     }
 
+    protected List<TestResultItem> filterResultsByLabUnitRoles(HttpServletRequest request, List<TestResultItem> results ,String roleName) {
+        String resultsRoleId = roleService.getRoleByName(roleName).getId();
+        List<IdValuePair> testSections = userService.getUserTestSections(getSysUserId(request), resultsRoleId);
+        List<String> testUnitIds = new ArrayList<>();
+        if (testSections != null) {
+            testSections.forEach(test -> testUnitIds.add(test.getId()));
+        }
+        
+        List<Test> allTests = typeOfSampleService.getAllActiveTestsByTestUnit(true, testUnitIds);
+        List<String> allTestsIds = new ArrayList<>();
+        allTests.forEach(test -> allTestsIds.add(test.getId()));
+        return results.stream().filter(result -> allTestsIds.contains(result.getTestId())).collect(Collectors.toList());
+    }
+
+    protected List<IdValuePair> getAllDisplayUserTestsByLabUnit(HttpServletRequest request, String roleName) {
+        String resultsRoleId = roleService.getRoleByName(roleName).getId();
+        List<IdValuePair> testSections = userService.getUserTestSections(getSysUserId(request), resultsRoleId);
+        List<String> testUnitIds = new ArrayList<>();
+        if (testSections != null) {
+            testSections.forEach(test -> testUnitIds.add(test.getId()));
+        }
+        
+        List<Test> allTests = typeOfSampleService.getAllActiveTestsByTestUnit(true, testUnitIds);
+        List<String> allTestsIds = new ArrayList<>();
+        allTests.forEach(test -> allTestsIds.add(test.getId()));
+        
+        List<IdValuePair> allDisplayUserTests = DisplayListService.getInstance()
+                .getListWithLeadingBlank(DisplayListService.ListType.ALL_TESTS);
+        return allDisplayUserTests.stream().filter(test -> allTestsIds.contains(test.getId())).collect(Collectors.toList());
+    }
+
+    protected List<AnalysisItem> filterAnalystResultsByLabUnitRoles(HttpServletRequest request, List<AnalysisItem> results ,String roleName) {
+        String resultsRoleId = roleService.getRoleByName(roleName).getId();
+        List<IdValuePair> testSections = userService.getUserTestSections(getSysUserId(request), resultsRoleId);
+        List<String> testUnitIds = new ArrayList<>();
+        if (testSections != null) {
+            testSections.forEach(test -> testUnitIds.add(test.getId()));
+        }
+        
+        List<Test> allTests = typeOfSampleService.getAllActiveTestsByTestUnit(true, testUnitIds);
+        List<String> allTestsIds = new ArrayList<>();
+        allTests.forEach(test -> allTestsIds.add(test.getId()));
+        return results.stream().filter(result -> allTestsIds.contains(result.getTestId())).collect(Collectors.toList());
+    }
 }

@@ -29,15 +29,19 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.validator.GenericValidator;
+import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.common.util.XMLUtil;
+import org.openelisglobal.login.valueholder.UserSessionData;
 import org.openelisglobal.panel.service.PanelService;
 import org.openelisglobal.panel.valueholder.Panel;
 import org.openelisglobal.panelitem.service.PanelItemService;
 import org.openelisglobal.panelitem.valueholder.PanelItem;
+import org.openelisglobal.role.service.RoleService;
 import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.systemuser.service.UserService;
 import org.openelisglobal.test.service.TestSectionService;
 import org.openelisglobal.test.service.TestServiceImpl;
 import org.openelisglobal.test.valueholder.Test;
@@ -50,6 +54,7 @@ import org.openelisglobal.typeofsample.valueholder.TypeOfSamplePanel;
 public class SampleEntryTestsForTypeProvider extends BaseQueryProvider {
     private static String USER_TEST_SECTION_ID;
     private static String VARIABLE_SAMPLE_TYPE_ID;
+    private static final String ROLE_RECEPTION = "Reception";
 
     private PanelService panelService = SpringContext.getBean(PanelService.class);
     private TestSectionService testSectionService = SpringContext.getBean(TestSectionService.class);
@@ -57,6 +62,8 @@ public class SampleEntryTestsForTypeProvider extends BaseQueryProvider {
     private TypeOfSamplePanelService samplePanelService = SpringContext.getBean(TypeOfSamplePanelService.class);
     private PanelItemService panelItemService = SpringContext.getBean(PanelItemService.class);
     private TypeOfSampleService typeOfSampleService = SpringContext.getBean(TypeOfSampleService.class);
+    private UserService userService = SpringContext.getBean(UserService.class);
+    private RoleService roleService = SpringContext.getBean(RoleService.class);
 
     private boolean isVariableTypeOfSample;
 
@@ -77,17 +84,25 @@ public class SampleEntryTestsForTypeProvider extends BaseQueryProvider {
         isVariableTypeOfSample = VARIABLE_SAMPLE_TYPE_ID.equals(sampleType);
         StringBuilder xml = new StringBuilder();
 
-        String result = createSearchResultXML(sampleType, xml);
+        String receptionRoleId =  roleService.getRoleByName(ROLE_RECEPTION).getId();
+        UserSessionData usd = (UserSessionData)request.getSession().getAttribute(IActionConstants.USER_SESSION_DATA);
+        List<IdValuePair> testSections = userService.getUserTestSections(String.valueOf(usd.getSystemUserId()) ,receptionRoleId);
+        List<String> testUnitIds = new ArrayList<>();
+        if(testSections !=null){
+            testSections.forEach(test -> testUnitIds.add(test.getId()));
+        }
+
+        String result = createSearchResultXML(sampleType, xml ,testUnitIds);
 
         ajaxServlet.sendData(xml.toString(), result, request, response);
 
     }
 
-    private String createSearchResultXML(String sampleType, StringBuilder xml) {
+    private String createSearchResultXML(String sampleType, StringBuilder xml ,List<String> testUnitIds) {
 
         String success = VALID;
 
-        List<Test> tests = typeOfSampleService.getActiveTestsBySampleTypeId(sampleType, true);
+        List<Test> tests = typeOfSampleService.getActiveTestsBySampleTypeIdAndTestUnit(sampleType, true ,testUnitIds);
 
         Collections.sort(tests, new Comparator<Test>() {
             @Override

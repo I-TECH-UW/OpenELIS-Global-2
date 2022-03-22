@@ -3,6 +3,7 @@ package org.openelisglobal.result.controller;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -12,6 +13,7 @@ import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.DisplayListService.ListType;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.inventory.action.InventoryUtility;
@@ -22,8 +24,12 @@ import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.result.action.util.ResultsLoadUtility;
 import org.openelisglobal.result.action.util.ResultsPaging;
 import org.openelisglobal.result.form.PatientResultsForm;
+import org.openelisglobal.role.service.RoleService;
 import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.systemuser.service.UserService;
 import org.openelisglobal.test.beanItems.TestResultItem;
+import org.openelisglobal.test.valueholder.Test;
+import org.openelisglobal.typeofsample.service.TypeOfSampleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
@@ -39,6 +45,14 @@ public class PatientResultsController extends BaseController {
 
     @Autowired
     PatientService patientService;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private RoleService roleService;
+    @Autowired
+    private TypeOfSampleService typeOfSampleService;
+
+    private static final String ROLE_RESULTS = "Results";
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -86,7 +100,8 @@ public class PatientResultsController extends BaseController {
 
                 List<TestResultItem> results = resultsUtility.getGroupedTestsForPatient(patient);
 
-                form.setTestResult(results);
+                List<TestResultItem> filteredResults = filterResultsByLabUnitRoles(request, results ,ROLE_RESULTS);
+                form.setTestResult(filteredResults);
 
                 // move this out of results utility
                 resultsUtility.addIdentifingPatientInfo(patient, form);
@@ -98,7 +113,7 @@ public class PatientResultsController extends BaseController {
                     addEmptyInventoryList(form);
                 }
 
-                paging.setDatabaseResults(request, form, results);
+                paging.setDatabaseResults(request, form, filteredResults);
 
             } else {
                 form.setTestResult(new ArrayList<TestResultItem>());
