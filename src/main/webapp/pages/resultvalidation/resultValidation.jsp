@@ -209,6 +209,35 @@ function updateLogValue(element, index ){
 	}
 }
 
+function toggleSampleSelectAll( element ) {
+    var index, item, checkboxes,matchedCheckboxes;
+
+	if (element.id == "sampleAccepted" ) {
+		checkboxes = jQuery(".accepted");
+		matchedCheckboxes = jQuery(".rejected");
+	} else if (element.id == "sampleRejected" ) {
+		checkboxes = jQuery(".rejected");
+		matchedCheckboxes = jQuery(".accepted");
+	} 
+
+	if (element.checked == true ) {
+		for (index = 0; index < checkboxes.length; ++index) {
+			  item = checkboxes[index];
+			  item.checked = true;
+		}
+		for (index = 0; index < matchedCheckboxes.length; ++index) {
+			  item = matchedCheckboxes[index];
+			  item.checked = false;
+		}
+	} else if (element.checked == false ) {
+		for (index = 0; index < checkboxes.length; ++index) {
+			  item = checkboxes[index];
+			  item.checked = false;
+		}
+	}
+
+}
+
 function trim(element, significantDigits){
     if( isNaN(significantDigits) || isNaN(element.value) ){
         return;
@@ -416,17 +445,20 @@ function altAccessionHighlightSearch(accessionNumber) {
 	    		</td>
 	    		<td style="text-align:center">
 					<form:checkbox path="resultList[${iter.index}].sampleIsAccepted"
-								   id='sampleAccepted_${resultList.sampleGroupingNumber}'
+								   id='sampleAccepted'
 								   cssClass="accepted"
+								   name="sampleAccepted"
 								   onchange="markUpdated(); makeDirty();" 
-								   onclick='acceptSample( this, "${resultList.sampleGroupingNumber}");' />
+								   onclick="toggleSampleSelectAll(this);"/>
 				</td>
 				<td style="text-align:center">
 					<form:checkbox path="resultList[${iter.index}].sampleIsRejected"
-								   id='sampleRejected_${resultList.sampleGroupingNumber}'
+								   id='sampleRejected'
 								   cssClass="rejected"
+								   name="sampleRejected"
 								   onchange="markUpdated(); makeDirty();"
-								   onclick='rejectSample( this, "${resultList.sampleGroupingNumber}");' />
+								   onclick="toggleSampleSelectAll(this);"
+								  />
 				</td>
 				<td>&nbsp;</td>
 			</tr>
