@@ -135,12 +135,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<IdValuePair> getUserTestSections(String systemUserId) {
-        List<String> userLabUnits = new ArrayList<>(); 
-        UserLabUnitRoles userLabRoles =  getUserLabUnitRoles(systemUserId);
-        if(userLabRoles != null){
-            userLabRoles.getLabUnitRoleMap().forEach(roles -> userLabUnits.add(roles.getLabUnit())); 
-        }    
+    public List<IdValuePair> getUserTestSections(String systemUserId, String userRole) {
+        List<String> userLabUnits = new ArrayList<>();
+        UserLabUnitRoles userLabRoles = getUserLabUnitRoles(systemUserId);
+        if (userLabRoles != null) {
+            userLabRoles.getLabUnitRoleMap().forEach(roles -> {
+                if (roles.getRoles().contains(userRole)) {
+                    userLabUnits.add(roles.getLabUnit());
+                }
+            });
+        }
         List<IdValuePair> allTestSections = DisplayListService.getInstance().getList(ListType.TEST_SECTION);
         List<IdValuePair> userTestSections = allTestSections.stream().filter(test -> userLabUnits.contains(test.getId())).collect(Collectors.toList());
         return userTestSections;

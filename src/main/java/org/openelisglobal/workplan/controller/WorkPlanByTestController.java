@@ -46,6 +46,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class WorkPlanByTestController extends BaseWorkplanController {
 
     private static final String[] ALLOWED_FIELDS = new String[] {};
+    private static final String ROLE_RESULTS = "Results";
 
     @Autowired
     private AnalysisService analysisService;
@@ -72,6 +73,7 @@ public class WorkPlanByTestController extends BaseWorkplanController {
         request.getSession().setAttribute(SAVE_DISABLED, "true");
 
         List<TestResultItem> workplanTests;
+        List<TestResultItem> filteredTests;
 
         String testType = "";
         if (!result.hasFieldErrors("selectedSearchID")) {
@@ -84,15 +86,17 @@ public class WorkPlanByTestController extends BaseWorkplanController {
             if (testType.equals("NFS")) {
                 testName = "NFS";
                 workplanTests = getWorkplanForNFSTest(testType);
+                filteredTests = filterResultsByLabUnitRoles(request, workplanTests ,ROLE_RESULTS);
             } else {
                 testName = getTestName(testType);
                 workplanTests = getWorkplanByTest(testType);
+                filteredTests = filterResultsByLabUnitRoles(request, workplanTests ,ROLE_RESULTS);
             }
             ResultsLoadUtility resultsLoadUtility = new ResultsLoadUtility();
-            resultsLoadUtility.sortByAccessionAndSequence(workplanTests);
+            resultsLoadUtility.sortByAccessionAndSequence(filteredTests);
             form.setTestTypeID(testType);
             form.setTestName(testName);
-            form.setWorkplanTests(workplanTests);
+            form.setWorkplanTests(filteredTests);
             form.setSearchFinished(Boolean.TRUE);
 
         } else {
@@ -102,7 +106,7 @@ public class WorkPlanByTestController extends BaseWorkplanController {
             form.setWorkplanTests(new ArrayList<TestResultItem>());
         }
 
-        form.setSearchTypes(getTestDropdownList());
+        form.setSearchTypes(getTestDropdownList(request));
         if (!result.hasFieldErrors("type")) {
             form.setType(oldForm.getType());
         }
@@ -113,8 +117,8 @@ public class WorkPlanByTestController extends BaseWorkplanController {
         return findForward(FWD_SUCCESS, form);
     }
 
-    private List<IdValuePair> getTestDropdownList() {
-        List<IdValuePair> testList = DisplayListService.getInstance().getList(DisplayListService.ListType.ALL_TESTS);
+    private List<IdValuePair> getTestDropdownList(HttpServletRequest request) {
+        List<IdValuePair> testList = getAllDisplayUserTestsByLabUnit(request , ROLE_RESULTS);
 
         if (HAS_NFS_PANEL) {
             testList = adjustNFSTests(testList);

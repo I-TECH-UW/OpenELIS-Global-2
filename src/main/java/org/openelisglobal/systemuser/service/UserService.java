@@ -20,5 +20,5 @@ public interface UserService {
 
     List<UserLabUnitRoles> getAllUserLabUnitRoles();
 
-    List<IdValuePair> getUserTestSections(String systemUserId);
+    List<IdValuePair> getUserTestSections(String systemUserId ,String userRole);
 }

@@ -81,6 +81,8 @@ public class UnifiedSystemUserController extends BaseController {
     private static final String RESERVED_ADMIN_NAME = "admin";
 
     private static final String GLOBAL_ADMIN = "Global Administrator";
+    private static final String GLOBAL_ROLES_GROUP = "Global Roles";
+    private static final String LAB_ROLES_GROUP = "Lab Unit Roles";
     private static String GLOBAL_ADMIN_ID;
     public static final char DEFAULT_OBFUSCATED_CHARACTER = '@';
 
@@ -138,8 +140,8 @@ public class UnifiedSystemUserController extends BaseController {
 
         List<DisplayRole> displayRoles = convertToDisplayRoles(roles);
         displayRoles = sortAndGroupRoles(displayRoles);
-        String globalParentRoleId =  roleService.getRoleByName("Global Roles").getId();
-        String labUnitRoleId = roleService.getRoleByName("Lab Unit Roles").getId();
+        String globalParentRoleId =  roleService.getRoleByName(GLOBAL_ROLES_GROUP).getId();
+        String labUnitRoleId = roleService.getRoleByName(LAB_ROLES_GROUP).getId();
    
         List<DisplayRole> globalRoles = displayRoles.stream().filter(role -> role.getParentRole() != null).filter(role -> role.getParentRole().equals(globalParentRoleId)).collect(Collectors.toList());
         List<DisplayRole> labUnitRoles = displayRoles.stream().filter(role -> role.getParentRole() != null).filter(role -> role.getParentRole().equals(labUnitRoleId)).collect(Collectors.toList());

@@ -46,7 +46,6 @@ import org.openelisglobal.dictionary.valueholder.Dictionary;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.inventory.action.InventoryUtility;
 import org.openelisglobal.inventory.form.InventoryKitItem;
-import org.openelisglobal.login.valueholder.UserSessionData;
 import org.openelisglobal.note.service.NoteService;
 import org.openelisglobal.note.service.NoteServiceImpl.NoteType;
 import org.openelisglobal.organization.service.OrganizationService;
@@ -74,6 +73,7 @@ import org.openelisglobal.result.valueholder.ResultInventory;
 import org.openelisglobal.result.valueholder.ResultSignature;
 import org.openelisglobal.resultlimit.service.ResultLimitService;
 import org.openelisglobal.resultlimits.valueholder.ResultLimit;
+import org.openelisglobal.role.service.RoleService;
 import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.spring.util.SpringContext;
@@ -142,9 +142,12 @@ public class LogbookResultsController extends LogbookResultsBaseController {
     private FhirTransformService fhirTransformService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private RoleService roleService;
 
     private final String RESULT_SUBJECT = "Result Note";
     private final String REFERRAL_CONFORMATION_ID;
+    private static final String ROLE_RESULTS = "Results";
 
     private LogbookResultsController(ReferralTypeService referralTypeService) {
         ReferralType referralType = referralTypeService.getReferralTypeByName("Confirmation");
@@ -178,8 +181,8 @@ public class LogbookResultsController extends LogbookResultsBaseController {
                     .getNumberedListWithLeadingBlank(DisplayListService.ListType.REJECTION_REASONS));
 
             // load testSections for drop down
-            UserSessionData usd = (UserSessionData)request.getSession().getAttribute(IActionConstants.USER_SESSION_DATA);
-            List<IdValuePair> testSections = userService.getUserTestSections(String.valueOf(usd.getSystemUserId()));
+            String resultsRoleId =  roleService.getRoleByName(ROLE_RESULTS).getId();
+            List<IdValuePair> testSections = userService.getUserTestSections(getSysUserId(request) ,resultsRoleId);
             newForm.setTestSections(testSections);
             newForm.setTestSectionsByName(DisplayListService.getInstance().getList(ListType.TEST_SECTION_BY_NAME));
         }
@@ -229,6 +232,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 
 
         List<TestResultItem> tests;
+        List<TestResultItem> filteredTests = new ArrayList<>() ;
 
         ResultsPaging paging = new ResultsPaging();
         List<InventoryKitItem> inventoryList = new ArrayList<>();
@@ -243,9 +247,10 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 
             if (!GenericValidator.isBlankOrNull(form.getTestSectionId())) {
                 tests = resultsLoadUtility.getUnfinishedTestResultItemsInTestSection(form.getTestSectionId());
+                filteredTests = filterResultsByLabUnitRoles(request, tests ,ROLE_RESULTS);
                 int count = resultsLoadUtility.getTotalCountAnalysisByTestSectionAndStatus(form.getTestSectionId());
                 request.setAttribute("analysisCount", count);
-                request.setAttribute("pageSize", tests.size());
+                request.setAttribute("pageSize", filteredTests.size());
 
                 TestSection ts = null;
                 if (!GenericValidator.isBlankOrNull(form.getTestSectionId())) {
@@ -268,9 +273,10 @@ public class LogbookResultsController extends LogbookResultsBaseController {
                 form.setSearchFinished(true);
             } else if (!GenericValidator.isBlankOrNull(form.getAccessionNumber())) {
                 tests = resultsLoadUtility.getUnfinishedTestResultItemsByAccession(form.getAccessionNumber());
-                int count = resultsLoadUtility.getTotalCountAnalysisByAccessionAndStatus(form.getAccessionNumber());
+                filteredTests = filterResultsByLabUnitRoles(request, tests ,ROLE_RESULTS);
+                int count = resultsLoadUtility.getTotalCountAnalysisByAccessionAndStatus(form.getAccessionNumber());  
                 request.setAttribute("analysisCount", count);
-                request.setAttribute("pageSize", tests.size());
+                request.setAttribute("pageSize", filteredTests.size());
                 form.setSearchFinished(true);
             } else {
                 tests = new ArrayList<>();
@@ -278,12 +284,12 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 
             if (ConfigurationProperties.getInstance().isPropertyValueEqual(Property.PATIENT_DATA_ON_RESULTS_BY_ROLE,
                     "true") && !userHasPermissionForModule(request, "PatientResults")) {
-                for (TestResultItem resultItem : tests) {
+                for (TestResultItem resultItem : filteredTests) {
                     resultItem.setPatientInfo("---");
                 }
             }
 
-            paging.setDatabaseResults(request, form, tests);
+            paging.setDatabaseResults(request, form, filteredTests);
 
         } else {
             int requestedPageNumber = Integer.parseInt(requestedPage);

@@ -3,6 +3,7 @@ package org.openelisglobal.result.controller;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -47,6 +48,8 @@ public class AccessionResultsController extends BaseController {
     private SampleHumanService sampleHumanService;
     @Autowired
     private UserRoleService userRoleService;
+
+    private static final String ROLE_RESULTS = "Results";
 
     public AccessionResultsController(RoleService roleService) {
         Role editRole = roleService.getRoleByName("Results modifier");
@@ -103,6 +106,7 @@ public class AccessionResultsController extends BaseController {
                     resultsUtility.addIdentifingPatientInfo(patient, form);
 
                     List<TestResultItem> results = resultsUtility.getGroupedTestsForSample(sample, patient);
+                    List<TestResultItem> filteredResults = filterResultsByLabUnitRoles(request, results , ROLE_RESULTS);
 
                     if (resultsUtility.inventoryNeeded()) {
                         addInventory(form);
@@ -111,7 +115,7 @@ public class AccessionResultsController extends BaseController {
                         addEmptyInventoryList(form, accessionNumber);
                     }
 
-                    paging.setDatabaseResults(request, form, results);
+                    paging.setDatabaseResults(request, form, filteredResults);
                 } else {
                     setEmptyResults(form, accessionNumber);
                 }
@@ -125,7 +129,6 @@ public class AccessionResultsController extends BaseController {
 
         return findForward(FWD_SUCCESS, form);
     }
-
     private boolean modifyResultsRoleBased() {
         return "true"
                 .equals(ConfigurationProperties.getInstance().getPropertyValue(Property.roleRequiredForModifyResults));

@@ -102,6 +102,17 @@ public class TypeOfSampleServiceImpl extends BaseObjectServiceImpl<TypeOfSample,
     }
 
     @Override
+    public List<Test> getAllActiveTestsByTestUnit(boolean b, List<String> testUnitIds) {
+        List<Test> allTests = new ArrayList<>();
+        List<TypeOfSample> allSampleTypes = getAllTypeOfSamples();
+        allSampleTypes.forEach(sample -> {
+            List<Test> testList = getActiveTestsBySampleTypeIdAndTestUnit(sample.getId(), b, testUnitIds);
+            allTests.addAll(testList);
+        });   
+        return allTests;
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public List<Test> getAllTestsBySampleTypeId(String sampleTypeId) {
         List<Test> testList = new ArrayList<>();

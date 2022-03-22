@@ -46,6 +46,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class WorkplanByPanelController extends BaseWorkplanController {
 
     private static final String[] ALLOWED_FIELDS = new String[] { "selectedSearchID" };
+    private static final String ROLE_RESULTS = "Results";
 
     @Autowired
     private AnalysisService analysisService;
@@ -70,17 +71,19 @@ public class WorkplanByPanelController extends BaseWorkplanController {
         request.getSession().setAttribute(SAVE_DISABLED, "true");
 
         List<TestResultItem> workplanTests;
+        List<TestResultItem> filteredTests;
 
         String panelID = oldForm.getSelectedSearchID();
 
         if (!GenericValidator.isBlankOrNull(panelID)) {
             String panelName = getPanelName(panelID);
             workplanTests = getWorkplanByPanel(panelID);
+            filteredTests = filterResultsByLabUnitRoles(request, workplanTests ,ROLE_RESULTS);
 
             // resultsLoadUtility.sortByAccessionAndSequence(workplanTests);
             form.setTestTypeID(panelID);
             form.setTestName(panelName);
-            form.setWorkplanTests(workplanTests);
+            form.setWorkplanTests(filteredTests);
             form.setSearchFinished(Boolean.TRUE);
         } else {
             // no search done, set workplanTests as empty

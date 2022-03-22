@@ -31,6 +31,7 @@ import org.openelisglobal.common.services.registration.ValidationUpdateRegister;
 import org.openelisglobal.common.services.registration.interfaces.IResultUpdate;
 import org.openelisglobal.common.services.serviceBeans.ResultSaveBean;
 import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.validator.BaseErrors;
 import org.openelisglobal.dataexchange.fhir.exception.FhirLocalPersistingException;
 import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
@@ -52,16 +53,19 @@ import org.openelisglobal.resultvalidation.form.ResultValidationForm;
 import org.openelisglobal.resultvalidation.service.ResultValidationService;
 import org.openelisglobal.resultvalidation.util.ResultValidationSaveService;
 import org.openelisglobal.resultvalidation.util.ResultsValidationUtility;
+import org.openelisglobal.role.service.RoleService;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.samplehuman.service.SampleHumanService;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.systemuser.service.SystemUserService;
+import org.openelisglobal.systemuser.service.UserService;
 import org.openelisglobal.systemuser.valueholder.SystemUser;
 import org.openelisglobal.test.service.TestSectionService;
 import org.openelisglobal.test.valueholder.TestSection;
 import org.openelisglobal.testresult.service.TestResultService;
 import org.openelisglobal.testresult.valueholder.TestResult;
 import org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
@@ -76,6 +80,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class ResultValidationController extends BaseResultValidationController {
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private RoleService roleService;
 
     private static final String[] ALLOWED_FIELDS = new String[] { "testSectionId", "paging.currentPage", "testSection",
             "testName", "resultList*.accessionNumber", "resultList*.analysisId", "resultList*.testId",
@@ -99,6 +107,7 @@ public class ResultValidationController extends BaseResultValidationController {
     private final String RESULT_SUBJECT = "Result Note";
     private final String RESULT_TABLE_ID;
     private final String RESULT_REPORT_ID;
+    private static final String ROLE_VALIDATION = "Validation";
 
     public ResultValidationController(AnalysisService analysisService, TestResultService testResultService,
             SampleHumanService sampleHumanService, DocumentTrackService documentTrackService,
@@ -153,7 +162,9 @@ public class ResultValidationController extends BaseResultValidationController {
         if (GenericValidator.isBlankOrNull(newPage)) {
 
             // load testSections for drop down
-            form.setTestSections(DisplayListService.getInstance().getList(ListType.TEST_SECTION));
+            String resultsRoleId =  roleService.getRoleByName(ROLE_VALIDATION).getId();
+            List<IdValuePair> testSections = userService.getUserTestSections(getSysUserId(request) ,resultsRoleId);
+            form.setTestSections(testSections);
             form.setTestSectionsByName(DisplayListService.getInstance().getList(ListType.TEST_SECTION_BY_NAME));
 
             if (!GenericValidator.isBlankOrNull(form.getTestSectionId())) {
@@ -161,6 +172,7 @@ public class ResultValidationController extends BaseResultValidationController {
             }
 
             List<AnalysisItem> resultList;
+            List<AnalysisItem> filteredresultList = new ArrayList<>();
             ResultsValidationUtility resultsValidationUtility = SpringContext.getBean(ResultsValidationUtility.class);
             setRequestType(ts == null ? MessageUtil.getMessage("workplan.unit.types") : ts.getLocalizedName());
 
@@ -169,15 +181,16 @@ public class ResultValidationController extends BaseResultValidationController {
 
                 resultList = resultsValidationUtility.getResultValidationList(getValidationStatus(),
                         form.getTestSectionId(), form.getAccessionNumber());
+                filteredresultList = filterAnalystResultsByLabUnitRoles(request, resultList, ROLE_VALIDATION);     
                 int count = resultsValidationUtility.getCountResultValidationList(getValidationStatus(),
                         form.getTestSectionId());
                 request.setAttribute("analysisCount", count);
-                request.setAttribute("pageSize", resultList.size());
+                request.setAttribute("pageSize", filteredresultList.size());
                 form.setSearchFinished(true);
                 } else {
                 resultList = new ArrayList<>();
             }
-            paging.setDatabaseResults(request, form, resultList);
+            paging.setDatabaseResults(request, form, filteredresultList);
         } else {
             paging.page(request, form, Integer.parseInt(newPage));
         }
