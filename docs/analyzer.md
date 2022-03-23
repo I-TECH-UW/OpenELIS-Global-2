@@ -8,6 +8,8 @@ which we are phasing out, has the code for importing analyzer results as
 part of the core of OpenELIS. The newer model which all new analyzers
 should use is a plugin model.
 
+You can find a set of precompiled analyzer plug-ins in our [installer folder here](https://www.dropbox.com/sh/xzjxca5ya73dylt/AACf35yDhjerS1V-C1SVNgJ2a?dl=0)
+
 ## Basics
 
 There is a directory /var/lib/openelis-global/plugins/ in OpenElis. Any jar file in this directory
