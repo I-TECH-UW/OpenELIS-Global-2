@@ -156,7 +156,10 @@ function mySaveAction() {
 		}
    }					  
 
-					  
+	function activateSave(){ 
+		document.getElementsByName('save')[0].disabled =false ;
+	}	
+				  
     function renderUserRolesData() {
 		for (let test in userRolesData) {
 		    counter++
@@ -360,7 +363,7 @@ function mySaveAction() {
 			<table id="rolesTable"  style="display: none">
 			<tr> 
 				<td>
-					<form:select path="testSectionId">
+					<form:select path="testSectionId" onchange="activateSave();">
 								<option value="none"></option>
 								<form:options items="${form.testSections}" itemLabel="value" itemValue="id" />
 					</form:select>
@@ -378,6 +381,7 @@ function mySaveAction() {
 				<form:checkbox path="selectedLabUnitRoles" 
 								onclick="selectChildren(this, ${role.childrenID});makeDirty();"
 								value="${role.roleId}"
+								onchange="activateSave();"
 								/>		
 					<c:out value="${role.roleName}" />
 				</td>
