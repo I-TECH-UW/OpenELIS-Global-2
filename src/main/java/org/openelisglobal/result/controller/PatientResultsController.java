@@ -13,7 +13,6 @@ import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.DisplayListService.ListType;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.util.ConfigurationProperties;
-import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.inventory.action.InventoryUtility;
@@ -24,12 +23,9 @@ import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.result.action.util.ResultsLoadUtility;
 import org.openelisglobal.result.action.util.ResultsPaging;
 import org.openelisglobal.result.form.PatientResultsForm;
-import org.openelisglobal.role.service.RoleService;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.systemuser.service.UserService;
 import org.openelisglobal.test.beanItems.TestResultItem;
-import org.openelisglobal.test.valueholder.Test;
-import org.openelisglobal.typeofsample.service.TypeOfSampleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
@@ -47,11 +43,6 @@ public class PatientResultsController extends BaseController {
     PatientService patientService;
     @Autowired
     private UserService userService;
-    @Autowired
-    private RoleService roleService;
-    @Autowired
-    private TypeOfSampleService typeOfSampleService;
-
     private static final String ROLE_RESULTS = "Results";
 
     @InitBinder
@@ -100,7 +91,7 @@ public class PatientResultsController extends BaseController {
 
                 List<TestResultItem> results = resultsUtility.getGroupedTestsForPatient(patient);
 
-                List<TestResultItem> filteredResults = filterResultsByLabUnitRoles(request, results ,ROLE_RESULTS);
+                List<TestResultItem> filteredResults = userService.filterResultsByLabUnitRoles(getSysUserId(request), results ,ROLE_RESULTS);
                 form.setTestResult(filteredResults);
 
                 // move this out of results utility

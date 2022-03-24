@@ -3,7 +3,6 @@ package org.openelisglobal.result.controller;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -26,6 +25,7 @@ import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.samplehuman.service.SampleHumanService;
 import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.systemuser.service.UserService;
 import org.openelisglobal.test.beanItems.TestResultItem;
 import org.openelisglobal.userrole.service.UserRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +48,9 @@ public class AccessionResultsController extends BaseController {
     private SampleHumanService sampleHumanService;
     @Autowired
     private UserRoleService userRoleService;
+    @Autowired
+    private UserService userService;
+
 
     private static final String ROLE_RESULTS = "Results";
 
@@ -106,7 +109,7 @@ public class AccessionResultsController extends BaseController {
                     resultsUtility.addIdentifingPatientInfo(patient, form);
 
                     List<TestResultItem> results = resultsUtility.getGroupedTestsForSample(sample, patient);
-                    List<TestResultItem> filteredResults = filterResultsByLabUnitRoles(request, results , ROLE_RESULTS);
+                    List<TestResultItem> filteredResults = userService.filterResultsByLabUnitRoles(getSysUserId(request), results , ROLE_RESULTS);
 
                     if (resultsUtility.inventoryNeeded()) {
                         addInventory(form);

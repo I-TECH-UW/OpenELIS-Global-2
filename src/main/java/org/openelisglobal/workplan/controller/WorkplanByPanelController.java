@@ -28,6 +28,7 @@ import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.sampleqaevent.service.SampleQaEventService;
 import org.openelisglobal.sampleqaevent.valueholder.SampleQaEvent;
 import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.systemuser.service.UserService;
 import org.openelisglobal.test.beanItems.TestResultItem;
 import org.openelisglobal.test.service.TestServiceImpl;
 import org.openelisglobal.workplan.form.WorkplanForm;
@@ -56,6 +57,8 @@ public class WorkplanByPanelController extends BaseWorkplanController {
     private PanelItemService panelItemService;
     @Autowired
     private SampleQaEventService sampleQaEventService;
+    @Autowired
+    private UserService userService;
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -78,7 +81,7 @@ public class WorkplanByPanelController extends BaseWorkplanController {
         if (!GenericValidator.isBlankOrNull(panelID)) {
             String panelName = getPanelName(panelID);
             workplanTests = getWorkplanByPanel(panelID);
-            filteredTests = filterResultsByLabUnitRoles(request, workplanTests ,ROLE_RESULTS);
+            filteredTests = userService.filterResultsByLabUnitRoles(getSysUserId(request), workplanTests ,ROLE_RESULTS);
 
             // resultsLoadUtility.sortByAccessionAndSequence(workplanTests);
             form.setTestTypeID(panelID);

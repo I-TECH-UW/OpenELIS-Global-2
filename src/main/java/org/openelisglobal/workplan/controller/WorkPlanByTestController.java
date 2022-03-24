@@ -27,6 +27,7 @@ import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.sampleqaevent.service.SampleQaEventService;
 import org.openelisglobal.sampleqaevent.valueholder.SampleQaEvent;
 import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.systemuser.service.UserService;
 import org.openelisglobal.test.beanItems.TestResultItem;
 import org.openelisglobal.test.service.TestServiceImpl;
 import org.openelisglobal.workplan.form.WorkplanForm;
@@ -52,6 +53,8 @@ public class WorkPlanByTestController extends BaseWorkplanController {
     private AnalysisService analysisService;
     @Autowired
     private SampleQaEventService sampleQaEventService;
+    @Autowired
+    private UserService userService;
     private static boolean HAS_NFS_PANEL = false;
 
     static {
@@ -86,11 +89,11 @@ public class WorkPlanByTestController extends BaseWorkplanController {
             if (testType.equals("NFS")) {
                 testName = "NFS";
                 workplanTests = getWorkplanForNFSTest(testType);
-                filteredTests = filterResultsByLabUnitRoles(request, workplanTests ,ROLE_RESULTS);
+                filteredTests = userService.filterResultsByLabUnitRoles(getSysUserId(request), workplanTests ,ROLE_RESULTS);
             } else {
                 testName = getTestName(testType);
                 workplanTests = getWorkplanByTest(testType);
-                filteredTests = filterResultsByLabUnitRoles(request, workplanTests ,ROLE_RESULTS);
+                filteredTests = userService.filterResultsByLabUnitRoles(getSysUserId(request), workplanTests ,ROLE_RESULTS);
             }
             ResultsLoadUtility resultsLoadUtility = new ResultsLoadUtility();
             resultsLoadUtility.sortByAccessionAndSequence(filteredTests);
@@ -118,7 +121,7 @@ public class WorkPlanByTestController extends BaseWorkplanController {
     }
 
     private List<IdValuePair> getTestDropdownList(HttpServletRequest request) {
-        List<IdValuePair> testList = getAllDisplayUserTestsByLabUnit(request , ROLE_RESULTS);
+        List<IdValuePair> testList = userService.getAllDisplayUserTestsByLabUnit(getSysUserId(request) , ROLE_RESULTS);
 
         if (HAS_NFS_PANEL) {
             testList = adjustNFSTests(testList);

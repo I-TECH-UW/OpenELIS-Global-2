@@ -6,7 +6,9 @@ import java.util.Map;
 
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.login.valueholder.LoginUser;
+import org.openelisglobal.resultvalidation.bean.AnalysisItem;
 import org.openelisglobal.systemuser.valueholder.SystemUser;
+import org.openelisglobal.test.beanItems.TestResultItem;
 import org.openelisglobal.userrole.valueholder.UserLabUnitRoles;
 
 public interface UserService {
@@ -21,4 +23,10 @@ public interface UserService {
     List<UserLabUnitRoles> getAllUserLabUnitRoles();
 
     List<IdValuePair> getUserTestSections(String systemUserId ,String userRole);
+
+    List<IdValuePair> getAllDisplayUserTestsByLabUnit(String SystemUserId, String roleName);
+
+    List<AnalysisItem> filterAnalystResultsByLabUnitRoles(String SystemUserId, List<AnalysisItem> results ,String roleName);
+
+    List<TestResultItem> filterResultsByLabUnitRoles(String SystemUserId, List<TestResultItem> results ,String roleName);
 }
