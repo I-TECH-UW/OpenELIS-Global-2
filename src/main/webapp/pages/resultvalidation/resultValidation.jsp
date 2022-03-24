@@ -213,11 +213,12 @@ function toggleSampleSelectAll( element,groupingNumber ) {
     var index, item, checkboxes,matchedCheckboxes;
 
 	if (element.id == "sampleAccepted_" + groupingNumber ) {
-		checkboxes = jQuery(".accepted");
-		matchedCheckboxes = jQuery(".rejected");
+		 checkboxes = jQuery(".accepted_" + groupingNumber);
+		 matchedCheckboxes = jQuery(".rejected_" + groupingNumber);
+
 	} else if (element.id == "sampleRejected_" + groupingNumber) {
-		checkboxes = jQuery(".rejected");
-		matchedCheckboxes = jQuery(".accepted");
+		checkboxes = jQuery(".rejected_" + groupingNumber);
+		 matchedCheckboxes = jQuery(".accepted_" + groupingNumber);
 	} 
 
 	if (element.checked == true ) {
@@ -447,6 +448,7 @@ function altAccessionHighlightSearch(accessionNumber) {
 					<form:checkbox path="resultList[${iter.index}].sampleIsAccepted"
 								   id='sampleAccepted_${resultList.sampleGroupingNumber}'
 								   cssClass="accepted"
+								   value="on"
 								   name="sampleAccepted_${resultList.sampleGroupingNumber}'"
 								   onchange="markUpdated(); makeDirty();" 
 								   onclick='toggleSampleSelectAll(this,"${resultList.sampleGroupingNumber}");'/>
@@ -455,6 +457,7 @@ function altAccessionHighlightSearch(accessionNumber) {
 					<form:checkbox path="resultList[${iter.index}].sampleIsRejected"
 								   id='sampleRejected_${resultList.sampleGroupingNumber}'
 								   cssClass="rejected"
+								   value="on"
 								   name="sampleRejected_${resultList.sampleGroupingNumber}'"
 								   onchange="markUpdated(); makeDirty();"
 								   onclick='toggleSampleSelectAll(this,"${resultList.sampleGroupingNumber}");'
