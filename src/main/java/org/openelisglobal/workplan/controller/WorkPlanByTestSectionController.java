@@ -96,7 +96,7 @@ public class WorkPlanByTestSectionController extends BaseWorkplanController {
 
             // get tests based on test section
             workplanTests = getWorkplanByTestSection(testSectionId);
-            filteredTests = filterResultsByLabUnitRoles(request, workplanTests ,ROLE_RESULTS);
+            filteredTests = userService.filterResultsByLabUnitRoles(getSysUserId(request), workplanTests ,ROLE_RESULTS);
             form.setWorkplanTests(filteredTests);
             form.setSearchFinished(Boolean.TRUE);
             if (ts != null) {

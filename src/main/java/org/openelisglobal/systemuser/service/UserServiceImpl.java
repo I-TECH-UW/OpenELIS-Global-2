@@ -13,7 +13,12 @@ import org.openelisglobal.common.services.DisplayListService.ListType;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.login.service.LoginUserService;
 import org.openelisglobal.login.valueholder.LoginUser;
+import org.openelisglobal.resultvalidation.bean.AnalysisItem;
+import org.openelisglobal.role.service.RoleService;
 import org.openelisglobal.systemuser.valueholder.SystemUser;
+import org.openelisglobal.test.beanItems.TestResultItem;
+import org.openelisglobal.test.valueholder.Test;
+import org.openelisglobal.typeofsample.service.TypeOfSampleService;
 import org.openelisglobal.userrole.service.UserRoleService;
 import org.openelisglobal.userrole.valueholder.UserLabUnitRoles;
 import org.openelisglobal.userrole.valueholder.LabUnitRoleMap;
@@ -31,6 +36,11 @@ public class UserServiceImpl implements UserService {
     private UserRoleService userRoleService;
     @Autowired
     private SystemUserService systemUserService;
+    @Autowired
+    private RoleService roleService;
+    @Autowired
+    private TypeOfSampleService typeOfSampleService;
+
 
     @Override
     @Transactional
@@ -148,5 +158,53 @@ public class UserServiceImpl implements UserService {
         List<IdValuePair> allTestSections = DisplayListService.getInstance().getList(ListType.TEST_SECTION);
         List<IdValuePair> userTestSections = allTestSections.stream().filter(test -> userLabUnits.contains(test.getId())).collect(Collectors.toList());
         return userTestSections;
+    }
+
+    @Override
+    public List<TestResultItem> filterResultsByLabUnitRoles(String SystemUserId, List<TestResultItem> results ,String roleName) {
+        String resultsRoleId = roleService.getRoleByName(roleName).getId();
+        List<IdValuePair> testSections = getUserTestSections(SystemUserId, resultsRoleId);
+        List<String> testUnitIds = new ArrayList<>();
+        if (testSections != null) {
+            testSections.forEach(test -> testUnitIds.add(test.getId()));
+        }
+        
+        List<Test> allTests = typeOfSampleService.getAllActiveTestsByTestUnit(true, testUnitIds);
+        List<String> allTestsIds = new ArrayList<>();
+        allTests.forEach(test -> allTestsIds.add(test.getId()));
+        return results.stream().filter(result -> allTestsIds.contains(result.getTestId())).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<IdValuePair> getAllDisplayUserTestsByLabUnit(String SystemUserId, String roleName) {
+        String resultsRoleId = roleService.getRoleByName(roleName).getId();
+        List<IdValuePair> testSections = getUserTestSections(SystemUserId, resultsRoleId);
+        List<String> testUnitIds = new ArrayList<>();
+        if (testSections != null) {
+            testSections.forEach(test -> testUnitIds.add(test.getId()));
+        }
+        
+        List<Test> allTests = typeOfSampleService.getAllActiveTestsByTestUnit(true, testUnitIds);
+        List<String> allTestsIds = new ArrayList<>();
+        allTests.forEach(test -> allTestsIds.add(test.getId()));
+        
+        List<IdValuePair> allDisplayUserTests = DisplayListService.getInstance()
+                .getListWithLeadingBlank(DisplayListService.ListType.ALL_TESTS);
+        return allDisplayUserTests.stream().filter(test -> allTestsIds.contains(test.getId())).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<AnalysisItem> filterAnalystResultsByLabUnitRoles(String SystemUserId, List<AnalysisItem> results ,String roleName) {
+        String resultsRoleId = roleService.getRoleByName(roleName).getId();
+        List<IdValuePair> testSections = getUserTestSections(SystemUserId, resultsRoleId);
+        List<String> testUnitIds = new ArrayList<>();
+        if (testSections != null) {
+            testSections.forEach(test -> testUnitIds.add(test.getId()));
+        }
+        
+        List<Test> allTests = typeOfSampleService.getAllActiveTestsByTestUnit(true, testUnitIds);
+        List<String> allTestsIds = new ArrayList<>();
+        allTests.forEach(test -> allTestsIds.add(test.getId()));
+        return results.stream().filter(result -> allTestsIds.contains(result.getTestId())).collect(Collectors.toList());
     }
 }

@@ -181,7 +181,7 @@ public class ResultValidationController extends BaseResultValidationController {
 
                 resultList = resultsValidationUtility.getResultValidationList(getValidationStatus(),
                         form.getTestSectionId(), form.getAccessionNumber());
-                filteredresultList = filterAnalystResultsByLabUnitRoles(request, resultList, ROLE_VALIDATION);     
+                filteredresultList = userService.filterAnalystResultsByLabUnitRoles(getSysUserId(request), resultList, ROLE_VALIDATION);     
                 int count = resultsValidationUtility.getCountResultValidationList(getValidationStatus(),
                         form.getTestSectionId());
                 request.setAttribute("analysisCount", count);

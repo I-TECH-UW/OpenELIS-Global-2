@@ -23,6 +23,7 @@ import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.samplehuman.service.SampleHumanService;
 import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.systemuser.service.UserService;
 import org.openelisglobal.userrole.service.UserRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -45,6 +46,8 @@ public class AccessionValidationController extends BaseController {
     private SampleHumanService sampleHumanService;
     @Autowired
     private UserRoleService userRoleService;
+    @Autowired
+    private UserService userService;
 
     public AccessionValidationController(RoleService roleService) {
         Role editRole = roleService.getRoleByName("Results modifier");
@@ -101,7 +104,7 @@ public class AccessionValidationController extends BaseController {
                     resultsUtility.addIdentifingPatientInfo(patient, form);
 
                     List<AnalysisItem> resultsAnalysises = resultsUtility.getValidationAnalysisBySample(sample);
-                    List<AnalysisItem> filteredresultList = filterAnalystResultsByLabUnitRoles(request, resultsAnalysises, ROLE_VALIDATION);
+                    List<AnalysisItem> filteredresultList = userService.filterAnalystResultsByLabUnitRoles(getSysUserId(request), resultsAnalysises, ROLE_VALIDATION);
                     count = filteredresultList.size();
 //                    if (resultsUtility.inventoryNeeded()) {
 //                        addInventory(form);

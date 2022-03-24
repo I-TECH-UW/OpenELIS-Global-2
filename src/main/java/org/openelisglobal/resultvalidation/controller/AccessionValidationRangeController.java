@@ -176,7 +176,7 @@ public class AccessionValidationRangeController extends BaseResultValidationCont
                 
                 resultList = resultsValidationUtility.getResultValidationList(getValidationStatus(),
                         form.getTestSectionId(), form.getAccessionNumber());
-                filteredresultList = filterAnalystResultsByLabUnitRoles(request, resultList, ROLE_VALIDATION);
+                filteredresultList = userService.filterAnalystResultsByLabUnitRoles(getSysUserId(request), resultList, ROLE_VALIDATION);
                 request.setAttribute("pageSize", filteredresultList.size());
                 form.setSearchFinished(true);
                 } else {
