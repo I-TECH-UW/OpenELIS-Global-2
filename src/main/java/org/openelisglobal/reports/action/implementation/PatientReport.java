@@ -22,10 +22,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.IllegalFormatException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
@@ -42,6 +44,7 @@ import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.formfields.FormFields.Field;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.provider.validation.IAccessionNumberValidator;
+import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.TableIdService;
@@ -74,6 +77,7 @@ import org.openelisglobal.referral.service.ReferralService;
 import org.openelisglobal.referral.valueholder.ReferralResult;
 import org.openelisglobal.reports.action.implementation.reportBeans.ClinicalPatientData;
 import org.openelisglobal.reports.form.ReportForm;
+import org.openelisglobal.reports.form.ReportForm.DateType;
 import org.openelisglobal.result.service.ResultService;
 import org.openelisglobal.result.valueholder.Result;
 import org.openelisglobal.sample.service.SampleService;
@@ -184,6 +188,9 @@ public abstract class PatientReport extends Report {
         form.getPatientSearch().setDefaultHeader(false);
         form.setUseAccessionDirect(Boolean.TRUE);
         form.setUseHighAccessionDirect(Boolean.TRUE);
+        form.setUseSiteSearch(true);
+        form.setReferringSiteList(
+                DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_PATIENT_REFERRING_CLINIC));
 
     }
 
@@ -194,7 +201,6 @@ public abstract class PatientReport extends Report {
 
         lowerNumber = form.getAccessionDirectNoSuffix();
         upperNumber = form.getHighAccessionDirectNoSuffix();
-        String patientNumber = form.getPatientNumberDirect();
 
         handledOrders = new ArrayList<>();
 
@@ -205,26 +211,32 @@ public abstract class PatientReport extends Report {
 
         if (form.getAnalysisIds() != null && form.getAnalysisIds().size() > 0) {
             reportSampleList = findReportSamples(form.getAnalysisIds());
+        } else if (!GenericValidator.isBlankOrNull(lowerNumber) || !GenericValidator.isBlankOrNull(upperNumber)) {
+            valid = validateAccessionNumbers();
+            if (valid) {
+                reportSampleList = findReportSamples(lowerNumber, upperNumber);
+            }
         } else if (!GenericValidator.isBlankOrNull(form.getSelPatient())) {
             List<Patient> patientList = new ArrayList<>();
             valid = findPatientById(form.getSelPatient(), patientList);
             if (valid) {
                 reportSampleList = findReportSamplesForReportPatient(patientList);
             }
-        } else if (GenericValidator.isBlankOrNull(lowerNumber) && GenericValidator.isBlankOrNull(upperNumber)) {
-
+        } else if (!GenericValidator.isBlankOrNull(form.getPatientNumberDirect())) {
             List<Patient> patientList = new ArrayList<>();
-            valid = findPatientByPatientNumber(patientNumber, patientList);
+            valid = findPatientByPatientNumber(form.getPatientNumberDirect(), patientList);
 
             if (valid) {
                 reportSampleList = findReportSamplesForReportPatient(patientList);
             }
-        } else {
-            valid = validateAccessionNumbers();
-
-            if (valid) {
-                reportSampleList = findReportSamples(lowerNumber, upperNumber);
+        } else if (!GenericValidator.isBlankOrNull(form.getReferringSiteId())) {
+            if (GenericValidator.isBlankOrNull(form.getUpperDateRange())
+                    && !GenericValidator.isBlankOrNull(form.getLowerDateRange())) {
+                form.setUpperDateRange(form.getLowerDateRange());
             }
+            reportSampleList = findReportSamplesForSite(form.getReferringSiteId(), form.getReferringSiteDepartmentId(),
+                    form.isOnlyResults(), form.getDateType(), form.getLowerDateRange(), form.getUpperDateRange());
+
         }
 
         sampleCompleteMap = new HashMap<>();
@@ -263,6 +275,43 @@ public abstract class PatientReport extends Report {
                 LogEvent.logErrorStack(e);
             }
         }
+    }
+
+    private List<Sample> findReportSamplesForSite(String referringSiteId, String referringSiteDepartmentId,
+            boolean onlyResults, DateType dateType, String lowerDateRange, String upperDateRange) {
+        List<Sample> sampleList = new ArrayList<>();
+        String sampleRequesterOrgId = GenericValidator.isBlankOrNull(referringSiteDepartmentId) ? referringSiteId
+                : referringSiteDepartmentId;
+
+        if (DateType.ORDER_DATE.equals(dateType)) {
+            sampleList = sampleService.getSamplesForSiteBetweenOrderDates(sampleRequesterOrgId,
+                    DateUtil.convertStringDateToLocalDate(lowerDateRange),
+                    DateUtil.convertStringDateToLocalDate(upperDateRange));
+        } else {
+            List<Analysis> analysises = analysisService.getAnalysisForSiteBetweenResultDates(sampleRequesterOrgId,
+                    DateUtil.convertStringDateToLocalDate(lowerDateRange),
+                    DateUtil.convertStringDateToLocalDate(upperDateRange));
+            sampleList = sampleService
+                    .getSamplesByAnalysisIds(analysises.stream().map(e -> e.getId()).collect(Collectors.toList()));
+
+        }
+
+        if (onlyResults) {
+            Set<Integer> analysisStatusIds = new HashSet<>();
+            analysisStatusIds.add(Integer.parseInt(
+                    SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.BiologistRejected)));
+            analysisStatusIds.add(Integer
+                    .parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized)));
+            analysisStatusIds.add(Integer.parseInt(
+                    SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalAcceptance)));
+            analysisStatusIds.add(Integer.parseInt(
+                    SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalRejected)));
+            sampleList = sampleList.stream().filter(
+                    e -> (analysisService.getAnalysesBySampleIdAndStatusId(e.getId(), analysisStatusIds).size() > 0))
+                    .collect(Collectors.toList());
+        }
+
+        return sampleList;
     }
 
     private boolean findPatientById(String patientId, List<Patient> patientList) {
@@ -548,7 +597,7 @@ public abstract class PatientReport extends Report {
 
     private void setNormalRange(ClinicalPatientData data, Test test, Result result) {
         String uom = getUnitOfMeasure(test);
-        if(!result.getResultType().equalsIgnoreCase("D")) {
+        if (!result.getResultType().equalsIgnoreCase("D")) {
             data.setTestRefRange(addIfNotEmpty(getRange(result), appendUOMToRange() ? uom : null));
         }
         data.setUom(uom);

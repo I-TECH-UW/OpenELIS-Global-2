@@ -19,6 +19,8 @@ package org.openelisglobal.sample.daoimpl;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Date;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -821,6 +823,22 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
             return query.list();
         } catch (HibernateException e) {
             handleException(e, "getSamplesBySampleItem");
+        }
+        return new ArrayList<>();
+    }
+
+    @Override
+    public List<Sample> getSamplesForSiteBetweenOrderDates(String referringSiteId, LocalDate lowerDate,
+            LocalDate upperDate) {
+        String hql = "FROM Sample s WHERE s.enteredDate BETWEEN :lowerDate AND :upperDate AND s.id IN (SELECT sr.sampleId FROM SampleRequester sr WHERE sr.requesterId = :requesterId AND sr.requesterTypeId = (SELECT rt.id FROM RequesterType rt WHERE rt.requesterType = 'organization' ))";
+        try {
+            Query query = entityManager.unwrap(Session.class).createQuery(hql);
+            query.setParameter("requesterId", Integer.parseInt(referringSiteId));
+            query.setParameter("lowerDate", lowerDate.atStartOfDay());
+            query.setParameter("upperDate", upperDate.atTime(LocalTime.MAX));
+            return query.list();
+        } catch (HibernateException e) {
+            handleException(e, "getSamplesForSiteBetweenOrderDates");
         }
         return new ArrayList<>();
     }

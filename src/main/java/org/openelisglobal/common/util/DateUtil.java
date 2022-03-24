@@ -21,7 +21,9 @@ import java.text.DateFormatSymbols;
 import java.text.ParseException;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.Period;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -76,6 +78,23 @@ public class DateUtil {
         String stringLocale = SystemConfiguration.getInstance().getDefaultLocale().toString();
 
         return convertStringDateToSqlDate(date, stringLocale);
+    }
+
+    public static LocalDate convertStringDateToLocalDate(String date) {
+        Locale locale = SystemConfiguration.getInstance().getDefaultLocale();
+
+        return convertStringDateToLocalDate(date, locale);
+    }
+
+    private static LocalDate convertStringDateToLocalDate(String date, Locale locale) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(getDateFormat());
+        LocalDate returnDate = null;
+
+        if (!StringUtil.isNullorNill(date)) {
+            formatter = formatter.withLocale(locale);
+            returnDate = LocalDate.parse(date, formatter);
+        }
+        return returnDate;
     }
 
     public static java.sql.Date convertStringDateToSqlDate(String date, String stringLocale)

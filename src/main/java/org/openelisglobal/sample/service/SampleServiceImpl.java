@@ -2,6 +2,7 @@ package org.openelisglobal.sample.service;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -576,6 +577,12 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
     @Override
     public List<Sample> getSamplesByAnalysisIds(List<String> analysisIds) {
         return sampleDAO.getSamplesByAnalysisIds(analysisIds);
+    }
+
+    @Override
+    public List<Sample> getSamplesForSiteBetweenOrderDates(String referringSiteId, LocalDate lowerDate,
+            LocalDate upperDate) {
+        return sampleDAO.getSamplesForSiteBetweenOrderDates(referringSiteId, lowerDate, upperDate);
     }
 
 }

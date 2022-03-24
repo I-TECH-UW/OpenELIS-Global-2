@@ -398,6 +398,8 @@
 		template="/pages/reports/commonReportParameters.jsp">
 		<put-attribute name="patientEnhancedSearch"
 			value="/pages/patient/patientEnhancedSearch.jsp" />
+		<put-attribute name="siteSearch"
+			value="/pages/reports/siteSearch.jsp" />
 	</definition>
 
 	<definition name="auditTrailCore"

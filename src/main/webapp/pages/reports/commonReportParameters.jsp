@@ -236,6 +236,10 @@ function setSaveButton() {
  	
 	<tiles:insertAttribute name="patientEnhancedSearch" />
   </c:if>
+  <c:if test="${form.useSiteSearch}">
+  		<h3><spring:message code="report.enter.site.headline"/></h3>
+		<tiles:insertAttribute name="siteSearch" />
+  </c:if>
   <c:if test="${form.usePatientNumberDirect}">
   
 	<div><strong><%= MessageUtil.getContextualMessage("report.enter.subjectNumber") %></strong></div>

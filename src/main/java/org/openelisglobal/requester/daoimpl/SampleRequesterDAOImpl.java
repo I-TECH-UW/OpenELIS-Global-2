@@ -39,67 +39,12 @@ public class SampleRequesterDAOImpl extends BaseDAOImpl<SampleRequester, String>
         super(SampleRequester.class);
     }
 
-//	@Override
-//	public boolean insertData(SampleRequester sampleRequester) throws LIMSRuntimeException {
-//		try {
-//			entityManager.unwrap(Session.class).save(sampleRequester);
-//
-//			auditDAO.saveNewHistory(sampleRequester, sampleRequester.getSysUserId(), "SAMPLE_REQUESTER");
-//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//
-//		} catch (RuntimeException e) {
-//			LogEvent.logError("SampleRequesterDAOImpl", "insertData()", e.toString());
-//			throw new LIMSRuntimeException("Error in SampleRequester insertData()", e);
-//		}
-//
-//		return true;
-//	}
-
-//	@Override
-//	public void updateData(SampleRequester sampleRequester) throws LIMSRuntimeException {
-//		SampleRequester oldData = readOld(sampleRequester.getSampleId(), sampleRequester.getRequesterTypeId());
-//
-//		try {
-//
-//			String sysUserId = sampleRequester.getSysUserId();
-//			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
-//			String tableName = "SAMPLE_REQUESTER";
-//			auditDAO.saveHistory(sampleRequester, oldData, sysUserId, event, tableName);
-//		} catch (RuntimeException e) {
-//			LogEvent.logError("SampleRequesterDAOImpl", "updateData()", e.toString());
-//			throw new LIMSRuntimeException("Error in SampleRequester AuditTrail updateData()", e);
-//		}
-//
-//		try {
-//			entityManager.unwrap(Session.class).merge(sampleRequester);
-//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//			// entityManager.unwrap(Session.class).evict // CSL remove old(sampleRequester);
-//			// entityManager.unwrap(Session.class).refresh // CSL remove
-//			// old(sampleRequester);
-//		} catch (RuntimeException e) {
-//			LogEvent.logError("SampleRequesterDAOImpl", "updateData()", e.toString());
-//			throw new LIMSRuntimeException("Error in SampleRequester updateData()", e);
-//		}
-//	}
-
-//	@Override
-//	public void insertOrUpdateData(SampleRequester samplePersonRequester) throws LIMSRuntimeException {
-//		if (samplePersonRequester.getLastupdated() == null) {
-//			insertData(samplePersonRequester);
-//		} else {
-//			updateData(samplePersonRequester);
-//		}
-//	}
-
     @Override
     public void delete(SampleRequester sampleRequester) throws LIMSRuntimeException {
         entityManager.unwrap(Session.class).delete(sampleRequester);
-        // closeSession(); // CSL remove old
     }
 
-    
+
     @Override
     @Transactional(readOnly = true)
     public List<SampleRequester> getRequestersForSampleId(String sampleId) throws LIMSRuntimeException {
@@ -110,7 +55,23 @@ public class SampleRequesterDAOImpl extends BaseDAOImpl<SampleRequester, String>
             query.setLong("sampleId", Long.parseLong(sampleId));
             List<SampleRequester> requester = query.list();
 
-            // closeSession(); // CSL remove old
+            return requester;
+
+        } catch (HibernateException e) {
+            handleException(e, "getRequesterForSampleId");
+        }
+        return null;
+    }
+
+    @Override
+    public List<SampleRequester> getRequestersForRequesterId(String requesterId, String requesterTypeId) {
+        String hql = "From SampleRequester sr where sr.requester_id = :requesterId and sr.requester_type_id = :requesterTypeId";
+
+        try {
+            Query query = entityManager.unwrap(Session.class).createQuery(hql);
+            query.setLong("requesterId", Long.parseLong(requesterId));
+            query.setLong("requesterTypeId", Long.parseLong(requesterTypeId));
+            List<SampleRequester> requester = query.list();
 
             return requester;
 
@@ -127,7 +88,7 @@ public class SampleRequesterDAOImpl extends BaseDAOImpl<SampleRequester, String>
             query.setLong("sampleId", sampleId);
             query.setLong("requesterTypeId", requesterTypeId);
             SampleRequester requester = (SampleRequester) query.uniqueResult();
-            // closeSession(); // CSL remove old
+
             return requester;
         } catch (HibernateException e) {
             LogEvent.logError(e.toString(), e);

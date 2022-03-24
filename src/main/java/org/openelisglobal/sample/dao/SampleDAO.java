@@ -16,6 +16,7 @@
 package org.openelisglobal.sample.dao;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 import org.openelisglobal.common.dao.BaseDAO;
@@ -81,4 +82,6 @@ public interface SampleDAO extends BaseDAO<Sample, String> {
     List<Sample> getAllMissingFhirUuid();
 
     List<Sample> getSamplesByAnalysisIds(List<String> analysisIds);
+
+    List<Sample> getSamplesForSiteBetweenOrderDates(String referringSiteId, LocalDate lowerDate, LocalDate upperDate);
 }
