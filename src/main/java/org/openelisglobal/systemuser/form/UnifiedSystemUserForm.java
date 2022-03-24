@@ -2,11 +2,11 @@ package org.openelisglobal.systemuser.form;
 
 import java.sql.Timestamp;
 import java.util.List;
-import java.util.Set;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
+import org.json.JSONObject;
 import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.util.validator.CustomDateValidator.DateRelation;
 import org.openelisglobal.common.validator.ValidationHelper;
@@ -54,7 +54,7 @@ public class UnifiedSystemUserForm extends BaseForm {
 
     private List<@Pattern(regexp = ValidationHelper.ID_REGEX) String> selectedRoles;
 
-    private Set<String> selectedLabUnitRoles;
+    private List<String> selectedLabUnitRoles;
 
     @NotBlank
     @ValidDate(relative = DateRelation.FUTURE)
@@ -77,6 +77,8 @@ public class UnifiedSystemUserForm extends BaseForm {
     private String timeout;
 
     private Timestamp systemUserLastupdated;
+
+    private JSONObject userLabRoleData;
 
     public UnifiedSystemUserForm() {
         setFormName("unifiedSystemUserForm");
@@ -226,11 +228,19 @@ public class UnifiedSystemUserForm extends BaseForm {
         this.testSectionId = testSectionId;
     }
 
-    public Set<String> getSelectedLabUnitRoles() {
+    public List<String> getSelectedLabUnitRoles() {
         return selectedLabUnitRoles;
     }
 
-    public void setSelectedLabUnitRoles(Set<String> selectedLabUnitRoles) {
+    public void setSelectedLabUnitRoles(List<String> selectedLabUnitRoles) {
         this.selectedLabUnitRoles = selectedLabUnitRoles;
+    }
+  
+    public JSONObject getUserLabRoleData() {
+        return userLabRoleData;
+    }
+
+    public void setUserLabRoleData(JSONObject userLabRoleData) {
+        this.userLabRoleData = userLabRoleData;
     }
 }

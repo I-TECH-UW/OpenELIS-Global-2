@@ -24,6 +24,8 @@ jQuery(document).ready( function() {
 	input.change( function( objEvent ){
 		document.getElementsByName("save")[0].disabled = false;
 	} );
+	renderUserRolesData();
+	createDefaultRolesTable();	
 });
 
 function validateForm(form) {
@@ -108,13 +110,107 @@ function mySaveAction() {
 
 </script>
  <script>
- function createField(){
-	   var content = document.getElementById('rolesTable').innerHTML;
-	   console.log(content);
-	    var newTable = document.createElement('table');
-	    newTable.innerHTML = content;
+ 
+	var counter = 0;
+	function createNewRolesTable() {
+		counter++
+		var content = document.getElementById('rolesTable').innerHTML;
+		var newTable = document.createElement('table');
+		var tableId = "rolesTable_" + counter ;
+		newTable.id = tableId
+		newTable.innerHTML = content;
 		document.getElementById('rolesRow').appendChild(newTable);
-       }
+
+		var rows = document.getElementById(tableId).rows;
+
+		for (var i = 0; i < rows.length; i++) {
+			if (rows[i].cells[0]) {
+				if (i == 0) {
+					var options = rows[i].cells[0].getElementsByTagName("option");
+					for(var x = 0; x < options.length; x++ ){
+					var optionsValue = options[x].value
+					rows[i].cells[0].getElementsByTagName("option")[x].value = counter + "=" + optionsValue;
+					}
+				}
+				if (i > 0) {
+					var val = rows[i].cells[0].getElementsByTagName("input")[0].value;
+					rows[i].cells[0].getElementsByTagName("input")[0].value = counter + "=" + val;
+				}
+			}
+		}
+
+	}
+
+	function removeRolesTable(element) {
+	  	var tableToRemove = element.parentNode.parentNode.parentNode.parentNode;
+	    tableToRemove.remove();
+	}
+  </script>
+
+  <script>
+	var userRolesData = JSON.parse('${form.userLabRoleData}');
+	console.log(userRolesData);
+	function createDefaultRolesTable(){
+		if(Object.keys(userRolesData).length === 0){
+			createNewRolesTable();
+		}
+   }					  
+
+					  
+    function renderUserRolesData() {
+		for (let test in userRolesData) {
+		    counter++
+		    var content = document.getElementById('rolesTable').innerHTML;
+    	    var newTable = document.createElement('table');
+			var tableId = "rolesTable_" + counter ;
+    		newTable.id = tableId
+    		newTable.innerHTML = content;
+    		document.getElementById('rolesRow').appendChild(newTable);
+			var rows = document.getElementById(tableId).rows;
+
+		    var data = userRolesData[test]
+			for (var y = 0; y < data.length; y++) {
+					for (var i = 0; i < rows.length; i++) {
+						if (rows[i].cells[0]) {
+							if (i == 0) {
+								var options = rows[i].cells[0].getElementsByTagName("option");
+								for(var x = 0; x < options.length; x++ ){
+									var optionsValue = options[x].value
+									if(optionsValue == test){
+                                      options[x].selected = "selected";
+									}
+								}
+							}
+							if (i > 0) {
+								var testCheck = rows[i].cells[0].getElementsByTagName("input")[0];
+								var testVal = testCheck.value;
+								if(testVal == data[y]){
+                                   testCheck.checked = "checked" ;
+								}
+								
+							}
+						}
+					}
+			}
+
+				for (var i = 0; i < rows.length; i++) {
+						if (rows[i].cells[0]) {
+							if (i == 0) {
+								var options = rows[i].cells[0].getElementsByTagName("option");
+								for(var x = 0; x < options.length; x++ ){
+									var optionsValue = options[x].value
+									options[x].value = counter + "=" + optionsValue;
+								}
+							}
+							if (i > 0) {
+								var testCheck = rows[i].cells[0].getElementsByTagName("input")[0];
+								var testVal = testCheck.value;
+								testCheck.value = counter + "=" + testVal;
+							}
+						}
+					}
+        }
+	}
   </script>
 <form:hidden path="systemUserId"/>
 <form:hidden path="loginUserId"/>
@@ -261,13 +357,16 @@ function mySaveAction() {
 	</tr>
 	 <tr>
 		<td id="rolesRow">
-			<table id="rolesTable">
+			<table id="rolesTable"  style="display: none">
 			<tr> 
 				<td>
 					<form:select path="testSectionId">
-								<option value=""></option>
+								<option value="none"></option>
 								<form:options items="${form.testSections}" itemLabel="value" itemValue="id" />
 					</form:select>
+				</td>
+				<td>
+				     <button type="button" name="removeRow" id="removeRoles" onClick="removeRolesTable(this);">-</button> 
 				</td>
 			</tr>
 			<c:forEach items="${form.labUnitRoles}" var="role">
@@ -277,7 +376,6 @@ function mySaveAction() {
 					&nbsp;&nbsp;&nbsp;&nbsp;
 				</c:forEach>
 				<form:checkbox path="selectedLabUnitRoles" 
-								id="role_${role.roleId}" 
 								onclick="selectChildren(this, ${role.childrenID});makeDirty();"
 								value="${role.roleId}"
 								/>		
@@ -291,7 +389,7 @@ function mySaveAction() {
 	<tr>
 		<td>
 		  &nbsp;
-		 <%-- <button type="button" name="addNewField" id="createSection" onClick="createField();">add new Permissions </button> --%>
+		  <button type="button" name="createNewRoles" id="createNewRoles" onClick="createNewRolesTable();">+</button> 
 		</td>
 	</tr>
 

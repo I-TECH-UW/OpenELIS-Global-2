@@ -8,6 +8,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.Map;
@@ -18,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.apache.commons.validator.GenericValidator;
+import org.json.JSONObject;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
@@ -88,13 +90,7 @@ public class UnifiedSystemUserController extends BaseController {
 
     @PostConstruct
     private void initialize() {
-        List<Role> roles = roleService.getAll();
-        for (Role role : roles) {
-            if (GLOBAL_ADMIN.equals(role.getName().trim())) {
-                GLOBAL_ADMIN_ID = role.getId();
-                break;
-            }
-        }
+        GLOBAL_ADMIN_ID =  roleService.getRoleByName(GLOBAL_ADMIN).getId();
     }
 
     @InitBinder
@@ -586,9 +582,8 @@ public class UnifiedSystemUserController extends BaseController {
     }
 
     private void saveUserLabUnitRoles(SystemUser user, UnifiedSystemUserForm form, String loggedOnUserId) {
-        Set<String> selectedLabUnitRolesId = form.getSelectedLabUnitRoles();
         Map<String, Set<String>> selectedLabUnitRolesMap = new HashMap<>();
-        selectedLabUnitRolesMap.put(form.getTestSectionId(), selectedLabUnitRolesId);
+        parseUserLabRolesData(form ,selectedLabUnitRolesMap);
         userService.saveUserLabUnitRoles(user, selectedLabUnitRolesMap, loggedOnUserId);
     }
     
@@ -596,9 +591,41 @@ public class UnifiedSystemUserController extends BaseController {
         UserLabUnitRoles roles = userService.getUserLabUnitRoles(form.getSystemUserId());
         if (roles != null) {
             Set<LabUnitRoleMap> roleMaps = roles.getLabUnitRoleMap();
-            for (LabUnitRoleMap map : roleMaps) {
-                form.setTestSectionId(map.getLabUnit());
-                form.setSelectedLabUnitRoles(map.getRoles());
+            JSONObject userLabData = new JSONObject();
+            for (LabUnitRoleMap map : roleMaps) {      
+                userLabData.put(map.getLabUnit(), map.getRoles().stream().collect(Collectors.toList()));
+            }
+            form.setUserLabRoleData(userLabData);
+        }
+    }
+
+    private void parseUserLabRolesData(UnifiedSystemUserForm form, Map<String, Set<String>> selectedLabUnitRolesMap) {
+        String labUnitEntryMapString = form.getTestSectionId();
+        List<String> labUnitsRolesEntryMaps = form.getSelectedLabUnitRoles();
+        
+        String parts[] = labUnitEntryMapString.split(",");
+        List<String> entries = new ArrayList<>();
+        List<String> labUnitsEntryMap = new ArrayList<>();
+        for (String part : parts) {
+            if (!part.contains("none")) {
+                entries.add(part.split("=")[0]);
+                labUnitsEntryMap.add(part);
+            }
+        }
+        for (String entry : entries) {
+            for (String labUnit : labUnitsEntryMap) {
+                if (labUnit.startsWith(entry)) {
+                    Set<String> labRolesId = new HashSet<>();
+                    String labUnitId = labUnit.split("=")[1];
+                    for (String labUnitsRolesEntryMap : labUnitsRolesEntryMaps) {
+                        if (labUnitsRolesEntryMap.startsWith(entry)) {
+                            labRolesId.add(labUnitsRolesEntryMap.split("=")[1]);
+                        }
+                    }
+                    if (labRolesId.size() > 0) {
+                        selectedLabUnitRolesMap.put(labUnitId, labRolesId);
+                    }
+                }
             }
         }
     }
