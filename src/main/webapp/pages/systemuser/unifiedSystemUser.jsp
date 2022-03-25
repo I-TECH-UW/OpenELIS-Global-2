@@ -112,6 +112,10 @@ function mySaveAction() {
  <script>
  
 	var counter = 0;
+
+	//creates new Roles Entry table.
+	// we append a common preffix to the Roles values on every entry in order to identify the distinct values for each entry,
+	// because mutiple fields will be created but binding to the same path 
 	function createNewRolesTable() {
 		counter++
 		var content = document.getElementById('rolesTable').innerHTML;
@@ -124,17 +128,17 @@ function mySaveAction() {
 		var rows = document.getElementById(tableId).rows;
 
 		for (var i = 0; i < rows.length; i++) {
-			if (rows[i].cells[0]) {
+			if (rows[i].cells[1]) {
 				if (i == 0) {
-					var options = rows[i].cells[0].getElementsByTagName("option");
+					var options = rows[i].cells[1].getElementsByTagName("option");
 					for(var x = 0; x < options.length; x++ ){
 					var optionsValue = options[x].value
-					rows[i].cells[0].getElementsByTagName("option")[x].value = counter + "=" + optionsValue;
+					rows[i].cells[1].getElementsByTagName("option")[x].value = counter + "=" + optionsValue;
 					}
 				}
 				if (i > 0) {
-					var val = rows[i].cells[0].getElementsByTagName("input")[0].value;
-					rows[i].cells[0].getElementsByTagName("input")[0].value = counter + "=" + val;
+					var val = rows[i].cells[1].getElementsByTagName("input")[0].value;
+					rows[i].cells[1].getElementsByTagName("input")[0].value = counter + "=" + val;
 				}
 			}
 		}
@@ -145,11 +149,8 @@ function mySaveAction() {
 	  	var tableToRemove = element.parentNode.parentNode.parentNode.parentNode;
 	    tableToRemove.remove();
 	}
-  </script>
 
-  <script>
-	var userRolesData = JSON.parse('${form.userLabRoleData}');
-	console.log(userRolesData);
+    //Renders an empty Lab Unit entry table if no user roles data exists
 	function createDefaultRolesTable(){
 		if(Object.keys(userRolesData).length === 0){
 			createNewRolesTable();
@@ -158,8 +159,27 @@ function mySaveAction() {
 
 	function activateSave(){ 
 		document.getElementsByName('save')[0].disabled =false ;
-	}	
-				  
+	}
+
+	function selectAllRoles(element){
+		var table= element.parentNode.parentNode.parentNode.parentNode;
+		var rows = table.rows;
+		for (var y = 2; y < rows.length; y++) {
+		   var checkBox = rows[y].cells[1].getElementsByTagName("input")[0];
+		   if(element.checked == true){
+                checkBox.checked = true
+		   }else{
+			   checkBox.checked = false
+		   }   
+		 }
+	}
+  </script>
+
+  <script>
+	var userRolesData = JSON.parse('${form.userLabRoleData}');
+	console.log(userRolesData);
+				 
+	// this dynamically Renders Lab Unit entry tables with data if user roles data exists			 
     function renderUserRolesData() {
 		for (let test in userRolesData) {
 		    counter++
@@ -174,9 +194,9 @@ function mySaveAction() {
 		    var data = userRolesData[test]
 			for (var y = 0; y < data.length; y++) {
 					for (var i = 0; i < rows.length; i++) {
-						if (rows[i].cells[0]) {
+						if (rows[i].cells[1]) {
 							if (i == 0) {
-								var options = rows[i].cells[0].getElementsByTagName("option");
+								var options = rows[i].cells[1].getElementsByTagName("option");
 								for(var x = 0; x < options.length; x++ ){
 									var optionsValue = options[x].value
 									if(optionsValue == test){
@@ -185,7 +205,7 @@ function mySaveAction() {
 								}
 							}
 							if (i > 0) {
-								var testCheck = rows[i].cells[0].getElementsByTagName("input")[0];
+								var testCheck = rows[i].cells[1].getElementsByTagName("input")[0];
 								var testVal = testCheck.value;
 								if(testVal == data[y]){
                                    testCheck.checked = "checked" ;
@@ -197,16 +217,16 @@ function mySaveAction() {
 			}
 
 				for (var i = 0; i < rows.length; i++) {
-						if (rows[i].cells[0]) {
+						if (rows[i].cells[1]) {
 							if (i == 0) {
-								var options = rows[i].cells[0].getElementsByTagName("option");
+								var options = rows[i].cells[1].getElementsByTagName("option");
 								for(var x = 0; x < options.length; x++ ){
 									var optionsValue = options[x].value
 									options[x].value = counter + "=" + optionsValue;
 								}
 							}
 							if (i > 0) {
-								var testCheck = rows[i].cells[0].getElementsByTagName("input")[0];
+								var testCheck = rows[i].cells[1].getElementsByTagName("input")[0];
 								var testVal = testCheck.value;
 								testCheck.value = counter + "=" + testVal;
 							}
@@ -342,7 +362,7 @@ function mySaveAction() {
 		<tr>
 		<td>
 		<c:forEach begin="0" end="${role.nestingLevel}">
-			&nbsp;&nbsp;&nbsp;&nbsp;
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 		</c:forEach>
 		<form:checkbox path="selectedRoles" 
 						id="role_${role.roleId}" 
@@ -362,21 +382,29 @@ function mySaveAction() {
 		<td id="rolesRow">
 			<table id="rolesTable"  style="display: none">
 			<tr> 
-				<td>
-					<form:select path="testSectionId" onchange="activateSave();">
-								<option value="none"></option>
-								<form:options items="${form.testSections}" itemLabel="value" itemValue="id" />
-					</form:select>
-				</td>
-				<td>
+			    <td>
 				     <button type="button" name="removeRow" id="removeRoles" onClick="removeRolesTable(this);">-</button> 
 				</td>
+				<td>
+					<form:select path="testSectionId" onchange="activateSave();">
+								 <option value="none"></option>
+								<form:options items="${form.testSections}" itemLabel="value" itemValue="id" />
+					</form:select>
+				</td>		
+			</tr>
+			<tr>
+			<td>&nbsp;</td>
+			<td>
+			   &nbsp;&nbsp;&nbsp;
+			   <input type="checkbox" onchange="activateSave();" onclick="selectAllRoles(this);"> <spring:message code="systemuserrole.allpermissions"/></input>
+			</td>
 			</tr>
 			<c:forEach items="${form.labUnitRoles}" var="role">
 				<tr>
+				<td>&nbsp;</td>
 				<td>
 				<c:forEach begin="0" end="${role.nestingLevel}">
-					&nbsp;&nbsp;&nbsp;&nbsp;
+					&nbsp;
 				</c:forEach>
 				<form:checkbox path="selectedLabUnitRoles" 
 								onclick="selectChildren(this, ${role.childrenID});makeDirty();"
@@ -392,11 +420,11 @@ function mySaveAction() {
 	</tr>
 	<tr>
 		<td>
-		  &nbsp;
 		  <button type="button" name="createNewRoles" id="createNewRoles" onClick="createNewRolesTable();">+</button> 
+		  &nbsp;
+		  <spring:message code="systemuserrole.newpermissions"/>
 		</td>
 	</tr>
-
 </table>
 
 

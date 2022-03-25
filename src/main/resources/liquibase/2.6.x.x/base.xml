@@ -11,4 +11,5 @@
 	<include file="liquibase/2.6.x.x/update_roles.xml"/>
 	<include file="liquibase/2.6.x.x/add_lab_roles_map_table.xml"/>	
 	<include file="liquibase/2.6.x.x/reporting_range.xml"/>	
+	<include file="liquibase/2.6.x.x/update_global_admin_role.xml"/>		
 </databaseChangeLog>
