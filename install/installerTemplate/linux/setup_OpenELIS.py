@@ -1217,6 +1217,14 @@ def create_db_backup_user():
     install_backup_config()
     
     if DOCKER_DB:
+        cmd = 'sudo docker inspect --format=\'{{json .State.Health.Status}}\' ' + DOCKER_DB_CONTAINER_NAME
+        result = subprocess.check_output(cmd, shell=True)
+        while "healthy" not in result:
+            log('DB Status: ' + result + ' - Waiting for db to be healthy to create backup user', PRINT_TO_CONSOLE)
+            time.sleep(1)
+            result = subprocess.check_output(cmd, shell=True)
+            
+        
         cmd = 'docker exec ' + DOCKER_DB_CONTAINER_NAME + ' mkdir ' + DOCKER_DB_BACKUPS_DIR + 'archive'
         os.system(cmd)
         cmd = 'docker exec ' + DOCKER_DB_CONTAINER_NAME + ' chown postgres:postgres ' + DOCKER_DB_BACKUPS_DIR + 'archive'
