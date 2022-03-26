@@ -209,6 +209,36 @@ function updateLogValue(element, index ){
 	}
 }
 
+function toggleSampleSelectAll( element,groupingNumber ) {
+    var index, item, checkboxes,matchedCheckboxes;
+
+	if (element.id == "sampleAccepted_" + groupingNumber ) {
+		 checkboxes = jQuery(".accepted_" + groupingNumber);
+		 matchedCheckboxes = jQuery(".rejected_" + groupingNumber);
+
+	} else if (element.id == "sampleRejected_" + groupingNumber) {
+		checkboxes = jQuery(".rejected_" + groupingNumber);
+		 matchedCheckboxes = jQuery(".accepted_" + groupingNumber);
+	} 
+
+	if (element.checked == true ) {
+		for (index = 0; index < checkboxes.length; ++index) {
+			  item = checkboxes[index];
+			  item.checked = true;
+		}
+		for (index = 0; index < matchedCheckboxes.length; ++index) {
+			  item = matchedCheckboxes[index];
+			  item.checked = false;
+		}
+	} else if (element.checked == false ) {
+		for (index = 0; index < checkboxes.length; ++index) {
+			  item = checkboxes[index];
+			  item.checked = false;
+		}
+	}
+
+}
+
 function trim(element, significantDigits){
     if( isNaN(significantDigits) || isNaN(element.value) ){
         return;
@@ -418,15 +448,20 @@ function altAccessionHighlightSearch(accessionNumber) {
 					<form:checkbox path="resultList[${iter.index}].sampleIsAccepted"
 								   id='sampleAccepted_${resultList.sampleGroupingNumber}'
 								   cssClass="accepted"
+								   value="on"
+								   name="sampleAccepted_${resultList.sampleGroupingNumber}'"
 								   onchange="markUpdated(); makeDirty();" 
-								   onclick='acceptSample( this, "${resultList.sampleGroupingNumber}");' />
+								   onclick='toggleSampleSelectAll(this,"${resultList.sampleGroupingNumber}");'/>
 				</td>
 				<td style="text-align:center">
 					<form:checkbox path="resultList[${iter.index}].sampleIsRejected"
 								   id='sampleRejected_${resultList.sampleGroupingNumber}'
 								   cssClass="rejected"
+								   value="on"
+								   name="sampleRejected_${resultList.sampleGroupingNumber}'"
 								   onchange="markUpdated(); makeDirty();"
-								   onclick='rejectSample( this, "${resultList.sampleGroupingNumber}");' />
+								   onclick='toggleSampleSelectAll(this,"${resultList.sampleGroupingNumber}");'
+								  />
 				</td>
 				<td>&nbsp;</td>
 			</tr>
