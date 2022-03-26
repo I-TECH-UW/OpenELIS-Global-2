@@ -92,8 +92,8 @@ EXPECTED_CROSSTAB_FUNCTIONS = "3"
 
 #Generated values
 CLINLIMS_PWD = ''
+BACKUP_PWD = ''
 ADMIN_PWD = ''
-ACTION_TIME = ''
 
 #Get from user values
 SITE_ID = ''
@@ -105,6 +105,7 @@ REMOTE_FHIR_SOURCE = []
 REMOTE_FHIR_SOURCE_UPDATE_STATUS = "false"
 CONSOLIDATED_SERVER_ADDRESS = []
 FHIR_IDENTIFIER = []
+DB_BACKUP_USER = ''
 TIMEZONE = ''
 
 EXTERNAL_HOSTS = []
@@ -125,16 +126,12 @@ setup_OpenELIS.py <options>
             
             install                 - Installs OpenELIS.  Assumes that there is not a partial install
             
-            installBackup           - Installs just the backup.  Will overwrite any existing backup
-            
             update                  - Updates OpenElis.  Checks to insure that the instance being updated is the same as the installed
             
             uninstall               - Removes OpenELIS from the system optionally including the database. Make sure you have the clinlims password written down someplace
             
-            recover                 - Will try to recover the system if somebody has tried to fix the system manually.  It will reset the database password
-            
         -f --file-config        - file that contains configuration settings
-            
+        
         -v --version            - run in version mode
         
         -h --help               - print help
@@ -184,14 +181,14 @@ def main(argv):
     if MODE == "install":
         log("install " + strftime("%a, %d %b %Y %H:%M:%S", gmtime()), not PRINT_TO_CONSOLE)
         install()
-    
+        
     elif MODE == "installCrossTabs":
         log("installCrossTabs " + strftime("%a, %d %b %Y %H:%M:%S", gmtime()), not PRINT_TO_CONSOLE)
         install_crosstab()
     
     elif MODE == "uninstall":
         log("uninstall " + strftime("%a, %d %b %Y %H:%M:%S", gmtime()), not PRINT_TO_CONSOLE)
-        print "This will uninstall OpenELIS from this machine including **ALL** data from database"
+        print "This will uninstall OpenELIS from this machine including **ALL** data from database and **ALL** local backups"
         remove = raw_input("Do you want to continue with the uninstall? y/n: ")
         if remove.lower() == 'y':
             uninstall()
@@ -200,15 +197,6 @@ def main(argv):
         log("update " + strftime("%a, %d %b %Y %H:%M:%S", gmtime()), not PRINT_TO_CONSOLE)
         update()
     
-    elif MODE == "installBackup":
-        log("installBackup " + strftime("%a, %d %b %Y %H:%M:%S", gmtime()), not PRINT_TO_CONSOLE)
-        find_password()
-        install_cron_tasks()
-    
-    elif MODE == "recover":
-        log("recover " + strftime("%a, %d %b %Y %H:%M:%S", gmtime()), not PRINT_TO_CONSOLE)
-        recover_database()
-        
     else: # if all else fails give help
         write_help()
         
@@ -246,7 +234,7 @@ def do_install():
     install_db()
     
     preserve_database_user_password()
-
+    
     install_crosstab()
 
     load_docker_image()
@@ -259,9 +247,10 @@ def do_install():
     ensure_dir_exists(TOMCAT_LOGS_DIR)
     os.chmod(TOMCAT_LOGS_DIR, 0777) 
     os.chown(TOMCAT_LOGS_DIR, 8443, 8443)  
-    
 
     start_docker_containers()
+    
+    create_db_backup_user()
 
 
 def install_files_from_templates():
@@ -555,6 +544,24 @@ def install_cron_file():
     shutil.copy(INSTALLER_STAGING_DIR + CRON_FILE_NAME, CRON_INSTALL_DIR)
     
 
+def install_backup_config():
+    # set values for database users
+    backup_config = open(INSTALLER_TEMPLATE_DIR + 'backupConfig.sql')
+    output_file = open(INSTALLER_DB_INIT_DIR + 'backupConfig.sql', 'w')
+    for line in backup_config:
+        if line.find('backups_dir') >= 0:
+            if DOCKER_DB:
+                line = line.replace('[% backups_dir %]', DOCKER_DB_BACKUPS_DIR)
+            elif LOCAL_DB:
+                line = line.replace('[% backups_dir %]', DB_BACKUPS_DIR)
+            output_file.write(line)
+        else:
+            output_file.write(line)
+    output_file.close()
+    backup_config.close() 
+    os.chmod(INSTALLER_DB_INIT_DIR + 'backupConfig.sql', 0644)  
+    
+
 def install_permissions_file():
     # set values for database users
     pg_permissions = open(INSTALLER_TEMPLATE_DIR + 'pgsql-permissions.sql')
@@ -565,6 +572,9 @@ def install_permissions_file():
             output_file.write(line)
         elif line.find('adminPassword') >= 0:
             line = line.replace('[% adminPassword %]', ADMIN_PWD)
+            output_file.write(line)
+        elif line.find('backupPassword') >= 0:
+            line = line.replace('[% backupPassword %]', BACKUP_PWD)
             output_file.write(line)
         else:
             output_file.write(line)
@@ -650,6 +660,15 @@ def preserve_database_user_password():
     os.chmod(SECRETS_DIR + 'datasource.password', 0640)
     
     
+def preserve_database_backup_user_password():
+    ensure_dir_exists(SECRETS_DIR)
+    db_backup_user_password_file = open(SECRETS_DIR + 'backup_datasource.password', 'w')
+    db_backup_user_password_file.write(BACKUP_PWD)
+    db_backup_user_password_file.close()
+
+    os.chmod(SECRETS_DIR + 'backup_datasource.password', 0640)
+    
+    
 # note There is a fair amount of copying files, it should be re-written using shutil
 def install_crosstab():
     if LOCAL_DB:
@@ -698,9 +717,12 @@ def update():
 def do_update():
     log("Updating " + APP_NAME, PRINT_TO_CONSOLE)
 
-    if not find_password():
-        log("Unable to find password from secrets file. Exiting", PRINT_TO_CONSOLE)
-        return
+    while not find_backup_password():
+        do_create_user = raw_input("Unable to find backup password from secrets file. Would you like to create a backup user? y/n ")
+        if do_create_user.lower() == 'y':
+            create_db_backup_user()
+        else:
+            return
 
     backup_db()
     
@@ -759,10 +781,6 @@ def do_uninstall():
     
     uninstall_cron_tasks()
     
-    do_uninstall_backups = raw_input("Do you want to remove backupfiles from this machines y/n ")
-    if do_uninstall_backups.lower() == 'y':
-        uninstall_backups()
-        
     uninstall_program_files()
 
 
@@ -823,54 +841,10 @@ def uninstall_program_files():
     log("cleaning up various program files", PRINT_TO_CONSOLE)
     if os.path.exists(OE_ETC_DIR):
         shutil.rmtree(OE_ETC_DIR)
-    if os.path.exists(DB_ENVIRONMENT_DIR):
-        shutil.rmtree(DB_ENVIRONMENT_DIR)
-    if os.path.exists(DB_INIT_DIR):
-        shutil.rmtree(DB_INIT_DIR)
-    if os.path.exists(SECRETS_DIR):
-        shutil.rmtree(SECRETS_DIR)
+    if os.path.exists(OE_VAR_DIR):
+        shutil.rmtree(OE_VAR_DIR)
 
 
-
-#---------------------------------------------------------------------
-#             RECOVER 
-#---------------------------------------------------------------------
-def recover_database():
-    over_ride = raw_input("This will reset the database password.  Do you want to keep going? y/n ")
-    if not over_ride.lower() == "y":
-        return
-
-    generate_database_user_password()
-    preserve_database_user_password()
-    update_database_user_role()
-    log("Updated postgres password in database and config file.", PRINT_TO_CONSOLE)
-
-
-def update_database_user_role():
-    template_file = open(INSTALLER_TEMPLATE_DIR + POSTGRES_ROLE_UPDATE_FILE_NAME, "r")
-    staging_file = open(INSTALLER_STAGING_DIR + POSTGRES_ROLE_UPDATE_FILE_NAME, "w")
-
-    for line in template_file:
-        if line.find("[% postgres_password %]") >= 0:
-            line = line.replace("[% postgres_password %]", CLINLIMS_PWD)
-
-    staging_file.write(line)
-
-    template_file.close()
-    staging_file.close()
-    #in case staging isn't deleted, make sure we're not storing password without protection
-    os.chmod(INSTALLER_STAGING_DIR + POSTGRES_ROLE_UPDATE_FILE_NAME, 0640)
-    if DOCKER_DB:
-        cmd = 'docker exec ' + DOCKER_DB_CONTAINER_NAME + ' psql -f ' + INSTALLER_STAGING_DIR + POSTGRES_ROLE_UPDATE_FILE_NAME
-        os.system(cmd)
-    elif LOCAL_DB:
-        cmd = 'su -c "psql  <  ' + INSTALLER_STAGING_DIR + POSTGRES_ROLE_UPDATE_FILE_NAME + '" postgres > /dev/null'
-        os.system(cmd)
-    else:
-        log("cannot update remote databases users". PRINT_TO_CONSOLE)
-        
-        
-        
 #---------------------------------------------------------------------
 #             GET/SET SETUP PROPERTIES
 #---------------------------------------------------------------------
@@ -952,18 +926,19 @@ def find_password():
             return True
     except IOError:
         return False
+  
+    
+def find_backup_password():
+    global BACKUP_PWD
+    try:
+        config_file = open(SECRETS_DIR + 'backup_datasource.password')
 
-
-def get_action_time():
-    global ACTION_TIME
-
-    if ACTION_TIME == '':
-        ACTION_TIME = strftime("%Y_%m_%d-%H_%M_%S", time.localtime())
-        cmd = 'mkdir ' + INSTALLER_ROLLBACK_DIR + '/' + ACTION_TIME
-        os.system(cmd)
-
-    return ACTION_TIME
-
+        for line in config_file:
+            BACKUP_PWD = line
+            return True
+    except IOError:
+        return False    
+    
 
 def get_stored_user_values():
     ensure_dir_exists(CONFIG_DIR)
@@ -1031,8 +1006,8 @@ def get_set_fhir_identifier():
     if (not is_fhir_identifier_set()):
         set_fhir_identifier()
     get_fhir_identifier()
-    
-        
+
+
 def is_site_id_set():
     return os.path.isfile(CONFIG_DIR + 'SITE_ID')
 
@@ -1232,6 +1207,40 @@ def set_fhir_identifier():
     identifier = raw_input("type a comma delimited list of fhir identifiers (format Practitioner/id1,Organization/id2...): ").split(',')
     with open(CONFIG_DIR + 'FHIR_IDENTIFIER', mode='wt') as file:
         file.write(','.join(identifier))
+    
+
+def create_db_backup_user(): 
+    global BACKUP_PWD
+    generate_database_backup_password()
+    preserve_database_backup_user_password()
+    
+    install_backup_config()
+    
+    if DOCKER_DB:
+        cmd = 'docker exec ' + DOCKER_DB_CONTAINER_NAME + ' mkdir ' + DOCKER_DB_BACKUPS_DIR + 'archive'
+        os.system(cmd)
+        cmd = 'docker exec ' + DOCKER_DB_CONTAINER_NAME + ' chown postgres:postgres ' + DOCKER_DB_BACKUPS_DIR + 'archive'
+        os.system(cmd)
+        cmd = 'docker cp ' + INSTALLER_DB_INIT_DIR + 'backupConfig.sql ' + DOCKER_DB_CONTAINER_NAME + ':backupConfig.sql'
+        os.system(cmd)
+        cmd = 'docker exec ' + DOCKER_DB_CONTAINER_NAME + ' psql -U admin -d clinlims -f backupConfig.sql'
+        os.system(cmd)
+        cmd = 'docker exec ' + DOCKER_DB_CONTAINER_NAME + ' psql -U admin -d clinlims -c "CREATE USER backup REPLICATION PASSWORD \'' + BACKUP_PWD + '\';"'
+        os.system(cmd)
+        os.system('echo "local replication backup   trust" >> ' + DB_DATA_DIR + 'pg_hba.conf')
+        os.system('echo "host replication backup  127.0.0.1/32 md5" >> ' + DB_DATA_DIR + 'pg_hba.conf')
+        os.system('docker restart ' + DOCKER_DB_CONTAINER_NAME)
+    elif LOCAL_DB:
+        cmd = 'psql -U admin  -d clinlims < ' + INSTALLER_DB_INIT_DIR + 'backupConfig.sql'
+        os.system(cmd)
+        os.system('sudo mkdir ' + DB_BACKUPS_DIR + 'archive')
+        os.system('sudo chown postgres:postgres ' + DB_BACKUPS_DIR + 'archive')
+        cmd = 'su -c "psql -c \"CREATE USER backup REPLICATION PASSWORD \'' + BACKUP_PWD + '\';\"" postgres > /dev/null'
+        os.system(cmd)
+        os.system('echo "local replication backup   trust" >> ' + POSTGRES_MAIN_DIR + 'pg_hba.conf')
+        os.system('echo "host replication backup  127.0.0.1/32 md5" >> ' + POSTGRES_MAIN_DIR + 'pg_hba.conf')
+        os.system('sudo service postgresql restart')
+    
         
                 
 #---------------------------------------------------------------------
@@ -1245,6 +1254,11 @@ def generate_passwords():
 def generate_database_user_password():
     global CLINLIMS_PWD
     CLINLIMS_PWD = ''.join(random.SystemRandom().choice(string.letters + string.digits) for _ in range(12))
+    
+    
+def generate_database_backup_password():
+    global BACKUP_PWD
+    BACKUP_PWD = ''.join(random.SystemRandom().choice(string.letters + string.digits) for _ in range(12))
 
     
 def generate_database_admin_password():
@@ -1452,31 +1466,54 @@ def persist_site_information(file, name, description, value):
 
 
 def backup_db():
-    action_time = get_action_time()
-    backup_name = action_time + '/openElis.backup'
-    
-    if find_password():
-        log("backing up database to " + INSTALLER_ROLLBACK_DIR + backup_name, PRINT_TO_CONSOLE)
-        if DOCKER_DB:
-            ensure_dir_exists(DB_BACKUPS_DIR + action_time)
-            os.system(
-                'docker exec ' + DOCKER_DB_CONTAINER_NAME + ' /usr/bin/pg_dump -U clinlims -f "' 
-                + DOCKER_DB_BACKUPS_DIR + backup_name + '" clinlims')
-            if os.path.exists(DB_BACKUPS_DIR + backup_name):
-                shutil.move(DB_BACKUPS_DIR + backup_name, INSTALLER_ROLLBACK_DIR + backup_name)
+    action_time = strftime("%Y_%m_%d-%H_%M_%S", time.localtime())
+    backup_name = 'oe_backup_' + action_time
+    logical_backup = raw_input("Would you like to take a logical backup? (slower, but mandatory if you are migrating between database versions) y/n ")
+    if logical_backup.lower() == "y":
+        backup_name = backup_name + '.sql'
+        if find_password():
+            log("backing up database to " + INSTALLER_ROLLBACK_DIR + backup_name, PRINT_TO_CONSOLE)
+            if DOCKER_DB:
+                ensure_dir_exists(DB_BACKUPS_DIR + action_time)
+                os.system(
+                    'docker exec ' + DOCKER_DB_CONTAINER_NAME + ' pg_dumpall --verbose --clean -U admin -f ' 
+                    + DOCKER_DB_BACKUPS_DIR + backup_name)
+                if os.path.exists(DB_BACKUPS_DIR + backup_name):
+                    shutil.move(DB_BACKUPS_DIR + backup_name, INSTALLER_ROLLBACK_DIR + backup_name)
+                else:
+                    over_ride = raw_input("Database could not be backed up properly. Do you want to continue without a proper backup? y/n ")
+                    if not over_ride.lower() == "y":
+                        clean_exit()  
+            elif LOCAL_DB:
+                os.system(
+                    "PGPASSWORD=\"" + CLINLIMS_PWD + "\";export PGPASSWORD; su -c  'pgdump_all --verbose --clean -h localhost -U clinlims clinlims > " + INSTALLER_ROLLBACK_DIR + backup_name + "'")
             else:
-                over_ride = raw_input("Database could not be backed up properly. Do you want to continue without a proper backup? y/n ")
-                if not over_ride.lower() == "y":
-                    clean_exit()  
-        elif LOCAL_DB:
-            os.system(
-                "PGPASSWORD=\"" + CLINLIMS_PWD + "\";export PGPASSWORD; su -c  'pg_dump -h localhost -U clinlims clinlims > " + INSTALLER_ROLLBACK_DIR + backup_name + "'")
+                log("can't backup remote databases. proceeding". PRINT_TO_CONSOLE)
         else:
-            log("can't backup remote databases. proceeding". PRINT_TO_CONSOLE)
-    else:
-        log("can't back up database, missing password file ", PRINT_TO_CONSOLE)
-    
-    
+            log("can't back up database, missing password file ", PRINT_TO_CONSOLE)    
+    else :
+        if find_backup_password():
+            log("backing up database to " + INSTALLER_ROLLBACK_DIR + backup_name, PRINT_TO_CONSOLE)
+            if DOCKER_DB:
+                ensure_dir_exists(DB_BACKUPS_DIR)
+                os.system(
+                    'docker exec ' + DOCKER_DB_CONTAINER_NAME + ' /usr/bin/pg_basebackup -U admin -U backup -D ' 
+                    + DOCKER_DB_BACKUPS_DIR + backup_name + ' -Xs -P')
+                if os.path.exists(DB_BACKUPS_DIR + backup_name):
+                    shutil.move(DB_BACKUPS_DIR + backup_name, INSTALLER_ROLLBACK_DIR + backup_name)
+                else:
+                    over_ride = raw_input("Database could not be backed up properly. Do you want to continue without a proper backup? y/n ")
+                    if not over_ride.lower() == "y":
+                        clean_exit()  
+            elif LOCAL_DB:
+                os.system(
+                    "PGPASSWORD=\"" + BACKUP_PWD + "\";export PGPASSWORD; su -c  '/usr/bin/pg_basebackup -U backup -h localhost -U backup clinlims -D " + INSTALLER_ROLLBACK_DIR + backup_name + "'")
+            else:
+                log("can't backup remote databases. proceeding". PRINT_TO_CONSOLE)
+        else:
+            log("can't back up database, missing password file ", PRINT_TO_CONSOLE)
+
+
 def ensure_dir_exists(dir):
     if not os.path.exists(dir):
         os.makedirs(dir)
