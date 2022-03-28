@@ -109,14 +109,17 @@ function mySaveAction() {
 }
 
 </script>
- <script>
- 
-	var counter = 0;
+<script>
+ 	var counter = 0;
+
+	/* This creates a New set of Lab Unit Roles and appends a common preffix to the Roles values in every new Set in order
+	 to identify the distinct values for each set,since multiple fields mapped to the same path are be created */
+	 
 	function createNewRolesTable() {
 		counter++
 		var content = document.getElementById('rolesTable').innerHTML;
 		var newTable = document.createElement('table');
-		var tableId = "rolesTable_" + counter ;
+		var tableId = "rolesTable_" + counter;
 		newTable.id = tableId
 		newTable.innerHTML = content;
 		document.getElementById('rolesRow').appendChild(newTable);
@@ -124,97 +127,161 @@ function mySaveAction() {
 		var rows = document.getElementById(tableId).rows;
 
 		for (var i = 0; i < rows.length; i++) {
-			if (rows[i].cells[0]) {
+			if (rows[i].cells[1]) {
 				if (i == 0) {
-					var options = rows[i].cells[0].getElementsByTagName("option");
-					for(var x = 0; x < options.length; x++ ){
-					var optionsValue = options[x].value
-					rows[i].cells[0].getElementsByTagName("option")[x].value = counter + "=" + optionsValue;
+					var options = rows[i].cells[1].getElementsByTagName("option");
+					for (var x = 0; x < options.length; x++) {
+						var optionsValue = options[x].value
+						rows[i].cells[1].getElementsByTagName("option")[x].value = counter + "=" + optionsValue;
 					}
 				}
 				if (i > 0) {
-					var val = rows[i].cells[0].getElementsByTagName("input")[0].value;
-					rows[i].cells[0].getElementsByTagName("input")[0].value = counter + "=" + val;
+					var val = rows[i].cells[1].getElementsByTagName("input")[0].value;
+					rows[i].cells[1].getElementsByTagName("input")[0].value = counter + "=" + val;
 				}
 			}
 		}
 
+
+		var rolesSection = document.getElementById("rolesRow");
+		var tables = rolesSection.getElementsByTagName("table");
+		if (tables.length <= 2) {
+			document.getElementById("createNewRoles").disabled = true;
+		}
+
+		if (tables.length > 2) {
+			for (var y = 2; y < tables.length; y++) {
+				var allLabUnitsOption = tables[y].rows[0].cells[1].getElementsByTagName("option")[0];
+				allLabUnitsOption.remove();
+			}
+		}
 	}
 
 	function removeRolesTable(element) {
-	  	var tableToRemove = element.parentNode.parentNode.parentNode.parentNode;
-	    tableToRemove.remove();
+		var tableToRemove = element.parentNode.parentNode.parentNode.parentNode;
+		tableToRemove.remove();
 	}
-  </script>
 
-  <script>
-	var userRolesData = JSON.parse('${form.userLabRoleData}');
-	console.log(userRolesData);
-	function createDefaultRolesTable(){
-		if(Object.keys(userRolesData).length === 0){
+	//Renders an empty set of Lab Unit Roles if no user roles data exists
+	function createDefaultRolesTable() {
+		if (Object.keys(userRolesData).length === 0) {
 			createNewRolesTable();
 		}
-   }					  
-
-	function activateSave(){ 
-		document.getElementsByName('save')[0].disabled =false ;
-	}	
-				  
-    function renderUserRolesData() {
-		for (let test in userRolesData) {
-		    counter++
-		    var content = document.getElementById('rolesTable').innerHTML;
-    	    var newTable = document.createElement('table');
-			var tableId = "rolesTable_" + counter ;
-    		newTable.id = tableId
-    		newTable.innerHTML = content;
-    		document.getElementById('rolesRow').appendChild(newTable);
-			var rows = document.getElementById(tableId).rows;
-
-		    var data = userRolesData[test]
-			for (var y = 0; y < data.length; y++) {
-					for (var i = 0; i < rows.length; i++) {
-						if (rows[i].cells[0]) {
-							if (i == 0) {
-								var options = rows[i].cells[0].getElementsByTagName("option");
-								for(var x = 0; x < options.length; x++ ){
-									var optionsValue = options[x].value
-									if(optionsValue == test){
-                                      options[x].selected = "selected";
-									}
-								}
-							}
-							if (i > 0) {
-								var testCheck = rows[i].cells[0].getElementsByTagName("input")[0];
-								var testVal = testCheck.value;
-								if(testVal == data[y]){
-                                   testCheck.checked = "checked" ;
-								}
-								
-							}
-						}
-					}
-			}
-
-				for (var i = 0; i < rows.length; i++) {
-						if (rows[i].cells[0]) {
-							if (i == 0) {
-								var options = rows[i].cells[0].getElementsByTagName("option");
-								for(var x = 0; x < options.length; x++ ){
-									var optionsValue = options[x].value
-									options[x].value = counter + "=" + optionsValue;
-								}
-							}
-							if (i > 0) {
-								var testCheck = rows[i].cells[0].getElementsByTagName("input")[0];
-								var testVal = testCheck.value;
-								testCheck.value = counter + "=" + testVal;
-							}
-						}
-					}
-        }
 	}
-  </script>
+
+	function activateSave() {
+		document.getElementsByName('save')[0].disabled = false;
+	}
+
+	function selectAllRoles(element) {
+		var table = element.parentNode.parentNode.parentNode.parentNode;
+		var rows = table.rows;
+		for (var y = 2; y < rows.length; y++) {
+			var checkBox = rows[y].cells[1].getElementsByTagName("input")[0];
+			if (element.checked == true) {
+				checkBox.checked = true
+			} else {
+				checkBox.checked = false
+			}
+		}
+	}
+
+	function checkAdminRoles(element) {
+		if (element.id == "role_1") {
+			if (element.checked == true) {
+				document.getElementById('role_2').checked = true;
+				document.getElementById('role_11').checked = true;
+			}
+		} else {
+			if (document.getElementById('role_1').checked == true) {
+				document.getElementById('role_2').checked = true;
+				document.getElementById('role_11').checked = true;
+			}
+		}
+	};
+
+	function disableAddRoles() {
+		var rolesSection = document.getElementById("rolesRow");
+		var tables = rolesSection.getElementsByTagName("table");
+		var allLabSelected = false;
+		for (var y = 1; y < tables.length; y++) {
+			var allLabUnitsOption = tables[y].rows[0].cells[1].getElementsByTagName("option")[0];
+			if (allLabUnitsOption.selected == true) {
+				allLabSelected = true;
+			}
+		}
+		if (allLabSelected) {
+			document.getElementById("createNewRoles").disabled = true;
+		} else {
+			document.getElementById("createNewRoles").disabled = false;
+		}
+	}
+
+</script>
+
+<script>
+ var userRolesData = JSON.parse('${form.userLabRoleData}');
+console.log(userRolesData);
+
+// this dynamically Renders sets of Lab Unit Roles with data if user roles data exists			 
+function renderUserRolesData() {
+	for (let labSection in userRolesData) {
+		counter++
+		var content = document.getElementById('rolesTable').innerHTML;
+		var newTable = document.createElement('table');
+		var tableId = "rolesTable_" + counter;
+		newTable.id = tableId
+		newTable.innerHTML = content;
+		document.getElementById('rolesRow').appendChild(newTable);
+		var rows = document.getElementById(tableId).rows;
+
+		var data = userRolesData[labSection]
+		for (var y = 0; y < data.length; y++) {
+			for (var i = 0; i < rows.length; i++) {
+				if (rows[i].cells[1]) {
+					if (i == 0) {
+						var options = rows[i].cells[1].getElementsByTagName("option");
+						for (var x = 0; x < options.length; x++) {
+							var optionsValue = options[x].value
+							if (optionsValue == labSection) {
+								options[x].selected = "selected";
+							}
+						}
+					}
+					if (i > 0) {
+						var testCheck = rows[i].cells[1].getElementsByTagName("input")[0];
+						var testVal = testCheck.value;
+						if (testVal == data[y]) {
+							testCheck.checked = "checked";
+						}
+
+					}
+				}
+			}
+		}
+
+		for (var i = 0; i < rows.length; i++) {
+			if (rows[i].cells[1]) {
+				if (i == 0) {
+					var options = rows[i].cells[1].getElementsByTagName("option");
+					for (var x = 0; x < options.length; x++) {
+						var optionsValue = options[x].value
+						options[x].value = counter + "=" + optionsValue;
+					}
+				}
+				if (i > 0) {
+					var testCheck = rows[i].cells[1].getElementsByTagName("input")[0];
+					var testVal = testCheck.value;
+					testCheck.value = counter + "=" + testVal;
+				}
+			}
+		}
+		if (labSection == "AllLabUnits") {
+			document.getElementById("createNewRoles").disabled = true;
+		}
+	}
+}
+</script>
 <form:hidden path="systemUserId"/>
 <form:hidden path="loginUserId"/>
 <%-- <form:hidden path="systemUserLastupdated"/> --%>
@@ -342,12 +409,13 @@ function mySaveAction() {
 		<tr>
 		<td>
 		<c:forEach begin="0" end="${role.nestingLevel}">
-			&nbsp;&nbsp;&nbsp;&nbsp;
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 		</c:forEach>
 		<form:checkbox path="selectedRoles" 
 						id="role_${role.roleId}" 
 						onclick="selectChildren(this, ${role.childrenID});makeDirty();"
 						value="${role.roleId}"
+						onchange="checkAdminRoles(this);"
 						/>
 			<c:out value="${role.roleName}" />
 		</td>
@@ -362,21 +430,29 @@ function mySaveAction() {
 		<td id="rolesRow">
 			<table id="rolesTable"  style="display: none">
 			<tr> 
+			    <td>
+				     <button type="button" name="removeRow" id="removeRoles" onClick="removeRolesTable(this);activateSave();">-</button> 
+				</td>
 				<td>
-					<form:select path="testSectionId" onchange="activateSave();">
-								<option value="none"></option>
+					<form:select path="testSectionId" onchange="activateSave();disableAddRoles()">
+					            <option value="AllLabUnits"><spring:message code="systemuserrole.allLabUnits"/></option>
 								<form:options items="${form.testSections}" itemLabel="value" itemValue="id" />
 					</form:select>
-				</td>
-				<td>
-				     <button type="button" name="removeRow" id="removeRoles" onClick="removeRolesTable(this);">-</button> 
-				</td>
+				</td>		
+			</tr>
+			<tr>
+			<td>&nbsp;</td>
+			<td>
+			   &nbsp;&nbsp;&nbsp;
+			   <input type="checkbox" onchange="activateSave();" onclick="selectAllRoles(this);"> <spring:message code="systemuserrole.allpermissions"/></input>
+			</td>
 			</tr>
 			<c:forEach items="${form.labUnitRoles}" var="role">
 				<tr>
+				<td>&nbsp;</td>
 				<td>
 				<c:forEach begin="0" end="${role.nestingLevel}">
-					&nbsp;&nbsp;&nbsp;&nbsp;
+					&nbsp;
 				</c:forEach>
 				<form:checkbox path="selectedLabUnitRoles" 
 								onclick="selectChildren(this, ${role.childrenID});makeDirty();"
@@ -392,11 +468,9 @@ function mySaveAction() {
 	</tr>
 	<tr>
 		<td>
-		  &nbsp;
 		  <button type="button" name="createNewRoles" id="createNewRoles" onClick="createNewRolesTable();">+</button> 
+		  &nbsp;
+		  <spring:message code="systemuserrole.newpermissions"/>
 		</td>
 	</tr>
-
 </table>
-
-
