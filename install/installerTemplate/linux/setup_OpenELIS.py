@@ -952,6 +952,7 @@ def get_stored_user_values():
     get_set_timezone()
     get_set_extra_hosts()
     get_set_fhir_identifier()
+    find_password()
 
 
 def get_set_site_id():
