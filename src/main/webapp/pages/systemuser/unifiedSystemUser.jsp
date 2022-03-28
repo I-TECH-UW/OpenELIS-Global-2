@@ -112,9 +112,9 @@ function mySaveAction() {
 <script>
  	var counter = 0;
 
-	/* This creates new a set of Lab Unit Roles and appends a common preffix to the Roles values in every new Set in order
-	 to identify the distinct values for each set,
-	 because mutiple fields can be created  mapped to the same path */
+	/* This creates a New set of Lab Unit Roles and appends a common preffix to the Roles values in every new Set in order
+	 to identify the distinct values for each set,since multiple fields mapped to the same path are be created */
+	 
 	function createNewRolesTable() {
 		counter++
 		var content = document.getElementById('rolesTable').innerHTML;
