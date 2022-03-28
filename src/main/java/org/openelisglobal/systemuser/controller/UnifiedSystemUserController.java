@@ -611,9 +611,9 @@ public class UnifiedSystemUserController extends BaseController {
 
     private void parseUserLabRolesData(UnifiedSystemUserForm form, Map<String, Set<String>> selectedLabUnitRolesMap) {
        /**
-        The ui-form can dynamically render more fields that are bound to the same field (ie for testSectionId ,selectedLabUnitRoles )of the form-backing object,
-        so we append a common pre-fix to the values on every entry to identify the distinct values for each entry .
-        this method parses the data from the form ,and builds a Map ie <String testSectionId ,Set<LabUnitRoles>> for each entry based on the suffix appended
+        The ui-form can dynamically render more fields that are mapped to the same field (ie for testSectionId ,selectedLabUnitRoles )of the form-backing object,
+        so we append a common pre-fix to the values in every New lab Unit Roles Set to identify the distinct values for each set .
+        This method parses the data from the form ,and builds a Map ie <String testSectionId ,Set<LabUnitRoles>> for each Lab Unit Role Set based on the suffix appended
         ie testSectionId = "1=2,2=5,2=6"  ,selectedLabUnitRoles = [1=56, 2=36 ,3=44]
         */
        

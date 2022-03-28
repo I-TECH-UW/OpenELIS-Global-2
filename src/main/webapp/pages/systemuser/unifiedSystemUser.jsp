@@ -113,9 +113,9 @@ function mySaveAction() {
  
 	var counter = 0;
 
-	/* this creates new Roles Entry table and also adds a common preffix to the Roles values on every entry in order
-	 to identify the distinct values for each entry,
-	 because mutiple fields binding to the same path will be created  */
+	/* This creates new a set of Lab Unit Roles and appends a common preffix to the Roles values in every new Set in order
+	 to identify the distinct values for each set,
+	 because mutiple fields can be created  mapped to the same path */
 	function createNewRolesTable() {
 		counter++
 		var content = document.getElementById('rolesTable').innerHTML;
@@ -150,7 +150,7 @@ function mySaveAction() {
 	    tableToRemove.remove();
 	}
 
-    //Renders an empty Lab Unit entry table if no user roles data exists
+    //Renders an empty set of Lab Unit Roles if no user roles data exists
 	function createDefaultRolesTable(){
 		if(Object.keys(userRolesData).length === 0){
 			createNewRolesTable();
@@ -193,7 +193,7 @@ function mySaveAction() {
 	var userRolesData = JSON.parse('${form.userLabRoleData}');
 	console.log(userRolesData);
 				 
-	// this dynamically Renders Lab Unit entry tables with data if user roles data exists			 
+	// this dynamically Renders sets of Lab Unit Roles with data if user roles data exists			 
     function renderUserRolesData() {
 		for (let test in userRolesData) {
 		    counter++

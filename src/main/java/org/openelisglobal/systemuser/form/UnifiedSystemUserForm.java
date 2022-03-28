@@ -50,11 +50,11 @@ public class UnifiedSystemUserForm extends BaseForm {
     // for display
     private List<IdValuePair> testSections;
 
-    /**There are multiple fields in the ui-form bound to this field, because the ui-form can dynamically create more fields bound to this same field(path), 
+    /**There are multiple fields in the ui-form mapped to this field, because the ui-form can dynamically create more fields mapped to this same field(path), 
     this field is only used to get values from the form as a single String with comma ,separated values ie "value1 ,value2"  **/
     private String testSectionId;
 
-    /**There are multiple fields in the ui-form bound to this field, because the ui-form can dynamically create more fields bound to this same field(path), 
+    /**There are multiple fields in the ui-form mapped to this field, because the ui-form can dynamically create more fields mapped to this same field(path), 
     this field is only used to get values from the form as a List of Strings  **/
     private List<String> selectedLabUnitRoles;
 
@@ -82,8 +82,8 @@ public class UnifiedSystemUserForm extends BaseForm {
 
     private Timestamp systemUserLastupdated;
 
-    /**this field passes the user Lab Unit Roles data to the ui-form in form of a json object , in order to dynamically 
-    render fields with data ,that are bound to a single filed (path) ie testSectionId and selectedLabUnitRoles **/
+    /**This field passes the user Lab Unit Roles data to the ui-form in form of a json object , in order to dynamically 
+    render sets of Lab Unit Roles with data ,with fields that are mapped to the same  path ie testSectionId and selectedLabUnitRoles **/
     private JSONObject userLabRoleData;
 
     public UnifiedSystemUserForm() {
