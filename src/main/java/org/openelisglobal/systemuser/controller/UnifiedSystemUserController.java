@@ -87,6 +87,7 @@ public class UnifiedSystemUserController extends BaseController {
     private static final String LAB_ROLES_GROUP = "Lab Unit Roles";
     private static String GLOBAL_ADMIN_ID;
     public static final char DEFAULT_OBFUSCATED_CHARACTER = '@';
+    public static final String ALL_LAB_UNITS = "AllLabUnits";
 
     @PostConstruct
     private void initialize() {
@@ -110,6 +111,7 @@ public class UnifiedSystemUserController extends BaseController {
         request.setAttribute(ALLOW_EDITS_KEY, "true");
         request.setAttribute(PREVIOUS_DISABLED, "true");
         request.setAttribute(NEXT_DISABLED, "true");
+        request.setAttribute(DISPLAY_PREV_NEXT, false);
 
         boolean isNew = GenericValidator.isBlankOrNull(id) || "0".equals(id);
 
@@ -591,10 +593,18 @@ public class UnifiedSystemUserController extends BaseController {
         UserLabUnitRoles roles = userService.getUserLabUnitRoles(form.getSystemUserId());
         if (roles != null) {
             Set<LabUnitRoleMap> roleMaps = roles.getLabUnitRoleMap();
+            List<String> userLabUnits = new ArrayList<>();
+            roleMaps.forEach(map -> userLabUnits.add(map.getLabUnit()));
             JSONObject userLabData = new JSONObject();
-            for (LabUnitRoleMap map : roleMaps) {      
-                userLabData.put(map.getLabUnit(), map.getRoles().stream().collect(Collectors.toList()));
+            if (userLabUnits.contains(ALL_LAB_UNITS)) {
+                roleMaps.stream().filter(map -> map.getLabUnit().equals(ALL_LAB_UNITS)).forEach(
+                    map -> userLabData.put(map.getLabUnit(), map.getRoles().stream().collect(Collectors.toList())));
+            } else {
+                for (LabUnitRoleMap map : roleMaps) {
+                    userLabData.put(map.getLabUnit(), map.getRoles().stream().collect(Collectors.toList()));
+                }
             }
+            
             form.setUserLabRoleData(userLabData);
         }
     }
@@ -609,14 +619,16 @@ public class UnifiedSystemUserController extends BaseController {
        
         String labUnitEntryMapString = form.getTestSectionId();
         List<String> labUnitsRolesEntryMaps = form.getSelectedLabUnitRoles();
-        
-        String parts[] = labUnitEntryMapString.split(",");
+         
         List<String> entries = new ArrayList<>();
         List<String> labUnitsEntryMap = new ArrayList<>();
-        for (String part : parts) {
-            if (!part.contains("none")) {
-                entries.add(part.split("=")[0]);
-                labUnitsEntryMap.add(part);
+        String labUnitEntries[] = labUnitEntryMapString.split(",");
+        for (String part : labUnitEntries) {
+            if (part.contains("=")) {
+                if (!part.contains("none")) {
+                    entries.add(part.split("=")[0]);
+                    labUnitsEntryMap.add(part);
+                }
             }
         }
         for (String entry : entries) {
@@ -634,6 +646,15 @@ public class UnifiedSystemUserController extends BaseController {
                     }
                 }
             }
+        }
+        
+        if(selectedLabUnitRolesMap.containsKey(ALL_LAB_UNITS )){
+            Set<String> labRolesId = selectedLabUnitRolesMap.get(ALL_LAB_UNITS );
+            selectedLabUnitRolesMap.clear();
+            selectedLabUnitRolesMap.put(ALL_LAB_UNITS , labRolesId);
+            List<String> allTestSectionIds = new ArrayList<>();
+            DisplayListService.getInstance().getList(ListType.TEST_SECTION).forEach(testScetion -> allTestSectionIds.add(testScetion.getId()));;
+            allTestSectionIds.forEach(testScetionId ->selectedLabUnitRolesMap.put(testScetionId, labRolesId));
         }
     }
 

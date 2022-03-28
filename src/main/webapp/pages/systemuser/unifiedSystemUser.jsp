@@ -113,9 +113,9 @@ function mySaveAction() {
  
 	var counter = 0;
 
-	//creates new Roles Entry table.
-	// we append a common preffix to the Roles values on every entry in order to identify the distinct values for each entry,
-	// because mutiple fields will be created but binding to the same path 
+	/* this creates new Roles Entry table and a common preffix to the Roles values on every entry in order
+	 to identify the distinct values for each entry,
+	 because mutiple fields binding to the same path will be created  */
 	function createNewRolesTable() {
 		counter++
 		var content = document.getElementById('rolesTable').innerHTML;
@@ -173,6 +173,20 @@ function mySaveAction() {
 		   }   
 		 }
 	}
+
+	function checkAdminRoles(element){
+		if(element.id == "role_1"){
+			 if(element.checked == true){
+				 document.getElementById('role_2').checked = true ;
+				 document.getElementById('role_11').checked = true ;
+			 }        
+		}else{
+			if(document.getElementById('role_1').checked ==true){
+				document.getElementById('role_2').checked = true ;
+				document.getElementById('role_11').checked = true ;
+			}
+		}
+	};
   </script>
 
   <script>
@@ -368,6 +382,7 @@ function mySaveAction() {
 						id="role_${role.roleId}" 
 						onclick="selectChildren(this, ${role.childrenID});makeDirty();"
 						value="${role.roleId}"
+						onchange="checkAdminRoles(this);"
 						/>
 			<c:out value="${role.roleName}" />
 		</td>
@@ -383,11 +398,11 @@ function mySaveAction() {
 			<table id="rolesTable"  style="display: none">
 			<tr> 
 			    <td>
-				     <button type="button" name="removeRow" id="removeRoles" onClick="removeRolesTable(this);">-</button> 
+				     <button type="button" name="removeRow" id="removeRoles" onClick="removeRolesTable(this);activateSave();">-</button> 
 				</td>
 				<td>
 					<form:select path="testSectionId" onchange="activateSave();">
-								 <option value="none"></option>
+					            <option value="AllLabUnits"><spring:message code="systemuserrole.allLabUnits"/></option>
 								<form:options items="${form.testSections}" itemLabel="value" itemValue="id" />
 					</form:select>
 				</td>		
