@@ -113,7 +113,7 @@ function mySaveAction() {
  
 	var counter = 0;
 
-	/* this creates new Roles Entry table and a common preffix to the Roles values on every entry in order
+	/* this creates new Roles Entry table and also adds a common preffix to the Roles values on every entry in order
 	 to identify the distinct values for each entry,
 	 because mutiple fields binding to the same path will be created  */
 	function createNewRolesTable() {
