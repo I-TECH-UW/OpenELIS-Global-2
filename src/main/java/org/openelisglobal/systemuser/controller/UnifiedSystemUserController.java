@@ -653,7 +653,7 @@ public class UnifiedSystemUserController extends BaseController {
             selectedLabUnitRolesMap.clear();
             selectedLabUnitRolesMap.put(ALL_LAB_UNITS , labRolesId);
             List<String> allTestSectionIds = new ArrayList<>();
-            DisplayListService.getInstance().getList(ListType.TEST_SECTION).forEach(testScetion -> allTestSectionIds.add(testScetion.getId()));;
+            DisplayListService.getInstance().getList(ListType.TEST_SECTION).forEach(testScetion -> allTestSectionIds.add(testScetion.getId()));
             allTestSectionIds.forEach(testScetionId ->selectedLabUnitRolesMap.put(testScetionId, labRolesId));
         }
     }
