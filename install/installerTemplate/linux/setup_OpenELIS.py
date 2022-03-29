@@ -1506,7 +1506,7 @@ def backup_db():
             if DOCKER_DB:
                 ensure_dir_exists(DB_BACKUPS_DIR)
                 os.system(
-                    'docker exec ' + DOCKER_DB_CONTAINER_NAME + ' /usr/bin/pg_basebackup -U admin -U backup -D ' 
+                    'docker exec ' + DOCKER_DB_CONTAINER_NAME + ' /usr/bin/pg_basebackup -U backup -D ' 
                     + DOCKER_DB_BACKUPS_DIR + backup_name + ' -Xs -P')
                 if os.path.exists(DB_BACKUPS_DIR + backup_name):
                     shutil.move(DB_BACKUPS_DIR + backup_name, INSTALLER_ROLLBACK_DIR + backup_name)
@@ -1516,7 +1516,7 @@ def backup_db():
                         clean_exit()  
             elif LOCAL_DB:
                 os.system(
-                    "PGPASSWORD=\"" + BACKUP_PWD + "\";export PGPASSWORD; su -c  '/usr/bin/pg_basebackup -U backup -h localhost -U backup clinlims -D " + INSTALLER_ROLLBACK_DIR + backup_name + "'")
+                    "PGPASSWORD=\"" + BACKUP_PWD + "\";export PGPASSWORD; su -c  '/usr/bin/pg_basebackup -h localhost -U backup -D " + INSTALLER_ROLLBACK_DIR + backup_name + "'")
             else:
                 log("can't backup remote databases. proceeding". PRINT_TO_CONSOLE)
         else:
