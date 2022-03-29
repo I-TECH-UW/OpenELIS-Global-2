@@ -10,7 +10,7 @@
 			<sqlCheck expectedResult="1">
 				SELECT COUNT(*) FROM clinlims.system_role WHERE name = 'Global Administrator'
 			</sqlCheck>
-            <sqlCheck expectedResult="1">
+			<sqlCheck expectedResult="1">
 				SELECT COUNT(*) FROM clinlims.system_module WHERE name = 'SystemUser'
 			</sqlCheck>
 		</preConditions>
