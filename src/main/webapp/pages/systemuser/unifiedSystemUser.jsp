@@ -186,19 +186,17 @@ function mySaveAction() {
 		}
 	}
 
-	function checkAdminRoles(element) {
-		if (element.id == "role_1") {
-			if (element.checked == true) {
-				document.getElementById('role_2').checked = true;
-				document.getElementById('role_11').checked = true;
-			}
-		} else {
-			if (document.getElementById('role_1').checked == true) {
-				document.getElementById('role_2').checked = true;
-				document.getElementById('role_11').checked = true;
+	function checkAdminRoles() {
+	var globalRoles = document.querySelectorAll('[id^="role_"]');
+	var adminRole = document.getElementById('role_1');
+	if (adminRole.checked == true) {
+		for (var y = 0; y < globalRoles.length; y++) {
+			if (globalRoles[y].id != "role_1") {
+				globalRoles[y].checked = true;
 			}
 		}
-	};
+	}
+   };
 
 	function disableAddRoles() {
 		var rolesSection = document.getElementById("rolesRow");
@@ -415,7 +413,7 @@ function renderUserRolesData() {
 						id="role_${role.roleId}" 
 						onclick="selectChildren(this, ${role.childrenID});makeDirty();"
 						value="${role.roleId}"
-						onchange="checkAdminRoles(this);"
+						onchange="checkAdminRoles();"
 						/>
 			<c:out value="${role.roleName}" />
 		</td>
