@@ -146,11 +146,13 @@ public class ElectronicOrdersController extends BaseController {
 
                 Test test = null;
                 for (Coding coding : serviceRequest.getCode().getCoding()) {
-                    if (coding.getSystem().equalsIgnoreCase("http://loinc.org")) {
-                        List<Test> tests = testService.getActiveTestsByLoinc(coding.getCode());
-                        if (tests.size() != 0) {
-                            test = tests.get(0);
-                            break;
+                    if (coding.hasSystem()) {
+                        if (coding.getSystem().equalsIgnoreCase("http://loinc.org")) {
+                            List<Test> tests = testService.getActiveTestsByLoinc(coding.getCode());
+                            if (tests.size() != 0) {
+                                test = tests.get(0);
+                                break;
+                            }
                         }
                     }
                 }

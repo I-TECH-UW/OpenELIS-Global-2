@@ -295,12 +295,14 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
 
         patientGuid = getPatientGuid(eOrder);
         for (Identifier identifier : patient.getIdentifier()) {
+            if (identifier.hasSystem()) {
 //            if (identifier.getSystem().equalsIgnoreCase("https://isanteplusdemo.com/openmrs/ws/fhir2/")) {
-            if (identifier.getSystem().equalsIgnoreCase("iSantePlus ID")
-                    || identifier.getSystem().equalsIgnoreCase("https://host.openelis.org/locator-form")) {
-                patientGuid = identifier.getId();
-            } else if (identifier.getSystem().equalsIgnoreCase(fhirConfig.getOeFhirSystem() + "/pat_guid")) {
-                patientGuid = identifier.getValue();
+                if (identifier.getSystem().equalsIgnoreCase("iSantePlus ID")
+                        || identifier.getSystem().equalsIgnoreCase("https://host.openelis.org/locator-form")) {
+                    patientGuid = identifier.getId();
+                } else if (identifier.getSystem().equalsIgnoreCase(fhirConfig.getOeFhirSystem() + "/pat_guid")) {
+                    patientGuid = identifier.getValue();
+                }
             }
         }
         LogEvent.logDebug(this.getClass().getName(), "createSearchResultXML", "using patient guid " + patientGuid);
@@ -386,16 +388,20 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
         String loinc = "";
         String sampleTypeAbbreviation = "";
         for (Coding code : serviceRequest.getCode().getCoding()) {
-            if (code.getSystem().equalsIgnoreCase("http://loinc.org")) {
-                loinc = code.getCode();
-                break;
+            if (code.hasSystem()) {
+                if (code.getSystem().equalsIgnoreCase("http://loinc.org")) {
+                    loinc = code.getCode();
+                    break;
+                }
             }
         }
         if (specimen != null) {
             for (Coding type : specimen.getType().getCoding()) {
-                if (type.getSystem().equals(fhirConfig.getOeFhirSystem() + "/sampleType")) {
-                    sampleTypeAbbreviation = type.getCode();
-                    break;
+                if (type.hasSystem()) {
+                    if (type.getSystem().equals(fhirConfig.getOeFhirSystem() + "/sampleType")) {
+                        sampleTypeAbbreviation = type.getCode();
+                        break;
+                    }
                 }
             }
         }
