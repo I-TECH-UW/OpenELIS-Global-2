@@ -33,7 +33,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 
 @Service
@@ -55,8 +54,6 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
     private String facilityAuth;
 
     @Autowired
-    private FhirContext fhirContext;
-    @Autowired
     private FhirUtil fhirUtil;
     @Autowired
     private FhirTransformService fhirTransformService;
@@ -69,7 +66,7 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
 
     @Override
     @Transactional
-    @Scheduled(initialDelay = 1000, fixedRateString = "864000000")
+    @Scheduled(initialDelay = 1000, fixedRate = 60 * 60 * 1000)
     public void importOrganizationList() throws FhirGeneralException, IOException {
         if (!GenericValidator.isBlankOrNull(facilityFhirStore)) {
             IGenericClient client ;

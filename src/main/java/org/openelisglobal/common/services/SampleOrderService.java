@@ -87,6 +87,9 @@ public class SampleOrderService {
         orderItems.setRequestDate(dateAsText);
         orderItems.setReceivedTime(DateUtil.convertTimestampToStringHourTime(DateUtil.getNowAsTimestamp()));
 
+        orderItems.setProvidersList(
+                DisplayListService.getInstance().getFreshList(DisplayListService.ListType.PRACTITIONER));
+
         if (needRequesterList) {
             orderItems.setReferringSiteList(DisplayListService.getInstance()
                     .getFreshList(DisplayListService.ListType.SAMPLE_PATIENT_REFERRING_CLINIC));
@@ -121,11 +124,11 @@ public class SampleOrderService {
         sampleOrder = getBaseSampleOrderItem();
 
         if (sample != null) {
-            SampleService sampleSampleService = SpringContext.getBean(SampleService.class);
+            SampleService sampleService = SpringContext.getBean(SampleService.class);
             sampleOrder.setSampleId(sample.getId());
-            sampleOrder.setLabNo(sampleSampleService.getAccessionNumber(sample));
-            sampleOrder.setReceivedDateForDisplay(sampleSampleService.getReceivedDateForDisplay(sample));
-            sampleOrder.setReceivedTime(sampleSampleService.getReceived24HourTimeForDisplay(sample));
+            sampleOrder.setLabNo(sampleService.getAccessionNumber(sample));
+            sampleOrder.setReceivedDateForDisplay(sampleService.getReceivedDateForDisplay(sample));
+            sampleOrder.setReceivedTime(sampleService.getReceived24HourTimeForDisplay(sample));
 
             sampleOrder.setRequestDate(
                     observationHistoryService.getValueForSample(ObservationType.REQUEST_DATE, sample.getId()));

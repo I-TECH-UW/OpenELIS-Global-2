@@ -173,10 +173,10 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
     private void persistProviderData(SamplePatientUpdateData updateData) {
         if (updateData.getProviderPerson() != null && updateData.getProvider() != null) {
 
-            personService.insert(updateData.getProviderPerson());
+            personService.save(updateData.getProviderPerson());
             updateData.getProvider().setPerson(updateData.getProviderPerson());
 
-            providerService.insert(updateData.getProvider());
+            providerService.save(updateData.getProvider());
         }
     }
 

@@ -120,6 +120,9 @@ public class SampleOrderItem implements Serializable {
     // for display
     private List<IdValuePair> referringSiteDepartmentList;
 
+    // for display
+    private List<IdValuePair> providersList;
+
     @Pattern(regexp = ValidationHelper.ID_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
             SamplePatientEntryBatch.class })
     private String providerId;
@@ -529,5 +532,13 @@ public class SampleOrderItem implements Serializable {
 
     public void setReferringSiteDepartmentName(String referringSiteDepartmentName) {
         this.referringSiteDepartmentName = referringSiteDepartmentName;
+    }
+
+    public List<IdValuePair> getProvidersList() {
+        return providersList;
+    }
+
+    public void setProvidersList(List<IdValuePair> providersList) {
+        this.providersList = providersList;
     }
 }

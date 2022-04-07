@@ -23,6 +23,7 @@ import org.hl7.fhir.r4.model.CodeableConcept;
 import org.hl7.fhir.r4.model.Coding;
 import org.hl7.fhir.r4.model.ContactPoint;
 import org.hl7.fhir.r4.model.ContactPoint.ContactPointSystem;
+import org.hl7.fhir.r4.model.ContactPoint.ContactPointUse;
 import org.hl7.fhir.r4.model.DateTimeType;
 import org.hl7.fhir.r4.model.DateType;
 import org.hl7.fhir.r4.model.DiagnosticReport;
@@ -410,9 +411,13 @@ public class FhirTransformServiceImpl implements FhirTransformService {
     public Practitioner transformProviderToPractitioner(Provider provider) {
         Practitioner practitioner = new Practitioner();
         practitioner.setId(provider.getFhirUuidAsString());
+        practitioner.addIdentifier(
+                this.createIdentifier(fhirConfig.getOeFhirSystem() + "/provider_uuid", provider.getFhirUuidAsString()));
         practitioner.addName(new HumanName().setFamily(provider.getPerson().getLastName())
                 .addGiven(provider.getPerson().getFirstName()));
         practitioner.setTelecom(transformToTelecom(provider.getPerson()));
+        practitioner.setActive(provider.getActive());
+
         return practitioner;
     }
 
@@ -1176,6 +1181,52 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         public Practitioner collector;
         public Specimen specimen;
         public List<ServiceRequest> serviceRequests = new ArrayList<>();
+    }
+
+    public void addHumanNameToPerson(HumanName humanName, Person person) {
+        person.setFirstName(humanName.getGivenAsSingleString());
+        person.setLastName(humanName.getFamily());
+    }
+
+    public void addTelecomToPerson(List<ContactPoint> telecoms, Person person) {
+        for (ContactPoint contact : telecoms) {
+            String contactValue = contact.getValue();
+            if (ContactPointSystem.EMAIL.equals(contact.getSystem())) {
+                person.setEmail(contactValue);
+            } else if (ContactPointSystem.FAX.equals(contact.getSystem())) {
+                person.setFax(contactValue);
+            } else if (ContactPointSystem.PHONE.equals(contact.getSystem())
+                    && ContactPointUse.MOBILE.equals(contact.getUse())) {
+                person.setCellPhone(contactValue);
+                person.setPrimaryPhone(contactValue);
+            } else if (ContactPointSystem.PHONE.equals(contact.getSystem())
+                    && ContactPointUse.HOME.equals(contact.getUse())) {
+                person.setHomePhone(contactValue);
+                if (GenericValidator.isBlankOrNull(person.getPrimaryPhone())) {
+                    person.setPrimaryPhone(contactValue);
+                }
+            } else if (ContactPointSystem.PHONE.equals(contact.getSystem())
+                    && ContactPointUse.WORK.equals(contact.getUse())) {
+                person.setWorkPhone(contactValue);
+                if (GenericValidator.isBlankOrNull(person.getPrimaryPhone())) {
+                    person.setPrimaryPhone(contactValue);
+                }
+            }
+        }
+    }
+
+    @Override
+    public Provider transformToProvider(Practitioner practitioner) {
+        Provider provider = new Provider();
+        provider.setActive(practitioner.getActive());
+        provider.setFhirUuid(UUID.fromString(practitioner.getIdElement().getIdPart()));
+
+        provider.setPerson(new Person());
+        addHumanNameToPerson(practitioner.getNameFirstRep(), provider.getPerson());
+        addTelecomToPerson(practitioner.getTelecom(), provider.getPerson());
+
+        return provider;
+
     }
 
 }

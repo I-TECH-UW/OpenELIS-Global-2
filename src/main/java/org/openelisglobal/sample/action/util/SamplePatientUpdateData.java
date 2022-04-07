@@ -46,6 +46,7 @@ import org.openelisglobal.organization.service.OrganizationService;
 import org.openelisglobal.organization.valueholder.Organization;
 import org.openelisglobal.patient.util.PatientUtil;
 import org.openelisglobal.person.valueholder.Person;
+import org.openelisglobal.provider.service.ProviderService;
 import org.openelisglobal.provider.valueholder.Provider;
 import org.openelisglobal.requester.valueholder.SampleRequester;
 import org.openelisglobal.sample.bean.SampleOrderItem;
@@ -337,6 +338,10 @@ public class SamplePatientUpdateData {
         providerPerson = null;
         if (noRequesterInformation(sampleOrder)) {
             provider = PatientUtil.getUnownProvider();
+        } else if (!GenericValidator.isBlankOrNull(sampleOrder.getProviderId())) {
+            provider = SpringContext.getBean(ProviderService.class).get(sampleOrder.getProviderId());
+            providerPerson = provider.getPerson();
+            providerPerson.setSysUserId(currentUserId);
         } else {
             providerPerson = new Person();
             provider = new Provider();
@@ -355,7 +360,8 @@ public class SamplePatientUpdateData {
     }
 
     private boolean noRequesterInformation(SampleOrderItem sampleOrder) {
-        return (GenericValidator.isBlankOrNull(sampleOrder.getProviderFirstName())
+        return (GenericValidator.isBlankOrNull(sampleOrder.getProviderId())
+                && GenericValidator.isBlankOrNull(sampleOrder.getProviderFirstName())
                 && GenericValidator.isBlankOrNull(sampleOrder.getProviderWorkPhone())
                 && GenericValidator.isBlankOrNull(sampleOrder.getProviderLastName())
                 && GenericValidator.isBlankOrNull(sampleOrder.getRequesterSampleID())
