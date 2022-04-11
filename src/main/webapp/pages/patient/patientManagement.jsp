@@ -1432,15 +1432,8 @@ function  processSubjectNumberSuccess(xhr){
 		<td>
 			<form:select path="patientProperties.patientType" onchange="updatePatientEditStatus();" id="patientTypeID">
 			<option value="0" ></option>
-			<form:options items="${patientProperties.patientTypes}" itemLabel="value" itemValue="id"/>
+			<form:options items="${patientProperties.patientTypes}" itemLabel="description" itemValue="type"/>
 				</form:select>
-			<%-- <nested:select name='${form.formName}'
-						 property="patientProperties.patientType"
-						 onchange="updatePatientEditStatus();"
-						 id="patientTypeID"  >
-				<option value="0" ></option>
-				<nested:optionsCollection name='${form.formName}' property="patientProperties.patientTypes" label="description" value="type" />
-			</nested:select> --%>
 		</td>
 		<% } if( supportInsurance ){ %>
 		<td style="text-align:right;">
@@ -1448,7 +1441,6 @@ function  processSubjectNumberSuccess(xhr){
 		</td>
 		<td>
 		<form:input path="patientProperties.insuranceNumber" onchange="updatePatientEditStatus();" id="insuranceID"/>
-		
 			<%-- <nested:text name='${form.formName}'
 					  property="patientProperties.insuranceNumber"
 					  onchange="updatePatientEditStatus();"
