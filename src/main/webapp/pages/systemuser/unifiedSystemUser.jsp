@@ -13,6 +13,16 @@
 
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
+<link rel="stylesheet" href="css/jquery_ui/jquery.ui.all.css?">
+<link rel="stylesheet" href="css/customAutocomplete.css?">
+
+<script src="scripts/ui/jquery.ui.core.js?"></script>
+<script src="scripts/ui/jquery.ui.widget.js?"></script>
+<script src="scripts/ui/jquery.ui.button.js?"></script>
+<script src="scripts/ui/jquery.ui.menu.js?"></script>
+<script src="scripts/ui/jquery.ui.position.js?"></script>
+<script src="scripts/ui/jquery.ui.autocomplete.js?"></script>
+<script src="scripts/customAutocomplete.js?"></script>
 <script type="text/javascript" src="scripts/utilities.js?" ></script>
 
 
@@ -21,11 +31,13 @@
 jQuery(document).ready( function() {
 	var input = jQuery( ":input" );
 	document.getElementsByName("save")[0].disabled = true;
+	document.getElementById("copyUserPermisions").disabled = true;	
 	input.change( function( objEvent ){
 		document.getElementsByName("save")[0].disabled = false;
 	} );
 	renderUserRolesData();
-	createDefaultRolesTable();	
+	createDefaultRolesTable();
+	makeSystemUserAutoComplete();	
 });
 
 function validateForm(form) {
@@ -218,7 +230,7 @@ function mySaveAction() {
 </script>
 
 <script>
- var userRolesData = JSON.parse('${form.userLabRoleData}');
+var userRolesData = JSON.parse('${form.userLabRoleData}' != '' ? '${form.userLabRoleData}' : '{}');
 console.log(userRolesData);
 
 // this dynamically Renders sets of Lab Unit Roles with data if user roles data exists			 
@@ -278,6 +290,37 @@ function renderUserRolesData() {
 			document.getElementById("createNewRoles").disabled = true;
 		}
 	}
+}
+</script>
+<script>
+function makeSystemUserAutoComplete() {
+	jQuery('#systemUserToCopySelector').autocomplete({
+		source: JSON.parse('${form.systemUsers}') ,
+		focus: function(event, ui) {
+			event.preventDefault();
+			jQuery(this).val(ui.item.label);
+		},
+		select: function(event, ui) {
+			event.preventDefault();
+			jQuery(this).val(ui.item.label);
+			jQuery('#systemUserToCopy').val(ui.item.value);
+		}
+	});
+}
+function copyPermisions(){
+	if(window.confirm('<spring:message code="systemuserrole.warning.replace"/>')){
+	  document.getElementById("allowCopyUserRoles").value = "Y";
+      mySaveAction() ;
+	}	
+}
+
+function activateCopyPermisions(){
+	 document.getElementById("copyUserPermisions").disabled = false;	
+}
+function handleCopyPermisions(element){
+	if(element.value == ""){
+       document.getElementById("copyUserPermisions").disabled = true;
+	} 	
 }
 </script>
 <form:hidden path="systemUserId"/>
@@ -395,6 +438,18 @@ function renderUserRolesData() {
 		</tr><tr>
 			<td>&nbsp;</td>
 		</tr>
+</table>
+<hr/>
+<table>
+	<tr>
+	    <td> <spring:message code="systemuserrole.copypermisions"/> </td>
+		<td>
+		<input type="text" id="systemUserToCopySelector" onchange="handleCopyPermisions(this);" oninput="activateCopyPermisions();"/>
+		 <form:hidden id="systemUserToCopy" path="systemUserIdToCopy" />
+		 <form:hidden id="allowCopyUserRoles" path="allowCopyUserRoles" />	
+		</td>
+		<td> <button type="button"  id="copyUserPermisions" onClick="copyPermisions();"><spring:message code="systemuserrole.apply"/></button>  </td>
+	</tr>
 </table>
 <hr/>
 <table>
