@@ -694,7 +694,7 @@ public class UnifiedSystemUserController extends BaseController {
         JSONArray displayUsers = new JSONArray();
         systemUserService.getAll().stream().filter(user -> user.getIsActive().equals(YES))
                 .map(user -> new JSONObject()
-                        .put("label", user.getLoginName() + " : " + user.getFirstName() + " " + user.getLastName())
+                        .put("label", user.getLoginName() + " | " + user.getFirstName() + " " + user.getLastName())
                         .put("value", user.getId()))
                 .forEach(userJson -> displayUsers.put(userJson));
         return displayUsers;
