@@ -42,28 +42,11 @@ Liquibase often complains about checksum errors. We hope to be able to get rid o
 
 
 
-# Path 1: Migrate Server to New Machine
+# Path 1: Migrate Server to New Machine 
+
+This is the recommended method of upgrading
 
 **ENSURE YOU HAVE BACKED UP YOUR DATABASE FIRST**
-
-
-## Migrate Passwords (If Unmigrated) on Old Server
-
-
-
-1. Follow password migration instructions
-    1. Currently located [here](password.md)
-
-## Run Liquibase on Old Server
-
-
-
-1. Download the [old liquibase files](https://github.com/I-TECH-UW/Liquibase-Outdated/archive/master.tar.gz) and unpack it
-    1. wget https://github.com/I-TECH-UW/Liquibase-Outdated/archive/master.tar.gz
-    2. tar -xvzf master.tar.gz
-    3. cd Liquibase-Outdated-master
-2. Run the liquibase command
-    4. java -jar -Dfile.encoding=utf-8 ./lib/liquibase-1.9.5.jar --defaultsFile=./liquibase.properties  --contexts=ci_regional --url=jdbc:postgresql://localhost:5432/clinlims update
 
 
 ## Dump Database on Old Server
@@ -82,15 +65,12 @@ Liquibase often complains about checksum errors. We hope to be able to get rid o
     1. Currently located in the make the docs
 
 
-## Pause Docker container on New Server
+## Pause Docker containers on New Server
 
 
 
-1. Get docker container id
-    2. sudo docker container ls
-    3. Find openelisglobal-web container and make a note of the id
-2. Pause running docker container
-    4. sudo docker kill {container_id}
+1. Run the following command 
+    1. sudo docker kill openelisglobal-webapp external-fhir-api
 
 
 ## Restore Database Dump on New Server
@@ -98,13 +78,50 @@ Liquibase often complains about checksum errors. We hope to be able to get rid o
 
 
 1. Copy OpenELIS-backup.sql from old server onto new server
+1. Copy OpenELIS-backup.sql into the docker db container
+	1. sudo docker cp OpenELIS-backup.sql openelisglobal-database:/OpenELIS-backup.sql
 2. Recreate the database and import the dump
-    1. dropdb clinlims
-    2. createdb clinlims
-    3. psql -f /OpenELIS-backup.sql clinlims
-    4. psql
-        1. ALTER DATABASE clinlims OWNER TO clinlims;
-        2. \q
+    1. sudo docker exec openelisglobal-database psql -Uadmin -dpostgres -c 'DROP DATABASE clinlims;'
+    1. sudo docker exec openelisglobal-database psql -Uadmin -dpostgres -c 'CREATE DATABASE clinlims;'
+    1. sudo docker exec openelisglobal-database psql -Uadmin -dpostgres -c 'ALTER DATABASE clinlims OWNER TO clinlims;'
+    1. sudo docker exec openelisglobal-database psql -Uclinlims -dclinlims < OpenELIS-backup.sql
+    
+    
+
+## Migrate Passwords (If Unmigrated) on New Server
+
+
+
+1. Follow password migration instructions
+    1. Currently located [here](password.md)
+    
+    
+
+## Migrate Encrypted Values on New Server
+
+
+
+1. SELECT * FROM clinlims.site_information WHERE encrypted = 't';
+1. record the "value" column for each row
+1. UPDATE clinlims.site_information SET value = '' WHERE encrypted = 't';
+1. re-add the using the front end once the server is back up and running 
+
+
+## Run Liquibase on New Server
+
+
+
+1. Download the [old liquibase files](https://github.com/I-TECH-UW/Liquibase-Outdated) and if there is a custom branch, change to it
+    1. git clone https://github.com/I-TECH-UW/Liquibase-Outdated.git
+    1. cd Liquibase-Outdated
+    1. git checkout <branch>
+1. Run the liquibase command
+    1. java -jar -Dfile.encoding=utf-8 ./lib/liquibase-1.9.5.jar --defaultsFile=./liquibase.properties  --contexts=<context> --url=jdbc:postgresql://localhost:5432/clinlims update
+    1. if it complains about md5 checksums, connect to the db and run
+    	1. UPDATE clinlims.databasechangelog SET md5sum = NULL ;
+    1. if it complains about connection set the correct values in liquibase.properties
+
+    
 
 
 ## Update Installation on New Server
@@ -112,95 +129,11 @@ Liquibase often complains about checksum errors. We hope to be able to get rid o
 
 
 1. Run upgrade script from OE2 Installer directory
-    1. sudo python setup_OpenELIS.py -update
-
-
-# Path 2: Migrate Server Using External Storage
-
-**ENSURE YOU HAVE BACKED UP YOUR DATABASE FIRST**
-
-
-## Migrate Passwords (If Unmigrated)
+    1. sudo python2 setup_OpenELIS.py -update
 
 
 
-1. Follow password migration instructions
-    1. Currently located [here](password.md)
-
-
-## Run Liquibase
-
-
-
-1. Download the [old liquibase files](https://github.com/I-TECH-UW/Liquibase-Outdated/archive/master.tar.gz) and unpack it
-    1. wget https://github.com/I-TECH-UW/Liquibase-Outdated/archive/master.tar.gz
-    2. tar -xvzf master.tar.gz
-    3. cd Liquibase-Outdated-master
-2. Run the liquibase command
-    4. java -jar -Dfile.encoding=utf-8 ./lib/liquibase-1.9.5.jar --defaultsFile=./liquibase.properties  --contexts=ci_regional --url=jdbc:postgresql://localhost:5432/clinlims update
-
-
-## Dump Database 
-
-
-
-1. Run the following command 
-    1. sudo -u postgres pg_dump > OpenELIS-backup.sql
-2. Copy OpenELIS-backup.sql from onto external storage (like a flash drive. After you are done with the upgrade you should SECURELY delete this backup as it contains sensitive patient info. This means deleting and overwriting the data)
-
-
-## Install OpenELIS-Global 2 on the Server
-
-
-
-1. Follow normal install instructions for OpenELIS-Global 2 on the computer
-    1. Currently located [here](install.md)
-
-
-## Pause Docker Container
-
-
-
-1. Get docker container id
-    1. sudo docker container ls
-    2. Find openelis-global container and make a note of the id
-2. Pause running docker container
-    3. sudo docker pause CONTAINER {container_id}
-
-
-## Restore Database Dump 
-
-
-
-1. Copy OpenELIS-backup.sql 
-2. Copy OpenELIS-backup.sql from new server into docker image
-    1. sudo docker container ls
-    2. Find openelisglobal-database and make a note of the id
-    3. sudo docker cp OpenELIS-backup.sql {container_id}:/OpenELIS-backup.sql
-3. Enter the docker image and login as postgres
-    4. sudo docker exec -it  {container_id} /bin/bash
-    5. su postgres
-4. Recreate the database and import the dump
-    6. dropdb clinlims
-    7. createdb clinlims
-    8. psql -f /OpenELIS-backup.sql clinlims
-    9. psql
-        1. ALTER DATABASE clinlims OWNER TO clinlims;
-        2. \q
-5. Exit out of sessions
-    10. exit
-    11. exit
-
-
-## Update Installation
-
-
-
-1. Run upgrade script from OE2 Installer directory
-    1. sudo python setup_OpenELIS.py -update
-
-
-# Path 3: Update Server in Place
+# Path 2: Update Server in Place
 
 **ENSURE YOU HAVE BACKED UP YOUR DATABASE FIRST**
 
