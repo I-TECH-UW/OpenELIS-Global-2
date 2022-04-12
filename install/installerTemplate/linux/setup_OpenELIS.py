@@ -1477,7 +1477,7 @@ def persist_site_information(file, name, description, value):
 def backup_db():
     action_time = strftime("%Y_%m_%d-%H_%M_%S", time.localtime())
     backup_name = 'oe_backup_' + action_time
-    logical_backup = raw_input("Would you like to take a logical backup? (slower, but mandatory if you are migrating between database versions) y/n ")
+    logical_backup = raw_input("Would you like to take a logical backup? (slower than default backup, but mandatory if you are migrating between database versions) y/n ")
     if logical_backup.lower() == "y":
         backup_name = backup_name + '.sql'
         if find_password():
