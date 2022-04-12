@@ -17,7 +17,7 @@ Before attempting any upgrade paths, be sure you have accessible backups of your
 
 For path 1 this involves checking to make sure your backups do not only exist on the server running OpenELIS-Global 1
 
-If you are doing path 2 or 3, it would also be good to have a backup of your entire system, not just your database.
+If you are doing path 2, it would also be good to have a backup of your entire system, not just your database.
 
 
 ## Testing New Installation
