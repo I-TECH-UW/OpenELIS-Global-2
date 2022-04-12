@@ -10,8 +10,6 @@ Path 1 is going to be the easiest and most reliable method of upgrading from ver
 
 Path 2 is a less reliable way to move from version 1 to 2, but can be done without using a spare machine.
 
-Path 3 is the least reliable method, and most likely to result in an unstable installation, but it can be done fully in place without any outside equipment, and will maintain any other configurations you have applied to your server running OpenELIS-Global 1.
-
 
 ## Backups
 
