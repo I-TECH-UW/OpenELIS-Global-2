@@ -1232,9 +1232,11 @@ def create_db_backup_user():
         os.system(cmd)
         cmd = 'docker cp ' + INSTALLER_DB_INIT_DIR + 'backupConfig.sql ' + DOCKER_DB_CONTAINER_NAME + ':backupConfig.sql'
         os.system(cmd)
-        cmd = 'docker exec ' + DOCKER_DB_CONTAINER_NAME + ' psql -U admin -d clinlims -f backupConfig.sql'
+        
+        
+        cmd = 'docker exec ' + DOCKER_DB_CONTAINER_NAME + ' psql -U postgres -d clinlims -f backupConfig.sql'
         os.system(cmd)
-        cmd = 'docker exec ' + DOCKER_DB_CONTAINER_NAME + ' psql -U admin -d clinlims -c "CREATE USER backup REPLICATION PASSWORD \'' + BACKUP_PWD + '\';"'
+        cmd = 'docker exec ' + DOCKER_DB_CONTAINER_NAME + ' psql -U postgres -d clinlims -c "CREATE USER backup REPLICATION PASSWORD \'' + BACKUP_PWD + '\';"'
         os.system(cmd)
         os.system('echo "local replication backup   trust" >> ' + DB_DATA_DIR + 'pg_hba.conf')
         os.system('echo "host replication backup  127.0.0.1/32 md5" >> ' + DB_DATA_DIR + 'pg_hba.conf')
