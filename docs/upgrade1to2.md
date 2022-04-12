@@ -81,7 +81,7 @@ This is the recommended method of upgrading
     1. `sudo docker exec openelisglobal-database psql -Uadmin -dpostgres -c 'DROP DATABASE clinlims;'`
     1. `sudo docker exec openelisglobal-database psql -Uadmin -dpostgres -c 'CREATE DATABASE clinlims;'`
     1. `sudo docker exec openelisglobal-database psql -Uadmin -dpostgres -c 'ALTER DATABASE clinlims OWNER TO clinlims;'`
-    1. `sudo docker exec openelisglobal-database psql -Uclinlims -dclinlims -f /OpenELIS-backup.sql`
+    1. `sudo docker exec openelisglobal-database psql -Uadmin -dclinlims -f /OpenELIS-backup.sql`
     
     
 
@@ -97,11 +97,12 @@ This is the recommended method of upgrading
 ## Migrate Encrypted Values on New Server
 
 
-
-1. `SELECT * FROM clinlims.site_information WHERE encrypted = 't';`
-1. `record the "value" column for each row`
+1. `sudo docker exec -it openelisglobal-database psql -Uclinlims -dclinlims`
+1. `SELECT id, name, value FROM clinlims.site_information WHERE encrypted = 't';`
+1. record the "value" column for each row
 1. `UPDATE clinlims.site_information SET value = '' WHERE encrypted = 't';`
-1. `re-add the using the front end once the server is back up and running `
+1. `\q`
+1. re-add the using the front end once the server is back up and running
 
 
 ## Run Liquibase on New Server
@@ -113,10 +114,10 @@ This is the recommended method of upgrading
     1. `cd Liquibase-Outdated`
     1. `git checkout <branch>`
 1. Run the liquibase command
+    1. put the correct connection values in `./liquibase.properties`
     1. `java -jar -Dfile.encoding=utf-8 ./lib/liquibase-1.9.5.jar --defaultsFile=./liquibase.properties --url=jdbc:postgresql://localhost:5432/clinlims --contexts=<context>  update`
-    1. if it complains about md5 checksums, connect to the db and run
-    	1. `UPDATE clinlims.databasechangelog SET md5sum = NULL ;`
-    1. if it complains about connection set the correct values in liquibase.properties
+    1. if it complains about md5 checksums, run
+    	1. `sudo docker exec -it openelisglobal-database psql -Uclinlims -dclinlims -c "UPDATE clinlims.databasechangelog SET md5sum = NULL ;"`
 
     
 
@@ -126,7 +127,7 @@ This is the recommended method of upgrading
 
 
 1. Run upgrade script from OE2 Installer directory
-    1. `sudo python2 setup_OpenELIS.py -update`
+    1. `sudo python2 setup_OpenELIS.py`
 
 
 
