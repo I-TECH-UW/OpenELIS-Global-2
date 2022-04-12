@@ -89,6 +89,7 @@ public class UnifiedSystemUserController extends BaseController {
     private static final String GLOBAL_ROLES_GROUP = "Global Roles";
     private static final String LAB_ROLES_GROUP = "Lab Unit Roles";
     private static String GLOBAL_ADMIN_ID;
+    private static String ID;
     public static final char DEFAULT_OBFUSCATED_CHARACTER = '@';
     public static final String ALL_LAB_UNITS = "AllLabUnits";
 
@@ -414,10 +415,7 @@ public class UnifiedSystemUserController extends BaseController {
             redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
             Map<String, String> params = new HashMap<>();
             params.put("forward", FWD_SUCCESS);
-            return getForwardWithParameters(findForward(forward, form), params);
-        } else if(forward.equals(FWD_SUCCESS_COPY_ROLES)){
-            Map<String, String> params = new HashMap<>();
-            params.put("ID", form.getSystemUserId()+"-"+form.getLoginUserId());
+            params.put("ID", ID);
             return getForwardWithParameters(findForward(forward, form), params);
         }
         else {
@@ -472,8 +470,8 @@ public class UnifiedSystemUserController extends BaseController {
                             .put(new String(roleMap.getLabUnit()), new HashSet<>(roleMap.getRoles())));
                     userService.saveUserLabUnitRoles(systemUser, copiedLabUnitRolesMap, loggedOnUserId);
                 }
-                return FWD_SUCCESS_COPY_ROLES;
             }
+            ID = systemUser.getId() + "-" + loginUser.getId();
         }
         catch (LIMSRuntimeException e) {
             if (e.getException() instanceof org.hibernate.StaleObjectStateException) {
@@ -708,9 +706,7 @@ public class UnifiedSystemUserController extends BaseController {
             return "redirect:/MasterListsPage";
         } else if (FWD_SUCCESS_INSERT.equals(forward)) {
             return "redirect:/UnifiedSystemUser";
-        }else if (FWD_SUCCESS_COPY_ROLES.equals(forward)) {
-            return "redirect:/UnifiedSystemUser";
-        }else if (FWD_FAIL_INSERT.equals(forward)) {
+        } else if (FWD_FAIL_INSERT.equals(forward)) {
             return "unifiedSystemUserDefinition";
         } else {
             return "PageNotFound";
