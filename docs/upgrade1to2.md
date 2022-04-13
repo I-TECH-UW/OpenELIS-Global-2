@@ -105,6 +105,10 @@ This is the recommended method of upgrading
     1. `java -jar -Dfile.encoding=utf-8 ./lib/liquibase-1.9.5.jar --defaultsFile=./liquibase.properties --url=jdbc:postgresql://localhost:5432/clinlims --contexts=<context>  update`
     1. if it complains about md5 checksums, run
     	1. `sudo docker exec -it openelisglobal-database psql -Uclinlims -dclinlims -c "UPDATE clinlims.databasechangelog SET md5sum = NULL;"`
+    1. if Liquibase exits citing that a changeset failed, then that changeset will need to be updated in the proper branch to accommodate that DB. Fixing a changeset can occur in many ways and should be done by a developer who understands OpenELIS and its relationship with the DB.
+    	1. If the changeset is doing an operation that is non-essential for your context (ie updating an Organization that doesn't exist in your DB), your context can be dropped from that changesets list of contexts 
+    	1. If the changeset relies on a previous changeset to run first (dropping a constraint from a table that is missing one), that previous changeset can be added to your context
+    	1. If the changeset is updating based on some value that is different in this DB, the SQL should be updated to accommodate both values (ie test section called Microbiology vs Microbiologie) 
 
     
 
