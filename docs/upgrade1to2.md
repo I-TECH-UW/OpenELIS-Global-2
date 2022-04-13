@@ -155,7 +155,7 @@ This is the recommended method of upgrading
 
 
 
-1. Follow normal install instructions for OpenELIS-Global 2
+1. Follow normal install/upgrade instructions for OpenELIS-Global 2
     1. Currently located [here](install.md)
     
     
@@ -206,26 +206,6 @@ This is the recommended method of upgrading
     1. if it complains about md5 checksums, run
     	1. `sudo docker exec -it openelisglobal-database psql -Uclinlims -dclinlims -c "UPDATE clinlims.databasechangelog SET md5sum = NULL;"`
 
-
-## Restore Database Dump 
-
-
-
-1. Copy OpenELIS-backup.sql from new server into docker image
-    1. `sudo docker container ls`
-    2. Find openelisglobal-database and make a note of the id
-    3. `sudo docker cp OpenELIS-backup.sql {container_id}:/OpenELIS-backup.sql`
-1. Enter the docker image and login as postgres
-    4. `sudo docker exec -it  {container_id} /bin/bash`
-    5. `su postgres`
-1. Recreate the database and import the dump
-    6. `dropdb clinlims`
-    7. `createdb clinlims`
-    8. `psql -f /OpenELIS-backup.sql clinlims`
-    9. `psql -c ALTER DATABASE clinlims OWNER TO clinlims;`
-5. Exit out of sessions
-    10. `exit`
-    11. `exit`
 
 
 ## Update Installation
