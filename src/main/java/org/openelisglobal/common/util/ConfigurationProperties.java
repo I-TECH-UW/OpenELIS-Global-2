@@ -44,6 +44,11 @@ public abstract class ConfigurationProperties {
         StatusRules("statusRules"),                //Only used to separate RetroCI rules from others.  May be obsolete
         SiteCode("siteNumber"),                   //Code referring to site
         SiteName("SiteName"),                   //Name for site
+        Addressline1label("Address line 1 label"),    //The address lines 1 can be used to specify anything
+        Addressline2label("Address line 2 label"),    //The address lines 2 can be used to specify anything
+        Addressline3label("Address line 3 label"),    //The address lines 3 can be used to specify anything
+        GeographicUnit1Label("Geographic Unit 1 Label"),    //The Geographical units for a particular region
+        GeographicUnit2Label("Geographic Unit 2 Label"),    //The Geographical units for a particular district
         AccessionFormat("acessionFormat"),            //Format of accession number can be one of SITEYEARNUM, YEARNUM OR PROGRAMNUM see AccessionNumberValidatorFactory
         ReflexAction("reflexAction"),               //In combination with flags in reflex table determines actual action, should be standardize
         TrainingInstallation("TrainingInstallation"),       //Flag to indicate if this is a training instance

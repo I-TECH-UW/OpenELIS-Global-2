@@ -9,7 +9,7 @@
   	<property name="now" value="now()" dbms="postgresql"/>
 
 	<changeSet author="cliff" id="1">
-	    <validCheckSum>8:012a94e22359a542ffb1d936861a918d</validCheckSum>
+	    <validCheckSum>8:f0a5a2d50b1a1db52b1ee22e9165294a</validCheckSum>
 		<preConditions onFail="MARK_RAN">
 			<sqlCheck  expectedResult="0">SELECT count(*) FROM clinlims.site_information WHERE name = 'Address line 1 label'</sqlCheck> 
 		</preConditions>
@@ -18,7 +18,7 @@
 			<column name="name" value="Address line 1 label" />
 			<column name="lastupdated" valueComputed="${now}" />
 			<column name="description" value="label name for a place" />
-			<column name="value" value=" " />
+			<column name="value" value="Street" />
 			<column name="encrypted" value="false" />
 			<column name="domain_id" valueComputed="(SELECT id FROM site_information_domain WHERE name = 'siteIdentity')" />
 			<column name="value_type" value="text" />
@@ -31,7 +31,7 @@
 			<column name="name" value="Address line 2 label" />
 			<column name="lastupdated" valueComputed="${now}" />
 			<column name="description" value="label name for a place" />
-			<column name="value" value=" " />
+			<column name="value" value="Camp/Commune" />
 			<column name="encrypted" value="false" />
 			<column name="domain_id" valueComputed="(SELECT id FROM site_information_domain WHERE name = 'siteIdentity')" />
 			<column name="value_type" value="text" />
@@ -44,7 +44,7 @@
 			<column name="name" value="Address line 3 label" />
 			<column name="lastupdated" valueComputed="${now}" />
 			<column name="description" value="label name for a place" />
-			<column name="value" value=" " />
+			<column name="value" value="Town" />
 			<column name="encrypted" value="false" />
 			<column name="domain_id" valueComputed="(SELECT id FROM site_information_domain WHERE name = 'siteIdentity')" />
 			<column name="value_type" value="text" />

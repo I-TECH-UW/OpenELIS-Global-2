@@ -4,6 +4,7 @@
                  org.openelisglobal.common.formfields.FormFields.Field,
                  org.openelisglobal.patient.action.bean.PatientManagementInfo,
                  org.openelisglobal.common.services.PhoneNumberService,
+				 org.openelisglobal.common.services.AddressService,
                  org.openelisglobal.common.util.*, org.openelisglobal.internationalization.MessageUtil" %>
 
 <%@ page isELIgnored="false" %>
@@ -1183,7 +1184,7 @@ function  processSubjectNumberSuccess(xhr){
 			<spring:message code="person.streetAddress" />
 		</td>
 		<td style="text-align:right;">
-			<spring:message code="person.streetAddress.street" />:
+			<%=" " + AddressService.getAddresslineLabel1() %>:
 		</td>
 		<td>
 			<%-- <nested:text name='${form.formName}'
@@ -1199,7 +1200,7 @@ function  processSubjectNumberSuccess(xhr){
     <tr>
         <td></td>
         <td style="text-align:right;">
-            <spring:message code="person.commune" />:
+			<%=" " + AddressService.getAddresslineLabel2() %>:
         </td>
         <td>
             <%-- <nested:text name='${form.formName}'
@@ -1216,7 +1217,7 @@ function  processSubjectNumberSuccess(xhr){
 	<tr>
 		<td></td>
 		<td style="text-align:right;">
-		    <%= MessageUtil.getContextualMessage("person.town") %>:
+			<%=" " + AddressService.getAddresslineLabel3() %>:
 		</td>
 		<td>
 			<%-- <nested:text name='${form.formName}'
@@ -1283,7 +1284,7 @@ function  processSubjectNumberSuccess(xhr){
 	<tr>
 	<td>&nbsp;</td>
 	<td style="text-align:right;">
-		<%= FormFields.getInstance().getLabel(Field.PatientHealthRegion) %>:
+		<%=" " + AddressService.getGeographicUnitLabel1() %>:
 	</td>
 		<td>
 			<%-- <nested:hidden name='${form.formName}' property="patientProperties.healthRegion" id="shadowHealthRegion" />
@@ -1305,7 +1306,7 @@ function  processSubjectNumberSuccess(xhr){
 	<% if( FormFields.getInstance().useField(Field.PatientHealthDistrict)){ %>
 	<tr>
 	<td>&nbsp;</td>
-	<td style="text-align:right;"><spring:message code="person.health.district"/>: </td>
+	<td style="text-align:right;"><%=" " + AddressService.getGeographicUnitLabel2() %>:</td>
 		<td>
 			<%-- <html:select name='${form.formName}'
 						 property="patientProperties.healthDistrict"
