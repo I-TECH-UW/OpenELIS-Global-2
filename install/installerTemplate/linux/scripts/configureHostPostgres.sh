@@ -25,6 +25,8 @@ sed -i.orig "s/^[#]\?listen_addresses .*/listen_addresses = '*'/g" ${postgres_di
 
 # update pg_hba.conf to allow connections from the subnet
 echo "host    clinlims             clinlims             localhost                   md5" >> ${postgres_dir}pg_hba.conf
+echo "host    replication          backup               localhost                   md5" >> ${postgres_dir}pg_hba.conf
+echo "local   replication          backup                                           trust" >> ${postgres_dir}pg_hba.conf
 echo "host    clinlims             clinlims             ${docker_subnet}            md5" >> ${postgres_dir}pg_hba.conf
 
 # update ufw firewall rules (postgres assumed to be runing on port 5432)

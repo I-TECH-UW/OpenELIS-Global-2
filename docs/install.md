@@ -26,18 +26,18 @@
 
         ping 8.8.8.8
 
+1. Open a command prompt and enter the following commands- this will install the needed services and install updates to the OS since the image was created. 
+This updates the system from the sources in the sources list. It updates what new packages are available.
+
+	    sudo apt update && sudo apt upgrade
+
 1. Install Net Tools in order to find the IP Address
         
 		sudo apt install net-tools
 
-1. Open a command prompt and enter the following commands- this will install the needed services and install updates to the OS since the image was created. 
-This updates the system from the sources in the sources list. It updates what new packages are available.
-
-	    sudo apt-get update && sudo apt-get upgrade
-
 3. Install Python
 
-        sudo apt-get install python2
+        sudo apt install python2
     
 ### Create and Load SSL Certificates
 
@@ -80,7 +80,7 @@ and then
 
 1. using keytool (more reliable):
    
-	    sudo apt-get install default-jre
+	    sudo apt install default-jre
    
         sudo keytool -import -alias oeCert -file path/to/your/cert -storetype pkcs12 -keystore /etc/openelis-global/truststore
 	

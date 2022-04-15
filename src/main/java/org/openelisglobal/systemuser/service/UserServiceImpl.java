@@ -145,12 +145,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<IdValuePair> getUserTestSections(String systemUserId, String userRole) {
+    public List<IdValuePair> getUserTestSections(String systemUserId, String roleId) {
         List<String> userLabUnits = new ArrayList<>();
         UserLabUnitRoles userLabRoles = getUserLabUnitRoles(systemUserId);
         if (userLabRoles != null) {
             userLabRoles.getLabUnitRoleMap().forEach(roles -> {
-                if (roles.getRoles().contains(userRole)) {
+                if (roles.getRoles().contains(roleId)) {
                     userLabUnits.add(roles.getLabUnit());
                 }
             });

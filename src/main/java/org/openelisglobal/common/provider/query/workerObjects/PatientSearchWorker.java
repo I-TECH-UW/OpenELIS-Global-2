@@ -57,6 +57,9 @@ abstract public class PatientSearchWorker {
         XMLUtil.appendKeyValue("gender", result.getGender(), xml);
         XMLUtil.appendKeyValue("dob", PatientUtil.getDisplayDOBForPatient(result.getPatientID(), result.getDOB()), xml);
         XMLUtil.appendKeyValue("nationalID", result.getNationalId(), xml);
+        // TODO frontend currently uses one or the other of these. This should be
+        // unified to a single value
+        XMLUtil.appendKeyValue("ST_ID", result.getSTNumber(), xml);
         XMLUtil.appendKeyValue("ST", result.getSTNumber(), xml);
         XMLUtil.appendKeyValue("subjectNumber", result.getSubjectNumber(), xml);
         String mothersName = GenericValidator.isBlankOrNull(result.getMothersName())

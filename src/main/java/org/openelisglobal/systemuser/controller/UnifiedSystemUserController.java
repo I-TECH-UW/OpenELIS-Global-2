@@ -18,7 +18,9 @@ import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.GenericValidator;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
@@ -63,7 +65,8 @@ public class UnifiedSystemUserController extends BaseController {
 
     private static final String[] ALLOWED_FIELDS = new String[] { "systemUserId", "loginUserId", "userLoginName",
             "userPassword", "confirmPassword", "userFirstName", "userLastName", "expirationDate", "timeout",
-            "accountLocked", "accountDisabled", "accountActive", "selectedRoles*" ,"selectedLabUnitRoles" ,"testSectionId" };
+            "accountLocked", "accountDisabled", "accountActive", "selectedRoles*" ,"selectedLabUnitRoles" ,"testSectionId", 
+            "systemUsers" ,"systemUserIdToCopy" , "allowCopyUserRoles"};
 
     @Autowired
     private UnifiedSystemUserFormValidator formValidator;
@@ -86,7 +89,9 @@ public class UnifiedSystemUserController extends BaseController {
     private static final String GLOBAL_ROLES_GROUP = "Global Roles";
     private static final String LAB_ROLES_GROUP = "Lab Unit Roles";
     private static String GLOBAL_ADMIN_ID;
+    private static String ID;
     public static final char DEFAULT_OBFUSCATED_CHARACTER = '@';
+    public static final String ALL_LAB_UNITS = "AllLabUnits";
 
     @PostConstruct
     private void initialize() {
@@ -110,6 +115,7 @@ public class UnifiedSystemUserController extends BaseController {
         request.setAttribute(ALLOW_EDITS_KEY, "true");
         request.setAttribute(PREVIOUS_DISABLED, "true");
         request.setAttribute(NEXT_DISABLED, "true");
+        request.setAttribute(DISPLAY_PREV_NEXT, false);
 
         boolean isNew = GenericValidator.isBlankOrNull(id) || "0".equals(id);
 
@@ -122,6 +128,7 @@ public class UnifiedSystemUserController extends BaseController {
         // load testSections for drop down
         List<IdValuePair> testSections = DisplayListService.getInstance().getList(ListType.TEST_SECTION);
         form.setTestSections(testSections);
+        form.setSystemUsers(getDisplaySystemUsersJsonArray());
         addFlashMsgsToRequest(request);
         return findForward(FWD_SUCCESS, form);
     }
@@ -408,8 +415,10 @@ public class UnifiedSystemUserController extends BaseController {
             redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
             Map<String, String> params = new HashMap<>();
             params.put("forward", FWD_SUCCESS);
+            params.put("ID", ID);
             return getForwardWithParameters(findForward(forward, form), params);
-        } else {
+        }
+        else {
             setupRoles(form, request, doFiltering);
             return findForward(forward, form);
         }
@@ -438,10 +447,33 @@ public class UnifiedSystemUserController extends BaseController {
         LoginUser loginUser = createLoginUser(form, loginUserId, loginUserNew, passwordUpdated, loggedOnUserId);
         SystemUser systemUser = createSystemUser(form, systemUserId, systemUserNew, loggedOnUserId);
         try {
-            userService.updateLoginUser(loginUser, loginUserNew, systemUser, systemUserNew, form.getSelectedRoles(),
+            if (form.getAllowCopyUserRoles().equals(NO)) {
+                userService.updateLoginUser(loginUser, loginUserNew, systemUser, systemUserNew, form.getSelectedRoles(),
                     loggedOnUserId);
-            saveUserLabUnitRoles(systemUser, form ,loggedOnUserId);        
-        } catch (LIMSRuntimeException e) {
+                saveUserLabUnitRoles(systemUser, form, loggedOnUserId);
+            } else if (form.getAllowCopyUserRoles().equals(YES)) {
+                if (StringUtils.isNotBlank(form.getSystemUserIdToCopy().trim())) {
+                    String globalParentRoleId = roleService.getRoleByName(GLOBAL_ROLES_GROUP).getId();
+                    List<String> globaRolesIds = getAllRoles().stream().filter(role -> role.getGroupingParent() != null)
+                            .filter(role -> role.getGroupingParent().equals(globalParentRoleId)).map(role -> role.getId())
+                            .collect(Collectors.toList());
+                    List<String> copiedRoleIds = userRoleService.getRoleIdsForUser(form.getSystemUserIdToCopy().trim());
+                    List<String> globalCopiedRoleIds = copiedRoleIds.stream().filter(role -> globaRolesIds.contains(role))
+                            .collect(Collectors.toList());
+                    
+                    userService.updateLoginUser(loginUser, loginUserNew, systemUser, systemUserNew, globalCopiedRoleIds,
+                        loggedOnUserId);
+                    
+                    UserLabUnitRoles labRoles = userService.getUserLabUnitRoles(form.getSystemUserIdToCopy().trim());
+                    Map<String, Set<String>> copiedLabUnitRolesMap = new HashMap<>();
+                    labRoles.getLabUnitRoleMap().forEach(roleMap -> copiedLabUnitRolesMap
+                            .put(new String(roleMap.getLabUnit()), new HashSet<>(roleMap.getRoles())));
+                    userService.saveUserLabUnitRoles(systemUser, copiedLabUnitRolesMap, loggedOnUserId);
+                }
+            }
+            ID = systemUser.getId() + "-" + loginUser.getId();
+        }
+        catch (LIMSRuntimeException e) {
             if (e.getException() instanceof org.hibernate.StaleObjectStateException) {
                 errors.reject("errors.OptimisticLockException", "errors.OptimisticLockException");
             } else if (e.getException() instanceof LIMSDuplicateRecordException) {
@@ -591,25 +623,42 @@ public class UnifiedSystemUserController extends BaseController {
         UserLabUnitRoles roles = userService.getUserLabUnitRoles(form.getSystemUserId());
         if (roles != null) {
             Set<LabUnitRoleMap> roleMaps = roles.getLabUnitRoleMap();
+            List<String> userLabUnits = new ArrayList<>();
+            roleMaps.forEach(map -> userLabUnits.add(map.getLabUnit()));
             JSONObject userLabData = new JSONObject();
-            for (LabUnitRoleMap map : roleMaps) {      
-                userLabData.put(map.getLabUnit(), map.getRoles().stream().collect(Collectors.toList()));
+            if (userLabUnits.contains(ALL_LAB_UNITS)) {
+                roleMaps.stream().filter(map -> map.getLabUnit().equals(ALL_LAB_UNITS)).forEach(
+                    map -> userLabData.put(map.getLabUnit(), map.getRoles().stream().collect(Collectors.toList())));
+            } else {
+                for (LabUnitRoleMap map : roleMaps) {
+                    userLabData.put(map.getLabUnit(), map.getRoles().stream().collect(Collectors.toList()));
+                }
             }
+            
             form.setUserLabRoleData(userLabData);
         }
     }
 
     private void parseUserLabRolesData(UnifiedSystemUserForm form, Map<String, Set<String>> selectedLabUnitRolesMap) {
+       /**
+        The ui-form can dynamically render more fields that are mapped to the same field (ie for testSectionId ,selectedLabUnitRoles )of the form-backing object,
+        so we append a common pre-fix to the values in every New lab Unit Roles Set to identify the distinct values for each set .
+        This method parses the data from the form ,and builds a Map ie <String testSectionId ,Set<LabUnitRoles>> for each Lab Unit Role Set based on the suffix appended
+        ie testSectionId = "1=2,2=5,2=6"  ,selectedLabUnitRoles = [1=56, 2=36 ,3=44]
+        */
+       
         String labUnitEntryMapString = form.getTestSectionId();
         List<String> labUnitsRolesEntryMaps = form.getSelectedLabUnitRoles();
-        
-        String parts[] = labUnitEntryMapString.split(",");
+         
         List<String> entries = new ArrayList<>();
         List<String> labUnitsEntryMap = new ArrayList<>();
-        for (String part : parts) {
-            if (!part.contains("none")) {
-                entries.add(part.split("=")[0]);
-                labUnitsEntryMap.add(part);
+        String labUnitEntries[] = labUnitEntryMapString.split(",");
+        for (String part : labUnitEntries) {
+            if (part.contains("=")) {
+                if (!part.contains("none")) {
+                    entries.add(part.split("=")[0]);
+                    labUnitsEntryMap.add(part);
+                }
             }
         }
         for (String entry : entries) {
@@ -628,6 +677,25 @@ public class UnifiedSystemUserController extends BaseController {
                 }
             }
         }
+        
+        if(selectedLabUnitRolesMap.containsKey(ALL_LAB_UNITS )){
+            Set<String> labRolesId = selectedLabUnitRolesMap.get(ALL_LAB_UNITS );
+            selectedLabUnitRolesMap.clear();
+            selectedLabUnitRolesMap.put(ALL_LAB_UNITS , labRolesId);
+            List<String> allTestSectionIds = new ArrayList<>();
+            DisplayListService.getInstance().getList(ListType.TEST_SECTION).forEach(testScetion -> allTestSectionIds.add(testScetion.getId()));
+            allTestSectionIds.forEach(testScetionId ->selectedLabUnitRolesMap.put(testScetionId, labRolesId));
+        }
+    }
+
+    private JSONArray getDisplaySystemUsersJsonArray() {
+        JSONArray displayUsers = new JSONArray();
+        systemUserService.getAll().stream().filter(user -> user.getIsActive().equals(YES))
+                .map(user -> new JSONObject()
+                        .put("label", user.getLoginName() + " | " + user.getFirstName() + " " + user.getLastName())
+                        .put("value", user.getId()))
+                .forEach(userJson -> displayUsers.put(userJson));
+        return displayUsers;
     }
 
     @Override

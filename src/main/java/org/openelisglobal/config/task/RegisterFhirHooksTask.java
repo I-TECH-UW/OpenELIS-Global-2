@@ -44,6 +44,9 @@ public class RegisterFhirHooksTask {
     @Value("${org.openelisglobal.fhir.subscriber}")
     private Optional<String> fhirSubscriber;
 
+    @Value("${org.openelisglobal.fhir.subscriber.allowHTTP:false}")
+    private Boolean allowHTTP;
+
     @Value("${org.openelisglobal.fhir.subscriber.resources}")
     private String[] fhirSubscriptionResources;
 
@@ -71,10 +74,12 @@ public class RegisterFhirHooksTask {
         if (!fhirSubscriber.isPresent() || GenericValidator.isBlankOrNull(fhirSubscriber.get())) {
             return;
         }
-        if (fhirSubscriber.get().startsWith("http://")) {
+        if (!allowHTTP && fhirSubscriber.get().startsWith("http://")) {
             fhirSubscriber = Optional.of("https://" + fhirSubscriber.get().substring("http://".length()));
         }
-        if (!fhirSubscriber.get().startsWith("https://")) {
+
+        if (!(allowHTTP && fhirSubscriber.get().startsWith("http://"))
+                && !fhirSubscriber.get().startsWith("https://")) {
             fhirSubscriber = Optional.of("https://" + fhirSubscriber.get());
         }
 

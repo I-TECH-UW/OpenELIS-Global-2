@@ -6,6 +6,7 @@ import java.util.List;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.util.validator.CustomDateValidator.DateRelation;
@@ -50,12 +51,16 @@ public class UnifiedSystemUserForm extends BaseForm {
     // for display
     private List<IdValuePair> testSections;
 
+    /**There are multiple fields in the ui-form mapped to this field, because the ui-form can dynamically create more fields mapped to this same field(path), 
+    this field is only used to get values from the form as a single String with comma ,separated values ie "value1 ,value2"  **/
     private String testSectionId;
 
-    private List<@Pattern(regexp = ValidationHelper.ID_REGEX) String> selectedRoles;
-
+    /**There are multiple fields in the ui-form mapped to this field, because the ui-form can dynamically create more fields mapped to this same field(path), 
+    this field is only used to get values from the form as a List of Strings  **/
     private List<String> selectedLabUnitRoles;
 
+    private List<@Pattern(regexp = ValidationHelper.ID_REGEX) String> selectedRoles;
+    
     @NotBlank
     @ValidDate(relative = DateRelation.FUTURE)
     private String expirationDate;
@@ -78,7 +83,19 @@ public class UnifiedSystemUserForm extends BaseForm {
 
     private Timestamp systemUserLastupdated;
 
+    /**This field passes the user Lab Unit Roles data to the ui-form in form of a json object , in order to dynamically 
+    render sets of Lab Unit Roles with data ,with fields that are mapped to the same  path ie testSectionId and selectedLabUnitRoles **/
     private JSONObject userLabRoleData;
+
+     // for display
+     private JSONArray systemUsers;
+
+     @Pattern(regexp = ValidationHelper.ID_REGEX)
+     private String systemUserIdToCopy = "";
+     
+     @NotBlank
+     @Pattern(regexp = ValidationHelper.YES_NO_REGEX)
+     private String allowCopyUserRoles = "N";
 
     public UnifiedSystemUserForm() {
         setFormName("unifiedSystemUserForm");
@@ -242,5 +259,29 @@ public class UnifiedSystemUserForm extends BaseForm {
 
     public void setUserLabRoleData(JSONObject userLabRoleData) {
         this.userLabRoleData = userLabRoleData;
+    }
+
+    public JSONArray getSystemUsers() {
+        return systemUsers;
+    }
+
+    public void setSystemUsers(JSONArray systemUsers) {
+        this.systemUsers = systemUsers;
+    }
+
+    public String getSystemUserIdToCopy() {
+        return systemUserIdToCopy;
+    }
+
+    public void setSystemUserIdToCopy(String systemUserIdToCopy) {
+        this.systemUserIdToCopy = systemUserIdToCopy;
+    }
+
+    public String getAllowCopyUserRoles() {
+        return allowCopyUserRoles;
+    }
+
+    public void setAllowCopyUserRoles(String allowCopyUserRoles) {
+        this.allowCopyUserRoles = allowCopyUserRoles;
     }
 }

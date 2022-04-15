@@ -29,6 +29,8 @@
 	String formName = (String) request.getAttribute("formName");
 	PatientManagementInfo patientProperties = (PatientManagementInfo) request.getAttribute("patientProperties");
 
+	boolean supportPatientPhone = FormFields.getInstance().useField(Field.PatientPhone);
+	boolean supportPatientEmail = FormFields.getInstance().useField(Field.PatientEmail);
 	boolean supportSTNumber = FormFields.getInstance().useField(Field.StNumber);
 	boolean supportAKA = FormFields.getInstance().useField(Field.AKA);
 	boolean supportMothersName = FormFields.getInstance().useField(Field.MothersName);
@@ -72,6 +74,8 @@ var $jq = jQuery.noConflict();
   tiles with simular names.  Only those elements that may cause confusion are being tagged, and we know which ones will collide
   because we can predicte the future */
 
+var supportPatientPhone = <%= supportPatientPhone %>;
+var supportPatientEmail = <%= supportPatientEmail %>;
 var supportSTNumber = <%= supportSTNumber %>;
 var supportAKA = <%= supportAKA %>;
 var supportMothersName = <%= supportMothersName %>;
@@ -711,10 +715,8 @@ function  /*void*/ setPatientInfo(nationalID, ST_ID, subjectNumber, lastName, fi
 	$("patientLastUpdated").value = patientUpdated == undefined ? "" : patientUpdated;
 	$("personLastUpdated").value = personUpdated == undefined ? "" : personUpdated;
 	$("patientGUID_ID").value = guid == undefined ? "" : guid;
-	$("patientPhone").value = phoneNumber == undefined ? "" : phoneNumber;
-	<% if( FormFields.getInstance().useField(Field.PatientEmail)){ %> 
-	$("patientEmail").value = email == undefined ? "" : email;
-	<% } %>
+	if(supportPatientPhone) {$("patientPhone").value = phoneNumber == undefined ? "" : phoneNumber;}
+	if(supportPatientEmail) {$("patientEmail").value = email == undefined ? "" : email;}
 	$("genderID").selectedIndex = gender == undefined ? 0 : gender;
 	if(supportPatientNationality){
 		$("nationalityID").selectedIndex = nationalId == undefined ? 0 : nationalId; 
@@ -1261,7 +1263,7 @@ function  processSubjectNumberSuccess(xhr){
 		</td>
 	</tr>
 	<% } %>
-	<% if( FormFields.getInstance().useField(Field.PatientPhone)){ %>
+	<% if( supportPatientPhone){ %>
 		<tr>
 			<td>&nbsp;</td>
 			<td style="text-align:right;"><%= MessageUtil.getContextualMessage("person.phone") %>: <%=" " + PhoneNumberService.getPhoneFormat() %></td>
@@ -1271,7 +1273,7 @@ function  processSubjectNumberSuccess(xhr){
  --%>			</td>
 		</tr>
 	<% } %>
-	<% if( FormFields.getInstance().useField(Field.PatientEmail)){ %> 
+	<% if( supportPatientEmail){ %> 
 		<tr>
 			<td>&nbsp;</td>
 			<td style="text-align:right;"><%= MessageUtil.getContextualMessage("person.email") %>:</td>
@@ -1433,15 +1435,8 @@ function  processSubjectNumberSuccess(xhr){
 		<td>
 			<form:select path="patientProperties.patientType" onchange="updatePatientEditStatus();" id="patientTypeID">
 			<option value="0" ></option>
-			<form:options items="${patientProperties.patientTypes}" itemLabel="value" itemValue="id"/>
+			<form:options items="${patientProperties.patientTypes}" itemLabel="description" itemValue="type"/>
 				</form:select>
-			<%-- <nested:select name='${form.formName}'
-						 property="patientProperties.patientType"
-						 onchange="updatePatientEditStatus();"
-						 id="patientTypeID"  >
-				<option value="0" ></option>
-				<nested:optionsCollection name='${form.formName}' property="patientProperties.patientTypes" label="description" value="type" />
-			</nested:select> --%>
 		</td>
 		<% } if( supportInsurance ){ %>
 		<td style="text-align:right;">
@@ -1449,7 +1444,6 @@ function  processSubjectNumberSuccess(xhr){
 		</td>
 		<td>
 		<form:input path="patientProperties.insuranceNumber" onchange="updatePatientEditStatus();" id="insuranceID"/>
-		
 			<%-- <nested:text name='${form.formName}'
 					  property="patientProperties.insuranceNumber"
 					  onchange="updatePatientEditStatus();"
