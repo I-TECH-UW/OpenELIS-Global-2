@@ -1,6 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.openelisglobal</groupId>
@@ -16,8 +14,8 @@
 
 		<major.version>2</major.version>
 		<minor.version>6</minor.version>
-		<state.version>1</state.version><!-- 0 = alpha, 1 = beta, 2 = rc, 3 = deployable -->
-		<fix.version>27</fix.version>
+		<state.version>1</state.version> <!-- 0 = alpha, 1 = beta, 2 = rc, 3 = deployable -->
+		<fix.version>28</fix.version>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
@@ -36,13 +34,6 @@
 	</properties>
 
 	<dependencies>
-	<!-- https://mvnrepository.com/artifact/org.jruby/jruby-complete -->
-<dependency>
-    <groupId>org.jruby</groupId>
-    <artifactId>jruby-complete</artifactId>
-    <version>9.3.3.0</version>
-</dependency>
-
 		<dependency>
 			<groupId>org.jsmpp</groupId>
 			<artifactId>jsmpp</artifactId>
