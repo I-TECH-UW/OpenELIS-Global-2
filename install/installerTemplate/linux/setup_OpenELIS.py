@@ -102,7 +102,7 @@ TRUSTSTORE_PWD = ''
 ENCRYPTION_KEY = ''
 LOCAL_FHIR_SERVER_ADDRESS = 'https://fhir.openelis.org:8443/fhir/'
 REMOTE_FHIR_SOURCE = []
-REMOTE_FHIR_SOURCE_UPDATE_STATUS = "false"
+REMOTE_FHIR_SOURCE_UPDATE_STATUS = "true"
 CONSOLIDATED_SERVER_ADDRESS = []
 FHIR_IDENTIFIER = []
 DB_BACKUP_USER = ''
@@ -948,7 +948,6 @@ def get_stored_user_values():
     get_set_truststore_password()
     get_set_encryption_key()
     get_set_remote_fhir_source()
-    get_set_remote_fhir_source()
     get_set_timezone()
     get_set_extra_hosts()
     get_set_fhir_identifier()
@@ -1110,6 +1109,7 @@ def is_remote_fhir_source_set():
         
 def get_remote_fhir_source():
     global REMOTE_FHIR_SOURCE
+    REMOTE_FHIR_SOURCE = []
     with open(CONFIG_DIR + 'REMOTE_FHIR_SOURCE') as file:
         for line in file.readlines():
             REMOTE_FHIR_SOURCE.append(line.strip())
@@ -1121,16 +1121,21 @@ def set_remote_fhir_source():
     Leave blank to disable polling a remote instance
     (entries should be comma delimited)
     """
-    remote_fhir_sources = raw_input("Remote Fhir Address: ").split(',')
-    remote_fhir_sources_with_protocol = []
-    for remote_fhir_source in remote_fhir_sources:
-        if not remote_fhir_source.startswith("https://"):
-            remote_fhir_sources_with_protocol.append("https://" + remote_fhir_source)
-        else:
-            remote_fhir_sources_with_protocol.append(remote_fhir_source)
+    user_input = raw_input("Remote Fhir Address: ")
+    if (user_input != ''):
+        remote_fhir_sources = user_input.split(',')
+        remote_fhir_sources_with_protocol = []
+        for remote_fhir_source in remote_fhir_sources:
+            if not remote_fhir_source.startswith("https://"):
+                remote_fhir_sources_with_protocol.append("https://" + remote_fhir_source)
+            else:
+                remote_fhir_sources_with_protocol.append(remote_fhir_source)
             
-    with open(CONFIG_DIR + 'REMOTE_FHIR_SOURCE', mode='wt') as file:
-        file.write('\n'.join(remote_fhir_sources_with_protocol))
+        with open(CONFIG_DIR + 'REMOTE_FHIR_SOURCE', mode='wt') as file:
+            file.write('\n'.join(remote_fhir_sources_with_protocol))
+    else:
+        with open(CONFIG_DIR + 'REMOTE_FHIR_SOURCE', mode='wt') as file:
+            file.write('')
 
 
 def is_cs_server_set():
@@ -1139,6 +1144,7 @@ def is_cs_server_set():
         
 def get_cs_server_source():
     global CONSOLIDATED_SERVER_ADDRESS
+    CONSOLIDATED_SERVER_ADDRESS = []
     with open(CONFIG_DIR + 'CS_SERVER') as file:
         for line in file.readlines():
             CONSOLIDATED_SERVER_ADDRESS.append(line.strip())
@@ -1149,16 +1155,21 @@ def set_cs_server_source():
     Enter the full server path to the consolidated server to send data to. 
     Leave blank to disable sending data to the Consolidated server
     """
-    cs_addresses = raw_input("Consolidated server address(es) (comma delimited): ").split(',')
-    cs_addresses_with_protocol = []
-    for cs_address in cs_addresses:
-        if not cs_address.startswith("https://"):
-            cs_addresses_with_protocol.append("https://" + cs_address)
-        else:
-            cs_addresses_with_protocol.append(cs_address)
-            
-    with open(CONFIG_DIR + 'CS_SERVER', mode='wt') as file:
-        file.write('\n'.join(cs_addresses_with_protocol))
+    user_input = raw_input("Consolidated server address(es) (comma delimited): ")
+    if (user_input != ''):
+        cs_addresses = user_input.split(',')
+        cs_addresses_with_protocol = []
+        for cs_address in cs_addresses:
+            if not cs_address.startswith("https://"):
+                cs_addresses_with_protocol.append("https://" + cs_address)
+            else:
+                cs_addresses_with_protocol.append(cs_address)
+                
+        with open(CONFIG_DIR + 'CS_SERVER', mode='wt') as file:
+            file.write('\n'.join(cs_addresses_with_protocol))
+    else:
+        with open(CONFIG_DIR + 'CS_SERVER', mode='wt') as file:
+            file.write('')
 
 
 def is_timezone_set():
@@ -1182,6 +1193,7 @@ def is_external_hosts_set():
 
 def get_external_hosts():
     global EXTERNAL_HOSTS
+    EXTERNAL_HOSTS = []
     with open(CONFIG_DIR + 'EXTERNAL_HOSTS') as file:
         for line in file.readlines():
             EXTERNAL_HOSTS.append(line.strip())
@@ -1199,6 +1211,7 @@ def is_fhir_identifier_set():
 
 def get_fhir_identifier():
     global FHIR_IDENTIFIER
+    FHIR_IDENTIFIER = []
     with open(CONFIG_DIR + 'FHIR_IDENTIFIER') as file:
         for line in file.readlines():
             FHIR_IDENTIFIER.append(line.strip())
