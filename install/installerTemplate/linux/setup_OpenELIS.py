@@ -1143,7 +1143,7 @@ def is_cs_server_set():
     return os.path.isfile(CONFIG_DIR + 'CS_SERVER')
         
         
-def get_cs_server_source():
+def get_cs_server():
     global CONSOLIDATED_SERVER_ADDRESS
     CONSOLIDATED_SERVER_ADDRESS = []
     with open(CONFIG_DIR + 'CS_SERVER') as file:
@@ -1151,7 +1151,7 @@ def get_cs_server_source():
             CONSOLIDATED_SERVER_ADDRESS.append(line.strip())
         
         
-def set_cs_server_source():
+def set_cs_server():
     print """
     Enter the full server path to the consolidated server to send data to. 
     Leave blank to disable sending data to the Consolidated server
