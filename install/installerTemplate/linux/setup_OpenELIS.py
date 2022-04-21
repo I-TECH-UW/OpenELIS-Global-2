@@ -948,6 +948,7 @@ def get_stored_user_values():
     get_set_truststore_password()
     get_set_encryption_key()
     get_set_remote_fhir_source()
+    get_set_cs_server()
     get_set_timezone()
     get_set_extra_hosts()
     get_set_fhir_identifier()
