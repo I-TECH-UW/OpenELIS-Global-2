@@ -97,14 +97,14 @@ function getCsrfToken() {
 				NotificationService ns = new NotificationService(); 
 				if (request.getSession().getAttribute(IActionConstants.USER_SESSION_DATA) != null) {
 					usd = (UserSessionData) request.getSession().getAttribute(IActionConstants.USER_SESSION_DATA);
-					String saveDisabledd = ns.getLoginFromCombinedId(usd.getLoginName()).toString();
+					String saveDate = ns.getLoginFromCombinedId(usd.getLoginName()).toString();
 
 			%>
 
 			<script type="text/javascript">
 				function showExpiaryNotificationMessage() {
 					var now = moment().format('DD-MMMM-YYYY, h:mm:ssA');
-				   var date_string = '<%=Encode.forJavaScript(saveDisabledd)%>';
+				    var date_string = '<%=Encode.forJavaScript(saveDate)%>';
                     var expiration = moment(date_string).format("YYYY-MM-DD");
                     var current_date = moment().format("YYYY-MM-DD");
                     var hours = moment(expiration).diff(current_date, 'hours');
