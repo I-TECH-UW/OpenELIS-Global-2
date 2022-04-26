@@ -20,18 +20,69 @@ jobs:
         path: ~/.m2/repository
         key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
         restore-keys: |
-            ${{ runner.os }}-maven-    
+            ${{ runner.os }}-maven- 
+    - name: Log in to the Container registry
+      uses: docker/login-action@v1
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}         
     - name: Checkout dataexport module
       uses: actions/checkout@v2
       with:
         repository: I-TECH-UW/dataexport
         ref: develop    
     - name: install dataexport module
-      run: mvn clean install   
+      run: mvn clean install  
+    
     - name: Checkout OpenELIS-Global2
       uses: actions/checkout@v2
       with:
         repository: ${{github.repository}} 
         ref: develop 
     - name: Build OpenELIS-Global2
-      run: mvn clean install     
+      run: mvn clean install  
+    
+    - name: Build Docker image
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        push: false
+        tags: ghcr.io/i-tech-uw/openelis-global-2:ci 
+        load: true
+        build-args: |
+          USERNAME=${{ github.actor }}
+          TOKEN=${{ secrets.GITHUB_TOKEN }}
+          cache-from: type=inline,ref=user/app:buildcache
+          cache-to: type=inline,ref=user/app:buildcache,mode=max
+          
+    - name: Run OpenELS image 
+      run : docker-compose -f ci.docker-compose.yml up -d
+      
+    - name: Sleep for 10 minutes for OpenELIS to start
+      run: sleep 10m
+      shell: bash
+      
+    - name: check containers
+      run : docker ps 
+      
+    - name: Show OpenELIS Logs
+      run : docker-compose logs  logs oe.openelis.org
+      
+    - name: Checkout QA framework
+      uses: actions/checkout@v2
+      with:
+        repository: I-TECH-UW/openelis-qaframework
+        ref: main
+    - name: Start the Remote web driver in docker  
+      run:  |
+            docker-compose up -d chrome   
+    - name: Sleep for 3 minutes 
+      run: sleep 3m
+      shell: bash      
+    - name: Run and Publish Openelis QA
+      run: |
+          echo "cucumber.publish.enabled=true" > src/test/resources/cucumber.properties
+          mvn clean install -DskipTests=true 
+          cp -f src/test/resources/test-local.properties src/test/resources/test.properties
+          mvn test -Dcucumber.filter.tags='@login'
