@@ -100,7 +100,7 @@ function getCsrfToken() {
 			<script type="text/javascript">
 				function showExpiaryNotificationMessage() {
 					var now = moment().format('DD-MMMM-YYYY, h:mm:ssA');
-					var date_string = '<%=usd.getExpiredDateForLoginUser(usd.getLoginName())%>';
+					var date_string = '<%=usd.getExpDate()%>';
                     var expiration = moment(date_string).format("YYYY-MM-DD");
                     var current_date = moment().format("YYYY-MM-DD");
                     var hours = moment(expiration).diff(current_date, 'hours');

@@ -84,6 +84,7 @@ public class CustomFormAuthenticationSuccessHandler implements AuthenticationSuc
         usd.setUserTimeOut(timeout * 60);
         usd.setAdmin(loginService.isUserAdmin(loginInfo));
         request.getSession().setAttribute(IActionConstants.USER_SESSION_DATA, usd);
+        usd.setExpDate(getExpiredDateForLoginUser(loginInfo.getLoginName()));
         request.getSession().setAttribute("timezone", timezone);
 
         // get permitted actions map (available modules for the current user)
@@ -123,5 +124,10 @@ public class CustomFormAuthenticationSuccessHandler implements AuthenticationSuc
         session.removeAttribute("login_errors");
         session.removeAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
     }
+
+    protected String getExpiredDateForLoginUser(String loginName) {
+        LoginUser loginUser = loginService.getUserProfile(loginName);
+           return loginUser.getPasswordExpiredDate().toString();
+    }  
 
 }
