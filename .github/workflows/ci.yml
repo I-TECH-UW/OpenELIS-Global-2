@@ -32,22 +32,22 @@ jobs:
       with:
         repository: I-TECH-UW/dataexport
         ref: develop    
-    # - name: install dataexport module
-    #   run: mvn clean install  
+    - name: install dataexport module
+      run: mvn clean install  
     
     - name: Checkout OpenELIS-Global2
       uses: actions/checkout@v2
       with:
         repository: ${{github.repository}} 
         ref: develop 
-    # - name: Build OpenELIS-Global2
-    #   run: mvn clean install  
+    - name: Build OpenELIS-Global2
+      run: mvn clean install  
           
     - name: Run OpenELS image 
       run : docker-compose up -d
       
     - name: Sleep for 5 minutes for OpenELIS to start
-      run: sleep 6m
+      run: sleep 5m
       shell: bash
       
     - name: check containers
@@ -64,7 +64,7 @@ jobs:
     - name: Start the Remote web driver in docker  
       run:  |
             docker-compose up -d chrome   
-    - name: Sleep for 2 minutes 
+    - name: Sleep for 1 minutes 
       run: sleep 1m
       shell: bash      
     - name: Run and Publish Openelis QA
