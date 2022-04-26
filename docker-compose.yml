@@ -35,9 +35,8 @@ services:
     oe.openelis.org:
         build:
           context: .
-        # image: openelis-global-2
         container_name: openelisglobal-webapp 
-        image: ghcr.io/i-tech-uw/openelis-global-2:pr-281      
+        # image: ghcr.io/i-tech-uw/openelis-global-2:pr-281      
         depends_on:
             - database
         ports:
