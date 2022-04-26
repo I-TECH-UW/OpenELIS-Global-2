@@ -161,8 +161,10 @@ caption {
 }
 
 #oe-bell-img {
-	width: auto;
-	height: 71 px;
+	margin-right: 10px;
+    width: auto;
+    height: 27px !important;
+    margin-top: -4px;
 	float: right;
 }
 #oe-logo-img {

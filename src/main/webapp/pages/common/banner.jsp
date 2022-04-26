@@ -112,7 +112,7 @@ function getCsrfToken() {
 			<div id="user-info"><div><%=usd.getElisUserName()%> - 
 			<input type="submit" value="<spring:message code="homePage.menu.logOut.toolTip"/>" class="btn-link"/>
 			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/> 			
-			</div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div><img id="oe-bell-img" src="images/bell.png" onclick="showExpiaryNotificationMessage()" alt="" width="auto" height="30"/>	
+			</div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div><img id="oe-bell-img" src="images/bell.png" onclick="showExpiaryNotificationMessage()" alt="" width="auto" height="25"/>	
 			</form>
 			<%
 		        }
