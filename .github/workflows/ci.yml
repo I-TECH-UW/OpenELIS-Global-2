@@ -47,7 +47,7 @@ jobs:
       run : docker-compose up -d
       
     - name: Sleep for 5 minutes for OpenELIS to start
-      run: sleep 5m
+      run: sleep 6m
       shell: bash
       
     - name: check containers
@@ -64,7 +64,7 @@ jobs:
     - name: Start the Remote web driver in docker  
       run:  |
             docker-compose up -d chrome   
-    - name: Sleep for 1 minutes 
+    - name: Sleep for 2 minutes 
       run: sleep 1m
       shell: bash      
     - name: Run and Publish Openelis QA
