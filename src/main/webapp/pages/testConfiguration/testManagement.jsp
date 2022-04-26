@@ -67,6 +67,10 @@
                    onclick="submitAction('SelectListRenameEntry');"
                    class="textButton"/><br>
             &nbsp;&nbsp;&nbsp;&nbsp;<%=MessageUtil.getMessage("configuration.selectList.rename.explain")%></li>
+        <li><input type="button" value="<%= MessageUtil.getMessage("configuration.method.rename") %>"
+                onclick="submitAction('MethodRenameEntry');"
+                class="textButton"/><br>
+               &nbsp;&nbsp;&nbsp;&nbsp;<%=MessageUtil.getMessage("configuration.method.rename.explain")%></li>
     </ul>
     <h3><spring:message code="configuration.test.management.organization" /></h3>
     <ul>
