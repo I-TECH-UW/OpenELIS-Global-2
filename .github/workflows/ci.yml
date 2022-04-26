@@ -54,7 +54,7 @@ jobs:
       run : docker ps 
       
     - name: Show OpenELIS Logs
-      run : docker-compose logs  logs oe.openelis.org
+      run : docker-compose logs oe.openelis.org
       
     - name: Checkout QA framework
       uses: actions/checkout@v2
