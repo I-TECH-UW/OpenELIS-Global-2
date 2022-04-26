@@ -35,11 +35,11 @@ jobs:
     # - name: install dataexport module
     #   run: mvn clean install  
     
-    # - name: Checkout OpenELIS-Global2
-    #   uses: actions/checkout@v2
-    #   with:
-    #     repository: ${{github.repository}} 
-    #     ref: develop 
+    - name: Checkout OpenELIS-Global2
+      uses: actions/checkout@v2
+      with:
+        repository: ${{github.repository}} 
+        ref: develop 
     # - name: Build OpenELIS-Global2
     #   run: mvn clean install  
     
