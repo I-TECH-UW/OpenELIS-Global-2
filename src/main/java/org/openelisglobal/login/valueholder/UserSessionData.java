@@ -16,6 +16,8 @@
 package org.openelisglobal.login.valueholder;
 
 import java.io.Serializable;
+import org.openelisglobal.login.service.LoginUserService;
+import org.openelisglobal.spring.util.SpringContext;
 
 /**
  * @author Hung Nguyen (Hung.Nguyen@health.state.mn.us)
@@ -31,6 +33,7 @@ public class UserSessionData implements Serializable {
     private int systemUserId;
     private String loginName;
     private boolean isAdmin;
+    private  LoginUserService loginService  = SpringContext.getBean(LoginUserService.class);
 
     public void setElisUserName(String elisUserName) {
         this.elisUserName = elisUserName;
@@ -71,4 +74,9 @@ public class UserSessionData implements Serializable {
     public void setAdmin(boolean isAdmin) {
         this.isAdmin = isAdmin;
     }
+
+    public String getExpiredDateForLoginUser(String loginName) {
+        LoginUser loginUser = loginService.getUserProfile(loginName);
+                 return loginUser.getPasswordExpiredDate().toString();
+   }  
 }

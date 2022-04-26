@@ -13,7 +13,6 @@
 				 org.openelisglobal.internationalization.MessageUtil,
 				 org.openelisglobal.common.util.Versioning,
                  org.openelisglobal.login.valueholder.UserSessionData,
-				 org.openelisglobal.common.services.NotificationService, 
 				 org.openelisglobal.menu.util.MenuUtil,
 				 org.openelisglobal.common.form.BaseForm,
 				 org.owasp.encoder.Encode"%>
@@ -94,21 +93,18 @@ function getCsrfToken() {
  		<div style="display: block">
 			<%
 				UserSessionData usd = null;
-				NotificationService ns = new NotificationService(); 
 				if (request.getSession().getAttribute(IActionConstants.USER_SESSION_DATA) != null) {
 					usd = (UserSessionData) request.getSession().getAttribute(IActionConstants.USER_SESSION_DATA);
-					String saveDate = ns.getLoginFromCombinedId(usd.getLoginName()).toString();
-
 			%>
 
 			<script type="text/javascript">
 				function showExpiaryNotificationMessage() {
 					var now = moment().format('DD-MMMM-YYYY, h:mm:ssA');
-				    var date_string = '<%=Encode.forJavaScript(saveDate)%>';
+					var date_string = '<%=usd.getExpiredDateForLoginUser(usd.getLoginName())%>';
                     var expiration = moment(date_string).format("YYYY-MM-DD");
                     var current_date = moment().format("YYYY-MM-DD");
                     var hours = moment(expiration).diff(current_date, 'hours');
-                       alert(now + ' Your password will expire on '  +  date_string  + 'You have ' + hours + ' hours left .Please set new password '); 
+					   alert(now + ' <spring:message code="password.will.expire.on"/> '  +  date_string  + ' <spring:message code="you.have"/> ' + hours + ' <spring:message code="hours.left"/> '); 
 		 		}
 			</script>
 			<spring:url value="/Logout" var="loginurl"/>
