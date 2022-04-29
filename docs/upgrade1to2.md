@@ -40,7 +40,7 @@ This is the recommended method of upgrading
 
 
 1. make a logical backup of your database
-    1. `sudo -u postgres pg_dump > OpenELIS-backup.sql`
+    1. `sudo -u postgres pg_dump -d clinlims > OpenELIS-backup.sql`
 
 ## Install OpenELIS-Global 2 on New Server
 
