@@ -20,18 +20,56 @@ jobs:
         path: ~/.m2/repository
         key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
         restore-keys: |
-            ${{ runner.os }}-maven-    
+            ${{ runner.os }}-maven- 
+    - name: Log in to the Container registry
+      uses: docker/login-action@v1
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}         
     - name: Checkout dataexport module
       uses: actions/checkout@v2
       with:
         repository: I-TECH-UW/dataexport
         ref: develop    
     - name: install dataexport module
-      run: mvn clean install   
+      run: mvn clean install  
+    
     - name: Checkout OpenELIS-Global2
       uses: actions/checkout@v2
       with:
         repository: ${{github.repository}} 
         ref: develop 
     - name: Build OpenELIS-Global2
-      run: mvn clean install     
+      run: mvn clean install  
+          
+    - name: Run OpenELS image 
+      run : docker-compose up -d
+      
+    - name: Sleep for 5 minutes for OpenELIS to start
+      run: sleep 5m
+      shell: bash
+      
+    - name: check containers
+      run : docker ps 
+      
+    - name: Show OpenELIS Logs
+      run : docker-compose logs oe.openelis.org
+      
+    - name: Checkout QA framework
+      uses: actions/checkout@v2
+      with:
+        repository: I-TECH-UW/openelis-qaframework
+        ref: main
+    - name: Start the Remote web driver in docker  
+      run:  |
+            docker-compose up -d chrome   
+    - name: Sleep for 1 minutes 
+      run: sleep 1m
+      shell: bash      
+    - name: Run and Publish Openelis QA
+      run: |
+          echo "cucumber.publish.enabled=true" > src/test/resources/cucumber.properties
+          mvn clean install -DskipTests=true 
+          cp -f src/test/resources/test-local.properties src/test/resources/test.properties
+          mvn test -Dcucumber.filter.tags='@login'
