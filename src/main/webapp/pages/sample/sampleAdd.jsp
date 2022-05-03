@@ -51,6 +51,8 @@ var currentTypeForTests = -1;
 var selectedTypeRowId = -1;
 var sampleChangeListeners = [];
 var sampleIdStart = 0;
+var currentSampleDiv ;
+var sampleManualselected = true;
 
 
 function /*void*/ addSampleChangedListener( listener ){
@@ -63,12 +65,14 @@ function /*void*/ notifyChangeListeners(){
 	}
 }
 
-function addNewSamples(){
+function addNewSamples(element){
+    currentSampleDiv = element.parentNode.parentNode.parentNode.parentNode.parentNode;
+	var samplesAdded = currentSampleDiv.getElementsByClassName("samplesAdded")[0];
+	samplesAdded.show();
 
-	$("samplesAdded").show();
+	var addTable = currentSampleDiv.getElementsByClassName("samplesAddedTable")[0];
 
-	var addTable = $("samplesAddedTable");
-	var typeElement = $("sampleTypeSelect");
+	var typeElement = element;
 	var typeIndex = typeElement.selectedIndex;
 	var sampleDescription = typeElement.options[typeIndex].text;
 	var sampleTypeValue = typeElement.options[typeIndex].value;
@@ -94,9 +98,12 @@ function testAndSetSave(){
 }
 
 function addTypeToTable(table, sampleDescription, sampleType, currentTime, currentDate ) {
+	    if(table.rows.length > 1){
+            table.rows[1].remove();
+	   }
 		var rowLength = table.rows.length;
-		var selectRow = rowLength == 1;
-		var rowLabel = rowLength == 1 ? 1 : parseInt(table.rows[rowLength - 1].id.substr(1)) + 1;
+		var parentDiv = table.parentNode.parentNode;
+		var rowLabel = parentDiv.id.substring(parentDiv.id.indexOf('_') + 1);
 		var newRow = table.insertRow(rowLength);
 
 		var cellCount = 0;
@@ -115,7 +122,7 @@ function addTypeToTable(table, sampleDescription, sampleType, currentTime, curre
 			var initialConditionCell = newRow.insertCell(++cellCount);
 			initialConditionCell.innerHTML = newMulti.innerHTML.replace("initialSampleConditionList", "formBreaker");
 
-			jQuery("#initialCondition_" + rowLabel).asmSelect({	removeLabel: "X"});
+			jQuery("#initialCondition_" + rowLabel).asmSelect({	removeLabel: "x"});
 		}
 		
 		if( useSampleNature ){
@@ -137,7 +144,7 @@ function addTypeToTable(table, sampleDescription, sampleType, currentTime, curre
 		var tests = newRow.insertCell(++cellCount);
 		var remove = newRow.insertCell(++cellCount);
 
-		selectionBox.innerHTML = getCheckBoxHtml( rowLabel, selectRow );
+		selectionBox.innerHTML = getCheckBoxHtml( rowLabel, true );
 		sampleId.innerHTML = getSampleIdHtml(rowLabel);
 		type.innerHTML = getSampleTypeHtml( rowLabel, sampleDescription, sampleType );
 		if( useCollectionDate ){
@@ -156,9 +163,9 @@ function addTypeToTable(table, sampleDescription, sampleType, currentTime, curre
 		tests.innerHTML = getTestsHtml( rowLabel );
 		remove.innerHTML = getRemoveButtonHtml( rowLabel );
 
-		if( selectRow ){
-			sampleClicked( rowLabel );
-		}
+		
+		sampleManualselected = false
+		sampleClicked( rowLabel );
 }
 
 
@@ -211,19 +218,20 @@ function formatToTwoDigits( number ){
 }
 
 function removeAllRows(){
-	var table = $("samplesAddedTable");
+	var table  = currentSampleDiv.getElementsByClassName("samplesAddedTable")[0];
+	samplesAdded.hide();
 	var rows = table.rows.length;
 
 	for( var i = rows - 1; i > 0; i--){
 		table.deleteRow( i );
 	}
-
-	$("samplesAdded").hide();
+	var samplesAdded = currentSampleDiv.getElementsByClassName("samplesAdded")[0];
+	samplesAdded.hide();
 }
 
 function removeRow( row ){
 	var checkedRowRemoved = false;
-	var table = $("samplesAddedTable");
+	var table  = currentSampleDiv.getElementsByClassName("samplesAddedTable")[0];
 	var rowID = "_" + row;
 	var rows = table.rows;
 
@@ -237,7 +245,8 @@ function removeRow( row ){
 	}
 
 	if( rows.length == 1 ){
-		$("samplesAdded").hide();
+		var samplesAdded = currentSampleDiv.getElementsByClassName("samplesAdded")[0];
+	    samplesAdded.hide();
 	}else if( checkedRowRemoved){
 		$("select" + rows[1].id).checked = true;
 		sampleClicked( rows[1].id.sub('_', '') );
@@ -247,7 +256,7 @@ function removeRow( row ){
     	referralTestSelected();
 	}
     if (typeof(assignTestsToSelected) === 'function') {
-    	assignTestsToSelected();
+    	//assignTestsToSelected();
 	}
 	
 	testAndSetSave();
@@ -258,12 +267,16 @@ function loadSamples(){
 }
 
 function convertSamplesToXml(){
-	var rows = $("samplesAddedTable").rows;
+	console.log("yea this one ")
+	var sampleDivs = document.getElementsByClassName("samplesAddedTable");
 
 	var xml = "<?xml version='1.0' encoding='utf-8'?><samples>";
 
-	for( var i = 1; i < rows.length; i++ ){
-		xml = xml + convertSampleToXml( rows[i].id );
+	for(var x = 1; x < sampleDivs.length ; x++ ){
+		var rows = sampleDivs[x].rows;
+		if(rows.length == 2){
+          xml = xml + convertSampleToXml( rows[1].id);
+		}
 	}
 
 	xml = xml + "</samples>";
@@ -318,7 +331,7 @@ function convertSampleToXml( id ){
 function sampleTypeSelected( element ){
 	var currentTypeIndex = element.selectedIndex;
 	if(currentTypeIndex != 0){
-		addNewSamples();
+		addNewSamples(element);
 		
 		element.options[0].selected = true;
 	}
@@ -337,8 +350,8 @@ function processGetTestSuccess(xhr){
     //alert(xhr.responseText);
     var response = xhr.responseXML.getElementsByTagName("formfield").item(0);
 	var i;
-    var testTable = $("addTestTable");
-    var panelTable = $("addPanelTable");
+	var testTable = currentSampleDiv.getElementsByClassName("addTestTable")[0];
+	var panelTable = currentSampleDiv.getElementsByClassName("addPanelTable")[0];
     var tests = response.getElementsByTagName("test");
     var isVariableSampleType = response.getElementsByTagName("variableSampleType").length > 0;
     clearTable( testTable );
@@ -361,10 +374,11 @@ function processGetTestSuccess(xhr){
 	   		insertPanelIntoPanelTable( panels[i], panelTable );
 	   }
 	
-		$("testSelections").show();
+		currentSampleDiv.getElementsByClassName("testSelections")[0].show();
 	
 		setSampleTests(isVariableSampleType);
 	}
+	sampleManualselected = true
 }
 
 function insertTestIntoTestTable( test, testTable, userSampleTypes ){
@@ -462,7 +476,7 @@ function getPanelCheckBoxesHtml(map, row, id ){
 }
 
 function getTestDisplayRowHtml( name, id, row ){
-	return "<input name='testName' class='testName'  value='" + id + "' id='testName_" + row  + "' type='hidden' >" + name;
+	return "<input name='testName' class='testName_" + row  + "'  value='" + id + "' id='testName_" + row  + "' type='hidden' >" + name;
 }
 
 function getValueFromXmlElement( parent, tag ){
@@ -526,7 +540,7 @@ function setUserSampleTypeSelection(testCheckbox, row){
 }
 
 function assignTestsToSelected(checkbox, panelId){
-	var testTable = $("addTestTable");
+	var testTable = currentSampleDiv.getElementsByClassName("addTestTable")[0];
 	var chosenTests = [];
 	var chosenIds = [];
 	var i, row,nameNode;
@@ -538,7 +552,7 @@ function assignTestsToSelected(checkbox, panelId){
 	for( i = 0; i < inputs.length; i++ ){
 		if( inputs[i].checked ){
             row = inputs[i].id.split("_")[1];
-            nameNode = $("testName_" + row);
+           nameNode = currentSampleDiv.getElementsByClassName("testName_" + row)[0];
 			chosenTests.push(nameNode.nextSibling.nodeValue);
 			chosenIds.push( nameNode.value);
 		}
@@ -569,7 +583,9 @@ function assignTestsToSelected(checkbox, panelId){
 	}
 	getNotificationsForTests(chosenIds, addNotificationConfigurations);
 	addNotificationsOptions();
-	referralTestSelected();
+	if (typeof(referralTestSelected) === 'function') {
+    	referralTestSelected();
+	}
 	testAndSetSave();
 }
 
@@ -592,14 +608,17 @@ function addNotificationsOptions() {
 	var reportingDivs = jQuery('.reportingDiv');
 	reportingDivs.addClass('deleteReportingRow');
 
-	var samples = jQuery('#samplesAddedTable .sampleId');
-	samples.each(function(index, value) {
-		var sampleNum = jQuery(this).val();
+	var sampleTables = document.getElementsByClassName("samplesAddedTable");
+	for(var x = 1 ; x < sampleTables.length ; x++){
+      var samples = sampleTables[x].getElementsByClassName("sampleId");
+	  samples.each(function(index, value) {
+		var sampleNum = index.value
 		var testNames = document.getElementById("tests_" + sampleNum).value.split(",");
 		var testIds = document.getElementById("testIds_" + sampleNum).value.split(",");
 		addNotificationOptionForRow(resultReportingSection, "<spring:message code='' text='Sample'/> " + sampleNum, sampleNum, testIds, testNames);
-	});
-	
+	 });
+	}
+ 
 	jQuery('.deleteReportingRow').remove();
 }
 
@@ -792,14 +811,15 @@ function sectionSelectionChanged( selectionElement ){
 }
 
 function editSelectedTest( ){
-	if( currentCheckedType == -1 || currentTypeForTests != currentCheckedType  ){
+	if( !sampleManualselected ){
     	getTestsForSampleType(currentCheckedType, processGetTestSuccess); //this is an asynchronous call and setSampleType will be called on the return of the call
-    }else{
+    }else {
     	setSampleTests();
     }
 }
 
 function setSampleTests(isVariableSampleType ){
+	currentSampleDiv = document.getElementById("samplesDisplay_"+selectedTypeRowId )
 	deselectAllTests();
 	var allTests = $("testIds_" + selectedTypeRowId ).value;
 	var allPanels = $("panelIds_" + selectedTypeRowId).value;
@@ -813,20 +833,22 @@ function setSampleTests(isVariableSampleType ){
         var panels = allPanels.split(",");
 		checkPanels(panels);
 	}
-
-	$("testSelections").show();
+   if (typeof(referralTestSelected) === 'function') {
+    	referralTestSelected();
+	}
+	currentSampleDiv.getElementsByClassName("testSelections")[0].show();
 	
 }
 
 function checkTests(tests, isVariableSampleType) {
-    var inputs = $("addTestTable").getElementsByClassName("testName");
+	var inputs = currentSampleDiv.getElementsByClassName("addTestTable")[0].getElementsByClassName("testName");
     var testRow;
 
     for( var i = 0; i < tests.length; i++ ){
         for( var j = 0; j < inputs.length; j++ ){
         	if( inputs[j].value == tests[i] ){
                 testRow = inputs[j].id.split("_")[1];
-                $("test_" + testRow).click();
+				jQuery("#"+currentSampleDiv.id).find("#test_" + testRow).click();
                 if( isVariableSampleType){
                     populateUserSelectedType(testRow)
                 }
@@ -838,7 +860,7 @@ function checkTests(tests, isVariableSampleType) {
 
 function populateUserSelectedType( testRow ){
     var selectedTypes = jQuery("#testTypeMap_" + selectedTypeRowId).val();
-    var testId = jQuery("#testName_" + testRow).val();
+	var testId = jQuery("#"+currentSampleDiv.id).find("#testName_" + testRow).val();
     var selectedTypeList, selectedTypeListLength, typeSelection, selectedTypeName, selectionFound, i;
 
     if(selectedTypes){
@@ -872,7 +894,7 @@ function populateUserSelectedType( testRow ){
     }
 }
 function checkPanels(panels) {
-    pInputs = $("addPanelTable").getElementsByTagName("input");
+	pInputs = currentSampleDiv.getElementsByClassName("addPanelTable")[0].getElementsByTagName("input");
     for( var x = 0; x < panels.length; x++ ){
         for( var y = 0; y < pInputs.length; y++ ){
             if( pInputs[y].value == panels[x] ){
@@ -898,8 +920,8 @@ function checkPanels(panels) {
 
 function panelSelected(checkBox, tests ){
 	for( var i = 0; i < tests.length; i++ ){
-		jQuery("#test_" + tests[i]).attr("checked", checkBox.checked );
-        jQuery("#test_" + tests[i]).trigger("onclick");
+		jQuery("#"+currentSampleDiv.id).find("#test_" + tests[i]).attr("checked", checkBox.checked );
+        jQuery("#"+currentSampleDiv.id).find("#test_" + tests[i]).trigger("onclick");
 
 	}
 }
@@ -916,7 +938,7 @@ function /*boolean*/ sampleAddValid( sampleRequired ){
 	}
 
 	if( sampleRequired){
-		var table = $("samplesAddedTable");
+		var table  = document.getElementsByClassName("samplesAddedTable")[1];
 		var rows = table.rows;
 		//if length is 1, then no sample exists
 		if( rows.length == 1 ){
@@ -944,14 +966,15 @@ function /*boolean*/ sampleAddValid( sampleRequired ){
 }
 
 function samplesHaveBeenAdded(){
-	return $("samplesAddedTable").rows.length > 1;
+	 return currentSampleDiv.getElementsByClassName("samplesAddedTable")[0].rows.length > 1;;
 }
 
 function userSampleTypeSelectionChanged( userTypeSelectionId, row,  qualifiableId ){
 
     var sampleType =  jQuery("#" + userTypeSelectionId);
     var typeMap = jQuery("#testTypeMap_" + selectedTypeRowId );
-    typeMap.val( typeMap.val() + jQuery("#testName_" + row).val() + ":" + jQuery("#" + userTypeSelectionId + " :selected").text() + "," );
+	var testId = jQuery("#"+currentSampleDiv.id).find("#testName_" + testRow).val();
+    typeMap.val( typeMap.val() + testId + ":" + jQuery("#" + userTypeSelectionId + " :selected").text() + "," );
 
     //testAndSetSave();
 
@@ -1026,13 +1049,6 @@ function sampleTypeQualifierChanged(element){
 <div id="crossPanels">
 </div>
 
-<form:hidden  path="sampleXML"  id="sampleXML"/>
-<form:hidden path="patientEmailNotificationTestIds" id="patientEmailNotificationTestIds"/>
-<form:hidden path="patientSMSNotificationTestIds" id="patientSMSNotificationTestIds"/>
-<form:hidden path="providerEmailNotificationTestIds" id="providerEmailNotificationTestIds"/>
-<form:hidden path="providerSMSNotificationTestIds" id="providerSMSNotificationTestIds"/>
-<form:hidden path="customNotificationLogic" id="customNotificationLogic" value="false"/>
-
 	<Table style="width:100%">
 		<tr>
 			<td>
@@ -1054,10 +1070,10 @@ function sampleTypeQualifierChanged(element){
 	</Table>
 
 	<br />
-	<div id="samplesAdded" class="colorFill" style="display: none; ">
+	<div id="samplesAdded" class="samplesAdded" style="display: none; ">
 		<hr style="width:100%" />
 
-		<table id="samplesAddedTable" width=<%=useCollectionDate ? "100%" : "80%" %>>
+		<table id="samplesAddedTable"  class="samplesAddedTable" width=<%=useCollectionDate ? "100%" : "80%" %>>
 			<tr>
 				<th style="width:5%"></th>
 				<th style="width:10%">
@@ -1095,20 +1111,20 @@ function sampleTypeQualifierChanged(element){
 				<th style="width:10%"></th>
 			</tr>
 		</table >
-		<table width=<%=useCollectionDate ? "100%" : "80%" %>>
+		<%-- <table width=<%=useCollectionDate ? "100%" : "80%" %>>
 			<tr>
 				<td width=<%=useCollectionDate ? "90%" : "90%" %>>&nbsp;</td>
 				<td style="width:10%">
                     <input type="button" onclick="removeAllRows();" value="<%=MessageUtil.getMessage("sample.entry.removeAllSamples")%>" class="textButton">
 				</td>
 			</tr>
-		</table>
+		</table> --%>
 		<br />
-		<div id="testSelections" class="colorFill" style="display:none;" >
+		<div id="testSelections" class="testSelections" style="display:none;" >
 		<table style="margin-left: 1%;width:60%;" id="addTables">
 		<tr>
 			<td  style="width:30%;vertical-align:top;">
-				<table style="width:97%" id="addPanelTable" >
+				<table style="width:97%" id="addPanelTable" class="addPanelTable">
 					<caption>
 						<spring:message code="sample.entry.panels"/>
 					</caption>
@@ -1124,7 +1140,7 @@ function sampleTypeQualifierChanged(element){
 				</table>
 			</td>
 			<td  style="width:70%;vertical-align:top;">
-				<table style="margin-left: 3%;width:97%;" id="addTestTable">
+				<table style="margin-left: 3%;width:97%;" id="addTestTable" class="addTestTable">
 					<caption>
 						<spring:message code="sample.entry.available.tests"/>
 					</caption>
