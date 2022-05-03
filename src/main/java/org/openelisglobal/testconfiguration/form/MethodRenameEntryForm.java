@@ -11,7 +11,7 @@ import org.openelisglobal.common.validator.ValidationHelper;
 
 public class MethodRenameEntryForm extends BaseForm {
     // for display
-    private List methodSectionList;
+    private List methodList;
 
     @NotBlank
     @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
@@ -23,18 +23,18 @@ public class MethodRenameEntryForm extends BaseForm {
 
     @NotBlank
     @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String methodSectionId = "";
+    private String methodId = "";
 
     public MethodRenameEntryForm() {
         setFormName("methodRenameEntryForm");
     }
 
-    public List getTestSectionList() {
-        return methodSectionList;
+    public List getMethodList() {
+        return methodList;
     }
 
-    public void setMethodSectionList(List methodSectionList) {
-        this.methodSectionList = methodSectionList;
+    public void setMethodList(List methodList) {
+        this.methodList = methodList;
     }
 
     public String getNameEnglish() {
@@ -53,11 +53,11 @@ public class MethodRenameEntryForm extends BaseForm {
         this.nameFrench = nameFrench;
     }
 
-    public String getMethodSectionId() {
-        return methodSectionId;
+    public String getMethodId() {
+        return methodId;
     }
 
-    public void setMethodSectionId(String methodSectionId) {
-        this.methodSectionId = methodSectionId;
+    public void setMethodSectionId(String methodId) {
+        this.methodId = methodId;
     }
 }

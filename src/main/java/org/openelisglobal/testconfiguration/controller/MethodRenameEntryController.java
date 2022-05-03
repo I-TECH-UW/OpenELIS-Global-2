@@ -9,8 +9,8 @@ import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.localization.service.LocalizationService;
 import org.openelisglobal.localization.valueholder.Localization;
-import org.openelisglobal.test.service.TestSectionService;
-import org.openelisglobal.test.valueholder.TestSection;
+import org.openelisglobal.method.service.MethodService;
+import org.openelisglobal.method.valueholder.Method;
 import org.openelisglobal.testconfiguration.form.MethodRenameEntryForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -22,13 +22,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+@Controller
 public class MethodRenameEntryController extends BaseController {
-    private static final String[] ALLOWED_FIELDS = new String[] { "methodSectionId", "nameEnglish", "nameFrench" };
+    private static final String[] ALLOWED_FIELDS = new String[] { "methodId", "nameEnglish", "nameFrench" };
 
     @Autowired
     LocalizationService localizationService;
     @Autowired
-    TestSectionService testSectionService;
+    MethodService methodService;
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -39,7 +40,7 @@ public class MethodRenameEntryController extends BaseController {
     public ModelAndView showMethodRenameEntry(HttpServletRequest request) {
         MethodRenameEntryForm form = new MethodRenameEntryForm();
 
-        form.setMethodSectionList(DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION));
+        form.setMethodList(DisplayListService.getInstance().getList(DisplayListService.ListType.METHODS));
 
         return findForward(FWD_SUCCESS, form);
     }
@@ -62,11 +63,11 @@ public class MethodRenameEntryController extends BaseController {
             @ModelAttribute("form") @Valid MethodRenameEntryForm form, BindingResult result) {
         if (result.hasErrors()) {
             saveErrors(result);
-            form.setMethodSectionList(DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION));
+            form.setMethodList(DisplayListService.getInstance().getList(DisplayListService.ListType.METHODS));
             return findForward(FWD_FAIL_INSERT, form);
         }
 
-        String methodId = form.getMethodSectionId();
+        String methodId = form.getMethodId();
         String nameEnglish = form.getNameEnglish();
         String nameFrench = form.getNameFrench();
         String userId = getSysUserId(request);
@@ -77,11 +78,11 @@ public class MethodRenameEntryController extends BaseController {
     }
 
     private void updateMethodNames(String methodId, String nameEnglish, String nameFrench, String userId) {
-        TestSection testSection = testSectionService.getTestSectionById(methodId);
+        Method method = methodService.getMethodById(methodId);
 
-        if (testSection != null) {
+        if (method != null) {
 
-            Localization name = testSection.getLocalization();
+            Localization name = method.getLocalization();
             name.setEnglish(nameEnglish.trim());
             name.setFrench(nameFrench.trim());
             name.setSysUserId(userId);
@@ -94,8 +95,8 @@ public class MethodRenameEntryController extends BaseController {
 
         }
 
-        // Refresh Test Section names
-        DisplayListService.getInstance().getFreshList(DisplayListService.ListType.TEST_SECTION);
+        // Refresh method names
+        DisplayListService.getInstance().getFreshList(DisplayListService.ListType.METHODS);
     }
 
     @Override

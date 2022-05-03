@@ -79,7 +79,7 @@
                    class="textButton"/><br>
             &nbsp;&nbsp;&nbsp;&nbsp;<%=MessageUtil.getMessage("configuration.test.catalog.explain")%></li>
         <li><input type="button" value="<%= MessageUtil.getMessage("configuration.method") %>"
-                onclick="submitAction('TestCatalog');"
+                onclick="submitAction('MethodManagement');"
                 class="textButton"/><br>
          &nbsp;&nbsp;&nbsp;&nbsp;<%=MessageUtil.getMessage("configuration.method.explain")%></li>
         <li><input type="button" value="<%= MessageUtil.getMessage("configuration.test.add") %>"
