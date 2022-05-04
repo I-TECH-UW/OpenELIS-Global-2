@@ -204,7 +204,7 @@ function getCollectorHtml(row){
 
 }
 function getRemoveButtonHtml( row ){
-	return "<input name='remove' value='" + "<spring:message code="sample.entry.remove.sample"/>" + "' class='textButton' onclick='removeRow(" + row + ");testAndSetSave();' id='removeButton_" + row +"' type='button' >";
+	return "<input name='remove' value='" + "<spring:message code="sample.entry.remove.sample"/>" + "' class='textButton' onclick='removeSample(this);testAndSetSave();' id='removeButton_" + row +"' type='button' >";
 }
 
 function getCurrentTime(){
@@ -217,17 +217,6 @@ function formatToTwoDigits( number ){
 	return number > 9 ? number : "0" + number;
 }
 
-function removeAllRows(){
-	var table  = currentSampleDiv.getElementsByClassName("samplesAddedTable")[0];
-	samplesAdded.hide();
-	var rows = table.rows.length;
-
-	for( var i = rows - 1; i > 0; i--){
-		table.deleteRow( i );
-	}
-	var samplesAdded = currentSampleDiv.getElementsByClassName("samplesAdded")[0];
-	samplesAdded.hide();
-}
 
 function removeRow( row ){
 	var checkedRowRemoved = false;
@@ -259,6 +248,12 @@ function removeRow( row ){
     	//assignTestsToSelected();
 	}
 	
+	testAndSetSave();
+}
+
+function removeSample(element){
+	var sampleBlock = element.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode
+	sampleBlock.remove();
 	testAndSetSave();
 }
 
@@ -332,8 +327,6 @@ function sampleTypeSelected( element ){
 	var currentTypeIndex = element.selectedIndex;
 	if(currentTypeIndex != 0){
 		addNewSamples(element);
-		
-		element.options[0].selected = true;
 	}
 }
 
@@ -616,7 +609,7 @@ function addNotificationsOptions() {
 		var testNames = document.getElementById("tests_" + sampleNum).value.split(",");
 		var testIds = document.getElementById("testIds_" + sampleNum).value.split(",");
 		addNotificationOptionForRow(resultReportingSection, "<spring:message code='' text='Sample'/> " + sampleNum, sampleNum, testIds, testNames);
-	 });
+	});
 	}
  
 	jQuery('.deleteReportingRow').remove();
@@ -1111,14 +1104,6 @@ function sampleTypeQualifierChanged(element){
 				<th style="width:10%"></th>
 			</tr>
 		</table >
-		<%-- <table width=<%=useCollectionDate ? "100%" : "80%" %>>
-			<tr>
-				<td width=<%=useCollectionDate ? "90%" : "90%" %>>&nbsp;</td>
-				<td style="width:10%">
-                    <input type="button" onclick="removeAllRows();" value="<%=MessageUtil.getMessage("sample.entry.removeAllSamples")%>" class="textButton">
-				</td>
-			</tr>
-		</table> --%>
 		<br />
 		<div id="testSelections" class="testSelections" style="display:none;" >
 		<table style="margin-left: 1%;width:60%;" id="addTables">

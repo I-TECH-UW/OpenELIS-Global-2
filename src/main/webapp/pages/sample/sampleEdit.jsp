@@ -517,7 +517,7 @@ function addSampleTable(){
 </table>
 <div id = "samplesBlock" style="width:100%">
 </div>
-<button type="button" onclick="addSampleTable();">Add sample</button>
+<button type="button" onclick="addSampleTable();"><spring:message code="sample.entry.sample.new"/></button>
 </c:if>
 </c:if>
 <c:if test="${form.noSampleFound}">

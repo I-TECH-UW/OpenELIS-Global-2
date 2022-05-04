@@ -712,7 +712,7 @@ function addSampleTable(){
 </div>
 
 <br />
-<button type="button" onclick="addSampleTable();">Add sample</button>
+<button type="button" onclick="addSampleTable();"><spring:message code="sample.entry.sample.new"/></button>
 <hr style="width:100%;height:5px" />
 
 <table style="width:100%">
