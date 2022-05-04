@@ -21,18 +21,27 @@
 <script type="text/javascript" src="scripts/testReflex.js?" ></script>
 
 <script type="text/javascript">
-
+var sampleDiv;
 function referralTestSelected(e) {
 	var index = 0;
-	jQuery('#mainTable .referralRow').addClass('deleteReferralRow');
-	var samples = jQuery('#samplesAddedTable .sampleId');
+	jQuery(currentReferalDivSelector).children('#mainTable .referralRow').addClass('deleteReferralRow');
+	
+	
+	if(typeof currentReferalDivSelector !=='undefined'){
+      	var id = currentReferalDivSelector.substring(currentReferalDivSelector.indexOf('_')+ 1);
+	  	sampleDiv = document.getElementById("samplesDisplay_"+id);
+	}else{
+		 sampleDiv = currentSampleDiv;
+	}
+	
+    var samples = sampleDiv.getElementsByClassName("samplesAddedTable")[0].getElementsByClassName("sampleId");
 	samples.each(function(index, value) {
-		var sampleNum = jQuery(this).val();
+		var sampleNum = index.value
 		var testNames = document.getElementById("tests_" + sampleNum).value.split(",");
 		var testIds = document.getElementById("testIds_" + sampleNum).value.split(",");
 		for (var j = 0; j < testIds.length; ++j) {
 			if (testIds[j] !== "") {
-				createReferralOption(sampleNum, testIds[j], testIds[j], testNames[j], index++);
+				createReferralOption(sampleNum, testIds[j], testIds[j], testNames[j], sampleNum++);
 			}
 		}
 	});
@@ -87,7 +96,10 @@ function createReferralOption(sampleNum, testNum, testId, testName, index) {
 	var table, tableBody, row, cell1, cell2, cell3, cell4, cell5;
 	var select, option;
 	
-	table = document.getElementById("mainTable");
+	if(typeof currentReferalDiv ==='undefined'){
+        return;
+	}
+	table = currentReferalDiv.getElementsByClassName("mainTable")[0];
 	tableBody = table.getElementsByTagName('tbody')[0];
 	
 	if (jQuery('#sample_' + sampleNum + '_test_' + testNum).length) {
@@ -183,7 +195,7 @@ function createReferralOption(sampleNum, testNum, testId, testName, index) {
 
 </script>
 
-<table width="75%" border="0" cellspacing="0" cellpadding="1" id="mainTable">
+<table width="75%" border="0" cellspacing="0" cellpadding="1" id="mainTable" class="mainTable">
 <thead>
 <tr>
     <th colspan="6" class="headerGroup"><spring:message code="referral.header.group.request"/></th>

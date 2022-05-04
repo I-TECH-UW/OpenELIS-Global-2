@@ -59,6 +59,8 @@ var acceptExternalOrders = <%= acceptExternalOrders %>;
 var dirty = false;
 var invalidSampleElements = [];
 var requiredFields = new Array("labNo", "receivedDateForDisplay" );
+var currentReferalDiv ;
+var currentReferalDivSelector ;
 
 if( requesterLastNameRequired ){
     requiredFields.push("providerLastNameID");
@@ -245,6 +247,7 @@ function addPatientInfo(  ){
 }
 
 function showHideSection(button, targetId){
+    targetId = targetId+button.name
     if( button.value == "+" ){
         showSection(button, targetId);
     }else{
@@ -625,8 +628,32 @@ function  processPhoneSuccess(xhr){
     setSave();
 }
 
-function toggleReferral() {
-	jQuery("#referTestSection").toggle();
+function toggleReferral(element) {
+    var blockId = element.parentNode.id;
+    var referalId = "referTestSection_" + blockId.substring(blockId.indexOf('_')+ 1);
+    currentReferalDivSelector = "#" + referalId;
+    currentReferalDiv = document.getElementById(referalId) ;
+	currentReferalDiv.toggle();
+}
+</script>
+<script>
+jQuery(document).ready( function() {
+    addSampleTable();
+});
+var counter = 0;
+function addSampleTable(){
+    counter ++
+    var content = $("addSampleTemplate").innerHTML;
+    var newTable = document.createElement('table');
+    newTable.style = "width:100%";
+    newTable.innerHTML = content;
+    var inputShowHide = newTable.getElementsByTagName("input")[0];
+    inputShowHide.name = counter ;
+    var divSampleDisplay = newTable.getElementsByTagName("div")[0];
+    divSampleDisplay.id = "samplesDisplay_" + counter;
+    var divReferalDisplay = newTable.getElementsByClassName("referTestSection")[0];
+    divReferalDisplay.id = "referTestSection_" + counter;
+    $("samplesBlock").appendChild(newTable);
 }
 </script>
 
@@ -654,20 +681,38 @@ function toggleReferral() {
 <tiles:insertAttribute name="sampleOrder" />
 
 <hr style="width:100%;height:5px" />
-<input type="button" name="showHide" value="-" onclick="showHideSection(this, 'samplesDisplay');" id="samplesSectionId">
-<%= MessageUtil.getContextualMessage("sample.entry.sampleList.label") %>
-<span class="requiredlabel">*</span>
 
-<div id="samplesDisplay" class="colorFill" >
-    <tiles:insertAttribute name="addSample"/>
-	<form:checkbox path="useReferral" id="useReferral" onclick="toggleReferral();referralTestSelected();" value="true"/> <spring:message code="sample.entry.referral.toggle" />
-</div>
+<form:hidden  path="sampleXML"  id="sampleXML"/>
+<form:hidden path="patientEmailNotificationTestIds" id="patientEmailNotificationTestIds"/>
+<form:hidden path="patientSMSNotificationTestIds" id="patientSMSNotificationTestIds"/>
+<form:hidden path="providerEmailNotificationTestIds" id="providerEmailNotificationTestIds"/>
+<form:hidden path="providerSMSNotificationTestIds" id="providerSMSNotificationTestIds"/>
+<form:hidden path="customNotificationLogic" id="customNotificationLogic" value="false"/>
 
-<div id="referTestSection" style="display:none;">
-    <tiles:insertAttribute name="referralInfo" />
+<table id = "addSampleTemplate"  style="display:none;">
+     <tr>
+        <td >
+            <input type="button" name="showHide" value="-" onclick="showHideSection(this, 'samplesDisplay_');" id="samplesSectionId">
+            <%= MessageUtil.getContextualMessage("sample.entry.sampleList.label") %>
+            <span class="requiredlabel">*</span>
+
+            <div id="samplesDisplay_0" class="colorFill" >
+                <tiles:insertAttribute name="addSample"/>
+                <form:checkbox path="useReferral" id="useReferral" onclick="toggleReferral(this);referralTestSelected();" value="true"/> <spring:message code="sample.entry.referral.toggle" />
+            </div>
+
+            <div id="referTestSection" class ="referTestSection" style="display:none;">
+                <tiles:insertAttribute name="referralInfo" />
+            </div>        
+           <hr >
+        </td>
+    </tr> 
+</table>
+<div id = "samplesBlock" style="width:100%">
 </div>
 
 <br />
+<button type="button" onclick="addSampleTable();"><spring:message code="sample.entry.sample.new"/></button>
 <hr style="width:100%;height:5px" />
 
 <table style="width:100%">
