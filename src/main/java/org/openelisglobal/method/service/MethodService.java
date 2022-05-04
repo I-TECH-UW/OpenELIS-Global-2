@@ -15,8 +15,4 @@ public interface MethodService extends BaseObjectService<Method, String> {
     void refreshNames();
 
     Method getMethodById(String methodId);
-
-
-
-
 }

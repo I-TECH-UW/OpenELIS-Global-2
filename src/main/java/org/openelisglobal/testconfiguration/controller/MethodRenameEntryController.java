@@ -68,6 +68,9 @@ public class MethodRenameEntryController extends BaseController {
         }
 
         String methodId = form.getMethodId();
+        System.out.println("mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm");
+        System.out.println(methodId);
+       System.out.println("mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm");
         String nameEnglish = form.getNameEnglish();
         String nameFrench = form.getNameFrench();
         String userId = getSysUserId(request);

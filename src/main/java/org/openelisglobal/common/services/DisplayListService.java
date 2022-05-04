@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.validator.GenericValidator;
@@ -666,7 +667,7 @@ public class DisplayListService implements LocaleChangeListener {
         List<Method> methods = methodService.getAllMethods();
 
         for (Method method : methods) {
-            methodPairs.add(new IdValuePair(method.getId(), method.getLocalizedName()));
+            methodPairs.add(new IdValuePair(method.getId(), method.getLocalization().getLocalizedValue()));
         }
 
         return methodPairs;
@@ -711,7 +712,7 @@ public class DisplayListService implements LocaleChangeListener {
         List<Method> methods = methodService.getAllInActiveMethods();
 
         for (Method method : methods) {
-            methodPairs.add(new IdValuePair(method.getId(), method.getLocalizedName()));
+            methodPairs.add(new IdValuePair(method.getId(), method.getLocalization().getLocalizedValue()));
         }
 
         return methodPairs;

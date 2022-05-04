@@ -18,19 +18,19 @@
 			<where>is_active = 'Y'</where>
 		</delete>
 	</changeSet>
+
 	<changeSet author="cliff" id="2">
 		<validCheckSum>8:362965b0de717133dbb4aba5201339fd</validCheckSum>
 		<preConditions onFail="MARK_RAN">
-		<not>
+			<not>
 				<columnExists tableName="method" columnName="name_localization_id" />
 			</not>
-				<!-- <tableExists tableName="method" schemaName="clinlims" /> -->
 		</preConditions>
 		<addColumn schemaName="clinlims" tableName="method">
 			<column name="name_localization_id" type="NUMERIC(10)"/>
 		</addColumn>
-	</changeSet>
-	  
+	</changeSet> 
+
 
 	<changeSet author="cliff" id="3">
 		<validCheckSum>8:a45e876c8019488694f6de348c326f5f</validCheckSum>

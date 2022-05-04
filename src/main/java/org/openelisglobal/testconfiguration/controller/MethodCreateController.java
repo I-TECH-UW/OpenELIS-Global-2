@@ -42,10 +42,7 @@ public class MethodCreateController extends BaseController {
     private RoleService roleService;
     @Autowired
     private MethodCreateService methodCreateService;
-    @Autowired
-    private LocalizationService localizationService;
-
-
+   
     @InitBinder
     public void initBinder(WebDataBinder binder) {
         binder.setAllowedFields(ALLOWED_FIELDS);
@@ -63,11 +60,12 @@ public class MethodCreateController extends BaseController {
 
     private void setupDisplayMethods(MethodCreateForm form) {
         form.setExistingMethodList(
-                DisplayListService.getInstance().getList(DisplayListService.ListType.METHODS));
+                 DisplayListService.getInstance().getList(DisplayListService.ListType.METHODS));
+        form.setExistingMethodList(
+                    DisplayListService.getInstance().getList(DisplayListService.ListType.METHODS));         
         form.setInactiveMethodList(
                 DisplayListService.getInstance().getList(DisplayListService.ListType.METHODS_INACTIVE));
-        // List<Method> methods = methodService.getAllMethods();
-        // if(methods != null){
+       
         form.setExistingEnglishNames(getExistingMethodNames( Locale.ENGLISH));
 
         form.setExistingFrenchNames(getExistingMethodNames( Locale.FRENCH));
@@ -75,18 +73,11 @@ public class MethodCreateController extends BaseController {
 
     private String getExistingMethodNames( Locale locale) {
         StringBuilder builder = new StringBuilder(NAME_SEPARATOR);
-        // Method method = new Method();
         List<Method> methods = methodService.getAllMethods();
 
 
         for (Method method : methods) {
-                System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
-                // System.out.println(method.getLocalization().getLocalizedValue(locale));
-                System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
-
-
-              builder.append(method.getLocalization().getLocalizedValue(locale));
-            // builder.append(method.getMethodName());
+            builder.append(method.getLocalization().getLocalizedValue(locale));
 
             builder.append(NAME_SEPARATOR);
         }
@@ -162,7 +153,6 @@ public class MethodCreateController extends BaseController {
         String identifyingNameKey = identifyingName.replaceAll(" ", "_");
         method.setNameKey("method." + identifyingNameKey);
 
-        // method.setSortOrderInt(Integer.MAX_VALUE);
         method.setSysUserId(userId);
         return method;
     }

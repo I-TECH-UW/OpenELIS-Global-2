@@ -65,7 +65,7 @@
             element.prop("disabled", "disabled");
             element.addClass("disabled-text-button");
         });
-        getEntityNames(methodId, "<%=EntityNamesProvider.TEST_SECTION%>", MethodNameSuccess );
+        getEntityNames(methodId, "<%=EntityNamesProvider.METHOD%>", MethodNameSuccess );
     }
 
     function MethodNameSuccess(xhr) {

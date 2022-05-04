@@ -147,7 +147,7 @@ function getTestResultLimits(testId, success, failure){
 //sensitive data is being transmitted, therefore a token check should be done even on GET. 
 //Otherwise this should be moved to a POST request and rely on regular csrf functionality
 function getEntityNames( entitiyId,entityName ,success, failure){
-    var permitted = ['panel','sampleType','testSection','unitOfMeasure'];
+    var permitted = ['panel','sampleType','testSection','unitOfMeasure','method'];
 
     if( permitted.indexOf(entityName) == -1){
         alert( "\"" + entityName + "\" has not been implemented for getEntityNames");
