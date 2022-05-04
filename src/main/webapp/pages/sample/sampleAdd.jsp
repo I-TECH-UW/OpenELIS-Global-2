@@ -245,7 +245,7 @@ function removeRow( row ){
     	referralTestSelected();
 	}
     if (typeof(assignTestsToSelected) === 'function') {
-    	//assignTestsToSelected();
+    	assignTestsToSelected();
 	}
 	
 	testAndSetSave();
@@ -254,6 +254,7 @@ function removeRow( row ){
 function removeSample(element){
 	var sampleBlock = element.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode
 	sampleBlock.remove();
+	addNotificationsOptions();
 	testAndSetSave();
 }
 
