@@ -313,14 +313,14 @@ function capitalizeValue( text){
 
 function checkOrderReferral(){
 
-	var value = jQuery("#externalOrderNumber").val()
+    var value = jQuery("#externalOrderNumber").val()
     getLabOrder(value, processLabOrderSuccess);
     showSection( $("orderSectionId"), 'orderDisplay');
 }
 
-function clearOrderData() {
-
-    removeAllRows();
+function clearOrderData() { 
+    var addTestTable = document.getElementsByClassName("addTestTable")[1];
+	var addPanelTable = document.getElementsByClassName("addPanelTable")[1];
     clearTable(addTestTable);
     clearTable(addPanelTable);
     clearSearchResultTable();
@@ -401,9 +401,7 @@ function processLabOrderSuccess(xhr){
         var crosstests = order.getElementsByTagName("crosstest");
         parseCrossTests(crosstests, crossSampleTypeMap, crossSampleTypeOrderMap);
 
-        showSection( $("samplesSectionId"), 'samplesDisplay');
-        $("samplesAdded").show();
-
+        document.getElementsByClassName("samplesAdded")[1].show();
         notifyChangeListeners();
         testAndSetSave();
         populateCrossPanelsAndTests(CrossPanels, CrossTests, '${entryDate}');
