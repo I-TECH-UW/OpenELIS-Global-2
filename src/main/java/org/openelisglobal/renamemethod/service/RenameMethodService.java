@@ -10,12 +10,8 @@ public interface RenameMethodService extends BaseObjectService<org.openelisgloba
     List<RenameMethod> getMethods(String filter);
 
     List<RenameMethod> getAllInActiveMethods();
-
-    List<RenameMethod> getAllMethods();
     
     void refreshNames();
-
-    RenameMethod getMethodById(String methodId);
 
     Localization getLocalizationForRenameMethod(String id);
 }

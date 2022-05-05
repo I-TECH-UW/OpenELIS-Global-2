@@ -9,10 +9,6 @@ public interface MethodService extends BaseObjectService<Method, String> {
     List<Method> getMethods(String filter);
 
     List<Method> getAllInActiveMethods();
-
-    List<Method> getAllMethods();
     
     void refreshNames();
-
-    Method getMethodById(String methodId);
 }

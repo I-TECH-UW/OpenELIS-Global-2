@@ -31,13 +31,9 @@ import org.openelisglobal.renamemethod.valueholder.RenameMethod;
  */
 public interface RenameMethodDAO extends BaseDAO<RenameMethod, String> {
 
-	List<RenameMethod> getAllMethods() throws LIMSRuntimeException;
-
     List<RenameMethod> getMethods(String filter) throws LIMSRuntimeException;
     
     List<RenameMethod> getAllInActiveMethods() throws LIMSRuntimeException;
     
-    RenameMethod getMethodById(String methodId) throws LIMSRuntimeException;
-
     boolean duplicateMethodExists(RenameMethod testSection) throws LIMSRuntimeException;
 }

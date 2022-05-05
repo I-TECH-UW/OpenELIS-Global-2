@@ -117,17 +117,6 @@
 		</insert>
 		 <insert schemaName="clinlims" tableName="method">
 			<column name="id" valueSequenceNext="method_seq" />
-			<column name="name" value="BIOCHEMICAL" />
-			<column name="lastupdated" valueComputed="${now}" />
-			<column name="description" value="Biochemical" />
-			<column name="reporting_description" value="" />
-            <column name="is_active" value="Y" />
-            <column name="active_begin" value="2006-09-29 00:00:00"/>
-            <column name="active_end"/>
-            <column name="name_localization_id" valueComputed="(SELECT id FROM clinlims.localization WHERE english = 'BIOCHEMICAL')"/>	
-		</insert>
-		 <insert schemaName="clinlims" tableName="method">
-			<column name="id" valueSequenceNext="method_seq" />
 			<column name="name" value="HPLC" />
 			<column name="lastupdated" valueComputed="${now}" />
 			<column name="description" value="High Pressure Liquid Chromatography" />
@@ -136,17 +125,6 @@
             <column name="active_begin" value="2006-09-29 00:00:00"/>
             <column name="active_end"/>
             <column name="name_localization_id" valueComputed="(SELECT id FROM clinlims.localization WHERE english = 'HPLC')"/>	
-		</insert>
-		 <insert schemaName="clinlims" tableName="method">
-			<column name="id" valueSequenceNext="method_seq" />
-			<column name="name" value="BIOCHEMICAL" />
-			<column name="lastupdated" valueComputed="${now}" />
-			<column name="description" value="Biochemical" />
-			<column name="reporting_description" value="" />
-            <column name="is_active" value="Y" />
-            <column name="active_begin" value="2006-09-29 00:00:00"/>
-            <column name="active_end"/>
-            <column name="name_localization_id" valueComputed="(SELECT id FROM clinlims.localization WHERE english = 'BIOCHEMICAL')"/>	
 		</insert>
 		 <insert schemaName="clinlims" tableName="method">
 			<column name="id" valueSequenceNext="method_seq" />

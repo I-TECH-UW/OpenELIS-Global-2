@@ -47,9 +47,6 @@ public class RenameMethod extends EnumValueItemImpl {
 
     private ValueHolderInterface localization;
 
-
-
-
     public RenameMethod() {
         super();
         localization = new ValueHolder();

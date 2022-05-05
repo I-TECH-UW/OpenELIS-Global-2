@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 
-
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
@@ -22,7 +21,7 @@ public class MethodServiceImpl extends BaseObjectServiceImpl<Method, String> imp
     @Autowired
     protected MethodDAO baseObjectDAO;
 
-    private Map<String, String> testUnitIdToNameMap;
+    private Map<String, String> methodUnitIdToNameMap;
 
 
     MethodServiceImpl() {
@@ -79,18 +78,6 @@ public class MethodServiceImpl extends BaseObjectServiceImpl<Method, String> imp
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public List<Method> getAllMethods() {
-        return baseObjectDAO.getAllMethods();
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public Method getMethodById(String methodId) {
-        return getBaseObjectDAO().getMethodById(methodId);
-    }
-
-    @Override
     public void refreshNames() {
         methodNamesChanged();
     }
@@ -100,12 +87,12 @@ public class MethodServiceImpl extends BaseObjectServiceImpl<Method, String> imp
     }
 
     private synchronized void createMethodToNameMap() {
-        testUnitIdToNameMap = new HashMap<>();
+        methodUnitIdToNameMap = new HashMap<>();
 
-        List<Method> methods = baseObjectDAO.getAllMethods();
+        List<Method> methods = baseObjectDAO.getAll();
 
         for (Method method : methods) {
-            testUnitIdToNameMap.put(method.getId(), buildMethodName(method).replace("\n", " "));
+            methodUnitIdToNameMap.put(method.getId(), buildMethodName(method).replace("\n", " "));
         }
     }
 

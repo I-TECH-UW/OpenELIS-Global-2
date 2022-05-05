@@ -57,7 +57,7 @@ public class MethodRenameEntryForm extends BaseForm {
         return methodId;
     }
 
-    public void setMethodSectionId(String methodId) {
+    public void setMethodId(String methodId) {
         this.methodId = methodId;
     }
 }

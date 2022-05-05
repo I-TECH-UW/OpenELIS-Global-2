@@ -60,6 +60,9 @@
             jQuery(value).removeClass("confirmation");
         });
         jQuery("#methodId").val(methodId);
+        console.log(methodId);
+        console.log(jQuery("#methodId").val(methodId));
+
         jQuery(".Method").each(function () {
             var element = jQuery(this);
             element.prop("disabled", "disabled");

@@ -82,18 +82,6 @@ public class RenameMethodServiceImpl extends BaseObjectServiceImpl<RenameMethod,
             }
         
             @Override
-            @Transactional(readOnly = true)
-            public List<RenameMethod> getAllMethods() {
-                return baseObjectDAO.getAllMethods();
-            }
-        
-            @Override
-            @Transactional(readOnly = true)
-            public RenameMethod getMethodById(String methodId) {
-                return getBaseObjectDAO().getMethodById(methodId);
-            }
-        
-            @Override
             public void refreshNames() {
                 methodNamesChanged();
             }
@@ -105,7 +93,7 @@ public class RenameMethodServiceImpl extends BaseObjectServiceImpl<RenameMethod,
             private synchronized void createMethodToNameMap() {
                 testUnitIdToNameMap = new HashMap<>();
         
-                List<RenameMethod> methods = baseObjectDAO.getAllMethods();
+                List<RenameMethod> methods = baseObjectDAO.getAll();
         
                 for (RenameMethod method : methods) {
                     testUnitIdToNameMap.put(method.getId(), buildMethodName(method).replace("\n", " "));
@@ -119,7 +107,7 @@ public class RenameMethodServiceImpl extends BaseObjectServiceImpl<RenameMethod,
     @Override
     @Transactional(readOnly = true)
     public Localization getLocalizationForRenameMethod(String id) {
-        RenameMethod renameMethod = getMethodById(id);
+        RenameMethod renameMethod = get(id);
         Localization localization = renameMethod != null ? renameMethod.getLocalization() : null;
         Hibernate.initialize(localization);
         return localization;

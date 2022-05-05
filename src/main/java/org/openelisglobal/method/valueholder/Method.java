@@ -45,13 +45,11 @@ public class Method extends EnumValueItemImpl {
 
     private String isActive;
 
-     private ValueHolderInterface localization;
-
+    private ValueHolderInterface localization;
 
     public Method() {
         super();
         localization = new ValueHolder();
-
     }
 
     public void setId(String id) {

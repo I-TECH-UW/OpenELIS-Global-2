@@ -73,7 +73,7 @@ public class MethodCreateController extends BaseController {
 
     private String getExistingMethodNames( Locale locale) {
         StringBuilder builder = new StringBuilder(NAME_SEPARATOR);
-        List<Method> methods = methodService.getAllMethods();
+        List<Method> methods = methodService.getAll();
 
 
         for (Method method : methods) {

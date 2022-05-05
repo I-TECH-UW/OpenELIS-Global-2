@@ -68,9 +68,6 @@ public class MethodRenameEntryController extends BaseController {
         }
 
         String methodId = form.getMethodId();
-        System.out.println("mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm");
-        System.out.println(methodId);
-       System.out.println("mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm");
         String nameEnglish = form.getNameEnglish();
         String nameFrench = form.getNameFrench();
         String userId = getSysUserId(request);
@@ -81,7 +78,7 @@ public class MethodRenameEntryController extends BaseController {
     }
 
     private void updateMethodNames(String methodId, String nameEnglish, String nameFrench, String userId) {
-        Method method = methodService.getMethodById(methodId);
+        Method method = methodService.get(methodId);
 
         if (method != null) {
 

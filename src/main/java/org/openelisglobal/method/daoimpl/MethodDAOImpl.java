@@ -181,39 +181,39 @@ public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements Method
 //		}
 //	}
 
-	@Override
-    @Transactional(readOnly = true)
-	public List<Method> getAllMethods() throws LIMSRuntimeException {
-        List<Method> list = null;
+	// @Override
+    // @Transactional(readOnly = true)
+	// public List<Method> getAllMethods() throws LIMSRuntimeException {
+    //     List<Method> list = null;
 
-		try {
-			String sql = "from Method";
-			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-			list = query.list();
-			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-			// entityManager.unwrap(Session.class).clear(); // CSL remove old
+	// 	try {
+	// 		String sql = "from Method";
+	// 		org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+	// 		list = query.list();
+	// 		// entityManager.unwrap(Session.class).flush(); // CSL remove old
+	// 		// entityManager.unwrap(Session.class).clear(); // CSL remove old
 
-		} catch (RuntimeException e) {
-			// bugzilla 2154
-			LogEvent.logError("MethodDAOImpl", "getAllMethods()", e.toString());
-			throw new LIMSRuntimeException("Error in Method getAllMethods()", e);
-		}
+	// 	} catch (RuntimeException e) {
+	// 		// bugzilla 2154
+	// 		LogEvent.logError("MethodDAOImpl", "getAllMethods()", e.toString());
+	// 		throw new LIMSRuntimeException("Error in Method getAllMethods()", e);
+	// 	}
 
-		return list;
-	}
+	// 	return list;
+	// }
 
-    @Override
-    @Transactional(readOnly = true)
-    public Method getMethodById(String methodId) {
-        try {
-            Method method = entityManager.unwrap(Session.class).get(Method.class, methodId);
-            // closeSession(); // CSL remove old
-            return method;
-        } catch (HibernateException e) {
-            handleException(e, "getMethodById");
-        }
-        return null;
-    }
+    // @Override
+    // @Transactional(readOnly = true)
+    // public Method getMethodById(String methodId) {
+    //     try {
+    //         Method method = entityManager.unwrap(Session.class).get(Method.class, methodId);
+    //         // closeSession(); // CSL remove old
+    //         return method;
+    //     } catch (HibernateException e) {
+    //         handleException(e, "getMethodById");
+    //     }
+    //     return null;
+    // }
 
 //	@Override
 //	public List getPageOfMethods(int startingRecNo) throws LIMSRuntimeException {

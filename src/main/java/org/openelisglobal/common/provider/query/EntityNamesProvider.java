@@ -44,13 +44,11 @@ public class EntityNamesProvider extends BaseQueryProvider {
     protected UnitOfMeasureService unitOfMeasureService = SpringContext.getBean(UnitOfMeasureService.class);
     protected RenameMethodService renameMethodService = SpringContext.getBean(RenameMethodService.class);
 
-
     public static final String PANEL = "panel";
     public static final String SAMPLE_TYPE = "sampleType";
     public static final String TEST_SECTION = "testSection";
     public static final String UNIT_OF_MEASURE = "unitOfMeasure";
     public static final String METHOD = "method";
-
     protected AjaxServlet ajaxServlet = null;
 
     @Override
@@ -147,7 +145,6 @@ public class EntityNamesProvider extends BaseQueryProvider {
     private Localization getLocalizationForRenameMethod(String id) {
         return renameMethodService.getLocalizationForRenameMethod(id);
     }
-
 
     @Override
     public void setServlet(AjaxServlet as) {
