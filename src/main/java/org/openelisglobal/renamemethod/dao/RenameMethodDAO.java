@@ -13,13 +13,13 @@
 *
 * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
 */
-package org.openelisglobal.method.dao;
+package org.openelisglobal.renamemethod.dao;
 
 import java.util.List;
 
 import org.openelisglobal.common.dao.BaseDAO;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
-import org.openelisglobal.method.valueholder.Method;
+import org.openelisglobal.renamemethod.valueholder.RenameMethod;
 
 /**
  * @author diane benz
@@ -29,10 +29,11 @@ import org.openelisglobal.method.valueholder.Method;
  *         disable the creation of type comments go to
  *         Window>Preferences>Java>Code Generation.
  */
-public interface MethodDAO extends BaseDAO<Method, String> {     List<Method> getMethods(String filter) throws LIMSRuntimeException;
+public interface RenameMethodDAO extends BaseDAO<RenameMethod, String> {
 
-    List<Method> getAllInActiveMethods() throws LIMSRuntimeException;
-
-    boolean duplicateMethodExists(Method method) throws LIMSRuntimeException;
-
+    List<RenameMethod> getMethods(String filter) throws LIMSRuntimeException;
+    
+    List<RenameMethod> getAllInActiveMethods() throws LIMSRuntimeException;
+    
+    boolean duplicateMethodExists(RenameMethod testSection) throws LIMSRuntimeException;
 }

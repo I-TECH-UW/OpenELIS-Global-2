@@ -728,6 +728,12 @@
 			value="/pages/testConfiguration/testSectionRename.jsp" />
 	</definition>
 
+	<definition name="methodRenameDefinition"
+		extends="baseMenuDefinition">
+		<put-attribute name="body"
+			value="/pages/testConfiguration/methodRename.jsp" />
+	</definition>
+
 	<definition name="uomRenameDefinition"
 		extends="baseMenuDefinition">
 		<put-attribute name="body"
@@ -786,6 +792,18 @@
 		extends="baseMenuDefinition">
 		<put-attribute name="body"
 			value="/pages/testConfiguration/testSectionCreate.jsp" />
+	</definition>
+
+	<definition name="methodManagementDefinition"
+		extends="baseMenuDefinition">
+		<put-attribute name="body"
+			value="/pages/testConfiguration/methodManagement.jsp" />
+	</definition>
+
+	<definition name="methodCreateDefinition"
+		extends="baseMenuDefinition">
+		<put-attribute name="body"
+			value="/pages/testConfiguration/methodCreate.jsp" />
 	</definition>
 
 	<definition name="testSectionOrderDefinition"

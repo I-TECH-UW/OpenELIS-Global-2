@@ -3,7 +3,8 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-	<class name="org.openelisglobal.method.valueholder.Method"
+	<class
+		name="org.openelisglobal.renamemethod.valueholder.RenameMethod"
 		table="METHOD" optimistic-lock="version" dynamic-update="true">
 		<id name="id"
 			type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType">
@@ -16,13 +17,15 @@
 		<version name="lastupdated" column="LASTUPDATED"
 			type="timestamp" access="field" />
 
+		
 		<property name="methodName" type="java.lang.String">
-			<column name="NAME" length="20" not-null="true" />
+			<column name="NAME" length="20" />
 		</property>
 		<property name="description" type="java.lang.String">
 			<column name="DESCRIPTION" length="60" not-null="true" />
 		</property>
-		<property name="reportingDescription" type="java.lang.String">
+
+        <property name="reportingDescription" type="java.lang.String">
 			<column name="REPORTING_DESCRIPTION" length="60" />
 		</property>
 		<property name="isActive" type="java.lang.String">
@@ -34,20 +37,21 @@
 		<property name="activeEndDate" type="java.sql.Date">
 			<column name="ACTIVE_END" length="7" />
 		</property>
+		
 		<many-to-one name="localization"
 			class="org.openelisglobal.localization.valueholder.Localization"
-			fetch="select" lazy="false">
+			fetch="select">
 			<column name="name_localization_id" precision="10" scale="0" />
 		</many-to-one>
 
-		<!-- <set name="instrumentAnalytes" inverse="true"> <key> <column name="METHOD_ID" 
-			precision="10" scale="0" /> </key> <one-to-many class="org.openelisglobal.instrumentanalyte.valueholder.InstrumentAnalyte" 
-			/> </set> <set name="methodResults" inverse="true"> <key> <column name="METHOD_ID" 
-			precision="10" scale="0" /> </key> <one-to-many class="org.openelisglobal.methodresult.valueholder.MethodResult" 
-			/> </set> <set name="methodAnalytes" inverse="true"> <key> <column name="METHOD_ID" 
-			precision="10" scale="0" /> </key> <one-to-many class="org.openelisglobal.methodanalyte.valueholder.MethodAnalyte" 
-			/> </set> <set name="tests" inverse="true"> <key> <column name="METHOD_ID" 
-			precision="10" scale="0" /> </key> <one-to-many class="org.openelisglobal.test.valueholder.Test" 
-			/> </set> -->
+		
 	</class>
+<!-- 	<query name="renametestsection.getNext"> -->
+<!-- 		from TestSection ts order by ts.organization.organizationName, -->
+<!-- 		ts.testSectionName -->
+<!-- 	</query> -->
+<!-- 	<query name="renametestsection.getPrevious"> -->
+<!-- 		from TestSection ts order by ts.organization.organizationName desc, -->
+<!-- 		ts.testSectionName desc -->
+<!-- 	</query> -->
 </hibernate-mapping>

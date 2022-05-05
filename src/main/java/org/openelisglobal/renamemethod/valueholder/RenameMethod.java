@@ -13,7 +13,7 @@
 * 
 * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
 */
-package org.openelisglobal.method.valueholder;
+package org.openelisglobal.renamemethod.valueholder;
 
 import java.sql.Date;
 
@@ -25,7 +25,7 @@ import org.openelisglobal.common.valueholder.EnumValueItemImpl;
 import org.openelisglobal.localization.valueholder.Localization;
 
 
-public class Method extends EnumValueItemImpl {
+public class RenameMethod extends EnumValueItemImpl {
 
     private String id;
 
@@ -47,9 +47,10 @@ public class Method extends EnumValueItemImpl {
 
     private ValueHolderInterface localization;
 
-    public Method() {
+    public RenameMethod() {
         super();
         localization = new ValueHolder();
+
     }
 
     public void setId(String id) {

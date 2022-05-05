@@ -76,6 +76,7 @@
 		<mapping resource="hibernate/hbm/Test.hbm.xml" />
 		<mapping resource="hibernate/hbm/TestSection.hbm.xml" />
 		<mapping resource="hibernate/hbm/RenameTestSection.hbm.xml" />
+		<mapping resource="hibernate/hbm/RenameMethod.hbm.xml" />
 		<mapping resource="hibernate/hbm/TestAnalyte.hbm.xml" />
 		<mapping
 			resource="hibernate/hbm/TestAnalyteTestResult.hbm.xml" />

@@ -29,6 +29,7 @@ import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.servlet.validation.AjaxServlet;
 import org.openelisglobal.localization.valueholder.Localization;
 import org.openelisglobal.panel.service.PanelService;
+import org.openelisglobal.renamemethod.service.RenameMethodService;
 import org.openelisglobal.renametestsection.service.RenameTestSectionService;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.typeofsample.service.TypeOfSampleService;
@@ -41,11 +42,13 @@ public class EntityNamesProvider extends BaseQueryProvider {
     protected RenameTestSectionService renameTestSectionService = SpringContext.getBean(RenameTestSectionService.class);
     protected TypeOfSampleService typeOfSampleService = SpringContext.getBean(TypeOfSampleService.class);
     protected UnitOfMeasureService unitOfMeasureService = SpringContext.getBean(UnitOfMeasureService.class);
+    protected RenameMethodService renameMethodService = SpringContext.getBean(RenameMethodService.class);
 
     public static final String PANEL = "panel";
     public static final String SAMPLE_TYPE = "sampleType";
     public static final String TEST_SECTION = "testSection";
     public static final String UNIT_OF_MEASURE = "unitOfMeasure";
+    public static final String METHOD = "method";
     protected AjaxServlet ajaxServlet = null;
 
     @Override
@@ -96,7 +99,10 @@ public class EntityNamesProvider extends BaseQueryProvider {
             localization = getLocalizationForRenameTestSection(id);
         } else if (UNIT_OF_MEASURE.equals(entityName)) {
             localization = getLocalizationForUnitOfMeasure(id);
-        } // add entity types as needed
+        } else if (METHOD.equals(entityName)) {
+            localization = getLocalizationForRenameMethod(id);
+        } 
+        // add entity types as needed
 
         if (localization != null) {
 
@@ -134,6 +140,10 @@ public class EntityNamesProvider extends BaseQueryProvider {
 
     private Localization getLocalizationForUnitOfMeasure(String id) {
         return unitOfMeasureService.getLocalizationForUnitOfMeasure(id);
+    }
+
+    private Localization getLocalizationForRenameMethod(String id) {
+        return renameMethodService.getLocalizationForRenameMethod(id);
     }
 
     @Override
