@@ -16,12 +16,9 @@
 
 package org.openelisglobal.localization.daoimpl;
 
-import org.hibernate.HibernateException;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
-import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.localization.dao.LocalizationDAO;
 import org.openelisglobal.localization.valueholder.Localization;
-import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,17 +32,17 @@ public class LocalizationDAOImpl extends BaseDAOImpl<Localization, String> imple
         super(Localization.class);
     }
 
-	@Override
-	public Localization getLocalizationById(String id) throws LIMSRuntimeException {
-		try {
-			Localization localization = entityManager.unwrap(Session.class).get(Localization.class, id);
-			// closeSession(); // CSL remove old
-			return localization;
-		} catch (HibernateException e) {
-			handleException(e, "getLocalizationById");
-		}
-		return null;
-	}
+//	@Override
+//	public Localization getLocalizationById(String id) throws LIMSRuntimeException {
+//		try {
+//			Localization localization = entityManager.unwrap(Session.class).get(Localization.class, id);
+//			// closeSession(); // CSL remove old
+//			return localization;
+//		} catch (HibernateException e) {
+//			handleException(e, "getLocalizationById");
+//		}
+//		return null;
+//	}
 
 //	@Override
 //	public void updateData(Localization localization) throws LIMSRuntimeException {
