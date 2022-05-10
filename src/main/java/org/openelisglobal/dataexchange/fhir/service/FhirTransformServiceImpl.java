@@ -918,6 +918,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         Patient patient = sampleHumanService.getPatientForSample(sampleItem.getSample());
 
         DiagnosticReport diagnosticReport = genNewDiagnosticReport(analysis);
+        Test test = analysis.getTest();
 
         if (analysis.getStatusId().equals(statusService.getStatusID(AnalysisStatus.Finalized))) {
             diagnosticReport.setStatus(DiagnosticReportStatus.FINAL);
@@ -939,6 +940,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
             diagnosticReport
                     .addResult(this.createReferenceFor(ResourceType.Observation, curResult.getFhirUuidAsString()));
         }
+        diagnosticReport.setCode(transformTestToCodeableConcept(test.getId()));
 
         return diagnosticReport;
     }
