@@ -959,6 +959,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 
     private Observation transformResultToObservation(Result result) {
         Analysis analysis = result.getAnalysis();
+        Test test = analysis.getTest();
         SampleItem sampleItem = analysis.getSampleItem();
         Patient patient = sampleHumanService.getPatientForSample(sampleItem.getSample());
         Observation observation = new Observation();
@@ -1004,7 +1005,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
                 observation.setValue(new StringType(result.getValue()));
             }
         }
-
+        observation.setCode(transformTestToCodeableConcept(test.getId()));
         observation.addBasedOn(this.createReferenceFor(ResourceType.ServiceRequest, analysis.getFhirUuidAsString()));
         observation.setSpecimen(this.createReferenceFor(ResourceType.Specimen, sampleItem.getFhirUuidAsString()));
         observation.setSubject(this.createReferenceFor(ResourceType.Patient, patient.getFhirUuidAsString()));
