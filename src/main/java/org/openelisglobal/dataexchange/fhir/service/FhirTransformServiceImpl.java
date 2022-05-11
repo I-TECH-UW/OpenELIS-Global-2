@@ -1011,6 +1011,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         observation.setSubject(this.createReferenceFor(ResourceType.Patient, patient.getFhirUuidAsString()));
 //        observation.setIssued(result.getOriginalLastupdated());
         observation.setIssued(result.getLastupdated());
+        observation.setEffective(new DateTimeType(result.getOriginalLastupdated()));
 //      observation.setIssued(new Date());
         return observation;
     }
