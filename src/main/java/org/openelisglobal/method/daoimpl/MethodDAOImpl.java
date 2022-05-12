@@ -293,6 +293,22 @@ public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements Method
 
     @Override
     @Transactional(readOnly = true)
+    public List<Method> getAllActiveMethods() {
+        String sql = "from Method m where m.isActive = 'Y'";
+
+        try {
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            List<Method> sections = query.list();
+            // closeSession(); // CSL remove old
+            return sections;
+        } catch (HibernateException e) {
+            handleException(e, "getAllActiveMethods");
+        }
+        return null;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public List<Method> getAllInActiveMethods() {
         String sql = "from Method m where m.isActive = 'N'";
 

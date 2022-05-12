@@ -68,6 +68,8 @@
 	pageContext.setAttribute("noteRequired", noteRequired);
 	boolean autofillTechBox = ConfigurationProperties.getInstance()
 			.isPropertyValueEqual(Property.autoFillTechNameBox, "true");
+	boolean restrictNewReferringMethodEntries = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.restrictFreeTextMethodEntry, "true");
+		
 %>
 
 <link rel="stylesheet" type="text/css" href="css/bootstrap_simple.css?" />
@@ -81,6 +83,9 @@
 <script type="text/javascript" src="scripts/OEPaging.js?"></script>
 <script type="text/javascript" src="scripts/math-extend.js?"></script>
 <script type="text/javascript" src="scripts/multiselectUtils.js?"></script>
+<script src="scripts/customAutocomplete.js?"></script>
+<link rel="stylesheet" href="css/customAutocomplete.css?">
+<script src="scripts/ui/jquery.ui.autocomplete.js?"></script> 
 <link rel="stylesheet" type="text/css" href="css/jquery.asmselect.css?" />
 
 
@@ -532,6 +537,24 @@ function /*void*/ handleEnterEvent(  ){
 	return false;
 }
 
+jQuery(document).ready(function (index) {
+    var dropdown = jQuery('#testMethod_' + index);
+    autoCompleteWidth = dropdown.width() + 66 + 'px';
+    <% if(restrictNewReferringMethodEntries) { %>
+   			clearNonMatching = true;
+    <% } else {%>
+    		clearNonMatching = false;
+    <% } %>
+    capitialize = true;
+    // Actually executes autocomplete
+    dropdown.combobox();
+    invalidLabID = '<spring:message code="error.method.invalid"/>'; // Alert if value is typed that's not on list. FIX - add bad message icon
+    maxRepMsg = '<spring:message code="method.entry.project.MaxMsg"/>';
+    resultCallBack = function (textValue) {
+    	setSave();
+    };
+});
+
 </script>
 
 <c:if test="${form.displayTestSections}">
@@ -916,6 +939,8 @@ function /*void*/ handleEnterEvent(  ){
 						indexed="true" />
 					<form:hidden path="testResult[${iter.index}].resultType"
 						id="resultType_${iter.index}" />
+					<form:hidden path="testResult[${iter.index}].testMethod"
+						id="testMethod_${iter.index}" />	
 					<form:hidden path="testResult[${iter.index}].valid"
 						id="valid_${iter.index}" />
 					<form:hidden path="testResult[${iter.index}].defaultResultValue"
@@ -1337,6 +1362,14 @@ function /*void*/ handleEnterEvent(  ){
 							path="testResult[${iter.index}].refer"
 							onchange="toggleReferral(${iter.index});markUpdated(${iter.index});" /> <spring:message
 							code="refertest" text="Refer test to a reference lab" /></td>
+							<td width="50%"><%=MessageUtil.getMessage("workplan.method")%>&nbsp;
+
+								<form:select id="testMethod_${iter.index}"
+								        path="testResult[${iter.index}].testMethod">
+										<option value=""></option>
+										<form:options items="${form.methods}" itemLabel="value"
+											itemValue="id" />
+									</form:select></td>		
 				</tr>
 				<tr>
 					<td colspan="${numCols}">

@@ -35,4 +35,7 @@ public interface MethodDAO extends BaseDAO<Method, String> {     List<Method> ge
 
     boolean duplicateMethodExists(Method method) throws LIMSRuntimeException;
 
+    List<Method> getAllActiveMethods() throws LIMSRuntimeException;
+
+
 }

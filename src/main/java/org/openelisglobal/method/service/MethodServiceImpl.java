@@ -86,6 +86,12 @@ public class MethodServiceImpl extends BaseObjectServiceImpl<Method, String> imp
         createMethodToNameMap();
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<Method> getAllActiveMethods() {
+        return getBaseObjectDAO().getAllActiveMethods();
+    }
+
     private synchronized void createMethodToNameMap() {
         methodUnitIdToNameMap = new HashMap<>();
 

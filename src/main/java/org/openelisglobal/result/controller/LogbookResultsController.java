@@ -100,7 +100,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class LogbookResultsController extends LogbookResultsBaseController {
 
     private final String[] ALLOWED_FIELDS = new String[] { "accessionNumber", "collectionDate", "recievedDate",
-            "selectedTest", "selectedAnalysisStatus", "selectedSampleStatus", "testSectionId", "type", "currentPageID",
+            "selectedTest", "selectedAnalysisStatus", "selectedSampleStatus", "testSectionId", "methodId", "type", "currentPageID",
             "testResult*.accessionNumber", "testResult*.isModified", "testResult*.analysisId", "testResult*.resultId",
             "testResult*.testId", "testResult*.technicianSignatureId", "testResult*.testKitId",
             "testResult*.resultLimitId", "testResult*.resultType", "testResult*.valid", "testResult*.referralId",
@@ -109,7 +109,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
             "testResult*.analysisMethod", "testResult*.testMethod", "testResult*.testKitInventoryId",
             "testResult*.forceTechApproval", "testResult*.lowerNormalRange", "testResult*.upperNormalRange",
             "testResult*.significantDigits", "testResult*.resultValue", "testResult*.qualifiedResultValue",
-            "testResult*.multiSelectResultValues", "testResult*.multiSelectResultValues",
+            "testResult*.multiSelectResultValues","testResult*.testMethod", "testResult*.multiSelectResultValues",
             "testResult*.qualifiedResultValue", "testResult*.qualifiedResultValue", "testResult*.shadowReferredOut",
             "testResult*.referredOut", "testResult*.referralReasonId", "testResult*.technician",
             "testResult*.shadowRejected", "testResult*.rejected", "testResult*.rejectReasonId", "testResult*.note",
@@ -168,7 +168,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
             @Validated(LogbookResults.class) @ModelAttribute("form") LogbookResultsForm form, BindingResult result)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         LogbookResultsForm newForm = new LogbookResultsForm();
-        if (!(result.hasFieldErrors("type") || result.hasFieldErrors("testSectionId")
+        if (!(result.hasFieldErrors("type") || result.hasFieldErrors("testSectionId") || result.hasFieldErrors("methodId")
                 || result.hasFieldErrors("accessionNumber"))) {
             newForm.setType(form.getType());
             newForm.setTestSectionId(form.getTestSectionId());
@@ -185,6 +185,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
             List<IdValuePair> testSections = userService.getUserTestSections(getSysUserId(request) ,resultsRoleId);
             newForm.setTestSections(testSections);
             newForm.setTestSectionsByName(DisplayListService.getInstance().getList(ListType.TEST_SECTION_BY_NAME));
+            newForm.setMethods(DisplayListService.getInstance().getList(ListType.METHODS));
         }
         newForm.setDisplayTestSections(true);
         newForm.setSearchByRange(false);

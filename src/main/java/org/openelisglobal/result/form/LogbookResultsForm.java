@@ -71,6 +71,19 @@ public class LogbookResultsForm extends BaseForm implements ResultsPagingForm {
     // for display
     private List<IdValuePair> referralOrganizations;
 
+    // for display
+     private List<IdValuePair> methods;
+
+     // for display
+    private List<IdValuePair> methodsByName;
+
+    @NotNull(groups = { LogbookResults.class })
+    private Boolean displayMethods = true;
+
+    @Pattern(regexp = ValidationHelper.ID_REGEX, groups = { LogbookResults.class })
+    private String methodId;
+
+
     @Pattern(regexp = ValidationHelper.ID_REGEX, groups = { LogbookResults.class })
     private String testSectionId;
 
@@ -256,6 +269,38 @@ public class LogbookResultsForm extends BaseForm implements ResultsPagingForm {
 
     public void setSearchFinished(boolean searchFinished) {
         this.searchFinished = searchFinished;
+    }
+
+    public List<IdValuePair> getMethods() {
+        return methods;
+    }
+
+    public void setMethods(List<IdValuePair> methods) {
+        this.methods = methods;
+    }
+
+    public List<IdValuePair> getMethodsByName() {
+        return methodsByName;
+    }
+
+    public void setMethodsByName(List<IdValuePair> methodsByName) {
+        this.methodsByName = methodsByName;
+    }
+
+    public String getMethodId() {
+        return methodId;
+    }
+
+    public void setMethodId(String methodId) {
+        this.methodId = methodId;
+    }
+
+    public Boolean getDisplayMethods() {
+        return displayMethods;
+    }
+
+    public void setDisplayMethods(Boolean displayMethods) {
+        this.displayMethods = displayMethods;
     }
 
 }
