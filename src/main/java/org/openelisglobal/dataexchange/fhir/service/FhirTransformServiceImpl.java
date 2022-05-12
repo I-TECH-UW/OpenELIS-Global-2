@@ -918,6 +918,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         Patient patient = sampleHumanService.getPatientForSample(sampleItem.getSample());
 
         DiagnosticReport diagnosticReport = genNewDiagnosticReport(analysis);
+        Test test = analysis.getTest();
 
         if (analysis.getStatusId().equals(statusService.getStatusID(AnalysisStatus.Finalized))) {
             diagnosticReport.setStatus(DiagnosticReportStatus.FINAL);
@@ -939,6 +940,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
             diagnosticReport
                     .addResult(this.createReferenceFor(ResourceType.Observation, curResult.getFhirUuidAsString()));
         }
+        diagnosticReport.setCode(transformTestToCodeableConcept(test.getId()));
 
         return diagnosticReport;
     }
@@ -957,6 +959,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 
     private Observation transformResultToObservation(Result result) {
         Analysis analysis = result.getAnalysis();
+        Test test = analysis.getTest();
         SampleItem sampleItem = analysis.getSampleItem();
         Patient patient = sampleHumanService.getPatientForSample(sampleItem.getSample());
         Observation observation = new Observation();
@@ -1002,12 +1005,13 @@ public class FhirTransformServiceImpl implements FhirTransformService {
                 observation.setValue(new StringType(result.getValue()));
             }
         }
-
+        observation.setCode(transformTestToCodeableConcept(test.getId()));
         observation.addBasedOn(this.createReferenceFor(ResourceType.ServiceRequest, analysis.getFhirUuidAsString()));
         observation.setSpecimen(this.createReferenceFor(ResourceType.Specimen, sampleItem.getFhirUuidAsString()));
         observation.setSubject(this.createReferenceFor(ResourceType.Patient, patient.getFhirUuidAsString()));
 //        observation.setIssued(result.getOriginalLastupdated());
         observation.setIssued(result.getLastupdated());
+        observation.setEffective(new DateTimeType(result.getOriginalLastupdated()));
 //      observation.setIssued(new Date());
         return observation;
     }
