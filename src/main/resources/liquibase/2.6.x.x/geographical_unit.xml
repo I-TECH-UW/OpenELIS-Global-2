@@ -40,5 +40,24 @@
 			<column name="description_key" value="siteInfo.geographical.district" />
 		</insert>
 	</changeSet>
+	<changeSet author="cliff" id="2">
+		<validCheckSum>8:d0eed534f8421378388b6c61b7325708</validCheckSum>
+		<preConditions onFail="MARK_RAN">
+			<sqlCheck  expectedResult="0">SELECT count(*) FROM clinlims.site_information WHERE name = 'restrictFreeTextMethodEntry'</sqlCheck> 
+		</preConditions>
+		<insert schemaName="clinlims" tableName="site_information">
+			<column name="id" valueSequenceNext="site_information_seq" />
+			<column name="name" value="restrictFreeTextMethodEntry" />
+			<column name="lastupdated" valueComputed="${now}" />
+			<column name="description" value="Users cannot enter new methods through result entry" />
+			<column name="value" value="false" />
+			<column name="encrypted" value="false" />
+			<column name="domain_id" valueComputed="(SELECT id FROM site_information_domain WHERE name = 'resultConfiguration')" />
+			<column name="value_type" value="boolean" />
+			<column name="instruction_key" value="instructions.method.limit" />
+			<column name="group" value="0" />
+			<column name="description_key" value="siteInfo.restrictFreeTextMethodEntry" />
+		</insert>
+	</changeSet>
 	
 </databaseChangeLog>

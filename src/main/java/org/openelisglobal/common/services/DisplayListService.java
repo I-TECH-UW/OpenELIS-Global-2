@@ -79,7 +79,7 @@ public class DisplayListService implements LocaleChangeListener {
         ORDERABLE_TESTS, ALL_TESTS, REJECTION_REASONS, REFERRAL_REASONS, REFERRAL_ORGANIZATIONS, TEST_LOCATION_CODE,
         PROGRAM, RESULT_TYPE_LOCALIZED, RESULT_TYPE_RAW, UNIT_OF_MEASURE, UNIT_OF_MEASURE_ACTIVE,
         UNIT_OF_MEASURE_INACTIVE, DICTIONARY_TEST_RESULTS, LAB_COMPONENT, SEVERITY_CONSEQUENCES_LIST,
-        SEVERITY_RECURRENCE_LIST, ACTION_TYPE_LIST, LABORATORY_COMPONENT, SAMPLE_NATURE, ELECTRONIC_ORDER_STATUSES, METHODS, METHODS_INACTIVE
+        SEVERITY_RECURRENCE_LIST, ACTION_TYPE_LIST, LABORATORY_COMPONENT, SAMPLE_NATURE, ELECTRONIC_ORDER_STATUSES, METHODS, METHODS_INACTIVE, METHOD_BY_NAME
     }
 
     private static Map<ListType, List<IdValuePair>> typeToListMap;
@@ -166,6 +166,7 @@ public class DisplayListService implements LocaleChangeListener {
         typeToListMap.put(ListType.TEST_SECTION_BY_NAME, createTestSectionByNameList());
         typeToListMap.put(ListType.METHODS, createMethodList());
         typeToListMap.put(ListType.METHODS_INACTIVE, createInactiveMethod());
+        typeToListMap.put(ListType.METHOD_BY_NAME, createMethodByNameList());
         typeToListMap.put(ListType.SAMPLE_PATIENT_PAYMENT_OPTIONS,
                 createFromDictionaryCategoryLocalizedSort("patientPayment"));
         typeToListMap.put(ListType.PATIENT_SEARCH_CRITERIA, createPatientSearchCriteria());
@@ -333,6 +334,7 @@ public class DisplayListService implements LocaleChangeListener {
         typeToListMap.put(ListType.TEST_SECTION, createTestSectionList());
         typeToListMap.put(ListType.METHODS, createMethodList());
         typeToListMap.put(ListType.METHODS_INACTIVE, createInactiveMethod());
+        typeToListMap.put(ListType.METHOD_BY_NAME, createMethodByNameList());
         typeToListMap.put(ListType.TEST_SECTION_INACTIVE, createInactiveTestSection());
         typeToListMap.put(ListType.TEST_SECTION_BY_NAME, createTestSectionByNameList());
         typeToListMap.put(ListType.HAITI_DEPARTMENTS, createAddressDepartmentList());
@@ -816,5 +818,15 @@ public class DisplayListService implements LocaleChangeListener {
                 new IdValuePair("11", MessageUtil.getMessage("label.select.laboratoryComponent.continualImprovement")));
         return recurrenceList;
     }
+
+    private List<IdValuePair> createMethodByNameList() {
+        List<IdValuePair> methodsPairs = new ArrayList<>();
+        List<Method> methods = methodService.getAllActiveMethods();
+        for (Method method : methods) {
+            methodsPairs.add(new IdValuePair(method.getId(), method.getMethodName()));
+        }
+        return methodsPairs;
+    }
+
 
 }
