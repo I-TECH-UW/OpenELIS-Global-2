@@ -44,16 +44,16 @@
 	   	    <c:when test="${site.valueType == 'logoUpload'}">
 	   			<c:choose>
 	   			<c:when test="${site.name == 'headerLeftImage'}">
-                <img src="./dbImage/siteInformation/headerLeftImage.jpg"  
+                <img src="images/headerLeftImage.jpg"  
                 	 height="42" 
 	   		         width="42"  />
                 </c:when>
 	   			<c:when test="${site.name == 'labDirectorSignature'}">
-                <img src="./dbImage/siteInformation/labDirectorSignature.jpg"  
+                <img src="images/labDirectorSignature.png"  
                 	 height="42" 
 	   		         width="42"  />
                 </c:when><c:otherwise>
-                <img src="./dbImage/siteInformation/headerRightImage.jpg"  
+                <img src="images/headerRightImage.jpg"  
                 	 height="42" 
 	   		         width="42"  />
                 </c:otherwise>
