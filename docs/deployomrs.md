@@ -40,13 +40,13 @@ Start up the OpenELIS Update Task in `System Administration` → `Advanced Admin
 1. Setup  OpenRMS 3.x on top an instance of the Refference Application see [more](https://wiki.openmrs.org/display/projects/3.x+Implementer+Documentation)
 
 2. Load the Following Modules
-  * [FHIR2 module](https://github.com/openmrs/openmrs-module-fhir2) version  >= 1.4.0 
-  * [Lab on FHIR](https://github.com/openmrs/openmrs-module-labonfhir) module 
-  * [Order Entry Ui Module](https://github.com/openmrs/openmrs-module-orderentryui)
-  * [Order Entry Owa](https://github.com/openmrs/openmrs-owa-orderentry)   
+    * [FHIR2 module](https://github.com/openmrs/openmrs-module-fhir2) version  >= 1.4.0 
+    * [Lab on FHIR](https://github.com/openmrs/openmrs-module-labonfhir) module 
+    * [Order Entry Ui Module](https://github.com/openmrs/openmrs-module-orderentryui)
+    * [Order Entry Owa](https://github.com/openmrs/openmrs-owa-orderentry)   
 3. Configure the required settings .
-  * `labonfhir.openElisUrl` ,The URL for the FHIR server where OpenELIS polls the Orders From.
-  * `labonfhir.openElisUserUuid` ,UUID for the service user that represents OpenELIS
+    * `labonfhir.openElisUrl` ,The URL for the FHIR server where OpenELIS polls the Orders From.
+    * `labonfhir.openElisUserUuid` ,UUID for the service user that represents OpenELIS
 
  [see more](https://github.com/openmrs/openmrs-module-labonfhir#usage) on Configuring the above Modules.  
 Note: The Lab test Concept should be of class `Test` ,and should be mapped to a  `Loinc code` that matches a the `Test Loinc Code` in OpenELIS
@@ -70,18 +70,19 @@ Go to the Patient DashBoard in 3.x ui and click Test Results.
 
 
 ### OpenELIS Global 2.6.x 
-The FHIR based Lab Workflow is supported in OpenELIS 2.6 .
+The FHIR based Lab Workflow is supported in OpenELIS 2.6 .  
+
 1. Start an instance of OpenELIS with the following configuration properties set in the properties file.
 
-  * `org.openelisglobal.fhirstore.uri=<localFhirServerUrl>` . This is the Fhir Server that runs paralel with OPenELIS
+    * `org.openelisglobal.fhirstore.uri=<localFhirServerUrl>` . This is the Fhir Server that runs paralel with OPenELIS
 
-  * `org.openelisglobal.remote.source.uri=<remoreFhirServerUr>`. This is the Fhir server that the Lab on FHIR module points to ie via the `labonfhir.openElisUrl`
-  * `org.openelisglobal.remote.source.updateStatus=true`
-  *  `org.openelisglobal.remote.source.identifier=Practitioner/<userUuuid>` .This is the UUID of the user who created the Order ie `labonfhir.openElisUserUuid`
-  * `org.openelisglobal.task.useBasedOn=true`
+    * `org.openelisglobal.remote.source.uri=<remoreFhirServerUr>`. This is the Fhir server that the Lab on FHIR module points to ie via the `labonfhir.openElisUrl`
+    * `org.openelisglobal.remote.source.updateStatus=true`
+    *  `org.openelisglobal.remote.source.identifier=Practitioner/<userUuuid>` .This is the UUID of the user who created the Order ie `labonfhir.openElisUserUuid`
+    * `org.openelisglobal.task.useBasedOn=true`
 
-  * `org.openelisglobal.fhir.subscriber=h<remoreFhirServerUrl>` .
-  * `org.openelisglobal.fhir.subscriber.resources=Task,Patient,ServiceRequest,DiagnosticReport,Observation,Specimen,Practitioner,Encounter`
+    * `org.openelisglobal.fhir.subscriber=h<remoreFhirServerUrl>` .
+    * `org.openelisglobal.fhir.subscriber.resources=Task,Patient,ServiceRequest,DiagnosticReport,Observation,Specimen,Practitioner,Encounter`
 
 2. Ensure OpenELIS has the test that maps to the same LOINC code as the test Concept in OpenMRS.
 This can be added via the  

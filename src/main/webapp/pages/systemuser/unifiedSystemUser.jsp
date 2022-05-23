@@ -440,6 +440,8 @@ function handleCopyPermisions(element){
 		</tr>
 </table>
 <hr/>
+   <spring:message code="systemuserrole.instruction" htmlEscape="false"/>
+<hr/>
 <table>
 	<tr>
 	    <td> <spring:message code="systemuserrole.copypermisions"/> </td>
