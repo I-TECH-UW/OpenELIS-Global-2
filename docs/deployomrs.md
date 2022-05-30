@@ -56,7 +56,7 @@ Start up the OpenELIS Update Task in `System Administration` → `Advanced Admin
 4. Go to the Reff App (2.x) Patient Dashbord ,Go to `Prescribed Medication` Widget.
   ![screen1](img/widget.png) 
 
-    see more on [Creating Orders](https://wiki.openmrs.org/display/projects/Order+Entry+UI+End+User+Guide+for+Creating+Drug+Orders) using the Order Entry Owa.
+    see more on [Creating Orders](https://wiki.openmrs.org/display/projects/Order+Entry+UI+End+User+Guide+for+Creating+Drug+Orders) using the Order Entry     Owa.
 
   
   ![screen1](img/order.png)
@@ -66,7 +66,7 @@ Start up the OpenELIS Update Task in `System Administration` → `Advanced Admin
 6. Start the OpenELIS Pull Task ,to start polling for Lab Results via the Sheduler Interface  
 `System Administration` → `Advanced Administration` → `Scheduler` → `Manage Scheduler`
 
-![screen1](img/omrsoe1.png)
+	![screen1](img/omrsoe1.png)
 
 7. To view the lab Results , Ensure you have the [patient-test-results-app](https://github.com/openmrs/openmrs-esm-patient-chart/tree/master/packages/esm-patient-test-results-app).
 Go to the Patient DashBoard in 3.x ui and click Test Results. 
