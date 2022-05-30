@@ -32,6 +32,7 @@ import org.openelisglobal.sample.service.SamplePatientEntryService;
 import org.openelisglobal.sample.validator.SamplePatientEntryFormValidator;
 import org.openelisglobal.sample.valueholder.SampleAdditionalField;
 import org.openelisglobal.sample.valueholder.SampleAdditionalField.AdditionalFieldName;
+import org.openelisglobal.systemuser.service.UserService;
 import org.openelisglobal.spring.util.SpringContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -114,6 +115,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
             "referralItems*.referralReasonId", "referralItems*.referrer", "referralItems*.referredInstituteId",
             "referralItems*.referredSendDate", "referralItems*.referredTestId", "referralItems*.referredReportDate",
             "referralItems*.note", "useReferral" };
+    private static final String ROLE_RECEPTION = "Reception";        
 
     @Autowired
     private SamplePatientEntryFormValidator formValidator;
@@ -121,6 +123,9 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
     private SamplePatientEntryService samplePatientService;
     @Autowired
     private FhirTransformService fhirTransformService;
+    @Autowired
+    private UserService userService;
+
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -135,7 +140,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
         SamplePatientEntryForm form = new SamplePatientEntryForm();
 
         request.getSession().setAttribute(SAVE_DISABLED, TRUE);
-        setupForm(form, externalOrderNumber);
+        setupForm(form,request, externalOrderNumber);
 
         addFlashMsgsToRequest(request);
         return findForward(FWD_SUCCESS, form);
@@ -155,7 +160,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
         formValidator.validate(form, result);
         if (result.hasErrors()) {
             saveErrors(result);
-            setupForm(form, "");
+            setupForm(form, request ,"");
             return findForward(FWD_FAIL_INSERT, form);
         }
         SamplePatientUpdateData updateData = new SamplePatientUpdateData(getSysUserId(request));
@@ -197,7 +202,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 
         if (result.hasErrors()) {
             saveErrors(result);
-            setupForm(form, "");
+            setupForm(form,request, "");
             // setSuccessFlag(request, true);
             return findForward(FWD_FAIL_INSERT, form);
         }
@@ -227,7 +232,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 
             // errors.add(ActionMessages.GLOBAL_MESSAGE, error);
             saveErrors(result);
-            setupForm(form, "");
+            setupForm(form,request, "");
             request.setAttribute(ALLOW_EDITS_KEY, "false");
             return findForward(FWD_FAIL_INSERT, form);
 
@@ -237,7 +242,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
         return findForward(FWD_SUCCESS_INSERT, form);
     }
 
-    private void setupForm(SamplePatientEntryForm form, String externalOrderNumber)
+    private void setupForm(SamplePatientEntryForm form, HttpServletRequest request ,String externalOrderNumber)
             throws LIMSRuntimeException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         SampleOrderService sampleOrderService = new SampleOrderService();
         form.setSampleOrderItems(sampleOrderService.getSampleOrderItem());
@@ -247,7 +252,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
         form.getSampleOrderItems().setExternalOrderNumber(externalOrderNumber);
         form.setPatientProperties(new PatientManagementInfo());
         form.setPatientSearch(new PatientSearch());
-        form.setSampleTypes(DisplayListService.getInstance().getList(ListType.SAMPLE_TYPE_ACTIVE));
+        form.setSampleTypes(userService.getUserSampleTypes(getSysUserId(request), ROLE_RECEPTION));
         form.setTestSectionList(DisplayListService.getInstance().getList(ListType.TEST_SECTION));
         form.setCurrentDate(DateUtil.getCurrentDateAsText());
 

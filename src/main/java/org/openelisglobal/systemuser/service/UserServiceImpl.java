@@ -161,12 +161,30 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<TestResultItem> filterResultsByLabUnitRoles(String SystemUserId, List<TestResultItem> results ,String roleName) {
+    public List<IdValuePair> getUserSampleTypes(String systemUserId, String roleName) {
         String resultsRoleId = roleService.getRoleByName(roleName).getId();
-        List<IdValuePair> testSections = getUserTestSections(SystemUserId, resultsRoleId);
+        List<IdValuePair> testSections = getUserTestSections(systemUserId, resultsRoleId);
         List<String> testUnitIds = new ArrayList<>();
         if (testSections != null) {
-            testSections.forEach(test -> testUnitIds.add(test.getId()));
+            testSections.forEach(testSection -> testUnitIds.add(testSection.getId()));
+        }
+        List<Test> allTests = typeOfSampleService.getAllActiveTestsByTestUnit(true, testUnitIds);  
+        List<IdValuePair> allSampleTypes = DisplayListService.getInstance().getList(ListType.SAMPLE_TYPE_ACTIVE);  
+        Set<String> sampleIds = new HashSet<>();
+        allTests.forEach(test -> sampleIds.add(typeOfSampleService.getTypeOfSampleForTest(test.getId()).getId()));
+        
+        List<IdValuePair> userSampleTypes = allSampleTypes.stream().filter(type -> sampleIds.contains(type.getId()))
+                .collect(Collectors.toList());  
+        return userSampleTypes;
+    }
+    
+    @Override
+    public List<TestResultItem> filterResultsByLabUnitRoles(String systemUserId, List<TestResultItem> results ,String roleName) {
+        String resultsRoleId = roleService.getRoleByName(roleName).getId();
+        List<IdValuePair> testSections = getUserTestSections(systemUserId, resultsRoleId);
+        List<String> testUnitIds = new ArrayList<>();
+        if (testSections != null) {
+            testSections.forEach(testSection -> testUnitIds.add(testSection.getId()));
         }
         
         List<Test> allTests = typeOfSampleService.getAllActiveTestsByTestUnit(true, testUnitIds);
@@ -181,7 +199,7 @@ public class UserServiceImpl implements UserService {
         List<IdValuePair> testSections = getUserTestSections(SystemUserId, resultsRoleId);
         List<String> testUnitIds = new ArrayList<>();
         if (testSections != null) {
-            testSections.forEach(test -> testUnitIds.add(test.getId()));
+            testSections.forEach(testSection -> testUnitIds.add(testSection.getId()));
         }
         
         List<Test> allTests = typeOfSampleService.getAllActiveTestsByTestUnit(true, testUnitIds);
@@ -199,7 +217,7 @@ public class UserServiceImpl implements UserService {
         List<IdValuePair> testSections = getUserTestSections(SystemUserId, resultsRoleId);
         List<String> testUnitIds = new ArrayList<>();
         if (testSections != null) {
-            testSections.forEach(test -> testUnitIds.add(test.getId()));
+            testSections.forEach(testSection -> testUnitIds.add(testSection.getId()));
         }
         
         List<Test> allTests = typeOfSampleService.getAllActiveTestsByTestUnit(true, testUnitIds);
