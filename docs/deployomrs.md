@@ -54,9 +54,9 @@ Start up the OpenELIS Update Task in `System Administration` → `Advanced Admin
 
 
 4. Go to the Reff App (2.x) Patient Dashbord ,Go to `Prescribed Medication` Widget.
-  ![screen1](img/widget.png) 
+  	![screen1](img/widget.png) 
 
-    see more on [Creating Orders](https://wiki.openmrs.org/display/projects/Order+Entry+UI+End+User+Guide+for+Creating+Drug+Orders) using the Order Entry     Owa.
+	See more on [Creating Orders](https://wiki.openmrs.org/display/projects/Order+Entry+UI+End+User+Guide+for+Creating+Drug+Orders) using the Order           Entry Owa.
 
   
   	![screen1](img/order.png)
