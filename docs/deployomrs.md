@@ -59,7 +59,7 @@ Start up the OpenELIS Update Task in `System Administration` → `Advanced Admin
     see more on [Creating Orders](https://wiki.openmrs.org/display/projects/Order+Entry+UI+End+User+Guide+for+Creating+Drug+Orders) using the Order Entry     Owa.
 
   
-  ![screen1](img/order.png)
+  	![screen1](img/order.png)
 
 5. If the [Lab on FHIR](https://github.com/openmrs/openmrs-module-labonfhir) module is rightly configured ,it will generate the lab FHIR Bundle and push to the remote Fhir Server for OpenELIS to poll the orders
 
