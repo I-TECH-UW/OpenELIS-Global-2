@@ -23,6 +23,8 @@ import org.openelisglobal.userrole.service.UserRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.saml2.provider.service.authentication.DefaultSaml2AuthenticatedPrincipal;
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.WebAttributes;
@@ -51,8 +53,19 @@ public class CustomFormAuthenticationSuccessHandler implements AuthenticationSuc
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
             Authentication authentication) throws IOException, ServletException {
+
         String homePath = "/Dashboard";
-        LoginUser loginInfo = loginService.getMatch("loginName", request.getParameter("loginName")).get();
+        LoginUser loginInfo = null;
+        if (authentication != null) {
+            Object principal = authentication.getPrincipal();
+            if (principal instanceof UserDetails) {
+                UserDetails user = (UserDetails) principal;
+                loginInfo = loginService.getUserProfile(user.getUsername());
+            } else if (principal instanceof DefaultSaml2AuthenticatedPrincipal) {
+                DefaultSaml2AuthenticatedPrincipal samlUser = (DefaultSaml2AuthenticatedPrincipal) principal;
+                loginInfo = loginService.getUserProfile(samlUser.getName());
+            }
+        }
         setupUserSession(request, loginInfo);
 
         if (passwordExpiringSoon(loginInfo)) {
