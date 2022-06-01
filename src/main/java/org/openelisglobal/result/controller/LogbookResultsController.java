@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -51,7 +52,6 @@ import org.openelisglobal.note.service.NoteServiceImpl.NoteType;
 import org.openelisglobal.organization.service.OrganizationService;
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.referral.action.beanitems.ReferralItem;
-import org.openelisglobal.referral.service.ReferralService;
 import org.openelisglobal.referral.service.ReferralTypeService;
 import org.openelisglobal.referral.valueholder.Referral;
 import org.openelisglobal.referral.valueholder.ReferralResult;
@@ -125,8 +125,6 @@ public class LogbookResultsController extends LogbookResultsBaseController {
     @Autowired
     private ResultInventoryService resultInventoryService;
     @Autowired
-    private ReferralService referralService;
-    @Autowired
     private OrganizationService organizationService;
     @Autowired
     private ResultLimitService resultLimitService;
@@ -148,6 +146,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
     private final String RESULT_SUBJECT = "Result Note";
     private final String REFERRAL_CONFORMATION_ID;
     private static final String ROLE_RESULTS = "Results";
+    private static final String REFLEX_ACCESSIONS = "reflex_accessions";
 
     private LogbookResultsController(ReferralTypeService referralTypeService) {
         ReferralType referralType = referralTypeService.getReferralTypeByName("Confirmation");
@@ -275,7 +274,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
             } else if (!GenericValidator.isBlankOrNull(form.getAccessionNumber())) {
                 tests = resultsLoadUtility.getUnfinishedTestResultItemsByAccession(form.getAccessionNumber());
                 filteredTests = userService.filterResultsByLabUnitRoles(getSysUserId(request), tests ,ROLE_RESULTS);
-                int count = resultsLoadUtility.getTotalCountAnalysisByAccessionAndStatus(form.getAccessionNumber());  
+                int count = resultsLoadUtility.getTotalCountAnalysisByAccessionAndStatus(form.getAccessionNumber());
                 request.setAttribute("analysisCount", count);
                 request.setAttribute("pageSize", filteredTests.size());
                 form.setSearchFinished(true);
@@ -390,7 +389,10 @@ public class LogbookResultsController extends LogbookResultsBaseController {
         createAnalysisOnlyUpdates(actionDataSet);
 
         try {
-            logbookPersistService.persistDataSet(actionDataSet, updaters, getSysUserId(request));
+            List<Analysis> reflexAnalysises = logbookPersistService.persistDataSet(actionDataSet, updaters,
+                    getSysUserId(request));
+            redirectAttributes.addFlashAttribute(REFLEX_ACCESSIONS, reflexAnalysises.stream()
+                    .map(e -> analysisService.getOrderAccessionNumber(e)).collect(Collectors.toList()));
             try {
                 fhirTransformService.transformPersistResultsEntryFhirObjects(actionDataSet);
             } catch (FhirTransformationException | FhirPersistanceException e) {

@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	import="java.util.List,
 			org.openelisglobal.common.action.IActionConstants,
+			org.openelisglobal.result.controller.LogbookResultsController,
 			java.util.ArrayList,
 			java.text.DecimalFormat,
 			org.apache.commons.validator.GenericValidator,
@@ -143,6 +144,16 @@ jQuery(document).ready( function() {
             	jQuery(this).find('.resultValue').val(jQuery(this).find('.defaultResultValue').val());
             	jQuery(this).find('.resultValue').change();
             });
+            <c:if test="${not empty requestScope.reflex_accessions}">
+            var reflexAccessions = new Array();
+            <c:forEach items="${requestScope.reflex_accessions}" var="accession">
+            reflexAccessions.push('<c:out value="${accession}"/>');
+            </c:forEach>
+            var msg = 'A result has triggered another test to be added to order(s): ' + reflexAccessions.join(', ');
+            
+            alert(msg);
+            </c:if>
+            
 			});
 
 
