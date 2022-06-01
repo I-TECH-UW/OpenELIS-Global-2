@@ -46,23 +46,27 @@ Start up the OpenELIS Update Task in `System Administration` → `Advanced Admin
     * [Order Entry Owa](https://github.com/openmrs/openmrs-owa-orderentry)   
 3. Configure the required settings .
     * `labonfhir.openElisUrl` ,The URL for the FHIR server where OpenELIS polls the Orders From.
-    * `labonfhir.openElisUserUuid` ,UUID for the service user that represents OpenELIS
+    * `labonfhir.openElisUserUuid` ,UUID for the service user that represents OpenELIS 
 
- [see more](https://github.com/openmrs/openmrs-module-labonfhir#usage) on Configuring the above Modules.  
-Note: The Lab test Concept should be of class `Test` ,and should be mapped to a  `Loinc code` that matches a the `Test Loinc Code` in OpenELIS
+    [see more](https://github.com/openmrs/openmrs-module-labonfhir#usage) on Configuring the above Modules.  
+
+    Note: The Lab test Concept should be of class `Test` ,and should be mapped to a  `Loinc code` that matches a the `Test Loinc Code` in OpenELIS
+
 
 4. Go to the Reff App (2.x) Patient Dashbord ,Go to `Prescribed Medication` Widget.
-![screen1](img/widget.png)   
-see more on [Creating Orders](https://wiki.openmrs.org/display/projects/Order+Entry+UI+End+User+Guide+for+Creating+Drug+Orders) using the Order Entry Owa.  
+  	![screen1](img/widget.png) 
 
-![screen1](img/order.png)
+	See more on [Creating Orders](https://wiki.openmrs.org/display/projects/Order+Entry+UI+End+User+Guide+for+Creating+Drug+Orders) using the Order           Entry Owa.
+
+  
+  	![screen1](img/order.png)
 
 5. If the [Lab on FHIR](https://github.com/openmrs/openmrs-module-labonfhir) module is rightly configured ,it will generate the lab FHIR Bundle and push to the remote Fhir Server for OpenELIS to poll the orders
 
 6. Start the OpenELIS Pull Task ,to start polling for Lab Results via the Sheduler Interface  
 `System Administration` → `Advanced Administration` → `Scheduler` → `Manage Scheduler`
 
-![screen1](img/omrsoe1.png)
+	![screen1](img/omrsoe1.png)
 
 7. To view the lab Results , Ensure you have the [patient-test-results-app](https://github.com/openmrs/openmrs-esm-patient-chart/tree/master/packages/esm-patient-test-results-app).
 Go to the Patient DashBoard in 3.x ui and click Test Results. 

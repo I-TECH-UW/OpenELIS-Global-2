@@ -54,6 +54,7 @@ import org.openelisglobal.typeofsample.service.TypeOfSampleTestService;
 import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
 import org.openelisglobal.typeofsample.valueholder.TypeOfSampleTest;
 import org.openelisglobal.userrole.service.UserRoleService;
+import org.openelisglobal.systemuser.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -91,6 +92,7 @@ public class SampleEditController extends BaseController {
             "existingTests*.collectionDate", "existingTests*.collectionTime", "existingTests*.removeSample",
             "existingTests*.canceled", "possibleTests*.testId", "possibleTests*.sampleItemId",
             "possibleTests*.add" };
+    private static final String ROLE_RECEPTION = "Reception";         
 
     @Autowired
     SampleEditFormValidator formValidator;
@@ -132,6 +134,8 @@ public class SampleEditController extends BaseController {
     private UserRoleService userRoleService;
     @Autowired
     private SampleEditService sampleEditService;
+    @Autowired
+    private UserService userService;
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -176,7 +180,7 @@ public class SampleEditController extends BaseController {
                         allowedToCancelResults);
                 form.setExistingTests(currentTestList);
                 setAddableTestInfo(form, sampleItemList, accessionNumber);
-                setAddableSampleTypes(form);
+                setAddableSampleTypes(form ,request);
                 setSampleOrderInfo(form, sample);
                 form.setAbleToCancelResults(hasResults(currentTestList, allowedToCancelResults));
                 String maxAccessionNumber;
@@ -350,9 +354,9 @@ public class SampleEditController extends BaseController {
         form.setTestSectionList(DisplayListService.getInstance().getList(ListType.TEST_SECTION));
     }
 
-    private void setAddableSampleTypes(SampleEditForm form)
+    private void setAddableSampleTypes(SampleEditForm form ,HttpServletRequest request)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        form.setSampleTypes(DisplayListService.getInstance().getList(ListType.SAMPLE_TYPE_ACTIVE));
+        form.setSampleTypes(userService.getUserSampleTypes(getSysUserId(request), ROLE_RECEPTION));
     }
 
     private void addPossibleTestsToList(SampleItem sampleItem, List<SampleEditItem> possibleTestList,

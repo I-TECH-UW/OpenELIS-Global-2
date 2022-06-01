@@ -178,7 +178,7 @@ function printWorkplan() {
 				</c:if>
 	    		<td>
 	      		<c:if test="${showAccessionNumber}">
-	      			<c:out value="${workplanTest.accessionNumber}"/>
+	      			<a style="color:blue;" href="${pageContext.request.contextPath}/AccessionResults?accessionNumber=${workplanTest.accessionNumber}"><u>${workplanTest.accessionNumber}</u></a> 
 				</c:if>
 	    		</td>
 	    		<% if( ConfigurationProperties.getInstance().isPropertyValueEqual(Property.SUBJECT_ON_WORKPLAN, "true")){ %>
