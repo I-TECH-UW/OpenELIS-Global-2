@@ -62,7 +62,7 @@ public class ProviderImportServiceImpl implements ProviderImportService {
                 responseBundle = client.loadPage().next(responseBundle).execute();
                 responseBundles.add(responseBundle);
             }
-            providerService.deactivateAllProviders();
+//            providerService.deactivateAllProviders();
             importProvidersFromBundle(client, responseBundles);
 
         }

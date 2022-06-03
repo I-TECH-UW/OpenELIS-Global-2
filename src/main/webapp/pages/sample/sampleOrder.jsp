@@ -420,7 +420,7 @@
         <%= MessageUtil.getContextualMessage( "sample.entry.provider" ) %>:
     </td>
     <td>
-    	<form:select path="sampleOrderItems.providerId" onchange="setOrderModified();" >
+    	<form:select id="providerId" path="sampleOrderItems.providerId" onchange="setOrderModified();" >
     		<option></option>
     		<form:options items="${form.sampleOrderItems.providersList}" itemValue="id" itemLabel="value" />
     	</form:select>
@@ -574,7 +574,13 @@
         <% } %>
         capitialize = true;
         // Actually executes autocomplete
-//         dropdown.combobox();
+        dropdown.combobox();
+        var providerDropdown = jQuery("select#providerId");
+        autoCompleteWidth = providerDropdown.width() + 66 + 'px';
+        clearNonMatching = true;
+        capitialize = true;
+        // Actually executes autocomplete
+        providerDropdown.combobox();
         invalidLabID = '<spring:message code="error.site.invalid"/>'; // Alert if value is typed that's not on list. FIX - add bad message icon
         maxRepMsg = '<spring:message code="sample.entry.project.siteMaxMsg"/>';
 
