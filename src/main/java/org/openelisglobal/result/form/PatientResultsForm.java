@@ -61,6 +61,9 @@ public class PatientResultsForm extends BaseForm implements PatientInfoForm, Res
 
     private List<IdValuePair> referralOrganizations;
 
+    // for display
+    private List<IdValuePair> methods;
+
     public PatientResultsForm() {
         setFormName("PatientResultsForm");
     }
@@ -279,6 +282,14 @@ public class PatientResultsForm extends BaseForm implements PatientInfoForm, Res
 
     public boolean getSearchByRange() {
         return false;
+    }
+
+    public List<IdValuePair> getMethods() {
+        return methods;
+    }
+
+    public void setMethods(List<IdValuePair> methods) {
+        this.methods = methods;
     }
 
 }
