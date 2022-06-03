@@ -1,6 +1,7 @@
 package org.openelisglobal.provider.service;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
 import org.openelisglobal.person.valueholder.Person;
@@ -47,5 +48,38 @@ public class ProviderServiceImpl extends BaseObjectServiceImpl<Provider, String>
     @Transactional(readOnly = true)
     public Provider getProviderByPerson(Person person) {
         return getBaseObjectDAO().getProviderByPerson(person);
+    }
+
+    @Override
+    public List<Provider> getAllActiveProviders() {
+        return getBaseObjectDAO().getAllMatching("active", Boolean.TRUE);
+    }
+
+    @Override
+    public void deactivateAllProviders() {
+        for (Provider provider : getBaseObjectDAO().getAll()) {
+            provider.setActive(false);
+        }
+
+    }
+
+    @Override
+    public Provider getProviderByFhirId(UUID fhirUuid) {
+        List<Provider> providers = getBaseObjectDAO().getAllMatching("fhirUuid", fhirUuid);
+        if (providers.size() <= 0) {
+            return null;
+        } else {
+            return providers.get(0);
+        }
+    }
+
+    @Override
+    public String getProviderIdByFhirId(UUID fhirUuid) {
+        List<Provider> providers = getBaseObjectDAO().getAllMatching("fhirUuid", fhirUuid);
+        if (providers.size() <= 0) {
+            return null;
+        } else {
+            return providers.get(0).getId();
+        }
     }
 }

@@ -417,69 +417,14 @@
 <% if( useProviderInfo ){ %>
 <tr>
     <td>
-        <%= MessageUtil.getContextualMessage( "sample.entry.provider.name" ) %>:
-        <% if( requesterLastNameRequired ){ %>
-        <span class="requiredlabel">*</span>
-        <% } %>
+        <%= MessageUtil.getContextualMessage( "sample.entry.provider" ) %>:
     </td>
     <td>
-        <form:input path="sampleOrderItems.providerLastName"
-                   id="providerLastNameID"
-                   onchange="setOrderModified();setCorrectSave();"
-                   size="30"/>
+    	<form:select id="providerId" path="sampleOrderItems.providerId" onchange="setOrderModified();" >
+    		<option></option>
+    		<form:options items="${form.sampleOrderItems.providersList}" itemValue="id" itemLabel="value" />
+    	</form:select>
     </td> 
-</tr>              
-<tr>
-    <td>
-        <spring:message code="sample.entry.provider.firstName"/>:
-	</td>
-    <td>
-        <form:input path="sampleOrderItems.providerFirstName"
-                   id="providerFirstNameID" 
-                   onchange="setOrderModified();"
-                   size="30"/>
-    </td>
-</tr>
-<tr>
-    <td>
-        <%= MessageUtil.getContextualMessage( "humansampleone.provider.workPhone" ) + ": " + PhoneNumberService.getPhoneFormat()%>
-    </td>
-    <td>
-         <form:input path="sampleOrderItems.providerWorkPhone"
-                  id="providerWorkPhoneID"
-                  size="30"
-                  maxlength="30"
-                  cssClass="text"
-                  onchange="setOrderModified();validatePhoneNumber(this)"/> 
-    </td>
-</tr>
-<% } %>
-<% if( FormFields.getInstance().useField( Field.SampleEntryProviderFax ) ){ %>
-<tr>
-    <td>
-        <%= MessageUtil.getContextualMessage( "sample.entry.project.faxNumber" )%>:
-    </td>
-    <td>
-        <form:input path="sampleOrderItems.providerFax"
-                  id="providerFaxID"
-                  size="20"
-                  cssClass="text"
-                  onchange="setOrderModified();makeDirty()"/> 
-    </td>
-</tr>
-<% } %>
-<% if( FormFields.getInstance().useField( Field.SampleEntryProviderEmail ) ){ %>
-<tr>
-    <td>
-        <%= MessageUtil.getContextualMessage( "sample.entry.project.email" )%>:
-    </td>
-    <td> 
-        <form:input path="sampleOrderItems.providerEmail"
-                  id="providerEmailID"
-                  size="20"
-                  cssClass="text"
-                  onchange="setOrderModified();makeDirty()"/> 
-    </td>
 </tr>
 <% } %>
 <% if( FormFields.getInstance().useField( Field.SampleEntryHealthFacilityAddress ) ){%>
@@ -629,7 +574,13 @@
         <% } %>
         capitialize = true;
         // Actually executes autocomplete
-//         dropdown.combobox();
+        dropdown.combobox();
+        var providerDropdown = jQuery("select#providerId");
+        autoCompleteWidth = providerDropdown.width() + 66 + 'px';
+        clearNonMatching = true;
+        capitialize = true;
+        // Actually executes autocomplete
+        providerDropdown.combobox();
         invalidLabID = '<spring:message code="error.site.invalid"/>'; // Alert if value is typed that's not on list. FIX - add bad message icon
         maxRepMsg = '<spring:message code="sample.entry.project.siteMaxMsg"/>';
 

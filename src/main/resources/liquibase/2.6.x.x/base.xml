@@ -17,4 +17,5 @@
 	<include file="liquibase/2.6.x.x/geographical_unit.xml"/>
 	<include file="liquibase/2.6.x.x/localization.xml"/>
 	<include file="liquibase/2.6.x.x/method.xml"/>
+	<include relativeToChangelogFile="true" file="provider.xml"/>	
 </databaseChangeLog>

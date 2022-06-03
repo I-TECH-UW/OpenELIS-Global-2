@@ -38,6 +38,8 @@ public class Provider extends BaseObject<String> {
 
     private String selectedPersonId;
 
+    private Boolean active;
+
     public Provider() {
         super();
         this.person = new ValueHolder();
@@ -112,6 +114,14 @@ public class Provider extends BaseObject<String> {
 
     public void setFhirUuid(UUID fhirUuid) {
         this.fhirUuid = fhirUuid;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 
 }

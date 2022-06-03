@@ -33,7 +33,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 
 @Service
@@ -54,8 +53,6 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
     @Value("${org.openelisglobal.facilitylist.auth:basic}")
     private String facilityAuth;
 
-    @Autowired
-    private FhirContext fhirContext;
     @Autowired
     private FhirUtil fhirUtil;
     @Autowired
