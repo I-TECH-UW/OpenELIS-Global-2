@@ -950,8 +950,8 @@ jQuery(document).ready(function (index) {
 						indexed="true" />
 					<form:hidden path="testResult[${iter.index}].resultType"
 						id="resultType_${iter.index}" />
-					<%-- <form:hidden path="testResult[${iter.index}].testMethod"
-						id="testMethod_${iter.index}" />	 --%>
+					 <form:hidden path="testResult[${iter.index}].testMethod"
+						id="testMethod_${iter.index}" />	 
 					<form:hidden path="testResult[${iter.index}].valid"
 						id="valid_${iter.index}" />
 					<form:hidden path="testResult[${iter.index}].defaultResultValue"
