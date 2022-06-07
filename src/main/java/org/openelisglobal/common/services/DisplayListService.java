@@ -79,7 +79,7 @@ public class DisplayListService implements LocaleChangeListener {
         PROGRAM, RESULT_TYPE_LOCALIZED, RESULT_TYPE_RAW, UNIT_OF_MEASURE, UNIT_OF_MEASURE_ACTIVE,
         UNIT_OF_MEASURE_INACTIVE, DICTIONARY_TEST_RESULTS, LAB_COMPONENT, SEVERITY_CONSEQUENCES_LIST,
         SEVERITY_RECURRENCE_LIST, ACTION_TYPE_LIST, LABORATORY_COMPONENT, SAMPLE_NATURE, ELECTRONIC_ORDER_STATUSES,
-        PRACTITIONER
+        PRACTITIONER_PERSONS
     }
 
     private static Map<ListType, List<IdValuePair>> typeToListMap;
@@ -356,15 +356,15 @@ public class DisplayListService implements LocaleChangeListener {
         typeToListMap.put(ListType.ACTION_TYPE_LIST, createActionTypeList());
         typeToListMap.put(ListType.LABORATORY_COMPONENT, createLaboratoryComponentList());
         typeToListMap.put(ListType.ELECTRONIC_ORDER_STATUSES, createElectronicOrderStatusList());
-        typeToListMap.put(ListType.PRACTITIONER, createActivePractitionerList());
+        typeToListMap.put(ListType.PRACTITIONER_PERSONS, createActivePractitionerPersonsList());
 
     }
 
     public void refreshList(ListType listType) {
 
         switch (listType) {
-        case PRACTITIONER: {
-            typeToListMap.put(ListType.PRACTITIONER, createActivePractitionerList());
+        case PRACTITIONER_PERSONS: {
+            typeToListMap.put(ListType.PRACTITIONER_PERSONS, createActivePractitionerPersonsList());
             break;
         }
         case SAMPLE_PATIENT_REFERRING_CLINIC: {
@@ -434,7 +434,7 @@ public class DisplayListService implements LocaleChangeListener {
         }
     }
 
-    private List<IdValuePair> createActivePractitionerList() {
+    private List<IdValuePair> createActivePractitionerPersonsList() {
         List<IdValuePair> providerDisplayList = new ArrayList<>();
 
         List<Provider> providerList = providerService.getAllActiveProviders();
@@ -443,7 +443,7 @@ public class DisplayListService implements LocaleChangeListener {
         });
 
         for (Provider provider : providerList) {
-            providerDisplayList.add(new IdValuePair(provider.getId(),
+            providerDisplayList.add(new IdValuePair(provider.getPerson().getId(),
                     provider.getPerson().getLastName() + ", " + provider.getPerson().getFirstName()));
         }
 

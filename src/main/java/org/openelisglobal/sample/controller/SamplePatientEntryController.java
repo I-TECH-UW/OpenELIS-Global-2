@@ -1,12 +1,15 @@
 package org.openelisglobal.sample.controller;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Pattern;
 
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.StaleObjectStateException;
+import org.hl7.fhir.r4.model.Enumerations.ResourceType;
+import org.hl7.fhir.r4.model.Reference;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.log.LogEvent;
@@ -24,6 +27,7 @@ import org.openelisglobal.patient.action.IPatientUpdate;
 import org.openelisglobal.patient.action.IPatientUpdate.PatientUpdateStatus;
 import org.openelisglobal.patient.action.bean.PatientManagementInfo;
 import org.openelisglobal.patient.action.bean.PatientSearch;
+import org.openelisglobal.provider.service.ProviderService;
 import org.openelisglobal.sample.action.util.SamplePatientUpdateData;
 import org.openelisglobal.sample.bean.SampleOrderItem;
 import org.openelisglobal.sample.form.SamplePatientEntryForm;
@@ -51,20 +55,20 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class SamplePatientEntryController extends BaseSampleEntryController {
 
-    @Value("${org.openelisglobal.requester.lastName:}")
-    private String requesterLastName;
-    @Value("${org.openelisglobal.requester.firstName:}")
-    private String requesterFirstName;
-    @Value("${org.openelisglobal.requester.phone:}")
-    private String requesterPhone;
+//    @Value("${org.openelisglobal.requester.lastName:}")
+//    private String requesterLastName;
+//    @Value("${org.openelisglobal.requester.firstName:}")
+//    private String requesterFirstName;
+//  @Value("${org.openelisglobal.requester.phone:}")
+//  private String requesterPhone;
+    @Value("${org.openelisglobal.requester.identifier:}")
+    private String requestFhirUuid;
 
     private static final String[] ALLOWED_FIELDS = new String[] { "customNotificationLogic",
-            "patientEmailNotificationTestIds",
-            "patientSMSNotificationTestIds", "providerEmailNotificationTestIds", "providerSMSNotificationTestIds",
-            "patientProperties.currentDate",
-            "patientProperties.patientLastUpdated", "patientProperties.personLastUpdated",
-            "patientProperties.patientUpdateStatus", "patientProperties.patientPK", "patientProperties.guid",
-            "patientProperties.fhirUuid",
+            "patientEmailNotificationTestIds", "patientSMSNotificationTestIds", "providerEmailNotificationTestIds",
+            "providerSMSNotificationTestIds", "patientProperties.currentDate", "patientProperties.patientLastUpdated",
+            "patientProperties.personLastUpdated", "patientProperties.patientUpdateStatus",
+            "patientProperties.patientPK", "patientProperties.guid", "patientProperties.fhirUuid",
             "patientProperties.STnumber", "patientProperties.subjectNumber", "patientProperties.nationalId",
             "patientProperties.lastName", "patientProperties.firstName", "patientProperties.aka",
             "patientProperties.mothersName", "patientProperties.mothersInitial", "patientProperties.streetAddress",
@@ -99,12 +103,10 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
             "sampleOrderItems.referringPatientNumber", "sampleOrderItems.referringSiteId",
             "referringSiteDepartmentName", "sampleOrderItems.referringSiteDepartmentId",
             "sampleOrderItems.referringSiteName", "sampleOrderItems.referringSiteCode", "sampleOrderItems.program",
-            "sampleOrderItems.providerLastName", "sampleOrderItems.providerFirstName",
-            "sampleOrderItems.providerWorkPhone", "sampleOrderItems.providerFax", "sampleOrderItems.providerEmail",
-            "sampleOrderItems.facilityAddressStreet", "sampleOrderItems.facilityAddressCommune",
-            "sampleOrderItems.facilityPhone", "sampleOrderItems.facilityFax", "sampleOrderItems.paymentOptionSelection",
-            "sampleOrderItems.billingReferenceNumber", "sampleOrderItems.testLocationCode",
-            "sampleOrderItems.otherLocationCode",
+            "sampleOrderItems.providerPersonId", "sampleOrderItems.facilityAddressStreet",
+            "sampleOrderItems.facilityAddressCommune", "sampleOrderItems.facilityPhone", "sampleOrderItems.facilityFax",
+            "sampleOrderItems.paymentOptionSelection", "sampleOrderItems.billingReferenceNumber",
+            "sampleOrderItems.testLocationCode", "sampleOrderItems.otherLocationCode",
             "sampleOrderItems.contactTracingIndexName", "sampleOrderItems.contactTracingIndexRecordNumber",
             //
             "currentDate", "sampleOrderItems.newRequesterName", "sampleOrderItems.externalOrderNumber",
@@ -121,6 +123,8 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
     private SamplePatientEntryService samplePatientService;
     @Autowired
     private FhirTransformService fhirTransformService;
+    @Autowired
+    private ProviderService providerService;
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -241,9 +245,14 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
             throws LIMSRuntimeException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         SampleOrderService sampleOrderService = new SampleOrderService();
         form.setSampleOrderItems(sampleOrderService.getSampleOrderItem());
-        form.getSampleOrderItems().setProviderLastName(requesterLastName);
-        form.getSampleOrderItems().setProviderFirstName(requesterFirstName);
-        form.getSampleOrderItems().setProviderWorkPhone(requesterPhone);
+        if (requestFhirUuid != null
+                && requestFhirUuid.toUpperCase().startsWith(ResourceType.PRACTITIONER.toString().toUpperCase())) {
+            Reference providerReference = new Reference(requestFhirUuid);
+            form.getSampleOrderItems()
+                    .setProviderPersonId(providerService
+                            .getProviderByFhirId(UUID.fromString(providerReference.getReferenceElement().getIdPart()))
+                            .getPerson().getId());
+        }
         form.getSampleOrderItems().setExternalOrderNumber(externalOrderNumber);
         form.setPatientProperties(new PatientManagementInfo());
         form.setPatientSearch(new PatientSearch());

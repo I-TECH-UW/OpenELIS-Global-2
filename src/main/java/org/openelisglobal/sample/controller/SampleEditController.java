@@ -78,19 +78,15 @@ public class SampleEditController extends BaseController {
             "sampleOrderItems.referringPatientNumber", "sampleOrderItems.referringSiteId",
             "sampleOrderItems.referringSiteName", "sampleOrderItems.referringSiteCode",
             "sampleOrderItems.referringSiteDepartmentId", "sampleOrderItems.referringSiteDepartmentName",
-            "sampleOrderItems.program",
-            "sampleOrderItems.providerLastName", "sampleOrderItems.providerFirstName",
-            "sampleOrderItems.providerWorkPhone", "sampleOrderItems.providerFax", "sampleOrderItems.providerEmail",
-            "sampleOrderItems.facilityAddressStreet", "sampleOrderItems.facilityAddressCommune",
-            "sampleOrderItems.facilityPhone", "sampleOrderItems.facilityFax", "sampleOrderItems.paymentOptionSelection",
-            "sampleOrderItems.billingReferenceNumber", "sampleOrderItems.testLocationCode",
-            "sampleOrderItems.otherLocationCode",
+            "sampleOrderItems.program", "sampleOrderItems.providerId", "sampleOrderItems.facilityAddressStreet",
+            "sampleOrderItems.facilityAddressCommune", "sampleOrderItems.facilityPhone", "sampleOrderItems.facilityFax",
+            "sampleOrderItems.paymentOptionSelection", "sampleOrderItems.billingReferenceNumber",
+            "sampleOrderItems.testLocationCode", "sampleOrderItems.otherLocationCode",
             //
             "accessionNumber", "newAccessionNumber", "isEditable", "maxAccessionNumber",
             "existingTests*.sampleItemChanged", "existingTests*.sampleItemId", "existingTests*.analysisId",
             "existingTests*.collectionDate", "existingTests*.collectionTime", "existingTests*.removeSample",
-            "existingTests*.canceled", "possibleTests*.testId", "possibleTests*.sampleItemId",
-            "possibleTests*.add" };
+            "existingTests*.canceled", "possibleTests*.testId", "possibleTests*.sampleItemId", "possibleTests*.add" };
 
     @Autowired
     SampleEditFormValidator formValidator;
@@ -103,10 +99,11 @@ public class SampleEditController extends BaseController {
 
     static {
         excludedAnalysisStatusList = new HashSet<>();
-        excludedAnalysisStatusList
-                .add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Canceled)));
+        excludedAnalysisStatusList.add(
+                Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Canceled)));
 
-        ENTERED_STATUS_SAMPLE_LIST.add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(SampleStatus.Entered)));
+        ENTERED_STATUS_SAMPLE_LIST
+                .add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(SampleStatus.Entered)));
         ABLE_TO_CANCEL_ROLE_NAMES.add("Validator");
         ABLE_TO_CANCEL_ROLE_NAMES.add("Validation");
         ABLE_TO_CANCEL_ROLE_NAMES.add("Biologist");
@@ -139,10 +136,10 @@ public class SampleEditController extends BaseController {
     }
 
     @RequestMapping(value = "/SampleEdit", method = RequestMethod.GET)
-    public ModelAndView showSampleEdit(HttpServletRequest request, @ModelAttribute("form") @Validated(SampleEdit.class)
-    SampleEditForm oldForm, BindingResult result)
+    public ModelAndView showSampleEdit(HttpServletRequest request,
+            @ModelAttribute("form") @Validated(SampleEdit.class) SampleEditForm oldForm, BindingResult result)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        if(oldForm.getExistingTests() != null) {
+        if (oldForm.getExistingTests() != null) {
             oldForm.getExistingTests().get(0).isCanceled();
         }
         SampleEditForm form = new SampleEditForm();
@@ -308,19 +305,21 @@ public class SampleEditController extends BaseController {
             sampleEditItem.setTestName(TestServiceImpl.getUserLocalizedTestName(analysis.getTest()));
             sampleEditItem.setSampleItemId(sampleItem.getId());
 
-            boolean canCancel = allowedToCancelAll
-                    || (!SpringContext.getBean(IStatusService.class).matches(analysis.getStatusId(), AnalysisStatus.Canceled)
-                            && SpringContext.getBean(IStatusService.class).matches(analysis.getStatusId(), AnalysisStatus.NotStarted));
+            boolean canCancel = allowedToCancelAll || (!SpringContext.getBean(IStatusService.class)
+                    .matches(analysis.getStatusId(), AnalysisStatus.Canceled)
+                    && SpringContext.getBean(IStatusService.class).matches(analysis.getStatusId(),
+                            AnalysisStatus.NotStarted));
 
             if (!canCancel) {
                 canRemove = false;
             }
             sampleEditItem.setCanCancel(canCancel);
             sampleEditItem.setAnalysisId(analysis.getId());
-            sampleEditItem.setStatus(SpringContext.getBean(IStatusService.class).getStatusNameFromId(analysis.getStatusId()));
+            sampleEditItem
+                    .setStatus(SpringContext.getBean(IStatusService.class).getStatusNameFromId(analysis.getStatusId()));
             sampleEditItem.setSortOrder(analysis.getTest().getSortOrder());
-            sampleEditItem.setHasResults(
-                    !SpringContext.getBean(IStatusService.class).matches(analysis.getStatusId(), AnalysisStatus.NotStarted));
+            sampleEditItem.setHasResults(!SpringContext.getBean(IStatusService.class).matches(analysis.getStatusId(),
+                    AnalysisStatus.NotStarted));
 
             analysisSampleItemList.add(sampleEditItem);
         }

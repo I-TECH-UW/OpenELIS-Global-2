@@ -127,6 +127,10 @@ public class SampleOrderItem implements Serializable {
             SamplePatientEntryBatch.class })
     private String providerId;
 
+    @Pattern(regexp = ValidationHelper.ID_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
+            SamplePatientEntryBatch.class })
+    private String providerPersonId;
+
     @ValidName(nameType = NameType.FIRST_NAME, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
             SamplePatientEntryBatch.class, SampleEditForm.SampleEdit.class })
     private String providerFirstName;
@@ -340,6 +344,14 @@ public class SampleOrderItem implements Serializable {
 
     public void setProviderId(String providerId) {
         this.providerId = providerId;
+    }
+
+    public String getProviderPersonId() {
+        return providerPersonId;
+    }
+
+    public void setProviderPersonId(String providerPersonId) {
+        this.providerPersonId = providerPersonId;
     }
 
     public String getProviderFirstName() {

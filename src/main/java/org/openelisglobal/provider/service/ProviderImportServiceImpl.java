@@ -66,7 +66,7 @@ public class ProviderImportServiceImpl implements ProviderImportService {
             importProvidersFromBundle(client, responseBundles);
 
         }
-        DisplayListService.getInstance().refreshList(ListType.PRACTITIONER);
+        DisplayListService.getInstance().refreshList(ListType.PRACTITIONER_PERSONS);
     }
 
     private void importProvidersFromBundle(IGenericClient client, List<Bundle> responseBundles)

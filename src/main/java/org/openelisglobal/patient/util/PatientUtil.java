@@ -60,6 +60,7 @@ public class PatientUtil {
             UNKNOWN_PROVIDER.setPerson(UNKNOWN_PERSON);
             providerService.insert(UNKNOWN_PROVIDER);
         }
+        UNKNOWN_PROVIDER.setActive(false);
 
         UNKNOWN_PATIENT = patientService.getPatientByPerson(UNKNOWN_PERSON);
 

@@ -98,7 +98,7 @@ public class DefaultFormFields extends AFormFields {
         setFieldFalse(Field.PatientMarriageStatus);
         setFieldFalse(Field.PatientEducation);
         setFieldFalse(Field.SampleEntryPatientClinical);
-        setFieldFalse(Field.SampleEntryRequesterLastNameRequired);
+        setFieldFalse(Field.SampleEntryRequesterPersonRequired);
         setFieldFalse(Field.QA_DOCUMENT_NUMBER);
         setFieldFalse(Field.QASubjectNumber);
         setFieldFalse(Field.QATimeWithDate);

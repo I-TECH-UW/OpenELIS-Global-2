@@ -69,7 +69,7 @@ public class CI_GeneralFormFields implements IFormFieldsForImplementation {
         settings.put(Field.PatientMarriageStatus, new FormField(Boolean.TRUE));
         settings.put(Field.PatientEducation, new FormField(Boolean.TRUE));
         settings.put(Field.SampleEntryPatientClinical, new FormField(Boolean.FALSE));
-        settings.put(Field.SampleEntryRequesterLastNameRequired, new FormField(Boolean.TRUE));
+        settings.put(Field.SampleEntryRequesterPersonRequired, new FormField(Boolean.TRUE));
         // settings.put(Field.QASubjectNumber, new FormField(Boolean.TRUE));
         settings.put(Field.QATimeWithDate, new FormField(Boolean.TRUE));
         settings.put(Field.SampleEntryReferralSiteCode, new FormField(Boolean.FALSE));
