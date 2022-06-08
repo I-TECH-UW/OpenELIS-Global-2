@@ -134,6 +134,8 @@
 			value="dictionaryMenuDefinition" />
 		<put-attribute name="rightOrganization"
 			value="organizationMenuDefinition" />
+		<put-attribute name="rightProvider"
+			value="providerMenuDefinition" />
 		<put-attribute name="rightTestSection"
 			value="testSectionMenuDefinition" />
 		<put-attribute name="rightExternalConnection"
@@ -187,6 +189,12 @@
 			value="organizationMenuBodyDefinition" />
 	</definition>
 	<!--end bugzilla 2372 -->
+
+	<definition name="providerMenuDefinition"
+		extends="baseMenuSelectListDefinition">
+		<put-attribute name="body"
+			value="/pages/provider/providerMenu.jsp" />
+	</definition>
 
 
 	<definition name="testSectionMenuDefinition"

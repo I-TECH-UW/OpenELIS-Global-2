@@ -19,6 +19,7 @@
 	String fromCount = "0";
 	String toCount = "0";
 	boolean allowDeactivate = false;
+	boolean allowEdits = false;
 	String formName =  "";
 	String searchColumn="";
 	String pageInstruction ="";
@@ -39,17 +40,18 @@
        }
 
        //This is added for testAnalyteTestResult (we need to disable ADD until test is selected
-       String allowEdits = "true";
+       String editable = "true";
        if (request.getAttribute(IActionConstants.ALLOW_EDITS_KEY) != null) {
-            allowEdits = (String)request.getAttribute(IActionConstants.ALLOW_EDITS_KEY);
+            editable = (String)request.getAttribute(IActionConstants.ALLOW_EDITS_KEY);
        }
+       allowEdits = Boolean.valueOf(editable).booleanValue();
 
        String editDisabled = "false"; 
        if (request.getAttribute(IActionConstants.EDIT_DISABLED) != null) {
             editDisabled = (String)request.getAttribute(IActionConstants.EDIT_DISABLED);
        }
 
-       boolean disableEdit = !Boolean.valueOf(allowEdits).booleanValue() && Boolean.valueOf(editDisabled).booleanValue();
+       boolean disableEdit = !Boolean.valueOf(editable).booleanValue() && Boolean.valueOf(editDisabled).booleanValue();
 
       String notAllowSearching="true";
       if (request.getAttribute(IActionConstants.MENU_SEARCH_BY_TABLE_COLUMN) != null) {
@@ -214,7 +216,7 @@ function submitFilterForClick(button){
 			<td><button type="button" id="edit"
 					onclick="setMenuAction(this, document.getElementById('menuForm'), '', 'yes', '?ID=');return false;"
 					name="edit"
-					<%if ( !disableEdit ) {%>
+					<%if ( disableEdit ) {%>
 					disabled="disabled"
 					<%} %>>
 					<spring:message code="label.button.modify" />
@@ -339,17 +341,23 @@ function output() {
       }
    }
      if(total == 0){
+         <% if( allowEdits){ %>
     	 document.getElementById("edit").disabled=true;
+    	 <% } %>		
     	 <% if( allowDeactivate){ %>
     	 	document.getElementById("deactivate").disabled=true;
     	 <% } %>	
      } else if(total == 1){
+    	 <% if( allowEdits){ %>
     	 document.getElementById("edit").disabled=false;
+    	 <% } %>		
     	 <% if( allowDeactivate){ %>
     	 	document.getElementById("deactivate").disabled=false;
     	 <% } %>		
      } else {
+    	 <% if( allowEdits){ %>
     	 document.getElementById("edit").disabled=true;
+    	 <% } %>		
     	 <% if( allowDeactivate){ %>
     	 	document.getElementById("deactivate").disabled=false;
     	 <% } %>		

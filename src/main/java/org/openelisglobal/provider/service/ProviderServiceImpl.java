@@ -1,8 +1,10 @@
 package org.openelisglobal.provider.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
 import org.openelisglobal.person.valueholder.Person;
 import org.openelisglobal.provider.dao.ProviderDAO;
@@ -51,11 +53,13 @@ public class ProviderServiceImpl extends BaseObjectServiceImpl<Provider, String>
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Provider> getAllActiveProviders() {
         return getBaseObjectDAO().getAllMatching("active", Boolean.TRUE);
     }
 
     @Override
+    @Transactional
     public void deactivateAllProviders() {
         for (Provider provider : getBaseObjectDAO().getAll()) {
             provider.setActive(false);
@@ -64,6 +68,7 @@ public class ProviderServiceImpl extends BaseObjectServiceImpl<Provider, String>
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Provider getProviderByFhirId(UUID fhirUuid) {
         List<Provider> providers = getBaseObjectDAO().getAllMatching("fhirUuid", fhirUuid);
         if (providers.size() <= 0) {
@@ -74,6 +79,7 @@ public class ProviderServiceImpl extends BaseObjectServiceImpl<Provider, String>
     }
 
     @Override
+    @Transactional(readOnly = true)
     public String getProviderIdByFhirId(UUID fhirUuid) {
         List<Provider> providers = getBaseObjectDAO().getAllMatching("fhirUuid", fhirUuid);
         if (providers.size() <= 0) {
@@ -81,5 +87,33 @@ public class ProviderServiceImpl extends BaseObjectServiceImpl<Provider, String>
         } else {
             return providers.get(0).getId();
         }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Provider> getPagesOfSearchedProviders(int startingRecNo, String parameter) {
+        return baseObjectDAO.getPagesOfSearchedProviders(startingRecNo, parameter);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public int getTotalSearchedProviderCount(String parameter) {
+        return baseObjectDAO.getTotalSearchedProviderCount(parameter);
+    }
+
+    @Override
+    @Transactional
+    public void deactivateProviders(List<Provider> providers) {
+        for (Provider deactivateProvider : providers) {
+            Optional<Provider> dbProvider = baseObjectDAO.get(deactivateProvider.getId());
+            if (dbProvider.isPresent()) {
+                dbProvider.get().setActive(false);
+            } else {
+                LogEvent.logWarn(this.getClass().getName(), "deactivateProviders",
+                        "could not deactivate Provider with id '" + deactivateProvider.getId()
+                                + "' as it could not be found");
+            }
+        }
+
     }
 }
