@@ -45,6 +45,7 @@ import org.openelisglobal.observationhistory.valueholder.ObservationHistory.Valu
 import org.openelisglobal.organization.service.OrganizationService;
 import org.openelisglobal.organization.valueholder.Organization;
 import org.openelisglobal.patient.util.PatientUtil;
+import org.openelisglobal.person.service.PersonService;
 import org.openelisglobal.person.valueholder.Person;
 import org.openelisglobal.provider.service.ProviderService;
 import org.openelisglobal.provider.valueholder.Provider;
@@ -338,8 +339,9 @@ public class SamplePatientUpdateData {
         providerPerson = null;
         if (noRequesterInformation(sampleOrder)) {
             provider = PatientUtil.getUnownProvider();
-        } else if (!GenericValidator.isBlankOrNull(sampleOrder.getProviderId())) {
-            provider = SpringContext.getBean(ProviderService.class).get(sampleOrder.getProviderId());
+        } else if (!GenericValidator.isBlankOrNull(sampleOrder.getProviderPersonId())) {
+            provider = SpringContext.getBean(ProviderService.class).getProviderByPerson(
+                    SpringContext.getBean(PersonService.class).get(sampleOrder.getProviderPersonId()));
             providerPerson = provider.getPerson();
             providerPerson.setSysUserId(currentUserId);
         } else {
@@ -360,7 +362,7 @@ public class SamplePatientUpdateData {
     }
 
     private boolean noRequesterInformation(SampleOrderItem sampleOrder) {
-        return (GenericValidator.isBlankOrNull(sampleOrder.getProviderId())
+        return (GenericValidator.isBlankOrNull(sampleOrder.getProviderPersonId())
                 && GenericValidator.isBlankOrNull(sampleOrder.getProviderFirstName())
                 && GenericValidator.isBlankOrNull(sampleOrder.getProviderWorkPhone())
                 && GenericValidator.isBlankOrNull(sampleOrder.getProviderLastName())

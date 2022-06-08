@@ -23,4 +23,10 @@ public interface ProviderService extends BaseObjectService<Provider, String> {
     Provider getProviderByFhirId(UUID fhirUuid);
 
     String getProviderIdByFhirId(UUID fhirUuid);
+
+    List<Provider> getPagesOfSearchedProviders(int startingRecNo, String parameter);
+
+    int getTotalSearchedProviderCount(String parameter);
+
+    void deactivateProviders(List<Provider> providers);
 }

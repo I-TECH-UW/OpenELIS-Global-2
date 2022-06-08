@@ -32,6 +32,7 @@ import org.openelisglobal.organization.service.OrganizationService;
 import org.openelisglobal.organization.valueholder.Organization;
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.person.valueholder.Person;
+import org.openelisglobal.provider.service.ProviderService;
 import org.openelisglobal.requester.valueholder.SampleRequester;
 import org.openelisglobal.sample.bean.SampleOrderItem;
 import org.openelisglobal.sample.service.SampleService;
@@ -88,7 +89,7 @@ public class SampleOrderService {
         orderItems.setReceivedTime(DateUtil.convertTimestampToStringHourTime(DateUtil.getNowAsTimestamp()));
 
         orderItems.setProvidersList(
-                DisplayListService.getInstance().getFreshList(DisplayListService.ListType.PRACTITIONER));
+                DisplayListService.getInstance().getFreshList(DisplayListService.ListType.PRACTITIONER_PERSONS));
 
         if (needRequesterList) {
             orderItems.setReferringSiteList(DisplayListService.getInstance()
@@ -148,6 +149,10 @@ public class SampleOrderService {
                     observationHistoryService.getRawValueForSample(ObservationType.PROGRAM, sample.getId()));
 
             RequesterService requesterService = new RequesterService(sample.getId());
+            sampleOrder.setProviderPersonId(requesterService.getRequesterPersonId());
+            sampleOrder.setProviderId(
+                    SpringContext.getBean(ProviderService.class).getProviderByPerson(requesterService.getPerson())
+                            .getId());
             sampleOrder.setProviderFirstName(requesterService.getRequesterFirstName());
             sampleOrder.setProviderLastName(requesterService.getRequesterLastName());
             sampleOrder.setProviderWorkPhone(requesterService.getWorkPhone());
@@ -226,7 +231,7 @@ public class SampleOrderService {
             List<SampleRequester> personSampleRequesters = requesterService
                     .getSampleRequestersByType(RequesterService.Requester.PERSON, true);
             SampleRequester samplePersonRequester = personSampleRequesters.size() > 0 ? personSampleRequesters.get(0)
-                            : null;
+                    : null;
             samplePersonRequester.setSysUserId(currentUserId);
             artifacts.setSamplePersonRequester(samplePersonRequester);
         }

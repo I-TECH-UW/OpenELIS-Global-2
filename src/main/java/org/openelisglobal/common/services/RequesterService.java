@@ -94,6 +94,10 @@ public class RequesterService {
         this.sampleId = sampleId;
     }
 
+    public String getRequesterPersonId() {
+        return getPerson() == null ? null : getPerson().getId();
+    }
+
     public String getRequesterFirstName() {
         return getPerson() == null ? null : personService.getFirstName(getPerson());
     }

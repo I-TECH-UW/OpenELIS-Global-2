@@ -1,12 +1,15 @@
 package org.openelisglobal.sample.controller;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Pattern;
 
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.StaleObjectStateException;
+import org.hl7.fhir.r4.model.Enumerations.ResourceType;
+import org.hl7.fhir.r4.model.Reference;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.log.LogEvent;
@@ -24,6 +27,7 @@ import org.openelisglobal.patient.action.IPatientUpdate;
 import org.openelisglobal.patient.action.IPatientUpdate.PatientUpdateStatus;
 import org.openelisglobal.patient.action.bean.PatientManagementInfo;
 import org.openelisglobal.patient.action.bean.PatientSearch;
+import org.openelisglobal.provider.service.ProviderService;
 import org.openelisglobal.sample.action.util.SamplePatientUpdateData;
 import org.openelisglobal.sample.bean.SampleOrderItem;
 import org.openelisglobal.sample.form.SamplePatientEntryForm;
@@ -32,8 +36,8 @@ import org.openelisglobal.sample.service.SamplePatientEntryService;
 import org.openelisglobal.sample.validator.SamplePatientEntryFormValidator;
 import org.openelisglobal.sample.valueholder.SampleAdditionalField;
 import org.openelisglobal.sample.valueholder.SampleAdditionalField.AdditionalFieldName;
-import org.openelisglobal.systemuser.service.UserService;
 import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.systemuser.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -52,20 +56,20 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class SamplePatientEntryController extends BaseSampleEntryController {
 
-    @Value("${org.openelisglobal.requester.lastName:}")
-    private String requesterLastName;
-    @Value("${org.openelisglobal.requester.firstName:}")
-    private String requesterFirstName;
-    @Value("${org.openelisglobal.requester.phone:}")
-    private String requesterPhone;
+//    @Value("${org.openelisglobal.requester.lastName:}")
+//    private String requesterLastName;
+//    @Value("${org.openelisglobal.requester.firstName:}")
+//    private String requesterFirstName;
+//  @Value("${org.openelisglobal.requester.phone:}")
+//  private String requesterPhone;
+    @Value("${org.openelisglobal.requester.identifier:}")
+    private String requestFhirUuid;
 
     private static final String[] ALLOWED_FIELDS = new String[] { "customNotificationLogic",
-            "patientEmailNotificationTestIds",
-            "patientSMSNotificationTestIds", "providerEmailNotificationTestIds", "providerSMSNotificationTestIds",
-            "patientProperties.currentDate",
-            "patientProperties.patientLastUpdated", "patientProperties.personLastUpdated",
-            "patientProperties.patientUpdateStatus", "patientProperties.patientPK", "patientProperties.guid",
-            "patientProperties.fhirUuid",
+            "patientEmailNotificationTestIds", "patientSMSNotificationTestIds", "providerEmailNotificationTestIds",
+            "providerSMSNotificationTestIds", "patientProperties.currentDate", "patientProperties.patientLastUpdated",
+            "patientProperties.personLastUpdated", "patientProperties.patientUpdateStatus",
+            "patientProperties.patientPK", "patientProperties.guid", "patientProperties.fhirUuid",
             "patientProperties.STnumber", "patientProperties.subjectNumber", "patientProperties.nationalId",
             "patientProperties.lastName", "patientProperties.firstName", "patientProperties.aka",
             "patientProperties.mothersName", "patientProperties.mothersInitial", "patientProperties.streetAddress",
@@ -100,12 +104,10 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
             "sampleOrderItems.referringPatientNumber", "sampleOrderItems.referringSiteId",
             "referringSiteDepartmentName", "sampleOrderItems.referringSiteDepartmentId",
             "sampleOrderItems.referringSiteName", "sampleOrderItems.referringSiteCode", "sampleOrderItems.program",
-            "sampleOrderItems.providerLastName", "sampleOrderItems.providerFirstName",
-            "sampleOrderItems.providerWorkPhone", "sampleOrderItems.providerFax", "sampleOrderItems.providerEmail",
-            "sampleOrderItems.facilityAddressStreet", "sampleOrderItems.facilityAddressCommune",
-            "sampleOrderItems.facilityPhone", "sampleOrderItems.facilityFax", "sampleOrderItems.paymentOptionSelection",
-            "sampleOrderItems.billingReferenceNumber", "sampleOrderItems.testLocationCode",
-            "sampleOrderItems.otherLocationCode",
+            "sampleOrderItems.providerPersonId", "sampleOrderItems.facilityAddressStreet",
+            "sampleOrderItems.facilityAddressCommune", "sampleOrderItems.facilityPhone", "sampleOrderItems.facilityFax",
+            "sampleOrderItems.paymentOptionSelection", "sampleOrderItems.billingReferenceNumber",
+            "sampleOrderItems.testLocationCode", "sampleOrderItems.otherLocationCode",
             "sampleOrderItems.contactTracingIndexName", "sampleOrderItems.contactTracingIndexRecordNumber",
             //
             "currentDate", "sampleOrderItems.newRequesterName", "sampleOrderItems.externalOrderNumber",
@@ -115,7 +117,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
             "referralItems*.referralReasonId", "referralItems*.referrer", "referralItems*.referredInstituteId",
             "referralItems*.referredSendDate", "referralItems*.referredTestId", "referralItems*.referredReportDate",
             "referralItems*.note", "useReferral" };
-    private static final String ROLE_RECEPTION = "Reception";        
+    private static final String ROLE_RECEPTION = "Reception";
 
     @Autowired
     private SamplePatientEntryFormValidator formValidator;
@@ -125,7 +127,8 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
     private FhirTransformService fhirTransformService;
     @Autowired
     private UserService userService;
-
+    @Autowired
+    private ProviderService providerService;
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -140,7 +143,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
         SamplePatientEntryForm form = new SamplePatientEntryForm();
 
         request.getSession().setAttribute(SAVE_DISABLED, TRUE);
-        setupForm(form,request, externalOrderNumber);
+        setupForm(form, request, externalOrderNumber);
 
         addFlashMsgsToRequest(request);
         return findForward(FWD_SUCCESS, form);
@@ -160,7 +163,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
         formValidator.validate(form, result);
         if (result.hasErrors()) {
             saveErrors(result);
-            setupForm(form, request ,"");
+            setupForm(form, request, "");
             return findForward(FWD_FAIL_INSERT, form);
         }
         SamplePatientUpdateData updateData = new SamplePatientUpdateData(getSysUserId(request));
@@ -202,7 +205,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 
         if (result.hasErrors()) {
             saveErrors(result);
-            setupForm(form,request, "");
+            setupForm(form, request, "");
             // setSuccessFlag(request, true);
             return findForward(FWD_FAIL_INSERT, form);
         }
@@ -232,7 +235,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 
             // errors.add(ActionMessages.GLOBAL_MESSAGE, error);
             saveErrors(result);
-            setupForm(form,request, "");
+            setupForm(form, request, "");
             request.setAttribute(ALLOW_EDITS_KEY, "false");
             return findForward(FWD_FAIL_INSERT, form);
 
@@ -242,13 +245,18 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
         return findForward(FWD_SUCCESS_INSERT, form);
     }
 
-    private void setupForm(SamplePatientEntryForm form, HttpServletRequest request ,String externalOrderNumber)
+    private void setupForm(SamplePatientEntryForm form, HttpServletRequest request, String externalOrderNumber)
             throws LIMSRuntimeException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         SampleOrderService sampleOrderService = new SampleOrderService();
         form.setSampleOrderItems(sampleOrderService.getSampleOrderItem());
-        form.getSampleOrderItems().setProviderLastName(requesterLastName);
-        form.getSampleOrderItems().setProviderFirstName(requesterFirstName);
-        form.getSampleOrderItems().setProviderWorkPhone(requesterPhone);
+        if (requestFhirUuid != null
+                && requestFhirUuid.toUpperCase().startsWith(ResourceType.PRACTITIONER.toString().toUpperCase())) {
+            Reference providerReference = new Reference(requestFhirUuid);
+            form.getSampleOrderItems()
+                    .setProviderPersonId(providerService
+                            .getProviderByFhirId(UUID.fromString(providerReference.getReferenceElement().getIdPart()))
+                            .getPerson().getId());
+        }
         form.getSampleOrderItems().setExternalOrderNumber(externalOrderNumber);
         form.setPatientProperties(new PatientManagementInfo());
         form.setPatientSearch(new PatientSearch());

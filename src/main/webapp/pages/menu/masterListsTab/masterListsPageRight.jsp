@@ -51,6 +51,9 @@ function /*void*/ showSuccessMessage( show ){
 <c:if test="${menuDef == 'OrganizationMenuDefinition'}">
   <tiles:insertAttribute name="rightOrganization" />
 </c:if>
+<c:if test="${menuDef == 'ProviderMenuDefinition'}">
+  <tiles:insertAttribute name="rightProvider" />
+</c:if>
 <c:if test="${menuDef == 'PatientTypeMenuDefinition'}">
   <tiles:insertAttribute name="rightPatientType" />
 </c:if>

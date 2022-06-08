@@ -31,7 +31,6 @@
     boolean useProviderInfo = FormFields.getInstance().useField( FormFields.Field.ProviderInfo );
     boolean patientRequired = FormFields.getInstance().useField( FormFields.Field.PatientRequired );
     boolean trackPayment = ConfigurationProperties.getInstance().isPropertyValueEqual( Property.TRACK_PATIENT_PAYMENT, "true" );
-    boolean requesterLastNameRequired = FormFields.getInstance().useField( Field.SampleEntryRequesterLastNameRequired );
     boolean acceptExternalOrders = ConfigurationProperties.getInstance().isPropertyValueEqual( Property.ACCEPT_EXTERNAL_ORDERS, "true" );
     boolean restrictNewReferringSiteEntries = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.restrictFreeTextRefSiteEntry, "true");
 	boolean useSiteDepartment = FormFields.getInstance().useField(Field.SITE_DEPARTMENT );
@@ -51,7 +50,7 @@
     var useReferralSiteList = <%= useReferralSiteList%>;
     var useReferralSiteCode = <%= useReferralSiteCode %>;
     var useSiteDepartment = <%= useSiteDepartment %>;
-
+    
     function checkAccessionNumber(accessionNumber) {
         //check if empty
         if (!fieldIsEmptyById("labNo")) {
@@ -418,9 +417,12 @@
 <tr>
     <td>
         <%= MessageUtil.getContextualMessage( "sample.entry.provider" ) %>:
+        <% if( FormFields.getInstance().useField( Field.SampleEntryReferralSiteNameRequired ) ){%>
+        <span class="requiredlabel">*</span>
+        <% } %>
     </td>
     <td>
-    	<form:select id="providerId" path="sampleOrderItems.providerId" onchange="setOrderModified();" >
+    	<form:select id="providerPersonId" path="sampleOrderItems.providerPersonId" onchange="setOrderModified();" >
     		<option></option>
     		<form:options items="${form.sampleOrderItems.providersList}" itemValue="id" itemLabel="value" />
     	</form:select>
@@ -575,7 +577,7 @@
         capitialize = true;
         // Actually executes autocomplete
         dropdown.combobox();
-        var providerDropdown = jQuery("select#providerId");
+        var providerDropdown = jQuery("select#providerPersonId");
         autoCompleteWidth = providerDropdown.width() + 66 + 'px';
         clearNonMatching = true;
         capitialize = true;

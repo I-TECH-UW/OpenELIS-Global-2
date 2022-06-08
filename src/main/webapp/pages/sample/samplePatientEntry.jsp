@@ -29,7 +29,7 @@
     boolean useProviderInfo = FormFields.getInstance().useField(FormFields.Field.ProviderInfo);
     boolean patientRequired = FormFields.getInstance().useField(FormFields.Field.PatientRequired);
     boolean trackPayment = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.TRACK_PATIENT_PAYMENT, "true");
-    boolean requesterLastNameRequired = FormFields.getInstance().useField(Field.SampleEntryRequesterLastNameRequired);
+    boolean requesterPersonRequired = FormFields.getInstance().useField(Field.SampleEntryRequesterPersonRequired);
 	boolean acceptExternalOrders = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.ACCEPT_EXTERNAL_ORDERS, "true");
 %>
 
@@ -54,7 +54,7 @@
 
 var useSTNumber = <%= useSTNumber %>;
 var useMothersName = <%= useMothersName %>;
-var requesterLastNameRequired = <%= requesterLastNameRequired %>;
+var requesterPersonRequired = <%= requesterPersonRequired %>;
 var acceptExternalOrders = <%= acceptExternalOrders %>;
 var dirty = false;
 var invalidSampleElements = [];
@@ -62,8 +62,8 @@ var requiredFields = new Array("labNo", "receivedDateForDisplay" );
 var currentReferalDiv ;
 var currentReferalDivSelector ;
 
-if( requesterLastNameRequired ){
-    requiredFields.push("providerLastNameID");
+if( requesterPersonRequired ){
+    requiredFields.push("providerPersonId");
 }
 <% if( FormFields.getInstance().useField(Field.SampleEntryUseRequestDate)){ %>
     requiredFields.push("requestDate");
@@ -438,8 +438,7 @@ function parsePatient(patienttag) {
 
 function clearRequester() {
 
-    $("providerFirstNameID").value = '';
-    $("providerLastNameID").value = '';
+    $("providerPersonId").value = '';
     $("labNo").value = '';
     $("receivedDateForDisplay").value = '${entryDate}';
     $("receivedTime").value = '';
@@ -448,26 +447,11 @@ function clearRequester() {
 }
 
 function parseRequester(requester) {
-    var firstName = requester.item(0).getElementsByTagName("firstName");
-    var first = "";
-    if (firstName.length > 0) {
-            first = firstName[0].firstChild.nodeValue;
-            $("providerFirstNameID").value = first;
-    }
-    var lastName = requester.item(0).getElementsByTagName("lastName");
-    var last = "";
-    if (lastName.length > 0) {
-        last = lastName[0].firstChild.nodeValue;
-        $("providerLastNameID").value = last;    
-    }
-    
-    var phoneNum = requester.item(0).getElementsByTagName("providerWorkPhoneID");
-    var phone = "";
-    if (phoneNum.length > 0) {
-        if (phoneNum[0].firstChild) {
-            phone = phoneNum[0].firstChild.nodeValue;
-            $("providerWorkPhoneID").value = phone;
-        }
+    var requesterIdElement = requester.item(0).getElementsByTagName("personId");
+    var requesterId = "";
+    if (requesterIdElement.length > 0) {
+    	requesterId = requesterIdElement[0].firstChild.nodeValue;
+            $("providerPersonId").value = first;
     }
 }
 
