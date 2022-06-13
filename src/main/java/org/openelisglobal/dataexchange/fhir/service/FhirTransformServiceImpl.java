@@ -422,9 +422,10 @@ public class FhirTransformServiceImpl implements FhirTransformService {
     private void updateReferringTaskWithTaskInfo(Task referringTask, Task task) {
         if (TaskStatus.COMPLETED.equals(task.getStatus())) {
             referringTask.setStatus(TaskStatus.COMPLETED);
-            referringTask.setOutput(task.getOutput());
+            task.getOutput().forEach(outPut -> {
+                referringTask.addOutput(outPut);
+            });
         }
-
     }
 
     private Optional<Task> getReferringTaskForSample(Sample sample) {
