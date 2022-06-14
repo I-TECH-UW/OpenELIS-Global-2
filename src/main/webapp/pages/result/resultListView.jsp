@@ -169,6 +169,13 @@ function /*void*/ makeDirty(){
 	window.onbeforeunload = formWarning;
 }
 
+ function checkCriticalResult( index ){
+	var criticalResult = jQuery("#results_" + index).val();
+	if((criticalResult >= 0) && (criticalResult <= 10) || (criticalResult >= 95)){
+		alert( `<%=MessageUtil.getContextualMessage("result.critical")%>` );
+	} 
+}
+
 function toggleKitDisplay( button ){
 	if( button.value == "+" ){
 		$(kitView).show();
@@ -1089,7 +1096,7 @@ jQuery(document).ready(function (index) {
 					   			 ${(testResult.reflexGroup && not testResult.childReflex) ? 'updateReflexChild(' += testResult.reflexParentGroup += ');' : ''}
 					   			 ${(noteRequired && not empty testResult.resultValue) ? 'showNote(' += iter.index += ');' : ''}
 					   			 ${(testResult.displayResultAsLog) ? 'updateLogValue(this, ' += iter.index += ');' : ''}
-					   			 updateShadowResult(this, ${iter.index});" />
+					   			 updateShadowResult(this, ${iter.index}); checkCriticalResult(${iter.index});" />
 							<form:hidden path="testResult[${iter.index}].significantDigits" />
 						</c:if>
 						<c:if test="${testResult.resultType == 'A'}">
@@ -1113,7 +1120,7 @@ jQuery(document).ready(function (index) {
 								onkeyup="value = value.substr(0,200);
 						           markUpdated(${iter.index});
 					   			   ${(noteRequired && not (empty testResult.resultValue)) ? 'showNote(' += iter.index += ');' : ''}
-					   			   updateShadowResult(this, ${iter.index}); " />
+					   			   updateShadowResult(this, ${iter.index}); checkCriticalResult(${iter.index}); " />
 						</c:if>
 						<c:if test="${testResult.resultType == 'D'}">
 							<%-- dictionary results --%>

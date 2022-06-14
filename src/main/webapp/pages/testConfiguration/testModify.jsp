@@ -917,6 +917,27 @@
             }
         });
     }
+
+    function criticalRangeCheck() {
+        var highCriticalRangeValue, lowCriticalRangeValue;
+        var lowCriticalRange = jQuery("#lowCriticalRange");
+        var highCriticalRange = jQuery("#highCriticalRange");
+        lowCriticalRange.removeClass("error");
+        lowCriticalRangeValue = lowCriticalRange.val();
+        if((lowCriticalRangeValue >= 0) && (lowCriticalRangeValue <= 10) || (lowCriticalRangeValue >= 95)){
+            lowCriticalRange.addClass("error");
+            alert("<%=MessageUtil.getContextualMessage("error.out.side.critical.range")%>");
+            return;
+        }
+
+        highCriticalRange.removeClass("error");
+        highCriticalRangeValue = highCriticalRange.val();
+        if((highCriticalRangeValue >= 0) && (highCriticalRangeValue <= 10) || (highCriticalRangeValue >= 95)){
+            highCriticalRange.addClass("error");
+            alert("<%=MessageUtil.getContextualMessage("error.out.side.critical.range")%>");
+            return;
+        }
+    }
     
     function checkReadyForNextStep() {
         var ready = true;
@@ -1886,6 +1907,8 @@ td {
 					<td><span class="catalog-label"><spring:message code="configuration.test.catalog.normal.range" /></span></td>
 					<td><span class="catalog-label"><spring:message code="configuration.test.catalog.valid.range" /></span></td>
                     <td><span class="catalog-label"><spring:message code="configuration.test.catalog.reporting.range" /></span></td>
+                    <td><span class="catalog-label"><spring:message code="configuration.test.catalog.critical.range" /></span></td>
+
 				</tr>
 				<%
 					String fLimitString = "";
@@ -1895,6 +1918,8 @@ td {
 						fLimitString = fLimitString + limitBean.getNormalRange() + ",";
 						fLimitString = fLimitString + limitBean.getValidRange() + "|";
                         fLimitString = fLimitString + limitBean.getReportingRange() + "|";
+                        fLimitString = fLimitString + limitBean.getCriticalRange() + "|";
+
 
 				%>
 				<tr>
@@ -1903,6 +1928,8 @@ td {
 					<td><b><%=limitBean.getNormalRange()%></b></td>
 					<td><b><%=limitBean.getValidRange()%></b></td>
                     <td><b><%=limitBean.getReportingRange()%></b></td>
+                    <td><b><%=limitBean.getCriticalRange()%></b></td>
+
 
 				</tr>
 				<%
@@ -2420,6 +2447,8 @@ td {
 					onchange="normalRangeCheck('0');"></td>
                 <td><input type="text" value="-Infinity" size="10" id="lowReportingRange" onchange="reportingRangeCheck();"></td>
                 <td><input type="text" value="Infinity" size="10" id="highReportingRange" onchange="reportingRangeCheck();"></td>
+                td><input type="text" value="0" size="10" id="lowCriticalRange" onchange="criticalRangeCheck();"></td>
+                <td><input type="text" value="0" size="10" id="highCriticalRange" onchange="criticalRangeCheck();"></td>
 				<td><input type="text" value="-Infinity" size="10"
 					id="lowValid" onchange="validRangeCheck();"></td>
 				<td><input type="text" value="Infinity" size="10"

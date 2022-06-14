@@ -11,6 +11,7 @@
 	<include file="liquibase/2.6.x.x/update_roles.xml"/>
 	<include file="liquibase/2.6.x.x/add_lab_roles_map_table.xml"/>	
 	<include file="liquibase/2.6.x.x/reporting_range.xml"/>	
+	<include file="liquibase/2.6.x.x/critical_range.xml"/>	
 	<include file="liquibase/2.6.x.x/update_global_admin_role.xml"/>
 	<include file="liquibase/2.6.x.x/add_user_filter_permision.xml"/>		
 	<include file="liquibase/2.6.x.x/address_line.xml"/>

@@ -62,6 +62,10 @@ function  /*void*/ setMyCancelAction(form, action, validate, parameters)
 	setAction(document.getElementById("mainForm"), 'Cancel', 'no', '');
 }
 
+function /*void*/ markUpdated(){
+	jQuery("#saveButtonId").prop('disabled', false);
+}
+
 function /*void*/ addRemoveRequest( checkbox ){
 	checkedCount = Math.max(checkedCount + (checkbox.checked ? 1 : -1), 0 );
 
@@ -69,7 +73,11 @@ function /*void*/ addRemoveRequest( checkbox ){
 		showSuccessMessage(false); //refers to last save
 	}
 
-	setSaveButton();
+	jQuery( "#saveButtonId" ).prop("disabled",false);
+
+
+	//  setSaveButton();
+	//  $("saveButtonId").disabled = false;
 
 }
 
@@ -533,7 +541,11 @@ function addSampleTable(){
         var sampleAddIsValid = typeof(sampleAddValid) != 'undefined' ?  sampleAddValid(false) : true;
         var sampleConfirmationIsValid = typeof(sampleConfirmationValid) != 'undefined' ?  sampleConfirmationValid() : true;
 
-        $("saveButtonId").disabled = errorsOnForm() || !sampleAddIsValid || !sampleConfirmationIsValid || (checkedCount == 0  && !accessionChanged && !samplesHaveBeenAdded() && !orderChanged && !sampleItemChanged );
+		// if(errorsOnForm() || !sampleAddIsValid || !sampleConfirmationIsValid || (checkedCount == 0  && !accessionChanged && !samplesHaveBeenAdded() && !orderChanged && !sampleItemChanged)){
+		//  $("saveButtonId").disabled = false;
+          $("saveButtonId").disabled = errorsOnForm() || !sampleAddIsValid || !sampleConfirmationIsValid || (checkedCount == 0  && !accessionChanged && !samplesHaveBeenAdded() && !orderChanged && !sampleItemChanged );
+		// }
+		//  else{$("saveButtonId").disabled = true}
     }
 
 </script>

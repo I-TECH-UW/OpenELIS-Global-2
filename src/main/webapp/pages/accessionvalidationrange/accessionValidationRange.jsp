@@ -104,6 +104,13 @@ function /*void*/ enableDisableCheckboxes( matchedElement, groupingNumber ){
 	jQuery("selectAllAccept").checked = false;
 }
 
+function criticalResultCheck( index ){
+	var result = jQuery("#resultId_" + index).val();
+	if((result >= 0) && (result <= 10) || (result >= 95)){
+		alert( `<%=MessageUtil.getContextualMessage("result.critical")%>` );
+	} 
+}
+
 function /*void*/ acceptSample(element, groupingNumber ){
 	jQuery(".accepted_" + groupingNumber).each( function(item){
 		item.checked = element.checked;
@@ -601,7 +608,7 @@ function altAccessionHighlightSearch(accessionNumber) {
 									   id='rejected_${iter.index}'
 									   cssClass='rejected rejected_${resultList.sampleGroupingNumber}'
 									   onchange="markUpdated(); makeDirty();"
-									   onclick='enableDisableCheckboxes("accepted_${iter.index}", "${resultList.sampleGroupingNumber}");' 
+									   onclick='enableDisableCheckboxes("accepted_${iter.index}", "${resultList.sampleGroupingNumber}"); criticalResultCheck(${iter.index});' 
 									   />
 				</td>
 				</c:if><c:if test="${not resultList.showAcceptReject}">

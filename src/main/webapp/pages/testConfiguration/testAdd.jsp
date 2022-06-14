@@ -589,6 +589,29 @@
             }
         });
     }
+
+    function criticalRangeCheck() {
+        var highCriticalRangeValue, lowCriticalRangeValue;
+        var lowCriticalRange = jQuery("#lowCriticalRange");
+        var highCriticalRange = jQuery("#highCriticalRange");
+        lowCriticalRange.removeClass("error");
+        lowCriticalRangeValue = lowCriticalRange.val();
+        if((lowCriticalRangeValue >= 0) && (lowCriticalRangeValue <= 10) || (lowCriticalRangeValue >= 95)){
+            lowCriticalRange.addClass("error");
+            alert("<%=MessageUtil.getContextualMessage("error.out.side.critical.range")%>");
+            return;
+        }
+
+        highCriticalRange.removeClass("error");
+        highCriticalRangeValue = highCriticalRange.val();
+        if((highCriticalRangeValue >= 0) && (highCriticalRangeValue <= 10) || (highCriticalRangeValue >= 95)){
+            highCriticalRange.addClass("error");
+            alert("<%=MessageUtil.getContextualMessage("error.out.side.critical.range")%>");
+            return;
+        }
+    }
+
+
     function checkReadyForNextStep() {
         var ready = true;
         if (step == "step1") {
@@ -1390,17 +1413,21 @@ td {
         <table style="display:inline-table">
             <tr>
                 <th></th>
-                <th colspan="8"><spring:message code="configuration.test.catalog.normal.range" /></th>
-                <th colspan="2"><spring:message code="configuration.test.catalog.valid.range" /> </th>
+                <th colspan="6"><spring:message code="configuration.test.catalog.normal.range" /></th>
+                <th colspan="6"><spring:message code="configuration.test.catalog.valid.range" /> </th>
+                <!-- <th colspan="4"><spring:message code="configuration.test.catalog.critical.range" /> </th> -->
+
                 <th></th>
             </tr>
             <tr>
                 <td><spring:message code="label.sex.dependent" /></td>
                 <td><span class="sexRange" style="display: none"><spring:message code="label.sex" /> </span></td>
-                <td colspan="4" align="center"><spring:message code="label.age.range" /> </td>
-                <td colspan="2" align="center"><spring:message code="label.range" /></td>
-                <td colspan="2" align="center"><spring:message code="label.reporting.range" /></td>
-                <td colspan="2"></td>
+                <td colspan="1"></td>
+                <td colspan="2" align="right"><spring:message code="label.age.range" /> </td>
+                <td colspan="2" align="right"><spring:message code="label.range" /></td>
+                <td colspan="2" align="right"><spring:message code="label.valid" /></td>
+                <td colspan="2" align="right"><spring:message code="label.reporting.range" /></td> 
+                <td colspan="2" align="right"><spring:message code="label.critical.range" /></td>
             </tr>
             <tr class="row_0">
                 <td><input type="hidden" class="rowKey" value="0"/><input id="genderCheck_0" type="checkbox"
@@ -1411,16 +1438,16 @@ td {
                             <spring:message code="sex.male" />
                         </span>
                 </td>
-                <td><input class="yearMonthSelect_0" type="radio" name="time_0" value="<%=MessageUtil.getContextualMessage("abbreviation.year.single")%>"
+                <td align="left"><input class="yearMonthSelect_0" type="radio" name="time_0" value="<%=MessageUtil.getContextualMessage("abbreviation.year.single")%>"
                            onchange="upperAgeRangeChanged('0')" checked><spring:message code="abbreviation.year.single" />
                     <input class="yearMonthSelect_0" type="radio" name="time_0" value="<%=MessageUtil.getContextualMessage("abbreviation.month.single")%>"
                            onchange="upperAgeRangeChanged('0')"><spring:message code="abbreviation.month.single" />
                     <input class="yearMonthSelect_0" type="radio" name="time_0" value="<%=MessageUtil.getContextualMessage("abbreviation.day.single")%>"
                            onchange="upperAgeRangeChanged('0')"><spring:message code="abbreviation.day.single" />&nbsp;</td>
-                <td id="lowerAge_0">0&nbsp;</td>
-                <td><input type="text" id="upperAgeSetter_0" value="Infinity" size="10"
+                <td id="lowerAge_0" align="left">0&nbsp;</td>
+                <td align="left"><input type="text" id="upperAgeSetter_0" value="Infinity" size="10"
                            onchange="upperAgeRangeChanged('0')"><span id="upperAge_0"></span></td>
-                <td>
+                <td align="left">
                     <select id="ageRangeSelect_0" onchange="ageRangeSelected( this, '0');">
                         <option value="0"></option>
                         <% for (IdValuePair pair : ageRangeList) { %>
@@ -1429,15 +1456,20 @@ td {
                         <% } %>
                     </select>
                 </td>
-                <td><input type="text" value="-Infinity" size="10" id="lowNormal_0" class="lowNormal"
+                <td align="left"><input type="text" value="-Infinity" size="10" id="lowNormal_0" class="lowNormal"
                            onchange="normalRangeCheck('0');"></td>
-                <td><input type="text" value="Infinity" size="10" id="highNormal_0" class="highNormal"
+                <td align="left"><input type="text" value="Infinity" size="10" id="highNormal_0" class="highNormal"
                            onchange="normalRangeCheck('0');"></td>
-                <td><input type="text" value="-Infinity" size="10" id="lowReportingRange" onchange="reportingRangeCheck();"></td>
-                <td><input type="text" value="Infinity" size="10" id="highReportingRange" onchange="reportingRangeCheck();"></td>
 
-                <td><input type="text" value="-Infinity" size="10" id="lowValid" onchange="validRangeCheck();"></td>
-                <td><input type="text" value="Infinity" size="10" id="highValid" onchange="validRangeCheck();"></td>
+                <td align="left"><input type="text" value="-Infinity" size="10" id="lowValid" onchange="validRangeCheck();"></td>
+                <td align="left"><input type="text" value="Infinity" size="10" id="highValid" onchange="validRangeCheck();"></td>
+
+                <td align="left"><input type="text" value="-Infinity" size="10" id="lowReportingRange" onchange="reportingRangeCheck();"></td>
+                <td align="left"><input type="text" value="Infinity" size="10" id="highReportingRange" onchange="reportingRangeCheck();"></td>
+
+                <td align="left"><input type="text" value="0" size="10" id="lowCriticalRange" onchange="criticalRangeCheck();"></td>
+                <td align="left"><input type="text" value="0" size="10" id="highCriticalRange" onchange="criticalRangeCheck();"></td>
+
             </tr>
             <tr class="sexRange_0 row_0" style="display: none">
                 <td></td>
