@@ -2447,7 +2447,7 @@ td {
 					onchange="normalRangeCheck('0');"></td>
                 <td><input type="text" value="-Infinity" size="10" id="lowReportingRange" onchange="reportingRangeCheck();"></td>
                 <td><input type="text" value="Infinity" size="10" id="highReportingRange" onchange="reportingRangeCheck();"></td>
-                td><input type="text" value="0" size="10" id="lowCriticalRange" onchange="criticalRangeCheck();"></td>
+                <td><input type="text" value="0" size="10" id="lowCriticalRange" onchange="criticalRangeCheck();"></td>
                 <td><input type="text" value="0" size="10" id="highCriticalRange" onchange="criticalRangeCheck();"></td>
 				<td><input type="text" value="-Infinity" size="10"
 					id="lowValid" onchange="validRangeCheck();"></td>

@@ -62,22 +62,13 @@ function  /*void*/ setMyCancelAction(form, action, validate, parameters)
 	setAction(document.getElementById("mainForm"), 'Cancel', 'no', '');
 }
 
-function /*void*/ markUpdated(){
-	jQuery("#saveButtonId").prop('disabled', false);
-}
-
 function /*void*/ addRemoveRequest( checkbox ){
 	checkedCount = Math.max(checkedCount + (checkbox.checked ? 1 : -1), 0 );
 
 	if( typeof(showSuccessMessage) === 'function' ){
 		showSuccessMessage(false); //refers to last save
 	}
-
-	jQuery( "#saveButtonId" ).prop("disabled",false);
-
-
-	//  setSaveButton();
-	//  $("saveButtonId").disabled = false;
+	  setSaveButton();
 
 }
 
@@ -541,11 +532,7 @@ function addSampleTable(){
         var sampleAddIsValid = typeof(sampleAddValid) != 'undefined' ?  sampleAddValid(false) : true;
         var sampleConfirmationIsValid = typeof(sampleConfirmationValid) != 'undefined' ?  sampleConfirmationValid() : true;
 
-		// if(errorsOnForm() || !sampleAddIsValid || !sampleConfirmationIsValid || (checkedCount == 0  && !accessionChanged && !samplesHaveBeenAdded() && !orderChanged && !sampleItemChanged)){
-		//  $("saveButtonId").disabled = false;
           $("saveButtonId").disabled = errorsOnForm() || !sampleAddIsValid || !sampleConfirmationIsValid || (checkedCount == 0  && !accessionChanged && !samplesHaveBeenAdded() && !orderChanged && !sampleItemChanged );
-		// }
-		//  else{$("saveButtonId").disabled = true}
     }
 
 </script>

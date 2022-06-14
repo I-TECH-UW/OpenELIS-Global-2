@@ -1415,8 +1415,6 @@ td {
                 <th></th>
                 <th colspan="6"><spring:message code="configuration.test.catalog.normal.range" /></th>
                 <th colspan="6"><spring:message code="configuration.test.catalog.valid.range" /> </th>
-                <!-- <th colspan="4"><spring:message code="configuration.test.catalog.critical.range" /> </th> -->
-
                 <th></th>
             </tr>
             <tr>
