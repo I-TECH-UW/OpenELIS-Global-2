@@ -70,6 +70,7 @@ public abstract class ConfigurationProperties {
         resultTechnicianName("ResultTechnicianName"),        //If true the technicians name is needed for results
         allowResultRejection("allowResultRejection"),        //If true then a technician has the ability to reject an individual test and select a reason for rejection
         restrictFreeTextRefSiteEntry("restrictFreeTextRefSiteEntry"), //If true then a user cannot enter new referring sites during sample entry and must choose from list provided
+        restrictFreeTextProviderEntry("restrictFreeTextProviderEntry"), //If true then a user cannot enter new providers during sample entry and must choose from list provided
         autoFillTechNameBox("autoFillTechNameBox"),         //If true a box will be provided to auto-fill technicians name for all results on page
         autoFillTechNameUser("autoFillTechNameUser"),        //If true the technicians name will be auto-filled with the name of the logged in user
         AUTOFILL_COLLECTION_DATE("auto-fill collection date/time"),    //If true the collection date will be auto-filled with current date
