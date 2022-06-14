@@ -63,8 +63,9 @@ var currentReferalDiv ;
 var currentReferalDivSelector ;
 
 if( requesterPersonRequired ){
-    requiredFields.push("providerPersonId");
+    requiredFields.push("providerLastNameID");
 }
+
 <% if( FormFields.getInstance().useField(Field.SampleEntryUseRequestDate)){ %>
     requiredFields.push("requestDate");
 <% } %>
@@ -437,13 +438,22 @@ function parsePatient(patienttag) {
 
 
 function clearRequester() {
-
-    $("providerPersonId").value = '';
+	clearProvider();
+    
     $("labNo").value = '';
     $("receivedDateForDisplay").value = '${entryDate}';
     $("receivedTime").value = '';
  //   $("externalOrderNumber").value = '';
 
+}
+
+function clearProvider() {
+	$("providerFirstNameID").value = '';
+	$("providerLastNameID").value = '';
+	$("providerPersonId").value = '';
+	$("providerWorkPhoneID").value = '';
+	$("providerEmailID").value = '';
+	$("providerFaxID").value = '';
 }
 
 function parseRequester(requester) {
@@ -452,6 +462,28 @@ function parseRequester(requester) {
     if (requesterIdElement.length > 0) {
     	requesterId = requesterIdElement[0].firstChild.nodeValue;
             $("providerPersonId").value = first;
+    }
+    
+    var firstName = requester.item(0).getElementsByTagName("firstName");
+    var first = "";
+    if (firstName.length > 0) {
+            first = firstName[0].firstChild.nodeValue;
+            $("providerFirstNameID").value = first;
+    }
+    var lastName = requester.item(0).getElementsByTagName("lastName");
+    var last = "";
+    if (lastName.length > 0) {
+        last = lastName[0].firstChild.nodeValue;
+        $("providerLastNameID").value = last;    
+    }
+    
+    var phoneNum = requester.item(0).getElementsByTagName("providerWorkPhoneID");
+    var phone = "";
+    if (phoneNum.length > 0) {
+        if (phoneNum[0].firstChild) {
+            phone = phoneNum[0].firstChild.nodeValue;
+            $("providerWorkPhoneID").value = phone;
+        }
     }
 }
 

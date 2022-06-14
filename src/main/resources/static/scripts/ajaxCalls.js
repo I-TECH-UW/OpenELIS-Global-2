@@ -26,6 +26,48 @@ function getNotificationsForTests( testIds, success, failure){
 
 //sensitive data is being transmitted, therefore a token check should be done even on GET. 
 //Otherwise this should be moved to a POST request and rely on regular csrf functionality
+function getProviderInfo( providerId, success, failure){
+	if( !failure ){	failure = defaultFailure;}
+	if (!providerId || providerId === "") {
+		return;
+	}
+
+	new Ajax.Request('Provider/' + providerId,
+			{
+				method : 'get', 
+			    //indicator: 'throbbing',
+				requestHeaders : {
+					"X-CSRF-Token" : getCsrfToken()
+				},
+				onSuccess : success,
+				onFailure : failure
+			});
+
+}
+
+//sensitive data is being transmitted, therefore a token check should be done even on GET. 
+//Otherwise this should be moved to a POST request and rely on regular csrf functionality
+function getProviderInfoByPersonId( personId, success, failure){
+	if( !failure ){	failure = defaultFailure;}
+	if (!personId || personId === "") {
+		return;
+	}
+
+	new Ajax.Request('Provider/Person/' + personId,
+			{
+				method : 'get', 
+			    //indicator: 'throbbing',
+				requestHeaders : {
+					"X-CSRF-Token" : getCsrfToken()
+				},
+				onSuccess : success,
+				onFailure : failure
+			});
+
+}
+
+//sensitive data is being transmitted, therefore a token check should be done even on GET. 
+//Otherwise this should be moved to a POST request and rely on regular csrf functionality
 function getLabOrder( orderNumber, success, failure){
 	if( !failure ){	failure = defaultFailure;}
 	

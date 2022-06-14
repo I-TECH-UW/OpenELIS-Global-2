@@ -85,6 +85,8 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
                 Property.restrictFreeTextRefSiteEntry.getName(), "false");
         setDBPropertyMappingAndDefault(Property.restrictFreeTextMethodEntry,
                 Property.restrictFreeTextMethodEntry.getName(), "false");          
+        setDBPropertyMappingAndDefault(Property.restrictFreeTextProviderEntry,
+                Property.restrictFreeTextProviderEntry.getName(), "false");
         setDBPropertyMappingAndDefault(Property.autoFillTechNameBox, Property.autoFillTechNameBox.getName(), "false");
         setDBPropertyMappingAndDefault(Property.autoFillTechNameUser, Property.autoFillTechNameUser.getName(), "false");
         setDBPropertyMappingAndDefault(Property.failedValidationMarker, Property.failedValidationMarker.getName(),

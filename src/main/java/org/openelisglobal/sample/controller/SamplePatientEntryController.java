@@ -28,6 +28,7 @@ import org.openelisglobal.patient.action.IPatientUpdate.PatientUpdateStatus;
 import org.openelisglobal.patient.action.bean.PatientManagementInfo;
 import org.openelisglobal.patient.action.bean.PatientSearch;
 import org.openelisglobal.provider.service.ProviderService;
+import org.openelisglobal.provider.valueholder.Provider;
 import org.openelisglobal.sample.action.util.SamplePatientUpdateData;
 import org.openelisglobal.sample.bean.SampleOrderItem;
 import org.openelisglobal.sample.form.SamplePatientEntryForm;
@@ -104,7 +105,9 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
             "sampleOrderItems.referringPatientNumber", "sampleOrderItems.referringSiteId",
             "referringSiteDepartmentName", "sampleOrderItems.referringSiteDepartmentId",
             "sampleOrderItems.referringSiteName", "sampleOrderItems.referringSiteCode", "sampleOrderItems.program",
-            "sampleOrderItems.providerPersonId", "sampleOrderItems.facilityAddressStreet",
+            "sampleOrderItems.providerPersonId", "sampleOrderItems.providerLastName",
+            "sampleOrderItems.providerFirstName", "sampleOrderItems.providerWorkPhone", "sampleOrderItems.providerFax",
+            "sampleOrderItems.providerEmail", "sampleOrderItems.facilityAddressStreet",
             "sampleOrderItems.facilityAddressCommune", "sampleOrderItems.facilityPhone", "sampleOrderItems.facilityFax",
             "sampleOrderItems.paymentOptionSelection", "sampleOrderItems.billingReferenceNumber",
             "sampleOrderItems.testLocationCode", "sampleOrderItems.otherLocationCode",
@@ -252,10 +255,11 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
         if (requestFhirUuid != null
                 && requestFhirUuid.toUpperCase().startsWith(ResourceType.PRACTITIONER.toString().toUpperCase())) {
             Reference providerReference = new Reference(requestFhirUuid);
-            form.getSampleOrderItems()
-                    .setProviderPersonId(providerService
-                            .getProviderByFhirId(UUID.fromString(providerReference.getReferenceElement().getIdPart()))
-                            .getPerson().getId());
+            Provider provider = providerService
+                    .getProviderByFhirId(UUID.fromString(providerReference.getReferenceElement().getIdPart()));
+            if (provider != null) {
+                form.getSampleOrderItems().setProviderPersonId(provider.getPerson().getId());
+            }
         }
         form.getSampleOrderItems().setExternalOrderNumber(externalOrderNumber);
         form.setPatientProperties(new PatientManagementInfo());
