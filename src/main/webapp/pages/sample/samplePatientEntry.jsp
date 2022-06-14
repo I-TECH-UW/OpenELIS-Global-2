@@ -451,7 +451,7 @@ function parseRequester(requester) {
     var requesterId = "";
     if (requesterIdElement.length > 0) {
     	requesterId = requesterIdElement[0].firstChild.nodeValue;
-            $("providerPersonId").value = first;
+             jQuery("#providerPersonId").val(requesterId);
     }
 }
 
