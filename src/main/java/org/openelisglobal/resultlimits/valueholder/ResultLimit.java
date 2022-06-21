@@ -18,8 +18,10 @@ public class ResultLimit extends BaseObject<String> {
     private double highValid = Double.POSITIVE_INFINITY;
     private double lowReportingRange = Double.NEGATIVE_INFINITY;
     private double highReportingRange = Double.POSITIVE_INFINITY;
-    private double highCriticalRange = Double.POSITIVE_INFINITY;
-    private double lowCriticalRange = Double.NEGATIVE_INFINITY;
+    private double highRangeHigh = Double.POSITIVE_INFINITY;
+    private double highRangeLow = Double.NEGATIVE_INFINITY;
+    private double lowRangeLow = Double.POSITIVE_INFINITY;
+    private double lowRangeHigh = Double.NEGATIVE_INFINITY;
     private String dictionaryNormalId;
     private boolean alwaysValidate;
 
@@ -99,20 +101,36 @@ public class ResultLimit extends BaseObject<String> {
         return highReportingRange;
     }
 
-    public void setLowCriticalRange(double lowCriticalRange) {
-        this.lowCriticalRange = lowCriticalRange;
+    public void setLowRangeLow(double lowRangeLow) {
+        this.lowRangeLow = lowRangeLow;
     }
 
-    public double getLowCriticalRange() {
-        return lowCriticalRange;
+    public double getLowRangeLow() {
+        return lowRangeLow;
     }
 
-    public void setHighCriticalRange(double highCriticalRange) {
-        this.highCriticalRange = highCriticalRange;
+    public void setLowRangeHigh(double lowRangeHigh) {
+        this.lowRangeHigh = lowRangeHigh;
     }
 
-    public double getHighCriticalRange() {
-        return highCriticalRange;
+    public double getLowRangeHigh() {
+        return lowRangeHigh;
+    }
+
+    public void setHighRangeHigh(double highRangeHigh) {
+        this.highRangeHigh = highRangeHigh;
+    }
+
+    public double getHighRangeHigh() {
+        return highRangeHigh;
+    }
+
+    public void setHighRangeLow(double highRangeLow) {
+        this.highRangeLow = highRangeLow;
+    }
+
+    public double getHighRangeLow() {
+        return highRangeLow;
     }
 
 

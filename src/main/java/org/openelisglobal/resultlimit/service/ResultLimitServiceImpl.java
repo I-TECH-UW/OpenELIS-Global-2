@@ -316,7 +316,7 @@ public class ResultLimitServiceImpl extends BaseObjectServiceImpl<ResultLimit, S
         String range = "";
         if (resultLimit != null && !GenericValidator.isBlankOrNull(resultLimit.getResultTypeId())) {
             if (NUMERIC_RESULT_TYPE_ID.equals(resultLimit.getResultTypeId())) {
-                range = getDisplayNormalRange(resultLimit.getLowCriticalRange(), resultLimit.getHighCriticalRange(), significantDigits,
+                range = getDisplayNormalRange(resultLimit.getLowRangeLow(), resultLimit.getHighRangeHigh(), significantDigits,
                         separator);
             }
         }

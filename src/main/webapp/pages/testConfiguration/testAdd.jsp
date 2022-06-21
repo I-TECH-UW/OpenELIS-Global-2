@@ -590,22 +590,43 @@
         });
     }
 
-    function criticalRangeCheck() {
-        var highCriticalRangeValue, lowCriticalRangeValue;
-        var lowCriticalRange = jQuery("#lowCriticalRange");
-        var highCriticalRange = jQuery("#highCriticalRange");
-        lowCriticalRange.removeClass("error");
-        lowCriticalRangeValue = lowCriticalRange.val();
-        if((lowCriticalRangeValue >= 0) && (lowCriticalRangeValue <= 10) || (lowCriticalRangeValue >= 95)){
-            lowCriticalRange.addClass("error");
+    function lowCriticalRangeCheck() {
+        var lowRangeHighValue, lowRangeLowValue;
+        var lowRangeLow = jQuery("#lowRangeLow");
+        var lowRangeHigh = jQuery("#lowRangeHigh");
+        lowRangeLow.removeClass("error");
+        lowRangeLowValue = +lowRangeLow.val();
+        if(lowRangeLowValue != lowRangeLow.val()){
+            lowRangeLow.addClass("error");
             alert("<%=MessageUtil.getContextualMessage("error.out.side.critical.range")%>");
             return;
         }
 
-        highCriticalRange.removeClass("error");
-        highCriticalRangeValue = highCriticalRange.val();
-        if((highCriticalRangeValue >= 0) && (highCriticalRangeValue <= 10) || (highCriticalRangeValue >= 95)){
-            highCriticalRange.addClass("error");
+        lowRangeHigh.removeClass("error");
+        lowRangeHighValue = +lowRangeHigh.val();
+        if(lowRangeHighValue != lowRangeHigh.val()){
+            lowRangeHigh.addClass("error");
+            alert("<%=MessageUtil.getContextualMessage("error.out.side.critical.range")%>");
+            return;
+        }
+    }
+
+    function highCriticalRangeCheck() {
+        var highRangeLowValue, highRangeHighValue;
+        var highRangeLow = jQuery("#highRangeLow");
+        var highRangeHigh = jQuery("#highRangeHigh");
+        highRangeLow.removeClass("error");
+        highRangeLowValue = +highRangeLow.val();
+        if(highRangeLowValue != highRangeLow.val()){
+            highRangeLow.addClass("error");
+            alert("<%=MessageUtil.getContextualMessage("error.out.side.critical.range")%>");
+            return;
+        }
+
+        highRangeHigh.removeClass("error");
+        highRangeHighValue = +highRangeHigh.val();
+        if(highRangeHighValue != "Infinity" && highRangeHighValue != highRangeHigh.val()){
+            highRangeHigh.addClass("error");
             alert("<%=MessageUtil.getContextualMessage("error.out.side.critical.range")%>");
             return;
         }
@@ -1421,11 +1442,16 @@ td {
                 <td><spring:message code="label.sex.dependent" /></td>
                 <td><span class="sexRange" style="display: none"><spring:message code="label.sex" /> </span></td>
                 <td colspan="1"></td>
+
                 <td colspan="2" align="right"><spring:message code="label.age.range" /> </td>
                 <td colspan="2" align="right"><spring:message code="label.range" /></td>
                 <td colspan="2" align="right"><spring:message code="label.valid" /></td>
                 <td colspan="2" align="right"><spring:message code="label.reporting.range" /></td> 
-                <td colspan="2" align="right"><spring:message code="label.critical.range" /></td>
+                <td colspan="1"></td>
+
+                <td colspan="3" align="right"><spring:message code="label.critical.range" /></td>
+                <td colspan="1"></td>
+
             </tr>
             <tr class="row_0">
                 <td><input type="hidden" class="rowKey" value="0"/><input id="genderCheck_0" type="checkbox"
@@ -1465,8 +1491,12 @@ td {
                 <td align="left"><input type="text" value="-Infinity" size="10" id="lowReportingRange" onchange="reportingRangeCheck();"></td>
                 <td align="left"><input type="text" value="Infinity" size="10" id="highReportingRange" onchange="reportingRangeCheck();"></td>
 
-                <td align="left"><input type="text" value="0" size="10" id="lowCriticalRange" onchange="criticalRangeCheck();"></td>
-                <td align="left"><input type="text" value="0" size="10" id="highCriticalRange" onchange="criticalRangeCheck();"></td>
+                <td align="left"><input type="text" value="0" size="3" id="lowRangeLow" onchange="lowCriticalRangeCheck();"></td>
+                <td align="left"><input type="text" value="0" size="3" id="lowRangeHigh" onchange="lowCriticalRangeCheck();"></td>
+
+                <td align="left"><input type="text" value="0" size="3" id="highRangeLow" onchange="highCriticalRangeCheck();"></td>
+                <td align="left"><input type="text" value="Infinity" size="3" id="highRangeHigh" onchange="highCriticalRangeCheck();"></td>
+
 
             </tr>
             <tr class="sexRange_0 row_0" style="display: none">

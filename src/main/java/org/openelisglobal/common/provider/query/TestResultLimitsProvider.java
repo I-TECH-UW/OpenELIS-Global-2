@@ -110,8 +110,11 @@ public class TestResultLimitsProvider extends BaseQueryProvider {
                 resultLimitObject.put("highValid", resultLimit.getHighValid());
                 resultLimitObject.put("highReportingRange", resultLimit.getHighReportingRange());
                 resultLimitObject.put("lowReportingRange", resultLimit.getLowReportingRange());
-                resultLimitObject.put("highCriticalRange", resultLimit.getHighCriticalRange());
-                resultLimitObject.put("lowCriticalRange", resultLimit.getLowCriticalRange());
+                resultLimitObject.put("highRangeHigh", resultLimit.getHighRangeHigh());
+                resultLimitObject.put("highRangeLow", resultLimit.getHighRangeLow());
+                resultLimitObject.put("lowRangeHigh", resultLimit.getLowRangeHigh());
+                resultLimitObject.put("lowRangeLow", resultLimit.getLowRangeLow());
+
 
                 limitsArray.add(resultLimitObject);
             }

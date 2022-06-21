@@ -918,22 +918,43 @@
         });
     }
 
-    function criticalRangeCheck() {
-        var highCriticalRangeValue, lowCriticalRangeValue;
-        var lowCriticalRange = jQuery("#lowCriticalRange");
-        var highCriticalRange = jQuery("#highCriticalRange");
-        lowCriticalRange.removeClass("error");
-        lowCriticalRangeValue = lowCriticalRange.val();
-        if((lowCriticalRangeValue >= 0) && (lowCriticalRangeValue <= 10) || (lowCriticalRangeValue >= 95)){
-            lowCriticalRange.addClass("error");
+    function lowCriticalRangeCheck() {
+        var lowRangeHighValue, lowRangeLowValue;
+        var lowRangeLow = jQuery("#lowRangeLow");
+        var lowRangeHigh = jQuery("#lowRangeHigh");
+        lowRangeLow.removeClass("error");
+        lowRangeLowValue = +lowRangeLow.val();
+        if(lowRangeLowValue != lowRangeLow.val()){
+            lowRangeLow.addClass("error");
             alert("<%=MessageUtil.getContextualMessage("error.out.side.critical.range")%>");
             return;
         }
 
-        highCriticalRange.removeClass("error");
-        highCriticalRangeValue = highCriticalRange.val();
-        if((highCriticalRangeValue >= 0) && (highCriticalRangeValue <= 10) || (highCriticalRangeValue >= 95)){
-            highCriticalRange.addClass("error");
+        lowRangeHigh.removeClass("error");
+        lowRangeHighValue = +lowRangeHigh.val();
+        if(lowRangeHighValue != lowRangeHigh.val()){
+            lowRangeHigh.addClass("error");
+            alert("<%=MessageUtil.getContextualMessage("error.out.side.critical.range")%>");
+            return;
+        }
+    }
+
+    function highCriticalRangeCheck() {
+        var highRangeLowValue, highRangeHighValue;
+        var highRangeLow = jQuery("#highRangeLow");
+        var highRangeHigh = jQuery("#highRangeHigh");
+        highRangeLow.removeClass("error");
+        highRangeLowValue = +highRangeLow.val();
+        if(highRangeLowValue != highRangeLow.val()){
+            highRangeLow.addClass("error");
+            alert("<%=MessageUtil.getContextualMessage("error.out.side.critical.range")%>");
+            return;
+        }
+
+        highRangeHigh.removeClass("error");
+        highRangeHighValue = +highRangeHigh.val();
+        if(highRangeHighValue != "Infinity" && highRangeHighValue != highRangeHigh.val()){
+            highRangeHigh.addClass("error");
             alert("<%=MessageUtil.getContextualMessage("error.out.side.critical.range")%>");
             return;
         }
@@ -2447,8 +2468,10 @@ td {
 					onchange="normalRangeCheck('0');"></td>
                 <td><input type="text" value="-Infinity" size="10" id="lowReportingRange" onchange="reportingRangeCheck();"></td>
                 <td><input type="text" value="Infinity" size="10" id="highReportingRange" onchange="reportingRangeCheck();"></td>
-                <td><input type="text" value="0" size="10" id="lowCriticalRange" onchange="criticalRangeCheck();"></td>
-                <td><input type="text" value="0" size="10" id="highCriticalRange" onchange="criticalRangeCheck();"></td>
+                <td><input type="text" value="0" size="3" id="lowRangeLow" onchange="lowwCriticalRangeCheck();"></td>
+                <td><input type="text" value="0" size="3" id="lowRangeHigh" onchange="lowCriticalRangeCheck();"></td>
+                <td><input type="text" value="0" size="3" id="highRangeLow" onchange="highCriticalRangeCheck();"></td>
+                <td><input type="text" value="0" size="3" id="highRangeHigh" onchange="highCriticalRangeCheck();"></td>
 				<td><input type="text" value="-Infinity" size="10"
 					id="lowValid" onchange="validRangeCheck();"></td>
 				<td><input type="text" value="Infinity" size="10"
