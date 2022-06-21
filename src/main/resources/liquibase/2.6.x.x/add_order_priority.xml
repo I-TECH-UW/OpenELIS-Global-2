@@ -4,17 +4,16 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
 	  http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
-	
-    <changeSet author="moses_mutesa" id="1">
+	<changeSet author="moses_mutesa" id="1">
 		<preConditions onFail="MARK_RAN">
 			<tableExists tableName="sample" schemaName="clinlims" />
 			<not>
-                <columnExists tableName="sample" columnName="priority" />
-            </not>
+				<columnExists tableName="sample" columnName="priority" />
+			</not>
 		</preConditions>
 		<comment>add Priority column to sample table</comment>
 		<addColumn schemaName="clinlims" tableName="sample">
 			<column name="priority" type="VARCHAR(255)" defaultValue="ROUTINE" />
-		</addColumn>	
+		</addColumn>
 	</changeSet>
 </databaseChangeLog>

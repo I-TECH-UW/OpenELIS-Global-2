@@ -22,9 +22,9 @@
 		</property>
 		<property name="priority" column="PRIORITY">
 			<type name="org.hibernate.type.EnumType">
-                <param name="enumClass">org.openelisglobal.sample.valueholder.OrderPriority</param>
-                <param name="useNamed">true</param>
-            </type>
+				<param name="enumClass">org.openelisglobal.sample.valueholder.OrderPriority</param>
+				<param name="useNamed">true</param>
+			</type>
 		</property>
 		<property name="packageId"
 			type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType">
