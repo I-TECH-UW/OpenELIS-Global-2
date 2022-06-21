@@ -109,6 +109,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
             "sampleOrderItems.paymentOptionSelection", "sampleOrderItems.billingReferenceNumber",
             "sampleOrderItems.testLocationCode", "sampleOrderItems.otherLocationCode",
             "sampleOrderItems.contactTracingIndexName", "sampleOrderItems.contactTracingIndexRecordNumber",
+            "sampleOrderItems.priority",
             //
             "currentDate", "sampleOrderItems.newRequesterName", "sampleOrderItems.externalOrderNumber",
             // referral
@@ -191,6 +192,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 
         updateData.setAccessionNumber(sampleOrder.getLabNo());
         updateData.setReferringId(sampleOrder.getExternalOrderNumber());
+        updateData.setPriority(sampleOrder.getPriority());
         updateData.initProvider(sampleOrder);
         updateData.initSampleData(form.getSampleXML(), receivedDateForDisplay, trackPayments, sampleOrder);
         updateData.setPatientEmailNotificationTestIds(form.getPatientEmailNotificationTestIds());

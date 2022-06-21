@@ -83,6 +83,7 @@ public class SampleEditController extends BaseController {
             "sampleOrderItems.facilityAddressCommune", "sampleOrderItems.facilityPhone", "sampleOrderItems.facilityFax",
             "sampleOrderItems.paymentOptionSelection", "sampleOrderItems.billingReferenceNumber",
             "sampleOrderItems.testLocationCode", "sampleOrderItems.otherLocationCode",
+            "sampleOrderItems.priority",
             //
             "accessionNumber", "newAccessionNumber", "isEditable", "maxAccessionNumber",
             "existingTests*.sampleItemChanged", "existingTests*.sampleItemId", "existingTests*.analysisId",

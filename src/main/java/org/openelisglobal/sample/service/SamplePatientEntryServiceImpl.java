@@ -185,6 +185,7 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
 
         updateData.getSample().setFhirUuid(UUID.randomUUID());
         sampleService.insertDataWithAccessionNumber(updateData.getSample());
+        updateData.getSample().setPriority(updateData.getPriority());
 
         for (SampleAdditionalField field : updateData.getSampleFields()) {
             field.setSample(updateData.getSample());
