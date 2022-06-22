@@ -8,12 +8,24 @@
 		<preConditions onFail="MARK_RAN">
 			<tableExists tableName="sample" schemaName="clinlims" />
 			<not>
-				<columnExists tableName="sample" columnName="priority" />
+				<columnExists tableName="sample" columnName="order_priority" />
 			</not>
 		</preConditions>
 		<comment>add Priority column to sample table</comment>
 		<addColumn schemaName="clinlims" tableName="sample">
-			<column name="priority" type="VARCHAR(255)" defaultValue="ROUTINE" />
+			<column name="order_priority" type="VARCHAR(255)" defaultValue="ROUTINE" />
+		</addColumn>
+	</changeSet>
+	<changeSet author="moses_mutesa" id="2">
+		<preConditions onFail="MARK_RAN">
+			<tableExists tableName="electronic_order" schemaName="clinlims" />
+			<not>
+				<columnExists tableName="electronic_order" columnName="order_priority" />
+			</not>
+		</preConditions>
+		<comment>add Priority column to electronic_order table</comment>
+		<addColumn schemaName="clinlims" tableName="electronic_order">
+			<column name="order_priority" type="VARCHAR(255)" defaultValue="ROUTINE" />
 		</addColumn>
 	</changeSet>
 </databaseChangeLog>

@@ -20,7 +20,7 @@
 			<column name="ACCESSION_NUMBER" precision="20" not-null="true"
 				unique="true" />
 		</property>
-		<property name="priority" column="PRIORITY">
+		<property name="priority" column="ORDER_PRIORITY">
 			<type name="org.hibernate.type.EnumType">
 				<param name="enumClass">org.openelisglobal.sample.valueholder.OrderPriority</param>
 				<param name="useNamed">true</param>

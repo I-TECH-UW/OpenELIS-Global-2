@@ -6,6 +6,7 @@ import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.StaleObjectStateException;
 import org.hl7.fhir.r4.model.Enumerations.ResourceType;
@@ -23,6 +24,7 @@ import org.openelisglobal.common.validator.BaseErrors;
 import org.openelisglobal.dataexchange.fhir.exception.FhirPersistanceException;
 import org.openelisglobal.dataexchange.fhir.exception.FhirTransformationException;
 import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
+import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder;
 import org.openelisglobal.patient.action.IPatientUpdate;
 import org.openelisglobal.patient.action.IPatientUpdate.PatientUpdateStatus;
 import org.openelisglobal.patient.action.bean.PatientManagementInfo;
@@ -38,6 +40,7 @@ import org.openelisglobal.sample.valueholder.SampleAdditionalField;
 import org.openelisglobal.sample.valueholder.SampleAdditionalField.AdditionalFieldName;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.systemuser.service.UserService;
+import org.openelisglobal.dataexchange.service.order.ElectronicOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -130,6 +133,8 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
     private UserService userService;
     @Autowired
     private ProviderService providerService;
+    @Autowired
+    private ElectronicOrderService electronicOrderService;
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -260,6 +265,12 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
                             .getPerson().getId());
         }
         form.getSampleOrderItems().setExternalOrderNumber(externalOrderNumber);
+        if(StringUtils.isNotBlank(externalOrderNumber)) {
+            ElectronicOrder eOrder = electronicOrderService.getElectronicOrdersByExternalId(externalOrderNumber).get(0);
+            if (eOrder != null) {
+                form.getSampleOrderItems().setPriority(eOrder.getPriority());
+            }
+        }
         form.setPatientProperties(new PatientManagementInfo());
         form.setPatientSearch(new PatientSearch());
         form.setSampleTypes(userService.getUserSampleTypes(getSysUserId(request), ROLE_RECEPTION));

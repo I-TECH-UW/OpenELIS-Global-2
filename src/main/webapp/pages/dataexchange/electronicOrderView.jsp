@@ -239,6 +239,10 @@ highlighted rows specifies a resource that is likely out of sync with the server
     	Lab Number
     	<span class="fa" onclick='sort(11)'><i class="fas fa-sort"></i></span>
     </th>
+	<th class='split-content'>
+    	Priority
+    	<span class="fa" onclick='sort(12)'><i class="fas fa-sort"></i></span>
+    </th>
 	<th style="background-color:white;"></th>
 </tr>
 </thead>
@@ -283,6 +287,9 @@ highlighted rows specifies a resource that is likely out of sync with the server
 	    </td>
 	    <td>
 	       <c:out value="${eOrder.labNumber}"/>
+	    </td>
+		<td>
+	       <c:out value="${eOrder.priority}"/>
 	    </td>
 	    <td style="background-color:white;">
 			<c:if test="${not empty eOrder.warnings}">
