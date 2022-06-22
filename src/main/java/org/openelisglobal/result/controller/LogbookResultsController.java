@@ -207,6 +207,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
                     DisplayListService.getInstance().getList(DisplayListService.ListType.REFERRAL_REASONS));
             newForm.setRejectReasons(DisplayListService.getInstance()
                     .getNumberedListWithLeadingBlank(DisplayListService.ListType.REJECTION_REASONS));
+            newForm.setMethods(DisplayListService.getInstance().getList(ListType.METHODS));
 
             // load testSections for drop down
         }

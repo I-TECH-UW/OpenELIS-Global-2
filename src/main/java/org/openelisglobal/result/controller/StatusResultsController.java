@@ -97,6 +97,7 @@ public class StatusResultsController extends BaseController {
         form.setRejectReasons(DisplayListService.getInstance()
                 .getNumberedListWithLeadingBlank(DisplayListService.ListType.REJECTION_REASONS));
         form.setReferralOrganizations(DisplayListService.getInstance().getList(ListType.REFERRAL_ORGANIZATIONS));
+        form.setMethods(DisplayListService.getInstance().getList(ListType.METHODS));
 
         ResultsPaging paging = new ResultsPaging();
 

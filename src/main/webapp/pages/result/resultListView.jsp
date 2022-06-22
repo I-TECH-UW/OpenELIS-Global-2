@@ -950,8 +950,8 @@ jQuery(document).ready(function (index) {
 						indexed="true" />
 					<form:hidden path="testResult[${iter.index}].resultType"
 						id="resultType_${iter.index}" />
-					<%-- <form:hidden path="testResult[${iter.index}].testMethod"
-						id="testMethod_${iter.index}" />	 --%>
+					 <form:hidden path="testResult[${iter.index}].testMethod"
+						id="testMethod_${iter.index}" />	 
 					<form:hidden path="testResult[${iter.index}].valid"
 						id="valid_${iter.index}" />
 					<form:hidden path="testResult[${iter.index}].defaultResultValue"
@@ -1373,14 +1373,14 @@ jQuery(document).ready(function (index) {
 							path="testResult[${iter.index}].refer"
 							onchange="toggleReferral(${iter.index});markUpdated(${iter.index});" /> <spring:message
 							code="refertest" text="Refer test to a reference lab" /></td>
-							<%-- <td width="50%"><%=MessageUtil.getMessage("workplan.method")%>&nbsp;
+							 <td width="50%"><%=MessageUtil.getMessage("workplan.method")%>&nbsp;
 
 								<form:select id="testMethod_${iter.index}"
 								        path="testResult[${iter.index}].testMethod">
 										<option value=""></option>
 										<form:options items="${form.methods}" itemLabel="value"
 											itemValue="id" />
-									</form:select></td>		 --%>
+									</form:select></td>		 
 				</tr>
 				<tr>
 					<td colspan="${numCols}">

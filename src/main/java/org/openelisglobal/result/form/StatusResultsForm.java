@@ -64,6 +64,9 @@ public class StatusResultsForm extends BaseForm implements ResultsPagingForm {
 
     private List<IdValuePair> referralOrganizations;
 
+    // for display
+    private List<IdValuePair> methods;
+
     public StatusResultsForm() {
         setFormName("StatusResultsForm");
     }
@@ -270,4 +273,11 @@ public class StatusResultsForm extends BaseForm implements ResultsPagingForm {
         return false;
     }
 
+    public List<IdValuePair> getMethods() {
+        return methods;
+    }
+
+    public void setMethods(List<IdValuePair> methods) {
+        this.methods = methods;
+    }
 }
