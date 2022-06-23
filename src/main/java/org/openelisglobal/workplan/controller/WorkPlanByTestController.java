@@ -163,6 +163,7 @@ public class WorkPlanByTestController extends BaseWorkplanController {
 
             for (Analysis analysis : testList) {
                 TestResultItem testResultItem = new TestResultItem();
+                testResultItem.setTestId(testType);
                 Sample sample = analysis.getSampleItem().getSample();
                 testResultItem.setAccessionNumber(sample.getAccessionNumber());
                 testResultItem.setReceivedDate(getReceivedDateDisplay(sample));
@@ -225,6 +226,7 @@ public class WorkPlanByTestController extends BaseWorkplanController {
 
                 }
                 testResultItem = new TestResultItem();
+                testResultItem.setTestId(testType);
                 testResultItem.setAccessionNumber(currentAccessionNumber);
                 testResultItem.setReceivedDate(sample.getReceivedDateForDisplay());
                 testResultItem.setSampleGroupingNumber(sampleGroupingNumber);

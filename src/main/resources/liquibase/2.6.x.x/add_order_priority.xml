@@ -28,4 +28,22 @@
 			<column name="order_priority" type="VARCHAR(255)" defaultValue="ROUTINE" />
 		</addColumn>
 	</changeSet>
+	<changeSet author="moses_mutesa" id="3">
+		<preConditions onFail="MARK_RAN">
+			<tableExists tableName="menu" schemaName="clinlims" />
+			<sqlCheck  expectedResult="0">SELECT count(*) FROM clinlims.menu WHERE element_id = 'menu_workplan_priority'</sqlCheck> 
+		</preConditions>
+		<comment>add Option 'By Priority' to the WorkPlan menu</comment>
+		<insert tableName="menu" schemaName="clinlims">
+			<column name="id" valueSequenceNext="menu_seq"/>
+			<column name="parent_id" valueComputed="(SELECT id FROM clinlims.menu WHERE element_id = 'menu_workplan')"/>
+			<column name="presentation_order" value="4"/>
+			<column name="element_id" value="menu_workplan_priority"/>
+			<column name="action_url" value="/WorkPlanByPriotiy?type=priority"/>
+			<column name="display_key" value="banner.menu.workplan.priority"/>
+			<column name="tool_tip_key" value="tooltip.bannner.menu.workplan.priority"/>
+			<column name="new_window" value="false"/>
+			<column name="is_active" value="true"/>
+		</insert>
+	</changeSet>
 </databaseChangeLog>

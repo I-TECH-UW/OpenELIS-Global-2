@@ -120,6 +120,7 @@ public class WorkplanByPanelController extends BaseWorkplanController {
 
                 for (Analysis analysis : analysisList) {
                     TestResultItem testResultItem = new TestResultItem();
+                    testResultItem.setTestId(analysis.getTest().getId());
                     Sample sample = analysis.getSampleItem().getSample();
                     testResultItem.setAccessionNumber(sample.getAccessionNumber());
                     testResultItem.setPatientInfo(getSubjectNumber(analysis));
