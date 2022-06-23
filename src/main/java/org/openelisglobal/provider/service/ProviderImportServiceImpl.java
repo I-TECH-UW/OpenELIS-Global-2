@@ -12,6 +12,7 @@ import org.apache.commons.validator.GenericValidator;
 import org.hl7.fhir.instance.model.api.IBaseBundle;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Bundle.BundleEntryComponent;
+import org.hl7.fhir.r4.model.Practitioner;
 import org.hl7.fhir.r4.model.Resource;
 import org.hl7.fhir.r4.model.ResourceType;
 import org.openelisglobal.common.services.DisplayListService;
@@ -56,6 +57,7 @@ public class ProviderImportServiceImpl implements ProviderImportService {
 
             List<Bundle> responseBundles = new ArrayList<>();
             Bundle responseBundle = client.search().forResource(org.hl7.fhir.r4.model.Practitioner.class)
+                    .where(Practitioner.ACTIVE.exactly().code("true"))
                     .returnBundle(Bundle.class).execute();
             responseBundles.add(responseBundle);
             while (responseBundle.getLink(IBaseBundle.LINK_NEXT) != null) {
