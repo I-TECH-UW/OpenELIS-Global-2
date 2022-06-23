@@ -15,7 +15,7 @@
 <script type="text/javascript" src="scripts/jquery-ui.js?"></script>
 <script type="text/javascript">
 
-var colSort = [0,0,0,0,0,0,0,0,0,0,0];
+var colSort = [0,0,0,0,0,0,0,0,0,0,0,0];
 var dirty = false;
 var entering = false;
 
@@ -215,32 +215,32 @@ highlighted rows specifies a resource that is likely out of sync with the server
     	Requesting Facility
     	<span class="fa" onclick='sort(5)'><i class="fas fa-sort"></i></span>
     </th>
-    <th class='split-content'>
-    	Status
+	<th class='split-content'>
+    	Priority
     	<span class="fa" onclick='sort(6)'><i class="fas fa-sort"></i></span>
     </th>
     <th class='split-content'>
-    	Test Name
+    	Status
     	<span class="fa" onclick='sort(7)'><i class="fas fa-sort"></i></span>
     </th>
     <th class='split-content'>
-    	Referring Lab Number
+    	Test Name
     	<span class="fa" onclick='sort(8)'><i class="fas fa-sort"></i></span>
     </th>
     <th class='split-content'>
-    	Passport Number
+    	Referring Lab Number
     	<span class="fa" onclick='sort(9)'><i class="fas fa-sort"></i></span>
     </th>
     <th class='split-content'>
-    	Subject Number
+    	Passport Number
     	<span class="fa" onclick='sort(10)'><i class="fas fa-sort"></i></span>
     </th>
     <th class='split-content'>
-    	Lab Number
+    	Subject Number
     	<span class="fa" onclick='sort(11)'><i class="fas fa-sort"></i></span>
     </th>
-	<th class='split-content'>
-    	Priority
+    <th class='split-content'>
+    	Lab Number
     	<span class="fa" onclick='sort(12)'><i class="fas fa-sort"></i></span>
     </th>
 	<th style="background-color:white;"></th>
@@ -270,6 +270,9 @@ highlighted rows specifies a resource that is likely out of sync with the server
 	    <td>
 	       <c:out value="${eOrder.requestingFacility}"/>
 	    </td>
+		<td>
+	       <c:out value="${eOrder.priority}"/>
+	    </td>
 	    <td>
 	       <c:out value="${eOrder.status}"/>
 	    </td>
@@ -287,9 +290,6 @@ highlighted rows specifies a resource that is likely out of sync with the server
 	    </td>
 	    <td>
 	       <c:out value="${eOrder.labNumber}"/>
-	    </td>
-		<td>
-	       <c:out value="${eOrder.priority}"/>
 	    </td>
 	    <td style="background-color:white;">
 			<c:if test="${not empty eOrder.warnings}">
