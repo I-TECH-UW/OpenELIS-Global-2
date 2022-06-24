@@ -96,6 +96,7 @@ echo "creating docker images"
 #create the docker image 
 bash ${INSTALL_DIR}/buildProject.sh -dl ${PROJECT_DIR} -t openelisglobal
 bash ${INSTALL_DIR}/buildProject.sh -dl ${PROJECT_DIR}/fhir -t hapi-fhir-jpaserver
+bash ${INSTALL_DIR}/buildProject.sh -dl ${PROJECT_DIR}/ASTM -t astmserver
 
 createLinuxInstaller() {
 	context=$1
@@ -108,6 +109,7 @@ createLinuxInstaller() {
 	cp OpenELIS-Global_DockerImage.tar.gz ${INSTALLER_CREATION_DIR}/linux/${installerName}/dockerImage/${context}-${projectVersion}.tar.gz
 	cp Postgres_DockerImage.tar.gz ${INSTALLER_CREATION_DIR}/linux/${installerName}/dockerImage/Postgres_DockerImage.tar.gz
 	cp JPAServer_DockerImage.tar.gz ${INSTALLER_CREATION_DIR}/linux/${installerName}/dockerImage/JPAServer_DockerImage.tar.gz
+	cp astmserver_DockerImage.tar.gz ${INSTALLER_CREATION_DIR}/linux/${installerName}/dockerImage/astmserver_DockerImage.tar.gz
 	cp AutoHeal_DockerImage.tar.gz ${INSTALLER_CREATION_DIR}/linux/${installerName}/dockerImage/AutoHeal_DockerImage.tar.gz
 #	cp DataImporter_DockerImage.tar.gz ${INSTALLER_CREATION_DIR}/linux/${installerName}/dockerImage/DataImporter_DockerImage.tar.gz
 #	cp DataSubscriber_DockerImage.tar.gz ${INSTALLER_CREATION_DIR}/linux/${installerName}/dockerImage/DataSubscriber_DockerImage.tar.gz
@@ -143,6 +145,8 @@ then
 	echo "saving JPA Server docker image"
 	
 	docker save hapi-fhir-jpaserver:latest | gzip > JPAServer_DockerImage.tar.gz
+	echo "saving ASTM Server docker image"
+	docker save astmserver:latest | gzip > astmserver_DockerImage.tar.gz
 	echo "saving Autoheal docker image"
 	docker pull willfarrell/autoheal:1.2.0
 	docker save willfarrell/autoheal:1.2.0 | gzip > AutoHeal_DockerImage.tar.gz
@@ -165,6 +169,7 @@ then
 	rm OpenELIS-Global_DockerImage*.tar.gz
 	rm Postgres_DockerImage.tar.gz
 	rm JPAServer_DockerImage.tar.gz
+	rm astmserver_DockerImage.tar.gz
 	rm AutoHeal_DockerImage.tar.gz
 #	rm DataSubscriber_DockerImage.tar.gz
 #	rm DataImporter_DockerImage.tar.gz

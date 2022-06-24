@@ -114,6 +114,20 @@ services:
             retries: 3
             start_period: 2m
 
+    astmserver.openelis.org:
+        container_name: astmserver
+        image: astmserver
+        restart: always
+        networks:
+          - openelis-network
+        volumes:
+          - /var/run/docker.sock:/var/run/docker.sock
+        logging:
+            driver: "local"
+            options:
+              max-size: "20m"
+              max-file: "50"
+
     autoheal:
         container_name: [% autoheal_name %]
         image: willfarrell/autoheal:1.2.0
@@ -124,7 +138,7 @@ services:
         environment:
           - AUTOHEAL_CONTAINER_LABEL=all
         volumes:
-          - /var/run/docker.sock:/var/run/docker.sock
+          - /var/lib/openelis-global/astmfiles:/astm/output/
         logging:
             driver: "local"
             options:
