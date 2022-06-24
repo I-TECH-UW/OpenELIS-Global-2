@@ -284,12 +284,14 @@ public class TestAddController extends BaseController {
             limit.setHighNormal(StringUtil.doubleWithInfinity(params.highLimit));
             limit.setLowValid(lowValid);
             limit.setHighValid(highValid);
-            if(lowRangeLow != null && lowRangeHigh != null && highRangeHigh != null && highRangeLow != null){
-            limit.setLowRangeLow(lowRangeLow);
-            limit.setLowRangeHigh(lowRangeHigh);
-            limit.setHighRangeHigh(highRangeHigh);
-            limit.setHighRangeLow(highRangeLow);
+            // if(lowRangeLow != null && lowRangeHigh != null && highRangeHigh != null && highRangeLow != null){
+            if(limit != null)    {
+            limit.setLowRangeLow(StringUtil.doubleWithInfinity(params.lowLimitLow));
             }
+            limit.setLowRangeHigh(StringUtil.doubleWithInfinity(params.lowLimitHigh));
+            limit.setHighRangeHigh(StringUtil.doubleWithInfinity(params.highLimitHigh));
+            limit.setHighRangeLow(StringUtil.doubleWithInfinity(params.highLimitLow));
+            //  }
             resultLimits.add(limit);
         }
 
@@ -396,6 +398,12 @@ public class TestAddController extends BaseController {
             params.displayRange = (String) (((JSONObject) limitArray.get(i)).get("reportingRange"));
             params.lowLimit = (String) (((JSONObject) limitArray.get(i)).get("lowNormal"));
             params.highLimit = (String) (((JSONObject) limitArray.get(i)).get("highNormal"));
+            params.lowLimitLow = (String) (((JSONObject) limitArray.get(i)).get("lowRangeLow"));
+            params.lowLimitHigh = (String) (((JSONObject) limitArray.get(i)).get("lowRangeHigh"));
+            params.highLimitHigh = (String) (((JSONObject) limitArray.get(i)).get("highRangeHigh"));
+            params.highLimitLow = (String) (((JSONObject) limitArray.get(i)).get("highRangeLow"));
+
+
             params.lowAge = lowAge;
             params.highAge = highAge;
             testAddParams.limits.add(params);
@@ -591,6 +599,10 @@ public class TestAddController extends BaseController {
         String lowLimit;
         String highLimit;
         String displayRange;
+        String lowLimitLow;
+        String lowLimitHigh;
+        String highLimitLow;
+        String highLimitHigh;
     }
 
     public class DictionaryParams {

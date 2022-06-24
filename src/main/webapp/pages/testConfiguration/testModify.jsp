@@ -1354,7 +1354,9 @@
         jQuery("#normalRangeDiv").show();
         jQuery(".resultLimits").show();
         jQuery("#normalRangeDiv input,select").removeAttr("disabled");
-		getTestResultLimits(testId, testResultLimitsSuccess);
+		var xxx = getTestResultLimits(testId, testResultLimitsSuccess);
+        console.log(xxx);
+
     }
 
     function doLims(item, index){
@@ -2419,12 +2421,26 @@ td {
 				<th></th>
 			</tr>
 			<tr>
-				<td><spring:message code="label.sex.dependent" /></td>
+				<!-- <td><spring:message code="label.sex.dependent" /></td>
 				<td><span class="sexRange" style="display: none"><spring:message code="label.sex" /> </span></td>
 				<td colspan="4" align="center"><spring:message code="label.age.range" /></td>
 				<td colspan="2" align="center"><spring:message code="label.range" /></td>
 				<td align="center"><spring:message code="label.reporting.range" /></td>
-				<td colspan="2"></td>
+                <td colspan="3" align="right"><spring:message code="label.critical.range" /></td>
+
+				<td colspan="2"></td> -->
+                <td><spring:message code="label.sex.dependent" /></td>
+                <td><span class="sexRange" style="display: none"><spring:message code="label.sex" /> </span></td>
+                <td colspan="1"></td>
+
+                <td colspan="2" align="right"><spring:message code="label.age.range" /> </td>
+                <td colspan="2" align="right"><spring:message code="label.range" /></td>
+                <td colspan="2" align="right"><spring:message code="label.valid" /></td>
+                <td colspan="2" align="right"><spring:message code="label.reporting.range" /></td> 
+                <td colspan="1"></td>
+
+                <td colspan="3" align="right"><spring:message code="label.critical.range" /></td>
+                <td colspan="1"></td>
 			</tr>
 			<tr class="row_0">
 				<td><input type="hidden" class="rowKey" value="0" /><input
@@ -2468,14 +2484,15 @@ td {
 					onchange="normalRangeCheck('0');"></td>
                 <td><input type="text" value="-Infinity" size="10" id="lowReportingRange" onchange="reportingRangeCheck();"></td>
                 <td><input type="text" value="Infinity" size="10" id="highReportingRange" onchange="reportingRangeCheck();"></td>
-                <td><input type="text" value="0" size="3" id="lowRangeLow" onchange="lowwCriticalRangeCheck();"></td>
-                <td><input type="text" value="0" size="3" id="lowRangeHigh" onchange="lowCriticalRangeCheck();"></td>
-                <td><input type="text" value="0" size="3" id="highRangeLow" onchange="highCriticalRangeCheck();"></td>
-                <td><input type="text" value="0" size="3" id="highRangeHigh" onchange="highCriticalRangeCheck();"></td>
+                
 				<td><input type="text" value="-Infinity" size="10"
 					id="lowValid" onchange="validRangeCheck();"></td>
 				<td><input type="text" value="Infinity" size="10"
 					id="highValid" onchange="validRangeCheck();"></td>
+                    <td><input type="text" value="0" size="3" id="lowRangeLow" onchange="lowwCriticalRangeCheck();"></td>
+                    <td><input type="text" value="0" size="3" id="lowRangeHigh" onchange="lowCriticalRangeCheck();"></td>
+                    <td><input type="text" value="0" size="3" id="highRangeLow" onchange="highCriticalRangeCheck();"></td>
+                    <td><input type="text" value="0" size="3" id="highRangeHigh" onchange="highCriticalRangeCheck();"></td>    
 			</tr>
 			<tr class="sexRange_0 row_0" style="display: none">
 				<td></td>
