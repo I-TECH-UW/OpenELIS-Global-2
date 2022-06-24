@@ -15,6 +15,7 @@ nav:
        - Dev Environment Setup Instructions: dev_setup.md
        - Developers Notes: dev.md
        - Adding facilities to the Consolidated Server: addingfacilities.md
+       - Adding a Requester to the Consolidated server: add_dr.md
        - Database Profiles Mass facility and test catalog updates: dbprofiles.md
     - Website: http://openelis-global.org
 theme: readthedocs
