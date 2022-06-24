@@ -15,7 +15,7 @@
 		<major.version>2</major.version>
 		<minor.version>6</minor.version>
 		<state.version>1</state.version> <!-- 0 = alpha, 1 = beta, 2 = rc, 3 = deployable -->
-		<fix.version>39</fix.version>
+		<fix.version>40</fix.version>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
@@ -42,7 +42,7 @@
 		<dependency>
 			<groupId>org.itech</groupId>
 			<artifactId>dataexport-api</artifactId>
-			<version>0.0.0.5</version>
+			<version>0.0.0.6</version>
 		</dependency>
 		<dependency>
 			<groupId>ca.uhn.hapi.fhir</groupId>
