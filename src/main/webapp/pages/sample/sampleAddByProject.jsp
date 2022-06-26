@@ -186,6 +186,10 @@ function setDefaultTests( div )
       tests = new Array ("eid.dnaPCR", "eid.dbsTaken");
     }
     
+    if (div=="VL_Id") {
+        tests = new Array ("vl.viralLoadTest");
+      }
+    
     if (div=="RTN_Id" ) {
         tests = new Array ("rtn.serologyHIVTest", "rtn.dryTubeTaken");
     }
@@ -639,7 +643,7 @@ function /*void*/ setSaveButton() {
                  		id="iarv.underInvestigation"
                  		onchange="makeDirty();compareAllObservationHistoryFields(true)" >
                  		<form:option value="">&nbsp;</form:option>
-            	 		<form:options items= "${form.dictionaryLists['YES_NO']}" itemLabel="localizedName" /> 
+            	 		<form:options items= "${form.dictionaryLists['YES_NO']}" itemLabel="localizedName" itemValue="id"/> 
 	    			</form:select>
         		</td>
     		</tr>
@@ -865,7 +869,7 @@ function /*void*/ setSaveButton() {
                          onchange="farv.checkHivStatus(true);"
                          id="farv.hivStatus"  >
                     	<form:option value="">&nbsp;</form:option>
-            	 		<form:options items= "${form.dictionaryLists['HIV_STATUSES']}" itemLabel="localizedName" /> 
+            	 		<form:options items= "${form.dictionaryLists['HIV_STATUSES']}" itemLabel="localizedName" itemValue="id"/> 
                 </form:select>
                 <div id="farv.hivStatusMessage" class="blank"></div>
             </td>
@@ -1018,7 +1022,7 @@ function /*void*/ setSaveButton() {
                     path="observations.underInvestigation" onchange="makeDirty();compareAllObservationHistoryFields(true)"
                     id="farv.underInvestigation">
                     <form:option value="">&nbsp;</form:option>
-            	 	<form:options items= "${form.dictionaryLists['YES_NO']}" itemLabel="localizedName" />
+            	 	<form:options items= "${form.dictionaryLists['YES_NO']}" itemLabel="localizedName" itemValue="id"/>
                     </form:select>
                 </td>
             </tr>
@@ -1207,7 +1211,7 @@ function /*void*/ setSaveButton() {
                 	path="observations.underInvestigation" onchange="makeDirty();compareAllObservationHistoryFields(true)"
                 	id="rtn.underInvestigation">
                 	<form:option value="">&nbsp;</form:option>
-            	 	<form:options items= "${form.dictionaryLists['YES_NO']}" itemLabel="localizedName" /> 
+            	 	<form:options items= "${form.dictionaryLists['YES_NO']}" itemLabel="localizedName" itemValue="id"/> 
                 </form:select>
             </td>
         </tr>       
@@ -1371,7 +1375,7 @@ function /*void*/ setSaveButton() {
                  id="eid.whichPCR"
                  onchange="eid.checkEIDWhichPCR(true)" >
                  <form:option value="">&nbsp;</form:option>
-            	 <form:options items= "${form.dictionaryLists['EID_WHICH_PCR']}" itemLabel="localizedName" /> 
+            	 <form:options items= "${form.dictionaryLists['EID_WHICH_PCR']}" itemLabel="localizedName" itemValue="id"/> 
 	    	</form:select>
         </td>
     </tr>
@@ -1387,7 +1391,7 @@ function /*void*/ setSaveButton() {
                  id="eid.reasonForSecondPCRTest"
                  onchange="makeDirty();compareAllObservationHistoryFields(true)" >
                  <form:option value="">&nbsp;</form:option>
-            	 <form:options items= "${form.dictionaryLists['EID_SECOND_PCR_REASON']}" itemLabel="localizedName" /> 
+            	 <form:options items= "${form.dictionaryLists['EID_SECOND_PCR_REASON']}" itemLabel="localizedName" itemValue="id"/> 
 	    	</form:select>
         </td>
     </tr>
@@ -1489,7 +1493,7 @@ function /*void*/ setSaveButton() {
                  id="eid.eidInfantPTME"
                  onchange="makeDirty();compareAllObservationHistoryFields(true)" >
                  <form:option value="">&nbsp;</form:option>
-            	 <form:options items= "${form.dictionaryLists['YES_NO']}" itemLabel="localizedName" /> 
+            	 <form:options items= "${form.dictionaryLists['YES_NO']}" itemLabel="localizedName" itemValue="id"/> 
 	    	</form:select>
 	    	<div id="eid.eidInfantPTMEMessage" class="blank" > </div>
         </td>
@@ -1506,7 +1510,7 @@ function /*void*/ setSaveButton() {
                  id="eid.eidTypeOfClinic"
                  onchange="makeDirty();compareAllObservationHistoryFields(true)" >
                  <form:option value="">&nbsp;</form:option>
-            	 <form:options items= "${form.dictionaryLists['EID_TYPE_OF_CLINIC']}" itemLabel="localizedName" /> 
+            	 <form:options items= "${form.dictionaryLists['EID_TYPE_OF_CLINIC']}" itemLabel="localizedName" itemValue="id"/> 
 	    	</form:select>
 	    	<div id="eid.eidTypeOfClinicMessage" class="blank" > </div>
         </td>
@@ -1523,7 +1527,7 @@ function /*void*/ setSaveButton() {
                  id="eid.eidHowChildFed"
                  onchange="makeDirty();compareAllObservationHistoryFields(true)" >
                  <form:option value="">&nbsp;</form:option>
-            	 <form:options items= "${form.dictionaryLists['EID_HOW_CHILD_FED']}" itemLabel="localizedName" /> 
+            	 <form:options items= "${form.dictionaryLists['EID_HOW_CHILD_FED']}" itemLabel="localizedName" itemValue="id"/> 
 	    	</form:select>
         </td>
     </tr>
@@ -1539,7 +1543,7 @@ function /*void*/ setSaveButton() {
                  id="eid.eidStoppedBreastfeedingidHowChildFed"
                  onchange="makeDirty();compareAllObservationHistoryFields(true)" >
                  <form:option value="">&nbsp;</form:option>
-            	 <form:options items= "${form.dictionaryLists['EID_STOPPED_BREASTFEEDING']}" itemLabel="localizedName" /> 
+            	 <form:options items= "${form.dictionaryLists['EID_STOPPED_BREASTFEEDING']}" itemLabel="localizedName" itemValue="id"/> 
 	    	</form:select>
         </td>
     </tr>
@@ -1555,7 +1559,7 @@ function /*void*/ setSaveButton() {
                  id="eid.eidInfantSymptomatic"
                  onchange="makeDirty();compareAllObservationHistoryFields(true)" >
                  <form:option value="">&nbsp;</form:option>
-            	 <form:options items= "${form.dictionaryLists['YES_NO']}" itemLabel="localizedName" /> 
+            	 <form:options items= "${form.dictionaryLists['YES_NO']}" itemLabel="localizedName" itemValue="id"/> 
 	    	</form:select>
         </td>
     </tr>
@@ -1571,7 +1575,7 @@ function /*void*/ setSaveButton() {
                  id="eid.eidInfantsARV"
                  onchange="makeDirty();compareAllObservationHistoryFields(true)" >
                  <form:option value="">&nbsp;</form:option>
-            	 <form:options items= "${form.dictionaryLists['EID_INFANT_PROPHYLAXIS_ARV']}" itemLabel="localizedName" /> 
+            	 <form:options items= "${form.dictionaryLists['EID_INFANT_PROPHYLAXIS_ARV']}" itemLabel="localizedName" itemValue="id"/> 
 	    	</form:select>
         </td>
     </tr>
@@ -1587,7 +1591,7 @@ function /*void*/ setSaveButton() {
                  id="eid.eidInfantCotrimoxazole"
                  onchange="makeDirty();compareAllObservationHistoryFields(true)" >
                  <form:option value="">&nbsp;</form:option>
-            	 <form:options items= "${form.dictionaryLists['YES_NO_UNKNOWN']}" itemLabel="localizedName" /> 
+            	 <form:options items= "${form.dictionaryLists['YES_NO_UNKNOWN']}" itemLabel="localizedName" itemValue="id"/> 
 	    	</form:select>
         </td>
     </tr>
@@ -1610,7 +1614,7 @@ function /*void*/ setSaveButton() {
                  id="eid.eidMothersHIVStatus"
                  onchange="makeDirty();compareAllObservationHistoryFields(true)" >
                  <form:option value="">&nbsp;</form:option>
-            	 <form:options items= "${form.dictionaryLists['EID_MOTHERS_HIV_STATUS']}" itemLabel="localizedName" /> 
+            	 <form:options items= "${form.dictionaryLists['EID_MOTHERS_HIV_STATUS']}" itemLabel="localizedName" itemValue="id"/> 
 	    	</form:select>
         </td>
     </tr>
@@ -1626,7 +1630,7 @@ function /*void*/ setSaveButton() {
                  id="eid.eidMothersARV"
                  onchange="makeDirty();compareAllObservationHistoryFields(true)" >
                  <form:option value="">&nbsp;</form:option>
-            	 <form:options items= "${form.dictionaryLists['EID_MOTHERS_ARV_TREATMENT']}" itemLabel="localizedName" /> 
+            	 <form:options items= "${form.dictionaryLists['EID_MOTHERS_ARV_TREATMENT']}" itemLabel="localizedName" itemValue="id"/> 
 	    	</form:select>
         </td>
     </tr>
@@ -1668,7 +1672,7 @@ function /*void*/ setSaveButton() {
                  id="eid.underInvestigation"
                  onchange="makeDirty();compareAllObservationHistoryFields(true)" >
                  <form:option value="">&nbsp;</form:option>
-            	 <form:options items= "${form.dictionaryLists['YES_NO']}" itemLabel="localizedName" /> 
+            	 <form:options items= "${form.dictionaryLists['YES_NO']}" itemLabel="localizedName" itemValue="id"/> 
 	    	</form:select>
         </td>
     </tr>
@@ -2080,7 +2084,7 @@ function /*void*/ setSaveButton() {
                 path="observations.underInvestigation" onchange="makeDirty();compareAllObservationHistoryFields(true)"
                 id="ind.underInvestigation">
                 <form:option value="">&nbsp;</form:option>
-            	<form:options items= "${form.dictionaryLists['YES_NO']}" itemLabel="localizedName" />
+            	<form:options items= "${form.dictionaryLists['YES_NO']}" itemLabel="localizedName" itemValue="id"/>
                 </form:select>
             </td>
         </tr>       
@@ -2223,7 +2227,7 @@ function /*void*/ setSaveButton() {
                          id="spe.gender"
                          onchange="spe.checkGender(false);" >
                     	<form:option value="">&nbsp;</form:option>
-            	 		<form:options items= "${form.dictionaryLists['YES_NO']}" itemLabel="localizedName" />
+            	 		<form:options items= "${form.dictionaryLists['YES_NO']}" itemLabel="localizedName" itemValue="id"/>
                 </form:select>
                 <div id="spe.genderMessage" class="blank" ></div>
             </td>
@@ -2253,7 +2257,7 @@ function /*void*/ setSaveButton() {
                              id="spe.reasonForRequest"
                              onchange="compareAllObservationHistoryFields(true)">
                     		<form:option value="">&nbsp;</form:option>
-            	 			<form:options items= "${form.dictionaryLists['SPECIAL_REQUEST_REASONS']}" itemLabel="localizedName" /> 
+            	 			<form:options items= "${form.dictionaryLists['SPECIAL_REQUEST_REASONS']}" itemLabel="localizedName" itemValue="id"/> 
                 </form:select>
             </td>
         </tr>
@@ -2602,7 +2606,7 @@ function /*void*/ setSaveButton() {
                     	path="observations.underInvestigation" onchange="makeDirty();compareAllObservationHistoryFields(true)"
                     	id="spe.underInvestigation">
                     	<form:option value="">&nbsp;</form:option>
-            	 		<form:options items= "${form.dictionaryLists['YES_NO']}" itemLabel="localizedName" />
+            	 		<form:options items= "${form.dictionaryLists['YES_NO']}" itemLabel="localizedName" itemValue="id"/>
                     </form:select>
                 </td>
             </tr>
@@ -2767,11 +2771,14 @@ function /*void*/ setSaveButton() {
             </td>
             <td>
                 <div class="blank"><spring:message code="sample.entry.project.LVL"/></div>
-                <INPUT type="text" name="vl.labNoForDisplay" id="ind.labNoForDisplay" size="5" class="text"
-                    onchange="handleLabNoChange( this, '<spring:message code="sample.entry.project.LVL"/>', false );makeDirty();"
+                <c:set var="labPrefix"><spring:message code='sample.entry.project.LVL'/></c:set>
+                <INPUT type="text" name="vl.labNoForDisplay" id="vl.labNoForDisplay" size="5" class="text"
+                    onchange="handleLabNoChange( this, '${labPrefix}', false );makeDirty();"
                     maxlength="5" />
-                <form:input path="labNo" style="display:none;"
-                        cssClass="text"
+                <form:input 
+                path="labNo"
+                		size="5"
+                        cssClass="text" style="display:none;"
                         id="vl.labNo" />
                 <div id="vl.labNoMessage"  class="blank" ></div>
             </td>
@@ -2799,7 +2806,16 @@ function /*void*/ setSaveButton() {
              <spring:message code="patient.age" />
         </td>
         <td>
-            <div class="blank"><spring:message code="label.month"/></div>
+            <label for="vl.age" ><spring:message  code="label.year" /></label>
+            <INPUT type='text' name='age' id="vl.age" size="3"
+                onchange="vl.checkAge( this, true, 'year' );clearField('vl.month');"
+                maxlength="2" />
+            <label for="vl.month" ><spring:message  code="label.month" /></label>
+            <INPUT type='text' name='month' id="vl.month" size="3"
+                onchange="vl.checkAge( this, true, 'month' ); clearField('vl.age');"
+                maxlength="2" />
+            <div id="ageMessage" class="blank" ></div>
+      <%--  <div class="blank"><spring:message code="label.month"/></div>
             <INPUT type="text" name="age" id="vl.month" size="3" class="text"
                 onchange="vl.checkAge( this, true, 'month' ); clearField('vl.ageWeek');"
                 maxlength="2" />
@@ -2807,7 +2823,7 @@ function /*void*/ setSaveButton() {
             <INPUT type="text" name="ageWeek" id="vl.ageWeek" size="3" class="text"
                 onchange="vl.checkAge( this, true, 'week' ); clearField('vl.month');"
                 maxlength="2" />
-            <div id="vl.ageMessage" class="blank" > </div>
+            <div id="vl.ageMessage" class="blank" > </div> --%>
         </td>
     </tr>
     
@@ -2828,7 +2844,7 @@ function /*void*/ setSaveButton() {
         </td>
     </tr>
     
-    <tr>
+    <tr id="vl.vlPregnancyRow" style="display:none">
         <td></td>
         <td>
             <spring:message code="sample.project.vlPregnancy"/>
@@ -2839,12 +2855,12 @@ function /*void*/ setSaveButton() {
                  id="vl.vlPregnancy"
                  onchange="makeDirty();compareAllObservationHistoryFields(true)" >
                  <form:option value="">&nbsp;</form:option>
-            	 <form:options items= "${form.dictionaryLists['YES_NO']}" itemLabel="localizedName" />
+            	 <form:options items= "${form.dictionaryLists['YES_NO']}" itemLabel="localizedName" itemValue="id"/>
 	    	</form:select>
         </td>
     </tr>
     
-    <tr>
+    <tr id="vl.vlSuckleRow" style="display:none">
         <td></td>
         <td>
             <spring:message code="sample.project.vlSuckle"/>
@@ -2855,7 +2871,7 @@ function /*void*/ setSaveButton() {
                  id="vl.vlSuckle"
                  onchange="makeDirty();compareAllObservationHistoryFields(true)" >
                  <form:option value="">&nbsp;</form:option>
-            	 <form:options items= "${form.dictionaryLists['YES_NO']}" itemLabel="localizedName" />  
+            	 <form:options items= "${form.dictionaryLists['YES_NO']}" itemLabel="localizedName" itemValue="id"/>  
 	    	</form:select>
         </td>
     </tr>
@@ -2871,7 +2887,7 @@ function /*void*/ setSaveButton() {
                  id="vl.hivStatus"
                  onchange="vl.checkHivStatus(true);" >
                  <form:option value="">&nbsp;</form:option>
-            	 <form:options items= "${form.dictionaryLists['HIV_STATUSES']}" itemLabel="localizedName" />  
+            	 <form:options items= "${form.dictionaryLists['HIV_TYPES']}" itemLabel="localizedName" itemValue="id"/>  
 	    	</form:select>
 	    	<div id="vl.hivStatusMessage" class="blank" > </div>
         </td>
@@ -2889,7 +2905,7 @@ function /*void*/ setSaveButton() {
                  id="vl.currentARVTreatment"
                  onchange="vl.checkInterruptedARVTreatment();compareAllObservationHistoryFields(true);" >
                  <form:option value="">&nbsp;</form:option>
-            	 <form:options items= "${form.dictionaryLists['YES_NO']}" itemLabel="localizedName" />  
+            	 <form:options items= "${form.dictionaryLists['YES_NO']}" itemLabel="localizedName" itemValue="id"/>  
 	    	</form:select>
         </td>
     </tr>
@@ -2920,7 +2936,7 @@ function /*void*/ setSaveButton() {
                  id="vl.arvTreatmentRegime"
                  onchange="makeDirty();compareAllObservationHistoryFields(true);"  >
                  <form:option value="">&nbsp;</form:option>
-            	 <form:options items= "${form.dictionaryLists['ARV_REGIME']}" itemLabel="localizedName" />  
+            	 <form:options items= "${form.dictionaryLists['ARV_REGIME']}" itemLabel="localizedName" itemValue="id"/>  
 	    	</form:select>
         </td>
     </tr>
@@ -2960,7 +2976,7 @@ function /*void*/ setSaveButton() {
                  id="vl.vlReasonForRequest"
                  onchange="vl.checkVLRequestReason();compareAllObservationHistoryFields(true);" >
                  <form:option value="">&nbsp;</form:option>
-            	 <form:options items= "${form.dictionaryLists['ARV_REASON_FOR_VL_DEMAND']}" itemLabel="localizedName" />  
+            	 <form:options items= "${form.dictionaryLists['ARV_REASON_FOR_VL_DEMAND']}" itemLabel="localizedName" itemValue="id"/>  
 	    	</form:select>
 	    	<div id="vlReasonForRequestMessage" class="blank" > </div>
         </td>
@@ -3091,7 +3107,7 @@ function /*void*/ setSaveButton() {
                  id="vl.vlBenefit"
                  onchange="vl.checkVLBenefit();compareAllObservationHistoryFields(true);" >
                  <form:option value="">&nbsp;</form:option>
-            	 <form:options items= "${form.dictionaryLists['YES_NO']}" itemLabel="localizedName" />  
+            	 <form:options items= "${form.dictionaryLists['YES_NO']}" itemLabel="localizedName" itemValue="id"/>  
 	    	</form:select>
         </td>
     </tr>
@@ -3173,7 +3189,7 @@ function /*void*/ setSaveButton() {
                  id="vl.underInvestigation"
                  onchange="makeDirty();compareAllObservationHistoryFields(true)" >
                  <form:option value="">&nbsp;</form:option>
-            	 <form:options items= "${form.dictionaryLists['YES_NO']}" itemLabel="localizedName" /> 
+            	 <form:options items= "${form.dictionaryLists['YES_NO']}" itemLabel="localizedName" itemValue="id"/> 
 	    	</form:select>
         </td>
     </tr>
@@ -3188,7 +3204,49 @@ function /*void*/ setSaveButton() {
                     onchange="makeDirty();" id="vl.underInvestigationComment" />
             </td>
     </tr> 
-    
+    <tr>
+		<td ></td>
+		<td colspan="3" class="sectionTitle">
+			<spring:message  code="sample.entry.project.title.specimen" />
+		</td>
+	</tr>
+	<tr>
+		<td width="2%"></td>
+		<td width="38%"><spring:message code="sample.entry.project.ARV.edtaTubeTaken" /></td>
+		<td width="60%">
+			<form:checkbox
+				   path="ProjectData.edtaTubeTaken"
+				   id="vl.edtaTubeTaken"
+				   onchange="vl.checkSampleItem($('vl.edtaTubeTaken'));" />
+		</td>
+	</tr>
+	
+	<tr>
+			<td width="2%"></td>
+			<td width="38%"><spring:message code="sample.entry.project.title.dryBloodSpot" /></td>
+			<td width="60%">
+				<form:checkbox
+					   path="ProjectData.dbsvlTaken"
+					   id="vl.dbsvlTaken"
+					   onchange="vl.checkSampleItem($('vl.dbsvlTaken'));" />
+			</td>
+		</tr>	
+	<tr>
+		<td></td>
+		<td colspan="3" class="sectionTitle">
+			<spring:message  code="sample.entry.project.title.tests" />
+		</td>
+	</tr>
+	<tr>
+		<td></td>
+		<td><spring:message code="sample.entry.project.ARV.viralLoadTest" /></td>
+		<td>
+			<form:checkbox 
+				   path="ProjectData.viralLoadTest"
+				   id="vl.viralLoadTest"
+				   onchange="vl.checkSampleItem($('vl.viralLoadTest'), this);" />
+		</td>
+	</tr>
     </table>   
 </div>
 

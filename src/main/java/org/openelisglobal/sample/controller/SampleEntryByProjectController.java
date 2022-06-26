@@ -102,7 +102,7 @@ public class SampleEntryByProjectController extends BaseSampleEntryController {
             setDisplayLists(form);
             return findForward(FWD_FAIL_INSERT, form);
         }
-
+System.out.print("LabNo: "+form.getLabNo());
         String forward;
 
         ISampleSecondEntry sampleSecondEntry = SpringContext.getBean(ISampleSecondEntry.class);
@@ -200,6 +200,7 @@ public class SampleEntryByProjectController extends BaseSampleEntryController {
         observationHistoryMapOfLists.put("EID_MOTHERS_ARV_TREATMENT",
                 ObservationHistoryList.EID_MOTHERS_ARV_TREATMENT.getList());
         observationHistoryMapOfLists.put("HIV_STATUSES", ObservationHistoryList.HIV_STATUSES.getList());
+        observationHistoryMapOfLists.put("HIV_TYPES", ObservationHistoryList.HIV_TYPES.getList());
         observationHistoryMapOfLists.put("SPECIAL_REQUEST_REASONS",
                 ObservationHistoryList.SPECIAL_REQUEST_REASONS.getList());
         observationHistoryMapOfLists.put("ARV_REGIME", ObservationHistoryList.ARV_REGIME.getList());

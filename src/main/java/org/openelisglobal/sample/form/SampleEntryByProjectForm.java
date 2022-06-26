@@ -45,13 +45,13 @@ public class SampleEntryByProjectForm extends BaseForm implements IAccessionerFo
     @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String project = "";
 
-    @ValidAccessionNumber(format = AccessionFormat.PROGRAM, dateValidate = true)
+    @ValidAccessionNumber(format = AccessionFormat.PROGRAM/*, dateValidate = true*/)
     private String labNo = "";
 
     @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
     private String doctor = "";
 
-    @NotBlank
+    //@NotBlank
     @Size(max = 7)
     @Pattern(regexp = ValidationHelper.PATIENT_ID_REGEX)
     private String subjectNumber = "";
