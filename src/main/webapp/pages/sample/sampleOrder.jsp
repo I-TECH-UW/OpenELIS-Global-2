@@ -214,6 +214,17 @@
         </td>
     </tr>
 </c:if>
+
+<tr>
+    <td><spring:message code="sample.entry.priority" htmlEscape="true"/> : </td>
+    <td>    
+        <form:select path="sampleOrderItems.priority" 
+                    id="priorityId"  >
+            <form:options items="${form.sampleOrderItems.priorityList}" itemValue="id" itemLabel="value"/>
+        </form:select> 
+    </td>
+</tr>
+
 <%-- <logic:notEmpty name="${formName}" property="sampleOrderItems.labNo" >
     <tr><td style="width:35%"></td><td style="width:65%"></td></tr>
 </logic:notEmpty> --%>

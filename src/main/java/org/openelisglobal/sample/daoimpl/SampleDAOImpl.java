@@ -38,6 +38,7 @@ import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.sample.dao.SampleDAO;
+import org.openelisglobal.sample.valueholder.OrderPriority;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.sampleproject.valueholder.SampleProject;
 import org.springframework.stereotype.Component;
@@ -841,5 +842,24 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
             handleException(e, "getSamplesForSiteBetweenOrderDates");
         }
         return new ArrayList<>();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Sample> getSamplesByPriority(OrderPriority priority) throws LIMSRuntimeException {
+        String sql = "from Sample s where s.priority = :oderpriority";
+        try {
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setParameter("oderpriority", priority.name());
+            List<Sample> sampleList = query.list();
+
+            // closeSession(); // CSL remove old
+
+            return sampleList;
+        } catch (HibernateException e) {
+            handleException(e, "getSamplesByPriority");
+        }
+
+        return null;
     }
 }
