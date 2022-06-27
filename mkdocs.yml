@@ -7,12 +7,11 @@ nav:
     - Analyzers: analyzer.md
     - Deploy:
        - OpenMRS Interoperability: deployomrs.md
-       - Backup Script Configuration: backups.md
+       - Backup Configuration: backups.md
        - Update From OpenELIS Global 1.x to 2.x: upgrade1to2.md
        - Password Migration: password.md
        - Examples of FHIR messages used: messages.md
        - Deploy Consolidated Server: build-cs.md
-       - Configure backups: backups.md
     - Develop: 
        - Dev Environment Setup Instructions: dev_setup.md
        - Developers Notes: dev.md
