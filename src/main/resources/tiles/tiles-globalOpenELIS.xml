@@ -432,10 +432,20 @@
 		extends="baseDefinition">
 		<put-attribute name="preSelectionHeader"
 			value="/pages/common/actionSuccess.jsp" />
-		<put-attribute name="body" value="resultListViewCore" />
+		<put-attribute name="body" value="resultsLogbookCore" />
 		<put-attribute name="footer"
 			value="/pages/common/saveCancelFooterButtons.jsp" />
 	</definition>
+
+	<definition name="resultsLogbookCore"
+		template="/pages/result/resultsBySearch.jsp">
+		<put-attribute name="searchPanel"
+			value="/pages/common/emptyPlaceHolder.jsp" />
+		<put-attribute name="resultsPanel"
+			value="resultListViewCore" />
+	</definition>
+	
+	
 
 	<definition name="patientResultDefinition"
 		extends="baseDefinition">
