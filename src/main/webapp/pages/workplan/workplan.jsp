@@ -68,7 +68,7 @@ function printWorkplan() {
 <form:hidden path="type"/>
 <form:hidden path="testTypeID"/>
 <c:choose>
-<c:when test="${not (type == 'test') && not (type == 'panel')}">
+<c:when test="${not (type == 'test') && not (type == 'panel') && not (type == 'priority')}">
 <div id="searchDiv" class="colorFill"  >
 <div id="PatientPage" class="colorFill" style="display:inline" >
 <input type="hidden" name="testName" value='<c:out value="${form.testName}"/>' />
@@ -222,12 +222,12 @@ function printWorkplan() {
 	</tr>
 </Table>
 </c:if>
-<c:if test="${type == 'test' || type == 'panel' }">
+<c:if test="${type == 'test' || type == 'panel' || type == 'priority'}">
 	<c:if test="${testCount == 0}">
 		<h2><%= MessageUtil.getContextualMessage("result.noTestsFound") %></h2>
 	</c:if>
 </c:if>
-<c:if test="${not (type == 'test') && not (type == 'panel') }">
+<c:if test="${not (type == 'test') && not (type == 'panel') && not (type == 'priority')}">
 	<c:if test="${testCount == 0}">
 		<c:if test="${not empty form.testSectionId}">
 		<h2><%=MessageUtil.getContextualMessage("result.noTestsFound") %></h2>

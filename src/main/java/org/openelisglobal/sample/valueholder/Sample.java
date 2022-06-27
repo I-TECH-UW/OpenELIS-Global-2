@@ -65,6 +65,7 @@ public class Sample extends EnumValueItemImpl implements NoteObject {
     private String referringId;
     private String clinicalOrderId;
     private Boolean isConfirmation = false;
+    private OrderPriority priority;
 
     // testing one-to-many
     // this is for HSE I and II - ability to enter up to two projects
@@ -406,5 +407,13 @@ public class Sample extends EnumValueItemImpl implements NoteObject {
 
     public String getFhirUuidAsString() {
         return fhirUuid == null ? "" : fhirUuid.toString();
+    }
+
+    public OrderPriority getPriority() {
+        return priority;
+    }
+
+    public void setPriority(OrderPriority priority) {
+        this.priority = priority;
     }
 }

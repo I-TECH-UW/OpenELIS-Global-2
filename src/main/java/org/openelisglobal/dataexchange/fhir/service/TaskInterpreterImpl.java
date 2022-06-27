@@ -11,6 +11,7 @@ import org.hl7.fhir.r4.model.Enumerations.AdministrativeGender;
 import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Patient;
 import org.hl7.fhir.r4.model.Patient.ContactComponent;
+import org.hl7.fhir.r4.model.ServiceRequest.ServiceRequestPriority;
 import org.hl7.fhir.r4.model.ServiceRequest;
 import org.hl7.fhir.r4.model.StringType;
 import org.hl7.fhir.r4.model.Task;
@@ -21,6 +22,7 @@ import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.dataexchange.fhir.FhirConfig;
 import org.openelisglobal.dataexchange.order.action.IOrderInterpreter.InterpreterResults;
 import org.openelisglobal.dataexchange.order.action.IOrderInterpreter.OrderType;
+import org.openelisglobal.sample.valueholder.OrderPriority;
 import org.openelisglobal.dataexchange.order.action.MessagePatient;
 import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.test.valueholder.Test;
@@ -88,6 +90,7 @@ public class TaskInterpreterImpl implements TaskInterpreter {
     TestService testService;
 
     private String labOrderNumber;
+    private OrderPriority priority;
     private OrderType orderType;
     private String orderMessage;
     private Task task;
@@ -123,6 +126,12 @@ public class TaskInterpreterImpl implements TaskInterpreter {
 
     private void extractOrderInformation(ServiceRequest serviceRequest) throws HL7Exception {
         labOrderNumber = serviceRequest.getIdentifierFirstRep().getValue();
+        if (serviceRequest.hasPriority()) {
+            getOrderPriorityFromIncomingOrder(serviceRequest.getPriority());
+        } else {
+            priority = OrderPriority.ROUTINE;
+        }
+       
         // gnr: make electronic_order.external_id longer
         if (labOrderNumber != null && labOrderNumber.length() > 60) {
             labOrderNumber = labOrderNumber.substring(labOrderNumber.length() - 60);
@@ -347,6 +356,11 @@ public class TaskInterpreterImpl implements TaskInterpreter {
          * results.add(InterpreterResults.OTHER_THAN_PANEL_OR_TEST_REQUESTED); } }
          */
     }
+    
+    @Override
+    public OrderPriority getOrderPriority() {
+        return priority;
+    }
 
     @Override
     public String getReferringOrderNumber() {
@@ -396,6 +410,25 @@ public class TaskInterpreterImpl implements TaskInterpreter {
 
     public void setTestIdentityService(ITestIdentityService testIdentityService) {
         this.testIdentityService = testIdentityService;
+    }
+
+    private void getOrderPriorityFromIncomingOrder(ServiceRequestPriority serviceRequestPriority) {
+        switch (serviceRequestPriority) {
+            case ROUTINE: {
+                priority = OrderPriority.ROUTINE;
+                break;
+            }
+            case ASAP: {
+                priority = OrderPriority.ASAP;
+                break;
+            }
+            case STAT: {
+                priority = OrderPriority.STAT;
+                break;
+            }
+            default:
+                priority = OrderPriority.ROUTINE;
+        }
     }
 
     @Override

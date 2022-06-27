@@ -49,6 +49,7 @@ import org.openelisglobal.qaevent.service.QaEventService;
 import org.openelisglobal.qaevent.valueholder.QaEvent;
 import org.openelisglobal.referral.service.ReferralReasonService;
 import org.openelisglobal.referral.valueholder.ReferralReason;
+import org.openelisglobal.sample.valueholder.OrderPriority;
 import org.openelisglobal.statusofsample.service.StatusOfSampleService;
 import org.openelisglobal.statusofsample.valueholder.StatusOfSample;
 import org.openelisglobal.test.service.TestSectionService;
@@ -80,7 +81,7 @@ public class DisplayListService implements LocaleChangeListener {
         REFERRAL_ORGANIZATIONS, TEST_LOCATION_CODE, PROGRAM, RESULT_TYPE_LOCALIZED, RESULT_TYPE_RAW, UNIT_OF_MEASURE,
         UNIT_OF_MEASURE_ACTIVE, UNIT_OF_MEASURE_INACTIVE, DICTIONARY_TEST_RESULTS, LAB_COMPONENT,
         SEVERITY_CONSEQUENCES_LIST, SEVERITY_RECURRENCE_LIST, ACTION_TYPE_LIST, LABORATORY_COMPONENT, SAMPLE_NATURE,
-        ELECTRONIC_ORDER_STATUSES, METHODS, METHODS_INACTIVE, METHOD_BY_NAME, PRACTITIONER_PERSONS
+        ELECTRONIC_ORDER_STATUSES, METHODS, METHODS_INACTIVE, METHOD_BY_NAME, PRACTITIONER_PERSONS , ORDER_PRIORITY
     }
 
     private static Map<ListType, List<IdValuePair>> typeToListMap;
@@ -192,6 +193,7 @@ public class DisplayListService implements LocaleChangeListener {
         typeToListMap.put(ListType.SEVERITY_RECURRENCE_LIST, createRecurrenceList());
         typeToListMap.put(ListType.ACTION_TYPE_LIST, createActionTypeList());
         typeToListMap.put(ListType.LABORATORY_COMPONENT, createLaboratoryComponentList());
+        typeToListMap.put(ListType.ORDER_PRIORITY, createSamplePriorityList());
     }
 
     public List<IdValuePair> getList(ListType listType) {
@@ -366,12 +368,17 @@ public class DisplayListService implements LocaleChangeListener {
         typeToListMap.put(ListType.LABORATORY_COMPONENT, createLaboratoryComponentList());
         typeToListMap.put(ListType.ELECTRONIC_ORDER_STATUSES, createElectronicOrderStatusList());
         typeToListMap.put(ListType.PRACTITIONER_PERSONS, createActivePractitionerPersonsList());
+        typeToListMap.put(ListType.ORDER_PRIORITY, createSamplePriorityList());
 
     }
 
     public void refreshList(ListType listType) {
 
         switch (listType) {
+        case ORDER_PRIORITY: {
+                typeToListMap.put(ListType.ORDER_PRIORITY, createSamplePriorityList());
+                break;
+        }    
         case PRACTITIONER_PERSONS: {
             typeToListMap.put(ListType.PRACTITIONER_PERSONS, createActivePractitionerPersonsList());
             break;
@@ -851,4 +858,13 @@ public class DisplayListService implements LocaleChangeListener {
         return methodsPairs;
     }
 
+    private List<IdValuePair> createSamplePriorityList() {
+        List<IdValuePair> priorities = new ArrayList<>();
+        priorities.add(new IdValuePair(OrderPriority.ROUTINE.name(), MessageUtil.getMessage("label.priority.routine")));
+        priorities.add(new IdValuePair(OrderPriority.ASAP.name(), MessageUtil.getMessage("label.priority.asap")));
+        priorities.add(new IdValuePair(OrderPriority.STAT.name(), MessageUtil.getMessage("label.priority.stat")));
+        priorities.add(new IdValuePair(OrderPriority.TIMED.name(), MessageUtil.getMessage("label.priority.timed")));
+        priorities.add(new IdValuePair(OrderPriority.FUTURE_STAT.name(), MessageUtil.getMessage("label.priority.futureStat")));
+        return priorities;
+    }
 }

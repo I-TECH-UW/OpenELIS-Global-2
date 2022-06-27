@@ -54,6 +54,7 @@ import org.openelisglobal.sample.bean.SampleOrderItem;
 import org.openelisglobal.sample.util.AccessionNumberUtil;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.sample.valueholder.SampleAdditionalField;
+import org.openelisglobal.sample.valueholder.OrderPriority;
 import org.openelisglobal.samplehuman.valueholder.SampleHuman;
 import org.openelisglobal.spring.util.SpringContext;
 import org.springframework.validation.Errors;
@@ -67,6 +68,7 @@ public class SamplePatientUpdateData {
     private String patientId;
     private String accessionNumber;
     private String referringId;
+    private OrderPriority priority;
 
     private Sample sample;
     private List<SampleAdditionalField> sampleFields = new ArrayList<>();
@@ -606,4 +608,11 @@ public class SamplePatientUpdateData {
         this.sampleFields.addAll(sampleFields);
     }
 
+    public OrderPriority getPriority() {
+        return priority;
+    }
+
+    public void setPriority(OrderPriority priority) {
+        this.priority = priority;
+    } 
 }

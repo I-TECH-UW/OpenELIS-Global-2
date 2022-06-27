@@ -91,6 +91,9 @@ public class SampleOrderService {
         orderItems.setProvidersList(
                 DisplayListService.getInstance().getFreshList(DisplayListService.ListType.PRACTITIONER_PERSONS));
 
+        orderItems.setPriorityList(
+            DisplayListService.getInstance().getFreshList(DisplayListService.ListType.ORDER_PRIORITY));    
+
         if (needRequesterList) {
             orderItems.setReferringSiteList(DisplayListService.getInstance()
                     .getFreshList(DisplayListService.ListType.SAMPLE_PATIENT_REFERRING_CLINIC));
@@ -128,6 +131,7 @@ public class SampleOrderService {
             SampleService sampleService = SpringContext.getBean(SampleService.class);
             sampleOrder.setSampleId(sample.getId());
             sampleOrder.setLabNo(sampleService.getAccessionNumber(sample));
+            sampleOrder.setPriority(sample.getPriority());
             sampleOrder.setReceivedDateForDisplay(sampleService.getReceivedDateForDisplay(sample));
             sampleOrder.setReceivedTime(sampleService.getReceived24HourTimeForDisplay(sample));
 

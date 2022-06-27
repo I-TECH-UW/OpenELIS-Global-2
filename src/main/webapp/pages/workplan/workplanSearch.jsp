@@ -20,6 +20,10 @@ function doShowTests(element){
 	window.location.href = '<c:url value="${responseAction}?type=${type}&selectedSearchID="/>' + element.value;
 }
 
+function doShowPriorityTests(element){
+	window.location.href = '<c:url value="${responseAction}?type=${type}&priority="/>' + element.value;
+}
+
 function validateTest(){
 
 	if ( fieldIsEmptyById( "testName" ) ) {
@@ -45,11 +49,20 @@ function /*boolean*/ handleEnterEvent(){
 				<c:out value="${form.searchLabel}"/>
 			</td>
 			<td>
-				<form:select path="selectedSearchID" id="testName"
-						 onchange="doShowTests(this);" >
-					<option value=""></option>
-					<form:options items="${form.searchTypes}" itemLabel="value" itemValue="id" />
-				</form:select>
+				<c:if test="${not (type == 'priority')}">
+					<form:select path="selectedSearchID" id="testName"
+							onchange="doShowTests(this);" >
+						<option value=""></option>
+						<form:options items="${form.searchTypes}" itemLabel="value" itemValue="id" />
+					</form:select>
+				</c:if>	
+				<c:if test="${type == 'priority'}">
+					<form:select path="priority" id="testName"
+							onchange="doShowPriorityTests(this);" >
+						<option value=""></option>
+						<form:options items="${form.priorityList}" itemLabel="value" itemValue="id" />
+					</form:select>
+				</c:if>	
 	   		</td>
 		</tr>
 	</table>
