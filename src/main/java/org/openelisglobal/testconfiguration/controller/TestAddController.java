@@ -276,6 +276,7 @@ public class TestAddController extends BaseController {
         ArrayList<ResultLimit> resultLimits = new ArrayList<>();
         for (ResultLimitParams params : testAddParams.limits) {
             ResultLimit limit = new ResultLimit();
+
             limit.setResultTypeId(testAddParams.resultTypeId);
             limit.setGender(params.gender);
             limit.setMinAge(StringUtil.doubleWithInfinity(params.lowAge));
@@ -284,14 +285,12 @@ public class TestAddController extends BaseController {
             limit.setHighNormal(StringUtil.doubleWithInfinity(params.highLimit));
             limit.setLowValid(lowValid);
             limit.setHighValid(highValid);
-            // if(lowRangeLow != null && lowRangeHigh != null && highRangeHigh != null && highRangeLow != null){
             if(limit != null)    {
             limit.setLowRangeLow(StringUtil.doubleWithInfinity(params.lowLimitLow));
-            }
             limit.setLowRangeHigh(StringUtil.doubleWithInfinity(params.lowLimitHigh));
             limit.setHighRangeHigh(StringUtil.doubleWithInfinity(params.highLimitHigh));
             limit.setHighRangeLow(StringUtil.doubleWithInfinity(params.highLimitLow));
-            //  }
+            }
             resultLimits.add(limit);
         }
 
