@@ -455,4 +455,28 @@ public class ResultLimitServiceImpl extends BaseObjectServiceImpl<ResultLimit, S
         return getResultLimitForTestAndPatient(analysis.getTest(),
                 sampleHumanService.getPatientForSample(analysis.getSampleItem().getSample()));
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<? extends Number>  getHighRangeHigh() throws LIMSRuntimeException {
+        return getBaseObjectDAO().getHighRangeHigh();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<? extends Number>  getHighRangeLow() throws LIMSRuntimeException {
+        return getBaseObjectDAO().getHighRangeLow();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<? extends Number>  getLowRangeHigh() throws LIMSRuntimeException {
+        return getBaseObjectDAO().getLowRangeHigh();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<? extends Number>  getLowRangeLow() throws LIMSRuntimeException {
+        return getBaseObjectDAO().getLowRangeLow();
+    }
 }

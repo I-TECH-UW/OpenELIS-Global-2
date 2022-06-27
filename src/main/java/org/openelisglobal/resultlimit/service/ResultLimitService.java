@@ -45,4 +45,13 @@ public interface ResultLimitService extends BaseObjectService<ResultLimit, Strin
     List<ResultLimit> getResultLimits(Test test);
 
     ResultLimit getResultLimitForAnalysis(Analysis analysis);
+
+    List<? extends Number> getHighRangeHigh();
+
+    List<? extends Number> getHighRangeLow();
+
+    List<? extends Number> getLowRangeHigh();
+
+    List<? extends Number> getLowRangeLow();
+
 }

@@ -38,4 +38,12 @@ public interface ResultLimitDAO extends BaseDAO<ResultLimit, String> {
     List<ResultLimit> getAllResultLimitsForTest(String testId) throws LIMSRuntimeException;
 
     ResultLimit getResultLimitById(String resultLimitId) throws LIMSRuntimeException;
+
+    List<? extends Number> getHighRangeHigh();
+
+    List<? extends Number> getHighRangeLow();
+
+    List<? extends Number> getLowRangeHigh();
+
+    List<? extends Number> getLowRangeLow();
 }

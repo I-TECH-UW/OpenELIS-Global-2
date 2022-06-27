@@ -236,4 +236,74 @@ public class ResultLimitDAOImpl extends BaseDAOImpl<ResultLimit, String> impleme
 
         return null;
     }
+
+    @Transactional(readOnly = true)
+    public List<? extends Number> getHighRangeHigh() throws LIMSRuntimeException {
+
+        try {
+            String sql = "high_range_high from ResultLimit";
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+
+            List<? extends Number> list = query.list();
+            // closeSession(); // CSL remove old
+            return list;
+        } catch (RuntimeException e) {
+            handleException(e, "getHighRangeHigh");
+        }
+
+        return null;
+    }
+
+    @Transactional(readOnly = true)
+    public List<? extends Number> getHighRangeLow() throws LIMSRuntimeException {
+
+        try {
+            String sql = "high_range_low from ResultLimit";
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+
+            List<? extends Number> list = query.list();
+            // closeSession(); // CSL remove old
+            return list;
+        } catch (RuntimeException e) {
+            handleException(e, "getHighRangeLow");
+        }
+
+        return null;
+    }
+
+    @Transactional(readOnly = true)
+    public List<? extends Number> getLowRangeHigh() throws LIMSRuntimeException {
+
+        try {
+            String sql = "low_range_high from ResultLimit";
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+
+            List<? extends Number> list = query.list();
+            // closeSession(); // CSL remove old
+            return list;
+        } catch (RuntimeException e) {
+            handleException(e, "getLowRangeHigh");
+        }
+
+        return null;
+    }
+
+    @Transactional(readOnly = true)
+    public List<? extends Number> getLowRangeLow() throws LIMSRuntimeException {
+
+        try {
+            String sql = "low_range_low from ResultLimit";
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+
+            List<? extends Number> list = query.list();
+            // closeSession(); // CSL remove old
+            return list;
+        } catch (RuntimeException e) {
+            handleException(e, "getLowhRangeLow");
+        }
+
+        return null;
+    }
+
+
 }

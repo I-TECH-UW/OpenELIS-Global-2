@@ -9,7 +9,9 @@
 			org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl.ResultType,
 		    java.text.DecimalFormat,
 			java.util.List,
+			java.lang.Number,
 			org.openelisglobal.resultvalidation.bean.AnalysisItem,
+			org.openelisglobal.common.services.ResultService,
 			org.openelisglobal.common.util.ConfigurationProperties,
 			org.openelisglobal.common.util.ConfigurationProperties.Property,
 			org.owasp.encoder.Encode" %>
@@ -35,6 +37,10 @@
 	String searchTerm = request.getParameter("searchTerm");
 	String url = request.getAttribute("javax.servlet.forward.servlet_path").toString();	
 	//boolean showTestSectionSelect = !ConfigurationProperties.getInstance().isPropertyValueEqual(Property.configurationName, "CI RetroCI");
+	List<? extends Number> highRangeHighResult = ResultService.getHighRangeHigh();
+	List<? extends Number> highRangeLowResult = ResultService.getHighRangeLow();
+	List<? extends Number> lowRangeLowResult = ResultService.getLowhRangeLow();
+	List<? extends Number> lowRangeHighResult = ResultService.getLowRangeHigh();
 %>
 
 
@@ -49,6 +55,10 @@
 <script src="scripts/ajaxCalls.js" ></script>
 
 <script>
+var highRangeHighResult = <%= highRangeHighResult %>;
+var highRangeLowResult = <%= highRangeLowResult %>;
+var lowRangeHighResult = <%= lowRangeHighResult %>;
+var lowRangeLowResult = <%= lowRangeLowResult %>;
 var dirty = false;
 var pager = new OEPager('${form.formName}', '<spring:escapeBody javaScriptEscape="true">${(analyzerType == "") ? "" : "&type=" +=  analyzerType}</spring:escapeBody>');
 var pager = new OEPager('${form.formName}', '<spring:escapeBody javaScriptEscape="true">${(testSection == "") ? "" : "&type=" += testSection}</spring:escapeBody>' + '&test= <spring:escapeBody javaScriptEscape="true">testName</spring:escapeBody>');
@@ -104,11 +114,36 @@ function /*void*/ enableDisableCheckboxes( matchedElement, groupingNumber ){
 	jQuery("selectAllAccept").checked = false;
 }
 
-function criticalResultCheck( index ){
-	var result = jQuery("#resultId_" + index).val();
-	if((result >= 0) && (result <= 10) || (result >= 95)){
-		alert( `<%=MessageUtil.getContextualMessage("result.critical")%>` );
-	} 
+function criticalResultCheckLowRangeHigh( index ){
+	var criticalResult = jQuery("#resultId_" + index).val();
+	lowRangeHighResult.forEach(function(result){
+    if(result == criticalResult){alert( `<%=MessageUtil.getContextualMessage("result.critical")%>` );
+    }
+	});
+}
+
+function criticalResultCheckLowRangeLow( index ){
+	var criticalResult = jQuery("#resultId_" + index).val();
+	lowRangeLowResult.forEach(function(result){
+    if(result == criticalResult){alert( `<%=MessageUtil.getContextualMessage("result.critical")%>` );
+    }
+	});
+}
+
+function criticalResultCheckHighRangeHigh( index ){
+	var criticalResult = jQuery("#resultId_" + index).val();
+	highRangeHighResult.forEach(function(result){
+    if(result == criticalResult){alert( `<%=MessageUtil.getContextualMessage("result.critical")%>` );
+    }
+	});
+}
+
+function criticalResultCheckHighRangeLow( index ){
+	var criticalResult = jQuery("#resultId_" + index).val();
+	highRangeLowResult.forEach(function(result){
+    if(result == criticalResult){alert( `<%=MessageUtil.getContextualMessage("result.critical")%>` );
+    }
+	});
 }
 
 function /*void*/ acceptSample(element, groupingNumber ){
@@ -608,7 +643,9 @@ function altAccessionHighlightSearch(accessionNumber) {
 									   id='rejected_${iter.index}'
 									   cssClass='rejected rejected_${resultList.sampleGroupingNumber}'
 									   onchange="markUpdated(); makeDirty();"
-									   onclick='enableDisableCheckboxes("accepted_${iter.index}", "${resultList.sampleGroupingNumber}"); criticalResultCheck(${iter.index});' 
+									   onclick='enableDisableCheckboxes("accepted_${iter.index}", "${resultList.sampleGroupingNumber}"); 
+									   criticalResultCheckLowRangeHigh(${iter.index}); criticalResultCheckLowRangeLow(${iter.index});
+									   criticalResultCheckHighRangeHigh(${iter.index}); criticalResultCheckHighRangeLow(${iter.index});' 
 									   />
 				</td>
 				</c:if><c:if test="${not resultList.showAcceptReject}">

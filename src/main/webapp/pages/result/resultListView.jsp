@@ -3,6 +3,7 @@
 			org.openelisglobal.common.action.IActionConstants,
 			org.openelisglobal.result.controller.LogbookResultsController,
 			java.util.ArrayList,
+			java.lang.Number,
 			java.text.DecimalFormat,
 			org.apache.commons.validator.GenericValidator,
 			org.openelisglobal.inventory.form.InventoryKitItem,
@@ -11,6 +12,7 @@
 			org.openelisglobal.common.formfields.FormFields,
 			org.openelisglobal.common.formfields.FormFields.Field,
 			org.openelisglobal.sample.util.AccessionNumberUtil,
+			org.openelisglobal.common.services.ResultService,
 			org.openelisglobal.common.util.ConfigurationProperties,
 			org.openelisglobal.common.util.ConfigurationProperties.Property,
 			org.openelisglobal.internationalization.MessageUtil,
@@ -70,6 +72,10 @@
 	boolean autofillTechBox = ConfigurationProperties.getInstance()
 			.isPropertyValueEqual(Property.autoFillTechNameBox, "true");
 	boolean restrictNewReferringMethodEntries = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.restrictFreeTextMethodEntry, "true");
+	List<? extends Number> highRangeHighResult = ResultService.getHighRangeHigh();
+	List<? extends Number> highRangeLowResult = ResultService.getHighRangeLow();
+	List<? extends Number> lowRangeLowResult = ResultService.getLowhRangeLow();
+	List<? extends Number> lowRangeHighResult = ResultService.getLowRangeHigh();
 		
 %>
 
@@ -92,6 +98,11 @@
 
 
 <script type="text/javascript">
+
+var highRangeHighResult = <%= highRangeHighResult %>;
+var highRangeLowResult = <%= highRangeLowResult %>;
+var lowRangeHighResult = <%= lowRangeHighResult %>;
+var lowRangeLowResult = <%= lowRangeLowResult %>;
 
 <%if (ConfigurationProperties.getInstance().isPropertyValueEqual(Property.ALERT_FOR_INVALID_RESULTS,
 					"true")) {%>
@@ -169,11 +180,36 @@ function /*void*/ makeDirty(){
 	window.onbeforeunload = formWarning;
 }
 
- function checkCriticalResult( index ){
+function criticalResultCheckLowRangeHigh( index ){
 	var criticalResult = jQuery("#results_" + index).val();
-	if((criticalResult >= 0) && (criticalResult <= 10) || (criticalResult >= 95)){
-		alert( `<%=MessageUtil.getContextualMessage("result.critical")%>` );
-	} 
+	lowRangeHighResult.forEach(function(result){
+    if(result == criticalResult){alert( `<%=MessageUtil.getContextualMessage("result.critical")%>` );
+    }
+	});
+}
+
+function criticalResultCheckLowRangeLow( index ){
+	var criticalResult = jQuery("#results_" + index).val();
+	lowRangeLowResult.forEach(function(result){
+    if(result == criticalResult){alert( `<%=MessageUtil.getContextualMessage("result.critical")%>` );
+    }
+	});
+}
+
+function criticalResultCheckHighRangeHigh( index ){
+	var criticalResult = jQuery("#results_" + index).val();
+	highRangeHighResult.forEach(function(result){
+    if(result == criticalResult){alert( `<%=MessageUtil.getContextualMessage("result.critical")%>` );
+    }
+	});
+}
+
+function criticalResultCheckHighRangeLow( index ){
+	var criticalResult = jQuery("#results_" + index).val();
+	highRangeLowResult.forEach(function(result){
+    if(result == criticalResult){alert( `<%=MessageUtil.getContextualMessage("result.critical")%>` );
+    }
+	});
 }
 
 function toggleKitDisplay( button ){
@@ -1096,7 +1132,9 @@ jQuery(document).ready(function (index) {
 					   			 ${(testResult.reflexGroup && not testResult.childReflex) ? 'updateReflexChild(' += testResult.reflexParentGroup += ');' : ''}
 					   			 ${(noteRequired && not empty testResult.resultValue) ? 'showNote(' += iter.index += ');' : ''}
 					   			 ${(testResult.displayResultAsLog) ? 'updateLogValue(this, ' += iter.index += ');' : ''}
-					   			 updateShadowResult(this, ${iter.index}); checkCriticalResult(${iter.index});" />
+					   			 updateShadowResult(this, ${iter.index});
+								 criticalResultCheckLowRangeHigh(${iter.index}); criticalResultCheckLowRangeLow(${iter.index});
+								 criticalResultCheckHighRangeHigh(${iter.index}); criticalResultCheckHighRangeLow(${iter.index});" />
 							<form:hidden path="testResult[${iter.index}].significantDigits" />
 						</c:if>
 						<c:if test="${testResult.resultType == 'A'}">
@@ -1120,7 +1158,9 @@ jQuery(document).ready(function (index) {
 								onkeyup="value = value.substr(0,200);
 						           markUpdated(${iter.index});
 					   			   ${(noteRequired && not (empty testResult.resultValue)) ? 'showNote(' += iter.index += ');' : ''}
-					   			   updateShadowResult(this, ${iter.index}); checkCriticalResult(${iter.index}); " />
+					   			   updateShadowResult(this, ${iter.index});
+								   criticalResultCheckLowRangeHigh(${iter.index}); criticalResultCheckLowRangeLow(${iter.index});
+								   criticalResultCheckHighRangeHigh(${iter.index}); criticalResultCheckHighRangeLow(${iter.index})" />
 						</c:if>
 						<c:if test="${testResult.resultType == 'D'}">
 							<%-- dictionary results --%>
