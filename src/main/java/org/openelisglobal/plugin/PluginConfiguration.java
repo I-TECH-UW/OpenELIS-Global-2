@@ -164,12 +164,15 @@ public class PluginConfiguration implements BeanFactoryAware {
 
                 Class<? extends Servlet> servletClass = (Class<? extends Servlet>) namedClass;
 
-                SimpleUrlHandlerMapping mapping = new SimpleUrlHandlerMapping();
-                Properties urlProperties = new Properties();
-                urlProperties.put("/plugin" + servletPath, servletName);
-                mapping.setMappings(urlProperties);
-                mapping.setOrder(Integer.MAX_VALUE - 2);
-                configurableBeanFactory.registerSingleton("SimpleUrlHandlerMapping", mapping);
+                if (!configurableBeanFactory.containsBean("SimpleUrlHandlerMapping")) {
+                    SimpleUrlHandlerMapping mapping = new SimpleUrlHandlerMapping();
+                    Properties urlProperties = new Properties();
+                    urlProperties.put("/plugin" + servletPath, servletName);
+                    mapping.setMappings(urlProperties);
+                    mapping.setOrder(Integer.MAX_VALUE - 2);
+                    configurableBeanFactory.registerSingleton("SimpleUrlHandlerMapping", mapping);
+                }
+//                configurableBeanFactory.getBean("SimpleUrlHandlerMapping");
 
                 ServletWrappingController controller = new ServletWrappingController();
                 controller.setServletClass(servletClass);
