@@ -7,6 +7,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.validator.GenericValidator;
+import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.DisplayListService.ListType;
@@ -52,7 +53,6 @@ public class AccessionResultsController extends BaseController {
     private UserService userService;
 
 
-    private static final String ROLE_RESULTS = "Results";
 
     public AccessionResultsController(RoleService roleService) {
         Role editRole = roleService.getRoleByName("Results modifier");
@@ -111,7 +111,7 @@ public class AccessionResultsController extends BaseController {
                     resultsUtility.addIdentifingPatientInfo(patient, form);
 
                     List<TestResultItem> results = resultsUtility.getGroupedTestsForSample(sample, patient);
-                    List<TestResultItem> filteredResults = userService.filterResultsByLabUnitRoles(getSysUserId(request), results , ROLE_RESULTS);
+                    List<TestResultItem> filteredResults = userService.filterResultsByLabUnitRoles(getSysUserId(request), results , Constants.ROLE_RESULTS);
 
                     if (resultsUtility.inventoryNeeded()) {
                         addInventory(form);

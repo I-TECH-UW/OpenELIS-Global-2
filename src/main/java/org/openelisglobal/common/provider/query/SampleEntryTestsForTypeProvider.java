@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.action.IActionConstants;
+import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.util.StringUtil;
@@ -54,7 +55,6 @@ import org.openelisglobal.typeofsample.valueholder.TypeOfSamplePanel;
 public class SampleEntryTestsForTypeProvider extends BaseQueryProvider {
     private static String USER_TEST_SECTION_ID;
     private static String VARIABLE_SAMPLE_TYPE_ID;
-    private static final String ROLE_RECEPTION = "Reception";
 
     private PanelService panelService = SpringContext.getBean(PanelService.class);
     private TestSectionService testSectionService = SpringContext.getBean(TestSectionService.class);
@@ -84,7 +84,7 @@ public class SampleEntryTestsForTypeProvider extends BaseQueryProvider {
         isVariableTypeOfSample = VARIABLE_SAMPLE_TYPE_ID.equals(sampleType);
         StringBuilder xml = new StringBuilder();
 
-        String receptionRoleId =  roleService.getRoleByName(ROLE_RECEPTION).getId();
+        String receptionRoleId =  roleService.getRoleByName(Constants.ROLE_RECEPTION).getId();
         UserSessionData usd = (UserSessionData)request.getSession().getAttribute(IActionConstants.USER_SESSION_DATA);
         List<IdValuePair> testSections = userService.getUserTestSections(String.valueOf(usd.getSystemUserId()) ,receptionRoleId);
         List<String> testUnitIds = new ArrayList<>();
