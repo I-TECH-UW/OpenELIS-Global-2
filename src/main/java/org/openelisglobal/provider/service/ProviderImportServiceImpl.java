@@ -15,6 +15,7 @@ import org.hl7.fhir.r4.model.Bundle.BundleEntryComponent;
 import org.hl7.fhir.r4.model.Practitioner;
 import org.hl7.fhir.r4.model.Resource;
 import org.hl7.fhir.r4.model.ResourceType;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.DisplayListService.ListType;
 import org.openelisglobal.dataexchange.fhir.FhirUtil;
@@ -29,6 +30,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 
 @Service
@@ -39,6 +41,8 @@ public class ProviderImportServiceImpl implements ProviderImportService {
 
     @Autowired
     private FhirUtil fhirUtil;
+    @Autowired
+    private FhirContext fhirContext;
     @Autowired
     private FhirTransformService fhirTransformService;
     @Autowired
@@ -57,8 +61,7 @@ public class ProviderImportServiceImpl implements ProviderImportService {
 
             List<Bundle> responseBundles = new ArrayList<>();
             Bundle responseBundle = client.search().forResource(org.hl7.fhir.r4.model.Practitioner.class)
-                    .where(Practitioner.ACTIVE.exactly().code("true"))
-                    .returnBundle(Bundle.class).execute();
+                    .where(Practitioner.ACTIVE.exactly().code("true")).returnBundle(Bundle.class).execute();
             responseBundles.add(responseBundle);
             while (responseBundle.getLink(IBaseBundle.LINK_NEXT) != null) {
                 responseBundle = client.loadPage().next(responseBundle).execute();
@@ -81,8 +84,13 @@ public class ProviderImportServiceImpl implements ProviderImportService {
                     org.hl7.fhir.r4.model.Practitioner fhirPractitioner = (org.hl7.fhir.r4.model.Practitioner) entry
                             .getResource();
                     remoteFhirProviders.put(fhirPractitioner.getIdElement().getIdPart(), fhirPractitioner);
-
-                    insertOrUpdateProvider(fhirTransformService.transformToProvider(fhirPractitioner));
+                    try {
+                        insertOrUpdateProvider(fhirTransformService.transformToProvider(fhirPractitioner));
+                    } catch (RuntimeException e) {
+                        LogEvent.logError(e);
+                        LogEvent.logDebug(this.getClass().getName(), "importProvidersFromBundle",
+                                fhirContext.newJsonParser().encodeResourceToString(fhirPractitioner));
+                    }
                 }
             }
         }
