@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.person.service.PersonService;
 import org.openelisglobal.person.valueholder.Person;
 import org.openelisglobal.provider.dao.ProviderDAO;
 import org.openelisglobal.provider.valueholder.Provider;
@@ -17,6 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class ProviderServiceImpl extends BaseObjectServiceImpl<Provider, String> implements ProviderService {
     @Autowired
     protected ProviderDAO baseObjectDAO;
+    @Autowired
+    protected PersonService personService;
 
     ProviderServiceImpl() {
         super(Provider.class);
@@ -115,5 +118,29 @@ public class ProviderServiceImpl extends BaseObjectServiceImpl<Provider, String>
             }
         }
 
+    }
+
+    @Override
+    @Transactional
+    public Provider insertOrUpdateProviderByFhirUuid(Provider provider) {
+        Provider dbProvider = getProviderByFhirId(provider.getFhirUuid());
+        if (dbProvider != null) {
+            dbProvider.setActive(provider.getActive());
+            dbProvider.getPerson().setLastName(provider.getPerson().getLastName());
+            dbProvider.getPerson().setMiddleName(provider.getPerson().getMiddleName());
+            dbProvider.getPerson().setFirstName(provider.getPerson().getFirstName());
+
+            dbProvider.getPerson().setEmail(provider.getPerson().getEmail());
+            dbProvider.getPerson().setPrimaryPhone(provider.getPerson().getPrimaryPhone());
+            dbProvider.getPerson().setWorkPhone(provider.getPerson().getWorkPhone());
+            dbProvider.getPerson().setFax(provider.getPerson().getFax());
+            dbProvider.getPerson().setCellPhone(provider.getPerson().getCellPhone());
+        } else {
+            provider.getPerson().setSysUserId("1");
+            provider.setPerson(personService.save(provider.getPerson()));
+            provider.setSysUserId("1");
+            dbProvider = save(provider);
+        }
+        return dbProvider;
     }
 }

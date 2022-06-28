@@ -84,7 +84,8 @@ public class AnalyzerResultsServiceImpl extends BaseObjectServiceImpl<AnalyzerRe
                     duplicateByAccessionAndTestOnly = true;
                     for (AnalyzerResults foundResult : previousResults) {
                         previousResult = foundResult;
-                        if (foundResult.getCompleteDate().equals(result.getCompleteDate())) {
+                        if (foundResult.getCompleteDate() != null
+                                && foundResult.getCompleteDate().equals(result.getCompleteDate())) {
                             duplicateByAccessionAndTestOnly = false;
                             break;
                         }

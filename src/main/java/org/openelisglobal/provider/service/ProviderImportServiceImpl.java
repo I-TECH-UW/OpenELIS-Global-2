@@ -6,8 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.transaction.Transactional;
-
 import org.apache.commons.validator.GenericValidator;
 import org.hl7.fhir.instance.model.api.IBaseBundle;
 import org.hl7.fhir.r4.model.Bundle;
@@ -24,7 +22,6 @@ import org.openelisglobal.dataexchange.fhir.exception.FhirLocalPersistingExcepti
 import org.openelisglobal.dataexchange.fhir.service.FhirPersistanceService;
 import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
 import org.openelisglobal.person.service.PersonService;
-import org.openelisglobal.provider.valueholder.Provider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -53,7 +50,6 @@ public class ProviderImportServiceImpl implements ProviderImportService {
     private PersonService personService;
 
     @Override
-    @Transactional
     @Scheduled(initialDelay = 1000, fixedRate = 60 * 60 * 1000)
     public void importPractitionerList() throws FhirLocalPersistingException, FhirGeneralException, IOException {
         if (!GenericValidator.isBlankOrNull(providerFhirStore)) {
@@ -85,7 +81,8 @@ public class ProviderImportServiceImpl implements ProviderImportService {
                             .getResource();
                     remoteFhirProviders.put(fhirPractitioner.getIdElement().getIdPart(), fhirPractitioner);
                     try {
-                        insertOrUpdateProvider(fhirTransformService.transformToProvider(fhirPractitioner));
+                        providerService.insertOrUpdateProviderByFhirUuid(
+                                fhirTransformService.transformToProvider(fhirPractitioner));
                     } catch (RuntimeException e) {
                         LogEvent.logError(e);
                         LogEvent.logDebug(this.getClass().getName(), "importProvidersFromBundle",
@@ -96,29 +93,6 @@ public class ProviderImportServiceImpl implements ProviderImportService {
         }
 
         fhirPersistanceService.updateFhirResourcesInFhirStore(remoteFhirProviders);
-    }
-
-    private Provider insertOrUpdateProvider(Provider provider) {
-        Provider dbProvider = providerService.getProviderByFhirId(provider.getFhirUuid());
-        if (dbProvider != null) {
-            dbProvider.setActive(provider.getActive());
-            dbProvider.getPerson().setLastName(provider.getPerson().getLastName());
-            dbProvider.getPerson().setMiddleName(provider.getPerson().getMiddleName());
-            dbProvider.getPerson().setFirstName(provider.getPerson().getFirstName());
-
-            dbProvider.getPerson().setEmail(provider.getPerson().getEmail());
-            dbProvider.getPerson().setPrimaryPhone(provider.getPerson().getPrimaryPhone());
-            dbProvider.getPerson().setWorkPhone(provider.getPerson().getWorkPhone());
-            dbProvider.getPerson().setFax(provider.getPerson().getFax());
-            dbProvider.getPerson().setCellPhone(provider.getPerson().getCellPhone());
-
-        } else {
-            provider.getPerson().setSysUserId("1");
-            provider.setPerson(personService.save(provider.getPerson()));
-            provider.setSysUserId("1");
-            dbProvider = providerService.save(provider);
-        }
-        return dbProvider;
     }
 
 }

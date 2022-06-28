@@ -1231,8 +1231,9 @@ public class FhirTransformServiceImpl implements FhirTransformService {
     }
 
     public void addHumanNameToPerson(HumanName humanName, Person person) {
-        person.setFirstName(humanName.getGivenAsSingleString());
-        person.setLastName(humanName.getFamily());
+        person.setFirstName(
+                humanName.getGivenAsSingleString() == null ? "" : humanName.getGivenAsSingleString().strip());
+        person.setLastName(humanName.getFamily() == null ? "" : humanName.getFamily().strip());
     }
 
     public void addTelecomToPerson(List<ContactPoint> telecoms, Person person) {
