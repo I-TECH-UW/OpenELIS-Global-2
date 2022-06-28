@@ -102,7 +102,7 @@ public class SampleEntryByProjectController extends BaseSampleEntryController {
             setDisplayLists(form);
             return findForward(FWD_FAIL_INSERT, form);
         }
-System.out.print("LabNo: "+form.getLabNo());
+
         String forward;
 
         ISampleSecondEntry sampleSecondEntry = SpringContext.getBean(ISampleSecondEntry.class);

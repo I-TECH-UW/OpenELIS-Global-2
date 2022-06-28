@@ -919,17 +919,19 @@ function BaseProjectChecker() {
 		checkRequiredField($(this.idPre + "gender"), blanksAllowed);
 		comparePatientField( this.idPre + "gender", false, blanksAllowed);
 		var selectedValue = $(this.idPre + "gender").value;
-		if(selectedValue==='F'){
-			$(this.idPre + "vlPregnancyRow").show();
-			$(this.idPre + "vlSuckleRow").show();
-			$(this.idPre + "vlPregnancy").value=1251; //Observation[YES_NO] set No option selected by default when selected gender = "F"
-			$(this.idPre + "vlSuckle").value=1251;
-		}
-		else{
-			$(this.idPre + "vlPregnancyRow").hide();
-			$(this.idPre + "vlSuckleRow").hide();
-			$(this.idPre + "vlPregnancy").clear();
-			$(this.idPre + "vlSuckle").clear();		
+		if(this.idPre === 'vl.'){// do it only for viral load form
+			if(selectedValue==='F'){
+				$(this.idPre + "vlPregnancyRow").show();
+				$(this.idPre + "vlSuckleRow").show();
+				$(this.idPre + "vlPregnancy").value=1251; //Observation[YES_NO] set No option selected by default when selected gender = "F"
+				$(this.idPre + "vlSuckle").value=1251;
+			}
+			else{
+				$(this.idPre + "vlPregnancyRow").hide();
+				$(this.idPre + "vlSuckleRow").hide();
+				$(this.idPre + "vlPregnancy").clear();
+				$(this.idPre + "vlSuckle").clear();		
+			}
 		}
 	}
 	
