@@ -440,9 +440,9 @@
 	<definition name="resultsLogbookCore"
 		template="/pages/result/resultsBySearch.jsp">
 		<put-attribute name="searchPanel"
-			value="/pages/common/emptyPlaceHolder.jsp" />
-		<put-attribute name="resultsPanel"
 			value="resultListViewCore" />
+		<put-attribute name="resultsPanel"
+			value="/pages/common/emptyPlaceHolder.jsp" />
 	</definition>
 	
 	
