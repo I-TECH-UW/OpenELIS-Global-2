@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.formfields.FormFields.Field;
 import org.openelisglobal.common.services.DisplayListService;
@@ -47,7 +48,6 @@ import org.springframework.web.servlet.ModelAndView;
 public class WorkPlanByPriorityController extends BaseWorkplanController {
 
     private static final String[] ALLOWED_FIELDS = new String[] {};
-    private static final String ROLE_RESULTS = "Results";
 
     @Autowired
     private AnalysisService analysisService;
@@ -82,7 +82,7 @@ public class WorkPlanByPriorityController extends BaseWorkplanController {
 
         if (priority != null) {
             workplanTests = getWorkplanByPriority(priority);   
-            filteredTests = userService.filterResultsByLabUnitRoles(getSysUserId(request), workplanTests, ROLE_RESULTS);
+            filteredTests = userService.filterResultsByLabUnitRoles(getSysUserId(request), workplanTests, Constants.ROLE_RESULTS);
 
             ResultsLoadUtility resultsLoadUtility = new ResultsLoadUtility();
             resultsLoadUtility.sortByAccessionAndSequence(filteredTests);

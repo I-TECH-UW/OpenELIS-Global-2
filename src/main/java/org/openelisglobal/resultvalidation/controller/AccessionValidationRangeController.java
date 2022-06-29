@@ -18,6 +18,7 @@ import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.action.IActionConstants;
+import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.DisplayListService;
@@ -104,7 +105,6 @@ public class AccessionValidationRangeController extends BaseResultValidationCont
     private final String RESULT_SUBJECT = "Result Note";
     private final String RESULT_TABLE_ID;
     private final String RESULT_REPORT_ID;
-    private static final String ROLE_VALIDATION = "Validation";
 
     public AccessionValidationRangeController(AnalysisService analysisService, TestResultService testResultService,
             SampleHumanService sampleHumanService, DocumentTrackService documentTrackService,
@@ -157,7 +157,7 @@ public class AccessionValidationRangeController extends BaseResultValidationCont
         if (GenericValidator.isBlankOrNull(newPage)) {
 
             // load testSections for drop down
-            String resultsRoleId =  roleService.getRoleByName(ROLE_VALIDATION).getId();
+            String resultsRoleId =  roleService.getRoleByName(Constants.ROLE_VALIDATION).getId();
             List<IdValuePair> testSections = userService.getUserTestSections(getSysUserId(request) ,resultsRoleId);
             form.setTestSections(testSections);
             form.setTestSectionsByName(DisplayListService.getInstance().getList(ListType.TEST_SECTION_BY_NAME));
@@ -176,7 +176,7 @@ public class AccessionValidationRangeController extends BaseResultValidationCont
                 
                 resultList = resultsValidationUtility.getResultValidationList(getValidationStatus(),
                         form.getTestSectionId(), form.getAccessionNumber());
-                filteredresultList = userService.filterAnalystResultsByLabUnitRoles(getSysUserId(request), resultList, ROLE_VALIDATION);
+                filteredresultList = userService.filterAnalystResultsByLabUnitRoles(getSysUserId(request), resultList, Constants.ROLE_VALIDATION);
                 request.setAttribute("pageSize", filteredresultList.size());
                 form.setSearchFinished(true);
                 } else {

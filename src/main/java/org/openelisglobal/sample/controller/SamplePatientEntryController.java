@@ -11,6 +11,7 @@ import org.apache.commons.validator.GenericValidator;
 import org.hibernate.StaleObjectStateException;
 import org.hl7.fhir.r4.model.Enumerations.ResourceType;
 import org.hl7.fhir.r4.model.Reference;
+import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.log.LogEvent;
@@ -124,7 +125,6 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
             "referralItems*.referralReasonId", "referralItems*.referrer", "referralItems*.referredInstituteId",
             "referralItems*.referredSendDate", "referralItems*.referredTestId", "referralItems*.referredReportDate",
             "referralItems*.note", "useReferral" };
-    private static final String ROLE_RECEPTION = "Reception";
 
     @Autowired
     private SamplePatientEntryFormValidator formValidator;
@@ -277,7 +277,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
         }
         form.setPatientProperties(new PatientManagementInfo());
         form.setPatientSearch(new PatientSearch());
-        form.setSampleTypes(userService.getUserSampleTypes(getSysUserId(request), ROLE_RECEPTION));
+        form.setSampleTypes(userService.getUserSampleTypes(getSysUserId(request), Constants.ROLE_RECEPTION));
         form.setTestSectionList(DisplayListService.getInstance().getList(ListType.TEST_SECTION));
         form.setCurrentDate(DateUtil.getCurrentDateAsText());
 

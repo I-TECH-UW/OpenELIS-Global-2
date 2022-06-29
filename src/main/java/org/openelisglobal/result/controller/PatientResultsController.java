@@ -3,11 +3,11 @@ package org.openelisglobal.result.controller;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.validator.GenericValidator;
+import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.DisplayListService.ListType;
@@ -43,7 +43,6 @@ public class PatientResultsController extends BaseController {
     PatientService patientService;
     @Autowired
     private UserService userService;
-    private static final String ROLE_RESULTS = "Results";
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -92,7 +91,7 @@ public class PatientResultsController extends BaseController {
 
                 List<TestResultItem> results = resultsUtility.getGroupedTestsForPatient(patient);
 
-                List<TestResultItem> filteredResults = userService.filterResultsByLabUnitRoles(getSysUserId(request), results ,ROLE_RESULTS);
+                List<TestResultItem> filteredResults = userService.filterResultsByLabUnitRoles(getSysUserId(request), results ,Constants.ROLE_RESULTS);
                 form.setTestResult(filteredResults);
 
                 // move this out of results utility
