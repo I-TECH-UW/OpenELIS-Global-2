@@ -169,3 +169,14 @@ In POSTman:
 * Add Bundle as the request body 
 * set Content-Type header to application/json
 * execute the command
+
+
+## Troubleshooting:
+
+### No new doctors are being imported
+
+ * ensure the OpenELIS is configured to pull practitioners from the FhirStore: by setting in extra.properties: org.openelisglobal.providerlist.fhirstore=https://server-url:5000/fhir/
+ * ensure the configured endpoint is reachable from the OE server: telnet server-url 5000
+ * ensure the doctors name has no illegal characters. The supported characters are set in Admin > Field Validation Configuration under the firstNameCharset and lastNameCharset
+ * ensure the system is running the import procedure (by default, it runs on startup and every hour. The system can be restarted to trigger the import or by visiting the endpoint https://server-url:8443/OpenELIS-Global/import/provider
+ * check the logs to see if an unknown error is occurring and if you can't understand what is going wrong, escalate the problem.
