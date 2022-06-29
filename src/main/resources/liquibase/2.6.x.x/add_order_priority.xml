@@ -46,4 +46,33 @@
 			<column name="is_active" value="true"/>
 		</insert>
 	</changeSet>
+	<changeSet author="moses_mutesa" id="4">
+		<preConditions onFail="MARK_RAN">
+			<tableExists tableName="system_role_module" schemaName="clinlims" />
+			<sqlCheck expectedResult="0">
+				SELECT count(*) FROM clinlims.system_module_url smu WHERE smu.system_module_id = (SELECT sm.id FROM clinlims.system_module sm WHERE sm.name ='Workplan') AND smu.url_path = '/WorkPlanByPriority'
+			</sqlCheck>
+		</preConditions>
+		<comment>update Results Role to have Acces to WorkPlan By Priority Tab </comment>
+		<insert tableName="system_module_url" schemaName="clinlims">
+			<column name="id" valueSequenceNext="system_module_url_seq"/>
+			<column name="url_path" value="/WorkPlanByPriority"/>
+			<column name="system_module_id" valueComputed="(SELECT id FROM clinlims.system_module WHERE name = 'Workplan')"/>
+		</insert>
+	</changeSet>
+	<changeSet author="moses_mutesa" id="5">
+		<preConditions onFail="MARK_RAN">
+			<sqlCheck expectedResult="1">
+				SELECT count(*) FROM clinlims.menu WHERE element_id = 'menu_workplan_priority'
+			</sqlCheck>
+			<sqlCheck expectedResult="0">
+				SELECT count(*) FROM clinlims.menu WHERE element_id = 'menu_workplan_priority' AND action_url = '/WorkPlanByPriority?type=priority'
+			</sqlCheck>	
+		</preConditions>
+		<comment>update correct WorkPlanByPriority action url</comment>
+		<update tableName="menu" schemaName="clinlims" >
+			<column name="action_url" value="/WorkPlanByPriority?type=priority"/>
+			<where>element_id='menu_workplan_priority'</where>
+		</update>
+	</changeSet>
 </databaseChangeLog>
