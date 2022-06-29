@@ -20,17 +20,17 @@
 			<column name="system_role_id" valueComputed="(SELECT id FROM clinlims.system_role WHERE name = 'Validation')"/>
 			<column name="system_module_id" valueComputed="(SELECT id FROM clinlims.system_module WHERE name = 'NonConformity')"/>
 		</insert>
-        <insert tableName="system_module_url" schemaName="clinlims">
+		<insert tableName="system_module_url" schemaName="clinlims">
 			<column name="id" valueSequenceNext="system_module_url_seq"/>
 			<column name="url_path" value="/ReportNonConformingEvent"/>
 			<column name="system_module_id" valueComputed="(SELECT id FROM clinlims.system_module WHERE name = 'NonConformity')"/>
 		</insert>
-        <insert tableName="system_module_url" schemaName="clinlims">
+		<insert tableName="system_module_url" schemaName="clinlims">
 			<column name="id" valueSequenceNext="system_module_url_seq"/>
 			<column name="url_path" value="/ViewNonConformingEvent"/>
 			<column name="system_module_id" valueComputed="(SELECT id FROM clinlims.system_module WHERE name = 'NonConformity')"/>
 		</insert>
-        <insert tableName="system_module_url" schemaName="clinlims">
+		<insert tableName="system_module_url" schemaName="clinlims">
 			<column name="id" valueSequenceNext="system_module_url_seq"/>
 			<column name="url_path" value="/NCECorrectiveAction"/>
 			<column name="system_module_id" valueComputed="(SELECT id FROM clinlims.system_module WHERE name = 'NonConformity')"/>
