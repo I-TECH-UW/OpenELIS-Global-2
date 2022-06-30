@@ -685,34 +685,36 @@ public class TestModifyEntryController extends BaseController {
 
     private void extractLimits(JSONObject obj, JSONParser parser, TestAddParams testAddParams) throws ParseException {
         String lowAge = "0";
-        String limits = (String) obj.get("resultLimits");
-        JSONArray limitArray = (JSONArray) parser.parse(limits);
-        for (int i = 0; i < limitArray.size(); i++) {
-            ResultLimitParams params = new ResultLimitParams();
-            Boolean gender = (Boolean) ((JSONObject) limitArray.get(i)).get("gender");
-            if (gender) {
-                params.gender = "M";
-            }
-            String highAge = (String) (((JSONObject) limitArray.get(i)).get("highAgeRange"));
-            params.displayRange = (String) (((JSONObject) limitArray.get(i)).get("reportingRange"));
-            params.lowLimit = (String) (((JSONObject) limitArray.get(i)).get("lowNormal"));
-            params.highLimit = (String) (((JSONObject) limitArray.get(i)).get("highNormal"));
-            params.lowAge = lowAge;
-            params.highAge = highAge;
-            testAddParams.limits.add(params);
-
-            if (gender) {
-                params = new ResultLimitParams();
-                params.gender = "F";
-                params.displayRange = (String) (((JSONObject) limitArray.get(i)).get("reportingRangeFemale"));
-                params.lowLimit = (String) (((JSONObject) limitArray.get(i)).get("lowNormalFemale"));
-                params.highLimit = (String) (((JSONObject) limitArray.get(i)).get("highNormalFemale"));
+        if (obj.containsKey("resultLimits")) {
+            String limits = (String) obj.get("resultLimits");
+            JSONArray limitArray = (JSONArray) parser.parse(limits);
+            for (int i = 0; i < limitArray.size(); i++) {
+                ResultLimitParams params = new ResultLimitParams();
+                Boolean gender = (Boolean) ((JSONObject) limitArray.get(i)).get("gender");
+                if (gender) {
+                    params.gender = "M";
+                }
+                String highAge = (String) (((JSONObject) limitArray.get(i)).get("highAgeRange"));
+                params.displayRange = (String) (((JSONObject) limitArray.get(i)).get("reportingRange"));
+                params.lowLimit = (String) (((JSONObject) limitArray.get(i)).get("lowNormal"));
+                params.highLimit = (String) (((JSONObject) limitArray.get(i)).get("highNormal"));
                 params.lowAge = lowAge;
                 params.highAge = highAge;
                 testAddParams.limits.add(params);
-            }
 
-            lowAge = highAge;
+                if (gender) {
+                    params = new ResultLimitParams();
+                    params.gender = "F";
+                    params.displayRange = (String) (((JSONObject) limitArray.get(i)).get("reportingRangeFemale"));
+                    params.lowLimit = (String) (((JSONObject) limitArray.get(i)).get("lowNormalFemale"));
+                    params.highLimit = (String) (((JSONObject) limitArray.get(i)).get("highNormalFemale"));
+                    params.lowAge = lowAge;
+                    params.highAge = highAge;
+                    testAddParams.limits.add(params);
+                }
+
+                lowAge = highAge;
+            }
         }
     }
 
@@ -772,7 +774,7 @@ public class TestModifyEntryController extends BaseController {
         public String testNameFrench;
         public String testReportNameEnglish;
         public String testReportNameFrench;
-        String testSectionId;
+        public String testSectionId;
         ArrayList<String> panelList = new ArrayList<>();
         public String uomId;
         public String loinc;
