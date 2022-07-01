@@ -148,9 +148,9 @@ Choose one or the other
     * fhir-pusher
     * fhir-puller
     * Route
-        * name: hapi-fhir-jpaserver
-        * type: http
-        * secured: yes
-        * CA ca
-        * Host: &lt;server-path>
-        * Port: 8444
+     * name: hapi-fhir-jpaserver
+     * type: http
+     * secured: yes
+     * CA ca
+     * Host: &lt;server-path>
+     * Port: 8444
