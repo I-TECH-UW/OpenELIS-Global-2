@@ -19,6 +19,8 @@ package org.openelisglobal.sample.daoimpl;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Date;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -36,6 +38,7 @@ import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.sample.dao.SampleDAO;
+import org.openelisglobal.sample.valueholder.OrderPriority;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.sampleproject.valueholder.SampleProject;
 import org.springframework.stereotype.Component;
@@ -823,5 +826,40 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
             handleException(e, "getSamplesBySampleItem");
         }
         return new ArrayList<>();
+    }
+
+    @Override
+    public List<Sample> getSamplesForSiteBetweenOrderDates(String referringSiteId, LocalDate lowerDate,
+            LocalDate upperDate) {
+        String hql = "FROM Sample s WHERE s.enteredDate BETWEEN :lowerDate AND :upperDate AND s.id IN (SELECT sr.sampleId FROM SampleRequester sr WHERE sr.requesterId = :requesterId AND sr.requesterTypeId = (SELECT rt.id FROM RequesterType rt WHERE rt.requesterType = 'organization' ))";
+        try {
+            Query query = entityManager.unwrap(Session.class).createQuery(hql);
+            query.setParameter("requesterId", Integer.parseInt(referringSiteId));
+            query.setParameter("lowerDate", lowerDate.atStartOfDay());
+            query.setParameter("upperDate", upperDate.atTime(LocalTime.MAX));
+            return query.list();
+        } catch (HibernateException e) {
+            handleException(e, "getSamplesForSiteBetweenOrderDates");
+        }
+        return new ArrayList<>();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Sample> getSamplesByPriority(OrderPriority priority) throws LIMSRuntimeException {
+        String sql = "from Sample s where s.priority = :oderpriority";
+        try {
+            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setParameter("oderpriority", priority.name());
+            List<Sample> sampleList = query.list();
+
+            // closeSession(); // CSL remove old
+
+            return sampleList;
+        } catch (HibernateException e) {
+            handleException(e, "getSamplesByPriority");
+        }
+
+        return null;
     }
 }

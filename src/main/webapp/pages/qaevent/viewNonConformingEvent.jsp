@@ -259,7 +259,7 @@
     function savePage() {
         var form = document.getElementById("mainForm");
         window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
-        form.action = "ViewNonConformingEvent.do";
+        form.action = "ViewNonConformingEvent";
         form.submit();
     }
 
@@ -317,7 +317,7 @@
                 var nceNumberEl = node.getElementsByTagName('ncenumber').item(0);
                 var nceNumber = (nceNumberEl ? nceNumberEl.firstChild.nodeValue : "#")
                 if (nceNumber != '#') {
-                    window.location = 'ViewNonConformingEvent.do?nceNumber=' + nceNumber;
+                    window.location = 'ViewNonConformingEvent?nceNumber=' + nceNumber;
                 }
             }
             for (var i = 0; i < resultNodes.length; i++) {
@@ -335,7 +335,7 @@
         var unit = nce.getElementsByTagName('unit').item(0);
         var nceNumber = (nceNumberEl ? nceNumberEl.firstChild.nodeValue : "#")
         var row = '<tr><td>' + (date ? date.firstChild.nodeValue : "") + '</td>' +
-            '<td><a href="ViewNonConformingEvent.do?nceNumber=' + nceNumber + '">' + nceNumber + '</a></td>' +
+            '<td><a href="ViewNonConformingEvent?nceNumber=' + nceNumber + '">' + nceNumber + '</a></td>' +
             '<td>' + (unit && unit.firstChild ? unit.firstChild.nodeValue : "") + '</td>' +
             '</tr><tr>';
         return row;

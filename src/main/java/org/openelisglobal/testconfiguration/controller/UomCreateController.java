@@ -109,7 +109,7 @@ public class UomCreateController extends BaseController {
         if (FWD_SUCCESS.equals(forward)) {
             return "uomCreateDefinition";
         } else if (FWD_SUCCESS_INSERT.equals(forward)) {
-            return "redirect:/UomCreate.do";
+            return "redirect:/UomCreate";
         } else if (FWD_FAIL_INSERT.equals(forward)) {
             return "uomCreateDefinition";
         } else {

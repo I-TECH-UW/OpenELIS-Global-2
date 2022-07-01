@@ -2,6 +2,7 @@ package org.openelisglobal.analysis.service;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -697,5 +698,11 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
         }
         return baseObjectDAO.getPageAnalysisByStatusFromAccession(analysisStatusList, sampleStatusList,
                 accessionNumber);
+    }
+
+    @Override
+    public List<Analysis> getAnalysisForSiteBetweenResultDates(String referringSiteId, LocalDate lowerDate,
+            LocalDate upperDate) {
+        return baseObjectDAO.getAnalysisForSiteBetweenResultDates(referringSiteId, lowerDate, upperDate);
     }
 }

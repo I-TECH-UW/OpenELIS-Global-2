@@ -26,6 +26,48 @@ function getNotificationsForTests( testIds, success, failure){
 
 //sensitive data is being transmitted, therefore a token check should be done even on GET. 
 //Otherwise this should be moved to a POST request and rely on regular csrf functionality
+function getProviderInfo( providerId, success, failure){
+	if( !failure ){	failure = defaultFailure;}
+	if (!providerId || providerId === "") {
+		return;
+	}
+
+	new Ajax.Request('Provider/' + providerId,
+			{
+				method : 'get', 
+			    //indicator: 'throbbing',
+				requestHeaders : {
+					"X-CSRF-Token" : getCsrfToken()
+				},
+				onSuccess : success,
+				onFailure : failure
+			});
+
+}
+
+//sensitive data is being transmitted, therefore a token check should be done even on GET. 
+//Otherwise this should be moved to a POST request and rely on regular csrf functionality
+function getProviderInfoByPersonId( personId, success, failure){
+	if( !failure ){	failure = defaultFailure;}
+	if (!personId || personId === "") {
+		return;
+	}
+
+	new Ajax.Request('Provider/Person/' + personId,
+			{
+				method : 'get', 
+			    //indicator: 'throbbing',
+				requestHeaders : {
+					"X-CSRF-Token" : getCsrfToken()
+				},
+				onSuccess : success,
+				onFailure : failure
+			});
+
+}
+
+//sensitive data is being transmitted, therefore a token check should be done even on GET. 
+//Otherwise this should be moved to a POST request and rely on regular csrf functionality
 function getLabOrder( orderNumber, success, failure){
 	if( !failure ){	failure = defaultFailure;}
 	
@@ -147,7 +189,7 @@ function getTestResultLimits(testId, success, failure){
 //sensitive data is being transmitted, therefore a token check should be done even on GET. 
 //Otherwise this should be moved to a POST request and rely on regular csrf functionality
 function getEntityNames( entitiyId,entityName ,success, failure){
-    var permitted = ['panel','sampleType','testSection','unitOfMeasure'];
+    var permitted = ['panel','sampleType','testSection','unitOfMeasure','method'];
 
     if( permitted.indexOf(entityName) == -1){
         alert( "\"" + entityName + "\" has not been implemented for getEntityNames");
@@ -515,7 +557,7 @@ function getPendingAnalysisForTest( testId, success, failure){
 function postBatchSample(success, failure){
     if( !failure){failure = defaultFailure;	}
 	new Ajax.Request(
-		'SamplePatientEntryBatch.do',  //url
+		'SamplePatientEntryBatch',  //url
 		{//options
 			method: 'POST', //http method
 			parameters: jQuery(document.getElementById("mainForm")).serialize().replace(/\+/g,'%20'),

@@ -276,7 +276,7 @@ function handleSelectedPatient(){
 
     $("searchResultsDiv").style.display = "none";
     var form = document.getElementById("mainForm");
-    form.action = '${form.formAction}' + ".do?";
+    form.action = '${form.formAction}' + "?";
     if( !(typeof requestType === 'undefined') ){
         form.action += "&type=" + requestType;
     }
@@ -322,7 +322,7 @@ function printBarcode(button) {
     }
 
     function finish() {
-        window.location = "Dashboard.do";
+        window.location = "Dashboard";
     }
 </script>
 

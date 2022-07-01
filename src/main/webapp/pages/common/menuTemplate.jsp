@@ -80,6 +80,7 @@ function setMenuAction(button, form, action, validate, parameters) {
   var searchString = '';
   var doSearch = '<%=request.getAttribute(IActionConstants.IN_MENU_SELECT_LIST_HEADER_SEARCH)%>';
   
+  var searchedString = '<%=request.getAttribute(IActionConstants.SEARCHED_STRING)%>';
   if (fieldObj != null) {
     //If only one checkbox
     if (fieldObj[0] == null) {
@@ -134,6 +135,9 @@ function setMenuAction(button, form, action, validate, parameters) {
          {  
             parameters += "&search=Y"; 
          }
+         if (searchedString != "null") { 
+             parameters += "&searchString=" + searchedString;
+         }
     }
   }
   
@@ -152,9 +156,33 @@ function setMenuAction(button, form, action, validate, parameters) {
         parameters += "&searchString=" + searchString; 
     }
   }
-   
 
-  form.action = context + '/' + action + parsedFormName + '.do' + sessionid + parameters;
+   var adminFilterCheckBox = document.getElementById("isAdmin");
+      if(adminFilterCheckBox != null){   
+         if (adminFilterCheckBox.checked == true){
+         parameters += "&filter=isAdmin";
+      }
+   }
+
+   var activeFilterCheckBox = document.getElementById("isActive");
+      if(activeFilterCheckBox != null){   
+         if (activeFilterCheckBox.checked == true){     
+         if(parameters.includes("filter=isAdmin")){
+             parameters += ",isActive"
+         }else{
+             parameters += "&filter=isActive";
+         }
+        }
+     }
+
+     var roleFilter = document.getElementById("roleFilter");
+      if(roleFilter != null){    
+            var role = roleFilter.value;  
+            parameters += "&roleFilter="+ role
+     }
+
+
+  form.action = context + '/' + action + parsedFormName + sessionid + parameters;
   form.selectedIDs = parameters;
   
   if ((button.name == 'edit' && ID == '') || (button.name=='search' && searchString == '') ||(button.name=='searchString' && searchString == '') ) {

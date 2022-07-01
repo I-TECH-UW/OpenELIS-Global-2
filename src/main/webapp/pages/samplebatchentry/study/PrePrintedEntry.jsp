@@ -49,9 +49,9 @@ function processAccessionSuccessStudy(xhr) {
 //what happens when save button is pressed
 function saveLabel() {
 	if (study == "viralLoad"){
-		postBatchSampleByProject('SampleEntryVLSave.do?type=initial', onPostBatchSampleSuccess, defaultFailure);
+		postBatchSampleByProject('SampleEntryVLSave?type=initial', onPostBatchSampleSuccess, defaultFailure);
 	} else if (study == "EID"){
-		postBatchSampleByProject('SampleEntryEIDSave.do?type=initial', onPostBatchSampleSuccess, defaultFailure);
+		postBatchSampleByProject('SampleEntryEIDSave?type=initial', onPostBatchSampleSuccess, defaultFailure);
 	}
 }
 

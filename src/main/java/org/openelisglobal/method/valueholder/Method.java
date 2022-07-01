@@ -19,9 +19,13 @@ import java.sql.Date;
 
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.SystemConfiguration;
-import org.openelisglobal.common.valueholder.BaseObject;
+import org.openelisglobal.common.valueholder.ValueHolderInterface;
+import org.openelisglobal.common.valueholder.ValueHolder;
+import org.openelisglobal.common.valueholder.EnumValueItemImpl;
+import org.openelisglobal.localization.valueholder.Localization;
 
-public class Method extends BaseObject<String> {
+
+public class Method extends EnumValueItemImpl {
 
     private String id;
 
@@ -41,8 +45,11 @@ public class Method extends BaseObject<String> {
 
     private String isActive;
 
+    private ValueHolderInterface localization;
+
     public Method() {
         super();
+        localization = new ValueHolder();
     }
 
     public void setId(String id) {
@@ -125,4 +132,11 @@ public class Method extends BaseObject<String> {
         return activeEndDateForDisplay;
     }
 
+    public Localization getLocalization() {
+        return (Localization) localization.getValue();
+    }
+
+    public void setLocalization(Localization localization) {
+        this.localization.setValue(localization);
+    }
 }

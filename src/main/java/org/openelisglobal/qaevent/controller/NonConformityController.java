@@ -491,7 +491,7 @@ public class NonConformityController extends BaseController {
         } else if (FWD_FAIL.equals(forward)) {
             return "nonConformityDefiniton";
         } else if (FWD_SUCCESS_INSERT.equals(forward)) {
-            return "redirect:/NonConformity.do";
+            return "redirect:/NonConformity";
         } else if (FWD_FAIL_INSERT.equals(forward)) {
             return "nonConformityDefiniton";
         } else {

@@ -64,7 +64,7 @@ function cancelAction() {
 	redirect = "${form.cancelAction}";
 	method =  "${form.cancelMethod}";
 	if (redirect == "null" || redirect == "") {
-		redirect = "Home.do";
+		redirect = "Home";
 	}
 	window.location = redirect;
 	
@@ -96,7 +96,7 @@ function navigationAction(form, action, validate, parameters) {
 	}
     parameters = parameters + "&startingRecNo=" + startingRecNoParameter;
     
-    window.location.href = context + '/' + action + parsedFormName + ".do"  + parameters ;
+    window.location.href = context + '/' + action + parsedFormName + ""  + parameters ;
 }
 
 function setAction(form, action, validate, parameters, method) {
@@ -127,7 +127,7 @@ function setAction(form, action, validate, parameters, method) {
     parameters = parameters + "&startingRecNo=" + startingRecNoParameter;
 
 
-	form.action = context + '/' + action + parsedFormName + ".do"  + sessionid + parameters ;
+	form.action = context + '/' + action + parsedFormName + ""  + sessionid + parameters ;
 	if (method != null && method != "") {
 		form.method = method;
 	}

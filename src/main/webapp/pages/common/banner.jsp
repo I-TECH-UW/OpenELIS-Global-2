@@ -95,7 +95,7 @@ function getCsrfToken() {
 				if (request.getSession().getAttribute(IActionConstants.USER_SESSION_DATA) != null) {
 					usd = (UserSessionData) request.getSession().getAttribute(IActionConstants.USER_SESSION_DATA);
 			%>
-			<spring:url value="/Logout.do" var="loginurl"/>
+			<spring:url value="/Logout" var="loginurl"/>
 			<form id="logout-form" method="post" action="${loginurl}">
 			<div id="user-info"><div><%=usd.getElisUserName()%> - 
 			<input type="submit" value="<spring:message code="homePage.menu.logOut.toolTip"/>" class="btn-link"/>

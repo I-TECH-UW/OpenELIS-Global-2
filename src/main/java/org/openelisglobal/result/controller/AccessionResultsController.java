@@ -7,6 +7,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.validator.GenericValidator;
+import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.DisplayListService.ListType;
@@ -25,6 +26,7 @@ import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.samplehuman.service.SampleHumanService;
 import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.systemuser.service.UserService;
 import org.openelisglobal.test.beanItems.TestResultItem;
 import org.openelisglobal.userrole.service.UserRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +49,10 @@ public class AccessionResultsController extends BaseController {
     private SampleHumanService sampleHumanService;
     @Autowired
     private UserRoleService userRoleService;
+    @Autowired
+    private UserService userService;
+
+
 
     public AccessionResultsController(RoleService roleService) {
         Role editRole = roleService.getRoleByName("Results modifier");
@@ -67,6 +73,8 @@ public class AccessionResultsController extends BaseController {
         form.setRejectReasons(DisplayListService.getInstance()
                 .getNumberedListWithLeadingBlank(DisplayListService.ListType.REJECTION_REASONS));
         form.setReferralOrganizations(DisplayListService.getInstance().getList(ListType.REFERRAL_ORGANIZATIONS));
+        form.setMethods(DisplayListService.getInstance().getList(ListType.METHODS));
+
 
         ResultsPaging paging = new ResultsPaging();
         String newPage = request.getParameter("page");
@@ -103,6 +111,7 @@ public class AccessionResultsController extends BaseController {
                     resultsUtility.addIdentifingPatientInfo(patient, form);
 
                     List<TestResultItem> results = resultsUtility.getGroupedTestsForSample(sample, patient);
+                    List<TestResultItem> filteredResults = userService.filterResultsByLabUnitRoles(getSysUserId(request), results , Constants.ROLE_RESULTS);
 
                     if (resultsUtility.inventoryNeeded()) {
                         addInventory(form);
@@ -111,7 +120,7 @@ public class AccessionResultsController extends BaseController {
                         addEmptyInventoryList(form, accessionNumber);
                     }
 
-                    paging.setDatabaseResults(request, form, results);
+                    paging.setDatabaseResults(request, form, filteredResults);
                 } else {
                     setEmptyResults(form, accessionNumber);
                 }
@@ -125,7 +134,6 @@ public class AccessionResultsController extends BaseController {
 
         return findForward(FWD_SUCCESS, form);
     }
-
     private boolean modifyResultsRoleBased() {
         return "true"
                 .equals(ConfigurationProperties.getInstance().getPropertyValue(Property.roleRequiredForModifyResults));

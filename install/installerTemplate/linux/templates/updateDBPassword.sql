@@ -1,1 +1,2 @@
-alter role clinlims PASSWORD '[% postgres_password %]';
+CREATE USER backup_management PASSWORD '[% itechappPassword %]';
+CREATE USER backup REPLICATION PASSWORD '[% itechappPassword %]';

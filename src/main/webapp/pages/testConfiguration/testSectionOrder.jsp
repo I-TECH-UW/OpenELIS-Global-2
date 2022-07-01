@@ -102,7 +102,7 @@
         buildJSONList();
         window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
         var form = document.getElementById("mainForm");
-        form.action = "TestSectionOrder.do";
+        form.action = "TestSectionOrder";
         form.submit();
     }
 </script>
@@ -124,13 +124,13 @@ td {
 				   id="mainForm">
 
     <input type="button" value='<%= MessageUtil.getContextualMessage("banner.menu.administration") %>'
-           onclick="submitAction('MasterListsPage.do');"
+           onclick="submitAction('MasterListsPage');"
            class="textButton"/>&rarr;
     <input type="button" value='<%= MessageUtil.getContextualMessage("configuration.test.management") %>'
-           onclick="submitAction('TestManagementConfigMenu.do');"
+           onclick="submitAction('TestManagementConfigMenu');"
            class="textButton"/>&rarr;
     <input type="button" value='<%= MessageUtil.getContextualMessage("configuration.testUnit.manage") %>'
-           onclick="submitAction('TestSectionManagement.do');"
+           onclick="submitAction('TestSectionManagement');"
            class="textButton"/>&rarr;
 
 <%=MessageUtil.getContextualMessage( "configuration.testUnit.order" )%>
@@ -162,7 +162,7 @@ td {
         <input type="button" value='<%=MessageUtil.getContextualMessage("label.button.next")%>'
                onclick="confirmValues();"/>
         <input type="button" value='<%=MessageUtil.getContextualMessage("label.button.previous")%>'
-               onclick='submitAction("TestSectionManagement.do")'/>
+               onclick='submitAction("TestSectionManagement")'/>
     </div>
     <div style="text-align: center; display: none;" id="confirmationButtons">
         <input type="button" value='<%=MessageUtil.getContextualMessage("label.button.accept")%>'

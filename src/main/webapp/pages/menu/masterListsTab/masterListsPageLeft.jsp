@@ -12,7 +12,7 @@
 <%--id is important for activating the menu tabs: see tabs.js from struts-menu for how masterListsSubMenu is used--%>
 <%-- similar code will need to be added in the left panel and in tabs.js for any menu tab that has the submenu on the left hand side--%>
 
-<ul id="masterListsSubMenu.do" class="leftnavigation">
+<ul id="masterListsSubMenu" class="leftnavigation">
 <c:forEach items="${form.adminMenuItems}" var="adminMenuItem">
 	<li>
 		<a href=<c:url value="${adminMenuItem.path}"/> >

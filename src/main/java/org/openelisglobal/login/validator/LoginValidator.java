@@ -44,7 +44,7 @@ public class LoginValidator implements Validator {
     }
 
     // complex validation for password update when user is not authenticated (ie
-    // /UpdateLoginChangePassword.do)
+    // /UpdateLoginChangePassword)
     public void unauthenticatedPasswordUpdateValidate(LoginUser login, Errors errors) {
         preUpdateValidate(login, errors);
 

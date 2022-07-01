@@ -50,7 +50,7 @@ public class ChangePasswordLoginController extends BaseController {
     @RequestMapping(value = "/ChangePasswordLogin", method = RequestMethod.GET)
     public ModelAndView showChangePasswordLogin(HttpServletRequest request) {
         ChangePasswordLoginForm form = new ChangePasswordLoginForm();
-        form.setFormAction("ChangePasswordLogin.do");
+        form.setFormAction("ChangePasswordLogin");
         return findForward(FWD_SUCCESS, form);
     }
 
@@ -107,7 +107,7 @@ public class ChangePasswordLoginController extends BaseController {
         if (FWD_SUCCESS.equals(forward)) {
             return "loginChangePasswordDefinition";
         } else if (FWD_SUCCESS_INSERT.equals(forward)) {
-            return "redirect:/LoginPage.do";
+            return "redirect:/LoginPage";
         } else if (FWD_FAIL_INSERT.equals(forward)) {
             return "loginChangePasswordDefinition";
         } else {

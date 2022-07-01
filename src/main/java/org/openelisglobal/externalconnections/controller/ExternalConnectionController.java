@@ -89,10 +89,10 @@ public class ExternalConnectionController extends BaseController {
     public ModelAndView viewExternalConnection(
             @RequestParam(value = ID, required = false) Integer externalConnectionId) {
         ExternalConnectionForm form = new ExternalConnectionForm();
-        form.setCancelAction("ExternalConnectionsMenu.do");
+        form.setCancelAction("ExternalConnectionsMenu");
         form.setCancelMethod(RequestMethod.GET);
 
-        form.setFormAction("ExternalConnection.do");
+        form.setFormAction("ExternalConnection");
         form.setFormName("ExternalConnectionForm");
         form.setFormMethod(RequestMethod.POST);
 
@@ -181,7 +181,7 @@ public class ExternalConnectionController extends BaseController {
         if (FWD_SUCCESS.equals(forward)) {
             return "externalConnectionDefinition";
         } else if (FWD_SUCCESS_INSERT.equals(forward)) {
-            return "redirect:/ExternalConnectionsMenu.do";
+            return "redirect:/ExternalConnectionsMenu";
         }
         return "PageNotFound";
     }

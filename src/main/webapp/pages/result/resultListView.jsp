@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	import="java.util.List,
 			org.openelisglobal.common.action.IActionConstants,
+			org.openelisglobal.result.controller.LogbookResultsController,
 			java.util.ArrayList,
 			java.text.DecimalFormat,
 			org.apache.commons.validator.GenericValidator,
@@ -68,6 +69,8 @@
 	pageContext.setAttribute("noteRequired", noteRequired);
 	boolean autofillTechBox = ConfigurationProperties.getInstance()
 			.isPropertyValueEqual(Property.autoFillTechNameBox, "true");
+	boolean restrictNewReferringMethodEntries = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.restrictFreeTextMethodEntry, "true");
+		
 %>
 
 <link rel="stylesheet" type="text/css" href="css/bootstrap_simple.css?" />
@@ -81,6 +84,9 @@
 <script type="text/javascript" src="scripts/OEPaging.js?"></script>
 <script type="text/javascript" src="scripts/math-extend.js?"></script>
 <script type="text/javascript" src="scripts/multiselectUtils.js?"></script>
+<script src="scripts/customAutocomplete.js?"></script>
+<link rel="stylesheet" href="css/customAutocomplete.css?">
+<script src="scripts/ui/jquery.ui.autocomplete.js?"></script> 
 <link rel="stylesheet" type="text/css" href="css/jquery.asmselect.css?" />
 
 
@@ -138,6 +144,7 @@ jQuery(document).ready( function() {
             	jQuery(this).find('.resultValue').val(jQuery(this).find('.defaultResultValue').val());
             	jQuery(this).find('.resultValue').change();
             });
+            
 			});
 
 
@@ -221,7 +228,9 @@ function /*void*/ autofill( sourceElement ){
 	}	
 }
 function validateForm(){
-	return !missingRequiredReferralValues();
+	var invalid = missingRequiredReferralValues();
+	invalid = invalid || missingRejectReason();
+	return !invalid;
 }
 
 function handleReferralCheckChange(checkbox,  index ){
@@ -256,7 +265,7 @@ function  /*void*/ savePage()
 		return;
 	}
 	var form = document.getElementById("mainForm");
-	form.action = '<spring:escapeBody javaScriptEscape="true">${form.formName}</spring:escapeBody>'.sub('Form','') + ".do"  + '?type=' + encodeURIComponent('<spring:escapeBody javaScriptEscape="true">${type}</spring:escapeBody>');
+	form.action = '<spring:escapeBody javaScriptEscape="true">${form.formName}</spring:escapeBody>'.sub('Form','') + ""  + '?type=' + encodeURIComponent('<spring:escapeBody javaScriptEscape="true">${type}</spring:escapeBody>');
 	form.submit();
 }
 
@@ -321,7 +330,7 @@ function processTestReflexCD4Success(parameters)
 }
 
 function submitTestSectionSelect( element ) {
-	window.location.href = "LogbookResults.do?testSectionId=" + element.value + "&type=" + encodeURIComponent(testSectionNameIdHash[element.value]) ;	
+	window.location.href = "LogbookResults?testSectionId=" + element.value + "&type=" + encodeURIComponent(testSectionNameIdHash[element.value]) ;	
 }
 
 var showForceWarning = true;
@@ -370,7 +379,7 @@ function altAccessionHighlightSearch(accessionNumber) {
 	if (confirm('Searching for an individual Lab no will take you to a new page.\n\nUnsaved data on this page will be lost.\n\nWould you like to continue?')) {
 		window.onbeforeunload = null;
 		var params = new URLSearchParams("accessionNumber=" + accessionNumber);
-		window.location = "AccessionResults.do?" + params.toString();
+		window.location = "AccessionResults?" + params.toString();
 	}
 }
 
@@ -407,6 +416,30 @@ function missingRequiredReferralValues() {
 
     return missing;
 
+}
+
+
+var rejectedIndexes = new Set();
+
+function addRemoveRejectedIndex(index) {
+	if (rejectedIndexes.has(index)) {
+		rejectedIndexes.delete(index);
+	} else {
+		rejectedIndexes.add(index);
+	}
+}
+
+function missingRejectReason() {
+	var missing = false;
+	for (var it = rejectedIndexes.values(), index= null; index=it.next().value; ) {
+		if (jQuery("#rejectReasonId_" + index).val() === "0") {
+			jQuery("#rejectReasonId_" + index).addClass('error');
+			missing = true;
+		} else {
+			jQuery("#rejectReasonId_" + index).removeClass('error');
+		}
+	}
+	return missing;
 }
 
 function createReferralOption(sampleNum, testNum, testId, testName, index) {
@@ -505,6 +538,25 @@ function /*void*/ handleEnterEvent(  ){
 	}
 	return false;
 }
+
+// jQuery(document).ready(function (index) {
+//     var dropdown = jQuery('#testMethod_' + index);
+
+//         autoCompleteWidth = dropdown.width() + 66 + 'px';
+<%--         <% if(restrictNewReferringMethodEntries) { %> --%>
+//        			clearNonMatching = true;
+<%--         <% } else {%> --%>
+//         		clearNonMatching = false;
+<%--         <% } %> --%>
+//         capitialize = true;
+//         // Actually executes autocomplete
+//         dropdown.combobox();
+//         invalidLabID = '<spring:message code="error.method.invalid"/>'; // Alert if value is typed that's not on list. FIX - add bad message icon
+//         maxRepMsg = '<spring:message code="method.entry.project.MaxMsg"/>';
+//         resultCallBack = function (textValue) {
+//         	setSave();
+//         };
+// });
 
 </script>
 
@@ -890,6 +942,8 @@ function /*void*/ handleEnterEvent(  ){
 						indexed="true" />
 					<form:hidden path="testResult[${iter.index}].resultType"
 						id="resultType_${iter.index}" />
+					 <form:hidden path="testResult[${iter.index}].testMethod"
+						id="testMethod_${iter.index}" />	 
 					<form:hidden path="testResult[${iter.index}].valid"
 						id="valid_${iter.index}" />
 					<form:hidden path="testResult[${iter.index}].defaultResultValue"
@@ -1250,10 +1304,11 @@ function /*void*/ handleEnterEvent(  ){
 							path="testResult[${iter.index}].shadowRejected"
 							id="shadowRejected_${iter.index}" /> <input type="hidden"
 						id="isRejected_${iter.index}" value="${testResult.rejected}" /> <spring:message
-							code="result.delete.confirm" var="deleteMsg" /> <form:checkbox
+							code="result.delete.confirm" var="deleteMsg" /> 
+							<form:checkbox
 							path="testResult[${iter.index}].rejected"
 							id="rejected_${iter.index}" tabindex='-1'
-							onchange="markUpdated(${iter.index}); showHideRejectionReasons(${iter.index}, '${deleteMsg}' );" />
+							onchange="addRemoveRejectedIndex(${iter.index}); markUpdated(${iter.index}); showHideRejectionReasons(${iter.index}, '${deleteMsg}' );" />
 					</td>
 					<%
 						}
@@ -1271,7 +1326,8 @@ function /*void*/ handleEnterEvent(  ){
 					<td colspan="6" style="text-align: right"><form:select
 							path="testResult[${iter.index}].rejectReasonId"
 							id="rejectReasonId_${iter.index}"
-							disabled='${testResult.readOnly}'>
+							disabled='${testResult.readOnly}'
+							onChange="markUpdated(${iter.index})">
 							<form:options items="${form.rejectReasons}" itemValue="id"
 								itemLabel="value" />
 						</form:select><br /></td>
@@ -1309,6 +1365,14 @@ function /*void*/ handleEnterEvent(  ){
 							path="testResult[${iter.index}].refer"
 							onchange="toggleReferral(${iter.index});markUpdated(${iter.index});" /> <spring:message
 							code="refertest" text="Refer test to a reference lab" /></td>
+							 <td width="50%"><%=MessageUtil.getMessage("workplan.method")%>&nbsp;
+
+								<form:select id="testMethod_${iter.index}"
+								        path="testResult[${iter.index}].testMethod">
+										<option value=""></option>
+										<form:options items="${form.methods}" itemLabel="value"
+											itemValue="id" />
+									</form:select></td>		 
 				</tr>
 				<tr>
 					<td colspan="${numCols}">

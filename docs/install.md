@@ -26,18 +26,18 @@
 
         ping 8.8.8.8
 
+1. Open a command prompt and enter the following commands- this will install the needed services and install updates to the OS since the image was created. 
+This updates the system from the sources in the sources list. It updates what new packages are available.
+
+	    sudo apt update && sudo apt upgrade
+
 1. Install Net Tools in order to find the IP Address
         
 		sudo apt install net-tools
 
-1. Open a command prompt and enter the following commands- this will install the needed services and install updates to the OS since the image was created. 
-This updates the system from the sources in the sources list. It updates what new packages are available.
-
-	    sudo apt-get update && sudo apt-get upgrade
-
 3. Install Python
 
-        sudo apt-get install python
+        sudo apt install python2
     
 ### Create and Load SSL Certificates
 
@@ -68,17 +68,19 @@ For the self-signed certificate above, you would use:
 	
     sudo openssl pkcs12 -inkey /etc/ssl/private/apache-selfsigned.key -in /etc/ssl/certs/apache-selfsigned.crt -export -out /etc/openelis-global/keystore
 
-    cp /etc/openelis-global/keystore /etc/openelis-global/client_facing_keystore
+and then
+
+    sudo cp /etc/openelis-global/keystore /etc/openelis-global/client_facing_keystore
 
 **Be sure to remember your keystore password, you will need it later **
 	
 #### Create truststore with OpenELIS-Global's cert (or a CA that signs OE certs)
 
-**Choose ONE of the two methods below to reate your truststore**
+**Choose ONE of the two methods below to create your truststore**
 
 1. using keytool (more reliable):
    
-	    sudo apt-get install default-jre
+	    sudo apt install default-jre
    
         sudo keytool -import -alias oeCert -file path/to/your/cert -storetype pkcs12 -keystore /etc/openelis-global/truststore
 	
@@ -107,19 +109,13 @@ For the self-signed certificate above, you would use:
 	For the self-signed certificate above, you would use:
 	
 	    openssl pkcs12 -export -nokeys -in /etc/ssl/certs/apache-selfsigned.crt -out /etc/openelis-global/truststore
-        
-### Install Postgresql
-OpenELIS-Global is configured to be able to install a docker based version of Postgres, but this is generally not recommended for production databases
-If you trust docker to provide your database, you can ignore this section. 
 
-1. Install Postgresql
 
-	    sudo apt install postgresql postgresql-contrib
+#### Ensure keystore/truststore permissions are all correct
 
-2. Configure Postgresql
+Ensure all keystores have global read permission
 
-    Postgres gets configured automatically through the setup script. This might possibly interfere with other applications installed on the same server.
-
+    sudo chmod 644 /etc/openelis-global/keystore /etc/openelis-global/truststore /etc/openelis-global/client_facing_keystore
 	
 ### Download OpenELIS Global
 
@@ -175,9 +171,6 @@ OpenELIS uses FHIR for much of its internal and external communication, if you d
 
 Wait while install procedure completes
 
-Finally, copy the keystore to be your client facing keystore
-
-    cp /etc/openelis-global/keystore /etc/openelis-global/client_facing_keystore
 
 Please note: OpenELIS Global 2.x is designed for and is testing on Chrome only. Please be sure to use Chrome for OpenELIS. 
 

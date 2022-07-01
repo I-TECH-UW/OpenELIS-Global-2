@@ -72,7 +72,7 @@ lightbox.prototype = {
 	//bugzilla 1895 replaced inialize function to initialize from main page javascript rather
     //than having a link click event trigger the popup (see humanSampleOne.jsp)
     //the url can be blank,
-    //               a struts action e.g 'HumanSampleCityStateZipPopup.do',
+    //               a struts action e.g 'HumanSampleCityStateZipPopup',
     //               an ajax servlet e.g. 'ajaxPopup',
     //               or a jsp .e.g 'pages/sample/humanSampleConfirmExitLightbox.jsp'
     initialize: function(url, parameters) {

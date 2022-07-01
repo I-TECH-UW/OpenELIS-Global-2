@@ -96,7 +96,7 @@
     }
 
     function panelSelected(panelId){
-   	    window.location.href = "PanelTestAssign.do?panelId=" + panelId ;
+   	    window.location.href = "PanelTestAssign?panelId=" + panelId ;
     }
 
     function confirmValues() {
@@ -126,7 +126,7 @@
         //window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
         jQuery('#list1 option').prop('selected', true);
         var form = document.getElementById("mainForm");
-        form.action = "PanelTestAssign.do";
+        form.action = "PanelTestAssign";
         form.submit();
     }
     
@@ -176,13 +176,13 @@ td {
      <form:hidden path="deactivatePanelId" id="deactivatePanelId"/>
 
     <input type="button" value='<%= MessageUtil.getContextualMessage("banner.menu.administration") %>'
-           onclick="submitAction('MasterListsPage.do');"
+           onclick="submitAction('MasterListsPage');"
            class="textButton"/>&rarr;
     <input type="button" value='<%= MessageUtil.getContextualMessage("configuration.test.management") %>'
-           onclick="submitAction('TestManagementConfigMenu.do');"
+           onclick="submitAction('TestManagementConfigMenu');"
            class="textButton"/>&rarr;
     <input type="button" value='<%= MessageUtil.getContextualMessage("configuration.panel.manage") %>'
-           onclick="submitAction('PanelManagement.do');"
+           onclick="submitAction('PanelManagement');"
            class="textButton"/>&rarr;
 
 <%=MessageUtil.getContextualMessage( "configuration.panel.assign" )%>
@@ -222,7 +222,7 @@ td {
         <input id="saveButton" type="button" value='<%=MessageUtil.getContextualMessage("label.button.next")%>'
                onclick="confirmValues();" disabled="disabled"/>configuration.testUnit.confirmation.move.phrase
         <input type="button" value='<%=MessageUtil.getContextualMessage("label.button.previous")%>'
-               onclick='window.onbeforeunload = null; submitAction("PanelTestAssign.do")'/>
+               onclick='window.onbeforeunload = null; submitAction("PanelTestAssign")'/>
     </div>
     <div style="text-align: center; display: none;" class="confirmation-step">
         <input type="button" value='<%=MessageUtil.getContextualMessage("label.button.accept")%>'

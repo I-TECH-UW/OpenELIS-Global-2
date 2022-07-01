@@ -33,24 +33,24 @@
     </script>
     <br>
     <input type="button" value="<%= MessageUtil.getMessage("banner.menu.administration") %>"
-           onclick="submitAction('MasterListsPage.do');"
+           onclick="submitAction('MasterListsPage');"
            class="textButton"/>&rarr;
     <input type="button" value="<%= MessageUtil.getMessage("configuration.test.management") %>"
-           onclick="submitAction('TestManagementConfigMenu.do');"
+           onclick="submitAction('TestManagementConfigMenu');"
            class="textButton"/>&rarr;
     <%=MessageUtil.getMessage( "configuration.testUnit.manage" )%>
 
     <ul>
         <li><input type="button" value="<%= MessageUtil.getMessage("configuration.testUnit.create") %>"
-                   onclick="submitAction('TestSectionCreate.do');"
+                   onclick="submitAction('TestSectionCreate');"
                    class="textButton"/><br>
             </li>
         <li><input type="button" value="<%= MessageUtil.getMessage("configuration.testUnit.order") %>"
-                   onclick="submitAction('TestSectionOrder.do');"
+                   onclick="submitAction('TestSectionOrder');"
                    class="textButton"/><br>
             </li>
         <li><input type="button" value="<%= MessageUtil.getMessage("configuration.testUnit.assign") %>"
-                   onclick="submitAction('TestSectionTestAssign.do');"
+                   onclick="submitAction('TestSectionTestAssign');"
                    class="textButton"/><br>
             </li>
     </ul>

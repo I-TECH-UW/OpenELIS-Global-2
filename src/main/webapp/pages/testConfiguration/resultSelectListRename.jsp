@@ -27,12 +27,12 @@
 <input 	type="button"
           class="textButton"
           value="<%= MessageUtil.getContextualMessage("banner.menu.administration")%>"
-          onclick="submitAction('MasterListsPage.do');" >&rarr;
+          onclick="submitAction('MasterListsPage');" >&rarr;
 
 <input  type="button"
         class="textButton"
         value="<%= MessageUtil.getContextualMessage("configuration.test.management") %>"
-        onclick="submitAction('TestManagementConfigMenu.do');" >&rarr;
+        onclick="submitAction('TestManagementConfigMenu');" >&rarr;
 <%=MessageUtil.getContextualMessage( "configuration.selectList.rename" ) %>
 <br><br>
 <div id="form-div">
@@ -132,7 +132,7 @@
 
     function save() {
         var form = document.getElementById("mainForm");
-        form.action = "SelectListRenameEntry.do";
+        form.action = "SelectListRenameEntry";
         form.submit();
     }
 

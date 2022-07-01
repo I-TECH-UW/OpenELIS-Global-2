@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.formfields.FormFields.Field;
 import org.openelisglobal.common.services.DisplayListService;
@@ -16,15 +17,18 @@ import org.openelisglobal.common.services.DisplayListService.ListType;
 import org.openelisglobal.common.services.QAService;
 import org.openelisglobal.common.services.QAService.QAObservationType;
 import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.observationhistory.service.ObservationHistoryService;
 import org.openelisglobal.observationhistory.service.ObservationHistoryServiceImpl.ObservationType;
 import org.openelisglobal.result.action.util.ResultsLoadUtility;
+import org.openelisglobal.role.service.RoleService;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.sampleqaevent.service.SampleQaEventService;
 import org.openelisglobal.sampleqaevent.valueholder.SampleQaEvent;
 import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.systemuser.service.UserService;
 import org.openelisglobal.test.beanItems.TestResultItem;
 import org.openelisglobal.test.service.TestSectionService;
 import org.openelisglobal.test.valueholder.TestSection;
@@ -51,6 +55,10 @@ public class WorkPlanByTestSectionController extends BaseWorkplanController {
     private SampleQaEventService sampleQaEventService;
     @Autowired
     private TestSectionService testSectionService;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private RoleService roleService;
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -73,10 +81,13 @@ public class WorkPlanByTestSectionController extends BaseWorkplanController {
         String workplan = form.getType();
 
         // load testSections for drop down
-        form.setTestSections(DisplayListService.getInstance().getList(ListType.TEST_SECTION));
+        String resultsRoleId =  roleService.getRoleByName(Constants.ROLE_RESULTS).getId();
+        List<IdValuePair> testSections = userService.getUserTestSections(getSysUserId(request) ,resultsRoleId);
+        form.setTestSections(testSections);
         form.setTestSectionsByName(DisplayListService.getInstance().getList(ListType.TEST_SECTION_BY_NAME));
 
         List<TestResultItem> workplanTests = new ArrayList<>();
+        List<TestResultItem> filteredTests = new ArrayList<>() ;
         TestSection ts = null;
 
         if (!GenericValidator.isBlankOrNull(testSectionId)) {
@@ -85,7 +96,8 @@ public class WorkPlanByTestSectionController extends BaseWorkplanController {
 
             // get tests based on test section
             workplanTests = getWorkplanByTestSection(testSectionId);
-            form.setWorkplanTests(workplanTests);
+            filteredTests = userService.filterResultsByLabUnitRoles(getSysUserId(request), workplanTests ,Constants.ROLE_RESULTS);
+            form.setWorkplanTests(filteredTests);
             form.setSearchFinished(Boolean.TRUE);
             if (ts != null) {
                 form.setTestName(ts.getLocalizedName());
@@ -98,10 +110,10 @@ public class WorkPlanByTestSectionController extends BaseWorkplanController {
             form.setWorkplanTests(new ArrayList<TestResultItem>());
         }
         ResultsLoadUtility resultsLoadUtility = new ResultsLoadUtility();
-        resultsLoadUtility.sortByAccessionAndSequence(workplanTests);
+        resultsLoadUtility.sortByAccessionAndSequence(filteredTests);
         // add Patient Name to test table
         if (isPatientNameAdded()) {
-            addPatientNamesToList(workplanTests);
+            addPatientNamesToList(filteredTests);
         }
         form.setType(workplan);
         form.setSearchLabel(MessageUtil.getMessage("workplan.unit.types"));

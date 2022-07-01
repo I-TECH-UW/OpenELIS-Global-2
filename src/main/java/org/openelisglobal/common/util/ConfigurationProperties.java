@@ -44,6 +44,11 @@ public abstract class ConfigurationProperties {
         StatusRules("statusRules"),                //Only used to separate RetroCI rules from others.  May be obsolete
         SiteCode("siteNumber"),                   //Code referring to site
         SiteName("SiteName"),                   //Name for site
+        Addressline1label("Address line 1 label"),    //The address lines 1 can be used to specify anything
+        Addressline2label("Address line 2 label"),    //The address lines 2 can be used to specify anything
+        Addressline3label("Address line 3 label"),    //The address lines 3 can be used to specify anything
+        GeographicUnit1Label("Geographic Unit 1 Label"),    //The Geographical units for a particular region
+        GeographicUnit2Label("Geographic Unit 2 Label"),    //The Geographical units for a particular district
         AccessionFormat("acessionFormat"),            //Format of accession number can be one of SITEYEARNUM, YEARNUM OR PROGRAMNUM see AccessionNumberValidatorFactory
         ReflexAction("reflexAction"),               //In combination with flags in reflex table determines actual action, should be standardize
         TrainingInstallation("TrainingInstallation"),       //Flag to indicate if this is a training instance
@@ -70,6 +75,8 @@ public abstract class ConfigurationProperties {
         resultTechnicianName("ResultTechnicianName"),        //If true the technicians name is needed for results
         allowResultRejection("allowResultRejection"),        //If true then a technician has the ability to reject an individual test and select a reason for rejection
         restrictFreeTextRefSiteEntry("restrictFreeTextRefSiteEntry"), //If true then a user cannot enter new referring sites during sample entry and must choose from list provided
+        restrictFreeTextMethodEntry("restrictFreeTextMethodEntry"), //If true the user must choose an existing method and will not be able to create a new method through result entry
+        restrictFreeTextProviderEntry("restrictFreeTextProviderEntry"), //If true then a user cannot enter new providers during sample entry and must choose from list provided
         autoFillTechNameBox("autoFillTechNameBox"),         //If true a box will be provided to auto-fill technicians name for all results on page
         autoFillTechNameUser("autoFillTechNameUser"),        //If true the technicians name will be auto-filled with the name of the logged in user
         AUTOFILL_COLLECTION_DATE("auto-fill collection date/time"),    //If true the collection date will be auto-filled with current date

@@ -338,7 +338,7 @@
         var form = document.getElementById("mainForm");
         window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
         setActionLog();
-        form.action = "NCECorrectiveAction.do";
+        form.action = "NCECorrectiveAction";
         form.submit();
     }
 
@@ -361,7 +361,7 @@
             var form = document.getElementById("mainForm");
             window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
             setActionLog();
-            form.action = "ResolveNonConformingEvent.do";
+            form.action = "ResolveNonConformingEvent";
             form.submit();
         }
         return false;
@@ -419,7 +419,7 @@
                 var nceNumberEl = node.getElementsByTagName('ncenumber').item(0);
                 var nceNumber = (nceNumberEl ? nceNumberEl.firstChild.nodeValue : "#")
                 if (nceNumber != '#') {
-                    window.location = 'NCECorrectiveAction.do?nceNumber=' + nceNumber;
+                    window.location = 'NCECorrectiveAction?nceNumber=' + nceNumber;
                 }
             }
             for (var i = 0; i < resultNodes.length; i++) {
@@ -438,7 +438,7 @@
         var colorCode = nce.getElementsByTagName('color').item(0);
         var nceNumber = (nceNumberEl ? nceNumberEl.firstChild.nodeValue : "#")
         var row = '<tr><td>' + (date ? date.firstChild.nodeValue : "") + '</td>' +
-            '<td><a href="NCECorrectiveAction.do?nceNumber=' + nceNumber + '">' + nceNumber + '</a></td>' +
+            '<td><a href="NCECorrectiveAction?nceNumber=' + nceNumber + '">' + nceNumber + '</a></td>' +
             '<td>' + (unit && unit.firstChild ? unit.firstChild.nodeValue : "") + '</td>' +
             '<td>' + (colorCode ? colorCode.firstChild.nodeValue : "") + '</td>' +
             '</tr><tr>';

@@ -8,6 +8,8 @@ which we are phasing out, has the code for importing analyzer results as
 part of the core of OpenELIS. The newer model which all new analyzers
 should use is a plugin model.
 
+You can find a set of precompiled analyzer plug-ins in our [installer folder here](https://www.dropbox.com/sh/xzjxca5ya73dylt/AACf35yDhjerS1V-C1SVNgJ2a?dl=0)
+
 ## Basics
 
 There is a directory /var/lib/openelis-global/plugins/ in OpenElis. Any jar file in this directory
@@ -77,10 +79,7 @@ Creation Steps
 .. _SourceTree: http://www.sourcetreeapp.com/
 
 
-# How to install analyzer plugins for OpenELIS?
-1. The plugins must be compiled into a jar file
-2. the jar file must be uploaded to the OE server in the folder: /var/lib/openelis-global/plugins/
-3. the main project will be recompiled including the jar file, you can tell the plugin is properly installed when its available in the menu.
+
 4. login to OpenELIS -> Results -> from Analyzer -> Analyzer name.
 
 

@@ -398,6 +398,8 @@
 		template="/pages/reports/commonReportParameters.jsp">
 		<put-attribute name="patientEnhancedSearch"
 			value="/pages/patient/patientEnhancedSearch.jsp" />
+		<put-attribute name="siteSearch"
+			value="/pages/reports/siteSearch.jsp" />
 	</definition>
 
 	<definition name="auditTrailCore"
@@ -430,10 +432,20 @@
 		extends="baseDefinition">
 		<put-attribute name="preSelectionHeader"
 			value="/pages/common/actionSuccess.jsp" />
-		<put-attribute name="body" value="resultListViewCore" />
+		<put-attribute name="body" value="resultsLogbookCore" />
 		<put-attribute name="footer"
 			value="/pages/common/saveCancelFooterButtons.jsp" />
 	</definition>
+
+	<definition name="resultsLogbookCore"
+		template="/pages/result/resultsBySearch.jsp">
+		<put-attribute name="searchPanel"
+			value="resultListViewCore" />
+		<put-attribute name="resultsPanel"
+			value="/pages/common/emptyPlaceHolder.jsp" />
+	</definition>
+	
+	
 
 	<definition name="patientResultDefinition"
 		extends="baseDefinition">
@@ -726,6 +738,12 @@
 			value="/pages/testConfiguration/testSectionRename.jsp" />
 	</definition>
 
+	<definition name="methodRenameDefinition"
+		extends="baseMenuDefinition">
+		<put-attribute name="body"
+			value="/pages/testConfiguration/methodRename.jsp" />
+	</definition>
+
 	<definition name="uomRenameDefinition"
 		extends="baseMenuDefinition">
 		<put-attribute name="body"
@@ -784,6 +802,18 @@
 		extends="baseMenuDefinition">
 		<put-attribute name="body"
 			value="/pages/testConfiguration/testSectionCreate.jsp" />
+	</definition>
+
+	<definition name="methodManagementDefinition"
+		extends="baseMenuDefinition">
+		<put-attribute name="body"
+			value="/pages/testConfiguration/methodManagement.jsp" />
+	</definition>
+
+	<definition name="methodCreateDefinition"
+		extends="baseMenuDefinition">
+		<put-attribute name="body"
+			value="/pages/testConfiguration/methodCreate.jsp" />
 	</definition>
 
 	<definition name="testSectionOrderDefinition"

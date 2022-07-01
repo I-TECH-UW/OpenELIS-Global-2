@@ -67,7 +67,7 @@ public class DeletePatientTestDataController extends BaseController {
         } else if (FWD_SUCCESS.equals(forward)) {
             return "databaseCleaningDefinition";
         }
-        return "redirect:/Home.do";
+        return "redirect:/Home";
     }
 
     @Override

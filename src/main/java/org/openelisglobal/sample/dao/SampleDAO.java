@@ -16,10 +16,12 @@
 package org.openelisglobal.sample.dao;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 import org.openelisglobal.common.dao.BaseDAO;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.sample.valueholder.OrderPriority;
 import org.openelisglobal.sample.valueholder.Sample;
 
 public interface SampleDAO extends BaseDAO<Sample, String> {
@@ -81,4 +83,8 @@ public interface SampleDAO extends BaseDAO<Sample, String> {
     List<Sample> getAllMissingFhirUuid();
 
     List<Sample> getSamplesByAnalysisIds(List<String> analysisIds);
+
+    List<Sample> getSamplesForSiteBetweenOrderDates(String referringSiteId, LocalDate lowerDate, LocalDate upperDate);
+
+    List<Sample> getSamplesByPriority(OrderPriority priority) throws LIMSRuntimeException;
 }

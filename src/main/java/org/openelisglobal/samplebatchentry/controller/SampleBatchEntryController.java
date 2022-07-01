@@ -254,9 +254,9 @@ public class SampleBatchEntryController extends BaseController {
         } else if (FWD_FAIL_INSERT.equals(forward)) {
             return "sampleBatchEntrySetupDefinition";
         } else if (FWD_SUCCESS_INSERT.equals(forward)) {
-            return "redirect:/SamplePatientEntry.do";
+            return "redirect:/SamplePatientEntry";
         } else {
-            return "redirect:/SampleBatchEntrySetup.do";
+            return "redirect:/SampleBatchEntrySetup";
         }
     }
 

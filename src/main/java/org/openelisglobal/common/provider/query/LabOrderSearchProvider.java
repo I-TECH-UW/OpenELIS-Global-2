@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -60,6 +61,8 @@ import org.openelisglobal.panelitem.service.PanelItemService;
 import org.openelisglobal.panelitem.valueholder.PanelItem;
 import org.openelisglobal.patient.service.PatientService;
 import org.openelisglobal.person.service.PersonService;
+import org.openelisglobal.provider.service.ProviderService;
+import org.openelisglobal.provider.valueholder.Provider;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.test.valueholder.Test;
@@ -87,6 +90,7 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
     private TestService testService = SpringContext.getBean(TestService.class);
     private PanelService panelService = SpringContext.getBean(PanelService.class);
     private PanelItemService panelItemService = SpringContext.getBean(PanelItemService.class);
+    private ProviderService providerService = SpringContext.getBean(ProviderService.class);
     private TypeOfSampleTestService typeOfSampleTestService = SpringContext.getBean(TypeOfSampleTestService.class);
     private ElectronicOrderService electronicOrderService = SpringContext.getBean(ElectronicOrderService.class);
     private TypeOfSampleService typeOfSampleService = SpringContext.getBean(TypeOfSampleService.class);
@@ -114,6 +118,8 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
     private static final String NOT_FOUND = "Not Found";
     private static final String CANCELED = "Canceled";
     private static final String REALIZED = "Realized";
+    private static final String PROVIDER_ID = "id";
+    private static final String PROVIDER_PERSON_ID = "personId";
     private static final String PROVIDER_FIRST_NAME = "firstName";
     private static final String PROVIDER_LAST_NAME = "lastName";
     private static final String PROVIDER_PHONE = "phone";
@@ -233,7 +239,7 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
             }
 
             if (!GenericValidator.isBlankOrNull(serviceRequest.getRequester().getReferenceElement().getIdPart())
-                    && task.getRequester().getReference().contains(ResourceType.Practitioner.toString())) {
+                    && serviceRequest.getRequester().getReference().contains(ResourceType.Practitioner.toString())) {
                 requesterPerson = localFhirClient.read()//
                         .resource(Practitioner.class)//
                         .withId(serviceRequest.getRequester().getReferenceElement().getIdPart())//
@@ -295,12 +301,14 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
 
         patientGuid = getPatientGuid(eOrder);
         for (Identifier identifier : patient.getIdentifier()) {
+            if (identifier.hasSystem()) {
 //            if (identifier.getSystem().equalsIgnoreCase("https://isanteplusdemo.com/openmrs/ws/fhir2/")) {
-            if (identifier.getSystem().equalsIgnoreCase("iSantePlus ID")
-                    || identifier.getSystem().equalsIgnoreCase("https://host.openelis.org/locator-form")) {
-                patientGuid = identifier.getId();
-            } else if (identifier.getSystem().equalsIgnoreCase(fhirConfig.getOeFhirSystem() + "/pat_guid")) {
-                patientGuid = identifier.getValue();
+                if (identifier.getSystem().equalsIgnoreCase("iSantePlus ID")
+                        || identifier.getSystem().equalsIgnoreCase("https://host.openelis.org/locator-form")) {
+                    patientGuid = identifier.getId();
+                } else if (identifier.getSystem().equalsIgnoreCase(fhirConfig.getOeFhirSystem() + "/pat_guid")) {
+                    patientGuid = identifier.getValue();
+                }
             }
         }
         LogEvent.logDebug(this.getClass().getName(), "createSearchResultXML", "using patient guid " + patientGuid);
@@ -368,11 +376,17 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
                     requesterValuesMap.put(PROVIDER_PHONE, contact.getValue());
                 }
             }
+            Provider provider = providerService
+                    .getProviderByFhirId(UUID.fromString(requesterPerson.getIdElement().getIdPart()));
+            requesterValuesMap.put(PROVIDER_ID, provider.getId());
+            requesterValuesMap.put(PROVIDER_PERSON_ID, provider.getPerson().getId());
             requesterValuesMap.put(PROVIDER_LAST_NAME, requesterPerson.getNameFirstRep().getFamily());
             requesterValuesMap.put(PROVIDER_FIRST_NAME, requesterPerson.getNameFirstRep().getGivenAsSingleString());
 
         }
         xml.append("<requester>");
+        XMLUtil.appendKeyValue(PROVIDER_ID, requesterValuesMap.get(PROVIDER_ID), xml);
+        XMLUtil.appendKeyValue(PROVIDER_PERSON_ID, requesterValuesMap.get(PROVIDER_ID), xml);
         XMLUtil.appendKeyValue(PROVIDER_FIRST_NAME, requesterValuesMap.get(PROVIDER_FIRST_NAME), xml);
         XMLUtil.appendKeyValue(PROVIDER_LAST_NAME, requesterValuesMap.get(PROVIDER_LAST_NAME), xml);
         XMLUtil.appendKeyValue(PROVIDER_PHONE, requesterValuesMap.get(PROVIDER_PHONE), xml);
@@ -386,16 +400,20 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
         String loinc = "";
         String sampleTypeAbbreviation = "";
         for (Coding code : serviceRequest.getCode().getCoding()) {
-            if (code.getSystem().equalsIgnoreCase("http://loinc.org")) {
-                loinc = code.getCode();
-                break;
+            if (code.hasSystem()) {
+                if (code.getSystem().equalsIgnoreCase("http://loinc.org")) {
+                    loinc = code.getCode();
+                    break;
+                }
             }
         }
         if (specimen != null) {
             for (Coding type : specimen.getType().getCoding()) {
-                if (type.getSystem().equals(fhirConfig.getOeFhirSystem() + "/sampleType")) {
-                    sampleTypeAbbreviation = type.getCode();
-                    break;
+                if (type.hasSystem()) {
+                    if (type.getSystem().equals(fhirConfig.getOeFhirSystem() + "/sampleType")) {
+                        sampleTypeAbbreviation = type.getCode();
+                        break;
+                    }
                 }
             }
         }

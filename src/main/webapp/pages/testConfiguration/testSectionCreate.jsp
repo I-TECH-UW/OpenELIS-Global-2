@@ -138,7 +138,7 @@
     function savePage() {
         window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
         var form = document.getElementById("mainForm");
-        form.action = "TestSectionCreate.do";
+        form.action = "TestSectionCreate";
         form.submit();
     }
 </script>
@@ -161,13 +161,13 @@ td {
 
 
     <input type="button" value="<%= MessageUtil.getContextualMessage("banner.menu.administration") %>"
-           onclick="submitAction('MasterListsPage.do');"
+           onclick="submitAction('MasterListsPage');"
            class="textButton"/>&rarr;
     <input type="button" value="<%= MessageUtil.getContextualMessage("configuration.test.management") %>"
-           onclick="submitAction('TestManagementConfigMenu.do');"
+           onclick="submitAction('TestManagementConfigMenu');"
            class="textButton"/>&rarr;
     <input type="button" value="<%= MessageUtil.getContextualMessage("configuration.testUnit.manage") %>"
-           onclick="submitAction('TestSectionManagement.do');"
+           onclick="submitAction('TestSectionManagement');"
            class="textButton"/>&rarr;
 
 <%=MessageUtil.getContextualMessage( "configuration.testUnit.create" )%>
@@ -201,7 +201,7 @@ td {
         <input type="button" value="<%=MessageUtil.getContextualMessage("label.button.save")%>"
                onclick="confirmValues();"/>
         <input type="button" value="<%=MessageUtil.getContextualMessage("label.button.cancel")%>"
-               onclick="window.onbeforeunload = null; submitAction('TestSectionManagement.do');"/>
+               onclick="window.onbeforeunload = null; submitAction('TestSectionManagement');"/>
     </div>
     <div style="text-align: center; display: none;" id="confirmationButtons">
         <input type="button" value="<%=MessageUtil.getContextualMessage("label.button.accept")%>"

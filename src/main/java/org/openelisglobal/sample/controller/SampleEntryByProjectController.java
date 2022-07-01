@@ -224,7 +224,7 @@ public class SampleEntryByProjectController extends BaseSampleEntryController {
         } else if (FWD_FAIL.equals(forward)) {
             return "homePageDefinition";
         } else if (FWD_SUCCESS_INSERT.equals(forward)) {
-            return "redirect:/SampleEntryByProject.do?type=" + Encode.forUriComponent(request.getParameter("type"));
+            return "redirect:/SampleEntryByProject?type=" + Encode.forUriComponent(request.getParameter("type"));
         } else if (FWD_FAIL_INSERT.equals(forward)) {
             return "sampleEntryByProjectDefinition";
         } else {

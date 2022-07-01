@@ -12,6 +12,7 @@ import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.util.validator.CustomDateValidator.DateRelation;
 import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.resultvalidation.bean.AnalysisItem;
+import org.openelisglobal.sample.valueholder.OrderPriority;
 import org.openelisglobal.test.beanItems.TestResultItem;
 import org.openelisglobal.validation.annotations.ValidDate;
 
@@ -37,6 +38,8 @@ public class WorkplanForm extends BaseForm {
     @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { PrintWorkplan.class })
     private String testName = "";
 
+    private OrderPriority priority ;
+
     @NotNull(groups = { PrintWorkplan.class })
     private Boolean searchFinished = false;
 
@@ -51,7 +54,7 @@ public class WorkplanForm extends BaseForm {
     @Pattern(regexp = "^[ a-zA-Z-]*", groups = { PrintWorkplan.class })
     private String type = "";
 
-    @Pattern(regexp = "^$|^WorkPlanByPanel.do$|^WorkPlanByTest.do$", groups = { PrintWorkplan.class })
+    @Pattern(regexp = "^$|^WorkPlanByPanel$|^WorkPlanByTest$", groups = { PrintWorkplan.class })
     private String searchAction = "";
 
     // for display
@@ -59,6 +62,9 @@ public class WorkplanForm extends BaseForm {
 
     // for display
     private List<IdValuePair> testSectionsByName;
+
+    // for display
+    private List<IdValuePair> priorityList;
 
     @Pattern(regexp = ValidationHelper.ID_REGEX, groups = { PrintWorkplan.class })
     private String testSectionId;
@@ -177,5 +183,21 @@ public class WorkplanForm extends BaseForm {
 
     public void setTestSectionId(String testSectionId) {
         this.testSectionId = testSectionId;
+    }
+
+    public OrderPriority getPriority() {
+        return priority;
+    }
+
+    public void setPriority(OrderPriority priority) {
+        this.priority = priority;
+    }
+
+    public List<IdValuePair> getPriorityList() {
+        return priorityList;
+    }
+
+    public void setPriorityList(List<IdValuePair> priorityList) {
+        this.priorityList = priorityList;
     }
 }

@@ -33,16 +33,16 @@
     </script>
     <br>
     <input type="button" value="<%= MessageUtil.getMessage("banner.menu.administration") %>"
-           onclick="submitAction('MasterListsPage.do');"
+           onclick="submitAction('MasterListsPage');"
            class="textButton"/>&rarr;
     <input type="button" value="<%= MessageUtil.getMessage("configuration.test.management") %>"
-           onclick="submitAction('TestManagementConfigMenu.do');"
+           onclick="submitAction('TestManagementConfigMenu');"
            class="textButton"/>&rarr;
     <%=MessageUtil.getMessage( "configuration.uom.manage" )%>
 
     <ul>
         <li><input type="button" value="<%= MessageUtil.getMessage("configuration.uom.create") %>"
-                   onclick="submitAction('UomCreate.do');"
+                   onclick="submitAction('UomCreate');"
                    class="textButton"/><br>
             </li>       
      </ul>

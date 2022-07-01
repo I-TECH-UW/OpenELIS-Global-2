@@ -81,7 +81,7 @@
 							value="${notificationConfig.providerSMS.active}"
 							onChange="makeDirty();" />
 					</td>
-					<c:url value="TestNotificationConfig.do" var="editUrl">
+					<c:url value="TestNotificationConfig" var="editUrl">
 						<c:param name="testId" value="${notificationConfig.test.id}" />
 					</c:url>
 					<td style="text-align: center; vertical-align: middle;"><a

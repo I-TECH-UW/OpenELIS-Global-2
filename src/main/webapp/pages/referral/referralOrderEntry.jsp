@@ -17,48 +17,25 @@
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
-<script type="text/javascript" src="scripts/jquery.ui.js?"></script>
+<!-- <script type="text/javascript" src="scripts/jquery.ui.js?"></script> -->
 <script type="text/javascript"
         src="scripts/jquery.asmselect.js?"></script>
 <script type="text/javascript" src="scripts/utilities.js?"></script>
 <script type="text/javascript" src="scripts/testReflex.js?" ></script>
-<script type="text/javascript"
-        src="scripts/multiselectUtils.js?"></script>
 
-<link rel="stylesheet" type="text/css"
-      href="css/jquery.asmselect.css?"/>
 <script type="text/javascript">
-
-jQuery(document).ready(function () {
-    loadMultiSelects();
-    jQuery("select[multiple]:visible").asmSelect({
-        removeLabel: "X"
-        // , debugMode: true
-    });
-
-    jQuery("select[multiple]").change(function (e, data) {
-        handleMultiSelectChange(e, data);
-    });
-
-    jQuery(".asmContainer").css("display", "inline-block");
-    
-//     jQuery('.saveToggle').each(function() {
-//     	checkFinish(jQuery(this).val());
-//     });
-
-});
-
 function referralTestSelected(e) {
 	var index = 0;
-	jQuery('#mainTable .referralRow').addClass('deleteReferralRow');
-	var samples = jQuery('#samplesAddedTable .sampleId');
-	samples.each(function(index, value) {
-		var sampleNum = jQuery(this).val();
-		var testNames = document.getElementById("tests_" + sampleNum).value.split(",");
-		var testIds = document.getElementById("testIds_" + sampleNum).value.split(",");
+	jQuery(currentReferalDivSelector).children('#mainTable .referralRow').addClass('deleteReferralRow');
+	
+    var samples = document.getElementById("samplesBlock").getElementsByClassName("sampleId");
+    samples.each(function(node, index) {
+		var sampleNum = node.value;
+		var testNames = document.getElementById("tests_" + node.value).value.split(",");
+		var testIds = document.getElementById("testIds_" + node.value).value.split(",");
 		for (var j = 0; j < testIds.length; ++j) {
 			if (testIds[j] !== "") {
-				createReferralOption(sampleNum, testIds[j], testIds[j], testNames[j], index++);
+				createReferralOption(sampleNum, testIds[j], testIds[j], testNames[j], index);
 			}
 		}
 	});
@@ -113,7 +90,11 @@ function createReferralOption(sampleNum, testNum, testId, testName, index) {
 	var table, tableBody, row, cell1, cell2, cell3, cell4, cell5;
 	var select, option;
 	
-	table = document.getElementById("mainTable");
+	referalDiv = document.getElementById('referTestSection_' + sampleNum)
+	if(typeof referalDiv === 'undefined'){
+        return;
+	}
+	table = referalDiv.getElementsByClassName("mainTable")[0];
 	tableBody = table.getElementsByTagName('tbody')[0];
 	
 	if (jQuery('#sample_' + sampleNum + '_test_' + testNum).length) {
@@ -209,7 +190,7 @@ function createReferralOption(sampleNum, testNum, testId, testName, index) {
 
 </script>
 
-<table width="75%" border="0" cellspacing="0" cellpadding="1" id="mainTable">
+<table width="75%" border="0" cellspacing="0" cellpadding="1" id="mainTable" class="mainTable">
 <thead>
 <tr>
     <th colspan="6" class="headerGroup"><spring:message code="referral.header.group.request"/></th>

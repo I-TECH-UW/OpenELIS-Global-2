@@ -65,7 +65,7 @@ public class ReferredOutTestsController extends BaseController {
         } else if (FWD_FAIL.equals(forward)) {
             return "homePageDefinition";
         } else if (FWD_SUCCESS_INSERT.equals(forward)) {
-            return "redirect:/ReferredOutTests.do";
+            return "redirect:/ReferredOutTests";
         } else if (FWD_FAIL_INSERT.equals(forward)) {
             return "referredOutDefinition";
         } else {

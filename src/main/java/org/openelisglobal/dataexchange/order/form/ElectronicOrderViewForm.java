@@ -16,6 +16,8 @@ public class ElectronicOrderViewForm extends BaseForm {
 
     private boolean searchFinished;
 
+    private boolean useAllInfo;
+
     private String searchValue;
 
     private String startDate;
@@ -146,5 +148,13 @@ public class ElectronicOrderViewForm extends BaseForm {
 
     public void setStatusId(String statusId) {
         this.statusId = statusId;
+    }
+
+    public boolean getUseAllInfo() {
+        return useAllInfo;
+    }
+
+    public void setUseAllInfo(boolean useAllInfo) {
+        this.useAllInfo = useAllInfo;
     }
 }

@@ -28,6 +28,8 @@ public interface SampleRequesterDAO extends BaseDAO<SampleRequester, String> {
 
     public List<SampleRequester> getRequestersForSampleId(String sampleId) throws LIMSRuntimeException;
 
+    List<SampleRequester> getRequestersForRequesterId(String requesterId, String requesterTypeId);
+
 //	void updateData(SampleRequester sampleRequester) throws LIMSRuntimeException;
 
 //	void insertOrUpdateData(SampleRequester sampleRequester) throws LIMSRuntimeException;

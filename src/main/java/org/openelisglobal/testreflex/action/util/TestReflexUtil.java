@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.validator.GenericValidator;
@@ -30,6 +31,9 @@ import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.analyte.service.AnalyteService;
 import org.openelisglobal.analyte.valueholder.Analyte;
+import org.openelisglobal.note.service.NoteService;
+import org.openelisglobal.note.service.NoteServiceImpl.NoteType;
+import org.openelisglobal.note.valueholder.Note;
 import org.openelisglobal.observationhistory.service.ObservationHistoryService;
 import org.openelisglobal.observationhistory.valueholder.ObservationHistory;
 import org.openelisglobal.result.service.ResultService;
@@ -67,6 +71,7 @@ public class TestReflexUtil {
     private static TestReflexService testReflexService = SpringContext.getBean(TestReflexService.class);
     private static AnalyteService analyteService = SpringContext.getBean(AnalyteService.class);
     private static ScriptletService scriptletService = SpringContext.getBean(ScriptletService.class);
+    private static NoteService noteService = SpringContext.getBean(NoteService.class);
 
     private TestReflexResolver reflexResolver = SpringContext.getBean(TestReflexResolver.class);
 
@@ -208,7 +213,7 @@ public class TestReflexUtil {
                 : testReflexService.getTestReflexesByTestResult(testResult);
     }
 
-    public void addNewTestsToDBForReflexTests(List<TestReflexBean> newResults, String sysUserId)
+    public List<Analysis> addNewTestsToDBForReflexTests(List<TestReflexBean> newResults, String sysUserId)
             throws IllegalStateException {
         if (sysUserId == null) {
             throw new IllegalStateException("sysUserId not set");
@@ -250,6 +255,7 @@ public class TestReflexUtil {
 
         // keep track of analysis which have triggered reflexes
         List<Analysis> parentAnalysisList = new ArrayList<>();
+        List<Analysis> reflexAnalysises = new ArrayList<>();
 
         for (TestReflexBean reflexBean : newResults) {
             // list may be empty or have previous handled reflexes
@@ -257,20 +263,23 @@ public class TestReflexUtil {
 
             // use cases 1-6, 10
             if (reflexBean.getTriggersToSelectedReflexesMap().isEmpty()) {
-                handleAutomaticReflexes(parentAnalysisList, reflexBean, handledReflexIdList, sysUserId);
+                reflexAnalysises.addAll(
+                        handleAutomaticReflexes(parentAnalysisList, reflexBean, handledReflexIdList, sysUserId));
             } else { // use cases 7,8,9
-                handleUserSelectedReflexes(parentAnalysisList, reflexBean, sysUserId);
+                reflexAnalysises.addAll(handleUserSelectedReflexes(parentAnalysisList, reflexBean, sysUserId));
 
             }
         }
+        return reflexAnalysises;
     }
 
-    private void handleUserSelectedReflexes(List<Analysis> parentAnalysisList, TestReflexBean reflexBean,
+    private List<Analysis> handleUserSelectedReflexes(List<Analysis> parentAnalysisList, TestReflexBean reflexBean,
             String sysUserId) {
         // The reflexes and the triggering tests have already been identified by
         // TestReflexUserChoiceProvider, if all of the parents are not being
         // picked up fix it there
 
+        List<Analysis> reflexAnalysises = new ArrayList<>();
         for (String triggeringTests : reflexBean.getTriggersToSelectedReflexesMap().keySet()) {
             List<String> addedActionIds = reflexBean.getTriggersToSelectedReflexesMap().get(triggeringTests);
             // no reflexes triggered so no parents
@@ -287,8 +296,11 @@ public class TestReflexUtil {
                     reflex.setActionScriptletId(splitActionId[1]);
                 }
 
-                addReflexTest(reflex, reflexBean.getResult(), reflexBean.getPatient().getId(), reflexBean.getSample(),
+                Optional<Analysis> newAnalysis =addReflexTest(reflex, reflexBean.getResult(), reflexBean.getPatient().getId(), reflexBean.getSample(),
                         true, true, addedActionId, false, sysUserId);
+                if (newAnalysis.isPresent()) {
+                    reflexAnalysises.add(newAnalysis.get());
+                }
 
             }
 
@@ -298,14 +310,15 @@ public class TestReflexUtil {
 
             markSibAnalysisAsParent(parentAnalysisList, sysUserId);
         }
+        return reflexAnalysises;
     }
 
-    private void handleAutomaticReflexes(List<Analysis> parentAnalysisList, TestReflexBean reflexBean,
+    private List<Analysis> handleAutomaticReflexes(List<Analysis> parentAnalysisList, TestReflexBean reflexBean,
             List<String> handledReflexIdList, String sysUserId) {
         // More than one reflex may be returned if more than one action
         // should be taken by the result
         List<TestReflex> reflexesForResult = reflexResolver.getTestReflexesForResult(reflexBean.getResult());
-
+        List<Analysis> reflexAnalysises = new ArrayList<>();
         for (TestReflex reflexForResult : reflexesForResult) {
             // filter out handled reflexes
             if (!GenericValidator.isBlankOrNull(reflexForResult.getSiblingReflexId())
@@ -330,8 +343,12 @@ public class TestReflexUtil {
             if (siblingsSatisfied) {
                 boolean allSibAnalysisCausedReflex = doAllAnalysisHaveReflex(parentAnalysisList, reflexBean);
 
-                addReflexTest(reflexForResult, reflexBean.getResult(), reflexBean.getPatient().getId(),
+                Optional<Analysis> newAnalysis = addReflexTest(reflexForResult, reflexBean.getResult(),
+                        reflexBean.getPatient().getId(),
                         reflexBean.getSample(), true, true, null, allSibAnalysisCausedReflex, sysUserId);
+                if (newAnalysis.isPresent()) {
+                    reflexAnalysises.add(newAnalysis.get());
+                }
                 // there may be multiple reflexes
                 for (TestReflex siblingReflex : siblingsOfResultReflex) {
                     // we want to make sure we don't add the same test
@@ -341,9 +358,11 @@ public class TestReflexUtil {
                     boolean handleAction = siblingReflex.getActionScriptletId() != null
                             && !siblingReflex.getActionScriptletId().equals(reflexForResult.getActionScriptletId());
 
-                    addReflexTest(siblingReflex, reflexBean.getResult(), reflexBean.getPatient().getId(),
+                    newAnalysis = addReflexTest(siblingReflex, reflexBean.getResult(), reflexBean.getPatient().getId(),
                             reflexBean.getSample(), addTest, handleAction, null, allSibAnalysisCausedReflex, sysUserId);
-
+                    if (newAnalysis.isPresent()) {
+                        reflexAnalysises.add(newAnalysis.get());
+                    }
                 }
 
                 if (reflexBean.getResult().getAnalysis() != null) {
@@ -353,6 +372,7 @@ public class TestReflexUtil {
                 markSibAnalysisAsParent(parentAnalysisList, sysUserId);
             }
         }
+        return reflexAnalysises;
     }
 
     private boolean doAllAnalysisHaveReflex(List<Analysis> parentAnalysisList, TestReflexBean reflexBean) {
@@ -403,7 +423,8 @@ public class TestReflexUtil {
         return handledReflexIdList;
     }
 
-    private void addReflexTest(TestReflex reflex, Result result, String patientId, Sample sample, boolean addTest,
+    private Optional<Analysis> addReflexTest(TestReflex reflex, Result result, String patientId, Sample sample,
+            boolean addTest,
             boolean handleAction, String actionSelectionId, boolean failOnDuplicateTest, String sysUserId) {
 
         if (addTest || handleAction) {
@@ -429,7 +450,7 @@ public class TestReflexUtil {
              * then this fails. This also precludes updates
              */
             if (failOnDuplicateTest && testDoneForSample(newAnalysis)) {
-                return;
+                return Optional.empty();
             }
 
             if (finalResult != null) {
@@ -451,8 +472,27 @@ public class TestReflexUtil {
 
                 analysisService.insert(newAnalysis);
                 analysisService.update(currentAnalysis);
+
+                List<Note> notes = new ArrayList<>();
+                notes.add(noteService.createSavableNote(newAnalysis, NoteType.EXTERNAL,
+                        "Triggered by " + currentAnalysis.getTest().getLocalizedReportingName().getLocalizedValue(),
+                        "Reflex Test Note", "1"));
+                notes.add(noteService.createSavableNote(newAnalysis, NoteType.INTERNAL,
+                        "This is part of a set of tests, please ensure all tests are resulted before validation",
+                        "Reflex Test Note", "1"));
+                if (result.getParentResult() == null) {
+                    Note note = noteService.createSavableNote(currentAnalysis, NoteType.INTERNAL,
+                            "This is part of a set of tests, please ensure all tests are resulted before validation",
+                            "Reflex Test Note", "1");
+                    if (!noteService.duplicateNoteExists(note)) {
+                        notes.add(note);
+                    }
+                }
+                noteService.saveAll(notes);
+                return Optional.of(newAnalysis);
             }
         }
+        return Optional.empty();
     }
 
     private boolean testDoneForSample(Analysis newAnalysis) {

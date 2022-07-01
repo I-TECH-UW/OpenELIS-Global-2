@@ -34,6 +34,11 @@
 		<property name="activeEndDate" type="java.sql.Date">
 			<column name="ACTIVE_END" length="7" />
 		</property>
+		<many-to-one name="localization"
+			class="org.openelisglobal.localization.valueholder.Localization"
+			fetch="select" lazy="false">
+			<column name="name_localization_id" precision="10" scale="0" />
+		</many-to-one>
 
 		<!-- <set name="instrumentAnalytes" inverse="true"> <key> <column name="METHOD_ID" 
 			precision="10" scale="0" /> </key> <one-to-many class="org.openelisglobal.instrumentanalyte.valueholder.InstrumentAnalyte" 

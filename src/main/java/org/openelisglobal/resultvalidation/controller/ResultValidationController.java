@@ -18,6 +18,7 @@ import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.action.IActionConstants;
+import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.DisplayListService;
@@ -31,6 +32,7 @@ import org.openelisglobal.common.services.registration.ValidationUpdateRegister;
 import org.openelisglobal.common.services.registration.interfaces.IResultUpdate;
 import org.openelisglobal.common.services.serviceBeans.ResultSaveBean;
 import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.validator.BaseErrors;
 import org.openelisglobal.dataexchange.fhir.exception.FhirLocalPersistingException;
 import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
@@ -52,16 +54,19 @@ import org.openelisglobal.resultvalidation.form.ResultValidationForm;
 import org.openelisglobal.resultvalidation.service.ResultValidationService;
 import org.openelisglobal.resultvalidation.util.ResultValidationSaveService;
 import org.openelisglobal.resultvalidation.util.ResultsValidationUtility;
+import org.openelisglobal.role.service.RoleService;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.samplehuman.service.SampleHumanService;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.systemuser.service.SystemUserService;
+import org.openelisglobal.systemuser.service.UserService;
 import org.openelisglobal.systemuser.valueholder.SystemUser;
 import org.openelisglobal.test.service.TestSectionService;
 import org.openelisglobal.test.valueholder.TestSection;
 import org.openelisglobal.testresult.service.TestResultService;
 import org.openelisglobal.testresult.valueholder.TestResult;
 import org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
@@ -76,6 +81,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class ResultValidationController extends BaseResultValidationController {
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private RoleService roleService;
 
     private static final String[] ALLOWED_FIELDS = new String[] { "testSectionId", "paging.currentPage", "testSection",
             "testName", "resultList*.accessionNumber", "resultList*.analysisId", "resultList*.testId",
@@ -153,7 +162,9 @@ public class ResultValidationController extends BaseResultValidationController {
         if (GenericValidator.isBlankOrNull(newPage)) {
 
             // load testSections for drop down
-            form.setTestSections(DisplayListService.getInstance().getList(ListType.TEST_SECTION));
+            String resultsRoleId =  roleService.getRoleByName(Constants.ROLE_VALIDATION).getId();
+            List<IdValuePair> testSections = userService.getUserTestSections(getSysUserId(request) ,resultsRoleId);
+            form.setTestSections(testSections);
             form.setTestSectionsByName(DisplayListService.getInstance().getList(ListType.TEST_SECTION_BY_NAME));
 
             if (!GenericValidator.isBlankOrNull(form.getTestSectionId())) {
@@ -161,23 +172,25 @@ public class ResultValidationController extends BaseResultValidationController {
             }
 
             List<AnalysisItem> resultList;
+            List<AnalysisItem> filteredresultList = new ArrayList<>();
             ResultsValidationUtility resultsValidationUtility = SpringContext.getBean(ResultsValidationUtility.class);
             setRequestType(ts == null ? MessageUtil.getMessage("workplan.unit.types") : ts.getLocalizedName());
-            
+
             if ( !(GenericValidator.isBlankOrNull(form.getTestSectionId()) &&
                     GenericValidator.isBlankOrNull(form.getAccessionNumber())) )  {
-                
+
                 resultList = resultsValidationUtility.getResultValidationList(getValidationStatus(),
                         form.getTestSectionId(), form.getAccessionNumber());
+                filteredresultList = userService.filterAnalystResultsByLabUnitRoles(getSysUserId(request), resultList, Constants.ROLE_VALIDATION);     
                 int count = resultsValidationUtility.getCountResultValidationList(getValidationStatus(),
                         form.getTestSectionId());
                 request.setAttribute("analysisCount", count);
-                request.setAttribute("pageSize", resultList.size());
+                request.setAttribute("pageSize", filteredresultList.size());
                 form.setSearchFinished(true);
                 } else {
                 resultList = new ArrayList<>();
             }
-            paging.setDatabaseResults(request, form, resultList);
+            paging.setDatabaseResults(request, form, filteredresultList);
         } else {
             paging.page(request, form, Integer.parseInt(newPage));
         }
@@ -224,7 +237,7 @@ public class ResultValidationController extends BaseResultValidationController {
         if (checkResults.size() == 0) {
             LogEvent.logDebug(this.getClass().getName(), "ResultValidation()", "Attempted save of stale page.");
             List<AnalysisItem> staleItemList = form.getResultList();
-            
+
             Errors staleErrors = new BaseErrors();
 
             for (AnalysisItem item : staleItemList) {
@@ -241,7 +254,7 @@ public class ResultValidationController extends BaseResultValidationController {
             saveErrors(staleErrors);
             return findForward(FWD_VALIDATION_ERROR, form);
         }
-        
+
         ResultValidationPaging paging = new ResultValidationPaging();
         paging.updatePagedResults(request, form);
         List<AnalysisItem> resultItemList = paging.getResults(request);
@@ -251,7 +264,7 @@ public class ResultValidationController extends BaseResultValidationController {
         setRequestType(testSectionName);
         // ----------------------
         String url = request.getRequestURL().toString();
-        
+
         Errors errors = validateModifiedItems(resultItemList);
 
         if (errors.hasErrors()) {
@@ -289,6 +302,7 @@ public class ResultValidationController extends BaseResultValidationController {
             }
         } catch (LIMSRuntimeException e) {
             LogEvent.logErrorStack(e);
+            throw e;
         }
 
         for (IResultUpdate updater : updaters) {
@@ -586,9 +600,9 @@ public class ResultValidationController extends BaseResultValidationController {
         } else if (FWD_FAIL.equals(forward)) {
             return "homePageDefinition";
         } else if (FWD_SUCCESS_INSERT.equals(forward)) {
-            return "redirect:/ResultValidation.do";
+            return "redirect:/ResultValidation";
         } else if ("successRetroC".equals(forward)) {
-            return "redirect:/ResultValidationRetroC.do";
+            return "redirect:/ResultValidationRetroC";
         } else if (FWD_FAIL_INSERT.equals(forward)) {
             return "homePageDefinition";
         } else if (FWD_VALIDATION_ERROR.equals(forward)) {

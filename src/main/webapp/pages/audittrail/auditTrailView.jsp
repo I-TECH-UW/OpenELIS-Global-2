@@ -22,7 +22,7 @@
 <script type="text/javascript">
 
 function search(){
-	window.location.href = "AuditTrailReport.do?accessionNumberSearch=" + jQuery('#accessionNumberSearch').val();
+	window.location.href = "AuditTrailReport?accessionNumberSearch=" + jQuery('#accessionNumberSearch').val();
 	return false;
 }
 

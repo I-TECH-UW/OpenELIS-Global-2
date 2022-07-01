@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.formfields.FormFields.Field;
 import org.openelisglobal.common.services.DisplayListService;
@@ -28,6 +29,7 @@ import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.sampleqaevent.service.SampleQaEventService;
 import org.openelisglobal.sampleqaevent.valueholder.SampleQaEvent;
 import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.systemuser.service.UserService;
 import org.openelisglobal.test.beanItems.TestResultItem;
 import org.openelisglobal.test.service.TestServiceImpl;
 import org.openelisglobal.workplan.form.WorkplanForm;
@@ -55,6 +57,8 @@ public class WorkplanByPanelController extends BaseWorkplanController {
     private PanelItemService panelItemService;
     @Autowired
     private SampleQaEventService sampleQaEventService;
+    @Autowired
+    private UserService userService;
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -70,17 +74,19 @@ public class WorkplanByPanelController extends BaseWorkplanController {
         request.getSession().setAttribute(SAVE_DISABLED, "true");
 
         List<TestResultItem> workplanTests;
+        List<TestResultItem> filteredTests;
 
         String panelID = oldForm.getSelectedSearchID();
 
         if (!GenericValidator.isBlankOrNull(panelID)) {
             String panelName = getPanelName(panelID);
             workplanTests = getWorkplanByPanel(panelID);
+            filteredTests = userService.filterResultsByLabUnitRoles(getSysUserId(request), workplanTests ,Constants.ROLE_RESULTS);
 
             // resultsLoadUtility.sortByAccessionAndSequence(workplanTests);
             form.setTestTypeID(panelID);
             form.setTestName(panelName);
-            form.setWorkplanTests(workplanTests);
+            form.setWorkplanTests(filteredTests);
             form.setSearchFinished(Boolean.TRUE);
         } else {
             // no search done, set workplanTests as empty
@@ -92,7 +98,7 @@ public class WorkplanByPanelController extends BaseWorkplanController {
         form.setType("panel");
         form.setSearchTypes(DisplayListService.getInstance().getList(DisplayListService.ListType.PANELS));
         form.setSearchLabel(MessageUtil.getMessage("workplan.panel.types"));
-        form.setSearchAction("WorkPlanByPanel.do");
+        form.setSearchAction("WorkPlanByPanel");
 
         return findForward(FWD_SUCCESS, form);
     }
@@ -114,6 +120,7 @@ public class WorkplanByPanelController extends BaseWorkplanController {
 
                 for (Analysis analysis : analysisList) {
                     TestResultItem testResultItem = new TestResultItem();
+                    testResultItem.setTestId(analysis.getTest().getId());
                     Sample sample = analysis.getSampleItem().getSample();
                     testResultItem.setAccessionNumber(sample.getAccessionNumber());
                     testResultItem.setPatientInfo(getSubjectNumber(analysis));

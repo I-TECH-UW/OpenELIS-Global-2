@@ -30,4 +30,10 @@ public class SampleRequesterServiceImpl extends BaseObjectServiceImpl<SampleRequ
     public List<SampleRequester> getRequestersForSampleId(String id) {
         return baseObjectDAO.getRequestersForSampleId(id);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<SampleRequester> getRequestersForRequesterId(String requesterId, String requesterTypeId) {
+        return baseObjectDAO.getRequestersForRequesterId(requesterId, requesterTypeId);
+    }
 }

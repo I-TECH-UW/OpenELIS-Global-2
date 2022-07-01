@@ -75,7 +75,7 @@ function  /*void*/ savePage()
 {
 	window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
 	var form = document.getElementById("mainForm");
-	form.action = "AnalyzerResults.do"  + '<spring:escapeBody javaScriptEscape="true">${(type == "") ? "": "?type=" += type}</spring:escapeBody>';
+	form.action = "AnalyzerResults"  + '<spring:escapeBody javaScriptEscape="true">${(type == "") ? "": "?type=" += type}</spring:escapeBody>';
 	form.submit();
 
 }

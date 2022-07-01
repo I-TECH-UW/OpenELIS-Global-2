@@ -48,7 +48,7 @@ function submitTestSectionSelect( element ) {
 	<c:forEach items="${testSectionsByName}" var="testSection">
 		testSectionNameIdHash["${testSection.id}"] = "${testSection.value}";
 	</c:forEach>
-		window.location.href = "ResultValidation.do?testSectionId=" + element.value + "&test=&type=" + testSectionNameIdHash[element.value];
+		window.location.href = "ResultValidation?testSectionId=" + element.value + "&test=&type=" + testSectionNameIdHash[element.value];
 	
 }
 
@@ -58,7 +58,7 @@ function validateEntrySize( elementValue ){
 
 function doShowTests(){
 	var form = document.getElementById("mainForm");
-	window.location.href = '${form.formName}'.sub('Form','') + ".do?accessionNumber="  + $("searchAccessionID").value;
+	window.location.href = '${form.formName}'.sub('Form','') + "?accessionNumber="  + $("searchAccessionID").value;
 }
 
 function /*void*/ handleEnterEvent(  ){

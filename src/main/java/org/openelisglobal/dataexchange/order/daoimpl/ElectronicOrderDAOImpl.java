@@ -212,6 +212,57 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder, String>
     }
 
     @Override
+    public List<ElectronicOrder> getAllElectronicOrdersMatchingAnyValue(List<String> identifierValues,
+            String patientValue, SortOrder order) {
+
+        String hql = "from ElectronicOrder eo "
+                + "join eo.patient patient "
+                + "join patient.person person "
+                + "where lower(eo.externalId) in (:identifierValues) "
+                + "or lower(person.firstName) = lower(:patientValue) "
+                + "or lower(person.lastName) = lower(:patientValue) "
+                + "or patient.id in (SELECT identity.patientId FROM PatientIdentity identity WHERE lower(identity.identityData) = lower(:patientValue)) "
+                + "or lower(patient.nationalId) = lower(:patientValue) "
+                + "or lower(concat(person.firstName, ' ', person.lastName)) = lower(:patientValue) order by ";
+
+        switch (order.getValue()) {
+        case "statusId":
+            hql = hql + "eo.statusId asc";
+            break;
+        case "lastupdatedasc":
+            hql = hql + "eo.statusId asc, eo.lastupdated asc";
+            break;
+        case "lastupdateddesc":
+            hql = hql + "eo.statusId asc, eo.lastupdated desc";
+            break;
+        case "externalId":
+            hql = hql + "eo.externalId asc";
+            break;
+        default:
+            //
+            break;
+        }
+        try {
+
+            Query query = entityManager.unwrap(Session.class).createQuery(hql);
+            query.setParameterList("identifierValues", identifierValues);
+            query.setString("patientValue", patientValue);
+            // query.setString("order", order.getValue());
+            List<Object> records = query.list();
+            List<ElectronicOrder> eOrders = new ArrayList<>();
+            for (int i = 0; i < records.size(); i++) {
+                Object[] oArray = (Object[]) records.get(i);
+                ElectronicOrder eo = (ElectronicOrder) oArray[0];
+                eOrders.add(eo);
+            }
+            return eOrders;
+        } catch (HibernateException e) {
+            handleException(e, "getAllElectronicOrdersMatchingAnyValue");
+        }
+        return null;
+    }
+
+    @Override
     public List<ElectronicOrder> getElectronicOrdersContainingValueExludedByOrderedBy(String searchValue,
             List<Integer> excludedStatuses, SortOrder sortOrder) {
 

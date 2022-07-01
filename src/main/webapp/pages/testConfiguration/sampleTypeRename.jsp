@@ -149,7 +149,7 @@
     function savePage() {
         window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
         var form = document.getElementById("mainForm");
-        form.action = "SampleTypeRenameEntry.do";
+        form.action = "SampleTypeRenameEntry";
         form.submit();
     }
 </script>
@@ -176,12 +176,12 @@
 <input 	type="button"
 		class="textButton" 
 		value="<%= MessageUtil.getContextualMessage("banner.menu.administration")%>"
-		onclick="submitAction('MasterListsPage.do');" >&rarr;
+		onclick="submitAction('MasterListsPage');" >&rarr;
 
 <input  type="button" 
 		class="textButton"
 		value="<%= MessageUtil.getContextualMessage("configuration.test.management") %>"
-       	onclick="submitAction('TestManagementConfigMenu.do');" >&rarr;
+       	onclick="submitAction('TestManagementConfigMenu');" >&rarr;
         
 
 <%=MessageUtil.getContextualMessage( "configuration.type.rename" ) %>
@@ -271,5 +271,5 @@
 
 <br>
 <input type="button" value='<%= MessageUtil.getContextualMessage("label.button.finished") %>'
-       onclick="submitAction('TestManagementConfigMenu.do');"/>
+       onclick="submitAction('TestManagementConfigMenu');"/>
 

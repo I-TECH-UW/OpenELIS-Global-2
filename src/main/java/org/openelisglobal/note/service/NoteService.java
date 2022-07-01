@@ -44,4 +44,6 @@ public interface NoteService extends BaseObjectService<Note, String> {
 
     List<Note> getNotes(NoteObject noteObject);
 
+    boolean duplicateNoteExists(Note note);
+
 }

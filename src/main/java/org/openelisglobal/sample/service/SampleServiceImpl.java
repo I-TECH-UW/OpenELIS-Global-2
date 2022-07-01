@@ -2,6 +2,7 @@ package org.openelisglobal.sample.service;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -31,6 +32,7 @@ import org.openelisglobal.requester.valueholder.RequesterType;
 import org.openelisglobal.requester.valueholder.SampleRequester;
 import org.openelisglobal.sample.dao.SampleAdditionalFieldDAO;
 import org.openelisglobal.sample.dao.SampleDAO;
+import org.openelisglobal.sample.valueholder.OrderPriority;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.sample.valueholder.SampleAdditionalField;
 import org.openelisglobal.sample.valueholder.SampleAdditionalField.AdditionalFieldName;
@@ -576,6 +578,18 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
     @Override
     public List<Sample> getSamplesByAnalysisIds(List<String> analysisIds) {
         return sampleDAO.getSamplesByAnalysisIds(analysisIds);
+    }
+
+    @Override
+    public List<Sample> getSamplesForSiteBetweenOrderDates(String referringSiteId, LocalDate lowerDate,
+            LocalDate upperDate) {
+        return sampleDAO.getSamplesForSiteBetweenOrderDates(referringSiteId, lowerDate, upperDate);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Sample> getSamplesByPriority(OrderPriority priority) {
+        return sampleDAO.getSamplesByPriority(priority);
     }
 
 }

@@ -174,6 +174,8 @@ if( typeof(showSuccessMessage) != 'undefined' ){
   		<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
    		<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
   		<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+     <%if( request.getAttribute(IActionConstants.DISPLAY_PREV_NEXT) == null ||
+       ((Boolean)request.getAttribute(IActionConstants.DISPLAY_PREV_NEXT)) ) { %>     
 	    <td>
   			<button type="button" 
   					onclick="previousAction(document.getElementById('mainForm'), '');" 
@@ -199,6 +201,7 @@ if( typeof(showSuccessMessage) != 'undefined' ){
   			   <spring:message code="label.button.next"/>
   			</button>
 	    </td>
+       <% } %>
 	    </tr>
 	 </tbody>
 </table>

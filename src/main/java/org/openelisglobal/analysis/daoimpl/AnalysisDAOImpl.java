@@ -20,6 +20,8 @@ package org.openelisglobal.analysis.daoimpl;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -1818,6 +1820,22 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         }
 
         return 0;
+    }
+
+    @Override
+    public List<Analysis> getAnalysisForSiteBetweenResultDates(String referringSiteId, LocalDate lowerDate,
+            LocalDate upperDate) {
+        String hql = "FROM Analysis a WHERE a.enteredDate BETWEEN :lowerDate AND :upperDate AND a.sampleItem.sample.id IN (SELECT sr.sampleId FROM SampleRequester sr WHERE sr.requesterId = :requesterId AND sr.requesterTypeId = (SELECT rt.id FROM RequesterType rt WHERE rt.requesterType = 'organization' ))";
+        try {
+            Query query = entityManager.unwrap(Session.class).createQuery(hql);
+            query.setParameter("requesterId", Integer.parseInt(referringSiteId));
+            query.setParameter("lowerDate", lowerDate.atStartOfDay());
+            query.setParameter("upperDate", upperDate.atTime(LocalTime.MAX));
+            return query.list();
+        } catch (HibernateException e) {
+            handleException(e, "getAnalysisForSiteBetweenResultDates");
+        }
+        return new ArrayList<>();
     }
 
 //  @Override

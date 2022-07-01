@@ -58,7 +58,8 @@ public class LogbookPersistServiceImpl implements LogbookResultsPersistService {
 
     @Override
     @Transactional
-    public void persistDataSet(ResultsUpdateDataSet actionDataSet, List<IResultUpdate> updaters, String sysUserId) {
+    public List<Analysis> persistDataSet(ResultsUpdateDataSet actionDataSet, List<IResultUpdate> updaters,
+            String sysUserId) {
         for (Note note : actionDataSet.getNoteList()) {
             noteService.insert(note);
         }
@@ -136,13 +137,15 @@ public class LogbookPersistServiceImpl implements LogbookResultsPersistService {
 
         ResultSaveService.removeDeletedResultsInTransaction(actionDataSet.getDeletableResults(), sysUserId);
 
-        setTestReflexes(actionDataSet, sysUserId);
+        List<Analysis> reflexAnalysises = setTestReflexes(actionDataSet, sysUserId);
 
         setSampleStatus(actionDataSet, sysUserId);
 
         for (IResultUpdate updater : updaters) {
             updater.transactionalUpdate(actionDataSet);
         }
+        return reflexAnalysises;
+
     }
 
     private void saveReferralsWithRequiredObjects(ReferralSet referralSet, String sysUserId) {
@@ -161,12 +164,14 @@ public class LogbookPersistServiceImpl implements LogbookResultsPersistService {
                 new ArrayList<>(), sysUserId);
     }
 
-    protected void setTestReflexes(ResultsUpdateDataSet actionDataSet, String sysUserId) {
+    protected List<Analysis> setTestReflexes(ResultsUpdateDataSet actionDataSet, String sysUserId) {
         TestReflexUtil testReflexUtil = new TestReflexUtil();
-        testReflexUtil.addNewTestsToDBForReflexTests(convertToTestReflexBeanList(actionDataSet.getNewResults()),
+        List<Analysis> reflexAnalysises = testReflexUtil.addNewTestsToDBForReflexTests(
+                convertToTestReflexBeanList(actionDataSet.getNewResults()),
                 sysUserId);
         testReflexUtil.updateModifiedReflexes(convertToTestReflexBeanList(actionDataSet.getModifiedResults()),
                 sysUserId);
+        return reflexAnalysises;
     }
 
     private List<TestReflexBean> convertToTestReflexBeanList(List<ResultSet> resultSetList) {

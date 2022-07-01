@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.16.0.final using JasperReports Library version 6.16.0-48579d909b7943b64690c65c71e07e0b80981928  -->
+<!-- Created with Jaspersoft Studio version 6.9.0.final using JasperReports Library version 6.9.0-cb8f9004be492ccc537180b49c026951f4220bf3  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PatientReport" pageWidth="612" pageHeight="792" whenNoDataType="AllSectionsNoDetail" columnWidth="552" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" resourceBundle="languages/message" whenResourceMissingType="Empty" uuid="4e6101c3-eebd-48c7-bdad-cf2d3cb2841f">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
@@ -771,7 +771,7 @@
 		<groupExpression><![CDATA[$F{testSection}]]></groupExpression>
 		<groupHeader>
 			<band height="25" splitType="Prevent">
-				<textField>
+				<textField isStretchWithOverflow="true">
 					<reportElement mode="Transparent" x="1" y="13" width="110" height="12" backcolor="#FFFFFF" uuid="c2ce697f-d1af-46c1-9ed8-b445bab34ef9"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="7"/>
@@ -1020,8 +1020,8 @@
 					</textElement>
 					<textFieldExpression><![CDATA[$F{result}]]></textFieldExpression>
 				</textField>
-				<textField>
-					<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="153" height="12" isPrintWhenDetailOverflows="true" uuid="7369b84e-d459-45d6-9e8b-688d3dc83c5d">
+				<textField isStretchWithOverflow="true">
+					<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="153" height="12" uuid="7369b84e-d459-45d6-9e8b-688d3dc83c5d">
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					</reportElement>
 					<box topPadding="2" leftPadding="4" bottomPadding="2">

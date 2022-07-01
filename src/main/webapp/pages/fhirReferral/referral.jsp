@@ -58,7 +58,7 @@ function searchFhirReferrals() {
 	if (gender) {
 		params.append("gender", gender);
 	}
-	window.location.href = "FhirReferralReception.do?" + params.toString();
+	window.location.href = "FhirReferralReception?" + params.toString();
 }
 
 function nextPage() {
@@ -89,7 +89,7 @@ function nextPage() {
 	if (gender) {
 		params.append("gender", gender);
 	}
-	window.location.href = "FhirReferralReception.do?" + params.toString();
+	window.location.href = "FhirReferralReception?" + params.toString();
 }
 
 function prevPage() {
@@ -120,7 +120,7 @@ function prevPage() {
 	if (gender) {
 		params.append("gender", gender);
 	}
-	window.location.href = "FhirReferralReception.do?" + params.toString();
+	window.location.href = "FhirReferralReception?" + params.toString();
 }
 
 function enterOrder(eOrderId, eOrderExternalId) {
@@ -131,7 +131,7 @@ function enterOrder(eOrderId, eOrderExternalId) {
 	
 	var iframe = document.createElement("iframe");
 	iframe.setAttribute("id", "iframe_" + eOrderId);
-	iframe.setAttribute("src", "SamplePatientEntry.do?attemptAutoSave=true&ID=" + eOrderExternalId);
+	iframe.setAttribute("src", "SamplePatientEntry?attemptAutoSave=true&ID=" + eOrderExternalId);
 	iframe.style.width = "640px";
 	iframe.style.height = "480px";
 	var container = document.getElementById("iframecontainer_" + eOrderId);

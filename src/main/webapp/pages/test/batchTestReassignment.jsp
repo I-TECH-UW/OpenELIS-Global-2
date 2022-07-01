@@ -410,7 +410,7 @@
     </div>
     <div align="center">
         <input type="button" id="nextStepButton" onclick="nextStep()" disabled="disabled" value='<%=MessageUtil.getMessage("label.button.process")%>'>
-    &nbsp;<button onclick='submitAction("MasterListsPage.do")' ><spring:message code="label.button.cancel"/></button>
+    &nbsp;<button onclick='submitAction("MasterListsPage")' ><spring:message code="label.button.cancel"/></button>
     </div>
 </div>
 <div id="verifyDiv" style="display:none">
@@ -467,7 +467,7 @@
     </div>
 
     <div align="center">
-        <button onclick='submitAction("BatchTestReassignment.do")' ><spring:message code="label.button.accept"/></button>&nbsp;
+        <button onclick='submitAction("BatchTestReassignment")' ><spring:message code="label.button.accept"/></button>&nbsp;
         <input type="button" onclick="restoreSelect()"  value='<%=MessageUtil.getMessage("label.button.reject")%>'>
     </div>
 </div>

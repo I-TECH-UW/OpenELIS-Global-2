@@ -1,6 +1,8 @@
 package org.openelisglobal.method.service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
@@ -10,11 +12,17 @@ import org.openelisglobal.method.valueholder.Method;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.context.annotation.DependsOn;
+
 
 @Service
+@DependsOn({ "springContext" })
 public class MethodServiceImpl extends BaseObjectServiceImpl<Method, String> implements MethodService {
     @Autowired
     protected MethodDAO baseObjectDAO;
+
+    private Map<String, String> methodUnitIdToNameMap;
+
 
     MethodServiceImpl() {
         super(Method.class);
@@ -62,5 +70,41 @@ public class MethodServiceImpl extends BaseObjectServiceImpl<Method, String> imp
         }
         return super.update(method);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Method> getAllInActiveMethods() {
+        return getBaseObjectDAO().getAllInActiveMethods();
+    }
+
+    @Override
+    public void refreshNames() {
+        methodNamesChanged();
+    }
+
+    public void methodNamesChanged() {
+        createMethodToNameMap();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Method> getAllActiveMethods() {
+        return getBaseObjectDAO().getAllActiveMethods();
+    }
+
+    private synchronized void createMethodToNameMap() {
+        methodUnitIdToNameMap = new HashMap<>();
+
+        List<Method> methods = baseObjectDAO.getAll();
+
+        for (Method method : methods) {
+            methodUnitIdToNameMap.put(method.getId(), buildMethodName(method).replace("\n", " "));
+        }
+    }
+
+    private String buildMethodName(Method method) {
+        return method.getLocalization().getLocalizedValue();
+    }
+
 
 }

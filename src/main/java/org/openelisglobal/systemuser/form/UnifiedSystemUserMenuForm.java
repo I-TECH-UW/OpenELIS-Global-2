@@ -4,9 +4,11 @@ import java.util.List;
 
 import javax.validation.constraints.Pattern;
 
+import org.hibernate.validator.constraints.SafeHtml;
 import org.openelisglobal.common.form.AdminOptionMenuForm;
 import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.systemuser.valueholder.UnifiedSystemUser;
+import org.openelisglobal.common.util.IdValuePair;
 
 public class UnifiedSystemUserMenuForm extends AdminOptionMenuForm<UnifiedSystemUser> {
     /**
@@ -17,7 +19,13 @@ public class UnifiedSystemUserMenuForm extends AdminOptionMenuForm<UnifiedSystem
     // for display
     private List<UnifiedSystemUser> menuList;
 
+    // for display
+    private List<IdValuePair> testSections;
+
     private List<@Pattern(regexp = ValidationHelper.ID_REGEX) String> selectedIDs;
+
+    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+    private String searchString = "";
 
     public UnifiedSystemUserMenuForm() {
         setFormName("unifiedSystemUserMenuForm");
@@ -42,4 +50,20 @@ public class UnifiedSystemUserMenuForm extends AdminOptionMenuForm<UnifiedSystem
     public void setSelectedIDs(List<String> selectedIDs) {
         this.selectedIDs = selectedIDs;
     }
+
+    public String getSearchString() {
+        return searchString;
+    }
+
+    public void setSearchString(String searchString) {
+        this.searchString = searchString;
+    }
+
+    public List<IdValuePair> getTestSections() {
+        return testSections;
+    }
+ 
+    public void setTestSections(List<IdValuePair> testSections) {
+        this.testSections = testSections;
+    }  
 }

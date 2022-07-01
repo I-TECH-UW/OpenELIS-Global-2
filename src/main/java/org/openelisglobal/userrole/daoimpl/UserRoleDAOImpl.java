@@ -23,11 +23,14 @@ import java.util.List;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.userrole.dao.UserRoleDAO;
+import org.openelisglobal.userrole.valueholder.LabUnitRoleMap;
+import org.openelisglobal.userrole.valueholder.UserLabUnitRoles;
 import org.openelisglobal.userrole.valueholder.UserRole;
 import org.openelisglobal.userrole.valueholder.UserRolePK;
 import org.springframework.stereotype.Component;
@@ -266,5 +269,54 @@ public class UserRoleDAOImpl extends BaseDAOImpl<UserRole, UserRolePK> implement
         }
 
         return inRole;
+    }
+
+    @Override
+    public void saveUserLabUnitRoles(UserLabUnitRoles userlabRoles) {
+        try {
+            entityManager.unwrap(Session.class).saveOrUpdate(userlabRoles);
+        }
+        catch (HibernateException e) {
+            LogEvent.logError(e.toString(), e);
+            throw new LIMSRuntimeException("Error in UserRoleDAOImpl userInRole()", e);
+        }
+    }
+
+    @Override
+    public UserLabUnitRoles getUserLabUnitRoles(String userId) {
+        UserLabUnitRoles userLabUnitRoles;
+        try {
+            userLabUnitRoles = entityManager.unwrap(Session.class).get(UserLabUnitRoles.class, Integer.parseInt(userId));
+        }
+        catch (RuntimeException e) {
+            LogEvent.logError(e.toString(), e);
+            throw new LIMSRuntimeException("Error in UserRoleDAOImpl getLabUnitRoleMap", e);
+        }
+        return userLabUnitRoles;
+    }
+
+    @Override
+    public void deleteLabUnitRoleMap(LabUnitRoleMap roleMap) {
+        try {
+            entityManager.unwrap(Session.class).delete(roleMap);
+        }
+        catch (HibernateException e) {
+            LogEvent.logError(e.toString(), e);
+            throw new LIMSRuntimeException("Error in UserRoleDAOImpl userInRole()", e);
+        } 
+    }
+
+    @Override
+    public List<UserLabUnitRoles> getAllUserLabUnitRoles() {
+        List<UserLabUnitRoles> userRoles;
+        Criteria criteria;
+        try {
+            criteria = entityManager.unwrap(Session.class).createCriteria(UserLabUnitRoles.class);
+        }
+        catch (HibernateException e) {
+            LogEvent.logError(e.toString(), e);
+            throw new LIMSRuntimeException("Error in UserRoleDAOImpl userInRole()", e);
+        }
+        return criteria.list();
     }
 }

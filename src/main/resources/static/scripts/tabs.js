@@ -103,19 +103,19 @@ function activateMenu() {
 	for (var i=0; i < items.length; i++) {
             var url = items[i].firstChild.getAttribute("href");
             //diane added this: store masterListsItem
-            if (url.indexOf('MasterListsPage.do') != -1) {
+            if (url.indexOf('MasterListsPage') != -1) {
                 masterListsItem = items[i];
             }
-            if (url.indexOf('QaEventManagementPage.do') != -1) {
+            if (url.indexOf('QaEventManagementPage') != -1) {
                 qaEventManagementItem = items[i];
             }
-            if (url.indexOf('RequestFormEntryPage.do') != -1) {
+            if (url.indexOf('RequestFormEntryPage') != -1) {
                 requestFormEntryItem = items[i];
             }
-            if (url.indexOf('ResultManagementPage.do') != -1) {
+            if (url.indexOf('ResultManagementPage') != -1) {
                 resultManagementItem = items[i];
             }
-             if (url.indexOf('ReportsPage.do') != -1) {
+             if (url.indexOf('ReportsPage') != -1) {
                 reportsItem = items[i];
             }
             //end of diane's addition

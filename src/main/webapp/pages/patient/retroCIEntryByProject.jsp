@@ -287,9 +287,9 @@ function savePage__() {
 	window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
 	var form = document.getElementById("mainForm");
 	if ( requestType == "readwrite" ) {
-		form.action = "PatientEditByProject.do?type=" + requestType;
+		form.action = "PatientEditByProject?type=" + requestType;
 	} else {
-		form.action = "PatientEntryByProject.do?type=" + requestType;
+		form.action = "PatientEntryByProject?type=" + requestType;
 	}
 	form.submit();
 }

@@ -16,7 +16,7 @@ public class BaseForm implements Serializable {
     private String formAction;
     private RequestMethod formMethod = RequestMethod.POST;
 
-    private String cancelAction = "Home.do";
+    private String cancelAction = "Home";
     private boolean submitOnCancel = false;
     private RequestMethod cancelMethod = RequestMethod.POST;
 

@@ -69,7 +69,7 @@ public class SecurityFilter implements Filter {
             LogEvent.logWarn("SecurityFilter", "doFilter()", attackMessage.toString());
             LogEvent.logInfo(this.getClass().getName(), "method unkown", attackMessage.toString());
             // send to safe page
-            httpResponse.sendRedirect("Dashboard.do");
+            httpResponse.sendRedirect("Dashboard");
         } else {
             chain.doFilter(request, httpResponse);
         }

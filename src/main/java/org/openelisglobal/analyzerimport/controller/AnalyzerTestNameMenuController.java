@@ -192,9 +192,9 @@ public class AnalyzerTestNameMenuController extends BaseMenuController<NamedAnal
         if (FWD_SUCCESS.equals(forward)) {
             return "haitiMasterListsPageDefinition";
         } else if (FWD_FAIL.equals(forward)) {
-            return "redirect:/MasterListsPage.do";
+            return "redirect:/MasterListsPage";
         } else if (FWD_SUCCESS_DELETE.equals(forward)) {
-            return "redirect:/AnalyzerTestNameMenu.do";
+            return "redirect:/AnalyzerTestNameMenu";
         } else if (FWD_FAIL_DELETE.equals(forward)) {
             return "haitiMasterListsPageDefinition";
         } else {

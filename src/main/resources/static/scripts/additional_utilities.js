@@ -865,7 +865,7 @@ function popupNotes (form, tableId, id, externalNotesDisabled) {
 	var refIdKey = '<%= IActionConstants.NOTES_REFID %>';
 	var disableExternalKey = '<%= IActionConstants.NOTES_EXTERNAL_NOTES_DISABLED %>';
 	var parmString = "?" + refTableKey + "=" + tableId + "&" + refIdKey + "=" +id + "&" + disableExternalKey +  "=" + externalNotesDisabled;
-	var href = context + "/NotesPopup.do" + parmString + sessionid;
+	var href = context + "/NotesPopup" + parmString + sessionid;
     //alert("href "+ href);
 	
 	createPopup( href, null, null );

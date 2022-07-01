@@ -6,11 +6,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.validator.GenericValidator;
+import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.Bundle.BundleEntryComponent;
+import org.hl7.fhir.r4.model.ResourceType;
+import org.hl7.fhir.r4.model.ServiceRequest;
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.ExternalOrderStatus;
+import org.openelisglobal.common.util.DateUtil;
+import org.openelisglobal.dataexchange.fhir.FhirConfig;
 import org.openelisglobal.dataexchange.fhir.FhirUtil;
 import org.openelisglobal.dataexchange.order.dao.ElectronicOrderDAO;
+import org.openelisglobal.dataexchange.order.form.ElectronicOrderViewForm;
 import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder;
 import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder.SortOrder;
 import org.openelisglobal.organization.service.OrganizationService;
@@ -18,6 +25,8 @@ import org.openelisglobal.test.service.TestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import ca.uhn.fhir.rest.client.api.IGenericClient;
 
 @Service
 public class ElectronicOrderServiceImpl extends BaseObjectServiceImpl<ElectronicOrder, String>
@@ -32,6 +41,8 @@ public class ElectronicOrderServiceImpl extends BaseObjectServiceImpl<Electronic
     protected TestService testService;
     @Autowired
     protected FhirUtil fhirUtil;
+    @Autowired
+    private FhirConfig fhirConfig;
 
     ElectronicOrderServiceImpl() {
         super(ElectronicOrder.class);
@@ -104,6 +115,52 @@ public class ElectronicOrderServiceImpl extends BaseObjectServiceImpl<Electronic
             Timestamp endTimestamp, String statusId, SortOrder sortOrder) {
         return getBaseObjectDAO().getAllElectronicOrdersByTimestampAndStatus(startTimestamp, endTimestamp, statusId,
                 sortOrder);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ElectronicOrder> searchForElectronicOrders(ElectronicOrderViewForm form) {
+        switch (form.getSearchType()) {
+        case IDENTIFIER:
+            IGenericClient fhirClient = fhirUtil.getFhirClient(fhirConfig.getLocalFhirStorePath());
+            Bundle searchBundle = fhirClient.search().forResource(ServiceRequest.class)
+                    .where(ServiceRequest.IDENTIFIER.exactly().code(form.getSearchValue())).returnBundle(Bundle.class)
+                    .execute();
+
+            List<String> identifierValues = new ArrayList<>(searchBundle.getEntry().size() + 1);
+            identifierValues.add(form.getSearchValue());
+            for (BundleEntryComponent bundleEntry : searchBundle.getEntry()) {
+                if (bundleEntry.hasResource()
+                        && ResourceType.ServiceRequest.equals(bundleEntry.getResource().getResourceType())) {
+                    identifierValues.add(bundleEntry.getResource().getIdElement().getIdPart());
+                }
+            }
+            String nameValue = form.getSearchValue();
+
+            List<ElectronicOrder> eOrders = baseObjectDAO.getAllElectronicOrdersMatchingAnyValue(identifierValues,
+                    nameValue,
+                    SortOrder.LAST_UPDATED_ASC);
+
+            return eOrders;
+        case DATE_STATUS:
+            String startDate = form.getStartDate();
+            String endDate = form.getEndDate();
+            if (GenericValidator.isBlankOrNull(startDate) && !GenericValidator.isBlankOrNull(endDate)) {
+                startDate = endDate;
+            }
+            if (GenericValidator.isBlankOrNull(endDate) && !GenericValidator.isBlankOrNull(startDate)) {
+                endDate = startDate;
+            }
+            java.sql.Timestamp startTimestamp = GenericValidator.isBlankOrNull(startDate) ? null
+                    : DateUtil.convertStringDateStringTimeToTimestamp(startDate, "00:00:00.0");
+            java.sql.Timestamp endTimestamp = GenericValidator.isBlankOrNull(endDate) ? null
+                    : DateUtil.convertStringDateStringTimeToTimestamp(endDate, "23:59:59");
+            return getAllElectronicOrdersByTimestampAndStatus(startTimestamp, endTimestamp, form.getStatusId(),
+                    SortOrder.STATUS_ID);
+        default:
+            return null;
+        }
+
     }
 
 }

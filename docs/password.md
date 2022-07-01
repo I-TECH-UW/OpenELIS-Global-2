@@ -8,9 +8,9 @@ This procedure is to be done for old instances of OpenELIS that are using an out
 
 
 1. Connect to running database
-2. Query login_user table
-    1. SELECT * FROM clinlims.login_user;
-3. Check the password column values
+1. Query login_user table
+    1. `SELECT * FROM clinlims.login_user;`
+1. Check the password column values
 
 If all passwords start with something similar to $2a$12$ then the passwords have been migrated, if not, then this procedure must be completed for OE2 to function.
 
@@ -23,24 +23,23 @@ It is recommended for all users to **change their password **after this tool is 
 ## Install Python tools on computer with connection to DB
 
 
-
 1. Run the following commands
-    1. sudo apt install python-pip
-    2. sudo apt-get update
-    3. sudo apt-get install libpq-dev python-dev
-    4. pip install bcrypt
-    5. pip install pycrypto
-    6. pip install psycopg2
+    1. `sudo apt update`
+    1. `wget https://bootstrap.pypa.io/pip/2.7/get-pip.py`
+    1. `python2 get-pip.py`
+    1. `sudo apt install libpq-dev python-dev`
+    1. `python2 -m pip install pycrypto`
+    1. `python2 -m pip install psycopg2`
+    1. `python2 -m pip install bcrypt`
 
 
 ## Run the Password Migration tool
 
 
-
 1. Download the [Password Migration](https://github.com/I-TECH-UW/Password-Migrator) tool and unpack it 
-    1. wget https://github.com/I-TECH-UW/Password-Migrator/archive/master.tar.gz
-    2. tar -xvzf master.tar.gz
-2. Run the tool and follow instructions
-    3. python PasswordMigrator-master/migrator/migrate.py
-    4. Provide DB connection info
-3. Confirm that no errors occurred
+    1. `wget https://github.com/I-TECH-UW/Password-Migrator/archive/master.tar.gz`
+    1. `tar -xvzf master.tar.gz`
+1. Run the tool and follow instructions
+    1. `python2 Password-Migrator-master/migrator/migrate.py`
+    1. Provide DB connection info
+1. Confirm that no errors occurred

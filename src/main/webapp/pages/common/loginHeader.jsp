@@ -22,7 +22,7 @@
 %>    
 
 <script>
-    var targetURL="<%=request.getContextPath()%>" + "/LoginPage.do";
+    var targetURL="<%=request.getContextPath()%>" + "/LoginPage";
     var milliseconds="<%=timeOut%>";
     
     var sec = 00;

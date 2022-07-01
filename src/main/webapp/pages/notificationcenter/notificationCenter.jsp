@@ -110,7 +110,7 @@
 			</td>
 		</tr>
 		<tr class="electronicOrders tabcontent">
-			<td><iframe src="ElectronicOrders.do" height="500px"
+			<td><iframe src="ElectronicOrders" height="500px"
 					style="width: 100%;"></iframe></td>
 		</tr>
 

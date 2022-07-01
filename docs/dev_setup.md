@@ -3,11 +3,11 @@
 ## Developer Setup
 
 
-## Install and Update Ubuntu (cur ver 20.04)
+## Install and Update Ubuntu Desktop (cur ver 20.04)
 
 
 
-1. Boot to a live version of Ubuntu on a cd or a usb key
+1. Boot to a live version of Ubuntu Desktop on a cd or a usb key
 2. Install Ubuntu on the target hard drive 
 3. Update ubuntu once it is finished installing
     1. `sudo apt update`

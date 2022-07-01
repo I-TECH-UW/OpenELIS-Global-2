@@ -19,6 +19,7 @@ package org.openelisglobal.analysis.dao;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
@@ -210,4 +211,7 @@ public interface AnalysisDAO extends BaseDAO<Analysis, String> {
 
     List<Analysis> getPageAnalysisByStatusFromAccession(List<Integer> analysisStatusList,
             List<Integer> sampleStatusList, String accessionNumber);
+
+    List<Analysis> getAnalysisForSiteBetweenResultDates(String referringSiteId, LocalDate lowerDate,
+            LocalDate upperDate);
 }

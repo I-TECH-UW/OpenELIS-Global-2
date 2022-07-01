@@ -274,7 +274,7 @@ function handleSelectedPatient() {
 
     $("searchResultsDiv").style.display = "none";
     var form = document.getElementById("mainForm");
-    form.action = '${form.formName}'.sub('Form','') + ".do?accessionNumber=" + accessionNumber + "&patientID=" + patientSelectID;
+    form.action = '${form.formName}'.sub('Form','') + "?accessionNumber=" + accessionNumber + "&patientID=" + patientSelectID;
     if (!(typeof requestType === 'undefined')) {
         form.action += "&type=" + requestType;
     }

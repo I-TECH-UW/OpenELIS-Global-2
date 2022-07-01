@@ -107,7 +107,6 @@
 
 	<script type="text/javascript">
 	var valueChanged = true;
-
 	
     function makeDirty(){
         window.onbeforeunload = "<spring:message code="banner.menu.dataLossWarning"/>";
@@ -328,7 +327,7 @@
     function savePage() {
         window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
         var form = document.getElementById("mainForm");
-        form.action = "TestModifyEntry.do";
+        form.action = "TestModifyEntry";
         form.submit();
     }
     
@@ -441,21 +440,35 @@
     }
 
   	
-    function dictionarySetDefault(valuesArray) {
+    function dictionarySetDefaultForEditing(valuesArray) {
+    	valuesArray.forEach(function(value) {
+            var dictionarySelect = jQuery("#dictionarySelectId .asmSelect option[value=" + value + "]");
+            dictionarySelect.attr("selected", "selected");
+            dictionarySelect.trigger('change');
+    	});
+    }
+
+  	
+    function dictionarySetDefault(valuesArray) {  
         var dictionaryOption;
         clearDictionaryLists();
         var optionArray = Array.from(jQuery("#dictionarySelection")[0]);
         
         for(var i = 0; i < valuesArray.length; i++) {
+            jQuery("#dictionarySelection").add
         	dictionaryOption = optionArray.filter(function(elem) { return elem.label === valuesArray[i] });
         	
         	for(var j=dictionaryOption.length; j>0; j--) {
         		dictionaryOption.splice(j,1);
         	}
-        	
+
+            
         	dictionaryOption.forEach(function(inner) {
             	jQuery(inner).attr("selected", "selected")
+                jQuery("#dictionarySelection").change();
         	});
+        	
+
         }
         jQuery("#dictionarySelection").change();
     }
@@ -698,12 +711,14 @@
     }
 
     function normalRangeCheck(index) {
-        var lowNormalValue, highNormalValue, lowValidValue, highValidValue;
+        var lowNormalValue, highNormalValue, lowValidValue, highValidValue,lowReportingRangeValue,highReportingRangeValue;
         var lowGenderNormalValue, highGenderNormalValue;
         var lowGenderNormal, highGenderNormal;
         var lowNormal = jQuery("#lowNormal_" + index);
         var highNormal = jQuery("#highNormal_" + index);
         var lowValid = jQuery("#lowValid");
+        var lowReportingRange = jQuery("#lowReportingRange");
+        var highReportingRange = jQuery("#highReportingRange");
         var highValid = jQuery("#highValid");
         var checkGenderValues = jQuery("#genderCheck_" + index).is(':checked');
 
@@ -767,10 +782,16 @@
             }
         }
 
-        //below we are testing against the valid values
+        //below we are testing against the valid and reporting range values
         lowValidValue = +lowValid.val();
         if (lowValidValue != "-Infinity" &&
                 lowValidValue != lowValid.val()) {
+            return;
+        }
+
+        lowReportingRangeValue = +lowReportingRange.val();
+        if (lowReportingRangeValue != "-Infinity" &&
+                lowReportingRangeValue != lowReportingRange.val()) {
             return;
         }
 
@@ -780,8 +801,14 @@
             return;
         }
 
+        highReportingRangeValue = +highReportingRange.val();
+        if (highReportingRangeValue != "-Infinity" &&
+                highReportingRangeValue != highReportingRange.val()) {
+            return;
+        }
 
-        if (lowValidValue == "-Infinity" && highValidValue == "Infinity") {
+
+        if (lowValidValue || lowReportingRange == "-Infinity" && highValidValue || highReportingRangeValue == "Infinity") {
             return;
         }
 
@@ -792,6 +819,12 @@
         }
 
         if (highValidValue != "Infinity" && highNormalValue > highValidValue) {
+            highNormal.addClass("error");
+            alert("<%=MessageUtil.getContextualMessage("error.high.normal.high.valid.order")%>");
+            return;
+        }
+
+        if (highReportingRangeValue != "Infinity" && highNormalValue > highReportingRangeValue) {
             highNormal.addClass("error");
             alert("<%=MessageUtil.getContextualMessage("error.high.normal.high.valid.order")%>");
             return;
@@ -849,6 +882,42 @@
             }
         });
     }
+
+    function reportingRangeCheck() {
+        var highReportingRangeValue, lowReportingRangeValue;
+        var lowReportingRange = jQuery("#lowReportingRange");
+        var highReportingRange = jQuery("#highReportingRange");
+        lowReportingRange.removeClass("error");
+        lowReportingRangeValue = +lowReportingRange.val();
+        if (lowReportingRangeValue != "-Infinity" &&
+                lowReportingRangeValue != lowReportingRange.val()) {
+            lowReportingRange.addClass("error");
+            alert("<%=MessageUtil.getContextualMessage("error.out.side.range")%>");
+            return;
+        }
+        highReportingRange.removeClass("error");
+        highReportingRangeValue = +highReportingRange.val();
+        if (highReportingRangeValue != "Infinity" &&
+                highReportingRangeValue != highReportingRange.val()) {
+            highReportingRange.addClass("error");
+            alert("<%=MessageUtil.getContextualMessage("error.out.side.range")%>");
+            return;
+        }
+        if (lowReportingRangeValue != "-Infinity" && highReportingRangeValue != "Infinity" &&
+                lowReportingRangeValue >= highReportingRangeValue) {
+            highReportingRange.addClass("error");
+            lowReportingRange.addClass("error");
+            alert("<%=MessageUtil.getContextualMessage("error.out.side.range")%>");
+            return;
+        }
+        jQuery(".rowKey").each(function () {
+            //index is in the template
+            if (jQuery(this).val() != "index") {
+                normalRangeCheck(jQuery(this).val());
+            }
+        });
+    }
+    
     function checkReadyForNextStep() {
         var ready = true;
         if (step == "step1") {
@@ -937,15 +1006,14 @@
             	referenceId = jQuery(elem).attr("fReferenceId")
             });
             
-            // format dictionary values
-            //if( dictionaryValues !== null) {
-            if( false ) {
-            	var tmpArray = dictionaryValues.split("[");
-            	var tmpArray = tmpArray[1].split("]");
-            	var tmpArray = tmpArray[0].split(", ");
-            	var valuesArray = jQuery.makeArray(tmpArray);
-            	dictionarySetDefault(valuesArray);
+            if (dictionaryValues !== null && dictionaryValues !== "null") {
+                var tmpArray = dictionaryValues.split("[");
+                var tmpArray = tmpArray[1].split("]");
+                var tmpArray = tmpArray[0].split(", ");
+                var valuesArray = jQuery.makeArray(tmpArray);
+                dictionarySetDefault(valuesArray);
             }
+            
             resultTypeId = jQuery("#resultTypeSelection").val();
             jQuery("#sortTitleDiv").attr("align", "left");
             jQuery("#step2BreadCrumb").hide();
@@ -1009,6 +1077,14 @@
             	referenceValue = jQuery(elem).attr("fReferenceValue")
             	referenceId = jQuery(elem).attr("fReferenceId")
             });
+
+            if (dictionaryValues !== null && dictionaryValues !== "null") {
+	            var tmpArray = dictionaryIds.split("[");
+	            var tmpArray = tmpArray[1].split("]");
+	            var tmpArray = tmpArray[0].split(", ");
+	            var valuesArray = jQuery.makeArray(tmpArray);
+	            dictionarySetDefaultForEditing(valuesArray);
+            }
             
             if (referenceValue == "n/a") {
                 jQuery("#referenceValue").text(referenceValue);
@@ -1104,10 +1180,14 @@
         var verifyList = jQuery("#dictionaryVerifyListId");
         var qualifyList = jQuery("#dictionaryQualify");
         var li, qualified;
-        var tmpArray = dictionaryValues.split("[");
-    	var tmpArray = tmpArray[1].split("]");
-    	var tmpArray = tmpArray[0].split(", ");
-    	dictionaryValues = jQuery.makeArray(tmpArray);
+        if (dictionaryValues !== null && dictionaryValues !== "null") {
+	        var tmpArray = dictionaryValues.split("[");
+	    	var tmpArray = tmpArray[1].split("]");
+	    	var tmpArray = tmpArray[0].split(", ");
+	    	dictionaryValues = jQuery.makeArray(tmpArray);
+        } else {
+        	dictionaryValues = [];
+        }
         verifyList.empty();
         for(var i=0; i < dictionaryValues.length; i++ ) {
             li = jQuery(document.createElement("li"));
@@ -1136,7 +1216,7 @@
         jQuery(".confirmShow").hide();
         jQuery(".selectShow").show();
         if (step == 'step1') {
-        	window.location.href = "TestManagementConfigMenu.do";
+        	window.location.href = "TestManagementConfigMenu";
         } else if (step == 'step2') {
             goBackToStep1();
         } else if ( step == 'step3Dictionary' || step == 'step3Numeric' || step == 'step3NumericAsk' || step == 'step3DictionaryAsk'){
@@ -1627,10 +1707,10 @@ td {
 
 	<input type="button"
 		value="<%=MessageUtil.getContextualMessage("banner.menu.administration")%>"
-		onclick="submitAction('MasterListsPage.do');" class="textButton" />
+		onclick="submitAction('MasterListsPage');" class="textButton" />
 	&rarr; <input type="button"
 		value="<%=MessageUtil.getContextualMessage("configuration.test.management")%>"
-		onclick="submitAction('TestManagementConfigMenu.do');"
+		onclick="submitAction('TestManagementConfigMenu');"
 		class="textButton" />&rarr; <span class="step1"> <spring:message code="configuration.test.modify" />
 	</span> <span class="step2 notStep1BreadCrumb" id="step2BreadCrumb"
 		style="display: none"> <input type="button"
@@ -1805,6 +1885,7 @@ td {
 					<td><span class="catalog-label"><spring:message code="configuration.test.catalog.age.range" /></span></td>
 					<td><span class="catalog-label"><spring:message code="configuration.test.catalog.normal.range" /></span></td>
 					<td><span class="catalog-label"><spring:message code="configuration.test.catalog.valid.range" /></span></td>
+                    <td><span class="catalog-label"><spring:message code="configuration.test.catalog.reporting.range" /></span></td>
 				</tr>
 				<%
 					String fLimitString = "";
@@ -1813,12 +1894,16 @@ td {
 						fLimitString = fLimitString + limitBean.getAgeRange() + ",";
 						fLimitString = fLimitString + limitBean.getNormalRange() + ",";
 						fLimitString = fLimitString + limitBean.getValidRange() + "|";
+                        fLimitString = fLimitString + limitBean.getReportingRange() + "|";
+
 				%>
 				<tr>
 					<td><b><%=limitBean.getGender()%></b></td>
 					<td><b><%=limitBean.getAgeRange()%></b></td>
 					<td><b><%=limitBean.getNormalRange()%></b></td>
 					<td><b><%=limitBean.getValidRange()%></b></td>
+                    <td><b><%=limitBean.getReportingRange()%></b></td>
+
 				</tr>
 				<%
 					}
@@ -2333,7 +2418,8 @@ td {
 				<td><input type="text" value="Infinity" size="10"
 					id="highNormal_0" class="highNormal"
 					onchange="normalRangeCheck('0');"></td>
-				<td><input type="text" value="" size="12" id="reportingRange_0"></td>
+                <td><input type="text" value="-Infinity" size="10" id="lowReportingRange" onchange="reportingRangeCheck();"></td>
+                <td><input type="text" value="Infinity" size="10" id="highReportingRange" onchange="reportingRangeCheck();"></td>
 				<td><input type="text" value="-Infinity" size="10"
 					id="lowValid" onchange="validRangeCheck();"></td>
 				<td><input type="text" value="Infinity" size="10"
@@ -2377,7 +2463,7 @@ td {
 		<input type="button"
 			id="acceptButton"
 			value="<%=MessageUtil.getContextualMessage("label.button.accept")%>"
-			onclick="submitAction('TestModifyEntry.do');" /> <input
+			onclick="submitAction('TestModifyEntry');" /> <input
 			type="button"
 			value="<%=MessageUtil.getContextualMessage("label.button.back")%>"
 			onclick="navigateBackFromConfirm()" />
@@ -2420,5 +2506,5 @@ td {
 
 	<br> <input type="button"
 		value='<%=MessageUtil.getContextualMessage("label.button.finished")%>'
-		onclick="submitAction('TestManagementConfigMenu.do');" />
+		onclick="submitAction('TestManagementConfigMenu');" />
 </form:form>

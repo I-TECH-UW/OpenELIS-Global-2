@@ -13,6 +13,7 @@ import javax.validation.Valid;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.DisplayListService.ListType;
@@ -32,6 +33,7 @@ import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.sampleitem.service.SampleItemService;
 import org.openelisglobal.sampleitem.valueholder.SampleItem;
 import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.systemuser.service.UserService;
 import org.openelisglobal.test.beanItems.TestResultItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -55,6 +57,8 @@ public class StatusResultsController extends BaseController {
     private SampleService sampleService;
     @Autowired
     private SampleItemService sampleItemService;
+    @Autowired
+    private UserService userService;
 
     private final InventoryUtility inventoryUtility = SpringContext.getBean(InventoryUtility.class);
     private static final ConfigurationProperties configProperties = ConfigurationProperties.getInstance();
@@ -78,7 +82,7 @@ public class StatusResultsController extends BaseController {
             BindingResult result) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         if (result.hasErrors()) {
             saveErrors(result);
-            setSelectionLists(form);
+            setSelectionLists(form ,request);
             return findForward(FWD_FAIL, form);
         }
 
@@ -93,28 +97,31 @@ public class StatusResultsController extends BaseController {
         form.setRejectReasons(DisplayListService.getInstance()
                 .getNumberedListWithLeadingBlank(DisplayListService.ListType.REJECTION_REASONS));
         form.setReferralOrganizations(DisplayListService.getInstance().getList(ListType.REFERRAL_ORGANIZATIONS));
+        form.setMethods(DisplayListService.getInstance().getList(ListType.METHODS));
 
         ResultsPaging paging = new ResultsPaging();
 
         String newPage = request.getParameter("page");
         if (GenericValidator.isBlankOrNull(newPage)) {
             List<TestResultItem> tests;
+            List<TestResultItem> filteredTests = new ArrayList();
             if (GenericValidator.isBlankOrNull(newRequest) || newRequest.equals("false")) {
                 tests = setSearchResults(form, resultsUtility);
+                filteredTests = userService.filterResultsByLabUnitRoles(getSysUserId(request), tests ,Constants.ROLE_RESULTS);
 
                 if (configProperties.isPropertyValueEqual(Property.PATIENT_DATA_ON_RESULTS_BY_ROLE, "true")
                         && !userHasPermissionForModule(request, "PatientResults")) {
-                    for (TestResultItem resultItem : tests) {
+                    for (TestResultItem resultItem : filteredTests) {
                         resultItem.setPatientInfo("---");
                     }
                 }
 
-                paging.setDatabaseResults(request, form, tests);
+                paging.setDatabaseResults(request, form, filteredTests);
             } else {
                 setEmptyResults(form);
             }
 
-            setSelectionLists(form);
+            setSelectionLists(form ,request);
         } else {
             paging.page(request, form, Integer.parseInt(newPage));
         }
@@ -161,14 +168,13 @@ public class StatusResultsController extends BaseController {
         form.setInventoryItems(new ArrayList<InventoryKitItem>());
     }
 
-    private void setSelectionLists(StatusResultsForm form)
+    private void setSelectionLists(StatusResultsForm form ,HttpServletRequest request)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
         List<DropPair> analysisStatusList = getAnalysisStatusTypes();
 
         form.setAnalysisStatusSelections(analysisStatusList);
-        form.setTestSelections(
-                DisplayListService.getInstance().getListWithLeadingBlank(DisplayListService.ListType.ALL_TESTS));
+        form.setTestSelections(userService.getAllDisplayUserTestsByLabUnit(getSysUserId(request) , Constants.ROLE_RESULTS));
 
         List<DropPair> sampleStatusList = getSampleStatusTypes();
         form.setSampleStatusSelections(sampleStatusList);

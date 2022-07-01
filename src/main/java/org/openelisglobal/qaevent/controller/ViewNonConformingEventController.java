@@ -91,7 +91,7 @@ public class ViewNonConformingEventController extends BaseController {
         if (FWD_SUCCESS.equals(forward)) {
             return "viewNonConformingEventDefiniton";
         } else if (FWD_SUCCESS_INSERT.equals(forward)) {
-            return "redirect:/ViewNonConformingEvent.do";
+            return "redirect:/ViewNonConformingEvent";
         } else if (FWD_FAIL_INSERT.equals(forward)) {
             return "viewNonConformingEventDefiniton";
         } else {

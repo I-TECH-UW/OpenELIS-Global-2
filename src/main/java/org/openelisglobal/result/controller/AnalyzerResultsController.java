@@ -174,7 +174,7 @@ public class AnalyzerResultsController extends BaseController {
             BindingResult result, HttpServletRequest request)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         AnalyzerResultsForm form = new AnalyzerResultsForm();
-
+        
         request.getSession().setAttribute(SAVE_DISABLED, TRUE);
 
         String requestAnalyzerType = null;
@@ -185,74 +185,73 @@ public class AnalyzerResultsController extends BaseController {
         form.setType(requestAnalyzerType);
 
         AnalyzerResultsPaging paging = new AnalyzerResultsPaging();
+        List<AnalyzerResults> analyzerResultsList = getAnalyzerResults();
         if (GenericValidator.isBlankOrNull(request.getParameter("page"))) {
             // get list of AnalyzerData from table based on analyzer type
-            List<AnalyzerResults> analyzerResultsList = getAnalyzerResults();
-
             if (analyzerResultsList.isEmpty()) {
                 form.setResultList(new ArrayList<AnalyzerResultItem>());
                 form.setDisplayNotFoundMsg(true);
                 paging.setEmptyPageBean(request, form);
 
             } else {
-
-                /*
-                 * The problem we are solving is that the accession numbers may not be
-                 * consecutive but we still want to maintain the order So we will form the
-                 * groups (by analyzer runs) by going in order but if the accession number is in
-                 * another group it will be boosted to the first group
-                 */
-                boolean missingTest = false;
-
-                resolveMissingTests(analyzerResultsList);
-
-                List<List<AnalyzerResultItem>> accessionGroupedResultsList = groupAnalyzerResults(analyzerResultsList);
-
-                List<AnalyzerResultItem> analyzerResultItemList = new ArrayList<>();
-
-                int sampleGroupingNumber = 0;
-                for (List<AnalyzerResultItem> group : accessionGroupedResultsList) {
-                    sampleGroupingNumber++;
-                    AnalyzerResultItem groupHeader = null;
-                    for (AnalyzerResultItem resultItem : group) {
-                        if (groupHeader == null) {
-                            groupHeader = resultItem;
-                            setNonConformityStateForResultItem(resultItem);
-                            if (FormFields.getInstance().useField(Field.QaEventsBySection)) {
-                                if (resultItem.getAnalysisId() != null) {
-                                    resultItem.setNonconforming(getQaEventByTestSection(
-                                            analysisService.getAnalysisById(resultItem.getAnalysisId())));
-                                }
-                            }
-                        }
-                        resultItem.setSampleGroupingNumber(sampleGroupingNumber);
-
-                        // There are two reasons there may not be a test id,
-                        // 1. it could not be found due to missing mapping
-                        // 2. it may not be looked for if the results are read
-                        // only
-                        // we only want to capture 1.
-                        if (GenericValidator.isBlankOrNull(resultItem.getTestId()) && !resultItem.isReadOnly()) {
-                            groupHeader.setGroupIsReadOnly(true);
-                            missingTest = true;
-                        } else if (resultItem.getIsControl()) {
-                            groupHeader.setGroupIsReadOnly(true);
-                        }
-
-                        analyzerResultItemList.add(resultItem);
-                    }
-                }
-
-                form.setDisplayMissingTestMsg(new Boolean(missingTest));
-
-                paging.setDatabaseResults(request, form, analyzerResultItemList);
+                paging.setDatabaseResults(request, form,  getAnalyzerResultItemList(analyzerResultsList , form));
             }
         } else {
+            paging.setDatabaseResults(request, form, getAnalyzerResultItemList(analyzerResultsList , form));
             paging.page(request, form, Integer.parseInt(request.getParameter("page")));
         }
 
         addFlashMsgsToRequest(request);
         return findForward(FWD_SUCCESS, form);
+    }
+
+    private List<AnalyzerResultItem> getAnalyzerResultItemList(List<AnalyzerResults> analyzerResultsList ,AnalyzerResultsForm form){
+        /*
+        * The problem we are solving is that the accession numbers may not be
+        * consecutive but we still want to maintain the order So we will form the
+        * groups (by analyzer runs) by going in order but if the accession number is in
+        * another group it will be boosted to the first group
+        */
+        boolean missingTest = false;
+        resolveMissingTests(analyzerResultsList);
+        List<AnalyzerResultItem> analyzerResultItemList = new ArrayList<>();
+        List<List<AnalyzerResultItem>> accessionGroupedResultsList = groupAnalyzerResults(analyzerResultsList);
+
+        int sampleGroupingNumber = 0;
+        for (List<AnalyzerResultItem> group : accessionGroupedResultsList) {
+            sampleGroupingNumber++;
+            AnalyzerResultItem groupHeader = null;
+            for (AnalyzerResultItem resultItem : group) {
+                if (groupHeader == null) {
+                    groupHeader = resultItem;
+                    setNonConformityStateForResultItem(resultItem);
+                    if (FormFields.getInstance().useField(Field.QaEventsBySection)) {
+                        if (resultItem.getAnalysisId() != null) {
+                            resultItem.setNonconforming(getQaEventByTestSection(
+                                    analysisService.getAnalysisById(resultItem.getAnalysisId())));
+                        }
+                    }
+                }
+                resultItem.setSampleGroupingNumber(sampleGroupingNumber);
+
+                // There are two reasons there may not be a test id,
+                // 1. it could not be found due to missing mapping
+                // 2. it may not be looked for if the results are read
+                // only
+                // we only want to capture 1.
+                if (GenericValidator.isBlankOrNull(resultItem.getTestId()) && !resultItem.isReadOnly()) {
+                    groupHeader.setGroupIsReadOnly(true);
+                    missingTest = true;
+                } else if (resultItem.getIsControl()) {
+                    groupHeader.setGroupIsReadOnly(true);
+                }
+
+                analyzerResultItemList.add(resultItem);
+            }
+        }
+
+        form.setDisplayMissingTestMsg(new Boolean(missingTest));
+        return analyzerResultItemList;  
     }
 
     private void setNonConformityStateForResultItem(AnalyzerResultItem resultItem) {
@@ -721,7 +720,8 @@ public class AnalyzerResultsController extends BaseController {
         } else {
             Map<String, String> params = new HashMap<>();
             params.put("type", form.getType());
-            // params.put("forward", FWD_SUCCESS_INSERT);
+           // params.put("page", form.getPaging().getCurrentPage());
+            params.put("forward", FWD_SUCCESS_INSERT);
             return getForwardWithParameters(findForward(FWD_SUCCESS_INSERT, form), params);
         }
     }
@@ -1370,7 +1370,7 @@ public class AnalyzerResultsController extends BaseController {
         } else if (FWD_FAIL.equals(forward)) {
             return "homePageDefinition";
         } else if (FWD_SUCCESS_INSERT.equals(forward)) {
-            return "redirect:/AnalyzerResults.do?type=" + Encode.forUriComponent(request.getParameter("type"));
+           return redirectInsertSuccess();
         } else if (FWD_FAIL_INSERT.equals(forward)) {
             return "analyzerResultsDefinition";
         } else if (FWD_VALIDATION_ERROR.equals(forward)) {
@@ -1378,6 +1378,17 @@ public class AnalyzerResultsController extends BaseController {
         } else {
             return "PageNotFound";
         }
+    }
+
+    private String redirectInsertSuccess() {
+        String successUrl = "redirect:/AnalyzerResults?type=" + Encode.forUriComponent(request.getParameter("type"));
+        if (request.getParameter("page") != null) {
+            successUrl += "&page=" + Encode.forUriComponent(request.getParameter("page"));
+        }
+        if (request.getParameter("searchTerm") != null) {
+            successUrl += "&searchTerm=" + Encode.forUriComponent(request.getParameter("searchTerm"));
+        }
+        return successUrl;
     }
 
     @Override
@@ -1390,7 +1401,7 @@ public class AnalyzerResultsController extends BaseController {
         String key = analyzerNameToSubtitleKey.get(getAnalyzerNameFromRequest());
         if (key == null) {
             key = PluginMenuService.getInstance()
-                    .getKeyForAction("/AnalyzerResults.do?type=" + request.getParameter("type"));
+                    .getKeyForAction("/AnalyzerResults?type=" + request.getParameter("type"));
         }
         return key;
 

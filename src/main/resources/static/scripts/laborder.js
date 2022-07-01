@@ -106,7 +106,7 @@ function displaySampleTypes(entryDate) {
 
 function assignTestsToSampleTypeTests(sampleType, entryDate){
 	var index = sampleType.rowid;
-    var addTable = $("samplesAddedTable");
+    var addTable = document.getElementsByClassName("samplesAddedTable")[1];
     var sampleDescription = sampleType.name;
     var sampleTypeValue = sampleType.id;
     var currentTime = getCurrentTime();
@@ -303,10 +303,10 @@ function crossTestSelected(testName, sampleTypeId, sampleTypeName, entryDate) {
 	testIds[0] = testId;
 	testNames[0] = testName;
 
-	if ($("samplesAddedTable").rows.length > 1)
+	if (document.getElementsByClassName("samplesAddedTable")[1].rows.length > 1)
 		removeTestsFromAllSampleTypes(testIds, testNames);
 	
-	var table = $("samplesAddedTable");
+	var table = document.getElementsByClassName("samplesAddedTable")[1];
 	var length = table.rows.length;
 	var rows = table.rows;
 	var currentTime = getCurrentTime();
@@ -338,8 +338,8 @@ function crossTestSelected(testName, sampleTypeId, sampleTypeName, entryDate) {
 	// No sampleType row available yet.	
 	} else {
 		addTypeToTable(table, sampleTypeName, sampleTypeId, currentTime,  entryDate );
-		$("samplesAdded").show();
-		table = $("samplesAddedTable");
+		document.getElementsByClassName("samplesAdded")[1].show();
+		table = document.getElementsByClassName("samplesAddedTable")[1];
 		length = table.rows.length;
 		rows = table.rows;
 		var lastRowIndex = length - 1;
@@ -363,10 +363,10 @@ function crossPanelSelected(panelId, panelName, sampleTypeId, sampleTypeName, en
 	
 	initializePanelTests = true;
 	
-	if ($("samplesAddedTable").rows.length > 1)
+	if (document.getElementsByClassName("samplesAddedTable")[1].rows.length > 1)
 		removePanelFromAllSampleTypes(panelId);
 	
-	var table = $("samplesAddedTable");
+	var table = document.getElementsByClassName("samplesAddedTable")[1];
 	var length = table.rows.length;
 	var rows = table.rows;
 	var currentTime = getCurrentTime();
@@ -403,8 +403,8 @@ function crossPanelSelected(panelId, panelName, sampleTypeId, sampleTypeName, en
 		$("select" + tempIndex).click();
 	} else {
 		addTypeToTable(table, sampleTypeName, sampleTypeId, currentTime,  entryDate );
-		$("samplesAdded").show();
-		table = $("samplesAddedTable");
+		document.getElementsByClassName("samplesAdded")[1].show();
+		table = document.getElementsByClassName("samplesAddedTable")[1];
 		length = table.rows.length;
 		rows = table.rows;
 		var lastRowIndex = length - 1;
@@ -490,7 +490,7 @@ function removePanel(panelId) {
 			}
 		}
 	}
-	var table = $("samplesAddedTable");
+	var table = document.getElementsByClassName("samplesAddedTable")[1];
 	var rows = table.rows.length;
 
 	for( var i = 1; i < rows; i++){
@@ -509,7 +509,7 @@ function removePanel(panelId) {
 
 
 function removeTestsFromAllSampleTypes(testIds, testNames) {
-	var table = $("samplesAddedTable");
+	var table = document.getElementsByClassName("samplesAddedTable")[1];
 	var rows = table.rows.length;
 	var rowsToRemove = [];
 	var rowsToRemoveIndex = 0;

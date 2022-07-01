@@ -131,7 +131,7 @@ public class OrganizationController extends BaseController {
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         OrganizationForm newForm = resetSessionFormToType(oldForm, OrganizationForm.class);
 
-        newForm.setCancelAction("CancelOrganization.do");
+        newForm.setCancelAction("CancelOrganization");
 
         // The first job is to determine if we are coming to this action with an
         // ID parameter in the request. If there is no parameter, we are
@@ -163,12 +163,12 @@ public class OrganizationController extends BaseController {
             organization = organizationService.getNext(id);
             String newId = organization.getId();
 
-            return new ModelAndView("redirect:/Organization.do?ID=" + Encode.forUriComponent(newId) + "&startingRecNo="
+            return new ModelAndView("redirect:/Organization?ID=" + Encode.forUriComponent(newId) + "&startingRecNo="
                     + Encode.forUriComponent(start));
         } else if (FWD_PREVIOUS.equals(request.getParameter("direction"))) {
             organization = organizationService.getPrevious(id);
             String newId = organization.getId();
-            return new ModelAndView("redirect:/Organization.do?ID=" + Encode.forUriComponent(newId) + "&startingRecNo="
+            return new ModelAndView("redirect:/Organization?ID=" + Encode.forUriComponent(newId) + "&startingRecNo="
                     + Encode.forUriComponent(start));
         }
 
@@ -495,13 +495,13 @@ public class OrganizationController extends BaseController {
         if (FWD_SUCCESS.equals(forward)) {
             return "organizationDefinition";
         } else if (FWD_FAIL.equals(forward)) {
-            return "redirect:/MasterListsPage.do";
+            return "redirect:/MasterListsPage";
         } else if (FWD_SUCCESS_INSERT.equals(forward)) {
-            return "redirect:/OrganizationMenu.do";
+            return "redirect:/OrganizationMenu";
         } else if (FWD_FAIL_INSERT.equals(forward)) {
             return "organizationDefinition";
         } else if (FWD_CANCEL.equals(forward)) {
-            return "redirect:/OrganizationMenu.do";
+            return "redirect:/OrganizationMenu";
         } else {
             return "PageNotFound";
         }

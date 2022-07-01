@@ -35,12 +35,12 @@
 <input 	type="button"
           class="textButton"
           value="<%= MessageUtil.getContextualMessage("banner.menu.administration")%>"
-          onclick="submitAction('MasterListsPage.do');" >&rarr;
+          onclick="submitAction('MasterListsPage');" >&rarr;
 
 <input  type="button"
         class="textButton"
         value="<%= MessageUtil.getContextualMessage("configuration.test.management") %>"
-        onclick="submitAction('TestManagementConfigMenu.do');" >&rarr;
+        onclick="submitAction('TestManagementConfigMenu');" >&rarr;
 
 
 <%=MessageUtil.getContextualMessage( "label.resultSelectList" ) %>
@@ -77,7 +77,7 @@
     <button onclick="return moveNext()">
         <spring:message code="label.button.next"/>
     </button>
-    <button onclick="return submitAction('TestManagementConfigMenu.do');">
+    <button onclick="return submitAction('TestManagementConfigMenu');">
         <spring:message code="label.button.cancel"/>
     </button>
 </div>
@@ -167,7 +167,7 @@
 
         if (nameEnglish != '' || nameFrench != '') {
             window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
-            form.action = "ResultSelectListAdd.do";
+            form.action = "ResultSelectListAdd";
             form.submit();
         }
         return false;
@@ -305,7 +305,7 @@
         jQuery(".assign").hide();
         // document.getElementsByClassName('cancel-btn')[0].removeEventListener('click', submitAction);
         /*window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
-        form.action = "SaveResultSelectList.do";
+        form.action = "SaveResultSelectList";
         form.submit();*/
         validating = true;
         return false;
@@ -314,7 +314,7 @@
     function accept() {
         window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
         var form = document.getElementById("mainForm");
-        form.action = "SaveResultSelectList.do";
+        form.action = "SaveResultSelectList";
         form.submit();
     }
 
@@ -324,7 +324,7 @@
     }
     
     function goBack() {
-        window.location = 'ResultSelectListAdd.do';
+        window.location = 'ResultSelectListAdd';
         return false;
     }
 

@@ -10,38 +10,38 @@ function OEPager(formName, sufix) {
 
 	this.pageFoward = function() {
 		window.onbeforeunload = null;
-		//this.form.action = this.formName.sub('Form', '') +".do?page=" + (this.currentPageNumber + 1) + this.sufix;
+		//this.form.action = this.formName.sub('Form', '') +"?page=" + (this.currentPageNumber + 1) + this.sufix;
 		var url = window.location.href;
 		if (url.indexOf("RetroC")!==-1){
-			this.form.action = this.formName.sub('Form', '') +"RetroC.do?pageResults=true&page=" + (this.currentPageNumber + 1) + this.sufix;
+			this.form.action = this.formName.sub('Form', '') +"RetroC?pageResults=true&page=" + (this.currentPageNumber + 1) + this.sufix;
 		}
-		else { this.form.action = this.formName.sub('Form', '') +".do?pageResults=true&page=" + (this.currentPageNumber + 1) + this.sufix;}
+		else { this.form.action = this.formName.sub('Form', '') +"?pageResults=true&page=" + (this.currentPageNumber + 1) + this.sufix;}
 		//'<%= logbookType == "" ? "" : "&type=" + logbookType  %>';
 		this.form.submit();
 	};
 
 	this.pageBack = function() {
 		window.onbeforeunload = null;
-		//this.form.action = this.formName.sub('Form', '') +"RetroC.do?page=" + (this.currentPageNumber - 1) + this.sufix;
+		//this.form.action = this.formName.sub('Form', '') +"RetroC?page=" + (this.currentPageNumber - 1) + this.sufix;
 		var url = window.location.href;
 		if (url.indexOf("RetroC")!==-1){
-			this.form.action = this.formName.sub('Form', '') +"RetroC.do?pageResults=true&page=" + (this.currentPageNumber - 1) + this.sufix;
+			this.form.action = this.formName.sub('Form', '') +"RetroC?pageResults=true&page=" + (this.currentPageNumber - 1) + this.sufix;
 		}
-		else { this.form.action = this.formName.sub('Form', '') +".do?pageResults=true&page=" + (this.currentPageNumber - 1) + this.sufix;}
+		else { this.form.action = this.formName.sub('Form', '') +"?pageResults=true&page=" + (this.currentPageNumber - 1) + this.sufix;}
 		//		+ '<%= logbookType == "" ? "" : "&type=" + logbookType  %>';
 		this.form.submit();
 	};
 
 	this.jumpToPage = function(page) {
 		window.onbeforeunload = null;
-		this.form.action = this.formName.sub('Form', '') + ".do?pageResults=true&page=" + page + this.sufix;
+		this.form.action = this.formName.sub('Form', '') + "?pageResults=true&page=" + page + this.sufix;
 			//+ '<%= logbookType == "" ? "" : "&type=" + logbookType  %>';
 		this.form.submit();
 	};
 
 	this.jumpToPageToSearch = function(page, term) {
 		window.onbeforeunload = null;
-		this.form.action = this.formName.sub('Form', '') + ".do?pageResults=true&page=" + page + "&searchTerm=" + term + this.sufix;
+		this.form.action = this.formName.sub('Form', '') + "?pageResults=true&page=" + page + "&searchTerm=" + term + this.sufix;
 			//+ '<%= logbookType == "" ? "" : "&type=" + logbookType  %>';
 		this.form.submit();
 	};

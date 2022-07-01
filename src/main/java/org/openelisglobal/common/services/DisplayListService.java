@@ -36,15 +36,20 @@ import org.openelisglobal.dictionary.valueholder.Dictionary;
 import org.openelisglobal.gender.service.GenderService;
 import org.openelisglobal.gender.valueholder.Gender;
 import org.openelisglobal.internationalization.MessageUtil;
+import org.openelisglobal.method.service.MethodService;
+import org.openelisglobal.method.valueholder.Method;
 import org.openelisglobal.organization.service.OrganizationService;
 import org.openelisglobal.organization.valueholder.Organization;
 import org.openelisglobal.panel.service.PanelService;
 import org.openelisglobal.panel.valueholder.Panel;
 import org.openelisglobal.panel.valueholder.PanelSortOrderComparator;
+import org.openelisglobal.provider.service.ProviderService;
+import org.openelisglobal.provider.valueholder.Provider;
 import org.openelisglobal.qaevent.service.QaEventService;
 import org.openelisglobal.qaevent.valueholder.QaEvent;
 import org.openelisglobal.referral.service.ReferralReasonService;
 import org.openelisglobal.referral.valueholder.ReferralReason;
+import org.openelisglobal.sample.valueholder.OrderPriority;
 import org.openelisglobal.statusofsample.service.StatusOfSampleService;
 import org.openelisglobal.statusofsample.valueholder.StatusOfSample;
 import org.openelisglobal.test.service.TestSectionService;
@@ -71,12 +76,12 @@ public class DisplayListService implements LocaleChangeListener {
         HOURS, MINS, SAMPLE_TYPE_ACTIVE, SAMPLE_TYPE_INACTIVE, SAMPLE_TYPE, INITIAL_SAMPLE_CONDITION,
         SAMPLE_PATIENT_PAYMENT_OPTIONS, PATIENT_HEALTH_REGIONS, PATIENT_MARITAL_STATUS, PATIENT_NATIONALITY,
         PATIENT_EDUCATION, GENDERS, SAMPLE_PATIENT_REFERRING_CLINIC, SAMPLE_PATIENT_CLINIC_DEPARTMENT, QA_EVENTS,
-        TEST_SECTION, TEST_SECTION_INACTIVE,
-        TEST_SECTION_BY_NAME, HAITI_DEPARTMENTS, PATIENT_SEARCH_CRITERIA, PANELS, PANELS_ACTIVE, PANELS_INACTIVE,
-        ORDERABLE_TESTS, ALL_TESTS, REJECTION_REASONS, REFERRAL_REASONS, REFERRAL_ORGANIZATIONS, TEST_LOCATION_CODE,
-        PROGRAM, RESULT_TYPE_LOCALIZED, RESULT_TYPE_RAW, UNIT_OF_MEASURE, UNIT_OF_MEASURE_ACTIVE,
-        UNIT_OF_MEASURE_INACTIVE, DICTIONARY_TEST_RESULTS, LAB_COMPONENT, SEVERITY_CONSEQUENCES_LIST,
-        SEVERITY_RECURRENCE_LIST, ACTION_TYPE_LIST, LABORATORY_COMPONENT, SAMPLE_NATURE, ELECTRONIC_ORDER_STATUSES
+        TEST_SECTION, TEST_SECTION_INACTIVE, TEST_SECTION_BY_NAME, HAITI_DEPARTMENTS, PATIENT_SEARCH_CRITERIA, PANELS,
+        PANELS_ACTIVE, PANELS_INACTIVE, ORDERABLE_TESTS, ALL_TESTS, REJECTION_REASONS, REFERRAL_REASONS,
+        REFERRAL_ORGANIZATIONS, TEST_LOCATION_CODE, PROGRAM, RESULT_TYPE_LOCALIZED, RESULT_TYPE_RAW, UNIT_OF_MEASURE,
+        UNIT_OF_MEASURE_ACTIVE, UNIT_OF_MEASURE_INACTIVE, DICTIONARY_TEST_RESULTS, LAB_COMPONENT,
+        SEVERITY_CONSEQUENCES_LIST, SEVERITY_RECURRENCE_LIST, ACTION_TYPE_LIST, LABORATORY_COMPONENT, SAMPLE_NATURE,
+        ELECTRONIC_ORDER_STATUSES, METHODS, METHODS_INACTIVE, METHOD_BY_NAME, PRACTITIONER_PERSONS , ORDER_PRIORITY
     }
 
     private static Map<ListType, List<IdValuePair>> typeToListMap;
@@ -99,6 +104,8 @@ public class DisplayListService implements LocaleChangeListener {
     @Autowired
     private TestSectionService testSectionService;
     @Autowired
+    private MethodService methodService;
+    @Autowired
     private UnitOfMeasureService unitOfMeasureService;
     @Autowired
     private DictionaryService dictionaryService;
@@ -106,6 +113,8 @@ public class DisplayListService implements LocaleChangeListener {
     private TypeOfTestResultService typeOfTestResultService;
     @Autowired
     private StatusOfSampleService statusOfSampleService;
+    @Autowired
+    private ProviderService providerService;
 
     @PostConstruct
     private void setupGlobalVariables() {
@@ -159,6 +168,9 @@ public class DisplayListService implements LocaleChangeListener {
         typeToListMap.put(ListType.TEST_SECTION, createTestSectionList());
         typeToListMap.put(ListType.TEST_SECTION_INACTIVE, createInactiveTestSection());
         typeToListMap.put(ListType.TEST_SECTION_BY_NAME, createTestSectionByNameList());
+        typeToListMap.put(ListType.METHODS, createMethodList());
+        typeToListMap.put(ListType.METHODS_INACTIVE, createInactiveMethod());
+        typeToListMap.put(ListType.METHOD_BY_NAME, createMethodByNameList());
         typeToListMap.put(ListType.SAMPLE_PATIENT_PAYMENT_OPTIONS,
                 createFromDictionaryCategoryLocalizedSort("patientPayment"));
         typeToListMap.put(ListType.PATIENT_SEARCH_CRITERIA, createPatientSearchCriteria());
@@ -181,6 +193,7 @@ public class DisplayListService implements LocaleChangeListener {
         typeToListMap.put(ListType.SEVERITY_RECURRENCE_LIST, createRecurrenceList());
         typeToListMap.put(ListType.ACTION_TYPE_LIST, createActionTypeList());
         typeToListMap.put(ListType.LABORATORY_COMPONENT, createLaboratoryComponentList());
+        typeToListMap.put(ListType.ORDER_PRIORITY, createSamplePriorityList());
     }
 
     public List<IdValuePair> getList(ListType listType) {
@@ -324,6 +337,9 @@ public class DisplayListService implements LocaleChangeListener {
         typeToListMap.put(ListType.SAMPLE_PATIENT_REFERRING_CLINIC, createReferringClinicList());
         typeToListMap.put(ListType.QA_EVENTS, createSortedQAEvents());
         typeToListMap.put(ListType.TEST_SECTION, createTestSectionList());
+        typeToListMap.put(ListType.METHODS, createMethodList());
+        typeToListMap.put(ListType.METHODS_INACTIVE, createInactiveMethod());
+        typeToListMap.put(ListType.METHOD_BY_NAME, createMethodByNameList());
         typeToListMap.put(ListType.TEST_SECTION_INACTIVE, createInactiveTestSection());
         typeToListMap.put(ListType.TEST_SECTION_BY_NAME, createTestSectionByNameList());
         typeToListMap.put(ListType.HAITI_DEPARTMENTS, createAddressDepartmentList());
@@ -351,12 +367,22 @@ public class DisplayListService implements LocaleChangeListener {
         typeToListMap.put(ListType.ACTION_TYPE_LIST, createActionTypeList());
         typeToListMap.put(ListType.LABORATORY_COMPONENT, createLaboratoryComponentList());
         typeToListMap.put(ListType.ELECTRONIC_ORDER_STATUSES, createElectronicOrderStatusList());
+        typeToListMap.put(ListType.PRACTITIONER_PERSONS, createActivePractitionerPersonsList());
+        typeToListMap.put(ListType.ORDER_PRIORITY, createSamplePriorityList());
 
     }
 
     public void refreshList(ListType listType) {
 
         switch (listType) {
+        case ORDER_PRIORITY: {
+                typeToListMap.put(ListType.ORDER_PRIORITY, createSamplePriorityList());
+                break;
+        }    
+        case PRACTITIONER_PERSONS: {
+            typeToListMap.put(ListType.PRACTITIONER_PERSONS, createActivePractitionerPersonsList());
+            break;
+        }
         case SAMPLE_PATIENT_REFERRING_CLINIC: {
             typeToListMap.put(ListType.SAMPLE_PATIENT_REFERRING_CLINIC, createReferringClinicList());
             break;
@@ -386,6 +412,16 @@ public class DisplayListService implements LocaleChangeListener {
         case TEST_SECTION: {
             testSectionService.refreshNames();
             typeToListMap.put(ListType.TEST_SECTION, createTestSectionList());
+            break;
+        }
+        case METHODS: {
+            methodService.refreshNames();
+            typeToListMap.put(ListType.METHODS, createMethodList());
+            break;
+        }
+        case METHODS_INACTIVE: {
+            methodService.refreshNames();
+            typeToListMap.put(ListType.METHODS_INACTIVE, createInactiveMethod());
             break;
         }
         case TEST_SECTION_INACTIVE: {
@@ -422,6 +458,22 @@ public class DisplayListService implements LocaleChangeListener {
             typeToListMap.put(ListType.DICTIONARY_TEST_RESULTS, createDictionaryTestResults());
         }
         }
+    }
+
+    private List<IdValuePair> createActivePractitionerPersonsList() {
+        List<IdValuePair> providerDisplayList = new ArrayList<>();
+
+        List<Provider> providerList = providerService.getAllActiveProviders();
+        providerList.sort((e, f) -> {
+            return e.getPerson().getLastName().compareTo(f.getPerson().getLastName());
+        });
+
+        for (Provider provider : providerList) {
+            providerDisplayList.add(new IdValuePair(provider.getPerson().getId(),
+                    provider.getPerson().getLastName() + ", " + provider.getPerson().getFirstName()));
+        }
+
+        return providerDisplayList;
     }
 
     private List<IdValuePair> createReferringClinicList() {
@@ -643,6 +695,17 @@ public class DisplayListService implements LocaleChangeListener {
         return testSectionsPairs;
     }
 
+    private List<IdValuePair> createMethodList() {
+        List<IdValuePair> methodPairs = new ArrayList<>();
+        List<Method> methods = methodService.getAll();
+
+        for (Method method : methods) {
+            methodPairs.add(new IdValuePair(method.getId(), method.getLocalization().getLocalizedValue()));
+        }
+
+        return methodPairs;
+    }
+
     private List<IdValuePair> createUnitOfMeasureList() {
         List<IdValuePair> unitOfMeasuresPairs = new ArrayList<>();
 //		List<UnitOfMeasure> unitOfMeasures = unitOfMeasureService.getAllActiveUnitOfMeasures();
@@ -675,6 +738,17 @@ public class DisplayListService implements LocaleChangeListener {
         }
 
         return testSectionsPairs;
+    }
+
+    private List<IdValuePair> createInactiveMethod() {
+        List<IdValuePair> methodPairs = new ArrayList<>();
+        List<Method> methods = methodService.getAllInActiveMethods();
+
+        for (Method method : methods) {
+            methodPairs.add(new IdValuePair(method.getId(), method.getLocalization().getLocalizedValue()));
+        }
+
+        return methodPairs;
     }
 
     private List<IdValuePair> createTestSectionByNameList() {
@@ -775,4 +849,22 @@ public class DisplayListService implements LocaleChangeListener {
         return recurrenceList;
     }
 
+    private List<IdValuePair> createMethodByNameList() {
+        List<IdValuePair> methodsPairs = new ArrayList<>();
+        List<Method> methods = methodService.getAllActiveMethods();
+        for (Method method : methods) {
+            methodsPairs.add(new IdValuePair(method.getId(), method.getMethodName()));
+        }
+        return methodsPairs;
+    }
+
+    private List<IdValuePair> createSamplePriorityList() {
+        List<IdValuePair> priorities = new ArrayList<>();
+        priorities.add(new IdValuePair(OrderPriority.ROUTINE.name(), MessageUtil.getMessage("label.priority.routine")));
+        priorities.add(new IdValuePair(OrderPriority.ASAP.name(), MessageUtil.getMessage("label.priority.asap")));
+        priorities.add(new IdValuePair(OrderPriority.STAT.name(), MessageUtil.getMessage("label.priority.stat")));
+        priorities.add(new IdValuePair(OrderPriority.TIMED.name(), MessageUtil.getMessage("label.priority.timed")));
+        priorities.add(new IdValuePair(OrderPriority.FUTURE_STAT.name(), MessageUtil.getMessage("label.priority.futureStat")));
+        return priorities;
+    }
 }

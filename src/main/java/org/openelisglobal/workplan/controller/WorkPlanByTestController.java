@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.formfields.FormFields.Field;
 import org.openelisglobal.common.services.DisplayListService;
@@ -27,6 +28,7 @@ import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.sampleqaevent.service.SampleQaEventService;
 import org.openelisglobal.sampleqaevent.valueholder.SampleQaEvent;
 import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.systemuser.service.UserService;
 import org.openelisglobal.test.beanItems.TestResultItem;
 import org.openelisglobal.test.service.TestServiceImpl;
 import org.openelisglobal.workplan.form.WorkplanForm;
@@ -51,6 +53,8 @@ public class WorkPlanByTestController extends BaseWorkplanController {
     private AnalysisService analysisService;
     @Autowired
     private SampleQaEventService sampleQaEventService;
+    @Autowired
+    private UserService userService;
     private static boolean HAS_NFS_PANEL = false;
 
     static {
@@ -72,6 +76,7 @@ public class WorkPlanByTestController extends BaseWorkplanController {
         request.getSession().setAttribute(SAVE_DISABLED, "true");
 
         List<TestResultItem> workplanTests;
+        List<TestResultItem> filteredTests;
 
         String testType = "";
         if (!result.hasFieldErrors("selectedSearchID")) {
@@ -84,15 +89,17 @@ public class WorkPlanByTestController extends BaseWorkplanController {
             if (testType.equals("NFS")) {
                 testName = "NFS";
                 workplanTests = getWorkplanForNFSTest(testType);
+                filteredTests = userService.filterResultsByLabUnitRoles(getSysUserId(request), workplanTests ,Constants.ROLE_RESULTS);
             } else {
                 testName = getTestName(testType);
                 workplanTests = getWorkplanByTest(testType);
+                filteredTests = userService.filterResultsByLabUnitRoles(getSysUserId(request), workplanTests ,Constants.ROLE_RESULTS);
             }
             ResultsLoadUtility resultsLoadUtility = new ResultsLoadUtility();
-            resultsLoadUtility.sortByAccessionAndSequence(workplanTests);
+            resultsLoadUtility.sortByAccessionAndSequence(filteredTests);
             form.setTestTypeID(testType);
             form.setTestName(testName);
-            form.setWorkplanTests(workplanTests);
+            form.setWorkplanTests(filteredTests);
             form.setSearchFinished(Boolean.TRUE);
 
         } else {
@@ -102,19 +109,19 @@ public class WorkPlanByTestController extends BaseWorkplanController {
             form.setWorkplanTests(new ArrayList<TestResultItem>());
         }
 
-        form.setSearchTypes(getTestDropdownList());
+        form.setSearchTypes(getTestDropdownList(request));
         if (!result.hasFieldErrors("type")) {
             form.setType(oldForm.getType());
         }
         form.setType("test");
         form.setSearchLabel(MessageUtil.getMessage("workplan.test.types"));
-        form.setSearchAction("WorkPlanByTest.do");
+        form.setSearchAction("WorkPlanByTest");
 
         return findForward(FWD_SUCCESS, form);
     }
 
-    private List<IdValuePair> getTestDropdownList() {
-        List<IdValuePair> testList = DisplayListService.getInstance().getList(DisplayListService.ListType.ALL_TESTS);
+    private List<IdValuePair> getTestDropdownList(HttpServletRequest request) {
+        List<IdValuePair> testList = userService.getAllDisplayUserTestsByLabUnit(getSysUserId(request) , Constants.ROLE_RESULTS);
 
         if (HAS_NFS_PANEL) {
             testList = adjustNFSTests(testList);
@@ -156,6 +163,7 @@ public class WorkPlanByTestController extends BaseWorkplanController {
 
             for (Analysis analysis : testList) {
                 TestResultItem testResultItem = new TestResultItem();
+                testResultItem.setTestId(testType);
                 Sample sample = analysis.getSampleItem().getSample();
                 testResultItem.setAccessionNumber(sample.getAccessionNumber());
                 testResultItem.setReceivedDate(getReceivedDateDisplay(sample));
@@ -218,6 +226,7 @@ public class WorkPlanByTestController extends BaseWorkplanController {
 
                 }
                 testResultItem = new TestResultItem();
+                testResultItem.setTestId(testType);
                 testResultItem.setAccessionNumber(currentAccessionNumber);
                 testResultItem.setReceivedDate(sample.getReceivedDateForDisplay());
                 testResultItem.setSampleGroupingNumber(sampleGroupingNumber);

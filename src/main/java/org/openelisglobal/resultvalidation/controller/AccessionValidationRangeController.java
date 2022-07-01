@@ -18,6 +18,7 @@ import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.action.IActionConstants;
+import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.DisplayListService;
@@ -31,6 +32,7 @@ import org.openelisglobal.common.services.registration.ValidationUpdateRegister;
 import org.openelisglobal.common.services.registration.interfaces.IResultUpdate;
 import org.openelisglobal.common.services.serviceBeans.ResultSaveBean;
 import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.validator.BaseErrors;
 import org.openelisglobal.dataexchange.orderresult.OrderResponseWorker.Event;
 import org.openelisglobal.internationalization.MessageUtil;
@@ -50,16 +52,19 @@ import org.openelisglobal.resultvalidation.form.ResultValidationForm;
 import org.openelisglobal.resultvalidation.service.ResultValidationService;
 import org.openelisglobal.resultvalidation.util.ResultValidationSaveService;
 import org.openelisglobal.resultvalidation.util.ResultsValidationUtility;
+import org.openelisglobal.role.service.RoleService;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.samplehuman.service.SampleHumanService;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.systemuser.service.SystemUserService;
+import org.openelisglobal.systemuser.service.UserService;
 import org.openelisglobal.systemuser.valueholder.SystemUser;
 import org.openelisglobal.test.service.TestSectionService;
 import org.openelisglobal.test.valueholder.TestSection;
 import org.openelisglobal.testresult.service.TestResultService;
 import org.openelisglobal.testresult.valueholder.TestResult;
 import org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
@@ -74,6 +79,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class AccessionValidationRangeController extends BaseResultValidationController {
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private RoleService roleService;
 
     private static final String[] ALLOWED_FIELDS = new String[] { "testSectionId", "paging.currentPage", "testSection",
             "testName", "resultList*.accessionNumber", "resultList*.analysisId", "resultList*.testId",
@@ -148,7 +157,9 @@ public class AccessionValidationRangeController extends BaseResultValidationCont
         if (GenericValidator.isBlankOrNull(newPage)) {
 
             // load testSections for drop down
-            form.setTestSections(DisplayListService.getInstance().getList(ListType.TEST_SECTION));
+            String resultsRoleId =  roleService.getRoleByName(Constants.ROLE_VALIDATION).getId();
+            List<IdValuePair> testSections = userService.getUserTestSections(getSysUserId(request) ,resultsRoleId);
+            form.setTestSections(testSections);
             form.setTestSectionsByName(DisplayListService.getInstance().getList(ListType.TEST_SECTION_BY_NAME));
 
             if (!GenericValidator.isBlankOrNull(form.getTestSectionId())) {
@@ -156,6 +167,7 @@ public class AccessionValidationRangeController extends BaseResultValidationCont
             }
 
             List<AnalysisItem> resultList;
+            List<AnalysisItem> filteredresultList = new ArrayList<>();
             ResultsValidationUtility resultsValidationUtility = SpringContext.getBean(ResultsValidationUtility.class);
             setRequestType(ts == null ? MessageUtil.getMessage("validation.range.title") : ts.getLocalizedName());
             
@@ -164,12 +176,13 @@ public class AccessionValidationRangeController extends BaseResultValidationCont
                 
                 resultList = resultsValidationUtility.getResultValidationList(getValidationStatus(),
                         form.getTestSectionId(), form.getAccessionNumber());
-                request.setAttribute("pageSize", resultList.size());
+                filteredresultList = userService.filterAnalystResultsByLabUnitRoles(getSysUserId(request), resultList, Constants.ROLE_VALIDATION);
+                request.setAttribute("pageSize", filteredresultList.size());
                 form.setSearchFinished(true);
                 } else {
                 resultList = new ArrayList<>();
             }
-            paging.setDatabaseResults(request, form, resultList);
+            paging.setDatabaseResults(request, form, filteredresultList);
         } else {
             paging.page(request, form, Integer.parseInt(newPage));
         }
@@ -220,7 +233,7 @@ public class AccessionValidationRangeController extends BaseResultValidationCont
 //            saveErrors(errors);
             redirectAttributes.addFlashAttribute(FWD_FAIL_INSERT, true);
             return findForward(FWD_SUCCESS_INSERT, form);
-//            return new ModelAndView("redirect:/ResultValidation.do?blank=true");
+//            return new ModelAndView("redirect:/ResultValidation?blank=true");
         }
 
         ResultValidationPaging paging = new ResultValidationPaging();
@@ -559,7 +572,7 @@ public class AccessionValidationRangeController extends BaseResultValidationCont
         } else if (FWD_FAIL.equals(forward)) {
             return "homePageDefinition";
         } else if (FWD_SUCCESS_INSERT.equals(forward)) {
-            return "redirect:/AccessionValidationRange.do";
+            return "redirect:/AccessionValidationRange";
         } else if (FWD_FAIL_INSERT.equals(forward)) {
             return "homePageDefinition";
         } else if (FWD_VALIDATION_ERROR.equals(forward)) {

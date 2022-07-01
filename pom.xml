@@ -16,8 +16,8 @@
 
 		<major.version>2</major.version>
 		<minor.version>6</minor.version>
-		<state.version>1</state.version><!-- 0 = alpha, 1 = beta, 2 = rc, 3 = deployable -->
-		<fix.version>1</fix.version>
+		<state.version>1</state.version> <!-- 0 = alpha, 1 = beta, 2 = rc, 3 = deployable -->
+		<fix.version>45</fix.version>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
@@ -26,11 +26,11 @@
 		<apachetiles.version>3.0.8</apachetiles.version>
 		<castor.version>1.4.1</castor.version>
 		<hapi.version>2.3</hapi.version>
-		<hibernate.version>5.4.3.Final</hibernate.version>
+		<hibernate.version>5.4.24.Final</hibernate.version>
 		<hibernate-validator.version>6.1.5.Final</hibernate-validator.version>
-		<log4j.version>2.17.0</log4j.version>
-		<postgresql.version>42.2.9</postgresql.version>
-		<springframework.version>5.2.4.RELEASE</springframework.version>
+		<postgresql.version>42.3.3</postgresql.version>
+		<log4j.version>2.17.1</log4j.version>
+		<springframework.version>5.3.20</springframework.version>
 		<springsecurity.version>5.2.10.RELEASE</springsecurity.version>
 		<testContainersVersion>1.15.3</testContainersVersion>
 	</properties>
@@ -44,7 +44,7 @@
 		<dependency>
 			<groupId>org.itech</groupId>
 			<artifactId>dataexport-api</artifactId>
-			<version>0.0.0.5</version>
+			<version>0.0.0.6</version>
 		</dependency>
 		<dependency>
 			<groupId>ca.uhn.hapi.fhir</groupId>
@@ -65,7 +65,7 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
-			<version>2.12.0</version>
+			<version>2.12.6.1</version>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
@@ -241,7 +241,7 @@
 		<dependency>
 			<groupId>org.liquibase</groupId>
 			<artifactId>liquibase-core</artifactId>
-			<version>3.8.5</version>
+			<version>4.8.0</version>
 			<!-- remove logback so our logging continues under log4j2 -->
 			<exclusions>
 				<exclusion>
@@ -475,7 +475,6 @@
 			<artifactId>saaj-impl</artifactId>
 			<version>1.4.0</version>
 		</dependency>
-
 	</dependencies>
 	<repositories>
 		<repository>

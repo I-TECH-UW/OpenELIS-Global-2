@@ -178,7 +178,7 @@
     }
 
     function selectBack(){
-        submitAction('TestManagementConfigMenu.do');
+        submitAction('TestManagementConfigMenu');
     }
 
     function confirmBack(){
@@ -208,7 +208,7 @@
 
         var form = document.getElementById("mainForm");
         form.method = "POST";
-        form.action = "TestOrderability.do";
+        form.action = "TestOrderability";
         form.submit();
     }
     </script>
@@ -231,10 +231,10 @@
    				   id="mainForm">
 <br>
 <input type="button" value="<%= MessageUtil.getContextualMessage("banner.menu.administration") %>"
-       onclick="submitAction('MasterListsPage.do');"
+       onclick="submitAction('MasterListsPage');"
        class="textButton"/> &rarr;
 <input type="button" value="<%= MessageUtil.getContextualMessage("configuration.test.management") %>"
-       onclick="submitAction('TestManagementConfigMenu.do');"
+       onclick="submitAction('TestManagementConfigMenu');"
        class="textButton"/>&rarr;
 <span id="testActivationSelectionButton" class="selectHide confirmShow" style="display:none" >
 <input type="button" value="<%=MessageUtil.getContextualMessage("configuration.test.orderable")%>"

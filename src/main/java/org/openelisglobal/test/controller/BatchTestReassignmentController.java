@@ -282,7 +282,7 @@ public class BatchTestReassignmentController extends BaseController {
         if (FWD_SUCCESS.equals(forward)) {
             return "BatchTestReassignmentDefinition";
         } else if (FWD_SUCCESS_INSERT.equals(forward)) {
-            return "redirect:/BatchTestReassignment.do";
+            return "redirect:/BatchTestReassignment";
         } else if (FWD_FAIL_INSERT.equals(forward)) {
             return "BatchTestReassignmentDefinition";
         } else if ("resubmit".equals(forward)) {

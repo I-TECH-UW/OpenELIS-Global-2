@@ -71,7 +71,7 @@ function /*void*/loadForm() {
 	if (!$("searchId").value.empty()) {
 		var form = document.getElementById("mainForm");
 
-		form.action = "NonConformity.do?labNo=" + $("searchId").value;
+		form.action = "NonConformity?labNo=" + $("searchId").value;
 		form.method = "GET";
 
 		form.submit();
@@ -779,7 +779,7 @@ function savePage() {
 	var form = document.getElementById("mainForm");
   
 	window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
-	form.action = "NonConformity.do";
+	form.action = "NonConformity";
 	form.submit();
 }
 

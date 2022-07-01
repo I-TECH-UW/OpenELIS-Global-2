@@ -70,7 +70,7 @@ public class DictionaryController extends BaseController {
     public ModelAndView showDictionary(HttpServletRequest request, @ModelAttribute("form") BaseForm oldForm)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         DictionaryForm newForm = resetSessionFormToType(oldForm, DictionaryForm.class);
-        newForm.setCancelAction("CancelDictionary.do");
+        newForm.setCancelAction("CancelDictionary");
 
         String id = request.getParameter(ID) == null ? "" : request.getParameter(ID);
         if (!id.matches(ValidationHelper.ID_REGEX)) {
@@ -142,7 +142,7 @@ public class DictionaryController extends BaseController {
             return new ModelAndView(findForward(FWD_FAIL));
         }
 
-        String url = "redirect:/Dictionary.do?ID=" + Encode.forUriComponent(nextPrevId);
+        String url = "redirect:/Dictionary?ID=" + Encode.forUriComponent(nextPrevId);
         return new ModelAndView(url);
     }
 
@@ -295,13 +295,13 @@ public class DictionaryController extends BaseController {
         if (FWD_SUCCESS.equals(forward)) {
             return "dictionaryDefinition";
         } else if (FWD_FAIL.equals(forward)) {
-            return "redirect:/DictionaryMenu.do";
+            return "redirect:/DictionaryMenu";
         } else if (FWD_SUCCESS_INSERT.equals(forward)) {
-            return "redirect:/DictionaryMenu.do";
+            return "redirect:/DictionaryMenu";
         } else if (FWD_FAIL_INSERT.equals(forward)) {
             return "dictionaryDefinition";
         } else if (FWD_CANCEL.equals(forward)) {
-            return "redirect:/DictionaryMenu.do";
+            return "redirect:/DictionaryMenu";
         } else {
 
             return "PageNotFound";

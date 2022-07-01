@@ -44,7 +44,7 @@ public class LoginPageController extends BaseController {
             request.getSession().removeAttribute(Constants.LOGIN_ERRORS);
         }
 
-        form.setFormAction("ValidateLogin.do");
+        form.setFormAction("ValidateLogin");
 
         return findForward(forward, form);
     }

@@ -128,7 +128,7 @@ function /*boolean*/ missingValue( id ){
 
 function onCancel(){
 	var form = document.getElementById("mainForm");
-	form.action = "CancelReport.do";
+	form.action = "CancelReport";
 	form.submit();
 	return true;
 }
@@ -136,7 +136,7 @@ function onCancel(){
 function onPrint(){
 	if( formCorrect()){
 		var form = document.getElementById("mainForm");
-		form.action = "ReportPrint.do";
+		form.action = "ReportPrint";
 		form.target = "_blank";
 		form.method = 'get';
 		form.submit();
@@ -235,6 +235,10 @@ function setSaveButton() {
   		<spring:message code="report.enter.patient.headline.description"/>
  	
 	<tiles:insertAttribute name="patientEnhancedSearch" />
+  </c:if>
+  <c:if test="${form.useSiteSearch}">
+  		<h3><spring:message code="report.enter.site.headline"/></h3>
+		<tiles:insertAttribute name="siteSearch" />
   </c:if>
   <c:if test="${form.usePatientNumberDirect}">
   

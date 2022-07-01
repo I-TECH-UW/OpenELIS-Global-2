@@ -46,7 +46,7 @@ public class BarcodeConfigurationController extends BaseController {
         BarcodeConfigurationForm form = new BarcodeConfigurationForm();
 
         addFlashMsgsToRequest(request);
-        form.setCancelAction("MasterListsPage.do");
+        form.setCancelAction("MasterListsPage");
 
         setFields(form);
 
@@ -131,7 +131,7 @@ public class BarcodeConfigurationController extends BaseController {
         }
         if (result.hasErrors()) {
             saveErrors(result);
-            form.setCancelAction("MasterListsPage.do");
+            form.setCancelAction("MasterListsPage");
             return findForward(FWD_FAIL_INSERT, form);
         }
 
@@ -158,7 +158,7 @@ public class BarcodeConfigurationController extends BaseController {
         if (FWD_SUCCESS.equals(forward)) {
             return "BarcodeConfigurationDefinition";
         } else if (FWD_SUCCESS_INSERT.equals(forward)) {
-            return "redirect:/BarcodeConfiguration.do";
+            return "redirect:/BarcodeConfiguration";
         } else if (FWD_FAIL_INSERT.equals(forward)) {
             return "BarcodeConfigurationDefinition";
         } else {
