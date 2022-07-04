@@ -44,11 +44,11 @@ public class AnalyzerXLSLineReader extends AnalyzerReader {
                     Cell cell = cellIterator.next();
                     String value = "";
                     switch (cell.getCellType()) {
-                    case Cell.CELL_TYPE_BLANK:
-                    case Cell.CELL_TYPE_STRING:
+                    case BLANK:
+                    case STRING:
                         value = cell.getStringCellValue();
                         break;
-                    case Cell.CELL_TYPE_NUMERIC:
+                    case NUMERIC:
                         value = Double.toString(cell.getNumericCellValue());
                         break;
                     default:
