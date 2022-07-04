@@ -11,7 +11,7 @@ nav:
        - Update From OpenELIS Global 1.x to 2.x: upgrade1to2.md
        - Password Migration: password.md
        - Examples of FHIR messages used: messages.md
-       - Deploy Consolidated Server: build-cs.md
+       - Deploy Consolidated Server: csbuild.md
     - Develop: 
        - Dev Environment Setup Instructions: dev_setup.md
        - Developers Notes: dev.md

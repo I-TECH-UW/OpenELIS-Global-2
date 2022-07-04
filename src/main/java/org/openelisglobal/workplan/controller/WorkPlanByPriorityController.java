@@ -63,7 +63,7 @@ public class WorkPlanByPriorityController extends BaseWorkplanController {
         binder.setAllowedFields(ALLOWED_FIELDS);
     }
 
-    @RequestMapping(value = "/WorkPlanByPriotiy", method = RequestMethod.GET)
+    @RequestMapping(value = "/WorkPlanByPriority", method = RequestMethod.GET)
     public ModelAndView showWorkPlanByPriority(HttpServletRequest request,
             @ModelAttribute("form") @Validated(PrintWorkplan.class) WorkplanForm oldForm,
             BindingResult result)
@@ -104,7 +104,7 @@ public class WorkPlanByPriorityController extends BaseWorkplanController {
         }
         form.setType("priority");
         form.setSearchLabel(MessageUtil.getMessage("workplan.priority.list"));
-        form.setSearchAction("WorkPlanByPriotiy");
+        form.setSearchAction("WorkPlanByPriority");
 
         return findForward(FWD_SUCCESS, form);
     }
