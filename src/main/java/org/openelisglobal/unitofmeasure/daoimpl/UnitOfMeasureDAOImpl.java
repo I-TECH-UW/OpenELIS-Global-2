@@ -368,9 +368,9 @@ public class UnitOfMeasureDAOImpl extends BaseDAOImpl<UnitOfMeasure, String> imp
 
             // not case sensitive hemolysis and Hemolysis are considered
             // duplicates
-            String sql = "from UnitOfMeasure t where trim(lower(t.unitOfMeasureName)) = :param and t.id != :param2";
+            String sql = "from UnitOfMeasure t where trim(t.unitOfMeasureName) = :param and t.id != :param2";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            query.setParameter("param", unitOfMeasure.getUnitOfMeasureName().toLowerCase().trim());
+            query.setParameter("param", unitOfMeasure.getUnitOfMeasureName().trim());
 
             // initialize with 0 (for new records where no id has been generated
             // yet

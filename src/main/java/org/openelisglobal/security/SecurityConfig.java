@@ -41,6 +41,7 @@ public class SecurityConfig {
             "/scripts/**", "/jsp/**" };
     public static final String[] HTTP_BASIC_SERVLET_PAGES = { "/importAnalyzer",
             "/fhir/**" };
+    public static final String[] AJAX_CALLS_TO_CONTROLLERS = {"/Provider/**"};     
 //    public static final String[] CLIENT_CERTIFICATE_PAGES = {};
 
     private static final String CONTENT_SECURITY_POLICY = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval';"
