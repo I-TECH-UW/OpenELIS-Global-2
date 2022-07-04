@@ -169,7 +169,7 @@ Detailed instructions [here](https://linuxize.com/post/how-to-install-apache-mav
 
 1. Expand the Servers folder in the projects tab
 2. Expand the server that runs OE
-3. Copy the contents of OpenELIS-Global-2/dev/tomcat/server.xml into Tomcat v9.0 Server at localhost-config/server.xml
+3. Copy the contents of OpenELIS-Global-2/dev/tomcat/oe_server.xml into Tomcat v9.0 Server at localhost-config/server.xml
 4. Edit Tomcat v9.0 Server at localhost-config/server.xml, substituting your paths
     1. replace &lt;Server port="-1" shutdown="SHUTDOWN"> with &lt;Server port="8005" shutdown="SHUTDOWN">
     2. replace keystoreFile=”/run/secrets/keystore” with keystoreFile=”/path/to/openelis_global_2/dev/https/oe_selfsigned.keystore”
