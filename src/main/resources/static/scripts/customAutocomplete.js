@@ -62,6 +62,13 @@ var autocompleteResultCallBack = null; // the callback for onchange
                                 item: ui.item.option
                             });
                         }
+						if( autocompleteResultCallBack ){ 
+							if ($( this ).val()) {
+								autocompleteResultCallBack(selectId, $(select).val());
+							} else {
+								autocompleteResultCallBack(selectId, '');
+							}
+						}
                     },
                     focus: function( event, ui ) {
                     	console.log('focus');

@@ -1152,7 +1152,8 @@
     	var tmpArray = defaultLimitsString.split("|");
     	
     	for (var i = 0; i < tmpArray.length-1; i++) {
-    		var tmpRangeArray = tmpArray[i].split(",");
+                if (tmpArray[i].split(",").length < 4) { continue; }
+    		    var tmpRangeArray = tmpArray[i].split(",");
     			gender = tmpRangeArray[0];
     			
     			var lowHigh = tmpRangeArray[1].split("-");
@@ -1565,6 +1566,9 @@
     
     function addJsonResultLimitsFromDefault(jsonObj) {
     	//gnr, global defaultResultLimits
+        if(defaultResultLimits.length == 0){
+            return ;
+        }
     	
     	for (var i = 0; i < defaultResultLimits.length; i++) {
         		console.log("addJsonResultLimitsFromDefault:defaultResultLimits:" + i + ":" + defaultResultLimits[i]);

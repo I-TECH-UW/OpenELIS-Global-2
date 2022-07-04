@@ -110,13 +110,13 @@
     }
 
     function handleInput(element, locale) {
-        var englishNames = "${form.existingEnglishNames}".toLowerCase();
-        var frenchNames = "${form.existingFrenchNames}".toLowerCase();
+        var englishNames = "${form.existingEnglishNames}";
+        var frenchNames = "${form.existingFrenchNames}";
         var duplicate = false;
         if( locale == 'english'){
-            duplicate = englishNames.indexOf( '<%=TestSectionCreateController.NAME_SEPARATOR%>' + element.value.toLowerCase() + '<%=TestSectionCreateController.NAME_SEPARATOR%>') != -1;
+            duplicate = englishNames.indexOf( '<%=TestSectionCreateController.NAME_SEPARATOR%>' + element.value + '<%=TestSectionCreateController.NAME_SEPARATOR%>') != -1;
         }else{
-            duplicate = frenchNames.indexOf( '<%=TestSectionCreateController.NAME_SEPARATOR%>' + element.value.toLowerCase() + '<%=TestSectionCreateController.NAME_SEPARATOR%>') != -1;
+            duplicate = frenchNames.indexOf( '<%=TestSectionCreateController.NAME_SEPARATOR%>' + element.value + '<%=TestSectionCreateController.NAME_SEPARATOR%>') != -1;
         }
 
         if(duplicate){
