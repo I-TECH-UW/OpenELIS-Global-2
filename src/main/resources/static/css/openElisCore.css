@@ -160,6 +160,13 @@ caption {
 	margin: 0 5px 0 0
 }
 
+#oe-bell-img {
+	margin-right: 10px;
+    width: auto;
+    height: 27px !important;
+    margin-top: -4px;
+	float: right;
+}
 #oe-logo-img {
 	width: auto;
 	height: 71 px;

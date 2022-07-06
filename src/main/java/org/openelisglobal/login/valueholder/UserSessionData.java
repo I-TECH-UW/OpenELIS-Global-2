@@ -30,7 +30,16 @@ public class UserSessionData implements Serializable {
     private int userTimeOut;
     private int systemUserId;
     private String loginName;
+    private String expDate;
     private boolean isAdmin;
+
+    public void setExpDate(String expDate) {
+        this.expDate = expDate;
+    }
+
+    public String getExpDate() {
+        return expDate;
+    }
 
     public void setElisUserName(String elisUserName) {
         this.elisUserName = elisUserName;

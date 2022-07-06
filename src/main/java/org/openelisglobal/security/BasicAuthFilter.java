@@ -57,6 +57,7 @@ public class BasicAuthFilter extends BasicAuthenticationFilter {
         usd.setLoginName(loginInfo.getLoginName());
         usd.setElisUserName(su.getNameForDisplay());
         usd.setAdmin(loginService.isUserAdmin(loginInfo));
+        usd.setExpDate(getExpiredDateForLoginUser(loginInfo.getLoginName()));
         request.setAttribute(IActionConstants.USER_SESSION_DATA, usd);
 
         // get permitted actions map (available modules for the current user)
@@ -80,4 +81,9 @@ public class BasicAuthFilter extends BasicAuthenticationFilter {
 
         return allPermittedPages;
     }
+
+    protected String getExpiredDateForLoginUser(String loginName) {
+        LoginUser loginUser = loginService.getUserProfile(loginName);
+           return loginUser.getPasswordExpiredDate().toString();
+    }  
 }

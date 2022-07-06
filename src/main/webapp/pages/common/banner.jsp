@@ -69,8 +69,9 @@ function getCsrfToken() {
 <script type="text/javascript" src="scripts/menu/superfish.js?"></script>
 <script type="text/javascript" src="scripts/menu/supersubs.js?"></script>
 <script type="text/javascript" src="scripts/menu/supposition.js?"></script>
+<script type="text/javascript" src="scripts/moment.min.js"></script>
 <script type="text/javascript">
-
+	
 	// initialize superfish menu plugin. supposition added to allow sub-menus on left when window size is too small.
 	jQuery(function(){
 		jQuery('ul.nav-menu').supersubs({
@@ -95,15 +96,27 @@ function getCsrfToken() {
 				if (request.getSession().getAttribute(IActionConstants.USER_SESSION_DATA) != null) {
 					usd = (UserSessionData) request.getSession().getAttribute(IActionConstants.USER_SESSION_DATA);
 			%>
+
+			<script type="text/javascript">
+				function showExpiaryNotificationMessage() {
+					var now = moment().format('DD-MMMM-YYYY, h:mm:ssA');
+					var date_string = '<%=usd.getExpDate()%>';
+                    var expiration = moment(date_string).format("YYYY-MM-DD");
+                    var current_date = moment().format("YYYY-MM-DD");
+                    var hours = moment(expiration).diff(current_date, 'hours');
+					   alert(now + ' <spring:message code="password.will.expire.on"/> '  +  date_string  + ' <spring:message code="you.have"/> ' + hours + ' <spring:message code="hours.left"/> '); 
+		 		}
+			</script>
 			<spring:url value="/Logout" var="loginurl"/>
 			<form id="logout-form" method="post" action="${loginurl}">
 			<div id="user-info"><div><%=usd.getElisUserName()%> - 
 			<input type="submit" value="<spring:message code="homePage.menu.logOut.toolTip"/>" class="btn-link"/>
-			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/> 
-			</div></div></form>
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/> 			
+			</div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div><img id="oe-bell-img" src="images/bell.png" onclick="showExpiaryNotificationMessage()" alt="" width="auto" height="25"/>	
+			</form>
 			<%
-				}
-			%>
+		        }
+	        %>
   	  		<div id="oe-title" onclick="navigateToHomePage();"><c:out value="${oeTitle}" /></div>
   		</div>  
   		<div id="oe-version" style="display: block">
