@@ -1598,20 +1598,21 @@
 
             upperAge = defaultResultLimits[rowIndex][1][1];
             if (upperAge != "Infinity") {
+                // 0D/0M/0Y
                  var ageLimitArray = upperAge.split("/");
                  var days = ageLimitArray[0].slice(0, -1);
                  var months = ageLimitArray[1].slice(0, -1);
                  var years = ageLimitArray[2].slice(0, -1);
                  var totalDays = 0;
                   if(days > 0){
-                     totalDays += days ;
+                     totalDays = days ;
                   }
                   if(months > 0){
-                     totalDays += months * 30 ;
+                      totalDays = Math.floor(months * 365/12); 
                   }
 
                   if(years > 0){
-                     totalDays += years * 365 ;
+                     totalDays = years * 365 ;
                   }
             	 limit.highAgeRange = (totalDays).toString();
             } else {
