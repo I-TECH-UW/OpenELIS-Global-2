@@ -154,9 +154,11 @@ public class SampleOrderService {
 
             RequesterService requesterService = new RequesterService(sample.getId());
             sampleOrder.setProviderPersonId(requesterService.getRequesterPersonId());
-            sampleOrder.setProviderId(
-                    SpringContext.getBean(ProviderService.class).getProviderByPerson(requesterService.getPerson())
-                            .getId());
+            if (requesterService.getPerson() != null) {
+                sampleOrder.setProviderId(
+                        SpringContext.getBean(ProviderService.class).getProviderByPerson(requesterService.getPerson())
+                                .getId());
+            }
             sampleOrder.setProviderFirstName(requesterService.getRequesterFirstName());
             sampleOrder.setProviderLastName(requesterService.getRequesterLastName());
             sampleOrder.setProviderWorkPhone(requesterService.getWorkPhone());
