@@ -1148,6 +1148,8 @@
     	var normalLow = null; var normalHigh = null;
     	var valid = [];
     	var validLow = null; var validHigh = null;
+        var report = [];
+        var reportLow = null; var reportHigh = null;
 		
     	var tmpArray = defaultLimitsString.split("|");
     	
@@ -1170,8 +1172,13 @@
     			validLow = (validLowHigh.length == 2) ? validLowHigh[0] : "-Infinity";
     			validHigh = (validLowHigh.length == 2) ? validLowHigh[1] : "Infinity";
     			valid = [validLow, validHigh];
+
+                var reportLowHigh = tmpRangeArray[4].split("-");
+    			reportLow = (reportLowHigh.length == 2) ? reportLowHigh[0] : "-Infinity";
+    			reportHigh = (reportLowHigh.length == 2) ? reportLowHigh[1] : "Infinity";
+    			report = [reportLow, reportHigh];
     			
-    			resultLimits.push([gender, age, normal, valid]);
+    			resultLimits.push([gender, age, normal, valid ,report]);
     	}
 
         return resultLimits;
@@ -1405,7 +1412,8 @@
         jQuery("#highValid").val("Infinity");
         jQuery("#lowNormal_0").removeClass("error");
         jQuery("#highNormal_0").removeClass("error");
-        jQuery("#reportingRange_0").val('');
+        jQuery("#lowReportingRange").val('-Infinity');
+        jQuery("#highReportingRange").val('Infinity');
         //jQuery("#significantDigits").val('');
         jQuery("#lowerAge_0").val('0');
         jQuery("#upperAge_0").text('');
@@ -1578,18 +1586,34 @@
 
         jsonObj.lowValid = defaultResultLimits[0][3][0];
         jsonObj.highValid = defaultResultLimits[0][3][1];
+        jsonObj.lowReportingRange = defaultResultLimits[0][4][0];
+        jsonObj.highReportingRange = defaultResultLimits[0][4][1];
         jsonObj.resultLimits = [];
 
         for (var rowIndex = 0; rowIndex < defaultResultLimits.length; rowIndex++) {
             
             //yearMonth = monthYear = jQuery(".yearMonthSelect_" + rowIndex + ":checked").val();
-            yearMonth = 'D'; // always month regardless
+            //yearMonth = 'D'; // always month regardless
             limit = {};
 
             upperAge = defaultResultLimits[rowIndex][1][1];
             if (upperAge != "Infinity") {
-                //limit.highAgeRange = yearMonth == "<%=MessageUtil.getContextualMessage("abbreviation.year.single")%>" ? (upperAge * 12).toString() : upperAge;
-            	 limit.highAgeRange = yearMonth == '<%=MessageUtil.getMessage("abbreviation.day.single")%>' ? upperAge : yearMonth == '<%=MessageUtil.getMessage("abbreviation.month.single")%>' ? Math.floor(upperAge * 365/12) : 365 * upperAge;
+                 var ageLimitArray = upperAge.split("/");
+                 var days = ageLimitArray[0].slice(0, -1);
+                 var months = ageLimitArray[1].slice(0, -1);
+                 var years = ageLimitArray[2].slice(0, -1);
+                 var totalDays = 0;
+                  if(days > 0){
+                     totalDays += days ;
+                  }
+                  if(months > 0){
+                     totalDays += months * 30 ;
+                  }
+
+                  if(years > 0){
+                     totalDays += years * 365 ;
+                  }
+            	 limit.highAgeRange = (totalDays).toString();
             } else {
                 limit.highAgeRange = "Infinity";
             }
@@ -1602,7 +1626,6 @@
             
             limit.lowNormal = defaultResultLimits[rowIndex][2][0];
             limit.highNormal = defaultResultLimits[rowIndex][2][1];
-            //limit.reportingRange = not used
 
             if (limit.gender) {
                 limit.lowNormalFemale = defaultResultLimits[rowIndex][2][0];
@@ -1622,6 +1645,8 @@
 
         jsonObj.lowValid = jQuery("#lowValid").val();
         jsonObj.highValid = jQuery("#highValid").val();
+        jsonObj.lowReportingRange = jQuery("#lowReportingRange").val();
+        jsonObj.highReportingRange = jQuery("#highReportingRange").val();
         jsonObj.significantDigits = jQuery("#significantDigits").val();
         jsonObj.resultLimits = [];
 
@@ -1633,7 +1658,7 @@
 
             upperAge = jQuery("#upperAgeSetter_" + rowIndex).val();
             if (upperAge != "Infinity") {
-<%--                 limit.highAgeRange = yearMonth == "<%=MessageUtil.getContextualMessage("abbreviation.year.single")%>" ? (upperAge * 365).toString() : upperAge; --%>
+                //limit.highAgeRange = yearMonth == "<%=MessageUtil.getContextualMessage("abbreviation.year.single")%>" ? (upperAge * 365).toString() : upperAge; --%>
                 limit.highAgeRange = yearMonth == '<%=MessageUtil.getMessage("abbreviation.day.single")%>' ? upperAge : yearMonth == '<%=MessageUtil.getMessage("abbreviation.month.single")%>' ? Math.floor(upperAge * 365/12).toString() : (365 * upperAge).toString();
             } else {
                 limit.highAgeRange = upperAge;
@@ -1642,12 +1667,10 @@
             limit.gender = gender;
             limit.lowNormal = jQuery("#lowNormal_" + rowIndex).val();
             limit.highNormal = jQuery("#highNormal_" + rowIndex).val();
-            limit.reportingRange = jQuery("#reportingRange_" + rowIndex).val();
 
             if (gender) {
                 limit.lowNormalFemale = jQuery("#lowNormal_G_" + rowIndex).val();
                 limit.highNormalFemale = jQuery("#highNormal_G_" + rowIndex).val();
-                limit.reportingRangeFemale = jQuery("#reportingRange_G_" + rowIndex).val();
             }
 
             jsonObj.resultLimits[countIndex++] = limit;
@@ -1897,7 +1920,7 @@ td {
 						fLimitString = fLimitString + limitBean.getGender() + ",";
 						fLimitString = fLimitString + limitBean.getAgeRange() + ",";
 						fLimitString = fLimitString + limitBean.getNormalRange() + ",";
-						fLimitString = fLimitString + limitBean.getValidRange() + "|";
+						fLimitString = fLimitString + limitBean.getValidRange() + ",";
                         fLimitString = fLimitString + limitBean.getReportingRange() + "|";
 
 				%>
@@ -2295,7 +2318,7 @@ td {
 				<td><span class="sexRange_index" style="display: none">
 						<spring:message code="sex.male" />
 				</span></td>
-				<td>
+				<td style="white-space:nowrap;>
 				<input class="yearMonthSelect_index" type="radio"
 					name="time_index"
 					value="<%=MessageUtil.getContextualMessage("abbreviation.year.single")%>"
@@ -2330,8 +2353,7 @@ td {
 				<td><input type="text" value="Infinity" size="10"
 					id="highNormal_index" class="highNormal"
 					onchange="normalRangeCheck('index');"></td>
-				<td><input type="text" value="" size="12"
-					id="reportingRange_index"></td>
+				<td></td>
 				<td></td>
 				<td></td>
 				<td><input id="removeButton_index" type="button"
@@ -2351,8 +2373,7 @@ td {
 				<td><input type="text" value="Infinity" size="10"
 					id="highNormal_G_index" class="highNormal"
 					onchange="normalRangeCheck('index');"></td>
-				<td><input type="text" value="" size="12"
-					id="reportingRange_G_index"></td>
+				<td></td>
 				<td></td>
 				<td></td>
 			</tr>
@@ -2365,22 +2386,22 @@ td {
 	</div>
 	<div id="normalRangeDiv" style="display: none;">
 		<h3>
-			<spring:message code="configuration.test.catalog.normal.range" />
+			<spring:message code="label.range" />
 		</h3>
 		<table style="display: inline-table">
 			<tr>
-				<th></th>
-				<th colspan="8"><spring:message code="configuration.test.catalog.normal.range" /></th>
-				<th colspan="2"><spring:message code="configuration.test.catalog.valid.range" /></th>
-				<th></th>
-			</tr>
+                <th colspan="6"><spring:message code="label.age.range" /></th>
+                <th colspan="2"><spring:message code="configuration.test.catalog.normal.range" /></th>
+                <th colspan="2"><spring:message code="label.reporting.range" /> </th>
+                 <th colspan="2"><spring:message code="configuration.test.catalog.valid.range" /> </th>
+            </tr>
 			<tr>
 				<td><spring:message code="label.sex.dependent" /></td>
 				<td><span class="sexRange" style="display: none"><spring:message code="label.sex" /> </span></td>
-				<td colspan="4" align="center"><spring:message code="label.age.range" /></td>
-				<td colspan="2" align="center"><spring:message code="label.range" /></td>
-				<td align="center"><spring:message code="label.reporting.range" /></td>
-				<td colspan="2"></td>
+				<td colspan="4" align="center"></td>
+                <td colspan="2" align="center"></td>
+                <td colspan="2" align="center"></td>
+                <td colspan="2"></td>
 			</tr>
 			<tr class="row_0">
 				<td><input type="hidden" class="rowKey" value="0" /><input
@@ -2388,7 +2409,7 @@ td {
 					onchange="genderMatersForRange(this.checked, '0')"></td>
 				<td><span class="sexRange_0" style="display: none"> <spring:message code="sex.male" />
 				</span></td>
-				<td><input class="yearMonthSelect_0" type="radio" name="time_0"
+				<td style="white-space:nowrap;"><input class="yearMonthSelect_0" type="radio" name="time_0"
 					value="<%=MessageUtil.getContextualMessage("abbreviation.year.single")%>"
 					onchange="upperAgeRangeChanged('0')" checked>
 				<spring:message code="abbreviation.year.single" /> <input
@@ -2442,8 +2463,7 @@ td {
 				<td><input type="text" value="Infinity" size="10"
 					id="highNormal_G_0" class="highNormal"
 					onchange="normalRangeCheck('0');"></td>
-				<td><input type="text" value="" size="12"
-					id="reportingRange_G_0"></td>
+				<td></td>
 				<td></td>
 				<td></td>
 			</tr>
