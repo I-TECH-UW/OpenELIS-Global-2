@@ -90,7 +90,48 @@ jQuery(document).ready(function () {
        // setOrderModified();
         //setCorrectSave();
     };
+
+	autocompleteResultCallBack = function (selectId, value) {
+		fetchDepartmentList();
+	}
 });
+
+ function fetchDepartmentList() {
+        var siteList = $("requesterId");
+        //if the index is 0 it is a new entry, if it is not then the textValue may include the index value
+        // create new entry has been removed gnr
+        if (siteList.selectedIndex != 0) {
+           if(document.getElementById("requesterId").selectedIndex != 0){
+    			getDepartmentsForSiteClinic( document.getElementById("requesterId").value, "", siteDepartmentSuccess, null);
+    		} 
+        } 
+    }
+
+	function siteDepartmentSuccess (xhr) {
+        console.log(xhr.responseText);
+        var message = xhr.responseXML.getElementsByTagName("message").item(0).firstChild.nodeValue;
+    	var departments = xhr.responseXML.getElementsByTagName("formfield").item(0).childNodes[0].childNodes;
+    	var selected = xhr.responseXML.getElementsByTagName("formfield").item(0).childNodes[1];
+    	var isValid = message == "<%=IActionConstants.VALID%>";
+    	var requesterDepartment = jQuery("#requesterDepartmentId");
+    	var i = 0;
+
+    	requesterDepartment.disabled = "";
+    	if( isValid ){
+    		requesterDepartment.children('option').remove();
+    		requesterDepartment.append(new Option('', ''));
+    		for( ;i < departments.length; ++i){
+//     						is this supposed to be value value or value id?
+    		requesterDepartment.append(
+    				new Option(departments[i].attributes.getNamedItem("value").value, 
+    					departments[i].attributes.getNamedItem("id").value));
+    		}
+    	}
+    	
+    	if( selected){
+    		requesterDepartment.selectedIndex = getSelectIndexFor( "requesterDepartmentId", selected.childNodes[0].nodeValue);
+    	}
+    }
 
 </script>
 <form:hidden path="sampleOrderItems.newRequesterName" id="newRequesterName"/>
@@ -131,6 +172,22 @@ Barcode Method :
 		    	<form:input path="facilityID" id="requesterId"/>
 		    </c:if>
 		</td>
+	</tr>
+	 <tr>
+	    <c:if test="${not form.sampleOrderItems.readOnly}">
+			<td></td>
+			<td></td>
+			<td>
+				<spring:message code="sample.entry.project.siteDepartmentName"/>
+			</td>
+			<td>    
+					<form:select path="sampleOrderItems.referringSiteDepartmentId" 
+						id="requesterDepartmentId"  >
+					<option ></option>
+					<form:options items="${form.sampleOrderItems.referringSiteDepartmentList}" itemValue="id" itemLabel="value"/>
+				</form:select>
+			</td>
+		</c:if>
 	</tr>
 	<tr>
 		<td></td>

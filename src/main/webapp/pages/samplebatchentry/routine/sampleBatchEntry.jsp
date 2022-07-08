@@ -217,6 +217,15 @@ jQuery(document).ready(function () {
 				</td>
 			</tr>
 		</c:if>
+		<c:if test='${not empty form.sampleOrderItems.referringSiteDepartmentId}'>
+			<tr>
+				<td>
+					<spring:message code="sample.entry.project.siteDepartmentName" /> 
+					: <%= request.getAttribute("departmentName") %> 
+					<form:hidden path="sampleOrderItems.referringSiteDepartmentId" id="requesterDepartmentId"/>			
+				</td>
+			</tr>
+		</c:if>
 		<c:if test='${empty form.facilityID}'>
 			<c:if test='${not empty form.sampleOrderItems.newRequesterName}'>
 			<tr>
@@ -227,6 +236,15 @@ jQuery(document).ready(function () {
 				</td>
 			</tr>
 			</c:if>
+		</c:if>
+		<c:if test='${empty form.sampleOrderItems.referringSiteDepartmentId}'>
+			<tr>
+				<td>
+					<spring:message code="sample.entry.project.siteDepartmentName" /> 
+					: <%= request.getAttribute("departmentName") %> 
+					<form:hidden path="sampleOrderItems.referringSiteDepartmentId" id="requesterDepartmentId"/>			
+				</td>
+			</tr>
 		</c:if>
 	</tr>
 </table>
