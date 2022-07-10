@@ -216,6 +216,7 @@ function mySaveAction() {
 		var value = selectedLabUnit.options[selectedLabUnit.selectedIndex].value;
 		console.log(value);
 		if (value == "1=AllLabUnits") {
+			alert("<spring:message code="systemuserrole.select.allLabUnits.warning"/>");
 			document.getElementById("createNewRoles").disabled = true;
 		}else {
 			document.getElementById("createNewRoles").disabled = false;
