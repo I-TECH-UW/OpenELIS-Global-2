@@ -211,18 +211,13 @@ function mySaveAction() {
    };
 
 	function disableAddRoles() {
-		var rolesSection = document.getElementById("rolesRow");
-		var tables = rolesSection.getElementsByTagName("table");
-		var allLabSelected = false;
-		for (var y = 1; y < tables.length; y++) {
-			var allLabUnitsOption = tables[y].rows[0].cells[1].getElementsByTagName("option")[0];
-			if (allLabUnitsOption.selected == true) {
-				allLabSelected = true;
-			}
-		}
-		if (allLabSelected) {
+		var rolesTable1 = document.getElementById("rolesTable_1");
+		var selectedLabUnit = rolesTable1.rows[0].cells[1].getElementsByTagName("select")[0];
+		var value = selectedLabUnit.options[selectedLabUnit.selectedIndex].value;
+		console.log(value);
+		if (value == "1=AllLabUnits") {
 			document.getElementById("createNewRoles").disabled = true;
-		} else {
+		}else {
 			document.getElementById("createNewRoles").disabled = false;
 		}
 	}
