@@ -101,7 +101,7 @@
 $(document).ready(function () {
     // jquery functions for details on error
     // Currently not localized.
-    var pathname = location.href;
+    var pathname = Encode.forJavaScript(location.href);
     $("#error-path").text(pathname);
     var referrerPath = document.referrer;
     var referrer = '<spring:message code="errorpage.previous" text="errorpage.previous"/><br /><span class="troubleshooting">' + referrerPath + '"</span>"';

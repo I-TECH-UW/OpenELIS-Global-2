@@ -32,10 +32,10 @@ import org.springframework.validation.Errors;
 public class ResultsValidation implements ConfigurationListener {
 
     private static final String SPECIAL_CASE = "XXXX";
-    private boolean supportReferrals;
-    private boolean useTechnicianName;
-    private boolean noteRequiredForChangedResults;
-    private boolean useRejected;
+    private static final boolean supportReferrals = FormFields.getInstance().useField(Field.ResultsReferral);
+    private static final boolean useTechnicianName = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.resultTechnicianName,"true");
+    private static final boolean noteRequiredForChangedResults = true;
+    private static final boolean useRejected = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.allowResultRejection, "true");
 
     @Autowired
     private ResultService resultService;
@@ -226,12 +226,12 @@ public class ResultsValidation implements ConfigurationListener {
 
     @Override
     public void refreshConfiguration() {
-        supportReferrals = FormFields.getInstance().useField(Field.ResultsReferral);
-        useTechnicianName = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.resultTechnicianName,
-                "true");
-        noteRequiredForChangedResults = "true"
-                .equals(ConfigurationProperties.getInstance().getPropertyValue(Property.notesRequiredForModifyResults));
-        useRejected = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.allowResultRejection, "true");
+//        supportReferrals = FormFields.getInstance().useField(Field.ResultsReferral);
+//        useTechnicianName = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.resultTechnicianName,
+//                "true");
+//        noteRequiredForChangedResults = "true"
+//                .equals(ConfigurationProperties.getInstance().getPropertyValue(Property.notesRequiredForModifyResults));
+//        useRejected = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.allowResultRejection, "true");
 
     }
 }

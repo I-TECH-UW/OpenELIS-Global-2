@@ -340,7 +340,7 @@ function processLabOrderSuccess(xhr){
     <c:if test="${param.attemptAutoSave}">
 	<c:choose>
 	<c:when test="${not empty param.labNumber}">
-		jQuery('#labNo').val('${param.labNumber}');
+		jQuery('#labNo').val('${param.labNumber}' escapXml="true");
 		setOrderModified();
 	</c:when>
 	<c:otherwise>

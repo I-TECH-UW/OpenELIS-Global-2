@@ -80,7 +80,8 @@ function setMenuAction(button, form, action, validate, parameters) {
   var searchString = '';
   var doSearch = '<%=request.getAttribute(IActionConstants.IN_MENU_SELECT_LIST_HEADER_SEARCH)%>';
   
-  var searchedString = '<%=request.getAttribute(IActionConstants.SEARCHED_STRING)%>';
+  var searchedString = '<%=Encode.forJavaScript((String)request.getAttribute(IActionConstants.SEARCHED_STRING))%>';
+  
   if (fieldObj != null) {
     //If only one checkbox
     if (fieldObj[0] == null) {
