@@ -6,6 +6,7 @@ nav:
     - Upgrade to the Newest Version: upgrade.md
     - Analyzers: analyzer.md
     - Deploy:
+       - Configure the property files to connect to the Consolidated Server: server-property.md
        - OpenMRS Interoperability: deployomrs.md
        - Backup Configuration: backups.md
        - Update From OpenELIS Global 1.x to 2.x: upgrade1to2.md
