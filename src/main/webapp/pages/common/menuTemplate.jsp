@@ -3,6 +3,7 @@
 	contentType="text/html; charset=UTF-8"
 	import="org.openelisglobal.common.action.IActionConstants,
 			org.openelisglobal.common.util.ConfigurationProperties,
+			org.owasp.encoder.Encode,
 			org.openelisglobal.common.util.Versioning" %>
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>

@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	import="org.openelisglobal.common.action.IActionConstants,
 			org.openelisglobal.login.valueholder.UserSessionData,
+			org.owasp.encoder.Encode,
             org.openelisglobal.common.util.Versioning,java.util.HashSet,org.owasp.encoder.Encode"%>
 
 <%@ page isELIgnored="false" %>

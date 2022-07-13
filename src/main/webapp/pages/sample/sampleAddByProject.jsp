@@ -2,7 +2,8 @@
          import="org.openelisglobal.common.action.IActionConstants,
 				org.openelisglobal.login.valueholder.UserSessionData,
 	            org.openelisglobal.common.util.*, org.openelisglobal.internationalization.MessageUtil,
-	            org.openelisglobal.common.util.ConfigurationProperties.Property,java.util.HashSet,org.owasp.encoder.Encode"%>
+	            org.openelisglobal.common.util.ConfigurationProperties.Property,java.util.HashSet,
+	            org.owasp.encoder.Encode"%>
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
