@@ -32,6 +32,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -107,7 +108,8 @@ public class AnalyzerExperimentController extends BaseController {
     }
 
     @GetMapping(path = "/AnalyzerSetupFile/{id}", produces = MediaType.TEXT_PLAIN_VALUE)
-    public ResponseEntity<byte[]> getSetupFile(@PathVariable Integer id, @RequestParam("filename") @Pattern(regexp = "^[\\w]$") String fileName, BindingResult result) {
+    public ResponseEntity<byte[]> getSetupFile(@PathVariable Integer id, 
+        @RequestParam("fileName") @Pattern(regexp = "^[\\w]+$" ) String fileName, BindingResult result) {
         if (result.hasErrors()) {
             saveErrors(result);
             return ResponseEntity.badRequest().build();
