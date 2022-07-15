@@ -38,8 +38,6 @@ import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
-import org.springframework.security.oauth2.core.AuthorizationGrantType;
-import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.saml2.core.Saml2X509Credential;
 import org.springframework.security.saml2.core.Saml2X509Credential.Saml2X509CredentialType;
 import org.springframework.security.saml2.provider.service.registration.InMemoryRelyingPartyRegistrationRepository;
@@ -204,53 +202,54 @@ public class SecurityConfig {
                 return CommonOAuth2Provider.OKTA.getBuilder(client).clientId(clientId).clientSecret(clientSecret)
                         .build();
             }
-            if (client.equals("keycloak")) {
-                return UncommonOAuth2Provider.KEYCLOAK.getBuilder(client).clientId(clientId).clientSecret(clientSecret)
-                        .build();
-            }
+            // TODO requires more work
+//            if (client.equals("keycloak")) {
+//                return UncommonOAuth2Provider.KEYCLOAK.getBuilder(client).clientId(clientId).clientSecret(clientSecret)
+//                        .build();
+//            }
             return null;
         }
 
-        public enum UncommonOAuth2Provider {
-            KEYCLOAK {
-
-                @Override
-                public ClientRegistration.Builder getBuilder(String registrationId) {
-                    ClientRegistration.Builder builder = getBuilder(registrationId, ClientAuthenticationMethod.POST,
-                            DEFAULT_REDIRECT_URL);
-                    builder.scope("openid", "profile");
-                    builder.authorizationUri(
-                            "http://host.openelis.org:8093/auth/realms/OE/protocol/openid-connect/auth");
-                    builder.tokenUri("http://host.openelis.org:8093/auth/realms/OE/protocol/openid-connect/token");
-                    builder.userInfoUri(
-                            "http://host.openelis.org:8093/auth/realms/OE/protocol/openid-connect/userInfo");
-//                    builder.userNameAttributeName(IdTokenClaimNames.SUB);
-                    builder.clientName("Keycloak");
-                    return builder;
-                }
-            };
-
-            private static final String DEFAULT_REDIRECT_URL = "{baseUrl}/{action}/oauth2/code/{registrationId}";
-
-            protected final ClientRegistration.Builder getBuilder(String registrationId,
-                    ClientAuthenticationMethod method, String redirectUri) {
-                ClientRegistration.Builder builder = ClientRegistration.withRegistrationId(registrationId);
-                builder.clientAuthenticationMethod(method);
-                builder.authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE);
-                builder.redirectUriTemplate(redirectUri);
-                return builder;
-            }
-
-            /**
-             * Create a new
-             * {@link org.springframework.security.oauth2.client.registration.ClientRegistration.Builder
-             * ClientRegistration.Builder} pre-configured with provider defaults.
-             *
-             * @param registrationId the registration-id used with the new builder
-             * @return a builder instance
-             */
-            public abstract ClientRegistration.Builder getBuilder(String registrationId);
-        }
+//        public enum UncommonOAuth2Provider {
+//            KEYCLOAK {
+//
+//                @Override
+//                public ClientRegistration.Builder getBuilder(String registrationId) {
+//                    ClientRegistration.Builder builder = getBuilder(registrationId, ClientAuthenticationMethod.POST,
+//                            DEFAULT_REDIRECT_URL);
+//                    builder.scope("openid", "profile");
+//                    builder.authorizationUri(
+//                            "http://host.openelis.org:8093/auth/realms/OE/protocol/openid-connect/auth");
+//                    builder.tokenUri("http://host.openelis.org:8093/auth/realms/OE/protocol/openid-connect/token");
+//                    builder.userInfoUri(
+//                            "http://host.openelis.org:8093/auth/realms/OE/protocol/openid-connect/userInfo");
+////                    builder.userNameAttributeName(IdTokenClaimNames.SUB);
+//                    builder.clientName("Keycloak");
+//                    return builder;
+//                }
+//            };
+//
+//            private static final String DEFAULT_REDIRECT_URL = "{baseUrl}/{action}/oauth2/code/{registrationId}";
+//
+//            protected final ClientRegistration.Builder getBuilder(String registrationId,
+//                    ClientAuthenticationMethod method, String redirectUri) {
+//                ClientRegistration.Builder builder = ClientRegistration.withRegistrationId(registrationId);
+//                builder.clientAuthenticationMethod(method);
+//                builder.authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE);
+//                builder.redirectUriTemplate(redirectUri);
+//                return builder;
+//            }
+//
+//            /**
+//             * Create a new
+//             * {@link org.springframework.security.oauth2.client.registration.ClientRegistration.Builder
+//             * ClientRegistration.Builder} pre-configured with provider defaults.
+//             *
+//             * @param registrationId the registration-id used with the new builder
+//             * @return a builder instance
+//             */
+//            public abstract ClientRegistration.Builder getBuilder(String registrationId);
+//        }
     }
 
     @Configuration
