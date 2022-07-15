@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.19.1.final using JasperReports Library version 6.19.1-867c00bf88cd4d784d404379d6c05e1b419e8a4c  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="StatisticsReport" pageWidth="3000" pageHeight="792" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isSummaryWithPageHeaderAndFooter="true" resourceBundle="languages/message" uuid="df013db5-f76e-44d3-b0df-bcbc46d93160">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<parameter name="startDate" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="stopDate" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="siteId" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="siteName" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="reportTitle" class="java.lang.String"/>
+	<parameter name="referralSiteName" class="java.lang.String"/>
+	<parameter name="labName1" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="labName2" class="java.lang.String"/>
+	<parameter name="year" class="java.lang.String"/>
+	<parameter name="labUnits" class="java.lang.String"/>
+	<parameter name="workHours" class="java.lang.String"/>
+	<parameter name="priority" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["../reports/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="headerName" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["GeneralHeader.jasper"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="usePageNumbers" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["true"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="directorName" class="java.lang.String"/>
+	<parameter name="rightHeaderImage" class="java.io.InputStream" isForPrompting="false"/>
+	<parameter name="leftHeaderImage" class="java.io.InputStream" isForPrompting="false"/>
+	<parameter name="imagesPath" class="java.lang.String"/>
+	<field name="testName" class="java.lang.String"/>
+	<field name="tests" class="java.lang.Integer"/>
+	<field name="samples" class="java.lang.Integer"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="201" splitType="Stretch">
+			<textField>
+				<reportElement mode="Opaque" x="0" y="148" width="572" height="40" backcolor="#F5F5F5" uuid="986d1a54-1427-4f80-bbeb-5dc037946b73"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="24" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{report.globalLabReport}]]></textFieldExpression>
+			</textField>
+			<subreport isUsingCache="true">
+				<reportElement x="0" y="0" width="573" height="136" uuid="32e6302a-7262-4aeb-8153-62ae1110e8a8"/>
+				<subreportParameter name="labName2">
+					<subreportParameterExpression><![CDATA[$P{labName2}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="imagesPath">
+					<subreportParameterExpression><![CDATA[$P{imagesPath}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="startDate">
+					<subreportParameterExpression><![CDATA[$P{startDate}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="stopDate">
+					<subreportParameterExpression><![CDATA[$P{stopDate}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="labName1">
+					<subreportParameterExpression><![CDATA[$P{siteName}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="reportTitle">
+					<subreportParameterExpression><![CDATA[$P{reportTitle}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="rightHeaderImage">
+					<subreportParameterExpression><![CDATA[$P{rightHeaderImage}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="headerName">
+					<subreportParameterExpression><![CDATA[$P{headerName}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="SUBREPORT_DIR">
+					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="leftHeaderImage">
+					<subreportParameterExpression><![CDATA[$P{leftHeaderImage}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="siteId">
+					<subreportParameterExpression><![CDATA[$P{siteId}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="usePageNumbers">
+					<subreportParameterExpression><![CDATA[$P{usePageNumbers}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="referralSiteName">
+					<subreportParameterExpression><![CDATA[$P{referralSiteName}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="directorName">
+					<subreportParameterExpression><![CDATA[$P{directorName}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="siteName">
+					<subreportParameterExpression><![CDATA[$P{siteName}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource()]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + $P{headerName}]]></subreportExpression>
+			</subreport>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="181" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="10" width="294" height="20" uuid="6f3e0ecb-9ae1-4cd6-854d-39d55e0b8395"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{startDate} + " - " + $P{stopDate}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="329" y="10" width="243" height="20" uuid="6b310ffb-857a-4f30-8cf8-d884a12255e4">
+					<printWhenExpression><![CDATA[$P{siteId} != null]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{report.label.siteID}+" " + $P{siteId}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="290" y="150" width="100" height="30" uuid="fa82b872-af2f-4311-ab7f-e4465727e0c4"/>
+				<textElement>
+					<font size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA["January"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="433" y="150" width="100" height="30" uuid="4238fe23-150a-445a-bda7-acea7c9374c8"/>
+				<textElement>
+					<font size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA["February"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="30" width="100" height="20" uuid="ae004b97-fb60-4129-a408-eec5f77850dc"/>
+				<textFieldExpression><![CDATA[$P{year}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="52" width="100" height="30" uuid="796f0d40-a8f9-4a2b-a638-f3a10f7d940a"/>
+				<textFieldExpression><![CDATA[$P{labUnits}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="80" width="100" height="30" uuid="ceb4f7e5-e89e-47eb-9e8e-60670a7f6bac"/>
+				<textFieldExpression><![CDATA[$P{workHours}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="110" width="100" height="30" uuid="8a47293e-2c6e-4242-9cbe-24aed79ba875"/>
+				<textFieldExpression><![CDATA[$P{priority}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="49" splitType="Stretch">
+			<rectangle>
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="4" width="572" height="40" isPrintWhenDetailOverflows="true" backcolor="#E1E1E1" uuid="928e4288-b56e-4032-85dc-37b824302549"/>
+				<graphicElement>
+					<pen lineWidth="0.0" lineStyle="Solid"/>
+				</graphicElement>
+			</rectangle>
+			<textField>
+				<reportElement stretchType="RelativeToBandHeight" x="294" y="4" width="70" height="40" isPrintWhenDetailOverflows="true" uuid="e85ff5d1-fc39-47e3-9d96-5bfa3984f1da"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{report.tests}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="4" y="4" width="80" height="40" uuid="f24ee1df-fb55-47ab-a705-949aacb1a3e9"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{report.test}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="364" y="4" width="70" height="40" uuid="5ed990d5-fd6f-4ada-a472-347140f22e81"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{report.samples}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement stretchType="RelativeToBandHeight" x="434" y="4" width="70" height="40" isPrintWhenDetailOverflows="true" uuid="6f6df5ab-339a-4601-b2df-c3953b63f9f4"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{report.tests}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="500" y="4" width="70" height="40" uuid="9ea14aca-5e07-4664-a592-894d67f845c5"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{report.samples}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="26" splitType="Stretch">
+			<frame>
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="573" height="21" isPrintWhenDetailOverflows="true" uuid="9298aea0-e04a-4e33-a5bd-818f67cf812a"/>
+				<textField>
+					<reportElement x="504" y="0" width="68" height="20" isRemoveLineWhenBlank="true" uuid="8e44dd4b-7939-4e90-a264-f23638e9cd7a">
+						<printWhenExpression><![CDATA[$F{testName} != null]]></printWhenExpression>
+					</reportElement>
+					<box rightPadding="4"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{samples}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="314" y="1" width="50" height="20" isRemoveLineWhenBlank="true" uuid="fa3f4e94-30c5-4096-9a74-c53e8edb44ac">
+						<printWhenExpression><![CDATA[$F{testName} != null]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{tests}]]></textFieldExpression>
+				</textField>
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" mode="Transparent" x="4" y="0" width="310" height="20" isPrintWhenDetailOverflows="true" backcolor="#FFFFFF" uuid="961a83cc-8250-4d3a-8a84-790182e4a60b"/>
+					<textElement verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{testName} != null ? $F{testName} : $R{report.no.section.tests}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="364" y="1" width="70" height="20" isRemoveLineWhenBlank="true" uuid="823039af-5250-4e6a-8f9a-6acc3b1f5807">
+						<printWhenExpression><![CDATA[$F{testName} != null]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{samples}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement positionType="FixRelativeToBottom" x="0" y="20" width="572" height="1" forecolor="#CCCCCC" uuid="74059a8e-09c6-4155-945a-495adc676c75"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
+				</line>
+				<textField>
+					<reportElement x="434" y="1" width="70" height="20" isRemoveLineWhenBlank="true" uuid="a19fecf7-e876-4c9b-8abf-9eddc9a6ef3d">
+						<printWhenExpression><![CDATA[$F{testName} != null]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{tests}]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="13" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="40" splitType="Stretch">
+			<textField>
+				<reportElement x="443" y="16" width="80" height="20" uuid="a17d6c9e-c74f-4aa3-b810-b26b38826f22">
+					<printWhenExpression><![CDATA[$P{usePageNumbers}.equals("true")]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$R{report.label.page}+" "+$V{PAGE_NUMBER}+" "+$R{report.about}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="523" y="16" width="40" height="20" uuid="d011ae12-05bc-440c-971f-4e60ff2fc838">
+					<printWhenExpression><![CDATA[$P{usePageNumbers}.equals("true")]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement stretchType="RelativeToBandHeight" x="4" y="0" width="568" height="14" isPrintWhenDetailOverflows="true" uuid="87b6fe97-2625-42f9-8616-24d096fb61b5"/>
+				<textElement markup="styled">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{report.footNote}]]></textFieldExpression>
+			</textField>
+			<textField pattern="MM/dd/yyyy">
+				<reportElement x="284" y="17" width="121" height="20" uuid="1707eafe-e05a-4d28-9497-551a71f629e7"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="194" y="17" width="90" height="20" uuid="520c2e87-f816-45cd-be4b-b3dd6220f14d"/>
+				<box rightPadding="4"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none"/>
+				<textFieldExpression><![CDATA[$R{referral.report.date}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

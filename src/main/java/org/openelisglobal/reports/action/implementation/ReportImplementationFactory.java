@@ -268,6 +268,9 @@ public class ReportImplementationFactory {
             else if (report.equals("covidResultsReport")) {
                 return new CovidResultsReport();
             }
+            else if(report.equals("statisticsReport")){
+                return new StatisticsReport();
+            }
         }
 
         return null;
