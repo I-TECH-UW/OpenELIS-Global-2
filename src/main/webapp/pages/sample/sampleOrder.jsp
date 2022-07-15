@@ -31,9 +31,9 @@
     boolean useProviderInfo = FormFields.getInstance().useField( FormFields.Field.ProviderInfo );
     boolean patientRequired = FormFields.getInstance().useField( FormFields.Field.PatientRequired );
     boolean trackPayment = ConfigurationProperties.getInstance().isPropertyValueEqual( Property.TRACK_PATIENT_PAYMENT, "true" );
-    boolean requesterLastNameRequired = FormFields.getInstance().useField( Field.SampleEntryRequesterLastNameRequired );
     boolean acceptExternalOrders = ConfigurationProperties.getInstance().isPropertyValueEqual( Property.ACCEPT_EXTERNAL_ORDERS, "true" );
     boolean restrictNewReferringSiteEntries = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.restrictFreeTextRefSiteEntry, "true");
+    boolean restrictNewProviderEntries = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.restrictFreeTextProviderEntry, "true");
 	boolean useSiteDepartment = FormFields.getInstance().useField(Field.SITE_DEPARTMENT );
 %>
 
@@ -51,7 +51,7 @@
     var useReferralSiteList = <%= useReferralSiteList%>;
     var useReferralSiteCode = <%= useReferralSiteCode %>;
     var useSiteDepartment = <%= useSiteDepartment %>;
-
+    
     function checkAccessionNumber(accessionNumber) {
         //check if empty
         if (!fieldIsEmptyById("labNo")) {
@@ -124,23 +124,6 @@
     			savePage();
     		}
     	</c:if>
-    }
-
-    function siteListChanged(siteList) {
-        var siteList = $("requesterId");
-        //if the index is 0 it is a new entry, if it is not then the textValue may include the index value
-        // create new entry has been removed gnr
-        if (siteList.selectedIndex == 0) {
-//             $("newRequesterName").value = textValue;
-        } else if (useReferralSiteCode) {
-            getCodeForOrganization(siteList.options[siteList.selectedIndex].value, processCodeSuccess);
-        }
-
-    	if ( useSiteDepartment ) {
-    		if(document.getElementById("requesterId").selectedIndex != 0){
-    			getDepartmentsForSiteClinic( document.getElementById("requesterId").value, "", siteDepartmentSuccess, null);
-    		} 
-    	}
     }
 
     function processCodeSuccess(xhr) {
@@ -231,6 +214,17 @@
         </td>
     </tr>
 </c:if>
+
+<tr>
+    <td><spring:message code="sample.entry.priority" htmlEscape="true"/> : </td>
+    <td>    
+        <form:select path="sampleOrderItems.priority" 
+                    id="priorityId"  >
+            <form:options items="${form.sampleOrderItems.priorityList}" itemValue="id" itemLabel="value"/>
+        </form:select> 
+    </td>
+</tr>
+
 <%-- <logic:notEmpty name="${formName}" property="sampleOrderItems.labNo" >
     <tr><td style="width:35%"></td><td style="width:65%"></td></tr>
 </logic:notEmpty> --%>
@@ -339,10 +333,17 @@
     </td>
     <td colspan="3" >
     	<c:if test="${form.sampleOrderItems.readOnly == false}" >
+    	
+    		<spring:message code="error.site.invalid" var="invalidSite"/>
+    	    <spring:message code="sample.entry.project.siteMaxMsg" var="siteMaxMessage"/>
     		<form:select path="sampleOrderItems.referringSiteId" 
     				 id="requesterId" 
-                     onchange="setOrderModified();siteListChanged(this);setCorrectSave();"
-                     onkeyup="capitalizeValue( this.value );" >
+                     onkeyup="capitalizeValue( this.value );"
+                     capitalize="true"
+                     invalidlabid='${invalidSite}'
+                     maxrepmsg='${siteMaxMessage}'
+       				 clearNonMatching="<%=restrictNewReferringSiteEntries%>"
+                      >
             <option ></option>
             <form:options items="${form.sampleOrderItems.referringSiteList}" itemValue="id" itemLabel="value"/>
             </form:select>
@@ -415,21 +416,40 @@
     <td>&nbsp;</td>
 </tr>
 <% if( useProviderInfo ){ %>
-<tr>
+<tr class="provider-info-row">
     <td>
-        <%= MessageUtil.getContextualMessage( "sample.entry.provider.name" ) %>:
-        <% if( requesterLastNameRequired ){ %>
+        <%= MessageUtil.getContextualMessage( "sample.entry.provider" ) %>:
+        <% if( FormFields.getInstance().useField( Field.SampleEntryReferralSiteNameRequired ) ){%>
         <span class="requiredlabel">*</span>
         <% } %>
     </td>
-    <td>
+    <td><spring:message code="error.provider.ininvalid" var="invalidProvider"/>
+    	<form:select id="providerPersonId" path="sampleOrderItems.providerPersonId" 
+                     capitalize="false"
+                     invalidlabid='${invalidProvider}'
+       				 clearNonMatching="false"
+                     maxrepmsg='maximum reached'
+                      >
+    		<option></option>
+    		<form:options items="${form.sampleOrderItems.providersList}" itemValue="id" itemLabel="value" />
+    	</form:select>
+    </td> 
+</tr>
+
+<tr class="provider-info-row provider-extra-info-row">
+<td>
+        <%= MessageUtil.getContextualMessage( "sample.entry.provider.name" ) %>:
+    </td>
+<td>
         <form:input path="sampleOrderItems.providerLastName"
                    id="providerLastNameID"
                    onchange="setOrderModified();setCorrectSave();"
-                   size="30"/>
+                   size="30"
+                  disabled="<%=restrictNewProviderEntries%>"/>
     </td> 
-</tr>              
-<tr>
+
+</tr >              
+<tr class="provider-info-row provider-extra-info-row">
     <td>
         <spring:message code="sample.entry.provider.firstName"/>:
 	</td>
@@ -437,10 +457,11 @@
         <form:input path="sampleOrderItems.providerFirstName"
                    id="providerFirstNameID" 
                    onchange="setOrderModified();"
-                   size="30"/>
+                   size="30"
+                  disabled="<%=restrictNewProviderEntries%>"/>
     </td>
 </tr>
-<tr>
+<tr class="provider-info-row provider-extra-info-row">
     <td>
         <%= MessageUtil.getContextualMessage( "humansampleone.provider.workPhone" ) + ": " + PhoneNumberService.getPhoneFormat()%>
     </td>
@@ -448,6 +469,7 @@
          <form:input path="sampleOrderItems.providerWorkPhone"
                   id="providerWorkPhoneID"
                   size="30"
+                  disabled="<%=restrictNewProviderEntries%>"
                   maxlength="30"
                   cssClass="text"
                   onchange="setOrderModified();validatePhoneNumber(this)"/> 
@@ -463,6 +485,7 @@
         <form:input path="sampleOrderItems.providerFax"
                   id="providerFaxID"
                   size="20"
+                  disabled="<%=restrictNewProviderEntries%>"
                   cssClass="text"
                   onchange="setOrderModified();makeDirty()"/> 
     </td>
@@ -477,10 +500,10 @@
         <form:input path="sampleOrderItems.providerEmail"
                   id="providerEmailID"
                   size="20"
+                  disabled="<%=restrictNewProviderEntries%>"
                   cssClass="text"
                   onchange="setOrderModified();makeDirty()"/> 
-    </td>
-</tr>
+    </td>   
 <% } %>
 <% if( FormFields.getInstance().useField( Field.SampleEntryHealthFacilityAddress ) ){%>
 <tr>
@@ -618,27 +641,69 @@
             }
     }
     <% } %>
+    
+    function siteListChanged(siteList) {
+        var siteList = $("requesterId");
+        //if the index is 0 it is a new entry, if it is not then the textValue may include the index value
+        // create new entry has been removed gnr
+        if (siteList.selectedIndex == 0) {
+//             $("newRequesterName").value = textValue;
+        } else if (useReferralSiteCode) {
+            getCodeForOrganization(siteList.options[siteList.selectedIndex].value, processCodeSuccess);
+        }
 
+    	if ( useSiteDepartment ) {
+    		if(document.getElementById("requesterId").selectedIndex != 0){
+    			getDepartmentsForSiteClinic( document.getElementById("requesterId").value, "", siteDepartmentSuccess, null);
+    		} 
+    	}
+    }
+
+    function parseRequesterPerson(xhr) {
+    	var requester = JSON.parse(xhr.responseText);
+            $("providerPersonId").value = requester.id;
+            $("providerFirstNameID").value = requester.firstName;
+            $("providerLastNameID").value = requester.lastName;    
+            $("providerWorkPhoneID").value = requester.primaryPhone;
+            $("providerFaxID").value = requester.fax;
+            $("providerEmailID").value = requester.email;
+    }
+    
     jQuery(document).ready(function () {
         var dropdown = jQuery("select#requesterId");
         autoCompleteWidth = dropdown.width() + 66 + 'px';
-        <% if(restrictNewReferringSiteEntries) { %>
-       			clearNonMatching = true;
-        <% } else {%>
-        		clearNonMatching = false;
-        <% } %>
-        capitialize = true;
         // Actually executes autocomplete
-//         dropdown.combobox();
-        invalidLabID = '<spring:message code="error.site.invalid"/>'; // Alert if value is typed that's not on list. FIX - add bad message icon
-        maxRepMsg = '<spring:message code="sample.entry.project.siteMaxMsg"/>';
+        dropdown.combobox();
+        var providerDropdown = jQuery("select#providerPersonId");
+        autoCompleteWidth = providerDropdown.width() + 66 + 'px';
+        // Actually executes autocomplete
+        providerDropdown.combobox();
 
-        resultCallBack = function (siteList) {
-            siteListChanged(siteList);
-            setOrderModified();
-            setCorrectSave();
-        };
+        autocompleteResultCallBack = function (selectId, value) {
+        	if (selectId === 'requesterId') {
+        		requesterId = value;
+        		siteListChanged(requesterId);
+                setOrderModified();
+                setCorrectSave();
+        	} else if (selectId === 'providerPersonId') {
+        		personId = value;
+        		if (personId) {
+        			getProviderInfoByPersonId(personId, parseRequesterPerson );
+        		} else {
+        			clearProvider();
+        		}
 
+                setOrderModified();
+                setCorrectSave();
+        	}
+        	
+        }
+        
+        if (providerDropdown.val()) {
+        	autocompleteResultCallBack('providerPersonId', providerDropdown.val());
+        }
+        
+        
         <% if( FormFields.getInstance().useField( Field.TEST_LOCATION_CODE ) ){%>
             showTestLocationCode();
         <% } %>

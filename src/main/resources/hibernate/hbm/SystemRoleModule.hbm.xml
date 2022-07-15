@@ -11,7 +11,7 @@
 			<column name="ID" precision="10" scale="0" />
 			<generator
 				class="org.openelisglobal.hibernate.resources.StringSequenceGenerator">
-				<param name="sequence_name">system_user_module_seq</param>
+				<param name="sequence_name">system_role_module_seq</param>
 			</generator>
 		</id>
 

@@ -1,18 +1,25 @@
 var autoCompId = ""; // the id for the autocomplete widget. This should be changed in scope and passed in with the constructor
-var clearNonMatching = true;
-var capitialize = false;
-var resultCallBack = null; // the callback for onchange
+//var clearNonMatching = true;
+//var capitialize = false;
+var autocompleteResultCallBack = null; // the callback for onchange
+//var invalidID = window.invalidLabID;
 (function( $) {
 	$.widget( "ui.combobox", {
 		_create: function( ) {
 			var self = this,
 				select = this.element.hide(),
 				selected = select.children( ":selected" ),
-				value = selected.val() ? selected.text() : "";
+				selectId = select.attr("id"),
+				maxRepMsg = select.attr("maxrepmsg"),
+				value = selected.val() ? selected.text() : "",
+				capitalize = "true" === select.attr("capitalize"),
+				invalidID = select.attr("invalidlabid"),
+				clearNonMatching = "true" === select.attr("clearnonmatching");
 			var input = this.input = $( "<input>" )
 				.insertAfter( select )
 				.val( value )
 				.attr('id', autoCompId)
+				
 				.autocomplete({
 					delay: 0,
 					minLength: 1,
@@ -55,6 +62,13 @@ var resultCallBack = null; // the callback for onchange
                                 item: ui.item.option
                             });
                         }
+						if( autocompleteResultCallBack ){ 
+							if ($( this ).val()) {
+								autocompleteResultCallBack(selectId, $(select).val());
+							} else {
+								autocompleteResultCallBack(selectId, '');
+							}
+						}
                     },
                     focus: function( event, ui ) {
                     	console.log('focus');
@@ -65,7 +79,7 @@ var resultCallBack = null; // the callback for onchange
                     // End new functionality to increase speed
 					change: function( event, ui ) {
 						console.log('change');
-						if( capitialize ){
+						if( capitalize ){
 							$(this).context.value = $(this).context.value.toUpperCase();
 						}
 						
@@ -87,16 +101,20 @@ var resultCallBack = null; // the callback for onchange
 								select.val( "" );
 								input.data( "ui-autocomplete" ).term = "";
 								
-								if( window.invalidLabID != undefined){
-									alert(invalidLabID);
+								if( invalidID != undefined){
+									alert(invalidID);
 								}
 								return false;
 							}
 							
 						}
 						
-						if( resultCallBack ){ 
-							resultCallBack($(this).val());
+						if( autocompleteResultCallBack ){ 
+							if ($( this ).val()) {
+								autocompleteResultCallBack(selectId, $(select).val());
+							} else {
+								autocompleteResultCallBack(selectId, '');
+							}
 						}
 					}
 				})

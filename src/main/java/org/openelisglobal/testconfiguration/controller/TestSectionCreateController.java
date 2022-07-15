@@ -99,8 +99,8 @@ public class TestSectionCreateController extends BaseController {
         SystemModule resultModule = createSystemModule("LogbookResults", identifyingName, userId);
         SystemModule validationModule = createSystemModule("ResultValidation", identifyingName, userId);
 
-        Role resultsEntryRole = roleService.getRoleByName("Results entry");
-        Role validationRole = roleService.getRoleByName("Validator");
+        Role resultsEntryRole = roleService.getRoleByName("Results");
+        Role validationRole = roleService.getRoleByName("Validation");
 
         RoleModule workplanResultModule = createRoleModule(userId, workplanModule, resultsEntryRole);
         RoleModule resultResultModule = createRoleModule(userId, resultModule, resultsEntryRole);
@@ -111,6 +111,7 @@ public class TestSectionCreateController extends BaseController {
                     validationModule, workplanResultModule, resultResultModule, validationValidationModule);
         } catch (LIMSRuntimeException e) {
             LogEvent.logDebug(e);
+            return findForward(FWD_FAIL_INSERT, form);
         }
 
         DisplayListService.getInstance().refreshList(DisplayListService.ListType.TEST_SECTION);

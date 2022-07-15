@@ -24,6 +24,7 @@ import org.openelisglobal.common.valueholder.ValueHolder;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.statusofsample.valueholder.StatusOfSample;
+import org.openelisglobal.sample.valueholder.OrderPriority;
 
 public class ElectronicOrder extends BaseObject<String> {
 
@@ -69,6 +70,7 @@ public class ElectronicOrder extends BaseObject<String> {
     private Timestamp orderTimestamp;
     private String data;
     private ElectronicOrderType type;
+    private OrderPriority priority;
 
     public ElectronicOrder() {
         patient = new ValueHolder();
@@ -138,5 +140,13 @@ public class ElectronicOrder extends BaseObject<String> {
 
     public void setType(ElectronicOrderType type) {
         this.type = type;
+    }
+
+    public OrderPriority getPriority() {
+        return priority;
+    }
+
+    public void setPriority(OrderPriority priority) {
+        this.priority = priority;
     }
 }

@@ -2,6 +2,8 @@
 <%@ page import="org.openelisglobal.common.action.IActionConstants,
                  org.openelisglobal.common.util.ConfigurationProperties,
                  org.openelisglobal.common.util.ConfigurationProperties.Property,
+                 org.openelisglobal.common.formfields.FormFields.Field,
+                 org.openelisglobal.common.formfields.FormFields, 
                  org.openelisglobal.common.util.Versioning" %>
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
@@ -14,6 +16,7 @@
 
 <%
 	boolean restrictNewReferringSiteEntries = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.restrictFreeTextRefSiteEntry, "true");
+    boolean useSiteDepartment = FormFields.getInstance().useField(Field.SITE_DEPARTMENT );
 %>
 
 <link rel="stylesheet" href="css/jquery_ui/jquery.ui.all.css?">
@@ -30,6 +33,7 @@
 <script src="scripts/customAutocomplete.js?"></script>
 <script type="text/javascript">
 var inPrintState = true;	//is entryMethod in a print state 
+var useSiteDepartment = <%= useSiteDepartment %>;
 
 function finish() {
     window.location = "SampleBatchEntrySetup";
@@ -83,6 +87,37 @@ function siteListChanged(textValue) {
     if (siteList.selectedIndex == 0 || siteList.options[siteList.selectedIndex].label != textValue) {
         $("newRequesterName").value = textValue;
     }
+	if ( useSiteDepartment ) {
+		if(document.getElementById("requesterId").selectedIndex != 0){
+			getDepartmentsForSiteClinic( document.getElementById("requesterId").value, "", siteDepartmentSuccess, null);
+		} 
+	}
+}
+
+function siteDepartmentSuccess (xhr) {
+    console.log(xhr.responseText);
+    var message = xhr.responseXML.getElementsByTagName("message").item(0).firstChild.nodeValue;
+	var departments = xhr.responseXML.getElementsByTagName("formfield").item(0).childNodes[0].childNodes;
+	var selected = xhr.responseXML.getElementsByTagName("formfield").item(0).childNodes[1];
+	var isValid = message == "<%=IActionConstants.VALID%>";
+	var requesterDepartment = jQuery("#requesterDepartmentId");
+	var i = 0;
+
+	requesterDepartment.disabled = "";
+	if( isValid ){
+		requesterDepartment.children('option').remove();
+		requesterDepartment.append(new Option('', ''));
+		for( ;i < departments.length; ++i){
+// 						is this supposed to be value value or value id?
+		requesterDepartment.append(
+				new Option(departments[i].attributes.getNamedItem("value").value, 
+					departments[i].attributes.getNamedItem("id").value));
+		}
+	}
+	
+	if( selected){
+		requesterDepartment.selectedIndex = getSelectIndexFor( "requesterDepartmentId", selected.childNodes[0].nodeValue);
+	}
 }
 
 jQuery(document).ready(function() {
@@ -92,18 +127,10 @@ jQuery(document).ready(function() {
 jQuery(document).ready(function () {
     var dropdown = jQuery("select#requesterId");
     autoCompleteWidth = dropdown.width() + 66 + 'px';
-    <% if(restrictNewReferringSiteEntries) { %>
-   			clearNonMatching = true;
-    <% } else {%>
-    		clearNonMatching = false;
-    <% } %>
-    capitialize = true;
     // Actually executes autocomplete
     dropdown.combobox();
-    invalidLabID = '<spring:message code="error.site.invalid"/>'; // Alert if value is typed that's not on list. FIX - add bad message icon
-    maxRepMsg = '<spring:message code="sample.entry.project.siteMaxMsg"/>';
 
-    resultCallBack = function (textValue) {
+    autocompleteResultCallBack = function (selectId, textValue) {
         siteListChanged(textValue);
     	setSave();
     };
@@ -130,7 +157,17 @@ jQuery(document).ready(function () {
 					<spring:message code="sample.batchentry.barcode.label.facilityid" />
 					:  
 					<c:if test="${not form.sampleOrderItems.readOnly}">
-				        <form:select id="requesterId" path="sampleOrderItems.referringSiteId" onkeyup="capitalizeValue( this.value );" onchange="siteListChanged(this);setSave();">
+    		            <spring:message code="error.site.invalid" var="invalidSite"/>
+    		            <spring:message code="sample.entry.project.siteMaxMsg" var="siteMaxMessage"/>
+				        <form:select id="requesterId" 
+				            path="sampleOrderItems.referringSiteId" 
+				            onkeyup="capitalizeValue( this.value );" 
+				            onchange="siteListChanged(this);setSave();"
+		                    capitalize="true"
+		                    invalidlabid='${invalidSite}'
+		                    maxrepmsg='${siteMaxMessage}'
+		       			    clearNonMatching="<%=restrictNewReferringSiteEntries%>"
+				            >
 				            <option value=""></option>
 				            <form:options items="${form.sampleOrderItems.referringSiteList}" itemLabel="value" itemValue="id"/>
 				        </form:select>
@@ -140,6 +177,19 @@ jQuery(document).ready(function () {
 				    </c:if>
 				</td>
 			</tr>
+		<% if( useSiteDepartment ){ %>
+		 <tr>
+		    <c:if test="${not form.sampleOrderItems.readOnly}">
+				<td>  <spring:message code="sample.entry.project.siteDepartmentName"/>:  
+						<form:select path="sampleOrderItems.referringSiteDepartmentId" 
+							id="requesterDepartmentId"  >
+						<option ></option>
+						<form:options items="${form.sampleOrderItems.referringSiteDepartmentList}" itemValue="id" itemLabel="value"/>
+					</form:select>
+				</td>
+			</c:if>
+		</tr>
+	<% } %>
 			</c:if>
 		</c:if>
 	</c:if>
@@ -211,9 +261,18 @@ jQuery(document).ready(function () {
 			<tr>
 				<td>
 					<spring:message code="sample.batchentry.barcode.label.facilityid" /> 
-					: <%= request.getAttribute("facilityName") %>
+					: <%= request.getAttribute("facilityName") escapXml="true" %>
 					<form:hidden path="sampleOrderItems.referringSiteId" id="requesterId"/>
 						
+				</td>
+			</tr>
+		</c:if>
+		<c:if test='${not empty form.sampleOrderItems.referringSiteDepartmentId}'>
+			<tr>
+				<td>
+					<spring:message code="sample.entry.project.siteDepartmentName" /> 
+					: <%= request.getAttribute("departmentName") %> 
+					<form:hidden path="sampleOrderItems.referringSiteDepartmentId" id="requesterDepartmentId"/>			
 				</td>
 			</tr>
 		</c:if>
@@ -227,6 +286,15 @@ jQuery(document).ready(function () {
 				</td>
 			</tr>
 			</c:if>
+		</c:if>
+		<c:if test='${empty form.sampleOrderItems.referringSiteDepartmentId}'>
+			<tr>
+				<td>
+					<spring:message code="sample.entry.project.siteDepartmentName" /> 
+					: <%= request.getAttribute("departmentName") %> 
+					<form:hidden path="sampleOrderItems.referringSiteDepartmentId" id="requesterDepartmentId"/>			
+				</td>
+			</tr>
 		</c:if>
 	</tr>
 </table>

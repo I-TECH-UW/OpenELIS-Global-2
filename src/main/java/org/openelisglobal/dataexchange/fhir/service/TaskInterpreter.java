@@ -9,6 +9,7 @@ import org.openelisglobal.dataexchange.order.action.IOrderInterpreter.Interprete
 import org.openelisglobal.dataexchange.order.action.IOrderInterpreter.OrderType;
 import org.openelisglobal.dataexchange.order.action.MessagePatient;
 import org.openelisglobal.test.valueholder.Test;
+import org.openelisglobal.sample.valueholder.OrderPriority;
 
 public interface TaskInterpreter {
 
@@ -27,6 +28,8 @@ public interface TaskInterpreter {
     List<InterpreterResults> getResultStatus();
 
     Test getTest();
+
+    OrderPriority getOrderPriority();
 
     List<InterpreterResults> interpret(Task incomingTask, ServiceRequest incomingServiceRequest,
             Patient incomingPatient);

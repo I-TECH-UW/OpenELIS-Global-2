@@ -65,7 +65,7 @@ public class SampleBatchEntryController extends BaseController {
             //
             "sampleOrderItems.labNo",
             //
-            "sampleOrderItems.newRequesterName", "sampleOrderItems.referringSiteId",
+            "sampleOrderItems.newRequesterName", "sampleOrderItems.referringSiteId", "sampleOrderItems.referringSiteDepartmentId" ,
             "form.sampleOrderItems.referringSiteName", "patientProperties.patientUpdateStatus", "currentDate",
             "currentTime", "sampleOrderItems.receivedDateForDisplay", "sampleOrderItems.receivedTime", "sampleXML",
             "sampleOrderItems.referringSiteId", "sampleOrderItems.referringSiteId",
@@ -112,6 +112,8 @@ public class SampleBatchEntryController extends BaseController {
         soi.setReceivedDateForDisplay(form.getSampleOrderItems().getReceivedDateForDisplay());
         soi.setNewRequesterName(form.getSampleOrderItems().getNewRequesterName());
         soi.setReferringSiteId(form.getFacilityID());
+        soi.setReferringSiteDepartmentId(form.getSampleOrderItems().getReferringSiteDepartmentId());
+
         form.setSampleOrderItems(soi);
 
         form.setLocalDBOnly(ConfigurationProperties.getInstance()
@@ -147,7 +149,13 @@ public class SampleBatchEntryController extends BaseController {
         } else if (!StringUtil.isNullorNill(form.getSampleOrderItems().getNewRequesterName())) {
             facilityName = form.getSampleOrderItems().getNewRequesterName();
         }
+        String departmentName = "";
+        if (!StringUtil.isNullorNill(form.getSampleOrderItems().getReferringSiteDepartmentId())) {
+            Organization organization = organizationService.get(form.getSampleOrderItems().getReferringSiteDepartmentId());
+            departmentName = organization.getOrganizationName();
+        }
         request.setAttribute("facilityName", facilityName);
+        request.setAttribute("departmentName", departmentName);
         form.setPatientSearch(new PatientSearch());
 
         return findForward(form.getMethod(), form);

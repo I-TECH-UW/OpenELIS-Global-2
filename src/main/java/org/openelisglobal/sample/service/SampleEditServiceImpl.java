@@ -111,7 +111,7 @@ public class SampleEditServiceImpl implements SampleEditService {
         if (updatedSample == null) {
             updatedSample = sampleService.getSampleByAccessionNumber(form.getAccessionNumber());
         }
-
+        updatedSample.setPriority(form.getSampleOrderItems().getPriority());
         String receivedDateForDisplay = updatedSample.getReceivedDateForDisplay();
         String collectionDateFromRecieveDate = null;
         boolean useReceiveDateForCollectionDate = !FormFields.getInstance().useField(Field.CollectionDate);

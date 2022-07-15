@@ -22,6 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
@@ -85,9 +86,6 @@ public class UnifiedSystemUserController extends BaseController {
     private UserService userService;
     private static final String RESERVED_ADMIN_NAME = "admin";
 
-    private static final String GLOBAL_ADMIN = "Global Administrator";
-    private static final String GLOBAL_ROLES_GROUP = "Global Roles";
-    private static final String LAB_ROLES_GROUP = "Lab Unit Roles";
     private static String GLOBAL_ADMIN_ID;
     private static String ID;
     public static final char DEFAULT_OBFUSCATED_CHARACTER = '@';
@@ -95,7 +93,7 @@ public class UnifiedSystemUserController extends BaseController {
 
     @PostConstruct
     private void initialize() {
-        GLOBAL_ADMIN_ID =  roleService.getRoleByName(GLOBAL_ADMIN).getId();
+        GLOBAL_ADMIN_ID =  roleService.getRoleByName(Constants.ROLE_GLOBAL_ADMIN).getId();
     }
 
     @InitBinder
@@ -143,8 +141,8 @@ public class UnifiedSystemUserController extends BaseController {
 
         List<DisplayRole> displayRoles = convertToDisplayRoles(roles);
         displayRoles = sortAndGroupRoles(displayRoles);
-        String globalParentRoleId =  roleService.getRoleByName(GLOBAL_ROLES_GROUP).getId();
-        String labUnitRoleId = roleService.getRoleByName(LAB_ROLES_GROUP).getId();
+        String globalParentRoleId =  roleService.getRoleByName(Constants.GLOBAL_ROLES_GROUP).getId();
+        String labUnitRoleId = roleService.getRoleByName(Constants.LAB_ROLES_GROUP).getId();
    
         List<DisplayRole> globalRoles = displayRoles.stream().filter(role -> role.getParentRole() != null).filter(role -> role.getParentRole().equals(globalParentRoleId)).collect(Collectors.toList());
         List<DisplayRole> labUnitRoles = displayRoles.stream().filter(role -> role.getParentRole() != null).filter(role -> role.getParentRole().equals(labUnitRoleId)).collect(Collectors.toList());
@@ -453,7 +451,7 @@ public class UnifiedSystemUserController extends BaseController {
                 saveUserLabUnitRoles(systemUser, form, loggedOnUserId);
             } else if (form.getAllowCopyUserRoles().equals(YES)) {
                 if (StringUtils.isNotBlank(form.getSystemUserIdToCopy().trim())) {
-                    String globalParentRoleId = roleService.getRoleByName(GLOBAL_ROLES_GROUP).getId();
+                    String globalParentRoleId = roleService.getRoleByName(Constants.GLOBAL_ROLES_GROUP).getId();
                     List<String> globaRolesIds = getAllRoles().stream().filter(role -> role.getGroupingParent() != null)
                             .filter(role -> role.getGroupingParent().equals(globalParentRoleId)).map(role -> role.getId())
                             .collect(Collectors.toList());

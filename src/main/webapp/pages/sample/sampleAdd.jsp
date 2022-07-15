@@ -959,7 +959,10 @@ function /*boolean*/ sampleAddValid( sampleRequired ){
 }
 
 function samplesHaveBeenAdded(){
-	 return currentSampleDiv.getElementsByClassName("samplesAddedTable")[0].rows.length > 1;;
+	 if(!currentSampleDiv){
+		return false;
+	 }
+	 return currentSampleDiv.getElementsByClassName("samplesAddedTable")[0].rows.length > 1;
 }
 
 function userSampleTypeSelectionChanged( userTypeSelectionId, row,  qualifiableId ){

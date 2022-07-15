@@ -17,6 +17,7 @@ import org.openelisglobal.dataexchange.order.action.IOrderPersister;
 import org.openelisglobal.dataexchange.order.action.MessagePatient;
 import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder;
 import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrderType;
+import org.openelisglobal.sample.valueholder.OrderPriority;
 import org.openelisglobal.spring.util.SpringContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -97,6 +98,7 @@ public class TaskWorker {
         interpretResults = interpreter.interpret(task, serviceRequest, patient);
         String referringOrderNumber = interpreter.getReferringOrderNumber();
         OrderType orderType = interpreter.getOrderType();
+        OrderPriority priority = interpreter.getOrderPriority();
         MessagePatient patient = interpreter.getMessagePatient();
         checkResult = existanceChecker.check(referringOrderNumber);
 
@@ -126,7 +128,7 @@ public class TaskWorker {
                 } else {
                     LogEvent.logDebug(this.getClass().getName(), "handleOrderRequest",
                             "no order found, entering order: " + referringOrderNumber);
-                    insertNewOrder(referringOrderNumber, message, patient, ExternalOrderStatus.Entered);
+                    insertNewOrder(referringOrderNumber, message, patient, priority, ExternalOrderStatus.Entered);
                     return TaskResult.OK;
                 }
             case ORDER_FOUND_CANCELED:
@@ -137,7 +139,7 @@ public class TaskWorker {
                 } else {
                     LogEvent.logDebug(this.getClass().getName(), "handleOrderRequest",
                             "order found cancelled, entering order: " + referringOrderNumber);
-                    insertNewOrder(referringOrderNumber, message, patient, ExternalOrderStatus.Entered);
+                    insertNewOrder(referringOrderNumber, message, patient, priority, ExternalOrderStatus.Entered);
                     return TaskResult.OK;
                 }
             default:
@@ -145,7 +147,7 @@ public class TaskWorker {
                         "undetermined issue in correctly interpreted request: "
                                 + interpretResults.get(0).toString() + " check result: " + checkResult + " for: "
                                 + referringOrderNumber + " " + orderType + " ");
-                insertNewOrder(referringOrderNumber, message, patient, ExternalOrderStatus.NonConforming);
+                insertNewOrder(referringOrderNumber, message, patient, priority, ExternalOrderStatus.NonConforming);
                 return TaskResult.MESSAGE_ERROR;
             }
 
@@ -164,7 +166,7 @@ public class TaskWorker {
         } else if (interpretResults.get(0) == InterpreterResults.UNSUPPORTED_TESTS) {
             LogEvent.logDebug(this.getClass().getName(), "handleOrderRequest",
                     "TaskWorker:unsupported tests: " + referringOrderNumber + orderType);
-            insertNewOrder(referringOrderNumber, message, patient, ExternalOrderStatus.NonConforming);
+            insertNewOrder(referringOrderNumber, message, patient, priority, ExternalOrderStatus.NonConforming);
             return TaskResult.MESSAGE_ERROR;
         } else if (interpretResults.get(0) == InterpreterResults.MISSING_PATIENT_GUID
                 || interpretResults.get(0) == InterpreterResults.MISSING_PATIENT_DOB
@@ -172,12 +174,12 @@ public class TaskWorker {
                 || interpretResults.get(0) == InterpreterResults.MISSING_PATIENT_IDENTIFIER) {
             LogEvent.logDebug(this.getClass().getName(), "handleOrderRequest", "missing patient info: "
                     + interpretResults.get(0).toString() + "for" + referringOrderNumber + " " + orderType + " ");
-            insertNewOrder(referringOrderNumber, message, patient, ExternalOrderStatus.NonConforming);
+            insertNewOrder(referringOrderNumber, message, patient, priority, ExternalOrderStatus.NonConforming);
             return TaskResult.MESSAGE_ERROR;
         } else {
             LogEvent.logDebug(this.getClass().getName(), "handleOrderRequest", "undetermined issue: "
                     + interpretResults.get(0).toString() + " for: " + referringOrderNumber + " " + orderType + " ");
-            insertNewOrder(referringOrderNumber, message, patient, ExternalOrderStatus.NonConforming);
+            insertNewOrder(referringOrderNumber, message, patient, priority, ExternalOrderStatus.NonConforming);
             return TaskResult.MESSAGE_ERROR;
         }
 
@@ -189,7 +191,7 @@ public class TaskWorker {
     }
 
     private void insertNewOrder(String referringOrderNumber, String message, MessagePatient patient,
-            ExternalOrderStatus eoStatus) {
+            OrderPriority orderPriority ,ExternalOrderStatus eoStatus) {
         LogEvent.logDebug(this.getClass().getName(), "insertNewOrder",
                 "TaskWorker:insertNewOrder: " + referringOrderNumber);
         ElectronicOrder eOrder = new ElectronicOrder();
@@ -199,6 +201,7 @@ public class TaskWorker {
         eOrder.setOrderTimestamp(DateUtil.getNowAsTimestamp());
         eOrder.setSysUserId(persister.getServiceUserId());
         eOrder.setType(ElectronicOrderType.FHIR);
+        eOrder.setPriority(orderPriority);
 
         persister.persist(patient, eOrder);
     }

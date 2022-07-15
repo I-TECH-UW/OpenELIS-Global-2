@@ -44,7 +44,7 @@ public enum ObservationHistoryList {
     SIMPLIFIED_NATIONALITIES("Simplified Nationality"), YES_NO_UNKNOWN("Yes No Unknown"), YES_NO_NA("Yes No NA"),
     YES_NO("Yes No"), YES_NO_UNKNOWN_NA(YES_NO_NA, "Unknown", true),
     YES_NO_UNKNOWN_NA_NOTSPEC(YES_NO_UNKNOWN_NA, "NotSpeced", true), AIDS_STAGES("AIDS Stages"),
-    HIV_STATUSES("HIVResult"),
+    HIV_STATUSES("HIVResult"),HIV_TYPES("HIV Status"),
 
     ARV_DISEASES("ARV Disease", false), ARV_DISEASES_SHORT(ARV_DISEASES, "DiarrheaC", false), /*
                                                                                                * same as ARV_DISEASES

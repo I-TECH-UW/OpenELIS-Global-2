@@ -43,105 +43,11 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider, String> implements Pr
         super(Provider.class);
     }
 
-//	@Override
-//	public void deleteData(List providers) throws LIMSRuntimeException {
-//		// add to audit trail
-//		try {
-//
-//			for (int i = 0; i < providers.size(); i++) {
-//				Provider data = (Provider) providers.get(i);
-//
-//				Provider oldData = readProvider(data.getId());
-//				Provider newData = new Provider();
-//
-//				String sysUserId = data.getSysUserId();
-//				String event = IActionConstants.AUDIT_TRAIL_DELETE;
-//				String tableName = "PROVIDER";
-//				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-//			}
-//		} catch (RuntimeException e) {
-//			// bugzilla 2154
-//			LogEvent.logError("ProviderDAOImpl", "AuditTrail deleteData()", e.toString());
-//			throw new LIMSRuntimeException("Error in Provider AuditTrail deleteData()", e);
-//		}
-//
-//		try {
-//			for (int i = 0; i < providers.size(); i++) {
-//				Provider data = (Provider) providers.get(i);
-//				// bugzilla 2206
-//				data = readProvider(data.getId());
-//				entityManager.unwrap(Session.class).delete(data);
-//				// entityManager.unwrap(Session.class).flush(); // CSL remove old
-//				// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//			}
-//		} catch (RuntimeException e) {
-//			// bugzilla 2154
-//			LogEvent.logError("ProviderDAOImpl", "deleteData()", e.toString());
-//			throw new LIMSRuntimeException("Error in Provider deleteData()", e);
-//		}
-//	}
-
-//	@Override
-//	public boolean insertData(Provider provider) throws LIMSRuntimeException {
-//
-//		try {
-//			String id = (String) entityManager.unwrap(Session.class).save(provider);
-//			provider.setId(id);
-//
-//			String sysUserId = provider.getSysUserId();
-//			String tableName = "PROVIDER";
-//			auditDAO.saveNewHistory(provider, sysUserId, tableName);
-//
-//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//
-//		} catch (RuntimeException e) {
-//			LogEvent.logError("ProviderDAOImpl", "insertData()", e.toString());
-//			throw new LIMSRuntimeException("Error in Provider insertData()", e);
-//		}
-//
-//		return true;
-//	}
-
-//	@Override
-//	public void updateData(Provider provider) throws LIMSRuntimeException {
-//
-//		Provider oldData = readProvider(provider.getId());
-//		Provider newData = provider;
-//
-//		// add to audit trail
-//		try {
-//
-//			String sysUserId = provider.getSysUserId();
-//			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
-//			String tableName = "PROVIDER";
-//			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-//		} catch (RuntimeException e) {
-//			// bugzilla 2154
-//			LogEvent.logError("ProviderDAOImpl", "AuditTrail updateData()", e.toString());
-//			throw new LIMSRuntimeException("Error in Provider AuditTrail updateData()", e);
-//		}
-//
-//		try {
-//			entityManager.unwrap(Session.class).merge(provider);
-//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//			// entityManager.unwrap(Session.class).evict // CSL remove old(provider);
-//			// entityManager.unwrap(Session.class).refresh // CSL remove old(provider);
-//		} catch (RuntimeException e) {
-//			// bugzilla 2154
-//			LogEvent.logError("ProviderDAOImpl", "updateData()", e.toString());
-//			throw new LIMSRuntimeException("Error in Provider updateData()", e);
-//		}
-//	}
-
     @Override
     @Transactional(readOnly = true)
     public void getData(Provider provider) throws LIMSRuntimeException {
         try {
             Provider prov = entityManager.unwrap(Session.class).get(Provider.class, provider.getId());
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
             if (prov != null) {
                 PropertyUtils.copyProperties(provider, prov);
             } else {
@@ -150,7 +56,7 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider, String> implements Pr
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
-            throw new LIMSRuntimeException("Error in Provider getData()", e);
+            throw new LIMSRuntimeException("Error in ProviderDAOImpl getData()", e);
         }
     }
 
@@ -162,12 +68,10 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider, String> implements Pr
             String sql = "from Provider";
             org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
             list = query.list();
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
-            throw new LIMSRuntimeException("Error in Provider getAllProviders()", e);
+            throw new LIMSRuntimeException("Error in ProviderDAOImpl getAllProviders()", e);
         }
 
         return list;
@@ -187,12 +91,10 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider, String> implements Pr
             query.setMaxResults(endingRecNo - 1);
 
             list = query.list();
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
-            throw new LIMSRuntimeException("Error in Provider getPageOfProviders()", e);
+            throw new LIMSRuntimeException("Error in ProviderDAOImpl getPageOfProviders()", e);
         }
 
         return list;
@@ -202,12 +104,10 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider, String> implements Pr
         Provider provider = null;
         try {
             provider = entityManager.unwrap(Session.class).get(Provider.class, idString);
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
-            throw new LIMSRuntimeException("Error in Provider readProvider()", e);
+            throw new LIMSRuntimeException("Error in ProviderDAOImpl readProvider()", e);
         }
 
         return provider;
@@ -225,11 +125,9 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider, String> implements Pr
             query.setInteger("personId", Integer.parseInt(person.getId()));
 
             list = query.list();
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
-            throw new LIMSRuntimeException("Error in Provider getProviderByPerson()", e);
+            throw new LIMSRuntimeException("Error in ProviderDAOImpl getProviderByPerson()", e);
         }
 
         if (list.size() > 0) {
@@ -237,5 +135,48 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider, String> implements Pr
         } else {
             return null;
         }
+    }
+
+    @Override
+    public int getTotalSearchedProviderCount(String parameter) {
+        List<Provider> list = null;
+        try {
+            String sql = "from Provider p where lower(p.person.firstName) like concat('%', lower(:searchValue), '%') "
+                    + "or lower(p.person.lastName) like concat('%', lower(:searchValue), '%') "
+                    + "or lower(concat(p.person.firstName, ' ', p.person.lastName)) like concat('%', lower(:searchValue), '%')";
+            Query<Provider> query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setParameter("searchValue", parameter);
+
+            list = query.list();
+        } catch (RuntimeException e) {
+            LogEvent.logError(e.toString(), e);
+            throw new LIMSRuntimeException("Error in ProviderDAOImpl getTotalSearchedProviderCount()", e);
+        }
+
+        return list.size();
+    }
+
+    @Override
+    public List<Provider> getPagesOfSearchedProviders(int startingRecNo, String parameter) {
+        List<Provider> list = new Vector<>();
+        try {
+            // calculate maxRow to be one more than the page size
+            int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
+
+            String sql = "from Provider p where lower(p.person.firstName) like concat('%', lower(:searchValue), '%') "
+                    + "or lower(p.person.lastName) like concat('%', lower(:searchValue), '%') "
+                    + "or lower(concat(p.person.firstName, ' ', p.person.lastName)) like concat('%', lower(:searchValue), '%') ORDER BY p.active DESC, p.person.lastName";
+            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setParameter("searchValue", parameter);
+            query.setFirstResult(startingRecNo - 1);
+            query.setMaxResults(endingRecNo - 1);
+
+            list = query.list();
+        } catch (RuntimeException e) {
+            LogEvent.logError(e.toString(), e);
+            throw new LIMSRuntimeException("Error in ProviderDAOImpl getPagesOfSearchedProviders()", e);
+        }
+
+        return list;
     }
 }

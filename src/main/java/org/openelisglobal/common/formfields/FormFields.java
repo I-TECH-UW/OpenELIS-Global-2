@@ -19,6 +19,7 @@ package org.openelisglobal.common.formfields;
 
 import java.util.Map;
 
+import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.internationalization.MessageUtil;
 
 /*
@@ -89,7 +90,7 @@ public class FormFields {
         SampleEntryProviderEmail, // Include provider email for sample entry
         SampleEntryHealthFacilityAddress, // Include referral address
         SampleEntrySampleCollector, // Include name of sample collector
-        SampleEntryRequesterLastNameRequired, // Is the requester name required
+        SampleEntryRequesterPersonRequired, // Is the requester person required
         SAMPLE_ENTRY_USE_REFFERING_PATIENT_NUMBER, // Include referral patient number
         PatientPhone, // Include patient phone with patient info
         PatientEmail, // Include patient email with patient info
@@ -129,6 +130,10 @@ public class FormFields {
     }
 
     public String getLabel(FormFields.Field field) {
-        return MessageUtil.getMessage(fields.get(field).getLabelKey());
+        FormField formField = fields.get(field);
+        if (!GenericValidator.isBlankOrNull(formField.getLabel())) {
+            return formField.getLabel();
+        }
+        return MessageUtil.getMessage(formField.getLabelKey());
     }
 }

@@ -17,6 +17,9 @@
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
+<!-- <script type="text/javascript" src="scripts/jquery.ui.js?"></script> -->
+<script type="text/javascript"
+        src="scripts/jquery.asmselect.js?"></script>
 <script type="text/javascript" src="scripts/utilities.js?"></script>
 <script type="text/javascript" src="scripts/testReflex.js?" ></script>
 
