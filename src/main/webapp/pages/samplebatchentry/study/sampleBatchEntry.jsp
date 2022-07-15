@@ -207,7 +207,7 @@ jQuery(document).ready(function () {
 			<tr>
 				<td>
 					<spring:message code="sample.batchentry.barcode.label.facilityid" /> 
-					: <%= request.getAttribute("facilityName") %>
+					: <%= request.getAttribute("facilityName") escapXml="true" %>
 					<form:hidden path="sampleOrderItems.referringSiteId" id="requesterId"/>
 						
 				</td>
