@@ -335,11 +335,13 @@
     	<c:if test="${form.sampleOrderItems.readOnly == false}" >
     	
     		<spring:message code="error.site.invalid" var="invalidSite"/>
+    	    <spring:message code="sample.entry.project.siteMaxMsg" var="siteMaxMessage"/>
     		<form:select path="sampleOrderItems.referringSiteId" 
     				 id="requesterId" 
                      onkeyup="capitalizeValue( this.value );"
                      capitalize="true"
                      invalidlabid='${invalidSite}'
+                     maxrepmsg='${siteMaxMessage}'
        				 clearNonMatching="<%=restrictNewReferringSiteEntries%>"
                       >
             <option ></option>
@@ -424,8 +426,10 @@
     <td><spring:message code="error.provider.ininvalid" var="invalidProvider"/>
     	<form:select id="providerPersonId" path="sampleOrderItems.providerPersonId" 
                      capitalize="false"
-                     invalidlabid='${invalidProvider }'
-       				 clearNonMatching="false" >
+                     invalidlabid='${invalidProvider}'
+       				 clearNonMatching="false"
+                     maxrepmsg='maximum reached'
+                      >
     		<option></option>
     		<form:options items="${form.sampleOrderItems.providersList}" itemValue="id" itemLabel="value" />
     	</form:select>
@@ -693,6 +697,10 @@
                 setCorrectSave();
         	}
         	
+        }
+        
+        if (providerDropdown.val()) {
+        	autocompleteResultCallBack('providerPersonId', providerDropdown.val());
         }
         
         
