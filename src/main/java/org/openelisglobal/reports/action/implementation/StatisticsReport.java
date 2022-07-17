@@ -64,23 +64,60 @@ public class StatisticsReport extends IndicatorReport implements IReportCreator,
     private void setTestandSample(){
         reportItems = new ArrayList<>();
         StatisticsReportData data = new StatisticsReportData();
-        List<String> labUnits = new ArrayList<>();
-        labUnits.add("Bio Chem");
-        labUnits.add("Serorlogy");
-       // data.setLabSections(labUnits);
-       // data.setPriority(OrderPriority.FUTURE_STAT);
-        data.setSamples(4);
-        data.setTests(4);
         data.setTestName("CD4 count");
+        data.setTestsJan(1);
+        data.setSamplesJan(1);
+        data.setTestsFeb(2);
+        data.setSamplesFeb(2);
+        data.setTestsMar(3);
+        data.setSamplesMar(3);
+        data.setTestsApr(4);
+        data.setSamplesApr(4);
+        data.setTestsMay(5);
+        data.setSamplesMay(5);
+        data.setTestsJun(6);
+        data.setSamplesJun(6);
+        data.setTestsJul(7);
+        data.setSamplesJul(7);
+        data.setTestsAug(8);
+        data.setSamplesAug(8);
+        data.setTestsSep(9);
+        data.setSamplesSep(9);
+        data.setTestsOct(10);
+        data.setSamplesOct(10);
+        data.setTestsNov(11);
+        data.setSamplesNov(11);
+        data.setTestsDec(12);
+        data.setSamplesDec(12);
+        
         //data.setYear("2022");
 
         StatisticsReportData data2 = new StatisticsReportData();
-       // data2.setLabSections(labUnits);
-       // data2.setPriority(OrderPriority.FUTURE_STAT);
-        data2.setSamples(6);
-        data2.setTests(6);
         data2.setTestName("CD4 percent");
-        //data2.setYear("2022");
+        data2.setTestsJan(10);
+        data2.setSamplesJan(10);
+        data2.setTestsFeb(20);
+        data2.setSamplesFeb(20);
+        data2.setTestsMar(30);
+        data2.setSamplesMar(30);
+        data2.setTestsApr(40);
+        data2.setSamplesApr(40);
+        data2.setTestsMay(50);
+        data2.setSamplesMay(50);
+        data2.setTestsJun(60);
+        data2.setSamplesJun(60);
+        data2.setTestsJul(70);
+        data2.setSamplesJul(70);
+        data2.setTestsAug(80);
+        data2.setSamplesAug(80);
+        data2.setTestsSep(90);
+        data2.setSamplesSep(90);
+        data2.setTestsOct(100);
+        data2.setSamplesOct(100);
+        data2.setTestsNov(110);
+        data2.setSamplesNov(110);
+        data2.setTestsDec(120);
+        data2.setSamplesDec(120);
 
         reportItems.add(data);
         reportItems.add(data2);
@@ -91,8 +128,8 @@ public class StatisticsReport extends IndicatorReport implements IReportCreator,
     protected void createReportParameters() {
         super.createReportParameters();
 
-        reportParameters.put("startDate", lowerDateRange);
-        reportParameters.put("stopDate", upperDateRange);
+        reportParameters.put("startDate", "12-12-12");
+        reportParameters.put("stopDate","14-14-14");
         reportParameters.put("siteId", ConfigurationProperties.getInstance().getPropertyValue(Property.SiteCode));
         reportParameters.put("directorName",
                 ConfigurationProperties.getInstance().getPropertyValue(Property.labDirectorName));
