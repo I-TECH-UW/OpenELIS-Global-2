@@ -1,29 +1,46 @@
 package org.openelisglobal.reports.action.implementation;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
+import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.common.util.DateUtil;
+import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
+import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.reports.action.implementation.reportBeans.StatisticsReportData;
 import org.openelisglobal.reports.form.ReportForm;
-import org.openelisglobal.sample.valueholder.OrderPriority;
+import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.analysis.service.AnalysisService;
+import org.openelisglobal.analysis.valueholder.Analysis;
 
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
-import net.sf.jasperreports.engine.JRDataSource;
 
 public class StatisticsReport extends IndicatorReport implements IReportCreator, IReportParameterSetter {
 
     private List<StatisticsReportData> reportItems;
+
+    @Override
+    public void setRequestParameters(ReportForm form) {
+        form.setUseStatisticsParams(true);
+        new ReportSpecificationList(DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION),
+                MessageUtil.getMessage("workplan.unit.types")).setRequestParameters(form);
+        form.setYearList(getYearList());
+        form.setPriorityList(DisplayListService.getInstance().getList(DisplayListService.ListType.ORDER_PRIORITY)); 
+        form.setReceptionTimeList(getReceptionTimeList());       
+    }
     
     @Override
     public void initializeReport(ReportForm form) {
         super.initializeReport();
         createReportParameters() ;
         setTestandSample();
-        
+        createReportData(form); 
     }
 
     @Override
@@ -123,6 +140,14 @@ public class StatisticsReport extends IndicatorReport implements IReportCreator,
         reportItems.add(data2);
         
     }
+    public void createReportData(ReportForm form){
+        AnalysisService analysisService = SpringContext.getBean(AnalysisService.class);
+        Date firstDate = DateUtil.getFistDayOfTheYear(Integer.valueOf(form.getUpperYear()));
+
+        Date lastDate = DateUtil.getLastDayOfTheYear(Integer.valueOf(form.getUpperYear()));
+        List<Analysis> yearAnalysis = analysisService.getAnalysisStartedOrCompletedInDateRange(DateUtil.convertDateTimeToSqlDate(firstDate), DateUtil.convertDateTimeToSqlDate(lastDate));
+        
+    }
 
     @Override
     protected void createReportParameters() {
@@ -147,5 +172,21 @@ public class StatisticsReport extends IndicatorReport implements IReportCreator,
         reportParameters.put("priority", "ASAP_FUTURE");
     }
 
-    
+    private List<IdValuePair> getYearList() {
+        List<IdValuePair> list = new ArrayList<>();
+        int currentYear = DateUtil.getCurrentYear();
+        for (int i = 15; i >= 0; i--) {
+            String year = String.valueOf(currentYear - i);
+            list.add(new IdValuePair(year, year));
+        }
+        Collections.reverse(list);
+        return list;
+    }
+
+    private List<IdValuePair> getReceptionTimeList() {
+        List<IdValuePair> list = new ArrayList<>();
+        list.add(new IdValuePair(ReportForm.RecetionTime.NORMAL_WORK_HOURS.name(),  MessageUtil.getMessage("report.normalWorkingHours")));
+        list.add(new IdValuePair(ReportForm.RecetionTime.OUT_OF_NORMAL_WORK_HOURS.name(),  MessageUtil.getMessage("report.outofnormalWorkingHours")));
+        return list;
+    }
 }

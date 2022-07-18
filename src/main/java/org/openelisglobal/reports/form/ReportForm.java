@@ -11,6 +11,7 @@ import org.openelisglobal.organization.valueholder.Organization;
 import org.openelisglobal.patient.action.bean.PatientSearch;
 import org.openelisglobal.project.valueholder.Project;
 import org.openelisglobal.reports.action.implementation.ReportSpecificationList;
+import org.openelisglobal.sample.valueholder.OrderPriority;
 import org.openelisglobal.validation.annotations.ValidDate;
 
 //values not preserved, so security validation not a large concern
@@ -30,6 +31,11 @@ public class ReportForm extends BaseForm {
             return this.messageKey;
         }
 
+    }
+
+    public enum RecetionTime {
+        NORMAL_WORK_HOURS,
+        OUT_OF_NORMAL_WORK_HOURS;
     }
 
     private boolean noRequestSpecifications = false;
@@ -136,6 +142,20 @@ public class ReportForm extends BaseForm {
     private boolean onlyResults;
 
     private DateType dateType;
+
+    private List<OrderPriority> priority;
+
+    private RecetionTime receptionTime ;
+
+    private List<String> labSections;
+
+    private Boolean useStatisticsParams = false;
+
+    // for display
+    private List<IdValuePair> priorityList;
+
+    // for display
+    private List<IdValuePair> receptionTimeList;
 
     public ReportForm() {
         setFormName("ReportForm");
@@ -530,5 +550,53 @@ public class ReportForm extends BaseForm {
 
     public void setDateType(DateType dateType) {
         this.dateType = dateType;
+    }
+
+    public List<OrderPriority> getPriority() {
+        return priority;
+    }
+
+    public void setPriority(List<OrderPriority> priority) {
+        this.priority = priority;
+    }
+
+    public RecetionTime getReceptionTime() {
+        return receptionTime;
+    }
+
+    public void setReceptionTime(RecetionTime receptionTime) {
+        this.receptionTime = receptionTime;
+    }
+
+    public List<String> getLabSections() {
+        return labSections;
+    }
+
+    public void setLabSections(List<String> labSections) {
+        this.labSections = labSections;
+    }
+
+    public List<IdValuePair> getPriorityList() {
+        return priorityList;
+    }
+
+    public void setPriorityList(List<IdValuePair> priorityList) {
+        this.priorityList = priorityList;
+    }
+
+    public List<IdValuePair> getReceptionTimeList() {
+        return receptionTimeList;
+    }
+
+    public void setReceptionTimeList(List<IdValuePair> receptionTimeList) {
+        this.receptionTimeList = receptionTimeList;
+    }
+
+    public Boolean getUseStatisticsParams() {
+        return useStatisticsParams;
+    }
+
+    public void setUseStatisticsParams(Boolean useStatisticsParams) {
+        this.useStatisticsParams = useStatisticsParams;
     }
 }

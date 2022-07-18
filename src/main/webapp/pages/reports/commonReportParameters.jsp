@@ -330,7 +330,7 @@ function setSaveButton() {
   			<div id="dateWarning" ></div>
 	</div>
   </c:if>
-    <c:if test="${not empty form.selectList}">
+    <c:if test="${not empty form.selectList && form.useStatisticsParams == false}">
    	<div>
        <c:set var="selectList" value="${form.selectList}" />
        <span style="padding-left: 10px"><label for="selectList">
@@ -341,6 +341,72 @@ function setSaveButton() {
 	</div>
     </c:if>
 </c:if>
+ <c:if test="${form.useStatisticsParams}">
+	<div>
+	        <spring:message code="report.select.labUnit"/><br>
+			<form:select path="labSections" cssClass="text" id="selectList">
+				<option value="0">All Lab Section</option><form:options items="${form.selectList.list}" itemLabel="value" itemValue="id" />
+			</form:select>
+			<br>
+	</div>
+	<div>
+	       <spring:message code="report.select.priority"/><br>
+	 <table>
+	       <tr>
+				<td>
+					<input type="checkbox" id="allPriorities">
+				</td>
+				<td>
+					<spring:message code="report.all"/> 
+				</td>
+			</tr>
+		<c:forEach items="${form.priorityList}" var="oderPriority" varStatus="iter">
+		    <tr>
+				<td>
+					<form:checkbox path="priority" value="${oderPriority.id}"/>
+				</td>
+				<td>
+					<c:out value="${oderPriority.value}"/>
+				</td>
+			</tr>
+		</c:forEach>
+	  </table>	
+	  <br>
+	</div>
+	<div>
+	           <spring:message code="report.select.timeFrame"/>
+			   <spring:message code="report.select.timeFrame.note"/>
+			   <br>
+		<table>
+		<tr>
+				<td>
+					<input type="checkbox" id="allTimes">
+				</td>
+				<td>
+					<spring:message code="report.all"/> 
+				</td>
+			</tr>
+		<c:forEach items="${form.receptionTimeList}" var="time" varStatus="iter">
+		    <tr>
+				<td>
+					<form:checkbox path="receptionTime" value="${time.id}" />
+				</td>
+				<td>
+					<c:out value="${time.value}"/>
+				</td>
+			</tr>
+		</c:forEach>
+	  </table>	
+	  <br>
+	</div>
+	<div>
+	    <spring:message code="report.select.year"/><br> 
+		<form:select path="upperYear" cssClass="text" id="upperYear" >
+			<form:options items="${form.yearList}" itemLabel="value" itemValue="id" />
+		</form:select>
+	</div>
+
+ </c:if>
 
 <br/>
 <div align="left" style="width:80%" >
