@@ -10,7 +10,7 @@ var autocompleteResultCallBack = null; // the callback for onchange
 				select = this.element.hide(),
 				selected = select.children( ":selected" ),
 				selectId = select.attr("id"),
-				maxRepMsg = select.attr("maxRepMsg"),
+				maxRepMsg = select.attr("maxrepmsg"),
 				value = selected.val() ? selected.text() : "",
 				capitalize = "true" === select.attr("capitalize"),
 				invalidID = select.attr("invalidlabid"),

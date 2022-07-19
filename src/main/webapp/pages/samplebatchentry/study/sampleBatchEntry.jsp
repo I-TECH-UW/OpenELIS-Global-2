@@ -72,23 +72,15 @@ jQuery(document).ready(function() {
 });
 
 jQuery(document).ready(function () {
-    var dropdown = jQuery("select#requesterId");
-    autoCompleteWidth = dropdown.width() + 66 + 'px';
-    <% if(restrictNewReferringSiteEntries) { %>
-   			clearNonMatching = true;
-    <% } else {%>
-    		clearNonMatching = false;
-    <% } %>
-    capitialize = true;
-    // Actually executes autocomplete
-    dropdown.combobox();
-    invalidLabID = '<spring:message code="error.site.invalid"/>'; // Alert if value is typed that's not on list. FIX - add bad message icon
-    maxRepMsg = '<spring:message code="sample.entry.project.siteMaxMsg"/>';
+//     var dropdown = jQuery("select#requesterId");
+//     autoCompleteWidth = dropdown.width() + 66 + 'px';
+//     // Actually executes autocomplete
+//     dropdown.combobox();
 
-    resultCallBack = function (textValue) {
-        siteListChanged(textValue);
-    	setSave();
-    };
+//     autocompleteResultCallBack = function (selectId, textValue) {
+//         siteListChanged(textValue);
+//     	setSave();
+//     };
 });
 </script>
 <div class="hidden-fields">

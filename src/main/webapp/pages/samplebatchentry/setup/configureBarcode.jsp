@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" %>
 <%@ page import="org.openelisglobal.common.action.IActionConstants,
+                 org.openelisglobal.common.formfields.FormFields.Field,
+                 org.openelisglobal.common.formfields.FormFields, 
                  org.openelisglobal.common.util.ConfigurationProperties,
                  org.openelisglobal.common.util.ConfigurationProperties.Property" %>
 <%@ page isELIgnored="false" %>
@@ -11,9 +13,11 @@
 
 <%
 	boolean restrictNewReferringSiteEntries = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.restrictFreeTextRefSiteEntry, "true");
+    boolean useSiteDepartment = FormFields.getInstance().useField(Field.SITE_DEPARTMENT );
 %>
 
 <script type="text/javascript" >
+var useSiteDepartment = <%= useSiteDepartment %>;
 
 function togglePatientInfo() {
 	if (document.getElementsByName('patientInfoCheck')[0].disabled == false) {
@@ -68,70 +72,50 @@ function siteListChanged(textValue) {
     if (siteList.selectedIndex == 0 || siteList.options[siteList.selectedIndex].label != textValue) {
         $("newRequesterName").value = textValue;
     }
+	if ( useSiteDepartment ) {
+		if(document.getElementById("requesterId").selectedIndex != 0){
+			getDepartmentsForSiteClinic( document.getElementById("requesterId").value, "", siteDepartmentSuccess, null);
+		} 
+	}
+}
+
+function siteDepartmentSuccess (xhr) {
+    console.log(xhr.responseText);
+    var message = xhr.responseXML.getElementsByTagName("message").item(0).firstChild.nodeValue;
+	var departments = xhr.responseXML.getElementsByTagName("formfield").item(0).childNodes[0].childNodes;
+	var selected = xhr.responseXML.getElementsByTagName("formfield").item(0).childNodes[1];
+	var isValid = message == "<%=IActionConstants.VALID%>";
+	var requesterDepartment = jQuery("#requesterDepartmentId");
+	var i = 0;
+
+	requesterDepartment.disabled = "";
+	if( isValid ){
+		requesterDepartment.children('option').remove();
+		requesterDepartment.append(new Option('', ''));
+		for( ;i < departments.length; ++i){
+// 						is this supposed to be value value or value id?
+		requesterDepartment.append(
+				new Option(departments[i].attributes.getNamedItem("value").value, 
+					departments[i].attributes.getNamedItem("id").value));
+		}
+	}
+	
+	if( selected){
+		requesterDepartment.selectedIndex = getSelectIndexFor( "requesterDepartmentId", selected.childNodes[0].nodeValue);
+	}
 }
 
 jQuery(document).ready(function () {
     var dropdown = jQuery("select#requesterId");
     autoCompleteWidth = dropdown.width() + 66 + 'px';
-    <% if(restrictNewReferringSiteEntries) { %>
-   			clearNonMatching = true;
-    <% } else {%>
-    		clearNonMatching = false;
-    <% } %>
-    capitialize = true;
     // Actually executes autocomplete
     dropdown.combobox();
-    invalidLabID = '<spring:message code="error.site.invalid"/>'; // Alert if value is typed that's not on list. FIX - add bad message icon
-    maxRepMsg = '<spring:message code="sample.entry.project.siteMaxMsg"/>';
-
-    resultCallBack = function (textValue) {
-        siteListChanged(textValue);
-    	processFacilityIDChange();
-       // setOrderModified();
-        //setCorrectSave();
-    };
 
 	autocompleteResultCallBack = function (selectId, value) {
-		fetchDepartmentList();
+        siteListChanged(value);
+    	processFacilityIDChange();
 	}
 });
-
- function fetchDepartmentList() {
-        var siteList = $("requesterId");
-        //if the index is 0 it is a new entry, if it is not then the textValue may include the index value
-        // create new entry has been removed gnr
-        if (siteList.selectedIndex != 0) {
-           if(document.getElementById("requesterId").selectedIndex != 0){
-    			getDepartmentsForSiteClinic( document.getElementById("requesterId").value, "", siteDepartmentSuccess, null);
-    		} 
-        } 
-    }
-
-	function siteDepartmentSuccess (xhr) {
-        console.log(xhr.responseText);
-        var message = xhr.responseXML.getElementsByTagName("message").item(0).firstChild.nodeValue;
-    	var departments = xhr.responseXML.getElementsByTagName("formfield").item(0).childNodes[0].childNodes;
-    	var selected = xhr.responseXML.getElementsByTagName("formfield").item(0).childNodes[1];
-    	var isValid = message == "<%=IActionConstants.VALID%>";
-    	var requesterDepartment = jQuery("#requesterDepartmentId");
-    	var i = 0;
-
-    	requesterDepartment.disabled = "";
-    	if( isValid ){
-    		requesterDepartment.children('option').remove();
-    		requesterDepartment.append(new Option('', ''));
-    		for( ;i < departments.length; ++i){
-//     						is this supposed to be value value or value id?
-    		requesterDepartment.append(
-    				new Option(departments[i].attributes.getNamedItem("value").value, 
-    					departments[i].attributes.getNamedItem("id").value));
-    		}
-    	}
-    	
-    	if( selected){
-    		requesterDepartment.selectedIndex = getSelectIndexFor( "requesterDepartmentId", selected.childNodes[0].nodeValue);
-    	}
-    }
 
 </script>
 <form:hidden path="sampleOrderItems.newRequesterName" id="newRequesterName"/>
@@ -162,8 +146,18 @@ Barcode Method :
 		</td>
 		<td>
 			<c:if test="${not form.sampleOrderItems.readOnly}">
-		    	<form:select path="facilityID" id="requesterId" onchange="siteListChanged(this);processFacilityIDChange();" onkeyup="capitalizeValue( this.value );">
-		    	
+			
+    		<spring:message code="error.site.invalid" var="invalidSite"/>
+    	    <spring:message code="sample.entry.project.siteMaxMsg" var="siteMaxMessage"/>
+		    	<form:select path="facilityID" 
+		    	     id="requesterId" 
+		    	     onchange="siteListChanged(this);processFacilityIDChange();" 
+		    	     onkeyup="capitalizeValue( this.value );"
+                     capitalize="true"
+                     invalidlabid='${invalidSite}'
+                     maxrepmsg='${siteMaxMessage}'
+       				 clearNonMatching="<%=restrictNewReferringSiteEntries%>"
+       				 >
 		            <option value=""></option>
 		            <form:options items="${form.sampleOrderItems.referringSiteList}" itemValue="id" itemLabel="value"/>
 		    	</form:select>
@@ -173,6 +167,7 @@ Barcode Method :
 		    </c:if>
 		</td>
 	</tr>
+	<% if( useSiteDepartment ){ %>
 	 <tr>
 	    <c:if test="${not form.sampleOrderItems.readOnly}">
 			<td></td>
@@ -189,6 +184,7 @@ Barcode Method :
 			</td>
 		</c:if>
 	</tr>
+	<% } %>
 	<tr>
 		<td></td>
 		<td>

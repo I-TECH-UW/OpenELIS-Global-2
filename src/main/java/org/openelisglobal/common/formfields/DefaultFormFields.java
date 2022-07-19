@@ -56,13 +56,13 @@ public class DefaultFormFields extends AFormFields {
         setFieldTrue(Field.SampleEntryRequestingSiteSampleId);
         setFieldTrue(Field.ADDRESS_COMMUNE);
         setFieldTrue(Field.ADDRESS_VILLAGE);
+        setFieldTrue(Field.SITE_DEPARTMENT);
 
         setFieldFalse(Field.OrgState);
         setFieldFalse(Field.ZipCode);
         setFieldFalse(Field.MLS);
         setFieldFalse(Field.CollectionTime);
         setFieldFalse(Field.RequesterSiteList);
-        setFieldFalse(Field.SITE_DEPARTMENT);
         setFieldFalse(Field.InlineOrganizationTypes);
         setFieldFalse(Field.SubjectNumber);
         setFieldFalse(Field.ADDRESS_DEPARTMENT);
