@@ -33,7 +33,7 @@ public class ReportForm extends BaseForm {
 
     }
 
-    public enum RecetionTime {
+    public enum ReceptionTime {
         NORMAL_WORK_HOURS,
         OUT_OF_NORMAL_WORK_HOURS;
     }
@@ -145,7 +145,7 @@ public class ReportForm extends BaseForm {
 
     private List<OrderPriority> priority;
 
-    private RecetionTime receptionTime ;
+    private List<ReceptionTime> receptionTime ;
 
     private List<String> labSections;
 
@@ -560,14 +560,6 @@ public class ReportForm extends BaseForm {
         this.priority = priority;
     }
 
-    public RecetionTime getReceptionTime() {
-        return receptionTime;
-    }
-
-    public void setReceptionTime(RecetionTime receptionTime) {
-        this.receptionTime = receptionTime;
-    }
-
     public List<String> getLabSections() {
         return labSections;
     }
@@ -598,5 +590,13 @@ public class ReportForm extends BaseForm {
 
     public void setUseStatisticsParams(Boolean useStatisticsParams) {
         this.useStatisticsParams = useStatisticsParams;
+    }
+
+    public List<ReceptionTime> getReceptionTime() {
+        return receptionTime;
+    }
+
+    public void setReceptionTime(List<ReceptionTime> receptionTime) {
+        this.receptionTime = receptionTime;
     }
 }
