@@ -166,7 +166,7 @@
 	<title>
 		<band height="183" splitType="Stretch">
 			<subreport isUsingCache="true">
-				<reportElement x="0" y="0" width="2000" height="136" uuid="32e6302a-7262-4aeb-8153-62ae1110e8a8"/>
+				<reportElement x="430" y="0" width="2000" height="136" uuid="32e6302a-7262-4aeb-8153-62ae1110e8a8"/>
 				<subreportParameter name="labName2">
 					<subreportParameterExpression><![CDATA[$P{labName2}]]></subreportParameterExpression>
 				</subreportParameter>
@@ -237,19 +237,19 @@
 				<textFieldExpression><![CDATA[$R{report.february}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="1" y="80" width="100" height="20" uuid="ae004b97-fb60-4129-a408-eec5f77850dc"/>
+				<reportElement x="2" y="100" width="159" height="20" uuid="ae004b97-fb60-4129-a408-eec5f77850dc"/>
 				<textFieldExpression><![CDATA[$P{year}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="0" y="10" width="100" height="30" uuid="796f0d40-a8f9-4a2b-a638-f3a10f7d940a"/>
+				<reportElement x="0" y="10" width="160" height="30" uuid="796f0d40-a8f9-4a2b-a638-f3a10f7d940a"/>
 				<textFieldExpression><![CDATA[$P{labUnits}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="0" y="40" width="100" height="20" uuid="ceb4f7e5-e89e-47eb-9e8e-60670a7f6bac"/>
+				<reportElement x="0" y="40" width="160" height="30" uuid="ceb4f7e5-e89e-47eb-9e8e-60670a7f6bac"/>
 				<textFieldExpression><![CDATA[$P{workHours}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="3" y="60" width="97" height="20" uuid="8a47293e-2c6e-4242-9cbe-24aed79ba875"/>
+				<reportElement x="3" y="70" width="157" height="30" uuid="8a47293e-2c6e-4242-9cbe-24aed79ba875"/>
 				<textFieldExpression><![CDATA[$P{priority}]]></textFieldExpression>
 			</textField>
 			<textField>
@@ -721,10 +721,10 @@
 		</band>
 	</detail>
 	<columnFooter>
-		<band height="35" splitType="Stretch"/>
+		<band height="91" splitType="Stretch"/>
 	</columnFooter>
 	<pageFooter>
-		<band height="40" splitType="Stretch">
+		<band height="80" splitType="Stretch">
 			<textField>
 				<reportElement x="443" y="16" width="80" height="20" uuid="a17d6c9e-c74f-4aa3-b810-b26b38826f22">
 					<printWhenExpression><![CDATA[$P{usePageNumbers}.equals("true")]]></printWhenExpression>
@@ -738,13 +738,6 @@
 				</reportElement>
 				<textElement verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement stretchType="RelativeToBandHeight" x="4" y="0" width="568" height="14" isPrintWhenDetailOverflows="true" uuid="87b6fe97-2625-42f9-8616-24d096fb61b5"/>
-				<textElement markup="styled">
-					<font size="9"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$R{report.footNote}]]></textFieldExpression>
 			</textField>
 			<textField pattern="MM/dd/yyyy">
 				<reportElement x="284" y="17" width="121" height="20" uuid="1707eafe-e05a-4d28-9497-551a71f629e7"/>

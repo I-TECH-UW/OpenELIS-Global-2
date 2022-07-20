@@ -23,8 +23,8 @@ import org.openelisglobal.reports.action.implementation.reportBeans.StatisticsRe
 import org.openelisglobal.reports.form.ReportForm;
 import org.openelisglobal.reports.form.ReportForm.ReceptionTime;
 import org.openelisglobal.sample.valueholder.OrderPriority;
-import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.test.service.TestSectionService;
 import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.test.valueholder.Test;
 
@@ -67,25 +67,21 @@ public class StatisticsReport extends IndicatorReport implements IReportCreator,
 
     @Override
     protected String getNameForReport() {
-        // TODO Auto-generated method stub
-        return "Mozzy Statistics Report Name";
+        return MessageUtil.getMessage("openreports.stat.aggregate");
     }
 
     @Override
     protected String getLabNameLine1() {
-        // TODO Auto-generated method stub
         return ConfigurationProperties.getInstance().getPropertyValue(Property.SiteName);
     }
 
     @Override
     protected String getLabNameLine2() {
-        // TODO Auto-generated method stub
-        return "Statistics Report 2";
+        return "";
     }
 
     @Override
     public JRDataSource getReportDataSource() throws IllegalStateException {
-        // TODO Auto-generated method stub
         return errorFound ? new JRBeanCollectionDataSource(errorMsgs) : new JRBeanCollectionDataSource(reportItems);
     }
 
@@ -148,31 +144,31 @@ public class StatisticsReport extends IndicatorReport implements IReportCreator,
             }
             // group tests and sample by Month
 
-            Set<Test> janTests = new HashSet<>();
-            Set<Test> febTests = new HashSet<>();
-            Set<Test> marTests = new HashSet<>();
-            Set<Test> aprTests = new HashSet<>();
-            Set<Test> mayTests = new HashSet<>();
-            Set<Test> junTests = new HashSet<>();
-            Set<Test> julTests = new HashSet<>();
-            Set<Test> augTests = new HashSet<>();
-            Set<Test> sepTests = new HashSet<>();
-            Set<Test> octTests = new HashSet<>();
-            Set<Test> novTests = new HashSet<>();
-            Set<Test> decTests = new HashSet<>();
+            Set<String> janTests = new HashSet<>();
+            Set<String> febTests = new HashSet<>();
+            Set<String> marTests = new HashSet<>();
+            Set<String> aprTests = new HashSet<>();
+            Set<String> mayTests = new HashSet<>();
+            Set<String> junTests = new HashSet<>();
+            Set<String> julTests = new HashSet<>();
+            Set<String> augTests = new HashSet<>();
+            Set<String> sepTests = new HashSet<>();
+            Set<String> octTests = new HashSet<>();
+            Set<String> novTests = new HashSet<>();
+            Set<String> decTests = new HashSet<>();
 
-            Set<Sample> janSamples = new HashSet<>();
-            Set<Sample> febSamples = new HashSet<>();
-            Set<Sample> marSamples = new HashSet<>();
-            Set<Sample> aprSamples = new HashSet<>();
-            Set<Sample> maySamples = new HashSet<>();
-            Set<Sample> junSamples = new HashSet<>();
-            Set<Sample> julSamples = new HashSet<>();
-            Set<Sample> augSamples = new HashSet<>();
-            Set<Sample> sepSamples = new HashSet<>();
-            Set<Sample> octSamples = new HashSet<>();
-            Set<Sample> novSamples = new HashSet<>();
-            Set<Sample> decSamples = new HashSet<>();
+            Set<String> janSamples = new HashSet<>();
+            Set<String> febSamples = new HashSet<>();
+            Set<String> marSamples = new HashSet<>();
+            Set<String> aprSamples = new HashSet<>();
+            Set<String> maySamples = new HashSet<>();
+            Set<String> junSamples = new HashSet<>();
+            Set<String> julSamples = new HashSet<>();
+            Set<String> augSamples = new HashSet<>();
+            Set<String> sepSamples = new HashSet<>();
+            Set<String> octSamples = new HashSet<>();
+            Set<String> novSamples = new HashSet<>();
+            Set<String> decSamples = new HashSet<>();
 
             yearAnalysis.forEach(analysis -> {
                 // Test test = analysis.getTest();
@@ -180,63 +176,63 @@ public class StatisticsReport extends IndicatorReport implements IReportCreator,
                 cal.setTime(analysis.getStartedDate());
                 switch (cal.get(Calendar.MONTH)) {
                     case 0: {
-                        janTests.add(analysis.getTest());
-                        janSamples.add(analysis.getSampleItem().getSample());
+                        janTests.add(analysis.getId());
+                        janSamples.add(analysis.getSampleItem().getSample().getAccessionNumber());
                         break;
                     }
                     case 1: {
-                        febTests.add(analysis.getTest());
-                        febSamples.add(analysis.getSampleItem().getSample());
+                        febTests.add(analysis.getId());
+                        febSamples.add(analysis.getSampleItem().getSample().getAccessionNumber());
                         break;
                     }
                     case 2: {
-                        marTests.add(analysis.getTest());
-                        marSamples.add(analysis.getSampleItem().getSample());
+                        marTests.add(analysis.getId());
+                        marSamples.add(analysis.getSampleItem().getSample().getAccessionNumber());
                         break;
                     }
                     case 3: {
-                        aprTests.add(analysis.getTest());
-                        aprSamples.add(analysis.getSampleItem().getSample());
+                        aprTests.add(analysis.getId());
+                        aprSamples.add(analysis.getSampleItem().getSample().getAccessionNumber());
                         break;
                     }
                     case 4: {
-                        mayTests.add(analysis.getTest());
-                        maySamples.add(analysis.getSampleItem().getSample());
+                        mayTests.add(analysis.getId());
+                        maySamples.add(analysis.getSampleItem().getSample().getAccessionNumber());
                         break;
                     }
                     case 5: {
-                        junTests.add(analysis.getTest());
-                        junSamples.add(analysis.getSampleItem().getSample());
+                        junTests.add(analysis.getId());
+                        junSamples.add(analysis.getSampleItem().getSample().getAccessionNumber());
                         break;
                     }
                     case 6: {
-                        julTests.add(analysis.getTest());
-                        julSamples.add(analysis.getSampleItem().getSample());
+                        julTests.add(analysis.getId());
+                        julSamples.add(analysis.getSampleItem().getSample().getAccessionNumber());
                         break;
                     }
                     case 7: {
-                        augTests.add(analysis.getTest());
-                        augSamples.add(analysis.getSampleItem().getSample());
+                        augTests.add(analysis.getId());
+                        augSamples.add(analysis.getSampleItem().getSample().getAccessionNumber());
                         break;
                     }
                     case 8: {
-                        sepTests.add(analysis.getTest());
-                        sepSamples.add(analysis.getSampleItem().getSample());
+                        sepTests.add(analysis.getId());
+                        sepSamples.add(analysis.getSampleItem().getSample().getAccessionNumber());
                         break;
                     }
                     case 9: {
-                        octTests.add(analysis.getTest());
-                        octSamples.add(analysis.getSampleItem().getSample());
+                        octTests.add(analysis.getId());
+                        octSamples.add(analysis.getSampleItem().getSample().getAccessionNumber());
                         break;
                     }
                     case 10: {
-                        novTests.add(analysis.getTest());
-                        novSamples.add(analysis.getSampleItem().getSample());
+                        novTests.add(analysis.getId());
+                        novSamples.add(analysis.getSampleItem().getSample().getAccessionNumber());
                         break;
                     }
                     case 11: {
-                        decTests.add(analysis.getTest());
-                        decSamples.add(analysis.getSampleItem().getSample());
+                        decTests.add(analysis.getId());
+                        decSamples.add(analysis.getSampleItem().getSample().getAccessionNumber());
                         break;
                     }
                 }
@@ -284,11 +280,7 @@ public class StatisticsReport extends IndicatorReport implements IReportCreator,
         reportParameters.put("labName1", getLabNameLine1());
         reportParameters.put("labName2", getLabNameLine2());
         reportParameters.put("reportTitle", getNameForReport());
-        if (ConfigurationProperties.getInstance().isPropertyValueEqual(Property.configurationName, "CI LNSP")) {
-            reportParameters.put("headerName", "CILNSPHeader.jasper");
-        } else {
-            reportParameters.put("headerName", "GeneralHeader.jasper");
-        }
+        reportParameters.put("headerName", "GeneralHeader.jasper");
         reportParameters.put("year", year);
         reportParameters.put("labUnits", labUnits);
         reportParameters.put("workHours", receptionTime);
@@ -329,14 +321,14 @@ public class StatisticsReport extends IndicatorReport implements IReportCreator,
     }
 
     private void inntialiseReportParams(ReportForm form) {
-
+        TestSectionService testSectionService =  SpringContext.getBean(TestSectionService.class);
         String startDate = DateUtil
                 .formatDateTimeAsText(DateUtil.getFistDayOfTheYear(Integer.valueOf(form.getUpperYear())));
         String endDate = DateUtil
                 .formatDateTimeAsText(DateUtil.getLastDayOfTheYear(Integer.valueOf(form.getUpperYear())));
         year = startDate + " - " + endDate;
         priority = form.getPriority().stream().map(priority -> priority.name()).collect(Collectors.joining(","));
-        labUnits = form.getLabSections().stream().collect(Collectors.joining(","));
+        labUnits = form.getLabSections().stream().map(labunitId -> testSectionService.getTestSectionById(labunitId).getLocalizedName()).collect(Collectors.joining(","));
         receptionTime = form.getReceptionTime().stream().map(time -> time.name()).collect(Collectors.joining(","));
     }
 }
