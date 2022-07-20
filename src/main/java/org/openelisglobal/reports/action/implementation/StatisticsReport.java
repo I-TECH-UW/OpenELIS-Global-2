@@ -278,11 +278,12 @@ public class StatisticsReport extends IndicatorReport implements IReportCreator,
         reportParameters.put("labName1", getLabNameLine1());
         reportParameters.put("labName2", getLabNameLine2());
         reportParameters.put("reportTitle", getNameForReport());
+        reportParameters.put("usePageNumbers", "true");
         reportParameters.put("headerName", "GeneralHeader.jasper");
         reportParameters.put("year", year);
-        reportParameters.put("labUnits", labUnits);
-        reportParameters.put("workHours", receptionTime);
-        reportParameters.put("priority", priority);
+        reportParameters.put("labUnits", "Lab Sections: " +  labUnits);
+        reportParameters.put("workHours", "Reception Time:" + receptionTime);
+        reportParameters.put("priority", "Priority: " + priority);
     }
 
     private List<IdValuePair> getYearList() {
@@ -321,9 +322,9 @@ public class StatisticsReport extends IndicatorReport implements IReportCreator,
     private void inntialiseReportParams(ReportForm form) {
         TestSectionService testSectionService =  SpringContext.getBean(TestSectionService.class);
         String startDate = DateUtil
-                .formatDateTimeAsText(DateUtil.getFistDayOfTheYear(Integer.valueOf(form.getUpperYear())));
+                .formatDateAsText(DateUtil.getFistDayOfTheYear(Integer.valueOf(form.getUpperYear())));
         String endDate = DateUtil
-                .formatDateTimeAsText(DateUtil.getLastDayOfTheYear(Integer.valueOf(form.getUpperYear())));
+                .formatDateAsText(DateUtil.getLastDayOfTheYear(Integer.valueOf(form.getUpperYear())));
         year = startDate + " - " + endDate;
         priority = form.getPriority().stream().map(priority -> priority.name()).collect(Collectors.joining(","));
         labUnits = form.getLabSections().stream().map(labunitId -> testSectionService.getTestSectionById(labunitId).getLocalizedName()).collect(Collectors.joining(","));

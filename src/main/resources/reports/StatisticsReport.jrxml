@@ -237,19 +237,19 @@
 				<textFieldExpression><![CDATA[$R{report.february}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="2" y="100" width="159" height="20" uuid="ae004b97-fb60-4129-a408-eec5f77850dc"/>
+				<reportElement x="0" y="90" width="376" height="20" uuid="ae004b97-fb60-4129-a408-eec5f77850dc"/>
 				<textFieldExpression><![CDATA[$P{year}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="0" y="10" width="160" height="30" uuid="796f0d40-a8f9-4a2b-a638-f3a10f7d940a"/>
+				<reportElement x="0" y="0" width="780" height="30" uuid="796f0d40-a8f9-4a2b-a638-f3a10f7d940a"/>
 				<textFieldExpression><![CDATA[$P{labUnits}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="0" y="40" width="160" height="30" uuid="ceb4f7e5-e89e-47eb-9e8e-60670a7f6bac"/>
+				<reportElement x="1" y="30" width="380" height="30" uuid="ceb4f7e5-e89e-47eb-9e8e-60670a7f6bac"/>
 				<textFieldExpression><![CDATA[$P{workHours}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="3" y="70" width="157" height="30" uuid="8a47293e-2c6e-4242-9cbe-24aed79ba875"/>
+				<reportElement x="0" y="60" width="378" height="30" uuid="8a47293e-2c6e-4242-9cbe-24aed79ba875"/>
 				<textFieldExpression><![CDATA[$P{priority}]]></textFieldExpression>
 			</textField>
 			<textField>
