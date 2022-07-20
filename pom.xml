@@ -17,7 +17,7 @@
 		<major.version>2</major.version>
 		<minor.version>6</minor.version>
 		<state.version>3</state.version> <!-- 0 = alpha, 1 = beta, 2 = rc, 3 = deployable -->
-		<fix.version>4</fix.version>
+		<fix.version>4_sso</fix.version>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
@@ -31,7 +31,7 @@
 		<postgresql.version>42.3.3</postgresql.version>
 		<log4j.version>2.17.1</log4j.version>
 		<springframework.version>5.3.20</springframework.version>
-		<springsecurity.version>5.2.10.RELEASE</springsecurity.version>
+		<springsecurity.version>5.7.2</springsecurity.version>
 		<testContainersVersion>1.15.3</testContainersVersion>
 	</properties>
 
@@ -40,11 +40,6 @@
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
 			<version>1.15</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-saml2-service-provider</artifactId>
-			<version>5.7.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jsmpp</groupId>
@@ -337,6 +332,17 @@
 			<groupId>org.springframework.retry</groupId>
 			<artifactId>spring-retry</artifactId>
 			<version>1.2.5.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-saml2-service-provider</artifactId>
+			<version>${springsecurity.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.bouncycastle</groupId>
+					<artifactId>bcprov-jdk15on</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
