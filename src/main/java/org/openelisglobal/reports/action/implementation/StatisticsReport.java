@@ -177,62 +177,62 @@ public class StatisticsReport extends IndicatorReport implements IReportCreator,
                 switch (cal.get(Calendar.MONTH)) {
                     case 0: {
                         janTests.add(analysis.getId());
-                        janSamples.add(analysis.getSampleItem().getSample().getAccessionNumber());
+                        janSamples.add(analysis.getSampleItem().getSample().getId());
                         break;
                     }
                     case 1: {
                         febTests.add(analysis.getId());
-                        febSamples.add(analysis.getSampleItem().getSample().getAccessionNumber());
+                        febSamples.add(analysis.getSampleItem().getSample().getId());
                         break;
                     }
                     case 2: {
                         marTests.add(analysis.getId());
-                        marSamples.add(analysis.getSampleItem().getSample().getAccessionNumber());
+                        marSamples.add(analysis.getSampleItem().getSample().getId());
                         break;
                     }
                     case 3: {
                         aprTests.add(analysis.getId());
-                        aprSamples.add(analysis.getSampleItem().getSample().getAccessionNumber());
+                        aprSamples.add(analysis.getSampleItem().getSample().getId());
                         break;
                     }
                     case 4: {
                         mayTests.add(analysis.getId());
-                        maySamples.add(analysis.getSampleItem().getSample().getAccessionNumber());
+                        maySamples.add(analysis.getSampleItem().getSample().getId());
                         break;
                     }
                     case 5: {
                         junTests.add(analysis.getId());
-                        junSamples.add(analysis.getSampleItem().getSample().getAccessionNumber());
+                        junSamples.add(analysis.getSampleItem().getSample().getId());
                         break;
                     }
                     case 6: {
                         julTests.add(analysis.getId());
-                        julSamples.add(analysis.getSampleItem().getSample().getAccessionNumber());
+                        julSamples.add(analysis.getSampleItem().getSample().getId());
                         break;
                     }
                     case 7: {
                         augTests.add(analysis.getId());
-                        augSamples.add(analysis.getSampleItem().getSample().getAccessionNumber());
+                        augSamples.add(analysis.getSampleItem().getSample().getId());
                         break;
                     }
                     case 8: {
                         sepTests.add(analysis.getId());
-                        sepSamples.add(analysis.getSampleItem().getSample().getAccessionNumber());
+                        sepSamples.add(analysis.getSampleItem().getSample().getId());
                         break;
                     }
                     case 9: {
                         octTests.add(analysis.getId());
-                        octSamples.add(analysis.getSampleItem().getSample().getAccessionNumber());
+                        octSamples.add(analysis.getSampleItem().getSample().getId());
                         break;
                     }
                     case 10: {
                         novTests.add(analysis.getId());
-                        novSamples.add(analysis.getSampleItem().getSample().getAccessionNumber());
+                        novSamples.add(analysis.getSampleItem().getSample().getId());
                         break;
                     }
                     case 11: {
                         decTests.add(analysis.getId());
-                        decSamples.add(analysis.getSampleItem().getSample().getAccessionNumber());
+                        decSamples.add(analysis.getSampleItem().getSample().getId());
                         break;
                     }
                 }
@@ -272,8 +272,6 @@ public class StatisticsReport extends IndicatorReport implements IReportCreator,
     protected void createReportParameters() {
         super.createReportParameters();
 
-        reportParameters.put("startDate", "12-12-12");
-        reportParameters.put("stopDate", "14-14-14");
         reportParameters.put("siteId", ConfigurationProperties.getInstance().getPropertyValue(Property.SiteCode));
         reportParameters.put("directorName",
                 ConfigurationProperties.getInstance().getPropertyValue(Property.labDirectorName));

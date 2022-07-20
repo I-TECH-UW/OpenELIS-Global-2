@@ -189,6 +189,16 @@ function setSaveButton() {
 }
 
 </script>
+<script>
+   jQuery(document).ready( function() {
+      jQuery('#allLabUnits').click();
+    });
+
+   function selectAll(element) {
+	 var checkBoxes = jQuery('.' + element.id );
+	 checkBoxes.prop("checked", !checkBoxes.prop("checked"));
+  }
+</script>
 
 <h2><c:out value="${form.reportName}"/></h2>
 
@@ -343,18 +353,35 @@ function setSaveButton() {
 </c:if>
  <c:if test="${form.useStatisticsParams}">
 	<div>
-	        <spring:message code="report.select.labUnit"/><br>
-			<form:select path="labSections" cssClass="text" id="selectList">
-				<option value="0">All Lab Section</option><form:options items="${form.selectList.list}" itemLabel="value" itemValue="id" />
-			</form:select>
+	        <b><spring:message code="report.select.labUnit"/></b><br>
+			<table>
+			  <tr>
+					<td>
+						<input type="checkbox" id="allLabUnits" onClick="selectAll(this);"/>
+					</td>
+					<td>
+						<spring:message code="report.all"/> 
+					</td>
+				</tr>
+			    <c:forEach items="${form.selectList.list}" var="labUnit" varStatus="iter">
+				<tr>
+					<td>
+						<form:checkbox class="allLabUnits" path="labSections" value="${labUnit.id}"/>
+					</td>
+					<td>
+						<c:out value="${labUnit.value}"/>
+					</td>
+				</tr>
+			   </c:forEach>
+		   </table>	
 			<br>
 	</div>
 	<div>
-	       <spring:message code="report.select.priority"/><br>
+	       <b><spring:message code="report.select.priority"/></b><br>
 	 <table>
 	       <tr>
 				<td>
-					<input type="checkbox" id="allPriorities">
+					<input type="checkbox" id="allPriorities" onClick="selectAll(this);"/>
 				</td>
 				<td>
 					<spring:message code="report.all"/> 
@@ -363,7 +390,7 @@ function setSaveButton() {
 		<c:forEach items="${form.priorityList}" var="oderPriority" varStatus="iter">
 		    <tr>
 				<td>
-					<form:checkbox path="priority" value="${oderPriority.id}"/>
+					<form:checkbox class="allPriorities" path="priority" value="${oderPriority.id}"/>
 				</td>
 				<td>
 					<c:out value="${oderPriority.value}"/>
@@ -374,13 +401,13 @@ function setSaveButton() {
 	  <br>
 	</div>
 	<div>
-	           <spring:message code="report.select.timeFrame"/>
+	           <b><spring:message code="report.select.timeFrame"/></b><br>
 			   <spring:message code="report.select.timeFrame.note"/>
 			   <br>
 		<table>
 		<tr>
 				<td>
-					<input type="checkbox" id="allTimes">
+					<input type="checkbox" id="allTimes" onClick="selectAll(this);"/>
 				</td>
 				<td>
 					<spring:message code="report.all"/> 
@@ -389,7 +416,7 @@ function setSaveButton() {
 		<c:forEach items="${form.receptionTimeList}" var="time" varStatus="iter">
 		    <tr>
 				<td>
-					<form:checkbox path="receptionTime" value="${time.id}" />
+					<form:checkbox class="allTimes" path="receptionTime" value="${time.id}" />
 				</td>
 				<td>
 					<c:out value="${time.value}"/>
