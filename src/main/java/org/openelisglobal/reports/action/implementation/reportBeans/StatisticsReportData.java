@@ -1,52 +1,49 @@
 package org.openelisglobal.reports.action.implementation.reportBeans;
 
-import java.util.List;
-
-import org.openelisglobal.sample.valueholder.OrderPriority;
-
 /**
-* The contents of this file are subject to the Mozilla Public License
-* Version 1.1 (the "License"); you may not use this file except in
-* compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/
-*
-* Software distributed under the License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
-* License for the specific language governing rights and limitations under
-* the License.
-*
-* The Original Code is OpenELIS code.
-*
-* Copyright (C) CIRG, University of Washington, Seattle WA.  All Rights Reserved.
-*
-*/
+ * The contents of this file are subject to the Mozilla Public License
+ * Version 1.1 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific language governing rights and limitations under
+ * the License.
+ *
+ * The Original Code is OpenELIS code.
+ *
+ * Copyright (C) CIRG, University of Washington, Seattle WA. All Rights
+ * Reserved.
+ *
+ */
 public class StatisticsReportData {
 
     private String testName;
     private int testsJan;
-	private int samplesJan;
-	private int testsFeb;
-	private int samplesFeb ;
-	private int testsMar;
-	private int samplesMar;
-	private int testsApr;
-	private int samplesApr;
-	private int testsMay;
-	private int samplesMay;
-	private int testsJun;
-	private int samplesJun;
-	private int testsJul;
-	private int samplesJul;
-	private int testsAug;
-	private int samplesAug;
-	private int testsSep;
-	private int samplesSep;
-	private int testsOct;
-	private int samplesOct;
-	private int testsNov;
-	private int samplesNov;
-	private int testsDec;
-	private int samplesDec;
+    private int samplesJan;
+    private int testsFeb;
+    private int samplesFeb;
+    private int testsMar;
+    private int samplesMar;
+    private int testsApr;
+    private int samplesApr;
+    private int testsMay;
+    private int samplesMay;
+    private int testsJun;
+    private int samplesJun;
+    private int testsJul;
+    private int samplesJul;
+    private int testsAug;
+    private int samplesAug;
+    private int testsSep;
+    private int samplesSep;
+    private int testsOct;
+    private int samplesOct;
+    private int testsNov;
+    private int samplesNov;
+    private int testsDec;
+    private int samplesDec;
 
     public String getTestName() {
         return testName;
@@ -247,5 +244,5 @@ public class StatisticsReportData {
     public void setSamplesDec(int samplesDec) {
         this.samplesDec = samplesDec;
     }
- 
+
 }
