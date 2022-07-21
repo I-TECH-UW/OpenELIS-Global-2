@@ -130,7 +130,7 @@ public class StatisticsReport extends IndicatorReport implements IReportCreator,
                             // 09:00:00-15:30:00
                             yearAnalysis = yearAnalysis.stream().filter(analysis -> analysis.getEnteredDate() != null)
                                     .filter(analysis -> checkTimeRange(analysis.getEnteredDate(), "09:00:00",
-                                            "15:30:00"))
+                                            "15:30:59"))
                                     .collect(Collectors.toList());
                         } else if (time.equals(ReceptionTime.OUT_OF_NORMAL_WORK_HOURS)) {
                             // 15:31:00 - 08:59:00
@@ -316,7 +316,7 @@ public class StatisticsReport extends IndicatorReport implements IReportCreator,
 
     private Boolean checkOutOfWorkingTimeRange(Timestamp targetTime) {
         return (checkTimeRange(targetTime, "15:31:00", "23:59:59")
-                || checkTimeRange(targetTime, "00:00:00", "08:59:00"));
+                || checkTimeRange(targetTime, "00:00:00", "08:59:59"));
     }
 
     private void inntialiseReportParams(ReportForm form) {
