@@ -238,6 +238,12 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
 
     @Override
     @Transactional(readOnly = true)
+    public List<Analysis> getAnalysisByTestIdAndTestSectionIdsAndStartedInDateRange(Date lowDate, Date highDate ,String testId ,List<Integer> testSectionIds) {
+        return baseObjectDAO.getAnalysisByTestIdAndTestSectionIdsAndStartedInDateRange(lowDate, highDate , testId ,testSectionIds);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public List<Result> getResults(Analysis analysis) {
         return analysis == null ? new ArrayList<>() : resultService.getResultsByAnalysis(analysis);
     }
