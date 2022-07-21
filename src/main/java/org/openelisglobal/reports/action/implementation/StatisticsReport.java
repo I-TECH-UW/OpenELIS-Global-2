@@ -6,13 +6,16 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.IStatusService;
+import org.openelisglobal.common.services.DisplayListService.ListType;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.DateUtil;
@@ -281,9 +284,9 @@ public class StatisticsReport extends IndicatorReport implements IReportCreator,
         reportParameters.put("usePageNumbers", "true");
         reportParameters.put("headerName", "GeneralHeader.jasper");
         reportParameters.put("year", year);
-        reportParameters.put("labUnits", "Lab Sections: " +  labUnits);
-        reportParameters.put("workHours", "Reception Time:" + receptionTime);
-        reportParameters.put("priority", "Priority: " + priority);
+        reportParameters.put("labUnits", MessageUtil.getMessage("label.openreports.testsection") +": " +  labUnits);
+        reportParameters.put("workHours", MessageUtil.getMessage("sample.batchentry.order.receptiontime") +": " +  receptionTime);
+        reportParameters.put("priority", MessageUtil.getMessage("sample.entry.priority") +": " + priority);
     }
 
     private List<IdValuePair> getYearList() {
@@ -326,8 +329,24 @@ public class StatisticsReport extends IndicatorReport implements IReportCreator,
         String endDate = DateUtil
                 .formatDateAsText(DateUtil.getLastDayOfTheYear(Integer.valueOf(form.getUpperYear())));
         year = startDate + " - " + endDate;
-        priority = form.getPriority().stream().map(priority -> priority.name()).collect(Collectors.joining(","));
-        labUnits = form.getLabSections().stream().map(labunitId -> testSectionService.getTestSectionById(labunitId).getLocalizedName()).collect(Collectors.joining(","));
-        receptionTime = form.getReceptionTime().stream().map(time -> time.name()).collect(Collectors.joining(","));
+        priority = form.getPriority().stream().map(priority -> getPriorityMap().get(priority.name()).toString()).collect(Collectors.joining(" , "));
+        labUnits = form.getLabSections().stream().map(labunitId -> testSectionService.getTestSectionById(labunitId).getLocalizedName()).collect(Collectors.joining(" , "));
+        receptionTime = form.getReceptionTime().stream().map(time -> getReceptionTimeMap().get(time.name()).toString()).collect(Collectors.joining(" ,"));
+    }
+
+    private Map getReceptionTimeMap() {
+        Map<String, String> timeMap = new HashMap<>();
+        for (IdValuePair value : getReceptionTimeList()) {
+            timeMap.put(value.getId(), value.getValue());
+        }
+        return timeMap;
+    }
+
+    private Map getPriorityMap() {
+        Map<String, String> prioritMap = new HashMap<>();
+        for (IdValuePair value : DisplayListService.getInstance().getList(ListType.ORDER_PRIORITY)) {
+            prioritMap.put(value.getId(), value.getValue());
+        }
+        return prioritMap;
     }
 }
