@@ -291,7 +291,7 @@ public class StatisticsReport extends IndicatorReport implements IReportCreator,
         reportParameters.put("usePageNumbers", "true");
         reportParameters.put("headerName", "GeneralHeader.jasper");
         reportParameters.put("year", year);
-        reportParameters.put("labUnits", MessageUtil.getMessage("label.openreports.testsection") +": " +  labUnits);
+        reportParameters.put("labUnits", MessageUtil.getMessage("label.openreports.testsection") +" " +  labUnits);
         reportParameters.put("workHours", MessageUtil.getMessage("sample.batchentry.order.receptiontime") +": " +  receptionTime);
         reportParameters.put("priority", MessageUtil.getMessage("sample.entry.priority") +": " + priority);
     }
