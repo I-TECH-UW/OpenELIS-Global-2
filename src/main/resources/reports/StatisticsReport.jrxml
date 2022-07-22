@@ -166,7 +166,7 @@
 	<title>
 		<band height="183" splitType="Stretch">
 			<subreport isUsingCache="true">
-				<reportElement x="430" y="0" width="2000" height="136" uuid="32e6302a-7262-4aeb-8153-62ae1110e8a8"/>
+				<reportElement x="600" y="0" width="2000" height="136" uuid="32e6302a-7262-4aeb-8153-62ae1110e8a8"/>
 				<subreportParameter name="labName2">
 					<subreportParameterExpression><![CDATA[$P{labName2}]]></subreportParameterExpression>
 				</subreportParameter>
@@ -237,19 +237,31 @@
 				<textFieldExpression><![CDATA[$R{report.february}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="0" y="90" width="376" height="20" uuid="ae004b97-fb60-4129-a408-eec5f77850dc"/>
+				<reportElement x="0" y="90" width="480" height="20" uuid="ae004b97-fb60-4129-a408-eec5f77850dc"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="14"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$P{year}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="0" y="0" width="780" height="30" uuid="796f0d40-a8f9-4a2b-a638-f3a10f7d940a"/>
+				<reportElement x="0" y="0" width="1680" height="30" uuid="796f0d40-a8f9-4a2b-a638-f3a10f7d940a"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="14"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$P{labUnits}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="1" y="30" width="380" height="30" uuid="ceb4f7e5-e89e-47eb-9e8e-60670a7f6bac"/>
+				<reportElement x="1" y="30" width="1279" height="30" uuid="ceb4f7e5-e89e-47eb-9e8e-60670a7f6bac"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="14"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$P{workHours}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="0" y="60" width="378" height="30" uuid="8a47293e-2c6e-4242-9cbe-24aed79ba875"/>
+				<reportElement x="0" y="60" width="880" height="30" uuid="8a47293e-2c6e-4242-9cbe-24aed79ba875"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="14"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$P{priority}]]></textFieldExpression>
 			</textField>
 			<textField>
@@ -592,129 +604,177 @@
 			<frame>
 				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="2000" height="21" isPrintWhenDetailOverflows="true" uuid="9298aea0-e04a-4e33-a5bd-818f67cf812a"/>
 				<textField>
-					<reportElement x="504" y="0" width="66" height="20" isRemoveLineWhenBlank="true" uuid="8e44dd4b-7939-4e90-a264-f23638e9cd7a"/>
+					<reportElement x="504" y="0" width="66" height="20" isRemoveLineWhenBlank="true" uuid="8e44dd4b-7939-4e90-a264-f23638e9cd7a">
+						<printWhenExpression><![CDATA[$F{testName} != null]]></printWhenExpression>
+					</reportElement>
 					<box rightPadding="4"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle"/>
 					<textFieldExpression><![CDATA[$F{samplesFeb}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="294" y="1" width="70" height="20" isRemoveLineWhenBlank="true" uuid="fa3f4e94-30c5-4096-9a74-c53e8edb44ac"/>
+					<reportElement x="294" y="1" width="70" height="20" isRemoveLineWhenBlank="true" uuid="fa3f4e94-30c5-4096-9a74-c53e8edb44ac">
+						<printWhenExpression><![CDATA[$F{testName} != null]]></printWhenExpression>
+					</reportElement>
 					<textElement textAlignment="Left" verticalAlignment="Middle"/>
 					<textFieldExpression><![CDATA[$F{testsJan}]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 					<reportElement stretchType="RelativeToBandHeight" mode="Transparent" x="4" y="0" width="310" height="20" isPrintWhenDetailOverflows="true" backcolor="#FFFFFF" uuid="961a83cc-8250-4d3a-8a84-790182e4a60b"/>
 					<textElement verticalAlignment="Middle"/>
-					<textFieldExpression><![CDATA[$F{testName}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{testName} != null ? $F{testName} : $R{report.no.section.tests}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="364" y="1" width="70" height="20" isRemoveLineWhenBlank="true" uuid="823039af-5250-4e6a-8f9a-6acc3b1f5807"/>
+					<reportElement x="364" y="1" width="70" height="20" isRemoveLineWhenBlank="true" uuid="823039af-5250-4e6a-8f9a-6acc3b1f5807">
+						<printWhenExpression><![CDATA[$F{testName} != null]]></printWhenExpression>
+					</reportElement>
 					<textElement textAlignment="Left" verticalAlignment="Middle"/>
 					<textFieldExpression><![CDATA[$F{samplesJan}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="434" y="1" width="70" height="20" isRemoveLineWhenBlank="true" uuid="a19fecf7-e876-4c9b-8abf-9eddc9a6ef3d"/>
+					<reportElement x="434" y="1" width="70" height="20" isRemoveLineWhenBlank="true" uuid="a19fecf7-e876-4c9b-8abf-9eddc9a6ef3d">
+						<printWhenExpression><![CDATA[$F{testName} != null]]></printWhenExpression>
+					</reportElement>
 					<textElement textAlignment="Left" verticalAlignment="Middle"/>
 					<textFieldExpression><![CDATA[$F{testsFeb}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="573" y="0" width="67" height="20" isRemoveLineWhenBlank="true" uuid="ecd971a5-f98c-4b76-8192-31c5ba362775"/>
+					<reportElement x="573" y="0" width="67" height="20" isRemoveLineWhenBlank="true" uuid="ecd971a5-f98c-4b76-8192-31c5ba362775">
+						<printWhenExpression><![CDATA[$F{testName} != null]]></printWhenExpression>
+					</reportElement>
 					<textElement textAlignment="Left" verticalAlignment="Middle"/>
 					<textFieldExpression><![CDATA[$F{testsMar}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="850" y="1" width="70" height="20" isRemoveLineWhenBlank="true" uuid="7dd20519-2ad2-471c-b872-f523f1740a61"/>
+					<reportElement x="850" y="1" width="70" height="20" isRemoveLineWhenBlank="true" uuid="7dd20519-2ad2-471c-b872-f523f1740a61">
+						<printWhenExpression><![CDATA[$F{testName} != null]]></printWhenExpression>
+					</reportElement>
 					<textElement textAlignment="Left" verticalAlignment="Middle"/>
 					<textFieldExpression><![CDATA[$F{testsMay}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="920" y="2" width="70" height="20" isRemoveLineWhenBlank="true" uuid="a2dbc292-4d16-4c1c-a451-322fa01fa189"/>
+					<reportElement x="920" y="2" width="70" height="20" isRemoveLineWhenBlank="true" uuid="a2dbc292-4d16-4c1c-a451-322fa01fa189">
+						<printWhenExpression><![CDATA[$F{testName} != null]]></printWhenExpression>
+					</reportElement>
 					<textElement textAlignment="Left" verticalAlignment="Middle"/>
 					<textFieldExpression><![CDATA[$F{samplesMay}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="990" y="1" width="70" height="20" isRemoveLineWhenBlank="true" uuid="a04a7570-4886-45e3-a805-b3ca079f2514"/>
+					<reportElement x="990" y="1" width="70" height="20" isRemoveLineWhenBlank="true" uuid="a04a7570-4886-45e3-a805-b3ca079f2514">
+						<printWhenExpression><![CDATA[$F{testName} != null]]></printWhenExpression>
+					</reportElement>
 					<textElement textAlignment="Left" verticalAlignment="Middle"/>
 					<textFieldExpression><![CDATA[$F{testsJun}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="1060" y="2" width="70" height="20" isRemoveLineWhenBlank="true" uuid="3fd7fc51-2cbd-454e-9c7a-6c64ead01478"/>
+					<reportElement x="1060" y="2" width="70" height="20" isRemoveLineWhenBlank="true" uuid="3fd7fc51-2cbd-454e-9c7a-6c64ead01478">
+						<printWhenExpression><![CDATA[$F{testName} != null]]></printWhenExpression>
+					</reportElement>
 					<textElement textAlignment="Left" verticalAlignment="Middle"/>
 					<textFieldExpression><![CDATA[$F{samplesJun}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="1129" y="2" width="70" height="20" isRemoveLineWhenBlank="true" uuid="e0139f92-51b9-41cb-ad5f-3906f1f8b190"/>
+					<reportElement x="1129" y="2" width="70" height="20" isRemoveLineWhenBlank="true" uuid="e0139f92-51b9-41cb-ad5f-3906f1f8b190">
+						<printWhenExpression><![CDATA[$F{testName} != null]]></printWhenExpression>
+					</reportElement>
 					<textElement textAlignment="Left" verticalAlignment="Middle"/>
 					<textFieldExpression><![CDATA[$F{testsJul}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="1199" y="3" width="70" height="20" isRemoveLineWhenBlank="true" uuid="15e45c80-2063-45ac-990b-201d3a98e248"/>
+					<reportElement x="1199" y="3" width="70" height="20" isRemoveLineWhenBlank="true" uuid="15e45c80-2063-45ac-990b-201d3a98e248">
+						<printWhenExpression><![CDATA[$F{testName} != null]]></printWhenExpression>
+					</reportElement>
 					<textElement textAlignment="Left" verticalAlignment="Middle"/>
 					<textFieldExpression><![CDATA[$F{samplesJul}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="1268" y="0" width="70" height="20" isRemoveLineWhenBlank="true" uuid="a260c8ea-4cee-49c3-a373-6a5faadc80d7"/>
+					<reportElement x="1268" y="0" width="70" height="20" isRemoveLineWhenBlank="true" uuid="a260c8ea-4cee-49c3-a373-6a5faadc80d7">
+						<printWhenExpression><![CDATA[$F{testName} != null]]></printWhenExpression>
+					</reportElement>
 					<textElement textAlignment="Left" verticalAlignment="Middle"/>
 					<textFieldExpression><![CDATA[$F{testsAug}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="1338" y="1" width="70" height="20" isRemoveLineWhenBlank="true" uuid="b7cc1911-2ffe-4926-80fa-192ce65ee273"/>
+					<reportElement x="1338" y="1" width="70" height="20" isRemoveLineWhenBlank="true" uuid="b7cc1911-2ffe-4926-80fa-192ce65ee273">
+						<printWhenExpression><![CDATA[$F{testName} != null]]></printWhenExpression>
+					</reportElement>
 					<textElement textAlignment="Left" verticalAlignment="Middle"/>
 					<textFieldExpression><![CDATA[$F{samplesAug}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="1409" y="0" width="70" height="20" isRemoveLineWhenBlank="true" uuid="ecea4121-3124-4379-a0ed-c0ab192dc78d"/>
+					<reportElement x="1409" y="0" width="70" height="20" isRemoveLineWhenBlank="true" uuid="ecea4121-3124-4379-a0ed-c0ab192dc78d">
+						<printWhenExpression><![CDATA[$F{testName} != null]]></printWhenExpression>
+					</reportElement>
 					<textElement textAlignment="Left" verticalAlignment="Middle"/>
 					<textFieldExpression><![CDATA[$F{testsSep}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="1479" y="1" width="70" height="20" isRemoveLineWhenBlank="true" uuid="7172573a-d226-4302-9af2-737a897b465d"/>
+					<reportElement x="1479" y="1" width="70" height="20" isRemoveLineWhenBlank="true" uuid="7172573a-d226-4302-9af2-737a897b465d">
+						<printWhenExpression><![CDATA[$F{testName} != null]]></printWhenExpression>
+					</reportElement>
 					<textElement textAlignment="Left" verticalAlignment="Middle"/>
 					<textFieldExpression><![CDATA[$F{samplesSep}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="1549" y="2" width="70" height="20" isRemoveLineWhenBlank="true" uuid="5fb3a8b3-dc68-417e-bb50-2e7d55568e76"/>
+					<reportElement x="1549" y="2" width="70" height="20" isRemoveLineWhenBlank="true" uuid="5fb3a8b3-dc68-417e-bb50-2e7d55568e76">
+						<printWhenExpression><![CDATA[$F{testName} != null]]></printWhenExpression>
+					</reportElement>
 					<textElement textAlignment="Left" verticalAlignment="Middle"/>
 					<textFieldExpression><![CDATA[$F{testsOct}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="1619" y="3" width="70" height="20" isRemoveLineWhenBlank="true" uuid="6e8e500b-4b28-4fd9-91e3-fa21c67d38d2"/>
+					<reportElement x="1619" y="3" width="70" height="20" isRemoveLineWhenBlank="true" uuid="6e8e500b-4b28-4fd9-91e3-fa21c67d38d2">
+						<printWhenExpression><![CDATA[$F{testName} != null]]></printWhenExpression>
+					</reportElement>
 					<textElement textAlignment="Left" verticalAlignment="Middle"/>
 					<textFieldExpression><![CDATA[$F{samplesOct}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="1689" y="1" width="70" height="20" isRemoveLineWhenBlank="true" uuid="e6042345-a8eb-45e8-a35b-1bad46b452d7"/>
+					<reportElement x="1689" y="1" width="70" height="20" isRemoveLineWhenBlank="true" uuid="e6042345-a8eb-45e8-a35b-1bad46b452d7">
+						<printWhenExpression><![CDATA[$F{testName} != null]]></printWhenExpression>
+					</reportElement>
 					<textElement textAlignment="Left" verticalAlignment="Middle"/>
 					<textFieldExpression><![CDATA[$F{testsNov}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="1759" y="2" width="70" height="20" isRemoveLineWhenBlank="true" uuid="608c1d8c-7e76-4c55-a96d-ed5a5feb5aae"/>
+					<reportElement x="1759" y="2" width="70" height="20" isRemoveLineWhenBlank="true" uuid="608c1d8c-7e76-4c55-a96d-ed5a5feb5aae">
+						<printWhenExpression><![CDATA[$F{testName} != null]]></printWhenExpression>
+					</reportElement>
 					<textElement textAlignment="Left" verticalAlignment="Middle"/>
 					<textFieldExpression><![CDATA[$F{samplesNov}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="1829" y="0" width="70" height="20" isRemoveLineWhenBlank="true" uuid="1deb0a66-a641-4154-b2bf-c5bc9b0ea230"/>
+					<reportElement x="1829" y="0" width="70" height="20" isRemoveLineWhenBlank="true" uuid="1deb0a66-a641-4154-b2bf-c5bc9b0ea230">
+						<printWhenExpression><![CDATA[$F{testName} != null]]></printWhenExpression>
+					</reportElement>
 					<textElement textAlignment="Left" verticalAlignment="Middle"/>
 					<textFieldExpression><![CDATA[$F{testsDec}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="1899" y="1" width="70" height="20" isRemoveLineWhenBlank="true" uuid="197a5407-e949-4d85-95a4-8c2bb12eb29e"/>
+					<reportElement x="1899" y="1" width="70" height="20" isRemoveLineWhenBlank="true" uuid="197a5407-e949-4d85-95a4-8c2bb12eb29e">
+						<printWhenExpression><![CDATA[$F{testName} != null]]></printWhenExpression>
+					</reportElement>
 					<textElement textAlignment="Left" verticalAlignment="Middle"/>
 					<textFieldExpression><![CDATA[$F{samplesDec}]]></textFieldExpression>
 				</textField>
 			</frame>
 			<textField>
-				<reportElement x="640" y="0" width="70" height="20" isRemoveLineWhenBlank="true" uuid="fd500bb3-f32f-473a-b3e2-161d75f1684b"/>
+				<reportElement x="640" y="0" width="70" height="20" isRemoveLineWhenBlank="true" uuid="fd500bb3-f32f-473a-b3e2-161d75f1684b">
+					<printWhenExpression><![CDATA[$F{testName} != null]]></printWhenExpression>
+				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{samplesMar}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="710" y="0" width="70" height="20" isRemoveLineWhenBlank="true" uuid="cb729819-bd73-49fc-9c43-2d8d5db82d28"/>
+				<reportElement x="710" y="0" width="70" height="20" isRemoveLineWhenBlank="true" uuid="cb729819-bd73-49fc-9c43-2d8d5db82d28">
+					<printWhenExpression><![CDATA[$F{testName} != null]]></printWhenExpression>
+				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{testsApr}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="780" y="1" width="70" height="20" isRemoveLineWhenBlank="true" uuid="b5ba9f25-c851-45ec-b5e9-4ed3b06057e8"/>
+				<reportElement x="780" y="1" width="70" height="20" isRemoveLineWhenBlank="true" uuid="b5ba9f25-c851-45ec-b5e9-4ed3b06057e8">
+					<printWhenExpression><![CDATA[$F{testName} != null]]></printWhenExpression>
+				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{samplesApr}]]></textFieldExpression>
 			</textField>

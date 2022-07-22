@@ -173,102 +173,109 @@ public class StatisticsReport extends IndicatorReport implements IReportCreator,
             Set<String> novSamples = new HashSet<>();
             Set<String> decSamples = new HashSet<>();
 
-            yearAnalysis.forEach(analysis -> {
-                // Test test = analysis.getTest();
-                Calendar cal = Calendar.getInstance();
-                cal.setTime(analysis.getStartedDate());
-                switch (cal.get(Calendar.MONTH)) {
-                    case 0: {
-                        janTests.add(analysis.getId());
-                        janSamples.add(analysis.getSampleItem().getSample().getId());
-                        break;
+            if (!yearAnalysis.isEmpty()) {
+                yearAnalysis.forEach(analysis -> {
+                    // Test test = analysis.getTest();
+                    Calendar cal = Calendar.getInstance();
+                    cal.setTime(analysis.getStartedDate());
+                    switch (cal.get(Calendar.MONTH)) {
+                        case 0: {
+                            janTests.add(analysis.getId());
+                            janSamples.add(analysis.getSampleItem().getSample().getId());
+                            break;
+                        }
+                        case 1: {
+                            febTests.add(analysis.getId());
+                            febSamples.add(analysis.getSampleItem().getSample().getId());
+                            break;
+                        }
+                        case 2: {
+                            marTests.add(analysis.getId());
+                            marSamples.add(analysis.getSampleItem().getSample().getId());
+                            break;
+                        }
+                        case 3: {
+                            aprTests.add(analysis.getId());
+                            aprSamples.add(analysis.getSampleItem().getSample().getId());
+                            break;
+                        }
+                        case 4: {
+                            mayTests.add(analysis.getId());
+                            maySamples.add(analysis.getSampleItem().getSample().getId());
+                            break;
+                        }
+                        case 5: {
+                            junTests.add(analysis.getId());
+                            junSamples.add(analysis.getSampleItem().getSample().getId());
+                            break;
+                        }
+                        case 6: {
+                            julTests.add(analysis.getId());
+                            julSamples.add(analysis.getSampleItem().getSample().getId());
+                            break;
+                        }
+                        case 7: {
+                            augTests.add(analysis.getId());
+                            augSamples.add(analysis.getSampleItem().getSample().getId());
+                            break;
+                        }
+                        case 8: {
+                            sepTests.add(analysis.getId());
+                            sepSamples.add(analysis.getSampleItem().getSample().getId());
+                            break;
+                        }
+                        case 9: {
+                            octTests.add(analysis.getId());
+                            octSamples.add(analysis.getSampleItem().getSample().getId());
+                            break;
+                        }
+                        case 10: {
+                            novTests.add(analysis.getId());
+                            novSamples.add(analysis.getSampleItem().getSample().getId());
+                            break;
+                        }
+                        case 11: {
+                            decTests.add(analysis.getId());
+                            decSamples.add(analysis.getSampleItem().getSample().getId());
+                            break;
+                        }
                     }
-                    case 1: {
-                        febTests.add(analysis.getId());
-                        febSamples.add(analysis.getSampleItem().getSample().getId());
-                        break;
-                    }
-                    case 2: {
-                        marTests.add(analysis.getId());
-                        marSamples.add(analysis.getSampleItem().getSample().getId());
-                        break;
-                    }
-                    case 3: {
-                        aprTests.add(analysis.getId());
-                        aprSamples.add(analysis.getSampleItem().getSample().getId());
-                        break;
-                    }
-                    case 4: {
-                        mayTests.add(analysis.getId());
-                        maySamples.add(analysis.getSampleItem().getSample().getId());
-                        break;
-                    }
-                    case 5: {
-                        junTests.add(analysis.getId());
-                        junSamples.add(analysis.getSampleItem().getSample().getId());
-                        break;
-                    }
-                    case 6: {
-                        julTests.add(analysis.getId());
-                        julSamples.add(analysis.getSampleItem().getSample().getId());
-                        break;
-                    }
-                    case 7: {
-                        augTests.add(analysis.getId());
-                        augSamples.add(analysis.getSampleItem().getSample().getId());
-                        break;
-                    }
-                    case 8: {
-                        sepTests.add(analysis.getId());
-                        sepSamples.add(analysis.getSampleItem().getSample().getId());
-                        break;
-                    }
-                    case 9: {
-                        octTests.add(analysis.getId());
-                        octSamples.add(analysis.getSampleItem().getSample().getId());
-                        break;
-                    }
-                    case 10: {
-                        novTests.add(analysis.getId());
-                        novSamples.add(analysis.getSampleItem().getSample().getId());
-                        break;
-                    }
-                    case 11: {
-                        decTests.add(analysis.getId());
-                        decSamples.add(analysis.getSampleItem().getSample().getId());
-                        break;
-                    }
-                }
-            });
+                });
 
-            StatisticsReportData data = new StatisticsReportData();
-            data.setTestName(test.getLocalizedName());
-            data.setTestsJan(janTests.size());
-            data.setSamplesJan(janSamples.size());
-            data.setTestsFeb(febTests.size());
-            data.setSamplesFeb(febSamples.size());
-            data.setTestsMar(marTests.size());
-            data.setSamplesMar(marSamples.size());
-            data.setTestsApr(aprTests.size());
-            data.setSamplesApr(aprSamples.size());
-            data.setTestsMay(mayTests.size());
-            data.setSamplesMay(maySamples.size());
-            data.setTestsJun(junTests.size());
-            data.setSamplesJun(junSamples.size());
-            data.setTestsJul(julTests.size());
-            data.setSamplesJul(julSamples.size());
-            data.setTestsAug(augTests.size());
-            data.setSamplesAug(augSamples.size());
-            data.setTestsSep(sepTests.size());
-            data.setSamplesSep(sepSamples.size());
-            data.setTestsOct(octTests.size());
-            data.setSamplesOct(octSamples.size());
-            data.setTestsNov(novTests.size());
-            data.setSamplesNov(novSamples.size());
-            data.setTestsDec(decTests.size());
-            data.setSamplesDec(decSamples.size());
-            reportItems.add(data);
+                StatisticsReportData data = new StatisticsReportData();
+                data.setTestName(test.getLocalizedName());
+                data.setTestsJan(janTests.size());
+                data.setSamplesJan(janSamples.size());
+                data.setTestsFeb(febTests.size());
+                data.setSamplesFeb(febSamples.size());
+                data.setTestsMar(marTests.size());
+                data.setSamplesMar(marSamples.size());
+                data.setTestsApr(aprTests.size());
+                data.setSamplesApr(aprSamples.size());
+                data.setTestsMay(mayTests.size());
+                data.setSamplesMay(maySamples.size());
+                data.setTestsJun(junTests.size());
+                data.setSamplesJun(junSamples.size());
+                data.setTestsJul(julTests.size());
+                data.setSamplesJul(julSamples.size());
+                data.setTestsAug(augTests.size());
+                data.setSamplesAug(augSamples.size());
+                data.setTestsSep(sepTests.size());
+                data.setSamplesSep(sepSamples.size());
+                data.setTestsOct(octTests.size());
+                data.setSamplesOct(octSamples.size());
+                data.setTestsNov(novTests.size());
+                data.setSamplesNov(novSamples.size());
+                data.setTestsDec(decTests.size());
+                data.setSamplesDec(decSamples.size());
+                reportItems.add(data);
+            }
         });
+        if(reportItems.isEmpty()){
+            StatisticsReportData emptydata = new StatisticsReportData();
+            emptydata.setTestName(null);
+            reportItems.add(emptydata);
+        }
     }
 
     @Override
