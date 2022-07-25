@@ -165,6 +165,7 @@ public class SampleOrderService {
             sampleOrder.setProviderFax(requesterService.getFax());
             sampleOrder.setProviderEmail(requesterService.getEmail());
             sampleOrder.setReferringSiteId(requesterService.getReferringSiteId());
+            sampleOrder.setReferringSiteDepartmentId(requesterService.getReferringDepartmentId());
             sampleOrder.setReferringSiteCode(requesterService.getReferringSiteCode());
             sampleOrder.setReferringSiteName(requesterService.getReferringSiteName());
 
