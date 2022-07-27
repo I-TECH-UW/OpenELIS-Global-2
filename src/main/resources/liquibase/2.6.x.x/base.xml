@@ -20,4 +20,5 @@
 	<include file="liquibase/2.6.x.x/add_order_priority.xml"/>
 	<include relativeToChangelogFile="true" file="provider.xml"/>	
 	<include relativeToChangelogFile="true" file="update_non_conformity_roles.xml"/>
+	<include relativeToChangelogFile="true" file="statistics_report.xml"/>
 </databaseChangeLog>

@@ -1390,6 +1390,27 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public List<Analysis> getAnalysisByTestIdAndTestSectionIdsAndStartedInDateRange(Date lowDate, Date highDate ,String testId , List<Integer> testSectionIds)
+            throws LIMSRuntimeException { 
+        String sql = "FROM Analysis a WHERE a.startedDate BETWEEN :lowDate AND :highDate AND a.test.id = :testId AND  a.testSection.id IN ( :testSectionIds )";
+
+        try {
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setDate("lowDate", lowDate);
+            query.setDate("highDate", highDate);
+            query.setInteger("testId", Integer.parseInt(testId));
+            query.setParameterList("testSectionIds", testSectionIds);
+            List<Analysis> list = query.list();
+            // closeSession(); // CSL remove old
+            return list;
+        } catch (HibernateException e) {
+            handleException(e, "getAnalysisStartedInDateRange");
+        }
+        return null;
+    }
+
+    @Override
 
     @Transactional(readOnly = true)
     public List<Analysis> getAnalysesBySampleId(String id) throws LIMSRuntimeException {

@@ -33,6 +33,7 @@ import org.openelisglobal.organization.valueholder.Organization;
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.person.valueholder.Person;
 import org.openelisglobal.provider.service.ProviderService;
+import org.openelisglobal.provider.valueholder.Provider;
 import org.openelisglobal.requester.valueholder.SampleRequester;
 import org.openelisglobal.sample.bean.SampleOrderItem;
 import org.openelisglobal.sample.service.SampleService;
@@ -155,9 +156,11 @@ public class SampleOrderService {
             RequesterService requesterService = new RequesterService(sample.getId());
             sampleOrder.setProviderPersonId(requesterService.getRequesterPersonId());
             if (requesterService.getPerson() != null) {
-                sampleOrder.setProviderId(
-                        SpringContext.getBean(ProviderService.class).getProviderByPerson(requesterService.getPerson())
-                                .getId());
+                Provider provider = SpringContext.getBean(ProviderService.class)
+                        .getProviderByPerson(requesterService.getPerson());
+                if (provider != null) {
+                    sampleOrder.setProviderId(provider.getId());
+                }
             }
             sampleOrder.setProviderFirstName(requesterService.getRequesterFirstName());
             sampleOrder.setProviderLastName(requesterService.getRequesterLastName());
@@ -165,6 +168,7 @@ public class SampleOrderService {
             sampleOrder.setProviderFax(requesterService.getFax());
             sampleOrder.setProviderEmail(requesterService.getEmail());
             sampleOrder.setReferringSiteId(requesterService.getReferringSiteId());
+            sampleOrder.setReferringSiteDepartmentId(requesterService.getReferringDepartmentId());
             sampleOrder.setReferringSiteCode(requesterService.getReferringSiteCode());
             sampleOrder.setReferringSiteName(requesterService.getReferringSiteName());
 
