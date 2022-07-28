@@ -668,6 +668,12 @@
             $("providerFaxID").value = requester.fax;
             $("providerEmailID").value = requester.email;
     }
+
+    function setSelectComboboxToId(selectId, selectVal) {
+    	jQuery("#" + selectId).val(selectVal).change();
+    	jQuery("#" + selectId).parent().find("input").val(jQuery("#" + selectId).find(":selected").text());
+    	autocompleteResultCallBack(selectId, selectVal)
+    }
     
     jQuery(document).ready(function () {
         var dropdown = jQuery("select#requesterId");
@@ -690,7 +696,12 @@
         		if (personId) {
         			getProviderInfoByPersonId(personId, parseRequesterPerson );
         		} else {
-        			clearProvider();
+       		 	$("providerFirstNameID").value = '';
+       		 	$("providerLastNameID").value = '';
+       		 	$("providerPersonId").value = '';
+       		 	$("providerWorkPhoneID").value = '';
+       		 	$("providerEmailID").value = '';
+       		 	$("providerFaxID").value = '';
         		}
 
                 setOrderModified();
@@ -698,9 +709,12 @@
         	}
         	
         }
-        
+
+        if (dropdown.val()) {
+        	setSelectComboboxToId('requesterId', dropdown.val());
+        }
         if (providerDropdown.val()) {
-        	autocompleteResultCallBack('providerPersonId', providerDropdown.val());
+        	setSelectComboboxToId('providerPersonId', providerDropdown.val());
         }
         
         

@@ -407,7 +407,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
                     try {
                         processTaskImportOrder(remoteTask, remoteStorePath, sourceFhirClient, bundle);
                     } catch (RuntimeException | FhirLocalPersistingException e) {
-                        LogEvent.logError(e);
+                        LogEvent.logErrorStack(e);
                         LogEvent.logError(this.getClass().getName(), "beginTaskImportOrderPath",
                                 "could not process Task with identifier : " + remoteTask.getId());
                     }
@@ -727,9 +727,12 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
             List<ServiceRequest> remoteServiceRequests) {
         List<Practitioner> specimens = new ArrayList<>();
         for (ServiceRequest serviceRequest : remoteServiceRequests) {
-            Reference requesterReference = serviceRequest.getRequester();
-            specimens.add(fhirClient.read().resource(Practitioner.class)
-                    .withId(requesterReference.getReferenceElement().getIdPart()).execute());
+            if (!GenericValidator.isBlankOrNull(serviceRequest.getRequester().getReferenceElement().getIdPart())
+                    && serviceRequest.getRequester().getReference().contains(ResourceType.Practitioner.toString())) {
+                Reference requesterReference = serviceRequest.getRequester();
+                specimens.add(fhirClient.read().resource(Practitioner.class)
+                        .withId(requesterReference.getReferenceElement().getIdPart()).execute());
+            }
         }
         return specimens;
     }

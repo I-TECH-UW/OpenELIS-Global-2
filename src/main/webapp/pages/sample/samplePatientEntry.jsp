@@ -448,12 +448,7 @@ function clearRequester() {
 }
 
 function clearProvider() {
-	$("providerFirstNameID").value = '';
-	$("providerLastNameID").value = '';
-	$("providerPersonId").value = '';
-	$("providerWorkPhoneID").value = '';
-	$("providerEmailID").value = '';
-	$("providerFaxID").value = '';
+	setSelectComboboxToId('providerPersonId', '');
 }
 
 function parseRequester(requester) {
@@ -461,7 +456,8 @@ function parseRequester(requester) {
     var requesterId = "";
     if (requesterIdElement.length > 0) {
     	requesterId = requesterIdElement[0].firstChild.nodeValue;
-             jQuery("#providerPersonId").val(requesterId);
+
+        setSelectComboboxToId("providerPersonId", requesterId);
     }
     
     var firstName = requester.item(0).getElementsByTagName("firstName");
@@ -493,7 +489,7 @@ function parseRequestingOrg(requestingOrg) {
     if (requestingOrgId.length > 0) {
             id = requestingOrgId[0].firstChild.nodeValue;
     }
-	jQuery("#requesterId").val(id).change();
+    setSelectComboboxToId("requesterId", id);
 }
 
 function parseLocation(location) {
@@ -502,7 +498,7 @@ function parseLocation(location) {
     if (locationId.length > 0) {
             id = locationId[0].firstChild.nodeValue;
     }
-	jQuery("#requesterId").val(id).change();
+    setSelectComboboxToId("requesterId", id);
 }
 
 function parseSampletypes(sampletypes, SampleTypes) {
