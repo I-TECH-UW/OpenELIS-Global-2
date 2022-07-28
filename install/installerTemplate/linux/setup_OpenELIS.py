@@ -223,6 +223,10 @@ def do_install():
     
     generate_passwords()
     
+    preserve_database_user_password()
+    
+    preserve_database_backup_user_password()
+    
     get_stored_user_values()
     
     install_docker()
@@ -232,8 +236,6 @@ def do_install():
     install_site_info_config_file()
     
     install_db()
-    
-    preserve_database_user_password()
     
     install_crosstab()
 
@@ -953,6 +955,7 @@ def get_stored_user_values():
     get_set_extra_hosts()
     get_set_fhir_identifier()
     find_password()
+    find_backup_password()
 
 
 def get_set_site_id():
@@ -1274,6 +1277,7 @@ def create_db_backup_user():
 def generate_passwords():
     generate_database_user_password()
     generate_database_admin_password()
+    generate_database_backup_password()
     
     
 def generate_database_user_password():
