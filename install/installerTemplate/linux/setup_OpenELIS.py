@@ -251,6 +251,8 @@ def do_install():
     os.chown(TOMCAT_LOGS_DIR, 8443, 8443)  
 
     start_docker_containers()
+    
+    create_db_backup_user()
 
 
 def install_files_from_templates():
