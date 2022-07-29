@@ -5,7 +5,8 @@
                  org.openelisglobal.common.formfields.FormFields,
                  org.openelisglobal.common.formfields.FormFields.Field,
                  org.openelisglobal.common.util.Versioning,
-                 org.openelisglobal.internationalization.MessageUtil" %>
+                 org.openelisglobal.internationalization.MessageUtil,
+		 		 org.owasp.encoder.Encode" %>
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
@@ -195,8 +196,8 @@ jQuery(document).ready(function () {
 						<th><spring:message code="test.testName"/></th>
 					</tr>
 					<tr>
-						<td><%= request.getAttribute("sampleType") %></td>
-						<td><%= request.getAttribute("testNames") %></td>
+						<td><%= Encode.forHtml((String) request.getAttribute("sampleType")) %></td>
+						<td><%= Encode.forHtml((String) request.getAttribute("testNames")) %></td>
 					</tr>
 				</table>
 				<form:hidden path="sampleXML"/>	
@@ -207,7 +208,7 @@ jQuery(document).ready(function () {
 			<tr>
 				<td>
 					<spring:message code="sample.batchentry.barcode.label.facilityid" /> 
-					: <%= request.getAttribute("facilityName") %>
+					: <%= Encode.forHtml((String) request.getAttribute("facilityName")) %>
 					<form:hidden path="sampleOrderItems.referringSiteId" id="requesterId"/>
 						
 				</td>
@@ -218,7 +219,7 @@ jQuery(document).ready(function () {
 			<tr>
 				<td>
 					<spring:message code="sample.batchentry.barcode.label.facilityid" /> 
-					: <%= request.getAttribute("facilityName") %>
+					: <%= Encode.forHtml((String) request.getAttribute("facilityName")) %>
 					<form:hidden path="sampleOrderItems.referringSiteId" id="requesterId"/>
 				</td>
 			</tr>
