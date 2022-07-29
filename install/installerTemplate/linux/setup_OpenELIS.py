@@ -251,6 +251,8 @@ def do_install():
     os.chown(TOMCAT_LOGS_DIR, 8443, 8443)  
 
     start_docker_containers()
+    
+    create_db_backup_user()
 
 
 def install_files_from_templates():
@@ -720,6 +722,8 @@ def do_update():
     while not find_backup_password():
         do_create_user = raw_input("Unable to find backup password from secrets file. Would you like to create a backup user? y/n ")
         if do_create_user.lower() == 'y':
+            generate_database_backup_password()
+            preserve_database_backup_user_password()
             create_db_backup_user()
         else:
             return
@@ -1227,8 +1231,6 @@ def set_fhir_identifier():
 
 def create_db_backup_user(): 
     global BACKUP_PWD
-    generate_database_backup_password()
-    preserve_database_backup_user_password()
     
     install_backup_config()
     
