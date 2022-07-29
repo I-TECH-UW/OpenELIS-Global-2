@@ -31,6 +31,7 @@
     boolean trackPayment = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.TRACK_PATIENT_PAYMENT, "true");
     boolean requesterPersonRequired = FormFields.getInstance().useField(Field.SampleEntryRequesterPersonRequired);
 	boolean acceptExternalOrders = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.ACCEPT_EXTERNAL_ORDERS, "true");
+    boolean restrictNewProviderEntries = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.restrictFreeTextProviderEntry, "true");
 %>
 
 
@@ -63,7 +64,12 @@ var currentReferalDiv ;
 var currentReferalDivSelector ;
 
 if( requesterPersonRequired ){
-    requiredFields.push("providerLastNameID");
+	if (<%=restrictNewProviderEntries%>) {
+		requiredFields.push("providerPersonId");
+	} else {
+		requiredFields.push("providerLastNameID");
+	}
+    
 }
 
 <% if( FormFields.getInstance().useField(Field.SampleEntryUseRequestDate)){ %>
