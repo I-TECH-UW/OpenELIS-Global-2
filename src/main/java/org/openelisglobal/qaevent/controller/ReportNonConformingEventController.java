@@ -130,7 +130,7 @@ public class ReportNonConformingEventController extends BaseController {
             form.setSpecimens(sampleItems);
         }
 
-        form.setReportingUnits(DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION));
+        form.setReportingUnits(DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION_ACTIVE));
 
         requesterService.setSampleId(sample == null ? null : sample.getId());
         form.setSite(requesterService.getReferringSiteName());

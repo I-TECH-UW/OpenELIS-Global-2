@@ -48,7 +48,7 @@ public class StatisticsReport extends IndicatorReport implements IReportCreator,
     @Override
     public void setRequestParameters(ReportForm form) {
         form.setUseStatisticsParams(true);
-        new ReportSpecificationList(DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION),
+        new ReportSpecificationList(DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION_ACTIVE),
                 MessageUtil.getMessage("workplan.unit.types")).setRequestParameters(form);
         form.setYearList(getYearList());
         form.setPriorityList(DisplayListService.getInstance().getList(DisplayListService.ListType.ORDER_PRIORITY));

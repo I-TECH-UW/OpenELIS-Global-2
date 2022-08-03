@@ -76,7 +76,8 @@ public class DisplayListService implements LocaleChangeListener {
         HOURS, MINS, SAMPLE_TYPE_ACTIVE, SAMPLE_TYPE_INACTIVE, SAMPLE_TYPE, INITIAL_SAMPLE_CONDITION,
         SAMPLE_PATIENT_PAYMENT_OPTIONS, PATIENT_HEALTH_REGIONS, PATIENT_MARITAL_STATUS, PATIENT_NATIONALITY,
         PATIENT_EDUCATION, GENDERS, SAMPLE_PATIENT_REFERRING_CLINIC, SAMPLE_PATIENT_CLINIC_DEPARTMENT, QA_EVENTS,
-        TEST_SECTION, TEST_SECTION_INACTIVE, TEST_SECTION_BY_NAME, HAITI_DEPARTMENTS, PATIENT_SEARCH_CRITERIA, PANELS,
+        TEST_SECTION_ACTIVE, TEST_SECTION_INACTIVE, TEST_SECTION_BY_NAME, HAITI_DEPARTMENTS, PATIENT_SEARCH_CRITERIA,
+        PANELS,
         PANELS_ACTIVE, PANELS_INACTIVE, ORDERABLE_TESTS, ALL_TESTS, REJECTION_REASONS, REFERRAL_REASONS,
         REFERRAL_ORGANIZATIONS, TEST_LOCATION_CODE, PROGRAM, RESULT_TYPE_LOCALIZED, RESULT_TYPE_RAW, UNIT_OF_MEASURE,
         UNIT_OF_MEASURE_ACTIVE, UNIT_OF_MEASURE_INACTIVE, DICTIONARY_TEST_RESULTS, LAB_COMPONENT,
@@ -165,7 +166,7 @@ public class DisplayListService implements LocaleChangeListener {
                 createFromDictionaryCategoryLocalizedSort("Education Level Demographic Information"));
         typeToListMap.put(ListType.GENDERS, createGenderList());
         typeToListMap.put(ListType.QA_EVENTS, createSortedQAEvents());
-        typeToListMap.put(ListType.TEST_SECTION, createTestSectionList());
+        typeToListMap.put(ListType.TEST_SECTION_ACTIVE, createTestSectionActiveList());
         typeToListMap.put(ListType.TEST_SECTION_INACTIVE, createInactiveTestSection());
         typeToListMap.put(ListType.TEST_SECTION_BY_NAME, createTestSectionByNameList());
         typeToListMap.put(ListType.METHODS, createMethodList());
@@ -336,7 +337,7 @@ public class DisplayListService implements LocaleChangeListener {
         typeToListMap.put(ListType.GENDERS, createGenderList());
         typeToListMap.put(ListType.SAMPLE_PATIENT_REFERRING_CLINIC, createReferringClinicList());
         typeToListMap.put(ListType.QA_EVENTS, createSortedQAEvents());
-        typeToListMap.put(ListType.TEST_SECTION, createTestSectionList());
+        typeToListMap.put(ListType.TEST_SECTION_ACTIVE, createTestSectionActiveList());
         typeToListMap.put(ListType.METHODS, createMethodList());
         typeToListMap.put(ListType.METHODS_INACTIVE, createInactiveMethod());
         typeToListMap.put(ListType.METHOD_BY_NAME, createMethodByNameList());
@@ -378,7 +379,7 @@ public class DisplayListService implements LocaleChangeListener {
         case ORDER_PRIORITY: {
                 typeToListMap.put(ListType.ORDER_PRIORITY, createSamplePriorityList());
                 break;
-        }    
+        }
         case PRACTITIONER_PERSONS: {
             typeToListMap.put(ListType.PRACTITIONER_PERSONS, createActivePractitionerPersonsList());
             break;
@@ -409,9 +410,9 @@ public class DisplayListService implements LocaleChangeListener {
             typeToListMap.put(ListType.SAMPLE_TYPE_INACTIVE, createSampleTypeList(true));
             break;
         }
-        case TEST_SECTION: {
+        case TEST_SECTION_ACTIVE: {
             testSectionService.refreshNames();
-            typeToListMap.put(ListType.TEST_SECTION, createTestSectionList());
+            typeToListMap.put(ListType.TEST_SECTION_ACTIVE, createTestSectionActiveList());
             break;
         }
         case METHODS: {
@@ -684,7 +685,7 @@ public class DisplayListService implements LocaleChangeListener {
         return qaEvents;
     }
 
-    private List<IdValuePair> createTestSectionList() {
+    private List<IdValuePair> createTestSectionActiveList() {
         List<IdValuePair> testSectionsPairs = new ArrayList<>();
         List<TestSection> testSections = testSectionService.getAllActiveTestSections();
 

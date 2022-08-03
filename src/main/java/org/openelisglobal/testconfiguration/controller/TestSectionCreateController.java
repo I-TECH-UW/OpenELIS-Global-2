@@ -59,7 +59,7 @@ public class TestSectionCreateController extends BaseController {
 
     private void setupDisplayItems(TestSectionCreateForm form) {
         form.setExistingTestUnitList(
-                DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION));
+                DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION_ACTIVE));
         form.setInactiveTestUnitList(
                 DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION_INACTIVE));
         List<TestSection> testSections = testSectionService.getAllTestSections();
@@ -114,7 +114,7 @@ public class TestSectionCreateController extends BaseController {
             return findForward(FWD_FAIL_INSERT, form);
         }
 
-        DisplayListService.getInstance().refreshList(DisplayListService.ListType.TEST_SECTION);
+        DisplayListService.getInstance().refreshList(DisplayListService.ListType.TEST_SECTION_ACTIVE);
         DisplayListService.getInstance().refreshList(DisplayListService.ListType.TEST_SECTION_INACTIVE);
 
         return findForward(FWD_SUCCESS_INSERT, form);
