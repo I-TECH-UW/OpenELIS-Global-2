@@ -103,7 +103,7 @@ public class AnalyzerResultsController extends BaseController {
             .isPropertyValueEqual(ConfigurationProperties.Property.configurationName, "CI_GENERAL");
     private static final String REJECT_VALUE = "XXXX";
     private String RESULT_SUBJECT = "Analyzer Result Note";
-    private String DBS_SAMPLE_TYPE_ID;
+    
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -146,7 +146,8 @@ public class AnalyzerResultsController extends BaseController {
     private TestReflexUtil reflexUtil = new TestReflexUtil();
 
     private Map<String, String> analyzerNameToSubtitleKey = new HashMap<>();
-
+    private String DBS_SAMPLE_TYPE_ID = null;
+    
     @PostConstruct
     public void InitializeGlobalVariables() {
         if (IS_RETROCI) {

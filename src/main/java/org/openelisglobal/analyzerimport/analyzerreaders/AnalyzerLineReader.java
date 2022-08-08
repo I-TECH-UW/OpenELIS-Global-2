@@ -16,6 +16,7 @@
 */
 package org.openelisglobal.analyzerimport.analyzerreaders;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,7 +24,10 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.plugin.AnalyzerImporterPlugin;
+
+import com.ibm.icu.text.CharsetDetector;
 
 public class AnalyzerLineReader extends AnalyzerReader {
 
@@ -56,15 +60,27 @@ public class AnalyzerLineReader extends AnalyzerReader {
         error = null;
         inserter = null;
         lines = new ArrayList<>();
-
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(stream));
-
+        BufferedInputStream bis = new BufferedInputStream(stream);
+        CharsetDetector detector = new CharsetDetector();
         try {
-            for (String line = bufferedReader.readLine(); line != null; line = bufferedReader.readLine()) {
-                lines.add(line);
+            detector.setText(bis);
+            String charsetName = detector.detect().getName();
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(bis, charsetName));
+
+            try {
+                for (String line = bufferedReader.readLine(); line != null; line = bufferedReader.readLine()) {
+                    lines.add(line);
+                }
+            } catch (IOException e) {
+                error = "Unable to read file";
+                LogEvent.logError(e);
+                LogEvent.logError("an error occured detecting the encoding of the analyzer file", e);
+                return false;
             }
         } catch (IOException e) {
-            error = "Unable to read file";
+            error = "Unable to determine file encoding";
+            LogEvent.logError(e);
+            LogEvent.logError("an error occured detecting the encoding of the analyzer file", e);
             return false;
         }
 

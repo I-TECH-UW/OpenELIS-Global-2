@@ -13,6 +13,7 @@ import javax.validation.Valid;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.DisplayListService.ListType;
@@ -61,7 +62,6 @@ public class StatusResultsController extends BaseController {
 
     private final InventoryUtility inventoryUtility = SpringContext.getBean(InventoryUtility.class);
     private static final ConfigurationProperties configProperties = ConfigurationProperties.getInstance();
-    private static final String ROLE_RESULTS = "Results";
 
     private static Set<Integer> excludedStatusIds;
 
@@ -107,7 +107,7 @@ public class StatusResultsController extends BaseController {
             List<TestResultItem> filteredTests = new ArrayList();
             if (GenericValidator.isBlankOrNull(newRequest) || newRequest.equals("false")) {
                 tests = setSearchResults(form, resultsUtility);
-                filteredTests = userService.filterResultsByLabUnitRoles(getSysUserId(request), tests ,ROLE_RESULTS);
+                filteredTests = userService.filterResultsByLabUnitRoles(getSysUserId(request), tests ,Constants.ROLE_RESULTS);
 
                 if (configProperties.isPropertyValueEqual(Property.PATIENT_DATA_ON_RESULTS_BY_ROLE, "true")
                         && !userHasPermissionForModule(request, "PatientResults")) {
@@ -174,7 +174,7 @@ public class StatusResultsController extends BaseController {
         List<DropPair> analysisStatusList = getAnalysisStatusTypes();
 
         form.setAnalysisStatusSelections(analysisStatusList);
-        form.setTestSelections(userService.getAllDisplayUserTestsByLabUnit(getSysUserId(request) , ROLE_RESULTS));
+        form.setTestSelections(userService.getAllDisplayUserTestsByLabUnit(getSysUserId(request) , Constants.ROLE_RESULTS));
 
         List<DropPair> sampleStatusList = getSampleStatusTypes();
         form.setSampleStatusSelections(sampleStatusList);

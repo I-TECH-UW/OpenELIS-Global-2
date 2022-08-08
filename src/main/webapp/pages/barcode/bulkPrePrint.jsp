@@ -96,13 +96,9 @@ jQuery(document).ready(function () {
 	
     var dropdown = jQuery("select#requesterId");
     autoCompleteWidth = dropdown.width() + 66 + 'px';
-    clearNonMatching = true;
-    capitialize = true;
     // Actually executes autocomplete
     dropdown.combobox();
-    invalidLabID = '<spring:message code="error.site.invalid"/>'; // Alert if value is typed that's not on list. FIX - add bad message icon
-    maxRepMsg = '<spring:message code="sample.entry.project.siteMaxMsg"/>';
-    resultCallBack = function (textValue) {
+    autocompleteResultCallBack = function (selectId, textValue) {
         siteListChanged(textValue);
     	processFacilityIDChange();
        // setOrderModified();
@@ -155,10 +151,16 @@ jQuery(document).ready(function () {
 		</td>
 		<td><div id="facility-combobox">
 			<c:if test="${not sampleOrderItems.readOnly}" >
+    		    <spring:message code="error.site.invalid" var="invalidSite"/>
+    		    <spring:message code="sample.entry.project.siteMaxMsg" var="siteMaxMessage"/>
 		        <form:select id="requesterId"
 		                     path="facilityID"
 		                     onchange="siteListChanged(this);processFacilityIDChange();"
 		                     onkeyup="capitalizeValue( this.value );"
+		                     capitalize="true"
+		                     invalidlabid='${invalidSite}'
+		                     maxrepmsg='${siteMaxMessage}'
+		       			     clearNonMatching="true"
 
 		                >
 		            <option value=""></option>

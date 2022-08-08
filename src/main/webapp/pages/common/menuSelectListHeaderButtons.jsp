@@ -303,7 +303,7 @@ function submitFilterForClick(button){
 		 <%-- to apply filters to reasults --%>
 	   <c:if test="${not empty filter}">
 			<td>  <spring:message code="menu.label.filter"/> : 			    
-				<select name="roleFilter" id="roleFilter" onclick="submitFilterForClick(this);return false;">
+				<select name="roleFilter" id="roleFilter" onchange="submitFilterForClick(this);return false;">
 				     <option value=""></option>
 					<c:forEach items="${form.testSections}" var="role">
                        <option value="${role.id}">${role.value}</option>

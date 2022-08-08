@@ -31,6 +31,7 @@
     boolean trackPayment = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.TRACK_PATIENT_PAYMENT, "true");
     boolean requesterPersonRequired = FormFields.getInstance().useField(Field.SampleEntryRequesterPersonRequired);
 	boolean acceptExternalOrders = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.ACCEPT_EXTERNAL_ORDERS, "true");
+    boolean restrictNewProviderEntries = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.restrictFreeTextProviderEntry, "true");
 %>
 
 
@@ -63,8 +64,14 @@ var currentReferalDiv ;
 var currentReferalDivSelector ;
 
 if( requesterPersonRequired ){
-    requiredFields.push("providerPersonId");
+	if (<%=restrictNewProviderEntries%>) {
+		requiredFields.push("providerPersonId");
+	} else {
+		requiredFields.push("providerLastNameID");
+	}
+    
 }
+
 <% if( FormFields.getInstance().useField(Field.SampleEntryUseRequestDate)){ %>
     requiredFields.push("requestDate");
 <% } %>
@@ -339,7 +346,7 @@ function processLabOrderSuccess(xhr){
     <c:if test="${param.attemptAutoSave}">
 	<c:choose>
 	<c:when test="${not empty param.labNumber}">
-		jQuery('#labNo').val('${param.labNumber}');
+		jQuery('#labNo').val('<spring:escapeBody javaScriptEscape="true">${param.labNumber}</spring:escapeBody>');
 		setOrderModified();
 	</c:when>
 	<c:otherwise>
@@ -437,8 +444,8 @@ function parsePatient(patienttag) {
 
 
 function clearRequester() {
-
-    $("providerPersonId").value = '';
+	clearProvider();
+    
     $("labNo").value = '';
     $("receivedDateForDisplay").value = '${entryDate}';
     $("receivedTime").value = '';
@@ -446,12 +453,39 @@ function clearRequester() {
 
 }
 
+function clearProvider() {
+	setSelectComboboxToId('providerPersonId', '');
+}
+
 function parseRequester(requester) {
     var requesterIdElement = requester.item(0).getElementsByTagName("personId");
     var requesterId = "";
     if (requesterIdElement.length > 0) {
     	requesterId = requesterIdElement[0].firstChild.nodeValue;
-            $("providerPersonId").value = first;
+
+        setSelectComboboxToId("providerPersonId", requesterId);
+    }
+    
+    var firstName = requester.item(0).getElementsByTagName("firstName");
+    var first = "";
+    if (firstName.length > 0) {
+            first = firstName[0].firstChild.nodeValue;
+            $("providerFirstNameID").value = first;
+    }
+    var lastName = requester.item(0).getElementsByTagName("lastName");
+    var last = "";
+    if (lastName.length > 0) {
+        last = lastName[0].firstChild.nodeValue;
+        $("providerLastNameID").value = last;    
+    }
+    
+    var phoneNum = requester.item(0).getElementsByTagName("providerWorkPhoneID");
+    var phone = "";
+    if (phoneNum.length > 0) {
+        if (phoneNum[0].firstChild) {
+            phone = phoneNum[0].firstChild.nodeValue;
+            $("providerWorkPhoneID").value = phone;
+        }
     }
 }
 
@@ -461,7 +495,7 @@ function parseRequestingOrg(requestingOrg) {
     if (requestingOrgId.length > 0) {
             id = requestingOrgId[0].firstChild.nodeValue;
     }
-	jQuery("#requesterId").val(id).change();
+    setSelectComboboxToId("requesterId", id);
 }
 
 function parseLocation(location) {
@@ -470,7 +504,7 @@ function parseLocation(location) {
     if (locationId.length > 0) {
             id = locationId[0].firstChild.nodeValue;
     }
-	jQuery("#requesterId").val(id).change();
+    setSelectComboboxToId("requesterId", id);
 }
 
 function parseSampletypes(sampletypes, SampleTypes) {

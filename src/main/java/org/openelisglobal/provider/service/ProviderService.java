@@ -29,4 +29,6 @@ public interface ProviderService extends BaseObjectService<Provider, String> {
     int getTotalSearchedProviderCount(String parameter);
 
     void deactivateProviders(List<Provider> providers);
+
+    Provider insertOrUpdateProviderByFhirUuid(Provider provider);
 }

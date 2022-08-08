@@ -33,6 +33,7 @@ import org.openelisglobal.observationhistory.service.ObservationHistoryService;
 import org.openelisglobal.observationhistory.valueholder.ObservationHistory;
 import org.openelisglobal.organization.service.OrganizationService;
 import org.openelisglobal.organization.valueholder.Organization;
+import org.openelisglobal.organization.valueholder.OrganizationType;
 import org.openelisglobal.panel.valueholder.Panel;
 import org.openelisglobal.patient.action.bean.PatientManagementInfo;
 import org.openelisglobal.person.service.PersonService;
@@ -185,6 +186,7 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
 
         updateData.getSample().setFhirUuid(UUID.randomUUID());
         sampleService.insertDataWithAccessionNumber(updateData.getSample());
+        updateData.getSample().setPriority(updateData.getPriority());
 
         for (SampleAdditionalField field : updateData.getSampleFields()) {
             field.setSample(updateData.getSample());
@@ -307,6 +309,18 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
         }
 
         if (updateData.getRequesterSiteDepartment() != null) {
+            Organization siteDepartment = organizationService
+                    .get(String.valueOf(updateData.getRequesterSiteDepartment().getRequesterId()));
+            boolean orgHasType = false;
+            for (OrganizationType orgType : siteDepartment.getOrganizationTypes()) {
+                if (orgType.getId().equals(TableIdService.getInstance().REFERRING_ORG_DEPARTMENT_TYPE_ID)) {
+                    orgHasType = true;
+                }
+            } 
+            if (!orgHasType) {
+                organizationService.linkOrganizationAndType(siteDepartment,
+                        TableIdService.getInstance().REFERRING_ORG_DEPARTMENT_TYPE_ID);
+            }
             updateData.getRequesterSiteDepartment().setSampleId(Long.parseLong(updateData.getSample().getId()));
 //            if (updateData.getNewOrganizationDepartment() != null) {
 //                updateData.getRequesterSite().setRequesterId(updateData.getNewOrganizationDepartment().getId());

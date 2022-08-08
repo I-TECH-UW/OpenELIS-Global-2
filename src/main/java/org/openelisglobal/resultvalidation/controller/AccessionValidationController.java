@@ -7,6 +7,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.validator.GenericValidator;
+import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.util.ConfigurationProperties;
@@ -37,7 +38,6 @@ import org.springframework.web.servlet.ModelAndView;
 public class AccessionValidationController extends BaseController {
 
     private final String RESULT_EDIT_ROLE_ID;
-    private static final String ROLE_VALIDATION = "Validation";
 
     private InventoryUtility inventoryUtility = SpringContext.getBean(InventoryUtility.class);
     @Autowired
@@ -104,7 +104,7 @@ public class AccessionValidationController extends BaseController {
                     resultsUtility.addIdentifingPatientInfo(patient, form);
 
                     List<AnalysisItem> resultsAnalysises = resultsUtility.getValidationAnalysisBySample(sample);
-                    List<AnalysisItem> filteredresultList = userService.filterAnalystResultsByLabUnitRoles(getSysUserId(request), resultsAnalysises, ROLE_VALIDATION);
+                    List<AnalysisItem> filteredresultList = userService.filterAnalystResultsByLabUnitRoles(getSysUserId(request), resultsAnalysises, Constants.ROLE_VALIDATION);
                     count = filteredresultList.size();
 //                    if (resultsUtility.inventoryNeeded()) {
 //                        addInventory(form);

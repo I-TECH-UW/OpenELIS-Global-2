@@ -144,15 +144,6 @@ jQuery(document).ready( function() {
             	jQuery(this).find('.resultValue').val(jQuery(this).find('.defaultResultValue').val());
             	jQuery(this).find('.resultValue').change();
             });
-            <c:if test="${not empty requestScope.reflex_accessions}">
-            var reflexAccessions = new Array();
-            <c:forEach items="${requestScope.reflex_accessions}" var="accession">
-            reflexAccessions.push('<c:out value="${accession}"/>');
-            </c:forEach>
-            var msg = 'A result has triggered another test to be added to order(s): ' + reflexAccessions.join(', ');
-            
-            alert(msg);
-            </c:if>
             
 			});
 
@@ -548,23 +539,18 @@ function /*void*/ handleEnterEvent(  ){
 	return false;
 }
 
-jQuery(document).ready(function (index) {
-    var dropdown = jQuery('#testMethod_' + index);
-    autoCompleteWidth = dropdown.width() + 66 + 'px';
-    <% if(restrictNewReferringMethodEntries) { %>
-   			clearNonMatching = true;
-    <% } else {%>
-    		clearNonMatching = false;
-    <% } %>
-    capitialize = true;
-    // Actually executes autocomplete
-    dropdown.combobox();
-    invalidLabID = '<spring:message code="error.method.invalid"/>'; // Alert if value is typed that's not on list. FIX - add bad message icon
-    maxRepMsg = '<spring:message code="method.entry.project.MaxMsg"/>';
-    resultCallBack = function (textValue) {
-    	setSave();
-    };
-});
+// jQuery(document).ready(function () {
+//     jQuery('select.autocomplete-combobox').each(function(index, value) {
+//     		var dropdown = jQuery(value);
+//             autoCompleteWidth = dropdown.width() + 66 + 'px';
+//             // Actually executes autocomplete
+//             dropdown.combobox();
+//             autocompleteResultCallBack = function (selectedId, textValue) {
+//             	setSave();
+//             };
+//     });
+
+// });
 
 </script>
 
@@ -1375,8 +1361,15 @@ jQuery(document).ready(function (index) {
 							code="refertest" text="Refer test to a reference lab" /></td>
 							 <td width="50%"><%=MessageUtil.getMessage("workplan.method")%>&nbsp;
 
+					    		<spring:message code="error.site.invalid" var="invalidSite"/>
+					    	    <spring:message code="sample.entry.project.siteMaxMsg" var="siteMaxMessage"/>
 								<form:select id="testMethod_${iter.index}"
-								        path="testResult[${iter.index}].testMethod">
+										class="autocomplete-combobox"
+								         path="testResult[${iter.index}].testMethod" 
+                    					 capitalize="true"
+					                     invalidlabid='${invalidSite}'
+					                     maxrepmsg='${siteMaxMessage}'
+					       				 clearNonMatching="<%=restrictNewReferringMethodEntries%>">
 										<option value=""></option>
 										<form:options items="${form.methods}" itemLabel="value"
 											itemValue="id" />

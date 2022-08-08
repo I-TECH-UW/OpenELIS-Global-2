@@ -16,6 +16,7 @@
  */
 
 package org.openelisglobal.dataexchange.order.valueholder;
+import org.openelisglobal.sample.valueholder.OrderPriority;
 
 import java.util.List;
 
@@ -48,6 +49,8 @@ public class ElectronicOrderDisplayItem {
     private String labNumber;
 
     private List<String> warnings;
+
+    private OrderPriority priority;
 
     public String getElectronicOrderId() {
         return electronicOrderId;
@@ -161,4 +164,11 @@ public class ElectronicOrderDisplayItem {
         this.warnings = warnings;
     }
 
+    public OrderPriority getPriority() {
+        return priority;
+    }
+
+    public void setPriority(OrderPriority priority) {
+        this.priority = priority;
+    }
 }

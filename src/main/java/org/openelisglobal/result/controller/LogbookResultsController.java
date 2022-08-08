@@ -22,6 +22,7 @@ import org.json.simple.parser.ParseException;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.action.IActionConstants;
+import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.formfields.FormFields.Field;
@@ -145,7 +146,6 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 
     private final String RESULT_SUBJECT = "Result Note";
     private final String REFERRAL_CONFORMATION_ID;
-    private static final String ROLE_RESULTS = "Results";
     private static final String REFLEX_ACCESSIONS = "reflex_accessions";
 
     private LogbookResultsController(ReferralTypeService referralTypeService) {
@@ -180,7 +180,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
                     .getNumberedListWithLeadingBlank(DisplayListService.ListType.REJECTION_REASONS));
 
             // load testSections for drop down
-            String resultsRoleId =  roleService.getRoleByName(ROLE_RESULTS).getId();
+            String resultsRoleId =  roleService.getRoleByName(Constants.ROLE_RESULTS).getId();
             List<IdValuePair> testSections = userService.getUserTestSections(getSysUserId(request) ,resultsRoleId);
             newForm.setTestSections(testSections);
             newForm.setTestSectionsByName(DisplayListService.getInstance().getList(ListType.TEST_SECTION_BY_NAME));
@@ -248,7 +248,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 
             if (!GenericValidator.isBlankOrNull(form.getTestSectionId())) {
                 tests = resultsLoadUtility.getUnfinishedTestResultItemsInTestSection(form.getTestSectionId());
-                filteredTests = userService.filterResultsByLabUnitRoles(getSysUserId(request), tests ,ROLE_RESULTS);
+                filteredTests = userService.filterResultsByLabUnitRoles(getSysUserId(request), tests ,Constants.ROLE_RESULTS);
                 int count = resultsLoadUtility.getTotalCountAnalysisByTestSectionAndStatus(form.getTestSectionId());
                 request.setAttribute("analysisCount", count);
                 request.setAttribute("pageSize", filteredTests.size());
@@ -274,7 +274,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
                 form.setSearchFinished(true);
             } else if (!GenericValidator.isBlankOrNull(form.getAccessionNumber())) {
                 tests = resultsLoadUtility.getUnfinishedTestResultItemsByAccession(form.getAccessionNumber());
-                filteredTests = userService.filterResultsByLabUnitRoles(getSysUserId(request), tests ,ROLE_RESULTS);
+                filteredTests = userService.filterResultsByLabUnitRoles(getSysUserId(request), tests ,Constants.ROLE_RESULTS);
                 int count = resultsLoadUtility.getTotalCountAnalysisByAccessionAndStatus(form.getAccessionNumber());
                 request.setAttribute("analysisCount", count);
                 request.setAttribute("pageSize", filteredTests.size());

@@ -17,6 +17,7 @@ import org.apache.commons.validator.GenericValidator;
 import org.hibernate.StaleObjectStateException;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.formfields.FormFields;
@@ -83,13 +84,13 @@ public class SampleEditController extends BaseController {
             "sampleOrderItems.facilityAddressCommune", "sampleOrderItems.facilityPhone", "sampleOrderItems.facilityFax",
             "sampleOrderItems.paymentOptionSelection", "sampleOrderItems.billingReferenceNumber",
             "sampleOrderItems.testLocationCode", "sampleOrderItems.otherLocationCode",
+            "sampleOrderItems.priority",
             //
             "accessionNumber", "newAccessionNumber", "isEditable", "maxAccessionNumber",
             "existingTests*.sampleItemChanged", "existingTests*.sampleItemId", "existingTests*.analysisId",
             "existingTests*.collectionDate", "existingTests*.collectionTime", "existingTests*.removeSample",
             "existingTests*.canceled", "possibleTests*.testId", "possibleTests*.sampleItemId", "possibleTests*.add" };
 
-    private static final String ROLE_RECEPTION = "Reception";
 
     @Autowired
     SampleEditFormValidator formValidator;
@@ -351,12 +352,12 @@ public class SampleEditController extends BaseController {
         }
 
         form.setPossibleTests(possibleTestList);
-        form.setTestSectionList(DisplayListService.getInstance().getList(ListType.TEST_SECTION));
+        form.setTestSectionList(DisplayListService.getInstance().getList(ListType.TEST_SECTION_ACTIVE));
     }
 
     private void setAddableSampleTypes(SampleEditForm form, HttpServletRequest request)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        form.setSampleTypes(userService.getUserSampleTypes(getSysUserId(request), ROLE_RECEPTION));
+        form.setSampleTypes(userService.getUserSampleTypes(getSysUserId(request), Constants.ROLE_RECEPTION));
     }
 
     private void addPossibleTestsToList(SampleItem sampleItem, List<SampleEditItem> possibleTestList,

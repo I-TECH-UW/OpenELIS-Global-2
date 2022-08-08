@@ -106,7 +106,11 @@ public class TestAddController extends BaseController {
         form.setPanelList(DisplayListService.getInstance().getList(ListType.PANELS));
         form.setResultTypeList(DisplayListService.getInstance().getList(ListType.RESULT_TYPE_LOCALIZED));
         form.setUomList(DisplayListService.getInstance().getList(ListType.UNIT_OF_MEASURE));
-        form.setLabUnitList(DisplayListService.getInstance().getList(ListType.TEST_SECTION));
+
+        List<IdValuePair> allLabUnitsList = new ArrayList<>();
+        allLabUnitsList.addAll(DisplayListService.getInstance().getList(ListType.TEST_SECTION_ACTIVE));
+        allLabUnitsList.addAll(DisplayListService.getInstance().getList(ListType.TEST_SECTION_INACTIVE));
+        form.setLabUnitList(allLabUnitsList);
         form.setAgeRangeList(SpringContext.getBean(ResultLimitService.class).getPredefinedAgeRanges());
         form.setDictionaryList(DisplayListService.getInstance().getList(ListType.DICTIONARY_TEST_RESULTS));
         form.setGroupedDictionaryList(createGroupedDictionaryList());
@@ -150,6 +154,12 @@ public class TestAddController extends BaseController {
         testService.refreshTestNames();
         displayListService.refreshList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE);
         displayListService.refreshList(DisplayListService.ListType.SAMPLE_TYPE_INACTIVE);
+        displayListService.refreshList(DisplayListService.ListType.PANELS_ACTIVE);
+        displayListService.refreshList(DisplayListService.ListType.PANELS_INACTIVE);
+        displayListService.refreshList(DisplayListService.ListType.PANELS);
+        displayListService.refreshList(DisplayListService.ListType.TEST_SECTION_ACTIVE);
+        displayListService.refreshList(DisplayListService.ListType.TEST_SECTION_BY_NAME);
+        displayListService.refreshList(DisplayListService.ListType.TEST_SECTION_INACTIVE);
         SpringContext.getBean(TypeOfSampleService.class).clearCache();
 
         return findForward(FWD_SUCCESS_INSERT, form);
@@ -159,11 +169,11 @@ public class TestAddController extends BaseController {
         List<Test> tests = testService.getTestsByLoincCode(loincCode);
         for (Test test : tests) {
             if(test.getLoinc().equals(loincCode)){
-                errors.reject("entry.invalid.loinc.number.used", 
+                errors.reject("entry.invalid.loinc.number.used",
                 "entry.invalid.loinc.number.used");
             }
         }
-        return errors;  
+        return errors;
     }
 
 
@@ -245,7 +255,7 @@ public class TestAddController extends BaseController {
             createPanelItems(testSet.panelItems, testAddParams);
             createTestResults(testSet.testResults, significantDigits, testAddParams);
             if (numericResults) {
-                testSet.resultLimits = createResultLimits(lowValid, highValid, highReportingRange, highReportingRange, testAddParams);
+                testSet.resultLimits = createResultLimits(lowValid, highValid, lowReportingRange, highReportingRange, testAddParams);
             } else if (dictionaryResults) {
                 testSet.resultLimits = createDictionaryResultLimit(testAddParams);
             }
@@ -268,7 +278,7 @@ public class TestAddController extends BaseController {
         return resultLimits;
     }
 
-    private ArrayList<ResultLimit> createResultLimits(Double lowValid, Double highValid,Double highReportingRange,Double lowReportingRange, TestAddParams testAddParams) {
+    private ArrayList<ResultLimit> createResultLimits(Double lowValid, Double highValid,Double lowReportingRange,Double highReportingRange, TestAddParams testAddParams) {
         ArrayList<ResultLimit> resultLimits = new ArrayList<>();
         for (ResultLimitParams params : testAddParams.limits) {
             ResultLimit limit = new ResultLimit();
@@ -276,8 +286,8 @@ public class TestAddController extends BaseController {
             limit.setGender(params.gender);
             limit.setMinAge(StringUtil.doubleWithInfinity(params.lowAge));
             limit.setMaxAge(StringUtil.doubleWithInfinity(params.highAge));
-            limit.setLowNormal(StringUtil.doubleWithInfinity(params.lowLimit));
-            limit.setHighNormal(StringUtil.doubleWithInfinity(params.highLimit));
+            limit.setLowNormal(StringUtil.doubleWithInfinity(params.lowNormalLimit));
+            limit.setHighNormal(StringUtil.doubleWithInfinity(params.highNormalLimit));
             limit.setLowValid(lowValid);
             limit.setHighValid(highValid);
             if(lowReportingRange != null && highReportingRange != null ){
@@ -384,8 +394,8 @@ public class TestAddController extends BaseController {
             }
             String highAge = (String) (((JSONObject) limitArray.get(i)).get("highAgeRange"));
             params.displayRange = (String) (((JSONObject) limitArray.get(i)).get("reportingRange"));
-            params.lowLimit = (String) (((JSONObject) limitArray.get(i)).get("lowNormal"));
-            params.highLimit = (String) (((JSONObject) limitArray.get(i)).get("highNormal"));
+            params.lowNormalLimit = (String) (((JSONObject) limitArray.get(i)).get("lowNormal"));
+            params.highNormalLimit = (String) (((JSONObject) limitArray.get(i)).get("highNormal"));
             params.lowAge = lowAge;
             params.highAge = highAge;
             testAddParams.limits.add(params);
@@ -393,9 +403,8 @@ public class TestAddController extends BaseController {
             if (gender) {
                 params = new ResultLimitParams();
                 params.gender = "F";
-                params.displayRange = (String) (((JSONObject) limitArray.get(i)).get("reportingRangeFemale"));
-                params.lowLimit = (String) (((JSONObject) limitArray.get(i)).get("lowNormalFemale"));
-                params.highLimit = (String) (((JSONObject) limitArray.get(i)).get("highNormalFemale"));
+                params.lowNormalLimit = (String) (((JSONObject) limitArray.get(i)).get("lowNormalFemale"));
+                params.highNormalLimit = (String) (((JSONObject) limitArray.get(i)).get("highNormalFemale"));
                 params.lowAge = lowAge;
                 params.highAge = highAge;
                 testAddParams.limits.add(params);
@@ -574,8 +583,8 @@ public class TestAddController extends BaseController {
         String gender;
         String lowAge;
         String highAge;
-        String lowLimit;
-        String highLimit;
+        String lowNormalLimit;
+        String highNormalLimit;
         String displayRange;
     }
 

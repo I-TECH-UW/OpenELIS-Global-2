@@ -34,6 +34,8 @@ public interface AnalysisService extends BaseObjectService<Analysis, String> {
 
     List<Analysis> getAnalysisStartedOrCompletedInDateRange(Date lowDate, Date highDate);
 
+    List<Analysis> getAnalysisByTestIdAndTestSectionIdsAndStartedInDateRange(Date lowDate, Date highDate ,String testId ,List<Integer> testScectionIds);
+
     List<Analysis> getAllAnalysisByTestSectionAndStatus(String testSectionId, List<Integer> analysisStatusList,
             List<Integer> sampleStatusList);
 

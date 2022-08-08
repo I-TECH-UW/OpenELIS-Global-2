@@ -39,5 +39,11 @@
                 <param name="useNamed">true</param>
             </type>
         </property>
+		<property name="priority" column="ORDER_PRIORITY">
+			<type name="org.hibernate.type.EnumType">
+				<param name="enumClass">org.openelisglobal.sample.valueholder.OrderPriority</param>
+				<param name="useNamed">true</param>
+			</type>
+		</property>
 	</class>
 </hibernate-mapping>

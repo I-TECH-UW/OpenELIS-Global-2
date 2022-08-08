@@ -6,10 +6,12 @@ import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.StaleObjectStateException;
 import org.hl7.fhir.r4.model.Enumerations.ResourceType;
 import org.hl7.fhir.r4.model.Reference;
+import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.log.LogEvent;
@@ -23,11 +25,13 @@ import org.openelisglobal.common.validator.BaseErrors;
 import org.openelisglobal.dataexchange.fhir.exception.FhirPersistanceException;
 import org.openelisglobal.dataexchange.fhir.exception.FhirTransformationException;
 import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
+import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder;
 import org.openelisglobal.patient.action.IPatientUpdate;
 import org.openelisglobal.patient.action.IPatientUpdate.PatientUpdateStatus;
 import org.openelisglobal.patient.action.bean.PatientManagementInfo;
 import org.openelisglobal.patient.action.bean.PatientSearch;
 import org.openelisglobal.provider.service.ProviderService;
+import org.openelisglobal.provider.valueholder.Provider;
 import org.openelisglobal.sample.action.util.SamplePatientUpdateData;
 import org.openelisglobal.sample.bean.SampleOrderItem;
 import org.openelisglobal.sample.form.SamplePatientEntryForm;
@@ -38,6 +42,7 @@ import org.openelisglobal.sample.valueholder.SampleAdditionalField;
 import org.openelisglobal.sample.valueholder.SampleAdditionalField.AdditionalFieldName;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.systemuser.service.UserService;
+import org.openelisglobal.dataexchange.service.order.ElectronicOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -104,11 +109,14 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
             "sampleOrderItems.referringPatientNumber", "sampleOrderItems.referringSiteId",
             "referringSiteDepartmentName", "sampleOrderItems.referringSiteDepartmentId",
             "sampleOrderItems.referringSiteName", "sampleOrderItems.referringSiteCode", "sampleOrderItems.program",
-            "sampleOrderItems.providerPersonId", "sampleOrderItems.facilityAddressStreet",
+            "sampleOrderItems.providerPersonId", "sampleOrderItems.providerLastName",
+            "sampleOrderItems.providerFirstName", "sampleOrderItems.providerWorkPhone", "sampleOrderItems.providerFax",
+            "sampleOrderItems.providerEmail", "sampleOrderItems.facilityAddressStreet",
             "sampleOrderItems.facilityAddressCommune", "sampleOrderItems.facilityPhone", "sampleOrderItems.facilityFax",
             "sampleOrderItems.paymentOptionSelection", "sampleOrderItems.billingReferenceNumber",
             "sampleOrderItems.testLocationCode", "sampleOrderItems.otherLocationCode",
             "sampleOrderItems.contactTracingIndexName", "sampleOrderItems.contactTracingIndexRecordNumber",
+            "sampleOrderItems.priority",
             //
             "currentDate", "sampleOrderItems.newRequesterName", "sampleOrderItems.externalOrderNumber",
             // referral
@@ -117,7 +125,6 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
             "referralItems*.referralReasonId", "referralItems*.referrer", "referralItems*.referredInstituteId",
             "referralItems*.referredSendDate", "referralItems*.referredTestId", "referralItems*.referredReportDate",
             "referralItems*.note", "useReferral" };
-    private static final String ROLE_RECEPTION = "Reception";
 
     @Autowired
     private SamplePatientEntryFormValidator formValidator;
@@ -129,6 +136,8 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
     private UserService userService;
     @Autowired
     private ProviderService providerService;
+    @Autowired
+    private ElectronicOrderService electronicOrderService;
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -191,6 +200,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 
         updateData.setAccessionNumber(sampleOrder.getLabNo());
         updateData.setReferringId(sampleOrder.getExternalOrderNumber());
+        updateData.setPriority(sampleOrder.getPriority());
         updateData.initProvider(sampleOrder);
         updateData.initSampleData(form.getSampleXML(), receivedDateForDisplay, trackPayments, sampleOrder);
         updateData.setPatientEmailNotificationTestIds(form.getPatientEmailNotificationTestIds());
@@ -252,16 +262,23 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
         if (requestFhirUuid != null
                 && requestFhirUuid.toUpperCase().startsWith(ResourceType.PRACTITIONER.toString().toUpperCase())) {
             Reference providerReference = new Reference(requestFhirUuid);
-            form.getSampleOrderItems()
-                    .setProviderPersonId(providerService
-                            .getProviderByFhirId(UUID.fromString(providerReference.getReferenceElement().getIdPart()))
-                            .getPerson().getId());
+            Provider provider = providerService
+                    .getProviderByFhirId(UUID.fromString(providerReference.getReferenceElement().getIdPart()));
+            if (provider != null) {
+                form.getSampleOrderItems().setProviderPersonId(provider.getPerson().getId());
+            }
         }
         form.getSampleOrderItems().setExternalOrderNumber(externalOrderNumber);
+        if(StringUtils.isNotBlank(externalOrderNumber)) {
+            ElectronicOrder eOrder = electronicOrderService.getElectronicOrdersByExternalId(externalOrderNumber).get(0);
+            if (eOrder != null) {
+                form.getSampleOrderItems().setPriority(eOrder.getPriority());
+            }
+        }
         form.setPatientProperties(new PatientManagementInfo());
         form.setPatientSearch(new PatientSearch());
-        form.setSampleTypes(userService.getUserSampleTypes(getSysUserId(request), ROLE_RECEPTION));
-        form.setTestSectionList(DisplayListService.getInstance().getList(ListType.TEST_SECTION));
+        form.setSampleTypes(userService.getUserSampleTypes(getSysUserId(request), Constants.ROLE_RECEPTION));
+        form.setTestSectionList(DisplayListService.getInstance().getList(ListType.TEST_SECTION_ACTIVE));
         form.setCurrentDate(DateUtil.getCurrentDateAsText());
 
         setupReferralOption(form);

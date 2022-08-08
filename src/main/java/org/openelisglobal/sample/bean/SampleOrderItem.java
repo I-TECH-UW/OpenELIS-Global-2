@@ -33,6 +33,7 @@ import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.sample.form.SampleEditForm;
 import org.openelisglobal.sample.form.SamplePatientEntryForm;
 import org.openelisglobal.sample.form.SamplePatientEntryForm.SamplePatientEntryBatch;
+import org.openelisglobal.sample.valueholder.OrderPriority;
 import org.openelisglobal.samplebatchentry.form.SampleBatchEntryForm;
 import org.openelisglobal.validation.annotations.OptionalNotBlank;
 import org.openelisglobal.validation.annotations.ValidAccessionNumber;
@@ -209,6 +210,27 @@ public class SampleOrderItem implements Serializable {
     private String contactTracingIndexName;
 
     private String contactTracingIndexRecordNumber;
+
+    // for display
+    private List<IdValuePair> priorityList;
+
+    public List<IdValuePair> getPriorityList() {
+        return priorityList;
+    }
+
+    public void setPriorityList(List<IdValuePair> priorityList) {
+        this.priorityList = priorityList;
+    }
+
+    private OrderPriority priority;
+
+    public OrderPriority getPriority() {
+        return priority;
+    }
+
+    public void setPriority(OrderPriority priority) {
+        this.priority = priority;
+    }
 
     public String getNewRequesterName() {
         return newRequesterName;

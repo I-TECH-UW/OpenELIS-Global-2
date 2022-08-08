@@ -378,15 +378,17 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
             }
             Provider provider = providerService
                     .getProviderByFhirId(UUID.fromString(requesterPerson.getIdElement().getIdPart()));
-            requesterValuesMap.put(PROVIDER_ID, provider.getId());
-            requesterValuesMap.put(PROVIDER_PERSON_ID, provider.getPerson().getId());
+            if (provider != null) {
+                requesterValuesMap.put(PROVIDER_ID, provider.getId());
+                requesterValuesMap.put(PROVIDER_PERSON_ID, provider.getPerson().getId());
+            }
             requesterValuesMap.put(PROVIDER_LAST_NAME, requesterPerson.getNameFirstRep().getFamily());
             requesterValuesMap.put(PROVIDER_FIRST_NAME, requesterPerson.getNameFirstRep().getGivenAsSingleString());
 
         }
         xml.append("<requester>");
         XMLUtil.appendKeyValue(PROVIDER_ID, requesterValuesMap.get(PROVIDER_ID), xml);
-        XMLUtil.appendKeyValue(PROVIDER_PERSON_ID, requesterValuesMap.get(PROVIDER_ID), xml);
+        XMLUtil.appendKeyValue(PROVIDER_PERSON_ID, requesterValuesMap.get(PROVIDER_PERSON_ID), xml);
         XMLUtil.appendKeyValue(PROVIDER_FIRST_NAME, requesterValuesMap.get(PROVIDER_FIRST_NAME), xml);
         XMLUtil.appendKeyValue(PROVIDER_LAST_NAME, requesterValuesMap.get(PROVIDER_LAST_NAME), xml);
         XMLUtil.appendKeyValue(PROVIDER_PHONE, requesterValuesMap.get(PROVIDER_PHONE), xml);

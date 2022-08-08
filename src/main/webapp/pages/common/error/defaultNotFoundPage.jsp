@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" %>
-<%@ page import="java.util.*"%>
+<%@ page import="java.util.*,
+		 		 org.owasp.encoder.Encode" %>
 
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
@@ -101,8 +102,7 @@
 $(document).ready(function () {
     // jquery functions for details on error
     // Currently not localized.
-    var pathname = location.href;
-    $("#error-path").text(pathname);
+    $("#error-path").text(location.href);
     var referrerPath = document.referrer;
     var referrer = '<spring:message code="errorpage.previous" text="errorpage.previous"/><br /><span class="troubleshooting">' + referrerPath + '"</span>"';
     if (referrerPath != '') {

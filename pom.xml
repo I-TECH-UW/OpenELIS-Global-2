@@ -14,8 +14,8 @@
 
 		<major.version>2</major.version>
 		<minor.version>6</minor.version>
-		<state.version>1</state.version> <!-- 0 = alpha, 1 = beta, 2 = rc, 3 = deployable -->
-		<fix.version>38</fix.version>
+		<state.version>3</state.version> <!-- 0 = alpha, 1 = beta, 2 = rc, 3 = deployable -->
+		<fix.version>6</fix.version>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
@@ -42,7 +42,7 @@
 		<dependency>
 			<groupId>org.itech</groupId>
 			<artifactId>dataexport-api</artifactId>
-			<version>0.0.0.5</version>
+			<version>0.0.0.6</version>
 		</dependency>
 		<dependency>
 			<groupId>ca.uhn.hapi.fhir</groupId>
@@ -80,7 +80,7 @@
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi</artifactId>
-			<version>3.17</version>
+			<version>4.1.1</version>
 		</dependency>
 		<!-- APACHE COMMONS DEPENDENCIES -->
 		<dependency>
@@ -472,6 +472,11 @@
 			<groupId>com.sun.xml.messaging.saaj</groupId>
 			<artifactId>saaj-impl</artifactId>
 			<version>1.4.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.ibm.icu</groupId>
+			<artifactId>icu4j</artifactId>
+			<version>71.1</version>
 		</dependency>
 
 	</dependencies>

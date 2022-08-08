@@ -33,11 +33,14 @@ public class SecurityConfig {
     private UserDetailsService userDetailsService;
 
     // pages that have special security constraints
-    public static final String[] OPEN_PAGES = { "/ChangePasswordLogin", "/UpdateLoginChangePassword" };
+    public static final String[] OPEN_PAGES = { "/pluginServlet/**", "/ChangePasswordLogin",
+            "/UpdateLoginChangePassword" };
     public static final String[] LOGIN_PAGES = { "/LoginPage", "/ValidateLogin" };
     public static final String[] AUTH_OPEN_PAGES = { "/Home", "/Dashboard", "/Logout", "/MasterListsPage" };
     public static final String[] RESOURCE_PAGES = { "/css/**", "/favicon/**", "/images/**", "/documentation/**",
             "/scripts/**", "/jsp/**" };
+//    public static final String[] HTTP_BASIC_SERVLET_PAGES = { "/pluginServlet/**", "/importAnalyzer", "/fhir/**" };
+    public static final String[] AJAX_CALLS_TO_CONTROLLERS = {"/Provider/**"};
     public static final String[] HTTP_BASIC_SERVLET_PAGES = { "/pluginServlet/**", "/importAnalyzer",
             "/fhir/**" };
 //    public static final String[] CLIENT_CERTIFICATE_PAGES = {};
