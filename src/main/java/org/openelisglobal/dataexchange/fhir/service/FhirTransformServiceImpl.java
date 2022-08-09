@@ -885,12 +885,21 @@ public class FhirTransformServiceImpl implements FhirTransformService {
             }
         }
 
+        Map<String ,Task> referingTaskMap = new HashMap<>();
         for (Sample sample : sampleUpdateList) {
             Task task = this.transformToTask(sample.getId());
             Optional<Task> referringTask = getReferringTaskForSample(sample);
             if (referringTask.isPresent()) {
-                updateReferringTaskWithTaskInfo(referringTask.get(), task);
-                this.addToOperations(fhirOperations, tempIdGenerator, referringTask.get());
+                if(referingTaskMap.containsKey(referringTask.get().getIdElement().getIdPart())){
+                    Task existingReferingTask = referingTaskMap.get(referringTask.get().getIdElement().getIdPart());
+                    updateReferringTaskWithTaskInfo(existingReferingTask, task);
+                    referingTaskMap.put(existingReferingTask.getIdElement().getIdPart(), existingReferingTask);
+                    this.addToOperations(fhirOperations, tempIdGenerator, existingReferingTask);
+                }else{
+                    updateReferringTaskWithTaskInfo(referringTask.get(), task);
+                    referingTaskMap.put(referringTask.get().getIdElement().getIdPart(), referringTask.get());
+                    this.addToOperations(fhirOperations, tempIdGenerator, referringTask.get());
+                } 
             }
             this.addToOperations(fhirOperations, tempIdGenerator, task);
         }
