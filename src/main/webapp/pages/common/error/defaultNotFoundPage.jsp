@@ -107,7 +107,7 @@ $(document).ready(function () {
     var referrerPath = document.referrer;
     var referrer = '<spring:message code="errorpage.previous" text="errorpage.previous"/><br /><span class="troubleshooting">' + referrerPath + '"</span>"';
     if (referrerPath != '') {
-            $("#previous-path").html(referrer);
+            $("#previous-path").html(Encode.forJavaScript(referrer));
             // To build mailto link - currenly not in use
             //var mailAdmin = '<a href="mailto:address_of_admin@uw.edu&subject=Page Error&body=A major error occurred in the OpenELIS system.%0D%0A%0D%0AError page: ' + pathname +'%0D%0AError Time: ' + myDate + '%0D%0AUser-agent header: ' + navigator.userAgent + '">system administrator</a>';
             //$("#admin-mail").html(mailAdmin);

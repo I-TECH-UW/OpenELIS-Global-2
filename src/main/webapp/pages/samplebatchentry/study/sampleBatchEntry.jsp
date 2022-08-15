@@ -5,6 +5,7 @@
                  org.openelisglobal.common.formfields.FormFields,
                  org.openelisglobal.common.formfields.FormFields.Field,
                  org.openelisglobal.common.util.Versioning,
+                 org.owasp.encoder.Encode,
                  org.openelisglobal.internationalization.MessageUtil" %>
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
@@ -218,7 +219,7 @@ jQuery(document).ready(function () {
 			<tr>
 				<td>
 					<spring:message code="sample.batchentry.barcode.label.facilityid" /> 
-					: <%= request.getAttribute("facilityName") %>
+					: <%= Encode.forJavaScript((String)request.getAttribute("facilityName"))%>					
 					<form:hidden path="sampleOrderItems.referringSiteId" id="requesterId"/>
 				</td>
 			</tr>
