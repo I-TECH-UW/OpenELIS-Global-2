@@ -1,4 +1,3 @@
-var autoCompId = ""; // the id for the autocomplete widget. This should be changed in scope and passed in with the constructor
 //var clearNonMatching = true;
 //var capitialize = false;
 var autocompleteResultCallBack = null; // the callback for onchange
@@ -14,7 +13,8 @@ var autocompleteResultCallBack = null; // the callback for onchange
 				value = selected.val() ? selected.text() : "",
 				capitalize = "true" === select.attr("capitalize"),
 				invalidID = select.attr("invalidlabid"),
-				clearNonMatching = "true" === select.attr("clearnonmatching");
+				clearNonMatching = "true" === select.attr("clearnonmatching"),
+				autoCompId = select.attr("combobox-id");
 			var input = this.input = $( "<input>" )
 				.insertAfter( select )
 				.val( value )

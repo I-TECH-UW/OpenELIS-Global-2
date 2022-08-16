@@ -140,7 +140,7 @@ public class PrintBarcodeController extends BaseController {
     private void addPrePrintFields(@Valid PrintBarcodeForm form) throws LIMSInvalidConfigurationException {
         form.setSampleOrderItems(sampleOrderService.getSampleOrderItem());
         form.setSampleTypes(displayListService.getList(ListType.SAMPLE_TYPE_ACTIVE));
-        form.setTestSectionList(displayListService.getList(ListType.TEST_SECTION));
+        form.setTestSectionList(displayListService.getList(ListType.TEST_SECTION_ACTIVE));
         form.setCurrentDate(DateUtil.getCurrentDateAsText());
         form.setCurrentTime(DateUtil.getCurrentTimeAsText());
         form.getSampleOrderItems().setReceivedTime(DateUtil.getCurrentTimeAsText());

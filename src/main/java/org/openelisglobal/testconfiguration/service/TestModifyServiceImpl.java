@@ -87,6 +87,13 @@ public class TestModifyServiceImpl implements TestModifyService {
             set.test.setLocalizedTestName(nameLocalization);
             set.test.setLocalizedReportingName(reportingNameLocalization);
 
+            TestSection testSection = set.test.getTestSection();
+            if ("N".equals(testSection.getIsActive())) {
+                testSection.setIsActive("Y");
+                testSection.setSysUserId(currentUserId);
+                testSectionService.update(testSection);
+            }
+
             // gnr: based on testAddUpdate,
             // added existing testId to process in createTestSets using
             // testAddParams.testId, delete then insert to modify for most elements

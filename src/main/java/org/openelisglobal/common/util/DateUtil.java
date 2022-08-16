@@ -701,4 +701,27 @@ public class DateUtil {
             return new DateFormatSymbols().getMonths()[month - 1];
         }
     }
+
+    public static Date getFistDayOfTheYear(int year) {
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.YEAR, year);
+        cal.set(Calendar.DAY_OF_YEAR, 1);
+        return cal.getTime();
+    }
+
+    public static Date getLastDayOfTheYear(int year) {
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.YEAR, year);
+        cal.set(Calendar.MONTH, 11); // 11 = december
+        cal.set(Calendar.DAY_OF_MONTH, 31); // new years eve
+        return  cal.getTime();
+    }
+
+    public static java.sql.Date convertDateTimeToSqlDate(Date date) throws LIMSRuntimeException {
+        java.sql.Date returnDate = null;
+        if (date != null) {
+            returnDate = new java.sql.Date(date.getTime());
+        }
+        return returnDate;
+    }
 }

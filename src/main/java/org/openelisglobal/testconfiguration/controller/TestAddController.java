@@ -106,7 +106,11 @@ public class TestAddController extends BaseController {
         form.setPanelList(DisplayListService.getInstance().getList(ListType.PANELS));
         form.setResultTypeList(DisplayListService.getInstance().getList(ListType.RESULT_TYPE_LOCALIZED));
         form.setUomList(DisplayListService.getInstance().getList(ListType.UNIT_OF_MEASURE));
-        form.setLabUnitList(DisplayListService.getInstance().getList(ListType.TEST_SECTION));
+
+        List<IdValuePair> allLabUnitsList = new ArrayList<>();
+        allLabUnitsList.addAll(DisplayListService.getInstance().getList(ListType.TEST_SECTION_ACTIVE));
+        allLabUnitsList.addAll(DisplayListService.getInstance().getList(ListType.TEST_SECTION_INACTIVE));
+        form.setLabUnitList(allLabUnitsList);
         form.setAgeRangeList(SpringContext.getBean(ResultLimitService.class).getPredefinedAgeRanges());
         form.setDictionaryList(DisplayListService.getInstance().getList(ListType.DICTIONARY_TEST_RESULTS));
         form.setGroupedDictionaryList(createGroupedDictionaryList());
@@ -150,6 +154,12 @@ public class TestAddController extends BaseController {
         testService.refreshTestNames();
         displayListService.refreshList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE);
         displayListService.refreshList(DisplayListService.ListType.SAMPLE_TYPE_INACTIVE);
+        displayListService.refreshList(DisplayListService.ListType.PANELS_ACTIVE);
+        displayListService.refreshList(DisplayListService.ListType.PANELS_INACTIVE);
+        displayListService.refreshList(DisplayListService.ListType.PANELS);
+        displayListService.refreshList(DisplayListService.ListType.TEST_SECTION_ACTIVE);
+        displayListService.refreshList(DisplayListService.ListType.TEST_SECTION_BY_NAME);
+        displayListService.refreshList(DisplayListService.ListType.TEST_SECTION_INACTIVE);
         SpringContext.getBean(TypeOfSampleService.class).clearCache();
 
         return findForward(FWD_SUCCESS_INSERT, form);
@@ -159,11 +169,11 @@ public class TestAddController extends BaseController {
         List<Test> tests = testService.getTestsByLoincCode(loincCode);
         for (Test test : tests) {
             if(test.getLoinc().equals(loincCode)){
-                errors.reject("entry.invalid.loinc.number.used", 
+                errors.reject("entry.invalid.loinc.number.used",
                 "entry.invalid.loinc.number.used");
             }
         }
-        return errors;  
+        return errors;
     }
 
 

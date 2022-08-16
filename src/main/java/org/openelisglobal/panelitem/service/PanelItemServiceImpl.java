@@ -1,5 +1,6 @@
 package org.openelisglobal.panelitem.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.validator.GenericValidator;
@@ -132,6 +133,7 @@ public class PanelItemServiceImpl extends BaseObjectServiceImpl<PanelItem, Strin
         }
         deleteAll(panelItems);
 
+        List<PanelItem> newPanelItems = new ArrayList<>();
         for (Test test : newTests) {
             PanelItem panelItem = new PanelItem();
             panelItem.setPanel(panel);
@@ -139,9 +141,11 @@ public class PanelItemServiceImpl extends BaseObjectServiceImpl<PanelItem, Strin
             panelItem.setLastupdatedFields();
             panelItem.setSysUserId(currentUser);
             insert(panelItem);
+
+            newPanelItems.add(panelItem);
         }
 
-        if ("N".equals(panel.getIsActive())) {
+        if (newPanelItems.size() > 0) {
             panel.setIsActive("Y");
             panel.setSysUserId(currentUser);
             panelService.update(panel);

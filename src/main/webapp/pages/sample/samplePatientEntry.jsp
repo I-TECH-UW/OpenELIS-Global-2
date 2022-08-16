@@ -31,6 +31,7 @@
     boolean trackPayment = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.TRACK_PATIENT_PAYMENT, "true");
     boolean requesterPersonRequired = FormFields.getInstance().useField(Field.SampleEntryRequesterPersonRequired);
 	boolean acceptExternalOrders = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.ACCEPT_EXTERNAL_ORDERS, "true");
+    boolean restrictNewProviderEntries = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.restrictFreeTextProviderEntry, "true");
 %>
 
 
@@ -63,7 +64,12 @@ var currentReferalDiv ;
 var currentReferalDivSelector ;
 
 if( requesterPersonRequired ){
-    requiredFields.push("providerLastNameID");
+	if (<%=restrictNewProviderEntries%>) {
+		requiredFields.push("providerPersonId");
+	} else {
+		requiredFields.push("providerLastNameID");
+	}
+    
 }
 
 <% if( FormFields.getInstance().useField(Field.SampleEntryUseRequestDate)){ %>
@@ -340,7 +346,7 @@ function processLabOrderSuccess(xhr){
     <c:if test="${param.attemptAutoSave}">
 	<c:choose>
 	<c:when test="${not empty param.labNumber}">
-		jQuery('#labNo').val('${param.labNumber}' escapeXml="true");
+		jQuery('#labNo').val('<spring:escapeBody javaScriptEscape="true">${param.labNumber}</spring:escapeBody>');
 		setOrderModified();
 	</c:when>
 	<c:otherwise>
@@ -448,12 +454,7 @@ function clearRequester() {
 }
 
 function clearProvider() {
-	$("providerFirstNameID").value = '';
-	$("providerLastNameID").value = '';
-	$("providerPersonId").value = '';
-	$("providerWorkPhoneID").value = '';
-	$("providerEmailID").value = '';
-	$("providerFaxID").value = '';
+	setSelectComboboxToId('providerPersonId', '');
 }
 
 function parseRequester(requester) {
@@ -461,7 +462,8 @@ function parseRequester(requester) {
     var requesterId = "";
     if (requesterIdElement.length > 0) {
     	requesterId = requesterIdElement[0].firstChild.nodeValue;
-             jQuery("#providerPersonId").val(requesterId);
+
+        setSelectComboboxToId("providerPersonId", requesterId);
     }
     
     var firstName = requester.item(0).getElementsByTagName("firstName");
@@ -493,7 +495,7 @@ function parseRequestingOrg(requestingOrg) {
     if (requestingOrgId.length > 0) {
             id = requestingOrgId[0].firstChild.nodeValue;
     }
-	jQuery("#requesterId").val(id).change();
+    setSelectComboboxToId("requesterId", id);
 }
 
 function parseLocation(location) {
@@ -502,7 +504,7 @@ function parseLocation(location) {
     if (locationId.length > 0) {
             id = locationId[0].firstChild.nodeValue;
     }
-	jQuery("#requesterId").val(id).change();
+    setSelectComboboxToId("requesterId", id);
 }
 
 function parseSampletypes(sampletypes, SampleTypes) {

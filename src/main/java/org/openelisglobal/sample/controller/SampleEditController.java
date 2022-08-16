@@ -352,7 +352,7 @@ public class SampleEditController extends BaseController {
         }
 
         form.setPossibleTests(possibleTestList);
-        form.setTestSectionList(DisplayListService.getInstance().getList(ListType.TEST_SECTION));
+        form.setTestSectionList(DisplayListService.getInstance().getList(ListType.TEST_SECTION_ACTIVE));
     }
 
     private void setAddableSampleTypes(SampleEditForm form, HttpServletRequest request)

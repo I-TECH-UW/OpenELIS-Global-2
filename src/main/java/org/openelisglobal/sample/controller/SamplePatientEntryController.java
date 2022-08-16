@@ -278,7 +278,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
         form.setPatientProperties(new PatientManagementInfo());
         form.setPatientSearch(new PatientSearch());
         form.setSampleTypes(userService.getUserSampleTypes(getSysUserId(request), Constants.ROLE_RECEPTION));
-        form.setTestSectionList(DisplayListService.getInstance().getList(ListType.TEST_SECTION));
+        form.setTestSectionList(DisplayListService.getInstance().getList(ListType.TEST_SECTION_ACTIVE));
         form.setCurrentDate(DateUtil.getCurrentDateAsText());
 
         setupReferralOption(form);

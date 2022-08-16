@@ -93,9 +93,9 @@ echo "creating docker images"
 #bash ${INSTALL_DIR}/buildProject.sh -l ${DATA_EXPORT_DIR}
 #create data import docker image
 #bash ${INSTALL_DIR}/buildProject.sh -dl ${CONSOLIDATED_SERVER_DIR}
+bash ${INSTALL_DIR}/buildProject.sh -dl ${PROJECT_DIR}/fhir -t hapi-fhir-jpaserver
 #create the docker image 
 bash ${INSTALL_DIR}/buildProject.sh -dl ${PROJECT_DIR} -t openelisglobal
-bash ${INSTALL_DIR}/buildProject.sh -dl ${PROJECT_DIR}/fhir -t hapi-fhir-jpaserver
 
 createLinuxInstaller() {
 	context=$1
