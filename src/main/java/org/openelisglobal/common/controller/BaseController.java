@@ -188,7 +188,10 @@ public abstract class BaseController implements IActionConstants {
     protected String getSysUserId(HttpServletRequest request) {
         UserSessionData usd = (UserSessionData) request.getSession().getAttribute(USER_SESSION_DATA);
         if (usd == null) {
-            return null;
+            usd = (UserSessionData) request.getAttribute(USER_SESSION_DATA);
+            if (usd == null) {
+                return null;
+            }
         }
         return String.valueOf(usd.getSystemUserId());
     }

@@ -1,48 +1,82 @@
 package org.openelisglobal.security;
 
-import javax.servlet.ServletContext;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.validator.GenericValidator;
 import org.jasypt.util.text.AES256TextEncryptor;
 import org.jasypt.util.text.TextEncryptor;
+import org.openelisglobal.config.condition.ConditionalOnProperty;
+import org.openelisglobal.security.KeystoreUtil.KeyCertPair;
 import org.openelisglobal.spring.util.SpringContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.annotation.Order;
+import org.springframework.core.io.Resource;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.InMemoryOAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.oidc.web.logout.OidcClientInitiatedLogoutSuccessHandler;
+import org.springframework.security.oauth2.client.registration.ClientRegistration;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.registration.ClientRegistrations;
+import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
+import org.springframework.security.saml2.core.Saml2X509Credential;
+import org.springframework.security.saml2.core.Saml2X509Credential.Saml2X509CredentialType;
+import org.springframework.security.saml2.provider.service.registration.InMemoryRelyingPartyRegistrationRepository;
+import org.springframework.security.saml2.provider.service.registration.RelyingPartyRegistration;
+import org.springframework.security.saml2.provider.service.registration.RelyingPartyRegistrationRepository;
+import org.springframework.security.saml2.provider.service.registration.RelyingPartyRegistrations;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.multipart.support.MultipartFilter;
 
 @EnableWebSecurity
 public class SecurityConfig {
-    @Autowired
-    private UserDetailsService userDetailsService;
 
+    // TODO should we move these to the properties files?
     // pages that have special security constraints
     public static final String[] OPEN_PAGES = { "/pluginServlet/**", "/ChangePasswordLogin",
             "/UpdateLoginChangePassword" };
     public static final String[] LOGIN_PAGES = { "/LoginPage", "/ValidateLogin" };
     public static final String[] AUTH_OPEN_PAGES = { "/Home", "/Dashboard", "/Logout", "/MasterListsPage" };
-    public static final String[] RESOURCE_PAGES = { "/css/**", "/favicon/**", "/images/**", "/documentation/**",
-            "/scripts/**", "/jsp/**" };
+    public static final String[] RESOURCE_PAGES = { "/fontawesome-free-5.13.1-web/**", "/css/**", "/favicon/**",
+            "/images/**", "/documentation/**", "/scripts/**", "/jsp/**" };
 //    public static final String[] HTTP_BASIC_SERVLET_PAGES = { "/pluginServlet/**", "/importAnalyzer", "/fhir/**" };
-    public static final String[] AJAX_CALLS_TO_CONTROLLERS = {"/Provider/**"};
-    public static final String[] HTTP_BASIC_SERVLET_PAGES = { "/pluginServlet/**", "/importAnalyzer",
-            "/fhir/**" };
+    public static final String[] AJAX_CALLS_TO_CONTROLLERS = { "/Provider/**" };
 //    public static final String[] CLIENT_CERTIFICATE_PAGES = {};
 
     private static final String CONTENT_SECURITY_POLICY = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval';"
@@ -53,67 +87,15 @@ public class SecurityConfig {
     private String encryptionPassword;
 
     @Autowired
+    private UserDetailsService userDetailsService;
+
+    @Autowired
     public void configureGlobalSecurity(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService);
         auth.authenticationProvider(authenticationProvider());
     }
 
     @Configuration
     @Order(1)
-    public static class httpBasicServletSecurityConfiguration extends WebSecurityConfigurerAdapter {
-
-        @Override
-        @Bean
-        public AuthenticationManager authenticationManagerBean() throws Exception {
-            return super.authenticationManagerBean();
-        }
-
-        @Override
-        protected void configure(HttpSecurity http) throws Exception {
-            CharacterEncodingFilter filter = new CharacterEncodingFilter();
-            filter.setEncoding("UTF-8");
-            filter.setForceEncoding(true);
-            http.addFilterBefore(filter, CsrfFilter.class);
-            MultipartFilter multipartFilter = new MultipartFilter();
-            multipartFilter.setServletContext(SpringContext.getBean(ServletContext.class));
-            http.addFilterBefore(multipartFilter, CsrfFilter.class);
-            // for all requests going to a http basic page, use this security configuration
-            http.requestMatchers().antMatchers(HTTP_BASIC_SERVLET_PAGES).and().authorizeRequests().anyRequest()
-                    // ensure they are authenticated
-                    .authenticated().and()
-                    // ensure they authenticate with http basic
-                    .httpBasic().and()
-                    // disable csrf as it is not needed for httpBasic
-                    .csrf().disable()//
-                    .addFilterAt(SpringContext.getBean(BasicAuthFilter.class), BasicAuthenticationFilter.class)
-                    // add security headers
-                    .headers().frameOptions().sameOrigin().contentSecurityPolicy(CONTENT_SECURITY_POLICY);
-        }
-
-    }
-
-//    @Configuration
-//    @Order(2)
-//    public static class clientCertificateSecurityConfiguration extends WebSecurityConfigurerAdapter {
-//        @Override
-//        protected void configure(HttpSecurity http) throws Exception {
-//            CharacterEncodingFilter filter = new CharacterEncodingFilter();
-//            filter.setEncoding("UTF-8");
-//            filter.setForceEncoding(true);
-//            http.addFilterBefore(filter, CsrfFilter.class);
-//
-//            // for all requests going to a client cert page, use this security configuration
-//            http.requestMatchers().antMatchers(CLIENT_CERTIFICATE_PAGES).and().authorizeRequests().anyRequest()
-//                    // ensure they are authenticated
-//                    .authenticated().and().x509().subjectPrincipalRegex("CN=(.*?)(?:,|$)")
-//                    .userDetailsService(allowAllUserDetailsService()).and()
-//                    // disable csrf as it is not needed for httpBasic
-//                    .csrf().disable();
-//        }
-//    }
-
-    @Configuration
-    @Order(2)
     public static class openSecurityConfiguration extends WebSecurityConfigurerAdapter {
         @Override
         protected void configure(HttpSecurity http) throws Exception {
@@ -132,6 +114,215 @@ public class SecurityConfig {
                     .contentSecurityPolicy(CONTENT_SECURITY_POLICY);
         }
 
+    }
+
+    @Configuration
+    @Order(2)
+    @ConditionalOnProperty(property = "org.itech.login.basic", havingValue = "true", matchIfMissing = true)
+    public static class httpBasicServletSecurityConfiguration extends WebSecurityConfigurerAdapter {
+
+        @Override
+        protected void configure(HttpSecurity http) throws Exception {
+            CharacterEncodingFilter filter = new CharacterEncodingFilter();
+            filter.setEncoding("UTF-8");
+            filter.setForceEncoding(true);
+            http.addFilterBefore(filter, CsrfFilter.class);
+            MultipartFilter multipartFilter = new MultipartFilter();
+            multipartFilter.setServletContext(SpringContext.getBean(ServletContext.class));
+            http.addFilterBefore(multipartFilter, CsrfFilter.class);
+            // for all requests going to a http basic page, use this security configuration
+            http.requestMatcher(new BasicAuthRequestedMatcher()).authorizeRequests().anyRequest()
+                    // ensure they are authenticated
+                    .authenticated().and()
+                    // ensure they authenticate with http basic
+                    .httpBasic().and()
+                    // disable csrf as it is not needed for httpBasic
+                    .csrf().disable()//
+                    .addFilterAt(SpringContext.getBean(BasicAuthFilter.class), BasicAuthenticationFilter.class)
+                    // add security headers
+                    .headers().frameOptions().sameOrigin().contentSecurityPolicy(CONTENT_SECURITY_POLICY);
+        }
+
+    }
+
+    @Configuration
+    @Order(3)
+    @ConditionalOnProperty(property = "org.itech.login.saml", havingValue = "true")
+    public static class samlSecurityConfiguration extends WebSecurityConfigurerAdapter {
+
+        @Value("${org.itech.login.saml.registrationId:keycloak}")
+        private String registrationId;
+        @Value("${org.itech.login.saml.entityId:OpenELIS-Global_saml}")
+        private String entityId;
+
+        @Value("${server.ssl.key-store}")
+        private Resource keyStore;
+        @Value("${server.ssl.key-store-password}")
+        private String keyStorePassword;
+
+        @Value("${org.itech.login.saml.metadatalocation:}")
+        private String metadata;
+
+        @Value("${org.itech.login.saml.idpEntityId:}")
+        private String idpEntityId;
+        @Value("${org.itech.login.saml.webSSOEndpoint:}")
+        private String webSSOEndpoint;
+        @Value("${org.itech.login.saml.idpVerificationCertificateLocation:/run/secrets/samlIDP.crt}")
+        private String idpVerificationCertificateLocation;
+
+        @Bean("samlRelyingPartyRegistrationRepository")
+        public RelyingPartyRegistrationRepository relyingPartyRegistrationRepository() throws KeyStoreException,
+                CertificateException, NoSuchAlgorithmException, IOException, UnrecoverableKeyException {
+            RelyingPartyRegistration relyingPartyRegistration;
+            final String acsUrlTemplate = "{baseUrl}/login/saml2/sso/{registrationId}";
+
+            KeyStore keystore = KeystoreUtil.readKeyStoreFile(keyStore, keyStorePassword.toCharArray());
+            KeyCertPair keyCert = KeystoreUtil.getKeyCertFromKeystore(keystore, keyStorePassword.toCharArray());
+            Saml2X509Credential credential = Saml2X509Credential.signing(keyCert.getKey(),
+                    (X509Certificate) keyCert.getCert());
+            if (GenericValidator.isBlankOrNull(metadata)) {
+                Saml2X509Credential idpVerificationCertificate;
+                try (InputStream pub = new FileInputStream(new File(idpVerificationCertificateLocation))) {
+                    X509Certificate c = (X509Certificate) CertificateFactory.getInstance("X.509")
+                            .generateCertificate(pub);
+                    idpVerificationCertificate = new Saml2X509Credential(c, Saml2X509CredentialType.VERIFICATION);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+                relyingPartyRegistration = RelyingPartyRegistration.withRegistrationId(registrationId)//
+                        .assertionConsumerServiceLocation(acsUrlTemplate)//
+                        .signingX509Credentials(e -> e.add(credential))//
+                        .assertingPartyDetails(config -> config.entityId(idpEntityId)//
+                                .singleSignOnServiceLocation(webSSOEndpoint)//
+                                .singleLogoutServiceLocation(webSSOEndpoint)//
+                                .wantAuthnRequestsSigned(true)//
+                                .verificationX509Credentials(c -> c.add(idpVerificationCertificate)))//
+                        .entityId(entityId)//
+                        .build();
+            } else {
+                relyingPartyRegistration = RelyingPartyRegistrations.fromMetadataLocation(metadata)//
+                        .registrationId(registrationId)//
+                        .assertionConsumerServiceLocation(acsUrlTemplate)//
+                        .signingX509Credentials(e -> e.add(credential))//
+                        .entityId(entityId)//
+                        .build();
+            }
+
+            // SAML configuration
+            // Mapping this application to one or more Identity Providers
+            return new InMemoryRelyingPartyRegistrationRepository(relyingPartyRegistration);
+        }
+
+        @Override
+        protected void configure(HttpSecurity http) throws Exception {
+            CharacterEncodingFilter filter = new CharacterEncodingFilter();
+            filter.setEncoding("UTF-8");
+            filter.setForceEncoding(true);
+            http.addFilterBefore(filter, CsrfFilter.class);
+            MultipartFilter multipartFilter = new MultipartFilter();
+            multipartFilter.setServletContext(SpringContext.getBean(ServletContext.class));
+            http.addFilterBefore(multipartFilter, CsrfFilter.class);
+
+            http.requestMatcher(new SamlRequestedMatcher()).authorizeRequests().anyRequest().authenticated().and()
+                    .saml2Logout().and().saml2Login().successHandler(customAuthenticationSuccessHandler())
+                    .relyingPartyRegistrationRepository(relyingPartyRegistrationRepository());
+        }
+
+        @Bean("samlAuthenticationSuccessHandler")
+        public AuthenticationSuccessHandler customAuthenticationSuccessHandler() {
+            return new CustomFormAuthenticationSuccessHandler();
+        }
+    }
+
+    @Configuration
+    @Order(4)
+    @ConditionalOnProperty(property = "org.itech.login.oauth", havingValue = "true")
+    public static class openidSecurityConfiguration extends WebSecurityConfigurerAdapter {
+
+        @Value("${org.itech.login.oauth.config:}")
+        private String config;
+        @Value("${org.itech.login.oauth.clientID:OpenELIS-Global_oauth}")
+        private String clientID;
+        @Value("${org.itech.login.oauth.clientSecret:}")
+        private String clientSecret;
+
+        private ClientRegistration clientRegistrationFromConfig(String config) {
+            return ClientRegistrations.fromOidcIssuerLocation(config).clientId(clientID).clientSecret(clientSecret)
+                    .build();
+        }
+
+        @Bean("oauthClientRegistrationRepository")
+        public ClientRegistrationRepository clientRegistrationRepository() {
+            List<ClientRegistration> registrations = new ArrayList<>();
+
+            if (!GenericValidator.isBlankOrNull(config)) {
+                registrations.add(clientRegistrationFromConfig(config));
+            }
+            return new InMemoryClientRegistrationRepository(registrations);
+        }
+
+        @Override
+        protected void configure(HttpSecurity http) throws Exception {
+            CharacterEncodingFilter filter = new CharacterEncodingFilter();
+            filter.setEncoding("UTF-8");
+            filter.setForceEncoding(true);
+            http.addFilterBefore(filter, CsrfFilter.class);
+            MultipartFilter multipartFilter = new MultipartFilter();
+            multipartFilter.setServletContext(SpringContext.getBean(ServletContext.class));
+            http.addFilterBefore(multipartFilter, CsrfFilter.class);
+            // for all requests going to a http basic page, use this security configuration
+            http.requestMatcher(new OAuthRequestedMatcher()).authorizeRequests().anyRequest()
+                    // ensure they are authenticated
+                    .authenticated().and()//
+                    .oauth2Login().clientRegistrationRepository(clientRegistrationRepository())//
+                    .authorizedClientService(authorizedClientService())
+                    .successHandler(customAuthenticationSuccessHandler())
+                    .and()
+                    .logout(logout -> logout.logoutSuccessHandler(oidcLogoutSuccessHandler()))
+                    // add security headers
+                    .headers().frameOptions().sameOrigin().contentSecurityPolicy(CONTENT_SECURITY_POLICY);
+        }
+
+        private LogoutSuccessHandler oidcLogoutSuccessHandler() {
+            OidcClientInitiatedLogoutSuccessHandler oidcLogoutSuccessHandler = new OidcClientInitiatedLogoutSuccessHandler(
+                    clientRegistrationRepository());
+
+//            oidcLogoutSuccessHandler..setPostLogoutRedirectUri(
+//              URI.create("http://localhost:8081/home"));
+
+            return oidcLogoutSuccessHandler;
+        }
+
+        @Bean
+        public OAuth2AuthorizedClientService authorizedClientService() {
+            return new InMemoryOAuth2AuthorizedClientService(clientRegistrationRepository());
+        }
+
+        @Bean("oauthAuthenticationSuccessHandler")
+        public AuthenticationSuccessHandler customAuthenticationSuccessHandler() {
+            return new CustomFormAuthenticationSuccessHandler();
+        }
+
+    }
+
+    @Configuration
+    @Order(5)
+    @ConditionalOnProperty(property = "org.itech.login.certificate", havingValue = "true")
+    public static class clientCertificateSecurityConfiguration extends WebSecurityConfigurerAdapter {
+        @Override
+        protected void configure(HttpSecurity http) throws Exception {
+            CharacterEncodingFilter filter = new CharacterEncodingFilter();
+            filter.setEncoding("UTF-8");
+            filter.setForceEncoding(true);
+            http.addFilterBefore(filter, CsrfFilter.class);
+
+            http.requestMatcher(new CertificateAuthRequestedMatcher()).authorizeRequests().anyRequest()
+                    // ensure they are authenticated
+                    .authenticated().and().x509().subjectPrincipalRegex("CN=(.*?)(?:,|$)")
+                    .userDetailsService(SpringContext.getBean(UserDetailsService.class)).and()
+                    // disable csrf as it is not needed for httpBasic
+                    .csrf().disable();
+        }
     }
 
     @Configuration
@@ -159,8 +350,9 @@ public class SecurityConfig {
                     .successHandler(customAuthenticationSuccessHandler()).and()
                     // setup logout
                     .logout().logoutUrl("/Logout").logoutSuccessUrl("/LoginPage").invalidateHttpSession(true).and()
-                    .sessionManagement().invalidSessionUrl("/LoginPage").sessionFixation().migrateSession()
-                    .and().csrf().and()
+                    .sessionManagement().invalidSessionUrl("/LoginPage").sessionFixation().migrateSession().and()
+                    .csrf()
+                    .and()
                     // add security headers
                     .headers().frameOptions().sameOrigin().contentSecurityPolicy(CONTENT_SECURITY_POLICY);
         }
@@ -171,14 +363,16 @@ public class SecurityConfig {
         }
 
         @Bean
+        @Primary
         public AuthenticationSuccessHandler customAuthenticationSuccessHandler() {
             return new CustomFormAuthenticationSuccessHandler();
         }
-    }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        @Bean
+        public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
+                throws Exception {
+            return authenticationConfiguration.getAuthenticationManager();
+        }
     }
 
 //    @Bean
@@ -191,8 +385,21 @@ public class SecurityConfig {
 //        };
 //    }
 
+//    @Bean
+//    @ConditionalOnProperty(property = "org.itech.authProvider.useADLDAP", havingValue = "true")
+//    public AuthenticationProvider activeDirectoryLdapAuthenticationProvider() {
+//        LdapAuthenticationProvider adProvider = new LdapAuthenticationProvider(new LdapAuthenticator()
+//
+//        return adProvider;
+//    }
+
     @Bean
-    public DaoAuthenticationProvider authenticationProvider() {
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
         authenticationProvider.setUserDetailsService(userDetailsService);
         authenticationProvider.setPasswordEncoder(passwordEncoder());
@@ -209,5 +416,44 @@ public class SecurityConfig {
         AES256TextEncryptor textEncryptor = new AES256TextEncryptor();
         textEncryptor.setPassword(encryptionPassword);
         return textEncryptor;
+    }
+
+    private static class OAuthRequestedMatcher implements RequestMatcher {
+        @Override
+        public boolean matches(HttpServletRequest request) {
+            String auth = request.getHeader("Authorization");
+            boolean haveOauth2Token = (auth != null) && auth.startsWith("Bearer");
+            boolean useOauth = haveOauth2Token || "true".equals(request.getParameter("useOAUTH"))
+                    || request.getRequestURI().contains("oauth");
+            return useOauth;
+        }
+    }
+
+    private static class SamlRequestedMatcher implements RequestMatcher {
+        @Override
+        public boolean matches(HttpServletRequest request) {
+            String auth = request.getHeader("Authorization");
+            boolean useSAML = (auth != null) && auth.startsWith("SAML")
+                    || "true".equals(request.getParameter("useSAML")) || request.getRequestURI().contains("saml2");
+            return useSAML;
+        }
+    }
+
+    private static class BasicAuthRequestedMatcher implements RequestMatcher {
+        @Override
+        public boolean matches(HttpServletRequest request) {
+            String auth = request.getHeader("Authorization");
+            boolean haveBasicAuth = (auth != null) && auth.startsWith("Basic");
+            return haveBasicAuth;
+        }
+    }
+
+    private static class CertificateAuthRequestedMatcher implements RequestMatcher {
+        @Override
+        public boolean matches(HttpServletRequest request) {
+            String auth = request.getHeader("Authorization");
+            boolean haveCertificateAuth = (auth != null) && auth.startsWith("Cert");
+            return haveCertificateAuth;
+        }
     }
 }
