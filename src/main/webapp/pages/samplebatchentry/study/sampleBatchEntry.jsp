@@ -5,8 +5,8 @@
                  org.openelisglobal.common.formfields.FormFields,
                  org.openelisglobal.common.formfields.FormFields.Field,
                  org.openelisglobal.common.util.Versioning,
-                 org.openelisglobal.internationalization.MessageUtil,
-		 		 org.owasp.encoder.Encode" %>
+                 org.owasp.encoder.Encode,
+                 org.openelisglobal.internationalization.MessageUtil" %>
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>

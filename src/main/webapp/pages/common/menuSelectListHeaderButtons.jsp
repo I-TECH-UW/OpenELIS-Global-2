@@ -3,6 +3,7 @@
 	import="org.openelisglobal.common.action.IActionConstants,
 			org.openelisglobal.common.util.resources.ResourceLocator,
 			java.util.Locale,
+			org.owasp.encoder.Encode,
 			org.openelisglobal.internationalization.MessageUtil"
 %>
 
@@ -365,5 +366,6 @@ function output() {
 }
 
 var roleFilter = document.getElementById("roleFilter");
-roleFilter.value='<%=filterRole%>';
+roleFilter.value= '<%=Encode.forJavaScript((String)filterRole)%>';
+
 </script> 

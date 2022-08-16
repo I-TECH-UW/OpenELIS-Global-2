@@ -138,7 +138,7 @@ $(document).ready(function () {
     var referrerPath = document.referrer;
     var referrer = '<spring:message code="errorpage.previous"/><br />' + referrerPath;
     if (referrerPath != '') {
-            $("#previous-path").html(referrer);
+            $("#previous-path").html(Encode.forJavaScript(referrer));
     }
 });	
 </script>
