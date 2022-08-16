@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
@@ -103,7 +102,7 @@ public class AnalyzerResultsController extends BaseController {
             .isPropertyValueEqual(ConfigurationProperties.Property.configurationName, "CI_GENERAL");
     private static final String REJECT_VALUE = "XXXX";
     private String RESULT_SUBJECT = "Analyzer Result Note";
-    
+
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -118,8 +117,6 @@ public class AnalyzerResultsController extends BaseController {
     private TestService testService;
     @Autowired
     private TypeOfSampleTestService typeOfSampleTestService;
-    @Autowired
-    private TypeOfSampleService typeOfSampleService;
     @Autowired
     private AnalyzerResultsService analyzerResultsService;
     @Autowired
@@ -143,13 +140,17 @@ public class AnalyzerResultsController extends BaseController {
     @Autowired
     private NoteService noteService;
 
+    // used in constructor, so use constructor injection
+    private TypeOfSampleService typeOfSampleService;
+
     private TestReflexUtil reflexUtil = new TestReflexUtil();
 
     private Map<String, String> analyzerNameToSubtitleKey = new HashMap<>();
-    private String DBS_SAMPLE_TYPE_ID = null;
-    
-    @PostConstruct
-    public void InitializeGlobalVariables() {
+    private final String DBS_SAMPLE_TYPE_ID;
+
+    public AnalyzerResultsController(TypeOfSampleService typeOfSampleService) {
+        this.typeOfSampleService = typeOfSampleService;
+
         if (IS_RETROCI) {
             TypeOfSample typeOfSample = new TypeOfSample();
             typeOfSample.setDescription("DBS");
@@ -175,7 +176,7 @@ public class AnalyzerResultsController extends BaseController {
             BindingResult result, HttpServletRequest request)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         AnalyzerResultsForm form = new AnalyzerResultsForm();
-        
+
         request.getSession().setAttribute(SAVE_DISABLED, TRUE);
 
         String requestAnalyzerType = null;
@@ -252,7 +253,7 @@ public class AnalyzerResultsController extends BaseController {
         }
 
         form.setDisplayMissingTestMsg(new Boolean(missingTest));
-        return analyzerResultItemList;  
+        return analyzerResultItemList;
     }
 
     private void setNonConformityStateForResultItem(AnalyzerResultItem resultItem) {

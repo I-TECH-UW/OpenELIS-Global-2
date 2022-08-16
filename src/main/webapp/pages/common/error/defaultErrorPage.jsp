@@ -123,6 +123,16 @@
 </div>
     
 <script type="text/javascript">
+
+function isValidUrl (urlString) {
+    try { 
+    	return Boolean(new URL(urlString)); 
+    }
+    catch(e){ 
+    	return false; 
+    }
+}
+
 $(document).ready(function () {
     // jquery functions for details on error
     // Browser details not localized, but probably ok.
@@ -135,10 +145,10 @@ $(document).ready(function () {
     $("#browser-details").html(browserDetails);
     var pathname = location.href;
     $("#error-path").text(pathname);
-    var referrerPath = document.referrer;
-    var referrer = '<spring:message code="errorpage.previous"/><br />' + referrerPath;
-    if (referrerPath != '') {
-            $("#previous-path").html(Encode.forJavaScript(referrer));
+//     ensure it is a url to prevent xss
+    if (isValidUrl(document.referrer)) {
+        var referrerMsg = '<spring:message code="errorpage.previous"/><br />' + document.referrer;
+        $("#previous-path").html(referrerMsg);
     }
 });	
 </script>
