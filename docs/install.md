@@ -43,7 +43,7 @@ This updates the system from the sources in the sources list. It updates what ne
 
 OpenELIS uses SSL certificates to securely communicate with other software or consolidated lab data servers. For a test or temporary instance, use a self-signed certificate, and for a production instance create a proper signed certifcate. **You must have a cert and key created and in the keystore and truststore for the installer to run**
 
-I will include 2 paths, one for generating your own self-signed cert, this is good for just starting out or experimenting, and for using your real certs, which is appropriate for production servers. If you have real certificates skip down to [Use a real certificate, best for production uses](#### Use a real certificate, best for production uses)
+I will include 2 paths, one for generating your own self-signed cert, this is good for just starting out or experimenting, and for using your real certs, which is appropriate for production servers. If you have real certificates skip down to [Use a real certificate, best for production uses](#Use-a-real-certificate-best-for-production-uses)
 
 #### Use a self signed certificate. 
 
