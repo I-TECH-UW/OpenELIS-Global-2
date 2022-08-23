@@ -1544,7 +1544,9 @@ var registered = false;
 
 function registerPatientChangedForManagement(){
 	if( !registered ){
-		addPatientChangedListener( selectedPatientChangedForManagement );
+		if(typeof addPatientChangedListener === 'function'){
+           addPatientChangedListener( selectedPatientChangedForManagement );
+		}
 		registered = true;
 	}
 }
