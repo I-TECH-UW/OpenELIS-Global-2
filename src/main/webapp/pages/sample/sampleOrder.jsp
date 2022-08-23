@@ -679,11 +679,16 @@
         var dropdown = jQuery("select#requesterId");
         autoCompleteWidth = dropdown.width() + 66 + 'px';
         // Actually executes autocomplete
-        dropdown.combobox();
+        if(typeof dropdown.combobox === 'function'){
+            dropdown.combobox()
+		}
         var providerDropdown = jQuery("select#providerPersonId");
         autoCompleteWidth = providerDropdown.width() + 66 + 'px';
         // Actually executes autocomplete
-        providerDropdown.combobox();
+       
+        if(typeof  providerDropdown.combobox === 'function'){
+             providerDropdown.combobox();
+		}
 
         autocompleteResultCallBack = function (selectId, value) {
         	if (selectId === 'requesterId') {
