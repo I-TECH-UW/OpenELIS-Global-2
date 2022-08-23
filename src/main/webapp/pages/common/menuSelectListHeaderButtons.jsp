@@ -366,6 +366,8 @@ function output() {
 }
 
 var roleFilter = document.getElementById("roleFilter");
-roleFilter.value= '<%=Encode.forJavaScript((String)filterRole)%>';
+if(roleFilter != null){
+  roleFilter.value= '<%=Encode.forJavaScript((String)filterRole)%>';
+}
 
 </script> 
