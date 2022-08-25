@@ -15,6 +15,7 @@
 			<column name="short_name" value="dept"/>
 			<column name="description" value="Organisation department"/>
 			<column name="name_display_key" value="sample.entry.project.siteDepartmentName"/>
+			<column name="lastupdated" valueComputed="${now}"/>
 		</insert>
 	</changeSet>
 </databaseChangeLog>

@@ -1052,6 +1052,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         fhirOrganization
                 .setId(organization.getFhirUuid() == null ? organization.getId() : organization.getFhirUuidAsString());
         fhirOrganization.setName(organization.getOrganizationName());
+        fhirOrganization.setActive(organization.getIsActive() == IActionConstants.YES? true : false);
         this.setFhirOrganizationIdentifiers(fhirOrganization, organization);
         this.setFhirAddressInfo(fhirOrganization, organization);
         this.setFhirOrganizationTypes(fhirOrganization, organization);
@@ -1063,7 +1064,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
     public Organization transformToOrganization(org.hl7.fhir.r4.model.Organization fhirOrganization) {
         Organization organization = new Organization();
         organization.setOrganizationName(fhirOrganization.getName());
-        organization.setIsActive(IActionConstants.YES);
+        organization.setIsActive(fhirOrganization.getActive()? IActionConstants.YES: IActionConstants.NO);
 
         setOeOrganizationIdentifiers(organization, fhirOrganization);
         setOeOrganizationAddressInfo(organization, fhirOrganization);
