@@ -65,6 +65,7 @@ import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.StatusService.OrderStatus;
 import org.openelisglobal.common.services.TableIdService;
 import org.openelisglobal.common.util.DateUtil;
+import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.common.util.validator.GenericValidator;
 import org.openelisglobal.dataexchange.fhir.FhirConfig;
 import org.openelisglobal.dataexchange.fhir.exception.FhirLocalPersistingException;
@@ -1004,7 +1005,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
                                         : dictionary.getLocalizedDictionaryName().getEnglish())));
             } else if (TypeOfTestResultServiceImpl.ResultType.isNumeric(result.getResultType())) {
                 Quantity quantity = new Quantity();
-                quantity.setValue(new BigDecimal(result.getValue()));
+                quantity.setValue(new BigDecimal(StringUtil.getActualNumericValue(result.getValue())));
                 quantity.setUnit(resultService.getUOM(result));
                 observation.setValue(quantity);
             } else if (TypeOfTestResultServiceImpl.ResultType.isTextOnlyVariant(result.getResultType())) {
