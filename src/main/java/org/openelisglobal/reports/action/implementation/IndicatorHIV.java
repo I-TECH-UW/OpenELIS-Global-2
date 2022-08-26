@@ -31,6 +31,7 @@ import org.openelisglobal.analyte.valueholder.Analyte;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.MathUtil;
+import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
 import org.openelisglobal.internationalization.MessageUtil;
@@ -205,7 +206,7 @@ public class IndicatorHIV extends IndicatorReport implements IReportCreator, IRe
                 }
 
                 try {
-                    Double value = Double.valueOf(firstResult.getValue());
+                    Double value = Double.valueOf(StringUtil.getActualNumericValue(firstResult.getValue()));
 
                     if (value >= firstResult.getMinNormal() && value <= firstResult.getMaxNormal()) {
                         bucket.negative++;

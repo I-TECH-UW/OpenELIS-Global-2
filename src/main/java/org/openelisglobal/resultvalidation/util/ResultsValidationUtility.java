@@ -444,13 +444,13 @@ public class ResultsValidationUtility {
                 normalResult = true;
             } else if (TypeOfTestResultServiceImpl.ResultType.NUMERIC.matches(result.getResultType())
                     && !GenericValidator.isBlankOrNull(result.getValue())
-                    && (resultLimit.getHighNormal() >= Double.parseDouble(result.getValue())
-                            && resultLimit.getLowNormal() <= Double.parseDouble(result.getValue()))) {
+                    && (resultLimit.getHighNormal() >= Double.parseDouble(StringUtil.getActualNumericValue(result.getValue()))
+                            && resultLimit.getLowNormal() <= Double.parseDouble(StringUtil.getActualNumericValue(result.getValue())))) {
                 normalResult = true;
             } else if (!TypeOfTestResultServiceImpl.ResultType.DICTIONARY.matches(result.getResultType())
                     && !GenericValidator.isBlankOrNull(result.getValue())
-                    && (resultLimit.getHighNormal() >= Double.parseDouble(result.getValue())
-                            && resultLimit.getLowNormal() <= Double.parseDouble(result.getValue()))) {
+                    && (resultLimit.getHighNormal() >= Double.parseDouble(StringUtil.getActualNumericValue(result.getValue()))
+                            && resultLimit.getLowNormal() <= Double.parseDouble(StringUtil.getActualNumericValue(result.getValue())))) {
                 normalResult = true;
             }
         }

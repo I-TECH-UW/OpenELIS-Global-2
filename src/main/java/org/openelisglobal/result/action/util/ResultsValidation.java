@@ -15,6 +15,7 @@ import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.formfields.FormFields.Field;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.validator.CustomDateValidator;
 import org.openelisglobal.common.util.validator.CustomDateValidator.DateRelation;
@@ -117,7 +118,7 @@ public class ResultsValidation {
                 return;
             }
             try {
-                Double.parseDouble(resultValue);
+                Double.parseDouble(StringUtil.getActualNumericValue(resultValue));
             } catch (NumberFormatException e) {
                 // errors.add(new ActionError("errors.number.format", new
                 // StringBuilder("Result")));
