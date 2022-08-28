@@ -43,7 +43,11 @@ This updates the system from the sources in the sources list. It updates what ne
 
 OpenELIS uses SSL certificates to securely communicate with other software or consolidated lab data servers. For a test or temporary instance, use a self-signed certificate, and for a production instance create a proper signed certifcate. **You must have a cert and key created and in the keystore and truststore for the installer to run**
 
-#### Generate a .crt and .key file for the domain you want to use. 
+I will include 2 paths, one for generating your own self-signed cert, this is good for just starting out or experimenting, and for using your real certs, which is appropriate for production servers. If you have real certificates skip down to [Use a real certificate, best for production uses](#Use-a-real-certificate-best-for-production-uses)
+
+#### Use a self signed certificate. 
+
+##### Generate a .crt and .key file for the domain you want to use. 
 
 The command below is for generating and using a self-signed certifcate. **Note: for FQDN use *.openelisci.org**
 
@@ -51,20 +55,10 @@ The command below is for generating and using a self-signed certifcate. **Note: 
     sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/apache-selfsigned.key -out /etc/ssl/certs/apache-selfsigned.crt
 
 
-#### Create keystore from key and cert 
+##### Create keystore from key and cert 
 Make the directories for the keystore
 
     sudo mkdir /etc/openelis-global/
-
-make sure to record the password somewhere secure as you will need to enter it elsewhere)
-
-    sudo openssl pkcs12 -inkey path/toyour/key -in path/to/your/cert -export -out /etc/openelis-global/keystore
-    
-enter an export password 
-
-**Be sure to remember your keystore password, you will need it later**
-	
-For the self-signed certificate above, you would use:
 	
     sudo openssl pkcs12 -inkey /etc/ssl/private/apache-selfsigned.key -in /etc/ssl/certs/apache-selfsigned.crt -export -out /etc/openelis-global/keystore
 
@@ -81,17 +75,7 @@ and then
 1. using keytool (more reliable):
    
 	    sudo apt install default-jre
-   
-        sudo keytool -import -alias oeCert -file path/to/your/cert -storetype pkcs12 -keystore /etc/openelis-global/truststore
-	
-	* set the truststore password 
-	
-	**Be sure to remember your truststore password, you will need it later **
-	
-	* when prompted if you want to trust the cert type `yes`
-	
-	For the self-signed certificate above, you would use:
-	
+          	
         sudo keytool -import -alias oeCert -file /etc/ssl/certs/apache-selfsigned.crt -storetype pkcs12 -keystore /etc/openelis-global/truststore
 	
 	* set the truststore password 
@@ -104,11 +88,48 @@ and then
 	
 2. using openssl (less reliable, but doesn't require java):
   
-        openssl pkcs12 -export -nokeys -in path/to/your/cert -out /etc/openelis-global/truststore
-
-	For the self-signed certificate above, you would use:
-	
 	    openssl pkcs12 -export -nokeys -in /etc/ssl/certs/apache-selfsigned.crt -out /etc/openelis-global/truststore
+
+
+#### Use a real certificate, best for production uses
+
+##### Create keystore from key and cert 
+Make the directories for the keystore
+
+    sudo mkdir /etc/openelis-global/
+
+make sure to record the password somewhere secure as you will need to enter it elsewhere)
+
+    sudo openssl pkcs12 -inkey path/toyour/key -in path/to/your/cert -export -out /etc/openelis-global/keystore
+    
+enter an export password 
+
+**Be sure to remember your keystore password, you will need it later**
+
+and then
+
+    sudo cp /etc/openelis-global/keystore /etc/openelis-global/client_facing_keystore
+
+##### Create truststore with OpenELIS-Global's cert (or a CA that signs OE certs)
+
+**Choose ONE of the two methods below to create your truststore**
+
+1. using keytool (more reliable):
+   
+	    sudo apt install default-jre
+   
+        sudo keytool -import -alias oeCert -file path/to/your/cert -storetype pkcs12 -keystore /etc/openelis-global/truststore
+	
+	* set the truststore password 
+	
+	**Be sure to remember your truststore password, you will need it later **
+	
+	* when prompted if you want to trust the cert type `yes`
+	
+	
+2. using openssl (less reliable, but doesn't require java):
+  
+        openssl pkcs12 -export -nokeys -in path/to/your/cert -out /etc/openelis-global/truststore
 
 
 #### Ensure keystore/truststore permissions are all correct
