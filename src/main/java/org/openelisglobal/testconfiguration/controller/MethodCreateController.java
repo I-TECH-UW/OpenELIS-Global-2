@@ -104,7 +104,7 @@ public class MethodCreateController extends BaseController {
         SystemModule resultModule = createSystemModule("LogbookResults", identifyingName, userId);
         SystemModule validationModule = createSystemModule("ResultValidation", identifyingName, userId);
 
-        Role resultsEntryRole = roleService.getRoleByName("Results entry");
+        Role resultsEntryRole = roleService.getRoleByName("Results");
         Role validationRole = roleService.getRoleByName("Validator");
 
         RoleModule workplanResultModule = createRoleModule(userId, workplanModule, resultsEntryRole);
