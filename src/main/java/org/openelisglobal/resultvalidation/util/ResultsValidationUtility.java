@@ -444,13 +444,13 @@ public class ResultsValidationUtility {
                 normalResult = true;
             } else if (TypeOfTestResultServiceImpl.ResultType.NUMERIC.matches(result.getResultType())
                     && !GenericValidator.isBlankOrNull(result.getValue())
-                    && (resultLimit.getHighNormal() >= Double.parseDouble(StringUtil.getActualNumericValue(result.getValue()))
-                            && resultLimit.getLowNormal() <= Double.parseDouble(StringUtil.getActualNumericValue(result.getValue())))) {
+                    && (resultLimit.getHighNormal() >= Double.parseDouble(result.getValue(true))
+                            && resultLimit.getLowNormal() <= Double.parseDouble(result.getValue(true)))) {
                 normalResult = true;
             } else if (!TypeOfTestResultServiceImpl.ResultType.DICTIONARY.matches(result.getResultType())
                     && !GenericValidator.isBlankOrNull(result.getValue())
-                    && (resultLimit.getHighNormal() >= Double.parseDouble(StringUtil.getActualNumericValue(result.getValue()))
-                            && resultLimit.getLowNormal() <= Double.parseDouble(StringUtil.getActualNumericValue(result.getValue())))) {
+                    && (resultLimit.getHighNormal() >= Double.parseDouble(result.getValue(true))
+                            && resultLimit.getLowNormal() <= Double.parseDouble(result.getValue(true)))) {
                 normalResult = true;
             }
         }
@@ -655,7 +655,7 @@ public class ResultsValidationUtility {
     }
 
     protected final String getFormattedResult(ResultValidationItem testResultItem) {
-        String result = testResultItem.getResult().getValue();
+        String result = testResultItem.getResult().getValue(false);
         if (TestIdentityService.getInstance().isTestNumericViralLoad(testResultItem.getTestId())
                 && !GenericValidator.isBlankOrNull(result)) {
             return result.split("\\(")[0].trim();

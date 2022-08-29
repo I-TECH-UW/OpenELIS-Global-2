@@ -638,9 +638,9 @@ public abstract class PatientReport extends Report {
                     && !GenericValidator.isBlankOrNull(result.getValue())) {
                 if (result.getMinNormal() != null & result.getMaxNormal() != null
                         && (result.getMinNormal() != 0.0 || result.getMaxNormal() != 0.0)) {
-                    if (Double.valueOf(StringUtil.getActualNumericValue(result.getValue())) < result.getMinNormal()) {
+                    if (Double.valueOf(result.getValue(true)) < result.getMinNormal()) {
                         flag = "B";
-                    } else if (Double.valueOf(StringUtil.getActualNumericValue(result.getValue())) > result.getMaxNormal()) {
+                    } else if (Double.valueOf(result.getValue(true)) > result.getMaxNormal()) {
                         flag = "E";
                     }
                 }
@@ -748,7 +748,7 @@ public abstract class PatientReport extends Report {
                             reportResult = dictionary.getId() != null ? dictionary.getLocalizedName() : "";
                             if (quantification != null
                                     && quantification.getParentResult().getId().equals(sibResult.getId())) {
-                                reportResult += ": " + quantification.getValue();
+                                reportResult += ": " + quantification.getValue(true);
                             }
                         }
                     }
@@ -791,7 +791,7 @@ public abstract class PatientReport extends Report {
                                     && quantifiedResult.getParentResult().getId().equals(subResult.getId())
                                     && !GenericValidator.isBlankOrNull(quantifiedResult.getValue())) {
                                 multiResult.append(": ");
-                                multiResult.append(quantifiedResult.getValue());
+                                multiResult.append(quantifiedResult.getValue(true));
                             }
                             multiResult.append("\n");
                         }
@@ -1016,10 +1016,8 @@ public abstract class PatientReport extends Report {
                 dictionaryService.getData(dictionary);
                 reportResult = dictionary.getId() != null ? dictionary.getLocalizedName() : "";
             }
-        } else if(TypeOfTestResultServiceImpl.ResultType.isNumeric(type)) {   
-            reportResult = StringUtil.getActualNumericValue(result.getValue());
-        }else {
-            reportResult = result.getValue();
+        } else {
+            reportResult = result.getValue(true);
         }
         return reportResult;
     }
