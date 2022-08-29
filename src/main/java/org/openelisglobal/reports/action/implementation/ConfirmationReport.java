@@ -258,7 +258,7 @@ public class ConfirmationReport extends IndicatorReport implements IReportCreato
 
                 return builder.toString();
             } else {
-                return getResultsWithUOM(results.get(0).getValue(), analysis);
+                return getResultsWithUOM(results.get(0).getValue(true), analysis);
             }
         }
 

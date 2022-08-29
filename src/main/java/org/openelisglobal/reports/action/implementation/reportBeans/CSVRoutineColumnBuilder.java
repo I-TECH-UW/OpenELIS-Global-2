@@ -432,7 +432,7 @@ abstract public class CSVRoutineColumnBuilder {
             if (gendCD4Result == null) {
                 return "";
             }
-            String value = gendCD4Result.getValue();
+            String value = gendCD4Result.getValue(true);
             return (value == null) ? "" : value;
         }
 

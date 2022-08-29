@@ -1014,7 +1014,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
                                         : dictionary.getLocalizedDictionaryName().getEnglish())));
             } else if (TypeOfTestResultServiceImpl.ResultType.isNumeric(result.getResultType())) {
                 Quantity quantity = new Quantity();
-                quantity.setValue(new BigDecimal(StringUtil.getActualNumericValue(result.getValue())));
+                quantity.setValue(new BigDecimal(result.getValue(true)));
                 quantity.setUnit(resultService.getUOM(result));
                 observation.setValue(quantity);
             } else if (TypeOfTestResultServiceImpl.ResultType.isTextOnlyVariant(result.getResultType())) {
