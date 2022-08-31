@@ -6,4 +6,5 @@
 	  http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
 	<include relativeToChangelogFile="true" file="add_dept_org_type.xml"/>
+	<include relativeToChangelogFile="true" file="add_analyser_import_role.xml"/>	
 </databaseChangeLog>
