@@ -429,6 +429,7 @@
                      invalidlabid='${invalidProvider}'
        				 clearNonMatching="false"
                      maxrepmsg='maximum reached'
+                     disabled = '${!restrictNewProviderEntries}'
                       >
     		<option></option>
     		<form:options items="${form.sampleOrderItems.providersList}" itemValue="id" itemLabel="value" />
@@ -686,9 +687,11 @@
         autoCompleteWidth = providerDropdown.width() + 66 + 'px';
         // Actually executes autocomplete
        
-        if (typeof providerDropdown.combobox === 'function') {
-	        providerDropdown.combobox();
-        }
+        <% if(restrictNewProviderEntries ){%>
+            if (typeof providerDropdown.combobox === 'function') {
+                providerDropdown.combobox();
+            }
+        <% } %>
 
         autocompleteResultCallBack = function (selectId, value) {
         	if (selectId === 'requesterId') {
