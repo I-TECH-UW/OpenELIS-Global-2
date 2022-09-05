@@ -177,6 +177,8 @@ public class UserServiceImpl implements UserService {
         List<Test> allTests = typeOfSampleService.getAllActiveTestsByTestUnit(true, testUnitIds);
         List<IdValuePair> allSampleTypes = DisplayListService.getInstance().getList(ListType.SAMPLE_TYPE_ACTIVE);
         Set<String> sampleIds = new HashSet<>();
+        //clear cache to create a fresh Map of testId To TypeOfSample
+        typeOfSampleService.clearCache();
         allTests.forEach(test -> sampleIds.add(typeOfSampleService.getTypeOfSampleForTest(test.getId()).getId()));
 
         List<IdValuePair> userSampleTypes = allSampleTypes.stream().filter(type -> sampleIds.contains(type.getId()))

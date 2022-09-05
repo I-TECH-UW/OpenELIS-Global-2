@@ -429,6 +429,7 @@
                      invalidlabid='${invalidProvider}'
        				 clearNonMatching="false"
                      maxrepmsg='maximum reached'
+                     disabled = '${!restrictNewProviderEntries}'
                       >
     		<option></option>
     		<form:options items="${form.sampleOrderItems.providersList}" itemValue="id" itemLabel="value" />
@@ -679,11 +680,18 @@
         var dropdown = jQuery("select#requesterId");
         autoCompleteWidth = dropdown.width() + 66 + 'px';
         // Actually executes autocomplete
-        dropdown.combobox();
+        if (typeof dropdown.combobox === 'function') {
+	        dropdown.combobox()
+        }
         var providerDropdown = jQuery("select#providerPersonId");
         autoCompleteWidth = providerDropdown.width() + 66 + 'px';
         // Actually executes autocomplete
-        providerDropdown.combobox();
+       
+        <% if(restrictNewProviderEntries ){%>
+            if (typeof providerDropdown.combobox === 'function') {
+                providerDropdown.combobox();
+            }
+        <% } %>
 
         autocompleteResultCallBack = function (selectId, value) {
         	if (selectId === 'requesterId') {

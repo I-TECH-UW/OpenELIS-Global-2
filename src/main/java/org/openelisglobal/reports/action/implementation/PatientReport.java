@@ -52,6 +52,7 @@ import org.openelisglobal.common.services.TestIdentityService;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.DateUtil;
+import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
 import org.openelisglobal.internationalization.MessageUtil;
@@ -637,9 +638,9 @@ public abstract class PatientReport extends Report {
                     && !GenericValidator.isBlankOrNull(result.getValue())) {
                 if (result.getMinNormal() != null & result.getMaxNormal() != null
                         && (result.getMinNormal() != 0.0 || result.getMaxNormal() != 0.0)) {
-                    if (Double.valueOf(result.getValue()) < result.getMinNormal()) {
+                    if (Double.valueOf(result.getValue(true)) < result.getMinNormal()) {
                         flag = "B";
-                    } else if (Double.valueOf(result.getValue()) > result.getMaxNormal()) {
+                    } else if (Double.valueOf(result.getValue(true)) > result.getMaxNormal()) {
                         flag = "E";
                     }
                 }
@@ -747,7 +748,7 @@ public abstract class PatientReport extends Report {
                             reportResult = dictionary.getId() != null ? dictionary.getLocalizedName() : "";
                             if (quantification != null
                                     && quantification.getParentResult().getId().equals(sibResult.getId())) {
-                                reportResult += ": " + quantification.getValue();
+                                reportResult += ": " + quantification.getValue(true);
                             }
                         }
                     }
@@ -790,7 +791,7 @@ public abstract class PatientReport extends Report {
                                     && quantifiedResult.getParentResult().getId().equals(subResult.getId())
                                     && !GenericValidator.isBlankOrNull(quantifiedResult.getValue())) {
                                 multiResult.append(": ");
-                                multiResult.append(quantifiedResult.getValue());
+                                multiResult.append(quantifiedResult.getValue(true));
                             }
                             multiResult.append("\n");
                         }
@@ -1016,7 +1017,7 @@ public abstract class PatientReport extends Report {
                 reportResult = dictionary.getId() != null ? dictionary.getLocalizedName() : "";
             }
         } else {
-            reportResult = result.getValue();
+            reportResult = result.getValue(true);
         }
         return reportResult;
     }
