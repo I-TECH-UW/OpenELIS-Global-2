@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
@@ -44,6 +45,7 @@ import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.StatusService.RecordStatus;
 import org.openelisglobal.common.services.TestIdentityService;
+import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.dictionary.service.DictionaryService;
@@ -153,7 +155,7 @@ public class ResultsValidationUtility {
         }
     }
 
-    public List<AnalysisItem> getResultValidationList(List<Integer> statusList, String testSectionId, String accessionNumber) {
+    public List<AnalysisItem> getResultValidationList(List<Integer> statusList, String testSectionId, String accessionNumber ,String date) {
 
         List<AnalysisItem> resultList = new ArrayList<>();
 
@@ -169,10 +171,14 @@ public class ResultsValidationUtility {
             resultList = testResultListToAnalysisItemList(testList);
             sortByAccessionNumberAndOrder(resultList);
             setGroupingNumbers(resultList);
+        } else if (!GenericValidator.isBlankOrNull(date)) {
+            List<ResultValidationItem> testList = getPageUnValidatedTestResultItemsByTestDate(date, statusList);
+            resultList = testResultListToAnalysisItemList(testList);
+            sortByAccessionNumberAndOrder(resultList);
+            setGroupingNumbers(resultList);
         }
 
         return resultList;
-
     }
 
     public int getCountResultValidationList(List<Integer> statusList, String testSectionId) {
@@ -211,6 +217,16 @@ public class ResultsValidationUtility {
         // getPage for validation
         List<Analysis> analysisList = analysisService.getPageAnalysisAtAccessionNumberAndStatus(accessionNumber, statusList,
                 false);
+        return getGroupedTestsForAnalysisList(analysisList, !StatusRules.useRecordStatusForValidation());
+    }
+
+    @SuppressWarnings("unchecked")
+    public final List<ResultValidationItem> getPageUnValidatedTestResultItemsByTestDate(String date,
+            List<Integer> statusList) {
+        
+        List<Analysis> analysisList = analysisService.getAnalysisStartedOn(DateUtil.convertStringDateToSqlDate(date))
+                .stream().filter(analysis -> statusList.contains(Integer.valueOf(analysis.getStatusId())))
+                .collect(Collectors.toList());
         return getGroupedTestsForAnalysisList(analysisList, !StatusRules.useRecordStatusForValidation());
     }
 

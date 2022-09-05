@@ -33,9 +33,10 @@ public class ResultValidationForm extends BaseForm implements ValidationPagingFo
     private String testSection = "";
     
     private String accessionNumber = "";
-    
-    
 
+    @ValidDate
+    private String testDate = "";  
+    
     public String getAccessionNumber() {
         return accessionNumber;
     }
@@ -150,4 +151,11 @@ public class ResultValidationForm extends BaseForm implements ValidationPagingFo
         return searchFinished;
     }
 
+    public String getTestDate() {
+        return testDate;
+    }
+    
+    public void setTestDate(String testDate) {
+        this.testDate = testDate;
+    }
 }
