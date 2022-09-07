@@ -47,8 +47,28 @@ public class ElectronicOrderDisplayItem {
     private String subjectNumber;
 
     private String labNumber;
+    
+    private String birthDate;
+    
+    private String gender;
 
-    private List<String> warnings;
+    public String getBirthDate() {
+		return birthDate;
+	}
+
+	public void setBirthDate(String birthDate) {
+		this.birthDate = birthDate;
+	}
+
+	public String getGender() {
+		return gender;
+	}
+
+	public void setGender(String gender) {
+		this.gender = gender;
+	}
+
+	private List<String> warnings;
 
     private OrderPriority priority;
 
