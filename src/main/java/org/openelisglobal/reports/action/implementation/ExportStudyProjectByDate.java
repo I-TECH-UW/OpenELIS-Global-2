@@ -36,6 +36,7 @@ import org.openelisglobal.reports.action.implementation.reportBeans.CSVColumnBui
 import org.openelisglobal.reports.action.implementation.reportBeans.StudyEIDColumnBuilder;
 import org.openelisglobal.reports.action.implementation.reportBeans.StudyVLColumnBuilder;
 import org.openelisglobal.reports.form.ReportForm;
+import org.openelisglobal.reports.form.ReportForm.DateType;
 import org.openelisglobal.spring.util.SpringContext;
 
 
@@ -46,6 +47,7 @@ import org.openelisglobal.spring.util.SpringContext;
 public class ExportStudyProjectByDate extends CSVSampleExportReport implements IReportParameterSetter, IReportCreator {
     private String projectStr;
     private Project project;
+    private DateType dateType;
 
     // @Override
     @Override
@@ -59,13 +61,15 @@ public class ExportStudyProjectByDate extends CSVSampleExportReport implements I
         form.setUseLowerDateRange(Boolean.TRUE);
         form.setUseUpperDateRange(Boolean.TRUE);
         form.setUseProjectCode(Boolean.TRUE);
+        form.setUseExportDateType(Boolean.TRUE);
         form.setProjectCodeList(getProjectList());
     }
 
 
     protected String getReportNameForParameterPage() {
-        return MessageUtil.getMessage("reports.label.project.export") + " "
-                + MessageUtil.getContextualMessage("sample.EnteredDate");
+        return MessageUtil.getMessage("reports.label.project.export.dateType")
+               // + MessageUtil.getContextualMessage("sample.EnteredDate");
+        + MessageUtil.getContextualMessage("");
     }
 
     @Override
@@ -83,6 +87,7 @@ public class ExportStudyProjectByDate extends CSVSampleExportReport implements I
         highDateStr = form.getUpperDateRange();
         projectStr = form.getProjectCode();
         dateRange = new DateRange(lowDateStr, highDateStr);
+        dateType = form.getDateType();
 
         createReportParameters();
 
@@ -181,9 +186,9 @@ public class ExportStudyProjectByDate extends CSVSampleExportReport implements I
     private CSVColumnBuilder getColumnBuilder(String projectId) {
         String projectTag = CIColumnBuilder.translateProjectId(projectId);
         if (projectTag.equalsIgnoreCase("DBS")) {
-            return new StudyEIDColumnBuilder(dateRange, projectStr);
+            return new StudyEIDColumnBuilder(dateRange, projectStr,dateType);
         } else if (projectTag.equalsIgnoreCase("VLS")) {
-            return new StudyVLColumnBuilder(dateRange, projectStr);
+            return new StudyVLColumnBuilder(dateRange, projectStr,dateType);
         }
         throw new IllegalArgumentException();
     }

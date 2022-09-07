@@ -19,11 +19,13 @@ import java.util.ArrayList;
 
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.services.DisplayListService;
+import org.openelisglobal.patient.action.bean.PatientSearch;
 import org.openelisglobal.reports.form.ReportForm;
 
 public class ReportSpecificationParameters implements IReportParameterSetter {
     public enum Parameter {
-        NO_SPECIFICATION, DATE_RANGE, ACCESSION_RANGE
+        NO_SPECIFICATION, DATE_RANGE, ACCESSION_RANGE,USE_SITE_SEARCH,USE_PATIENT_SEARCH
     }
 
     private String reportTitle;
@@ -65,6 +67,17 @@ public class ReportSpecificationParameters implements IReportParameterSetter {
             form.setReportName(reportTitle);
             for (Parameter parameter : parameters) {
                 switch (parameter) {
+                case USE_PATIENT_SEARCH: {
+                	form.setUsePatientSearch(true);
+                	form.setPatientSearch(new PatientSearch());
+                    break;
+                }
+                case USE_SITE_SEARCH: {
+                	form.setUseSiteSearch(true);
+                	form.setReferringSiteList(
+                            DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_PATIENT_REFERRING_CLINIC));
+                    break;
+                }
                 case DATE_RANGE: {
                     form.setUseLowerDateRange(true);
                     form.setUseUpperDateRange(true);

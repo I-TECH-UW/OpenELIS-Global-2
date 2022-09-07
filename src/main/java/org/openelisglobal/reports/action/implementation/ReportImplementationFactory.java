@@ -44,13 +44,15 @@ public class ReportImplementationFactory {
                 return new ReportSpecificationParameters(Parameter.ACCESSION_RANGE,
                         MessageUtil.getMessage("reports.label.patient.ARV.followup"), null);
             } else if (report.equals("patientEID1")) {
-                return new ReportSpecificationParameters(Parameter.ACCESSION_RANGE,
+                return new ReportSpecificationParameters(new Parameter[] {Parameter.ACCESSION_RANGE,
+                		Parameter.USE_PATIENT_SEARCH,Parameter.USE_SITE_SEARCH},
                         MessageUtil.getMessage("reports.label.patient.EID"), null);
             } else if (report.equals("patientEID2")) {
                 return new ReportSpecificationParameters(Parameter.ACCESSION_RANGE,
                         MessageUtil.getMessage("reports.label.patient.EID"), null);
             } else if (report.equals("patientVL1")) {
-                return new ReportSpecificationParameters(Parameter.ACCESSION_RANGE,
+                return new ReportSpecificationParameters(new Parameter[] {Parameter.ACCESSION_RANGE,
+                		Parameter.USE_PATIENT_SEARCH,Parameter.USE_SITE_SEARCH},
                         MessageUtil.getMessage("reports.label.patient.VL"), null);
             } else if (report.equals("patientIndeterminate1")) {
                 return new ReportSpecificationParameters(Parameter.ACCESSION_RANGE,

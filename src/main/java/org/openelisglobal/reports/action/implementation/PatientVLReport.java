@@ -14,6 +14,7 @@ import org.openelisglobal.common.services.ReportTrackingService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.internationalization.MessageUtil;
+import org.openelisglobal.organization.service.OrganizationService;
 import org.openelisglobal.reports.action.implementation.reportBeans.VLReportData;
 import org.openelisglobal.result.service.ResultService;
 import org.openelisglobal.result.valueholder.Result;
@@ -35,6 +36,7 @@ public abstract class PatientVLReport extends RetroCIPatientReport {
     private AnalysisService analysisService = SpringContext.getBean(AnalysisService.class);
     private ResultService resultService = SpringContext.getBean(ResultService.class);
     private SampleOrganizationService orgService = SpringContext.getBean(SampleOrganizationService.class);
+    private OrganizationService oService = SpringContext.getBean(OrganizationService.class);
 
     protected List<VLReportData> reportItems;
     private String invalidValue = MessageUtil.getMessage("report.test.status.inProgress");
@@ -145,6 +147,7 @@ public abstract class PatientVLReport extends RetroCIPatientReport {
 
     protected void setPatientInfo(VLReportData data) {
 
+    	data.setVlPregnancy( MessageUtil.getMessage("answer.no"));
         data.setSubjectno(reportPatient.getNationalId());
         data.setSitesubjectno(reportPatient.getExternalId());
         data.setBirth_date(reportPatient.getBirthDateForDisplay());
@@ -154,7 +157,7 @@ public abstract class PatientVLReport extends RetroCIPatientReport {
         SampleOrganization sampleOrg = new SampleOrganization();
         sampleOrg.setSample(reportSample);
         orgService.getDataBySample(sampleOrg);
-        data.setServicename(sampleOrg.getId() == null ? "" : sampleOrg.getOrganization().getOrganizationName());
+        data.setServicename(sampleOrg.getId() == null ? "" : oService.get(sampleOrg.getOrganization().getId()).getOrganizationName());
         data.setDoctor(getObservationValues(OBSERVATION_DOCTOR_ID));
         data.setAccession_number(reportSample.getAccessionNumber());
         data.setReceptiondate(DateUtil.convertTimestampToStringDateAndTime(reportSample.getReceivedTimestamp()));
