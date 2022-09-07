@@ -20,7 +20,17 @@
 		<spring:message code="label.button.changePassword" var="changePasswordText"/>
 		<spring:url var="changePassUrl" value="/ChangePasswordLogin" htmlEscape="true"/>
         <button type="button" onclick="window.location.href='${changePassUrl}'"><c:out value="${changePasswordText}"/> </button>
-  		   
+  		<c:if test="${form.useSAML}">
+			<spring:message code="label.button.ssoLogin" var="ssoLoginText"/>
+  			<spring:url var="ssoEndpoint" value="/LoginPage?useSAML=true" htmlEscape="true"/>
+  	        <button type="button" onclick="window.location.href='${ssoEndpoint}'"><c:out value="${ssoLoginText}"/> </button>
+  		</c:if>
+  		</br>
+  		<c:forEach items="${form.oauthUrls}" var="oauthUrl">
+			<spring:message code="label.button.ssoLogin" var="ssoLoginText"/>
+  			<spring:url var="ssoEndpoint" value="/${oauthUrl.value}" htmlEscape="true"/>
+  	        <button type="button" onclick="window.location.href='${ssoEndpoint}'"><c:out value="${ssoLoginText}"/> </button>
+  		</c:forEach>
     </td>        
 </tr>         
 </table>

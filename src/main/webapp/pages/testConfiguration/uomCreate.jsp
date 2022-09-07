@@ -183,7 +183,7 @@ td {
 <%--         <tr><td style="text-align: center"><spring:message code="label.english"/></td></tr> --%>
         <tr>
             <td><span class="requiredlabel">*</span><form:input path="uomEnglishName" cssClass="required" size="40"
-                                                               onchange="handleInput(this, 'english');checkForDuplicates('english');"/>
+                                                               onchange="handleInput(this, 'english');"/>
             </td>
             <%-- 
             <td><span class="requiredlabel">*</span><html:text property="uomFrenchName" name="${form.formName}" size="40"

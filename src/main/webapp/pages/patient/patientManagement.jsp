@@ -1542,9 +1542,11 @@ function selectedPatientChangedForManagement(firstName, lastName, gender, DOB, s
 
 var registered = false;
 
-function registerPatientChangedForManagement(){
-	if( !registered ){
-		addPatientChangedListener( selectedPatientChangedForManagement );
+function registerPatientChangedForManagement() {
+	if (!registered) {
+		if (typeof addPatientChangedListener === 'function') {
+			addPatientChangedListener(selectedPatientChangedForManagement);
+		}
 		registered = true;
 	}
 }

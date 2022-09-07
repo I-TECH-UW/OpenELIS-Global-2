@@ -19,6 +19,7 @@ import java.util.UUID;
 
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.analyte.valueholder.Analyte;
+import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.common.valueholder.EnumValueItemImpl;
 import org.openelisglobal.common.valueholder.ValueHolder;
 import org.openelisglobal.common.valueholder.ValueHolderInterface;
@@ -105,6 +106,15 @@ public class Result extends EnumValueItemImpl {
     }
 
     public String getValue() {
+        return value;
+    }
+
+    public String getValue(Boolean getActualNumericValue) {
+        if (getActualNumericValue) {
+            if ((this.resultType.equals("N") || this.resultType.equals("D") || this.resultType.equals("A"))&& this.value != null) {   
+                return StringUtil.getActualNumericValue(value);
+            }
+        }
         return value;
     }
 

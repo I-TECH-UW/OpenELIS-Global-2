@@ -289,26 +289,6 @@ function getTestsForSampleType(sampleTypeId, success, failure) {
 
 //sensitive data is being transmitted, therefore a token check should be done even on GET. 
 //Otherwise this should be moved to a POST request and rely on regular csrf functionality
-function testConnectionOnServer(connectionId, url, success, failure) {
-	var request = "&connectionId=" + connectionId + "&url=" + url;
-	
-	if( !failure ){	failure = defaultFailure;}
-	
-	new Ajax.Request('ajaxQueryXML', // url
-	{// options
-		method : 'get', // http method
-		parameters : "provider=ConnectionTestProvider" + request,
-		// indicator: 'throbbing'
-		requestHeaders : {
-			"X-CSRF-Token" : getCsrfToken()
-		},
-		onSuccess : success,
-		onFailure : failure
-	});
-}
-
-//sensitive data is being transmitted, therefore a token check should be done even on GET. 
-//Otherwise this should be moved to a POST request and rely on regular csrf functionality
 function validateAccessionNumberOnServer(ignoreYear, ignoreUsage, fieldId, accessionNumber, success, failure) {
     if( !failure ){ failure = defaultFailure;}
     new Ajax.Request(

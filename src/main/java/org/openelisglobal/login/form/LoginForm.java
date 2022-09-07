@@ -1,5 +1,7 @@
 package org.openelisglobal.login.form;
 
+import java.util.Map;
+
 import javax.validation.constraints.NotBlank;
 
 import org.openelisglobal.common.form.BaseForm;
@@ -13,6 +15,10 @@ public class LoginForm extends BaseForm {
 
     @NotBlank
     private String password;
+
+    private Boolean useSAML;
+
+    private Map<String, String> oauthUrls;
 
     public LoginForm() {
         setFormName("loginForm");
@@ -33,4 +39,21 @@ public class LoginForm extends BaseForm {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public Boolean getUseSAML() {
+        return useSAML;
+    }
+
+    public void setUseSAML(Boolean useSAML) {
+        this.useSAML = useSAML;
+    }
+
+    public Map<String, String> getOauthUrls() {
+        return oauthUrls;
+    }
+
+    public void setOauthUrls(Map<String, String> oauthUrls) {
+        this.oauthUrls = oauthUrls;
+    }
+
 }

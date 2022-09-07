@@ -7,10 +7,10 @@
 <tiles-definitions>
 
 	<definition name="404ErrorPage"
-		template="/pages/common/erro/defaultNotFoundPage.jsp">
+		template="/pages/common/error/defaultNotFoundPage.jsp">
 	</definition>
 	<definition name="PageNotFound"
-		template="/pages/common/erro/defaultNotFoundPage.jsp">
+		template="/pages/common/error/defaultNotFoundPage.jsp">
 	</definition>
 
 	<definition name="endpointdoc"

@@ -27,6 +27,7 @@ import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.analyte.service.AnalyteService;
 import org.openelisglobal.analyte.valueholder.Analyte;
 import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
 import org.openelisglobal.observationhistory.valueholder.ObservationHistory;
@@ -172,8 +173,8 @@ public class RetroCIReflexActions extends ReflexAction {
 
         if (CD4Result != null && GBResult != null && LymphResult != null) {
             try {
-                double result = Double.parseDouble(CD4Result.getValue()) * Double.parseDouble(GBResult.getValue())
-                        * Double.parseDouble(LymphResult.getValue()) * 0.1;
+                double result = Double.parseDouble(CD4Result.getValue(true)) * Double.parseDouble(GBResult.getValue(true))
+                        * Double.parseDouble(LymphResult.getValue(true)) * 0.1;
                 result = Math.rint(result);
 
                 calculatedResult = resultService.getResultForAnalyteInAnalysisSet(ANALYTE_CD4_CT_GENERATED.getId(),
