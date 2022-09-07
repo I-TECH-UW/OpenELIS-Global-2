@@ -250,7 +250,7 @@ public class HaitiLNSPExportReport extends CSVExportReport {
         String reportResult = resultResultService.getResultValue(result, true);
         Result quantifiableResult = analysisService.getQuantifiedResult(analysis);
         if (quantifiableResult != null) {
-            reportResult += ":" + quantifiableResult.getValue();
+            reportResult += ":" + quantifiableResult.getValue(true);
         }
 
         data.setResult(reportResult.replace(",", ";"));

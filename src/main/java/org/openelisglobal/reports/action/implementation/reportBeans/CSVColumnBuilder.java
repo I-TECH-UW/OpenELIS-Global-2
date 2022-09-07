@@ -448,7 +448,7 @@ abstract public class CSVColumnBuilder {
             if (gendCD4Result == null) {
                 return "";
             }
-            String value = gendCD4Result.getValue();
+            String value = gendCD4Result.getValue(true);
             return (value == null) ? "" : value;
         }
 

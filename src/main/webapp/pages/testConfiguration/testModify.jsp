@@ -2319,7 +2319,7 @@ td {
 				<td><span class="sexRange_index" style="display: none">
 						<spring:message code="sex.male" />
 				</span></td>
-				<td style="white-space:nowrap;>
+				<td style="white-space:nowrap;">
 				<input class="yearMonthSelect_index" type="radio"
 					name="time_index"
 					value="<%=MessageUtil.getContextualMessage("abbreviation.year.single")%>"

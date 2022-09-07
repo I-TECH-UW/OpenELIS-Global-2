@@ -143,16 +143,16 @@ public abstract class PatientARVReport extends RetroCIPatientReport {
                             data.setShowSerologie(Boolean.TRUE);
                         } else if (result.getAnalyte() != null
                                 && result.getAnalyte().getId().equals(CD4_CNT_CONCLUSION)) {
-                            data.setCd4(valid ? result.getValue() : invalidValue);
+                            data.setCd4(valid ? result.getValue(true) : invalidValue);
                         } else {
-                            resultValue = result.getValue();
+                            resultValue = result.getValue(true);
                         }
                     }
                 }
 
                 if (resultList.size() > 0) {
                     if (resultValue == null) {
-                        resultValue = resultList.get(resultList.size() - 1).getValue();
+                        resultValue = resultList.get(resultList.size() - 1).getValue(true);
                     }
                 }
 

@@ -1142,9 +1142,9 @@ function sampleTypeQualifierChanged(element){
 						<th style="width:40%;display:none;" id="sectionHead">
 							Section
 						</th>
-                        <th style="width:25%" style="display:none" id="userSampleTypeHead">
+                        <%-- <th style="width:25%" style="display:none" id="userSampleTypeHead">
                             <spring:message code="sample.entry.sample.type"/>
-                        </th>
+                        </th> --%>
                         <th style="width:20%">
                               &nbsp;
                         </th>

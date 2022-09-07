@@ -107,7 +107,7 @@ public abstract class PatientVLReport extends RetroCIPatientReport {
                     // data.setShowVirologie(Boolean.TRUE);
                     String resultValue = "";
                     if (resultList.size() > 0) {
-                        resultValue = resultList.get(resultList.size() - 1).getValue();
+                        resultValue = resultList.get(resultList.size() - 1).getValue(true);
                     }
 
                     String baseValue = resultValue;
