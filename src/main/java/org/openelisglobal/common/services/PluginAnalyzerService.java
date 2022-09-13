@@ -24,6 +24,7 @@ import javax.annotation.PostConstruct;
 import org.openelisglobal.analyzer.service.AnalyzerService;
 import org.openelisglobal.analyzer.valueholder.Analyzer;
 import org.openelisglobal.analyzerimport.analyzerreaders.AnalyzerLineReader;
+import org.openelisglobal.analyzerimport.analyzerreaders.AnalyzerXLSLineReader;
 import org.openelisglobal.analyzerimport.service.AnalyzerTestMappingService;
 import org.openelisglobal.analyzerimport.util.AnalyzerTestNameCache;
 import org.openelisglobal.analyzerimport.valueholder.AnalyzerTestMapping;
@@ -59,6 +60,7 @@ public class PluginAnalyzerService {
 
     public void registerAnalyzer(AnalyzerImporterPlugin analyzer) {
         AnalyzerLineReader.registerAnalyzerPlugin(analyzer);
+        AnalyzerXLSLineReader.registerAnalyzerPlugin(analyzer);
     }
 
     public String addAnalyzerDatabaseParts(String name, String description, List<TestMapping> nameMappings) {

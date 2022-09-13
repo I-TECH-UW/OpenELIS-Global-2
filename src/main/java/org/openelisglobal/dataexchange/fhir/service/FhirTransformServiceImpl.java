@@ -65,6 +65,7 @@ import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.StatusService.OrderStatus;
 import org.openelisglobal.common.services.TableIdService;
 import org.openelisglobal.common.util.DateUtil;
+import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.common.util.validator.GenericValidator;
 import org.openelisglobal.dataexchange.fhir.FhirConfig;
 import org.openelisglobal.dataexchange.fhir.exception.FhirLocalPersistingException;
@@ -422,9 +423,10 @@ public class FhirTransformServiceImpl implements FhirTransformService {
     private void updateReferringTaskWithTaskInfo(Task referringTask, Task task) {
         if (TaskStatus.COMPLETED.equals(task.getStatus())) {
             referringTask.setStatus(TaskStatus.COMPLETED);
-            referringTask.setOutput(task.getOutput());
+            task.getOutput().forEach(outPut -> {
+                referringTask.addOutput(outPut);
+            });
         }
-
     }
 
     private Optional<Task> getReferringTaskForSample(Sample sample) {
@@ -884,12 +886,21 @@ public class FhirTransformServiceImpl implements FhirTransformService {
             }
         }
 
+        Map<String ,Task> referingTaskMap = new HashMap<>();
         for (Sample sample : sampleUpdateList) {
             Task task = this.transformToTask(sample.getId());
             Optional<Task> referringTask = getReferringTaskForSample(sample);
             if (referringTask.isPresent()) {
-                updateReferringTaskWithTaskInfo(referringTask.get(), task);
-                this.addToOperations(fhirOperations, tempIdGenerator, referringTask.get());
+                if(referingTaskMap.containsKey(referringTask.get().getIdElement().getIdPart())){
+                    Task existingReferingTask = referingTaskMap.get(referringTask.get().getIdElement().getIdPart());
+                    updateReferringTaskWithTaskInfo(existingReferingTask, task);
+                    referingTaskMap.put(existingReferingTask.getIdElement().getIdPart(), existingReferingTask);
+                    this.addToOperations(fhirOperations, tempIdGenerator, existingReferingTask);
+                }else{
+                    updateReferringTaskWithTaskInfo(referringTask.get(), task);
+                    referingTaskMap.put(referringTask.get().getIdElement().getIdPart(), referringTask.get());
+                    this.addToOperations(fhirOperations, tempIdGenerator, referringTask.get());
+                } 
             }
             this.addToOperations(fhirOperations, tempIdGenerator, task);
         }
@@ -1003,7 +1014,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
                                         : dictionary.getLocalizedDictionaryName().getEnglish())));
             } else if (TypeOfTestResultServiceImpl.ResultType.isNumeric(result.getResultType())) {
                 Quantity quantity = new Quantity();
-                quantity.setValue(new BigDecimal(result.getValue()));
+                quantity.setValue(new BigDecimal(result.getValue(true)));
                 quantity.setUnit(resultService.getUOM(result));
                 observation.setValue(quantity);
             } else if (TypeOfTestResultServiceImpl.ResultType.isTextOnlyVariant(result.getResultType())) {
@@ -1051,6 +1062,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         fhirOrganization
                 .setId(organization.getFhirUuid() == null ? organization.getId() : organization.getFhirUuidAsString());
         fhirOrganization.setName(organization.getOrganizationName());
+        fhirOrganization.setActive(organization.getIsActive() == IActionConstants.YES? true : false);
         this.setFhirOrganizationIdentifiers(fhirOrganization, organization);
         this.setFhirAddressInfo(fhirOrganization, organization);
         this.setFhirOrganizationTypes(fhirOrganization, organization);
@@ -1062,7 +1074,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
     public Organization transformToOrganization(org.hl7.fhir.r4.model.Organization fhirOrganization) {
         Organization organization = new Organization();
         organization.setOrganizationName(fhirOrganization.getName());
-        organization.setIsActive(IActionConstants.YES);
+        organization.setIsActive(fhirOrganization.getActive()? IActionConstants.YES: IActionConstants.NO);
 
         setOeOrganizationIdentifiers(organization, fhirOrganization);
         setOeOrganizationAddressInfo(organization, fhirOrganization);
@@ -1230,8 +1242,9 @@ public class FhirTransformServiceImpl implements FhirTransformService {
     }
 
     public void addHumanNameToPerson(HumanName humanName, Person person) {
-        person.setFirstName(humanName.getGivenAsSingleString());
-        person.setLastName(humanName.getFamily());
+        person.setFirstName(
+                humanName.getGivenAsSingleString() == null ? "" : humanName.getGivenAsSingleString().strip());
+        person.setLastName(humanName.getFamily() == null ? "" : humanName.getFamily().strip());
     }
 
     public void addTelecomToPerson(List<ContactPoint> telecoms, Person person) {

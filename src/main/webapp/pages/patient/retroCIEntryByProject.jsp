@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	import="org.openelisglobal.common.action.IActionConstants,
 			org.openelisglobal.login.valueholder.UserSessionData,
+			org.owasp.encoder.Encode,
             org.openelisglobal.common.util.Versioning,java.util.HashSet,org.owasp.encoder.Encode"%>
 
 <%@ page isELIgnored="false" %>
@@ -247,9 +248,11 @@ function setProjectName(divId) {
  * A list of answers that equate to yes in certain lists when comparing (cross check or 2nd entry for a match).
  */
 yesesInDiseases = [
-     <%= org.openelisglobal.dictionary.ObservationHistoryList.YES_NO.getList().get(0).getId() %>,
-	 <%= org.openelisglobal.dictionary.ObservationHistoryList.YES_NO_UNKNOWN.getList().get(0).getId() %>
+     <%=Encode.forJavaScript(org.openelisglobal.dictionary.ObservationHistoryList.YES_NO.getList().get(0).getId()) %>,
+	 <%=Encode.forJavaScript(org.openelisglobal.dictionary.ObservationHistoryList.YES_NO_UNKNOWN.getList().get(0).getId()) %>
 	 ];
+	 
+var type = '<%=Encode.forJavaScript(requestType)%>';
 
 function hideAllDivs(){
 	toggleDisabledDiv(document.getElementById("InitialARV_Id"), false);

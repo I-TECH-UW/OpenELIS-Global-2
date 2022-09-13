@@ -138,6 +138,10 @@ public class RequesterService {
         return getOrganization() == null ? null : getOrganization().getCode();
     }
 
+    public String getReferringDepartmentId() {
+        return getOrganizationDepartment() == null ? null : getOrganizationDepartment().getId();
+    }
+
     public Person getPerson() {
         if (person == null) {
             buildRequesters();

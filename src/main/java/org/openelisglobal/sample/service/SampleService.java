@@ -11,6 +11,7 @@ import org.openelisglobal.organization.valueholder.Organization;
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.person.valueholder.Person;
 import org.openelisglobal.requester.valueholder.SampleRequester;
+import org.openelisglobal.sample.valueholder.OrderPriority;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.sample.valueholder.SampleAdditionalField;
 import org.openelisglobal.sample.valueholder.SampleAdditionalField.AdditionalFieldName;
@@ -113,4 +114,6 @@ public interface SampleService extends BaseObjectService<Sample, String> {
     boolean sampleContainsTestWithLoinc(String id, String loinc);
 
     List<Sample> getSamplesForSiteBetweenOrderDates(String referringSiteId, LocalDate lowerDate, LocalDate upperDate);
+
+    List<Sample> getSamplesByPriority(OrderPriority priority);
 }

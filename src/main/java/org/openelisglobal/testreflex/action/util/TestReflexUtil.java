@@ -474,7 +474,7 @@ public class TestReflexUtil {
                 analysisService.update(currentAnalysis);
 
                 List<Note> notes = new ArrayList<>();
-                notes.add(noteService.createSavableNote(newAnalysis, NoteType.EXTERNAL,
+                notes.add(noteService.createSavableNote(newAnalysis, NoteType.INTERNAL,
                         "Triggered by " + currentAnalysis.getTest().getLocalizedReportingName().getLocalizedValue(),
                         "Reflex Test Note", "1"));
                 notes.add(noteService.createSavableNote(newAnalysis, NoteType.INTERNAL,

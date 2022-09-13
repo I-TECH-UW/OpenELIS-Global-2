@@ -26,7 +26,7 @@ services:
 #db              max-size: "20m"
 #db              max-file: "50"
 #db        healthcheck:
-#db            test: [ "CMD", "pg_isready" ]
+#db            test: [ "CMD" , "pg_isready", "-q", "-d", "postgres", "-U", "postgres"]
 #db            timeout: 45s
 #db            interval: 10s
 #db            retries: 10 

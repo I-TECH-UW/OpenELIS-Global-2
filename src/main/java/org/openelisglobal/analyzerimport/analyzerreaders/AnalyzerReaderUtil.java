@@ -40,7 +40,8 @@ public class AnalyzerReaderUtil {
                         try {
                             AnalyzerResults resultFromDB = (AnalyzerResults) resultFromAnalyzer.clone();
                             resultFromDB.setResult(resultList.get(resultList.size() - 1).getValue());
-                            resultFromDB.setCompleteDate(new Timestamp(analysis.getCompletedDate().getTime()));
+                            resultFromDB.setCompleteDate(analysis.getCompletedDate() == null ? null
+                                    : new Timestamp(analysis.getCompletedDate().getTime()));
                             resultFromDB.setReadOnly(true);
                             resultFromDB.setResultType(resultFromAnalyzer.getResultType());
                             return resultFromDB;

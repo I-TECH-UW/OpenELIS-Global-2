@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.openelisglobal</groupId>
@@ -13,9 +15,9 @@
 		<maven.java.release>11</maven.java.release>
 
 		<major.version>2</major.version>
-		<minor.version>6</minor.version>
-		<state.version>1</state.version> <!-- 0 = alpha, 1 = beta, 2 = rc, 3 = deployable -->
-		<fix.version>38</fix.version>
+		<minor.version>7</minor.version>
+		<state.version>0</state.version> <!-- 0 = alpha, 1 = beta, 2 = rc, 3 = deployable -->
+		<fix.version>2</fix.version>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
@@ -26,14 +28,19 @@
 		<hapi.version>2.3</hapi.version>
 		<hibernate.version>5.4.24.Final</hibernate.version>
 		<hibernate-validator.version>6.1.5.Final</hibernate-validator.version>
-		<postgresql.version>42.3.3</postgresql.version>
+		<postgresql.version>42.4.1</postgresql.version>
 		<log4j.version>2.17.1</log4j.version>
 		<springframework.version>5.3.20</springframework.version>
-		<springsecurity.version>5.2.10.RELEASE</springsecurity.version>
+		<springsecurity.version>5.7.2</springsecurity.version>
 		<testContainersVersion>1.15.3</testContainersVersion>
 	</properties>
 
 	<dependencies>
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+			<version>1.15</version>
+		</dependency>
 		<dependency>
 			<groupId>org.jsmpp</groupId>
 			<artifactId>jsmpp</artifactId>
@@ -42,7 +49,7 @@
 		<dependency>
 			<groupId>org.itech</groupId>
 			<artifactId>dataexport-api</artifactId>
-			<version>0.0.0.5</version>
+			<version>0.0.0.6</version>
 		</dependency>
 		<dependency>
 			<groupId>ca.uhn.hapi.fhir</groupId>
@@ -80,7 +87,7 @@
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi</artifactId>
-			<version>3.17</version>
+			<version>4.1.1</version>
 		</dependency>
 		<!-- APACHE COMMONS DEPENDENCIES -->
 		<dependency>
@@ -328,12 +335,33 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-saml2-service-provider</artifactId>
+			<version>${springsecurity.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.bouncycastle</groupId>
+					<artifactId>bcprov-jdk15on</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-web</artifactId>
 			<version>${springsecurity.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-core</artifactId>
+			<version>${springsecurity.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-config</artifactId>
+			<version>${springsecurity.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-oauth2-client</artifactId>
 			<version>${springsecurity.version}</version>
 		</dependency>
 		<dependency>
@@ -472,6 +500,11 @@
 			<groupId>com.sun.xml.messaging.saaj</groupId>
 			<artifactId>saaj-impl</artifactId>
 			<version>1.4.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.ibm.icu</groupId>
+			<artifactId>icu4j</artifactId>
+			<version>71.1</version>
 		</dependency>
 
 	</dependencies>

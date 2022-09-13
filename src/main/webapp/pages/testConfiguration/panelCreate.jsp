@@ -206,7 +206,7 @@ td {
         </tr>
         <tr>
         	<td><span class="requiredlabel">*</span><form:input path="panelEnglishName" cssClass="required" size="40"
-                                                               onchange="handleInput(this, 'english');checkForDuplicates('english');"/>
+                                                               onchange="handleInput(this, 'english');"/>
             </td>
             <td><span class="requiredlabel">*</span><form:input path="panelFrenchName" cssClass="required" size="40"
                                                                onchange="handleInput(this, 'french');"/>

@@ -110,13 +110,13 @@
     }
 
     function handleInput(element, locale) {
-        var englishNames = "${form.existingEnglishNames}".toLowerCase();
-        var frenchNames = "${form.existingFrenchNames}".toLowerCase();
+        var englishNames = "${form.existingEnglishNames}";
+        var frenchNames = "${form.existingFrenchNames}";
         var duplicate = false;
         if( locale == 'english'){
-            duplicate = englishNames.indexOf( '<%=TestSectionCreateController.NAME_SEPARATOR%>' + element.value.toLowerCase() + '<%=TestSectionCreateController.NAME_SEPARATOR%>') != -1;
+            duplicate = englishNames.indexOf( '<%=TestSectionCreateController.NAME_SEPARATOR%>' + element.value + '<%=TestSectionCreateController.NAME_SEPARATOR%>') != -1;
         }else{
-            duplicate = frenchNames.indexOf( '<%=TestSectionCreateController.NAME_SEPARATOR%>' + element.value.toLowerCase() + '<%=TestSectionCreateController.NAME_SEPARATOR%>') != -1;
+            duplicate = frenchNames.indexOf( '<%=TestSectionCreateController.NAME_SEPARATOR%>' + element.value + '<%=TestSectionCreateController.NAME_SEPARATOR%>') != -1;
         }
 
         if(duplicate){
@@ -183,7 +183,7 @@ td {
 <%--         <tr><td style="text-align: center"><spring:message code="label.english"/></td></tr> --%>
         <tr>
             <td><span class="requiredlabel">*</span><form:input path="uomEnglishName" cssClass="required" size="40"
-                                                               onchange="handleInput(this, 'english');checkForDuplicates('english');"/>
+                                                               onchange="handleInput(this, 'english');"/>
             </td>
             <%-- 
             <td><span class="requiredlabel">*</span><html:text property="uomFrenchName" name="${form.formName}" size="40"

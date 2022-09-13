@@ -22,6 +22,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
 <script type="text/javascript" src="scripts/OEPaging.js?"></script>
+<script type="text/javascript" src="scripts/utilities.js"></script>
 
 <%
 	String url = request.getAttribute("javax.servlet.forward.servlet_path").toString();	
@@ -33,9 +34,18 @@ function validateEntrySize( elementValue ){
 	$("retrieveTestsID").disabled = (elementValue.length == 0);
 }
 
+function validateDateEntrySize( elementValue ){
+	$("retrieveTestsByDate").disabled = (elementValue.length == 0);
+}
+
 function doShowTests(){
 	var form = document.getElementById("mainForm");
 	window.location.href = "${requestScope['javax.servlet.forward.request_uri']}?accessionNumber="  + $("searchAccessionID").value;
+}
+
+function doShowTestsForDate(){
+	var form = document.getElementById("mainForm");
+	window.location.href = "${requestScope['javax.servlet.forward.request_uri']}?date="  + encodeURIComponent($("searchDate").value);
 }
 
 function /*void*/ handleEnterEvent(  ){
@@ -51,30 +61,56 @@ function /*void*/ handleEnterEvent(  ){
 <div id="searchDiv" class="colorFill"  >
 <div id="PatientPage" class="colorFill" style="display:inline" >
 <h2><spring:message code="sample.entry.search"/></h2>
-	<table width="50%">
-		<tr >
-		<td width="50%" align="right" >
-			<%=MessageUtil.getContextualMessage("quick.entry.accession.range")%>
-		</td>
-		<td width="50%">
-			<input name="accessionNumber"
-			       size="20"
-			       id="searchAccessionID"
-			       maxlength="<%=Integer.toString(AccessionNumberUtil.getMaxAccessionLength())%>"
-			       onkeyup="validateEntrySize( this.value );"
-			       onblur="validateEntrySize( this.value );"
-			       class="text"
-			       type="text">
-			<spring:message code="sample.search.scanner.instructions"/>
-		</td>
-	</tr>
+    <% if(url.contains("AccessionValidationRange")){ %> 
+		<table width="50%">
+			<tr >
+			<td width="50%" align="right" >
+				<%=MessageUtil.getContextualMessage("quick.entry.accession.range")%>
+			</td>
+			<td width="50%">
+				<input name="accessionNumber"
+					size="20"
+					id="searchAccessionID"
+					maxlength="<%=Integer.toString(AccessionNumberUtil.getMaxAccessionLength())%>"
+					onkeyup="validateEntrySize( this.value );"
+					onblur="validateEntrySize( this.value );"
+					class="text"
+					type="text">
+				<spring:message code="sample.search.scanner.instructions"/>
+			</td>
+		</tr>
+			
+		</table>
+		<br/>
 		
-	</table>
-	<br/>
-	
-	<button type="button" name="retrieveTestsButton" id="retrieveTestsID"  onclick="doShowTests();" disabled="disabled" >
-		<%= MessageUtil.getContextualMessage("validationentry.accession.range") %>
-	</button>
+		<button type="button" name="retrieveTestsButton" id="retrieveTestsID"  onclick="doShowTests();" disabled="disabled" >
+			<%= MessageUtil.getContextualMessage("validationentry.accession.range") %>
+		</button>
+	<% }%>
+	<% if(url.contains("ResultValidationByTestDate")){ %> 
+		<table width="50%">
+			<tr >
+			<td width="50%" align="right" >
+				<spring:message code="sample.search.date.instructions"/>
+			</td>
+			<td width="50%">
+				<input name="date"
+					size="20"
+					id="searchDate"
+					onkeyup="validateDateEntrySize( this.value );addDateSlashes(this, event);"
+					onblur="validateDateEntrySize( this.value );"
+					class="text"
+					type="text">
+			</td>
+		</tr>
+			
+		</table>
+		<br/>
+		
+		<button type="button" name="retrieveTestsButton" id="retrieveTestsByDate"  onclick="doShowTestsForDate();" disabled="disabled" >
+			<%= MessageUtil.getContextualMessage("validationentry.date.search") %>
+		</button>
+	<% }%>
 	
 	<h1>
 		

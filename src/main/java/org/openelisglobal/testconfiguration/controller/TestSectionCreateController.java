@@ -6,6 +6,7 @@ import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
@@ -59,7 +60,7 @@ public class TestSectionCreateController extends BaseController {
 
     private void setupDisplayItems(TestSectionCreateForm form) {
         form.setExistingTestUnitList(
-                DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION));
+                DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION_ACTIVE));
         form.setInactiveTestUnitList(
                 DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION_INACTIVE));
         List<TestSection> testSections = testSectionService.getAllTestSections();
@@ -99,8 +100,8 @@ public class TestSectionCreateController extends BaseController {
         SystemModule resultModule = createSystemModule("LogbookResults", identifyingName, userId);
         SystemModule validationModule = createSystemModule("ResultValidation", identifyingName, userId);
 
-        Role resultsEntryRole = roleService.getRoleByName("Results");
-        Role validationRole = roleService.getRoleByName("Validation");
+        Role resultsEntryRole = roleService.getRoleByName(Constants.ROLE_RESULTS);
+        Role validationRole = roleService.getRoleByName(Constants.ROLE_VALIDATION);
 
         RoleModule workplanResultModule = createRoleModule(userId, workplanModule, resultsEntryRole);
         RoleModule resultResultModule = createRoleModule(userId, resultModule, resultsEntryRole);
@@ -114,7 +115,7 @@ public class TestSectionCreateController extends BaseController {
             return findForward(FWD_FAIL_INSERT, form);
         }
 
-        DisplayListService.getInstance().refreshList(DisplayListService.ListType.TEST_SECTION);
+        DisplayListService.getInstance().refreshList(DisplayListService.ListType.TEST_SECTION_ACTIVE);
         DisplayListService.getInstance().refreshList(DisplayListService.ListType.TEST_SECTION_INACTIVE);
 
         return findForward(FWD_SUCCESS_INSERT, form);

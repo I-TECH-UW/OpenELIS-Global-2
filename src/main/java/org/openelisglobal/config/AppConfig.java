@@ -24,6 +24,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -120,7 +121,8 @@ public class AppConfig implements WebMvcConfigurer {
                 .excludePathPatterns(SecurityConfig.OPEN_PAGES)//
                 .excludePathPatterns(SecurityConfig.LOGIN_PAGES)//
                 .excludePathPatterns(SecurityConfig.RESOURCE_PAGES)//
-                .excludePathPatterns(SecurityConfig.AUTH_OPEN_PAGES);
+                .excludePathPatterns(SecurityConfig.AUTH_OPEN_PAGES)
+                .excludePathPatterns(SecurityConfig.AJAX_CALLS_TO_CONTROLLERS);
 //                .excludePathPatterns(SecurityConfig.CLIENT_CERTIFICATE_PAGES);
         registry.addInterceptor(urlLocatedErrorsInterceptor).addPathPatterns("/**");
         registry.addInterceptor(pageAttributesInterceptor).addPathPatterns("/**");
@@ -172,5 +174,10 @@ public class AppConfig implements WebMvcConfigurer {
         }
 
         return mailSender;
+    }
+
+    @Bean
+    public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
+        return new PropertySourcesPlaceholderConfigurer();
     }
 }
