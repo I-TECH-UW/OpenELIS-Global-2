@@ -127,6 +127,9 @@ services:
 #astm            - source: truststore
 #astm            - source: keystore
 #astm        environment:
+#astm            server.ssl.keyStorePath: /run/secrets/keystore
+#astm            server.ssl.keyStorePassword: [% keystore_password %] 
+#astm            server.ssl.keyStoreType: PKCS12
 #astm            TZ: [% timezone %]
 #astm            JAVA_OPTS: "-Djavax.net.ssl.trustStore=/run/secrets/truststore 
 #astm                      -Djavax.net.ssl.trustStorePassword=[% truststore_password %] 
