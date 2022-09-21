@@ -20,6 +20,7 @@ services:
 #db            - [% db_init_dir %]:/docker-entrypoint-initdb.d    
 #db              # values must match values in DatabaseBackup.pl
 #db            - [% db_backups_dir %]:[% docker_backups_dir %] 
+#db            - [% db_pgpass %]:/var/lib/postgresql/.pgpass
 #db        logging:
 #db            driver: "local"
 #db            options:

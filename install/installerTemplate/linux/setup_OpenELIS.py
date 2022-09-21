@@ -52,6 +52,7 @@ OE_ETC_DIR = "/etc/openelis-global/"
 DB_BACKUPS_DIR = OE_VAR_DIR + "backups/"  
 DB_DATA_DIR = OE_VAR_DIR + "data/"  
 DB_ENVIRONMENT_DIR = OE_VAR_DIR + "database/env/"
+DB_PGPASS = OE_VAR_DIR + "database/.pgpass"
 DB_INIT_DIR = OE_VAR_DIR + "initDB/"
 SECRETS_DIR = OE_VAR_DIR + "secrets/"
 PLUGINS_DIR = OE_VAR_DIR + "plugins/"
@@ -281,6 +282,8 @@ def create_docker_compose_file():
                 line = line.replace("#db", "")
             if line.find("[% db_env_dir %]")  >= 0:
                 line = line.replace("[% db_env_dir %]", DB_ENVIRONMENT_DIR)  
+            if line.find("[% db_pgpass %]")  >= 0:
+                line = line.replace("[% db_pgpass %]", DB_PGPASS)  
             if line.find("[% db_data_dir %]")  >= 0:
                 line = line.replace("[% db_data_dir %]", DB_DATA_DIR)  
             if line.find("[% db_init_dir %]")  >= 0:
