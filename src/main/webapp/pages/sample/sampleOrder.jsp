@@ -35,6 +35,7 @@
     boolean restrictNewReferringSiteEntries = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.restrictFreeTextRefSiteEntry, "true");
     boolean restrictNewProviderEntries = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.restrictFreeTextProviderEntry, "true");
 	boolean useSiteDepartment = FormFields.getInstance().useField(Field.SITE_DEPARTMENT );
+    pageContext.setAttribute("restrictNewReferringSiteEntries", restrictNewReferringSiteEntries);
 %>
 
 <script type="text/javascript" src="scripts/additional_utilities.js"></script>
@@ -332,7 +333,7 @@
         <% } %>
     </td>
     <td colspan="3" >
-    	<c:if test="${form.sampleOrderItems.readOnly == false}" >
+    	<c:if test="${restrictNewReferringSiteEntries}" >
     	
     		<spring:message code="error.site.invalid" var="invalidSite"/>
     	    <spring:message code="sample.entry.project.siteMaxMsg" var="siteMaxMessage"/>
@@ -342,14 +343,15 @@
                      capitalize="true"
                      invalidlabid='${invalidSite}'
                      maxrepmsg='${siteMaxMessage}'
+                     disabled="<%=!restrictNewReferringSiteEntries%>"
        				 clearNonMatching="<%=restrictNewReferringSiteEntries%>"
                       >
             <option ></option>
             <form:options items="${form.sampleOrderItems.referringSiteList}" itemValue="id" itemLabel="value"/>
             </form:select>
     	</c:if>
-    	<c:if test="${form.sampleOrderItems.readOnly}" >
-            <form:input path="sampleOrderItems.referringSiteName"  style="width:300px" />
+    	<c:if test="${not restrictNewReferringSiteEntries}" >
+            <form:input id="requesterName" path="sampleOrderItems.referringSiteName"  style="width:300px" onchange="setOrderModified();makeDirty()"/>
     	</c:if>
     </td>
 </tr>
@@ -367,6 +369,7 @@
 	    		<form:select path="sampleOrderItems.referringSiteDepartmentId" 
 	    				 id="requesterDepartmentId" 
 	                     onchange="setOrderModified();setCorrectSave();"
+                         disabled="<%=!restrictNewReferringSiteEntries%>"
 	                     onkeyup="capitalizeValue( this.value );" >
 	            <option value="0" ></option>
 	            <form:options items="${form.sampleOrderItems.referringSiteDepartmentList}" itemValue="id" itemLabel="value"/>
@@ -680,9 +683,11 @@
         var dropdown = jQuery("select#requesterId");
         autoCompleteWidth = dropdown.width() + 66 + 'px';
         // Actually executes autocomplete
-        if (typeof dropdown.combobox === 'function') {
-	        dropdown.combobox()
-        }
+        <% if(restrictNewReferringSiteEntries ){%>
+            if (typeof dropdown.combobox === 'function') {
+                dropdown.combobox()
+            }
+         <% } %>
         var providerDropdown = jQuery("select#providerPersonId");
         autoCompleteWidth = providerDropdown.width() + 66 + 'px';
         // Actually executes autocomplete
