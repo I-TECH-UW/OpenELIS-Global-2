@@ -250,6 +250,8 @@ def do_install():
     ensure_dir_exists(TOMCAT_LOGS_DIR)
     os.chmod(TOMCAT_LOGS_DIR, 0777) 
     os.chown(TOMCAT_LOGS_DIR, 8443, 8443)  
+    
+    ensure_file_exists(DB_PGPASS)
 
     start_docker_containers()
 
@@ -745,6 +747,8 @@ def do_update():
     ensure_dir_exists(TOMCAT_LOGS_DIR)
     os.chmod(TOMCAT_LOGS_DIR, 0777) 
     os.chown(TOMCAT_LOGS_DIR, 8443, 8443)  
+    
+    ensure_file_exists(DB_PGPASS)
     
     get_stored_user_values()
     
@@ -1552,7 +1556,11 @@ def ensure_dir_exists(dir):
 def ensure_dir_not_exists(dir):
     if os.path.exists(dir):
         shutil.rmtree(dir)
-
+        
+def ensure_file_exists(fileName):
+    if not os.path.exists(fileName):
+        fp = open(fileName, 'x')
+        fp.close()
 
 def get_file_name(file):
     filename_parts = file.split('/')
