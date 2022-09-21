@@ -115,7 +115,7 @@ LOG_FILE = ''
 
 
 def write_help():
-    print """
+    print("""
 setup_OpenELIS.py <options>
     This script must be run as sudo or else it will fail due to permission problems.
 
@@ -135,7 +135,7 @@ setup_OpenELIS.py <options>
         -v --version            - run in version mode
         
         -h --help               - print help
-        """
+        """)
 
 
 #this method is the starting point of the script (called at bottom of page)
@@ -188,7 +188,7 @@ def main(argv):
     
     elif MODE == "uninstall":
         log("uninstall " + strftime("%a, %d %b %Y %H:%M:%S", gmtime()), not PRINT_TO_CONSOLE)
-        print "This will uninstall OpenELIS from this machine including **ALL** data from database and **ALL** local backups"
+        print("This will uninstall OpenELIS from this machine including **ALL** data from database and **ALL** local backups")
         remove = raw_input("Do you want to continue with the uninstall? y/n: ")
         if remove.lower() == 'y':
             uninstall()
@@ -212,7 +212,7 @@ def main(argv):
 #---------------------------------------------------------------------
 def install():
     if not check_preconditions('install'):
-        print "Please either do an uninstall or update first"
+        print("Please either do an uninstall or update first")
         clean_exit()
     do_install()
         
@@ -244,10 +244,10 @@ def do_install():
     ensure_dir_exists(PLUGINS_DIR)
     
     ensure_dir_exists(LOGS_DIR)
-    os.chmod(LOGS_DIR, 0777) 
+    os.chmod(LOGS_DIR, 0o777) 
     os.chown(LOGS_DIR, 8443, 8443)  
     ensure_dir_exists(TOMCAT_LOGS_DIR)
-    os.chmod(TOMCAT_LOGS_DIR, 0777) 
+    os.chmod(TOMCAT_LOGS_DIR, 0o777) 
     os.chown(TOMCAT_LOGS_DIR, 8443, 8443)  
 
     start_docker_containers()
@@ -368,12 +368,12 @@ def create_properties_files():
 
     template_file.close()
     output_file.close()
-    os.chmod(SECRETS_DIR + "common.properties", 0640)   
+    os.chmod(SECRETS_DIR + "common.properties", 0o640)   
     os.chown(SECRETS_DIR + 'common.properties', 8443, 8443) 
     
     if not os.path.exists(SECRETS_DIR + "extra.properties"):
         open(SECRETS_DIR + "extra.properties", "w").close()
-    os.chmod(SECRETS_DIR + "extra.properties", 0640)   
+    os.chmod(SECRETS_DIR + "extra.properties", 0o640)   
     os.chown(SECRETS_DIR + 'extra.properties', 8443, 8443) 
     
     template_file = open(INSTALLER_TEMPLATE_DIR + "hapi_application.yaml", "r")
@@ -398,7 +398,7 @@ def create_properties_files():
 
     template_file.close()
     output_file.close()
-    os.chmod(SECRETS_DIR + "hapi_application.yaml", 0640)  
+    os.chmod(SECRETS_DIR + "hapi_application.yaml", 0o640)  
     os.chown(SECRETS_DIR + 'hapi_application.yaml', 8443, 8443)   
     
 
@@ -417,7 +417,7 @@ def create_server_xml_files():
 
     template_file.close()
     output_file.close()
-    os.chmod(OE_ETC_DIR + "oe_server.xml", 0640) 
+    os.chmod(OE_ETC_DIR + "oe_server.xml", 0o640) 
     os.chown(OE_ETC_DIR + 'oe_server.xml', 8443, 8443)  
     
     template_file = open(INSTALLER_TEMPLATE_DIR + "hapi_server.xml", "r")
@@ -433,7 +433,7 @@ def create_server_xml_files():
 
     template_file.close()
     output_file.close()
-    os.chmod(OE_ETC_DIR + "hapi_server.xml", 0640) 
+    os.chmod(OE_ETC_DIR + "hapi_server.xml", 0o640) 
     os.chown(OE_ETC_DIR + 'hapi_server.xml', 8443, 8443)   
     
     template_file = open(INSTALLER_TEMPLATE_DIR + "healthcheck.sh", "r")
@@ -449,7 +449,7 @@ def create_server_xml_files():
 
     template_file.close()
     output_file.close()
-    os.chmod(OE_ETC_DIR + "healthcheck.sh", 0750) 
+    os.chmod(OE_ETC_DIR + "healthcheck.sh", 0o750) 
     os.chown(OE_ETC_DIR + 'healthcheck.sh', 8443, 8443)      
     
 
@@ -512,16 +512,16 @@ def install_backup_script():
     staging_file.close()
 
     if not os.path.exists(DB_BACKUPS_DIR):
-        os.makedirs(DB_BACKUPS_DIR, 0640)
+        os.makedirs(DB_BACKUPS_DIR, 0o640)
     if not os.path.exists(DB_BACKUPS_DIR + "daily"):
-        os.makedirs(DB_BACKUPS_DIR + "daily", 0640)
+        os.makedirs(DB_BACKUPS_DIR + "daily", 0o640)
     if not os.path.exists(DB_BACKUPS_DIR + "cumulative"):
-        os.makedirs(DB_BACKUPS_DIR + "cumulative", 0640)
+        os.makedirs(DB_BACKUPS_DIR + "cumulative", 0o640)
     if not os.path.exists(DB_BACKUPS_DIR + "transmissionQueue"):
-        os.makedirs(DB_BACKUPS_DIR + "transmissionQueue", 0640)
+        os.makedirs(DB_BACKUPS_DIR + "transmissionQueue", 0o640)
 
     shutil.copy(INSTALLER_STAGING_DIR + BACKUP_SCRIPT_NAME, DB_BACKUPS_DIR + BACKUP_SCRIPT_NAME)
-    os.chmod(DB_BACKUPS_DIR + BACKUP_SCRIPT_NAME, 0744)    
+    os.chmod(DB_BACKUPS_DIR + BACKUP_SCRIPT_NAME, 0o744)    
     
     
 def install_log_cleanup_script():
@@ -559,7 +559,7 @@ def install_backup_config():
             output_file.write(line)
     output_file.close()
     backup_config.close() 
-    os.chmod(INSTALLER_DB_INIT_DIR + 'backupConfig.sql', 0644)  
+    os.chmod(INSTALLER_DB_INIT_DIR + 'backupConfig.sql', 0o644)  
     
 
 def install_permissions_file():
@@ -580,7 +580,7 @@ def install_permissions_file():
             output_file.write(line)
     output_file.close()
     pg_permissions.close() 
-    os.chmod(INSTALLER_DB_INIT_DIR + '1-pgsqlPermissions.sql', 0640)  
+    os.chmod(INSTALLER_DB_INIT_DIR + '1-pgsqlPermissions.sql', 0o640)  
     
     
 def install_environment_file():
@@ -596,7 +596,7 @@ def install_environment_file():
             output_file.write(line)
     output_file.close()
     database_environment.close()
-    os.chmod(DB_ENVIRONMENT_DIR + 'database.env', 0640) 
+    os.chmod(DB_ENVIRONMENT_DIR + 'database.env', 0o640) 
         
         
 def install_site_info_config_file():
@@ -627,7 +627,7 @@ def install_db():
         #make sure docker can read this file to run it
         os.chown(DB_INIT_DIR + '1-pgsqlPermissions.sql', 0, 0)
         #TODO not the best for security. consider revisiting
-        os.chmod(DB_INIT_DIR + '1-pgsqlPermissions.sql', 0644)  
+        os.chmod(DB_INIT_DIR + '1-pgsqlPermissions.sql', 0o644)  
     elif LOCAL_DB:
         #configure the postgres installation to make sure it can be connected to from the docker container
         cmd = 'sudo ' + INSTALLER_SCRIPTS_DIR + 'configureHostPostgres.sh ' + POSTGRES_MAIN_DIR
@@ -657,7 +657,7 @@ def preserve_database_user_password():
 
     # own directory by tomcat user
     os.chown(SECRETS_DIR + 'datasource.password', 8443, 8443)
-    os.chmod(SECRETS_DIR + 'datasource.password', 0640)
+    os.chmod(SECRETS_DIR + 'datasource.password', 0o640)
     
     
 def preserve_database_backup_user_password():
@@ -666,7 +666,7 @@ def preserve_database_backup_user_password():
     db_backup_user_password_file.write(BACKUP_PWD)
     db_backup_user_password_file.close()
 
-    os.chmod(SECRETS_DIR + 'backup_datasource.password', 0640)
+    os.chmod(SECRETS_DIR + 'backup_datasource.password', 0o640)
     
     
 # note There is a fair amount of copying files, it should be re-written using shutil
@@ -708,7 +708,7 @@ def install_crosstab():
 def update():
     if not check_preconditions('update'):
         log(APP_NAME + " is not an existing installation, can not update.\n", PRINT_TO_CONSOLE)
-        print "Please either do an install first"
+        print("Please either do an install first")
         clean_exit()
 
     do_update()
@@ -737,10 +737,10 @@ def do_update():
     ensure_dir_exists(PLUGINS_DIR)
     
     ensure_dir_exists(LOGS_DIR)
-    os.chmod(LOGS_DIR, 0777) 
+    os.chmod(LOGS_DIR, 0o777) 
     os.chown(LOGS_DIR, 8443, 8443)
     ensure_dir_exists(TOMCAT_LOGS_DIR)
-    os.chmod(TOMCAT_LOGS_DIR, 0777) 
+    os.chmod(TOMCAT_LOGS_DIR, 0o777) 
     os.chown(TOMCAT_LOGS_DIR, 8443, 8443)  
     
     get_stored_user_values()
@@ -767,7 +767,7 @@ def do_update():
 def uninstall():
     if not check_preconditions('uninstall'):
         log(APP_NAME + " is not an existing installation, can not uninstall.\n", PRINT_TO_CONSOLE)
-        print "Nothing to uninstall"
+        print("Nothing to uninstall")
         clean_exit()
 
     do_uninstall()
@@ -944,7 +944,7 @@ def find_backup_password():
 
 def get_stored_user_values():
     ensure_dir_exists(CONFIG_DIR)
-    os.chmod(CONFIG_DIR, 0640) 
+    os.chmod(CONFIG_DIR, 0o640) 
     get_set_site_id()
     get_set_keystore_password()
     get_set_truststore_password()
@@ -1024,12 +1024,12 @@ def get_site_id():
     
 def set_site_id():
     # Get site specific information
-    print """
+    print("""
     Some installations require configuration.  
         You will be asked for specific information which may or may not be needed for this installation.
         If you do not know if it is needed or you do not know the correct value it may be left blank.
         You can set the values after the installation is complete.
-    """
+    """)
     site_id = raw_input("site number for this lab (5 character): ")
     with open(CONFIG_DIR + 'SITE_ID', mode='wt') as file:
         file.write(site_id)   
@@ -1046,12 +1046,12 @@ def get_keystore_password():
     
     
 def set_keystore_password():
-    print "keystore location: " + KEYSTORE_PATH
+    print("keystore location: " + KEYSTORE_PATH)
     k_password = getpass("keystore password: ")
     cmd = "openssl pkcs12 -info -in " + KEYSTORE_PATH + " -nokeys -passin pass:" + k_password
     status = os.system(cmd)
     if not status == 0:
-        print "password for the keystore is incorrect. Please try again"
+        print("password for the keystore is incorrect. Please try again")
         set_keystore_password()
     else:
         with open(CONFIG_DIR + 'KEYSTORE_PASSWORD', mode='wt') as file:
@@ -1069,12 +1069,12 @@ def get_truststore_password():
 
 
 def set_truststore_password():
-    print "truststore location: " + TRUSTSTORE_PATH
+    print("truststore location: " + TRUSTSTORE_PATH)
     t_password = getpass("truststore password: ")
     cmd = "openssl pkcs12 -info -in " + TRUSTSTORE_PATH + " -nokeys -passin pass:" + t_password
     status = os.system(cmd)
     if not status == 0:
-        print "password for the truststore is incorrect. Please try again"
+        print("password for the truststore is incorrect. Please try again")
         set_truststore_password()
     else:
         with open(CONFIG_DIR + 'TRUSTSTORE_PASSWORD', mode='wt') as file:
@@ -1092,15 +1092,15 @@ def get_encryption_key():
         
         
 def set_encryption_key():
-    print """
+    print("""
     Enter an encryption key that will be used to encrypt sensitive data.
     This value must stay the same between installations or the program will lose all encrypted data.
     Record this value somewhere secure.
-    """
+    """)
     e_key = getpass("encryption key: ")
     confirm_encryption_key = getpass("confirm encryption key: ")
     while (not confirm_encryption_key == e_key):
-        print "encryption key did not match. Please re-enter the encryption key"
+        print("encryption key did not match. Please re-enter the encryption key")
         e_key = getpass("encryption key: ")
         confirm_encryption_key = getpass("confirm encryption key: ")
     with open(CONFIG_DIR + 'ENCRYPTION_KEY', mode='wt') as file:
@@ -1120,11 +1120,11 @@ def get_remote_fhir_source():
         
         
 def set_remote_fhir_source():
-    print """
+    print("""
     Enter the full server path(s) to the remote fhir instance you'd like to poll for Fhir Tasks (eg. OpenMRS) . 
     Leave blank to disable polling a remote instance
     (entries should be comma delimited)
-    """
+    """)
     user_input = raw_input("Remote Fhir Address: ")
     if (user_input != ''):
         remote_fhir_sources = user_input.split(',')
@@ -1155,10 +1155,10 @@ def get_cs_server():
         
         
 def set_cs_server():
-    print """
+    print(""" 
     Enter the full server path to the consolidated server to send data to. 
     Leave blank to disable sending data to the Consolidated server
-    """
+    """)
     user_input = raw_input("Consolidated server address(es) (comma delimited): ")
     if (user_input != ''):
         cs_addresses = user_input.split(',')
@@ -1291,10 +1291,10 @@ def generate_database_backup_password():
 def generate_database_admin_password():
     global ADMIN_PWD
     ADMIN_PWD = ''.join(random.SystemRandom().choice(string.letters + string.digits) for _ in range(12))
-    print "This is the postgres admin password.  Please record it in a safe and private place."
-    print "It will not be able to be recovered once this script is finished\n"
-    print ADMIN_PWD
-    print raw_input("\npress any key once you have recorded it")
+    print("This is the postgres admin password.  Please record it in a safe and private place.")
+    print("It will not be able to be recovered once this script is finished\n")
+    print(ADMIN_PWD)
+    print(raw_input("\npress any key once you have recorded it"))
     os.system('clear')
         
         
@@ -1603,7 +1603,7 @@ def open_log_file():
 def log(message, to_console):
     LOG_FILE.write(message + "\n")
     if to_console:
-        print message
+        print(message)
         
         
 def clean_exit():
