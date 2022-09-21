@@ -351,7 +351,7 @@
             </form:select>
     	</c:if>
     	<c:if test="${not restrictNewReferringSiteEntries}" >
-            <form:input path="sampleOrderItems.referringSiteName"  style="width:300px" />
+            <form:input id="requesterName" path="sampleOrderItems.referringSiteName"  style="width:300px" onchange="setOrderModified();makeDirty()"/>
     	</c:if>
     </td>
 </tr>
