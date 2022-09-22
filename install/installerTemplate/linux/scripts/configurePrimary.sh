@@ -24,6 +24,7 @@ echo "waiting for DB container to start..."
 until [ "`docker inspect -f {{.State.Health.Status}} openelisglobal-database`"=="healthy" ]; do 
 	sleep 2; 
 done;
+echo "docker DB container started"
 
 docker exec  openelisglobal-database chown postgres:postgres /backups/archive;
 #configure the primary db as the primary and restart so the changes take effect
@@ -56,3 +57,5 @@ sshpass -p "${SECONDARY_PASSWORD}" ssh -o StrictHostKeyChecking=no -o UserKnownH
 	echo ${SECONDARY_PASSWORD} | sudo -S ./configureSecondary.sh ${PRIMARY_IP} ${SECONDARY_IP} ${SECONDARY_USER} ${SECONDARY_PASSWORD}
 	exit
 EOF
+
+docker-compose up -d

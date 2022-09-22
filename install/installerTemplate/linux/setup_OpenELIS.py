@@ -254,6 +254,8 @@ def do_install():
     ensure_file_exists(DB_PGPASS)
 
     start_docker_containers()
+    
+    create_db_backup_user()
 
 
 def install_files_from_templates():
@@ -1559,7 +1561,7 @@ def ensure_dir_not_exists(dir):
         
 def ensure_file_exists(fileName):
     if not os.path.exists(fileName):
-        fp = open(fileName, 'x')
+        fp = open(fileName, 'a')
         fp.close()
 
 def get_file_name(file):
