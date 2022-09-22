@@ -1,3 +1,5 @@
+#!/bin/bash
+
 
 PRIMARY_IP=$1
 SECONDARY_IP=$2

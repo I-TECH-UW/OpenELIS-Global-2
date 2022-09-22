@@ -1264,7 +1264,10 @@ def create_db_backup_user():
         os.system(cmd)
         os.system('echo "local replication backup   trust" >> ' + DB_DATA_DIR + 'pg_hba.conf')
         os.system('echo "host replication backup  127.0.0.1/32 md5" >> ' + DB_DATA_DIR + 'pg_hba.conf')
-        os.system('docker restart ' + DOCKER_DB_CONTAINER_NAME)
+        if MODE == 'install':
+            print('please restart the database once it has finished standing up for configuration changes to populate')
+        else:
+            os.system('docker restart ' + DOCKER_DB_CONTAINER_NAME)
     elif LOCAL_DB:
         cmd = 'psql -U admin  -d clinlims < ' + INSTALLER_DB_INIT_DIR + 'backupConfig.sql'
         os.system(cmd)
