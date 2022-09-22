@@ -1243,11 +1243,11 @@ def create_db_backup_user():
     
     if DOCKER_DB:
         cmd = 'sudo docker inspect --format=\'{{json .State.Health.Status}}\' ' + DOCKER_DB_CONTAINER_NAME
-        result = subprocess.check_output(cmd, shell=True)
+        result = subprocess.check_output(cmd, shell=True).decode("utf-8")
         while "healthy" not in result:
             log('DB Status: ' + result + ' - Waiting for db to be healthy to create backup user', PRINT_TO_CONSOLE)
             time.sleep(1)
-            result = subprocess.check_output(cmd, shell=True)
+            result = subprocess.check_output(cmd, shell=True).decode("utf-8")
             
         
         cmd = 'docker exec ' + DOCKER_DB_CONTAINER_NAME + ' mkdir ' + DOCKER_DB_BACKUPS_DIR + 'archive'
@@ -1289,17 +1289,17 @@ def generate_passwords():
     
 def generate_database_user_password():
     global CLINLIMS_PWD
-    CLINLIMS_PWD = ''.join(random.SystemRandom().choice(string.letters + string.digits) for _ in range(12))
+    CLINLIMS_PWD = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(12))
     
     
 def generate_database_backup_password():
     global BACKUP_PWD
-    BACKUP_PWD = ''.join(random.SystemRandom().choice(string.letters + string.digits) for _ in range(12))
+    BACKUP_PWD = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(12))
 
     
 def generate_database_admin_password():
     global ADMIN_PWD
-    ADMIN_PWD = ''.join(random.SystemRandom().choice(string.letters + string.digits) for _ in range(12))
+    ADMIN_PWD = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(12))
     print("This is the postgres admin password.  Please record it in a safe and private place.")
     print("It will not be able to be recovered once this script is finished\n")
     print(ADMIN_PWD)
@@ -1367,7 +1367,7 @@ def db_installed(db_name):
         return os.path.isdir(DB_DATA_DIR)
     elif LOCAL_DB:
         cmd = 'sudo -u postgres psql -c "SELECT datname FROM pg_catalog.pg_database WHERE lower(datname) = lower(\'' + db_name + '\');"'
-        result = subprocess.check_output(cmd, shell=True)
+        result = subprocess.check_output(cmd, shell=True).decode("utf-8")
         return db_name in result
     else:
         log("cannot check if remote database is installed. proceeding", PRINT_TO_CONSOLE)
@@ -1468,7 +1468,7 @@ def clean_docker_objects():
     
 def get_docker_host_ip():
     cmd = "ip -4 addr show docker0 | grep -Po 'inet \K[\d.]+'"
-    return subprocess.check_output(cmd, shell=True).strip()
+    return subprocess.check_output(cmd, shell=True).decode("utf-8").strip()
 
 
 
@@ -1560,9 +1560,8 @@ def ensure_dir_not_exists(dir):
         shutil.rmtree(dir)
         
 def ensure_file_exists(fileName):
-    if not os.path.exists(fileName):
-        fp = open(fileName, 'a')
-        fp.close()
+    with open(fileName, "a+") as f:
+        print(fileName + " created or exists")
 
 def get_file_name(file):
     filename_parts = file.split('/')

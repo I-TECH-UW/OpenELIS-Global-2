@@ -3,7 +3,7 @@ version: '3.6'
 services:
 #db    db.openelis.org:
 #db        container_name: [% db_name %]
-#db        image: postgres:9.5
+#db        image: postgres:14.4
 #db        ports:
 #db            - "[% db_host_port %]:5432"
 #db        networks:

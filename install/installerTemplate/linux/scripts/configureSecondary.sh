@@ -32,12 +32,4 @@ docker kill openelisglobal-database;
 rm -r /var/lib/openelis-global/data2;
 mv /var/lib/openelis-global/data /var/lib/openelis-global/data2;
 mv /var/lib/openelis-global/backups/basebackup /var/lib/openelis-global/data;
-#add this so it stays recovered to the latest point, not when the backup was made
-RECOVERY_STRING="recovery_target_timeline = 'latest'";
-if grep -Fxq "${RECOVERY_STRING}" /var/lib/openelis-global/data/recovery.conf
-then
-    echo "recovery_target_timeline already exists. Continuing..."
-else
-    echo ${RECOVERY_STRING} >> /var/lib/openelis-global/data/recovery.conf;
-fi
 docker start openelisglobal-database;

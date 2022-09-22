@@ -17,7 +17,8 @@ fi
 #discard previous recovery.confs in case this is a secondary server becoming the primary
 #restart the db container so that it can be configured
 #take down all others so this occurs without interruption
-rm /var/lib/openelis-global/data/recovery.conf
+docker exec openelisglobal-database psql -Upostgres -c "ALTER SYSTEM SET primary_conninfo = '';"
+rm /var/lib/openelis-global/data/standby.signal
 docker stop external-fhir-api openelisglobal-webapp autoheal-oe openelisglobal-database
 docker start openelisglobal-database
 echo "waiting for DB container to start..."
