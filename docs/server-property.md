@@ -1,7 +1,10 @@
 # Property files for server configuration
 OpenELIS reads in properties from a few different sources. The property will be set to the last specified source
+
 * /src/main/resources/application.properties - contained in the docker container when compiled
+
 * /var/lib/openelisglobal/secrets/common.properties - overwritten every time setup script is called based on values specified to script
+
 * /var/lib/openelis-global/secrets/extra.properties - optional file for specifying attributes outside of setup script that is persistent 
 
 If you are looking at manually adding/setting a property (ie a facility fhir repo), it should be added to extra.properties
