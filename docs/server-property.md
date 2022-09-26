@@ -46,45 +46,4 @@ These are the properties that are set in common.properties. Most values are stor
 As the last loaded file, properties set here will overwrite ones set in other files. As such, if it seems that the values in the config directory are not being used, it could be that different values are being supplied in extra.properties
 
 
-full properties list:
-property | default | description | values
---- | --- | --- | ---
-|org.openelisglobal.ozeki.active|false|whether ozeki SMS db should be used|true,false|
-|org.openelisglobal.mail.bcc|safemauritius|bcc for email|user@email.com|
-|org.openelisglobal.mail.from|Ahl-lab@safemauritius.govmu.org|from for email|user@email.com|
-|org.openelisglobal.notification.sms.sender|Covid Lab|the sender used for SMS messages||
-|org.openelisglobal.smsc.serviceType|CMT|Used for SMPP sms sending||
-|org.openelisglobal.smsc.bindParamSystemType||used for SMPP sms sending||
-|org.openelisglobal.externalSearch.infohighway.timeout|50000|timeout to reach the infohighway|integer|
-|org.openelisglobal.externalSearch.timeout|5000|timeout for all other patient searches|integer|
-|org.openelisglobal.task.useBasedOn||use based-on resources for order imports [DEPRECATED]|true,false|
-|org.openelisglobal.paging.results.pageSize|99|results page size|integer|
-|org.openelisglobal.paging.validation.pageSize|99|validation page size|integer|
-|org.openelisglobal.facilitylist.fhirstore||facility list fhirstore url|url|
-|org.openelisglobal.facilitylist.authurl||facility auth url for token based auth|url|
-|org.openelisglobal.facilitylist.username||facility auth username||
-|org.openelisglobal.facilitylist.password||facility auth password||
-|org.openelisglobal.facilitylist.auth|basic|facility auth type |[basic, token]|
-|org.openelisglobal.fhirstore.uri||local fhir url|url|
-|org.openelisglobal.remote.source.updateStatus||update status of imported tasks in remote source|true,false|
-|org.openelisglobal.remote.source.identifier||identifier(s) for importing tasks from remote source|ResourceType/uuid|
-|org.openelisglobal.oe.fhir.system|http://openelis-global.org|the system that will be used for OE identifiers in FHIR|url|
-|org.openelisglobal.remote.source.uri||remote fhir server url to import tasks from|url|
-|org.openelisglobal.fhirstore.username||username for basic auth for fhir servers||
-|org.openelisglobal.fhirstore.password||passweord for basic auth for fhir servers||
-|org.openelisglobal.requester.lastName||default last name used for requester on order entry screen||
-|org.openelisglobal.requester.firstName||default first name used for requester on order entry screen||
-|org.openelisglobal.requester.phone||default phone number used for requester on order entry screen||
-|org.openelisglobal.timezone||timezone that OpenELIS should be running in||
-|encryption.general.password|dev|encryption key||
-|server.ssl.trust-store||path to the truststore||
-|server.ssl.trust-store-password||truststore password||
-|server.ssl.key-store||path to keystore||
-|server.ssl.key-store-password||keystore password||
-|server.ssl.key-password||key password within truststore (normally the same as password for keystore)||
-|org.openelisglobal.fhir.subscriber||FHIR server where FHIR resources are sent (CS)|url|
-|org.openelisglobal.fhir.subscriber.allowHTTP|FALSE|allow standard HTTP for backing up (not recommended)|true, false|
-|org.openelisglobal.fhir.subscriber.resources||resources that should be sent to the subscriber FHIR server|for a list of fhir resources visit https://www.hl7.org/fhir/resourcelist.html|
-|org.openelisglobal.fhir.subscriber.backup.interval|5|the interval upon which backup will be attemtped in minutes|integers|
-|org.openelisglobal.fhir.subscriber.backup.timeout|60|the timeout for backing up  in seconds|integers|
-|org.openelisglobal.fhir.subscriber.resource.singleTransaction|FALSE|whether a single transaction should be used for backing up resources|true, false|
+For a full properties list, please see the [wiki entry here](https://github.com/I-TECH-UW/OpenELIS-Global-2/wiki/Properties)
