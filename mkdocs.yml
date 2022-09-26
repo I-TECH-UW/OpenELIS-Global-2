@@ -22,4 +22,7 @@ nav:
     - Troubleshooting: troubleshooting.md
     - Website: http://openelis-global.org
 theme: readthedocs
+markdown_extensions:
+  - tables
+
 
