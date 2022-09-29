@@ -30,9 +30,9 @@ public class BaseTestConfig {
     static LocalContainerEntityManagerFactoryBean emf;
     static JpaTransactionManager transactionManager;
 
-    private static final String PASSWORD = "admin";
+    private static final String PASSWORD = "clinlims";
 
-    private static final String USER = "postgres";
+    private static final String USER = "clinlims";
 
     private static final String DB_NAME = "clinlims";
 
@@ -42,7 +42,7 @@ public class BaseTestConfig {
     @Profile("test")
     public SpringLiquibase testLiquibase() {
         SpringLiquibase liquibase = new SpringLiquibase();
-        liquibase.setChangeLog("classpath:liquibase/base-test-changelog.xml");
+        liquibase.setChangeLog("classpath:liquibase/base-changelog.xml");
         liquibase.setDataSource(dataSource);
         return liquibase;
     }
