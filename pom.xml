@@ -17,7 +17,7 @@
 		<major.version>2</major.version>
 		<minor.version>7</minor.version>
 		<state.version>0</state.version> <!-- 0 = alpha, 1 = beta, 2 = rc, 3 = deployable -->
-		<fix.version>2</fix.version>
+		<fix.version>3</fix.version>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
@@ -506,7 +506,14 @@
 			<artifactId>icu4j</artifactId>
 			<version>71.1</version>
 		</dependency>
-
+		<!-- this fixes running test containers on the apple silicon mac -->
+		<!-- see https://github.com/testcontainers/testcontainers-java/issues/3834 -->
+		<dependency>
+			<groupId>net.java.dev.jna</groupId>
+			<artifactId>jna</artifactId>
+			<version>5.7.0</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 	<repositories>
 		<repository>

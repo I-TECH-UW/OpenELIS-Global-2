@@ -14,8 +14,8 @@ import time
 import re
 from time import gmtime, strftime
 import random
-import ConfigParser
-from string import letters
+import configparser
+from string import ascii_letters
 from getpass import getpass
 import tarfile
 
@@ -52,6 +52,7 @@ OE_ETC_DIR = "/etc/openelis-global/"
 DB_BACKUPS_DIR = OE_VAR_DIR + "backups/"  
 DB_DATA_DIR = OE_VAR_DIR + "data/"  
 DB_ENVIRONMENT_DIR = OE_VAR_DIR + "database/env/"
+DB_PGPASS = OE_VAR_DIR + "database/.pgpass"
 DB_INIT_DIR = OE_VAR_DIR + "initDB/"
 SECRETS_DIR = OE_VAR_DIR + "secrets/"
 PLUGINS_DIR = OE_VAR_DIR + "plugins/"
@@ -189,7 +190,7 @@ def main(argv):
     elif MODE == "uninstall":
         log("uninstall " + strftime("%a, %d %b %Y %H:%M:%S", gmtime()), not PRINT_TO_CONSOLE)
         print("This will uninstall OpenELIS from this machine including **ALL** data from database and **ALL** local backups")
-        remove = raw_input("Do you want to continue with the uninstall? y/n: ")
+        remove = input("Do you want to continue with the uninstall? y/n: ")
         if remove.lower() == 'y':
             uninstall()
     
@@ -249,8 +250,12 @@ def do_install():
     ensure_dir_exists(TOMCAT_LOGS_DIR)
     os.chmod(TOMCAT_LOGS_DIR, 0o777) 
     os.chown(TOMCAT_LOGS_DIR, 8443, 8443)  
+    
+    ensure_file_exists(DB_PGPASS)
 
     start_docker_containers()
+    
+    create_db_backup_user()
 
 
 def install_files_from_templates():
@@ -281,6 +286,8 @@ def create_docker_compose_file():
                 line = line.replace("#db", "")
             if line.find("[% db_env_dir %]")  >= 0:
                 line = line.replace("[% db_env_dir %]", DB_ENVIRONMENT_DIR)  
+            if line.find("[% db_pgpass %]")  >= 0:
+                line = line.replace("[% db_pgpass %]", DB_PGPASS)  
             if line.find("[% db_data_dir %]")  >= 0:
                 line = line.replace("[% db_data_dir %]", DB_DATA_DIR)  
             if line.find("[% db_init_dir %]")  >= 0:
@@ -460,7 +467,7 @@ def install_cron_tasks():
         
 def install_backup_script():
     if os.path.exists(DB_BACKUPS_DIR + BACKUP_SCRIPT_NAME):
-        over_ride = raw_input("The backup script is already installed. Do you want to overwrite it? y/n ")
+        over_ride = input("The backup script is already installed. Do you want to overwrite it? y/n ")
         if not over_ride.lower() == "y":
             return
     
@@ -718,7 +725,7 @@ def do_update():
     log("Updating " + APP_NAME, PRINT_TO_CONSOLE)
 
     while not find_backup_password():
-        do_create_user = raw_input("Unable to find backup password from secrets file. Would you like to create a backup user? y/n ")
+        do_create_user = input("Unable to find backup password from secrets file. Would you like to create a backup user? y/n ")
         if do_create_user.lower() == 'y':
             generate_database_backup_password()
             preserve_database_backup_user_password()
@@ -742,6 +749,8 @@ def do_update():
     ensure_dir_exists(TOMCAT_LOGS_DIR)
     os.chmod(TOMCAT_LOGS_DIR, 0o777) 
     os.chown(TOMCAT_LOGS_DIR, 8443, 8443)  
+    
+    ensure_file_exists(DB_PGPASS)
     
     get_stored_user_values()
     
@@ -856,7 +865,7 @@ def read_setup_properties_file():
     global DB_HOST, DB_PORT
     global LOCAL_DB
     
-    config = ConfigParser.ConfigParser() 
+    config = configparser.ConfigParser() 
     config.read(OE_ETC_DIR + SETUP_CONFIG_FILE_NAME)
     
     install_dirs_info = "INSTALL_DIRS"
@@ -1030,7 +1039,7 @@ def set_site_id():
         If you do not know if it is needed or you do not know the correct value it may be left blank.
         You can set the values after the installation is complete.
     """)
-    site_id = raw_input("site number for this lab (5 character): ")
+    site_id = input("site number for this lab (5 character): ")
     with open(CONFIG_DIR + 'SITE_ID', mode='wt') as file:
         file.write(site_id)   
     
@@ -1125,7 +1134,7 @@ def set_remote_fhir_source():
     Leave blank to disable polling a remote instance
     (entries should be comma delimited)
     """)
-    user_input = raw_input("Remote Fhir Address: ")
+    user_input = input("Remote Fhir Address: ")
     if (user_input != ''):
         remote_fhir_sources = user_input.split(',')
         remote_fhir_sources_with_protocol = []
@@ -1159,7 +1168,7 @@ def set_cs_server():
     Enter the full server path to the consolidated server to send data to. 
     Leave blank to disable sending data to the Consolidated server
     """)
-    user_input = raw_input("Consolidated server address(es) (comma delimited): ")
+    user_input = input("Consolidated server address(es) (comma delimited): ")
     if (user_input != ''):
         cs_addresses = user_input.split(',')
         cs_addresses_with_protocol = []
@@ -1204,7 +1213,7 @@ def get_external_hosts():
     
 
 def set_external_hosts(): 
-    extra_hosts = raw_input("type a comma delimited list of extra hosts (format DNS_ENTRY1:IP_ADDRESS1,DNS_ENTRY2:IP_ADDRESS2...): ").split(',')
+    extra_hosts = input("type a comma delimited list of extra hosts (format DNS_ENTRY1:IP_ADDRESS1,DNS_ENTRY2:IP_ADDRESS2...): ").split(',')
     with open(CONFIG_DIR + 'EXTERNAL_HOSTS', mode='wt') as file:
         file.write('\n'.join(extra_hosts))
     
@@ -1222,7 +1231,7 @@ def get_fhir_identifier():
     
 
 def set_fhir_identifier(): 
-    identifier = raw_input("type a comma delimited list of fhir identifiers (format Practitioner/id1,Organization/id2...): ").split(',')
+    identifier = input("type a comma delimited list of fhir identifiers (format Practitioner/id1,Organization/id2...): ").split(',')
     with open(CONFIG_DIR + 'FHIR_IDENTIFIER', mode='wt') as file:
         file.write(','.join(identifier))
     
@@ -1234,11 +1243,11 @@ def create_db_backup_user():
     
     if DOCKER_DB:
         cmd = 'sudo docker inspect --format=\'{{json .State.Health.Status}}\' ' + DOCKER_DB_CONTAINER_NAME
-        result = subprocess.check_output(cmd, shell=True)
+        result = subprocess.check_output(cmd, shell=True).decode("utf-8")
         while "healthy" not in result:
             log('DB Status: ' + result + ' - Waiting for db to be healthy to create backup user', PRINT_TO_CONSOLE)
             time.sleep(1)
-            result = subprocess.check_output(cmd, shell=True)
+            result = subprocess.check_output(cmd, shell=True).decode("utf-8")
             
         
         cmd = 'docker exec ' + DOCKER_DB_CONTAINER_NAME + ' mkdir ' + DOCKER_DB_BACKUPS_DIR + 'archive'
@@ -1255,7 +1264,10 @@ def create_db_backup_user():
         os.system(cmd)
         os.system('echo "local replication backup   trust" >> ' + DB_DATA_DIR + 'pg_hba.conf')
         os.system('echo "host replication backup  127.0.0.1/32 md5" >> ' + DB_DATA_DIR + 'pg_hba.conf')
-        os.system('docker restart ' + DOCKER_DB_CONTAINER_NAME)
+        if MODE == 'install':
+            print('please restart the database once it has finished standing up for configuration changes to populate')
+        else:
+            os.system('docker restart ' + DOCKER_DB_CONTAINER_NAME)
     elif LOCAL_DB:
         cmd = 'psql -U admin  -d clinlims < ' + INSTALLER_DB_INIT_DIR + 'backupConfig.sql'
         os.system(cmd)
@@ -1280,21 +1292,21 @@ def generate_passwords():
     
 def generate_database_user_password():
     global CLINLIMS_PWD
-    CLINLIMS_PWD = ''.join(random.SystemRandom().choice(string.letters + string.digits) for _ in range(12))
+    CLINLIMS_PWD = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(12))
     
     
 def generate_database_backup_password():
     global BACKUP_PWD
-    BACKUP_PWD = ''.join(random.SystemRandom().choice(string.letters + string.digits) for _ in range(12))
+    BACKUP_PWD = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(12))
 
     
 def generate_database_admin_password():
     global ADMIN_PWD
-    ADMIN_PWD = ''.join(random.SystemRandom().choice(string.letters + string.digits) for _ in range(12))
+    ADMIN_PWD = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(12))
     print("This is the postgres admin password.  Please record it in a safe and private place.")
     print("It will not be able to be recovered once this script is finished\n")
     print(ADMIN_PWD)
-    print(raw_input("\npress any key once you have recorded it"))
+    print(input("\npress any key once you have recorded it"))
     os.system('clear')
         
         
@@ -1358,7 +1370,7 @@ def db_installed(db_name):
         return os.path.isdir(DB_DATA_DIR)
     elif LOCAL_DB:
         cmd = 'sudo -u postgres psql -c "SELECT datname FROM pg_catalog.pg_database WHERE lower(datname) = lower(\'' + db_name + '\');"'
-        result = subprocess.check_output(cmd, shell=True)
+        result = subprocess.check_output(cmd, shell=True).decode("utf-8")
         return db_name in result
     else:
         log("cannot check if remote database is installed. proceeding", PRINT_TO_CONSOLE)
@@ -1459,7 +1471,7 @@ def clean_docker_objects():
     
 def get_docker_host_ip():
     cmd = "ip -4 addr show docker0 | grep -Po 'inet \K[\d.]+'"
-    return subprocess.check_output(cmd, shell=True).strip()
+    return subprocess.check_output(cmd, shell=True).decode("utf-8").strip()
 
 
 
@@ -1495,7 +1507,7 @@ def persist_site_information(file, name, description, value):
 def backup_db():
     action_time = strftime("%Y_%m_%d-%H_%M_%S", time.localtime())
     backup_name = 'oe_backup_' + action_time
-    logical_backup = raw_input("Would you like to take a logical backup? (slower than default backup, but mandatory if you are migrating between database versions) y/n ")
+    logical_backup = input("Would you like to take a logical backup? (slower than default backup, but mandatory if you are migrating between database versions) y/n ")
     if logical_backup.lower() == "y":
         backup_name = backup_name + '.sql'
         if find_password():
@@ -1508,7 +1520,7 @@ def backup_db():
                 if os.path.exists(DB_BACKUPS_DIR + backup_name):
                     shutil.move(DB_BACKUPS_DIR + backup_name, INSTALLER_ROLLBACK_DIR + backup_name)
                 else:
-                    over_ride = raw_input("Database could not be backed up properly. Do you want to continue without a proper backup? y/n ")
+                    over_ride = input("Database could not be backed up properly. Do you want to continue without a proper backup? y/n ")
                     if not over_ride.lower() == "y":
                         clean_exit()  
             elif LOCAL_DB:
@@ -1529,7 +1541,7 @@ def backup_db():
                 if os.path.exists(DB_BACKUPS_DIR + backup_name):
                     shutil.move(DB_BACKUPS_DIR + backup_name, INSTALLER_ROLLBACK_DIR + backup_name)
                 else:
-                    over_ride = raw_input("Database could not be backed up properly. Do you want to continue without a proper backup? y/n ")
+                    over_ride = input("Database could not be backed up properly. Do you want to continue without a proper backup? y/n ")
                     if not over_ride.lower() == "y":
                         clean_exit()  
             elif LOCAL_DB:
@@ -1549,7 +1561,10 @@ def ensure_dir_exists(dir):
 def ensure_dir_not_exists(dir):
     if os.path.exists(dir):
         shutil.rmtree(dir)
-
+        
+def ensure_file_exists(fileName):
+    with open(fileName, "a+") as f:
+        print(fileName + " created or exists")
 
 def get_file_name(file):
     filename_parts = file.split('/')

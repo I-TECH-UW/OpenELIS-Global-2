@@ -1,6 +1,6 @@
 # compiled code #
 *.class
-
+*.DS_Store
 # Package Files #
 *.war
 *.ear

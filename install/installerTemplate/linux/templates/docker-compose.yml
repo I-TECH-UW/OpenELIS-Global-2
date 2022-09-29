@@ -3,7 +3,7 @@ version: '3.6'
 services:
 #db    db.openelis.org:
 #db        container_name: [% db_name %]
-#db        image: postgres:9.5
+#db        image: postgres:14.4
 #db        ports:
 #db            - "[% db_host_port %]:5432"
 #db        networks:
@@ -20,6 +20,7 @@ services:
 #db            - [% db_init_dir %]:/docker-entrypoint-initdb.d    
 #db              # values must match values in DatabaseBackup.pl
 #db            - [% db_backups_dir %]:[% docker_backups_dir %] 
+#db            - [% db_pgpass %]:/var/lib/postgresql/.pgpass
 #db        logging:
 #db            driver: "local"
 #db            options:
