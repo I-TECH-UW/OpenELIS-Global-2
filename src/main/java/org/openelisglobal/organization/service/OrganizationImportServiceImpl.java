@@ -73,7 +73,7 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
         if (!GenericValidator.isBlankOrNull(facilityFhirStore)) {
             IGenericClient client ;
             if (facilityAuth.equals("token")) {
-                String token = fhirUtil.getAccesToken(facilityAuthUrl, facilityUserName, facilityPassword);
+                String token = fhirUtil.getAccessToken(facilityAuthUrl, facilityUserName, facilityPassword);
                 client = fhirUtil.getFhirClient(facilityFhirStore, token);
             } else {
                 client = fhirUtil.getFhirClient(facilityFhirStore);
