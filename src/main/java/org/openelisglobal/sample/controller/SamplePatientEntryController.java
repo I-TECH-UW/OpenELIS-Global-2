@@ -280,6 +280,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
         form.setSampleTypes(userService.getUserSampleTypes(getSysUserId(request), Constants.ROLE_RECEPTION));
         form.setTestSectionList(DisplayListService.getInstance().getList(ListType.TEST_SECTION_ACTIVE));
         form.setCurrentDate(DateUtil.getCurrentDateAsText());
+        form.setRejectReasonList(DisplayListService.getInstance().getList(ListType.REJECTION_REASONS));
 
         setupReferralOption(form);
         // for (Object program : form.getSampleOrderItems().getProgramList()) {
