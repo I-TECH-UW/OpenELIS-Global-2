@@ -43,15 +43,15 @@ several client workstations will be able to access to this server via a network 
 
 * *server minimal configuration*
 
-	`Processor:	Core i3`;
+	`Processor:	Core Intel i5, i7+ recommended`;
 		
-	`RAM:	4 Go`;
+	`RAM:	8 Gigabyte, 16+ recommended`;
 	
-	`Hard Disk:	500 Go`;
+	`Hard Disk:	1 Terabyte, 6+ recommended`;
 		
-	`External Hard Disk:	500 Go`;
+	`External Hard Disk:	2TB`;
 	
-	`Ethernet Output available or provide wifi key`;
+	`Ethernet Output available or provide wifi key. Physical connection recommended`;
 	
 	`UPS: 1000 /1500 VA`;
 
@@ -69,28 +69,20 @@ several client workstations will be able to access to this server via a network 
 	
 	`UPS: 650 VA`;
 	
+	`Anything that can run Google Chrome, or Chromium`;
+	
 	
 * *Network Configuration*
 	
 	`Wifi Router`;
 	
-	`Provide wifi key or ethernt cable`;
+	`Provide wifi card/key or ethernet cable per workstation`;
 	
 
 ## Server and workstations Configurations
 
 
 
-## Training
 
-
-
-
-## Installation
-
-
-
-
-## Assistance
 
 
