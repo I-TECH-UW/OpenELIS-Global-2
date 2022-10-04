@@ -118,7 +118,7 @@ public class SampleAddService {
                 String collectionDateTime = null;
                 String rejectedValue =   sampleItem.attributeValue("rejected").trim();
                 boolean rejected = StringUtils.isNotBlank(rejectedValue)? Boolean.parseBoolean(rejectedValue) : false;
-                String rejectReasonId = sampleItem.attributeValue("rejectedReason").trim();
+                String rejectReasonId = sampleItem.attributeValue("rejectReasonId").trim();
 
                 if (!GenericValidator.isBlankOrNull(collectionDate)
                         && !GenericValidator.isBlankOrNull(collectionTime)) {

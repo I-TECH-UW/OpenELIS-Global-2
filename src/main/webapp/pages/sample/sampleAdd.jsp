@@ -169,7 +169,7 @@ function addTypeToTable(table, sampleDescription, sampleType, currentTime, curre
 		var newRejection = $("rejectPrototypeID").parentNode.cloneNode(true);
 		var rejectSelection = newRejection.getElementsByTagName("select")[0];
 		rejectSelection.id = "rejectedReasonId_" + rowLabel;
-		rejectReasonCell .innerHTML = newRejection.innerHTML.replace("rejectReasonList", "rejectionList");
+		rejectReasonCell.innerHTML = newRejection.innerHTML.replace("rejectReasonList", "rejectionList");
 		remove.innerHTML = getRemoveButtonHtml( rowLabel );
 
 		
@@ -288,8 +288,6 @@ function convertSamplesToXml(){
 	}
 
 	xml = xml + "</samples>";
-    console.log(xml);
-	alert(xml);
 	return xml;
 }
 
@@ -302,9 +300,9 @@ function convertSampleToXml( id ){
 			  "' tests='" + jQuery("#testIds" + id).val() +
               "' testSectionMap='" + jQuery("#testSectionMap" + id).val() +
               "' testSampleTypeMap=\"" + jQuery("#testTypeMap" + id).val() +
-			  "\" panels='" + jQuery("#panelIds" + id).val() + "'" +
-			  "' rejected='" + jQuery("#reject_" + id).val() +
-			 "'  rejectReasonId='" + jQuery("#rejectedReasonId_" + id).val() + "'" ;
+			  "\" panels='" + jQuery("#panelIds" + id).val() + 
+			  "' rejected='" + jQuery("#reject" + id).prop("checked") +
+			  "' rejectReasonId='" + jQuery("#rejectedReasonId" + id).val() + "'" ;
 
 	if( useInitialSampleCondition ){
 		var initialConditions = $("initialCondition" + id);
