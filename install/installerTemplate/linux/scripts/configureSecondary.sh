@@ -29,7 +29,7 @@ echo ${PGPASS} >> /var/lib/openelis-global/database/.pgpass;
 chmod 0600 /var/lib/openelis-global/database/.pgpass;
 docker exec  openelisglobal-database chown postgres:postgres /var/lib/postgresql/.pgpass;
 
-docker exec -u postgres:postgres openelisglobal-database pg_basebackup -D /backups/basebackup -h ${PRIMARY_IP} -X stream -c fast -U backup -W -R;
+docker exec -u postgres:postgres openelisglobal-database pg_basebackup -D /backups/basebackup -h ${PRIMARY_IP} -p 5432 -X stream -c fast -U backup -W -R;
 docker kill openelisglobal-database;
 rm -r /var/lib/openelis-global/data2;
 mv /var/lib/openelis-global/data /var/lib/openelis-global/data2;
