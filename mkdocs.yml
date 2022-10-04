@@ -6,6 +6,8 @@ nav:
     - Upgrade to the Newest Version: upgrade.md
     - Analyzers: analyzer.md
     - Deploy:
+       - Technical Requirements for Deployment: implementation.md 
+       - Implementation Best Practices: implementation-bestpract.md
        - Configure the property files to connect to the Consolidated Server: server-property.md
        - OpenMRS Interoperability: deployomrs.md
        - Backup Configuration: backups.md
@@ -13,13 +15,25 @@ nav:
        - Password Migration: password.md
        - Examples of FHIR messages used: messages.md
        - Deploy Consolidated Server: csbuild.md
+       - Setup High Availability Failover: failover.md
     - Develop: 
        - Dev Environment Setup Instructions: dev_setup.md
        - Developers Notes: dev.md
        - Adding facilities to the Consolidated Server: addingfacilities.md
        - Adding a Requester to the Consolidated server: add_dr.md
        - Database Profiles Mass facility and test catalog updates: dbprofiles.md
+       - Entity Relation Diagram: entity relation diagram.md
     - Troubleshooting: troubleshooting.md
     - Website: http://openelis-global.org
 theme: readthedocs
+
+markdown_extensions:
+
+  # Python Markdown
+  - toc:
+      permalink: true
+  - tables
+markdown_extensions:
+  - tables
+  
 
