@@ -124,7 +124,7 @@ setup_OpenELIS.py <options>
         -m --mode <mode>        - Choose what mode you want to run in, default is install
         <mode>
             update-install          - Installs OpenELIS or updates if already installed (default option)
-            
+
             install                 - Installs OpenELIS.  Assumes that there is not a partial install
             
             update                  - Updates OpenElis.  Checks to insure that the instance being updated is the same as the installed
@@ -197,7 +197,7 @@ def main(argv):
     elif MODE == "update":
         log("update " + strftime("%a, %d %b %Y %H:%M:%S", gmtime()), not PRINT_TO_CONSOLE)
         update()
-    
+        
     else: # if all else fails give help
         write_help()
         
@@ -339,6 +339,8 @@ def create_docker_compose_file():
 
     template_file.close()
     output_file.close()
+    # copy file so even if installer is delted, we have a copy on the machine
+    shutil.copyfile(os.getcwd() + "/docker-compose.yml", OE_VAR_DIR + "docker-compose.yml")
     
     
 def create_properties_files():
@@ -767,8 +769,7 @@ def do_update():
     time.sleep(10)
 
     log("Finished updating " + APP_NAME, PRINT_TO_CONSOLE)
-
-
+    
 
 #---------------------------------------------------------------------
 #             UNINSTALL
