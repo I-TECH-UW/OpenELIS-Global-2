@@ -53,7 +53,7 @@ public class HttpClientConfig {
 				configBuilder.setConnectTimeout(connectionTimeout);
 			}
 			if (socketTimeout != 0) {
-				configBuilder.setSocketTimeout(0);
+				configBuilder.setSocketTimeout(socketTimeout);
 			}
 			httpBuilder.setDefaultRequestConfig(configBuilder.build());
     	}
