@@ -65,7 +65,6 @@ import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.StatusService.OrderStatus;
 import org.openelisglobal.common.services.TableIdService;
 import org.openelisglobal.common.util.DateUtil;
-import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.common.util.validator.GenericValidator;
 import org.openelisglobal.dataexchange.fhir.FhirConfig;
 import org.openelisglobal.dataexchange.fhir.exception.FhirLocalPersistingException;
@@ -1074,7 +1073,8 @@ public class FhirTransformServiceImpl implements FhirTransformService {
     public Organization transformToOrganization(org.hl7.fhir.r4.model.Organization fhirOrganization) {
         Organization organization = new Organization();
         organization.setOrganizationName(fhirOrganization.getName());
-        organization.setIsActive(fhirOrganization.getActive()? IActionConstants.YES: IActionConstants.NO);
+		organization.setIsActive(Boolean.FALSE == fhirOrganization.getActiveElement().getValue() ? IActionConstants.NO
+				: IActionConstants.YES);
 
         setOeOrganizationIdentifiers(organization, fhirOrganization);
         setOeOrganizationAddressInfo(organization, fhirOrganization);
