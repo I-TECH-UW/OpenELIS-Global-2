@@ -208,7 +208,7 @@ public class SampleEditController extends BaseController {
         if (FormFields.getInstance().useField(FormFields.Field.SampleNature)) {
             form.setSampleNatureList(DisplayListService.getInstance().getList(ListType.SAMPLE_NATURE));
         }
-
+        form.setRejectReasonList(DisplayListService.getInstance().getList(ListType.REJECTION_REASONS));
         form.setCurrentDate(DateUtil.getCurrentDateAsText());
         PatientSearch patientSearch = new PatientSearch();
         patientSearch.setLoadFromServerWithPatient(true);
