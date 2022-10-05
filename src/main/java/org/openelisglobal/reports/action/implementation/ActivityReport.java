@@ -90,7 +90,6 @@ public abstract class ActivityReport extends Report implements IReportCreator {
         }
 
         buildReportContent(selection);
-//        System.out.println("ActivityReport:" + "after buildReportContent " + testsResults.size());
         if (testsResults.size() == 0) {
             add1LineErrorMessage("report.error.message.noPrintableItems");
         }

@@ -49,7 +49,16 @@ public class ActivityReportByTestSection extends ActivityReport implements IRepo
 
     @Override
     protected void buildReportContent(ReportSpecificationList unitSelection) {
-        unitName = unitSelection.getSelectionAsName();
+        String selection = unitSelection.getSelection();
+        if (unitSelection.getList().isEmpty()) {
+            unitSelection = new ReportSpecificationList(
+                    DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION_ACTIVE),
+                    MessageUtil.getMessage("workplan.unit.types"));
+            unitSelection.setSelection(selection);
+            unitName = unitSelection.getSelectionAsName();
+        } else {
+            unitName = unitSelection.getSelectionAsName();
+        }
         createReportParameters();
 
         List<Result> resultList = ResultServiceImpl.getResultsInTimePeriodInTestSection(dateRange.getLowDate(),
