@@ -10,7 +10,7 @@
 			<not>
 				<columnExists tableName="sample_item" columnName="rejected" />
 			</not>
-            <not>
+			<not>
 				<columnExists tableName="sample_item" columnName="reject_reason_id" />
 			</not>
 		</preConditions>
@@ -18,7 +18,7 @@
 		<addColumn schemaName="clinlims" tableName="sample_item">
 			<column name="rejected" type="boolean" defaultValueBoolean="false"/>
 		</addColumn>
-        <addColumn schemaName="clinlims" tableName="sample_item">
+		<addColumn schemaName="clinlims" tableName="sample_item">
 			<column name="reject_reason_id" type="NUMERIC(10)"/>
 		</addColumn>
 	</changeSet>
