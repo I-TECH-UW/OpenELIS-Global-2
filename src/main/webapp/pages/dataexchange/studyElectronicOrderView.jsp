@@ -98,7 +98,7 @@ function enterOrder(index) {
 	<c:set var="labPrefix">"<spring:message code='sample.entry.project.LVL'/>"</c:set>
 	var inputLabelHTML = '<div class="blank"><spring:message code="quick.entry.accession.number"/>: &nbsp;<spring:message code="sample.entry.project.LVL"/></div>';
 	var inputHTML='<input size="5" class="text" type="text" id="eOrderLabNumber_' + index + '" name="eOrderLabNumber_' + index + '"';
-	inputHTML+= ' onchange="handleLabNoChange( this, ${labPrefix}, false );makeDirty();"  maxlength="5"/>';
+	inputHTML+= ' onchange="handleLabNoChange( this, <spring:escapeBody javaScriptEscape="true">${labPrefix}</spring:escapeBody>, false );makeDirty();"  maxlength="5"/>';
 		
 	var saveHTML = '&nbsp;<button type="button" onclick="saveEntry(\'' + index + '\')"><spring:message code='label.button.save'/></button>';
 	var cancelHTML = '&nbsp;<button type="button" onclick="restoreRow(\'' + index + '\');"><spring:message code='label.button.cancel'/></button>';
@@ -134,10 +134,10 @@ function rejectOrder(index) {
 	var inputHTMLtable = '<table id="qaEventsTable"><thead><tr><th style="width:10%"><spring:message code="label.refusal.reason" /><span class="requiredlabel">*</span></th>';
 	inputHTMLtable+='<th style="width:13%"><spring:message code="label.biologist"/></th>';
 	inputHTMLtable+='<th><spring:message code="nonconformity.note"/></th></tr></thead>';
-	inputHTMLtable+='<tbody><tr><td> <form:select path="qaEventId" id="qaEventSelectBox"  class="eoder_select_qaEvent"> <form:option value="">&nbsp;</form:option> ';
-	inputHTMLtable+='<form:options items="${form.qaEvents}" itemLabel="value" itemValue="id" /></form:select></td>';
-	inputHTMLtable+= '<td> <form:input path="qaAuthorizer" id="qaAuthorizerInput" style="width: 99%"/> </td>';
-	inputHTMLtable+='<td> <form:input path="qaNote" id="qaNoteInput" style="width: 99%"/> </td></tr>';
+	inputHTMLtable+='<tbody><tr><td> <form:select path="qaEventId" id="qaEventSelectBox"  class="eoder_select_qaEvent" htmlEscape="true"> <form:option value="">&nbsp;</form:option> ';
+	inputHTMLtable+='<form:options items="${form.qaEvents}" itemLabel="value" itemValue="id" htmlEscape="true" /></form:select></td>';
+	inputHTMLtable+= '<td> <form:input path="qaAuthorizer" id="qaAuthorizerInput" style="width: 99%" htmlEscape="true"/> </td>';
+	inputHTMLtable+='<td> <form:input path="qaNote" id="qaNoteInput" style="width: 99%" htmlEscape="true"/> </td></tr>';
 	inputHTMLtable+='</tbody></table>';
 
 	var saveHTML = '&nbsp;<button type="button" onclick="saveEntry(\'' + index + '\')"><spring:message code='label.button.save'/></button>';
@@ -220,8 +220,8 @@ jQuery(document).ready( function() {
 <hr>
 <spring:message code='study.eorder.search.patient_facility.title' text='Rechercher par code Patient ou par Site de prise en charge' /><br/><br/>
 <c:set var = "patientCodeLabel"> <spring:message code="report.patientCode" text="get all info" /> </c:set>
-<form:hidden id="searchType" path="searchType"/>
-<form:input path="searchValue" id="searchValue" placeholder="${patientCodeLabel}"/> 
+<form:hidden id="searchType" path="searchType" htmlEscape="true"/>
+<form:input path="searchValue" id="searchValue" placeholder="${patientCodeLabel}" htmlEscape="true"/> 
 <button type="button" onclick="searchByIdentifier()"><spring:message code="label.button.search" /></button>
 <form:checkbox path="useAllInfo" id="allInfo1" value="true"/> <spring:message code="label.eorder.allinfo" text="get all info" />
 <br/><br/>
@@ -229,7 +229,7 @@ jQuery(document).ready( function() {
 			 id="organizationId"
 			 class="eoder_select_site">
 	<form:option value="">&nbsp;</form:option>
-	<form:options items="${form.organizationList}" itemLabel="doubleName" itemValue="id" />
+	<form:options items="${form.organizationList}" itemLabel="doubleName" itemValue="id" htmlEscape="true"/>
 </form:select>
 <button type="button" onclick="searchByFacility()" class="button"><spring:message code="label.button.search" /></button>
 <form:checkbox path="useAllInfo" id="allInfo2" value="true"/> <spring:message code="label.eorder.allinfo" text="get all info" />
@@ -238,13 +238,13 @@ jQuery(document).ready( function() {
 
 <br> 
 <spring:message code='study.eorder.search.date.start'/>:
-<form:input path="startDate" onkeyup="addDateSlashes(this,event); "/> &nbsp;&nbsp;
+<form:input path="startDate" onkeyup="addDateSlashes(this,event); " htmlEscape="true"/> &nbsp;&nbsp;
 <spring:message code='study.eorder.search.date.end'/>:
-<form:input path="endDate"	onkeyup="addDateSlashes(this,event); "/>
+<form:input path="endDate"	onkeyup="addDateSlashes(this,event); " htmlEscape="true"/>
 <spring:message code='eorder.status'/>
 <form:select path="statusId">
 <option value=""><spring:message code='study.eorder.all_status'/> </option>
-<form:options items="${form.statusSelectionList}" itemLabel="value" itemValue="id"/>
+<form:options items="${form.statusSelectionList}" itemLabel="value" itemValue="id" htmlEscape="true"/>
 </form:select>
 <button type="button" onclick="searchByDateAndStatus()"><spring:message code="label.button.search" /></button>
 <form:checkbox path="useAllInfo" id="allInfo3r" value="true" /> <spring:message code="label.eorder.allinfo" text="get all info" />
@@ -353,7 +353,7 @@ jQuery(document).ready( function() {
 	       <c:out value="${eOrder.referringLabNumber}"/>
 	    </td>
 	    <td>
-	    	<form:hidden id="externalOrderId_${iter.index}" path="eOrders[${iter.index}].externalOrderId"  />
+	    	<form:hidden id="externalOrderId_${iter.index}" path="eOrders[${iter.index}].externalOrderId" htmlEscape="true" />
 	    	<button type="button" id="enterButton_${iter.index}" onclick="enterOrder('${iter.index}')" ${entered ? 'disabled="disabled"' : '' }>
 	    	<spring:message code="study.eorder.action.enter"/>
 	    	</button>
