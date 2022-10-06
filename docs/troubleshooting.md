@@ -1,3 +1,8 @@
+# Have you tried turning it off and back on again? 
+This may be the most basic of advice, but the first step should always be to restart the docker containers. 
+
+`sudo docker restart`
+
 # Disk Space Running Out
 System monitoring applications should be installed alongside OE so that disk space shortages can be discovered ahead of time. When a disk is near full, the following solutions may be able to help.
 

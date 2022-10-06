@@ -429,7 +429,9 @@ public class SamplePatientUpdateData {
 
     private SampleRequester initSampleRequester(SampleOrderItem orderItem) {
         SampleRequester requester = null;
-
+        if(!GenericValidator.isBlankOrNull(orderItem.getReferringSiteName())){
+            orderItem.setNewRequesterName(orderItem.getReferringSiteName());
+        }
         String orgId = orderItem.getReferringSiteId();
 
         if (!GenericValidator.isBlankOrNull(orgId)) {

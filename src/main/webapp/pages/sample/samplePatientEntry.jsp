@@ -32,6 +32,7 @@
     boolean requesterPersonRequired = FormFields.getInstance().useField(Field.SampleEntryRequesterPersonRequired);
 	boolean acceptExternalOrders = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.ACCEPT_EXTERNAL_ORDERS, "true");
     boolean restrictNewProviderEntries = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.restrictFreeTextProviderEntry, "true");
+    boolean restrictNewReferringSiteEntries = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.restrictFreeTextRefSiteEntry, "true");
 %>
 
 
@@ -57,6 +58,7 @@ var useSTNumber = <%= useSTNumber %>;
 var useMothersName = <%= useMothersName %>;
 var requesterPersonRequired = <%= requesterPersonRequired %>;
 var acceptExternalOrders = <%= acceptExternalOrders %>;
+var restrictNewReferringSiteEntries = <%= restrictNewReferringSiteEntries %>;
 var dirty = false;
 var invalidSampleElements = [];
 var requiredFields = new Array("labNo", "receivedDateForDisplay" );
@@ -70,6 +72,12 @@ if( requesterPersonRequired ){
 		requiredFields.push("providerLastNameID");
 	}
     
+}
+
+if (<%=restrictNewReferringSiteEntries%>) {
+		requiredFields.push("requesterId");
+} else {
+		requiredFields.push("requesterName");
 }
 
 <% if( FormFields.getInstance().useField(Field.SampleEntryUseRequestDate)){ %>
@@ -378,15 +386,17 @@ function processLabOrderSuccess(xhr){
         }
 
         var requestingOrg = order.getElementsByTagName('requestingOrg');
-        if (requestingOrg) {
-            parseRequestingOrg(requestingOrg);
-        }
-
         var location = order.getElementsByTagName('location');
-        if (location && !jQuery("#requesterId").val()) {
-            parseLocation(location);
+        
+       if (restrictNewReferringSiteEntries) {
+            if (requestingOrg) {
+                parseRequestingOrg(requestingOrg);
+            }
+            if (location && !jQuery("#requesterId").val()) {
+                parseLocation(location);
+            }
         }
-
+        
         var useralert = order.getElementsByTagName("user_alert");
         var alertMessage = "";
         if (useralert) {

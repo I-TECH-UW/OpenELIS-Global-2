@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.transaction.Transactional;
+
 import org.apache.commons.validator.GenericValidator;
 import org.hl7.fhir.instance.model.api.IBaseBundle;
 import org.hl7.fhir.r4.model.Bundle;
@@ -24,6 +26,7 @@ import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
 import org.openelisglobal.person.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -50,6 +53,8 @@ public class ProviderImportServiceImpl implements ProviderImportService {
     private PersonService personService;
 
     @Override
+	@Transactional
+	@Async
     @Scheduled(initialDelay = 1000, fixedRate = 60 * 60 * 1000)
     public void importPractitionerList() throws FhirLocalPersistingException, FhirGeneralException, IOException {
         if (!GenericValidator.isBlankOrNull(providerFhirStore)) {

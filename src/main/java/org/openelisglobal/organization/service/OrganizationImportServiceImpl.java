@@ -30,6 +30,7 @@ import org.openelisglobal.organization.valueholder.Organization;
 import org.openelisglobal.organization.valueholder.OrganizationType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -66,12 +67,13 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
 
     @Override
     @Transactional
+	@Async
     @Scheduled(initialDelay = 1000, fixedRateString = "${facilitylist.schedule.fixedRate}")
     public void importOrganizationList() throws FhirGeneralException, IOException {
         if (!GenericValidator.isBlankOrNull(facilityFhirStore)) {
             IGenericClient client ;
             if (facilityAuth.equals("token")) {
-                String token = fhirUtil.getAccesToken(facilityAuthUrl, facilityUserName, facilityPassword);
+                String token = fhirUtil.getAccessToken(facilityAuthUrl, facilityUserName, facilityPassword);
                 client = fhirUtil.getFhirClient(facilityFhirStore, token);
             } else {
                 client = fhirUtil.getFhirClient(facilityFhirStore);

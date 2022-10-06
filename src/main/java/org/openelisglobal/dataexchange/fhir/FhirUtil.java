@@ -31,7 +31,9 @@ public class FhirUtil implements FhirClientFetcher {
     private FhirConfig fhirConfig;
     @Autowired
     private FhirContext fhirContext;
-
+    @Autowired
+    private CloseableHttpClient closeableHttpClient;
+    
     @Override
     public IGenericClient getFhirClient(String fhirStorePath) {
         IGenericClient fhirClient = fhirContext.newRestfulGenericClient(fhirStorePath);
@@ -61,8 +63,7 @@ public class FhirUtil implements FhirClientFetcher {
         return fhirClient;
     }
     
-    public String getAccesToken(String authUrl, String authUserName, String authPassowrd) throws IOException {
-        CloseableHttpClient client = HttpClients.createDefault();
+    public String getAccessToken(String authUrl, String authUserName, String authPassowrd) throws IOException {
         HttpPost httpPost = new HttpPost(authUrl);
         
         String json = String.format("{\"username\":\"%s\",\"password\":\"%s\"}", authUserName, authPassowrd);
@@ -72,7 +73,7 @@ public class FhirUtil implements FhirClientFetcher {
         httpPost.setHeader("Content-type", "application/json");
         ObjectMapper mapper = new ObjectMapper();
         JsonNode response = mapper.createObjectNode();
-        try (CloseableHttpResponse res = client.execute(httpPost)) {
+        try (CloseableHttpResponse res = closeableHttpClient.execute(httpPost)) {
             if (res.getStatusLine().getStatusCode() == 200) {
                 response = mapper.readTree(EntityUtils.toString(res.getEntity(), StandardCharsets.UTF_8));
             }
