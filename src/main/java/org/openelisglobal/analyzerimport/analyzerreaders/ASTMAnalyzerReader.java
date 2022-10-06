@@ -25,7 +25,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.services.PluginAnalyzerService;
 import org.openelisglobal.plugin.AnalyzerImporterPlugin;
+import org.openelisglobal.spring.util.SpringContext;
 
 import com.ibm.icu.text.CharsetDetector;
 
@@ -34,11 +36,6 @@ public class ASTMAnalyzerReader extends AnalyzerReader {
 	private List<String> lines;
 	private AnalyzerLineInserter inserter;
 	private String error;
-	private static ArrayList<AnalyzerImporterPlugin> analyzerPlugins = new ArrayList<>();
-
-	public static void registerAnalyzerPlugin(AnalyzerImporterPlugin plugin) {
-		analyzerPlugins.add(plugin);
-	}
 
 	@Override
 	public boolean readStream(InputStream stream) {
@@ -83,7 +80,7 @@ public class ASTMAnalyzerReader extends AnalyzerReader {
 	}
 
 	private void setInserter() {
-		for (AnalyzerImporterPlugin plugin : analyzerPlugins) {
+		for (AnalyzerImporterPlugin plugin : SpringContext.getBean(PluginAnalyzerService.class).getAnalyzerPlugins()) {
 			if (plugin.isTargetAnalyzer(lines)) {
 				inserter = plugin.getAnalyzerLineInserter();
 				return;

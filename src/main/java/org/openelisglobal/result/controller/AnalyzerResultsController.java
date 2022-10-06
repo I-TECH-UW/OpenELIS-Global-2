@@ -15,6 +15,7 @@ import javax.validation.Valid;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.analyzer.service.BidirectionalAnalyzer;
 import org.openelisglobal.analyzerimport.util.AnalyzerTestNameCache;
 import org.openelisglobal.analyzerimport.util.MappedTestName;
 import org.openelisglobal.analyzerresults.action.AnalyzerResultsPaging;
@@ -28,6 +29,7 @@ import org.openelisglobal.common.formfields.FormFields.Field;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.paging.PagingBean.Paging;
 import org.openelisglobal.common.services.IStatusService;
+import org.openelisglobal.common.services.PluginAnalyzerService;
 import org.openelisglobal.common.services.PluginMenuService;
 import org.openelisglobal.common.services.QAService;
 import org.openelisglobal.common.services.QAService.QAObservationType;
@@ -47,6 +49,7 @@ import org.openelisglobal.note.service.NoteServiceImpl;
 import org.openelisglobal.note.valueholder.Note;
 import org.openelisglobal.patient.util.PatientUtil;
 import org.openelisglobal.patient.valueholder.Patient;
+import org.openelisglobal.plugin.AnalyzerImporterPlugin;
 import org.openelisglobal.result.action.util.ResultUtil;
 import org.openelisglobal.result.form.AnalyzerResultsForm;
 import org.openelisglobal.result.service.ResultService;
@@ -139,6 +142,8 @@ public class AnalyzerResultsController extends BaseController {
     private LocalizationService localizationService;
     @Autowired
     private NoteService noteService;
+	@Autowired
+	private PluginAnalyzerService pluginAnalyzerService;
 
     // used in constructor, so use constructor injection
     private TypeOfSampleService typeOfSampleService;
@@ -185,6 +190,13 @@ public class AnalyzerResultsController extends BaseController {
         }
 
         form.setType(requestAnalyzerType);
+
+		AnalyzerImporterPlugin analyzerPlugin = pluginAnalyzerService.getPluginByAnalyzerId(
+				AnalyzerTestNameCache.getInstance().getAnalyzerIdForName(getAnalyzerNameFromRequest()));
+		if (analyzerPlugin instanceof BidirectionalAnalyzer) {
+			BidirectionalAnalyzer bidirectionalAnalyzer = (BidirectionalAnalyzer) analyzerPlugin;
+			form.setSupportedLISActions(bidirectionalAnalyzer.getSupportedLISActions());
+		}
 
         AnalyzerResultsPaging paging = new AnalyzerResultsPaging();
         List<AnalyzerResults> analyzerResultsList = getAnalyzerResults();

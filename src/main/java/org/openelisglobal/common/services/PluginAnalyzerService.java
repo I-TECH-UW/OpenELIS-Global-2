@@ -17,14 +17,15 @@
 package org.openelisglobal.common.services;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import javax.annotation.PostConstruct;
 
 import org.openelisglobal.analyzer.service.AnalyzerService;
 import org.openelisglobal.analyzer.valueholder.Analyzer;
-import org.openelisglobal.analyzerimport.analyzerreaders.AnalyzerLineReader;
-import org.openelisglobal.analyzerimport.analyzerreaders.AnalyzerXLSLineReader;
 import org.openelisglobal.analyzerimport.service.AnalyzerTestMappingService;
 import org.openelisglobal.analyzerimport.util.AnalyzerTestNameCache;
 import org.openelisglobal.analyzerimport.valueholder.AnalyzerTestMapping;
@@ -48,6 +49,17 @@ public class PluginAnalyzerService {
     private TestService testService;
 
     private List<AnalyzerTestMapping> existingMappings;
+	private Map<String, AnalyzerImporterPlugin> pluginByAnalyzerId = new HashMap<>();
+
+	private List<AnalyzerImporterPlugin> analyzerPlugins = new ArrayList<>();
+
+	public void registerAnalyzerPlugin(AnalyzerImporterPlugin plugin) {
+		analyzerPlugins.add(plugin);
+	}
+
+	public List<AnalyzerImporterPlugin> getAnalyzerPlugins() {
+		return analyzerPlugins;
+	}
 
     @PostConstruct
     private void registerInstance() {
@@ -58,9 +70,19 @@ public class PluginAnalyzerService {
         return INSTANCE;
     }
 
+	public AnalyzerImporterPlugin getPluginByAnalyzerId(String analyzerId) {
+		return pluginByAnalyzerId.get(analyzerId);
+	}
+
     public void registerAnalyzer(AnalyzerImporterPlugin analyzer) {
-        AnalyzerLineReader.registerAnalyzerPlugin(analyzer);
-        AnalyzerXLSLineReader.registerAnalyzerPlugin(analyzer);
+		registerAnalyzer(analyzer, Optional.empty());
+	}
+
+	public void registerAnalyzer(AnalyzerImporterPlugin analyzer, Optional<String> analyzerId) {
+		registerAnalyzerPlugin(analyzer);
+		if (analyzerId.isPresent()) {
+			pluginByAnalyzerId.put(analyzerId.get(), analyzer);
+		}
     }
 
     public String addAnalyzerDatabaseParts(String name, String description, List<TestMapping> nameMappings) {

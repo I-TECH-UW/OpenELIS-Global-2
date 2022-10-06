@@ -586,3 +586,19 @@ function getPreviousExperimentSetup(id, success, failure) {
     	);
 }
 
+function runLIStoAnalyzerAction(analyzerType, action, success, failure) {
+    if( !failure){failure = defaultFailure;	}
+    new Ajax.Request(
+    		"analyzer/runAction",  //url
+    		{//options
+    			method: 'POST', //http method
+                parameters : "analyzerType=" + analyzerType + "&actionName=" + action,
+				requestHeaders : {
+					"X-CSRF-Token" : getCsrfToken()
+				},
+    		    onSuccess: success,
+    		    onFailure: failure
+    		}
+    	);
+}
+
