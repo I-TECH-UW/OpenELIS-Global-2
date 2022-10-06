@@ -10,17 +10,23 @@ import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.formfields.FormFields.Field;
+import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.RequesterService;
 import org.openelisglobal.common.services.SampleAddService;
 import org.openelisglobal.common.services.SampleAddService.SampleTestCollection;
 import org.openelisglobal.common.services.SampleOrderService;
+import org.openelisglobal.common.services.DisplayListService.ListType;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.StatusService.SampleStatus;
 import org.openelisglobal.common.services.registration.ResultUpdateRegister;
 import org.openelisglobal.common.services.registration.interfaces.IResultUpdate;
 import org.openelisglobal.common.util.DateUtil;
+import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.dataexchange.orderresult.OrderResponseWorker.Event;
+import org.openelisglobal.note.service.NoteService;
+import org.openelisglobal.note.service.NoteServiceImpl.NoteType;
+import org.openelisglobal.note.valueholder.Note;
 import org.openelisglobal.observationhistory.service.ObservationHistoryService;
 import org.openelisglobal.observationhistory.valueholder.ObservationHistory;
 import org.openelisglobal.organization.service.OrganizationService;
@@ -57,6 +63,7 @@ public class SampleEditServiceImpl implements SampleEditService {
     private static final String DEFAULT_ANALYSIS_TYPE = "MANUAL";
     private static final String CANCELED_TEST_STATUS_ID;
     private static final String CANCELED_SAMPLE_STATUS_ID;
+    private final String SAMPLE_SUBJECT = "Sample Note"; 
 
     static {
         CANCELED_TEST_STATUS_ID = SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Canceled);
@@ -91,6 +98,8 @@ public class SampleEditServiceImpl implements SampleEditService {
     SampleHumanService sampleHumanService;
     @Autowired
     UserRoleService userRoleService;
+    @Autowired
+    NoteService noteService;
 
     @Transactional
     @Override
@@ -173,7 +182,22 @@ public class SampleEditServiceImpl implements SampleEditService {
          */
 
         for (SampleTestCollection sampleTestCollection : addedSamples) {
-            sampleItemService.insert(sampleTestCollection.item);
+            String sampleId = sampleItemService.insert(sampleTestCollection.item);
+            SampleItem savedItem = sampleItemService.get(sampleId);
+            if (savedItem.isRejected()) {
+                String rejectReasonId = savedItem.getRejectReasonId();
+                String currentUserId = savedItem.getSysUserId();
+                for (IdValuePair rejectReason : DisplayListService.getInstance()
+                        .getList(ListType.REJECTION_REASONS)) {
+                    if (rejectReasonId.equals(rejectReason.getId())) {
+                        Note note = noteService.createSavableNote(savedItem, NoteType.REJECTION_REASON,
+                                rejectReason.getValue(), SAMPLE_SUBJECT, currentUserId);
+                        noteService.insert(note);
+                        break;
+                    }
+
+                }
+            }
 
             for (Test test : sampleTestCollection.tests) {
                 test = testService.get(test.getId());

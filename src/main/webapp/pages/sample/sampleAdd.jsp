@@ -142,6 +142,8 @@ function addTypeToTable(table, sampleDescription, sampleType, currentTime, curre
 			var collector = newRow.insertCell(++cellCount);
 		}
 		var tests = newRow.insertCell(++cellCount);
+		var rejectCell = newRow.insertCell(++cellCount);
+		var rejectReasonCell = newRow.insertCell(++cellCount);
 		var remove = newRow.insertCell(++cellCount);
 
 		selectionBox.innerHTML = getCheckBoxHtml( rowLabel, true );
@@ -161,6 +163,13 @@ function addTypeToTable(table, sampleDescription, sampleType, currentTime, curre
 			collector.innerHTML = getCollectorHtml( rowLabel);
 		}
 		tests.innerHTML = getTestsHtml( rowLabel );
+
+		rejectCell.innerHTML =  getRejectCheckBoxHtml(rowLabel);
+
+		var newRejection = $("rejectPrototypeID").parentNode.cloneNode(true);
+		var rejectSelection = newRejection.getElementsByTagName("select")[0];
+		rejectSelection.id = "rejectedReasonId_" + rowLabel;
+		rejectReasonCell.innerHTML = newRejection.innerHTML.replace("rejectReasonList", "rejectionList");
 		remove.innerHTML = getRemoveButtonHtml( rowLabel );
 
 		
@@ -205,6 +214,10 @@ function getCollectorHtml(row){
 }
 function getRemoveButtonHtml( row ){
 	return "<input name='remove' value='" + "<spring:message code="sample.entry.remove.sample"/>" + "' class='textButton' onclick='removeSample(this);testAndSetSave();' id='removeButton_" + row +"' type='button' >";
+}
+
+function getRejectCheckBoxHtml(row ){
+	return "<input name='reject' class='rejected' id='reject_" + row  + "' type='checkbox' >" ;
 }
 
 function getCurrentTime(){
@@ -275,7 +288,6 @@ function convertSamplesToXml(){
 	}
 
 	xml = xml + "</samples>";
-
 	return xml;
 }
 
@@ -288,7 +300,9 @@ function convertSampleToXml( id ){
 			  "' tests='" + jQuery("#testIds" + id).val() +
               "' testSectionMap='" + jQuery("#testSectionMap" + id).val() +
               "' testSampleTypeMap=\"" + jQuery("#testTypeMap" + id).val() +
-			  "\" panels='" + jQuery("#panelIds" + id).val() + "'";
+			  "\" panels='" + jQuery("#panelIds" + id).val() + 
+			  "' rejected='" + jQuery("#reject" + id).prop("checked") +
+			  "' rejectReasonId='" + jQuery("#rejectedReasonId" + id).val() + "'" ;
 
 	if( useInitialSampleCondition ){
 		var initialConditions = $("initialCondition" + id);
@@ -1040,7 +1054,19 @@ function sampleTypeQualifierChanged(element){
     <input id="userSampleTypeQualifierPrototypeValueID" value="" type="hidden" >
 </div>
 
-
+<div id="rejectedReasonPrototype" style="display: none" >
+<form:select path="rejectReasonList"
+			 multiple="false"
+             title='<spring:message/>'
+			 style="width:100%"
+			 id= 'rejectPrototypeID'>
+			<c:forEach var="optionValue" items="${form.rejectReasonList}">
+						<option value='${optionValue.id}' >
+							${optionValue.value}
+						</option>
+			</c:forEach>
+</form:select>
+</div>
 
 <div id="crossPanels">
 </div>
@@ -1103,6 +1129,12 @@ function sampleTypeQualifierChanged(element){
 				<% } %>
 				<th style="width:35%">
 					<span class='requiredlabel'>*</span>&nbsp;<spring:message code="sample.entry.sample.tests"/>
+				</th>
+				<th style="width:5%">
+				  Reject
+				</th>
+				<th style="width:10%">
+				   Reject Reason
 				</th>
 				<th style="width:10%"></th>
 			</tr>

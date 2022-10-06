@@ -46,8 +46,16 @@ public class ActivityReportByTest extends ActivityReport implements IReportCreat
 
     @Override
     protected void buildReportContent(ReportSpecificationList testSelection) {
-
-        testName = testSelection.getSelectionAsName();
+        String selection = testSelection.getSelection();
+        if (testSelection.getList().isEmpty()) {
+            testSelection = new ReportSpecificationList(
+                    DisplayListService.getInstance().getList(DisplayListService.ListType.ALL_TESTS),
+                    MessageUtil.getMessage("workplan.test.types"));
+            testSelection.setSelection(selection);
+            testName = testSelection.getSelectionAsName();
+        } else {
+            testName = testSelection.getSelectionAsName();
+        }
         createReportParameters();
 
         // do not print the separator bar between name/Id and tests
