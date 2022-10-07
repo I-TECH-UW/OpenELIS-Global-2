@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -14,7 +15,6 @@ import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.formfields.FormFields.Field;
-import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.QAService;
 import org.openelisglobal.common.services.QAService.QAObservationType;
 import org.openelisglobal.common.util.ConfigurationProperties;
@@ -155,7 +155,8 @@ public class WorkPlanByTestController extends BaseWorkplanController {
 
         if (!(GenericValidator.isBlankOrNull(testType) || testType.equals("0"))) {
 
-            testList = analysisService.getAllAnalysisByTestAndStatus(testType, statusList);
+            testList = analysisService.getAllAnalysisByTestAndStatus(testType, statusList).stream().filter(analysis -> !analysis.getSampleItem().isRejected())
+            .collect(Collectors.toList());
 
             if (testList.isEmpty()) {
                 return new ArrayList<>();
@@ -208,7 +209,8 @@ public class WorkPlanByTestController extends BaseWorkplanController {
 
         if (!(GenericValidator.isBlankOrNull(testType) || testType.equals("0"))) {
 
-            testList = analysisService.getAllAnalysisByTestsAndStatus(nfsTestIdList, statusList);
+            testList = analysisService.getAllAnalysisByTestsAndStatus(nfsTestIdList, statusList).stream().filter(analysis -> !analysis.getSampleItem().isRejected())
+            .collect(Collectors.toList());
 
             if (testList.isEmpty()) {
                 return new ArrayList<>();

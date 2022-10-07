@@ -3,6 +3,7 @@ package org.openelisglobal.workplan.controller;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -138,7 +139,8 @@ public class WorkPlanByTestSectionController extends BaseWorkplanController {
         if (!(GenericValidator.isBlankOrNull(testSectionId))) {
 
             String sectionId = testSectionId;
-            testList = analysisService.getAllAnalysisByTestSectionAndStatus(sectionId, statusList, true);
+            testList = analysisService.getAllAnalysisByTestSectionAndStatus(sectionId, statusList, true).stream().filter(analysis -> !analysis.getSampleItem().isRejected())
+            .collect(Collectors.toList());;
 
             if (testList.isEmpty()) {
                 return new ArrayList<>();

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -116,7 +117,8 @@ public class WorkplanByPanelController extends BaseWorkplanController {
 
             for (PanelItem panelItem : panelItems) {
                 List<Analysis> analysisList = analysisService.getAllAnalysisByTestAndStatus(panelItem.getTest().getId(),
-                        statusList);
+                        statusList).stream().filter(analysis -> !analysis.getSampleItem().isRejected())
+                        .collect(Collectors.toList());
 
                 for (Analysis analysis : analysisList) {
                     TestResultItem testResultItem = new TestResultItem();
