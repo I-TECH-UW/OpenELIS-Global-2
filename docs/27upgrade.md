@@ -1,138 +1,217 @@
-**OpenELIS 2.7 Upgrade**
 
-**Background**
 
-The goal of this process is to upgrade a typical OpenELIS installation to the current versions of OpenELIS and all supporting software. A complete backup and rollback strategy is beyond the scope of this document and is assumed to be completed prior to starting this process.
+# **Migrate with pg_upgrade**
 
-The order of the upgrades is important as there are interdependencies.
+Much faster method of upgrading postgres dbs
+
+If you are running these commands on a remote server, it is recommended to use a recoverable script session. For example, running `screen`. If you disconnect, just reconnect and run `screen -x` to recover active session.
+
+
+## **Migrating OE 9.5 database to 14.4 database in dockerized environments**
+
+
+    1.     stop containers so no changes happen while migration is occurring
+
+
+        a)     sudo docker stop autoheal-oe external-fhir-api openelisglobal-webapp openelisglobal-database
+
+
+    2.     remove db container so auto restart doesn’t occur
+
+
+        a)     sudo docker rm openelisglobal-database
+
+
+    3.     create folders for first step db migration to take place
+
+
+        a)     sudo mkdir /var/lib/openelis-global/db
+
+
+        b)    sudo mkdir /var/lib/openelis-global/db/9.5
+
+
+        c)     sudo mkdir /var/lib/openelis-global/db/9.6
+
+
+        d)    sudo mkdir /var/lib/openelis-global/db/9.6/data
+
+
+    4.     copy current db to location (copy will preserve the old data so that we can more easily revert if something goes wrong)
+
+
+        a)     sudo cp -r /var/lib/openelis-global/data /var/lib/openelis-global/db/9.5/data
+
+
+    5.     run the 9.5 to 9.6 migration
+
+
+        a)     sudo docker run -it --rm -v /var/lib/openelis-global/db/:/var/lib/postgresql/  tianon/postgres-upgrade:9.5-to-9.6 --link
+
+
+    6.     create folders for second step migration to take place
+
+
+        a)     sudo mkdir /var/lib/openelis-global/db/14
+
+
+        b)    sudo mkdir /var/lib/openelis-global/db/14/data
+
+
+    7.     run the 9.6 to 14 conversion
+
+
+        a)     sudo docker run -it --rm -v /var/lib/openelis-global/db/:/var/lib/postgresql/  tianon/postgres-upgrade:9.6-to-14 --link
+
+
+    8.     replace old db with new db
+
+
+        a)     sudo mv /var/lib/openelis-global/data /var/lib/openelis-global/data2
+
+
+        b)    sudo mv /var/lib/openelis-global/db/14/data /var/lib/openelis-global/data
+
+
+    9.     run the setup script for the new version with updated db, ignoring db backup couldn’t occur step
+
+
+        a)     sudo setup_OpenELIS.py
+
+
+    10.  ensure systems start up and that data is present
+
+
+    11.  optionally delete old db
+
+
+        a)     sudo rm /var/lib/openelis-global/db /var/lib/openelis-global/data2
+
+
+## **Migrating OE 9.5 database to 14.4 database in non dockerized environment into dockerized environment (untested)**
+
+
+    1)    stop containers so no changes happen while migration is occurring
+
+
+        a)     sudo docker stop autoheal-oe external-fhir-api openelisglobal-webapp
+
+
+    2)    stop postgres instance
+
+
+        a)     sudo -upostgres /usr/lib/postgresql/9/bin/pg_ctl -D /var/lib/postgresql/9/data -l logfile stop
+
+
+    3)    check that upgrade can occur
+
+
+        a)     time /usr/lib/postgresql/14/bin/pg_upgrade --old-bindir /usr/lib/postgresql/9/bin --new-bindir /usr/lib/postgresql/14/bin --old-datadir /var/lib/postgresql/9/data --new-datadir /var/lib/openelis-global/data --link --check
+
+
+    4)    run the upgrade
+
+
+        a)     time /usr/lib/postgresql/14/bin/pg_upgrade --old-bindir /usr/lib/postgresql/9/bin --new-bindir /usr/lib/postgresql/14/bin --old-datadir /var/lib/postgresql/9/data --new-datadir /var/lib/openelis-global/data --link
+
+
+    5)    run the setup script for the new version with updated db, ignoring db backup couldn’t occur step
+
+
+        a)     sudo setup_OpenELIS.py
+
+
+    6)    ensure systems start up and that data is present
+
+
+# **Migrate with pg_dump**
+
+This approach is mentioned as being the preferred option in postgres docs, but is VERY slow when restoring BLOBs
+
+
+## **Migrating OE 9.5 database to 14.4 database in dockerized environments**
 
  
 
-**Backup **(dev example)
 
-sudo lsblk
+    1.     Run  the following commands to create the backup for restoring into OE 14, and the backup for 9.5 in case something goes wrong
 
-sudo mkdir /media/newhd
 
-sudo mount /dev/sdb2 /media/newhd, umount /dev/sdb2
+        a)     sudo docker exec openelisglobal-database pg_dump -j 8 -d clinlims --verbose -U admin -F c -f /backups/95db.backup
 
-df -H
 
-dd if=/dev/sda2 of=/dev/sdb2 bs=256K conv=noerror,sync
+        b)    sudo docker kill openelisglobal-database && sudo mv /var/lib/openelis-global/data  /var/lib/openelis-global/data2
 
-dd if=/dev/sda of=/dev/sdb bs=256K conv=noerror,sync
+
+    2.     install new OE with setup script - ignore db missing when prompted
+
+
+    3.     Run the following to pause non-db connections and restore the backup before bringing the containers up again (must run in OE installer directory). Restoring a db can take a long time for large dbs. To avoid a long downtime, this can be done in a separate container
+
+
+        a)     sudo docker kill external-fhir-api openelisglobal-webapp && sudo docker rm external-fhir-api openelisglobal-webapp
+
+
+        b)    sudo docker exec openelisglobal-database pg_restore -j 8 -d clinlims -U postgres -v -Fc -c /backups/95db.backup
+
+
+        c)     sudo docker-compose up -d
+
+
+    4.     confirm that OpenELIS is working and that the data is there by accessing the front end
+
+
+    5.     optionally, delete old data
+
+
+        a)     rm /var/lib/openelis-global/data2
+
+
+        b)    rm /var/lib/openelis-global/backups/95db.backup
+
+
+## **Migrating OE 9.5 database to 14.4 database in non dockerized environment into dockerized environment (untested)**
 
  
 
-**PostgreSQL**           	
 
-Current Version       	Latest Version         	Show Version          	End of Life
+    1.     Run  the following commands to create the backup for restoring into OE 14
 
-9.5                           	14.5                         	postgres -V  	        	2021-01-01
 
- 
+        a)     pg_dump -d clinlims -h localhost -p 5432 –verbose -U clinlims -F c -f /var/lib/openelis-global/backups/95db.backup
 
-docker image, docker image ls, docker pull postgres:14.5,
 
-sudo docker exec -it openelisglobal-database bash,
+        b)    [enter password for clinlims]
 
-which postgres
 
- 
+    2.     Modify setup.ini to have docker db on port other than 5432 and use docker db
 
-postgresql 9.5 -> 14.5
 
-  9.5 db will be copied from the docker container and restored to a 9.5 db running Ubuntu 18 native.
+        a)     sudo vi /etc/openelis-global/setup.ini
 
 
-    1.     Install Posgresql latest (14.5) using:
+    3.     install new OE with setup script
 
 
-    sudo apt-get update
+    4.     Run the following to pause non-db connections and restore the backup before bringing the containers up again (must run in OE installer directory)
 
 
-    sudo apt-get install postgresql postgresql-contrib
+        a)     sudo docker kill external-fhir-api openelisglobal-webapp && sudo docker rm external-fhir-api openelisglobal-webapp
 
 
-    2.     Initialize a 9.5 db and a 14.5 db using:
+        b)    sudo docker exec openelisglobal-database  pg_restore -d clinlims -U postgres -v -Fc -c /backups/95db.backup
 
 
-    sudo -upostgres /usr/lib/postgresql/9/bin/initdb -D /var/lib/postgresql/9/data
+        c)     sudo docker-compose up -d
 
 
-    sudo -upostgres /usr/lib/postgresql/14/bin/initdb -D /var/lib/postgresql/14/data
+    5.     confirm that OpenELIS is working and that the data is there by accessing the front end
 
 
-    3.     In /tmp start the native Ubuntu 9.5 Postgres server using:
+    6.     optionally, delete old data
 
 
-    sudo -upostgres /usr/lib/postgresql/9/bin/pg_ctl -D /var/lib/postgresql/9/data -l logfile start
+        a)     sudo rm /var/lib/openelis-global/backups/95db.backup
 
 
-    4.     In openelisglobal-database container back up 9.5 db using:
-
-
-    pg_dump -b -Upostgres -Fc  -f dump_9.bk
-
-
-    5.     Exit container then copy backup file to /tmp using:
-
-
-    docker cp &lt;container id>:dump_9.bk .
-
-
-    6.     Restore restore db to Ubuntu native 9.5 using:
-
-
-    pg_restore -Cvc -Upostgres -dpostgres dump_9.bk
-
-
-    7.     Stop the Postgres 9.5 server using:
-
-
-    sudo -upostgres /usr/lib/postgresql/9/bin/pg_ctl -D /var/lib/postgresql/9/data -l logfile stop
-
-
-    8.     Check that pg_upgrade can upgrade the 9.5 db to the 14.5 using:
-
-
-    time /usr/lib/postgresql/14/bin/pg_upgrade --old-bindir /usr/lib/postgresql/9/bin --new-bindir /usr/lib/postgresql/14/bin --old-datadir /var/lib/postgresql/9/data --new-datadir /var/lib/postgresql/14/data --link –check
-
-
-    9.     Run the upgrade using the above command without the –check flag.
-
-
-    10.  Start the native Ubuntu 14.5 server using:
-
-
-    11.  sudo -upostgres /usr/lib/postgresql/14/bin/pg_ctl -D /var/lib/postgresql/14/data -l logfile start
-
-
-    12.  Once you start the new server, consider running:
-
-
-    sudo -upostgres /usr/lib/postgresql/14/bin/vacuumdb --all –analyze-in-stages
-
-
-    13.  Backup native 14.5 database using:
-
-
-    pg_dump -b -Upostgres -Fc  -f dump_14.bk
-
-
-    14.  Edit docker-compose.yml to use postgresql 14.5
-
-
-    image: postgres:9.5 to image: postgres:14.5
-
-
-    15.  Start the database container using docker-compose.
-
-
-    16.  Copy dump_14.bk to the container using docker cp.
-
-
-    17.  In container restore db to container 14.5 using:
-
-
-    pg_restore -Cvc -Upostgres -dpostgres dump_14.bk
+        b)    uninstall native postgres if you want to move the docker  db onto port 5432
