@@ -217,9 +217,12 @@ function getRemoveButtonHtml( row ){
 }
 
 function getRejectCheckBoxHtml(row ){
-	return "<input name='reject' class='rejected' id='reject_" + row  + "' type='checkbox' >" ;
+	return "<input name='reject' class='rejected' id='reject_" + row  + "' type='checkbox' onclick='activateRejectReason(" + row +");'>" ;
 }
 
+function activateRejectReason(row){
+  jQuery("#rejectedReasonId_" + row).prop("disabled" , !jQuery("#reject_" + row).prop("checked"));
+}
 function getCurrentTime(){
 	var date = new Date();
 
@@ -1059,7 +1062,9 @@ function sampleTypeQualifierChanged(element){
 			 multiple="false"
              title='<spring:message/>'
 			 style="width:100%"
+			 disabled="true"
 			 id= 'rejectPrototypeID'>
+			 <option value=''></option>
 			<c:forEach var="optionValue" items="${form.rejectReasonList}">
 						<option value='${optionValue.id}' >
 							${optionValue.value}
@@ -1131,10 +1136,10 @@ function sampleTypeQualifierChanged(element){
 					<span class='requiredlabel'>*</span>&nbsp;<spring:message code="sample.entry.sample.tests"/>
 				</th>
 				<th style="width:5%">
-				  Reject
+				  <spring:message code="result.rejected"/>
 				</th>
 				<th style="width:10%">
-				   Reject Reason
+				    <spring:message code="note.type.rejectReason"/>
 				</th>
 				<th style="width:10%"></th>
 			</tr>
