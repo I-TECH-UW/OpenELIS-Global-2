@@ -221,7 +221,15 @@ function getRejectCheckBoxHtml(row ){
 }
 
 function activateRejectReason(row){
-  jQuery("#rejectedReasonId_" + row).prop("disabled" , !jQuery("#reject_" + row).prop("checked"));
+  if(jQuery("#reject_" + row).prop("checked")){
+	if (confirm("<%= MessageUtil.getMessage("sample.entry.reject.warning")%>")){
+		jQuery("#rejectedReasonId_" + row).prop("disabled" , !jQuery("#reject_" + row).prop("checked"));
+	}else{
+		jQuery("#reject_" + row).prop("checked" , !jQuery("#reject_" + row).prop("checked"));
+	}
+  }else{
+     jQuery("#rejectedReasonId_" + row).prop("disabled" , !jQuery("#reject_" + row).prop("checked"));
+  }	
 }
 function getCurrentTime(){
 	var date = new Date();
