@@ -406,7 +406,12 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
         analysis.setSysUserId(sampleTestCollection.item.getSysUserId());
         analysis.setRevision(analysisRevision);
         analysis.setStartedDate(collectionDateTime == null ? DateUtil.getNowAsSqlDate() : collectionDateTime);
-        analysis.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NotStarted));
+        if (sampleTestCollection.item.isRejected()) {
+            analysis.setStatusId(
+                    SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.SampleRejected));
+        } else {
+            analysis.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NotStarted));
+        }
         if (!org.apache.commons.validator.GenericValidator.isBlankOrNull(sampleTypeName)) {
             analysis.setSampleTypeName(sampleTypeName);
         }
