@@ -52,4 +52,22 @@
 			<column name="display_key" value="status.sample.rejected"/>
 		</insert>
 	</changeSet>
+	<changeSet author="moses_mutesa" id="3">
+		<preConditions onFail="MARK_RAN">
+			<tableExists tableName="menu" schemaName="clinlims" />
+			<sqlCheck  expectedResult="0">SELECT count(*) FROM clinlims.menu WHERE element_id = 'menu_reports_management_rejection'</sqlCheck> 
+		</preConditions>
+		<comment>Add Rejection report to the Reports Management menu</comment>
+		<insert tableName="menu" schemaName="clinlims">
+			<column name="id" valueSequenceNext="menu_seq"/>
+			<column name="parent_id" valueComputed="(SELECT id FROM clinlims.menu WHERE element_id = 'menu_reports_management')"/>
+			<column name="presentation_order" value="3"/>
+			<column name="element_id" value="menu_reports_management_rejection"/>
+			<column name="action_url" value="/Report?type=indicator&amp;report=sampleRejectionReport"/>
+			<column name="display_key" value="openreports.mgt.rejection"/>
+			<column name="tool_tip_key" value="tooltip.openreports.stat.aggregate"/>
+			<column name="new_window" value="false"/>
+			<column name="is_active" value="true"/>
+		</insert>
+	</changeSet>
 </databaseChangeLog>

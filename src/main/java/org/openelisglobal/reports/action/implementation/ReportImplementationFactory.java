@@ -139,6 +139,8 @@ public class ReportImplementationFactory {
             }
             else if(report.equals("statisticsReport")){
                 return new StatisticsReport();
+            }else if(report.equals("sampleRejectionReport")){
+                 return new CSVSampleRejectionReport();
             }
         }
 
@@ -273,6 +275,8 @@ public class ReportImplementationFactory {
             }
             else if(report.equals("statisticsReport")){
                 return new StatisticsReport();
+            }else if(report.equals("sampleRejectionReport")){
+                return new CSVSampleRejectionReport();
             }
         }
 
