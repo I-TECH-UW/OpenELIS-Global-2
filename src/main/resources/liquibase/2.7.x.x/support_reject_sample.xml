@@ -41,7 +41,7 @@
 			<column name="name" value="Sample Rejected"/>
 			<column name="description" value="The sample has been rejected"/>
 			<column name="display_key" value="status.sample.rejected"/>
-        </insert>
+		</insert>
 		<insert tableName="status_of_sample" schemaName="clinlims">
 			<column name="id" valueNumeric=" nextval( 'status_of_sample_seq' ) "/>
 			<column name="code" value="1"/>
@@ -50,6 +50,6 @@
 			<column name="name" value="Sample Rejected"/>
 			<column name="description" value="The sample has been rejected"/>
 			<column name="display_key" value="status.sample.rejected"/>
-        </insert>
+		</insert>
 	</changeSet>
 </databaseChangeLog>
