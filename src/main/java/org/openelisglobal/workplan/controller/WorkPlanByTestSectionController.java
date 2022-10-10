@@ -139,8 +139,7 @@ public class WorkPlanByTestSectionController extends BaseWorkplanController {
         if (!(GenericValidator.isBlankOrNull(testSectionId))) {
 
             String sectionId = testSectionId;
-            testList = analysisService.getAllAnalysisByTestSectionAndStatus(sectionId, statusList, true).stream().filter(analysis -> !analysis.getSampleItem().isRejected())
-            .collect(Collectors.toList());;
+            testList = analysisService.getAllAnalysisByTestSectionAndStatus(sectionId, statusList, true);
 
             if (testList.isEmpty()) {
                 return new ArrayList<>();

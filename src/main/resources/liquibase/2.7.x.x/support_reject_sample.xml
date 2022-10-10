@@ -22,4 +22,34 @@
 			<column name="reject_reason_id" type="NUMERIC(10)"/>
 		</addColumn>
 	</changeSet>
+	<changeSet author="moses_mutesa" id="2">
+		<preConditions onFail="MARK_RAN">
+			<tableExists tableName="status_of_sample" schemaName="clinlims" />
+			<sqlCheck expectedResult="0">
+				SELECT COUNT(*) FROM clinlims.status_of_sample WHERE name = 'Sample Rejected' and status_type = 'ANALYSIS'
+			</sqlCheck>
+			<sqlCheck expectedResult="0">
+				SELECT COUNT(*) FROM clinlims.status_of_sample WHERE name = 'Sample Rejected' and status_type = 'SAMPLE'
+			</sqlCheck>
+		</preConditions>
+		<comment>Add sample rejected Analysis status </comment>
+		<insert tableName="status_of_sample" schemaName="clinlims">
+			<column name="id" valueNumeric=" nextval( 'status_of_sample_seq' ) "/>
+			<column name="code" value="1"/>
+			<column name="lastupdated" valueDate='now()' />
+			<column name="status_type" value="ANALYSIS"/>
+			<column name="name" value="Sample Rejected"/>
+			<column name="description" value="The sample has been rejected"/>
+			<column name="display_key" value="status.sample.rejected"/>
+        </insert>
+		<insert tableName="status_of_sample" schemaName="clinlims">
+			<column name="id" valueNumeric=" nextval( 'status_of_sample_seq' ) "/>
+			<column name="code" value="1"/>
+			<column name="lastupdated" valueDate='now()' />
+			<column name="status_type" value="SAMPLE"/>
+			<column name="name" value="Sample Rejected"/>
+			<column name="description" value="The sample has been rejected"/>
+			<column name="display_key" value="status.sample.rejected"/>
+        </insert>
+	</changeSet>
 </databaseChangeLog>

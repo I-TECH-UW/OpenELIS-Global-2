@@ -155,8 +155,7 @@ public class WorkPlanByTestController extends BaseWorkplanController {
 
         if (!(GenericValidator.isBlankOrNull(testType) || testType.equals("0"))) {
 
-            testList = analysisService.getAllAnalysisByTestAndStatus(testType, statusList).stream().filter(analysis -> !analysis.getSampleItem().isRejected())
-            .collect(Collectors.toList());
+            testList = analysisService.getAllAnalysisByTestAndStatus(testType, statusList);
 
             if (testList.isEmpty()) {
                 return new ArrayList<>();
@@ -209,8 +208,7 @@ public class WorkPlanByTestController extends BaseWorkplanController {
 
         if (!(GenericValidator.isBlankOrNull(testType) || testType.equals("0"))) {
 
-            testList = analysisService.getAllAnalysisByTestsAndStatus(nfsTestIdList, statusList).stream().filter(analysis -> !analysis.getSampleItem().isRejected())
-            .collect(Collectors.toList());
+            testList = analysisService.getAllAnalysisByTestsAndStatus(nfsTestIdList, statusList);
 
             if (testList.isEmpty()) {
                 return new ArrayList<>();

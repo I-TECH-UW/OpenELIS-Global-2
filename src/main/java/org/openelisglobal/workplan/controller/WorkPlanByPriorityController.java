@@ -122,8 +122,7 @@ public class WorkPlanByPriorityController extends BaseWorkplanController {
         int sampleGroupingNumber = 0;
 
         if (priority != null) {
-            List<Analysis> analysisList = analysisService.getAnalysesByPriorityAndStatusId(priority, statusList).stream().filter(analysis -> !analysis.getSampleItem().isRejected())
-            .collect(Collectors.toList());
+            List<Analysis> analysisList = analysisService.getAnalysesByPriorityAndStatusId(priority, statusList);
             for (Analysis analysis : analysisList) {
                 TestResultItem testResultItem = new TestResultItem();
                 testResultItem.setTestId(analysis.getTest().getId());

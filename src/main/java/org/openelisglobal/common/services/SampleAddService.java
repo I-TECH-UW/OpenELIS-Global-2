@@ -143,7 +143,12 @@ public class SampleAddService {
                 item.setSample(sample);
                 item.setTypeOfSample(typeOfSampleService.getTypeOfSampleById(sampleItem.attributeValue("sampleID")));
                 item.setSortOrder(Integer.toString(sampleItemIdIndex));
-                item.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(SampleStatus.Entered));
+                if (rejected) {
+                    item.setStatusId(
+                            SpringContext.getBean(IStatusService.class).getStatusID(SampleStatus.SampleRejected));
+                } else {
+                    item.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(SampleStatus.Entered));
+                }
                 item.setCollector(sampleItem.attributeValue("collector"));
                 item.setRejected(rejected);
                 item.setRejectReasonId(rejectReasonId);

@@ -117,8 +117,7 @@ public class WorkplanByPanelController extends BaseWorkplanController {
 
             for (PanelItem panelItem : panelItems) {
                 List<Analysis> analysisList = analysisService.getAllAnalysisByTestAndStatus(panelItem.getTest().getId(),
-                        statusList).stream().filter(analysis -> !analysis.getSampleItem().isRejected())
-                        .collect(Collectors.toList());
+                        statusList);
 
                 for (Analysis analysis : analysisList) {
                     TestResultItem testResultItem = new TestResultItem();
