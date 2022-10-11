@@ -19,16 +19,28 @@ public class CSVSampleRejectionColumnBuilder extends CSVColumnBuilder {
     @Override
     public void makeSQL() {
         query = new StringBuilder();
-        query.append("select s.accession_number ,s.received_date  from sample s where s.id in (select si.samp_id from sample_item si where si.rejected = true)");
         Date lowDate = dateRange.getLowDate();
         Date highDate = dateRange.getHighDate();
-        
+        query.append(
+                "SELECT s.accession_number AS lab_no ,s.received_date AS request_date , o.name as site_name, ts.description AS sample_type , t.name AS test_name , d.dict_entry AS rejection_reason ,si.lastupdated AS rejection_date "
+                        +
+                        "FROM sample s INNER JOIN sample_item si ON s.id = si.samp_id INNER JOIN type_of_sample ts ON si.typeosamp_id = ts.id INNER JOIN analysis a ON si.id = a.sampitem_id INNER JOIN test t ON a.test_id = t.id "
+                        +
+                        " LEFT JOIN dictionary d ON si.reject_reason_id = d.id  INNER JOIN sample_requester sr ON s.id = sr.sample_id  INNER JOIN organization o ON sr.requester_id = o.id  WHERE si.rejected = true AND sr.requester_type_id = (SELECT rt.id FROM requester_type rt WHERE rt.requester_type = 'organization') "
+                        +
+                        " AND s.entered_date BETWEEN '" + lowDate + "' AND '" + highDate + "'");
+
     }
 
 
     protected void defineAllReportColumns() {
-        add("accession_number", "Lab_No.",NONE );
-        add("received_date", "STARTED_DATE", DATE_TIME);
+        add("lab_no", "Lab No ",NONE );
+        add("request_date", "Request Date", DATE_TIME);
+        add("site_name", "Site Name", NONE);
+        add("sample_type", "Sample",NONE );
+        add("test_name", "Test", NONE);
+        add("rejection_reason", "Rejection Reason", NONE);
+        add("rejection_date", "Rejection Date", DATE_TIME);
     }
     
 }

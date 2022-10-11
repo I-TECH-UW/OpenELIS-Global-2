@@ -45,6 +45,7 @@ public class CSVSampleRejectionReport extends CSVSampleExportReport implements I
         dateRange = new DateRange(lowDateStr, highDateStr);
 
         createReportParameters();
+        errorFound = !validateSubmitParameters();
         if (errorFound) {
             return;
         }
@@ -63,5 +64,9 @@ public class CSVSampleRejectionReport extends CSVSampleExportReport implements I
             Log.error("Error in " + this.getClass().getSimpleName() + ".createReportItems: ", e);
             add1LineErrorMessage("report.error.message.general.error");
         }
+    }
+
+    private boolean validateSubmitParameters() {
+        return dateRange.validateHighLowDate("report.error.message.date.received.missing");
     }
 }
