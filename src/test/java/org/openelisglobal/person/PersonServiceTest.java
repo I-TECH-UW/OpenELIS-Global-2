@@ -28,8 +28,8 @@ public class PersonServiceTest {
     }
 
     @Test
-    public void getAllPerson_shouldGetAllPatients() throws Exception {
-        Assert.assertEquals(0, personService.getAllPersons().size());
+    public void getAllPerson_shouldGetAllPerson() throws Exception {
+        Assert.assertEquals(1, personService.getAllPersons().size());
     }
 
     @Test
