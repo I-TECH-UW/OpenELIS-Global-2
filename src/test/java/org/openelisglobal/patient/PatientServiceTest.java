@@ -39,7 +39,7 @@ public class PatientServiceTest {
 
 	@Test
 	public void getAllPatients_shouldGetAllPatients() throws Exception {
-		Assert.assertEquals(1, patientService.getAllPatients().size());
+		Assert.assertEquals(0, patientService.getAllPatients().size());
 	}
 
 	@Test
