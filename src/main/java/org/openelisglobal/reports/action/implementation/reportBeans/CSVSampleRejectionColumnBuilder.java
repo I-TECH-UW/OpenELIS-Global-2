@@ -28,7 +28,7 @@ public class CSVSampleRejectionColumnBuilder extends CSVColumnBuilder {
                         +
                         " LEFT JOIN dictionary d ON si.reject_reason_id = d.id  INNER JOIN sample_requester sr ON s.id = sr.sample_id  INNER JOIN organization o ON sr.requester_id = o.id  WHERE si.rejected = true AND sr.requester_type_id = (SELECT rt.id FROM requester_type rt WHERE rt.requester_type = 'organization') "
                         +
-                        " AND s.entered_date BETWEEN '" + lowDate + "' AND '" + highDate + "'");
+                        " AND s.entered_date BETWEEN '" + lowDate + "' AND '" + highDate + "' ORDER BY s.accession_number");
 
     }
 
