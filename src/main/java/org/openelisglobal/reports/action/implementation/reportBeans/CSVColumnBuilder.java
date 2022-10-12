@@ -244,7 +244,7 @@ abstract public class CSVColumnBuilder {
 //		PreparedStatement stmt = session.connection().prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE,
 //				ResultSet.CONCUR_READ_ONLY);
 //		resultSet = stmt.executeQuery();
-        Session session = SpringContext.getBean(SessionFactory.class).getCurrentSession();
+        Session session = SpringContext.getBean(SessionFactory.class).openSession();
         resultSet = session.doReturningWork(new ReturningWork<ResultSet>() {
 
             @Override

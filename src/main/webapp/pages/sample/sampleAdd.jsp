@@ -115,14 +115,14 @@ function addTypeToTable(table, sampleDescription, sampleType, currentTime, curre
 		var type = newRow.insertCell(++cellCount);
 
 		if( useInitialSampleCondition ){
-			var newMulti = $("prototypeID").parentNode.cloneNode(true);
-			var selection = newMulti.getElementsByTagName("select")[0];
-			selection.id = "initialCondition_" + rowLabel;
+			// var newMulti = $("prototypeID").parentNode.cloneNode(true);
+			// var selection = newMulti.getElementsByTagName("select")[0];
+			// selection.id = "initialCondition_" + rowLabel;
 
-			var initialConditionCell = newRow.insertCell(++cellCount);
-			initialConditionCell.innerHTML = newMulti.innerHTML.replace("initialSampleConditionList", "formBreaker");
+			// var initialConditionCell = newRow.insertCell(++cellCount);
+			// initialConditionCell.innerHTML = newMulti.innerHTML.replace("initialSampleConditionList", "formBreaker");
 
-			jQuery("#initialCondition_" + rowLabel).asmSelect({	removeLabel: "x"});
+			// jQuery("#initialCondition_" + rowLabel).asmSelect({	removeLabel: "x"});
 		}
 		
 		if( useSampleNature ){
@@ -217,9 +217,20 @@ function getRemoveButtonHtml( row ){
 }
 
 function getRejectCheckBoxHtml(row ){
-	return "<input name='reject' class='rejected' id='reject_" + row  + "' type='checkbox' >" ;
+	return "<input name='reject' class='rejected' id='reject_" + row  + "' type='checkbox' onclick='activateRejectReason(" + row +");'>" ;
 }
 
+function activateRejectReason(row){
+  if(jQuery("#reject_" + row).prop("checked")){
+	if (confirm("<%= MessageUtil.getMessage("sample.entry.reject.warning")%>")){
+		jQuery("#rejectedReasonId_" + row).prop("disabled" , !jQuery("#reject_" + row).prop("checked"));
+	}else{
+		jQuery("#reject_" + row).prop("checked" , !jQuery("#reject_" + row).prop("checked"));
+	}
+  }else{
+     jQuery("#rejectedReasonId_" + row).prop("disabled" , !jQuery("#reject_" + row).prop("checked"));
+  }	
+}
 function getCurrentTime(){
 	var date = new Date();
 
@@ -305,17 +316,17 @@ function convertSampleToXml( id ){
 			  "' rejectReasonId='" + jQuery("#rejectedReasonId" + id).val() + "'" ;
 
 	if( useInitialSampleCondition ){
-		var initialConditions = $("initialCondition" + id);
-		var optionLength = initialConditions.options.length;
-		xml += " initialConditionIds=' ";
-		for( var i = 0; i < optionLength; ++i ){
-			if( initialConditions.options[i].selected ){
-				xml += initialConditions.options[i].value + ",";
-			}
-		}
+		//var initialConditions = $("initialCondition" + id);
+		//var optionLength = initialConditions.options.length;
+		xml += " initialConditionIds='' ";
+		// for( var i = 0; i < optionLength; ++i ){
+		// 	if( initialConditions.options[i].selected ){
+		// 		xml += initialConditions.options[i].value + ",";
+		// 	}
+		// }
 
-		xml =  xml.substring(0,xml.length - 1);
-		xml += "'";
+		// xml =  xml.substring(0,xml.length - 1);
+		//xml += "'";
 	}
 	if( useSampleNature ){
 		var sampleNature = $("sampleNature" + id);
@@ -1059,7 +1070,9 @@ function sampleTypeQualifierChanged(element){
 			 multiple="false"
              title='<spring:message/>'
 			 style="width:100%"
+			 disabled="true"
 			 id= 'rejectPrototypeID'>
+			 <option value=''></option>
 			<c:forEach var="optionValue" items="${form.rejectReasonList}">
 						<option value='${optionValue.id}' >
 							${optionValue.value}
@@ -1105,9 +1118,9 @@ function sampleTypeQualifierChanged(element){
 					<spring:message code="sample.entry.sample.type"/>
 				</th>
 				<% if(useInitialSampleCondition){ %>
-				<th style="width:15%">
+				<%-- <th style="width:15%">
 					<spring:message code="sample.entry.sample.condition"/>
-				</th>
+				</th> --%>
 				<% } %>
 				<% if(useSampleNature){ %>
 				<th style="width:15%">
@@ -1131,10 +1144,10 @@ function sampleTypeQualifierChanged(element){
 					<span class='requiredlabel'>*</span>&nbsp;<spring:message code="sample.entry.sample.tests"/>
 				</th>
 				<th style="width:5%">
-				  Reject
+				  <spring:message code="result.rejected"/>
 				</th>
 				<th style="width:10%">
-				   Reject Reason
+				    <spring:message code="note.type.rejectReason"/>
 				</th>
 				<th style="width:10%"></th>
 			</tr>

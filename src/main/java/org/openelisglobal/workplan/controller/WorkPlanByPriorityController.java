@@ -121,40 +121,34 @@ public class WorkPlanByPriorityController extends BaseWorkplanController {
         int sampleGroupingNumber = 0;
 
         if (priority != null) {
-            List<Sample> samples = sampleService.getSamplesByPriority(priority);
-            for (Sample s : samples) {
-                List<Analysis> analysisList = sampleService.getAnalysis(s);
-                if (analysisList.isEmpty()) {
-                    return new ArrayList<>();
+            List<Analysis> analysisList = analysisService.getAnalysesByPriorityAndStatusId(priority, statusList);
+            for (Analysis analysis : analysisList) {
+                TestResultItem testResultItem = new TestResultItem();
+                testResultItem.setTestId(analysis.getTest().getId());
+                Sample sample = analysis.getSampleItem().getSample();
+                testResultItem.setAccessionNumber(sample.getAccessionNumber());
+                testResultItem.setReceivedDate(getReceivedDateDisplay(sample));
+                testResultItem.setTestName(TestServiceImpl.getUserLocalizedTestName(analysis.getTest()));
+                boolean nonConforming = QAService.isAnalysisParentNonConforming(analysis);
+                if (FormFields.getInstance().useField(Field.QaEventsBySection)) {
+                    nonConforming = nonConforming || getQaEventByTestSection(analysis);
                 }
-                for (Analysis analysis : analysisList) {
-                    TestResultItem testResultItem = new TestResultItem();
-                    testResultItem.setTestId(analysis.getTest().getId());
-                    Sample sample = analysis.getSampleItem().getSample();
-                    testResultItem.setAccessionNumber(sample.getAccessionNumber());
-                    testResultItem.setReceivedDate(getReceivedDateDisplay(sample));
-                    testResultItem.setTestName(TestServiceImpl.getUserLocalizedTestName(analysis.getTest()));
-                    boolean nonConforming = QAService.isAnalysisParentNonConforming(analysis);
-                    if (FormFields.getInstance().useField(Field.QaEventsBySection)) {
-                        nonConforming = nonConforming || getQaEventByTestSection(analysis);
-                    }
-                    testResultItem.setNonconforming(nonConforming);
+                testResultItem.setNonconforming(nonConforming);
 
-                    if (!testResultItem.getAccessionNumber().equals(currentAccessionNumber)) {
-                        sampleGroupingNumber++;
-                        currentAccessionNumber = testResultItem.getAccessionNumber();
-                        subjectNumber = getSubjectNumber(analysis);
-                        patientName = getPatientName(analysis);
-                        nextVisit = SpringContext.getBean(ObservationHistoryService.class)
-                                .getValueForSample(ObservationType.NEXT_VISIT_DATE, sample.getId());
-                    }
-                    testResultItem.setSampleGroupingNumber(sampleGroupingNumber);
-                    testResultItem.setPatientInfo(subjectNumber);
-                    testResultItem.setPatientName(patientName);
-                    testResultItem.setNextVisitDate(nextVisit);
-
-                    workplanTestList.add(testResultItem);
+                if (!testResultItem.getAccessionNumber().equals(currentAccessionNumber)) {
+                    sampleGroupingNumber++;
+                    currentAccessionNumber = testResultItem.getAccessionNumber();
+                    subjectNumber = getSubjectNumber(analysis);
+                    patientName = getPatientName(analysis);
+                    nextVisit = SpringContext.getBean(ObservationHistoryService.class)
+                            .getValueForSample(ObservationType.NEXT_VISIT_DATE, sample.getId());
                 }
+                testResultItem.setSampleGroupingNumber(sampleGroupingNumber);
+                testResultItem.setPatientInfo(subjectNumber);
+                testResultItem.setPatientName(patientName);
+                testResultItem.setNextVisitDate(nextVisit);
+
+                workplanTestList.add(testResultItem);
             }
         }
         return workplanTestList;

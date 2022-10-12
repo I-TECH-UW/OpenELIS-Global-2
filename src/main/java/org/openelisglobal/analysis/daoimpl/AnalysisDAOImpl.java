@@ -42,6 +42,7 @@ import org.openelisglobal.common.paging.PagingProperties;
 import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.result.valueholder.Result;
+import org.openelisglobal.sample.valueholder.OrderPriority;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.sampleitem.valueholder.SampleItem;
 import org.openelisglobal.spring.util.SpringContext;
@@ -625,6 +626,26 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
         return null;
 
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Analysis> getAnalysesByPriorityAndStatusId(OrderPriority priority, List<Integer> statusIds)
+            throws LIMSRuntimeException {
+        String sql = "from Analysis a where a.sampleItem.sample.priority = :oderpriority and a.statusId in ( :statusIds)";
+
+        try {
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setParameter("oderpriority", priority.name());
+            query.setParameterList("statusIds", statusIds);
+            List<Analysis> analysisList = query.list();
+            // closeSession(); // CSL remove old
+            return analysisList;
+        } catch (HibernateException e) {
+            handleException(e, "getAnalysesBySampleIdAndStatusId");
+        }
+
+        return null;
     }
 
     /**
