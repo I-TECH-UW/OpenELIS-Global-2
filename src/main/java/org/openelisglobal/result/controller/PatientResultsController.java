@@ -85,8 +85,10 @@ public class PatientResultsController extends BaseController {
                 if (statusRules.equals(STATUS_RULES_RETROCI)) {
                     resultsUtility.addExcludedAnalysisStatus(AnalysisStatus.TechnicalRejected);
                     resultsUtility.addExcludedAnalysisStatus(AnalysisStatus.Canceled);
+                    resultsUtility.addExcludedAnalysisStatus(AnalysisStatus.SampleRejected);
                 } else if (statusRules.equals(STATUS_RULES_HAITI) || statusRules.equals(STATUS_RULES_HAITI_LNSP)) {
                     resultsUtility.addExcludedAnalysisStatus(AnalysisStatus.Canceled);
+                    resultsUtility.addExcludedAnalysisStatus(AnalysisStatus.SampleRejected);
                 }
 
                 List<TestResultItem> results = resultsUtility.getGroupedTestsForPatient(patient);
