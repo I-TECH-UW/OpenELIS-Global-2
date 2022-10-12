@@ -70,6 +70,7 @@ public class StatusResultsController extends BaseController {
         // gets more complicate use the status sets
         excludedStatusIds = new HashSet<>();
         excludedStatusIds.add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Canceled)));
+        excludedStatusIds.add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.SampleRejected)));
     }
 
     @InitBinder

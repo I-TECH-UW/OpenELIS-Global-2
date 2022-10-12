@@ -89,6 +89,7 @@ public class AccessionResultsController extends BaseController {
                 resultsUtility.setSysUser(getSysUserId(request));
                 // This is for Haiti_LNSP if it gets more complicated use the status set stuff
                 resultsUtility.addExcludedAnalysisStatus(AnalysisStatus.Canceled);
+                resultsUtility.addExcludedAnalysisStatus(AnalysisStatus.SampleRejected);
                 // resultsUtility.addExcludedAnalysisStatus(AnalysisStatus.Finalized);
                 resultsUtility.setLockCurrentResults(modifyResultsRoleBased() && userNotInRole(request));
                 validateAll(request, errors, form, accessionNumber);
