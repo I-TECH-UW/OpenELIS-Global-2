@@ -70,4 +70,15 @@
 			<column name="is_active" value="true"/>
 		</insert>
 	</changeSet>
+	<changeSet author="moses_mutesa" id="4">
+		<preConditions onFail="MARK_RAN">
+			<tableExists tableName="dictionary" schemaName="clinlims" />
+			<sqlCheck  expectedResult="1">SELECT count(*) FROM clinlims.dictionary WHERE dict_entry='Please submit another sample. Need to re-test .' AND dictionary_category_id = (SELECT dc.id FROM dictionary_category dc WHERE dc.name = 'resultRejectionReasons')</sqlCheck> 
+		</preConditions>
+		<comment>Remove 'Please submit another sample. Need to re-test .' From the rejection Reasons</comment>
+		<update tableName="dictionary" schemaName="clinlims" >
+			<column name="dictionary_category_id" value="null"/>
+			<where>dict_entry='Please submit another sample. Need to re-test .'</where>
+		</update>
+	</changeSet>
 </databaseChangeLog>

@@ -115,14 +115,14 @@ function addTypeToTable(table, sampleDescription, sampleType, currentTime, curre
 		var type = newRow.insertCell(++cellCount);
 
 		if( useInitialSampleCondition ){
-			var newMulti = $("prototypeID").parentNode.cloneNode(true);
-			var selection = newMulti.getElementsByTagName("select")[0];
-			selection.id = "initialCondition_" + rowLabel;
+			// var newMulti = $("prototypeID").parentNode.cloneNode(true);
+			// var selection = newMulti.getElementsByTagName("select")[0];
+			// selection.id = "initialCondition_" + rowLabel;
 
-			var initialConditionCell = newRow.insertCell(++cellCount);
-			initialConditionCell.innerHTML = newMulti.innerHTML.replace("initialSampleConditionList", "formBreaker");
+			// var initialConditionCell = newRow.insertCell(++cellCount);
+			// initialConditionCell.innerHTML = newMulti.innerHTML.replace("initialSampleConditionList", "formBreaker");
 
-			jQuery("#initialCondition_" + rowLabel).asmSelect({	removeLabel: "x"});
+			// jQuery("#initialCondition_" + rowLabel).asmSelect({	removeLabel: "x"});
 		}
 		
 		if( useSampleNature ){
@@ -316,17 +316,17 @@ function convertSampleToXml( id ){
 			  "' rejectReasonId='" + jQuery("#rejectedReasonId" + id).val() + "'" ;
 
 	if( useInitialSampleCondition ){
-		var initialConditions = $("initialCondition" + id);
-		var optionLength = initialConditions.options.length;
-		xml += " initialConditionIds=' ";
-		for( var i = 0; i < optionLength; ++i ){
-			if( initialConditions.options[i].selected ){
-				xml += initialConditions.options[i].value + ",";
-			}
-		}
+		//var initialConditions = $("initialCondition" + id);
+		//var optionLength = initialConditions.options.length;
+		xml += " initialConditionIds='' ";
+		// for( var i = 0; i < optionLength; ++i ){
+		// 	if( initialConditions.options[i].selected ){
+		// 		xml += initialConditions.options[i].value + ",";
+		// 	}
+		// }
 
-		xml =  xml.substring(0,xml.length - 1);
-		xml += "'";
+		// xml =  xml.substring(0,xml.length - 1);
+		//xml += "'";
 	}
 	if( useSampleNature ){
 		var sampleNature = $("sampleNature" + id);
@@ -1118,9 +1118,9 @@ function sampleTypeQualifierChanged(element){
 					<spring:message code="sample.entry.sample.type"/>
 				</th>
 				<% if(useInitialSampleCondition){ %>
-				<th style="width:15%">
+				<%-- <th style="width:15%">
 					<spring:message code="sample.entry.sample.condition"/>
-				</th>
+				</th> --%>
 				<% } %>
 				<% if(useSampleNature){ %>
 				<th style="width:15%">
