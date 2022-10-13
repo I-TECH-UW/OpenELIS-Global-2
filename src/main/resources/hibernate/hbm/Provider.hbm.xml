@@ -17,7 +17,7 @@
 			type="timestamp" access="field" />
 
 		<many-to-one name="person"
-			class="org.openelisglobal.person.valueholder.Person" fetch="select">
+			class="org.openelisglobal.person.valueholder.Person" fetch="select" lazy="false">
 			<column name="PERSON_ID" precision="10" scale="0" />
 		</many-to-one>
 		<property name="npi" type="java.lang.String">
@@ -33,5 +33,7 @@
 		</property>
 		<property name="fhirUuid"
 			column="fhir_uuid" type="java.util.UUID" />
+		<property name="active" column="active"
+			type="java.lang.Boolean" />
 	</class>
 </hibernate-mapping>

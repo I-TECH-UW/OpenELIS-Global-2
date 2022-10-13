@@ -110,6 +110,7 @@ public class ElectronicOrdersController extends BaseController {
             displayItem.setStatus(statusOfSampleService.get(electronicOrder.getStatusId()).getDefaultLocalizedName());
             displayItem.setElectronicOrderId(electronicOrder.getId());
             displayItem.setExternalOrderId(electronicOrder.getExternalId());
+            displayItem.setPriority(electronicOrder.getPriority());
 
             Patient patient = electronicOrder.getPatient();
             if (patient != null) {

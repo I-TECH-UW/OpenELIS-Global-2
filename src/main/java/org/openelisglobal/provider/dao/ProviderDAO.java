@@ -51,4 +51,8 @@ public interface ProviderDAO extends BaseDAO<Provider, String> {
      */
     Provider getProviderByPerson(Person person) throws LIMSRuntimeException;
 
+    int getTotalSearchedProviderCount(String parameter);
+
+    List<Provider> getPagesOfSearchedProviders(int startingRecNo, String parameter);
+
 }

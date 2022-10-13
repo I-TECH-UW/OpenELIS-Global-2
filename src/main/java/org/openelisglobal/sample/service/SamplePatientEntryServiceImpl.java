@@ -14,13 +14,19 @@ import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.formfields.FormFields.Field;
+import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.SampleAddService.SampleTestCollection;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.TableIdService;
+import org.openelisglobal.common.services.DisplayListService.ListType;
 import org.openelisglobal.common.util.DateUtil;
+import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.dataexchange.service.order.ElectronicOrderService;
+import org.openelisglobal.note.service.NoteService;
+import org.openelisglobal.note.service.NoteServiceImpl.NoteType;
+import org.openelisglobal.note.valueholder.Note;
 import org.openelisglobal.notification.service.AnalysisNotificationConfigService;
 import org.openelisglobal.notification.service.TestNotificationConfigService;
 import org.openelisglobal.notification.valueholder.AnalysisNotificationConfig;
@@ -33,6 +39,7 @@ import org.openelisglobal.observationhistory.service.ObservationHistoryService;
 import org.openelisglobal.observationhistory.valueholder.ObservationHistory;
 import org.openelisglobal.organization.service.OrganizationService;
 import org.openelisglobal.organization.valueholder.Organization;
+import org.openelisglobal.organization.valueholder.OrganizationType;
 import org.openelisglobal.panel.valueholder.Panel;
 import org.openelisglobal.patient.action.bean.PatientManagementInfo;
 import org.openelisglobal.person.service.PersonService;
@@ -44,6 +51,7 @@ import org.openelisglobal.sample.form.SamplePatientEntryForm;
 import org.openelisglobal.sample.valueholder.SampleAdditionalField;
 import org.openelisglobal.samplehuman.service.SampleHumanService;
 import org.openelisglobal.sampleitem.service.SampleItemService;
+import org.openelisglobal.sampleitem.valueholder.SampleItem;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.test.service.TestSectionService;
 import org.openelisglobal.test.service.TestService;
@@ -57,6 +65,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class SamplePatientEntryServiceImpl implements SamplePatientEntryService {
 
     private static final String DEFAULT_ANALYSIS_TYPE = "MANUAL";
+    private final String SAMPLE_SUBJECT = "Sample Note"; 
+    //private String currentUserId; 
 
     @Autowired
     private OrganizationAddressService organizationAddressService;
@@ -76,6 +86,8 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
     private SampleHumanService sampleHumanService;
     @Autowired
     private SampleItemService sampleItemService;
+    @Autowired
+    private NoteService noteService;
     @Autowired
     private AnalysisService analysisService;
     @Autowired
@@ -173,10 +185,10 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
     private void persistProviderData(SamplePatientUpdateData updateData) {
         if (updateData.getProviderPerson() != null && updateData.getProvider() != null) {
 
-            personService.insert(updateData.getProviderPerson());
+            personService.save(updateData.getProviderPerson());
             updateData.getProvider().setPerson(updateData.getProviderPerson());
 
-            providerService.insert(updateData.getProvider());
+            providerService.save(updateData.getProvider());
         }
     }
 
@@ -185,6 +197,7 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
 
         updateData.getSample().setFhirUuid(UUID.randomUUID());
         sampleService.insertDataWithAccessionNumber(updateData.getSample());
+        updateData.getSample().setPriority(updateData.getPriority());
 
         for (SampleAdditionalField field : updateData.getSampleFields()) {
             field.setSample(updateData.getSample());
@@ -198,7 +211,22 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
             if (GenericValidator.isBlankOrNull(sampleTestCollection.item.getFhirUuidAsString())) {
                 sampleTestCollection.item.setFhirUuid(UUID.randomUUID());
             }
-            sampleItemService.insert(sampleTestCollection.item);
+            String sampleId = sampleItemService.insert(sampleTestCollection.item);
+            SampleItem savedItem = sampleItemService.get(sampleId);
+            if (savedItem.isRejected()) {
+                String rejectReasonId = savedItem.getRejectReasonId();
+                String currentUserId = savedItem.getSysUserId();
+                for (IdValuePair rejectReason : DisplayListService.getInstance()
+                        .getList(ListType.REJECTION_REASONS)) {
+                    if (rejectReasonId.equals(rejectReason.getId())) {
+                        Note note = noteService.createSavableNote(savedItem, NoteType.REJECTION_REASON,
+                                rejectReason.getValue(), SAMPLE_SUBJECT, currentUserId);
+                        noteService.insert(note);
+                        break;
+                    }
+
+                }
+            }
             sampleTestCollection.analysises = new ArrayList<>();
             for (Test test : sampleTestCollection.tests) {
                 test = testService.get(test.getId());
@@ -307,6 +335,18 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
         }
 
         if (updateData.getRequesterSiteDepartment() != null) {
+            Organization siteDepartment = organizationService
+                    .get(String.valueOf(updateData.getRequesterSiteDepartment().getRequesterId()));
+            boolean orgHasType = false;
+            for (OrganizationType orgType : siteDepartment.getOrganizationTypes()) {
+                if (orgType.getId().equals(TableIdService.getInstance().REFERRING_ORG_DEPARTMENT_TYPE_ID)) {
+                    orgHasType = true;
+                }
+            } 
+            if (!orgHasType) {
+                organizationService.linkOrganizationAndType(siteDepartment,
+                        TableIdService.getInstance().REFERRING_ORG_DEPARTMENT_TYPE_ID);
+            }
             updateData.getRequesterSiteDepartment().setSampleId(Long.parseLong(updateData.getSample().getId()));
 //            if (updateData.getNewOrganizationDepartment() != null) {
 //                updateData.getRequesterSite().setRequesterId(updateData.getNewOrganizationDepartment().getId());
@@ -366,7 +406,12 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
         analysis.setSysUserId(sampleTestCollection.item.getSysUserId());
         analysis.setRevision(analysisRevision);
         analysis.setStartedDate(collectionDateTime == null ? DateUtil.getNowAsSqlDate() : collectionDateTime);
-        analysis.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NotStarted));
+        if (sampleTestCollection.item.isRejected()) {
+            analysis.setStatusId(
+                    SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.SampleRejected));
+        } else {
+            analysis.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NotStarted));
+        }
         if (!org.apache.commons.validator.GenericValidator.isBlankOrNull(sampleTypeName)) {
             analysis.setSampleTypeName(sampleTypeName);
         }

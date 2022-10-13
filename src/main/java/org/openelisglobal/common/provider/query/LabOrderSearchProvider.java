@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -60,6 +61,8 @@ import org.openelisglobal.panelitem.service.PanelItemService;
 import org.openelisglobal.panelitem.valueholder.PanelItem;
 import org.openelisglobal.patient.service.PatientService;
 import org.openelisglobal.person.service.PersonService;
+import org.openelisglobal.provider.service.ProviderService;
+import org.openelisglobal.provider.valueholder.Provider;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.test.valueholder.Test;
@@ -87,6 +90,7 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
     private TestService testService = SpringContext.getBean(TestService.class);
     private PanelService panelService = SpringContext.getBean(PanelService.class);
     private PanelItemService panelItemService = SpringContext.getBean(PanelItemService.class);
+    private ProviderService providerService = SpringContext.getBean(ProviderService.class);
     private TypeOfSampleTestService typeOfSampleTestService = SpringContext.getBean(TypeOfSampleTestService.class);
     private ElectronicOrderService electronicOrderService = SpringContext.getBean(ElectronicOrderService.class);
     private TypeOfSampleService typeOfSampleService = SpringContext.getBean(TypeOfSampleService.class);
@@ -114,6 +118,8 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
     private static final String NOT_FOUND = "Not Found";
     private static final String CANCELED = "Canceled";
     private static final String REALIZED = "Realized";
+    private static final String PROVIDER_ID = "id";
+    private static final String PROVIDER_PERSON_ID = "personId";
     private static final String PROVIDER_FIRST_NAME = "firstName";
     private static final String PROVIDER_LAST_NAME = "lastName";
     private static final String PROVIDER_PHONE = "phone";
@@ -370,11 +376,19 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
                     requesterValuesMap.put(PROVIDER_PHONE, contact.getValue());
                 }
             }
+            Provider provider = providerService
+                    .getProviderByFhirId(UUID.fromString(requesterPerson.getIdElement().getIdPart()));
+            if (provider != null) {
+                requesterValuesMap.put(PROVIDER_ID, provider.getId());
+                requesterValuesMap.put(PROVIDER_PERSON_ID, provider.getPerson().getId());
+            }
             requesterValuesMap.put(PROVIDER_LAST_NAME, requesterPerson.getNameFirstRep().getFamily());
             requesterValuesMap.put(PROVIDER_FIRST_NAME, requesterPerson.getNameFirstRep().getGivenAsSingleString());
 
         }
         xml.append("<requester>");
+        XMLUtil.appendKeyValue(PROVIDER_ID, requesterValuesMap.get(PROVIDER_ID), xml);
+        XMLUtil.appendKeyValue(PROVIDER_PERSON_ID, requesterValuesMap.get(PROVIDER_PERSON_ID), xml);
         XMLUtil.appendKeyValue(PROVIDER_FIRST_NAME, requesterValuesMap.get(PROVIDER_FIRST_NAME), xml);
         XMLUtil.appendKeyValue(PROVIDER_LAST_NAME, requesterValuesMap.get(PROVIDER_LAST_NAME), xml);
         XMLUtil.appendKeyValue(PROVIDER_PHONE, requesterValuesMap.get(PROVIDER_PHONE), xml);

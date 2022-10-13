@@ -59,6 +59,9 @@ public class AccessionResultsForm extends BaseForm implements PatientInfoForm, R
 
     private List<IdValuePair> referralOrganizations;
 
+     // for display
+     private List<IdValuePair> methods;
+
     public AccessionResultsForm() {
         setFormName("AccessionResultsForm");
     }
@@ -277,6 +280,14 @@ public class AccessionResultsForm extends BaseForm implements PatientInfoForm, R
 
     public boolean getSearchByRange() {
         return false;
+    }
+
+    public List<IdValuePair> getMethods() {
+        return methods;
+    }
+
+    public void setMethods(List<IdValuePair> methods) {
+        this.methods = methods;
     }
 
 }

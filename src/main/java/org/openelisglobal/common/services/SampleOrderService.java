@@ -32,6 +32,8 @@ import org.openelisglobal.organization.service.OrganizationService;
 import org.openelisglobal.organization.valueholder.Organization;
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.person.valueholder.Person;
+import org.openelisglobal.provider.service.ProviderService;
+import org.openelisglobal.provider.valueholder.Provider;
 import org.openelisglobal.requester.valueholder.SampleRequester;
 import org.openelisglobal.sample.bean.SampleOrderItem;
 import org.openelisglobal.sample.service.SampleService;
@@ -87,6 +89,12 @@ public class SampleOrderService {
         orderItems.setRequestDate(dateAsText);
         orderItems.setReceivedTime(DateUtil.convertTimestampToStringHourTime(DateUtil.getNowAsTimestamp()));
 
+        orderItems.setProvidersList(
+                DisplayListService.getInstance().getFreshList(DisplayListService.ListType.PRACTITIONER_PERSONS));
+
+        orderItems.setPriorityList(
+            DisplayListService.getInstance().getFreshList(DisplayListService.ListType.ORDER_PRIORITY));    
+
         if (needRequesterList) {
             orderItems.setReferringSiteList(DisplayListService.getInstance()
                     .getFreshList(DisplayListService.ListType.SAMPLE_PATIENT_REFERRING_CLINIC));
@@ -121,11 +129,12 @@ public class SampleOrderService {
         sampleOrder = getBaseSampleOrderItem();
 
         if (sample != null) {
-            SampleService sampleSampleService = SpringContext.getBean(SampleService.class);
+            SampleService sampleService = SpringContext.getBean(SampleService.class);
             sampleOrder.setSampleId(sample.getId());
-            sampleOrder.setLabNo(sampleSampleService.getAccessionNumber(sample));
-            sampleOrder.setReceivedDateForDisplay(sampleSampleService.getReceivedDateForDisplay(sample));
-            sampleOrder.setReceivedTime(sampleSampleService.getReceived24HourTimeForDisplay(sample));
+            sampleOrder.setLabNo(sampleService.getAccessionNumber(sample));
+            sampleOrder.setPriority(sample.getPriority());
+            sampleOrder.setReceivedDateForDisplay(sampleService.getReceivedDateForDisplay(sample));
+            sampleOrder.setReceivedTime(sampleService.getReceived24HourTimeForDisplay(sample));
 
             sampleOrder.setRequestDate(
                     observationHistoryService.getValueForSample(ObservationType.REQUEST_DATE, sample.getId()));
@@ -145,12 +154,21 @@ public class SampleOrderService {
                     observationHistoryService.getRawValueForSample(ObservationType.PROGRAM, sample.getId()));
 
             RequesterService requesterService = new RequesterService(sample.getId());
+            sampleOrder.setProviderPersonId(requesterService.getRequesterPersonId());
+            if (requesterService.getPerson() != null) {
+                Provider provider = SpringContext.getBean(ProviderService.class)
+                        .getProviderByPerson(requesterService.getPerson());
+                if (provider != null) {
+                    sampleOrder.setProviderId(provider.getId());
+                }
+            }
             sampleOrder.setProviderFirstName(requesterService.getRequesterFirstName());
             sampleOrder.setProviderLastName(requesterService.getRequesterLastName());
             sampleOrder.setProviderWorkPhone(requesterService.getWorkPhone());
             sampleOrder.setProviderFax(requesterService.getFax());
             sampleOrder.setProviderEmail(requesterService.getEmail());
             sampleOrder.setReferringSiteId(requesterService.getReferringSiteId());
+            sampleOrder.setReferringSiteDepartmentId(requesterService.getReferringDepartmentId());
             sampleOrder.setReferringSiteCode(requesterService.getReferringSiteCode());
             sampleOrder.setReferringSiteName(requesterService.getReferringSiteName());
 
@@ -223,7 +241,7 @@ public class SampleOrderService {
             List<SampleRequester> personSampleRequesters = requesterService
                     .getSampleRequestersByType(RequesterService.Requester.PERSON, true);
             SampleRequester samplePersonRequester = personSampleRequesters.size() > 0 ? personSampleRequesters.get(0)
-                            : null;
+                    : null;
             samplePersonRequester.setSysUserId(currentUserId);
             artifacts.setSamplePersonRequester(samplePersonRequester);
         }

@@ -183,6 +183,11 @@ public class AdminMenuItemServiceImpl implements AdminMenuItemService, Configura
         curItem.setPath("/TestNotificationConfigMenu");
         curItem.setMessageKey("testnotificationconfig.browse.title");
         adminMenuItems.add(curItem);
+
+        curItem = new AdminMenuItem();
+        curItem.setPath("/ProviderMenu");
+        curItem.setMessageKey("provider.browse.title");
+        adminMenuItems.add(curItem);
     }
 
     @Override

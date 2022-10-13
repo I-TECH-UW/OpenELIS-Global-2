@@ -37,6 +37,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.saml2.provider.service.authentication.DefaultSaml2AuthenticatedPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -167,6 +168,9 @@ public class UserModuleServiceImpl implements UserModuleService, IActionConstant
                 if (principal instanceof UserDetails) {
                     UserDetails user = (UserDetails) principal;
                     login = loginService.getUserProfile(user.getUsername());
+                } else if (principal instanceof DefaultSaml2AuthenticatedPrincipal) {
+                    DefaultSaml2AuthenticatedPrincipal samlUser = (DefaultSaml2AuthenticatedPrincipal) principal;
+                    login = loginService.getUserProfile(samlUser.getName());
                 }
             }
         } catch (LIMSRuntimeException e) {
@@ -254,7 +258,7 @@ public class UserModuleServiceImpl implements UserModuleService, IActionConstant
     public boolean isUserAdmin(HttpServletRequest request) throws LIMSRuntimeException {
         try {
             LoginUser login = getUserLogin(request);
-            if (login.getIsAdmin().equalsIgnoreCase(YES)) {
+            if (login != null && login.getIsAdmin().equalsIgnoreCase(YES)) {
                 return true;
             }
         } catch (LIMSRuntimeException e) {

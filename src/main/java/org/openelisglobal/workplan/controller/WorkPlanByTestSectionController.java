@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.formfields.FormFields.Field;
 import org.openelisglobal.common.services.DisplayListService;
@@ -47,7 +48,6 @@ import org.springframework.web.servlet.ModelAndView;
 public class WorkPlanByTestSectionController extends BaseWorkplanController {
 
     private static final String[] ALLOWED_FIELDS = new String[] { "testSectionId", "type" };
-    private static final String ROLE_RESULTS = "Results";
 
     @Autowired
     private AnalysisService analysisService;
@@ -81,7 +81,7 @@ public class WorkPlanByTestSectionController extends BaseWorkplanController {
         String workplan = form.getType();
 
         // load testSections for drop down
-        String resultsRoleId =  roleService.getRoleByName(ROLE_RESULTS).getId();
+        String resultsRoleId =  roleService.getRoleByName(Constants.ROLE_RESULTS).getId();
         List<IdValuePair> testSections = userService.getUserTestSections(getSysUserId(request) ,resultsRoleId);
         form.setTestSections(testSections);
         form.setTestSectionsByName(DisplayListService.getInstance().getList(ListType.TEST_SECTION_BY_NAME));
@@ -96,7 +96,7 @@ public class WorkPlanByTestSectionController extends BaseWorkplanController {
 
             // get tests based on test section
             workplanTests = getWorkplanByTestSection(testSectionId);
-            filteredTests = userService.filterResultsByLabUnitRoles(getSysUserId(request), workplanTests ,ROLE_RESULTS);
+            filteredTests = userService.filterResultsByLabUnitRoles(getSysUserId(request), workplanTests ,Constants.ROLE_RESULTS);
             form.setWorkplanTests(filteredTests);
             form.setSearchFinished(Boolean.TRUE);
             if (ts != null) {

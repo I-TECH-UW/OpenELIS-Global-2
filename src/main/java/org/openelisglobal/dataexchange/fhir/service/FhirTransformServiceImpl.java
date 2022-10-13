@@ -24,6 +24,7 @@ import org.hl7.fhir.r4.model.CodeableConcept;
 import org.hl7.fhir.r4.model.Coding;
 import org.hl7.fhir.r4.model.ContactPoint;
 import org.hl7.fhir.r4.model.ContactPoint.ContactPointSystem;
+import org.hl7.fhir.r4.model.ContactPoint.ContactPointUse;
 import org.hl7.fhir.r4.model.DateTimeType;
 import org.hl7.fhir.r4.model.DateType;
 import org.hl7.fhir.r4.model.DiagnosticReport;
@@ -421,9 +422,10 @@ public class FhirTransformServiceImpl implements FhirTransformService {
     private void updateReferringTaskWithTaskInfo(Task referringTask, Task task) {
         if (TaskStatus.COMPLETED.equals(task.getStatus())) {
             referringTask.setStatus(TaskStatus.COMPLETED);
-            referringTask.setOutput(task.getOutput());
+            task.getOutput().forEach(outPut -> {
+                referringTask.addOutput(outPut);
+            });
         }
-
     }
 
     private Optional<Task> getReferringTaskForSample(Sample sample) {
@@ -442,9 +444,13 @@ public class FhirTransformServiceImpl implements FhirTransformService {
     public Practitioner transformProviderToPractitioner(Provider provider) {
         Practitioner practitioner = new Practitioner();
         practitioner.setId(provider.getFhirUuidAsString());
+        practitioner.addIdentifier(
+                this.createIdentifier(fhirConfig.getOeFhirSystem() + "/provider_uuid", provider.getFhirUuidAsString()));
         practitioner.addName(new HumanName().setFamily(provider.getPerson().getLastName())
                 .addGiven(provider.getPerson().getFirstName()));
         practitioner.setTelecom(transformToTelecom(provider.getPerson()));
+        practitioner.setActive(provider.getActive());
+
         return practitioner;
     }
 
@@ -684,6 +690,8 @@ public class FhirTransformServiceImpl implements FhirTransformService {
             serviceRequest.setStatus(ServiceRequestStatus.COMPLETED);
         } else if (analysis.getStatusId().equals(statusService.getStatusID(AnalysisStatus.Canceled))) {
             serviceRequest.setStatus(ServiceRequestStatus.REVOKED);
+        } else if(analysis.getStatusId().equals(statusService.getStatusID(AnalysisStatus.SampleRejected))){
+            serviceRequest.setStatus(ServiceRequestStatus.ENTEREDINERROR);
         } else {
             serviceRequest.setStatus(ServiceRequestStatus.UNKNOWN);
         }
@@ -879,12 +887,21 @@ public class FhirTransformServiceImpl implements FhirTransformService {
             }
         }
 
+        Map<String ,Task> referingTaskMap = new HashMap<>();
         for (Sample sample : sampleUpdateList) {
             Task task = this.transformToTask(sample.getId());
             Optional<Task> referringTask = getReferringTaskForSample(sample);
             if (referringTask.isPresent()) {
-                updateReferringTaskWithTaskInfo(referringTask.get(), task);
-                this.addToOperations(fhirOperations, tempIdGenerator, referringTask.get());
+                if(referingTaskMap.containsKey(referringTask.get().getIdElement().getIdPart())){
+                    Task existingReferingTask = referingTaskMap.get(referringTask.get().getIdElement().getIdPart());
+                    updateReferringTaskWithTaskInfo(existingReferingTask, task);
+                    referingTaskMap.put(existingReferingTask.getIdElement().getIdPart(), existingReferingTask);
+                    this.addToOperations(fhirOperations, tempIdGenerator, existingReferingTask);
+                }else{
+                    updateReferringTaskWithTaskInfo(referringTask.get(), task);
+                    referingTaskMap.put(referringTask.get().getIdElement().getIdPart(), referringTask.get());
+                    this.addToOperations(fhirOperations, tempIdGenerator, referringTask.get());
+                } 
             }
             this.addToOperations(fhirOperations, tempIdGenerator, task);
         }
@@ -998,7 +1015,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
                                         : dictionary.getLocalizedDictionaryName().getEnglish())));
             } else if (TypeOfTestResultServiceImpl.ResultType.isNumeric(result.getResultType())) {
                 Quantity quantity = new Quantity();
-                quantity.setValue(new BigDecimal(result.getValue()));
+                quantity.setValue(new BigDecimal(result.getValue(true)));
                 quantity.setUnit(resultService.getUOM(result));
                 observation.setValue(quantity);
             } else if (TypeOfTestResultServiceImpl.ResultType.isTextOnlyVariant(result.getResultType())) {
@@ -1046,6 +1063,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         fhirOrganization
                 .setId(organization.getFhirUuid() == null ? organization.getId() : organization.getFhirUuidAsString());
         fhirOrganization.setName(organization.getOrganizationName());
+        fhirOrganization.setActive(organization.getIsActive() == IActionConstants.YES? true : false);
         this.setFhirOrganizationIdentifiers(fhirOrganization, organization);
         this.setFhirAddressInfo(fhirOrganization, organization);
         this.setFhirOrganizationTypes(fhirOrganization, organization);
@@ -1057,7 +1075,8 @@ public class FhirTransformServiceImpl implements FhirTransformService {
     public Organization transformToOrganization(org.hl7.fhir.r4.model.Organization fhirOrganization) {
         Organization organization = new Organization();
         organization.setOrganizationName(fhirOrganization.getName());
-        organization.setIsActive(IActionConstants.YES);
+		organization.setIsActive(Boolean.FALSE == fhirOrganization.getActiveElement().getValue() ? IActionConstants.NO
+				: IActionConstants.YES);
 
         setOeOrganizationIdentifiers(organization, fhirOrganization);
         setOeOrganizationAddressInfo(organization, fhirOrganization);
@@ -1222,6 +1241,53 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         public Practitioner collector;
         public Specimen specimen;
         public List<ServiceRequest> serviceRequests = new ArrayList<>();
+    }
+
+    public void addHumanNameToPerson(HumanName humanName, Person person) {
+        person.setFirstName(
+                humanName.getGivenAsSingleString() == null ? "" : humanName.getGivenAsSingleString().strip());
+        person.setLastName(humanName.getFamily() == null ? "" : humanName.getFamily().strip());
+    }
+
+    public void addTelecomToPerson(List<ContactPoint> telecoms, Person person) {
+        for (ContactPoint contact : telecoms) {
+            String contactValue = contact.getValue();
+            if (ContactPointSystem.EMAIL.equals(contact.getSystem())) {
+                person.setEmail(contactValue);
+            } else if (ContactPointSystem.FAX.equals(contact.getSystem())) {
+                person.setFax(contactValue);
+            } else if (ContactPointSystem.PHONE.equals(contact.getSystem())
+                    && ContactPointUse.MOBILE.equals(contact.getUse())) {
+                person.setCellPhone(contactValue);
+                person.setPrimaryPhone(contactValue);
+            } else if (ContactPointSystem.PHONE.equals(contact.getSystem())
+                    && ContactPointUse.HOME.equals(contact.getUse())) {
+                person.setHomePhone(contactValue);
+                if (GenericValidator.isBlankOrNull(person.getPrimaryPhone())) {
+                    person.setPrimaryPhone(contactValue);
+                }
+            } else if (ContactPointSystem.PHONE.equals(contact.getSystem())
+                    && ContactPointUse.WORK.equals(contact.getUse())) {
+                person.setWorkPhone(contactValue);
+                if (GenericValidator.isBlankOrNull(person.getPrimaryPhone())) {
+                    person.setPrimaryPhone(contactValue);
+                }
+            }
+        }
+    }
+
+    @Override
+    public Provider transformToProvider(Practitioner practitioner) {
+        Provider provider = new Provider();
+        provider.setActive(practitioner.getActive());
+        provider.setFhirUuid(UUID.fromString(practitioner.getIdElement().getIdPart()));
+
+        provider.setPerson(new Person());
+        addHumanNameToPerson(practitioner.getNameFirstRep(), provider.getPerson());
+        addTelecomToPerson(practitioner.getTelecom(), provider.getPerson());
+
+        return provider;
+
     }
 
 }

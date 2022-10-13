@@ -16,6 +16,7 @@
 */
 package org.openelisglobal.analyzerimport.action;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -23,15 +24,23 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.validator.GenericValidator;
+import org.openelisglobal.analyzer.service.BidirectionalAnalyzer;
 import org.openelisglobal.analyzerimport.analyzerreaders.AnalyzerReader;
 import org.openelisglobal.analyzerimport.analyzerreaders.AnalyzerReaderFactory;
+import org.openelisglobal.analyzerimport.util.AnalyzerTestNameCache;
 import org.openelisglobal.common.action.IActionConstants;
+import org.openelisglobal.common.services.PluginAnalyzerService;
+import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.login.service.LoginUserService;
 import org.openelisglobal.login.valueholder.UserSessionData;
+import org.openelisglobal.plugin.AnalyzerImporterPlugin;
 import org.openelisglobal.systemuser.service.SystemUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -42,6 +51,8 @@ public class AnalyzerImportController implements IActionConstants {
     protected LoginUserService loginService;
     @Autowired
     protected SystemUserService systemUserService;
+	@Autowired
+	private PluginAnalyzerService pluginAnalyzerService;
 
     @PostMapping("/importAnalyzer")
     protected void doPost(@RequestParam("file") MultipartFile file,
@@ -56,53 +67,44 @@ public class AnalyzerImportController implements IActionConstants {
         if (reader != null) {
             fileRead = reader.readStream(stream);
         }
+		if (fileRead) {
+			boolean successful = reader.insertAnalyzerData(getSysUserId(request));
 
-//        try {
-//            ServletFileUpload upload = new ServletFileUpload();
-//            upload.setFileSizeMax(FILE_SIZE_MAX);
-//            upload.setSizeMax(TOTAL_SIZE_MAX);
-//
-//            FileItemIterator iterator = upload.getItemIterator(request);
-//            while (iterator.hasNext()) {
-//                FileItemStream item = iterator.next();
-//                stream = item.openStream();
-//
-//                String name = null;
-//
-//                if (item.isFormField()) {
-//
-//                    if (PASSWORD_FIELD_NAME.equals(item.getFieldName())) {
-//                        password = fieldStreamToString(stream);
-//                    } else if (USER_FIELD_NAME.equals(item.getFieldName())) {
-//                        user = fieldStreamToString(stream);
-//                    }
-//
-//                } else {
-//
-//                    name = item.getName();
-//
-//                    reader = AnalyzerReaderFactory.getReaderFor(name);
-//
-//                    if (reader != null) {
-//                        fileRead = reader.readStream(new InputStreamReader(stream));
-//                    }
-//                }
-//
-//                stream.close();
-//            }
-//        } catch (FileUploadException e) {
-//            LogEvent.logError(e.getMessage(), e);
-//            throw new ServletException(e);
-//        } finally {
-//            if (stream != null) {
-//                try {
-//                    stream.close();
-//                } catch (IOException e) {
-//                    LogEvent.logError(e.getMessage(), e);
-//                }
-//            }
-//        }
-        if (fileRead) {
+			if (successful) {
+				response.getWriter().print("success");
+				response.setStatus(HttpServletResponse.SC_OK);
+				return;
+			} else {
+				if (reader != null) {
+					response.getWriter().print(reader.getError());
+				}
+				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			}
+
+		} else {
+			if (reader != null) {
+				response.getWriter().print(reader.getError());
+			}
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			return;
+		}
+
+	}
+
+	@PostMapping("/analyzer/astm")
+	public void doPost(@RequestBody String message, HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+
+		AnalyzerReader reader = null;
+		boolean read = false;
+		InputStream stream = new ByteArrayInputStream(message.getBytes());
+
+		reader = AnalyzerReaderFactory.getReaderFor("astm");
+
+		if (reader != null) {
+			read = reader.readStream(stream);
+		}
+        if (read) {
             boolean successful = reader.insertAnalyzerData(getSysUserId(request));
 
             if (successful) {
@@ -125,6 +127,29 @@ public class AnalyzerImportController implements IActionConstants {
         }
 
     }
+
+	@PostMapping("/analyzer/runAction")
+	public ResponseEntity<String> runAnalyzerAction(@RequestParam String analyzerType,
+			@RequestParam String actionName) {
+		AnalyzerImporterPlugin analyzerPlugin = pluginAnalyzerService.getPluginByAnalyzerId(
+				AnalyzerTestNameCache.getInstance().getAnalyzerIdForName(getAnalyzerNameFromType(analyzerType)));
+		if (analyzerPlugin instanceof BidirectionalAnalyzer) {
+			BidirectionalAnalyzer bidirectionalAnalyzer = (BidirectionalAnalyzer) analyzerPlugin;
+			boolean success = bidirectionalAnalyzer.runLISAction(actionName, null);
+			return success ? ResponseEntity.ok().build()
+					: ResponseEntity.internalServerError().body(MessageUtil.getMessage("analyzer.lisaction.failed"));
+		}
+		return ResponseEntity.badRequest().body(MessageUtil.getMessage("analyzer.lisaction.unsupported"));
+
+	}
+
+	protected String getAnalyzerNameFromType(String analyzerType) {
+		String analyzer = null;
+		if (!GenericValidator.isBlankOrNull(analyzerType)) {
+			analyzer = AnalyzerTestNameCache.getInstance().getDBNameForActionName(analyzerType);
+		}
+		return analyzer;
+	}
 
     private String getSysUserId(HttpServletRequest request) {
         UserSessionData usd = (UserSessionData) request.getAttribute(USER_SESSION_DATA);

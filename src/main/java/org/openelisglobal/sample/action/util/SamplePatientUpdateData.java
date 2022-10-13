@@ -45,13 +45,16 @@ import org.openelisglobal.observationhistory.valueholder.ObservationHistory.Valu
 import org.openelisglobal.organization.service.OrganizationService;
 import org.openelisglobal.organization.valueholder.Organization;
 import org.openelisglobal.patient.util.PatientUtil;
+import org.openelisglobal.person.service.PersonService;
 import org.openelisglobal.person.valueholder.Person;
+import org.openelisglobal.provider.service.ProviderService;
 import org.openelisglobal.provider.valueholder.Provider;
 import org.openelisglobal.requester.valueholder.SampleRequester;
 import org.openelisglobal.sample.bean.SampleOrderItem;
 import org.openelisglobal.sample.util.AccessionNumberUtil;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.sample.valueholder.SampleAdditionalField;
+import org.openelisglobal.sample.valueholder.OrderPriority;
 import org.openelisglobal.samplehuman.valueholder.SampleHuman;
 import org.openelisglobal.spring.util.SpringContext;
 import org.springframework.validation.Errors;
@@ -65,6 +68,7 @@ public class SamplePatientUpdateData {
     private String patientId;
     private String accessionNumber;
     private String referringId;
+    private OrderPriority priority;
 
     private Sample sample;
     private List<SampleAdditionalField> sampleFields = new ArrayList<>();
@@ -337,6 +341,11 @@ public class SamplePatientUpdateData {
         providerPerson = null;
         if (noRequesterInformation(sampleOrder)) {
             provider = PatientUtil.getUnownProvider();
+        } else if (!GenericValidator.isBlankOrNull(sampleOrder.getProviderPersonId())) {
+            provider = SpringContext.getBean(ProviderService.class).getProviderByPerson(
+                    SpringContext.getBean(PersonService.class).get(sampleOrder.getProviderPersonId()));
+            providerPerson = provider.getPerson();
+            providerPerson.setSysUserId(currentUserId);
         } else {
             providerPerson = new Person();
             provider = new Provider();
@@ -355,7 +364,8 @@ public class SamplePatientUpdateData {
     }
 
     private boolean noRequesterInformation(SampleOrderItem sampleOrder) {
-        return (GenericValidator.isBlankOrNull(sampleOrder.getProviderFirstName())
+        return (GenericValidator.isBlankOrNull(sampleOrder.getProviderPersonId())
+                && GenericValidator.isBlankOrNull(sampleOrder.getProviderFirstName())
                 && GenericValidator.isBlankOrNull(sampleOrder.getProviderWorkPhone())
                 && GenericValidator.isBlankOrNull(sampleOrder.getProviderLastName())
                 && GenericValidator.isBlankOrNull(sampleOrder.getRequesterSampleID())
@@ -419,7 +429,9 @@ public class SamplePatientUpdateData {
 
     private SampleRequester initSampleRequester(SampleOrderItem orderItem) {
         SampleRequester requester = null;
-
+        if(!GenericValidator.isBlankOrNull(orderItem.getReferringSiteName())){
+            orderItem.setNewRequesterName(orderItem.getReferringSiteName());
+        }
         String orgId = orderItem.getReferringSiteId();
 
         if (!GenericValidator.isBlankOrNull(orgId)) {
@@ -598,4 +610,11 @@ public class SamplePatientUpdateData {
         this.sampleFields.addAll(sampleFields);
     }
 
+    public OrderPriority getPriority() {
+        return priority;
+    }
+
+    public void setPriority(OrderPriority priority) {
+        this.priority = priority;
+    } 
 }

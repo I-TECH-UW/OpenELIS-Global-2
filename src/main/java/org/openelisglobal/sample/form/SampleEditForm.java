@@ -84,6 +84,9 @@ public class SampleEditForm extends BaseForm {
     // for display
     private List<IdValuePair> testSectionList;
 
+     // for display
+    private List<IdValuePair> rejectReasonList;
+
     @Valid
     private SampleOrderItem sampleOrderItems;
 
@@ -385,4 +388,11 @@ public class SampleEditForm extends BaseForm {
         this.providerSMSNotificationTestIds = providerSMSNotificationTestIds;
     }
 
+    public List<IdValuePair> getRejectReasonList() {
+        return rejectReasonList;
+    }
+
+    public void setRejectReasonList(List<IdValuePair> rejectReasonList) {
+        this.rejectReasonList = rejectReasonList;
+    }
 }

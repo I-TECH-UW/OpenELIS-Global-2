@@ -94,6 +94,10 @@ public class RequesterService {
         this.sampleId = sampleId;
     }
 
+    public String getRequesterPersonId() {
+        return getPerson() == null ? null : getPerson().getId();
+    }
+
     public String getRequesterFirstName() {
         return getPerson() == null ? null : personService.getFirstName(getPerson());
     }
@@ -132,6 +136,10 @@ public class RequesterService {
 
     public String getReferringSiteCode() {
         return getOrganization() == null ? null : getOrganization().getCode();
+    }
+
+    public String getReferringDepartmentId() {
+        return getOrganizationDepartment() == null ? null : getOrganizationDepartment().getId();
     }
 
     public Person getPerson() {

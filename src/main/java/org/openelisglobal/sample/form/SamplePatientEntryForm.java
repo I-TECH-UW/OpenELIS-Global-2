@@ -90,6 +90,9 @@ public class SamplePatientEntryForm extends BaseForm {
 
     private boolean useReferral;
 
+     // for display
+     private List<IdValuePair> rejectReasonList;
+
     public SamplePatientEntryForm() {
         setFormName("samplePatientEntryForm");
     }
@@ -278,4 +281,11 @@ public class SamplePatientEntryForm extends BaseForm {
         this.useReferral = useReferral;
     }
 
+    public List<IdValuePair> getRejectReasonList() {
+        return rejectReasonList;
+    }
+
+    public void setRejectReasonList(List<IdValuePair> rejectReasonList) {
+        this.rejectReasonList = rejectReasonList;
+    }
 }

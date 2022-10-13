@@ -115,14 +115,14 @@ function addTypeToTable(table, sampleDescription, sampleType, currentTime, curre
 		var type = newRow.insertCell(++cellCount);
 
 		if( useInitialSampleCondition ){
-			var newMulti = $("prototypeID").parentNode.cloneNode(true);
-			var selection = newMulti.getElementsByTagName("select")[0];
-			selection.id = "initialCondition_" + rowLabel;
+			// var newMulti = $("prototypeID").parentNode.cloneNode(true);
+			// var selection = newMulti.getElementsByTagName("select")[0];
+			// selection.id = "initialCondition_" + rowLabel;
 
-			var initialConditionCell = newRow.insertCell(++cellCount);
-			initialConditionCell.innerHTML = newMulti.innerHTML.replace("initialSampleConditionList", "formBreaker");
+			// var initialConditionCell = newRow.insertCell(++cellCount);
+			// initialConditionCell.innerHTML = newMulti.innerHTML.replace("initialSampleConditionList", "formBreaker");
 
-			jQuery("#initialCondition_" + rowLabel).asmSelect({	removeLabel: "x"});
+			// jQuery("#initialCondition_" + rowLabel).asmSelect({	removeLabel: "x"});
 		}
 		
 		if( useSampleNature ){
@@ -142,6 +142,8 @@ function addTypeToTable(table, sampleDescription, sampleType, currentTime, curre
 			var collector = newRow.insertCell(++cellCount);
 		}
 		var tests = newRow.insertCell(++cellCount);
+		var rejectCell = newRow.insertCell(++cellCount);
+		var rejectReasonCell = newRow.insertCell(++cellCount);
 		var remove = newRow.insertCell(++cellCount);
 
 		selectionBox.innerHTML = getCheckBoxHtml( rowLabel, true );
@@ -161,6 +163,13 @@ function addTypeToTable(table, sampleDescription, sampleType, currentTime, curre
 			collector.innerHTML = getCollectorHtml( rowLabel);
 		}
 		tests.innerHTML = getTestsHtml( rowLabel );
+
+		rejectCell.innerHTML =  getRejectCheckBoxHtml(rowLabel);
+
+		var newRejection = $("rejectPrototypeID").parentNode.cloneNode(true);
+		var rejectSelection = newRejection.getElementsByTagName("select")[0];
+		rejectSelection.id = "rejectedReasonId_" + rowLabel;
+		rejectReasonCell.innerHTML = newRejection.innerHTML.replace("rejectReasonList", "rejectionList");
 		remove.innerHTML = getRemoveButtonHtml( rowLabel );
 
 		
@@ -207,6 +216,21 @@ function getRemoveButtonHtml( row ){
 	return "<input name='remove' value='" + "<spring:message code="sample.entry.remove.sample"/>" + "' class='textButton' onclick='removeSample(this);testAndSetSave();' id='removeButton_" + row +"' type='button' >";
 }
 
+function getRejectCheckBoxHtml(row ){
+	return "<input name='reject' class='rejected' id='reject_" + row  + "' type='checkbox' onclick='activateRejectReason(" + row +");'>" ;
+}
+
+function activateRejectReason(row){
+  if(jQuery("#reject_" + row).prop("checked")){
+	if (confirm("<%= MessageUtil.getMessage("sample.entry.reject.warning")%>")){
+		jQuery("#rejectedReasonId_" + row).prop("disabled" , !jQuery("#reject_" + row).prop("checked"));
+	}else{
+		jQuery("#reject_" + row).prop("checked" , !jQuery("#reject_" + row).prop("checked"));
+	}
+  }else{
+     jQuery("#rejectedReasonId_" + row).prop("disabled" , !jQuery("#reject_" + row).prop("checked"));
+  }	
+}
 function getCurrentTime(){
 	var date = new Date();
 
@@ -275,7 +299,6 @@ function convertSamplesToXml(){
 	}
 
 	xml = xml + "</samples>";
-
 	return xml;
 }
 
@@ -288,20 +311,22 @@ function convertSampleToXml( id ){
 			  "' tests='" + jQuery("#testIds" + id).val() +
               "' testSectionMap='" + jQuery("#testSectionMap" + id).val() +
               "' testSampleTypeMap=\"" + jQuery("#testTypeMap" + id).val() +
-			  "\" panels='" + jQuery("#panelIds" + id).val() + "'";
+			  "\" panels='" + jQuery("#panelIds" + id).val() + 
+			  "' rejected='" + jQuery("#reject" + id).prop("checked") +
+			  "' rejectReasonId='" + jQuery("#rejectedReasonId" + id).val() + "'" ;
 
 	if( useInitialSampleCondition ){
-		var initialConditions = $("initialCondition" + id);
-		var optionLength = initialConditions.options.length;
-		xml += " initialConditionIds=' ";
-		for( var i = 0; i < optionLength; ++i ){
-			if( initialConditions.options[i].selected ){
-				xml += initialConditions.options[i].value + ",";
-			}
-		}
+		//var initialConditions = $("initialCondition" + id);
+		//var optionLength = initialConditions.options.length;
+		xml += " initialConditionIds='' ";
+		// for( var i = 0; i < optionLength; ++i ){
+		// 	if( initialConditions.options[i].selected ){
+		// 		xml += initialConditions.options[i].value + ",";
+		// 	}
+		// }
 
-		xml =  xml.substring(0,xml.length - 1);
-		xml += "'";
+		// xml =  xml.substring(0,xml.length - 1);
+		//xml += "'";
 	}
 	if( useSampleNature ){
 		var sampleNature = $("sampleNature" + id);
@@ -959,7 +984,10 @@ function /*boolean*/ sampleAddValid( sampleRequired ){
 }
 
 function samplesHaveBeenAdded(){
-	 return currentSampleDiv.getElementsByClassName("samplesAddedTable")[0].rows.length > 1;;
+	 if(!currentSampleDiv){
+		return false;
+	 }
+	 return currentSampleDiv.getElementsByClassName("samplesAddedTable")[0].rows.length > 1;
 }
 
 function userSampleTypeSelectionChanged( userTypeSelectionId, row,  qualifiableId ){
@@ -1037,7 +1065,21 @@ function sampleTypeQualifierChanged(element){
     <input id="userSampleTypeQualifierPrototypeValueID" value="" type="hidden" >
 </div>
 
-
+<div id="rejectedReasonPrototype" style="display: none" >
+<form:select path="rejectReasonList"
+			 multiple="false"
+             title='<spring:message/>'
+			 style="width:100%"
+			 disabled="true"
+			 id= 'rejectPrototypeID'>
+			 <option value=''></option>
+			<c:forEach var="optionValue" items="${form.rejectReasonList}">
+						<option value='${optionValue.id}' >
+							${optionValue.value}
+						</option>
+			</c:forEach>
+</form:select>
+</div>
 
 <div id="crossPanels">
 </div>
@@ -1076,9 +1118,9 @@ function sampleTypeQualifierChanged(element){
 					<spring:message code="sample.entry.sample.type"/>
 				</th>
 				<% if(useInitialSampleCondition){ %>
-				<th style="width:15%">
+				<%-- <th style="width:15%">
 					<spring:message code="sample.entry.sample.condition"/>
-				</th>
+				</th> --%>
 				<% } %>
 				<% if(useSampleNature){ %>
 				<th style="width:15%">
@@ -1100,6 +1142,12 @@ function sampleTypeQualifierChanged(element){
 				<% } %>
 				<th style="width:35%">
 					<span class='requiredlabel'>*</span>&nbsp;<spring:message code="sample.entry.sample.tests"/>
+				</th>
+				<th style="width:5%">
+				  <spring:message code="result.rejected"/>
+				</th>
+				<th style="width:10%">
+				    <spring:message code="note.type.rejectReason"/>
 				</th>
 				<th style="width:10%"></th>
 			</tr>
@@ -1139,9 +1187,9 @@ function sampleTypeQualifierChanged(element){
 						<th style="width:40%;display:none;" id="sectionHead">
 							Section
 						</th>
-                        <th style="width:25%" style="display:none" id="userSampleTypeHead">
+                        <%-- <th style="width:25%" style="display:none" id="userSampleTypeHead">
                             <spring:message code="sample.entry.sample.type"/>
-                        </th>
+                        </th> --%>
                         <th style="width:20%">
                               &nbsp;
                         </th>

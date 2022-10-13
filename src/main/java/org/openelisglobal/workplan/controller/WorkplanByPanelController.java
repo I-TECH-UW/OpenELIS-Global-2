@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.formfields.FormFields.Field;
 import org.openelisglobal.common.services.DisplayListService;
@@ -47,7 +48,6 @@ import org.springframework.web.servlet.ModelAndView;
 public class WorkplanByPanelController extends BaseWorkplanController {
 
     private static final String[] ALLOWED_FIELDS = new String[] { "selectedSearchID" };
-    private static final String ROLE_RESULTS = "Results";
 
     @Autowired
     private AnalysisService analysisService;
@@ -81,7 +81,7 @@ public class WorkplanByPanelController extends BaseWorkplanController {
         if (!GenericValidator.isBlankOrNull(panelID)) {
             String panelName = getPanelName(panelID);
             workplanTests = getWorkplanByPanel(panelID);
-            filteredTests = userService.filterResultsByLabUnitRoles(getSysUserId(request), workplanTests ,ROLE_RESULTS);
+            filteredTests = userService.filterResultsByLabUnitRoles(getSysUserId(request), workplanTests ,Constants.ROLE_RESULTS);
 
             // resultsLoadUtility.sortByAccessionAndSequence(workplanTests);
             form.setTestTypeID(panelID);
@@ -120,6 +120,7 @@ public class WorkplanByPanelController extends BaseWorkplanController {
 
                 for (Analysis analysis : analysisList) {
                     TestResultItem testResultItem = new TestResultItem();
+                    testResultItem.setTestId(analysis.getTest().getId());
                     Sample sample = analysis.getSampleItem().getSample();
                     testResultItem.setAccessionNumber(sample.getAccessionNumber());
                     testResultItem.setPatientInfo(getSubjectNumber(analysis));

@@ -12,8 +12,10 @@ import org.openelisglobal.panelitem.service.PanelItemService;
 import org.openelisglobal.panelitem.valueholder.PanelItem;
 import org.openelisglobal.resultlimit.service.ResultLimitService;
 import org.openelisglobal.resultlimits.valueholder.ResultLimit;
+import org.openelisglobal.test.service.TestSectionService;
 import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.test.valueholder.Test;
+import org.openelisglobal.test.valueholder.TestSection;
 import org.openelisglobal.testconfiguration.controller.TestModifyEntryController.TestAddParams;
 import org.openelisglobal.testconfiguration.controller.TestModifyEntryController.TestSet;
 import org.openelisglobal.testresult.service.TestResultService;
@@ -52,6 +54,8 @@ public class TestModifyServiceImpl implements TestModifyService {
     private UnitOfMeasureService unitOfMeasureService;
     @Autowired
     private PanelService panelService;
+    @Autowired
+    private TestSectionService testSectionService;
 
     @Override
     @Transactional
@@ -83,6 +87,13 @@ public class TestModifyServiceImpl implements TestModifyService {
             set.test.setLocalizedTestName(nameLocalization);
             set.test.setLocalizedReportingName(reportingNameLocalization);
 
+            TestSection testSection = set.test.getTestSection();
+            if ("N".equals(testSection.getIsActive())) {
+                testSection.setIsActive("Y");
+                testSection.setSysUserId(currentUserId);
+                testSectionService.update(testSection);
+            }
+
             // gnr: based on testAddUpdate,
             // added existing testId to process in createTestSets using
             // testAddParams.testId, delete then insert to modify for most elements
@@ -92,7 +103,7 @@ public class TestModifyServiceImpl implements TestModifyService {
             }
 
             updateTestNames(testAddParams.testId, nameLocalization, reportingNameLocalization, currentUserId);
-            updateTestEntities(testAddParams.testId, testAddParams.loinc, currentUserId, testAddParams.uomId,
+            updateTestEntities(testAddParams.testId, testAddParams.loinc, currentUserId, testAddParams.uomId, testAddParams.testSectionId ,
                     set.test.isNotifyResults(), set.test.isInLabOnly());
 
             set.sampleTypeTest.setSysUserId(currentUserId);
@@ -162,9 +173,10 @@ public class TestModifyServiceImpl implements TestModifyService {
 
     }
 
-    private void updateTestEntities(String testId, String loinc, String userId, String uomId, boolean notifyResults,
+    private void updateTestEntities(String testId, String loinc, String userId, String uomId, String testSectionId , boolean notifyResults,
             boolean inLabOnly) {
         Test test = testService.get(testId);
+        TestSection testSection = testSectionService.get(testSectionId);
 
         if (test != null) {
             test.setSysUserId(userId);
@@ -172,6 +184,7 @@ public class TestModifyServiceImpl implements TestModifyService {
             test.setUnitOfMeasure(unitOfMeasureService.getUnitOfMeasureById(uomId));
             test.setNotifyResults(notifyResults);
             test.setInLabOnly(inLabOnly);
+            test.setTestSection(testSection);
             testService.update(test);
         }
     }

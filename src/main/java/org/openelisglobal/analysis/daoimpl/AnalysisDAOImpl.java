@@ -42,6 +42,7 @@ import org.openelisglobal.common.paging.PagingProperties;
 import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.result.valueholder.Result;
+import org.openelisglobal.sample.valueholder.OrderPriority;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.sampleitem.valueholder.SampleItem;
 import org.openelisglobal.spring.util.SpringContext;
@@ -625,6 +626,26 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
         return null;
 
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Analysis> getAnalysesByPriorityAndStatusId(OrderPriority priority, List<Integer> statusIds)
+            throws LIMSRuntimeException {
+        String sql = "from Analysis a where a.sampleItem.sample.priority = :oderpriority and a.statusId in ( :statusIds)";
+
+        try {
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setParameter("oderpriority", priority.name());
+            query.setParameterList("statusIds", statusIds);
+            List<Analysis> analysisList = query.list();
+            // closeSession(); // CSL remove old
+            return analysisList;
+        } catch (HibernateException e) {
+            handleException(e, "getAnalysesBySampleIdAndStatusId");
+        }
+
+        return null;
     }
 
     /**
@@ -1387,6 +1408,27 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
         return null;
 
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Analysis> getAnalysisByTestIdAndTestSectionIdsAndStartedInDateRange(Date lowDate, Date highDate ,String testId , List<Integer> testSectionIds)
+            throws LIMSRuntimeException { 
+        String sql = "FROM Analysis a WHERE a.startedDate BETWEEN :lowDate AND :highDate AND a.test.id = :testId AND  a.testSection.id IN ( :testSectionIds )";
+
+        try {
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setDate("lowDate", lowDate);
+            query.setDate("highDate", highDate);
+            query.setInteger("testId", Integer.parseInt(testId));
+            query.setParameterList("testSectionIds", testSectionIds);
+            List<Analysis> list = query.list();
+            // closeSession(); // CSL remove old
+            return list;
+        } catch (HibernateException e) {
+            handleException(e, "getAnalysisStartedInDateRange");
+        }
+        return null;
     }
 
     @Override

@@ -840,7 +840,8 @@
         jQuery("#highValid").val("Infinity");
         jQuery("#lowNormal_0").removeClass("error");
         jQuery("#highNormal_0").removeClass("error");
-        jQuery("#reportingRange_0").val('');
+        jQuery("#lowReportingRange").val('-Infinity');
+        jQuery("#highReportingRange").val('Infinity');
         jQuery("#significantDigits").val('');
         jQuery("#lowerAge_0").val('0');
         jQuery("#upperAge_0").text('');
@@ -945,6 +946,8 @@
 
         jsonObj.lowValid = jQuery("#lowValid").val();
         jsonObj.highValid = jQuery("#highValid").val();
+        jsonObj.lowReportingRange = jQuery("#lowReportingRange").val();
+        jsonObj.highReportingRange = jQuery("#highReportingRange").val();
         jsonObj.significantDigits = jQuery("#significantDigits").val();
         jsonObj.resultLimits = [];
 
@@ -965,12 +968,10 @@
             limit.gender = gender;
             limit.lowNormal = jQuery("#lowNormal_" + rowIndex).val();
             limit.highNormal = jQuery("#highNormal_" + rowIndex).val();
-            limit.reportingRange = jQuery("#reportingRange_" + rowIndex).val();
 
             if (gender) {
                 limit.lowNormalFemale = jQuery("#lowNormal_G_" + rowIndex).val();
                 limit.highNormalFemale = jQuery("#highNormal_G_" + rowIndex).val();
-                limit.reportingRangeFemale = jQuery("#reportingRange_G_" + rowIndex).val();
             }
 
             jsonObj.resultLimits[countIndex++] = limit;
@@ -1382,7 +1383,7 @@ td {
                             <spring:message code="sex.male" />
                         </span>
                 </td>
-                <td><input class="yearMonthSelect_index" type="radio" name="time_index" value="<%=MessageUtil.getContextualMessage("abbreviation.year.single")%>"
+                <td style="white-space:nowrap;"><input class="yearMonthSelect_index" type="radio" name="time_index" value="<%=MessageUtil.getContextualMessage("abbreviation.year.single")%>"
                            onchange="upperAgeRangeChanged( 'index' )" checked><spring:message code="abbreviation.year.single" />
                     <input class="yearMonthSelect_index" type="radio" name="time_index" value="<%=MessageUtil.getContextualMessage("abbreviation.month.single")%>"
                            onchange="upperAgeRangeChanged( 'index' )"><spring:message code="abbreviation.month.single" />
@@ -1406,7 +1407,8 @@ td {
                            onchange="normalRangeCheck('index');"></td>
                 <td><input type="text" value="Infinity" size="10" id="highNormal_index" class="highNormal"
                            onchange="normalRangeCheck('index');"></td>
-                <td><input type="text" value="" size="12" id="reportingRange_index"></td>
+                
+                <td></td>
                 <td></td>
                 <td></td>
                 <td><input id="removeButton_index" type="button" class="textButton" onclick='removeLimitRow( index );'
@@ -1423,20 +1425,21 @@ td {
                            onchange="normalRangeCheck('index');"></td>
                 <td><input type="text" value="Infinity" size="10" id="highNormal_G_index" class="highNormal"
                            onchange="normalRangeCheck('index');"></td>
-                <td><input type="text" value="" size="12" id="reportingRange_G_index"></td>
+                <td></td>
                 <td></td>
                 <td></td>
             </tr>
         </table>
     </div>
     <div id="normalRangeDiv" style="display:none;">
-        <h3><spring:message code="configuration.test.catalog.normal.range" /></h3>
+        <h3><spring:message code="label.range" /></h3>
         <table style="display:inline-table">
             <tr>
                 <th></th>
                 <th colspan="6"><spring:message code="configuration.test.catalog.normal.range" /></th>
                 <th colspan="6"><spring:message code="configuration.test.catalog.valid.range" /> </th>
                 <th></th>
+
             </tr>
             <tr>
                 <td><spring:message code="label.sex.dependent" /></td>
@@ -1462,7 +1465,9 @@ td {
                             <spring:message code="sex.male" />
                         </span>
                 </td>
+
                 <td align="left"><input class="yearMonthSelect_0" type="radio" name="time_0" value="<%=MessageUtil.getContextualMessage("abbreviation.year.single")%>"
+
                            onchange="upperAgeRangeChanged('0')" checked><spring:message code="abbreviation.year.single" />
                     <input class="yearMonthSelect_0" type="radio" name="time_0" value="<%=MessageUtil.getContextualMessage("abbreviation.month.single")%>"
                            onchange="upperAgeRangeChanged('0')"><spring:message code="abbreviation.month.single" />
@@ -1470,6 +1475,7 @@ td {
                            onchange="upperAgeRangeChanged('0')"><spring:message code="abbreviation.day.single" />&nbsp;</td>
                 <td id="lowerAge_0" align="left">0&nbsp;</td>
                 <td align="left"><input type="text" id="upperAgeSetter_0" value="Infinity" size="10"
+
                            onchange="upperAgeRangeChanged('0')"><span id="upperAge_0"></span></td>
                 <td align="left">
                     <select id="ageRangeSelect_0" onchange="ageRangeSelected( this, '0');">
@@ -1510,7 +1516,7 @@ td {
                            onchange="normalRangeCheck('0');"></td>
                 <td><input type="text" value="Infinity" size="10" id="highNormal_G_0" class="highNormal"
                            onchange="normalRangeCheck('0');"></td>
-                <td><input type="text" value="" size="12" id="reportingRange_G_0"></td>
+                <td></td>
                 <td></td>
                 <td></td>
             </tr>

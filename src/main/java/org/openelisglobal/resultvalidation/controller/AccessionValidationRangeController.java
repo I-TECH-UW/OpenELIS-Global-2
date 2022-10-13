@@ -18,6 +18,7 @@ import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.action.IActionConstants;
+import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.DisplayListService;
@@ -104,7 +105,6 @@ public class AccessionValidationRangeController extends BaseResultValidationCont
     private final String RESULT_SUBJECT = "Result Note";
     private final String RESULT_TABLE_ID;
     private final String RESULT_REPORT_ID;
-    private static final String ROLE_VALIDATION = "Validation";
 
     public AccessionValidationRangeController(AnalysisService analysisService, TestResultService testResultService,
             SampleHumanService sampleHumanService, DocumentTrackService documentTrackService,
@@ -130,16 +130,19 @@ public class AccessionValidationRangeController extends BaseResultValidationCont
         binder.setAllowedFields(ALLOWED_FIELDS);
     }
 
-    @RequestMapping(value = "/AccessionValidationRange", method = RequestMethod.GET)
+    @RequestMapping(value = {"/AccessionValidationRange" ,"/ResultValidationByTestDate"}, method = RequestMethod.GET)
     public ModelAndView showAccessionValidationRange(HttpServletRequest request,
             @ModelAttribute("form") @Validated(ResultValidationForm.ResultValidation.class) ResultValidationForm oldForm)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
-        String accessionNumber = request.getParameter("accessionNumber");
         ResultValidationForm newForm = new ResultValidationForm();
+        if (request.getParameter("accessionNumber") != null) {
+            newForm.setAccessionNumber(request.getParameter("accessionNumber"));
+        } else if (request.getParameter("date") != null) {
+            newForm.setTestDate(request.getParameter("date"));
+        }
         newForm.setTestSectionId(oldForm.getTestSectionId());
         newForm.setTestSection(oldForm.getTestSection());
-        newForm.setAccessionNumber(accessionNumber);
         return getResultValidation(request, newForm);
     }
 
@@ -157,7 +160,7 @@ public class AccessionValidationRangeController extends BaseResultValidationCont
         if (GenericValidator.isBlankOrNull(newPage)) {
 
             // load testSections for drop down
-            String resultsRoleId =  roleService.getRoleByName(ROLE_VALIDATION).getId();
+            String resultsRoleId =  roleService.getRoleByName(Constants.ROLE_VALIDATION).getId();
             List<IdValuePair> testSections = userService.getUserTestSections(getSysUserId(request) ,resultsRoleId);
             form.setTestSections(testSections);
             form.setTestSectionsByName(DisplayListService.getInstance().getList(ListType.TEST_SECTION_BY_NAME));
@@ -169,14 +172,17 @@ public class AccessionValidationRangeController extends BaseResultValidationCont
             List<AnalysisItem> resultList;
             List<AnalysisItem> filteredresultList = new ArrayList<>();
             ResultsValidationUtility resultsValidationUtility = SpringContext.getBean(ResultsValidationUtility.class);
-            setRequestType(ts == null ? MessageUtil.getMessage("validation.range.title") : ts.getLocalizedName());
-            
+            if (request.getRequestURI().contains("AccessionValidationRange")) {
+                setRequestType(ts == null ? MessageUtil.getMessage("validation.range.title") : ts.getLocalizedName());
+            } else if (request.getRequestURI().contains("ResultValidationByTestDate")) {
+                setRequestType(ts == null ? MessageUtil.getMessage("validation.date.title") : ts.getLocalizedName());
+            }
             if ( !(GenericValidator.isBlankOrNull(form.getTestSectionId()) &&
-                    GenericValidator.isBlankOrNull(form.getAccessionNumber())) )  {
+                    GenericValidator.isBlankOrNull(form.getAccessionNumber()) && GenericValidator.isBlankOrNull(form.getTestDate())) )  {
                 
                 resultList = resultsValidationUtility.getResultValidationList(getValidationStatus(),
-                        form.getTestSectionId(), form.getAccessionNumber());
-                filteredresultList = userService.filterAnalystResultsByLabUnitRoles(getSysUserId(request), resultList, ROLE_VALIDATION);
+                        form.getTestSectionId(), form.getAccessionNumber() ,form.getTestDate());
+                filteredresultList = userService.filterAnalystResultsByLabUnitRoles(getSysUserId(request), resultList, Constants.ROLE_VALIDATION);
                 request.setAttribute("pageSize", filteredresultList.size());
                 form.setSearchFinished(true);
                 } else {

@@ -57,7 +57,7 @@ public class TestSectionTestAssignController extends BaseController {
 
     private void setupDisplayItems(TestSectionTestAssignForm form) {
         List<IdValuePair> testSections = DisplayListService.getInstance()
-                .getListWithLeadingBlank(DisplayListService.ListType.TEST_SECTION);
+                .getListWithLeadingBlank(DisplayListService.ListType.TEST_SECTION_ACTIVE);
         LinkedHashMap<IdValuePair, List<IdValuePair>> testSectionTestsMap = new LinkedHashMap<>(testSections.size());
 
         for (IdValuePair sectionPair : testSections) {
@@ -148,7 +148,7 @@ public class TestSectionTestAssignController extends BaseController {
             LogEvent.logDebug(e);
         }
 
-        DisplayListService.getInstance().refreshList(DisplayListService.ListType.TEST_SECTION);
+        DisplayListService.getInstance().refreshList(DisplayListService.ListType.TEST_SECTION_ACTIVE);
         DisplayListService.getInstance().refreshList(DisplayListService.ListType.TEST_SECTION_INACTIVE);
 
         return findForward(FWD_SUCCESS_INSERT, form);

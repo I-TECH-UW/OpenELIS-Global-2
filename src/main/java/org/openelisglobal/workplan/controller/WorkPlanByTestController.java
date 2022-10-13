@@ -11,9 +11,9 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.formfields.FormFields.Field;
-import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.QAService;
 import org.openelisglobal.common.services.QAService.QAObservationType;
 import org.openelisglobal.common.util.ConfigurationProperties;
@@ -47,7 +47,6 @@ import org.springframework.web.servlet.ModelAndView;
 public class WorkPlanByTestController extends BaseWorkplanController {
 
     private static final String[] ALLOWED_FIELDS = new String[] {};
-    private static final String ROLE_RESULTS = "Results";
 
     @Autowired
     private AnalysisService analysisService;
@@ -89,11 +88,11 @@ public class WorkPlanByTestController extends BaseWorkplanController {
             if (testType.equals("NFS")) {
                 testName = "NFS";
                 workplanTests = getWorkplanForNFSTest(testType);
-                filteredTests = userService.filterResultsByLabUnitRoles(getSysUserId(request), workplanTests ,ROLE_RESULTS);
+                filteredTests = userService.filterResultsByLabUnitRoles(getSysUserId(request), workplanTests ,Constants.ROLE_RESULTS);
             } else {
                 testName = getTestName(testType);
                 workplanTests = getWorkplanByTest(testType);
-                filteredTests = userService.filterResultsByLabUnitRoles(getSysUserId(request), workplanTests ,ROLE_RESULTS);
+                filteredTests = userService.filterResultsByLabUnitRoles(getSysUserId(request), workplanTests ,Constants.ROLE_RESULTS);
             }
             ResultsLoadUtility resultsLoadUtility = new ResultsLoadUtility();
             resultsLoadUtility.sortByAccessionAndSequence(filteredTests);
@@ -121,7 +120,7 @@ public class WorkPlanByTestController extends BaseWorkplanController {
     }
 
     private List<IdValuePair> getTestDropdownList(HttpServletRequest request) {
-        List<IdValuePair> testList = userService.getAllDisplayUserTestsByLabUnit(getSysUserId(request) , ROLE_RESULTS);
+        List<IdValuePair> testList = userService.getAllDisplayUserTestsByLabUnit(getSysUserId(request) , Constants.ROLE_RESULTS);
 
         if (HAS_NFS_PANEL) {
             testList = adjustNFSTests(testList);
@@ -163,6 +162,7 @@ public class WorkPlanByTestController extends BaseWorkplanController {
 
             for (Analysis analysis : testList) {
                 TestResultItem testResultItem = new TestResultItem();
+                testResultItem.setTestId(testType);
                 Sample sample = analysis.getSampleItem().getSample();
                 testResultItem.setAccessionNumber(sample.getAccessionNumber());
                 testResultItem.setReceivedDate(getReceivedDateDisplay(sample));
@@ -225,6 +225,7 @@ public class WorkPlanByTestController extends BaseWorkplanController {
 
                 }
                 testResultItem = new TestResultItem();
+                testResultItem.setTestId(testType);
                 testResultItem.setAccessionNumber(currentAccessionNumber);
                 testResultItem.setReceivedDate(sample.getReceivedDateForDisplay());
                 testResultItem.setSampleGroupingNumber(sampleGroupingNumber);

@@ -17,6 +17,7 @@ import org.apache.commons.validator.GenericValidator;
 import org.hibernate.StaleObjectStateException;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.formfields.FormFields;
@@ -46,6 +47,7 @@ import org.openelisglobal.samplehuman.service.SampleHumanService;
 import org.openelisglobal.sampleitem.service.SampleItemService;
 import org.openelisglobal.sampleitem.valueholder.SampleItem;
 import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.systemuser.service.UserService;
 import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.test.service.TestServiceImpl;
 import org.openelisglobal.test.valueholder.Test;
@@ -54,7 +56,6 @@ import org.openelisglobal.typeofsample.service.TypeOfSampleTestService;
 import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
 import org.openelisglobal.typeofsample.valueholder.TypeOfSampleTest;
 import org.openelisglobal.userrole.service.UserRoleService;
-import org.openelisglobal.systemuser.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -79,20 +80,17 @@ public class SampleEditController extends BaseController {
             "sampleOrderItems.referringPatientNumber", "sampleOrderItems.referringSiteId",
             "sampleOrderItems.referringSiteName", "sampleOrderItems.referringSiteCode",
             "sampleOrderItems.referringSiteDepartmentId", "sampleOrderItems.referringSiteDepartmentName",
-            "sampleOrderItems.program",
-            "sampleOrderItems.providerLastName", "sampleOrderItems.providerFirstName",
-            "sampleOrderItems.providerWorkPhone", "sampleOrderItems.providerFax", "sampleOrderItems.providerEmail",
-            "sampleOrderItems.facilityAddressStreet", "sampleOrderItems.facilityAddressCommune",
-            "sampleOrderItems.facilityPhone", "sampleOrderItems.facilityFax", "sampleOrderItems.paymentOptionSelection",
-            "sampleOrderItems.billingReferenceNumber", "sampleOrderItems.testLocationCode",
-            "sampleOrderItems.otherLocationCode",
+            "sampleOrderItems.program", "sampleOrderItems.providerId", "sampleOrderItems.facilityAddressStreet",
+            "sampleOrderItems.facilityAddressCommune", "sampleOrderItems.facilityPhone", "sampleOrderItems.facilityFax",
+            "sampleOrderItems.paymentOptionSelection", "sampleOrderItems.billingReferenceNumber",
+            "sampleOrderItems.testLocationCode", "sampleOrderItems.otherLocationCode",
+            "sampleOrderItems.priority",
             //
             "accessionNumber", "newAccessionNumber", "isEditable", "maxAccessionNumber",
             "existingTests*.sampleItemChanged", "existingTests*.sampleItemId", "existingTests*.analysisId",
             "existingTests*.collectionDate", "existingTests*.collectionTime", "existingTests*.removeSample",
-            "existingTests*.canceled", "possibleTests*.testId", "possibleTests*.sampleItemId",
-            "possibleTests*.add" };
-    private static final String ROLE_RECEPTION = "Reception";         
+            "existingTests*.canceled", "possibleTests*.testId", "possibleTests*.sampleItemId", "possibleTests*.add" };
+
 
     @Autowired
     SampleEditFormValidator formValidator;
@@ -105,10 +103,11 @@ public class SampleEditController extends BaseController {
 
     static {
         excludedAnalysisStatusList = new HashSet<>();
-        excludedAnalysisStatusList
-                .add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Canceled)));
+        excludedAnalysisStatusList.add(
+                Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Canceled)));
 
-        ENTERED_STATUS_SAMPLE_LIST.add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(SampleStatus.Entered)));
+        ENTERED_STATUS_SAMPLE_LIST
+                .add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(SampleStatus.Entered)));
         ABLE_TO_CANCEL_ROLE_NAMES.add("Validator");
         ABLE_TO_CANCEL_ROLE_NAMES.add("Validation");
         ABLE_TO_CANCEL_ROLE_NAMES.add("Biologist");
@@ -143,10 +142,10 @@ public class SampleEditController extends BaseController {
     }
 
     @RequestMapping(value = "/SampleEdit", method = RequestMethod.GET)
-    public ModelAndView showSampleEdit(HttpServletRequest request, @ModelAttribute("form") @Validated(SampleEdit.class)
-    SampleEditForm oldForm, BindingResult result)
+    public ModelAndView showSampleEdit(HttpServletRequest request,
+            @ModelAttribute("form") @Validated(SampleEdit.class) SampleEditForm oldForm, BindingResult result)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        if(oldForm.getExistingTests() != null) {
+        if (oldForm.getExistingTests() != null) {
             oldForm.getExistingTests().get(0).isCanceled();
         }
         SampleEditForm form = new SampleEditForm();
@@ -180,7 +179,7 @@ public class SampleEditController extends BaseController {
                         allowedToCancelResults);
                 form.setExistingTests(currentTestList);
                 setAddableTestInfo(form, sampleItemList, accessionNumber);
-                setAddableSampleTypes(form ,request);
+                setAddableSampleTypes(form, request);
                 setSampleOrderInfo(form, sample);
                 form.setAbleToCancelResults(hasResults(currentTestList, allowedToCancelResults));
                 String maxAccessionNumber;
@@ -209,7 +208,7 @@ public class SampleEditController extends BaseController {
         if (FormFields.getInstance().useField(FormFields.Field.SampleNature)) {
             form.setSampleNatureList(DisplayListService.getInstance().getList(ListType.SAMPLE_NATURE));
         }
-
+        form.setRejectReasonList(DisplayListService.getInstance().getList(ListType.REJECTION_REASONS));
         form.setCurrentDate(DateUtil.getCurrentDateAsText());
         PatientSearch patientSearch = new PatientSearch();
         patientSearch.setLoadFromServerWithPatient(true);
@@ -312,19 +311,21 @@ public class SampleEditController extends BaseController {
             sampleEditItem.setTestName(TestServiceImpl.getUserLocalizedTestName(analysis.getTest()));
             sampleEditItem.setSampleItemId(sampleItem.getId());
 
-            boolean canCancel = allowedToCancelAll
-                    || (!SpringContext.getBean(IStatusService.class).matches(analysis.getStatusId(), AnalysisStatus.Canceled)
-                            && SpringContext.getBean(IStatusService.class).matches(analysis.getStatusId(), AnalysisStatus.NotStarted));
+            boolean canCancel = allowedToCancelAll || (!SpringContext.getBean(IStatusService.class)
+                    .matches(analysis.getStatusId(), AnalysisStatus.Canceled)
+                    && SpringContext.getBean(IStatusService.class).matches(analysis.getStatusId(),
+                            AnalysisStatus.NotStarted));
 
             if (!canCancel) {
                 canRemove = false;
             }
             sampleEditItem.setCanCancel(canCancel);
             sampleEditItem.setAnalysisId(analysis.getId());
-            sampleEditItem.setStatus(SpringContext.getBean(IStatusService.class).getStatusNameFromId(analysis.getStatusId()));
+            sampleEditItem
+                    .setStatus(SpringContext.getBean(IStatusService.class).getStatusNameFromId(analysis.getStatusId()));
             sampleEditItem.setSortOrder(analysis.getTest().getSortOrder());
-            sampleEditItem.setHasResults(
-                    !SpringContext.getBean(IStatusService.class).matches(analysis.getStatusId(), AnalysisStatus.NotStarted));
+            sampleEditItem.setHasResults(!SpringContext.getBean(IStatusService.class).matches(analysis.getStatusId(),
+                    AnalysisStatus.NotStarted));
 
             analysisSampleItemList.add(sampleEditItem);
         }
@@ -351,12 +352,12 @@ public class SampleEditController extends BaseController {
         }
 
         form.setPossibleTests(possibleTestList);
-        form.setTestSectionList(DisplayListService.getInstance().getList(ListType.TEST_SECTION));
+        form.setTestSectionList(DisplayListService.getInstance().getList(ListType.TEST_SECTION_ACTIVE));
     }
 
-    private void setAddableSampleTypes(SampleEditForm form ,HttpServletRequest request)
+    private void setAddableSampleTypes(SampleEditForm form, HttpServletRequest request)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        form.setSampleTypes(userService.getUserSampleTypes(getSysUserId(request), ROLE_RECEPTION));
+        form.setSampleTypes(userService.getUserSampleTypes(getSysUserId(request), Constants.ROLE_RECEPTION));
     }
 
     private void addPossibleTestsToList(SampleItem sampleItem, List<SampleEditItem> possibleTestList,

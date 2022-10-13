@@ -51,10 +51,6 @@ function /*boolean*/ hasRequriedValues(){
 	return true;	
 }
 
-function testConnection( identifier){
-	testConnectionOnServer(identifier, jQuery("#" + identifier).val(), processTestSuccess);
-}
-
 function  /*void*/ processTestSuccess(xhr){
 
     //alert(xhr.responseText);
@@ -90,12 +86,6 @@ function  /*void*/ processTestSuccess(xhr){
     			   id = "${reports.connectionTestIdentifier}"
     			   size="80" />
     </td>
-    <c:if test="${not empty reports.connectionTestIdentifier}">
-    <td>
-		<input type="button" value='<spring:message code="connection.test.button"/>' onclick='testConnection( "${reports.connectionTestIdentifier}");' >
-		<spring:message code="connection.test.button.message"/> 
-    </td>
-    </c:if>
   </tr>
   <c:if test="${resports.isScheduled}">
   <tr>

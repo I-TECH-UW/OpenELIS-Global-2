@@ -53,7 +53,7 @@ public class StatusService implements IStatusService {
     }
 
     public enum AnalysisStatus {
-        NotStarted, Canceled, TechnicalAcceptance, TechnicalRejected, BiologistRejected, NonConforming_depricated,
+        SampleRejected ,NotStarted, Canceled, TechnicalAcceptance, TechnicalRejected, BiologistRejected, NonConforming_depricated,
         Finalized
     }
 
@@ -62,7 +62,7 @@ public class StatusService implements IStatusService {
     }
 
     public enum SampleStatus {
-        Entered, Canceled
+        SampleRejected ,Entered, Canceled
     }
 
     public enum StatusType {
@@ -409,6 +409,8 @@ public class StatusService implements IStatusService {
             analysisStatusToObjectMap.put(AnalysisStatus.Finalized, status);
         } else if (name.equals("NonConforming")) {
             analysisStatusToObjectMap.put(AnalysisStatus.NonConforming_depricated, status);
+        }else if(name.equals("Sample Rejected")){
+            analysisStatusToObjectMap.put(AnalysisStatus.SampleRejected, status);
         }
     }
 
@@ -433,6 +435,8 @@ public class StatusService implements IStatusService {
             sampleStatusToObjectMap.put(SampleStatus.Entered, status);
         } else if (name.equals("SampleCanceled")) {
             sampleStatusToObjectMap.put(SampleStatus.Canceled, status);
+        } else if(name.equals("Sample Rejected")){
+            sampleStatusToObjectMap.put(SampleStatus.SampleRejected, status);
         }
     }
 

@@ -33,6 +33,7 @@ import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.sample.form.SampleEditForm;
 import org.openelisglobal.sample.form.SamplePatientEntryForm;
 import org.openelisglobal.sample.form.SamplePatientEntryForm.SamplePatientEntryBatch;
+import org.openelisglobal.sample.valueholder.OrderPriority;
 import org.openelisglobal.samplebatchentry.form.SampleBatchEntryForm;
 import org.openelisglobal.validation.annotations.OptionalNotBlank;
 import org.openelisglobal.validation.annotations.ValidAccessionNumber;
@@ -120,9 +121,16 @@ public class SampleOrderItem implements Serializable {
     // for display
     private List<IdValuePair> referringSiteDepartmentList;
 
+    // for display
+    private List<IdValuePair> providersList;
+
     @Pattern(regexp = ValidationHelper.ID_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
             SamplePatientEntryBatch.class })
     private String providerId;
+
+    @Pattern(regexp = ValidationHelper.ID_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
+            SamplePatientEntryBatch.class })
+    private String providerPersonId;
 
     @ValidName(nameType = NameType.FIRST_NAME, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
             SamplePatientEntryBatch.class, SampleEditForm.SampleEdit.class })
@@ -202,6 +210,27 @@ public class SampleOrderItem implements Serializable {
     private String contactTracingIndexName;
 
     private String contactTracingIndexRecordNumber;
+
+    // for display
+    private List<IdValuePair> priorityList;
+
+    public List<IdValuePair> getPriorityList() {
+        return priorityList;
+    }
+
+    public void setPriorityList(List<IdValuePair> priorityList) {
+        this.priorityList = priorityList;
+    }
+
+    private OrderPriority priority;
+
+    public OrderPriority getPriority() {
+        return priority;
+    }
+
+    public void setPriority(OrderPriority priority) {
+        this.priority = priority;
+    }
 
     public String getNewRequesterName() {
         return newRequesterName;
@@ -337,6 +366,14 @@ public class SampleOrderItem implements Serializable {
 
     public void setProviderId(String providerId) {
         this.providerId = providerId;
+    }
+
+    public String getProviderPersonId() {
+        return providerPersonId;
+    }
+
+    public void setProviderPersonId(String providerPersonId) {
+        this.providerPersonId = providerPersonId;
     }
 
     public String getProviderFirstName() {
@@ -529,5 +566,13 @@ public class SampleOrderItem implements Serializable {
 
     public void setReferringSiteDepartmentName(String referringSiteDepartmentName) {
         this.referringSiteDepartmentName = referringSiteDepartmentName;
+    }
+
+    public List<IdValuePair> getProvidersList() {
+        return providersList;
+    }
+
+    public void setProvidersList(List<IdValuePair> providersList) {
+        this.providersList = providersList;
     }
 }

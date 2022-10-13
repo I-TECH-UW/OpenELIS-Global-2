@@ -185,7 +185,7 @@ td {
         </tr>
         <tr>
             <td><span class="requiredlabel">*</span><form:input path="sampleTypeEnglishName" cssClass="required" size="40"
-                                                               onchange="handleInput(this, 'english');checkForDuplicates('english');"/>
+                                                               onchange="handleInput(this, 'english');"/>
             </td>
             <td><span class="requiredlabel">*</span><form:input path="sampleTypeFrenchName" cssClass="required" size="40"
                                                                onchange="handleInput(this, 'french');"/>

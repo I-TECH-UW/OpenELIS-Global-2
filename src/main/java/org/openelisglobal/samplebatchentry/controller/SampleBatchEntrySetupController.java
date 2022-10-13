@@ -44,7 +44,7 @@ public class SampleBatchEntrySetupController extends BaseSampleEntryController {
         SampleOrderService sampleOrderService = new SampleOrderService();
         form.setSampleOrderItems(sampleOrderService.getSampleOrderItem());
         form.setSampleTypes(DisplayListService.getInstance().getList(ListType.SAMPLE_TYPE_ACTIVE));
-        form.setTestSectionList(DisplayListService.getInstance().getList(ListType.TEST_SECTION));
+        form.setTestSectionList(DisplayListService.getInstance().getList(ListType.TEST_SECTION_ACTIVE));
         form.setCurrentDate(DateUtil.getCurrentDateAsText());
         form.setCurrentTime(DateUtil.getCurrentTimeAsText());
         form.getSampleOrderItems().setReceivedTime(DateUtil.getCurrentTimeAsText());

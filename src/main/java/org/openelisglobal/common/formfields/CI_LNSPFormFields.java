@@ -69,7 +69,7 @@ public class CI_LNSPFormFields implements IFormFieldsForImplementation {
         settings.put(Field.PatientMarriageStatus, new FormField(Boolean.TRUE));
         settings.put(Field.PatientEducation, new FormField(Boolean.TRUE));
         settings.put(Field.SampleEntryPatientClinical, new FormField(Boolean.FALSE));
-        settings.put(Field.SampleEntryRequesterLastNameRequired, new FormField(Boolean.TRUE));
+        settings.put(Field.SampleEntryRequesterPersonRequired, new FormField(Boolean.TRUE));
         settings.put(Field.QA_DOCUMENT_NUMBER, new FormField(Boolean.TRUE));
         settings.put(Field.QATimeWithDate, new FormField(Boolean.TRUE));
         settings.put(Field.SEARCH_PATIENT_WITH_LAB_NO, new FormField(Boolean.TRUE));

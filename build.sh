@@ -93,9 +93,9 @@ echo "creating docker images"
 #bash ${INSTALL_DIR}/buildProject.sh -l ${DATA_EXPORT_DIR}
 #create data import docker image
 #bash ${INSTALL_DIR}/buildProject.sh -dl ${CONSOLIDATED_SERVER_DIR}
+bash ${INSTALL_DIR}/buildProject.sh -dl ${PROJECT_DIR}/fhir -t hapi-fhir-jpaserver
 #create the docker image 
 bash ${INSTALL_DIR}/buildProject.sh -dl ${PROJECT_DIR} -t openelisglobal
-bash ${INSTALL_DIR}/buildProject.sh -dl ${PROJECT_DIR}/fhir -t hapi-fhir-jpaserver
 
 createLinuxInstaller() {
 	context=$1
@@ -138,8 +138,8 @@ then
 	echo "saving docker image as OpenELIS-Global_DockerImage.tar.gz"
 	docker save openelisglobal:latest | gzip > OpenELIS-Global_DockerImage.tar.gz
 	echo "saving Postgres docker image"
-	docker pull postgres:9.5
-	docker save postgres:9.5 | gzip > Postgres_DockerImage.tar.gz
+	docker pull postgres:14.4
+	docker save postgres:14.4 | gzip > Postgres_DockerImage.tar.gz
 	echo "saving JPA Server docker image"
 	
 	docker save hapi-fhir-jpaserver:latest | gzip > JPAServer_DockerImage.tar.gz
@@ -157,7 +157,7 @@ then
 	mkdir ${STAGING_DIR}
 	echo "downloading scripts for docker installation and docker-compose installation"
 	curl -fsSL https://get.docker.com -o ${STAGING_DIR}/get-docker.sh
-	curl -L https://github.com/docker/compose/releases/download/1.21.2/docker-compose-`uname -s`-`uname -m` -o ${STAGING_DIR}/docker-compose
+	curl -L https://github.com/docker/compose/releases/download/1.29.2/docker-compose-`uname -s`-`uname -m` -o ${STAGING_DIR}/docker-compose
 	
 	createLinuxInstaller OpenELIS-Global OffSiteBackupLinux.pl 
 

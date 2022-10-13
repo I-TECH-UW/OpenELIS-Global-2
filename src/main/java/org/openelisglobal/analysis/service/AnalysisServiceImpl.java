@@ -28,6 +28,7 @@ import org.openelisglobal.referencetables.service.ReferenceTablesService;
 import org.openelisglobal.result.service.ResultService;
 import org.openelisglobal.result.service.ResultServiceImpl;
 import org.openelisglobal.result.valueholder.Result;
+import org.openelisglobal.sample.valueholder.OrderPriority;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.sampleitem.valueholder.SampleItem;
 import org.openelisglobal.spring.util.SpringContext;
@@ -234,6 +235,12 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
     @Transactional(readOnly = true)
     public List<Analysis> getAnalysisStartedOrCompletedInDateRange(Date lowDate, Date highDate) {
         return baseObjectDAO.getAnalysisStartedOrCompletedInDateRange(lowDate, highDate);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Analysis> getAnalysisByTestIdAndTestSectionIdsAndStartedInDateRange(Date lowDate, Date highDate ,String testId ,List<Integer> testSectionIds) {
+        return baseObjectDAO.getAnalysisByTestIdAndTestSectionIdsAndStartedInDateRange(lowDate, highDate , testId ,testSectionIds);
     }
 
     @Override
@@ -704,5 +711,11 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
     public List<Analysis> getAnalysisForSiteBetweenResultDates(String referringSiteId, LocalDate lowerDate,
             LocalDate upperDate) {
         return baseObjectDAO.getAnalysisForSiteBetweenResultDates(referringSiteId, lowerDate, upperDate);
+    }
+
+    @Override
+    public List<Analysis> getAnalysesByPriorityAndStatusId(OrderPriority priority,
+            List<Integer> analysisStatusIds) {
+        return baseObjectDAO.getAnalysesByPriorityAndStatusId(priority, analysisStatusIds);
     }
 }
