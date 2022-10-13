@@ -29,8 +29,6 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class FhirReferralReceptionController extends BaseController {
 
-    private static final String[] ALLOWED_FIELDS = new String[] { "organization.id", "sampleIdsToAnalysisIds" };
-
     @Autowired
     private ElectronicOrderService electronicOrderService;
     @Autowired
@@ -40,9 +38,12 @@ public class FhirReferralReceptionController extends BaseController {
     @Autowired
     private DisplayListService displayListService;
 
+	private static final String[] ALLOWED_FIELDS = new String[] { "externalAccessionNumber",
+			"patientID", "patientLastName", "patientFirstName", "dateOfBirth", "gender", "page" };
+
     @InitBinder
     public void initBinder(WebDataBinder binder) {
-//        binder.setAllowedFields(ALLOWED_FIELDS);
+		binder.setAllowedFields(ALLOWED_FIELDS);
     }
 
     @GetMapping("/FhirReferralReception")
