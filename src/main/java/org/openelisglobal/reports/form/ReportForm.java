@@ -19,7 +19,7 @@ import org.openelisglobal.validation.annotations.ValidDate;
 public class ReportForm extends BaseForm {
 
     public enum DateType {
-        RESULT_DATE("report.label.datetype.resultdate"), ORDER_DATE("report.label.datetype.orderdate");
+        RESULT_DATE("report.label.datetype.resultdate"), ORDER_DATE("report.label.datetype.orderdate"),PRINT_DATE("report.label.datetype.printdate");
 
         String messageKey;
 
@@ -86,9 +86,13 @@ public class ReportForm extends BaseForm {
     private boolean useProjectCode = false;
 
     private boolean useDashboard = false;
+    
+    private boolean useExportDateType = false;
 
     @Pattern(regexp = ValidationHelper.ID_REGEX)
     private String projectCode = "";
+    
+    private String vlStudyType = "";
 
     private List<@Pattern(regexp = ValidationHelper.ID_REGEX) String> analysisIds;
 
@@ -359,6 +363,15 @@ public class ReportForm extends BaseForm {
     public void setUseDashboard(boolean useDashboard) {
         this.useDashboard = useDashboard;
     }
+    
+    public boolean getUseExportDateType() {
+        return useExportDateType;
+    }
+
+    public void setUseExportDateType(boolean useExportDateType) {
+        this.useExportDateType = useExportDateType;
+    }
+
 
     public String getProjectCode() {
         return projectCode;
@@ -366,6 +379,14 @@ public class ReportForm extends BaseForm {
 
     public void setProjectCode(String projectCode) {
         this.projectCode = projectCode;
+    }
+    
+    public String getVlStudyType() {
+        return vlStudyType;
+    }
+
+    public void setVlStudyType(String vlStudyType) {
+        this.vlStudyType = vlStudyType;
     }
 
     public boolean getUsePredefinedDateRanges() {

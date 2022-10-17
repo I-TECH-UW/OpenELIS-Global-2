@@ -1879,6 +1879,22 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         }
         return new ArrayList<>();
     }
+    
+    @Override
+    public List<Analysis> getStudyAnalysisForSiteBetweenResultDates(String referringSiteId, LocalDate lowerDate,
+            LocalDate upperDate) {
+        String hql = "FROM Analysis a WHERE a.releasedDate BETWEEN :lowerDate AND :upperDate AND a.sampleItem.sample.id IN (SELECT so.sample.id FROM SampleOrganization so WHERE so.organization.id = :requesterId )";
+        try {
+            Query query = entityManager.unwrap(Session.class).createQuery(hql);
+            query.setParameter("requesterId", Integer.parseInt(referringSiteId));
+            query.setParameter("lowerDate", lowerDate.atStartOfDay());
+            query.setParameter("upperDate", upperDate.atTime(LocalTime.MAX));
+            return query.list();
+        } catch (HibernateException e) {
+            handleException(e, "getAnalysisForSiteBetweenResultDates");
+        }
+        return new ArrayList<>();
+    }
 
 //  @Override
 //  public Analysis getPatientPreviousAnalysisForTestName(Patient patient, Sample currentSample, String testName) {

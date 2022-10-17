@@ -717,5 +717,10 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
     public List<Analysis> getAnalysesByPriorityAndStatusId(OrderPriority priority,
             List<Integer> analysisStatusIds) {
         return baseObjectDAO.getAnalysesByPriorityAndStatusId(priority, analysisStatusIds);
+    
+    @Override
+    public List<Analysis> getStudyAnalysisForSiteBetweenResultDates(String referringSiteId, LocalDate lowerDate,
+            LocalDate upperDate) {
+        return baseObjectDAO.getStudyAnalysisForSiteBetweenResultDates(referringSiteId, lowerDate, upperDate);
     }
 }

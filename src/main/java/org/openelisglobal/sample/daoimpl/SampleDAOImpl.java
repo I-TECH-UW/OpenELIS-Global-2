@@ -843,6 +843,22 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
         }
         return new ArrayList<>();
     }
+    
+    @Override
+    public List<Sample> getStudySamplesForSiteBetweenOrderDates(String referringSiteId, LocalDate lowerDate,
+            LocalDate upperDate) {
+        String hql = "FROM Sample s WHERE s.enteredDate BETWEEN :lowerDate AND :upperDate AND s.id IN (SELECT so.sample.id FROM SampleOrganization so WHERE so.organization.id = :requesterId )";
+        try {
+            Query query = entityManager.unwrap(Session.class).createQuery(hql);
+            query.setParameter("requesterId", Integer.parseInt(referringSiteId));
+            query.setParameter("lowerDate", lowerDate.atStartOfDay());
+            query.setParameter("upperDate", upperDate.atTime(LocalTime.MAX));
+            return query.list();
+        } catch (HibernateException e) {
+            handleException(e, "getSamplesForSiteBetweenOrderDates");
+        }
+        return new ArrayList<>();
+    }
 
     @Override
     @Transactional(readOnly = true)

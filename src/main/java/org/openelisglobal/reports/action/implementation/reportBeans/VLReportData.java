@@ -50,8 +50,8 @@ public class VLReportData {
 	private String servicename;
 	private String doctor;
 	private String compleationdate;
-	private String pregnancy;
-	private String suckle;
+	private String vlPregnancy;
+	private String vlSuckle;
 	private String PTME;
 	private String clinicDistrict;
 	private String clinic;
@@ -184,18 +184,18 @@ public class VLReportData {
 		this.ampli2lo = ampli2lo;
 	}
 
-	public String getpregnancy() {
-		return pregnancy;
+	public String getVlPregnancy() {
+		return vlPregnancy;
 	}
-	public void setpregnancy(String pregnancy) {
-		this.pregnancy = pregnancy;
+	public void setVlPregnancy(String vlPregnancy) {
+		this.vlPregnancy = vlPregnancy;
 	}
 
-	public String getsuckle() {
-		return suckle;
+	public String getVlSuckle() {
+		return vlSuckle;
 	}
-	public void setsuckle(String suckle) {
-		this.suckle = suckle;
+	public void setVlSuckle(String vlSuckle) {
+		this.vlSuckle = vlSuckle;
 	}
 
 

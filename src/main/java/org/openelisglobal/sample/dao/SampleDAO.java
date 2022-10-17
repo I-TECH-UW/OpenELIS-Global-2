@@ -86,5 +86,7 @@ public interface SampleDAO extends BaseDAO<Sample, String> {
 
     List<Sample> getSamplesForSiteBetweenOrderDates(String referringSiteId, LocalDate lowerDate, LocalDate upperDate);
 
+    List<Sample> getStudySamplesForSiteBetweenOrderDates(String referringSiteId, LocalDate lowerDate, LocalDate upperDate);
+    
     List<Sample> getSamplesByPriority(OrderPriority priority) throws LIMSRuntimeException;
 }

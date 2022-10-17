@@ -21,4 +21,7 @@
 	<include relativeToChangelogFile="true" file="provider.xml"/>	
 	<include relativeToChangelogFile="true" file="update_non_conformity_roles.xml"/>
 	<include relativeToChangelogFile="true" file="statistics_report.xml"/>
+	<include relativeToChangelogFile="true" file="add_menu_study_electronic_order.xml"/>
+	<include relativeToChangelogFile="true" file="disable_menu_reports_export_valid.xml"/>
+	<include relativeToChangelogFile="true" file="add_retroci_sampletype_test_element.xml"/>
 </databaseChangeLog>
