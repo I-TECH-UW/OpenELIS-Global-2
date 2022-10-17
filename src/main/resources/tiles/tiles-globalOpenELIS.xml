@@ -24,6 +24,14 @@
 			value="/pages/common/emptyPlaceHolder.jsp" />
 	</definition>
 	
+	<definition name="studyElectronicOrderViewDefinition"
+		extends="baseDefinition">
+		<put-attribute name="body"
+			value="/pages/dataexchange/studyElectronicOrderView.jsp" />
+		<put-attribute name="footer"
+			value="/pages/common/emptyPlaceHolder.jsp" />
+	</definition>
+	
 	<definition name="portableOrderViewDefinition"
 		extends="baseDefinition">
 		<put-attribute name="body"

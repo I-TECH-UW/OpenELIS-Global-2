@@ -244,7 +244,8 @@ abstract public class CSVColumnBuilder {
 //		PreparedStatement stmt = session.connection().prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE,
 //				ResultSet.CONCUR_READ_ONLY);
 //		resultSet = stmt.executeQuery();
-        Session session = SpringContext.getBean(SessionFactory.class).openSession();
+        Session session = SpringContext.getBean(SessionFactory.class).getCurrentSession();
+        session.beginTransaction();
         resultSet = session.doReturningWork(new ReturningWork<ResultSet>() {
 
             @Override
@@ -402,8 +403,9 @@ abstract public class CSVColumnBuilder {
             case AGE_MONTHS:
             case AGE_WEEKS:
                 return isBlankOrNull(value) ? "" : translateAge(strategy, value);
-            case GENDER:
-                return isBlankOrNull(value) ? "" : ResourceTranslator.GenderTranslator.getInstance().translate(value);
+            //PK: Query result already return M/F so no need to translate
+            //case GENDER:
+            //    return isBlankOrNull(value) ? "" : ResourceTranslator.GenderTranslator.getInstance().translate(value);
             case DROP_ZERO:
                 return ("0".equals(value) || value == null) ? "" : value;
             case TEST_RESULT:
@@ -526,7 +528,7 @@ abstract public class CSVColumnBuilder {
     abstract public void makeSQL();
 
     protected void defineAllObservationHistoryTypes() {
-        allObHistoryTypes = ohtService.getAllOrdered("type_name", false);
+        allObHistoryTypes = ohtService.getAllOrdered("typeName", false);
     }
 
     /**

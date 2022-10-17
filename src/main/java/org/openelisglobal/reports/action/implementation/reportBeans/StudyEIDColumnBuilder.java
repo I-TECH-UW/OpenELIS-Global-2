@@ -24,6 +24,7 @@ import static org.openelisglobal.reports.action.implementation.reportBeans.CSVCo
 import static org.openelisglobal.reports.action.implementation.reportBeans.CSVColumnBuilder.Strategy.TEST_RESULT;
 
 import org.openelisglobal.reports.action.implementation.Report.DateRange;
+import org.openelisglobal.reports.form.ReportForm.DateType;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.test.valueholder.Test;
@@ -33,13 +34,18 @@ import org.openelisglobal.test.valueholder.Test;
  * @since May 16, 2011
  */
 public class StudyEIDColumnBuilder extends CIStudyColumnBuilder {
-
+	private DateType dateType;
     /**
      * @param dateRange
      * @param projectStr
      */
     public StudyEIDColumnBuilder(DateRange dateRange, String projectStr) {
         super(dateRange, projectStr);
+    }
+    
+    public StudyEIDColumnBuilder(DateRange dateRange, String projectStr,DateType dateType) {
+        super(dateRange, projectStr);
+        this.dateType = dateType;
     }
 
     /**
@@ -109,6 +115,20 @@ public class StudyEIDColumnBuilder extends CIStudyColumnBuilder {
 
     @Override
     public void makeSQL() {
+    	//Switch date column according to selected DateType: PK
+    	String dateColumn = "s.entered_date ";
+    	switch (dateType) {
+		case ORDER_DATE:
+			dateColumn = "s.entered_date ";
+			break;
+		case RESULT_DATE:
+			dateColumn = "a.released_date ";
+			break;
+		case PRINT_DATE:
+			dateColumn = "dt.report_generation_time ";
+		default:
+			break;
+		}
         //String validStatusId = StatusService.getInstance().getStatusID(StatusService.AnalysisStatus.Finalized);
         Test test = SpringContext.getBean(TestService.class).getActiveTestByName("DNA PCR").get(0);
         query = new StringBuilder();
@@ -164,8 +184,8 @@ public class StudyEIDColumnBuilder extends CIStudyColumnBuilder {
         + "\n AND so.org_id=o.id"
         + "\n AND s.id = sp.samp_id"
         + "\n AND s.id=demo.s_id"
-        + "\n AND s.entered_date >= date('" + lowDatePostgres + "')"
-        + "\n AND s.entered_date <= date('" + highDatePostgres + "')"
+        + "\n AND "+dateColumn+"  >= date('" + lowDatePostgres + "')"
+        + "\n AND "+dateColumn+"  <= date('" + highDatePostgres + "')"
 
         + "\n ORDER BY s.accession_number;");
         /////////

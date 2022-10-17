@@ -54,7 +54,7 @@ public class ReportController extends BaseController {
             "upperDateRange", "locationCode", "projectCode", "datePeriod", "lowerMonth", "lowerYear", "upperMonth",
             "upperYear", "selectList.selection", "experimentId", "reportName", "selPatient", "analysisIds",
             "referringSiteId", "referringSiteDepartmentId", "onlyResults", "dateType",
-            "labSections" , "priority" ,"receptionTime" };
+            "labSections" , "priority" ,"receptionTime","vlStudyType" };
 
     @Autowired
     private ServletContext context;

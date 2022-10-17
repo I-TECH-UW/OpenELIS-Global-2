@@ -196,7 +196,7 @@ function toggleSelectAll( element ) {
 }
 
 function updateLogValue(element, index ){
-	var logField = jQuery("log_" + index );
+	var logField = jQuery("#log_" + index );
 
 	if( logField ){
 		var logValue = Math.baseLog(element.value).toFixed(2);
@@ -578,7 +578,10 @@ function altAccessionHighlightSearch(accessionNumber) {
 						<br/>
 						<div id='log_${iter.index}'
 								class='results-readonly'>
-								${resultList.result}
+							<c:catch var="logConversionException">
+								${Math.log10(resultList.result)}
+							</c:catch>
+							<c:if test = "${logConversionException != null}"> -- </c:if>  
 								<%-- <% try{
 												Double value = Math.log10(Double.parseDouble(resultList.getResult()));
 												DecimalFormat twoDForm = new DecimalFormat("##.##");
