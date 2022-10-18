@@ -21,8 +21,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
@@ -39,55 +39,12 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest, Strin
         super(TypeOfSampleTest.class);
     }
 
-//	@Override
-//	public void deleteData(String[] typeOfSamplesTestIDs, String currentUserId) throws LIMSRuntimeException {
-//
-//		try {
-//
-//			for (String id : typeOfSamplesTestIDs) {
-//				TypeOfSampleTest data = readTypeOfSample(id);
-//
-//				auditDAO.saveHistory(new TypeOfSampleTest(), data, currentUserId, IActionConstants.AUDIT_TRAIL_DELETE,
-//						"SAMPLETYPE_TEST");
-//				entityManager.unwrap(Session.class).delete(data);
-//				// entityManager.unwrap(Session.class).flush(); // CSL remove old
-//				// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//			}
-//
-//		} catch (RuntimeException e) {
-//
-//			LogEvent.logError("TypeOfSampleDAOImpl", "deleteData()", e.toString());
-//			throw new LIMSRuntimeException("Error in TypeOfSampleTest deleteData()", e);
-//		}
-//	}
-
-//	@Override
-//	public boolean insertData(TypeOfSampleTest typeOfSampleTest) throws LIMSRuntimeException {
-//
-//		try {
-//
-//			String id = (String) entityManager.unwrap(Session.class).save(typeOfSampleTest);
-//			typeOfSampleTest.setId(id);
-//
-//			auditDAO.saveNewHistory(typeOfSampleTest, typeOfSampleTest.getSysUserId(), "SAMPLETYPE_TEST");
-//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (RuntimeException e) {
-//			LogEvent.logError("TypeOfSampleTestDAOImpl", "insertData()", e.toString());
-//			throw new LIMSRuntimeException("Error in TypeOfSampleTest insertData()", e);
-//		}
-//
-//		return true;
-//	}
-
     @Override
     @Transactional(readOnly = true)
     public void getData(TypeOfSampleTest typeOfSample) throws LIMSRuntimeException {
         try {
             TypeOfSampleTest tos = entityManager.unwrap(Session.class).get(TypeOfSampleTest.class,
                     typeOfSample.getId());
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
             if (tos != null) {
                 PropertyUtils.copyProperties(typeOfSample, tos);
             } else {
@@ -109,12 +66,11 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest, Strin
 
         try {
             String sql = "from TypeOfSampleTest";
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+			Query<TypeOfSampleTest> query = entityManager.unwrap(Session.class).createQuery(sql,
+					TypeOfSampleTest.class);
             // query.setMaxResults(10);
             // query.setFirstResult(3);
             list = query.list();
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (RuntimeException e) {
 
             LogEvent.logError(e.toString(), e);
@@ -133,12 +89,11 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest, Strin
             int endingRecNo = startingRecNo + DEFAULT_PAGE_SIZE + 1;
 
             String sql = "from TypeOfSampleTest t order by t.typeOfSampleId, t.testId";
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+			Query<TypeOfSampleTest> query = entityManager.unwrap(Session.class).createQuery(sql,
+					TypeOfSampleTest.class);
             query.setFirstResult(startingRecNo - 1);
             query.setMaxResults(endingRecNo - 1);
             list = query.list();
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TypeOfSampleTest getPageOfTypeOfSamples()", e);
@@ -151,8 +106,6 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest, Strin
         TypeOfSampleTest tos;
         try {
             tos = entityManager.unwrap(Session.class).get(TypeOfSampleTest.class, idString);
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (RuntimeException e) {
 
             LogEvent.logError(e.toString(), e);
@@ -173,10 +126,10 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest, Strin
                 // so parseInt doesn't throw
                 sampleTypeId = "0";
             }
-            Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            query.setInteger("sampleId", Integer.parseInt(sampleTypeId));
+			Query<TypeOfSampleTest> query = entityManager.unwrap(Session.class).createQuery(sql,
+					TypeOfSampleTest.class);
+			query.setParameter("sampleId", Integer.parseInt(sampleTypeId));
             List<TypeOfSampleTest> list = query.list();
-            // closeSession(); // CSL remove old
             return list;
         } catch (RuntimeException e) {
             handleException(e, "getTypeOfSampleTestsForSampleType");
@@ -193,10 +146,10 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest, Strin
         String sql = "from TypeOfSampleTest tt where tt.testId = :testId";
 
         try {
-            Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            query.setInteger("testId", Integer.parseInt(testId));
+			Query<TypeOfSampleTest> query = entityManager.unwrap(Session.class).createQuery(sql,
+					TypeOfSampleTest.class);
+			query.setParameter("testId", Integer.parseInt(testId));
             List<TypeOfSampleTest> list = query.list();
-            // closeSession(); // CSL remove old
             return list.size() > 0 ? list.get(0) : null;
         } catch (RuntimeException e) {
             handleException(e, "getTypeOfSampleTestForTest");
@@ -212,10 +165,10 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest, Strin
         String sql = "from TypeOfSampleTest tt where tt.testId = :testId";
 
         try {
-            Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            query.setInteger("testId", Integer.parseInt(testId));
+			Query<TypeOfSampleTest> query = entityManager.unwrap(Session.class).createQuery(sql,
+					TypeOfSampleTest.class);
+			query.setParameter("testId", Integer.parseInt(testId));
             List<TypeOfSampleTest> list = query.list();
-            // closeSession(); // CSL remove old
             return list;
         } catch (RuntimeException e) {
             handleException(e, "getTypeOfSampleTestsForTest");

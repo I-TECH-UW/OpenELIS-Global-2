@@ -4,7 +4,7 @@ import java.util.List;
 
 import javax.validation.constraints.NotBlank;
 
-import org.hibernate.validator.constraints.SafeHtml;
+import org.openelisglobal.validation.annotations.SafeHtml;
 import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.util.IdValuePair;
 
@@ -22,11 +22,11 @@ public class MethodCreateForm extends BaseForm {
      private String existingFrenchNames;
  
      @NotBlank
-     @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+     @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
      private String methodEnglishName;
  
      @NotBlank
-     @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+     @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
      private String methodFrenchName;
  
      public MethodCreateForm() {

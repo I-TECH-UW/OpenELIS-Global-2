@@ -25,7 +25,8 @@ public class CertificateAuthenticationDataDAOImpl extends BaseDAOImpl<Certificat
         CertificateAuthenticationData data;
         try {
             String sql = "from CertificateAuthenticationData as cad where cad.externalConnection.id = :externalConnectionId";
-            Query<CertificateAuthenticationData> query = entityManager.unwrap(Session.class).createQuery(sql);
+			Query<CertificateAuthenticationData> query = entityManager.unwrap(Session.class).createQuery(sql,
+					CertificateAuthenticationData.class);
             query.setParameter("externalConnectionId", externalConnectionId);
             data = query.uniqueResult();
         } catch (RuntimeException e) {

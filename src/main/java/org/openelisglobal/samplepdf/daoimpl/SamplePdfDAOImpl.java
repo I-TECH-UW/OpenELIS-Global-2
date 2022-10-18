@@ -18,6 +18,7 @@ package org.openelisglobal.samplepdf.daoimpl;
 import java.util.List;
 
 import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
@@ -42,14 +43,12 @@ public class SamplePdfDAOImpl extends BaseDAOImpl<SamplePdf, String> implements 
         Boolean isFound = false;
         try {
             String sql = "from SamplePdf s where s.accessionNumber = :param and s.allowView='Y'";
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+			Query<SamplePdf> query = entityManager.unwrap(Session.class).createQuery(sql, SamplePdf.class);
             query.setParameter("param", accessionNumber);
             List<SamplePdf> list = query.list();
             if ((list != null) && !list.isEmpty()) {
                 isFound = true;
             }
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
@@ -65,16 +64,13 @@ public class SamplePdfDAOImpl extends BaseDAOImpl<SamplePdf, String> implements 
     public SamplePdf getSamplePdfByAccessionNumber(SamplePdf samplePdf) throws LIMSRuntimeException {
         try {
             String sql = "from SamplePdf s where s.accessionNumber = :param";
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+			Query<SamplePdf> query = entityManager.unwrap(Session.class).createQuery(sql, SamplePdf.class);
             query.setParameter("param", samplePdf.getAccessionNumber());
 
             List<SamplePdf> list = query.list();
             if ((list != null) && !list.isEmpty()) {
                 samplePdf = list.get(0);
             }
-
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
         } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);

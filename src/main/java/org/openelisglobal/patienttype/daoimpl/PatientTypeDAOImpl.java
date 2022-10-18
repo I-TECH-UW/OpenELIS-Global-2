@@ -158,7 +158,7 @@ public class PatientTypeDAOImpl extends BaseDAOImpl<PatientType, String> impleme
         List<PatientType> list = new Vector<>();
         try {
             String sql = "from PatientType p order by p.type";
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            org.hibernate.query.Query query = entityManager.unwrap(Session.class).createQuery(sql);
             // query.setMaxResults(10);
             // query.setFirstResult(3);
             list = query.list();
@@ -181,7 +181,7 @@ public class PatientTypeDAOImpl extends BaseDAOImpl<PatientType, String> impleme
             int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 
             String sql = "from PatientType l order by l.type";
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            org.hibernate.query.Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setFirstResult(startingRecNo - 1);
             query.setMaxResults(endingRecNo - 1);
 
@@ -217,7 +217,7 @@ public class PatientTypeDAOImpl extends BaseDAOImpl<PatientType, String> impleme
         List<PatientType> list = new Vector<>();
         try {
             String sql = "from patientType l where upper(l.description) like upper(:param) order by upper(l.description)";
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            org.hibernate.query.Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setParameter("param", description + "%");
 
             list = query.list();
@@ -236,7 +236,7 @@ public class PatientTypeDAOImpl extends BaseDAOImpl<PatientType, String> impleme
     public PatientType getPatientTypeByName(PatientType patientType) throws LIMSRuntimeException {
         try {
             String sql = "from PatientType l where l.type = :param";
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            org.hibernate.query.Query query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setParameter("param", patientType.getType());
 
             List<PatientType> list = query.list();
@@ -268,7 +268,7 @@ public class PatientTypeDAOImpl extends BaseDAOImpl<PatientType, String> impleme
 
             List<PatientType> list = new ArrayList<>();
             String sql = "from PatientType t where trim(upper(t.description)) = :param1 or trim(upper(t.type)) = :param2";
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            org.hibernate.query.Query query = entityManager.unwrap(Session.class).createQuery(sql);
 
             // initialize with 0 (for new records where no id has been generated
             // yet

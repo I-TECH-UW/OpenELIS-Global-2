@@ -219,9 +219,7 @@ public class ReferredOutReport extends PatientReport implements IReportParameter
             Timestamp referralReportDate = referralResult.getReferralReportDate();
             data.setReferralResultReportDate(
                     (referralReportDate == null) ? null : DateUtil.formatDateAsText(referralReportDate));
-            ReferralReason reason = new ReferralReason();
-            reason.setId(referral.getReferralReasonId());
-            referralReasonService.getData(reason);
+			ReferralReason reason = referralReasonService.get(referral.getReferralReasonId());
             data.setReferralReason(reason.getLocalizedName());
 
             reportItems.add(data);

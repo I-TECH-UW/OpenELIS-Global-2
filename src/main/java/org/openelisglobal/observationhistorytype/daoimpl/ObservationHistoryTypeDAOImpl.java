@@ -2,8 +2,8 @@ package org.openelisglobal.observationhistorytype.daoimpl;
 
 import java.util.List;
 
-import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
@@ -29,11 +29,10 @@ public class ObservationHistoryTypeDAOImpl extends BaseDAOImpl<ObservationHistor
 
         try {
             String sql = "from ObservationHistoryType oht where oht.typeName = :name";
-            Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            query.setString("name", name);
+			Query<ObservationHistoryType> query = entityManager.unwrap(Session.class).createQuery(sql,
+					ObservationHistoryType.class);
+			query.setParameter("name", name);
             historyTypeList = query.list();
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
             return historyTypeList.size() > 0 ? historyTypeList.get(0) : null;
 
@@ -53,7 +52,8 @@ public class ObservationHistoryTypeDAOImpl extends BaseDAOImpl<ObservationHistor
         List<ObservationHistoryType> entities;
         try {
             String sql = "from ObservationHistoryType";
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+			Query<ObservationHistoryType> query = entityManager.unwrap(Session.class).createQuery(sql,
+					ObservationHistoryType.class);
             entities = query.list();
         } catch (RuntimeException e) {
             LogEvent.logDebug(e);

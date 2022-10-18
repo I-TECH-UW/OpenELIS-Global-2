@@ -17,8 +17,8 @@
 package org.openelisglobal.qaevent.daoimpl;
 
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.qaevent.dao.QaObservationTypeDAO;
@@ -40,10 +40,10 @@ public class QaObservationTypeDAOImpl extends BaseDAOImpl<QaObservationType, Str
         String sql = "FROM QaObservationType where name = :name";
 
         try {
-            Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            query.setString("name", typeName);
-            QaObservationType type = (QaObservationType) query.uniqueResult();
-            // closeSession(); // CSL remove old
+			Query<QaObservationType> query = entityManager.unwrap(Session.class).createQuery(sql,
+					QaObservationType.class);
+			query.setParameter("name", typeName);
+            QaObservationType type = query.uniqueResult();
             return type;
         } catch (HibernateException e) {
             handleException(e, "getQaObservationTypeByName");

@@ -3,8 +3,6 @@ package org.openelisglobal.notification.service;
 import java.util.List;
 import java.util.Optional;
 
-import javax.transaction.Transactional;
-
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.dao.BaseDAO;
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
@@ -15,6 +13,7 @@ import org.openelisglobal.notification.valueholder.TestNotificationConfig;
 import org.openelisglobal.test.service.TestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TestNotificationConfigServiceImpl extends BaseObjectServiceImpl<TestNotificationConfig, Integer>

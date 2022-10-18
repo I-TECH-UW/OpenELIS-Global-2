@@ -20,6 +20,7 @@ package org.openelisglobal.organization.daoimpl;
 import java.util.List;
 
 import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
@@ -43,15 +44,13 @@ public class OrganizationTypeDAOImpl extends BaseDAOImpl<OrganizationType, Strin
         List<OrganizationType> list = null;
         try {
             String sql = "from OrganizationType";
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+			Query<OrganizationType> query = entityManager.unwrap(Session.class).createQuery(sql,
+					OrganizationType.class);
             list = query.list();
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in Organization getAllOrganizationTypes()", e);
         }
-
         return list;
     }
 
@@ -61,17 +60,14 @@ public class OrganizationTypeDAOImpl extends BaseDAOImpl<OrganizationType, Strin
         String sql = null;
         try {
             sql = "from OrganizationType o where o.name = :name";
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+			Query<OrganizationType> query = entityManager.unwrap(Session.class).createQuery(sql,
+					OrganizationType.class);
 
-            query.setString("name", name);
+			query.setParameter("name", name);
 
             
             List<OrganizationType> list = query.list();
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
-
             return list.size() > 0 ? list.get(0) : null;
-
         } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in OrganizationType getOrganizationTypeByName()", e);

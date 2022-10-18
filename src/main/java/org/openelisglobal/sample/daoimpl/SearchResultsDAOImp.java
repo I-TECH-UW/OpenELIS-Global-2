@@ -18,7 +18,6 @@
 package org.openelisglobal.sample.daoimpl;
 
 import java.math.BigDecimal;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,8 +55,6 @@ public class SearchResultsDAOImp implements SearchResultsDAO {
     private static final String ID_TYPE_FOR_SUBJECT_NUMBER = "subjectNumberId";
     private static final String ID_TYPE_FOR_GUID = "guidId";
 
-    private static final Charset UTF_8 = Charset.forName("UTF-8");
-
     @Override
     @SuppressWarnings("rawtypes")
     @Transactional
@@ -84,7 +81,7 @@ public class SearchResultsDAOImp implements SearchResultsDAO {
                     queryNationalId, queryExternalId, queryAnyID, queryPatientID, queryGuid, queryDateOfBirth,
                     queryGender);
 
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createSQLQuery(sql);
+			org.hibernate.query.Query query = entityManager.unwrap(Session.class).createNativeQuery(sql);
 
             queryResults = query.list();
         } catch (RuntimeException e) {
@@ -132,12 +129,13 @@ public class SearchResultsDAOImp implements SearchResultsDAO {
                     queryNationalId, queryExternalId, queryAnyID, queryPatientID, queryGuid, queryDateOfBirth,
                     queryGender);
 
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createSQLQuery(sql);
+			org.hibernate.query.Query query = entityManager.unwrap(Session.class).createNativeQuery(sql);
 
-            query.setInteger(ID_TYPE_FOR_ST, Integer.valueOf(PatientIdentityTypeMap.getInstance().getIDForType("ST")));
-            query.setInteger(ID_TYPE_FOR_SUBJECT_NUMBER,
+			query.setParameter(ID_TYPE_FOR_ST,
+					Integer.valueOf(PatientIdentityTypeMap.getInstance().getIDForType("ST")));
+			query.setParameter(ID_TYPE_FOR_SUBJECT_NUMBER,
                     Integer.valueOf(PatientIdentityTypeMap.getInstance().getIDForType("SUBJECT")));
-            query.setInteger(ID_TYPE_FOR_GUID,
+			query.setParameter(ID_TYPE_FOR_GUID,
                     Integer.valueOf(PatientIdentityTypeMap.getInstance().getIDForType("GUID")));
 
             lastName = '%' + lastName + '%';
@@ -152,34 +150,34 @@ public class SearchResultsDAOImp implements SearchResultsDAO {
 //            gender = '%' + gender + '%';
 
             if (queryFirstName) {
-                query.setString(FIRST_NAME_PARAM, firstName);
+				query.setParameter(FIRST_NAME_PARAM, firstName);
             }
             if (queryLastName) {
-                query.setText(LAST_NAME_PARAM, lastName);
+				query.setParameter(LAST_NAME_PARAM, lastName);
             }
             if (queryNationalId) {
-                query.setString(NATIONAL_ID_PARAM, nationalID);
+				query.setParameter(NATIONAL_ID_PARAM, nationalID);
             }
             if (queryExternalId) {
-                query.setString(EXTERNAL_ID_PARAM, nationalID);
+				query.setParameter(EXTERNAL_ID_PARAM, nationalID);
             }
             if (querySTNumber) {
-                query.setString(ST_NUMBER_PARAM, STNumber);
+				query.setParameter(ST_NUMBER_PARAM, STNumber);
             }
             if (querySubjectNumber) {
-                query.setString(SUBJECT_NUMBER_PARAM, subjectNumber);
+				query.setParameter(SUBJECT_NUMBER_PARAM, subjectNumber);
             }
             if (queryPatientID) {
-                query.setInteger(ID_PARAM, Integer.valueOf(patientID));
+				query.setParameter(ID_PARAM, Integer.valueOf(patientID));
             }
             if (queryGuid) {
-                query.setString(GUID, guid);
+				query.setParameter(GUID, guid);
             }
             if (queryDateOfBirth) {
-                query.setString(DATE_OF_BIRTH, dateOfBirth);
+				query.setParameter(DATE_OF_BIRTH, dateOfBirth);
             }
             if (queryGender) {
-                query.setString(GENDER, gender);
+				query.setParameter(GENDER, gender);
             }
             LogEvent.logWarn(this.getClass().getName(), "getSearchResults",
                     "SearchResultsDAOImp:getSearchResults:query:guid: " + guid);
@@ -249,43 +247,44 @@ public class SearchResultsDAOImp implements SearchResultsDAO {
                     queryNationalId, queryExternalId, queryAnyID, queryPatientID, queryGuid, queryDateOfBirth,
                     queryGender);
 
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createSQLQuery(sql);
+			org.hibernate.query.Query query = entityManager.unwrap(Session.class).createNativeQuery(sql);
 
-            query.setInteger(ID_TYPE_FOR_ST, Integer.valueOf(PatientIdentityTypeMap.getInstance().getIDForType("ST")));
-            query.setInteger(ID_TYPE_FOR_SUBJECT_NUMBER,
+			query.setParameter(ID_TYPE_FOR_ST,
+					Integer.valueOf(PatientIdentityTypeMap.getInstance().getIDForType("ST")));
+			query.setParameter(ID_TYPE_FOR_SUBJECT_NUMBER,
                     Integer.valueOf(PatientIdentityTypeMap.getInstance().getIDForType("SUBJECT")));
-            query.setInteger(ID_TYPE_FOR_GUID,
+			query.setParameter(ID_TYPE_FOR_GUID,
                     Integer.valueOf(PatientIdentityTypeMap.getInstance().getIDForType("GUID")));
 
             if (queryFirstName) {
-                query.setString(FIRST_NAME_PARAM, firstName);
+				query.setParameter(FIRST_NAME_PARAM, firstName);
             }
             if (queryLastName) {
-                query.setText(LAST_NAME_PARAM, lastName);
+				query.setParameter(LAST_NAME_PARAM, lastName);
             }
             if (queryNationalId) {
-                query.setString(NATIONAL_ID_PARAM, nationalID);
+				query.setParameter(NATIONAL_ID_PARAM, nationalID);
             }
             if (queryExternalId) {
-                query.setString(EXTERNAL_ID_PARAM, nationalID);
+				query.setParameter(EXTERNAL_ID_PARAM, nationalID);
             }
             if (querySTNumber) {
-                query.setString(ST_NUMBER_PARAM, STNumber);
+				query.setParameter(ST_NUMBER_PARAM, STNumber);
             }
             if (querySubjectNumber) {
-                query.setString(SUBJECT_NUMBER_PARAM, subjectNumber);
+				query.setParameter(SUBJECT_NUMBER_PARAM, subjectNumber);
             }
             if (queryPatientID) {
-                query.setInteger(ID_PARAM, Integer.valueOf(patientID));
+				query.setParameter(ID_PARAM, Integer.valueOf(patientID));
             }
             if (queryGuid) {
-                query.setString(GUID, guid);
+				query.setParameter(GUID, guid);
             }
             if (queryDateOfBirth) {
-                query.setString(DATE_OF_BIRTH, dateOfBirth);
+				query.setParameter(DATE_OF_BIRTH, dateOfBirth);
             }
             if (queryGender) {
-                query.setString(GENDER, gender);
+				query.setParameter(GENDER, gender);
             }
             queryResults = query.list();
         } catch (RuntimeException e) {

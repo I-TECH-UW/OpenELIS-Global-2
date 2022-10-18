@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
-import org.hibernate.ObjectNotFoundException;
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
 import org.openelisglobal.localization.dao.LocalizationDAO;
 import org.openelisglobal.localization.valueholder.Localization;
@@ -38,7 +37,7 @@ public class LocalizationServiceImpl extends BaseObjectServiceImpl<Localization,
     @Override
     @Transactional(readOnly = true)
     public Localization get(String id) {
-        return getBaseObjectDAO().get(id).orElseThrow(() -> new ObjectNotFoundException(id, "Localization"));
+		return getBaseObjectDAO().get(id).get();
 
     }
 
@@ -80,7 +79,7 @@ public class LocalizationServiceImpl extends BaseObjectServiceImpl<Localization,
 
     @Override
     public String getLocalizedValueById(String id) {
-        return baseObjectDAO.get(id).orElseThrow(() -> new ObjectNotFoundException(id, "Localization"))
+		return baseObjectDAO.get(id).get()
                 .getLocalizedValue();
     }
 

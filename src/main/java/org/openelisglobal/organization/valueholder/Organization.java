@@ -21,20 +21,20 @@ import java.util.UUID;
 
 import javax.validation.constraints.Pattern;
 
-import org.hibernate.validator.constraints.SafeHtml;
 import org.hibernate.validator.constraints.URL;
 import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.common.valueholder.EnumValueItemImpl;
 import org.openelisglobal.common.valueholder.SimpleBaseEntity;
 import org.openelisglobal.common.valueholder.ValueHolder;
 import org.openelisglobal.common.valueholder.ValueHolderInterface;
+import org.openelisglobal.validation.annotations.SafeHtml;
 
 public class Organization extends EnumValueItemImpl implements SimpleBaseEntity<String> {
     private static final long serialVersionUID = 1L;
 
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String city;
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String cliaNum;
     @Pattern(regexp = ValidationHelper.ID_REGEX)
     private String id;
@@ -42,32 +42,32 @@ public class Organization extends EnumValueItemImpl implements SimpleBaseEntity<
     private String internetAddress;
     @Pattern(regexp = ValidationHelper.YES_NO_REGEX)
     private String isActive;
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String mlsLabFlag;
     @Pattern(regexp = ValidationHelper.YES_NO_REGEX)
     private String mlsSentinelLabFlag;
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String multipleUnit;
     private ValueHolderInterface organization;
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String organizationName;
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String orgMltOrgMltId;
     @Pattern(regexp = ValidationHelper.ID_REGEX)
     private String pwsId;
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String shortName;
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String state;
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String streetAddress;
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String zipCode;
     @Pattern(regexp = ValidationHelper.ID_REGEX)
     private String selectedOrgId;
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String organizationLocalAbbreviation;
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String code;
     private Set<OrganizationType> organizationTypes;
     private UUID fhirUuid;

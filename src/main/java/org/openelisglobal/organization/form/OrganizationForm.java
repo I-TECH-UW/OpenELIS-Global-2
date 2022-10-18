@@ -8,7 +8,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
-import org.hibernate.validator.constraints.SafeHtml;
 import org.hibernate.validator.constraints.URL;
 import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.formfields.FormFields.Field;
@@ -17,6 +16,7 @@ import org.openelisglobal.dictionary.valueholder.Dictionary;
 import org.openelisglobal.organization.valueholder.Organization;
 import org.openelisglobal.organization.valueholder.OrganizationType;
 import org.openelisglobal.validation.annotations.OptionalNotBlank;
+import org.openelisglobal.validation.annotations.SafeHtml;
 
 public class OrganizationForm extends BaseForm {
     @Pattern(regexp = ValidationHelper.ID_REGEX)
@@ -26,10 +26,10 @@ public class OrganizationForm extends BaseForm {
     private String organizationLocalAbbreviation = "";
 
     @NotBlank
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String organizationName = "";
 
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String city = "";
 
     @OptionalNotBlank(formFields = { Field.OrganizationAddressInfo, Field.ZipCode })
@@ -37,7 +37,7 @@ public class OrganizationForm extends BaseForm {
     private String zipCode = "";
 
     @OptionalNotBlank(formFields = { Field.MLS })
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String mlsSentinelLabFlag = "";
 
     @NotBlank
@@ -50,23 +50,23 @@ public class OrganizationForm extends BaseForm {
     @Pattern(regexp = ValidationHelper.ID_REGEX)
     private String selectedOrgId = "";
 
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String parentOrgName = "";
 
     @Valid
     private Organization organization;
 
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String shortName = "";
 
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String multipleUnit = "";
 
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String streetAddress = "";
 
     @OptionalNotBlank(formFields = { Field.OrganizationAddressInfo, Field.OrgState })
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String state = "";
     // for display
     private Collection states;
@@ -75,10 +75,10 @@ public class OrganizationForm extends BaseForm {
     private String internetAddress = "";
 
     @OptionalNotBlank(formFields = { Field.MLS })
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String mlsLabFlag = "";
 
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String cliaNum = "";
 
     @Pattern(regexp = ValidationHelper.ID_REGEX)
@@ -91,10 +91,10 @@ public class OrganizationForm extends BaseForm {
 
     private Timestamp lastupdated;
 
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String commune = "";
 
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String village = "";
 
     @Pattern(regexp = ValidationHelper.ID_REGEX)

@@ -22,8 +22,8 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.openelisglobal.common.dao.DatabaseChangeLogDAO;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
@@ -33,12 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional
-//public class DatabaseChangeLogDAOImpl extends BaseDAOImpl<DatabaseChangeLog, String> implements DatabaseChangeLogDAO {
 public class DatabaseChangeLogDAOImpl implements DatabaseChangeLogDAO {
-
-    // public DatabaseChangeLogDAOImpl() {
-    // super(DatabaseChangeLog.class);
-    // }
 
     @PersistenceContext
     EntityManager entityManager;
@@ -51,11 +46,10 @@ public class DatabaseChangeLogDAOImpl implements DatabaseChangeLogDAO {
 
         try {
             String sql = "from DatabaseChangeLog dcl order by dcl.executed desc";
-            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+			Query<DatabaseChangeLog> query = entityManager.unwrap(Session.class).createQuery(sql,
+					DatabaseChangeLog.class);
 
             results = query.list();
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
             if (results != null && results.get(0) != null) {
                 return results.get(0);

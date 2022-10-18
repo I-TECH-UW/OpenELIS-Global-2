@@ -20,8 +20,8 @@ import java.sql.Timestamp;
 import java.util.List;
 
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.dataexchange.aggregatereporting.dao.ReportExternalExportDAO;
@@ -45,11 +45,10 @@ public class ReportExternalExportDAOImpl extends BaseDAOImpl<ReportExternalExpor
             throws LIMSRuntimeException {
         String sql = "from ReportExternalExport rq where rq.recalculate = true and rq.typeId = :typeId";
         try {
-            Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            query.setInteger("typeId", Integer.parseInt(reportQueueTypeId));
+			Query<ReportExternalExport> query = entityManager.unwrap(Session.class).createQuery(sql,
+					ReportExternalExport.class);
+			query.setParameter("typeId", Integer.parseInt(reportQueueTypeId));
             List<ReportExternalExport> reports = query.list();
-
-            // closeSession(); // CSL remove old
 
             return reports;
         } catch (HibernateException e) {
@@ -64,11 +63,10 @@ public class ReportExternalExportDAOImpl extends BaseDAOImpl<ReportExternalExpor
     public List<ReportExternalExport> getUnsentReportExports(String reportQueueTypeId) throws LIMSRuntimeException {
         String sql = "from ReportExternalExport rq where rq.send = true and rq.typeId = :typeId";
         try {
-            Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            query.setInteger("typeId", Integer.parseInt(reportQueueTypeId));
+			Query<ReportExternalExport> query = entityManager.unwrap(Session.class).createQuery(sql,
+					ReportExternalExport.class);
+			query.setParameter("typeId", Integer.parseInt(reportQueueTypeId));
             List<ReportExternalExport> reports = query.list();
-
-            // closeSession(); // CSL remove old
 
             return reports;
         } catch (HibernateException e) {
@@ -85,11 +83,10 @@ public class ReportExternalExportDAOImpl extends BaseDAOImpl<ReportExternalExpor
         String sql = "from ReportExternalExport rq where rq.send = false and rq.typeId = :typeId order by rq.sentDate desc";
 
         try {
-            Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            query.setInteger("typeId", Integer.parseInt(reportQueueTypeId));
-            ReportExternalExport report = (ReportExternalExport) query.setMaxResults(1).uniqueResult();
-
-            // closeSession(); // CSL remove old
+			Query<ReportExternalExport> query = entityManager.unwrap(Session.class).createQuery(sql,
+					ReportExternalExport.class);
+			query.setParameter("typeId", Integer.parseInt(reportQueueTypeId));
+            ReportExternalExport report = query.setMaxResults(1).uniqueResult();
 
             return report;
         } catch (HibernateException e) {
@@ -105,11 +102,10 @@ public class ReportExternalExportDAOImpl extends BaseDAOImpl<ReportExternalExpor
         String sql = "from ReportExternalExport rq where rq.typeId = :typeId order by rq.eventDate desc";
 
         try {
-            Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            query.setInteger("typeId", Integer.parseInt(reportQueueTypeId));
-            ReportExternalExport report = (ReportExternalExport) query.setMaxResults(1).uniqueResult();
-
-            // closeSession(); // CSL remove old
+			Query<ReportExternalExport> query = entityManager.unwrap(Session.class).createQuery(sql,
+					ReportExternalExport.class);
+			query.setParameter("typeId", Integer.parseInt(reportQueueTypeId));
+            ReportExternalExport report = query.setMaxResults(1).uniqueResult();
 
             return report;
         } catch (HibernateException e) {
@@ -128,12 +124,11 @@ public class ReportExternalExportDAOImpl extends BaseDAOImpl<ReportExternalExpor
         String sql = "from ReportExternalExport rq where rq.sentDate >= :lower and rq.sentDate <= :upper";
 
         try {
-            Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            query.setTimestamp("lower", lower);
-            query.setTimestamp("upper", upper);
+			Query<ReportExternalExport> query = entityManager.unwrap(Session.class).createQuery(sql,
+					ReportExternalExport.class);
+			query.setParameter("lower", lower);
+			query.setParameter("upper", upper);
             List<ReportExternalExport> reports = query.list();
-
-            // closeSession(); // CSL remove old
 
             return reports;
         } catch (HibernateException e) {
@@ -143,37 +138,11 @@ public class ReportExternalExportDAOImpl extends BaseDAOImpl<ReportExternalExpor
         return null;
     }
 
-//	@Override
-//	public void insertReportExternalExport(ReportExternalExport report) throws LIMSRuntimeException {
-//		try {
-//			String id = (String) entityManager.unwrap(Session.class).save(report);
-//			report.setId(id);
-//			// closeSession(); // CSL remove old
-//		} catch (HibernateException e) {
-//			handleException(e, "insertReportExternalExport");
-//		}
-//	}
-
-//	@Override
-//	public void updateReportExternalExport(ReportExternalExport report) throws LIMSRuntimeException {
-//
-//		try {
-//			entityManager.unwrap(Session.class).merge(report);
-//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//			// entityManager.unwrap(Session.class).evict // CSL remove old(report);
-//			// entityManager.unwrap(Session.class).refresh // CSL remove old(report);
-//		} catch (RuntimeException e) {
-//			handleException(e, "updateReportExternalExport");
-//		}
-//	}
-
     @Override
     public ReportExternalExport readReportExternalExport(String idString) throws LIMSRuntimeException {
 
         try {
             ReportExternalExport data = entityManager.unwrap(Session.class).get(ReportExternalExport.class, idString);
-            // closeSession(); // CSL remove old
             return data;
         } catch (HibernateException e) {
             handleException(e, "readReportExternalExport");
@@ -187,9 +156,9 @@ public class ReportExternalExportDAOImpl extends BaseDAOImpl<ReportExternalExpor
         String sql = "From ReportExternalExport ree where ree.sentDate IS NOT NULL order by ree.sentDate DESC";
 
         try {
-            Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            ReportExternalExport report = (ReportExternalExport) query.setMaxResults(1).uniqueResult();
-            // closeSession(); // CSL remove old
+			Query<ReportExternalExport> query = entityManager.unwrap(Session.class).createQuery(sql,
+					ReportExternalExport.class);
+            ReportExternalExport report = query.setMaxResults(1).uniqueResult();
             if (report != null) {
                 return report.getSentDate();
             }
@@ -205,9 +174,9 @@ public class ReportExternalExportDAOImpl extends BaseDAOImpl<ReportExternalExpor
         String sql = "From ReportExternalExport ree order by ree.collectionDate DESC";
 
         try {
-            Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            ReportExternalExport report = (ReportExternalExport) query.setMaxResults(1).uniqueResult();
-            // closeSession(); // CSL remove old
+			Query<ReportExternalExport> query = entityManager.unwrap(Session.class).createQuery(sql,
+					ReportExternalExport.class);
+            ReportExternalExport report = query.setMaxResults(1).uniqueResult();
             if (report != null) {
                 return report.getCollectionDate();
             }
@@ -223,12 +192,12 @@ public class ReportExternalExportDAOImpl extends BaseDAOImpl<ReportExternalExpor
         String sql = "From ReportExternalExport ree where ree.eventDate >= :eventDate and ree.eventDate < :nextDay and ree.typeId = :typeId";
 
         try {
-            Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            query.setDate("eventDate", report.getEventDate());
-            query.setDate("nextDay", new Timestamp(report.getEventDate().getTime() + DAY_IN_MILLSEC));
-            query.setInteger("typeId", Integer.parseInt(report.getTypeId()));
-            ReportExternalExport foundReport = (ReportExternalExport) query.setMaxResults(1).uniqueResult();
-            // closeSession(); // CSL remove old
+			Query<ReportExternalExport> query = entityManager.unwrap(Session.class).createQuery(sql,
+					ReportExternalExport.class);
+			query.setParameter("eventDate", report.getEventDate());
+			query.setParameter("nextDay", new Timestamp(report.getEventDate().getTime() + DAY_IN_MILLSEC));
+			query.setParameter("typeId", Integer.parseInt(report.getTypeId()));
+            ReportExternalExport foundReport = query.setMaxResults(1).uniqueResult();
             return foundReport == null ? report : foundReport;
 
         } catch (HibernateException e) {
@@ -242,13 +211,4 @@ public class ReportExternalExportDAOImpl extends BaseDAOImpl<ReportExternalExpor
         return readReportExternalExport(report.getId());
     }
 
-//	@Override
-//	public void delete(ReportExternalExport report) throws LIMSRuntimeException {
-//		try {
-//			entityManager.unwrap(Session.class).delete(readReportExternalExport(report.getId()));
-//			// closeSession(); // CSL remove old
-//		} catch (RuntimeException e) {
-//			handleException(e, "delete");
-//		}
-//	}
 }

@@ -645,7 +645,7 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
     // ImplicitNamingStrategyJpaCompliantImpl
     public String getTableName() {
         AbstractEntityPersister persister = (AbstractEntityPersister) entityManager.unwrap(Session.class)
-                .getSessionFactory().getClassMetadata(classType);
+				.getSessionFactory().getMetamodel().managedType(classType);
         String tableName = persister.getTableName();
         return tableName.substring(tableName.indexOf('.') + 1);
     }

@@ -17,8 +17,8 @@
 package org.openelisglobal.siteinformation.daoimpl;
 
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.siteinformation.dao.SiteInformationDomainDAO;
@@ -41,10 +41,10 @@ public class SiteInformationDomainDAOImpl extends BaseDAOImpl<SiteInformationDom
         String sql = "from SiteInformationDomain sid where sid.name = :name";
 
         try {
-            Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            query.setString("name", name);
-            SiteInformationDomain domain = (SiteInformationDomain) query.uniqueResult();
-            // closeSession(); // CSL remove old
+			Query<SiteInformationDomain> query = entityManager.unwrap(Session.class).createQuery(sql,
+					SiteInformationDomain.class);
+			query.setParameter("name", name);
+            SiteInformationDomain domain = query.uniqueResult();
             return domain;
         } catch (HibernateException e) {
             handleException(e, "getByName");

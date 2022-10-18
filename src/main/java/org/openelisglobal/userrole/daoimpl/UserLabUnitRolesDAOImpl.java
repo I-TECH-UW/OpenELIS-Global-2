@@ -12,21 +12,23 @@
 * The Original Code is OpenELIS code.
 *
 * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
+*
+* Contributor(s): CIRG, University of Washington, Seattle WA.
 */
-package org.openelisglobal.analyzer.daoimpl;
+package org.openelisglobal.userrole.daoimpl;
 
-import org.openelisglobal.analyzer.dao.AnalyzerDAO;
-import org.openelisglobal.analyzer.valueholder.Analyzer;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
+import org.openelisglobal.userrole.dao.UserLabUnitRolesDAO;
+import org.openelisglobal.userrole.valueholder.UserLabUnitRoles;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional
-public class AnalyzerDAOImpl extends BaseDAOImpl<Analyzer, String> implements AnalyzerDAO {
+public class UserLabUnitRolesDAOImpl extends BaseDAOImpl<UserLabUnitRoles, Integer> implements UserLabUnitRolesDAO {
 
-    public AnalyzerDAOImpl() {
-        super(Analyzer.class);
+    public UserLabUnitRolesDAOImpl() {
+		super(UserLabUnitRoles.class);
     }
 
 }

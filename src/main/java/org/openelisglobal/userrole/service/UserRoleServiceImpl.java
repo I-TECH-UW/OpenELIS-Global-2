@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.userrole.dao.UserLabUnitRolesDAO;
 import org.openelisglobal.userrole.dao.UserRoleDAO;
 import org.openelisglobal.userrole.valueholder.LabUnitRoleMap;
 import org.openelisglobal.userrole.valueholder.UserLabUnitRoles;
@@ -18,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserRoleServiceImpl extends BaseObjectServiceImpl<UserRole, UserRolePK> implements UserRoleService {
     @Autowired
     protected UserRoleDAO baseObjectDAO;
+	@Autowired
+	protected UserLabUnitRolesDAO userLabUnitRolesDAO;
 
     UserRoleServiceImpl() {
         super(UserRole.class);
@@ -48,12 +51,16 @@ public class UserRoleServiceImpl extends BaseObjectServiceImpl<UserRole, UserRol
 
     @Override
     public void saveOrUpdateUserLabUnitRoles(UserLabUnitRoles labRoles) {
-        getBaseObjectDAO().saveUserLabUnitRoles(labRoles);
+		if (null == labRoles.getId()) {
+			userLabUnitRolesDAO.insert(labRoles);
+		} else {
+			userLabUnitRolesDAO.update(labRoles);
+		}
     }
 
     @Override
     public UserLabUnitRoles getUserLabUnitRoles(String userId){
-        return  getBaseObjectDAO().getUserLabUnitRoles(userId);
+		return userLabUnitRolesDAO.get(Integer.parseInt(userId)).get();
     }
 
     @Override
@@ -63,6 +70,6 @@ public class UserRoleServiceImpl extends BaseObjectServiceImpl<UserRole, UserRol
 
     @Override
     public List<UserLabUnitRoles> getAllUserLabUnitRoles() {
-        return getBaseObjectDAO().getAllUserLabUnitRoles();
+		return userLabUnitRolesDAO.getAll();
     }
 }

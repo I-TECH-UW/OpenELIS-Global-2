@@ -6,7 +6,7 @@ import java.util.Map;
 import javax.validation.Valid;
 import javax.validation.constraints.Pattern;
 
-import org.hibernate.validator.constraints.SafeHtml;
+import org.openelisglobal.validation.annotations.SafeHtml;
 import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.util.validator.CustomDateValidator.DateRelation;
@@ -25,10 +25,10 @@ import org.openelisglobal.validation.annotations.ValidTime;
 
 //values used for fetching, tight validation not needed
 public class PrintBarcodeForm extends BaseForm {
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String accessionNumber;
 
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String patientId;
 
     @ValidDate(relative = DateRelation.TODAY)

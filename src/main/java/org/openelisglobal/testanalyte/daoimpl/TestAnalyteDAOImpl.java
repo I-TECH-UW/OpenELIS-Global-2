@@ -45,108 +45,11 @@ public class TestAnalyteDAOImpl extends BaseDAOImpl<TestAnalyte, String> impleme
         super(TestAnalyte.class);
     }
 
-//	@Override
-//	public void deleteData(List testAnalytes) throws LIMSRuntimeException {
-//		// add to audit trail
-//		try {
-//
-//			for (int i = 0; i < testAnalytes.size(); i++) {
-//				TestAnalyte data = (TestAnalyte) testAnalytes.get(i);
-//
-//				TestAnalyte oldData = readTestAnalyte(data.getId());
-//				TestAnalyte newData = new TestAnalyte();
-//
-//				String sysUserId = data.getSysUserId();
-//				String event = IActionConstants.AUDIT_TRAIL_DELETE;
-//				String tableName = "TEST_ANALYTE";
-//				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-//			}
-//		} catch (RuntimeException e) {
-//			// bugzilla 2154
-//			LogEvent.logError("TestAnalyteDAOImpl", "AuditTrail deleteData()", e.toString());
-//			throw new LIMSRuntimeException("Error in TestAnalyte AuditTrail deleteData()", e);
-//		}
-//
-//		try {
-//			for (int i = 0; i < testAnalytes.size(); i++) {
-//				TestAnalyte data = (TestAnalyte) testAnalytes.get(i);
-//				// bugzilla 2206
-//				data = readTestAnalyte(data.getId());
-//				entityManager.unwrap(Session.class).delete(data);
-//				// entityManager.unwrap(Session.class).flush(); // CSL remove old
-//				// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//			}
-//		} catch (RuntimeException e) {
-//			// bugzilla 2154
-//			LogEvent.logError("TestAnalyteDAOImpl", "deleteData()", e.toString());
-//			throw new LIMSRuntimeException("Error in TestAnalyte deleteData()", e);
-//		}
-//	}
-
-//	@Override
-//	public boolean insertData(TestAnalyte testAnalyte) throws LIMSRuntimeException {
-//
-//		try {
-//			String id = (String) entityManager.unwrap(Session.class).save(testAnalyte);
-//			testAnalyte.setId(id);
-//
-//			// bugzilla 1824 inserts will be logged in history table
-//
-//			String sysUserId = testAnalyte.getSysUserId();
-//			String tableName = "TEST_ANALYTE";
-//			auditDAO.saveNewHistory(testAnalyte, sysUserId, tableName);
-//
-//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//
-//		} catch (RuntimeException e) {
-//			// bugzilla 2154
-//			LogEvent.logError("TestAnalyteDAOImpl", "insertData()", e.toString());
-//			throw new LIMSRuntimeException("Error in TestAnalyte insertData()", e);
-//		}
-//
-//		return true;
-//	}
-
-//	@Override
-//	public void updateData(TestAnalyte testAnalyte) throws LIMSRuntimeException {
-//
-//		TestAnalyte oldData = readTestAnalyte(testAnalyte.getId());
-//		TestAnalyte newData = testAnalyte;
-//
-//		// add to audit trail
-//		try {
-//
-//			String sysUserId = testAnalyte.getSysUserId();
-//			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
-//			String tableName = "TEST_ANALYTE";
-//			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-//		} catch (RuntimeException e) {
-//			// bugzilla 2154
-//			LogEvent.logError("TestAnalyteDAOImpl", "AuditTrail updateData()", e.toString());
-//			throw new LIMSRuntimeException("Error in TestAnalyte AuditTrail updateData()", e);
-//		}
-//
-//		try {
-//			entityManager.unwrap(Session.class).merge(testAnalyte);
-//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//			// entityManager.unwrap(Session.class).evict // CSL remove old(testAnalyte);
-//			// entityManager.unwrap(Session.class).refresh // CSL remove old(testAnalyte);
-//		} catch (RuntimeException e) {
-//			// bugzilla 2154
-//			LogEvent.logError("TestAnalyteDAOImpl", "updateData()", e.toString());
-//			throw new LIMSRuntimeException("Error in TestAnalyte updateData()", e);
-//		}
-//	}
-
     @Override
     @Transactional(readOnly = true)
     public TestAnalyte getData(TestAnalyte testAnalyte) throws LIMSRuntimeException {
         try {
             TestAnalyte anal = entityManager.unwrap(Session.class).get(TestAnalyte.class, testAnalyte.getId());
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
             if (anal != null) {
                 PropertyUtils.copyProperties(testAnalyte, anal);
             } else {
@@ -167,10 +70,9 @@ public class TestAnalyteDAOImpl extends BaseDAOImpl<TestAnalyte, String> impleme
         List<TestAnalyte> list;
         try {
             String sql = "from TestAnalyte";
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            list = query.list();
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
+			org.hibernate.query.Query<TestAnalyte> query = entityManager.unwrap(Session.class).createQuery(sql,
+					TestAnalyte.class);
+			list = query.list();
         } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
@@ -189,13 +91,12 @@ public class TestAnalyteDAOImpl extends BaseDAOImpl<TestAnalyte, String> impleme
             int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 
             String sql = "from TestAnalyte t order by t.id";
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            query.setFirstResult(startingRecNo - 1);
+			org.hibernate.query.Query<TestAnalyte> query = entityManager.unwrap(Session.class).createQuery(sql,
+					TestAnalyte.class);
+			query.setFirstResult(startingRecNo - 1);
             query.setMaxResults(endingRecNo - 1);
 
             list = query.list();
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
@@ -209,8 +110,6 @@ public class TestAnalyteDAOImpl extends BaseDAOImpl<TestAnalyte, String> impleme
         TestAnalyte ta = null;
         try {
             ta = entityManager.unwrap(Session.class).get(TestAnalyte.class, idString);
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
@@ -260,8 +159,6 @@ public class TestAnalyteDAOImpl extends BaseDAOImpl<TestAnalyte, String> impleme
         TestAnalyte newTestAnalyte;
         try {
             newTestAnalyte = entityManager.unwrap(Session.class).get(TestAnalyte.class, testAnalyte.getId());
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
@@ -278,17 +175,16 @@ public class TestAnalyteDAOImpl extends BaseDAOImpl<TestAnalyte, String> impleme
         List<TestAnalyte> list;
 
         if (test == null || StringUtil.isNullorNill(test.getId())) {
-            return new ArrayList();
+			return new ArrayList<>();
         }
 
         try {
             String sql = "from TestAnalyte t where t.test = :testId order by t.sortOrder asc";
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            query.setInteger("testId", Integer.parseInt(test.getId()));
+			org.hibernate.query.Query<TestAnalyte> query = entityManager.unwrap(Session.class).createQuery(sql,
+					TestAnalyte.class);
+			query.setParameter("testId", Integer.parseInt(test.getId()));
 
             list = query.list();
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TestAnalyte getAllTestAnalytesPerTest()", e);

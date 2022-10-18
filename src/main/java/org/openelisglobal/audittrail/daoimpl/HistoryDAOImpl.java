@@ -1,9 +1,11 @@
-package org.openelisglobal.audittrail.dao;
+package org.openelisglobal.audittrail.daoimpl;
 
 import java.util.List;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
+import org.openelisglobal.audittrail.dao.HistoryDAO;
 import org.openelisglobal.audittrail.valueholder.History;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
@@ -35,9 +37,9 @@ public class HistoryDAOImpl extends BaseDAOImpl<History, String> implements Hist
 
         try {
             String sql = "from History h where h.referenceId = :refId and h.referenceTable = :tableId order by h.timestamp desc, h.activity desc";
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            query.setInteger("refId", Integer.parseInt(refId));
-            query.setInteger("tableId", Integer.parseInt(tableId));
+			Query<History> query = entityManager.unwrap(Session.class).createQuery(sql, History.class);
+			query.setParameter("refId", Integer.parseInt(refId));
+			query.setParameter("tableId", Integer.parseInt(tableId));
             list = query.list();
         } catch (HibernateException e) {
             LogEvent.logError(e.toString(), e);

@@ -17,8 +17,8 @@
 package org.openelisglobal.testcodes.daoimpl;
 
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.testcodes.dao.TestCodeTypeDAO;
@@ -40,10 +40,9 @@ public class TestCodeTypeDAOImpl extends BaseDAOImpl<TestCodeType, String> imple
         String sql = "from TestCodeType et where et.schemaName = :name";
 
         try {
-            Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            query.setString("name", name);
-            TestCodeType et = (TestCodeType) query.uniqueResult();
-            // closeSession(); // CSL remove old
+			Query<TestCodeType> query = entityManager.unwrap(Session.class).createQuery(sql, TestCodeType.class);
+			query.setParameter("name", name);
+            TestCodeType et = query.uniqueResult();
             return et;
         } catch (HibernateException e) {
             handleException(e, "getTestCodeTypeByName");
@@ -57,10 +56,9 @@ public class TestCodeTypeDAOImpl extends BaseDAOImpl<TestCodeType, String> imple
         String sql = "from TestCodeType et where et.id = :id";
 
         try {
-            Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            query.setString("id", id);
-            TestCodeType et = (TestCodeType) query.uniqueResult();
-            // closeSession(); // CSL remove old
+			Query<TestCodeType> query = entityManager.unwrap(Session.class).createQuery(sql, TestCodeType.class);
+			query.setParameter("id", id);
+            TestCodeType et = query.uniqueResult();
             return et;
         } catch (HibernateException e) {
             handleException(e, "getTestCodeTypeByName");

@@ -25,7 +25,8 @@ public class BasicAuthenticationDataDAOImpl extends BaseDAOImpl<BasicAuthenticat
         BasicAuthenticationData data;
         try {
             String sql = "from BasicAuthenticationData as cad where cad.externalConnection.id = :externalConnectionId";
-            Query<BasicAuthenticationData> query = entityManager.unwrap(Session.class).createQuery(sql);
+			Query<BasicAuthenticationData> query = entityManager.unwrap(Session.class).createQuery(sql,
+					BasicAuthenticationData.class);
             query.setParameter("externalConnectionId", externalConnectionId);
             data = query.uniqueResult();
         } catch (RuntimeException e) {
