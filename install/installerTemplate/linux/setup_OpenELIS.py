@@ -1456,7 +1456,7 @@ def load_docker_image():
 
 def start_docker_containers():
     log("starting docker containers", PRINT_TO_CONSOLE)
-    cmd = 'sudo docker-compose up -d '
+    cmd = 'sudo docker compose up -d '
     os.system(cmd)
 
 

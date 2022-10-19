@@ -114,10 +114,8 @@ createLinuxInstaller() {
 #	cp ${PROJECT_DIR}/tools/DBBackup/installerTemplates/${backupFile} ${INSTALLER_CREATION_DIR}/linux/${context}/templates/DatabaseBackup.pl
 #	cp ${PROJECT_DIR}/database/baseDatabase/OpenELIS-Global.sql ${INSTALLER_CREATION_DIR}/linux/${installerName}/database/baseDatabase/databaseInstall.sql
 	
-	cp ${STAGING_DIR}/get-docker.sh ${INSTALLER_CREATION_DIR}/linux/${installerName}/scripts/
 	chmod +x ${INSTALLER_CREATION_DIR}/linux/${installerName}/scripts/*.sh
 	
-	cp ${STAGING_DIR}/docker-compose ${INSTALLER_CREATION_DIR}/linux/${installerName}/bin/docker-compose
 	cd ${INSTALLER_CREATION_DIR}/linux
 	tar -cf ${installerName}.tar ${installerName}
 	gzip ${installerName}.tar 
@@ -155,10 +153,6 @@ then
 #	docker save datasubscriber-webapp:latest | gzip > DataSubscriber_DockerImage.tar.gz
 	
 	mkdir ${STAGING_DIR}
-	echo "downloading scripts for docker installation and docker-compose installation"
-	curl -fsSL https://get.docker.com -o ${STAGING_DIR}/get-docker.sh
-	curl -L https://github.com/docker/compose/releases/download/1.29.2/docker-compose-`uname -s`-`uname -m` -o ${STAGING_DIR}/docker-compose
-	
 	createLinuxInstaller OpenELIS-Global OffSiteBackupLinux.pl 
 
 	
