@@ -44,7 +44,10 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder, String>
     @Override
     @Transactional(readOnly = true)
     public List<ElectronicOrder> getElectronicOrdersByExternalId(String id) throws LIMSRuntimeException {
-        String sql = "from ElectronicOrder eo where eo.externalId = :externalid order by id";
+		if (GenericValidator.isBlankOrNull(id)) {
+			return new ArrayList<>();
+		}
+		String sql = "from ElectronicOrder eo where eo.externalId = :externalid order by id";
 
         try {
 			Query<ElectronicOrder> query = entityManager.unwrap(Session.class).createQuery(sql, ElectronicOrder.class);
