@@ -1,0 +1,5 @@
+{
+    "tittle" : "Cote d'Ivoire Regional Laboratory Laboratory Information System",
+    "serverBaseUrl" : "http://localhost/OpenELIS-Global" ,
+    "loginRedirect" : "https://localhost:8443/OpenELIS-Global/LoginPage"
+}

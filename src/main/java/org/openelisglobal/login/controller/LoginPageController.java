@@ -6,20 +6,24 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.json.JSONObject;
 import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.login.form.LoginForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ResolvableType;
+import org.springframework.http.MediaType;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
@@ -78,6 +82,12 @@ public class LoginPageController extends BaseController {
         form.setFormAction("ValidateLogin");
 
         return findForward(forward, form);
+    }
+
+    @GetMapping(value = "/IsSessionExpired", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public String getPerson(HttpServletRequest request ) {
+        return new JSONObject().put("sessionExpired", userModuleService.isSessionExpired(request)).toString();
     }
 
     @Override

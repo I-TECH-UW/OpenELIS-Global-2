@@ -25,3 +25,4 @@ src/main/resources/adminPassword.txt
 /OEInstaller/
 /docs_back
 /bin/
+/.apt_generated/
