@@ -112,7 +112,7 @@ public class LoginPageController extends BaseController {
 
             JSONArray roleArray = new JSONArray();
             for (String roleId : userRoleService.getRoleIdsForUser(user.getId())) {
-                roleArray.put(roleService.getRoleById(roleId).getName());
+                roleArray.put(roleService.getRoleById(roleId).getName().trim());
             }
             sessionDetails.put("roles", roleArray);
         }
