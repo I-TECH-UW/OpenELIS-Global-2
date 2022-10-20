@@ -34,9 +34,27 @@ class SecureRoute extends React.Component {
                     this.props.onAuth(jsonResp);
 
                     const hasRole = !!jsonResp.roles.find(role => {
-                        return role === this.props.role
+                        return role.trim() === this.props.role
                     })
-                    console.log("...." + hasRole);
+                    if (hasRole) {
+                        console.info("Acess Allowed");
+                    } else {
+                        const options = {
+                            title: 'Access Denied',
+                            message: 'You do not have access to this module ,please contact your system administrator',
+                            buttons: [
+                                {
+                                    label: 'Yes',
+                                    onClick: () => {
+                                        window.location.href = window.location.origin
+                                    }
+                                }
+                            ],
+                            closeOnClickOutside: false,
+                            closeOnEscape: false
+                        }
+                        confirmAlert(options);
+                    }
                 } else {
                     window.location.href = this.props.config.loginRedirect;
                 }

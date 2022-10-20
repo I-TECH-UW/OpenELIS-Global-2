@@ -78,7 +78,7 @@ class App extends React.Component {
             <Layout config={this.state.config} onChangeLanguage={this.onChangeLanguage} logout={this.logout} isLoggedIn={this.isLoggedIn} user={this.state.user}>
               <Switch>
                 <Route path="/" exact component={OpenElis} />
-                <SecureRoute path="/admin" exact component={() => <Admin/>} role="Audit Trail                   " config={this.state.config} onAuth={this.onAuth} logout={this.logout} isLoggedIn={this.isLoggedIn}/>
+                <SecureRoute path="/admin" exact component={() => <Admin/>} role="Audit Trail" config={this.state.config} onAuth={this.onAuth} logout={this.logout} isLoggedIn={this.isLoggedIn}/>
               </Switch>
             </Layout>
           </Router>
