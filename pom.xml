@@ -15,7 +15,7 @@
 		<major.version>2</major.version>
 		<minor.version>7</minor.version>
 		<state.version>0</state.version> <!-- 0 = alpha, 1 = beta, 2 = rc, 3 = deployable -->
-		<fix.version>12</fix.version>
+		<fix.version>13</fix.version>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
@@ -454,7 +454,7 @@
 		<dependency>
 			<groupId>org.jsoup</groupId>
 			<artifactId>jsoup</artifactId>
-			<version>1.14.2</version>
+			<version>1.15.3</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
