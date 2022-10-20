@@ -77,8 +77,10 @@ div {
   box-shadow: none !important;
 }
 
-.logut{
-  /* float: right */
+
+.logoutDiv{
+  /* float: right ; */
+  text-align: right
 }
 
 .logout-button{

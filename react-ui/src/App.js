@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Switch, Redirectx } from "react-router-
 import { IntlProvider } from 'react-intl';
 import Layout from './components/layout/Layout';
 import OpenElis from './components/OpenElis';
-import Admin from './components/Admin';
+import {Admin} from './components';
 import './App.css';
 import messages_en from './languages/en.json';
 import messages_fr from './languages/fr.json';
@@ -22,6 +22,7 @@ class App extends React.Component {
     super(props);
     this.state = {
       authenticated: false,
+      user : {},
       config: config
     }
     i18nConfig.locale = localStorage.getItem('locale') || navigator.language.split(/[-_]/)[0];
@@ -38,8 +39,9 @@ class App extends React.Component {
 
   }
 
-  onAuth = () => {
+  onAuth = (user) => {
     this.setState({ authenticated: true });
+    this.setState({ user: user });
   }
 
   isLoggedIn = () => {
@@ -73,10 +75,10 @@ class App extends React.Component {
       >
         <>
           <Router>
-            <Layout config={this.state.config} onChangeLanguage={this.onChangeLanguage} logout={this.logout} isLoggedIn={this.isLoggedIn} >
+            <Layout config={this.state.config} onChangeLanguage={this.onChangeLanguage} logout={this.logout} isLoggedIn={this.isLoggedIn} user={this.state.user}>
               <Switch>
                 <Route path="/" exact component={OpenElis} />
-                <SecureRoute path="/admin" exact component={Admin} config={this.state.config} onAuth={this.onAuth} logout={this.logout} isLoggedIn={this.isLoggedIn}/>
+                <SecureRoute path="/admin" exact component={() => <Admin/>} role="Audit Trail                   " config={this.state.config} onAuth={this.onAuth} logout={this.logout} isLoggedIn={this.isLoggedIn}/>
               </Switch>
             </Layout>
           </Router>

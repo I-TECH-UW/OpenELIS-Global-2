@@ -71,7 +71,7 @@ public class SecurityConfig {
     // pages that have special security constraints
     public static final String[] OPEN_PAGES = { "/pluginServlet/**", "/ChangePasswordLogin",
 			"/UpdateLoginChangePassword" };
-    public static final String[] LOGIN_PAGES = { "/LoginPage", "/ValidateLogin" , "/IsSessionExpired"};
+    public static final String[] LOGIN_PAGES = { "/LoginPage", "/ValidateLogin" , "/session"};
 	public static final String[] AUTH_OPEN_PAGES = { "/Home", "/Dashboard", "/Logout", "/MasterListsPage",
 			"/analyzer/runAction/**" };
     public static final String[] RESOURCE_PAGES = { "/fontawesome-free-5.13.1-web/**", "/css/**", "/favicon/**",

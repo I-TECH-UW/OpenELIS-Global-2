@@ -6,10 +6,15 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.login.form.LoginForm;
+import org.openelisglobal.role.service.RoleService;
+import org.openelisglobal.systemuser.service.SystemUserService;
+import org.openelisglobal.systemuser.valueholder.SystemUser;
+import org.openelisglobal.userrole.service.UserRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ResolvableType;
@@ -26,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+
 @Controller
 public class LoginPageController extends BaseController {
 
@@ -40,6 +46,13 @@ public class LoginPageController extends BaseController {
     Map<String, String> oauth2AuthenticationUrls = new HashMap<>();
     @Autowired(required = false)
     private ClientRegistrationRepository clientRegistrationRepository;
+
+    @Autowired
+    SystemUserService systemUserService;
+    @Autowired
+    UserRoleService userRoleService;
+    @Autowired
+    RoleService roleService;
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -84,10 +97,26 @@ public class LoginPageController extends BaseController {
         return findForward(forward, form);
     }
 
-    @GetMapping(value = "/IsSessionExpired", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/session", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public String getPerson(HttpServletRequest request ) {
-        return new JSONObject().put("sessionExpired", userModuleService.isSessionExpired(request)).toString();
+    public String getSesssionDetails(HttpServletRequest request) {
+        boolean authenticated = !userModuleService.isSessionExpired(request);
+        JSONObject sessionDetails = new JSONObject().put("authenticated", authenticated);
+        sessionDetails.put("sessionId", request.getSession().getId());
+        if (authenticated) {
+            SystemUser user = systemUserService.get(getSysUserId(request));
+            sessionDetails.put("userId", user.getId());
+            sessionDetails.put("loginName", user.getLoginName());
+            sessionDetails.put("firstName", user.getFirstName());
+            sessionDetails.put("lastName", user.getLastName());
+
+            JSONArray roleArray = new JSONArray();
+            for (String roleId : userRoleService.getRoleIdsForUser(user.getId())) {
+                roleArray.put(roleService.getRoleById(roleId).getName());
+            }
+            sessionDetails.put("roles", roleArray);
+        }
+        return sessionDetails.toString();
     }
 
     @Override

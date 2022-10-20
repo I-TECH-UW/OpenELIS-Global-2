@@ -32,13 +32,19 @@ class Header extends React.Component {
               <div id="oe-title">{this.props.config.tittle}</div>
             </div>
           </div>
-          <div classNmae="logut">
-              {this.props.isLoggedIn() && 
+
+          {this.props.isLoggedIn() &&
+            <>
+              <div className="logoutDiv">
                 <button type="button" className="logout-button" onClick={this.props.logout}>
                   <FontAwesomeIcon id="sign-out" icon={faSignOutAlt} size="1x" />
                 </button>
-              }   
-           </div>      
+                {/* {this.props.user.loginName}  */}
+                {this.props.user.firstName}  {this.props.user.lastName}
+                
+              </div>
+            </>
+          }
         </div>
         <div className="lang">
           <button className="lang-button"

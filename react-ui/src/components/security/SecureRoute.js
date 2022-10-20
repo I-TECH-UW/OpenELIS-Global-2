@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import IdleTimer from 'react-idle-timer'
-import { confirmAlert } from 'react-confirm-alert'; 
+import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css' // Import css
 
 const idleTimeout = 1000 * 60 * 15; // milliseconds until idle warning will appear
@@ -21,52 +21,59 @@ class SecureRoute extends React.Component {
     }
 
     componentDidMount() {
-        fetch(this.props.config.serverBaseUrl + `/IsSessionExpired`,
+        fetch(this.props.config.serverBaseUrl + `/session`,
+            //includes the browser sessionId in the Header for Authentication on the backend server
             { credentials: "include" }
         )
             .then((response) => response.json()).then(jsonResp => {
                 console.log(JSON.stringify(jsonResp)) // access json.body here
-                if (jsonResp.sessionExpired) {
-                    window.location.href = this.props.config.loginRedirect;
-                } else {
+                if (jsonResp.authenticated) {
                     console.info("Authenticated");
+                    console.log(JSON.stringify(jsonResp))
                     this.setState({ authenticated: true });
-                    this.props.onAuth();
+                    this.props.onAuth(jsonResp);
+
+                    const hasRole = !!jsonResp.roles.find(role => {
+                        return role === this.props.role
+                    })
+                    console.log("...." + hasRole);
+                } else {
+                    window.location.href = this.props.config.loginRedirect;
                 }
-            });
+            }).catch(error => console.log(error));
     }
 
     handleOnAction = (event) => {
     }
-  
+
     handleOnActive = (event) => {
-      console.log('user is active', event)
-      this.setState({isIdle: false});
+        console.log('user is active', event)
+        this.setState({ isIdle: false });
     }
 
     handleOnIdle = (event) => {
-		console.log('user is idle', event)
-		this.setState({isIdle: true});
+        console.log('user is idle', event)
+        this.setState({ isIdle: true });
 
-		const timer = () => setTimeout(() => { 
-			this.props.logout();
-		}, idleWarningTimeout);
-		const timeoutEventID = timer();
+        const timer = () => setTimeout(() => {
+            this.props.logout();
+        }, idleWarningTimeout);
+        const timeoutEventID = timer();
 
-		const options = {
-			title: 'Still there?',
-			message: 'user session is about to time out',
-			buttons: [
-			  {
-				label: 'Yes',
-				onClick: () => { 
-					clearTimeout(timeoutEventID);
-				}
-			  }
-			],
-		}
-		confirmAlert(options);
-	  }
+        const options = {
+            title: 'Still there?',
+            message: 'user session is about to time out',
+            buttons: [
+                {
+                    label: 'Yes',
+                    onClick: () => {
+                        clearTimeout(timeoutEventID);
+                    }
+                }
+            ],
+        }
+        confirmAlert(options);
+    }
 
     render() {
         return (
