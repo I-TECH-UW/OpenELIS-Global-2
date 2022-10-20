@@ -10,7 +10,6 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="tiles" uri="http://tiles.apache.org/tags-tiles"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>	
    
 <c:set var="altAccessionLength" value="${fn:length(form.startingAtAccession)}"/>
@@ -189,7 +188,7 @@ jQuery(document).ready(function () {
 		<td><h2>Sample</h2></td>
 	</tr>
 	<tr>
-		<td><tiles:insertAttribute name="sampleAdd"/></td>
+		<td><jsp:include page="${sampleAddFragment}"/></td>
 	</tr>
 	<tr>
 		<td>NOTE: If a facility and/or sample and test are added, they will be printed on EVERY label</td>

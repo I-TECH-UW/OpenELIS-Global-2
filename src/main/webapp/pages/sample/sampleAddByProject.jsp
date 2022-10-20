@@ -11,9 +11,6 @@
 
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
-
-
 <c:set var="formName" value="${form.formName}" />
 <c:set var="requestType" value="${type}" />
 <c:set var="genericDomain" value="" />

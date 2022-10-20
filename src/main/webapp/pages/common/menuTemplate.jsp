@@ -9,10 +9,8 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %> 
 
-<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
 <html>
 <%
 String form = (String)request.getAttribute(IActionConstants.FORM_NAME);
@@ -211,8 +209,8 @@ function setMenuAction(button, form, action, validate, parameters) {
 	<title>
 		<c:out value="${title}"/>
 	</title>
-<tiles:insertAttribute name="banner" />
-<tiles:insertAttribute name="login" />
+<jsp:include page="${bannerFragment}"/>
+<jsp:include page="${loginFragment}"/>
 </head>
 
 
@@ -223,22 +221,22 @@ function setMenuAction(button, form, action, validate, parameters) {
 	<table cellpadding="0" cellspacing="1" width="100%">
 			<tr>
 				<td>
-					<tiles:insertAttribute name="error"/>
+					<jsp:include page="${errorFragment}"/>
 				</td>
 			</tr>
 			<tr>
 				<td>
-					<tiles:insertAttribute name="header"/>
+					<jsp:include page="${headerFragment}"/>
 				</td>
 			</tr>
 			<tr>
 				<td>
-					<tiles:insertAttribute name="body"/>
+					<jsp:include page="${bodyFragment}"/>
 				</td>
 			</tr>
 			<tr>
 				<td>
-					<tiles:insertAttribute name="footer"/>
+					<jsp:include page="${footerFragment}"/>
 				</td>
 			</tr>
 

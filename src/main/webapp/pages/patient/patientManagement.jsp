@@ -14,9 +14,6 @@
 
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
-
-
 <script type="text/javascript" src="scripts/ajaxCalls.js?"></script>
 <script type="text/javascript" src="scripts/utilities.js?" ></script>
 
@@ -939,8 +936,8 @@ function  processSubjectNumberSuccess(xhr){
 <form:hidden path="patientProperties.patientLastUpdated" id="patientLastUpdated"/>
 <form:hidden path="patientProperties.personLastUpdated" id="personLastUpdated"/>
 
-<%-- 	<tiles:insertAttribute name="patientSearch" /> --%>
-	<tiles:insertAttribute name="patientEnhancedSearch" />
+<%-- 	<jsp:include page="${patientSearchFragment}"/> --%>
+	<jsp:include page="${patientEnhancedSearchFragment}"/>
 
 <%-- 	<nested:hidden name='${form.formName}' property="patientProperties.patientProcessingStatus" id="processingStatus" value="add" />
 	<nested:hidden name='${form.formName}' property="patientProperties.patientPK" id="patientPK_ID" />

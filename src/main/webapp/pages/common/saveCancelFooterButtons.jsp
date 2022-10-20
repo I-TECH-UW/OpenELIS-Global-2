@@ -8,9 +8,6 @@
 
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
-
-
 <c:set var="success" value="${success}" />
 
 <%

@@ -39,9 +39,7 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
-import org.springframework.web.servlet.view.UrlBasedViewResolver;
-import org.springframework.web.servlet.view.tiles3.TilesConfigurer;
-import org.springframework.web.servlet.view.tiles3.TilesView;
+import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 @EnableWebMvc
 @Configuration
@@ -63,21 +61,13 @@ public class AppConfig implements WebMvcConfigurer {
     RequestMappingHandlerMapping requestMappingHandlerMapping;
 
     @Bean
-    public ViewResolver viewResolver() {
-        UrlBasedViewResolver viewResolver = new UrlBasedViewResolver();
-        viewResolver.setViewClass(TilesView.class);
-        viewResolver.setContentType("text/html; charset=UTF-8");
-        return viewResolver;
-    }
-
-    @Bean
-    public TilesConfigurer tilesConfigurer() {
-        TilesConfigurer tilesConfig = new TilesConfigurer();
-        String[] tilesFiles = new String[] { "classpath:/tiles/tiles-defs.xml",
-                "classpath:/tiles/tiles-globalOpenELIS.xml" };
-        tilesConfig.setDefinitions(tilesFiles);
-        return tilesConfig;
-    }
+	public ViewResolver internalResourceViewResolver() {
+		InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
+		viewResolver.setPrefix("");
+		viewResolver.setSuffix("");
+		viewResolver.setContentType("text/html; charset=UTF-8");
+		return viewResolver;
+	}
 
     @Bean
     public MessageSource messageSource() {

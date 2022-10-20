@@ -15,8 +15,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
-<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
-
 
 <c:set var="formName" value="${form.formName}" />
 <c:set var="entryDate" value="${form.currentDate}" />
@@ -704,7 +702,7 @@ function addSampleTable(){
 <%= MessageUtil.getContextualMessage("sample.entry.order.label") %>
 <span class="requiredlabel">*</span>
 
-<tiles:insertAttribute name="sampleOrder" />
+<jsp:include page="${sampleOrderFragment}"/>
 
 <hr style="width:100%;height:5px" />
 
@@ -723,12 +721,12 @@ function addSampleTable(){
             <span class="requiredlabel">*</span>
 
             <div id="samplesDisplay_0" class="colorFill" >
-                <tiles:insertAttribute name="addSample"/>
+                <jsp:include page="${addSampleFragment}"/>
                 <form:checkbox path="useReferral" id="useReferral" onclick="toggleReferral(this);referralTestSelected();" value="true"/> <spring:message code="sample.entry.referral.toggle" />
             </div>
 
             <div id="referTestSection" class ="referTestSection" style="display:none;">
-                <tiles:insertAttribute name="referralInfo" />
+                <jsp:include page="${referralInfoFragment}"/>
             </div>        
            <hr >
         </td>
@@ -778,8 +776,8 @@ function addSampleTable(){
 </table>
 
 <div id="patientInfo"  >
-    <tiles:insertAttribute name="patientInfo" />
-    <tiles:insertAttribute name="patientClinicalInfo" />
+    <jsp:include page="${patientInfoFragment}"/>
+    <jsp:include page="${patientClinicalInfoFragment}"/>
 </div>
 </div>
 

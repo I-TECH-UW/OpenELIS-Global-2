@@ -16,7 +16,6 @@
 
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
-<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
 
 <script type="text/javascript" src="scripts/tableSort.js"></script>
 
@@ -78,9 +77,9 @@ function printPatientReports() {
 
 <form:hidden id="searchType" path="searchType"/>
 
-<tiles:insertAttribute name="referredTestSearch"/>
+<jsp:include page="${referredTestSearchFragment}"/>
 
-<tiles:insertAttribute name="patientEnhancedSearch"/>
+<jsp:include page="${patientEnhancedSearchFragment}"/>
 <button class="patientFinishSearchShow" hidden="hidden" type="button" onclick="search('PATIENT')">Search referrals by patient</button>
 <hr>
 

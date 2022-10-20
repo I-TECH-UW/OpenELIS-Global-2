@@ -13,8 +13,6 @@
 
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
-
 <c:set var="formName" value="${form.formName}"/>
 <c:set var="localDBOnly" value='<%=Boolean.toString(ConfigurationProperties.getInstance().getPropertyValueLowerCase(Property.UseExternalPatientInfo).equals("false"))%>'/>
 <c:set var="patientEnhancedSearch" value="${form.patientSearch}"/>
