@@ -79,7 +79,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
         List<TypeOfSample> list;
         try {
             String sql = "from TypeOfSample order by description";
-			Query<TypeOfSample> query = entityManager.unwrap(Session.class).createQuery(sql, TypeOfSample.class);
+            Query<TypeOfSample> query = entityManager.unwrap(Session.class).createQuery(sql, TypeOfSample.class);
             // query.setMaxResults(10);
             // query.setFirstResult(3);
             list = query.list();
@@ -98,7 +98,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
         List<TypeOfSample> list = new ArrayList<>();
         try {
             String sql = "from TypeOfSample order by sort_order";
-			Query<TypeOfSample> query = entityManager.unwrap(Session.class).createQuery(sql, TypeOfSample.class);
+            Query<TypeOfSample> query = entityManager.unwrap(Session.class).createQuery(sql, TypeOfSample.class);
             list = query.list();
         } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
@@ -118,7 +118,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
 
             // bugzilla 1399
             String sql = "from TypeOfSample t order by t.domain, t.description";
-			Query<TypeOfSample> query = entityManager.unwrap(Session.class).createQuery(sql, TypeOfSample.class);
+            Query<TypeOfSample> query = entityManager.unwrap(Session.class).createQuery(sql, TypeOfSample.class);
             query.setFirstResult(startingRecNo - 1);
             query.setMaxResults(endingRecNo - 1);
 
@@ -161,7 +161,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
                 sql = "from TypeOfSample t where upper(t.description) like upper(:param) order by upper(t.description)";
 
             }
-			Query<TypeOfSample> query = entityManager.unwrap(Session.class).createQuery(sql, TypeOfSample.class);
+            Query<TypeOfSample> query = entityManager.unwrap(Session.class).createQuery(sql, TypeOfSample.class);
             query.setParameter("param", filter + "%");
             // bugzilla 1387 added domain parm
             if (!StringUtil.isNullorNill(domain)) {
@@ -188,7 +188,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
 
             String sql = "from TypeOfSample t where t.domain = :domainKey order by upper(t.description)";
 
-			Query<TypeOfSample> query = entityManager.unwrap(Session.class).createQuery(sql, TypeOfSample.class);
+            Query<TypeOfSample> query = entityManager.unwrap(Session.class).createQuery(sql, TypeOfSample.class);
 
             query.setParameter("domainKey", key);
 
@@ -210,7 +210,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
 
             String sql = "from TypeOfSample t where t.domain = :domainKey order by t.sortOrder";
 
-			Query<TypeOfSample> query = entityManager.unwrap(Session.class).createQuery(sql, TypeOfSample.class);
+            Query<TypeOfSample> query = entityManager.unwrap(Session.class).createQuery(sql, TypeOfSample.class);
 
             query.setParameter("domainKey", key);
 
@@ -229,9 +229,9 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
             throws LIMSRuntimeException {
         String sql = "From TypeOfSample tos where tos.localAbbreviation = :localAbbrev and tos.domain = :domain";
         try {
-			Query<TypeOfSample> query = entityManager.unwrap(Session.class).createQuery(sql, TypeOfSample.class);
-			query.setParameter("localAbbrev", localAbbrev);
-			query.setParameter("domain", domain);
+            Query<TypeOfSample> query = entityManager.unwrap(Session.class).createQuery(sql, TypeOfSample.class);
+            query.setParameter("localAbbrev", localAbbrev);
+            query.setParameter("domain", domain);
             TypeOfSample typeOfSample = query.uniqueResult();
             return typeOfSample;
         } catch (HibernateException e) {
@@ -292,7 +292,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
                     sql = "from TypeOfSample tos where trim(tos.description) = :param";
                 }
             }
-			Query<TypeOfSample> query = entityManager.unwrap(Session.class).createQuery(sql, TypeOfSample.class);
+            Query<TypeOfSample> query = entityManager.unwrap(Session.class).createQuery(sql, TypeOfSample.class);
 
             if (ignoreCase) {
                 query.setParameter("param", tos.getDescription().toLowerCase().trim());
@@ -324,7 +324,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
     public boolean duplicateTypeOfSampleExists(TypeOfSample typeOfSample) throws LIMSRuntimeException {
         try {
 
-			List<TypeOfSample> list = new ArrayList<>();
+            List<TypeOfSample> list = new ArrayList<>();
 
             // not case sensitive hemolysis and Hemolysis are considered
             // duplicates
@@ -332,7 +332,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
             // bugzilla 2432 add check for local abbreviation
             String sql = "from TypeOfSample t where (trim(lower(t.description)) = :description and trim(lower(t.domain)) = :domain and t.id != :id)"
                     + " or (trim(lower(t.localAbbreviation)) = :abbrev and trim(lower(t.domain)) = :domain and t.id != :id)";
-			Query<TypeOfSample> query = entityManager.unwrap(Session.class).createQuery(sql, TypeOfSample.class);
+            Query<TypeOfSample> query = entityManager.unwrap(Session.class).createQuery(sql, TypeOfSample.class);
             query.setParameter("description", typeOfSample.getDescription().toLowerCase().trim());
             query.setParameter("domain", typeOfSample.getDomain().toLowerCase().trim());
             // bugzila 2432
@@ -344,7 +344,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
             if (!StringUtil.isNullorNill(typeOfSample.getId())) {
                 typeOfSampleId = typeOfSample.getId();
             }
-			query.setParameter("id", Integer.parseInt(typeOfSampleId));
+            query.setParameter("id", Integer.parseInt(typeOfSampleId));
 
             list = query.list();
 
@@ -400,8 +400,8 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
         String sql = "select tos from TypeOfSample tos, Test test, TypeOfSampleTest tost " + "where tost.testId = :id "
                 + "AND tos.id = tost.typeOfSampleId";
         try {
-			Query<TypeOfSample> query = entityManager.unwrap(Session.class).createQuery(sql, TypeOfSample.class);
-			query.setParameter("id", Integer.parseInt(test.getId()));
+            Query<TypeOfSample> query = entityManager.unwrap(Session.class).createQuery(sql, TypeOfSample.class);
+            query.setParameter("id", Integer.parseInt(test.getId()));
 
             TypeOfSample tos = query.uniqueResult();
             // closeSession(); // CSL remove old

@@ -41,9 +41,9 @@ public class SiteInformationDomainDAOImpl extends BaseDAOImpl<SiteInformationDom
         String sql = "from SiteInformationDomain sid where sid.name = :name";
 
         try {
-			Query<SiteInformationDomain> query = entityManager.unwrap(Session.class).createQuery(sql,
-					SiteInformationDomain.class);
-			query.setParameter("name", name);
+            Query<SiteInformationDomain> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    SiteInformationDomain.class);
+            query.setParameter("name", name);
             SiteInformationDomain domain = query.uniqueResult();
             return domain;
         } catch (HibernateException e) {

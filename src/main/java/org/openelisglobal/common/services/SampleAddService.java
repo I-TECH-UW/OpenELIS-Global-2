@@ -72,7 +72,6 @@ public class SampleAddService {
     private static ObservationHistoryTypeService ohtService = SpringContext
             .getBean(ObservationHistoryTypeService.class);
 
-
     private static String getObservationHistoryTypeId(String name) {
         ObservationHistoryType oht;
         oht = ohtService.getByName(name);
@@ -116,8 +115,8 @@ public class SampleAddService {
                 String collectionDate = sampleItem.attributeValue("date").trim();
                 String collectionTime = sampleItem.attributeValue("time").trim();
                 String collectionDateTime = null;
-                String rejectedValue =   sampleItem.attributeValue("rejected").trim();
-                boolean rejected = StringUtils.isNotBlank(rejectedValue)? Boolean.parseBoolean(rejectedValue) : false;
+                String rejectedValue = sampleItem.attributeValue("rejected").trim();
+                boolean rejected = StringUtils.isNotBlank(rejectedValue) ? Boolean.parseBoolean(rejectedValue) : false;
                 String rejectReasonId = sampleItem.attributeValue("rejectReasonId").trim();
 
                 if (!GenericValidator.isBlankOrNull(collectionDate)

@@ -51,13 +51,15 @@ public class MethodAutocompleteProvider extends BaseAutocompleteProvider {
     public List processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // LogEvent.logInfo(this.getClass().getName(), "method unkown", "I am in MethodAutocompleteProvider "
+        // LogEvent.logInfo(this.getClass().getName(), "method unkown", "I am in
+        // MethodAutocompleteProvider "
         // + request.getParameter("methodName"));
         String methodName = request.getParameter("methodName");
         // System.out
         // .println("MethodAutocompleteProvider methodName " + methodName);
         List list = methodService.getMethods(methodName);
-        // LogEvent.logInfo(this.getClass().getName(), "method unkown", "MethodAutocompleteProvider list " + list.size());
+        // LogEvent.logInfo(this.getClass().getName(), "method unkown",
+        // "MethodAutocompleteProvider list " + list.size());
 
         return list;
     }

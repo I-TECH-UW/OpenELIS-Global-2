@@ -108,7 +108,7 @@ public class PanelCreateController extends BaseController {
 
     @RequestMapping(value = "/PanelCreate", method = RequestMethod.POST)
     public ModelAndView postPanelCreate(HttpServletRequest request, @ModelAttribute("form") @Valid PanelCreateForm form,
-            BindingResult result)  {
+            BindingResult result) {
         if (result.hasErrors()) {
             saveErrors(result);
             return findForward(FWD_FAIL_INSERT, form);

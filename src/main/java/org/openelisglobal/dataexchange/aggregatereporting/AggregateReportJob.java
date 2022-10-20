@@ -63,7 +63,8 @@ public class AggregateReportJob implements Job {
 
     @Override
     public void execute(JobExecutionContext arg0) throws JobExecutionException {
-        LogEvent.logInfo(this.getClass().getName(), "method unkown", "Reporting triggered: " + DateUtil.getCurrentDateAsText("dd-MM-yyyy hh:mm"));
+        LogEvent.logInfo(this.getClass().getName(), "method unkown",
+                "Reporting triggered: " + DateUtil.getCurrentDateAsText("dd-MM-yyyy hh:mm"));
         LogEvent.logInfo("AggregateReportJob", "execute()",
                 "Reporting triggered: " + DateUtil.getCurrentDateAsText("dd-MM-yyyy hh:mm"));
 
@@ -260,11 +261,12 @@ public class AggregateReportJob implements Job {
 //                        } catch (InterruptedException e) {
 //                            LogEvent.logDebug(e);
 //                        }
-                        new ReportTransmission().sendReport(wrapper, castorPropertyName, url, false, instance);
+                new ReportTransmission().sendReport(wrapper, castorPropertyName, url, false, instance);
 //                    }
 //                }.start();
             } else {
-                LogEvent.logInfo(this.getClass().getName(), "method unkown", "Aggregate report: Giving up trying to connect");
+                LogEvent.logInfo(this.getClass().getName(), "method unkown",
+                        "Aggregate report: Giving up trying to connect");
                 LogEvent.logInfo("AggregateReportJob", "retry()", "Giving up trying to connect");
             }
         }

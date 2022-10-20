@@ -73,7 +73,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
         List<Test> list = new Vector<>();
         try {
             String sql = "from Test Order by description";
-			Query<Test> query = entityManager.unwrap(Session.class).createQuery(sql, Test.class);
+            Query<Test> query = entityManager.unwrap(Session.class).createQuery(sql, Test.class);
             list = query.list();
 //			list = filterOnlyFullSetup(onlyTestsFullySetup, list);
 
@@ -91,7 +91,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
         List<Test> list = new Vector<>();
         try {
             String sql = "from Test WHERE is_Active = 'Y' Order by description";
-			Query<Test> query = entityManager.unwrap(Session.class).createQuery(sql, Test.class);
+            Query<Test> query = entityManager.unwrap(Session.class).createQuery(sql, Test.class);
             list = query.list();
 //			list = filterOnlyFullSetup(onlyTestsFullySetup, list);
 
@@ -107,7 +107,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
     public List<Test> getAllActiveOrderableTests() throws LIMSRuntimeException {
         try {
             String sql = "from Test t WHERE t.isActive = 'Y'  and t.orderable = true Order by t.description";
-			Query<Test> query = entityManager.unwrap(Session.class).createQuery(sql, Test.class);
+            Query<Test> query = entityManager.unwrap(Session.class).createQuery(sql, Test.class);
             List<Test> list = query.list();
 
             return list;
@@ -128,7 +128,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 
             // bugzilla 1399
             String sql = "from Test t order by t.testSection.testSectionName";
-			Query<Test> query = entityManager.unwrap(Session.class).createQuery(sql, Test.class);
+            Query<Test> query = entityManager.unwrap(Session.class).createQuery(sql, Test.class);
             query.setFirstResult(startingRecNo - 1);
             query.setMaxResults(endingRecNo - 1);
 
@@ -163,7 +163,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
                 newSearchStr = searchString.replace(wildCard, "%").toLowerCase().trim();
                 sql = "from Test t where trim(lower (t.description)) like :param  order by t.testSection.testSectionName";
             }
-			Query<Test> query = entityManager.unwrap(Session.class).createQuery(sql, Test.class);
+            Query<Test> query = entityManager.unwrap(Session.class).createQuery(sql, Test.class);
             query.setParameter("param", newSearchStr);
             query.setFirstResult(startingRecNo - 1);
             query.setMaxResults(endingRecNo - 1);
@@ -198,7 +198,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
         List<Test> list;
         try {
             String sql = "from Test t where (upper(t.localizedTestName.english) like upper(:param) or upper(t.localizedTestName.french) like upper(:param)) and t.isActive='Y'";
-			Query<Test> query = entityManager.unwrap(Session.class).createQuery(sql, Test.class);
+            Query<Test> query = entityManager.unwrap(Session.class).createQuery(sql, Test.class);
             query.setParameter("param", filter + "%");
             list = query.list();
 
@@ -216,7 +216,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
     public List<Test> getTestsByName(String testName) throws LIMSRuntimeException {
         String sql = "from Test t where (t.localizedTestName.english = :testName or t.localizedTestName.french = :testName)";
         try {
-			Query<Test> query = entityManager.unwrap(Session.class).createQuery(sql, Test.class);
+            Query<Test> query = entityManager.unwrap(Session.class).createQuery(sql, Test.class);
             query.setParameter("testName", testName);
 
             return query.list();
@@ -232,7 +232,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
     public List<Test> getActiveTestsByName(String testName) throws LIMSRuntimeException {
         String sql = "from Test t where (t.localizedTestName.english = :testName or t.localizedTestName.french = :testName) and t.isActive='Y'";
         try {
-			Query<Test> query = entityManager.unwrap(Session.class).createQuery(sql, Test.class);
+            Query<Test> query = entityManager.unwrap(Session.class).createQuery(sql, Test.class);
             query.setParameter("testName", testName);
 
             return query.list();
@@ -253,7 +253,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
             sql = "from Test t where t.localizedTestName.french = :testName and t.isActive='Y'";
         }
         try {
-			Query<Test> query = entityManager.unwrap(Session.class).createQuery(sql, Test.class);
+            Query<Test> query = entityManager.unwrap(Session.class).createQuery(sql, Test.class);
             query.setParameter("testName", testName);
 
             List<Test> list = query.list();
@@ -282,7 +282,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
             sql = "from Test t where t.localizedTestName.french = :testName";
         }
         try {
-			Query<Test> query = entityManager.unwrap(Session.class).createQuery(sql, Test.class);
+            Query<Test> query = entityManager.unwrap(Session.class).createQuery(sql, Test.class);
             query.setParameter("testName", testName);
 
             List<Test> list = query.list();
@@ -309,7 +309,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 
         try {
             String sql = "from Test t where t.id = :testId and t.isActive='Y'";
-			Query<Test> query = entityManager.unwrap(Session.class).createQuery(sql, Test.class);
+            Query<Test> query = entityManager.unwrap(Session.class).createQuery(sql, Test.class);
             query.setParameter("testId", testId);
 
             list = query.list();
@@ -342,11 +342,11 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
     public List<Method> getMethodsByTestSection(String filter) throws LIMSRuntimeException {
         try {
             String sql = "from Test t where t.testSection = :param";
-			Query<Test> query = entityManager.unwrap(Session.class).createQuery(sql, Test.class);
+            Query<Test> query = entityManager.unwrap(Session.class).createQuery(sql, Test.class);
             query.setParameter("param", filter);
 
             List<Test> list = query.list();
-			List<Method> methods = new ArrayList<>();
+            List<Method> methods = new ArrayList<>();
 
             for (int i = 0; i < list.size(); i++) {
                 Test t = list.get(i);
@@ -371,8 +371,8 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
     public List<Test> getTestsByTestSection(String filter) throws LIMSRuntimeException {
         try {
             String sql = "from Test t where t.testSection = :param";
-			Query<Test> query = entityManager.unwrap(Session.class).createQuery(sql, Test.class);
-			query.setParameter("param", Integer.parseInt(filter));
+            Query<Test> query = entityManager.unwrap(Session.class).createQuery(sql, Test.class);
+            query.setParameter("param", Integer.parseInt(filter));
 
             List<Test> list = query.list();
             return list;
@@ -389,8 +389,8 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
     public List<Test> getTestsByTestSectionId(String id) throws LIMSRuntimeException {
         try {
             String sql = "from Test t where t.testSection.id = :id";
-			Query<Test> query = entityManager.unwrap(Session.class).createQuery(sql, Test.class);
-			query.setParameter("id", Integer.parseInt(id));
+            Query<Test> query = entityManager.unwrap(Session.class).createQuery(sql, Test.class);
+            query.setParameter("id", Integer.parseInt(id));
 
             List<Test> list = query.list();
             return list;
@@ -408,7 +408,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
     public List<Test> getTestsByMethod(String filter) throws LIMSRuntimeException {
         try {
             String sql = "from Test t where t.method = :param";
-			Query<Test> query = entityManager.unwrap(Session.class).createQuery(sql, Test.class);
+            Query<Test> query = entityManager.unwrap(Session.class).createQuery(sql, Test.class);
             query.setParameter("param", filter);
 
             List<Test> list = query.list();
@@ -427,7 +427,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
     public List<Test> getTestsByTestSectionAndMethod(String filter, String filter2) throws LIMSRuntimeException {
         try {
             String sql = "from Test t where t.testSection = :param1 and t.method = :param2";
-			Query<Test> query = entityManager.unwrap(Session.class).createQuery(sql, Test.class);
+            Query<Test> query = entityManager.unwrap(Session.class).createQuery(sql, Test.class);
             query.setParameter("param1", filter);
             query.setParameter("param2", filter2);
 
@@ -467,7 +467,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
                 newSearchStr = searchString.replace(wildCard, "%").toLowerCase().trim();
                 sql = "select count (*) from Test t where trim(lower (t.description)) like :param ";
             }
-			Query<Long> query = entityManager.unwrap(Session.class).createQuery(sql, Long.class);
+            Query<Long> query = entityManager.unwrap(Session.class).createQuery(sql, Long.class);
             query.setParameter("param", newSearchStr);
 
             List<Long> results = query.list();
@@ -497,7 +497,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
                 // not case sensitive hemolysis and Hemolysis are considered
                 // duplicates
                 String sql = "from Test t where (trim(lower(t.description)) = :description and t.isActive='Y' and t.id != :testId)";
-				Query<Test> query = entityManager.unwrap(Session.class).createQuery(sql, Test.class);
+                Query<Test> query = entityManager.unwrap(Session.class).createQuery(sql, Test.class);
 
                 // initialize with 0 (for new records where no id has been
                 // generated yet
@@ -505,7 +505,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
                 if (!StringUtil.isNullorNill(test.getId())) {
                     testId = test.getId();
                 }
-				query.setParameter("testId", Integer.parseInt(testId));
+                query.setParameter("testId", Integer.parseInt(testId));
                 query.setParameter("description", test.getDescription().toLowerCase().trim());
 
                 list = query.list();
@@ -519,7 +519,6 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
         }
     }
 
-
     // bugzilla 2443
     @Override
     @Transactional(readOnly = true)
@@ -532,7 +531,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
             Test testWithHighestSortOrder;
 
             String sql = "from Test t where t.testSection = :param and t.sortOrder is not null order by t.sortOrder desc";
-			Query<Test> query = entityManager.unwrap(Session.class).createQuery(sql, Test.class);
+            Query<Test> query = entityManager.unwrap(Session.class).createQuery(sql, Test.class);
             query.setParameter("param", test.getTestSection());
 
             list = query.list();
@@ -570,7 +569,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
             // so I had to generate the HQL manually, but only after the above
             // check.
             String hql = "from Test t where t.isActive='Y' ORDER BY " + columnName;
-			Query<Test> query = entityManager.unwrap(Session.class).createQuery(hql, Test.class);
+            Query<Test> query = entityManager.unwrap(Session.class).createQuery(hql, Test.class);
             entities = query.list();
         } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
@@ -585,8 +584,8 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
     public Test getTestById(String testId) throws LIMSRuntimeException {
         String sql = "From Test t where t.id = :id";
         try {
-			Query<Test> query = entityManager.unwrap(Session.class).createQuery(sql, Test.class);
-			query.setParameter("id", Integer.parseInt(testId));
+            Query<Test> query = entityManager.unwrap(Session.class).createQuery(sql, Test.class);
+            query.setParameter("id", Integer.parseInt(testId));
 
             Test test = query.uniqueResult();
             return test;
@@ -602,8 +601,8 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
     public Test getTestByDescription(String description) {
         String sql = "From Test t where t.description = :description";
         try {
-			Query<Test> query = entityManager.unwrap(Session.class).createQuery(sql, Test.class);
-			query.setParameter("description", description);
+            Query<Test> query = entityManager.unwrap(Session.class).createQuery(sql, Test.class);
+            query.setParameter("description", description);
 
             Test test = query.uniqueResult();
             return test;
@@ -619,8 +618,8 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
     public Test getTestByGUID(String guid) {
         String sql = "From Test t where t.guid = :guid";
         try {
-			Query<Test> query = entityManager.unwrap(Session.class).createQuery(sql, Test.class);
-			query.setParameter("guid", guid);
+            Query<Test> query = entityManager.unwrap(Session.class).createQuery(sql, Test.class);
+            query.setParameter("guid", guid);
 
             Test test = query.uniqueResult();
             return test;
@@ -636,8 +635,8 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
     public List<Test> getTestsByLoincCode(String loincCode) {
         String sql = "From Test t where t.loinc = :loinc";
         try {
-			Query<Test> query = entityManager.unwrap(Session.class).createQuery(sql, Test.class);
-			query.setParameter("loinc", loincCode);
+            Query<Test> query = entityManager.unwrap(Session.class).createQuery(sql, Test.class);
+            query.setParameter("loinc", loincCode);
             List<Test> tests = query.list();
             return tests;
         } catch (HibernateException e) {
@@ -652,8 +651,8 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
     public List<Test> getActiveTestsByLoinc(String loincCode) {
         String sql = "From Test t where t.loinc = :loinc and t.isActive='Y'";
         try {
-			Query<Test> query = entityManager.unwrap(Session.class).createQuery(sql, Test.class);
-			query.setParameter("loinc", loincCode);
+            Query<Test> query = entityManager.unwrap(Session.class).createQuery(sql, Test.class);
+            query.setParameter("loinc", loincCode);
             List<Test> tests = query.list();
             return tests;
         } catch (HibernateException e) {
@@ -667,7 +666,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
     public List<Test> getActiveTestsByLoinc(String[] loincCodes) {
         String sql = "From Test t where t.loinc IN (:loinc) and t.isActive='Y'";
         try {
-			Query<Test> query = entityManager.unwrap(Session.class).createQuery(sql, Test.class);
+            Query<Test> query = entityManager.unwrap(Session.class).createQuery(sql, Test.class);
             query.setParameterList("loinc", loincCodes);
             List<Test> tests = query.list();
             return tests;
@@ -683,7 +682,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
     public List<Test> getAllTestsByDictionaryResult() {
         String sql = "From Test t where t.id in (select tr.test from TestResult tr where tr.testResultType in ('D','M','C')) ORDER BY t.description asc";
         try {
-			Query<Test> query = entityManager.unwrap(Session.class).createQuery(sql, Test.class);
+            Query<Test> query = entityManager.unwrap(Session.class).createQuery(sql, Test.class);
             List<Test> tests = query.list();
             return tests;
         } catch (HibernateException e) {

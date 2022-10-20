@@ -765,7 +765,7 @@ public class SystemConfiguration {
     }
 
     public String getLoginUserChangePasswordAllowDay() {
-		String string = properties.getProperty("login.user.change.allow.day");
+        String string = properties.getProperty("login.user.change.allow.day");
         if (string != null) {
             return string;
         }
@@ -773,7 +773,7 @@ public class SystemConfiguration {
     }
 
     public String getLoginUserChangePasswordExpiredMonth() {
-		String string = properties.getProperty("login.user.expired.month");
+        String string = properties.getProperty("login.user.expired.month");
         if (string != null) {
             return string;
         }
@@ -782,7 +782,7 @@ public class SystemConfiguration {
 
     // bugzilla 2286 password reminder days
     public String getLoginUserPasswordExpiredReminderDay() {
-		String string = properties.getProperty("login.user.expired.reminder.day");
+        String string = properties.getProperty("login.user.expired.reminder.day");
         if (string != null) {
             return string;
         }

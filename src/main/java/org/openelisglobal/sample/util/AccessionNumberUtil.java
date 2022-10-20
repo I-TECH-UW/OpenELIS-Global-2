@@ -132,7 +132,7 @@ public class AccessionNumberUtil {
                 .valueOf(ConfigurationProperties.getInstance().getPropertyValue(Property.USE_ALT_ACCESSION_PREFIX))) {
 
             try {
-            activeValidators.add(accessionNumberValidatorFactory.getValidator(AccessionFormat.ALT_YEAR));
+                activeValidators.add(accessionNumberValidatorFactory.getValidator(AccessionFormat.ALT_YEAR));
             } catch (LIMSInvalidConfigurationException e) {
                 LogEvent.logError("AccessionNumberUtil", "getAccessionNumberValidator", e.toString());
             }
@@ -158,8 +158,8 @@ public class AccessionNumberUtil {
 
     public static ValidationResults checkAccessionNumberValidity(String accessionNumber, String recordType,
             String isRequired, String projectFormName) {
-        return getGeneralAccessionNumberValidator().checkAccessionNumberValidity(accessionNumber, recordType, isRequired,
-                projectFormName);
+        return getGeneralAccessionNumberValidator().checkAccessionNumberValidity(accessionNumber, recordType,
+                isRequired, projectFormName);
     }
 
     public static ValidationResults isPatientStatusValid(String accessionNumber, RecordStatus validStatus) {

@@ -69,7 +69,7 @@ public class PersonDAOImpl extends BaseDAOImpl<Person, String> implements Person
         List<Person> list = new Vector<>();
         try {
             String sql = "from Person";
-			Query<Person> query = entityManager.unwrap(Session.class).createQuery(sql, Person.class);
+            Query<Person> query = entityManager.unwrap(Session.class).createQuery(sql, Person.class);
             list = query.list();
         } catch (RuntimeException e) {
             // bugzilla 2154
@@ -89,7 +89,7 @@ public class PersonDAOImpl extends BaseDAOImpl<Person, String> implements Person
             int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 
             String sql = "from Person t order by t.id";
-			Query<Person> query = entityManager.unwrap(Session.class).createQuery(sql, Person.class);
+            Query<Person> query = entityManager.unwrap(Session.class).createQuery(sql, Person.class);
             query.setFirstResult(startingRecNo - 1);
             query.setMaxResults(endingRecNo - 1);
 
@@ -123,8 +123,8 @@ public class PersonDAOImpl extends BaseDAOImpl<Person, String> implements Person
         List<Person> list = null;
         try {
             String sql = "from Person p where p.lastName = :lastName";
-			Query<Person> query = entityManager.unwrap(Session.class).createQuery(sql, Person.class);
-			query.setParameter("lastName", lastName);
+            Query<Person> query = entityManager.unwrap(Session.class).createQuery(sql, Person.class);
+            query.setParameter("lastName", lastName);
 
             list = query.list();
         } catch (RuntimeException e) {
@@ -144,8 +144,8 @@ public class PersonDAOImpl extends BaseDAOImpl<Person, String> implements Person
     public Person getPersonById(String personId) throws LIMSRuntimeException {
         String sql = "From Person p where id = :personId";
         try {
-			Query<Person> query = entityManager.unwrap(Session.class).createQuery(sql, Person.class);
-			query.setParameter("personId", Integer.parseInt(personId));
+            Query<Person> query = entityManager.unwrap(Session.class).createQuery(sql, Person.class);
+            query.setParameter("personId", Integer.parseInt(personId));
             Person person = query.uniqueResult();
             return person;
         } catch (HibernateException e) {

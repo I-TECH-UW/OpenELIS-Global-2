@@ -19,8 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserRoleServiceImpl extends BaseObjectServiceImpl<UserRole, UserRolePK> implements UserRoleService {
     @Autowired
     protected UserRoleDAO baseObjectDAO;
-	@Autowired
-	protected UserLabUnitRolesDAO userLabUnitRolesDAO;
+    @Autowired
+    protected UserLabUnitRolesDAO userLabUnitRolesDAO;
 
     UserRoleServiceImpl() {
         super(UserRole.class);
@@ -51,25 +51,26 @@ public class UserRoleServiceImpl extends BaseObjectServiceImpl<UserRole, UserRol
 
     @Override
     public void saveOrUpdateUserLabUnitRoles(UserLabUnitRoles labRoles) {
-		if (null == labRoles.getId()) {
-			userLabUnitRolesDAO.insert(labRoles);
-		} else {
-			userLabUnitRolesDAO.update(labRoles);
-		}
+        if (null == labRoles.getId()) {
+            userLabUnitRolesDAO.insert(labRoles);
+        } else {
+            userLabUnitRolesDAO.update(labRoles);
+        }
     }
 
     @Override
-    public UserLabUnitRoles getUserLabUnitRoles(String userId){
-		return userLabUnitRolesDAO.get(Integer.parseInt(userId)).get();
+    public UserLabUnitRoles getUserLabUnitRoles(String userId) {
+        return userLabUnitRolesDAO.get(Integer.parseInt(userId)).get();
     }
 
     @Override
     public void deleteLabUnitRoleMap(LabUnitRoleMap roleMap) {
-        getBaseObjectDAO().deleteLabUnitRoleMap(roleMap);; 
+        getBaseObjectDAO().deleteLabUnitRoleMap(roleMap);
+        ;
     }
 
     @Override
     public List<UserLabUnitRoles> getAllUserLabUnitRoles() {
-		return userLabUnitRolesDAO.getAll();
+        return userLabUnitRolesDAO.getAll();
     }
 }

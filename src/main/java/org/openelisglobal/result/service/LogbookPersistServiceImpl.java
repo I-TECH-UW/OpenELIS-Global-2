@@ -82,8 +82,9 @@ public class LogbookPersistServiceImpl implements LogbookResultsPersistService {
 //                    checkSample.getId() + " " +
 //                    checkSample.getAccessionNumber());
 
-            checkResult = resultService.getResultsForTestAndSample(checkSample.getId(), checkAnalysis.getTest().getId());
-            if (checkResult.size() == 0 ) {
+            checkResult = resultService.getResultsForTestAndSample(checkSample.getId(),
+                    checkAnalysis.getTest().getId());
+            if (checkResult.size() == 0) {
                 resultService.insert(resultSet.result);
             } else {
                 continue;
@@ -168,9 +169,8 @@ public class LogbookPersistServiceImpl implements LogbookResultsPersistService {
         TestReflexUtil testReflexUtil = new TestReflexUtil();
         List allResults = actionDataSet.getNewResults();
         allResults.addAll(actionDataSet.getModifiedResults());
-        List<Analysis> reflexAnalysises = testReflexUtil.addNewTestsToDBForReflexTests(
-                convertToTestReflexBeanList(allResults),
-                sysUserId);
+        List<Analysis> reflexAnalysises = testReflexUtil
+                .addNewTestsToDBForReflexTests(convertToTestReflexBeanList(allResults), sysUserId);
         testReflexUtil.updateModifiedReflexes(convertToTestReflexBeanList(actionDataSet.getModifiedResults()),
                 sysUserId);
         return reflexAnalysises;
@@ -214,7 +214,8 @@ public class LogbookPersistServiceImpl implements LogbookResultsPersistService {
         }
 
         String sampleTestingStartedId = SpringContext.getBean(IStatusService.class).getStatusID(OrderStatus.Started);
-        String sampleNonConformingId = SpringContext.getBean(IStatusService.class).getStatusID(OrderStatus.NonConforming_depricated);
+        String sampleNonConformingId = SpringContext.getBean(IStatusService.class)
+                .getStatusID(OrderStatus.NonConforming_depricated);
 
         for (Sample sample : sampleSet) {
             if (!(sample.getStatusId().equals(sampleNonConformingId)

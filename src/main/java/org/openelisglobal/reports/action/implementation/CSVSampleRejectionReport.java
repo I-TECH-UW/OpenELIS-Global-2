@@ -7,7 +7,6 @@ import org.openelisglobal.reports.form.ReportForm;
 import java.sql.SQLException;
 import org.jfree.util.Log;
 
-
 public class CSVSampleRejectionReport extends CSVSampleExportReport implements IReportParameterSetter, IReportCreator {
 
     @Override
@@ -34,7 +33,7 @@ public class CSVSampleRejectionReport extends CSVSampleExportReport implements I
     protected void createReportParameters() {
         super.createReportParameters();
     }
-    
+
     @Override
     public void initializeReport(ReportForm form) {
         super.initializeReport();
@@ -53,13 +52,13 @@ public class CSVSampleRejectionReport extends CSVSampleExportReport implements I
         createReportItems();
     }
 
-       /**
+    /**
      * creating the list for generation to the report
      */
     private void createReportItems() {
         try {
-           csvColumnBuilder = new CSVSampleRejectionColumnBuilder(dateRange);
-           csvColumnBuilder.buildDataSource();
+            csvColumnBuilder = new CSVSampleRejectionColumnBuilder(dateRange);
+            csvColumnBuilder.buildDataSource();
         } catch (SQLException e) {
             Log.error("Error in " + this.getClass().getSimpleName() + ".createReportItems: ", e);
             add1LineErrorMessage("report.error.message.general.error");

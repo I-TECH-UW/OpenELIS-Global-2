@@ -63,14 +63,13 @@ public class NceType extends BaseObject<String> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         NceType nceType = (NceType) o;
-        return id == nceType.id &&
-                Objects.equals(name, nceType.name) &&
-                Objects.equals(displayKey, nceType.displayKey) &&
-                Objects.equals(active, nceType.active) &&
-                Objects.equals(lastupdated, nceType.lastupdated);
+        return id == nceType.id && Objects.equals(name, nceType.name) && Objects.equals(displayKey, nceType.displayKey)
+                && Objects.equals(active, nceType.active) && Objects.equals(lastupdated, nceType.lastupdated);
     }
 
     @Override

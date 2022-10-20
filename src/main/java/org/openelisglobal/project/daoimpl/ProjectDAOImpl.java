@@ -75,7 +75,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
         List<Project> list;
         try {
             String sql = "from Project";
-			Query<Project> query = entityManager.unwrap(Session.class).createQuery(sql, Project.class);
+            Query<Project> query = entityManager.unwrap(Session.class).createQuery(sql, Project.class);
             list = query.list();
         } catch (RuntimeException e) {
             // bugzilla 2154
@@ -97,7 +97,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
             // bugzilla 1399
             // bugzilla 2438 order by local abbreviation
             String sql = "from Project p order by p.localAbbreviation desc";
-			Query<Project> query = entityManager.unwrap(Session.class).createQuery(sql, Project.class);
+            Query<Project> query = entityManager.unwrap(Session.class).createQuery(sql, Project.class);
             query.setFirstResult(startingRecNo - 1);
             query.setMaxResults(endingRecNo - 1);
 
@@ -145,7 +145,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
                     sql = "from Project p where p.projectName = :param";
                 }
             }
-			Query<Project> query = entityManager.unwrap(Session.class).createQuery(sql, Project.class);
+            Query<Project> query = entityManager.unwrap(Session.class).createQuery(sql, Project.class);
             if (ignoreCase) {
                 query.setParameter("param", project.getProjectName().toLowerCase().trim());
             } else {
@@ -179,7 +179,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
             } else {
                 sql = "from Project p where upper(p.projectName) like upper(:param) order by upper(p.projectName)";
             }
-			Query<Project> query = entityManager.unwrap(Session.class).createQuery(sql, Project.class);
+            Query<Project> query = entityManager.unwrap(Session.class).createQuery(sql, Project.class);
             query.setParameter("param", filter + "%");
 
             List<Project> list = query.list();
@@ -205,14 +205,14 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
     public boolean duplicateProjectExists(Project project) throws LIMSRuntimeException {
         try {
 
-			List<Project> list = new ArrayList<>();
+            List<Project> list = new ArrayList<>();
 
             // not case sensitive hemolysis and Hemolysis are considered
             // duplicates
 
             // bugzilla 2438 adding local abbreviation to duplicate check
             String sql = "from Project t where ((trim(lower(t.projectName)) = :param and t.id != :param2) or (trim(lower(t.localAbbreviation)) = :param3 and t.id != :param2))";
-			Query<Project> query = entityManager.unwrap(Session.class).createQuery(sql, Project.class);
+            Query<Project> query = entityManager.unwrap(Session.class).createQuery(sql, Project.class);
             query.setParameter("param", project.getProjectName().toLowerCase().trim());
             query.setParameter("param3", project.getLocalAbbreviation().toLowerCase().trim());
 
@@ -249,7 +249,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
             } else {
                 sql = "from Project p where trim(lower(p.localAbbreviation)) = :param";
             }
-			Query<Project> query = entityManager.unwrap(Session.class).createQuery(sql, Project.class);
+            Query<Project> query = entityManager.unwrap(Session.class).createQuery(sql, Project.class);
             query.setParameter("param", project.getLocalAbbreviation().toLowerCase().trim());
             List<Project> list = query.list();
             Project pro = null;
@@ -271,9 +271,9 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
     public Project getProjectById(String id) throws LIMSRuntimeException {
         if (!GenericValidator.isBlankOrNull(id)) {
             try {
-				Query<Project> query = entityManager.unwrap(Session.class)
-						.createQuery("from Project p where p.id = :id", Project.class);
-				query.setParameter("id", Integer.parseInt(id));
+                Query<Project> query = entityManager.unwrap(Session.class)
+                        .createQuery("from Project p where p.id = :id", Project.class);
+                query.setParameter("id", Integer.parseInt(id));
                 Project project = query.uniqueResult();
 
                 return project;

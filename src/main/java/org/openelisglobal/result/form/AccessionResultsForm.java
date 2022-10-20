@@ -59,8 +59,8 @@ public class AccessionResultsForm extends BaseForm implements PatientInfoForm, R
 
     private List<IdValuePair> referralOrganizations;
 
-     // for display
-     private List<IdValuePair> methods;
+    // for display
+    private List<IdValuePair> methods;
 
     public AccessionResultsForm() {
         setFormName("AccessionResultsForm");

@@ -71,7 +71,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
         List<Organization> list;
         try {
             String sql = "from Organization";
-			Query<Organization> query = entityManager.unwrap(Session.class).createQuery(sql, Organization.class);
+            Query<Organization> query = entityManager.unwrap(Session.class).createQuery(sql, Organization.class);
             list = query.list();
         } catch (RuntimeException e) {
             // bugzilla 2154
@@ -92,7 +92,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 
             // bugzilla 1399
             String sql = "from Organization o order by o.organizationName";
-			Query<Organization> query = entityManager.unwrap(Session.class).createQuery(sql, Organization.class);
+            Query<Organization> query = entityManager.unwrap(Session.class).createQuery(sql, Organization.class);
             query.setFirstResult(startingRecNo - 1);
             query.setMaxResults(endingRecNo - 1);
 
@@ -128,7 +128,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
                 newSearchStr = searchString.replace(wildCard, "%").toLowerCase().trim();
                 sql = "from Organization o where trim(lower (o.organizationName)) like :param  order by o.organizationName";
             }
-			Query<Organization> query = entityManager.unwrap(Session.class).createQuery(sql, Organization.class);
+            Query<Organization> query = entityManager.unwrap(Session.class).createQuery(sql, Organization.class);
             query.setParameter("param", newSearchStr);
             query.setFirstResult(startingRecNo - 1);
             query.setMaxResults(endingRecNo - 1);
@@ -163,7 +163,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
         List<Organization> list;
         try {
             String sql = "from Organization o where upper(o.organizationName) like upper(:param) and o.isActive='Y' order by upper(o.organizationName)";
-			Query<Organization> query = entityManager.unwrap(Session.class).createQuery(sql, Organization.class);
+            Query<Organization> query = entityManager.unwrap(Session.class).createQuery(sql, Organization.class);
             query.setParameter("param", filter + "%");
 
             list = query.list();
@@ -189,11 +189,11 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
                 sql = "from Organization o where o.organizationName = :param and o.isActive='Y'";
             }
 
-			Query<Organization> query = entityManager.unwrap(Session.class).createQuery(sql, Organization.class);
+            Query<Organization> query = entityManager.unwrap(Session.class).createQuery(sql, Organization.class);
             if (ignoreCase) {
-				query.setParameter("param", organization.getOrganizationName().trim().toLowerCase());
+                query.setParameter("param", organization.getOrganizationName().trim().toLowerCase());
             } else {
-				query.setParameter("param", organization.getOrganizationName());
+                query.setParameter("param", organization.getOrganizationName());
             }
 
             List<Organization> list = query.list();
@@ -218,7 +218,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
         try {
             sql = "from Organization o where o.isActive='Y'";
 
-			Query<Organization> query = entityManager.unwrap(Session.class).createQuery(sql, Organization.class);
+            Query<Organization> query = entityManager.unwrap(Session.class).createQuery(sql, Organization.class);
             List<Organization> list = query.list();
 
             return list;
@@ -242,11 +242,11 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
                 sql = "from Organization o where o.organizationName = :param";
             }
 
-			Query<Organization> query = entityManager.unwrap(Session.class).createQuery(sql, Organization.class);
+            Query<Organization> query = entityManager.unwrap(Session.class).createQuery(sql, Organization.class);
             if (ignoreCase) {
-				query.setParameter("param", organization.getOrganizationName().trim().toLowerCase());
+                query.setParameter("param", organization.getOrganizationName().trim().toLowerCase());
             } else {
-				query.setParameter("param", organization.getOrganizationName());
+                query.setParameter("param", organization.getOrganizationName());
             }
 
             List<Organization> list = query.list();
@@ -277,7 +277,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
                 sql = "from Organization o where o.organizationLocalAbbreviation = :param and o.isActive='Y'";
             }
 
-			Query<Organization> query = entityManager.unwrap(Session.class).createQuery(sql, Organization.class);
+            Query<Organization> query = entityManager.unwrap(Session.class).createQuery(sql, Organization.class);
             if (ignoreCase) {
                 query.setParameter("param", organization.getOrganizationLocalAbbreviation().trim().toLowerCase());
             } else {
@@ -310,21 +310,21 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
     public boolean duplicateOrganizationExists(Organization organization) throws LIMSRuntimeException {
         try {
 
-			List<Organization> list = new ArrayList<>();
+            List<Organization> list = new ArrayList<>();
 
             // only check if the test to be inserted/updated is active
             if (organization.getIsActive().equalsIgnoreCase(IActionConstants.YES)) {
                 // not case sensitive hemolysis and Hemolysis are considered
                 // duplicates
                 String sql = "from Organization o where ((trim(lower(o.organizationLocalAbbreviation))) = :orgAbrv and o.isActive='Y' and o.id != :orgId)";
-				Query<Organization> query = entityManager.unwrap(Session.class).createQuery(sql, Organization.class);
+                Query<Organization> query = entityManager.unwrap(Session.class).createQuery(sql, Organization.class);
                 // initialize with 0 (for new records where no id has been generated yet
                 String orgId = "0";
                 if (!StringUtil.isNullorNill(organization.getId())) {
                     orgId = organization.getId();
                 }
 
-				query.setParameter("orgId", Integer.parseInt(orgId));
+                query.setParameter("orgId", Integer.parseInt(orgId));
                 String organizationLocalAbbrev = "0";
                 if (!StringUtil.isNullorNill(organization.getOrganizationLocalAbbreviation())) {
                     organizationLocalAbbrev = organization.getOrganizationLocalAbbreviation();
@@ -369,7 +369,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
                 newSearchStr = searchString.replace(wildCard, "%").toLowerCase().trim();
                 sql = "select count (*) from Organization o where trim(lower (o.organizationName)) like :param ";
             }
-			Query<Long> query = entityManager.unwrap(Session.class).createQuery(sql, Long.class);
+            Query<Long> query = entityManager.unwrap(Session.class).createQuery(sql, Long.class);
             query.setParameter("param", newSearchStr);
 
             List<Long> results = query.list();
@@ -402,8 +402,8 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
                 sql += " ORDER BY o." + orderByProperty;
             }
             Session session = entityManager.unwrap(Session.class);
-			Query<Organization> query = session.createQuery(sql, Organization.class).setParameterList("names",
-					typeNames);
+            Query<Organization> query = session.createQuery(sql, Organization.class).setParameterList("names",
+                    typeNames);
 
             List<Organization> orgs = query.list();
             return orgs;
@@ -420,7 +420,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
         try {
             String sql = "SELECT o FROM Organization AS o INNER JOIN o.organizationTypes AS ot WHERE ot.name = :typeName "
                     + " AND o.isActive = 'Y' AND upper(o.organizationName) like upper(:partialName) order by upper(o.organizationName)";
-			Query<Organization> query = entityManager.unwrap(Session.class).createQuery(sql, Organization.class);
+            Query<Organization> query = entityManager.unwrap(Session.class).createQuery(sql, Organization.class);
             query.setParameter("typeName", typeName);
             query.setParameter("partialName", partialName + "%");
 
@@ -440,8 +440,8 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
             String sql = "from Organization o where o.id = :organizationId";
 
             try {
-				Query<Organization> query = entityManager.unwrap(Session.class).createQuery(sql, Organization.class);
-				query.setParameter("organizationId", Integer.parseInt(organizationId));
+                Query<Organization> query = entityManager.unwrap(Session.class).createQuery(sql, Organization.class);
+                query.setParameter("organizationId", Integer.parseInt(organizationId));
                 Organization organization = query.uniqueResult();
 
                 return organization;
@@ -463,8 +463,8 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
         String sql = "from Organization o where o.organization.id = :parentId order by o.id";
 
         try {
-			Query<Organization> query = entityManager.unwrap(Session.class).createQuery(sql, Organization.class);
-			query.setParameter("parentId", Integer.parseInt(parentId));
+            Query<Organization> query = entityManager.unwrap(Session.class).createQuery(sql, Organization.class);
+            query.setParameter("parentId", Integer.parseInt(parentId));
             List<Organization> orgs = query.list();
 
             return orgs;
@@ -484,7 +484,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
         String sql = "from Organization o where o.fhirUuid = :uuid";
 
         try {
-			Query<Organization> query = entityManager.unwrap(Session.class).createQuery(sql, Organization.class);
+            Query<Organization> query = entityManager.unwrap(Session.class).createQuery(sql, Organization.class);
             query.setParameter("uuid", UUID.fromString(uuid));
             List<Organization> list = query.list();
             Organization org = null;

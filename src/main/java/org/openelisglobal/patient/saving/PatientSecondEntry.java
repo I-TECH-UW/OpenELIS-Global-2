@@ -47,8 +47,7 @@ public class PatientSecondEntry extends PatientEntry implements IPatientSecondEn
      * @throws IllegalAccessException
      * @throws LIMSRuntimeException
      */
-    public PatientSecondEntry(PatientEntryByProjectForm form, String sysUserId, HttpServletRequest request)
-             {
+    public PatientSecondEntry(PatientEntryByProjectForm form, String sysUserId, HttpServletRequest request) {
         this();
         super.setFieldsFromForm(form);
         super.setSysUserId(sysUserId);

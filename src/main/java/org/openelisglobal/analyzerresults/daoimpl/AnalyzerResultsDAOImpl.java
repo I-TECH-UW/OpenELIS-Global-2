@@ -47,10 +47,10 @@ public class AnalyzerResultsDAOImpl extends BaseDAOImpl<AnalyzerResults, String>
 
             String sql = "from AnalyzerResults a where a.analyzerId = :analyzerId and "
                     + "a.accessionNumber = :assessionNumber and " + "a.testName = :testName";
-			Query<AnalyzerResults> query = entityManager.unwrap(Session.class).createQuery(sql, AnalyzerResults.class);
-			query.setParameter("analyzerId", Integer.parseInt(result.getAnalyzerId()));
-			query.setParameter("assessionNumber", result.getAccessionNumber());
-			query.setParameter("testName", result.getTestName());
+            Query<AnalyzerResults> query = entityManager.unwrap(Session.class).createQuery(sql, AnalyzerResults.class);
+            query.setParameter("analyzerId", Integer.parseInt(result.getAnalyzerId()));
+            query.setParameter("assessionNumber", result.getAccessionNumber());
+            query.setParameter("testName", result.getTestName());
 
             list = query.list();
 
@@ -61,7 +61,6 @@ public class AnalyzerResultsDAOImpl extends BaseDAOImpl<AnalyzerResults, String>
             throw new LIMSRuntimeException("Error in duplicateAnalyzerResultsExists()", e);
         }
     }
-
 
     @Override
     public AnalyzerResults readAnalyzerResults(String idString) throws LIMSRuntimeException {

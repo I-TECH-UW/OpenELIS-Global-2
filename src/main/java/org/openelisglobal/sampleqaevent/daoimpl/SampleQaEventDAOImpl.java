@@ -50,7 +50,6 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent, String> imp
         super(SampleQaEvent.class);
     }
 
-
     @Override
     @Transactional(readOnly = true)
     public SampleQaEvent getData(String sampleQaEventId) throws LIMSRuntimeException {
@@ -96,11 +95,11 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent, String> imp
     @Override
     @Transactional(readOnly = true)
     public List<SampleQaEvent> getSampleQaEventsBySample(SampleQaEvent sampleQaEvent) throws LIMSRuntimeException {
-		List<SampleQaEvent> sampleQaEvents = new ArrayList<>();
+        List<SampleQaEvent> sampleQaEvents = new ArrayList<>();
 
         try {
             String sql = "from SampleQaEvent aqe where aqe.sample = :param";
-			Query<SampleQaEvent> query = entityManager.unwrap(Session.class).createQuery(sql, SampleQaEvent.class);
+            Query<SampleQaEvent> query = entityManager.unwrap(Session.class).createQuery(sql, SampleQaEvent.class);
             query.setParameter("param", sampleQaEvent.getSample().getId());
 
             sampleQaEvents = query.list();
@@ -122,8 +121,8 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent, String> imp
 
         try {
             String sql = "from SampleQaEvent aqe where aqe.sample = :sampleId";
-			Query<SampleQaEvent> query = entityManager.unwrap(Session.class).createQuery(sql, SampleQaEvent.class);
-			query.setParameter("sampleId", Integer.parseInt(sample.getId()));
+            Query<SampleQaEvent> query = entityManager.unwrap(Session.class).createQuery(sql, SampleQaEvent.class);
+            query.setParameter("sampleId", Integer.parseInt(sample.getId()));
 
             sampleQaEvents = query.list();
 
@@ -143,7 +142,7 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent, String> imp
             // Use an expression to read in the SampleQaEvent whose
             // sample and qaevent is given
             String sql = "from SampleQaEvent aqe where aqe.sample = :param and aqe.qaEvent = :param2";
-			Query<SampleQaEvent> query = entityManager.unwrap(Session.class).createQuery(sql, SampleQaEvent.class);
+            Query<SampleQaEvent> query = entityManager.unwrap(Session.class).createQuery(sql, SampleQaEvent.class);
             query.setParameter("param", sampleQaEvent.getSample().getId());
             query.setParameter("param2", sampleQaEvent.getQaEvent().getId());
             List<SampleQaEvent> list = query.list();
@@ -171,9 +170,9 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent, String> imp
 
         try {
             String sql = "FROM SampleQaEvent sqe WHERE sqe.lastupdated >= :lowDate AND sqe.lastupdated <= :highDate";
-			Query<SampleQaEvent> query = entityManager.unwrap(Session.class).createQuery(sql, SampleQaEvent.class);
-			query.setParameter("lowDate", lowDate);
-			query.setParameter("highDate", highDate);
+            Query<SampleQaEvent> query = entityManager.unwrap(Session.class).createQuery(sql, SampleQaEvent.class);
+            query.setParameter("lowDate", lowDate);
+            query.setParameter("highDate", highDate);
 
             sampleQaEvents = query.list();
         } catch (RuntimeException e) {
@@ -189,7 +188,7 @@ public class SampleQaEventDAOImpl extends BaseDAOImpl<SampleQaEvent, String> imp
         String sql = "From SampleQaEvent sqa where sqa.completedDate is null";
 
         try {
-			Query<SampleQaEvent> query = entityManager.unwrap(Session.class).createQuery(sql, SampleQaEvent.class);
+            Query<SampleQaEvent> query = entityManager.unwrap(Session.class).createQuery(sql, SampleQaEvent.class);
             List<SampleQaEvent> events = query.list();
             return events;
         } catch (HibernateException e) {

@@ -71,8 +71,8 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule, Strin
         List<SystemUserModule> list;
         try {
             String sql = "from SystemUserModule";
-			Query<SystemUserModule> query = entityManager.unwrap(Session.class).createQuery(sql,
-					SystemUserModule.class);
+            Query<SystemUserModule> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    SystemUserModule.class);
             list = query.list();
         } catch (RuntimeException e) {
             // bugzilla 2154
@@ -89,8 +89,8 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule, Strin
         List<SystemUserModule> list;
         try {
             String sql = "from SystemUserModule s where s.systemUser.id = :param";
-			Query<SystemUserModule> query = entityManager.unwrap(Session.class).createQuery(sql,
-					SystemUserModule.class);
+            Query<SystemUserModule> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    SystemUserModule.class);
             query.setParameter("param", systemUserId);
             list = query.list();
         } catch (RuntimeException e) {
@@ -112,8 +112,8 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule, Strin
             int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 
             String sql = "from SystemUserModule s order by s.systemUser.id";
-			Query<SystemUserModule> query = entityManager.unwrap(Session.class).createQuery(sql,
-					SystemUserModule.class);
+            Query<SystemUserModule> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    SystemUserModule.class);
             query.setFirstResult(startingRecNo - 1);
             query.setMaxResults(endingRecNo - 1);
 
@@ -150,11 +150,11 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule, Strin
     public boolean duplicateSystemUserModuleExists(SystemUserModule systemUserModule) throws LIMSRuntimeException {
         try {
 
-			List<SystemUserModule> list = new ArrayList<>();
+            List<SystemUserModule> list = new ArrayList<>();
 
             String sql = "from SystemUserModule s where s.systemUser.id = :param and s.systemModule.id = :param2 and s.id != :param3";
-			Query<SystemUserModule> query = entityManager.unwrap(Session.class).createQuery(sql,
-					SystemUserModule.class);
+            Query<SystemUserModule> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    SystemUserModule.class);
             query.setParameter("param", systemUserModule.getSystemUser().getId());
             query.setParameter("param2", systemUserModule.getSystemModule().getId());
 

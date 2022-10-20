@@ -67,8 +67,8 @@ public class ResultSignatureDAOImpl extends BaseDAOImpl<ResultSignature, String>
         try {
 
             String sql = "from ResultSignature r where r.resultId = :resultId";
-			Query<ResultSignature> query = entityManager.unwrap(Session.class).createQuery(sql, ResultSignature.class);
-			query.setParameter("resultId", Integer.parseInt(result.getId()));
+            Query<ResultSignature> query = entityManager.unwrap(Session.class).createQuery(sql, ResultSignature.class);
+            query.setParameter("resultId", Integer.parseInt(result.getId()));
 
             resultSignatures = query.list();
             return resultSignatures;
@@ -119,7 +119,7 @@ public class ResultSignatureDAOImpl extends BaseDAOImpl<ResultSignature, String>
         String sql = "From ResultSignature rs where rs.resultId in (:resultIdList)";
 
         try {
-			Query<ResultSignature> query = entityManager.unwrap(Session.class).createQuery(sql, ResultSignature.class);
+            Query<ResultSignature> query = entityManager.unwrap(Session.class).createQuery(sql, ResultSignature.class);
             query.setParameterList("resultIdList", resultIds);
             List<ResultSignature> sigs = query.list();
             return sigs;

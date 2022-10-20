@@ -84,9 +84,9 @@ public class SampleOrganizationDAOImpl extends BaseDAOImpl<SampleOrganization, S
 
         try {
             String sql = "from SampleOrganization so where samp_id = :param";
-			Query<SampleOrganization> query = entityManager.unwrap(Session.class).createQuery(sql,
-					SampleOrganization.class);
-			query.setParameter("param", Integer.valueOf(sampleOrganization.getSample().getId()));
+            Query<SampleOrganization> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    SampleOrganization.class);
+            query.setParameter("param", Integer.valueOf(sampleOrganization.getSample().getId()));
             List<SampleOrganization> list = query.list();
             SampleOrganization so = null;
             if (list.size() > 0) {
@@ -106,9 +106,9 @@ public class SampleOrganizationDAOImpl extends BaseDAOImpl<SampleOrganization, S
     public SampleOrganization getDataBySample(Sample sample) throws LIMSRuntimeException {
         String sql = "From SampleOrganization so where so.sample.id = :sampleId";
         try {
-			Query<SampleOrganization> query = entityManager.unwrap(Session.class).createQuery(sql,
-					SampleOrganization.class);
-			query.setParameter("sampleId", Integer.parseInt(sample.getId()));
+            Query<SampleOrganization> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    SampleOrganization.class);
+            query.setParameter("sampleId", Integer.parseInt(sample.getId()));
             List<SampleOrganization> sampleOrg = query.list();
             // There was a bug that allowed the same sample id / organization id to be
             // entered twice

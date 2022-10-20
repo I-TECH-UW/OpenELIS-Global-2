@@ -52,8 +52,8 @@ public class ProviderImportServiceImpl implements ProviderImportService {
     private PersonService personService;
 
     @Override
-	@Transactional
-	@Async
+    @Transactional
+    @Async
     @Scheduled(initialDelay = 1000, fixedRate = 60 * 60 * 1000)
     public void importPractitionerList() throws FhirLocalPersistingException, FhirGeneralException, IOException {
         if (!GenericValidator.isBlankOrNull(providerFhirStore)) {

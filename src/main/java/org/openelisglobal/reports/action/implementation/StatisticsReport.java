@@ -48,7 +48,8 @@ public class StatisticsReport extends IndicatorReport implements IReportCreator,
     @Override
     public void setRequestParameters(ReportForm form) {
         form.setUseStatisticsParams(true);
-        new ReportSpecificationList(DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION_ACTIVE),
+        new ReportSpecificationList(
+                DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION_ACTIVE),
                 MessageUtil.getMessage("workplan.unit.types")).setRequestParameters(form);
         form.setYearList(getYearList());
         form.setPriorityList(DisplayListService.getInstance().getList(DisplayListService.ListType.ORDER_PRIORITY));
@@ -179,66 +180,66 @@ public class StatisticsReport extends IndicatorReport implements IReportCreator,
                     Calendar cal = Calendar.getInstance();
                     cal.setTime(analysis.getStartedDate());
                     switch (cal.get(Calendar.MONTH)) {
-                        case 0: {
-                            janTests.add(analysis.getId());
-                            janSamples.add(analysis.getSampleItem().getSample().getId());
-                            break;
-                        }
-                        case 1: {
-                            febTests.add(analysis.getId());
-                            febSamples.add(analysis.getSampleItem().getSample().getId());
-                            break;
-                        }
-                        case 2: {
-                            marTests.add(analysis.getId());
-                            marSamples.add(analysis.getSampleItem().getSample().getId());
-                            break;
-                        }
-                        case 3: {
-                            aprTests.add(analysis.getId());
-                            aprSamples.add(analysis.getSampleItem().getSample().getId());
-                            break;
-                        }
-                        case 4: {
-                            mayTests.add(analysis.getId());
-                            maySamples.add(analysis.getSampleItem().getSample().getId());
-                            break;
-                        }
-                        case 5: {
-                            junTests.add(analysis.getId());
-                            junSamples.add(analysis.getSampleItem().getSample().getId());
-                            break;
-                        }
-                        case 6: {
-                            julTests.add(analysis.getId());
-                            julSamples.add(analysis.getSampleItem().getSample().getId());
-                            break;
-                        }
-                        case 7: {
-                            augTests.add(analysis.getId());
-                            augSamples.add(analysis.getSampleItem().getSample().getId());
-                            break;
-                        }
-                        case 8: {
-                            sepTests.add(analysis.getId());
-                            sepSamples.add(analysis.getSampleItem().getSample().getId());
-                            break;
-                        }
-                        case 9: {
-                            octTests.add(analysis.getId());
-                            octSamples.add(analysis.getSampleItem().getSample().getId());
-                            break;
-                        }
-                        case 10: {
-                            novTests.add(analysis.getId());
-                            novSamples.add(analysis.getSampleItem().getSample().getId());
-                            break;
-                        }
-                        case 11: {
-                            decTests.add(analysis.getId());
-                            decSamples.add(analysis.getSampleItem().getSample().getId());
-                            break;
-                        }
+                    case 0: {
+                        janTests.add(analysis.getId());
+                        janSamples.add(analysis.getSampleItem().getSample().getId());
+                        break;
+                    }
+                    case 1: {
+                        febTests.add(analysis.getId());
+                        febSamples.add(analysis.getSampleItem().getSample().getId());
+                        break;
+                    }
+                    case 2: {
+                        marTests.add(analysis.getId());
+                        marSamples.add(analysis.getSampleItem().getSample().getId());
+                        break;
+                    }
+                    case 3: {
+                        aprTests.add(analysis.getId());
+                        aprSamples.add(analysis.getSampleItem().getSample().getId());
+                        break;
+                    }
+                    case 4: {
+                        mayTests.add(analysis.getId());
+                        maySamples.add(analysis.getSampleItem().getSample().getId());
+                        break;
+                    }
+                    case 5: {
+                        junTests.add(analysis.getId());
+                        junSamples.add(analysis.getSampleItem().getSample().getId());
+                        break;
+                    }
+                    case 6: {
+                        julTests.add(analysis.getId());
+                        julSamples.add(analysis.getSampleItem().getSample().getId());
+                        break;
+                    }
+                    case 7: {
+                        augTests.add(analysis.getId());
+                        augSamples.add(analysis.getSampleItem().getSample().getId());
+                        break;
+                    }
+                    case 8: {
+                        sepTests.add(analysis.getId());
+                        sepSamples.add(analysis.getSampleItem().getSample().getId());
+                        break;
+                    }
+                    case 9: {
+                        octTests.add(analysis.getId());
+                        octSamples.add(analysis.getSampleItem().getSample().getId());
+                        break;
+                    }
+                    case 10: {
+                        novTests.add(analysis.getId());
+                        novSamples.add(analysis.getSampleItem().getSample().getId());
+                        break;
+                    }
+                    case 11: {
+                        decTests.add(analysis.getId());
+                        decSamples.add(analysis.getSampleItem().getSample().getId());
+                        break;
+                    }
                     }
                 });
 
@@ -271,7 +272,7 @@ public class StatisticsReport extends IndicatorReport implements IReportCreator,
                 reportItems.add(data);
             }
         });
-        if(reportItems.isEmpty()){
+        if (reportItems.isEmpty()) {
             StatisticsReportData emptydata = new StatisticsReportData();
             emptydata.setTestName(null);
             reportItems.add(emptydata);
@@ -291,9 +292,10 @@ public class StatisticsReport extends IndicatorReport implements IReportCreator,
         reportParameters.put("usePageNumbers", "true");
         reportParameters.put("headerName", "GeneralHeader.jasper");
         reportParameters.put("year", year);
-        reportParameters.put("labUnits", MessageUtil.getMessage("label.openreports.testsection") +" " +  labUnits);
-        reportParameters.put("workHours", MessageUtil.getMessage("sample.batchentry.order.receptiontime") +": " +  receptionTime);
-        reportParameters.put("priority", MessageUtil.getMessage("sample.entry.priority") +": " + priority);
+        reportParameters.put("labUnits", MessageUtil.getMessage("label.openreports.testsection") + " " + labUnits);
+        reportParameters.put("workHours",
+                MessageUtil.getMessage("sample.batchentry.order.receptiontime") + ": " + receptionTime);
+        reportParameters.put("priority", MessageUtil.getMessage("sample.entry.priority") + ": " + priority);
     }
 
     private List<IdValuePair> getYearList() {
@@ -330,15 +332,18 @@ public class StatisticsReport extends IndicatorReport implements IReportCreator,
     }
 
     private void inntialiseReportParams(ReportForm form) {
-        TestSectionService testSectionService =  SpringContext.getBean(TestSectionService.class);
+        TestSectionService testSectionService = SpringContext.getBean(TestSectionService.class);
         String startDate = DateUtil
                 .formatDateAsText(DateUtil.getFistDayOfTheYear(Integer.valueOf(form.getUpperYear())));
-        String endDate = DateUtil
-                .formatDateAsText(DateUtil.getLastDayOfTheYear(Integer.valueOf(form.getUpperYear())));
+        String endDate = DateUtil.formatDateAsText(DateUtil.getLastDayOfTheYear(Integer.valueOf(form.getUpperYear())));
         year = startDate + " - " + endDate;
-        priority = form.getPriority().stream().map(priority -> getPriorityMap().get(priority.name()).toString()).collect(Collectors.joining(" , "));
-        labUnits = form.getLabSections().stream().map(labunitId -> testSectionService.getTestSectionById(labunitId).getLocalizedName()).collect(Collectors.joining(" , "));
-        receptionTime = form.getReceptionTime().stream().map(time -> getReceptionTimeMap().get(time.name()).toString()).collect(Collectors.joining(" ,"));
+        priority = form.getPriority().stream().map(priority -> getPriorityMap().get(priority.name()).toString())
+                .collect(Collectors.joining(" , "));
+        labUnits = form.getLabSections().stream()
+                .map(labunitId -> testSectionService.getTestSectionById(labunitId).getLocalizedName())
+                .collect(Collectors.joining(" , "));
+        receptionTime = form.getReceptionTime().stream().map(time -> getReceptionTimeMap().get(time.name()).toString())
+                .collect(Collectors.joining(" ,"));
     }
 
     private Map getReceptionTimeMap() {

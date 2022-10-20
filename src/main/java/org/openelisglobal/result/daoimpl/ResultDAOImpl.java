@@ -76,9 +76,9 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
             Analyte analyte = ta.getAnalyte();
 
             String sql = "from Result r where r.analysis = :analysisId and r.analyte = :analyteId";
-			Query<Result> query = entityManager.unwrap(Session.class).createQuery(sql, Result.class);
-			query.setParameter("analysisId", Integer.parseInt(analysis.getId()));
-			query.setParameter("analyteId", Integer.parseInt(analyte.getId()));
+            Query<Result> query = entityManager.unwrap(Session.class).createQuery(sql, Result.class);
+            query.setParameter("analysisId", Integer.parseInt(analysis.getId()));
+            query.setParameter("analyteId", Integer.parseInt(analyte.getId()));
 
             results = query.list();
             Result thisResult;
@@ -107,8 +107,8 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
         try {
 
             String sql = "from Result r where r.analysis = :analysisId order by r.id";
-			Query<Result> query = entityManager.unwrap(Session.class).createQuery(sql, Result.class);
-			query.setParameter("analysisId", Integer.parseInt(analysis.getId()));
+            Query<Result> query = entityManager.unwrap(Session.class).createQuery(sql, Result.class);
+            query.setParameter("analysisId", Integer.parseInt(analysis.getId()));
 
             List<Result> results = query.list();
             return results;
@@ -131,8 +131,8 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
         List<Result> results;
         try {
             String sql = "from Result r where r.testResult = :testResultId";
-			Query<Result> query = entityManager.unwrap(Session.class).createQuery(sql, Result.class);
-			query.setParameter("testResultId", Integer.parseInt(testResult.getId()));
+            Query<Result> query = entityManager.unwrap(Session.class).createQuery(sql, Result.class);
+            query.setParameter("testResultId", Integer.parseInt(testResult.getId()));
 
             results = query.list();
             Result thisResult;
@@ -159,7 +159,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
         List<Result> results;
         try {
             String sql = "from Result";
-			Query<Result> query = entityManager.unwrap(Session.class).createQuery(sql, Result.class);
+            Query<Result> query = entityManager.unwrap(Session.class).createQuery(sql, Result.class);
             results = query.list();
         } catch (RuntimeException e) {
 
@@ -179,7 +179,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
             int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 
             String sql = "from Result r order by r.id";
-			Query<Result> query = entityManager.unwrap(Session.class).createQuery(sql, Result.class);
+            Query<Result> query = entityManager.unwrap(Session.class).createQuery(sql, Result.class);
             query.setFirstResult(startingRecNo - 1);
             query.setMaxResults(endingRecNo - 1);
 
@@ -231,7 +231,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
         try {
 
             String sql = "from Result r where r.analysis = :param1 and r.isReportable = " + enquote(YES);
-			Query<Result> query = entityManager.unwrap(Session.class).createQuery(sql, Result.class);
+            Query<Result> query = entityManager.unwrap(Session.class).createQuery(sql, Result.class);
             query.setParameter("param1", analysis);
 
             List<Result> results = query.list();
@@ -251,8 +251,8 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
         try {
 
             String sql = "from Result r where r.analyte = :analyteId and r.analysis in (:analysisIdList)";
-			Query<Result> query = entityManager.unwrap(Session.class).createQuery(sql, Result.class);
-			query.setParameter("analyteId", Integer.parseInt(analyteId));
+            Query<Result> query = entityManager.unwrap(Session.class).createQuery(sql, Result.class);
+            query.setParameter("analyteId", Integer.parseInt(analyteId));
             query.setParameterList("analysisIdList", analysisIDList);
 
             List<Result> results = query.list();
@@ -273,9 +273,9 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
 
         try {
             String sql = "from Result r where r.analyte.id = :analyteId and r.analysis.sampleItem.id = :sampleItemId";
-			Query<Result> query = entityManager.unwrap(Session.class).createQuery(sql, Result.class);
-			query.setParameter("analyteId", Integer.parseInt(analyteId));
-			query.setParameter("sampleItemId", Integer.parseInt(sampleItemId));
+            Query<Result> query = entityManager.unwrap(Session.class).createQuery(sql, Result.class);
+            query.setParameter("analyteId", Integer.parseInt(analyteId));
+            query.setParameter("sampleItemId", Integer.parseInt(sampleItemId));
 
             List<Result> results = query.list();
 
@@ -299,7 +299,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
         String sql = "from Result r where r.analysis IN (:analysisList)";
 
         try {
-			Query<Result> query = entityManager.unwrap(Session.class).createQuery(sql, Result.class);
+            Query<Result> query = entityManager.unwrap(Session.class).createQuery(sql, Result.class);
             query.setParameterList("analysisList", analysisIdList);
 
             List<Result> resultList = query.list();
@@ -317,7 +317,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
         String sql = "FROM Result r WHERE r.analysis.sampleItem.sample.id = :sampleId AND r.testResult.test.id = :testId";
 
         try {
-			Query<Result> query = entityManager.unwrap(Session.class).createQuery(sql, Result.class);
+            Query<Result> query = entityManager.unwrap(Session.class).createQuery(sql, Result.class);
             query.setParameter("testId", Integer.valueOf(testId));
             query.setParameter("sampleId", Integer.valueOf(sampleId));
 
@@ -336,8 +336,8 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
         String sql = "From Result r where r.analysis.sampleItem.sample.id = :sampleId";
 
         try {
-			Query<Result> query = entityManager.unwrap(Session.class).createQuery(sql, Result.class);
-			query.setParameter("sampleId", Integer.parseInt(sample.getId()));
+            Query<Result> query = entityManager.unwrap(Session.class).createQuery(sql, Result.class);
+            query.setParameter("sampleId", Integer.parseInt(sample.getId()));
             List<Result> results = query.list();
             return results;
         } catch (HibernateException e) {
@@ -352,8 +352,8 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
         String sql = "From Result r where r.parentResult.id = :parentId";
 
         try {
-			Query<Result> query = entityManager.unwrap(Session.class).createQuery(sql, Result.class);
-			query.setParameter("parentId", Integer.parseInt(resultId));
+            Query<Result> query = entityManager.unwrap(Session.class).createQuery(sql, Result.class);
+            query.setParameter("parentId", Integer.parseInt(resultId));
             List<Result> results = query.list();
             return results;
         } catch (HibernateException e) {
@@ -370,10 +370,10 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
         String sql = "FROM Result r WHERE r.analysis.test.id = :testId AND r.lastupdated BETWEEN :lowDate AND :highDate";
 
         try {
-			Query<Result> query = entityManager.unwrap(Session.class).createQuery(sql, Result.class);
-			query.setParameter("testId", Integer.valueOf(testId));
-			query.setParameter("lowDate", startDate);
-			query.setParameter("highDate", endDate);
+            Query<Result> query = entityManager.unwrap(Session.class).createQuery(sql, Result.class);
+            query.setParameter("testId", Integer.valueOf(testId));
+            query.setParameter("lowDate", startDate);
+            query.setParameter("highDate", endDate);
 
             List<Result> resultList = query.list();
             return resultList;
@@ -390,10 +390,10 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
         String sql = "FROM Result r WHERE r.analysis.panel.id = :panelId AND r.lastupdated BETWEEN :lowDate AND :highDate order by r.id";
 
         try {
-			Query<Result> query = entityManager.unwrap(Session.class).createQuery(sql, Result.class);
-			query.setParameter("panelId", Integer.valueOf(panelId));
-			query.setParameter("lowDate", lowDate);
-			query.setParameter("highDate", highDate);
+            Query<Result> query = entityManager.unwrap(Session.class).createQuery(sql, Result.class);
+            query.setParameter("panelId", Integer.valueOf(panelId));
+            query.setParameter("lowDate", lowDate);
+            query.setParameter("highDate", highDate);
 
             List<Result> resultList = query.list();
             return resultList;
@@ -410,10 +410,10 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
         String sql = "FROM Result r WHERE r.analysis.testSection.id = :testSectionId AND r.lastupdated BETWEEN :lowDate AND :highDate";
 
         try {
-			Query<Result> query = entityManager.unwrap(Session.class).createQuery(sql, Result.class);
-			query.setParameter("testSectionId", Integer.valueOf(testSectionId));
-			query.setParameter("lowDate", lowDate);
-			query.setParameter("highDate", highDate);
+            Query<Result> query = entityManager.unwrap(Session.class).createQuery(sql, Result.class);
+            query.setParameter("testSectionId", Integer.valueOf(testSectionId));
+            query.setParameter("lowDate", lowDate);
+            query.setParameter("highDate", highDate);
 
             List<Result> resultList = query.list();
             return resultList;

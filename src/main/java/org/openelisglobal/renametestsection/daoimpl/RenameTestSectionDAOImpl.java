@@ -67,8 +67,8 @@ public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection, Str
         List<RenameTestSection> list = new Vector<>();
         try {
             String sql = "from TestSection";
-			Query<RenameTestSection> query = entityManager.unwrap(Session.class).createQuery(sql,
-					RenameTestSection.class);
+            Query<RenameTestSection> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    RenameTestSection.class);
             // query.setMaxResults(10);
             // query.setFirstResult(3);
             list = query.list();
@@ -91,8 +91,8 @@ public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection, Str
 
             // bugzilla 1399
             String sql = "from TestSection t order by t.testSectionName";
-			Query<RenameTestSection> query = entityManager.unwrap(Session.class).createQuery(sql,
-					RenameTestSection.class);
+            Query<RenameTestSection> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    RenameTestSection.class);
             query.setFirstResult(startingRecNo - 1);
             query.setMaxResults(endingRecNo - 1);
 
@@ -124,8 +124,8 @@ public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection, Str
     public RenameTestSection getTestSectionByName(RenameTestSection testSection) throws LIMSRuntimeException {
         try {
             String sql = "from TestSection t where t.testSectionName = :param";
-			Query<RenameTestSection> query = entityManager.unwrap(Session.class).createQuery(sql,
-					RenameTestSection.class);
+            Query<RenameTestSection> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    RenameTestSection.class);
             query.setParameter("param", testSection.getTestSectionName());
 
             List<RenameTestSection> list = query.list();
@@ -150,8 +150,8 @@ public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection, Str
         List<RenameTestSection> list = new Vector<>();
         try {
             String sql = "from TestSection t where upper(t.testSectionName) like upper(:param) order by upper(t.testSectionName)";
-			Query<RenameTestSection> query = entityManager.unwrap(Session.class).createQuery(sql,
-					RenameTestSection.class);
+            Query<RenameTestSection> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    RenameTestSection.class);
             query.setParameter("param", filter + "%");
 
             list = query.list();
@@ -193,8 +193,8 @@ public class RenameTestSectionDAOImpl extends BaseDAOImpl<RenameTestSection, Str
             // not case sensitive hemolysis and Hemolysis are considered
             // duplicates
             String sql = "from TestSection t where trim(lower(t.testSectionName)) = :param and t.id != :param2";
-			Query<RenameTestSection> query = entityManager.unwrap(Session.class).createQuery(sql,
-					RenameTestSection.class);
+            Query<RenameTestSection> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    RenameTestSection.class);
             query.setParameter("param", testSection.getTestSectionName().toLowerCase().trim());
 
             // initialize with 0 (for new records where no id has been generated

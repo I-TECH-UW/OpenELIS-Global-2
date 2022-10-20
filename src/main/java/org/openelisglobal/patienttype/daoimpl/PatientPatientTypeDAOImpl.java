@@ -59,7 +59,8 @@ public class PatientPatientTypeDAOImpl extends BaseDAOImpl<PatientPatientType, S
 
         try {
             String sql = "from PatientPatientType pi where pi.patientId = :patientId";
-            Query<PatientPatientType> query = entityManager.unwrap(Session.class).createQuery(sql, PatientPatientType.class);
+            Query<PatientPatientType> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    PatientPatientType.class);
             query.setParameter("patientId", Integer.parseInt(patientId));
 
             patientTypes = query.list();

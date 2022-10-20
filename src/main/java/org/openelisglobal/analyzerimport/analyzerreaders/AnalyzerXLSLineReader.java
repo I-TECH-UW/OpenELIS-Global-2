@@ -78,7 +78,7 @@ public class AnalyzerXLSLineReader extends AnalyzerReader {
     }
 
     private void setInserter() {
-		for (AnalyzerImporterPlugin plugin : SpringContext.getBean(PluginAnalyzerService.class).getAnalyzerPlugins()) {
+        for (AnalyzerImporterPlugin plugin : SpringContext.getBean(PluginAnalyzerService.class).getAnalyzerPlugins()) {
             if (plugin.isTargetAnalyzer(lines)) {
                 inserter = plugin.getAnalyzerLineInserter();
                 return;

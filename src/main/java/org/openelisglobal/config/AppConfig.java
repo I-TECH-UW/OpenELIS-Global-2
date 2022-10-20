@@ -61,13 +61,13 @@ public class AppConfig implements WebMvcConfigurer {
     RequestMappingHandlerMapping requestMappingHandlerMapping;
 
     @Bean
-	public ViewResolver internalResourceViewResolver() {
-		InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
-		viewResolver.setPrefix("");
-		viewResolver.setSuffix("");
-		viewResolver.setContentType("text/html; charset=UTF-8");
-		return viewResolver;
-	}
+    public ViewResolver internalResourceViewResolver() {
+        InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
+        viewResolver.setPrefix("");
+        viewResolver.setSuffix("");
+        viewResolver.setContentType("text/html; charset=UTF-8");
+        return viewResolver;
+    }
 
     @Bean
     public MessageSource messageSource() {

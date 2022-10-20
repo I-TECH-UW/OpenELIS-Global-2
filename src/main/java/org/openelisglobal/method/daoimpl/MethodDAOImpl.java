@@ -49,7 +49,7 @@ public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements Method
         List<Method> list = new Vector<>();
         try {
             String sql = "from Method m where upper(m.methodName) like upper(:param) and m.isActive='Y' order by upper(m.methodName)";
-			Query<Method> query = entityManager.unwrap(Session.class).createQuery(sql, Method.class);
+            Query<Method> query = entityManager.unwrap(Session.class).createQuery(sql, Method.class);
             query.setParameter("param", filter + "%");
 
             list = query.list();
@@ -68,7 +68,7 @@ public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements Method
         String sql = "from Method m where m.isActive = 'Y'";
 
         try {
-			Query<Method> query = entityManager.unwrap(Session.class).createQuery(sql, Method.class);
+            Query<Method> query = entityManager.unwrap(Session.class).createQuery(sql, Method.class);
             List<Method> sections = query.list();
             return sections;
         } catch (HibernateException e) {
@@ -83,7 +83,7 @@ public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements Method
         String sql = "from Method m where m.isActive = 'N'";
 
         try {
-			Query<Method> query = entityManager.unwrap(Session.class).createQuery(sql, Method.class);
+            Query<Method> query = entityManager.unwrap(Session.class).createQuery(sql, Method.class);
             List<Method> sections = query.list();
             return sections;
         } catch (HibernateException e) {
@@ -91,7 +91,6 @@ public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements Method
         }
         return null;
     }
-
 
     // bugzilla 1482
     @Override
@@ -103,7 +102,7 @@ public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements Method
             // not case sensitive hemolysis and Hemolysis are considered
             // duplicates
             String sql = "from Method t where trim(lower(t.methodName)) = :param and t.id != :param2";
-			Query<Method> query = entityManager.unwrap(Session.class).createQuery(sql, Method.class);
+            Query<Method> query = entityManager.unwrap(Session.class).createQuery(sql, Method.class);
             query.setParameter("param", method.getMethodName().toLowerCase().trim());
 
             // initialize with 0 (for new records where no id has been generated yet

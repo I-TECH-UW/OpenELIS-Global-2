@@ -52,8 +52,6 @@ public class AccessionResultsController extends BaseController {
     @Autowired
     private UserService userService;
 
-
-
     public AccessionResultsController(RoleService roleService) {
         Role editRole = roleService.getRoleByName("Results modifier");
         if (editRole != null) {
@@ -74,7 +72,6 @@ public class AccessionResultsController extends BaseController {
                 .getNumberedListWithLeadingBlank(DisplayListService.ListType.REJECTION_REASONS));
         form.setReferralOrganizations(DisplayListService.getInstance().getList(ListType.REFERRAL_ORGANIZATIONS));
         form.setMethods(DisplayListService.getInstance().getList(ListType.METHODS));
-
 
         ResultsPaging paging = new ResultsPaging();
         String newPage = request.getParameter("page");
@@ -112,7 +109,8 @@ public class AccessionResultsController extends BaseController {
                     resultsUtility.addIdentifingPatientInfo(patient, form);
 
                     List<TestResultItem> results = resultsUtility.getGroupedTestsForSample(sample, patient);
-                    List<TestResultItem> filteredResults = userService.filterResultsByLabUnitRoles(getSysUserId(request), results , Constants.ROLE_RESULTS);
+                    List<TestResultItem> filteredResults = userService
+                            .filterResultsByLabUnitRoles(getSysUserId(request), results, Constants.ROLE_RESULTS);
 
                     if (resultsUtility.inventoryNeeded()) {
                         addInventory(form);
@@ -135,6 +133,7 @@ public class AccessionResultsController extends BaseController {
 
         return findForward(FWD_SUCCESS, form);
     }
+
     private boolean modifyResultsRoleBased() {
         return "true"
                 .equals(ConfigurationProperties.getInstance().getPropertyValue(Property.roleRequiredForModifyResults));
@@ -190,8 +189,7 @@ public class AccessionResultsController extends BaseController {
         if (sample == null) {
             // ActionError error = new ActionError("sample.edit.sample.notFound",
             // accessionNumber, null, null);
-            errors.reject("sample.edit.sample.notFound", new String[] {},
-                    "sample.edit.sample.notFound");
+            errors.reject("sample.edit.sample.notFound", new String[] {}, "sample.edit.sample.notFound");
         }
 
         return errors;

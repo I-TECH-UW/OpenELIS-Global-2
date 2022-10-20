@@ -60,12 +60,12 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte, String> implements Anal
             } else {
                 sql = "from Analyte a where a.analyteName = :param and a.isActive='Y'";
             }
-			Query<Analyte> query = entityManager.unwrap(Session.class).createQuery(sql, Analyte.class);
+            Query<Analyte> query = entityManager.unwrap(Session.class).createQuery(sql, Analyte.class);
 
             if (ignoreCase) {
-				query.setParameter("param", analyte.getAnalyteName().trim().toLowerCase());
+                query.setParameter("param", analyte.getAnalyteName().trim().toLowerCase());
             } else {
-				query.setParameter("param", analyte.getAnalyteName());
+                query.setParameter("param", analyte.getAnalyteName());
             }
 
             List<Analyte> list = query.list();
@@ -103,16 +103,16 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte, String> implements Anal
                 sql = "from Analyte a where trim(lower(a.analyteName)) = :name and a.id != :id";
             }
 
-			Query<Analyte> query = entityManager.unwrap(Session.class).createQuery(sql, Analyte.class);
-			query.setParameter("name", analyte.getAnalyteName().toLowerCase().trim());
+            Query<Analyte> query = entityManager.unwrap(Session.class).createQuery(sql, Analyte.class);
+            query.setParameter("name", analyte.getAnalyteName().toLowerCase().trim());
             // bugzilla 2432
             if (analyte.getLocalAbbreviation() != null) {
-				query.setParameter("abbreviation", analyte.getLocalAbbreviation().toLowerCase().trim());
+                query.setParameter("abbreviation", analyte.getLocalAbbreviation().toLowerCase().trim());
             }
 
             String analyteId = !StringUtil.isNullorNill(analyte.getId()) ? analyte.getId() : "0";
 
-			query.setParameter("id", Integer.parseInt(analyteId));
+            query.setParameter("id", Integer.parseInt(analyteId));
 
             list = query.list();
 

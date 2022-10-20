@@ -37,15 +37,14 @@ public class OrganizationContactDAOImpl extends BaseDAOImpl<OrganizationContact,
         super(OrganizationContact.class);
     }
 
-    
     @Override
     @Transactional(readOnly = true)
     public List<OrganizationContact> getListForOrganizationId(String orgId) throws LIMSRuntimeException {
         String sql = "From OrganizationContact oc where oc.organizationId = :orgId";
         try {
-			Query<OrganizationContact> query = entityManager.unwrap(Session.class).createQuery(sql,
-					OrganizationContact.class);
-			query.setParameter("orgId", Integer.parseInt(orgId));
+            Query<OrganizationContact> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    OrganizationContact.class);
+            query.setParameter("orgId", Integer.parseInt(orgId));
             List<OrganizationContact> contactList = query.list();
             return contactList;
         } catch (HibernateException e) {

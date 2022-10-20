@@ -40,8 +40,8 @@ public class ReportQueueTypeDAOImpl extends BaseDAOImpl<ReportQueueType, String>
         String sql = "from ReportQueueType rqt where rqt.name = :name";
 
         try {
-			Query<ReportQueueType> query = entityManager.unwrap(Session.class).createQuery(sql, ReportQueueType.class);
-			query.setParameter("name", name);
+            Query<ReportQueueType> query = entityManager.unwrap(Session.class).createQuery(sql, ReportQueueType.class);
+            query.setParameter("name", name);
             ReportQueueType type = query.uniqueResult();
             return type;
         } catch (HibernateException e) {

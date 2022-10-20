@@ -66,7 +66,7 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider, String> implements Pr
         List<Provider> list = new Vector<>();
         try {
             String sql = "from Provider";
-			Query<Provider> query = entityManager.unwrap(Session.class).createQuery(sql, Provider.class);
+            Query<Provider> query = entityManager.unwrap(Session.class).createQuery(sql, Provider.class);
             list = query.list();
         } catch (RuntimeException e) {
             // bugzilla 2154
@@ -86,7 +86,7 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider, String> implements Pr
             int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 
             String sql = "from Provider p order by p.id";
-			Query<Provider> query = entityManager.unwrap(Session.class).createQuery(sql, Provider.class);
+            Query<Provider> query = entityManager.unwrap(Session.class).createQuery(sql, Provider.class);
             query.setFirstResult(startingRecNo - 1);
             query.setMaxResults(endingRecNo - 1);
 
@@ -121,8 +121,8 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider, String> implements Pr
         List<Provider> list = null;
         try {
             String sql = "from Provider p where p.person.id = :personId";
-			Query<Provider> query = entityManager.unwrap(Session.class).createQuery(sql, Provider.class);
-			query.setParameter("personId", Integer.parseInt(person.getId()));
+            Query<Provider> query = entityManager.unwrap(Session.class).createQuery(sql, Provider.class);
+            query.setParameter("personId", Integer.parseInt(person.getId()));
 
             list = query.list();
         } catch (RuntimeException e) {
@@ -144,7 +144,7 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider, String> implements Pr
             String sql = "from Provider p where lower(p.person.firstName) like concat('%', lower(:searchValue), '%') "
                     + "or lower(p.person.lastName) like concat('%', lower(:searchValue), '%') "
                     + "or lower(concat(p.person.firstName, ' ', p.person.lastName)) like concat('%', lower(:searchValue), '%')";
-			Query<Provider> query = entityManager.unwrap(Session.class).createQuery(sql, Provider.class);
+            Query<Provider> query = entityManager.unwrap(Session.class).createQuery(sql, Provider.class);
             query.setParameter("searchValue", parameter);
 
             list = query.list();
@@ -166,7 +166,7 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider, String> implements Pr
             String sql = "from Provider p where lower(p.person.firstName) like concat('%', lower(:searchValue), '%') "
                     + "or lower(p.person.lastName) like concat('%', lower(:searchValue), '%') "
                     + "or lower(concat(p.person.firstName, ' ', p.person.lastName)) like concat('%', lower(:searchValue), '%') ORDER BY p.active DESC, p.person.lastName";
-			Query<Provider> query = entityManager.unwrap(Session.class).createQuery(sql, Provider.class);
+            Query<Provider> query = entityManager.unwrap(Session.class).createQuery(sql, Provider.class);
             query.setParameter("searchValue", parameter);
             query.setFirstResult(startingRecNo - 1);
             query.setMaxResults(endingRecNo - 1);

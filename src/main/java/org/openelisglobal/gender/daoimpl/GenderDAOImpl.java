@@ -44,8 +44,8 @@ public class GenderDAOImpl extends BaseDAOImpl<Gender, Integer> implements Gende
     public Gender getGenderByType(String type) throws LIMSRuntimeException {
         String sql = "From Gender g where g.genderType = :type";
         try {
-			Query<Gender> query = entityManager.unwrap(Session.class).createQuery(sql, Gender.class);
-			query.setParameter("type", type);
+            Query<Gender> query = entityManager.unwrap(Session.class).createQuery(sql, Gender.class);
+            query.setParameter("type", type);
             Gender gender = query.uniqueResult();
             return gender;
         } catch (HibernateException e) {
@@ -64,7 +64,7 @@ public class GenderDAOImpl extends BaseDAOImpl<Gender, Integer> implements Gende
             // not case sensitive hemolysis and Hemolysis are considered
             // duplicates
             String sql = "from Gender t where trim(lower(t.genderType)) = :genderType and t.id != :genderId";
-			Query<Gender> query = entityManager.unwrap(Session.class).createQuery(sql, Gender.class);
+            Query<Gender> query = entityManager.unwrap(Session.class).createQuery(sql, Gender.class);
             query.setParameter("genderType", gender.getGenderType().toLowerCase().trim());
 
             // initialize with 0 (for new records where no id has been generated
@@ -73,7 +73,7 @@ public class GenderDAOImpl extends BaseDAOImpl<Gender, Integer> implements Gende
             if (gender.getId() != null) {
                 genderId = gender.getId();
             }
-			query.setParameter("genderId", genderId);
+            query.setParameter("genderId", genderId);
             list = query.list();
             return list.size() > 0;
         } catch (RuntimeException e) {

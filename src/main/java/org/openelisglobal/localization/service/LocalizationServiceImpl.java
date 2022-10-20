@@ -37,7 +37,7 @@ public class LocalizationServiceImpl extends BaseObjectServiceImpl<Localization,
     @Override
     @Transactional(readOnly = true)
     public Localization get(String id) {
-		return getBaseObjectDAO().get(id).get();
+        return getBaseObjectDAO().get(id).get();
 
     }
 
@@ -79,8 +79,7 @@ public class LocalizationServiceImpl extends BaseObjectServiceImpl<Localization,
 
     @Override
     public String getLocalizedValueById(String id) {
-		return baseObjectDAO.get(id).get()
-                .getLocalizedValue();
+        return baseObjectDAO.get(id).get().getLocalizedValue();
     }
 
     /**

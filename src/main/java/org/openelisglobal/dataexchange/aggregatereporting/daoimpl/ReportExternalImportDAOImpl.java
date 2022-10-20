@@ -39,7 +39,6 @@ public class ReportExternalImportDAOImpl extends BaseDAOImpl<ReportExternalImpor
         super(ReportExternalImport.class);
     }
 
-    
     @Override
     @Transactional(readOnly = true)
     public List<ReportExternalImport> getReportsInDateRangeSorted(Timestamp lower, Timestamp upper)
@@ -47,10 +46,10 @@ public class ReportExternalImportDAOImpl extends BaseDAOImpl<ReportExternalImpor
         String sql = "from ReportExternalImport rq where rq.eventDate >= :lower and rq.eventDate <= :upper order by rq.sendingSite";
 
         try {
-			Query<ReportExternalImport> query = entityManager.unwrap(Session.class).createQuery(sql,
-					ReportExternalImport.class);
-			query.setParameter("lower", lower);
-			query.setParameter("upper", upper);
+            Query<ReportExternalImport> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    ReportExternalImport.class);
+            query.setParameter("lower", lower);
+            query.setParameter("upper", upper);
 
             List<ReportExternalImport> reports = query.list();
 
@@ -61,7 +60,6 @@ public class ReportExternalImportDAOImpl extends BaseDAOImpl<ReportExternalImpor
 
         return null;
     }
-
 
     public ReportExternalImport readReportExternalImport(String idString) throws LIMSRuntimeException {
 
@@ -74,14 +72,13 @@ public class ReportExternalImportDAOImpl extends BaseDAOImpl<ReportExternalImpor
         return null;
     }
 
-    
     @Override
     @Transactional
     public List<String> getUniqueSites() throws LIMSRuntimeException {
         String sql = "select distinct sending_site from clinlims.report_external_import ";
         try {
-			@SuppressWarnings("unchecked")
-			NativeQuery query = entityManager.unwrap(Session.class).createNativeQuery(sql);
+            @SuppressWarnings("unchecked")
+            NativeQuery query = entityManager.unwrap(Session.class).createNativeQuery(sql);
             List<String> sites = query.list();
             return sites;
         } catch (HibernateException e) {
@@ -91,7 +88,6 @@ public class ReportExternalImportDAOImpl extends BaseDAOImpl<ReportExternalImpor
         return null;
     }
 
-    
     @Override
     @Transactional(readOnly = true)
     public List<ReportExternalImport> getReportsInDateRangeSortedForSite(Timestamp lower, Timestamp upper, String site)
@@ -99,11 +95,11 @@ public class ReportExternalImportDAOImpl extends BaseDAOImpl<ReportExternalImpor
         String sql = "from ReportExternalImport rq where rq.eventDate >= :lower and rq.eventDate <= :upper and rq.sendingSite = :site order by rq.sendingSite";
 
         try {
-			Query<ReportExternalImport> query = entityManager.unwrap(Session.class).createQuery(sql,
-					ReportExternalImport.class);
-			query.setParameter("lower", lower);
-			query.setParameter("upper", upper);
-			query.setParameter("site", site);
+            Query<ReportExternalImport> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    ReportExternalImport.class);
+            query.setParameter("lower", lower);
+            query.setParameter("upper", upper);
+            query.setParameter("site", site);
 
             List<ReportExternalImport> reports = query.list();
 
@@ -115,7 +111,6 @@ public class ReportExternalImportDAOImpl extends BaseDAOImpl<ReportExternalImpor
         return null;
     }
 
-    
     @Override
     @Transactional(readOnly = true)
     public ReportExternalImport getReportByEventDateSiteType(ReportExternalImport importReport)
@@ -123,11 +118,11 @@ public class ReportExternalImportDAOImpl extends BaseDAOImpl<ReportExternalImpor
         String sql = "from ReportExternalImport rei where rei.eventDate = :eventDate and rei.sendingSite = :site and rei.reportType = :type";
 
         try {
-			Query<ReportExternalImport> query = entityManager.unwrap(Session.class).createQuery(sql,
-					ReportExternalImport.class);
-			query.setParameter("eventDate", importReport.getEventDate());
-			query.setParameter("site", importReport.getSendingSite());
-			query.setParameter("type", importReport.getReportType());
+            Query<ReportExternalImport> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    ReportExternalImport.class);
+            query.setParameter("eventDate", importReport.getEventDate());
+            query.setParameter("site", importReport.getSendingSite());
+            query.setParameter("type", importReport.getReportType());
 
             List<ReportExternalImport> reports = query.list();
 

@@ -66,7 +66,7 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet, String> implements 
         List<Scriptlet> list;
         try {
             String sql = "from Scriptlet";
-			Query<Scriptlet> query = entityManager.unwrap(Session.class).createQuery(sql, Scriptlet.class);
+            Query<Scriptlet> query = entityManager.unwrap(Session.class).createQuery(sql, Scriptlet.class);
             // query.setMaxResults(10);
             // query.setFirstResult(3);
             list = query.list();
@@ -89,7 +89,7 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet, String> implements 
 
             // bugzilla 1399
             String sql = "from Scriptlet s order by s.scriptletName";
-			Query<Scriptlet> query = entityManager.unwrap(Session.class).createQuery(sql, Scriptlet.class);
+            Query<Scriptlet> query = entityManager.unwrap(Session.class).createQuery(sql, Scriptlet.class);
             query.setFirstResult(startingRecNo - 1);
             query.setMaxResults(endingRecNo - 1);
 
@@ -123,7 +123,7 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet, String> implements 
         List<Scriptlet> list;
         try {
             String sql = "from Scriptlet s where upper(s.scriptletName) like upper(:param) order by upper(s.scriptletName)";
-			Query<Scriptlet> query = entityManager.unwrap(Session.class).createQuery(sql, Scriptlet.class);
+            Query<Scriptlet> query = entityManager.unwrap(Session.class).createQuery(sql, Scriptlet.class);
             query.setParameter("param", filter + "%");
 
             list = query.list();
@@ -140,7 +140,7 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet, String> implements 
     public Scriptlet getScriptletByName(Scriptlet scriptlet) throws LIMSRuntimeException {
         try {
             String sql = "from Scriptlet s where s.scriptletName = :param";
-			Query<Scriptlet> query = entityManager.unwrap(Session.class).createQuery(sql, Scriptlet.class);
+            Query<Scriptlet> query = entityManager.unwrap(Session.class).createQuery(sql, Scriptlet.class);
             query.setParameter("param", scriptlet.getScriptletName());
 
             List<Scriptlet> list = query.list();
@@ -169,12 +169,12 @@ public class ScriptletDAOImpl extends BaseDAOImpl<Scriptlet, String> implements 
     public boolean duplicateScriptletExists(Scriptlet scriptlet) throws LIMSRuntimeException {
         try {
 
-			List<Scriptlet> list = new ArrayList<>();
+            List<Scriptlet> list = new ArrayList<>();
 
             // not case sensitive hemolysis and Hemolysis are considered
             // duplicates
             String sql = "from Scriptlet t where trim(lower(t.scriptletName)) = :param and t.id != :param2";
-			Query<Scriptlet> query = entityManager.unwrap(Session.class).createQuery(sql, Scriptlet.class);
+            Query<Scriptlet> query = entityManager.unwrap(Session.class).createQuery(sql, Scriptlet.class);
             query.setParameter("param", scriptlet.getScriptletName().toLowerCase().trim());
 
             // initialize with 0 (for new records where no id has been generated

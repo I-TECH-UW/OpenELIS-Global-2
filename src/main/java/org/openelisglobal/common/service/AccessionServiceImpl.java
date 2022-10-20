@@ -37,7 +37,6 @@ public class AccessionServiceImpl implements AccessionService {
         return value;
     }
 
-
     @Override
     public long getNextNumberIncrement(AccessionIdentity accessionIdentity) {
         long value;

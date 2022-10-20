@@ -26,6 +26,7 @@ public class QaObservation extends BaseObject<String> {
 
     public enum ObservedType {
         SAMPLE("SAMPLE"), ANALYSIS("ANALYSIS");
+
         String dbName;
 
         private ObservedType(String type) {

@@ -42,7 +42,6 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private TypeOfSampleService typeOfSampleService;
 
-
     @Override
     @Transactional
     public void updateLoginUser(LoginUser loginUser, boolean loginUserNew, SystemUser systemUser, boolean systemUserNew,
@@ -177,7 +176,7 @@ public class UserServiceImpl implements UserService {
         List<Test> allTests = typeOfSampleService.getAllActiveTestsByTestUnit(true, testUnitIds);
         List<IdValuePair> allSampleTypes = DisplayListService.getInstance().getList(ListType.SAMPLE_TYPE_ACTIVE);
         Set<String> sampleIds = new HashSet<>();
-        //clear cache to create a fresh Map of testId To TypeOfSample
+        // clear cache to create a fresh Map of testId To TypeOfSample
         typeOfSampleService.clearCache();
         allTests.forEach(test -> sampleIds.add(typeOfSampleService.getTypeOfSampleForTest(test.getId()).getId()));
 
@@ -187,7 +186,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<TestResultItem> filterResultsByLabUnitRoles(String systemUserId, List<TestResultItem> results ,String roleName) {
+    public List<TestResultItem> filterResultsByLabUnitRoles(String systemUserId, List<TestResultItem> results,
+            String roleName) {
         String resultsRoleId = roleService.getRoleByName(roleName).getId();
         List<IdValuePair> testSections = getUserTestSections(systemUserId, resultsRoleId);
         List<String> testUnitIds = new ArrayList<>();
@@ -216,11 +216,13 @@ public class UserServiceImpl implements UserService {
 
         List<IdValuePair> allDisplayUserTests = DisplayListService.getInstance()
                 .getListWithLeadingBlank(DisplayListService.ListType.ALL_TESTS);
-        return allDisplayUserTests.stream().filter(test -> allTestsIds.contains(test.getId())).collect(Collectors.toList());
+        return allDisplayUserTests.stream().filter(test -> allTestsIds.contains(test.getId()))
+                .collect(Collectors.toList());
     }
 
     @Override
-    public List<AnalysisItem> filterAnalystResultsByLabUnitRoles(String SystemUserId, List<AnalysisItem> results ,String roleName) {
+    public List<AnalysisItem> filterAnalystResultsByLabUnitRoles(String SystemUserId, List<AnalysisItem> results,
+            String roleName) {
         String resultsRoleId = roleService.getRoleByName(roleName).getId();
         List<IdValuePair> testSections = getUserTestSections(SystemUserId, resultsRoleId);
         List<String> testUnitIds = new ArrayList<>();

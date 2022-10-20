@@ -43,12 +43,11 @@ public class MethodCreateController extends BaseController {
     private RoleService roleService;
     @Autowired
     private MethodCreateService methodCreateService;
-   
+
     @InitBinder
     public void initBinder(WebDataBinder binder) {
         binder.setAllowedFields(ALLOWED_FIELDS);
     }
-
 
     @RequestMapping(value = "/MethodCreate", method = RequestMethod.GET)
     public ModelAndView showMethodCreate(HttpServletRequest request) {
@@ -60,22 +59,19 @@ public class MethodCreateController extends BaseController {
     }
 
     private void setupDisplayMethods(MethodCreateForm form) {
-        form.setExistingMethodList(
-                 DisplayListService.getInstance().getList(DisplayListService.ListType.METHODS));
-        form.setExistingMethodList(
-                    DisplayListService.getInstance().getList(DisplayListService.ListType.METHODS));         
+        form.setExistingMethodList(DisplayListService.getInstance().getList(DisplayListService.ListType.METHODS));
+        form.setExistingMethodList(DisplayListService.getInstance().getList(DisplayListService.ListType.METHODS));
         form.setInactiveMethodList(
                 DisplayListService.getInstance().getList(DisplayListService.ListType.METHODS_INACTIVE));
-       
-        form.setExistingEnglishNames(getExistingMethodNames( Locale.ENGLISH));
 
-        form.setExistingFrenchNames(getExistingMethodNames( Locale.FRENCH));
+        form.setExistingEnglishNames(getExistingMethodNames(Locale.ENGLISH));
+
+        form.setExistingFrenchNames(getExistingMethodNames(Locale.FRENCH));
     }
 
-    private String getExistingMethodNames( Locale locale) {
+    private String getExistingMethodNames(Locale locale) {
         StringBuilder builder = new StringBuilder(NAME_SEPARATOR);
         List<Method> methods = methodService.getAll();
-
 
         for (Method method : methods) {
             builder.append(method.getLocalization().getLocalizedValue(locale));
@@ -87,7 +83,7 @@ public class MethodCreateController extends BaseController {
 
     @RequestMapping(value = "/MethodCreate", method = RequestMethod.POST)
     public ModelAndView postMethodCreate(HttpServletRequest request,
-            @ModelAttribute("form") @Valid MethodCreateForm form, BindingResult result)  {
+            @ModelAttribute("form") @Valid MethodCreateForm form, BindingResult result) {
         if (result.hasErrors()) {
             saveErrors(result);
             setupDisplayMethods(form);
@@ -113,8 +109,8 @@ public class MethodCreateController extends BaseController {
         RoleModule validationValidationModule = createRoleModule(userId, validationModule, validationRole);
 
         try {
-            methodCreateService.insertMethod(localization, method, workplanModule, resultModule,
-                    validationModule, workplanResultModule, resultResultModule, validationValidationModule);
+            methodCreateService.insertMethod(localization, method, workplanModule, resultModule, validationModule,
+                    workplanResultModule, resultResultModule, validationValidationModule);
         } catch (LIMSRuntimeException e) {
             LogEvent.logDebug(e);
         }
@@ -193,5 +189,4 @@ public class MethodCreateController extends BaseController {
         return null;
     }
 
-    
 }

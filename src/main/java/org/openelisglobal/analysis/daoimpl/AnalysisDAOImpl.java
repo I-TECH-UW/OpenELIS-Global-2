@@ -78,7 +78,6 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         }
     }
 
-
     public Analysis readAnalysis(String idString) {
         Analysis analysis = null;
         try {
@@ -92,7 +91,6 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         return analysis;
     }
 
-
     @Override
     @Transactional(readOnly = true)
     public List<Analysis> getAllAnalysisByTestAndStatus(String testId, List<Integer> statusIdList)
@@ -100,8 +98,8 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         try {
             String sql = "from Analysis a where a.test = :testId and a.statusId IN (:statusIdList) order by a.sampleItem.sample.accessionNumber";
 
-			Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
-			query.setParameter("testId", Integer.parseInt(testId));
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
+            query.setParameter("testId", Integer.parseInt(testId));
             query.setParameterList("statusIdList", statusIdList);
             return query.list();
         } catch (RuntimeException e) {
@@ -123,7 +121,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
                 testList.add(Integer.parseInt(testId));
             }
 
-			Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
             query.setParameterList("testList", testList);
             query.setParameterList("statusIdList", statusIdList);
             return query.list();
@@ -146,16 +144,16 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
                 testList.add(Integer.parseInt(testId));
             }
 
-			Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql,
-					Analysis.class);
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
             query.setParameterList("testList", testList);
             query.setParameterList("statusIdList", statusIdList);
-			query.setParameter("lowDate", lowDate);
-			query.setParameter("highDate", highDate);
+            query.setParameter("lowDate", lowDate);
+            query.setParameter("highDate", highDate);
             return query.list();
         } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
-            throw new LIMSRuntimeException("Error in Analysis getAllAnalysisByTestsAndStatusAndCompletedDateRange()", e);
+            throw new LIMSRuntimeException("Error in Analysis getAllAnalysisByTestsAndStatusAndCompletedDateRange()",
+                    e);
         }
     }
 
@@ -166,9 +164,8 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         try {
             String sql = "from Analysis a where a.test = :testId and a.statusId not IN (:statusIdList) order by a.sampleItem.sample.accessionNumber";
 
-			Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql,
-					Analysis.class);
-			query.setParameter("testId", Integer.parseInt(testId));
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
+            query.setParameter("testId", Integer.parseInt(testId));
             query.setParameterList("statusIdList", statusIdList);
             return query.list();
         } catch (RuntimeException e) {
@@ -191,8 +188,8 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
                 // a.sampleItem.sample.accessionNumber";
             }
 
-			Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
-			query.setParameter("testSectionId", Integer.parseInt(testSectionId));
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
+            query.setParameter("testSectionId", Integer.parseInt(testSectionId));
             query.setParameterList("statusIdList", statusIdList);
             return query.list();
         } catch (RuntimeException e) {
@@ -207,19 +204,17 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
     public List<Analysis> getPageAnalysisByTestSectionAndStatus(String testSectionId, List<Integer> statusIdList,
             boolean sortedByDateAndAccession) throws LIMSRuntimeException {
         try {
-            String sql = "from Analysis a "
-                    + " where a.testSection.id = :testSectionId "
-                    + " and a.statusId IN (:statusIdList) "
-                    + " order by a.sampleItem.sample.accessionNumber ";
+            String sql = "from Analysis a " + " where a.testSection.id = :testSectionId "
+                    + " and a.statusId IN (:statusIdList) " + " order by a.sampleItem.sample.accessionNumber ";
 
             if (sortedByDateAndAccession) {
                 // sql += " order by a.sampleItem.sample.receivedTimestamp asc,
                 // a.sampleItem.sample.accessionNumber";
             }
 
-			Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
 
-			query.setParameter("testSectionId", Integer.parseInt(testSectionId));
+            query.setParameter("testSectionId", Integer.parseInt(testSectionId));
             query.setParameterList("statusIdList", statusIdList);
             query.setMaxResults(SpringContext.getBean(PagingProperties.class).getValidationPageSize());
 
@@ -242,7 +237,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
                 + " and a.statusId IN (:statusIdList)  "//
                 + " order by a.sampleItem.sample.accessionNumber";
         try {
-			Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(hql, Analysis.class);
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(hql, Analysis.class);
 
             query.setParameter("accessionNumber", accessionNumber);
             query.setParameterList("statusIdList", statusIdList);
@@ -263,8 +258,8 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         try {
             String sql = "from Analysis a where a.testSection.id = :testSectionId and a.statusId NOT IN (:statusIdList) order by a.sampleItem.sample.receivedTimestamp asc, a.sampleItem.sample.accessionNumber ";
 
-			Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
-			query.setParameter("testSectionId", Integer.parseInt(testSectionId));
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
+            query.setParameter("testSectionId", Integer.parseInt(testSectionId));
             query.setParameterList("statusIdList", statusIdList);
             return query.list();
         } catch (RuntimeException e) {
@@ -282,8 +277,8 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         try {
             String sql = "from Analysis a where a.sampleItem.id = :sampleItemId";
 
-			Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
-			query.setParameter("sampleItemId", Integer.parseInt(sampleItem.getId()));
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
+            query.setParameter("sampleItemId", Integer.parseInt(sampleItem.getId()));
 
             list = query.list();
         } catch (RuntimeException e) {
@@ -308,8 +303,8 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         try {
             String sql = "from Analysis a where a.sampleItem.id = :sampleItemId and a.statusId not in ( :statusList )";
 
-			Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
-			query.setParameter("sampleItemId", Integer.parseInt(sampleItem.getId()));
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
+            query.setParameter("sampleItemId", Integer.parseInt(sampleItem.getId()));
             query.setParameterList("statusList", statusIds);
 
             analysisList = query.list();
@@ -333,8 +328,8 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         String sql = "from Analysis a where a.sampleItem.sample.statusId = :sampleStatus and a.statusId not in (:excludedStatusIds)";
 
         try {
-			Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
-			query.setParameter("sampleStatus", Integer.parseInt(statusId));
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
+            query.setParameter("sampleStatus", Integer.parseInt(statusId));
             query.setParameterList("excludedStatusIds", statusIds);
 
             List<Analysis> analysisList = query.list();
@@ -356,8 +351,8 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         try {
             String sql = "from Analysis a where a.sampleItem.sample.statusId = :sampleStatusId";
 
-			Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
-			query.setParameter("sampleStatusId", Integer.parseInt(statusId));
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
+            query.setParameter("sampleStatusId", Integer.parseInt(statusId));
 
             analysisList = query.list();
         } catch (RuntimeException e) {
@@ -380,8 +375,8 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         String sql = "from Analysis a where a.sampleItem.sample.id = :sampleId and a.statusId not in ( :excludedIds)";
 
         try {
-			Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
-			query.setParameter("sampleId", Integer.parseInt(id));
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
+            query.setParameter("sampleId", Integer.parseInt(id));
             query.setParameterList("excludedIds", statusIds);
             List<Analysis> analysisList = query.list();
             return analysisList;
@@ -403,8 +398,8 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         String sql = "from Analysis a where a.sampleItem.sample.id = :sampleId and a.statusId in ( :statusIds)";
 
         try {
-			Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
-			query.setParameter("sampleId", Integer.parseInt(id));
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
+            query.setParameter("sampleId", Integer.parseInt(id));
             query.setParameterList("statusIds", statusIds);
             List<Analysis> analysisList = query.list();
             return analysisList;
@@ -423,7 +418,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         String sql = "from Analysis a where a.sampleItem.sample.priority = :oderpriority and a.statusId in ( :statusIds)";
 
         try {
-			Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
             query.setParameter("oderpriority", priority.name());
             query.setParameterList("statusIds", statusIds);
             List<Analysis> analysisList = query.list();
@@ -473,7 +468,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
                     + "                           when (select count(*) from analysis_qaevent aq, qa_event q where aq.analysis_id = anal.id and q.id = aq.qa_event_id and aq.completed_date is null and q.is_holdable = 'Y') = 0 then 'Y'\n"
                     + "                        --else isQaEventsCompleted = 'N'\n"
                     + "                           else 'N'" + "end";
-			return entityManager.unwrap(Session.class).createQuery(sql, Analysis.class)
+            return entityManager.unwrap(Session.class).createQuery(sql, Analysis.class)
                     .setParameterList("analysisStatusesToInclude", analysisStatusesToInclude)
                     .setParameterList("sampleStatusesToInclude", sampleStatusesToInclude).list();
 
@@ -489,7 +484,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
     public List<Analysis> getAllChildAnalysesByResult(Result result) throws LIMSRuntimeException {
         try {
             String sql = "from Analysis a where a.parentResult = :param and a.status NOT IN (:param2)";
-			Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
             query.setParameter("param", result.getId());
             List<String> statusesToExclude = new ArrayList<>();
             statusesToExclude.add(SystemConfiguration.getInstance().getAnalysisStatusCanceled());
@@ -511,7 +506,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
                     + "group by b.sampleItem.id, b.test.id) " + "and a.sampleItem.id = :param "
                     + "and a.status NOT IN (:param2) " + "order by a.test.id, a.revision desc";
 
-			Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
             query.setParameter("param", sampleItem.getId());
             List<String> statusesToExclude = new ArrayList<>();
             statusesToExclude.add(SystemConfiguration.getInstance().getAnalysisStatusCanceled());
@@ -536,7 +531,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
                     + "group by b.sampleItem.id, b.test.id) " + "and a.sampleItem.id = :param "
                     + "order by a.test.id, a.revision desc";
 
-			Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
             query.setParameter("param", sampleItem.getId());
             return query.list();
         } catch (RuntimeException e) {
@@ -555,7 +550,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
                     + "group by b.sampleItem.id, b.test.id) " + "and a.sampleItem.id = :param "
                     + "and a.status NOT IN (:param2) " + "order by a.test.id, a.revision desc";
 
-			Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
             query.setParameter("param", sampleItem.getId());
             List<String> statusesToExclude = new ArrayList<>();
             statusesToExclude.add(SystemConfiguration.getInstance().getAnalysisStatusCanceled());
@@ -585,7 +580,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
                         + "order by a.test.id, a.revision desc";
             }
 
-			Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
             query.setParameter("param", sampleItem.getId());
             query.setParameter("param2", test.getId());
             List<String> statusesToExclude = new ArrayList<>();
@@ -608,7 +603,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
                     + "and a.test = :param " + "and a.status NOT IN (:param2) "
                     + "order by a.sampleItem.sample.accessionNumber";
 
-			Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
             query.setParameter("param", test.getId());
 
             List<String> statusesToExclude = new ArrayList<>();
@@ -623,7 +618,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
     }
 
     // bugzilla 2227, 2258
-	@Override
+    @Override
     @Transactional
     public List<Analysis> getMaxRevisionAnalysesReadyToBeReported() throws LIMSRuntimeException {
         try {
@@ -659,7 +654,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
                     + "                           when (select count(*) from analysis_qaevent aq, qa_event q where aq.analysis_id = anal.id and q.id = aq.qa_event_id and aq.completed_date is null and q.is_holdable = 'Y') = 0 then 'Y'\n"
                     + "                        --else isQaEventsCompleted = 'N'\n"
                     + "                           else 'N'\n" + "                      end";
-			return entityManager.unwrap(Session.class).createNativeQuery(sql, Analysis.class)
+            return entityManager.unwrap(Session.class).createNativeQuery(sql, Analysis.class)
                     .setParameterList("analysisStatusesToInclude", analysisStatusesToInclude)
                     .setParameterList("sampleStatusesToInclude", sampleStatusesToInclude).list();
 
@@ -670,7 +665,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
     }
 
     // bugzilla 1900
-	@Override
+    @Override
     @Transactional
     public List<Analysis> getMaxRevisionAnalysesReadyForReportPreviewBySample(List<String> accessionNumbers)
             throws LIMSRuntimeException {
@@ -716,7 +711,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
                         + "                           --when (select count(*) from analysis_qaevent aq, qa_event q where aq.analysis_id = anal.id and q.id = aq.qa_event_id and aq.completed_date is null and q.is_holdable = 'Y') = 0 then 'Y'\n"
                         + "                        --else isQaEventsCompleted = 'N'\n"
                         + "                           --else 'N'\n" + "                      --end";
-				list = entityManager.unwrap(Session.class).createNativeQuery(sql)
+                list = entityManager.unwrap(Session.class).createNativeQuery(sql)
                         .setParameterList("analysisStatusesToInclude", analysisStatusesToInclude)
                         .setParameterList("sampleStatusesToInclude", sampleStatusesToInclude)
                         .setParameterList("samplesToInclude", accessionNumbers).list();
@@ -730,7 +725,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
     }
 
     // bugzilla 1856
-	@Override
+    @Override
     @Transactional
     public List<Analysis> getAnalysesAlreadyReportedBySample(Sample sample) throws LIMSRuntimeException {
         try {
@@ -747,7 +742,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
                     + "        anal.id = res.analysis_id and\n" + "        anal.test_id = test.id and\n"
                     + "        anal.sampitem_id = sampitem. id and\n" + "        sampitem.samp_id = samp.id\n"
                     + "        and anal.printed_date is not null";
-			return entityManager.unwrap(Session.class).createNativeQuery(sql).setParameter("sampleId", sample.getId())
+            return entityManager.unwrap(Session.class).createNativeQuery(sql).setParameter("sampleId", sample.getId())
                     .list();
         } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
@@ -756,7 +751,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
     }
 
     // bugzilla 2264
-	@Override
+    @Override
     @Transactional
     public List<Analysis> getMaxRevisionPendingAnalysesReadyToBeReportedBySample(Sample sample)
             throws LIMSRuntimeException {
@@ -792,7 +787,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
                     + "                                anal.id = anal2.id and\n"
                     + "                                anal2.status in (:analysisStatusesToInclude)\n"
                     + "                           )\n" + "   ) > 0";
-			return entityManager.unwrap(Session.class).createNativeQuery(sql).setParameter("sampleId", sample.getId())
+            return entityManager.unwrap(Session.class).createNativeQuery(sql).setParameter("sampleId", sample.getId())
                     .setParameterList("analysisStatusesToInclude", analysisStatusesToInclude).list();
 
         } catch (RuntimeException e) {
@@ -803,8 +798,8 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
     }
 
     // bugzilla 1900
-	@SuppressWarnings("unchecked")
-	@Override
+    @SuppressWarnings("unchecked")
+    @Override
     @Transactional(readOnly = true)
     public List<Analysis> getMaxRevisionPendingAnalysesReadyForReportPreviewBySample(Sample sample)
             throws LIMSRuntimeException {
@@ -840,7 +835,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             // revision is 1 less than the analysis passed in
 
             String sql = "from Analysis a where a.revision = :param and a.sampleItem = :param2 and a.test = :param3 and a.status NOT IN (:param4)";
-			Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
 
             String revisionString = analysis.getRevision();
             int revision = 0;
@@ -885,7 +880,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
                     + "group by b.sampleItem.id, b.test.id) " + "and a.sampleItem = :param "
                     + "and a.status NOT IN (:param3) " + "and a.test = :param2";
 
-			Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
             query.setParameter("param", analysis.getSampleItem().getId());
             query.setParameter("param2", analysis.getTest().getId());
             List<String> statusesToExclude = new ArrayList<>();
@@ -920,7 +915,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
                     + "and a.status NOT IN (:param2) " + "and a.parentAnalysis is null "
                     + "order by a.test.id, a.revision desc";
 
-			Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
             query.setParameter("param", sampleItem.getId());
             List<String> statusesToExclude = new ArrayList<>();
             statusesToExclude.add(SystemConfiguration.getInstance().getAnalysisStatusCanceled());
@@ -943,8 +938,8 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
         try {
             String sql = "from Analysis a where a.statusId = :statusId";
-			Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
-			query.setParameter("statusId", Integer.parseInt(statusId));
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
+            query.setParameter("statusId", Integer.parseInt(statusId));
 
             list = query.list();
             return list;
@@ -966,8 +961,8 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         String sql = "from Analysis a where a.startedDate = :startedDate and a.statusId not in ( :statusList )";
 
         try {
-			Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
-			query.setParameter("startedDate", collectionDate);
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
+            query.setParameter("startedDate", collectionDate);
             query.setParameterList("statusList", statusIds);
 
             List<Analysis> analysisList = query.list();
@@ -986,8 +981,8 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
         try {
             String sql = "from Analysis a where DATE(a.startedDate) = DATE(:startedDate)";
-			Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
-			query.setParameter("startedDate", collectionDate);
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
+            query.setParameter("startedDate", collectionDate);
 
             List<Analysis> list = query.list();
             return list;
@@ -1010,8 +1005,8 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         String sql = "from Analysis a where DATE(a.sampleItem.collectionDate) = DATE(:startedDate) and a.statusId not in ( :statusList )";
 
         try {
-			Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
-			query.setParameter("startedDate", collectionDate);
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
+            query.setParameter("startedDate", collectionDate);
             query.setParameterList("statusList", statusIds);
 
             List<Analysis> analysisList = query.list();
@@ -1030,8 +1025,8 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
         try {
             String sql = "from Analysis a where a.sampleItem.collectionDate = :startedDate";
-			Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
-			query.setParameter("startedDate", collectionDate);
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
+            query.setParameter("startedDate", collectionDate);
 
             List<Analysis> list = query.list();
             return list;
@@ -1057,8 +1052,8 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
                 return new ArrayList<>();
             }
             String sql = "from Analysis a WHERE a.sampleItem.sample.id = :sampleId AND a.test.id IN ( :testIds )";
-			Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
-			query.setParameter("sampleId", Integer.valueOf(sampleId));
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
+            query.setParameter("sampleId", Integer.valueOf(sampleId));
             query.setParameterList("testIds", testIds);
 
             list = query.list();
@@ -1079,10 +1074,10 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         String sql = "From Analysis a where a.testSection.id = :testSectionId and a.completedDate BETWEEN :lowDate AND :highDate";
 
         try {
-			Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
-			query.setParameter("testSectionId", Integer.parseInt(sectionID));
-			query.setParameter("lowDate", lowDate);
-			query.setParameter("highDate", highDate);
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
+            query.setParameter("testSectionId", Integer.parseInt(sectionID));
+            query.setParameter("lowDate", lowDate);
+            query.setParameter("highDate", highDate);
 
             List<Analysis> list = query.list();
             return list;
@@ -1101,9 +1096,9 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         String sql = "From Analysis a where a.startedDate BETWEEN :lowDate AND :highDate or a.completedDate BETWEEN :lowDate AND :highDate";
 
         try {
-			Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
-			query.setParameter("lowDate", lowDate);
-			query.setParameter("highDate", highDate);
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
+            query.setParameter("lowDate", lowDate);
+            query.setParameter("highDate", highDate);
 
             List<Analysis> list = query.list();
             return list;
@@ -1117,15 +1112,15 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
     @Override
     @Transactional(readOnly = true)
-    public List<Analysis> getAnalysisByTestIdAndTestSectionIdsAndStartedInDateRange(Date lowDate, Date highDate ,String testId , List<Integer> testSectionIds)
-            throws LIMSRuntimeException { 
+    public List<Analysis> getAnalysisByTestIdAndTestSectionIdsAndStartedInDateRange(Date lowDate, Date highDate,
+            String testId, List<Integer> testSectionIds) throws LIMSRuntimeException {
         String sql = "FROM Analysis a WHERE a.startedDate BETWEEN :lowDate AND :highDate AND a.test.id = :testId AND  a.testSection.id IN ( :testSectionIds )";
 
         try {
-			Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
-			query.setParameter("lowDate", lowDate);
-			query.setParameter("highDate", highDate);
-			query.setParameter("testId", Integer.parseInt(testId));
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
+            query.setParameter("lowDate", lowDate);
+            query.setParameter("highDate", highDate);
+            query.setParameter("testId", Integer.parseInt(testId));
             query.setParameterList("testSectionIds", testSectionIds);
             List<Analysis> list = query.list();
             return list;
@@ -1144,8 +1139,8 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             try {
                 String sql = "from Analysis a where a.sampleItem.sample.id = :sampleId";
 
-				Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
-				query.setParameter("sampleId", Integer.parseInt(id));
+                Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
+                query.setParameter("sampleId", Integer.parseInt(id));
 
                 list = query.list();
             } catch (RuntimeException e) {
@@ -1155,14 +1150,13 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         return list;
     }
 
-
     @Override
     @Transactional(readOnly = true)
     public List<Analysis> getAllAnalysisByTestsAndStatus(List<Integer> testIds, List<Integer> analysisStatusList,
             List<Integer> sampleStatusList) {
         String sql = "From Analysis a WHERE a.test.id IN (:testIds) AND a.statusId IN (:analysisStatusList) AND a.sampleItem.sample.statusId IN (:sampleStatusList)";
         try {
-			Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
             query.setParameterList("testIds", testIds);
             query.setParameterList("analysisStatusList", analysisStatusList);
             query.setParameterList("sampleStatusList", sampleStatusList);
@@ -1178,12 +1172,10 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         return null;
     }
 
-
-
     @Override
     @Transactional(readOnly = true)
-    public List<Analysis> getAllAnalysisByTestsAndStatusAndCompletedDateRange(List<Integer> testIdList, List<Integer> analysisStatusList,
-            List<Integer> sampleStatusList, Date lowDate, Date highDate) {
+    public List<Analysis> getAllAnalysisByTestsAndStatusAndCompletedDateRange(List<Integer> testIdList,
+            List<Integer> analysisStatusList, List<Integer> sampleStatusList, Date lowDate, Date highDate) {
         List<Integer> testList = new ArrayList<>();
         try {
             String sql = "from Analysis a where a.test.id IN (:testList) and a.statusId IN (:analysisStatusList) "
@@ -1194,12 +1186,12 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
                 testList.add(testId);
             }
 
-			Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
             query.setParameterList("testList", testList);
             query.setParameterList("sampleStatusList", sampleStatusList);
             query.setParameterList("analysisStatusList", analysisStatusList);
-			query.setParameter("lowDate", lowDate);
-			query.setParameter("highDate", highDate);
+            query.setParameter("lowDate", lowDate);
+            query.setParameter("highDate", highDate);
 
             List<Analysis> analysisList = query.list();
             return analysisList;
@@ -1217,8 +1209,8 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
         String sql = "From Analysis a WHERE a.testSection.id = :testSectionId AND a.statusId IN (:analysisStatusList) AND a.sampleItem.sample.statusId IN (:sampleStatusList) ORDER BY a.sampleItem.sample.accessionNumber";
         try {
-			Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
-			query.setParameter("testSectionId", Integer.parseInt(testSectionId));
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
+            query.setParameter("testSectionId", Integer.parseInt(testSectionId));
             query.setParameterList("analysisStatusList", analysisStatusList);
             query.setParameterList("sampleStatusList", sampleStatusList);
             List<Analysis> analysisList = query.list();
@@ -1238,8 +1230,8 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
         String sql = "From Analysis a WHERE a.testSection.id = :testSectionId AND a.statusId IN (:analysisStatusList) AND a.sampleItem.sample.statusId IN (:sampleStatusList) ORDER BY a.sampleItem.sample.accessionNumber";
         try {
-			Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
-			query.setParameter("testSectionId", Integer.parseInt(testSectionId));
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
+            query.setParameter("testSectionId", Integer.parseInt(testSectionId));
             query.setParameterList("analysisStatusList", analysisStatusList);
             query.setParameterList("sampleStatusList", sampleStatusList);
             query.setMaxResults(SpringContext.getBean(PagingProperties.class).getResultsPageSize());
@@ -1262,10 +1254,10 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         String sql = "From Analysis a where a.statusId = :statusID and a.startedDate BETWEEN :lowDate AND :highDate";
 
         try {
-			Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
-			query.setParameter("statusID", Integer.parseInt(statusID));
-			query.setParameter("lowDate", lowDate);
-			query.setParameter("highDate", highDate);
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
+            query.setParameter("statusID", Integer.parseInt(statusID));
+            query.setParameter("lowDate", lowDate);
+            query.setParameter("highDate", highDate);
 
             List<Analysis> analysisList = query.list();
             return analysisList;
@@ -1284,9 +1276,9 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         String sql = "From Analysis a where a.completedDate >= :lowDate AND a.completedDate < :highDate";
 
         try {
-			Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
-			query.setParameter("lowDate", lowDate);
-			query.setParameter("highDate", highDate);
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
+            query.setParameter("lowDate", lowDate);
+            query.setParameter("highDate", highDate);
 
             List<Analysis> analysisList = query.list();
             return analysisList;
@@ -1304,8 +1296,8 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         String sql = "From Analysis a where a.enteredDate > :date";
 
         try {
-			Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
-			query.setParameter("date", date);
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
+            query.setParameter("date", date);
 
             List<Analysis> analysisList = query.list();
             return analysisList;
@@ -1328,9 +1320,9 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         String sql = "From Analysis a where a.sampleItem.sample.accessionNumber = :accessionNumber and a.test.id = :testId";
 
         try {
-			Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
-			query.setParameter("accessionNumber", accessionNumber);
-			query.setParameter("testId", Integer.parseInt(testId));
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
+            query.setParameter("accessionNumber", accessionNumber);
+            query.setParameter("testId", Integer.parseInt(testId));
             List<Analysis> analysises = query.list();
             return analysises;
         } catch (HibernateException e) {
@@ -1351,10 +1343,10 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         String sql = "From Analysis a where (a.test.localizedTestName.english in (:testNames) or a.test.localizedTestName.french in (:testNames)) and a.completedDate BETWEEN :lowDate AND :highDate";
 
         try {
-			Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
             query.setParameterList("testNames", testNames);
-			query.setParameter("lowDate", lowDate);
-			query.setParameter("highDate", highDate);
+            query.setParameter("lowDate", lowDate);
+            query.setParameter("highDate", highDate);
 
             List<Analysis> list = query.list();
             return list;
@@ -1376,10 +1368,10 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         String sql = "From Analysis a where a.test.description in (:descriptions) and a.completedDate BETWEEN :lowDate AND :highDate";
 
         try {
-			Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
             query.setParameterList("descriptions", descriptions);
-			query.setParameter("lowDate", lowDate);
-			query.setParameter("highDate", highDate);
+            query.setParameter("lowDate", lowDate);
+            query.setParameter("highDate", highDate);
 
             List<Analysis> list = query.list();
             return list;
@@ -1397,9 +1389,9 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         try {
             String sql = "from Analysis a where a.sampleItem.id = :sampleItemId and a.statusId = :statusId";
 
-			Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
-			query.setParameter("sampleItemId", Integer.parseInt(sampleItemId));
-			query.setParameter("statusId", Integer.parseInt(statusId));
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
+            query.setParameter("sampleItemId", Integer.parseInt(sampleItemId));
+            query.setParameter("statusId", Integer.parseInt(statusId));
 
             List<Analysis> analysisList = query.list();
             return analysisList;
@@ -1437,7 +1429,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         String sql = "from Analysis a where a.sampleItem.sample.id in (:sampleIdList) and a.test.id in (:testIdList) and a.statusId in (:statusIdList) order by a.releasedDate desc";
 
         try {
-			Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
             query.setParameterList("sampleIdList", sampleIdList);
             query.setParameterList("testIdList", testIdList);
             query.setParameterList("statusIdList", statusIdList);
@@ -1456,7 +1448,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         String sql = "from Analysis a where a.id in (:ids)";
 
         try {
-			Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
             query.setParameterList("ids", ids.stream().map(e -> Integer.parseInt(e)).collect(Collectors.toList()));
             List<Analysis> analysisList = query.list();
             return analysisList;
@@ -1473,8 +1465,8 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
         String hql = "SELECT COUNT(*) From Analysis a WHERE a.testSection.id = :testSectionId AND a.statusId IN (:analysisStatusList) AND a.sampleItem.sample.statusId IN (:sampleStatusList)";
         try {
-			Query<Long> query = entityManager.unwrap(Session.class).createQuery(hql, Long.class);
-			query.setParameter("testSectionId", Integer.parseInt(testSectionId));
+            Query<Long> query = entityManager.unwrap(Session.class).createQuery(hql, Long.class);
+            query.setParameter("testSectionId", Integer.parseInt(testSectionId));
             query.setParameterList("analysisStatusList", analysisStatusList);
             query.setParameterList("sampleStatusList", sampleStatusList);
 
@@ -1490,12 +1482,12 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
     }
 
     @Override
-    public int getCountAnalysisByTestSectionAndStatus(String testSectionId, List<Integer> analysisStatusList ) {
+    public int getCountAnalysisByTestSectionAndStatus(String testSectionId, List<Integer> analysisStatusList) {
 
         String hql = "SELECT COUNT(*) From Analysis a WHERE a.testSection.id = :testSectionId AND a.statusId IN (:analysisStatusList)";
         try {
-			Query<Long> query = entityManager.unwrap(Session.class).createQuery(hql, Long.class);
-			query.setParameter("testSectionId", Integer.parseInt(testSectionId));
+            Query<Long> query = entityManager.unwrap(Session.class).createQuery(hql, Long.class);
+            query.setParameter("testSectionId", Integer.parseInt(testSectionId));
             query.setParameterList("analysisStatusList", analysisStatusList);
 
             Long analysisList = query.uniqueResult();
@@ -1519,7 +1511,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
                 + " AND a.sampleItem.sample.statusId IN (:sampleStatusList)"//
                 + " ORDER BY a.sampleItem.sample.accessionNumber";//
         try {
-			Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
             query.setParameter("accessionNumber", accessionNumber);
             query.setParameterList("analysisStatusList", analysisStatusList);
             query.setParameterList("sampleStatusList", sampleStatusList);
@@ -1543,7 +1535,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         String hql = "SELECT COUNT(*) From Analysis a WHERE " + " a.statusId IN (:analysisStatusList)"
                 + " AND a.sampleItem.sample.statusId IN (:sampleStatusList)";
         try {
-			Query<Long> query = entityManager.unwrap(Session.class).createQuery(hql, Long.class);
+            Query<Long> query = entityManager.unwrap(Session.class).createQuery(hql, Long.class);
             query.setParameterList("analysisStatusList", analysisStatusList);
             query.setParameterList("sampleStatusList", sampleStatusList);
 
@@ -1563,7 +1555,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             LocalDate upperDate) {
         String hql = "FROM Analysis a WHERE a.enteredDate BETWEEN :lowerDate AND :upperDate AND a.sampleItem.sample.id IN (SELECT sr.sampleId FROM SampleRequester sr WHERE sr.requesterId = :requesterId AND sr.requesterTypeId = (SELECT rt.id FROM RequesterType rt WHERE rt.requesterType = 'organization' ))";
         try {
-			Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(hql, Analysis.class);
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(hql, Analysis.class);
             query.setParameter("requesterId", Integer.parseInt(referringSiteId));
             query.setParameter("lowerDate", lowerDate.atStartOfDay());
             query.setParameter("upperDate", upperDate.atTime(LocalTime.MAX));
@@ -1573,13 +1565,13 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         }
         return new ArrayList<>();
     }
-    
+
     @Override
     public List<Analysis> getStudyAnalysisForSiteBetweenResultDates(String referringSiteId, LocalDate lowerDate,
             LocalDate upperDate) {
         String hql = "FROM Analysis a WHERE a.releasedDate BETWEEN :lowerDate AND :upperDate AND a.sampleItem.sample.id IN (SELECT so.sample.id FROM SampleOrganization so WHERE so.organization.id = :requesterId )";
         try {
-			Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(hql, Analysis.class);
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(hql, Analysis.class);
             query.setParameter("requesterId", Integer.parseInt(referringSiteId));
             query.setParameter("lowerDate", lowerDate.atStartOfDay());
             query.setParameter("upperDate", upperDate.atTime(LocalTime.MAX));

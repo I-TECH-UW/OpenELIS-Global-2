@@ -48,7 +48,6 @@ public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject, String> imp
         super(SampleProject.class);
     }
 
-
     @Override
     @Transactional(readOnly = true)
     public void getData(SampleProject sampleProj) throws LIMSRuntimeException {
@@ -88,7 +87,7 @@ public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject, String> imp
 
         try {
             String sql = "from SampleProject sp where sp.project = :param";
-			Query<SampleProject> query = entityManager.unwrap(Session.class).createQuery(sql, SampleProject.class);
+            Query<SampleProject> query = entityManager.unwrap(Session.class).createQuery(sql, SampleProject.class);
             query.setParameter("param", projId);
 
             sampleProjects = query.list();
@@ -110,8 +109,8 @@ public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject, String> imp
 
         try {
             String sql = "from SampleProject sp where sp.sample.id = :sampleId";
-			Query<SampleProject> query = entityManager.unwrap(Session.class).createQuery(sql, SampleProject.class);
-			query.setParameter("sampleId", Integer.parseInt(id));
+            Query<SampleProject> query = entityManager.unwrap(Session.class).createQuery(sql, SampleProject.class);
+            query.setParameter("sampleId", Integer.parseInt(id));
 
             sampleProjects = query.list();
 
@@ -131,12 +130,12 @@ public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject, String> imp
             String sql = "FROM SampleProject as sp "
                     + " WHERE sp.project.projectName = :projectName AND sp.sample.id IN (SELECT so.sample.id FROM SampleOrganization as so WHERE so.sample.receivedTimestamp >= :dateLow AND so.sample.receivedTimestamp <= :dateHigh "
                     + " AND   so.organization.id = :organizationId ) ";
-			Query<SampleProject> query = entityManager.unwrap(Session.class).createQuery(sql, SampleProject.class);
+            Query<SampleProject> query = entityManager.unwrap(Session.class).createQuery(sql, SampleProject.class);
 
-			query.setParameter("projectName", projectName);
-			query.setParameter("dateLow", lowReceivedDate);
-			query.setParameter("dateHigh", highReceivedDate);
-			query.setParameter("organizationId", Integer.valueOf(organizationId));
+            query.setParameter("projectName", projectName);
+            query.setParameter("dateLow", lowReceivedDate);
+            query.setParameter("dateHigh", highReceivedDate);
+            query.setParameter("organizationId", Integer.valueOf(organizationId));
             list = query.list();
         } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);

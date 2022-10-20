@@ -43,7 +43,6 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem, String> implements 
         super(PanelItem.class);
     }
 
-
     @Override
     @Transactional(readOnly = true)
     public void getData(PanelItem panelItem) throws LIMSRuntimeException {
@@ -66,7 +65,7 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem, String> implements 
         List<PanelItem> list;
         try {
             String sql = "from PanelItem P order by P.panel.id ";
-			Query<PanelItem> query = entityManager.unwrap(Session.class).createQuery(sql, PanelItem.class);
+            Query<PanelItem> query = entityManager.unwrap(Session.class).createQuery(sql, PanelItem.class);
             list = query.list();
         } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
@@ -85,7 +84,7 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem, String> implements 
             int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 
             String sql = "from PanelItem p order by p.panel.panelName, p.testName";
-			Query<PanelItem> query = entityManager.unwrap(Session.class).createQuery(sql, PanelItem.class);
+            Query<PanelItem> query = entityManager.unwrap(Session.class).createQuery(sql, PanelItem.class);
             query.setFirstResult(startingRecNo - 1);
             query.setMaxResults(endingRecNo - 1);
 
@@ -116,7 +115,7 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem, String> implements 
         List<PanelItem> list;
         try {
             String sql = "from PanelItem p where upper(p.methodName) like upper(:param) order by upper(p.methodName)";
-			Query<PanelItem> query = entityManager.unwrap(Session.class).createQuery(sql, PanelItem.class);
+            Query<PanelItem> query = entityManager.unwrap(Session.class).createQuery(sql, PanelItem.class);
             query.setParameter("param", filter + "%");
             list = query.list();
         } catch (RuntimeException e) {
@@ -133,15 +132,15 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem, String> implements 
         List<PanelItem> list;
         try {
             String sql = "from PanelItem p where p.panel.id = :panelId";
-			Query<PanelItem> query = entityManager.unwrap(Session.class).createQuery(sql, PanelItem.class);
-			query.setParameter("panelId", Integer.parseInt(panelId));
+            Query<PanelItem> query = entityManager.unwrap(Session.class).createQuery(sql, PanelItem.class);
+            query.setParameter("panelId", Integer.parseInt(panelId));
 
             list = query.list();
         } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in PanelItem getPanelItemsForPanel(String panelId)", e);
         }
-        
+
         return list;
 
     }
@@ -161,10 +160,10 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem, String> implements 
             // not case sensitive hemolysis and Hemolysis are considered
             // duplicates
             String sql = "from PanelItem t where trim(lower(t.panel.panelName)) = :param and t.sortOrder = :sortOrder and t.id != :panelItemId";
-			Query<PanelItem> query = entityManager.unwrap(Session.class).createQuery(sql, PanelItem.class);
+            Query<PanelItem> query = entityManager.unwrap(Session.class).createQuery(sql, PanelItem.class);
 
             query.setParameter("param", panelItem.getPanelName().toLowerCase().trim());
-			query.setParameter("sortOrder", Integer.parseInt(panelItem.getSortOrder()));
+            query.setParameter("sortOrder", Integer.parseInt(panelItem.getSortOrder()));
 
             // initialize with 0 (for new records where no id has been generated
             // yet
@@ -173,7 +172,7 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem, String> implements 
                 panelItemId = panelItem.getId();
             }
 
-			query.setParameter("panelItemId", Integer.parseInt(panelItemId));
+            query.setParameter("panelItemId", Integer.parseInt(panelItemId));
 
             list = query.list();
 
@@ -191,8 +190,8 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem, String> implements 
         String sql = "From PanelItem pi where pi.test.id = :testId";
 
         try {
-			Query<PanelItem> query = entityManager.unwrap(Session.class).createQuery(sql, PanelItem.class);
-			query.setParameter("testId", Integer.parseInt(testId));
+            Query<PanelItem> query = entityManager.unwrap(Session.class).createQuery(sql, PanelItem.class);
+            query.setParameter("testId", Integer.parseInt(testId));
             List<PanelItem> panelItems = query.list();
             return panelItems;
 
@@ -209,8 +208,8 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem, String> implements 
             throws LIMSRuntimeException {
         String sql = "From PanelItem pi where pi.panel.id = :panelId and pi.test.id in (:testList)";
         try {
-			Query<PanelItem> query = entityManager.unwrap(Session.class).createQuery(sql, PanelItem.class);
-			query.setParameter("panelId", Integer.parseInt(panelId));
+            Query<PanelItem> query = entityManager.unwrap(Session.class).createQuery(sql, PanelItem.class);
+            query.setParameter("panelId", Integer.parseInt(panelId));
             query.setParameterList("testList", testList);
             List<PanelItem> items = query.list();
             return items;

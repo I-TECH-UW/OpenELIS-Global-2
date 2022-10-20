@@ -63,8 +63,7 @@ public class TestAddFormValidator implements Validator {
                         "active", errors);
 
                 ValidationHelper.validateYNField(StringUtil.nullSafeToString(newTest.get("inLabOnly")), "JsonWad",
-                        "inLabOnly",
-                        errors);
+                        "inLabOnly", errors);
 
                 JSONArray sampleTypes = JSONUtils.getAsArray(newTest.get("sampleTypes"));
                 for (int i = 0; i < sampleTypes.size(); ++i) {
@@ -123,12 +122,14 @@ public class TestAddFormValidator implements Validator {
                                 "JsonWad", "result limit [" + i + "] highNormal", errors, false, 255,
                                 ValidationHelper.FLOAT_REGEX);
 
-                        ValidationHelper.validateField(StringUtil.nullSafeToString(resultLimit.get("lowReportingRange")),
-                                "JsonWad", "result limit [" + i + "] lowReportingRange", errors, false, 255,
+                        ValidationHelper.validateField(
+                                StringUtil.nullSafeToString(resultLimit.get("lowReportingRange")), "JsonWad",
+                                "result limit [" + i + "] lowReportingRange", errors, false, 255,
                                 ValidationHelper.FLOAT_REGEX);
 
-                        ValidationHelper.validateField(StringUtil.nullSafeToString(resultLimit.get("highReportingRange")),
-                                "JsonWad", "result limit [" + i + "] highReportingRange", errors, false, 255,
+                        ValidationHelper.validateField(
+                                StringUtil.nullSafeToString(resultLimit.get("highReportingRange")), "JsonWad",
+                                "result limit [" + i + "] highReportingRange", errors, false, 255,
                                 ValidationHelper.FLOAT_REGEX);
 
                         if ((Boolean) resultLimit.get("gender")) {

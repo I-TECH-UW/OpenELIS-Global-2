@@ -41,9 +41,9 @@ public class OrgHL7SchemaDAOImpl extends BaseDAOImpl<OrganizationHL7Schema, Orga
         String sql = "from OrganizationHL7Schema hs where hs.compoundId.organizationId = :id";
 
         try {
-			Query<OrganizationHL7Schema> query = entityManager.unwrap(Session.class).createQuery(sql,
-					OrganizationHL7Schema.class);
-			query.setParameter("id", orgId);
+            Query<OrganizationHL7Schema> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    OrganizationHL7Schema.class);
+            query.setParameter("id", orgId);
             OrganizationHL7Schema hs = query.uniqueResult();
             return hs;
         } catch (HibernateException e) {

@@ -40,7 +40,7 @@ public class ImageDAOImpl extends BaseDAOImpl<Image, String> implements ImageDAO
         try {
             String sql = "from Image i where i.description = :imageDescription";
 
-			Query<Image> query = entityManager.unwrap(Session.class).createQuery(sql, Image.class);
+            Query<Image> query = entityManager.unwrap(Session.class).createQuery(sql, Image.class);
             query.setParameter("imageDescription", imageDescription);
             return query.uniqueResult();
         } catch (RuntimeException e) {

@@ -43,7 +43,7 @@ public class AnalyzerResultItem implements Serializable {
     @Pattern(regexp = "^[0-9a-zA-Z -]*$", groups = { AnalyzerResultsForm.AnalyzerResuts.class })
     private String accessionNumber;
 
-	@SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { AnalyzerResultsForm.AnalyzerResuts.class })
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { AnalyzerResultsForm.AnalyzerResuts.class })
     private String result;
 
     private boolean isControl = false;
@@ -58,7 +58,7 @@ public class AnalyzerResultItem implements Serializable {
 
     private String errorMessage;
 
-	@SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { AnalyzerResultsForm.AnalyzerResuts.class })
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { AnalyzerResultsForm.AnalyzerResuts.class })
     private String note;
     private String statusId;
     private String sampleId;
@@ -79,13 +79,13 @@ public class AnalyzerResultItem implements Serializable {
 
     private boolean readOnly = false;
 
-	@SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { AnalyzerResultsForm.AnalyzerResuts.class })
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { AnalyzerResultsForm.AnalyzerResuts.class })
     private String testResultType = "N";
     private boolean userChoiceReflex;
     private boolean userChoicePending;
     private String siblingReflexKey;
 
-	@SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { AnalyzerResultsForm.AnalyzerResuts.class })
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { AnalyzerResultsForm.AnalyzerResuts.class })
     private String reflexSelectionId;
     private String selectionOneText = "";
     private String selectionOneValue = "";

@@ -97,7 +97,6 @@ public class ResultLimit extends BaseObject<String> {
         return highReportingRange;
     }
 
-
     public void setHighNormal(double highNormal) {
         this.highNormal = highNormal;
     }

@@ -40,8 +40,8 @@ public class TestCodeTypeDAOImpl extends BaseDAOImpl<TestCodeType, String> imple
         String sql = "from TestCodeType et where et.schemaName = :name";
 
         try {
-			Query<TestCodeType> query = entityManager.unwrap(Session.class).createQuery(sql, TestCodeType.class);
-			query.setParameter("name", name);
+            Query<TestCodeType> query = entityManager.unwrap(Session.class).createQuery(sql, TestCodeType.class);
+            query.setParameter("name", name);
             TestCodeType et = query.uniqueResult();
             return et;
         } catch (HibernateException e) {
@@ -56,8 +56,8 @@ public class TestCodeTypeDAOImpl extends BaseDAOImpl<TestCodeType, String> imple
         String sql = "from TestCodeType et where et.id = :id";
 
         try {
-			Query<TestCodeType> query = entityManager.unwrap(Session.class).createQuery(sql, TestCodeType.class);
-			query.setParameter("id", id);
+            Query<TestCodeType> query = entityManager.unwrap(Session.class).createQuery(sql, TestCodeType.class);
+            query.setParameter("id", id);
             TestCodeType et = query.uniqueResult();
             return et;
         } catch (HibernateException e) {

@@ -81,7 +81,8 @@ public class ReferralItem implements IReferralResultTest, Serializable {
 
     // can't be used as this is an xml wad, but it should be safe since this field
     // is meant to be parsed
-    // @CustomSafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { ReferredOutTestsForm.ReferredOut.class })
+    // @CustomSafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = {
+    // ReferredOutTestsForm.ReferredOut.class })
     private String additionalTestsXMLWad;
 
     @Pattern(regexp = ValidationHelper.ID_REGEX, groups = { ReferredOutTestsForm.ReferredOut.class })

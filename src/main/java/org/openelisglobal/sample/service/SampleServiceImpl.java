@@ -585,7 +585,7 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
             LocalDate upperDate) {
         return sampleDAO.getSamplesForSiteBetweenOrderDates(referringSiteId, lowerDate, upperDate);
     }
-    
+
     @Override
     public List<Sample> getStudySamplesForSiteBetweenOrderDates(String referringSiteId, LocalDate lowerDate,
             LocalDate upperDate) {

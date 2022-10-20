@@ -36,7 +36,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-
 @Service("InfoHighwaySearch")
 @Scope("prototype")
 public class PatientInfoHighwaySearch implements IExternalPatientSearch {
@@ -317,8 +316,7 @@ public class PatientInfoHighwaySearch implements IExternalPatientSearch {
         }
     }
 
-    private void addField(ExtendedPatientSearchResults patient, String fieldName, String value)
-            throws ParseException {
+    private void addField(ExtendedPatientSearchResults patient, String fieldName, String value) throws ParseException {
         switch (fieldName) {
         case "NIC_NUMBER":
             patient.setNationalId(value);

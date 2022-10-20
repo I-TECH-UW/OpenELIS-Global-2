@@ -102,7 +102,6 @@ public class TestAddServiceImpl implements TestAddService {
                 }
             }
 
-
             for (ResultLimit resultLimit : set.resultLimits) {
                 resultLimit.setSysUserId(currentUserId);
                 resultLimit.setTestId(set.test.getId());

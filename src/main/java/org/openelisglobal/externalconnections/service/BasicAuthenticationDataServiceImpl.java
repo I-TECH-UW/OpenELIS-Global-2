@@ -9,8 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class BasicAuthenticationDataServiceImpl
-        extends BaseObjectServiceImpl<BasicAuthenticationData, Integer>
+public class BasicAuthenticationDataServiceImpl extends BaseObjectServiceImpl<BasicAuthenticationData, Integer>
         implements BasicAuthenticationDataService {
 
     @Autowired

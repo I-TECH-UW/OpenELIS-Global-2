@@ -239,8 +239,10 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
 
     @Override
     @Transactional(readOnly = true)
-    public List<Analysis> getAnalysisByTestIdAndTestSectionIdsAndStartedInDateRange(Date lowDate, Date highDate ,String testId ,List<Integer> testSectionIds) {
-        return baseObjectDAO.getAnalysisByTestIdAndTestSectionIdsAndStartedInDateRange(lowDate, highDate , testId ,testSectionIds);
+    public List<Analysis> getAnalysisByTestIdAndTestSectionIdsAndStartedInDateRange(Date lowDate, Date highDate,
+            String testId, List<Integer> testSectionIds) {
+        return baseObjectDAO.getAnalysisByTestIdAndTestSectionIdsAndStartedInDateRange(lowDate, highDate, testId,
+                testSectionIds);
     }
 
     @Override
@@ -307,7 +309,8 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
         analysis.setAnalysisType(DEFAULT_ANALYSIS_TYPE);
         analysis.setRevision("0");
         analysis.setStartedDate(DateUtil.getNowAsSqlDate());
-        analysis.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(StatusService.AnalysisStatus.NotStarted));
+        analysis.setStatusId(
+                SpringContext.getBean(IStatusService.class).getStatusID(StatusService.AnalysisStatus.NotStarted));
         analysis.setSampleItem(sampleItem);
         analysis.setTestSection(test.getTestSection());
         analysis.setSampleTypeName(sampleItem.getTypeOfSample().getLocalizedName());
@@ -370,7 +373,8 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
     @Override
     @Transactional
     public void updateAnalysises(List<Analysis> cancelAnalysis, List<Analysis> newAnalysis, String sysUserId) {
-        String cancelStatus = SpringContext.getBean(IStatusService.class).getStatusID(StatusService.AnalysisStatus.Canceled);
+        String cancelStatus = SpringContext.getBean(IStatusService.class)
+                .getStatusID(StatusService.AnalysisStatus.Canceled);
         for (Analysis analysis : cancelAnalysis) {
             analysis.setStatusId(cancelStatus);
             analysis.setSysUserId(sysUserId);
@@ -391,8 +395,10 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
 
     @Override
     @Transactional(readOnly = true)
-    public List<Analysis> getAllAnalysisByTestsAndStatusAndCompletedDateRange(List<Integer> testIdList, List<Integer> analysisStatusList, List<Integer> sampleStatusList, Date lowDate, Date highDate) {
-        return baseObjectDAO.getAllAnalysisByTestsAndStatusAndCompletedDateRange(testIdList, analysisStatusList, sampleStatusList, lowDate, highDate);
+    public List<Analysis> getAllAnalysisByTestsAndStatusAndCompletedDateRange(List<Integer> testIdList,
+            List<Integer> analysisStatusList, List<Integer> sampleStatusList, Date lowDate, Date highDate) {
+        return baseObjectDAO.getAllAnalysisByTestsAndStatusAndCompletedDateRange(testIdList, analysisStatusList,
+                sampleStatusList, lowDate, highDate);
     }
 
     @Override
@@ -416,7 +422,8 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
         if (accessionNumber != null && accessionNumber.contains(".")) {
             accessionNumber = accessionNumber.substring(0, accessionNumber.indexOf('.'));
         }
-        return baseObjectDAO.getPageAnalysisAtAccessionNumberAndStatus(accessionNumber, statusList, sortedByDateAndAccession);
+        return baseObjectDAO.getPageAnalysisAtAccessionNumberAndStatus(accessionNumber, statusList,
+                sortedByDateAndAccession);
     }
 
     @Override
@@ -714,11 +721,10 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
     }
 
     @Override
-    public List<Analysis> getAnalysesByPriorityAndStatusId(OrderPriority priority,
-            List<Integer> analysisStatusIds) {
+    public List<Analysis> getAnalysesByPriorityAndStatusId(OrderPriority priority, List<Integer> analysisStatusIds) {
         return baseObjectDAO.getAnalysesByPriorityAndStatusId(priority, analysisStatusIds);
-	}
-    
+    }
+
     @Override
     public List<Analysis> getStudyAnalysisForSiteBetweenResultDates(String referringSiteId, LocalDate lowerDate,
             LocalDate upperDate) {

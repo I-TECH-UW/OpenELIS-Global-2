@@ -1280,7 +1280,6 @@ public class AuditTrailServiceImpl implements AuditTrailService {
         return null;
     }
 
-
     /**
      * Save the object into history table
      *

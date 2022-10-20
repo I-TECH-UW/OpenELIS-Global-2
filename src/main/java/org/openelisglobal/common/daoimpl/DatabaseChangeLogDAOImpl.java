@@ -39,15 +39,15 @@ public class DatabaseChangeLogDAOImpl implements DatabaseChangeLogDAO {
     EntityManager entityManager;
 
     @Override
-    
+
     @Transactional(readOnly = true)
     public DatabaseChangeLog getLastExecutedChange() throws LIMSRuntimeException {
         List<DatabaseChangeLog> results;
 
         try {
             String sql = "from DatabaseChangeLog dcl order by dcl.executed desc";
-			Query<DatabaseChangeLog> query = entityManager.unwrap(Session.class).createQuery(sql,
-					DatabaseChangeLog.class);
+            Query<DatabaseChangeLog> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    DatabaseChangeLog.class);
 
             results = query.list();
 

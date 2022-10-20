@@ -47,8 +47,8 @@ public class TypeOfDataIndicatorDAOImpl extends BaseDAOImpl<TypeOfDataIndicator,
         List<TypeOfDataIndicator> list;
         try {
             String sql = "from TypeOfDataIndicator";
-			Query<TypeOfDataIndicator> query = entityManager.unwrap(Session.class).createQuery(sql,
-					TypeOfDataIndicator.class);
+            Query<TypeOfDataIndicator> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    TypeOfDataIndicator.class);
             list = query.list();
         } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);

@@ -54,7 +54,6 @@ public class SampleItem extends BaseObject<String> implements NoteObject {
     private String collector;
     private boolean rejected = false;
     private String rejectReasonId;
-    
 
     public SampleItem() {
         super();

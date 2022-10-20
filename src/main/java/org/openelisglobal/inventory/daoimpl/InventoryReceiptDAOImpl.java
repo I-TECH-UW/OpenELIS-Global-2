@@ -46,8 +46,8 @@ public class InventoryReceiptDAOImpl extends BaseDAOImpl<InventoryReceipt, Strin
         List<InventoryReceipt> inventoryReceipts;
         try {
             String sql = "from InventoryReceipt";
-			Query<InventoryReceipt> query = entityManager.unwrap(Session.class).createQuery(sql,
-					InventoryReceipt.class);
+            Query<InventoryReceipt> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    InventoryReceipt.class);
             inventoryReceipts = query.list();
         } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
@@ -97,8 +97,8 @@ public class InventoryReceiptDAOImpl extends BaseDAOImpl<InventoryReceipt, Strin
             List<InventoryReceipt> inventoryReceipts;
 
             String sql = "from InventoryReceipt where invitem_id = :id";
-			Query<InventoryReceipt> query = entityManager.unwrap(Session.class).createNativeQuery(sql);
-			query.setParameter("id", Integer.parseInt(id));
+            Query<InventoryReceipt> query = entityManager.unwrap(Session.class).createNativeQuery(sql);
+            query.setParameter("id", Integer.parseInt(id));
             inventoryReceipts = query.list();
 
             if (inventoryReceipts != null && inventoryReceipts.size() > 0) {

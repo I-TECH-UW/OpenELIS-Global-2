@@ -17,7 +17,8 @@ public class SearchResultsServiceImpl implements SearchResultsService {
     @Override
     @Transactional
     public List<PatientSearchResults> getSearchResults(String lastName, String firstName, String STNumber,
-            String subjectNumber, String nationalID, String externalID, String patientID, String guid, String dateOfBirth, String gender) {
+            String subjectNumber, String nationalID, String externalID, String patientID, String guid,
+            String dateOfBirth, String gender) {
         return searchResultsDAO.getSearchResults(lastName, firstName, STNumber, subjectNumber, nationalID, externalID,
                 patientID, guid, dateOfBirth, gender);
     }

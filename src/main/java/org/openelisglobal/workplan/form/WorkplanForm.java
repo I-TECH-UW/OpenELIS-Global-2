@@ -38,7 +38,7 @@ public class WorkplanForm extends BaseForm {
     @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { PrintWorkplan.class })
     private String testName = "";
 
-    private OrderPriority priority ;
+    private OrderPriority priority;
 
     @NotNull(groups = { PrintWorkplan.class })
     private Boolean searchFinished = false;

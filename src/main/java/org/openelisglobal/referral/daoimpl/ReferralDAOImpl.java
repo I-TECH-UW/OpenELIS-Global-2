@@ -66,8 +66,8 @@ public class ReferralDAOImpl extends BaseDAOImpl<Referral, String> implements Re
             String sql = "From Referral r where r.analysis.id = :analysisId";
 
             try {
-				Query<Referral> query = entityManager.unwrap(Session.class).createQuery(sql, Referral.class);
-				query.setParameter("analysisId", Integer.parseInt(analysisId));
+                Query<Referral> query = entityManager.unwrap(Session.class).createQuery(sql, Referral.class);
+                query.setParameter("analysisId", Integer.parseInt(analysisId));
                 List<Referral> referralList = query.list();
                 return referralList.isEmpty() ? null : referralList.get(referralList.size() - 1);
             } catch (HibernateException e) {
@@ -90,7 +90,6 @@ public class ReferralDAOImpl extends BaseDAOImpl<Referral, String> implements Re
         return null;
     }
 
-
     @Override
     @Transactional(readOnly = true)
     public List<Referral> getAllReferralsBySampleId(String id) throws LIMSRuntimeException {
@@ -98,8 +97,8 @@ public class ReferralDAOImpl extends BaseDAOImpl<Referral, String> implements Re
             String sql = "FROM Referral r WHERE r.analysis.sampleItem.sample.id = :sampleId";
 
             try {
-				Query<Referral> query = entityManager.unwrap(Session.class).createQuery(sql, Referral.class);
-				query.setParameter("sampleId", Integer.parseInt(id));
+                Query<Referral> query = entityManager.unwrap(Session.class).createQuery(sql, Referral.class);
+                query.setParameter("sampleId", Integer.parseInt(id));
                 List<Referral> referralList = query.list();
                 return referralList;
 
@@ -122,10 +121,10 @@ public class ReferralDAOImpl extends BaseDAOImpl<Referral, String> implements Re
         String sql = "FROM Referral r WHERE r.organization.id = :organizationId AND r.requestDate >= :lowDate AND r.requestDate <= :highDate";
 
         try {
-			Query<Referral> query = entityManager.unwrap(Session.class).createQuery(sql, Referral.class);
-			query.setParameter("organizationId", Integer.parseInt(organizationId));
-			query.setParameter("lowDate", lowDate);
-			query.setParameter("highDate", highDate);
+            Query<Referral> query = entityManager.unwrap(Session.class).createQuery(sql, Referral.class);
+            query.setParameter("organizationId", Integer.parseInt(organizationId));
+            query.setParameter("lowDate", lowDate);
+            query.setParameter("highDate", highDate);
             List<Referral> referralList = query.list();
             // closeSession(); // CSL remove old
             return referralList;
@@ -140,7 +139,7 @@ public class ReferralDAOImpl extends BaseDAOImpl<Referral, String> implements Re
         String sql = "From Referral r where r.status in (:statuses) order by r.id";
 
         try {
-			Query<Referral> query = entityManager.unwrap(Session.class).createQuery(sql, Referral.class);
+            Query<Referral> query = entityManager.unwrap(Session.class).createQuery(sql, Referral.class);
             query.setParameter("statuses", statuses.stream().map(e -> e.name()).collect(Collectors.toList()));
             List<Referral> referrals = query.list();
             return referrals;
@@ -158,7 +157,7 @@ public class ReferralDAOImpl extends BaseDAOImpl<Referral, String> implements Re
         }
         String sql = "From Referral r where r.analysis.id in (:analysisIds)";
         try {
-			Query<Referral> query = entityManager.unwrap(Session.class).createQuery(sql, Referral.class);
+            Query<Referral> query = entityManager.unwrap(Session.class).createQuery(sql, Referral.class);
             query.setParameterList("analysisIds",
                     analysisIds.stream().map(e -> Integer.parseInt(e)).collect(Collectors.toList()));
             return query.list();
@@ -192,10 +191,10 @@ public class ReferralDAOImpl extends BaseDAOImpl<Referral, String> implements Re
         }
 
         try {
-			Query<Referral> query = entityManager.unwrap(Session.class).createQuery(hql, Referral.class);
+            Query<Referral> query = entityManager.unwrap(Session.class).createQuery(hql, Referral.class);
             if (startDate != null) {
-				query.setParameter("startDate", startDate);
-				query.setParameter("endDate", endDate);
+                query.setParameter("startDate", startDate);
+                query.setParameter("endDate", endDate);
             }
             if (testUnitIds != null && testUnitIds.size() > 0) {
                 query.setParameter("testUnitIds",

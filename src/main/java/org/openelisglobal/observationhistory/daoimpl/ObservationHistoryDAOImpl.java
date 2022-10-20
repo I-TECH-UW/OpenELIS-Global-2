@@ -30,18 +30,18 @@ public class ObservationHistoryDAOImpl extends BaseDAOImpl<ObservationHistory, S
     @Override
     @Transactional(readOnly = true)
     public List<ObservationHistory> getAll(Patient patient, Sample sample) {
-		Map<String, Object> queryMap = new HashMap<>();
-		queryMap.put("patientId", patient.getId());
-		if (patient != null && patient.getId() != null) {
-			queryMap.put("patientId", patient.getId());
-		}
-		if (sample != null && sample.getId() != null) {
-			queryMap.put("sampleId", sample.getId());
+        Map<String, Object> queryMap = new HashMap<>();
+        queryMap.put("patientId", patient.getId());
+        if (patient != null && patient.getId() != null) {
+            queryMap.put("patientId", patient.getId());
         }
-		if (queryMap.size() == 0) {
-			return new ArrayList<>();
-		}
-		return getAllMatching(queryMap);
+        if (sample != null && sample.getId() != null) {
+            queryMap.put("sampleId", sample.getId());
+        }
+        if (queryMap.size() == 0) {
+            return new ArrayList<>();
+        }
+        return getAllMatching(queryMap);
 //        if (patient != null && sample != null) {
 //            ObservationHistory dh = new ObservationHistory();
 //            dh.setPatientId(patient.getId());
@@ -53,23 +53,23 @@ public class ObservationHistoryDAOImpl extends BaseDAOImpl<ObservationHistory, S
     @Override
     @Transactional(readOnly = true)
     public List<ObservationHistory> getAll(Patient patient, Sample sample, String observationHistoryTypeId) {
-		Map<String, Object> queryMap = new HashMap<>();
-		queryMap.put("patientId", patient.getId());
-		if (patient != null && patient.getId() != null) {
-			queryMap.put("patientId", patient.getId());
-		}
-		if (sample != null && sample.getId() != null) {
-			queryMap.put("sampleId", sample.getId());
+        Map<String, Object> queryMap = new HashMap<>();
+        queryMap.put("patientId", patient.getId());
+        if (patient != null && patient.getId() != null) {
+            queryMap.put("patientId", patient.getId());
         }
-		if (observationHistoryTypeId != null) {
-			queryMap.put("observationHistoryTypeId", observationHistoryTypeId);
+        if (sample != null && sample.getId() != null) {
+            queryMap.put("sampleId", sample.getId());
         }
-		return getAllMatching(queryMap);
+        if (observationHistoryTypeId != null) {
+            queryMap.put("observationHistoryTypeId", observationHistoryTypeId);
+        }
+        return getAllMatching(queryMap);
 //        return readByExample(history);
     }
 
     @Override
-    
+
     @Transactional(readOnly = true)
     public List<ObservationHistory> getObservationHistoryByDictonaryValues(String dictionaryValue)
             throws LIMSRuntimeException {
@@ -78,8 +78,8 @@ public class ObservationHistoryDAOImpl extends BaseDAOImpl<ObservationHistory, S
 
         try {
 
-			Query<ObservationHistory> query = entityManager.unwrap(Session.class).createQuery(sql,
-					ObservationHistory.class);
+            Query<ObservationHistory> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    ObservationHistory.class);
             query.setParameter("value", dictionaryValue);
 
             observationList = query.list();
@@ -92,7 +92,6 @@ public class ObservationHistoryDAOImpl extends BaseDAOImpl<ObservationHistory, S
         return null;
     }
 
-    
     @Override
     @Transactional(readOnly = true)
     public List<ObservationHistory> getObservationHistoriesBySampleItemId(String sampleItemId)
@@ -100,9 +99,9 @@ public class ObservationHistoryDAOImpl extends BaseDAOImpl<ObservationHistory, S
         String sql = "from ObservationHistory oh where oh.sampleItemId = :sampleItemId";
 
         try {
-			Query<ObservationHistory> query = entityManager.unwrap(Session.class).createQuery(sql,
-					ObservationHistory.class);
-			query.setParameter("sampleItemId", Integer.parseInt(sampleItemId));
+            Query<ObservationHistory> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    ObservationHistory.class);
+            query.setParameter("sampleItemId", Integer.parseInt(sampleItemId));
 
             List<ObservationHistory> observationList = query.list();
             return observationList;
@@ -112,16 +111,15 @@ public class ObservationHistoryDAOImpl extends BaseDAOImpl<ObservationHistory, S
         return null;
     }
 
-    
     @Override
     @Transactional(readOnly = true)
     public List<ObservationHistory> getObservationHistoriesBySampleId(String sampleId) throws LIMSRuntimeException {
         String sql = "from ObservationHistory oh where oh.sampleId = :sampleId";
 
         try {
-			Query<ObservationHistory> query = entityManager.unwrap(Session.class).createQuery(sql,
-					ObservationHistory.class);
-			query.setParameter("sampleId", Integer.parseInt(sampleId));
+            Query<ObservationHistory> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    ObservationHistory.class);
+            query.setParameter("sampleId", Integer.parseInt(sampleId));
 
             List<ObservationHistory> observationList = query.list();
             return observationList;
@@ -138,10 +136,10 @@ public class ObservationHistoryDAOImpl extends BaseDAOImpl<ObservationHistory, S
         String sql = "from ObservationHistory oh where oh.patientId = :patientId and oh.observationHistoryTypeId = :ohTypeId order by oh.lastupdated desc";
 
         try {
-			Query<ObservationHistory> query = entityManager.unwrap(Session.class).createQuery(sql,
-					ObservationHistory.class);
-			query.setParameter("patientId", Integer.parseInt(patientId));
-			query.setParameter("ohTypeId", Integer.parseInt(observationHistoryTypeId));
+            Query<ObservationHistory> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    ObservationHistory.class);
+            query.setParameter("patientId", Integer.parseInt(patientId));
+            query.setParameter("ohTypeId", Integer.parseInt(observationHistoryTypeId));
 
             List<ObservationHistory> ohList = query.list();
             return ohList;
@@ -158,10 +156,10 @@ public class ObservationHistoryDAOImpl extends BaseDAOImpl<ObservationHistory, S
             throws LIMSRuntimeException {
         String sql = "from ObservationHistory oh where oh.sampleId = :sampleId and oh.observationHistoryTypeId = :ohTypeId";
         try {
-			Query<ObservationHistory> query = entityManager.unwrap(Session.class).createQuery(sql,
-					ObservationHistory.class);
-			query.setParameter("sampleId", Integer.parseInt(sampleId));
-			query.setParameter("ohTypeId", Integer.parseInt(observationHistoryTypeId));
+            Query<ObservationHistory> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    ObservationHistory.class);
+            query.setParameter("sampleId", Integer.parseInt(sampleId));
+            query.setParameter("ohTypeId", Integer.parseInt(observationHistoryTypeId));
 
             ObservationHistory oh = query.setMaxResults(1).uniqueResult();
             return oh;
@@ -179,11 +177,11 @@ public class ObservationHistoryDAOImpl extends BaseDAOImpl<ObservationHistory, S
         String sql = "from ObservationHistory oh where oh.value = :value and oh.observationHistoryTypeId = :typeId and oh.valueType = :valueType";
 
         try {
-			Query<ObservationHistory> query = entityManager.unwrap(Session.class).createQuery(sql,
-					ObservationHistory.class);
-			query.setParameter("typeId", Integer.parseInt(typeId));
-			query.setParameter("value", value);
-			query.setParameter("valueType", valueType);
+            Query<ObservationHistory> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    ObservationHistory.class);
+            query.setParameter("typeId", Integer.parseInt(typeId));
+            query.setParameter("value", value);
+            query.setParameter("valueType", valueType);
 
             List<ObservationHistory> ohList = query.list();
             return ohList;

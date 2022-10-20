@@ -24,11 +24,11 @@ public class ElectronicOrderViewForm extends BaseForm {
     private String startDate;
 
     private String endDate;
-    
+
     private String organizationId;
 
     private List<String> facilityIds;
-    
+
     private List<Organization> organizationList;
 
     private List<String> testIds;
@@ -42,13 +42,13 @@ public class ElectronicOrderViewForm extends BaseForm {
     private List<IdValuePair> testSelectionList;
 
     private List<IdValuePair> statusSelectionList;
-    
+
     private String qaEventId;
-    
+
     private List<IdValuePair> qaEvents;
-    
+
     private String qaAuthorizer;
-    
+
     private String qaNote;
 
     public ElectronicOrderViewForm() {
@@ -150,7 +150,7 @@ public class ElectronicOrderViewForm extends BaseForm {
     public void setEndDate(String endDate) {
         this.endDate = endDate;
     }
-    
+
     public List<ElectronicOrderDisplayItem> geteOrders() {
         return eOrders;
     }
@@ -171,50 +171,51 @@ public class ElectronicOrderViewForm extends BaseForm {
         this.useAllInfo = useAllInfo;
     }
 
-	public List<Organization> getOrganizationList() {
-		return organizationList;
-	}
+    public List<Organization> getOrganizationList() {
+        return organizationList;
+    }
 
-	public void setOrganizationList(List<Organization> organizationList) {
-		this.organizationList = organizationList;
-	}
+    public void setOrganizationList(List<Organization> organizationList) {
+        this.organizationList = organizationList;
+    }
 
-	public String getOrganizationId() {
-		return organizationId;
-	}
+    public String getOrganizationId() {
+        return organizationId;
+    }
 
-	public void setOrganizationId(String organizationId) {
-		this.organizationId = organizationId;
-	}
-	public List<IdValuePair> getQaEvents() {
-		return qaEvents;
-	}
+    public void setOrganizationId(String organizationId) {
+        this.organizationId = organizationId;
+    }
 
-	public void setQaEvents(List<IdValuePair> qaEvents) {
-		this.qaEvents = qaEvents;
-	}
+    public List<IdValuePair> getQaEvents() {
+        return qaEvents;
+    }
 
-	public String getQaAuthorizer() {
-		return qaAuthorizer;
-	}
+    public void setQaEvents(List<IdValuePair> qaEvents) {
+        this.qaEvents = qaEvents;
+    }
 
-	public void setQaAuthorizer(String qaAuthorizer) {
-		this.qaAuthorizer = qaAuthorizer;
-	}
+    public String getQaAuthorizer() {
+        return qaAuthorizer;
+    }
 
-	public String getQaNote() {
-		return qaNote;
-	}
+    public void setQaAuthorizer(String qaAuthorizer) {
+        this.qaAuthorizer = qaAuthorizer;
+    }
 
-	public void setQaNote(String qaNote) {
-		this.qaNote = qaNote;
-	}
+    public String getQaNote() {
+        return qaNote;
+    }
 
-	public String getQaEventId() {
-		return qaEventId;
-	}
+    public void setQaNote(String qaNote) {
+        this.qaNote = qaNote;
+    }
 
-	public void setQaEventId(String qaEventId) {
-		this.qaEventId = qaEventId;
-	}
+    public String getQaEventId() {
+        return qaEventId;
+    }
+
+    public void setQaEventId(String qaEventId) {
+        this.qaEventId = qaEventId;
+    }
 }

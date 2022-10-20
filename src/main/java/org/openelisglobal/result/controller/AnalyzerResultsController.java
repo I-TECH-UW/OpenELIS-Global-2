@@ -106,7 +106,6 @@ public class AnalyzerResultsController extends BaseController {
     private static final String REJECT_VALUE = "XXXX";
     private String RESULT_SUBJECT = "Analyzer Result Note";
 
-
     @InitBinder
     public void initBinder(WebDataBinder binder) {
         binder.setAllowedFields(ALLOWED_FIELDS);
@@ -142,8 +141,8 @@ public class AnalyzerResultsController extends BaseController {
     private LocalizationService localizationService;
     @Autowired
     private NoteService noteService;
-	@Autowired
-	private PluginAnalyzerService pluginAnalyzerService;
+    @Autowired
+    private PluginAnalyzerService pluginAnalyzerService;
 
     // used in constructor, so use constructor injection
     private TypeOfSampleService typeOfSampleService;
@@ -191,12 +190,12 @@ public class AnalyzerResultsController extends BaseController {
 
         form.setType(requestAnalyzerType);
 
-		AnalyzerImporterPlugin analyzerPlugin = pluginAnalyzerService.getPluginByAnalyzerId(
-				AnalyzerTestNameCache.getInstance().getAnalyzerIdForName(getAnalyzerNameFromRequest()));
-		if (analyzerPlugin instanceof BidirectionalAnalyzer) {
-			BidirectionalAnalyzer bidirectionalAnalyzer = (BidirectionalAnalyzer) analyzerPlugin;
-			form.setSupportedLISActions(bidirectionalAnalyzer.getSupportedLISActions());
-		}
+        AnalyzerImporterPlugin analyzerPlugin = pluginAnalyzerService.getPluginByAnalyzerId(
+                AnalyzerTestNameCache.getInstance().getAnalyzerIdForName(getAnalyzerNameFromRequest()));
+        if (analyzerPlugin instanceof BidirectionalAnalyzer) {
+            BidirectionalAnalyzer bidirectionalAnalyzer = (BidirectionalAnalyzer) analyzerPlugin;
+            form.setSupportedLISActions(bidirectionalAnalyzer.getSupportedLISActions());
+        }
 
         AnalyzerResultsPaging paging = new AnalyzerResultsPaging();
         List<AnalyzerResults> analyzerResultsList = getAnalyzerResults();
@@ -208,10 +207,10 @@ public class AnalyzerResultsController extends BaseController {
                 paging.setEmptyPageBean(request, form);
 
             } else {
-                paging.setDatabaseResults(request, form,  getAnalyzerResultItemList(analyzerResultsList , form));
+                paging.setDatabaseResults(request, form, getAnalyzerResultItemList(analyzerResultsList, form));
             }
         } else {
-            paging.setDatabaseResults(request, form, getAnalyzerResultItemList(analyzerResultsList , form));
+            paging.setDatabaseResults(request, form, getAnalyzerResultItemList(analyzerResultsList, form));
             paging.page(request, form, Integer.parseInt(request.getParameter("page")));
         }
 
@@ -219,13 +218,14 @@ public class AnalyzerResultsController extends BaseController {
         return findForward(FWD_SUCCESS, form);
     }
 
-    private List<AnalyzerResultItem> getAnalyzerResultItemList(List<AnalyzerResults> analyzerResultsList ,AnalyzerResultsForm form){
+    private List<AnalyzerResultItem> getAnalyzerResultItemList(List<AnalyzerResults> analyzerResultsList,
+            AnalyzerResultsForm form) {
         /*
-        * The problem we are solving is that the accession numbers may not be
-        * consecutive but we still want to maintain the order So we will form the
-        * groups (by analyzer runs) by going in order but if the accession number is in
-        * another group it will be boosted to the first group
-        */
+         * The problem we are solving is that the accession numbers may not be
+         * consecutive but we still want to maintain the order So we will form the
+         * groups (by analyzer runs) by going in order but if the accession number is in
+         * another group it will be boosted to the first group
+         */
         boolean missingTest = false;
         resolveMissingTests(analyzerResultsList);
         List<AnalyzerResultItem> analyzerResultItemList = new ArrayList<>();
@@ -734,7 +734,7 @@ public class AnalyzerResultsController extends BaseController {
         } else {
             Map<String, String> params = new HashMap<>();
             params.put("type", form.getType());
-           // params.put("page", form.getPaging().getCurrentPage());
+            // params.put("page", form.getPaging().getCurrentPage());
             params.put("forward", FWD_SUCCESS_INSERT);
             return getForwardWithParameters(findForward(FWD_SUCCESS_INSERT, form), params);
         }
@@ -1384,7 +1384,7 @@ public class AnalyzerResultsController extends BaseController {
         } else if (FWD_FAIL.equals(forward)) {
             return "homePageDefinition";
         } else if (FWD_SUCCESS_INSERT.equals(forward)) {
-           return redirectInsertSuccess();
+            return redirectInsertSuccess();
         } else if (FWD_FAIL_INSERT.equals(forward)) {
             return "analyzerResultsDefinition";
         } else if (FWD_VALIDATION_ERROR.equals(forward)) {

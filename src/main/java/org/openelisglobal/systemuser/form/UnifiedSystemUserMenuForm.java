@@ -62,8 +62,8 @@ public class UnifiedSystemUserMenuForm extends AdminOptionMenuForm<UnifiedSystem
     public List<IdValuePair> getTestSections() {
         return testSections;
     }
- 
+
     public void setTestSections(List<IdValuePair> testSections) {
         this.testSections = testSections;
-    }  
+    }
 }

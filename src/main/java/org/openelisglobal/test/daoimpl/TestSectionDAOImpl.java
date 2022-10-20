@@ -44,7 +44,6 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
         super(TestSection.class);
     }
 
-
     @Override
     @Transactional(readOnly = true)
     public void getData(TestSection testSection) throws LIMSRuntimeException {
@@ -68,7 +67,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
         List<TestSection> list = null;
         try {
             String sql = "from TestSection";
-			Query<TestSection> query = entityManager.unwrap(Session.class).createQuery(sql, TestSection.class);
+            Query<TestSection> query = entityManager.unwrap(Session.class).createQuery(sql, TestSection.class);
             list = query.list();
         } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
@@ -97,7 +96,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
             }
 
             sql = "from TestSection where id in (:ids)";
-			Query<TestSection> query = entityManager.unwrap(Session.class).createQuery(sql, TestSection.class);
+            Query<TestSection> query = entityManager.unwrap(Session.class).createQuery(sql, TestSection.class);
             query.setParameterList("ids", sectionIds);
             list = query.list();
         } catch (RuntimeException e) {
@@ -118,7 +117,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
 
             // bugzilla 1399
             String sql = "from TestSection t order by t.organization.organizationName, t.testSectionName";
-			Query<TestSection> query = entityManager.unwrap(Session.class).createQuery(sql, TestSection.class);
+            Query<TestSection> query = entityManager.unwrap(Session.class).createQuery(sql, TestSection.class);
             query.setFirstResult(startingRecNo - 1);
             query.setMaxResults(endingRecNo - 1);
 
@@ -152,7 +151,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
         List<TestSection> list;
         try {
             String sql = "from TestSection t where upper(t.testSectionName) like upper(:param) order by upper(t.testSectionName)";
-			Query<TestSection> query = entityManager.unwrap(Session.class).createQuery(sql, TestSection.class);
+            Query<TestSection> query = entityManager.unwrap(Session.class).createQuery(sql, TestSection.class);
             query.setParameter("param", filter + "%");
             list = query.list();
         } catch (RuntimeException e) {
@@ -179,7 +178,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
                 return list;
             }
 
-			Query<TestSection> query = entityManager.unwrap(Session.class).createQuery(sql, TestSection.class);
+            Query<TestSection> query = entityManager.unwrap(Session.class).createQuery(sql, TestSection.class);
             query.setParameter("param", filter + "%");
             query.setParameterList("sectionIdList", sectionIdList);
             list = query.list();
@@ -198,7 +197,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
     public TestSection getTestSectionByName(TestSection testSection) throws LIMSRuntimeException {
         try {
             String sql = "from TestSection t where t.testSectionName = :param";
-			Query<TestSection> query = entityManager.unwrap(Session.class).createQuery(sql, TestSection.class);
+            Query<TestSection> query = entityManager.unwrap(Session.class).createQuery(sql, TestSection.class);
             query.setParameter("param", testSection.getTestSectionName());
 
             List<TestSection> list = query.list();
@@ -227,7 +226,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
         try {
 
             String sql = "from TestSection t where trim(lower(t.testSectionName)) = :name and t.id != :id";
-			Query<TestSection> query = entityManager.unwrap(Session.class).createQuery(sql, TestSection.class);
+            Query<TestSection> query = entityManager.unwrap(Session.class).createQuery(sql, TestSection.class);
 
             query.setParameter("name", testSection.getTestSectionName().toLowerCase().trim());
 
@@ -235,7 +234,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
             if (!StringUtil.isNullorNill(testSection.getId())) {
                 testSectionId = testSection.getId();
             }
-			query.setParameter("id", Integer.parseInt(testSectionId));
+            query.setParameter("id", Integer.parseInt(testSectionId));
 
             List<TestSection> list = query.list();
 
@@ -253,7 +252,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
         String sql = "from TestSection t where t.isActive = 'Y' order by t.sortOrderInt";
 
         try {
-			Query<TestSection> query = entityManager.unwrap(Session.class).createQuery(sql, TestSection.class);
+            Query<TestSection> query = entityManager.unwrap(Session.class).createQuery(sql, TestSection.class);
 
             List<TestSection> sections = query.list();
             return sections;
@@ -269,7 +268,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
         String sql = "from TestSection t where t.isActive = 'N' order by t.sortOrderInt";
 
         try {
-			Query<TestSection> query = entityManager.unwrap(Session.class).createQuery(sql, TestSection.class);
+            Query<TestSection> query = entityManager.unwrap(Session.class).createQuery(sql, TestSection.class);
             List<TestSection> sections = query.list();
             return sections;
         } catch (HibernateException e) {
@@ -283,7 +282,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
     public TestSection getTestSectionByName(String testSection) throws LIMSRuntimeException {
         try {
             String sql = "from TestSection t where t.testSectionName = :name order by t.sortOrderInt";
-			Query<TestSection> query = entityManager.unwrap(Session.class).createQuery(sql, TestSection.class);
+            Query<TestSection> query = entityManager.unwrap(Session.class).createQuery(sql, TestSection.class);
             query.setParameter("name", testSection);
 
             List<TestSection> list = query.list();

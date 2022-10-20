@@ -66,7 +66,7 @@ public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule, String> imple
         List<SystemModule> list;
         try {
             String sql = "from SystemModule";
-			Query<SystemModule> query = entityManager.unwrap(Session.class).createQuery(sql, SystemModule.class);
+            Query<SystemModule> query = entityManager.unwrap(Session.class).createQuery(sql, SystemModule.class);
             list = query.list();
         } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
@@ -85,7 +85,7 @@ public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule, String> imple
             int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 
             String sql = "from SystemModule s order by s.systemModuleName";
-			Query<SystemModule> query = entityManager.unwrap(Session.class).createQuery(sql, SystemModule.class);
+            Query<SystemModule> query = entityManager.unwrap(Session.class).createQuery(sql, SystemModule.class);
             query.setFirstResult(startingRecNo - 1);
             query.setMaxResults(endingRecNo - 1);
 
@@ -122,8 +122,8 @@ public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule, String> imple
         String sql = "From SystemModule sm where sm.systemModuleName = :name";
 
         try {
-			Query<SystemModule> query = entityManager.unwrap(Session.class).createQuery(sql, SystemModule.class);
-			query.setParameter("name", name);
+            Query<SystemModule> query = entityManager.unwrap(Session.class).createQuery(sql, SystemModule.class);
+            query.setParameter("name", name);
             SystemModule module = query.uniqueResult();
             return module;
         } catch (HibernateException e) {
@@ -139,14 +139,14 @@ public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule, String> imple
             List<SystemModule> list;
 
             String sql = "from SystemModule s where trim(s.systemModuleName) = :moduleName and s.id != :moduleId";
-			Query<SystemModule> query = entityManager.unwrap(Session.class).createQuery(sql, SystemModule.class);
+            Query<SystemModule> query = entityManager.unwrap(Session.class).createQuery(sql, SystemModule.class);
             query.setParameter("moduleName", systemModule.getSystemModuleName().trim());
 
             String systemModuleId = "0";
             if (!StringUtil.isNullorNill(systemModule.getId())) {
                 systemModuleId = systemModule.getId();
             }
-			query.setParameter("moduleId", Integer.parseInt(systemModuleId));
+            query.setParameter("moduleId", Integer.parseInt(systemModuleId));
 
             list = query.list();
 

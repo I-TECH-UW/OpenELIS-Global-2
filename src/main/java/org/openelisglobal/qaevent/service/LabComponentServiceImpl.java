@@ -8,7 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class LabComponentServiceImpl extends BaseObjectServiceImpl<LabComponent, String> implements LabComponentService{
+public class LabComponentServiceImpl extends BaseObjectServiceImpl<LabComponent, String>
+        implements LabComponentService {
 
     @Autowired
     private LabComponentDAO baseObjectDAO;

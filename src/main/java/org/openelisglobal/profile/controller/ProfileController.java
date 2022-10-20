@@ -20,12 +20,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class ProfileController extends BaseController {
 
-	private static final String[] ALLOWED_FIELDS = new String[] { "file" };
+    private static final String[] ALLOWED_FIELDS = new String[] { "file" };
 
-	@InitBinder
-	public void initBinder(WebDataBinder binder) {
-		binder.setAllowedFields(ALLOWED_FIELDS);
-	}
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
 
     @Autowired
     private TestService testService;

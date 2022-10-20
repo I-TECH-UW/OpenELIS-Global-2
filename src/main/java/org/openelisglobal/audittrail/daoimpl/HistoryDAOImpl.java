@@ -37,9 +37,9 @@ public class HistoryDAOImpl extends BaseDAOImpl<History, String> implements Hist
 
         try {
             String sql = "from History h where h.referenceId = :refId and h.referenceTable = :tableId order by h.timestamp desc, h.activity desc";
-			Query<History> query = entityManager.unwrap(Session.class).createQuery(sql, History.class);
-			query.setParameter("refId", Integer.parseInt(refId));
-			query.setParameter("tableId", Integer.parseInt(tableId));
+            Query<History> query = entityManager.unwrap(Session.class).createQuery(sql, History.class);
+            query.setParameter("refId", Integer.parseInt(refId));
+            query.setParameter("tableId", Integer.parseInt(tableId));
             list = query.list();
         } catch (HibernateException e) {
             LogEvent.logError(e.toString(), e);

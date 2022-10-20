@@ -34,16 +34,14 @@ public class KeystoreUtil {
         return (PrivateKey) keyStore.getKey(keyAlias, keyPwd);
     }
 
-    public static PrivateKey getPrivateKeyFromKeyStore(KeyStore keyStore, char[] keyPwd)
-            throws CertificateException, NoSuchAlgorithmException, KeyStoreException, IOException,
-            UnrecoverableKeyException {
+    public static PrivateKey getPrivateKeyFromKeyStore(KeyStore keyStore, char[] keyPwd) throws CertificateException,
+            NoSuchAlgorithmException, KeyStoreException, IOException, UnrecoverableKeyException {
         String alias = keyStore.aliases().nextElement();
         return (PrivateKey) keyStore.getKey(alias, keyPwd);
     }
 
-    public static Certificate getCertFromKeyStore(KeyStore keyStore, String keyAlias)
-            throws CertificateException, NoSuchAlgorithmException, KeyStoreException, IOException,
-            UnrecoverableKeyException {
+    public static Certificate getCertFromKeyStore(KeyStore keyStore, String keyAlias) throws CertificateException,
+            NoSuchAlgorithmException, KeyStoreException, IOException, UnrecoverableKeyException {
         return keyStore.getCertificate(keyAlias);
     }
 

@@ -66,8 +66,8 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest, Strin
 
         try {
             String sql = "from TypeOfSampleTest";
-			Query<TypeOfSampleTest> query = entityManager.unwrap(Session.class).createQuery(sql,
-					TypeOfSampleTest.class);
+            Query<TypeOfSampleTest> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    TypeOfSampleTest.class);
             // query.setMaxResults(10);
             // query.setFirstResult(3);
             list = query.list();
@@ -89,8 +89,8 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest, Strin
             int endingRecNo = startingRecNo + DEFAULT_PAGE_SIZE + 1;
 
             String sql = "from TypeOfSampleTest t order by t.typeOfSampleId, t.testId";
-			Query<TypeOfSampleTest> query = entityManager.unwrap(Session.class).createQuery(sql,
-					TypeOfSampleTest.class);
+            Query<TypeOfSampleTest> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    TypeOfSampleTest.class);
             query.setFirstResult(startingRecNo - 1);
             query.setMaxResults(endingRecNo - 1);
             list = query.list();
@@ -126,9 +126,9 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest, Strin
                 // so parseInt doesn't throw
                 sampleTypeId = "0";
             }
-			Query<TypeOfSampleTest> query = entityManager.unwrap(Session.class).createQuery(sql,
-					TypeOfSampleTest.class);
-			query.setParameter("sampleId", Integer.parseInt(sampleTypeId));
+            Query<TypeOfSampleTest> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    TypeOfSampleTest.class);
+            query.setParameter("sampleId", Integer.parseInt(sampleTypeId));
             List<TypeOfSampleTest> list = query.list();
             return list;
         } catch (RuntimeException e) {
@@ -146,9 +146,9 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest, Strin
         String sql = "from TypeOfSampleTest tt where tt.testId = :testId";
 
         try {
-			Query<TypeOfSampleTest> query = entityManager.unwrap(Session.class).createQuery(sql,
-					TypeOfSampleTest.class);
-			query.setParameter("testId", Integer.parseInt(testId));
+            Query<TypeOfSampleTest> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    TypeOfSampleTest.class);
+            query.setParameter("testId", Integer.parseInt(testId));
             List<TypeOfSampleTest> list = query.list();
             return list.size() > 0 ? list.get(0) : null;
         } catch (RuntimeException e) {
@@ -165,9 +165,9 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest, Strin
         String sql = "from TypeOfSampleTest tt where tt.testId = :testId";
 
         try {
-			Query<TypeOfSampleTest> query = entityManager.unwrap(Session.class).createQuery(sql,
-					TypeOfSampleTest.class);
-			query.setParameter("testId", Integer.parseInt(testId));
+            Query<TypeOfSampleTest> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    TypeOfSampleTest.class);
+            query.setParameter("testId", Integer.parseInt(testId));
             List<TypeOfSampleTest> list = query.list();
             return list;
         } catch (RuntimeException e) {

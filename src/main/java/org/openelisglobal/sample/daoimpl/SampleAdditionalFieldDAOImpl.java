@@ -23,8 +23,8 @@ public class SampleAdditionalFieldDAOImpl extends BaseDAOImpl<SampleAdditionalFi
     @Override
     public List<SampleAdditionalField> getAllForSample(String sampleId) {
         String sql = "from SampleAdditionalField s where s.sample.id = :sampleId";
-		Query<SampleAdditionalField> query = entityManager.unwrap(Session.class).createQuery(sql,
-				SampleAdditionalField.class);
+        Query<SampleAdditionalField> query = entityManager.unwrap(Session.class).createQuery(sql,
+                SampleAdditionalField.class);
         query.setParameter("sampleId", Integer.parseInt(sampleId));
         List<SampleAdditionalField> list = query.list();
         return list;
@@ -33,8 +33,8 @@ public class SampleAdditionalFieldDAOImpl extends BaseDAOImpl<SampleAdditionalFi
     @Override
     public Optional<SampleAdditionalField> getFieldForSample(AdditionalFieldName fieldName, String sampleId) {
         String sql = "from SampleAdditionalField s where s.sample.id = :sampleId AND s.id.fieldName = :fieldName";
-		Query<SampleAdditionalField> query = entityManager.unwrap(Session.class).createQuery(sql,
-				SampleAdditionalField.class);
+        Query<SampleAdditionalField> query = entityManager.unwrap(Session.class).createQuery(sql,
+                SampleAdditionalField.class);
         query.setParameter("sampleId", Integer.parseInt(sampleId));
         query.setParameter("fieldName", fieldName.name());
         SampleAdditionalField field = query.uniqueResult();

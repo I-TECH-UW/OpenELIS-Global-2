@@ -269,7 +269,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
             }
         }
         form.getSampleOrderItems().setExternalOrderNumber(externalOrderNumber);
-        if(StringUtils.isNotBlank(externalOrderNumber)) {
+        if (StringUtils.isNotBlank(externalOrderNumber)) {
             ElectronicOrder eOrder = electronicOrderService.getElectronicOrdersByExternalId(externalOrderNumber).get(0);
             if (eOrder != null) {
                 form.getSampleOrderItems().setPriority(eOrder.getPriority());

@@ -56,16 +56,16 @@ public class ReferralResultDAOImpl extends BaseDAOImpl<ReferralResult, String> i
     }
 
     @Override
-    
+
     @Transactional(readOnly = true)
     public List<ReferralResult> getReferralResultsForReferral(String referralId) throws LIMSRuntimeException {
         if (!GenericValidator.isBlankOrNull(referralId)) {
             String sql = "from ReferralResult rr where rr.referralId = :referralId order by rr.id";
 
             try {
-				Query<ReferralResult> query = entityManager.unwrap(Session.class).createQuery(sql,
-						ReferralResult.class);
-				query.setParameter("referralId", Integer.parseInt(referralId));
+                Query<ReferralResult> query = entityManager.unwrap(Session.class).createQuery(sql,
+                        ReferralResult.class);
+                query.setParameter("referralId", Integer.parseInt(referralId));
                 List<ReferralResult> resultList = query.list();
                 return resultList;
 
@@ -77,16 +77,15 @@ public class ReferralResultDAOImpl extends BaseDAOImpl<ReferralResult, String> i
         return new ArrayList<>();
     }
 
-
     @Override
-    
+
     @Transactional(readOnly = true)
     public List<ReferralResult> getReferralsByResultId(String resultId) throws LIMSRuntimeException {
         String sql = "From ReferralResult rr where rr.result.id= :resultId";
 
         try {
-			Query<ReferralResult> query = entityManager.unwrap(Session.class).createQuery(sql, ReferralResult.class);
-			query.setParameter("resultId", Integer.parseInt(resultId));
+            Query<ReferralResult> query = entityManager.unwrap(Session.class).createQuery(sql, ReferralResult.class);
+            query.setParameter("resultId", Integer.parseInt(resultId));
             List<ReferralResult> referralResults = query.list();
             return referralResults;
         } catch (HibernateException e) {

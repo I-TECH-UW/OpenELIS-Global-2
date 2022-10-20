@@ -66,7 +66,7 @@ public class SiteInformationDAOImpl extends BaseDAOImpl<SiteInformation, String>
         List<SiteInformation> list;
         try {
             String sql = "from SiteInformation";
-			Query<SiteInformation> query = entityManager.unwrap(Session.class).createQuery(sql, SiteInformation.class);
+            Query<SiteInformation> query = entityManager.unwrap(Session.class).createQuery(sql, SiteInformation.class);
             list = query.list();
         } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
@@ -87,8 +87,8 @@ public class SiteInformationDAOImpl extends BaseDAOImpl<SiteInformation, String>
             int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 
             String sql = "from SiteInformation si where si.domain.name = :domainName order by si.name";
-			Query<SiteInformation> query = entityManager.unwrap(Session.class).createQuery(sql, SiteInformation.class);
-			query.setParameter("domainName", domainName);
+            Query<SiteInformation> query = entityManager.unwrap(Session.class).createQuery(sql, SiteInformation.class);
+            query.setParameter("domainName", domainName);
             query.setFirstResult(startingRecNo - 1);
             query.setMaxResults(endingRecNo - 1);
 
@@ -118,8 +118,8 @@ public class SiteInformationDAOImpl extends BaseDAOImpl<SiteInformation, String>
         String sql = "From SiteInformation si where name = :name";
 
         try {
-			Query<SiteInformation> query = entityManager.unwrap(Session.class).createQuery(sql, SiteInformation.class);
-			query.setParameter("name", siteName);
+            Query<SiteInformation> query = entityManager.unwrap(Session.class).createQuery(sql, SiteInformation.class);
+            query.setParameter("name", siteName);
             SiteInformation information = query.uniqueResult();
             return information;
         } catch (HibernateException e) {
@@ -135,8 +135,8 @@ public class SiteInformationDAOImpl extends BaseDAOImpl<SiteInformation, String>
         String sql = "select count(*) from SiteInformation si where si.domain.name = :domainName";
 
         try {
-			Query<Long> query = entityManager.unwrap(Session.class).createQuery(sql, Long.class);
-			query.setParameter("domainName", domainName);
+            Query<Long> query = entityManager.unwrap(Session.class).createQuery(sql, Long.class);
+            query.setParameter("domainName", domainName);
             Integer count = query.uniqueResult().intValue();
             return count;
         } catch (HibernateException e) {
@@ -164,8 +164,8 @@ public class SiteInformationDAOImpl extends BaseDAOImpl<SiteInformation, String>
     public List<SiteInformation> getSiteInformationByDomainName(String domainName) {
         String sql = "From SiteInformation si where si.domain.name = :domainName";
         try {
-			Query<SiteInformation> query = entityManager.unwrap(Session.class).createQuery(sql, SiteInformation.class);
-			query.setParameter("domainName", domainName);
+            Query<SiteInformation> query = entityManager.unwrap(Session.class).createQuery(sql, SiteInformation.class);
+            query.setParameter("domainName", domainName);
             List<SiteInformation> list = query.list();
             return list;
         } catch (HibernateException e) {

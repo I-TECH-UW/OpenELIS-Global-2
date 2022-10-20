@@ -49,8 +49,8 @@ public class TypeOfTestResultDAOImpl extends BaseDAOImpl<TypeOfTestResult, Strin
             // not case sensitive hemolysis and Hemolysis are considered
             // duplicates
             String sql = "from TypeOfTestResult t where (trim(lower(t.description)) = :param and t.id != :param2) or (trim(lower(t.testResultType)) = :param3 and t.id != :param2)";
-			Query<TypeOfTestResult> query = entityManager.unwrap(Session.class).createQuery(sql,
-					TypeOfTestResult.class);
+            Query<TypeOfTestResult> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    TypeOfTestResult.class);
             query.setParameter("param", typeOfTestResult.getDescription().toLowerCase().trim());
             query.setParameter("param3", typeOfTestResult.getTestResultType().toLowerCase().trim());
 
@@ -78,8 +78,8 @@ public class TypeOfTestResultDAOImpl extends BaseDAOImpl<TypeOfTestResult, Strin
         TypeOfTestResult totr = null;
         try {
             String sql = "from TypeOfTestResult totr where upper(totr.testResultType) = :param";
-			Query<TypeOfTestResult> query = entityManager.unwrap(Session.class).createQuery(sql,
-					TypeOfTestResult.class);
+            Query<TypeOfTestResult> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    TypeOfTestResult.class);
             query.setParameter("param", typeOfTestResult.getTestResultType().trim().toUpperCase());
 
             List<TypeOfTestResult> list = query.list();

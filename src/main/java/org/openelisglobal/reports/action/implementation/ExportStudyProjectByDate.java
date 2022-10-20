@@ -39,7 +39,6 @@ import org.openelisglobal.reports.form.ReportForm;
 import org.openelisglobal.reports.form.ReportForm.DateType;
 import org.openelisglobal.spring.util.SpringContext;
 
-
 /**
  * @author Paul A. Hill (pahill@uw.edu)
  * @since Jan 26, 2011
@@ -64,7 +63,6 @@ public class ExportStudyProjectByDate extends CSVSampleExportReport implements I
         form.setUseExportDateType(Boolean.TRUE);
         form.setProjectCodeList(getProjectList());
     }
-
 
     protected String getReportNameForParameterPage() {
         return MessageUtil.getMessage("reports.label.project.export.dateType");
@@ -135,8 +133,7 @@ public class ExportStudyProjectByDate extends CSVSampleExportReport implements I
     }
 
     @Override
-    protected void writeResultsToBuffer(ByteArrayOutputStream buffer)
-            throws IOException, SQLException, ParseException {
+    protected void writeResultsToBuffer(ByteArrayOutputStream buffer) throws IOException, SQLException, ParseException {
 
         String currentAccessionNumber = null;
         String[] splitBase = null;
@@ -184,9 +181,9 @@ public class ExportStudyProjectByDate extends CSVSampleExportReport implements I
     private CSVColumnBuilder getColumnBuilder(String projectId) {
         String projectTag = CIColumnBuilder.translateProjectId(projectId);
         if (projectTag.equalsIgnoreCase("DBS")) {
-            return new StudyEIDColumnBuilder(dateRange, projectStr,dateType);
+            return new StudyEIDColumnBuilder(dateRange, projectStr, dateType);
         } else if (projectTag.equalsIgnoreCase("VLS")) {
-            return new StudyVLColumnBuilder(dateRange, projectStr,dateType);
+            return new StudyVLColumnBuilder(dateRange, projectStr, dateType);
         }
         throw new IllegalArgumentException();
     }

@@ -68,7 +68,7 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent, String> implements QaEv
         List<QaEvent> list;
         try {
             String sql = "from QaEvent qe order by qe.id";
-			Query<QaEvent> query = entityManager.unwrap(Session.class).createQuery(sql, QaEvent.class);
+            Query<QaEvent> query = entityManager.unwrap(Session.class).createQuery(sql, QaEvent.class);
             list = query.list();
         } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
@@ -87,7 +87,7 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent, String> implements QaEv
             int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 
             String sql = "from QaEvent qe order by qe.qaEventName";
-			Query<QaEvent> query = entityManager.unwrap(Session.class).createQuery(sql, QaEvent.class);
+            Query<QaEvent> query = entityManager.unwrap(Session.class).createQuery(sql, QaEvent.class);
             query.setFirstResult(startingRecNo - 1);
             query.setMaxResults(endingRecNo - 1);
 
@@ -121,7 +121,7 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent, String> implements QaEv
         List<QaEvent> list = new Vector<>();
         try {
             String sql = "from QaEvent qe where upper(qe.qaEventName) like upper(:param) order by upper(qe.qaEventName)";
-			Query<QaEvent> query = entityManager.unwrap(Session.class).createQuery(sql, QaEvent.class);
+            Query<QaEvent> query = entityManager.unwrap(Session.class).createQuery(sql, QaEvent.class);
             query.setParameter("param", filter + "%");
 
             list = query.list();
@@ -139,7 +139,7 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent, String> implements QaEv
     public QaEvent getQaEventByName(QaEvent qaEvent) throws LIMSRuntimeException {
         try {
             String sql = "from QaEvent qe where qe.qaEventName = :param";
-			Query<QaEvent> query = entityManager.unwrap(Session.class).createQuery(sql, QaEvent.class);
+            Query<QaEvent> query = entityManager.unwrap(Session.class).createQuery(sql, QaEvent.class);
             query.setParameter("param", qaEvent.getQaEventName());
 
             List<QaEvent> list = query.list();
@@ -176,7 +176,7 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent, String> implements QaEv
                     + "or "
                     + "(trim(lower(t.description)) = :param4 and trim(lower(t.type)) = :param3 and t.id != :param2)) ";
 
-			Query<QaEvent> query = entityManager.unwrap(Session.class).createQuery(sql, QaEvent.class);
+            Query<QaEvent> query = entityManager.unwrap(Session.class).createQuery(sql, QaEvent.class);
             query.setParameter("param", qaEvent.getQaEventName().toLowerCase().trim());
             query.setParameter("param3", qaEvent.getType());
             query.setParameter("param4", qaEvent.getDescription().toLowerCase().trim());

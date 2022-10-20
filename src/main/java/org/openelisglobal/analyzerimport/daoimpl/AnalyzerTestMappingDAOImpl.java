@@ -45,8 +45,8 @@ public class AnalyzerTestMappingDAOImpl extends BaseDAOImpl<AnalyzerTestMapping,
         List<AnalyzerTestMapping> list;
         try {
             String sql = "from AnalyzerTestMapping a where a.compoundId.analyzerId = :analyzerId";
-			Query<AnalyzerTestMapping> query = entityManager.unwrap(Session.class).createQuery(sql,
-					AnalyzerTestMapping.class);
+            Query<AnalyzerTestMapping> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    AnalyzerTestMapping.class);
             query.setParameter("analyzerId", Integer.parseInt(analyzerId));
             list = query.list();
         } catch (RuntimeException e) {

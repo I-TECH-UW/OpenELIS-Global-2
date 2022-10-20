@@ -47,7 +47,6 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
         super(TestReflex.class);
     }
 
-
     @Override
     @Transactional(readOnly = true)
     public void getData(TestReflex testReflex) throws LIMSRuntimeException {
@@ -71,7 +70,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
         List<TestReflex> list = null;
         try {
             String sql = "from TestReflex t order by t.testAnalyte.analyte.analyteName";
-			Query<TestReflex> query = entityManager.unwrap(Session.class).createQuery(sql, TestReflex.class);
+            Query<TestReflex> query = entityManager.unwrap(Session.class).createQuery(sql, TestReflex.class);
             // query.setMaxResults(10);
             // query.setFirstResult(3);
             list = query.list();
@@ -96,7 +95,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
             // column) for dictionary values - requires further step of getting
             // value from dictionary table before sorting
             String sql = "from TestReflex t order by t.testAnalyte.analyte.analyteName";
-			Query<TestReflex> query = entityManager.unwrap(Session.class).createQuery(sql, TestReflex.class);
+            Query<TestReflex> query = entityManager.unwrap(Session.class).createQuery(sql, TestReflex.class);
             query.setFirstResult(startingRecNo - 1);
             query.setMaxResults(endingRecNo - 1);
 
@@ -123,8 +122,8 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
     public List<TestReflex> getTestReflexesByTestResult(TestResult testResult) throws LIMSRuntimeException {
         try {
             String sql = "from TestReflex t where t.testResult.id = :testResultId";
-			Query<TestReflex> query = entityManager.unwrap(Session.class).createQuery(sql, TestReflex.class);
-			query.setParameter("testResultId", Integer.parseInt(testResult.getId()));
+            Query<TestReflex> query = entityManager.unwrap(Session.class).createQuery(sql, TestReflex.class);
+            query.setParameter("testResultId", Integer.parseInt(testResult.getId()));
 
             List<TestReflex> list = query.list();
 
@@ -152,7 +151,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
         try {
             // bugzilla 1404 testResultId is mapped as testResult.id now
             String sql = "from TestReflex t where t.testResult.id = :param and t.testAnalyte.id = :param2";
-			Query<TestReflex> query = entityManager.unwrap(Session.class).createQuery(sql, TestReflex.class);
+            Query<TestReflex> query = entityManager.unwrap(Session.class).createQuery(sql, TestReflex.class);
             query.setParameter("param", testResult.getId());
             query.setParameter("param2", testAnalyte.getId());
 
@@ -183,7 +182,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
 
             if (analysis.getParentAnalysis() != null && analysis.getParentResult() != null) {
                 String sql = "from TestReflex t where t.testResult.id = :param and t.testAnalyte.analyte.id = :param2 and t.test.id = :param3 and t.addedTest.id = :param4";
-				Query<TestReflex> query = entityManager.unwrap(Session.class).createQuery(sql, TestReflex.class);
+                Query<TestReflex> query = entityManager.unwrap(Session.class).createQuery(sql, TestReflex.class);
                 query.setParameter("param", analysis.getParentResult().getTestResult().getId());
                 query.setParameter("param2", analysis.getParentResult().getAnalyte().getId());
                 query.setParameter("param3", analysis.getParentAnalysis().getTest().getId());
@@ -212,10 +211,10 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
                 List<TestReflex> list = null;
 
                 String sql = "from TestReflex t where t.testResult.id = :testResultId and t.testAnalyte.analyte.id = :analyteId and t.test.id = :testId";
-				Query<TestReflex> query = entityManager.unwrap(Session.class).createQuery(sql, TestReflex.class);
-				query.setParameter("testResultId", Integer.parseInt(testResultId));
-				query.setParameter("analyteId", Integer.parseInt(analyteId));
-				query.setParameter("testId", Integer.parseInt(testId));
+                Query<TestReflex> query = entityManager.unwrap(Session.class).createQuery(sql, TestReflex.class);
+                query.setParameter("testResultId", Integer.parseInt(testResultId));
+                query.setParameter("analyteId", Integer.parseInt(analyteId));
+                query.setParameter("testId", Integer.parseInt(testId));
 
                 list = query.list();
 
@@ -254,7 +253,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
     public boolean duplicateTestReflexExists(TestReflex testReflex) throws LIMSRuntimeException {
         try {
 
-			List<TestReflex> list = new ArrayList<>();
+            List<TestReflex> list = new ArrayList<>();
 
             // not case sensitive hemolysis and Hemolysis are considered
             // duplicates
@@ -262,20 +261,20 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
                     + "trim(lower(t.testAnalyte.analyte.analyteName)) = :analyteName and "
                     + "t.testResult.id = :resultId and " + "t.addedTest.localizedTestName = :addedTestNameId or "
                     + "trim(lower(t.actionScriptlet.scriptletName)) = :scriptletName  ) and " + " t.id != :testId";
-			Query<TestReflex> query = entityManager.unwrap(Session.class).createQuery(sql, TestReflex.class);
-			query.setParameter("localizedTestName",
+            Query<TestReflex> query = entityManager.unwrap(Session.class).createQuery(sql, TestReflex.class);
+            query.setParameter("localizedTestName",
                     Integer.parseInt(testReflex.getTest().getLocalizedTestName().getId()));
-			query.setParameter("analyteName",
+            query.setParameter("analyteName",
                     testReflex.getTestAnalyte().getAnalyte().getAnalyteName().toLowerCase().trim());
-			query.setParameter("resultId", Integer.parseInt(testReflex.getTestResult().getId()));
-			query.setParameter("addedTestNameId", testReflex.getAddedTest() == null ? -1
+            query.setParameter("resultId", Integer.parseInt(testReflex.getTestResult().getId()));
+            query.setParameter("addedTestNameId", testReflex.getAddedTest() == null ? -1
                     : Integer.parseInt(testReflex.getAddedTest().getLocalizedTestName().getId()));
-			query.setParameter("scriptletName", testReflex.getActionScriptlet() == null ? null
+            query.setParameter("scriptletName", testReflex.getActionScriptlet() == null ? null
                     : testReflex.getActionScriptlet().getScriptletName().toLowerCase().trim());
 
             String testReflexId = StringUtil.isNullorNill(testReflex.getId()) ? "0" : testReflex.getId();
 
-			query.setParameter("testId", Integer.parseInt(testReflexId));
+            query.setParameter("testId", Integer.parseInt(testReflexId));
 
             list = query.list();
 
@@ -302,16 +301,16 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
         List<TestReflex> reflexList = null;
 
         try {
-			Query<TestReflex> query;
+            Query<TestReflex> query;
             if (GenericValidator.isBlankOrNull(flag)) {
                 String sql = "from TestReflex tr where tr.testResult.test.id = :id";
-				query = entityManager.unwrap(Session.class).createQuery(sql, TestReflex.class);
-				query.setParameter("id", Integer.parseInt(testId));
+                query = entityManager.unwrap(Session.class).createQuery(sql, TestReflex.class);
+                query.setParameter("id", Integer.parseInt(testId));
             } else {
                 String sql = "from TestReflex tr where tr.testResult.test.id = :id and tr.flags = :flag";
-				query = entityManager.unwrap(Session.class).createQuery(sql, TestReflex.class);
-				query.setParameter("id", Integer.parseInt(testId));
-				query.setParameter("flag", flag);
+                query = entityManager.unwrap(Session.class).createQuery(sql, TestReflex.class);
+                query.setParameter("id", Integer.parseInt(testId));
+                query.setParameter("flag", flag);
             }
             reflexList = query.list();
 
@@ -332,9 +331,9 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
 
         try {
             String sql = "from TestReflex t where t.testResult.id = :testResultId and t.flags = :flag";
-			Query<TestReflex> query = entityManager.unwrap(Session.class).createQuery(sql, TestReflex.class);
-			query.setParameter("testResultId", Integer.parseInt(testResult.getId()));
-			query.setParameter("flag", flag);
+            Query<TestReflex> query = entityManager.unwrap(Session.class).createQuery(sql, TestReflex.class);
+            query.setParameter("testResultId", Integer.parseInt(testResult.getId()));
+            query.setParameter("flag", flag);
             List<TestReflex> list = query.list();
             return list;
         } catch (RuntimeException e) {

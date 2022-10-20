@@ -130,7 +130,9 @@ public abstract class PatientVLReport extends RetroCIPatientReport {
                 }
 
             }
-            if (mayBeDuplicate && SpringContext.getBean(IStatusService.class).matches(analysis.getStatusId(), AnalysisStatus.Finalized)
+            if (mayBeDuplicate
+                    && SpringContext.getBean(IStatusService.class).matches(analysis.getStatusId(),
+                            AnalysisStatus.Finalized)
                     && lastReport != null && lastReport.before(analysis.getLastupdated())) {
                 mayBeDuplicate = false;
             }
@@ -147,7 +149,7 @@ public abstract class PatientVLReport extends RetroCIPatientReport {
 
     protected void setPatientInfo(VLReportData data) {
 
-    	data.setVlPregnancy( MessageUtil.getMessage("answer.no"));
+        data.setVlPregnancy(MessageUtil.getMessage("answer.no"));
         data.setSubjectno(reportPatient.getNationalId());
         data.setSitesubjectno(reportPatient.getExternalId());
         data.setBirth_date(reportPatient.getBirthDateForDisplay());
@@ -157,7 +159,8 @@ public abstract class PatientVLReport extends RetroCIPatientReport {
         SampleOrganization sampleOrg = new SampleOrganization();
         sampleOrg.setSample(reportSample);
         orgService.getDataBySample(sampleOrg);
-        data.setServicename(sampleOrg.getId() == null ? "" : oService.get(sampleOrg.getOrganization().getId()).getOrganizationName());
+        data.setServicename(sampleOrg.getId() == null ? ""
+                : oService.get(sampleOrg.getOrganization().getId()).getOrganizationName());
         data.setDoctor(getObservationValues(OBSERVATION_DOCTOR_ID));
         data.setAccession_number(reportSample.getAccessionNumber());
         data.setReceptiondate(DateUtil.convertTimestampToStringDateAndTime(reportSample.getReceivedTimestamp()));

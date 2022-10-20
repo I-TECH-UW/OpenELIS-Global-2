@@ -70,7 +70,7 @@ public class TestResultDAOImpl extends BaseDAOImpl<TestResult, String> implement
         List<TestResult> list;
         try {
             String sql = "from TestResult";
-			Query<TestResult> query = entityManager.unwrap(Session.class).createQuery(sql, TestResult.class);
+            Query<TestResult> query = entityManager.unwrap(Session.class).createQuery(sql, TestResult.class);
             list = query.list();
         } catch (RuntimeException e) {
             // bugzilla 2154
@@ -89,7 +89,7 @@ public class TestResultDAOImpl extends BaseDAOImpl<TestResult, String> implement
             // calculate maxRow to be one more than the page size
             int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
             String sql = "from TestResult t order by t.test.description";
-			Query<TestResult> query = entityManager.unwrap(Session.class).createQuery(sql, TestResult.class);
+            Query<TestResult> query = entityManager.unwrap(Session.class).createQuery(sql, TestResult.class);
             query.setFirstResult(startingRecNo - 1);
             query.setMaxResults(endingRecNo - 1);
 
@@ -140,10 +140,10 @@ public class TestResultDAOImpl extends BaseDAOImpl<TestResult, String> implement
             if (testAnalyte.getId() != null && testAnalyte.getResultGroup() != null) {
                 // bugzilla 1845 added testResult sortOrder
                 String sql = "from TestResult t where t.test = :testId and t.resultGroup = :resultGroup order by t.sortOrder";
-				Query<TestResult> query = entityManager.unwrap(Session.class).createQuery(sql, TestResult.class);
+                Query<TestResult> query = entityManager.unwrap(Session.class).createQuery(sql, TestResult.class);
 
-				query.setParameter("testId", Integer.parseInt(testAnalyte.getTest().getId()));
-				query.setParameter("resultGroup", Integer.parseInt(testAnalyte.getResultGroup()));
+                query.setParameter("testId", Integer.parseInt(testAnalyte.getTest().getId()));
+                query.setParameter("resultGroup", Integer.parseInt(testAnalyte.getResultGroup()));
 
                 list = query.list();
             }
@@ -168,8 +168,8 @@ public class TestResultDAOImpl extends BaseDAOImpl<TestResult, String> implement
         List<TestResult> list;
         try {
             String sql = "from TestResult t where t.test = :testId and t.isActive = true order by t.resultGroup, t.id asc";
-			Query<TestResult> query = entityManager.unwrap(Session.class).createQuery(sql, TestResult.class);
-			query.setParameter("testId", Integer.parseInt(test.getId()));
+            Query<TestResult> query = entityManager.unwrap(Session.class).createQuery(sql, TestResult.class);
+            query.setParameter("testId", Integer.parseInt(test.getId()));
 
             list = query.list();
         } catch (RuntimeException e) {
@@ -188,9 +188,9 @@ public class TestResultDAOImpl extends BaseDAOImpl<TestResult, String> implement
             List<TestResult> list;
             try {
                 String sql = "from TestResult t where  t.testResultType in ('D','M','Q') and t.test = :testId and t.value = :testValue";
-				Query<TestResult> query = entityManager.unwrap(Session.class).createQuery(sql, TestResult.class);
-				query.setParameter("testId", Integer.parseInt(testId));
-				query.setParameter("testValue", result);
+                Query<TestResult> query = entityManager.unwrap(Session.class).createQuery(sql, TestResult.class);
+                query.setParameter("testId", Integer.parseInt(testId));
+                query.setParameter("testValue", result);
 
                 list = query.list();
 
@@ -215,8 +215,8 @@ public class TestResultDAOImpl extends BaseDAOImpl<TestResult, String> implement
         List<TestResult> list;
         try {
             String sql = "from TestResult t where  t.test = :testId and t.isActive = true";
-			Query<TestResult> query = entityManager.unwrap(Session.class).createQuery(sql, TestResult.class);
-			query.setParameter("testId", Integer.parseInt(testId));
+            Query<TestResult> query = entityManager.unwrap(Session.class).createQuery(sql, TestResult.class);
+            query.setParameter("testId", Integer.parseInt(testId));
 
             list = query.list();
 

@@ -66,11 +66,11 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
 
     @Override
     @Transactional
-	@Async
+    @Async
     @Scheduled(initialDelay = 1000, fixedRateString = "${facilitylist.schedule.fixedRate}")
     public void importOrganizationList() throws FhirGeneralException, IOException {
         if (!GenericValidator.isBlankOrNull(facilityFhirStore)) {
-            IGenericClient client ;
+            IGenericClient client;
             if (facilityAuth.equals("token")) {
                 String token = fhirUtil.getAccessToken(facilityAuthUrl, facilityUserName, facilityPassword);
                 client = fhirUtil.getFhirClient(facilityFhirStore, token);
@@ -166,34 +166,33 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
 
         for (OrganizationObjects organizationObjects : organizationObjectsByOrgUUID.values()) {
             try {
-            Organization curOrganization = organizationObjects.organization;
-            // ensure the parent org is in the db
-            if (!GenericValidator.isBlankOrNull(organizationObjects.parentUUID)) {
-                Organization dbParentOrg;
-                if (dbOrgsByUUID.containsKey(organizationObjects.parentUUID)) {
-                    dbParentOrg = dbOrgsByUUID.get(organizationObjects.parentUUID);
-                } else {
-                    dbParentOrg = insertOrUpdateOrganization(
-                            organizationObjectsByOrgUUID.get(organizationObjects.parentUUID).organization);
-                    dbOrgsByUUID.put(organizationObjects.parentUUID, dbParentOrg);
+                Organization curOrganization = organizationObjects.organization;
+                // ensure the parent org is in the db
+                if (!GenericValidator.isBlankOrNull(organizationObjects.parentUUID)) {
+                    Organization dbParentOrg;
+                    if (dbOrgsByUUID.containsKey(organizationObjects.parentUUID)) {
+                        dbParentOrg = dbOrgsByUUID.get(organizationObjects.parentUUID);
+                    } else {
+                        dbParentOrg = insertOrUpdateOrganization(
+                                organizationObjectsByOrgUUID.get(organizationObjects.parentUUID).organization);
+                        dbOrgsByUUID.put(organizationObjects.parentUUID, dbParentOrg);
+                    }
+                    // set the parent org to the db parent org
+                    curOrganization.setOrganization(dbParentOrg);
                 }
-                // set the parent org to the db parent org
-                curOrganization.setOrganization(dbParentOrg);
-            }
 
-            // save this org with all it's db pointers set
-            Organization dbOrg = insertOrUpdateOrganization(curOrganization);
-            dbOrgsByUUID.put(dbOrg.getFhirUuidAsString(), dbOrg);
-            for (String orgTypeName : organizationObjects.organizationTypeNames) {
-                OrganizationType orgType = dbOrgTypesByName.get(orgTypeName);
-                dbOrg.getOrganizationTypes().add(orgType);
-                orgType.getOrganizations().add(dbOrg);
-            }
+                // save this org with all it's db pointers set
+                Organization dbOrg = insertOrUpdateOrganization(curOrganization);
+                dbOrgsByUUID.put(dbOrg.getFhirUuidAsString(), dbOrg);
+                for (String orgTypeName : organizationObjects.organizationTypeNames) {
+                    OrganizationType orgType = dbOrgTypesByName.get(orgTypeName);
+                    dbOrg.getOrganizationTypes().add(orgType);
+                    orgType.getOrganizations().add(dbOrg);
+                }
             } catch (LIMSRuntimeException e) {
                 LogEvent.logError(e);
-                LogEvent.logError(this.getClass().getName(), "",
-                        "error importing an organization with id: "
-                                + organizationObjects.organization.getFhirUuidAsString());
+                LogEvent.logError(this.getClass().getName(), "", "error importing an organization with id: "
+                        + organizationObjects.organization.getFhirUuidAsString());
             }
 
         }

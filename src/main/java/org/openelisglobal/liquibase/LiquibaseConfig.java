@@ -14,8 +14,8 @@ public class LiquibaseConfig {
 
     @Autowired
     private DataSource dataSource;
-    
-	@Value("${spring.liquibase.contexts:default}")
+
+    @Value("${spring.liquibase.contexts:default}")
     private String contexts;
 
     @Bean("liquibase")
