@@ -60,7 +60,7 @@ public class UserRoleServiceImpl extends BaseObjectServiceImpl<UserRole, UserRol
 
     @Override
     public UserLabUnitRoles getUserLabUnitRoles(String userId) {
-        return userLabUnitRolesDAO.get(Integer.parseInt(userId)).get();
+        return userLabUnitRolesDAO.get(Integer.parseInt(userId)).orElseGet(null);
     }
 
     @Override
