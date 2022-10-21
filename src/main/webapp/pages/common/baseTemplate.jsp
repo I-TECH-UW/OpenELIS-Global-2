@@ -173,7 +173,7 @@ if (document.layers) {
 		<c:out value="${title}" />
 </title>
 <jsp:include page="${bannerFragment}"/>
-<jsp:include page="${loginFragment}"/>
+<jsp:include page="${loginHeaderFragment}"/>
 </head>
 
 <%-- check_width()--%>

@@ -21,7 +21,7 @@
 		template="/pages/common/formTemplate.jsp">
 		<put-attribute name="bannerFragment"
 			value="/pages/common/banner.jsp" />
-		<put-attribute name="loginFragment"
+		<put-attribute name="loginHeaderFragment"
 			value="/pages/common/loginHeader.jsp" />
 		<put-attribute name="errorFragment"
 			value="/pages/common/actionError.jsp" />
@@ -39,7 +39,7 @@
 		template="/pages/common/baseTemplate.jsp">
 		<put-attribute name="bannerFragment"
 			value="/pages/common/banner.jsp" />
-		<put-attribute name="loginFragment"
+		<put-attribute name="loginHeaderFragment"
 			value="/pages/common/loginHeader.jsp" />
 		<put-attribute name="errorFragment"
 			value="/pages/common/actionError.jsp" />
@@ -69,7 +69,7 @@
 		template="/pages/common/menuTemplate.jsp">
 		<put-attribute name="bannerFragment"
 			value="/pages/common/banner.jsp" />
-		<put-attribute name="loginFragment"
+		<put-attribute name="loginHeaderFragment"
 			value="/pages/common/loginHeader.jsp" />
 		<put-attribute name="errorFragment"
 			value="/pages/common/actionError.jsp" />

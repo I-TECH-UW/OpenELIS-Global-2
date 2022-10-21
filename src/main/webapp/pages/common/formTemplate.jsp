@@ -214,7 +214,7 @@ if (document.layers) {
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td>				
 				<jsp:include page="${headerFragment}"/>
 			</td>
 		</tr>

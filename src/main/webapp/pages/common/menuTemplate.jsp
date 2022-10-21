@@ -210,7 +210,7 @@ function setMenuAction(button, form, action, validate, parameters) {
 		<c:out value="${title}"/>
 	</title>
 <jsp:include page="${bannerFragment}"/>
-<jsp:include page="${loginFragment}"/>
+<jsp:include page="${loginHeaderFragment}"/>
 </head>
 
 
