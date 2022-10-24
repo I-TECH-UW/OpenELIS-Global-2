@@ -38,7 +38,10 @@ class SecureRoute extends React.Component {
                     })
                     if (hasRole) {
                         console.info("Acess Allowed");
-                    } else {
+                    } else if(this.props.role == "null"){
+                        console.info("Acess Allowed");
+                    }
+                    else {
                         const options = {
                             title: 'Access Denied',
                             message: 'You do not have access to this module ,please contact your system administrator',

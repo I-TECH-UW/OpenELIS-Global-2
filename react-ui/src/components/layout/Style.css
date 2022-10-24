@@ -3,6 +3,15 @@
   width: auto;
 }
 
+.headerPanel {
+  height: max-content;
+}
+
+.logo2 {
+  height: 40px;
+  width: auto;
+}
+
 element.style {
   display: block;
 }
@@ -78,10 +87,17 @@ div {
 }
 
 
-.logoutDiv{
+.userDiv{
   /* float: right ; */
-  text-align: right
+  text-align: Left
 }
+
+.userDetails{
+  /* float: right ; */
+  padding: 2px;
+  margin: 10px;
+}
+
 
 .logout-button{
   margin-right: 15px;

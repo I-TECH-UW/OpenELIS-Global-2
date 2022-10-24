@@ -2,13 +2,14 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Switch, Redirectx } from "react-router-dom";
 import { IntlProvider } from 'react-intl';
 import Layout from './components/layout/Layout';
-import OpenElis from './components/OpenElis';
-import {Admin} from './components';
+import Home from './components/Home';
+import { Admin } from './components';
 import './App.css';
 import messages_en from './languages/en.json';
 import messages_fr from './languages/fr.json';
 import config from './config.json';
 import { SecureRoute } from "./components/security";
+import './index.scss';
 
 let i18nConfig = {
   locale: navigator.language.split(/[-_]/)[0],
@@ -22,7 +23,7 @@ class App extends React.Component {
     super(props);
     this.state = {
       authenticated: false,
-      user : {},
+      user: {},
       config: config
     }
     i18nConfig.locale = localStorage.getItem('locale') || navigator.language.split(/[-_]/)[0];
@@ -59,9 +60,7 @@ class App extends React.Component {
     localStorage.setItem('locale', lang);
   }
 
-  onChangeLanguage = (e) => {
-    e.preventDefault();
-    let lang = e.target.lang;
+  onChangeLanguage = (lang) => {
     this.changeLanguage(lang);
   }
 
@@ -77,8 +76,8 @@ class App extends React.Component {
           <Router>
             <Layout config={this.state.config} onChangeLanguage={this.onChangeLanguage} logout={this.logout} isLoggedIn={this.isLoggedIn} user={this.state.user}>
               <Switch>
-                <Route path="/" exact component={OpenElis} />
-                <SecureRoute path="/admin" exact component={() => <Admin/>} role="Audit Trail" config={this.state.config} onAuth={this.onAuth} logout={this.logout} isLoggedIn={this.isLoggedIn}/>
+                <SecureRoute path="/" exact component={() => <Home />} role="null" config={this.state.config} onAuth={this.onAuth} logout={this.logout} isLoggedIn={this.isLoggedIn} />
+                <SecureRoute path="/admin" exact component={() => <Admin />} role="Global Administrator" config={this.state.config} onAuth={this.onAuth} logout={this.logout} isLoggedIn={this.isLoggedIn} />
               </Switch>
             </Layout>
           </Router>

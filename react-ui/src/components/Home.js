@@ -1,7 +1,8 @@
 import React from 'react'
 import { FormattedMessage, injectIntl } from 'react-intl'
+import { Button } from '@carbon/react';
 
-class OpenElis extends React.Component {
+class Home extends React.Component {
 
     constructor(props) {
 		super(props)
@@ -10,10 +11,10 @@ class OpenElis extends React.Component {
 	}
     render() {
         return(
-            <b> <FormattedMessage id="language.select.label" /></b>
+            <b><FormattedMessage id="language.select.label"/></b>
         );
 
     }
 }
 
-export default injectIntl(OpenElis)
+export default injectIntl(Home)
