@@ -26,7 +26,7 @@ class SecureRoute extends React.Component {
             { credentials: "include" }
         )
             .then((response) => response.json()).then(jsonResp => {
-                console.log(JSON.stringify(jsonResp)) // access json.body here
+                console.log(JSON.stringify(jsonResp)) 
                 if (jsonResp.authenticated) {
                     console.info("Authenticated");
                     console.log(JSON.stringify(jsonResp))
@@ -38,7 +38,7 @@ class SecureRoute extends React.Component {
                     })
                     if (hasRole) {
                         console.info("Acess Allowed");
-                    } else if(this.props.role == "null"){
+                    } else if (this.props.role == "null") {
                         console.info("Acess Allowed");
                     }
                     else {
@@ -47,7 +47,7 @@ class SecureRoute extends React.Component {
                             message: 'You do not have access to this module ,please contact your system administrator',
                             buttons: [
                                 {
-                                    label: 'Yes',
+                                    label: 'OK',
                                     onClick: () => {
                                         window.location.href = window.location.origin
                                     }
@@ -61,7 +61,25 @@ class SecureRoute extends React.Component {
                 } else {
                     window.location.href = this.props.config.loginRedirect;
                 }
-            }).catch(error => console.log(error));
+            }).catch(error => {
+                console.log(error);
+                const options = {
+                    title: 'System Error',
+                    message: "Error : " + error.message,
+                    buttons: [
+                        {
+                            label: 'OK',
+                            onClick: () => {
+                                window.location.href = window.location.origin
+                            }
+                        }
+                    ],
+                    closeOnClickOutside: false,
+                    closeOnEscape: false
+                }
+                confirmAlert(options)
+            }
+            );
     }
 
     handleOnAction = (event) => {
