@@ -1,0 +1,26 @@
+.logo {
+  height: 40px;
+  width: auto;
+}
+
+.headerPanel {
+  height: max-content;
+}
+
+div {
+  display: block;
+}
+
+.userDetails{
+  padding: 1%;
+  margin: 4%;
+}
+
+.adminPageContent {
+  margin-left: 20%;
+}
+
+.inputText {
+  color: red;
+}
+

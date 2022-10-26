@@ -49,7 +49,7 @@ class SecureRoute extends React.Component {
                                 {
                                     label: 'OK',
                                     onClick: () => {
-                                        window.location.href = window.location.origin
+                                       window.location.href = window.location.origin
                                     }
                                 }
                             ],
@@ -70,7 +70,7 @@ class SecureRoute extends React.Component {
                         {
                             label: 'OK',
                             onClick: () => {
-                                window.location.href = window.location.origin
+                               window.location.href = window.location.origin
                             }
                         }
                     ],

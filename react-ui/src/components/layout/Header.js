@@ -1,7 +1,7 @@
 import React from "react"
 import { FormattedMessage, injectIntl } from 'react-intl'
 import { withRouter } from "react-router-dom"
-import './Style.css'
+import '../Style.css'
 import { faLanguage, faSignOutAlt } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { Button, Select, SelectItem } from '@carbon/react';
@@ -39,7 +39,7 @@ class OEHeader extends React.Component {
   logo = () => {
     return (<>
       <picture>
-        <img className="logo2" src={`images/openelis_logo.png`} alt="logo" />
+        <img className="logo" src={`images/openelis_logo.png`} alt="logo" />
       </picture>
     </>
     )
@@ -90,11 +90,7 @@ class OEHeader extends React.Component {
                   <HeaderMenuItem href="#">Sub-link 2</HeaderMenuItem>
                   <HeaderMenuItem href="#">Sub-link 3</HeaderMenuItem>
                 </HeaderMenu>
-                <HeaderMenu aria-label="Admin" menuLinkName="Admin">
-                  <HeaderMenuItem href="#">Sub-link 1</HeaderMenuItem>
-                  <HeaderMenuItem href="#">Sub-link 2</HeaderMenuItem>
-                  <HeaderMenuItem href="#">Sub-link 3</HeaderMenuItem>
-                </HeaderMenu>
+                <HeaderMenuItem href="/admin">Admin</HeaderMenuItem>
               </HeaderNavigation>
               <HeaderGlobalBar>
                 <HeaderGlobalAction aria-label="Search" onClick={() => { }}>
