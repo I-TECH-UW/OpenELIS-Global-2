@@ -3,6 +3,7 @@ import { FormattedMessage, injectIntl } from 'react-intl'
 import './Style.css'
 import ReflectTests from './AdminPageComponents/ReflectTests';
 import { BrowserRouter as Router, Route, Switch, useMatch } from "react-router-dom";
+import PathRoute from "./utils/PathRoute"
 import {
     SideNav,
     SideNavItems,
@@ -16,13 +17,6 @@ class Admin extends React.Component {
         super(props)
         this.state = {
         }
-    }
-
-    switchComponent(id) {
-        if (window.location.href.endsWith(id)) {
-            return true
-        }
-        return false;
     }
 
     render() {
@@ -51,9 +45,9 @@ class Admin extends React.Component {
                     </SideNavItems>
                 </SideNav>
 
-                {this.switchComponent("#reflex") &&
+                <PathRoute path="#reflex">
                     <ReflectTests />
-                }
+                </PathRoute>
             </>
 
         );

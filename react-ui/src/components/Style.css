@@ -18,9 +18,11 @@ div {
 
 .adminPageContent {
   margin-left: 20%;
+  margin-right: 5%;
 }
 
 .inputText {
-  color: red;
+  --cds-text-primary:  black; 
+  width: 40%;
 }
 
