@@ -5,7 +5,6 @@ import '../Style.css'
 import { faLanguage, faSignOutAlt } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { Button, Select, SelectItem } from '@carbon/react';
-import { Add } from '@carbon/react/icons';
 import { Search, Notification, Switcher, User, Language, UserAvatarFilledAlt, Fade, Menu, Logout } from "@carbon/icons-react";
 import {
   Header,
