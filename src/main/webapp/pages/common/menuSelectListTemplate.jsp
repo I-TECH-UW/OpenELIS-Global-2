@@ -17,22 +17,22 @@
 			</tr>
 			<tr valign="top">
 				<td>
-					<jsp:include page="${preSelectionHeaderFragment}"/>
+					<jsp:include page="${preSelectionHeaderMenuFragment}"/>
 				</td>
 			</tr>
 			<tr valign="top">
 				<td>
-					<jsp:include page="${headerFragment}"/>
+					<jsp:include page="${headerMenuFragment}"/>
 				</td>
 			</tr>
 			<tr valign="top">
 				<td>
-					<jsp:include page="${bodyFragment}"/>
+					<jsp:include page="${bodyMenuFragment}"/>
 				</td>
 			</tr>
 			<tr valign="bottom">
 				<td>
-					<jsp:include page="${footerFragment}"/>
+					<jsp:include page="${footerMenuFragment}"/>
 				</td>
 			</tr>
 

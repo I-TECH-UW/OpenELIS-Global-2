@@ -16,7 +16,9 @@ import org.openelisglobal.common.controller.BaseMenuController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.form.AdminOptionMenuForm;
 import org.openelisglobal.common.services.DisplayListService;
+import org.openelisglobal.common.services.DisplayListService.ListType;
 import org.openelisglobal.common.util.DateUtil;
+import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.common.validator.BaseErrors;
 import org.openelisglobal.login.service.LoginUserService;
@@ -24,15 +26,13 @@ import org.openelisglobal.login.valueholder.LoginUser;
 import org.openelisglobal.systemuser.form.UnifiedSystemUserMenuForm;
 import org.openelisglobal.systemuser.service.SystemUserService;
 import org.openelisglobal.systemuser.service.UnifiedSystemUserService;
+import org.openelisglobal.systemuser.service.UserService;
 import org.openelisglobal.systemuser.valueholder.SystemUser;
 import org.openelisglobal.systemuser.valueholder.UnifiedSystemUser;
 import org.openelisglobal.userrole.service.UserRoleService;
 import org.openelisglobal.userrole.valueholder.LabUnitRoleMap;
 import org.openelisglobal.userrole.valueholder.UserLabUnitRoles;
 import org.openelisglobal.userrole.valueholder.UserRole;
-import org.openelisglobal.common.services.DisplayListService.ListType;
-import org.openelisglobal.common.util.IdValuePair;
-import org.openelisglobal.systemuser.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -313,7 +313,7 @@ public class UnifiedSystemUserMenuController extends BaseMenuController<UnifiedS
     @Override
     protected String findLocalForward(String forward) {
         if (FWD_SUCCESS.equals(forward)) {
-            return "haitiMasterListsPageDefinition";
+            return "userMasterListsPageDefinition";
         } else if (FWD_FAIL.equals(forward)) {
             return "redirect:/MasterListsPage";
         } else if (FWD_SUCCESS_DELETE.equals(forward)) {

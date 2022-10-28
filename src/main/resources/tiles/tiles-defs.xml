@@ -55,13 +55,13 @@
 
 	<definition name="baseMenuSelectListDefinition"
 		template="/pages/common/menuSelectListTemplate.jsp">
-		<put-attribute name="preSelectionHeaderFragment"
+		<put-attribute name="preSelectionHeaderMenuFragment"
 			value="/pages/common/emptyPlaceHolder.jsp" />
-		<put-attribute name="headerFragment"
+		<put-attribute name="headerMenuFragment"
 			value="/pages/common/menuSelectListHeaderButtons.jsp" />
-		<put-attribute name="bodyFragment"
+		<put-attribute name="bodyMenuFragment"
 			value="/pages/common/emptyPlaceHolder.jsp" />
-		<put-attribute name="footerFragment"
+		<put-attribute name="footerMenuFragment"
 			value="/pages/common/menuSelectListFooterButtons.jsp" />
 	</definition>
 
@@ -130,27 +130,27 @@
 
 	<definition name="masterListsPageRightDefinition"
 		template="/pages/menu/masterListsTab/masterListsPageRight.jsp">
-		<put-attribute name="rightDictionaryFragment"
-			value="dictionaryMenuDefinition" />
-		<put-attribute name="rightOrganizationFragment"
-			value="organizationMenuDefinition" />
-		<put-attribute name="rightProviderFragment"
-			value="providerMenuDefinition" />
+<!-- 		<put-attribute name="rightDictionaryFragment" -->
+<!-- 			value="dictionaryMenuDefinition" /> -->
+<!-- 		<put-attribute name="rightOrganizationFragment" -->
+<!-- 			value="organizationMenuDefinition" /> -->
+<!-- 		<put-attribute name="rightProviderFragment" -->
+<!-- 			value="providerMenuDefinition" /> -->
 		<put-attribute name="rightTestSectionFragment"
 			value="testSectionMenuDefinition" />
-		<put-attribute name="rightExternalConnectionFragment"
-			value="externalConnectionMenuDefinition" />
+<!-- 		<put-attribute name="rightExternalConnectionFragment" -->
+<!-- 			value="externalConnectionMenuDefinition" /> -->
 		<put-attribute name="rightTypeOfSamplePanelFragment"
 			value="/pages/common/emptyPlaceHolder.jsp" />
 		<put-attribute name="rightTypeOfSampleTestFragment"
 			value="/pages/common/emptyPlaceHolder.jsp" />
-		<put-attribute name="rightFragment"
+		<put-attribute name="rightDefaultFragment"
 			value="/pages/menu/masterListsTab/masterListsPageRightDefault.jsp" />
 	</definition>
 
 	<definition name="dictionaryMenuDefinition"
 		extends="baseMenuSelectListDefinition">
-		<put-attribute name="bodyFragment"
+		<put-attribute name="bodyMenuFragment"
 			value="/pages/dictionary/dictionaryMenu.jsp" />
 	</definition>
 
@@ -171,7 +171,7 @@
 
 	<definition name="organizationMenuDefinition"
 		extends="baseMenuSelectListDefinition">
-		<put-attribute name="bodyFragment"
+		<put-attribute name="bodyMenuFragment"
 			value="/pages/organization/organizationMenu.jsp" />
 	</definition>
 
@@ -192,14 +192,14 @@
 
 	<definition name="providerMenuDefinition"
 		extends="baseMenuSelectListDefinition">
-		<put-attribute name="bodyFragment"
+		<put-attribute name="bodyMenuFragment"
 			value="/pages/provider/providerMenu.jsp" />
 	</definition>
 
 
 	<definition name="testSectionMenuDefinition"
 		extends="baseMenuSelectListDefinition">
-		<put-attribute name="bodyFragment"
+		<put-attribute name="bodyMenuFragment"
 			value="/pages/test/testSectionMenu.jsp" />
 	</definition>
 
@@ -227,7 +227,7 @@
 	
 	<definition name="externalConnectionMenuDefinition"
 		extends="baseMenuSelectListDefinition">
-		<put-attribute name="bodyFragment"
+		<put-attribute name="bodyMenuFragment"
 			value="/pages/externalconnections/externalConnectionMenu.jsp" />
 	</definition>
 	
@@ -832,18 +832,186 @@
 			value="/pages/patient/patientEnhancedSearch.jsp" />
 	</definition>
 	
-	<!-- MasterPageLists -->
-	<definition name="haitiMasterListsPageDefinition"
+	<definition name="userMasterListsPageDefinition"
 		extends="masterListsPageDefinition">
 		<put-attribute name="bodyFragment"
-			value="haitiMasterListsPageBodyDefinition" />
+			value="userMasterListsPageBodyDefinition" />
 	</definition>
 
-	<definition name="haitiMasterListsPageBodyDefinition"
+	<definition name="userMasterListsPageBodyDefinition"
 		extends="masterListsPageBodyDefinition">
 		<put-attribute name="rightFragment"
-			value="haitiMasterListsPageRightDefinition" />
+			value="userMasterListsPageRightDefinition" />
 	</definition>
+
+	<definition name="userMasterListsPageRightDefinition"
+		template="/pages/menu/masterListsTab/masterListsPageRight.jsp">
+		<put-attribute name="rightMenuDefinition"
+			value="unifiedSystemUserMenuDefinition" />
+	</definition>
+	
+	<definition name="testNotificationMasterListsPageDefinition"
+		extends="masterListsPageDefinition">
+		<put-attribute name="bodyFragment"
+			value="testNotificationMasterListsPageBodyDefinition" />
+	</definition>
+
+	<definition name="testNotificationMasterListsPageBodyDefinition"
+		extends="masterListsPageBodyDefinition">
+		<put-attribute name="rightFragment"
+			value="testNotificationMasterListsPageRightDefinition" />
+	</definition>
+
+	<definition name="testNotificationMasterListsPageRightDefinition"
+		template="/pages/menu/masterListsTab/masterListsPageRight.jsp">
+		<put-attribute name="rightMenuDefinition"
+			value="testNotificationMenuDefinition" />
+	</definition>
+	
+	<definition name="siteInfoMasterListsPageDefinition"
+		extends="masterListsPageDefinition">
+		<put-attribute name="bodyFragment"
+			value="siteInfoMasterListsPageBodyDefinition" />
+	</definition>
+
+	<definition name="siteInfoMasterListsPageBodyDefinition"
+		extends="masterListsPageBodyDefinition">
+		<put-attribute name="rightFragment"
+			value="siteInfoMasterListsPageRightDefinition" />
+	</definition>
+
+	<definition name="siteInfoMasterListsPageRightDefinition"
+		template="/pages/menu/masterListsTab/masterListsPageRight.jsp">
+		<put-attribute name="rightMenuDefinition"
+			value="siteInformationMenuDefinition" />
+	</definition>
+	
+	<definition name="providerMasterListsPageDefinition"
+		extends="masterListsPageDefinition">
+		<put-attribute name="bodyFragment"
+			value="providerMasterListsPageBodyDefinition" />
+	</definition>
+
+	<definition name="providerMasterListsPageBodyDefinition"
+		extends="masterListsPageBodyDefinition">
+		<put-attribute name="rightFragment"
+			value="providerMasterListsPageRightDefinition" />
+	</definition>
+
+	<definition name="providerMasterListsPageRightDefinition"
+		template="/pages/menu/masterListsTab/masterListsPageRight.jsp">
+		<put-attribute name="rightMenuDefinition"
+			value="providerMenuDefinition" />
+	</definition>
+	
+	<definition name="orgMasterListsPageDefinition"
+		extends="masterListsPageDefinition">
+		<put-attribute name="bodyFragment"
+			value="orgMasterListsPageBodyDefinition" />
+	</definition>
+
+	<definition name="orgMasterListsPageBodyDefinition"
+		extends="masterListsPageBodyDefinition">
+		<put-attribute name="rightFragment"
+			value="orgMasterListsPageRightDefinition" />
+	</definition>
+
+	<definition name="orgMasterListsPageRightDefinition"
+		template="/pages/menu/masterListsTab/masterListsPageRight.jsp">
+		<put-attribute name="rightMenuDefinition"
+			value="organizationMenuDefinition" />
+	</definition>
+	
+	<definition name="externalConnectionsMasterListsPageDefinition"
+		extends="masterListsPageDefinition">
+		<put-attribute name="bodyFragment"
+			value="externalConnectionsMasterListsPageBodyDefinition" />
+	</definition>
+
+	<definition name="externalConnectionsMasterListsPageBodyDefinition"
+		extends="masterListsPageBodyDefinition">
+		<put-attribute name="rightFragment"
+			value="externalConnectionsMasterListsPageRightDefinition" />
+	</definition>
+
+	<definition name="externalConnectionsMasterListsPageRightDefinition"
+		template="/pages/menu/masterListsTab/masterListsPageRight.jsp">
+		<put-attribute name="rightMenuDefinition"
+			value="externalConnectionMenuDefinition" />
+	</definition>
+	
+	<definition name="dictionaryMasterListsPageDefinition"
+		extends="masterListsPageDefinition">
+		<put-attribute name="bodyFragment"
+			value="dictionaryMasterListsPageBodyDefinition" />
+	</definition>
+
+	<definition name="dictionaryMasterListsPageBodyDefinition"
+		extends="masterListsPageBodyDefinition">
+		<put-attribute name="rightFragment"
+			value="dictionaryMasterListsPageRightDefinition" />
+	</definition>
+
+	<definition name="dictionaryMasterListsPageRightDefinition"
+		template="/pages/menu/masterListsTab/masterListsPageRight.jsp">
+		<put-attribute name="rightMenuDefinition"
+			value="dictionaryMenuDefinition" />
+	</definition>
+	
+	<definition name="analyzerMasterListsPageDefinition"
+		extends="masterListsPageDefinition">
+		<put-attribute name="bodyFragment"
+			value="analyzerMasterListsPageBodyDefinition" />
+	</definition>
+
+	<definition name="analyzerMasterListsPageBodyDefinition"
+		extends="masterListsPageBodyDefinition">
+		<put-attribute name="rightFragment"
+			value="analyzerMasterListsPageRightDefinition" />
+	</definition>
+
+	<definition name="analyzerMasterListsPageRightDefinition"
+		template="/pages/menu/masterListsTab/masterListsPageRight.jsp">
+		<put-attribute name="rightMenuDefinition"
+			value="analyzerTestNameMenuDefinition" />
+	</definition>
+	
+	<definition name="haitiMasterListsPageRightDefinition"
+		extends="masterListsPageRightDefinition">
+		<put-attribute name="rightTypeOfSampleTestFragment"
+			value="typeOfSampleTestMenuDefinition" />
+		<put-attribute name="rightTypeOfSamplePanelFragment"
+			value="typeOfSamplePanelMenuDefinition" />
+		<put-attribute name="rightPatientTypeFragment"
+			value="patientTypeMenuDefinition" />
+		<put-attribute name="rightResultLimitsFragment"
+			value="resultLimitsMenuDefinition" />
+		<put-attribute name="rightRoleFragment"
+			value="roleMenuDefinition" />
+		<put-attribute name="rightUserRoleFragment"
+			value="userRoleMenuDefinition" />
+<!-- 		<put-attribute name="rightSystemUserOnePageFragment" -->
+<!-- 			value="unifiedSystemUserMenuDefinition" /> -->
+<!-- 		<put-attribute name="rightSiteInformationFragment" -->
+<!-- 			value="siteInformationMenuDefinition" /> -->
+<!-- 		<put-attribute name="rightAnalyzerTestNameFragment" -->
+<!-- 			value="analyzerTestNameMenuDefinition" /> -->
+<!-- 		<put-attribute name="rightTestNotificationFragment" -->
+<!-- 			value="testNotificationMenuDefinition" /> -->
+	</definition>
+	
+	<!-- MasterPageLists -->
+<!-- 	<definition name="haitiMasterListsPageDefinition" -->
+<!-- 		extends="masterListsPageDefinition"> -->
+<!-- 		<put-attribute name="bodyFragment" -->
+<!-- 			value="haitiMasterListsPageBodyDefinition" /> -->
+<!-- 	</definition> -->
+
+<!-- 	<definition name="haitiMasterListsPageBodyDefinition" -->
+<!-- 		extends="masterListsPageBodyDefinition"> -->
+<!-- 		<put-attribute name="rightFragment" -->
+<!-- 			value="haitiMasterListsPageRightDefinition" /> -->
+<!-- 	</definition> -->
 
 	<definition name="haitiMasterListsPageRightDefinition"
 		extends="masterListsPageRightDefinition">
@@ -871,19 +1039,19 @@
 
 	<definition name="typeOfSampleTestMenuDefinition"
 		extends="baseMenuSelectListDefinition">
-		<put-attribute name="bodyFragment"
+		<put-attribute name="bodyMenuFragment"
 			value="/pages/typeofsample/typeOfSampleTestMenu.jsp" />
 	</definition>
 
 	<definition name="typeOfSamplePanelMenuDefinition"
 		extends="baseMenuSelectListDefinition">
-		<put-attribute name="bodyFragment"
+		<put-attribute name="bodyMenuFragment"
 			value="/pages/typeofsample/typeOfSamplePanelMenu.jsp" />
 	</definition>
 
 	<definition name="patientTypeMenuDefinition"
 		extends="baseMenuSelectListDefinition">
-		<put-attribute name="bodyFragment"
+		<put-attribute name="bodyMenuFragment"
 			value="/pages/patienttype/patientTypeMenu.jsp" />
 	</definition>
 
@@ -907,7 +1075,7 @@
 
 	<definition name="resultLimitsMenuDefinition"
 		extends="baseMenuSelectListDefinition">
-		<put-attribute name="bodyFragment"
+		<put-attribute name="bodyMenuFragment"
 			value="/pages/resultLimits/resultLimitsMenu.jsp" />
 	</definition>
 
@@ -919,7 +1087,7 @@
 
 	<definition name="roleMenuDefinition"
 		extends="baseMenuSelectListDefinition">
-		<put-attribute name="bodyFragment"
+		<put-attribute name="bodyMenuFragment"
 			value="/pages/role/roleMenu.jsp" />
 	</definition>
 
@@ -929,7 +1097,7 @@
 
 	<definition name="siteInformationMenuDefinition"
 		extends="baseMenuSelectListDefinition">
-		<put-attribute name="bodyFragment"
+		<put-attribute name="bodyMenuFragment"
 			value="/pages/siteinformation/siteInformationMenu.jsp" />
 	</definition>
 
@@ -1115,7 +1283,7 @@
 	<!-- -->
 	<definition name="userRoleMenuDefinition"
 		extends="baseMenuSelectListDefinition">
-		<put-attribute name="bodyFragment"
+		<put-attribute name="bodyMenuFragment"
 			value="/pages/userrole/userRoleMenu.jsp" />
 	</definition>
 
@@ -1127,7 +1295,7 @@
 
 	<definition name="unifiedSystemUserMenuDefinition"
 		extends="baseMenuSelectListDefinition">
-		<put-attribute name="bodyFragment"
+		<put-attribute name="bodyMenuFragment"
 			value="/pages/systemuser/unifiedSystemUserMenu.jsp" />
 	</definition>
 
@@ -1141,7 +1309,7 @@
 
 	<definition name="analyzerTestNameMenuDefinition"
 		extends="baseMenuSelectListDefinition">
-		<put-attribute name="bodyFragment"
+		<put-attribute name="bodyMenuFragment"
 			value="/pages/analyzertestname/analyzerTestNameMenu.jsp" />
 	</definition>
 
@@ -1275,11 +1443,11 @@
 
 	<definition name="testNotificationMenuDefinition"
 		extends="baseMenuSelectListDefinition">
-		<put-attribute name="headerFragment"
+		<put-attribute name="headerMenuFragment"
 			value="/pages/testnotification/headerButtons.jsp" />
-		<put-attribute name="bodyFragment"
+		<put-attribute name="bodyMenuFragment"
 			value="/pages/testnotification/testNotificationMenu.jsp" />
-		<put-attribute name="footerFragment"
+		<put-attribute name="footerMenuFragment"
 			value="/pages/testnotification/headerButtons.jsp" />
 	</definition>
 

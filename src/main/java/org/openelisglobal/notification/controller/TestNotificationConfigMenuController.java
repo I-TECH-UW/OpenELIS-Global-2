@@ -108,7 +108,7 @@ public class TestNotificationConfigMenuController extends BaseMenuController<Tes
     @Override
     protected String findLocalForward(String forward) {
         if (FWD_SUCCESS.equals(forward)) {
-            return "haitiMasterListsPageDefinition";
+            return "testNotificationMasterListsPageDefinition";
         } else if (FWD_FAIL.equals(forward)) {
             return "redirect:/MasterListsPage";
         } else if (FWD_SUCCESS_INSERT.equals(forward)) {

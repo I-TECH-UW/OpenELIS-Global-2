@@ -196,7 +196,7 @@ public class OrganizationMenuController extends BaseMenuController<Organization>
     @Override
     protected String findLocalForward(String forward) {
         if (FWD_SUCCESS.equals(forward)) {
-            return "masterListsPageDefinition";
+            return "orgMasterListsPageDefinition";
         } else if (FWD_FAIL.equals(forward)) {
             return "redirect:/MasterListsPage";
         } else if (FWD_SUCCESS_DELETE.equals(forward)) {
