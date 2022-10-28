@@ -1,14 +1,19 @@
 import { useState } from "react";
 import "./test.css"
-
+import { Form, Stack, TextInput, Select, SelectItem, Button, InlineLoading, IconButton } from '@carbon/react';
+import { Add, Subtract } from '@carbon/react/icons';
 function AddRule() {
-  const [ruleList, setRuleList] = useState([{ rule: "" }]);
+  const [ruleList, setRuleList] = useState([{
+    rule: "",
+    condition: ""
+  }]);
 
   const handleRuleChange = (e, index) => {
     const { name, value } = e.target;
     const list = [...ruleList];
     list[index][name] = value;
     setRuleList(list);
+    console.log(JSON.stringify(list))
   };
 
   const handleRuleRemove = (index) => {
@@ -21,55 +26,76 @@ function AddRule() {
     setRuleList([...ruleList, { rule: "" }]);
   };
 
+  const handleSubmit = () => {
+    setRuleList([...ruleList, { rule: "" }]);
+  };
+
+
   return (
-    <form className="App" autoComplete="off">
-      <div className="form-field">
-        <label htmlFor="rule">Service(s)</label>
+    <Form
+      onSubmit={handleSubmit}
+    >
+      <Stack gap={7}>
         {ruleList.map((singleRule, index) => (
           <div key={index} className="rules">
             <div className="first-division">
-              <input
+              <TextInput
                 name="rule"
+                className="inputText"
                 type="text"
                 id="rule"
                 value={singleRule.rule}
                 onChange={(e) => handleRuleChange(e, index)}
                 required
               />
+
+              <Select
+                defaultValue={singleRule.condition}
+                id="select"
+                name="condition"
+                labelText="Select"
+                className="inputText"
+                onChange={(e) => handleRuleChange(e, index)}
+              // disabled={this.state.hasSubmitted}
+              >
+                <SelectItem
+                  text=""
+                  value=""
+                />
+                <SelectItem
+                  text="Equals"
+                  value="equal"
+                />
+                <SelectItem
+                  text="Not Equla"
+                  value="not_equal"
+                />
+              </Select>
               {ruleList.length - 1 === index && ruleList.length < 4 && (
                 <button
-                  type="button"
                   onClick={handleRuleAdd}
                   className="add-btn"
                 >
-                  <span>Add a Service</span>
+                  <Add size={16} />
+                  <span>Rule</span>
                 </button>
               )}
             </div>
             <div className="second-division">
               {ruleList.length !== 1 && (
                 <button
-                  type="button"
-                  onClick={() => handleRuleRemove(index)}
-                  className="remove-btn"
-                >
-                  <span>Remove</span>
+                 type="button"
+                 onClick={() => handleRuleRemove(index)}
+                  className="remove-btn">
+                    <Subtract size={16} />
                 </button>
               )}
             </div>
           </div>
         ))}
-      </div>
-      <div className="output">
-        <h2>Output</h2>
-        {ruleList &&
-          ruleList.map((singleRule, index) => (
-            <ul key={index}>
-              {singleRule.rule && <li>{singleRule.rule}</li>}
-            </ul>
-          ))}
-      </div>
-    </form>
+      </Stack>
+    </Form >
+
   );
 }
 
