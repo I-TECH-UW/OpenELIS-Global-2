@@ -1,0 +1,52 @@
+{
+  "name": "openelis-global-reat-app",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@carbon/react": "^1.15.0",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-router-dom": "^5.2.0",
+    "react-intl": "^5.20.12",
+    "react-scripts": "5.0.1",
+    "@fortawesome/fontawesome-svg-core": "^1.2.28",
+    "@fortawesome/free-regular-svg-icons": "^5.13.0",
+    "@fortawesome/free-solid-svg-icons": "^5.13.0",
+    "@fortawesome/react-fontawesome": "^0.1.9",
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^9.5.0",
+    "@testing-library/user-event": "^7.2.1",
+    "react-confirm-alert": "^2.7.0",
+    "react-idle-timer": "^4.6.4",
+    "sass": "1.55.0",
+    "web-vitals": "^2.1.4",
+    "@carbon/themes" :"11.10.0" ,
+    "formik": "^2.2.9",
+    "formik-error-focus": "2.0.0",
+    "cors": "^2.8.5"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
