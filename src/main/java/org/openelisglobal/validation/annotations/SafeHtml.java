@@ -20,15 +20,15 @@ import org.openelisglobal.validation.constraintvalidator.HtmlValidator;
 @Retention(RUNTIME)
 @Constraint(validatedBy = HtmlValidator.class)
 public @interface SafeHtml {
-	String message() default "Unsafe HTML tags included";
+    String message() default "Unsafe HTML tags included";
 
-	Class<?>[] groups() default {};
+    Class<?>[] groups() default {};
 
-	SafeListLevel level() default SafeHtml.SafeListLevel.RELAXED;
+    SafeListLevel level() default SafeHtml.SafeListLevel.RELAXED;
 
-	public abstract Class<? extends Payload>[] payload() default {};
+    public abstract Class<? extends Payload>[] payload() default {};
 
-	public enum SafeListLevel {
-		NONE, BASIC, BASIC_WITH_IMAGES, SIMPLE_TEXT, RELAXED
-	}
+    public enum SafeListLevel {
+        NONE, BASIC, BASIC_WITH_IMAGES, SIMPLE_TEXT, RELAXED
+    }
 }

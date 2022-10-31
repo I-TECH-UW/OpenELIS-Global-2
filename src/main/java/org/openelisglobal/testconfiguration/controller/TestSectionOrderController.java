@@ -53,7 +53,8 @@ public class TestSectionOrderController extends BaseController {
     }
 
     private void setupDisplayItems(TestSectionOrderForm form) {
-        form.setTestSectionList(DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION_ACTIVE));
+        form.setTestSectionList(
+                DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION_ACTIVE));
     }
 
     @Override

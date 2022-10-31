@@ -45,8 +45,8 @@ public class UnitOfMeasureDAOImpl extends BaseDAOImpl<UnitOfMeasure, String> imp
     public UnitOfMeasure getUnitOfMeasureById(String uomId) throws LIMSRuntimeException {
         String sql = "from UnitOfMeasure uom where id = :id";
         try {
-			Query<UnitOfMeasure> query = entityManager.unwrap(Session.class).createQuery(sql, UnitOfMeasure.class);
-			query.setParameter("id", Integer.parseInt(uomId));
+            Query<UnitOfMeasure> query = entityManager.unwrap(Session.class).createQuery(sql, UnitOfMeasure.class);
+            query.setParameter("id", Integer.parseInt(uomId));
             UnitOfMeasure uom = query.uniqueResult();
             return uom;
         } catch (HibernateException e) {
@@ -64,7 +64,7 @@ public class UnitOfMeasureDAOImpl extends BaseDAOImpl<UnitOfMeasure, String> imp
             // not case sensitive hemolysis and Hemolysis are considered
             // duplicates
             String sql = "from UnitOfMeasure t where trim(t.unitOfMeasureName) = :param and t.id != :param2";
-			Query<UnitOfMeasure> query = entityManager.unwrap(Session.class).createQuery(sql, UnitOfMeasure.class);
+            Query<UnitOfMeasure> query = entityManager.unwrap(Session.class).createQuery(sql, UnitOfMeasure.class);
             query.setParameter("param", unitOfMeasure.getUnitOfMeasureName().trim());
 
             // initialize with 0 (for new records where no id has been generated
@@ -73,7 +73,7 @@ public class UnitOfMeasureDAOImpl extends BaseDAOImpl<UnitOfMeasure, String> imp
             if (!StringUtil.isNullorNill(unitOfMeasure.getId())) {
                 unitOfMeasureId = unitOfMeasure.getId();
             }
-			query.setParameter("param2", Integer.parseInt(unitOfMeasureId));
+            query.setParameter("param2", Integer.parseInt(unitOfMeasureId));
 
             list = query.list();
             return !list.isEmpty();

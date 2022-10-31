@@ -67,8 +67,8 @@ public class SystemUserSectionDAOImpl extends BaseDAOImpl<SystemUserSection, Str
         List<SystemUserSection> list;
         try {
             String sql = "from SystemUserSection";
-			Query<SystemUserSection> query = entityManager.unwrap(Session.class).createQuery(sql,
-					SystemUserSection.class);
+            Query<SystemUserSection> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    SystemUserSection.class);
             list = query.list();
         } catch (RuntimeException e) {
             // bugzilla 2154
@@ -86,8 +86,8 @@ public class SystemUserSectionDAOImpl extends BaseDAOImpl<SystemUserSection, Str
         List<SystemUserSection> list;
         try {
             String sql = "from SystemUserSection s where s.systemUser.id = :param";
-			Query<SystemUserSection> query = entityManager.unwrap(Session.class).createQuery(sql,
-					SystemUserSection.class);
+            Query<SystemUserSection> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    SystemUserSection.class);
             query.setParameter("param", systemUserId);
             list = query.list();
         } catch (RuntimeException e) {
@@ -108,8 +108,8 @@ public class SystemUserSectionDAOImpl extends BaseDAOImpl<SystemUserSection, Str
             int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 
             String sql = "from SystemUserSection s ";
-			Query<SystemUserSection> query = entityManager.unwrap(Session.class).createQuery(sql,
-					SystemUserSection.class);
+            Query<SystemUserSection> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    SystemUserSection.class);
             query.setFirstResult(startingRecNo - 1);
             query.setMaxResults(endingRecNo - 1);
 
@@ -146,11 +146,11 @@ public class SystemUserSectionDAOImpl extends BaseDAOImpl<SystemUserSection, Str
     public boolean duplicateSystemUserSectionExists(SystemUserSection systemUserSection) throws LIMSRuntimeException {
         try {
 
-			List<SystemUserSection> list = new ArrayList<>();
+            List<SystemUserSection> list = new ArrayList<>();
 
             String sql = "from SystemUserSection s where s.systemUser.id = :param and s.testSection.id = :param2 and s.id != :param3";
-			Query<SystemUserSection> query = entityManager.unwrap(Session.class).createQuery(sql,
-					SystemUserSection.class);
+            Query<SystemUserSection> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    SystemUserSection.class);
             query.setParameter("param", systemUserSection.getSystemUser().getId());
             query.setParameter("param2", systemUserSection.getTestSection().getId());
 

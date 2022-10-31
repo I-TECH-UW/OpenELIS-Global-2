@@ -22,7 +22,7 @@ public class PatientIdentityDAOImpl extends BaseDAOImpl<PatientIdentity, String>
     }
 
     @Override
-    
+
     @Transactional(readOnly = true)
     public List<PatientIdentity> getPatientIdentitiesForPatient(String id) {
 
@@ -30,8 +30,8 @@ public class PatientIdentityDAOImpl extends BaseDAOImpl<PatientIdentity, String>
 
         try {
             String sql = "from PatientIdentity pi where pi.patientId = :Id";
-			Query<PatientIdentity> query = entityManager.unwrap(Session.class).createQuery(sql, PatientIdentity.class);
-			query.setParameter("Id", Integer.parseInt(id));
+            Query<PatientIdentity> query = entityManager.unwrap(Session.class).createQuery(sql, PatientIdentity.class);
+            query.setParameter("Id", Integer.parseInt(id));
 
             identities = query.list();
         } catch (RuntimeException e) {
@@ -41,7 +41,6 @@ public class PatientIdentityDAOImpl extends BaseDAOImpl<PatientIdentity, String>
 
         return identities;
     }
-
 
     @Transactional(readOnly = true)
     public PatientIdentity getCurrentPatientIdentity(String id) {
@@ -94,16 +93,16 @@ public class PatientIdentityDAOImpl extends BaseDAOImpl<PatientIdentity, String>
     }
 
     @Override
-    
+
     @Transactional(readOnly = true)
     public List<PatientIdentity> getPatientIdentitiesByValueAndType(String value, String identityType)
             throws LIMSRuntimeException {
         String sql = "From PatientIdentity pi where pi.identityData = :value and pi.identityTypeId = :identityType";
 
         try {
-			Query<PatientIdentity> query = entityManager.unwrap(Session.class).createQuery(sql, PatientIdentity.class);
-			query.setParameter("value", value);
-			query.setParameter("identityType", Integer.parseInt(identityType));
+            Query<PatientIdentity> query = entityManager.unwrap(Session.class).createQuery(sql, PatientIdentity.class);
+            query.setParameter("value", value);
+            query.setParameter("identityType", Integer.parseInt(identityType));
 
             List<PatientIdentity> identities = query.list();
             return identities;
@@ -121,9 +120,9 @@ public class PatientIdentityDAOImpl extends BaseDAOImpl<PatientIdentity, String>
         String sql = "from PatientIdentity pi where pi.patientId = :patientId and pi.identityTypeId = :typeId";
 
         try {
-			Query<PatientIdentity> query = entityManager.unwrap(Session.class).createQuery(sql, PatientIdentity.class);
-			query.setParameter("patientId", Integer.parseInt(patientId));
-			query.setParameter("typeId", Integer.parseInt(identityTypeId));
+            Query<PatientIdentity> query = entityManager.unwrap(Session.class).createQuery(sql, PatientIdentity.class);
+            query.setParameter("patientId", Integer.parseInt(patientId));
+            query.setParameter("typeId", Integer.parseInt(identityTypeId));
 
             PatientIdentity pi = query.uniqueResult();
             return pi;

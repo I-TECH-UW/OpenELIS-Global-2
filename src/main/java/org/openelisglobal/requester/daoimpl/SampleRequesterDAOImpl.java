@@ -44,15 +44,14 @@ public class SampleRequesterDAOImpl extends BaseDAOImpl<SampleRequester, String>
         entityManager.unwrap(Session.class).delete(sampleRequester);
     }
 
-
     @Override
     @Transactional(readOnly = true)
     public List<SampleRequester> getRequestersForSampleId(String sampleId) throws LIMSRuntimeException {
         String sql = "From SampleRequester sr where sr.sampleId = :sampleId";
 
         try {
-			Query<SampleRequester> query = entityManager.unwrap(Session.class).createQuery(sql, SampleRequester.class);
-			query.setParameter("sampleId", Long.parseLong(sampleId));
+            Query<SampleRequester> query = entityManager.unwrap(Session.class).createQuery(sql, SampleRequester.class);
+            query.setParameter("sampleId", Long.parseLong(sampleId));
             List<SampleRequester> requester = query.list();
 
             return requester;
@@ -68,9 +67,9 @@ public class SampleRequesterDAOImpl extends BaseDAOImpl<SampleRequester, String>
         String hql = "From SampleRequester sr where sr.requester_id = :requesterId and sr.requester_type_id = :requesterTypeId";
 
         try {
-			Query<SampleRequester> query = entityManager.unwrap(Session.class).createQuery(hql, SampleRequester.class);
-			query.setParameter("requesterId", Long.parseLong(requesterId));
-			query.setParameter("requesterTypeId", Long.parseLong(requesterTypeId));
+            Query<SampleRequester> query = entityManager.unwrap(Session.class).createQuery(hql, SampleRequester.class);
+            query.setParameter("requesterId", Long.parseLong(requesterId));
+            query.setParameter("requesterTypeId", Long.parseLong(requesterTypeId));
             List<SampleRequester> requester = query.list();
 
             return requester;
@@ -84,9 +83,9 @@ public class SampleRequesterDAOImpl extends BaseDAOImpl<SampleRequester, String>
     public SampleRequester readOld(long sampleId, long requesterTypeId) {
         String sql = "From SampleRequester sr where sr.sampleId = :sampleId and sr.requesterTypeId = :requesterTypeId";
         try {
-			Query<SampleRequester> query = entityManager.unwrap(Session.class).createQuery(sql, SampleRequester.class);
-			query.setParameter("sampleId", sampleId);
-			query.setParameter("requesterTypeId", requesterTypeId);
+            Query<SampleRequester> query = entityManager.unwrap(Session.class).createQuery(sql, SampleRequester.class);
+            query.setParameter("sampleId", sampleId);
+            query.setParameter("requesterTypeId", requesterTypeId);
             SampleRequester requester = query.uniqueResult();
 
             return requester;

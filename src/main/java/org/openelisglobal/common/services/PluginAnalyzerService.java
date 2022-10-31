@@ -49,17 +49,17 @@ public class PluginAnalyzerService {
     private TestService testService;
 
     private List<AnalyzerTestMapping> existingMappings;
-	private Map<String, AnalyzerImporterPlugin> pluginByAnalyzerId = new HashMap<>();
+    private Map<String, AnalyzerImporterPlugin> pluginByAnalyzerId = new HashMap<>();
 
-	private List<AnalyzerImporterPlugin> analyzerPlugins = new ArrayList<>();
+    private List<AnalyzerImporterPlugin> analyzerPlugins = new ArrayList<>();
 
-	public void registerAnalyzerPlugin(AnalyzerImporterPlugin plugin) {
-		analyzerPlugins.add(plugin);
-	}
+    public void registerAnalyzerPlugin(AnalyzerImporterPlugin plugin) {
+        analyzerPlugins.add(plugin);
+    }
 
-	public List<AnalyzerImporterPlugin> getAnalyzerPlugins() {
-		return analyzerPlugins;
-	}
+    public List<AnalyzerImporterPlugin> getAnalyzerPlugins() {
+        return analyzerPlugins;
+    }
 
     @PostConstruct
     private void registerInstance() {
@@ -70,19 +70,19 @@ public class PluginAnalyzerService {
         return INSTANCE;
     }
 
-	public AnalyzerImporterPlugin getPluginByAnalyzerId(String analyzerId) {
-		return pluginByAnalyzerId.get(analyzerId);
-	}
+    public AnalyzerImporterPlugin getPluginByAnalyzerId(String analyzerId) {
+        return pluginByAnalyzerId.get(analyzerId);
+    }
 
     public void registerAnalyzer(AnalyzerImporterPlugin analyzer) {
-		registerAnalyzer(analyzer, Optional.empty());
-	}
+        registerAnalyzer(analyzer, Optional.empty());
+    }
 
-	public void registerAnalyzer(AnalyzerImporterPlugin analyzer, Optional<String> analyzerId) {
-		registerAnalyzerPlugin(analyzer);
-		if (analyzerId.isPresent()) {
-			pluginByAnalyzerId.put(analyzerId.get(), analyzer);
-		}
+    public void registerAnalyzer(AnalyzerImporterPlugin analyzer, Optional<String> analyzerId) {
+        registerAnalyzerPlugin(analyzer);
+        if (analyzerId.isPresent()) {
+            pluginByAnalyzerId.put(analyzerId.get(), analyzer);
+        }
     }
 
     public String addAnalyzerDatabaseParts(String name, String description, List<TestMapping> nameMappings) {

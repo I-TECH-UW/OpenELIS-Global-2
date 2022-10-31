@@ -69,7 +69,8 @@ public class PatientClinicalInfo implements Serializable {
             SamplePatientEntryBatch.class })
     private String stdZona;
 
-    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class, SamplePatientEntryBatch.class })
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+            SamplePatientEntryBatch.class })
     private String stdOther;
 
     @Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
@@ -88,16 +89,20 @@ public class PatientClinicalInfo implements Serializable {
             SamplePatientEntryBatch.class })
     private String arvTreatmentRemembered;
 
-    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class, SamplePatientEntryBatch.class })
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+            SamplePatientEntryBatch.class })
     private String arvTreatment1;
 
-    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class, SamplePatientEntryBatch.class })
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+            SamplePatientEntryBatch.class })
     private String arvTreatment2;
 
-    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class, SamplePatientEntryBatch.class })
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+            SamplePatientEntryBatch.class })
     private String arvTreatment3;
 
-    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class, SamplePatientEntryBatch.class })
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+            SamplePatientEntryBatch.class })
     private String arvTreatment4;
 
     @Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
@@ -124,7 +129,8 @@ public class PatientClinicalInfo implements Serializable {
             SamplePatientEntryBatch.class })
     private String infectionPrurigol;
 
-    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class, SamplePatientEntryBatch.class })
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+            SamplePatientEntryBatch.class })
     private String infectionOther;
 
     @Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
@@ -147,10 +153,12 @@ public class PatientClinicalInfo implements Serializable {
             SamplePatientEntryBatch.class })
     private String infectionUnderTreatment;
 
-    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class, SamplePatientEntryBatch.class })
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+            SamplePatientEntryBatch.class })
     private String weight;
 
-    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class, SamplePatientEntryBatch.class })
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+            SamplePatientEntryBatch.class })
     private String karnofskyScore;
 
     // for display

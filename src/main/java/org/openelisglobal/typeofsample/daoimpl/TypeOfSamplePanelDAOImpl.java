@@ -66,8 +66,8 @@ public class TypeOfSamplePanelDAOImpl extends BaseDAOImpl<TypeOfSamplePanel, Str
         List<TypeOfSamplePanel> list;
         try {
             String sql = "from TypeOfSamplePanel";
-			Query<TypeOfSamplePanel> query = entityManager.unwrap(Session.class).createQuery(sql,
-					TypeOfSamplePanel.class);
+            Query<TypeOfSamplePanel> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    TypeOfSamplePanel.class);
             list = query.list();
         } catch (RuntimeException e) {
             // bugzilla 2154
@@ -88,8 +88,8 @@ public class TypeOfSamplePanelDAOImpl extends BaseDAOImpl<TypeOfSamplePanel, Str
             int endingRecNo = startingRecNo + DEFAULT_PAGE_SIZE + 1;
 
             String sql = "from TypeOfSamplePanel t order by t.typeOfSampleId, t.panelId";
-			Query<TypeOfSamplePanel> query = entityManager.unwrap(Session.class).createQuery(sql,
-					TypeOfSamplePanel.class);
+            Query<TypeOfSamplePanel> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    TypeOfSamplePanel.class);
             query.setFirstResult(startingRecNo - 1);
             query.setMaxResults(endingRecNo - 1);
             list = query.list();
@@ -133,9 +133,9 @@ public class TypeOfSamplePanelDAOImpl extends BaseDAOImpl<TypeOfSamplePanel, Str
                 // so parseInt doesn't throw
                 sampleType = "0";
             }
-			Query<TypeOfSamplePanel> query = entityManager.unwrap(Session.class).createQuery(sql,
-					TypeOfSamplePanel.class);
-			query.setParameter("sampleId", Integer.parseInt(sampleType));
+            Query<TypeOfSamplePanel> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    TypeOfSamplePanel.class);
+            query.setParameter("sampleId", Integer.parseInt(sampleType));
             list = query.list();
         } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
@@ -152,9 +152,9 @@ public class TypeOfSamplePanelDAOImpl extends BaseDAOImpl<TypeOfSamplePanel, Str
         String sql = "from TypeOfSamplePanel tosp where tosp.panelId = :panelId";
 
         try {
-			Query<TypeOfSamplePanel> query = entityManager.unwrap(Session.class).createQuery(sql,
-					TypeOfSamplePanel.class);
-			query.setParameter("panelId", Integer.parseInt(panelId));
+            Query<TypeOfSamplePanel> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    TypeOfSamplePanel.class);
+            query.setParameter("panelId", Integer.parseInt(panelId));
             List<TypeOfSamplePanel> typeOfSamplePanels = query.list();
             return typeOfSamplePanels;
         } catch (HibernateException e) {

@@ -44,7 +44,6 @@ public class PluginConfiguration implements BeanFactoryAware {
         loadDirectory(pluginDir);
     }
 
-
     private void loadDirectory(File pluginDir) {
 
         File[] files = pluginDir.listFiles();
@@ -133,8 +132,7 @@ public class PluginConfiguration implements BeanFactoryAware {
                         .attribute(PluginLoader.VALUE);
                 Attribute classPath = servlet.element(PluginLoader.EXTENSION_POINT).element(PluginLoader.EXTENSION)
                         .attribute(PluginLoader.PATH);
-                loadActualPlugin(url, servletName.getValue(), servletPath.getValue(), classPath.getValue()
-                        );
+                loadActualPlugin(url, servletName.getValue(), servletPath.getValue(), classPath.getValue());
                 LogEvent.logInfo(this.getClass().getName(), "loadFromXML", "Loaded: " + description.getValue());
             }
 
@@ -152,7 +150,8 @@ public class PluginConfiguration implements BeanFactoryAware {
         return true;
     }
 
-    private void loadActualPlugin(URL url, String servletName, String servletPath, String servletClassPath) throws IOException {
+    private void loadActualPlugin(URL url, String servletName, String servletPath, String servletClassPath)
+            throws IOException {
         ClassLoader classLoader = null;
         ConfigurableBeanFactory configurableBeanFactory = (ConfigurableBeanFactory) beanFactory;
         try {

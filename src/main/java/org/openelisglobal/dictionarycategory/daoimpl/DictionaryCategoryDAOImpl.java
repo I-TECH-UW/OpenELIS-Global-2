@@ -44,7 +44,6 @@ public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory, S
         super(DictionaryCategory.class);
     }
 
-
     // bugzilla 1386
     @Override
     public boolean duplicateDictionaryCategoryExists(DictionaryCategory dictionaryCategory)
@@ -60,8 +59,8 @@ public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory, S
                     + "((trim(lower(t.categoryName)) = :param and t.id != :param3) " + "or "
                     + "(trim(lower(t.description)) = :param2 and t.id != :param3) " + "or "
                     + "(trim(lower(t.localAbbreviation)) = :param4 and t.id != :param3)) ";
-			Query<DictionaryCategory> query = entityManager.unwrap(Session.class).createQuery(sql,
-					DictionaryCategory.class);
+            Query<DictionaryCategory> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    DictionaryCategory.class);
             query.setParameter("param", dictionaryCategory.getCategoryName().toLowerCase().trim());
             query.setParameter("param2", dictionaryCategory.getDescription().toLowerCase().trim());
             query.setParameter("param4", dictionaryCategory.getLocalAbbreviation().toLowerCase().trim());
@@ -89,15 +88,14 @@ public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory, S
         }
     }
 
-
     @Override
     public DictionaryCategory getDictionaryCategoryByName(String name) throws LIMSRuntimeException {
 
         String sql = "from DictionaryCategory dc where dc.categoryName = :name";
         try {
-			Query<DictionaryCategory> query = entityManager.unwrap(Session.class).createQuery(sql,
-					DictionaryCategory.class);
-			query.setParameter("name", name);
+            Query<DictionaryCategory> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    DictionaryCategory.class);
+            query.setParameter("name", name);
 
             List<DictionaryCategory> categoryList = query.list();
 

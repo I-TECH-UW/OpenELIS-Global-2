@@ -14,7 +14,7 @@ import org.openelisglobal.validation.annotations.ValidName;
 import org.openelisglobal.validation.constraintvalidator.NameValidator.NameType;
 
 public class FhirReferralSearchForm extends BaseForm {
-    
+
     private static final long serialVersionUID = 3245627796529364543L;
 
     protected String externalAccessionNumber;

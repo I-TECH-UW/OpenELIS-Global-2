@@ -33,83 +33,83 @@ import com.ibm.icu.text.CharsetDetector;
 
 public class ASTMAnalyzerReader extends AnalyzerReader {
 
-	private List<String> lines;
-	private AnalyzerLineInserter inserter;
-	private String error;
+    private List<String> lines;
+    private AnalyzerLineInserter inserter;
+    private String error;
 
-	@Override
-	public boolean readStream(InputStream stream) {
-		error = null;
-		inserter = null;
-		lines = new ArrayList<>();
-		BufferedInputStream bis = new BufferedInputStream(stream);
-		CharsetDetector detector = new CharsetDetector();
-		try {
-			detector.setText(bis);
-			String charsetName = detector.detect().getName();
-			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(bis, charsetName));
+    @Override
+    public boolean readStream(InputStream stream) {
+        error = null;
+        inserter = null;
+        lines = new ArrayList<>();
+        BufferedInputStream bis = new BufferedInputStream(stream);
+        CharsetDetector detector = new CharsetDetector();
+        try {
+            detector.setText(bis);
+            String charsetName = detector.detect().getName();
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(bis, charsetName));
 
-			try {
-				for (String line = bufferedReader.readLine(); line != null; line = bufferedReader.readLine()) {
-					lines.add(line);
-				}
-			} catch (IOException e) {
-				error = "Unable to read input stream";
-				LogEvent.logError(e);
-				return false;
-			}
-		} catch (IOException e) {
-			error = "Unable to determine message encoding";
-			LogEvent.logError(e);
-			LogEvent.logError("an error occured detecting the encoding of the analyzer message", e);
-			return false;
-		}
+            try {
+                for (String line = bufferedReader.readLine(); line != null; line = bufferedReader.readLine()) {
+                    lines.add(line);
+                }
+            } catch (IOException e) {
+                error = "Unable to read input stream";
+                LogEvent.logError(e);
+                return false;
+            }
+        } catch (IOException e) {
+            error = "Unable to determine message encoding";
+            LogEvent.logError(e);
+            LogEvent.logError("an error occured detecting the encoding of the analyzer message", e);
+            return false;
+        }
 
-		if (!lines.isEmpty()) {
-			setInserter();
-			if (inserter == null) {
-				error = "Unable to understand which analyzer sent the message";
-				return false;
-			}
-			return true;
-		} else {
-			error = "Empty message";
-			return false;
-		}
+        if (!lines.isEmpty()) {
+            setInserter();
+            if (inserter == null) {
+                error = "Unable to understand which analyzer sent the message";
+                return false;
+            }
+            return true;
+        } else {
+            error = "Empty message";
+            return false;
+        }
 
-	}
+    }
 
-	private void setInserter() {
-		for (AnalyzerImporterPlugin plugin : SpringContext.getBean(PluginAnalyzerService.class).getAnalyzerPlugins()) {
-			if (plugin.isTargetAnalyzer(lines)) {
-				inserter = plugin.getAnalyzerLineInserter();
-				return;
-			}
-		}
-	}
+    private void setInserter() {
+        for (AnalyzerImporterPlugin plugin : SpringContext.getBean(PluginAnalyzerService.class).getAnalyzerPlugins()) {
+            if (plugin.isTargetAnalyzer(lines)) {
+                inserter = plugin.getAnalyzerLineInserter();
+                return;
+            }
+        }
+    }
 
-	public void insertTestLines(List<String> testLines) {
-		lines = testLines;
-	}
+    public void insertTestLines(List<String> testLines) {
+        lines = testLines;
+    }
 
-	@Override
-	public boolean insertAnalyzerData(String systemUserId) {
-		if (inserter == null) {
-			error = "Unable to understand which analyzer sent the file";
-			return false;
-		} else {
-			boolean success = inserter.insert(lines, systemUserId);
-			if (!success) {
-				error = inserter.getError();
-			}
+    @Override
+    public boolean insertAnalyzerData(String systemUserId) {
+        if (inserter == null) {
+            error = "Unable to understand which analyzer sent the file";
+            return false;
+        } else {
+            boolean success = inserter.insert(lines, systemUserId);
+            if (!success) {
+                error = inserter.getError();
+            }
 
-			return success;
-		}
+            return success;
+        }
 
-	}
+    }
 
-	@Override
-	public String getError() {
-		return error;
-	}
+    @Override
+    public String getError() {
+        return error;
+    }
 }

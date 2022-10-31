@@ -5,8 +5,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
-<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
-
 
 <div  id="IEWarning" style="display:none;background-color:#b0c4de"  ><b>
 <spring:message code="banner.menu.ie.warning" text="banner.menu.ie.warning"/><br/>

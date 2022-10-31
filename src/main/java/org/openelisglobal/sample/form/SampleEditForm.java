@@ -84,7 +84,7 @@ public class SampleEditForm extends BaseForm {
     // for display
     private List<IdValuePair> testSectionList;
 
-     // for display
+    // for display
     private List<IdValuePair> rejectReasonList;
 
     @Valid

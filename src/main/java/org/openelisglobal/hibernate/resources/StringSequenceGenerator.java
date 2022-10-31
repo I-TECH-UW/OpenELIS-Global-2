@@ -20,9 +20,9 @@ public class StringSequenceGenerator extends SequenceStyleGenerator {
         return String.format(numberFormat, id);
     }
 
-	@Override
-	public void configure(Type type, Properties params, ServiceRegistry dialect) throws MappingException {
-		super.configure(LongType.INSTANCE, params, dialect);
-	}
+    @Override
+    public void configure(Type type, Properties params, ServiceRegistry dialect) throws MappingException {
+        super.configure(LongType.INSTANCE, params, dialect);
+    }
 
 }

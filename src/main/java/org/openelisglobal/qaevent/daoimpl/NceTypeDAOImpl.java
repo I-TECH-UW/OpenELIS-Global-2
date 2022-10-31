@@ -26,7 +26,7 @@ public class NceTypeDAOImpl extends BaseDAOImpl<NceType, String> implements NceT
         List<NceType> list;
         try {
             String sql = "from NceType nt order by nt.id";
-			Query<NceType> query = entityManager.unwrap(Session.class).createQuery(sql, NceType.class);
+            Query<NceType> query = entityManager.unwrap(Session.class).createQuery(sql, NceType.class);
             list = query.list();
         } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);

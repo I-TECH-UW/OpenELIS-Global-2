@@ -84,7 +84,7 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem, String> implement
         List<SampleItem> list;
         try {
             String sql = "from SampleItem";
-			Query<SampleItem> query = entityManager.unwrap(Session.class).createQuery(sql, SampleItem.class);
+            Query<SampleItem> query = entityManager.unwrap(Session.class).createQuery(sql, SampleItem.class);
             list = query.list();
         } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
@@ -104,7 +104,7 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem, String> implement
             int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 
             String sql = "from SampleItem s order by s.id";
-			Query<SampleItem> query = entityManager.unwrap(Session.class).createQuery(sql, SampleItem.class);
+            Query<SampleItem> query = entityManager.unwrap(Session.class).createQuery(sql, SampleItem.class);
             query.setFirstResult(startingRecNo - 1);
             query.setMaxResults(endingRecNo - 1);
 
@@ -138,9 +138,9 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem, String> implement
         // Use an expression to read in the Sample_Item by SAMP_ID
         try {
             String sql = "from SampleItem si where samp_id = :param";
-			Query<SampleItem> query = entityManager.unwrap(Session.class).createQuery(sql, SampleItem.class);
+            Query<SampleItem> query = entityManager.unwrap(Session.class).createQuery(sql, SampleItem.class);
 
-			query.setParameter("param", Integer.parseInt(sampleItem.getSample().getId()));
+            query.setParameter("param", Integer.parseInt(sampleItem.getSample().getId()));
 
             List<SampleItem> list = query.list();
             SampleItem si = null;
@@ -173,8 +173,8 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem, String> implement
 
         try {
             String sql = "from SampleItem sampleItem where sampleItem.sample.id = :sampleId order by sampleItem.sortOrder";
-			Query<SampleItem> query = entityManager.unwrap(Session.class).createQuery(sql, SampleItem.class);
-			query.setParameter("sampleId", Integer.parseInt(id));
+            Query<SampleItem> query = entityManager.unwrap(Session.class).createQuery(sql, SampleItem.class);
+            query.setParameter("sampleId", Integer.parseInt(id));
             List<SampleItem> list = query.list();
 
             return list;
@@ -196,9 +196,9 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem, String> implement
     public List<SampleItem> getSampleItemsBySampleIdAndType(String sampleId, TypeOfSample typeOfSample) {
         try {
             String sql = "from SampleItem si where si.sample.id = :sampleId and si.typeOfSample.id = :typeOfSampleId";
-			Query<SampleItem> query = entityManager.unwrap(Session.class).createQuery(sql, SampleItem.class);
-			query.setParameter("sampleId", Integer.parseInt(sampleId));
-			query.setParameter("typeOfSampleId", Integer.parseInt(typeOfSample.getId()));
+            Query<SampleItem> query = entityManager.unwrap(Session.class).createQuery(sql, SampleItem.class);
+            query.setParameter("sampleId", Integer.parseInt(sampleId));
+            query.setParameter("typeOfSampleId", Integer.parseInt(typeOfSample.getId()));
             List<SampleItem> list = query.list();
 
             return list;
@@ -219,8 +219,8 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem, String> implement
 
         try {
             String sql = "from SampleItem sampleItem where sampleItem.sample.id = :sampleId and sampleItem.statusId in ( :statusIds ) order by sampleItem.sortOrder";
-			Query<SampleItem> query = entityManager.unwrap(Session.class).createQuery(sql, SampleItem.class);
-			query.setParameter("sampleId", Integer.parseInt(id));
+            Query<SampleItem> query = entityManager.unwrap(Session.class).createQuery(sql, SampleItem.class);
+            query.setParameter("sampleId", Integer.parseInt(id));
             query.setParameterList("statusIds", includedStatusList);
 
             List<SampleItem> list = query.list();

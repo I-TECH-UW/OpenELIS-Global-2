@@ -32,7 +32,6 @@ public class AnalysisNotificationConfigServiceImpl extends BaseObjectServiceImpl
         return baseDAO.getAnalysisNotificationConfigForAnalysisId(analysisId);
     }
 
-
     @Override
     public List<AnalysisNotificationConfig> getAnalysisNotificationConfigForAnalysisId(List<String> analysisIds) {
         return baseDAO.getAnalysisNotificationConfigsForAnalysisIds(analysisIds);

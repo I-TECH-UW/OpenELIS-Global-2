@@ -42,7 +42,7 @@ public class AccessionNumberConstraintValidator implements ConstraintValidator<V
         try {
             return ValidationResults.SUCCESS
                     .equals(AccessionNumberUtil.getAccessionNumberValidator(validateAccessionNumberConstraint.format())
-                    .validFormat(value, validateAccessionNumberConstraint.dateValidate()));
+                            .validFormat(value, validateAccessionNumberConstraint.dateValidate()));
         } catch (IllegalArgumentException e) {
             LogEvent.logError(e);
             return false;

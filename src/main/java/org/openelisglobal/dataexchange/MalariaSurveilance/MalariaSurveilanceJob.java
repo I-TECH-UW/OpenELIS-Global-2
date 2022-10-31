@@ -63,7 +63,8 @@ public class MalariaSurveilanceJob implements Job {
     private static Map<String, String> RAPID_DICTIONARY_ID_VALUE_MAP;
     private static List<String> MALARIA_TEST_NAMES;
     private static List<String> RAPID_TEST_NAMES;
-    private static final String FINISHED_STATUS_ID = SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized);
+    private static final String FINISHED_STATUS_ID = SpringContext.getBean(IStatusService.class)
+            .getStatusID(AnalysisStatus.Finalized);
 
     private StringBuffer buffer;
 

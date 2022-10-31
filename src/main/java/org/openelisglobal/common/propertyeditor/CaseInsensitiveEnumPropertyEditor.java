@@ -20,5 +20,4 @@ public class CaseInsensitiveEnumPropertyEditor<T extends Enum<?>> extends Proper
         }
     }
 
-
 }

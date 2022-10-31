@@ -71,7 +71,7 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
         List<RoleModule> list;
         try {
             String sql = "from RoleModule";
-			Query<RoleModule> query = entityManager.unwrap(Session.class).createQuery(sql, RoleModule.class);
+            Query<RoleModule> query = entityManager.unwrap(Session.class).createQuery(sql, RoleModule.class);
             list = query.list();
         } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
@@ -87,7 +87,7 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
         List<RoleModule> list;
         try {
             String sql = "from RoleModule s where s.role.id = :param";
-			Query<RoleModule> query = entityManager.unwrap(Session.class).createQuery(sql, RoleModule.class);
+            Query<RoleModule> query = entityManager.unwrap(Session.class).createQuery(sql, RoleModule.class);
             query.setParameter("param", systemUserId);
             list = query.list();
         } catch (RuntimeException e) {
@@ -107,7 +107,7 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
             int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 
             String sql = "from RoleModule s order by s.role.id";
-			Query<RoleModule> query = entityManager.unwrap(Session.class).createQuery(sql, RoleModule.class);
+            Query<RoleModule> query = entityManager.unwrap(Session.class).createQuery(sql, RoleModule.class);
             query.setFirstResult(startingRecNo - 1);
             query.setMaxResults(endingRecNo - 1);
 
@@ -138,9 +138,9 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
         String sql = "From RoleModule rm where rm.systemModule.id = :moduleId and rm.role.id = :roleId";
 
         try {
-			Query<RoleModule> query = entityManager.unwrap(Session.class).createQuery(sql, RoleModule.class);
-			query.setParameter("moduleId", Integer.parseInt(moduleId));
-			query.setParameter("roleId", Integer.parseInt(roleId));
+            Query<RoleModule> query = entityManager.unwrap(Session.class).createQuery(sql, RoleModule.class);
+            query.setParameter("moduleId", Integer.parseInt(moduleId));
+            query.setParameter("roleId", Integer.parseInt(roleId));
             List<RoleModule> modules = query.list();
             return modules.isEmpty() ? new RoleModule() : modules.get(0);
         } catch (HibernateException e) {
@@ -164,15 +164,15 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
             List<RoleModule> list;
 
             String sql = "from RoleModule s where s.role.id = :param and s.systemModule.id = :param2 and s.id != :param3";
-			Query<RoleModule> query = entityManager.unwrap(Session.class).createQuery(sql, RoleModule.class);
-			query.setParameter("param", Integer.parseInt(roleModule.getRole().getId()));
-			query.setParameter("param2", Integer.parseInt(roleModule.getSystemModule().getId()));
+            Query<RoleModule> query = entityManager.unwrap(Session.class).createQuery(sql, RoleModule.class);
+            query.setParameter("param", Integer.parseInt(roleModule.getRole().getId()));
+            query.setParameter("param2", Integer.parseInt(roleModule.getSystemModule().getId()));
 
             String systemUserModuleId = "0";
             if (!StringUtil.isNullorNill(roleModule.getId())) {
                 systemUserModuleId = roleModule.getId();
             }
-			query.setParameter("param3", Integer.parseInt(systemUserModuleId));
+            query.setParameter("param3", Integer.parseInt(systemUserModuleId));
 
             list = query.list();
 
@@ -189,9 +189,9 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
     public boolean doesUserHaveAnyModules(int userId) throws LIMSRuntimeException {
         try {
             String sql = "select count(*) from system_user_role where system_user_id = :userId";
-			Query query = entityManager.unwrap(Session.class).createNativeQuery(sql);
-			query.setParameter("userId", userId);
-			int roleCount = ((BigInteger) query.uniqueResult()).intValue();
+            Query query = entityManager.unwrap(Session.class).createNativeQuery(sql);
+            query.setParameter("userId", userId);
+            int roleCount = ((BigInteger) query.uniqueResult()).intValue();
             return roleCount > 0;
         } catch (HibernateException e) {
             LogEvent.logError(e.toString(), e);

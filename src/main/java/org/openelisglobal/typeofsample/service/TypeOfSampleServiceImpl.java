@@ -96,9 +96,11 @@ public class TypeOfSampleServiceImpl extends BaseObjectServiceImpl<TypeOfSample,
 
     @Override
     @Transactional(readOnly = true)
-    public synchronized List<Test> getActiveTestsBySampleTypeIdAndTestUnit(String sampleType, boolean b ,List<String> testUnitIds){
-        List<Test> testList = getActiveTestsBySampleTypeId(sampleType , b);
-        return testList.stream().filter(test -> testUnitIds.contains(test.getTestSection().getId())).collect(Collectors.toList());
+    public synchronized List<Test> getActiveTestsBySampleTypeIdAndTestUnit(String sampleType, boolean b,
+            List<String> testUnitIds) {
+        List<Test> testList = getActiveTestsBySampleTypeId(sampleType, b);
+        return testList.stream().filter(test -> testUnitIds.contains(test.getTestSection().getId()))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -108,7 +110,7 @@ public class TypeOfSampleServiceImpl extends BaseObjectServiceImpl<TypeOfSample,
         allSampleTypes.forEach(sample -> {
             List<Test> testList = getActiveTestsBySampleTypeIdAndTestUnit(sample.getId(), b, testUnitIds);
             allTests.addAll(testList);
-        });   
+        });
         return allTests;
     }
 

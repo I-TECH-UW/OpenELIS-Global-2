@@ -116,8 +116,8 @@ public class RegisterFhirHooksTask {
         headers.put("Server-Name", ConfigurationProperties.getInstance().getPropertyValue(Property.SiteName));
         headers.put("Server-Code", ConfigurationProperties.getInstance().getPropertyValue(Property.SiteCode));
 
-        dataExportTask.setFhirResources(Arrays.asList(fhirSubscriptionResources).stream()
-                .map(ResourceType::fromCode).collect(Collectors.toList()));
+        dataExportTask.setFhirResources(Arrays.asList(fhirSubscriptionResources).stream().map(ResourceType::fromCode)
+                .collect(Collectors.toList()));
         dataExportTask.setHeaders(headers);
         dataExportTask.setMaxDataExportInterval(backupInterval); // minutes
         dataExportTask.setDataRequestAttemptTimeout(backupTimeout); // seconds // currently unused

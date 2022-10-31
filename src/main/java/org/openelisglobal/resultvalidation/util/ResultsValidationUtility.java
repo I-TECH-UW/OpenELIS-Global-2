@@ -155,7 +155,8 @@ public class ResultsValidationUtility {
         }
     }
 
-    public List<AnalysisItem> getResultValidationList(List<Integer> statusList, String testSectionId, String accessionNumber ,String date) {
+    public List<AnalysisItem> getResultValidationList(List<Integer> statusList, String testSectionId,
+            String accessionNumber, String date) {
 
         List<AnalysisItem> resultList = new ArrayList<>();
 
@@ -215,15 +216,15 @@ public class ResultsValidationUtility {
 //        List<Analysis> analysisList = analysisService.getAllAnalysisByTestSectionAndStatus(sectionId, statusList,
 //                false);
         // getPage for validation
-        List<Analysis> analysisList = analysisService.getPageAnalysisAtAccessionNumberAndStatus(accessionNumber, statusList,
-                false);
+        List<Analysis> analysisList = analysisService.getPageAnalysisAtAccessionNumberAndStatus(accessionNumber,
+                statusList, false);
         return getGroupedTestsForAnalysisList(analysisList, !StatusRules.useRecordStatusForValidation());
     }
 
     @SuppressWarnings("unchecked")
     public final List<ResultValidationItem> getPageUnValidatedTestResultItemsByTestDate(String date,
             List<Integer> statusList) {
-        
+
         List<Analysis> analysisList = analysisService.getAnalysisStartedOn(DateUtil.convertStringDateToSqlDate(date))
                 .stream().filter(analysis -> statusList.contains(Integer.valueOf(analysis.getStatusId())))
                 .collect(Collectors.toList());

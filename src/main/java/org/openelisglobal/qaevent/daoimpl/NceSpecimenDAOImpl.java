@@ -25,8 +25,8 @@ public class NceSpecimenDAOImpl extends BaseDAOImpl<NceSpecimen, String> impleme
         List<NceSpecimen> list;
         try {
             String sql = "from NceSpecimen ns where ns.nceId=:nceId ";
-			Query<NceSpecimen> query = entityManager.unwrap(Session.class).createQuery(sql, NceSpecimen.class);
-			query.setParameter("nceId", nceId);
+            Query<NceSpecimen> query = entityManager.unwrap(Session.class).createQuery(sql, NceSpecimen.class);
+            query.setParameter("nceId", nceId);
             list = query.list();
         } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
@@ -39,8 +39,8 @@ public class NceSpecimenDAOImpl extends BaseDAOImpl<NceSpecimen, String> impleme
     public List<NceSpecimen> getSpecimenBySampleId(String sampleId) {
         List<NceSpecimen> list;
         String sql = "from NceSpecimen ns where ns.sampleItemId=:sampleId ";
-		Query<NceSpecimen> query = entityManager.unwrap(Session.class).createQuery(sql, NceSpecimen.class);
-		query.setParameter("sampleId", Integer.parseInt(sampleId));
+        Query<NceSpecimen> query = entityManager.unwrap(Session.class).createQuery(sql, NceSpecimen.class);
+        query.setParameter("sampleId", Integer.parseInt(sampleId));
         list = query.list();
 
         return list;

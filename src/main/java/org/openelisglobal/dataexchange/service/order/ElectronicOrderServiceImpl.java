@@ -138,8 +138,7 @@ public class ElectronicOrderServiceImpl extends BaseObjectServiceImpl<Electronic
             String nameValue = form.getSearchValue();
 
             List<ElectronicOrder> eOrders = baseObjectDAO.getAllElectronicOrdersMatchingAnyValue(identifierValues,
-                    nameValue,
-                    SortOrder.LAST_UPDATED_ASC);
+                    nameValue, SortOrder.LAST_UPDATED_ASC);
 
             return eOrders;
         case DATE_STATUS:

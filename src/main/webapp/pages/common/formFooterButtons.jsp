@@ -11,8 +11,6 @@
 
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
-
 <c:set var="success" value="${success}" />
 
 <%--bugzilla 1908 changed some disabled values for Vietnam tomcat/linux--%>

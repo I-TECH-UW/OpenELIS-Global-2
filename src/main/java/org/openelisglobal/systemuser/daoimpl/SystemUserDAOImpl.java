@@ -43,7 +43,6 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
         super(SystemUser.class);
     }
 
-
     @Override
     @Transactional(readOnly = true)
     public void getData(SystemUser systemUser) throws LIMSRuntimeException {
@@ -68,7 +67,7 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
         List<SystemUser> list;
         try {
             String sql = "from SystemUser";
-			Query<SystemUser> query = entityManager.unwrap(Session.class).createQuery(sql, SystemUser.class);
+            Query<SystemUser> query = entityManager.unwrap(Session.class).createQuery(sql, SystemUser.class);
             list = query.list();
         } catch (RuntimeException e) {
             // bugzilla 2154
@@ -89,7 +88,7 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
 
             // bugzilla 1399
             String sql = "from SystemUser s order by s.lastName, s.firstName";
-			Query<SystemUser> query = entityManager.unwrap(Session.class).createQuery(sql, SystemUser.class);
+            Query<SystemUser> query = entityManager.unwrap(Session.class).createQuery(sql, SystemUser.class);
             query.setFirstResult(startingRecNo - 1);
             query.setMaxResults(endingRecNo - 1);
 
@@ -128,12 +127,12 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
     public boolean duplicateSystemUserExists(SystemUser systemUser) throws LIMSRuntimeException {
         try {
 
-			List<SystemUser> list = new ArrayList<>();
+            List<SystemUser> list = new ArrayList<>();
 
             // not case sensitive hemolysis and Hemolysis are considered
             // duplicates
             String sql = "from SystemUser t where trim(lower(t.lastName)) = :param and trim(lower(t.firstName)) = :param2 and t.id != :id";
-			Query<SystemUser> query = entityManager.unwrap(Session.class).createQuery(sql, SystemUser.class);
+            Query<SystemUser> query = entityManager.unwrap(Session.class).createQuery(sql, SystemUser.class);
             query.setParameter("param", systemUser.getLastName().toLowerCase().trim());
             query.setParameter("param2", systemUser.getFirstName().toLowerCase().trim());
 
@@ -142,7 +141,7 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
             if (!StringUtil.isNullorNill(systemUser.getId())) {
                 sysUserId = systemUser.getId();
             }
-			query.setParameter("id", Integer.parseInt(sysUserId));
+            query.setParameter("id", Integer.parseInt(sysUserId));
 
             list = query.list();
 
@@ -166,8 +165,8 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
         List<SystemUser> list;
         try {
             String sql = "from SystemUser where login_name = :name";
-			Query<SystemUser> query = entityManager.unwrap(Session.class).createQuery(sql, SystemUser.class);
-			query.setParameter("name", userName);
+            Query<SystemUser> query = entityManager.unwrap(Session.class).createQuery(sql, SystemUser.class);
+            query.setParameter("name", userName);
             list = query.list();
         } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);

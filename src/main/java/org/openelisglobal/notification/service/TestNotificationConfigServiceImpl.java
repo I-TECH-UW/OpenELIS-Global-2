@@ -44,8 +44,7 @@ public class TestNotificationConfigServiceImpl extends BaseObjectServiceImpl<Tes
     @Override
     @Transactional
     public TestNotificationConfig saveTestNotificationConfigActiveStatuses(
-            TestNotificationConfig targetTestNotificationConfig,
-            String sysUserId) {
+            TestNotificationConfig targetTestNotificationConfig, String sysUserId) {
         TestNotificationConfig oldConfig;
         if (targetTestNotificationConfig.getId() != null) {
             oldConfig = get(targetTestNotificationConfig.getId());

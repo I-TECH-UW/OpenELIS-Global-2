@@ -51,12 +51,12 @@ public class AnalyzerImportController implements IActionConstants {
     protected LoginUserService loginService;
     @Autowired
     protected SystemUserService systemUserService;
-	@Autowired
-	private PluginAnalyzerService pluginAnalyzerService;
+    @Autowired
+    private PluginAnalyzerService pluginAnalyzerService;
 
     @PostMapping("/importAnalyzer")
-    protected void doPost(@RequestParam("file") MultipartFile file,
-            HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(@RequestParam("file") MultipartFile file, HttpServletRequest request,
+            HttpServletResponse response) throws ServletException, IOException {
 
         AnalyzerReader reader = null;
         boolean fileRead = false;
@@ -67,43 +67,43 @@ public class AnalyzerImportController implements IActionConstants {
         if (reader != null) {
             fileRead = reader.readStream(stream);
         }
-		if (fileRead) {
-			boolean successful = reader.insertAnalyzerData(getSysUserId(request));
+        if (fileRead) {
+            boolean successful = reader.insertAnalyzerData(getSysUserId(request));
 
-			if (successful) {
-				response.getWriter().print("success");
-				response.setStatus(HttpServletResponse.SC_OK);
-				return;
-			} else {
-				if (reader != null) {
-					response.getWriter().print(reader.getError());
-				}
-				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-			}
+            if (successful) {
+                response.getWriter().print("success");
+                response.setStatus(HttpServletResponse.SC_OK);
+                return;
+            } else {
+                if (reader != null) {
+                    response.getWriter().print(reader.getError());
+                }
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            }
 
-		} else {
-			if (reader != null) {
-				response.getWriter().print(reader.getError());
-			}
-			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			return;
-		}
+        } else {
+            if (reader != null) {
+                response.getWriter().print(reader.getError());
+            }
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return;
+        }
 
-	}
+    }
 
-	@PostMapping("/analyzer/astm")
-	public void doPost(@RequestBody String message, HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
+    @PostMapping("/analyzer/astm")
+    public void doPost(@RequestBody String message, HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
-		AnalyzerReader reader = null;
-		boolean read = false;
-		InputStream stream = new ByteArrayInputStream(message.getBytes());
+        AnalyzerReader reader = null;
+        boolean read = false;
+        InputStream stream = new ByteArrayInputStream(message.getBytes());
 
-		reader = AnalyzerReaderFactory.getReaderFor("astm");
+        reader = AnalyzerReaderFactory.getReaderFor("astm");
 
-		if (reader != null) {
-			read = reader.readStream(stream);
-		}
+        if (reader != null) {
+            read = reader.readStream(stream);
+        }
         if (read) {
             boolean successful = reader.insertAnalyzerData(getSysUserId(request));
 
@@ -128,28 +128,28 @@ public class AnalyzerImportController implements IActionConstants {
 
     }
 
-	@PostMapping("/analyzer/runAction")
-	public ResponseEntity<String> runAnalyzerAction(@RequestParam String analyzerType,
-			@RequestParam String actionName) {
-		AnalyzerImporterPlugin analyzerPlugin = pluginAnalyzerService.getPluginByAnalyzerId(
-				AnalyzerTestNameCache.getInstance().getAnalyzerIdForName(getAnalyzerNameFromType(analyzerType)));
-		if (analyzerPlugin instanceof BidirectionalAnalyzer) {
-			BidirectionalAnalyzer bidirectionalAnalyzer = (BidirectionalAnalyzer) analyzerPlugin;
-			boolean success = bidirectionalAnalyzer.runLISAction(actionName, null);
-			return success ? ResponseEntity.ok().build()
-					: ResponseEntity.internalServerError().body(MessageUtil.getMessage("analyzer.lisaction.failed"));
-		}
-		return ResponseEntity.badRequest().body(MessageUtil.getMessage("analyzer.lisaction.unsupported"));
+    @PostMapping("/analyzer/runAction")
+    public ResponseEntity<String> runAnalyzerAction(@RequestParam String analyzerType,
+            @RequestParam String actionName) {
+        AnalyzerImporterPlugin analyzerPlugin = pluginAnalyzerService.getPluginByAnalyzerId(
+                AnalyzerTestNameCache.getInstance().getAnalyzerIdForName(getAnalyzerNameFromType(analyzerType)));
+        if (analyzerPlugin instanceof BidirectionalAnalyzer) {
+            BidirectionalAnalyzer bidirectionalAnalyzer = (BidirectionalAnalyzer) analyzerPlugin;
+            boolean success = bidirectionalAnalyzer.runLISAction(actionName, null);
+            return success ? ResponseEntity.ok().build()
+                    : ResponseEntity.internalServerError().body(MessageUtil.getMessage("analyzer.lisaction.failed"));
+        }
+        return ResponseEntity.badRequest().body(MessageUtil.getMessage("analyzer.lisaction.unsupported"));
 
-	}
+    }
 
-	protected String getAnalyzerNameFromType(String analyzerType) {
-		String analyzer = null;
-		if (!GenericValidator.isBlankOrNull(analyzerType)) {
-			analyzer = AnalyzerTestNameCache.getInstance().getDBNameForActionName(analyzerType);
-		}
-		return analyzer;
-	}
+    protected String getAnalyzerNameFromType(String analyzerType) {
+        String analyzer = null;
+        if (!GenericValidator.isBlankOrNull(analyzerType)) {
+            analyzer = AnalyzerTestNameCache.getInstance().getDBNameForActionName(analyzerType);
+        }
+        return analyzer;
+    }
 
     private String getSysUserId(HttpServletRequest request) {
         UserSessionData usd = (UserSessionData) request.getAttribute(USER_SESSION_DATA);

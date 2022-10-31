@@ -53,7 +53,7 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
         try {
             String sql = "from CityView csz where upper(csz.city) like upper(:param) order by upper(csz.city)";
 
-			Query<CityView> query = entityManager.unwrap(Session.class).createQuery(sql, CityView.class);
+            Query<CityView> query = entityManager.unwrap(Session.class).createQuery(sql, CityView.class);
             query.setParameter("param", filter + "%");
             // for performance
             query.setMaxResults(100);
@@ -85,10 +85,10 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 
             String sql = "select distinct csz.zipCode, csz.city from CityStateZip csz where upper(csz.city) = :param";
 
-			Query<?> query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<?> query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setParameter("param", cityStateZip.getCity().trim().toUpperCase());
 
-			List<?> list = query.list();
+            List<?> list = query.list();
 
             // different behavior using select distinct...we need to put data
             // into valueholder manually and load up the list to return
@@ -121,10 +121,10 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
         List<CityStateZip> cityStateZips = new ArrayList<>();
         try {
             String sql = "select distinct csz.city, csz.zipCode from CityStateZip csz where csz.zipCode = :param";
-			Query<?> query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<?> query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setParameter("param", cityStateZip.getZipCode().trim());
 
-			List<?> list = query.list();
+            List<?> list = query.list();
             // different behavior using select distinct...we need to put data
             // into valueholder manually and load up the list to return
             for (int i = 0; i < list.size(); i++) {
@@ -156,7 +156,7 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
         try {
             // bugzilla 1908 postgres error on order by
             String sql = "select distinct upper(csz.state) from CityStateZip csz order by upper(csz.state)";
-			Query<?> query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<?> query = entityManager.unwrap(Session.class).createQuery(sql);
             List list = query.list();
 
             for (int i = 0; i < list.size(); i++) {
@@ -183,7 +183,7 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
         CityStateZip csz = null;
         try {
             String sql = "from CityStateZip csz where upper(csz.city)) = :param and csz.zipCode = :param2";
-			Query<CityStateZip> query = entityManager.unwrap(Session.class).createQuery(sql, CityStateZip.class);
+            Query<CityStateZip> query = entityManager.unwrap(Session.class).createQuery(sql, CityStateZip.class);
             query.setParameter("param", cityStateZip.getCity().trim().toUpperCase());
             query.setParameter("param2", cityStateZip.getZipCode());
 
@@ -209,10 +209,10 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
         CityStateZip csz = null;
         try {
             String sql = "select distinct csz.state from CityStateZip csz where upper(csz.state) = :param";
-			Query<?> query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<?> query = entityManager.unwrap(Session.class).createQuery(sql);
 
             query.setParameter("param", cityStateZip.getState().trim().toUpperCase());
-			List<?> list = query.list();
+            List<?> list = query.list();
 
             for (int i = 0; i < list.size(); i++) {
                 String state = ((String) list.get(i)).trim();
@@ -245,10 +245,10 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
         CityStateZip csz = null;
         try {
             String sql = "select distinct csz.city from CityStateZip csz where upper(csz.city) = :param";
-			Query<?> query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<?> query = entityManager.unwrap(Session.class).createQuery(sql);
 
             query.setParameter("param", cityStateZip.getCity().trim().toUpperCase());
-			List<?> list = query.list();
+            List<?> list = query.list();
 
             for (int i = 0; i < list.size(); i++) {
                 String city = ((String) list.get(i)).trim();
@@ -281,10 +281,10 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
         CityStateZip csz = null;
         try {
             String sql = "select distinct csz.zipCode from CityStateZip csz where upper(csz.zipCode) = :param";
-			Query<?> query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<?> query = entityManager.unwrap(Session.class).createQuery(sql);
 
             query.setParameter("param", cityStateZip.getZipCode().trim().toUpperCase());
-			List<?> list = query.list();
+            List<?> list = query.list();
 
             for (int i = 0; i < list.size(); i++) {
                 String zipCode = ((String) list.get(i)).trim();
@@ -318,12 +318,12 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
             String state = cityStateZip.getState();
             String city = cityStateZip.getCity();
             String zipCode = cityStateZip.getZipCode();
-			List<?> list = new ArrayList<>();
+            List<?> list = new ArrayList<>();
 
             if (!StringUtil.isNullorNill(state) && !StringUtil.isNullorNill(city)
                     && !StringUtil.isNullorNill(zipCode)) {
                 sql = "select distinct csz.zipCode, csz.city, csz.state from CityStateZip csz where upper(csz.city) = :param and csz.zipCode = :param2 and upper(csz.state) = :param3";
-				Query<?> query = entityManager.unwrap(Session.class).createQuery(sql);
+                Query<?> query = entityManager.unwrap(Session.class).createQuery(sql);
                 query.setParameter("param", cityStateZip.getCity().trim().toUpperCase());
                 query.setParameter("param2", cityStateZip.getZipCode().trim().toUpperCase());
                 query.setParameter("param3", cityStateZip.getState().trim().toUpperCase());
@@ -331,40 +331,40 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
             } else if (!StringUtil.isNullorNill(state) && !StringUtil.isNullorNill(city)
                     && StringUtil.isNullorNill(zipCode)) {
                 sql = "select distinct csz.city, csz.state from CityStateZip csz where upper(csz.city) = :param and upper(csz.state) = :param3";
-				Query<?> query = entityManager.unwrap(Session.class).createQuery(sql);
+                Query<?> query = entityManager.unwrap(Session.class).createQuery(sql);
                 query.setParameter("param", cityStateZip.getCity().trim().toUpperCase());
                 query.setParameter("param3", cityStateZip.getState().trim().toUpperCase());
                 list = query.list();
             } else if (StringUtil.isNullorNill(state) && !StringUtil.isNullorNill(city)
                     && !StringUtil.isNullorNill(zipCode)) {
                 sql = "select distinct csz.zipCode, csz.city from CityStateZip csz where upper(csz.city) = :param and csz.zipCode = :param2";
-				Query<?> query = entityManager.unwrap(Session.class).createQuery(sql);
+                Query<?> query = entityManager.unwrap(Session.class).createQuery(sql);
                 query.setParameter("param", cityStateZip.getCity().trim().toUpperCase());
                 query.setParameter("param2", cityStateZip.getZipCode().trim().toUpperCase());
                 list = query.list();
             } else if (!StringUtil.isNullorNill(state) && StringUtil.isNullorNill(city)
                     && !StringUtil.isNullorNill(zipCode)) {
                 sql = "select distinct csz.zipCode, csz.state from CityStateZip csz where csz.zipCode = :param2 and upper(csz.state) = :param3";
-				Query<?> query = entityManager.unwrap(Session.class).createQuery(sql);
+                Query<?> query = entityManager.unwrap(Session.class).createQuery(sql);
                 query.setParameter("param2", cityStateZip.getZipCode().trim().toUpperCase());
                 query.setParameter("param3", cityStateZip.getState().trim().toUpperCase());
                 list = query.list();
             } else if (StringUtil.isNullorNill(state) && StringUtil.isNullorNill(zipCode)
                     && !StringUtil.isNullorNill(city)) {
                 sql = "select distinct csz.city from CityStateZip csz where upper(csz.city) = :param";
-				Query<?> query = entityManager.unwrap(Session.class).createQuery(sql);
+                Query<?> query = entityManager.unwrap(Session.class).createQuery(sql);
                 query.setParameter("param", cityStateZip.getCity().trim().toUpperCase());
                 list = query.list();
             } else if (StringUtil.isNullorNill(state) && StringUtil.isNullorNill(city)
                     && !StringUtil.isNullorNill(zipCode)) {
                 sql = "select distinct csz.zipCode from CityStateZip csz where csz.zipCode = :param2";
-				Query<?> query = entityManager.unwrap(Session.class).createQuery(sql);
+                Query<?> query = entityManager.unwrap(Session.class).createQuery(sql);
                 query.setParameter("param2", cityStateZip.getZipCode().trim().toUpperCase());
                 list = query.list();
             } else if (StringUtil.isNullorNill(city) && StringUtil.isNullorNill(zipCode)
                     && !StringUtil.isNullorNill(state)) {
                 sql = "select distinct csz.state from CityStateZip csz where upper(csz.state) = :param3";
-				Query<?> query = entityManager.unwrap(Session.class).createQuery(sql);
+                Query<?> query = entityManager.unwrap(Session.class).createQuery(sql);
                 query.setParameter("param3", cityStateZip.getState().trim().toUpperCase());
                 list = query.list();
             } else if (StringUtil.isNullorNill(state) && StringUtil.isNullorNill(city)
@@ -397,16 +397,16 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
             String state = cityStateZip.getState();
             String city = cityStateZip.getCity();
             String zipCode = cityStateZip.getZipCode();
-			List<?> listByCity;
-			List<?> listByZip;
-			List<?> list;
+            List<?> listByCity;
+            List<?> listByZip;
+            List<?> list;
 
             // 1) ALL THREE PARAMETERS NEED TO BE SEARCHED (CITY, STATE, ZIP)
             if (!StringUtil.isNullorNill(state) && !StringUtil.isNullorNill(city)
                     && !StringUtil.isNullorNill(zipCode)) {
                 // first get all where city matches (and state)
                 sql = "select distinct csz.zipCode, csz.city, csz.state from CityStateZip csz where upper(csz.city) = :param and upper(csz.state) = :param3 order by csz.zipCode";
-				Query<?> query = entityManager.unwrap(Session.class).createQuery(sql);
+                Query<?> query = entityManager.unwrap(Session.class).createQuery(sql);
                 query.setParameter("param", cityStateZip.getCity().trim().toUpperCase());
                 query.setParameter("param3", cityStateZip.getState().trim().toUpperCase());
                 listByCity = query.list();
@@ -425,7 +425,7 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
                 }
                 // now get all where zip matches (and state)
                 sql = "select distinct csz.zipCode, csz.city, csz.state from CityStateZip csz where csz.zipCode = :param2 and upper(csz.state) = :param3 order by csz.city";
-				Query<?> query2 = entityManager.unwrap(Session.class).createQuery(sql);
+                Query<?> query2 = entityManager.unwrap(Session.class).createQuery(sql);
                 query2.setParameter("param2", cityStateZip.getZipCode().trim());
                 query2.setParameter("param3", cityStateZip.getState().trim().toUpperCase());
                 listByZip = query2.list();
@@ -448,7 +448,7 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
                 // all matches for city and zip regardless of state
                 if (cityStateZips.size() == 0) {
                     sql = "select distinct csz.zipCode, csz.city, csz.state from CityStateZip csz where upper(csz.city) = :param order by csz.zipCode";
-					Query<?> query3 = entityManager.unwrap(Session.class).createQuery(sql);
+                    Query<?> query3 = entityManager.unwrap(Session.class).createQuery(sql);
                     query3.setParameter("param", cityStateZip.getCity().trim().toUpperCase());
                     listByCity = query3.list();
                     for (int i = 0; i < listByCity.size(); i++) {
@@ -466,7 +466,7 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
                     }
                     // now get all where zip matches
                     sql = "select distinct csz.zipCode, csz.city, csz.state from CityStateZip csz where csz.zipCode = :param2 order by csz.city";
-					Query<?> query4 = entityManager.unwrap(Session.class).createQuery(sql);
+                    Query<?> query4 = entityManager.unwrap(Session.class).createQuery(sql);
                     query4.setParameter("param2", cityStateZip.getZipCode().trim());
                     listByZip = query4.list();
                     int k = cityStateZips.size();
@@ -487,7 +487,7 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
             } else if (!StringUtil.isNullorNill(state) && !StringUtil.isNullorNill(city)
                     && StringUtil.isNullorNill(zipCode)) {
                 sql = "select distinct csz.city, csz.state from CityStateZip csz where upper(csz.city) = :param order by csz.state";
-				Query<?> query = entityManager.unwrap(Session.class).createQuery(sql);
+                Query<?> query = entityManager.unwrap(Session.class).createQuery(sql);
                 query.setParameter("param", cityStateZip.getCity().trim().toUpperCase());
                 list = query.list();
                 for (int i = 0; i < list.size(); i++) {
@@ -506,7 +506,7 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
             } else if (StringUtil.isNullorNill(state) && !StringUtil.isNullorNill(city)
                     && !StringUtil.isNullorNill(zipCode)) {
                 sql = "select distinct csz.zipCode, csz.city from CityStateZip csz where upper(csz.city) = :param order by csz.zipCode";
-				Query<?> query = entityManager.unwrap(Session.class).createQuery(sql);
+                Query<?> query = entityManager.unwrap(Session.class).createQuery(sql);
                 query.setParameter("param", cityStateZip.getCity().trim().toUpperCase());
                 listByCity = query.list();
                 for (int i = 0; i < listByCity.size(); i++) {
@@ -524,7 +524,7 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
                 }
                 // now get all where zip matches
                 sql = "select distinct csz.zipCode, csz.city from CityStateZip csz where csz.zipCode = :param2 order by csz.city";
-				Query<?> query2 = entityManager.unwrap(Session.class).createQuery(sql);
+                Query<?> query2 = entityManager.unwrap(Session.class).createQuery(sql);
                 query2.setParameter("param2", cityStateZip.getZipCode().trim());
                 listByZip = query2.list();
                 int k = cityStateZips.size();
@@ -544,7 +544,7 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
             } else if (!StringUtil.isNullorNill(state) && StringUtil.isNullorNill(city)
                     && !StringUtil.isNullorNill(zipCode)) {
                 sql = "select distinct csz.state, csz.zipCode from CityStateZip csz where csz.zipCode = :param2 order by csz.state";
-				Query<?> query = entityManager.unwrap(Session.class).createQuery(sql);
+                Query<?> query = entityManager.unwrap(Session.class).createQuery(sql);
                 query.setParameter("param2", cityStateZip.getZipCode().trim());
                 list = query.list();
                 for (int i = 0; i < list.size(); i++) {
@@ -596,8 +596,8 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
         String countyCode = null;
         try {
 
-			List<?> list = entityManager.unwrap(Session.class)
-					.getNamedQuery("cityStateZip.getCountyCodeByStateAndZipCode")
+            List<?> list = entityManager.unwrap(Session.class)
+                    .getNamedQuery("cityStateZip.getCountyCodeByStateAndZipCode")
                     .setParameter("param", cityStateZip.getState().trim().toUpperCase())
                     .setParameter("param2", cityStateZip.getZipCode().trim()).list();
 

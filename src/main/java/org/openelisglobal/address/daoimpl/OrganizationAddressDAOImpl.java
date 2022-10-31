@@ -38,16 +38,15 @@ public class OrganizationAddressDAOImpl extends BaseDAOImpl<OrganizationAddress,
         super(OrganizationAddress.class);
     }
 
-    
     @Override
     public List<OrganizationAddress> getAddressPartsByOrganizationId(String organizationId)
             throws LIMSRuntimeException {
         String sql = "from OrganizationAddress pa where pa.compoundId.targetId = :organizationId";
 
         try {
-			Query<OrganizationAddress> query = entityManager.unwrap(Session.class).createQuery(sql,
-					OrganizationAddress.class);
-			query.setParameter("organizationId", Integer.parseInt(organizationId));
+            Query<OrganizationAddress> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    OrganizationAddress.class);
+            query.setParameter("organizationId", Integer.parseInt(organizationId));
             List<OrganizationAddress> addressPartList = query.list();
             return addressPartList;
         } catch (HibernateException e) {

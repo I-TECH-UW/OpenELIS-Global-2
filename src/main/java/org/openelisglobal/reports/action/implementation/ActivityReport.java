@@ -125,31 +125,31 @@ public abstract class ActivityReport extends Report implements IReportCreator {
         item.setResultValue(resultService.getResultValueForDisplay(result, "\n", true, true));
         item.setSampleStatus(sampleService.getSampleStatusForDisplay(sample));
         item.setTechnician(resultService.getSignature(result));
-        
-        //item.setAccessionNumber(sampleService.getAccessionNumber(sample).substring(PREFIX_LENGTH));
+
+        // item.setAccessionNumber(sampleService.getAccessionNumber(sample).substring(PREFIX_LENGTH));
         item.setAccessionNumber(sampleService.getAccessionNumber(sample));
-        
+
         item.setReceivedDate(sampleService.getReceivedDateWithTwoYearDisplay(sample));
         Timestamp start = sample.getReceivedTimestamp();
         Timestamp stop = result.getLastupdated();
         float diff = stop.getTime() - start.getTime();
         float diffSeconds = diff / 1000;
-        float diffMinutes = diff/ (60 * 1000);
+        float diffMinutes = diff / (60 * 1000);
         float diffHours = diff / (60 * 60 * 1000);
         float diffDays = diffHours / 24;
         DecimalFormat df = new DecimalFormat("0.00");
-        
+
         item.setTurnaroundHours(df.format(diffHours));
         item.setTurnaroundDays(df.format(diffDays));
 
         item.setResultDate(DateUtil.convertTimestampToStringDateAndTime(result.getLastupdated()));
         item.setCollectionDate(
                 DateUtil.convertTimestampToTwoYearStringDate(result.getAnalysis().getSampleItem().getCollectionDate()));
-        
+
         item.setPatientLastName(person.getLastName() == null ? "" : person.getLastName());
         item.setPatientFirstName(person.getFirstName() == null ? "" : person.getFirstName());
         item.setPatientId(patient.getStringId() == null ? "" : patient.getStringId());
-       
+
         List<String> values = new ArrayList<>();
         values.add(
                 patientService.getLastName(patient) == null ? "" : patientService.getLastName(patient).toUpperCase());

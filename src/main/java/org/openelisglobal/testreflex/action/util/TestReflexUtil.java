@@ -296,8 +296,9 @@ public class TestReflexUtil {
                     reflex.setActionScriptletId(splitActionId[1]);
                 }
 
-                Optional<Analysis> newAnalysis =addReflexTest(reflex, reflexBean.getResult(), reflexBean.getPatient().getId(), reflexBean.getSample(),
-                        true, true, addedActionId, false, sysUserId);
+                Optional<Analysis> newAnalysis = addReflexTest(reflex, reflexBean.getResult(),
+                        reflexBean.getPatient().getId(), reflexBean.getSample(), true, true, addedActionId, false,
+                        sysUserId);
                 if (newAnalysis.isPresent()) {
                     reflexAnalysises.add(newAnalysis.get());
                 }
@@ -344,8 +345,8 @@ public class TestReflexUtil {
                 boolean allSibAnalysisCausedReflex = doAllAnalysisHaveReflex(parentAnalysisList, reflexBean);
 
                 Optional<Analysis> newAnalysis = addReflexTest(reflexForResult, reflexBean.getResult(),
-                        reflexBean.getPatient().getId(),
-                        reflexBean.getSample(), true, true, null, allSibAnalysisCausedReflex, sysUserId);
+                        reflexBean.getPatient().getId(), reflexBean.getSample(), true, true, null,
+                        allSibAnalysisCausedReflex, sysUserId);
                 if (newAnalysis.isPresent()) {
                     reflexAnalysises.add(newAnalysis.get());
                 }
@@ -424,8 +425,8 @@ public class TestReflexUtil {
     }
 
     private Optional<Analysis> addReflexTest(TestReflex reflex, Result result, String patientId, Sample sample,
-            boolean addTest,
-            boolean handleAction, String actionSelectionId, boolean failOnDuplicateTest, String sysUserId) {
+            boolean addTest, boolean handleAction, String actionSelectionId, boolean failOnDuplicateTest,
+            String sysUserId) {
 
         if (addTest || handleAction) {
 

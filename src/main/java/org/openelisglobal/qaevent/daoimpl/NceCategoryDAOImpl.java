@@ -26,7 +26,7 @@ public class NceCategoryDAOImpl extends BaseDAOImpl<NceCategory, String> impleme
         List<NceCategory> list;
         try {
             String sql = "from NceCategory nc order by nc.id";
-			Query<NceCategory> query = entityManager.unwrap(Session.class).createQuery(sql, NceCategory.class);
+            Query<NceCategory> query = entityManager.unwrap(Session.class).createQuery(sql, NceCategory.class);
             list = query.list();
 
         } catch (RuntimeException e) {

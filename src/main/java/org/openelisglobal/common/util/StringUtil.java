@@ -657,11 +657,11 @@ public class StringUtil {
     }
 
     public static String getActualNumericValue(String resultValue) {
-        //ignore < or > from the analyser on validation
-       String actualValue = resultValue;
-       if (actualValue.startsWith("<") || actualValue.startsWith(">")) {
-           actualValue = actualValue.replaceAll("<|>", "");
-       }
-       return actualValue;
-   }
+        // ignore < or > from the analyser on validation
+        String actualValue = resultValue;
+        if (actualValue.startsWith("<") || actualValue.startsWith(">")) {
+            actualValue = actualValue.replaceAll("<|>", "");
+        }
+        return actualValue;
+    }
 }

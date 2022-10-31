@@ -138,7 +138,8 @@ public class PatientHistoryHistoryService extends AbstractHistoryService {
         ObservationHistory obsHistory = new ObservationHistory();
         obsHistory.setId(history.getReferenceId());
         obsHistory = observationHistoryService.getById(obsHistory);
-        // LogEvent.logInfo(this.getClass().getName(), "method unkown", obsHistory.getObservationHistoryTypeId() + " : " + value);
+        // LogEvent.logInfo(this.getClass().getName(), "method unkown",
+        // obsHistory.getObservationHistoryTypeId() + " : " + value);
         if ("D".equals(obsHistory.getValueType())) {
             return dictionaryService.getDataForId(value).getDictEntry();
         }

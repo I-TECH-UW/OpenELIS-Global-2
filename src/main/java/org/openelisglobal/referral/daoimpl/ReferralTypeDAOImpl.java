@@ -42,7 +42,7 @@ public class ReferralTypeDAOImpl extends BaseDAOImpl<ReferralType, String> imple
         String sql = "From ReferralType rt where rt.name = :name";
 
         try {
-			Query<ReferralType> query = entityManager.unwrap(Session.class).createQuery(sql, ReferralType.class);
+            Query<ReferralType> query = entityManager.unwrap(Session.class).createQuery(sql, ReferralType.class);
             query.setParameter("name", name);
             ReferralType referralType = query.uniqueResult();
             return referralType;

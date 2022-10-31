@@ -16,11 +16,7 @@ public interface SiteInformationService extends BaseObjectService<SiteInformatio
 
     SiteInformation getSiteInformationById(String urlId);
 
-
-
     List<SiteInformation> getSiteInformationByDomainName(String domainName);
-
-
 
     List<SiteInformation> getPageOfSiteInformationByDomainName(int startingRecNo, String domainName);
 

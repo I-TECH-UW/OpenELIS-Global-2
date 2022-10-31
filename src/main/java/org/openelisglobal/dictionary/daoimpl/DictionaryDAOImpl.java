@@ -47,7 +47,6 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
         super(Dictionary.class);
     }
 
-
     @Override
     @Transactional(readOnly = true)
     public void getData(Dictionary dictionary) throws LIMSRuntimeException {
@@ -64,7 +63,6 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
             throw new LIMSRuntimeException("Error in Dictionary getData()", e);
         }
     }
-
 
     // this is for autocomplete
     // modified for 2062
@@ -105,7 +103,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
             }
 
             sql += " order by d.dictEntry asc";
-			Query<Dictionary> query = entityManager.unwrap(Session.class).createQuery(sql, Dictionary.class);
+            Query<Dictionary> query = entityManager.unwrap(Session.class).createQuery(sql, Dictionary.class);
             query.setParameter("param1", filter + "%");
             if (!StringUtil.isNullorNill(categoryFilter)) {
                 query.setParameter("param2", categoryFilter);
@@ -152,7 +150,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
             } else {
                 sql += " order by d.sortOrder asc";
             }
-			Query<Dictionary> query = entityManager.unwrap(Session.class).createQuery(sql, Dictionary.class);
+            Query<Dictionary> query = entityManager.unwrap(Session.class).createQuery(sql, Dictionary.class);
             query.setParameter("param1", fieldValue);
 
             List<Dictionary> list = query.list();
@@ -165,7 +163,6 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
                     "Error in Dictionary getDictionaryEntrysByCategoryAbbreviation(String categoryFilter)", e);
         }
     }
-
 
     /*
      * note 1: The case of no category will throw a conversion error for postgres
@@ -215,7 +212,6 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
         }
     }
 
-
     // bugzilla 2061-2063
     @Override
     public boolean isDictionaryFrozen(Dictionary dictionary) throws LIMSRuntimeException {
@@ -236,7 +232,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
                 sql = "from TestResult tr where tr.value = :param and tr.test.isActive = " + enquote(YES);
             }
 
-			Query<?> query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<?> query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setParameter("param", dictionary.getId());
 
             return !query.list().isEmpty();
@@ -259,13 +255,12 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
         return null;
     }
 
-
     @Override
     @Transactional(readOnly = true)
     public Dictionary getDataForId(String dictionaryId) throws LIMSRuntimeException {
         String sql = "from Dictionary d where d.id = :id";
         try {
-			Query<Dictionary> query = entityManager.unwrap(Session.class).createQuery(sql, Dictionary.class);
+            Query<Dictionary> query = entityManager.unwrap(Session.class).createQuery(sql, Dictionary.class);
             query.setParameter("id", Integer.parseInt(dictionaryId));
             Dictionary dictionary = query.uniqueResult();
             return dictionary;

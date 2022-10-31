@@ -30,7 +30,8 @@ public class AnalyzerReaderUtil {
 
         if (sample != null && sample.getId() != null) {
             List<Analysis> analysisList = analysisService.getAnalysesBySampleId(sample.getId());
-            String acceptedStatusId = SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalAcceptance);
+            String acceptedStatusId = SpringContext.getBean(IStatusService.class)
+                    .getStatusID(AnalysisStatus.TechnicalAcceptance);
 
             for (Analysis analysis : analysisList) {
                 if (analysis.getStatusId().equals(acceptedStatusId)

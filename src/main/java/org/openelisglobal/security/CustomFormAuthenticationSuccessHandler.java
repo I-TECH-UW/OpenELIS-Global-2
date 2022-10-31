@@ -92,8 +92,7 @@ public class CustomFormAuthenticationSuccessHandler extends SavedRequestAwareAut
             errors.reject("login.error.noOeUser");
 
             request.getSession().setAttribute(Constants.LOGIN_ERRORS, errors);
-            getRedirectStrategy().sendRedirect(request, response,
-                    "/LoginPage");
+            getRedirectStrategy().sendRedirect(request, response, "/LoginPage");
             return;
         } catch (RuntimeException e) {
             LogEvent.logErrorStack(e);

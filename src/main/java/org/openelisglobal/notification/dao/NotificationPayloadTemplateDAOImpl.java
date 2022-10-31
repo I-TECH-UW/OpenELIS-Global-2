@@ -24,8 +24,8 @@ public class NotificationPayloadTemplateDAOImpl extends BaseDAOImpl<Notification
         List<NotificationPayloadTemplate> data;
         try {
             String sql = "from NotificationPayloadTemplate as npt where npt.type = :type order by npt.id asc";
-			Query<NotificationPayloadTemplate> query = entityManager.unwrap(Session.class).createQuery(sql,
-					NotificationPayloadTemplate.class);
+            Query<NotificationPayloadTemplate> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    NotificationPayloadTemplate.class);
             query.setParameter("type", type.name());
             query.setFirstResult(0);
             query.setMaxResults(1);

@@ -33,7 +33,8 @@ public class NotificationPayloadTemplateServiceImpl extends BaseObjectServiceImp
 
     @Override
     @Transactional
-    public void updatePayloadTemplateMessagesAndSubject(NotificationPayloadTemplate newPayloadTemplate, String sysUserId) {
+    public void updatePayloadTemplateMessagesAndSubject(NotificationPayloadTemplate newPayloadTemplate,
+            String sysUserId) {
         NotificationPayloadTemplate oldTemplate;
         if (newPayloadTemplate.getId() == null) {
             oldTemplate = newPayloadTemplate;

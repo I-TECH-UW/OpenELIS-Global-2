@@ -10,9 +10,9 @@ import org.openelisglobal.validation.annotations.SafeHtml;
 public class AdverseEffect implements Serializable {
     private static final long serialVersionUID = 1L;
 
-	@SafeHtml(level = SafeHtml.SafeListLevel.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String type;
-	@SafeHtml(level = SafeHtml.SafeListLevel.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String grade;
 
     public String getType() {

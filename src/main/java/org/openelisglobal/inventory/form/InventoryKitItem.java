@@ -31,7 +31,7 @@ public class InventoryKitItem implements Serializable {
     private String type;
 
     @NotBlank(groups = { Default.class, InventoryForm.ManageInventory.class })
-	@SafeHtml(groups = { Default.class, InventoryForm.ManageInventory.class })
+    @SafeHtml(groups = { Default.class, InventoryForm.ManageInventory.class })
     private String kitName;
 
     @ValidDate(relative = DateRelation.ANY, groups = { Default.class, InventoryForm.ManageInventory.class })

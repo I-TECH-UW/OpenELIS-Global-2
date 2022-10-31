@@ -33,7 +33,7 @@ public class FhirUtil implements FhirClientFetcher {
     private FhirContext fhirContext;
     @Autowired
     private CloseableHttpClient closeableHttpClient;
-    
+
     @Override
     public IGenericClient getFhirClient(String fhirStorePath) {
         IGenericClient fhirClient = fhirContext.newRestfulGenericClient(fhirStorePath);
@@ -62,10 +62,10 @@ public class FhirUtil implements FhirClientFetcher {
         fhirClient.registerInterceptor(authInterceptor);
         return fhirClient;
     }
-    
+
     public String getAccessToken(String authUrl, String authUserName, String authPassowrd) throws IOException {
         HttpPost httpPost = new HttpPost(authUrl);
-        
+
         String json = String.format("{\"username\":\"%s\",\"password\":\"%s\"}", authUserName, authPassowrd);
         StringEntity entity = new StringEntity(json);
         httpPost.setEntity(entity);

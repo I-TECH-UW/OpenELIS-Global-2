@@ -12,8 +12,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
-<%@ taglib prefix="tiles" uri="http://tiles.apache.org/tags-tiles" %>
-
 
 <%
 	boolean restrictNewReferringSiteEntries = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.restrictFreeTextRefSiteEntry, "true");
@@ -197,7 +195,7 @@ jQuery(document).ready(function () {
 	<c:if test="${form.patientInfoCheck}">
 		<tr>
 			<td>
-				<tiles:insertAttribute name="patientInfo" />
+				<jsp:include page="${patientInfoFragment}"/>
 			</td>
 		</tr>
 	</c:if>
@@ -210,7 +208,7 @@ jQuery(document).ready(function () {
 	</c:if>
 	<tr>
 		<td>
-			<tiles:insertAttribute name="entryMethod" />
+			<jsp:include page="${entryMethodFragment}"/>
 		</td>
 	</tr>
 </table>

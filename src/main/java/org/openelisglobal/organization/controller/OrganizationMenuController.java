@@ -71,8 +71,8 @@ public class OrganizationMenuController extends BaseMenuController<Organization>
     }
 
     @GetMapping(value = "/OrganizationExport", produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody byte[] exportOrganizations(
-            @RequestParam(name = "active", defaultValue = "true") String active) throws FhirTransformationException {
+    public @ResponseBody byte[] exportOrganizations(@RequestParam(name = "active", defaultValue = "true") String active)
+            throws FhirTransformationException {
         return organizationExportService.exportFhirOrganizationsFromOrganizations(Boolean.valueOf(active)).getBytes();
     }
 
@@ -98,10 +98,9 @@ public class OrganizationMenuController extends BaseMenuController<Organization>
         // bugzilla 1411 set pagination variables
         // bugzilla 2372 set pagination variables for searched results
         if (YES.equals(request.getParameter("search"))) {
-            request.setAttribute(MENU_TOTAL_RECORDS,
-                    String.valueOf(organizationService
-                            .getTotalSearchedOrganizationCount(request.getParameter("searchString"))));
-            request.setAttribute(SEARCHED_STRING, request.getParameter("searchString"));                
+            request.setAttribute(MENU_TOTAL_RECORDS, String.valueOf(
+                    organizationService.getTotalSearchedOrganizationCount(request.getParameter("searchString"))));
+            request.setAttribute(SEARCHED_STRING, request.getParameter("searchString"));
         } else {
             request.setAttribute(MENU_TOTAL_RECORDS, String.valueOf(organizationService.getCount()));
         }
@@ -197,7 +196,7 @@ public class OrganizationMenuController extends BaseMenuController<Organization>
     @Override
     protected String findLocalForward(String forward) {
         if (FWD_SUCCESS.equals(forward)) {
-            return "masterListsPageDefinition";
+            return "orgMasterListsPageDefinition";
         } else if (FWD_FAIL.equals(forward)) {
             return "redirect:/MasterListsPage";
         } else if (FWD_SUCCESS_DELETE.equals(forward)) {

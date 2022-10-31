@@ -66,7 +66,7 @@ public class RoleDAOImpl extends BaseDAOImpl<Role, String> implements RoleDAO {
         List<Role> list = null;
         try {
             String sql = "from Role";
-			Query<Role> query = entityManager.unwrap(Session.class).createQuery(sql, Role.class);
+            Query<Role> query = entityManager.unwrap(Session.class).createQuery(sql, Role.class);
             list = query.list();
         } catch (HibernateException e) {
             handleException(e, "getAllRoles");
@@ -82,7 +82,7 @@ public class RoleDAOImpl extends BaseDAOImpl<Role, String> implements RoleDAO {
         List<Role> list = null;
         try {
             String sql = "from Role r where r.active = true";
-			Query<Role> query = entityManager.unwrap(Session.class).createQuery(sql, Role.class);
+            Query<Role> query = entityManager.unwrap(Session.class).createQuery(sql, Role.class);
             list = query.list();
         } catch (HibernateException e) {
             handleException(e, "getAllActiveRoles");
@@ -101,7 +101,7 @@ public class RoleDAOImpl extends BaseDAOImpl<Role, String> implements RoleDAO {
             int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 
             String sql = "from Role r order by r.id";
-			Query<Role> query = entityManager.unwrap(Session.class).createQuery(sql, Role.class);
+            Query<Role> query = entityManager.unwrap(Session.class).createQuery(sql, Role.class);
             query.setFirstResult(startingRecNo - 1);
             query.setMaxResults(endingRecNo - 1);
 
@@ -137,8 +137,8 @@ public class RoleDAOImpl extends BaseDAOImpl<Role, String> implements RoleDAO {
         List<Role> list = null;
         try {
             String sql = "from Role where grouping_parent = :parent";
-			Query<Role> query = entityManager.unwrap(Session.class).createQuery(sql, Role.class);
-			query.setParameter("parent", Integer.parseInt(role.getId()));
+            Query<Role> query = entityManager.unwrap(Session.class).createQuery(sql, Role.class);
+            query.setParameter("parent", Integer.parseInt(role.getId()));
 
             list = query.list();
         } catch (RuntimeException e) {
@@ -155,8 +155,8 @@ public class RoleDAOImpl extends BaseDAOImpl<Role, String> implements RoleDAO {
         String sql = "from Role r where trim(r.name) = :name";
 
         try {
-			Query<Role> query = entityManager.unwrap(Session.class).createQuery(sql, Role.class);
-			query.setParameter("name", name);
+            Query<Role> query = entityManager.unwrap(Session.class).createQuery(sql, Role.class);
+            query.setParameter("name", name);
             Role role = query.setMaxResults(1).uniqueResult();
             return role;
         } catch (HibernateException e) {
@@ -171,8 +171,8 @@ public class RoleDAOImpl extends BaseDAOImpl<Role, String> implements RoleDAO {
         String sql = "from Role r where r.id = :id";
 
         try {
-			Query<Role> query = entityManager.unwrap(Session.class).createQuery(sql, Role.class);
-			query.setParameter("id", Integer.parseInt(roleId));
+            Query<Role> query = entityManager.unwrap(Session.class).createQuery(sql, Role.class);
+            query.setParameter("id", Integer.parseInt(roleId));
             Role role = query.uniqueResult();
             return role;
         } catch (HibernateException e) {

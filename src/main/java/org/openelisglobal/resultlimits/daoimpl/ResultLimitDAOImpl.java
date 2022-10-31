@@ -64,7 +64,7 @@ public class ResultLimitDAOImpl extends BaseDAOImpl<ResultLimit, String> impleme
         List<ResultLimit> list;
         try {
             String sql = "from ResultLimit";
-			Query<ResultLimit> query = entityManager.unwrap(Session.class).createQuery(sql, ResultLimit.class);
+            Query<ResultLimit> query = entityManager.unwrap(Session.class).createQuery(sql, ResultLimit.class);
             list = query.list();
         } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
@@ -83,7 +83,7 @@ public class ResultLimitDAOImpl extends BaseDAOImpl<ResultLimit, String> impleme
             int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 
             String sql = "from ResultLimit t order by t.id";
-			Query<ResultLimit> query = entityManager.unwrap(Session.class).createQuery(sql, ResultLimit.class);
+            Query<ResultLimit> query = entityManager.unwrap(Session.class).createQuery(sql, ResultLimit.class);
             query.setFirstResult(startingRecNo - 1);
             query.setMaxResults(endingRecNo - 1);
 
@@ -119,8 +119,8 @@ public class ResultLimitDAOImpl extends BaseDAOImpl<ResultLimit, String> impleme
 
         try {
             String sql = "from ResultLimit rl where rl.testId = :test_id";
-			Query<ResultLimit> query = entityManager.unwrap(Session.class).createQuery(sql, ResultLimit.class);
-			query.setParameter("test_id", Integer.parseInt(testId));
+            Query<ResultLimit> query = entityManager.unwrap(Session.class).createQuery(sql, ResultLimit.class);
+            query.setParameter("test_id", Integer.parseInt(testId));
 
             List<ResultLimit> list = query.list();
             return list;

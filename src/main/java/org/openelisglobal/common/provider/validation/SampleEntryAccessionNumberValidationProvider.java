@@ -102,8 +102,8 @@ public class SampleEntryAccessionNumberValidationProvider extends BaseValidation
                         : new ProgramAccessionValidator().getInvalidFormatMessage(result);
             } else {
                 returnData = !ignoreUsage ? altAccession //
-                                 ? AccessionNumberUtil.getAltAccessionNumberValidator().getInvalidMessage(result)
-                                 : AccessionNumberUtil.getMainAccessionNumberValidator().getInvalidMessage(result)
+                        ? AccessionNumberUtil.getAltAccessionNumberValidator().getInvalidMessage(result)
+                        : AccessionNumberUtil.getMainAccessionNumberValidator().getInvalidMessage(result)
                         : altAccession
                                 ? AccessionNumberUtil.getAltAccessionNumberValidator().getInvalidFormatMessage(result)
                                 : AccessionNumberUtil.getMainAccessionNumberValidator().getInvalidFormatMessage(result);

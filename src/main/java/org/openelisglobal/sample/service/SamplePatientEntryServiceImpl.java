@@ -65,8 +65,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class SamplePatientEntryServiceImpl implements SamplePatientEntryService {
 
     private static final String DEFAULT_ANALYSIS_TYPE = "MANUAL";
-    private final String SAMPLE_SUBJECT = "Sample Note"; 
-    //private String currentUserId; 
+    private final String SAMPLE_SUBJECT = "Sample Note";
+    // private String currentUserId;
 
     @Autowired
     private OrganizationAddressService organizationAddressService;
@@ -216,8 +216,7 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
             if (savedItem.isRejected()) {
                 String rejectReasonId = savedItem.getRejectReasonId();
                 String currentUserId = savedItem.getSysUserId();
-                for (IdValuePair rejectReason : DisplayListService.getInstance()
-                        .getList(ListType.REJECTION_REASONS)) {
+                for (IdValuePair rejectReason : DisplayListService.getInstance().getList(ListType.REJECTION_REASONS)) {
                     if (rejectReasonId.equals(rejectReason.getId())) {
                         Note note = noteService.createSavableNote(savedItem, NoteType.REJECTION_REASON,
                                 rejectReason.getValue(), SAMPLE_SUBJECT, currentUserId);
@@ -342,7 +341,7 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
                 if (orgType.getId().equals(TableIdService.getInstance().REFERRING_ORG_DEPARTMENT_TYPE_ID)) {
                     orgHasType = true;
                 }
-            } 
+            }
             if (!orgHasType) {
                 organizationService.linkOrganizationAndType(siteDepartment,
                         TableIdService.getInstance().REFERRING_ORG_DEPARTMENT_TYPE_ID);

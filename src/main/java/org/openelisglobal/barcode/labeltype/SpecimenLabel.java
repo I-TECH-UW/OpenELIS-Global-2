@@ -75,8 +75,7 @@ public class SpecimenLabel extends Label {
             belowFields.add(sexField);
         }
         if ("true".equals(useDateTime)) {
-            LabelField dateField = new LabelField(MessageUtil.getMessage("barcode.label.info.collectiondate"), "",
-                    3);
+            LabelField dateField = new LabelField(MessageUtil.getMessage("barcode.label.info.collectiondate"), "", 3);
             dateField.setDisplayFieldName(true);
             dateField.setUnderline(true);
             belowFields.add(dateField);
@@ -110,10 +109,10 @@ public class SpecimenLabel extends Label {
      */
     public SpecimenLabel(Patient patient, Sample sample, SampleItem sampleItem, String labNo) {
         // set dimensions
-            width = Float.parseFloat(
-                    ConfigurationProperties.getInstance().getPropertyValue(Property.SPECIMEN_BARCODE_WIDTH));
-            height = Float.parseFloat(
-                    ConfigurationProperties.getInstance().getPropertyValue(Property.SPECIMEN_BARCODE_HEIGHT));
+        width = Float
+                .parseFloat(ConfigurationProperties.getInstance().getPropertyValue(Property.SPECIMEN_BARCODE_WIDTH));
+        height = Float
+                .parseFloat(ConfigurationProperties.getInstance().getPropertyValue(Property.SPECIMEN_BARCODE_HEIGHT));
         // get information for displaying above bar code
         SampleOrderService sampleOrderService = new SampleOrderService(sample);
         Person person = patient.getPerson();
@@ -241,8 +240,7 @@ public class SpecimenLabel extends Label {
     @Override
     public int getMaxNumLabels() {
         int max = 0;
-            max = Integer
-                    .parseInt(ConfigurationProperties.getInstance().getPropertyValue(Property.MAX_SPECIMEN_PRINTED));
+        max = Integer.parseInt(ConfigurationProperties.getInstance().getPropertyValue(Property.MAX_SPECIMEN_PRINTED));
         return max;
     }
 

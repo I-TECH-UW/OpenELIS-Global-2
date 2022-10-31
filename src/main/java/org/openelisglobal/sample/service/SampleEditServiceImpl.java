@@ -63,7 +63,7 @@ public class SampleEditServiceImpl implements SampleEditService {
     private static final String DEFAULT_ANALYSIS_TYPE = "MANUAL";
     private static final String CANCELED_TEST_STATUS_ID;
     private static final String CANCELED_SAMPLE_STATUS_ID;
-    private final String SAMPLE_SUBJECT = "Sample Note"; 
+    private final String SAMPLE_SUBJECT = "Sample Note";
 
     static {
         CANCELED_TEST_STATUS_ID = SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Canceled);
@@ -187,8 +187,7 @@ public class SampleEditServiceImpl implements SampleEditService {
             if (savedItem.isRejected()) {
                 String rejectReasonId = savedItem.getRejectReasonId();
                 String currentUserId = savedItem.getSysUserId();
-                for (IdValuePair rejectReason : DisplayListService.getInstance()
-                        .getList(ListType.REJECTION_REASONS)) {
+                for (IdValuePair rejectReason : DisplayListService.getInstance().getList(ListType.REJECTION_REASONS)) {
                     if (rejectReasonId.equals(rejectReason.getId())) {
                         Note note = noteService.createSavableNote(savedItem, NoteType.REJECTION_REASON,
                                 rejectReason.getValue(), SAMPLE_SUBJECT, currentUserId);
@@ -415,7 +414,8 @@ public class SampleEditServiceImpl implements SampleEditService {
                     analysis.setStartedDate(DateUtil.getNowAsSqlDate());
                 }
 
-                analysis.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NotStarted));
+                analysis.setStatusId(
+                        SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NotStarted));
                 analysis.setSysUserId(sysUserId);
 
                 addAnalysisList.add(analysis);

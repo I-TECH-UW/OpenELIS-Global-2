@@ -253,10 +253,11 @@ public class QAService {
 
         return false;
     }
+
     private static boolean nonconformingByDepricatedStatus(Sample sample, Analysis analysis) {
 
-        return nonconformingByDepricatedStatus(sample) || analysis.getStatusId()
-                .equals(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NonConforming_depricated));
+        return nonconformingByDepricatedStatus(sample) || analysis.getStatusId().equals(
+                SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NonConforming_depricated));
     }
 
     private static boolean hasNonConformingEvent(SampleItem sampleItem) {

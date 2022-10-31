@@ -44,7 +44,6 @@ public interface DictionaryCategoryDAO extends BaseDAO<DictionaryCategory, Strin
 
 //	public void updateData(DictionaryCategory dictionaryCategory) throws LIMSRuntimeException;
 
-
 //
 
 //

@@ -25,11 +25,11 @@ public class AnalyzerReaderFactory {
      * some point we are going to be reading more than flat files
      */
     public static AnalyzerReader getReaderFor(String name) {
-		if (name.endsWith(".xls")) {
-			return new AnalyzerXLSLineReader();
-		}
-		if (name.equals("astm")) {
-			return new ASTMAnalyzerReader();
+        if (name.endsWith(".xls")) {
+            return new AnalyzerXLSLineReader();
+        }
+        if (name.equals("astm")) {
+            return new ASTMAnalyzerReader();
         }
         return new AnalyzerLineReader();
     }

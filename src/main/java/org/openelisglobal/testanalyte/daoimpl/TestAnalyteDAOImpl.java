@@ -70,9 +70,9 @@ public class TestAnalyteDAOImpl extends BaseDAOImpl<TestAnalyte, String> impleme
         List<TestAnalyte> list;
         try {
             String sql = "from TestAnalyte";
-			org.hibernate.query.Query<TestAnalyte> query = entityManager.unwrap(Session.class).createQuery(sql,
-					TestAnalyte.class);
-			list = query.list();
+            org.hibernate.query.Query<TestAnalyte> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    TestAnalyte.class);
+            list = query.list();
         } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
@@ -91,9 +91,9 @@ public class TestAnalyteDAOImpl extends BaseDAOImpl<TestAnalyte, String> impleme
             int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 
             String sql = "from TestAnalyte t order by t.id";
-			org.hibernate.query.Query<TestAnalyte> query = entityManager.unwrap(Session.class).createQuery(sql,
-					TestAnalyte.class);
-			query.setFirstResult(startingRecNo - 1);
+            org.hibernate.query.Query<TestAnalyte> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    TestAnalyte.class);
+            query.setFirstResult(startingRecNo - 1);
             query.setMaxResults(endingRecNo - 1);
 
             list = query.list();
@@ -175,14 +175,14 @@ public class TestAnalyteDAOImpl extends BaseDAOImpl<TestAnalyte, String> impleme
         List<TestAnalyte> list;
 
         if (test == null || StringUtil.isNullorNill(test.getId())) {
-			return new ArrayList<>();
+            return new ArrayList<>();
         }
 
         try {
             String sql = "from TestAnalyte t where t.test = :testId order by t.sortOrder asc";
-			org.hibernate.query.Query<TestAnalyte> query = entityManager.unwrap(Session.class).createQuery(sql,
-					TestAnalyte.class);
-			query.setParameter("testId", Integer.parseInt(test.getId()));
+            org.hibernate.query.Query<TestAnalyte> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    TestAnalyte.class);
+            query.setParameter("testId", Integer.parseInt(test.getId()));
 
             list = query.list();
         } catch (RuntimeException e) {

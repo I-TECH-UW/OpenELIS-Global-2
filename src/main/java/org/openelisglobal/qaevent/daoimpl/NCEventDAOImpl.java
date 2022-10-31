@@ -27,7 +27,7 @@ public class NCEventDAOImpl extends BaseDAOImpl<NcEvent, String> implements NCEv
         List<NcEvent> list = new ArrayList();
         try {
             String sql = "from NcEvent where nceNumber = :nceNumber or labOrderNumber = :labOrderNumber";
-			Query<NcEvent> query = entityManager.unwrap(Session.class).createQuery(sql, NcEvent.class);
+            Query<NcEvent> query = entityManager.unwrap(Session.class).createQuery(sql, NcEvent.class);
             query.setParameter("nceNumber", nceNumber);
             query.setParameter("labOrderNumber", labOrderId);
             list = query.list();

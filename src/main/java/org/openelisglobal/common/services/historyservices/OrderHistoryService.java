@@ -79,7 +79,8 @@ public class OrderHistoryService extends AbstractHistoryService {
         newValueMap = new HashMap<>();
         addReferrerHistory(sample, searchHistory);
 
-        newValueMap.put(STATUS_ATTRIBUTE, SpringContext.getBean(IStatusService.class).getStatusNameFromId(sample.getStatusId()));
+        newValueMap.put(STATUS_ATTRIBUTE,
+                SpringContext.getBean(IStatusService.class).getStatusNameFromId(sample.getStatusId()));
         newValueMap.put(ACCESSION_ATTRIBUTE, sample.getAccessionNumber());
 
     }

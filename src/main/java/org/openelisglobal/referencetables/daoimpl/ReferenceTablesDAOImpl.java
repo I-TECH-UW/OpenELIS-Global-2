@@ -69,7 +69,7 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
         List<ReferenceTables> list = new Vector<>();
         try {
             String sql = "from ReferenceTables";
-			Query<ReferenceTables> query = entityManager.unwrap(Session.class).createQuery(sql, ReferenceTables.class);
+            Query<ReferenceTables> query = entityManager.unwrap(Session.class).createQuery(sql, ReferenceTables.class);
             list = query.list();
         } catch (RuntimeException e) {
             // bugzilla 2154
@@ -89,7 +89,7 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
             int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 
             String sql = "from ReferenceTables r order by r.tableName";
-			Query<ReferenceTables> query = entityManager.unwrap(Session.class).createQuery(sql, ReferenceTables.class);
+            Query<ReferenceTables> query = entityManager.unwrap(Session.class).createQuery(sql, ReferenceTables.class);
             query.setFirstResult(startingRecNo - 1);
             query.setMaxResults(endingRecNo - 1);
             // query.setCacheMode(org.hibernate.CacheMode.REFRESH);
@@ -144,7 +144,7 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
 
             // LogEvent.logInfo(this.getClass().getName(), "method unkown", "Yi in
             // duplicateReferencetables sql is " + sql);
-			Query<ReferenceTables> query = entityManager.unwrap(Session.class).createQuery(sql, ReferenceTables.class);
+            Query<ReferenceTables> query = entityManager.unwrap(Session.class).createQuery(sql, ReferenceTables.class);
             // LogEvent.logInfo(this.getClass().getName(), "method unkown",
             // "duplicateReferencetables sql is " + sql);
 
@@ -181,7 +181,7 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
         List<ReferenceTables> list = new Vector<>();
         try {
             String sql = "from ReferenceTables rt where trim(upper(rt.isHl7Encoded)) = 'Y'";
-			Query<ReferenceTables> query = entityManager.unwrap(Session.class).createQuery(sql, ReferenceTables.class);
+            Query<ReferenceTables> query = entityManager.unwrap(Session.class).createQuery(sql, ReferenceTables.class);
             // query.setMaxResults(10);
             // query.setFirstResult(3);
             list = query.list();
@@ -211,7 +211,7 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
     public ReferenceTables getReferenceTableByName(String tableName) {
         try {
             String sql = "from ReferenceTables rt where trim(lower(rt.tableName)) = :tableName";
-			Query<ReferenceTables> query = entityManager.unwrap(Session.class).createQuery(sql, ReferenceTables.class);
+            Query<ReferenceTables> query = entityManager.unwrap(Session.class).createQuery(sql, ReferenceTables.class);
             query.setParameter("tableName", tableName.toLowerCase().trim());
 
             ReferenceTables table = query.setMaxResults(1).uniqueResult();

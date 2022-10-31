@@ -108,9 +108,12 @@ public class ObservationData implements Serializable {
     private List<NameValuePair> rtnPriorDiseasesList;
     private List<NameValuePair> rtnCurrentDiseasesList;
 
-    private List<@SafeHtml(level = SafeHtml.SafeListLevel.NONE) String> priorARVTreatmentINNs = Arrays.asList(new String[] { null, null, null, null });
-    private List<@SafeHtml(level = SafeHtml.SafeListLevel.NONE) String> futureARVTreatmentINNs = Arrays.asList(new String[] { null, null, null, null });
-    private List<@SafeHtml(level = SafeHtml.SafeListLevel.NONE) String> currentARVTreatmentINNs = Arrays.asList(new String[] { null, null, null, null });
+    private List<@SafeHtml(level = SafeHtml.SafeListLevel.NONE) String> priorARVTreatmentINNs = Arrays
+            .asList(new String[] { null, null, null, null });
+    private List<@SafeHtml(level = SafeHtml.SafeListLevel.NONE) String> futureARVTreatmentINNs = Arrays
+            .asList(new String[] { null, null, null, null });
+    private List<@SafeHtml(level = SafeHtml.SafeListLevel.NONE) String> currentARVTreatmentINNs = Arrays
+            .asList(new String[] { null, null, null, null });
     // private List<String> initialSampleConditionINNs= Arrays.asList(new String[]
     // {null, null, null, null});
 

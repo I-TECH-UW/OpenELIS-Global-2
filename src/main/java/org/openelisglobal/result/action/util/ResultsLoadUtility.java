@@ -781,9 +781,8 @@ public class ResultsLoadUtility {
                     resultLimit.getHighValid() == Double.POSITIVE_INFINITY ? 0 : resultLimit.getHighValid());
             testItem.setValid(getIsValid(testItem.getResultValue(), resultLimit));
             testItem.setNormal(getIsNormal(testItem.getResultValue(), resultLimit));
-            testItem.setNormalRange(SpringContext.getBean(ResultLimitService.class)
-                    .getDisplayReferenceRange(resultLimit,
-                            testResults.isEmpty() ? "0" : testResults.get(0).getSignificantDigits(), " - "));
+            testItem.setNormalRange(SpringContext.getBean(ResultLimitService.class).getDisplayReferenceRange(
+                    resultLimit, testResults.isEmpty() ? "0" : testResults.get(0).getSignificantDigits(), " - "));
         }
     }
 

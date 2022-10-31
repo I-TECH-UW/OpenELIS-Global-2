@@ -56,7 +56,8 @@ public class MalariaReportingUpdate implements IResultUpdate {
 
     public MalariaReportingUpdate() {
         REPORTABLE_STATUS_IDS = new HashSet<>();
-        REPORTABLE_STATUS_IDS.add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized)));
+        REPORTABLE_STATUS_IDS.add(
+                Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized)));
 
         // N.B. This should be discoverable from the DB, not hard coded by name
         MALARIA_TEST_IDS = new HashSet<>();

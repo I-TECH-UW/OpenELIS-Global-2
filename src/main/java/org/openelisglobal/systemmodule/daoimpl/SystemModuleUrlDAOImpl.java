@@ -40,8 +40,8 @@ public class SystemModuleUrlDAOImpl extends BaseDAOImpl<SystemModuleUrl, String>
         List<SystemModuleUrl> list;
         try {
             String sql = "From SystemModuleUrl smu where smu.urlPath = :urlPath";
-			Query<SystemModuleUrl> query = entityManager.unwrap(Session.class).createQuery(sql, SystemModuleUrl.class);
-			query.setParameter("urlPath", urlPath);
+            Query<SystemModuleUrl> query = entityManager.unwrap(Session.class).createQuery(sql, SystemModuleUrl.class);
+            query.setParameter("urlPath", urlPath);
             list = query.list();
         } catch (RuntimeException e) {
             LogEvent.logDebug(e);
@@ -61,9 +61,9 @@ public class SystemModuleUrlDAOImpl extends BaseDAOImpl<SystemModuleUrl, String>
         }
         try {
             String sql = "From SystemModuleUrl smu where smu.urlPath = :urlPath AND smu.systemModule = :systemModuleId";
-			Query<SystemModuleUrl> query = entityManager.unwrap(Session.class).createQuery(sql, SystemModuleUrl.class);
-			query.setParameter("urlPath", urlPath);
-			query.setParameter("systemModuleId", Integer.parseInt(moduleId));
+            Query<SystemModuleUrl> query = entityManager.unwrap(Session.class).createQuery(sql, SystemModuleUrl.class);
+            query.setParameter("urlPath", urlPath);
+            query.setParameter("systemModuleId", Integer.parseInt(moduleId));
             moduleUrl = query.getResultStream().findFirst().orElse(null);
         } catch (RuntimeException e) {
             LogEvent.logDebug(e);

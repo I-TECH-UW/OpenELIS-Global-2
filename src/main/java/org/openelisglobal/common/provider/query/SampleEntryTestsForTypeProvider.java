@@ -84,25 +84,26 @@ public class SampleEntryTestsForTypeProvider extends BaseQueryProvider {
         isVariableTypeOfSample = VARIABLE_SAMPLE_TYPE_ID.equals(sampleType);
         StringBuilder xml = new StringBuilder();
 
-        String receptionRoleId =  roleService.getRoleByName(Constants.ROLE_RECEPTION).getId();
-        UserSessionData usd = (UserSessionData)request.getSession().getAttribute(IActionConstants.USER_SESSION_DATA);
-        List<IdValuePair> testSections = userService.getUserTestSections(String.valueOf(usd.getSystemUserId()) ,receptionRoleId);
+        String receptionRoleId = roleService.getRoleByName(Constants.ROLE_RECEPTION).getId();
+        UserSessionData usd = (UserSessionData) request.getSession().getAttribute(IActionConstants.USER_SESSION_DATA);
+        List<IdValuePair> testSections = userService.getUserTestSections(String.valueOf(usd.getSystemUserId()),
+                receptionRoleId);
         List<String> testUnitIds = new ArrayList<>();
-        if(testSections !=null){
+        if (testSections != null) {
             testSections.forEach(test -> testUnitIds.add(test.getId()));
         }
 
-        String result = createSearchResultXML(sampleType, xml ,testUnitIds);
+        String result = createSearchResultXML(sampleType, xml, testUnitIds);
 
         ajaxServlet.sendData(xml.toString(), result, request, response);
 
     }
 
-    private String createSearchResultXML(String sampleType, StringBuilder xml ,List<String> testUnitIds) {
+    private String createSearchResultXML(String sampleType, StringBuilder xml, List<String> testUnitIds) {
 
         String success = VALID;
 
-        List<Test> tests = typeOfSampleService.getActiveTestsBySampleTypeIdAndTestUnit(sampleType, true ,testUnitIds);
+        List<Test> tests = typeOfSampleService.getActiveTestsBySampleTypeIdAndTestUnit(sampleType, true, testUnitIds);
 
         Collections.sort(tests, new Comparator<Test>() {
             @Override

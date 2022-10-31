@@ -43,7 +43,6 @@ public class NoteDAOImpl extends BaseDAOImpl<Note, String> implements NoteDAO {
         super(Note.class);
     }
 
-
     @Override
     @Transactional(readOnly = true)
     public Note getData(String noteId) throws LIMSRuntimeException {
@@ -57,17 +56,16 @@ public class NoteDAOImpl extends BaseDAOImpl<Note, String> implements NoteDAO {
         return null;
     }
 
-
     @Override
     @Transactional(readOnly = true)
     public List<Note> getAllNotesByRefIdRefTable(Note note) throws LIMSRuntimeException {
         try {
 
             String sql = "from Note n where n.referenceId = :refId and n.referenceTableId = :refTableId order by n.noteType desc, n.lastupdated desc";
-			Query<Note> query = entityManager.unwrap(Session.class).createQuery(sql, Note.class);
-			query.setParameter("refId", Integer.parseInt(note.getReferenceId()));
+            Query<Note> query = entityManager.unwrap(Session.class).createQuery(sql, Note.class);
+            query.setParameter("refId", Integer.parseInt(note.getReferenceId()));
 
-			query.setParameter("refTableId", Integer.parseInt(note.getReferenceTableId()));
+            query.setParameter("refTableId", Integer.parseInt(note.getReferenceTableId()));
 
             List<Note> list = query.list();
             return list;
@@ -85,17 +83,17 @@ public class NoteDAOImpl extends BaseDAOImpl<Note, String> implements NoteDAO {
             List<Note> list;
 
             String sql = "from Note t where trim(lower(t.noteType)) = :noteType and t.referenceId = :referenceId and t.referenceTableId = :referenceTableId and trim(lower(t.text)) = :param4 and trim(lower(t.subject)) = :param5 and t.id != :noteId";
-			Query<Note> query = entityManager.unwrap(Session.class).createQuery(sql, Note.class);
+            Query<Note> query = entityManager.unwrap(Session.class).createQuery(sql, Note.class);
             query.setParameter("noteType", note.getNoteType().toLowerCase().trim());
-			query.setParameter("referenceId", Integer.parseInt(note.getReferenceId()));
+            query.setParameter("referenceId", Integer.parseInt(note.getReferenceId()));
 
-			query.setParameter("referenceTableId", Integer.parseInt(note.getReferenceTableId()));
+            query.setParameter("referenceTableId", Integer.parseInt(note.getReferenceTableId()));
             query.setParameter("param4", note.getText().toLowerCase().trim());
             query.setParameter("param5", note.getSubject().toLowerCase().trim());
 
             int noteId = !StringUtil.isNullorNill(note.getId()) ? Integer.parseInt(note.getId()) : 0;
 
-			query.setParameter("noteId", noteId);
+            query.setParameter("noteId", noteId);
 
             list = query.list();
 
@@ -107,7 +105,6 @@ public class NoteDAOImpl extends BaseDAOImpl<Note, String> implements NoteDAO {
         }
     }
 
-
     @Override
     @Transactional(readOnly = true)
     public List<Note> getNotesChronologicallyByRefIdAndRefTableAndType(String objectId, String tableId,
@@ -115,9 +112,9 @@ public class NoteDAOImpl extends BaseDAOImpl<Note, String> implements NoteDAO {
         String sql = "FROM Note n where n.referenceId = :refId and n.referenceTableId = :tableId and n.noteType in ( :filter ) order by n.lastupdated asc";
 
         try {
-			Query<Note> query = entityManager.unwrap(Session.class).createQuery(sql, Note.class);
-			query.setParameter("refId", Integer.parseInt(objectId));
-			query.setParameter("tableId", Integer.parseInt(tableId));
+            Query<Note> query = entityManager.unwrap(Session.class).createQuery(sql, Note.class);
+            query.setParameter("refId", Integer.parseInt(objectId));
+            query.setParameter("tableId", Integer.parseInt(tableId));
             query.setParameterList("filter", filter);
 
             List<Note> noteList = query.list();
@@ -135,11 +132,11 @@ public class NoteDAOImpl extends BaseDAOImpl<Note, String> implements NoteDAO {
         String sql = "FROM Note n where n.noteType = :type and n.referenceTableId = :referenceTableId and n.lastupdated between :lowDate and :highDate";
 
         try {
-			Query<Note> query = entityManager.unwrap(Session.class).createQuery(sql, Note.class);
-			query.setParameter("type", noteType);
-			query.setParameter("referenceTableId", Integer.parseInt(referenceTableId));
-			query.setParameter("lowDate", lowDate);
-			query.setParameter("highDate", highDate);
+            Query<Note> query = entityManager.unwrap(Session.class).createQuery(sql, Note.class);
+            query.setParameter("type", noteType);
+            query.setParameter("referenceTableId", Integer.parseInt(referenceTableId));
+            query.setParameter("lowDate", lowDate);
+            query.setParameter("highDate", highDate);
 
             List<Note> noteList = query.list();
             return noteList;

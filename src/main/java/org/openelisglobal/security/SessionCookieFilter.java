@@ -20,30 +20,30 @@ public class SessionCookieFilter extends GenericFilterBean {
 
 //	private ArrayList<String> exceptions = new ArrayList<>();
 
-	private final String SESSION_COOKIE_NAME = "JSESSIONID";
-	private final String SESSION_PATH_ATTRIBUTE = ";Path=";
-	private final String ROOT_CONTEXT = "/";
-	private final String SAME_SITE_ATTRIBUTE_VALUES = ";HttpOnly;Secure;SameSite=Strict";
+    private final String SESSION_COOKIE_NAME = "JSESSIONID";
+    private final String SESSION_PATH_ATTRIBUTE = ";Path=";
+    private final String ROOT_CONTEXT = "/";
+    private final String SAME_SITE_ATTRIBUTE_VALUES = ";HttpOnly;Secure;SameSite=Strict";
 
-	@Override
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-			throws IOException, ServletException {
-		HttpServletResponse resp = (HttpServletResponse) response;
-		Cookie[] cookies = ((HttpServletRequest) request).getCookies();
-		if (cookies != null && cookies.length > 0) {
-			List<Cookie> cookieList = Arrays.asList(cookies);
-			Cookie sessionCookie = cookieList.stream().filter(cookie -> SESSION_COOKIE_NAME.equals(cookie.getName()))
-					.findFirst().orElse(null);
-			if (sessionCookie != null) {
-				String contextPath = request.getServletContext() != null
-						&& StringUtils.isNotBlank(request.getServletContext().getContextPath())
-								? request.getServletContext().getContextPath()
-								: ROOT_CONTEXT;
-				resp.setHeader(HttpHeaders.SET_COOKIE, sessionCookie.getName() + "=" + sessionCookie.getValue()
-						+ SESSION_PATH_ATTRIBUTE + contextPath + SAME_SITE_ATTRIBUTE_VALUES);
-			}
-		}
-		chain.doFilter(request, response);
-	}
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+            throws IOException, ServletException {
+        HttpServletResponse resp = (HttpServletResponse) response;
+        Cookie[] cookies = ((HttpServletRequest) request).getCookies();
+        if (cookies != null && cookies.length > 0) {
+            List<Cookie> cookieList = Arrays.asList(cookies);
+            Cookie sessionCookie = cookieList.stream().filter(cookie -> SESSION_COOKIE_NAME.equals(cookie.getName()))
+                    .findFirst().orElse(null);
+            if (sessionCookie != null) {
+                String contextPath = request.getServletContext() != null
+                        && StringUtils.isNotBlank(request.getServletContext().getContextPath())
+                                ? request.getServletContext().getContextPath()
+                                : ROOT_CONTEXT;
+                resp.setHeader(HttpHeaders.SET_COOKIE, sessionCookie.getName() + "=" + sessionCookie.getValue()
+                        + SESSION_PATH_ATTRIBUTE + contextPath + SAME_SITE_ATTRIBUTE_VALUES);
+            }
+        }
+        chain.doFilter(request, response);
+    }
 
 }

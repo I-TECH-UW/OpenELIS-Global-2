@@ -77,4 +77,4 @@ if [[ "$CONFIGURE_SECONDARY" = true ]]; then
   EOF
 fi
 
-docker-compose up -d
+docker compose up -d

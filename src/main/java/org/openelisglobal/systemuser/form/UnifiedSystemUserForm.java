@@ -44,23 +44,30 @@ public class UnifiedSystemUserForm extends BaseForm {
 
     // for display
     private List<DisplayRole> globalRoles;
-    
+
     // for display
     private List<DisplayRole> labUnitRoles;
 
     // for display
     private List<IdValuePair> testSections;
 
-    /**There are multiple fields in the ui-form mapped to this field, because the ui-form can dynamically create more fields mapped to this same field(path), 
-    this field is only used to get values from the form as a single String with comma ,separated values ie "value1 ,value2"  **/
+    /**
+     * There are multiple fields in the ui-form mapped to this field, because the
+     * ui-form can dynamically create more fields mapped to this same field(path),
+     * this field is only used to get values from the form as a single String with
+     * comma ,separated values ie "value1 ,value2"
+     **/
     private String testSectionId;
 
-    /**There are multiple fields in the ui-form mapped to this field, because the ui-form can dynamically create more fields mapped to this same field(path), 
-    this field is only used to get values from the form as a List of Strings  **/
+    /**
+     * There are multiple fields in the ui-form mapped to this field, because the
+     * ui-form can dynamically create more fields mapped to this same field(path),
+     * this field is only used to get values from the form as a List of Strings
+     **/
     private List<String> selectedLabUnitRoles;
 
     private List<@Pattern(regexp = ValidationHelper.ID_REGEX) String> selectedRoles;
-    
+
     @NotBlank
     @ValidDate(relative = DateRelation.FUTURE)
     private String expirationDate;
@@ -83,19 +90,23 @@ public class UnifiedSystemUserForm extends BaseForm {
 
     private Timestamp systemUserLastupdated;
 
-    /**This field passes the user Lab Unit Roles data to the ui-form in form of a json object , in order to dynamically 
-    render sets of Lab Unit Roles with data ,with fields that are mapped to the same  path ie testSectionId and selectedLabUnitRoles **/
+    /**
+     * This field passes the user Lab Unit Roles data to the ui-form in form of a
+     * json object , in order to dynamically render sets of Lab Unit Roles with data
+     * ,with fields that are mapped to the same path ie testSectionId and
+     * selectedLabUnitRoles
+     **/
     private JSONObject userLabRoleData;
 
-     // for display
-     private JSONArray systemUsers;
+    // for display
+    private JSONArray systemUsers;
 
-     @Pattern(regexp = ValidationHelper.ID_REGEX)
-     private String systemUserIdToCopy = "";
-     
-     @NotBlank
-     @Pattern(regexp = ValidationHelper.YES_NO_REGEX)
-     private String allowCopyUserRoles = "N";
+    @Pattern(regexp = ValidationHelper.ID_REGEX)
+    private String systemUserIdToCopy = "";
+
+    @NotBlank
+    @Pattern(regexp = ValidationHelper.YES_NO_REGEX)
+    private String allowCopyUserRoles = "N";
 
     public UnifiedSystemUserForm() {
         setFormName("unifiedSystemUserForm");
@@ -160,7 +171,7 @@ public class UnifiedSystemUserForm extends BaseForm {
     public List<DisplayRole> getGlobalRoles() {
         return globalRoles;
     }
-  
+
     public void setGlobalRoles(List<DisplayRole> globalRoles) {
         this.globalRoles = globalRoles;
     }
@@ -228,7 +239,7 @@ public class UnifiedSystemUserForm extends BaseForm {
     public void setSystemUserLastupdated(Timestamp systemUserLastupdated) {
         this.systemUserLastupdated = systemUserLastupdated;
     }
- 
+
     public List<IdValuePair> getTestSections() {
         return testSections;
     }
@@ -240,7 +251,7 @@ public class UnifiedSystemUserForm extends BaseForm {
     public String getTestSectionId() {
         return testSectionId;
     }
- 
+
     public void setTestSectionId(String testSectionId) {
         this.testSectionId = testSectionId;
     }
@@ -252,7 +263,7 @@ public class UnifiedSystemUserForm extends BaseForm {
     public void setSelectedLabUnitRoles(List<String> selectedLabUnitRoles) {
         this.selectedLabUnitRoles = selectedLabUnitRoles;
     }
-  
+
     public JSONObject getUserLabRoleData() {
         return userLabRoleData;
     }

@@ -47,7 +47,6 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
         super(Patient.class);
     }
 
-
     @Override
     public Optional<Patient> get(String patientId) {
         Optional<Patient> patient = super.get(patientId);
@@ -110,7 +109,7 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
         List<Patient> list;
         try {
             String sql = "from Patient";
-			Query<Patient> query = entityManager.unwrap(Session.class).createQuery(sql, Patient.class);
+            Query<Patient> query = entityManager.unwrap(Session.class).createQuery(sql, Patient.class);
             list = query.list();
         } catch (RuntimeException e) {
             // bugzilla 2154
@@ -130,7 +129,7 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
             int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 
             String sql = "from Patient t order by t.id";
-			Query<Patient> query = entityManager.unwrap(Session.class).createQuery(sql, Patient.class);
+            Query<Patient> query = entityManager.unwrap(Session.class).createQuery(sql, Patient.class);
             query.setFirstResult(startingRecNo - 1);
             query.setMaxResults(endingRecNo - 1);
 
@@ -167,7 +166,7 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
         try {
             String sql = "From Patient where external_id = :patientID";
 
-			Query<Patient> query = entityManager.unwrap(Session.class).createQuery(sql, Patient.class);
+            Query<Patient> query = entityManager.unwrap(Session.class).createQuery(sql, Patient.class);
             query.setParameter("patientID", patientExternalID);
 
             results = query.list();
@@ -184,8 +183,8 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
 
         try {
             String sql = "From Patient p where p." + propertyName + " = :" + propertyName;
-			Query<Patient> query = entityManager.unwrap(Session.class).createQuery(sql, Patient.class);
-			query.setParameter(propertyName, propertyValue);
+            Query<Patient> query = entityManager.unwrap(Session.class).createQuery(sql, Patient.class);
+            query.setParameter(propertyName, propertyValue);
             patients = query.list();
         } catch (RuntimeException e) {
             LogEvent.logDebug(e);
@@ -205,8 +204,8 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
     public List<Patient> getPatientsByNationalId(String nationalId) throws LIMSRuntimeException {
         try {
             String sql = "From Patient p where p.nationalId = :nationalId";
-			Query<Patient> query = entityManager.unwrap(Session.class).createQuery(sql, Patient.class);
-			query.setParameter("nationalId", nationalId);
+            Query<Patient> query = entityManager.unwrap(Session.class).createQuery(sql, Patient.class);
+            query.setParameter("nationalId", nationalId);
             List<Patient> patients = query.list();
             return patients;
         } catch (RuntimeException e) {
@@ -231,8 +230,8 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
         try {
             String sql = "From Patient p where p.person.id = :personID";
 
-			Query<Patient> query = entityManager.unwrap(Session.class).createQuery(sql, Patient.class);
-			query.setParameter("personID", Integer.parseInt(person.getId()));
+            Query<Patient> query = entityManager.unwrap(Session.class).createQuery(sql, Patient.class);
+            query.setParameter("personID", Integer.parseInt(person.getId()));
 
             patients = query.list();
         } catch (RuntimeException e) {
@@ -262,11 +261,11 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
         }
 
         try {
-			NativeQuery query = entityManager.unwrap(Session.class).createNativeQuery(sqlBuilder.toString());
+            NativeQuery query = entityManager.unwrap(Session.class).createNativeQuery(sqlBuilder.toString());
             if (useIdList) {
                 query.setParameterList("statusIdList", inclusiveStatusIdList);
             }
-			query.setParameter("project", project);
+            query.setParameter("project", project);
 
             List<String> subjectList = query.list();
 
@@ -288,7 +287,7 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
     public List<Patient> getAllMissingFhirUuid() {
         String sql = "from Patient p where p.fhirUuid is NULL";
         try {
-			Query<Patient> query = entityManager.unwrap(Session.class).createQuery(sql, Patient.class);
+            Query<Patient> query = entityManager.unwrap(Session.class).createQuery(sql, Patient.class);
             List<Patient> patientList = query.list();
 
             return patientList;
@@ -302,7 +301,7 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
     public Patient getByExternalId(String id) {
         String sql = "from Patient p where p.externalId = :id";
         try {
-			Query<Patient> query = entityManager.unwrap(Session.class).createQuery(sql, Patient.class);
+            Query<Patient> query = entityManager.unwrap(Session.class).createQuery(sql, Patient.class);
             query.setParameter("id", id);
             return query.uniqueResult();
         } catch (HibernateException e) {

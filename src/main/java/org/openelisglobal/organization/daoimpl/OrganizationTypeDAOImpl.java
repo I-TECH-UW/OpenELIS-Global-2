@@ -38,14 +38,14 @@ public class OrganizationTypeDAOImpl extends BaseDAOImpl<OrganizationType, Strin
     }
 
     @Override
-    
+
     @Transactional(readOnly = true)
     public List<OrganizationType> getAllOrganizationTypes() throws LIMSRuntimeException {
         List<OrganizationType> list = null;
         try {
             String sql = "from OrganizationType";
-			Query<OrganizationType> query = entityManager.unwrap(Session.class).createQuery(sql,
-					OrganizationType.class);
+            Query<OrganizationType> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    OrganizationType.class);
             list = query.list();
         } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
@@ -60,12 +60,11 @@ public class OrganizationTypeDAOImpl extends BaseDAOImpl<OrganizationType, Strin
         String sql = null;
         try {
             sql = "from OrganizationType o where o.name = :name";
-			Query<OrganizationType> query = entityManager.unwrap(Session.class).createQuery(sql,
-					OrganizationType.class);
+            Query<OrganizationType> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    OrganizationType.class);
 
-			query.setParameter("name", name);
+            query.setParameter("name", name);
 
-            
             List<OrganizationType> list = query.list();
             return list.size() > 0 ? list.get(0) : null;
         } catch (RuntimeException e) {

@@ -58,10 +58,9 @@ public class ExternalConnectionController extends BaseController {
             //
             "externalConnectionContacts*.id", "externalConnectionContacts*.lastupdated",
             //
-            "externalConnectionContacts*.person.id",
-            "externalConnectionContacts*.person.lastupdated", "externalConnectionContacts*.person.lastName",
-            "externalConnectionContacts*.person.firstName", "externalConnectionContacts*.person.primaryPhone",
-            "externalConnectionContacts*.person.email",
+            "externalConnectionContacts*.person.id", "externalConnectionContacts*.person.lastupdated",
+            "externalConnectionContacts*.person.lastName", "externalConnectionContacts*.person.firstName",
+            "externalConnectionContacts*.person.primaryPhone", "externalConnectionContacts*.person.email",
             //
             "certificateAuthenticationData.certificate", "certificateAuthenticationData.id",
             "certificateAuthenticationData.lastupdated",
@@ -136,8 +135,7 @@ public class ExternalConnectionController extends BaseController {
         return findForward(FWD_SUCCESS_INSERT, form);
     }
 
-    private void loadCertificateIntoTruststore(String connectionName,
-            MultipartFile certificateFile)
+    private void loadCertificateIntoTruststore(String connectionName, MultipartFile certificateFile)
             throws CertificateException, IOException, KeyStoreException, NoSuchAlgorithmException {
         if (certificateFile != null && !certificateFile.isEmpty()) {
             final CertificateFactory cf = CertificateFactory.getInstance("X.509");

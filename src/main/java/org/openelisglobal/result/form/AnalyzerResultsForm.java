@@ -32,8 +32,8 @@ public class AnalyzerResultsForm extends BaseForm implements IPagingForm {
     @NotNull
     private Boolean displayMissingTestMsg = false;
 
-	// display only
-	private List<LISAction> supportedLISActions;
+    // display only
+    private List<LISAction> supportedLISActions;
 
     public AnalyzerResultsForm() {
         setFormName("AnalyzerResultsForm");
@@ -81,12 +81,12 @@ public class AnalyzerResultsForm extends BaseForm implements IPagingForm {
         this.displayMissingTestMsg = displayMissingTestMsg;
     }
 
-	public List<LISAction> getSupportedLISActions() {
-		return supportedLISActions;
-	}
+    public List<LISAction> getSupportedLISActions() {
+        return supportedLISActions;
+    }
 
-	public void setSupportedLISActions(List<LISAction> supportedLISActions) {
-		this.supportedLISActions = supportedLISActions;
-	}
+    public void setSupportedLISActions(List<LISAction> supportedLISActions) {
+        this.supportedLISActions = supportedLISActions;
+    }
 
 }

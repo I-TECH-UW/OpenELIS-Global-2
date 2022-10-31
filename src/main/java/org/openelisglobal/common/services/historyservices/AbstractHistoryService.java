@@ -151,13 +151,15 @@ public abstract class AbstractHistoryService {
 
     private Map<String, String> getChangeMap(History history) throws SQLException, IOException {
         Map<String, String> changeMap = new HashMap<>();
-        // LogEvent.logInfo(this.getClass().getName(), "method unkown",  history.getId() + " : " + history.getActivity() );
+        // LogEvent.logInfo(this.getClass().getName(), "method unkown", history.getId()
+        // + " : " + history.getActivity() );
         if ("U".equals(history.getActivity()) || "D".equals(history.getActivity())) {
 
             byte[] bindata = history.getChanges();
 
             String changes = new String(bindata, StandardCharsets.UTF_8);
-            // LogEvent.logInfo(this.getClass().getName(), "method unkown", history.getActivity() + " : "+ changes);
+            // LogEvent.logInfo(this.getClass().getName(), "method unkown",
+            // history.getActivity() + " : "+ changes);
             getObservableChanges(history, changeMap, changes);
 
         }

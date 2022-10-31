@@ -45,8 +45,8 @@ public class OrganizationOrganizationTypeDAOImpl implements OrganizationOrganiza
 
         try {
             String sql = "delete from organization_organization_type where org_id = :id";
-			NativeQuery query = entityManager.unwrap(Session.class).createNativeQuery(sql);
-			query.setParameter("id", Integer.parseInt(id));
+            NativeQuery query = entityManager.unwrap(Session.class).createNativeQuery(sql);
+            query.setParameter("id", Integer.parseInt(id));
             query.executeUpdate();
         } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
@@ -60,9 +60,9 @@ public class OrganizationOrganizationTypeDAOImpl implements OrganizationOrganiza
 
         try {
             String sql = "INSERT INTO organization_organization_type(org_id, org_type_id)VALUES (:org_id, :type_id);";
-			NativeQuery query = entityManager.unwrap(Session.class).createNativeQuery(sql);
-			query.setParameter("org_id", Integer.parseInt(org.getId()));
-			query.setParameter("type_id", Integer.parseInt(typeId));
+            NativeQuery query = entityManager.unwrap(Session.class).createNativeQuery(sql);
+            query.setParameter("org_id", Integer.parseInt(org.getId()));
+            query.setParameter("type_id", Integer.parseInt(typeId));
             query.executeUpdate();
 
         } catch (RuntimeException e) {
@@ -78,8 +78,8 @@ public class OrganizationOrganizationTypeDAOImpl implements OrganizationOrganiza
         String sql = "select cast(org_id AS varchar) from organization_organization_type where org_type_id = :orgTypeId";
 
         try {
-			NativeQuery query = entityManager.unwrap(Session.class).createNativeQuery(sql);
-			query.setParameter("orgTypeId", Integer.parseInt(typeId));
+            NativeQuery query = entityManager.unwrap(Session.class).createNativeQuery(sql);
+            query.setParameter("orgTypeId", Integer.parseInt(typeId));
             orgIdList = query.list();
 
         } catch (RuntimeException e) {
@@ -96,8 +96,8 @@ public class OrganizationOrganizationTypeDAOImpl implements OrganizationOrganiza
         String sql = "select cast(org_type_id AS varchar) from organization_organization_type where org_id = :orgId";
 
         try {
-			NativeQuery query = entityManager.unwrap(Session.class).createNativeQuery(sql);
-			query.setParameter("orgId", Integer.parseInt(organizationId));
+            NativeQuery query = entityManager.unwrap(Session.class).createNativeQuery(sql);
+            query.setParameter("orgId", Integer.parseInt(organizationId));
             orgIdList = query.list();
 
         } catch (RuntimeException e) {
@@ -107,7 +107,7 @@ public class OrganizationOrganizationTypeDAOImpl implements OrganizationOrganiza
     }
 
     private void handleException(Exception e, String string) {
-		LogEvent.logErrorStack(e);
+        LogEvent.logErrorStack(e);
 
     }
 }

@@ -238,8 +238,8 @@ public abstract class PatientReport extends Report {
             if (!GenericValidator.isBlankOrNull(form.getUpperDateRange())
                     && !GenericValidator.isBlankOrNull(form.getLowerDateRange())) {
                 reportSampleList = findReportSamplesForSite(form.getReferringSiteId(),
-                        form.getReferringSiteDepartmentId(),
-                        form.isOnlyResults(), form.getDateType(), form.getLowerDateRange(), form.getUpperDateRange());
+                        form.getReferringSiteDepartmentId(), form.isOnlyResults(), form.getDateType(),
+                        form.getLowerDateRange(), form.getUpperDateRange());
             }
 
         }

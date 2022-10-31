@@ -22,16 +22,16 @@ public class ObservationHistoryTypeDAOImpl extends BaseDAOImpl<ObservationHistor
     }
 
     @Override
-    
+
     @Transactional(readOnly = true)
     public ObservationHistoryType getByName(String name) throws LIMSRuntimeException {
         List<ObservationHistoryType> historyTypeList;
 
         try {
             String sql = "from ObservationHistoryType oht where oht.typeName = :name";
-			Query<ObservationHistoryType> query = entityManager.unwrap(Session.class).createQuery(sql,
-					ObservationHistoryType.class);
-			query.setParameter("name", name);
+            Query<ObservationHistoryType> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    ObservationHistoryType.class);
+            query.setParameter("name", name);
             historyTypeList = query.list();
 
             return historyTypeList.size() > 0 ? historyTypeList.get(0) : null;
@@ -46,14 +46,14 @@ public class ObservationHistoryTypeDAOImpl extends BaseDAOImpl<ObservationHistor
      * Read all entities from the database.
      */
     @Override
-    
+
     @Transactional(readOnly = true)
     public List<ObservationHistoryType> getAll() throws LIMSRuntimeException {
         List<ObservationHistoryType> entities;
         try {
             String sql = "from ObservationHistoryType";
-			Query<ObservationHistoryType> query = entityManager.unwrap(Session.class).createQuery(sql,
-					ObservationHistoryType.class);
+            Query<ObservationHistoryType> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    ObservationHistoryType.class);
             entities = query.list();
         } catch (RuntimeException e) {
             LogEvent.logDebug(e);

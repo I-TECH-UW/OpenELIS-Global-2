@@ -35,10 +35,6 @@ public interface SiteInformationDAO extends BaseDAO<SiteInformation, String> {
 
 //	public void updateData(SiteInformation siteInformation) throws LIMSRuntimeException;
 
-
-
-
-
     public SiteInformation getSiteInformationByName(String siteName) throws LIMSRuntimeException;
 
     public int getCountForDomainName(String domainName) throws LIMSRuntimeException;

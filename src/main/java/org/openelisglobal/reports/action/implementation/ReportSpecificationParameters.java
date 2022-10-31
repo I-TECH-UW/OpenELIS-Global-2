@@ -25,7 +25,7 @@ import org.openelisglobal.reports.form.ReportForm;
 
 public class ReportSpecificationParameters implements IReportParameterSetter {
     public enum Parameter {
-        NO_SPECIFICATION, DATE_RANGE, ACCESSION_RANGE,USE_SITE_SEARCH,USE_PATIENT_SEARCH
+        NO_SPECIFICATION, DATE_RANGE, ACCESSION_RANGE, USE_SITE_SEARCH, USE_PATIENT_SEARCH
     }
 
     private String reportTitle;
@@ -68,14 +68,14 @@ public class ReportSpecificationParameters implements IReportParameterSetter {
             for (Parameter parameter : parameters) {
                 switch (parameter) {
                 case USE_PATIENT_SEARCH: {
-                	form.setUsePatientSearch(true);
-                	form.setPatientSearch(new PatientSearch());
+                    form.setUsePatientSearch(true);
+                    form.setPatientSearch(new PatientSearch());
                     break;
                 }
                 case USE_SITE_SEARCH: {
-                	form.setUseSiteSearch(true);
-                	form.setReferringSiteList(
-                            DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_PATIENT_REFERRING_CLINIC));
+                    form.setUseSiteSearch(true);
+                    form.setReferringSiteList(DisplayListService.getInstance()
+                            .getList(DisplayListService.ListType.SAMPLE_PATIENT_REFERRING_CLINIC));
                     break;
                 }
                 case DATE_RANGE: {

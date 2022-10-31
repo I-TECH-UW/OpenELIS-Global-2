@@ -50,7 +50,7 @@ public class StatusOfSampleDAOImpl extends BaseDAOImpl<StatusOfSample, String> i
         try {
             // AIS - bugzilla 1546 - Used Upper
             String sql = "from StatusOfSample ss where UPPER(ss.statusType) = UPPER(:param) and ss.code = :param2";
-			Query<StatusOfSample> query = entityManager.unwrap(Session.class).createQuery(sql, StatusOfSample.class);
+            Query<StatusOfSample> query = entityManager.unwrap(Session.class).createQuery(sql, StatusOfSample.class);
             query.setParameter("param", statusofsample.getStatusType());
             query.setParameter("param2", statusofsample.getCode());
             List<StatusOfSample> list = query.list();
@@ -69,7 +69,6 @@ public class StatusOfSampleDAOImpl extends BaseDAOImpl<StatusOfSample, String> i
             throw new LIMSRuntimeException("Error in StatusOfSample getDataByStatusTypeAndStatusCode()", e);
         }
     }
-
 
     /**
      * getData()
@@ -108,7 +107,7 @@ public class StatusOfSampleDAOImpl extends BaseDAOImpl<StatusOfSample, String> i
         List<StatusOfSample> list;
         try {
             String sql = "from StatusOfSample sos order by sos.statusOfSampleName ";
-			Query<StatusOfSample> query = entityManager.unwrap(Session.class).createQuery(sql, StatusOfSample.class);
+            Query<StatusOfSample> query = entityManager.unwrap(Session.class).createQuery(sql, StatusOfSample.class);
             list = query.list();
         } catch (RuntimeException e) {
             // bugzilla 2154
@@ -138,7 +137,7 @@ public class StatusOfSampleDAOImpl extends BaseDAOImpl<StatusOfSample, String> i
 
             // bugzilla 1399
             String sql = "from StatusOfSample s order by s.statusType, s.code";
-			Query<StatusOfSample> query = entityManager.unwrap(Session.class).createQuery(sql, StatusOfSample.class);
+            Query<StatusOfSample> query = entityManager.unwrap(Session.class).createQuery(sql, StatusOfSample.class);
             query.setFirstResult(startingRecNo - 1);
             query.setMaxResults(endingRecNo - 1);
 
@@ -204,7 +203,7 @@ public class StatusOfSampleDAOImpl extends BaseDAOImpl<StatusOfSample, String> i
             // not case sensitive hemolysis and Hemolysis are considered
             // duplicates
             String sql = "from StatusOfSample t where trim(lower(t.code)) = :param and trim(lower(t.statusType)) = :param2 and t.id != :param3";
-			Query<StatusOfSample> query = entityManager.unwrap(Session.class).createQuery(sql, StatusOfSample.class);
+            Query<StatusOfSample> query = entityManager.unwrap(Session.class).createQuery(sql, StatusOfSample.class);
             query.setParameter("param", statusOfSample.getCode().toLowerCase().trim());
             query.setParameter("param2", statusOfSample.getStatusType().toLowerCase().trim());
 

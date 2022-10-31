@@ -36,13 +36,13 @@ public class InventoryItemDAOImpl extends BaseDAOImpl<InventoryItem, String> imp
     }
 
     @Override
-    
+
     @Transactional(readOnly = true)
     public List<InventoryItem> getAllInventoryItems() throws LIMSRuntimeException {
         List<InventoryItem> inventoryItems;
         try {
             String sql = "from InventoryItem";
-			Query<InventoryItem> query = entityManager.unwrap(Session.class).createQuery(sql, InventoryItem.class);
+            Query<InventoryItem> query = entityManager.unwrap(Session.class).createQuery(sql, InventoryItem.class);
             inventoryItems = query.list();
         } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);

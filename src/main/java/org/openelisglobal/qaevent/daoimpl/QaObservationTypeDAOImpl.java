@@ -40,9 +40,9 @@ public class QaObservationTypeDAOImpl extends BaseDAOImpl<QaObservationType, Str
         String sql = "FROM QaObservationType where name = :name";
 
         try {
-			Query<QaObservationType> query = entityManager.unwrap(Session.class).createQuery(sql,
-					QaObservationType.class);
-			query.setParameter("name", typeName);
+            Query<QaObservationType> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    QaObservationType.class);
+            query.setParameter("name", typeName);
             QaObservationType type = query.uniqueResult();
             return type;
         } catch (HibernateException e) {

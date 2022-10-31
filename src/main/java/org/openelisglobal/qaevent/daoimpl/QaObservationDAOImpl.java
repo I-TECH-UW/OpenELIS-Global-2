@@ -34,7 +34,6 @@ public class QaObservationDAOImpl extends BaseDAOImpl<QaObservation, String> imp
         super(QaObservation.class);
     }
 
-
     @Override
     @Transactional(readOnly = true)
     public QaObservation getQaObservationByTypeAndObserved(String typeName, String observedType, String observedId)
@@ -42,10 +41,10 @@ public class QaObservationDAOImpl extends BaseDAOImpl<QaObservation, String> imp
         String sql = "FROM QaObservation o where o.observationType.name = :observationName and o.observedType = :observedType and o.observedId = :observedId ";
 
         try {
-			Query<QaObservation> query = entityManager.unwrap(Session.class).createQuery(sql, QaObservation.class);
-			query.setParameter("observationName", typeName);
-			query.setParameter("observedType", observedType);
-			query.setParameter("observedId", Integer.parseInt(observedId));
+            Query<QaObservation> query = entityManager.unwrap(Session.class).createQuery(sql, QaObservation.class);
+            query.setParameter("observationName", typeName);
+            query.setParameter("observedType", observedType);
+            query.setParameter("observedId", Integer.parseInt(observedId));
             QaObservation observation = query.uniqueResult();
             return observation;
         } catch (HibernateException e) {

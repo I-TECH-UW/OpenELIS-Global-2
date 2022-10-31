@@ -37,8 +37,7 @@ import org.springframework.stereotype.Service;
 @Scope("prototype")
 public class PatientEntryAfterSampleEntry extends PatientEntry implements IPatientEntryAfterSampleEntry {
 
-    public PatientEntryAfterSampleEntry(PatientEntryByProjectForm form, String sysUserId, HttpServletRequest request)
-             {
+    public PatientEntryAfterSampleEntry(PatientEntryByProjectForm form, String sysUserId, HttpServletRequest request) {
         this();
         super.setFieldsFromForm(form);
         super.setSysUserId(sysUserId);

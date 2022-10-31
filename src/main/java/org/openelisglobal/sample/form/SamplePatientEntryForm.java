@@ -67,7 +67,7 @@ public class SamplePatientEntryForm extends BaseForm {
     // for display
     private PatientSearch patientSearch;
 
- // for display
+    // for display
     private PatientEnhancedSearch patientEnhancedSearch;
 
     @Valid
@@ -90,8 +90,8 @@ public class SamplePatientEntryForm extends BaseForm {
 
     private boolean useReferral;
 
-     // for display
-     private List<IdValuePair> rejectReasonList;
+    // for display
+    private List<IdValuePair> rejectReasonList;
 
     public SamplePatientEntryForm() {
         setFormName("samplePatientEntryForm");

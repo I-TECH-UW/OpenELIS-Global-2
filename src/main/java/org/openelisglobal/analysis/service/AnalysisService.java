@@ -35,7 +35,8 @@ public interface AnalysisService extends BaseObjectService<Analysis, String> {
 
     List<Analysis> getAnalysisStartedOrCompletedInDateRange(Date lowDate, Date highDate);
 
-    List<Analysis> getAnalysisByTestIdAndTestSectionIdsAndStartedInDateRange(Date lowDate, Date highDate ,String testId ,List<Integer> testScectionIds);
+    List<Analysis> getAnalysisByTestIdAndTestSectionIdsAndStartedInDateRange(Date lowDate, Date highDate, String testId,
+            List<Integer> testScectionIds);
 
     List<Analysis> getAllAnalysisByTestSectionAndStatus(String testSectionId, List<Integer> analysisStatusList,
             List<Integer> sampleStatusList);
@@ -171,7 +172,6 @@ public interface AnalysisService extends BaseObjectService<Analysis, String> {
 
     List<Analysis> get(List<String> value);
 
-
     List<Analysis> getAllAnalysisByTestsAndStatusAndCompletedDateRange(List<Integer> nfsTestIdList,
             List<Integer> analysisStatusList, List<Integer> sampleStatusList, Date lowDate, Date highDate);
 
@@ -189,7 +189,6 @@ public interface AnalysisService extends BaseObjectService<Analysis, String> {
 
     int getCountAnalysisByTestSectionAndStatus(String sectionId, List<Integer> statusList);
 
-
     int getCountAnalysisByStatusFromAccession(List<Integer> analysisStatusList, List<Integer> sampleStatusList,
             String accessionNumber);
 
@@ -198,7 +197,7 @@ public interface AnalysisService extends BaseObjectService<Analysis, String> {
 
     List<Analysis> getAnalysisForSiteBetweenResultDates(String referringSiteId, LocalDate lowerDate,
             LocalDate upperDate);
-    
+
     List<Analysis> getStudyAnalysisForSiteBetweenResultDates(String referringSiteId, LocalDate lowerDate,
             LocalDate upperDate);
 }

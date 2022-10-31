@@ -45,9 +45,9 @@ public class ReportExternalExportDAOImpl extends BaseDAOImpl<ReportExternalExpor
             throws LIMSRuntimeException {
         String sql = "from ReportExternalExport rq where rq.recalculate = true and rq.typeId = :typeId";
         try {
-			Query<ReportExternalExport> query = entityManager.unwrap(Session.class).createQuery(sql,
-					ReportExternalExport.class);
-			query.setParameter("typeId", Integer.parseInt(reportQueueTypeId));
+            Query<ReportExternalExport> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    ReportExternalExport.class);
+            query.setParameter("typeId", Integer.parseInt(reportQueueTypeId));
             List<ReportExternalExport> reports = query.list();
 
             return reports;
@@ -63,9 +63,9 @@ public class ReportExternalExportDAOImpl extends BaseDAOImpl<ReportExternalExpor
     public List<ReportExternalExport> getUnsentReportExports(String reportQueueTypeId) throws LIMSRuntimeException {
         String sql = "from ReportExternalExport rq where rq.send = true and rq.typeId = :typeId";
         try {
-			Query<ReportExternalExport> query = entityManager.unwrap(Session.class).createQuery(sql,
-					ReportExternalExport.class);
-			query.setParameter("typeId", Integer.parseInt(reportQueueTypeId));
+            Query<ReportExternalExport> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    ReportExternalExport.class);
+            query.setParameter("typeId", Integer.parseInt(reportQueueTypeId));
             List<ReportExternalExport> reports = query.list();
 
             return reports;
@@ -83,9 +83,9 @@ public class ReportExternalExportDAOImpl extends BaseDAOImpl<ReportExternalExpor
         String sql = "from ReportExternalExport rq where rq.send = false and rq.typeId = :typeId order by rq.sentDate desc";
 
         try {
-			Query<ReportExternalExport> query = entityManager.unwrap(Session.class).createQuery(sql,
-					ReportExternalExport.class);
-			query.setParameter("typeId", Integer.parseInt(reportQueueTypeId));
+            Query<ReportExternalExport> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    ReportExternalExport.class);
+            query.setParameter("typeId", Integer.parseInt(reportQueueTypeId));
             ReportExternalExport report = query.setMaxResults(1).uniqueResult();
 
             return report;
@@ -102,9 +102,9 @@ public class ReportExternalExportDAOImpl extends BaseDAOImpl<ReportExternalExpor
         String sql = "from ReportExternalExport rq where rq.typeId = :typeId order by rq.eventDate desc";
 
         try {
-			Query<ReportExternalExport> query = entityManager.unwrap(Session.class).createQuery(sql,
-					ReportExternalExport.class);
-			query.setParameter("typeId", Integer.parseInt(reportQueueTypeId));
+            Query<ReportExternalExport> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    ReportExternalExport.class);
+            query.setParameter("typeId", Integer.parseInt(reportQueueTypeId));
             ReportExternalExport report = query.setMaxResults(1).uniqueResult();
 
             return report;
@@ -116,7 +116,6 @@ public class ReportExternalExportDAOImpl extends BaseDAOImpl<ReportExternalExpor
 
     }
 
-    
     @Override
     @Transactional(readOnly = true)
     public List<ReportExternalExport> getReportsInDateRange(Timestamp lower, Timestamp upper, String reportQueueTypeId)
@@ -124,10 +123,10 @@ public class ReportExternalExportDAOImpl extends BaseDAOImpl<ReportExternalExpor
         String sql = "from ReportExternalExport rq where rq.sentDate >= :lower and rq.sentDate <= :upper";
 
         try {
-			Query<ReportExternalExport> query = entityManager.unwrap(Session.class).createQuery(sql,
-					ReportExternalExport.class);
-			query.setParameter("lower", lower);
-			query.setParameter("upper", upper);
+            Query<ReportExternalExport> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    ReportExternalExport.class);
+            query.setParameter("lower", lower);
+            query.setParameter("upper", upper);
             List<ReportExternalExport> reports = query.list();
 
             return reports;
@@ -156,8 +155,8 @@ public class ReportExternalExportDAOImpl extends BaseDAOImpl<ReportExternalExpor
         String sql = "From ReportExternalExport ree where ree.sentDate IS NOT NULL order by ree.sentDate DESC";
 
         try {
-			Query<ReportExternalExport> query = entityManager.unwrap(Session.class).createQuery(sql,
-					ReportExternalExport.class);
+            Query<ReportExternalExport> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    ReportExternalExport.class);
             ReportExternalExport report = query.setMaxResults(1).uniqueResult();
             if (report != null) {
                 return report.getSentDate();
@@ -174,8 +173,8 @@ public class ReportExternalExportDAOImpl extends BaseDAOImpl<ReportExternalExpor
         String sql = "From ReportExternalExport ree order by ree.collectionDate DESC";
 
         try {
-			Query<ReportExternalExport> query = entityManager.unwrap(Session.class).createQuery(sql,
-					ReportExternalExport.class);
+            Query<ReportExternalExport> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    ReportExternalExport.class);
             ReportExternalExport report = query.setMaxResults(1).uniqueResult();
             if (report != null) {
                 return report.getCollectionDate();
@@ -192,11 +191,11 @@ public class ReportExternalExportDAOImpl extends BaseDAOImpl<ReportExternalExpor
         String sql = "From ReportExternalExport ree where ree.eventDate >= :eventDate and ree.eventDate < :nextDay and ree.typeId = :typeId";
 
         try {
-			Query<ReportExternalExport> query = entityManager.unwrap(Session.class).createQuery(sql,
-					ReportExternalExport.class);
-			query.setParameter("eventDate", report.getEventDate());
-			query.setParameter("nextDay", new Timestamp(report.getEventDate().getTime() + DAY_IN_MILLSEC));
-			query.setParameter("typeId", Integer.parseInt(report.getTypeId()));
+            Query<ReportExternalExport> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    ReportExternalExport.class);
+            query.setParameter("eventDate", report.getEventDate());
+            query.setParameter("nextDay", new Timestamp(report.getEventDate().getTime() + DAY_IN_MILLSEC));
+            query.setParameter("typeId", Integer.parseInt(report.getTypeId()));
             ReportExternalExport foundReport = query.setMaxResults(1).uniqueResult();
             return foundReport == null ? report : foundReport;
 

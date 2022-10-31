@@ -38,13 +38,13 @@ public class ReferralReasonDAOImpl extends BaseDAOImpl<ReferralReason, String> i
     }
 
     @Override
-    
+
     @Transactional(readOnly = true)
     public List<ReferralReason> getAllReferralReasons() throws LIMSRuntimeException {
         String sql = "from ReferralReason";
 
         try {
-			Query<ReferralReason> query = entityManager.unwrap(Session.class).createQuery(sql, ReferralReason.class);
+            Query<ReferralReason> query = entityManager.unwrap(Session.class).createQuery(sql, ReferralReason.class);
             List<ReferralReason> reasons = query.list();
             return reasons;
         } catch (HibernateException e) {

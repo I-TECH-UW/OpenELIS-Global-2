@@ -101,7 +101,7 @@ public class EntityNamesProvider extends BaseQueryProvider {
             localization = getLocalizationForUnitOfMeasure(id);
         } else if (METHOD.equals(entityName)) {
             localization = getLocalizationForRenameMethod(id);
-        } 
+        }
         // add entity types as needed
 
         if (localization != null) {

@@ -72,8 +72,8 @@ public class TestNotificationConfigController extends BaseController {
 
     @PostMapping("/TestNotificationConfig")
     public ModelAndView updateNotificationConfig(HttpServletRequest request,
-            @ModelAttribute("form") @Valid TestNotificationConfigForm form,
-            BindingResult result, RedirectAttributes redirectAttributes) {
+            @ModelAttribute("form") @Valid TestNotificationConfigForm form, BindingResult result,
+            RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
             saveErrors(result);
             return displayNotificationConfig(form.getConfig().getTest().getId());

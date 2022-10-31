@@ -50,7 +50,6 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
     private static Map<String, String> ID_DESCRIPTION_MAP = null;
     private static Map<String, String> NAME_ID_MAP = null;
 
-
     @Override
     @Transactional(readOnly = true)
     public void getData(Panel panel) throws LIMSRuntimeException {
@@ -88,7 +87,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
     public List<Panel> getAllActivePanels() throws LIMSRuntimeException {
         try {
             String sql = "from Panel p where p.isActive = 'Y' order by p.panelName";
-			Query<Panel> query = entityManager.unwrap(Session.class).createQuery(sql, Panel.class);
+            Query<Panel> query = entityManager.unwrap(Session.class).createQuery(sql, Panel.class);
 
             List<Panel> list = query.list();
             return list;
@@ -105,7 +104,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
     public List<Panel> getAllPanels() throws LIMSRuntimeException {
         try {
             String sql = "from Panel p order by p.sortOrderInt";
-			Query<Panel> query = entityManager.unwrap(Session.class).createQuery(sql, Panel.class);
+            Query<Panel> query = entityManager.unwrap(Session.class).createQuery(sql, Panel.class);
 
             List<Panel> list = query.list();
             return list;
@@ -126,7 +125,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
 
             // bugzilla 1399
             String sql = "from Panel p order by p.panelName";
-			Query<Panel> query = entityManager.unwrap(Session.class).createQuery(sql, Panel.class);
+            Query<Panel> query = entityManager.unwrap(Session.class).createQuery(sql, Panel.class);
             query.setFirstResult(startingRecNo - 1);
             query.setMaxResults(endingRecNo - 1);
 
@@ -160,7 +159,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
         List<Panel> list = null;
         try {
             String sql = "from Panel p where isActive = 'Y' and upper(p.panelName) like upper(:param) order by upper(p.panelName)";
-			Query<Panel> query = entityManager.unwrap(Session.class).createQuery(sql, Panel.class);
+            Query<Panel> query = entityManager.unwrap(Session.class).createQuery(sql, Panel.class);
             query.setParameter("param", filter + "%");
 
             list = query.list();
@@ -188,12 +187,12 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
     public boolean duplicatePanelExists(Panel panel) throws LIMSRuntimeException {
         try {
 
-			List<Panel> list = new ArrayList<>();
+            List<Panel> list = new ArrayList<>();
 
             // not case sensitive hemolysis and Hemolysis are considered
             // duplicates
             String sql = "from Panel t where trim(lower(t.panelName)) = :param and t.id != :panelId";
-			Query<Panel> query = entityManager.unwrap(Session.class).createQuery(sql, Panel.class);
+            Query<Panel> query = entityManager.unwrap(Session.class).createQuery(sql, Panel.class);
             query.setParameter("param", panel.getPanelName().toLowerCase().trim());
 
             // initialize with 0 (for new records where no id has been generated
@@ -202,7 +201,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
             if (!StringUtil.isNullorNill(panel.getId())) {
                 panelId = panel.getId();
             }
-			query.setParameter("panelId", Integer.parseInt(panelId));
+            query.setParameter("panelId", Integer.parseInt(panelId));
 
             list = query.list();
 
@@ -222,12 +221,12 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
     public boolean duplicatePanelDescriptionExists(Panel panel) throws LIMSRuntimeException {
         try {
 
-			List<Panel> list = new ArrayList<>();
+            List<Panel> list = new ArrayList<>();
 
             // not case sensitive hemolysis and Hemolysis are considered
             // duplicates
             String sql = "from Panel t where trim(lower(t.description)) = :param and t.id != :panelId";
-			Query<Panel> query = entityManager.unwrap(Session.class).createQuery(sql, Panel.class);
+            Query<Panel> query = entityManager.unwrap(Session.class).createQuery(sql, Panel.class);
             query.setParameter("param", panel.getDescription().toLowerCase().trim());
 
             // initialize with 0 (for new records where no id has been generated
@@ -236,7 +235,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
             if (!StringUtil.isNullorNill(panel.getId())) {
                 panelId = panel.getId();
             }
-			query.setParameter("panelId", Integer.parseInt(panelId));
+            query.setParameter("panelId", Integer.parseInt(panelId));
 
             list = query.list();
 
@@ -310,8 +309,8 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
     public Panel getPanelByName(String panelName) {
         try {
             String sql = "from Panel p where p.panelName = :name";
-			Query<Panel> query = entityManager.unwrap(Session.class).createQuery(sql, Panel.class);
-			query.setParameter("name", panelName);
+            Query<Panel> query = entityManager.unwrap(Session.class).createQuery(sql, Panel.class);
+            query.setParameter("name", panelName);
 
             List<Panel> panelList = query.list();
             return panelList.isEmpty() ? null : panelList.get(0);

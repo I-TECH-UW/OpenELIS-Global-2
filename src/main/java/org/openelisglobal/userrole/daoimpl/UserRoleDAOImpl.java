@@ -49,8 +49,8 @@ public class UserRoleDAOImpl extends BaseDAOImpl<UserRole, UserRolePK> implement
 
         try {
             String sql = "select cast(role_id AS varchar) from system_user_role where system_user_id = :userId";
-			NativeQuery query = entityManager.unwrap(Session.class).createNativeQuery(sql);
-			query.setParameter("userId", Integer.parseInt(userId));
+            NativeQuery query = entityManager.unwrap(Session.class).createNativeQuery(sql);
+            query.setParameter("userId", Integer.parseInt(userId));
             userRoles = query.list();
         } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
@@ -66,10 +66,10 @@ public class UserRoleDAOImpl extends BaseDAOImpl<UserRole, UserRolePK> implement
         try {
             String sql = "select count(*) from system_user_role sur " + "join system_role as sr on sr.id = sur.role_id "
                     + "where sur.system_user_id = :userId and sr.name = :roleName";
-			NativeQuery query = entityManager.unwrap(Session.class).createNativeQuery(sql);
-			query.setParameter("userId", Integer.parseInt(userId));
-			query.setParameter("roleName", roleName);
-			int result = ((BigInteger) query.uniqueResult()).intValue();
+            NativeQuery query = entityManager.unwrap(Session.class).createNativeQuery(sql);
+            query.setParameter("userId", Integer.parseInt(userId));
+            query.setParameter("roleName", roleName);
+            int result = ((BigInteger) query.uniqueResult()).intValue();
 
             inRole = result != 0;
         } catch (HibernateException e) {
@@ -88,10 +88,10 @@ public class UserRoleDAOImpl extends BaseDAOImpl<UserRole, UserRolePK> implement
         try {
             String sql = "select count(*) from system_user_role sur " + "join system_role as sr on sr.id = sur.role_id "
                     + "where sur.system_user_id = :userId and sr.name in (:roleNames)";
-			NativeQuery query = entityManager.unwrap(Session.class).createNativeQuery(sql);
-			query.setParameter("userId", Integer.parseInt(userId));
+            NativeQuery query = entityManager.unwrap(Session.class).createNativeQuery(sql);
+            query.setParameter("userId", Integer.parseInt(userId));
             query.setParameterList("roleNames", roleNames);
-			int result = ((BigInteger) query.uniqueResult()).intValue();
+            int result = ((BigInteger) query.uniqueResult()).intValue();
 
             inRole = result != 0;
         } catch (HibernateException e) {
@@ -106,11 +106,10 @@ public class UserRoleDAOImpl extends BaseDAOImpl<UserRole, UserRolePK> implement
     public void deleteLabUnitRoleMap(LabUnitRoleMap roleMap) {
         try {
             entityManager.unwrap(Session.class).delete(roleMap);
-        }
-        catch (HibernateException e) {
+        } catch (HibernateException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in UserRoleDAOImpl userInRole()", e);
-        } 
+        }
     }
 
 }

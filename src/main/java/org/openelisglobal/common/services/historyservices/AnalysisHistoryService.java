@@ -52,7 +52,8 @@ public class AnalysisHistoryService extends AbstractHistoryService {
             historyList = historyService.getHistoryByRefIdAndRefTableId(searchHistory);
 
             newValueMap = new HashMap<String, String>();
-            newValueMap.put(STATUS_ATTRIBUTE, SpringContext.getBean(IStatusService.class).getStatusNameFromId(analysis.getStatusId()));
+            newValueMap.put(STATUS_ATTRIBUTE,
+                    SpringContext.getBean(IStatusService.class).getStatusNameFromId(analysis.getStatusId()));
 
             identifier = TestServiceImpl.getLocalizedTestNameWithType(analysis.getTest()) + " - "
                     + analysis.getAnalysisType();

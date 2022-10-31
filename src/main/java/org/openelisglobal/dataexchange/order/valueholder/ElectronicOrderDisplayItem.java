@@ -16,6 +16,7 @@
  */
 
 package org.openelisglobal.dataexchange.order.valueholder;
+
 import org.openelisglobal.sample.valueholder.OrderPriority;
 
 import java.util.List;
@@ -47,28 +48,28 @@ public class ElectronicOrderDisplayItem {
     private String subjectNumber;
 
     private String labNumber;
-    
+
     private String birthDate;
-    
+
     private String gender;
 
     public String getBirthDate() {
-		return birthDate;
-	}
+        return birthDate;
+    }
 
-	public void setBirthDate(String birthDate) {
-		this.birthDate = birthDate;
-	}
+    public void setBirthDate(String birthDate) {
+        this.birthDate = birthDate;
+    }
 
-	public String getGender() {
-		return gender;
-	}
+    public String getGender() {
+        return gender;
+    }
 
-	public void setGender(String gender) {
-		this.gender = gender;
-	}
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
 
-	private List<String> warnings;
+    private List<String> warnings;
 
     private OrderPriority priority;
 

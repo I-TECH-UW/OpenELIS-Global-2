@@ -5,7 +5,6 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="tiles" uri="http://tiles.apache.org/tags-tiles" %>
 <style>
 
 .well {
@@ -478,7 +477,7 @@ jQuery( document ).ready(function() {
 				</td>
 			</tr>
 			</table>
-			<tiles:insertAttribute name="patientEnhancedSearch" />
+			<jsp:include page="${patientEnhancedSearchFragment}"/>
 			<table id="summaryId">
 			<tr>
 				<td>

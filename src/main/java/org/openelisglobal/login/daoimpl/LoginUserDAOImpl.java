@@ -42,7 +42,6 @@ public class LoginUserDAOImpl extends BaseDAOImpl<LoginUser, Integer> implements
         super(LoginUser.class);
     }
 
-
     @Override
     public boolean duplicateLoginNameExists(LoginUser login) throws LIMSRuntimeException {
         try {
@@ -50,7 +49,7 @@ public class LoginUserDAOImpl extends BaseDAOImpl<LoginUser, Integer> implements
             List<LoginUser> list = new ArrayList<>();
 
             String sql = "from LoginUser l where trim(lower(l.loginName)) = :loginName and l.id != :loginId";
-			Query<LoginUser> query = entityManager.unwrap(Session.class).createQuery(sql, LoginUser.class);
+            Query<LoginUser> query = entityManager.unwrap(Session.class).createQuery(sql, LoginUser.class);
             query.setParameter("loginName", login.getLoginName().toLowerCase().trim());
 
             Integer loginId = 0;
@@ -58,7 +57,7 @@ public class LoginUserDAOImpl extends BaseDAOImpl<LoginUser, Integer> implements
                 loginId = login.getId();
             }
 
-			query.setParameter("loginId", loginId);
+            query.setParameter("loginId", loginId);
 
             list = query.list();
 
@@ -70,7 +69,6 @@ public class LoginUserDAOImpl extends BaseDAOImpl<LoginUser, Integer> implements
             throw new LIMSRuntimeException("Error in duplicateLoginNameExists()", e);
         }
     }
-
 
     /**
      * Get the password expiration day
@@ -85,8 +83,8 @@ public class LoginUserDAOImpl extends BaseDAOImpl<LoginUser, Integer> implements
         try {
             String sql = "SELECT \n" + "                    floor(current_date-password_expired_dt)*-1 as cnt\n"
                     + "                FROM Login_User l where l.LOGIN_NAME = :loginName ";
-			Object obj = entityManager.unwrap(Session.class).createNativeQuery(sql)
-					.setParameter("loginName", login.getLoginName()).uniqueResult();
+            Object obj = entityManager.unwrap(Session.class).createNativeQuery(sql)
+                    .setParameter("loginName", login.getLoginName()).uniqueResult();
             if (obj != null) {
                 retVal = (int) Float.parseFloat(obj.toString());
             }
@@ -112,8 +110,8 @@ public class LoginUserDAOImpl extends BaseDAOImpl<LoginUser, Integer> implements
         int retVal = 0;
         try {
             String sql = "SELECT id from System_User su Where su.login_name = :loginName and su.is_active='Y'";
-			NativeQuery query = entityManager.unwrap(Session.class).createNativeQuery(sql);
-			query.setParameter("loginName", login.getLoginName());
+            NativeQuery query = entityManager.unwrap(Session.class).createNativeQuery(sql);
+            query.setParameter("loginName", login.getLoginName());
             Object obj = query.uniqueResult();
 
             if (obj != null) {

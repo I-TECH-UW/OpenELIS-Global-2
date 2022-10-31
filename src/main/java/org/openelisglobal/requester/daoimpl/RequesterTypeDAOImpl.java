@@ -42,7 +42,7 @@ public class RequesterTypeDAOImpl extends BaseDAOImpl<RequesterType, String> imp
         String sql = "from RequesterType rt where rt.requesterType = :typeName";
 
         try {
-			Query<RequesterType> query = entityManager.unwrap(Session.class).createQuery(sql, RequesterType.class);
+            Query<RequesterType> query = entityManager.unwrap(Session.class).createQuery(sql, RequesterType.class);
             query.setParameter("typeName", typeName);
             RequesterType type = query.uniqueResult();
             return type;

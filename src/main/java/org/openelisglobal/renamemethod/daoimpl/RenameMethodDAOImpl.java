@@ -45,7 +45,7 @@ public class RenameMethodDAOImpl extends BaseDAOImpl<RenameMethod, String> imple
         List<RenameMethod> list = new Vector<>();
         try {
             String sql = "from Method m where upper(m.methodName) like upper(:param) and m.isActive='Y' order by upper(m.methodName)";
-			Query<RenameMethod> query = entityManager.unwrap(Session.class).createQuery(sql, RenameMethod.class);
+            Query<RenameMethod> query = entityManager.unwrap(Session.class).createQuery(sql, RenameMethod.class);
             query.setParameter("param", filter + "%");
 
             list = query.list();
@@ -64,7 +64,7 @@ public class RenameMethodDAOImpl extends BaseDAOImpl<RenameMethod, String> imple
         String sql = "from Method m where m.isActive = 'N'";
 
         try {
-			Query<RenameMethod> query = entityManager.unwrap(Session.class).createQuery(sql, RenameMethod.class);
+            Query<RenameMethod> query = entityManager.unwrap(Session.class).createQuery(sql, RenameMethod.class);
             List<RenameMethod> sections = query.list();
             return sections;
         } catch (HibernateException e) {
@@ -83,7 +83,7 @@ public class RenameMethodDAOImpl extends BaseDAOImpl<RenameMethod, String> imple
             // not case sensitive hemolysis and Hemolysis are considered
             // duplicates
             String sql = "from Method t where trim(lower(t.methodName)) = :param and t.id != :param2";
-			Query<RenameMethod> query = entityManager.unwrap(Session.class).createQuery(sql, RenameMethod.class);
+            Query<RenameMethod> query = entityManager.unwrap(Session.class).createQuery(sql, RenameMethod.class);
             query.setParameter("param", method.getMethodName().toLowerCase().trim());
 
             // initialize with 0 (for new records where no id has been generated yet
