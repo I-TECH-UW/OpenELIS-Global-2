@@ -23,6 +23,76 @@ div {
 
 .inputText {
   --cds-text-primary:  black; 
-  width: 40%;
+  width: 20%;
+  --cds-text-secondary : red ;
 }
+
+.inputSelect {
+  --cds-text-primary:  black; 
+  width: 100%;
+  --cds-text-secondary : red ;
+}
+.inputSearch {
+  --cds-text-primary:  black; 
+  width: 100%;
+  --cds-text-secondary : red ;
+  --cds-icon-primary :black;
+}
+
+.rules {
+  display: flex;
+  justify-content: space-between;
+}
+.first-division {
+  display: flex;
+  flex-direction: column;
+  margin: 0 5px 0.5rem 0;
+  width: 100%;
+}
+button {
+  background: none;
+  outline: none;
+  cursor: pointer;
+  font-weight: 500;
+  border-radius: 2px;
+  padding: 5px 10px;
+}
+.add_button {
+  align-self: flex-start;
+  display: flex;
+  align-items: center;
+  margin-top: 0.5rem;
+  color: rgb(0, 208, 255);
+  border: 1px solid rgb(0, 208, 255);
+}
+
+.second-division button {
+  color: red;
+  border: 1px solid red;
+}
+
+.services {
+  display: flex;
+  justify-content: space-between;
+}
+
+.ruleBody {
+  border-left: 1px solid black;
+  margin: 2%;
+}
+
+.inlineDiv {
+  display: flex;
+  margin-bottom: 3%;
+  margin-left: 1%;
+
+}
+
+.section {
+  border: 0.5px solid green ;
+  border-radius : 3px;
+  margin: 0.5%;
+}
+
+
 

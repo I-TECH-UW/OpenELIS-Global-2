@@ -1,0 +1,42 @@
+body {
+    font-family: sans-serif;
+  }
+  
+  input {
+    border: 1px solid #999;
+    padding: 0.5rem;
+    width: 300px;
+    margin-top: 5%;
+    --cds-text-primary:  black; 
+  }
+  
+  .no-suggestions {
+    color: #999;
+    padding: 0.5rem;
+  }
+  
+  .suggestions {
+    border: 1px solid #999;
+    border-top-width: 0;
+    list-style: none;
+    margin-top: 0;
+    max-height: 140px;
+    overflow-y: auto;
+    padding-left: 0;
+    width: 300;
+  }
+  
+  .suggestions li {
+    padding: 0.5rem;
+  }
+  
+  .suggestion-active,
+  .suggestions li:hover {
+    background-color:  #295785;
+    color:  #ffffff;
+    cursor: pointer;
+  }
+  
+  .suggestions li:not(:last-of-type) {
+    border-bottom: 1px solid #999;
+  }
