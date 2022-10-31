@@ -132,6 +132,29 @@ function AddRule() {
                         />
                       </Select>
                     </div>
+                    <div>
+                      &nbsp;  &nbsp;
+                    </div>
+                    <div >
+                      <Select
+                        defaultValue={singleRule.condition}
+                        id="select"
+                        name="sample"
+                        labelText=""
+                        className="inputSelect"
+                        onChange={(e) => handleRuleChange(e, index)}
+                      // disabled={this.state.hasSubmitted}
+                      >
+                        <SelectItem
+                          text="Postive"
+                          value="postive"
+                        />
+                        <SelectItem
+                          text="Negative"
+                          value="negative"
+                        />
+                      </Select>
+                    </div>
                   </div>
                 </div>
               </div>
