@@ -15,7 +15,7 @@
 		<major.version>2</major.version>
 		<minor.version>7</minor.version>
 		<state.version>0</state.version> <!-- 0 = alpha, 1 = beta, 2 = rc, 3 = deployable -->
-		<fix.version>15</fix.version>
+		<fix.version>16</fix.version>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
@@ -28,7 +28,7 @@
 		<postgresql.version>42.4.1</postgresql.version>
 		<log4j.version>2.17.1</log4j.version>
 		<springframework.version>5.3.23</springframework.version>
-		<springsecurity.version>5.7.2</springsecurity.version>
+		<springsecurity.version>5.7.5</springsecurity.version>
 		<testContainersVersion>1.15.3</testContainersVersion>
 	</properties>
 
