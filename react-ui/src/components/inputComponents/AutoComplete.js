@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from "react";
 import './styles.css'
-import {TextInput} from '@carbon/react';
+import { TextInput } from '@carbon/react';
 
 class Autocomplete extends Component {
   constructor(props) {
@@ -14,7 +14,7 @@ class Autocomplete extends Component {
   }
 
   onChange = e => {
-    const { suggestions } = this.props;
+    const { suggestions, index, condition_index, handleChange } = this.props;
     const userInput = e.currentTarget.value;
 
     const filteredSuggestions = suggestions.filter(
@@ -28,6 +28,12 @@ class Autocomplete extends Component {
       showSuggestions: true,
       userInput: e.currentTarget.value
     });
+
+    const nameValue = {
+      target: { name: "test", value: e.currentTarget.valuet }
+    }
+
+    handleChange(nameValue, index, condition_index, "conditions");
   };
 
   onClick = e => {
@@ -40,10 +46,10 @@ class Autocomplete extends Component {
     });
 
     const nameValue = {
-      target : {name: "test", value: e.currentTarget.innerText}
+      target: { name: "test", value: e.currentTarget.innerText }
     }
 
-    handleChange(nameValue, index, condition_index ,"conditions");
+    handleChange(nameValue, index, condition_index, "conditions");
   };
 
   onKeyDown = e => {
@@ -118,6 +124,7 @@ class Autocomplete extends Component {
         <TextInput
           type="text"
           id="select"
+          className="inoutText"
           name="test"
           labelText=""
           onChange={onChange}

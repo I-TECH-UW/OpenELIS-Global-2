@@ -6,7 +6,7 @@ body {
     border: 1px solid #999;
     padding: 0.5rem;
     width: 300px;
-    margin-top: 5%;
+    margin-top: -6%;
     --cds-text-primary:  black; 
   }
   
@@ -24,10 +24,13 @@ body {
     overflow-y: auto;
     padding-left: 0;
     width: 300;
+    /* z-index: 10000;
+    position:absolute; */
   }
   
   .suggestions li {
     padding: 0.5rem;
+    z-index: 99 !important;
   }
   
   .suggestion-active,
