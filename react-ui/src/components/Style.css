@@ -66,7 +66,7 @@ button {
   border: 1px solid rgb(0, 208, 255);
 }
 
-.second-division button {
+.remove-btn {
   color: red;
   border: 1px solid red;
 }
@@ -79,6 +79,7 @@ button {
 .ruleBody {
   border-left: 1px solid black;
   margin: 2%;
+  padding: 0.3%;
 }
 
 .inlineDiv {
@@ -92,7 +93,11 @@ button {
   border: 0.5px solid green ;
   border-radius : 3px;
   margin: 0.5%;
+  padding: 0.5%;
 }
 
+.conditionsAddDiv {
+  float:right;
+}
 
 

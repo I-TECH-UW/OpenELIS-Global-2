@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from "react";
 import './styles.css'
-import { Form, Stack, TextInput, Select, SelectItem, Button, InlineLoading, IconButton ,Search } from '@carbon/react';
+import {TextInput} from '@carbon/react';
 
 class Autocomplete extends Component {
   constructor(props) {
@@ -31,12 +31,19 @@ class Autocomplete extends Component {
   };
 
   onClick = e => {
+    const { index, condition_index, handleChange } = this.props;
     this.setState({
       activeSuggestion: 0,
       filteredSuggestions: [],
       showSuggestions: false,
       userInput: e.currentTarget.innerText
     });
+
+    const nameValue = {
+      target : {name: "test", value: e.currentTarget.innerText}
+    }
+
+    handleChange(nameValue, index, condition_index ,"conditions");
   };
 
   onKeyDown = e => {
@@ -79,45 +86,48 @@ class Autocomplete extends Component {
     let suggestionsListComponent;
 
     if (showSuggestions && userInput) {
-        if (filteredSuggestions.length) {
-          suggestionsListComponent = (
-            <ul class="suggestions">
-              {filteredSuggestions.map((suggestion, index) => {
-                let className;
-  
-                // Flag the active suggestion with a class
-                if (index === activeSuggestion) {
-                  className = "suggestion-active";
-                }
-                return (
-                  <li className={className} key={suggestion} onClick={onClick}>
-                    {suggestion}
-                  </li>
-                );
-              })}
-            </ul>
-          );
-        } else {
-          suggestionsListComponent = (
-            <div class="no-suggestions">
-              <em>No suggestions available.</em>
-            </div>
-          );
-        }
-      }
+      if (filteredSuggestions.length) {
+        suggestionsListComponent = (
+          <ul className="suggestions">
+            {filteredSuggestions.map((suggestion, index) => {
+              let className;
 
-      return (
-        <Fragment>
-          <TextInput
-            type="text"
-            onChange={onChange}
-            onKeyDown={onKeyDown}
-            value={userInput}
-          />
-          {suggestionsListComponent}
-        </Fragment>
-      );
+              // Flag the active suggestion with a class
+              if (index === activeSuggestion) {
+                className = "suggestion-active";
+              }
+              return (
+                <li className={className} key={suggestion} onClick={onClick}>
+                  {suggestion}
+                </li>
+              );
+            })}
+          </ul>
+        );
+      } else {
+        suggestionsListComponent = (
+          <div className="no-suggestions">
+            <em>No suggestions available.</em>
+          </div>
+        );
+      }
     }
+
+    return (
+      <Fragment>
+        <TextInput
+          type="text"
+          id="select"
+          name="test"
+          labelText=""
+          onChange={onChange}
+          onKeyDown={onKeyDown}
+          value={this.props.stateValue}
+        />
+        {suggestionsListComponent}
+      </Fragment>
+    );
   }
-  
-  export default Autocomplete;
+}
+
+export default Autocomplete;
