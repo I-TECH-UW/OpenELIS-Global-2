@@ -14,7 +14,7 @@ class Autocomplete extends Component {
   }
 
   onChange = e => {
-    const { suggestions, index, condition_index, handleChange } = this.props;
+    const { suggestions, index, item_index, handleChange ,field , name} = this.props;
     const userInput = e.currentTarget.value;
 
     const filteredSuggestions = suggestions.filter(
@@ -30,14 +30,14 @@ class Autocomplete extends Component {
     });
 
     const nameValue = {
-      target: { name: "test", value: e.currentTarget.valuet }
+      target: { name: name, value: e.currentTarget.valuet }
     }
 
-    handleChange(nameValue, index, condition_index, "conditions");
+    handleChange(nameValue, index, item_index, field);
   };
 
   onClick = e => {
-    const { index, condition_index, handleChange } = this.props;
+    const { index, item_index, handleChange ,field ,name} = this.props;
     this.setState({
       activeSuggestion: 0,
       filteredSuggestions: [],
@@ -46,10 +46,10 @@ class Autocomplete extends Component {
     });
 
     const nameValue = {
-      target: { name: "test", value: e.currentTarget.innerText }
+      target: { name: name, value: e.currentTarget.innerText }
     }
 
-    handleChange(nameValue, index, condition_index, "conditions");
+    handleChange(nameValue, index, item_index, field);
   };
 
   onKeyDown = e => {
@@ -123,10 +123,10 @@ class Autocomplete extends Component {
       <Fragment>
         <TextInput
           type="text"
-          id="select"
-          className="inoutText"
+          id={this.props.index + "_" + this.props.item_index + "_test" + this.props.field}
           name="test"
           labelText=""
+          className={this.props.class}
           onChange={onChange}
           onKeyDown={onKeyDown}
           value={this.props.stateValue}

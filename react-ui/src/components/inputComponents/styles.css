@@ -2,11 +2,17 @@ body {
     font-family: sans-serif;
   }
   
-  input {
-    border: 1px solid #999;
+  .autocomplete1 {
     padding: 0.5rem;
     width: 300px;
-    margin-top: -6%;
+    margin-top: -3%;
+    --cds-text-primary:  black; 
+  }
+
+  .autocomplete2 {
+    padding: 0.5rem;
+    width: 300px;
+    margin-top: -4%;
     --cds-text-primary:  black; 
   }
   

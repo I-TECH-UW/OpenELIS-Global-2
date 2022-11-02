@@ -1,7 +1,7 @@
 import React from 'react'
 import { FormattedMessage, injectIntl } from 'react-intl'
 import './Style.css'
-import ReflectTests from './AdminPage/ReflectTests';
+import ReflexTestManagement from './AdminPage/ReflexTestManagement';
 import { BrowserRouter as Router, Route, Switch, useMatch } from "react-router-dom";
 import PathRoute from "./utils/PathRoute"
 import {
@@ -46,7 +46,7 @@ class Admin extends React.Component {
                 </SideNav>
 
                 <PathRoute path="#reflex">
-                    <ReflectTests />
+                    <ReflexTestManagement />
                 </PathRoute>
             </>
 

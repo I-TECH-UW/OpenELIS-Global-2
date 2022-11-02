@@ -4,17 +4,17 @@ import { FormattedMessage, injectIntl } from 'react-intl'
 import { Form, Stack, TextInput, Select, SelectItem, Button, InlineLoading } from '@carbon/react';
 import { Formik } from "formik";
 import { Add } from '@carbon/react/icons';
-import AddRule from './AddRule';
+import ReflexRule from './ReflexRule';
 
 
-class ReflectTests extends React.Component {
+class ReflexTestManagement extends React.Component {
 
 
   render() {
     return (
       <>
         <div className='adminPageContent'>
-          <AddRule/>
+          <ReflexRule/>
         </div>
       </>
     );
@@ -22,4 +22,4 @@ class ReflectTests extends React.Component {
   }
 }
 
-export default injectIntl(ReflectTests)
+export default injectIntl(ReflexTestManagement)
