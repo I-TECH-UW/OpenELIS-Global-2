@@ -30,7 +30,7 @@ class Autocomplete extends Component {
     });
 
     const nameValue = {
-      target: { name: name, value: e.currentTarget.valuet }
+      target: { name: name, value: e.currentTarget.value }
     }
 
     handleChange(nameValue, index, item_index, field);
