@@ -1,4 +1,4 @@
-FROM hapiproject/hapi:v5.4.1
+FROM hapiproject/hapi:v6.1.0-tomcat
 
 RUN apt-get update && apt-get install -y curl=7.64.0-4+deb10u2
 
