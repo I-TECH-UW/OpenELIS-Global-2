@@ -25,7 +25,6 @@ public class TestController {
             testObj.put("value", test.getId());
             testsArray.put(testObj);
         });
-
         return testsArray.toString();
     }
 
@@ -39,9 +38,6 @@ public class TestController {
             sampleObj.put("value", sample.getId());
             sampleArray.put(sampleObj);
         });
-
         return sampleArray.toString();
     }
-
-
 }
