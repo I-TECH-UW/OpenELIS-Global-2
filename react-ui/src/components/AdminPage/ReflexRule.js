@@ -13,12 +13,14 @@ function ReflexRule() {
   const conditionsObj = {
     sample: "",
     test: "",
+    testId: "",
     relation: "",
     value: ""
   }
   const actionObj = {
     action: "",
-    reflexResult: ""
+    reflexResult: "",
+    reflexResultTestId: ""
   }
   const ruleObj = {
     ruleName: "",
@@ -36,12 +38,14 @@ function ReflexRule() {
     conditions: [{
       sample: "",
       test: "",
+      testId: "",
       relation: "",
       value: ""
     }],
     actions: [{
       action: "",
-      reflexResult: ""
+      reflexResult: "",
+      reflexResultTestId: ""
     }]
   }]);
 
@@ -57,6 +61,7 @@ function ReflexRule() {
       .then(response => response.json()).then(jsonResp => {
         if (componentMounted.current) {
           setTestList(jsonResp);
+          //console.log(JSON.stringify(jsonResp))
         }
       }).catch(error => {
         console.log(error)
@@ -229,6 +234,7 @@ function ReflexRule() {
                                 handleChange={handleRuleFieldItemChange}
                                 index={index}
                                 name="test"
+                                idField="testId"
                                 class="autocomplete1"
                                 item_index={condition_index}
                                 field={FIELD.conditions}
@@ -333,6 +339,7 @@ function ReflexRule() {
                                 handleChange={handleRuleFieldItemChange}
                                 index={index}
                                 name="reflexResult"
+                                idField="reflexResultTestId"
                                 item_index={action_index}
                                 field={FIELD.actions}
                                 class="autocomplete2"

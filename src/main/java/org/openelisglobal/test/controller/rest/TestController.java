@@ -20,7 +20,10 @@ public class TestController {
     public String getTests(HttpServletRequest request) {
         JSONArray testsArray = new JSONArray();
         DisplayListService.getInstance().getList(DisplayListService.ListType.ALL_TESTS).forEach(test -> {
-            testsArray.put(test.getValue());
+            JSONObject testObj = new JSONObject();
+            testObj.put("label", test.getValue());
+            testObj.put("value", test.getId());
+            testsArray.put(testObj);
         });
 
         return testsArray.toString();
@@ -30,10 +33,10 @@ public class TestController {
     @ResponseBody
     public String getSeamples(HttpServletRequest request) {
         JSONArray sampleArray = new JSONArray();
-        DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE).forEach(test -> {
+        DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE).forEach(sample -> {
             JSONObject sampleObj = new JSONObject();
-            sampleObj.put("label", test.getValue());
-            sampleObj.put("value", test.getId());
+            sampleObj.put("label", sample.getValue());
+            sampleObj.put("value", sample.getId());
             sampleArray.put(sampleObj);
         });
 

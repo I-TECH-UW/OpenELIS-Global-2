@@ -14,12 +14,12 @@ class Autocomplete extends Component {
   }
 
   onChange = e => {
-    const { suggestions, index, item_index, handleChange ,field , name} = this.props;
+    const { suggestions, index, item_index, handleChange, field, name } = this.props;
     const userInput = e.currentTarget.value;
 
     const filteredSuggestions = suggestions.filter(
       suggestion =>
-        suggestion.toLowerCase().indexOf(userInput.toLowerCase()) > -1
+        suggestion.label.toLowerCase().indexOf(userInput.toLowerCase()) > -1
     );
 
     this.setState({
@@ -36,8 +36,8 @@ class Autocomplete extends Component {
     handleChange(nameValue, index, item_index, field);
   };
 
-  onClick = e => {
-    const { index, item_index, handleChange ,field ,name} = this.props;
+  onClick = (e, id) => {
+    const { index, item_index, handleChange, field, name, idField } = this.props;
     this.setState({
       activeSuggestion: 0,
       filteredSuggestions: [],
@@ -49,7 +49,12 @@ class Autocomplete extends Component {
       target: { name: name, value: e.currentTarget.innerText }
     }
 
+    const nameId = {
+      target: { name: idField, value: id }
+    }
+    
     handleChange(nameValue, index, item_index, field);
+    handleChange(nameId, index, item_index, field);
   };
 
   onKeyDown = e => {
@@ -103,8 +108,8 @@ class Autocomplete extends Component {
                 className = "suggestion-active";
               }
               return (
-                <li className={className} key={suggestion} onClick={onClick}>
-                  {suggestion}
+                <li className={className} key={index} onClick={(e) => onClick(e, suggestion.value)}>
+                  {suggestion.label}
                 </li>
               );
             })}
