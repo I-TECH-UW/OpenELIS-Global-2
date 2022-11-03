@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Form, Stack, TextInput, Select, SelectItem, Button, InlineLoading, IconButton, Search, Toggle, Switch } from '@carbon/react';
 import { Add, Subtract } from '@carbon/react/icons';
 import Autocomplete from "../inputComponents/AutoComplete";
-function ReflexRule() {
+import config from '../../config.json'
 
+function ReflexRule() {
+  const componentMounted = useRef(true);
   const FIELD = {
     conditions: "conditions",
     actions: "actions"
@@ -43,6 +45,41 @@ function ReflexRule() {
     }]
   }]);
 
+  const [testList, setTestList] = useState([]);
+
+  const [sampleList, setSampleList] = useState([]);
+
+  useEffect(() => {
+    fetch(config.serverBaseUrl + "/rest/tests",
+      //includes the browser sessionId in the Header for Authentication on the backend server
+      { credentials: "include" }
+    )
+      .then(response => response.json()).then(jsonResp => {
+        if (componentMounted.current) {
+          setTestList(jsonResp);
+        }
+      }).catch(error => {
+        console.log(error)
+      })
+
+    fetch(config.serverBaseUrl + "/rest/samples",
+      //includes the browser sessionId in the Header for Authentication on the backend server
+      { credentials: "include" }
+    )
+      .then(response => response.json()).then(jsonResp => {
+        if (componentMounted.current) {
+          setSampleList(jsonResp);
+        }
+      }).catch(error => {
+        console.log(error)
+      })
+
+    return () => { // This code runs when component is unmounted
+      componentMounted.current = false; 
+    }
+
+  }, []);
+
   const handleRuleFieldChange = (e, index) => {
     const { name, value } = e.target;
     const list = [...ruleList];
@@ -73,21 +110,9 @@ function ReflexRule() {
     setRuleList(list);
   }
 
-  const handleRuleConditionAdd = (index) => {
-    const list = [...ruleList];
-    list[index]["conditions"].push(conditionsObj);
-    setRuleList(list);
-  };
-
   const handleRuleFieldItemAdd = (index, field, fieldObj) => {
     const list = [...ruleList];
     list[index][field].push(fieldObj);
-    setRuleList(list);
-  };
-
-  const handleRuleConditionRemove = (index, condition_index) => {
-    const list = [...ruleList];
-    list[index]["conditions"].splice(condition_index, 1);
     setRuleList(list);
   };
 
@@ -186,14 +211,13 @@ function ReflexRule() {
                                 className="inputSelect"
                                 onChange={(e) => handleRuleFieldItemChange(e, index, condition_index, FIELD.conditions)}
                               >
-                                <SelectItem
-                                  text="Blood"
-                                  value="blood"
-                                />
-                                <SelectItem
-                                  text="Fluid"
-                                  value="fluid"
-                                />
+                                {sampleList.map((sample, sample_index) => (
+                                  <SelectItem
+                                    text={sample.label}
+                                    value={sample.value}
+                                    key={sample_index}
+                                  />
+                                ))}
                               </Select>
                             </div>
                             <div>
@@ -208,7 +232,7 @@ function ReflexRule() {
                                 class="autocomplete1"
                                 item_index={condition_index}
                                 field={FIELD.conditions}
-                                suggestions={["CD4Count", "CD4Percent", "CD3Count", "CD3Absolute"]} />
+                                suggestions={testList} />
                             </div>
                             <div>
                               &nbsp;  &nbsp;
@@ -312,7 +336,7 @@ function ReflexRule() {
                                 item_index={action_index}
                                 field={FIELD.actions}
                                 class="autocomplete2"
-                                suggestions={["CD4Count", "CD4Percent", "CD3Count", "CD3Absolute"]} />
+                                suggestions={testList} />
                             </div>
                             <div>
                               &nbsp;  &nbsp;

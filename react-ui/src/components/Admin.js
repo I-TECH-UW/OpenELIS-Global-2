@@ -1,7 +1,7 @@
 import React from 'react'
 import { FormattedMessage, injectIntl } from 'react-intl'
 import './Style.css'
-import ReflexTestManagement from './AdminPage/ReflexTestManagement';
+import ReflexTestManagement from './adminPage/ReflexTestManagement';
 import { BrowserRouter as Router, Route, Switch, useMatch } from "react-router-dom";
 import PathRoute from "./utils/PathRoute"
 import {

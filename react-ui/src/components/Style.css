@@ -31,7 +31,7 @@ div {
 
 .inputSelect {
   --cds-text-primary:  black; 
-  width: 100%;
+  width: 100px;
   --cds-text-secondary : red ;
   margin-top: -15%;
 }

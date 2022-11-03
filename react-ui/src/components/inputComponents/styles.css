@@ -4,15 +4,15 @@ body {
   
   .autocomplete1 {
     padding: 0.5rem;
-    width: 300px;
-    margin-top: -3%;
+    width: 350px;
+    margin-top: -2%;
     --cds-text-primary:  black; 
   }
 
   .autocomplete2 {
     padding: 0.5rem;
-    width: 300px;
-    margin-top: -4%;
+    width: 350px;
+    margin-top: -2%;
     --cds-text-primary:  black; 
   }
   
