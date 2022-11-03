@@ -19,6 +19,8 @@ body {
   .no-suggestions {
     color: #999;
     padding: 0.5rem;
+    z-index: 10000;
+    position:absolute; 
   }
   
   .suggestions {
@@ -26,12 +28,13 @@ body {
     border-top-width: 0;
     list-style: none;
     margin-top: 0;
-     max-height: 500px; 
+    max-height: 495px; 
     overflow-y: auto;
     padding-left: 0;
     width: 300;
-    /* z-index: 10000;
-    position:absolute; */
+    z-index: 10;
+    position:absolute; 
+    background-color: #ffffff;
   }
   
   .suggestions li {
