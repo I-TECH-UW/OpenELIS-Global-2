@@ -185,6 +185,8 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
         setDBPropertyMappingAndDefault(Property.SPECIMEN_BARCODE_WIDTH, Property.SPECIMEN_BARCODE_WIDTH.getName(),
                 "76.2");
         setDBPropertyMappingAndDefault(Property.SPECIMEN_FIELD_DATE, Property.SPECIMEN_FIELD_DATE.getName(), "true");
+        setDBPropertyMappingAndDefault(Property.SPECIMEN_FIELD_COLLECTED_BY,
+                Property.SPECIMEN_FIELD_COLLECTED_BY.getName(), "true");
         setDBPropertyMappingAndDefault(Property.SPECIMEN_FIELD_SEX, Property.SPECIMEN_FIELD_SEX.getName(), "true");
         setDBPropertyMappingAndDefault(Property.SPECIMEN_FIELD_TESTS, Property.SPECIMEN_FIELD_TESTS.getName(), "true");
 

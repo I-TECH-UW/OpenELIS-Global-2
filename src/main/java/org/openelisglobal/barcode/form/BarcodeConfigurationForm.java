@@ -41,6 +41,8 @@ public class BarcodeConfigurationForm extends BaseForm {
 
     private boolean collectionDateCheck;
 
+    private boolean collectedByCheck;
+
     private boolean testsCheck;
 
     private boolean patientSexCheck;
@@ -188,5 +190,13 @@ public class BarcodeConfigurationForm extends BaseForm {
 
     public void setNumMaxAliquotLabels(int numMaxAliquotLabels) {
         this.numMaxAliquotLabels = numMaxAliquotLabels;
+    }
+
+    public boolean getCollectedByCheck() {
+        return collectedByCheck;
+    }
+
+    public void setCollectedByCheck(boolean collectedByCheck) {
+        this.collectedByCheck = collectedByCheck;
     }
 }

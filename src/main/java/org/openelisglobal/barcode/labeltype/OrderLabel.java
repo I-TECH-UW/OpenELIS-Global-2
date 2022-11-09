@@ -37,19 +37,19 @@ public class OrderLabel extends Label {
         }
         // adding fields above bar code
         aboveFields = new ArrayList<>();
-        LabelField labelField = new LabelField(MessageUtil.getMessage("barcode.label.info.patientname"), "", 6);
+        LabelField labelField = new LabelField(MessageUtil.getMessage("barcode.label.info.patientname"), "", 12);
         labelField.setDisplayFieldName(true);
         labelField.setUnderline(true);
         aboveFields.add(labelField);
 
-        labelField = new LabelField(MessageUtil.getMessage("barcode.label.info.patientdob"), "", 4);
+        labelField = new LabelField(MessageUtil.getMessage("barcode.label.info.patientdob"), "", 8);
         labelField.setDisplayFieldName(true);
         labelField.setUnderline(true);
         aboveFields.add(labelField);
 
         // aboveFields.add(getAvailableIdField(patient));
         LabelField siteField = new LabelField(MessageUtil.getMessage("barcode.label.info.site"),
-                StringUtils.substring(facility, 0, 20), 4);
+                StringUtils.substring(facility, 0, 20), 8);
         siteField.setDisplayFieldName(true);
         aboveFields.add(siteField);
 
@@ -82,11 +82,11 @@ public class OrderLabel extends Label {
 
         // adding fields above bar code
         aboveFields = new ArrayList<>();
-        aboveFields.add(new LabelField(MessageUtil.getMessage("barcode.label.info.patientname"), patientName, 6));
-        aboveFields.add(new LabelField(MessageUtil.getMessage("barcode.label.info.patientdob"), dob, 4));
+        aboveFields.add(new LabelField(MessageUtil.getMessage("barcode.label.info.patientname"), patientName, 12));
+        aboveFields.add(new LabelField(MessageUtil.getMessage("barcode.label.info.patientdob"), dob, 8));
         aboveFields.add(getAvailableIdField(patient));
         LabelField siteField = new LabelField(MessageUtil.getMessage("barcode.label.info.site"),
-                StringUtils.substring(referringFacility, 0, 20), 4);
+                StringUtils.substring(referringFacility, 0, 20), 8);
         siteField.setDisplayFieldName(true);
         aboveFields.add(siteField);
 
@@ -107,12 +107,12 @@ public class OrderLabel extends Label {
         String patientId = patientPatientService.getSubjectNumber(patient);
         if (!StringUtil.isNullorNill(patientId)) {
             return new LabelField(MessageUtil.getMessage("barcode.label.info.patientid"),
-                    StringUtils.substring(patientId, 0, 25), 6);
+                    StringUtils.substring(patientId, 0, 25), 12);
         }
         patientId = patientPatientService.getNationalId(patient);
         if (!StringUtil.isNullorNill(patientId)) {
             return new LabelField(MessageUtil.getMessage("barcode.label.info.patientid"),
-                    StringUtils.substring(patientId, 0, 25), 6);
+                    StringUtils.substring(patientId, 0, 25), 12);
         }
         return new LabelField(MessageUtil.getMessage("barcode.label.info.patientid"), "", 6);
     }

@@ -80,6 +80,14 @@
 			</tr>
 			<tr>
 				<td>
+					<form:checkbox path="collectedByCheck"
+						value="true"
+						onchange="enableSave();"/>
+					<spring:message code="barcode.label.info.collectedBy"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
 					<form:checkbox path="testsCheck"
 						value="true"
 						onchange="enableSave();"/>
