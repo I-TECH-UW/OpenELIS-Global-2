@@ -7,25 +7,27 @@
 	        org.openelisglobal.common.util.ConfigurationProperties.Property,
 	        org.openelisglobal.common.util.DateUtil,
 	        org.openelisglobal.internationalization.MessageUtil,
-	        org.openelisglobal.common.util.Versioning" %>
-<%@ page isELIgnored="false" %>
+	        org.openelisglobal.common.util.Versioning"%>
+<%@ page isELIgnored="false"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
-<%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
+<%@ taglib prefix="ajax" uri="/tags/ajaxtags"%>
 
 <c:set var="formName" value="${form.formName}" />
 <c:set var="entryDate" value="${form.currentDate}" />
 
 <%
-	boolean useCollectionDate = FormFields.getInstance().useField(Field.CollectionDate);
-	boolean useInitialSampleCondition = FormFields.getInstance().useField(Field.InitialSampleCondition);
-	boolean useSampleNature = FormFields.getInstance().useField(Field.SampleNature); 
-	boolean useCollector = FormFields.getInstance().useField(Field.SampleEntrySampleCollector);
-	boolean autofillCollectionDate = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.AUTOFILL_COLLECTION_DATE, "true");
+boolean useCollectionDate = FormFields.getInstance().useField(Field.CollectionDate);
+boolean useInitialSampleCondition = FormFields.getInstance().useField(Field.InitialSampleCondition);
+boolean useSampleNature = FormFields.getInstance().useField(Field.SampleNature);
+boolean useCollector = FormFields.getInstance().useField(Field.SampleEntrySampleCollector);
+boolean autofillCollectionDate = ConfigurationProperties.getInstance()
+		.isPropertyValueEqual(Property.AUTOFILL_COLLECTION_DATE, "true");
 %>
-
+<link href="select2/css/select2.min.css" rel="stylesheet" />
+<script src="select2/js/select2.min.js"></script>
 <script type="text/javascript" src="scripts/additional_utilities.js"></script>
 <script type="text/javascript" src="scripts/jquery.asmselect.js?"></script>
 <script type="text/javascript" src="scripts/ajaxCalls.js?"></script>
@@ -36,13 +38,13 @@
 
 
 
-<script type="text/javascript" >
+<script type="text/javascript">
 
-var useCollectionDate = <%= useCollectionDate %>;
-var autoFillCollectionDate = <%= autofillCollectionDate %>;
-var useInitialSampleCondition = <%= useInitialSampleCondition  %>;
-var useSampleNature = <%= useSampleNature  %>;
-var useCollector = <%= useCollector %>;
+var useCollectionDate = <%=useCollectionDate%>;
+var autoFillCollectionDate = <%=autofillCollectionDate%>;
+var useInitialSampleCondition = <%=useInitialSampleCondition%>;
+var useSampleNature = <%=useSampleNature%>;
+var useCollector = <%=useCollector%>;
 var currentCheckedType = -1;
 var currentTypeForTests = -1;
 var selectedTypeRowId = -1;
@@ -219,7 +221,7 @@ function getRejectCheckBoxHtml(row ){
 
 function activateRejectReason(row){
   if(jQuery("#reject_" + row).prop("checked")){
-	if (confirm("<%= MessageUtil.getMessage("sample.entry.reject.warning")%>")){
+	if (confirm("<%=MessageUtil.getMessage("sample.entry.reject.warning")%>")){
 		jQuery("#rejectedReasonId_" + row).prop("disabled" , !jQuery("#reject_" + row).prop("checked"));
 	}else{
 		jQuery("#reject_" + row).prop("checked" , !jQuery("#reject_" + row).prop("checked"));
@@ -366,14 +368,16 @@ function processGetTestSuccess(xhr){
     var response = xhr.responseXML.getElementsByTagName("formfield").item(0);
 	var i;
 	var testTable = currentSampleDiv.getElementsByClassName("addTestTable")[0];
+	var testDropdown = currentSampleDiv.getElementsByClassName("testDropdown")[0];
 	var panelTable = currentSampleDiv.getElementsByClassName("addPanelTable")[0];
     var tests = response.getElementsByTagName("test");
     var isVariableSampleType = response.getElementsByTagName("variableSampleType").length > 0;
     clearTable( testTable );
     clearTable( panelTable );
-
+	clearDropdown(testDropdown);
+    
     if( tests.length == 0){
-        alert("<%= MessageUtil.getMessage("sample.entry.noTests") %>" );
+        alert("<%=MessageUtil.getMessage("sample.entry.noTests")%>" );
 		removeRow( selectedTypeRowId );
     }else{
        if( isVariableSampleType){
@@ -382,8 +386,36 @@ function processGetTestSuccess(xhr){
            jQuery("#userSampleTypeHead").hide();
        }
 	   for( i = 0; i < tests.length; i++ ){
-	   		insertTestIntoTestTable( tests[i], testTable, isVariableSampleType );
+	   		insertTestIntoTestTable( tests[i], testTable, testDropdown, isVariableSampleType );
 	   }
+	   if (!testDropdown.classList.contains("select2Applied")) {
+		   //alphabetize sort
+// 		   var opt = jQuery(testDropdown).find('option').sort(function (a,b) { return a.text.toUpperCase().localeCompare(b.text.toUpperCase()) });
+// 		   jQuery(testDropdown).append(opt);
+
+		   var select2Dropdown = jQuery(testDropdown).select2({
+			    placeholder: "<spring:message code="label.button.search"/>",
+			    allowClear: true
+			});
+		   select2Dropdown.on("change", function () {
+			    var items= jQuery(this).val();       
+			    jQuery(testTable.getElementsByClassName("testCheckbox")).each(function() {
+				    jQuery(this).attr('checked', false);
+				    jQuery(this).trigger("onclick");
+			    });
+			    if (items != null) {
+			    	for (i = 0; i < items.length; i++) {
+						var checkbox = jQuery(testTable.getElementsByClassName("test_" + items[i])[0]);
+						checkbox.attr('checked', true);
+						checkbox.trigger("onclick");
+					}
+			    }
+				
+			  
+			});
+		   testDropdown.classList.add("select2Applied");
+	   }
+	   
 	   var panels = response.getElementsByTagName("panel");
 	   for( i = 0; i < panels.length; i++ ){
 	   		insertPanelIntoPanelTable( panels[i], panelTable );
@@ -396,7 +428,7 @@ function processGetTestSuccess(xhr){
 	sampleManualselected = true
 }
 
-function insertTestIntoTestTable( test, testTable, userSampleTypes ){
+function insertTestIntoTestTable( test, testTable, testDropdown, userSampleTypes ){
 	var name = getValueFromXmlElement( test, "name" );
 	var id = getValueFromXmlElement( test, "id" );
 	var userBench = "true" == getValueFromXmlElement( test, "userBenchChoice" );
@@ -407,6 +439,13 @@ function insertTestIntoTestTable( test, testTable, userSampleTypes ){
 	var nameCell = newRow.insertCell(1);
     var qualifiableId = "";
     var userSampleTypesList, userVariableSampleTypes,selectionClone;
+	
+	//TODO get select
+	//add select option
+	var opt = document.createElement('option');
+    opt.text = name;
+    opt.value = nominalRow;
+    testDropdown.appendChild(opt);
 
 	newRow.id = "availRow_" + nominalRow;
 
@@ -482,7 +521,7 @@ function insertPanelIntoPanelTable( panel, panelTable ){
 function getTestCheckBoxesHtml( row, userBench, userSampleTypes ){
 	var benchUpdate = userBench ? "setUserSectionSelection(this, \'" + row + "\');" : " ";
     var sampleTypeUpdate =  userSampleTypes ? "setUserSampleTypeSelection(this, \'" + row + "\' );" : " ";
-	return "<input name='testSelect'  class='testCheckbox' id='test_" + row + "' type='checkbox' onclick=\"" +  benchUpdate + sampleTypeUpdate + " assignTestsToSelected();" + "\" >";
+	return "<input name='testSelect'  class='testCheckbox test_" + row + "' id='test_" + row + "' type='checkbox' onclick=\"" +  benchUpdate + sampleTypeUpdate + " assignTestsToSelected();" + "\" >";
 }
 
 function getPanelCheckBoxesHtml(map, row, id ){
@@ -505,6 +544,14 @@ function clearTable(table){
 	var rows = table.rows.length - 1;
 	while( rows > 0 ){
 		table.deleteRow( rows-- );
+	}
+}
+
+function clearDropdown(dropdown) {
+	let options = dropdown.getElementsByTagName('option');
+
+	for (var i=options.length; i--;) {
+		dropdown.removeChild(options[i]);
 	}
 }
 
@@ -934,11 +981,19 @@ function checkPanels(panels) {
 }
 
 function panelSelected(checkBox, tests ){
-	for( var i = 0; i < tests.length; i++ ){
-		jQuery("#"+currentSampleDiv.id).find("#test_" + tests[i]).attr("checked", checkBox.checked );
-        jQuery("#"+currentSampleDiv.id).find("#test_" + tests[i]).trigger("onclick");
 
+	var testDropdown = jQuery(jQuery("#"+currentSampleDiv.id + " .testDropdown")[0]);
+	var curVals = testDropdown.val() == null ? [] : testDropdown.val();
+	var allVals;
+	if (checkBox.checked) {
+		allVals = [...new Set(curVals.concat(tests))];
+	} else {
+		allVals =  curVals.filter(function(value, index, arr){ 
+	        return !tests.contains(value);
+	    });
 	}
+
+	testDropdown.val(allVals).trigger('change');
 }
 
 function /*boolean*/ sampleAddValid( sampleRequired ){
@@ -1015,186 +1070,193 @@ function sampleTypeQualifierChanged(element){
     testAndSetSave();
 }
 </script>
-<% if(useInitialSampleCondition){ %>
-<div id="sampleConditionPrototype" style="display: none" >
-<form:select path="initialSampleConditionList"
-			 multiple="true"
-             title='<spring:message/>'
-			 id= 'prototypeID'>
-			<c:forEach var="optionValue" items="${form.initialSampleConditionList}">
-						<option value='${optionValue.id}' >
-							${optionValue.value}
-						</option>
-			</c:forEach>
-</form:select>
+<%
+if (useInitialSampleCondition) {
+%>
+<div id="sampleConditionPrototype" style="display: none">
+	<form:select path="initialSampleConditionList" multiple="true"
+		title='<spring:message/>' id='prototypeID'>
+		<c:forEach var="optionValue"
+			items="${form.initialSampleConditionList}">
+			<option value='${optionValue.id}'>${optionValue.value}</option>
+		</c:forEach>
+	</form:select>
 </div>
-<% } %>
-<% if(useSampleNature){ %>
-<div id="sampleNaturePrototype" style="display: none" >
-<form:select path=""
-			 id= 'sampleNaturePrototypeID'>
-			<form:options items="${form.sampleNatureList}" itemValue="id" itemLabel="value"/>
-</form:select>
+<%
+}
+%>
+<%
+if (useSampleNature) {
+%>
+<div id="sampleNaturePrototype" style="display: none">
+	<form:select path="" id='sampleNaturePrototypeID'>
+		<form:options items="${form.sampleNatureList}" itemValue="id"
+			itemLabel="value" />
+	</form:select>
 </div>
-<% } %>
-<div id="sectionPrototype" style="display:none;" >
-	<span class="requiredlabel" style="visibility:hidden;">*</span>
-	
-	<select id="testSectionPrototypeID" disabled  onchange="sectionSelectionChanged( this );" class="testSectionSelector" >
-				<option value='0'></option>
-				<c:forEach var="optionValue" items="${form.testSectionList}">
-						<option value='${optionValue.id}' >
-							${optionValue.value}
-						</option>
-			</c:forEach>
+<%
+}
+%>
+<div id="sectionPrototype" style="display: none;">
+	<span class="requiredlabel" style="visibility: hidden;">*</span> <select
+		id="testSectionPrototypeID" disabled
+		onchange="sectionSelectionChanged( this );"
+		class="testSectionSelector">
+		<option value='0'></option>
+		<c:forEach var="optionValue" items="${form.testSectionList}">
+			<option value='${optionValue.id}'>${optionValue.value}</option>
+		</c:forEach>
 	</select>
 </div>
-<div id="userSampleTypePrototype" style="display:none;" >
-    <span class="requiredlabel" style="visibility:hidden;">*</span>
-    <select id="userSampleTypePrototypeID" disabled="disabled"  >
-        <option value='0'></option>
+<div id="userSampleTypePrototype" style="display: none;">
+	<span class="requiredlabel" style="visibility: hidden;">*</span> <select
+		id="userSampleTypePrototypeID" disabled="disabled">
+		<option value='0'></option>
 
-    </select>
+	</select>
 </div>
-<div id="userSampleTypeQualifierPrototype" style="display:none;" >
-    <span class="requiredlabel" >*</span>
-    <input id="userSampleTypeQualifierPrototypeID"  size="12" value=""  disabled="disabled" onchange="sampleTypeQualifierChanged(this)" type="text">
-    <input id="userSampleTypeQualifierPrototypeValueID" value="" type="hidden" >
-</div>
-
-<div id="rejectedReasonPrototype" style="display: none" >
-<form:select path="rejectReasonList"
-			 multiple="false"
-             title='<spring:message/>'
-			 style="width:100%"
-			 disabled="true"
-			 id= 'rejectPrototypeID'>
-			 <option value=''></option>
-			<c:forEach var="optionValue" items="${form.rejectReasonList}">
-						<option value='${optionValue.id}' >
-							${optionValue.value}
-						</option>
-			</c:forEach>
-</form:select>
+<div id="userSampleTypeQualifierPrototype" style="display: none;">
+	<span class="requiredlabel">*</span> <input
+		id="userSampleTypeQualifierPrototypeID" size="12" value=""
+		disabled="disabled" onchange="sampleTypeQualifierChanged(this)"
+		type="text"> <input
+		id="userSampleTypeQualifierPrototypeValueID" value="" type="hidden">
 </div>
 
-<div id="crossPanels">
+<div id="rejectedReasonPrototype" style="display: none">
+	<form:select path="rejectReasonList" multiple="false"
+		title='<spring:message/>' style="width:100%" disabled="true"
+		id='rejectPrototypeID'>
+		<option value=''></option>
+		<c:forEach var="optionValue" items="${form.rejectReasonList}">
+			<option value='${optionValue.id}'>${optionValue.value}</option>
+		</c:forEach>
+	</form:select>
 </div>
 
-	<Table style="width:100%">
-		<tr>
-			<td>
-                <spring:message code="sample.entry.sample.type"/>
-			</td>
-		</tr>
+<div id="crossPanels"></div>
 
-		<tr>
-			<td>
-				<select onchange="sampleTypeSelected(this);" id="sampleTypeSelect">
-				<option value="" label=""/>
-				<c:forEach items="${form.sampleTypes}"  var="sampleType" >
-					<option value="${sampleType.id}"> ${sampleType.value}</option>
+<Table style="width: 100%">
+	<tr>
+		<td><spring:message code="sample.entry.sample.type" /></td>
+	</tr>
+
+	<tr>
+		<td><select onchange="sampleTypeSelected(this);"
+			id="sampleTypeSelect">
+				<option value="" label="" />
+				<c:forEach items="${form.sampleTypes}" var="sampleType">
+					<option value="${sampleType.id}">${sampleType.value}</option>
 				</c:forEach>
-				</select>
-                 
-			</td>
-		</tr>
-	</Table>
+		</select></td>
+	</tr>
+</Table>
 
-	<br />
-	<div id="samplesAdded" class="samplesAdded" style="display: none; ">
-		<hr style="width:100%" />
+<br />
+<div id="samplesAdded" class="samplesAdded" style="display: none;">
+	<hr style="width: 100%" />
 
-		<table id="samplesAddedTable"  class="samplesAddedTable" width=<%=useCollectionDate ? "100%" : "80%" %>>
-			<tr>
-				<th style="width:5%"></th>
-				<th style="width:10%">
-					<spring:message code="sample.entry.id"/>
-				</th>
-				<th style="width:10%">
-					<spring:message code="sample.entry.sample.type"/>
-				</th>
-				<% if(useInitialSampleCondition){ %>
-				<%-- <th style="width:15%">
+	<table id="samplesAddedTable" class="samplesAddedTable"
+		width=<%=useCollectionDate ? "100%" : "80%"%>>
+		<tr>
+			<th style="width: 5%"></th>
+			<th style="width: 10%"><spring:message code="sample.entry.id" />
+			</th>
+			<th style="width: 10%"><spring:message
+					code="sample.entry.sample.type" /></th>
+			<%
+			if (useInitialSampleCondition) {
+			%>
+			<%-- <th style="width:15%">
 					<spring:message code="sample.entry.sample.condition"/>
 				</th> --%>
-				<% } %>
-				<% if(useSampleNature){ %>
-				<th style="width:15%">
-					<spring:message code="sample.entry.sample.nature"/>
-				</th>
-				<% } %>
-				<% if( useCollectionDate ){ %>
-				<th >
-					<spring:message code="sample.collectionDate"/>&nbsp;<%=DateUtil.getDateUserPrompt()%>
-				</th>
-				<th >
-					<spring:message code="sample.collectionTime"/>
-				</th>
-				<% } %>
-				<% if( useCollector ){ %>
-				<th>
-					<spring:message code="sample.entry.collector" />
-				</th>	
-				<% } %>
-				<th style="width:35%">
-					<span class='requiredlabel'>*</span>&nbsp;<spring:message code="sample.entry.sample.tests"/>
-				</th>
-				<th style="width:5%">
-				  <spring:message code="result.rejected"/>
-				</th>
-				<th style="width:10%">
-				    <spring:message code="note.type.rejectReason"/>
-				</th>
-				<th style="width:10%"></th>
-			</tr>
-		</table >
-		<br />
-		<div id="testSelections" class="testSelections" style="display:none;" >
-		<table style="margin-left: 1%;width:60%;" id="addTables">
-		<tr>
-			<td  style="width:30%;vertical-align:top;">
-				<table style="width:97%" id="addPanelTable" class="addPanelTable">
-					<caption>
-						<spring:message code="sample.entry.panels"/>
-					</caption>
-					<tr>
-						<th style="width:20%">&nbsp;
-							
-						</th>
-						<th style="width:80%">
-							<spring:message code="sample.entry.panel.name"/>
-						</th>
-					</tr>
-
-				</table>
-			</td>
-			<td  style="width:70%;vertical-align:top;">
-				<table style="margin-left: 3%;width:97%;" id="addTestTable" class="addTestTable">
-					<caption>
-						<spring:message code="sample.entry.available.tests"/>
-					</caption>
-					<tr>
-						<th style="width:5%">&nbsp;
-							
-						</th>
-						<th style="width:50%">
-							<spring:message code="sample.entry.available.test.names"/>
-						</th>
-						<th style="width:40%;display:none;" id="sectionHead">
-							Section
-						</th>
-                        <%-- <th style="width:25%" style="display:none" id="userSampleTypeHead">
-                            <spring:message code="sample.entry.sample.type"/>
-                        </th> --%>
-                        <th style="width:20%">
-                              &nbsp;
-                        </th>
-					</tr>
-				</table>
-			</td>
+			<%
+			}
+			%>
+			<%
+			if (useSampleNature) {
+			%>
+			<th style="width: 15%"><spring:message
+					code="sample.entry.sample.nature" /></th>
+			<%
+			}
+			%>
+			<%
+			if (useCollectionDate) {
+			%>
+			<th><spring:message code="sample.collectionDate" />&nbsp;<%=DateUtil.getDateUserPrompt()%>
+			</th>
+			<th><spring:message code="sample.collectionTime" /></th>
+			<%
+			}
+			%>
+			<%
+			if (useCollector) {
+			%>
+			<th><spring:message code="sample.entry.collector" /></th>
+			<%
+			}
+			%>
+			<th style="width: 35%"><span class='requiredlabel'>*</span>&nbsp;<spring:message
+					code="sample.entry.sample.tests" /></th>
+			<th style="width: 5%"><spring:message code="result.rejected" />
+			</th>
+			<th style="width: 10%"><spring:message
+					code="note.type.rejectReason" /></th>
+			<th style="width: 10%"></th>
 		</tr>
 	</table>
+	<br />
+	<div id="testSelections" class="testSelections" style="display: none;">
+		<table style="margin-left: 1%; width: 60%;" id="addTables">
+			<tr>
+				<td style="width: 30%; vertical-align: top;">
+					<span class="caption"> 
+					<spring:message code="sample.entry.panels" />
+					</span>
+				</td>
+				<td style="width: 70%; vertical-align: top; margin-left: 3%;">
+					<span class="caption"> 
+					<spring:message	code="sample.entry.available.tests" />
+					</span> 
+				</td>
+				</tr>
+				<tr>
+				<td></td>
+				<td>
+					<select class="testDropdown" style="width: 97%;" multiple="multiple">
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td style="width: 30%; vertical-align: top;">
+					<table style="width: 97%" id="addPanelTable" class="addPanelTable">
+						<tr>
+							<th style="width: 20%">&nbsp;</th>
+							<th style="width: 80%"><spring:message
+									code="sample.entry.panel.name" /></th>
+						</tr>
+
+					</table>
+				</td>
+				<td style="width: 70%; vertical-align: top; margin-left: 3%;">
+					<table style="width: 97%" id="addTestTable"
+						class="addTestTable">
+
+						<tr>
+							<th style="width: 5%">&nbsp;</th>
+							<th style="width: 50%"><spring:message
+									code="sample.entry.available.test.names" /></th>
+							<th style="width: 40%; display: none;" id="sectionHead">
+								Section</th>
+							<%-- <th style="width:25%" style="display:none" id="userSampleTypeHead">
+                            <spring:message code="sample.entry.sample.type"/>
+                        </th> --%>
+							<th style="width: 20%">&nbsp;</th>
+						</tr>
+					</table></td>
+			</tr>
+		</table>
 	</div>
-	</div>
-<br/>
+</div>
+<br />
