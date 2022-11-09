@@ -112,7 +112,7 @@ public class AppConfig implements WebMvcConfigurer {
                 .excludePathPatterns(SecurityConfig.LOGIN_PAGES)//
                 .excludePathPatterns(SecurityConfig.RESOURCE_PAGES)//
                 .excludePathPatterns(SecurityConfig.AUTH_OPEN_PAGES)
-                .excludePathPatterns(SecurityConfig.AJAX_CALLS_TO_CONTROLLERS);
+                .excludePathPatterns(SecurityConfig.REST_CONTROLLERS);
 //                .excludePathPatterns(SecurityConfig.CLIENT_CERTIFICATE_PAGES);
         registry.addInterceptor(urlLocatedErrorsInterceptor).addPathPatterns("/**");
         registry.addInterceptor(pageAttributesInterceptor).addPathPatterns("/**");

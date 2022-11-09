@@ -2,17 +2,25 @@ body {
     font-family: sans-serif;
   }
   
-  input {
-    border: 1px solid #999;
+  .autocomplete1 {
     padding: 0.5rem;
-    width: 300px;
-    margin-top: 5%;
+    width: 350px;
+    margin-top: -2%;
+    --cds-text-primary:  black; 
+  }
+
+  .autocomplete2 {
+    padding: 0.5rem;
+    width: 350px;
+    margin-top: -2%;
     --cds-text-primary:  black; 
   }
   
   .no-suggestions {
     color: #999;
     padding: 0.5rem;
+    z-index: 10000;
+    position:absolute; 
   }
   
   .suggestions {
@@ -20,14 +28,18 @@ body {
     border-top-width: 0;
     list-style: none;
     margin-top: 0;
-    max-height: 140px;
+    max-height: 495px; 
     overflow-y: auto;
     padding-left: 0;
     width: 300;
+    z-index: 10;
+    position:absolute; 
+    background-color: #ffffff;
   }
   
   .suggestions li {
     padding: 0.5rem;
+    z-index: 99 !important;
   }
   
   .suggestion-active,

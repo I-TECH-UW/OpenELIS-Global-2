@@ -21,16 +21,19 @@ div {
   margin-right: 5%;
 }
 
+/* Reflext tests */
 .inputText {
   --cds-text-primary:  black; 
-  width: 20%;
+  width: 100%;
   --cds-text-secondary : red ;
+  margin-top: 0.1%;
 }
 
 .inputSelect {
   --cds-text-primary:  black; 
-  width: 100%;
+  width: 100px;
   --cds-text-secondary : red ;
+  margin-top: -15%;
 }
 .inputSearch {
   --cds-text-primary:  black; 
@@ -49,6 +52,10 @@ div {
   margin: 0 5px 0.5rem 0;
   width: 100%;
 }
+
+.second-division{
+  padding-top: 5%;
+}
 button {
   background: none;
   outline: none;
@@ -66,7 +73,7 @@ button {
   border: 1px solid rgb(0, 208, 255);
 }
 
-.second-division button {
+.remove-btn {
   color: red;
   border: 1px solid red;
 }
@@ -77,21 +84,23 @@ button {
 }
 
 .ruleBody {
-  border-left: 1px solid black;
+  border: 0.5px solid #295785 ;
+  border-radius : 5px;
   margin: 2%;
+  padding: 0.5%;
 }
 
 .inlineDiv {
   display: flex;
   margin-bottom: 3%;
   margin-left: 1%;
-
 }
 
 .section {
   border: 0.5px solid green ;
   border-radius : 3px;
   margin: 0.5%;
+  padding: 1%;
 }
 
 

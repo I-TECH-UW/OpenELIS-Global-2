@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from "react";
 import './styles.css'
-import { Form, Stack, TextInput, Select, SelectItem, Button, InlineLoading, IconButton ,Search } from '@carbon/react';
+import { TextInput } from '@carbon/react';
 
 class Autocomplete extends Component {
   constructor(props) {
@@ -14,12 +14,12 @@ class Autocomplete extends Component {
   }
 
   onChange = e => {
-    const { suggestions } = this.props;
+    const { suggestions, index, item_index, handleChange, field, name } = this.props;
     const userInput = e.currentTarget.value;
 
     const filteredSuggestions = suggestions.filter(
       suggestion =>
-        suggestion.toLowerCase().indexOf(userInput.toLowerCase()) > -1
+        suggestion.label.toLowerCase().indexOf(userInput.toLowerCase()) > -1
     );
 
     this.setState({
@@ -28,15 +28,33 @@ class Autocomplete extends Component {
       showSuggestions: true,
       userInput: e.currentTarget.value
     });
+
+    const nameValue = {
+      target: { name: name, value: e.currentTarget.value }
+    }
+
+    handleChange(nameValue, index, item_index, field);
   };
 
-  onClick = e => {
+  onClick = (e, id) => {
+    const { index, item_index, handleChange, field, name, idField } = this.props;
     this.setState({
       activeSuggestion: 0,
       filteredSuggestions: [],
       showSuggestions: false,
       userInput: e.currentTarget.innerText
     });
+
+    const nameValue = {
+      target: { name: name, value: e.currentTarget.innerText }
+    }
+
+    const nameId = {
+      target: { name: idField, value: id }
+    }
+    
+    handleChange(nameValue, index, item_index, field);
+    handleChange(nameId, index, item_index, field);
   };
 
   onKeyDown = e => {
@@ -79,45 +97,49 @@ class Autocomplete extends Component {
     let suggestionsListComponent;
 
     if (showSuggestions && userInput) {
-        if (filteredSuggestions.length) {
-          suggestionsListComponent = (
-            <ul class="suggestions">
-              {filteredSuggestions.map((suggestion, index) => {
-                let className;
-  
-                // Flag the active suggestion with a class
-                if (index === activeSuggestion) {
-                  className = "suggestion-active";
-                }
-                return (
-                  <li className={className} key={suggestion} onClick={onClick}>
-                    {suggestion}
-                  </li>
-                );
-              })}
-            </ul>
-          );
-        } else {
-          suggestionsListComponent = (
-            <div class="no-suggestions">
-              <em>No suggestions available.</em>
-            </div>
-          );
-        }
-      }
+      if (filteredSuggestions.length) {
+        suggestionsListComponent = (
+          <ul className="suggestions">
+            {filteredSuggestions.map((suggestion, index) => {
+              let className;
 
-      return (
-        <Fragment>
-          <TextInput
-            type="text"
-            onChange={onChange}
-            onKeyDown={onKeyDown}
-            value={userInput}
-          />
-          {suggestionsListComponent}
-        </Fragment>
-      );
+              // Flag the active suggestion with a class
+              if (index === activeSuggestion) {
+                className = "suggestion-active";
+              }
+              return (
+                <li className={className} key={index} onClick={(e) => onClick(e, suggestion.value)}>
+                  {suggestion.label}
+                </li>
+              );
+            })}
+          </ul>
+        );
+      } else {
+        suggestionsListComponent = (
+          <div className="no-suggestions">
+            <em>No suggestions available.</em>
+          </div>
+        );
+      }
     }
+
+    return (
+      <Fragment>
+        <TextInput
+          type="text"
+          id={this.props.index + "_" + this.props.item_index + "_test" + this.props.field}
+          name="test"
+          labelText=""
+          className={this.props.class}
+          onChange={onChange}
+          onKeyDown={onKeyDown}
+          value={this.props.stateValue}
+        />
+        {suggestionsListComponent}
+      </Fragment>
+    );
   }
-  
-  export default Autocomplete;
+}
+
+export default Autocomplete;
