@@ -696,6 +696,12 @@ function addSampleTable(){
 <hr style="width:100%;height:5px"/>
 
 <% } %>
+       
+<form:checkbox id="rememberSiteAndRequester" path="rememberSiteAndRequester"/><spring:message code="label.rememberSiteRequester"/>
+<%-- <form:checkbox id="rememberSamplePanelTest" path="rememberSamplePanelTest"/> <spring:message code="label.remembersamplepaneltest"/>--%>
+       
+<br>
+<br>
             
 <div id=sampleEntryPage >
 <input type="button" name="showHide" value='-' onclick="showHideSection(this, 'orderDisplay');" id="orderSectionId">

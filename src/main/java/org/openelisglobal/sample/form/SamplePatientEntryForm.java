@@ -29,6 +29,8 @@ public class SamplePatientEntryForm extends BaseForm {
     public interface SamplePatientEntry {
     }
 
+    private Boolean rememberSiteAndRequester;
+
     @ValidDate(relative = DateRelation.TODAY, groups = { SamplePatientEntry.class, SamplePatientEntryBatch.class })
     private String currentDate = "";
 
@@ -287,5 +289,13 @@ public class SamplePatientEntryForm extends BaseForm {
 
     public void setRejectReasonList(List<IdValuePair> rejectReasonList) {
         this.rejectReasonList = rejectReasonList;
+    }
+
+    public Boolean getRememberSiteAndRequester() {
+        return rememberSiteAndRequester;
+    }
+
+    public void setRememberSiteAndRequester(Boolean rememberSiteAndRequester) {
+        this.rememberSiteAndRequester = rememberSiteAndRequester;
     }
 }
