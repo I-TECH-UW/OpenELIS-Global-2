@@ -1,5 +1,6 @@
 {
     "tittle" : "Cote d'Ivoire Regional Laboratory LIS",
-    "serverBaseUrl" : "http://localhost/OpenELIS-Global" ,
-    "loginRedirect" : "https://localhost:8443/OpenELIS-Global/LoginPage"
+    "proxyServerBaseUrl" : "http://localhost/OpenELIS-Global" ,
+    "loginRedirect" : "https://localhost:8443/OpenELIS-Global/LoginPage",
+    "serverBaseUrl" : "https://localhost:8443/OpenELIS-Global"
 }

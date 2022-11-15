@@ -1,10 +1,11 @@
 package org.openelisglobal.test.controller.rest;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.openelisglobal.common.services.DisplayListService;
+import org.openelisglobal.common.util.IdValuePair;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,27 +18,13 @@ public class TestController {
 
     @GetMapping(value = "tests", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public String getTests(HttpServletRequest request) {
-        JSONArray testsArray = new JSONArray();
-        DisplayListService.getInstance().getList(DisplayListService.ListType.ALL_TESTS).forEach(test -> {
-            JSONObject testObj = new JSONObject();
-            testObj.put("label", test.getValue());
-            testObj.put("value", test.getId());
-            testsArray.put(testObj);
-        });
-        return testsArray.toString();
+    public List<IdValuePair> getTests(HttpServletRequest request) {
+        return DisplayListService.getInstance().getList(DisplayListService.ListType.ALL_TESTS);
     }
 
     @GetMapping(value = "samples", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public String getSeamples(HttpServletRequest request) {
-        JSONArray sampleArray = new JSONArray();
-        DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE).forEach(sample -> {
-            JSONObject sampleObj = new JSONObject();
-            sampleObj.put("label", sample.getValue());
-            sampleObj.put("value", sample.getId());
-            sampleArray.put(sampleObj);
-        });
-        return sampleArray.toString();
+    public List<IdValuePair> getSeamples(HttpServletRequest request) {
+        return DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE);
     }
 }

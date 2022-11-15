@@ -337,7 +337,8 @@ public class SecurityConfig {
             MultipartFilter multipartFilter = new MultipartFilter();
             multipartFilter.setServletContext(SpringContext.getBean(ServletContext.class));
             http.addFilterBefore(multipartFilter, CsrfFilter.class);
-            http.addFilterAfter(new SessionCookieFilter(), CsrfFilter.class);
+            http.addFilterBefore(new CORSFilter() ,CsrfFilter.class);
+            http.addFilterAfter(new SessionCookieFilter(), CsrfFilter.class );
 
             http.authorizeRequests()
                     // allow all users to access these pages no matter authentication status
