@@ -218,8 +218,8 @@ function ReflexRule() {
                               >
                                 {sampleList.map((sample, sample_index) => (
                                   <SelectItem
-                                    text={sample.label}
-                                    value={sample.value}
+                                    text={sample.value}
+                                    value={sample.id}
                                     key={sample_index}
                                   />
                                 ))}

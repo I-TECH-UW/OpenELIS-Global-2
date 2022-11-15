@@ -19,7 +19,7 @@ class Autocomplete extends Component {
 
     const filteredSuggestions = suggestions.filter(
       suggestion =>
-        suggestion.label.toLowerCase().indexOf(userInput.toLowerCase()) > -1
+        suggestion.value.toLowerCase().indexOf(userInput.toLowerCase()) > -1
     );
 
     this.setState({
@@ -108,8 +108,8 @@ class Autocomplete extends Component {
                 className = "suggestion-active";
               }
               return (
-                <li className={className} key={index} onClick={(e) => onClick(e, suggestion.value)}>
-                  {suggestion.label}
+                <li className={className} key={index} onClick={(e) => onClick(e, suggestion.id)}>
+                  {suggestion.value}
                 </li>
               );
             })}
