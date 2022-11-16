@@ -244,6 +244,9 @@ function setMenuAction(button, form, action, validate, parameters) {
 
 </body>
 
+<script>
+console.log('bufferSize: <%=out.getBufferSize()%> remaining: <%= out.getRemaining()%> used: <%=out.getBufferSize() - out.getRemaining()%> autoFlush: <%=out.isAutoFlush() %>')
+</script>
 
 
 </html>
