@@ -1,5 +1,6 @@
 package org.openelisglobal.patientidentity.daoimpl;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.hibernate.HibernateException;
@@ -99,6 +100,9 @@ public class PatientIdentityDAOImpl extends BaseDAOImpl<PatientIdentity, String>
             throws LIMSRuntimeException {
         String sql = "From PatientIdentity pi where pi.identityData = :value and pi.identityTypeId = :identityType";
 
+        if(value == null){
+            return Collections.emptyList();
+        }
         try {
             Query<PatientIdentity> query = entityManager.unwrap(Session.class).createQuery(sql, PatientIdentity.class);
             query.setParameter("value", value);
