@@ -2,7 +2,9 @@
 
 ## Before Running
 
-### Firewall Access
+### Firewall Access - out
+
+All should be using http/https ports (80, 443)
 
 * archive.ubuntu.com - Ubuntu package manager
 * *.docker.com - install docker, docker hub
@@ -12,6 +14,17 @@
 * github.com - get projects
 * repo.maven.apache.org - maven downloads
 
+### Firewall Access - in
+
+* 80, 443 - nginx (covers openhim-console)
+* 8080, 5000, 5001, 5050, 5051, 5052, 7788 - openhim-core
+
+
+### Firewall Access - intraservice
+
+* 5432 - postgres db
+* 8444 - fhir server
+* 27017 - mongo db
 
 ## Installing Commands
 
@@ -56,7 +69,7 @@
 
 * git clone [https://github.com/I-TECH-UW/Consolidated-Server.git](https://github.com/I-TECH-UW/Consolidated-Server.git) --recurse-submodules
 * cd Consolidated-Server/
-* git checkout reduced-stack
+* git checkout develop
 
 
 ## **_Create Certificates_**
