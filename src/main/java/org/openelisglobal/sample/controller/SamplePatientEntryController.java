@@ -59,6 +59,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.RequestContextUtils;
+import org.hl7.fhir.r4.model.Task;
+import org.openelisglobal.dataexchange.fhir.FhirUtil;
+import org.openelisglobal.organization.service.OrganizationService;
+import org.openelisglobal.organization.valueholder.Organization;
 
 @Controller
 public class SamplePatientEntryController extends BaseSampleEntryController {
@@ -140,6 +144,10 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
     private ProviderService providerService;
     @Autowired
     private ElectronicOrderService electronicOrderService;
+    @Autowired
+    private OrganizationService organizationService;
+    @Autowired
+    private FhirUtil fhirUtil;
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -325,6 +333,15 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
             ElectronicOrder eOrder = electronicOrderService.getElectronicOrdersByExternalId(externalOrderNumber).get(0);
             if (eOrder != null) {
                 form.getSampleOrderItems().setPriority(eOrder.getPriority());
+                Task task = fhirUtil.getFhirParser().parseResource(Task.class, eOrder.getData());
+                if (!task.getLocation().isEmpty()) {
+                    Organization organization = organizationService
+                            .getOrganizationByFhirId(task.getLocation().getReferenceElement().getIdPart());
+                    if (organization != null) {
+                        form.getSampleOrderItems().setReferringSiteName(organization.getOrganizationName());
+                        form.getSampleOrderItems().setReferringSiteId(organization.getId());
+                    }
+                }
             }
         }
         form.setPatientProperties(new PatientManagementInfo());
