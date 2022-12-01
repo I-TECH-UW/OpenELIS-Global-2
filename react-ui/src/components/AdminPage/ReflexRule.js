@@ -3,6 +3,7 @@ import { Form, Stack, TextInput, Select, SelectItem, Button, InlineLoading, Icon
 import { Add, Subtract } from '@carbon/react/icons';
 import Autocomplete from "../inputComponents/AutoComplete";
 import config from '../../config.json'
+import RuleBuilderFormValues from "../formModel/ruleBuilder/RuleBuilderFormValues";
 
 function ReflexRule() {
   const componentMounted = useRef(true);
@@ -31,23 +32,7 @@ function ReflexRule() {
   }
 
   //const [ruleList, setRuleList] = useState([ruleObj]);
-  const [ruleList, setRuleList] = useState([{
-    ruleName: "",
-    overall: "",
-    toggled: true,
-    conditions: [{
-      sample: "",
-      test: "",
-      testId: "",
-      relation: "",
-      value: ""
-    }],
-    actions: [{
-      action: "",
-      reflexResult: "",
-      reflexResultTestId: ""
-    }]
-  }]);
+  const [ruleList, setRuleList] = useState([RuleBuilderFormValues]);
 
   const [testList, setTestList] = useState([]);
 
@@ -187,7 +172,12 @@ function ReflexRule() {
                               labelText=""
                               className="inputSelect"
                               onChange={(e) => handleRuleFieldChange(e, index)}
+                              required
                             >
+                              <SelectItem
+                                  text=""
+                                  value=""
+                                />
                               <SelectItem
                                 text="Any"
                                 value="any"
@@ -215,7 +205,12 @@ function ReflexRule() {
                                 value={condition.sample}
                                 className="inputSelect"
                                 onChange={(e) => handleRuleFieldItemChange(e, index, condition_index, FIELD.conditions)}
-                              >
+                                required
+                             >
+                               <SelectItem
+                                  text=""
+                                  value=""
+                                />
                                 {sampleList.map((sample, sample_index) => (
                                   <SelectItem
                                     text={sample.value}
@@ -238,7 +233,9 @@ function ReflexRule() {
                                 class="autocomplete1"
                                 item_index={condition_index}
                                 field={FIELD.conditions}
-                                suggestions={testList} />
+                                suggestions={testList}
+                                required
+                                 />
                             </div>
                             <div>
                               &nbsp;  &nbsp;
@@ -251,7 +248,12 @@ function ReflexRule() {
                                 labelText=""
                                 className="inputSelect"
                                 onChange={(e) => handleRuleFieldItemChange(e, index, condition_index, FIELD.conditions)}
+                                required
                               >
+                                <SelectItem
+                                  text=""
+                                  value=""
+                                />
                                 <SelectItem
                                   text="Equlas"
                                   value="equals"
@@ -273,7 +275,12 @@ function ReflexRule() {
                                 labelText=""
                                 className="inputSelect"
                                 onChange={(e) => handleRuleFieldItemChange(e, index, condition_index, FIELD.conditions)}
+                                required
                               >
+                                <SelectItem
+                                  text=""
+                                  value=""
+                                />
                                 <SelectItem
                                   text="Postive"
                                   value="postive"
@@ -319,7 +326,12 @@ function ReflexRule() {
                                 labelText=""
                                 className="inputSelect"
                                 onChange={(e) => handleRuleFieldItemChange(e, index, action_index, FIELD.actions)}
+                                required
                               >
+                                 <SelectItem
+                                  text=""
+                                  value=""
+                                />
                                 <SelectItem
                                   text="Add Test To Order"
                                   value="add_test"

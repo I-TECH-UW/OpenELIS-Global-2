@@ -29,9 +29,10 @@ body {
     list-style: none;
     margin-top: 0;
     max-height: 495px; 
+    margin-left: 10px;
     overflow-y: auto;
-    padding-left: 0;
-    width: 300;
+    padding-left: 0px;
+    width: 330px;
     z-index: 10;
     position:absolute; 
     background-color: #ffffff;
