@@ -23,7 +23,8 @@
     "@carbon/themes" :"11.10.0" ,
     "formik": "^2.2.9",
     "formik-error-focus": "2.0.0",
-    "cors": "^2.8.5"
+    "cors": "^2.8.5" ,
+    "yup": "^0.29.2" 
   },
   "scripts": {
     "start": "HTTPS=true react-scripts start",

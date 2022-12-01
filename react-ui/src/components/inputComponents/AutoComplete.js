@@ -129,12 +129,13 @@ class Autocomplete extends Component {
         <TextInput
           type="text"
           id={this.props.index + "_" + this.props.item_index + "_test" + this.props.field}
-          name="test"
+          name={this.props.name}
           labelText=""
           className={this.props.class}
           onChange={onChange}
           onKeyDown={onKeyDown}
           value={this.props.stateValue}
+          required
         />
         {suggestionsListComponent}
       </Fragment>
