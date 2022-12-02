@@ -180,8 +180,9 @@ public class ResultValidationController extends BaseResultValidationController {
                     GenericValidator.isBlankOrNull(form.getAccessionNumber())) )  {
 
                 resultList = resultsValidationUtility.getResultValidationList(getValidationStatus(),
-                        form.getTestSectionId(), form.getAccessionNumber() ,form.getTestDate());
-                filteredresultList = userService.filterAnalystResultsByLabUnitRoles(getSysUserId(request), resultList, Constants.ROLE_VALIDATION);     
+                        form.getTestSectionId(), form.getAccessionNumber(), form.getTestDate());
+                filteredresultList = userService.filterAnalysisResultsByLabUnitRoles(getSysUserId(request), resultList,
+                        Constants.ROLE_VALIDATION);
                 int count = resultsValidationUtility.getCountResultValidationList(getValidationStatus(),
                         form.getTestSectionId());
                 request.setAttribute("analysisCount", count);

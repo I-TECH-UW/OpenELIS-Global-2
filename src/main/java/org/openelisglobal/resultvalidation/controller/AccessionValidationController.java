@@ -104,7 +104,8 @@ public class AccessionValidationController extends BaseController {
                     resultsUtility.addIdentifingPatientInfo(patient, form);
 
                     List<AnalysisItem> resultsAnalysises = resultsUtility.getValidationAnalysisBySample(sample);
-                    List<AnalysisItem> filteredresultList = userService.filterAnalystResultsByLabUnitRoles(getSysUserId(request), resultsAnalysises, Constants.ROLE_VALIDATION);
+                    List<AnalysisItem> filteredresultList = userService.filterAnalystResultsByLabUnitRoles(
+                            getSysUserId(request), resultsAnalysises, Constants.ROLE_VALIDATION);
                     count = filteredresultList.size();
 //                    if (resultsUtility.inventoryNeeded()) {
 //                        addInventory(form);

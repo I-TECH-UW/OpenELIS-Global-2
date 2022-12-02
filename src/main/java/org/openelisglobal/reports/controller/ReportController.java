@@ -102,6 +102,7 @@ public class ReportController extends BaseController {
         IReportCreator reportCreator = ReportImplementationFactory.getReportCreator(request.getParameter("report"));
 
         if (reportCreator != null) {
+            reportCreator.setSystemUserId(getSysUserId(request));
             reportCreator.setRequestedReport(request.getParameter("report"));
             reportCreator.initializeReport(form);
             reportCreator.setReportPath(getReportPath());
