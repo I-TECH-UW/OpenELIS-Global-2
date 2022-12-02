@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.Map;
 
+import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.login.valueholder.LoginUser;
 import org.openelisglobal.resultvalidation.bean.AnalysisItem;
@@ -29,7 +30,10 @@ public interface UserService {
 
     List<IdValuePair> getAllDisplayUserTestsByLabUnit(String SystemUserId, String roleName);
 
-    List<AnalysisItem> filterAnalystResultsByLabUnitRoles(String SystemUserId, List<AnalysisItem> results,
+    List<AnalysisItem> filterAnalysisResultsByLabUnitRoles(String SystemUserId, List<AnalysisItem> results,
+            String roleName);
+
+    List<Analysis> filterAnalysesByLabUnitRoles(String SystemUserId, List<Analysis> results,
             String roleName);
 
     List<TestResultItem> filterResultsByLabUnitRoles(String SystemUserId, List<TestResultItem> results,

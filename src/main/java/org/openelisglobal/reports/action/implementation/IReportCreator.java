@@ -54,4 +54,6 @@ public interface IReportCreator {
 
     List<String> getReportedOrders();
 
+    void setSystemUserId(String id);
+
 }
