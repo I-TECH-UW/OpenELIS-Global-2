@@ -25,6 +25,7 @@ import java.util.Set;
 
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.internationalization.MessageUtil;
@@ -87,10 +88,11 @@ public class PatientClinicalReport extends PatientReport implements IReportCreat
         List<Analysis> analysisList = analysisService
                 .getAnalysesBySampleIdAndStatusId(sampleService.getId(currentSample), analysisStatusIds);
 
+        List<Analysis> filteredAnalysisList  = userService.filterAnalysesByLabUnitRoles(systemUserId, analysisList, Constants.ROLE_REPORTS);
         currentConclusion = null;
         Set<SampleItem> sampleSet = new HashSet<>();
-        List<ClinicalPatientData> currentSampleReportItems = new ArrayList<>(analysisList.size());
-        for (Analysis analysis : analysisList) {
+        List<ClinicalPatientData> currentSampleReportItems = new ArrayList<>(filteredAnalysisList.size());
+        for (Analysis analysis : filteredAnalysisList) {
             if (!analysis.getTest().isInLabOnly()) {
                 sampleSet.add(analysis.getSampleItem());
                 boolean hasParentResult = analysis.getParentResult() != null;
