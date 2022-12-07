@@ -1,6 +1,7 @@
 package org.openelisglobal.sample.controller;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
@@ -26,6 +27,7 @@ import org.openelisglobal.dataexchange.fhir.exception.FhirPersistanceException;
 import org.openelisglobal.dataexchange.fhir.exception.FhirTransformationException;
 import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
 import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder;
+import org.openelisglobal.dataexchange.service.order.ElectronicOrderService;
 import org.openelisglobal.patient.action.IPatientUpdate;
 import org.openelisglobal.patient.action.IPatientUpdate.PatientUpdateStatus;
 import org.openelisglobal.patient.action.bean.PatientManagementInfo;
@@ -42,7 +44,6 @@ import org.openelisglobal.sample.valueholder.SampleAdditionalField;
 import org.openelisglobal.sample.valueholder.SampleAdditionalField.AdditionalFieldName;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.systemuser.service.UserService;
-import org.openelisglobal.dataexchange.service.order.ElectronicOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -57,6 +58,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.support.RequestContextUtils;
 
 @Controller
 public class SamplePatientEntryController extends BaseSampleEntryController {
@@ -70,7 +72,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
     @Value("${org.openelisglobal.requester.identifier:}")
     private String requestFhirUuid;
 
-    private static final String[] ALLOWED_FIELDS = new String[] { "customNotificationLogic",
+    private static final String[] ALLOWED_FIELDS = new String[] { "rememberSiteAndRequester", "customNotificationLogic",
             "patientEmailNotificationTestIds", "patientSMSNotificationTestIds", "providerEmailNotificationTestIds",
             "providerSMSNotificationTestIds", "patientProperties.currentDate", "patientProperties.patientLastUpdated",
             "patientProperties.personLastUpdated", "patientProperties.patientUpdateStatus",
@@ -148,12 +150,34 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
     public ModelAndView showSamplePatientEntry(HttpServletRequest request,
             @RequestParam(value = ID, required = false) @Pattern(regexp = "[a-zA-Z0-9 -]*") String externalOrderNumber)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-
         SamplePatientEntryForm form = new SamplePatientEntryForm();
 
         request.getSession().setAttribute(SAVE_DISABLED, TRUE);
         setupForm(form, request, externalOrderNumber);
-
+        Map<String, ?> inputFlashMap = RequestContextUtils.getInputFlashMap(request);
+        if (inputFlashMap != null) {
+            form.getSampleOrderItems().setProviderId((String) inputFlashMap.get("sampleOrderItems.providerId"));
+            form.getSampleOrderItems()
+                    .setProviderPersonId((String) inputFlashMap.get("sampleOrderItems.providerPersonId"));
+            form.getSampleOrderItems().setProviderEmail((String) inputFlashMap.get("sampleOrderItems.providerEmail"));
+            form.getSampleOrderItems().setProviderFax((String) inputFlashMap.get("sampleOrderItems.providerfax"));
+            form.getSampleOrderItems()
+                    .setProviderFirstName((String) inputFlashMap.get("sampleOrderItems.providerFirstName"));
+            form.getSampleOrderItems()
+                    .setProviderLastName((String) inputFlashMap.get("sampleOrderItems.providerLastName"));
+            form.getSampleOrderItems()
+                    .setProviderWorkPhone((String) inputFlashMap.get("sampleOrderItems.providerWorkPhone"));
+            form.getSampleOrderItems()
+                    .setReferringSiteId((String) inputFlashMap.get("sampleOrderItems.referringSiteId"));
+            form.getSampleOrderItems()
+                    .setReferringSiteCode((String) inputFlashMap.get("sampleOrderItems.referringSiteCode"));
+            form.getSampleOrderItems()
+                    .setReferringSiteName((String) inputFlashMap.get("sampleOrderItems.referringSiteName"));
+            form.getSampleOrderItems().setReferringSiteDepartmentId(
+                    (String) inputFlashMap.get("sampleOrderItems.referringSiteDepartmentId"));
+            form.getSampleOrderItems().setReferringSiteDepartmentName(
+                    (String) inputFlashMap.get("sampleOrderItems.referringSiteDepartmentName"));
+        }
         addFlashMsgsToRequest(request);
         return findForward(FWD_SUCCESS, form);
     }
@@ -252,6 +276,34 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
         }
 
         redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
+        if (form.getRememberSiteAndRequester()) {
+            redirectAttributes.addFlashAttribute("sampleOrderItems.providerId",
+                    form.getSampleOrderItems().getProviderId());
+            redirectAttributes.addFlashAttribute("sampleOrderItems.providerPersonId",
+                    form.getSampleOrderItems().getProviderPersonId());
+            redirectAttributes.addFlashAttribute("sampleOrderItems.providerEmail",
+                    form.getSampleOrderItems().getProviderEmail());
+            redirectAttributes.addFlashAttribute("sampleOrderItems.providerfax",
+                    form.getSampleOrderItems().getProviderFax());
+            redirectAttributes.addFlashAttribute("sampleOrderItems.providerFirstName",
+                    form.getSampleOrderItems().getProviderFirstName());
+            redirectAttributes.addFlashAttribute("sampleOrderItems.providerLastName",
+                    form.getSampleOrderItems().getProviderLastName());
+            redirectAttributes.addFlashAttribute("sampleOrderItems.providerWorkPhone",
+                    form.getSampleOrderItems().getProviderWorkPhone());
+
+            redirectAttributes.addFlashAttribute("sampleOrderItems.referringSiteId",
+                    form.getSampleOrderItems().getReferringSiteId());
+            redirectAttributes.addFlashAttribute("sampleOrderItems.referringSiteCode",
+                    form.getSampleOrderItems().getReferringSiteCode());
+            redirectAttributes.addFlashAttribute("sampleOrderItems.referringSiteName",
+                    form.getSampleOrderItems().getReferringSiteName());
+
+            redirectAttributes.addFlashAttribute("sampleOrderItems.referringSiteDepartmentId",
+                    form.getSampleOrderItems().getReferringSiteDepartmentId());
+            redirectAttributes.addFlashAttribute("sampleOrderItems.referringSiteDepartmentName",
+                    form.getSampleOrderItems().getReferringSiteDepartmentName());
+        }
         return findForward(FWD_SUCCESS_INSERT, form);
     }
 

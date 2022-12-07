@@ -167,6 +167,7 @@ public abstract class ConfigurationProperties {
         SPECIMEN_BARCODE_WIDTH("widthSpecimenLabels"), // Width of the specimen barcode
         SPECIMEN_FIELD_DATE("collectionDateCheck"), //
         SPECIMEN_FIELD_SEX("patientSexCheck"), //
+        SPECIMEN_FIELD_COLLECTED_BY("collectedByCheck"),
         SPECIMEN_FIELD_TESTS("testsCheck"), //
         ALT_ACCESSION_PREFIX("prePrintAltAccessionPrefix"), //
         USE_ALT_ACCESSION_PREFIX("prePrintUseAltAccession"), //

@@ -39,7 +39,7 @@ function /*void*/ showSuccessMessage( show ){
 <table cellpadding="0" cellspacing="0" width="100%" height="100%" border="0">
 <tr>
 <td>
- <jsp:include page="${rightMenuDefinition}"/>
+ <jsp:include page="${rightMenuFragment}"/>
 <%-- <c:if test="${menuDef == 'AnalyzerTestNameMenuDefinition'}"> --%>
 <%--   <jsp:include page="${rightAnalyzerTestNameFragment}"/> --%>
 <%-- </c:if> --%>
