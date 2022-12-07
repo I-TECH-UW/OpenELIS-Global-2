@@ -85,7 +85,21 @@ services:
             - ./volume/tomcat/hapi_server.xml:/usr/local/tomcat/conf/server.xml
         secrets:
             - source: common.properties
-
+    frontend.openelis.org:
+       image: react-ui
+       build:
+         context: ./react-ui
+         dockerfile: ./Dockerfile    
+       ports:
+         - 3000:3000
+       networks:
+         - default
+       volumes:
+         - './react-ui/src:/app/src'
+         - './react-ui/public:/app/public'
+       environment:
+         - CHOKIDAR_USEPOLLING=true
+       tty: true
     # proxy:
     #     image: nginx:1.15-alpine
     #     ports:
