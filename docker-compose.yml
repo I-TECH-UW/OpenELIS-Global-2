@@ -124,5 +124,3 @@ networks:
 volumes:
   db-data:
   cert-volume:
-       
-    

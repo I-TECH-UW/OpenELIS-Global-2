@@ -337,7 +337,8 @@ public class SecurityConfig {
             MultipartFilter multipartFilter = new MultipartFilter();
             multipartFilter.setServletContext(SpringContext.getBean(ServletContext.class));
             http.addFilterBefore(multipartFilter, CsrfFilter.class);
-            http.addFilterBefore(new CORSFilter() ,CsrfFilter.class);
+           // we delegate handling CORS to the inginix proxy
+           // http.addFilterBefore(new CORSFilter() ,CsrfFilter.class);
             http.addFilterAfter(new SessionCookieFilter(), CsrfFilter.class );
 
             http.authorizeRequests()
