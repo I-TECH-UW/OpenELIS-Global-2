@@ -2,8 +2,8 @@ import { useState, useEffect, useRef } from "react";
 import { Form, Stack, TextInput, Select, SelectItem, Button, InlineLoading, IconButton, Search, Toggle, Switch } from '@carbon/react';
 import { Add, Subtract } from '@carbon/react/icons';
 import Autocomplete from "../inputComponents/AutoComplete";
-import config from '../../config.json'
 import RuleBuilderFormValues from "../formModel/ruleBuilder/RuleBuilderFormValues";
+import { getFromOpenElisServer, postToOpenElisServer } from "../utils/Utils";
 
 function ReflexRule() {
   const componentMounted = useRef(true);
@@ -38,34 +38,13 @@ function ReflexRule() {
 
   const [sampleList, setSampleList] = useState([]);
 
-  useEffect(() => {
-    fetch(config.serverBaseUrl + "/rest/tests",
-      //includes the browser sessionId in the Header for Authentication on the backend server
-      { credentials: "include" }
-    )
-      .then(response => response.json()).then(jsonResp => {
-        if (componentMounted.current) {
-          setTestList(jsonResp);
-          //console.log(JSON.stringify(jsonResp))
-        }
-      }).catch(error => {
-        console.log(error)
-      })
 
-    fetch(config.serverBaseUrl + "/rest/samples",
-      //includes the browser sessionId in the Header for Authentication on the backend server
-      { credentials: "include" }
-    )
-      .then(response => response.json()).then(jsonResp => {
-        if (componentMounted.current) {
-          setSampleList(jsonResp);
-        }
-      }).catch(error => {
-        console.log(error)
-      })
+  useEffect(() => {
+    getFromOpenElisServer("/rest/tests", fetchTests)
+    getFromOpenElisServer("/rest/samples", fetchSamples)
 
     return () => { // This code runs when component is unmounted
-      componentMounted.current = false; 
+      componentMounted.current = false;
     }
 
   }, []);
@@ -112,12 +91,28 @@ function ReflexRule() {
     setRuleList(list);
   };
 
+  const handlePost = (status) => {
+    alert(status)
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
     //setRuleList([...ruleList, { rule: "" }]);
-    console.log(JSON.stringify(ruleList))
+     console.log(JSON.stringify(ruleList))
+     postToOpenElisServer("/rest/reflexrule" ,JSON.stringify(ruleList) , handlePost)
   };
 
+  const fetchTests = (testList) => {
+    if (componentMounted.current) {
+      setTestList(testList);
+    }
+  }
+
+  const fetchSamples = (sampleList) => {
+    if (componentMounted.current) {
+      setSampleList(sampleList);
+    }
+  }
 
   return (
     <>

@@ -21,6 +21,7 @@ import org.springframework.core.ResolvableType;
 import org.springframework.http.MediaType;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.WebDataBinder;
@@ -99,7 +100,7 @@ public class LoginPageController extends BaseController {
 
     @GetMapping(value = "/session", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public String getSesssionDetails(HttpServletRequest request) {
+    public String getSesssionDetails(HttpServletRequest request ,CsrfToken token) {
         boolean authenticated = !userModuleService.isSessionExpired(request);
         JSONObject sessionDetails = new JSONObject().put("authenticated", authenticated);
         sessionDetails.put("sessionId", request.getSession().getId());
@@ -109,6 +110,7 @@ public class LoginPageController extends BaseController {
             sessionDetails.put("loginName", user.getLoginName());
             sessionDetails.put("firstName", user.getFirstName());
             sessionDetails.put("lastName", user.getLastName());
+            sessionDetails.put("CSRF", token.getToken());
 
             JSONArray roleArray = new JSONArray();
             for (String roleId : userRoleService.getRoleIdsForUser(user.getId())) {
