@@ -3,6 +3,7 @@ package org.openelisglobal.userrole.service;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
 import org.openelisglobal.userrole.dao.UserLabUnitRolesDAO;
@@ -60,13 +61,13 @@ public class UserRoleServiceImpl extends BaseObjectServiceImpl<UserRole, UserRol
 
     @Override
     public UserLabUnitRoles getUserLabUnitRoles(String userId) {
-        return userLabUnitRolesDAO.get(Integer.parseInt(userId)).orElse(null);
+        Optional<UserLabUnitRoles> labUnitRoles = userLabUnitRolesDAO.get(Integer.parseInt(userId));
+        return labUnitRoles.isPresent() ? labUnitRoles.get() : null;
     }
 
     @Override
     public void deleteLabUnitRoleMap(LabUnitRoleMap roleMap) {
         getBaseObjectDAO().deleteLabUnitRoleMap(roleMap);
-        ;
     }
 
     @Override
