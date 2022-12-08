@@ -66,7 +66,6 @@ public abstract class CovidResultsBuilderImpl implements CovidResultsBuilder {
     protected static final String CONTACT_TRACING_INDEX_NAME = "contact tracing index name";
     protected static final String CONTACT_TRACING_INDEX_RECORD_NUMBER = "contact tracing dossier number";
 
-
     protected static final String EMPTY_VALUE = "";
 
     protected final List<String> ANALYSIS_STATUS_IDS;
@@ -90,8 +89,7 @@ public abstract class CovidResultsBuilderImpl implements CovidResultsBuilder {
                 tests.stream().map(test -> Integer.parseInt(test.getId())).collect(Collectors.toList()),
                 ANALYSIS_STATUS_IDS.stream().map(val -> Integer.parseInt(val)).collect(Collectors.toList()),
                 SAMPLE_STATUS_IDS.stream().map(val -> Integer.parseInt(val)).collect(Collectors.toList()),
-                this.dateRange.getLowDate(),
-                this.dateRange.getHighDate());
+                this.dateRange.getLowDate(), this.dateRange.getHighDate());
 
         return analysises;
 
@@ -108,24 +106,23 @@ public abstract class CovidResultsBuilderImpl implements CovidResultsBuilder {
 
         ServiceRequest serviceRequest = null;
         for (String remotePath : fhirConfig.getRemoteStorePaths()) {
-        Bundle responseBundle = client.search().forResource(ServiceRequest.class)
+            Bundle responseBundle = client.search().forResource(ServiceRequest.class)
                     .where(ServiceRequest.IDENTIFIER.exactly().systemAndIdentifier(remotePath, serviceRequestId))
-                    .returnBundle(Bundle.class)
-                .execute();
-        for (BundleEntryComponent bundleComponent : responseBundle.getEntry()) {
-            if (bundleComponent.hasResource()
-                    && ResourceType.ServiceRequest.equals(bundleComponent.getResource().getResourceType())) {
-                serviceRequest = (ServiceRequest) bundleComponent.getResource();
+                    .returnBundle(Bundle.class).execute();
+            for (BundleEntryComponent bundleComponent : responseBundle.getEntry()) {
+                if (bundleComponent.hasResource()
+                        && ResourceType.ServiceRequest.equals(bundleComponent.getResource().getResourceType())) {
+                    serviceRequest = (ServiceRequest) bundleComponent.getResource();
+                }
             }
-        }
         }
 
         if (serviceRequest == null) {
             return Optional.empty();
         }
         Bundle responseBundle = client.search().forResource(Task.class)
-                .where(Task.BASED_ON.hasId(serviceRequest.getIdElement().getIdPart()))
-                .returnBundle(Bundle.class).execute();
+                .where(Task.BASED_ON.hasId(serviceRequest.getIdElement().getIdPart())).returnBundle(Bundle.class)
+                .execute();
         for (BundleEntryComponent bundleComponent : responseBundle.getEntry()) {
             if (bundleComponent.hasResource()
                     && ResourceType.Task.equals(bundleComponent.getResource().getResourceType())) {

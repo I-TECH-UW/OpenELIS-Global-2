@@ -93,7 +93,7 @@ public class SampleOrderService {
                 DisplayListService.getInstance().getFreshList(DisplayListService.ListType.PRACTITIONER_PERSONS));
 
         orderItems.setPriorityList(
-            DisplayListService.getInstance().getFreshList(DisplayListService.ListType.ORDER_PRIORITY));    
+                DisplayListService.getInstance().getFreshList(DisplayListService.ListType.ORDER_PRIORITY));
 
         if (needRequesterList) {
             orderItems.setReferringSiteList(DisplayListService.getInstance()

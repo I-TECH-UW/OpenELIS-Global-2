@@ -6,7 +6,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
-import org.hibernate.validator.constraints.SafeHtml;
+import org.openelisglobal.validation.annotations.SafeHtml;
 import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.util.validator.CustomDateValidator.DateRelation;
@@ -35,10 +35,10 @@ public class WorkplanForm extends BaseForm {
     @Pattern(regexp = ValidationHelper.ID_REGEX, groups = { PrintWorkplan.class })
     private String testTypeID = "";
 
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { PrintWorkplan.class })
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { PrintWorkplan.class })
     private String testName = "";
 
-    private OrderPriority priority ;
+    private OrderPriority priority;
 
     @NotNull(groups = { PrintWorkplan.class })
     private Boolean searchFinished = false;

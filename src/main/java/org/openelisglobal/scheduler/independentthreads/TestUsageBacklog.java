@@ -75,7 +75,8 @@ public class TestUsageBacklog {
     }
 
     private void handleBacklog() {
-        LogEvent.logInfo(this.getClass().getName(), "method unkown", "Gathering triggered: " + DateUtil.getCurrentDateAsText("dd-MM-yyyy hh:mm"));
+        LogEvent.logInfo(this.getClass().getName(), "method unkown",
+                "Gathering triggered: " + DateUtil.getCurrentDateAsText("dd-MM-yyyy hh:mm"));
         LogEvent.logInfo("TestUsagebacklog", "handleBacklog",
                 "Gathering triggered: " + DateUtil.getCurrentDateAsText("dd-MM-yyyy hh:mm"));
 

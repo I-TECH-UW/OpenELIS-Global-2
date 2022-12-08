@@ -1,6 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.openelisglobal</groupId>
@@ -17,21 +15,20 @@
 		<major.version>2</major.version>
 		<minor.version>7</minor.version>
 		<state.version>0</state.version> <!-- 0 = alpha, 1 = beta, 2 = rc, 3 = deployable -->
-		<fix.version>4</fix.version>
+		<fix.version>19</fix.version>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 		<liquibase.propertyFile>${project.basedir}/liquibase/liquibase.properties</liquibase.propertyFile>
 
-		<apachetiles.version>3.0.8</apachetiles.version>
 		<castor.version>1.4.1</castor.version>
 		<hapi.version>2.3</hapi.version>
-		<hibernate.version>5.4.24.Final</hibernate.version>
-		<hibernate-validator.version>6.1.5.Final</hibernate-validator.version>
+		<hibernate.version>5.6.12.Final</hibernate.version>
+		<hibernate-validator.version>6.1.7.Final</hibernate-validator.version>
 		<postgresql.version>42.4.1</postgresql.version>
 		<log4j.version>2.17.1</log4j.version>
-		<springframework.version>5.3.20</springframework.version>
-		<springsecurity.version>5.7.2</springsecurity.version>
+		<springframework.version>5.3.23</springframework.version>
+		<springsecurity.version>5.7.5</springsecurity.version>
 		<testContainersVersion>1.15.3</testContainersVersion>
 	</properties>
 
@@ -70,7 +67,7 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
-			<version>2.12.6.1</version>
+			<version>2.13.4.1</version>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
@@ -129,27 +126,6 @@
 			<groupId>commons-validator</groupId>
 			<artifactId>commons-validator</artifactId>
 			<version>1.6</version>
-		</dependency>
-		<!-- APACHE TILES DEPENDENCIES -->
-		<dependency>
-			<groupId>org.apache.tiles</groupId>
-			<artifactId>tiles-core</artifactId>
-			<version>${apachetiles.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.tiles</groupId>
-			<artifactId>tiles-api</artifactId>
-			<version>${apachetiles.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.tiles</groupId>
-			<artifactId>tiles-servlet</artifactId>
-			<version>${apachetiles.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.tiles</groupId>
-			<artifactId>tiles-jsp</artifactId>
-			<version>${apachetiles.version}</version>
 		</dependency>
 		<!-- CASTOR DEPENDENCIES -->
 		<dependency>
@@ -446,6 +422,11 @@
 			<version>1.6.2</version>
 		</dependency>
 		<dependency>
+			<groupId>org.dom4j</groupId>
+			<artifactId>dom4j</artifactId>
+			<version>2.1.3</version>
+		</dependency>
+		<dependency>
 			<groupId>org.mindrot</groupId>
 			<artifactId>jbcrypt</artifactId>
 			<version>0.4</version>
@@ -473,7 +454,7 @@
 		<dependency>
 			<groupId>org.jsoup</groupId>
 			<artifactId>jsoup</artifactId>
-			<version>1.14.2</version>
+			<version>1.15.3</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -582,6 +563,16 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-help-plugin</artifactId>
 				<version>3.2.0</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.18.1</version>
+				<configuration>
+					<argLine>-Xmx512m -XX:MaxPermSize=256m</argLine>
+					<forkCount>1</forkCount>
+					<reuseForks>false</reuseForks>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

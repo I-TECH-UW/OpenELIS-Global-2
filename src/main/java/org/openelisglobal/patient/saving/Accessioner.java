@@ -148,10 +148,12 @@ public abstract class Accessioner implements IAccessioner {
      */
     private Set<String> analysisDone = new HashSet<>();
     {
-        analysisDone.add(SpringContext.getBean(IStatusService.class).getStatusID(StatusService.AnalysisStatus.Finalized));
         analysisDone
-                .add(SpringContext.getBean(IStatusService.class).getStatusID(StatusService.AnalysisStatus.NonConforming_depricated));
-        analysisDone.add(SpringContext.getBean(IStatusService.class).getStatusID(StatusService.AnalysisStatus.Canceled));
+                .add(SpringContext.getBean(IStatusService.class).getStatusID(StatusService.AnalysisStatus.Finalized));
+        analysisDone.add(SpringContext.getBean(IStatusService.class)
+                .getStatusID(StatusService.AnalysisStatus.NonConforming_depricated));
+        analysisDone
+                .add(SpringContext.getBean(IStatusService.class).getStatusID(StatusService.AnalysisStatus.Canceled));
     }
 
     /**
@@ -1001,8 +1003,8 @@ public abstract class Accessioner implements IAccessioner {
      * @
      */
     public void completeSample() {
-        if (isAllAnalysisDone() && !SpringContext.getBean(IStatusService.class).getStatusID(OrderStatus.NonConforming_depricated)
-                .equals(sample.getStatus())) {
+        if (isAllAnalysisDone() && !SpringContext.getBean(IStatusService.class)
+                .getStatusID(OrderStatus.NonConforming_depricated).equals(sample.getStatus())) {
             sample.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(OrderStatus.Finished));
             sample.setSysUserId(sysUserId);
             sampleService.update(sample);
@@ -1247,8 +1249,8 @@ public abstract class Accessioner implements IAccessioner {
         if (projectForm == SPECIAL_REQUEST || projectForm == EID) {
             newPatientStatus = newSampleStatus;
         }
-        SpringContext.getBean(IStatusService.class).persistRecordStatusForSample(sample, newSampleStatus, patientInDB, newPatientStatus,
-                sysUserId);
+        SpringContext.getBean(IStatusService.class).persistRecordStatusForSample(sample, newSampleStatus, patientInDB,
+                newPatientStatus, sysUserId);
     }
 
     protected void deleteOldPatient() {

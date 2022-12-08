@@ -167,7 +167,8 @@ public class ProgramAccessionValidator implements IAccessionNumberGenerator {
         if (recordType == null) {
             return accessionNumberUsed;
         }
-        StatusSet statusSet = SpringContext.getBean(IStatusService.class).getStatusSetForAccessionNumber(accessionNumber);
+        StatusSet statusSet = SpringContext.getBean(IStatusService.class)
+                .getStatusSetForAccessionNumber(accessionNumber);
         String recordStatus = new String();
         boolean isSampleEntry = recordType.contains("Sample");
         boolean isPatientEntry = recordType.contains("Patient");
@@ -320,7 +321,8 @@ public class ProgramAccessionValidator implements IAccessionNumberGenerator {
     }
 
     public static String findStudyFormName(String accessionNumber) {
-        StatusSet statusSet = SpringContext.getBean(IStatusService.class).getStatusSetForAccessionNumber(accessionNumber);
+        StatusSet statusSet = SpringContext.getBean(IStatusService.class)
+                .getStatusSetForAccessionNumber(accessionNumber);
         Patient p = new Patient();
         p.setId(statusSet.getPatientId());
         Sample s = new Sample();

@@ -25,7 +25,8 @@ public class AnalysisNotificationConfigDAOImpl extends BaseDAOImpl<AnalysisNotif
         AnalysisNotificationConfig data;
         try {
             String sql = "From AnalysisNotificationConfig as anc where anc.analysis.id = :analysisId";
-            Query<AnalysisNotificationConfig> query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<AnalysisNotificationConfig> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    AnalysisNotificationConfig.class);
             query.setParameter("analysisId", Integer.parseInt(analysisId));
             data = query.uniqueResult();
         } catch (RuntimeException e) {
@@ -42,7 +43,8 @@ public class AnalysisNotificationConfigDAOImpl extends BaseDAOImpl<AnalysisNotif
         List<AnalysisNotificationConfig> data;
         try {
             String sql = "From AnalysisNotificationConfig as anc where anc.analysis.id IN (:analysisIds)";
-            Query<AnalysisNotificationConfig> query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<AnalysisNotificationConfig> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    AnalysisNotificationConfig.class);
             query.setParameterList("analysisIds",
                     analysisIds.stream().map(i -> Integer.parseInt(i)).collect(Collectors.toList()));
             data = query.getResultList();
@@ -60,7 +62,8 @@ public class AnalysisNotificationConfigDAOImpl extends BaseDAOImpl<AnalysisNotif
         AnalysisNotificationConfig data;
         try {
             String sql = "SELECT anc From AnalysisNotificationConfig as anc join anc.options as anco where anco.id = :configOptionId";
-            Query<AnalysisNotificationConfig> query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<AnalysisNotificationConfig> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    AnalysisNotificationConfig.class);
             query.setParameter("configOptionId", configOptionId);
             data = query.uniqueResult();
         } catch (RuntimeException e) {

@@ -5,7 +5,7 @@ import java.util.List;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
-import org.hibernate.validator.constraints.SafeHtml;
+import org.openelisglobal.validation.annotations.SafeHtml;
 import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.validator.ValidationHelper;
 
@@ -13,16 +13,16 @@ public class TestModifyEntryForm extends BaseForm {
     // for display
     private List testList;
 
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String nameEnglish = "";
 
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String nameFrench = "";
 
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String reportNameEnglish = "";
 
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String reportNameFrench = "";
 
     @Pattern(regexp = ValidationHelper.ID_REGEX)

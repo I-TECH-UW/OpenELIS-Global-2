@@ -9,7 +9,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
-<%@ taglib prefix="tiles" uri="http://tiles.apache.org/tags-tiles" %>
 
 <script type="text/javascript" src="scripts/utilities.js?" ></script>
 <script type="text/javascript">
@@ -34,7 +33,7 @@ function enableSave() {
 }
 </script>
 
-<tiles:insertAttribute name="numberBarCodes"/>
-<tiles:insertAttribute name="elementsBarCodes"/>
-<tiles:insertAttribute name="alternateAccession"/>
-<tiles:insertAttribute name="sizeBarCodes"/>
+<jsp:include page="${numberBarCodesFragment}"/>
+<jsp:include page="${elementsBarCodesFragment}"/>
+<jsp:include page="${alternateAccessionFragment}"/>
+<jsp:include page="${sizeBarCodesFragment}"/>

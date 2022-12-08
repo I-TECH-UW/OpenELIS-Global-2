@@ -34,7 +34,6 @@ import java.util.Map;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.hibernate.jdbc.ReturningWork;
 import org.openelisglobal.analyte.service.AnalyteService;
 import org.openelisglobal.analyte.valueholder.Analyte;
@@ -215,8 +214,7 @@ abstract public class CSVColumnBuilder {
      * @since Feb 1, 2011
      */
     public enum Strategy {
-        ANALYSIS_STATUS,
-        DICT, // dictionary localized value
+        ANALYSIS_STATUS, DICT, // dictionary localized value
         DICT_PLUS, // dictionary localized value or a string constant
         DICT_RAW, // dictionary localized value, no attempts at trimming to show just code number.
         DATE, // date (i.e. 01/01/2013)
@@ -404,9 +402,10 @@ abstract public class CSVColumnBuilder {
             case AGE_MONTHS:
             case AGE_WEEKS:
                 return isBlankOrNull(value) ? "" : translateAge(strategy, value);
-            //PK: Query result already return M/F so no need to translate
-            //case GENDER:
-            //    return isBlankOrNull(value) ? "" : ResourceTranslator.GenderTranslator.getInstance().translate(value);
+            // PK: Query result already return M/F so no need to translate
+            // case GENDER:
+            // return isBlankOrNull(value) ? "" :
+            // ResourceTranslator.GenderTranslator.getInstance().translate(value);
             case DROP_ZERO:
                 return ("0".equals(value) || value == null) ? "" : value;
             case TEST_RESULT:

@@ -37,7 +37,6 @@ public class NotificationPayloadTemplate extends BaseObject<Integer> {
     @Column(name = "subject_template")
     private String subjectTemplate;
 
-
     public String getMessageTemplate() {
         return messageTemplate;
     }

@@ -12,8 +12,6 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="tiles" uri="http://tiles.apache.org/tags-tiles" %>
-
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
 <%-- Creates updated UI. Removing for current release 
@@ -245,11 +243,11 @@ function setSaveButton() {
   		<h3><spring:message code="report.enter.patient.headline"/></h3>
   		<spring:message code="report.enter.patient.headline.description"/>
  	
-	<tiles:insertAttribute name="patientEnhancedSearch" />
+	<jsp:include page="${patientEnhancedSearchFragment}"/>
   </c:if>
   <c:if test="${form.useSiteSearch}">
   		<h3><spring:message code="report.enter.site.headline"/></h3>
-		<tiles:insertAttribute name="siteSearch" />
+		<jsp:include page="${siteSearchFragment}"/>
   </c:if>
   <c:if test="${form.usePatientNumberDirect}">
   

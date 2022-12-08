@@ -23,9 +23,8 @@ import java.util.Vector;
 
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.criterion.Order;
+import org.hibernate.query.Query;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.dataexchange.order.dao.ElectronicOrderDAO;
@@ -45,14 +44,16 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder, String>
     @Override
     @Transactional(readOnly = true)
     public List<ElectronicOrder> getElectronicOrdersByExternalId(String id) throws LIMSRuntimeException {
+        if (GenericValidator.isBlankOrNull(id)) {
+            return new ArrayList<>();
+        }
         String sql = "from ElectronicOrder eo where eo.externalId = :externalid order by id";
 
         try {
-            Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            query.setString("externalid", id);
+            Query<ElectronicOrder> query = entityManager.unwrap(Session.class).createQuery(sql, ElectronicOrder.class);
+            query.setParameter("externalid", id);
 
             List<ElectronicOrder> eOrders = query.list();
-            // closeSession(); // CSL remove old
             return eOrders;
         } catch (HibernateException e) {
             handleException(e, "getElectronicOrderByExternalId");
@@ -60,103 +61,18 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder, String>
         return null;
     }
 
-//
-//	@Override
-//	public List<ElectronicOrder> getElectronicOrdersByPatientId(String id) throws LIMSRuntimeException {
-//		String sql = "from ElectronicOrder eo where eo.patient.id = :patientid";
-//
-//		try {
-//			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-//
-//			query.setString("patientid", id);
-//			List<ElectronicOrder> eorders = query.list();
-//			// closeSession(); // CSL remove old
-//
-//			return eorders;
-//		} catch (HibernateException e) {
-//			handleException(e, "getElectronicOrdersByPatientId");
-//		}
-//		return null;
-//	}
-
-//	@Override
-//	public void insertData(ElectronicOrder eOrder) throws LIMSRuntimeException {
-//		try {
-//			String id = (String) entityManager.unwrap(Session.class).save(eOrder);
-//			eOrder.setId(id);
-//
-//			auditDAO.saveNewHistory(eOrder, eOrder.getSysUserId(), "ELECTROINIC_ORDER");
-//
-//			// closeSession(); // CSL remove old
-//		} catch (HibernateException e) {
-//			handleException(e, "insertData");
-//		}
-//	}
-
-//	@Override
-//	public void updateData(ElectronicOrder eOrder) throws LIMSRuntimeException {
-//
-//		ElectronicOrder oldOrder = readOrder(eOrder.getId());
-//
-//		try {
-//			auditDAO.saveHistory(eOrder, oldOrder, eOrder.getSysUserId(), IActionConstants.AUDIT_TRAIL_UPDATE,
-//					"ELECTROINIC_ORDER");
-//
-//			entityManager.unwrap(Session.class).merge(eOrder);
-//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//			// entityManager.unwrap(Session.class).evict // CSL remove old(eOrder);
-//			// entityManager.unwrap(Session.class).refresh // CSL remove old(eOrder);
-//		} catch (HibernateException e) {
-//			handleException(e, "updateData");
-//		}
-//	}
-
-//	public ElectronicOrder readOrder(String idString) {
-//		try {
-//			ElectronicOrder eOrder = entityManager.unwrap(Session.class).get(ElectronicOrder.class, idString);
-//			// closeSession(); // CSL remove old
-//			return eOrder;
-//		} catch (HibernateException e) {
-//			handleException(e, "readOrder");
-//		}
-//
-//		return null;
-//	}
-
-//
-//	@Override
-//	public List<ElectronicOrder> getAllElectronicOrders() {
-//		List<ElectronicOrder> list = new Vector<>();
-//		try {
-//			String sql = "from ElectronicOrder";
-//			org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
-//			list = query.list();
-//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (RuntimeException e) {
-//			handleException(e, "getAllElectronicOrders");
-//		}
-//
-//		return list;
-//
-//	}
-
     @Override
     @Transactional(readOnly = true)
     public List<ElectronicOrder> getAllElectronicOrdersOrderedBy(SortOrder order) {
         List<ElectronicOrder> list = new Vector<>();
         try {
             if (order.equals(ElectronicOrder.SortOrder.LAST_UPDATED_DESC)) {
-                list = entityManager.unwrap(Session.class).createCriteria(ElectronicOrder.class)
-                        .addOrder(Order.desc("lastupdated")).list();
+                String sql = "from ElectronicOrder eo order by lastupdated desc";
+                list = entityManager.unwrap(Session.class).createQuery(sql, ElectronicOrder.class).list();
             } else {
-
-                list = entityManager.unwrap(Session.class).createCriteria(ElectronicOrder.class)
-                        .addOrder(Order.asc(order.getValue())).addOrder(Order.desc("lastupdated")).list();
+                String sql = "from ElectronicOrder eo order by " + order.getValue() + "asc, lastupdated desc";
+                list = entityManager.unwrap(Session.class).createQuery(sql, ElectronicOrder.class).list();
             }
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (RuntimeException e) {
             handleException(e, "getAllElectronicOrdersOrderedBy");
         }
@@ -195,9 +111,9 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder, String>
         try {
 
             Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            query.setString("searchValue", searchValue);
-            // query.setString("order", order.getValue());
-            List<Object> records = query.list();
+            query.setParameter("searchValue", searchValue);
+            // query.setParameter("order", order.getValue());
+            List records = query.list();
             List<ElectronicOrder> eOrders = new ArrayList<>();
             for (int i = 0; i < records.size(); i++) {
                 Object[] oArray = (Object[]) records.get(i);
@@ -215,9 +131,7 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder, String>
     public List<ElectronicOrder> getAllElectronicOrdersMatchingAnyValue(List<String> identifierValues,
             String patientValue, SortOrder order) {
 
-        String hql = "from ElectronicOrder eo "
-                + "join eo.patient patient "
-                + "join patient.person person "
+        String hql = "from ElectronicOrder eo " + "join eo.patient patient " + "join patient.person person "
                 + "where lower(eo.externalId) in (:identifierValues) "
                 + "or lower(person.firstName) = lower(:patientValue) "
                 + "or lower(person.lastName) = lower(:patientValue) "
@@ -244,11 +158,11 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder, String>
         }
         try {
 
-            Query query = entityManager.unwrap(Session.class).createQuery(hql);
+            Query<?> query = entityManager.unwrap(Session.class).createQuery(hql);
             query.setParameterList("identifierValues", identifierValues);
-            query.setString("patientValue", patientValue);
-            // query.setString("order", order.getValue());
-            List<Object> records = query.list();
+            query.setParameter("patientValue", patientValue);
+            // query.setParameter("order", order.getValue());
+            List<?> records = query.list();
             List<ElectronicOrder> eOrders = new ArrayList<>();
             for (int i = 0; i < records.size(); i++) {
                 Object[] oArray = (Object[]) records.get(i);
@@ -266,9 +180,7 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder, String>
     public List<ElectronicOrder> getElectronicOrdersContainingValueExludedByOrderedBy(String searchValue,
             List<Integer> excludedStatuses, SortOrder sortOrder) {
 
-        String sql = "from ElectronicOrder eo "
-                + "join eo.patient patient "
-                + "join patient.person person  "
+        String sql = "from ElectronicOrder eo " + "join eo.patient patient " + "join patient.person person  "
                 + "where lower(eo.data) like concat('%', lower(:searchValue), '%') "
                 + "or lower(person.firstName) like concat('%', lower(:searchValue), '%') "
                 + "or lower(person.lastName) like concat('%', lower(:searchValue), '%') "
@@ -296,11 +208,11 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder, String>
         }
         try {
 
-            Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            query.setString("searchValue", searchValue);
+            Query<?> query = entityManager.unwrap(Session.class).createQuery(sql);
+            query.setParameter("searchValue", searchValue);
             query.setParameter("excludedStatuses", excludedStatuses);
-            // query.setString("order", order.getValue());
-            List<Object> records = query.list();
+            // query.setParameter("order", order.getValue());
+            List<?> records = query.list();
             List<ElectronicOrder> eOrders = new ArrayList<>();
             for (int i = 0; i < records.size(); i++) {
                 Object[] oArray = (Object[]) records.get(i);
@@ -365,21 +277,21 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder, String>
         }
         try {
 
-            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<?> query = entityManager.unwrap(Session.class).createQuery(sql);
             if (!GenericValidator.isBlankOrNull(accessionNumber)) {
-                query.setString("accessionNumber", accessionNumber);
+                query.setParameter("accessionNumber", accessionNumber);
             }
             if (!GenericValidator.isBlankOrNull(patientLastName)) {
-                query.setString("patientLastName", patientLastName);
+                query.setParameter("patientLastName", patientLastName);
             }
             if (!GenericValidator.isBlankOrNull(patientFirstName)) {
-                query.setString("patientFirstName", patientFirstName);
+                query.setParameter("patientFirstName", patientFirstName);
             }
             if (!GenericValidator.isBlankOrNull(gender)) {
-                query.setString("gender", gender);
+                query.setParameter("gender", gender);
             }
-            // query.setString("order", order.getValue());
-            List<Object> records = query.list();
+            // query.setParameter("order", order.getValue());
+            List<?> records = query.list();
             List<ElectronicOrder> eOrders = new ArrayList<>();
             for (int i = 0; i < records.size(); i++) {
                 Object[] oArray = (Object[]) records.get(i);
@@ -402,8 +314,8 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder, String>
     }
 
     @Override
-    public List<ElectronicOrder> getAllElectronicOrdersByDateAndStatus(Date startDate, Date endDate,
-            String statusId, SortOrder sortOrder) {
+    public List<ElectronicOrder> getAllElectronicOrdersByDateAndStatus(Date startDate, Date endDate, String statusId,
+            SortOrder sortOrder) {
         String hql = "From ElectronicOrder eo WHERE 1 = 1 ";
         if (startDate != null) {
             hql += "AND eo.orderTimestamp BETWEEN :startDate AND :endDate ";
@@ -431,10 +343,10 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder, String>
         }
 
         try {
-            Query query = entityManager.unwrap(Session.class).createQuery(hql);
+            Query<ElectronicOrder> query = entityManager.unwrap(Session.class).createQuery(hql, ElectronicOrder.class);
             if (startDate != null) {
-                query.setDate("startDate", startDate);
-                query.setDate("endDate", endDate);
+                query.setParameter("startDate", startDate);
+                query.setParameter("endDate", endDate);
             }
             if (!GenericValidator.isBlankOrNull(statusId)) {
                 query.setParameter("statusId", Integer.parseInt(statusId));
@@ -447,8 +359,8 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder, String>
     }
 
     @Override
-    public List<ElectronicOrder> getAllElectronicOrdersByTimestampAndStatus(java.sql.Timestamp startTimestamp, java.sql.Timestamp endTimestamp,
-            String statusId, SortOrder sortOrder) {
+    public List<ElectronicOrder> getAllElectronicOrdersByTimestampAndStatus(java.sql.Timestamp startTimestamp,
+            java.sql.Timestamp endTimestamp, String statusId, SortOrder sortOrder) {
         String hql = "From ElectronicOrder eo WHERE 1 = 1 ";
         if (startTimestamp != null) {
             hql += "AND eo.orderTimestamp BETWEEN :startDate AND :endDate ";
@@ -476,10 +388,10 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder, String>
         }
 
         try {
-            Query query = entityManager.unwrap(Session.class).createQuery(hql);
+            Query<ElectronicOrder> query = entityManager.unwrap(Session.class).createQuery(hql, ElectronicOrder.class);
             if (startTimestamp != null) {
-                query.setTimestamp("startDate", startTimestamp);
-                query.setTimestamp("endDate", endTimestamp);
+                query.setParameter("startDate", startTimestamp);
+                query.setParameter("endDate", endTimestamp);
             }
             if (!GenericValidator.isBlankOrNull(statusId)) {
                 query.setParameter("statusId", Integer.parseInt(statusId));

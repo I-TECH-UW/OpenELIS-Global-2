@@ -73,7 +73,8 @@ public class OrganizationController extends BaseController {
         return new OrganizationForm();
     }
 
-    //    private static boolean useZip = FormFields.getInstance().useField(FormFields.Field.ZipCode);
+    // private static boolean useZip =
+    // FormFields.getInstance().useField(FormFields.Field.ZipCode);
     private static boolean useState = FormFields.getInstance().useField(FormFields.Field.OrgState);
     private static boolean useDepartment = FormFields.getInstance().useField(Field.ADDRESS_DEPARTMENT);
     private static boolean useCommune = FormFields.getInstance().useField(Field.ADDRESS_COMMUNE);
@@ -292,7 +293,7 @@ public class OrganizationController extends BaseController {
     public ModelAndView showUpdateOrganization(HttpServletRequest request,
             @ModelAttribute("form") @Valid OrganizationForm form, BindingResult result, SessionStatus status,
             RedirectAttributes redirectAttributes)
-                    throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
         setDefaultButtonAttributes(request);
         if (result.hasErrors()) {
@@ -360,9 +361,9 @@ public class OrganizationController extends BaseController {
             return findForward(FWD_FAIL_INSERT, form);
 
         }
-        //		finally {
-        //			HibernateUtil.closeSession();
-        //		}
+        // finally {
+        // HibernateUtil.closeSession();
+        // }
         PropertyUtils.copyProperties(form, organization);
 
         if (states != null) {

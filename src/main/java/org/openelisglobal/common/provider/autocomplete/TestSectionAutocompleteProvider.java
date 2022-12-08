@@ -51,7 +51,8 @@ public class TestSectionAutocompleteProvider extends BaseAutocompleteProvider {
     public List processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // LogEvent.logInfo(this.getClass().getName(), "method unkown", "I am in TestSectionAutocompleteProvider "
+        // LogEvent.logInfo(this.getClass().getName(), "method unkown", "I am in
+        // TestSectionAutocompleteProvider "
         // + request.getParameter("testSectionName"));
         String testSectionName = request.getParameter("testSectionName");
         // System.out
@@ -60,7 +61,8 @@ public class TestSectionAutocompleteProvider extends BaseAutocompleteProvider {
         // Get test sections by sys user id
         // bugzilla 2160
         List list = userTestSectionService.getAllUserTestSectionsByName(request, testSectionName);
-        // LogEvent.logInfo(this.getClass().getName(), "method unkown", "TestSectionAutocompleteProvider list "
+        // LogEvent.logInfo(this.getClass().getName(), "method unkown",
+        // "TestSectionAutocompleteProvider list "
         // + list.size());
         return list;
     }

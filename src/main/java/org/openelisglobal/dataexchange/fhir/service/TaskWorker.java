@@ -144,9 +144,9 @@ public class TaskWorker {
                 }
             default:
                 LogEvent.logDebug(this.getClass().getName(), "handleOrderRequest",
-                        "undetermined issue in correctly interpreted request: "
-                                + interpretResults.get(0).toString() + " check result: " + checkResult + " for: "
-                                + referringOrderNumber + " " + orderType + " ");
+                        "undetermined issue in correctly interpreted request: " + interpretResults.get(0).toString()
+                                + " check result: " + checkResult + " for: " + referringOrderNumber + " " + orderType
+                                + " ");
                 insertNewOrder(referringOrderNumber, message, patient, priority, ExternalOrderStatus.NonConforming);
                 return TaskResult.MESSAGE_ERROR;
             }
@@ -191,7 +191,7 @@ public class TaskWorker {
     }
 
     private void insertNewOrder(String referringOrderNumber, String message, MessagePatient patient,
-            OrderPriority orderPriority ,ExternalOrderStatus eoStatus) {
+            OrderPriority orderPriority, ExternalOrderStatus eoStatus) {
         LogEvent.logDebug(this.getClass().getName(), "insertNewOrder",
                 "TaskWorker:insertNewOrder: " + referringOrderNumber);
         ElectronicOrder eOrder = new ElectronicOrder();

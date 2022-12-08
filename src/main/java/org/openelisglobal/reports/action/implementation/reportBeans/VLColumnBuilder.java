@@ -96,7 +96,8 @@ public class VLColumnBuilder extends CIColumnBuilder {
 
     @Override
     public void makeSQL() {
-        String validStatusId = SpringContext.getBean(IStatusService.class).getStatusID(StatusService.AnalysisStatus.Finalized);
+        String validStatusId = SpringContext.getBean(IStatusService.class)
+                .getStatusID(StatusService.AnalysisStatus.Finalized);
         Test test = SpringContext.getBean(TestService.class).getActiveTestsByName("Viral Load").get(0);
         // this is done to ensure that sql injection can't succeed
         int testId = Integer.parseInt(test.getId());

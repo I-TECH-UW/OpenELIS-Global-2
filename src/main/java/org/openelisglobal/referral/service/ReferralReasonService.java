@@ -6,7 +6,5 @@ import org.openelisglobal.common.service.BaseObjectService;
 import org.openelisglobal.referral.valueholder.ReferralReason;
 
 public interface ReferralReasonService extends BaseObjectService<ReferralReason, String> {
-    void getData(ReferralReason entity);
-
     List<ReferralReason> getAllReferralReasons();
 }

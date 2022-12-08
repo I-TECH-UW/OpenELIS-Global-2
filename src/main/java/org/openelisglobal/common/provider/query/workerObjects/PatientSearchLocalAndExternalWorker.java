@@ -121,8 +121,8 @@ public class PatientSearchLocalAndExternalWorker extends PatientSearchWorker {
         for (IExternalPatientSearch externalSearch : externalSearches) {
             try {
                 Future<Integer> futureExternalSearchResult = externalSearch.runExternalSearch();
-                Integer externalSearchResult = futureExternalSearchResult
-                        .get(externalSearch.getTimeout(), TimeUnit.MILLISECONDS);
+                Integer externalSearchResult = futureExternalSearchResult.get(externalSearch.getTimeout(),
+                        TimeUnit.MILLISECONDS);
 
                 if (externalSearchResult == 200) {
                     externalResults = externalSearch.getSearchResults();

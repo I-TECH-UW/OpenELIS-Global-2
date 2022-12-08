@@ -26,7 +26,6 @@
 
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
-<%@ taglib prefix="tiles" uri="http://tiles.apache.org/tags-tiles"%>
 
 <c:set var="tests" value="${form.testResult}" />
 <c:set var="testCount" value="${fn:length(tests)}" />
@@ -648,7 +647,7 @@ function /*void*/ handleEnterEvent(  ){
 		<input type="button" onclick="toggleKitDisplay(this)" value="+">
 		<spring:message code="inventory.testKits" />
 		<div id="kitView" style="display: none;" class="colorFill">
-			<tiles:insertAttribute name="testKitInfo" />
+			<jsp:include page="${testKitInfoFragment}"/>
 			<br />
 			<hr style="width: 100%" />
 		</div>

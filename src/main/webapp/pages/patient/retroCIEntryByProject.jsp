@@ -10,8 +10,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
-<%@ taglib prefix="tiles" uri="http://tiles.apache.org/tags-tiles"%>
-
 <%
 	String requestType = (String)request.getSession().getAttribute("type");
 	HashSet accessMap = (HashSet)request.getSession().getAttribute(IActionConstants.PERMITTED_ACTIONS_MAP);
@@ -303,7 +301,8 @@ function initializeStudySelection() {
 
 </script>
 <b><spring:message code="sample.entry.project.form" /> </b>
-<tiles:insertAttribute name="patientSearch" ignore="true"/>
+<jsp:include page="${patientSearchFragment}"/>
+<%-- <tiles:insertAttribute name="patientSearch" ignore="true"/> --%>
 <br/>
 <select name="studyForms" onchange="selectStudy(this.value);" id="studyFormsID">
 	<option value="0" selected>
@@ -328,20 +327,20 @@ function initializeStudySelection() {
 <form:hidden path="" id="subjectOrSiteSubject" value="" />
 <div id="studies">
 	<div id="InitialARV_Id" style="display: none;">
-		<tiles:insertAttribute name="arvInitialStudy"/>
+		<jsp:include page="${arvInitialStudyFragment}"/>
 	</div>
 	
 	<div id="FollowUpARV_Id" style="display: none;">
-		<tiles:insertAttribute name="arvFollowupStudy"/>
+		<jsp:include page="${arvFollowupStudyFragment}"/>
 	</div>
 	<div id="EID_Id" style="display: none;">
-		<tiles:insertAttribute name="ediStudy"/>
+		<jsp:include page="${ediStudyFragment}"/>
 	</div>
 	<div id="VL_Id" style="display: none;">
-		<tiles:insertAttribute name="lvStudy"/>
+		<jsp:include page="${lvStudyFragment}"/>
 	</div>
 	<div id="RTN_Id" style="display: none;">
-		<tiles:insertAttribute name="rtnStudy"/>
+		<jsp:include page="${rtnStudyFragment}"/>
 	</div>
 </div>
 <script type="text/javascript">

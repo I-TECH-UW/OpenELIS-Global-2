@@ -58,7 +58,7 @@ function submitOnClick(button){
             <td width="10%" noWrap><spring:message code="login.msg.userName"/>:</td>
             <td colspan="2" align="left">
                 <%--bugzilla 2173, 2376--%>
-                <form:input path="loginName" id="loginName" onkeypress="submitOnEnter(event)"/>
+                <form:input autocomplete="off" path="loginName" id="loginName" onkeypress="submitOnEnter(event)"/>
             </td>
         </tr>
         <tr>
@@ -66,7 +66,7 @@ function submitOnClick(button){
             <td width="10%" noWrap><spring:message code="login.msg.password"/>:</td>
             <td colspan="2" align="left">
                 
-                <form:password path="password" id="password" onkeypress="submitOnEnter(event)"/>
+                <form:password autocomplete="off" path="password" id="password" onkeypress="submitOnEnter(event)"/>
             </td>
         </tr>
         </table>

@@ -41,8 +41,8 @@ public class TestSectionWorkplanReport implements IWorkplanReport {
     protected String reportPath = "";
 
     public TestSectionWorkplanReport(String testSection) {
-        //messageKey = messageKey + testSection.replace(' ', '-');
-        //this.testSection = MessageUtil.getContextualMessage(messageKey);
+        // messageKey = messageKey + testSection.replace(' ', '-');
+        // this.testSection = MessageUtil.getContextualMessage(messageKey);
 
         if (GenericValidator.isBlankOrNull(this.testSection)) {
             this.testSection = testSection;

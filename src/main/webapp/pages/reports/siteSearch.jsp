@@ -14,8 +14,6 @@
 
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
-
 <%
     boolean useReferralSiteList = FormFields.getInstance().useField( FormFields.Field.RequesterSiteList );
 	boolean useSiteDepartment = FormFields.getInstance().useField(Field.SITE_DEPARTMENT );

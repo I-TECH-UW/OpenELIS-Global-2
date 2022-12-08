@@ -25,8 +25,8 @@ import java.util.Map;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
@@ -56,113 +56,11 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
         ID_NAME_MAP = null;
     }
 
-//	@Override
-//	public void deleteData(List typeOfSamples) throws LIMSRuntimeException {
-//		// add to audit trail
-//		try {
-//
-//			for (int i = 0; i < typeOfSamples.size(); i++) {
-//				TypeOfSample data = (TypeOfSample) typeOfSamples.get(i);
-//
-//				TypeOfSample oldData = readTypeOfSample(data.getId());
-//				TypeOfSample newData = new TypeOfSample();
-//
-//				String sysUserId = data.getSysUserId();
-//				String event = IActionConstants.AUDIT_TRAIL_DELETE;
-//				String tableName = "TYPE_OF_SAMPLE";
-//				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-//			}
-//		} catch (RuntimeException e) {
-//			// bugzilla 2154
-//			LogEvent.logError("TypeOfSampleDAOImpl", "AuditTrail deleteData()", e.toString());
-//			throw new LIMSRuntimeException("Error in TypeOfSample AuditTrail deleteData()", e);
-//		}
-//
-//		try {
-//			for (int i = 0; i < typeOfSamples.size(); i++) {
-//				TypeOfSample data = (TypeOfSample) typeOfSamples.get(i);
-//				// bugzilla 2206
-//				data = readTypeOfSample(data.getId());
-//				entityManager.unwrap(Session.class).delete(data);
-//				// entityManager.unwrap(Session.class).flush(); // CSL remove old
-//				// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//			}
-//		} catch (RuntimeException e) {
-//			// bugzilla 2154
-//			LogEvent.logError("TypeOfSampleDAOImpl", "deleteData()", e.toString());
-//			throw new LIMSRuntimeException("Error in TypeOfSample deleteData()", e);
-//		}
-//
-//		clearMap();
-//	}
-
-//	@Override
-//	public boolean insertData(TypeOfSample typeOfSample) throws LIMSRuntimeException {
-//
-//		try {
-//			// bugzilla 1482 throw Exception if record already exists
-//			if (duplicateTypeOfSampleExists(typeOfSample)) {
-//				throw new LIMSDuplicateRecordException("Duplicate record exists for " + typeOfSample.getDescription());
-//			}
-//
-//			String id = (String) entityManager.unwrap(Session.class).save(typeOfSample);
-//			typeOfSample.setId(id);
-//
-//			// bugzilla 1824 inserts will be logged in history table
-//
-//			String sysUserId = typeOfSample.getSysUserId();
-//			String tableName = "TYPE_OF_SAMPLE";
-//			auditDAO.saveNewHistory(typeOfSample, sysUserId, tableName);
-//
-//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (RuntimeException e) {
-//			// bugzilla 2154
-//			LogEvent.logError("TypeOfSampleDAOImpl", "insertData()", e.toString());
-//			throw new LIMSRuntimeException("Error in TypeOfSample insertData()", e);
-//		}
-//
-//		clearMap();
-//
-//		return true;
-//	}
-
-//	@Override
-//	public void updateData(TypeOfSample typeOfSample) throws LIMSRuntimeException {
-//
-//		TypeOfSample oldData = readTypeOfSample(typeOfSample.getId());
-//
-//		try {
-//
-//			auditDAO.saveHistory(typeOfSample, oldData, typeOfSample.getSysUserId(),
-//					IActionConstants.AUDIT_TRAIL_UPDATE, "TYPE_OF_SAMPLE");
-//		} catch (RuntimeException e) {
-//			LogEvent.logError("TypeOfSampleDAOImpl", "AuditTrail updateData()", e.toString());
-//			throw new LIMSRuntimeException("Error in TypeOfSample AuditTrail updateData()", e);
-//		}
-//
-//		try {
-//			entityManager.unwrap(Session.class).merge(typeOfSample);
-//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//			// entityManager.unwrap(Session.class).evict // CSL remove old(typeOfSample);
-//			// entityManager.unwrap(Session.class).refresh // CSL remove old(typeOfSample);
-//		} catch (RuntimeException e) {
-//
-//			LogEvent.logError("TypeOfSampleDAOImpl", "updateData()", e.toString());
-//			throw new LIMSRuntimeException("Error in TypeOfSample updateData()", e);
-//		}
-//
-//		clearMap();
-//	}
-
     @Override
     @Transactional(readOnly = true)
     public void getData(TypeOfSample typeOfSample) throws LIMSRuntimeException {
         try {
             TypeOfSample tos = entityManager.unwrap(Session.class).get(TypeOfSample.class, typeOfSample.getId());
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
             if (tos != null) {
                 PropertyUtils.copyProperties(typeOfSample, tos);
             } else {
@@ -181,12 +79,10 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
         List<TypeOfSample> list;
         try {
             String sql = "from TypeOfSample order by description";
-            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<TypeOfSample> query = entityManager.unwrap(Session.class).createQuery(sql, TypeOfSample.class);
             // query.setMaxResults(10);
             // query.setFirstResult(3);
             list = query.list();
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
@@ -202,10 +98,8 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
         List<TypeOfSample> list = new ArrayList<>();
         try {
             String sql = "from TypeOfSample order by sort_order";
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<TypeOfSample> query = entityManager.unwrap(Session.class).createQuery(sql, TypeOfSample.class);
             list = query.list();
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in TypeOfSample getAllTypeOfSamplesSortOrdered()", e);
@@ -224,13 +118,11 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
 
             // bugzilla 1399
             String sql = "from TypeOfSample t order by t.domain, t.description";
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<TypeOfSample> query = entityManager.unwrap(Session.class).createQuery(sql, TypeOfSample.class);
             query.setFirstResult(startingRecNo - 1);
             query.setMaxResults(endingRecNo - 1);
 
             list = query.list();
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
@@ -244,8 +136,6 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
         TypeOfSample tos = null;
         try {
             tos = entityManager.unwrap(Session.class).get(TypeOfSample.class, idString);
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
@@ -271,7 +161,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
                 sql = "from TypeOfSample t where upper(t.description) like upper(:param) order by upper(t.description)";
 
             }
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<TypeOfSample> query = entityManager.unwrap(Session.class).createQuery(sql, TypeOfSample.class);
             query.setParameter("param", filter + "%");
             // bugzilla 1387 added domain parm
             if (!StringUtil.isNullorNill(domain)) {
@@ -279,8 +169,6 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
             }
 
             list = query.list();
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
@@ -300,13 +188,11 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
 
             String sql = "from TypeOfSample t where t.domain = :domainKey order by upper(t.description)";
 
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<TypeOfSample> query = entityManager.unwrap(Session.class).createQuery(sql, TypeOfSample.class);
 
             query.setParameter("domainKey", key);
 
             list = query.list();
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (RuntimeException e) {
             LogEvent.logDebug(e);
             throw new LIMSRuntimeException("Error in TypeOfSample getTypes(String filter)", e);
@@ -324,13 +210,11 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
 
             String sql = "from TypeOfSample t where t.domain = :domainKey order by t.sortOrder";
 
-            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<TypeOfSample> query = entityManager.unwrap(Session.class).createQuery(sql, TypeOfSample.class);
 
             query.setParameter("domainKey", key);
 
             list = query.list();
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (RuntimeException e) {
             handleException(e, "getTypesForDomainBySortOrder");
         }
@@ -345,11 +229,10 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
             throws LIMSRuntimeException {
         String sql = "From TypeOfSample tos where tos.localAbbreviation = :localAbbrev and tos.domain = :domain";
         try {
-            Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            query.setString("localAbbrev", localAbbrev);
-            query.setString("domain", domain);
-            TypeOfSample typeOfSample = (TypeOfSample) query.uniqueResult();
-            // closeSession(); // CSL remove old
+            Query<TypeOfSample> query = entityManager.unwrap(Session.class).createQuery(sql, TypeOfSample.class);
+            query.setParameter("localAbbrev", localAbbrev);
+            query.setParameter("domain", domain);
+            TypeOfSample typeOfSample = query.uniqueResult();
             return typeOfSample;
         } catch (HibernateException e) {
             handleException(e, "getTypeOfSampeByLocalAbbreviationAndDomain");
@@ -409,7 +292,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
                     sql = "from TypeOfSample tos where trim(tos.description) = :param";
                 }
             }
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<TypeOfSample> query = entityManager.unwrap(Session.class).createQuery(sql, TypeOfSample.class);
 
             if (ignoreCase) {
                 query.setParameter("param", tos.getDescription().toLowerCase().trim());
@@ -422,8 +305,6 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
             }
 
             List<TypeOfSample> list = query.list();
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
             TypeOfSample typeOfSample = null;
             if (list.size() > 0) {
                 typeOfSample = list.get(0);
@@ -443,7 +324,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
     public boolean duplicateTypeOfSampleExists(TypeOfSample typeOfSample) throws LIMSRuntimeException {
         try {
 
-            List<TypeOfSample> list = new ArrayList();
+            List<TypeOfSample> list = new ArrayList<>();
 
             // not case sensitive hemolysis and Hemolysis are considered
             // duplicates
@@ -451,7 +332,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
             // bugzilla 2432 add check for local abbreviation
             String sql = "from TypeOfSample t where (trim(lower(t.description)) = :description and trim(lower(t.domain)) = :domain and t.id != :id)"
                     + " or (trim(lower(t.localAbbreviation)) = :abbrev and trim(lower(t.domain)) = :domain and t.id != :id)";
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<TypeOfSample> query = entityManager.unwrap(Session.class).createQuery(sql, TypeOfSample.class);
             query.setParameter("description", typeOfSample.getDescription().toLowerCase().trim());
             query.setParameter("domain", typeOfSample.getDomain().toLowerCase().trim());
             // bugzila 2432
@@ -463,11 +344,9 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
             if (!StringUtil.isNullorNill(typeOfSample.getId())) {
                 typeOfSampleId = typeOfSample.getId();
             }
-            query.setInteger("id", Integer.parseInt(typeOfSampleId));
+            query.setParameter("id", Integer.parseInt(typeOfSampleId));
 
             list = query.list();
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
             if (list.size() > 0) {
                 return true;
@@ -507,7 +386,6 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
     public TypeOfSample getTypeOfSampleById(String typeOfSampleId) throws LIMSRuntimeException {
         try {
             TypeOfSample tos = entityManager.unwrap(Session.class).get(TypeOfSample.class, typeOfSampleId);
-            // closeSession(); // CSL remove old
             return tos;
         } catch (RuntimeException e) {
             handleException(e, "getTypeOfSampleById");
@@ -522,10 +400,10 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
         String sql = "select tos from TypeOfSample tos, Test test, TypeOfSampleTest tost " + "where tost.testId = :id "
                 + "AND tos.id = tost.typeOfSampleId";
         try {
-            Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            query.setInteger("id", Integer.parseInt(test.getId()));
+            Query<TypeOfSample> query = entityManager.unwrap(Session.class).createQuery(sql, TypeOfSample.class);
+            query.setParameter("id", Integer.parseInt(test.getId()));
 
-            TypeOfSample tos = (TypeOfSample) query.uniqueResult();
+            TypeOfSample tos = query.uniqueResult();
             // closeSession(); // CSL remove old
             return tos;
         } catch (RuntimeException e) {

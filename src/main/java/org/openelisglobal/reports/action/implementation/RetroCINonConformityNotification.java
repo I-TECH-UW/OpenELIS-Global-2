@@ -67,7 +67,8 @@ public class RetroCINonConformityNotification extends RetroCIReport implements I
     public void setRequestParameters(ReportForm form) {
         try {
             form.setReportName(MessageUtil.getMessage("reports.nonConformity.notification.report"));
-            form.setSelectList(new ReportSpecificationList(getSiteList(), MessageUtil.getMessage("report.select.site")));
+            form.setSelectList(
+                    new ReportSpecificationList(getSiteList(), MessageUtil.getMessage("report.select.site")));
             form.setUseAccessionDirect(Boolean.TRUE);
             form.setInstructions(MessageUtil.getMessage("reports.nonConformity.notification.report.instructions"));
         } catch (RuntimeException e) {

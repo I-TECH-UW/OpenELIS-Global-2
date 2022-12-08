@@ -30,35 +30,35 @@ public class HttpClientConfig {
     @Value("${server.ssl.key-password}")
     private String keyPassword;
 
-	@Value("${org.openelisglobal.httpclient.connectionRequestTimeout:0}")
-	private Integer connectionRequestTimeout;
+    @Value("${org.openelisglobal.httpclient.connectionRequestTimeout:0}")
+    private Integer connectionRequestTimeout;
 
-	@Value("${org.openelisglobal.httpclient.connectionTimeout:0}")
-	private Integer connectionTimeout;
+    @Value("${org.openelisglobal.httpclient.connectionTimeout:0}")
+    private Integer connectionTimeout;
 
-	@Value("${org.openelisglobal.httpclient.socketTimeout:0}")
-	private Integer socketTimeout;
+    @Value("${org.openelisglobal.httpclient.socketTimeout:0}")
+    private Integer socketTimeout;
 
     @Bean
     public CloseableHttpClient httpClient() throws Exception {
-    	
-    	HttpClientBuilder httpBuilder = HttpClientBuilder.create().setSSLSocketFactory(sslConnectionSocketFactory());
-        
-		if (connectionRequestTimeout != 0 || connectionTimeout != 0 || socketTimeout != 0) {
-        	final RequestConfig.Builder configBuilder = RequestConfig.custom();
-			if (connectionRequestTimeout != 0) {
-				configBuilder.setConnectionRequestTimeout(this.connectionRequestTimeout);
-			}
-			if (connectionTimeout != 0) {
-				configBuilder.setConnectTimeout(connectionTimeout);
-			}
-			if (socketTimeout != 0) {
-				configBuilder.setSocketTimeout(socketTimeout);
-			}
-			httpBuilder.setDefaultRequestConfig(configBuilder.build());
-    	}
-    	
-		return httpBuilder.setSSLSocketFactory(sslConnectionSocketFactory()).build();
+
+        HttpClientBuilder httpBuilder = HttpClientBuilder.create().setSSLSocketFactory(sslConnectionSocketFactory());
+
+        if (connectionRequestTimeout != 0 || connectionTimeout != 0 || socketTimeout != 0) {
+            final RequestConfig.Builder configBuilder = RequestConfig.custom();
+            if (connectionRequestTimeout != 0) {
+                configBuilder.setConnectionRequestTimeout(this.connectionRequestTimeout);
+            }
+            if (connectionTimeout != 0) {
+                configBuilder.setConnectTimeout(connectionTimeout);
+            }
+            if (socketTimeout != 0) {
+                configBuilder.setSocketTimeout(socketTimeout);
+            }
+            httpBuilder.setDefaultRequestConfig(configBuilder.build());
+        }
+
+        return httpBuilder.setSSLSocketFactory(sslConnectionSocketFactory()).build();
     }
 
     public SSLConnectionSocketFactory sslConnectionSocketFactory() throws Exception {

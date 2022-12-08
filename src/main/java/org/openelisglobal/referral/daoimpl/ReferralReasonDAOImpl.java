@@ -19,8 +19,8 @@ package org.openelisglobal.referral.daoimpl;
 import java.util.List;
 
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.referral.dao.ReferralReasonDAO;
@@ -38,15 +38,14 @@ public class ReferralReasonDAOImpl extends BaseDAOImpl<ReferralReason, String> i
     }
 
     @Override
-    
+
     @Transactional(readOnly = true)
     public List<ReferralReason> getAllReferralReasons() throws LIMSRuntimeException {
         String sql = "from ReferralReason";
 
         try {
-            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<ReferralReason> query = entityManager.unwrap(Session.class).createQuery(sql, ReferralReason.class);
             List<ReferralReason> reasons = query.list();
-            // closeSession(); // CSL remove old
             return reasons;
         } catch (HibernateException e) {
             handleException(e, "getAllReferralReasons");
@@ -55,10 +54,4 @@ public class ReferralReasonDAOImpl extends BaseDAOImpl<ReferralReason, String> i
         return null;
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public void getData(ReferralReason entity) {
-        // TODO Auto-generated method stub
-
-    }
 }

@@ -168,14 +168,12 @@ public class TestAddController extends BaseController {
     private Errors validateLoinc(String loincCode, Errors errors) {
         List<Test> tests = testService.getTestsByLoincCode(loincCode);
         for (Test test : tests) {
-            if(test.getLoinc().equals(loincCode)){
-                errors.reject("entry.invalid.loinc.number.used",
-                "entry.invalid.loinc.number.used");
+            if (test.getLoinc().equals(loincCode)) {
+                errors.reject("entry.invalid.loinc.number.used", "entry.invalid.loinc.number.used");
             }
         }
         return errors;
     }
-
 
     private Localization createNameLocalization(TestAddParams testAddParams) {
         return LocalizationServiceImpl.createNewLocalization(testAddParams.testNameEnglish,
@@ -255,7 +253,8 @@ public class TestAddController extends BaseController {
             createPanelItems(testSet.panelItems, testAddParams);
             createTestResults(testSet.testResults, significantDigits, testAddParams);
             if (numericResults) {
-                testSet.resultLimits = createResultLimits(lowValid, highValid, lowReportingRange, highReportingRange, testAddParams);
+                testSet.resultLimits = createResultLimits(lowValid, highValid, lowReportingRange, highReportingRange,
+                        testAddParams);
             } else if (dictionaryResults) {
                 testSet.resultLimits = createDictionaryResultLimit(testAddParams);
             }
@@ -278,7 +277,8 @@ public class TestAddController extends BaseController {
         return resultLimits;
     }
 
-    private ArrayList<ResultLimit> createResultLimits(Double lowValid, Double highValid,Double lowReportingRange,Double highReportingRange, TestAddParams testAddParams) {
+    private ArrayList<ResultLimit> createResultLimits(Double lowValid, Double highValid, Double lowReportingRange,
+            Double highReportingRange, TestAddParams testAddParams) {
         ArrayList<ResultLimit> resultLimits = new ArrayList<>();
         for (ResultLimitParams params : testAddParams.limits) {
             ResultLimit limit = new ResultLimit();
@@ -290,9 +290,9 @@ public class TestAddController extends BaseController {
             limit.setHighNormal(StringUtil.doubleWithInfinity(params.highNormalLimit));
             limit.setLowValid(lowValid);
             limit.setHighValid(highValid);
-            if(lowReportingRange != null && highReportingRange != null ){
-            limit.setLowReportingRange(lowReportingRange);
-            limit.setHighReportingRange(highReportingRange);
+            if (lowReportingRange != null && highReportingRange != null) {
+                limit.setLowReportingRange(lowReportingRange);
+                limit.setHighReportingRange(highReportingRange);
             }
             resultLimits.add(limit);
         }

@@ -129,6 +129,14 @@ public class ElectronicOrdersController extends BaseController {
                     task.getRestriction().getRecipientFirstRep().getReferenceElement().getIdPart());
             if (organization != null) {
                 displayItem.setRequestingFacility(organization.getOrganizationName());
+            } else {
+                if (!task.getLocation().isEmpty()) {
+                    organization = organizationService
+                            .getOrganizationByFhirId(task.getLocation().getReferenceElement().getIdPart());
+                    if (organization != null) {
+                        displayItem.setRequestingFacility(organization.getOrganizationName());
+                    }
+                }
             }
 
             Sample sample = sampleService.getSampleByReferringId(electronicOrder.getExternalId());

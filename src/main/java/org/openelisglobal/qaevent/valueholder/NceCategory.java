@@ -16,7 +16,6 @@ public class NceCategory extends BaseObject<String> {
 
     private Timestamp lastUpdated;
 
-
     @Override
     public String getId() {
         return id;

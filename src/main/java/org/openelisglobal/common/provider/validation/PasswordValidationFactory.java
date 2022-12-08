@@ -28,15 +28,15 @@ public class PasswordValidationFactory {
 
     public static ILoginPasswordValidation getPasswordValidator() {
 
-        String passwordRequirementSite = ConfigurationProperties.getInstance()
+        String requirementSite = ConfigurationProperties.getInstance()
                 .getPropertyValueUpperCase(Property.PasswordRequirments);
         ILoginPasswordValidation validator = new MinnPasswordValidation();
 
-        if (MINN_SITE.equals(passwordRequirementSite)) {
+        if (MINN_SITE.equals(requirementSite)) {
             // no-op Minnesota is the default
-        } else if (HAITI_SITE.equals(passwordRequirementSite)) {
+        } else if (HAITI_SITE.equals(requirementSite)) {
             validator = new HaitiPasswordValidation();
-        } else if (CDI_SITE.equals(passwordRequirementSite)) {
+        } else if (CDI_SITE.equals(requirementSite)) {
             validator = new CDIPasswordValidation();
         }
 

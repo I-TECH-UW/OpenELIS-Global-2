@@ -269,6 +269,6 @@ public interface IActionConstants {
     String MODULE_ACCESS_PATIENT_SUBJECTNOS_EDIT = "Access.patient.subjectNos.edit";
     String MODULE_ACCESS_SAMPLE_ACCESSIONNO_EDIT = "Access.sample.accessionNo.edit";
 
-    String DISPLAY_PREV_NEXT = "DisplayPrevNext" ;
+    String DISPLAY_PREV_NEXT = "DisplayPrevNext";
 
 }

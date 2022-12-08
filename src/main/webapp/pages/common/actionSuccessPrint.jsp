@@ -9,8 +9,6 @@
 
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
-
 <script type="text/javascript">
 
 function /*void*/ showSuccessMessage( show ){

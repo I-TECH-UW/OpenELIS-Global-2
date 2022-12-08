@@ -17,8 +17,8 @@
 package org.openelisglobal.dataexchange.aggregatereporting.daoimpl;
 
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.dataexchange.aggregatereporting.dao.ReportQueueTypeDAO;
@@ -40,10 +40,9 @@ public class ReportQueueTypeDAOImpl extends BaseDAOImpl<ReportQueueType, String>
         String sql = "from ReportQueueType rqt where rqt.name = :name";
 
         try {
-            Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            query.setString("name", name);
-            ReportQueueType type = (ReportQueueType) query.uniqueResult();
-            // closeSession(); // CSL remove old
+            Query<ReportQueueType> query = entityManager.unwrap(Session.class).createQuery(sql, ReportQueueType.class);
+            query.setParameter("name", name);
+            ReportQueueType type = query.uniqueResult();
             return type;
         } catch (HibernateException e) {
             handleException(e, "getReportQueueTypeByName");

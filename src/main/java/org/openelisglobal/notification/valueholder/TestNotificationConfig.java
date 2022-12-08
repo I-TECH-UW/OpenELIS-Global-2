@@ -122,10 +122,9 @@ public class TestNotificationConfig extends NotificationConfig<Test> {
 
     }
 
-    private NotificationConfigOption getAndAddNewConfigOption(NotificationNature nature,
-            NotificationMethod methodType, NotificationPersonType personType) {
-        NotificationConfigOption configOption = new NotificationConfigOption(methodType, personType,
-                nature, false);
+    private NotificationConfigOption getAndAddNewConfigOption(NotificationNature nature, NotificationMethod methodType,
+            NotificationPersonType personType) {
+        NotificationConfigOption configOption = new NotificationConfigOption(methodType, personType, nature, false);
         options.add(configOption);
         return configOption;
     }

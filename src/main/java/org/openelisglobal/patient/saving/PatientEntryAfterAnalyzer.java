@@ -41,8 +41,7 @@ import org.springframework.stereotype.Service;
 @Scope("prototype")
 public class PatientEntryAfterAnalyzer extends PatientEntry implements IPatientEntryAfterAnalyzer {
 
-    public PatientEntryAfterAnalyzer(PatientEntryByProjectForm form, String sysUserId, HttpServletRequest request)
-             {
+    public PatientEntryAfterAnalyzer(PatientEntryByProjectForm form, String sysUserId, HttpServletRequest request) {
         this();
         super.setFieldsFromForm(form);
         super.setSysUserId(sysUserId);
@@ -68,7 +67,7 @@ public class PatientEntryAfterAnalyzer extends PatientEntry implements IPatientE
      * @see org.openelisglobal.patient.saving.PatientEntry#populateSampleHuman()
      */
     @Override
-    protected void populateSampleHuman()  {
+    protected void populateSampleHuman() {
         sampleHuman = new SampleHuman();
         sampleHuman.setSampleId(statusSet.getSampleId());
         sampleHumanService.getDataBySample(sampleHuman);
@@ -81,7 +80,8 @@ public class PatientEntryAfterAnalyzer extends PatientEntry implements IPatientE
      */
     @Override
     protected void persistRecordStatus() {
-        SpringContext.getBean(IStatusService.class).deleteRecordStatus(sample, PatientUtil.getUnknownPatient(), sysUserId);
+        SpringContext.getBean(IStatusService.class).deleteRecordStatus(sample, PatientUtil.getUnknownPatient(),
+                sysUserId);
         super.persistRecordStatus();
     }
 }

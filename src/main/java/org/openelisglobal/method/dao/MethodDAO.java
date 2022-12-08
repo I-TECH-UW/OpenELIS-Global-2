@@ -29,13 +29,13 @@ import org.openelisglobal.method.valueholder.Method;
  *         disable the creation of type comments go to
  *         Window>Preferences>Java>Code Generation.
  */
-public interface MethodDAO extends BaseDAO<Method, String> {     List<Method> getMethods(String filter) throws LIMSRuntimeException;
+public interface MethodDAO extends BaseDAO<Method, String> {
+    List<Method> getMethods(String filter) throws LIMSRuntimeException;
 
     List<Method> getAllInActiveMethods() throws LIMSRuntimeException;
 
     boolean duplicateMethodExists(Method method) throws LIMSRuntimeException;
 
     List<Method> getAllActiveMethods() throws LIMSRuntimeException;
-
 
 }

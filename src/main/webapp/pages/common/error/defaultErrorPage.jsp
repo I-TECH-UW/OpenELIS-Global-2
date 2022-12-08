@@ -147,8 +147,10 @@ $(document).ready(function () {
     $("#error-path").text(pathname);
 //     ensure it is a url to prevent xss
     if (isValidUrl(document.referrer)) {
-        var referrerMsg = '<spring:message code="errorpage.previous"/><br />' + document.referrer;
-        $("#previous-path").html(referrerMsg);
+    	var previousPath = document.getElementById('previous-path');
+    	previousPath.appendChild(document.createTextNode('<spring:message code="errorpage.previous"/>'));
+    	previousPath.appendChild(document.createElement('br'));
+    	previousPath.appendChild(document.createTextNode(document.referrer));
     }
 });	
 </script>

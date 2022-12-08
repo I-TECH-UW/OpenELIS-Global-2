@@ -26,13 +26,6 @@ public class ReferralReasonServiceImpl extends BaseObjectServiceImpl<ReferralRea
 
     @Override
     @Transactional(readOnly = true)
-    public void getData(ReferralReason entity) {
-        getBaseObjectDAO().getData(entity);
-
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public List<ReferralReason> getAllReferralReasons() {
         return getBaseObjectDAO().getAllReferralReasons();
     }

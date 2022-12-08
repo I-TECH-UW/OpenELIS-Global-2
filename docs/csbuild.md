@@ -1,3 +1,31 @@
+# Installation
+
+## Before Running
+
+### Firewall Access - out
+
+All should be using http/https ports (80, 443)
+
+* archive.ubuntu.com - Ubuntu package manager
+* *.docker.com - install docker, docker hub
+	* get.docker.com
+	* download.docker.com
+	* hub.docker.com
+* github.com - get projects
+* repo.maven.apache.org - maven downloads
+
+### Firewall Access - in
+
+* 80, 443 - nginx (covers openhim-console)
+* 8080, 5000, 5001, 5050, 5051, 5052, 7788 - openhim-core
+
+
+### Firewall Access - intraservice
+
+* 5432 - postgres db
+* 8444 - fhir server
+* 27017 - mongo db
+
 ## Installing Commands
 
 
@@ -41,7 +69,7 @@
 
 * git clone [https://github.com/I-TECH-UW/Consolidated-Server.git](https://github.com/I-TECH-UW/Consolidated-Server.git) --recurse-submodules
 * cd Consolidated-Server/
-* git checkout reduced-stack
+* git checkout develop
 
 
 ## **_Create Certificates_**
@@ -80,13 +108,12 @@ Choose one or the other
 
 
 
-* find ./ \( -type d -name .git -prune \) -o -type f -print0 | xargs -0 sed -i 's/host\.openelis\.org/&lt;insert server address here>/g'
-* find ./ \( -type d -name .git -prune \) -o -type f -print0 | xargs -0 sed -i 's/databaseAdminPassword/&lt;insert database admin password for cs_admin here>/g'
-* find ./ \( -type d -name .git -prune \) -o -type f -print0 | xargs -0 sed -i 's/databasePassword/&lt;insert database password for cs_user here>/g'
-* find ./ \( -type d -name .git -prune \) -o -type f -print0 | xargs -0 sed -i 's/passwordForKeystore/&lt;insert keystore password here>/g'
-* find ./ \( -type d -name .git -prune \) -o -type f -print0 | xargs -0 sed -i 's/passwordForTruststore/&lt;insert truststore password here>/g'
-* If not docker db:
-    * find ./ \( -type d -name .git -prune \) -o -type f -print0 | xargs -0 sed -i 's/consolidated-server-data:5432/&lt;insert server:port for database>/g'
+* Run ./configure.sh
+    * Server address: the address that all of the services are running on (this will be the url they will reach out to to communicate, it should be the DNS entry of the server)
+    * Db admin password: password for cs_admin
+    * Db password: password for cs_user
+    * Keystore password: key encryption password
+    * Truststore password: trust encryption password
 
 
 ### Detailed Configure Container(s):
@@ -154,3 +181,40 @@ Choose one or the other
      * CA ca
      * Host: &lt;server-path>
      * Port: 8444
+     
+     
+# Upgrade
+
+## Updating Commands
+
+### Update Ubuntu
+
+* sudo apt-get update
+* sudo apt-get upgrade
+
+## Update Git Project
+
+* git stash (optional, unless there are conflicts)
+* git submodules init
+* git pull origin --recurse-submodules
+* git checkout -- configure.sh
+
+## Configuring Projects
+
+Choose one or the other
+
+
+### Quick Config Container(s):
+
+* Run ./configure.sh
+    * Server address: the address that all of the services are running on (this will be the url they will reach out to to communicate, it should be the DNS entry of the server)
+    * Db admin password: password for cs_admin
+    * Db password: password for cs_user
+    * Keystore password: key encryption password
+    * Truststore password: trust encryption password
+    
+# Notes
+
+## Passwords
+
+ALL passwords should be recorded into the 1Password Vault

@@ -287,8 +287,7 @@ public class SiteInformationServiceImpl extends BaseObjectServiceImpl<SiteInform
     public List<SiteInformation> getMatchingOrderedPage(String propertyName, Object propertyValue, String orderProperty,
             boolean descending, int startingRecNo) {
         List<SiteInformation> siteInformations = super.getMatchingOrderedPage(propertyName, propertyValue,
-                orderProperty,
-                descending, startingRecNo);
+                orderProperty, descending, startingRecNo);
         for (SiteInformation siteInformation : siteInformations) {
             decryptSiteInformation(siteInformation);
         }

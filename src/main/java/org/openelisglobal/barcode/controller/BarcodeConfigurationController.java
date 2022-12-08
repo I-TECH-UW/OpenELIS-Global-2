@@ -27,9 +27,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class BarcodeConfigurationController extends BaseController {
 
     private static final String[] ALLOWED_FIELDS = new String[] { "heightOrderLabels", "heightSpecimenLabels",
-            "widthOrderLabels", "widthSpecimenLabels", "collectionDateCheck", "testsCheck", "patientSexCheck",
-            "numMaxOrderLabels", "numMaxSpecimenLabels", "numDefaultOrderLabels", "numDefaultSpecimenLabels",
-            "prePrintDontUseAltAccession", "prePrintAltAccessionPrefix" };
+            "widthOrderLabels", "widthSpecimenLabels", "collectionDateCheck", "collectedByCheck", "testsCheck",
+            "patientSexCheck", "numMaxOrderLabels", "numMaxSpecimenLabels", "numDefaultOrderLabels",
+            "numDefaultSpecimenLabels", "prePrintDontUseAltAccession", "prePrintAltAccessionPrefix" };
 
     @Autowired
     private BarcodeInformationService barcodeInformationService;
@@ -105,10 +105,13 @@ public class BarcodeConfigurationController extends BaseController {
         // get the optional specimen values
         String collectionDateCheck = ConfigurationProperties.getInstance()
                 .getPropertyValue(Property.SPECIMEN_FIELD_DATE);
+        String collectedByCheck = ConfigurationProperties.getInstance()
+                .getPropertyValue(Property.SPECIMEN_FIELD_COLLECTED_BY);
         String testsCheck = ConfigurationProperties.getInstance().getPropertyValue(Property.SPECIMEN_FIELD_TESTS);
         String patientSexCheck = ConfigurationProperties.getInstance().getPropertyValue(Property.SPECIMEN_FIELD_SEX);
         // set the optional specimen values
         form.setCollectionDateCheck(Boolean.valueOf(collectionDateCheck));
+        form.setCollectedByCheck(Boolean.valueOf(collectedByCheck));
         form.setTestsCheck(Boolean.valueOf(testsCheck));
         form.setPatientSexCheck(Boolean.valueOf(patientSexCheck));
 

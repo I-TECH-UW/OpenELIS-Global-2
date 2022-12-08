@@ -36,12 +36,12 @@ import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.test.valueholder.Test;
 
 public class StudyVLColumnBuilder extends CIStudyColumnBuilder {
-	private DateType dateType;
+    private DateType dateType;
 
     public StudyVLColumnBuilder(DateRange dateRange, String projectStr) {
         super(dateRange, projectStr);
     }
-    
+
     public StudyVLColumnBuilder(DateRange dateRange, String projectStr, DateType dateType) {
         super(dateRange, projectStr);
         this.dateType = dateType;
@@ -102,23 +102,22 @@ public class StudyVLColumnBuilder extends CIStudyColumnBuilder {
      *         for the particular project.
      */
 
-
     @Override
     public void makeSQL() {
-    	//Switch date column according to selected DateType: PK
-    	String dateColumn = "s.entered_date ";
-    	switch (dateType) {
-		case ORDER_DATE:
-			dateColumn = "s.entered_date ";
-			break;
-		case RESULT_DATE:
-			dateColumn = "a.released_date ";
-			break;
-		case PRINT_DATE:
-			dateColumn = "dt.report_generation_time ";
-		default:
-			break;
-		}
+        // Switch date column according to selected DateType: PK
+        String dateColumn = "s.entered_date ";
+        switch (dateType) {
+        case ORDER_DATE:
+            dateColumn = "s.entered_date ";
+            break;
+        case RESULT_DATE:
+            dateColumn = "a.released_date ";
+            break;
+        case PRINT_DATE:
+            dateColumn = "dt.report_generation_time ";
+        default:
+            break;
+        }
         // String validStatusId =
         // StatusService.getInstance().getStatusID(StatusService.AnalysisStatus.Finalized);
         // String validStatusId2 =
@@ -160,7 +159,7 @@ public class StudyVLColumnBuilder extends CIStudyColumnBuilder {
                 + "\n AND s.id = si.samp_id" + "\n AND s.id=sh.samp_id" + "\n AND sh.patient_id=pat.id"
                 + "\n AND pat.person_id = per.id" + "\n AND s.id=so.samp_id" + "\n AND so.org_id=o.id"
                 + "\n AND s.id = sp.samp_id" + "\n AND s.id=demo.s_id" + "\n AND s.id = currentARVTreatmentINNs.samp_id"
-                + "\n AND "+dateColumn+" >= date('" + lowDatePostgres + "')" + "\n AND "+dateColumn+" <= date('"
+                + "\n AND " + dateColumn + " >= date('" + lowDatePostgres + "')" + "\n AND " + dateColumn + " <= date('"
                 + highDatePostgres + "')"
 
 //--------------

@@ -44,15 +44,15 @@ public class ReportImplementationFactory {
                 return new ReportSpecificationParameters(Parameter.ACCESSION_RANGE,
                         MessageUtil.getMessage("reports.label.patient.ARV.followup"), null);
             } else if (report.equals("patientEID1")) {
-                return new ReportSpecificationParameters(new Parameter[] {Parameter.ACCESSION_RANGE,
-                		Parameter.USE_PATIENT_SEARCH,Parameter.USE_SITE_SEARCH},
+                return new ReportSpecificationParameters(new Parameter[] { Parameter.ACCESSION_RANGE,
+                        Parameter.USE_PATIENT_SEARCH, Parameter.USE_SITE_SEARCH },
                         MessageUtil.getMessage("reports.label.patient.EID"), null);
             } else if (report.equals("patientEID2")) {
                 return new ReportSpecificationParameters(Parameter.ACCESSION_RANGE,
                         MessageUtil.getMessage("reports.label.patient.EID"), null);
             } else if (report.equals("patientVL1")) {
-                return new ReportSpecificationParameters(new Parameter[] {Parameter.ACCESSION_RANGE,
-                		Parameter.USE_PATIENT_SEARCH,Parameter.USE_SITE_SEARCH},
+                return new ReportSpecificationParameters(new Parameter[] { Parameter.ACCESSION_RANGE,
+                        Parameter.USE_PATIENT_SEARCH, Parameter.USE_SITE_SEARCH },
                         MessageUtil.getMessage("reports.label.patient.VL"), null);
             } else if (report.equals("patientIndeterminate1")) {
                 return new ReportSpecificationParameters(Parameter.ACCESSION_RANGE,
@@ -138,9 +138,10 @@ public class ReportImplementationFactory {
 
             else if (report.equals("covidResultsReport")) {
                 return new CovidResultsReport();
-            }
-            else if(report.equals("statisticsReport")){
+            } else if (report.equals("statisticsReport")) {
                 return new StatisticsReport();
+            } else if (report.equals("sampleRejectionReport")) {
+                return new CSVSampleRejectionReport();
             }
         }
 
@@ -272,9 +273,10 @@ public class ReportImplementationFactory {
 
             else if (report.equals("covidResultsReport")) {
                 return new CovidResultsReport();
-            }
-            else if(report.equals("statisticsReport")){
+            } else if (report.equals("statisticsReport")) {
                 return new StatisticsReport();
+            } else if (report.equals("sampleRejectionReport")) {
+                return new CSVSampleRejectionReport();
             }
         }
 

@@ -75,7 +75,6 @@ public class AnalyzerTestNameController extends BaseController {
         newForm.setAnalyzerList(analyzerList);
         newForm.setTestList(testList);
 
-
         if (request.getParameter("ID") != null && isValidID(request.getParameter("ID"))) {
             String[] splitId = request.getParameter("ID").split("#");
             newForm.setAnalyzerTestName(splitId[1]);

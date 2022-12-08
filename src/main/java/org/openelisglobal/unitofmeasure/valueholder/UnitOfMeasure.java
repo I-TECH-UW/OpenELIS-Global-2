@@ -48,7 +48,8 @@ public class UnitOfMeasure extends EnumValueItemImpl {
     }
 
     public String getUnitOfMeasureName() {
-        // LogEvent.logInfo(this.getClass().getName(), "method unkown", "unitOfMeasureName, id = " + this.unitOfMeasureName + " "
+        // LogEvent.logInfo(this.getClass().getName(), "method unkown",
+        // "unitOfMeasureName, id = " + this.unitOfMeasureName + " "
         // + this.id);
         return unitOfMeasureName;
     }

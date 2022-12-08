@@ -9,7 +9,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-import org.hibernate.validator.constraints.SafeHtml;
+import org.openelisglobal.validation.annotations.SafeHtml;
 import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory.AccessionFormat;
 import org.openelisglobal.common.util.IdValuePair;
@@ -42,16 +42,16 @@ public class SampleEntryByProjectForm extends BaseForm implements IAccessionerFo
     @ValidTime
     private String interviewTime = "";
 
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String project = "";
 
-    @ValidAccessionNumber(format = AccessionFormat.PROGRAM/*, dateValidate = true*/)
+    @ValidAccessionNumber(format = AccessionFormat.PROGRAM/* , dateValidate = true */)
     private String labNo = "";
 
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String doctor = "";
 
-    //@NotBlank
+    // @NotBlank
     @Size(max = 7)
     @Pattern(regexp = ValidationHelper.PATIENT_ID_REGEX)
     private String subjectNumber = "";
@@ -75,10 +75,10 @@ public class SampleEntryByProjectForm extends BaseForm implements IAccessionerFo
 
     private PatientUpdateStatus patientUpdateStatus = PatientUpdateStatus.ADD;
 
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String patientLastUpdated = "";
 
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String personLastUpdated = "";
 
     @Valid
@@ -105,7 +105,7 @@ public class SampleEntryByProjectForm extends BaseForm implements IAccessionerFo
     // for display
     private PatientSearch patientSearch;
 
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String domain = "";
 
     public SampleEntryByProjectForm() {

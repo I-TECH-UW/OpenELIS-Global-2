@@ -24,7 +24,6 @@ import org.openelisglobal.common.valueholder.ValueHolder;
 import org.openelisglobal.common.valueholder.EnumValueItemImpl;
 import org.openelisglobal.localization.valueholder.Localization;
 
-
 public class Method extends EnumValueItemImpl {
 
     private String id;

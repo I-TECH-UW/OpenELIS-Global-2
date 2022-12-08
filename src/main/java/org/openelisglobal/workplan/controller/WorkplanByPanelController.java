@@ -81,7 +81,8 @@ public class WorkplanByPanelController extends BaseWorkplanController {
         if (!GenericValidator.isBlankOrNull(panelID)) {
             String panelName = getPanelName(panelID);
             workplanTests = getWorkplanByPanel(panelID);
-            filteredTests = userService.filterResultsByLabUnitRoles(getSysUserId(request), workplanTests ,Constants.ROLE_RESULTS);
+            filteredTests = userService.filterResultsByLabUnitRoles(getSysUserId(request), workplanTests,
+                    Constants.ROLE_RESULTS);
 
             // resultsLoadUtility.sortByAccessionAndSequence(workplanTests);
             form.setTestTypeID(panelID);
@@ -198,7 +199,7 @@ public class WorkplanByPanelController extends BaseWorkplanController {
     }
 
     private String getPanelName(String panelId) {
-        return panelService.get(panelId).getLocalizedName();//getName();
+        return panelService.get(panelId).getLocalizedName();// getName();
     }
 
     private boolean getQaEventByTestSection(Analysis analysis) {
