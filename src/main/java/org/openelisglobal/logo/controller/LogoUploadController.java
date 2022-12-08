@@ -47,7 +47,6 @@ import org.springframework.web.multipart.MultipartFile;
 @Controller
 @RequestMapping("/logoUpload")
 public class LogoUploadController {
-    
 
     static final long serialVersionUID = 1L;
 
@@ -57,14 +56,14 @@ public class LogoUploadController {
     private SiteInformationService siteInformationService;
     @Autowired
     private LogoUploadService logoUploadService;
-    
+
     private static final String[] ALLOWED_FIELDS = new String[] { "logoFile", "removeImage", "logoName" };
-    
+
     @InitBinder
     public void initBinder(WebDataBinder binder) {
         binder.setAllowedFields(ALLOWED_FIELDS);
     }
-    
+
     @PostMapping
     protected String doPost(HttpServletRequest request, @ModelAttribute("form") LogoUploadForm form)
             throws ServletException, IOException {

@@ -7,7 +7,7 @@ import java.util.List;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Pattern;
 
-import org.hibernate.validator.constraints.SafeHtml;
+import org.openelisglobal.validation.annotations.SafeHtml;
 import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.dictionary.ObservationHistoryList;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
@@ -21,7 +21,7 @@ public class ProjectData implements Serializable {
 
     private static final long serialVersionUID = -6470190207790723782L;
     // ALL
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String underInvestigationNote;
 
     // TESTS
@@ -81,15 +81,15 @@ public class ProjectData implements Serializable {
     private String EIDsiteName;
     @Pattern(regexp = ValidationHelper.ID_REGEX)
     private String EIDsiteCode;
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String dbsInfantNumber;
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String dbsSiteInfantNumber;
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String eidWhichPCR;
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String eidSecondPCRReason;
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String requester;
     private List eidWhichPCRList = new ArrayList();
     private List eidSecondPCRReasonList = new ArrayList();
@@ -101,7 +101,7 @@ public class ProjectData implements Serializable {
     private String INDsiteName;
     @Pattern(regexp = ValidationHelper.ID_REGEX)
     private String INDsiteCode;
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String address;
     @Pattern(regexp = ValidationHelper.PHONE_REGEX)
     private String phoneNumber;
@@ -112,7 +112,7 @@ public class ProjectData implements Serializable {
 
     // SPE - Special Request
     private List requestReasons;
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String reasonForRequest;
 
     // TESTS

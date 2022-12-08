@@ -39,8 +39,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class ResultReportingConfigurationController extends BaseController {
 
     private static final String[] ALLOWED_FIELDS = new String[] { "reports*.enabledId", "reports*.enabled",
-            "reports*.urlId", "reports*.url", "reports*.scheduleHours", "reports*.scheduleMin",
-            "reports*.userName", "reports*.password", };
+            "reports*.urlId", "reports*.url", "reports*.scheduleHours", "reports*.scheduleMin", "reports*.userName",
+            "reports*.password", };
 
     @Autowired
     private SiteInformationService siteInformationService;

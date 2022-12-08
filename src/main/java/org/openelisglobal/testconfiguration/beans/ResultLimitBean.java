@@ -25,7 +25,6 @@ public class ResultLimitBean {
     private String validRange;
     private String reportingRange;
 
-
     public String getGender() {
         return gender;
     }

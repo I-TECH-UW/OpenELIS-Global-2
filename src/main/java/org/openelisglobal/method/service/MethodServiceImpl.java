@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.context.annotation.DependsOn;
 
-
 @Service
 @DependsOn({ "springContext" })
 public class MethodServiceImpl extends BaseObjectServiceImpl<Method, String> implements MethodService {
@@ -22,7 +21,6 @@ public class MethodServiceImpl extends BaseObjectServiceImpl<Method, String> imp
     protected MethodDAO baseObjectDAO;
 
     private Map<String, String> methodUnitIdToNameMap;
-
 
     MethodServiceImpl() {
         super(Method.class);
@@ -105,6 +103,5 @@ public class MethodServiceImpl extends BaseObjectServiceImpl<Method, String> imp
     private String buildMethodName(Method method) {
         return method.getLocalization().getLocalizedValue();
     }
-
 
 }

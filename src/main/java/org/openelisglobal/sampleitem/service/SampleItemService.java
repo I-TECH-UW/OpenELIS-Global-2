@@ -16,13 +16,9 @@ public interface SampleItemService extends BaseObjectService<SampleItem, String>
 
     List<SampleItem> getPageOfSampleItems(int startingRecNo);
 
-
-
     List<SampleItem> getAllSampleItems();
 
     List<SampleItem> getSampleItemsBySampleId(String id);
-
-
 
     List<SampleItem> getSampleItemsBySampleIdAndStatus(String id, Set<Integer> includedStatusList);
 

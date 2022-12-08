@@ -20,10 +20,10 @@ import java.util.List;
 
 import javax.validation.constraints.Pattern;
 
-import org.hibernate.validator.constraints.SafeHtml;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.resultvalidation.form.ResultValidationForm;
+import org.openelisglobal.validation.annotations.SafeHtml;
 import org.openelisglobal.validation.annotations.ValidAccessionNumber;
 
 public class AnalysisItem {
@@ -37,7 +37,7 @@ public class AnalysisItem {
     @ValidAccessionNumber(groups = { ResultValidationForm.ResultValidation.class })
     private String accessionNumber;
 
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { ResultValidationForm.ResultValidation.class })
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { ResultValidationForm.ResultValidation.class })
     private String result;
 
     private String receivedDate;
@@ -54,7 +54,7 @@ public class AnalysisItem {
 
     private String errorMessage;
 
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { ResultValidationForm.ResultValidation.class })
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { ResultValidationForm.ResultValidation.class })
     private String note;
 
     @Pattern(regexp = ValidationHelper.ID_REGEX, groups = { ResultValidationForm.ResultValidation.class })
@@ -74,7 +74,7 @@ public class AnalysisItem {
     @Pattern(regexp = ValidationHelper.ID_REGEX, groups = { ResultValidationForm.ResultValidation.class })
     private String resultId;
 
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { ResultValidationForm.ResultValidation.class })
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { ResultValidationForm.ResultValidation.class })
     private String resultType;
 
     private String completeDate;
@@ -148,7 +148,7 @@ public class AnalysisItem {
 
     private boolean isMultipleResultForSample = false;
 
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { ResultValidationForm.ResultValidation.class })
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { ResultValidationForm.ResultValidation.class })
     private String multiSelectResultValues = "{}";
 
     private boolean readOnly = false;
@@ -163,7 +163,7 @@ public class AnalysisItem {
 
     private String qualifiedDictionaryId;
 
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { ResultValidationForm.ResultValidation.class })
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { ResultValidationForm.ResultValidation.class })
     private String qualifiedResultValue = "";
 
     private String qualifiedResultId;

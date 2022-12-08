@@ -25,7 +25,6 @@ import org.springframework.stereotype.Component;
 @Component("basicAuthFilter")
 public class BasicAuthFilter extends BasicAuthenticationFilter {
 
-
     @Autowired
     private LoginUserService loginService;
     @Autowired

@@ -714,7 +714,7 @@ public class DateUtil {
         cal.set(Calendar.YEAR, year);
         cal.set(Calendar.MONTH, 11); // 11 = december
         cal.set(Calendar.DAY_OF_MONTH, 31); // new years eve
-        return  cal.getTime();
+        return cal.getTime();
     }
 
     public static java.sql.Date convertDateTimeToSqlDate(Date date) throws LIMSRuntimeException {

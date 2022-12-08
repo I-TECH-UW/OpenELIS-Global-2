@@ -11,18 +11,15 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.openelisglobal.common.services.PluginAnalyzerService;
 import org.openelisglobal.plugin.AnalyzerImporterPlugin;
+import org.openelisglobal.spring.util.SpringContext;
 
 public class AnalyzerXLSLineReader extends AnalyzerReader {
 
     private List<String> lines;
     private AnalyzerLineInserter inserter;
     private String error;
-    private static ArrayList<AnalyzerImporterPlugin> analyzerPlugins = new ArrayList<>();
-
-    public static void registerAnalyzerPlugin(AnalyzerImporterPlugin plugin) {
-        analyzerPlugins.add(plugin);
-    }
 
     @Override
     public boolean readStream(InputStream stream) {
@@ -81,7 +78,7 @@ public class AnalyzerXLSLineReader extends AnalyzerReader {
     }
 
     private void setInserter() {
-        for (AnalyzerImporterPlugin plugin : analyzerPlugins) {
+        for (AnalyzerImporterPlugin plugin : SpringContext.getBean(PluginAnalyzerService.class).getAnalyzerPlugins()) {
             if (plugin.isTargetAnalyzer(lines)) {
                 inserter = plugin.getAnalyzerLineInserter();
                 return;

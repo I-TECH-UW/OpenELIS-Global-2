@@ -123,7 +123,7 @@ public abstract class CIStudyColumnBuilder extends CSVColumnBuilder {
                 + highDatePostgres + "'')" + "' )" + " AS " + aOhTypeName + " ( s_id NUMERIC(10) ");
         for (int col = 1; col <= maxCols; col++) {
             query.append(", \"").append(aOhTypeName).append(col).append("\" VARCHAR(100)");
-}
+        }
         query.append(" )\n ");
         appendCrosstabPostfix(lowDatePostgres, highDatePostgres, aOhTypeName);
     }

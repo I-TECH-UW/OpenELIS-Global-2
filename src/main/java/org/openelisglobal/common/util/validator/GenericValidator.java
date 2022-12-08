@@ -70,5 +70,4 @@ public class GenericValidator extends org.apache.commons.validator.GenericValida
 
     }
 
-
 }

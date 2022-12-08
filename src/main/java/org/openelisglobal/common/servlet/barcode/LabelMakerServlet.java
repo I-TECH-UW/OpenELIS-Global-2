@@ -175,8 +175,8 @@ public class LabelMakerServlet extends HttpServlet implements IActionConstants {
             response.getWriter().println("</br>");
             response.getWriter()
                     .println("<input type='button' id='overrideButton' value='Override' onclick='override();'>");
-            response.getWriter().println("<script type=\"text/javascript\" src=\"" + basePath
-                    + "scripts/labelMaker.js ></script>");
+            response.getWriter()
+                    .println("<script type=\"text/javascript\" src=\"" + basePath + "scripts/labelMaker.js ></script>");
             // else return the pdf
         } else {
             response.setContentType("application/pdf");
@@ -200,8 +200,7 @@ public class LabelMakerServlet extends HttpServlet implements IActionConstants {
      * @param override    Ensure is bool
      * @return any errors that were generated along the way
      */
-    private Errors validate(String labNo, String programCode, String type, String quantity,
-            String override) {
+    private Errors validate(String labNo, String programCode, String type, String quantity, String override) {
         Errors errors = new BaseErrors();
         // Validate quantity
         if (!org.apache.commons.validator.GenericValidator.isInt(quantity)) {

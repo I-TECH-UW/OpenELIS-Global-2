@@ -76,8 +76,7 @@ public class MauritiusProtocolSheet extends Report implements IReportCreator {
         twelveWellRow.setRowLabel(alpha);
         String num = matcher.group(2);
         String printValue = idValue == null ? ""
-                : idValue.getValue().substring(
-                        Math.max(0, idValue.getValue().length() - ACCESSION_PRINT_MAX_LENGTH));
+                : idValue.getValue().substring(Math.max(0, idValue.getValue().length() - ACCESSION_PRINT_MAX_LENGTH));
         switch (num) {
         case "1":
             twelveWellRow.setValue1(printValue);

@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
@@ -42,126 +43,12 @@ public class SystemUserSectionDAOImpl extends BaseDAOImpl<SystemUserSection, Str
         super(SystemUserSection.class);
     }
 
-//	@Override
-//	public void deleteData(List systemUserSections) throws LIMSRuntimeException {
-//		// add to audit trail
-//		try {
-//
-//			for (int i = 0; i < systemUserSections.size(); i++) {
-//				SystemUserSection data = (SystemUserSection) systemUserSections.get(i);
-//
-//				SystemUserSection oldData = readSystemUserSection(data.getId());
-//				SystemUserSection newData = new SystemUserSection();
-//
-//				String sysUserId = data.getSysUserId();
-//				String event = IActionConstants.AUDIT_TRAIL_DELETE;
-//				String tableName = "SYSTEM_USER_SECTION";
-//				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-//			}
-//		} catch (RuntimeException e) {
-//			// bugzilla 2154
-//			LogEvent.logError("SystemUserSectionDAOImpl", "AuditTrail deleteData()", e.toString());
-//			throw new LIMSRuntimeException("Error in SystemUserSection AuditTrail deleteData()", e);
-//		}
-//
-//		try {
-//			for (int i = 0; i < systemUserSections.size(); i++) {
-//				SystemUserSection data = (SystemUserSection) systemUserSections.get(i);
-//				// bugzilla 2206
-//				data = readSystemUserSection(data.getId());
-//				entityManager.unwrap(Session.class).delete(data);
-//				// entityManager.unwrap(Session.class).flush(); // CSL remove old
-//				// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//			}
-//		} catch (RuntimeException e) {
-//			// bugzilla 2154
-//			LogEvent.logError("SystemUserSectionDAOImpl", "deleteData()", e.toString());
-//			throw new LIMSRuntimeException("Error in SystemUserSection deleteData()", e);
-//		}
-//	}
-
-//	@Override
-//	public boolean insertData(SystemUserSection systemUserSection) throws LIMSRuntimeException {
-//
-//		try {
-//			if (duplicateSystemUserSectionExists(systemUserSection)) {
-//				throw new LIMSDuplicateRecordException(
-//						"Duplicate record exists for " + systemUserSection.getSysUserId());
-//			}
-//
-//			String id = (String) entityManager.unwrap(Session.class).save(systemUserSection);
-//			systemUserSection.setId(id);
-//
-//			// add to audit trail
-//
-//			String sysUserId = systemUserSection.getSysUserId();
-//			String tableName = "SYSTEM_USER_SECTION";
-//			auditDAO.saveNewHistory(systemUserSection, sysUserId, tableName);
-//
-//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (RuntimeException e) {
-//			// bugzilla 2154
-//			LogEvent.logError("SystemUserSectionDAOImpl", "insertData()", e.toString());
-//			throw new LIMSRuntimeException("Error in SystemUserSection insertData()", e);
-//		}
-//
-//		return true;
-//	}
-//
-//	@Override
-//	public void updateData(SystemUserSection systemUserSection) throws LIMSRuntimeException {
-//
-//		try {
-//			if (duplicateSystemUserSectionExists(systemUserSection)) {
-//				throw new LIMSDuplicateRecordException(
-//						"Duplicate record exists for " + systemUserSection.getSystemUserId());
-//			}
-//		} catch (RuntimeException e) {
-//			// bugzilla 2154
-//			LogEvent.logError("SystemUserSectionDAOImpl", "updateData()", e.toString());
-//			throw new LIMSRuntimeException("Error in SystemUserSection updateData()", e);
-//		}
-//
-//		SystemUserSection oldData = readSystemUserSection(systemUserSection.getId());
-//		SystemUserSection newData = systemUserSection;
-//
-//		// add to audit trail
-//		try {
-//
-//			String sysUserId = systemUserSection.getSysUserId();
-//			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
-//			String tableName = "SYSTEM_USER_SECTION";
-//			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-//		} catch (RuntimeException e) {
-//			// bugzilla 2154
-//			LogEvent.logError("SystemUserSectionDAOImpl", "AuditTrail updateData()", e.toString());
-//			throw new LIMSRuntimeException("Error in SystemUserSection AuditTrail updateData()", e);
-//		}
-//
-//		try {
-//			entityManager.unwrap(Session.class).merge(systemUserSection);
-//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//			// entityManager.unwrap(Session.class).evict // CSL remove
-//			// old(systemUserSection);
-//			// entityManager.unwrap(Session.class).refresh // CSL remove
-//			// old(systemUserSection);
-//		} catch (RuntimeException e) {
-//			// bugzilla 2154
-//			LogEvent.logError("SystemUserSectionDAOImpl", "updateData()", e.toString());
-//			throw new LIMSRuntimeException("Error in SystemUserSection updateData()", e);
-//		}
-//	}
-
     @Override
     @Transactional(readOnly = true)
     public void getData(SystemUserSection systemUserSection) throws LIMSRuntimeException {
         try {
             SystemUserSection sysUserSection = entityManager.unwrap(Session.class).get(SystemUserSection.class,
                     systemUserSection.getId());
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
             if (sysUserSection != null) {
                 PropertyUtils.copyProperties(systemUserSection, sysUserSection);
             } else {
@@ -180,10 +67,9 @@ public class SystemUserSectionDAOImpl extends BaseDAOImpl<SystemUserSection, Str
         List<SystemUserSection> list;
         try {
             String sql = "from SystemUserSection";
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<SystemUserSection> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    SystemUserSection.class);
             list = query.list();
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
@@ -200,11 +86,10 @@ public class SystemUserSectionDAOImpl extends BaseDAOImpl<SystemUserSection, Str
         List<SystemUserSection> list;
         try {
             String sql = "from SystemUserSection s where s.systemUser.id = :param";
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<SystemUserSection> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    SystemUserSection.class);
             query.setParameter("param", systemUserId);
             list = query.list();
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
@@ -223,13 +108,12 @@ public class SystemUserSectionDAOImpl extends BaseDAOImpl<SystemUserSection, Str
             int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 
             String sql = "from SystemUserSection s ";
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<SystemUserSection> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    SystemUserSection.class);
             query.setFirstResult(startingRecNo - 1);
             query.setMaxResults(endingRecNo - 1);
 
             list = query.list();
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
@@ -243,8 +127,6 @@ public class SystemUserSectionDAOImpl extends BaseDAOImpl<SystemUserSection, Str
         SystemUserSection sysUserSection = null;
         try {
             sysUserSection = entityManager.unwrap(Session.class).get(SystemUserSection.class, idString);
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
@@ -264,10 +146,11 @@ public class SystemUserSectionDAOImpl extends BaseDAOImpl<SystemUserSection, Str
     public boolean duplicateSystemUserSectionExists(SystemUserSection systemUserSection) throws LIMSRuntimeException {
         try {
 
-            List<SystemUserSection> list = new ArrayList();
+            List<SystemUserSection> list = new ArrayList<>();
 
             String sql = "from SystemUserSection s where s.systemUser.id = :param and s.testSection.id = :param2 and s.id != :param3";
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<SystemUserSection> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    SystemUserSection.class);
             query.setParameter("param", systemUserSection.getSystemUser().getId());
             query.setParameter("param2", systemUserSection.getTestSection().getId());
 
@@ -278,8 +161,6 @@ public class SystemUserSectionDAOImpl extends BaseDAOImpl<SystemUserSection, Str
             query.setParameter("param3", systemUserSectionId);
 
             list = query.list();
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
             if (list.size() > 0) {
                 return true;

@@ -228,7 +228,8 @@ public class SampleEntry extends Accessioner implements ISampleEntry {
             sampleItemsToDelete.put(sampleItem.getId(), sampleItem);
         }
         for (Analysis analysis : analysisList) {
-            AnalysisStatus analysisStatus = SpringContext.getBean(IStatusService.class).getAnalysisStatusForID(analysis.getStatusId());
+            AnalysisStatus analysisStatus = SpringContext.getBean(IStatusService.class)
+                    .getAnalysisStatusForID(analysis.getStatusId());
             switch (analysisStatus) {
             case NotStarted:
                 // deletable => leave sampleItem in the Delete list

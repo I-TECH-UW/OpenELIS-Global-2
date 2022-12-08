@@ -31,7 +31,8 @@ public class LoginUserServiceImpl extends BaseObjectServiceImpl<LoginUser, Integ
     private PasswordEncoder passwordEncoder;
 
     private Pattern BCRYPT_PATTERN = Pattern.compile("\\A\\$2[ya]?\\$\\d\\d\\$[./0-9A-Za-z]{53}"); // make sure this
-                                                                                                // variable is current
+                                                                                                   // variable is
+                                                                                                   // current
 
     LoginUserServiceImpl() {
         super(LoginUser.class);

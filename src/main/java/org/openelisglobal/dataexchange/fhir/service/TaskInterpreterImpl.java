@@ -131,7 +131,7 @@ public class TaskInterpreterImpl implements TaskInterpreter {
         } else {
             priority = OrderPriority.ROUTINE;
         }
-       
+
         // gnr: make electronic_order.external_id longer
         if (labOrderNumber != null && labOrderNumber.length() > 60) {
             labOrderNumber = labOrderNumber.substring(labOrderNumber.length() - 60);
@@ -356,7 +356,7 @@ public class TaskInterpreterImpl implements TaskInterpreter {
          * results.add(InterpreterResults.OTHER_THAN_PANEL_OR_TEST_REQUESTED); } }
          */
     }
-    
+
     @Override
     public OrderPriority getOrderPriority() {
         return priority;
@@ -414,20 +414,20 @@ public class TaskInterpreterImpl implements TaskInterpreter {
 
     private void getOrderPriorityFromIncomingOrder(ServiceRequestPriority serviceRequestPriority) {
         switch (serviceRequestPriority) {
-            case ROUTINE: {
-                priority = OrderPriority.ROUTINE;
-                break;
-            }
-            case ASAP: {
-                priority = OrderPriority.ASAP;
-                break;
-            }
-            case STAT: {
-                priority = OrderPriority.STAT;
-                break;
-            }
-            default:
-                priority = OrderPriority.ROUTINE;
+        case ROUTINE: {
+            priority = OrderPriority.ROUTINE;
+            break;
+        }
+        case ASAP: {
+            priority = OrderPriority.ASAP;
+            break;
+        }
+        case STAT: {
+            priority = OrderPriority.STAT;
+            break;
+        }
+        default:
+            priority = OrderPriority.ROUTINE;
         }
     }
 

@@ -3,7 +3,7 @@ package org.openelisglobal.sample.bean;
 import javax.validation.constraints.Pattern;
 import javax.validation.groups.Default;
 
-import org.hibernate.validator.constraints.SafeHtml;
+import org.openelisglobal.validation.annotations.SafeHtml;
 import org.openelisglobal.common.util.validator.CustomDateValidator.DateRelation;
 import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.sample.form.SampleEditForm;
@@ -16,10 +16,10 @@ public class SampleEditItem {
     @Pattern(regexp = ValidationHelper.ID_REGEX, groups = { SampleEditForm.SampleEdit.class })
     private String analysisId;
 
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { Default.class, SampleEditForm.SampleEdit.class })
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { Default.class, SampleEditForm.SampleEdit.class })
     private String sampleType;
 
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { Default.class, SampleEditForm.SampleEdit.class })
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { Default.class, SampleEditForm.SampleEdit.class })
     private String testName;
 
     @Pattern(regexp = ValidationHelper.ID_REGEX, groups = { SampleEditForm.SampleEdit.class })
@@ -34,10 +34,10 @@ public class SampleEditItem {
 
     private boolean add;
 
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { Default.class, SampleEditForm.SampleEdit.class })
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { Default.class, SampleEditForm.SampleEdit.class })
     private String status;
 
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { Default.class, SampleEditForm.SampleEdit.class })
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { Default.class, SampleEditForm.SampleEdit.class })
     private String sortOrder;
 
     private boolean canRemoveSample = false;

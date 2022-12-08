@@ -99,8 +99,7 @@ public class ReferralServiceImpl extends BaseObjectServiceImpl<Referral, String>
 
     @Override
     public List<Referral> getReferralsByTestAndDate(ReferDateType dateType, Timestamp startTimestamp,
-            Timestamp endTimestamp,
-            List<String> testUnitIds, List<String> testIds) {
+            Timestamp endTimestamp, List<String> testUnitIds, List<String> testIds) {
         return baseObjectDAO.getReferralsByTestAndDate(dateType, startTimestamp, endTimestamp, testUnitIds, testIds);
     }
 
@@ -166,8 +165,8 @@ public class ReferralServiceImpl extends BaseObjectServiceImpl<Referral, String>
                 : DateUtil.convertStringDateStringTimeToTimestamp(startDate, "00:00:00.0");
         java.sql.Timestamp endTimestamp = GenericValidator.isBlankOrNull(endDate) ? null
                 : DateUtil.convertStringDateStringTimeToTimestamp(endDate, "23:59:59");
-        return getReferralsByTestAndDate(form.getDateType(), startTimestamp, endTimestamp,
-                form.getTestUnitIds(), form.getTestIds());
+        return getReferralsByTestAndDate(form.getDateType(), startTimestamp, endTimestamp, form.getTestUnitIds(),
+                form.getTestIds());
     }
 
     private List<Referral> getReferralsByLabNumber(ReferredOutTestsForm form) {

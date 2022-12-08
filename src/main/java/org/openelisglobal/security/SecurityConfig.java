@@ -72,7 +72,8 @@ public class SecurityConfig {
     public static final String[] OPEN_PAGES = { "/pluginServlet/**", "/ChangePasswordLogin",
             "/UpdateLoginChangePassword" };
     public static final String[] LOGIN_PAGES = { "/LoginPage", "/ValidateLogin" };
-    public static final String[] AUTH_OPEN_PAGES = { "/Home", "/Dashboard", "/Logout", "/MasterListsPage" };
+    public static final String[] AUTH_OPEN_PAGES = { "/Home", "/Dashboard", "/Logout", "/MasterListsPage",
+            "/analyzer/runAction/**" };
     public static final String[] RESOURCE_PAGES = { "/fontawesome-free-5.13.1-web/**", "/css/**", "/favicon/**",
             "/images/**", "/documentation/**", "/scripts/**", "/jsp/**" };
 //    public static final String[] HTTP_BASIC_SERVLET_PAGES = { "/pluginServlet/**", "/importAnalyzer", "/fhir/**" };
@@ -276,8 +277,7 @@ public class SecurityConfig {
                     .authenticated().and()//
                     .oauth2Login().clientRegistrationRepository(clientRegistrationRepository())//
                     .authorizedClientService(authorizedClientService())
-                    .successHandler(customAuthenticationSuccessHandler())
-                    .and()
+                    .successHandler(customAuthenticationSuccessHandler()).and()
                     .logout(logout -> logout.logoutSuccessHandler(oidcLogoutSuccessHandler()))
                     // add security headers
                     .headers().frameOptions().sameOrigin().contentSecurityPolicy(CONTENT_SECURITY_POLICY);
@@ -337,6 +337,7 @@ public class SecurityConfig {
             MultipartFilter multipartFilter = new MultipartFilter();
             multipartFilter.setServletContext(SpringContext.getBean(ServletContext.class));
             http.addFilterBefore(multipartFilter, CsrfFilter.class);
+            http.addFilterAfter(new SessionCookieFilter(), CsrfFilter.class);
 
             http.authorizeRequests()
                     // allow all users to access these pages no matter authentication status
@@ -350,8 +351,7 @@ public class SecurityConfig {
                     .successHandler(customAuthenticationSuccessHandler()).and()
                     // setup logout
                     .logout().logoutUrl("/Logout").logoutSuccessUrl("/LoginPage").invalidateHttpSession(true).and()
-                    .sessionManagement().invalidSessionUrl("/LoginPage").sessionFixation().migrateSession().and()
-                    .csrf()
+                    .sessionManagement().invalidSessionUrl("/LoginPage").sessionFixation().migrateSession().and().csrf()
                     .and()
                     // add security headers
                     .headers().frameOptions().sameOrigin().contentSecurityPolicy(CONTENT_SECURITY_POLICY);
@@ -373,6 +373,7 @@ public class SecurityConfig {
                 throws Exception {
             return authenticationConfiguration.getAuthenticationManager();
         }
+
     }
 
 //    @Bean

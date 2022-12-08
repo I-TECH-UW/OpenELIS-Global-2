@@ -40,7 +40,7 @@ public class ResultValidationPaging {
 
     public void setDatabaseResults(HttpServletRequest request, ValidationPagingForm form,
             List<AnalysisItem> analysisItems)
-                    throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
         paging.setDatabaseResults(request.getSession(), analysisItems, pagingHelper);
 
@@ -86,7 +86,7 @@ public class ResultValidationPaging {
     }
 
     private static class AnalysisItemPageHelper implements IPageDivider<List<AnalysisItem>>,
-    IPageUpdater<List<AnalysisItem>>, IPageFlattener<List<AnalysisItem>> {
+            IPageUpdater<List<AnalysisItem>>, IPageFlattener<List<AnalysisItem>> {
 
         @Override
         public void createPages(List<AnalysisItem> analysisList, List<List<AnalysisItem>> pagedResults) {

@@ -65,10 +65,8 @@ public class ReportNonConformingEventController extends BaseController {
 
     @RequestMapping(value = "/ReportNonConformingEvent", method = RequestMethod.GET)
     public ModelAndView showReportNonConformingEvent(@Valid @ModelAttribute("form") NonConformingEventForm oldForm,
-            BindingResult result,
-            HttpServletRequest request)
-            throws LIMSInvalidConfigurationException, IllegalAccessException, InvocationTargetException,
-            NoSuchMethodException {
+            BindingResult result, HttpServletRequest request) throws LIMSInvalidConfigurationException,
+            IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         if (result.hasErrors()) {
             saveErrors(result);
             return findForward(FWD_FAIL, oldForm);
@@ -130,7 +128,8 @@ public class ReportNonConformingEventController extends BaseController {
             form.setSpecimens(sampleItems);
         }
 
-        form.setReportingUnits(DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION_ACTIVE));
+        form.setReportingUnits(
+                DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION_ACTIVE));
 
         requesterService.setSampleId(sample == null ? null : sample.getId());
         form.setSite(requesterService.getReferringSiteName());

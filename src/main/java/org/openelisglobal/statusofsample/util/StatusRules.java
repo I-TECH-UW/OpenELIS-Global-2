@@ -28,7 +28,8 @@ import org.openelisglobal.spring.util.SpringContext;
 public class StatusRules {
 
     public boolean hasFailedValidation(String analysisStatusId) {
-        return analysisStatusId.equals(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.BiologistRejected));
+        return analysisStatusId
+                .equals(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.BiologistRejected));
     }
 
     public void setAllowableStatusForLoadingResults(ResultsLoadUtility resultsLoadUtility) {

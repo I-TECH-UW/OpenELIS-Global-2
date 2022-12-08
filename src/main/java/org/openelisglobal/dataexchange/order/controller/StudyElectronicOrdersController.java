@@ -52,7 +52,7 @@ import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 public class StudyElectronicOrdersController extends BaseController {
 
     private static final String[] ALLOWED_FIELDS = new String[] { "searchType", "searchValue", "startDate", "endDate",
-            "testIds", "statusId", "useAllInfo", "organizationId","organizationList" };
+            "testIds", "statusId", "useAllInfo", "organizationId", "organizationList" };
 
     @Autowired
     private StatusOfSampleService statusOfSampleService;
@@ -99,7 +99,7 @@ public class StudyElectronicOrdersController extends BaseController {
 
         return findForward(FWD_SUCCESS, form);
     }
-    
+
     private List<ElectronicOrderDisplayItem> convertToDisplayItem(List<ElectronicOrder> electronicOrders,
             boolean useAllInfo) {
         return electronicOrders.stream().map(e -> convertToDisplayItem(e, useAllInfo)).collect(Collectors.toList());

@@ -46,7 +46,7 @@ public class PatientXmit extends org.openelisglobal.patient.valueholder.Patient 
 
     public String getCity() {
         if (!StringUtil.isNullorNill(city)) {
-           return city.trim();
+            return city.trim();
         }
         return city;
     }
@@ -76,7 +76,7 @@ public class PatientXmit extends org.openelisglobal.patient.valueholder.Patient 
 
     public String getZipCode() {
         if (!StringUtil.isNullorNill(zipCode)) {
-           return zipCode.trim();
+            return zipCode.trim();
         }
         return zipCode;
     }

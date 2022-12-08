@@ -102,14 +102,10 @@ public class PatientSearchProvider extends BaseQueryProvider {
         PersonService personService = SpringContext.getBean(PersonService.class);
         personService.getData(patient.getPerson());
         return new PatientSearchResults(BigDecimal.valueOf(Long.parseLong(patient.getId())),
-                patientPatientService.getFirstName(patient), 
-                patientPatientService.getLastName(patient),
-                patientPatientService.getGender(patient), 
-                patientPatientService.getEnteredDOB(patient),
-                patientPatientService.getNationalId(patient), 
-                patient.getExternalId(),
-                patientPatientService.getSTNumber(patient), 
-                patientPatientService.getSubjectNumber(patient),
+                patientPatientService.getFirstName(patient), patientPatientService.getLastName(patient),
+                patientPatientService.getGender(patient), patientPatientService.getEnteredDOB(patient),
+                patientPatientService.getNationalId(patient), patient.getExternalId(),
+                patientPatientService.getSTNumber(patient), patientPatientService.getSubjectNumber(patient),
                 patientPatientService.getGUID(patient),
                 SpringContext.getBean(ObservationHistoryService.class).getMostRecentValueForPatient(
                         ObservationType.REFERRERS_PATIENT_ID, patientPatientService.getPatientId(patient)));

@@ -70,9 +70,11 @@ public abstract class RetroCIPatientReport extends RetroCIReport {
         READY_FOR_REPORT_STATUS_IDS = new ArrayList<>();
         READY_FOR_REPORT_STATUS_IDS
                 .add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(OrderStatus.Finished)));
-        READY_FOR_REPORT_STATUS_IDS.add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(OrderStatus.Started)));
+        READY_FOR_REPORT_STATUS_IDS
+                .add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(OrderStatus.Started)));
 
-        ANALYSIS_FINALIZED_STATUS_ID = SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized);
+        ANALYSIS_FINALIZED_STATUS_ID = SpringContext.getBean(IStatusService.class)
+                .getStatusID(AnalysisStatus.Finalized);
     }
 
     @Override
@@ -86,7 +88,7 @@ public abstract class RetroCIPatientReport extends RetroCIReport {
         handledOrders = new ArrayList<>();
 
         createReportParameters();
-        
+
         boolean valid;
         List<Sample> reportSampleList = new ArrayList<>();
 
@@ -118,8 +120,8 @@ public abstract class RetroCIPatientReport extends RetroCIReport {
             if (!GenericValidator.isBlankOrNull(form.getUpperDateRange())
                     && !GenericValidator.isBlankOrNull(form.getLowerDateRange())) {
                 reportSampleList = findReportSamplesForSite(form.getReferringSiteId(),
-                        form.getReferringSiteDepartmentId(),
-                        form.isOnlyResults(), form.getDateType(), form.getLowerDateRange(), form.getUpperDateRange());
+                        form.getReferringSiteDepartmentId(), form.isOnlyResults(), form.getDateType(),
+                        form.getLowerDateRange(), form.getUpperDateRange());
             }
 
         }
@@ -129,12 +131,12 @@ public abstract class RetroCIPatientReport extends RetroCIReport {
         if (reportSampleList.isEmpty()) {
             add1LineErrorMessage("report.error.message.noPrintableItems");
         } else {
-        	Collections.sort(reportSampleList, new Comparator<Sample>() {
-        		@Override
-        		public int compare(Sample o1, Sample o2) {
-        			return o1.getAccessionNumber().compareTo(o2.getAccessionNumber());
-        		}
-        	});
+            Collections.sort(reportSampleList, new Comparator<Sample>() {
+                @Override
+                public int compare(Sample o1, Sample o2) {
+                    return o1.getAccessionNumber().compareTo(o2.getAccessionNumber());
+                }
+            });
             for (Sample sample : reportSampleList) {
                 handledOrders.add(sample.getId());
                 reportSample = sample;
@@ -187,7 +189,7 @@ public abstract class RetroCIPatientReport extends RetroCIReport {
         patientList.add(patientService.get(patientId));
         return !patientList.isEmpty();
     }
-    
+
     private boolean findPatientByPatientNumber(String patientNumber, List<Patient> patientList) {
         PatientIdentityService patientIdentityService = SpringContext.getBean(PatientIdentityService.class);
         patientList.addAll(patientService.getPatientsByNationalId(patientNumber));
@@ -224,7 +226,7 @@ public abstract class RetroCIPatientReport extends RetroCIReport {
 
         return sampleList;
     }
-    
+
     private boolean validateAccessionNumbers() {
 
         if (GenericValidator.isBlankOrNull(lowerNumber) && GenericValidator.isBlankOrNull(upperNumber)) {
@@ -278,7 +280,7 @@ public abstract class RetroCIPatientReport extends RetroCIReport {
         return sampleService.getSamplesByProjectAndStatusIDAndAccessionRange(getProjIdsList(getProjectId()),
                 READY_FOR_REPORT_STATUS_IDS, lowerNumber, upperNumber);
     }
-    
+
     private List<Sample> findReportSamples(List<String> analysisIds) {
         List<Sample> sampleList = sampleService.getSamplesByAnalysisIds(analysisIds);
         return sampleList == null ? new ArrayList<>() : sampleList;

@@ -53,8 +53,8 @@ public class ReportController extends BaseController {
             "highAccessionDirect", "patientNumberDirect", "patientUpperNumberDirect", "lowerDateRange",
             "upperDateRange", "locationCode", "projectCode", "datePeriod", "lowerMonth", "lowerYear", "upperMonth",
             "upperYear", "selectList.selection", "experimentId", "reportName", "selPatient", "analysisIds",
-            "referringSiteId", "referringSiteDepartmentId", "onlyResults", "dateType",
-            "labSections" , "priority" ,"receptionTime","vlStudyType" };
+            "referringSiteId", "referringSiteDepartmentId", "onlyResults", "dateType", "labSections", "priority",
+            "receptionTime", "vlStudyType" };
 
     @Autowired
     private ServletContext context;
@@ -102,6 +102,7 @@ public class ReportController extends BaseController {
         IReportCreator reportCreator = ReportImplementationFactory.getReportCreator(request.getParameter("report"));
 
         if (reportCreator != null) {
+            reportCreator.setSystemUserId(getSysUserId(request));
             reportCreator.setRequestedReport(request.getParameter("report"));
             reportCreator.initializeReport(form);
             reportCreator.setReportPath(getReportPath());

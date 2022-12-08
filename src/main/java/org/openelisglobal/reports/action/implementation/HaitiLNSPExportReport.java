@@ -149,8 +149,8 @@ public class HaitiLNSPExportReport extends CSVExportReport {
         ts.setLastName(patientService.getLastName(patient));
         ts.setGender(patientService.getGender(patient));
         ts.setNationalId(patientService.getNationalId(patient));
-        ts.setStatus(SpringContext.getBean(IStatusService.class)
-                .getStatusName(SpringContext.getBean(IStatusService.class).getAnalysisStatusForID(analysis.getStatusId())));
+        ts.setStatus(SpringContext.getBean(IStatusService.class).getStatusName(
+                SpringContext.getBean(IStatusService.class).getAnalysisStatusForID(analysis.getStatusId())));
         ts.setSampleType(sampleItem.getTypeOfSample().getLocalizedName());
         ts.setTestBench(analysis.getTestSection() == null ? "" : analysis.getTestSection().getTestSectionName());
         ts.setTestName(TestServiceImpl.getUserLocalizedTestName(analysis.getTest()));
@@ -167,7 +167,8 @@ public class HaitiLNSPExportReport extends CSVExportReport {
             ts.setReferringSiteName(requesterOrganization.getOrganizationName());
         }
 
-        if (SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized).equals(analysis.getStatusId())) {
+        if (SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized)
+                .equals(analysis.getStatusId())) {
             ts.setResultDate(DateUtil.convertSqlDateToStringDate(analysis.getCompletedDate()));
 
             List<Result> resultList = resultService.getResultsByAnalysis(analysis);
@@ -196,7 +197,7 @@ public class HaitiLNSPExportReport extends CSVExportReport {
     }
 
     @Override
-    public byte[] runReport()  {
+    public byte[] runReport() {
         StringBuilder builder = new StringBuilder();
         builder.append(TestSegmentedExportBean.getHeader());
         builder.append("\n");

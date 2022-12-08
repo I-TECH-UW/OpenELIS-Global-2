@@ -284,8 +284,7 @@ public class DictionaryController extends BaseController {
     }
 
     @RequestMapping(value = "/CancelDictionary", method = RequestMethod.GET)
-    public ModelAndView cancelDictionary(HttpServletRequest request,
-            SessionStatus status) {
+    public ModelAndView cancelDictionary(HttpServletRequest request, SessionStatus status) {
         status.setComplete();
         return findForward(FWD_CANCEL, new DictionaryForm());
     }

@@ -37,7 +37,7 @@ public class ActivityReportBean {
     private String patientId;
     private String turnaroundDays;
     private String turnaroundHours;
-    
+
     private Timestamp activityTime;
 
     public String getAccessionNumber() {
@@ -119,7 +119,7 @@ public class ActivityReportBean {
     public void setActivityTime(Timestamp activityTime) {
         this.activityTime = activityTime;
     }
-    
+
     public String getPatientLastName() {
         return patientLastName;
     }

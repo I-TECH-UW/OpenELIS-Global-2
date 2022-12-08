@@ -34,5 +34,4 @@ public interface TaskInterpreter {
     List<InterpreterResults> interpret(Task incomingTask, ServiceRequest incomingServiceRequest,
             Patient incomingPatient);
 
-    
 }

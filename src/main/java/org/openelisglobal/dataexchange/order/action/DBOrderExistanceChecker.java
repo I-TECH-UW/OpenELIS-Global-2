@@ -55,9 +55,9 @@ public class DBOrderExistanceChecker implements IOrderExistanceChecker {
         }
 
         if (SpringContext.getBean(IStatusService.class).getStatusID(ExternalOrderStatus.Entered)
-                .equals(eOrder.getStatusId()) ||
-            SpringContext.getBean(IStatusService.class).getStatusID(ExternalOrderStatus.NonConforming)
-                .equals(eOrder.getStatusId())) {
+                .equals(eOrder.getStatusId())
+                || SpringContext.getBean(IStatusService.class).getStatusID(ExternalOrderStatus.NonConforming)
+                        .equals(eOrder.getStatusId())) {
             LogEvent.logDebug(this.getClass().getName(), "check", "order queued: " + orderId);
             return CheckResult.ORDER_FOUND_QUEUED;
         }

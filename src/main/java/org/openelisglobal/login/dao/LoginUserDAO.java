@@ -46,9 +46,7 @@ public interface LoginUserDAO extends BaseDAO<LoginUser, Integer> {
 
 //	public void updateData(Login login, boolean passwordUpdated) throws LIMSRuntimeException;
 
-
 //
-
 
 //	public Integer getTotalLoginUserCount() throws LIMSRuntimeException;
 

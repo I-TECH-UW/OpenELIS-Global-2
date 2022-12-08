@@ -190,13 +190,13 @@ public class AnalyzerTestNameMenuController extends BaseMenuController<NamedAnal
     @Override
     protected String findLocalForward(String forward) {
         if (FWD_SUCCESS.equals(forward)) {
-            return "haitiMasterListsPageDefinition";
+            return "analyzerMasterListsPageDefinition";
         } else if (FWD_FAIL.equals(forward)) {
             return "redirect:/MasterListsPage";
         } else if (FWD_SUCCESS_DELETE.equals(forward)) {
             return "redirect:/AnalyzerTestNameMenu";
         } else if (FWD_FAIL_DELETE.equals(forward)) {
-            return "haitiMasterListsPageDefinition";
+            return "analyzerMasterListsPageDefinition";
         } else {
             return "PageNotFound";
         }

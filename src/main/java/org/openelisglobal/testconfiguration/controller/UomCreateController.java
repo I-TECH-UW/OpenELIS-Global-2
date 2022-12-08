@@ -69,7 +69,7 @@ public class UomCreateController extends BaseController {
 
     @RequestMapping(value = "/UomCreate", method = RequestMethod.POST)
     public ModelAndView postUomCreate(HttpServletRequest request, @ModelAttribute("form") @Valid UomCreateForm form,
-            BindingResult result)  {
+            BindingResult result) {
         if (result.hasErrors()) {
             saveErrors(result);
             setupDisplayItems(form);

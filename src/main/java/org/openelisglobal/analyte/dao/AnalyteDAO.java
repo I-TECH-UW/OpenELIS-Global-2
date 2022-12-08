@@ -43,9 +43,7 @@ public interface AnalyteDAO extends BaseDAO<Analyte, String> {
 
 //	public List getAnalytes(String filter) throws LIMSRuntimeException;
 
-
 //
-
 
     // bugzilla 1367 added boolean param
     public Analyte getAnalyteByName(Analyte analyte, boolean ignoreCase) throws LIMSRuntimeException;

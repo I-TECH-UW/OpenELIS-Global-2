@@ -52,6 +52,8 @@ public class SampleItem extends BaseObject<String> implements NoteObject {
     private Timestamp collectionDate;
     private String statusId;
     private String collector;
+    private boolean rejected = false;
+    private String rejectReasonId;
 
     public SampleItem() {
         super();
@@ -225,4 +227,19 @@ public class SampleItem extends BaseObject<String> implements NoteObject {
         return fhirUuid == null ? "" : fhirUuid.toString();
     }
 
+    public boolean isRejected() {
+        return rejected;
+    }
+
+    public void setRejected(boolean rejected) {
+        this.rejected = rejected;
+    }
+
+    public String getRejectReasonId() {
+        return rejectReasonId;
+    }
+
+    public void setRejectReasonId(String rejectReasonId) {
+        this.rejectReasonId = rejectReasonId;
+    }
 }

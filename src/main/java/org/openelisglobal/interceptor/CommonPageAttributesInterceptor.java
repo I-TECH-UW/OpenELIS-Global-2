@@ -22,8 +22,7 @@ public class CommonPageAttributesInterceptor implements HandlerInterceptor {
     LocalizationService localizationService;
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
-             {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         request.setAttribute("title", localizationService.getLocalizedValueById(
                 ConfigurationProperties.getInstance().getPropertyValue(ConfigurationProperties.Property.BANNER_TEXT)));
 
@@ -35,7 +34,7 @@ public class CommonPageAttributesInterceptor implements HandlerInterceptor {
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
-            ModelAndView modelAndView)  {
+            ModelAndView modelAndView) {
         BaseForm form;
         if (modelAndView != null) {
             form = (BaseForm) modelAndView.getModel().get("form");

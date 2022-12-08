@@ -56,7 +56,7 @@ import com.lowagie.text.pdf.draw.LineSeparator;
 public class BarcodeLabelMaker {
 
     // number of columns for label layout grid
-    private static int NUM_COLUMNS = 10;
+    private static int NUM_COLUMNS = 20;
 
     // stores labels between generation and creating pdf
     private ArrayList<Label> labels;

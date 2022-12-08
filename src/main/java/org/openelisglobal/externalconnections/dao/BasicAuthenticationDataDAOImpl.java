@@ -25,14 +25,14 @@ public class BasicAuthenticationDataDAOImpl extends BaseDAOImpl<BasicAuthenticat
         BasicAuthenticationData data;
         try {
             String sql = "from BasicAuthenticationData as cad where cad.externalConnection.id = :externalConnectionId";
-            Query<BasicAuthenticationData> query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<BasicAuthenticationData> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    BasicAuthenticationData.class);
             query.setParameter("externalConnectionId", externalConnectionId);
             data = query.uniqueResult();
         } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
-            throw new LIMSRuntimeException("Error in BasicAuthenticationDataDAOImpl getByExternalConnection()",
-                    e);
+            throw new LIMSRuntimeException("Error in BasicAuthenticationDataDAOImpl getByExternalConnection()", e);
         }
 
         return Optional.ofNullable(data);

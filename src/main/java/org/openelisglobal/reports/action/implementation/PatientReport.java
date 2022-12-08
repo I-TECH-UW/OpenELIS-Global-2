@@ -88,6 +88,7 @@ import org.openelisglobal.sample.valueholder.SampleAdditionalField.AdditionalFie
 import org.openelisglobal.samplehuman.service.SampleHumanService;
 import org.openelisglobal.sampleitem.valueholder.SampleItem;
 import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.systemuser.service.UserService;
 import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.test.service.TestServiceImpl;
 import org.openelisglobal.test.valueholder.Test;
@@ -101,7 +102,7 @@ public abstract class PatientReport extends Report {
     private static String ADDRESS_DEPT_ID;
     private static String ADDRESS_COMMUNE_ID;
     protected String currentContactInfo = "";
-    protected String currentSiteInfo = "";
+    protected String currentSiteInfo = ""; 
 
     protected SampleHumanService sampleHumanService = SpringContext.getBean(SampleHumanService.class);
     protected DictionaryService dictionaryService = SpringContext.getBean(DictionaryService.class);
@@ -119,7 +120,7 @@ public abstract class PatientReport extends Report {
     protected PersonAddressService addressService = SpringContext.getBean(PersonAddressService.class);
     protected AddressPartService addressPartService = SpringContext.getBean(AddressPartService.class);
     protected OrganizationService organizationService = SpringContext.getBean(OrganizationService.class);
-
+    protected UserService userService =  SpringContext.getBean(UserService.class);;
     private List<String> handledOrders;
     private List<Analysis> updatedAnalysis = new ArrayList<>();
 
@@ -238,8 +239,8 @@ public abstract class PatientReport extends Report {
             if (!GenericValidator.isBlankOrNull(form.getUpperDateRange())
                     && !GenericValidator.isBlankOrNull(form.getLowerDateRange())) {
                 reportSampleList = findReportSamplesForSite(form.getReferringSiteId(),
-                        form.getReferringSiteDepartmentId(),
-                        form.isOnlyResults(), form.getDateType(), form.getLowerDateRange(), form.getUpperDateRange());
+                        form.getReferringSiteDepartmentId(), form.isOnlyResults(), form.getDateType(),
+                        form.getLowerDateRange(), form.getUpperDateRange());
             }
 
         }

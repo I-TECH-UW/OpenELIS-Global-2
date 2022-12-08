@@ -108,5 +108,5 @@ public class MethodRenameEntryController extends BaseController {
     protected String getPageSubtitleKey() {
         return null;
     }
-    
+
 }

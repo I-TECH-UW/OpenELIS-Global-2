@@ -129,7 +129,7 @@ public class Dictionary extends BaseObject<String> {
     }
 
     public Localization getLocalizedDictionaryName() {
-        return (Localization)localizedDictionaryName.getValue();
+        return (Localization) localizedDictionaryName.getValue();
     }
 
     public void setLocalizedDictionaryName(Localization localizedDictionaryName) {

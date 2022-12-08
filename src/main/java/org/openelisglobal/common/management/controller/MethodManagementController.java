@@ -36,5 +36,5 @@ public class MethodManagementController extends BaseController {
     protected String getPageSubtitleKey() {
         return null;
     }
-    
+
 }

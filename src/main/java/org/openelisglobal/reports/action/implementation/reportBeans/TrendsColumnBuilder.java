@@ -98,5 +98,4 @@ public class TrendsColumnBuilder extends CIColumnBuilder {
         return;
     }
 
-
 }

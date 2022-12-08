@@ -22,6 +22,7 @@ import java.util.Vector;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
@@ -43,121 +44,11 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent, String> implements QaEv
         super(QaEvent.class);
     }
 
-//	@Override
-//	public void deleteData(List qaEvents) throws LIMSRuntimeException {
-//		// add to audit trail
-//		try {
-//
-//			for (int i = 0; i < qaEvents.size(); i++) {
-//				QaEvent data = (QaEvent) qaEvents.get(i);
-//
-//				QaEvent oldData = readQaEvent(data.getId());
-//				QaEvent newData = new QaEvent();
-//
-//				String sysUserId = data.getSysUserId();
-//				String event = IActionConstants.AUDIT_TRAIL_DELETE;
-//				String tableName = "QA_EVENT";
-//				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-//			}
-//		} catch (RuntimeException e) {
-//			// bugzilla 2154
-//			LogEvent.logError("QaEventDAOImpl", "AuditTrail deleteData()", e.toString());
-//			throw new LIMSRuntimeException("Error in QaEvent AuditTrail deleteData()", e);
-//		}
-//
-//		try {
-//			for (int i = 0; i < qaEvents.size(); i++) {
-//				QaEvent data = (QaEvent) qaEvents.get(i);
-//				QaEvent cloneData = readQaEvent(data.getId());
-//
-//				entityManager.unwrap(Session.class).merge(cloneData);
-//				// entityManager.unwrap(Session.class).flush(); // CSL remove old
-//				// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//				// entityManager.unwrap(Session.class).evict // CSL remove old(cloneData);
-//				// entityManager.unwrap(Session.class).refresh // CSL remove old(cloneData);
-//			}
-//		} catch (RuntimeException e) {
-//			// bugzilla 2154
-//			LogEvent.logError("QaEventDAOImpl", "deleteData()", e.toString());
-//			throw new LIMSRuntimeException("Error in QaEvent deleteData()", e);
-//		}
-//	}
-
-//	@Override
-//	public boolean insertData(QaEvent qaEvent) throws LIMSRuntimeException {
-//
-//		try {
-//			if (duplicateQaEventExists(qaEvent)) {
-//				throw new LIMSDuplicateRecordException("Duplicate record exists for " + qaEvent.getQaEventName());
-//			}
-//
-//			String id = (String) entityManager.unwrap(Session.class).save(qaEvent);
-//			qaEvent.setId(id);
-//
-//			String sysUserId = qaEvent.getSysUserId();
-//			String tableName = "QA_EVENT";
-//			auditDAO.saveNewHistory(qaEvent, sysUserId, tableName);
-//
-//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//
-//		} catch (RuntimeException e) {
-//			// bugzilla 2154
-//			LogEvent.logError("QaEventDAOImpl", "insertData()", e.toString());
-//			throw new LIMSRuntimeException("Error in QaEvent insertData()", e);
-//		}
-//
-//		return true;
-//	}
-
-//	@Override
-//	public void updateData(QaEvent qaEvent) throws LIMSRuntimeException {
-//		try {
-//			if (duplicateQaEventExists(qaEvent)) {
-//				throw new LIMSDuplicateRecordException("Duplicate record exists for " + qaEvent.getQaEventName());
-//			}
-//		} catch (RuntimeException e) {
-//			// bugzilla 2154
-//			LogEvent.logError("QaEventDAOImpl", "updateData()", e.toString());
-//			throw new LIMSRuntimeException("Error in QaEvent updateData()", e);
-//		}
-//
-//		QaEvent oldData = readQaEvent(qaEvent.getId());
-//		QaEvent newData = qaEvent;
-//
-//		// add to audit trail
-//		try {
-//
-//			String sysUserId = qaEvent.getSysUserId();
-//			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
-//			String tableName = "QA_EVENT";
-//			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-//		} catch (RuntimeException e) {
-//			// bugzilla 2154
-//			LogEvent.logError("QaEventDAOImpl", "AuditTrail updateData()", e.toString());
-//			throw new LIMSRuntimeException("Error in QaEvent AuditTrail updateData()", e);
-//		}
-//
-//		try {
-//			entityManager.unwrap(Session.class).merge(qaEvent);
-//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//			// entityManager.unwrap(Session.class).evict // CSL remove old(qaEvent);
-//			// entityManager.unwrap(Session.class).refresh // CSL remove old(qaEvent);
-//		} catch (RuntimeException e) {
-//			// bugzilla 2154
-//			LogEvent.logError("QaEventDAOImpl", "updateData()", e.toString());
-//			throw new LIMSRuntimeException("Error in QaEvent updateData()", e);
-//		}
-//	}
-
     @Override
     @Transactional(readOnly = true)
     public void getData(QaEvent qaEvent) throws LIMSRuntimeException {
         try {
             QaEvent qaEv = entityManager.unwrap(Session.class).get(QaEvent.class, qaEvent.getId());
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
             if (qaEv != null) {
                 PropertyUtils.copyProperties(qaEvent, qaEv);
 
@@ -177,11 +68,8 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent, String> implements QaEv
         List<QaEvent> list;
         try {
             String sql = "from QaEvent qe order by qe.id";
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<QaEvent> query = entityManager.unwrap(Session.class).createQuery(sql, QaEvent.class);
             list = query.list();
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
-
         } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in QaEvent getAllQaEvents()", e);
@@ -199,14 +87,11 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent, String> implements QaEv
             int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 
             String sql = "from QaEvent qe order by qe.qaEventName";
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<QaEvent> query = entityManager.unwrap(Session.class).createQuery(sql, QaEvent.class);
             query.setFirstResult(startingRecNo - 1);
             query.setMaxResults(endingRecNo - 1);
 
             list = query.list();
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
-
         } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
@@ -220,8 +105,6 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent, String> implements QaEv
         QaEvent qaEvent = null;
         try {
             qaEvent = entityManager.unwrap(Session.class).get(QaEvent.class, idString);
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
@@ -238,12 +121,10 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent, String> implements QaEv
         List<QaEvent> list = new Vector<>();
         try {
             String sql = "from QaEvent qe where upper(qe.qaEventName) like upper(:param) order by upper(qe.qaEventName)";
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<QaEvent> query = entityManager.unwrap(Session.class).createQuery(sql, QaEvent.class);
             query.setParameter("param", filter + "%");
 
             list = query.list();
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
@@ -258,12 +139,10 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent, String> implements QaEv
     public QaEvent getQaEventByName(QaEvent qaEvent) throws LIMSRuntimeException {
         try {
             String sql = "from QaEvent qe where qe.qaEventName = :param";
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<QaEvent> query = entityManager.unwrap(Session.class).createQuery(sql, QaEvent.class);
             query.setParameter("param", qaEvent.getQaEventName());
 
             List<QaEvent> list = query.list();
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
             QaEvent qe = null;
             if (list.size() > 0) {
                 qe = list.get(0);
@@ -297,7 +176,7 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent, String> implements QaEv
                     + "or "
                     + "(trim(lower(t.description)) = :param4 and trim(lower(t.type)) = :param3 and t.id != :param2)) ";
 
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<QaEvent> query = entityManager.unwrap(Session.class).createQuery(sql, QaEvent.class);
             query.setParameter("param", qaEvent.getQaEventName().toLowerCase().trim());
             query.setParameter("param3", qaEvent.getType());
             query.setParameter("param4", qaEvent.getDescription().toLowerCase().trim());
@@ -310,8 +189,6 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent, String> implements QaEv
             query.setParameter("param2", qaEventId);
 
             list = query.list();
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
             if (list.size() > 0) {
                 return true;

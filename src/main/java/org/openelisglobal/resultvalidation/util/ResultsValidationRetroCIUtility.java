@@ -127,8 +127,10 @@ public class ResultsValidationRetroCIUtility {
 
     @PostConstruct
     private void initializeGlobalVariables() {
-        notValidStatus.add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized)));
-        notValidStatus.add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalRejected)));
+        notValidStatus.add(
+                Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized)));
+        notValidStatus.add(Integer
+                .parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalRejected)));
         Analyte analyte = new Analyte();
         analyte.setAnalyteName("Conclusion");
         analyte = analyteService.getAnalyteByName(analyte, false);
@@ -867,8 +869,9 @@ public class ResultsValidationRetroCIUtility {
         analysisResultItem.setReflexGroup(testResultItem.isReflexGroup());
         analysisResultItem.setChildReflex(testResultItem.isChildReflex());
         if (!(testResultItem.getAnalysis() == null)) {
-            analysisResultItem.setNonconforming(testResultItem.isNonconforming() || SpringContext.getBean(IStatusService.class)
-                    .matches(testResultItem.getAnalysis().getStatusId(), AnalysisStatus.TechnicalRejected));
+            analysisResultItem
+                    .setNonconforming(testResultItem.isNonconforming() || SpringContext.getBean(IStatusService.class)
+                            .matches(testResultItem.getAnalysis().getStatusId(), AnalysisStatus.TechnicalRejected));
         }
         analysisResultItem.setQualifiedDictionaryId(testResultItem.getQualifiedDictionaryId());
         analysisResultItem.setQualifiedResultValue(testResultItem.getQualifiedResultValue());
