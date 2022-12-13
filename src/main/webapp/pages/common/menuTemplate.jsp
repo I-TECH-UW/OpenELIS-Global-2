@@ -231,9 +231,6 @@ function setMenuAction(button, form, action, validate, parameters) {
 			</tr>
 			<tr>
 				<td>
-				
-<% System.out.println("bodyFragment"); %>
-<% System.out.println(request.getAttribute("bodyFragment")); %>
 					<jsp:include page="${bodyFragment}"/>
 				</td>
 			</tr>
@@ -247,6 +244,9 @@ function setMenuAction(button, form, action, validate, parameters) {
 
 </body>
 
+<script>
+console.log('bufferSize: <%=out.getBufferSize()%> remaining: <%= out.getRemaining()%> used: <%=out.getBufferSize() - out.getRemaining()%> autoFlush: <%=out.isAutoFlush() %>')
+</script>
 
 
 </html>

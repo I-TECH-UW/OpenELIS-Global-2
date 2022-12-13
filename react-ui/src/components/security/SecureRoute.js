@@ -16,7 +16,7 @@ class SecureRoute extends React.Component {
             authenticated: false,
             isIdle: false,
             refreshTimeoutSet: false,
-            requiredPermission: props.requiredPermission,
+            userSessionDetails: {}
         }
     }
 
@@ -30,16 +30,16 @@ class SecureRoute extends React.Component {
                 if (jsonResp.authenticated) {
                     console.info("Authenticated");
                     console.log(JSON.stringify(jsonResp))
-                    this.setState({ authenticated: true });
+                    this.setState({ authenticated: true, userSessionDetails: jsonResp });
                     this.props.onAuth(jsonResp);
                     localStorage.setItem("CSRF" , jsonResp.CSRF)
                     const hasRole = !!jsonResp.roles.find(role => {
                         return role.trim() === this.props.role
                     })
                     if (hasRole) {
-                        console.info("Acess Allowed");
+                        console.info("Access Allowed");
                     } else if (this.props.role == "null") {
-                        console.info("Acess Allowed");
+                        console.info("Access Allowed");
                     }
                     else {
                         const options = {
@@ -115,19 +115,32 @@ class SecureRoute extends React.Component {
     }
 
     render() {
-        return (
-            <>
-                <IdleTimer
-                    ref={ref => { this.idleTimer = ref }}
-                    timeout={idleTimeout}
-                    onActive={this.handleOnActive}
-                    onIdle={this.handleOnIdle}
-                    onAction={this.handleOnAction}
-                    debounce={250}
-                />
-                <Route {...this.props} />
-            </>
-        );
+        if (!this.state.authenticated) {
+            return (<div>Not authenticated</div>);
+        } else {
+            const hasRole = this.state.role || !!this.state.userSessionDetails.roles.find(role => {
+                return role.trim() === this.props.role
+            })
+            if (hasRole) {
+                console.info("Access Allowed");
+                return (
+                    <>
+                        <IdleTimer
+                            ref={ref => { this.idleTimer = ref }}
+                            timeout={idleTimeout}
+                            onActive={this.handleOnActive}
+                            onIdle={this.handleOnIdle}
+                            onAction={this.handleOnAction}
+                            debounce={250}
+                        />
+                        <Route {...this.props}/>
+                    </>
+                );
+            } else {
+                return <></>
+            }
+
+        } 
     }
 
 }

@@ -144,7 +144,7 @@
 			value="/pages/common/emptyPlaceHolder.jsp" />
 		<put-attribute name="rightTypeOfSampleTestFragment"
 			value="/pages/common/emptyPlaceHolder.jsp" />
-		<put-attribute name="rightDefaultFragment"
+		<put-attribute name="rightMenuFragment"
 			value="/pages/menu/masterListsTab/masterListsPageRightDefault.jsp" />
 	</definition>
 
@@ -846,7 +846,7 @@
 
 	<definition name="userMasterListsPageRightDefinition"
 		template="/pages/menu/masterListsTab/masterListsPageRight.jsp">
-		<put-attribute name="rightMenuDefinition"
+		<put-attribute name="rightMenuFragment"
 			value="unifiedSystemUserMenuDefinition" />
 	</definition>
 	
@@ -864,7 +864,7 @@
 
 	<definition name="testNotificationMasterListsPageRightDefinition"
 		template="/pages/menu/masterListsTab/masterListsPageRight.jsp">
-		<put-attribute name="rightMenuDefinition"
+		<put-attribute name="rightMenuFragment"
 			value="testNotificationMenuDefinition" />
 	</definition>
 	
@@ -882,7 +882,7 @@
 
 	<definition name="siteInfoMasterListsPageRightDefinition"
 		template="/pages/menu/masterListsTab/masterListsPageRight.jsp">
-		<put-attribute name="rightMenuDefinition"
+		<put-attribute name="rightMenuFragment"
 			value="siteInformationMenuDefinition" />
 	</definition>
 	
@@ -900,7 +900,7 @@
 
 	<definition name="providerMasterListsPageRightDefinition"
 		template="/pages/menu/masterListsTab/masterListsPageRight.jsp">
-		<put-attribute name="rightMenuDefinition"
+		<put-attribute name="rightMenuFragment"
 			value="providerMenuDefinition" />
 	</definition>
 	
@@ -918,7 +918,7 @@
 
 	<definition name="orgMasterListsPageRightDefinition"
 		template="/pages/menu/masterListsTab/masterListsPageRight.jsp">
-		<put-attribute name="rightMenuDefinition"
+		<put-attribute name="rightMenuFragment"
 			value="organizationMenuDefinition" />
 	</definition>
 	
@@ -936,7 +936,7 @@
 
 	<definition name="externalConnectionsMasterListsPageRightDefinition"
 		template="/pages/menu/masterListsTab/masterListsPageRight.jsp">
-		<put-attribute name="rightMenuDefinition"
+		<put-attribute name="rightMenuFragment"
 			value="externalConnectionMenuDefinition" />
 	</definition>
 	
@@ -954,7 +954,7 @@
 
 	<definition name="dictionaryMasterListsPageRightDefinition"
 		template="/pages/menu/masterListsTab/masterListsPageRight.jsp">
-		<put-attribute name="rightMenuDefinition"
+		<put-attribute name="rightMenuFragment"
 			value="dictionaryMenuDefinition" />
 	</definition>
 	
@@ -972,7 +972,7 @@
 
 	<definition name="analyzerMasterListsPageRightDefinition"
 		template="/pages/menu/masterListsTab/masterListsPageRight.jsp">
-		<put-attribute name="rightMenuDefinition"
+		<put-attribute name="rightMenuFragment"
 			value="analyzerTestNameMenuDefinition" />
 	</definition>
 	
