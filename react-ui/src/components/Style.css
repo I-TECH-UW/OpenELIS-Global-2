@@ -3,6 +3,10 @@
   width: auto;
 }
 
+#header-logo {
+  margin: 10px;
+}
+
 .headerPanel {
   height: max-content;
 }

@@ -1,6 +1,10 @@
 import React from 'react'
 import Header from './Header'
 import Footer from './Footer'
+import {
+  Content, 
+  Theme
+} from "@carbon/react";
 
 export default function Layout(props) {
   const { children } = props
@@ -8,7 +12,11 @@ export default function Layout(props) {
     <>
       <div className="d-flex flex-column min-vh-100">
       <Header user={props.user} config={props.config} onChangeLanguage={props.onChangeLanguage} isLoggedIn={props.isLoggedIn} logout={props.logout}  />
-      {children}
+      <Theme  theme="white">
+        <Content>
+          {children}
+        </ Content>
+        </Theme>
       <Footer/>
       </div>
     </>

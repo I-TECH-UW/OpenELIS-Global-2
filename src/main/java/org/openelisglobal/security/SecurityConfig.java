@@ -354,6 +354,7 @@ public class SecurityConfig {
                     // setup logout
                     .logout().logoutUrl("/Logout").logoutSuccessUrl("/LoginPage").invalidateHttpSession(true).and()
                     .sessionManagement().invalidSessionUrl("/LoginPage").sessionFixation().migrateSession().and().csrf()
+                    .ignoringAntMatchers("/ValidateLogin")
                     .and()
                     // add security headers
                     .headers().frameOptions().sameOrigin().contentSecurityPolicy(CONTENT_SECURITY_POLICY);

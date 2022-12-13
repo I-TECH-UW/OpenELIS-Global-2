@@ -1,6 +1,7 @@
-
+@use '@carbon/react/scss/themes';
 @use '@carbon/react/scss/theme' with
   (
+    $fallback: themes.$g100,
     $theme: (
       background: #295785,
       text-primary:   #ffffff ,
@@ -13,5 +14,16 @@
     )
   );
 
-  @use '@carbon/react';
+@use '@carbon/react';
+
+.cds--content {
+  margin-top: 3rem;
+  padding: 0;
+  background: var(--cds-background);
+}
+
+.loginPageContent {
+  padding-top: 3rem;
+  background: var(--cds-background);
+}
   
