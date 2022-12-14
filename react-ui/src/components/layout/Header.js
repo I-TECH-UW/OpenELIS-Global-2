@@ -33,18 +33,43 @@ import {
 class OEHeader extends React.Component {
   constructor(props) {
     super(props);
-    this.toggleSwitch = this.toggleSwitch.bind(this);
+    this.userSwitchRef = React.createRef();
+    this.headerPanelRef = React.createRef();
     this.state = {
       switchCollapsed: true,
       language: "en",
     };
   }
 
-  toggleSwitch() {
-    this.setState((state) => ({
-      switchCollapsed: !state.switchCollapsed,
-    }));
+  outsideClickListener = (event) => {
+    if (
+      !this.userSwitchRef.current.contains(event.target) &&
+      !this.headerPanelRef.current.contains(event.target)
+    ) {
+      this.dismissPanel();
+      window.removeEventListener("click", this.outsideClickListener);
+    }
+  };
+
+  componentWillUnmount() {
+    window.removeEventListener("click", this.outsideClickListener);
   }
+
+  clickUser = () => {
+    const userSwitchCollapsed = this.state.switchCollapsed;
+    this.setState((state) => ({
+      switchCollapsed: !userSwitchCollapsed,
+    }));
+    if (userSwitchCollapsed) {
+      window.addEventListener("click", this.outsideClickListener);
+    }
+  };
+
+  dismissPanel = (event) => {
+    this.setState((state) => ({
+      switchCollapsed: true,
+    }));
+  };
 
   logo = () => {
     return (
@@ -124,7 +149,8 @@ class OEHeader extends React.Component {
                     </HeaderGlobalAction>
                     <HeaderGlobalAction
                       aria-label="User"
-                      onClick={this.toggleSwitch}
+                      onClick={this.clickUser}
+                      ref={this.userSwitchRef}
                     >
                       <UserAvatarFilledAlt size={20} />
                     </HeaderGlobalAction>
@@ -133,13 +159,17 @@ class OEHeader extends React.Component {
                     aria-label="Header Panel"
                     expanded={!this.state.switchCollapsed}
                     className="headerPanel"
+                    ref={this.headerPanelRef}
                   >
                     <ul>
                       <li className="userDetails">
                         <UserAvatarFilledAlt size={18} />{" "}
                         {this.props.user.firstName} {this.props.user.lastName}
                       </li>
-                      <li className="userDetails" onClick={this.props.logout}>
+                      <li
+                        className="userDetails clickableUserDetails"
+                        onClick={this.props.logout}
+                      >
                         <FontAwesomeIcon
                           id="sign-out"
                           icon={faSignOutAlt}

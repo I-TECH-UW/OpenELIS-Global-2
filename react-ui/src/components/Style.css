@@ -16,8 +16,19 @@ div {
 }
 
 .userDetails {
-  padding: 1%;
-  margin: 4%;
+  padding: 5%; 
+}
+
+li.userDetails {
+  cursor: default;
+}
+
+li.clickableUserDetails {
+  cursor: pointer;
+}
+
+li.clickableUserDetails:hover  {
+  background: #072655;
 }
 
 .adminPageContent {
