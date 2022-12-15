@@ -32,7 +32,7 @@ class SecureRoute extends React.Component {
                     console.log(JSON.stringify(jsonResp))
                     this.setState({ authenticated: true, userSessionDetails: jsonResp });
                     this.props.onAuth(jsonResp);
-                    localStorage.setItem("CSRF" , jsonResp.CSRF)
+                    localStorage.setItem("CSRF" , jsonResp.csrf)
                     const hasRole = !!jsonResp.roles.find(role => {
                         return role.trim() === this.props.role
                     })

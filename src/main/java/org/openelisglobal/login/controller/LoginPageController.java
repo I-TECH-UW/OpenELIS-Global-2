@@ -2,14 +2,15 @@ package org.openelisglobal.login.controller;
 
 import java.security.Principal;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.controller.BaseController;
+import org.openelisglobal.login.bean.UserSession;
 import org.openelisglobal.login.form.LoginForm;
 import org.openelisglobal.role.service.RoleService;
 import org.openelisglobal.systemuser.service.SystemUserService;
@@ -100,25 +101,25 @@ public class LoginPageController extends BaseController {
 
     @GetMapping(value = "/session", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public String getSesssionDetails(HttpServletRequest request ,CsrfToken token) {
+    public UserSession getSesssionDetails(HttpServletRequest request ,CsrfToken token) {
         boolean authenticated = !userModuleService.isSessionExpired(request);
-        JSONObject sessionDetails = new JSONObject().put("authenticated", authenticated);
-        sessionDetails.put("sessionId", request.getSession().getId());
+        UserSession session = new UserSession();
+        session.setAuthenticated(authenticated);
+        session.setSessionId(request.getSession().getId());
         if (authenticated) {
             SystemUser user = systemUserService.get(getSysUserId(request));
-            sessionDetails.put("userId", user.getId());
-            sessionDetails.put("loginName", user.getLoginName());
-            sessionDetails.put("firstName", user.getFirstName());
-            sessionDetails.put("lastName", user.getLastName());
-            sessionDetails.put("CSRF", token.getToken());
-
-            JSONArray roleArray = new JSONArray();
+            session.setUserId(user.getId());
+            session.setLoginName(user.getLoginName());
+            session.setFirstName(user.getFirstName());
+            session.setLastName(user.getLastName());
+            session.setCSRF(token.getToken());
+            Set<String> roles = new HashSet<>();
             for (String roleId : userRoleService.getRoleIdsForUser(user.getId())) {
-                roleArray.put(roleService.getRoleById(roleId).getName().trim());
+                roles.add(roleService.getRoleById(roleId).getName().trim());
             }
-            sessionDetails.put("roles", roleArray);
+            session.setRoles(roles);
         }
-        return sessionDetails.toString();
+        return session;
     }
 
     @Override

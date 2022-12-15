@@ -1,8 +1,10 @@
 export default {
+  id : "" ,
   ruleName: "",
   overall: "",
   toggled: true,
   conditions: [{
+    id : "" ,
     sample: "",
     test: "",
     testId: "",
@@ -10,6 +12,7 @@ export default {
     value: ""
   }],
   actions: [{
+    id : "" ,
     action: "",
     reflexResult: "",
     reflexResultTestId: ""

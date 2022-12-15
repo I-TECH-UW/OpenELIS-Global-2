@@ -3,6 +3,7 @@ import { Form, Stack, TextInput, Select, SelectItem, Button, InlineLoading, Icon
 import { Add, Subtract } from '@carbon/react/icons';
 import Autocomplete from "../inputComponents/AutoComplete";
 import RuleBuilderFormValues from "../formModel/ruleBuilder/RuleBuilderFormValues";
+import { actionOptions ,relationOptions ,overallOptions } from "../data/ReflexRuleOptions";
 import { getFromOpenElisServer, postToOpenElisServer } from "../utils/Utils";
 
 function ReflexRule() {
@@ -12,6 +13,7 @@ function ReflexRule() {
     actions: "actions"
   }
   const conditionsObj = {
+    id : "" ,
     sample: "",
     test: "",
     testId: "",
@@ -19,11 +21,13 @@ function ReflexRule() {
     value: ""
   }
   const actionObj = {
+    id : "" ,
     action: "",
     reflexResult: "",
     reflexResultTestId: ""
   }
   const ruleObj = {
+    id : "" ,
     ruleName: "",
     overall: "",
     toggled: true,
@@ -173,14 +177,13 @@ function ReflexRule() {
                                   text=""
                                   value=""
                                 />
-                              <SelectItem
-                                text="Any"
-                                value="any"
-                              />
-                              <SelectItem
-                                text="All"
-                                value="all"
-                              />
+                               {overallOptions.map((overall, overall_index) => (
+                                  <SelectItem
+                                    text={overall.label}
+                                    value={overall.value}
+                                    key={overall_index}
+                                  />
+                                ))}
                             </Select>
                           </div>
                           <div >
@@ -249,14 +252,13 @@ function ReflexRule() {
                                   text=""
                                   value=""
                                 />
-                                <SelectItem
-                                  text="Equlas"
-                                  value="equals"
-                                />
-                                <SelectItem
-                                  text="NotEqual"
-                                  value="not_equals"
-                                />
+                                 {relationOptions.map((relation, relation_index) => (
+                                  <SelectItem
+                                    text={relation.label}
+                                    value={relation.value}
+                                    key={ relation_index}
+                                  />
+                                ))}
                               </Select>
                             </div>
                             <div>
@@ -327,14 +329,13 @@ function ReflexRule() {
                                   text=""
                                   value=""
                                 />
-                                <SelectItem
-                                  text="Add Test To Order"
-                                  value="add_test"
-                                />
-                                <SelectItem
-                                  text="Add Notification"
-                                  value="notifocation"
-                                />
+                                 {actionOptions.map((action, action_index) => (
+                                  <SelectItem
+                                    text={action.label}
+                                    value={action.value}
+                                    key={action_index}
+                                  />
+                                ))}
                               </Select>
                             </div>
                             <div>
