@@ -1,4 +1,4 @@
-package org.openelisglobal.test.controller.rest;
+package org.openelisglobal.common.controller.rest;
 
 import java.util.List;
 
@@ -9,14 +9,12 @@ import org.openelisglobal.common.util.IdValuePair;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping(value = "/rest/")
-public class TestController {
+public class DisplayListController {
 
     @GetMapping(value = "tests", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -28,12 +26,5 @@ public class TestController {
     @ResponseBody
     public List<IdValuePair> getSeamples(HttpServletRequest request) {
         return DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE);
-    }
-
-    @PostMapping(value = "reflexrule", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public String postDummy(HttpServletRequest request , @RequestBody String rule) {
-        System.out.println(rule);
-        return rule;
     }
 }
