@@ -2,11 +2,13 @@
     "language.select.label": "French" ,
     "language.select.admin": "Admin - French",
     "label.button.submit": "Connecter",
+    "label.button.changepassword" : "Changer Mot de Passe",
     "login.title": "Identifiant",
     "login.subtitle": "Identifiant",
     "login.msg.username": "Nom d'utilisateur",
     "login.msg.password": "Mot de passe",
     "login.msg.username.missing": "Votre nom d'utilisateur requis",
     "login.msg.password.missing": "Votre mot de passe requis",
-    "login.notice.message": "Veuillez entrer dans le logiciel de Syst\u00E8me d'Information \u00C9lectronique de Laboratoire:"
+    "login.notice.message": "Veuillez entrer dans le logiciel de Syst\u00E8me d'Information \u00C9lectronique de Laboratoire:",
+    "error.invalidcredentials": "L'identifiant ou le mot de passe est incorrect"
 }

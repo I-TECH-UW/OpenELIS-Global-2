@@ -2,7 +2,7 @@ import React from "react";
 import config from "../config.json";
 import "./Style.css";
 import qs from "qs";
-import { FormattedMessage, injectIntl, useIntl } from "react-intl";
+import { FormattedMessage, injectIntl } from "react-intl";
 import {
   Form,
   Section,
@@ -13,34 +13,31 @@ import {
   TextInput,
   Button,
 } from "@carbon/react";
-import { Formik, Field } from "formik";
-import { useNavigate } from "react-router-dom";
-import { getFromOpenElisServer, postToOpenElisServer } from "./utils/Utils";
-import { Add } from "@carbon/react/icons";
+import { Formik } from "formik";
 
 class Login extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { formValid: false };
+    this.state = { formValid: false, loginError: "" };
   }
 
-  validate = (values) => {
-    let errors = {
-      items: [],
-    };
-
-    if (values.items.length > 0) {
-      values.items.forEach((item) => {
-        const error = {};
-        if (item.value.length < 0) {
-          error.value = "Too few characters!";
+  componentDidMount() {
+    // CSL - this is a workaround for checking login state when NOT in a secure route
+    // if more pages require this checking, we need to find a way to centralize checking login state
+    // as App.js only has the correct state if mounting a SecureRoute
+    fetch(
+      config.serverBaseUrl + `/session`,
+      //includes the browser sessionId in the Header for Authentication on the backend server
+      { credentials: "include" }
+    )
+      .then((response) => response.json())
+      .then((jsonResp) => {
+        console.log(JSON.stringify(jsonResp));
+        if (jsonResp.authenticated) {
+          window.location.href = "/";
         }
-        errors.items.push(error);
       });
-    }
-
-    return errors;
-  };
+  }
 
   handlePost = (status) => {
     alert(status);
@@ -68,7 +65,7 @@ class Login extends React.Component {
   };
 
   doLogin = (data) => {
-    fetch(config.serverBaseUrl + "/ValidateLogin", {
+    fetch(config.serverBaseUrl + "/ValidateLogin?apiCall=true", {
       //includes the browser sessionId in the Header for Authentication on the backend server
       method: "POST",
       headers: {
@@ -76,10 +73,15 @@ class Login extends React.Component {
       },
       body: qs.stringify(data),
     })
-      .then((response) => response.status)
-      .then((status) => {
-        window.location.href = "/";
-        //console.log(JSON.stringify(jsonResp))
+      .then(async (response) => {
+        // get json response here
+        let data = await response.json();
+
+        if (response.status === 200) {
+          window.location.href = "/";
+        } else {
+          this.setState({ loginError: data.error });
+        }
       })
       .catch((error) => {
         console.log(error);
@@ -130,6 +132,11 @@ class Login extends React.Component {
                           <FormattedMessage id="login.title" />
                         </Heading>
                       </FormLabel>
+                      <div className="errorMessage">
+                        {this.state.loginError && (
+                          <FormattedMessage id={this.state.loginError} />
+                        )}
+                      </div>
                       <TextInput
                         className="inputText"
                         id="loginName"
@@ -159,9 +166,6 @@ class Login extends React.Component {
                           id: "login.msg.password",
                         })}
                       />
-                      <Button type="submit" disabled={!isValid}>
-                        <FormattedMessage id="label.button.submit" />
-                      </Button>
                     </Form>
                   )}
                 </Formik>
