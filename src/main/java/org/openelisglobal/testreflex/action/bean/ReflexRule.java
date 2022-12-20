@@ -2,14 +2,44 @@ package org.openelisglobal.testreflex.action.bean;
 
 import java.util.List;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "reflex_rule")
 public class ReflexRule {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "reflex_rule_generator")
+    @SequenceGenerator(name = "reflex_rule_generator", sequenceName = "reflex_rule_seq", allocationSize = 1)
+    @Column(name = "id")
     private String id;
+
+    @Column(name = "rule_name")
     private String ruleName;
+
+    @Column(name = "overall")
     private String overall;
+
+    @Column(name = "toggled")
     private Boolean toggled;
+
+    @OneToMany(cascade = CascadeType.ALL)  
+    @JoinColumn(name = "reflex_rule_id", referencedColumnName = "id")   
     List<ReflexRuleCondition> conditions;
+
+    @OneToMany(cascade = CascadeType.ALL)  
+    @JoinColumn(name = "reflex_rule_id", referencedColumnName = "id") 
     List<ReflexRuleAction> actions;
+
     public String getId() {
         return id;
     }
