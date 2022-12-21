@@ -152,6 +152,20 @@ services:
 #astm            retries: 3
 #astm            start_period: 2m
 
+
+	proxy.openelis.org:
+        image: nginx:1.15-alpine
+        ports:
+        - 80:80
+        - 443:443
+        volumes:
+        - /var/lib/openelis-global/secrets/nginx.conf:/etc/nginx/nginx.conf:ro
+        - /var/lib/openelis-global/config/KEYSTORE_PASSWORD:/etc/nginx/private/key_pass
+        extra_hosts:
+        - host.openelis.org:host-gateway
+        - host.docker.internal:host-gateway
+        restart: unless-stopped    
+        
     autoheal:
         container_name: [% autoheal_name %]
         image: willfarrell/autoheal:1.2.0
@@ -169,6 +183,9 @@ services:
             options:
               max-size: "20m"
               max-file: "50"
+              
+              
+      
             
 secrets:
   datasource.password:

@@ -109,6 +109,7 @@ createLinuxInstaller() {
 	cp Postgres_DockerImage.tar.gz ${INSTALLER_CREATION_DIR}/linux/${installerName}/dockerImage/Postgres_DockerImage.tar.gz
 	cp JPAServer_DockerImage.tar.gz ${INSTALLER_CREATION_DIR}/linux/${installerName}/dockerImage/JPAServer_DockerImage.tar.gz
 	cp AutoHeal_DockerImage.tar.gz ${INSTALLER_CREATION_DIR}/linux/${installerName}/dockerImage/AutoHeal_DockerImage.tar.gz
+	cp NGINX_DockerImage.tar.gz ${INSTALLER_CREATION_DIR}/linux/${installerName}/dockerImage/NGINX_DockerImage.tar.gz
 #	cp DataImporter_DockerImage.tar.gz ${INSTALLER_CREATION_DIR}/linux/${installerName}/dockerImage/DataImporter_DockerImage.tar.gz
 #	cp DataSubscriber_DockerImage.tar.gz ${INSTALLER_CREATION_DIR}/linux/${installerName}/dockerImage/DataSubscriber_DockerImage.tar.gz
 #	cp ${PROJECT_DIR}/tools/DBBackup/installerTemplates/${backupFile} ${INSTALLER_CREATION_DIR}/linux/${context}/templates/DatabaseBackup.pl
@@ -139,11 +140,13 @@ then
 	docker pull postgres:14.4
 	docker save postgres:14.4 | gzip > Postgres_DockerImage.tar.gz
 	echo "saving JPA Server docker image"
-	
 	docker save hapi-fhir-jpaserver:latest | gzip > JPAServer_DockerImage.tar.gz
 	echo "saving Autoheal docker image"
 	docker pull willfarrell/autoheal:1.2.0
 	docker save willfarrell/autoheal:1.2.0 | gzip > AutoHeal_DockerImage.tar.gz
+	echo "saving NGINX docker image"
+	docker pull nginx:1.15-alpine
+	docker save nginx:1.15-alpine | gzip > NGINX_DockerImage.tar.gz
 	
 	
 #	docker save hapi-fhir-jpaserver-starter:latest | gzip > JPAServer_DockerImage.tar.gz
@@ -160,6 +163,7 @@ then
 	rm Postgres_DockerImage.tar.gz
 	rm JPAServer_DockerImage.tar.gz
 	rm AutoHeal_DockerImage.tar.gz
+	rm NGINX_DockerImage.tar.gz
 #	rm DataSubscriber_DockerImage.tar.gz
 #	rm DataImporter_DockerImage.tar.gz
 	rm -r ${STAGING_DIR}

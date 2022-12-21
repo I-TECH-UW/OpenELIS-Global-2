@@ -41,6 +41,8 @@ LOG_FILE_NAME = "installer.log"
 POSTGRES_ROLE_UPDATE_FILE_NAME = "updateDBPassword.sql"
 SETUP_CONFIG_FILE_NAME = "setup.ini"
 CLIENT_FACING_KEYSTORE = "client_facing_keystore"
+CLIENT_FACING_KEY = "nginx.key.pem"
+CLIENT_FACING_CERT = "nginx.cert.pem"
 KEYSTORE = "keystore"
 TRUSTSTORE = "truststore"
 CLEANUP_SCRIPT_NAME = "logCleanup.sh"
@@ -64,6 +66,8 @@ CRON_INSTALL_DIR = "/etc/cron.d/"
 
 #full file paths
 CLIENT_FACING_KEYSTORE_PATH = OE_ETC_DIR + CLIENT_FACING_KEYSTORE
+CLIENT_FACING_KEY_PATH = OE_ETC_DIR + CLIENT_FACING_KEY
+CLIENT_FACING_CERT_PATH = OE_ETC_DIR + CLIENT_FACING_CERT
 KEYSTORE_PATH = OE_ETC_DIR + KEYSTORE
 TRUSTSTORE_PATH = OE_ETC_DIR + TRUSTSTORE
 
@@ -265,6 +269,8 @@ def install_files_from_templates():
     create_server_xml_files()
     install_cron_tasks()
     install_permissions_file()
+    create_nginx_certs()
+    create_nginx_files()
     if DOCKER_DB:
         install_environment_file()
 
@@ -460,6 +466,20 @@ def create_server_xml_files():
     output_file.close()
     os.chmod(OE_ETC_DIR + "healthcheck.sh", 0o750) 
     os.chown(OE_ETC_DIR + 'healthcheck.sh', 8443, 8443)      
+    
+#this is somewhat unnecessary as we could just copy the file, but in case we start using variables in the file, this is being used    
+def create_nginx_files():
+    ensure_dir_exists(SECRETS_DIR)
+    template_file = open(INSTALLER_TEMPLATE_DIR + "nginx.conf", "r")
+    output_file = open(SECRETS_DIR + "nginx.conf", "w")
+
+    for line in template_file:
+        output_file.write(line)
+
+    template_file.close()
+    output_file.close()
+    os.chmod(SECRETS_DIR + "common.properties", 0o640)   
+    os.chown(SECRETS_DIR + "nginx.conf", 8443, 8443) 
     
 
 def install_cron_tasks():
@@ -755,6 +775,10 @@ def do_update():
     ensure_file_exists(DB_PGPASS)
     
     get_stored_user_values()
+    
+    create_nginx_certs()
+    
+    create_nginx_files()
     
     create_docker_compose_file()
     
@@ -1065,7 +1089,7 @@ def set_keystore_password():
         set_keystore_password()
     else:
         with open(CONFIG_DIR + 'KEYSTORE_PASSWORD', mode='wt') as file:
-            file.write(k_password)    
+            file.write(k_password)
     
     
 def is_truststore_password_set():
@@ -1281,6 +1305,19 @@ def create_db_backup_user():
         os.system('sudo service postgresql restart')
     
         
+create_nginx_certs():
+# copying file as openssl wont accept the same input and output file for passwords
+    cmd = 'cp ' + CONFIG_DIR + 'KEYSTORE_PASSWORD ' + CONFIG_DIR + 'KEYSTORE_PASSWORD2'
+    os.system(cmd)
+#openssl pkcs12 -in /etc/openelis-global/new/client_facing_keystore -out /etc/openelis-global/nginx.key.pem -nocerts -passout file:/var/lib/openelis-global/config/KEYSTORE_PASSWORD -passin file:/var/lib/openelis-global/config/KEYSTORE_PASSWORD2
+    cmd = 'openssl pkcs12 -in ' + CLIENT_FACING_KEYSTORE_PATH + ' -out ' + CLIENT_FACING_KEY_PATH + ' -nocerts -passout file:' + CONFIG_DIR + 'KEYSTORE_PASSWORD -passin file:' + CONFIG_DIR + 'KEYSTORE_PASSWORD2'
+    os.system(cmd)
+#openssl pkcs12 -in /etc/openelis-global/client_facing_keystore -out /etc/openelis-global/nginx.crt.pem -nodes -nokeys -passin file:/var/lib/openelis-global/config/KEYSTORE_PASSWORD -passout file:/var/lib/openelis-global/config/KEYSTORE_PASSWORD
+    cmd = 'openssl pkcs12 -in ' + CLIENT_FACING_KEYSTORE_PATH + ' -out ' + CLIENT_FACING_CERT_PATH + ' -nokeys -nodes -passout file:' + CONFIG_DIR + 'KEYSTORE_PASSWORD -passin file:' + CONFIG_DIR + 'KEYSTORE_PASSWORD2'
+    os.system(cmd)
+# cleanup temp file
+    cmd = 'rm ' + CONFIG_DIR + 'KEYSTORE_PASSWORD2'
+    os.system(cmd)
                 
 #---------------------------------------------------------------------
 #             PASSWORD GENERATION
