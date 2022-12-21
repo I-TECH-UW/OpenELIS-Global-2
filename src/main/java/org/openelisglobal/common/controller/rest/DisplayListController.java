@@ -24,7 +24,7 @@ public class DisplayListController {
 
     @GetMapping(value = "samples", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public List<IdValuePair> getSeamples(HttpServletRequest request) {
+    public List<IdValuePair> getSamples(HttpServletRequest request) {
         return DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE);
     }
 }

@@ -13,21 +13,21 @@ function ReflexRule() {
     actions: "actions"
   }
   const conditionsObj = {
-    id : "" ,
-    sample: "",
-    test: "",
+    id : null ,
+    sampleId: "",
+    testName: "",
     testId: "",
     relation: "",
     value: ""
   }
   const actionObj = {
-    id : "" ,
+    id : null ,
     action: "",
     reflexResult: "",
     reflexResultTestId: ""
   }
   const ruleObj = {
-    id : "" ,
+    id : null ,
     ruleName: "",
     overall: "",
     toggled: true,
@@ -46,6 +46,7 @@ function ReflexRule() {
   useEffect(() => {
     getFromOpenElisServer("/rest/tests", fetchTests)
     getFromOpenElisServer("/rest/samples", fetchSamples)
+    getFromOpenElisServer("/rest/reflexrules", fetchReflexRules)
 
     return () => { // This code runs when component is unmounted
       componentMounted.current = false;
@@ -115,6 +116,12 @@ function ReflexRule() {
   const fetchSamples = (sampleList) => {
     if (componentMounted.current) {
       setSampleList(sampleList);
+    }
+  }
+
+  const fetchReflexRules = (reflexRuleList) => {
+    if (componentMounted.current) {
+      console.log(JSON.stringify(reflexRuleList))
     }
   }
 
@@ -198,7 +205,7 @@ function ReflexRule() {
                             <div >
                               <Select
                                 id={index + "_" + condition_index + "_sample"}
-                                name="sample"
+                                name="sampleId"
                                 labelText=""
                                 value={condition.sample}
                                 className="inputSelect"
@@ -223,10 +230,10 @@ function ReflexRule() {
                             </div>
                             <div>
                               <Autocomplete
-                                stateValue={condition.test}
+                                stateValue={condition.testName}
                                 handleChange={handleRuleFieldItemChange}
                                 index={index}
-                                name="test"
+                                name="testName"
                                 idField="testId"
                                 class="autocomplete1"
                                 item_index={condition_index}

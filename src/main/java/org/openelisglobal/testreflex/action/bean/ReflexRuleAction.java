@@ -16,7 +16,7 @@ public class ReflexRuleAction {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "reflex_rule_action_generator")
     @SequenceGenerator(name = "reflex_rule_action_generator", sequenceName = "reflex_rule_action_seq", allocationSize = 1)
     @Column(name = "id")
-    private String id;
+    private Integer id;
 
     @Column(name = "action")
     private String action;
@@ -26,10 +26,10 @@ public class ReflexRuleAction {
 
     @Column(name = "reflex_result_test_id")
     private String reflexResultTestId;
-    public String getId() {
+    public Integer getId() {
         return id;
     }
-    public void setId(String id) {
+    public void setId(Integer id) {
         this.id = id;
     }
     public String getAction() {

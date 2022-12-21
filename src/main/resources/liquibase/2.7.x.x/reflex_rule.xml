@@ -12,8 +12,10 @@
 			
 		</preConditions>
 		<comment>create reflex_rule table</comment>
+		<createSequence incrementBy="1" schemaName="clinlims"
+			sequenceName="reflex_rule_seq" startValue="1" />
 		<createTable tableName="reflex_rule">
-			<column name="id" type="int">
+			<column name="id" type="INTEGER" valueSequenceNext="reflex_rule_seq">
 				<constraints primaryKey="true" nullable="false"/>
 			</column>
 			<column name="rule_name" type="varchar(64)">
@@ -23,6 +25,7 @@
 				<constraints nullable="false"/>
 			</column>
             <column name="toggled" type="boolean"/>
+			<column name="last_updated" type="datetime"/>
 		</createTable>
 	</changeSet>
     <changeSet author="moses_mutesa" id="2">
@@ -32,8 +35,10 @@
           </not>  	
 		</preConditions>
 		<comment>create reflex_rule_action table</comment>
+		<createSequence incrementBy="1" schemaName="clinlims"
+			sequenceName="reflex_rule_action_seq" startValue="1" />
         <createTable tableName="reflex_rule_action">
-			<column name="id" type="int">
+			<column name="id" type="INTEGER" valueSequenceNext="reflex_rule_action_seq">
 				<constraints primaryKey="true" nullable="false"/>
 			</column>
 			<column name="action" type="varchar(64)">
@@ -42,7 +47,7 @@
             <column name="reflex_result" type="varchar(64)">
 				<constraints nullable="false"/>
 			</column>
-            <column name="reflex_result_test_id" type="varchar(64"/>
+            <column name="reflex_result_test_id" type="varchar(64)"/>
              <column name="reflex_rule_id" type="int"/>
 		</createTable>
 
@@ -51,22 +56,23 @@
                                  referencedTableName="reflex_rule" referencedColumnNames="id"/>
 		
 	</changeSet>
-    <changeSet author="moses_mutesa" id="2">
+    <changeSet author="moses_mutesa" id="3">
 		<preConditions onFail="MARK_RAN">
-         <not>>
+         <not>
             <tableExists tableName="reflex_rule_condition" schemaName="clinlims" />
           </not>  
-			
 		</preConditions>
 		<comment>create reflex_rule_condition table</comment>
+		<createSequence incrementBy="1" schemaName="clinlims"
+			sequenceName="reflex_rule_condition_seq" startValue="1" />
          <createTable tableName="reflex_rule_condition">
-			<column name="id" type="int">
+			<column name="id" type="INTEGER" valueSequenceNext="reflex_rule_condition_seq">
 				<constraints primaryKey="true" nullable="false"/>
 			</column>
-			<column name="sample" type="varchar(64)">
+			<column name="sample_id" type="varchar(64)">
 				<constraints nullable="false"/>
 			</column>
-            <column name="test" type="varchar(64)">
+            <column name="test_name" type="varchar(64)">
 				<constraints nullable="false"/>
 			</column>
             <column name="test_id" type="varchar(64)"/>

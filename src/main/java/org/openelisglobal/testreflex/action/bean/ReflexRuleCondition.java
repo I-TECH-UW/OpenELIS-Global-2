@@ -16,13 +16,13 @@ public class ReflexRuleCondition {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "reflex_rule_condition_generator")
     @SequenceGenerator(name = "reflex_rule_condition_generator", sequenceName = "reflex_rule_condition_seq", allocationSize = 1)
     @Column(name = "id")
-    private String id;
+    private Integer id;
 
-    @Column(name = "sample")
-    private String sample;
+    @Column(name = "sample_id")
+    private String sampleId;
 
-    @Column(name = "test")
-    private String test;
+    @Column(name = "test_name")
+    private String testName;
 
     @Column(name = "test_id")
     private String testId;
@@ -32,23 +32,25 @@ public class ReflexRuleCondition {
 
     @Column(name = "value")
     private String value ;
-    public String getId() {
+
+    public Integer getId() {
         return id;
     }
-    public void setId(String id) {
+    public void setId(Integer id) {
         this.id = id;
     }
-    public String getSample() {
-        return sample;
+    
+    public String getSampleId() {
+        return sampleId;
     }
-    public void setSample(String sample) {
-        this.sample = sample;
+    public void setSampleId(String sampleId) {
+        this.sampleId = sampleId;
     }
-    public String getTest() {
-        return test;
+    public String getTestName() {
+        return testName;
     }
-    public void setTest(String test) {
-        this.test = test;
+    public void setTestName(String testName) {
+        this.testName = testName;
     }
     public String getTestId() {
         return testId;
