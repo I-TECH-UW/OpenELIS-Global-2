@@ -1,18 +1,18 @@
 export default {
-  id : "" ,
+  id : null ,
   ruleName: "",
   overall: "",
   toggled: true,
   conditions: [{
-    id : "" ,
-    sample: "",
-    test: "",
+    id : null ,
+    sampleId: "",
+    testName: "",
     testId: "",
     relation: "",
     value: ""
   }],
   actions: [{
-    id : "" ,
+    id : null,
     action: "",
     reflexResult: "",
     reflexResultTestId: ""

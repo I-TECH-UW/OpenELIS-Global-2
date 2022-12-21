@@ -8,6 +8,8 @@ import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
 import org.openelisglobal.test.service.TestServiceImpl;
 import org.openelisglobal.testanalyte.valueholder.TestAnalyte;
+import org.openelisglobal.testreflex.action.bean.ReflexRule;
+import org.openelisglobal.testreflex.dao.ReflexRuleDAO;
 import org.openelisglobal.testreflex.dao.TestReflexDAO;
 import org.openelisglobal.testreflex.valueholder.TestReflex;
 import org.openelisglobal.testresult.valueholder.TestResult;
@@ -19,6 +21,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class TestReflexServiceImpl extends BaseObjectServiceImpl<TestReflex, String> implements TestReflexService {
     @Autowired
     protected TestReflexDAO baseObjectDAO;
+
+    @Autowired
+    protected ReflexRuleDAO reflexRuleDAO ;
 
     TestReflexServiceImpl() {
         super(TestReflex.class);
@@ -128,5 +133,20 @@ public class TestReflexServiceImpl extends BaseObjectServiceImpl<TestReflex, Str
 
     private boolean duplicateTestReflexExists(TestReflex testReflex) {
         return baseObjectDAO.duplicateTestReflexExists(testReflex);
+    }
+
+    @Override
+    public void saveOrUpdateReflexRule(ReflexRule reflexRule) {
+        if (reflexRule.getId() == null) {
+            reflexRuleDAO.insert(reflexRule);
+        } else {
+            reflexRuleDAO.update(reflexRule);
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ReflexRule> getAllReflexRules() {
+        return reflexRuleDAO.getAll();
     }
 }

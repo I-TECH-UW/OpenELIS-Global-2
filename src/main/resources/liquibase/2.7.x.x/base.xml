@@ -9,4 +9,5 @@
 	<include relativeToChangelogFile="true" file="add_analyser_import_role.xml"/>
 	<include relativeToChangelogFile="true" file="add_validation_by_date.xml"/>	
 	<include relativeToChangelogFile="true" file="support_reject_sample.xml"/>	
+	<include relativeToChangelogFile="true" file="reflex_rule.xml"/>	
 </databaseChangeLog>

@@ -1,29 +1,56 @@
 package org.openelisglobal.testreflex.action.bean;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "reflex_rule_condition")
 public class ReflexRuleCondition {
-    private String id;
-    private String sample;
-    private String test;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "reflex_rule_condition_generator")
+    @SequenceGenerator(name = "reflex_rule_condition_generator", sequenceName = "reflex_rule_condition_seq", allocationSize = 1)
+    @Column(name = "id")
+    private Integer id;
+
+    @Column(name = "sample_id")
+    private String sampleId;
+
+    @Column(name = "test_name")
+    private String testName;
+
+    @Column(name = "test_id")
     private String testId;
+
+    @Column(name = "relation")
     private String relation;
+
+    @Column(name = "value")
     private String value ;
-    public String getId() {
+
+    public Integer getId() {
         return id;
     }
-    public void setId(String id) {
+    public void setId(Integer id) {
         this.id = id;
     }
-    public String getSample() {
-        return sample;
+    
+    public String getSampleId() {
+        return sampleId;
     }
-    public void setSample(String sample) {
-        this.sample = sample;
+    public void setSampleId(String sampleId) {
+        this.sampleId = sampleId;
     }
-    public String getTest() {
-        return test;
+    public String getTestName() {
+        return testName;
     }
-    public void setTest(String test) {
-        this.test = test;
+    public void setTestName(String testName) {
+        this.testName = testName;
     }
     public String getTestId() {
         return testId;
