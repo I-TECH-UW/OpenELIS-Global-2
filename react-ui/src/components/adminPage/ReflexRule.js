@@ -100,11 +100,10 @@ function ReflexRule() {
     alert(status)
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = (event ,index) => {
     event.preventDefault();
-    //setRuleList([...ruleList, { rule: "" }]);
-     console.log(JSON.stringify(ruleList))
-     postToOpenElisServer("/rest/reflexrule" ,JSON.stringify(ruleList) , handlePost)
+    console.log(JSON.stringify(ruleList[index]))
+    postToOpenElisServer("/rest/reflexrule" ,JSON.stringify(ruleList[index]) , handlePost)
   };
 
   const fetchTests = (testList) => {
@@ -122,6 +121,9 @@ function ReflexRule() {
   const fetchReflexRules = (reflexRuleList) => {
     if (componentMounted.current) {
       console.log(JSON.stringify(reflexRuleList))
+      if (reflexRuleList.length > 0) {
+        setRuleList(reflexRuleList);
+      }
     }
   }
 
@@ -132,7 +134,7 @@ function ReflexRule() {
         <div key={index} className="rules">
           <div className="first-division">
             <Form
-              onSubmit={handleSubmit}
+              onSubmit={(e) => handleSubmit(e, index)}
             >
               <Stack gap={7}>
                 <div className="ruleBody">
@@ -207,7 +209,7 @@ function ReflexRule() {
                                 id={index + "_" + condition_index + "_sample"}
                                 name="sampleId"
                                 labelText=""
-                                value={condition.sample}
+                                value={condition.sampleId}
                                 className="inputSelect"
                                 onChange={(e) => handleRuleFieldItemChange(e, index, condition_index, FIELD.conditions)}
                                 required
