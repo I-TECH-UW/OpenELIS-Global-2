@@ -20,6 +20,7 @@ import messages_fr from "./languages/fr.json";
 import config from "./config.json";
 import { SecureRoute } from "./components/security";
 import "./index.scss";
+import PatientMgt from "./components/PatientMgt";
 
 let i18nConfig = {
   locale: navigator.language.split(/[-_]/)[0],
@@ -138,6 +139,16 @@ class App extends React.Component {
                   exact
                   component={() => <Admin />}
                   role="Global Administrator"
+                  config={this.state.config}
+                  onAuth={this.onAuth}
+                  logout={this.logout}
+                  isLoggedIn={this.isLoggedIn}
+                />
+                <SecureRoute
+                  path="/PatientManagement"
+                  exact
+                  component={() => <PatientMgt />}
+                  role="Reception"
                   config={this.state.config}
                   onAuth={this.onAuth}
                   logout={this.logout}
