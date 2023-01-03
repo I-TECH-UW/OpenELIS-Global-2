@@ -1,4 +1,5 @@
-<%@page import="org.openelisglobal.internationalization.MessageUtil"%>
+<%@page import="org.openelisglobal.internationalization.MessageUtil,
+                 org.openelisglobal.common.util.DateUtil"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"%>
 
 <%@ page isELIgnored="false" %>
@@ -237,9 +238,9 @@ jQuery(document).ready( function() {
 <spring:message code='study.eorder.search.date_range.title'/>
 
 <br> 
-<spring:message code='study.eorder.search.date.start'/>:
+<spring:message code='study.eorder.search.date.start'/> (<%=DateUtil.getDateUserPrompt()%>):
 <form:input path="startDate" onkeyup="addDateSlashes(this,event); " htmlEscape="true"/> &nbsp;&nbsp;
-<spring:message code='study.eorder.search.date.end'/>:
+<spring:message code='study.eorder.search.date.end'/> (<%=DateUtil.getDateUserPrompt()%>):
 <form:input path="endDate"	onkeyup="addDateSlashes(this,event); " htmlEscape="true"/>
 <spring:message code='eorder.status'/>
 <form:select path="statusId">
