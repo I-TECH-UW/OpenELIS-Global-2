@@ -10,7 +10,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <link href="select2/css/select2.min.css" rel="stylesheet" />
-<script src="select2/js/select2.min.js"></script>
+<script type="text/javascript" src="select2/js/select2.min.js"></script>
 <script type="text/javascript" src="scripts/tableSort.js"></script>
 <script type="text/javascript" src="scripts/utilities.js"></script>
 <script type="text/javascript" src="scripts/ajaxCalls.js"></script>
