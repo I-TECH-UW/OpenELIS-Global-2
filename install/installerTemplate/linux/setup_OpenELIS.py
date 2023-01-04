@@ -1305,7 +1305,7 @@ def create_db_backup_user():
         os.system('sudo service postgresql restart')
     
         
-create_nginx_certs():
+def create_nginx_certs():
 # copying file as openssl wont accept the same input and output file for passwords
     cmd = 'cp ' + CONFIG_DIR + 'KEYSTORE_PASSWORD ' + CONFIG_DIR + 'KEYSTORE_PASSWORD2'
     os.system(cmd)

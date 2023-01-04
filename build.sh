@@ -96,6 +96,8 @@ echo "creating docker images"
 bash ${INSTALL_DIR}/buildProject.sh -dl ${PROJECT_DIR}/fhir -t hapi-fhir-jpaserver
 #create the docker image 
 bash ${INSTALL_DIR}/buildProject.sh -dl ${PROJECT_DIR} -t openelisglobal
+#create the frontend docker image 
+bash ${INSTALL_DIR}/buildProject.sh -dl ${PROJECT_DIR}/react-ui -t openelisglobal-frontend
 
 createLinuxInstaller() {
 	context=$1
@@ -110,6 +112,7 @@ createLinuxInstaller() {
 	cp JPAServer_DockerImage.tar.gz ${INSTALLER_CREATION_DIR}/linux/${installerName}/dockerImage/JPAServer_DockerImage.tar.gz
 	cp AutoHeal_DockerImage.tar.gz ${INSTALLER_CREATION_DIR}/linux/${installerName}/dockerImage/AutoHeal_DockerImage.tar.gz
 	cp NGINX_DockerImage.tar.gz ${INSTALLER_CREATION_DIR}/linux/${installerName}/dockerImage/NGINX_DockerImage.tar.gz
+	cp ReactFrontend_DockerImage.tar.gz ${INSTALLER_CREATION_DIR}/linux/${installerName}/dockerImage/ReactFrontend_DockerImage.tar.gz
 #	cp DataImporter_DockerImage.tar.gz ${INSTALLER_CREATION_DIR}/linux/${installerName}/dockerImage/DataImporter_DockerImage.tar.gz
 #	cp DataSubscriber_DockerImage.tar.gz ${INSTALLER_CREATION_DIR}/linux/${installerName}/dockerImage/DataSubscriber_DockerImage.tar.gz
 #	cp ${PROJECT_DIR}/tools/DBBackup/installerTemplates/${backupFile} ${INSTALLER_CREATION_DIR}/linux/${context}/templates/DatabaseBackup.pl
@@ -147,6 +150,8 @@ then
 	echo "saving NGINX docker image"
 	docker pull nginx:1.15-alpine
 	docker save nginx:1.15-alpine | gzip > NGINX_DockerImage.tar.gz
+	echo "saving React frontend docker image"
+	docker save openelisglobal-frontend:latest | gzip > ReactFrontend_DockerImage-Global_DockerImage.tar.gz
 	
 	
 #	docker save hapi-fhir-jpaserver-starter:latest | gzip > JPAServer_DockerImage.tar.gz
@@ -164,6 +169,7 @@ then
 	rm JPAServer_DockerImage.tar.gz
 	rm AutoHeal_DockerImage.tar.gz
 	rm NGINX_DockerImage.tar.gz
+	rm ReactFrontend_DockerImage.tar.gz
 #	rm DataSubscriber_DockerImage.tar.gz
 #	rm DataImporter_DockerImage.tar.gz
 	rm -r ${STAGING_DIR}
