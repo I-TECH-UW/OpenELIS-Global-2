@@ -1477,13 +1477,9 @@ def load_docker_image():
     cmd = 'sudo docker load < ' + INSTALLER_DOCKER_DIR + 'AutoHeal_DockerImage.tar.gz'
     os.system(cmd)
     
-#     log("loading dataimport-webapp docker image", PRINT_TO_CONSOLE)
-#     cmd = 'sudo docker load < ' + INSTALLER_DOCKER_DIR + 'DataImporter_DockerImage.tar.gz'
-#     os.system(cmd)
-    
-#    log("loading datasubscriber-webapp docker image", PRINT_TO_CONSOLE)
-#    cmd = 'sudo docker load < ' + INSTALLER_DOCKER_DIR + 'DataSubscriber_DockerImage.tar.gz'
-#    os.system(cmd)
+    log("loading openelisglobal-frontend docker image", PRINT_TO_CONSOLE)
+    cmd = 'sudo docker load < ' + INSTALLER_DOCKER_DIR + 'ReactFrontend_DockerImage.tar.gz'
+    os.system(cmd)
 
     if DOCKER_DB:
         log("loading postgres docker image", PRINT_TO_CONSOLE)
