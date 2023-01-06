@@ -166,6 +166,9 @@ class Login extends React.Component {
                           id: "login.msg.password",
                         })}
                       />
+                      <Button type="submit" disabled={!isValid}>
+                        <FormattedMessage id="label.button.submit" />
+                      </Button>
                     </Form>
                   )}
                 </Formik>
