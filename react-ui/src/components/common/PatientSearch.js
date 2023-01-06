@@ -13,52 +13,170 @@ import {
     DatePicker,
     DatePickerInput,
     RadioButton,
-    RadioButtonGroup ,
-    ContentSwitcher ,
-    Switch
+    RadioButtonGroup,
+    ContentSwitcher,
+    Switch,
+    Stack,
+    DataTable, TableContainer, Table, TableHead, TableRow, TableHeader, TableBody, TableCell,
+    Checkbox
 
 } from '@carbon/react';
+
+import { rowData, headerData } from './sampleData';
+import { Formik, Field, FieldArray, ErrorMessage } from "formik";
+import PatientSearchFormValues from '../formModel/innitialValues/PatientSearchFormValues';
 
 class PatientSearch extends React.Component {
 
     constructor(props) {
         super(props)
         this.state = {
+            dob: ""
         }
+    }
+
+    handleSubmit = (values) => {
+        values.dateOfBirth = this.state.dob
+        console.log(JSON.stringify(values))
+    };
+
+    handleDatePickerChange = (...e) => {
+        this.setState({
+            dob: e[1],
+        });
     }
 
     render() {
         return (
             <>
                 <Grid fullWidth={true}>
-                    <Column lg={3} md={4} sm={4}>
-                        <Form>
-                            <FormLabel>
-                                <Heading size="sm">
-                                    <FormattedMessage id="patient.label.search" />
-                                </Heading>
-                            </FormLabel>
-                            <TextInput labelText="Lab Number" id="test" className="inputText" />
-                            <TextInput labelText="Patient Id" id="test" className="inputText" />
-                            <TextInput labelText="Last Name" id="test" className="inputText" />
-                            <TextInput labelText="First Name" id="test" className="inputText" />
-                            <DatePicker dateFormat="d/m/Y" datePickerType="single" light={false}>
-                                <DatePickerInput
-                                    id="date-picker-default-id"
-                                    placeholder="dd/mm/yyyy"
-                                    labelText="Date of Birth"
-                                    type="text" />
-                            </DatePicker>
-                            <ContentSwitcher  onChange={console.log}>
-                                <Switch name={'first'} text='Male' />
-                                <Switch name={'second'} text='Female' />
-                            </ContentSwitcher>
-                            <Button type="submit" >
-                                <FormattedMessage id="label.button.submit" />
-                            </Button>
-                        </Form>
+                    <Column lg={3}>
+                        <Formik
+                            initialValues={PatientSearchFormValues}
+                            //validationSchema={}
+                            onSubmit={this.handleSubmit}
+                            onChange
+                        >
+                            {({ values,
+                                errors,
+                                touched,
+                                handleChange,
+                                handleBlur,
+                                handleSubmit }) => (
+                                <Form
+                                    onSubmit={handleSubmit}
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}>
+                                    <Stack gap={2}>
+                                        <FormLabel>
+                                            <Heading >
+                                                <FormattedMessage id="patient.label.search" />
+                                            </Heading>
+                                        </FormLabel>
+                                        <Field name="labNumber"
+                                        >
+                                            {({ field }) =>
+                                                <TextInput name={field.name} labelText="Lab Number" id="test" className="inputText" />
+                                            }
+                                        </Field>
+                                        <Field name="patientId"
+                                        >
+                                            {({ field }) =>
+                                                <TextInput name={field.name} labelText="Patient Id" id="test" className="inputText" />
+                                            }
+                                        </Field>
+                                        <Field name="lastName"
+                                        >
+                                            {({ field }) =>
+                                                <TextInput name={field.name} labelText="Last Name" id="test" className="inputText" />
+                                            }
+                                        </Field>
+                                        <Field name="firstName"
+                                        >
+                                            {({ field }) =>
+                                                <TextInput name={field.name} labelText="First Name" id="test" className="inputText" />
+                                            }
+                                        </Field>
+                                        <Field name="dateOfBirth"
+                                        >
+                                            {({ field }) =>
+                                                <DatePicker onChange={this.handleDatePickerChange} name={field.name} dateFormat="d/m/Y" datePickerType="single" light={true} className="inputText">
+                                                    <DatePickerInput
+                                                        id="date-picker-default-id"
+                                                        placeholder="dd/mm/yyyy"
+                                                        labelText="Date of Birth"
+                                                        type="text"
+                                                        name={field.name}
+
+                                                    />
+                                                </DatePicker>
+                                            }
+                                        </Field>
+                                        <Field name="gender"
+                                        >
+                                            {({ field }) =>
+                                                <RadioButtonGroup
+                                                    defaultSelected=""
+                                                    legendText="Gender"
+                                                    name={field.name}
+                                                >
+                                                    <RadioButton
+                                                        id="radio-1"
+                                                        labelText="Male"
+                                                        value="M"
+                                                    />
+                                                    <RadioButton
+                                                        id="radio-2"
+                                                        labelText="Female"
+                                                        value="F"
+                                                    />
+                                                </RadioButtonGroup>
+                                            }
+                                        </Field>
+                                        <Button type="submit" id="submit">
+                                            <FormattedMessage id="label.button.submit" />
+                                        </Button>
+                                    </Stack>
+                                </Form>
+                            )}
+                        </Formik>
+                    </Column>
+                    <Column></Column>
+                    <Column lg={12} >
+                        <DataTable rows={rowData} headers={headerData}>
+                            {({ rows, headers, getHeaderProps, getTableProps }) => (
+                                <TableContainer title="Patient Results">
+                                    <Table {...getTableProps()}>
+                                        <TableHead>
+                                            <TableRow>
+                                                <TableHeader>
+                                                </TableHeader>
+                                                {headers.map((header) => (
+                                                    <TableHeader {...getHeaderProps({ header })}>
+                                                        {header.header}
+                                                    </TableHeader>
+                                                ))}
+                                            </TableRow>
+                                        </TableHead>
+                                        <TableBody>
+
+                                            {rows.map((row) => (
+                                                <TableRow key={row.id}>
+                                                    <TableCell > <RadioButtonGroup name="radio-button-group"><RadioButton labelText="" id={row.id} /></RadioButtonGroup></TableCell>
+                                                    {row.cells.map((cell) => (
+                                                        <TableCell key={cell.id}>{cell.value}</TableCell>
+                                                    ))}
+                                                </TableRow>
+                                            ))}
+
+                                        </TableBody>
+                                    </Table>
+                                </TableContainer>
+                            )}
+                        </DataTable>
                     </Column>
                 </Grid>
+
             </>
 
         );
