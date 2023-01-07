@@ -31,11 +31,16 @@ fi
 #build and package application
 if [ $dockerBuild == true ]
 then
+	dockerfile="Dockerfile"
+	if [ -f "${DIR}/Dockerfile.prod" ]; then
+		echo "production dockerfile found"
+    	dockerfile="Dockerfile.prod"
+	fi
 	if [ -z "${TAG}" ]
 	then
-		docker build . 
+		docker build --file ${dockerfile} . 
 	else
-		docker build -t ${TAG} . 
+		docker build --file ${dockerfile} -t ${TAG} . 
 	fi
 else
 	mvn clean install -DskipTests

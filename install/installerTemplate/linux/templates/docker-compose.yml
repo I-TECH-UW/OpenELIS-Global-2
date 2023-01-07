@@ -170,10 +170,9 @@ services:
     frontend.openelis.org:
        image: openelisglobal-frontend
        ports:
-         - 3000:3000
+         - 3000:80
        networks:
          - openelis-network
-       tty: true  
         
     autoheal:
         container_name: [% autoheal_name %]

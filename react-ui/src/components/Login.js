@@ -67,6 +67,7 @@ class Login extends React.Component {
   doLogin = (data) => {
     fetch(config.serverBaseUrl + "/ValidateLogin?apiCall=true", {
       //includes the browser sessionId in the Header for Authentication on the backend server
+      credentials: 'include',
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
@@ -106,6 +107,7 @@ class Login extends React.Component {
                   onSubmit={(values, actions) => {
                     fetch(config.serverBaseUrl + "/LoginPage", {
                       //includes the browser sessionId in the Header for Authentication on the backend server
+                      credentials: 'include',
                       method: "GET",
                     })
                       .then((response) => response.status)
