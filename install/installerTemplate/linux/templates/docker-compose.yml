@@ -154,6 +154,7 @@ services:
 
 
     proxy.openelis.org:
+        container_name: openelisglobal-proxy
         image: nginx:1.15-alpine
         ports:
         - 80:80
@@ -168,11 +169,18 @@ services:
         restart: unless-stopped  
         
     frontend.openelis.org:
+       container_name: openelisglobal-frontend
        image: openelisglobal-frontend
        ports:
          - 3000:80
        networks:
          - openelis-network
+       restart: unless-stopped  
+       logging:
+            driver: "local"
+            options:
+              max-size: "20m"
+              max-file: "50"
         
     autoheal:
         container_name: [% autoheal_name %]
