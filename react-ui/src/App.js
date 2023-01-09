@@ -128,7 +128,7 @@ class App extends React.Component {
                   path="/"
                   exact
                   component={() => <Home />}
-                  role="null"
+                  role=""
                   config={this.state.config}
                   onAuth={this.onAuth}
                   logout={this.logout}
