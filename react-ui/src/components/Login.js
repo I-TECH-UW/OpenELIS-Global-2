@@ -12,6 +12,7 @@ import {
   Column,
   TextInput,
   Button,
+  Stack
 } from "@carbon/react";
 import { Formik, Field } from "formik";
 import { useNavigate } from "react-router-dom";
@@ -125,6 +126,7 @@ class Login extends React.Component {
                     handleSubmit,
                   }) => (
                     <Form onSubmit={handleSubmit} onChange={handleChange}>
+                       <Stack gap={5}>
                       <FormLabel>
                         <Heading>
                           <FormattedMessage id="login.title" />
@@ -162,6 +164,7 @@ class Login extends React.Component {
                       <Button type="submit" disabled={!isValid}>
                         <FormattedMessage id="label.button.submit" />
                       </Button>
+                      </Stack>
                     </Form>
                   )}
                 </Formik>

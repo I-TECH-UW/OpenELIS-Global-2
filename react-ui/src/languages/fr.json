@@ -8,5 +8,7 @@
     "login.msg.password": "Mot de passe",
     "login.msg.username.missing": "Votre nom d'utilisateur requis",
     "login.msg.password.missing": "Votre mot de passe requis",
-    "login.notice.message": "Veuillez entrer dans le logiciel de Syst\u00E8me d'Information \u00C9lectronique de Laboratoire:"
+    "login.notice.message": "Veuillez entrer dans le logiciel de Syst\u00E8me d'Information \u00C9lectronique de Laboratoire:" ,
+    "patient.label.modify" : "Ajouter/Modifier un patient" ,
+    "patient.label.search" : "Chercher"
 }

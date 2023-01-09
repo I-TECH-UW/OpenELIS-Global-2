@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Form, Stack, TextInput, Select, SelectItem, Button, InlineLoading, IconButton, Search, Toggle, Switch } from '@carbon/react';
 import { Add, Subtract } from '@carbon/react/icons';
 import Autocomplete from "../inputComponents/AutoComplete";
-import RuleBuilderFormValues from "../formModel/ruleBuilder/RuleBuilderFormValues";
+import RuleBuilderFormValues from "../formModel/innitialValues/RuleBuilderFormValues";
 import { actionOptions ,relationOptions ,overallOptions } from "../data/ReflexRuleOptions";
 import { getFromOpenElisServer, postToOpenElisServer } from "../utils/Utils";
 

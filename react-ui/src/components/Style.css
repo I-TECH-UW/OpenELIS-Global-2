@@ -36,6 +36,11 @@ li.clickableUserDetails:hover  {
   margin-right: 5%;
 }
 
+.pageContent {
+  margin-left: 2%;
+  margin-right: 5%;
+}
+
 /* Reflext tests */
 .inputText {
   --cds-text-primary: black;

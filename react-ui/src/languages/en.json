@@ -8,5 +8,7 @@
     "login.msg.password": "Password",
     "login.msg.username.missing": "A username is required",
     "login.msg.password.missing": "A password is required",
-    "login.notice.message": "Notice: Access to this service is for authorized personnel only. If you do not have the expressed authorization of the administrator, you must exit now. This organization prohibits unauthorized access, disclosure, duplication, modification, diversion, destruction, loss, misuse, or theft of its information."
+    "login.notice.message": "Notice: Access to this service is for authorized personnel only. If you do not have the expressed authorization of the administrator, you must exit now. This organization prohibits unauthorized access, disclosure, duplication, modification, diversion, destruction, loss, misuse, or theft of its information.",
+    "patient.label.modify" : "Add/Modify Patient" ,
+    "patient.label.search" : "Search"
 }
