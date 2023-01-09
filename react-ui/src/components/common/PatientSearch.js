@@ -1,6 +1,7 @@
 import React from 'react'
 import { FormattedMessage, injectIntl } from 'react-intl'
 import "../Style.css";
+import { getFromOpenElisServer } from '../utils/Utils';
 
 import {
     Heading,
@@ -18,11 +19,12 @@ import {
     Switch,
     Stack,
     DataTable, TableContainer, Table, TableHead, TableRow, TableHeader, TableBody, TableCell,
-    Checkbox
+    Checkbox,
+    Section
 
 } from '@carbon/react';
 
-import { rowData, headerData } from './sampleData';
+import { patientSearchHeaderData } from '../data/PatientTableData';
 import { Formik, Field, FieldArray, ErrorMessage } from "formik";
 import PatientSearchFormValues from '../formModel/innitialValues/PatientSearchFormValues';
 
@@ -31,19 +33,34 @@ class PatientSearch extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            dob: ""
+            dob: "",
+            patientSearchResults: []
         }
     }
 
     handleSubmit = (values) => {
         values.dateOfBirth = this.state.dob
-        console.log(JSON.stringify(values))
+        var searchURL = "/rest/patientsearch?" + "lastName=" + values.lastName + "&firstName=" + values.firstName + "&STNumber=" + values.patientId + "&subjectNumber=" + values.patientId + "&nationalID=" + values.patientId + "&labNumber=" + values.labNumber + "&dateOfBirth=" + values.dateOfBirth + "&gender=" + values.gender
+        getFromOpenElisServer(searchURL, this.fetchPatientResults)
     };
+
+    fetchPatientResults = (patientsResults) => {
+        patientsResults.forEach(item => item.id = item.patientID);
+        // console.log(JSON.stringify(patientsResults))
+        this.setState({ patientSearchResults: patientsResults })
+    }
 
     handleDatePickerChange = (...e) => {
         this.setState({
             dob: e[1],
         });
+    }
+
+    patientSelected = (e) => {
+        const patientSelected = this.state.patientSearchResults.find((patient) => {
+            return patient.id == e.target.id;
+        });
+        this.props.getSelectedPatient(patientSelected)
     }
 
     render() {
@@ -69,9 +86,15 @@ class PatientSearch extends React.Component {
                                     onBlur={handleBlur}>
                                     <Stack gap={2}>
                                         <FormLabel>
-                                            <Heading >
-                                                <FormattedMessage id="patient.label.search" />
-                                            </Heading>
+                                            <Section>
+                                                <Section>
+                                                    <Section>
+                                                        <Heading>
+                                                            <FormattedMessage id="patient.label.search" />
+                                                        </Heading>
+                                                    </Section>
+                                                </Section>
+                                            </Section>
                                         </FormLabel>
                                         <Field name="labNumber"
                                         >
@@ -134,7 +157,7 @@ class PatientSearch extends React.Component {
                                             }
                                         </Field>
                                         <Button type="submit" id="submit">
-                                            <FormattedMessage id="label.button.submit" />
+                                            <FormattedMessage id="patient.label.search" />
                                         </Button>
                                     </Stack>
                                 </Form>
@@ -143,7 +166,7 @@ class PatientSearch extends React.Component {
                     </Column>
                     <Column></Column>
                     <Column lg={12} >
-                        <DataTable rows={rowData} headers={headerData}>
+                        <DataTable rows={this.state.patientSearchResults} headers={patientSearchHeaderData}>
                             {({ rows, headers, getHeaderProps, getTableProps }) => (
                                 <TableContainer title="Patient Results">
                                     <Table {...getTableProps()}>
@@ -159,15 +182,25 @@ class PatientSearch extends React.Component {
                                             </TableRow>
                                         </TableHead>
                                         <TableBody>
-
-                                            {rows.map((row) => (
-                                                <TableRow key={row.id}>
-                                                    <TableCell > <RadioButtonGroup name="radio-button-group"><RadioButton labelText="" id={row.id} /></RadioButtonGroup></TableCell>
-                                                    {row.cells.map((cell) => (
-                                                        <TableCell key={cell.id}>{cell.value}</TableCell>
+                                            {rows.length > 0 ? (
+                                                <>
+                                                    {rows.map((row) => (
+                                                        <TableRow key={row.id}>
+                                                            <TableCell > <RadioButton name="radio-group" onClick={this.patientSelected} labelText="" id={row.id} /></TableCell>
+                                                            {row.cells.map((cell) => (
+                                                                <TableCell key={cell.id}>{cell.value}</TableCell>
+                                                            ))}
+                                                        </TableRow>
                                                     ))}
+                                                </>
+                                            ) : (
+                                                <TableRow>
+                                                    <TableCell colSpan={7} >
+                                                        No patients found matching search terms
+                                                    </TableCell>
                                                 </TableRow>
-                                            ))}
+
+                                            )}
 
                                         </TableBody>
                                     </Table>
