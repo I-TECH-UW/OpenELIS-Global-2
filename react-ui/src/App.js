@@ -20,7 +20,7 @@ import messages_fr from "./languages/fr.json";
 import config from "./config.json";
 import { SecureRoute } from "./components/security";
 import "./index.scss";
-import PatientMgt from "./components/PatientMgt";
+import PatientManagement from "./components/PatientManagement";
 
 let i18nConfig = {
   locale: navigator.language.split(/[-_]/)[0],
@@ -147,7 +147,7 @@ class App extends React.Component {
                 <SecureRoute
                   path="/PatientManagement"
                   exact
-                  component={() => <PatientMgt />}
+                  component={() => <PatientManagement />}
                   role="Reception"
                   config={this.state.config}
                   onAuth={this.onAuth}
