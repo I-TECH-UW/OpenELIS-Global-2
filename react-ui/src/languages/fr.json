@@ -1,7 +1,8 @@
 {
     "language.select.label": "French" ,
-    "language.select.admin": "Admin - French",
     "label.button.submit": "Connecter",
+    "label.button.save": "Sauver",
+    "label.button.search" : "Chercher" ,
     "login.title": "Identifiant",
     "login.subtitle": "Identifiant",
     "login.msg.username": "Nom d'utilisateur",
@@ -10,5 +11,6 @@
     "login.msg.password.missing": "Votre mot de passe requis",
     "login.notice.message": "Veuillez entrer dans le logiciel de Syst\u00E8me d'Information \u00C9lectronique de Laboratoire:" ,
     "patient.label.modify" : "Ajouter/Modifier un patient" ,
-    "patient.label.search" : "Chercher"
+    "patient.label.info" : "Informations sur les patients",
+    "breadcrumb.home" : "Domicile"
 }

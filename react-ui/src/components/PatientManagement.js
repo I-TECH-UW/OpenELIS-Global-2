@@ -3,18 +3,29 @@ import { FormattedMessage, injectIntl } from 'react-intl'
 import "./Style.css";
 
 import {
-
     Heading,
     Form,
     FormLabel,
-    Section,
+    TextInput,
+    Button,
     Grid,
-    Column
+    Column,
+    DatePicker,
+    DatePickerInput,
+    RadioButton,
+    RadioButtonGroup,
+    Stack,
+    DataTable, TableContainer, Table, TableHead, TableRow, TableHeader, TableBody, TableCell,
+    Section ,
+    Pagination
 
 } from '@carbon/react';
-import PatientSearch from './common/PatientSearch';
+import PatientSearch from './common/PatientSearchForm';
+import { Formik, Field, FieldArray, ErrorMessage } from "formik";
+import PatientSearchFormValues from './formModel/innitialValues/PatientSearchFormValues';
+import CreatePatientForm from './common/CreatePatientForm';
 
-class PatientMgt extends React.Component {
+class PatientManagement extends React.Component {
 
     constructor(props) {
         super(props)
@@ -44,17 +55,19 @@ class PatientMgt extends React.Component {
                 <br></br>
        
                 <PatientSearch getSelectedPatient={this.getSelectedPatient}></PatientSearch>
+                
                 <Grid fullWidth={true}>
-                    <Column lg={12}>
+                    {/* <Column lg={16}>
                         <div> {this.state.selectedPatient.firstName} &nbsp; 
                          {this.state.selectedPatient.lastName} &nbsp; 
                         {this.state.selectedPatient.gender} &nbsp; 
                          {this.state.selectedPatient.dob} &nbsp; 
                          {this.state.selectedPatient.subjectNumber} &nbsp; 
                         {this.state.selectedPatient.nationalId} </div>
-                    </Column >
+                    </Column > */}
                 </Grid>
-
+                <br></br>
+                <CreatePatientForm></CreatePatientForm>
             </>
 
         );
@@ -62,4 +75,4 @@ class PatientMgt extends React.Component {
     }
 }
 
-export default injectIntl(PatientMgt)
+export default injectIntl(PatientManagement)

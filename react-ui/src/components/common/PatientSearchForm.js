@@ -15,26 +15,26 @@ import {
     DatePickerInput,
     RadioButton,
     RadioButtonGroup,
-    ContentSwitcher,
-    Switch,
     Stack,
     DataTable, TableContainer, Table, TableHead, TableRow, TableHeader, TableBody, TableCell,
-    Checkbox,
-    Section
+    Section ,
+    Pagination
 
 } from '@carbon/react';
 
-import { patientSearchHeaderData } from '../data/PatientTableData';
+import { patientSearchHeaderData} from '../data/PatientTableData';
 import { Formik, Field, FieldArray, ErrorMessage } from "formik";
 import PatientSearchFormValues from '../formModel/innitialValues/PatientSearchFormValues';
 
-class PatientSearch extends React.Component {
+class PatientSearchForm extends React.Component {
 
     constructor(props) {
         super(props)
         this.state = {
             dob: "",
-            patientSearchResults: []
+            patientSearchResults: [],
+            page: 1,
+            pageSize: 5,
         }
     }
 
@@ -46,7 +46,7 @@ class PatientSearch extends React.Component {
 
     fetchPatientResults = (patientsResults) => {
         patientsResults.forEach(item => item.id = item.patientID);
-        // console.log(JSON.stringify(patientsResults))
+        console.log(JSON.stringify(patientsResults))
         this.setState({ patientSearchResults: patientsResults })
     }
 
@@ -63,11 +63,28 @@ class PatientSearch extends React.Component {
         this.props.getSelectedPatient(patientSelected)
     }
 
+    handlePageChange = (pageInfo) => {
+        if (this.state.page != pageInfo.page) {
+            this.setState({ page: pageInfo.page });
+        }
+
+        if (this.state.pageSize != pageInfo.pageSize) {
+            this.setState({ pageSize: pageInfo.pageSize });
+        }
+
+    };
+
+    handlePerPageChange = (newPerPage) => {
+        this.setState({ perPage: newPerPage });
+    };
+
     render() {
+        const { page, pageSize } = this.state;
         return (
+
             <>
-                <Grid fullWidth={true}>
-                    <Column lg={3}>
+                <Grid  fullWidth={true} className="gridBoundary">
+                    <Column  lg={3}>
                         <Formik
                             initialValues={PatientSearchFormValues}
                             //validationSchema={}
@@ -80,7 +97,7 @@ class PatientSearch extends React.Component {
                                 handleChange,
                                 handleBlur,
                                 handleSubmit }) => (
-                                <Form
+                                <Form 
                                     onSubmit={handleSubmit}
                                     onChange={handleChange}
                                     onBlur={handleBlur}>
@@ -90,7 +107,7 @@ class PatientSearch extends React.Component {
                                                 <Section>
                                                     <Section>
                                                         <Heading>
-                                                            <FormattedMessage id="patient.label.search" />
+                                                            <FormattedMessage id="label.button.search" />
                                                         </Heading>
                                                     </Section>
                                                 </Section>
@@ -99,25 +116,25 @@ class PatientSearch extends React.Component {
                                         <Field name="labNumber"
                                         >
                                             {({ field }) =>
-                                                <TextInput name={field.name} labelText="Lab Number" id="test" className="inputText" />
+                                                <TextInput name={field.name} labelText="Lab Number" id={field.name} className="inputText" />
                                             }
                                         </Field>
                                         <Field name="patientId"
                                         >
                                             {({ field }) =>
-                                                <TextInput name={field.name} labelText="Patient Id" id="test" className="inputText" />
+                                                <TextInput name={field.name} labelText="Patient Id" id={field.name} className="inputText" />
                                             }
                                         </Field>
                                         <Field name="lastName"
                                         >
                                             {({ field }) =>
-                                                <TextInput name={field.name} labelText="Last Name" id="test" className="inputText" />
+                                                <TextInput name={field.name} labelText="Last Name" id={field.name} className="inputText" />
                                             }
                                         </Field>
                                         <Field name="firstName"
                                         >
                                             {({ field }) =>
-                                                <TextInput name={field.name} labelText="First Name" id="test" className="inputText" />
+                                                <TextInput name={field.name} labelText="First Name" id={field.name} className="inputText" />
                                             }
                                         </Field>
                                         <Field name="dateOfBirth"
@@ -157,7 +174,7 @@ class PatientSearch extends React.Component {
                                             }
                                         </Field>
                                         <Button type="submit" id="submit">
-                                            <FormattedMessage id="patient.label.search" />
+                                            <FormattedMessage id="label.button.search" />
                                         </Button>
                                     </Stack>
                                 </Form>
@@ -165,8 +182,8 @@ class PatientSearch extends React.Component {
                         </Formik>
                     </Column>
                     <Column></Column>
-                    <Column lg={12} >
-                        <DataTable rows={this.state.patientSearchResults} headers={patientSearchHeaderData}>
+                    <Column  lg={12} >
+                        <DataTable rows={this.state.patientSearchResults} headers={patientSearchHeaderData} >
                             {({ rows, headers, getHeaderProps, getTableProps }) => (
                                 <TableContainer title="Patient Results">
                                     <Table {...getTableProps()}>
@@ -182,9 +199,8 @@ class PatientSearch extends React.Component {
                                             </TableRow>
                                         </TableHead>
                                         <TableBody>
-                                            {rows.length > 0 ? (
                                                 <>
-                                                    {rows.map((row) => (
+                                                    {rows.slice((page - 1) * pageSize).slice(0, pageSize).map((row) => (
                                                         <TableRow key={row.id}>
                                                             <TableCell > <RadioButton name="radio-group" onClick={this.patientSelected} labelText="" id={row.id} /></TableCell>
                                                             {row.cells.map((cell) => (
@@ -193,23 +209,15 @@ class PatientSearch extends React.Component {
                                                         </TableRow>
                                                     ))}
                                                 </>
-                                            ) : (
-                                                <TableRow>
-                                                    <TableCell colSpan={7} >
-                                                        No patients found matching search terms
-                                                    </TableCell>
-                                                </TableRow>
-
-                                            )}
 
                                         </TableBody>
                                     </Table>
                                 </TableContainer>
                             )}
                         </DataTable>
+                        <Pagination onChange={this.handlePageChange} page={this.state.page}  pageSize ={this.state.pageSize} pageSizes={[5,10,20,30]} totalItems={this.state.patientSearchResults.length}></Pagination>
                     </Column>
                 </Grid>
-
             </>
 
         );
@@ -217,4 +225,4 @@ class PatientSearch extends React.Component {
     }
 }
 
-export default injectIntl(PatientSearch)
+export default injectIntl(PatientSearchForm)
