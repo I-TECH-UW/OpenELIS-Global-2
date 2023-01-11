@@ -9,7 +9,7 @@ import { IntlProvider } from "react-intl";
 import Layout from "./components/layout/Layout";
 import Home from "./components/Home";
 import Login from "./components/Login";
-import { Admin } from "./components";
+import Admin from "./components/admin/Admin";
 import {
   getFromOpenElisServer,
   postToOpenElisServer,
@@ -20,6 +20,7 @@ import messages_fr from "./languages/fr.json";
 import config from "./config.json";
 import { SecureRoute } from "./components/security";
 import "./index.scss";
+import PatientManagement from "./components/patient/PatientManagement";
 
 let i18nConfig = {
   locale: navigator.language.split(/[-_]/)[0],
@@ -133,7 +134,7 @@ class App extends React.Component {
                   path="/"
                   exact
                   component={() => <Home />}
-                  role="null"
+                  role=""
                   config={this.state.config}
                   onAuth={this.onAuth}
                   logout={this.logout}
@@ -144,6 +145,16 @@ class App extends React.Component {
                   exact
                   component={() => <Admin />}
                   role="Global Administrator"
+                  config={this.state.config}
+                  onAuth={this.onAuth}
+                  logout={this.logout}
+                  isLoggedIn={this.isLoggedIn}
+                />
+                <SecureRoute
+                  path="/PatientManagement"
+                  exact
+                  component={() => <PatientManagement />}
+                  role="Reception"
                   config={this.state.config}
                   onAuth={this.onAuth}
                   logout={this.logout}

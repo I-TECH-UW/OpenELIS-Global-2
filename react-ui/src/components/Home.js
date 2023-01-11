@@ -1,6 +1,8 @@
 import React from 'react'
 import { FormattedMessage, injectIntl } from 'react-intl'
-import { Breadcrumb, BreadcrumbItem } from '@carbon/react';
+import { Breadcrumb, BreadcrumbItem, Grid } from '@carbon/react';
+
+
 
 class Home extends React.Component {
 
@@ -9,13 +11,14 @@ class Home extends React.Component {
         this.state = {
         }
     }
+
     render() {
         return (
-            <>
+            <><Grid>
                 <Breadcrumb>
                     <BreadcrumbItem href="/">Home</BreadcrumbItem>
                 </Breadcrumb>
-                <b><FormattedMessage id="language.select.label" /></b>
+            </Grid>
             </>
         );
 

@@ -26,22 +26,19 @@ class SecureRoute extends React.Component {
             { credentials: "include" }
         )
             .then((response) => response.json()).then(jsonResp => {
-                console.log(JSON.stringify(jsonResp)) 
+                console.log(JSON.stringify(jsonResp))
                 if (jsonResp.authenticated) {
                     console.info("Authenticated");
-                    console.log(JSON.stringify(jsonResp))
+                   // console.log(JSON.stringify(jsonResp))
                     this.setState({ authenticated: true, userSessionDetails: jsonResp });
                     this.props.onAuth(jsonResp);
-                    localStorage.setItem("CSRF" , jsonResp.CSRF)
+                    localStorage.setItem("CSRF", jsonResp.csrf)
                     const hasRole = !!jsonResp.roles.find(role => {
-                        return role.trim() === this.props.role
+                        return role.trim() === this.props.role 
                     })
-                    if (hasRole) {
+                    if (hasRole || !this.props.role ) {
                         console.info("Access Allowed");
-                    } else if (this.props.role == "null") {
-                        console.info("Access Allowed");
-                    }
-                    else {
+                    } else {
                         const options = {
                             title: 'Access Denied',
                             message: 'You do not have access to this module ,please contact your system administrator',
@@ -49,7 +46,7 @@ class SecureRoute extends React.Component {
                                 {
                                     label: 'OK',
                                     onClick: () => {
-                                       window.location.href = window.location.origin
+                                        window.location.href = window.location.origin
                                     }
                                 }
                             ],
@@ -58,6 +55,7 @@ class SecureRoute extends React.Component {
                         }
                         confirmAlert(options);
                     }
+
                 } else {
                     window.location.href = this.props.config.loginRedirect;
                 }
@@ -70,7 +68,7 @@ class SecureRoute extends React.Component {
                         {
                             label: 'OK',
                             onClick: () => {
-                               window.location.href = window.location.origin
+                                window.location.href = window.location.origin
                             }
                         }
                     ],
@@ -118,10 +116,10 @@ class SecureRoute extends React.Component {
         if (!this.state.authenticated) {
             return (<div>Not authenticated</div>);
         } else {
-            const hasRole = this.state.role || !!this.state.userSessionDetails.roles.find(role => {
+            const hasRole =  !!this.state.userSessionDetails.roles.find(role => {
                 return role.trim() === this.props.role
             })
-            if (hasRole) {
+            if (hasRole || !this.props.role) {
                 console.info("Access Allowed");
                 return (
                     <>
@@ -133,14 +131,14 @@ class SecureRoute extends React.Component {
                             onAction={this.handleOnAction}
                             debounce={250}
                         />
-                        <Route {...this.props}/>
+                        <Route {...this.props} />
                     </>
                 );
             } else {
                 return <></>
             }
 
-        } 
+        }
     }
 
 }

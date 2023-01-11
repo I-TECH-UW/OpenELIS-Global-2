@@ -2,7 +2,8 @@ import { useState, useEffect, useRef } from "react";
 import { Form, Stack, TextInput, Select, SelectItem, Button, InlineLoading, IconButton, Search, Toggle, Switch } from '@carbon/react';
 import { Add, Subtract } from '@carbon/react/icons';
 import Autocomplete from "../inputComponents/AutoComplete";
-import RuleBuilderFormValues from "../formModel/ruleBuilder/RuleBuilderFormValues";
+import RuleBuilderFormValues from "../formModel/innitialValues/RuleBuilderFormValues";
+import { actionOptions ,relationOptions ,overallOptions } from "../data/ReflexRuleOptions";
 import { getFromOpenElisServer, postToOpenElisServer } from "../utils/Utils";
 
 function ReflexRule() {
@@ -12,18 +13,21 @@ function ReflexRule() {
     actions: "actions"
   }
   const conditionsObj = {
-    sample: "",
-    test: "",
+    id : null ,
+    sampleId: "",
+    testName: "",
     testId: "",
     relation: "",
     value: ""
   }
   const actionObj = {
+    id : null ,
     action: "",
     reflexResult: "",
     reflexResultTestId: ""
   }
   const ruleObj = {
+    id : null ,
     ruleName: "",
     overall: "",
     toggled: true,
@@ -42,6 +46,7 @@ function ReflexRule() {
   useEffect(() => {
     getFromOpenElisServer("/rest/tests", fetchTests)
     getFromOpenElisServer("/rest/samples", fetchSamples)
+    getFromOpenElisServer("/rest/reflexrules", fetchReflexRules)
 
     return () => { // This code runs when component is unmounted
       componentMounted.current = false;
@@ -95,11 +100,10 @@ function ReflexRule() {
     alert(status)
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = (event ,index) => {
     event.preventDefault();
-    //setRuleList([...ruleList, { rule: "" }]);
-     console.log(JSON.stringify(ruleList))
-     postToOpenElisServer("/rest/reflexrule" ,JSON.stringify(ruleList) , handlePost)
+    console.log(JSON.stringify(ruleList[index]))
+    postToOpenElisServer("/rest/reflexrule" ,JSON.stringify(ruleList[index]) , handlePost)
   };
 
   const fetchTests = (testList) => {
@@ -114,6 +118,15 @@ function ReflexRule() {
     }
   }
 
+  const fetchReflexRules = (reflexRuleList) => {
+    if (componentMounted.current) {
+      console.log(JSON.stringify(reflexRuleList))
+      if (reflexRuleList.length > 0) {
+        setRuleList(reflexRuleList);
+      }
+    }
+  }
+
   return (
     <>
       {ruleList.map((rule, index) => (
@@ -121,7 +134,7 @@ function ReflexRule() {
         <div key={index} className="rules">
           <div className="first-division">
             <Form
-              onSubmit={handleSubmit}
+              onSubmit={(e) => handleSubmit(e, index)}
             >
               <Stack gap={7}>
                 <div className="ruleBody">
@@ -173,14 +186,13 @@ function ReflexRule() {
                                   text=""
                                   value=""
                                 />
-                              <SelectItem
-                                text="Any"
-                                value="any"
-                              />
-                              <SelectItem
-                                text="All"
-                                value="all"
-                              />
+                               {overallOptions.map((overall, overall_index) => (
+                                  <SelectItem
+                                    text={overall.label}
+                                    value={overall.value}
+                                    key={overall_index}
+                                  />
+                                ))}
                             </Select>
                           </div>
                           <div >
@@ -195,9 +207,9 @@ function ReflexRule() {
                             <div >
                               <Select
                                 id={index + "_" + condition_index + "_sample"}
-                                name="sample"
+                                name="sampleId"
                                 labelText=""
-                                value={condition.sample}
+                                value={condition.sampleId}
                                 className="inputSelect"
                                 onChange={(e) => handleRuleFieldItemChange(e, index, condition_index, FIELD.conditions)}
                                 required
@@ -220,10 +232,10 @@ function ReflexRule() {
                             </div>
                             <div>
                               <Autocomplete
-                                stateValue={condition.test}
+                                stateValue={condition.testName}
                                 handleChange={handleRuleFieldItemChange}
                                 index={index}
-                                name="test"
+                                name="testName"
                                 idField="testId"
                                 class="autocomplete1"
                                 item_index={condition_index}
@@ -249,14 +261,13 @@ function ReflexRule() {
                                   text=""
                                   value=""
                                 />
-                                <SelectItem
-                                  text="Equlas"
-                                  value="equals"
-                                />
-                                <SelectItem
-                                  text="NotEqual"
-                                  value="not_equals"
-                                />
+                                 {relationOptions.map((relation, relation_index) => (
+                                  <SelectItem
+                                    text={relation.label}
+                                    value={relation.value}
+                                    key={ relation_index}
+                                  />
+                                ))}
                               </Select>
                             </div>
                             <div>
@@ -327,14 +338,13 @@ function ReflexRule() {
                                   text=""
                                   value=""
                                 />
-                                <SelectItem
-                                  text="Add Test To Order"
-                                  value="add_test"
-                                />
-                                <SelectItem
-                                  text="Add Notification"
-                                  value="notifocation"
-                                />
+                                 {actionOptions.map((action, action_index) => (
+                                  <SelectItem
+                                    text={action.label}
+                                    value={action.value}
+                                    key={action_index}
+                                  />
+                                ))}
                               </Select>
                             </div>
                             <div>

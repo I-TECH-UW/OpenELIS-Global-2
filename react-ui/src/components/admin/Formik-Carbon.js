@@ -4,8 +4,8 @@ import { Add, Subtract } from '@carbon/react/icons';
 import Autocomplete from "../inputComponents/AutoComplete";
 import { Formik, Field, FieldArray, ErrorMessage } from "formik";
 import config from '../../config.json'
-import RuleBuilderFormValues from "../formModel/ruleBuilder/RuleBuilderFormValues";
-import RuleBuilderValidationSchema from "../formModel/ruleBuilder/RuleBuilderValidationSchema";
+import RuleBuilderFormValues from "../formModel/innitialValues/RuleBuilderFormValues";
+import RuleBuilderValidationSchema from "../formModel/ValidationScheme/RuleBuilderValidationSchema";
 import * as Yup from 'yup';
 
 function ReflexRule() {
