@@ -8,6 +8,7 @@ import java.util.Comparator;
 
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.provider.query.PatientSearchResults;
+import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.observationhistory.service.ObservationHistoryService;
 import org.openelisglobal.observationhistory.service.ObservationHistoryServiceImpl.ObservationType;
 import org.openelisglobal.observationhistory.valueholder.ObservationHistory;
@@ -43,7 +44,7 @@ public class PatientSearchRestController {
     @Autowired
     SearchResultsService searchResultsService;
 
-    @GetMapping(value = "patientsearch", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "patient-search-results", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public List<PatientSearchResults> getPatientResults(@RequestParam String lastName,
             @RequestParam String firstName, @RequestParam String STNumber, @RequestParam String subjectNumber,
@@ -57,6 +58,7 @@ public class PatientSearchRestController {
                 return Collections.<PatientSearchResults>emptyList();
             } else {
                 PatientSearchResults searchResult = getSearchResultsForPatient(patient, null);
+                searchResult.setDataSourceName(MessageUtil.getMessage("patient.local.source"));
                 results.add(searchResult);
 
             }
@@ -113,7 +115,9 @@ public class PatientSearchRestController {
             for (ObservationHistory observation : observationList) {
                 Patient patient = patientService.getData(observation.getPatientId());
                 if (patient != null) {
-                    resultList.add(getSearchResultsForPatient(patient, referringId));
+                    PatientSearchResults searchResult = getSearchResultsForPatient(patient, referringId);
+                    searchResult.setDataSourceName(MessageUtil.getMessage("patient.local.source"));
+                    resultList.add(searchResult);
                 }
 
             }

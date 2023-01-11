@@ -22,11 +22,11 @@ import {
 
 } from '@carbon/react';
 
-import { patientSearchHeaderData} from '../data/PatientTableData';
+import { patientSearchHeaderData} from '../data/PatientResultsTableHeaders';
 import { Formik, Field, FieldArray, ErrorMessage } from "formik";
-import PatientSearchFormValues from '../formModel/innitialValues/PatientSearchFormValues';
+import SearchPatientFormValues from '../formModel/innitialValues/SearchPatientFormValues';
 
-class PatientSearchForm extends React.Component {
+class SearchPatientForm extends React.Component {
 
     constructor(props) {
         super(props)
@@ -40,14 +40,19 @@ class PatientSearchForm extends React.Component {
 
     handleSubmit = (values) => {
         values.dateOfBirth = this.state.dob
-        var searchURL = "/rest/patientsearch?" + "lastName=" + values.lastName + "&firstName=" + values.firstName + "&STNumber=" + values.patientId + "&subjectNumber=" + values.patientId + "&nationalID=" + values.patientId + "&labNumber=" + values.labNumber + "&dateOfBirth=" + values.dateOfBirth + "&gender=" + values.gender
-        getFromOpenElisServer(searchURL, this.fetchPatientResults)
+        var searchEndPoint = "/rest/patient-search-results?" + "lastName=" + values.lastName + "&firstName=" + values.firstName + "&STNumber=" + values.patientId + "&subjectNumber=" + values.patientId + "&nationalID=" + values.patientId + "&labNumber=" + values.labNumber + "&dateOfBirth=" + values.dateOfBirth + "&gender=" + values.gender
+        getFromOpenElisServer(searchEndPoint, this.fetchPatientResults);
     };
 
     fetchPatientResults = (patientsResults) => {
         patientsResults.forEach(item => item.id = item.patientID);
-        console.log(JSON.stringify(patientsResults))
+        //console.log(JSON.stringify(patientsResults))
         this.setState({ patientSearchResults: patientsResults })
+    }
+
+    fetchPatientDetails = (patientDetails) => {
+        console.log(JSON.stringify(patientDetails))
+        this.props.getSelectedPatient(patientDetails)
     }
 
     handleDatePickerChange = (...e) => {
@@ -58,9 +63,10 @@ class PatientSearchForm extends React.Component {
 
     patientSelected = (e) => {
         const patientSelected = this.state.patientSearchResults.find((patient) => {
-            return patient.id == e.target.id;
+            return patient.patientID == e.target.id;
         });
-        this.props.getSelectedPatient(patientSelected)
+        var searchEndPoint = "/rest/patient-details?patientID=" + patientSelected.patientID
+        getFromOpenElisServer(searchEndPoint, this.fetchPatientDetails);
     }
 
     handlePageChange = (pageInfo) => {
@@ -86,7 +92,7 @@ class PatientSearchForm extends React.Component {
                 <Grid  fullWidth={true} className="gridBoundary">
                     <Column  lg={3}>
                         <Formik
-                            initialValues={PatientSearchFormValues}
+                            initialValues={SearchPatientFormValues}
                             //validationSchema={}
                             onSubmit={this.handleSubmit}
                             onChange
@@ -225,4 +231,4 @@ class PatientSearchForm extends React.Component {
     }
 }
 
-export default injectIntl(PatientSearchForm)
+export default injectIntl(SearchPatientForm)

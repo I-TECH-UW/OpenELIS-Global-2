@@ -20,10 +20,9 @@ import {
     Pagination
 
 } from '@carbon/react';
-import PatientSearch from './common/PatientSearchForm';
-import { Formik, Field, FieldArray, ErrorMessage } from "formik";
-import PatientSearchFormValues from './formModel/innitialValues/PatientSearchFormValues';
+import SearchPatientForm from './common/SearchPatientForm';
 import CreatePatientForm from './common/CreatePatientForm';
+
 
 class PatientManagement extends React.Component {
 
@@ -54,20 +53,10 @@ class PatientManagement extends React.Component {
                 </Grid>
                 <br></br>
        
-                <PatientSearch getSelectedPatient={this.getSelectedPatient}></PatientSearch>
+                <SearchPatientForm getSelectedPatient={this.getSelectedPatient}></SearchPatientForm>
                 
-                <Grid fullWidth={true}>
-                    {/* <Column lg={16}>
-                        <div> {this.state.selectedPatient.firstName} &nbsp; 
-                         {this.state.selectedPatient.lastName} &nbsp; 
-                        {this.state.selectedPatient.gender} &nbsp; 
-                         {this.state.selectedPatient.dob} &nbsp; 
-                         {this.state.selectedPatient.subjectNumber} &nbsp; 
-                        {this.state.selectedPatient.nationalId} </div>
-                    </Column > */}
-                </Grid>
                 <br></br>
-                <CreatePatientForm></CreatePatientForm>
+                <CreatePatientForm selectedPatient={this.state.selectedPatient}></CreatePatientForm>
             </>
 
         );

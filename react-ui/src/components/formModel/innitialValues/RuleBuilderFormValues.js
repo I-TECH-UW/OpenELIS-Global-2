@@ -1,10 +1,11 @@
+// eslint-disable-next-line import/no-anonymous-default-export
 export default {
-  id : null ,
+  id: null,
   ruleName: "",
   overall: "",
   toggled: true,
   conditions: [{
-    id : null ,
+    id: null,
     sampleId: "",
     testName: "",
     testId: "",
@@ -12,7 +13,7 @@ export default {
     value: ""
   }],
   actions: [{
-    id : null,
+    id: null,
     action: "",
     reflexResult: "",
     reflexResultTestId: ""
