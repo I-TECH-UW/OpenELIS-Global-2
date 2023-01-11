@@ -1,6 +1,6 @@
 import React from 'react'
 import { FormattedMessage, injectIntl } from 'react-intl'
-import "./Style.css";
+import "../Style.css";
 
 import {
     Heading,
@@ -20,8 +20,8 @@ import {
     Pagination
 
 } from '@carbon/react';
-import SearchPatientForm from './common/SearchPatientForm';
-import CreatePatientForm from './common/CreatePatientForm';
+import SearchPatientForm from '../common/SearchPatientForm';
+import CreatePatientForm from '../common/CreatePatientForm';
 
 
 class PatientManagement extends React.Component {

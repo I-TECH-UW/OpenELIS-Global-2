@@ -1,8 +1,8 @@
 import React from 'react'
 import { FormattedMessage, injectIntl } from 'react-intl'
-import './Style.css'
-import ReflexTestManagement from './adminPage/ReflexTestManagement';
-import PathRoute from "./utils/PathRoute"
+import '../Style.css'
+import ReflexTestManagement from './ReflexTestManagement'
+import PathRoute from "../utils/PathRoute"
 import {
     SideNav,
     SideNavItems,

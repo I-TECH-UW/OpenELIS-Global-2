@@ -9,7 +9,7 @@ import { IntlProvider } from "react-intl";
 import Layout from "./components/layout/Layout";
 import Home from "./components/Home";
 import Login from "./components/Login";
-import { Admin } from "./components";
+import Admin from "./components/admin/Admin";
 import {
   getFromOpenElisServer,
   postToOpenElisServer,
@@ -20,7 +20,7 @@ import messages_fr from "./languages/fr.json";
 import config from "./config.json";
 import { SecureRoute } from "./components/security";
 import "./index.scss";
-import PatientManagement from "./components/PatientManagement";
+import PatientManagement from "./components/patient/PatientManagement";
 
 let i18nConfig = {
   locale: navigator.language.split(/[-_]/)[0],
