@@ -189,7 +189,7 @@ class SearchPatientForm extends React.Component {
                     </Column>
                     <Column></Column>
                     <Column  lg={12} >
-                        <DataTable rows={this.state.patientSearchResults} headers={patientSearchHeaderData} >
+                        <DataTable rows={this.state.patientSearchResults} headers={patientSearchHeaderData} isSortable >
                             {({ rows, headers, getHeaderProps, getTableProps }) => (
                                 <TableContainer title="Patient Results">
                                     <Table {...getTableProps()}>

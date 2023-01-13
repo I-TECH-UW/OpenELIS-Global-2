@@ -2,6 +2,7 @@ import React from 'react'
 import { FormattedMessage, injectIntl } from 'react-intl'
 import "../Style.css";
 import { getFromOpenElisServer } from '../utils/Utils';
+import config from '../../config.json';
 
 import {
     Heading,
@@ -17,6 +18,8 @@ import {
     RadioButtonGroup,
     Stack,
     Section,
+    Select,
+    SelectItem
 
 } from '@carbon/react';
 
@@ -28,31 +31,76 @@ class CreatePatientForm extends React.Component {
         super(props)
         this.state = {
             patientDetails: CreatePatientFormValues,
-            showForm: false
+            showForm: false,
+            healthRegions: [],
+            healthDistricts: [],
         }
     }
+    _isMounted = false;
+    _healthDistricts = [];
 
     handleDatePickerChange = (values, ...e) => {
         var patient = values
         patient.dob = e[1];
 
         this.setState({
-            patientDetails: patient,
+            patientDetails: patient
         });
+    }
+
+    handleRegionSelection = (e) => {
+        const { value } = e.target;
+        getFromOpenElisServer("/rest/health-districts-for-region?regionId=" + value, this.fetchHeathDistricts)
     }
 
 
     shouldComponentUpdate(nextProps, nextState) {
         if (nextProps.selectedPatient.id) {
+            if (nextProps.selectedPatient.healthRegion != 0) {
+                // getFromOpenElisServer("/rest/health-districts-for-region?regionId=" + nextProps.selectedPatient.healthRegion, (districts) => this.fetchDefaultHeathDistricts(districts, update))
+                const request = new XMLHttpRequest()
+                request.open('GET', config.serverBaseUrl + '/rest/health-districts-for-region?regionId=' + nextProps.selectedPatient.healthRegion, false);
+                request.setRequestHeader("credentials", "include");
+                request.send();
+                //nextState.healthDistricts = JSON.parse(request.response);
+                this._healthDistricts = JSON.parse(request.response);
+            } else {
+                //nextState.healthDistricts = [];
+                this._healthDistricts = [];
+            }
             nextState.patientDetails = nextProps.selectedPatient;
+            nextState.showForm = true;
+
         }
+
         return true;
     }
 
-    addNewPatient = () => {
-        this.setState({ showForm: true })
+    componentDidMount() {
+        this._isMounted = true;
+        getFromOpenElisServer("/rest/health-regions", this.fetchHeathRegions)
     }
 
+    componentWillUnmount() {
+        this._isMounted = false;
+    }
+
+    addNewPatient = () => {
+        this.setState({
+            showForm: true,
+        })
+    }
+
+    fetchHeathRegions = (regions) => {
+        if (this._isMounted) {
+            this.setState({ healthRegions: regions })
+        }
+    }
+
+    fetchHeathDistricts = (districts) => {
+        //this.setState({ healthDistricts: districts })
+        this._healthDistricts = districts
+    }
 
     handleSubmit = (values) => {
         console.log(JSON.stringify(values))
@@ -75,6 +123,7 @@ class CreatePatientForm extends React.Component {
                             {({ values,
                                 errors,
                                 touched,
+                                resetForm,
                                 handleChange,
                                 handleBlur,
                                 handleSubmit }) => (
@@ -99,13 +148,13 @@ class CreatePatientForm extends React.Component {
                                             <Field name="subjectNumber"
                                             >
                                                 {({ field }) =>
-                                                    <TextInput value={values.subjectNumber} name={field.name} labelText="Unique Health ID number" id={field.name} className="inputText" />
+                                                    <TextInput value={values.subjectNumber} name={field.name} labelText="Unique Health ID number" id={field.name} className="" />
                                                 }
                                             </Field>
                                             <Field name="nationalID"
                                             >
                                                 {({ field }) =>
-                                                    <TextInput value={values.nationalID} name={field.name} labelText="National Id" id={field.name} className="inputText" />
+                                                    <TextInput value={values.nationalID} name={field.name} labelText="National Id" id={field.name} className="" />
                                                 }
                                             </Field>
                                         </div>
@@ -114,13 +163,13 @@ class CreatePatientForm extends React.Component {
                                             <Field name="lastName"
                                             >
                                                 {({ field }) =>
-                                                    <TextInput value={values.lastName} name={field.name} labelText="Last Name" id={field.name} className="inputText" />
+                                                    <TextInput value={values.lastName} name={field.name} labelText="Last Name" id={field.name} className="" />
                                                 }
                                             </Field>
                                             <Field name="firstName"
                                             >
                                                 {({ field }) =>
-                                                    <TextInput value={values.firstName} name={field.name} labelText="First Name" id={field.name} className="inputText" />
+                                                    <TextInput value={values.firstName} name={field.name} labelText="First Name" id={field.name} className="" />
                                                 }
                                             </Field>
                                         </div>
@@ -129,13 +178,13 @@ class CreatePatientForm extends React.Component {
                                             <Field name="contactLastName"
                                             >
                                                 {({ field }) =>
-                                                    <TextInput value={values.contactLastName} name={field.name} labelText="Contact Last Name" id={field.name} className="inputText" />
+                                                    <TextInput value={values.contactLastName} name={field.name} labelText="Contact Last Name" id={field.name} className="" />
                                                 }
                                             </Field>
                                             <Field name="contactFirstName"
                                             >
                                                 {({ field }) =>
-                                                    <TextInput value={values.contactFirstName} name={field.name} labelText="Contact First Name" id={field.name} className="inputText" />
+                                                    <TextInput value={values.contactFirstName} name={field.name} labelText="Contact First Name" id={field.name} className="" />
                                                 }
                                             </Field>
                                         </div>
@@ -144,13 +193,13 @@ class CreatePatientForm extends React.Component {
                                             <Field name="contactEmail"
                                             >
                                                 {({ field }) =>
-                                                    <TextInput value={values.contactEmail} name={field.name} labelText="Contact Email" id={field.name} className="inputText" />
+                                                    <TextInput value={values.contactEmail} name={field.name} labelText="Contact Email" id={field.name} className="" />
                                                 }
                                             </Field>
                                             <Field name="contactPhone"
                                             >
                                                 {({ field }) =>
-                                                    <TextInput value={values.contactPhone} name={field.name} labelText="Contact Phone" id={field.name} className="inputText" />
+                                                    <TextInput value={values.contactPhone} name={field.name} labelText="Contact Phone" id={field.name} className="" />
                                                 }
                                             </Field>
                                         </div>
@@ -159,13 +208,13 @@ class CreatePatientForm extends React.Component {
                                             <Field name="street"
                                             >
                                                 {({ field }) =>
-                                                    <TextInput value={values.street} name={field.name} labelText="Street" id={field.name} className="inputText" />
+                                                    <TextInput value={values.street} name={field.name} labelText="Street" id={field.name} className="" />
                                                 }
                                             </Field>
                                             <Field name="commune"
                                             >
                                                 {({ field }) =>
-                                                    <TextInput value={values.commune} name={field.name} labelText="Camp/Commune" id={field.name} className="inputText" />
+                                                    <TextInput value={values.commune} name={field.name} labelText="Camp/Commune" id={field.name} className="" />
                                                 }
                                             </Field>
                                         </div>
@@ -174,13 +223,13 @@ class CreatePatientForm extends React.Component {
                                             <Field name="city"
                                             >
                                                 {({ field }) =>
-                                                    <TextInput value={values.city} name={field.name} labelText="Town" id={field.name} className="inputText" />
+                                                    <TextInput value={values.city} name={field.name} labelText="Town" id={field.name} className="" />
                                                 }
                                             </Field>
                                             <Field name="phoneNumber"
                                             >
                                                 {({ field }) =>
-                                                    <TextInput value={values.phoneNumber} name={field.name} labelText="Phone" id={field.name} className="inputText" />
+                                                    <TextInput value={values.phoneNumber} name={field.name} labelText="Phone" id={field.name} className="" />
                                                 }
                                             </Field>
                                         </div>
@@ -189,20 +238,58 @@ class CreatePatientForm extends React.Component {
                                             <Field name="healthRegion"
                                             >
                                                 {({ field }) =>
-                                                    <TextInput value={values.healthRegion} name={field.name} labelText="Region" id={field.name} className="inputText" />
+                                                    <Select
+                                                        id="health_region"
+                                                        value={values.healthRegion}
+                                                        name={field.name}
+                                                        labelText="Region"
+                                                        className=""
+                                                        onChange={this.handleRegionSelection}
+                                                    >
+                                                        <SelectItem
+                                                            text=""
+                                                            value=""
+                                                        />
+                                                        {this.state.healthRegions.map((region, index) => (
+                                                            <SelectItem
+                                                                text={region.value}
+                                                                value={region.id}
+                                                                key={index}
+                                                            />
+                                                        ))}
+                                                    </Select>
                                                 }
                                             </Field>
                                             <Field name="healthDistrict"
                                             >
                                                 {({ field }) =>
-                                                    <TextInput value={values.healthDistrict} name={field.name} labelText="District" id={field.name} className="inputText" />
+                                                    <Select
+                                                        id="health_district"
+                                                        value={values.healthDistrict}
+                                                        name={field.name}
+                                                        labelText="District"
+                                                        className=""
+                                                        readOnly
+                                                    >
+                                                        <SelectItem
+                                                            text=""
+                                                            value=""
+                                                        />
+                                                        {this._healthDistricts.map((district, index) => (
+                                                            <SelectItem
+                                                                text={district.value}
+                                                                value={district.value}
+                                                                key={index}
+                                                            />
+                                                        ))}
+                                                    </Select>
                                                 }
                                             </Field>
                                         </div>
                                         <Field name="dob"
                                         >
                                             {({ field }) =>
-                                                <DatePicker value={values.dob} onChange={(...e) => this.handleDatePickerChange(values, ...e)} name={field.name} dateFormat="d/m/Y" datePickerType="single" light={true} className="inputText">
+                                                <DatePicker value={values.dob} onChange={(...e) => this.handleDatePickerChange(values, ...e)} name={field.name} dateFormat="d/m/Y" datePickerType="single" light={true} className="">
                                                     <DatePickerInput
                                                         id="date-picker-default-id"
                                                         placeholder="dd/mm/yyyy"
@@ -234,9 +321,15 @@ class CreatePatientForm extends React.Component {
                                                 </RadioButtonGroup>
                                             }
                                         </Field>
-                                        <Button type="submit" id="submit">
-                                            <FormattedMessage id="label.button.save" />
-                                        </Button>
+                                        <div className="formInlineDiv">
+                                            <Button type="submit" id="submit">
+                                                <FormattedMessage id="label.button.save" />
+                                            </Button>
+                                            <Button id="clear" kind='danger' onClick={() => { resetForm({ values: CreatePatientFormValues }); this._healthDistricts = [] }}>
+                                                <FormattedMessage id="label.button.clear" />
+                                            </Button>
+
+                                        </div>
                                     </Stack>
                                 </Form>
 
@@ -250,4 +343,4 @@ class CreatePatientForm extends React.Component {
     }
 }
 
-export default injectIntl(CreatePatientForm)
+export default injectIntl(CreatePatientForm);

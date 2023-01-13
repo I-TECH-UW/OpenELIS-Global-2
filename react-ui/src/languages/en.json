@@ -3,6 +3,7 @@
     "label.button.submit": "Submit",
     "label.button.save": "Save",
     "label.button.search" : "Search",
+    "label.button.clear" : "Clear",
     "login.title": "Login",
     "login.subtitle": "Login",
     "login.msg.username": "Username",
