@@ -3,6 +3,7 @@
     "label.button.submit": "Connecter",
     "label.button.save": "Sauver",
     "label.button.search" : "Chercher" ,
+    "label.button.clear" : "Dégager",
     "login.title": "Identifiant",
     "login.subtitle": "Identifiant",
     "login.msg.username": "Nom d'utilisateur",

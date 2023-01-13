@@ -27,4 +27,10 @@ public class DisplayListController {
     public List<IdValuePair> getSamples(HttpServletRequest request) {
         return DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE);
     }
+
+    @GetMapping(value = "health-regions", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<IdValuePair> getHealthRegions(HttpServletRequest request) {
+        return DisplayListService.getInstance().getList(DisplayListService.ListType.PATIENT_HEALTH_REGIONS);
+    }
 }
