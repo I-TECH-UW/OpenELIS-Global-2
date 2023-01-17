@@ -12,11 +12,12 @@ export default {
     "commune": "",
     "education": "",
     "maritialStatus": "",
-    "nationality": "hhh",
+    "nationality": "",
     "healthDistrict": "",
     "healthRegion": "",
     "contactFirstName": "",
     "contactLastName": "",
     "contactPhone": "",
-    "contactEmail": ""
+    "contactEmail": "",
+    "otherNationality": ""
 }

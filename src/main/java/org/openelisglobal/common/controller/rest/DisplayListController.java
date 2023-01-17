@@ -2,9 +2,10 @@ package org.openelisglobal.common.controller.rest;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
+
 
 import org.openelisglobal.common.services.DisplayListService;
+import org.openelisglobal.common.services.DisplayListService.ListType;
 import org.openelisglobal.common.util.IdValuePair;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -18,19 +19,37 @@ public class DisplayListController {
 
     @GetMapping(value = "tests", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public List<IdValuePair> getTests(HttpServletRequest request) {
-        return DisplayListService.getInstance().getList(DisplayListService.ListType.ALL_TESTS);
+    public List<IdValuePair> getTests() {
+        return DisplayListService.getInstance().getList(ListType.ALL_TESTS);
     }
 
     @GetMapping(value = "samples", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public List<IdValuePair> getSamples(HttpServletRequest request) {
-        return DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE);
+    public List<IdValuePair> getSamples() {
+        return DisplayListService.getInstance().getList(ListType.SAMPLE_TYPE_ACTIVE);
     }
 
     @GetMapping(value = "health-regions", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public List<IdValuePair> getHealthRegions(HttpServletRequest request) {
-        return DisplayListService.getInstance().getList(DisplayListService.ListType.PATIENT_HEALTH_REGIONS);
+    public List<IdValuePair> getHealthRegions() {
+        return DisplayListService.getInstance().getList(ListType.PATIENT_HEALTH_REGIONS);
+    }
+
+    @GetMapping(value = "education-list", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<IdValuePair> getEducationList() {
+        return DisplayListService.getInstance().getList(ListType.PATIENT_EDUCATION);
+    }
+
+    @GetMapping(value = "marital-statuses", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<IdValuePair> getMaritialList() {
+        return DisplayListService.getInstance().getList(ListType.PATIENT_MARITAL_STATUS);
+    }
+
+    @GetMapping(value = "nationalities", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<IdValuePair> getNationalityList() {
+        return DisplayListService.getInstance().getList(ListType.PATIENT_NATIONALITY);
     }
 }

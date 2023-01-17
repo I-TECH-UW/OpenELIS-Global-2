@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping(value = "/rest/")
-public class TestReflexRuleController {
+public class TestReflexRuleRestController {
 
     @Autowired
     TestReflexService reflexService;
