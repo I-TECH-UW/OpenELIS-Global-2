@@ -67,7 +67,7 @@ class CreatePatientForm extends React.Component {
         if (nextProps.selectedPatient.id) {
             if (nextProps.selectedPatient.healthRegion != 0) {
                 // getFromOpenElisServer("/rest/health-districts-for-region?regionId=" + nextProps.selectedPatient.healthRegion, (districts) => this.fetchDefaultHeathDistricts(districts, update))
-                // used XMLHttpRequest instead of Fecthin order to make a synchronous call
+                // used XMLHttpRequest instead of Fecth ,in order to make synchronous calls here
                 const request = new XMLHttpRequest()
                 request.open('GET', config.serverBaseUrl + '/rest/health-districts-for-region?regionId=' + nextProps.selectedPatient.healthRegion, false);
                 request.setRequestHeader("credentials", "include");
