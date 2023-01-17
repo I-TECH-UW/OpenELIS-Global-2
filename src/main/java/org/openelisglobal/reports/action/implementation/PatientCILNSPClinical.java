@@ -25,6 +25,7 @@ import java.util.Set;
 
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.util.ConfigurationProperties;
@@ -111,9 +112,10 @@ public class PatientCILNSPClinical extends PatientReport implements IReportCreat
         boolean isConfirmationSample = sampleService.isConfirmationSample(currentSample);
         List<Analysis> analysisList = analysisService
                 .getAnalysesBySampleIdAndStatusId(sampleService.getId(currentSample), analysisStatusIds);
-        List<ClinicalPatientData> currentSampleReportItems = new ArrayList<>(analysisList.size());
+        List<Analysis> filteredAnalysisList  = userService.filterAnalysesByLabUnitRoles(systemUserId, analysisList, Constants.ROLE_REPORTS);
+        List<ClinicalPatientData> currentSampleReportItems = new ArrayList<>(filteredAnalysisList.size());
         currentConclusion = null;
-        for (Analysis analysis : analysisList) {
+        for (Analysis analysis : filteredAnalysisList) {
             if (!analysis.getTest().isInLabOnly()) {
                 boolean hasParentResult = analysis.getParentResult() != null;
                 sampleSet.add(analysis.getSampleItem());
