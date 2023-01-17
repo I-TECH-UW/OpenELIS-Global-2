@@ -165,14 +165,15 @@ class SearchPatientForm extends React.Component {
                                                     defaultSelected=""
                                                     legendText="Gender"
                                                     name={field.name}
+                                                    id="search_patient_gender"
                                                 >
                                                     <RadioButton
-                                                        id="radio-1"
+                                                        id="search-radio-1"
                                                         labelText="Male"
                                                         value="M"
                                                     />
                                                     <RadioButton
-                                                        id="radio-2"
+                                                        id="search-radio-2"
                                                         labelText="Female"
                                                         value="F"
                                                     />

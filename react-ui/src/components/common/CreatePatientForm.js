@@ -1,8 +1,9 @@
 import React from 'react'
 import { FormattedMessage, injectIntl } from 'react-intl'
 import "../Style.css";
-import { getFromOpenElisServer } from '../utils/Utils';
+import { getFromOpenElisServer ,postToOpenElisServer} from '../utils/Utils';
 import config from '../../config.json';
+import { nationalityList } from '../data/countries';
 
 import {
     Heading,
@@ -34,6 +35,9 @@ class CreatePatientForm extends React.Component {
             showForm: false,
             healthRegions: [],
             healthDistricts: [],
+            educationList : [] ,
+            maritalStatuses : [],
+            nationalities : []
         }
     }
     _isMounted = false;
@@ -48,7 +52,12 @@ class CreatePatientForm extends React.Component {
         });
     }
 
-    handleRegionSelection = (e) => {
+    handleRegionSelection = (e, values) => {
+        var patient = values
+        patient.healthDistrict = ""
+        this.setState({
+            patientDetails: patient
+        });
         const { value } = e.target;
         getFromOpenElisServer("/rest/health-districts-for-region?regionId=" + value, this.fetchHeathDistricts)
     }
@@ -58,6 +67,7 @@ class CreatePatientForm extends React.Component {
         if (nextProps.selectedPatient.id) {
             if (nextProps.selectedPatient.healthRegion != 0) {
                 // getFromOpenElisServer("/rest/health-districts-for-region?regionId=" + nextProps.selectedPatient.healthRegion, (districts) => this.fetchDefaultHeathDistricts(districts, update))
+                // used XMLHttpRequest instead of Fecth ,in order to make synchronous calls here
                 const request = new XMLHttpRequest()
                 request.open('GET', config.serverBaseUrl + '/rest/health-districts-for-region?regionId=' + nextProps.selectedPatient.healthRegion, false);
                 request.setRequestHeader("credentials", "include");
@@ -78,7 +88,10 @@ class CreatePatientForm extends React.Component {
 
     componentDidMount() {
         this._isMounted = true;
-        getFromOpenElisServer("/rest/health-regions", this.fetchHeathRegions)
+        getFromOpenElisServer("/rest/health-regions", this.fetchHeathRegions);
+        getFromOpenElisServer("/rest/education-list", this.fetchEducationList);
+        getFromOpenElisServer("/rest/marital-statuses", this.fetchMaritalStatuses);
+       // getFromOpenElisServer("/rest/nationalities", this.fetchNationalities);
     }
 
     componentWillUnmount() {
@@ -97,6 +110,24 @@ class CreatePatientForm extends React.Component {
         }
     }
 
+    fetchNationalities = (nationalities) => {
+        if (this._isMounted) {
+            this.setState({ nationalities: nationalities })
+        }
+    }
+
+    fetchMaritalStatuses = (statuses) => {
+        if (this._isMounted) {
+            this.setState({ maritalStatuses: statuses })
+        }
+    }
+
+    fetchEducationList = (eductationList) => {
+        if (this._isMounted) {
+            this.setState({ educationList: eductationList })
+        }
+    }
+
     fetchHeathDistricts = (districts) => {
         //this.setState({ healthDistricts: districts })
         this._healthDistricts = districts
@@ -104,7 +135,12 @@ class CreatePatientForm extends React.Component {
 
     handleSubmit = (values) => {
         console.log(JSON.stringify(values))
+        postToOpenElisServer("/rest/patient-management" ,JSON.stringify(values) , this.handlePost)
     };
+
+    handlePost = (status) => {
+        alert(status)
+      };
 
     render() {
 
@@ -244,7 +280,7 @@ class CreatePatientForm extends React.Component {
                                                         name={field.name}
                                                         labelText="Region"
                                                         className=""
-                                                        onChange={this.handleRegionSelection}
+                                                        onChange={(e) => this.handleRegionSelection(e, values)}
                                                     >
                                                         <SelectItem
                                                             text=""
@@ -286,41 +322,131 @@ class CreatePatientForm extends React.Component {
                                                 }
                                             </Field>
                                         </div>
-                                        <Field name="dob"
-                                        >
-                                            {({ field }) =>
-                                                <DatePicker value={values.dob} onChange={(...e) => this.handleDatePickerChange(values, ...e)} name={field.name} dateFormat="d/m/Y" datePickerType="single" light={true} className="">
-                                                    <DatePickerInput
-                                                        id="date-picker-default-id"
-                                                        placeholder="dd/mm/yyyy"
-                                                        labelText="Date of Birth"
-                                                        type="text"
+                                        <div className="formInlineDiv">
+                                            <Field name="dob"
+                                            >
+                                                {({ field }) =>
+                                                    <DatePicker value={values.dob} onChange={(...e) => this.handleDatePickerChange(values, ...e)} name={field.name} dateFormat="d/m/Y" datePickerType="single" light={true} className="">
+                                                        <DatePickerInput
+                                                            id="date-picker-default-id"
+                                                            placeholder="dd/mm/yyyy"
+                                                            labelText="Date of Birth"
+                                                            type="text"
+                                                            name={field.name}
+                                                        />
+                                                    </DatePicker>
+                                                }
+                                            </Field>
+                                            <Field name="gender"
+                                            >
+                                                {({ field }) =>
+                                                    <RadioButtonGroup
+                                                        valueSelected={values.gender}
+                                                        legendText="Gender"
                                                         name={field.name}
-                                                    />
-                                                </DatePicker>
-                                            }
-                                        </Field>
-                                        <Field name="gender"
-                                        >
-                                            {({ field }) =>
-                                                <RadioButtonGroup
-                                                    valueSelected={values.gender}
-                                                    legendText="Gender"
-                                                    name={field.name}
-                                                >
-                                                    <RadioButton
-                                                        id="radio-1"
-                                                        labelText="Male"
-                                                        value="M"
-                                                    />
-                                                    <RadioButton
-                                                        id="radio-2"
-                                                        labelText="Female"
-                                                        value="F"
-                                                    />
-                                                </RadioButtonGroup>
-                                            }
-                                        </Field>
+                                                        id="create_patient_gender"
+                                                    >
+                                                        <RadioButton
+                                                            id="radio-1"
+                                                            labelText="Male"
+                                                            value="M"
+                                                        />
+                                                        <RadioButton
+                                                            id="radio-2"
+                                                            labelText="Female"
+                                                            value="F"
+                                                        />
+                                                    </RadioButtonGroup>
+                                                }
+                                            </Field>
+                                        </div>
+                                        <div className="formInlineDiv">
+
+                                            <Field name="education"
+                                            >
+                                                {({ field }) =>
+                                                    <Select
+                                                        id="education"
+                                                        value={values.education}
+                                                        name={field.name}
+                                                        labelText="Education"
+                                                        className=""
+                                                        readOnly
+                                                    >
+                                                        <SelectItem
+                                                            text=""
+                                                            value=""
+                                                        />
+                                                        {this.state.educationList.map((education, index) => (
+                                                            <SelectItem
+                                                                text={education.value}
+                                                                value={education.value}
+                                                                key={index}
+                                                            />
+                                                        ))}
+                                                    </Select>
+                                                }
+                                            </Field>
+                                            <Field name="maritialStatus"
+                                            >
+                                                {({ field }) =>
+                                                    <Select
+                                                        id="maritialStatus"
+                                                        value={values.maritialStatus}
+                                                        name={field.name}
+                                                        labelText="Marital Status"
+                                                        className=""
+                                                        readOnly
+                                                    >
+                                                        <SelectItem
+                                                            text=""
+                                                            value=""
+                                                        />
+                                                        {this.state.maritalStatuses.map((status, index) => (
+                                                            <SelectItem
+                                                                text={status.value}
+                                                                value={status.value}
+                                                                key={index}
+                                                            />
+                                                        ))}
+                                                    </Select>
+                                                }
+                                            </Field>
+                                        </div>
+                                        <div className="formInlineDiv">
+
+                                            <Field name="nationality"
+                                            >
+                                                {({ field }) =>
+                                                    <Select
+                                                        id="nationality"
+                                                        value={values.nationality}
+                                                        name={field.name}
+                                                        labelText="Nationality"
+                                                        className=""
+                                                        readOnly
+                                                    >
+                                                        <SelectItem
+                                                            text=""
+                                                            value=""
+                                                        />
+                                                        {nationalityList.map((nationality, index) => (
+                                                            <SelectItem
+                                                                text={nationality.label}
+                                                                value={nationality.value}
+                                                                key={index}
+                                                            />
+                                                        ))}
+                                                    </Select>
+                                                }
+                                            </Field>
+                                            <Field name="otherNationality"
+                                            >
+                                                {({ field }) =>
+                                                    <TextInput value={values.otherNationality} name={field.name} labelText="Specify Other nationality" id={field.name} className="" />
+                                                }
+                                            </Field>
+                                        </div>
                                         <div className="formInlineDiv">
                                             <Button type="submit" id="submit">
                                                 <FormattedMessage id="label.button.save" />
