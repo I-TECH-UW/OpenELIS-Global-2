@@ -1,11 +1,14 @@
 package org.openelisglobal.security;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.http.HttpStatus;
+import org.json.JSONObject;
 import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.validator.BaseErrors;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -20,29 +23,60 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 
 public class CustomAuthenticationFailureHandler implements AuthenticationFailureHandler {
 
-    private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
             AuthenticationException exception) throws IOException, ServletException {
-        BaseErrors errors = new BaseErrors();
-        if (exception instanceof UsernameNotFoundException) {
-            errors.reject("login.error.message");
-        } else if (exception instanceof BadCredentialsException) {
-            errors.reject("login.error.message");
-        } else if (exception instanceof CredentialsExpiredException) {
-            errors.reject("login.error.password.expired");
-        } else if (exception instanceof DisabledException) {
-            errors.reject("login.error.account.disable");
-        } else if (exception instanceof LockedException) {
-            errors.reject("login.error.account.lock");
+        if ("true".equals(request.getParameter("apiCall"))) {
+            this.handleApiLogin(request, response, exception);
+            return;
         } else {
-            exception.printStackTrace();
-            errors.reject("login.error.generic");
+            BaseErrors errors = new BaseErrors();
+            if (exception instanceof UsernameNotFoundException) {
+                errors.reject("login.error.message");
+            } else if (exception instanceof BadCredentialsException) {
+                errors.reject("login.error.message");
+            } else if (exception instanceof CredentialsExpiredException) {
+                errors.reject("login.error.password.expired");
+            } else if (exception instanceof DisabledException) {
+                errors.reject("login.error.account.disable");
+            } else if (exception instanceof LockedException) {
+                errors.reject("login.error.account.lock");
+            } else {
+                exception.printStackTrace();
+                errors.reject("login.error.generic");
+            }
+
+            RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
+            request.getSession().setAttribute(Constants.LOGIN_ERRORS, errors);
+            redirectStrategy.sendRedirect(request, response, "/LoginPage");
+        }
+    }
+
+    private void handleApiLogin(HttpServletRequest request, HttpServletResponse response,
+            AuthenticationException exception)
+            throws IOException {
+        PrintWriter out = response.getWriter();
+        response.setContentType("application/json");
+        response.setStatus(HttpStatus.SC_UNAUTHORIZED);
+        JSONObject sessionDetails = new JSONObject();
+
+        if (exception instanceof UsernameNotFoundException) {
+            sessionDetails.put("error", "error.invalidcredentials");
+        } else if (exception instanceof BadCredentialsException) {
+            sessionDetails.put("error", "error.invalidcredentials");
+        } else if (exception instanceof CredentialsExpiredException) {
+            sessionDetails.put("error", "error.expiredCredentials");
+        } else if (exception instanceof DisabledException) {
+            sessionDetails.put("error", "error.disabledCredentials");
+        } else if (exception instanceof LockedException) {
+            sessionDetails.put("error", "error.lockedCredentials");
+        } else {
+            sessionDetails.put("error", "error.generic");
         }
 
-        request.getSession().setAttribute(Constants.LOGIN_ERRORS, errors);
-        redirectStrategy.sendRedirect(request, response, "/LoginPage");
+        out.print(sessionDetails);
+
     }
 
 }

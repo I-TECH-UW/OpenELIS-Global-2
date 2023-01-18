@@ -37,7 +37,6 @@ class OEHeader extends React.Component {
     this.headerPanelRef = React.createRef();
     this.state = {
       switchCollapsed: true,
-      language: "en",
     };
   }
 
@@ -55,7 +54,7 @@ class OEHeader extends React.Component {
     window.removeEventListener("click", this.outsideClickListener);
   }
 
-  clickUser = () => {
+  clickPanelSwitch = () => {
     const userSwitchCollapsed = this.state.switchCollapsed;
     this.setState((state) => ({
       switchCollapsed: !userSwitchCollapsed,
@@ -63,6 +62,18 @@ class OEHeader extends React.Component {
     if (userSwitchCollapsed) {
       window.addEventListener("click", this.outsideClickListener);
     }
+  };
+
+  panelSwitchLabel = () => {
+    return this.props.isLoggedIn() ? "User" : "Lang";
+  };
+
+  panelSwitchIcon = () => {
+    return this.props.isLoggedIn() ? (
+      <UserAvatarFilledAlt size={20} />
+    ) : (
+      <Language size={20} />
+    );
   };
 
   dismissPanel = (event) => {
@@ -137,7 +148,11 @@ class OEHeader extends React.Component {
                     </HeaderMenu>
                     <HeaderMenuItem href="/admin">Admin</HeaderMenuItem>
                   </HeaderNavigation>
-                  <HeaderGlobalBar>
+                </>
+              )}
+              <HeaderGlobalBar>
+                {this.props.isLoggedIn() && (
+                  <>
                     <HeaderGlobalAction aria-label="Search" onClick={() => {}}>
                       <Search size={20} />
                     </HeaderGlobalAction>
@@ -147,21 +162,25 @@ class OEHeader extends React.Component {
                     >
                       <Notification size={20} />
                     </HeaderGlobalAction>
-                    <HeaderGlobalAction
-                      aria-label="User"
-                      onClick={this.clickUser}
-                      ref={this.userSwitchRef}
-                    >
-                      <UserAvatarFilledAlt size={20} />
-                    </HeaderGlobalAction>
-                  </HeaderGlobalBar>
-                  <HeaderPanel
-                    aria-label="Header Panel"
-                    expanded={!this.state.switchCollapsed}
-                    className="headerPanel"
-                    ref={this.headerPanelRef}
-                  >
-                    <ul>
+                  </>
+                )}
+                <HeaderGlobalAction
+                  aria-label={this.panelSwitchLabel()}
+                  onClick={this.clickPanelSwitch}
+                  ref={this.userSwitchRef}
+                >
+                  {this.panelSwitchIcon()}
+                </HeaderGlobalAction>
+              </HeaderGlobalBar>
+              <HeaderPanel
+                aria-label="Header Panel"
+                expanded={!this.state.switchCollapsed}
+                className="headerPanel"
+                ref={this.headerPanelRef}
+              >
+                <ul>
+                  {this.props.isLoggedIn() && (
+                    <>
                       <li className="userDetails">
                         <UserAvatarFilledAlt size={18} />{" "}
                         {this.props.user.firstName} {this.props.user.lastName}
@@ -174,66 +193,29 @@ class OEHeader extends React.Component {
                           id="sign-out"
                           icon={faSignOutAlt}
                           size="1x"
-                        />{" "}
+                        />
                         Logout
                       </li>
-                      <li className="userDetails">
-                        <Select
-                          id="selector"
-                          name="selectLocale"
-                          className="selectLocale"
-                          invalidText="A valid locale value is required"
-                          labelText="Select locale"
-                          onChange={(event) =>
-                            this.props.onChangeLanguage(event.target.value)
-                          }
-                          onClick={(event) => event.stopPropagation()}
-                        >
-                          <SelectItem text="English" value="en" />
-                          <SelectItem text="French" value="fr" />
-                        </Select>
-                      </li>
-                    </ul>
-                  </HeaderPanel>
-                </>
-              )}
-              {!this.props.isLoggedIn() && (
-                <>
-                  <HeaderGlobalBar>
-                    <HeaderGlobalAction
-                      aria-label="Lang"
-                      onClick={this.toggleSwitch}
+                    </>
+                  )}
+                  <li className="userDetails">
+                    <Select
+                      id="selector"
+                      name="selectLocale"
+                      className="selectLocale"
+                      invalidText="A valid locale value is required"
+                      labelText="Select locale"
+                      onChange={(event) => {
+                        this.props.onChangeLanguage(event.target.value);
+                      }}
+                      value={this.props.intl.locale}
                     >
-                      <Language size={20} />
-                    </HeaderGlobalAction>
-                  </HeaderGlobalBar>
-                  <HeaderPanel
-                    aria-label="Header Panel"
-                    expanded={!this.state.switchCollapsed}
-                    className="headerPanel"
-                  >
-                    <ul>
-                      <li className="userDetails">
-                        <Select
-                          id="selector"
-                          name="selectLocale"
-                          className="selectLocale"
-                          invalidText="A valid locale value is required"
-                          labelText="Select locale"
-                          onChange={(event) =>
-                            this.props.onChangeLanguage(event.target.value)
-                          }
-                          value={this.props.intl.locale}
-                          onClick={(event) => event.stopPropagation()}
-                        >
-                          <SelectItem text="English" value="en" />
-                          <SelectItem text="French" value="fr" />
-                        </Select>
-                      </li>
-                    </ul>
-                  </HeaderPanel>
-                </>
-              )}
+                      <SelectItem text="English" value="en" />
+                      <SelectItem text="French" value="fr" />
+                    </Select>
+                  </li>
+                </ul>
+              </HeaderPanel>
             </Header>
           </Theme>
         </div>

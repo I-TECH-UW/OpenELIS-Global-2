@@ -97,6 +97,10 @@ class App extends React.Component {
     localStorage.setItem("locale", lang);
   };
 
+  getLocale = () => {
+    return this.state.locale;
+  };
+
   onChangeLanguage = (lang) => {
     this.changeLanguage(lang);
   };
@@ -122,7 +126,9 @@ class App extends React.Component {
                 <Route
                   path="/login"
                   exact
-                  component={() => <Login onAuth={this.onAuth} />}
+                  component={() => (
+                    <Login onAuth={this.onAuth} />
+                  )}
                 />
                 <SecureRoute
                   path="/"
