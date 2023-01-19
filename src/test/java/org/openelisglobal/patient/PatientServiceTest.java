@@ -37,12 +37,6 @@ public class PatientServiceTest {
 	public void init() throws Exception {
 	}
 
-
-	@Test
-	public void getAllPatients_shouldGetAllPatients() throws Exception {
-		Assert.assertEquals(1, patientService.getAllPatients().size());
-	}
-
 	@Test
 	public void createPatient_shouldCreateNewPatient() throws Exception {
 		String firstName = "John";

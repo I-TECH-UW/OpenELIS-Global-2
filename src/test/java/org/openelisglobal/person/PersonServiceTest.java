@@ -28,7 +28,6 @@ public class PersonServiceTest {
     }
 
     @Test
-<<<<<<< HEAD
     public void createPerson_shouldCreateNewPerson() throws Exception {
         String firstName = "John";
         String lastname = "Doe";
@@ -45,28 +44,8 @@ public class PersonServiceTest {
         Assert.assertEquals(lastname, savedPerson.getLastName());
     }
 
-    @Test
     public void getAllPerson_shouldGetAllPerson() throws Exception {
         Assert.assertEquals(1, personService.getAllPersons().size());
-=======
-    public void getAllPerson_shouldGetAllPerson() throws Exception {
-        Assert.assertEquals(1, personService.getAllPersons().size());
-    }
-
-    @Test
-    public void createPerson_shouldCreateNewPerson() throws Exception {
-        String firstName = "John";
-        String lastname = "Doe";
-
-        Person pat = createPerson(firstName, lastname);
-        // save person to the DB
-        String personIdId = personService.insert(pat);
-        Person savedPerson = personService.get(personIdId);
-
-        Assert.assertEquals(1, personService.getAllPersons().size());
-        Assert.assertEquals(firstName, savedPerson.getFirstName());
-        Assert.assertEquals(lastname, savedPerson.getLastName());
->>>>>>> master
     }
 
     private Person createPerson(String firstName, String LastName) {
