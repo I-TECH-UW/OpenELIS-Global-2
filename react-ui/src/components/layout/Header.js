@@ -130,7 +130,7 @@ class OEHeader extends React.Component {
                     </HeaderMenu>
                     <HeaderMenu aria-label="Results" menuLinkName="Results">
                       <HeaderMenuItem href="#">Sub-link 1</HeaderMenuItem>
-                      <HeaderMenuItem href="#">Sub-link 2</HeaderMenuItem>
+                      <HeaderMenuItem href="/result">Result Search</HeaderMenuItem>
                       <HeaderMenuItem href="#">Sub-link 3</HeaderMenuItem>
                     </HeaderMenu>
                     <HeaderMenu

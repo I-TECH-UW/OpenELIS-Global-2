@@ -9,7 +9,7 @@ import { IntlProvider } from "react-intl";
 import Layout from "./components/layout/Layout";
 import Home from "./components/Home";
 import Login from "./components/Login";
-import Admin from "./components/admin/Admin";
+import { Admin, Result } from "./components";
 import {
   getFromOpenElisServer,
   postToOpenElisServer,
@@ -160,6 +160,8 @@ class App extends React.Component {
                   logout={this.logout}
                   isLoggedIn={this.isLoggedIn}
                 />
+                  <SecureRoute path="/result" exact component={() => <Result />} role="Global Administrator" config={this.state.config} onAuth={this.onAuth} logout={this.logout} isLoggedIn={this.isLoggedIn} />
+                  <SecureRoute path="/AccessionResults" exact component={() => <Admin />} role="Global Administrator" config={this.state.config} onAuth={this.onAuth} logout={this.logout} isLoggedIn={this.isLoggedIn} />
               </Switch>
             </Layout>
           </Router>
