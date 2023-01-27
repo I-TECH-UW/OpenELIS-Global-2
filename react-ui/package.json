@@ -27,7 +27,7 @@
     "yup": "^0.29.2" 
   },
   "scripts": {
-    "start": "HTTPS=false react-scripts start",
+    "start": "HTTPS=true react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
