@@ -21,6 +21,8 @@ import config from "./config.json";
 import { SecureRoute } from "./components/security";
 import "./index.scss";
 import PatientManagement from "./components/patient/PatientManagement";
+import PatientHistory from "./components/patient/PatientHistory";
+
 
 let i18nConfig = {
   locale: navigator.language.split(/[-_]/)[0],
@@ -154,6 +156,16 @@ class App extends React.Component {
                   path="/PatientManagement"
                   exact
                   component={() => <PatientManagement />}
+                  role="Reception"
+                  config={this.state.config}
+                  onAuth={this.onAuth}
+                  logout={this.logout}
+                  isLoggedIn={this.isLoggedIn}
+                />
+                <SecureRoute
+                  path="/PatientHistory"
+                  exact
+                  component={() => <PatientHistory />}
                   role="Reception"
                   config={this.state.config}
                   onAuth={this.onAuth}

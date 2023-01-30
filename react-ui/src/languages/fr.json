@@ -15,5 +15,6 @@
     "error.invalidcredentials": "L'identifiant ou le mot de passe est incorrect",
     "patient.label.modify" : "Ajouter/Modifier un patient" ,
     "patient.label.info" : "Informations sur les patients",
-    "breadcrumb.home" : "Domicile"
+    "breadcrumb.home" : "Domicile" ,
+    "label.page.patientHistory": "Antécédents du patient"
 }

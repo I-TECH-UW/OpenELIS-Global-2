@@ -24,7 +24,17 @@
     "formik": "^2.2.9",
     "formik-error-focus": "2.0.0",
     "cors": "^2.8.5" ,
-    "yup": "^0.29.2" 
+    "yup": "^0.29.2" ,
+    "@carbon/charts": "^1.5.2",
+    "@carbon/charts-react": "^1.5.2",
+    "d3": "^7.6.1",
+    "lodash-es": "^4.17.15" ,
+    "react-i18next": "11.x",
+    "rxjs": "6.x" ,
+    "single-spa": "5.x",
+    "dayjs": "^1.10.4",
+    "qs":"6.11.0" ,
+    "swr" : "2.0.3"
   },
   "scripts": {
     "start": "HTTPS=true react-scripts start",
@@ -49,5 +59,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "resolutions": {
+    "**/@types/react": "16.14.5"
   }
 }
