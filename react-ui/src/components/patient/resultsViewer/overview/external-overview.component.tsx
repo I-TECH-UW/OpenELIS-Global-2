@@ -7,7 +7,9 @@ import { EmptyState, ExternalOverviewProps, PanelFilterProps, PatientData } from
 import { parseSingleEntry, OverviewPanelEntry } from './useOverviewData';
 import usePatientResultsData from '../loadPatientTestData/usePatientResultsData';
 import CommonOverview from './common-overview.component';
-import styles from './external-overview.scss';
+//import styles from './external-overview.scss';
+import  './external-overview.scss';
+import './recent-overview.scss';
 
 const resultsToShow = 3;
 
@@ -54,9 +56,9 @@ const ExternalOverview: React.FC<ExternalOverviewProps> = ({ patientUuid, filter
           {(() => {
             if (overviewData.length) {
               return (
-                <div className={styles.widgetCard}>
-                  <div className={styles.externalOverviewHeader}>
-                    <h4 className={`${styles.productiveHeading03} ${styles.text02}`}>{cardTitle}</h4>
+                <div className="widgetCard">
+                  <div className="externalOverviewHeader">
+                    <h4 className="productiveHeading03 text02" >{cardTitle}</h4>
                     <Button
                       kind="ghost"
                       renderIcon={(props) => <ArrowRight size={16} {...props} />}
@@ -98,5 +100,5 @@ const ExternalOverview: React.FC<ExternalOverviewProps> = ({ patientUuid, filter
 export default ExternalOverview;
 
 const RecentResultsGrid = (props) => {
-  return <div {...props} className={styles['recent-results-grid']} />;
+  return <div {...props} className='recent-results-grid' />;
 };

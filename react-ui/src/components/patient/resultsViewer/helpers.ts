@@ -39,4 +39,4 @@ export const navigateToTrendline = (basePath: string, panelUuid: string, testUui
 
 export const navigateToResults = (basePath: string) => navigate({ to: `${testResultsBasePath(basePath)}` });
 
-export const testResultsBasePath = (basePath: string) => `${window.spaBase}${basePath}/${dashboardMeta.title}`;
+export const testResultsBasePath = (basePath: string) => `${"https://localhost/PatientHistory"}${basePath}/${dashboardMeta.title}`;

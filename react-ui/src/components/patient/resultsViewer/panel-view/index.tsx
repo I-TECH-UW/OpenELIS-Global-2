@@ -136,7 +136,7 @@ const PanelView: React.FC<PanelViewProps> = ({ expanded, testUuid, basePath, typ
         <div className={styles.stickySection}>
           {isLoading ? (
             <DataTableSkeleton columns={3} />
-          ) : trendlineView ? (
+          ) : window.location.href.endsWith('#trendline') ? (
             <Trendline patientUuid={patientUuid} conceptUuid={testUuid} basePath={basePath} showBackToTimelineButton />
           ) : activePanel ? (
             <PanelTimelineComponent groupedObservations={groupedObservations} activePanel={activePanel} />

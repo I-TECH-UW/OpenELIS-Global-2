@@ -4,6 +4,7 @@ import { assessValue } from '../loadPatientTestData/helpers';
 import { useMemo } from 'react';
 import { FetchResponse, openmrsFetch, showNotification } from '../commons';
 import { TreeNode } from '../filter/filter-types';
+import {obs} from '../../../data/dummy/obs.js'
 
 function computeTrendlineData(treeNode: TreeNode): Array<TreeNode> {
   const tests: Array<TreeNode> = [];
@@ -35,10 +36,11 @@ export function useObstreeData(
   trendlineData: TreeNode;
   isValidating: boolean;
 } {
-  const { data, error, isLoading, isValidating } = useSWR<FetchResponse<TreeNode>, Error>(
-    `/ws/rest/v1/obstree?patient=${patientUuid}&concept=${conceptUuid}`,
-    openmrsFetch,
-  );
+  // const { data, error, isLoading, isValidating } = useSWR<FetchResponse<TreeNode>, Error>(
+  //   `/ws/rest/v1/obstree?patient=${patientUuid}&concept=${conceptUuid}`,
+  //   openmrsFetch,
+  // );
+  const { data, error, isLoading ,isValidating } = { data : {data :obs}  , error:{name:"sss" ,message:"lll"}, isLoading:false ,isValidating:true};
   if (error) {
     showNotification({
       title: error.name,

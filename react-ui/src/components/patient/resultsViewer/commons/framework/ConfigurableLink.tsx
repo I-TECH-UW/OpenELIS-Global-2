@@ -49,7 +49,8 @@ import React, {
     return (
       <a
         onClick={(event) => handleClick(event, to, templateParams)}
-        href={interpolateUrl(to, templateParams)}
+       // href={interpolateUrl(to, templateParams)}
+       href={to}
         {...otherProps}
       >
         {children}

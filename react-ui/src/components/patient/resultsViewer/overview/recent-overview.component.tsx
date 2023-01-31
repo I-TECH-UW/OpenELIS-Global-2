@@ -7,7 +7,8 @@ import { EmptyState } from '../commons';
 import { useTranslation } from 'react-i18next';
 import { navigateToResults, navigateToTimeline, navigateToTrendline } from '../helpers';
 import { useLayoutType } from '../commons';
-import styles from './recent-overview.scss';
+//import styles from './recent-overview.scss';
+import './recent-overview.scss';
 
 const RECENT_COUNT = 5;
 
@@ -30,8 +31,8 @@ const RecentOverview: React.FC<RecentOverviewProps> = ({ patientUuid, basePath }
             if (overviewData.length) {
               const resultsCount = Math.min(RECENT_COUNT, overviewData.length);
               return (
-                <div className={styles.widgetCard}>
-                  <div className={isTablet ? styles.tabletHeader : styles.desktopHeader}>
+                <div className="widgetCard">
+                  <div className={isTablet ? "tabletHeader" : "desktopHeader"}>
                     <h4>{`${cardTitle} (${resultsCount})`}</h4>
                     <Button
                       kind="ghost"
@@ -66,7 +67,7 @@ const RecentOverview: React.FC<RecentOverviewProps> = ({ patientUuid, basePath }
 };
 
 const RecentResultsGrid = (props) => {
-  return <div {...props} className={styles['recent-results-grid']} />;
+  return <div {...props} className='recent-results-grid' />;
 };
 
 export default RecentOverview;

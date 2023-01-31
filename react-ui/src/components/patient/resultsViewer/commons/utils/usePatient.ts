@@ -1,7 +1,7 @@
 /** @module @category API */
 import { useEffect, useReducer } from "react";
 import {  PatientUuid } from "../../commons";
-import patData from "../../../../data/patient.json"
+import patData from "../../../../data/dummy/patient.json"
 
 export type NullablePatient = {} | null;
 

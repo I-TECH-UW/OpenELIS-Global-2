@@ -5,7 +5,8 @@ import { useLayoutType } from '../commons';
 import FilterSet, { FilterContext } from '../filter';
 import GroupedTimeline from '../grouped-timeline';
 import Trendline from '../trendline/trendline.component';
-import styles from '../results-viewer.styles.scss';
+//import styles from '../results-viewer.styles.scss';
+import  '../results-viewer.styles.scss';
 import { useTranslation } from 'react-i18next';
 import TabletOverlay from '../tablet-overlay';
 
@@ -29,7 +30,7 @@ const TreeView: React.FC<TreeViewProps> = ({ patientUuid, basePath, testUuid, lo
     return (
       <>
         <div>{!loading ? <GroupedTimeline /> : <DataTableSkeleton />}</div>
-        <div className={styles.floatingTreeButton}>
+        <div className="floatingTreeButton">
           <Button
             renderIcon={TreeViewAlt}
             hasIconOnly
@@ -64,14 +65,14 @@ const TreeView: React.FC<TreeViewProps> = ({ patientUuid, basePath, testUuid, lo
   return (
     <>
       {!tablet && (
-        <div id="treeview" className={styles.leftSection}>
+        <div id="treeview" className="leftSection">
           {!loading ? <FilterSet /> : <AccordionSkeleton open count={4} align="start" />}
         </div>
       )}
-      <div className={`${styles.rightSection}`}>
-        {!tablet && testUuid && type === 'trendline' ? (
+      <div className="rightSection">
+        {!tablet   && window.location.href.endsWith('#trendline')? (
           <Trendline patientUuid={patientUuid} conceptUuid={testUuid} basePath={basePath} showBackToTimelineButton />
-        ) : !loading ? (
+        ) : !loading || window.location.href.endsWith('#groupedtimeline')? (
           <GroupedTimeline />
         ) : (
           <DataTableSkeleton />

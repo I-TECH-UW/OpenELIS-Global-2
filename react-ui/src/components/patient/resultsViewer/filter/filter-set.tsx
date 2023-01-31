@@ -5,7 +5,8 @@ import { TreeViewAlt, Close, Search as SearchIcon } from '@carbon/react/icons';
 import { useConfig, useLayoutType } from '../commons';
 import type { FilterNodeProps, FilterLeafProps } from './filter-types';
 import FilterContext from './filter-context';
-import styles from './filter-set.styles.scss';
+//import styles from './filter-set.styles.scss';
+import './filter-set.styles.scss';
 
 const isIndeterminate = (kids, checkboxes) => {
   return kids && !kids?.every((kid) => checkboxes[kid]) && !kids?.every((kid) => !checkboxes[kid]);
@@ -25,12 +26,12 @@ const FilterSet: React.FC<FilterSetProps> = ({ hideFilterSetHeader = false }) =>
   const [showSearchInput, setShowSearchInput] = useState(false);
 
   return (
-    <div className={!tablet ? styles.stickyFilterSet : ''}>
+    <div className={!tablet ? 'stickyFilterSet' : ''}>
       {!hideFilterSetHeader &&
         (!showSearchInput ? (
-          <div className={styles.filterSetHeader}>
+          <div className="filterSetHeader">
             <h4>{t('tree', 'Tree')}</h4>
-            <div className={styles.filterSetActions}>
+            <div className="filterSetActions">
               <Button
                 kind="ghost"
                 size="sm"
@@ -45,7 +46,7 @@ const FilterSet: React.FC<FilterSetProps> = ({ hideFilterSetHeader = false }) =>
             </div>
           </div>
         ) : (
-          <div className={styles.filterTreeSearchHeader}>
+          <div className="filterTreeSearchHeader">
             <Search size="sm" value={searchTerm} onChange={(evt) => setSearchTerm(evt.target.value)} light />
             <Button kind="secondary" size="sm" onClick={() => {}}>
               {t('search', 'Search')}
@@ -53,9 +54,9 @@ const FilterSet: React.FC<FilterSetProps> = ({ hideFilterSetHeader = false }) =>
             <Button hasIconOnly renderIcon={Close} size="sm" kind="ghost" onClick={() => setShowSearchInput(false)} />
           </div>
         ))}
-      <div className={styles.filterSetContent}>
+      <div className="filterSetContent">
         {roots?.map((root, index) => (
-          <div className={styles.nestedAccordion} key={`filter-node-${index}`}>
+          <div className="nestedAccordion" key={`filter-node-${index}`}>
             <FilterNode root={root} level={0} open={config.concepts[index].defaultOpen} />
           </div>
         ))}
@@ -96,7 +97,7 @@ const FilterNode = ({ root, level, open }: FilterNodeProps) => {
 const FilterLeaf = ({ leaf }: FilterLeafProps) => {
   const { checkboxes, toggleVal } = useContext(FilterContext);
   return (
-    <div className={styles.filterItem}>
+    <div className="filterItem">
       <Checkbox
         id={leaf?.flatName}
         labelText={leaf?.display}

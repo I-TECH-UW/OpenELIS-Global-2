@@ -9,7 +9,8 @@ import { useObstreeData } from './trendline-resource';
 import { testResultsBasePath } from '../helpers';
 import CommonDataTable from '../overview/common-datatable.component';
 import RangeSelector from './range-selector.component';
-import styles from './trendline.scss';
+//import styles from './trendline.scss';
+import  './trendline.scss';
 
 enum ScaleTypes {
   TIME = 'time',
@@ -24,15 +25,17 @@ enum TickRotations {
   NEVER = 'never',
 }
 
-const TrendLineBackground = ({ ...props }) => <div {...props} className={styles.background} />;
+const TrendLineBackground = ({ ...props }) => <div {...props} className="background" />;
 
 const TrendlineHeader = ({ patientUuid, title, referenceRange, isValidating, showBackToTimelineButton }) => {
   const { t } = useTranslation();
   return (
-    <div className={styles.header}>
-      <div className={styles.backButton}>
+    <div className="header">
+      <div className="backButton">
         {showBackToTimelineButton && (
-          <ConfigurableLink to={testResultsBasePath(`/patient/${patientUuid}/chart`)}>
+           
+            <ConfigurableLink to="#groupedtimeline"> 
+         
             <Button
               kind="ghost"
               renderIcon={(props) => <ArrowLeft {...props} size={24} />}
@@ -40,14 +43,16 @@ const TrendlineHeader = ({ patientUuid, title, referenceRange, isValidating, sho
             >
               <span>{t('backToTimeline', 'Back to timeline')}</span>
             </Button>
-          </ConfigurableLink>
+            
+            </ConfigurableLink> 
+           
         )}
       </div>
-      <div className={styles.content}>
-        <span className={styles.title}>{title}</span>
-        <span className={styles.referenceange}>{referenceRange}</span>
+      <div className="content">
+        <span className="title">{title}</span>
+        <span className="referenceange">{referenceRange}</span>
       </div>
-      <div>{isValidating && <InlineLoading className={styles.inlineLoader} />}</div>
+      <div>{isValidating && <InlineLoading className="inlineLoader" />}</div>
     </div>
   );
 };

@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { OBSERVATION_INTERPRETATION } from '../commons';
 import { ObsRecord } from '../panel-view/types';
-import styles from './timeline.scss';
+//import styles from './timeline.scss';
+import  './timeline.scss';
 import { ConfigurableLink, formatDate, formatTime, parseDate, usePatient } from '../commons';
 import { ParsedTimeType } from '../filter/filter-types';
 import { testResultsBasePath } from '../helpers';
@@ -50,25 +51,25 @@ export const Grid: React.FC<{
       gridTemplateColumns: `${padding ? '9em ' : ''} repeat(${dataColumns}, 5em)`,
       margin: '1px',
     }}
-    className={styles['grid']}
+    className='grid'
     {...props}
   />
 );
 
 export const PaddingContainer = React.forwardRef<HTMLElement, any>((props, ref) => (
-  <div ref={ref} className={styles['padding-container']} {...props} />
+  <div ref={ref} className='padding-container' {...props} />
 ));
 
 const TimeSlotsInner: React.FC<{
   style?: React.CSSProperties;
   className?: string;
 }> = ({ className, ...props }) => (
-  <div className={styles['time-slot-inner'] + (className ? ' ' + className : '')} {...props} />
+  <div className='time-slot-inner'  {...props} />
 );
 
-export const Main: React.FC = () => <main className={styles['padded-main']} />;
+export const Main: React.FC = () => <main className='padded-main' />;
 
-export const ShadowBox: React.FC = () => <div className={styles['shadow-box']} />;
+export const ShadowBox: React.FC = () => <div className='shadow-box' />;
 
 export const TimelineCell: React.FC<{
   text: string;
@@ -79,27 +80,27 @@ export const TimelineCell: React.FC<{
 
   switch (interpretation) {
     case 'OFF_SCALE_HIGH':
-      additionalClassname = styles['off-scale-high'];
+      additionalClassname = 'off-scale-high';
       break;
 
     case 'CRITICALLY_HIGH':
-      additionalClassname = styles['critically-high'];
+      additionalClassname = 'critically-high';
       break;
 
     case 'HIGH':
-      additionalClassname = styles['high'];
+      additionalClassname = 'high';
       break;
 
     case 'OFF_SCALE_LOW':
-      additionalClassname = styles['off-scale-low'];
+      additionalClassname = 'off-scale-low';
       break;
 
     case 'CRITICALLY_LOW':
-      additionalClassname = styles['critically-low'];
+      additionalClassname = 'critically-low';
       break;
 
     case 'LOW':
-      additionalClassname = styles['low'];
+      additionalClassname = 'low';
       break;
 
     case 'NORMAL':
@@ -109,7 +110,7 @@ export const TimelineCell: React.FC<{
 
   return (
     <div
-      className={`${styles['timeline-data-cell']} ${zebra ? styles['timeline-cell-zebra'] : ''} ${additionalClassname}`}
+      className={`${'timeline-data-cell'} ${zebra ? 'timeline-cell-zebra' : ''} ${additionalClassname}`}
     >
       <p>{text}</p>
     </div>
@@ -119,21 +120,21 @@ export const TimelineCell: React.FC<{
 export const RowStartCell = ({ title, range, units, shadow = false, testUuid, isString = false }) => {
   return (
     <div
-      className={styles['row-start-cell']}
+      className='row-start-cell'
       style={{
         boxShadow: shadow ? '8px 0 20px 0 rgba(0,0,0,0.15)' : undefined,
       }}
     >
-      <span className={styles['trendline-link']}>
+      <span className='trendline-link'>
         {!isString ? (
-          <ConfigurableLink to={`${testResultsBasePath(`/patient/${patientUuid}/chart`)}/trendline/${testUuid}`}>
+          <ConfigurableLink to="#trendline">
             {title}
           </ConfigurableLink>
         ) : (
           title
         )}
       </span>
-      <span className={styles['range-units']}>
+      <span className='range-units'>
         {range} {units}
       </span>
     </div>

@@ -3,7 +3,8 @@ import { useMemo } from 'react';
 import useSWR from 'swr';
 import useSWRInfinite from 'swr/infinite';
 import { assessValue, exist } from '../loadPatientTestData/helpers';
-import {obstree} from '../../../data/obsTree'
+import obstree from '../../../data/dummy/obsTree.json'
+import obstree2 from '../../../data/dummy/obsTree2.json'
 
 export const getName = (prefix, name) => {
   return prefix ? `${prefix}-${name}` : name;
@@ -56,8 +57,9 @@ const useGetManyObstreeData = (uuidArray) => {
       return `/ws/rest/v1/obstree?patient=${patientUuid}&concept=${uuidArray[index]}`;
     } else return null;
   };
+
   //const { data, error, isLoading } = useSWRInfinite(getObstreeUrl, openmrsFetch, { initialSize: uuidArray.length });
-  const { data, error, isLoading } = { data : [{data :obstree}] , error:false , isLoading:false};
+  const { data, error, isLoading } = { data : [{data :obstree} ,{data :obstree2}] , error:false , isLoading:false};
 
   const result = useMemo(() => {
     return (

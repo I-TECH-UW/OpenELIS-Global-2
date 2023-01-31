@@ -22,6 +22,7 @@ import { SecureRoute } from "./components/security";
 import "./index.scss";
 import PatientManagement from "./components/patient/PatientManagement";
 import PatientHistory from "./components/patient/PatientHistory";
+//import "./components/patient/resultsViewer/results-viewer.styles.scss"
 
 
 let i18nConfig = {

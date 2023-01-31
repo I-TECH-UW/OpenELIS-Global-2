@@ -6,7 +6,8 @@ import { OverviewPanelEntry } from './useOverviewData';
 import { useTranslation } from 'react-i18next';
 import { formatDatetime, navigate } from '../commons';
 import CommonDataTable from './common-datatable.component';
-import styles from './common-overview.scss';
+//import styles from './common-overview.scss';
+import './common-overview.scss';
 
 const DashboardResultsCount = 5;
 
@@ -72,15 +73,15 @@ const CommonOverview: React.FC<CommonOverviewProps> = ({
         const cards = overviewData.map(([title, type, data, effectiveDateTime, issuedDateTime, uuid]) => (
           <article
             key={uuid}
-            className={insertSeparator ? '' : `${styles.card} ${isActiveCard(uuid) ? styles.activeCard : ''}`}
+            className={insertSeparator ? '' : `${"card"} ${isActiveCard(uuid) ? "activeCard" : ''}`}
           >
             <CommonDataTable
               {...{
                 title,
                 data,
                 description: (
-                  <div className={insertSeparator ? '' : styles.cardHeader}>
-                    <div className={styles.meta}>
+                  <div className={insertSeparator ? '' : "cardHeader"}>
+                    <div className="meta">
                       {formatDatetime(effectiveDateTime, { mode: 'wide' })}
                       <InfoTooltip effectiveDateTime={effectiveDateTime} issuedDateTime={issuedDateTime} />
                     </div>
@@ -142,24 +143,24 @@ const CommonOverview: React.FC<CommonOverviewProps> = ({
   );
 };
 
-const Separator = ({ ...props }) => <div {...props} className={styles.separator} />;
+const Separator = ({ ...props }) => <div {...props} className="separator" />;
 
 const InfoTooltip = ({ effectiveDateTime, issuedDateTime }) => {
   const { t } = useTranslation();
   return (
-    <Toggletip align="bottom" className={styles.tooltipContainer}>
+    <Toggletip align="bottom" className="tooltipContainer">
       <ToggletipButton label="Additional information">
         <Information />
       </ToggletipButton>
       <ToggletipContent>
-        <div className={styles.tooltip}>
+        <div className="tooltip">
           <p>{t('dateCollected', 'Displaying date collected')}</p>
           <p>
-            <span className={styles.label}>{t('resulted', 'Resulted')}: </span>{' '}
+            <span className="label">{t('resulted', 'Resulted')}: </span>{' '}
             {formatDatetime(issuedDateTime, { mode: 'wide' })}
           </p>
           <p>
-            <span className={styles.label}>{t('ordered', 'Ordered')}: </span>{' '}
+            <span className="label">{t('ordered', 'Ordered')}: </span>{' '}
             {formatDatetime(effectiveDateTime, { mode: 'wide' })}
           </p>
         </div>

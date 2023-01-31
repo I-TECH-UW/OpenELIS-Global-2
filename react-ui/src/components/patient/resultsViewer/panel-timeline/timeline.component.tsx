@@ -2,12 +2,13 @@ import React from 'react';
 import { PaddingContainer, TimeSlots, Grid, RowStartCell, GridItems, ShadowBox } from './helpers';
 import { EmptyState } from '../commons';
 import useScrollIndicator from './useScroll';
-import styles from './timeline.scss';
+//import styles from './timeline.scss';
+import  './timeline.scss';
 import { ParsedTimeType } from '../filter/filter-types';
 import { ObsRecord } from '../panel-view/types';
 
 const RecentResultsGrid = (props) => {
-  return <div {...props} className={styles['recent-results-grid']} />;
+  return <div {...props} className='recent-results-grid' />;
 };
 
 interface PanelNameCornerProps {
@@ -16,7 +17,7 @@ interface PanelNameCornerProps {
 }
 
 const PanelNameCorner: React.FC<PanelNameCornerProps> = ({ showShadow, panelName }) => (
-  <TimeSlots className={`${styles['corner-grid-element']} ${showShadow ? `${styles.shadow}` : ''}`}>
+  <TimeSlots className={`${'corner-grid-element'} ${showShadow ? "shadow" : ''}`}>
     {panelName}
   </TimeSlots>
 );
@@ -41,21 +42,21 @@ const DateHeaderGrid: React.FC<DateHeaderGridProps> = ({ timeColumns, yearColumn
   >
     {yearColumns.map(({ year, size }) => {
       return (
-        <TimeSlots key={year} className={styles['year-column']} style={{ gridColumn: `${size} span` }}>
+        <TimeSlots key={year} className='year-column' style={{ gridColumn: `${size} span` }}>
           {year}
         </TimeSlots>
       );
     })}
     {dayColumns.map(({ day, year, size }) => {
       return (
-        <TimeSlots key={`${day} - ${year}`} className={styles['day-column']} style={{ gridColumn: `${size} span` }}>
+        <TimeSlots key={`${day} - ${year}`} className='day-column' style={{ gridColumn: `${size} span` }}>
           {day}
         </TimeSlots>
       );
     })}
     {timeColumns.map((time, i) => {
       return (
-        <TimeSlots key={time + i} className={styles['time-column']}>
+        <TimeSlots key={time + i} className='time-column'>
           {time}
         </TimeSlots>
       );

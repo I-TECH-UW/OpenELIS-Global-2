@@ -1,13 +1,33 @@
 
-//@import "~@openmrs/esm-styleguide/src/vars";
+@use '@carbon/styles/scss/grid/_flexbox';
+@use '@carbon/styles/scss/spacing';
+@use '@carbon/styles/scss/type';
+@use "carbon-components/scss/globals/scss/typography.scss";
 @import './commons/scss/vars.scss';
-@import "carbon-components/scss/globals/scss/typography.scss";
 
+
+.tests{
+  background-color: red ;
+  border: 0.5px solid red;
+}
 
 .resultsContainer {
   padding: 0;
   width: 100%;
   position: relative;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  background-color: $ui-01;
+}
+
+.flex {
+  display: flex;
+  flex: 1;
+}
+
+.resultsHeaderTablet {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .resultsHeader {
@@ -16,15 +36,33 @@
   background-color: $openmrs-background-grey;
   position: sticky;
   top: 3rem;
+  display: flex;
+}
+
+.leftHeaderSection {
+  display: flex;
+  align-items: center;
 }
 
 .viewOptsContentSwitcherContainer {
   margin-left: auto;
 }
 
-.leftHeader {
+.leftSection {
+  width: 45%;
+  margin-right: spacing.$spacing-05;
+}
+
+.rightSection, .rightSectionHeader {
+  width: 55%;
+}
+
+.rightSectionHeader {
   display: flex;
-  align-items: center;
+} 
+
+.rightSection :global(.cds--skeleton) {
+  width: 100%;
 }
 
 .leftHeaderActions {
@@ -32,7 +70,8 @@
   min-width: 2.5rem;
 }
 
-.leftHeaderActions > :global(.bx--content-switcher) {
+.leftHeaderActions > :global(.cds--content-switcher), 
+.viewOptsContentSwitcherContainer :global(.cds--content-switcher) {
   display: grid;
   grid-template-columns: 1fr 1fr;
   width: max-content;
@@ -45,12 +84,50 @@
   align-items: baseline;
 
   .trendlineOverlayHeaderTitle {
-    @include carbon--type-style('productive-heading-02');
+    @include type.type-style('heading-compact-02');
     margin-right: 4px;
   }
 
   .trendlineOverlayHeaderReferenceRange {
-    @include carbon--type-style('helper-text-01');
+    @include type.type-style('helper-text-01');
   }
 }
 
+.filterSetHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: spacing.$spacing-03;
+  background-color: $openmrs-background-grey;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+
+  h4 {
+    @include type.type-style("heading-compact-02");
+    color: $text-02;
+  }
+
+  .filterSetActions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
+}
+
+.floatingTreeButton {
+  position: fixed;
+  bottom: 5rem;
+  right: spacing.$spacing-05;
+  z-index: 99;
+
+  button {
+    background-color: $brand-01 !important;
+    padding: spacing.$spacing-05;
+    border-radius: 50%;
+  }
+
+  svg {
+    fill: $ui-01 !important;
+  }
+}

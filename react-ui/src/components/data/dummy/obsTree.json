@@ -1,4 +1,4 @@
-export const obstree = {
+ {
     "display": "Hematology",
     "subSets": [
         {
@@ -90,7 +90,12 @@ export const obstree = {
                     "hiNormal": 20
                 },
                 {
-                    "obs": [],
+                    "obs": [
+                        {
+                            "obsDatetime": "2020-06-14 21:07:26.0",
+                            "value": "99.0"
+                        }
+                    ],
                     "datatype": "Numeric",
                     "lowAbsolute": 0,
                     "display": "White blood cells",
@@ -103,9 +108,17 @@ export const obstree = {
                 {
                     "obs": [
                         {
+                            "obsDatetime": "2020-05-14 21:07:26.0",
+                            "value": "50"
+                          },
+                          {
                             "obsDatetime": "2020-06-14 21:07:26.0",
-                            "value": "82.0"
-                        }
+                            "value": "82"
+                          },
+                          {
+                            "obsDatetime": "2020-07-14 21:07:26.0",
+                            "value": "100"
+                          }
                     ],
                     "datatype": "Numeric",
                     "lowAbsolute": 0,

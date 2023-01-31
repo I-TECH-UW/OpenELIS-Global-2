@@ -3,9 +3,10 @@ import { FetchResponse, openmrsFetch, usePatient } from '../commons';
 import useSWRInfinite from 'swr/infinite';
 import { extractMetaInformation, getConceptUuid } from './helper';
 import { Concept, ConceptMeta, FHIRObservationResource, FhirResponse, LabSetRecord, ObsRecord } from './types';
+import concept from "../../../data/dummy/concepts.json"
 
 export function useObservations() {
-  const { patientUuid } = usePatient();
+  const { patientUuid } = usePatient("demopat");
   const getUrl = useCallback(
     (pageIndex: number, prevPageData: FetchResponse<FhirResponse<FHIRObservationResource>>) => {
       if (prevPageData && !prevPageData?.data?.link.some(({ relation }) => relation === 'next')) {

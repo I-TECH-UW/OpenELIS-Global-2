@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import styles from './result-panel.scss';
+//import styles from './result-panel.scss';
+import  './result-panel.scss';
 import {
   DataTable,
   TableContainer,
@@ -94,11 +95,11 @@ const LabSetPanel: React.FC<LabSetPanelProps> = ({ panel, observations, activePa
         role="button"
         tabIndex={0}
         onClick={() => setActivePanel(panel)}
-        className={`${styles.labSetPanel} ${activePanel?.conceptUuid === panel.conceptUuid && styles.activePanel}`}
+        className={`${"labSetPanel"} ${activePanel?.conceptUuid === panel.conceptUuid && "activePanel"}`}
       >
-        <div className={styles.panelHeader}>
-          <h2 className={styles.productiveHeading02}>{panel.name}</h2>
-          <p className={styles.subtitleText}>
+        <div className="panelHeader">
+          <h2 className="productiveHeading02">{panel.name}</h2>
+          <p className="subtitleText">
             {formatDate(date, {
               mode: 'wide',
             })}{' '}

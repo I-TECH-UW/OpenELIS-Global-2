@@ -1,7 +1,8 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Tab, Tabs, TabList } from '@carbon/react';
-import styles from './trendline.scss';
+//import styles from './trendline.scss';
+import  './trendline.scss';
 
 const RangeSelector: React.FC<{ setLowerRange: (lowerRange: Date) => void; upperRange: Date }> = ({
   setLowerRange,
@@ -37,7 +38,7 @@ const RangeSelector: React.FC<{ setLowerRange: (lowerRange: Date) => void; upper
   ];
 
   return (
-    <Tabs light selected={6} className={styles['range-tabs']}>
+    <Tabs light selected={6} className='range-tabs'>
       <TabList aria-label="Trendline range tabs">
         {ranges.map(([label, onClick], index) => (
           <Tab onClick={onClick} key={index}>

@@ -1,4 +1,5 @@
-import styles from './result-panel.scss';
+//import styles from './result-panel.scss';
+import './result-panel.scss';
 import { Concept, ConceptMeta, FHIRObservationResource, observationInterpretation } from './types';
 import { OBSERVATION_INTERPRETATION } from '../commons';
 
@@ -7,22 +8,22 @@ export const getConceptUuid = (obs: FHIRObservationResource) => obs?.code.coding
 export const getClass = (interpretation: OBSERVATION_INTERPRETATION) => {
   switch (interpretation) {
     case 'OFF_SCALE_HIGH':
-      return styles['off-scale-high'];
+      return 'off-scale-high';
 
     case 'CRITICALLY_HIGH':
-      return styles['critically-high'];
+      return 'critically-high';
 
     case 'HIGH':
-      return styles['high'];
+      return 'high';
 
     case 'OFF_SCALE_LOW':
-      return styles['off-scale-low'];
+      return 'off-scale-low';
 
     case 'CRITICALLY_LOW':
-      return styles['critically-low'];
+      return 'critically-low';
 
     case 'LOW':
-      return styles['low'];
+      return 'low';
 
     case 'NORMAL':
     default:

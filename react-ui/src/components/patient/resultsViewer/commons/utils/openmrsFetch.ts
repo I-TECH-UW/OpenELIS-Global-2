@@ -2,6 +2,8 @@ import { Observable } from "rxjs";
 import isPlainObject from "lodash-es/isPlainObject";
 import { FetchResponse } from "../types";
 import {  navigate } from "../../commons"
+import panelData from "../../../../data/dummy/panelData.json"
+import concept from "../../../../data/dummy/concepts.json"
 
 
 export const sessionEndpoint = "/ws/rest/v1/session";
@@ -14,6 +16,7 @@ export function openmrsFetch<T = any>(
     path: string,
     fetchInit: FetchConfig = {}
   ): Promise<FetchResponse<T>> {
+    
     if (typeof path !== "string") {
       throw Error(
         "The first argument to @openmrs/api's openmrsFetch function must be a url string"
@@ -27,12 +30,13 @@ export function openmrsFetch<T = any>(
     }
   
     // @ts-ignore
-    if (!window.openmrsBase) {
-      throw Error(
-        "@openmrs/api is running in a browser that doesn't have window.openmrsBase, which is provided by openmrs-module-spa's HTML file."
-      );
-    }
+    // if (!window.openmrsBase) {
+    //   throw Error(
+    //     "@openmrs/api is running in a browser that doesn't have window.openmrsBase, which is provided by openmrs-module-spa's HTML file."
+    //   );
+    // }
   
+    
     // Prefix the url with the openmrs spa base
     // @ts-ignore
     const url = makeUrl(path);
@@ -77,9 +81,14 @@ export function openmrsFetch<T = any>(
      * called @openmrs/api.
      */
     const requestStacktrace = Error();
-  
-    return window.fetch(url, fetchInit as RequestInit).then(async (r) => {
+    
+   // const response  = window.fetch(url, fetchInit as RequestInit).then() as FetchResponse<T>;
+   // return response.data;
+
+    return window.fetch("https://cat-fact.herokuapp.com/facts/", fetchInit as RequestInit).then(async (r) => {
       const response = r as FetchResponse<T>;
+      // response.data = panelData as T;
+      // return response;
       if (response.ok) {
         if (response.status === 204) {
           /* HTTP 204 - No Content
@@ -93,7 +102,13 @@ export function openmrsFetch<T = any>(
           return response.text().then((responseText) => {
             try {
               if (responseText) {
-                response.data = JSON.parse(responseText);
+                //response.data = JSON.parse(responseText);
+                if(path.includes("/ws/fhir2/R4/Observation")){
+                  response.data = panelData as T;
+                }else if (path.includes("/ws/rest/v1/concept")){
+                  response.data = concept as T;
+                }
+                
               }
             } catch (err) {
               // Server didn't respond with json

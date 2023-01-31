@@ -55,7 +55,11 @@ class PatientHistory extends React.Component {
                 <SearchPatientForm getSelectedPatient={this.getSelectedPatient}></SearchPatientForm>
                 
                 <br></br>
-                 <RoutedResultsViewer patientUuid={this.state.selectedPatient.id} basePath={config.serverBaseUrl}></RoutedResultsViewer> 
+                <Grid fullWidth={true}>
+                    <Column lg={16}>
+                 <RoutedResultsViewer patientUuid="patuuid" basePath={config.serverBaseUrl}></RoutedResultsViewer> 
+                 </Column>
+                </Grid>
 
             </>
 

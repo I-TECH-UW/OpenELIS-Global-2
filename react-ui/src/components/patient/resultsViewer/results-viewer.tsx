@@ -8,7 +8,8 @@ import { FilterContext, FilterProvider } from './filter';
 import { useGetManyObstreeData } from './grouped-timeline';
 import TabletOverlay from './tablet-overlay';
 import Trendline from './trendline/trendline.component';
-import styles from './results-viewer.styles.scss';
+//import styles from './results-viewer.styles.scss';
+import  './results-viewer.styles.scss';
 import { useParams } from 'react-router-dom';
 import PanelView from './panel-view';
 import TreeViewWrapper from './tree-view';
@@ -35,7 +36,7 @@ const RoutedResultsViewer: React.FC<ResultsViewerProps> = ({ basePath, patientUu
 
   if (roots?.length) {
     return (
-      <FilterProvider roots={!loading ? roots : []}>
+      <FilterProvider roots={loading ? roots : []}>
         <ResultsViewer patientUuid={patientUuid} basePath={basePath} loading={loading} />
       </FilterProvider>
     );
@@ -59,7 +60,6 @@ const ResultsViewer: React.FC<ResultsViewerProps> = ({ patientUuid, basePath, lo
   const expanded = view === 'full';
   const { type, testUuid } = useParams();
   const trendlineView = testUuid && type === 'trendline';
-
   const navigateBackFromTrendlineView = useCallback(() => {
     navigate({
       to: testResultsBasePath(`/patient/${patientUuid}/chart`),
@@ -68,12 +68,12 @@ const ResultsViewer: React.FC<ResultsViewerProps> = ({ patientUuid, basePath, lo
 
   if (tablet) {
     return (
-      <div className={styles.resultsContainer}>
-        <div className={styles.resultsHeader}>
+      <div className="resultsContainer">
+        <div className="resultsHeader">
           <h4 style={{ flexGrow: 1 }}>{`${t('results', 'Results')} ${
             totalResultsCount ? `(${totalResultsCount})` : ''
           }`}</h4>
-          <div className={styles.leftHeaderActions}>
+          <div className="leftHeaderActions">
             <ContentSwitcher
               selectedIndex={['panel', 'tree'].indexOf(selectedSection)}
               onChange={(e) => setSelectedSection(e.name as panelOpts)}
@@ -114,13 +114,13 @@ const ResultsViewer: React.FC<ResultsViewerProps> = ({ patientUuid, basePath, lo
   }
 
   return (
-    <div className={styles.resultsContainer}>
-      <div className={styles.resultsHeader}>
-        <div className={`${styles.leftSection} ${styles.leftHeaderSection}`}>
+    <div className="resultsContainer">
+      <div className="resultsHeader">
+        <div className="leftSection leftHeaderSection">
           <h4 style={{ flexGrow: 1 }}>{`${t('results', 'Results')} ${
             totalResultsCount ? `(${totalResultsCount})` : ''
           }`}</h4>
-          <div className={styles.leftHeaderActions}>
+          <div className="leftHeaderActions">
             {!expanded && (
               <ContentSwitcher
                 size={tablet ? 'lg' : 'md'}
@@ -133,8 +133,8 @@ const ResultsViewer: React.FC<ResultsViewerProps> = ({ patientUuid, basePath, lo
             )}
           </div>
         </div>
-        <div className={styles.rightSectionHeader}>
-          <div className={styles.viewOptsContentSwitcherContainer}>
+        <div className="rightSectionHeader">
+          <div className="viewOptsContentSwitcherContainer">
             <ContentSwitcher
               size={tablet ? 'lg' : 'md'}
               style={{ maxWidth: '10rem' }}
@@ -148,7 +148,7 @@ const ResultsViewer: React.FC<ResultsViewerProps> = ({ patientUuid, basePath, lo
         </div>
       </div>
 
-      <div className={styles.flex}>
+      <div className="flex">
         {selectedSection === 'tree' ? (
           <TreeViewWrapper
             patientUuid={patientUuid}
