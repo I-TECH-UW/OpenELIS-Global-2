@@ -98,7 +98,7 @@ class OEHeader extends React.Component {
       <>
         <div className="container">
           <Theme>
-            <Header className="header" aria-label="">
+            <Header className="" aria-label="">
               <HeaderName href="/" prefix="">
                 <span id="header-logo">{this.logo()}</span>
                 <span id="header-title">{this.props.config.title}</span>
