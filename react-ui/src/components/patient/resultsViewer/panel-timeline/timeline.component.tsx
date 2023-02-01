@@ -17,7 +17,7 @@ interface PanelNameCornerProps {
 }
 
 const PanelNameCorner: React.FC<PanelNameCornerProps> = ({ showShadow, panelName }) => (
-  <TimeSlots className={`${'corner-grid-element'} ${showShadow ? "shadow" : ''}`}>
+  <TimeSlots className="corner-grid-element">
     {panelName}
   </TimeSlots>
 );
@@ -111,8 +111,9 @@ export const Timeline: React.FC<TimelineParams> = ({ parsedTime, rowData, panelN
 
   if (yearColumns && dayColumns && timeColumns)
     return (
-      <RecentResultsGrid>
-        <PaddingContainer ref={containerRef}>
+      <div className="timelineHeader" style={{ top: '6.5rem' }}>
+       <div className="timelineHeader" style={{ top: '6.5rem' }}>
+        <div className="dateHeaderContainer">
           <PanelNameCorner showShadow={xIsScrolled} panelName={panelName} />
           <DateHeaderGrid
             {...{
@@ -133,8 +134,9 @@ export const Timeline: React.FC<TimelineParams> = ({ parsedTime, rowData, panelN
             }}
           />
           <ShadowBox />
-        </PaddingContainer>
-      </RecentResultsGrid>
+        </div>
+        </div>
+        </div>
     );
   return <EmptyState displayText={'timeline data'} headerTitle="Data Timeline" />;
 };

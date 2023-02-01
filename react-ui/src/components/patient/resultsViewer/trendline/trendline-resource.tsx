@@ -40,7 +40,7 @@ export function useObstreeData(
   //   `/ws/rest/v1/obstree?patient=${patientUuid}&concept=${conceptUuid}`,
   //   openmrsFetch,
   // );
-  const { data, error, isLoading ,isValidating } = { data : {data :obs}  , error:{name:"sss" ,message:"lll"}, isLoading:false ,isValidating:true};
+  const { data, error, isLoading ,isValidating } = { data : {data :obs}  , error:{name:"sss" ,message:"lll"}, isLoading:false ,isValidating:false};
   if (error) {
     showNotification({
       title: error.name,

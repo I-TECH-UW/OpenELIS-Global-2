@@ -3,7 +3,8 @@ import LabSetPanel from './panel.component';
 import usePanelData from './usePanelData';
 import { DataTableSkeleton, Button, Search, Form } from '@carbon/react';
 import { Search as SearchIcon, Close } from '@carbon/react/icons';
-import styles from './panel-view.scss';
+//import styles from './panel-view.scss';
+import  './panel-view.scss';
 import { navigate, useLayoutType } from '../commons';
 import PanelTimelineComponent from '../panel-timeline';
 import { ObsRecord } from './types';
@@ -102,7 +103,7 @@ const PanelView: React.FC<PanelViewProps> = ({ expanded, testUuid, basePath, typ
 
   return (
     <>
-      <div className={styles.leftSection}>
+      <div className="leftSection"  >
         <>
           <PanelViewHeader
             isTablet={isTablet}
@@ -113,8 +114,9 @@ const PanelView: React.FC<PanelViewProps> = ({ expanded, testUuid, basePath, typ
           {!isLoading ? (
             panels.length > 0 ? (
               filteredPanels.length ? (
-                filteredPanels.map((panel) => (
+                filteredPanels.map((panel ,index) => (
                   <LabSetPanel
+                   key={index}
                     panel={panel}
                     observations={[panel, ...panel.relatedObs]}
                     setActivePanel={setActivePanel}
@@ -132,8 +134,8 @@ const PanelView: React.FC<PanelViewProps> = ({ expanded, testUuid, basePath, typ
           )}
         </>
       </div>
-      <div className={`${styles.headerMargin} ${styles.rightSection}`}>
-        <div className={styles.stickySection}>
+      <div className="headerMargin rightSection" >
+        <div className="stickySection">
           {isLoading ? (
             <DataTableSkeleton columns={3} />
           ) : window.location.href.endsWith('#trendline') ? (
@@ -179,11 +181,11 @@ const PanelViewHeader: React.FC<PanelViewHeaderProps> = ({
   }, [setSearchTerm, setLocalSearchTerm]);
 
   return (
-    <div className={styles.panelViewHeader}>
+    <div className="panelViewHeader">
       {!showSearchFields ? (
         <>
-          <div className={styles.flex}>
-            <h4 className={styles.productiveHeading02}>
+          <div className="flex">
+            <h4 className="productiveHeading02">
               {!searchTerm
                 ? t('panel', 'Panel')
                 : `${totalSearchResults} ${t('searchResultsTextFor', 'search results for')} "${searchTerm}"`}
@@ -200,7 +202,7 @@ const PanelViewHeader: React.FC<PanelViewHeaderProps> = ({
         </>
       ) : !isTablet ? (
         <>
-          <Form onSubmit={handleSearchTerm} className={styles.flex}>
+          <Form onSubmit={handleSearchTerm} className="flex">
             <Search
               size="sm"
               value={localSearchTerm}
@@ -224,7 +226,7 @@ const PanelViewHeader: React.FC<PanelViewHeaderProps> = ({
       ) : (
         <>
           <Overlay close={handleToggleSearchFields} headerText={t('search', 'Search')}>
-            <Form onSubmit={handleSearchTerm} className={`${styles.flex} ${styles.tabletSearch}`}>
+            <Form onSubmit={handleSearchTerm} className="flex tabletSearch">
               <Search
                 value={localSearchTerm}
                 onChange={(e) => setLocalSearchTerm(e.target.value)}

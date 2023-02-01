@@ -3,6 +3,26 @@
 //@import '~@openmrs/esm-styleguide/src/vars';
 @import '../commons/scss/vars.scss';
 
+
+.timelineHeader {
+  position: sticky;
+  top: 6.5rem;
+  z-index: 1;
+}
+
+.dateHeaderContainer {
+  padding: 0;
+  box-sizing: border-box;
+  display: grid;
+  grid-auto-flow: row;
+  column-gap: 1px;
+  row-gap: 0px;
+  background-color: $color-gray-30;
+  grid-template: auto auto / 9em auto;
+  border-collapse: collapse;
+}
+
+
 .grid {
   width: fit-content;
   background-color: $color-gray-30;
