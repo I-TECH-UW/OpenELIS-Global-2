@@ -24,6 +24,7 @@ import java.text.ParseException;
 
 import org.apache.commons.validator.GenericValidator;
 import org.jfree.util.Log;
+import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.project.service.ProjectService;
 import org.openelisglobal.reports.action.implementation.reportBeans.RoutineColumnBuilder;
@@ -134,7 +135,7 @@ public class ExportRoutineByDate extends CSVRoutineSampleExportReport
         String[] splitBase = null;
         while (csvRoutineColumnBuilder.next()) {
             String line = csvRoutineColumnBuilder.nextLine();
-            String[] splitLine = line.split(",");
+            String[] splitLine = StringUtil.separateCSVWithMixedEmbededQuotes(line);
 
             if (splitLine[0].equals(currentAccessionNumber)) {
                 merge(splitBase, splitLine);

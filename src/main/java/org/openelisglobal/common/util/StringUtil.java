@@ -17,6 +17,8 @@
  */
 package org.openelisglobal.common.util;
 
+import java.io.IOException;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -28,6 +30,12 @@ import org.openelisglobal.common.exception.LIMSException;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.owasp.encoder.Encode;
+
+import com.opencsv.CSVParser;
+import com.opencsv.CSVParserBuilder;
+import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
+import com.opencsv.exceptions.CsvException;
 
 /**
  * @author diane benz
@@ -413,26 +421,38 @@ public class StringUtil {
 
     /**
      * Similar to separateCSVWithEmbededQuotes(String line) but deals with mixed
-     * fields i.e. 1,2,"something, else", 4,5 , "more of that thing", 8
+     * fields i.e. 1,2,"something, else, 4",5 , "more of that thing", 8
+     * 
+     */
+    public static String[] separateCSVWithMixedEmbededQuotes(String line) {
+        CSVParser parser = new CSVParserBuilder().withSeparator(',').build();
+        try (CSVReader reader = new CSVReaderBuilder(new StringReader(line)).withCSVParser(parser).build();) {
+            String[] columns = reader.readNext();
+            columns[columns.length - 1] = columns[columns.length - 1] + System.getProperty("line.separator");
+            return columns;
+        } catch (CsvException | IOException e) {
+            LogEvent.logErrorStack(e);
+            throw new LIMSRuntimeException(e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Similar to separateCSVWithEmbededQuotes(String line) but deals with mixed
+     * fields i.e. 1,2,"something, else, 4",5 , "more of that thing", 8
+     * 
+     * @throws CsvException
+     * @throws IOException
      *
      *
      */
-    public static String[] separateCSVWithMixedEmbededQuotes(String line) {
-
-        String[] breakOnQuotes = line.split(QUOTE);
-
-        StringBuffer substitutedString = new StringBuffer(line.length());
-        for (String subString : breakOnQuotes) {
-            if (subString.startsWith(COMMA) || subString.endsWith(COMMA)) {
-                substitutedString.append(subString.replace(CHAR_COMA, CHAR_TIDDLE));
-            } else {
-                substitutedString.append(QUOTE);
-                substitutedString.append(subString);
-                substitutedString.append(QUOTE);
-            }
+    public static List<String[]> separateCSVWithMixedEmbededQuotesAllRows(String line) {
+        CSVParser parser = new CSVParserBuilder().withSeparator(',').build();
+        try (CSVReader reader = new CSVReaderBuilder(new StringReader(line)).withCSVParser(parser).build();) {
+            return reader.readAll();
+        } catch (CsvException | IOException e) {
+            LogEvent.logErrorStack(e);
+            throw new LIMSRuntimeException(e.getMessage(), e);
         }
-
-        return substitutedString.toString().split(TIDDLE);
     }
 
     /**
