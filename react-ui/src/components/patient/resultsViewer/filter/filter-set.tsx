@@ -30,7 +30,7 @@ const FilterSet: React.FC<FilterSetProps> = ({ hideFilterSetHeader = false }) =>
       {!hideFilterSetHeader &&
         (!showSearchInput ? (
           <div className="filterSetHeader">
-            <h4>{t('tree', 'Tree')}</h4>
+            <h4>{t('Tree', 'Tree')}</h4>
             <div className="filterSetActions">
               <Button
                 kind="ghost"

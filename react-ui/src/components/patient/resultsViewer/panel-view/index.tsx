@@ -81,7 +81,7 @@ const PanelView: React.FC<PanelViewProps> = ({ expanded, testUuid, basePath, typ
                 <FilterEmptyState clearFilter={() => setSearchTerm('')} />
               )
             ) : (
-              <EmptyState displayText={t('panels', 'panels')} headerTitle={t('noPanelsFound', 'No panels found')} />
+              <EmptyState displayText={t('Panels', 'panels')} headerTitle={t('noPanelsFound', 'No panels found')} />
             )
           ) : (
             <DataTableSkeleton columns={3} />
@@ -187,7 +187,7 @@ const PanelViewHeader: React.FC<PanelViewHeaderProps> = ({
           <div className="flex">
             <h4 className="productiveHeading02">
               {!searchTerm
-                ? t('panel', 'Panel')
+                ? t('Panel', 'Panel')
                 : `${totalSearchResults} ${t('searchResultsTextFor', 'search results for')} "${searchTerm}"`}
             </h4>
             {searchTerm ? (

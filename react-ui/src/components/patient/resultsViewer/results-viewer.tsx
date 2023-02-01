@@ -70,7 +70,7 @@ const ResultsViewer: React.FC<ResultsViewerProps> = ({ patientUuid, basePath, lo
     return (
       <div className="resultsContainer">
         <div className="resultsHeader">
-          <h4 style={{ flexGrow: 1 }}>{`${t('results', 'Results')} ${
+          <h4 style={{ flexGrow: 1 }}>{`${t('Results', 'Results')} ${
             totalResultsCount ? `(${totalResultsCount})` : ''
           }`}</h4>
           <div className="leftHeaderActions">
@@ -117,7 +117,7 @@ const ResultsViewer: React.FC<ResultsViewerProps> = ({ patientUuid, basePath, lo
     <div className="resultsContainer">
       <div className="resultsHeader">
         <div className="leftSection leftHeaderSection">
-          <h4 style={{ flexGrow: 1 }}>{`${t('results', 'Results')} ${
+          <h4 style={{ flexGrow: 1 }}>{`${t('Results', 'Results')} ${
             totalResultsCount ? `(${totalResultsCount})` : ''
           }`}</h4>
           <div className="leftHeaderActions">
@@ -127,8 +127,8 @@ const ResultsViewer: React.FC<ResultsViewerProps> = ({ patientUuid, basePath, lo
                 selectedIndex={['panel', 'tree'].indexOf(selectedSection)}
                 onChange={(e) => setSelectedSection(e.name as panelOpts)}
               >
-                <Switch name="panel" text={t('panel', 'Panel')} />
-                <Switch name="tree" text={t('tree', 'Tree')} />
+                <Switch name="panel" text={t('Panel', 'Panel')} />
+                <Switch name="tree" text={t('Tree', 'Tree')} />
               </ContentSwitcher>
             )}
           </div>

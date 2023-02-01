@@ -40,7 +40,7 @@ const TreeView: React.FC<TreeViewProps> = ({ patientUuid, basePath, testUuid, lo
         </div>
         {showTreeOverlay && (
           <TabletOverlay
-            headerText={t('tree', 'Tree')}
+            headerText={t('Tree', 'Tree')}
             close={() => setShowTreeOverlay(false)}
             buttonsGroup={
               <>
