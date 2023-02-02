@@ -15,5 +15,6 @@
     "error.invalidcredentials": "Username or Password are incorrect",
     "patient.label.modify" : "Add/Modify Patient" ,
     "patient.label.info" : "Patient Information",
-    "breadcrumb.home" : "Home"
+    "breadcrumb.home" : "Home",
+    "admin.legacy" :"Legacy Admin"
 }
