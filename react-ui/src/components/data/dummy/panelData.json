@@ -1,0 +1,1441 @@
+{
+  "resourceType": "Bundle",
+  "id": "79df7602-597f-4dd6-9897-59cf57cf5580",
+  "meta": {
+    "lastUpdated": "2023-01-31T19:22:26.509+00:00"
+  },
+  "type": "searchset",
+  "total": 19,
+  "link": [
+    {
+      "relation": "self",
+      "url": "http://dev3.openmrs.org/openmrs/ws/fhir2/R4/Observation?_count=100&category=laboratory&patient=766b1311-bb85-487f-98bf-e07bec7c0169"
+    }
+  ],
+  "entry": [
+    {
+      "fullUrl": "http://dev3.openmrs.org/openmrs/ws/fhir2/R4/Observation/28d6d720-9c09-4a67-80b4-8f82e2f42eac",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "28d6d720-9c09-4a67-80b4-8f82e2f42eac",
+        "meta": {
+          "lastUpdated": "2023-01-24T08:22:27.000+00:00"
+        },
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><table class=\"hapiPropertyTable\"><tbody><tr><td>Id:</td><td>28d6d720-9c09-4a67-80b4-8f82e2f42eac</td></tr><tr><td>Status:</td><td>FINAL</td></tr><tr><td>Category:</td><td> Laboratory </td></tr><tr><td>Code:</td><td>Neutrophils (%) - microscopic exam</td></tr><tr><td>Subject:</td><td><a href=\"http://localhost:8080/openmrs/ws/fhir2/R4/Patient/766b1311-bb85-487f-98bf-e07bec7c0169\">Grace García (OpenMRS ID: 100003R)</a></td></tr><tr><td>Encounter:</td><td><a href=\"http://localhost:8080/openmrs/ws/fhir2/R4/Encounter/a16bdf0a-ffb8-4a56-ad95-70936bb35d2c\">Encounter/a16bdf0a-ffb8-4a56-ad95-70936bb35d2c</a></td></tr><tr><td>Effective:</td><td> 14 June 2020 21:07:26 </td></tr><tr><td>Issued:</td><td>24/01/2023 08:22:27 AM</td></tr><tr><td>Value:</td><td>82.0 % </td></tr><tr><td>Reference Ranges:</td><td><table class=\"subPropertyTable\"><tbody><tr><th>-</th><th>Low</th><th>High</th><th>Type</th><th>Applies To</th><th>Age</th></tr><tr><td>1</td><td>0.0 </td><td>100.0 </td><td> absolute </td><td/><td> - </td></tr></tbody></table></td></tr></tbody></table></div>"
+        },
+        "status": "final",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                "code": "laboratory",
+                "display": "Laboratory"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "code": "1336AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "display": "Neutrophils (%) - microscopic exam"
+            }
+          ],
+          "text": "Neutrophils (%) - microscopic exam"
+        },
+        "subject": {
+          "reference": "Patient/766b1311-bb85-487f-98bf-e07bec7c0169",
+          "type": "Patient",
+          "display": "Grace García (OpenMRS ID: 100003R)"
+        },
+        "encounter": {
+          "reference": "Encounter/a16bdf0a-ffb8-4a56-ad95-70936bb35d2c",
+          "type": "Encounter"
+        },
+        "effectiveDateTime": "2020-06-14T21:07:26+00:00",
+        "issued": "2023-01-24T08:22:27.000+00:00",
+        "valueQuantity": {
+          "value": 82,
+          "unit": "%",
+          "system": "http://unitsofmeasure.org",
+          "code": "%"
+        },
+        "referenceRange": [
+          {
+            "low": {
+              "value": 0
+            },
+            "high": {
+              "value": 100
+            },
+            "type": {
+              "coding": [
+                {
+                  "system": "http://fhir.openmrs.org/ext/obs/reference-range",
+                  "code": "absolute"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "fullUrl": "http://dev3.openmrs.org/openmrs/ws/fhir2/R4/Observation/fa8f7697-277f-4b3d-a845-fda4710c12e4",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "fa8f7697-277f-4b3d-a845-fda4710c12e4",
+        "meta": {
+          "lastUpdated": "2023-01-24T08:22:28.000+00:00"
+        },
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><table class=\"hapiPropertyTable\"><tbody><tr><td>Id:</td><td>fa8f7697-277f-4b3d-a845-fda4710c12e4</td></tr><tr><td>Status:</td><td>AMENDED</td></tr><tr><td>Category:</td><td> Laboratory </td></tr><tr><td>Code:</td><td>Urea measurement (calculated)</td></tr><tr><td>Subject:</td><td><a href=\"http://localhost:8080/openmrs/ws/fhir2/R4/Patient/766b1311-bb85-487f-98bf-e07bec7c0169\">Grace García (OpenMRS ID: 100003R)</a></td></tr><tr><td>Encounter:</td><td><a href=\"http://localhost:8080/openmrs/ws/fhir2/R4/Encounter/350412af-96d6-4640-95fc-4da6d94f2c54\">Encounter/350412af-96d6-4640-95fc-4da6d94f2c54</a></td></tr><tr><td>Effective:</td><td> 31 May 2021 23:24:26 </td></tr><tr><td>Issued:</td><td>24/01/2023 08:22:28 AM</td></tr><tr><td>Value:</td><td>38.0 mg/dl </td></tr><tr><td>Reference Ranges:</td><td><table class=\"subPropertyTable\"><tbody><tr><th>-</th><th>Low</th><th>High</th><th>Type</th><th>Applies To</th><th>Age</th></tr><tr><td>1</td><td>20.0 </td><td>40.0 </td><td> normal </td><td/><td> - </td></tr><tr><td>2</td><td>10.0 </td><td>200.0 </td><td> absolute </td><td/><td> - </td></tr></tbody></table></td></tr></tbody></table></div>"
+        },
+        "status": "amended",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                "code": "laboratory",
+                "display": "Laboratory"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "code": "163699AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "display": "Urea measurement (calculated)"
+            }
+          ],
+          "text": "Urea measurement (calculated)"
+        },
+        "subject": {
+          "reference": "Patient/766b1311-bb85-487f-98bf-e07bec7c0169",
+          "type": "Patient",
+          "display": "Grace García (OpenMRS ID: 100003R)"
+        },
+        "encounter": {
+          "reference": "Encounter/350412af-96d6-4640-95fc-4da6d94f2c54",
+          "type": "Encounter"
+        },
+        "effectiveDateTime": "2021-05-31T23:24:26+00:00",
+        "issued": "2023-01-24T08:22:28.000+00:00",
+        "valueQuantity": {
+          "value": 38,
+          "unit": "mg/dl",
+          "system": "http://unitsofmeasure.org",
+          "code": "mg/dl"
+        },
+        "referenceRange": [
+          {
+            "low": {
+              "value": 20
+            },
+            "high": {
+              "value": 40
+            },
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/referencerange-meaning",
+                  "code": "normal"
+                }
+              ]
+            }
+          },
+          {
+            "low": {
+              "value": 10
+            },
+            "high": {
+              "value": 200
+            },
+            "type": {
+              "coding": [
+                {
+                  "system": "http://fhir.openmrs.org/ext/obs/reference-range",
+                  "code": "absolute"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "fullUrl": "http://dev3.openmrs.org/openmrs/ws/fhir2/R4/Observation/0abfea69-c3fc-41f1-b13a-b0a73b020446",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "0abfea69-c3fc-41f1-b13a-b0a73b020446",
+        "meta": {
+          "lastUpdated": "2023-01-24T08:22:28.000+00:00"
+        },
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><table class=\"hapiPropertyTable\"><tbody><tr><td>Id:</td><td>0abfea69-c3fc-41f1-b13a-b0a73b020446</td></tr><tr><td>Status:</td><td>AMENDED</td></tr><tr><td>Category:</td><td> Laboratory </td></tr><tr><td>Code:</td><td>Serum glucose</td></tr><tr><td>Subject:</td><td><a href=\"http://localhost:8080/openmrs/ws/fhir2/R4/Patient/766b1311-bb85-487f-98bf-e07bec7c0169\">Grace García (OpenMRS ID: 100003R)</a></td></tr><tr><td>Encounter:</td><td><a href=\"http://localhost:8080/openmrs/ws/fhir2/R4/Encounter/350412af-96d6-4640-95fc-4da6d94f2c54\">Encounter/350412af-96d6-4640-95fc-4da6d94f2c54</a></td></tr><tr><td>Effective:</td><td> 31 May 2021 23:24:26 </td></tr><tr><td>Issued:</td><td>24/01/2023 08:22:28 AM</td></tr><tr><td>Value:</td><td>104.0 mg/dl </td></tr><tr><td>Reference Ranges:</td><td><table class=\"subPropertyTable\"><tbody><tr><th>-</th><th>Low</th><th>High</th><th>Type</th><th>Applies To</th><th>Age</th></tr><tr><td>1</td><td>0.0 </td><td/><td> absolute </td><td/><td> - </td></tr></tbody></table></td></tr></tbody></table></div>"
+        },
+        "status": "amended",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                "code": "laboratory",
+                "display": "Laboratory"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "code": "887AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "display": "Serum glucose"
+            }
+          ],
+          "text": "Serum glucose"
+        },
+        "subject": {
+          "reference": "Patient/766b1311-bb85-487f-98bf-e07bec7c0169",
+          "type": "Patient",
+          "display": "Grace García (OpenMRS ID: 100003R)"
+        },
+        "encounter": {
+          "reference": "Encounter/350412af-96d6-4640-95fc-4da6d94f2c54",
+          "type": "Encounter"
+        },
+        "effectiveDateTime": "2021-05-31T23:24:26+00:00",
+        "issued": "2023-01-24T08:22:28.000+00:00",
+        "valueQuantity": {
+          "value": 104,
+          "unit": "mg/dl",
+          "system": "http://unitsofmeasure.org",
+          "code": "mg/dl"
+        },
+        "referenceRange": [
+          {
+            "low": {
+              "value": 0
+            },
+            "type": {
+              "coding": [
+                {
+                  "system": "http://fhir.openmrs.org/ext/obs/reference-range",
+                  "code": "absolute"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "fullUrl": "http://dev3.openmrs.org/openmrs/ws/fhir2/R4/Observation/c69e2e01-1e1b-43d4-99b9-bb4e1bbf4a5e",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "c69e2e01-1e1b-43d4-99b9-bb4e1bbf4a5e",
+        "meta": {
+          "lastUpdated": "2023-01-24T08:22:28.000+00:00"
+        },
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><table class=\"hapiPropertyTable\"><tbody><tr><td>Id:</td><td>c69e2e01-1e1b-43d4-99b9-bb4e1bbf4a5e</td></tr><tr><td>Status:</td><td>AMENDED</td></tr><tr><td>Category:</td><td> Laboratory </td></tr><tr><td>Code:</td><td>Urine routine and microscopy</td></tr><tr><td>Subject:</td><td><a href=\"http://localhost:8080/openmrs/ws/fhir2/R4/Patient/766b1311-bb85-487f-98bf-e07bec7c0169\">Grace García (OpenMRS ID: 100003R)</a></td></tr><tr><td>Encounter:</td><td><a href=\"http://localhost:8080/openmrs/ws/fhir2/R4/Encounter/350412af-96d6-4640-95fc-4da6d94f2c54\">Encounter/350412af-96d6-4640-95fc-4da6d94f2c54</a></td></tr><tr><td>Effective:</td><td> 31 May 2021 23:24:26 </td></tr><tr><td>Issued:</td><td>24/01/2023 08:22:28 AM</td></tr><tr><td>Value:</td><td>Greenish-yellow matter detected.</td></tr></tbody></table></div>"
+        },
+        "status": "amended",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                "code": "laboratory",
+                "display": "Laboratory"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "code": "161445AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "display": "Urine routine and microscopy"
+            }
+          ],
+          "text": "Urine routine and microscopy"
+        },
+        "subject": {
+          "reference": "Patient/766b1311-bb85-487f-98bf-e07bec7c0169",
+          "type": "Patient",
+          "display": "Grace García (OpenMRS ID: 100003R)"
+        },
+        "encounter": {
+          "reference": "Encounter/350412af-96d6-4640-95fc-4da6d94f2c54",
+          "type": "Encounter"
+        },
+        "effectiveDateTime": "2021-05-31T23:24:26+00:00",
+        "issued": "2023-01-24T08:22:28.000+00:00",
+        "valueString": "Greenish-yellow matter detected."
+      }
+    },
+    {
+      "fullUrl": "http://dev3.openmrs.org/openmrs/ws/fhir2/R4/Observation/342da0e9-20f3-4b37-a9da-a2e9f801f1c0",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "342da0e9-20f3-4b37-a9da-a2e9f801f1c0",
+        "meta": {
+          "lastUpdated": "2023-01-24T08:22:28.000+00:00"
+        },
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><table class=\"hapiPropertyTable\"><tbody><tr><td>Id:</td><td>342da0e9-20f3-4b37-a9da-a2e9f801f1c0</td></tr><tr><td>Status:</td><td>AMENDED</td></tr><tr><td>Category:</td><td> Laboratory </td></tr><tr><td>Code:</td><td>Blood urea nitrogen</td></tr><tr><td>Subject:</td><td><a href=\"http://localhost:8080/openmrs/ws/fhir2/R4/Patient/766b1311-bb85-487f-98bf-e07bec7c0169\">Grace García (OpenMRS ID: 100003R)</a></td></tr><tr><td>Encounter:</td><td><a href=\"http://localhost:8080/openmrs/ws/fhir2/R4/Encounter/350412af-96d6-4640-95fc-4da6d94f2c54\">Encounter/350412af-96d6-4640-95fc-4da6d94f2c54</a></td></tr><tr><td>Effective:</td><td> 31 May 2021 23:24:26 </td></tr><tr><td>Issued:</td><td>24/01/2023 08:22:28 AM</td></tr><tr><td>Value:</td><td>126.1 mmol/L </td></tr><tr><td>Reference Ranges:</td><td><table class=\"subPropertyTable\"><tbody><tr><th>-</th><th>Low</th><th>High</th><th>Type</th><th>Applies To</th><th>Age</th></tr><tr><td>1</td><td>0.0 </td><td/><td> absolute </td><td/><td> - </td></tr></tbody></table></td></tr></tbody></table></div>"
+        },
+        "status": "amended",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                "code": "laboratory",
+                "display": "Laboratory"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "code": "857AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "display": "Blood urea nitrogen"
+            }
+          ],
+          "text": "Blood urea nitrogen"
+        },
+        "subject": {
+          "reference": "Patient/766b1311-bb85-487f-98bf-e07bec7c0169",
+          "type": "Patient",
+          "display": "Grace García (OpenMRS ID: 100003R)"
+        },
+        "encounter": {
+          "reference": "Encounter/350412af-96d6-4640-95fc-4da6d94f2c54",
+          "type": "Encounter"
+        },
+        "effectiveDateTime": "2021-05-31T23:24:26+00:00",
+        "issued": "2023-01-24T08:22:28.000+00:00",
+        "valueQuantity": {
+          "value": 126.1,
+          "unit": "mmol/L",
+          "system": "http://unitsofmeasure.org",
+          "code": "mmol/L"
+        },
+        "referenceRange": [
+          {
+            "low": {
+              "value": 0
+            },
+            "type": {
+              "coding": [
+                {
+                  "system": "http://fhir.openmrs.org/ext/obs/reference-range",
+                  "code": "absolute"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "fullUrl": "http://dev3.openmrs.org/openmrs/ws/fhir2/R4/Observation/40d12c99-ae96-40e5-8c45-97ee75cf33b8",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "40d12c99-ae96-40e5-8c45-97ee75cf33b8",
+        "meta": {
+          "lastUpdated": "2023-01-24T08:22:28.000+00:00"
+        },
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><table class=\"hapiPropertyTable\"><tbody><tr><td>Id:</td><td>40d12c99-ae96-40e5-8c45-97ee75cf33b8</td></tr><tr><td>Status:</td><td>AMENDED</td></tr><tr><td>Category:</td><td> Laboratory </td></tr><tr><td>Code:</td><td>Serum creatinine (umol/L)</td></tr><tr><td>Subject:</td><td><a href=\"http://localhost:8080/openmrs/ws/fhir2/R4/Patient/766b1311-bb85-487f-98bf-e07bec7c0169\">Grace García (OpenMRS ID: 100003R)</a></td></tr><tr><td>Encounter:</td><td><a href=\"http://localhost:8080/openmrs/ws/fhir2/R4/Encounter/350412af-96d6-4640-95fc-4da6d94f2c54\">Encounter/350412af-96d6-4640-95fc-4da6d94f2c54</a></td></tr><tr><td>Effective:</td><td> 31 May 2021 23:24:26 </td></tr><tr><td>Issued:</td><td>24/01/2023 08:22:28 AM</td></tr><tr><td>Value:</td><td>106.7 umol/L </td></tr><tr><td>Reference Ranges:</td><td><table class=\"subPropertyTable\"><tbody><tr><th>-</th><th>Low</th><th>High</th><th>Type</th><th>Applies To</th><th>Age</th></tr><tr><td>1</td><td>0.0 </td><td/><td> absolute </td><td/><td> - </td></tr></tbody></table></td></tr></tbody></table></div>"
+        },
+        "status": "amended",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                "code": "laboratory",
+                "display": "Laboratory"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "code": "790AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "display": "Serum creatinine (umol/L)"
+            }
+          ],
+          "text": "Serum creatinine (umol/L)"
+        },
+        "subject": {
+          "reference": "Patient/766b1311-bb85-487f-98bf-e07bec7c0169",
+          "type": "Patient",
+          "display": "Grace García (OpenMRS ID: 100003R)"
+        },
+        "encounter": {
+          "reference": "Encounter/350412af-96d6-4640-95fc-4da6d94f2c54",
+          "type": "Encounter"
+        },
+        "effectiveDateTime": "2021-05-31T23:24:26+00:00",
+        "issued": "2023-01-24T08:22:28.000+00:00",
+        "valueQuantity": {
+          "value": 106.7,
+          "unit": "umol/L",
+          "system": "http://unitsofmeasure.org",
+          "code": "umol/L"
+        },
+        "referenceRange": [
+          {
+            "low": {
+              "value": 0
+            },
+            "type": {
+              "coding": [
+                {
+                  "system": "http://fhir.openmrs.org/ext/obs/reference-range",
+                  "code": "absolute"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "fullUrl": "http://dev3.openmrs.org/openmrs/ws/fhir2/R4/Observation/819c8272-d321-47a8-8f8a-87b66d6bc548",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "819c8272-d321-47a8-8f8a-87b66d6bc548",
+        "meta": {
+          "lastUpdated": "2023-01-24T08:22:28.000+00:00"
+        },
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><table class=\"hapiPropertyTable\"><tbody><tr><td>Id:</td><td>819c8272-d321-47a8-8f8a-87b66d6bc548</td></tr><tr><td>Status:</td><td>FINAL</td></tr><tr><td>Category:</td><td> Laboratory </td></tr><tr><td>Code:</td><td>Sickle cell screening test</td></tr><tr><td>Subject:</td><td><a href=\"http://localhost:8080/openmrs/ws/fhir2/R4/Patient/766b1311-bb85-487f-98bf-e07bec7c0169\">Grace García (OpenMRS ID: 100003R)</a></td></tr><tr><td>Encounter:</td><td><a href=\"http://localhost:8080/openmrs/ws/fhir2/R4/Encounter/9734c9bb-5e0c-4efe-9fac-e4d34ca059db\">Encounter/9734c9bb-5e0c-4efe-9fac-e4d34ca059db</a></td></tr><tr><td>Effective:</td><td> 10 January 2022 12:38:26 </td></tr><tr><td>Issued:</td><td>24/01/2023 08:22:28 AM</td></tr><tr><td>Value:</td><td>Sickle cell screening test</td></tr></tbody></table></div>"
+        },
+        "status": "final",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                "code": "laboratory",
+                "display": "Laboratory"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "code": "160225AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "display": "Sickle cell screening test"
+            },
+            {
+              "system": "http://loinc.org",
+              "code": "39230-8",
+              "display": "Sickle cell screening test"
+            },
+            {
+              "system": "https://cielterminology.org",
+              "code": "160225",
+              "display": "Sickle cell screening test"
+            },
+            {
+              "system": "http://snomed.info/sct/",
+              "code": "314090007",
+              "display": "Sickle cell screening test"
+            }
+          ],
+          "text": "Sickle cell screening test"
+        },
+        "subject": {
+          "reference": "Patient/766b1311-bb85-487f-98bf-e07bec7c0169",
+          "type": "Patient",
+          "display": "Grace García (OpenMRS ID: 100003R)"
+        },
+        "encounter": {
+          "reference": "Encounter/9734c9bb-5e0c-4efe-9fac-e4d34ca059db",
+          "type": "Encounter"
+        },
+        "effectiveDateTime": "2022-01-10T12:38:26+00:00",
+        "issued": "2023-01-24T08:22:28.000+00:00",
+        "valueCodeableConcept": {
+          "coding": [
+            {
+              "code": "160225AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "display": "Sickle cell screening test"
+            },
+            {
+              "system": "http://loinc.org",
+              "code": "39230-8",
+              "display": "Sickle cell screening test"
+            },
+            {
+              "system": "https://cielterminology.org",
+              "code": "160225",
+              "display": "Sickle cell screening test"
+            },
+            {
+              "system": "http://snomed.info/sct/",
+              "code": "314090007",
+              "display": "Sickle cell screening test"
+            }
+          ],
+          "text": "Sickle cell screening test"
+        }
+      }
+    },
+    {
+      "fullUrl": "http://dev3.openmrs.org/openmrs/ws/fhir2/R4/Observation/9f8c3d26-2aaf-464c-acac-ada1208bf820",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "9f8c3d26-2aaf-464c-acac-ada1208bf820",
+        "meta": {
+          "lastUpdated": "2023-01-24T08:22:29.000+00:00"
+        },
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><table class=\"hapiPropertyTable\"><tbody><tr><td>Id:</td><td>9f8c3d26-2aaf-464c-acac-ada1208bf820</td></tr><tr><td>Status:</td><td>AMENDED</td></tr><tr><td>Category:</td><td> Laboratory </td></tr><tr><td>Code:</td><td>Total bilirubin</td></tr><tr><td>Subject:</td><td><a href=\"http://localhost:8080/openmrs/ws/fhir2/R4/Patient/766b1311-bb85-487f-98bf-e07bec7c0169\">Grace García (OpenMRS ID: 100003R)</a></td></tr><tr><td>Encounter:</td><td><a href=\"http://localhost:8080/openmrs/ws/fhir2/R4/Encounter/74eed619-f2d9-4a03-bc16-922f7b3f2554\">Encounter/74eed619-f2d9-4a03-bc16-922f7b3f2554</a></td></tr><tr><td>Effective:</td><td> 20 June 2022 06:57:26 </td></tr><tr><td>Issued:</td><td>24/01/2023 08:22:29 AM</td></tr><tr><td>Value:</td><td>112.2 umol/L </td></tr><tr><td>Reference Ranges:</td><td><table class=\"subPropertyTable\"><tbody><tr><th>-</th><th>Low</th><th>High</th><th>Type</th><th>Applies To</th><th>Age</th></tr><tr><td>1</td><td>0.0 </td><td/><td> absolute </td><td/><td> - </td></tr></tbody></table></td></tr></tbody></table></div>"
+        },
+        "status": "amended",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                "code": "laboratory",
+                "display": "Laboratory"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "code": "655AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "display": "Total bilirubin"
+            }
+          ],
+          "text": "Total bilirubin"
+        },
+        "subject": {
+          "reference": "Patient/766b1311-bb85-487f-98bf-e07bec7c0169",
+          "type": "Patient",
+          "display": "Grace García (OpenMRS ID: 100003R)"
+        },
+        "encounter": {
+          "reference": "Encounter/74eed619-f2d9-4a03-bc16-922f7b3f2554",
+          "type": "Encounter"
+        },
+        "effectiveDateTime": "2022-06-20T06:57:26+00:00",
+        "issued": "2023-01-24T08:22:29.000+00:00",
+        "valueQuantity": {
+          "value": 112.2,
+          "unit": "umol/L",
+          "system": "http://unitsofmeasure.org",
+          "code": "umol/L"
+        },
+        "referenceRange": [
+          {
+            "low": {
+              "value": 0
+            },
+            "type": {
+              "coding": [
+                {
+                  "system": "http://fhir.openmrs.org/ext/obs/reference-range",
+                  "code": "absolute"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "fullUrl": "http://dev3.openmrs.org/openmrs/ws/fhir2/R4/Observation/1b9fd119-17b1-48fa-b32b-97db1d4900fd",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "1b9fd119-17b1-48fa-b32b-97db1d4900fd",
+        "meta": {
+          "lastUpdated": "2023-01-24T08:22:29.000+00:00"
+        },
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><table class=\"hapiPropertyTable\"><tbody><tr><td>Id:</td><td>1b9fd119-17b1-48fa-b32b-97db1d4900fd</td></tr><tr><td>Status:</td><td>FINAL</td></tr><tr><td>Category:</td><td> Laboratory </td></tr><tr><td>Code:</td><td>Hepatitis C test - qualitative</td></tr><tr><td>Subject:</td><td><a href=\"http://localhost:8080/openmrs/ws/fhir2/R4/Patient/766b1311-bb85-487f-98bf-e07bec7c0169\">Grace García (OpenMRS ID: 100003R)</a></td></tr><tr><td>Encounter:</td><td><a href=\"http://localhost:8080/openmrs/ws/fhir2/R4/Encounter/74eed619-f2d9-4a03-bc16-922f7b3f2554\">Encounter/74eed619-f2d9-4a03-bc16-922f7b3f2554</a></td></tr><tr><td>Effective:</td><td> 20 June 2022 06:57:26 </td></tr><tr><td>Issued:</td><td>24/01/2023 08:22:29 AM</td></tr><tr><td>Value:</td><td>Karnofsky performance score</td></tr></tbody></table></div>"
+        },
+        "status": "final",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                "code": "laboratory",
+                "display": "Laboratory"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "code": "1325AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "display": "Hepatitis C test - qualitative"
+            }
+          ],
+          "text": "Hepatitis C test - qualitative"
+        },
+        "subject": {
+          "reference": "Patient/766b1311-bb85-487f-98bf-e07bec7c0169",
+          "type": "Patient",
+          "display": "Grace García (OpenMRS ID: 100003R)"
+        },
+        "encounter": {
+          "reference": "Encounter/74eed619-f2d9-4a03-bc16-922f7b3f2554",
+          "type": "Encounter"
+        },
+        "effectiveDateTime": "2022-06-20T06:57:26+00:00",
+        "issued": "2023-01-24T08:22:29.000+00:00",
+        "valueCodeableConcept": {
+          "coding": [
+            {
+              "code": "5283AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "display": "Karnofsky performance score"
+            },
+            {
+              "system": "https://cielterminology.org",
+              "code": "5283",
+              "display": "Karnofsky performance score"
+            }
+          ],
+          "text": "Karnofsky performance score"
+        }
+      }
+    },
+    {
+      "fullUrl": "http://dev3.openmrs.org/openmrs/ws/fhir2/R4/Observation/7f73c8fa-0d6f-4c5f-8daf-3e4a989663bf",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "7f73c8fa-0d6f-4c5f-8daf-3e4a989663bf",
+        "meta": {
+          "lastUpdated": "2023-01-24T08:22:29.000+00:00"
+        },
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><table class=\"hapiPropertyTable\"><tbody><tr><td>Id:</td><td>7f73c8fa-0d6f-4c5f-8daf-3e4a989663bf</td></tr><tr><td>Status:</td><td>FINAL</td></tr><tr><td>Category:</td><td> Laboratory </td></tr><tr><td>Code:</td><td>Hepatitis B Surface Antigen Test</td></tr><tr><td>Subject:</td><td><a href=\"http://localhost:8080/openmrs/ws/fhir2/R4/Patient/766b1311-bb85-487f-98bf-e07bec7c0169\">Grace García (OpenMRS ID: 100003R)</a></td></tr><tr><td>Encounter:</td><td><a href=\"http://localhost:8080/openmrs/ws/fhir2/R4/Encounter/74eed619-f2d9-4a03-bc16-922f7b3f2554\">Encounter/74eed619-f2d9-4a03-bc16-922f7b3f2554</a></td></tr><tr><td>Effective:</td><td> 20 June 2022 06:57:26 </td></tr><tr><td>Issued:</td><td>24/01/2023 08:22:29 AM</td></tr><tr><td>Value:</td><td>One plus</td></tr></tbody></table></div>"
+        },
+        "status": "final",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                "code": "laboratory",
+                "display": "Laboratory"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "code": "159430AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "display": "Hepatitis B Surface Antigen Test"
+            }
+          ],
+          "text": "Hepatitis B Surface Antigen Test"
+        },
+        "subject": {
+          "reference": "Patient/766b1311-bb85-487f-98bf-e07bec7c0169",
+          "type": "Patient",
+          "display": "Grace García (OpenMRS ID: 100003R)"
+        },
+        "encounter": {
+          "reference": "Encounter/74eed619-f2d9-4a03-bc16-922f7b3f2554",
+          "type": "Encounter"
+        },
+        "effectiveDateTime": "2022-06-20T06:57:26+00:00",
+        "issued": "2023-01-24T08:22:29.000+00:00",
+        "valueCodeableConcept": {
+          "coding": [
+            {
+              "code": "1362AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "display": "One plus"
+            },
+            {
+              "system": "https://cielterminology.org",
+              "code": "1362",
+              "display": "One plus"
+            },
+            {
+              "system": "http://snomed.info/sct/",
+              "code": "260408008",
+              "display": "One plus"
+            },
+            {
+              "system": "http://fhir.org/guides/who/anc-cds/CodeSystem/anc-custom-codes",
+              "code": "ANC.B9.DE146",
+              "display": "One plus"
+            }
+          ],
+          "text": "One plus"
+        }
+      }
+    },
+    {
+      "fullUrl": "http://dev3.openmrs.org/openmrs/ws/fhir2/R4/Observation/aaf8fcdb-16bd-4307-82d2-e956d488d4f6",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "aaf8fcdb-16bd-4307-82d2-e956d488d4f6",
+        "meta": {
+          "lastUpdated": "2023-01-24T08:22:29.000+00:00"
+        },
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><table class=\"hapiPropertyTable\"><tbody><tr><td>Id:</td><td>aaf8fcdb-16bd-4307-82d2-e956d488d4f6</td></tr><tr><td>Status:</td><td>AMENDED</td></tr><tr><td>Category:</td><td> Laboratory </td></tr><tr><td>Code:</td><td>Alkaline phosphatase</td></tr><tr><td>Subject:</td><td><a href=\"http://localhost:8080/openmrs/ws/fhir2/R4/Patient/766b1311-bb85-487f-98bf-e07bec7c0169\">Grace García (OpenMRS ID: 100003R)</a></td></tr><tr><td>Encounter:</td><td><a href=\"http://localhost:8080/openmrs/ws/fhir2/R4/Encounter/74eed619-f2d9-4a03-bc16-922f7b3f2554\">Encounter/74eed619-f2d9-4a03-bc16-922f7b3f2554</a></td></tr><tr><td>Effective:</td><td> 20 June 2022 06:57:26 </td></tr><tr><td>Issued:</td><td>24/01/2023 08:22:29 AM</td></tr><tr><td>Value:</td><td>91.0 U/L </td></tr><tr><td>Reference Ranges:</td><td><table class=\"subPropertyTable\"><tbody><tr><th>-</th><th>Low</th><th>High</th><th>Type</th><th>Applies To</th><th>Age</th></tr><tr><td>1</td><td>0.0 </td><td>270.0 </td><td> normal </td><td/><td> - </td></tr><tr><td>2</td><td/><td>541.0 </td><td> treatment </td><td/><td> - </td></tr></tbody></table></td></tr></tbody></table></div>"
+        },
+        "status": "amended",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                "code": "laboratory",
+                "display": "Laboratory"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "code": "785AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "display": "Alkaline phosphatase"
+            }
+          ],
+          "text": "Alkaline phosphatase"
+        },
+        "subject": {
+          "reference": "Patient/766b1311-bb85-487f-98bf-e07bec7c0169",
+          "type": "Patient",
+          "display": "Grace García (OpenMRS ID: 100003R)"
+        },
+        "encounter": {
+          "reference": "Encounter/74eed619-f2d9-4a03-bc16-922f7b3f2554",
+          "type": "Encounter"
+        },
+        "effectiveDateTime": "2022-06-20T06:57:26+00:00",
+        "issued": "2023-01-24T08:22:29.000+00:00",
+        "valueQuantity": {
+          "value": 91,
+          "unit": "U/L",
+          "system": "http://unitsofmeasure.org",
+          "code": "U/L"
+        },
+        "referenceRange": [
+          {
+            "low": {
+              "value": 0
+            },
+            "high": {
+              "value": 270
+            },
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/referencerange-meaning",
+                  "code": "normal"
+                }
+              ]
+            }
+          },
+          {
+            "high": {
+              "value": 541
+            },
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/referencerange-meaning",
+                  "code": "treatment"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "fullUrl": "http://dev3.openmrs.org/openmrs/ws/fhir2/R4/Observation/9d5786b0-e808-4ad2-a78d-78c777c5d401",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "9d5786b0-e808-4ad2-a78d-78c777c5d401",
+        "meta": {
+          "lastUpdated": "2023-01-24T08:22:29.000+00:00"
+        },
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><table class=\"hapiPropertyTable\"><tbody><tr><td>Id:</td><td>9d5786b0-e808-4ad2-a78d-78c777c5d401</td></tr><tr><td>Status:</td><td>AMENDED</td></tr><tr><td>Category:</td><td> Laboratory </td></tr><tr><td>Code:</td><td>Total protein</td></tr><tr><td>Subject:</td><td><a href=\"http://localhost:8080/openmrs/ws/fhir2/R4/Patient/766b1311-bb85-487f-98bf-e07bec7c0169\">Grace García (OpenMRS ID: 100003R)</a></td></tr><tr><td>Encounter:</td><td><a href=\"http://localhost:8080/openmrs/ws/fhir2/R4/Encounter/74eed619-f2d9-4a03-bc16-922f7b3f2554\">Encounter/74eed619-f2d9-4a03-bc16-922f7b3f2554</a></td></tr><tr><td>Effective:</td><td> 20 June 2022 06:57:26 </td></tr><tr><td>Issued:</td><td>24/01/2023 08:22:29 AM</td></tr><tr><td>Value:</td><td>13.0 g/dL </td></tr><tr><td>Reference Ranges:</td><td><table class=\"subPropertyTable\"><tbody><tr><th>-</th><th>Low</th><th>High</th><th>Type</th><th>Applies To</th><th>Age</th></tr><tr><td>1</td><td>0.0 </td><td/><td> absolute </td><td/><td> - </td></tr></tbody></table></td></tr></tbody></table></div>"
+        },
+        "status": "amended",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                "code": "laboratory",
+                "display": "Laboratory"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "code": "717AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "display": "Total protein"
+            }
+          ],
+          "text": "Total protein"
+        },
+        "subject": {
+          "reference": "Patient/766b1311-bb85-487f-98bf-e07bec7c0169",
+          "type": "Patient",
+          "display": "Grace García (OpenMRS ID: 100003R)"
+        },
+        "encounter": {
+          "reference": "Encounter/74eed619-f2d9-4a03-bc16-922f7b3f2554",
+          "type": "Encounter"
+        },
+        "effectiveDateTime": "2022-06-20T06:57:26+00:00",
+        "issued": "2023-01-24T08:22:29.000+00:00",
+        "valueQuantity": {
+          "value": 13,
+          "unit": "g/dL",
+          "system": "http://unitsofmeasure.org",
+          "code": "g/dL"
+        },
+        "referenceRange": [
+          {
+            "low": {
+              "value": 0
+            },
+            "type": {
+              "coding": [
+                {
+                  "system": "http://fhir.openmrs.org/ext/obs/reference-range",
+                  "code": "absolute"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "fullUrl": "http://dev3.openmrs.org/openmrs/ws/fhir2/R4/Observation/6a9bbf06-1ebb-4f56-9f87-46df8fc603be",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "6a9bbf06-1ebb-4f56-9f87-46df8fc603be",
+        "meta": {
+          "lastUpdated": "2023-01-24T08:22:29.000+00:00"
+        },
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><table class=\"hapiPropertyTable\"><tbody><tr><td>Id:</td><td>6a9bbf06-1ebb-4f56-9f87-46df8fc603be</td></tr><tr><td>Status:</td><td>AMENDED</td></tr><tr><td>Category:</td><td> Laboratory </td></tr><tr><td>Code:</td><td>Serum glutamic-pyruvic transaminase</td></tr><tr><td>Subject:</td><td><a href=\"http://localhost:8080/openmrs/ws/fhir2/R4/Patient/766b1311-bb85-487f-98bf-e07bec7c0169\">Grace García (OpenMRS ID: 100003R)</a></td></tr><tr><td>Encounter:</td><td><a href=\"http://localhost:8080/openmrs/ws/fhir2/R4/Encounter/74eed619-f2d9-4a03-bc16-922f7b3f2554\">Encounter/74eed619-f2d9-4a03-bc16-922f7b3f2554</a></td></tr><tr><td>Effective:</td><td> 20 June 2022 06:57:26 </td></tr><tr><td>Issued:</td><td>24/01/2023 08:22:29 AM</td></tr><tr><td>Value:</td><td>10.3 IU/L </td></tr><tr><td>Reference Ranges:</td><td><table class=\"subPropertyTable\"><tbody><tr><th>-</th><th>Low</th><th>High</th><th>Type</th><th>Applies To</th><th>Age</th></tr><tr><td>1</td><td>0.0 </td><td>35.0 </td><td> normal </td><td/><td> - </td></tr><tr><td>2</td><td>0.0 </td><td/><td> absolute </td><td/><td> - </td></tr></tbody></table></td></tr></tbody></table></div>"
+        },
+        "status": "amended",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                "code": "laboratory",
+                "display": "Laboratory"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "code": "654AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "display": "Serum glutamic-pyruvic transaminase"
+            }
+          ],
+          "text": "Serum glutamic-pyruvic transaminase"
+        },
+        "subject": {
+          "reference": "Patient/766b1311-bb85-487f-98bf-e07bec7c0169",
+          "type": "Patient",
+          "display": "Grace García (OpenMRS ID: 100003R)"
+        },
+        "encounter": {
+          "reference": "Encounter/74eed619-f2d9-4a03-bc16-922f7b3f2554",
+          "type": "Encounter"
+        },
+        "effectiveDateTime": "2022-06-20T06:57:26+00:00",
+        "issued": "2023-01-24T08:22:29.000+00:00",
+        "valueQuantity": {
+          "value": 10.3,
+          "unit": "IU/L"
+        },
+        "referenceRange": [
+          {
+            "low": {
+              "value": 0
+            },
+            "high": {
+              "value": 35
+            },
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/referencerange-meaning",
+                  "code": "normal"
+                }
+              ]
+            }
+          },
+          {
+            "low": {
+              "value": 0
+            },
+            "type": {
+              "coding": [
+                {
+                  "system": "http://fhir.openmrs.org/ext/obs/reference-range",
+                  "code": "absolute"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "fullUrl": "http://dev3.openmrs.org/openmrs/ws/fhir2/R4/Observation/abd6d010-da03-41cc-9581-b49b59e49105",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "abd6d010-da03-41cc-9581-b49b59e49105",
+        "meta": {
+          "lastUpdated": "2023-01-24T08:22:29.000+00:00"
+        },
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><table class=\"hapiPropertyTable\"><tbody><tr><td>Id:</td><td>abd6d010-da03-41cc-9581-b49b59e49105</td></tr><tr><td>Status:</td><td>AMENDED</td></tr><tr><td>Category:</td><td> Laboratory </td></tr><tr><td>Code:</td><td>Serum glutamic-oxaloacetic transaminase</td></tr><tr><td>Subject:</td><td><a href=\"http://localhost:8080/openmrs/ws/fhir2/R4/Patient/766b1311-bb85-487f-98bf-e07bec7c0169\">Grace García (OpenMRS ID: 100003R)</a></td></tr><tr><td>Encounter:</td><td><a href=\"http://localhost:8080/openmrs/ws/fhir2/R4/Encounter/74eed619-f2d9-4a03-bc16-922f7b3f2554\">Encounter/74eed619-f2d9-4a03-bc16-922f7b3f2554</a></td></tr><tr><td>Effective:</td><td> 20 June 2022 06:57:26 </td></tr><tr><td>Issued:</td><td>24/01/2023 08:22:29 AM</td></tr><tr><td>Value:</td><td>34.0 IU/L </td></tr><tr><td>Reference Ranges:</td><td><table class=\"subPropertyTable\"><tbody><tr><th>-</th><th>Low</th><th>High</th><th>Type</th><th>Applies To</th><th>Age</th></tr><tr><td>1</td><td>25.0 </td><td>45.0 </td><td> normal </td><td/><td> - </td></tr><tr><td>2</td><td>0.0 </td><td/><td> absolute </td><td/><td> - </td></tr></tbody></table></td></tr></tbody></table></div>"
+        },
+        "status": "amended",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                "code": "laboratory",
+                "display": "Laboratory"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "code": "653AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "display": "Serum glutamic-oxaloacetic transaminase"
+            }
+          ],
+          "text": "Serum glutamic-oxaloacetic transaminase"
+        },
+        "subject": {
+          "reference": "Patient/766b1311-bb85-487f-98bf-e07bec7c0169",
+          "type": "Patient",
+          "display": "Grace García (OpenMRS ID: 100003R)"
+        },
+        "encounter": {
+          "reference": "Encounter/74eed619-f2d9-4a03-bc16-922f7b3f2554",
+          "type": "Encounter"
+        },
+        "effectiveDateTime": "2022-06-20T06:57:26+00:00",
+        "issued": "2023-01-24T08:22:29.000+00:00",
+        "valueQuantity": {
+          "value": 34,
+          "unit": "IU/L"
+        },
+        "referenceRange": [
+          {
+            "low": {
+              "value": 25
+            },
+            "high": {
+              "value": 45
+            },
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/referencerange-meaning",
+                  "code": "normal"
+                }
+              ]
+            }
+          },
+          {
+            "low": {
+              "value": 0
+            },
+            "type": {
+              "coding": [
+                {
+                  "system": "http://fhir.openmrs.org/ext/obs/reference-range",
+                  "code": "absolute"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "fullUrl": "http://dev3.openmrs.org/openmrs/ws/fhir2/R4/Observation/4c672de8-e342-4711-98ff-bece0ee096b0",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "4c672de8-e342-4711-98ff-bece0ee096b0",
+        "meta": {
+          "lastUpdated": "2023-01-24T08:22:30.000+00:00"
+        },
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><table class=\"hapiPropertyTable\"><tbody><tr><td>Id:</td><td>4c672de8-e342-4711-98ff-bece0ee096b0</td></tr><tr><td>Status:</td><td>AMENDED</td></tr><tr><td>Category:</td><td> Laboratory </td></tr><tr><td>Code:</td><td>Serum chloride</td></tr><tr><td>Subject:</td><td><a href=\"http://localhost:8080/openmrs/ws/fhir2/R4/Patient/766b1311-bb85-487f-98bf-e07bec7c0169\">Grace García (OpenMRS ID: 100003R)</a></td></tr><tr><td>Encounter:</td><td><a href=\"http://localhost:8080/openmrs/ws/fhir2/R4/Encounter/7c63946d-cf59-4ed6-b2b1-6866b8bf36a7\">Encounter/7c63946d-cf59-4ed6-b2b1-6866b8bf36a7</a></td></tr><tr><td>Effective:</td><td> 24 January 2023 01:13:30 </td></tr><tr><td>Issued:</td><td>24/01/2023 08:22:30 AM</td></tr><tr><td>Value:</td><td>101.0 mmol/L </td></tr><tr><td>Reference Ranges:</td><td><table class=\"subPropertyTable\"><tbody><tr><th>-</th><th>Low</th><th>High</th><th>Type</th><th>Applies To</th><th>Age</th></tr><tr><td>1</td><td>96.0 </td><td>107.0 </td><td> normal </td><td/><td> - </td></tr><tr><td>2</td><td>0.0 </td><td/><td> absolute </td><td/><td> - </td></tr></tbody></table></td></tr></tbody></table></div>"
+        },
+        "status": "amended",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                "code": "laboratory",
+                "display": "Laboratory"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "code": "1134AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "display": "Serum chloride"
+            }
+          ],
+          "text": "Serum chloride"
+        },
+        "subject": {
+          "reference": "Patient/766b1311-bb85-487f-98bf-e07bec7c0169",
+          "type": "Patient",
+          "display": "Grace García (OpenMRS ID: 100003R)"
+        },
+        "encounter": {
+          "reference": "Encounter/7c63946d-cf59-4ed6-b2b1-6866b8bf36a7",
+          "type": "Encounter"
+        },
+        "effectiveDateTime": "2023-01-24T01:13:30+00:00",
+        "issued": "2023-01-24T08:22:30.000+00:00",
+        "valueQuantity": {
+          "value": 101,
+          "unit": "mmol/L",
+          "system": "http://unitsofmeasure.org",
+          "code": "mmol/L"
+        },
+        "referenceRange": [
+          {
+            "low": {
+              "value": 96
+            },
+            "high": {
+              "value": 107
+            },
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/referencerange-meaning",
+                  "code": "normal"
+                }
+              ]
+            }
+          },
+          {
+            "low": {
+              "value": 0
+            },
+            "type": {
+              "coding": [
+                {
+                  "system": "http://fhir.openmrs.org/ext/obs/reference-range",
+                  "code": "absolute"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "fullUrl": "http://dev3.openmrs.org/openmrs/ws/fhir2/R4/Observation/6de270f6-abc6-4c4d-8071-8d821cddf0ed",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "6de270f6-abc6-4c4d-8071-8d821cddf0ed",
+        "meta": {
+          "lastUpdated": "2023-01-24T08:22:30.000+00:00"
+        },
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><table class=\"hapiPropertyTable\"><tbody><tr><td>Id:</td><td>6de270f6-abc6-4c4d-8071-8d821cddf0ed</td></tr><tr><td>Status:</td><td>AMENDED</td></tr><tr><td>Category:</td><td> Laboratory </td></tr><tr><td>Code:</td><td>Serum carbon dioxide</td></tr><tr><td>Subject:</td><td><a href=\"http://localhost:8080/openmrs/ws/fhir2/R4/Patient/766b1311-bb85-487f-98bf-e07bec7c0169\">Grace García (OpenMRS ID: 100003R)</a></td></tr><tr><td>Encounter:</td><td><a href=\"http://localhost:8080/openmrs/ws/fhir2/R4/Encounter/7c63946d-cf59-4ed6-b2b1-6866b8bf36a7\">Encounter/7c63946d-cf59-4ed6-b2b1-6866b8bf36a7</a></td></tr><tr><td>Effective:</td><td> 24 January 2023 01:13:30 </td></tr><tr><td>Issued:</td><td>24/01/2023 08:22:30 AM</td></tr><tr><td>Value:</td><td>25.0 mmol/L </td></tr><tr><td>Reference Ranges:</td><td><table class=\"subPropertyTable\"><tbody><tr><th>-</th><th>Low</th><th>High</th><th>Type</th><th>Applies To</th><th>Age</th></tr><tr><td>1</td><td>22.0 </td><td>27.0 </td><td> normal </td><td/><td> - </td></tr><tr><td>2</td><td>0.0 </td><td/><td> absolute </td><td/><td> - </td></tr></tbody></table></td></tr></tbody></table></div>"
+        },
+        "status": "amended",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                "code": "laboratory",
+                "display": "Laboratory"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "code": "1135AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "display": "Serum carbon dioxide"
+            }
+          ],
+          "text": "Serum carbon dioxide"
+        },
+        "subject": {
+          "reference": "Patient/766b1311-bb85-487f-98bf-e07bec7c0169",
+          "type": "Patient",
+          "display": "Grace García (OpenMRS ID: 100003R)"
+        },
+        "encounter": {
+          "reference": "Encounter/7c63946d-cf59-4ed6-b2b1-6866b8bf36a7",
+          "type": "Encounter"
+        },
+        "effectiveDateTime": "2023-01-24T01:13:30+00:00",
+        "issued": "2023-01-24T08:22:30.000+00:00",
+        "valueQuantity": {
+          "value": 25,
+          "unit": "mmol/L",
+          "system": "http://unitsofmeasure.org",
+          "code": "mmol/L"
+        },
+        "referenceRange": [
+          {
+            "low": {
+              "value": 22
+            },
+            "high": {
+              "value": 27
+            },
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/referencerange-meaning",
+                  "code": "normal"
+                }
+              ]
+            }
+          },
+          {
+            "low": {
+              "value": 0
+            },
+            "type": {
+              "coding": [
+                {
+                  "system": "http://fhir.openmrs.org/ext/obs/reference-range",
+                  "code": "absolute"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "fullUrl": "http://dev3.openmrs.org/openmrs/ws/fhir2/R4/Observation/a646339a-7756-499f-a5af-14cbf5da918a",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "a646339a-7756-499f-a5af-14cbf5da918a",
+        "meta": {
+          "lastUpdated": "2023-01-24T08:22:30.000+00:00"
+        },
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><table class=\"hapiPropertyTable\"><tbody><tr><td>Id:</td><td>a646339a-7756-499f-a5af-14cbf5da918a</td></tr><tr><td>Status:</td><td>AMENDED</td></tr><tr><td>Category:</td><td> Laboratory </td></tr><tr><td>Code:</td><td>Serum calcium</td></tr><tr><td>Subject:</td><td><a href=\"http://localhost:8080/openmrs/ws/fhir2/R4/Patient/766b1311-bb85-487f-98bf-e07bec7c0169\">Grace García (OpenMRS ID: 100003R)</a></td></tr><tr><td>Encounter:</td><td><a href=\"http://localhost:8080/openmrs/ws/fhir2/R4/Encounter/7c63946d-cf59-4ed6-b2b1-6866b8bf36a7\">Encounter/7c63946d-cf59-4ed6-b2b1-6866b8bf36a7</a></td></tr><tr><td>Effective:</td><td> 24 January 2023 01:13:30 </td></tr><tr><td>Issued:</td><td>24/01/2023 08:22:30 AM</td></tr><tr><td>Value:</td><td>63.8 mg/dL </td></tr></tbody></table></div>"
+        },
+        "status": "amended",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                "code": "laboratory",
+                "display": "Laboratory"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "code": "159497AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "display": "Serum calcium"
+            }
+          ],
+          "text": "Serum calcium"
+        },
+        "subject": {
+          "reference": "Patient/766b1311-bb85-487f-98bf-e07bec7c0169",
+          "type": "Patient",
+          "display": "Grace García (OpenMRS ID: 100003R)"
+        },
+        "encounter": {
+          "reference": "Encounter/7c63946d-cf59-4ed6-b2b1-6866b8bf36a7",
+          "type": "Encounter"
+        },
+        "effectiveDateTime": "2023-01-24T01:13:30+00:00",
+        "issued": "2023-01-24T08:22:30.000+00:00",
+        "valueQuantity": {
+          "value": 63.8,
+          "unit": "mg/dL",
+          "system": "http://unitsofmeasure.org",
+          "code": "mg/dL"
+        }
+      }
+    },
+    {
+      "fullUrl": "http://dev3.openmrs.org/openmrs/ws/fhir2/R4/Observation/dc96a035-7946-41f4-8a54-35b9bae2f0a0",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "dc96a035-7946-41f4-8a54-35b9bae2f0a0",
+        "meta": {
+          "lastUpdated": "2023-01-24T08:22:30.000+00:00"
+        },
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><table class=\"hapiPropertyTable\"><tbody><tr><td>Id:</td><td>dc96a035-7946-41f4-8a54-35b9bae2f0a0</td></tr><tr><td>Status:</td><td>AMENDED</td></tr><tr><td>Category:</td><td> Laboratory </td></tr><tr><td>Code:</td><td>Serum potassium</td></tr><tr><td>Subject:</td><td><a href=\"http://localhost:8080/openmrs/ws/fhir2/R4/Patient/766b1311-bb85-487f-98bf-e07bec7c0169\">Grace García (OpenMRS ID: 100003R)</a></td></tr><tr><td>Encounter:</td><td><a href=\"http://localhost:8080/openmrs/ws/fhir2/R4/Encounter/7c63946d-cf59-4ed6-b2b1-6866b8bf36a7\">Encounter/7c63946d-cf59-4ed6-b2b1-6866b8bf36a7</a></td></tr><tr><td>Effective:</td><td> 24 January 2023 01:13:30 </td></tr><tr><td>Issued:</td><td>24/01/2023 08:22:30 AM</td></tr><tr><td>Value:</td><td>4.4 mmol/L </td></tr><tr><td>Reference Ranges:</td><td><table class=\"subPropertyTable\"><tbody><tr><th>-</th><th>Low</th><th>High</th><th>Type</th><th>Applies To</th><th>Age</th></tr><tr><td>1</td><td>3.5 </td><td>5.6 </td><td> normal </td><td/><td> - </td></tr><tr><td>2</td><td>2.4 </td><td>6.6 </td><td> treatment </td><td/><td> - </td></tr><tr><td>3</td><td>0.0 </td><td/><td> absolute </td><td/><td> - </td></tr></tbody></table></td></tr></tbody></table></div>"
+        },
+        "status": "amended",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                "code": "laboratory",
+                "display": "Laboratory"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "code": "1133AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "display": "Serum potassium"
+            },
+            {
+              "system": "https://cielterminology.org",
+              "code": "1133",
+              "display": "Serum potassium"
+            },
+            {
+              "system": "http://snomed.info/sct/",
+              "code": "271236005",
+              "display": "Serum potassium"
+            }
+          ],
+          "text": "Serum potassium"
+        },
+        "subject": {
+          "reference": "Patient/766b1311-bb85-487f-98bf-e07bec7c0169",
+          "type": "Patient",
+          "display": "Grace García (OpenMRS ID: 100003R)"
+        },
+        "encounter": {
+          "reference": "Encounter/7c63946d-cf59-4ed6-b2b1-6866b8bf36a7",
+          "type": "Encounter"
+        },
+        "effectiveDateTime": "2023-01-24T01:13:30+00:00",
+        "issued": "2023-01-24T08:22:30.000+00:00",
+        "valueQuantity": {
+          "value": 4.4,
+          "unit": "mmol/L",
+          "system": "http://unitsofmeasure.org",
+          "code": "mmol/L"
+        },
+        "referenceRange": [
+          {
+            "low": {
+              "value": 3.5
+            },
+            "high": {
+              "value": 5.6
+            },
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/referencerange-meaning",
+                  "code": "normal"
+                }
+              ]
+            }
+          },
+          {
+            "low": {
+              "value": 2.4
+            },
+            "high": {
+              "value": 6.6
+            },
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/referencerange-meaning",
+                  "code": "treatment"
+                }
+              ]
+            }
+          },
+          {
+            "low": {
+              "value": 0
+            },
+            "type": {
+              "coding": [
+                {
+                  "system": "http://fhir.openmrs.org/ext/obs/reference-range",
+                  "code": "absolute"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "fullUrl": "http://dev3.openmrs.org/openmrs/ws/fhir2/R4/Observation/57abee78-0f0f-43bc-8168-ce33b2f27d68",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "57abee78-0f0f-43bc-8168-ce33b2f27d68",
+        "meta": {
+          "lastUpdated": "2023-01-24T08:22:30.000+00:00"
+        },
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><table class=\"hapiPropertyTable\"><tbody><tr><td>Id:</td><td>57abee78-0f0f-43bc-8168-ce33b2f27d68</td></tr><tr><td>Status:</td><td>AMENDED</td></tr><tr><td>Category:</td><td> Laboratory </td></tr><tr><td>Code:</td><td>Serum sodium</td></tr><tr><td>Subject:</td><td><a href=\"http://localhost:8080/openmrs/ws/fhir2/R4/Patient/766b1311-bb85-487f-98bf-e07bec7c0169\">Grace García (OpenMRS ID: 100003R)</a></td></tr><tr><td>Encounter:</td><td><a href=\"http://localhost:8080/openmrs/ws/fhir2/R4/Encounter/7c63946d-cf59-4ed6-b2b1-6866b8bf36a7\">Encounter/7c63946d-cf59-4ed6-b2b1-6866b8bf36a7</a></td></tr><tr><td>Effective:</td><td> 24 January 2023 01:13:30 </td></tr><tr><td>Issued:</td><td>24/01/2023 08:22:30 AM</td></tr><tr><td>Value:</td><td>145.0 mmol/L </td></tr><tr><td>Reference Ranges:</td><td><table class=\"subPropertyTable\"><tbody><tr><th>-</th><th>Low</th><th>High</th><th>Type</th><th>Applies To</th><th>Age</th></tr><tr><td>1</td><td>142.0 </td><td>151.0 </td><td> normal </td><td/><td> - </td></tr><tr><td>2</td><td>123.0 </td><td>156.0 </td><td> treatment </td><td/><td> - </td></tr><tr><td>3</td><td>0.0 </td><td/><td> absolute </td><td/><td> - </td></tr></tbody></table></td></tr></tbody></table></div>"
+        },
+        "status": "amended",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                "code": "laboratory",
+                "display": "Laboratory"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "code": "1132AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "display": "Serum sodium"
+            }
+          ],
+          "text": "Serum sodium"
+        },
+        "subject": {
+          "reference": "Patient/766b1311-bb85-487f-98bf-e07bec7c0169",
+          "type": "Patient",
+          "display": "Grace García (OpenMRS ID: 100003R)"
+        },
+        "encounter": {
+          "reference": "Encounter/7c63946d-cf59-4ed6-b2b1-6866b8bf36a7",
+          "type": "Encounter"
+        },
+        "effectiveDateTime": "2023-01-24T01:13:30+00:00",
+        "issued": "2023-01-24T08:22:30.000+00:00",
+        "valueQuantity": {
+          "value": 145,
+          "unit": "mmol/L",
+          "system": "http://unitsofmeasure.org",
+          "code": "mmol/L"
+        },
+        "referenceRange": [
+          {
+            "low": {
+              "value": 142
+            },
+            "high": {
+              "value": 151
+            },
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/referencerange-meaning",
+                  "code": "normal"
+                }
+              ]
+            }
+          },
+          {
+            "low": {
+              "value": 123
+            },
+            "high": {
+              "value": 156
+            },
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/referencerange-meaning",
+                  "code": "treatment"
+                }
+              ]
+            }
+          },
+          {
+            "low": {
+              "value": 0
+            },
+            "type": {
+              "coding": [
+                {
+                  "system": "http://fhir.openmrs.org/ext/obs/reference-range",
+                  "code": "absolute"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
