@@ -16,5 +16,6 @@
     "patient.label.modify" : "Add/Modify Patient" ,
     "patient.label.info" : "Patient Information",
     "breadcrumb.home" : "Home",
+    "admin.legacy" :"Legacy Admin",
     "label.page.patientHistory" : "Patient History"
 }
