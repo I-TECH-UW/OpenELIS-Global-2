@@ -81,14 +81,15 @@ public class ReactResultsController extends LogbookResultsBaseController {
     @GetMapping(value = "results", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public AccessionResultsForm
-        getResults(HttpServletRequest request)
+        getResults(@RequestParam String labNumber)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException{
 //        System.out.println("Get Results:");
 //          System.out.println("Get Results:" + request.toString());
         
 //        return DisplayListService.getInstance().getList(DisplayListService.ListType.ALL_TESTS);
 //        HttpServletRequest request = null;
-        String accessionNumber = "TESTA220000000000039"; 
+        System.out.println("ReactResultsController getTestResult:labNumber:" + labNumber );
+        String accessionNumber = labNumber; 
         //String accessionNumber = "TESTA220000000000042"; 
         //String accessionNumber = "TESTA220000000000037";
 

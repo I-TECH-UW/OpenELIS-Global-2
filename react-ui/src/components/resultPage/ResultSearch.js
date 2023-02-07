@@ -1,18 +1,29 @@
-// import React from 'react'
-// import '../Style.css'
-// import { FormattedMessage, injectIntl } from 'react-intl'
-// import { Form, Stack, TextInput, Select, SelectItem, Button, InlineLoading } from '@carbon/react';
-// import { Formik } from "formik";
-// import { Add } from '@carbon/react/icons';
-// import ResultSearchAccession from './ResultSearchAccession';
-
 import React from 'react'
 import '../Style.css'
 import { FormattedMessage, injectIntl } from 'react-intl'
-import { Form, Stack, TextInput, Select, SelectItem, Button, InlineLoading } from '@carbon/react';
+import { Select, SelectItem, InlineLoading } from '@carbon/react';
 import { Formik } from "formik";
 import { Add } from '@carbon/react/icons';
 import ResultSearchAccession from './ResultSearchAccession';
+import {
+  Heading,
+  Form,
+  FormLabel,
+  TextInput,
+  Button,
+  Grid,
+  Column,
+  DatePicker,
+  DatePickerInput,
+  RadioButton,
+  RadioButtonGroup,
+  Stack,
+  DataTable, TableContainer, Table, TableHead, TableRow, TableHeader, TableBody, TableCell,
+  Section ,
+  Pagination
+
+} from '@carbon/react';
+import SearchResultForm from '../common/SearchResultForm';
 
 class ResultSearch extends React.Component {
 
@@ -22,7 +33,7 @@ class ResultSearch extends React.Component {
       <>
 
         <div className='resultPageContent'>
-          <ResultSearchAccession/>
+          <SearchResultForm getSelectedResults={this.getSelectedResults}></SearchResultForm>
         </div>
       </>
     );

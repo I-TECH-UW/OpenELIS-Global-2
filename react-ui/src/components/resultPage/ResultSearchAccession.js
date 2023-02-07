@@ -11,25 +11,6 @@ import config from '../../config.json';
 function ResultSearchAccession() {
 
   const componentMounted = useRef(true);
-  
-  
-  // const FIELD = {
-  //   conditions: "conditions",
-  //   actions: "actions",
-  //   results: "results"
-  // }
-  // const conditionsObj = {
-  //   sample: "",
-  //   test: "",
-  //   testId: "",
-  //   relation: "",
-  //   value: ""
-  // }
-  // const actionObj = {
-  //   action: "",
-  //   reflexResult: "",
-  //   reflexResultTestId: ""
-  // }
 
   // class dictionaryResultObj {
   //   constructor(id, value) {
@@ -41,24 +22,6 @@ function ResultSearchAccession() {
   // const dictionaryResultObj = {
   //   id: "",
   //   value: "",
-  // }
-
-  // const resultObj = {
-  //   formName: "default_AccessionResultsForm",
-  //   accessionNumber: "",
-  //   lastName: "default_lastName",
-  //   firstName: "default_firstName",
-  //   gender: "",
-  //   dob: "",
-  //   nationalId: "",
-  //   subjectNumber: "",
-  //   sequenceAccessionNumber: "",
-  //   initialSampleCondition: "",
-  //   sampleType: "",
-  //   testDate: "",
-  //   analysisMethod: "",
-  //   testName: "",
-  //   dictionaryResults: [dictionaryResultObj],
   // }
 
   useEffect(() => {
@@ -157,105 +120,38 @@ function ResultSearchAccession() {
     }
   }
 
-  const saveSample = {
-    sampleType: "init ",
-  }
-  
-  function SampleHeader({ currentSample}) {
-    
-    if (saveSample.sampleType !== currentSample.sampleType ) 
-    //if (true) 
-      return <div> "s " {saveSample.sampleType} "c " {currentSample.sampleType} </div>;
-    
-    saveSample.sampleType = currentSample.sampleType;  
-    return <div>"old" </div>
+  function SampleHeader({ currentSample }) {
+    if (currentSample.showSampleDetails == true)
+      return <div className="resultBody">
+        Lab No. : {currentSample.sequenceAccessionNumber} Condition: {currentSample.initialSampleCondition}  Sample Type: {currentSample.sampleType}
+      </div>
+    return <div></div>
   };
 
   return (
     <>
-      <div className="inlineDiv">
-        <div>
-          <TextInput
-            name="resultName"
-            className="inputText"
-            type="text"
-            id={"resultname"}
-            labelText="Result Name"
-            value={""}
-            onChange={(e) => handleResultFieldChange(e, 0)}
-            required
-          />
+      <Stack gap={4}>
+        <div className="resultBody">
+          {resultList.lastName} {resultList.firstName} {resultList.gender} {resultList.dob} {resultList.nationalId} {resultList.subjectNumber}
         </div>
-      </div>
-
-      {resultList.lastName} {resultList.firstName} {resultList.gender} {resultList.dob} {resultList.nationalId} {resultList.subjectNumber}
-      <br></br>
-      Lab No. : {resultList.testResult[0].sequenceAccessionNumber} {resultList.testResult[0].initialSampleCondition} {resultList.testResult[0].sampleType}
+      </Stack>
       {resultList.testResult.map((test, index) => (
         <div className="results">
           <div className="first-division">
             <Form onSubmit={handleSubmit} >
-            
-            <SampleHeader currentSample={{sampleType: resultList.testResult[index].sampleType}} />
+              <SampleHeader
+                currentSample={{
+                  sampleType: test.sampleType,
+                  sequenceAccessionNumber: test.sequenceAccessionNumber,
+                  showSampleDetails: test.showSampleDetails
+                }} />
               <Stack gap={7}>
-                <div className="resultBody">
+                <div className="result">
                   {test.testDate} {test.analysisMethod} {test.testName}
-                  {true && (
-                    <>
-                      {/* <div className="section">
-                        <div className="inlineDiv">
-                         
-                        <div >
-                              <Select
-                                id={"sample"}
-                                name="sample"
-                                labelText=""
-                                value={""}
-                                className="inputSelect"
-                                onChange={(e) => handleResultFieldItemChange(e, 0, 0, "")}
-                                required
-                             >
-                               <SelectItem
-                                  text=""
-                                  value=""
-                                />
-                                {resultList.dictionaryResults.map((sample, sample_index) => (
-                                  <SelectItem
-                                    text={sample.value}
-                                    value={sample.id}
-                                    key={sample_index}
-                                  />
-                                ))}
-                              </Select>
-                            </div>
-                        </div>
-                      </div> */}
-                    </>
-                  )}
                 </div>
               </Stack>
             </Form >
-            {/* {resultList.length - 1 === index && (
-              <button
-                onClick={handleResultAdd}
-                className="add_button"
-              >
-                <Add size={16} />
-                <span>Result</span>
-              </button>
-            )} */}
-
           </div>
-          {/* <div className="second-division">
-            {resultList.length !== 1 && (
-              <button
-                type="button"
-                onClick={() => handleResultRemove(index)}
-                className="remove-btn">
-                <Subtract size={16} />
-              </button>
-            )}
-          </div> */}
         </div>
       ))}
       <Button type="submit" kind='tertiary' size='sm'>
