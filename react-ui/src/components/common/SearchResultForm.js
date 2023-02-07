@@ -2,8 +2,13 @@ import React from 'react'
 import { FormattedMessage, injectIntl } from 'react-intl'
 import "../Style.css";
 import { getFromOpenElisServer } from '../utils/Utils';
-
+import { Add, Subtract } from '@carbon/react/icons';
+import ContainedList from '@carbon/react/lib/components/ContainedList';
+import ContainedListItem from '@carbon/react/lib/components/ContainedList';
+import OverflowMenu from '@carbon/react/lib/components/ContainedList';
+import OverflowMenuItem from '@carbon/react/lib/components/ContainedList';
 import {
+    // usePrefix,
     Heading,
     Form,
     FormLabel,
@@ -18,11 +23,13 @@ import {
     Stack,
     DataTable, TableContainer, Table, TableHead, TableRow, TableHeader, TableBody, TableCell,
     Section,
-    Pagination
+    Pagination,
+    Header
 
 } from '@carbon/react';
 
 import { resultSearchHeaderData } from '../data/ResultsTableHeaders';
+import { labHeaderData } from '../data/LabTableHeaders';
 import { Formik, Field, FieldArray, ErrorMessage } from "formik";
 import SearchResultFormValues from '../formModel/innitialValues/SearchResultFormValues';
 
@@ -32,27 +39,44 @@ class SearchResultForm extends React.Component {
         super(props)
         this.state = {
             dob: "",
-            testResult: [],
+            resultForm: { testResult: [] },
+            tableTitle: "",
             page: 1,
             pageSize: 5,
         }
     }
 
+
+
     handleSubmit = (values) => {
         values.dateOfBirth = this.state.dob
-        console.log("handleSubmit:values.labNumber:" + values.labNumber)
+        // console.log("handleSubmit:values.labNumber:" + values.labNumber)
         var searchEndPoint = "/rest/results?" + "&labNumber=" + values.labNumber
         getFromOpenElisServer(searchEndPoint, this.fetchResults);
     };
 
-    fetchResults = (result) => {
-        console.log(JSON.stringify(result.testResult))
-        result.testResult.forEach(item => item.id = item.testId);
+    fetchResults = (resultForm) => {
+        //console.log(JSON.stringify(result))
+        var i = 0;
+        resultForm.testResult.forEach(item => item.id = i++);
+        //this.setState({ testResult: result.testResult })
+        // labSearchHeaderData.forEach(item => item.id = item.sequenceNumber);
+        // labSearchHeaderData.forEach(item => console.log("item:" +JSON.stringify(item)));
+        this.setState({ resultForm: resultForm })
+        //console.log(JSON.stringify(this.state.labResult))
 
-        this.setState({ testResult: result.testResult })
-        
-        
+        this.setState({
+            tableTitle:
+                resultForm.lastName +
+                resultForm.firstName + " " +
+                resultForm.gender + " " +
+                resultForm.dob + " " +
+                resultForm.nationalId + " " +
+                resultForm.subjectNumber
+        })
 
+
+        // this.state.prefix = usePrefix();
         //setResultList(result);
     }
 
@@ -90,8 +114,26 @@ class SearchResultForm extends React.Component {
         this.setState({ perPage: newPerPage });
     };
 
+    SampleHeader = (currentSample) => {
+        if (currentSample.showSampleDetails == true)
+            return <tr >
+                Lab No. : {currentSample.sequenceAccessionNumber} {currentSample.initialSampleCondition}  Sample Type: {currentSample.sampleType} <br></br>
+                {currentSample.rowCells.map((cell) => (
+                    <TableCell key={cell.id}>{cell.value}</TableCell>
+                ))}
+            </tr>
+        return <tr>
+            {currentSample.rowCells.map((cell) => (
+                <TableCell key={cell.id}>{cell.value}</TableCell>
+            ))}
+        </tr>
+    };
+
     render() {
+
+
         const { page, pageSize } = this.state;
+        // const prefix = this.state.prefix;
         return (
 
             <>
@@ -109,10 +151,14 @@ class SearchResultForm extends React.Component {
                         handleChange,
                         handleBlur,
                         handleSubmit }) => (
+
+
+
                         <Form
                             onSubmit={handleSubmit}
                             onChange={handleChange}
                             onBlur={handleBlur}>
+
                             <Stack gap={2}>
                                 <FormLabel>
                                     <Section>
@@ -131,7 +177,6 @@ class SearchResultForm extends React.Component {
                                         <TextInput name={field.name} labelText="Lab Number" id={field.name} className="inputText" />
                                     }
                                 </Field>
-
                                 <Button type="submit" id="submit">
                                     <FormattedMessage id="label.button.search" />
                                 </Button>
@@ -142,14 +187,16 @@ class SearchResultForm extends React.Component {
                 {/* </Column> */}
                 {/* <Column></Column> */}
                 {/* <Column  lg={12} > */}
-                <DataTable rows={this.state.testResult} headers={resultSearchHeaderData} isSortable >
+
+
+                <DataTable rows={this.state.resultForm.testResult} headers={resultSearchHeaderData} isSortable >
                     {({ rows, headers, getHeaderProps, getTableProps }) => (
-                        <TableContainer title="Results">
+                        <TableContainer title={this.state.tableTitle} description="description">
                             <Table {...getTableProps()}>
                                 <TableHead>
                                     <TableRow>
-                                        <TableHeader>
-                                        </TableHeader>
+                                        {/* <TableHeader > add cell header for radio button
+                                        </TableHeader> */}
                                         {headers.map((header) => (
                                             <TableHeader {...getHeaderProps({ header })}>
                                                 {header.header}
@@ -160,21 +207,33 @@ class SearchResultForm extends React.Component {
                                 <TableBody>
                                     <>
                                         {rows.slice((page - 1) * pageSize).slice(0, pageSize).map((row) => (
+
                                             <TableRow key={row.id}>
-                                                <TableCell > <RadioButton name="radio-group" onClick={this.patientSelected} labelText="" id={row.id} /></TableCell>
-                                                {row.cells.map((cell) => (
+
+                                                {this.SampleHeader
+                                                    ({
+                                                        sampleType: this.state.resultForm.testResult[row.id].sampleType,
+                                                        sequenceAccessionNumber: this.state.resultForm.testResult[row.id].sequenceAccessionNumber,
+                                                        showSampleDetails: this.state.resultForm.testResult[row.id].showSampleDetails,
+                                                        rowCells: row.cells
+                                                    })
+                                                }
+
+                                                {/* <TableCell > <RadioButton name="radio-group" onClick={this.patientSelected} labelText="" id={row.id} /></TableCell> */}
+                                                {/* {row.cells.map((cell) => (
                                                     <TableCell key={cell.id}>{cell.value}</TableCell>
-                                                ))}
+                                                ))} */}
                                             </TableRow>
                                         ))}
                                     </>
-
                                 </TableBody>
                             </Table>
                         </TableContainer>
                     )}
                 </DataTable>
-                <Pagination onChange={this.handlePageChange} page={this.state.page} pageSize={this.state.pageSize} pageSizes={[5, 10, 20, 30]} totalItems={this.state.testResult.length}></Pagination>
+                <Pagination onChange={this.handlePageChange} page={this.state.page} pageSize={this.state.pageSize}
+                    pageSizes={[5, 10, 20, 30]} totalItems={this.state.resultForm.testResult.length}></Pagination>
+
                 {/* </Column> */}
                 {/* </Grid> */}
             </>
