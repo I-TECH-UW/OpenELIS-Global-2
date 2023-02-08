@@ -9,6 +9,8 @@
 liqubase.properties
 
 # IDE files #
+.idea/
+.vscode/
 .classpath
 .settings/
 .project
