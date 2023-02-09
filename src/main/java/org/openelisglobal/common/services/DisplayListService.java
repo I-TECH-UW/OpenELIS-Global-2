@@ -300,7 +300,7 @@ public class DisplayListService implements LocaleChangeListener {
         return list;
     }
 
-    private List<IdValuePair> createFromDictionaryCategoryLocalizedSort(String category) {
+    public List<IdValuePair> createFromDictionaryCategoryLocalizedSort(String category) {
         List<IdValuePair> dictionaryList = new ArrayList<>();
 
         List<Dictionary> dictionaries = dictionaryService.getDictionaryEntrysByCategoryNameLocalizedSort(category);
