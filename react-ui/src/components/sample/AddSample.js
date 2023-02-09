@@ -1,13 +1,13 @@
 import React from 'react'
-import { Grid, Column } from '@carbon/react';
+import { Grid, Column, IconButton, Button } from '@carbon/react';
 
 const AddSample = () => {
     return (
         <>
-            <Grid fullWidth={true} className="gridBoundary">
-                <Column lg={12}>
+            <Grid fullWidth={true}>
+                <Column lg={16}>
 
-                    
+                    <Button>Add New Sample</Button>
                 </Column>
             </Grid>
 
