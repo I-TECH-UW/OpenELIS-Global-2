@@ -13,6 +13,7 @@ import {
     Form,
     FormLabel,
     TextInput,
+    Checkbox,
     Button,
     Grid,
     Column,
@@ -33,6 +34,7 @@ import { labHeaderData } from '../data/LabTableHeaders';
 import { Formik, Field, FieldArray, ErrorMessage } from "formik";
 import SearchResultFormValues from '../formModel/innitialValues/SearchResultFormValues';
 
+
 class SearchResultForm extends React.Component {
 
     constructor(props) {
@@ -42,15 +44,20 @@ class SearchResultForm extends React.Component {
             resultForm: { testResult: [] },
             tableTitle: "",
             page: 1,
-            pageSize: 5,
+            pageSize: 10,
+            doRange: true,
         }
     }
 
-
+    handleDoRangeChange = () => {
+        console.log("handleDoRangeChange:" + this.state.doRange);
+        this.state.doRange = !this.state.doRange;
+        
+    }
 
     handleSubmit = (values) => {
         values.dateOfBirth = this.state.dob
-        // console.log("handleSubmit:values.labNumber:" + values.labNumber)
+        console.log("handleSubmit:" + this.state.doRange)
         var searchEndPoint = "/rest/results?" + "&labNumber=" + values.labNumber
         getFromOpenElisServer(searchEndPoint, this.fetchResults);
     };
@@ -59,31 +66,8 @@ class SearchResultForm extends React.Component {
         //console.log(JSON.stringify(result))
         var i = 0;
         resultForm.testResult.forEach(item => item.id = i++);
-        //this.setState({ testResult: result.testResult })
-        // labSearchHeaderData.forEach(item => item.id = item.sequenceNumber);
-        // labSearchHeaderData.forEach(item => console.log("item:" +JSON.stringify(item)));
         this.setState({ resultForm: resultForm })
-        //console.log(JSON.stringify(this.state.labResult))
-
-        this.setState({
-            tableTitle:
-                resultForm.lastName +
-                resultForm.firstName + " " +
-                resultForm.gender + " " +
-                resultForm.dob + " " +
-                resultForm.nationalId + " " +
-                resultForm.subjectNumber
-        })
-
-
-        // this.state.prefix = usePrefix();
-        //setResultList(result);
     }
-
-    // fetchPatientDetails = (patientDetails) => {
-    //     console.log(JSON.stringify(patientDetails))
-    //     this.props.getSelectedPatient(patientDetails)
-    // }
 
     handleDatePickerChange = (...e) => {
         this.setState({
@@ -91,43 +75,39 @@ class SearchResultForm extends React.Component {
         });
     }
 
-    // patientSelected = (e) => {
-    //     const resultSelected = this.state.searchResults.find((patient) => {
-    //         return patient.patientID == e.target.id;
-    //     });
-    //     var searchEndPoint = "/rest/patient-details?patientID=" + patientSelected.patientID
-    //     getFromOpenElisServer(searchEndPoint, this.fetchPatientDetails);
-    // }
-
     handlePageChange = (pageInfo) => {
         if (this.state.page != pageInfo.page) {
             this.setState({ page: pageInfo.page });
         }
-
         if (this.state.pageSize != pageInfo.pageSize) {
             this.setState({ pageSize: pageInfo.pageSize });
         }
-
     };
 
     handlePerPageChange = (newPerPage) => {
         this.setState({ perPage: newPerPage });
     };
 
-    SampleHeader = (currentSample) => {
-        if (currentSample.showSampleDetails == true)
-            return <tr >
-                Lab No. : {currentSample.sequenceAccessionNumber} {currentSample.initialSampleCondition}  Sample Type: {currentSample.sampleType} <br></br>
-                {currentSample.rowCells.map((cell) => (
-                    <TableCell key={cell.id}>{cell.value}</TableCell>
-                ))}
-            </tr>
-        return <tr>
-            {currentSample.rowCells.map((cell) => (
+    renderLabHeader = (param) => {
+        if (param.resultForm.testResult[param.rowId].showSampleDetails == true)
+            return <div >
+                Lab No.: &nbsp;&nbsp;{param.resultForm.testResult[param.rowId].sequenceAccessionNumber} Condition: {param.resultForm.testResult[param.rowId].initialSampleCondition}  Sample Type: {param.resultForm.testResult[param.rowId].sampleType} <br></br>
+                Patient: &nbsp;&nbsp;{param.resultForm.lastName}, {param.resultForm.firstName} {param.resultForm.nationalId} {param.resultForm.subjectNumber} {param.resultForm.gender}, {param.resultForm.dob} <br></br>
+                <br></br>
+            </div>
+        return <div ></div>
+    };
+
+    renderResultRow = (param) => {
+        return <div >
+            {param.rowCells.map((cell) => (
                 <TableCell key={cell.id}>{cell.value}</TableCell>
             ))}
-        </tr>
+            {/* {currentSample.testDate} {currentSample.testName} {currentSample.normalRange} {currentSample.resultValue} {currentSample.shadowResultValue} */}
+        </div>
     };
+
+   
 
     render() {
 
@@ -177,6 +157,12 @@ class SearchResultForm extends React.Component {
                                         <TextInput name={field.name} labelText="Lab Number" id={field.name} className="inputText" />
                                     }
                                 </Field>
+                                <Field name="doRange"
+                                >
+                                    {({ field }) =>
+                                        <Checkbox onChange={this.handleDoRangeChange} name={field.name} labelText="Do Range" id={field.name}   />
+                                    }
+                                </Field>
                                 <Button type="submit" id="submit">
                                     <FormattedMessage id="label.button.search" />
                                 </Button>
@@ -191,31 +177,34 @@ class SearchResultForm extends React.Component {
 
                 <DataTable rows={this.state.resultForm.testResult} headers={resultSearchHeaderData} isSortable >
                     {({ rows, headers, getHeaderProps, getTableProps }) => (
-                        <TableContainer title={this.state.tableTitle} description="description">
+                        <TableContainer title={"Title"} description="description">
                             <Table {...getTableProps()}>
                                 <TableHead>
                                     <TableRow>
-                                        {/* <TableHeader > add cell header for radio button
-                                        </TableHeader> */}
                                         {headers.map((header) => (
                                             <TableHeader {...getHeaderProps({ header })}>
                                                 {header.header}
                                             </TableHeader>
                                         ))}
                                     </TableRow>
+
                                 </TableHead>
                                 <TableBody>
                                     <>
                                         {rows.slice((page - 1) * pageSize).slice(0, pageSize).map((row) => (
-
                                             <TableRow key={row.id}>
-
-                                                {this.SampleHeader
+                                                {this.renderLabHeader
                                                     ({
-                                                        sampleType: this.state.resultForm.testResult[row.id].sampleType,
-                                                        sequenceAccessionNumber: this.state.resultForm.testResult[row.id].sequenceAccessionNumber,
+                                                        rowId: row.id,
+                                                        resultForm: this.state.resultForm,
+                                                    })
+                                                }
+                                                
+                                                {this.renderResultRow
+                                                    ({
                                                         showSampleDetails: this.state.resultForm.testResult[row.id].showSampleDetails,
-                                                        rowCells: row.cells
+                                                        rowCells: row.cells,
+                                                        row: row
                                                     })
                                                 }
 

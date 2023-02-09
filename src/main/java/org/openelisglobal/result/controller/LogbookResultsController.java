@@ -13,6 +13,10 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.json.simple.JSONObject;
+import org.json.simple.parser.ContainerFactory;
+import org.json.simple.parser.JSONParser;
+
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.StaleObjectStateException;
 import org.json.simple.JSONArray;
@@ -96,6 +100,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Controller
 public class LogbookResultsController extends LogbookResultsBaseController {
@@ -213,6 +220,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
         }
         newForm.setDisplayTestSections(false);
         newForm.setSearchByRange(true);
+        System.out.println("LogbookResultsController:call getLogbookResults");
         return getLogbookResults(request, newForm);
     }
 
@@ -313,6 +321,17 @@ public class LogbookResultsController extends LogbookResultsBaseController {
         form.setReferralOrganizations(DisplayListService.getInstance().getList(ListType.REFERRAL_ORGANIZATIONS));
 
         addFlashMsgsToRequest(request);
+
+        ObjectMapper mapper = new ObjectMapper();
+        String jsonForm = "";
+        try {
+            jsonForm = mapper.writeValueAsString(form);
+        } catch (JsonProcessingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        System.out.println("LogbookResultsController:jsonForm:" + jsonForm);
         return findForward(FWD_SUCCESS, form);
     }
 

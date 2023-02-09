@@ -52,7 +52,6 @@ import org.springframework.web.servlet.ModelAndView;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-
 @Controller
 @RequestMapping(value = "/rest/")
 public class ReactResultsController extends LogbookResultsBaseController {
@@ -77,21 +76,20 @@ public class ReactResultsController extends LogbookResultsBaseController {
             RESULT_EDIT_ROLE_ID = null;
         }
     }
-    
+
     @GetMapping(value = "results", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public AccessionResultsForm
-        getResults(@RequestParam String labNumber)
-            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException{
+    public AccessionResultsForm getResults(@RequestParam String labNumber)
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 //        System.out.println("Get Results:");
 //          System.out.println("Get Results:" + request.toString());
-        
+
 //        return DisplayListService.getInstance().getList(DisplayListService.ListType.ALL_TESTS);
 //        HttpServletRequest request = null;
-        System.out.println("ReactResultsController getTestResult:labNumber:" + labNumber );
-        String accessionNumber = labNumber; 
-        //String accessionNumber = "TESTA220000000000042"; 
-        //String accessionNumber = "TESTA220000000000037";
+        System.out.println("ReactResultsController getTestResult:labNumber:" + labNumber);
+        String accessionNumber = labNumber;
+        // String accessionNumber = "TESTA220000000000042";
+        // String accessionNumber = "TESTA220000000000037";
 
         AccessionResultsForm form = new AccessionResultsForm();
 
@@ -162,9 +160,9 @@ public class ReactResultsController extends LogbookResultsBaseController {
         } else {
             paging.page(request, form, Integer.parseInt(newPage));
         }
-        
-        System.out.println("ReactResultsController getTestResult:" );
-        
+
+        System.out.println("ReactResultsController getTestResult:");
+
         List<TestResultItem> testResultItems = form.getTestResult();
 ////        Timestamp now = new Timestamp(System.currentTimeMillis());
 //
@@ -174,26 +172,22 @@ public class ReactResultsController extends LogbookResultsBaseController {
 //            System.out.println(":" + item.getTestName());
 //        });
 //        
-//        ObjectMapper mapper = new ObjectMapper();
-//        String jsonForm = "";
-//        try {
-//            jsonForm = mapper.writeValueAsString(form);
-//        } catch (JsonProcessingException e) {
-//            // TODO Auto-generated catch block
-//            e.printStackTrace();
-//        }
+        ObjectMapper mapper = new ObjectMapper();
+        String jsonForm = "";
+        try {
+            jsonForm = mapper.writeValueAsString(form);
+        } catch (JsonProcessingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 //       
 //        IdValuePair formsEntry = new IdValuePair("0", jsonForm);
 //        List<IdValuePair> forms = new ArrayList<>();
 //        forms.add(0, formsEntry);
-        
-//        /*
-//         * System.out.println("ReactResultsController jsonForm:" + accessionNumber + ":"
-//         * + jsonForm);
-//         */System.out.println("ReactResultsController jsonForm:" + accessionNumber + ":" + forms);
 
-        
-        return(form);
+       System.out.println("ReactResultsController jsonForm:" + jsonForm);
+
+        return (form);
     }
 
     @RequestMapping(value = "/AccessionResults", method = RequestMethod.GET)
