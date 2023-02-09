@@ -171,3 +171,6 @@ button {
 .formDiv{
   background-color: #bfc2bc;
 }
+.requiredFieldIndicator{
+  color: red;
+}
