@@ -5,6 +5,8 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -29,8 +31,9 @@ public class ReflexRule extends BaseObject<Integer>{
     @Column(name = "rule_name")
     private String ruleName;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "overall")
-    private String overall;
+    private ReflexRuleOtions.OverallOptions overall ;
 
     @Column(name = "toggled")
     private Boolean toggled;
@@ -58,10 +61,10 @@ public class ReflexRule extends BaseObject<Integer>{
     public void setRuleName(String ruleName) {
         this.ruleName = ruleName;
     }
-    public String getOverall() {
+    public ReflexRuleOtions.OverallOptions getOverall() {
         return overall;
     }
-    public void setOverall(String overall) {
+    public void setOverall(ReflexRuleOtions.OverallOptions overall) {
         this.overall = overall;
     }
     public Boolean getToggled() {

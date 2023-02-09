@@ -2,6 +2,8 @@ package org.openelisglobal.testreflex.action.bean;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -18,24 +20,26 @@ public class ReflexRuleAction {
     @Column(name = "id")
     private Integer id;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "action")
-    private String action;
+    private ReflexRuleOtions.ActionOptions action;
 
     @Column(name = "reflex_result")
     private String reflexResult;
 
     @Column(name = "reflex_result_test_id")
     private String reflexResultTestId;
+
     public Integer getId() {
         return id;
     }
     public void setId(Integer id) {
         this.id = id;
     }
-    public String getAction() {
+    public ReflexRuleOtions.ActionOptions getAction() {
         return action;
     }
-    public void setAction(String action) {
+    public void setAction(ReflexRuleOtions.ActionOptions action) {
         this.action = action;
     }
     public String getReflexResult() {

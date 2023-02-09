@@ -3,7 +3,7 @@ import { Form, Stack, TextInput, Select, SelectItem, Button, InlineLoading, Icon
 import { Add, Subtract } from '@carbon/react/icons';
 import Autocomplete from "../inputComponents/AutoComplete";
 import RuleBuilderFormValues from "../formModel/innitialValues/RuleBuilderFormValues";
-import { actionOptions ,relationOptions ,overallOptions } from "../data/ReflexRuleOptions";
+//import { actionOptions ,relationOptions ,overallOptions } from "../data/ReflexRuleOptions";
 import { getFromOpenElisServer, postToOpenElisServer } from "../utils/Utils";
 
 function ReflexRule() {
@@ -37,16 +37,21 @@ function ReflexRule() {
 
   //const [ruleList, setRuleList] = useState([ruleObj]);
   const [ruleList, setRuleList] = useState([RuleBuilderFormValues]);
-
   const [testList, setTestList] = useState([]);
-
   const [sampleList, setSampleList] = useState([]);
+  const [actionOptions, setActionOptions] = useState([]);
+  const [generalRelationOptions, setGeneralRelationOptions] = useState([]);
+  const [numericRelationOptions, setNumericRelationOptions] = useState([]);
+  const [overallOptions, setOverallOptions] = useState([]);
+  const [testResultList, setTestResultList] = useState({});
 
 
   useEffect(() => {
-    getFromOpenElisServer("/rest/tests", fetchTests)
+    getFromOpenElisServer("/rest/test-details", fetchTests)
     getFromOpenElisServer("/rest/samples", fetchSamples)
     getFromOpenElisServer("/rest/reflexrules", fetchReflexRules)
+    getFromOpenElisServer("/rest/reflexrule-options", fetchRuleOptions)
+
 
     return () => { // This code runs when component is unmounted
       componentMounted.current = false;
@@ -67,6 +72,16 @@ function ReflexRule() {
     list[index][field][itemIndex][name] = value;
     setRuleList(list);
   }
+
+  const onSelect = (index ,item_index ,resulList) => {
+    const results = {...testResultList}  
+    if(!results[index]){
+      results[index] = {}
+    }
+    results[index][item_index] = resulList
+    setTestResultList(results)
+  }
+
 
   const handleRuleRemove = (index) => {
     const list = [...ruleList];
@@ -123,6 +138,18 @@ function ReflexRule() {
       console.log(JSON.stringify(reflexRuleList))
       if (reflexRuleList.length > 0) {
         setRuleList(reflexRuleList);
+      }
+    }
+  }
+
+  const fetchRuleOptions = (options) => {
+    if (componentMounted.current) {
+      console.log(JSON.stringify(options))
+      if (options) {
+        setActionOptions(options.actionOptions);
+        setGeneralRelationOptions(options.generalRelationOptions);
+        setNumericRelationOptions(options.numericRelationOptions);
+        setOverallOptions(options.overallOptions)
       }
     }
   }
@@ -234,6 +261,7 @@ function ReflexRule() {
                               <Autocomplete
                                 stateValue={condition.testName}
                                 handleChange={handleRuleFieldItemChange}
+                                onSelect={onSelect}
                                 index={index}
                                 name="testName"
                                 idField="testId"
@@ -261,7 +289,7 @@ function ReflexRule() {
                                   text=""
                                   value=""
                                 />
-                                 {relationOptions.map((relation, relation_index) => (
+                                 {generalRelationOptions.map((relation, relation_index) => (
                                   <SelectItem
                                     text={relation.label}
                                     value={relation.value}
@@ -281,20 +309,28 @@ function ReflexRule() {
                                 labelText=""
                                 className="inputSelect"
                                 onChange={(e) => handleRuleFieldItemChange(e, index, condition_index, FIELD.conditions)}
-                                required
+                                //required
                               >
                                 <SelectItem
                                   text=""
                                   value=""
                                 />
-                                <SelectItem
-                                  text="Postive"
-                                  value="postive"
-                                />
-                                <SelectItem
-                                  text="Negative"
-                                  value="negative"
-                                />
+                                {testResultList[index] && (
+                                  <>
+                                    {testResultList[index][condition_index] && (
+                                    <>
+                                      {testResultList[index][condition_index].map((result, condition_value_index) => (
+                                        <SelectItem
+                                          text={result.label}
+                                          value={result.value}
+                                          key={condition_value_index}
+                                        />
+                                      ))}
+                                    </>
+                                    )}
+                                  </>
+                                )}
+                                
                               </Select>
                             </div>
                             <div>
