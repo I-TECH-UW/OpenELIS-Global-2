@@ -2,6 +2,8 @@ import React from 'react'
 import { FormattedMessage, injectIntl } from 'react-intl'
 import './Style.css'
 import ResultSearch from './resultPage/ResultSearch';
+import ResultRangeSearch from './resultPage/ResultRangeSearch';
+
 import { BrowserRouter as Router, Route, Switch, useMatch } from "react-router-dom";
 import PathRoute from "./utils/PathRoute"
 import {
@@ -29,7 +31,7 @@ class Result extends React.Component {
                     <SideNavItems className="resultSideNav">
                         <SideNavMenu title="Result Search">
                             <SideNavMenuItem href="#result" >by Accession Number</SideNavMenuItem>
-                            <SideNavMenuItem href="#1"> Link</SideNavMenuItem>
+                            <SideNavMenuItem href="#rangeResults">Range Results</SideNavMenuItem>
                             <SideNavMenuItem href="#2">Link</SideNavMenuItem>
                         </SideNavMenu>
                         <SideNavMenu title="User Management">
@@ -47,6 +49,9 @@ class Result extends React.Component {
 
                 <PathRoute path="#result">
                     <ResultSearch />
+                </PathRoute>
+                <PathRoute path="#rangeResults">
+                    <ResultRangeSearch />
                 </PathRoute>
             </>
 

@@ -4,7 +4,7 @@ import { FormattedMessage, injectIntl } from 'react-intl'
 import { Select, SelectItem, InlineLoading } from '@carbon/react';
 import { Formik } from "formik";
 import { Add } from '@carbon/react/icons';
-import ResultSearchAccession from './ResultSearchAccession';
+
 import {
   Heading,
   Form,

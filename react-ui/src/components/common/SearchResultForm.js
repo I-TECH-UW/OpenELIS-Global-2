@@ -55,10 +55,18 @@ class SearchResultForm extends React.Component {
         
     }
 
+    // handleSubmit = (values) => {
+    //     values.dateOfBirth = this.state.dob
+    //     console.log("handleSubmit:" + this.state.doRange)
+    //     var searchEndPoint = "/rest/results?" + "&labNumber=" + values.labNumber
+    //     getFromOpenElisServer(searchEndPoint, this.fetchResults);
+    // };
+
     handleSubmit = (values) => {
         values.dateOfBirth = this.state.dob
         console.log("handleSubmit:" + this.state.doRange)
-        var searchEndPoint = "/rest/results?" + "&labNumber=" + values.labNumber
+        // var searchEndPoint = "/rest/results?" + "&labNumber=" + values.labNumber
+        var searchEndPoint = "/rest/RangeResults?" + "&labNumber=" + values.labNumber
         getFromOpenElisServer(searchEndPoint, this.fetchResults);
     };
 
