@@ -1,5 +1,4 @@
 import React from 'react'
-import '../Style.css'
 import { FormattedMessage, injectIntl } from 'react-intl'
 import { Form, Stack, TextInput, Select, SelectItem, Button, InlineLoading } from '@carbon/react';
 import { Formik } from "formik";

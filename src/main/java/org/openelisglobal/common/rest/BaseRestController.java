@@ -1,4 +1,4 @@
-package org.openelisglobal.common.controller.rest;
+package org.openelisglobal.common.rest;
 
 import javax.servlet.http.HttpServletRequest;
 

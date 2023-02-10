@@ -1,4 +1,4 @@
-package org.openelisglobal.common.provider.query.rest;
+package org.openelisglobal.common.rest.provider;
 
 import java.math.BigDecimal;
 import java.util.List;

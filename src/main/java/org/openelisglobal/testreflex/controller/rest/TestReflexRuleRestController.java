@@ -21,6 +21,7 @@ import org.openelisglobal.testreflex.action.bean.ReflexRuleOtions;
 import org.openelisglobal.testreflex.service.TestReflexService;
 import org.openelisglobal.testresult.service.TestResultService;
 import org.openelisglobal.testresult.valueholder.TestResult;
+import org.openelisglobal.typeofsample.service.TypeOfSampleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
@@ -42,6 +44,9 @@ public class TestReflexRuleRestController {
     private TestResultService testResultService;
     @Autowired
     DictionaryService dictionaryService ;
+    @Autowired
+    TypeOfSampleService typeOfSampleService;
+    
 
     @PostMapping(value = "reflexrule", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -82,9 +87,44 @@ public class TestReflexRuleRestController {
 
     @GetMapping(value = "test-details", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public List<TestDisplayBean> createTestList() {
+    public List<TestDisplayBean> getTestList() {
         ArrayList<TestDisplayBean> tests = new ArrayList<>();
         List<Test> testList = testService.getAllActiveTests(false);
+        for (Test test : testList) {
+            TestDisplayBean testObj = new TestDisplayBean();
+            testObj.setLabel(TestServiceImpl.getLocalizedTestNameWithType(test));
+            testObj.setValue(test.getId());
+            testObj.setResultType(testService.getResultType(test));
+            List<LabelValuePair> resultList = new ArrayList<>();
+            List<TestResult> results = testResultService.getActiveTestResultsByTest(test.getId());
+            results.forEach(result -> {
+                if(result.getValue()!= null){
+                    System.out.println(result.getValue());
+                    Dictionary dict = dictionaryService.getDictionaryById(result.getValue());
+                    resultList.add(new LabelValuePair(dict.getDictEntryDisplayValue(), dict.getId()));
+                }
+            });
+            testObj.setResultList(resultList);
+            tests.add(testObj);
+
+            Collections.sort(tests, new Comparator<TestDisplayBean>() {
+                @Override
+                public int compare(TestDisplayBean o1, TestDisplayBean o2) {
+                    return o1.getValue().compareTo(o2.getValue());
+                }
+            });
+        }
+
+        return tests;
+    }
+
+    @GetMapping(value = "test-details-by-sample", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<TestDisplayBean> getTestListBySample(HttpServletRequest request, @RequestParam String sampleType) {
+;
+        List<Test> testList = typeOfSampleService.getActiveTestsBySampleTypeId(sampleType, false);
+        ArrayList<TestDisplayBean> tests = new ArrayList<>();
+
         for (Test test : testList) {
             TestDisplayBean testObj = new TestDisplayBean();
             testObj.setLabel(TestServiceImpl.getLocalizedTestNameWithType(test));
