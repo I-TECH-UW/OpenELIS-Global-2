@@ -9,7 +9,7 @@ import { IntlProvider } from "react-intl";
 import Layout from "./components/layout/Layout";
 import Home from "./components/Home";
 import Login from "./components/Login";
-import { Admin } from "./components";
+import Admin from "./components/admin/Admin";
 import {
   getFromOpenElisServer,
   postToOpenElisServer,
@@ -20,6 +20,10 @@ import messages_fr from "./languages/fr.json";
 import config from "./config.json";
 import { SecureRoute } from "./components/security";
 import "./index.scss";
+import PatientManagement from "./components/patient/PatientManagement";
+import PatientHistory from "./components/patient/PatientHistory";
+//import "./components/patient/resultsViewer/results-viewer.styles.scss"
+
 
 let i18nConfig = {
   locale: navigator.language.split(/[-_]/)[0],
@@ -96,6 +100,10 @@ class App extends React.Component {
     localStorage.setItem("locale", lang);
   };
 
+  getLocale = () => {
+    return this.state.locale;
+  };
+
   onChangeLanguage = (lang) => {
     this.changeLanguage(lang);
   };
@@ -121,13 +129,15 @@ class App extends React.Component {
                 <Route
                   path="/login"
                   exact
-                  component={() => <Login onAuth={this.onAuth} />}
+                  component={() => (
+                    <Login onAuth={this.onAuth} />
+                  )}
                 />
                 <SecureRoute
                   path="/"
                   exact
                   component={() => <Home />}
-                  role="null"
+                  role=""
                   config={this.state.config}
                   onAuth={this.onAuth}
                   logout={this.logout}
@@ -138,6 +148,26 @@ class App extends React.Component {
                   exact
                   component={() => <Admin />}
                   role="Global Administrator"
+                  config={this.state.config}
+                  onAuth={this.onAuth}
+                  logout={this.logout}
+                  isLoggedIn={this.isLoggedIn}
+                />
+                <SecureRoute
+                  path="/PatientManagement"
+                  exact
+                  component={() => <PatientManagement />}
+                  role="Reception"
+                  config={this.state.config}
+                  onAuth={this.onAuth}
+                  logout={this.logout}
+                  isLoggedIn={this.isLoggedIn}
+                />
+                <SecureRoute
+                  path="/PatientHistory"
+                  exact
+                  component={() => <PatientHistory />}
+                  role="Reception"
                   config={this.state.config}
                   onAuth={this.onAuth}
                   logout={this.logout}

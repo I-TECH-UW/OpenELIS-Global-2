@@ -1,6 +1,5 @@
 {
   "title": "Cote d'Ivoire Regional Laboratory LIS",
-  "proxyServerBaseUrl": "http://localhost/api/OpenELIS-Global",
-  "loginRedirect": "http://localhost/login",
-  "serverBaseUrl": "http://localhost/api/OpenELIS-Global"
+  "loginRedirect": "login",
+  "serverBaseUrl": "api/OpenELIS-Global"
 }

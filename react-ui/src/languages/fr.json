@@ -1,12 +1,21 @@
 {
     "language.select.label": "French" ,
-    "language.select.admin": "Admin - French",
     "label.button.submit": "Connecter",
+    "label.button.changepassword" : "Changer Mot de Passe",
+    "label.button.save": "Sauver",
+    "label.button.search" : "Chercher" ,
+    "label.button.clear" : "Dégager",
     "login.title": "Identifiant",
     "login.subtitle": "Identifiant",
     "login.msg.username": "Nom d'utilisateur",
     "login.msg.password": "Mot de passe",
     "login.msg.username.missing": "Votre nom d'utilisateur requis",
     "login.msg.password.missing": "Votre mot de passe requis",
-    "login.notice.message": "Veuillez entrer dans le logiciel de Syst\u00E8me d'Information \u00C9lectronique de Laboratoire:"
+    "login.notice.message": "Veuillez entrer dans le logiciel de Syst\u00E8me d'Information \u00C9lectronique de Laboratoire:",
+    "error.invalidcredentials": "L'identifiant ou le mot de passe est incorrect",
+    "patient.label.modify" : "Ajouter/Modifier un patient" ,
+    "patient.label.info" : "Informations sur les patients",
+    "breadcrumb.home" : "Domicile",
+    "admin.legacy" :"Précédent Admin",
+    "label.page.patientHistory": "Antécédents du patient"
 }

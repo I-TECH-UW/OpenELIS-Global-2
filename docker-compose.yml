@@ -11,6 +11,8 @@ services:
             - default
         volumes:
             -  cert-volume:/etc/openelis-global
+            - keys-vol:/etc/ssl/private/
+            - certs-vol:/etc/ssl/certs/
     database:
         container_name: openelisglobal-database 
         image: postgres:9.5
@@ -89,8 +91,8 @@ services:
        build:
          context: ./react-ui
          dockerfile: ./Dockerfile    
-       ports:
-         - 3000:3000
+#       ports:
+#         - 3000
        networks:
          - default
        volumes:
@@ -103,10 +105,15 @@ services:
     proxy:
         image: nginx:1.15-alpine
         ports:
-        - 80:80
+            - 80:80
+            - 443:443
         volumes:
-        - ./volume/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-        restart: unless-stopped            
+            - certs-vol:/etc/nginx/certs/
+            - keys-vol:/etc/nginx/keys/
+            - ./volume/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+        restart: unless-stopped   
+        depends_on:
+            - certs             
                 
 secrets:
   datasource.password:
@@ -124,3 +131,5 @@ networks:
 volumes:
   db-data:
   cert-volume:
+  certs-vol:
+  keys-vol:

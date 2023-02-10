@@ -16,12 +16,28 @@ div {
 }
 
 .userDetails {
-  padding: 1%;
-  margin: 4%;
+  padding: 5%; 
+}
+
+li.userDetails {
+  cursor: default;
+}
+
+li.clickableUserDetails {
+  cursor: pointer;
+}
+
+li.clickableUserDetails:hover  {
+  background: #072655;
 }
 
 .adminPageContent {
   margin-left: 20%;
+  margin-right: 5%;
+}
+
+.pageContent {
+  margin-left: 2%;
   margin-right: 5%;
 }
 
@@ -98,13 +114,28 @@ button {
   padding: 0.5%;
 }
 
+.gridBoundary {
+  border: 0.5px solid #295785;
+  border-radius: 5px;
+  padding: 1%;
+  box-shadow: 4px 2px 4px #d3d3d3; 
+  margin-bottom: 1%;
+}
+
+.columnBoundary {
+  border: 0.5px solid #295785;
+  border-radius: 5px;
+  margin: 2%;
+  padding: 1%;
+  width: 120%;
+}
+
 .inlineDiv {
   display: flex;
   margin-top: 2%;
   margin-bottom: 3%;
-  margin-left: 1%;
+  margin-left: 1%; 
 }
-
 .section {
   border: 0.5px solid green;
   border-radius: 3px;
@@ -122,4 +153,21 @@ button {
 .errorMessage::before {
   content: " ";
   font-size: 10px;
+}
+
+.inlineChildDiv {
+  margin-left : 1%
+}
+
+.formInlineDiv {
+  /* display: flex;
+  flex-wrap: nowrap;
+  width: 100%; */
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-column-gap: 2%;
+}
+
+.formDiv{
+  background-color: #bfc2bc;
 }

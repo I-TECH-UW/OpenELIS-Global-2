@@ -1,6 +1,7 @@
 package org.openelisglobal.security;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.json.JSONObject;
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.log.LogEvent;
@@ -111,9 +113,20 @@ public class CustomFormAuthenticationSuccessHandler extends SavedRequestAwareAut
             homePath += "?passReminder=true";
         }
 
+        if ("true".equals(request.getParameter("apiCall"))) {
+            this.handleApiLogin(request, response);
+        } else {
 //        redirectStrategy.sendRedirect(request, response, homePath);
-        super.onAuthenticationSuccess(request, response, authentication);
-        clearCustomAuthenticationAttributes(request);
+            super.onAuthenticationSuccess(request, response, authentication);
+            clearCustomAuthenticationAttributes(request);
+        }
+    }
+
+    private void handleApiLogin(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        PrintWriter out = response.getWriter();
+        response.setContentType("application/json");
+
+        out.print(new JSONObject().put("success", true));
     }
 
     private void setupUserSession(HttpServletRequest request, LoginUser loginInfo) {
