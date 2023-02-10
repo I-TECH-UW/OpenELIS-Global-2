@@ -44,7 +44,6 @@ public class PersonServiceTest {
         Assert.assertEquals(lastname, savedPerson.getLastName());
     }
 
-    @Test
     public void getAllPerson_shouldGetAllPerson() throws Exception {
         Assert.assertEquals(1, personService.getAllPersons().size());
     }

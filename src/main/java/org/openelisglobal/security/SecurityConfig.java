@@ -74,8 +74,8 @@ public class SecurityConfig {
     public static final String[] LOGIN_PAGES = { "/LoginPage", "/ValidateLogin" };
     public static final String[] AUTH_OPEN_PAGES = { "/Home", "/Dashboard", "/Logout", "/MasterListsPage",
             "/analyzer/runAction/**" };
-    public static final String[] RESOURCE_PAGES = { "/fontawesome-free-5.13.1-web/**", "/css/**", "/favicon/**",
-            "/images/**", "/documentation/**", "/scripts/**", "/jsp/**" };
+    public static final String[] RESOURCE_PAGES = { "/fontawesome-free-5.13.1-web/**", "/select2/**", "/css/**",
+            "/favicon/**", "/images/**", "/documentation/**", "/scripts/**", "/jsp/**" };
 //    public static final String[] HTTP_BASIC_SERVLET_PAGES = { "/pluginServlet/**", "/importAnalyzer", "/fhir/**" };
     public static final String[] AJAX_CALLS_TO_CONTROLLERS = { "/Provider/**" };
 //    public static final String[] CLIENT_CERTIFICATE_PAGES = {};
