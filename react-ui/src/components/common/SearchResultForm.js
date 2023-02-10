@@ -65,8 +65,7 @@ class SearchResultForm extends React.Component {
     handleSubmit = (values) => {
         values.dateOfBirth = this.state.dob
         console.log("handleSubmit:" + this.state.doRange)
-        // var searchEndPoint = "/rest/results?" + "&labNumber=" + values.labNumber
-        var searchEndPoint = "/rest/RangeResults?" + "&labNumber=" + values.labNumber
+        var searchEndPoint = "/rest/results?" + "&labNumber=" + values.labNumber
         getFromOpenElisServer(searchEndPoint, this.fetchResults);
     };
 
@@ -201,12 +200,12 @@ class SearchResultForm extends React.Component {
                                     <>
                                         {rows.slice((page - 1) * pageSize).slice(0, pageSize).map((row) => (
                                             <TableRow key={row.id}>
-                                                {this.renderLabHeader
+                                                {/* {this.renderLabHeader
                                                     ({
                                                         rowId: row.id,
                                                         resultForm: this.state.resultForm,
                                                     })
-                                                }
+                                                } */}
                                                 
                                                 {this.renderResultRow
                                                     ({
