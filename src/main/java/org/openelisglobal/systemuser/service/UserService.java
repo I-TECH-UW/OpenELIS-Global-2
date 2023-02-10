@@ -1,8 +1,8 @@
 package org.openelisglobal.systemuser.service;
 
 import java.util.List;
-import java.util.Set;
 import java.util.Map;
+import java.util.Set;
 
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.util.IdValuePair;

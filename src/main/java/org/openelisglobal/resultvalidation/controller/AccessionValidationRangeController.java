@@ -14,7 +14,6 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.action.IActionConstants;
@@ -33,6 +32,7 @@ import org.openelisglobal.common.services.registration.interfaces.IResultUpdate;
 import org.openelisglobal.common.services.serviceBeans.ResultSaveBean;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.IdValuePair;
+import org.openelisglobal.common.util.validator.GenericValidator;
 import org.openelisglobal.common.validator.BaseErrors;
 import org.openelisglobal.dataexchange.orderresult.OrderResponseWorker.Event;
 import org.openelisglobal.internationalization.MessageUtil;
