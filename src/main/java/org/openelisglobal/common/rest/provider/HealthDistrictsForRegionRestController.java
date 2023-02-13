@@ -1,4 +1,4 @@
-package org.openelisglobal.common.provider.query.rest;
+package org.openelisglobal.common.rest.provider;
 
 import java.util.ArrayList;
 import java.util.Collections;

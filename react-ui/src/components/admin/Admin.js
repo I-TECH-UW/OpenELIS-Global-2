@@ -2,7 +2,7 @@ import React from 'react'
 import config from "../../config.json";
 import { FormattedMessage, injectIntl } from 'react-intl'
 import '../Style.css'
-import ReflexTestManagement from './ReflexTestManagement'
+import ReflexTestManagement from './reflexTests/ReflexTestManagement'
 import PathRoute from "../utils/PathRoute"
 import {
     SideNav,

@@ -1,4 +1,4 @@
-package org.openelisglobal.common.controller.rest;
+package org.openelisglobal.common.rest;
 
 import java.util.List;
 

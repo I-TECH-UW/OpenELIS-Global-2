@@ -2,6 +2,8 @@ package org.openelisglobal.testreflex.action.bean;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -27,8 +29,13 @@ public class ReflexRuleCondition {
     @Column(name = "test_id")
     private String testId;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "relation")
-    private String relation;
+    private ReflexRuleOtions.GeneralRelationOptions relation;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "numeric_relation")
+    private ReflexRuleOtions.NumericRelationOptions numericRelation;
 
     @Column(name = "value")
     private String value ;
@@ -58,10 +65,10 @@ public class ReflexRuleCondition {
     public void setTestId(String testId) {
         this.testId = testId;
     }
-    public String getRelation() {
+    public ReflexRuleOtions.GeneralRelationOptions getRelation() {
         return relation;
     }
-    public void setRelation(String relation) {
+    public void setRelation(ReflexRuleOtions.GeneralRelationOptions relation) {
         this.relation = relation;
     }
     public String getValue() {
@@ -69,5 +76,11 @@ public class ReflexRuleCondition {
     }
     public void setValue(String value) {
         this.value = value;
+    }
+    public ReflexRuleOtions.NumericRelationOptions getNumericRelation() {
+        return numericRelation;
+    }
+    public void setNumericRelation(ReflexRuleOtions.NumericRelationOptions numericRelation) {
+        this.numericRelation = numericRelation;
     }
 }

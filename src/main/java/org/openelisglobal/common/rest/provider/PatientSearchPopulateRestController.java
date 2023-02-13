@@ -1,4 +1,4 @@
-package org.openelisglobal.common.provider.query.rest;
+package org.openelisglobal.common.rest.provider;
 
 import java.util.List;
 
@@ -7,7 +7,7 @@ import org.openelisglobal.address.service.AddressPartService;
 import org.openelisglobal.address.service.PersonAddressService;
 import org.openelisglobal.address.valueholder.AddressPart;
 import org.openelisglobal.address.valueholder.PersonAddress;
-import org.openelisglobal.common.provider.query.rest.bean.PatientDetails;
+import org.openelisglobal.common.rest.provider.bean.PatientDetails;
 import org.openelisglobal.patient.service.PatientContactService;
 import org.openelisglobal.patient.service.PatientService;
 import org.openelisglobal.patient.util.PatientUtil;

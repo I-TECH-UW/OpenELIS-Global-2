@@ -1,4 +1,4 @@
-package org.openelisglobal.common.provider.query.rest.bean;
+package org.openelisglobal.common.rest.provider.bean;
 
 public class PatientDetails {
     String ID;
