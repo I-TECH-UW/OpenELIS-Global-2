@@ -15,6 +15,7 @@ export default {
   actions: [{
     id: null,
     action: "",
+    sampleId : "",
     reflexResult: "",
     reflexResultTestId: ""
   }]

@@ -47,6 +47,7 @@
 				<constraints nullable="false"/>
 			</column>
 			<column name="reflex_result_test_id" type="varchar(64)"/>
+			<column name="sample_id" type="varchar(64)"/>
 			<column name="reflex_rule_id" type="int"/>
 		</createTable>
 		<addForeignKeyConstraint constraintName="action_reflex_rule_id_fk"

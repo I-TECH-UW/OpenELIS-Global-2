@@ -30,6 +30,9 @@ public class ReflexRuleAction {
     @Column(name = "reflex_result_test_id")
     private String reflexResultTestId;
 
+    @Column(name = "sample_id")
+    private String sampleId;
+
     public Integer getId() {
         return id;
     }
@@ -53,5 +56,11 @@ public class ReflexRuleAction {
     }
     public void setReflexResultTestId(String reflexResultTestId) {
         this.reflexResultTestId = reflexResultTestId;
+    }
+    public String getSampleId() {
+        return sampleId;
+    }
+    public void setSampleId(String sampleId) {
+        this.sampleId = sampleId;
     }
 }
