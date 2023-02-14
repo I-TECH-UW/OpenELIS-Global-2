@@ -305,7 +305,7 @@ class CreatePatientForm extends React.Component {
                                                         name={field.name}
                                                         labelText="District"
                                                         className=""
-                                                        readOnly
+                                                        onChange={()=> {}}
                                                     >
                                                         <SelectItem
                                                             text=""
@@ -371,7 +371,7 @@ class CreatePatientForm extends React.Component {
                                                         name={field.name}
                                                         labelText="Education"
                                                         className=""
-                                                        readOnly
+                                                        onChange={()=> {}}
                                                     >
                                                         <SelectItem
                                                             text=""
@@ -396,7 +396,7 @@ class CreatePatientForm extends React.Component {
                                                         name={field.name}
                                                         labelText="Marital Status"
                                                         className=""
-                                                        readOnly
+                                                        onChange={()=> {}}
                                                     >
                                                         <SelectItem
                                                             text=""
@@ -424,7 +424,7 @@ class CreatePatientForm extends React.Component {
                                                         name={field.name}
                                                         labelText="Nationality"
                                                         className=""
-                                                        readOnly
+                                                        onChange={()=> {}}
                                                     >
                                                         <SelectItem
                                                             text=""
