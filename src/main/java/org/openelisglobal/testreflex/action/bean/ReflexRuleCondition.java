@@ -31,11 +31,7 @@ public class ReflexRuleCondition {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "relation")
-    private ReflexRuleOtions.GeneralRelationOptions relation;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "numeric_relation")
-    private ReflexRuleOtions.NumericRelationOptions numericRelation;
+    private ReflexRuleOtions.NumericRelationOptions relation ;
 
     @Column(name = "value")
     private String value ;
@@ -65,10 +61,10 @@ public class ReflexRuleCondition {
     public void setTestId(String testId) {
         this.testId = testId;
     }
-    public ReflexRuleOtions.GeneralRelationOptions getRelation() {
+    public ReflexRuleOtions.NumericRelationOptions getRelation() {
         return relation;
     }
-    public void setRelation(ReflexRuleOtions.GeneralRelationOptions relation) {
+    public void setRelation(ReflexRuleOtions.NumericRelationOptions relation) {
         this.relation = relation;
     }
     public String getValue() {
@@ -76,11 +72,5 @@ public class ReflexRuleCondition {
     }
     public void setValue(String value) {
         this.value = value;
-    }
-    public ReflexRuleOtions.NumericRelationOptions getNumericRelation() {
-        return numericRelation;
-    }
-    public void setNumericRelation(ReflexRuleOtions.NumericRelationOptions numericRelation) {
-        this.numericRelation = numericRelation;
     }
 }

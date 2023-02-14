@@ -36,7 +36,7 @@ class Autocomplete extends Component {
     handleChange(nameValue, index, item_index, field);
   };
 
-  onClick = (e, id , resultList) => {
+  onClick = (e, id , testDetails) => {
     const { index, item_index, handleChange, field, name, idField ,onSelect } = this.props;
     this.setState({
       activeSuggestion: 0,
@@ -56,7 +56,7 @@ class Autocomplete extends Component {
     handleChange(nameValue, index, item_index, field);
     handleChange(nameId, index, item_index, field);
     if (typeof onSelect === "function") {
-      onSelect(index ,item_index ,resultList )
+      onSelect(index ,item_index ,testDetails)
     } 
   };
 
@@ -111,7 +111,7 @@ class Autocomplete extends Component {
                 className = "suggestion-active";
               }
               return (
-                <li className={className} key={index} onClick={(e) => onClick(e, suggestion.value ,suggestion.resultList)}>
+                <li className={className} key={index} onClick={(e) => onClick(e, suggestion.value ,suggestion)}>
                   {suggestion.label}
                 </li>
               );

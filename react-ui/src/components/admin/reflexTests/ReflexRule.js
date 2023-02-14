@@ -4,6 +4,7 @@ import { Add, Subtract } from '@carbon/react/icons';
 import Autocomplete from "./AutoComplete";
 import RuleBuilderFormValues from "../../formModel/innitialValues/RuleBuilderFormValues";
 import { getFromOpenElisServer, postToOpenElisServer, getFromOpeElisServerSync } from "../../utils/Utils";
+import "./styles.css"
 
 
 function ReflexRule() {
@@ -36,14 +37,14 @@ function ReflexRule() {
     actions: [actionObj]
   }
 
-  
+
   const [ruleList, setRuleList] = useState([RuleBuilderFormValues]);
   const [sampleList, setSampleList] = useState([]);
   const [actionOptions, setActionOptions] = useState([]);
   const [generalRelationOptions, setGeneralRelationOptions] = useState([]);
   const [numericRelationOptions, setNumericRelationOptions] = useState([]);
   const [overallOptions, setOverallOptions] = useState([]);
-  const [testResultList, setTestResultList] = useState({}); //{0 :{0:[]}}
+  const [testResultList, setTestResultList] = useState({ 0: { 0: { type: "N", list: [] } } }); //{index :{field_index:{type : "T" ,list : []}}}
   const [sampleTestList, setSampleTestList] = useState({ "conditions": {}, "actions": {} }); //{field :{index :{field_index:[]}}}
   const [counter, setCounter] = useState(0);
   const [loaded, setLoaded] = useState(false);
@@ -78,9 +79,7 @@ function ReflexRule() {
             })
 
             if (test) {
-              if (test.resultList) {
-                loadDefaultResultList(index, conditionIndex, test.resultList);
-              }
+              loadDefaultResultList(index, conditionIndex, test);
             }
           }
         });
@@ -111,11 +110,16 @@ function ReflexRule() {
   }
 
 
-  const loadDefaultResultList = (index, item_index, resulList) => {
+  const loadDefaultResultList = (index, item_index, test) => {
     if (!defaultTestResultList[index]) {
       defaultTestResultList[index] = {}
     }
-    defaultTestResultList[index][item_index] = resulList
+    if (!defaultTestResultList[index][item_index]) {
+      defaultTestResultList[index][item_index] = {}
+    }
+
+    defaultTestResultList[index][item_index]["list"] = test.resultList
+    defaultTestResultList[index][item_index]["type"] = test.resultType
   }
 
   const handleRuleFieldChange = (e, index) => {
@@ -132,12 +136,16 @@ function ReflexRule() {
     setRuleList(list);
   }
 
-  const loadResultList = (index, item_index, resulList) => {
+  const handleTestSelected = (index, item_index, testDetails) => {
     const results = { ...testResultList }
     if (!results[index]) {
       results[index] = {}
     }
-    results[index][item_index] = resulList
+    if (!results[index][item_index]) {
+      results[index][item_index] = {}
+    }
+    results[index][item_index]["list"] = testDetails.resultList
+    results[index][item_index]["type"] = testDetails.resultType
     setTestResultList(results)
   }
 
@@ -156,11 +164,18 @@ function ReflexRule() {
   }
 
 
-  const handleRuleRemove = (index) => {
+  const handleRuleRemove = (index, id) => {
     const list = [...ruleList];
     list.splice(index, 1);
     setRuleList(list);
+    if (id) {
+      postToOpenElisServer("/rest/deactivate-reflexrule/" + id, {}, handleDelete);
+    }
   };
+
+  const handleDelete = (status) => {
+    alert(status)
+  }
 
   const handleRuleAdd = () => {
     setRuleList([...ruleList, ruleObj]);
@@ -345,7 +360,7 @@ function ReflexRule() {
                               <Autocomplete
                                 stateValue={condition.testName}
                                 handleChange={handleRuleFieldItemChange}
-                                onSelect={loadResultList}
+                                onSelect={handleTestSelected}
                                 index={index}
                                 name="testName"
                                 idField="testId"
@@ -373,49 +388,83 @@ function ReflexRule() {
                                   text=""
                                   value=""
                                 />
-                                {generalRelationOptions.map((relation, relation_index) => (
-                                  <SelectItem
-                                    text={relation.label}
-                                    value={relation.value}
-                                    key={relation_index}
-                                  />
-                                ))}
+                                {testResultList[index] && testResultList[index][condition_index] && testResultList[index][condition_index]["type"] && (
+                                  <>
+                                    {testResultList[index][condition_index]["type"] === 'N' ? (
+                                      <>
+                                        {numericRelationOptions.map((relation, relation_index) => (
+                                          <SelectItem
+                                            text={relation.label}
+                                            value={relation.value}
+                                            key={relation_index}
+                                          />
+                                        ))}
+                                      </>
+                                    ) : (<>
+                                      {generalRelationOptions.map((relation, relation_index) => (
+                                        <SelectItem
+                                          text={relation.label}
+                                          value={relation.value}
+                                          key={relation_index}
+                                        />
+                                      ))}
+                                    </>)}
+                                  </>
+                                )}
                               </Select>
+
                             </div>
                             <div>
                               &nbsp;  &nbsp;
                             </div>
                             <div >
-                              <Select
-                                value={condition.value}
-                                id={index + "_" + condition_index + "_value"}
-                                name="value"
-                                labelText=""
-                                className="inputSelect"
-                                onChange={(e) => handleRuleFieldItemChange(e, index, condition_index, FIELD.conditions)}
-                              //required
-                              >
-                                <SelectItem
-                                  text=""
-                                  value=""
-                                />
-                                {testResultList[index] && (
-                                  <>
-                                    {testResultList[index][condition_index] && (
-                                      <>
-                                        {testResultList[index][condition_index].map((result, condition_value_index) => (
-                                          <SelectItem
-                                            text={result.label}
-                                            value={result.value}
-                                            key={condition_value_index}
-                                          />
-                                        ))}
-                                      </>
-                                    )}
-                                  </>
-                                )}
 
-                              </Select>
+                              {testResultList[index] && testResultList[index][condition_index] && testResultList[index][condition_index]["type"] && (
+                                <>
+                                  {testResultList[index][condition_index]["type"] === 'D' ? (
+                                    <Select
+                                      value={condition.value}
+                                      id={index + "_" + condition_index + "_value"}
+                                      name="value"
+                                      labelText=""
+                                      className="inputSelect"
+                                      onChange={(e) => handleRuleFieldItemChange(e, index, condition_index, FIELD.conditions)}
+                                      required
+                                    >
+                                      <SelectItem
+                                        text=""
+                                        value=""
+                                      />
+                                      <>
+                                        {testResultList[index][condition_index]["list"] && (
+                                          <>
+                                            {testResultList[index][condition_index]["list"].map((result, condition_value_index) => (
+                                              <SelectItem
+                                                text={result.label}
+                                                value={result.value}
+                                                key={condition_value_index}
+                                              />
+                                            ))}
+                                          </>
+                                        )}
+                                      </>
+                                    </Select>
+                                  ) : (
+                                    <>
+                                      <TextInput
+                                        name="value"
+                                        className="inputText"
+                                        type="text"
+                                        id={index + "_" + condition_index + "_value"}
+                                        labelText=""
+                                        value={condition.value}
+                                        onChange={(e) => handleRuleFieldItemChange(e, index, condition_index, FIELD.conditions)}
+                                        required
+                                      />
+                                    </>
+                                  )}
+                                </>
+                              )}
                             </div>
                             <div>
                               &nbsp;  &nbsp;
@@ -550,7 +599,7 @@ function ReflexRule() {
             {ruleList.length !== 1 && (
               <button
                 type="button"
-                onClick={() => handleRuleRemove(index)}
+                onClick={() => handleRuleRemove(index, rule.id)}
                 className="remove-btn">
                 <Subtract size={16} />
               </button>

@@ -46,6 +46,9 @@ public class ReflexRule extends BaseObject<Integer>{
     @JoinColumn(name = "reflex_rule_id", referencedColumnName = "id") 
     Set<ReflexRuleAction> actions;
 
+    @Column(name = "active")
+    private Boolean active = true;
+
     @Override
     public Integer getId() {
         return id;
@@ -84,6 +87,14 @@ public class ReflexRule extends BaseObject<Integer>{
     }
     public void setActions(Set<ReflexRuleAction> actions) {
         this.actions = actions;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 
 }
