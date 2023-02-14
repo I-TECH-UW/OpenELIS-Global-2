@@ -24,6 +24,7 @@
 				<constraints nullable="false"/>
 			</column>
 			<column name="toggled" type="boolean"/>
+			<column name="active" type="boolean"/>
 			<column name="last_updated" type="datetime"/>
 		</createTable>
 	</changeSet>
@@ -75,7 +76,6 @@
 			</column>
 			<column name="test_id" type="varchar(64)"/>
 			<column name="relation" type="varchar(64)"/>
-			<column name="numeric_relation" type="varchar(64)"/>
 			<column name="value" type="varchar(64)"/>
 			<column name="reflex_rule_id" type="int"/>
 		</createTable>

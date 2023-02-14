@@ -1,6 +1,7 @@
 package org.openelisglobal.testreflex.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.action.IActionConstants;
@@ -148,5 +149,14 @@ public class TestReflexServiceImpl extends BaseObjectServiceImpl<TestReflex, Str
     @Transactional(readOnly = true)
     public List<ReflexRule> getAllReflexRules() {
         return reflexRuleDAO.getAll();
+    }
+
+    @Override
+    public void deactivateReflexRule(String id) {
+        Optional<ReflexRule> rule = reflexRuleDAO.get(Integer.valueOf(id));
+        if(rule.isPresent()){
+            rule.get().setActive(false);
+            reflexRuleDAO.update(rule.get());
+        }   
     }
 }

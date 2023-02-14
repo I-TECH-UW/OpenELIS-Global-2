@@ -5,14 +5,14 @@ body {
   .autocomplete1 {
     padding: 0.5rem;
     width: 350px;
-    margin-top: -2%;
+    margin-top: -4%;
     --cds-text-primary:  black; 
   }
 
   .autocomplete2 {
     padding: 0.5rem;
     width: 350px;
-    margin-top: -2%;
+    margin-top: -4%;
     --cds-text-primary:  black; 
   }
   
@@ -52,4 +52,12 @@ body {
   
   .suggestions li:not(:last-of-type) {
     border-bottom: 1px solid #999;
+  }
+
+
+  .inputText {
+    --cds-text-primary: black;
+    width: 100%;
+    --cds-text-secondary: black;
+    margin-top: -4%;
   }

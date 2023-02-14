@@ -4,6 +4,7 @@ export default {
   ruleName: "",
   overall: "",
   toggled: true,
+  active : true,
   conditions: [{
     id: null,
     sampleId: "",

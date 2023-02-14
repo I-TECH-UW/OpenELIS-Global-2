@@ -41,6 +41,7 @@ export const postToOpenElisServer = (endPoint, payLoad, callback) => {
         })
 }
 
+//provides Synchronous calls to the api
 export const getFromOpeElisServerSync = (endPoint, callback) => {
     const request = new XMLHttpRequest()
     request.open('GET', config.serverBaseUrl + endPoint, false);

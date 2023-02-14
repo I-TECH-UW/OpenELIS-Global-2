@@ -34,4 +34,6 @@ public interface TestReflexService extends BaseObjectService<TestReflex, String>
 
     List<ReflexRule> getAllReflexRules();
 
+    void deactivateReflexRule(String id); 
+
 }
