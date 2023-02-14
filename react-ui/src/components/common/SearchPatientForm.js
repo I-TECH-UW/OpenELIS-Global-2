@@ -107,7 +107,7 @@ class SearchPatientForm extends React.Component {
                                     onSubmit={handleSubmit}
                                     onChange={handleChange}
                                     onBlur={handleBlur}>
-                                    <Stack gap={2}>
+                                    <Stack gap={5}>
                                         <FormLabel>
                                             <Section>
                                                 <Section>
