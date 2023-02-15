@@ -86,13 +86,9 @@ public class TestReflexRuleRestController {
         ReflexRuleOtions.NumericRelationOptions.stream().forEach(
                 option -> numericRelationOptions
                         .add(new LabelValuePair(option.getDisplayName(), option.name())));
-        List<LabelValuePair> actionOptions = new ArrayList<>();
-        ReflexRuleOtions.ActionOptions.stream()
-                .forEach(option -> actionOptions.add(new LabelValuePair(option.getDisplayName(), option.name())));
         options.setOverallOptions(overallOptions);
         options.setGeneralRelationOptions(generalRelationOptions);
         options.setNumericRelationOptions(numericRelationOptions);
-        options.setActionOptions(actionOptions);
         return options;
     }
 

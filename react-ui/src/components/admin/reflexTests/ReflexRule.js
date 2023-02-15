@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Form, Stack, TextInput, Select, SelectItem, Button, InlineLoading, IconButton, Search, Toggle, Switch, Loading } from '@carbon/react';
+import { Form, Stack, TextInput, Select, SelectItem, Button, InlineLoading, IconButton, Search, Toggle, Switch, Loading, RadioButtonGroup, RadioButton } from '@carbon/react';
 import { Add, Subtract } from '@carbon/react/icons';
 import Autocomplete from "./AutoComplete";
 import RuleBuilderFormValues from "../../formModel/innitialValues/RuleBuilderFormValues";
@@ -23,11 +23,14 @@ function ReflexRule() {
   }
   const actionObj = {
     id: null,
-    action: "",
     sampleId: "",
-    reflexResult: "",
-    reflexResultTestId: ""
+    reflexTestName: "",
+    reflexTestId: "",
+    internalNote: "",
+    externalNote: "",
+    addNotification: "Y"
   }
+
   const ruleObj = {
     id: null,
     ruleName: "",
@@ -40,7 +43,6 @@ function ReflexRule() {
 
   const [ruleList, setRuleList] = useState([RuleBuilderFormValues]);
   const [sampleList, setSampleList] = useState([]);
-  const [actionOptions, setActionOptions] = useState([]);
   const [generalRelationOptions, setGeneralRelationOptions] = useState([]);
   const [numericRelationOptions, setNumericRelationOptions] = useState([]);
   const [overallOptions, setOverallOptions] = useState([]);
@@ -48,6 +50,7 @@ function ReflexRule() {
   const [sampleTestList, setSampleTestList] = useState({ "conditions": {}, "actions": {} }); //{field :{index :{field_index:[]}}}
   const [counter, setCounter] = useState(0);
   const [loaded, setLoaded] = useState(false);
+  const [errors, setErrors] = useState({});
   var defaultTestResultList = {};
   var defaultSampleTests = { "conditions": {}, "actions": {} };
 
@@ -98,6 +101,18 @@ function ReflexRule() {
     setSampleTestList(defaultSampleTests);
   }
 
+  const addError = (errorObj) => {
+    const error = { ...errors }
+    error[errorObj.name] = errorObj.error
+    setErrors(error)
+  }
+
+  const clearError = (field) => {
+    const error = { ...errors }
+    delete error[field]
+    setErrors(error)
+  }
+
   const fetchDeafultTests = (testList, index, item_index, field) => {
     loadDeafultSampleTestList(field, index, item_index, testList);
   }
@@ -108,7 +123,6 @@ function ReflexRule() {
     }
     defaultSampleTests[field][index][item_index] = resulList
   }
-
 
   const loadDefaultResultList = (index, item_index, test) => {
     if (!defaultTestResultList[index]) {
@@ -134,6 +148,11 @@ function ReflexRule() {
     const list = [...ruleList];
     list[index][field][itemIndex][name] = value;
     setRuleList(list);
+  }
+
+  const handleAddNotificationChange = (value, index, itemIndex, field) => {
+    const e = { target: { name: "addNotification", value: value } };
+    handleRuleFieldItemChange(e, index, itemIndex, field);
   }
 
   const handleTestSelected = (index, item_index, testDetails) => {
@@ -233,7 +252,6 @@ function ReflexRule() {
     if (componentMounted.current) {
       console.log(JSON.stringify(options))
       if (options) {
-        setActionOptions(options.actionOptions);
         setGeneralRelationOptions(options.generalRelationOptions);
         setNumericRelationOptions(options.numericRelationOptions);
         setOverallOptions(options.overallOptions)
@@ -284,7 +302,7 @@ function ReflexRule() {
                         toggled={rule.toggled}
                         aria-label="toggle button"
                         id={index + "_toggle"}
-                        labelText="Label text"
+                        labelText="Toggle Rule"
                         onToggle={(e) => toggleRule(e, index)}
                         onClick={handleClick}
                       />
@@ -296,14 +314,16 @@ function ReflexRule() {
                       <div className="section">
                         <div className="inlineDiv">
                           <div >
-                            If &nbsp;
+                            <h5>Add Reflect Rule Conditions </h5>
                           </div>
+                        </div>
+                        <div className="inlineDiv">
                           <div >
                             <Select
                               value={rule.overall}
                               id={index + "_overall"}
                               name="overall"
-                              labelText=""
+                              labelText="Over All Option"
                               className="inputSelect"
                               onChange={(e) => handleRuleFieldChange(e, index)}
                               required
@@ -321,20 +341,15 @@ function ReflexRule() {
                               ))}
                             </Select>
                           </div>
-                          <div >
-                            &nbsp; of the following conditions are met
-                          </div>
                         </div>
                         {rule.conditions.map((condition, condition_index) => (
                           <div key={index + "_" + condition_index} className="inlineDiv">
-                            <div>
-                              If a Sample is &nbsp;
-                            </div>
+
                             <div >
                               <Select
                                 id={index + "_" + condition_index + "_sample"}
                                 name="sampleId"
-                                labelText=""
+                                labelText="Select Sample"
                                 value={condition.sampleId}
                                 className="inputSelect"
                                 onChange={(e) => { handleRuleFieldItemChange(e, index, condition_index, FIELD.conditions); handleSampleSelected(e, index, condition_index, FIELD.conditions) }}
@@ -353,9 +368,7 @@ function ReflexRule() {
                                 ))}
                               </Select>
                             </div>
-                            <div>
-                              &nbsp; And the Test &nbsp;
-                            </div>
+
                             <div>
                               <Autocomplete
                                 stateValue={condition.testName}
@@ -364,11 +377,14 @@ function ReflexRule() {
                                 index={index}
                                 name="testName"
                                 idField="testId"
+                                label="Search Test"
                                 class="autocomplete1"
                                 item_index={condition_index}
                                 field={FIELD.conditions}
                                 suggestions={sampleTestList[FIELD.conditions][index] ? sampleTestList[FIELD.conditions][index][condition_index] : []}
                                 required
+                                addError={addError}
+                                clearError={clearError}
                               />
                             </div>
                             <div>
@@ -379,7 +395,7 @@ function ReflexRule() {
                                 value={condition.relation}
                                 id={index + "_" + condition_index + "_relation"}
                                 name="relation"
-                                labelText=""
+                                labelText="Relation"
                                 className="inputSelect"
                                 onChange={(e) => handleRuleFieldItemChange(e, index, condition_index, FIELD.conditions)}
                                 required
@@ -419,14 +435,14 @@ function ReflexRule() {
                             </div>
                             <div >
 
-                              {testResultList[index] && testResultList[index][condition_index] && testResultList[index][condition_index]["type"] && (
+                              {testResultList[index] && testResultList[index][condition_index] && testResultList[index][condition_index]["type"] ? (
                                 <>
                                   {testResultList[index][condition_index]["type"] === 'D' ? (
                                     <Select
                                       value={condition.value}
                                       id={index + "_" + condition_index + "_value"}
                                       name="value"
-                                      labelText=""
+                                      labelText="Dictionaly Result"
                                       className="inputSelect"
                                       onChange={(e) => handleRuleFieldItemChange(e, index, condition_index, FIELD.conditions)}
                                       required
@@ -453,16 +469,29 @@ function ReflexRule() {
                                     <>
                                       <TextInput
                                         name="value"
-                                        className="inputText"
+                                        className="reflexInputText"
                                         type="text"
                                         id={index + "_" + condition_index + "_value"}
-                                        labelText=""
+                                        labelText="Numeric Result"
                                         value={condition.value}
                                         onChange={(e) => handleRuleFieldItemChange(e, index, condition_index, FIELD.conditions)}
                                         required
                                       />
                                     </>
                                   )}
+                                </>
+                              ) : (
+                                <>
+                                  <TextInput
+                                    name="value"
+                                    className="reflexInputText"
+                                    type="text"
+                                    id={index + "_" + condition_index + "_value"}
+                                    labelText="Numeric Result"
+                                    value={condition.value}
+                                    onChange={(e) => handleRuleFieldItemChange(e, index, condition_index, FIELD.conditions)}
+                                    required
+                                  />
                                 </>
                               )}
                             </div>
@@ -471,7 +500,7 @@ function ReflexRule() {
                             </div>
                             {rule.conditions.length - 1 === condition_index && (
                               <div >
-                                <IconButton label="" onClick={() => handleRuleFieldItemAdd(index, FIELD.conditions, conditionsObj)} kind='tertiary' size='sm'>  <Add size={18} /></IconButton>
+                                <IconButton label="Add Condition" className="ruleFieldButton" onClick={() => handleRuleFieldItemAdd(index, FIELD.conditions, conditionsObj)} kind='tertiary' size='sm'>  <Add size={18} /></IconButton>
                               </div>
                             )}
                             <div>
@@ -479,7 +508,7 @@ function ReflexRule() {
                             </div>
                             {rule.conditions.length !== 1 && (
                               <div >
-                                <IconButton label="" onClick={() => handleRuleFieldItemRemove(index, condition_index, FIELD.conditions)} kind='tertiary' size='sm'>  <Subtract size={18} /></IconButton>
+                                <IconButton label="Remove Condition" className="ruleFieldButton" onClick={() => handleRuleFieldItemRemove(index, condition_index, FIELD.conditions)} kind='danger' size='sm'>  <Subtract size={18} /></IconButton>
                               </div>
                             )}
                           </div>
@@ -488,42 +517,16 @@ function ReflexRule() {
                       <div className="section">
                         <div className="inlineDiv">
                           <div >
-                            <h5>Perform the following actions </h5> &nbsp;
+                            <h5>Perform the following actions </h5>
                           </div>
                         </div>
                         {rule.actions.map((action, action_index) => (
                           <div key={index + "_" + action_index} className="inlineDiv">
                             <div >
                               <Select
-                                value={action.action}
-                                id={index + "_" + action_index + "_value"}
-                                name="action"
-                                labelText=""
-                                className="inputSelect"
-                                onChange={(e) => handleRuleFieldItemChange(e, index, action_index, FIELD.actions)}
-                                required
-                              >
-                                <SelectItem
-                                  text=""
-                                  value=""
-                                />
-                                {actionOptions.map((action, action_index) => (
-                                  <SelectItem
-                                    text={action.label}
-                                    value={action.value}
-                                    key={action_index}
-                                  />
-                                ))}
-                              </Select>
-                            </div>
-                            <div>
-                              &nbsp;  &nbsp;
-                            </div>
-                            <div >
-                              <Select
                                 id={index + "_" + action_index + "_sample"}
                                 name="sampleId"
-                                labelText=""
+                                labelText="Select Sample"
                                 value={action.sampleId}
                                 className="inputSelect"
                                 onChange={(e) => { handleRuleFieldItemChange(e, index, action_index, FIELD.actions); handleSampleSelected(e, index, action_index, FIELD.actions) }}
@@ -547,22 +550,78 @@ function ReflexRule() {
                             </div>
                             <div>
                               <Autocomplete
-                                stateValue={action.reflexResult}
+                                stateValue={action.reflexTestName}
                                 handleChange={handleRuleFieldItemChange}
                                 index={index}
-                                name="reflexResult"
-                                idField="reflexResultTestId"
+                                label="Search Test"
+                                name="reflexTestName"
+                                idField="reflexTestId"
                                 item_index={action_index}
                                 field={FIELD.actions}
                                 class="autocomplete2"
+                                addError={addError}
+                                clearError={clearError}
                                 suggestions={sampleTestList[FIELD.actions][index] ? sampleTestList[FIELD.actions][index][action_index] : []} />
+                            </div>
+                            <div>
+                              &nbsp;  &nbsp;
+                            </div>
+                            <div>
+                              <TextInput
+                                name="internalNote"
+                                className="reflexInputText"
+                                type="text"
+                                id={index + "_" + action_index + "_inote"}
+                                labelText="Add Internal Note"
+                                value={action.internalNote}
+                                onChange={(e) => handleRuleFieldItemChange(e, index, action_index, FIELD.actions)}
+
+                              />
+                            </div>
+                            <div>
+                              &nbsp;  &nbsp;
+                            </div>
+                            <div>
+                              <TextInput
+                                name="externalNote"
+                                className="reflexInputText"
+                                type="text"
+                                id={index + "_" + action_index + "_xnote"}
+                                labelText="Add External Note"
+                                value={action.externalNote}
+                                onChange={(e) => handleRuleFieldItemChange(e, index, action_index, FIELD.actions)}
+
+                              />
+                            </div>
+                            <div>
+                              &nbsp;  &nbsp;
+                            </div>
+                            <div>
+                              <RadioButtonGroup
+                                valueSelected={action.addNotification}
+                                legendText="Add Pop Up"
+                                name={index + "_" + action_index + "_add_notofocation"}
+                                id={index + "_" + action_index + "_popup"}
+                                onChange={(value) => handleAddNotificationChange(value, index, action_index, FIELD.actions)}
+                              >
+                                <RadioButton
+                                  id={index + "_" + action_index + "_no"}
+                                  labelText="Yes"
+                                  value="Y"
+                                />
+                                <RadioButton
+                                  id={index + "_" + action_index + "_yes"}
+                                  labelText="No"
+                                  value="N"
+                                />
+                              </RadioButtonGroup>
                             </div>
                             <div>
                               &nbsp;  &nbsp;
                             </div>
                             {rule.actions.length - 1 === action_index && (
                               <div >
-                                <IconButton label="" onClick={() => handleRuleFieldItemAdd(index, FIELD.actions, actionObj)} kind='tertiary' size='sm'>  <Add size={18} /></IconButton>
+                                <IconButton label="Add Action" className="ruleFieldButton" onClick={() => handleRuleFieldItemAdd(index, FIELD.actions, actionObj)} kind='tertiary' size='sm'>  <Add size={18} /></IconButton>
                               </div>
                             )}
                             <div>
@@ -570,13 +629,13 @@ function ReflexRule() {
                             </div>
                             {rule.actions.length !== 1 && (
                               <div >
-                                <IconButton label="" onClick={() => handleRuleFieldItemRemove(index, action_index, FIELD.actions)} kind='tertiary' size='sm'>  <Subtract size={18} /></IconButton>
+                                <IconButton label="Remove Action" className="ruleFieldButton" kind='danger' onClick={() => handleRuleFieldItemRemove(index, action_index, FIELD.actions)} size='sm'>  <Subtract size={18} /></IconButton>
                               </div>
                             )}
                           </div>
                         ))}
                       </div>
-                      <Button type="submit" kind='tertiary' size='sm'>
+                      <Button disabled={Object.keys(errors).length === 0 ? false : true} type="submit" kind='tertiary' size='sm'>
                         Submit
                       </Button>
                     </>
@@ -585,24 +644,18 @@ function ReflexRule() {
               </Stack>
             </Form >
             {ruleList.length - 1 === index && (
-              <button
-                onClick={handleRuleAdd}
-                className="add_button"
-              >
+              <IconButton onClick={handleRuleAdd} label="Add Rule" size='md' kind='tertiary' >
                 <Add size={16} />
                 <span>Rule</span>
-              </button>
+              </IconButton>
             )}
 
           </div>
           <div className="second-division">
             {ruleList.length !== 1 && (
-              <button
-                type="button"
-                onClick={() => handleRuleRemove(index, rule.id)}
-                className="remove-btn">
+              <IconButton kind='danger' label="Remove Rule" size='md' onClick={() => handleRuleRemove(index, rule.id)}>
                 <Subtract size={16} />
-              </button>
+              </IconButton>
             )}
           </div>
         </div>

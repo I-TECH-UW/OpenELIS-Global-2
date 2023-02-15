@@ -5,14 +5,14 @@ body {
   .autocomplete1 {
     padding: 0.5rem;
     width: 350px;
-    margin-top: -4%;
+    margin-top: -7%;
     --cds-text-primary:  black; 
   }
 
   .autocomplete2 {
     padding: 0.5rem;
     width: 350px;
-    margin-top: -4%;
+    margin-top: -7%;
     --cds-text-primary:  black; 
   }
   
@@ -55,9 +55,13 @@ body {
   }
 
 
-  .inputText {
+  .reflexInputText {
     --cds-text-primary: black;
     width: 100%;
     --cds-text-secondary: black;
-    margin-top: -4%;
+    margin-top: -9%;
+  }
+
+  .ruleFieldButton {
+    margin-top: 5px;
   }

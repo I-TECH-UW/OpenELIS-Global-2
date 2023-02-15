@@ -9,12 +9,13 @@ class Autocomplete extends Component {
       activeSuggestion: 0,
       filteredSuggestions: [],
       showSuggestions: false,
-      userInput: ""
+      userInput: "" ,
+      invalid : false
     };
   }
 
   onChange = e => {
-    const { suggestions, index, item_index, handleChange, field, name } = this.props;
+    const { suggestions, index, item_index, handleChange, field, name ,addError} = this.props;
     const userInput = e.currentTarget.value;
 
     const filteredSuggestions = suggestions.filter(
@@ -26,25 +27,30 @@ class Autocomplete extends Component {
       activeSuggestion: 0,
       filteredSuggestions,
       showSuggestions: true,
-      userInput: e.currentTarget.value
+      userInput: e.currentTarget.value,
     });
-
+    addError({name : name+"-"+index+"-"+item_index , error : "Invaid Test"})
     const nameValue = {
       target: { name: name, value: e.currentTarget.value }
     }
 
     handleChange(nameValue, index, item_index, field);
+    if (filteredSuggestions.length){
+      this.setState({invalid : true})
+    }
   };
 
   onClick = (e, id , testDetails) => {
-    const { index, item_index, handleChange, field, name, idField ,onSelect } = this.props;
+    const { index, item_index, handleChange, field, name, idField ,onSelect ,clearError} = this.props;
     this.setState({
       activeSuggestion: 0,
       filteredSuggestions: [],
       showSuggestions: false,
-      userInput: e.currentTarget.innerText
+      userInput: e.currentTarget.innerText ,
+      invalid: false
     });
-
+   
+    clearError(name+"-"+index+"-"+item_index)
     const nameValue = {
       target: { name: name, value: e.currentTarget.innerText }
     }
@@ -133,12 +139,14 @@ class Autocomplete extends Component {
           type="text"
           id={this.props.index + "_" + this.props.item_index + "_test" + this.props.field}
           name={this.props.name}
-          labelText=""
+          labelText={this.props.label?this.props.label : ""}
           className={this.props.class}
           onChange={onChange}
           onKeyDown={onKeyDown}
           value={this.props.stateValue}
+          invalid={this.state.invalid}
           required
+          invalidText="Invalid Test"
         />
         {suggestionsListComponent}
       </Fragment>
