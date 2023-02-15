@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Form, Stack, TextInput, Select, SelectItem, Button, InlineLoading, IconButton, Search, Toggle, Switch, Loading ,RadioButtonGroup ,RadioButton } from '@carbon/react';
+import { Form, Stack, TextInput, Select, SelectItem, Button, InlineLoading, IconButton, Search, Toggle, Switch, Loading, RadioButtonGroup, RadioButton } from '@carbon/react';
 import { Add, Subtract } from '@carbon/react/icons';
 import Autocomplete from "./AutoComplete";
 import RuleBuilderFormValues from "../../formModel/innitialValues/RuleBuilderFormValues";
@@ -50,6 +50,7 @@ function ReflexRule() {
   const [sampleTestList, setSampleTestList] = useState({ "conditions": {}, "actions": {} }); //{field :{index :{field_index:[]}}}
   const [counter, setCounter] = useState(0);
   const [loaded, setLoaded] = useState(false);
+  const [errors, setErrors] = useState({});
   var defaultTestResultList = {};
   var defaultSampleTests = { "conditions": {}, "actions": {} };
 
@@ -100,6 +101,18 @@ function ReflexRule() {
     setSampleTestList(defaultSampleTests);
   }
 
+  const addError = (errorObj) => {
+    const error = { ...errors }
+    error[errorObj.name] = errorObj.error
+    setErrors(error)
+  }
+
+  const clearError = (field) => {
+    const error = { ...errors }
+    delete error[field]
+    setErrors(error)
+  }
+
   const fetchDeafultTests = (testList, index, item_index, field) => {
     loadDeafultSampleTestList(field, index, item_index, testList);
   }
@@ -110,7 +123,6 @@ function ReflexRule() {
     }
     defaultSampleTests[field][index][item_index] = resulList
   }
-
 
   const loadDefaultResultList = (index, item_index, test) => {
     if (!defaultTestResultList[index]) {
@@ -138,9 +150,9 @@ function ReflexRule() {
     setRuleList(list);
   }
 
-  const handleAddNotificationChange = (value ,index, itemIndex, field) => {
-    const e = {target :{name : "addNotification" , value : value}};
-    handleRuleFieldItemChange(e ,index, itemIndex, field);
+  const handleAddNotificationChange = (value, index, itemIndex, field) => {
+    const e = { target: { name: "addNotification", value: value } };
+    handleRuleFieldItemChange(e, index, itemIndex, field);
   }
 
   const handleTestSelected = (index, item_index, testDetails) => {
@@ -300,9 +312,9 @@ function ReflexRule() {
 
                     <>
                       <div className="section">
-                      <div className="inlineDiv">
+                        <div className="inlineDiv">
                           <div >
-                            <h5>Add Reflect Rule Conditions </h5> 
+                            <h5>Add Reflect Rule Conditions </h5>
                           </div>
                         </div>
                         <div className="inlineDiv">
@@ -371,6 +383,8 @@ function ReflexRule() {
                                 field={FIELD.conditions}
                                 suggestions={sampleTestList[FIELD.conditions][index] ? sampleTestList[FIELD.conditions][index][condition_index] : []}
                                 required
+                                addError={addError}
+                                clearError={clearError}
                               />
                             </div>
                             <div>
@@ -421,7 +435,7 @@ function ReflexRule() {
                             </div>
                             <div >
 
-                              {testResultList[index] && testResultList[index][condition_index] && testResultList[index][condition_index]["type"] && (
+                              {testResultList[index] && testResultList[index][condition_index] && testResultList[index][condition_index]["type"] ? (
                                 <>
                                   {testResultList[index][condition_index]["type"] === 'D' ? (
                                     <Select
@@ -466,6 +480,19 @@ function ReflexRule() {
                                     </>
                                   )}
                                 </>
+                              ) : (
+                                <>
+                                  <TextInput
+                                    name="value"
+                                    className="reflexInputText"
+                                    type="text"
+                                    id={index + "_" + condition_index + "_value"}
+                                    labelText="Numeric Result"
+                                    value={condition.value}
+                                    onChange={(e) => handleRuleFieldItemChange(e, index, condition_index, FIELD.conditions)}
+                                    required
+                                  />
+                                </>
                               )}
                             </div>
                             <div>
@@ -473,7 +500,7 @@ function ReflexRule() {
                             </div>
                             {rule.conditions.length - 1 === condition_index && (
                               <div >
-                                <IconButton label="Add Condition" className="ruleFieldButton"  onClick={() => handleRuleFieldItemAdd(index, FIELD.conditions, conditionsObj)} kind='tertiary' size='sm'>  <Add size={18} /></IconButton>
+                                <IconButton label="Add Condition" className="ruleFieldButton" onClick={() => handleRuleFieldItemAdd(index, FIELD.conditions, conditionsObj)} kind='tertiary' size='sm'>  <Add size={18} /></IconButton>
                               </div>
                             )}
                             <div>
@@ -481,7 +508,7 @@ function ReflexRule() {
                             </div>
                             {rule.conditions.length !== 1 && (
                               <div >
-                                <IconButton label="Remove Condition" className="ruleFieldButton"  onClick={() => handleRuleFieldItemRemove(index, condition_index, FIELD.conditions)} kind='danger' size='sm'>  <Subtract size={18} /></IconButton>
+                                <IconButton label="Remove Condition" className="ruleFieldButton" onClick={() => handleRuleFieldItemRemove(index, condition_index, FIELD.conditions)} kind='danger' size='sm'>  <Subtract size={18} /></IconButton>
                               </div>
                             )}
                           </div>
@@ -490,7 +517,7 @@ function ReflexRule() {
                       <div className="section">
                         <div className="inlineDiv">
                           <div >
-                            <h5>Perform the following actions </h5> 
+                            <h5>Perform the following actions </h5>
                           </div>
                         </div>
                         {rule.actions.map((action, action_index) => (
@@ -532,6 +559,8 @@ function ReflexRule() {
                                 item_index={action_index}
                                 field={FIELD.actions}
                                 class="autocomplete2"
+                                addError={addError}
+                                clearError={clearError}
                                 suggestions={sampleTestList[FIELD.actions][index] ? sampleTestList[FIELD.actions][index][action_index] : []} />
                             </div>
                             <div>
@@ -573,7 +602,7 @@ function ReflexRule() {
                                 legendText="Add Pop Up"
                                 name={index + "_" + action_index + "_add_notofocation"}
                                 id={index + "_" + action_index + "_popup"}
-                                onChange={(value) => handleAddNotificationChange(value ,index , action_index , FIELD.actions)}
+                                onChange={(value) => handleAddNotificationChange(value, index, action_index, FIELD.actions)}
                               >
                                 <RadioButton
                                   id={index + "_" + action_index + "_no"}
@@ -592,7 +621,7 @@ function ReflexRule() {
                             </div>
                             {rule.actions.length - 1 === action_index && (
                               <div >
-                                <IconButton label="Add Action" className="ruleFieldButton"  onClick={() => handleRuleFieldItemAdd(index, FIELD.actions, actionObj)} kind='tertiary' size='sm'>  <Add size={18} /></IconButton>
+                                <IconButton label="Add Action" className="ruleFieldButton" onClick={() => handleRuleFieldItemAdd(index, FIELD.actions, actionObj)} kind='tertiary' size='sm'>  <Add size={18} /></IconButton>
                               </div>
                             )}
                             <div>
@@ -600,13 +629,13 @@ function ReflexRule() {
                             </div>
                             {rule.actions.length !== 1 && (
                               <div >
-                                <IconButton label="Remove Action" className="ruleFieldButton"  kind='danger'  onClick={() => handleRuleFieldItemRemove(index, action_index, FIELD.actions)}  size='sm'>  <Subtract size={18} /></IconButton>
+                                <IconButton label="Remove Action" className="ruleFieldButton" kind='danger' onClick={() => handleRuleFieldItemRemove(index, action_index, FIELD.actions)} size='sm'>  <Subtract size={18} /></IconButton>
                               </div>
                             )}
                           </div>
                         ))}
                       </div>
-                      <Button type="submit" kind='tertiary' size='sm'>
+                      <Button disabled={Object.keys(errors).length === 0 ? false : true} type="submit" kind='tertiary' size='sm'>
                         Submit
                       </Button>
                     </>
