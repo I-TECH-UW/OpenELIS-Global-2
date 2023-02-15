@@ -41,14 +41,18 @@
 			<column name="id" type="INTEGER" valueSequenceNext="reflex_rule_action_seq">
 				<constraints primaryKey="true" nullable="false"/>
 			</column>
-			<column name="action" type="varchar(64)">
+			<column name="reflex_test_name" type="varchar(64)">
 				<constraints nullable="false"/>
 			</column>
-			<column name="reflex_result" type="varchar(64)">
-				<constraints nullable="false"/>
+			<column name="reflex_test_id" type="varchar(64)">
+			  <constraints nullable="false"/>
 			</column>
-			<column name="reflex_result_test_id" type="varchar(64)"/>
-			<column name="sample_id" type="varchar(64)"/>
+			<column name="sample_id" type="varchar(64)">
+			  <constraints nullable="false"/>
+			</column>
+			<column name="internal_note" type="varchar(64)"/>
+			<column name="external_note" type="varchar(64)"/>
+			<column name="add_notification" type="varchar(2)"/>
 			<column name="reflex_rule_id" type="int"/>
 		</createTable>
 		<addForeignKeyConstraint constraintName="action_reflex_rule_id_fk"

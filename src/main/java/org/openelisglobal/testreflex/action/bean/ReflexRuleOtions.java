@@ -65,28 +65,4 @@ public class ReflexRuleOtions {
         }
     }
 
-    public enum ActionOptions {
-
-        ADD_TEST("Add test to order"), ADD_NOTIFICATION("Add pop up notification to user"),
-        ADD_INTERNAL_NOTE("Add Internal Note"),
-        ADD_EXTERNAL_NOTE("Add External Note"), ADD_INTERNAL_TRIGGER_MESSAGE("Add Internal `triggered by` message"),
-        ADD_EXTERNAL_TRIGGER_MESSAGE("Add External `triggered by` message");
-
-        private String displayName;
-
-        private ActionOptions(String displayName) {
-            this.displayName = displayName;
-        }
-
-        public String getDisplayName() {
-            return this.displayName;
-        }
-
-
-        public static Stream<ActionOptions> stream() {
-            return Stream.of(ActionOptions.values()); 
-        }
-
-    }
-
 }

@@ -52,14 +52,14 @@ li.clickableUserDetails:hover  {
 .inputSelect {
   --cds-text-primary: black;
   width: 100px;
-  --cds-text-secondary: red;
+  --cds-text-secondary: black;
   margin-top: -15%;
 }
 
 .inputSearch {
   --cds-text-primary: black;
   width: 100%;
-  --cds-text-secondary: red;
+  --cds-text-secondary: black;
   --cds-icon-primary: black;
 }
 

@@ -15,9 +15,11 @@ export default {
   }],
   actions: [{
     id: null,
-    action: "",
     sampleId : "",
-    reflexResult: "",
-    reflexResultTestId: ""
+    reflexTestName: "",
+    reflexTestId: "",
+    internalNote : "" ,
+    externalNote : "" ,
+    addNotification : "Y"
   }]
 };

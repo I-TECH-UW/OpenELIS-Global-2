@@ -8,7 +8,6 @@ public class ReflexRuleOptionsDisplayItem {
     List<LabelValuePair> overallOptions;
     List<LabelValuePair> generalRelationOptions;
     List<LabelValuePair> numericRelationOptions;
-    List<LabelValuePair> actionOptions;
     public List<LabelValuePair> getOverallOptions() {
         return overallOptions;
     }
@@ -26,12 +25,6 @@ public class ReflexRuleOptionsDisplayItem {
     }
     public void setNumericRelationOptions(List<LabelValuePair> numericRelationOptions) {
         this.numericRelationOptions = numericRelationOptions;
-    }
-    public List<LabelValuePair> getActionOptions() {
-        return actionOptions;
-    }
-    public void setActionOptions(List<LabelValuePair> actionOptions) {
-        this.actionOptions = actionOptions;
     }
 
 }

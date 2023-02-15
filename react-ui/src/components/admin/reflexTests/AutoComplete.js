@@ -133,7 +133,7 @@ class Autocomplete extends Component {
           type="text"
           id={this.props.index + "_" + this.props.item_index + "_test" + this.props.field}
           name={this.props.name}
-          labelText=""
+          labelText={this.props.label?this.props.label : ""}
           className={this.props.class}
           onChange={onChange}
           onKeyDown={onKeyDown}
