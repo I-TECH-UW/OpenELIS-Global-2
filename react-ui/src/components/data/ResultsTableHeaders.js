@@ -2,6 +2,10 @@
   export const resultSearchHeaderData = [
     
     {
+      key: 'sampleInfo',
+      header: 'Sample Info',
+    },
+    {
       key: 'testDate',
       header: 'Test Date',
     },
@@ -14,13 +18,14 @@
       header: 'Normal Range',
     },
     {
-      key: 'resultValue',
-      header: 'Result Value',
-    },
-    {
       key: 'shadowResultValue',
-      header: 'Shadow Result Value',
+      header: 'Shadow Result',
+    }, 
+    {
+      key: 'resultValue',
+      header: 'Current Result',
     },
+     
     
     
   ];

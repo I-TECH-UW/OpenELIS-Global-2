@@ -185,7 +185,7 @@ public class ReactResultsController extends LogbookResultsBaseController {
 //        List<IdValuePair> forms = new ArrayList<>();
 //        forms.add(0, formsEntry);
 
-       System.out.println("ReactResultsController jsonForm:" + jsonForm);
+       //System.out.println("ReactResultsController jsonForm:" + jsonForm);
 
         return (form);
     }

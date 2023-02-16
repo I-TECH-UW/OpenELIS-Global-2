@@ -1033,6 +1033,14 @@ public class ResultsLoadUtility {
 
         return getGroupedTestsForAnalysisList(analysisList, SORT_FORWARD);
     }
+    
+    public List<TestResultItem> getUnfinishedTestResultItemsByAccession(String accessionNumber, boolean doRange) {
+        List<Analysis> analysisList = analysisService.getPageAnalysisByStatusFromAccession(analysisStatusList,
+                sampleStatusList, accessionNumber, doRange);
+
+        return getGroupedTestsForAnalysisList(analysisList, SORT_FORWARD);
+    }
+
 
     public int getTotalCountAnalysisByAccessionAndStatus(String accessionNumber) {
         return analysisService.getCountAnalysisByStatusFromAccession(analysisStatusList, sampleStatusList,
