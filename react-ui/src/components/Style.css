@@ -53,7 +53,7 @@ li.clickableUserDetails:hover  {
   --cds-text-primary: black;
   width: 100px;
   --cds-text-secondary: black;
-  margin-top: -15%;
+  /* margin-top: -15%; */
 }
 
 .inputSearch {
@@ -170,4 +170,28 @@ button {
 
 .formDiv{
   background-color: #bfc2bc;
+}
+
+.requiredFieldIndicator{
+  color: red;
+}
+.toastDisplay{
+  position: fixed; /*or fixed*/
+  right: 0px;
+  z-index: 10;
+}
+
+.selectSampleType {
+  --cds-text-primary: black;
+  width: 200px;
+  --cds-text-secondary: black;
+    margin-bottom: 20px;
+}
+
+.cds--data-table-content{
+  width: 100%;
+  overflow: hidden !important;
+}
+.sampleTypesTable {
+  width: 1230px !important;
 }

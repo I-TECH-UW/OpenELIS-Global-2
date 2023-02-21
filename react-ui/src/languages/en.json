@@ -17,5 +17,6 @@
     "patient.label.info" : "Patient Information",
     "breadcrumb.home" : "Home",
     "admin.legacy" :"Legacy Admin",
-    "label.page.patientHistory" : "Patient History"
+    "label.page.patientHistory" : "Patient History",
+    "order.label.add" : "Add Order"
 }
