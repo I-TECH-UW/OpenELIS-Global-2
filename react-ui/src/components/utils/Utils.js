@@ -49,3 +49,12 @@ export const getFromOpeElisServerSync = (endPoint, callback) => {
     request.send();
     callback(JSON.parse(request.response));
 }
+
+export const getFromOpenElisServerWithTokenHeader = (endPoint) => {
+    const request = new XMLHttpRequest()
+    request.open('GET', config.serverBaseUrl + endPoint, false);
+    request.setRequestHeader('Content-Type', 'application/json');
+    request.setRequestHeader("X-CSRF-Token", localStorage.getItem("CSRF"))
+    request.send();
+    return request.response;
+}

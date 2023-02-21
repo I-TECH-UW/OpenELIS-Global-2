@@ -18,5 +18,6 @@
     "patient.label.info" : "Informations sur les patients",
     "breadcrumb.home" : "Domicile",
     "admin.legacy" :"Précédent Admin",
-    "label.page.patientHistory": "Antécédents du patient"
+    "label.page.patientHistory": "Antécédents du patient",
+    "order.label.add" : "Ajouter Ordonnance"
 }
