@@ -17,12 +17,14 @@
     "formik-error-focus": "2.0.0",
     "react": "^16.13.1",
     "react-confirm-alert": "^2.7.0",
+    "react-data-table-component": "^7.5.3",
     "react-dom": "^16.13.1",
     "react-idle-timer": "^4.6.4",
     "react-intl": "^5.20.12",
     "react-router-dom": "^5.2.0",
     "react-scripts": "5.0.1",
     "sass": "1.55.0",
+    "styled-components": "^5.3.6",
     "swr": "^2.0.0",
     "web-vitals": "^2.1.4",
     "yup": "^0.29.2"
@@ -50,5 +52,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "carbon-components-svelte": "^0.72.3"
   }
 }
