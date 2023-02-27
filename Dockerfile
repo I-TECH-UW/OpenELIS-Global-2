@@ -22,23 +22,23 @@ WORKDIR /build
 ##
 # Checkout Dependencies
 #
-RUN git submodule update --init --recursive
+#RUN git submodule update --init --recursive
 
 ARG DEFAULT_PW="adminADMIN!"
 
 # OE Default Password
-RUN ./install/createDefaultPassword.sh -c -p ${DEFAULT_PW}
+#RUN ./install/createDefaultPassword.sh -c -p ${DEFAULT_PW}
 
 ##
 # Build DataExport
 #
-WORKDIR /build/dataexport
+#WORKDIR /build/dataexport
 
-RUN mvn clean install -DskipTests
+#RUN mvn clean install -DskipTests
 
 WORKDIR /build
 
-RUN	mvn clean install -DskipTests
+#RUN	mvn clean install -DskipTests
 
 ##
 # Run Stage
@@ -48,13 +48,13 @@ FROM tomcat:8.5-jdk11
 ADD install/createDefaultPassword.sh ./
 
 
-#Clean out unneccessary files from tomcat (especially pre-existing applications) 
-RUN rm -rf /usr/local/tomcat/webapps/* \ 
+#Clean out unneccessary files from tomcat (especially pre-existing applications)
+RUN rm -rf /usr/local/tomcat/webapps/* \
     /usr/local/tomcat/conf/Catalina/localhost/manager.xml
-    
+
 #Deploy the war into tomcat image and point root to it
 ADD install/tomcat-resources/ROOT.war /usr/local/tomcat/webapps/ROOT.war
-COPY --from=build /build/target/OpenELIS-Global.war /usr/local/tomcat/webapps/OpenELIS-Global.war
+COPY target/OpenELIS-Global.war /usr/local/tomcat/webapps/OpenELIS-Global.war
     
 #rewrite cataline.properties with our catalina.properties so it contains:
 #    org.apache.catalina.STRICT_SERVLET_COMPLIANCE=true

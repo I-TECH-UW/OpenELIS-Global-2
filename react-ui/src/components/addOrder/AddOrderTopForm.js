@@ -1,18 +1,18 @@
 import React, {useEffect, useRef, useState} from 'react'
 import {Add, Subtract} from '@carbon/react/icons';
 import {
-    TextInput,
     Checkbox,
-    Link,
-    Select,
-    IconButton,
-    SelectItem,
     DatePicker,
     DatePickerInput,
+    IconButton,
+    Link,
+    Select,
+    SelectItem,
+    TextInput,
     TimePicker
 } from '@carbon/react';
 
-import {getFromOpenElisServer, getFromOpenElisServerWithTokenHeader, postToOpenElisServer} from '../utils/Utils';
+import {getFromOpenElisServer} from '../utils/Utils';
 import {priorities} from "../data/orderOptions";
 import {orderValues} from "../formModel/innitialValues/CreateOrderFormValues";
 import {NotificationKinds, useShowNotification} from "../common/useShowNotification";
@@ -64,42 +64,41 @@ const AddOrderTopForm = () => {
         }
     };
 
-
-    const formatServerResponse = (serverResponse, neededText) => {
-        const regex = /(<([^>]+)>)/gi;
-        let removedTags = serverResponse.replace(regex, "");
-        return removedTags.replace(neededText, "");
-    }
-
-    const handleLabNoGeneration = () => {
-        const serverResponse = getFromOpenElisServerWithTokenHeader('/ajaxQueryXML?provider=SampleEntryGenerateScanProvider');
-        const generateLabNo = formatServerResponse(serverResponse, "valid");
-        setLabNo(generateLabNo);
-        setNotificationVisible(false);
-    }
-
-
-    const handleLabNoValidation = () => {
-        const serverResponse = getFromOpenElisServerWithTokenHeader('/ajaxXML?provider=SampleEntryAccessionNumberValidationProvider&ignoreYear=false&ignoreUsage=false&field=labNo&accessionNumber=' + labNo);
-        const message = formatServerResponse(serverResponse, "labNo");
-        if (message !== "valid") {
-            setNotificationVisible(true);
-            setNotificationBody({kind: NotificationKinds.error, title: "Notification Message", message: message});
+    function fetchGeneratedAccessionNo(res) {
+        if (res.status) {
+            setLabNo(res.body);
+            setNotificationVisible(false);
         }
     }
 
+    const handleLabNoGeneration = () => {
+        getFromOpenElisServer('/rest/SampleEntryGenerateScanProvider', fetchGeneratedAccessionNo);
+    }
+
+    function accessionNumberValidationResults(res) {
+        if (res.status === false) {
+            setNotificationVisible(true);
+            setNotificationBody({kind: NotificationKinds.error, title: "Notification Message", message: res.body});
+        }
+
+    }
+
+    const handleLabNoValidation = () => {
+        getFromOpenElisServer('/rest/SampleEntryAccessionNumberValidation?ignoreYear=false&ignoreUsage=false&field=labNo&accessionNumber=' + labNo, accessionNumberValidationResults);
+    }
+
+    function fetchPhoneNoValidation(res) {
+        if (res.status === false) {
+            setNotificationVisible(true);
+            setNotificationBody({title: "Notification Message", message: res.body, kind: NotificationKinds.error});
+        }
+    }
 
     const handlePhoneNoValidation = () => {
         if (formValues.requesterPhone !== "") {
             const providerPhoneNo = formValues.requesterPhone.replace(/\+/g, '%2B');
-
-            const serverResponse = getFromOpenElisServerWithTokenHeader("/ajaxXML?provider=PhoneNumberValidationProvider&fieldId=providerWorkPhoneID&value=" + providerPhoneNo);
-            const message = formatServerResponse(serverResponse, "providerWorkPhoneID");
-
-            if (message !== "valid") {
-                setNotificationVisible(true);
-                setNotificationBody({title: "Notification Message", message: message, kind: NotificationKinds.error});
-            }
+            console.log(providerPhoneNo);
+            getFromOpenElisServer("/rest/PhoneNumberValidationProvider?fieldId=providerWorkPhoneID&value=" + providerPhoneNo, fetchPhoneNoValidation);
         }
     }
 
