@@ -70,4 +70,10 @@ public class DisplayListController {
     public List<IdValuePair> getTestLocationCodes() {
         return DisplayListService.getInstance().getList(ListType.TEST_LOCATION_CODE);
     }
+
+    @GetMapping(value = "test-rejection-reasons", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<IdValuePair> getTestRejectionReasons() {
+        return DisplayListService.getInstance().getList(ListType.REJECTION_REASONS);
+    }
 }
