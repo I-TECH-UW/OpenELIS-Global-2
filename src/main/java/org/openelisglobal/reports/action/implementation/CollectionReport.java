@@ -48,11 +48,17 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 public abstract class CollectionReport implements IReportCreator {
     protected String requestedReport;
+    protected String systemUserId;
 
     @Override
     public void setRequestedReport(String report) {
         requestedReport = report;
     }
+
+    @Override
+    public void setSystemUserId(String id){
+        systemUserId = id ;
+    };
 
     @Override
     public String getContentType() {

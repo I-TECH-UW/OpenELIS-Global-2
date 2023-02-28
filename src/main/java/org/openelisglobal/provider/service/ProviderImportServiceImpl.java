@@ -27,7 +27,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
@@ -52,7 +51,6 @@ public class ProviderImportServiceImpl implements ProviderImportService {
     private PersonService personService;
 
     @Override
-    @Transactional
     @Async
     @Scheduled(initialDelay = 1000, fixedRate = 60 * 60 * 1000)
     public void importPractitionerList() throws FhirLocalPersistingException, FhirGeneralException, IOException {
@@ -83,10 +81,11 @@ public class ProviderImportServiceImpl implements ProviderImportService {
                 if (entry.hasResource() && entry.getResource().getResourceType().equals(ResourceType.Practitioner)) {
                     org.hl7.fhir.r4.model.Practitioner fhirPractitioner = (org.hl7.fhir.r4.model.Practitioner) entry
                             .getResource();
-                    remoteFhirProviders.put(fhirPractitioner.getIdElement().getIdPart(), fhirPractitioner);
                     try {
                         providerService.insertOrUpdateProviderByFhirUuid(
                                 fhirTransformService.transformToProvider(fhirPractitioner));
+                        remoteFhirProviders.put(fhirPractitioner.getIdElement().getIdPart(), fhirPractitioner);
+
                     } catch (RuntimeException e) {
                         LogEvent.logError(e);
                         LogEvent.logDebug(this.getClass().getName(), "importProvidersFromBundle",

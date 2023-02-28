@@ -37,7 +37,6 @@ public class PatientServiceTest {
 	public void init() throws Exception {
 	}
 
-
 	@Test
 	public void createPatient_shouldCreateNewPatient() throws Exception {
 		String firstName = "John";

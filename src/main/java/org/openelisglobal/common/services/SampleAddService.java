@@ -112,12 +112,16 @@ public class SampleAddService {
                 Map<String, String> testIdToSampleTypeMap = getTestIdToSelectionMap(
                         sampleItem.attributeValue("testSampleTypeMap"));
 
-                String collectionDate = sampleItem.attributeValue("date").trim();
-                String collectionTime = sampleItem.attributeValue("time").trim();
+                String collectionDate = sampleItem.attributeValue("date") == null ? null
+                        : sampleItem.attributeValue("date").trim();
+                String collectionTime = sampleItem.attributeValue("time") == null ? null
+                        : sampleItem.attributeValue("time").trim();
                 String collectionDateTime = null;
-                String rejectedValue = sampleItem.attributeValue("rejected").trim();
+                String rejectedValue = sampleItem.attributeValue("rejected") == null ? null
+                        : sampleItem.attributeValue("rejected").trim();
                 boolean rejected = StringUtils.isNotBlank(rejectedValue) ? Boolean.parseBoolean(rejectedValue) : false;
-                String rejectReasonId = sampleItem.attributeValue("rejectReasonId").trim();
+                String rejectReasonId = sampleItem.attributeValue("rejectReasonId") == null ? null
+                        : sampleItem.attributeValue("rejectReasonId").trim();
 
                 if (!GenericValidator.isBlankOrNull(collectionDate)
                         && !GenericValidator.isBlankOrNull(collectionTime)) {
