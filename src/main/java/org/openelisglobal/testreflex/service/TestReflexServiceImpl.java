@@ -203,25 +203,26 @@ public class TestReflexServiceImpl extends BaseObjectServiceImpl<TestReflex, Str
                 testAnalyte.setTest(triggerTest);
                 testAnalyte.setResultGroup(REFLEX_RESULT_GROUP);
                 testAnalyte.setTestAnalyteType(REFLEX_RESULT_TYPE);
-                testAnalyte =  testAnalyteService.save(testAnalyte);
-                for (ReflexRuleAction action : rule.getActions()){
+                testAnalyte = testAnalyteService.save(testAnalyte);
+                for (ReflexRuleAction action : rule.getActions()) {
                     TestReflex reflex = new TestReflex();
-                    //TestResult result = testResultService.get(condition.getValue());
+                    // TestResult result = testResultService.get(condition.getValue());
                     List<TestResult> results = testResultService.getActiveTestResultsByTest(triggerTest.getId());
-                    if(testService.getResultType(triggerTest).equals("D")){
-                        Optional<TestResult> result = results.stream().filter(res -> res.getValue().equals(condition.getValue())).findFirst();
-                       reflex.setTestResult(result.get());
-                    }else {
+                    if (testService.getResultType(triggerTest).equals("D")) {
+                        Optional<TestResult> result = results.stream()
+                                .filter(res -> res.getValue().equals(condition.getValue())).findFirst();
+                        reflex.setTestResult(result.get());
+                    } else {
                         reflex.setTestResult(results.get(0));
                         reflex.setNonDictionaryValue(condition.getValue());
                     }
                     reflex.setRelation(condition.getRelation());
                     reflex.setTestAnalyte(testAnalyte);
                     reflex.setTest(triggerTest);
-                    if(testAndSampleMatches(action.getReflexTestId(), action.getSampleId())){
+                    if (testAndSampleMatches(action.getReflexTestId(), action.getSampleId())) {
                         Test reflexTest = testService.getTestById(action.getReflexTestId());
                         reflex.setAddedTest(reflexTest);
-                    }    
+                    }
                     reflexService.save(reflex);
                 }
             }
