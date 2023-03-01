@@ -323,12 +323,17 @@ public class TestReflexUtil {
         // should be taken by the result
         String resultType = testService.getResultType(reflexBean.getResult().getTestResult().getTest());
         List<TestReflex> reflexesForResult = reflexResolver.getTestReflexesForResult(reflexBean.getResult());
-        if(!resultType.equals("D")){
-            if(resultType.equals("N")){
-                reflexesForResult = reflexesForResult.stream().filter(test -> Double.valueOf(test.getNonDictionaryValue()).equals(Double.valueOf(reflexBean.getResult().getValue()))).collect(Collectors.toList());
-            }else{
-                reflexesForResult = reflexesForResult.stream().filter(test -> test.getNonDictionaryValue().equals(reflexBean.getResult().getValue())).collect(Collectors.toList());
-            }  
+        if (!resultType.equals("D")) {
+            if (resultType.equals("N")) {
+                reflexesForResult = reflexesForResult.stream()
+                        .filter(test -> Double.valueOf(test.getNonDictionaryValue())
+                                .equals(Double.valueOf(reflexBean.getResult().getValue())))
+                        .collect(Collectors.toList());
+            } else {
+                reflexesForResult = reflexesForResult.stream()
+                        .filter(test -> test.getNonDictionaryValue().equals(reflexBean.getResult().getValue()))
+                        .collect(Collectors.toList());
+            }
         }
         List<Analysis> reflexAnalysises = new ArrayList<>();
         for (TestReflex reflexForResult : reflexesForResult) {
