@@ -2,7 +2,7 @@ package org.openelisglobal.testreflex.action.bean;
 
 import java.util.stream.Stream;
 
-public class ReflexRuleOtions {
+public class ReflexRuleOptions {
 
     public enum GeneralRelationOptions {
 

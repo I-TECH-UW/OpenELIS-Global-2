@@ -31,7 +31,7 @@ public class ReflexRuleCondition {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "relation")
-    private ReflexRuleOtions.NumericRelationOptions relation ;
+    private ReflexRuleOptions.NumericRelationOptions relation ;
 
     @Column(name = "value")
     private String value ;
@@ -61,10 +61,10 @@ public class ReflexRuleCondition {
     public void setTestId(String testId) {
         this.testId = testId;
     }
-    public ReflexRuleOtions.NumericRelationOptions getRelation() {
+    public ReflexRuleOptions.NumericRelationOptions getRelation() {
         return relation;
     }
-    public void setRelation(ReflexRuleOtions.NumericRelationOptions relation) {
+    public void setRelation(ReflexRuleOptions.NumericRelationOptions relation) {
         this.relation = relation;
     }
     public String getValue() {

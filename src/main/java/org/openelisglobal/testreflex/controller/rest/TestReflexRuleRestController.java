@@ -18,7 +18,7 @@ import org.openelisglobal.test.valueholder.Test;
 import org.openelisglobal.test.service.TestServiceImpl;
 import org.openelisglobal.testreflex.action.bean.ReflexRule;
 import org.openelisglobal.testreflex.action.bean.ReflexRuleOptionsDisplayItem;
-import org.openelisglobal.testreflex.action.bean.ReflexRuleOtions;
+import org.openelisglobal.testreflex.action.bean.ReflexRuleOptions;
 import org.openelisglobal.testreflex.service.TestReflexService;
 import org.openelisglobal.testresult.service.TestResultService;
 import org.openelisglobal.testresult.valueholder.TestResult;
@@ -75,15 +75,15 @@ public class TestReflexRuleRestController {
     public ReflexRuleOptionsDisplayItem getReflexRuleOptions() {
         ReflexRuleOptionsDisplayItem options = new ReflexRuleOptionsDisplayItem();
         List<LabelValuePair> overallOptions = new ArrayList<>();
-        ReflexRuleOtions.OverallOptions.stream()
+        ReflexRuleOptions.OverallOptions.stream()
                 .forEach(option -> overallOptions.add(new LabelValuePair(option.getDisplayName(), option.name())));
         List<LabelValuePair> generalRelationOptions = new ArrayList<>();
-        ReflexRuleOtions.GeneralRelationOptions.stream()
+        ReflexRuleOptions.GeneralRelationOptions.stream()
                 .forEach(
                         option -> generalRelationOptions
                                 .add(new LabelValuePair(option.getDisplayName(), option.name())));
         List<LabelValuePair> numericRelationOptions = new ArrayList<>();
-        ReflexRuleOtions.NumericRelationOptions.stream().forEach(
+        ReflexRuleOptions.NumericRelationOptions.stream().forEach(
                 option -> numericRelationOptions
                         .add(new LabelValuePair(option.getDisplayName(), option.name())));
         options.setOverallOptions(overallOptions);
