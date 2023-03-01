@@ -48,6 +48,15 @@
 			type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType">
 			<column name="sibling_reflex" precision="10" />
 		</property>
+		<property name="nonDictionaryValue" type="java.lang.String">
+			<column name="NON_DICTIONARY_VALUE" length="50" />
+		</property>
+		<property name="relation" column="RELATION">
+            <type name="org.hibernate.type.EnumType">
+                <param name="enumClass">org.openelisglobal.testreflex.action.bean.ReflexRuleOptions$NumericRelationOptions</param>
+                <param name="useNamed">true</param>
+            </type>
+        </property>
 	</class>
 <!-- 	<query name="testreflex.getNext"> -->
 <!-- 		from TestReflex tr order by tr.test.testName, -->

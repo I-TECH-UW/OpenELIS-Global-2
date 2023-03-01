@@ -33,7 +33,7 @@ public class ReflexRule extends BaseObject<Integer>{
 
     @Enumerated(EnumType.STRING)
     @Column(name = "overall")
-    private ReflexRuleOtions.OverallOptions overall ;
+    private ReflexRuleOptions.OverallOptions overall ;
 
     @Column(name = "toggled")
     private Boolean toggled;
@@ -64,10 +64,10 @@ public class ReflexRule extends BaseObject<Integer>{
     public void setRuleName(String ruleName) {
         this.ruleName = ruleName;
     }
-    public ReflexRuleOtions.OverallOptions getOverall() {
+    public ReflexRuleOptions.OverallOptions getOverall() {
         return overall;
     }
-    public void setOverall(ReflexRuleOtions.OverallOptions overall) {
+    public void setOverall(ReflexRuleOptions.OverallOptions overall) {
         this.overall = overall;
     }
     public Boolean getToggled() {

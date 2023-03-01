@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
@@ -42,6 +43,7 @@ import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.scriptlet.service.ScriptletService;
 import org.openelisglobal.scriptlet.valueholder.Scriptlet;
 import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.test.service.TestServiceImpl;
 import org.openelisglobal.testreflex.service.TestReflexService;
 import org.openelisglobal.testreflex.valueholder.TestReflex;
@@ -72,6 +74,7 @@ public class TestReflexUtil {
     private static AnalyteService analyteService = SpringContext.getBean(AnalyteService.class);
     private static ScriptletService scriptletService = SpringContext.getBean(ScriptletService.class);
     private static NoteService noteService = SpringContext.getBean(NoteService.class);
+    private static TestService testService = SpringContext.getBean(TestService.class);
 
     private TestReflexResolver reflexResolver = SpringContext.getBean(TestReflexResolver.class);
 
@@ -318,7 +321,15 @@ public class TestReflexUtil {
             List<String> handledReflexIdList, String sysUserId) {
         // More than one reflex may be returned if more than one action
         // should be taken by the result
+        String resultType = testService.getResultType(reflexBean.getResult().getTestResult().getTest());
         List<TestReflex> reflexesForResult = reflexResolver.getTestReflexesForResult(reflexBean.getResult());
+        if(!resultType.equals("D")){
+            if(resultType.equals("N")){
+                reflexesForResult = reflexesForResult.stream().filter(test -> Double.valueOf(test.getNonDictionaryValue()).equals(Double.valueOf(reflexBean.getResult().getValue()))).collect(Collectors.toList());
+            }else{
+                reflexesForResult = reflexesForResult.stream().filter(test -> test.getNonDictionaryValue().equals(reflexBean.getResult().getValue())).collect(Collectors.toList());
+            }  
+        }
         List<Analysis> reflexAnalysises = new ArrayList<>();
         for (TestReflex reflexForResult : reflexesForResult) {
             // filter out handled reflexes
