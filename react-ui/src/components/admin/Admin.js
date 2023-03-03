@@ -1,6 +1,7 @@
 import React from 'react'
 import { FormattedMessage, injectIntl } from 'react-intl'
 import '../Style.css'
+import { useEffect, useState } from "react";
 import ReflexTestManagement from './ReflexTestManagement'
 import PathRoute from "../utils/PathRoute"
 import {
@@ -9,6 +10,9 @@ import {
     SideNavMenu,
     SideNavMenuItem
 } from '@carbon/react';
+
+import OutsideClick from "./outsideClick";
+import { useRef } from "react";
 
 class Admin extends React.Component {
 
@@ -24,6 +28,7 @@ class Admin extends React.Component {
                 <SideNav
                     aria-label="Side navigation"
                     expanded={true}
+                    
                 >
                     <SideNavItems className="adminSideNav">
                         <SideNavMenu title="Test Management">
