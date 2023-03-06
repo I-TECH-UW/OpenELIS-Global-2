@@ -20,6 +20,7 @@ class Login extends React.Component {
   constructor(props) {
     super(props);
     this.state = { formValid: false, loginError: "" };
+    this.firstInput = React.createRef();
   }
 
   componentDidMount() {
@@ -38,6 +39,8 @@ class Login extends React.Component {
           window.location.href = "/";
         }
       });
+
+    this.firstInput.current.focus(); 
   }
 
   handlePost = (status) => {
@@ -155,6 +158,7 @@ class Login extends React.Component {
                           id: "login.msg.username",
                         })}
                         autoComplete="off"
+                        ref={this.firstInput}
                       />
                       <TextInput.PasswordInput
                         className="inputText"
