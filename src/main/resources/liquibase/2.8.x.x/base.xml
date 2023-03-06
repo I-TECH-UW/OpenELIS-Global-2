@@ -6,4 +6,5 @@
 	  http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
 	<include relativeToChangelogFile="true" file="reflex_rule.xml" />
+	<include relativeToChangelogFile="true" file="desynchronous_objects.xml" />
 </databaseChangeLog>

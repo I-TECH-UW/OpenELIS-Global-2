@@ -2,7 +2,7 @@
 FROM node:19.2-alpine as build
 WORKDIR /app
 COPY package*.json ./
-RUN npm ci
+RUN npm ci --force
 COPY . ./
 RUN npm run build
 

@@ -17,12 +17,13 @@ package org.openelisglobal.provider.valueholder;
 
 import java.util.UUID;
 
+import org.openelisglobal.common.DesynchronousCapable;
 import org.openelisglobal.common.valueholder.BaseObject;
 import org.openelisglobal.common.valueholder.ValueHolder;
 import org.openelisglobal.common.valueholder.ValueHolderInterface;
 import org.openelisglobal.person.valueholder.Person;
 
-public class Provider extends BaseObject<String> {
+public class Provider extends BaseObject<String> implements DesynchronousCapable {
 
     private String id;
 
@@ -39,6 +40,8 @@ public class Provider extends BaseObject<String> {
     private String selectedPersonId;
 
     private Boolean active;
+
+    private boolean desynchronized;
 
     public Provider() {
         super();
@@ -122,6 +125,16 @@ public class Provider extends BaseObject<String> {
 
     public void setActive(Boolean active) {
         this.active = active;
+    }
+
+    @Override
+    public boolean isDesynchronized() {
+        return desynchronized;
+    }
+
+    @Override
+    public void setDesynchronized(boolean desynchronized) {
+        this.desynchronized = desynchronized;
     }
 
 }
