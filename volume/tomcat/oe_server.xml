@@ -161,6 +161,17 @@
 <!--                prefix="localhost_access_log" suffix=".txt" -->
 <!--                pattern="%h %l %u %t &quot;%r&quot; %s %b" /> -->
 
+               <Context docBase="ROOT" path="/api" />
+               <Context docBase="OpenELIS-Global"
+                    path="/api/OpenELIS-Global/" logEffectiveWebXml="true">
+               <Resources cacheMaxSize="102400" />
+               <Resource auth="Container"
+                    driverClassName="org.postgresql.Driver" maxTotal="20" maxIdle="10"
+                    maxWaitMillis="-1" name="jdbc/LimsDS" type="javax.sql.DataSource"
+                    url="${datasource.url}" username="${datasource.username}"
+                    password="${datasource.password}" />
+               </Context>
+
       </Host>
     </Engine>
   </Service>

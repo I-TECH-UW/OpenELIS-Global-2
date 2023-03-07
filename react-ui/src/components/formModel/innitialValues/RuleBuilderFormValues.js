@@ -4,6 +4,7 @@ export default {
   ruleName: "",
   overall: "",
   toggled: true,
+  active : true,
   conditions: [{
     id: null,
     sampleId: "",
@@ -14,8 +15,11 @@ export default {
   }],
   actions: [{
     id: null,
-    action: "",
-    reflexResult: "",
-    reflexResultTestId: ""
+    sampleId : "",
+    reflexTestName: "",
+    reflexTestId: "",
+    internalNote : "" ,
+    externalNote : "" ,
+    addNotification : "Y"
   }]
 };

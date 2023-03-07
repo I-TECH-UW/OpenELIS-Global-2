@@ -5,6 +5,8 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -29,8 +31,9 @@ public class ReflexRule extends BaseObject<Integer>{
     @Column(name = "rule_name")
     private String ruleName;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "overall")
-    private String overall;
+    private ReflexRuleOptions.OverallOptions overall ;
 
     @Column(name = "toggled")
     private Boolean toggled;
@@ -42,6 +45,9 @@ public class ReflexRule extends BaseObject<Integer>{
     @OneToMany(fetch = FetchType.EAGER ,cascade = CascadeType.ALL)  
     @JoinColumn(name = "reflex_rule_id", referencedColumnName = "id") 
     Set<ReflexRuleAction> actions;
+
+    @Column(name = "active")
+    private Boolean active = true;
 
     @Override
     public Integer getId() {
@@ -58,10 +64,10 @@ public class ReflexRule extends BaseObject<Integer>{
     public void setRuleName(String ruleName) {
         this.ruleName = ruleName;
     }
-    public String getOverall() {
+    public ReflexRuleOptions.OverallOptions getOverall() {
         return overall;
     }
-    public void setOverall(String overall) {
+    public void setOverall(ReflexRuleOptions.OverallOptions overall) {
         this.overall = overall;
     }
     public Boolean getToggled() {
@@ -81,6 +87,14 @@ public class ReflexRule extends BaseObject<Integer>{
     }
     public void setActions(Set<ReflexRuleAction> actions) {
         this.actions = actions;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 
 }
