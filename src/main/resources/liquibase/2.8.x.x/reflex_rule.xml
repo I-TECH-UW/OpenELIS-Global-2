@@ -24,6 +24,7 @@
 				<constraints nullable="false"/>
 			</column>
 			<column name="toggled" type="boolean"/>
+			<column name="active" type="boolean"/>
 			<column name="last_updated" type="datetime"/>
 		</createTable>
 	</changeSet>
@@ -40,13 +41,18 @@
 			<column name="id" type="INTEGER" valueSequenceNext="reflex_rule_action_seq">
 				<constraints primaryKey="true" nullable="false"/>
 			</column>
-			<column name="action" type="varchar(64)">
+			<column name="reflex_test_name" type="varchar(64)">
 				<constraints nullable="false"/>
 			</column>
-			<column name="reflex_result" type="varchar(64)">
-				<constraints nullable="false"/>
+			<column name="reflex_test_id" type="varchar(64)">
+			  <constraints nullable="false"/>
 			</column>
-			<column name="reflex_result_test_id" type="varchar(64)"/>
+			<column name="sample_id" type="varchar(64)">
+			  <constraints nullable="false"/>
+			</column>
+			<column name="internal_note" type="varchar(64)"/>
+			<column name="external_note" type="varchar(64)"/>
+			<column name="add_notification" type="varchar(2)"/>
 			<column name="reflex_rule_id" type="int"/>
 		</createTable>
 		<addForeignKeyConstraint constraintName="action_reflex_rule_id_fk"
@@ -80,5 +86,20 @@
 		<addForeignKeyConstraint constraintName="condition_reflex_rule_id_fk"
                                  baseTableName="reflex_rule_condition" baseColumnNames="reflex_rule_id"
                                  referencedTableName="reflex_rule" referencedColumnNames="id"/>
+	</changeSet>
+	<changeSet author="moses_mutesa" id="4">
+		<preConditions onFail="MARK_RAN">
+			<tableExists tableName="test_reflex" schemaName="clinlims" />
+			<not>
+				<columnExists tableName="test_reflex" columnName="non_dictionary_value" />
+			</not>
+		</preConditions>
+		<comment>add Non Dictionary Value Column to test_reflex table</comment>
+		<addColumn schemaName="clinlims" tableName="test_reflex">
+			<column name="non_dictionary_value" type="VARCHAR(50)"  />
+		</addColumn>
+		<addColumn schemaName="clinlims" tableName="test_reflex">
+			<column name="relation" type="VARCHAR(20)"  />
+		</addColumn>
 	</changeSet>
 </databaseChangeLog>
