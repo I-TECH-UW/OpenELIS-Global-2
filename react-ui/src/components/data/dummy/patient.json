@@ -1,0 +1,70 @@
+{
+    "resourceType": "Patient",
+    "id": "766b1311-bb85-487f-98bf-e07bec7c0169",
+    "meta": {
+        "lastUpdated": "2023-01-24T08:22:04.000+00:00"
+    },
+    "text": {
+        "status": "generated",
+        "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><table class=\"hapiPropertyTable\"><tbody><tr><td>Id:</td><td>766b1311-bb85-487f-98bf-e07bec7c0169</td></tr><tr><td>Identifier:</td><td><div>100003R</div></td></tr><tr><td>Active:</td><td>true</td></tr><tr><td>Name:</td><td> Grace <b>GARCÍA </b></td></tr><tr><td>Gender:</td><td>FEMALE</td></tr><tr><td>Birth Date:</td><td>18/01/1956</td></tr><tr><td>Deceased:</td><td>false</td></tr><tr><td>Address:</td><td><span>City2976 </span><span>State2976 </span><span>Country2976 </span></td></tr></tbody></table></div>"
+    },
+    "identifier": [
+        {
+            "id": "2ee95aef-da54-4d44-8e5a-787eb0841b04",
+            "extension": [
+                {
+                    "url": "http://fhir.openmrs.org/ext/patient/identifier#location",
+                    "valueReference": {
+                        "reference": "Location/9d33bf8e-a6ed-44c0-8677-9237481df256",
+                        "type": "Location",
+                        "display": "Ward 28"
+                    }
+                }
+            ],
+            "use": "official",
+            "type": {
+                "coding": [
+                    {
+                        "code": "05a29f94-c0ed-11e2-94be-8c13b969e334"
+                    }
+                ],
+                "text": "OpenMRS ID"
+            },
+            "value": "100003R"
+        }
+    ],
+    "active": true,
+    "name": [
+        {
+            "id": "91dbbc95-d622-44b0-a71b-d8e098e8034f",
+            "family": "García",
+            "given": [
+                "Grace"
+            ]
+        }
+    ],
+    "gender": "female",
+    "birthDate": "1956-01-18",
+    "deceasedBoolean": false,
+    "address": [
+        {
+            "id": "57b7b25b-abce-4e9a-b6aa-5bdaab6fe0fc",
+            "extension": [
+                {
+                    "url": "http://fhir.openmrs.org/ext/address",
+                    "extension": [
+                        {
+                            "url": "http://fhir.openmrs.org/ext/address#address1",
+                            "valueString": "Address12976"
+                        }
+                    ]
+                }
+            ],
+            "use": "home",
+            "city": "City2976",
+            "state": "State2976",
+            "postalCode": "67687",
+            "country": "Country2976"
+        }
+    ]
+}

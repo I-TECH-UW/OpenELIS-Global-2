@@ -259,20 +259,27 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
             // duplicates
             String sql = "from TestReflex t where t.test.localizedTestName = :localizedTestNameId and "
                     + "trim(lower(t.testAnalyte.analyte.analyteName)) = :analyteName and "
-                    + "t.testResult.id = :resultId and " + "t.addedTest.localizedTestName = :addedTestNameId or "
-                    + "trim(lower(t.actionScriptlet.scriptletName)) = :scriptletName  ) and " + " t.id != :testId";
+                    + "t.testResult.id = :resultId and " + "t.addedTest.localizedTestName = :addedTestNameId "
+                    + "and t.id != :testId";
+             
+            if (testReflex.getActionScriptlet() != null) {
+                sql = sql + "or trim(lower(t.actionScriptlet.scriptletName)) = :scriptletName ";
+            }
+
             Query<TestReflex> query = entityManager.unwrap(Session.class).createQuery(sql, TestReflex.class);
-            query.setParameter("localizedTestName",
+            query.setParameter("localizedTestNameId",
                     Integer.parseInt(testReflex.getTest().getLocalizedTestName().getId()));
             query.setParameter("analyteName",
                     testReflex.getTestAnalyte().getAnalyte().getAnalyteName().toLowerCase().trim());
             query.setParameter("resultId", Integer.parseInt(testReflex.getTestResult().getId()));
             query.setParameter("addedTestNameId", testReflex.getAddedTest() == null ? -1
                     : Integer.parseInt(testReflex.getAddedTest().getLocalizedTestName().getId()));
-            query.setParameter("scriptletName", testReflex.getActionScriptlet() == null ? null
-                    : testReflex.getActionScriptlet().getScriptletName().toLowerCase().trim());
 
             String testReflexId = StringUtil.isNullorNill(testReflex.getId()) ? "0" : testReflex.getId();
+
+            if (testReflex.getActionScriptlet() != null) {
+                query.setParameter("scriptletName", testReflex.getActionScriptlet().getScriptletName().toLowerCase().trim());
+            }
 
             query.setParameter("testId", Integer.parseInt(testReflexId));
 

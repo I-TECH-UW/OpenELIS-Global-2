@@ -1,0 +1,265 @@
+{
+    "uuid": "1134AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "display": "Serum chloride",
+    "name": {
+      "display": "Serum chloride",
+      "uuid": "1209BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+      "name": "Serum chloride",
+      "locale": "en",
+      "localePreferred": true,
+      "conceptNameType": "FULLY_SPECIFIED",
+      "links": [
+        {
+          "rel": "self",
+          "uri": "http://dev3.openmrs.org/openmrs/ws/rest/v1/concept/1134AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/name/1209BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+          "resourceAlias": "name"
+        },
+        {
+          "rel": "full",
+          "uri": "http://dev3.openmrs.org/openmrs/ws/rest/v1/concept/1134AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/name/1209BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB?v=full",
+          "resourceAlias": "name"
+        }
+      ],
+      "resourceVersion": "1.9"
+    },
+    "datatype": {
+      "uuid": "8d4a4488-c2cc-11de-8d13-0010c6dffd0f",
+      "display": "Numeric",
+      "name": "Numeric",
+      "description": "Numeric value, including integer or float (e.g., creatinine, weight)",
+      "hl7Abbreviation": "NM",
+      "retired": false,
+      "links": [
+        {
+          "rel": "self",
+          "uri": "http://dev3.openmrs.org/openmrs/ws/rest/v1/conceptdatatype/8d4a4488-c2cc-11de-8d13-0010c6dffd0f",
+          "resourceAlias": "conceptdatatype"
+        },
+        {
+          "rel": "full",
+          "uri": "http://dev3.openmrs.org/openmrs/ws/rest/v1/conceptdatatype/8d4a4488-c2cc-11de-8d13-0010c6dffd0f?v=full",
+          "resourceAlias": "conceptdatatype"
+        }
+      ],
+      "resourceVersion": "1.8"
+    },
+    "conceptClass": {
+      "uuid": "8d4907b2-c2cc-11de-8d13-0010c6dffd0f",
+      "display": "Test",
+      "name": "Test",
+      "description": "Acq. during patient encounter (vitals, labs, etc.)",
+      "retired": false,
+      "links": [
+        {
+          "rel": "self",
+          "uri": "http://dev3.openmrs.org/openmrs/ws/rest/v1/conceptclass/8d4907b2-c2cc-11de-8d13-0010c6dffd0f",
+          "resourceAlias": "conceptclass"
+        },
+        {
+          "rel": "full",
+          "uri": "http://dev3.openmrs.org/openmrs/ws/rest/v1/conceptclass/8d4907b2-c2cc-11de-8d13-0010c6dffd0f?v=full",
+          "resourceAlias": "conceptclass"
+        }
+      ],
+      "resourceVersion": "1.8"
+    },
+    "set": false,
+    "version": null,
+    "retired": false,
+    "names": [
+      {
+        "display": "Chlorure serum",
+        "uuid": "136714BBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+        "name": "Chlorure serum",
+        "locale": "fr",
+        "localePreferred": true,
+        "conceptNameType": "FULLY_SPECIFIED",
+        "links": [
+          {
+            "rel": "self",
+            "uri": "http://dev3.openmrs.org/openmrs/ws/rest/v1/concept/1134AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/name/136714BBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+            "resourceAlias": "name"
+          },
+          {
+            "rel": "full",
+            "uri": "http://dev3.openmrs.org/openmrs/ws/rest/v1/concept/1134AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/name/136714BBBBBBBBBBBBBBBBBBBBBBBBBBBBBB?v=full",
+            "resourceAlias": "name"
+          }
+        ],
+        "resourceVersion": "1.9"
+      },
+      {
+        "display": "Serum chloride",
+        "uuid": "1209BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+        "name": "Serum chloride",
+        "locale": "en",
+        "localePreferred": true,
+        "conceptNameType": "FULLY_SPECIFIED",
+        "links": [
+          {
+            "rel": "self",
+            "uri": "http://dev3.openmrs.org/openmrs/ws/rest/v1/concept/1134AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/name/1209BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+            "resourceAlias": "name"
+          },
+          {
+            "rel": "full",
+            "uri": "http://dev3.openmrs.org/openmrs/ws/rest/v1/concept/1134AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/name/1209BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB?v=full",
+            "resourceAlias": "name"
+          }
+        ],
+        "resourceVersion": "1.9"
+      },
+      {
+        "display": "Klori sewòm",
+        "uuid": "136715BBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+        "name": "Klori sewòm",
+        "locale": "ht",
+        "localePreferred": true,
+        "conceptNameType": "FULLY_SPECIFIED",
+        "links": [
+          {
+            "rel": "self",
+            "uri": "http://dev3.openmrs.org/openmrs/ws/rest/v1/concept/1134AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/name/136715BBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+            "resourceAlias": "name"
+          },
+          {
+            "rel": "full",
+            "uri": "http://dev3.openmrs.org/openmrs/ws/rest/v1/concept/1134AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/name/136715BBBBBBBBBBBBBBBBBBBBBBBBBBBBBB?v=full",
+            "resourceAlias": "name"
+          }
+        ],
+        "resourceVersion": "1.9"
+      },
+      {
+        "display": "Chloride",
+        "uuid": "89520BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+        "name": "Chloride",
+        "locale": "en",
+        "localePreferred": false,
+        "conceptNameType": null,
+        "links": [
+          {
+            "rel": "self",
+            "uri": "http://dev3.openmrs.org/openmrs/ws/rest/v1/concept/1134AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/name/89520BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+            "resourceAlias": "name"
+          },
+          {
+            "rel": "full",
+            "uri": "http://dev3.openmrs.org/openmrs/ws/rest/v1/concept/1134AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/name/89520BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB?v=full",
+            "resourceAlias": "name"
+          }
+        ],
+        "resourceVersion": "1.9"
+      },
+      {
+        "display": "Cl",
+        "uuid": "89613BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+        "name": "Cl",
+        "locale": "en",
+        "localePreferred": false,
+        "conceptNameType": null,
+        "links": [
+          {
+            "rel": "self",
+            "uri": "http://dev3.openmrs.org/openmrs/ws/rest/v1/concept/1134AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/name/89613BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+            "resourceAlias": "name"
+          },
+          {
+            "rel": "full",
+            "uri": "http://dev3.openmrs.org/openmrs/ws/rest/v1/concept/1134AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/name/89613BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB?v=full",
+            "resourceAlias": "name"
+          }
+        ],
+        "resourceVersion": "1.9"
+      },
+      {
+        "display": "Cl",
+        "uuid": "86780BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+        "name": "Cl",
+        "locale": "en",
+        "localePreferred": false,
+        "conceptNameType": "SHORT",
+        "links": [
+          {
+            "rel": "self",
+            "uri": "http://dev3.openmrs.org/openmrs/ws/rest/v1/concept/1134AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/name/86780BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+            "resourceAlias": "name"
+          },
+          {
+            "rel": "full",
+            "uri": "http://dev3.openmrs.org/openmrs/ws/rest/v1/concept/1134AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/name/86780BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB?v=full",
+            "resourceAlias": "name"
+          }
+        ],
+        "resourceVersion": "1.9"
+      }
+    ],
+    "descriptions": [
+      {
+        "display": "Laboratory test that determines a blood serum chloride level.",
+        "uuid": "1137FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF",
+        "description": "Laboratory test that determines a blood serum chloride level.",
+        "locale": "en",
+        "links": [
+          {
+            "rel": "self",
+            "uri": "http://dev3.openmrs.org/openmrs/ws/rest/v1/concept/1134AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/description/1137FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF",
+            "resourceAlias": "description"
+          },
+          {
+            "rel": "full",
+            "uri": "http://dev3.openmrs.org/openmrs/ws/rest/v1/concept/1134AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/description/1137FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF?v=full",
+            "resourceAlias": "description"
+          }
+        ],
+        "resourceVersion": "1.9"
+      }
+    ],
+    "mappings": [],
+    "answers": [],
+    "setMembers": [],
+    "auditInfo": {
+      "creator": {
+        "uuid": "A4F30A1B-5EB9-11DF-A648-37A07F9C90FB",
+        "display": "daemon",
+        "links": [
+          {
+            "rel": "self",
+            "uri": "http://dev3.openmrs.org/openmrs/ws/rest/v1/user/A4F30A1B-5EB9-11DF-A648-37A07F9C90FB",
+            "resourceAlias": "user"
+          }
+        ]
+      },
+      "dateCreated": "2023-01-24T08:21:12.000+0000",
+      "changedBy": {
+        "uuid": "A4F30A1B-5EB9-11DF-A648-37A07F9C90FB",
+        "display": "daemon",
+        "links": [
+          {
+            "rel": "self",
+            "uri": "http://dev3.openmrs.org/openmrs/ws/rest/v1/user/A4F30A1B-5EB9-11DF-A648-37A07F9C90FB",
+            "resourceAlias": "user"
+          }
+        ]
+      },
+      "dateChanged": "2023-01-24T08:21:12.000+0000"
+    },
+    "hiNormal": 107,
+    "hiAbsolute": null,
+    "hiCritical": null,
+    "lowNormal": 96,
+    "lowAbsolute": 0,
+    "lowCritical": null,
+    "units": "mmol/L",
+    "allowDecimal": false,
+    "displayPrecision": null,
+    "attributes": [],
+    "links": [
+      {
+        "rel": "self",
+        "uri": "http://dev3.openmrs.org/openmrs/ws/rest/v1/concept/1134AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "resourceAlias": "concept"
+      }
+    ],
+    "resourceVersion": "2.0"
+  }

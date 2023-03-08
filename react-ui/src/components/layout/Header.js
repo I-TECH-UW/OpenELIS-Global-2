@@ -16,6 +16,7 @@ import {
   Menu,
   Logout,
 } from "@carbon/icons-react";
+
 import {
   Header,
   HeaderName,
@@ -73,7 +74,7 @@ class OEHeader extends React.Component {
       <>
         <div className="container">
           <Theme>
-            <Header className="header" aria-label="">
+            <Header className="" aria-label="">
               <HeaderName href="/" prefix="">
                 <span id="header-logo">{this.logo()}</span>
                 <span id="header-title">{this.props.config.title}</span>
@@ -88,7 +89,7 @@ class OEHeader extends React.Component {
                     </HeaderMenu>
                     <HeaderMenu aria-label="Patient" menuLinkName="Patient">
                       <HeaderMenuItem href="/PatientManagement">Add/Edit Patient</HeaderMenuItem>
-                      <HeaderMenuItem href="#">Sub-link 2</HeaderMenuItem>
+                      <HeaderMenuItem href="/PatientHistory">Patient History</HeaderMenuItem>
                       <HeaderMenuItem href="#">Sub-link 3</HeaderMenuItem>
                     </HeaderMenu>
                     <HeaderMenu

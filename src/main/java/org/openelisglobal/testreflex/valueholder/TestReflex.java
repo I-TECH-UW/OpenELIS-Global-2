@@ -23,6 +23,7 @@ import org.openelisglobal.common.valueholder.ValueHolderInterface;
 import org.openelisglobal.scriptlet.valueholder.Scriptlet;
 import org.openelisglobal.test.valueholder.Test;
 import org.openelisglobal.testanalyte.valueholder.TestAnalyte;
+import org.openelisglobal.testreflex.action.bean.ReflexRuleOptions;
 import org.openelisglobal.testresult.valueholder.TestResult;
 
 public class TestReflex extends EnumValueItemImpl {
@@ -57,6 +58,10 @@ public class TestReflex extends EnumValueItemImpl {
 
     // This is solely for display and a different approach should be used
     private boolean passiveSibling;
+
+    private String nonDictionaryValue;
+
+    private ReflexRuleOptions.NumericRelationOptions relation;
 
     public TestReflex() {
         super();
@@ -242,6 +247,22 @@ public class TestReflex extends EnumValueItemImpl {
 
     public boolean isPassiveSibling() {
         return passiveSibling;
+    }
+
+    public String getNonDictionaryValue() {
+        return nonDictionaryValue;
+    }
+
+    public void setNonDictionaryValue(String nonDictionaryValue) {
+        this.nonDictionaryValue = nonDictionaryValue;
+    }
+
+    public ReflexRuleOptions.NumericRelationOptions getRelation() {
+        return relation;
+    }
+
+    public void setRelation(ReflexRuleOptions.NumericRelationOptions relation) {
+        this.relation = relation;
     }
 
 }

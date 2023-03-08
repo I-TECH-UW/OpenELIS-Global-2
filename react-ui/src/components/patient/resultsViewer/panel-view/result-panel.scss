@@ -1,0 +1,115 @@
+@use '@carbon/styles/scss/grid/_flexbox';
+@use '@carbon/styles/scss/spacing';
+@use '@carbon/styles/scss/type';
+//@import '~@openmrs/esm-styleguide/src/vars';
+@import "../commons/scss/vars.scss";
+
+.labSetPanel {
+  width: 100%;
+  margin-bottom: spacing.$spacing-05;
+  border: 1px solid #eeeeee;
+  cursor: pointer;
+  text-decoration: none;
+  color: $text-02;
+  box-sizing: border-box;
+}
+
+.activePanel {
+  border: 2px solid var(--brand-03);
+}
+
+.panelHeader {
+  padding: spacing.$spacing-05 spacing.$spacing-05 spacing.$spacing-03 spacing.$spacing-05;
+  background-color: $ui-02;
+}
+
+.productiveHeading02 {
+  @include type.type-style('heading-compact-02');
+}
+
+.panelHeader::after {
+  content: "";
+  display: block;
+  width: 2rem;
+  padding-top: 0.188rem;
+  border-bottom: 0.375rem solid var(--brand-03);
+}
+
+.subtitleText {
+  @include type.type-style('body-compact-01');
+}
+
+.off-scale-high,
+.off-scale-low,
+.critically-high,
+.critically-low,
+.high,
+.low {
+  p {
+    @include type.type-style('heading-compact-01');
+  }
+}
+
+.high,
+.low {
+    border: 2px solid black !important;
+}
+
+.critically-high,
+.critically-low {
+  border: 2px solid $danger !important;
+}
+
+.off-scale-low {
+  span {
+    font-weight: 600;
+  }
+  span::after {
+    content: " ↓↓↓";
+  }
+}
+
+.off-scale-high {
+  span {
+    font-weight: 600;
+  }
+  span::after {
+    content: " ↑↑↑";
+  }
+}
+
+.critically-low {
+  span {
+    font-weight: 600;
+  }
+  span::after {
+    content: " ↓↓";
+  }
+}
+
+.critically-high {
+  span {
+    font-weight: 600;
+  }
+  span::after {
+    content: " ↑↑";
+  }
+}
+
+.low {
+  span {
+    font-weight: 600;
+  }
+  span::after {
+    content: " ↓";
+  }
+}
+
+.high {
+  span {
+    font-weight: 600;
+  }
+  span::after {
+    content: " ↑";
+  }
+}

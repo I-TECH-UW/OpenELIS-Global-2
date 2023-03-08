@@ -11,6 +11,8 @@ services:
             - default
         volumes:
             -  cert-volume:/etc/openelis-global
+            - keys-vol:/etc/ssl/private/
+            - certs-vol:/etc/ssl/certs/
     database:
         container_name: openelisglobal-database 
         image: postgres:14.4
@@ -90,8 +92,8 @@ services:
        build:
          context: ./react-ui
          dockerfile: ./Dockerfile    
-       ports:
-         - 3000:3000
+#       ports:
+#         - 3000
        networks:
          - default
        volumes:

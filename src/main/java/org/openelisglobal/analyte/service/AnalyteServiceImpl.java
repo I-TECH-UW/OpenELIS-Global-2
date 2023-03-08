@@ -54,7 +54,7 @@ public class AnalyteServiceImpl extends BaseObjectServiceImpl<Analyte, String> i
     }
 
     private boolean duplicateAnalyteExists(Analyte analyte) {
-        return duplicateAnalyteExists(analyte);
+        return  baseObjectDAO.duplicateAnalyteExists(analyte);
     }
 
     @Override
