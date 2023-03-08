@@ -6,17 +6,17 @@ import { faLanguage, faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button, Select, SelectItem } from "@carbon/react";
 import {
-  Search20,
-  Notification20,
+  Search,
+  Notification,
   Switcher,
   User,
-  Language20,
-  UserAvatarFilledAlt20,
-  UserAvatarFilledAlt16,
+  Language,
+  UserAvatarFilledAlt,
   Fade,
   Menu,
   Logout,
 } from "@carbon/icons-react";
+
 import {
   Header,
   HeaderName,
@@ -41,39 +41,15 @@ class OEHeader extends React.Component {
     };
   }
 
-  outsideClickListener = (event) => {
-    if (
-      !this.userSwitchRef.current.contains(event.target) &&
-      !this.headerPanelRef.current.contains(event.target)
-    ) {
-      this.dismissPanel();
-      window.removeEventListener("click", this.outsideClickListener);
-    }
-  };
-
-  componentWillUnmount() {
-    window.removeEventListener("click", this.outsideClickListener);
-  }
-
-  clickPanelSwitch = () => {
-    const userSwitchCollapsed = this.state.switchCollapsed;
-    this.setState((state) => ({
-      switchCollapsed: !userSwitchCollapsed,
-    }));
-    if (userSwitchCollapsed) {
-      window.addEventListener("click", this.outsideClickListener);
-    }
-  };
-
   panelSwitchLabel = () => {
     return this.props.isLoggedIn() ? "User" : "Lang";
   };
 
   panelSwitchIcon = () => {
     return this.props.isLoggedIn() ? (
-      <UserAvatarFilledAlt20 size={20} />
+      <UserAvatarFilledAlt size={20} />
     ) : (
-      <Language20 size={20} />
+      <Language size={20} />
     );
   };
 
@@ -131,7 +107,7 @@ class OEHeader extends React.Component {
                     </HeaderMenu>
                     <HeaderMenu aria-label="Results" menuLinkName="Results">
                       <HeaderMenuItem href="#">Sub-link 1</HeaderMenuItem>
-                      <HeaderMenuItem href="#">Sub-link 2</HeaderMenuItem>
+                      <HeaderMenuItem href="/result">Result Search</HeaderMenuItem>
                       <HeaderMenuItem href="#">Sub-link 3</HeaderMenuItem>
                     </HeaderMenu>
                     <HeaderMenu
@@ -155,13 +131,13 @@ class OEHeader extends React.Component {
                 {this.props.isLoggedIn() && (
                   <>
                     <HeaderGlobalAction aria-label="Search" onClick={() => {}}>
-                      <Search20 size={20} />
+                      <Search size={20} />
                     </HeaderGlobalAction>
                     <HeaderGlobalAction
                       aria-label="Notifications"
                       onClick={() => {}}
                     >
-                      <Notification20 size={20} />
+                      <Notification size={20} />
                     </HeaderGlobalAction>
                   </>
                 )}
@@ -183,7 +159,7 @@ class OEHeader extends React.Component {
                   {this.props.isLoggedIn() && (
                     <>
                       <li className="userDetails">
-                        <UserAvatarFilledAlt16 size={18} />{" "}
+                        <UserAvatarFilledAlt size={18} />{" "}
                         {this.props.user.firstName} {this.props.user.lastName}
                       </li>
                       <li

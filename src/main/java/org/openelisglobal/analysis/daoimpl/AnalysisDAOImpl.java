@@ -1529,6 +1529,42 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
     }
 
     @Override
+    public List<Analysis> getPageAnalysisByStatusFromAccession(List<Integer> analysisStatusList,
+            List<Integer> sampleStatusList, String accessionNumber, boolean doRange) {
+
+        String sql = "";
+        if (doRange)
+            sql = "From Analysis a WHERE a.sampleItem.sample.accessionNumber >= :accessionNumber"//
+                    + " AND length(a.sampleItem.sample.accessionNumber) = length(:accessionNumber)"//
+                    + " AND a.statusId IN (:analysisStatusList)"//
+                    + " AND a.sampleItem.sample.statusId IN (:sampleStatusList)"//
+                    + " ORDER BY a.sampleItem.sample.accessionNumber";//
+        else
+            sql = "From Analysis a WHERE a.sampleItem.sample.accessionNumber = :accessionNumber"//
+                    + " AND length(a.sampleItem.sample.accessionNumber) = length(:accessionNumber)"//
+                    + " AND a.statusId IN (:analysisStatusList)"//
+                    + " AND a.sampleItem.sample.statusId IN (:sampleStatusList)"//
+                    + " ORDER BY a.sampleItem.sample.accessionNumber";//
+        
+        try {
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
+            query.setParameter("accessionNumber", accessionNumber);
+            query.setParameterList("analysisStatusList", analysisStatusList);
+            query.setParameterList("sampleStatusList", sampleStatusList);
+            query.setMaxResults(SpringContext.getBean(PagingProperties.class).getResultsPageSize());
+
+            List<Analysis> analysisList = query.list();
+
+            return analysisList;
+
+        } catch (HibernateException e) {
+            handleException(e, "getPageAnalysisByStatusFromAccession");
+        }
+
+        return null;
+    }
+
+    @Override
     public int getCountAnalysisByStatusFromAccession(List<Integer> analysisStatusList, List<Integer> sampleStatusList,
             String accessionNumber) {
 

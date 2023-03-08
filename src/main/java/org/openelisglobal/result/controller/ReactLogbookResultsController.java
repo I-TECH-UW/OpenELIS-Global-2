@@ -68,6 +68,7 @@ import org.openelisglobal.result.action.util.ResultUtil;
 import org.openelisglobal.result.action.util.ResultsLoadUtility;
 import org.openelisglobal.result.action.util.ResultsPaging;
 import org.openelisglobal.result.action.util.ResultsUpdateDataSet;
+import org.openelisglobal.result.form.AccessionResultsForm;
 import org.openelisglobal.result.form.LogbookResultsForm;
 import org.openelisglobal.result.form.LogbookResultsForm.LogbookResults;
 import org.openelisglobal.result.service.LogbookResultsPersistService;
@@ -89,15 +90,19 @@ import org.openelisglobal.test.service.TestSectionService;
 import org.openelisglobal.test.valueholder.TestSection;
 import org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -105,7 +110,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Controller
-public class LogbookResultsController extends LogbookResultsBaseController {
+@RequestMapping(value = "/rest/")
+public class ReactLogbookResultsController extends LogbookResultsBaseController {
 
     private final String[] ALLOWED_FIELDS = new String[] { "accessionNumber", "collectionDate", "recievedDate",
             "selectedTest", "selectedAnalysisStatus", "selectedSampleStatus", "testSectionId", "methodId", "type",
@@ -155,7 +161,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
     private final String REFERRAL_CONFORMATION_ID;
     private static final String REFLEX_ACCESSIONS = "reflex_accessions";
 
-    private LogbookResultsController(ReferralTypeService referralTypeService) {
+    private ReactLogbookResultsController(ReferralTypeService referralTypeService) {
         ReferralType referralType = referralTypeService.getReferralTypeByName("Confirmation");
         if (referralType != null) {
             REFERRAL_CONFORMATION_ID = referralType.getId();
@@ -169,10 +175,19 @@ public class LogbookResultsController extends LogbookResultsBaseController {
         binder.setAllowedFields(ALLOWED_FIELDS);
     }
 
-    @RequestMapping(value = "/LogbookResults", method = RequestMethod.GET)
-    public ModelAndView showLogbookResults(HttpServletRequest request,
+//    @RequestMapping(value = "/ReactLogbookResults", method = RequestMethod.GET)
+//    public ModelAndView showReactLogbookResults(HttpServletRequest request,
+//            @Validated(LogbookResults.class) @ModelAttribute("form") LogbookResultsForm form, BindingResult result)
+//            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+
+    @GetMapping(value = "ReactLogbookResultsByRange", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public LogbookResultsForm showReactLogbookResults(@RequestParam String labNumber, @RequestParam boolean doRange,
             @Validated(LogbookResults.class) @ModelAttribute("form") LogbookResultsForm form, BindingResult result)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+
+        System.out.println("ReactLogbookResultsController:labNumber:doRange" + labNumber + ":" + doRange);
+        
         LogbookResultsForm newForm = new LogbookResultsForm();
         if (!(result.hasFieldErrors("type") || result.hasFieldErrors("testSectionId")
                 || result.hasFieldErrors("methodId") || result.hasFieldErrors("accessionNumber"))) {
@@ -181,6 +196,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 
             String currentDate = getCurrentDate();
             newForm.setCurrentDate(currentDate);
+            newForm.setAccessionNumber(labNumber);
             newForm.setReferralReasons(
                     DisplayListService.getInstance().getList(DisplayListService.ListType.REFERRAL_REASONS));
             newForm.setRejectReasons(DisplayListService.getInstance()
@@ -196,14 +212,26 @@ public class LogbookResultsController extends LogbookResultsBaseController {
         newForm.setDisplayTestSections(true);
         newForm.setSearchByRange(false);
 
-        return getLogbookResults(request, newForm);
+        return getLogbookResults(request, newForm, doRange);
     }
 
-    @RequestMapping(value = "/RangeResults", method = RequestMethod.GET)
-    public ModelAndView showLogbookResultsByRange(HttpServletRequest request,
-            @Validated(LogbookResults.class) @ModelAttribute("form") LogbookResultsForm form, BindingResult result)
-            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        LogbookResultsForm newForm = new LogbookResultsForm();
+
+    
+    
+//    @RequestMapping(value = "/ReactRangeResults", method = RequestMethod.GET)
+//    public ModelAndView showReactLogbookResultsByRange(HttpServletRequest request,
+//            @Validated(LogbookResults.class) @ModelAttribute("form") LogbookResultsForm form, BindingResult result)
+//            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        
+        @GetMapping(value = "ReactRangeResults", produces = MediaType.APPLICATION_JSON_VALUE)
+        @ResponseBody
+        public LogbookResultsForm showReactLogbookResultsByRange(@RequestParam String labNumber, @RequestParam boolean doRange,
+                @Validated(LogbookResults.class) @ModelAttribute("form") LogbookResultsForm form, BindingResult result)
+                throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+            
+            System.out.println("ReactLogbookResultsController showReactLogbookResultsByRange:labNumber:" + labNumber);
+        
+              LogbookResultsForm newForm = new LogbookResultsForm();
         if (!(result.hasFieldErrors("type") || result.hasFieldErrors("accessionNumber"))) {
             newForm.setType(form.getType());
             newForm.setAccessionNumber(form.getAccessionNumber());
@@ -220,11 +248,11 @@ public class LogbookResultsController extends LogbookResultsBaseController {
         }
         newForm.setDisplayTestSections(false);
         newForm.setSearchByRange(true);
-        System.out.println("LogbookResultsController:call getLogbookResults");
-        return getLogbookResults(request, newForm);
+        System.out.println("ReactLogbookResultsController:call getLogbookResults");
+        return getLogbookResults(request, newForm, doRange);
     }
 
-    private ModelAndView getLogbookResults(HttpServletRequest request, LogbookResultsForm form)
+    private LogbookResultsForm getLogbookResults(HttpServletRequest request, LogbookResultsForm form, boolean doRange)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
         // boolean useTechnicianName = ConfigurationProperties.getInstance()
@@ -280,10 +308,12 @@ public class LogbookResultsController extends LogbookResultsBaseController {
                 }
                 form.setSearchFinished(true);
             } else if (!GenericValidator.isBlankOrNull(form.getAccessionNumber())) {
-                tests = resultsLoadUtility.getUnfinishedTestResultItemsByAccession(form.getAccessionNumber());
+                
+                tests = resultsLoadUtility.getUnfinishedTestResultItemsByAccession(form.getAccessionNumber(), doRange);
                 filteredTests = userService.filterResultsByLabUnitRoles(getSysUserId(request), tests,
                         Constants.ROLE_RESULTS);
                 int count = resultsLoadUtility.getTotalCountAnalysisByAccessionAndStatus(form.getAccessionNumber());
+                
                 request.setAttribute("analysisCount", count);
                 request.setAttribute("pageSize", filteredTests.size());
                 form.setSearchFinished(true);
@@ -321,6 +351,13 @@ public class LogbookResultsController extends LogbookResultsBaseController {
         form.setReferralOrganizations(DisplayListService.getInstance().getList(ListType.REFERRAL_ORGANIZATIONS));
 
         addFlashMsgsToRequest(request);
+        
+        for (TestResultItem resultItem : filteredTests) {
+            //gnr
+            resultItem.setMethods(DisplayListService.getInstance().getList(ListType.METHODS));
+            resultItem.setReferralOrganizations(DisplayListService.getInstance().getList(ListType.REFERRAL_ORGANIZATIONS));
+            resultItem.setReferralReasons(DisplayListService.getInstance().getList(DisplayListService.ListType.REFERRAL_REASONS));
+        }
 
         ObjectMapper mapper = new ObjectMapper();
         String jsonForm = "";
@@ -331,8 +368,9 @@ public class LogbookResultsController extends LogbookResultsBaseController {
             e.printStackTrace();
         }
 
-        System.out.println("LogbookResultsController:jsonForm:" + jsonForm);
-        return findForward(FWD_SUCCESS, form);
+        System.out.println("ReactLogbookResultsController:jsonForm:" + jsonForm);
+        //return findForward(FWD_SUCCESS, form);
+        return (form);
     }
 
     private String getCurrentDate() {
@@ -341,9 +379,9 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 
     }
 
-    @RequestMapping(value = { "/LogbookResults", "/PatientResults", "/AccessionResults",
+    @RequestMapping(value = { "/ReactLogbookResults", "/PatientResults", "/AccessionResults",
             "/StatusResults" }, method = RequestMethod.POST)
-    public ModelAndView showLogbookResultsUpdate(HttpServletRequest request,
+    public LogbookResultsForm showReactLogbookResultsUpdate(HttpServletRequest request,
             @ModelAttribute("form") @Validated(LogbookResultsForm.LogbookResults.class) LogbookResultsForm form,
             BindingResult result, RedirectAttributes redirectAttributes)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
@@ -355,12 +393,12 @@ public class LogbookResultsController extends LogbookResultsBaseController {
         String statusRuleSet = ConfigurationProperties.getInstance().getPropertyValueUpperCase(Property.StatusRules);
 
         if ("true".equals(request.getParameter("pageResults"))) {
-            return getLogbookResults(request, form);
+            return getLogbookResults(request, form, true);
         }
 
         if (result.hasErrors()) {
             saveErrors(result);
-            return findForward(FWD_FAIL_INSERT, form);
+//            return findForward(FWD_FAIL_INSERT, form);
         }
 
 //  gnr: shows current session records, can be current, stale/empty vs. other user
@@ -385,7 +423,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 
             if (true) {
                 saveErrors(errors);
-                return findForward(FWD_VALIDATION_ERROR, form);
+//                return findForward(FWD_VALIDATION_ERROR, form);
             }
         }
 
@@ -402,7 +440,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 
         if (errors.hasErrors()) {
             saveErrors(errors);
-            return findForward(FWD_VALIDATION_ERROR, form);
+//            return findForward(FWD_VALIDATION_ERROR, form);
         }
 
         createResultsFromItems(actionDataSet, supportReferrals, alwaysValidate, useTechnicianName, statusRuleSet);
@@ -429,7 +467,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 
             errors.reject(errorMsg, errorMsg);
             saveErrors(errors);
-            return findForward(FWD_FAIL_INSERT, form);
+//            return findForward(FWD_FAIL_INSERT, form);
 
         }
 
@@ -445,12 +483,14 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 
         redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
         if (GenericValidator.isBlankOrNull(form.getType())) {
-            return findForward(FWD_SUCCESS_INSERT, form);
+//            return findForward(FWD_SUCCESS_INSERT, form);
         } else {
             Map<String, String> params = new HashMap<>();
             params.put("type", form.getType());
-            return getForwardWithParameters(findForward(FWD_SUCCESS_INSERT, form), params);
+//            return getForwardWithParameters(findForward(FWD_SUCCESS_INSERT, form), params);
         }
+        // added return
+        return(form);
     }
 
     private void createAnalysisOnlyUpdates(ResultsUpdateDataSet actionDataSet) {
