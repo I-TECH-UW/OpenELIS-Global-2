@@ -5,18 +5,16 @@ import ResultSearch from './resultPage/ResultSearch';
 import ResultRangeSearch from './resultPage/ResultRangeSearch';
 import CodeTest from './resultPage/CodeTest';
 
-import styles from "./resultPage/sidenav.module.css"
 import { NavLink } from "react-router-dom";
-import { 
+import {
     Microscope,
     IbmWatsonDiscovery,
     IbmWatsonNaturalLanguageUnderstanding,
     WatsonHealthCrossReference,
     Query
 }
-from '@carbon/icons-react';
+    from '@carbon/icons-react';
 
-import { navData } from "./resultPage/navData";
 import { useState } from "react";
 
 import { BrowserRouter as Router, Route, Switch, useMatch } from "react-router-dom";

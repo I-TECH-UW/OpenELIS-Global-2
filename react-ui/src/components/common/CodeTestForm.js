@@ -1,6 +1,7 @@
 import React from 'react'
 import { FormattedMessage, injectIntl } from 'react-intl'
-import "../Style.css";
+import '../Style.css'
+
 import { getFromOpenElisServer } from '../utils/Utils';
 import { Add, Subtract } from '@carbon/react/icons';
 import ContainedList from '@carbon/react/lib/components/ContainedList';
@@ -30,7 +31,6 @@ import {
     Header,
     Select,
     SelectItem,
-
 } from '@carbon/react';
 
 import DataTable
@@ -49,60 +49,61 @@ const columns = [
             return renderCell(row, index, column, id);
         },
         sortable: true,
-        grow: true,
-        maxWidth: "20",
+        width: "19rem"
     },
     {
         name: 'Test Date',
         selector: row => row.testDate,
         sortable: true,
-        maxWidth: "20",
+        width: "7rem"
     },
     {
         name: 'Methods',
         cell: (row, index, column, id) => {
             return renderCell(row, index, column, id);
         },
-        minWidth: "20",
-        maxWidth: "20",
-        flex_grow: true,
+        width: "12rem",
         sortable: true,
     },
     {
-        name: 'Result from analyzer',
+        name: "Analyzer Result",
         selector: row => row.analysisMethod,
         sortable: true,
-        maxWidth: "6",
+        width: "7rem",
     },
     {
         name: 'Test Name',
         selector: row => row.testName,
         sortable: true,
-        maxWidth: "20",
+        width: "10rem",
     },
     {
         name: 'Normal Range',
         selector: row => row.normalRange,
         sortable: true,
-        maxWidth: "20",
+        width: "7rem",
     },
     {
         name: 'Accept as is',
-        selector: row => row.forceTechApproval,
-        sortable: true,
-        maxWidth: "6",
+        cell: (row, index, column, id, resultForm) => {
+            return renderCell(row, index, column, id);
+        },
+        width: "7rem",
+
     },
     {
         name: 'Shadow Result',
         cell: (row, index, column, id, resultForm) => {
             return renderCell(row, index, column, id);
         },
+        width: "10rem",
     },
     {
         name: 'Current Result',
         cell: (row, index, column, id, resultForm) => {
             return renderCell(row, index, column, id);
         },
+        width: "10rem",
     },
 ];
 
@@ -110,9 +111,32 @@ function renderCell(row, index, column, id) {
     switch (column.name) {
         case "Sample Info":
             // return <input id={"results_" + id} type="text" size="6"></input>  
-            return <TextArea value={row.sequenceAccessionNumber + " " + row.patientName + " " + row.patientInfo}
-                disabled={true} size="md" type="text" labelText="" >
-            </TextArea>
+            return (
+                <>
+                    <div className='sampleInfo'>
+                        <TextArea value={row.sequenceAccessionNumber + "\n" + row.patientName + "\n" + row.patientInfo}
+                            disabled={true} type="text" labelText="" rows={3} >
+                        </TextArea>
+                    </div>
+                </>
+            );
+
+        case "Accept as is":
+            return (
+                <>
+                    <Field name="acceptAsIs" >
+                        {({ field }) =>
+                            <Checkbox
+                                id={field.name}
+                                name={field.name}
+                                labelText=""
+                            // defaultChecked={this.state.acceptAsIs}
+                            // onChange={this.handleAcceptAsIs}
+                            />
+                        }
+                    </Field>
+                </>
+            );
 
         case "Shadow Result":
             switch (row.resultType) {
@@ -122,7 +146,6 @@ function renderCell(row, index, column, id) {
                         name={"testResult[" + id + "].resultValue"}
                         noLabel={true} >
                         {/* onChange={(e) => markUpdated(e, param.rowId, false, '')}{...updateShadowResult(e, this, param.rowId)} */}
-
                         <SelectItem
                             text=""
                             value=""
@@ -155,7 +178,6 @@ function renderCell(row, index, column, id) {
                 name={"methods"}
                 noLabel={true} >
                 {/* onChange={(e) => markUpdated(e, param.rowId, false, '')}{...updateShadowResult(e, this, param.rowId)} */}
-
                 <SelectItem
                     text=""
                     value=""
@@ -173,76 +195,91 @@ function renderCell(row, index, column, id) {
 }
 
 const ExpandedComponent = ({ data }) => <pre>
-    <Select
-        id={"referralReason" + data.id}
-        name={"referralReason" + data.id}
-        // noLabel={true} 
-        labelText={"Referral Reason"}>
-        {/* onChange={(e) => markUpdated(e, param.rowId, false, '')}{...updateShadowResult(e, this, param.rowId)} */}
+    <div className='expandedComponent'>
+        <Grid >
+            <Column lg={3}>
+                <div >
+                    <Select className='referralReason'
+                        id={"referralReason" + data.id}
+                        name={"referralReason" + data.id}
+                        // noLabel={true} 
+                        labelText={"Referral Reason"}>
+                        {/* onChange={(e) => markUpdated(e, param.rowId, false, '')}{...updateShadowResult(e, this, param.rowId)} */}
+                        <SelectItem
+                            text=""
+                            value=""
+                        />
+                        {data.referralReasons.map((method, method_index) => (
+                            <SelectItem
+                                text={method.value}
+                                value={method.id}
+                                key={method_index}
+                            />
+                        ))}
+                    </Select>
+                </div>
+            </Column>
+            <Column lg={3}>
+                <div className='institute'>
+                    <Select
+                        id={"institute" + data.id}
+                        name={"institute" + data.id}
+                        // noLabel={true} 
+                        labelText={"Institute"}>
+                        {/* onChange={(e) => markUpdated(e, param.rowId, false, '')}{...updateShadowResult(e, this, param.rowId)} */}
 
-        <SelectItem
-            text=""
-            value=""
-        />
-        {data.referralReasons.map((method, method_index) => (
-            <SelectItem
-                text={method.value}
-                value={method.id}
-                key={method_index}
-            />
-        ))}
-    </Select><Select
-        id={"institute" + data.id}
-        name={"institute" + data.id}
-        // noLabel={true} 
-        labelText={"Institute"}>
-        {/* onChange={(e) => markUpdated(e, param.rowId, false, '')}{...updateShadowResult(e, this, param.rowId)} */}
+                        <SelectItem
+                            text=""
+                            value=""
+                        />
+                        {data.referralOrganizations.map((method, method_index) => (
+                            <SelectItem
+                                text={method.value}
+                                value={method.id}
+                                key={method_index}
+                            />
+                        ))}
+                    </Select>
+                </div>
+            </Column>
+            <Column lg={3}>
+                <div className='testToPerform'>
+                    <Select
+                        id={"testToPerform" + data.id}
+                        name={"testToPerform" + data.id}
+                        // noLabel={true} 
+                        labelText={"Test to Perform"}>
+                        {/* onChange={(e) => markUpdated(e, param.rowId, false, '')}{...updateShadowResult(e, this, param.rowId)} */}
 
-        <SelectItem
-            text=""
-            value=""
-        />
-        {data.referralOrganizations.map((method, method_index) => (
-            <SelectItem
-                text={method.value}
-                value={method.id}
-                key={method_index}
-            />
-        ))}
-    </Select>
-    {/* <Select
-        id={"testToPerform" + data.id}
-        name={"testToPerform" + data.id}
-        // noLabel={true} 
-        labelText={"Test to Perform"}>
-        {/* onChange={(e) => markUpdated(e, param.rowId, false, '')}{...updateShadowResult(e, this, param.rowId)} 
+                        <SelectItem
+                            text={data.testName}
+                            value={data.id}
+                        />
+                    </Select>
+                </div>
+            </Column>
+            <Column lg={3}>
+                <DatePicker datePickerType="single"
+                    id={"sentDate_" + data.id}
+                    name={"sentDate_" + data.id} >
+                    <DatePickerInput
+                        placeholder="mm/dd/yyyy"
+                        labelText="Sent Date"
+                        id="date-picker-single"
+                        size="md"
+                    />
+                </DatePicker>
+            </Column>
 
-        <SelectItem
-            text=""
-            value=""
-        />
-        {data.dictionaryResults.map((method, method_index) => (
-            <SelectItem
-                text={method.value}
-                value={method.id}
-                key={method_index}
-            />
-        ))}
-    </Select> */}
-    Test to Perform:
-    <input
-        id={"sentDate_" + data.id}
-        name={"sentDate_" + data.id} 
-        value={data.testName} >
-    </input>
-    Sent Date:
-    <input
-        id={"sentDate_" + data.id}
-        name={"sentDate_" + data.id} >
-    </input>
+        </Grid>
+    </div >
+
+
+
+
 
     {/* {JSON.stringify(data, null, 2)}  */}
-</pre>;
+</pre >;
 
 
 
@@ -257,11 +294,16 @@ class CodeTestForm extends React.Component {
             page: 1,
             pageSize: 100,
             doRange: true,
+            acceptAsIs: true,
         }
     }
 
     handleDoRangeChange = () => {
         this.state.doRange = !this.state.doRange;
+    }
+
+    handleAcceptAsIsChange = () => {
+        this.state.acceptAsIs = !this.state.acceptAsIs;
     }
 
     handleSubmit = (values) => {
@@ -350,7 +392,7 @@ class CodeTestForm extends React.Component {
                 return <input id={"results_" + param.rowId} name="testResult[0].resultValue" />
             // <input id={"results_" + param.rowId} type="text" size="6"></input>
 
-            //         <input id="results_0" name="testResult[0].resultValue" class="resultValue" 
+            //         <input id="results_0" name="testResult[0].resultValue" class="resultValue"
             // style="background: rgb(255, 255, 255);" onchange="validateResults( this, 0, 7.0, 40.0, 7.0, 350.0, 0, 'XXXX' );
             // 		   			 markUpdated(0);
             // 		   			 updateShadowResult(this, 0);" type="text" value="" size="6" title=""></input>
@@ -363,19 +405,40 @@ class CodeTestForm extends React.Component {
     myComponent() {
         return (
             <>
-                <DataTable
-                    data={this.state.resultForm.testResult}
-                    columns={columns} isSortable
-                    expandableRows
-                    expandableRowsComponent={ExpandedComponent}>
+                <Formik
+                    initialValues={SearchResultFormValues}
+                    //validationSchema={}
+                    onSubmit={this.handleSubmit}
+                    onChange
+                >
+                    {({ values,
+                        errors,
+                        touched,
+                        handleChange,
+                        handleBlur,
+                        handleSubmit }) => (
 
-                </DataTable><Pagination onChange={this.handlePageChange} page={this.state.page} pageSize={this.state.pageSize}
-                    pageSizes={[100]} totalItems={this.state.resultForm.testResult.length}></Pagination>
+                        <Form
+                            onSubmit={handleSubmit}
+                            onChange={handleChange}
+                            onBlur={handleBlur}>
+
+                            <DataTable
+                                data={this.state.resultForm.testResult}
+                                columns={columns} isSortable
+                                expandableRows
+                                expandableRowsComponent={ExpandedComponent}>
+                            </DataTable><Pagination onChange={this.handlePageChange} page={this.state.page} pageSize={this.state.pageSize}
+                                pageSizes={[100]} totalItems={this.state.resultForm.testResult.length}></Pagination>
+
+                            <Button type="save" id="save">
+                                <FormattedMessage id="label.button.save" />
+                            </Button>
+                        </Form>)}
+                </Formik>
             </>
         );
     };
-
-
 
     render() {
         const { page, pageSize } = this.state;
@@ -423,7 +486,12 @@ class CodeTestForm extends React.Component {
                                 <Field name="doRange"
                                 >
                                     {({ field }) =>
-                                        <Checkbox defaultChecked={this.state.doRange} onChange={this.handleDoRangeChange} name={field.name} labelText="Do Range" id={field.name} />
+                                        <Checkbox
+                                            defaultChecked={this.state.doRange}
+                                            onChange={this.handleDoRangeChange}
+                                            name={field.name}
+                                            labelText="Do Range"
+                                            id={field.name} />
                                     }
                                 </Field>
                                 <Button type="submit" id="submit">

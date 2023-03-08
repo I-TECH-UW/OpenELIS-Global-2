@@ -40,30 +40,6 @@ class OEHeader extends React.Component {
     };
   }
 
-  outsideClickListener = (event) => {
-    if (
-      !this.userSwitchRef.current.contains(event.target) &&
-      !this.headerPanelRef.current.contains(event.target)
-    ) {
-      this.dismissPanel();
-      window.removeEventListener("click", this.outsideClickListener);
-    }
-  };
-
-  componentWillUnmount() {
-    window.removeEventListener("click", this.outsideClickListener);
-  }
-
-  clickPanelSwitch = () => {
-    const userSwitchCollapsed = this.state.switchCollapsed;
-    this.setState((state) => ({
-      switchCollapsed: !userSwitchCollapsed,
-    }));
-    if (userSwitchCollapsed) {
-      window.addEventListener("click", this.outsideClickListener);
-    }
-  };
-
   panelSwitchLabel = () => {
     return this.props.isLoggedIn() ? "User" : "Lang";
   };

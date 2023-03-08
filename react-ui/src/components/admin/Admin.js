@@ -11,9 +11,6 @@ import {
     SideNavMenuItem
 } from '@carbon/react';
 
-import OutsideClick from "./outsideClick";
-import { useRef } from "react";
-
 class Admin extends React.Component {
 
     constructor(props) {
