@@ -9,5 +9,9 @@
         url="${datasource.url}"
         username="${datasource.username}"
         password="${datasource.password}" />
+        
+        <CookieProcessor 
+        	className="org.apache.tomcat.util.http.Rfc6265CookieProcessor" 
+        	sameSiteCookies="strict" />
 </Context>
 
