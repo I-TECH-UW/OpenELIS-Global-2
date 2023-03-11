@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react'
+import React, {useContext, useEffect, useRef, useState} from 'react'
 import {Add, Subtract} from '@carbon/react/icons';
 import {
     Checkbox,
@@ -15,7 +15,8 @@ import {
 import {getFromOpenElisServer} from '../utils/Utils';
 import {priorities} from "../data/orderOptions";
 import {orderValues} from "../formModel/innitialValues/CreateOrderFormValues";
-import {NotificationKinds, useShowNotification} from "../common/useShowNotification";
+import {NotificationKinds} from "../common/CustomNotification";
+import {NotificationContext} from "../layout/Layout";
 
 
 const AddOrderTopForm = () => {
@@ -28,7 +29,7 @@ const AddOrderTopForm = () => {
     const [paymentOptions, setPaymentOptions] = useState([]);
     const [samplingPerformed, setSamplingPerformed] = useState([]);
     const [labNo, setLabNo] = useState("");
-    const [notificationVisible, setNotificationVisible, setNotificationBody, AlertDialog] = useShowNotification();
+    const { setNotificationVisible,setNotificationBody } = useContext(NotificationContext);
 
     const handleDatePickerChange = (date, value) => {
         setFormValues({
@@ -89,8 +90,8 @@ const AddOrderTopForm = () => {
 
     function fetchPhoneNoValidation(res) {
         if (res.status === false) {
-            setNotificationVisible(true);
             setNotificationBody({title: "Notification Message", message: res.body, kind: NotificationKinds.error});
+            setNotificationVisible(true);
         }
     }
 
@@ -115,7 +116,6 @@ const AddOrderTopForm = () => {
 
     return (
         <>
-            {notificationVisible === true ? <AlertDialog/> : ""}
             <div className="inlineDiv">
                 <Checkbox labelText="Remember site and requester" id="rememberSiteAndRequester"/>
             </div>

@@ -1,11 +1,14 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useRef, useState} from 'react'
 import {Button, Column, Grid, Row} from '@carbon/react';
 import SampleTypes from './SampleTypes';
+import {getFromOpenElisServer} from "../utils/Utils";
 
 export let sampleObj = {index: 0};
 
 const AddSample = () => {
+    const componentMounted = useRef(true);
     const [sampleElementsList, setSampleElementsList] = useState([]);
+    const [rejectSampleReasons, setRejectSampleReasons] = useState([]);
 
     const handleAddNewSample = () => {
         setSampleElementsList([...sampleElementsList, sampleObj = {index: sampleObj.index + 1}]);
@@ -16,18 +19,27 @@ const AddSample = () => {
         setSampleElementsList(newList);
     }
 
-    useEffect(() => {
+    const fetchRejectSampleReasons=(res) => {
+        if (componentMounted.current) {
+            setRejectSampleReasons(res);
+        }
+    }
 
-    }, [sampleElementsList]);
+    useEffect(() => {
+        setSampleElementsList([...sampleElementsList, sampleObj = {index: sampleObj.index = 1}]);
+        getFromOpenElisServer("/rest/test-rejection-reasons", fetchRejectSampleReasons);
+        return () => {
+            componentMounted.current = false
+        }
+    }, []);
 
     return (<>
         <Grid fullWidth={true}>
             <Column lg={16}>
                 {
                     sampleElementsList.map((element, index) => {
-                        return (
-                            <SampleTypes index={index} key={index} removeSample={removeSample}/>
-                        );
+                        return (<SampleTypes index={index} key={index} rejectSampleReasons={rejectSampleReasons}
+                                             removeSample={removeSample}/>)
                     })
                 }
                 <Row>

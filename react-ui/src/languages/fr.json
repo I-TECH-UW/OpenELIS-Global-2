@@ -19,5 +19,6 @@
     "breadcrumb.home" : "Domicile",
     "admin.legacy" :"Précédent Admin",
     "label.page.patientHistory": "Antécédents du patient",
-    "order.label.add" : "Ajouter Ordonnance"
+    "order.label.add" : "Ajouter Ordonnance",
+    "reject.order.sample.notification": "Vous rejetez un échantillon.Cet échantillon sera rejeté et n’apparaîtra pas dans les plans de travail une fois enregistré,aucun résultat ne peut être entré pour cette commande."
 }

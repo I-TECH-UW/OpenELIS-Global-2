@@ -313,11 +313,3 @@ button {
   --cds-text-secondary: black;
     margin-bottom: 20px;
 }
-
-.cds--data-table-content{
-  width: 100%;
-  overflow: hidden !important;
-}
-.sampleTypesTable {
-  width: 1195px !important;
-}

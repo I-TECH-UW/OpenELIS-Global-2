@@ -19,5 +19,6 @@
     "breadcrumb.home" : "Home",
     "admin.legacy" :"Legacy Admin",
     "label.page.patientHistory" : "Patient History",
-    "order.label.add" : "Add Order"
+    "order.label.add" : "Add Order",
+    "reject.order.sample.notification": "You are rejecting a sample. This sample will be rejected and not appear in workplans once saved,no results can be entered for this order."
 }

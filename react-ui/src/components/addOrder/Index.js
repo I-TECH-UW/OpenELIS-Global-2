@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, {useContext, useState} from 'react'
 import { FormattedMessage } from 'react-intl';
 
 import { Grid, Column, Section, Heading } from '@carbon/react';
@@ -6,9 +6,12 @@ import CreatePatientForm from '../common/CreatePatientForm';
 
 import SearchPatientForm from '../common/SearchPatientForm';
 import CreateOrder from './CreateOrder';
+import {AlertDialog} from "../common/CustomNotification";
+import {NotificationContext} from "../layout/Layout";
 
 const Index = () => {
 
+    const { notificationVisible } = useContext(NotificationContext);
     const [selectedPatient, setSelectedPatient] = useState({
         id: "",
         healthRegion: []
@@ -20,6 +23,7 @@ const Index = () => {
 
     return (
         <div className='pageContent'>
+            {notificationVisible === true ? <AlertDialog/> : ""}
             <Grid fullWidth={true}>
                 <Column lg={16}>
                     <Section>
