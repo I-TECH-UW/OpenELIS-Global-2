@@ -15,7 +15,7 @@ services:
       - certs-vol:/etc/ssl/certs/
   database:
     container_name: openelisglobal-database
-    image: postgres:14.4
+    image: postgres:9.5
     ports:
       - "15432:5432"
     restart: always
@@ -34,33 +34,33 @@ services:
       interval: 10s
       retries: 10
 
-      #   oe.openelis.org:
-      #       build:
-      #         context: .
-      #       container_name: openelisglobal-webapp
-      #       image: openelisglobal-webapp.build
-      #       depends_on:
-      #           - database
-      #       ports:
-      #           - "8080:8080"
-      #           - "8443:8443"
-      #       restart: always
-      #       networks:
-      #         default:
-      #             ipv4_address: 172.20.1.121
+  oe.openelis.org:
+    build:
+      context: .
+    container_name: openelisglobal-webapp
+    image: openelisglobal-webapp.build
+    depends_on:
+      - database
+    ports:
+      - "8080:8080"
+      - "8443:8443"
+    restart: always
+    networks:
+      default:
+        ipv4_address: 172.20.1.121
 
-      #       environment:
-      #           - DEFAULT_PW=adminADMIN!
-      #           - TZ=Africa/Nairobi
-      #             # context.xml doesn't seem to be able to pick up environment variables directly, so we are passing them in as CATALINA_OPTS
-      #           - CATALINA_OPTS= -Ddatasource.url=jdbc:postgresql://database:5432/clinlims -Ddatasource.username=clinlims
-      #       volumes:
-      #           -  cert-volume:/etc/openelis-global
-      #           - ./volume/plugins/:/var/lib/openelis-global/plugins
-      #           - ./volume/tomcat/oe_server.xml:/usr/local/tomcat/conf/server.xml
-      #       secrets:
-      #           - source: datasource.password
-      #           - source: common.properties
+    environment:
+      - DEFAULT_PW=adminADMIN!
+      - TZ=Africa/Nairobi
+      # context.xml doesn't seem to be able to pick up environment variables directly, so we are passing them in as CATALINA_OPTS
+      - CATALINA_OPTS= -Ddatasource.url=jdbc:postgresql://database:5432/clinlims -Ddatasource.username=clinlims
+    volumes:
+      -  cert-volume:/etc/openelis-global
+      - ./volume/plugins/:/var/lib/openelis-global/plugins
+      - ./volume/tomcat/oe_server.xml:/usr/local/tomcat/conf/server.xml
+    secrets:
+      - source: datasource.password
+      - source: common.properties
 
   fhir.openelis.org:
     container_name: external-fhir-api
@@ -86,14 +86,13 @@ services:
       - ./volume/tomcat/hapi_server.xml:/usr/local/tomcat/conf/server.xml
     secrets:
       - source: common.properties
-
   frontend.openelis.org:
     image: react-ui
     build:
       context: ./react-ui
       dockerfile: ./Dockerfile
-    #       ports:
-    #         - 3000
+    ports:
+      - 3000:3000
     networks:
       - default
     volumes:
@@ -109,13 +108,12 @@ services:
       - 80:80
       - 443:443
     volumes:
+      - certs-vol:/etc/nginx/certs/
+      - keys-vol:/etc/nginx/keys/
       - ./volume/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - /home/greg/workspace10/OpenELIS/dev/https/greg.dev.openelis.org.crt.pem:/etc/nginx/serverCerts/cert.crt
-      - /home/greg/workspace10/OpenELIS/dev/https/greg.dev.openelis.org.key.pem:/etc/nginx/serverCerts/cert.key
-      - /home/greg/workspace10/OpenELIS/dev/https/passwd:/etc/nginx/private/key_pass
-    extra_hosts:
-      - host.docker.internal:172.20.1.1
     restart: unless-stopped
+    depends_on:
+      - certs
 
 secrets:
   datasource.password:
@@ -133,3 +131,5 @@ networks:
 volumes:
   db-data:
   cert-volume:
+  certs-vol:
+  keys-vol:
