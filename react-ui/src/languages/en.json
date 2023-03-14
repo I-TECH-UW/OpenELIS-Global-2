@@ -4,6 +4,7 @@
     "label.button.changepassword" : "Change Password",
     "label.button.save": "Save",
     "label.button.search" : "Search",
+    "label.button.range" : "Range",
     "label.button.clear" : "Clear",
     "login.title": "Login",
     "login.subtitle": "Login",

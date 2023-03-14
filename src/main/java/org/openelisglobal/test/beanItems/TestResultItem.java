@@ -149,6 +149,9 @@ public class TestResultItem implements ResultItem, Serializable {
     @Pattern(regexp = ValidationHelper.ID_REGEX, groups = { LogbookResultsForm.LogbookResults.class })
     private String resultLimitId;
     private List<IdValuePair> dictionaryResults;
+    private List<IdValuePair> methods;
+    private List<IdValuePair> referralOrganizations;
+    private List<IdValuePair> referralReasons;
     private String remove = NO;
 
     @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { LogbookResultsForm.LogbookResults.class })
@@ -437,6 +440,22 @@ public class TestResultItem implements ResultItem, Serializable {
     public void setTestMethod(String testMethod) {
         this.testMethod = testMethod;
     }
+    
+    public List<IdValuePair> getReferralOrganizations() {
+        return referralOrganizations;
+    }
+
+    public void setReferralOrganizations(List<IdValuePair> referralOrganizations) {
+        this.referralOrganizations = referralOrganizations;
+    }
+    
+    public List<IdValuePair> getReferralReasons() {
+        return referralReasons;
+    }
+
+    public void setReferralReasons(List<IdValuePair> referralReasons) {
+        this.referralReasons = referralReasons;
+    }
 
     public String getRemove() {
         return remove;
@@ -574,6 +593,14 @@ public class TestResultItem implements ResultItem, Serializable {
 
     public List<IdValuePair> getDictionaryResults() {
         return dictionaryResults == null ? new ArrayList<>() : dictionaryResults;
+    }
+    
+    public void setMethods(List<IdValuePair> methods) {
+        this.methods = methods;
+    }
+
+    public List<IdValuePair> getMethods() {
+        return methods == null ? new ArrayList<>() : methods;
     }
 
     public String getResultLimitId() {
