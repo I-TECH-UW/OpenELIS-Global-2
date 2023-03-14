@@ -20,7 +20,7 @@ import "./index.scss";
 import PatientManagement from "./components/patient/PatientManagement";
 import PatientHistory from "./components/patient/PatientHistory";
 //import "./components/patient/resultsViewer/results-viewer.styles.scss"
-
+import AddOrder from "./components/addOrder/Index";
 
 let i18nConfig = {
   locale: navigator.language.split(/[-_]/)[0],
@@ -149,6 +149,16 @@ class App extends React.Component {
                   onAuth={this.onAuth}
                   logout={this.logout}
                   isLoggedIn={this.isLoggedIn}
+                />
+                <SecureRoute
+                    path="/AddOrder"
+                    exact
+                    component={() => <AddOrder />}
+                    role="Reception"
+                    config={this.state.config}
+                    onAuth={this.onAuth}
+                    logout={this.logout}
+                    isLoggedIn={this.isLoggedIn}
                 />
                 <SecureRoute
                   path="/PatientManagement"

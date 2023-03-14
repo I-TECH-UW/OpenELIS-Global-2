@@ -1,0 +1,22 @@
+export const orderValues = {
+    "rememberSiteAndRequester": "",
+    "orderNo": "",
+    "priority": "",
+    "requestDate": "",
+    "receivedDate": "",
+    "receptionTime": "",
+    "nextVisitDate": "",
+    "siteName": "",
+    "ward": "",
+    "program": "",
+    "requester": "",
+    "requesterLastName": "",
+    "requesterFirstName": "",
+    "requesterPhone": "",
+    "fax": "",
+    "email": "",
+    "patientPaymentStatus": "",
+    "URAPNumber": "",
+    "samplingPerformedForAnalysis": "",
+    
+};

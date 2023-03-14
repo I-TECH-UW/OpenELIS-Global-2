@@ -75,9 +75,11 @@ class OEHeader extends React.Component {
                 <>
                   <HeaderNavigation aria-label="nav">
                     <HeaderMenu aria-label="Order" menuLinkName="Order">
-                      <HeaderMenuItem href="#">Sub-link 1</HeaderMenuItem>
-                      <HeaderMenuItem href="#">Sub-link 2</HeaderMenuItem>
-                      <HeaderMenuItem href="#">Sub-link 3</HeaderMenuItem>
+                      <HeaderMenuItem href="/AddOrder">Add Order</HeaderMenuItem>
+                      <HeaderMenuItem href="#">Modify Order</HeaderMenuItem>
+                      <HeaderMenuItem href="#">Incoming Orders</HeaderMenuItem>
+                      <HeaderMenuItem href="#">Batch Order Entry</HeaderMenuItem>
+                      <HeaderMenuItem href="#">Barcode</HeaderMenuItem>
                     </HeaderMenu>
                     <HeaderMenu aria-label="Patient" menuLinkName="Patient">
                       <HeaderMenuItem href="/PatientManagement">Add/Edit Patient</HeaderMenuItem>
