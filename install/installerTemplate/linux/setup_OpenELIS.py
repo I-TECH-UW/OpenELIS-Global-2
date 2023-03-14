@@ -1480,6 +1480,10 @@ def load_docker_image():
     log("loading openelisglobal-frontend docker image", PRINT_TO_CONSOLE)
     cmd = 'sudo docker load < ' + INSTALLER_DOCKER_DIR + 'ReactFrontend_DockerImage.tar.gz'
     os.system(cmd)
+    
+    log("loading nginx-proxy docker image", PRINT_TO_CONSOLE)
+    cmd = 'sudo docker load < ' + INSTALLER_DOCKER_DIR + 'NGINX_DockerImage.tar.gz'
+    os.system(cmd)
 
     if DOCKER_DB:
         log("loading postgres docker image", PRINT_TO_CONSOLE)

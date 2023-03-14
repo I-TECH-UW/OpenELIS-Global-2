@@ -152,10 +152,9 @@ services:
 #astm            retries: 3
 #astm            start_period: 2m
 
-
     proxy.openelis.org:
         container_name: openelisglobal-proxy
-        image: nginx:1.15-alpine
+        image: nginx-proxy
         ports:
         - 80:80
         - 443:443
@@ -167,6 +166,12 @@ services:
         - /etc/openelis-global/nginx.cert.pem:/etc/nginx/serverCerts/cert.crt
         - /etc/openelis-global/nginx.key.pem:/etc/nginx/serverCerts/cert.key
         restart: unless-stopped  
+        healthcheck:
+            test: ["CMD", "/healthcheck.sh"]
+            timeout: 10s
+            interval: 30s
+            retries: 3
+            start_period: 2m
         
     frontend.openelis.org:
        container_name: openelisglobal-frontend
@@ -181,6 +186,12 @@ services:
             options:
               max-size: "20m"
               max-file: "50"
+       healthcheck:
+            test: ["CMD", "/healthcheck.sh"]
+            timeout: 10s
+            interval: 30s
+            retries: 3
+            start_period: 2m
         
     autoheal:
         container_name: [% autoheal_name %]

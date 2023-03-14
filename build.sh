@@ -93,6 +93,8 @@ echo "creating docker images"
 bash ${INSTALL_DIR}/buildProject.sh -dl ${PROJECT_DIR}/fhir -t hapi-fhir-jpaserver
 #create the frontend docker image 
 bash ${INSTALL_DIR}/buildProject.sh -dl ${PROJECT_DIR}/react-ui -t openelisglobal-frontend
+#create the frontend docker image 
+bash ${INSTALL_DIR}/buildProject.sh -dl ${PROJECT_DIR}/nginx-proxy -t nginx-proxy
 #create the docker image 
 bash ${INSTALL_DIR}/buildProject.sh -dl ${PROJECT_DIR} -t openelisglobal
 
@@ -144,8 +146,7 @@ then
 	docker pull willfarrell/autoheal:1.2.0
 	docker save willfarrell/autoheal:1.2.0 | gzip > AutoHeal_DockerImage.tar.gz
 	echo "saving NGINX docker image"
-	docker pull nginx:1.15-alpine
-	docker save nginx:1.15-alpine | gzip > NGINX_DockerImage.tar.gz
+	docker save nginx-proxy | gzip > NGINX_DockerImage.tar.gz
 	
 	mkdir ${STAGING_DIR}
 	createLinuxInstaller OpenELIS-Global OffSiteBackupLinux.pl 
