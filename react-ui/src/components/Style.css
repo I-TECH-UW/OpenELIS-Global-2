@@ -178,23 +178,23 @@ button {
 }
 
 .sampleInfo {
-  margin-left: 0%; 
+  margin-left: 0%;
   margin-right: 0%;
 }
 
 .expandedComponent {
   /* margin-right: 50%; */
-  margin-left: 5%; 
+  margin-left: 5%;
   width: 100%;
 }
 
 /* .referralReason {
-  margin-left: 5%; 
-  margin-right: 5%; 
+  margin-left: 5%;
+  margin-right: 5%;
   width: 25%;
 }
 .institute {
-  margin-left: 5%; 
+  margin-left: 5%;
   margin-right: 5%;
   width: 15rem;
 } */
@@ -296,4 +296,20 @@ button {
 .errorMessage::before {
   content: " ";
   font-size: 10px;
+}
+
+.requiredFieldIndicator{
+  color: red;
+}
+.toastDisplay{
+  position: fixed; /*or fixed*/
+  right: 0px;
+  z-index: 10;
+}
+
+.selectSampleType {
+  --cds-text-primary: black;
+  width: 200px;
+  --cds-text-secondary: black;
+    margin-bottom: 20px;
 }
