@@ -1,8 +1,8 @@
 # build env
-FROM node:19.2-alpine as build
+FROM node:18-alpine as build
 WORKDIR /app
 COPY package*.json ./
-RUN npm ci --force
+RUN npm ci 
 COPY . ./
 RUN npm run build
 

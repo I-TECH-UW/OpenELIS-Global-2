@@ -1,38 +1,25 @@
-import React from 'react'
-import { FormattedMessage, injectIntl } from 'react-intl'
+import React from 'react';
+import { FormattedMessage, injectIntl } from 'react-intl';
 import "../Style.css";
 import { getFromOpenElisServer } from '../utils/Utils';
-import { Add, Subtract } from '@carbon/react/icons';
-import ContainedList from '@carbon/react/lib/components/ContainedList';
-import ContainedListItem from '@carbon/react/lib/components/ContainedList';
-import OverflowMenu from '@carbon/react/lib/components/ContainedList';
-import OverflowMenuItem from '@carbon/react/lib/components/ContainedList';
 import {
-    // usePrefix,
     Heading,
-    Form,
+    Form,  
     FormLabel,
     TextInput,
     Checkbox,
     Button,
-    Grid,
-    Column,
-    DatePicker,
-    DatePickerInput,
-    RadioButton,
-    RadioButtonGroup,
     Stack,
     DataTable, TableContainer, Table, TableHead, TableRow, TableHeader, TableBody, TableCell,
     Section,
     Pagination,
-    Header,
     Select,
     SelectItem,
 
 } from '@carbon/react';
 
 import { resultSearchHeaderData } from '../data/ResultsTableHeaders';
-import { Formik, Field, FieldArray, ErrorMessage } from "formik";
+import { Formik, Field } from "formik";
 import SearchResultFormValues from '../formModel/innitialValues/SearchResultFormValues';
 
 class SearchResultRangeForm extends React.Component {

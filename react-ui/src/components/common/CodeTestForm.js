@@ -3,13 +3,7 @@ import { FormattedMessage, injectIntl } from 'react-intl'
 import '../Style.css'
 
 import { getFromOpenElisServer } from '../utils/Utils';
-import { Add, Subtract } from '@carbon/react/icons';
-import ContainedList from '@carbon/react/lib/components/ContainedList';
-import ContainedListItem from '@carbon/react/lib/components/ContainedList';
-import OverflowMenu from '@carbon/react/lib/components/ContainedList';
-import OverflowMenuItem from '@carbon/react/lib/components/ContainedList';
 import {
-    // usePrefix,
     Heading,
     Form,
     FormLabel,
@@ -21,26 +15,15 @@ import {
     Column,
     DatePicker,
     DatePickerInput,
-    RadioButton,
-    RadioButtonGroup,
     Stack,
-    // DataTable, 
-    TableContainer, Table, TableHead, TableRow, TableHeader, TableBody, TableCell,
     Section,
     Pagination,
-    Header,
     Select,
     SelectItem,
 } from '@carbon/react';
-
-import DataTable
-    from 'react-data-table-component';
-
-// import { resultSearchHeaderData } from '../data/ResultsTableHeaders';
-// import { columns } from '../data/TestTableHeaders';
-import { Formik, Field, FieldArray, ErrorMessage } from "formik";
+import DataTable from 'react-data-table-component';
+import { Formik, Field } from "formik";
 import SearchResultFormValues from '../formModel/innitialValues/SearchResultFormValues';
-import { faDatabase } from '@fortawesome/free-solid-svg-icons';
 
 const columns = [
     {

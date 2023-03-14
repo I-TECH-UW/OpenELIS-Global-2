@@ -3,17 +3,14 @@ import {
   BrowserRouter as Router,
   Route,
   Switch,
-  Redirectx,
 } from "react-router-dom";
 import { IntlProvider } from "react-intl";
 import Layout from "./components/layout/Layout";
 import Home from "./components/Home";
 import Login from "./components/Login";
 import { Admin, Result } from "./components";
-import {
-  getFromOpenElisServer,
-  postToOpenElisServer,
-} from "./components/utils/Utils";
+
+
 import "./App.css";
 import messages_en from "./languages/en.json";
 import messages_fr from "./languages/fr.json";

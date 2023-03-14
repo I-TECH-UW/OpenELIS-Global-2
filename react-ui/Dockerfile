@@ -1,5 +1,5 @@
 # pull official base image
-FROM node:19.2-alpine
+FROM node:18-alpine
 
 RUN apk update apk upgrade apk add bash
 
@@ -12,7 +12,7 @@ ENV PATH /app/node_modules/.bin:$PATH
 # install app dependencies
 COPY package.json ./
 COPY package-lock.json ./
-RUN npm install --force
+RUN npm install 
 RUN npm install react-scripts@5.0.1 -g
 
 # add app

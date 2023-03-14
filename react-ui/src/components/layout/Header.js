@@ -1,20 +1,14 @@
 import React from "react";
-import { FormattedMessage, injectIntl } from "react-intl";
+import { injectIntl } from "react-intl";
 import { withRouter } from "react-router-dom";
 import "../Style.css";
-import { faLanguage, faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Button, Select, SelectItem } from "@carbon/react";
+import { Select, SelectItem } from "@carbon/react";
 import {
   Search,
   Notification,
-  Switcher,
-  User,
   Language,
   UserAvatarFilledAlt,
-  Fade,
-  Menu,
-  Logout,
+  Logout
 } from "@carbon/icons-react";
 
 import {
@@ -24,10 +18,8 @@ import {
   HeaderGlobalBar,
   HeaderNavigation,
   HeaderMenu,
-  HeaderMenuButton,
   HeaderMenuItem,
   Theme,
-  Content,
   HeaderPanel,
 } from "@carbon/react";
 
@@ -166,11 +158,7 @@ class OEHeader extends React.Component {
                         className="userDetails clickableUserDetails"
                         onClick={this.props.logout}
                       >
-                        <FontAwesomeIcon
-                          id="sign-out"
-                          icon={faSignOutAlt}
-                          size="1x"
-                        />
+                        <Logout id="sign-out" />
                         Logout
                       </li>
                     </>

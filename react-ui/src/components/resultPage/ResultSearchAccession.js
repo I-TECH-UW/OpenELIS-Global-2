@@ -1,10 +1,7 @@
 import { useState, useEffect, useRef } from "react";
-import { Form, Stack, TextInput, Select, SelectItem, Button, InlineLoading, IconButton, Search, Toggle, Switch } from '@carbon/react';
-import { Add, Subtract } from '@carbon/react/icons';
-import Autocomplete from "../inputComponents/AutoComplete";
+import { Form, Stack, Button } from '@carbon/react';
 import ResultFormValues from "../formModel/result/ResultFormValues";
-import { getFromOpenElisServer, postToOpenElisServer } from "../utils/Utils";
-import config from '../../config.json';
+import { getFromOpenElisServer } from "../utils/Utils";
 
 
 

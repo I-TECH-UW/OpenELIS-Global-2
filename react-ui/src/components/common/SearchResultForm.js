@@ -1,145 +1,123 @@
 import React from 'react'
 import { FormattedMessage, injectIntl } from 'react-intl'
-import "../Style.css";
-import { getFromOpenElisServer } from '../utils/Utils';
-import { Add, Subtract } from '@carbon/react/icons';
-import ContainedList from '@carbon/react/lib/components/ContainedList';
-import ContainedListItem from '@carbon/react/lib/components/ContainedList';
-import OverflowMenu from '@carbon/react/lib/components/ContainedList';
-import OverflowMenuItem from '@carbon/react/lib/components/ContainedList';
+import '../Style.css'
+import { getFromOpenElisServer } from '../utils/Utils'
 import {
-    // usePrefix,
-    Heading,
-    Form,
-    FormLabel,
-    TextInput,
-    Checkbox,
-    Button,
-    Grid,
-    Column,
-    DatePicker,
-    DatePickerInput,
-    RadioButton,
-    RadioButtonGroup,
-    Stack,
-    DataTable, TableContainer, Table, TableHead, TableRow, TableHeader, TableBody, TableCell,
-    Section,
-    Pagination,
-    Header
-
-} from '@carbon/react';
-
-import { resultSearchHeaderData } from '../data/ResultsTableHeaders';
-import { labHeaderData } from '../data/LabTableHeaders';
-import { Formik, Field, FieldArray, ErrorMessage } from "formik";
-import SearchResultFormValues from '../formModel/innitialValues/SearchResultFormValues';
-
+  Heading,
+  Form,
+  FormLabel,
+  TextInput,
+  Checkbox,
+  Button,
+  Stack,
+  DataTable, TableContainer, Table, TableHead, TableRow, TableHeader, TableBody, TableCell,
+  Section,
+  Pagination
+} from '@carbon/react'
+import { resultSearchHeaderData } from '../data/ResultsTableHeaders'
+import { Formik, Field } from 'formik'
+import SearchResultFormValues from '../formModel/innitialValues/SearchResultFormValues'
 
 class SearchResultForm extends React.Component {
-
-    constructor(props) {
-        super(props)
-        this.state = {
-            dob: "",
-            resultForm: { testResult: [] },
-            tableTitle: "",
-            page: 1,
-            pageSize: 10,
-            doRange: true,
-        }
+  constructor (props) {
+    super(props)
+    this.state = {
+      dob: '',
+      resultForm: { testResult: [] },
+      tableTitle: '',
+      page: 1,
+      pageSize: 10,
+      doRange: true
     }
+  }
 
-    handleDoRangeChange = () => {
-        console.log("handleDoRangeChange:" + this.state.doRange);
-        this.state.doRange = !this.state.doRange;
-        
+  handleDoRangeChange = () => {
+    console.log('handleDoRangeChange:' + this.state.doRange)
+    this.state.doRange = !this.state.doRange
+  }
+
+  // handleSubmit = (values) => {
+  //     values.dateOfBirth = this.state.dob
+  //     console.log("handleSubmit:" + this.state.doRange)
+  //     var searchEndPoint = "/rest/results?" + "&labNumber=" + values.labNumber
+  //     getFromOpenElisServer(searchEndPoint, this.fetchResults);
+  // };
+
+  handleSubmit = (values) => {
+    values.dateOfBirth = this.state.dob
+    console.log('handleSubmit:' + this.state.doRange)
+    const searchEndPoint = '/rest/results?' + '&labNumber=' + values.labNumber
+    getFromOpenElisServer(searchEndPoint, this.fetchResults)
+  }
+
+  fetchResults = (resultForm) => {
+    // console.log(JSON.stringify(result))
+    let i = 0
+    resultForm.testResult.forEach(item => item.id = i++)
+    this.setState({ resultForm })
+  }
+
+  handleDatePickerChange = (...e) => {
+    this.setState({
+      dob: e[1]
+    })
+  }
+
+  handlePageChange = (pageInfo) => {
+    if (this.state.page != pageInfo.page) {
+      this.setState({ page: pageInfo.page })
     }
-
-    // handleSubmit = (values) => {
-    //     values.dateOfBirth = this.state.dob
-    //     console.log("handleSubmit:" + this.state.doRange)
-    //     var searchEndPoint = "/rest/results?" + "&labNumber=" + values.labNumber
-    //     getFromOpenElisServer(searchEndPoint, this.fetchResults);
-    // };
-
-    handleSubmit = (values) => {
-        values.dateOfBirth = this.state.dob
-        console.log("handleSubmit:" + this.state.doRange)
-        var searchEndPoint = "/rest/results?" + "&labNumber=" + values.labNumber
-        getFromOpenElisServer(searchEndPoint, this.fetchResults);
-    };
-
-    fetchResults = (resultForm) => {
-        //console.log(JSON.stringify(result))
-        var i = 0;
-        resultForm.testResult.forEach(item => item.id = i++);
-        this.setState({ resultForm: resultForm })
+    if (this.state.pageSize != pageInfo.pageSize) {
+      this.setState({ pageSize: pageInfo.pageSize })
     }
+  }
 
-    handleDatePickerChange = (...e) => {
-        this.setState({
-            dob: e[1],
-        });
-    }
+  handlePerPageChange = (newPerPage) => {
+    this.setState({ perPage: newPerPage })
+  }
 
-    handlePageChange = (pageInfo) => {
-        if (this.state.page != pageInfo.page) {
-            this.setState({ page: pageInfo.page });
-        }
-        if (this.state.pageSize != pageInfo.pageSize) {
-            this.setState({ pageSize: pageInfo.pageSize });
-        }
-    };
-
-    handlePerPageChange = (newPerPage) => {
-        this.setState({ perPage: newPerPage });
-    };
-
-    renderLabHeader = (param) => {
-        if (param.resultForm.testResult[param.rowId].showSampleDetails == true)
-            return <div >
+  renderLabHeader = (param) => {
+    if (param.resultForm.testResult[param.rowId].showSampleDetails == true) {
+      return <div >
                 Lab No.: &nbsp;&nbsp;{param.resultForm.testResult[param.rowId].sequenceAccessionNumber} Condition: {param.resultForm.testResult[param.rowId].initialSampleCondition}  Sample Type: {param.resultForm.testResult[param.rowId].sampleType} <br></br>
                 Patient: &nbsp;&nbsp;{param.resultForm.lastName}, {param.resultForm.firstName} {param.resultForm.nationalId} {param.resultForm.subjectNumber} {param.resultForm.gender}, {param.resultForm.dob} <br></br>
                 <br></br>
             </div>
-        return <div ></div>
-    };
+    }
+    return <div ></div>
+  }
 
-    renderResultRow = (param) => {
-        return <div >
+  renderResultRow = (param) => {
+    return <div >
             {param.rowCells.map((cell) => (
                 <TableCell key={cell.id}>{cell.value}</TableCell>
             ))}
             {/* {currentSample.testDate} {currentSample.testName} {currentSample.normalRange} {currentSample.resultValue} {currentSample.shadowResultValue} */}
         </div>
-    };
+  }
 
-   
-
-    render() {
-
-
-        const { page, pageSize } = this.state;
-        // const prefix = this.state.prefix;
-        return (
+  render () {
+    const { page, pageSize } = this.state
+    // const prefix = this.state.prefix;
+    return (
 
             <>
                 {/* <Grid  fullWidth={true} className="gridBoundary"> */}
                 {/* <Column  lg={3}> */}
                 <Formik
                     initialValues={SearchResultFormValues}
-                    //validationSchema={}
+                    // validationSchema={}
                     onSubmit={this.handleSubmit}
                     onChange
                 >
-                    {({ values,
-                        errors,
-                        touched,
-                        handleChange,
-                        handleBlur,
-                        handleSubmit }) => (
-
-
+                    {({
+                      values,
+                      errors,
+                      touched,
+                      handleChange,
+                      handleBlur,
+                      handleSubmit
+                    }) => (
 
                         <Form
                             onSubmit={handleSubmit}
@@ -167,7 +145,7 @@ class SearchResultForm extends React.Component {
                                 <Field name="doRange"
                                 >
                                     {({ field }) =>
-                                        <Checkbox onChange={this.handleDoRangeChange} name={field.name} labelText="Do Range" id={field.name}   />
+                                        <Checkbox onChange={this.handleDoRangeChange} name={field.name} labelText="Do Range" id={field.name} />
                                     }
                                 </Field>
                                 <Button type="submit" id="submit">
@@ -181,10 +159,9 @@ class SearchResultForm extends React.Component {
                 {/* <Column></Column> */}
                 {/* <Column  lg={12} > */}
 
-
                 <DataTable rows={this.state.resultForm.testResult} headers={resultSearchHeaderData} isSortable >
                     {({ rows, headers, getHeaderProps, getTableProps }) => (
-                        <TableContainer title={"Title"} description="description">
+                        <TableContainer title={'Title'} description="description">
                             <Table {...getTableProps()}>
                                 <TableHead>
                                     <TableRow>
@@ -206,13 +183,13 @@ class SearchResultForm extends React.Component {
                                                         resultForm: this.state.resultForm,
                                                     })
                                                 } */}
-                                                
+
                                                 {this.renderResultRow
-                                                    ({
-                                                        showSampleDetails: this.state.resultForm.testResult[row.id].showSampleDetails,
-                                                        rowCells: row.cells,
-                                                        row: row
-                                                    })
+                                                ({
+                                                  showSampleDetails: this.state.resultForm.testResult[row.id].showSampleDetails,
+                                                  rowCells: row.cells,
+                                                  row
+                                                })
                                                 }
 
                                                 {/* <TableCell > <RadioButton name="radio-group" onClick={this.patientSelected} labelText="" id={row.id} /></TableCell> */}
@@ -234,9 +211,8 @@ class SearchResultForm extends React.Component {
                 {/* </Grid> */}
             </>
 
-        );
-
-    }
+    )
+  }
 }
 
 export default injectIntl(SearchResultForm)
