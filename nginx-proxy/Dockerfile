@@ -6,4 +6,3 @@ ADD healthcheck.sh /healthcheck.sh
 RUN chown nginx:nginx /healthcheck.sh; \
     chmod 770 /healthcheck.sh;  
 
-USER nginx

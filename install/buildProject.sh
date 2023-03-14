@@ -33,8 +33,10 @@ if [ $dockerBuild == true ]
 then
 	dockerfile="Dockerfile"
 	if [ -f "${DIR}/Dockerfile.prod" ]; then
-		echo "production dockerfile found"
+		echo "production dockerfile found, using Dockerfile.prod"
     	dockerfile="Dockerfile.prod"
+    else
+		echo "no production dockerfile found, defaulting to Dockerfile"
 	fi
 	if [ -z "${TAG}" ]
 	then
