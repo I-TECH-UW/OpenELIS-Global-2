@@ -96,7 +96,7 @@ services:
                       -Djavax.net.ssl.keyStorePassword=[% keystore_password %] 
                       -Djavax.net.ssl.keyStoreType=pkcs12"
         volumes:
-            - [% etc_dir %]hapi_server.xml:/usr/local/tomcat/conf/server.xml
+            - [% etc_dir %]hapi_server.xml:/opt/bitnami/tomcat/conf/server.xml
             - [% etc_dir %]healthcheck.sh:/healthcheck.sh
         secrets:
             - source: hapi_application.yaml
