@@ -114,6 +114,11 @@ public class TestResultItem implements ResultItem, Serializable {
     private double upperAbnormalRange;
     private double lowerAbnormalRange;
     private String normalRange = "";
+    private double lowerCriticalRangeLow = 0;
+    private double lowerCriticalRangeHigh = 0;
+    private double higherCriticalRangeHigh;
+    private double higherCriticalRangeLow;
+    
 
     private int significantDigits = -1;
 
@@ -419,6 +424,39 @@ public class TestResultItem implements ResultItem, Serializable {
     public void setLowerAbnormalRange(double lowerAbnormalRange) {
         this.lowerAbnormalRange = lowerAbnormalRange;
     }
+
+    public double getLowerCriticalRangeLow() {
+        return lowerCriticalRangeLow;
+    }
+
+    public void setLowerCriticalRangeLow(double lowerCriticalRangeLow) {
+        this.lowerCriticalRangeLow = lowerCriticalRangeLow;
+    }
+
+    public double getLowerCriticalRangeHigh() {
+        return lowerCriticalRangeHigh;
+    }
+
+    public void setLowerCriticalRangeHigh(double lowerCriticalRangeHigh) {
+        this.lowerCriticalRangeHigh = lowerCriticalRangeHigh;
+    }
+
+    public double getHigherCriticalRangeLow() {
+        return higherCriticalRangeLow;
+    }
+
+    public void setHigherCriticalRangeLow(double higherCriticalRangeLow) {
+        this.higherCriticalRangeLow = higherCriticalRangeLow;
+    }
+
+    public double getHigherCriticalRangeHigh() {
+        return higherCriticalRangeHigh;
+    }
+
+    public void setHigherCriticalRangeHigh(double higherCriticalRangeHigh) {
+        this.higherCriticalRangeHigh = higherCriticalRangeHigh;
+    }
+
 
     public String getReportable() {
         return reportable ? IActionConstants.YES : IActionConstants.NO;

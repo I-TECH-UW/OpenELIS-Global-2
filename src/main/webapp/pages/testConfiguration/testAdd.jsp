@@ -555,6 +555,69 @@
         });
     }
 
+    function lowCriticalRangeCheck() {
+        var lowCriticalRangeHighValue, lowCriticalRangeLowValue;
+        var lowCriticalRangeLow = jQuery("#lowCriticalRangeLow");
+        var lowCriticalRangeHigh = jQuery("#lowCriticalRangeHigh");
+
+        lowCriticalRangeLow.removeClass("error");
+        lowCriticalRangeLowValue = +lowCriticalRangeLow.val();
+        if (lowCriticalRangeLowValue != "-Infinity" &&
+          lowCriticalRangeLowValue != lowCriticalRangeLow.val()) {
+            lowCriticalRangeLow.addClass("error");
+            alert("<%=MessageUtil.getContextualMessage("error.low.valid.value")%>");
+            return;
+        }
+
+        lowCriticalRangeHigh.removeClass("error");
+        lowCriticalRangeHighValue = +lowCriticalRangeHigh.val();
+        if (lowCriticalRangeHighValue != "Infinity" &&
+           lowCriticalRangeHighValue != lowCriticalRangeHigh.val()) {
+            lowCriticalRangeHigh.addClass("error");
+            alert("<%=MessageUtil.getContextualMessage("error.high.valid.value")%>");
+            return;
+        }
+
+        jQuery(".rowKey").each(function () {
+            //index is in the template
+            if (jQuery(this).val() != "index") {
+                lowCriticalRangeCheck(jQuery(this).val());
+            }
+        });
+    }
+
+    function highCriticalRangeCheck() {
+        var highCriticalRangeHighValue, highCriticalRangeLowValue;
+        var highCriticalRangeLow = jQuery("#highCriticalRangeLow");
+        var highCriticalRangeHigh = jQuery("#highCriticalRangeHigh");
+
+        highCriticalRangeLow.removeClass("error");
+        highCriticalRangeLowValue = +highCriticalRangeLow.val();
+        if (highCriticalRangeLowValue != "-Infinity" &&
+          highCriticalRangeLowValue != highCriticalRangeLow.val()) {
+            highCriticalRangeLow.addClass("error");
+            alert("<%=MessageUtil.getContextualMessage("error.low.valid.value")%>");
+            return;
+        }
+
+        highCriticalRangeHigh.removeClass("error");
+        highCriticalRangeHighValue = +highCriticalRangeHigh.val();
+        if (highCriticalRangeHighValue != "Infinity" &&
+          highCriticalRangeHighValue != highCriticalRangeHigh.val()) {
+            highCriticalRangeHigh.addClass("error");
+            alert("<%=MessageUtil.getContextualMessage("error.high.valid.value")%>");
+            return;
+        }
+
+        jQuery(".rowKey").each(function () {
+            //index is in the template
+            if (jQuery(this).val() != "index") {
+                lowCriticalRangeCheck(jQuery(this).val());
+            }
+        });
+    }
+
+
     function reportingRangeCheck() {
         var highReportingRangeValue, lowReportingRangeValue;
         var lowReportingRange = jQuery("#lowReportingRange");
@@ -1442,6 +1505,12 @@ td {
 
                 <td><input type="text" value="-Infinity" size="10" id="lowValid" onchange="validRangeCheck();"></td>
                 <td><input type="text" value="Infinity" size="10" id="highValid" onchange="validRangeCheck();"></td>
+
+                <td><input type="text" value="-Infinity" size="5" id="lowCriticalRangeLow" onchange="lowCriticalRangeCheck();"></td>
+                <td><input type="text" value="Infinity" size="5" id="lowCriticalRangeHigh" onchange="lowCriticalRangeCheck();"></td>
+
+                <td><input type="text" value="-Infinity" size="5" id="highCriticalRangeLow" onchange="highCriticalRangeCheck();"></td>
+                <td><input type="text" value="Infinity" size="5" id="highCriticalRangeHigh" onchange="highCriticalRangeCheck();"></td>
             </tr>
             <tr class="sexRange_0 row_0" style="display: none">
                 <td></td>

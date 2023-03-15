@@ -44,7 +44,7 @@ function validateNumberFormat( resultBox, row, significantDigits){
     return true;
 }
 
-function /*void*/ validateResults( resultBox, row, lowerNormal, upperNormal, lowerAbnormal, upperAbnormal, significantDigits, specialCase ){
+function /*void*/ validateResults( resultBox, row, lowerNormal, upperNormal, lowerAbnormal, upperAbnormal,lowCriticalLow,lowCriticalHigh,highCriticalLow,highCriticalHigh, significantDigits, specialCase ){
     //ignore < or > from the analyser on validation
 	var greaterThanOrLessThan = "";
 	if(resultBox.value.startsWith("<") ||resultBox.value.startsWith(">") ){
@@ -65,6 +65,23 @@ function /*void*/ validateResults( resultBox, row, lowerNormal, upperNormal, low
 		resultBox.style.background = "#ffffff";
 		$("valid_" + row).value = true;
 		return;
+	}
+	if( lowCriticalLow != lowCriticalHigh  &&
+		(actualValue >= lowCriticalLow || actualValue <= lowCriticalHigh) ){
+		 resultBox.style.background = "#ffa0a0";
+		 resultBox.title = "Value is a critical result. Please follow normal critical result procedures"; 
+		 $("valid_" + row).value = false;
+ 
+	 }else if(highCriticalLow != highCriticalHigh  &&
+		(actualValue >= highCriticalLow || actualValue <= highCriticalHigh)){
+		 resultBox.style.background = "#ffa0a0";
+		 resultBox.title = "Value is a critical result. Please follow normal critical result procedures"; 
+		 $("valid_" + row).value = false;
+
+	 }else{
+		resultBox.style.background = "#ffffff";
+		resultBox.title = "";
+		$("valid_" + row).value = true;
 	}
 
 	if( lowerAbnormal != upperAbnormal &&
