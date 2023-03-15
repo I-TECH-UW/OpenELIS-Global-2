@@ -302,6 +302,50 @@ public class ResultLimitServiceImpl extends BaseObjectServiceImpl<ResultLimit, S
         return range;
     }
 
+    /**
+     * Get the valid low critical range for numeric result limits. For other result types an
+     * empty string will be returned
+     *
+     * @param resultLimit       The limit from which we will get the valid reporting range
+     * @param significantDigits The numbe of significant digit to display
+     * @param separator         -- how to separate the numbers
+     * @return The range
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public String getDisplayLowCriticalRange(ResultLimit resultLimit, String significantDigits, String separator) {
+        String range = "";
+        if (resultLimit != null && !GenericValidator.isBlankOrNull(resultLimit.getResultTypeId())) {
+            if (NUMERIC_RESULT_TYPE_ID.equals(resultLimit.getResultTypeId())) {
+                range = getDisplayNormalRange(resultLimit.getLowCriticalRangeLow(), resultLimit.getHighCriticalRangeLow(), significantDigits,
+                        separator);
+            }
+        }
+        return range;
+    }
+
+    /**
+     * Get the valid high critical range for numeric result limits. For other result types an
+     * empty string will be returned
+     *
+     * @param resultLimit       The limit from which we will get the valid reporting range
+     * @param significantDigits The numbe of significant digit to display
+     * @param separator         -- how to separate the numbers
+     * @return The range
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public String getDisplayHighCriticalRange(ResultLimit resultLimit, String significantDigits, String separator) {
+        String range = "";
+        if (resultLimit != null && !GenericValidator.isBlankOrNull(resultLimit.getResultTypeId())) {
+            if (NUMERIC_RESULT_TYPE_ID.equals(resultLimit.getResultTypeId())) {
+                range = getDisplayNormalRange(resultLimit.getLowCriticalRangeHigh(), resultLimit.getHighCriticalRangeHigh(), significantDigits,
+                        separator);
+            }
+        }
+        return range;
+    }
+
     @Override
     @Transactional(readOnly = true)
     public String getDisplayAgeRange(ResultLimit resultLimit, String separator) {

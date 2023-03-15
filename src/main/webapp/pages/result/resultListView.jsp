@@ -869,6 +869,14 @@ function /*void*/ handleEnterEvent(  ){
 					value="${testResult.lowerAbnormalRange}" />
 				<c:set var="upperAbnormalBound"
 					value="${testResult.upperAbnormalRange}" />
+				<c:set var="lowerCriticalLow"
+					value="${testResult.lowerCriticalRangeLow}" />	
+				<c:set var="lowerCriticalHigh"
+					value="${testResult.higherCriticalRangeHigh}" />	
+				<c:set var="upperCriticalLow"
+					value="${testResult.higherCriticalRangeLow}" />	
+				<c:set var="upperCriticalHigh"
+					value="${testResult.higherCriticalRangeHigh}" />		
 				<c:set var="significantDigits"
 					value="${testResult.significantDigits}" />
 				<c:set var="accessionNumber" value="${testResult.accessionNumber}" />
@@ -1069,7 +1077,8 @@ function /*void*/ handleEnterEvent(  ){
 								style="background: ${testResult.valid ? testResult.normal ? '#ffffff' : '#ffffa0' : '#ffa0a0' }"
 								cssClass="resultValue"
 								disabled='${testResult.readOnly}'
-								onchange="validateResults( this, ${iter.index}, ${lowerBound}, ${upperBound}, ${lowerAbnormalBound}, ${upperAbnormalBound}, ${significantDigits}, 'XXXX' );
+								onchange="validateResults( this, ${iter.index}, ${lowerBound}, ${upperBound}, ${lowerAbnormalBound}, ${upperAbnormalBound}, 
+								${lowerCriticalLow}, ${lowerCriticalHigh}, ${upperCriticalLow}, ${upperCriticalHigh}, ${significantDigits}, 'XXXX' );
 					   			 markUpdated(${iter.index});
 					   			 ${(testResult.reflexGroup && not testResult.childReflex) ? 'updateReflexChild(' += testResult.reflexParentGroup += ');' : ''}
 					   			 ${(noteRequired && not empty testResult.resultValue) ? 'showNote(' += iter.index += ');' : ''}
