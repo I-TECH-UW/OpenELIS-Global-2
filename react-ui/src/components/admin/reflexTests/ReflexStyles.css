@@ -2,18 +2,12 @@ body {
     font-family: sans-serif;
   }
   
-  .autocomplete1 {
+  .autocomplete {
     padding: 0.5rem;
     width: 350px;
-    margin-top: -7%;
     --cds-text-primary:  black; 
-  }
-
-  .autocomplete2 {
-    padding: 0.5rem;
-    width: 350px;
-    margin-top: -7%;
-    --cds-text-primary:  black; 
+    --cds-text-secondary: green;
+    margin-top: -1%;
   }
   
   .no-suggestions {
@@ -58,8 +52,13 @@ body {
   .reflexInputText {
     --cds-text-primary: black;
     width: 100%;
-    --cds-text-secondary: black;
-    margin-top: -9%;
+    --cds-text-secondary: green;
+  }
+
+  .reflexInputSelect {
+    --cds-text-primary: black;
+    width: 100px;
+    --cds-text-secondary: green;
   }
 
   .ruleFieldButton {
