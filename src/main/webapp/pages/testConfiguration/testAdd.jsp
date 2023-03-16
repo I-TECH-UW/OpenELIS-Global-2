@@ -1458,6 +1458,7 @@ td {
                 <th colspan="2"><spring:message code="configuration.test.catalog.normal.range" /></th>
                 <th colspan="2"><spring:message code="label.reporting.range" /> </th>
                  <th colspan="2"><spring:message code="configuration.test.catalog.valid.range" /> </th>
+                 <th colspan="4"><spring:message code="configuration.test.catalog.critical.range" /> </th>
             </tr>
             <tr>
                 <td><spring:message code="label.sex.dependent" /></td>
