@@ -36,6 +36,7 @@ function ReflexRule() {
     ruleName: "",
     overall: "",
     toggled: true,
+    active : true,
     conditions: [conditionsObj],
     actions: [actionObj]
   }
@@ -345,7 +346,7 @@ function ReflexRule() {
                       <div className="section">
                         <div className="inlineDiv">
                           <div >
-                            <h5>Add Reflect Rule Conditions </h5>
+                            <h5>Add Reflex Rule Conditions </h5>
                           </div>
                         </div>
                         <div className="inlineDiv">

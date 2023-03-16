@@ -6,7 +6,7 @@ body {
     padding: 0.5rem;
     width: 350px;
     --cds-text-primary:  black; 
-    --cds-text-secondary: green;
+    --cds-text-secondary: blue;
     margin-top: -1%;
   }
   
@@ -52,13 +52,13 @@ body {
   .reflexInputText {
     --cds-text-primary: black;
     width: 100%;
-    --cds-text-secondary: green;
+    --cds-text-secondary: blue;
   }
 
   .reflexInputSelect {
     --cds-text-primary: black;
     width: 100px;
-    --cds-text-secondary: green;
+    --cds-text-secondary: blue;
   }
 
   .ruleFieldButton {

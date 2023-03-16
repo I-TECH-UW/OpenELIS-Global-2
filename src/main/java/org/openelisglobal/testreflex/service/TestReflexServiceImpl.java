@@ -214,7 +214,12 @@ public class TestReflexServiceImpl extends BaseObjectServiceImpl<TestReflex, Str
                         reflex.setTestResult(result.get());
                     } else {
                         reflex.setTestResult(results.get(0));
-                        reflex.setNonDictionaryValue(condition.getValue());
+                        if(testService.getResultType(triggerTest).equals("N")){
+                            Double value = Double.parseDouble(condition.getValue());
+                            reflex.setNonDictionaryValue(value.toString());
+                        }else{
+                            reflex.setNonDictionaryValue(condition.getValue());
+                        }  
                     }
                     reflex.setRelation(condition.getRelation());
                     reflex.setTestAnalyte(testAnalyte);

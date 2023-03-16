@@ -15,6 +15,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.openelisglobal.common.valueholder.BaseObject;
 
@@ -48,6 +49,12 @@ public class ReflexRule extends BaseObject<Integer>{
 
     @Column(name = "active")
     private Boolean active = true;
+
+    @Transient
+    String localizedName ;
+    
+    @Transient
+    String stringId ;
 
     @Override
     public Integer getId() {
@@ -96,5 +103,13 @@ public class ReflexRule extends BaseObject<Integer>{
     public void setActive(Boolean active) {
         this.active = active;
     }
+   
+    public void setLocalizedName(String localizedName) {
+        System.out.println(">>>>  localizedName");
+        this.localizedName = localizedName;
+    }
 
+    public void setStringId(String stringId) {
+        this.stringId = stringId;
+    }
 }
