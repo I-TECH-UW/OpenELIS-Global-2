@@ -105,7 +105,6 @@ public class ReflexRule extends BaseObject<Integer>{
     }
    
     public void setLocalizedName(String localizedName) {
-        System.out.println(">>>>  localizedName");
         this.localizedName = localizedName;
     }
 
