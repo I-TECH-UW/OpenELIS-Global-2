@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from "react";
-import './styles.css'
+import './ReflexStyles.css'
 import { TextInput } from '@carbon/react';
 
 class Autocomplete extends Component {

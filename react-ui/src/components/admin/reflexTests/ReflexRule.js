@@ -1,10 +1,13 @@
-import { useState, useEffect, useRef } from "react";
+import {useContext, useState, useEffect, useRef } from "react";
 import { Form, Stack, TextInput, Select, SelectItem, Button, InlineLoading, IconButton, Search, Toggle, Switch, Loading, RadioButtonGroup, RadioButton } from '@carbon/react';
 import { Add, Subtract } from '@carbon/react/icons';
 import Autocomplete from "./AutoComplete";
 import RuleBuilderFormValues from "../../formModel/innitialValues/RuleBuilderFormValues";
 import { getFromOpenElisServer, postToOpenElisServer, getFromOpeElisServerSync } from "../../utils/Utils";
-import "./styles.css"
+import { NotificationContext } from "../../layout/Layout";
+import { AlertDialog,  NotificationKinds} from "../../common/CustomNotification";
+import { FormattedMessage} from "react-intl";
+import "./ReflexStyles.css"
 
 
 function ReflexRule() {
@@ -36,6 +39,7 @@ function ReflexRule() {
     ruleName: "",
     overall: "",
     toggled: true,
+    active : true,
     conditions: [conditionsObj],
     actions: [actionObj]
   }
@@ -51,6 +55,7 @@ function ReflexRule() {
   const [counter, setCounter] = useState(0);
   const [loaded, setLoaded] = useState(false);
   const [errors, setErrors] = useState({});
+  const { notificationVisible ,setNotificationVisible,setNotificationBody} = useContext(NotificationContext);
   var defaultTestResultList = {};
   var defaultSampleTests = { "conditions": {}, "actions": {} };
 
@@ -193,7 +198,13 @@ function ReflexRule() {
   };
 
   const handleDelete = (status) => {
-    alert(status)
+   // alert(status)
+    setNotificationVisible(true);
+    if(status == "200"){
+      setNotificationBody({kind: NotificationKinds.success, title: "Notification Message", message: "Succesfuly Deleted"});
+    }else{
+      setNotificationBody({kind: NotificationKinds.error, title: "Notification Message", message: "Error while Deleting"});
+    }
   }
 
   const handleRuleAdd = () => {
@@ -218,14 +229,22 @@ function ReflexRule() {
     setRuleList(list);
   };
 
-  const handlePost = (status) => {
-    alert(status)
+  const handleSubmited = (status , index) => {
+    //alert(status)
+    setNotificationVisible(true);
+    if(status == "200"){
+      const element = document.getElementById("submit_"+index)
+      element.disabled = true;
+      setNotificationBody({kind: NotificationKinds.success, title: "Notification Message", message: "Succesfuly saved"});
+    }else{
+      setNotificationBody({kind: NotificationKinds.error, title: "Notification Message", message: "Error while saving"});
+    }
   };
 
   const handleSubmit = (event, index) => {
     event.preventDefault();
     console.log(JSON.stringify(ruleList[index]))
-    postToOpenElisServer("/rest/reflexrule", JSON.stringify(ruleList[index]), handlePost)
+    postToOpenElisServer("/rest/reflexrule", JSON.stringify(ruleList[index]), (status) => handleSubmited(status ,index))
   };
 
   const fetchTests = (testList, index, item_index, field) => {
@@ -268,8 +287,40 @@ function ReflexRule() {
     setCounter(count);
   };
 
+  const validateTextInPut = (value, type ) => {
+    if (type === "N") {
+      if (value.match(/^-?\d+$/)) {
+        //valid integer (positive or negative)
+        return false;
+      } else if (value.match(/^\d+\.\d+$/)) {
+        //valid float
+        return false;
+      } else {
+        console.log("invalid value")
+        return true;
+      }
+    }
+  }
+
+  const addTextInPutError = (value, type ,fieldName) => {
+    if (type === "N") {
+      if (value.match(/^-?\d+$/)) {
+        //valid integer (positive or negative)
+        clearError(fieldName);
+      } else if (value.match(/^\d+\.\d+$/)) {
+        //valid float
+        clearError(fieldName);
+      } else {
+        console.log("invalid value")
+        addError({name : fieldName, error : "Invaid Numeric Value"})
+      }
+    }
+  }
+
+
   return (
     <>
+     {notificationVisible === true ? <AlertDialog/> : ""}
       {!loaded && (
         <Loading></Loading>
       )}
@@ -285,7 +336,7 @@ function ReflexRule() {
                     <div>
                       <TextInput
                         name="ruleName"
-                        className="inputText"
+                        className="reflexInputText"
                         type="text"
                         id={index + "_rulename"}
                         labelText="Rule Name"
@@ -314,7 +365,7 @@ function ReflexRule() {
                       <div className="section">
                         <div className="inlineDiv">
                           <div >
-                            <h5>Add Reflect Rule Conditions </h5>
+                            <h5>Add Reflex Rule Conditions </h5>
                           </div>
                         </div>
                         <div className="inlineDiv">
@@ -324,7 +375,7 @@ function ReflexRule() {
                               id={index + "_overall"}
                               name="overall"
                               labelText="Over All Option"
-                              className="inputSelect"
+                              className="reflexInputSelect"
                               onChange={(e) => handleRuleFieldChange(e, index)}
                               required
                             >
@@ -351,7 +402,7 @@ function ReflexRule() {
                                 name="sampleId"
                                 labelText="Select Sample"
                                 value={condition.sampleId}
-                                className="inputSelect"
+                                className="reflexInputSelect"
                                 onChange={(e) => { handleRuleFieldItemChange(e, index, condition_index, FIELD.conditions); handleSampleSelected(e, index, condition_index, FIELD.conditions) }}
                                 required
                               >
@@ -378,7 +429,7 @@ function ReflexRule() {
                                 name="testName"
                                 idField="testId"
                                 label="Search Test"
-                                class="autocomplete1"
+                                class="autocomplete"
                                 item_index={condition_index}
                                 field={FIELD.conditions}
                                 suggestions={sampleTestList[FIELD.conditions][index] ? sampleTestList[FIELD.conditions][index][condition_index] : []}
@@ -396,7 +447,7 @@ function ReflexRule() {
                                 id={index + "_" + condition_index + "_relation"}
                                 name="relation"
                                 labelText="Relation"
-                                className="inputSelect"
+                                className="reflexInputSelect"
                                 onChange={(e) => handleRuleFieldItemChange(e, index, condition_index, FIELD.conditions)}
                                 required
                               >
@@ -443,7 +494,7 @@ function ReflexRule() {
                                       id={index + "_" + condition_index + "_value"}
                                       name="value"
                                       labelText="Dictionaly Result"
-                                      className="inputSelect"
+                                      className="reflexInputSelect"
                                       onChange={(e) => handleRuleFieldItemChange(e, index, condition_index, FIELD.conditions)}
                                       required
                                     >
@@ -472,9 +523,11 @@ function ReflexRule() {
                                         className="reflexInputText"
                                         type="text"
                                         id={index + "_" + condition_index + "_value"}
-                                        labelText="Numeric Result"
+                                        labelText={testResultList[index][condition_index]["type"] === "N" ? "Numeric Result" : "Text Result"}
                                         value={condition.value}
-                                        onChange={(e) => handleRuleFieldItemChange(e, index, condition_index, FIELD.conditions)}
+                                        onChange={(e) => {handleRuleFieldItemChange(e, index, condition_index, FIELD.conditions); addTextInPutError(condition.value , testResultList[index][condition_index]["type"] ,"condition-value_" + index + "_" + condition_index )}}
+                                        invalid={validateTextInPut(condition.value , testResultList[index][condition_index]["type"])}
+                                        invalidText="Invalid Numeric Value"
                                         required
                                       />
                                     </>
@@ -528,7 +581,7 @@ function ReflexRule() {
                                 name="sampleId"
                                 labelText="Select Sample"
                                 value={action.sampleId}
-                                className="inputSelect"
+                                className="reflexInputSelect"
                                 onChange={(e) => { handleRuleFieldItemChange(e, index, action_index, FIELD.actions); handleSampleSelected(e, index, action_index, FIELD.actions) }}
                                 required
                               >
@@ -558,7 +611,7 @@ function ReflexRule() {
                                 idField="reflexTestId"
                                 item_index={action_index}
                                 field={FIELD.actions}
-                                class="autocomplete2"
+                                class="autocomplete"
                                 addError={addError}
                                 clearError={clearError}
                                 suggestions={sampleTestList[FIELD.actions][index] ? sampleTestList[FIELD.actions][index][action_index] : []} />
@@ -635,8 +688,8 @@ function ReflexRule() {
                           </div>
                         ))}
                       </div>
-                      <Button disabled={Object.keys(errors).length === 0 ? false : true} type="submit" kind='tertiary' size='sm'>
-                        Submit
+                      <Button id={"submit_"+ index} disabled={(Object.keys(errors).length === 0 ? false : true)} type="submit" kind='tertiary' size='sm'>
+                         <FormattedMessage id="label.button.submit" />
                       </Button>
                     </>
                   )}

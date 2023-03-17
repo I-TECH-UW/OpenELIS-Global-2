@@ -41,20 +41,12 @@ li.clickableUserDetails:hover  {
   margin-right: 5%;
 }
 
-/* Reflext tests */
 .inputText {
   --cds-text-primary: black;
   width: 100%;
   --cds-text-secondary: black;
-  margin-top: 0.1%;
 }
 
-.inputSelect {
-  --cds-text-primary: black;
-  width: 100px;
-  --cds-text-secondary: black;
-  margin-top: -15%;
-}
 
 .inputSearch {
   --cds-text-primary: black;
@@ -210,14 +202,13 @@ button {
 .inputSelect {
   --cds-text-primary: black;
   width: 100px;
-  --cds-text-secondary: red;
-  margin-top: -15%;
+  --cds-text-secondary: black;
 }
 
 .inputSearch {
   --cds-text-primary: black;
   width: 100%;
-  --cds-text-secondary: red;
+  --cds-text-secondary: black;
   --cds-icon-primary: black;
 }
 

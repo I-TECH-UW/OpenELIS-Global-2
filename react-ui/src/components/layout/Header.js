@@ -45,6 +45,13 @@ class OEHeader extends React.Component {
     return this.props.isLoggedIn() ? "User" : "Lang";
   };
 
+  clickPanelSwitch = () => {
+    this.setState((state) => ({
+      switchCollapsed: !state.switchCollapsed
+    }));
+  }
+
+
   panelSwitchIcon = () => {
     return this.props.isLoggedIn() ? (
       <UserAvatarFilledAlt size={20} />
