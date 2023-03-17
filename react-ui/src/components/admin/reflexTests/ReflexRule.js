@@ -1,9 +1,12 @@
-import { useState, useEffect, useRef } from "react";
+import {useContext, useState, useEffect, useRef } from "react";
 import { Form, Stack, TextInput, Select, SelectItem, Button, InlineLoading, IconButton, Search, Toggle, Switch, Loading, RadioButtonGroup, RadioButton } from '@carbon/react';
 import { Add, Subtract } from '@carbon/react/icons';
 import Autocomplete from "./AutoComplete";
 import RuleBuilderFormValues from "../../formModel/innitialValues/RuleBuilderFormValues";
 import { getFromOpenElisServer, postToOpenElisServer, getFromOpeElisServerSync } from "../../utils/Utils";
+import { NotificationContext } from "../../layout/Layout";
+import { AlertDialog,  NotificationKinds} from "../../common/CustomNotification";
+import { FormattedMessage} from "react-intl";
 import "./ReflexStyles.css"
 
 
@@ -52,6 +55,7 @@ function ReflexRule() {
   const [counter, setCounter] = useState(0);
   const [loaded, setLoaded] = useState(false);
   const [errors, setErrors] = useState({});
+  const { notificationVisible ,setNotificationVisible,setNotificationBody} = useContext(NotificationContext);
   var defaultTestResultList = {};
   var defaultSampleTests = { "conditions": {}, "actions": {} };
 
@@ -194,7 +198,13 @@ function ReflexRule() {
   };
 
   const handleDelete = (status) => {
-    alert(status)
+   // alert(status)
+    setNotificationVisible(true);
+    if(status == "200"){
+      setNotificationBody({kind: NotificationKinds.success, title: "Notification Message", message: "Succesfuly Deleted"});
+    }else{
+      setNotificationBody({kind: NotificationKinds.error, title: "Notification Message", message: "Error while Deleting"});
+    }
   }
 
   const handleRuleAdd = () => {
@@ -219,14 +229,22 @@ function ReflexRule() {
     setRuleList(list);
   };
 
-  const handlePost = (status) => {
-    alert(status)
+  const handleSubmited = (status , index) => {
+    //alert(status)
+    setNotificationVisible(true);
+    if(status == "200"){
+      const element = document.getElementById("submit_"+index)
+      element.disabled = true;
+      setNotificationBody({kind: NotificationKinds.success, title: "Notification Message", message: "Succesfuly saved"});
+    }else{
+      setNotificationBody({kind: NotificationKinds.error, title: "Notification Message", message: "Error while saving"});
+    }
   };
 
   const handleSubmit = (event, index) => {
     event.preventDefault();
     console.log(JSON.stringify(ruleList[index]))
-    postToOpenElisServer("/rest/reflexrule", JSON.stringify(ruleList[index]), handlePost)
+    postToOpenElisServer("/rest/reflexrule", JSON.stringify(ruleList[index]), (status) => handleSubmited(status ,index))
   };
 
   const fetchTests = (testList, index, item_index, field) => {
@@ -302,6 +320,7 @@ function ReflexRule() {
 
   return (
     <>
+     {notificationVisible === true ? <AlertDialog/> : ""}
       {!loaded && (
         <Loading></Loading>
       )}
@@ -669,8 +688,8 @@ function ReflexRule() {
                           </div>
                         ))}
                       </div>
-                      <Button disabled={Object.keys(errors).length === 0 ? false : true} type="submit" kind='tertiary' size='sm'>
-                        Submit
+                      <Button id={"submit_"+ index} disabled={(Object.keys(errors).length === 0 ? false : true)} type="submit" kind='tertiary' size='sm'>
+                         <FormattedMessage id="label.button.submit" />
                       </Button>
                     </>
                   )}
