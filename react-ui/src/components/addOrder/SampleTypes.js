@@ -1,7 +1,8 @@
 import React, {useEffect, useRef, useState} from 'react'
 import {
     Checkbox,
-    Column, FilterableMultiSelect,
+    Column,
+    FilterableMultiSelect,
     Grid,
     IconButton,
     Select,
@@ -18,22 +19,29 @@ import {getFromOpenElisServer} from "../utils/Utils";
 import {TableSampleTableRows} from "./OrderItemsTableRow";
 import {sampleTypeTestsStructure} from "../data/SampleEntryTestsForTypeProvider";
 import {sampleTypesTableHeader} from '../data/SampleTypesTableHeaders';
+import OrderReferralRequest from "./OrderReferralRequest";
 
 
 const SampleTypes = (props) => {
     const {index, rejectSampleReasons, removeSample} = props;
     const componentMounted = useRef(true);
-    const testCheckBoxRef = useRef(null);
     const [sampleTypes, setSampleTypes] = useState([]);
     const sampleTypesRef = useRef(null);
     const [selectedSampleType, setSelectedSampleType] = useState({id: null, name: "", element_index: 0});
     const [sampleTypeTests, setSampleTypeTests] = useState(sampleTypeTestsStructure);
     const [selectedTests, setSelectedTests] = useState([]);
     const [searchBoxTests, setSearchBoxTests] = useState([{id: null, label: ''}]);
+    const [requestTestReferral, setRequestTestReferral] = useState(false);
+    const [referralReasons, setReferralReasons] = useState([]);
+    const [referralOrganizations, setReferralOrganizations] = useState([]);
 
 
     const handleRemoveSampleTest = (index) => {
         removeSample(index);
+    }
+
+    const handleReferralRequest = () => {
+        setRequestTestReferral(!requestTestReferral);
     }
 
     const handleSearchTestsFilter = (selectedItems) => {
@@ -50,45 +58,68 @@ const SampleTypes = (props) => {
     }
 
     const handleTestCheckbox = (e, test) => {
+        let testIndex = findTestIndex(test.id);
+        let tests = [...sampleTypeTests.tests];
         if (e.currentTarget.checked) {
-            setSelectedTests([...selectedTests, {
-                id: test.id,
-                name: test.name
-            }]);
+            tests[testIndex].userBenchChoice = true;
+            addTestToSelectedTests(test)
         } else {
-            const removeUnSelectedTests = selectedTests.filter((oldTest) => oldTest.id !== test.id);
-            setSelectedTests(removeUnSelectedTests);
+            tests[testIndex].userBenchChoice = false;
+            removedTestFromSelectedTests(test);
         }
+        setSampleTypeTests({...sampleTypeTests, tests: tests});
+    }
 
+    function removedTestFromSelectedTests(test) {
+        const removeUnSelectedTests = selectedTests.filter((oldTest) => oldTest.id !== test.id);
+        setSelectedTests(removeUnSelectedTests);
+    }
+
+    function addTestToSelectedTests(test) {
+        setSelectedTests([...selectedTests, {id: test.id, name: test.name}]);
     }
 
     function handlePanelChecked(e, testMaps) {
         if (e.currentTarget.checked) {
             triggerPanelCheckBoxChange(true, testMaps);
         } else {
-            triggerPanelCheckBoxChange(undefined, testMaps);
+            triggerPanelCheckBoxChange(false, testMaps);
         }
+    }
+
+    function findTestById(testId) {
+        return sampleTypeTests.tests.find((test) => test.id === testId);
+    }
+
+    function findTestIndex(testId) {
+        return sampleTypeTests.tests.findIndex((test) => test.id === testId);
     }
 
     const triggerPanelCheckBoxChange = (userBenchChoiceChecked, testMaps) => {
         const testIds = testMaps.split(',').map(id => id.trim());
+
         testIds.map(testId => {
-            let testIndex = sampleTypeTests.tests.findIndex((test) => test.id === testId);
+            let testIndex = findTestIndex(testId);
+            let test = findTestById(testId);
             let tests = [...sampleTypeTests.tests];
             if (testIndex !== -1) {
                 tests[testIndex].userBenchChoice = userBenchChoiceChecked;
-                setSampleTypeTests(
-                    {
-                        ...sampleTypeTests,
-                        tests: tests
-                    }
-                );
-                if (testCheckBoxRef.current === "test_" + index + "_" + testId) {
+                setSampleTypeTests({...sampleTypeTests, tests: tests});
 
+                if (userBenchChoiceChecked === true) {
+                    setSelectedTests(prevState => {
+                        return [...prevState, {id: test.id, name: test.name}]
+                    });
+                } else {
+                    setSelectedTests(prevState => {
+                        return [selectedTests.filter((oldTest) => oldTest.id !== test.id)]
+                    });
                 }
             }
 
         });
+
+
     }
 
     const handleFetchSampleTypeTests = (e, index) => {
@@ -142,6 +173,24 @@ const SampleTypes = (props) => {
         }
     }, [selectedSampleType.id]);
 
+    const displayReferralReasonsOptions = (res) => {
+        if (componentMounted.current) {
+            setReferralReasons(res);
+        }
+    }
+    const displayReferralOrgOptions = (res) => {
+        if (componentMounted.current) {
+            setReferralOrganizations(res);
+        }
+    }
+
+    useEffect(() => {
+        getFromOpenElisServer("/rest/referral-reasons", displayReferralReasonsOptions);
+        getFromOpenElisServer("/rest/referral-organizations", displayReferralOrgOptions);
+        return () => {
+            componentMounted.current = false
+        }
+    }, []);
 
     return (
         <>
@@ -244,13 +293,20 @@ const SampleTypes = (props) => {
                                         <Checkbox onChange={(e) => handleTestCheckbox(e, test)}
                                                   labelText={test.name}
                                                   id={`test_` + index + "_" + test.id} key={index + test.id}
-                                                  ref={testCheckBoxRef}
-                                                  defaultChecked={test.userBenchChoice ? true : undefined}/>
+                                                  checked={test.userBenchChoice}/>
                                     );
                                 })
                             }
                         </div>
                     </div>
+                </div>
+                <div>
+                    <Checkbox id={`useReferral_` + index} labelText="Refer test to a reference lab"
+                              onChange={handleReferralRequest}/>
+                    {requestTestReferral === true &&
+                        <OrderReferralRequest index={index} selectedTests={selectedTests}
+                                              referralReasons={referralReasons}
+                                              referralOrganizations={referralOrganizations}/>}
                 </div>
             </div>
             }
