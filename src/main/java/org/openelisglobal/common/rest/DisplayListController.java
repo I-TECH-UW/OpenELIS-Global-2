@@ -2,8 +2,6 @@ package org.openelisglobal.common.rest;
 
 import java.util.List;
 
-
-
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.DisplayListService.ListType;
 import org.openelisglobal.common.util.IdValuePair;
@@ -76,4 +74,16 @@ public class DisplayListController {
     public List<IdValuePair> getTestRejectionReasons() {
         return DisplayListService.getInstance().getList(ListType.REJECTION_REASONS);
     }
+
+    @GetMapping(value = "referral-reasons", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    private List<IdValuePair> createReferralReasonList() {
+        return DisplayListService.getInstance().getList(ListType.REFERRAL_REASONS);
+    }
+
+	@GetMapping(value = "referral-organizations", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	private List<IdValuePair> createReferralOrganizationsList() {
+		return DisplayListService.getInstance().getList(ListType.REFERRAL_ORGANIZATIONS);
+	}
 }
