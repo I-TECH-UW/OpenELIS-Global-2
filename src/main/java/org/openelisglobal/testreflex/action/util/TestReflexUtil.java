@@ -324,8 +324,7 @@ public class TestReflexUtil {
         String resultType = testService.getResultType(reflexBean.getResult().getTestResult().getTest());
         List<TestReflex> reflexesForResult = reflexResolver.getTestReflexesForResult(reflexBean.getResult());
         if (resultType.equals("D")) {
-            reflexesForResult = reflexesForResult.stream()
-                    .filter(test -> applyDictionaryRelationRulesForReflex(test, reflexBean)).collect(Collectors.toList());
+            reflexesForResult = applyDictionaryRelationRulesForReflex(reflexBean.getResult());
         } else if (!resultType.equals("D")) {
             if (resultType.equals("N")) {
                 reflexesForResult = reflexesForResult.stream()
@@ -392,16 +391,26 @@ public class TestReflexUtil {
         return reflexAnalysises;
     }
 
-    private Boolean applyDictionaryRelationRulesForReflex(TestReflex reflexTest, TestReflexBean reflexBean) {
+    private List<TestReflex> applyDictionaryRelationRulesForReflex(Result result) {
+        List<TestReflex> reflexTests = new ArrayList<>();
         
-        switch (reflexTest.getRelation()) {
-            case EQUALS:
-                return reflexTest.getTestResult().getValue().equals(reflexBean.getResult().getValue()); 
-            case NOT_EQUALS:
-                return !(reflexTest.getTestResult().getValue().equals(reflexBean.getResult().getValue()));
-            default:
-                return false;
-        }
+        reflexResolver.getTestReflexsByAnalyteAndTest(result).forEach(reflexTest -> {
+            switch (reflexTest.getRelation()) {
+                case EQUALS:
+                    if (reflexTest.getTestResult().getValue().equals(result.getValue())) {
+                        reflexTests.add(reflexTest);
+                    }
+                    break;
+                case NOT_EQUALS:
+                    if (!(reflexTest.getTestResult().getValue().equals(result.getValue()))) {
+                        reflexTests.add(reflexTest);
+                    }
+                    break;
+                default:
+                    break;
+            }
+        });
+        return reflexTests;
     }
 
     private Boolean applyNumericRelationRulesForReflex(TestReflex reflexTest, TestReflexBean reflexBean) {
@@ -431,7 +440,8 @@ public class TestReflexUtil {
             case OUTSIDE_NORMAL_RANGE :
                 return !(Double.valueOf(reflexBean.getResult().getValue()) >= reflexBean.getResult().getMinNormal() &&
                  Double.valueOf(reflexBean.getResult().getValue()) <= reflexBean.getResult().getMaxNormal()) ;    
-                             
+            case BETWEEN :
+               return true ;  
             default:
                 return false;
         }

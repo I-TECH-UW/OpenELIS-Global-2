@@ -244,4 +244,8 @@ public class TestReflexServiceImpl extends BaseObjectServiceImpl<TestReflex, Str
         return testIdList.contains(testId);
     }
 
+    @Override
+    public List<TestReflex> getTestReflexsByAnalyteAndTest(String analyteId, String testId) {
+        return getBaseObjectDAO().getTestReflexsByAnalyteAndTest(analyteId, testId);
+    }
 }

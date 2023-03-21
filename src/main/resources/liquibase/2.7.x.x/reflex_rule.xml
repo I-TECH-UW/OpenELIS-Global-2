@@ -99,7 +99,7 @@
 			<column name="non_dictionary_value" type="VARCHAR(50)"  />
 		</addColumn>
 		<addColumn schemaName="clinlims" tableName="test_reflex">
-			<column name="relation" type="VARCHAR(20)"  />
+			<column name="relation" type="VARCHAR(40)"  />
 		</addColumn>
 	</changeSet>
 </databaseChangeLog>
