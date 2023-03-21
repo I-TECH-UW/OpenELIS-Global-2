@@ -176,8 +176,6 @@ services:
     frontend.openelis.org:
        container_name: openelisglobal-frontend
        image: openelisglobal-frontend
-       ports:
-         - 3000:80
        networks:
          - openelis-network
        restart: unless-stopped  
