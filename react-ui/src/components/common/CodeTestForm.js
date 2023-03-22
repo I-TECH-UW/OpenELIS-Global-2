@@ -2,7 +2,7 @@ import React from 'react'
 import { FormattedMessage, injectIntl } from 'react-intl'
 import '../Style.css'
 
-import { getFromOpenElisServer } from '../utils/Utils';
+import { getFromOpenElisServer, postToOpenElisServer } from '../utils/Utils';
 import { Add, Subtract } from '@carbon/react/icons';
 import ContainedList from '@carbon/react/lib/components/ContainedList';
 import ContainedListItem from '@carbon/react/lib/components/ContainedList';
@@ -170,14 +170,48 @@ function renderCell(row, index, column, id) {
                 default:
                     return row.resultValue
             }
+
         case "Current Result":
-            return <input id={"results_" + id} type="text" size="6"></input>
+            // return <input id={"results_" + id} type="text" size="6"></input>
+            switch (row.resultType) {
+                case "D":
+                    return <Select
+                        id={"results_" + id}
+                        name={"testResult[" + id + "].resultValue"}
+                        noLabel={true} >
+                        {/* onChange={(e) => markUpdated(e, param.rowId, false, '')}{...updateShadowResult(e, this, param.rowId)} */}
+                        <SelectItem
+                            text=""
+                            value=""
+                        />
+                        {row.dictionaryResults.map((dictionaryResult, dictionaryResult_index) => (
+                            <SelectItem
+                                text={dictionaryResult.value}
+                                value={dictionaryResult.id}
+                                key={dictionaryResult_index}
+                            />
+                        ))}
+                    </Select>
+
+                case "N":
+                    return <input id={"results_" + id} name="testResult[0].resultValue" />
+                // <input id={"results_" + param.rowId} type="text" size="6"></input>
+
+                //         <input id="results_0" name="testResult[0].resultValue" class="resultValue" 
+                // style="background: rgb(255, 255, 255);" onchange="validateResults( this, 0, 7.0, 40.0, 7.0, 350.0, 0, 'XXXX' );
+                // 		   			 markUpdated(0);
+                // 		   			 updateShadowResult(this, 0);" type="text" value="" size="6" title=""></input>
+                default:
+                    return row.resultValue
+            }
+
         case "Methods":
             return <Select
                 id={"methods"}
                 name={"methods"}
-                noLabel={true} >
-                {/* onChange={(e) => markUpdated(e, param.rowId, false, '')}{...updateShadowResult(e, this, param.rowId)} */}
+                noLabel={true}
+                onChange={(e) => this.markUpdated(e)} >
+                {/* {...updateShadowResult(e, this, param.rowId)}  onSubmit={this.handleSave}*/}
                 <SelectItem
                     text=""
                     value=""
@@ -273,15 +307,8 @@ const ExpandedComponent = ({ data }) => <pre>
 
         </Grid>
     </div >
-
-
-
-
-
     {/* {JSON.stringify(data, null, 2)}  */}
 </pre >;
-
-
 
 class CodeTestForm extends React.Component {
 
@@ -298,6 +325,10 @@ class CodeTestForm extends React.Component {
         }
     }
 
+    markUpdated = () => {
+        console.log("markUpdated:")
+    }
+
     handleDoRangeChange = () => {
         this.state.doRange = !this.state.doRange;
     }
@@ -306,9 +337,24 @@ class CodeTestForm extends React.Component {
         this.state.acceptAsIs = !this.state.acceptAsIs;
     }
 
+    handleSaveChange = () => {
+        console.log("handleSaveChange:")
+
+    }
+
+    handlePost = (status) => {
+        //alert(status)
+      };
+
+    handleSave = (values) => {
+        console.log("handleSave:" + JSON.stringify(this.state.resultForm));
+        var searchEndPoint = "/rest/ReactLogbookResultsUpdate"
+        postToOpenElisServer(searchEndPoint, JSON.stringify(this.state.resultForm), this.handlePost());
+    }
+
     handleSubmit = (values) => {
         values.dateOfBirth = this.state.dob
-        // console.log("handleSubmit:" + this.state.doRange)
+        //console.log("handleSubmit:" + this.state.doRange)
         this.setState({ resultForm: { testResult: [] }, });
 
         var searchEndPoint = "/rest/ReactLogbookResultsByRange?" +
@@ -318,7 +364,7 @@ class CodeTestForm extends React.Component {
     };
 
     setResults = (resultForm) => {
-        //console.log(JSON.stringify(result))
+        //console.log(JSON.stringify(resultForm))
         var i = 0;
         resultForm.testResult.forEach(item => item.id = "" + i++);
         this.setState({ resultForm: resultForm })
@@ -343,72 +389,13 @@ class CodeTestForm extends React.Component {
         this.setState({ perPage: newPerPage });
     };
 
-    sampleDetails = (param) => {
-        //console.log("sampleDetails:param.rowId:" + param.rowId);
-        // todo
-        // if (param.resultForm.testResult[param.rowId] === undefined)
-        //     return
-        if (param.resultForm.testResult[param.rowId].showSampleDetails == true)
-            param.row.cells[0].value =
-                param.resultForm.testResult[param.rowId].sequenceAccessionNumber + " " +
-                param.resultForm.testResult[param.rowId].patientName + " " +
-                param.resultForm.testResult[param.rowId].patientInfo
-        return
-    };
-
-    renderResultValue = (param) => {
-        // todo
-        // if (param.resultForm.testResult[param.rowId] === undefined)
-        //     return
-        return <input id={"results_" + param.rowId} type="text" size="6"></input>
-    }
-
-    renderShadowResultValue = (param) => {
-        // if (param.resultForm.testResult[param.rowId] === undefined)
-        //     return
-        switch (param.resultForm.testResult[param.rowId].resultType) {
-            case "D":
-                return <Select >
-                    id={"results_" + param.rowId}
-                    name={"testResult[" + param.rowId + "].resultValue"}
-                    noLabel={false}
-                    labelText="labelText"
-                    {/* onChange={(e) => markUpdated(e, param.rowId, false, '')}{...updateShadowResult(e, this, param.rowId)} */}
-
-                    <SelectItem
-                        text=""
-                        value=""
-                    />
-                    {param.resultForm.testResult[param.rowId].dictionaryResults.map((dictionaryResult, dictionaryResult_index) => (
-                        <SelectItem
-                            text={dictionaryResult.value}
-                            value={dictionaryResult.id}
-                            key={dictionaryResult_index}
-                        />
-                    ))}
-                </Select>
-
-            case "N":
-                return <input id={"results_" + param.rowId} name="testResult[0].resultValue" />
-            // <input id={"results_" + param.rowId} type="text" size="6"></input>
-
-            //         <input id="results_0" name="testResult[0].resultValue" class="resultValue"
-            // style="background: rgb(255, 255, 255);" onchange="validateResults( this, 0, 7.0, 40.0, 7.0, 350.0, 0, 'XXXX' );
-            // 		   			 markUpdated(0);
-            // 		   			 updateShadowResult(this, 0);" type="text" value="" size="6" title=""></input>
-            default:
-                return param.cell.value
-        }
-    }
-
-
     myComponent() {
         return (
             <>
                 <Formik
                     initialValues={SearchResultFormValues}
                     //validationSchema={}
-                    onSubmit={this.handleSubmit}
+                    onSubmit={this.handleSave}
                     onChange
                 >
                     {({ values,
@@ -431,7 +418,7 @@ class CodeTestForm extends React.Component {
                             </DataTable><Pagination onChange={this.handlePageChange} page={this.state.page} pageSize={this.state.pageSize}
                                 pageSizes={[100]} totalItems={this.state.resultForm.testResult.length}></Pagination>
 
-                            <Button type="save" id="save">
+                            <Button type="submit" id="submit">
                                 <FormattedMessage id="label.button.save" />
                             </Button>
                         </Form>)}
@@ -480,7 +467,9 @@ class CodeTestForm extends React.Component {
                                 <Field name="labNumber"
                                 >
                                     {({ field }) =>
-                                        <TextInput name={field.name} labelText="Lab Number" id={field.name} className="inputText" />
+                                        <TextInput
+                                            className="searchLabNumber"
+                                            name={field.name} labelText="Lab Number" id={field.name} />
                                     }
                                 </Field>
                                 <Field name="doRange"

@@ -38,6 +38,10 @@ import org.openelisglobal.validation.annotations.ValidName;
 import org.openelisglobal.validation.constraintvalidator.NameValidator.NameType;
 import org.openelisglobal.workplan.form.WorkplanForm;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class TestResultItem implements ResultItem, Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -361,14 +365,16 @@ public class TestResultItem implements ResultItem, Serializable {
         return resultDisplayType.toString();
     }
 
+    @JsonIgnore()
     public ResultDisplayType getRawResultDisplayType() {
         return resultDisplayType;
     }
-
+    
     public void setResultDisplayType(ResultDisplayType resultType) {
         resultDisplayType = resultType;
     }
 
+    @JsonIgnore()
     public ResultDisplayType getEnumResultType() {
         return resultDisplayType;
     }
@@ -414,7 +420,7 @@ public class TestResultItem implements ResultItem, Serializable {
     }
 
     public String getReportable() {
-        return reportable ? "Y" : "N";
+        return reportable ? "True" : "False";
     }
 
     public void setReportable(boolean reportable) {
@@ -465,6 +471,7 @@ public class TestResultItem implements ResultItem, Serializable {
         this.remove = remove;
     }
 
+    @JsonIgnore()
     public boolean isRemoved() {
         return NO.equals(remove);
     }
