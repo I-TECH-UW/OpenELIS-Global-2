@@ -24,7 +24,7 @@ import {
 
 } from '@carbon/react';
 
-import { Formik, Field, FieldArray, ErrorMessage } from "formik";
+import { Formik, Field } from "formik";
 import CreatePatientFormValues from '../formModel/innitialValues/CreatePatientFormValues';
 
 class CreatePatientForm extends React.Component {

@@ -1,20 +1,14 @@
 import React from "react";
-import { FormattedMessage, injectIntl } from "react-intl";
+import { injectIntl } from "react-intl";
 import { withRouter } from "react-router-dom";
 import "../Style.css";
-import { faLanguage, faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Button, Select, SelectItem } from "@carbon/react";
+import { Select, SelectItem } from "@carbon/react";
 import {
   Search,
   Notification,
-  Switcher,
-  User,
   Language,
   UserAvatarFilledAlt,
-  Fade,
-  Menu,
-  Logout,
+  Logout
 } from "@carbon/icons-react";
 
 import {
@@ -24,10 +18,8 @@ import {
   HeaderGlobalBar,
   HeaderNavigation,
   HeaderMenu,
-  HeaderMenuButton,
   HeaderMenuItem,
   Theme,
-  Content,
   HeaderPanel,
 } from "@carbon/react";
 
@@ -44,6 +36,13 @@ class OEHeader extends React.Component {
   panelSwitchLabel = () => {
     return this.props.isLoggedIn() ? "User" : "Lang";
   };
+
+  clickPanelSwitch = () => {
+    this.setState((state) => ({
+      switchCollapsed: !state.switchCollapsed
+    }));
+  }
+
 
   panelSwitchIcon = () => {
     return this.props.isLoggedIn() ? (
@@ -83,9 +82,11 @@ class OEHeader extends React.Component {
                 <>
                   <HeaderNavigation aria-label="nav">
                     <HeaderMenu aria-label="Order" menuLinkName="Order">
-                      <HeaderMenuItem href="#">Sub-link 1</HeaderMenuItem>
-                      <HeaderMenuItem href="#">Sub-link 2</HeaderMenuItem>
-                      <HeaderMenuItem href="#">Sub-link 3</HeaderMenuItem>
+                      <HeaderMenuItem href="/AddOrder">Add Order</HeaderMenuItem>
+                      <HeaderMenuItem href="#">Modify Order</HeaderMenuItem>
+                      <HeaderMenuItem href="#">Incoming Orders</HeaderMenuItem>
+                      <HeaderMenuItem href="#">Batch Order Entry</HeaderMenuItem>
+                      <HeaderMenuItem href="#">Barcode</HeaderMenuItem>
                     </HeaderMenu>
                     <HeaderMenu aria-label="Patient" menuLinkName="Patient">
                       <HeaderMenuItem href="/PatientManagement">Add/Edit Patient</HeaderMenuItem>
@@ -166,11 +167,7 @@ class OEHeader extends React.Component {
                         className="userDetails clickableUserDetails"
                         onClick={this.props.logout}
                       >
-                        <FontAwesomeIcon
-                          id="sign-out"
-                          icon={faSignOutAlt}
-                          size="1x"
-                        />
+                        <Logout id="sign-out" />
                         Logout
                       </li>
                     </>

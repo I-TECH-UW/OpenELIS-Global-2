@@ -2,7 +2,6 @@ import React from 'react'
 import config from "../../config.json";
 import { FormattedMessage, injectIntl } from 'react-intl'
 import '../Style.css'
-import { useEffect, useState } from "react";
 import ReflexTestManagement from './reflexTests/ReflexTestManagement'
 import PathRoute from "../utils/PathRoute"
 import {

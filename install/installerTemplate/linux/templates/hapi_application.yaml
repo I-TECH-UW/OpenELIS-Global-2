@@ -1,4 +1,10 @@
 spring:
+  main:
+    allow-circular-references: true
+  flyway:
+    enabled: false
+    check-location: false
+    baselineOnMigrate: true
   datasource:
     url: 'jdbc:postgresql://[% db_host %]:[% db_port %]/clinlims?currentSchema=clinlims'
     #url: jdbc:h2:mem:test_mem

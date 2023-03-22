@@ -80,6 +80,8 @@ DB_PORT="5432"
 DOCKER_OE_REPO_NAME = "openelisglobal" #must match docker image name (not container name)
 DOCKER_OE_CONTAINER_NAME = "openelisglobal-webapp" 
 DOCKER_FHIR_API_CONTAINER_NAME = "external-fhir-api"
+DOCKER_NGINX_CONTAINER_NAME = "openelisglobal-proxy"
+DOCKER_FRONTEND_CONTAINER_NAME = "openelisglobal-frontend"
 DOCKER_AUTOHEAL_CONTAINER_NAME = "autoheal-oe"
 DOCKER_DB_CONTAINER_NAME = "openelisglobal-database" 
 DOCKER_DB_BACKUPS_DIR = "/backups/"  # path in docker container
@@ -326,6 +328,10 @@ def create_docker_compose_file():
             line = line.replace("[% oe_name %]", DOCKER_OE_CONTAINER_NAME )
         if line.find("[% fhir_api_name %]")  >= 0:
             line = line.replace("[% fhir_api_name %]", DOCKER_FHIR_API_CONTAINER_NAME )
+        if line.find("[% nginx_name %]")  >= 0:
+            line = line.replace("[% nginx_name %]", DOCKER_NGINX_CONTAINER_NAME )
+        if line.find("[% frontend_name %]")  >= 0:
+            line = line.replace("[% frontend_name %]", DOCKER_FRONTEND_CONTAINER_NAME )
         if line.find("[% autoheal_name %]")  >= 0:
             line = line.replace("[% autoheal_name %]", DOCKER_AUTOHEAL_CONTAINER_NAME )
         if line.find("[% timezone %]")  >= 0:
@@ -850,6 +856,14 @@ def uninstall_docker_images():
     
     log("removing fhir api image...", PRINT_TO_CONSOLE)
     cmd = 'docker rm $(docker stop $(docker ps -a -q --filter="name=' + DOCKER_FHIR_API_CONTAINER_NAME + '" --format="{{.ID}}"))'
+    os.system(cmd)
+    
+    log("removing nginx proxy image...", PRINT_TO_CONSOLE)
+    cmd = 'docker rm $(docker stop $(docker ps -a -q --filter="name=' + DOCKER_NGINX_CONTAINER_NAME + '" --format="{{.ID}}"))'
+    os.system(cmd)
+    
+    log("removing frontend image...", PRINT_TO_CONSOLE)
+    cmd = 'docker rm $(docker stop $(docker ps -a -q --filter="name=' + DOCKER_FRONTEND_CONTAINER_NAME + '" --format="{{.ID}}"))'
     os.system(cmd)
     
     log("removing autoheal image...", PRINT_TO_CONSOLE)
@@ -1479,6 +1493,10 @@ def load_docker_image():
     
     log("loading openelisglobal-frontend docker image", PRINT_TO_CONSOLE)
     cmd = 'sudo docker load < ' + INSTALLER_DOCKER_DIR + 'ReactFrontend_DockerImage.tar.gz'
+    os.system(cmd)
+    
+    log("loading nginx-proxy docker image", PRINT_TO_CONSOLE)
+    cmd = 'sudo docker load < ' + INSTALLER_DOCKER_DIR + 'NGINX_DockerImage.tar.gz'
     os.system(cmd)
 
     if DOCKER_DB:

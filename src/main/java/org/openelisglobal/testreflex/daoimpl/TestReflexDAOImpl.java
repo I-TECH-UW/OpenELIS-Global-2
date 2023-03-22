@@ -350,4 +350,29 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
         return null;
     }
 
+    @Override
+    public List<TestReflex> getTestReflexsByAnalyteAndTest(String analyteId, String testId) throws LIMSRuntimeException {
+        if (!GenericValidator.isBlankOrNull(analyteId) && !GenericValidator.isBlankOrNull(testId)) {
+            try {
+                List<TestReflex> list = null;
+                
+                String sql = "from TestReflex t where t.testAnalyte.analyte.id = :analyteId and t.test.id = :testId";
+                Query<TestReflex> query = entityManager.unwrap(Session.class).createQuery(sql, TestReflex.class);
+                query.setParameter("analyteId", Integer.parseInt(analyteId));
+                query.setParameter("testId", Integer.parseInt(testId));
+                
+                list = query.list();
+                
+                return list;
+            }
+            catch (RuntimeException e) {
+                LogEvent.logError(e.toString(), e);
+                throw new LIMSRuntimeException(
+                        "Error in TestReflex getTestReflexByTestResultAnalyteTest(String testResultId, String analyteId, String testId)",
+                        e);
+            }
+        }
+        return new ArrayList<>();
+    }
+
 }

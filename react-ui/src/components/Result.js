@@ -1,27 +1,21 @@
 import React from 'react'
-import { FormattedMessage, injectIntl } from 'react-intl'
+import { injectIntl } from 'react-intl'
 import './Style.css'
 import ResultSearch from './resultPage/ResultSearch';
 import ResultRangeSearch from './resultPage/ResultRangeSearch';
 import CodeTest from './resultPage/CodeTest';
 
-import { NavLink } from "react-router-dom";
 import {
     Microscope,
     IbmWatsonDiscovery,
-    IbmWatsonNaturalLanguageUnderstanding,
-    WatsonHealthCrossReference,
-    Query
+    IbmWatsonNaturalLanguageUnderstanding
 }
     from '@carbon/icons-react';
 
-import { useState } from "react";
 
-import { BrowserRouter as Router, Route, Switch, useMatch } from "react-router-dom";
 import PathRoute from "./utils/PathRoute"
 import {
     Content,
-    StoryContent,
     SideNav,
     SideNavItems,
     SideNavMenu,
