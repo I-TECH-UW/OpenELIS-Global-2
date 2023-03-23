@@ -21,7 +21,7 @@
 		<hibernate-validator.version>6.1.7.Final</hibernate-validator.version>
 		<postgresql.version>42.4.3</postgresql.version>
 		<log4j.version>2.17.1</log4j.version>
-		<springframework.version>5.3.25</springframework.version>
+		<springframework.version>5.3.26</springframework.version>
 		<springsecurity.version>5.7.5</springsecurity.version>
 		<testContainersVersion>1.15.3</testContainersVersion>
 	</properties>
