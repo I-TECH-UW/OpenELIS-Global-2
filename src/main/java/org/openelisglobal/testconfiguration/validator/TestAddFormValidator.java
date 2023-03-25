@@ -73,7 +73,7 @@ public class TestAddFormValidator implements Validator {
 
                     JSONArray tests = JSONUtils.getAsArray(sampleType.get("tests"));
                     for (int j = 0; j < tests.size(); ++j) {
-                        JSONObject test = JSONUtils.getAsObject(tests.get(i));
+                        JSONObject test = JSONUtils.getAsObject(tests.get(j));
                         ValidationHelper.validateIdField(StringUtil.nullSafeToString(test.get("id")), "JsonWad", errors,
                                 false);
                     }
