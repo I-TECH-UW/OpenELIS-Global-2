@@ -77,6 +77,18 @@ public class TestReflexResolver {
         return reflexes != null ? reflexes : new ArrayList<>();
     }
 
+    public List<TestReflex> getTestReflexsByAnalyteAndTest(Result result) {
+        String testId = null;
+        String analyteId = result.getAnalyte() == null ? null : result.getAnalyte().getId();
+        
+        if (result.getTestResult() != null) {
+            testId = result.getTestResult().getTest() == null ? null : result.getTestResult().getTest().getId();
+        }
+        
+        List<TestReflex> reflexes = testReflexService.getTestReflexsByAnalyteAndTest(analyteId, testId);
+        return reflexes != null ? reflexes : new ArrayList<>();
+    }
+    
     public ReflexAction getReflexAction() {
         return ReflexActionFactory.getReflexAction();
     }

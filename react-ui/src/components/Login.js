@@ -15,11 +15,16 @@ import {
   Stack
 } from "@carbon/react";
 import { Formik } from "formik";
+import {AlertDialog, NotificationKinds} from "./common/CustomNotification";
+import {NotificationContext} from "./layout/Layout";
 
 class Login extends React.Component {
+  static contextType = NotificationContext;
+
   constructor(props) {
     super(props);
     this.state = { formValid: false, loginError: "" };
+    this.firstInput = React.createRef();
   }
 
   componentDidMount() {
@@ -38,6 +43,8 @@ class Login extends React.Component {
           window.location.href = "/";
         }
       });
+
+    this.firstInput.current.focus(); 
   }
 
   handlePost = (status) => {
@@ -82,7 +89,9 @@ class Login extends React.Component {
         if (response.status === 200) {
           window.location.href = "/";
         } else {
-          this.setState({ loginError: data.error });
+          console.log(this.context.notificationVisible);
+          this.context.setNotificationBody({title: "Notification Message", message: data.error, kind: NotificationKinds.error})
+          this.context.setNotificationVisible(true);
         }
       })
       .catch((error) => {
@@ -94,6 +103,7 @@ class Login extends React.Component {
     return (
       <>
         <div className="loginPageContent">
+          {this.context.notificationVisible === true ? <AlertDialog/> : ""}
           <Grid fullWidth={true}>
             <Column lg={0} md={0} sm={4}>
               {this.loginMessage()}
@@ -155,6 +165,7 @@ class Login extends React.Component {
                           id: "login.msg.username",
                         })}
                         autoComplete="off"
+                        ref={this.firstInput}
                       />
                       <TextInput.PasswordInput
                         className="inputText"

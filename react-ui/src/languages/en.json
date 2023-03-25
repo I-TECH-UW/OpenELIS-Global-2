@@ -4,6 +4,7 @@
     "label.button.changepassword" : "Change Password",
     "label.button.save": "Save",
     "label.button.search" : "Search",
+    "label.button.range" : "Range",
     "label.button.clear" : "Clear",
     "login.title": "Login",
     "login.subtitle": "Login",
@@ -17,5 +18,7 @@
     "patient.label.info" : "Patient Information",
     "breadcrumb.home" : "Home",
     "admin.legacy" :"Legacy Admin",
-    "label.page.patientHistory" : "Patient History"
+    "label.page.patientHistory" : "Patient History",
+    "order.label.add" : "Add Order",
+    "reject.order.sample.notification": "You are rejecting a sample. This sample will be rejected and not appear in workplans once saved,no results can be entered for this order."
 }

@@ -124,6 +124,15 @@ public interface TestReflexDAO extends BaseDAO<TestReflex, String> {
     List<TestReflex> getTestReflexsByTestResultAnalyteTest(String testResultId, String analyteId, String testId)
             throws LIMSRuntimeException;
 
+    /**
+     * Gets the ReflexTests By analyte and test, otherwise returns null.
+     *
+     * @param analysis
+     * @throws LIMSRuntimeException
+     */        
+    List<TestReflex> getTestReflexsByAnalyteAndTest(String analyteId, String testId)
+            throws LIMSRuntimeException;        
+
     /*
      * Gets all test reflexs which may be triggered by this test and have this flag.
      * Intended use was to get testReflexs which the user decides what the action

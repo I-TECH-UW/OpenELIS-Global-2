@@ -171,12 +171,15 @@ public class LabelMakerServlet extends HttpServlet implements IActionConstants {
             String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()
                     + path + "/";
             response.setContentType("text/html; charset=utf-8");
+            response.getWriter()
+                    .println("<script type=\"text/javascript\">" + "function override() {\n"
+                            + "    var url = new URL(window.location.href);\n"
+                            + "    url.searchParams.set('override', 'true');\n"
+                            + "    window.location.href = url.toString();\n" + "}" + "</script>");
             response.getWriter().println(MessageUtil.getMessage("barcode.message.maxreached"));
             response.getWriter().println("</br>");
             response.getWriter()
                     .println("<input type='button' id='overrideButton' value='Override' onclick='override();'>");
-            response.getWriter()
-                    .println("<script type=\"text/javascript\" src=\"" + basePath + "scripts/labelMaker.js ></script>");
             // else return the pdf
         } else {
             response.setContentType("application/pdf");

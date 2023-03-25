@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.DisplayListService.ListType;
 import org.openelisglobal.common.util.IdValuePair;
@@ -221,7 +222,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<AnalysisItem> filterAnalystResultsByLabUnitRoles(String SystemUserId, List<AnalysisItem> results,
+    public List<AnalysisItem> filterAnalysisResultsByLabUnitRoles(String SystemUserId, List<AnalysisItem> results,
             String roleName) {
         String resultsRoleId = roleService.getRoleByName(roleName).getId();
         List<IdValuePair> testSections = getUserTestSections(SystemUserId, resultsRoleId);
@@ -234,5 +235,21 @@ public class UserServiceImpl implements UserService {
         List<String> allTestsIds = new ArrayList<>();
         allTests.forEach(test -> allTestsIds.add(test.getId()));
         return results.stream().filter(result -> allTestsIds.contains(result.getTestId())).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Analysis> filterAnalysesByLabUnitRoles(String SystemUserId, List<Analysis> results,
+            String roleName) {
+        String resultsRoleId = roleService.getRoleByName(roleName).getId();
+        List<IdValuePair> testSections = getUserTestSections(SystemUserId, resultsRoleId);
+        List<String> testUnitIds = new ArrayList<>();
+        if (testSections != null) {
+            testSections.forEach(testSection -> testUnitIds.add(testSection.getId()));
+        }
+
+        List<Test> allTests = typeOfSampleService.getAllActiveTestsByTestUnit(true, testUnitIds);
+        List<String> allTestsIds = new ArrayList<>();
+        allTests.forEach(test -> allTestsIds.add(test.getId()));
+        return results.stream().filter(result -> allTestsIds.contains(result.getTest().getId())).collect(Collectors.toList());
     }
 }

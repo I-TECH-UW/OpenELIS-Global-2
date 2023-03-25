@@ -96,7 +96,7 @@ services:
                       -Djavax.net.ssl.keyStorePassword=[% keystore_password %] 
                       -Djavax.net.ssl.keyStoreType=pkcs12"
         volumes:
-            - [% etc_dir %]hapi_server.xml:/usr/local/tomcat/conf/server.xml
+            - [% etc_dir %]hapi_server.xml:/opt/bitnami/tomcat/conf/server.xml
             - [% etc_dir %]healthcheck.sh:/healthcheck.sh
         secrets:
             - source: hapi_application.yaml
@@ -152,10 +152,9 @@ services:
 #astm            retries: 3
 #astm            start_period: 2m
 
-
     proxy.openelis.org:
-        container_name: openelisglobal-proxy
-        image: nginx:1.15-alpine
+        container_name: [% nginx_name %]
+        image: nginx-proxy
         ports:
         - 80:80
         - 443:443
@@ -167,12 +166,16 @@ services:
         - /etc/openelis-global/nginx.cert.pem:/etc/nginx/serverCerts/cert.crt
         - /etc/openelis-global/nginx.key.pem:/etc/nginx/serverCerts/cert.key
         restart: unless-stopped  
+        healthcheck:
+            test: ["CMD", "/healthcheck.sh"]
+            timeout: 10s
+            interval: 30s
+            retries: 3
+            start_period: 2m
         
     frontend.openelis.org:
-       container_name: openelisglobal-frontend
+       container_name: [% frontend_name %]
        image: openelisglobal-frontend
-       ports:
-         - 3000:80
        networks:
          - openelis-network
        restart: unless-stopped  
@@ -181,6 +184,12 @@ services:
             options:
               max-size: "20m"
               max-file: "50"
+       healthcheck:
+            test: ["CMD", "/healthcheck.sh"]
+            timeout: 10s
+            interval: 30s
+            retries: 3
+            start_period: 2m
         
     autoheal:
         container_name: [% autoheal_name %]

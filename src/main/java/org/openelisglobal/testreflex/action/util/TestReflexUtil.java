@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
@@ -42,6 +43,7 @@ import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.scriptlet.service.ScriptletService;
 import org.openelisglobal.scriptlet.valueholder.Scriptlet;
 import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.test.service.TestServiceImpl;
 import org.openelisglobal.testreflex.service.TestReflexService;
 import org.openelisglobal.testreflex.valueholder.TestReflex;
@@ -72,6 +74,7 @@ public class TestReflexUtil {
     private static AnalyteService analyteService = SpringContext.getBean(AnalyteService.class);
     private static ScriptletService scriptletService = SpringContext.getBean(ScriptletService.class);
     private static NoteService noteService = SpringContext.getBean(NoteService.class);
+    private static TestService testService = SpringContext.getBean(TestService.class);
 
     private TestReflexResolver reflexResolver = SpringContext.getBean(TestReflexResolver.class);
 
@@ -318,7 +321,19 @@ public class TestReflexUtil {
             List<String> handledReflexIdList, String sysUserId) {
         // More than one reflex may be returned if more than one action
         // should be taken by the result
+        String resultType = testService.getResultType(reflexBean.getResult().getTestResult().getTest());
         List<TestReflex> reflexesForResult = reflexResolver.getTestReflexesForResult(reflexBean.getResult());
+        if (resultType.equals("D")) {
+            reflexesForResult = applyDictionaryRelationRulesForReflex(reflexBean.getResult());
+        } else if (!resultType.equals("D")) {
+            if (resultType.equals("N")) {
+                reflexesForResult = reflexesForResult.stream()
+                        .filter(test -> applyNumericRelationRulesForReflex(test, reflexBean)).collect(Collectors.toList());
+            } else {
+                reflexesForResult = reflexesForResult.stream()
+                        .filter(test -> applyTextRelationRulesForReflex(test, reflexBean)).collect(Collectors.toList());
+            }
+        }
         List<Analysis> reflexAnalysises = new ArrayList<>();
         for (TestReflex reflexForResult : reflexesForResult) {
             // filter out handled reflexes
@@ -374,6 +389,73 @@ public class TestReflexUtil {
             }
         }
         return reflexAnalysises;
+    }
+
+    private List<TestReflex> applyDictionaryRelationRulesForReflex(Result result) {
+        List<TestReflex> reflexTests = new ArrayList<>();
+        
+        reflexResolver.getTestReflexsByAnalyteAndTest(result).forEach(reflexTest -> {
+            switch (reflexTest.getRelation()) {
+                case EQUALS:
+                    if (reflexTest.getTestResult().getValue().equals(result.getValue())) {
+                        reflexTests.add(reflexTest);
+                    }
+                    break;
+                case NOT_EQUALS:
+                    if (!(reflexTest.getTestResult().getValue().equals(result.getValue()))) {
+                        reflexTests.add(reflexTest);
+                    }
+                    break;
+                default:
+                    break;
+            }
+        });
+        return reflexTests;
+    }
+
+    private Boolean applyNumericRelationRulesForReflex(TestReflex reflexTest, TestReflexBean reflexBean) {
+        
+        switch (reflexTest.getRelation()) {
+            case EQUALS:
+                return Double.valueOf(reflexTest.getNonDictionaryValue())
+                        .equals(Double.valueOf(reflexBean.getResult().getValue()));      
+            case NOT_EQUALS:
+                return !(Double.valueOf(reflexTest.getNonDictionaryValue())
+                        .equals(Double.valueOf(reflexBean.getResult().getValue())));  
+            case GREATER_THAN:
+                return Double.valueOf(reflexTest.getNonDictionaryValue()) < Double
+                        .valueOf(reflexBean.getResult().getValue());
+            case LESS_THAN:
+                return Double.valueOf(reflexTest.getNonDictionaryValue()) > Double
+                        .valueOf(reflexBean.getResult().getValue());
+            case GREATER_THAN_OR_EQUAL:
+                return Double.valueOf(reflexTest.getNonDictionaryValue()) <= Double
+                        .valueOf(reflexBean.getResult().getValue());
+            case LESS_THAN_OR_EQUAL:
+                return Double.valueOf(reflexTest.getNonDictionaryValue()) >= Double
+                        .valueOf(reflexBean.getResult().getValue());
+            case INSIDE_NORMAL_RANGE :
+               return Double.valueOf(reflexBean.getResult().getValue()) >= reflexBean.getResult().getMinNormal() &&
+                Double.valueOf(reflexBean.getResult().getValue()) <= reflexBean.getResult().getMaxNormal() ;
+            case OUTSIDE_NORMAL_RANGE :
+                return !(Double.valueOf(reflexBean.getResult().getValue()) >= reflexBean.getResult().getMinNormal() &&
+                 Double.valueOf(reflexBean.getResult().getValue()) <= reflexBean.getResult().getMaxNormal()) ;    
+            case BETWEEN :
+               return true ;  
+            default:
+                return false;
+        }
+    }
+
+    private Boolean applyTextRelationRulesForReflex(TestReflex reflexTest, TestReflexBean reflexBean) {
+        switch (reflexTest.getRelation()) {
+            case EQUALS:
+                return reflexTest.getNonDictionaryValue().equals(reflexBean.getResult().getValue());   
+            case NOT_EQUALS:
+                return !(reflexTest.getNonDictionaryValue().equals(reflexBean.getResult().getValue()));    
+            default:
+                return false;
+        }
     }
 
     private boolean doAllAnalysisHaveReflex(List<Analysis> parentAnalysisList, TestReflexBean reflexBean) {

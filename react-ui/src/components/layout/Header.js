@@ -1,22 +1,16 @@
 import React from "react";
-import { FormattedMessage, injectIntl } from "react-intl";
+import { injectIntl } from "react-intl";
 import { withRouter } from "react-router-dom";
 import "../Style.css";
-import { faLanguage, faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Button, Select, SelectItem } from "@carbon/react";
+import { Select, SelectItem } from "@carbon/react";
 import {
-  Search20,
-  Notification20,
-  Switcher,
-  User,
-  Language20,
-  UserAvatarFilledAlt20,
-  UserAvatarFilledAlt16,
-  Fade,
-  Menu,
-  Logout,
+  Search,
+  Notification,
+  Language,
+  UserAvatarFilledAlt,
+  Logout
 } from "@carbon/icons-react";
+
 import {
   Header,
   HeaderName,
@@ -24,10 +18,8 @@ import {
   HeaderGlobalBar,
   HeaderNavigation,
   HeaderMenu,
-  HeaderMenuButton,
   HeaderMenuItem,
   Theme,
-  Content,
   HeaderPanel,
 } from "@carbon/react";
 
@@ -41,39 +33,22 @@ class OEHeader extends React.Component {
     };
   }
 
-  outsideClickListener = (event) => {
-    if (
-      !this.userSwitchRef.current.contains(event.target) &&
-      !this.headerPanelRef.current.contains(event.target)
-    ) {
-      this.dismissPanel();
-      window.removeEventListener("click", this.outsideClickListener);
-    }
-  };
-
-  componentWillUnmount() {
-    window.removeEventListener("click", this.outsideClickListener);
-  }
-
-  clickPanelSwitch = () => {
-    const userSwitchCollapsed = this.state.switchCollapsed;
-    this.setState((state) => ({
-      switchCollapsed: !userSwitchCollapsed,
-    }));
-    if (userSwitchCollapsed) {
-      window.addEventListener("click", this.outsideClickListener);
-    }
-  };
-
   panelSwitchLabel = () => {
     return this.props.isLoggedIn() ? "User" : "Lang";
   };
 
+  clickPanelSwitch = () => {
+    this.setState((state) => ({
+      switchCollapsed: !state.switchCollapsed
+    }));
+  }
+
+
   panelSwitchIcon = () => {
     return this.props.isLoggedIn() ? (
-      <UserAvatarFilledAlt20 size={20} />
+      <UserAvatarFilledAlt size={20} />
     ) : (
-      <Language20 size={20} />
+      <Language size={20} />
     );
   };
 
@@ -107,9 +82,11 @@ class OEHeader extends React.Component {
                 <>
                   <HeaderNavigation aria-label="nav">
                     <HeaderMenu aria-label="Order" menuLinkName="Order">
-                      <HeaderMenuItem href="#">Sub-link 1</HeaderMenuItem>
-                      <HeaderMenuItem href="#">Sub-link 2</HeaderMenuItem>
-                      <HeaderMenuItem href="#">Sub-link 3</HeaderMenuItem>
+                      <HeaderMenuItem href="/AddOrder">Add Order</HeaderMenuItem>
+                      <HeaderMenuItem href="#">Modify Order</HeaderMenuItem>
+                      <HeaderMenuItem href="#">Incoming Orders</HeaderMenuItem>
+                      <HeaderMenuItem href="#">Batch Order Entry</HeaderMenuItem>
+                      <HeaderMenuItem href="#">Barcode</HeaderMenuItem>
                     </HeaderMenu>
                     <HeaderMenu aria-label="Patient" menuLinkName="Patient">
                       <HeaderMenuItem href="/PatientManagement">Add/Edit Patient</HeaderMenuItem>
@@ -131,7 +108,7 @@ class OEHeader extends React.Component {
                     </HeaderMenu>
                     <HeaderMenu aria-label="Results" menuLinkName="Results">
                       <HeaderMenuItem href="#">Sub-link 1</HeaderMenuItem>
-                      <HeaderMenuItem href="#">Sub-link 2</HeaderMenuItem>
+                      <HeaderMenuItem href="/result">Result Search</HeaderMenuItem>
                       <HeaderMenuItem href="#">Sub-link 3</HeaderMenuItem>
                     </HeaderMenu>
                     <HeaderMenu
@@ -155,13 +132,13 @@ class OEHeader extends React.Component {
                 {this.props.isLoggedIn() && (
                   <>
                     <HeaderGlobalAction aria-label="Search" onClick={() => {}}>
-                      <Search20 size={20} />
+                      <Search size={20} />
                     </HeaderGlobalAction>
                     <HeaderGlobalAction
                       aria-label="Notifications"
                       onClick={() => {}}
                     >
-                      <Notification20 size={20} />
+                      <Notification size={20} />
                     </HeaderGlobalAction>
                   </>
                 )}
@@ -183,18 +160,14 @@ class OEHeader extends React.Component {
                   {this.props.isLoggedIn() && (
                     <>
                       <li className="userDetails">
-                        <UserAvatarFilledAlt16 size={18} />{" "}
+                        <UserAvatarFilledAlt size={18} />{" "}
                         {this.props.user.firstName} {this.props.user.lastName}
                       </li>
                       <li
                         className="userDetails clickableUserDetails"
                         onClick={this.props.logout}
                       >
-                        <FontAwesomeIcon
-                          id="sign-out"
-                          icon={faSignOutAlt}
-                          size="1x"
-                        />
+                        <Logout id="sign-out" />
                         Logout
                       </li>
                     </>

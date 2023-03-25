@@ -1,29 +1,57 @@
 package org.openelisglobal.testreflex.service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.analyte.service.AnalyteService;
+import org.openelisglobal.analyte.valueholder.Analyte;
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.dictionary.service.DictionaryService;
+import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.test.service.TestServiceImpl;
+import org.openelisglobal.test.valueholder.Test;
+import org.openelisglobal.testanalyte.service.TestAnalyteService;
 import org.openelisglobal.testanalyte.valueholder.TestAnalyte;
 import org.openelisglobal.testreflex.action.bean.ReflexRule;
+import org.openelisglobal.testreflex.action.bean.ReflexRuleCondition;
 import org.openelisglobal.testreflex.dao.ReflexRuleDAO;
 import org.openelisglobal.testreflex.dao.TestReflexDAO;
 import org.openelisglobal.testreflex.valueholder.TestReflex;
+import org.openelisglobal.testresult.service.TestResultService;
 import org.openelisglobal.testresult.valueholder.TestResult;
+import org.openelisglobal.typeofsample.service.TypeOfSampleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.openelisglobal.testreflex.action.bean.ReflexRuleAction;
 
 @Service
 public class TestReflexServiceImpl extends BaseObjectServiceImpl<TestReflex, String> implements TestReflexService {
     @Autowired
     protected TestReflexDAO baseObjectDAO;
-
     @Autowired
     protected ReflexRuleDAO reflexRuleDAO ;
+    @Autowired
+    TestReflexService reflexService;
+    @Autowired
+    private TestService testService;
+    @Autowired
+    private TestResultService testResultService;
+    @Autowired
+    DictionaryService dictionaryService;
+    @Autowired
+    TypeOfSampleService typeOfSampleService;
+    @Autowired
+    AnalyteService analyteService;
+    @Autowired
+    TestAnalyteService testAnalyteService;
+    
+    final static String REFLEX_RESULT_GROUP = "30" ;
+    final static String REFLEX_RESULT_TYPE = "R" ;
 
     TestReflexServiceImpl() {
         super(TestReflex.class);
@@ -136,9 +164,11 @@ public class TestReflexServiceImpl extends BaseObjectServiceImpl<TestReflex, Str
     }
 
     @Override
+    @Transactional()
     public void saveOrUpdateReflexRule(ReflexRule reflexRule) {
         if (reflexRule.getId() == null) {
             reflexRuleDAO.insert(reflexRule);
+            processReflexRule(reflexRule);
         } else {
             reflexRuleDAO.update(reflexRule);
         }
@@ -148,5 +178,74 @@ public class TestReflexServiceImpl extends BaseObjectServiceImpl<TestReflex, Str
     @Transactional(readOnly = true)
     public List<ReflexRule> getAllReflexRules() {
         return reflexRuleDAO.getAll();
+    }
+
+    @Override
+    public void deactivateReflexRule(String id) {
+        Optional<ReflexRule> rule = reflexRuleDAO.get(Integer.valueOf(id));
+        if(rule.isPresent()){
+            rule.get().setActive(false);
+            reflexRuleDAO.update(rule.get());
+        }   
+    }
+
+    private void processReflexRule(ReflexRule rule) {
+        Analyte analyte = new Analyte();
+        analyte.setAnalyteName(rule.getRuleName());
+        analyte.setIsActive(IActionConstants.YES);
+        analyte = analyteService.save(analyte);
+
+        for (ReflexRuleCondition condition : rule.getConditions()) {
+            if (testAndSampleMatches(condition.getTestId(), condition.getSampleId())) {
+                TestAnalyte testAnalyte = new TestAnalyte();
+                testAnalyte.setAnalyte(analyte);
+                Test triggerTest = testService.getTestById(condition.getTestId());
+                testAnalyte.setTest(triggerTest);
+                testAnalyte.setResultGroup(REFLEX_RESULT_GROUP);
+                testAnalyte.setTestAnalyteType(REFLEX_RESULT_TYPE);
+                testAnalyte = testAnalyteService.save(testAnalyte);
+                for (ReflexRuleAction action : rule.getActions()) {
+                    TestReflex reflex = new TestReflex();
+                    // TestResult result = testResultService.get(condition.getValue());
+                    List<TestResult> results = testResultService.getActiveTestResultsByTest(triggerTest.getId());
+                    if (testService.getResultType(triggerTest).equals("D")) {
+                        Optional<TestResult> result = results.stream()
+                                .filter(res -> res.getValue().equals(condition.getValue())).findFirst();
+                        reflex.setTestResult(result.get());
+                    } else {
+                        reflex.setTestResult(results.get(0));
+                        if(testService.getResultType(triggerTest).equals("N")){
+                            Double value = Double.parseDouble(condition.getValue());
+                            reflex.setNonDictionaryValue(value.toString());
+                        }else{
+                            reflex.setNonDictionaryValue(condition.getValue());
+                        }  
+                    }
+                    reflex.setRelation(condition.getRelation());
+                    reflex.setTestAnalyte(testAnalyte);
+                    reflex.setTest(triggerTest);
+                    if (testAndSampleMatches(action.getReflexTestId(), action.getSampleId())) {
+                        Test reflexTest = testService.getTestById(action.getReflexTestId());
+                        reflex.setAddedTest(reflexTest);
+                    }
+                    reflexService.save(reflex);
+                }
+            }
+        }
+    }
+
+
+    private Boolean testAndSampleMatches(String testId, String sampleTypeId) {
+        List<Test> testList = typeOfSampleService.getActiveTestsBySampleTypeId(sampleTypeId, false);
+        List<String> testIdList = new ArrayList<>();
+        testList.forEach(test -> {
+            testIdList.add(test.getId());
+        });
+        return testIdList.contains(testId);
+    }
+
+    @Override
+    public List<TestReflex> getTestReflexsByAnalyteAndTest(String analyteId, String testId) {
+        return getBaseObjectDAO().getTestReflexsByAnalyteAndTest(analyteId, testId);
     }
 }

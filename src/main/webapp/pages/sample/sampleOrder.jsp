@@ -185,7 +185,6 @@
 <%-- This define may not be needed, look at usages (not in any other jsp or js page may be radio buttons for ci LNSP--%>
 <c:set var="sampleOrderItem" value="${sampleOrderItems}"/>
 
-<form:hidden path="sampleOrderItems.newRequesterName" id="newRequesterName" />
 <form:hidden path="sampleOrderItems.modified" id="orderModified"/>
 <form:hidden path="sampleOrderItems.sampleId" id="sampleId"/>
 
@@ -431,7 +430,7 @@
                      invalidlabid='${invalidProvider}'
        				 clearNonMatching="false"
                      maxrepmsg='maximum reached'
-                     disabled = '${!restrictNewProviderEntries}'
+                     disabled='<%=!restrictNewProviderEntries%>'
                       >
     		<option></option>
     		<form:options items="${form.sampleOrderItems.providersList}" itemValue="id" itemLabel="value" />

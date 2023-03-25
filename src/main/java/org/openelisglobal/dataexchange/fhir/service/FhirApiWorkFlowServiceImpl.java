@@ -18,6 +18,7 @@ import org.hl7.fhir.r4.model.CodeableConcept;
 import org.hl7.fhir.r4.model.Coding;
 import org.hl7.fhir.r4.model.DiagnosticReport;
 import org.hl7.fhir.r4.model.Identifier;
+import org.hl7.fhir.r4.model.Location;
 import org.hl7.fhir.r4.model.Observation;
 import org.hl7.fhir.r4.model.Patient;
 import org.hl7.fhir.r4.model.Practitioner;
@@ -30,7 +31,9 @@ import org.hl7.fhir.r4.model.ServiceRequest.ServiceRequestStatus;
 import org.hl7.fhir.r4.model.Specimen;
 import org.hl7.fhir.r4.model.Task;
 import org.hl7.fhir.r4.model.Task.TaskStatus;
+import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.services.TableIdService;
 import org.openelisglobal.dataexchange.fhir.FhirConfig;
 import org.openelisglobal.dataexchange.fhir.FhirUtil;
 import org.openelisglobal.dataexchange.fhir.exception.FhirLocalPersistingException;
@@ -38,6 +41,8 @@ import org.openelisglobal.dataexchange.fhir.service.FhirPersistanceServiceImpl.F
 import org.openelisglobal.dataexchange.fhir.service.TaskWorker.TaskResult;
 import org.openelisglobal.dataexchange.order.action.DBOrderExistanceChecker;
 import org.openelisglobal.dataexchange.order.action.IOrderPersister;
+import org.openelisglobal.organization.service.OrganizationService;
+import org.openelisglobal.organization.valueholder.Organization;
 import org.openelisglobal.referral.fhir.service.FhirReferralService;
 import org.openelisglobal.referral.service.ReferralService;
 import org.openelisglobal.spring.util.SpringContext;
@@ -69,6 +74,8 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
     private ReferralService referralService;
     @Autowired
     private FhirTransformService fhirTransformService;
+    @Autowired
+    private OrganizationService organizationService;
 
     @Value("${org.openelisglobal.fhirstore.uri}")
     private String localFhirStorePath;
@@ -515,6 +522,23 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         List<Practitioner> remoteRequesters = getRequestorsForServiceRequestsFromServer(sourceFhirClient,
                 remoteServiceRequests);
         Patient remotePatientForTask = getForPatientFromServer(sourceFhirClient, remoteTask);
+        Location remoteTaskLocation = getTaskLocationFromServer(sourceFhirClient, remoteTask);
+        if (remoteTaskLocation != null) {
+            Organization localOrganization = organizationService
+                    .getOrganizationByFhirId(remoteTaskLocation.getIdElement().getIdPart());
+            if (localOrganization == null) {
+                Organization newOrg = new Organization();
+                if (remoteTaskLocation.hasName()) {
+                    newOrg.setOrganizationName(remoteTaskLocation.getName());
+                }
+                newOrg.setFhirUuid(UUID.fromString(remoteTaskLocation.getIdElement().getIdPart()));
+                newOrg.setIsActive(IActionConstants.YES);
+                newOrg.setMlsLabFlag(IActionConstants.NO);
+                newOrg.setMlsSentinelLabFlag(IActionConstants.NO);
+                organizationService.save(newOrg);
+                organizationService.linkOrganizationAndType(newOrg, TableIdService.getInstance().REFERRING_ORG_TYPE_ID);
+            }
+        }
         if (remotePatientForTask == null) {
             remotePatientForTask = getForPatientFromServer(sourceFhirClient, remoteServiceRequests);
         }
@@ -860,6 +884,20 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         return forPatient;
     }
 
+    private Location getTaskLocationFromServer(IGenericClient fhirClient, Task remoteTask) {
+        Location taskLocation = null;
+        if (!(remoteTask.getLocation() == null || remoteTask.getLocation().getReference() == null)) {
+            taskLocation = fhirClient.read().resource(Location.class)
+                    .withId(remoteTask.getLocation().getReferenceElement().getIdPart()).execute();
+        }
+
+        if (taskLocation == null) {
+            LogEvent.logWarn(this.getClass().getName(), "getTaskLoctionFromServer",
+                    "remoteTask doesn't reference a Location, or referenced patient returned null");
+        }
+        return taskLocation;
+    }
+
     private Practitioner getPractitionerFromServer(IGenericClient fhirClient, Task remoteTask) {
         Practitioner practitioner = null;
         if (!GenericValidator.isBlankOrNull(remoteTask.getRequester().getReferenceElement().getIdPart())
@@ -884,6 +922,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         public List<Practitioner> requestors;
         public List<Specimen> specimens;
         public Patient patient;
+        public Location location;
     }
 
     public class ReferralResultsImportObjects {

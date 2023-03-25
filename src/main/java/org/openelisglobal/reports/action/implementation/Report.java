@@ -63,10 +63,16 @@ public abstract class Report implements IReportCreator {
     protected HashMap<String, Object> reportParameters = null;
     protected String requestedReport;
     private String fullReportFilename;
+    protected String systemUserId;
 
     @Override
     public void setRequestedReport(String report) {
         requestedReport = report;
+    }
+
+    @Override
+    public void setSystemUserId(String id){
+        systemUserId = id ;
     }
 
     protected void initializeReport() {

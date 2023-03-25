@@ -4,6 +4,7 @@
     "label.button.changepassword" : "Changer Mot de Passe",
     "label.button.save": "Sauver",
     "label.button.search" : "Chercher" ,
+    "label.button.range" : "Range" ,
     "label.button.clear" : "Dégager",
     "login.title": "Identifiant",
     "login.subtitle": "Identifiant",
@@ -17,5 +18,7 @@
     "patient.label.info" : "Informations sur les patients",
     "breadcrumb.home" : "Domicile",
     "admin.legacy" :"Précédent Admin",
-    "label.page.patientHistory": "Antécédents du patient"
+    "label.page.patientHistory": "Antécédents du patient",
+    "order.label.add" : "Ajouter Ordonnance",
+    "reject.order.sample.notification": "Vous rejetez un échantillon.Cet échantillon sera rejeté et n’apparaîtra pas dans les plans de travail une fois enregistré,aucun résultat ne peut être entré pour cette commande."
 }
