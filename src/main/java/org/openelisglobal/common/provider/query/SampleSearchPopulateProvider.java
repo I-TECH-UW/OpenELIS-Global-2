@@ -200,7 +200,7 @@ public class SampleSearchPopulateProvider extends BaseQueryProvider {
     private Organization getOrganizationForSample(Sample sample) {
         SampleOrganization so = new SampleOrganization();
         so.setSample(sample);
-        sampleOrganizationService.getDataBySample(so);
+        sampleOrganizationService.getDataBySample(sample);
         return so.getOrganization();
     }
 

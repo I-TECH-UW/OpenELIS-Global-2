@@ -23,7 +23,7 @@ public class SessionCookieFilter extends GenericFilterBean {
     private final String SESSION_COOKIE_NAME = "JSESSIONID";
     private final String SESSION_PATH_ATTRIBUTE = ";Path=";
     private final String ROOT_CONTEXT = "/";
-    private final String SAME_SITE_ATTRIBUTE_VALUES = ";HttpOnly;Secure;SameSite=Strict";
+    private final String SAME_SITE_ATTRIBUTE_VALUES = ";HttpOnly;SameSite=Strict";
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
