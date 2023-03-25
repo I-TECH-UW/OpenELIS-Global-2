@@ -1111,8 +1111,8 @@
 					<textFieldExpression><![CDATA[$F{sampleSortOrder}]]></textFieldExpression>
 				</textField>
 			</frame>
-			<textField isBlankWhenNull="true">
-				<reportElement positionType="Float" mode="Opaque" x="10" y="12" width="543" height="11" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" backcolor="#F5F5F5" uuid="33e6ed2f-7490-4610-bb37-82e66d73ae33">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="10" y="12" width="543" height="11" isRemoveLineWhenBlank="true" backcolor="#F5F5F5" uuid="33e6ed2f-7490-4610-bb37-82e66d73ae33">
 					<printWhenExpression><![CDATA[$F{note} != null]]></printWhenExpression>
 				</reportElement>
 				<box topPadding="2" leftPadding="4" rightPadding="4">
