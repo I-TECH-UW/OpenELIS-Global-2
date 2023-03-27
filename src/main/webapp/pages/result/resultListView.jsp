@@ -551,6 +551,17 @@ function /*void*/ handleEnterEvent(  ){
 
 // });
 
+  function validateCriticalResults(resultBox, lowCriticalLow,lowCriticalHigh,highCriticalLow,highCriticalHigh, ){
+	var actualValue = resultBox.value;
+	if (actualValue > lowCriticalLow && actualValue < lowCriticalHigh
+	|| actualValue > highCriticalLow && actualValue < highCriticalHigh) {
+		resultBox.style.borderColor = "red";
+
+            alert("<%=MessageUtil.getContextualMessage("error.critical.range.value")%>");
+            return;
+        }
+  }
+
 </script>
 
 <c:if test="${form.displayTestSections}">
@@ -872,11 +883,11 @@ function /*void*/ handleEnterEvent(  ){
 				<c:set var="lowerCriticalLow"
 					value="${testResult.lowerCriticalRangeLow}" />	
 				<c:set var="lowerCriticalHigh"
-					value="${testResult.higherCriticalRangeHigh}" />	
+					value="${testResult.lowerCriticalRangeHigh}" />	
 				<c:set var="upperCriticalLow"
 					value="${testResult.higherCriticalRangeLow}" />	
 				<c:set var="upperCriticalHigh"
-					value="${testResult.higherCriticalRangeHigh}" />		
+					value="${testResult.higherCriticalRangeHigh}" />	
 				<c:set var="significantDigits"
 					value="${testResult.significantDigits}" />
 				<c:set var="accessionNumber" value="${testResult.accessionNumber}" />
@@ -1078,7 +1089,8 @@ function /*void*/ handleEnterEvent(  ){
 								cssClass="resultValue"
 								disabled='${testResult.readOnly}'
 								onchange="validateResults( this, ${iter.index}, ${lowerBound}, ${upperBound}, ${lowerAbnormalBound}, ${upperAbnormalBound}, 
-								${lowerCriticalLow}, ${lowerCriticalHigh}, ${upperCriticalLow}, ${upperCriticalHigh}, ${significantDigits}, 'XXXX' );
+								 ${significantDigits}, 'XXXX' );
+								 validateCriticalResults(this,${upperCriticalLow}, ${upperCriticalHigh},${lowerCriticalLow}, ${lowerCriticalHigh},);
 					   			 markUpdated(${iter.index});
 					   			 ${(testResult.reflexGroup && not testResult.childReflex) ? 'updateReflexChild(' += testResult.reflexParentGroup += ');' : ''}
 					   			 ${(noteRequired && not empty testResult.resultValue) ? 'showNote(' += iter.index += ');' : ''}

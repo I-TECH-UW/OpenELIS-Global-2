@@ -598,7 +598,7 @@ public class TestModifyEntryController extends BaseController {
             createTestResults(testSet.testResults, significantDigits, testAddParams);
             if (numericResults) {
                 testSet.resultLimits = createResultLimits(lowValid, highValid, lowReportingRange, highReportingRange,
-                        testAddParams, highCriticalRangeLow, highCriticalRangeLow, highCriticalRangeLow, highCriticalRangeLow);
+                        testAddParams,  highCriticalRangeLow, highCriticalRangeHigh, lowCriticalRangeHigh, lowCriticalRangeLow);
             } else if (dictionaryResults) {
                 testSet.resultLimits = createDictionaryResultLimit(testAddParams);
             }

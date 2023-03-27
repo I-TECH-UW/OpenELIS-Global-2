@@ -130,7 +130,7 @@ public class TestAddController extends BaseController {
 
         String currentUserId = getSysUserId(request);
         String jsonString = (form.getJsonWad());
-
+       
         JSONParser parser = new JSONParser();
 
         JSONObject obj = null;
@@ -262,7 +262,7 @@ public class TestAddController extends BaseController {
             createTestResults(testSet.testResults, significantDigits, testAddParams);
             if (numericResults) {
                 testSet.resultLimits = createResultLimits(lowValid, highValid, lowReportingRange, highReportingRange,
-                        testAddParams, highCriticalRangeLow, highCriticalRangeLow, highCriticalRangeLow, highCriticalRangeLow);
+                        testAddParams, highCriticalRangeLow, highCriticalRangeHigh, lowCriticalRangeHigh, lowCriticalRangeLow);
             } else if (dictionaryResults) {
                 testSet.resultLimits = createDictionaryResultLimit(testAddParams);
             }
@@ -306,7 +306,7 @@ public class TestAddController extends BaseController {
                 limit.setLowCriticalRangeHigh(lowCriticalRangeHigh);
                 limit.setHighCriticalRangeHigh(highCriticalRangeHigh);
                 limit.setHighCriticalRangeLow(highCriticalhRangeLow);
-            }
+             }
             resultLimits.add(limit);
         }
 
