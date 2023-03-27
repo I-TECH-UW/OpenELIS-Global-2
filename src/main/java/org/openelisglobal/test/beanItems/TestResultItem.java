@@ -109,8 +109,8 @@ public class TestResultItem implements ResultItem, Serializable {
     private double upperAbnormalRange;
     private double lowerAbnormalRange;
     private String normalRange = "";
-    private double lowerCriticalRangeLow = 0;
-    private double lowerCriticalRangeHigh = 0;
+    private double lowerCriticalRangeLow;
+    private double lowerCriticalRangeHigh;
     private double higherCriticalRangeHigh;
     private double higherCriticalRangeLow;
     
