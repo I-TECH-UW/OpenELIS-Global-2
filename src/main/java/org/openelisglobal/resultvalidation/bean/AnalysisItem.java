@@ -34,10 +34,10 @@ public class AnalysisItem {
 
     private String testName;
 
-    @ValidAccessionNumber(groups = { ResultValidationForm.ResultValidation.class }) //cause error on result validation
+    @ValidAccessionNumber(groups = { ResultValidationForm.ResultValidation.class })
     private String accessionNumber;
 
-    //@SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { ResultValidationForm.ResultValidation.class }) //cause error when value is < LL
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { ResultValidationForm.ResultValidation.class })
     private String result;
 
     private String receivedDate;
