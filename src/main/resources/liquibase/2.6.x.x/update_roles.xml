@@ -141,7 +141,7 @@
 	</changeSet>
 	<changeSet author="CIV Developer Group" id="202303247"
 		context="CDIRetroCI">
-		<preConditions onError="MARK_RAN">
+		<preConditions onFail="CONTINUE">
 			<tableExists tableName="system_role"
 				schemaName="clinlims" />
 			<sqlCheck expectedResult="0">
@@ -156,6 +156,40 @@
 			</sqlCheck>
 		</preConditions>
 		<comment>update roles for RetroCI context </comment>
+		<sql>
+			insert into clinlims.system_role
+			values(nextval('clinlims.system_role_seq'),'Reception','Sample entry
+			and patient management.',FALSE,(select id from clinlims.system_role
+			where name = 'Lab Unit Roles'),'role.intake',TRUE,FALSE);
+
+			update
+			clinlims.system_role set active = TRUE where name in ('Global
+			Roles','Lab Unit Roles');
+
+			update clinlims.system_role set
+			grouping_parent = (select id from
+			clinlims.system_role where name =
+			'Global Roles') where name = 'Audit
+			Trail';
+		</sql>
+	</changeSet>
+	<changeSet author="CIV Developer Group" id="202303248"
+		context="ci_regional,ci_general">
+		<preConditions onFail="CONTINUE">
+			<tableExists tableName="system_role"
+				schemaName="clinlims" />
+			<sqlCheck expectedResult="0">
+				select count(*) from
+				clinlims.system_role
+				where name = 'Reception';
+			</sqlCheck>
+			<sqlCheck expectedResult="1">
+				select count(*) from
+				clinlims.system_role
+				where name = 'Lab Unit Roles' limit 1;
+			</sqlCheck>
+		</preConditions>
+		<comment>Add role Reception if missing </comment>
 		<sql>
 			insert into clinlims.system_role
 			values(nextval('clinlims.system_role_seq'),'Reception','Sample entry
