@@ -145,9 +145,9 @@ class CodeTestForm extends React.Component {
                             id={"testResult" + row.id + ".resultValue"}
                             name={"testResult[" + row.id + "].resultValue"}
                             noLabel={true}
-                            onChange={(e) => this.markUpdated(e)}
+                            onChange={(e) => this.handleChange(e, row.id)}
                         >
-                            {/* onChange={(e) => markUpdated(e, param.rowId, false, '')}{...updateShadowResult(e, this, param.rowId)} */}
+                            {/* {...updateShadowResult(e, this, param.rowId)} */}
                             <SelectItem
                                 text=""
                                 value=""
@@ -184,9 +184,9 @@ class CodeTestForm extends React.Component {
                             id={"testResult" + row.id + ".resultValue"}
                             name={"testResult[" + row.id + "].resultValue"}
                             noLabel={true}
-                        //onChange={(e) => markUpdated(e)} sb. disabled and setto value
+                            onChange={(e) => this.handleChange(e, row.id)}
                         >
-                            {/* onChange={(e) => markUpdated(e, param.rowId, false, '')}{...updateShadowResult(e, this, param.rowId)} */}
+                            {/* {...updateShadowResult(e, this, param.rowId)} */}
                             <SelectItem
                                 text=""
                                 value=""
@@ -203,6 +203,7 @@ class CodeTestForm extends React.Component {
                     case "N":
                         return <input id={"testResult" + row.id + ".resultValue"}
                             name={"testResult[" + row.id + "].resultValue"}
+                            onChange={(e) => this.handleChange(e, row.id)}
                         //onChange={(e) => markUpdated(e)} sb. disabled and setto value
                         />
                     // <input id={"results_" + param.rowId} type="text" size="6"></input>
@@ -217,10 +218,10 @@ class CodeTestForm extends React.Component {
 
             case "Methods":
                 return <Select
-                    id={"testMethod" + id}
+                    id={"testMethod" + row.id}
                     name={"testResult[" + row.id + "].testMethod"}
                     noLabel={true}
-                    onChange={(e) => this.markUpdated(e, row.id)}
+                    onChange={(e) => this.handleChange(e, row.id)}
                     value={row.method}
                 >
                     <SelectItem
@@ -239,19 +240,6 @@ class CodeTestForm extends React.Component {
         return row.resultValue;
     }
 
-    markUpdated = (e, rowId) => {
-        const { name, value } = e.target;
-        console.log("markUpdated0:" + name + ":" + value + ":" + rowId);
-        
-        var form = this.state.resultForm;
-        var jp = require('jsonpath');
-        jp.value(form, name, value);
-        var isModified = "testResult[" + rowId + "].isModified";
-        jp.value(form, isModified, "true");
-
-        
-    };
-
     renderReferral = ({ data }) => <pre>
         <div className='referralRow'>
             <Grid >
@@ -259,12 +247,12 @@ class CodeTestForm extends React.Component {
                     <div >
                         <Select className='referralReason'
                             id={"referralReason" + data.id}
-                            name={"referralReason" + data.id}
+                            name={"testResult[" + data.id + "].referralReason"}
                             // noLabel={true} 
                             labelText={"Referral Reason"}
-                            onChange={(e) => this.markUpdated(e)}
+                            onChange={(e) => this.handleChange(e, data.id)}
                         >
-                            {/* onChange={(e) => markUpdated(e, param.rowId, false, '')}{...updateShadowResult(e, this, param.rowId)} */}
+                            {/* {...updateShadowResult(e, this, param.rowId)} */}
                             <SelectItem
                                 text=""
                                 value=""
@@ -283,12 +271,12 @@ class CodeTestForm extends React.Component {
                     <div className='institute'>
                         <Select
                             id={"institute" + data.id}
-                            name={"institute" + data.id}
+                            name={"testResult[" + data.id + "].institute"}
                             // noLabel={true} 
                             labelText={"Institute"}
-                            onChange={(e) => markUpdated(e)}
+                            onChange={(e) => this.handleChange(e, data.id)}
                         >
-                            {/* onChange={(e) => markUpdated(e, param.rowId, false, '')}{...updateShadowResult(e, this, param.rowId)} */}
+                            {/* {...updateShadowResult(e, this, param.rowId)} */}
 
                             <SelectItem
                                 text=""
@@ -308,10 +296,10 @@ class CodeTestForm extends React.Component {
                     <div className='testToPerform'>
                         <Select
                             id={"testToPerform" + data.id}
-                            name={"testToPerform" + data.id}
+                            name={"testResult[" + data.id + "].testToPerform"}
                             // noLabel={true} 
                             labelText={"Test to Perform"}
-                            onChange={(e) => markUpdated(e)}
+                            onChange={(e) => this.handleChange(e, data.id)}
                         >
                             {/* onChange={(e) => markUpdated(e, param.rowId, false, '')}{...updateShadowResult(e, this, param.rowId)} */}
 
@@ -325,8 +313,8 @@ class CodeTestForm extends React.Component {
                 <Column lg={3}>
                     <DatePicker datePickerType="single"
                         id={"sentDate_" + data.id}
-                        name={"sentDate_" + data.id}
-                        onChange={(e) => markUpdated(e)}
+                        name={"testResult[" + data.id + "].sentDate_"}
+                        onChange={(date) => this.handleDatePickerChange(date, data.id)}
                     >
                         <DatePickerInput
                             placeholder="mm/dd/yyyy"
@@ -339,11 +327,27 @@ class CodeTestForm extends React.Component {
 
             </Grid>
         </div >
-        {/* {JSON.stringify(data, null, 2)}  */}
+
     </pre >;
 
-    handleChange = (values) => {
-        console.log("handleChange:")
+    handleDatePickerChange = (date, rowId) => {
+        console.log("handleDatePickerChange:" + date)
+        const d = new Date(date).toLocaleDateString('fr-FR');
+        var form = this.state.resultForm;
+        var jp = require('jsonpath');
+        jp.value(form, "testResult[" + rowId + "].sentDate_", d);
+        var isModified = "testResult[" + rowId + "].isModified";
+        jp.value(form, isModified, "true");
+    }
+
+    handleChange = (e, rowId) => {
+        const { name, value } = e.target;
+        console.log("handleChange:" + name + ":" + value + ":" + rowId);
+        var form = this.state.resultForm;
+        var jp = require('jsonpath');
+        jp.value(form, name, value);
+        var isModified = "testResult[" + rowId + "].isModified";
+        jp.value(form, isModified, "true");
     }
 
     handleDoRangeChange = () => {
@@ -366,7 +370,7 @@ class CodeTestForm extends React.Component {
     };
 
     handleSave = (values) => {
-        console.log("handleSave:" + JSON.stringify(this.state.resultForm));
+        //console.log("handleSave:" + JSON.stringify(this.state.resultForm));
         var searchEndPoint = "/rest/ReactLogbookResultsUpdate"
         postToOpenElisServer(searchEndPoint, JSON.stringify(this.state.resultForm), this.handlePost());
     }
@@ -389,12 +393,7 @@ class CodeTestForm extends React.Component {
         this.setState({ resultForm: resultForm })
     }
 
-    handleDatePickerChange = (...e) => {
-        console.log("handleDatePickerChange:")
-        this.setState({
-            dob: e[1],
-        });
-    }
+
 
     handlePageChange = (pageInfo) => {
         if (this.state.page != pageInfo.page) {
