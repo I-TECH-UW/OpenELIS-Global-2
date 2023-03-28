@@ -94,6 +94,7 @@ class OEHeader extends React.Component {
   };
 
   render() {
+    const { formatMessage } = this.props.intl;
     return (
       <>
         <div className="container">
@@ -124,10 +125,11 @@ class OEHeader extends React.Component {
                       <HeaderMenuItem href="#">Sub-link 2</HeaderMenuItem>
                       <HeaderMenuItem href="#">Sub-link 3</HeaderMenuItem>
                     </HeaderMenu>
-                    <HeaderMenu aria-label="Workplan" menuLinkName="Workplan">
-                      <HeaderMenuItem href="#">Sub-link 1</HeaderMenuItem>
-                      <HeaderMenuItem href="#">Sub-link 2</HeaderMenuItem>
-                      <HeaderMenuItem href="#">Sub-link 3</HeaderMenuItem>
+                    <HeaderMenu aria-label="Workplan" menuLinkName={formatMessage({id:"banner.menu.workplan"})}>
+                      <HeaderMenuItem href="/WorkplanByTest"><FormattedMessage id="banner.menu.workplan.test"/> </HeaderMenuItem>
+                      <HeaderMenuItem href="/WorkplanByPanel"><FormattedMessage id="banner.menu.workplan.panel"/> </HeaderMenuItem>
+                      <HeaderMenuItem href="/WorkplanByUnit"><FormattedMessage id="banner.menu.workplan.bench"/> </HeaderMenuItem>
+                      <HeaderMenuItem href="/WorkplanByPriority"><FormattedMessage id="banner.menu.workplan.priority"/> </HeaderMenuItem>
                     </HeaderMenu>
                     <HeaderMenu aria-label="Results" menuLinkName="Results">
                       <HeaderMenuItem href="#">Sub-link 1</HeaderMenuItem>
