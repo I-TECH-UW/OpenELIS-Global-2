@@ -715,7 +715,9 @@ function enableFields(enable, fieldsStr) {
 function /*void*/
 setSaveButton() {
     var validToSave = fieldValidator.isAllValid();
-    $("saveButtonId").disabled = !validToSave;
+    if(document.getElementById('saveButtonId')) {
+		$("saveButtonId").disabled = !validToSave;
+	}
 }
 
 

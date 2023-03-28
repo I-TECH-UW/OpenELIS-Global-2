@@ -3,20 +3,9 @@ import { FormattedMessage, injectIntl } from 'react-intl'
 import "../Style.css";
 import {
     Heading,
-    Form,
-    FormLabel,
-    TextInput,
-    Button,
     Grid,
     Column,
-    DatePicker,
-    DatePickerInput,
-    RadioButton,
-    RadioButtonGroup,
-    Stack,
-    DataTable, TableContainer, Table, TableHead, TableRow, TableHeader, TableBody, TableCell,
-    Section ,
-    Pagination
+    Section 
 
 } from '@carbon/react';
 import SearchPatientForm from '../common/SearchPatientForm';

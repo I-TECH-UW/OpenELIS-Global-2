@@ -38,6 +38,10 @@ import org.openelisglobal.validation.annotations.ValidName;
 import org.openelisglobal.validation.constraintvalidator.NameValidator.NameType;
 import org.openelisglobal.workplan.form.WorkplanForm;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class TestResultItem implements ResultItem, Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -149,6 +153,9 @@ public class TestResultItem implements ResultItem, Serializable {
     @Pattern(regexp = ValidationHelper.ID_REGEX, groups = { LogbookResultsForm.LogbookResults.class })
     private String resultLimitId;
     private List<IdValuePair> dictionaryResults;
+    private List<IdValuePair> methods;
+    private List<IdValuePair> referralOrganizations;
+    private List<IdValuePair> referralReasons;
     private String remove = NO;
 
     @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { LogbookResultsForm.LogbookResults.class })
@@ -358,14 +365,16 @@ public class TestResultItem implements ResultItem, Serializable {
         return resultDisplayType.toString();
     }
 
+    @JsonIgnore()
     public ResultDisplayType getRawResultDisplayType() {
         return resultDisplayType;
     }
-
+    
     public void setResultDisplayType(ResultDisplayType resultType) {
         resultDisplayType = resultType;
     }
 
+    @JsonIgnore()
     public ResultDisplayType getEnumResultType() {
         return resultDisplayType;
     }
@@ -411,7 +420,7 @@ public class TestResultItem implements ResultItem, Serializable {
     }
 
     public String getReportable() {
-        return reportable ? "Y" : "N";
+        return reportable ? "True" : "False";
     }
 
     public void setReportable(boolean reportable) {
@@ -437,6 +446,22 @@ public class TestResultItem implements ResultItem, Serializable {
     public void setTestMethod(String testMethod) {
         this.testMethod = testMethod;
     }
+    
+    public List<IdValuePair> getReferralOrganizations() {
+        return referralOrganizations;
+    }
+
+    public void setReferralOrganizations(List<IdValuePair> referralOrganizations) {
+        this.referralOrganizations = referralOrganizations;
+    }
+    
+    public List<IdValuePair> getReferralReasons() {
+        return referralReasons;
+    }
+
+    public void setReferralReasons(List<IdValuePair> referralReasons) {
+        this.referralReasons = referralReasons;
+    }
 
     public String getRemove() {
         return remove;
@@ -446,6 +471,7 @@ public class TestResultItem implements ResultItem, Serializable {
         this.remove = remove;
     }
 
+    @JsonIgnore()
     public boolean isRemoved() {
         return NO.equals(remove);
     }
@@ -574,6 +600,14 @@ public class TestResultItem implements ResultItem, Serializable {
 
     public List<IdValuePair> getDictionaryResults() {
         return dictionaryResults == null ? new ArrayList<>() : dictionaryResults;
+    }
+    
+    public void setMethods(List<IdValuePair> methods) {
+        this.methods = methods;
+    }
+
+    public List<IdValuePair> getMethods() {
+        return methods == null ? new ArrayList<>() : methods;
     }
 
     public String getResultLimitId() {

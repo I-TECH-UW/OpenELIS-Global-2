@@ -1,113 +1,113 @@
 import React from 'react'
 import { FormattedMessage, injectIntl } from 'react-intl'
-import "../Style.css";
-import { getFromOpenElisServer } from '../utils/Utils';
+import '../Style.css'
+import { getFromOpenElisServer } from '../utils/Utils'
 
 import {
-    Heading,
-    Form,
-    FormLabel,
-    TextInput,
-    Button,
-    Grid,
-    Column,
-    DatePicker,
-    DatePickerInput,
-    RadioButton,
-    RadioButtonGroup,
-    Stack,
-    DataTable, TableContainer, Table, TableHead, TableRow, TableHeader, TableBody, TableCell,
-    Section ,
-    Pagination
+  Heading,
+  Form,
+  FormLabel,
+  TextInput,
+  Button,
+  Grid,
+  Column,
+  DatePicker,
+  DatePickerInput,
+  RadioButton,
+  RadioButtonGroup,
+  Stack,
+  DataTable, TableContainer, Table, TableHead, TableRow, TableHeader, TableBody, TableCell,
+  Section,
+  Pagination
 
-} from '@carbon/react';
+} from '@carbon/react'
 
-import { patientSearchHeaderData} from '../data/PatientResultsTableHeaders';
-import { Formik, Field, FieldArray, ErrorMessage } from "formik";
-import SearchPatientFormValues from '../formModel/innitialValues/SearchPatientFormValues';
+import { patientSearchHeaderData } from '../data/PatientResultsTableHeaders'
+import { Formik, Field } from 'formik'
+import SearchPatientFormValues from '../formModel/innitialValues/SearchPatientFormValues'
 
 class SearchPatientForm extends React.Component {
+  constructor (props) {
+    super(props)
+    this.state = {
+      dob: '',
+      patientSearchResults: [],
+      page: 1,
+      pageSize: 5
+    }
+  }
 
-    constructor(props) {
-        super(props)
-        this.state = {
-            dob: "",
-            patientSearchResults: [],
-            page: 1,
-            pageSize: 5,
-        }
+  handleSubmit = (values) => {
+    values.dateOfBirth = this.state.dob
+    const searchEndPoint = '/rest/patient-search-results?' + 'lastName=' + values.lastName + '&firstName=' + values.firstName + '&STNumber=' + values.patientId + '&subjectNumber=' + values.patientId + '&nationalID=' + values.patientId + '&labNumber=' + values.labNumber + '&dateOfBirth=' + values.dateOfBirth + '&gender=' + values.gender
+    getFromOpenElisServer(searchEndPoint, this.fetchPatientResults)
+  }
+
+  fetchPatientResults = (patientsResults) => {
+    patientsResults.forEach(item => item.id = item.patientID)
+    // console.log(JSON.stringify(patientsResults))
+    this.setState({ patientSearchResults: patientsResults })
+  }
+
+  fetchPatientDetails = (patientDetails) => {
+    console.log(JSON.stringify(patientDetails))
+    this.props.getSelectedPatient(patientDetails)
+  }
+
+  handleDatePickerChange = (...e) => {
+    this.setState({
+      dob: e[1]
+    })
+  }
+
+  patientSelected = (e) => {
+    const patientSelected = this.state.patientSearchResults.find((patient) => {
+      return patient.patientID == e.target.id
+    })
+    const searchEndPoint = '/rest/patient-details?patientID=' + patientSelected.patientID
+    getFromOpenElisServer(searchEndPoint, this.fetchPatientDetails)
+  }
+
+  handlePageChange = (pageInfo) => {
+    if (this.state.page != pageInfo.page) {
+      this.setState({ page: pageInfo.page })
     }
 
-    handleSubmit = (values) => {
-        values.dateOfBirth = this.state.dob
-        var searchEndPoint = "/rest/patient-search-results?" + "lastName=" + values.lastName + "&firstName=" + values.firstName + "&STNumber=" + values.patientId + "&subjectNumber=" + values.patientId + "&nationalID=" + values.patientId + "&labNumber=" + values.labNumber + "&dateOfBirth=" + values.dateOfBirth + "&gender=" + values.gender
-        getFromOpenElisServer(searchEndPoint, this.fetchPatientResults);
-    };
-
-    fetchPatientResults = (patientsResults) => {
-        patientsResults.forEach(item => item.id = item.patientID);
-        //console.log(JSON.stringify(patientsResults))
-        this.setState({ patientSearchResults: patientsResults })
+    if (this.state.pageSize != pageInfo.pageSize) {
+      this.setState({ pageSize: pageInfo.pageSize })
     }
+  }
 
-    fetchPatientDetails = (patientDetails) => {
-        console.log(JSON.stringify(patientDetails))
-        this.props.getSelectedPatient(patientDetails)
-    }
+  handlePerPageChange = (newPerPage) => {
+    this.setState({ perPage: newPerPage })
+  }
 
-    handleDatePickerChange = (...e) => {
-        this.setState({
-            dob: e[1],
-        });
-    }
-
-    patientSelected = (e) => {
-        const patientSelected = this.state.patientSearchResults.find((patient) => {
-            return patient.patientID == e.target.id;
-        });
-        var searchEndPoint = "/rest/patient-details?patientID=" + patientSelected.patientID
-        getFromOpenElisServer(searchEndPoint, this.fetchPatientDetails);
-    }
-
-    handlePageChange = (pageInfo) => {
-        if (this.state.page != pageInfo.page) {
-            this.setState({ page: pageInfo.page });
-        }
-
-        if (this.state.pageSize != pageInfo.pageSize) {
-            this.setState({ pageSize: pageInfo.pageSize });
-        }
-
-    };
-
-    handlePerPageChange = (newPerPage) => {
-        this.setState({ perPage: newPerPage });
-    };
-
-    render() {
-        const { page, pageSize } = this.state;
-        return (
+  render () {
+    const { page, pageSize } = this.state
+    return (
 
             <>
-                <Grid  fullWidth={true} className="gridBoundary">
-                    <Column  lg={3}>
+                <Grid fullWidth={true} className="gridBoundary">
+                    <Column lg={3}>
                         <Formik
                             initialValues={SearchPatientFormValues}
-                            //validationSchema={}
+                            // validationSchema={}
                             onSubmit={this.handleSubmit}
                             onChange
                         >
-                            {({ values,
-                                errors,
-                                touched,
-                                handleChange,
-                                handleBlur,
-                                handleSubmit }) => (
-                                <Form 
+                            {({
+                              values,
+                              errors,
+                              touched,
+                              handleChange,
+                              handleBlur,
+                              handleSubmit
+                            }) => (
+                                <Form
                                     onSubmit={handleSubmit}
                                     onChange={handleChange}
                                     onBlur={handleBlur}>
-                                    <Stack gap={2}>
+                                    <Stack gap={5}>
                                         <FormLabel>
                                             <Section>
                                                 <Section>
@@ -189,7 +189,7 @@ class SearchPatientForm extends React.Component {
                         </Formik>
                     </Column>
                     <Column></Column>
-                    <Column  lg={12} >
+                    <Column lg={12} >
                         <DataTable rows={this.state.patientSearchResults} headers={patientSearchHeaderData} isSortable >
                             {({ rows, headers, getHeaderProps, getTableProps }) => (
                                 <TableContainer title="Patient Results">
@@ -222,14 +222,13 @@ class SearchPatientForm extends React.Component {
                                 </TableContainer>
                             )}
                         </DataTable>
-                        <Pagination onChange={this.handlePageChange} page={this.state.page}  pageSize ={this.state.pageSize} pageSizes={[5,10,20,30]} totalItems={this.state.patientSearchResults.length}></Pagination>
+                        <Pagination onChange={this.handlePageChange} page={this.state.page} pageSize ={this.state.pageSize} pageSizes={[5, 10, 20, 30]} totalItems={this.state.patientSearchResults.length}></Pagination>
                     </Column>
                 </Grid>
             </>
 
-        );
-
-    }
+    )
+  }
 }
 
 export default injectIntl(SearchPatientForm)

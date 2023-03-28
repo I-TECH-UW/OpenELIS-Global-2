@@ -2,6 +2,8 @@ package org.openelisglobal.testreflex.action.bean;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -18,36 +20,68 @@ public class ReflexRuleAction {
     @Column(name = "id")
     private Integer id;
 
-    @Column(name = "action")
-    private String action;
+    @Column(name = "reflex_test_name")
+    private String reflexTestName;
 
-    @Column(name = "reflex_result")
-    private String reflexResult;
+    @Column(name = "reflex_test_id")
+    private String reflexTestId;
 
-    @Column(name = "reflex_result_test_id")
-    private String reflexResultTestId;
+    @Column(name = "sample_id")
+    private String sampleId ;
+
+    @Column(name = "internal_note")
+    private String internalNote ;
+
+    @Column(name = "external_note")
+    private String externalNote;
+
+    @Column(name = "add_notification")
+    private String addNotification = "Y" ;
+
+
     public Integer getId() {
         return id;
     }
     public void setId(Integer id) {
         this.id = id;
     }
-    public String getAction() {
-        return action;
+
+    public String getSampleId() {
+        return sampleId;
     }
-    public void setAction(String action) {
-        this.action = action;
+    public void setSampleId(String sampleId) {
+        this.sampleId = sampleId;
     }
-    public String getReflexResult() {
-        return reflexResult;
+    public String getReflexTestName() {
+        return reflexTestName;
     }
-    public void setReflexResult(String reflexResult) {
-        this.reflexResult = reflexResult;
+    public void setReflexTestName(String reflexTestName) {
+        this.reflexTestName = reflexTestName;
     }
-    public String getReflexResultTestId() {
-        return reflexResultTestId;
+    public String getReflexTestId() {
+        return reflexTestId;
     }
-    public void setReflexResultTestId(String reflexResultTestId) {
-        this.reflexResultTestId = reflexResultTestId;
+    public void setReflexTestId(String reflexTestId) {
+        this.reflexTestId = reflexTestId;
     }
+    public String getInternalNote() {
+        return internalNote;
+    }
+    public void setInternalNote(String internalNote) {
+        this.internalNote = internalNote;
+    }
+    public String getExternalNote() {
+        return externalNote;
+    }
+    public void setExternalNote(String externalNote) {
+        this.externalNote = externalNote;
+    }
+    public String getAddNotification() {
+        return addNotification;
+    }
+    public void setAddNotification(String addNotification) {
+        this.addNotification = addNotification;
+    }
+
+    
 }

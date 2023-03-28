@@ -29,9 +29,13 @@ public interface TestReflexService extends BaseObjectService<TestReflex, String>
     List<TestReflex> getTestReflexesByTestResultAndTestAnalyte(TestResult testResult, TestAnalyte testAnalyte);
 
     List<TestReflex> getTestReflexsByTestResultAnalyteTest(String testResultId, String analyteId, String testId);
+
+    List<TestReflex> getTestReflexsByAnalyteAndTest(String analyteId, String testId);
     
     void saveOrUpdateReflexRule(ReflexRule reflexRule);
 
     List<ReflexRule> getAllReflexRules();
+
+    void deactivateReflexRule(String id); 
 
 }

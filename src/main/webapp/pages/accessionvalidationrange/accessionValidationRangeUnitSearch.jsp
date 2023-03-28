@@ -6,6 +6,7 @@
 			org.openelisglobal.common.util.IdValuePair,
 			org.openelisglobal.internationalization.MessageUtil,
 			org.openelisglobal.common.util.Versioning,
+            org.openelisglobal.common.util.DateUtil,
 		    java.text.DecimalFormat,
 			java.util.List,
 			org.openelisglobal.resultvalidation.bean.AnalysisItem,
@@ -92,6 +93,7 @@ function /*void*/ handleEnterEvent(  ){
 			<tr >
 			<td width="50%" align="right" >
 				<spring:message code="sample.search.date.instructions"/>
+				(<%=DateUtil.getDateUserPrompt()%>)
 			</td>
 			<td width="50%">
 				<input name="date"

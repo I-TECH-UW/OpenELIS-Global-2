@@ -3,17 +3,14 @@ import {
   BrowserRouter as Router,
   Route,
   Switch,
-  Redirectx,
 } from "react-router-dom";
 import { IntlProvider } from "react-intl";
 import Layout from "./components/layout/Layout";
 import Home from "./components/Home";
 import Login from "./components/Login";
-import Admin from "./components/admin/Admin";
-import {
-  getFromOpenElisServer,
-  postToOpenElisServer,
-} from "./components/utils/Utils";
+import { Admin, Result } from "./components";
+
+
 import "./App.css";
 import messages_en from "./languages/en.json";
 import messages_fr from "./languages/fr.json";
@@ -24,7 +21,7 @@ import PatientManagement from "./components/patient/PatientManagement";
 import PatientHistory from "./components/patient/PatientHistory";
 import Workplan from "./components/workplan/Workplan";
 //import "./components/patient/resultsViewer/results-viewer.styles.scss"
-
+import AddOrder from "./components/addOrder/Index";
 
 let i18nConfig = {
   locale: navigator.language.split(/[-_]/)[0],
@@ -155,6 +152,16 @@ class App extends React.Component {
                   isLoggedIn={this.isLoggedIn}
                 />
                 <SecureRoute
+                    path="/AddOrder"
+                    exact
+                    component={() => <AddOrder />}
+                    role="Reception"
+                    config={this.state.config}
+                    onAuth={this.onAuth}
+                    logout={this.logout}
+                    isLoggedIn={this.isLoggedIn}
+                />
+                <SecureRoute
                   path="/PatientManagement"
                   exact
                   component={() => <PatientManagement />}
@@ -214,7 +221,8 @@ class App extends React.Component {
                   logout={this.logout}
                   isLoggedIn={this.isLoggedIn}
                 />
-                
+                <SecureRoute path="/result" exact component={() => <Result />} role="Global Administrator" config={this.state.config} onAuth={this.onAuth} logout={this.logout} isLoggedIn={this.isLoggedIn} />
+                <SecureRoute path="/AccessionResults" exact component={() => <Admin />} role="Global Administrator" config={this.state.config} onAuth={this.onAuth} logout={this.logout} isLoggedIn={this.isLoggedIn} />
               </Switch>
             </Layout>
           </Router>
