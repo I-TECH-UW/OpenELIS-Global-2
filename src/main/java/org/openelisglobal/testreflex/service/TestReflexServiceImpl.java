@@ -18,6 +18,7 @@ import org.openelisglobal.testanalyte.service.TestAnalyteService;
 import org.openelisglobal.testanalyte.valueholder.TestAnalyte;
 import org.openelisglobal.testreflex.action.bean.ReflexRule;
 import org.openelisglobal.testreflex.action.bean.ReflexRuleCondition;
+import org.openelisglobal.testreflex.action.bean.ReflexRuleOptions.NumericRelationOptions;
 import org.openelisglobal.testreflex.dao.ReflexRuleDAO;
 import org.openelisglobal.testreflex.dao.TestReflexDAO;
 import org.openelisglobal.testreflex.valueholder.TestReflex;
@@ -211,12 +212,21 @@ public class TestReflexServiceImpl extends BaseObjectServiceImpl<TestReflex, Str
                     if (testService.getResultType(triggerTest).equals("D")) {
                         Optional<TestResult> result = results.stream()
                                 .filter(res -> res.getValue().equals(condition.getValue())).findFirst();
-                        reflex.setTestResult(result.get());
+                        if(result.isPresent()){
+                            reflex.setTestResult(result.get());
+                        }else{
+                            reflex.setTestResult(results.get(0));
+                        }                   
                     } else {
                         reflex.setTestResult(results.get(0));
                         if(testService.getResultType(triggerTest).equals("N")){
                             Double value = Double.parseDouble(condition.getValue());
-                            reflex.setNonDictionaryValue(value.toString());
+                            Double value2 = Double.parseDouble(condition.getValue2());
+                            if(condition.getRelation().equals(NumericRelationOptions.BETWEEN)){
+                                reflex.setNonDictionaryValue(value.toString()+"-"+value2.toString());
+                            }else{
+                                reflex.setNonDictionaryValue(value.toString());
+                            }
                         }else{
                             reflex.setNonDictionaryValue(condition.getValue());
                         }  

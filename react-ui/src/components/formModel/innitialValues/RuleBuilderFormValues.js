@@ -11,7 +11,8 @@ export default {
     testName: "",
     testId: "",
     relation: "",
-    value: ""
+    value: "0",
+    value2 : "0"
   }],
   actions: [{
     id: null,
