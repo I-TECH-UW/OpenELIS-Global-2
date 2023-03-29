@@ -81,6 +81,7 @@
 			<column name="test_id" type="varchar(64)"/>
 			<column name="relation" type="varchar(64)"/>
 			<column name="value" type="varchar(64)"/>
+			<column name="value2" type="varchar(64)"/>
 			<column name="reflex_rule_id" type="int"/>
 		</createTable>
 		<addForeignKeyConstraint constraintName="condition_reflex_rule_id_fk"

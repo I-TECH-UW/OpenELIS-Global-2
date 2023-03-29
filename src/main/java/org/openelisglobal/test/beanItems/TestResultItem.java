@@ -24,6 +24,7 @@ import java.util.List;
 import javax.validation.constraints.Pattern;
 
 import org.openelisglobal.validation.annotations.SafeHtml;
+import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory.AccessionFormat;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.util.validator.CustomDateValidator.DateRelation;
@@ -420,7 +421,7 @@ public class TestResultItem implements ResultItem, Serializable {
     }
 
     public String getReportable() {
-        return reportable ? "True" : "False";
+        return reportable ? IActionConstants.YES : IActionConstants.NO;
     }
 
     public void setReportable(boolean reportable) {

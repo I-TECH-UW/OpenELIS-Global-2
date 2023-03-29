@@ -1,5 +1,5 @@
 import {useContext, useState, useEffect, useRef } from "react";
-import { Form, Stack, TextInput, Select, SelectItem, Button, InlineLoading, IconButton, Search, Toggle, Switch, Loading, RadioButtonGroup, RadioButton } from '@carbon/react';
+import { Form, Stack, TextInput, Select, SelectItem, Button, IconButton, Toggle,  Loading, RadioButtonGroup, RadioButton } from '@carbon/react';
 import { Add, Subtract } from '@carbon/react/icons';
 import Autocomplete from "./AutoComplete";
 import RuleBuilderFormValues from "../../formModel/innitialValues/RuleBuilderFormValues";
@@ -22,7 +22,8 @@ function ReflexRule() {
     testName: "",
     testId: "",
     relation: "",
-    value: ""
+    value: "0" ,
+    value2 : "0"
   }
   const actionObj = {
     id: null,
@@ -230,7 +231,6 @@ function ReflexRule() {
   };
 
   const handleSubmited = (status , index) => {
-    //alert(status)
     setNotificationVisible(true);
     if(status == "200"){
       const element = document.getElementById("submit_"+index)
@@ -317,6 +317,12 @@ function ReflexRule() {
     }
   }
 
+  const normalRangeSelected = (relation) => {
+    if (relation === "OUTSIDE_NORMAL_RANGE" || relation === "INSIDE_NORMAL_RANGE") {
+      return true
+    }
+    return false
+  }
 
   return (
     <>
@@ -493,9 +499,10 @@ function ReflexRule() {
                                       value={condition.value}
                                       id={index + "_" + condition_index + "_value"}
                                       name="value"
-                                      labelText="Dictionaly Result"
+                                      labelText="Dictionaly Value"
                                       className="reflexInputSelect"
                                       onChange={(e) => handleRuleFieldItemChange(e, index, condition_index, FIELD.conditions)}
+                                      disabled={normalRangeSelected(condition.relation)}
                                       required
                                     >
                                       <SelectItem
@@ -523,11 +530,12 @@ function ReflexRule() {
                                         className="reflexInputText"
                                         type="text"
                                         id={index + "_" + condition_index + "_value"}
-                                        labelText={testResultList[index][condition_index]["type"] === "N" ? "Numeric Result" : "Text Result"}
+                                        labelText={testResultList[index][condition_index]["type"] === "N" ? "Numeric Value" : "Text Value"}
                                         value={condition.value}
                                         onChange={(e) => {handleRuleFieldItemChange(e, index, condition_index, FIELD.conditions); addTextInPutError(condition.value , testResultList[index][condition_index]["type"] ,"condition-value_" + index + "_" + condition_index )}}
                                         invalid={validateTextInPut(condition.value , testResultList[index][condition_index]["type"])}
                                         invalidText="Invalid Numeric Value"
+                                        disabled={normalRangeSelected(condition.relation)}
                                         required
                                       />
                                     </>
@@ -540,11 +548,34 @@ function ReflexRule() {
                                     className="reflexInputText"
                                     type="text"
                                     id={index + "_" + condition_index + "_value"}
-                                    labelText="Numeric Result"
+                                    labelText="Numeric Value"
                                     value={condition.value}
                                     onChange={(e) => handleRuleFieldItemChange(e, index, condition_index, FIELD.conditions)}
                                     required
                                   />
+                                </>
+                              )}
+                            </div>
+                            <div>
+                              &nbsp;  &nbsp;
+                            </div>
+                            <div>
+                              {testResultList[index] && testResultList[index][condition_index] && testResultList[index][condition_index]["type"] && (
+                                <>
+                                  {testResultList[index][condition_index]["type"] === "N" && condition.relation === "BETWEEN" && (
+                                    <TextInput
+                                      name="value2"
+                                      className="reflexInputText"
+                                      type="text"
+                                      id={index + "_" + condition_index + "_value"}
+                                      labelText="Numeric Value2"
+                                      value={condition.value2}
+                                      onChange={(e) => { handleRuleFieldItemChange(e, index, condition_index, FIELD.conditions); addTextInPutError(condition.value2, testResultList[index][condition_index]["type"], "condition-value2_" + index + "_" + condition_index) }}
+                                      invalid={validateTextInPut(condition.value2, testResultList[index][condition_index]["type"])}
+                                      invalidText="Invalid Numeric Value"
+                                      required
+                                    />
+                                  )}
                                 </>
                               )}
                             </div>
