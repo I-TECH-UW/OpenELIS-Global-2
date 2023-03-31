@@ -56,14 +56,14 @@ class CodeTestForm extends React.Component {
             sortable: true,
             width: "7rem"
         },
-        {
-            name: 'Methods',
-            cell: (row, index, column, id) => {
-                return this.renderCell(row, index, column, id);
-            },
-            width: "12rem",
-            sortable: true,
-        },
+        // {
+        //     name: 'Methods',
+        //     cell: (row, index, column, id) => {
+        //         return this.renderCell(row, index, column, id);
+        //     },
+        //     width: "12rem",
+        //     sortable: true,
+        // },
         {
             name: "Analyzer Result",
             selector: row => row.analysisMethod,
@@ -83,31 +83,39 @@ class CodeTestForm extends React.Component {
             width: "7rem",
         },
         {
-            name: 'Accept as is',
+            name: 'Accept',
             cell: (row, index, column, id, resultForm) => {
                 return this.renderCell(row, index, column, id);
             },
-            width: "7rem",
-
+            width: "8rem",
         },
         {
             name: 'Shadow Result',
             cell: (row, index, column, id, resultForm) => {
                 return this.renderCell(row, index, column, id);
             },
-            width: "10rem",
+            width: "8rem",
         },
         {
             name: 'Current Result',
             cell: (row, index, column, id, resultForm) => {
                 return this.renderCell(row, index, column, id);
             },
-            width: "10rem",
+            width: "8rem",
         },
+        {
+            name: 'Notes',
+            cell: (row, index, column, id, resultForm) => {
+                return this.renderCell(row, index, column, id);
+            },
+            width: "16rem",
+        },
+
+
     ];
 
     renderCell(row, index, column, id) {
-        console.log("renderCell:");
+        // console.log("renderCell:");
         switch (column.name) {
             case "Sample Info":
                 // return <input id={"results_" + id} type="text" size="6"></input>  
@@ -121,7 +129,7 @@ class CodeTestForm extends React.Component {
                     </>
                 );
 
-            case "Accept as is":
+            case "Accept":
                 return (
                     <>
                         <Field name="forceTechApproval" >
@@ -131,10 +139,29 @@ class CodeTestForm extends React.Component {
                                     name={"testResult[" + row.id + "].forceTechApproval"}
                                     labelText=""
                                     //defaultChecked={this.state.acceptAsIs}
-                                    onChange={(e) => this.markUpdated(e)}
+                                    onChange={(e) => this.handleChange(e, row.id)}
                                 />
                             }
                         </Field>
+                    </>
+                );
+
+            case "Notes":
+                return (
+                    <>
+                        <div className='note'>
+                            <TextArea
+                                id={"testResult" + row.id + ".note"}
+                                name={"testResult[" + row.id + "].note"}
+                                value={this.state.resultForm.testResult[row.id].note}
+                                disabled={false}
+                                type="text"
+                                labelText=""
+                                rows={3}
+                                onChange={(e) => this.handleChange(e, row.id)}
+                            >
+                            </TextArea>
+                        </div>
                     </>
                 );
 
@@ -164,7 +191,7 @@ class CodeTestForm extends React.Component {
                     case "N":
                         return <input id={"testResult" + row.id + ".resultValue"}
                             name={"testResult[" + row.id + "].resultValue"}
-                            onChange={(e) => markUpdated(e)}
+                            onChange={(e) => this.handleChange(e, row.id)}
                         />
                     // <input id={"results_" + param.rowId} type="text" size="6"></input>
 
@@ -216,26 +243,27 @@ class CodeTestForm extends React.Component {
                         return row.resultValue
                 }
 
-            case "Methods":
-                return <Select
-                    id={"testMethod" + row.id}
-                    name={"testResult[" + row.id + "].testMethod"}
-                    noLabel={true}
-                    onChange={(e) => this.handleChange(e, row.id)}
-                    value={row.method}
-                >
-                    <SelectItem
-                        text=""
-                        value=""
-                    />
-                    {row.methods.map((method, method_index) => (
-                        <SelectItem
-                            text={method.value}
-                            value={method.id}
-                            key={method_index}
-                        />
-                    ))}
-                </Select>
+            // case "Methods":
+            //     return <Select
+            //         id={"testMethod" + row.id}
+            //         name={"testResult[" + row.id + "].testMethod"}
+            //         noLabel={true}
+            //         onChange={(e) => this.handleChange(e, row.id)}
+            //         value={row.method}
+            //     >
+            //         <SelectItem
+            //             text=""
+            //             value=""
+            //         />
+            //         {row.methods.map((method, method_index) => (
+            //             <SelectItem
+            //                 text={method.value}
+            //                 value={method.id}
+            //                 key={method_index}
+            //             />
+            //         ))}
+            //     </Select>
+
         }
         return row.resultValue;
     }
@@ -243,6 +271,29 @@ class CodeTestForm extends React.Component {
     renderReferral = ({ data }) => <pre>
         <div className='referralRow'>
             <Grid >
+                <Column lg={3}>
+                    <div >
+                        <Select
+                            id={"testMethod" + data.id}
+                            name={"testResult[" + data.id + "].testMethod"}
+                            labelText={"Methods"}
+                            onChange={(e) => this.handleChange(e, data.id)}
+                            value={data.method}
+                        >
+                            <SelectItem
+                                text=""
+                                value=""
+                            />
+                            {data.methods.map((method, method_index) => (
+                                <SelectItem
+                                    text={method.value}
+                                    value={method.id}
+                                    key={method_index}
+                                />
+                            ))}
+                        </Select>
+                    </div>
+                </Column>
                 <Column lg={3}>
                     <div >
                         <Select className='referralReason'
@@ -301,7 +352,7 @@ class CodeTestForm extends React.Component {
                             labelText={"Test to Perform"}
                             onChange={(e) => this.handleChange(e, data.id)}
                         >
-                            {/* onChange={(e) => markUpdated(e, param.rowId, false, '')}{...updateShadowResult(e, this, param.rowId)} */}
+                            {/* {...updateShadowResult(e, this, param.rowId)} */}
 
                             <SelectItem
                                 text={data.testName}
@@ -342,7 +393,7 @@ class CodeTestForm extends React.Component {
 
     handleChange = (e, rowId) => {
         const { name, value } = e.target;
-        console.log("handleChange:" + name + ":" + value + ":" + rowId);
+        //console.log("handleChange:" + name + ":" + value + ":" + rowId);
         var form = this.state.resultForm;
         var jp = require('jsonpath');
         jp.value(form, name, value);
@@ -366,7 +417,8 @@ class CodeTestForm extends React.Component {
     }
 
     handlePost = (status) => {
-        //alert(status)
+        console.log("handlePost:")
+        alert(status)
     };
 
     handleSave = (values) => {
@@ -407,45 +459,6 @@ class CodeTestForm extends React.Component {
     handlePerPageChange = (newPerPage) => {
         this.setState({ perPage: newPerPage });
     };
-
-    // myComponent() {
-    //     return (
-    //         <>
-    //             <Formik
-    //                 initialValues={SearchResultFormValues}
-    //                 //validationSchema={}
-    //                 onSubmit={this.handleSave}
-    //                 onChange
-    //             >
-    //                 {({ values,
-    //                     errors,
-    //                     touched,
-    //                     handleChange,
-    //                     //handleBlur,
-    //                     handleSubmit }) => (
-
-    //                     <Form
-    //                         onSubmit={handleSubmit}
-    //                         onChange={handleChange}
-    //                     //onBlur={handleBlur}
-    //                     >
-
-    //                         <DataTable
-    //                             data={this.state.resultForm.testResult}
-    //                             columns={columns} isSortable
-    //                             expandableRows
-    //                             expandableRowsComponent={ExpandedComponent}>
-    //                         </DataTable><Pagination onChange={this.handlePageChange} page={this.state.page} pageSize={this.state.pageSize}
-    //                             pageSizes={[100]} totalItems={this.state.resultForm.testResult.length}></Pagination>
-
-    //                         <Button type="submit" id="submit">
-    //                             <FormattedMessage id="label.button.save" />
-    //                         </Button>
-    //                     </Form>)}
-    //             </Formik>
-    //         </>
-    //     );
-    // };
 
     render() {
         const { page, pageSize } = this.state;
