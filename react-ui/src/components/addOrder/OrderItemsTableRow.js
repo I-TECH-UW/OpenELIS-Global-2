@@ -16,7 +16,7 @@ import {NotificationContext} from "../layout/Layout";
 import {FormattedMessage} from "react-intl";
 
 const Sequence = (index) => {
-    return (<TextInput id={`sequence_${index}`} value={index + 1} readOnly={true} style={{width: "50px"}}
+    return (<TextInput id={`sequence_${index}`} value={index + 1} style={{width: "50px"}}
                        labelText=""/>);
 }
 
@@ -25,8 +25,8 @@ const Sample_Type = (index, name) => {
 }
 
 
-const CollectionDate = (index) => {
-    return (<DatePicker dateFormat="m/d/Y" datePickerType="single">
+const CollectionDate = (index,defaultDate) => {
+    return (<DatePicker dateFormat="m/d/Y" datePickerType="single"  value={defaultDate}>
         <DatePickerInput id={`collectionDate_` + index} placeholder="dd/mm/yyyy" type="text" labelText=""
                          style={{width: "140px"}}/>
     </DatePicker>);
@@ -37,8 +37,8 @@ const SampleSelect = (index) => {
 }
 
 
-const CollectionTime = (index) => {
-    return (<TimePicker id={`collectionTime_${index}`}/>);
+const CollectionTime = (index,defaultTime) => {
+    return (<TimePicker id={`collectionTime_${index}`} value={defaultTime}/>);
 }
 
 const Collector = (index) => {
@@ -46,13 +46,6 @@ const Collector = (index) => {
 }
 
 
-const Tests = (index, selectedTests) => {
-    const tests = [];
-    selectedTests.map(test => {
-       return tests.push(test.name)
-    });
-    return (<TextArea rows={3} labelText="" id={`tests_${index}`} value={tests.toString()} readOnly={true}/>);
-}
 const RejectReasons = (index, rejectSampleReasons, rejectionReasonsDisabled) => {
     return (<Select
         disabled={rejectionReasonsDisabled}
@@ -101,18 +94,16 @@ const Reject = (index, rejectionReasonsDisabled, setRejectionReasonsDisabled) =>
         <Checkbox labelText="" id={`reject_${index}`} onChange={(e) => handleRejection(e)}/>
     );
 }
-export const TableSampleTableRows = (index, selectedSampleType, rejectSampleReasons, selectedTests, handleRemoveSampleTest) => {
+export const TableSampleTableRows = (index, selectedSampleType, rejectSampleReasons, selectedTests,findConfigurationProperty, handleRemoveSampleTest) => {
     const {id, name} = selectedSampleType;
     const [rejectionReasonsDisabled, setRejectionReasonsDisabled] = useState(true);
-
     return [{
         select_radioButton: SampleSelect(index),
         sampleType: Sequence(index),
         name: Sample_Type(index, name),
-        collectionDate: CollectionDate(index),
-        collectionTime: CollectionTime(index),
+        collectionDate: CollectionDate(index,findConfigurationProperty("currentDateAsText")),
+        collectionTime: CollectionTime(index, findConfigurationProperty("currentTimeAsText")),
         collector: Collector(index),
-        tests: Tests(index, selectedTests),
         reject: Reject(index, rejectionReasonsDisabled, setRejectionReasonsDisabled),
         reason: RejectReasons(index, rejectSampleReasons, rejectionReasonsDisabled),
         removeSample: RemoveSample(index, handleRemoveSampleTest)

@@ -24,10 +24,6 @@ export const sampleTypesTableHeader = [
         header: 'Collector'
     },
     {
-        key: 'tests',
-        header: '* Tests'
-    },
-    {
         key: 'reject',
         header: 'Reject'
     },

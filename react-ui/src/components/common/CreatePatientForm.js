@@ -37,7 +37,8 @@ class CreatePatientForm extends React.Component {
             healthDistricts: [],
             educationList : [] ,
             maritalStatuses : [],
-            nationalities : []
+            nationalities : [],
+            showActionsButton: props.showActionsButton
         }
     }
     _isMounted = false;
@@ -447,7 +448,7 @@ class CreatePatientForm extends React.Component {
                                                 }
                                             </Field>
                                         </div>
-                                        <div className="formInlineDiv">
+                                        {this.state.showActionsButton && <div className="formInlineDiv">
                                             <Button type="submit" id="submit">
                                                 <FormattedMessage id="label.button.save" />
                                             </Button>
@@ -456,6 +457,7 @@ class CreatePatientForm extends React.Component {
                                             </Button>
 
                                         </div>
+                                        }
                                     </Stack>
                                 </Form>
 
