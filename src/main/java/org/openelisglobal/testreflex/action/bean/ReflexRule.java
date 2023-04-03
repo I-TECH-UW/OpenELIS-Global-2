@@ -50,6 +50,9 @@ public class ReflexRule extends BaseObject<Integer>{
     @Column(name = "active")
     private Boolean active = true;
 
+    @Column(name = "analyte_id")
+    private Integer analyteId;
+
     @Transient
     String localizedName ;
     
@@ -110,5 +113,13 @@ public class ReflexRule extends BaseObject<Integer>{
 
     public void setStringId(String stringId) {
         this.stringId = stringId;
+    }
+
+    public Integer getAnalyteId() {
+        return analyteId;
+    }
+
+    public void setAnalyteId(Integer analyteId) {
+        this.analyteId = analyteId;
     }
 }

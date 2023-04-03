@@ -26,6 +26,7 @@
 			<column name="toggled" type="boolean"/>
 			<column name="active" type="boolean"/>
 			<column name="last_updated" type="datetime"/>
+			<column name="analyte_id" type="int"/>
 		</createTable>
 	</changeSet>
 	<changeSet author="moses_mutesa" id="2">
@@ -54,6 +55,7 @@
 			<column name="external_note" type="varchar(64)"/>
 			<column name="add_notification" type="varchar(2)"/>
 			<column name="reflex_rule_id" type="int"/>
+			<column name="test_reflex_id" type="int"/>
 		</createTable>
 		<addForeignKeyConstraint constraintName="action_reflex_rule_id_fk"
                                  baseTableName="reflex_rule_action" baseColumnNames="reflex_rule_id"
@@ -83,6 +85,7 @@
 			<column name="value" type="varchar(64)"/>
 			<column name="value2" type="varchar(64)"/>
 			<column name="reflex_rule_id" type="int"/>
+			<column name="test_analyte_id" type="int"/>
 		</createTable>
 		<addForeignKeyConstraint constraintName="condition_reflex_rule_id_fk"
                                  baseTableName="reflex_rule_condition" baseColumnNames="reflex_rule_id"
