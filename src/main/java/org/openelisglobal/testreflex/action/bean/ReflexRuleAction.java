@@ -2,8 +2,6 @@ package org.openelisglobal.testreflex.action.bean;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -38,6 +36,8 @@ public class ReflexRuleAction {
     @Column(name = "add_notification")
     private String addNotification = "Y" ;
 
+    @Column(name = "test_reflex_id")
+    private Integer testReflexId;
 
     public Integer getId() {
         return id;
@@ -82,6 +82,12 @@ public class ReflexRuleAction {
     public void setAddNotification(String addNotification) {
         this.addNotification = addNotification;
     }
-
     
+    public Integer getTestReflexId() {
+        return testReflexId;
+    }
+    
+    public void setTestReflexId(Integer testReflexId) {
+        this.testReflexId = testReflexId;
+    }
 }

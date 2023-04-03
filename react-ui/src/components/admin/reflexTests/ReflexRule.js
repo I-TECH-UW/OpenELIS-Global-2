@@ -23,7 +23,8 @@ function ReflexRule() {
     testId: "",
     relation: "",
     value: "0" ,
-    value2 : "0"
+    value2 : "0",
+    testAnalyteId : null 
   }
   const actionObj = {
     id: null,
@@ -32,7 +33,8 @@ function ReflexRule() {
     reflexTestId: "",
     internalNote: "",
     externalNote: "",
-    addNotification: "Y"
+    addNotification: "Y" ,
+    testReflexId : null 
   }
 
   const ruleObj = {
@@ -41,6 +43,7 @@ function ReflexRule() {
     overall: "",
     toggled: true,
     active : true,
+    analyteId : null,
     conditions: [conditionsObj],
     actions: [actionObj]
   }
