@@ -188,12 +188,21 @@ public class TestReflexServiceImpl extends BaseObjectServiceImpl<TestReflex, Str
     }
 
     @Override
+    @Transactional()
     public void deactivateReflexRule(String id) {
         Optional<ReflexRule> rule = reflexRuleDAO.get(Integer.valueOf(id));
-        if(rule.isPresent()){
+        if (rule.isPresent()) {
+            // clear all the existing reflex tests
+            for (ReflexRuleCondition condition : rule.get().getConditions()) {
+                if (condition.getId() != null && condition.getTestAnalyteId() != null) {
+                    List<TestReflex> reflexes = baseObjectDAO
+                            .getTestReflexsByTestAnalyteId(condition.getTestAnalyteId().toString());
+                    reflexes.forEach(r -> baseObjectDAO.delete(r));
+                }
+            }
             rule.get().setActive(false);
             reflexRuleDAO.update(rule.get());
-        }   
+        }
     }
 
     private void processReflexRule(ReflexRule rule) {
