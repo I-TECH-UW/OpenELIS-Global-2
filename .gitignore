@@ -19,7 +19,6 @@ liqubase.properties
 
 #Developer specific docker-compose
 /docker-compose.yml
-dev/**
 dev/
 # Additional build files
 src/main/resources/adminPassword.txt
