@@ -2,7 +2,7 @@
 
 ### Setup Ubuntu 22.04.2.0 LTS 
 
-1. Boot Ubuntu from a CD. [Note: Use Ubuntu Server 22.04.2.0 LTS, do NOT use desktop] [Download]([https://releases.ubuntu.com/20.04/ubuntu-20.04.2-live-server-amd64.iso](https://ubuntu.com/download/server)).
+1. Boot Ubuntu from a CD. [Note: Use Ubuntu Server 22.04.2.0 LTS, do NOT use desktop] [Download](https://ubuntu.com/download/server).
 1. Chose UI language and keyboard layout
 1. Set the network configuration
 1. Use the default mirror
