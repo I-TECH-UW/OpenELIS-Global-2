@@ -54,7 +54,7 @@ public class ObservationHistoryDAOImpl extends BaseDAOImpl<ObservationHistory, S
     @Transactional(readOnly = true)
     public List<ObservationHistory> getAll(Patient patient, Sample sample, String observationHistoryTypeId) {
         Map<String, Object> queryMap = new HashMap<>();
-        queryMap.put("patientId", patient.getId());
+        //queryMap.put("patientId", patient.getId());
         if (patient != null && patient.getId() != null) {
             queryMap.put("patientId", patient.getId());
         }
