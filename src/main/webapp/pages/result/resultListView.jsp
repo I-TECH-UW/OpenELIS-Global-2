@@ -555,13 +555,11 @@ function /*void*/ handleEnterEvent(  ){
 	var actualValue = resultBox.value;
 	if (actualValue > lowCriticalLow && actualValue < lowCriticalHigh
 	|| actualValue > highCriticalLow && actualValue < highCriticalHigh) {
-		resultBox.style.borderColor = "red";
-
+		resultBox.style.borderColor = "orange";
             alert("<%=MessageUtil.getContextualMessage("error.critical.range.value")%>");
             return;
         }
   }
-
 </script>
 
 <c:if test="${form.displayTestSections}">
