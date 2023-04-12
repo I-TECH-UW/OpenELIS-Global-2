@@ -21,6 +21,7 @@
 
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<%@ taglib prefix = "fmt" uri = "http://java.sun.com/jsp/jstl/fmt" %>
 
 
 <c:set var="testSection"	value='${form.testSection}' />
@@ -579,7 +580,7 @@ function altAccessionHighlightSearch(accessionNumber) {
 						<div id='log_${iter.index}'
 								class='results-readonly'>
 							<c:catch var="logConversionException">
-								${Math.log10(resultList.result)}
+								<fmt:formatNumber maxFractionDigits="2" value = "${Math.log10(resultList.result)}" type="number" />
 							</c:catch>
 							<c:if test = "${logConversionException != null}"> -- </c:if>  
 								<%-- <% try{

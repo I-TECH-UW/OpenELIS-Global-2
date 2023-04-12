@@ -9,7 +9,7 @@
 	<changeSet author="rossumg" id="1">
 <!-- 		no precondition needed, always delete the option -->
 		<delete schemaName="clinlims" tableName="menu">
-			<where>id in (60,61)</where>
+			<where>element_id in ('menu_reports_status_patient.vreduit','menu_reports_status_patient.classique')</where>
 		</delete>
 		<!-- no rollback as these options were never needed -->
 	</changeSet>
