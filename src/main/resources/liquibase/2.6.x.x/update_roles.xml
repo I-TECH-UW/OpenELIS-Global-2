@@ -5,6 +5,7 @@
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
 	 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 	<changeSet author="moses_mutesa" id="1">
+		<validCheckSum>8:a977b14a1ce877e468544e1fd2976968</validCheckSum>
 		<preConditions onFail="MARK_RAN">
 			<tableExists tableName="system_role"
 				schemaName="clinlims" />

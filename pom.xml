@@ -21,7 +21,7 @@
 		<hibernate-validator.version>6.1.7.Final</hibernate-validator.version>
 		<postgresql.version>42.4.3</postgresql.version>
 		<log4j.version>2.17.1</log4j.version>
-		<springframework.version>5.3.25</springframework.version>
+		<springframework.version>5.3.26</springframework.version>
 		<springsecurity.version>5.7.5</springsecurity.version>
 		<testContainersVersion>1.15.3</testContainersVersion>
 	</properties>
@@ -60,7 +60,7 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
-			<version>2.13.4.1</version>
+			<version>2.13.4.2</version>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
@@ -97,7 +97,7 @@
 		<dependency>
 			<groupId>commons-fileupload</groupId>
 			<artifactId>commons-fileupload</artifactId>
-			<version>1.4</version>
+			<version>1.5</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-httpclient</groupId>
@@ -383,7 +383,7 @@
 		<dependency>
 			<groupId>com.itextpdf</groupId>
 			<artifactId>itextpdf</artifactId>
-			<version>5.5.13</version>
+			<version>5.5.13.3</version>
 		</dependency>
 		<dependency>
 			<groupId>jakarta.xml.ws</groupId>
