@@ -6,7 +6,16 @@ Much faster method of upgrading postgres dbs
 
 If you are running these commands on a remote server, it is recommended to use a recoverable script session. For example, running `screen`. If you disconnect, just reconnect and run `screen -x` to recover active session.
 
+## NOTES: 
 
+    1.     It is paramount that data backups are up to date and recovery is tested before attempting a database migration. 
+    
+    2.     This can be a very memory intensive process. It is recommended to increase memory on the server that this is running on to 128 GB or more. This can be accomplished without too much of a performance hit by adding an SSD as a swap drive.
+    
+    3.     This process doesn't delete the old database files until the new database is up, running, and tested. Ensure that OE is running properly and the data is there BEFORE deleting the old machine.
+    
+    4.     Because of point number 3, you will require room on the server for a copy of all the database files located at `/var/lib/openelis-global/data`
+    
 ## **Migrating OE 9.5 database to 14.4 database in dockerized environments**
 
 
@@ -22,46 +31,43 @@ If you are running these commands on a remote server, it is recommended to use a
         a)     sudo docker rm openelisglobal-database
 
 
-    3.     create folders for first step db migration to take place
+    3.     create folders for first step db migration to take place (this can be done on a separate machine with docker installed if the main server lacks resources to run the upgrade).
 
 
         a)     sudo mkdir /var/lib/openelis-global/db
 
 
-        b)    sudo mkdir /var/lib/openelis-global/db/9.5
+        b)     sudo mkdir /var/lib/openelis-global/db/9.5
 
 
-        c)     sudo mkdir /var/lib/openelis-global/db/9.6
+        c)     sudo mkdir /var/lib/openelis-global/db/14
 
 
-        d)    sudo mkdir /var/lib/openelis-global/db/9.6/data
+        d)     sudo mkdir /var/lib/openelis-global/db/14/data
 
 
-    4.     copy current db to location (copy will preserve the old data so that we can more easily revert if something goes wrong)
-
+    4.     copy current db to the upgrade location (copy will preserve the old data so that we can more easily revert if something goes wrong)
+    
+    4.1    If you are performing the upgrade on the machine where the database is installed:
 
         a)     sudo cp -r /var/lib/openelis-global/data /var/lib/openelis-global/db/9.5/data
+        
+    4.2 If you are performing the upgrade on another machine where the database is not installed:
+
+        a)     sudo tar cf /var/lib/openelis-global/data.tar.gz -C /var/lib/openelis-global/ data
+
+        a)     sudo scp /var/lib/openelis-global/data.tar.gz username@destination:/var/lib/openelis-global/db/9.5/data.tar.gz
+
+        a)     ssh username@destination
+        
+        a)     tar xzf /var/lib/openelis-global/db/9.5/data.tar.gz -C /var/lib/openelis-global/db/9.5/
+
+    5.     run the 9.5 to 14 migration
 
 
-    5.     run the 9.5 to 9.6 migration
-
-
-        a)     sudo docker run -it --rm -v /var/lib/openelis-global/db/:/var/lib/postgresql/  tianon/postgres-upgrade:9.5-to-9.6 --link
-
-
-    6.     create folders for second step migration to take place
-
-
-        a)     sudo mkdir /var/lib/openelis-global/db/14
-
-
-        b)    sudo mkdir /var/lib/openelis-global/db/14/data
-
-
-    7.     run the 9.6 to 14 conversion
-
-
-        a)     sudo docker run -it --rm -v /var/lib/openelis-global/db/:/var/lib/postgresql/  tianon/postgres-upgrade:9.6-to-14 --link
+        a)     sudo docker pull ctsteele/postgres-migration:9.5-14
+        
+        b)     sudo docker run -it --rm -v /var/lib/openelis-global/db/:/var/lib/postgresql/  ctsteele/postgres-migration:9.5-14 --link
 
 
     8.     replace old db with new db
@@ -70,19 +76,29 @@ If you are running these commands on a remote server, it is recommended to use a
         a)     sudo mv /var/lib/openelis-global/data /var/lib/openelis-global/data2
 
 
-        b)    sudo mv /var/lib/openelis-global/db/14/data /var/lib/openelis-global/data
+        b)     sudo mv /var/lib/openelis-global/db/14/data /var/lib/openelis-global/data
 
 
-    9.     run the setup script for the new version with updated db, ignoring db backup couldn’t occur step
+    9.  ensure file permissions and db access permissions are correct 
+    
+
+        a)     sudo chown -R tomcat2:tomcat2 /var/lib/openelis-global/data
+
+
+        b)     edit `/var/lib/openelis-global/data/pg_hba.conf` to include all the same entries that are in `/var/lib/openelis-global/data2/pg_hba.conf`
+    
+    
+    
+    10.     run the setup script for the new version with updated db, ignoring db backup couldn’t occur step
 
 
         a)     sudo setup_OpenELIS.py
 
 
-    10.  ensure systems start up and that data is present
+    11.  ensure systems start up and that data is present
 
 
-    11.  optionally delete old db
+    12.  optionally delete old db (or move to a secure backup server)
 
 
         a)     sudo rm /var/lib/openelis-global/db /var/lib/openelis-global/data2
