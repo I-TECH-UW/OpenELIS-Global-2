@@ -37,7 +37,7 @@ This updates the system from the sources in the sources list. It updates what ne
 
 3. Install Python
 
-        sudo apt install python2
+        sudo apt install python3
     
 ### Create and Load SSL Certificates
 
