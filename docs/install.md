@@ -165,7 +165,7 @@ Ensure all keystores have global read permission
 
 3. Run the install script in Terminal or Putty
 
-        sudo python2 setup_OpenELIS.py
+        sudo python3 setup_OpenELIS.py
 
 ### Install OpenELIS Global ###
 
