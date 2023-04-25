@@ -1,4 +1,5 @@
-import React from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
+
 import { FormattedMessage, injectIntl } from 'react-intl'
 import '../Style.css'
 import { jp } from 'jsonpath'
@@ -25,8 +26,12 @@ import {
 import DataTable from 'react-data-table-component';
 import { Formik, Field } from "formik";
 import SearchResultFormValues from '../formModel/innitialValues/SearchResultFormValues';
+import { AlertDialog, NotificationKinds } from "../common/CustomNotification";
+import { NotificationContext } from "../layout/Layout";
+
 
 class CodeTestForm extends React.Component {
+    static contextType = NotificationContext;
 
     constructor(props) {
         super(props)
@@ -37,8 +42,11 @@ class CodeTestForm extends React.Component {
             page: 1,
             pageSize: 100,
             doRange: true,
-            acceptAsIs: true,
+            finished: true,
+            acceptAsIs: [],
+            saveStatus: "",
         }
+
     }
 
     columns = [
@@ -90,7 +98,7 @@ class CodeTestForm extends React.Component {
             width: "8rem",
         },
         {
-            name: 'Shadow Result',
+            name: 'Result',
             cell: (row, index, column, id, resultForm) => {
                 return this.renderCell(row, index, column, id);
             },
@@ -115,7 +123,7 @@ class CodeTestForm extends React.Component {
     ];
 
     renderCell(row, index, column, id) {
-        // console.log("renderCell:");
+        console.log("renderCell:" + column.name + ":" + row.resultType);
         switch (column.name) {
             case "Sample Info":
                 // return <input id={"results_" + id} type="text" size="6"></input>  
@@ -139,7 +147,7 @@ class CodeTestForm extends React.Component {
                                     name={"testResult[" + row.id + "].forceTechApproval"}
                                     labelText=""
                                     //defaultChecked={this.state.acceptAsIs}
-                                    onChange={(e) => this.handleChange(e, row.id)}
+                                    onChange={(e) => this.handleAcceptAsIsChange(e, row.id)}
                                 />
                             }
                         </Field>
@@ -147,6 +155,13 @@ class CodeTestForm extends React.Component {
                 );
 
             case "Notes":
+                // let aNote;
+                // if (!this.state.resultForm.testResult[row.id].note) {
+                //     aNote = ""
+                // } else {
+                //     aNote = this.state.resultForm.testResult[row.id].note
+                // }
+
                 return (
                     <>
                         <div className='note'>
@@ -165,14 +180,14 @@ class CodeTestForm extends React.Component {
                     </>
                 );
 
-            case "Shadow Result":
+            case "Result":
                 switch (row.resultType) {
                     case "D":
-                        return <Select
-                            id={"testResult" + row.id + ".resultValue"}
+                        return <Select className='result'
+                            id={"resultValue" + row.id}
                             name={"testResult[" + row.id + "].resultValue"}
                             noLabel={true}
-                            onChange={(e) => this.handleChange(e, row.id)}
+                            onChange={(e) => this.validateResults(e, row.id)}
                         >
                             {/* {...updateShadowResult(e, this, param.rowId)} */}
                             <SelectItem
@@ -189,10 +204,23 @@ class CodeTestForm extends React.Component {
                         </Select>
 
                     case "N":
-                        return <input id={"testResult" + row.id + ".resultValue"}
+                        // return <input
+                        //     id={"Result" + row.id}
+                        //     name={"testResult[" + row.id + "].resultValue"}
+                        //     value={this.state.resultForm.testResult[row.id].resultVaule}
+                        //     onChange={(e) => this.validateResults(e, row.id, row)}
+                        // />
+
+                        return <TextInput
+                            id={"ResultValue" + row.id}
                             name={"testResult[" + row.id + "].resultValue"}
+                            //type="text"
+                            // value={this.state.resultForm.testResult[row.id].resultValue}
+                            labelText=""
+                            // helperText="Optional help text"
                             onChange={(e) => this.handleChange(e, row.id)}
                         />
+
                     // <input id={"results_" + param.rowId} type="text" size="6"></input>
 
                     //         <input id="results_0" name="testResult[0].resultValue" class="resultValue" 
@@ -204,14 +232,13 @@ class CodeTestForm extends React.Component {
                 }
 
             case "Current Result":
-                // return <input id={"results_" + id} type="text" size="6"></input>
                 switch (row.resultType) {
                     case "D":
-                        return <Select
-                            id={"testResult" + row.id + ".resultValue"}
+                        return <Select className='currentResult'
+                            id={"currentResultValue" + row.id}
                             name={"testResult[" + row.id + "].resultValue"}
                             noLabel={true}
-                            onChange={(e) => this.handleChange(e, row.id)}
+                            onChange={(e) => this.validateResults(e, row.id)}
                         >
                             {/* {...updateShadowResult(e, this, param.rowId)} */}
                             <SelectItem
@@ -228,11 +255,34 @@ class CodeTestForm extends React.Component {
                         </Select>
 
                     case "N":
-                        return <input id={"testResult" + row.id + ".resultValue"}
-                            name={"testResult[" + row.id + "].resultValue"}
-                            onChange={(e) => this.handleChange(e, row.id)}
-                        //onChange={(e) => markUpdated(e)} sb. disabled and setto value
-                        />
+                        //return
+                        // <input id={"currentResult" + row.id}
+                        //     name={"testResult[" + row.id + "].resultValue"}
+                        //     onChange={(e) => this.validateResults(e, row.id)}
+                        // //onChange={(e) => markUpdated(e)} sb. disabled and setto value
+                        // />
+
+                        return <TextInput
+                        id={"currentResultValue" + row.id}
+                        name={"testResult[" + row.id + "].resultValue"}
+                        //type="text"
+                        value={this.state.resultForm.testResult[row.id].resultValue}
+                        // labelText="Text input label"
+                        // helperText="Optional help text"
+                        onChange={(e) => this.handleChange(e, row.id)}
+                    />
+
+
+                        // return <TextInput
+                        //     id={"testResult[" + row.id + "].resultValue"}
+                        //     name={"testResult[" + row.id + "].resultValue"}
+                        //     type="text"
+                        //     value={this.state.resultForm.testResult[row.id].resultValue}
+                        //     // labelText="Text input label"
+                        //     // helperText="Optional help text"
+                        //     onChange={(e) => this.validateResults(e, row.id, row)}
+                        // />
+
                     // <input id={"results_" + param.rowId} type="text" size="6"></input>
 
                     //         <input id="results_0" name="testResult[0].resultValue" class="resultValue" 
@@ -375,11 +425,35 @@ class CodeTestForm extends React.Component {
                         />
                     </DatePicker>
                 </Column>
-
             </Grid>
         </div >
 
     </pre >;
+
+    validateResults = (e, rowId, row) => {
+        console.log("validateResults:" + e.target.value)
+        e.target.value;
+        this.handleChange(e, rowId)
+    }
+
+    // validateResults = (e, rowId) => {
+    //     console.log("validateResults:")
+    //     this.handleChange(e, rowId)
+    // }
+
+
+    handleChange = (e, rowId) => {
+        const { name, id, value } = e.target;
+        console.log("handleChange:" + id + ":" + name + ":" + value + ":" + rowId);
+        // this.setState({value: e.target.value})
+        // console.log('State updated to ', e.target.value);
+        var form = this.state.resultForm;
+        var jp = require('jsonpath');
+        jp.value(form, name, value);
+        var isModified = "testResult[" + rowId + "].isModified";
+        jp.value(form, isModified, "true");
+    }
+
 
     handleDatePickerChange = (date, rowId) => {
         console.log("handleDatePickerChange:" + date)
@@ -391,24 +465,40 @@ class CodeTestForm extends React.Component {
         jp.value(form, isModified, "true");
     }
 
-    handleChange = (e, rowId) => {
-        const { name, value } = e.target;
-        //console.log("handleChange:" + name + ":" + value + ":" + rowId);
-        var form = this.state.resultForm;
-        var jp = require('jsonpath');
-        jp.value(form, name, value);
-        var isModified = "testResult[" + rowId + "].isModified";
-        jp.value(form, isModified, "true");
-    }
-
     handleDoRangeChange = () => {
         console.log("handleDoRangeChange:")
         this.state.doRange = !this.state.doRange;
     }
 
-    handleAcceptAsIsChange = () => {
-        console.log("handleAcceptAsIsChange:")
-        this.state.acceptAsIs = !this.state.acceptAsIs;
+    handleFinishedChange = () => {
+        console.log("handleFinishedChange:")
+        this.state.finished = !this.state.finished;
+    }
+
+    handleAcceptAsIsChange = (e, rowId) => {
+        console.log("handleAcceptAsIsChange:" + this.state.acceptAsIs[rowId])
+        this.handleChange(e, rowId)
+        if (this.state.acceptAsIs[rowId] == undefined) {
+            var message = `Checking this box will indicate that you accept the results unconditionally.\n` +
+                `Expected uses:\n` +
+                `1. The test has been redone and the result is the same.\n` +
+                `2. There is no result for the test but you do not want to cancel it.\n` +
+                `3. The result was changed and the technician wants to give the biologist the option to add a note during the validation step explaining the reason of the change.\n` +
+                `In  either case, leave a note explaining why you are taking this action.\n`
+
+            // message=`Incorrect Username/Password Used \n Please try again…`
+
+
+            alert(message);
+
+            this.context.setNotificationBody({
+                title: "Notification Message",
+                message: message,
+                kind: NotificationKinds.warning
+            })
+            this.context.setNotificationVisible(true);
+        }
+        this.state.acceptAsIs[rowId] = !this.state.acceptAsIs[rowId];
     }
 
     handleSaveChange = () => {
@@ -416,15 +506,11 @@ class CodeTestForm extends React.Component {
 
     }
 
-    handlePost = (status) => {
-        console.log("handlePost:")
-        alert(status)
-    };
-
     handleSave = (values) => {
-        //console.log("handleSave:" + JSON.stringify(this.state.resultForm));
+        //console.log("handleSave:" + values);
+        values.status = this.state.saveStatus;
         var searchEndPoint = "/rest/ReactLogbookResultsUpdate"
-        postToOpenElisServer(searchEndPoint, JSON.stringify(this.state.resultForm), this.handlePost());
+        postToOpenElisServer(searchEndPoint, JSON.stringify(this.state.resultForm), this.setStatus);
     }
 
     handleSubmit = (values) => {
@@ -434,15 +520,34 @@ class CodeTestForm extends React.Component {
 
         var searchEndPoint = "/rest/ReactLogbookResultsByRange?" +
             "&labNumber=" + values.labNumber +
-            "&doRange=" + this.state.doRange
+            "&doRange=" + this.state.doRange +
+            "&finished=" + this.state.finished
         getFromOpenElisServer(searchEndPoint, this.setResults);
     };
 
     setResults = (resultForm) => {
-        //console.log(JSON.stringify(resultForm))
+        //console.log("setResults")
         var i = 0;
         resultForm.testResult.forEach(item => item.id = "" + i++);
         this.setState({ resultForm: resultForm })
+    }
+
+    setStatus = (status) => {
+        //console.log("setStatus" + status)
+        if (status != 200) {
+            this.context.setNotificationBody({
+                title: "Notification Message",
+                message: "Error: " + status,
+                kind: NotificationKinds.error
+            })
+        } else {
+            this.context.setNotificationBody({
+                title: "Notification Message",
+                message: "Success: " + status,
+                kind: NotificationKinds.success
+            })
+        }
+        this.context.setNotificationVisible(true);
     }
 
 
@@ -465,6 +570,8 @@ class CodeTestForm extends React.Component {
         // const prefix = this.state.prefix;
         return (
             <>
+                {this.context.notificationVisible === true ? <AlertDialog /> : ""}
+
                 {/* <Grid  fullWidth={true} className="gridBoundary"> */}
                 {/* <Column  lg={3}> */}
                 <Formik
@@ -486,8 +593,8 @@ class CodeTestForm extends React.Component {
                             onChange={handleChange}
                         //onBlur={handleBlur}
                         >
-
                             <Stack gap={2}>
+
                                 <FormLabel>
                                     <Section>
                                         <Section>
@@ -507,17 +614,35 @@ class CodeTestForm extends React.Component {
                                             name={field.name} labelText="Lab Number" id={field.name} />
                                     }
                                 </Field>
-                                <Field name="doRange"
-                                >
-                                    {({ field }) =>
-                                        <Checkbox
-                                            defaultChecked={this.state.doRange}
-                                            onChange={this.handleDoRangeChange}
-                                            name={field.name}
-                                            labelText="Do Range"
-                                            id={field.name} />
-                                    }
-                                </Field>
+                                <Grid>
+                                    <Column lg={2}>
+                                        <Field name="doRange"
+                                        >
+                                            {({ field }) =>
+                                                <Checkbox
+                                                    defaultChecked={this.state.doRange}
+                                                    onChange={this.handleDoRangeChange}
+                                                    name={field.name}
+                                                    labelText="Do Range"
+                                                    id={field.name} />
+                                            }
+                                        </Field>
+                                    </Column>
+                                    <Column lg={2}>
+                                        <Field name="finished"
+                                        >
+                                            {({ field }) =>
+                                                <Checkbox
+                                                    defaultChecked={this.state.finished}
+                                                    onChange={this.handleFinishedChange}
+                                                    //onClick={() => (this.state.doRange = false)}
+                                                    name={field.name}
+                                                    labelText="Display All"
+                                                    id={field.name} />
+                                            }
+                                        </Field>
+                                    </Column>
+                                </Grid>
                                 <Button type="submit" id="submit">
                                     <FormattedMessage id="label.button.search" />
                                 </Button>
