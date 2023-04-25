@@ -3,13 +3,14 @@ import { Route } from "react-router-dom";
 import IdleTimer from 'react-idle-timer'
 import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css' // Import css
+import { Loading } from '@carbon/react';
 
 const idleTimeout = 1000 * 60 * 15; // milliseconds until idle warning will appear
 const idleWarningTimeout = 1000 * 60 * 1; // milliseconds until logout is automatically processed from idle warning
 
 class SecureRoute extends React.Component {
 
-    constructor(props) {
+    constructor(props) { 
         super(props);
         this.idleTimer = null
         this.state = {
@@ -33,10 +34,7 @@ class SecureRoute extends React.Component {
                     this.setState({ authenticated: true, userSessionDetails: jsonResp });
                     this.props.onAuth(jsonResp);
                     localStorage.setItem("CSRF", jsonResp.csrf)
-                    const hasRole = !!jsonResp.roles.find(role => {
-                        return role.trim() === this.props.role 
-                    })
-                    if (hasRole || !this.props.role ) {
+                    if (this.hasPermission()) {
                         console.info("Access Allowed");
                     } else {
                         const options = {
@@ -80,6 +78,10 @@ class SecureRoute extends React.Component {
             );
     }
 
+    hasPermission = () => {
+        return !this.props.role || [].concat(this.props.role).some(role => this.state.userSessionDetails.roles.includes(role))
+    }
+
     handleOnAction = (event) => {
     }
 
@@ -114,12 +116,9 @@ class SecureRoute extends React.Component {
 
     render() {
         if (!this.state.authenticated) {
-            return (<div>Not authenticated</div>);
+            return (<Loading/>);
         } else {
-            const hasRole =  !!this.state.userSessionDetails.roles.find(role => {
-                return role.trim() === this.props.role
-            })
-            if (hasRole || !this.props.role) {
+            if (this.hasPermission()) {
                 console.info("Access Allowed");
                 return (
                     <>

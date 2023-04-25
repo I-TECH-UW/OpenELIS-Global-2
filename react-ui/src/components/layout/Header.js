@@ -8,17 +8,23 @@ import {
   Notification,
   Language,
   UserAvatarFilledAlt,
-  Logout
+  Logout,
+  Fade
 } from "@carbon/icons-react";
 
 import {
+  HeaderContainer,
   Header,
+  HeaderMenuButton,
   HeaderName,
   HeaderGlobalAction,
   HeaderGlobalBar,
   HeaderNavigation,
   HeaderMenu,
   HeaderMenuItem,
+  SideNav,
+  HeaderSideNavItems,
+  SideNavItems,
   Theme,
   HeaderPanel,
 } from "@carbon/react";
@@ -73,7 +79,14 @@ class OEHeader extends React.Component {
       <>
         <div className="container">
           <Theme>
-            <Header className="" aria-label="">
+            <HeaderContainer
+             render={({ isSideNavExpanded, onClickSideNavExpand }) => ( 
+            <Header id="mainHeader" className="mainHeader" aria-label="">
+              <HeaderMenuButton
+                aria-label="Open menu"
+                onClick={onClickSideNavExpand}
+                isActive={isSideNavExpanded}
+              />
               <HeaderName href="/" prefix="">
                 <span id="header-logo">{this.logo()}</span>
                 <span id="header-title">{this.props.config.title}</span>
@@ -190,7 +203,66 @@ class OEHeader extends React.Component {
                   </li>
                 </ul>
               </HeaderPanel>
+              {this.props.isLoggedIn() && (
+                <>
+                <SideNav aria-label="Side navigation"
+          expanded={isSideNavExpanded}
+          isPersistent={false}>
+            <SideNavItems>
+            <HeaderSideNavItems >
+            <HeaderMenu aria-label="Order" menuLinkName="Order">
+                      <HeaderMenuItem href="/AddOrder">Add Order</HeaderMenuItem>
+                      <HeaderMenuItem href="#">Modify Order</HeaderMenuItem>
+                      <HeaderMenuItem href="#">Incoming Orders</HeaderMenuItem>
+                      <HeaderMenuItem href="#">Batch Order Entry</HeaderMenuItem>
+                      <HeaderMenuItem href="#">Barcode</HeaderMenuItem>
+                    </HeaderMenu>
+                    <HeaderMenu aria-label="Patient" menuLinkName="Patient">
+                      <HeaderMenuItem href="/PatientManagement">Add/Edit Patient</HeaderMenuItem>
+                      <HeaderMenuItem href="/PatientHistory">Patient History</HeaderMenuItem>
+                      <HeaderMenuItem href="#">Sub-link 3</HeaderMenuItem>
+                    </HeaderMenu>
+                    <HeaderMenu
+                      aria-label="Non-Conforming Events"
+                      menuLinkName="Non-Conform"
+                    >
+                      <HeaderMenuItem href="#">Sub-link 1</HeaderMenuItem>
+                      <HeaderMenuItem href="#">Sub-link 2</HeaderMenuItem>
+                      <HeaderMenuItem href="#">Sub-link 3</HeaderMenuItem>
+                    </HeaderMenu>
+                    <HeaderMenu aria-label="Workplan" menuLinkName="Workplan">
+                      <HeaderMenuItem href="#">Sub-link 1</HeaderMenuItem>
+                      <HeaderMenuItem href="#">Sub-link 2</HeaderMenuItem>
+                      <HeaderMenuItem href="#">Sub-link 3</HeaderMenuItem>
+                    </HeaderMenu>
+                    <HeaderMenu aria-label="Results" menuLinkName="Results">
+                      <HeaderMenuItem href="#">Sub-link 1</HeaderMenuItem>
+                      <HeaderMenuItem href="/result">Result Search</HeaderMenuItem>
+                      <HeaderMenuItem href="#">Sub-link 3</HeaderMenuItem>
+                    </HeaderMenu>
+                    <HeaderMenu
+                      aria-label="Validation"
+                      menuLinkName="Validation"
+                    >
+                      <HeaderMenuItem href="#">Sub-link 1</HeaderMenuItem>
+                      <HeaderMenuItem href="#">Sub-link 2</HeaderMenuItem>
+                      <HeaderMenuItem href="#">Sub-link 3</HeaderMenuItem>
+                    </HeaderMenu>
+                    <HeaderMenu aria-label="Reports" menuLinkName="Reports">
+                      <HeaderMenuItem href="#">Sub-link 1</HeaderMenuItem>
+                      <HeaderMenuItem href="#">Sub-link 2</HeaderMenuItem>
+                      <HeaderMenuItem href="#">Sub-link 3</HeaderMenuItem>
+                    </HeaderMenu>
+                    <HeaderMenuItem href="/admin">Admin</HeaderMenuItem>
+            </HeaderSideNavItems >
+                       </SideNavItems>
+          </SideNav>
+                </>
+              )}
+              
             </Header>
+            )}
+            />
           </Theme>
         </div>
       </>
