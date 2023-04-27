@@ -353,7 +353,22 @@ public class LogbookResultsController extends LogbookResultsBaseController {
                 .isPropertyValueEqual(Property.ALWAYS_VALIDATE_RESULTS, "true");
         boolean supportReferrals = FormFields.getInstance().useField(Field.ResultsReferral);
         String statusRuleSet = ConfigurationProperties.getInstance().getPropertyValueUpperCase(Property.StatusRules);
-
+        System.out.println("LogbookResultsController:showLogbookResultsUpdate:form:" + form.toString());
+        
+        ObjectMapper mapper = new ObjectMapper();
+        String jsonForm = "";
+        List<TestResultItem> testResultItemList = form.getTestResult();
+        //gnr
+        for (TestResultItem item : testResultItemList) {
+            try {
+                jsonForm = mapper.writeValueAsString(item);
+            } catch (JsonProcessingException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            //System.out.println("LogbookResultsController:showLogbookResultsUpdate:jsonForm:" + jsonForm);
+        }
+        
         if ("true".equals(request.getParameter("pageResults"))) {
             return getLogbookResults(request, form);
         }
@@ -684,8 +699,8 @@ public class LogbookResultsController extends LogbookResultsBaseController {
     private ResultInventory createTestKitLinkIfNeeded(TestResultItem testResult, String testKitName) {
         ResultInventory testKit = null;
 
-        if ((TestResultItem.ResultDisplayType.SYPHILIS == testResult.getRawResultDisplayType()
-                || TestResultItem.ResultDisplayType.HIV == testResult.getRawResultDisplayType())
+        if ((TestResultItem.ResultDisplayType.SYPHILIS.toString() == testResult.getResultDisplayType()
+                || TestResultItem.ResultDisplayType.HIV.toString() == testResult.getResultDisplayType())
                 && ResultsLoadUtility.TESTKIT.equals(testKitName)) {
 
             testKit = createTestKit(testResult, testKitName, testResult.getTestKitId());

@@ -169,11 +169,18 @@ button {
 }
 
 .resultPageContent {
-  /* margin-left: 0%; */
-  margin-right: 5%;
+  margin-left: 1%; 
+  margin-right: 0%;
+}
+
+.searchLabNumber {
+  margin-left: 0%; 
+  margin-right: 0%;
+  width: 50%;
 }
 
 .sampleInfo {
+  /* margin-left: 0%;  */
   margin-left: 0%;
   margin-right: 0%;
 }
@@ -184,16 +191,16 @@ button {
   width: 100%;
 }
 
-/* .referralReason {
-  margin-left: 5%;
-  margin-right: 5%;
-  width: 25%;
+.referralReason {
+  margin-left: 5%; 
+  margin-right: 5%; 
+  width: 100%;
 }
 .institute {
   margin-left: 5%;
   margin-right: 5%;
-  width: 15rem;
-} */
+  width: 100%;
+}
 
 /* Results */
 .inputText {

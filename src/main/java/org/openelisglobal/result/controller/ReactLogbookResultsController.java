@@ -13,6 +13,8 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.http.HttpEntity;
+
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ContainerFactory;
 import org.json.simple.parser.JSONParser;
@@ -88,6 +90,7 @@ import org.openelisglobal.systemuser.service.UserService;
 import org.openelisglobal.test.beanItems.TestResultItem;
 import org.openelisglobal.test.service.TestSectionService;
 import org.openelisglobal.test.valueholder.TestSection;
+import org.openelisglobal.testreflex.action.bean.ReflexRule;
 import org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -97,17 +100,23 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.annotation.JsonCreator.Mode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.module.*;
 
 @Controller
 @RequestMapping(value = "/rest/")
@@ -186,8 +195,9 @@ public class ReactLogbookResultsController extends LogbookResultsBaseController 
             @Validated(LogbookResults.class) @ModelAttribute("form") LogbookResultsForm form, BindingResult result)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
-        System.out.println("ReactLogbookResultsController:labNumber:doRange" + labNumber + ":" + doRange);
-        
+        System.out.println("Get:ReactLogbookResultsController:ReactLogbookResultsByRange:labNumber:doRange"
+                + labNumber + ":" + doRange);
+
         LogbookResultsForm newForm = new LogbookResultsForm();
         if (!(result.hasFieldErrors("type") || result.hasFieldErrors("testSectionId")
                 || result.hasFieldErrors("methodId") || result.hasFieldErrors("accessionNumber"))) {
@@ -215,23 +225,22 @@ public class ReactLogbookResultsController extends LogbookResultsBaseController 
         return getLogbookResults(request, newForm, doRange);
     }
 
-
-    
-    
 //    @RequestMapping(value = "/ReactRangeResults", method = RequestMethod.GET)
 //    public ModelAndView showReactLogbookResultsByRange(HttpServletRequest request,
 //            @Validated(LogbookResults.class) @ModelAttribute("form") LogbookResultsForm form, BindingResult result)
 //            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        
-        @GetMapping(value = "ReactRangeResults", produces = MediaType.APPLICATION_JSON_VALUE)
-        @ResponseBody
-        public LogbookResultsForm showReactLogbookResultsByRange(@RequestParam String labNumber, @RequestParam boolean doRange,
-                @Validated(LogbookResults.class) @ModelAttribute("form") LogbookResultsForm form, BindingResult result)
-                throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-            
-            System.out.println("ReactLogbookResultsController showReactLogbookResultsByRange:labNumber:" + labNumber);
-        
-              LogbookResultsForm newForm = new LogbookResultsForm();
+
+    @GetMapping(value = "ReactRangeResults", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public LogbookResultsForm showReactLogbookResultsByRange(@RequestParam String labNumber,
+            @RequestParam boolean doRange,
+            @Validated(LogbookResults.class) @ModelAttribute("form") LogbookResultsForm form, BindingResult result)
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+
+        System.out.println(
+                "Get:ReactLogbookResultsController showReactLogbookResultsByRange:labNumber:" + labNumber);
+
+        LogbookResultsForm newForm = new LogbookResultsForm();
         if (!(result.hasFieldErrors("type") || result.hasFieldErrors("accessionNumber"))) {
             newForm.setType(form.getType());
             newForm.setAccessionNumber(form.getAccessionNumber());
@@ -248,7 +257,7 @@ public class ReactLogbookResultsController extends LogbookResultsBaseController 
         }
         newForm.setDisplayTestSections(false);
         newForm.setSearchByRange(true);
-        System.out.println("ReactLogbookResultsController:call getLogbookResults");
+        //System.out.println("Post:ReactLogbookResultsController:call getLogbookResults");
         return getLogbookResults(request, newForm, doRange);
     }
 
@@ -308,12 +317,12 @@ public class ReactLogbookResultsController extends LogbookResultsBaseController 
                 }
                 form.setSearchFinished(true);
             } else if (!GenericValidator.isBlankOrNull(form.getAccessionNumber())) {
-                
+
                 tests = resultsLoadUtility.getUnfinishedTestResultItemsByAccession(form.getAccessionNumber(), doRange);
                 filteredTests = userService.filterResultsByLabUnitRoles(getSysUserId(request), tests,
                         Constants.ROLE_RESULTS);
                 int count = resultsLoadUtility.getTotalCountAnalysisByAccessionAndStatus(form.getAccessionNumber());
-                
+
                 request.setAttribute("analysisCount", count);
                 request.setAttribute("pageSize", filteredTests.size());
                 form.setSearchFinished(true);
@@ -351,12 +360,13 @@ public class ReactLogbookResultsController extends LogbookResultsBaseController 
         form.setReferralOrganizations(DisplayListService.getInstance().getList(ListType.REFERRAL_ORGANIZATIONS));
 
         addFlashMsgsToRequest(request);
-        
+
         for (TestResultItem resultItem : filteredTests) {
-            //gnr
             resultItem.setMethods(DisplayListService.getInstance().getList(ListType.METHODS));
-            resultItem.setReferralOrganizations(DisplayListService.getInstance().getList(ListType.REFERRAL_ORGANIZATIONS));
-            resultItem.setReferralReasons(DisplayListService.getInstance().getList(DisplayListService.ListType.REFERRAL_REASONS));
+            resultItem.setReferralOrganizations(
+                    DisplayListService.getInstance().getList(ListType.REFERRAL_ORGANIZATIONS));
+            resultItem.setReferralReasons(
+                    DisplayListService.getInstance().getList(DisplayListService.ListType.REFERRAL_REASONS));
         }
 
         ObjectMapper mapper = new ObjectMapper();
@@ -368,8 +378,8 @@ public class ReactLogbookResultsController extends LogbookResultsBaseController 
             e.printStackTrace();
         }
 
-        System.out.println("ReactLogbookResultsController:jsonForm:" + jsonForm);
-        //return findForward(FWD_SUCCESS, form);
+        // System.out.println("ReactLogbookResultsController:jsonForm:" + jsonForm);
+        // return findForward(FWD_SUCCESS, form);
         return (form);
     }
 
@@ -379,12 +389,64 @@ public class ReactLogbookResultsController extends LogbookResultsBaseController 
 
     }
 
-    @RequestMapping(value = { "/ReactLogbookResults", "/PatientResults", "/AccessionResults",
-            "/StatusResults" }, method = RequestMethod.POST)
-    public LogbookResultsForm showReactLogbookResultsUpdate(HttpServletRequest request,
-            @ModelAttribute("form") @Validated(LogbookResultsForm.LogbookResults.class) LogbookResultsForm form,
-            BindingResult result, RedirectAttributes redirectAttributes)
+    @PostMapping(value = "ReactLogbookResultsUpdateTest", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public void showReactLogbookResultsUpdateTest(
+            HttpServletRequest request, 
+            @Validated(LogbookResultsForm.LogbookResults.class) 
+            @RequestBody LogbookResultsForm Form, 
+            BindingResult result)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        
+        //System.out.println("ReactLogbookResultsController:Form:" + Form.toString());
+        
+//        JSONParser parser = new JSONParser();
+//        JSONObject jsonObject = new JSONObject();
+//        try {
+//            jsonObject = (JSONObject) parser.parse("{\"formName\":\"LogbookResultsForm\",\"formAction\":null,\"formMethod\":\"POST\",\"cancelAction\":\"Home\",\"submitOnCancel\":false,\"cancelMethod\":\"POST\",\"paging\":{\"totalPages\":\"1\",\"currentPage\":\"1\",\"searchTermToPage\":[]},\"accessionNumber\":null,\"singlePatient\":false,\"currentDate\":\"03/17/2023\",\"displayTestMethod\":true,\"displayTestKit\":false,\"testResult\":[],\"referralItems\":null,\"inventoryItems\":[],\"hivKits\":[],\"syphilisKits\":[],\"type\":\"\",\"referralReasons\":[{\"id\":\"1\",\"value\":\"Test not performed\"},{\"id\":\"2\",\"value\":\"Confirmation requested\"},{\"id\":\"3\",\"value\":\"Further testing required\"},{\"id\":\"4\",\"value\":\"Reagent expired\"},{\"id\":\"5\",\"value\":\"Reagents unavailable\"},{\"id\":\"6\",\"value\":\"Equipment failure\"},{\"id\":\"7\",\"value\":\"Verification of EQA\"},{\"id\":\"8\",\"value\":\"Specimen sent for serotyping\"},{\"id\":\"9\",\"value\":\"EQA by Repeat Testing\"},{\"id\":\"10\",\"value\":\"Other\"}],\"rejectReasons\":[{\"id\":\"0\",\"value\":\"\"},{\"id\":\"1140\",\"value\":\"1. Measurement not available due to technical problem. Please submit another sample.\"},{\"id\":\"1141\",\"value\":\"2. Sample / request form not / misidentified . Please submit another sample.\"},{\"id\":\"1142\",\"value\":\"3. Sample / request form incompatible . Please submit another sample.\"},{\"id\":\"1143\",\"value\":\"4. Free sample request form or vice versa. Please submit another sample.\"},{\"id\":\"1144\",\"value\":\"5. Sample transported / stored incorrectly. Please submit another sample.\"},{\"id\":\"1145\",\"value\":\"6. Identification of improper sample. Please submit another sample.\"},{\"id\":\"1146\",\"value\":\"7. Sample was collected in the wrong tube. Please submit another sample.\"},{\"id\":\"1147\",\"value\":\"8. Incorrect quantity of the sample. Please submit another sample.\"},{\"id\":\"1148\",\"value\":\"9. The sample received is not suitable for test requested . Please submit the appropriate sample.\"},{\"id\":\"1149\",\"value\":\"10. The sample received is coagulated . Please submit another sample.\"},{\"id\":\"1150\",\"value\":\"11. The received sample was refrigerated . Please submit another sample.\"},{\"id\":\"1151\",\"value\":\"12. Tube received arrived broken or spilled . Please submit another sample.\"},{\"id\":\"1152\",\"value\":\"13. The received sample is hemolyzed . Please submit another sample.\"},{\"id\":\"1160\",\"value\":\"14. The sample received is jaundiced. Please submit another sample.\"},{\"id\":\"1161\",\"value\":\"15. The sample received is lipemic. Please submit another sample.\"},{\"id\":\"1153\",\"value\":\"16. The sample is contaminated. Please submit another sample.\"},{\"id\":\"1154\",\"value\":\"17. The sample received was insufficient volume . Please submit another sample.\"},{\"id\":\"1155\",\"value\":\"18. Following a mistake in sample intake, a not requested test has been scheduled but not executed.\"},{\"id\":\"1162\",\"value\":\"19. Other.\"}],\"testSections\":null,\"testSectionsByName\":null,\"referralOrganizations\":[{\"id\":\"3210\",\"value\":\"CEDRES\"},{\"id\":\"3131\",\"value\":\"CENTRAL HEALTH LABORATORY\"},{\"id\":\"3219\",\"value\":\"CIRBA\"},{\"id\":\"2878\",\"value\":\"PROJECT RETROCI\"},{\"id\":\"3224\",\"value\":\"SSR AIRPORT LAB\"},{\"id\":\"3614\",\"value\":\"Test referral lab\"},{\"id\":\"2769\",\"value\":\"Training Reflab\"}],\"methods\":[{\"id\":\"39\",\"value\":\"EIA\"},{\"id\":\"40\",\"value\":\"PCR\"},{\"id\":\"41\",\"value\":\"STAIN\"},{\"id\":\"42\",\"value\":\"CULTURE\"},{\"id\":\"43\",\"value\":\"PROBE\"},{\"id\":\"44\",\"value\":\"BIOCHEMICAL\"},{\"id\":\"45\",\"value\":\"Diane Test\"},{\"id\":\"46\",\"value\":\"HPLC\"},{\"id\":\"47\",\"value\":\"DNA SEQUENCING\"},{\"id\":\"48\",\"value\":\"AUTO\"},{\"id\":\"49\",\"value\":\"MANUAL\"},{\"id\":\"50\",\"value\":\"HIV_TEST_KIT\"},{\"id\":\"51\",\"value\":\"SYPHILIS_TEST_KIT\"}],\"methodsByName\":null,\"displayMethods\":true,\"methodId\":null,\"testSectionId\":null,\"displayTestSections\":false,\n"
+//                    + "\"searchByRange\":true,\"searchFinished\":false}");
+//        } catch (Exception e) {
+//            
+//            System.out.println("Post:ReactLogbookResultsController:ERROR:" + e.toString());
+//        }
+
+        ObjectMapper mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
+        String jsonString = new String();
+//        //mapper.registerModule(new ParameterNamesModule(Mode.PROPERTIES));
+//       
+//        LogbookResultsForm form = new LogbookResultsForm();
+//
+        try {
+         //   form = mapper.readValue(Form.toJSONString(), LogbookResultsForm.class);
+            jsonString = mapper.writeValueAsString(Form);
+        } catch (Exception e) {
+            System.out.println("Post:ReactLogbookResultsController:ERROR:" + e.toString());
+        }
+//        //System.out.println("Post:ReactLogbookResultsController:form:" + form.toString());
+        System.out.println("Post:ReactLogbookResultsController:SUCCESS" + jsonString);
+        
+        
+        // return("");
+    }
+
+//    @RequestMapping(value = { "/ReactLogbookResults", "/PatientResults", "/AccessionResults",
+//            "/StatusResults" }, method = RequestMethod.POST)
+//    public LogbookResultsForm showReactLogbookResultsUpdate(HttpServletRequest request,
+//            @ModelAttribute("form") @Validated(LogbookResultsForm.LogbookResults.class) LogbookResultsForm form,
+//            BindingResult result, RedirectAttributes redirectAttributes)
+//            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+
+    @PostMapping(value = "ReactLogbookResultsUpdate", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public LogbookResultsForm showReactLogbookResultsUpdate(
+            HttpServletRequest request, 
+            @Validated(LogbookResultsForm.LogbookResults.class) 
+            @RequestBody LogbookResultsForm form, 
+            BindingResult result)
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        
+        System.out.println("Post:ReactLogbookResultsController:SUCCESS");
+
         boolean useTechnicianName = ConfigurationProperties.getInstance()
                 .isPropertyValueEqual(Property.resultTechnicianName, "true");
         boolean alwaysValidate = ConfigurationProperties.getInstance()
@@ -429,6 +491,9 @@ public class ReactLogbookResultsController extends LogbookResultsBaseController 
 
         List<IResultUpdate> updaters = ResultUpdateRegister.getRegisteredUpdaters();
 
+        // gnr
+        // if (true) return(form);
+
         ResultsPaging paging = new ResultsPaging();
         paging.updatePagedResults(request, form);
         List<TestResultItem> tests = paging.getResults(request);
@@ -449,8 +514,8 @@ public class ReactLogbookResultsController extends LogbookResultsBaseController 
         try {
             List<Analysis> reflexAnalysises = logbookPersistService.persistDataSet(actionDataSet, updaters,
                     getSysUserId(request));
-            redirectAttributes.addFlashAttribute(REFLEX_ACCESSIONS, reflexAnalysises.stream()
-                    .map(e -> analysisService.getOrderAccessionNumber(e)).collect(Collectors.toList()));
+//            redirectAttributes.addFlashAttribute(REFLEX_ACCESSIONS, reflexAnalysises.stream()
+//                    .map(e -> analysisService.getOrderAccessionNumber(e)).collect(Collectors.toList()));
             try {
                 fhirTransformService.transformPersistResultsEntryFhirObjects(actionDataSet);
             } catch (FhirTransformationException | FhirPersistanceException e) {
@@ -481,7 +546,7 @@ public class ReactLogbookResultsController extends LogbookResultsBaseController 
             }
         }
 
-        redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
+//        redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
         if (GenericValidator.isBlankOrNull(form.getType())) {
 //            return findForward(FWD_SUCCESS_INSERT, form);
         } else {
@@ -490,7 +555,7 @@ public class ReactLogbookResultsController extends LogbookResultsBaseController 
 //            return getForwardWithParameters(findForward(FWD_SUCCESS_INSERT, form), params);
         }
         // added return
-        return(form);
+        return (form);
     }
 
     private void createAnalysisOnlyUpdates(ResultsUpdateDataSet actionDataSet) {
@@ -724,8 +789,8 @@ public class ReactLogbookResultsController extends LogbookResultsBaseController 
     private ResultInventory createTestKitLinkIfNeeded(TestResultItem testResult, String testKitName) {
         ResultInventory testKit = null;
 
-        if ((TestResultItem.ResultDisplayType.SYPHILIS == testResult.getRawResultDisplayType()
-                || TestResultItem.ResultDisplayType.HIV == testResult.getRawResultDisplayType())
+        if ((TestResultItem.ResultDisplayType.SYPHILIS.toString() == testResult.getResultDisplayType()
+                || TestResultItem.ResultDisplayType.HIV.toString() == testResult.getResultDisplayType())
                 && ResultsLoadUtility.TESTKIT.equals(testKitName)) {
 
             testKit = createTestKit(testResult, testKitName, testResult.getTestKitId());

@@ -34,6 +34,7 @@ export const postToOpenElisServer = (endPoint, payLoad, callback) => {
         }
     )
         .then(response => response.status).then(status => {
+            
             callback(status);
             //console.log(JSON.stringify(jsonResp))
         }).catch(error => {

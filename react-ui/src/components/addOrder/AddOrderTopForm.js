@@ -17,6 +17,7 @@ import {priorities} from "../data/orderOptions";
 import {orderValues} from "../formModel/innitialValues/CreateOrderFormValues";
 import {NotificationKinds} from "../common/CustomNotification";
 import {NotificationContext} from "../layout/Layout";
+import SiteNameAutoComplete from "../common/SiteNameAutoComplete";
 
 
 const AddOrderTopForm = () => {
@@ -29,7 +30,9 @@ const AddOrderTopForm = () => {
     const [paymentOptions, setPaymentOptions] = useState([]);
     const [samplingPerformed, setSamplingPerformed] = useState([]);
     const [labNo, setLabNo] = useState("");
-    const { setNotificationVisible,setNotificationBody } = useContext(NotificationContext);
+    const {setNotificationVisible, setNotificationBody} = useContext(NotificationContext);
+    const [siteNames, setSiteNames] = useState([]);
+    const [configurationProperties, setConfigurationProperties] = useState([{id: "", value: ""}]);
 
     const handleDatePickerChange = (date, value) => {
         setFormValues({
@@ -85,7 +88,9 @@ const AddOrderTopForm = () => {
     }
 
     const handleLabNoValidation = () => {
-        getFromOpenElisServer('/rest/SampleEntryAccessionNumberValidation?ignoreYear=false&ignoreUsage=false&field=labNo&accessionNumber=' + labNo, accessionNumberValidationResults);
+        if (labNo !== "") {
+            getFromOpenElisServer('/rest/SampleEntryAccessionNumberValidation?ignoreYear=false&ignoreUsage=false&field=labNo&accessionNumber=' + labNo, accessionNumberValidationResults);
+        }
     }
 
     function fetchPhoneNoValidation(res) {
@@ -98,16 +103,38 @@ const AddOrderTopForm = () => {
     const handlePhoneNoValidation = () => {
         if (formValues.requesterPhone !== "") {
             const providerPhoneNo = formValues.requesterPhone.replace(/\+/g, '%2B');
-            console.log(providerPhoneNo);
             getFromOpenElisServer("/rest/PhoneNumberValidationProvider?fieldId=providerWorkPhoneID&value=" + providerPhoneNo, fetchPhoneNoValidation);
+        }
+    }
+    const fetchReferringClinics = (res) => {
+        if (res.length > 0 && componentMounted.current) {
+            setSiteNames(res);
+        }
+    }
+
+
+    function findConfigurationProperty(property) {
+        if (configurationProperties.length > 0) {
+            const filterProperty = configurationProperties.find((config) => config.id === property);
+            if (filterProperty !== undefined) {
+                return filterProperty.value
+            }
+        }
+    }
+
+    const fetchConfigurationProperties = (res) => {
+        if (componentMounted.current) {
+            setConfigurationProperties(res);
         }
     }
 
     useEffect(() => {
 
         getFromOpenElisServer("/rest/programs", fetchPrograms)
+        getFromOpenElisServer("/rest/site-names", fetchReferringClinics)
         getFromOpenElisServer("/rest/patientPaymentsOptions", getPaymentOptions)
         getFromOpenElisServer("/rest/testLocationCodes", getSamplingPerformedOptions)
+        getFromOpenElisServer("/rest/configuration-properties", fetchConfigurationProperties)
 
         return () => {
             componentMounted.current = false
@@ -154,9 +181,10 @@ const AddOrderTopForm = () => {
                         />);
                     })}
                 </Select>
-                <DatePicker value={formValues.requestDate}
-                            name="requestDate" onChange={(e) => handleDatePickerChange("requestDate", e)}
-                            dateFormat="d/m/Y" datePickerType="single" light={true} className="">
+                <DatePicker
+                    value={formValues.requestDate === "" ? findConfigurationProperty("currentDateAsText") : formValues.requestDate}
+                    name="requestDate" onChange={(e) => handleDatePickerChange("requestDate", e)}
+                    dateFormat="d/m/Y" datePickerType="single" light={true} className="">
                     <DatePickerInput
                         id="date-picker-default-id"
                         placeholder="dd/mm/yyyy"
@@ -167,9 +195,10 @@ const AddOrderTopForm = () => {
                 </DatePicker>
             </div>
             <div className="formInlineDiv">
-                <DatePicker value={formValues.receivedDate}
-                            name="requestDate" onChange={(e) => handleDatePickerChange("receivedDate", e)}
-                            dateFormat="d/m/Y" datePickerType="single" light={true} className="">
+                <DatePicker
+                    value={formValues.receivedDate === "" ? findConfigurationProperty("currentDateAsText") : formValues.receivedDate}
+                    name="requestDate" onChange={(e) => handleDatePickerChange("receivedDate", e)}
+                    dateFormat="d/m/Y" datePickerType="single" light={true} className="">
                     <DatePickerInput
                         id="date-picker-default-id"
                         placeholder="dd/mm/yyyy"
@@ -178,7 +207,10 @@ const AddOrderTopForm = () => {
                         name="receivedDate"
                     />
                 </DatePicker>
-                <TimePicker id="time-picker" labelText="Reception Time (hh:mm):"/>
+                <TimePicker id="time-picker" labelText="Reception Time (hh:mm):"
+                            value={
+                                findConfigurationProperty("currentTimeAsText") == null ? '' : findConfigurationProperty("currentTimeAsText")
+                            }/>
                 <br/><br/>
             </div>
             <div className="formInlineDiv">
@@ -196,8 +228,19 @@ const AddOrderTopForm = () => {
                     </DatePicker>
                 </div>
                 <div>
-                    <TextInput name="siteName" labelText="Site Name: "
-                               id="siteName" className="inputText"/>
+                    {
+                        findConfigurationProperty("restrictFreeTextRefSiteEntry") === true ? <SiteNameAutoComplete
+                            name="siteName"
+                            idField="siteName"
+                            label="Search site Name"
+                            class="autocomplete"
+                            style={{width: "!important 100%"}}
+                            suggestions={siteNames.length > 0 ? siteNames : []}
+                            required
+                        /> : <TextInput name="siteName" labelText="Site Name: "
+                                        id="siteName" className="inputText"/>
+                    }
+
                 </div>
             </div>
             <div className="formInlineDiv">

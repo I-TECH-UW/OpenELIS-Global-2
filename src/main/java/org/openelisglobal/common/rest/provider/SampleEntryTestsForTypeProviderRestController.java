@@ -207,10 +207,10 @@ public class SampleEntryTestsForTypeProviderRestController {
 		for (PanelItem item : items) {
 			String derivedNameFromPanel = getDerivedNameFromPanel(item);
 			if (derivedNameFromPanel != null) {
-				Integer index = testIdOrderMap.get(derivedNameFromPanel);
+				String ItemId = item.getTest().getId();
 
-				if (index != null) {
-					indexes.append(index.toString());
+				if (ItemId != null) {
+					indexes.append(ItemId);
 					indexes.append(",");
 				}
 			}
