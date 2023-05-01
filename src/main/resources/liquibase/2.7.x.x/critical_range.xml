@@ -8,8 +8,6 @@
 	<property name="now" value="now()" dbms="postgresql" />
 
 	<changeSet author="cliff" id="1">
-		<validCheckSum>8:d30ab032096adb6b489edac763c55588</validCheckSum>
-
 		<preConditions onFail="MARK_RAN">
 			<not>
 				<columnExists tableName="result_limits" columnName="high_critical_range_low" />
@@ -21,7 +19,6 @@
 	</changeSet>
 
     <changeSet author="cliff" id="2">
-		<validCheckSum>8:e3dfc74dae964ba133a37ecb580a0d23</validCheckSum>
 		<preConditions onFail="MARK_RAN">
 			<not>
 				<columnExists tableName="result_limits" columnName="high_critical_range_high" />
