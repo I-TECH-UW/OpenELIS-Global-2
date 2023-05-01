@@ -24,7 +24,6 @@ public class ResultLimitBean {
     private String normalRange;
     private String validRange;
     private String reportingRange;
-    //  private String criticalRange;
     private double lowerCriticalRangeLow;
     private double lowerCriticalRangeHigh;
     private double higherCriticalRangeHigh;
@@ -71,14 +70,6 @@ public class ResultLimitBean {
         this.reportingRange = reportingRange;
     }
 
-    // public String getCriticalRange() {
-    //     return criticalRange;
-    // }
-
-    // public void setCriticalRange(String criticalRange) {
-    //     this.criticalRange = criticalRange;
-    // }
-
     public double getLowerCriticalRangeLow() {
         return lowerCriticalRangeLow;
     }
@@ -110,9 +101,4 @@ public class ResultLimitBean {
     public void setHigherCriticalRangeHigh(double higherCriticalRangeHigh) {
         this.higherCriticalRangeHigh = higherCriticalRangeHigh;
     }
-
-    // public void setCriticalRange(String criticalRange) {
-    //     this.criticalRange = criticalRange;
-    // }
-
 }

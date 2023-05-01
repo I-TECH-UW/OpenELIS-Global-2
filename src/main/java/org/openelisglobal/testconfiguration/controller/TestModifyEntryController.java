@@ -211,45 +211,21 @@ public class TestModifyEntryController extends BaseController {
             }
         });
 
-        for (ResultLimit limit : resultLimitList) {
-            // System.out.println("xxxxxxxxxxxxxxxxxxx");
-            // System.out.println(limit.getHighCriticalRangeHigh());
-            // System.out.println(limit.getHighCriticalRangeLow());
-            // System.out.println(limit.getLowCriticalRangeHigh());
-            // System.out.println(limit.getLowCriticalRangeLow());
-            // System.out.println("xxxxxxxxxxxxxxxxxxx");
-            Double highCriticalRangeHigh = limit.getHighCriticalRangeHigh();
-            Double highCriticalhRangeLow = limit.getHighCriticalRangeLow();
-            Double lowCriticalRangeLow = limit.getHighCriticalRangeHigh();
-            Double lowCriticalRangeHigh = limit.getLowCriticalRangeHigh();
-
-            if(highCriticalRangeHigh != null  && highCriticalhRangeLow != null  && lowCriticalRangeLow != null && lowCriticalRangeHigh != null){
-
-            
+        for (ResultLimit limit : resultLimitList) {                
             ResultLimitBean bean = new ResultLimitBean();
             bean.setNormalRange(SpringContext.getBean(ResultLimitService.class).getDisplayReferenceRange(limit,
                     significantDigits, "-"));
             bean.setValidRange(SpringContext.getBean(ResultLimitService.class).getDisplayValidRange(limit,
                     significantDigits, "-"));
             bean.setReportingRange(SpringContext.getBean(ResultLimitService.class).getDisplayReportingRange(limit,
-                    significantDigits, "-"));
-            // if(highCriticalRangeHigh != null  && highCriticalhRangeLow != null  && lowCriticalRangeLow != null && lowCriticalRangeHigh != null){
+                    significantDigits, "-"));  
             bean.setHigherCriticalRangeHigh(SpringContext.getBean(ResultLimitService.class).getResultLimitById(limit.getId()).getHighCriticalRangeHigh()); 
             bean.setHigherCriticalRangeLow(SpringContext.getBean(ResultLimitService.class).getResultLimitById(limit.getId()).getHighCriticalRangeLow());
             bean.setLowerCriticalRangeHigh(SpringContext.getBean(ResultLimitService.class).getResultLimitById(limit.getId()).getLowCriticalRangeHigh());
             bean.setLowerCriticalRangeLow(SpringContext.getBean(ResultLimitService.class).getResultLimitById(limit.getId()).getLowCriticalRangeLow());  
-
-             System.out.println("vvvvvvvvvvvvvvvvvv");
-            System.out.println(bean.getHigherCriticalRangeHigh());
-            System.out.println(bean.getHigherCriticalRangeLow());
-            System.out.println(bean.getLowerCriticalRangeHigh());
-            System.out.println(bean.getLowerCriticalRangeLow());
-            System.out.println("vvvvvvvvvvvvvvvvvv");
-
             bean.setGender(limit.getGender());
             bean.setAgeRange(SpringContext.getBean(ResultLimitService.class).getDisplayAgeRange(limit, "-"));
             limitBeans.add(bean);
-             }
         }
         return limitBeans;
     }
