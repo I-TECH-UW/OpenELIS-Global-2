@@ -2,7 +2,7 @@ import React, {Component, Fragment} from "react";
 import '../admin/reflexTests/ReflexStyles.css';
 import {TextInput} from '@carbon/react';
 
-class SiteNameAutoComplete extends Component {
+class AutoComplete extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -37,7 +37,8 @@ class SiteNameAutoComplete extends Component {
         }
     };
 
-    onClick = (e, suggestion) => {
+    onClick = (e, id, suggestion) => {
+        const { onSelect} = this.props;
         this.setState({
             textValue: suggestion.value,
             activeSuggestion: 0,
@@ -47,6 +48,9 @@ class SiteNameAutoComplete extends Component {
             invalid: false
         });
 
+        if (typeof onSelect === "function") {
+            onSelect(id);
+        }
     };
 
     onKeyDown = e => {
@@ -98,7 +102,7 @@ class SiteNameAutoComplete extends Component {
                             }
                             return (
                                 <li className={className} key={index}
-                                    onClick={(e) => onClick(e,suggestion)}>
+                                    onClick={(e) => onClick(e, suggestion.id, suggestion)}>
                                     {suggestion.value}
                                 </li>
                             );
@@ -118,7 +122,7 @@ class SiteNameAutoComplete extends Component {
             <Fragment>
                 <TextInput
                     type="text"
-                    id={this.props.index + "_" + this.props.item_index + "_test" + this.props.field}
+                    id={this.props.idField}
                     name={this.props.name}
                     labelText={this.props.label ? this.props.label : ""}
                     className={this.props.class}
@@ -127,7 +131,7 @@ class SiteNameAutoComplete extends Component {
                     value={this.state.textValue}
                     invalid={this.state.invalid}
                     required
-                    invalidText="Invalid site name"
+                    invalidText={this.props.invalidText}
                 />
                 {suggestionsListComponent}
             </Fragment>
@@ -135,4 +139,4 @@ class SiteNameAutoComplete extends Component {
     }
 }
 
-export default SiteNameAutoComplete;
+export default AutoComplete;

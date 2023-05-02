@@ -17,14 +17,14 @@ export const AlertDialog = () => {
             () => {
                 setNotificationVisible(false);
             },
-            7000
+            notificationBody.kind !== NotificationKinds.error? 7000 : 100000
         )
     },[]);
     return (
         <div className="toastDisplay">
             <ToastNotification
                 title={notificationBody.title}
-                timeout={7000}
+                timeout={notificationBody.kind !== NotificationKinds.error? 8000 : 100000}
                 lowContrast={true}
                 kind={notificationBody.kind}
                 subtitle={notificationBody.message}

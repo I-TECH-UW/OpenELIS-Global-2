@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react'
+import React, {useContext, useEffect, useRef, useState} from 'react'
 import {
     Checkbox,
     Column,
@@ -25,10 +25,12 @@ import {TableSampleTableRows} from "./OrderItemsTableRow";
 import {sampleTypeTestsStructure} from "../data/SampleEntryTestsForTypeProvider";
 import {sampleTypesTableHeader} from '../data/SampleTypesTableHeaders';
 import OrderReferralRequest from "./OrderReferralRequest";
+import {UserInformationContext} from "../layout/Layout";
 
 
 const SampleTypes = (props) => {
-    const {index, rejectSampleReasons, removeSample, findConfigurationProperty} = props;
+    const {user} = useContext(UserInformationContext);
+    const {index, rejectSampleReasons, removeSample} = props;
     const componentMounted = useRef(true);
     const [sampleTypes, setSampleTypes] = useState([]);
     const sampleTypesRef = useRef(null);
@@ -40,6 +42,7 @@ const SampleTypes = (props) => {
     const [referralReasons, setReferralReasons] = useState([]);
     const [referralOrganizations, setReferralOrganizations] = useState([]);
     const [testSearchTerm, setTestSearchTerm] = useState("");
+    const [referralRequest, setReferralRequest] = useState([]);
 
     const handleRemoveSampleTest = (index) => {
         removeSample(index);
@@ -47,6 +50,21 @@ const SampleTypes = (props) => {
 
     const handleReferralRequest = () => {
         setRequestTestReferral(!requestTestReferral);
+        if (selectedTests.length > 0) {
+            const defaultReferralRequest = [];
+            selectedTests.map(test => {
+
+                defaultReferralRequest.push({
+                    reasonForReferral: referralReasons[0].id,
+                    referrer: user.firstName + " " + user.lastName,
+                    institute: referralOrganizations[0].id,
+                    sentDate: "",
+                    testId: test.id
+                });
+
+            });
+            setReferralRequest(defaultReferralRequest);
+        }
     }
 
     const handleTestSearchChange = (event) => {
@@ -147,7 +165,11 @@ const SampleTypes = (props) => {
         });
     }
 
-    const rows = TableSampleTableRows(index, selectedSampleType, rejectSampleReasons, selectedTests, findConfigurationProperty, handleRemoveSampleTest);
+    const updateSampleXml = (sampleXML, index) => {
+        props.sampleTypeObject({sampleXML: sampleXML, index: index});
+    }
+
+    const rows = TableSampleTableRows(index, selectedSampleType, rejectSampleReasons, selectedTests, updateSampleXml, handleRemoveSampleTest);
 
     const fetchSamplesTypes = (res) => {
         if (componentMounted.current) {
@@ -161,8 +183,13 @@ const SampleTypes = (props) => {
         }
     }
     useEffect(() => {
-        props.sampleTypeObject(selectedTests, index);
+        props.sampleTypeObject({sampleTypeId: selectedSampleType.id, selectedTests: selectedTests, index: index});
     }, [selectedTests]);
+
+
+    useEffect(() => {
+        props.sampleTypeObject({referralItems: referralRequest, index: index});
+    }, [referralRequest]);
 
     useEffect(() => {
         getFromOpenElisServer("/rest/samples", fetchSamplesTypes);
@@ -355,7 +382,9 @@ const SampleTypes = (props) => {
                 {
                     requestTestReferral === true && <OrderReferralRequest index={index} selectedTests={selectedTests}
                                                                           referralReasons={referralReasons}
-                                                                          referralOrganizations={referralOrganizations}/>
+                                                                          referralOrganizations={referralOrganizations}
+                                                                          referralRequest={referralRequest}
+                                                                          setReferralRequest={setReferralRequest}/>
                 }
             </div>
         </div>}

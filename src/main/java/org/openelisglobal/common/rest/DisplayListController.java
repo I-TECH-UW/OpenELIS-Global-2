@@ -8,15 +8,27 @@ import org.openelisglobal.common.services.DisplayListService.ListType;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.IdValuePair;
+import org.openelisglobal.person.service.PersonService;
+import org.openelisglobal.person.valueholder.Person;
+import org.openelisglobal.provider.service.ProviderService;
+import org.openelisglobal.provider.valueholder.Provider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping(value = "/rest/")
 public class DisplayListController {
+
+    @Autowired
+    private ProviderService  providerService;
+
+    @Autowired
+    private PersonService personService;
 
     @GetMapping(value = "tests", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -52,24 +64,6 @@ public class DisplayListController {
     @ResponseBody
     public List<IdValuePair> getNationalityList() {
         return DisplayListService.getInstance().getList(ListType.PATIENT_NATIONALITY);
-    }
-
-    @GetMapping(value = "programs", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public List<IdValuePair> getPrograms() {
-        return DisplayListService.getInstance().getList(ListType.PROGRAM);
-    }
-
-    @GetMapping(value = "patientPaymentsOptions", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public List<IdValuePair> getSamplePatientPaymentOptions() {
-        return DisplayListService.getInstance().getList(ListType.SAMPLE_PATIENT_PAYMENT_OPTIONS);
-    }
-
-    @GetMapping(value = "testLocationCodes", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public List<IdValuePair> getTestLocationCodes() {
-        return DisplayListService.getInstance().getList(ListType.TEST_LOCATION_CODE);
     }
 
     @GetMapping(value = "test-rejection-reasons", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -111,6 +105,17 @@ public class DisplayListController {
 	    configs.add(new IdValuePair("currentTimeAsText", DateUtil.getCurrentTimeAsText()));
         return configs;
 	}
+
+    @GetMapping(value = "practitioner", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    private Provider getProviderInformation(@RequestParam String providerId) {
+        if (providerId != null){
+            Person person = personService.getPersonById(providerId);
+            Provider provider = providerService.getProviderByPerson(person);
+            return provider;
+        }
+        return null;
+    }
 
 
 }

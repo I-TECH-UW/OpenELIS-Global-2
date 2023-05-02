@@ -26,6 +26,7 @@ import {
 
 import { Formik, Field } from "formik";
 import CreatePatientFormValues from '../formModel/innitialValues/CreatePatientFormValues';
+import PatientFormObserver from "./PatientFormObserver";
 
 class CreatePatientForm extends React.Component {
     constructor(props) {
@@ -169,6 +170,7 @@ class CreatePatientForm extends React.Component {
                                     onSubmit={handleSubmit}
                                     onChange={handleChange}
                                     onBlur={handleBlur}>
+                                    {this.props.orderFormValues && <PatientFormObserver orderFormValues={this.props.orderFormValues} setOrderFormValues={this.props.setOrderFormValues} /> }
                                     <Stack gap={2}>
                                         <FormLabel>
                                             <Section>
