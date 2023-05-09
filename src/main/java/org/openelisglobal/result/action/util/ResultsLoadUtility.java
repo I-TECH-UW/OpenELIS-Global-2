@@ -779,6 +779,12 @@ public class ResultsLoadUtility {
                     resultLimit.getLowValid() == Double.NEGATIVE_INFINITY ? 0 : resultLimit.getLowValid());
             testItem.setUpperAbnormalRange(
                     resultLimit.getHighValid() == Double.POSITIVE_INFINITY ? 0 : resultLimit.getHighValid());
+            testItem.setLowerCritical(
+                        resultLimit.getLowCritical() == Double.NEGATIVE_INFINITY ? 0 : resultLimit.getLowCritical());
+            testItem.setHigherCritical(
+                        resultLimit.getHighCritical() == Double.POSITIVE_INFINITY ? 0 : resultLimit.getHighCritical());
+                               
+                               
             testItem.setValid(getIsValid(testItem.getResultValue(), resultLimit));
             testItem.setNormal(getIsNormal(testItem.getResultValue(), resultLimit));
             testItem.setNormalRange(SpringContext.getBean(ResultLimitService.class).getDisplayReferenceRange(

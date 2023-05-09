@@ -551,6 +551,14 @@ function /*void*/ handleEnterEvent(  ){
 
 // });
 
+  function validateCriticalResults(resultBox,lowCritical,highCritical){
+	var actualValue = resultBox.value;
+	if (actualValue > lowCritical && actualValue < highCritical) {
+		resultBox.style.borderColor = "orange";
+            alert("<%=MessageUtil.getContextualMessage("error.critical.range.value")%>");
+            return;
+        }
+  }
 </script>
 
 <c:if test="${form.displayTestSections}">
@@ -869,6 +877,10 @@ function /*void*/ handleEnterEvent(  ){
 					value="${testResult.lowerAbnormalRange}" />
 				<c:set var="upperAbnormalBound"
 					value="${testResult.upperAbnormalRange}" />
+				<c:set var="lowerCritical"
+					value="${testResult.lowerCritical}" />	
+				<c:set var="upperCritical"
+					value="${testResult.higherCritical}" />	
 				<c:set var="significantDigits"
 					value="${testResult.significantDigits}" />
 				<c:set var="accessionNumber" value="${testResult.accessionNumber}" />
@@ -1069,7 +1081,9 @@ function /*void*/ handleEnterEvent(  ){
 								style="background: ${testResult.valid ? testResult.normal ? '#ffffff' : '#ffffa0' : '#ffa0a0' }"
 								cssClass="resultValue"
 								disabled='${testResult.readOnly}'
-								onchange="validateResults( this, ${iter.index}, ${lowerBound}, ${upperBound}, ${lowerAbnormalBound}, ${upperAbnormalBound}, ${significantDigits}, 'XXXX' );
+								onchange="validateResults( this, ${iter.index}, ${lowerBound}, ${upperBound}, ${lowerAbnormalBound}, ${upperAbnormalBound}, 
+								 ${significantDigits}, 'XXXX' );
+								 validateCriticalResults(this, ${lowerCritical},${upperCritical});
 					   			 markUpdated(${iter.index});
 					   			 ${(testResult.reflexGroup && not testResult.childReflex) ? 'updateReflexChild(' += testResult.reflexParentGroup += ');' : ''}
 					   			 ${(noteRequired && not empty testResult.resultValue) ? 'showNote(' += iter.index += ');' : ''}
