@@ -114,10 +114,9 @@ public class TestResultItem implements ResultItem, Serializable {
     private double upperAbnormalRange;
     private double lowerAbnormalRange;
     private String normalRange = "";
-    private double lowerCriticalRangeLow;
-    private double lowerCriticalRangeHigh;
-    private double higherCriticalRangeHigh;
-    private double higherCriticalRangeLow;
+    private double lowerCritical;
+    private double higherCritical;
+    
     
 
     private int significantDigits = -1;
@@ -425,38 +424,21 @@ public class TestResultItem implements ResultItem, Serializable {
         this.lowerAbnormalRange = lowerAbnormalRange;
     }
 
-    public double getLowerCriticalRangeLow() {
-        return lowerCriticalRangeLow;
+    public double getLowerCritical() {
+        return lowerCritical;
     }
 
-    public void setLowerCriticalRangeLow(double lowerCriticalRangeLow) {
-        this.lowerCriticalRangeLow = lowerCriticalRangeLow;
+    public void setLowerCritical(double lowerCritical) {
+        this.lowerCritical = lowerCritical;
     }
 
-    public double getLowerCriticalRangeHigh() {
-        return lowerCriticalRangeHigh;
+    public double getHigherCritical() {
+        return higherCritical;
     }
 
-    public void setLowerCriticalRangeHigh(double lowerCriticalRangeHigh) {
-        this.lowerCriticalRangeHigh = lowerCriticalRangeHigh;
+    public void setHigherCritical(double higherCritical) {
+        this.higherCritical = higherCritical;
     }
-
-    public double getHigherCriticalRangeLow() {
-        return higherCriticalRangeLow;
-    }
-
-    public void setHigherCriticalRangeLow(double higherCriticalRangeLow) {
-        this.higherCriticalRangeLow = higherCriticalRangeLow;
-    }
-
-    public double getHigherCriticalRangeHigh() {
-        return higherCriticalRangeHigh;
-    }
-
-    public void setHigherCriticalRangeHigh(double higherCriticalRangeHigh) {
-        this.higherCriticalRangeHigh = higherCriticalRangeHigh;
-    }
-
 
     public String getReportable() {
         return reportable ? IActionConstants.YES : IActionConstants.NO;

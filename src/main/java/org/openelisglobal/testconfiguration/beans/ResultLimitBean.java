@@ -24,10 +24,8 @@ public class ResultLimitBean {
     private String normalRange;
     private String validRange;
     private String reportingRange;
-    private double lowerCriticalRangeLow;
-    private double lowerCriticalRangeHigh;
-    private double higherCriticalRangeHigh;
-    private double higherCriticalRangeLow;
+    private String criticalRange;
+
 
 
     public String getGender() {
@@ -70,35 +68,13 @@ public class ResultLimitBean {
         this.reportingRange = reportingRange;
     }
 
-    public double getLowerCriticalRangeLow() {
-        return lowerCriticalRangeLow;
+    public String getCriticalRange() {
+        return criticalRange;
     }
 
-    public void setLowerCriticalRangeLow(double lowerCriticalRangeLow) {
-        this.lowerCriticalRangeLow = lowerCriticalRangeLow;
+    public void setCriticalRange(String criticalRange) {
+        this.criticalRange = criticalRange;
     }
 
-    public double getLowerCriticalRangeHigh() {
-        return lowerCriticalRangeHigh;
-    }
-
-    public void setLowerCriticalRangeHigh(double lowerCriticalRangeHigh) {
-        this.lowerCriticalRangeHigh = lowerCriticalRangeHigh;
-    }
-
-    public double getHigherCriticalRangeLow() {
-        return higherCriticalRangeLow;
-    }
-
-    public void setHigherCriticalRangeLow(double higherCriticalRangeLow) {
-        this.higherCriticalRangeLow = higherCriticalRangeLow;
-    }
-
-    public double getHigherCriticalRangeHigh() {
-        return higherCriticalRangeHigh;
-    }
-
-    public void setHigherCriticalRangeHigh(double higherCriticalRangeHigh) {
-        this.higherCriticalRangeHigh = higherCriticalRangeHigh;
-    }
+   
 }

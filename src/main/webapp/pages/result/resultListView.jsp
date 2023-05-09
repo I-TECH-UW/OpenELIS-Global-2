@@ -551,10 +551,9 @@ function /*void*/ handleEnterEvent(  ){
 
 // });
 
-  function validateCriticalResults(resultBox, lowCriticalLow,lowCriticalHigh,highCriticalLow,highCriticalHigh, ){
+  function validateCriticalResults(resultBox,lowCritical,highCritical){
 	var actualValue = resultBox.value;
-	if (actualValue > lowCriticalLow && actualValue < lowCriticalHigh
-	|| actualValue > highCriticalLow && actualValue < highCriticalHigh) {
+	if (actualValue > lowCritical && actualValue < highCritical) {
 		resultBox.style.borderColor = "orange";
             alert("<%=MessageUtil.getContextualMessage("error.critical.range.value")%>");
             return;
@@ -878,14 +877,10 @@ function /*void*/ handleEnterEvent(  ){
 					value="${testResult.lowerAbnormalRange}" />
 				<c:set var="upperAbnormalBound"
 					value="${testResult.upperAbnormalRange}" />
-				<c:set var="lowerCriticalLow"
-					value="${testResult.lowerCriticalRangeLow}" />	
-				<c:set var="lowerCriticalHigh"
-					value="${testResult.lowerCriticalRangeHigh}" />	
-				<c:set var="upperCriticalLow"
-					value="${testResult.higherCriticalRangeLow}" />	
-				<c:set var="upperCriticalHigh"
-					value="${testResult.higherCriticalRangeHigh}" />	
+				<c:set var="lowerCritical"
+					value="${testResult.lowerCritical}" />	
+				<c:set var="upperCritical"
+					value="${testResult.higherCritical}" />	
 				<c:set var="significantDigits"
 					value="${testResult.significantDigits}" />
 				<c:set var="accessionNumber" value="${testResult.accessionNumber}" />
@@ -1088,7 +1083,7 @@ function /*void*/ handleEnterEvent(  ){
 								disabled='${testResult.readOnly}'
 								onchange="validateResults( this, ${iter.index}, ${lowerBound}, ${upperBound}, ${lowerAbnormalBound}, ${upperAbnormalBound}, 
 								 ${significantDigits}, 'XXXX' );
-								 validateCriticalResults(this,${upperCriticalLow}, ${upperCriticalHigh},${lowerCriticalLow}, ${lowerCriticalHigh},);
+								 validateCriticalResults(this, ${lowerCritical},${upperCritical});
 					   			 markUpdated(${iter.index});
 					   			 ${(testResult.reflexGroup && not testResult.childReflex) ? 'updateReflexChild(' += testResult.reflexParentGroup += ');' : ''}
 					   			 ${(noteRequired && not empty testResult.resultValue) ? 'showNote(' += iter.index += ');' : ''}

@@ -520,7 +520,6 @@
         var highValidValue, lowValidValue;
         var lowValid = jQuery("#lowValid");
         var highValid = jQuery("#highValid");
-
         lowValid.removeClass("error");
         lowValidValue = +lowValid.val();
         if (lowValidValue != "-Infinity" &&
@@ -529,7 +528,6 @@
             alert("<%=MessageUtil.getContextualMessage("error.low.valid.value")%>");
             return;
         }
-
         highValid.removeClass("error");
         highValidValue = +highValid.val();
         if (highValidValue != "Infinity" &&
@@ -538,7 +536,6 @@
             alert("<%=MessageUtil.getContextualMessage("error.high.valid.value")%>");
             return;
         }
-
         if (lowValidValue != "-Infinity" && highValidValue != "Infinity" &&
                 lowValidValue >= highValidValue) {
             highValid.addClass("error");
@@ -546,7 +543,6 @@
             alert("<%=MessageUtil.getContextualMessage("error.low.high.valid.order")%>");
             return;
         }
-
         jQuery(".rowKey").each(function () {
             //index is in the template
             if (jQuery(this).val() != "index") {
@@ -554,6 +550,41 @@
             }
         });
     }
+
+    function criticalRangeCheckLow(index) {
+         var lowCriticalValue,highCriticalValue;
+
+        var lowCritical = jQuery("#lowCritical");
+        var highCritical = jQuery("#highCritical");
+        var lowValid = jQuery("#lowValid");
+        var highValid = jQuery("#highValid");
+        var lowNormal = jQuery("#lowNormal_" + index); 
+        var highNormal = jQuery("#highNormal_" + index);
+
+         lowCritical.removeClass("error");
+        lowCriticalValue = lowCritical.val();
+        if (lowCriticalValue < lowValid.val() || lowCriticalValue  > lowNormal.val()) {
+            lowCritical.addClass("error");
+            alert("<%=MessageUtil.getContextualMessage("error.critical.range.value.low")%>");
+            return;
+        }     
+    }
+
+    function criticalRangeCheckHigh(index) {
+        var highCriticalValue;
+
+        var highCritical = jQuery("#highCritical");
+        var highValid = jQuery("#highValid");
+        var highNormal = jQuery("#highNormal_" + index);
+        
+         highCritical.removeClass("error");
+        highCriticalValue = highCritical.val();
+        if (highCriticalValue != "-Infinity" && highCriticalValue < highNormal.val() || highCriticalValue != "-Infinity" && highCriticalValue > highValid.val()) {
+             highCritical.addClass("error");
+            alert("<%=MessageUtil.getContextualMessage("error.critical.range.value.high")%>");
+            return;
+        }  
+     }
 
     function reportingRangeCheck() {
         var highReportingRangeValue, lowReportingRangeValue;
@@ -904,10 +935,8 @@
         jsonObj.highValid = jQuery("#highValid").val();
         jsonObj.lowReportingRange = jQuery("#lowReportingRange").val();
         jsonObj.highReportingRange = jQuery("#highReportingRange").val();
-        jsonObj.lowCriticalRangeLow = jQuery("#lowCriticalRangeLow").val();
-        jsonObj.lowCriticalRangeHigh = jQuery("#lowCriticalRangeHigh").val();
-        jsonObj.highCriticalRangeLow = jQuery("#highCriticalRangeLow").val();
-        jsonObj.highCriticalRangeHigh = jQuery("#highCriticalRangeHigh").val();
+        jsonObj.lowCritical = jQuery("#lowCritical").val();
+        jsonObj.highCritical = jQuery("#highCritical").val();
 
         jsonObj.significantDigits = jQuery("#significantDigits").val();
         jsonObj.resultLimits = [];
@@ -1449,11 +1478,8 @@ td {
                 <td><input type="text" value="-Infinity" size="10" id="lowValid" onchange="validRangeCheck();"></td>
                 <td><input type="text" value="Infinity" size="10" id="highValid" onchange="validRangeCheck();"></td>
 
-                <td><input type="text" value="-Infinity" size="5" id="lowCriticalRangeLow"></td>
-                <td><input type="text" value="Infinity" size="5" id="lowCriticalRangeHigh"></td>
-
-                <td><input type="text" value="-Infinity" size="5" id="highCriticalRangeLow"></td>
-                <td><input type="text" value="Infinity" size="5" id="highCriticalRangeHigh"></td>
+                <td><input type="text" value="-Infinity" size="5" id="lowCritical" onchange="criticalRangeCheckLow('0');"></td>
+                <td><input type="text" value="-Infinity" size="5" id="highCritical" onchange="criticalRangeCheckHigh('0');"></td>
             </tr>
             <tr class="sexRange_0 row_0" style="display: none">
                 <td></td>

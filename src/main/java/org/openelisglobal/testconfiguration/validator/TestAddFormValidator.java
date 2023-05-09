@@ -131,22 +131,13 @@ public class TestAddFormValidator implements Validator {
                                 StringUtil.nullSafeToString(resultLimit.get("highReportingRange")), "JsonWad",
                                 "result limit [" + i + "] highReportingRange", errors, false, 255,
                                 ValidationHelper.FLOAT_REGEX);
-                                ValidationHelper.validateField(StringUtil.nullSafeToString(resultLimit.get("lowCriticalRangeLow")),
-                                "JsonWad", "result limit [" + i + "] lowCriticalRangeLow", errors, false, 255,
+                        ValidationHelper.validateField(StringUtil.nullSafeToString(resultLimit.get("lowCritical")),
+                                "JsonWad", "result limit [" + i + "] lowCritical", errors, false, 255,
                                 ValidationHelper.FLOAT_REGEX);
 
-                        ValidationHelper.validateField(StringUtil.nullSafeToString(resultLimit.get("lowCriticalRangeHigh")),
-                                "JsonWad", "result limit [" + i + "] lowCriticalRangeHigh", errors, false, 255,
+                        ValidationHelper.validateField(StringUtil.nullSafeToString(resultLimit.get("highCritical")),
+                                "JsonWad", "result limit [" + i + "] highCritical", errors, false, 255,
                                 ValidationHelper.FLOAT_REGEX);
-
-                        ValidationHelper.validateField(StringUtil.nullSafeToString(resultLimit.get("highCriticalRangeLow")),
-                                "JsonWad", "result limit [" + i + "] highCriticalRangeLow", errors, false, 255,
-                                ValidationHelper.FLOAT_REGEX);
-
-                        ValidationHelper.validateField(StringUtil.nullSafeToString(resultLimit.get("highCriticalRangeHigh")),
-                                "JsonWad", "result limit [" + i + "] highCriticalRangeHigh", errors, false, 255,
-                                ValidationHelper.FLOAT_REGEX);        
-        
 
                         if ((Boolean) resultLimit.get("gender")) {
                             ValidationHelper.validateField(

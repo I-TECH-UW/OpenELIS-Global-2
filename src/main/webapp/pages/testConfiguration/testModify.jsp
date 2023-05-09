@@ -1986,7 +1986,8 @@ td {
 						fLimitString = fLimitString + limitBean.getAgeRange() + ",";
 						fLimitString = fLimitString + limitBean.getNormalRange() + ",";
 						fLimitString = fLimitString + limitBean.getValidRange() + ",";
-                        fLimitString = fLimitString + limitBean.getReportingRange() + "|";
+                        fLimitString = fLimitString + limitBean.getReportingRange() + ",";
+                        fLimitString = fLimitString + limitBean.getCriticalRange() + "|";
 
 				%>
 				<tr>
@@ -1995,12 +1996,8 @@ td {
 					<td><b><%=limitBean.getNormalRange()%></b></td>
 					<td><b><%=limitBean.getValidRange()%></b></td>
                     <td><b><%=limitBean.getReportingRange()%></b></td>
-                    <td><b><%=limitBean.getHigherCriticalRangeHigh()%></b></td>
-                    <td><b><%=limitBean.getLowerCriticalRangeLow()%></b></td>
-                    <td><b><%=limitBean.getHigherCriticalRangeLow()%></b></td>
-                    <td><b><%=limitBean.getLowerCriticalRangeHigh()%></b></td>          
-
-
+                    <td><b><%=limitBean.getCriticalRange()%></b></td>
+                            
 				</tr>
 				<%
 					}
@@ -2517,10 +2514,8 @@ td {
 					onchange="normalRangeCheck('0');"></td>                
                 <td><input type="text" value="-Infinity" size="10" id="lowReportingRange" onchange="reportingRangeCheck();"></td>
                 <td><input type="text" value="Infinity" size="10" id="highReportingRange" onchange="reportingRangeCheck();"></td>
-                <td><input type="text" value="infinity" size="5" id="lowCriticalRangeLow"></td>
-                <td><input type="text" value="infinity" size="5" id="lowCriticalRangeHigh"></td>
-                <td><input type="text" value="infinity" size="5" id="highCriticalRangeLow"></td>
-                <td><input type="text" value="infinity" size="5" id="highCriticalRangeHigh"></td>
+                <td><input type="text" value="infinity" size="5" id="lowCritical"></td>
+                <td><input type="text" value="infinity" size="5" id="highCritical"></td>
 				<td><input type="text" value="-Infinity" size="10"
 					id="lowValid" onchange="validRangeCheck();"></td>
 				<td><input type="text" value="Infinity" size="10"
