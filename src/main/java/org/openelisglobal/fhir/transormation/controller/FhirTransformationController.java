@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeoutException;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -208,12 +207,7 @@ public class FhirTransformationController extends BaseController {
 
     private void runExportTasks() {
         for (DataExportTask dataExportTask : dataExportTaskService.getDAO().findAll()) {
-            try {
-                dataExportService.exportNewDataFromLocalToRemote(dataExportTask);
-            } catch (InterruptedException | ExecutionException | TimeoutException e) {
-                LogEvent.logError(e);
-                LogEvent.logError(this.getClass().getName(), "runExportTasks", "error exporting to remote server");
-            }
+            dataExportService.exportNewDataFromLocalToRemote(dataExportTask);
         }
     }
 

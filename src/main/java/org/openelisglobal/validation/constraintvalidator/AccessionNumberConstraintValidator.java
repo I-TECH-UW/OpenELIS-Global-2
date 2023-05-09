@@ -22,7 +22,7 @@ public class AccessionNumberConstraintValidator implements ConstraintValidator<V
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-        if (org.apache.commons.validator.GenericValidator.isBlankOrNull(value)) {
+    	if (org.apache.commons.validator.GenericValidator.isBlankOrNull(value)) {
             return true;
         }
         if (value.contains(".") && validateAccessionNumberConstraint.searchValue()) {

@@ -7,9 +7,10 @@
 	  
 	  
 	<changeSet author="rossumg" id="1">
+		<validCheckSum>8:cb336fddcbe6d69638ab52fccc2b510b</validCheckSum>
 <!-- 		no precondition needed, always delete the option -->
 		<delete schemaName="clinlims" tableName="menu">
-			<where>id in (60,61)</where>
+			<where>element_id in ('menu_reports_status_patient.vreduit','menu_reports_status_patient.classique')</where>
 		</delete>
 		<!-- no rollback as these options were never needed -->
 	</changeSet>

@@ -36,4 +36,18 @@
 			<column name="system_module_id" valueComputed="(SELECT id FROM clinlims.system_module WHERE name = 'AnalyzerResults')"/>
 		</insert>
 	</changeSet>
+	<changeSet author="CIV developer Group" id="202303181">
+		<preConditions onFail="MARK_RAN">
+			<tableExists tableName="system_module_url" schemaName="clinlims" />
+			<sqlCheck expectedResult="1">
+					SELECT COUNT(*) FROM clinlims.system_module WHERE name  = 'AnalyzerResults' limit 1
+				</sqlCheck>
+		</preConditions>
+		<comment>Attach importAnalyzer url path to Analyzer result module</comment>
+		<insert tableName="system_module_url" schemaName="clinlims">
+			<column name="id" valueSequenceNext="system_module_url_seq"/>
+			<column name="url_path" value="/importAnalyzer"/>
+			<column name="system_module_id" valueComputed="(SELECT id FROM clinlims.system_module WHERE name = 'AnalyzerResults')"/>
+		</insert>
+	</changeSet>
 </databaseChangeLog>

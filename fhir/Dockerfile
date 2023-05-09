@@ -1,24 +1,26 @@
-FROM hapiproject/hapi:v6.1.0-tomcat
+FROM hapiproject/hapi:v6.4.0-tomcat
 
-RUN apt-get update && apt-get install -y curl=7.64.0-4+deb10u2
+USER root
+RUN apt-get update && apt-get install -y curl=7.74.0-1.3+deb11u7
 
 RUN groupadd tomcat; \
     groupadd tomcat-ssl-cert -g 8443; \ 
     useradd -M -s /bin/bash -u 8443 tomcat_admin; \
     usermod -a -G tomcat,tomcat-ssl-cert tomcat_admin; \
-    chown -R tomcat_admin:tomcat $CATALINA_HOME; \
-    chmod g-w,o-rwx $CATALINA_HOME; \
-    chmod g-w,o-rwx $CATALINA_HOME/conf; \
-    chmod o-rwx $CATALINA_HOME/logs; \
-    chmod o-rwx $CATALINA_HOME/temp; \
-    chmod g-w,o-rwx $CATALINA_HOME/bin; \
-    chmod g-w,o-rwx $CATALINA_HOME/webapps; \
-    chmod 770 $CATALINA_HOME/conf/catalina.policy; \
-    chmod g-w,o-rwx $CATALINA_HOME/conf/catalina.properties; \
-    chmod g-w,o-rwx $CATALINA_HOME/conf/context.xml; \
-    chmod g-w,o-rwx $CATALINA_HOME/conf/logging.properties; \
-    chmod g-w,o-rwx $CATALINA_HOME/conf/server.xml; \
-    chmod g-w,o-rwx $CATALINA_HOME/conf/tomcat-users.xml; \
-    chmod g-w,o-rwx $CATALINA_HOME/conf/web.xml
+    chown -R tomcat_admin:tomcat /opt/bitnami/tomcat; \
+    chmod g-w,o-rwx /opt/bitnami/tomcat; \
+    chmod g-w,o-rwx /opt/bitnami/tomcat/conf; \
+    chmod o-rwx /opt/bitnami/tomcat/logs; \
+    chmod o-rwx /opt/bitnami/tomcat/temp; \
+    chmod g-w,o-rwx /opt/bitnami/tomcat/bin; \
+    chmod g-w,o-rwx /opt/bitnami/tomcat/webapps; \
+    chmod 770 /opt/bitnami/tomcat/conf/catalina.policy; \
+    chmod g-w,o-rwx /opt/bitnami/tomcat/conf/catalina.properties; \
+    chmod g-w,o-rwx /opt/bitnami/tomcat/conf/context.xml; \
+    chmod g-w,o-rwx /opt/bitnami/tomcat/conf/logging.properties; \
+    chmod g-w,o-rwx /opt/bitnami/tomcat/conf/server.xml; \
+    chmod g-w,o-rwx /opt/bitnami/tomcat/conf/tomcat-users.xml; \
+    chmod g-w,o-rwx /opt/bitnami/tomcat/conf/web.xml;\
+    chown -R tomcat_admin:tomcat /bitnami/tomcat/
 
 USER tomcat_admin
