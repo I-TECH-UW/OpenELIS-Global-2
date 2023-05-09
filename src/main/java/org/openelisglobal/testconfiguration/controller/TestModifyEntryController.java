@@ -219,10 +219,7 @@ public class TestModifyEntryController extends BaseController {
                     significantDigits, "-"));
             bean.setReportingRange(SpringContext.getBean(ResultLimitService.class).getDisplayReportingRange(limit,
                     significantDigits, "-"));  
-            bean.setHigherCriticalRangeHigh(SpringContext.getBean(ResultLimitService.class).getResultLimitById(limit.getId()).getHighCriticalRangeHigh()); 
-            bean.setHigherCriticalRangeLow(SpringContext.getBean(ResultLimitService.class).getResultLimitById(limit.getId()).getHighCriticalRangeLow());
-            bean.setLowerCriticalRangeHigh(SpringContext.getBean(ResultLimitService.class).getResultLimitById(limit.getId()).getLowCriticalRangeHigh());
-            bean.setLowerCriticalRangeLow(SpringContext.getBean(ResultLimitService.class).getResultLimitById(limit.getId()).getLowCriticalRangeLow());  
+            bean.setCriticalRange(SpringContext.getBean(ResultLimitService.class).getDisplayCriticalRange(limit, significantDigits, "-"));  
             bean.setGender(limit.getGender());
             bean.setAgeRange(SpringContext.getBean(ResultLimitService.class).getDisplayAgeRange(limit, "-"));
             limitBeans.add(bean);
@@ -527,10 +524,8 @@ public class TestModifyEntryController extends BaseController {
         Double highValid = null;
         Double lowReportingRange = null;
         Double highReportingRange = null;
-        Double lowCriticalRangeLow = null;
-        Double lowCriticalRangeHigh = null;
-        Double highCriticalRangeHigh = null;
-        Double highCriticalRangeLow = null;
+        Double lowCritical = null;
+        Double highCritical = null;
         String significantDigits = testAddParams.significantDigits;
         boolean numericResults = TypeOfTestResultServiceImpl.ResultType.isNumericById(testAddParams.resultTypeId);
         boolean dictionaryResults = TypeOfTestResultServiceImpl.ResultType
@@ -548,10 +543,8 @@ public class TestModifyEntryController extends BaseController {
             highValid = StringUtil.doubleWithInfinity(testAddParams.highValid);
             lowReportingRange = StringUtil.doubleWithInfinity(testAddParams.lowReportingRange);
             highReportingRange = StringUtil.doubleWithInfinity(testAddParams.highReportingRange);
-            lowCriticalRangeLow = StringUtil.doubleWithInfinity(testAddParams.lowCriticalRangeLow);
-            lowCriticalRangeHigh = StringUtil.doubleWithInfinity(testAddParams.lowCriticalRangeHigh);
-            highCriticalRangeHigh = StringUtil.doubleWithInfinity(testAddParams.highCriticalRangeHigh);
-            highCriticalRangeLow = StringUtil.doubleWithInfinity(testAddParams.highCriticalRangeLow);
+            lowCritical = StringUtil.doubleWithInfinity(testAddParams.lowCritical);
+            highCritical = StringUtil.doubleWithInfinity(testAddParams.highCritical);
         }
         // The number of test sets depend on the number of sampleTypes
         for (int i = 0; i < testAddParams.sampleList.size(); i++) {
@@ -598,7 +591,7 @@ public class TestModifyEntryController extends BaseController {
             createTestResults(testSet.testResults, significantDigits, testAddParams);
             if (numericResults) {
                 testSet.resultLimits = createResultLimits(lowValid, highValid, lowReportingRange, highReportingRange,
-                        testAddParams,  highCriticalRangeLow, highCriticalRangeHigh, lowCriticalRangeHigh, lowCriticalRangeLow);
+                        testAddParams, highCritical, lowCritical);
             } else if (dictionaryResults) {
                 testSet.resultLimits = createDictionaryResultLimit(testAddParams);
             }
@@ -629,7 +622,7 @@ public class TestModifyEntryController extends BaseController {
     }
 
     private ArrayList<ResultLimit> createResultLimits(Double lowValid, Double highValid, Double lowReportingRange,
-            Double highReportingRange, TestAddParams testAddParams, Double highCriticalRangeHigh,Double highCriticalhRangeLow, Double lowCriticalRangeLow,Double lowCriticalRangeHigh) {
+            Double highReportingRange, TestAddParams testAddParams, Double highCritical,Double lowCritical) {
         ArrayList<ResultLimit> resultLimits = new ArrayList<>();
         for (ResultLimitParams params : testAddParams.limits) {
             ResultLimit limit = new ResultLimit();
@@ -641,14 +634,11 @@ public class TestModifyEntryController extends BaseController {
             limit.setHighNormal(StringUtil.doubleWithInfinity(params.highNormalLimit));
             limit.setLowValid(lowValid);
             limit.setHighValid(highValid);
-            if (lowReportingRange != null && highReportingRange != null && lowCriticalRangeLow != null && 
-            lowCriticalRangeHigh != null && highCriticalRangeHigh != null && highCriticalhRangeLow != null) {
+            if (lowReportingRange != null && highReportingRange != null && lowCritical != null && highCritical != null) {
                 limit.setLowReportingRange(lowReportingRange);
                 limit.setHighReportingRange(highReportingRange);
-                limit.setLowCriticalRangeLow(lowCriticalRangeLow);
-                limit.setLowCriticalRangeHigh(lowCriticalRangeHigh);
-                limit.setHighCriticalRangeHigh(highCriticalRangeHigh);
-                limit.setHighCriticalRangeLow(highCriticalhRangeLow);
+                limit.setLowCritical(lowCritical);
+                limit.setHighCritical(highCritical);
             }
             resultLimits.add(limit);
         }
@@ -681,10 +671,8 @@ public class TestModifyEntryController extends BaseController {
                 testAddParams.highValid = (String) obj.get("highValid");
                 testAddParams.lowReportingRange = (String) obj.get("lowReportingRange");
                 testAddParams.highReportingRange = (String) obj.get("highReportingRange");
-                testAddParams.lowCriticalRangeLow = (String) obj.get("lowCriticalRangeLow");
-                testAddParams.lowCriticalRangeHigh = (String) obj.get("lowCriticalRangeHigh");
-                testAddParams.highCriticalRangeHigh = (String) obj.get("highCriticalRangeHigh");
-                testAddParams.highCriticalRangeLow = (String) obj.get("highCriticalRangeLow");
+                testAddParams.lowCritical = (String) obj.get("lowCritical");
+                testAddParams.highCritical = (String) obj.get("highCritical");
                 testAddParams.significantDigits = (String) obj.get("significantDigits");
                 extractLimits(obj, parser, testAddParams);
             } else if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVarientById(testAddParams.resultTypeId)) {
@@ -721,10 +709,8 @@ public class TestModifyEntryController extends BaseController {
                 params.displayRange = (String) (((JSONObject) limitArray.get(i)).get("reportingRange"));
                 params.lowNormalLimit = (String) (((JSONObject) limitArray.get(i)).get("lowNormal"));
                 params.highNormalLimit = (String) (((JSONObject) limitArray.get(i)).get("highNormal"));
-                params.lowCriticalLimitLow = (String) (((JSONObject) limitArray.get(i)).get("lowCriticalRangeLow"));
-                params.lowCriticalLimitHigh = (String) (((JSONObject) limitArray.get(i)).get("lowCriticalRangeHigh"));
-                params.highCriticalLimitHigh = (String) (((JSONObject) limitArray.get(i)).get("highCriticalRangeHigh"));
-                params.highCriticalLimitLow = (String) (((JSONObject) limitArray.get(i)).get("highCriticalRangeLow"));
+                params.lowCritical = (String) (((JSONObject) limitArray.get(i)).get("lowCritical"));
+                params.highCritical = (String) (((JSONObject) limitArray.get(i)).get("highCritical"));
                 params.lowAge = lowAge;
                 params.highAge = highAge;
                 testAddParams.limits.add(params);
@@ -814,10 +800,8 @@ public class TestModifyEntryController extends BaseController {
         String highValid;
         String lowReportingRange;
         String highReportingRange;
-        String lowCriticalRangeLow;
-        String lowCriticalRangeHigh;
-        String highCriticalRangeLow;
-        String highCriticalRangeHigh;
+        String lowCritical;
+        String highCritical;
         public String significantDigits;
         String dictionaryReferenceId;
         ArrayList<ResultLimitParams> limits = new ArrayList<>();
@@ -836,10 +820,8 @@ public class TestModifyEntryController extends BaseController {
         String lowNormalLimit;
         String highNormalLimit;
         String displayRange;
-        String lowCriticalLimitLow;
-        String lowCriticalLimitHigh;
-        String highCriticalLimitLow;
-        String highCriticalLimitHigh;
+        String lowCritical;
+        String highCritical;
     }
 
     public class TestSet {

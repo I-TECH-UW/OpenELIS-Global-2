@@ -11,10 +11,8 @@ public class ResultLimit extends BaseObject<String> {
     private String resultTypeId;
     private String gender;
     private double minAge = 0;
-    private double highCriticalRangeHigh = Double.POSITIVE_INFINITY;
-    private double highCriticalRangeLow = Double.NEGATIVE_INFINITY;
-    private double lowCriticalRangeHigh = Double.POSITIVE_INFINITY;
-    private double lowCriticalRangeLow = Double.NEGATIVE_INFINITY;
+    private double highCritical = Double.POSITIVE_INFINITY;
+    private double lowCritical = Double.POSITIVE_INFINITY;
     private double maxAge = Double.POSITIVE_INFINITY;
     private double lowNormal = Double.NEGATIVE_INFINITY;
     private double highNormal = Double.POSITIVE_INFINITY;
@@ -141,35 +139,19 @@ public class ResultLimit extends BaseObject<String> {
         this.alwaysValidate = alwaysValidate;
     }
 
-    public void setLowCriticalRangeLow(double lowCriticalRangeLow) {
-        this.lowCriticalRangeLow = lowCriticalRangeLow;
+    public void setLowCritical(double lowCritical) {
+        this.lowCritical = lowCritical;
     }
 
-    public double getLowCriticalRangeLow() {
-        return lowCriticalRangeLow;
+    public double getLowCritical() {
+        return lowCritical;
     }
 
-    public void setLowCriticalRangeHigh(double lowCriticalRangeHigh) {
-        this.lowCriticalRangeHigh = lowCriticalRangeHigh;
+    public void setHighCritical(double highCritical) {
+        this.highCritical = highCritical;
     }
 
-    public double getLowCriticalRangeHigh() {
-        return lowCriticalRangeHigh;
-    }
-
-    public void setHighCriticalRangeHigh(double highCriticalRangeHigh) {
-        this.highCriticalRangeHigh = highCriticalRangeHigh;
-    }
-
-    public double getHighCriticalRangeHigh() {
-        return highCriticalRangeHigh;
-    }
-
-    public void setHighCriticalRangeLow(double highCriticalRangeLow) {
-        this.highCriticalRangeLow = highCriticalRangeLow;
-    }
-
-    public double getHighCriticalRangeLow() {
-        return highCriticalRangeLow;
+    public double getHighCritical() {
+        return highCritical;
     }
 }
