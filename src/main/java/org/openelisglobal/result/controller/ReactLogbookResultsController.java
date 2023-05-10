@@ -320,21 +320,7 @@ public class ReactLogbookResultsController extends LogbookResultsBaseController 
                 }
                 form.setSearchFinished(true);
             } else if (!GenericValidator.isBlankOrNull(form.getAccessionNumber())) {
-
-                if (false) {
-                    Sample sample = sampleService.getSampleByAccessionNumber(form.getAccessionNumber());
-                    Patient patient = sampleService.getPatient(sample);
-                    ResultsLoadUtility resultsUtility = SpringContext.getBean(ResultsLoadUtility.class);
-                    //resultsUtility.addIdentifingPatientInfo(patient, form);
-                    tests = resultsUtility.getGroupedTestsForSample(sample, patient);
-//                List<TestResultItem> filteredResults = userService
-//                        .filterResultsByLabUnitRoles(getSysUserId(request), results, Constants.ROLE_RESULTS);
-                } else {
-                    // unfinished
-                    tests = resultsLoadUtility.getUnfinishedTestResultItemsByAccession(form.getAccessionNumber(), doRange, finished);
-                    // tests = resultsLoadUtility.getTestResultItemsByAccession(form.getAccessionNumber(), doRange, finished);
-                }
-
+                tests = resultsLoadUtility.getUnfinishedTestResultItemsByAccession(form.getAccessionNumber(), doRange, finished);
                 filteredTests = userService.filterResultsByLabUnitRoles(getSysUserId(request), tests,
                         Constants.ROLE_RESULTS);
                 int count = resultsLoadUtility.getTotalCountAnalysisByAccessionAndStatus(form.getAccessionNumber());
