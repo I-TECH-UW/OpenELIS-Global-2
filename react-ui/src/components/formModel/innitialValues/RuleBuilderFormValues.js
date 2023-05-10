@@ -5,13 +5,16 @@ export default {
   overall: "",
   toggled: true,
   active : true,
+  analyteId : null,
   conditions: [{
     id: null,
     sampleId: "",
     testName: "",
     testId: "",
     relation: "",
-    value: ""
+    value: "0",
+    value2 : "0",
+    testAnalyteId : null 
   }],
   actions: [{
     id: null,
@@ -20,6 +23,7 @@ export default {
     reflexTestId: "",
     internalNote : "" ,
     externalNote : "" ,
-    addNotification : "Y"
+    addNotification : "Y",
+    testReflexId : null 
   }]
 };

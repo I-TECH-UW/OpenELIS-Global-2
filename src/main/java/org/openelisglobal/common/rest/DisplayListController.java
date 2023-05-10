@@ -1,9 +1,12 @@
 package org.openelisglobal.common.rest;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.DisplayListService.ListType;
+import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.IdValuePair;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -81,9 +84,33 @@ public class DisplayListController {
         return DisplayListService.getInstance().getList(ListType.REFERRAL_REASONS);
     }
 
-	@GetMapping(value = "referral-organizations", produces = MediaType.APPLICATION_JSON_VALUE)
-	@ResponseBody
-	private List<IdValuePair> createReferralOrganizationsList() {
-		return DisplayListService.getInstance().getList(ListType.REFERRAL_ORGANIZATIONS);
+    @GetMapping(value = "referral-organizations", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    private List<IdValuePair> createReferralOrganizationsList() {
+        return DisplayListService.getInstance().getList(ListType.REFERRAL_ORGANIZATIONS);
+    }
+
+    @GetMapping(value = "site-names", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    private List<IdValuePair> getSiteNameList() {
+        return DisplayListService.getInstance().getList(ListType.SAMPLE_PATIENT_REFERRING_CLINIC);
+    }
+
+
+    @GetMapping(value = "configuration-properties", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    private List<IdValuePair> getConfigurationProperties() {
+        ConfigurationProperties.forceReload();
+
+        List<IdValuePair> configs = new ArrayList<>();
+	    configs.add(new IdValuePair("restrictFreeTextProviderEntry", ConfigurationProperties.getInstance().getPropertyValue(
+			    ConfigurationProperties.Property.restrictFreeTextProviderEntry)));
+	    configs.add(new IdValuePair("restrictFreeTextRefSiteEntry", ConfigurationProperties.getInstance().getPropertyValue(
+			    ConfigurationProperties.Property.restrictFreeTextRefSiteEntry)));
+	    configs.add(new IdValuePair("currentDateAsText", DateUtil.getCurrentDateAsText()));
+	    configs.add(new IdValuePair("currentTimeAsText", DateUtil.getCurrentTimeAsText()));
+        return configs;
 	}
+
+
 }

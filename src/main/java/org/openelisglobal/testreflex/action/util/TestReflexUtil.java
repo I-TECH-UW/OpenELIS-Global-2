@@ -27,6 +27,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
@@ -39,6 +40,8 @@ import org.openelisglobal.observationhistory.service.ObservationHistoryService;
 import org.openelisglobal.observationhistory.valueholder.ObservationHistory;
 import org.openelisglobal.result.service.ResultService;
 import org.openelisglobal.result.valueholder.Result;
+import org.openelisglobal.resultlimit.service.ResultLimitService;
+import org.openelisglobal.resultlimits.valueholder.ResultLimit;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.scriptlet.service.ScriptletService;
 import org.openelisglobal.scriptlet.valueholder.Scriptlet;
@@ -406,7 +409,23 @@ public class TestReflexUtil {
                         reflexTests.add(reflexTest);
                     }
                     break;
-                default:
+                case INSIDE_NORMAL_RANGE:
+                    List<ResultLimit> resultLimits = SpringContext.getBean(ResultLimitService.class).getResultLimits(result.getTestResult().getTest());
+                    if(!resultLimits.isEmpty() && StringUtils.isNotBlank(resultLimits.get(0).getDictionaryNormalId())){
+                        if (result.getValue().equals(resultLimits.get(0).getDictionaryNormalId())) {
+                            reflexTests.add(reflexTest);
+                        }
+                    } 
+                    break;
+                case OUTSIDE_NORMAL_RANGE:
+                    List<ResultLimit> limits = SpringContext.getBean(ResultLimitService.class).getResultLimits(result.getTestResult().getTest());
+                    if(!limits.isEmpty() && StringUtils.isNotBlank(limits.get(0).getDictionaryNormalId())){
+                        if (!(result.getValue().equals(limits.get(0).getDictionaryNormalId()))) {
+                            reflexTests.add(reflexTest);
+                        }
+                    } 
+                    break;   
+                default :
                     break;
             }
         });
@@ -440,8 +459,11 @@ public class TestReflexUtil {
             case OUTSIDE_NORMAL_RANGE :
                 return !(Double.valueOf(reflexBean.getResult().getValue()) >= reflexBean.getResult().getMinNormal() &&
                  Double.valueOf(reflexBean.getResult().getValue()) <= reflexBean.getResult().getMaxNormal()) ;    
-            case BETWEEN :
-               return true ;  
+            case BETWEEN:
+                String value1 = reflexTest.getNonDictionaryValue().split("-")[0];
+                String value2 = reflexTest.getNonDictionaryValue().split("-")[1];
+                return Double.valueOf(reflexBean.getResult().getValue()) >= Double.valueOf(value1)
+                        && Double.valueOf(reflexBean.getResult().getValue()) <= Double.valueOf(value2);
             default:
                 return false;
         }
