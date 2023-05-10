@@ -217,7 +217,7 @@ public interface AnalysisDAO extends BaseDAO<Analysis, String> {
             List<Integer> sampleStatusList, String accessionNumber);
     
     List<Analysis> getPageAnalysisByStatusFromAccession(List<Integer> analysisStatusList,
-            List<Integer> sampleStatusList, String accessionNumber, boolean doRange);
+            List<Integer> sampleStatusList, String accessionNumber, boolean doRange, boolean finished);
 
 
     List<Analysis> getAnalysisForSiteBetweenResultDates(String referringSiteId, LocalDate lowerDate,
