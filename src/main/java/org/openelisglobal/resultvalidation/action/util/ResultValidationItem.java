@@ -84,6 +84,8 @@ public class ResultValidationItem implements ResultItem, Serializable {
     private String qualificationResultId;
     private boolean hasQualifiedResult = false;
     private boolean normalResult;
+    private double lowerCritical;
+    private double higherCritical;
 
     @Override
     public String getAccessionNumber() {
@@ -448,6 +450,22 @@ public class ResultValidationItem implements ResultItem, Serializable {
 
     public void setNormalResult(boolean normalResult) {
         this.normalResult = normalResult;
+    }
+
+    public double getLowerCritical() {
+        return lowerCritical;
+    }
+
+    public void setLowerCritical(double lowerCritical) {
+        this.lowerCritical = lowerCritical;
+    }
+
+    public double getHigherCritical() {
+        return higherCritical;
+    }
+
+    public void setHigherCritical(double higherCritical) {
+        this.higherCritical = higherCritical;
     }
 
 }
