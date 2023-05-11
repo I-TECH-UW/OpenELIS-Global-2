@@ -190,6 +190,7 @@ secrets:
     
 networks:
   openelis-network:
+    name: openelis-network
     driver: bridge
     ipam:
       config:

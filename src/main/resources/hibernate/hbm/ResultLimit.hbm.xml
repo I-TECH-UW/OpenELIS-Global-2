@@ -68,6 +68,16 @@
 			type="org.hibernate.type.DoubleType">
 			<column name="high_reporting_range" />
 		</property>
+		
+		<property name="highCritical"
+			type="org.hibernate.type.DoubleType">
+			<column name="high_critical" />
+		</property>
+		<property name="lowCritical"
+			type="org.hibernate.type.DoubleType">
+			<column name="low_critical" />
+		</property>
+		
 		<property name="dictionaryNormalId"
 			type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType"
 			column="normal_dictionary_id" />
