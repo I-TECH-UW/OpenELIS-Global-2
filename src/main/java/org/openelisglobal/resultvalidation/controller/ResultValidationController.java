@@ -89,7 +89,7 @@ public class ResultValidationController extends BaseResultValidationController {
     private static final String[] ALLOWED_FIELDS = new String[] { "testSectionId", "paging.currentPage", "testSection",
             "testName", "resultList*.accessionNumber", "resultList*.analysisId", "resultList*.testId",
             "resultList*.sampleId", "resultList*.resultType", "resultList*.sampleGroupingNumber", "resultList*.noteId",
-            "resultList*.resultId", "resultList*.hasQualifiedResult", "resultList*.sampleIsAccepted",
+            "resultList*.resultId", "resultList*.hasQualifiedResult", "resultList*.sampleIsAccepted","resultList*.lowerCritical","resultList*.higherCritical",
             "resultList*.sampleIsRejected", "resultList*.result", "resultList*.qualifiedResultValue",
             "resultList*.multiSelectResultValues", "resultList*.isAccepted", "resultList*.isRejected",
             "resultList*.note" };

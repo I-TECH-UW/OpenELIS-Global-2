@@ -552,34 +552,41 @@
     }
 
     function criticalRangeCheckLow(index) {
-         var lowCriticalValue,highCriticalValue;
+         var lowCriticalValue;
 
         var lowCritical = jQuery("#lowCritical");
-        var highCritical = jQuery("#highCritical");
         var lowValid = jQuery("#lowValid");
-        var highValid = jQuery("#highValid");
         var lowNormal = jQuery("#lowNormal_" + index); 
-        var highNormal = jQuery("#highNormal_" + index);
 
          lowCritical.removeClass("error");
         lowCriticalValue = lowCritical.val();
-        if (lowCriticalValue < lowValid.val() || lowCriticalValue  > lowNormal.val()) {
+        if (lowCriticalValue != "-Infinity" && lowCriticalValue < lowValid.val() ||
+         lowCriticalValue != "-Infinity" && lowCriticalValue  > lowNormal.val()) {
             lowCritical.addClass("error");
             alert("<%=MessageUtil.getContextualMessage("error.critical.range.value.low")%>");
             return;
         }     
+        jQuery(".rowKey").each(function () {
+            //index is in the template
+            if (jQuery(this).val() != "index") {
+                normalRangeCheck(jQuery(this).val());
+            }
+        });
     }
 
     function criticalRangeCheckHigh(index) {
-        var highCriticalValue;
+        var highCriticalValue, highValidValue,highNormalValue;
 
         var highCritical = jQuery("#highCritical");
         var highValid = jQuery("#highValid");
         var highNormal = jQuery("#highNormal_" + index);
         
-         highCritical.removeClass("error");
+        highCritical.removeClass("error");
         highCriticalValue = highCritical.val();
-        if (highCriticalValue != "-Infinity" && highCriticalValue < highNormal.val() || highCriticalValue != "-Infinity" && highCriticalValue > highValid.val()) {
+        highValidValue = +highValid.val();
+        highNormalValue = +highNormal.val();
+        if (highCriticalValue != "-Infinity" && highCriticalValue < highNormalValue ||
+         highCriticalValue != "-Infinity" && highCriticalValue > highValidValue) {
              highCritical.addClass("error");
             alert("<%=MessageUtil.getContextualMessage("error.critical.range.value.high")%>");
             return;
