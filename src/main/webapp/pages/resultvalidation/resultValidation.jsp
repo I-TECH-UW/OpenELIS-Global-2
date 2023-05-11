@@ -322,6 +322,17 @@ function altAccessionHighlightSearch(accessionNumber) {
 	}
 }
 
+function validateCriticalResults(index,lowCritical,highCritical){
+	var elementVal;
+	var elementt = jQuery("#resultId_" + index);
+	elementVal = elementt.val();
+	console.log(elementVal);
+	if (elementVal > lowCritical && elementVal < highCritical) {
+		    elementt.addClass("error");
+            alert("<%=MessageUtil.getContextualMessage("error.critical.range.value")%>");
+            return;
+        }
+  }
 </script>
 
 <c:if test="${resultCount != 0}">
@@ -598,7 +609,8 @@ function altAccessionHighlightSearch(accessionNumber) {
 								   id='accepted_${iter.index}'
 								   cssClass='accepted accepted_${resultList.sampleGroupingNumber} ${resultList.normal ? "normalAccepted" : "" }'
 								   onchange="markUpdated(); makeDirty();"
-								   onclick='enableDisableCheckboxes("rejected_${iter.index}", "${resultList.sampleGroupingNumber}");' 
+								   onclick='enableDisableCheckboxes("rejected_${iter.index}", "${resultList.sampleGroupingNumber}");
+								    validateCriticalResults("${iter.index}","${resultList.lowerCritical}","${resultList.higherCritical}");' 
 								   />
 				</td>
 				<td style="text-align:center">
