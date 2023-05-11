@@ -14,6 +14,8 @@ import org.openelisglobal.common.services.ReportTrackingService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.internationalization.MessageUtil;
+import org.openelisglobal.observationhistory.service.ObservationHistoryService;
+import org.openelisglobal.observationhistory.service.ObservationHistoryServiceImpl.ObservationType;
 import org.openelisglobal.organization.service.OrganizationService;
 import org.openelisglobal.reports.action.implementation.reportBeans.VLReportData;
 import org.openelisglobal.result.service.ResultService;
@@ -37,6 +39,7 @@ public abstract class PatientVLReport extends RetroCIPatientReport {
     private ResultService resultService = SpringContext.getBean(ResultService.class);
     private SampleOrganizationService orgService = SpringContext.getBean(SampleOrganizationService.class);
     private OrganizationService oService = SpringContext.getBean(OrganizationService.class);
+    private ObservationHistoryService ohService = SpringContext.getBean(ObservationHistoryService.class);
 
     protected List<VLReportData> reportItems;
     private String invalidValue = MessageUtil.getMessage("report.test.status.inProgress");
@@ -149,7 +152,9 @@ public abstract class PatientVLReport extends RetroCIPatientReport {
 
     protected void setPatientInfo(VLReportData data) {
 
-        data.setVlPregnancy(MessageUtil.getMessage("answer.no"));
+        data.setVlSuckle(ohService.getMostRecentValueForPatient(ObservationType.VL_SUCKLE, reportPatient.getId()));
+        data.setVlPregnancy(ohService.getMostRecentValueForPatient(ObservationType.VL_PREGNANCY, reportPatient.getId()));
+        data.setvih(ohService.getMostRecentValueForPatient(ObservationType.HIV_STATUS, reportPatient.getId()));
         data.setSubjectno(reportPatient.getNationalId());
         data.setSitesubjectno(reportPatient.getExternalId());
         data.setBirth_date(reportPatient.getBirthDateForDisplay());
