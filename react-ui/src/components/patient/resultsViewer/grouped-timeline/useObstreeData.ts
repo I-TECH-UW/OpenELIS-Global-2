@@ -59,14 +59,14 @@ const useGetManyObstreeData = (uuidArray) => {
   };
 
   //const { data, error, isLoading } = useSWRInfinite(getObstreeUrl, openmrsFetch, { initialSize: uuidArray.length });
-  const { data, error, isLoading } = { data : [{data :obstree} ,{data :obstree2}] , error:false , isLoading:false};
+  const { data, error, isLoading } = { data : [obstree ,obstree2 ,obstree] , error:false , isLoading:false};
 
   const result = useMemo(() => {
     return (
       data?.map((resp) => {
-        if (resp?.data) {
-          const { data, ...rest } = resp;
-          const newData = augmentObstreeData(data, '');
+        if (resp) {
+          const { ...rest } = resp;
+          const newData = augmentObstreeData(resp, '');
           return { ...rest, loading: false, data: newData };
         } else {
           return {

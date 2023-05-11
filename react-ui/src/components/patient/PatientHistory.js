@@ -46,7 +46,8 @@ class PatientHistory extends React.Component {
                 <br></br>
                 <Grid fullWidth={true}>
                     <Column lg={16}>
-                 <RoutedResultsViewer patientUuid="patuuid" basePath={config.serverBaseUrl}></RoutedResultsViewer> 
+                  {/* {JSON.stringify(this.state.selectedPatient.id)}         */}
+                 <RoutedResultsViewer patientUuid={this.state.selectedPatient.id} basePath={config.serverBaseUrl}></RoutedResultsViewer> 
                  </Column>
                 </Grid>
 
