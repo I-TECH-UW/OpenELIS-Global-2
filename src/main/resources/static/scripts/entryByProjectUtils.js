@@ -914,6 +914,14 @@ function BaseProjectChecker() {
 		comparePatientField( this.idPre + "patientFirstNames", false, blanksAllowed, "firstName");
 	}
 
+	this.checkGenderForVlPregnancyOrSuckle = function () {
+		//Observation[YES_NO] set No option selected by default when selected gender = "F"
+		if($("vl.gender").value === 'F'){
+			$("vl.vlPregnancy").value=1251; 
+			$("vl.vlSuckle").value=1251;
+		}
+	}
+
 	this.checkGender = function (blanksAllowed) {
 		makeDirty();
 		checkRequiredField($(this.idPre + "gender"), blanksAllowed);
@@ -923,8 +931,6 @@ function BaseProjectChecker() {
 			if(selectedValue==='F'){
 				$(this.idPre + "vlPregnancyRow").show();
 				$(this.idPre + "vlSuckleRow").show();
-				$(this.idPre + "vlPregnancy").value=1251; //Observation[YES_NO] set No option selected by default when selected gender = "F"
-				$(this.idPre + "vlSuckle").value=1251;
 			}
 			else{
 				$(this.idPre + "vlPregnancyRow").hide();

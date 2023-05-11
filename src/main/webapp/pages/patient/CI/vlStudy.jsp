@@ -269,10 +269,10 @@ vl = new VLProjectChecker();
 		</td>
 		<td>
 			<form:select path="gender"
-			onchange="vl.checkGender(false)" 
+			onchange="vl.checkGender(true)" 
 			id="vl.gender"  >
 			<option value=""></option>
-			<form:options items="${form.formLists.GENDERS}" itemLabel="localizedName" itemValue="genderType" />
+			<form:options items="${form.formLists.GENDERS_2}" itemLabel="localizedName" itemValue="id" />
 			</form:select>
 			<div id="vl.genderMessage" class="blank"></div>
 		</td>
@@ -317,7 +317,7 @@ vl = new VLProjectChecker();
 					 onchange="vl.checkHivStatus(true);"
 					 id="vl.hivStatus"  >
 				<option value=""></option>
-				<form:options items="${form.projectData.hivStatusList}" itemLabel="localizedName" itemValue="id" />
+				<form:options items="${form.dictionaryLists.HIV_TYPES.list}" itemLabel="localizedName" itemValue="id" />
 			</form:select>
 			<div id="vl.hivStatusMessage" class="blank"></div>
 		</td>
@@ -630,6 +630,59 @@ vl = new VLProjectChecker();
                 onchange="makeDirty();" id="vl.underInvestigationComment" />
         </td>
     </tr>
+    <tr>
+		<td ></td>
+		<td colspan="3" class="sectionTitle">
+			<spring:message  code="sample.entry.project.title.specimen" />
+		</td>
+	</tr>
+	<tr>
+		<td width="2%"></td>
+		<td width="38%"><spring:message code="sample.entry.project.ARV.edtaTubeTaken" /></td>
+		<td width="60%">
+			<form:checkbox
+				   path="ProjectData.edtaTubeTaken"
+				   id="vl.edtaTubeTaken"
+				   onchange="vl.checkSampleItem($('vl.edtaTubeTaken'));checkVLSampleType(this);" />
+		</td>
+	</tr>
+	
+	<tr>
+			<td width="2%"></td>
+			<td width="38%"><spring:message code="sample.entry.project.title.dryBloodSpot" /></td>
+			<td width="60%">
+				<form:checkbox
+					   path="ProjectData.dbsvlTaken"
+					   id="vl.dbsvlTaken"
+					   onchange="vl.checkSampleItem($('vl.dbsvlTaken'));checkVLSampleType(this);" />
+			</td>
+		</tr>	
+			<tr>
+			<td width="2%"></td>
+			<td width="38%"><spring:message code="sample.entry.project.title.psc" /></td>
+			<td width="60%">
+				<form:checkbox
+					   path="ProjectData.pscvlTaken"
+					   id="vl.pscvlTaken"
+					   onchange="vl.checkSampleItem($('vl.pscvlTaken'));checkVLSampleType(this);" />
+			</td>
+		</tr>	
+	<tr>
+		<td></td>
+		<td colspan="3" class="sectionTitle">
+			<spring:message  code="sample.entry.project.title.tests" />
+		</td>
+	</tr>
+	<tr>
+		<td></td>
+		<td><spring:message code="sample.entry.project.ARV.viralLoadTest" /></td>
+		<td>
+			<form:checkbox 
+				   path="ProjectData.viralLoadTest"
+				   id="vl.viralLoadTest"
+				   onchange="vl.checkSampleItem($('vl.viralLoadTest'), this);" />
+		</td>
+	</tr>
 	
 	
 </table>

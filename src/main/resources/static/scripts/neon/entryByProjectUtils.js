@@ -328,7 +328,7 @@ function PatientLoader() {
 		var dob = this.getResponseProperty(response,   "dob");
 		var gender = this.getResponseProperty(response, "gender");
 
-		this.setFields(nationalID, lastName, firstName, externalID, dob, gender);
+		//this.setFields(nationalID, lastName, firstName, externalID, dob, gender);
 		var searchLabNumber = $("searchLabNumber").value; 
 		if ( searchLabNumber != "" ) {
 			sampleLoader.loadDetailsByAccessionNumber(searchLabNumber);
@@ -910,6 +910,14 @@ function BaseProjectChecker() {
 	this.checkFirstNames = function (blanksAllowed) {
 		makeDirty();
 		comparePatientField( this.idPre + "patientFirstNames", false, blanksAllowed, "firstName");
+	}
+	
+	this.checkGenderForVlPregnancyOrSuckle = function () {
+		//Observation[YES_NO] set No option selected by default when selected gender = "F"
+		if($("vl.gender").value === 'F'){
+			$("vl.vlPregnancy").value=1251; 
+			$("vl.vlSuckle").value=1251;
+		}
 	}
 
 	this.checkGender = function (blanksAllowed) {
