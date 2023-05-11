@@ -72,8 +72,12 @@ public class ImageServiceImpl extends BaseObjectServiceImpl<Image, String> imple
                 || GenericValidator.isBlankOrNull(logoInformation.getValue().trim())) {
             return Optional.empty();
         }
-        Image image = get(logoInformation.getValue());
-        return Optional.ofNullable(image);
+        try {
+	        Image image = get(logoInformation.getValue());
+	        return Optional.ofNullable(image);
+        } catch (Exception e) {
+			return Optional.empty();
+		}
 
     }
 
