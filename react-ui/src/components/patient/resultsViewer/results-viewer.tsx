@@ -24,10 +24,9 @@ interface ResultsViewerProps {
 }
 
 const RoutedResultsViewer: React.FC<ResultsViewerProps> = ({ basePath, patientUuid }) => {
-  const config = useConfig();
-  const conceptUuids = config?.concepts?.map((c) => c.conceptUuid) ?? [];
 
-  const { roots, loading, error } = useGetManyObstreeData(conceptUuids);
+
+  const { roots, loading, error } = useGetManyObstreeData(patientUuid);
   const { t } = useTranslation();
 
   if (error) {

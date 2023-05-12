@@ -15,17 +15,17 @@ interface TreeViewWrapperProps {
 }
 
 const TreeViewWrapper: React.FC<TreeViewWrapperProps> = (props) => {
-  const config = useConfig();
-  const conceptUuids = config?.concepts?.map((c) => c.conceptUuid) ?? [];
-  const { roots, loading, error } = useGetManyObstreeData(conceptUuids);
+
+  //const conceptUuids = config?.concepts?.map((c) => c.conceptUuid) ?? [];
+  const { roots, loading, error } = useGetManyObstreeData(props.patientUuid);
   const { t } = useTranslation();
 
   if (error) return <ErrorState error={error} headerTitle={t('dataLoadError', 'Data Load Error')} />;
 
   if (roots?.length) {
     return (
-      <FilterProvider roots={!loading ? roots : []}>
-        <TreeView {...props} loading={loading} />
+      <FilterProvider key={props.patientUuid} roots={!loading ? roots : []}>
+        <TreeView   {...props} loading={loading} />
       </FilterProvider>
     );
   }

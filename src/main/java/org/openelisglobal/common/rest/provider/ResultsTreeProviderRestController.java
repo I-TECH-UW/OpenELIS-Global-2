@@ -61,7 +61,6 @@ public class ResultsTreeProviderRestController {
             testSection = result.getAnalysis().getTestSection();
             panel = result.getAnalysis().getPanel();
             
-            System.out.println(testSectionPanelMap);
             if (testSectionPanelMap.containsKey(testSection)) {
                 testSectionPanelMap.get(testSection).add(panel);
             } else {

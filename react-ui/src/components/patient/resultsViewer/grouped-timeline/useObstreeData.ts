@@ -3,8 +3,7 @@ import { useMemo } from 'react';
 import useSWR from 'swr';
 import useSWRInfinite from 'swr/infinite';
 import { assessValue, exist } from '../loadPatientTestData/helpers';
-import obstree from '../../../data/dummy/obsTree.json'
-import obstree2 from '../../../data/dummy/obsTree2.json'
+import { getFromOpeElisServerSync } from "../../../utils/Utils.js";
 
 export const getName = (prefix, name) => {
   return prefix ? `${prefix}-${name}` : name;
@@ -50,16 +49,20 @@ const useGetObstreeData = (conceptUuid) => {
   return result;
 };
 
-const useGetManyObstreeData = (uuidArray) => {
-  const { patientUuid } = usePatient();
-  const getObstreeUrl = (index) => {
-    if (index < uuidArray.length && patientUuid) {
-      return `/ws/rest/v1/obstree?patient=${patientUuid}&concept=${uuidArray[index]}`;
-    } else return null;
-  };
 
-  //const { data, error, isLoading } = useSWRInfinite(getObstreeUrl, openmrsFetch, { initialSize: uuidArray.length });
-  const { data, error, isLoading } = { data : [obstree ,obstree2 ,obstree] , error:false , isLoading:false};
+
+const useGetManyObstreeData = (patientUuid) => {
+ 
+  var { data, error, isLoading } = {data : [] , error: null , isLoading: null}
+
+  const fetchResultsTree = (resultsTree) => {
+        data  =resultsTree ;
+        error = false ;
+        isLoading = false;
+  }
+   if(patientUuid){
+    getFromOpeElisServerSync(`/rest/result-tree?patientId=${patientUuid}` , fetchResultsTree)
+   }
 
   const result = useMemo(() => {
     return (
@@ -86,9 +89,8 @@ const useGetManyObstreeData = (uuidArray) => {
   }, [data]);
   const roots = result.map((item) => item.data);
   const loading = result.some((item) => item.loading);
-
   return { roots, loading, error };
-};
+}
 
 export default useGetManyObstreeData;
 export { useGetManyObstreeData, useGetObstreeData };
