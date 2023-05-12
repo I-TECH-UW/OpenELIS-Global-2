@@ -185,14 +185,26 @@ button {
   margin-right: 0%;
 }
 
-.expandedComponent {
+.referralRow {
   /* margin-right: 50%; */
   margin-left: 5%;
   width: 100%;
 }
 
+/* .resultValue {
+ 
+  margin-left: 5%;
+  width: 100%;
+}
+
+.currentResultValue {
+ 
+  margin-left: 5%;
+  width: 100%;
+} */
+
 .referralReason {
-  margin-left: 5%; 
+  margin-left: 25%; 
   margin-right: 5%; 
   width: 100%;
 }

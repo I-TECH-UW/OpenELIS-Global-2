@@ -39,6 +39,10 @@ import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.paging.PagingProperties;
+import org.openelisglobal.common.services.IStatusService;
+import org.openelisglobal.common.services.StatusService.AnalysisStatus;
+import org.openelisglobal.common.services.StatusService.OrderStatus;
+import org.openelisglobal.common.services.StatusService.SampleStatus;
 import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.result.valueholder.Result;
@@ -1527,11 +1531,30 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
         return null;
     }
-
+    
     @Override
     public List<Analysis> getPageAnalysisByStatusFromAccession(List<Integer> analysisStatusList,
-            List<Integer> sampleStatusList, String accessionNumber, boolean doRange) {
-
+            List<Integer> sampleStatusList, String accessionNumber, boolean doRange, boolean finished) {
+               
+        if(finished) {
+        analysisStatusList.add(
+                Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized)));
+        analysisStatusList.add(
+                Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.BiologistRejected)));
+        analysisStatusList.add(
+                Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Canceled)));
+        analysisStatusList.add(
+                Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NotStarted)));
+        analysisStatusList.add(
+                Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NonConforming_depricated)));
+        analysisStatusList.add(
+                Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.SampleRejected)));
+        analysisStatusList.add(
+                Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalAcceptance)));
+        analysisStatusList.add(
+                Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalRejected)));
+        }
+        
         String sql = "";
         if (doRange)
             sql = "From Analysis a WHERE a.sampleItem.sample.accessionNumber >= :accessionNumber"//
