@@ -23,4 +23,23 @@
 			<column name="description_key" value="siteInfo.accessionValidate" />
 		</insert>
 	</changeSet>
+	<changeSet author="cliff" id="2">
+		<preConditions onFail="MARK_RAN">
+			<sqlCheck  expectedResult="0">SELECT count(*) FROM clinlims.site_information WHERE name = 'customCriticalMessage'</sqlCheck> 
+		</preConditions>
+		<comment>create a custom critical message in site information</comment>
+		<insert schemaName="clinlims" tableName="site_information">
+			<column name="id" valueSequenceNext="site_information_seq" />
+			<column name="name" value="customCriticalMessage" />
+			<column name="lastupdated" valueComputed="${now}" />
+			<column name="description" value="Set critical result message" />
+			<column name="value" value="Set new critical result message" />
+			<column name="encrypted" value="false" />
+			<column name="domain_id" valueComputed="(SELECT id FROM site_information_domain WHERE name = 'resultConfiguration')" />
+			<column name="value_type" value="text" />
+			<column name="instruction_key" value="instructions.custom.critical.message" />
+			<column name="group" value="0" />
+			<column name="description_key" value="Set new critical result message" />
+		</insert>
+	</changeSet>
 </databaseChangeLog>
