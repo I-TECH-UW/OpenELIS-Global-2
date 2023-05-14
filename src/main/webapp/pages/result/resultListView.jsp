@@ -69,6 +69,7 @@
 	boolean autofillTechBox = ConfigurationProperties.getInstance()
 			.isPropertyValueEqual(Property.autoFillTechNameBox, "true");
 	boolean restrictNewReferringMethodEntries = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.restrictFreeTextMethodEntry, "true");
+	String criticalMessage = ConfigurationProperties.getInstance().getPropertyValue(ConfigurationProperties.Property.customCriticalMessage);
 		
 %>
 
@@ -102,6 +103,7 @@
 var compactHozSpace = '<%=compactHozSpace%>';
 var dirty = false;
 
+var criticalMsg = "<%=criticalMessage%>";
 var pager = new OEPager('<c:out value="${form.formName}" />', '&type=' + encodeURIComponent('<spring:escapeBody javaScriptEscape="true">${type}</spring:escapeBody>'));
 pager.setCurrentPageNumber('<spring:escapeBody javaScriptEscape="true">${form.paging.currentPage}</spring:escapeBody>');
 
@@ -555,7 +557,7 @@ function /*void*/ handleEnterEvent(  ){
 	var actualValue = resultBox.value;
 	if (actualValue > lowCritical && actualValue < highCritical) {
 		resultBox.style.borderColor = "orange";
-            alert("<%=MessageUtil.getContextualMessage("error.critical.range.value")%>");
+            alert(criticalMsg);
             return;
         }
   }
