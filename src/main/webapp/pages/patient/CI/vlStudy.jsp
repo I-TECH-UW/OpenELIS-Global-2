@@ -272,7 +272,7 @@ vl = new VLProjectChecker();
 			onchange="vl.checkGender(true)" 
 			id="vl.gender"  >
 			<option value=""></option>
-			<form:options items="${form.formLists.GENDERS_2}" itemLabel="localizedName" itemValue="id" />
+			<form:options items="${form.formLists.GENDERS}" itemLabel="localizedName" itemValue="id" />
 			</form:select>
 			<div id="vl.genderMessage" class="blank"></div>
 		</td>

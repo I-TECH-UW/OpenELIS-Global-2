@@ -917,7 +917,7 @@ function BaseProjectChecker() {
 	this.checkGenderForVlPregnancyOrSuckle = function () {
 		//Observation[YES_NO] set No option selected by default when selected gender = "F"
 		if($("vl.gender").value === 'F'){
-			$("vl.vlPregnancy").value=1251; 
+			$("vl.vlPregnancy").value=1251; //1251 is th dictionary ID for "No" response 
 			$("vl.vlSuckle").value=1251;
 		}
 	}
