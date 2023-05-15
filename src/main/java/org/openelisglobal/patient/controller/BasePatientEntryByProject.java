@@ -186,8 +186,9 @@ public abstract class BasePatientEntryByProject extends BaseController {
     public static Map<String, Object> addAllPatientFormLists(PatientEntryByProjectForm form)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         Map<String, Object> resultMap = new HashMap<>();
-        resultMap.put("GENDERS", PatientUtil.findGenders());
+        //resultMap.put("GENDERS", PatientUtil.findGenders()); this GENDERS dataset does not use the same structure than the one used in others forms
 
+        //the structure below is more suitable
         List<Dictionary> listOfDictionary = new ArrayList<>();
         List<IdValuePair> genders = DisplayListService.getInstance().getList(ListType.GENDERS);
         for (IdValuePair i : genders) {
@@ -196,7 +197,7 @@ public abstract class BasePatientEntryByProject extends BaseController {
             dictionary.setDictEntry(i.getValue());
             listOfDictionary.add(dictionary);
         }
-        resultMap.put("GENDERS_2", listOfDictionary);
+        resultMap.put("GENDERS", listOfDictionary);
         
         form.setFormLists(resultMap);
         form.setDictionaryLists(ObservationHistoryList.MAP);
