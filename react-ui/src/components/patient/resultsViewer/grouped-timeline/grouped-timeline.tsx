@@ -30,7 +30,6 @@ const PanelNameCorner: React.FC<PanelNameCornerProps> = ({ showShadow, panelName
 
 const NewRowStartCell = ({ title, range, units, conceptUuid, shadow = false, isString = false }) => {
   const { patientUuid } = usePatient("uuid");
-
   return (
     <div
       className="rowStartCell"
@@ -40,7 +39,7 @@ const NewRowStartCell = ({ title, range, units, conceptUuid, shadow = false, isS
     >
       {!isString ? (
         <ConfigurableLink
-          to='#trendline'
+          to={"#trendline/" + conceptUuid}
           className="trendlineLink"
         >
           {title}

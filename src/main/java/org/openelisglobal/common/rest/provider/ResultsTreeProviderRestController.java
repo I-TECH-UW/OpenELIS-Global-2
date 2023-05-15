@@ -18,6 +18,7 @@ import org.openelisglobal.result.service.ResultService;
 import org.openelisglobal.result.valueholder.Result;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.samplehuman.service.SampleHumanService;
+import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.test.valueholder.Test;
 import org.openelisglobal.test.valueholder.TestSection;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,9 @@ public class ResultsTreeProviderRestController {
     
     @Autowired
     SampleHumanService sampleHumanService;
+
+    @Autowired
+    TestService testService;
     
     @GetMapping(value = "result-tree", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -143,6 +147,70 @@ public class ResultsTreeProviderRestController {
         }
         
         return resultTrees;
+    }
+
+    @GetMapping(value = "test-result-tree", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public PanelDisplay getTestResultTree(@RequestParam String patientId, @RequestParam String testId) {
+        Test test = testService.get(testId.trim());
+        if(test == null){
+            return null;
+        }
+        List<Sample> samples = sampleHumanService.getSamplesForPatient(patientId);
+        
+        List<Result> results = new ArrayList<>();
+        samples.forEach(sample -> {
+            results.addAll(resultService.getResultsForSample(sample));
+        });
+        
+        Map<Test, Set<Result>> testResultMap = new HashMap<>();
+        
+        Set<Result> filteredResults;
+        for (Result result : results) {
+            if (test.equals(result.getAnalysis().getTest())) {
+                if (testResultMap.containsKey(test)) {
+                    testResultMap.get(test).add(result);
+                } else {
+                    filteredResults = new HashSet<>();
+                    filteredResults.add(result);
+                    testResultMap.put(test, filteredResults);
+                }
+            }
+        }
+        
+        List<TestDisplay> testDisplays = new ArrayList<>();
+        
+        for (Map.Entry<Test, Set<Result>> testResultentry : testResultMap.entrySet()) {
+            List<ResultDisplay> resultDisplays = new ArrayList<>();
+            
+            for (Result result : testResultentry.getValue()) {
+                ResultDisplay resultDisplay = new ResultDisplay();
+                resultDisplay.setValue(result.getValue(true));
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
+                resultDisplay.setObsDatetime(dateFormat.format(result.getLastupdated()));
+                resultDisplays.add(resultDisplay);
+            }
+            
+            TestDisplay testDisplay = new TestDisplay();
+            testDisplay.setDisplay(testResultentry.getKey().getLocalizedName());
+            testDisplay.setConceptUuid(testResultentry.getKey().getId());
+            testDisplay.setDatatype(testResultentry.getValue().iterator().next().getResultType());
+            testDisplay.setHiNormal(testResultentry.getValue().iterator().next().getMaxNormal());
+            testDisplay.setLowNormal(testResultentry.getValue().iterator().next().getMinNormal());
+            testDisplay.setHighCritical(testResultentry.getValue().iterator().next().getMaxNormal());
+            testDisplay.setLowCritical(testResultentry.getValue().iterator().next().getMinNormal());
+            testDisplay.setLowAbsolute(0.0);
+            testDisplay.setUnits(
+                testResultentry.getKey().getUnitOfMeasure() != null ? testResultentry.getKey().getUnitOfMeasure().getName()
+                        : "");
+            testDisplay.setObs(resultDisplays);
+            testDisplays.add(testDisplay);
+        }
+        
+        PanelDisplay panelDisplay = new PanelDisplay();
+        panelDisplay.setDisplay(test.getLocalizedName());
+        panelDisplay.setSubSets(testDisplays);
+        return panelDisplay;
     }
     
 }
