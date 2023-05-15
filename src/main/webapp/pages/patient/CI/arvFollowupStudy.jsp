@@ -261,7 +261,7 @@ farv = new ArvFollowupProjectChecker();
 					 onchange="farv.checkGender(false)" id="farv.gender"  >
 				<option value=""></option>
 				<form:options items="${form.formLists.GENDERS}"
-					itemLabel="localizedName" itemValue="genderType" />
+					itemLabel="localizedName" itemValue="id" />
 			</form:select>
 			<div id="farv.genderMessage" class="blank"></div>
 		</td>
