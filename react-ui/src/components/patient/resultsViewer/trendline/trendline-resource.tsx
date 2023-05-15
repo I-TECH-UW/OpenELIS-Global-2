@@ -4,7 +4,6 @@ import { assessValue } from '../loadPatientTestData/helpers';
 import { useMemo } from 'react';
 import { FetchResponse, openmrsFetch, showNotification } from '../commons';
 import { TreeNode } from '../filter/filter-types';
-import {obs} from '../../../data/dummy/obs.js'
 import { getFromOpeElisServerSync } from "../../../utils/Utils.js";
 
 function computeTrendlineData(treeNode: TreeNode): Array<TreeNode> {
@@ -41,7 +40,7 @@ export function useObstreeData(
   var { data, error, isLoading , isValidating} = {data : null , error: null , isLoading: false ,  isValidating : false}
 
   const fetchResults = (results) => {
-    data  =results ;
+    data  = results ;
     error = false;
     isLoading = false;
 }
@@ -49,7 +48,6 @@ export function useObstreeData(
   if(patientUuid && conceptUuid){
     getFromOpeElisServerSync(`/rest/test-result-tree?patientId=${patientUuid}&testId=${conceptUuid}` , fetchResults)
    }
- // const { data, error, isLoading ,isValidating } = { data : obs  , error:{name:"" ,message:""}, isLoading:false ,isValidating:false};
   if (error) {
     showNotification({
       title: error.name,
