@@ -5,7 +5,7 @@ import {getFromOpenElisServer} from "../utils/Utils";
 
 const AddSample = (props) => {
     const componentMounted = useRef(true);
-    const [sampleElementsList, setSampleElementsList] = useState([{index: "", tests: []}]);
+    const [sampleElementsList, setSampleElementsList] = useState([{index: "", tests: [],referralItems:[]}]);
     const [elementsCounter, setElementsCounter] = useState(0);
     const [rejectSampleReasons, setRejectSampleReasons] = useState([]);
 
@@ -13,7 +13,7 @@ const AddSample = (props) => {
         setElementsCounter(elementsCounter + 1);
         const updates = [...sampleElementsList];
         updates.push({
-            index: elementsCounter, tests: []
+            index: elementsCounter, tests: [], referralItems: []
         });
         setSampleElementsList(updates);
     }
@@ -51,6 +51,7 @@ const AddSample = (props) => {
         newState[0].sampleTypeId = "";
         newState[0].sampleXML = null;
         newState[0].tests = [];
+        newState[0].referralItems = [];
         setSampleElementsList(newState);
         setElementsCounter(elementsCounter + 1);
     }

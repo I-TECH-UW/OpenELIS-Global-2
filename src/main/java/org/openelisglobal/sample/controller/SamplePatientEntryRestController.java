@@ -56,14 +56,11 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
@@ -202,13 +199,14 @@ public class SamplePatientEntryRestController extends BaseSampleEntryController 
 	}
 
 
-	@PostMapping(value = "SamplePatientEntry", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = "SamplePatientEntry",  produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public SamplePatientEntryForm showSamplePatientEntrySave(HttpServletRequest request,
+	public SamplePatientEntryForm samplePatientEntrySave(HttpServletRequest request,
 			@Validated(SamplePatientEntryForm.SamplePatientEntry.class)
 			@RequestBody SamplePatientEntryForm form,
 			BindingResult result,RedirectAttributes redirectAttributes)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+		System.out.println("MbabaziNamanya:"+form.toString());
 
 		formValidator.validate(form, result);
 		if (result.hasErrors()) {
@@ -318,6 +316,7 @@ public class SamplePatientEntryRestController extends BaseSampleEntryController 
 			redirectAttributes.addFlashAttribute("sampleOrderItems.referringSiteDepartmentName",
 					form.getSampleOrderItems().getReferringSiteDepartmentName());
 		}
+
 		return (form);
 	}
 

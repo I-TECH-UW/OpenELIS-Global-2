@@ -3,16 +3,18 @@ import {useFormikContext} from "formik";
 
 const PatientFormObserver = (props) => {
     const {values} = useFormikContext();
-    const {orderFormValues, setOrderFormValues} = props;
-
+    const {orderFormValues, setOrderFormValues,formAction} = props;
     useEffect(() => {
         setOrderFormValues({
             ...orderFormValues,
+            patientUpdateStatus: formAction,
             patientProperties: {
                 ...orderFormValues.patientProperties,
-                patientUpdateStatus: "UPDATE",
+                patientUpdateStatus: formAction,
                 nationalId: values.nationalID,
                 subjectNumber: values.subjectNumber,
+                patientPK: values.id,
+                guid:values.guid,
                 lastName: values.lastName,
                 firstName: values.firstName,
                 streetAddress: values.street,
@@ -26,7 +28,8 @@ const PatientFormObserver = (props) => {
                 nationality: values.nationality,
                 healthDistrict: values.healthDistrict,
                 healthRegion: values.healthRegion,
-                patientContact: values.contactFirstName + " " + values.contactLastName,
+                /**To..do */
+                // patientContact: values.contactFirstName + " " + values.contactLastName,
                 otherNationality: values.otherNationality,
             }
         });

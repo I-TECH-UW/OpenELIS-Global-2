@@ -39,7 +39,8 @@ class CreatePatientForm extends React.Component {
             educationList : [] ,
             maritalStatuses : [],
             nationalities : [],
-            showActionsButton: props.showActionsButton
+            showActionsButton: props.showActionsButton,
+            formAction: "ADD"
         }
     }
     _isMounted = false;
@@ -82,7 +83,7 @@ class CreatePatientForm extends React.Component {
             }
             nextState.patientDetails = nextProps.selectedPatient;
             nextState.showForm = true;
-
+            this.state.formAction = "UPDATE";
         }
 
         return true;
@@ -170,7 +171,7 @@ class CreatePatientForm extends React.Component {
                                     onSubmit={handleSubmit}
                                     onChange={handleChange}
                                     onBlur={handleBlur}>
-                                    {this.props.orderFormValues && <PatientFormObserver orderFormValues={this.props.orderFormValues} setOrderFormValues={this.props.setOrderFormValues} /> }
+                                    {this.props.orderFormValues && <PatientFormObserver orderFormValues={this.props.orderFormValues} setOrderFormValues={this.props.setOrderFormValues} formAction={this.state.formAction}/> }
                                     <Stack gap={2}>
                                         <FormLabel>
                                             <Section>

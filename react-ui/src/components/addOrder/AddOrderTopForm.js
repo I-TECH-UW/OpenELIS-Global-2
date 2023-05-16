@@ -29,7 +29,7 @@ const AddOrderTopForm = (props) => {
         let obj = null;
         switch (datePicker) {
             case "requestDate":
-                obj = {...orderFormValues.sampleOrderItems, date}
+                obj = {...orderFormValues.sampleOrderItems, requestDate: date}
                 break;
             case "receivedDate":
                 obj = {...orderFormValues.sampleOrderItems, receivedDateForDisplay: date}
@@ -262,10 +262,12 @@ const AddOrderTopForm = (props) => {
         const requesterConfig = findConfigurationProperty("restrictFreeTextProviderEntry");
 
         setOrderFormValues({
-            ...orderFormValues, sampleOrderItems: {
+            ...orderFormValues,
+            currentDate: currentDate,
+            sampleOrderItems: {
                 ...orderFormValues.sampleOrderItems,
                 requestDate: currentDate,
-                receivedDate: currentDate,
+                receivedDateForDisplay: currentDate,
                 receivedTime: currentTime
             }
         });

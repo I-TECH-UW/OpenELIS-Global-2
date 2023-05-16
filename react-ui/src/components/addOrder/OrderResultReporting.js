@@ -66,7 +66,7 @@ const OrderResultReporting = (props) => {
                 if (checked) {
                     setNotificationTestIds({
                         ...notificationTestIds,
-                        patientSMSNotificationTestIds: [...notificationTestIds.patientSMSNotificationTestIds, testId]
+                        patientSMSNotificationTestIds: [...notificationTestIds.patientSMSNotificationTestIds, Number(testId)]
                     });
                 } else {
                     const updatedSMSNotificationIds = notificationTestIds.patientSMSNotificationTestIds.filter((test) => test !== testId);
@@ -79,7 +79,7 @@ const OrderResultReporting = (props) => {
                 if (checked) {
                     setNotificationTestIds({
                         ...notificationTestIds,
-                        patientEmailNotificationTestIds: [...notificationTestIds.patientEmailNotificationTestIds, testId]
+                        patientEmailNotificationTestIds: [...notificationTestIds.patientEmailNotificationTestIds, Number(testId)]
                     });
                 } else {
                     const updatedEmailNotificationIds = notificationTestIds.patientEmailNotificationTestIds.filter((test) => test !== testId);
@@ -97,7 +97,7 @@ const OrderResultReporting = (props) => {
                 if (checked) {
                     setNotificationTestIds({
                         ...notificationTestIds,
-                        providerSMSNotificationTestIds: [...notificationTestIds.providerSMSNotificationTestIds, testId]
+                        providerSMSNotificationTestIds: [...notificationTestIds.providerSMSNotificationTestIds, Number(testId)]
                     });
                 } else {
                     const updatedSMSNotificationIds = notificationTestIds.providerSMSNotificationTestIds.filter((test) => test !== testId);
@@ -110,7 +110,7 @@ const OrderResultReporting = (props) => {
                 if (checked) {
                     setNotificationTestIds({
                         ...notificationTestIds,
-                        providerEmailNotificationTestIds: [...notificationTestIds.providerEmailNotificationTestIds, testId]
+                        providerEmailNotificationTestIds: [...notificationTestIds.providerEmailNotificationTestIds, Number(testId)]
                     });
                 } else {
                     const updatedEmailNotificationIds = notificationTestIds.providerEmailNotificationTestIds.filter((test) => test !== testId);
