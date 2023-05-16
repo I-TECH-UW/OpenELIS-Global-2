@@ -36,6 +36,7 @@
 	String searchTerm = request.getParameter("searchTerm");
 	String url = request.getAttribute("javax.servlet.forward.servlet_path").toString();	
 	//boolean showTestSectionSelect = !ConfigurationProperties.getInstance().isPropertyValueEqual(Property.configurationName, "CI RetroCI");
+	String criticalMessage = ConfigurationProperties.getInstance().getPropertyValue(ConfigurationProperties.Property.customCriticalMessage);
 %>
 
 
@@ -56,6 +57,8 @@ var pager = new OEPager('${form.formName}', '<spring:escapeBody javaScriptEscape
 pager.setCurrentPageNumber('<c:out value="${form.paging.currentPage}"/>');
 
 var pageSearch; //assigned in post load function
+
+var criticalMsg = "<%=criticalMessage%>";
 
 var pagingSearch = {};
 
@@ -329,7 +332,7 @@ function validateCriticalResults(index,lowCritical,highCritical){
 	console.log(elementVal);
 	if (elementVal > lowCritical && elementVal < highCritical) {
 		    elementt.addClass("error");
-            alert("<%=MessageUtil.getContextualMessage("error.critical.range.value")%>");
+            alert(criticalMsg);
             return;
         }
   }
