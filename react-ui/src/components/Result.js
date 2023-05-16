@@ -42,8 +42,8 @@ class Result extends React.Component {
                     <SideNavItems className="resultSideNav">
                         <SideNavMenu renderIcon={IbmWatsonDiscovery} title="Result Search">
                             <SideNavMenuItem href="#result" >by Accession Number</SideNavMenuItem>
-                            <SideNavMenuItem href="#rangeResults">Range Results</SideNavMenuItem>
-                            <SideNavMenuItem href="#codeTest">Test</SideNavMenuItem>
+                            <SideNavMenuItem href="#2">Link</SideNavMenuItem>
+                            <SideNavMenuItem href="#3">Link</SideNavMenuItem>
                         </SideNavMenu>
                         <SideNavMenu renderIcon={Microscope} title="Patient Search">
                             <SideNavMenuItem href="#3">Link</SideNavMenuItem>
