@@ -118,7 +118,6 @@ public class PatientSearchPopulateRestController {
         patientDetails.setDob(patient.getBirthDateForDisplay());
         patientDetails.setCommune(commune);
         patientDetails.setAddressDept(dept);
-        ;
         patientDetails.setMotherInitial(identityMap.getIdentityValue(identityList, "MOTHERS_INITIAL"));
         patientDetails.setExternalID(patient.getExternalId());
         patientDetails.setEducation(identityMap.getIdentityValue(identityList, "EDUCATION"));

@@ -16,6 +16,7 @@
 package org.openelisglobal.test.valueholder;
 
 import java.sql.Date;
+import java.util.Objects;
 
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.StringUtil;
@@ -503,5 +504,20 @@ public class Test extends EnumValueItemImpl {
 
     public void setInLabOnly(boolean inLabOnly) {
         this.inLabOnly = inLabOnly;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        Test that = (Test) o;
+        return id.equals(that.id) ;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

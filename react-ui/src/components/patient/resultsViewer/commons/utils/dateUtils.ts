@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import isToday from "dayjs/plugin/isToday";
+import { ParsedTimeType } from "../../filter/filter-types";
 
 dayjs.extend(utc);
 dayjs.extend(isToday);
@@ -119,6 +120,32 @@ export function formatDate(date: Date, options?: Partial<FormatDateOptions>) {
 export function parseDate(dateString: string) {
     return dayjs(dateString).toDate();
   }
+
+  export const parseTime: (sortedTimes: Array<string>) => ParsedTimeType = (sortedTimes) => {
+    const yearColumns: Array<{ year: string; size: number }> = [],
+      dayColumns: Array<{ year: string; day: string; size: number }> = [],
+      timeColumns: string[] = [];
+  
+    sortedTimes.forEach((datetime) => {
+      const parsedDate = parseDate(datetime);
+      const year = parsedDate.getFullYear().toString();
+      const date = formatDate(parsedDate, { mode: 'wide', year: false });
+      const time = formatTime(parsedDate);
+  
+      const yearColumn = yearColumns.find(({ year: innerYear }) => year === innerYear);
+      if (yearColumn) yearColumn.size++;
+      else yearColumns.push({ year, size: 1 });
+  
+      const dayColumn = dayColumns.find(({ year: innerYear, day: innerDay }) => date === innerDay && year === innerYear);
+      if (dayColumn) dayColumn.size++;
+      else dayColumns.push({ day: date, year, size: 1 });
+  
+      timeColumns.push(time);
+    });
+  
+    return { yearColumns, dayColumns, timeColumns, sortedTimes };
+  };
+  
   
   
 

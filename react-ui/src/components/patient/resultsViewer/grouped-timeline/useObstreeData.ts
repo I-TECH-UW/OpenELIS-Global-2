@@ -1,10 +1,6 @@
-import { usePatient, openmrsFetch } from '../commons';
 import { useMemo } from 'react';
-import useSWR from 'swr';
-import useSWRInfinite from 'swr/infinite';
 import { assessValue, exist } from '../loadPatientTestData/helpers';
-import obstree from '../../../data/dummy/obsTree.json'
-import obstree2 from '../../../data/dummy/obsTree2.json'
+import { getFromOpeElisServerSync } from "../../../utils/Utils.js";
 
 export const getName = (prefix, name) => {
   return prefix ? `${prefix}-${name}` : name;
@@ -31,42 +27,28 @@ const augmentObstreeData = (node, prefix) => {
   return { ...outData };
 };
 
-const useGetObstreeData = (conceptUuid) => {
-  const { patientUuid } = usePatient();
-  const response = useSWR(`/ws/rest/v1/obstree?patient=${patientUuid}&concept=${conceptUuid}`, openmrsFetch);
-  const result = useMemo(() => {
-    if (response.data) {
-      const { data, ...rest } = response;
-      const newData = augmentObstreeData(data?.data, '');
-      return { ...rest, loading: false, data: newData };
-    } else {
-      return {
-        data: {},
-        error: false,
-        loading: true,
-      };
-    }
-  }, [response]);
-  return result;
-};
 
-const useGetManyObstreeData = (uuidArray) => {
-  const { patientUuid } = usePatient();
-  const getObstreeUrl = (index) => {
-    if (index < uuidArray.length && patientUuid) {
-      return `/ws/rest/v1/obstree?patient=${patientUuid}&concept=${uuidArray[index]}`;
-    } else return null;
-  };
 
-  //const { data, error, isLoading } = useSWRInfinite(getObstreeUrl, openmrsFetch, { initialSize: uuidArray.length });
-  const { data, error, isLoading } = { data : [{data :obstree} ,{data :obstree2}] , error:false , isLoading:false};
+
+const useGetManyObstreeData = (patientUuid) => {
+ 
+  var { data, error, isLoading } = {data : [] , error: null , isLoading: null}
+
+  const fetchResultsTree = (resultsTree) => {
+        data  =resultsTree ;
+        error = false ;
+        isLoading = false;
+  }
+   if(patientUuid){
+    getFromOpeElisServerSync(`/rest/result-tree?patientId=${patientUuid}` , fetchResultsTree)
+   }
 
   const result = useMemo(() => {
     return (
       data?.map((resp) => {
-        if (resp?.data) {
-          const { data, ...rest } = resp;
-          const newData = augmentObstreeData(data, '');
+        if (resp) {
+          const { ...rest } = resp;
+          const newData = augmentObstreeData(resp, '');
           return { ...rest, loading: false, data: newData };
         } else {
           return {
@@ -86,9 +68,8 @@ const useGetManyObstreeData = (uuidArray) => {
   }, [data]);
   const roots = result.map((item) => item.data);
   const loading = result.some((item) => item.loading);
-
   return { roots, loading, error };
-};
+}
 
 export default useGetManyObstreeData;
-export { useGetManyObstreeData, useGetObstreeData };
+export { useGetManyObstreeData};
