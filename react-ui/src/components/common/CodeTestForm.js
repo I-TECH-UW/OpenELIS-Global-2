@@ -432,7 +432,7 @@ class CodeTestForm extends React.Component {
 
     validateResults = (e, rowId, row) => {
         console.log("validateResults:" + e.target.value)
-        e.target.value;
+       // e.target.value;
         this.handleChange(e, rowId)
     }
 
