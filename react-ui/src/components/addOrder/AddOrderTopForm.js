@@ -1,76 +1,153 @@
 import React, {useContext, useEffect, useRef, useState} from 'react'
 import {Add, Subtract} from '@carbon/react/icons';
-import {
-    Checkbox,
-    DatePicker,
-    DatePickerInput,
-    IconButton,
-    Link,
-    Select,
-    SelectItem,
-    TextInput,
-    TimePicker
-} from '@carbon/react';
+import {Checkbox, IconButton, Link, Select, SelectItem, TextInput, TimePicker} from '@carbon/react';
 
 import {getFromOpenElisServer} from '../utils/Utils';
 import {priorities} from "../data/orderOptions";
-import {orderValues} from "../formModel/innitialValues/CreateOrderFormValues";
 import {NotificationKinds} from "../common/CustomNotification";
 import {NotificationContext} from "../layout/Layout";
-import SiteNameAutoComplete from "../common/SiteNameAutoComplete";
+import AutoComplete from "../common/AutoComplete";
+import CustomDatePicker from "../common/CustomDatePicker";
 
 
-const AddOrderTopForm = () => {
-
-    const [formValues, setFormValues] = useState(orderValues);
+const AddOrderTopForm = (props) => {
+    const {orderFormValues, setOrderFormValues} = props;
     const componentMounted = useRef(true);
     const [otherSamplingVisible, setOtherSamplingVisible] = useState(false);
     const [orderIconToggled, setOrderIconToggled] = useState(false);
     const [programs, setPrograms] = useState([]);
+    const [providers, setProviders] = useState([]);
     const [paymentOptions, setPaymentOptions] = useState([]);
     const [samplingPerformed, setSamplingPerformed] = useState([]);
-    const [labNo, setLabNo] = useState("");
+    const [allowSiteNameOptions, setAllowSiteNameOptions] = useState("false");
+    const [allowRequesterOptions, setAllowRequesterOptions] = useState("false");
     const {setNotificationVisible, setNotificationBody} = useContext(NotificationContext);
     const [siteNames, setSiteNames] = useState([]);
     const [configurationProperties, setConfigurationProperties] = useState([{id: "", value: ""}]);
 
-    const handleDatePickerChange = (date, value) => {
-        setFormValues({
-            ...formValues,
-            date: value
+    const handleDatePickerChange = (datePicker, date) => {
+        let obj = null;
+        switch (datePicker) {
+            case "requestDate":
+                obj = {...orderFormValues.sampleOrderItems, requestDate: date}
+                break;
+            case "receivedDate":
+                obj = {...orderFormValues.sampleOrderItems, receivedDateForDisplay: date}
+                break;
+            case "nextVisitDate":
+                obj = {...orderFormValues.sampleOrderItems, nextVisitDate: date}
+                break;
+        }
+        setOrderFormValues({
+            ...orderFormValues, sampleOrderItems: obj
         });
     }
-    const fetchPrograms = (programsList) => {
-        if (componentMounted.current) {
-            setPrograms(programsList);
-        }
+
+    function handlePaymentStatus(e) {
+        setOrderFormValues({
+            ...orderFormValues, sampleOrderItems: {
+                ...orderFormValues.sampleOrderItems, paymentOptionSelection: e.target.value
+            }
+        });
     }
 
-    const getPaymentOptions = (options) => {
-        if (componentMounted.current) {
-            setPaymentOptions(options);
-        }
+    function handleBillReferenceNo(e) {
+        setOrderFormValues({
+            ...orderFormValues, sampleOrderItems: {
+                ...orderFormValues.sampleOrderItems, billingReferenceNumber: e.target.value
+            }
+        });
     }
 
-    const getSamplingPerformedOptions = (performedSamples) => {
-        if (componentMounted.current) {
-            setSamplingPerformed(performedSamples);
-        }
-
+    function handleRequesterFax(e) {
+        setOrderFormValues({
+            ...orderFormValues, sampleOrderItems: {
+                ...orderFormValues.sampleOrderItems, providerFax: e.target.value
+            }
+        });
     }
+
+    function handleRequesterEmail(e) {
+        setOrderFormValues({
+            ...orderFormValues, sampleOrderItems: {
+                ...orderFormValues.sampleOrderItems, providerEmail: e.target.value
+            }
+        });
+    }
+
+    function handleRequesterWorkPhone(e) {
+        setOrderFormValues({
+            ...orderFormValues, sampleOrderItems: {
+                ...orderFormValues.sampleOrderItems, providerWorkPhone: e.target.value
+            }
+        });
+        setNotificationVisible(false);
+    }
+
+    function handleRequesterFirstName(e) {
+        setOrderFormValues({
+            ...orderFormValues, sampleOrderItems: {
+                ...orderFormValues.sampleOrderItems, providerFirstName: e.target.value
+            }
+        });
+    }
+
+    function handleRequesterLastName(e) {
+        setOrderFormValues({
+            ...orderFormValues, sampleOrderItems: {
+                ...orderFormValues.sampleOrderItems, providerLastName: e.target.value
+            }
+        });
+    }
+
+    function handleProgramOptions(e) {
+        setOrderFormValues({
+            ...orderFormValues, sampleOrderItems: {
+                ...orderFormValues.sampleOrderItems, program: e.target.value
+            }
+        });
+    }
+
 
     const handleSamplingPerformed = (e) => {
-        const {name, value} = e.target;
+        const {value} = e.target;
         if (value === "1310") {
             setOtherSamplingVisible(!otherSamplingVisible);
         } else {
             setOtherSamplingVisible(false);
         }
+        setOrderFormValues({
+            ...orderFormValues, sampleOrderItems: {
+                ...orderFormValues.sampleOrderItems, testLocationCode: value
+            }
+        });
     };
+
+    function handleOtherLocationCode(e) {
+        setOrderFormValues({
+            ...orderFormValues, sampleOrderItems: {
+                ...orderFormValues.sampleOrderItems, otherLocationCode: e.target.value
+            }
+        });
+    }
+
+    function handleReceivedTime(e) {
+        setOrderFormValues({
+            ...orderFormValues, sampleOrderItems: {...orderFormValues.sampleOrderItems, receivedTime: e.target.value}
+        });
+    }
+
+    function handlePriority(e) {
+        setOrderFormValues({
+            ...orderFormValues, sampleOrderItems: {...orderFormValues.sampleOrderItems, priority: e.target.value}
+        });
+    }
 
     function fetchGeneratedAccessionNo(res) {
         if (res.status) {
-            setLabNo(res.body);
+            setOrderFormValues({
+                ...orderFormValues, sampleOrderItems: {...orderFormValues.sampleOrderItems, labNo: res.body}
+            });
             setNotificationVisible(false);
         }
     }
@@ -87,9 +164,54 @@ const AddOrderTopForm = () => {
 
     }
 
+    function handleProviderSelectOptions(providerId) {
+        setOrderFormValues({
+            ...orderFormValues, sampleOrderItems: {...orderFormValues.sampleOrderItems, providerId: providerId}
+        });
+
+        getFromOpenElisServer('/rest/practitioner?providerId=' + providerId, fetchPractitioner);
+    }
+
+    function fetchPractitioner(data) {
+        setOrderFormValues({
+            ...orderFormValues, sampleOrderItems: {
+                ...orderFormValues.sampleOrderItems,
+                providerFirstName: data.person.firstName,
+                providerLastName: data.person.lastName,
+                providerWorkPhone: data.person.workPhone,
+                providerEmail: data.person.email,
+                providerFax: data.person.fax
+            }
+        });
+    }
+
+    function handleRequesterDept(e) {
+
+    }
+
+    function handleSiteName(e) {
+        setOrderFormValues({
+            ...orderFormValues,
+            sampleOrderItems: {...orderFormValues.sampleOrderItems, referringSiteName: e.target.value}
+        });
+    }
+
+    function handleAutoCompleteSiteName(siteId) {
+        setOrderFormValues({
+            ...orderFormValues, sampleOrderItems: {...orderFormValues.sampleOrderItems, referringSiteId: siteId}
+        });
+    }
+
+    function handleLabNo(e) {
+        setOrderFormValues({
+            ...orderFormValues, sampleOrderItems: {...orderFormValues.sampleOrderItems, labNo: e.target.value}
+        });
+        setNotificationVisible(false);
+    }
+
     const handleLabNoValidation = () => {
-        if (labNo !== "") {
-            getFromOpenElisServer('/rest/SampleEntryAccessionNumberValidation?ignoreYear=false&ignoreUsage=false&field=labNo&accessionNumber=' + labNo, accessionNumberValidationResults);
+        if (orderFormValues.sampleOrderItems.labNo !== "") {
+            getFromOpenElisServer('/rest/SampleEntryAccessionNumberValidation?ignoreYear=false&ignoreUsage=false&field=labNo&accessionNumber=' + orderFormValues.sampleOrderItems.labNo, accessionNumberValidationResults);
         }
     }
 
@@ -101,17 +223,22 @@ const AddOrderTopForm = () => {
     }
 
     const handlePhoneNoValidation = () => {
-        if (formValues.requesterPhone !== "") {
-            const providerPhoneNo = formValues.requesterPhone.replace(/\+/g, '%2B');
+        if (orderFormValues.sampleOrderItems.providerWorkPhone !== "") {
+            const providerPhoneNo = orderFormValues.sampleOrderItems.providerWorkPhone.replace(/\+/g, '%2B');
             getFromOpenElisServer("/rest/PhoneNumberValidationProvider?fieldId=providerWorkPhoneID&value=" + providerPhoneNo, fetchPhoneNoValidation);
         }
     }
-    const fetchReferringClinics = (res) => {
-        if (res.length > 0 && componentMounted.current) {
-            setSiteNames(res);
-        }
-    }
 
+
+    function handleRememberCheckBox(e) {
+        let checked = false;
+        if (e.currentTarget.checked) {
+            checked = true;
+        }
+        setOrderFormValues({
+            ...orderFormValues, rememberSiteAndRequester: checked
+        });
+    }
 
     function findConfigurationProperty(property) {
         if (configurationProperties.length > 0) {
@@ -129,11 +256,39 @@ const AddOrderTopForm = () => {
     }
 
     useEffect(() => {
+        const currentDate = findConfigurationProperty("currentDateAsText");
+        const currentTime = findConfigurationProperty("currentTimeAsText");
+        const siteNameConfig = findConfigurationProperty("restrictFreeTextRefSiteEntry");
+        const requesterConfig = findConfigurationProperty("restrictFreeTextProviderEntry");
 
-        getFromOpenElisServer("/rest/programs", fetchPrograms)
-        getFromOpenElisServer("/rest/site-names", fetchReferringClinics)
-        getFromOpenElisServer("/rest/patientPaymentsOptions", getPaymentOptions)
-        getFromOpenElisServer("/rest/testLocationCodes", getSamplingPerformedOptions)
+        setOrderFormValues({
+            ...orderFormValues,
+            currentDate: currentDate,
+            sampleOrderItems: {
+                ...orderFormValues.sampleOrderItems,
+                requestDate: currentDate,
+                receivedDateForDisplay: currentDate,
+                receivedTime: currentTime
+            }
+        });
+        setAllowSiteNameOptions(siteNameConfig);
+        setAllowRequesterOptions(requesterConfig);
+
+    }, [configurationProperties]);
+
+    const getSampleEntryPreform = (response) => {
+        if (componentMounted.current) {
+            setPrograms(response.sampleOrderItems.programList);
+            setSiteNames(response.sampleOrderItems.referringSiteList)
+            setPaymentOptions(response.sampleOrderItems.paymentOptions);
+            setSamplingPerformed(response.sampleOrderItems.testLocationCodeList);
+            setProviders(response.sampleOrderItems.providersList);
+        }
+    }
+
+    useEffect(() => {
+
+        getFromOpenElisServer("/rest/SamplePatientEntry", getSampleEntryPreform);
         getFromOpenElisServer("/rest/configuration-properties", fetchConfigurationProperties)
 
         return () => {
@@ -141,237 +296,216 @@ const AddOrderTopForm = () => {
         }
     }, []);
 
-    return (
-        <>
-            <div className="inlineDiv">
-                <Checkbox labelText="Remember site and requester" id="rememberSiteAndRequester"/>
+    return (<>
+        <div className="inlineDiv">
+            <Checkbox labelText="Remember site and requester" id="rememberSiteAndRequester"
+                      onChange={handleRememberCheckBox}/>
+        </div>
+
+        <div className="inlineDiv">
+            <IconButton label="" onClick={() => setOrderIconToggled(!orderIconToggled)} kind='tertiary' size='sm'>
+                {orderIconToggled ? <Add size={18}/> : <Subtract size={18}/>}
+            </IconButton>
+            &nbsp; &nbsp;
+            <div>Order <span className="requiredFieldIndicator"> *</span></div>
+        </div>
+
+        <div className="formInlineDiv">
+            <TextInput name="labNo" value={orderFormValues.sampleOrderItems.labNo} onMouseLeave={handleLabNoValidation}
+                       onChange={(e) => handleLabNo(e)}
+                       labelText="Lab No: "
+                       id="labNo" className="inputText"/>
+            <div>
+                Scan Or Enter Manually Or  &nbsp;
+                <Link href="#" onClick={handleLabNoGeneration}>Generate</Link>
             </div>
 
-            <div className="inlineDiv">
-                <IconButton label="" onClick={() => setOrderIconToggled(!orderIconToggled)} kind='tertiary' size='sm'>
-                    {orderIconToggled ? <Add size={18}/> : <Subtract size={18}/>}
-                </IconButton>
-                &nbsp; &nbsp;
-                <div>Order <span className="requiredFieldIndicator"> *</span></div>
+        </div>
+
+        <div className="formInlineDiv">
+            <Select
+                id="priorityId"
+                name="priority"
+                labelText="priority"
+                onChange={handlePriority}
+                required>
+                {priorities.map((priority, index) => {
+                    return (<SelectItem key={index}
+                                        text={priority.label}
+                                        value={priority.value}
+                    />);
+                })}
+            </Select>
+            <CustomDatePicker id={"requestDate"} labelText={"Request Date"}
+                              onChange={(date) => handleDatePickerChange("requestDate", date)}/>
+        </div>
+        <div className="formInlineDiv">
+
+            <CustomDatePicker id={"receivedDate"} labelText={"Received Date"}
+                              onChange={(date) => handleDatePickerChange("receivedDate", date)}/>
+
+            <TimePicker id="receivedTime" labelText="Reception Time (hh:mm):" onChange={handleReceivedTime}
+                        value={orderFormValues.sampleOrderItems.receivedTime == null ? '' : orderFormValues.sampleOrderItems.receivedTime}
+            />
+            <br/><br/>
+        </div>
+        <div className="formInlineDiv">
+            <div>
+                <CustomDatePicker id={"nextVisitDate"} labelText={"Next Visit Date"}
+                                  onChange={(date) => handleDatePickerChange("nextVisitDate", date)}/>
             </div>
+            <div>
+                {allowSiteNameOptions === "false" ? <TextInput name="siteName" labelText="Site Name: "
+                                                               onChange={handleSiteName}
+                                                               value={orderFormValues.sampleOrderItems.referringSiteName == null ? '' : orderFormValues.sampleOrderItems.referringSiteName}
+                                                               id="siteName" className="inputText"/> :
 
-            <div className="formInlineDiv">
-                <TextInput name="labNo" value={labNo} onMouseLeave={handleLabNoValidation} onChange={(e) => {
-                    setLabNo(e.target.value);
-                    setNotificationVisible(false);
-                }} labelText="Lab No: "
-                           id="labNo" className="inputText"/>
-                <div>
-                    Scan Or Enter Manually Or  &nbsp;
-                    <Link href="#" onClick={handleLabNoGeneration}>Generate</Link>
-                </div>
-
-            </div>
-
-            <div className="formInlineDiv">
-                <Select
-                    id="priorityId"
-                    name="priority"
-                    labelText="priority"
-                    required>
-                    {priorities.map((priority, index) => {
-                        return (<SelectItem key={index}
-                                            text={priority.label}
-                                            value={priority.value}
-                        />);
-                    })}
-                </Select>
-                <DatePicker
-                    value={formValues.requestDate === "" ? findConfigurationProperty("currentDateAsText") : formValues.requestDate}
-                    name="requestDate" onChange={(e) => handleDatePickerChange("requestDate", e)}
-                    dateFormat="d/m/Y" datePickerType="single" light={true} className="">
-                    <DatePickerInput
-                        id="date-picker-default-id"
-                        placeholder="dd/mm/yyyy"
-                        labelText="Request Date"
-                        type="text"
-                        name="requestDate"
-                    />
-                </DatePicker>
-            </div>
-            <div className="formInlineDiv">
-                <DatePicker
-                    value={formValues.receivedDate === "" ? findConfigurationProperty("currentDateAsText") : formValues.receivedDate}
-                    name="requestDate" onChange={(e) => handleDatePickerChange("receivedDate", e)}
-                    dateFormat="d/m/Y" datePickerType="single" light={true} className="">
-                    <DatePickerInput
-                        id="date-picker-default-id"
-                        placeholder="dd/mm/yyyy"
-                        labelText="Received Date"
-                        type="text"
-                        name="receivedDate"
-                    />
-                </DatePicker>
-                <TimePicker id="time-picker" labelText="Reception Time (hh:mm):"
-                            value={
-                                findConfigurationProperty("currentTimeAsText") == null ? '' : findConfigurationProperty("currentTimeAsText")
-                            }/>
-                <br/><br/>
-            </div>
-            <div className="formInlineDiv">
-                <div>
-                    <DatePicker value={formValues.nextVisitDate}
-                                name="nextVisitDate" onChange={(e) => handleDatePickerChange("nextVisitDate", e)}
-                                dateFormat="d/m/Y" datePickerType="single" light={true} className="">
-                        <DatePickerInput
-                            id="date-picker-default-id"
-                            placeholder="dd/mm/yyyy"
-                            labelText="Date Of Next Visit"
-                            type="text"
-                            name="nextVisitDate"
-                        />
-                    </DatePicker>
-                </div>
-                <div>
-                    {
-                        findConfigurationProperty("restrictFreeTextRefSiteEntry") === true ? <SiteNameAutoComplete
-                            name="siteName"
-                            idField="siteName"
-                            label="Search site Name"
-                            class="autocomplete"
-                            style={{width: "!important 100%"}}
-                            suggestions={siteNames.length > 0 ? siteNames : []}
-                            required
-                        /> : <TextInput name="siteName" labelText="Site Name: "
-                                        id="siteName" className="inputText"/>
-                    }
-
-                </div>
-            </div>
-            <div className="formInlineDiv">
-                <Select
-                    id="requesterDepartmentId"
-                    name="requesterDepartmentId"
-                    labelText="ward/dept/unit:"
-                    required>
-                    <SelectItem
-                        value=""
-                        text=""
-                    />
-                </Select>
-
-                <Select
-                    id="programId"
-                    name="program"
-                    labelText="program:"
-                    required>
-                    {
-                        programs.map(program => {
-                            return (
-                                <SelectItem key={program.id}
-                                            value={program.id}
-                                            text={program.value}/>
-                            )
-                        })
-                    }
-                </Select>
-            </div>
-
-            <div className="formInlineDiv">
-                <br/>
-                <Select
-                    id="requesterId"
-                    name="requester"
-                    labelText="Requester"
-                    required>
-                    <SelectItem
-                        value=""
-                        text=""
-                    />
-                </Select>
-
-                <TextInput name="requesterLastName" labelText="Requesters' LastName: "
-                           id="requesterLastName" className="inputText"/>
+                    <AutoComplete
+                        name="siteName"
+                        idField="siteName"
+                        onSelect={handleAutoCompleteSiteName}
+                        label="Search site Name"
+                        class="autocomplete"
+                        invalidText="Invalid site name"
+                        style={{width: "!important 100%"}}
+                        suggestions={siteNames.length > 0 ? siteNames : []}
+                        required
+                    />}
 
             </div>
-            <div className='formInlineDiv'>
-                <br/>
-                <TextInput name="requesterFirstName" labelText="Requester's FirstName: "
-                           id="requesterFirstName" className="inputText"/>
+        </div>
+        <div className="formInlineDiv">
+            <Select
+                id="requesterDepartmentId"
+                name="requesterDepartmentId"
+                labelText="ward/dept/unit:"
+                onChange={handleRequesterDept}
+                required>
+                <SelectItem
+                    value=""
+                    text=""
+                />
+            </Select>
 
-                <TextInput name="providerWorkPhone" value={formValues.requesterPhone} onChange={(e) => {
-                    setFormValues({
-                        ...formValues,
-                        requesterPhone: e.target.value
-                    });
-                    setNotificationVisible(false);
-                }} onMouseLeave={handlePhoneNoValidation} labelText="Requester Phone: +225-xx-xx-xx-xx: "
-                           id="providerWorkPhoneId" className="inputText"/>
-            </div>
+            <Select
+                id="programId"
+                name="program"
+                labelText="program:"
+                onChange={handleProgramOptions}
+                required>
+                {programs.map(program => {
+                    return (<SelectItem key={program.id}
+                                        value={program.id}
+                                        text={program.value}/>)
+                })}
+            </Select>
+        </div>
 
-            <div className='formInlineDiv'>
-                <br/>
-                <TextInput name="providerFax" labelText="Requester's Fax Number: "
-                           id="providerFaxId" className="inputText"/>
+        <div className="formInlineDiv">
+            {allowRequesterOptions === "false" ? '' : <AutoComplete
+                name="requesterId"
+                idField="requesterId"
+                onSelect={handleProviderSelectOptions}
+                label="Search Requester"
+                class="autocomplete"
+                style={{width: "!important 100%"}}
+                invalidText="invalid requester name"
+                suggestions={providers.length > 0 ? providers : []}
+                required
+            />}
+            <TextInput name="requesterLastName" labelText="Requesters' LastName: "
+                       disabled={allowRequesterOptions !== "false"}
+                       value={orderFormValues.sampleOrderItems.providerLastName}
+                       onChange={handleRequesterLastName}
+                       id="requesterLastName" className="inputText"/>
 
-                <TextInput name="providerEmail" labelText="Requester's Email: "
-                           id="providerEmailId" className="inputText"/>
-            </div>
+        </div>
+        <div className='formInlineDiv'>
+            <br/>
+            <TextInput name="requesterFirstName" labelText="Requester's FirstName: "
+                       disabled={allowRequesterOptions !== "false"}
+                       onChange={handleRequesterFirstName}
+                       value={orderFormValues.sampleOrderItems.providerFirstName}
+                       id="requesterFirstName" className="inputText"/>
+
+            <TextInput name="providerWorkPhone"
+                       disabled={allowRequesterOptions !== "false"}
+                       value={orderFormValues.sampleOrderItems.providerWorkPhone}
+                       onChange={handleRequesterWorkPhone}
+                       onMouseLeave={handlePhoneNoValidation} labelText="Requester Phone: +225-xx-xx-xx-xx: "
+                       id="providerWorkPhoneId" className="inputText"/>
+        </div>
+
+        <div className='formInlineDiv'>
+            <br/>
+            <TextInput name="providerFax" labelText="Requester's Fax Number: "
+                       disabled={allowRequesterOptions !== "false"}
+                       onChange={handleRequesterFax}
+                       value={orderFormValues.sampleOrderItems.providerFax}
+                       id="providerFaxId" className="inputText"/>
+
+            <TextInput name="providerEmail" labelText="Requester's Email: "
+                       disabled={allowRequesterOptions !== "false"}
+                       onChange={handleRequesterEmail}
+                       value={orderFormValues.sampleOrderItems.providerEmail}
+                       id="providerEmailId" className="inputText"/>
+        </div>
 
 
-            <div className="formInlineDiv">
-                <Select
-                    id="paymentOptionSelectionId"
-                    name="paymentOptionSelections"
-                    labelText="Patient payment status:"
-                    required>
+        <div className="formInlineDiv">
+            <Select
+                id="paymentOptionSelectionId"
+                name="paymentOptionSelections"
+                labelText="Patient payment status:"
+                onChange={handlePaymentStatus}
+                required>
 
-                    <SelectItem
-                        value=""
-                        text=""
-                    />
-                    {
-                        paymentOptions.map(option => {
-                            return (
-                                <SelectItem key={option.id}
-                                            value={option.id}
-                                            text={option.value}
-                                />
-                            )
-                        })
-                    }
+                <SelectItem
+                    value=""
+                    text=""
+                />
+                {paymentOptions.map(option => {
+                    return (<SelectItem key={option.id}
+                                        value={option.id}
+                                        text={option.value}
+                    />)
+                })}
 
-                </Select>
+            </Select>
 
-                <TextInput name="billingReferenceNumber" labelText="URAP Number:"
-                           id="billingReferenceNumberId" className="inputText"/>
+            <TextInput name="billingReferenceNumber" labelText="URAP Number:"
+                       value={orderFormValues.sampleOrderItems.billingReferenceNumber}
+                       onChange={handleBillReferenceNo}
+                       id="billingReferenceNumberId" className="inputText"/>
 
-            </div>
+        </div>
 
-            <div className="formInlineDiv">
-                <Select
-                    id="testLocationCodeId"
-                    name="testLocationCode"
-                    labelText="Sampling performed for analysis::"
-                    onChange={(e) => handleSamplingPerformed(e)}
-                    required>
-                    <SelectItem
-                        value=""
-                        text=""
-                    />
-                    {
-                        samplingPerformed.map(option => {
-                            return (
-                                <SelectItem key={option.id}
-                                            value={option.id}
-                                            text={option.value}
-                                />
-                            )
-                        })
-                    }
-                </Select>
+        <div className="formInlineDiv">
+            <Select
+                id="testLocationCodeId"
+                name="testLocationCode"
+                labelText="Sampling performed for analysis::"
+                onChange={(e) => handleSamplingPerformed(e)}
+                required>
+                <SelectItem
+                    value=""
+                    text=""
+                />
+                {samplingPerformed.map(option => {
+                    return (<SelectItem key={option.id}
+                                        value={option.id}
+                                        text={option.value}
+                    />)
+                })}
+            </Select>
 
-                {otherSamplingVisible && <TextInput name="testLocationCodeOther" labelText="Other specify:"
-                                                    id="testLocationCodeOtherId" className="inputText"/>}
+            {otherSamplingVisible && <TextInput name="testLocationCodeOther" labelText="Other specify:"
+                                                value={orderFormValues.sampleOrderItems.otherLocationCode}
+                                                onChange={handleOtherLocationCode}
+                                                id="testLocationCodeOtherId" className="inputText"/>}
 
-            </div>
-        </>
-    )
+        </div>
+    </>)
 }
 
-export default AddOrderTopForm
+export default AddOrderTopForm;
