@@ -135,7 +135,7 @@ public class ResultsTreeProviderRestController {
                 }
                 
                 PanelDisplay panelDisplay = new PanelDisplay();
-                panelDisplay.setDisplay(panelEntry != null ? panelEntry.getLocalizedName() : "NO PANNEL");
+                panelDisplay.setDisplay(panelEntry != null ? panelEntry.getLocalizedName() : "");
                 panelDisplay.setSubSets(testDisplays);
                 panelDisplays.add(panelDisplay);
             }
