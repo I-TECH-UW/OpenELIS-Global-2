@@ -1,5 +1,4 @@
 export * from "./useLayoutType"
-export * from "./usePatient"
 export * from "./dateUtils"
 export * from "./notification"
 export * from "./helpers"

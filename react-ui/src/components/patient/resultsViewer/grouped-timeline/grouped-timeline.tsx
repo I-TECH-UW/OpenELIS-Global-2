@@ -1,7 +1,7 @@
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { EmptyState } from '../commons';
-import { ConfigurableLink, useLayoutType, usePatient } from '../commons';
+import { ConfigurableLink, useLayoutType } from '../commons';
 import { Grid,ShadowBox } from '../commons/utils';
 import { makeThrottled, testResultsBasePath } from '../helpers';
 import type {
@@ -29,7 +29,6 @@ const PanelNameCorner: React.FC<PanelNameCornerProps> = ({ showShadow, panelName
 );
 
 const NewRowStartCell = ({ title, range, units, conceptUuid, shadow = false, isString = false }) => {
-  const { patientUuid } = usePatient("uuid");
   return (
     <div
       className="rowStartCell"

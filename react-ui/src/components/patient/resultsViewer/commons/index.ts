@@ -4,6 +4,5 @@ export * from './types';
 export * from "./framework/ConfigurableLink";
 export * from "./framework/navigation";
 export * from './utils/useLayoutType';
-export * from './utils/usePatient';
 export * from "./utils/dateUtils"
 export * from "./utils/notification"
