@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { EmptyState, ErrorState } from '../commons';
 import { FilterProvider } from '../filter/filter-context';
 import TreeView from './tree-view.component';
-import { useConfig } from '../commons';
 import { useGetManyObstreeData } from '../grouped-timeline';
 
 interface TreeViewWrapperProps {

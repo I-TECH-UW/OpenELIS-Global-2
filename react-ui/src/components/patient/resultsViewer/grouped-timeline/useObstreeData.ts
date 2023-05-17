@@ -1,7 +1,4 @@
-import { usePatient, openmrsFetch } from '../commons';
 import { useMemo } from 'react';
-import useSWR from 'swr';
-import useSWRInfinite from 'swr/infinite';
 import { assessValue, exist } from '../loadPatientTestData/helpers';
 import { getFromOpeElisServerSync } from "../../../utils/Utils.js";
 
@@ -30,24 +27,6 @@ const augmentObstreeData = (node, prefix) => {
   return { ...outData };
 };
 
-const useGetObstreeData = (conceptUuid) => {
-  const { patientUuid } = usePatient();
-  const response = useSWR(`/ws/rest/v1/obstree?patient=${patientUuid}&concept=${conceptUuid}`, openmrsFetch);
-  const result = useMemo(() => {
-    if (response.data) {
-      const { data, ...rest } = response;
-      const newData = augmentObstreeData(data?.data, '');
-      return { ...rest, loading: false, data: newData };
-    } else {
-      return {
-        data: {},
-        error: false,
-        loading: true,
-      };
-    }
-  }, [response]);
-  return result;
-};
 
 
 
@@ -93,4 +72,4 @@ const useGetManyObstreeData = (patientUuid) => {
 }
 
 export default useGetManyObstreeData;
-export { useGetManyObstreeData, useGetObstreeData };
+export { useGetManyObstreeData};

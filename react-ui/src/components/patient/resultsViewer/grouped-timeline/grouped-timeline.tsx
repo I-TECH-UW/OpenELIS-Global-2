@@ -2,7 +2,7 @@ import React, { useCallback, useContext, useEffect, useRef, useState } from 'rea
 import { useTranslation } from 'react-i18next';
 import { EmptyState } from '../commons';
 import { ConfigurableLink, useLayoutType, usePatient } from '../commons';
-import { Grid, ShadowBox } from '../panel-timeline/helpers';
+import { Grid,ShadowBox } from '../commons/utils';
 import { makeThrottled, testResultsBasePath } from '../helpers';
 import type {
   DateHeaderGridProps,

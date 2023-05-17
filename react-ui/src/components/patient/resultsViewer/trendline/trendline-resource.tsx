@@ -2,7 +2,7 @@ import useSWR from 'swr';
 import { OBSERVATION_INTERPRETATION } from '../commons';
 import { assessValue } from '../loadPatientTestData/helpers';
 import { useMemo } from 'react';
-import { FetchResponse, openmrsFetch, showNotification } from '../commons';
+import { FetchResponse, showNotification } from '../commons';
 import { TreeNode } from '../filter/filter-types';
 import { getFromOpeElisServerSync } from "../../../utils/Utils.js";
 
@@ -43,7 +43,7 @@ export function useObstreeData(
     data  = results ;
     error = false;
     isLoading = false;
-}
+  }
 
   if(patientUuid && conceptUuid){
     getFromOpeElisServerSync(`/rest/test-result-tree?patientId=${patientUuid}&testId=${conceptUuid}` , fetchResults)
