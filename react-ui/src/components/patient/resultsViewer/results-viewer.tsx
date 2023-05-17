@@ -1,29 +1,20 @@
-import React, { useCallback, useContext, useState } from 'react';
+import React, { useContext,} from 'react';
 import { useTranslation } from 'react-i18next';
-import { ContentSwitcher, Switch } from '@carbon/react';
 import { EmptyState, ErrorState } from './commons';
-import { testResultsBasePath } from './helpers';
 import { FilterContext, FilterProvider } from './filter';
 import { useGetManyObstreeData } from './grouped-timeline';
-import TabletOverlay from './tablet-overlay';
-import Trendline from './trendline/trendline.component';
-//import styles from './results-viewer.styles.scss';
 import  './results-viewer.styles.scss';
 import { useParams } from 'react-router-dom';
 import TreeViewWrapper from './tree-view';
 
-type viewOpts = 'split' | 'full';
-type panelOpts = 'tree' | 'panel';
 
 interface ResultsViewerProps {
   basePath: string;
   patientUuid?: string;
-  patientFhirUuid?: string;
   loading?: boolean;
 }
 
-const RoutedResultsViewer: React.FC<ResultsViewerProps> = ({ basePath, patientUuid ,patientFhirUuid}) => {
-
+const RoutedResultsViewer: React.FC<ResultsViewerProps> = ({ basePath, patientUuid }) => {
 
   const { roots, loading, error } = useGetManyObstreeData(patientUuid);
   const { t } = useTranslation();
@@ -35,7 +26,7 @@ const RoutedResultsViewer: React.FC<ResultsViewerProps> = ({ basePath, patientUu
   if (roots?.length) {
     return (
       <FilterProvider roots={loading ? roots : []}>
-        <ResultsViewer patientUuid={patientUuid} patientFhirUuid={patientFhirUuid} basePath={basePath} loading={loading} />
+        <ResultsViewer patientUuid={patientUuid}  basePath={basePath} loading={loading} />
       </FilterProvider>
     );
   }
@@ -48,15 +39,10 @@ const RoutedResultsViewer: React.FC<ResultsViewerProps> = ({ basePath, patientUu
   );
 };
 
-const ResultsViewer: React.FC<ResultsViewerProps> = ({ patientUuid,patientFhirUuid, basePath, loading }) => {
+const ResultsViewer: React.FC<ResultsViewerProps> = ({ patientUuid, basePath, loading }) => {
   const { t } = useTranslation();
-  const [view, setView] = useState<viewOpts>('split');
   const { totalResultsCount } = useContext(FilterContext);
-  const expanded = view === 'full';
   const { type, testUuid } = useParams();
-
-
-
   return (
     <div className="resultsContainer">
       <div className="resultsHeader">
@@ -72,7 +58,7 @@ const ResultsViewer: React.FC<ResultsViewerProps> = ({ patientUuid,patientFhirUu
             patientUuid={patientUuid}
             basePath={basePath}
             type={type}
-            expanded={expanded}
+            expanded={true}
             testUuid={testUuid}
           />
       </div>
