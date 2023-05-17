@@ -14,11 +14,9 @@
 			tableName="login_user" />
 		<addPrimaryKey schemaName="clinlims"
 			tableName="login_user" columnNames="id" />
-		
 		<addColumn schemaName="clinlims" tableName="login_user">
 			<column name="last_updated" type="TIMESTAMP WITH TIME ZONE" />
 		</addColumn>
-		
 		
 		<rollback>
 			<modifyDataType columnName="id" newDataType="numeric"
