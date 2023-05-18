@@ -2,15 +2,12 @@ package org.openelisglobal.common.rest.provider;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang3.StringUtils;
-import org.checkerframework.checker.units.qual.A;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.rest.provider.bean.patientHistory.PanelDisplay;
 import org.openelisglobal.common.rest.provider.bean.patientHistory.ResultDisplay;
