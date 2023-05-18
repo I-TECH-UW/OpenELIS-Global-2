@@ -37,6 +37,10 @@
       key: 'resultValue',
       header: 'Current Result',
     },
+    {
+      key: 'note',
+      header: 'Notes',
+    },
     
      
     

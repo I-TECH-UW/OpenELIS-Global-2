@@ -1,8 +1,8 @@
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { EmptyState } from '../commons';
-import { ConfigurableLink, useLayoutType, usePatient } from '../commons';
-import { Grid, ShadowBox } from '../panel-timeline/helpers';
+import { ConfigurableLink, useLayoutType } from '../commons';
+import { Grid,ShadowBox } from '../commons/utils';
 import { makeThrottled, testResultsBasePath } from '../helpers';
 import type {
   DateHeaderGridProps,
@@ -29,8 +29,6 @@ const PanelNameCorner: React.FC<PanelNameCornerProps> = ({ showShadow, panelName
 );
 
 const NewRowStartCell = ({ title, range, units, conceptUuid, shadow = false, isString = false }) => {
-  const { patientUuid } = usePatient("uuid");
-
   return (
     <div
       className="rowStartCell"
@@ -40,7 +38,7 @@ const NewRowStartCell = ({ title, range, units, conceptUuid, shadow = false, isS
     >
       {!isString ? (
         <ConfigurableLink
-          to='#trendline'
+          to={"#trendline/" + conceptUuid}
           className="trendlineLink"
         >
           {title}

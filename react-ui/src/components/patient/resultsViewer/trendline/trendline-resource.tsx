@@ -2,9 +2,9 @@ import useSWR from 'swr';
 import { OBSERVATION_INTERPRETATION } from '../commons';
 import { assessValue } from '../loadPatientTestData/helpers';
 import { useMemo } from 'react';
-import { FetchResponse, openmrsFetch, showNotification } from '../commons';
+import { FetchResponse, showNotification } from '../commons';
 import { TreeNode } from '../filter/filter-types';
-import {obs} from '../../../data/dummy/obs.js'
+import { getFromOpeElisServerSync } from "../../../utils/Utils.js";
 
 function computeTrendlineData(treeNode: TreeNode): Array<TreeNode> {
   const tests: Array<TreeNode> = [];
@@ -36,11 +36,18 @@ export function useObstreeData(
   trendlineData: TreeNode;
   isValidating: boolean;
 } {
-  // const { data, error, isLoading, isValidating } = useSWR<FetchResponse<TreeNode>, Error>(
-  //   `/ws/rest/v1/obstree?patient=${patientUuid}&concept=${conceptUuid}`,
-  //   openmrsFetch,
-  // );
-  const { data, error, isLoading ,isValidating } = { data : {data :obs}  , error:{name:"sss" ,message:"lll"}, isLoading:false ,isValidating:false};
+
+  var { data, error, isLoading , isValidating} = {data : null , error: null , isLoading: false ,  isValidating : false}
+
+  const fetchResults = (results) => {
+    data  = results ;
+    error = false;
+    isLoading = false;
+  }
+
+  if(patientUuid && conceptUuid){
+    getFromOpeElisServerSync(`/rest/test-result-tree?patientId=${patientUuid}&testId=${conceptUuid}` , fetchResults)
+   }
   if (error) {
     showNotification({
       title: error.name,
@@ -53,7 +60,7 @@ export function useObstreeData(
     () => ({
       isLoading,
       trendlineData:
-        computeTrendlineData(data?.data)?.[0] ??
+        computeTrendlineData(data)?.[0] ??
         ({
           obs: [],
           display: '',
@@ -64,7 +71,7 @@ export function useObstreeData(
         } as TreeNode),
       isValidating,
     }),
-    [data?.data, isLoading, isValidating],
+    [data, isLoading, isValidating],
   );
 
   return returnValue;

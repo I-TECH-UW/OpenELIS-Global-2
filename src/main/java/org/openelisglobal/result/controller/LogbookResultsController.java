@@ -331,7 +331,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
             e.printStackTrace();
         }
 
-        System.out.println("LogbookResultsController:jsonForm:" + jsonForm);
+        //System.out.println("LogbookResultsController:jsonForm:" + jsonForm);
         return findForward(FWD_SUCCESS, form);
     }
 

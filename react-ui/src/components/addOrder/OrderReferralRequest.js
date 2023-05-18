@@ -1,112 +1,103 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {
-    Column,
-    DatePicker,
-    DatePickerInput,
-    Grid,
-    Select,
-    SelectItem,
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-    TextInput
-} from "@carbon/react";
+import {Column, Grid, Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@carbon/react";
 import {UserInformationContext} from "../layout/Layout";
+import CustomTextInput from "../common/CustomTextInput";
+import CustomSelect from "../common/CustomSelect";
+import CustomDatePicker from "../common/CustomDatePicker";
+
+function requiredSymbol(value) {
+    return (
+        <> {value} <span style={{color: "red"}}>*</span></>
+    )
+}
+
+const header = [{key: 'reason', header: requiredSymbol("Reason for Referral")}, {key: 'referrer', header: 'Referrer'}, {
+    key: 'institute', header: requiredSymbol("Institute")
+}, {key: '', header: 'Sent Date\n' + '(dd/mm/yyyy)'}, {key: 'name', header: requiredSymbol("Test Name")},];
 
 
-const header = [{key: 'reason', header: 'Reason for Referral*'}, {key: 'referrer', header: 'Referrer'}, {
-    key: 'institute', header: 'Institute'
-}, {key: '', header: 'Sent Date\n' + '(dd/mm/yyyy)'}, {key: 'name', header: 'Test Name'},];
-
-const OrderReferralRequest = ({index, selectedTests, referralReasons, referralOrganizations}) => {
+const OrderReferralRequest = ({
+                                  index,
+                                  selectedTests,
+                                  referralReasons,
+                                  referralOrganizations,
+                                  referralRequest,
+                                  setReferralRequest
+                              }) => {
     const {user} = useContext(UserInformationContext);
     const [referralRows, setReferralRows] = useState([]);
 
-    useEffect(() => {
+    function handleReferrer(referrer, index) {
+        const update = [...referralRequest];
+        update[index].referrer = referrer;
+        setReferralRequest(update);
+    }
+
+    function handleReasonForReferral(reasonId, index) {
+        const update = [...referralRequest];
+        update[index].reasonForReferral = reasonId;
+        setReferralRequest(update);
+    }
+
+    function handleInstituteSelect(instituteId, index) {
+        const update = [...referralRequest];
+        update[index].institute = instituteId;
+        setReferralRequest(update);
+    }
+
+    function handleSentDatePicker(date, index) {
+        if (date != null) {
+            const update = [...referralRequest];
+            update[index].sentDate = date;
+            setReferralRequest(update);
+        }
+    }
+
+    const updateUIRender = () => {
         const rows = [];
-        selectedTests.map(test => {
-            let elementId = index + "_" + test.id;
-            let row = {
-                reason: <ReferralReason index={elementId} reasons={referralReasons}/>,
-                referrer: <Referrer index={elementId} user={user}/>,
-                institute: <Institute index={elementId} organizations={referralOrganizations}/>,
-                sentDate: <SentDate index={elementId}/>,
-                testName: <TestName index={elementId} test={test}/>
+        let obj = {};
+        const updateReferralRequest = [...referralRequest];
+        let testValue = {};
+        let defaultSelect = {};
+        selectedTests.map((test, array_index) => {
+            let id = index + "_" + test.id;
+            testValue = {
+                id: test.id, value: test.name
+            };
+            defaultSelect = {
+                id: "", value: ""
             }
+
+
+            obj = {
+                referralRequestObject: referralReasons[0].id,
+                referrer: user.firstName + " " + user.lastName,
+                institute: null,
+                sentDate: "",
+                testId: test.id
+            };
+            let row = {
+                reason: <CustomSelect id={"referralReasonId_" + id} options={referralReasons}
+                                      onChange={(e) => handleReasonForReferral(e, array_index)}/>,
+                referrer: <CustomTextInput id={"referrer_" + id} defaultValue={obj.referrer}
+                                           onChange={(value) => handleReferrer(value, array_index)}/>,
+                institute: <CustomSelect id={"referredInstituteId_" + id} options={referralOrganizations}
+                                         onChange={(e) => handleInstituteSelect(e, array_index)}
+                                         defaultSelect={defaultSelect}/>,
+                sentDate: <CustomDatePicker id={"sendDate_" + id}
+                                            onChange={(date) => handleSentDatePicker(date, array_index)} labelText={""}/>,
+                testName: <CustomSelect id={"shadowReferredTest_" + id} defaultSelect={testValue}/>,
+            };
             rows.push(row);
         });
         setReferralRows(rows);
-
-    }, [selectedTests]);
-
-
-    const ReferralReason = ({index, reasons}) => {
-        return (<>
-            <Select
-                labelText=""
-                id={`referralReasonId_` + index}>
-                {
-                    reasons.map(reason => {
-                        return (
-                            <SelectItem
-                                key={reason.id}
-                                text={reason.value}
-                                value={reason.id}
-                            />
-                        );
-                    })
-                }
-            </Select>
-        </>);
-    };
-    const Referrer = ({index, user}) => {
-        return (<>
-            <TextInput id={`referrer_${index}`} labelText="" value={user.firstName + " " + user.lastName}/>
-        </>);
-    };
-
-    const Institute = ({index, organizations}) => {
-        return (<>
-            <Select
-                labelText="" id={`referredInstituteId_` + index}>
-                {
-                    organizations.map(org => {
-                        return (
-                            <SelectItem
-                                key={org.id}
-                                text={org.value}
-                                value={org.id}
-                            />
-                        );
-                    })
-                }
-            </Select>
-        </>);
-    };
-
-    const SentDate = ({index}) => {
-        return (<>
-            <DatePicker dateFormat="m/d/Y" datePickerType="single">
-                <DatePickerInput id={`sendDate_` + index} placeholder="dd/mm/yyyy" type="text" labelText=""/>
-            </DatePicker>
-        </>);
+        updateReferralRequest.push(obj);
+        setReferralRequest(updateReferralRequest);
     }
 
-    const TestName = ({index, test}) => {
-        return (<>
-            <Select
-                labelText="" id={`shadowReferredTest_` + index}>
-                <SelectItem
-                    text={test.name}
-                    value={test.id}
-                />
-            </Select>
-        </>);
-    };
-
+    useEffect(() => {
+        updateUIRender();
+    }, [selectedTests]);
 
     return (<>
         <Grid>
@@ -114,24 +105,20 @@ const OrderReferralRequest = ({index, selectedTests, referralReasons, referralOr
                 <Table useZebraStyles={false} id={`referralRequestTable_` + index}>
                     <TableHead>
                         <TableRow>
-                            {header.map((header, header_index) => (
-                                <TableHeader id={header.key} key={header_index}>
-                                    {header.header}
-                                </TableHeader>))}
+                            {header.map((header, header_index) => (<TableHeader id={header.key} key={header_index}>
+                                {header.header}
+                            </TableHeader>))}
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {referralRows.length > 0 && referralRows.map((row, td_index) => (
-                            <TableRow key={td_index}>
-                                {
-                                    Object.keys(row)
-                                        .filter((key) => key !== 'id')
-                                        .map((key) => {
-                                            return <TableCell key={key}>{row[key]}
-                                            </TableCell>;
-                                        })
-                                }
-                            </TableRow>))}
+                        {referralRows.length > 0 && referralRows.map((row, td_index) => (<TableRow key={td_index}>
+                            {Object.keys(row)
+                                .filter((key) => key !== 'id')
+                                .map((key) => {
+                                    return <TableCell key={key}>{row[key]}
+                                    </TableCell>;
+                                })}
+                        </TableRow>))}
                     </TableBody>
                 </Table>
             </Column>

@@ -70,8 +70,8 @@ const TreeView: React.FC<TreeViewProps> = ({ patientUuid, basePath, testUuid, lo
         </div>
       )}
       <div className="rightSection">
-        {!tablet   && window.location.href.endsWith('#trendline')? (
-          <Trendline patientUuid={patientUuid} conceptUuid={testUuid} basePath={basePath} showBackToTimelineButton />
+        {!tablet   && window.location.href.includes('#trendline')? (
+          <Trendline patientUuid={patientUuid} conceptUuid={window.location.href.split("#trendline/")[1]} basePath={basePath} showBackToTimelineButton />
         ) : !loading || window.location.href.endsWith('#groupedtimeline')? (
           <GroupedTimeline />
         ) : (

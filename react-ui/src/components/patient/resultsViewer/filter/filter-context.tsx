@@ -1,7 +1,7 @@
 import React, { createContext, useReducer, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import isObject from 'lodash/isObject';
-import { parseTime } from '../panel-timeline/helpers';
+import { parseTime } from '../commons';
 import { TreeNode, FilterContextProps, ReducerState, ReducerActionType, TimelineData } from './filter-types';
 import reducer from './filter-reducer';
 

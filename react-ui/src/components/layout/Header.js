@@ -3,6 +3,8 @@ import { injectIntl } from "react-intl";
 import { withRouter } from "react-router-dom";
 import "../Style.css";
 import { Select, SelectItem } from "@carbon/react";
+import config from "../../config.json";
+import { FormattedMessage } from 'react-intl'
 import {
   Search,
   Notification,
@@ -58,6 +60,7 @@ class OEHeader extends React.Component {
     }));
   };
 
+
   logo = () => {
     return (
       <>
@@ -78,7 +81,8 @@ class OEHeader extends React.Component {
                 <span id="header-logo">{this.logo()}</span>
                 <span id="header-title">{this.props.config.title}</span>
               </HeaderName>
-              {this.props.isLoggedIn() && (
+
+              {this.props.isLoggedIn() && true && (
                 <>
                   <HeaderNavigation aria-label="nav">
                     <HeaderMenu aria-label="Order" menuLinkName="Order">
@@ -88,15 +92,16 @@ class OEHeader extends React.Component {
                       <HeaderMenuItem href="#">Batch Order Entry</HeaderMenuItem>
                       <HeaderMenuItem href="#">Barcode</HeaderMenuItem>
                     </HeaderMenu>
+
+                    {this.props.isLoggedIn() && true && (
                     <HeaderMenu aria-label="Patient" menuLinkName="Patient">
                       <HeaderMenuItem href="/PatientManagement">Add/Edit Patient</HeaderMenuItem>
                       <HeaderMenuItem href="/PatientHistory">Patient History</HeaderMenuItem>
                       <HeaderMenuItem href="#">Sub-link 3</HeaderMenuItem>
                     </HeaderMenu>
-                    <HeaderMenu
-                      aria-label="Non-Conforming Events"
-                      menuLinkName="Non-Conform"
-                    >
+                    )}
+
+                    <HeaderMenu aria-label="Non-Conforming Events" menuLinkName="Non-Conform">
                       <HeaderMenuItem href="#">Sub-link 1</HeaderMenuItem>
                       <HeaderMenuItem href="#">Sub-link 2</HeaderMenuItem>
                       <HeaderMenuItem href="#">Sub-link 3</HeaderMenuItem>
@@ -108,15 +113,13 @@ class OEHeader extends React.Component {
                     </HeaderMenu>
                     <HeaderMenu aria-label="Results" menuLinkName="Results">
                       <HeaderMenuItem href="#">Sub-link 1</HeaderMenuItem>
-                      <HeaderMenuItem href="/result">Result Search</HeaderMenuItem>
+                      <HeaderMenuItem href="/result">Search</HeaderMenuItem>
                       <HeaderMenuItem href="#">Sub-link 3</HeaderMenuItem>
                     </HeaderMenu>
                     <HeaderMenu
-                      aria-label="Validation"
-                      menuLinkName="Validation"
-                    >
+                      aria-label="Validation" menuLinkName="Validation"                    >
                       <HeaderMenuItem href="#">Sub-link 1</HeaderMenuItem>
-                      <HeaderMenuItem href="#">Sub-link 2</HeaderMenuItem>
+                      <HeaderMenuItem href="/validation">Search</HeaderMenuItem>
                       <HeaderMenuItem href="#">Sub-link 3</HeaderMenuItem>
                     </HeaderMenu>
                     <HeaderMenu aria-label="Reports" menuLinkName="Reports">
@@ -126,17 +129,22 @@ class OEHeader extends React.Component {
                     </HeaderMenu>
                     <HeaderMenuItem href="/admin">Admin</HeaderMenuItem>
                   </HeaderNavigation>
+
+                  <HeaderMenuItem target="_blank" href={"http://ozone.uwdigi.org:8069/"}><FormattedMessage id="admin.billing"/></HeaderMenuItem>
+
+                  {/* <HeaderMenuItem target="_blank" href={config.serverBaseUrl + "/MasterListsPage"}><FormattedMessage id="admin.billing"/></HeaderMenuItem> */}
+
                 </>
               )}
               <HeaderGlobalBar>
                 {this.props.isLoggedIn() && (
                   <>
-                    <HeaderGlobalAction aria-label="Search" onClick={() => {}}>
+                    <HeaderGlobalAction aria-label="Search" onClick={() => { }}>
                       <Search size={20} />
                     </HeaderGlobalAction>
                     <HeaderGlobalAction
                       aria-label="Notifications"
-                      onClick={() => {}}
+                      onClick={() => { }}
                     >
                       <Notification size={20} />
                     </HeaderGlobalAction>
