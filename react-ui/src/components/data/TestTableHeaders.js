@@ -47,4 +47,9 @@ export const columns = [
     selector: row => row.resultValue,
     sortable: true,
   },
+  {
+    name: 'Notes',
+    selector: row => row.note,
+    sortable: true,
+  },
 ];

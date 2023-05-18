@@ -45,7 +45,7 @@ class PatientManagement extends React.Component {
                 <SearchPatientForm getSelectedPatient={this.getSelectedPatient}></SearchPatientForm>
                 
                 <br></br>
-                <CreatePatientForm selectedPatient={this.state.selectedPatient}></CreatePatientForm>
+                <CreatePatientForm showActionsButton={true} selectedPatient={this.state.selectedPatient}></CreatePatientForm>
             </>
 
         );

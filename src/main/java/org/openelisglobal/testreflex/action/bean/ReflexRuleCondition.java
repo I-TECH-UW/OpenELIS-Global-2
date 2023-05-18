@@ -36,6 +36,12 @@ public class ReflexRuleCondition {
     @Column(name = "value")
     private String value ;
 
+    @Column(name = "value2")
+    private String value2 ;
+
+    @Column(name = "test_analyte_id")
+    private Integer testAnalyteId;
+
     public Integer getId() {
         return id;
     }
@@ -72,5 +78,21 @@ public class ReflexRuleCondition {
     }
     public void setValue(String value) {
         this.value = value;
+    }
+    
+    public String getValue2() {
+        return value2;
+    }
+    
+    public void setValue2(String value2) {
+        this.value2 = value2;
+    }
+    
+    public Integer getTestAnalyteId() {
+        return testAnalyteId;
+    }
+    
+    public void setTestAnalyteId(Integer testAnalyteId) {
+        this.testAnalyteId = testAnalyteId;
     }
 }

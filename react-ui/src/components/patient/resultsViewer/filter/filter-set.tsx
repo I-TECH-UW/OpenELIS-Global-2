@@ -2,7 +2,6 @@ import React, { useContext, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Accordion, AccordionItem, Checkbox, Button, Search } from '@carbon/react';
 import { TreeViewAlt, Close, Search as SearchIcon } from '@carbon/react/icons';
-import { useConfig, useLayoutType } from '../commons';
 import type { FilterNodeProps, FilterLeafProps } from './filter-types';
 import FilterContext from './filter-context';
 //import styles from './filter-set.styles.scss';
@@ -18,15 +17,13 @@ interface FilterSetProps {
 
 const FilterSet: React.FC<FilterSetProps> = ({ hideFilterSetHeader = false }) => {
   const { roots } = useContext(FilterContext);
-  const config = useConfig();
-  const tablet = useLayoutType();
   const { t } = useTranslation();
   const { resetTree } = useContext(FilterContext);
   const [searchTerm, setSearchTerm] = useState('');
   const [showSearchInput, setShowSearchInput] = useState(false);
 
   return (
-    <div className={!tablet ? 'stickyFilterSet' : ''}>
+    <div className={'stickyFilterSet'}>
       {!hideFilterSetHeader &&
         (!showSearchInput ? (
           <div className="filterSetHeader">
@@ -57,7 +54,7 @@ const FilterSet: React.FC<FilterSetProps> = ({ hideFilterSetHeader = false }) =>
       <div className="filterSetContent">
         {roots?.map((root, index) => (
           <div className="nestedAccordion" key={`filter-node-${index}`}>
-            <FilterNode root={root} level={0} open={config.concepts[index].defaultOpen} />
+            <FilterNode root={root} level={0} open={true} />
           </div>
         ))}
       </div>

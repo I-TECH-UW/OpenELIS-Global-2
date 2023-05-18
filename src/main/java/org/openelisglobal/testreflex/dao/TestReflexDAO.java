@@ -147,4 +147,12 @@ public interface TestReflexDAO extends BaseDAO<TestReflex, String> {
     List<TestReflex> getFlaggedTestReflexesByTestResult(TestResult testResult, String flag) throws LIMSRuntimeException;
 
     boolean duplicateTestReflexExists(TestReflex testReflex) throws LIMSRuntimeException;
+
+     /**
+     * Gets the ReflexTests By TestAnalyte  returns null.
+     *
+     * @param analyte id
+     * @throws LIMSRuntimeException
+     */    
+    List<TestReflex> getTestReflexsByTestAnalyteId(String testAnalyteId) throws LIMSRuntimeException;
 }

@@ -18,6 +18,7 @@ import org.openelisglobal.testanalyte.service.TestAnalyteService;
 import org.openelisglobal.testanalyte.valueholder.TestAnalyte;
 import org.openelisglobal.testreflex.action.bean.ReflexRule;
 import org.openelisglobal.testreflex.action.bean.ReflexRuleCondition;
+import org.openelisglobal.testreflex.action.bean.ReflexRuleOptions.NumericRelationOptions;
 import org.openelisglobal.testreflex.dao.ReflexRuleDAO;
 import org.openelisglobal.testreflex.dao.TestReflexDAO;
 import org.openelisglobal.testreflex.valueholder.TestReflex;
@@ -164,12 +165,18 @@ public class TestReflexServiceImpl extends BaseObjectServiceImpl<TestReflex, Str
     }
 
     @Override
+    public List<TestReflex> getTestReflexsByTestAnalyteId(String testAnalyteId){
+      return baseObjectDAO.getTestReflexsByTestAnalyteId(testAnalyteId);
+    }
+
+    @Override
     @Transactional()
     public void saveOrUpdateReflexRule(ReflexRule reflexRule) {
         if (reflexRule.getId() == null) {
-            reflexRuleDAO.insert(reflexRule);
             processReflexRule(reflexRule);
+            reflexRuleDAO.insert(reflexRule);
         } else {
+            processReflexRule(reflexRule);
             reflexRuleDAO.update(reflexRule);
         }
     }
@@ -181,59 +188,108 @@ public class TestReflexServiceImpl extends BaseObjectServiceImpl<TestReflex, Str
     }
 
     @Override
+    @Transactional()
     public void deactivateReflexRule(String id) {
         Optional<ReflexRule> rule = reflexRuleDAO.get(Integer.valueOf(id));
-        if(rule.isPresent()){
+        if (rule.isPresent()) {
+            // clear all the existing reflex tests
+            for (ReflexRuleCondition condition : rule.get().getConditions()) {
+                if (condition.getId() != null && condition.getTestAnalyteId() != null) {
+                    List<TestReflex> reflexes = baseObjectDAO
+                            .getTestReflexsByTestAnalyteId(condition.getTestAnalyteId().toString());
+                    reflexes.forEach(r -> baseObjectDAO.delete(r));
+                }
+            }
             rule.get().setActive(false);
             reflexRuleDAO.update(rule.get());
-        }   
+        }
     }
 
     private void processReflexRule(ReflexRule rule) {
-        Analyte analyte = new Analyte();
-        analyte.setAnalyteName(rule.getRuleName());
-        analyte.setIsActive(IActionConstants.YES);
-        analyte = analyteService.save(analyte);
-
+        Analyte analyte = null;
+        if (rule.getId() != null && rule.getAnalyteId() != null) {
+            analyte = analyteService.get(rule.getAnalyteId().toString());
+            analyte.setAnalyteName(rule.getRuleName());
+            analyte = analyteService.update(analyte);
+        } else {
+            analyte = new Analyte();
+            analyte.setAnalyteName(rule.getRuleName());
+            analyte.setIsActive(IActionConstants.YES);
+            analyte = analyteService.save(analyte);
+            rule.setAnalyteId(Integer.valueOf(analyte.getId()));
+        }
+        
+        // clear all the existing reflex tests
+        for (ReflexRuleCondition condition : rule.getConditions()) {
+            if (condition.getId() != null && condition.getTestAnalyteId() != null) {
+                List<TestReflex> reflexes = baseObjectDAO
+                        .getTestReflexsByTestAnalyteId(condition.getTestAnalyteId().toString());
+                reflexes.forEach(r -> baseObjectDAO.delete(r));
+            }
+        }
+        
         for (ReflexRuleCondition condition : rule.getConditions()) {
             if (testAndSampleMatches(condition.getTestId(), condition.getSampleId())) {
-                TestAnalyte testAnalyte = new TestAnalyte();
-                testAnalyte.setAnalyte(analyte);
-                Test triggerTest = testService.getTestById(condition.getTestId());
-                testAnalyte.setTest(triggerTest);
-                testAnalyte.setResultGroup(REFLEX_RESULT_GROUP);
-                testAnalyte.setTestAnalyteType(REFLEX_RESULT_TYPE);
-                testAnalyte = testAnalyteService.save(testAnalyte);
+                TestAnalyte testAnalyte = null;
+                Test triggerTest = null;
+                if (condition.getId() != null && condition.getTestAnalyteId() != null) {
+                    testAnalyte = testAnalyteService.get(condition.getTestAnalyteId().toString());
+                    triggerTest = testService.getTestById(condition.getTestId());
+                    testAnalyte.setTest(triggerTest);
+                    testAnalyte = testAnalyteService.update(testAnalyte);
+                } else {
+                    testAnalyte = new TestAnalyte();
+                    testAnalyte.setAnalyte(analyte);
+                    triggerTest = testService.getTestById(condition.getTestId());
+                    testAnalyte.setTest(triggerTest);
+                    testAnalyte.setResultGroup(REFLEX_RESULT_GROUP);
+                    testAnalyte.setTestAnalyteType(REFLEX_RESULT_TYPE);
+                    testAnalyte = testAnalyteService.save(testAnalyte);
+                    condition.setTestAnalyteId(Integer.valueOf(testAnalyte.getId()));
+                }
                 for (ReflexRuleAction action : rule.getActions()) {
                     TestReflex reflex = new TestReflex();
-                    // TestResult result = testResultService.get(condition.getValue());
-                    List<TestResult> results = testResultService.getActiveTestResultsByTest(triggerTest.getId());
-                    if (testService.getResultType(triggerTest).equals("D")) {
-                        Optional<TestResult> result = results.stream()
-                                .filter(res -> res.getValue().equals(condition.getValue())).findFirst();
-                        reflex.setTestResult(result.get());
-                    } else {
-                        reflex.setTestResult(results.get(0));
-                        if(testService.getResultType(triggerTest).equals("N")){
-                            Double value = Double.parseDouble(condition.getValue());
-                            reflex.setNonDictionaryValue(value.toString());
-                        }else{
-                            reflex.setNonDictionaryValue(condition.getValue());
-                        }  
-                    }
-                    reflex.setRelation(condition.getRelation());
-                    reflex.setTestAnalyte(testAnalyte);
-                    reflex.setTest(triggerTest);
-                    if (testAndSampleMatches(action.getReflexTestId(), action.getSampleId())) {
-                        Test reflexTest = testService.getTestById(action.getReflexTestId());
-                        reflex.setAddedTest(reflexTest);
-                    }
+                    setTestReflexTest(triggerTest, condition, action, reflex, testAnalyte);
                     reflexService.save(reflex);
+                    action.setTestReflexId(Integer.valueOf(reflex.getId()));
                 }
             }
         }
     }
 
+    private void setTestReflexTest(Test triggerTest, ReflexRuleCondition condition, ReflexRuleAction action,
+            TestReflex reflex, TestAnalyte testAnalyte) {
+        List<TestResult> results = testResultService.getActiveTestResultsByTest(triggerTest.getId());
+        if (testService.getResultType(triggerTest).equals("D")) {
+            Optional<TestResult> result = results.stream().filter(res -> res.getValue().equals(condition.getValue()))
+                    .findFirst();
+            if (result.isPresent()) {
+                reflex.setTestResult(result.get());
+            } else {
+                reflex.setTestResult(results.get(0));
+            }
+        } else {
+            reflex.setTestResult(results.get(0));
+            if (testService.getResultType(triggerTest).equals("N")) {
+                Double value = Double.parseDouble(condition.getValue());
+                Double value2 = Double.parseDouble(condition.getValue2());
+                if (condition.getRelation().equals(NumericRelationOptions.BETWEEN)) {
+                    reflex.setNonDictionaryValue(value.toString() + "-" + value2.toString());
+                } else {
+                    reflex.setNonDictionaryValue(value.toString());
+                }
+            } else {
+                reflex.setNonDictionaryValue(condition.getValue());
+            }
+        }
+        reflex.setRelation(condition.getRelation());
+        reflex.setTestAnalyte(testAnalyte);
+        reflex.setTest(triggerTest);
+        if (testAndSampleMatches(action.getReflexTestId(), action.getSampleId())) {
+            Test reflexTest = testService.getTestById(action.getReflexTestId());
+            reflex.setAddedTest(reflexTest);
+        }
+    }
 
     private Boolean testAndSampleMatches(String testId, String sampleTypeId) {
         List<Test> testList = typeOfSampleService.getActiveTestsBySampleTypeId(sampleTypeId, false);

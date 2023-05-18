@@ -1,4 +1,5 @@
 import React, { Component, Fragment } from "react";
+import { FormattedMessage} from "react-intl";
 import './ReflexStyles.css'
 import { TextInput } from '@carbon/react';
 
@@ -127,7 +128,7 @@ class Autocomplete extends Component {
       } else {
         suggestionsListComponent = (
           <div className="no-suggestions">
-            <em>No suggestions available.</em>
+            <em><FormattedMessage id="rulebuilder.label.noSuggestions" /></em>
           </div>
         );
       }
@@ -146,7 +147,7 @@ class Autocomplete extends Component {
           value={this.props.stateValue}
           invalid={this.state.invalid}
           required
-          invalidText="Invalid Test"
+          invalidText={<FormattedMessage id="rulebuilder.error.invalidTest"/>}
         />
         {suggestionsListComponent}
       </Fragment>

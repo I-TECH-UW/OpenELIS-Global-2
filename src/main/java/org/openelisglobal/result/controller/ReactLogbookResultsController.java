@@ -165,6 +165,8 @@ public class ReactLogbookResultsController extends LogbookResultsBaseController 
     private UserService userService;
     @Autowired
     private RoleService roleService;
+    @Autowired
+    private SampleService sampleService;
 
     private final String RESULT_SUBJECT = "Result Note";
     private final String REFERRAL_CONFORMATION_ID;
@@ -192,11 +194,12 @@ public class ReactLogbookResultsController extends LogbookResultsBaseController 
     @GetMapping(value = "ReactLogbookResultsByRange", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public LogbookResultsForm showReactLogbookResults(@RequestParam String labNumber, @RequestParam boolean doRange,
+            @RequestParam boolean finished,
             @Validated(LogbookResults.class) @ModelAttribute("form") LogbookResultsForm form, BindingResult result)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
-        System.out.println("Get:ReactLogbookResultsController:ReactLogbookResultsByRange:labNumber:doRange"
-                + labNumber + ":" + doRange);
+        System.out.println("Get:ReactLogbookResultsController:ReactLogbookResultsByRange:labNumber:doRange:finished"
+                + labNumber + ":" + doRange + ":" + finished);
 
         LogbookResultsForm newForm = new LogbookResultsForm();
         if (!(result.hasFieldErrors("type") || result.hasFieldErrors("testSectionId")
@@ -222,7 +225,7 @@ public class ReactLogbookResultsController extends LogbookResultsBaseController 
         newForm.setDisplayTestSections(true);
         newForm.setSearchByRange(false);
 
-        return getLogbookResults(request, newForm, doRange);
+        return getLogbookResults(request, newForm, doRange, finished);
     }
 
 //    @RequestMapping(value = "/ReactRangeResults", method = RequestMethod.GET)
@@ -233,12 +236,11 @@ public class ReactLogbookResultsController extends LogbookResultsBaseController 
     @GetMapping(value = "ReactRangeResults", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public LogbookResultsForm showReactLogbookResultsByRange(@RequestParam String labNumber,
-            @RequestParam boolean doRange,
+            @RequestParam boolean doRange, @RequestParam boolean finished,
             @Validated(LogbookResults.class) @ModelAttribute("form") LogbookResultsForm form, BindingResult result)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
-        System.out.println(
-                "Get:ReactLogbookResultsController showReactLogbookResultsByRange:labNumber:" + labNumber);
+        System.out.println("Get:ReactLogbookResultsController showReactLogbookResultsByRange:labNumber:" + labNumber);
 
         LogbookResultsForm newForm = new LogbookResultsForm();
         if (!(result.hasFieldErrors("type") || result.hasFieldErrors("accessionNumber"))) {
@@ -257,12 +259,13 @@ public class ReactLogbookResultsController extends LogbookResultsBaseController 
         }
         newForm.setDisplayTestSections(false);
         newForm.setSearchByRange(true);
-        //System.out.println("Post:ReactLogbookResultsController:call getLogbookResults");
-        return getLogbookResults(request, newForm, doRange);
+        // System.out.println("Post:ReactLogbookResultsController:call
+        // getLogbookResults");
+        return getLogbookResults(request, newForm, doRange, finished);
     }
 
-    private LogbookResultsForm getLogbookResults(HttpServletRequest request, LogbookResultsForm form, boolean doRange)
-            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+    private LogbookResultsForm getLogbookResults(HttpServletRequest request, LogbookResultsForm form, boolean doRange,
+            boolean finished) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
         // boolean useTechnicianName = ConfigurationProperties.getInstance()
         // .isPropertyValueEqual(Property.resultTechnicianName, "true");
@@ -317,8 +320,7 @@ public class ReactLogbookResultsController extends LogbookResultsBaseController 
                 }
                 form.setSearchFinished(true);
             } else if (!GenericValidator.isBlankOrNull(form.getAccessionNumber())) {
-
-                tests = resultsLoadUtility.getUnfinishedTestResultItemsByAccession(form.getAccessionNumber(), doRange);
+                tests = resultsLoadUtility.getUnfinishedTestResultItemsByAccession(form.getAccessionNumber(), doRange, finished);
                 filteredTests = userService.filterResultsByLabUnitRoles(getSysUserId(request), tests,
                         Constants.ROLE_RESULTS);
                 int count = resultsLoadUtility.getTotalCountAnalysisByAccessionAndStatus(form.getAccessionNumber());
@@ -369,14 +371,14 @@ public class ReactLogbookResultsController extends LogbookResultsBaseController 
                     DisplayListService.getInstance().getList(DisplayListService.ListType.REFERRAL_REASONS));
         }
 
-        ObjectMapper mapper = new ObjectMapper();
-        String jsonForm = "";
-        try {
-            jsonForm = mapper.writeValueAsString(form);
-        } catch (JsonProcessingException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+//        ObjectMapper mapper = new ObjectMapper();
+//        String jsonForm = "";
+//        try {
+//            jsonForm = mapper.writeValueAsString(form);
+//        } catch (JsonProcessingException e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        }
 
         // System.out.println("ReactLogbookResultsController:jsonForm:" + jsonForm);
         // return findForward(FWD_SUCCESS, form);
@@ -391,15 +393,12 @@ public class ReactLogbookResultsController extends LogbookResultsBaseController 
 
     @PostMapping(value = "ReactLogbookResultsUpdateTest", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public void showReactLogbookResultsUpdateTest(
-            HttpServletRequest request, 
-            @Validated(LogbookResultsForm.LogbookResults.class) 
-            @RequestBody LogbookResultsForm Form, 
-            BindingResult result)
-            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        
-        //System.out.println("ReactLogbookResultsController:Form:" + Form.toString());
-        
+    public void showReactLogbookResultsUpdateTest(HttpServletRequest request,
+            @Validated(LogbookResultsForm.LogbookResults.class) @RequestBody LogbookResultsForm Form,
+            BindingResult result) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+
+        // System.out.println("ReactLogbookResultsController:Form:" + Form.toString());
+
 //        JSONParser parser = new JSONParser();
 //        JSONObject jsonObject = new JSONObject();
 //        try {
@@ -417,15 +416,14 @@ public class ReactLogbookResultsController extends LogbookResultsBaseController 
 //        LogbookResultsForm form = new LogbookResultsForm();
 //
         try {
-         //   form = mapper.readValue(Form.toJSONString(), LogbookResultsForm.class);
+            // form = mapper.readValue(Form.toJSONString(), LogbookResultsForm.class);
             jsonString = mapper.writeValueAsString(Form);
         } catch (Exception e) {
             System.out.println("Post:ReactLogbookResultsController:ERROR:" + e.toString());
         }
 //        //System.out.println("Post:ReactLogbookResultsController:form:" + form.toString());
         System.out.println("Post:ReactLogbookResultsController:SUCCESS" + jsonString);
-        
-        
+
         // return("");
     }
 
@@ -438,13 +436,10 @@ public class ReactLogbookResultsController extends LogbookResultsBaseController 
 
     @PostMapping(value = "ReactLogbookResultsUpdate", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public LogbookResultsForm showReactLogbookResultsUpdate(
-            HttpServletRequest request, 
-            @Validated(LogbookResultsForm.LogbookResults.class) 
-            @RequestBody LogbookResultsForm form, 
-            BindingResult result)
-            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        
+    public LogbookResultsForm showReactLogbookResultsUpdate(HttpServletRequest request,
+            @Validated(LogbookResultsForm.LogbookResults.class) @RequestBody LogbookResultsForm form,
+            BindingResult result) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+
         System.out.println("Post:ReactLogbookResultsController:SUCCESS");
 
         boolean useTechnicianName = ConfigurationProperties.getInstance()
@@ -455,7 +450,7 @@ public class ReactLogbookResultsController extends LogbookResultsBaseController 
         String statusRuleSet = ConfigurationProperties.getInstance().getPropertyValueUpperCase(Property.StatusRules);
 
         if ("true".equals(request.getParameter("pageResults"))) {
-            return getLogbookResults(request, form, true);
+            return getLogbookResults(request, form, true, true);
         }
 
         if (result.hasErrors()) {
