@@ -4,7 +4,6 @@ import { withRouter } from "react-router-dom";
 import "../Style.css";
 import { Select, SelectItem } from "@carbon/react";
 import config from "../../config.json";
-import { FormattedMessage } from 'react-intl'
 import {
   Search,
   Notification,
