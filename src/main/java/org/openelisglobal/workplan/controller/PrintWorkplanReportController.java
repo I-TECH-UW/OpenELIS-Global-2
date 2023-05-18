@@ -23,6 +23,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -107,6 +108,70 @@ public class PrintWorkplanReportController extends BaseController {
         }
     }
 
+    @RequestMapping(value = "/rest/printWorkplanReport", method = RequestMethod.POST)
+    public void showRestPrintWorkplanReport(HttpServletRequest request, HttpServletResponse response,
+    		@RequestBody @Validated(PrintWorkplan.class) WorkplanForm form, BindingResult result) {
+        if (result.hasErrors()) {
+            writeErrorsToResponse(result, response);
+            return;
+        }
+
+        request.getSession().setAttribute(SAVE_DISABLED, "true");
+
+        String workplanType = form.getType();
+        String workplanName;
+
+        if (workplanType.equals("test")) {
+            String testID = form.getTestTypeID();
+            workplanName = getTestTypeName(testID);
+        } else {
+            workplanType = Character.toUpperCase(workplanType.charAt(0)) + workplanType.substring(1);
+            workplanName = form.getTestName();
+        }
+
+        // get workplan report based on testName
+        IWorkplanReport workplanReport = getWorkplanReport(workplanType, workplanName);
+
+        workplanReport.setReportPath(getReportPath());
+
+        // set jasper report parameters
+        HashMap<String, Object> parameterMap = workplanReport.getParameters();
+
+        // prepare report
+        List<?> workplanRows = workplanReport.prepareRows(form);
+
+        // set Jasper report file name
+        String reportFileName = workplanReport.getFileName();
+        ClassLoader classLoader = getClass().getClassLoader();
+        File reportFile = new File(classLoader.getResource("reports/" + reportFileName + ".jasper").getFile());
+
+        try {
+
+            byte[] bytes = null;
+
+            JRDataSource dataSource = createReportDataSource(workplanRows);
+            bytes = JasperRunManager.runReportToPdf(reportFile.getAbsolutePath(), parameterMap, dataSource);
+
+            ServletOutputStream servletOutputStream = response.getOutputStream();
+            response.setContentType("application/pdf");
+            response.setContentLength(bytes.length);
+            String downloadFilename = "WorkplanReport";
+            response.setHeader("Content-Disposition", "filename=\"" + downloadFilename + ".pdf\"");
+
+            servletOutputStream.write(bytes, 0, bytes.length);
+            servletOutputStream.flush();
+            servletOutputStream.close();
+
+        } catch (JRException | IOException e) {
+            LogEvent.logError(e.toString(), e);
+            result.reject("error.jasper", "error.jasper");
+        }
+        if (result.hasErrors()) {
+            saveErrors(result);
+        }
+    }
+
+    
     private JRDataSource createReportDataSource(List<?> includedTests) {
         JRBeanCollectionDataSource dataSource;
         dataSource = new JRBeanCollectionDataSource(includedTests);

@@ -1,5 +1,5 @@
 import React from "react";
-import { injectIntl } from "react-intl";
+import { FormattedMessage, injectIntl } from "react-intl";
 import { withRouter } from "react-router-dom";
 import "../Style.css";
 import { Select, SelectItem } from "@carbon/react";
@@ -105,7 +105,7 @@ class OEHeader extends React.Component {
                     <HeaderMenu aria-label="Workplan" menuLinkName={formatMessage({id:"banner.menu.workplan"})}>
                       <HeaderMenuItem href="/WorkplanByTest"><FormattedMessage id="banner.menu.workplan.test"/> </HeaderMenuItem>
                       <HeaderMenuItem href="/WorkplanByPanel"><FormattedMessage id="banner.menu.workplan.panel"/> </HeaderMenuItem>
-                      <HeaderMenuItem href="/WorkplanByUnit"><FormattedMessage id="banner.menu.workplan.bench"/> </HeaderMenuItem>
+                      <HeaderMenuItem href="/WorkplanByUnit"><FormattedMessage id="banner.menu.workplan.unit"/> </HeaderMenuItem>
                       <HeaderMenuItem href="/WorkplanByPriority"><FormattedMessage id="banner.menu.workplan.priority"/> </HeaderMenuItem>
                     </HeaderMenu>
                     <HeaderMenu aria-label="Results" menuLinkName="Results">
