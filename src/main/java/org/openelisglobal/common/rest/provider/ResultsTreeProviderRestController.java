@@ -2,17 +2,21 @@ package org.openelisglobal.common.rest.provider;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
+import org.checkerframework.checker.units.qual.A;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.rest.provider.bean.patientHistory.PanelDisplay;
 import org.openelisglobal.common.rest.provider.bean.patientHistory.ResultDisplay;
 import org.openelisglobal.common.rest.provider.bean.patientHistory.ResultTree;
 import org.openelisglobal.common.rest.provider.bean.patientHistory.TestDisplay;
+import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.panel.valueholder.Panel;
 import org.openelisglobal.result.service.ResultService;
 import org.openelisglobal.result.valueholder.Result;
@@ -40,6 +44,9 @@ public class ResultsTreeProviderRestController {
     SampleHumanService sampleHumanService;
 
     @Autowired
+    DictionaryService dictionaryService;
+
+    @Autowired
     TestService testService;
     
     @GetMapping(value = "result-tree", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -63,15 +70,14 @@ public class ResultsTreeProviderRestController {
         for (Result result : results) {
             analyses.add(result.getAnalysis());
             testSection = result.getAnalysis().getTestSection();
-            panel = result.getAnalysis().getPanel();
+            panel = result.getAnalysis().getPanel() != null ? result.getAnalysis().getPanel():createDummyPanel(result.getAnalysis().getTestSection().getId());
             
             if (testSectionPanelMap.containsKey(testSection)) {
                 testSectionPanelMap.get(testSection).add(panel);
             } else {
                 filteredPanels = new HashSet<>();
                 filteredPanels.add(panel);
-                testSectionPanelMap.put(testSection, filteredPanels);
-                
+                testSectionPanelMap.put(testSection, filteredPanels); 
             }
             
             if (panelResultMap.containsKey(panel)) {
@@ -112,7 +118,13 @@ public class ResultsTreeProviderRestController {
                     
                     for (Result result : testResultentry.getValue()) {
                         ResultDisplay resultDisplay = new ResultDisplay();
-                        resultDisplay.setValue(result.getValue(true));
+                        if(result.getResultType().equals("N")){
+                            resultDisplay.setValue(result.getValue(true));
+                        }else {
+                            String dict = dictionaryService.get(result.getValue()).getDictEntry();
+                            resultDisplay.setValue(dict);
+                        }
+                        
                         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
                         resultDisplay.setObsDatetime(dateFormat.format(result.getLastupdated()));
                         resultDisplays.add(resultDisplay);
@@ -135,7 +147,7 @@ public class ResultsTreeProviderRestController {
                 }
                 
                 PanelDisplay panelDisplay = new PanelDisplay();
-                panelDisplay.setDisplay(panelEntry != null ? panelEntry.getLocalizedName() : "");
+                panelDisplay.setDisplay(panelEntry.getPanelName().contains("NEW")?"" :panelEntry.getLocalizedName());
                 panelDisplay.setSubSets(testDisplays);
                 panelDisplays.add(panelDisplay);
             }
@@ -147,6 +159,13 @@ public class ResultsTreeProviderRestController {
         }
         
         return resultTrees;
+    }
+
+    private Panel createDummyPanel(String id) {
+        Panel panel = new Panel();
+        panel.setId("NEW"+id);
+        panel.setPanelName("NEW"+id);
+        return panel;
     }
 
     @GetMapping(value = "test-result-tree", produces = MediaType.APPLICATION_JSON_VALUE)
