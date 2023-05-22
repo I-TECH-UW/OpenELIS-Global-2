@@ -2834,7 +2834,7 @@ function /*void*/ setSaveButton() {
             <form:select 
                  path="gender"
                  id="vl.gender"
-                 onchange="vl.checkGender(true)" >
+                 onchange="vl.checkGender(true);vl.checkGenderForVlPregnancyOrSuckle()" >
                  <form:option value="">&nbsp;</form:option>
             	 <form:options items= "${form.formLists['GENDERS']}" itemLabel="localizedName" itemValue="id"/> 
 	    	</form:select>
@@ -3115,11 +3115,11 @@ function /*void*/ setSaveButton() {
         	<td><spring:message code="sample.project.priorVLLab"/>
 		    </td>
         <td>
-            <form:input path="observations.demandcd4Percent"
+            <form:input path="observations.priorVLLab"
 					cssClass="text"
                     onchange="makeDirty();compareAllObservationHistoryFields(true);"
-	     			id="vl.demandcd4Percent" maxlength="10" />
-	     			<div id="demandcd4PercentMessage" class="blank" />
+	     			id="vl.priorVLLab" maxlength="10" />
+	     			<div id="priorVLLabMessage" class="blank" />
         </td>
     </tr>
     
@@ -3215,7 +3215,7 @@ function /*void*/ setSaveButton() {
 			<form:checkbox
 				   path="ProjectData.edtaTubeTaken"
 				   id="vl.edtaTubeTaken"
-				   onchange="vl.checkSampleItem($('vl.edtaTubeTaken'));" />
+				   onchange="vl.checkSampleItem($('vl.edtaTubeTaken'));checkVLSampleType(this);" />
 		</td>
 	</tr>
 	
@@ -3226,7 +3226,17 @@ function /*void*/ setSaveButton() {
 				<form:checkbox
 					   path="ProjectData.dbsvlTaken"
 					   id="vl.dbsvlTaken"
-					   onchange="vl.checkSampleItem($('vl.dbsvlTaken'));" />
+					   onchange="vl.checkSampleItem($('vl.dbsvlTaken'));checkVLSampleType(this);" />
+			</td>
+		</tr>	
+			<tr>
+			<td width="2%"></td>
+			<td width="38%"><spring:message code="sample.entry.project.title.psc" /></td>
+			<td width="60%">
+				<form:checkbox
+					   path="ProjectData.pscvlTaken"
+					   id="vl.pscvlTaken"
+					   onchange="vl.checkSampleItem($('vl.pscvlTaken'));checkVLSampleType(this);" />
 			</td>
 		</tr>	
 	<tr>
@@ -3262,7 +3272,13 @@ yesesInDiseases = [
      <%=Encode.forJavaScript(org.openelisglobal.dictionary.ObservationHistoryList.YES_NO_UNKNOWN.getList().get(0).getId()) %>
      ];
 
-
+function checkVLSampleType(e){
+	$("vl.pscvlTaken").checked = (e.id === "vl.pscvlTaken");
+	$("vl.dbsvlTaken").checked = (e.id === "vl.dbsvlTaken");
+	$("vl.edtaTubeTaken").checked = (e.id === "vl.edtaTubeTaken");
+}
+    
+    
 function ArvInitialProjectChecker() {
     this.idPre = "iarv.";
 
@@ -3450,6 +3466,7 @@ function pageOnLoad(){
     initializeStudySelection();
     studies.initializeProjectChecker();
     projectChecker == null || projectChecker.refresh(); 
+    vl.checkGenderForVlPregnancyOrSuckle();
 }
 
 </script>

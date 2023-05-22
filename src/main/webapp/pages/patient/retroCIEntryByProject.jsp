@@ -110,7 +110,7 @@ function clearFormElements(fieldIds) {
 <script type="text/javascript">
 function Studies() {
 	this.validators = new Array();
-	this.studyNames = ["InitialARV_Id", "FollowUpARV_Id", "RTN_Id", "_Id", "RTN_Id"];
+	this.studyNames = ["InitialARV_Id", "FollowUpARV_Id", "RTN_Id", "_Id", "RTN_Id","VL_Id","EID_Id"];
 
 	this.validators["InitialARV_Id"] = new FieldValidator();
 	this.validators["InitialARV_Id"].setRequiredFields( new Array("receivedDateForDisplay", "interviewDate", "centerCode", "subjectOrSiteSubject", "labNo", "gender", "dateOfBirth") );
@@ -121,7 +121,7 @@ function Studies() {
 	this.validators["EID_Id"].setRequiredFields( new Array("eid.receivedDateForDisplay", "eid.interviewDate", "eid.centerCode", "eid.centerName", "subjectOrSiteSubject", "eid.labNo", "eid.dateOfBirth", "eid.gender" ) );
 	
 	this.validators["VL_Id"] = new FieldValidator();
-	this.validators["VL_Id"].setRequiredFields( new Array("vl.receivedDateForDisplay", "vl.interviewDate", "vl.centerCode", "vl.centerName", "subjectOrSiteSubject", "vl.labNo", "vl.dateOfBirth", "vl.gender" ) );
+	this.validators["VL_Id"].setRequiredFields( new Array("vl.receivedDateForDisplay", "vl.interviewDate", "subjectOrSiteSubject", "vl.labNo", "vl.dateOfBirth", "vl.gender" ) );
 	
 	this.validators["RTN_Id"] = new FieldValidator();
 	this.validators["RTN_Id"].setRequiredFields( new Array("rtn.labNo", "rtn.receivedDateForDisplay", "rtn.interviewDate", "rtn.gender", "rtn.dateOfBirth", "rtn.nameOfDoctor", "rtn.service", "rtn.hospital") );
@@ -165,6 +165,7 @@ var formFields = null;
 // the ID of the div with the right questions is the same as the projectFormName
 function switchStudyForm( divId ) {
 	hideAllDivs();
+	setDefaultTests(divId);
 	if (divId != "" && divId != "0") {
 		$("projectFormName").value = divId;
     	toggleDisabledDiv(document.getElementById(divId), true);
@@ -193,7 +194,7 @@ function adjustFieldsForRequestType() {
 	}
 	
   	if (requestType == "readwrite" || requestType == "readonly") {
-    	$("studyFormsID").style.display = "none";
+    	//$("studyFormsID").style.display = "none";
     	if ( projectChecker != null ) {
 			$(projectChecker.idPre + "patientRecordStatusRow").style.display = "table-row";
 			$(projectChecker.idPre + "sampleRecordStatusRow").style.display = "table-row";
@@ -266,6 +267,53 @@ function hideAllDivs(){
 	document.getElementById('VL_Id').style.display = "none";
 }
 
+/*
+ * Set default tests by study, but 
+ */
+function setDefaultTests( div )
+{
+    if ( requestType != 'initial' ) {
+        return;
+    }
+    var tests = new Array();
+    if (div=="InitialARV_Id") {
+       /* tests = new Array("iarv.serologyHIVTest", "iarv.glycemiaTest", "iarv.creatinineTest",
+                "iarv.transaminaseTest", "iarv.edtaTubeTaken", "iarv.dryTubeTaken",
+                "iarv.nfsTest", "iarv.cd4cd8Test") ;*/
+                
+    	tests = new Array("iarv.serologyHIVTest", "iarv.creatinineTest",
+                "iarv.edtaTubeTaken", "iarv.dryTubeTaken",
+                "iarv.nfsTest", "iarv.cd4cd8Test") ;      
+      }
+    
+    if (div=="FollowUpARV_Id") {
+       // tests = new Array("farv.glycemiaTest", "farv.creatinineTest",
+             //  "farv.transaminaseTest", "farv.edtaTubeTaken", "farv.dryTubeTaken") ;
+       tests = new Array("farv.creatinineTest", "farv.dryTubeTaken") ;
+    }
+    
+    if (div=="EID_Id") {
+      tests = new Array ("eid.dnaPCR", "eid.dbsTaken");
+    }
+    
+    if (div=="VL_Id") {
+        tests = new Array ("vl.viralLoadTest");
+      }
+    
+    if (div=="RTN_Id" ) {
+        tests = new Array ("rtn.serologyHIVTest", "rtn.dryTubeTaken");
+    }
+    if (div=="Indeterminate_Id" ){
+            tests = new Array ("ind.serologyHIVTest", "ind.dryTubeTaken");
+    }
+
+    for( var i = 0; i < tests.length; i++ ){
+        var testId = tests[i];
+        $(testId).value = true;
+        $(testId).checked = true;
+    }
+}
+
 </script>
 
 <script type="text/javascript">
@@ -316,6 +364,8 @@ function initializeStudySelection() {
 	<option value="RTN_Id">
 		<spring:message code="sample.entry.project.RTN.title" />
 	</option>
+	<option value="VL_Id" ><spring:message code="sample.entry.project.VL.title"/></option>
+	<option value="EID_Id" ><spring:message code="sample.entry.project.EID.title"/></option>
 </select>
 <br />
 <hr>
@@ -344,6 +394,12 @@ function initializeStudySelection() {
 	</div>
 </div>
 <script type="text/javascript">
+function checkVLSampleType(e){
+	$("vl.pscvlTaken").checked = (e.id === "vl.pscvlTaken");
+	$("vl.dbsvlTaken").checked = (e.id === "vl.dbsvlTaken");
+	$("vl.edtaTubeTaken").checked = (e.id === "vl.edtaTubeTaken");
+}
+
 // All openElis struts pages have a function to override to do some work onLoad
 function onLoad() {
 	// alert("load 1 " + $("projectFormName").value);
@@ -351,5 +407,6 @@ function onLoad() {
 	studies.initializeProjectChecker();
 	registerPatientSearchChanged();
 	projectChecker == null || projectChecker.refresh();
+	vl.checkGenderForVlPregnancyOrSuckle();
 }
 </script>

@@ -60,11 +60,11 @@ public class PatientEntryByProjectFormValidator implements Validator {
     }
 
     private void validateVLForm(PatientEntryByProjectForm form, Errors errors) {
-        ValidationHelper.validateFieldRequired(form.getCenterName(), "centerName", errors);
-
-        if (form.getCenterCode() == null) {
-            errors.rejectValue("centerCode", "field.error.required");
-        }
+//        ValidationHelper.validateFieldRequired(form.getCenterName(), "centerName", errors);
+//
+//        if (form.getCenterCode() == null) {
+//            errors.rejectValue("centerCode", "field.error.required");
+//        }
 
         ValidationHelper.validateFieldRequired(form.getReceivedDateForDisplay(), "receivedDateForDisplay", errors);
 

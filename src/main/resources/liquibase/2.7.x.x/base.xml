@@ -13,4 +13,5 @@
 	<include relativeToChangelogFile="true" file="site_information.xml"/>
 	<include relativeToChangelogFile="true" file="critical_range.xml"/>	
 	<include relativeToChangelogFile="true" file="fix_database_bugs_retroc.xml"/>
+	<include relativeToChangelogFile="true" file="add_psc_sampletype_test_element.xml"/>
 </databaseChangeLog>

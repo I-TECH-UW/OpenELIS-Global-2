@@ -254,7 +254,7 @@ iarv = new ArvInitialProjectChecker();
 				onchange="iarv.checkGender(false)" id="gender">
 				<option value=""></option>
 				<form:options items="${form.formLists.GENDERS}" itemLabel="localizedName"
-					itemValue="genderType" />
+					itemValue="id" />
 			</form:select>
 			<div id="genderMessage" class="blank"></div>
 		</td>
