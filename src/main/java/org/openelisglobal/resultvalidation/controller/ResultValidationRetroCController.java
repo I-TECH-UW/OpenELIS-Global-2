@@ -62,6 +62,7 @@ public class ResultValidationRetroCController extends BaseResultValidationRetroC
                 sectionName = getDBSectionName(sectionName);
                 List<AnalysisItem> resultList = resultsValidationUtility.getResultValidationList(sectionName, testName,
                         getValidationStatus(testSectionName));
+                form.setSearchFinished(true);
                 paging.setDatabaseResults(request, form, resultList);
             }
 
@@ -97,6 +98,19 @@ public class ResultValidationRetroCController extends BaseResultValidationRetroC
                 validationStatus.add(Integer.parseInt(
                         SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalRejected)));
             }
+        }
+
+        return validationStatus;
+    }
+    
+    public List<Integer> getValidationStatus() {
+        List<Integer> validationStatus = new ArrayList<>();
+        validationStatus.add(Integer
+                .parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalAcceptance)));
+        if (ConfigurationProperties.getInstance()
+                .isPropertyValueEqual(ConfigurationProperties.Property.VALIDATE_REJECTED_TESTS, "true")) {
+            validationStatus.add(Integer.parseInt(
+                    SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalRejected)));
         }
 
         return validationStatus;

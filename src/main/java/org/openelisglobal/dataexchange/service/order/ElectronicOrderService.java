@@ -31,5 +31,7 @@ public interface ElectronicOrderService extends BaseObjectService<ElectronicOrde
             String statusId, SortOrder statusId2);
 
     List<ElectronicOrder> searchForElectronicOrders(ElectronicOrderViewForm form);
+    
+    List<ElectronicOrder> searchForStudyElectronicOrders(ElectronicOrderViewForm form);
 
 }

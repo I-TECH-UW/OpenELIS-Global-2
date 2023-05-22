@@ -169,8 +169,8 @@ public class PanelItemServiceImpl extends BaseObjectServiceImpl<PanelItem, Strin
         }
         for (PanelItem existingPanelItem : existingPanelItems) {
             if ((panelItem.getTest().getId().equals(existingPanelItem.getTest().getId()))
-                    || (panelItem.getTest().getName().equals(existingPanelItem.getTest().getName()))) {
-                return !panelItem.getId().equals(existingPanelItem.getId());
+                    || (panelItem.getTest().getDescription().equals(existingPanelItem.getTest().getDescription()))) {
+                return !existingPanelItem.getId().equals(panelItem.getId());
             }
         }
         return false;

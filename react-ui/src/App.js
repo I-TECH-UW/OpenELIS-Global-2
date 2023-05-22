@@ -22,6 +22,9 @@ import PatientHistory from "./components/patient/PatientHistory";
 import Workplan from "./components/workplan/Workplan";
 //import "./components/patient/resultsViewer/results-viewer.styles.scss"
 import AddOrder from "./components/addOrder/Index";
+import RoutineReports from "./components/Reports/Routine";
+import StudyReports from "./components/Reports/Study";
+import StudyValidation from "./components/validation/Study";
 
 let i18nConfig = {
   locale: navigator.language.split(/[-_]/)[0],
@@ -221,8 +224,11 @@ class App extends React.Component {
                   logout={this.logout}
                   isLoggedIn={this.isLoggedIn}
                 />
-                <SecureRoute path="/result" exact component={() => <Result />} role="Global Administrator" config={this.state.config} onAuth={this.onAuth} logout={this.logout} isLoggedIn={this.isLoggedIn} />
-                <SecureRoute path="/AccessionResults" exact component={() => <Admin />} role="Global Administrator" config={this.state.config} onAuth={this.onAuth} logout={this.logout} isLoggedIn={this.isLoggedIn} />
+                  <SecureRoute path="/result" exact component={() => <Result />} role="Global Administrator" config={this.state.config} onAuth={this.onAuth} logout={this.logout} isLoggedIn={this.isLoggedIn} />
+                  <SecureRoute path="/AccessionResults" exact component={() => <Admin />} role="Global Administrator" config={this.state.config} onAuth={this.onAuth} logout={this.logout} isLoggedIn={this.isLoggedIn} />
+                  <SecureRoute path="/RoutineReports" exact component={() => <RoutineReports />} role="Global Administrator" config={this.state.config} onAuth={this.onAuth} logout={this.logout} isLoggedIn={this.isLoggedIn} />
+                  <SecureRoute path="/StudyReports" exact component={() => <StudyReports />} role="Global Administrator" config={this.state.config} onAuth={this.onAuth} logout={this.logout} isLoggedIn={this.isLoggedIn} />
+                  <SecureRoute path="/validationStudy" exact component={() => <StudyValidation />} role="Global Administrator" config={this.state.config} onAuth={this.onAuth} logout={this.logout} isLoggedIn={this.isLoggedIn} />
               </Switch>
             </Layout>
           </Router>

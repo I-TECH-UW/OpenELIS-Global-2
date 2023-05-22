@@ -29,7 +29,7 @@ public class ResultValidationForm extends BaseForm implements ValidationPagingFo
     @Valid
     private List<AnalysisItem> resultList;
 
-    @Pattern(regexp = "^[a-zA-Z -]*$", groups = { ResultValidation.class })
+    @Pattern(regexp = "^[a-zA-Z0-9 -]*$", groups = { ResultValidation.class })
     private String testSection = "";
 
     private String accessionNumber = "";

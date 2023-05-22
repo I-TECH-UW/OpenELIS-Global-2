@@ -5,7 +5,7 @@
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
 	  http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-	<changeSet author="CIV developer Group" id="202208312" context="ci_regional,ci_general,CDIRetroCI">
+	<changeSet author="CIV developer Group" id="202208312" context="ci_regional,ci_general">
 		<preConditions onFail="MARK_RAN">
 			<tableExists tableName="sampletype_test" schemaName="clinlims" />
 			<sqlCheck  expectedResult="1">SELECT count(*) FROM clinlims.type_of_sample WHERE description = 'Dry Tube'</sqlCheck> 
@@ -87,7 +87,7 @@
 			<column name="test_id" valueComputed="(SELECT id FROM clinlims.test WHERE description = 'Innolia')"/>
 		</insert>
 	</changeSet>
-	<changeSet author="CIV developer Group" id="202208313" context="ci_regional,ci_general,CDIRetroCI">
+	<changeSet author="CIV developer Group" id="202208313" context="ci_regional,ci_general">
 		<preConditions onFail="MARK_RAN">
 			<tableExists tableName="sampletype_test" schemaName="clinlims" />
 			<sqlCheck  expectedResult="1">SELECT count(*) FROM clinlims.type_of_sample WHERE description = 'EDTA Tube'</sqlCheck> 

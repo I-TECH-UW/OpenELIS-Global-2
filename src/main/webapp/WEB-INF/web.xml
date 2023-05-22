@@ -85,4 +85,11 @@
 		<param-value>true</param-value>
 	</context-param>
 
+	<session-config>
+		<cookie-config>
+			<http-only>true</http-only>
+			<secure>true</secure>
+		</cookie-config>
+	</session-config>
+
 </web-app>
