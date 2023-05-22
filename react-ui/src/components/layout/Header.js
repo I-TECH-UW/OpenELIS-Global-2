@@ -97,7 +97,62 @@ class OEHeader extends React.Component {
                 <span id="header-logo">{this.logo()}</span>
                 <span id="header-title">{this.props.config.title}</span>
               </HeaderName>
+              {this.props.isLoggedIn() && true && (
+                <>
+                  <HeaderNavigation aria-label="nav">
+                    <HeaderMenu aria-label="Order" menuLinkName="Order">
+                      <HeaderMenuItem href="/AddOrder">Add Order</HeaderMenuItem>
+                      <HeaderMenuItem href={config.serverBaseUrl +"/SampleEdit?type=readwrite"}>Modify Order</HeaderMenuItem>
+                      <HeaderMenuItem href={config.serverBaseUrl +"/ElectronicOrders"}>Incoming Orders</HeaderMenuItem>
+                      <HeaderMenuItem href={config.serverBaseUrl +"/SampleBatchEntrySetup"}>Batch Order Entry</HeaderMenuItem>
+                      <HeaderMenuItem href={config.serverBaseUrl +"/PrintBarcode"}>Barcode</HeaderMenuItem>
+                    </HeaderMenu>
 
+                    {this.props.isLoggedIn() && true && (
+                    <HeaderMenu aria-label="Patient" menuLinkName="Patient">
+                      <HeaderMenuItem href="/PatientManagement">Add/Edit Patient</HeaderMenuItem>
+                      <HeaderMenuItem href="/PatientHistory">Patient History</HeaderMenuItem>
+                    </HeaderMenu>
+                    )}
+                    <HeaderMenu
+                      aria-label="Non-Conforming Events"
+                      menuLinkName="Non-Conform"
+                    >
+                      <HeaderMenuItem href={config.serverBaseUrl + "/ReportNonConformingEvent"}>Report Non-Conforming Event</HeaderMenuItem>
+                      <HeaderMenuItem href={config.serverBaseUrl + "/ViewNonConformingEvent"}>View New Non-Conforming Events</HeaderMenuItem>
+                      <HeaderMenuItem href={config.serverBaseUrl + "/NCECorrectiveAction"}>Corrective actions</HeaderMenuItem>
+                    </HeaderMenu>
+                    <HeaderMenu aria-label="Workplan" menuLinkName="Workplan">
+                      <HeaderMenuItem href={config.serverBaseUrl + "/WorkPlanByTest?type=test"}>By Test Type</HeaderMenuItem>
+                      <HeaderMenuItem href={config.serverBaseUrl + "/WorkPlanByPanel?type=panel"}>By Panel Type</HeaderMenuItem>
+                      <HeaderMenuItem href={config.serverBaseUrl + "/WorkPlanByTestSection?type="}>By Unit</HeaderMenuItem>
+                      <HeaderMenuItem href={config.serverBaseUrl + "/WorkPlanByPriority?type=priority"}>By Priority</HeaderMenuItem>
+                    </HeaderMenu>
+                    <HeaderMenu aria-label="Results" menuLinkName="Results">
+                      <HeaderMenuItem href={config.serverBaseUrl + "/LogbookResults?type="}>Enter by Unit</HeaderMenuItem>
+                      <HeaderMenuItem href="/result">Search</HeaderMenuItem>
+                      <HeaderMenuItem href={config.serverBaseUrl + "/ReferredOutTests"}>Referred Tests</HeaderMenuItem>
+                    </HeaderMenu>
+                    <HeaderMenu
+                      aria-label="Validation" menuLinkName="Validation"                    >
+                      <HeaderMenuItem href={config.serverBaseUrl + "/ResultValidation?type=&test="}>Routine</HeaderMenuItem>
+                      <HeaderMenuItem href="/validationStudy">Study</HeaderMenuItem>
+                      <HeaderMenuItem href="/validation">Search</HeaderMenuItem>
+                    </HeaderMenu>
+
+                    <HeaderMenu aria-label="Reports" menuLinkName="Reports">
+                      <HeaderMenuItem href="/RoutineReports">Routine</HeaderMenuItem>
+                      <HeaderMenuItem href="/StudyReports">Study</HeaderMenuItem>
+                    </HeaderMenu>
+                    <HeaderMenuItem href="/admin">Admin</HeaderMenuItem>
+                  </HeaderNavigation>
+
+                  <HeaderMenuItem target="_blank" href={"http://ozone.uwdigi.org:8069/"}><FormattedMessage id="admin.billing"/></HeaderMenuItem>
+
+                  {/* <HeaderMenuItem target="_blank" href={config.serverBaseUrl + "/MasterListsPage"}><FormattedMessage id="admin.billing"/></HeaderMenuItem> */}
+
+                </>
+              )}
               <HeaderGlobalBar>
                 {this.props.isLoggedIn() && (
                   <>
