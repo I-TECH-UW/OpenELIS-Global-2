@@ -1,8 +1,8 @@
-## Bare Metal Server Installation for OpenELIS Global 2.0 on Ubuntu 20.04 LTS
+## Bare Metal Server Installation for OpenELIS Global 2.0 on Ubuntu 22.04 LTS
 
-### Setup Ubuntu 20.04.2.0 LTS (Focal Fossa)
+### Setup Ubuntu 22.04.2.0 LTS 
 
-1. Boot Ubuntu from a CD. [Note: Use Ubuntu Server 20.04.2.0 LTS, do NOT use desktop] [Download](https://releases.ubuntu.com/20.04/ubuntu-20.04.2-live-server-amd64.iso).
+1. Boot Ubuntu from a CD. [Note: Use Ubuntu Server 22.04.2.0 LTS, do NOT use desktop] [Download](https://ubuntu.com/download/server).
 1. Chose UI language and keyboard layout
 1. Set the network configuration
 1. Use the default mirror

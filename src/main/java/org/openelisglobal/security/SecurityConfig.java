@@ -337,10 +337,6 @@ public class SecurityConfig {
             MultipartFilter multipartFilter = new MultipartFilter();
             multipartFilter.setServletContext(SpringContext.getBean(ServletContext.class));
             http.addFilterBefore(multipartFilter, CsrfFilter.class);
-           // we delegate handling CORS to the inginix proxy
-           // http.addFilterBefore(new CORSFilter() ,CsrfFilter.class);
-            http.addFilterAfter(new SessionCookieFilter(), CsrfFilter.class );
-
             http.authorizeRequests()
                     // allow all users to access these pages no matter authentication status
                     .antMatchers(LOGIN_PAGES).permitAll().antMatchers(RESOURCE_PAGES).permitAll()

@@ -25,6 +25,9 @@ public class HtmlValidator implements ConstraintValidator<SafeHtml, String> {
         if (s == null) {
             return true;
         }
+        if(!s.matches(".*\\<[^>]+>.*")) { //allow <LL or >log7 as result values 
+        	return true;
+        }
         switch (level) {
         case NONE:
             return Jsoup.isValid(s, Safelist.none());

@@ -7,6 +7,10 @@
   margin: 10px;
 }
 
+#mainHeader {
+  z-index: 8001;
+}
+
 .headerPanel {
   height: max-content;
 }

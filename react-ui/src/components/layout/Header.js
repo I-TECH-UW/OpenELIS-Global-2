@@ -10,17 +10,23 @@ import {
   Notification,
   Language,
   UserAvatarFilledAlt,
-  Logout
+  Logout,
+  Fade
 } from "@carbon/icons-react";
 
 import {
+  HeaderContainer,
   Header,
+  HeaderMenuButton,
   HeaderName,
   HeaderGlobalAction,
   HeaderGlobalBar,
   HeaderNavigation,
-  HeaderMenu,
-  HeaderMenuItem,
+  SideNavMenu,
+  SideNavMenuItem,
+  SideNav,
+  HeaderSideNavItems,
+  SideNavItems,
   Theme,
   HeaderPanel,
 } from "@carbon/react";
@@ -76,12 +82,21 @@ class OEHeader extends React.Component {
       <>
         <div className="container">
           <Theme>
-            <Header className="" aria-label="">
+            <HeaderContainer
+             render={({ isSideNavExpanded, onClickSideNavExpand }) => ( 
+            <Header id="mainHeader" className="mainHeader" aria-label="">
+
+{this.props.isLoggedIn() && 
+              <HeaderMenuButton
+                aria-label={isSideNavExpanded ? 'Close menu' : 'Open menu'}
+                onClick={onClickSideNavExpand}
+                isActive={isSideNavExpanded}
+                isCollapsible={true}
+              />}
               <HeaderName href="/" prefix="">
                 <span id="header-logo">{this.logo()}</span>
                 <span id="header-title">{this.props.config.title}</span>
               </HeaderName>
-
               {this.props.isLoggedIn() && true && (
                 <>
                   <HeaderNavigation aria-label="nav">
@@ -200,7 +215,66 @@ class OEHeader extends React.Component {
                   </li>
                 </ul>
               </HeaderPanel>
+              {this.props.isLoggedIn() && (
+                <>
+                <SideNav aria-label="Side navigation"
+          expanded={isSideNavExpanded}
+          isPersistent={false}>
+            <SideNavItems>
+            <SideNavMenu aria-label="Order" title="Order">
+                      <SideNavMenuItem href="/AddOrder">Add Order</SideNavMenuItem>
+                      <SideNavMenuItem href="#">Modify Order</SideNavMenuItem>
+                      <SideNavMenuItem href="#">Incoming Orders</SideNavMenuItem>
+                      <SideNavMenuItem href="#">Batch Order Entry</SideNavMenuItem>
+                      <SideNavMenuItem href="#">Barcode</SideNavMenuItem>
+                    </SideNavMenu>
+                    <SideNavMenu aria-label="Patient" title="Patient">
+                      <SideNavMenuItem href="/PatientManagement">Add/Edit Patient</SideNavMenuItem>
+                      <SideNavMenuItem href="/PatientHistory">Patient History</SideNavMenuItem>
+                      <SideNavMenuItem href="#">Sub-link 3</SideNavMenuItem>
+                    </SideNavMenu>
+                    <SideNavMenu
+                      aria-label="Non-Conforming Events"
+                      title="Non-Conform"
+                    >
+                      <SideNavMenuItem href="#">Sub-link 1</SideNavMenuItem>
+                      <SideNavMenuItem href="#">Sub-link 2</SideNavMenuItem>
+                      <SideNavMenuItem href="#">Sub-link 3</SideNavMenuItem>
+                    </SideNavMenu>
+                    <SideNavMenu aria-label="Workplan" title="Workplan">
+                      <SideNavMenuItem href="#">Sub-link 1</SideNavMenuItem>
+                      <SideNavMenuItem href="#">Sub-link 2</SideNavMenuItem>
+                      <SideNavMenuItem href="#">Sub-link 3</SideNavMenuItem>
+                    </SideNavMenu>
+                    <SideNavMenu aria-label="Results" title="Results">
+                      <SideNavMenuItem href="#">Sub-link 1</SideNavMenuItem>
+                      <SideNavMenuItem href="/result">Result Search</SideNavMenuItem>
+                      <SideNavMenuItem href="#">Sub-link 3</SideNavMenuItem>
+                    </SideNavMenu>
+                    <SideNavMenu
+                      aria-label="Validation"
+                      title="Validation"
+                    >
+                      <SideNavMenuItem href="#">Sub-link 1</SideNavMenuItem>
+                      <SideNavMenuItem href="#">Sub-link 2</SideNavMenuItem>
+                      <SideNavMenuItem href="#">Sub-link 3</SideNavMenuItem>
+                    </SideNavMenu>
+                    <SideNavMenu aria-label="Reports" title="Reports">
+                      <SideNavMenuItem href="#">Sub-link 1</SideNavMenuItem>
+                      <SideNavMenuItem href="#">Sub-link 2</SideNavMenuItem>
+                      <SideNavMenuItem href="#">Sub-link 3</SideNavMenuItem>
+                    </SideNavMenu>
+                    <SideNavMenuItem href="/admin">Admin</SideNavMenuItem>
+                    <SideNavMenuItem target="_blank" href={"http://ozone.uwdigi.org:8069/"}><FormattedMessage id="admin.billing"/></SideNavMenuItem>
+          
+                       </SideNavItems>
+          </SideNav>
+                </>
+              )}
+              
             </Header>
+            )}
+            />
           </Theme>
         </div>
       </>
