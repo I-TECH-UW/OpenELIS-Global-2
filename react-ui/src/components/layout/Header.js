@@ -4,13 +4,16 @@ import { withRouter } from "react-router-dom";
 import "../Style.css";
 import { Select, SelectItem } from "@carbon/react";
 import config from "../../config.json";
-import { FormattedMessage } from 'react-intl'
 import {
   Search,
   Notification,
   Language,
   UserAvatarFilledAlt,
-  Logout
+  Logout,
+  Query,
+  TableOfContents,
+  WarningAlt,
+  Microscope
 } from "@carbon/icons-react";
 
 import {
@@ -108,10 +111,10 @@ class OEHeader extends React.Component {
                       <HeaderMenuItem href="#">Sub-link 3</HeaderMenuItem>
                     </HeaderMenu>
                     <HeaderMenu aria-label="Workplan" menuLinkName={formatMessage({id:"banner.menu.workplan"})}>
-                      <HeaderMenuItem href="/WorkplanByTest"><FormattedMessage id="banner.menu.workplan.test"/> </HeaderMenuItem>
-                      <HeaderMenuItem href="/WorkplanByPanel"><FormattedMessage id="banner.menu.workplan.panel"/> </HeaderMenuItem>
-                      <HeaderMenuItem href="/WorkplanByUnit"><FormattedMessage id="banner.menu.workplan.unit"/> </HeaderMenuItem>
-                      <HeaderMenuItem href="/WorkplanByPriority"><FormattedMessage id="banner.menu.workplan.priority"/> </HeaderMenuItem>
+                      <HeaderMenuItem href="/WorkplanByTest"><Query /> &nbsp;<FormattedMessage id="banner.menu.workplan.test"/> </HeaderMenuItem>
+                      <HeaderMenuItem href="/WorkplanByPanel"><TableOfContents />&nbsp;<FormattedMessage id="banner.menu.workplan.panel"/> </HeaderMenuItem>
+                      <HeaderMenuItem href="/WorkplanByUnit"><Microscope />&nbsp;<FormattedMessage id="banner.menu.workplan.unit"/> </HeaderMenuItem>
+                      <HeaderMenuItem href="/WorkplanByPriority"><WarningAlt />&nbsp;<FormattedMessage id="banner.menu.workplan.priority"/> </HeaderMenuItem>
                     </HeaderMenu>
                     <HeaderMenu aria-label="Results" menuLinkName="Results">
                       <HeaderMenuItem href="#">Sub-link 1</HeaderMenuItem>

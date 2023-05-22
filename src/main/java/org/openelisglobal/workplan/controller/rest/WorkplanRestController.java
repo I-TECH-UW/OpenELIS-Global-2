@@ -1,4 +1,4 @@
-package org.openelisglobal.workplan.controller;
+package org.openelisglobal.workplan.controller.rest;
 
 import java.util.ArrayList;
 import java.util.Comparator;

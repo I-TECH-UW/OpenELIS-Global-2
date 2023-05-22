@@ -1,4 +1,4 @@
-package org.openelisglobal.workplan.controller;
+package org.openelisglobal.workplan.controller.rest;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,19 +13,15 @@ import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.formfields.FormFields.Field;
-import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.QAService;
-import org.openelisglobal.common.services.DisplayListService.ListType;
 import org.openelisglobal.common.services.QAService.QAObservationType;
 import org.openelisglobal.common.util.ConfigurationProperties;
-import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.observationhistory.service.ObservationHistoryService;
 import org.openelisglobal.observationhistory.service.ObservationHistoryServiceImpl.ObservationType;
 import org.openelisglobal.patient.service.PatientService;
 import org.openelisglobal.person.service.PersonService;
 import org.openelisglobal.result.action.util.ResultsLoadUtility;
-import org.openelisglobal.role.service.RoleService;
 import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.samplehuman.service.SampleHumanService;
@@ -35,17 +31,14 @@ import org.openelisglobal.search.service.SearchResultsService;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.systemuser.service.UserService;
 import org.openelisglobal.test.beanItems.TestResultItem;
-import org.openelisglobal.test.service.TestSectionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController
-@RequestMapping(value = "/rest/")
+@RestController("WorkplanByTestSectionRestController")
 public class WorkplanByTestSectionRestController extends WorkplanRestController {
 
 	@Autowired
@@ -64,27 +57,10 @@ public class WorkplanByTestSectionRestController extends WorkplanRestController 
 	private AnalysisService analysisService;
 	@Autowired
 	private SampleQaEventService sampleQaEventService;
-	
-	@Autowired
-	private RoleService roleService;
 	@Autowired
 	private UserService userService;
-
-
-	@GetMapping(value = "test-sections", produces = MediaType.APPLICATION_JSON_VALUE)
-	@ResponseBody
-	private List<IdValuePair> createTestSectionsList() {
-		return DisplayListService.getInstance().getList(ListType.REFERRAL_ORGANIZATIONS);
-	}
-
-	@GetMapping(value = "user-test-sections", produces = MediaType.APPLICATION_JSON_VALUE)
-	@ResponseBody
-	private List<IdValuePair> createUserTestSectionsList(HttpServletRequest request) {
-		String resultsRoleId = roleService.getRoleByName(Constants.ROLE_RESULTS).getId();
-		return userService.getUserTestSections(getSysUserId(request), resultsRoleId);
-	}
 	
-	@GetMapping(value = "workplan-by-test-section", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/rest/workplan-by-test-section", produces = MediaType.APPLICATION_JSON_VALUE)
 	public Map<String,Object> showWorkPlanByTestSection(HttpServletRequest request,
 			@RequestParam(name = "test_section_id",defaultValue = "0") String testSectionId) {
 		Map<String,Object> response = new HashMap<String, Object>();

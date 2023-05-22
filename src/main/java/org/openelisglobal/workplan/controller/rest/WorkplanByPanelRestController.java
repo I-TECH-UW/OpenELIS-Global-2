@@ -1,4 +1,4 @@
-package org.openelisglobal.workplan.controller;
+package org.openelisglobal.workplan.controller.rest;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -17,12 +17,12 @@ import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.formfields.FormFields.Field;
 import org.openelisglobal.common.services.DisplayListService;
-import org.openelisglobal.common.services.DisplayListService.ListType;
 import org.openelisglobal.common.services.QAService;
+import org.openelisglobal.common.services.DisplayListService.ListType;
 import org.openelisglobal.common.services.QAService.QAObservationType;
 import org.openelisglobal.common.util.ConfigurationProperties;
-import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.IdValuePair;
+import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.observationhistory.service.ObservationHistoryService;
 import org.openelisglobal.observationhistory.service.ObservationHistoryServiceImpl.ObservationType;
 import org.openelisglobal.panelitem.service.PanelItemService;
@@ -47,8 +47,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController
-@RequestMapping(value = "/rest/")
+@RestController("WorkplanByPanelRestController")
 public class WorkplanByPanelRestController extends WorkplanRestController {
 
 	@Autowired
@@ -72,14 +71,8 @@ public class WorkplanByPanelRestController extends WorkplanRestController {
 	@Autowired
 	private UserService userService;
 
-	@GetMapping(value = "panels", produces = MediaType.APPLICATION_JSON_VALUE)
-	@ResponseBody
-	private List<IdValuePair> createPanelList() {
-		return DisplayListService.getInstance().getList(ListType.PANELS);
-	}
-
-	@GetMapping(value = "/workplan-by-panel", produces = MediaType.APPLICATION_JSON_VALUE)
-	public Map<String, Object> showWorkPlanByTest(HttpServletRequest request,
+	@GetMapping(value = "/rest/workplan-by-panel", produces = MediaType.APPLICATION_JSON_VALUE)
+	public Map<String, Object> showWorkPlanByPanel(HttpServletRequest request,
 			@RequestParam(name = "panel_id", defaultValue = "0") String panelID)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
@@ -216,5 +209,12 @@ public class WorkplanByPanelRestController extends WorkplanRestController {
 	public List<SampleQaEvent> getSampleQaEvents(Sample sample) {
 		return sampleQaEventService.getSampleQaEventsBySample(sample);
 	}
+	
+	@GetMapping(value = "panels", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	private List<IdValuePair> createPanelList() {
+		return DisplayListService.getInstance().getList(ListType.PANELS);
+	}
+	
 
 }
