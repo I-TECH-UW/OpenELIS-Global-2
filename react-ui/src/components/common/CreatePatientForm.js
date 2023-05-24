@@ -24,11 +24,15 @@ import {
 
 } from '@carbon/react';
 
-import { Formik, Field } from "formik";
+import { Formik, Field ,ErrorMessage} from "formik";
 import CreatePatientFormValues from '../formModel/innitialValues/CreatePatientFormValues';
 import PatientFormObserver from "./PatientFormObserver";
+import {AlertDialog, NotificationKinds} from "./CustomNotification";
+import {NotificationContext} from "../layout/Layout";
+import CreatePatientValidationSchema from '../formModel/validationSchema/CreatePatientValidationShema';
 
 class CreatePatientForm extends React.Component {
+    static contextType = NotificationContext;
     constructor(props) {
         super(props)
         this.state = {
@@ -144,7 +148,12 @@ class CreatePatientForm extends React.Component {
     };
 
     handlePost = (status) => {
-        alert(status)
+        this.context.setNotificationVisible(true);
+        if(status === 200){
+            this.context.setNotificationBody({title: "Notification Message", message: "Patient Saved Succsfuly", kind: NotificationKinds.success})
+        }else{
+            this.context.setNotificationBody({title: "Notification Message", message: "Error While Saving Patient", kind: NotificationKinds.error})
+        }
       };
 
     render() {
@@ -153,13 +162,14 @@ class CreatePatientForm extends React.Component {
             
             <Grid fullWidth={true} className="gridBoundary" >
                  {/* {JSON.stringify(this.state.patientDetails)} */}
+                 {this.context.notificationVisible === true ? <AlertDialog/> : ""}
                 <Column lg={10} >
                     <Button onClick={this.addNewPatient} kind='tertiary'>New Patient</Button>
                     {this.state.showForm && (
                         <Formik
                             initialValues={this.state.patientDetails}
                             enableReinitialize
-                            //validationSchema={}
+                            validationSchema={CreatePatientValidationSchema}
                             onSubmit={this.handleSubmit}
                             onChange
                         >
@@ -199,8 +209,13 @@ class CreatePatientForm extends React.Component {
                                             >
                                                 {({ field }) =>
                                                     <TextInput value={values.nationalId} name={field.name} labelText="National Id" id={field.name} className="" />
+                                                                                         
                                                 }
                                             </Field>
+                                            <div className="error"></div>
+                                            <div className="error">
+                                                <ErrorMessage name = "nationalId"></ErrorMessage>
+                                           </div>                     
                                         </div>
                                         <div className="formInlineDiv">
 
@@ -246,6 +261,10 @@ class CreatePatientForm extends React.Component {
                                                     <TextInput value={values.patientContact.person.primaryPhone} name={field.name} labelText="Contact Phone" id={field.name} className="" />
                                                 }
                                             </Field>
+                                            <div className="error">
+                                                <ErrorMessage name = "patientContact.person.email"></ErrorMessage>
+                                           </div> 
+                                           <div className="error"></div>  
                                         </div>
                                         <div className="formInlineDiv">
 
@@ -367,6 +386,12 @@ class CreatePatientForm extends React.Component {
                                                     </RadioButtonGroup>
                                                 }
                                             </Field>
+                                            <div className="error">
+                                                <ErrorMessage name = "birthDateForDisplay"></ErrorMessage>
+                                           </div> 
+                                           <div className="error">
+                                             <ErrorMessage name = "gender"></ErrorMessage>
+                                            </div>   
                                         </div>
                                         <div className="formInlineDiv">
 

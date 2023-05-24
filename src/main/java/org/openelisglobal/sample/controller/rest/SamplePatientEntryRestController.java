@@ -207,7 +207,6 @@ public class SamplePatientEntryRestController extends BaseSampleEntryController 
 			@RequestBody SamplePatientEntryForm form,
 			BindingResult result,RedirectAttributes redirectAttributes)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		System.out.println("MbabaziNamanya:"+form.toString());
 
 		formValidator.validate(form, result);
 		if (result.hasErrors()) {

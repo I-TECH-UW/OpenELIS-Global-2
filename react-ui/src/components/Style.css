@@ -313,6 +313,7 @@ button {
 }
 .toastDisplay{
   position: fixed; /*or fixed*/
+  top: 47px;
   right: 0px;
   z-index: 10;
 }
@@ -322,4 +323,16 @@ button {
   width: 200px;
   --cds-text-secondary: black;
     margin-bottom: 20px;
+}
+
+.error {
+  font-size: 12px; 
+	  color: red;
+    margin-bottom: 0.25rem;
+	  /* width: 150px; */
+	  /* 
+	  &:before {
+	    content: " ";
+	    font-size: 10px;
+	  } */
 }

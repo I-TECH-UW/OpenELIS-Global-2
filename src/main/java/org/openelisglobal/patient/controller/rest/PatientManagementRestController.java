@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.dataexchange.fhir.exception.FhirPersistanceException;
@@ -26,6 +25,7 @@ import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.patientidentity.service.PatientIdentityService;
 import org.openelisglobal.patientidentity.valueholder.PatientIdentity;
 import org.openelisglobal.person.valueholder.Person;
+import org.openelisglobal.sample.form.SamplePatientEntryForm;
 import org.openelisglobal.search.service.SearchResultsService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +34,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -57,8 +58,8 @@ public class PatientManagementRestController extends BaseRestController {
 
     @PostMapping(value = "patient-management", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public void savepatient(HttpServletRequest request, @Valid @RequestBody PatientManagementInfo patientInfo ,BindingResult bindingResult)
-            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+    public void savepatient(HttpServletRequest request, @Validated(SamplePatientEntryForm.SamplePatientEntry.class) @RequestBody PatientManagementInfo patientInfo ,BindingResult bindingResult)
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException{
 
         if (StringUtils.isNotBlank(patientInfo.getPatientPK())) {
             patientInfo.setPatientUpdateStatus(PatientUpdateStatus.UPDATE);
@@ -70,10 +71,12 @@ public class PatientManagementRestController extends BaseRestController {
         if (patientInfo.getPatientUpdateStatus() != PatientUpdateStatus.NO_ACTION) {
             preparePatientData(bindingResult ,request, patientInfo, patient);
             if(bindingResult.hasErrors()){
-                System.out.println(">>>>> has Errors");
-                bindingResult.getAllErrors().forEach(err -> {
-                    System.out.println( err.getCode() + ": "+ err.getDefaultMessage() + " <>" + err.getObjectName());
-                });
+                try {
+                    throw new BindException(bindingResult);
+                }
+                catch (BindException e) {
+                    LogEvent.logError(e);
+                }
             }
             try {
                 patientService.persistPatientData(patientInfo, patient, getSysUserId(request));
