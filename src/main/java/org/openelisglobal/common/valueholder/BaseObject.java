@@ -29,6 +29,8 @@ import javax.persistence.Version;
 
 import org.openelisglobal.internationalization.MessageUtil;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @MappedSuperclass
 public abstract class BaseObject<PK extends Serializable> implements Serializable, Cloneable {
 
@@ -53,6 +55,7 @@ public abstract class BaseObject<PK extends Serializable> implements Serializabl
     public abstract void setId(PK id);
 
     // used for audittrail
+    @JsonIgnore
     public String getStringId() {
         if (getId() == null) {
             return null;
@@ -162,6 +165,7 @@ public abstract class BaseObject<PK extends Serializable> implements Serializabl
      * derived class will be asked to supply the name via the protected method
      * getDefaultLocaledName()
      */
+    @JsonIgnore
     public String getLocalizedName() {
         if (nameKey != null) {
             String localizedName = MessageUtil.getContextualMessage(nameKey.trim());

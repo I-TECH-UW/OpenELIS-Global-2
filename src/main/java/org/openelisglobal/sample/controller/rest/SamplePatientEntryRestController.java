@@ -1,4 +1,4 @@
-package org.openelisglobal.sample.controller;
+package org.openelisglobal.sample.controller.rest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Pattern;
@@ -39,6 +39,7 @@ import org.openelisglobal.provider.service.ProviderService;
 import org.openelisglobal.provider.valueholder.Provider;
 import org.openelisglobal.sample.action.util.SamplePatientUpdateData;
 import org.openelisglobal.sample.bean.SampleOrderItem;
+import org.openelisglobal.sample.controller.BaseSampleEntryController;
 import org.openelisglobal.sample.form.SamplePatientEntryForm;
 import org.openelisglobal.sample.service.PatientManagementUpdate;
 import org.openelisglobal.sample.service.SamplePatientEntryService;
@@ -206,7 +207,6 @@ public class SamplePatientEntryRestController extends BaseSampleEntryController 
 			@RequestBody SamplePatientEntryForm form,
 			BindingResult result,RedirectAttributes redirectAttributes)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		System.out.println("MbabaziNamanya:"+form.toString());
 
 		formValidator.validate(form, result);
 		if (result.hasErrors()) {
