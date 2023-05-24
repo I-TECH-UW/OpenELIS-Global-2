@@ -48,7 +48,7 @@ class CreatePatientForm extends React.Component {
 
     handleDatePickerChange = (values, ...e) => {
         var patient = values
-        patient.dob = e[1];
+        patient.birthDateForDisplay = e[1];
 
         this.setState({
             patientDetails: patient
@@ -67,8 +67,8 @@ class CreatePatientForm extends React.Component {
 
 
     shouldComponentUpdate(nextProps, nextState) {
-        if (nextProps.selectedPatient.id) {
-            if (nextProps.selectedPatient.healthRegion != 0) {
+        if (nextProps.selectedPatient.patientPK) {
+            if (nextProps.selectedPatient.healthRegion != null) {
                 // getFromOpenElisServer("/rest/health-districts-for-region?regionId=" + nextProps.selectedPatient.healthRegion, (districts) => this.fetchDefaultHeathDistricts(districts, update))
                 // used XMLHttpRequest instead of Fecth ,in order to make synchronous calls here
                 const request = new XMLHttpRequest()
@@ -82,7 +82,9 @@ class CreatePatientForm extends React.Component {
                 this._healthDistricts = [];
             }
             nextState.patientDetails = nextProps.selectedPatient;
+            nextState.patientDetails.patientUpdateStatus="UPDATE"
             nextState.showForm = true;
+           // this.setState({ healthRegions: nextProps.selectedPatient.healthRegions })
             this.state.formAction = "UPDATE";
         }
 
@@ -132,13 +134,13 @@ class CreatePatientForm extends React.Component {
     }
 
     fetchHeathDistricts = (districts) => {
-        //this.setState({ healthDistricts: districts })
+        this.setState({ healthDistricts: districts })
         this._healthDistricts = districts
     }
 
     handleSubmit = (values) => {
         console.log(JSON.stringify(values))
-        postToOpenElisServer("/rest/patient-management" ,JSON.stringify(values) , this.handlePost)
+       postToOpenElisServer("/rest/patient-management" ,JSON.stringify(values) , this.handlePost)
     };
 
     handlePost = (status) => {
@@ -148,7 +150,9 @@ class CreatePatientForm extends React.Component {
     render() {
 
         return (
+            
             <Grid fullWidth={true} className="gridBoundary" >
+                 {/* {JSON.stringify(this.state.patientDetails)} */}
                 <Column lg={10} >
                     <Button onClick={this.addNewPatient} kind='tertiary'>New Patient</Button>
                     {this.state.showForm && (
@@ -191,10 +195,10 @@ class CreatePatientForm extends React.Component {
                                                     <TextInput value={values.subjectNumber} name={field.name} labelText="Unique Health ID number" id={field.name} className="" />
                                                 }
                                             </Field>
-                                            <Field name="nationalID"
+                                            <Field name="nationalId"
                                             >
                                                 {({ field }) =>
-                                                    <TextInput value={values.nationalID} name={field.name} labelText="National Id" id={field.name} className="" />
+                                                    <TextInput value={values.nationalId} name={field.name} labelText="National Id" id={field.name} className="" />
                                                 }
                                             </Field>
                                         </div>
@@ -215,40 +219,40 @@ class CreatePatientForm extends React.Component {
                                         </div>
                                         <div className="formInlineDiv">
 
-                                            <Field name="contactLastName"
+                                            <Field name="patientContact.person.lastName"
                                             >
                                                 {({ field }) =>
-                                                    <TextInput value={values.contactLastName} name={field.name} labelText="Contact Last Name" id={field.name} className="" />
+                                                    <TextInput value={values.patientContact.person.lastName} name={field.name} labelText="Contact Last Name" id={field.name} className="" />
                                                 }
                                             </Field>
-                                            <Field name="contactFirstName"
+                                            <Field name="patientContact.person.firstName"
                                             >
                                                 {({ field }) =>
-                                                    <TextInput value={values.contactFirstName} name={field.name} labelText="Contact First Name" id={field.name} className="" />
-                                                }
-                                            </Field>
-                                        </div>
-                                        <div className="formInlineDiv">
-
-                                            <Field name="contactEmail"
-                                            >
-                                                {({ field }) =>
-                                                    <TextInput value={values.contactEmail} name={field.name} labelText="Contact Email" id={field.name} className="" />
-                                                }
-                                            </Field>
-                                            <Field name="contactPhone"
-                                            >
-                                                {({ field }) =>
-                                                    <TextInput value={values.contactPhone} name={field.name} labelText="Contact Phone" id={field.name} className="" />
+                                                    <TextInput value={values.patientContact.person.firstName} name={field.name} labelText="Contact First Name" id={field.name} className="" />
                                                 }
                                             </Field>
                                         </div>
                                         <div className="formInlineDiv">
 
-                                            <Field name="street"
+                                            <Field name="patientContact.person.email"
                                             >
                                                 {({ field }) =>
-                                                    <TextInput value={values.street} name={field.name} labelText="Street" id={field.name} className="" />
+                                                    <TextInput value={values.patientContact.person.email} name={field.name} labelText="Contact Email" id={field.name} className="" />
+                                                }
+                                            </Field>
+                                            <Field name="patientContact.person.primaryPhone"
+                                            >
+                                                {({ field }) =>
+                                                    <TextInput value={values.patientContact.person.primaryPhone} name={field.name} labelText="Contact Phone" id={field.name} className="" />
+                                                }
+                                            </Field>
+                                        </div>
+                                        <div className="formInlineDiv">
+
+                                            <Field name="streetAddress"
+                                            >
+                                                {({ field }) =>
+                                                    <TextInput value={values.streetAddress} name={field.name} labelText="Street" id={field.name} className="" />
                                                 }
                                             </Field>
                                             <Field name="commune"
@@ -266,10 +270,10 @@ class CreatePatientForm extends React.Component {
                                                     <TextInput value={values.city} name={field.name} labelText="Town" id={field.name} className="" />
                                                 }
                                             </Field>
-                                            <Field name="phoneNumber"
+                                            <Field name="primaryPhone"
                                             >
                                                 {({ field }) =>
-                                                    <TextInput value={values.phoneNumber} name={field.name} labelText="Phone" id={field.name} className="" />
+                                                    <TextInput value={values.primaryPhone} name={field.name} labelText="Phone" id={field.name} className="" />
                                                 }
                                             </Field>
                                         </div>
@@ -327,10 +331,10 @@ class CreatePatientForm extends React.Component {
                                             </Field>
                                         </div>
                                         <div className="formInlineDiv">
-                                            <Field name="dob"
+                                            <Field name="birthDateForDisplay"
                                             >
                                                 {({ field }) =>
-                                                    <DatePicker value={values.dob} onChange={(...e) => this.handleDatePickerChange(values, ...e)} name={field.name} dateFormat="d/m/Y" datePickerType="single" light={true} className="">
+                                                    <DatePicker value={values.birthDateForDisplay} onChange={(...e) => this.handleDatePickerChange(values, ...e)} name={field.name} dateFormat="d/m/Y" datePickerType="single" light={true} className="">
                                                         <DatePickerInput
                                                             id="date-picker-default-id"
                                                             placeholder="dd/mm/yyyy"

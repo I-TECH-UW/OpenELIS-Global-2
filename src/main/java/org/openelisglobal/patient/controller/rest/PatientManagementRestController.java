@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.dataexchange.fhir.exception.FhirPersistanceException;
@@ -21,16 +22,17 @@ import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.provider.query.PatientSearchResults;
 import org.openelisglobal.common.rest.BaseRestController;
-import org.openelisglobal.common.rest.provider.bean.PatientDetails;
 import org.openelisglobal.patient.valueholder.Patient;
-import org.openelisglobal.patient.valueholder.PatientContact;
 import org.openelisglobal.patientidentity.service.PatientIdentityService;
 import org.openelisglobal.patientidentity.valueholder.PatientIdentity;
 import org.openelisglobal.person.valueholder.Person;
 import org.openelisglobal.search.service.SearchResultsService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindException;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -55,14 +57,24 @@ public class PatientManagementRestController extends BaseRestController {
 
     @PostMapping(value = "patient-management", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public void savepatient(HttpServletRequest request, @RequestBody PatientDetails patientDetails)
+    public void savepatient(HttpServletRequest request, @Valid @RequestBody PatientManagementInfo patientInfo ,BindingResult bindingResult)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
+        if (StringUtils.isNotBlank(patientInfo.getPatientPK())) {
+            patientInfo.setPatientUpdateStatus(PatientUpdateStatus.UPDATE);
+        } else {
+            patientInfo.setPatientUpdateStatus(PatientUpdateStatus.ADD);
+        }
         Patient patient = new Patient();
-        PatientManagementInfo patientInfo = createPtaientInfo(patientDetails);
 
         if (patientInfo.getPatientUpdateStatus() != PatientUpdateStatus.NO_ACTION) {
-            preparePatientData(request, patientInfo, patient);
+            preparePatientData(bindingResult ,request, patientInfo, patient);
+            if(bindingResult.hasErrors()){
+                System.out.println(">>>>> has Errors");
+                bindingResult.getAllErrors().forEach(err -> {
+                    System.out.println( err.getCode() + ": "+ err.getDefaultMessage() + " <>" + err.getObjectName());
+                });
+            }
             try {
                 patientService.persistPatientData(patientInfo, patient, getSysUserId(request));
                 fhirTransformService.transformPersistPatient(patientInfo);
@@ -83,13 +95,13 @@ public class PatientManagementRestController extends BaseRestController {
 
     }
 
-    private void preparePatientData(HttpServletRequest request, PatientManagementInfo patientInfo,
+    private void preparePatientData(Errors errors ,HttpServletRequest request, PatientManagementInfo patientInfo,
             Patient patient) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
-        // validatePatientInfo(errors, patientInfo);
-        // if (errors.hasErrors()) {
-        // return;
-        // }
+        validatePatientInfo(errors, patientInfo);
+        if (errors.hasErrors()) {
+           return;
+        }
 
         initMembers(patient);
         patientInfo.setPatientIdentities(new ArrayList<PatientIdentity>());
@@ -199,54 +211,6 @@ public class PatientManagementRestController extends BaseRestController {
         Patient patient = patientService.get(patientInfo.getPatientPK());
         patientInfo.setPatientIdentities(patientIdentityService.getPatientIdentitiesForPatient(patient.getId()));
         return patient;
-    }
-
-    private PatientManagementInfo createPtaientInfo(PatientDetails patient) {
-        PatientManagementInfo patientInfo = new PatientManagementInfo();
-        if (StringUtils.isNotBlank(patient.getID())) {
-            patientInfo.setPatientPK(patient.getID());
-            patientInfo.setPatientUpdateStatus(PatientUpdateStatus.UPDATE);
-        } else {
-            patientInfo.setPatientUpdateStatus(PatientUpdateStatus.ADD);
-        }
-        patientInfo.setPatientLastUpdated(patient.getPatientUpdated());
-        patientInfo.setPersonLastUpdated(patient.getPersonUpdated());
-        patientInfo.setSTnumber(patient.getST_ID());
-        patientInfo.setSubjectNumber(patient.getSubjectNumber());
-        patientInfo.setNationalId(patient.getNationalID());
-        patientInfo.setGuid(patient.getFhirUuid());
-        patientInfo.setLastName(patient.getLastName());
-        patientInfo.setFirstName(patient.getFirstName());
-        patientInfo.setAka(patient.getAka());
-        patientInfo.setMothersName(patient.getMother());
-        patientInfo.setMothersInitial(patient.getMotherInitial());
-        patientInfo.setStreetAddress(patient.getStreet());
-        patientInfo.setCity(patient.getCity());
-        patientInfo.setCommune(patient.getCommune());
-        patientInfo.setAddressDepartment(patient.getAddressDept());
-        patientInfo.setGender(patient.getGender());
-        patientInfo.setBirthDateForDisplay(patient.getDob());
-        patientInfo.setPatientType(patient.getPatientType());
-        patientInfo.setInsuranceNumber(patient.getInsurance());
-        patientInfo.setOccupation(patient.getOccupation());
-        patientInfo.setPrimaryPhone(patient.getPhoneNumber());
-        patientInfo.setEmail(patient.getEmail());
-        patientInfo.setHealthRegion(patient.getHealthRegion());
-        patientInfo.setHealthDistrict(patient.getHealthDistrict());
-        patientInfo.setEducation(patient.getEducation());
-        patientInfo.setMaritialStatus(patient.getMaritialStatus());
-        patientInfo.setNationality(patient.getNationality());
-        patientInfo.setOtherNationality(patient.getOtherNationality());
-
-        PatientContact contact = new PatientContact();
-        contact.setPerson(new Person());
-        contact.setId(patient.getContactPK());
-        contact.getPerson().setFirstName(patient.getContactFirstName());
-        contact.getPerson().setLastName(patient.getContactLastName());
-        contact.getPerson().setEmail(patient.getContactEmail());
-        contact.getPerson().setPrimaryPhone(patient.getContactPhone());
-        patientInfo.setPatientContact(contact);
-        return patientInfo;
     }
 
 }
