@@ -57,6 +57,7 @@ import org.openelisglobal.inventory.form.InventoryKitItem;
 import org.openelisglobal.note.service.NoteService;
 import org.openelisglobal.note.service.NoteServiceImpl.NoteType;
 import org.openelisglobal.organization.service.OrganizationService;
+import org.openelisglobal.patient.service.PatientService;
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.referral.action.beanitems.ReferralItem;
 import org.openelisglobal.referral.service.ReferralTypeService;
@@ -167,6 +168,8 @@ public class ReactLogbookResultsController extends LogbookResultsBaseController 
     private RoleService roleService;
     @Autowired
     private SampleService sampleService;
+    @Autowired
+    PatientService patientService;
 
     private final String RESULT_SUBJECT = "Result Note";
     private final String REFERRAL_CONFORMATION_ID;
@@ -180,7 +183,9 @@ public class ReactLogbookResultsController extends LogbookResultsBaseController 
             REFERRAL_CONFORMATION_ID = null;
         }
     }
-
+    
+   
+    
     @InitBinder
     public void initBinder(WebDataBinder binder) {
         binder.setAllowedFields(ALLOWED_FIELDS);
@@ -198,8 +203,10 @@ public class ReactLogbookResultsController extends LogbookResultsBaseController 
             @Validated(LogbookResults.class) @ModelAttribute("form") LogbookResultsForm form, BindingResult result)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
-        System.out.println("Get:ReactLogbookResultsController:ReactLogbookResultsByRange:labNumber:doRange:finished"
+        System.out.println("Get:ReactLogbookResultsController:ReactLogbookResultsByRange:labNumber:doRange:finished:"
                 + labNumber + ":" + doRange + ":" + finished);
+        
+       
 
         LogbookResultsForm newForm = new LogbookResultsForm();
         if (!(result.hasFieldErrors("type") || result.hasFieldErrors("testSectionId")
@@ -225,7 +232,7 @@ public class ReactLogbookResultsController extends LogbookResultsBaseController 
         newForm.setDisplayTestSections(true);
         newForm.setSearchByRange(false);
 
-        return getLogbookResults(request, newForm, doRange, finished);
+        return getLogbookResults(request, newForm, labNumber, doRange, finished);
     }
 
 //    @RequestMapping(value = "/ReactRangeResults", method = RequestMethod.GET)
@@ -261,10 +268,10 @@ public class ReactLogbookResultsController extends LogbookResultsBaseController 
         newForm.setSearchByRange(true);
         // System.out.println("Post:ReactLogbookResultsController:call
         // getLogbookResults");
-        return getLogbookResults(request, newForm, doRange, finished);
+        return getLogbookResults(request, newForm, labNumber, doRange, finished);
     }
 
-    private LogbookResultsForm getLogbookResults(HttpServletRequest request, LogbookResultsForm form, boolean doRange,
+    private LogbookResultsForm getLogbookResults(HttpServletRequest request, LogbookResultsForm form, String labNumber, boolean doRange,
             boolean finished) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
         // boolean useTechnicianName = ConfigurationProperties.getInstance()
@@ -275,10 +282,18 @@ public class ReactLogbookResultsController extends LogbookResultsBaseController 
         // FormFields.getInstance().useField(Field.ResultsReferral);
         // String statusRuleSet =
         // ConfigurationProperties.getInstance().getPropertyValueUpperCase(Property.StatusRules);
+        
+        String patientName = "";
+        String patientInfo = "";
+        Patient patient = null;
+        
+        
+        System.out.println("Get:ReactLogbookResultsController getLogbookResults:labNumber:" + labNumber);
+
 
         request.getSession().setAttribute(SAVE_DISABLED, TRUE);
 
-        List<TestResultItem> tests;
+        List<TestResultItem> tests = new ArrayList<>();
         List<TestResultItem> filteredTests = new ArrayList<>();
 
         ResultsPaging paging = new ResultsPaging();
@@ -320,9 +335,25 @@ public class ReactLogbookResultsController extends LogbookResultsBaseController 
                 }
                 form.setSearchFinished(true);
             } else if (!GenericValidator.isBlankOrNull(form.getAccessionNumber())) {
-                tests = resultsLoadUtility.getUnfinishedTestResultItemsByAccession(form.getAccessionNumber(), doRange, finished);
-                filteredTests = userService.filterResultsByLabUnitRoles(getSysUserId(request), tests,
-                        Constants.ROLE_RESULTS);
+                
+                tests.clear();
+                tests = resultsLoadUtility.getUnfinishedTestResultItemsByAccession(labNumber, doRange, finished);
+                
+                // if no test try patientID
+                if(tests.isEmpty()) {
+                    ResultsLoadUtility resultsUtility = SpringContext.getBean(ResultsLoadUtility.class);
+                    resultsUtility.setSysUser(getSysUserId(request));
+                    String patientID = labNumber;
+                    //Patient patient = getPatient(patientID);
+                    patient = patientService.getPatientByNationalId(patientID);
+                    tests = resultsUtility.getGroupedTestsForPatient(patient);
+                    patientName = patientService.getLastFirstName(patient);
+                    patientInfo = patientID + ", " + patientService.getGender(patient) + ", "
+                            + patientService.getBirthdayForDisplay(patient);
+                } 
+                
+                filteredTests = userService.filterResultsByLabUnitRoles(getSysUserId(request), tests, Constants.ROLE_RESULTS);
+                
                 int count = resultsLoadUtility.getTotalCountAnalysisByAccessionAndStatus(form.getAccessionNumber());
 
                 request.setAttribute("analysisCount", count);
@@ -364,12 +395,16 @@ public class ReactLogbookResultsController extends LogbookResultsBaseController 
         addFlashMsgsToRequest(request);
 
         for (TestResultItem resultItem : filteredTests) {
+            if (patientName != "") resultItem.setPatientName(patientName); 
+            if (patientInfo != "") resultItem.setPatientInfo(patientInfo); 
+            
             resultItem.setMethods(DisplayListService.getInstance().getList(ListType.METHODS));
             resultItem.setReferralOrganizations(
                     DisplayListService.getInstance().getList(ListType.REFERRAL_ORGANIZATIONS));
             resultItem.setReferralReasons(
                     DisplayListService.getInstance().getList(DisplayListService.ListType.REFERRAL_REASONS));
-        }
+
+         }
 
 //        ObjectMapper mapper = new ObjectMapper();
 //        String jsonForm = "";
@@ -450,7 +485,7 @@ public class ReactLogbookResultsController extends LogbookResultsBaseController 
         String statusRuleSet = ConfigurationProperties.getInstance().getPropertyValueUpperCase(Property.StatusRules);
 
         if ("true".equals(request.getParameter("pageResults"))) {
-            return getLogbookResults(request, form, true, true);
+            return getLogbookResults(request, form, "", true, true);
         }
 
         if (result.hasErrors()) {
@@ -936,5 +971,9 @@ public class ReactLogbookResultsController extends LogbookResultsBaseController 
         } else {
             return "PageNotFound";
         }
+    }
+    
+    private Patient getPatient(String patientID) {
+        return patientService.get(patientID);
     }
 }

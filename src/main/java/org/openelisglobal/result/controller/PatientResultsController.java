@@ -52,6 +52,10 @@ public class PatientResultsController extends BaseController {
     @RequestMapping(value = "/PatientResults", method = RequestMethod.GET)
     public ModelAndView showPatientResults(HttpServletRequest request)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        
+        System.out.println("Get:PatientResultsController:showPatientResults:patientID:"
+                + request.getParameter("patientID"));
+        
         PatientResultsForm form = new PatientResultsForm();
         form.setReferralOrganizations(DisplayListService.getInstance().getList(ListType.REFERRAL_ORGANIZATIONS));
 

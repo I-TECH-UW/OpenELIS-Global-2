@@ -2,6 +2,7 @@ import React from 'react'
 import { injectIntl } from 'react-intl'
 import './Style.css'
 import ResultSearch from './resultPage/ResultSearch';
+
 import ResultRangeSearch from './resultPage/ResultRangeSearch';
 import CodeTest from './resultPage/CodeTest';
 
@@ -12,15 +13,27 @@ import {
 }
     from '@carbon/icons-react';
 import GlobalSideBar from "./common/GlobalSideBar";
-export const resultsSideMenu = { className: "resultSideNav",
+import { FourGPlusMobiledataOutlined } from '@mui/icons-material';
+
+
+export const resultsSideMenu = {
+    className: "resultSideNav",
     sideNavMenuItems: [
         {
             title: "Result Search",
             icon: IbmWatsonDiscovery,
             SideNavMenuItem: [
                 {
-                    link: "#result",
-                    label: "By Accession Number"
+                    link: "#resultSearch",
+                    label: "By Patient or Lab"
+                },
+                {
+                    link: "#resultUnit",
+                    label: "By Unit"
+                },
+                {
+                    link: "#resultSearch",
+                    label: "By Test, Date or Status"
                 }
             ]
         },
@@ -49,33 +62,74 @@ export const resultsSideMenu = { className: "resultSideNav",
             ]
         },
     ],
-    contentRoutes: [ {
-        path: "#result",
-        pageComponent: <ResultSearch/>
-    },{
-        path: "#rangeResults",
-        pageComponent: <ResultRangeSearch/>
-    },{
-        path: "#codeTest",
-        pageComponent: <CodeTest/>
+    contentRoutes: [{
+        path: "#resultSearch",
+        pageComponent: <ResultSearch />
+    }, {
+        path: "#resultUnit",
+        pageComponent: <ResultSearch />
+    }, {
+        path: "#resultTest",
+        pageComponent: <ResultSearch />
     }]
 }
+
+export const billingSideMenu = {
+    className: "resultSideNav",
+    sideNavMenuItems: [
+        {
+            title: "Result Search",
+            icon: IbmWatsonDiscovery,
+            SideNavMenuItem: [
+                {
+                    link: "#resultSearch",
+                    label: "By Patient or Lab"
+                }
+            ]
+        }
+    ],
+    contentRoutes: [{
+        path: "#resultSearch",
+        pageComponent: <ResultSearch />
+    }]
+}
+
 class Result extends React.Component {
 
     constructor(props) {
         super(props)
         this.state = {
-            sideNav: resultsSideMenu
+            // sideNav: resultsSideMenu
+            billingSideNav: billingSideMenu
+            , resultsSideNav: resultsSideMenu
         }
     }
 
     render() {
-        return (
-            <>
-                <GlobalSideBar sideNav={this.state.sideNav}/>
-            </>
+        var menu = "Results"
+        switch (menu) {
+            case "Billing":
+                return (
+                    <>
+                        <GlobalSideBar sideNav={this.state.billingSideNav} />
+                    </>
 
-        );
+                );
+            case "Results":
+                return (
+                    <>
+                        <GlobalSideBar sideNav={this.state.resultsSideNav} />
+                    </>
+
+                );
+            default:
+                return (
+                    <>
+                        <GlobalSideBar sideNav={this.state.billingSideNav} />
+                    </>
+
+                );
+        }
 
     }
 }

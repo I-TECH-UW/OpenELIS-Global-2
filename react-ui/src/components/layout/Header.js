@@ -83,148 +83,151 @@ class OEHeader extends React.Component {
         <div className="container">
           <Theme>
             <HeaderContainer
-             render={({ isSideNavExpanded, onClickSideNavExpand }) => ( 
-            <Header id="mainHeader" className="mainHeader" aria-label="">
+              render={({ isSideNavExpanded, onClickSideNavExpand }) => (
+                <Header id="mainHeader" className="mainHeader" aria-label="">
 
-{this.props.isLoggedIn() && 
-              <HeaderMenuButton
-                aria-label={isSideNavExpanded ? 'Close menu' : 'Open menu'}
-                onClick={onClickSideNavExpand}
-                isActive={isSideNavExpanded}
-                isCollapsible={true}
-              />}
-              <HeaderName href="/" prefix="">
-                <span id="header-logo">{this.logo()}</span>
-                <span id="header-title">{this.props.config.title}</span>
-              </HeaderName>
-              {this.props.isLoggedIn() && true && (
-                <>
-                    
-                  {/* <HeaderMenuItem target="_blank" href={config.serverBaseUrl + "/MasterListsPage"}><FormattedMessage id="admin.billing"/></HeaderMenuItem> */}
-
-                </>
-              )}
-              <HeaderGlobalBar>
-                {this.props.isLoggedIn() && (
-                  <>
-                    <HeaderGlobalAction aria-label="Search" onClick={() => { }}>
-                      <Search size={20} />
-                    </HeaderGlobalAction>
-                    <HeaderGlobalAction
-                      aria-label="Notifications"
-                      onClick={() => { }}
-                    >
-                      <Notification size={20} />
-                    </HeaderGlobalAction>
-                  </>
-                )}
-                <HeaderGlobalAction
-                  aria-label={this.panelSwitchLabel()}
-                  onClick={this.clickPanelSwitch}
-                  ref={this.userSwitchRef}
-                >
-                  {this.panelSwitchIcon()}
-                </HeaderGlobalAction>
-              </HeaderGlobalBar>
-              <HeaderPanel
-                aria-label="Header Panel"
-                expanded={!this.state.switchCollapsed}
-                className="headerPanel"
-                ref={this.headerPanelRef}
-              >
-                <ul>
-                  {this.props.isLoggedIn() && (
+                  {this.props.isLoggedIn() &&
+                    <HeaderMenuButton
+                      aria-label={isSideNavExpanded ? 'Close menu' : 'Open menu'}
+                      onClick={onClickSideNavExpand}
+                      isActive={isSideNavExpanded}
+                      isCollapsible={true}
+                    />}
+                  <HeaderName href="/" prefix="">
+                    <span id="header-logo">{this.logo()}</span>
+                    <span id="header-title">{this.props.config.title}</span>
+                  </HeaderName>
+                  {this.props.isLoggedIn() && true && (
                     <>
-                      <li className="userDetails">
-                        <UserAvatarFilledAlt size={18} />{" "}
-                        {this.props.user.firstName} {this.props.user.lastName}
-                      </li>
-                      <li
-                        className="userDetails clickableUserDetails"
-                        onClick={this.props.logout}
-                      >
-                        <Logout id="sign-out" />
-                        Logout
-                      </li>
+
+                      {/* <HeaderMenuItem target="_blank" href={config.serverBaseUrl + "/MasterListsPage"}><FormattedMessage id="admin.billing"/></HeaderMenuItem> */}
+
                     </>
                   )}
-                  <li className="userDetails">
-                    <Select
-                      id="selector"
-                      name="selectLocale"
-                      className="selectLocale"
-                      invalidText="A valid locale value is required"
-                      labelText="Select locale"
-                      onChange={(event) => {
-                        this.props.onChangeLanguage(event.target.value);
-                      }}
-                      value={this.props.intl.locale}
+                  <HeaderGlobalBar>
+                    {this.props.isLoggedIn() && (
+                      <>
+                        <HeaderGlobalAction aria-label="Search" onClick={() => { }}>
+                          <Search size={20} />
+                        </HeaderGlobalAction>
+                        <HeaderGlobalAction
+                          aria-label="Notifications"
+                          onClick={() => { }}
+                        >
+                          <Notification size={20} />
+                        </HeaderGlobalAction>
+                      </>
+                    )}
+                    <HeaderGlobalAction
+                      aria-label={this.panelSwitchLabel()}
+                      onClick={this.clickPanelSwitch}
+                      ref={this.userSwitchRef}
                     >
-                      <SelectItem text="English" value="en" />
-                      <SelectItem text="French" value="fr" />
-                    </Select>
-                  </li>
-                </ul>
-              </HeaderPanel>
-              {this.props.isLoggedIn() && (
-                <>
-                <SideNav aria-label="Side navigation"
-          expanded={isSideNavExpanded}
-          isPersistent={false}>
-            <SideNavItems>
-            <SideNavMenu aria-label="Order" title="Order">
-                      <SideNavMenuItem href="/AddOrder">Add Order</SideNavMenuItem>
-                      <SideNavMenuItem href={config.serverBaseUrl +"/SampleEdit?type=readwrite"}>Modify Order</SideNavMenuItem>
-                      <SideNavMenuItem href={config.serverBaseUrl +"/ElectronicOrders"}>Incoming Orders</SideNavMenuItem>
-                      <SideNavMenuItem href={config.serverBaseUrl +"/SampleBatchEntrySetup"}>Batch Order Entry</SideNavMenuItem>
-                      <SideNavMenuItem href={config.serverBaseUrl +"/PrintBarcode"}>Barcode</SideNavMenuItem>
-                    </SideNavMenu>
-                    <SideNavMenu aria-label="Patient" title="Patient">
-                      <SideNavMenuItem href="/PatientManagement">Add/Edit Patient</SideNavMenuItem>
-                      <SideNavMenuItem href="/PatientHistory">Patient History</SideNavMenuItem>
-                    </SideNavMenu>
-                    <SideNavMenu
-                      aria-label="Non-Conforming Events"
-                      title="Non-Conform"
-                    >
-                      <SideNavMenuItem href={config.serverBaseUrl + "/ReportNonConformingEvent"}>Report Non-Conforming Event</SideNavMenuItem>
-                      <SideNavMenuItem href={config.serverBaseUrl + "/ViewNonConformingEvent"}>View New Non-Conforming Events</SideNavMenuItem>
-                      <SideNavMenuItem href={config.serverBaseUrl + "/NCECorrectiveAction"}>Corrective actions</SideNavMenuItem>
-                    </SideNavMenu>
-                    <SideNavMenu aria-label="Workplan" title="Workplan">
-                      <SideNavMenuItem href={config.serverBaseUrl + "/WorkPlanByTest?type=test"}>By Test Type</SideNavMenuItem>
-                      <SideNavMenuItem href={config.serverBaseUrl + "/WorkPlanByPanel?type=panel"}>By Panel Type</SideNavMenuItem>
-                      <SideNavMenuItem href={config.serverBaseUrl + "/WorkPlanByTestSection?type="}>By Unit</SideNavMenuItem>
-                      <SideNavMenuItem href={config.serverBaseUrl + "/WorkPlanByPriority?type=priority"}>By Priority</SideNavMenuItem>
-                    </SideNavMenu>
-                    <SideNavMenu aria-label="Results" title="Results">
-                      <SideNavMenuItem href={config.serverBaseUrl + "/LogbookResults?type="}>Enter by Unit</SideNavMenuItem>
-                      <SideNavMenuItem href="/result">Search</SideNavMenuItem>
-                      <SideNavMenuItem href={config.serverBaseUrl + "/ReferredOutTests"}>Referred Tests</SideNavMenuItem>
-                    </SideNavMenu>
-                    <SideNavMenu
-                      aria-label="Validation" title="Validation"                    >
-                      <SideNavMenuItem href={config.serverBaseUrl + "/ResultValidation?type=&test="}>Routine</SideNavMenuItem>
-                      <SideNavMenuItem href="/validationStudy">Study</SideNavMenuItem>
-                      <SideNavMenuItem href="/validation">Search</SideNavMenuItem>
-                    </SideNavMenu>
+                      {this.panelSwitchIcon()}
+                    </HeaderGlobalAction>
+                  </HeaderGlobalBar>
+                  <HeaderPanel
+                    aria-label="Header Panel"
+                    expanded={!this.state.switchCollapsed}
+                    className="headerPanel"
+                    ref={this.headerPanelRef}
+                  >
+                    <ul>
+                      {this.props.isLoggedIn() && (
+                        <>
+                          <li className="userDetails">
+                            <UserAvatarFilledAlt size={18} />{" "}
+                            {this.props.user.firstName} {this.props.user.lastName}
+                          </li>
+                          <li
+                            className="userDetails clickableUserDetails"
+                            onClick={this.props.logout}
+                          >
+                            <Logout id="sign-out" />
+                            Logout
+                          </li>
+                        </>
+                      )}
+                      <li className="userDetails">
+                        <Select
+                          id="selector"
+                          name="selectLocale"
+                          className="selectLocale"
+                          invalidText="A valid locale value is required"
+                          labelText="Select locale"
+                          onChange={(event) => {
+                            this.props.onChangeLanguage(event.target.value);
+                          }}
+                          value={this.props.intl.locale}
+                        >
+                          <SelectItem text="English" value="en" />
+                          <SelectItem text="French" value="fr" />
+                        </Select>
+                      </li>
+                    </ul>
+                  </HeaderPanel>
+                  {this.props.isLoggedIn() && (
+                    <>
+                      <SideNav aria-label="Side navigation"
+                        expanded={isSideNavExpanded}
+                        isPersistent={false}>
+                        <SideNavItems>
+                          <SideNavMenu aria-label="Order" title="Order">
+                            <SideNavMenuItem href="/AddOrder">Add Order</SideNavMenuItem>
+                            <SideNavMenuItem href={config.serverBaseUrl + "/SampleEdit?type=readwrite"}>Modify Order</SideNavMenuItem>
+                            <SideNavMenuItem href={config.serverBaseUrl + "/ElectronicOrders"}>Incoming Orders</SideNavMenuItem>
+                            <SideNavMenuItem href={config.serverBaseUrl + "/SampleBatchEntrySetup"}>Batch Order Entry</SideNavMenuItem>
+                            <SideNavMenuItem href={config.serverBaseUrl + "/PrintBarcode"}>Barcode</SideNavMenuItem>
+                          </SideNavMenu>
+                          <SideNavMenu aria-label="Patient" title="Patient">
+                            <SideNavMenuItem href="/PatientManagement">Add/Edit Patient</SideNavMenuItem>
+                            <SideNavMenuItem href="/PatientHistory">Patient History</SideNavMenuItem>
+                          </SideNavMenu>
+                          <SideNavMenu
+                            aria-label="Non-Conforming Events"
+                            title="Non-Conform"
+                          >
+                            <SideNavMenuItem href={config.serverBaseUrl + "/ReportNonConformingEvent"}>Report Non-Conforming Event</SideNavMenuItem>
+                            <SideNavMenuItem href={config.serverBaseUrl + "/ViewNonConformingEvent"}>View New Non-Conforming Events</SideNavMenuItem>
+                            <SideNavMenuItem href={config.serverBaseUrl + "/NCECorrectiveAction"}>Corrective actions</SideNavMenuItem>
+                          </SideNavMenu>
+                          <SideNavMenu aria-label="Workplan" title="Workplan">
+                            <SideNavMenuItem href={config.serverBaseUrl + "/WorkPlanByTest?type=test"}>By Test Type</SideNavMenuItem>
+                            <SideNavMenuItem href={config.serverBaseUrl + "/WorkPlanByPanel?type=panel"}>By Panel Type</SideNavMenuItem>
+                            <SideNavMenuItem href={config.serverBaseUrl + "/WorkPlanByTestSection?type="}>By Unit</SideNavMenuItem>
+                            <SideNavMenuItem href={config.serverBaseUrl + "/WorkPlanByPriority?type=priority"}>By Priority</SideNavMenuItem>
+                          </SideNavMenu>
+                          <SideNavMenu aria-label="Results" title="Results">
+                            <SideNavMenuItem href={config.serverBaseUrl + "/LogbookResults?type="}>Enter by Unit</SideNavMenuItem>
+                            <SideNavMenuItem href="/result">Search</SideNavMenuItem>
+                            <SideNavMenuItem href={config.serverBaseUrl + "/ReferredOutTests"}>Referred Tests</SideNavMenuItem>
+                          </SideNavMenu>
+                          <SideNavMenu
+                            aria-label="Validation" title="Validation"                    >
+                            <SideNavMenuItem href={config.serverBaseUrl + "/ResultValidation?type=&test="}>Routine</SideNavMenuItem>
+                            <SideNavMenuItem href="/validationStudy">Study</SideNavMenuItem>
+                            <SideNavMenuItem href="/validation">Search</SideNavMenuItem>
+                          </SideNavMenu>
 
-                    <SideNavMenu aria-label="Reports" title="Reports">
-                      <SideNavMenuItem href="/RoutineReports">Routine</SideNavMenuItem>
-                      <SideNavMenuItem href="/StudyReports">Study</SideNavMenuItem>
-                    </SideNavMenu>
-                    <SideNavMenuItem href="/admin">Admin</SideNavMenuItem>
+                          <SideNavMenu aria-label="Reports" title="Reports">
+                            <SideNavMenuItem href="/RoutineReports">Routine</SideNavMenuItem>
+                            <SideNavMenuItem href="/StudyReports">Study</SideNavMenuItem>
+                          </SideNavMenu>
+                          <SideNavMenuItem href="/admin">Admin</SideNavMenuItem>
 
-                  <SideNavMenuItem target="_blank" href={"http://ozone.uwdigi.org:8069/"}><FormattedMessage id="admin.billing"/></SideNavMenuItem>
+                          <SideNavMenuItem
+                            target="_blank"
+                            href={"http://ozone.uwdigi.org:8069/"}><FormattedMessage
+                              id="admin.billing" />
+                          </SideNavMenuItem>
 
-          
-                       </SideNavItems>
-          </SideNav>
-                </>
+                        </SideNavItems>
+                      </SideNav>
+                    </>
+                  )}
+
+                </Header>
               )}
-              
-            </Header>
-            )}
             />
           </Theme>
         </div>
