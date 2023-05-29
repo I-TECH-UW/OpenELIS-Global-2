@@ -105,11 +105,11 @@ function ResultSearchAccession() {
   //   }
   // }
 
-  const fetchSamples = (sampleList) => {
-    if (componentMounted.current) {
-      setSampleList(sampleList);
-    }
-  }
+  // const fetchSamples = (sampleList) => {
+  //   if (componentMounted.current) {
+  //     setSampleList(sampleList);
+  //   }
+  // }
 
   const fetchResults = (resultList) => {
     if (componentMounted.current) {
