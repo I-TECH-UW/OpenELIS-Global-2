@@ -1,4 +1,4 @@
-package org.openelisglobal.workplan.controller;
+package org.openelisglobal.workplan.controller.rest;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,51 +9,33 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.rest.BaseRestController;
 import org.openelisglobal.test.service.TestServiceImpl;
 import org.openelisglobal.workplan.form.WorkplanForm;
 import org.openelisglobal.workplan.form.WorkplanForm.PrintWorkplan;
 import org.openelisglobal.workplan.reports.IWorkplanReport;
 import org.openelisglobal.workplan.reports.TestSectionWorkplanReport;
 import org.openelisglobal.workplan.reports.TestWorkplanReport;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
-@Controller
-public class PrintWorkplanReportController extends BaseController {
+@RestController("PrintWorkplanReportRestController")
+public class PrintWorkplanReportRestController extends BaseRestController {
 
-    private static final String[] ALLOWED_FIELDS = new String[] { "selectedSearchID", "type", "testTypeID",
-            "testSectionId", "testName", "workplanTests*.accessionNumber", "workplanTests*.patientInfo",
-            "workplanTests*.receivedDate", "workplanTests*.testName", "workplanTests*.notIncludedInWorkplan",
-            "resultList" };
 
-    @InitBinder
-    public void initBinder(WebDataBinder binder) {
-        binder.setAllowedFields(ALLOWED_FIELDS);
-    }
-
-    @RequestMapping(value = "/PrintWorkplanReport", method = RequestMethod.POST)
-    public void showPrintWorkplanReport(HttpServletRequest request, HttpServletResponse response,
-            @ModelAttribute("form") @Validated(PrintWorkplan.class) WorkplanForm form, BindingResult result) {
-        if (result.hasErrors()) {
-            writeErrorsToResponse(result, response);
-            return;
-        }
-
-        request.getSession().setAttribute(SAVE_DISABLED, "true");
+    @RequestMapping(value = "/rest/printWorkplanReport", method = RequestMethod.POST)
+    public void showRestPrintWorkplanReport(HttpServletRequest request, HttpServletResponse response,
+    		@RequestBody @Validated(PrintWorkplan.class) WorkplanForm form, BindingResult result) {
 
         String workplanType = form.getType();
         String workplanName;
@@ -103,11 +85,9 @@ public class PrintWorkplanReportController extends BaseController {
             LogEvent.logError(e.toString(), e);
             result.reject("error.jasper", "error.jasper");
         }
-        if (result.hasErrors()) {
-            saveErrors(result);
-        }
     }
 
+    
     private JRDataSource createReportDataSource(List<?> includedTests) {
         JRBeanCollectionDataSource dataSource;
         dataSource = new JRBeanCollectionDataSource(includedTests);
@@ -125,8 +105,6 @@ public class PrintWorkplanReportController extends BaseController {
 
         if ("test".equals(testType)) {
             workplan = new TestWorkplanReport(name);
-//        } else if ("Serology".equals(testType)) {
-//            workplan = new ElisaWorkplanReport(name);
         } else {
             workplan = new TestSectionWorkplanReport(name);
         }
@@ -138,24 +116,5 @@ public class PrintWorkplanReportController extends BaseController {
         ClassLoader classLoader = getClass().getClassLoader();
         File reportFile = new File(classLoader.getResource("reports/").getFile());
         return reportFile.getAbsolutePath();
-    }
-
-    @Override
-    protected String findLocalForward(String forward) {
-        if (FWD_SUCCESS.equals(forward)) {
-            return "homePageDefinition";
-        } else {
-            return "PageNotFound";
-        }
-    }
-
-    @Override
-    protected String getPageSubtitleKey() {
-        return "workplan.title";
-    }
-
-    @Override
-    protected String getPageTitleKey() {
-        return "workplan.title";
     }
 }

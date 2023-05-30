@@ -51,3 +51,30 @@ export const getFromOpeElisServerSync = (endPoint, callback) => {
     request.send();
     callback(JSON.parse(request.response));
 }
+
+export const postToOpenElisServerForPDF = (endPoint, payLoad) => {
+    fetch(config.serverBaseUrl + endPoint,
+
+        {
+            //includes the browser sessionId in the Header for Authentication on the backend server
+            credentials: "include",
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+                "X-CSRF-Token": localStorage.getItem("CSRF")
+            },
+            body: payLoad
+        }
+    )
+    .then((response) => response.blob())
+    .then((blob) => {   
+        let link = document.createElement('a')           
+        link.href = window.URL.createObjectURL(blob,{type:'application/pdf'});
+        link.target='_blank'
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+    }).catch(error => {
+        console.log(error)
+    })
+}
