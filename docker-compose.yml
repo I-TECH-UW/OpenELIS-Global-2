@@ -82,8 +82,7 @@ services:
     volumes:
       -  key_trust-store-volume:/etc/openelis-global
       - ./volume/tomcat/hapi_server.xml:/usr/local/tomcat/conf/server.xml
-    secrets:
-      - source: common.properties
+    
       
   frontend.openelis.org:
     image: ghcr.io/i-tech-uw/openelis-global-2-frontend:2.8
