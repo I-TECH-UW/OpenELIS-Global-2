@@ -35,8 +35,10 @@ services:
       retries: 10
 
   oe.openelis.org:
+    build:
+      context: .
     container_name: openelisglobal-webapp
-    image: ghcr.io/i-tech-uw/openelis-global-2:2.8
+    image: openelisglobal-webapp.build
     depends_on:
       - database
     ports:
@@ -84,12 +86,13 @@ services:
       - ./volume/tomcat/hapi_server.xml:/usr/local/tomcat/conf/server.xml
     secrets:
       - source: common.properties
-      
   frontend.openelis.org:
-    image: ghcr.io/i-tech-uw/openelis-global-2-frontend:2.8
-    container_name: openelisglobal-front-end
-    # ports:
-    #   - 3000:300
+    image: react-ui
+    build:
+      context: ./react-ui
+      dockerfile: ./Dockerfile
+    ports:
+      - 3000:3000
     networks:
       - default
     volumes:

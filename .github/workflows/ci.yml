@@ -43,7 +43,7 @@ jobs:
       run: mvn clean install  
           
     - name: Run OpenELS image 
-      run : docker-compose up -d
+      run : docker-compose -f build.docker-compose.yml up -d
       
     - name: Sleep for 3 minutes for OpenELIS to start
       run: sleep 3m
