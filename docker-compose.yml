@@ -88,8 +88,8 @@ services:
   frontend.openelis.org:
     image: ghcr.io/i-tech-uw/openelis-global-2-frontend:2.8
     container_name: openelisglobal-front-end
-    # ports:
-    #   - 3000:300
+    ports:
+      - 3000:3000
     networks:
       - default
     volumes:

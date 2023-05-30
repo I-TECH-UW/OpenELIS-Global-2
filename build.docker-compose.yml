@@ -86,6 +86,7 @@ services:
       - ./volume/tomcat/hapi_server.xml:/usr/local/tomcat/conf/server.xml
     secrets:
       - source: common.properties
+      
   frontend.openelis.org:
     image: react-ui
     build:
