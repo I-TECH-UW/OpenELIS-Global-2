@@ -35,8 +35,10 @@ services:
       retries: 10
 
   oe.openelis.org:
+    build:
+      context: .
     container_name: openelisglobal-webapp
-    image: ghcr.io/i-tech-uw/openelis-global-2:2.8
+    image: openelisglobal-webapp.build
     depends_on:
       - database
     ports:
@@ -82,13 +84,17 @@ services:
     volumes:
       -  key_trust-store-volume:/etc/openelis-global
       - ./volume/tomcat/hapi_server.xml:/usr/local/tomcat/conf/server.xml
-    
+    secrets:
+      - source: common.properties
       
   frontend.openelis.org:
-    image: ghcr.io/i-tech-uw/openelis-global-2-frontend:2.8
-    container_name: openelisglobal-front-end
+    image: react-ui
+    build:
+      context: ./react-ui
+      dockerfile: ./Dockerfile
+    container_name: openelisglobal-front-end  
     # ports:
-    #   - 80:80
+    #   - 3000:3000
     networks:
       - default
     volumes:
@@ -107,7 +113,7 @@ services:
     volumes:
       - certs-vol:/etc/nginx/certs/
       - keys-vol:/etc/nginx/keys/
-      - ./volume/nginx/nginx-prod.conf:/etc/nginx/nginx.conf:ro
+      - ./volume/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
     restart: unless-stopped
     depends_on:
       - certs
