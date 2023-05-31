@@ -8,14 +8,14 @@ You can find more information on how to set up OpenELIS at our [docs page](http:
 [![Publish Docker Image Status](https://github.com/I-TECH-UW/OpenELIS-Global-2/actions/workflows/publish.yml/badge.svg)](https://github.com/I-TECH-UW/OpenELIS-Global-2/actions/workflows/publish.yml)
 
 
-# Running OpenELIS in Docker
-## running with published docker images
+### Running OpenELIS in Docker
+#### Running with published docker images
     docker-compose up -d
 
-## Building the docker images from source code
+#### Building the docker images from source code
     docker-compose -f build.docker-compose.yml up -d --build
 
-The Instaces can be accesed at 
+#### The Instaces can be accesed at 
 
 | Instance  |     URL       | credentials (user : password)|
 |---------- |:-------------:|------:                       |
