@@ -92,8 +92,9 @@ services:
     build:
       context: ./react-ui
       dockerfile: ./Dockerfile
-    ports:
-      - 3000:3000
+    container_name: openelisglobal-front-end  
+    # ports:
+    #   - 3000:3000
     networks:
       - default
     volumes:
@@ -105,6 +106,7 @@ services:
 
   proxy:
     image: nginx:1.15-alpine
+    container_name: openelisglobal-proxy
     ports:
       - 80:80
       - 443:443
