@@ -172,7 +172,7 @@ class OEHeader extends React.Component {
                         <SideNavItems>
                           <SideNavMenu aria-label="Order" title="Order">
                             <SideNavMenuItem href="/AddOrder">Add Order</SideNavMenuItem>
-                            <SideNavMenuItem href={config.serverBaseUrl + "/SampleEdit?type=readwrite"}>Modify Order</SideNavMenuItem>
+                            <SideNavMenuItem href="/ModifyOrder">Modify Order</SideNavMenuItem>
                             <SideNavMenuItem href={config.serverBaseUrl + "/ElectronicOrders"}>Incoming Orders</SideNavMenuItem>
                             <SideNavMenuItem href={config.serverBaseUrl + "/SampleBatchEntrySetup"}>Batch Order Entry</SideNavMenuItem>
                             <SideNavMenuItem href={config.serverBaseUrl + "/PrintBarcode"}>Barcode</SideNavMenuItem>
