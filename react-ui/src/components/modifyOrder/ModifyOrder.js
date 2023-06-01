@@ -1,6 +1,6 @@
 import React, {useState,useEffect,useContext} from 'react'
 import { Column, Form, Grid} from '@carbon/react';
-import ModifyOrderForm from "./ModifyOrderForm";
+import SearchPatientForm from '../common/SearchPatientForm';
 
 
 const ModifyOrder = () => {
@@ -12,7 +12,8 @@ const ModifyOrder = () => {
         setSelectedPatient(patient);
     }
     return (<>
-        <ModifyOrderForm getSelectedPatient={getSelectedPatient}></ModifyOrderForm>
+        <SearchPatientForm getSelectedPatient={this.getSelectedPatient}></SearchPatientForm>
+
     </>)
 }
 export default ModifyOrder;
