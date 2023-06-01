@@ -12,4 +12,5 @@
 	<include relativeToChangelogFile="true" file="site_information.xml"/>
 	<include relativeToChangelogFile="true" file="fix_database_bugs_retroc.xml"/>
 	<include relativeToChangelogFile="true" file="add_admin_default_roles.xml"/>
+	<include relativeToChangelogFile="true" file="fix_person_table.xml"/>
 </databaseChangeLog>
