@@ -3,17 +3,26 @@ import { Column, Form, Grid} from '@carbon/react';
 import SearchPatientForm from '../common/SearchPatientForm';
 
 
-const ModifyOrder = () => {
+class  ModifyOrder extends React.Component {
 
-    const [selectedPatient, setSelectedPatient] = useState({
-        id: "", healthRegion: []
-    });
-    const getSelectedPatient = (patient) => {
-        setSelectedPatient(patient);
+    constructor(props) {
+        super(props)
+        this.state = {
+            selectedPatient: {}
+        }
     }
-    return (<>
-        <SearchPatientForm getSelectedPatient={this.getSelectedPatient}></SearchPatientForm>
 
-    </>)
+
+    getSelectedPatient = (patient) => {
+        this.setState({ selectedPatient: patient })
+    }
+
+    render() {
+        return (
+            <>
+                <SearchPatientForm getSelectedPatient={this.getSelectedPatient}></SearchPatientForm>          
+            </>
+        );
+    }
 }
 export default ModifyOrder;
