@@ -1,10 +1,11 @@
 package org.openelisglobal.sample.controller;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.constraints.Pattern;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.UUID;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.GenericValidator;
@@ -125,7 +126,7 @@ public class SamplePatientEntryRestController extends BaseSampleEntryController 
 			"referralItems*.referredResultType", "referralItems*.modified", "referralItems*.inLabResultId",
 			"referralItems*.referralReasonId", "referralItems*.referrer", "referralItems*.referredInstituteId",
 			"referralItems*.referredSendDate", "referralItems*.referredTestId", "referralItems*.referredReportDate",
-			"referralItems*.note", "useReferral" };
+            "referralItems*.note", "useReferral", "additionalQuestions", "programId" };
 
 	@Autowired
 	private SamplePatientEntryFormValidator formValidator;
@@ -250,7 +251,9 @@ public class SamplePatientEntryRestController extends BaseSampleEntryController 
 			setContactTracingInfo(updateData, sampleOrder);
 		}
 		updateData.validateSample(result);
-
+        if (!GenericValidator.isBlankOrNull(form.getProgramId())) {
+            updateData.initProgramQuestions(form.getProgramId(), form.getAdditionalQuestions());
+        }
 		if (result.hasErrors()) {
 			saveErrors(result);
 			setupForm(form, request, "");

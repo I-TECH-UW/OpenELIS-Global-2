@@ -17,11 +17,13 @@
 package org.openelisglobal.common.services;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
@@ -43,6 +45,9 @@ import org.openelisglobal.organization.valueholder.Organization;
 import org.openelisglobal.panel.service.PanelService;
 import org.openelisglobal.panel.valueholder.Panel;
 import org.openelisglobal.panel.valueholder.PanelSortOrderComparator;
+import org.openelisglobal.program.service.ProgramService;
+import org.openelisglobal.program.valueholder.Program;
+import org.openelisglobal.program.valueholder.pathology.PathologySample;
 import org.openelisglobal.provider.service.ProviderService;
 import org.openelisglobal.provider.valueholder.Provider;
 import org.openelisglobal.qaevent.service.QaEventService;
@@ -78,10 +83,12 @@ public class DisplayListService implements LocaleChangeListener {
         PATIENT_EDUCATION, GENDERS, SAMPLE_PATIENT_REFERRING_CLINIC, SAMPLE_PATIENT_CLINIC_DEPARTMENT, QA_EVENTS,
         TEST_SECTION_ACTIVE, TEST_SECTION_INACTIVE, TEST_SECTION_BY_NAME, HAITI_DEPARTMENTS, PATIENT_SEARCH_CRITERIA,
         PANELS, PANELS_ACTIVE, PANELS_INACTIVE, ORDERABLE_TESTS, ALL_TESTS, REJECTION_REASONS, REFERRAL_REASONS,
-        REFERRAL_ORGANIZATIONS, TEST_LOCATION_CODE, PROGRAM, RESULT_TYPE_LOCALIZED, RESULT_TYPE_RAW, UNIT_OF_MEASURE,
+        REFERRAL_ORGANIZATIONS, TEST_LOCATION_CODE, DICTIONARY_PROGRAM, RESULT_TYPE_LOCALIZED, RESULT_TYPE_RAW,
+        UNIT_OF_MEASURE,
         UNIT_OF_MEASURE_ACTIVE, UNIT_OF_MEASURE_INACTIVE, DICTIONARY_TEST_RESULTS, LAB_COMPONENT,
         SEVERITY_CONSEQUENCES_LIST, SEVERITY_RECURRENCE_LIST, ACTION_TYPE_LIST, LABORATORY_COMPONENT, SAMPLE_NATURE,
-        ELECTRONIC_ORDER_STATUSES, METHODS, METHODS_INACTIVE, METHOD_BY_NAME, PRACTITIONER_PERSONS, ORDER_PRIORITY
+        ELECTRONIC_ORDER_STATUSES, METHODS, METHODS_INACTIVE, METHOD_BY_NAME, PRACTITIONER_PERSONS, ORDER_PRIORITY,
+        PROGRAM, PATHOLOGY_STATUS, PATHOLOGY_TECHNIQUES, PATHOLOGIST_REQUESTS
     }
 
     private static Map<ListType, List<IdValuePair>> typeToListMap;
@@ -115,6 +122,8 @@ public class DisplayListService implements LocaleChangeListener {
     private StatusOfSampleService statusOfSampleService;
     @Autowired
     private ProviderService providerService;
+    @Autowired
+    private ProgramService programService;
 
     @PostConstruct
     private void setupGlobalVariables() {
@@ -133,7 +142,7 @@ public class DisplayListService implements LocaleChangeListener {
         List<IdValuePair> testResults = createFromDictionaryCategoryLocalizedSort("CG");
         testResults.addAll(createFromDictionaryCategoryLocalizedSort("HL"));
         testResults.addAll(createFromDictionaryCategoryLocalizedSort("KL"));
-        testResults.addAll(createFromDictionaryCategoryLocalizedSort("Test Result"));
+        testResults.addAll(createFromDictionaryCategoryLocalizedSort("Test Reslt"));
         testResults.addAll(createFromDictionaryCategoryLocalizedSort("HIV1NInd"));
         testResults.addAll(createFromDictionaryCategoryLocalizedSort("PosNegIndInv"));
         testResults.addAll(createFromDictionaryCategoryLocalizedSort("HIVResult"));
@@ -185,7 +194,8 @@ public class DisplayListService implements LocaleChangeListener {
         typeToListMap.put(ListType.ORDERABLE_TESTS, createOrderableTestList());
         typeToListMap.put(ListType.ALL_TESTS, createTestList());
         typeToListMap.put(ListType.TEST_LOCATION_CODE, createDictionaryListForCategory("testLocationCode"));
-        typeToListMap.put(ListType.PROGRAM, createDictionaryListForCategory("programs"));
+        typeToListMap.put(ListType.PROGRAM, createProgramList());
+        typeToListMap.put(ListType.DICTIONARY_PROGRAM, createDictionaryListForCategory("programs"));
         typeToListMap.put(ListType.RESULT_TYPE_LOCALIZED, createLocalizedResultTypeList());
         typeToListMap.put(ListType.UNIT_OF_MEASURE, createUOMList());
         typeToListMap.put(ListType.DICTIONARY_TEST_RESULTS, createDictionaryTestResults());
@@ -194,6 +204,14 @@ public class DisplayListService implements LocaleChangeListener {
         typeToListMap.put(ListType.ACTION_TYPE_LIST, createActionTypeList());
         typeToListMap.put(ListType.LABORATORY_COMPONENT, createLaboratoryComponentList());
         typeToListMap.put(ListType.ORDER_PRIORITY, createSamplePriorityList());
+        typeToListMap.put(ListType.PATHOLOGY_STATUS, createPathologyStatusList());
+        typeToListMap.put(ListType.PATHOLOGY_TECHNIQUES, createPathologyStatusList());
+        typeToListMap.put(ListType.PATHOLOGIST_REQUESTS, createPathologyStatusList());
+    }
+
+    private List<IdValuePair> createPathologyStatusList() {
+        return Arrays.asList(PathologySample.PathologyStatus.values()).stream()
+                .map(e -> new IdValuePair(e.name(), e.getDisplay())).collect(Collectors.toList());
     }
 
     public List<IdValuePair> getList(ListType listType) {
@@ -237,6 +255,15 @@ public class DisplayListService implements LocaleChangeListener {
             list.add(new IdValuePair(uom.getId(), uom.getLocalizedName()));
         }
 
+        return list;
+    }
+
+    private List<IdValuePair> createProgramList() {
+        List<IdValuePair> list = new ArrayList<>();
+        List<Program> programList = programService.getAll();
+        for (Program program : programList) {
+            list.add(new IdValuePair(program.getId(), program.getProgramName()));
+        }
         return list;
     }
 
@@ -318,6 +345,7 @@ public class DisplayListService implements LocaleChangeListener {
 
     public synchronized void refreshLists() {
         typeToListMap = new HashMap<>();
+        typeToListMap.put(ListType.PATHOLOGY_STATUS, createPathologyStatusList());
         typeToListMap.put(ListType.HOURS, createHourList());
         typeToListMap.put(ListType.MINS, createMinList());
         typeToListMap.put(ListType.SAMPLE_TYPE, createTypeOfSampleList());
@@ -355,7 +383,8 @@ public class DisplayListService implements LocaleChangeListener {
         typeToListMap.put(ListType.REFERRAL_REASONS, createReferralReasonList());
         typeToListMap.put(ListType.REFERRAL_ORGANIZATIONS, createReferralOrganizationList());
         typeToListMap.put(ListType.TEST_LOCATION_CODE, createDictionaryListForCategory("testLocationCode"));
-        typeToListMap.put(ListType.PROGRAM, createDictionaryListForCategory("programs"));
+        typeToListMap.put(ListType.PROGRAM, createProgramList());
+        typeToListMap.put(ListType.DICTIONARY_PROGRAM, createDictionaryListForCategory("programs"));
         typeToListMap.put(ListType.RESULT_TYPE_LOCALIZED, createLocalizedResultTypeList());
         typeToListMap.put(ListType.RESULT_TYPE_RAW, createRawResultTypeList());
         typeToListMap.put(ListType.UNIT_OF_MEASURE, createUOMList());
@@ -369,6 +398,12 @@ public class DisplayListService implements LocaleChangeListener {
         typeToListMap.put(ListType.ELECTRONIC_ORDER_STATUSES, createElectronicOrderStatusList());
         typeToListMap.put(ListType.PRACTITIONER_PERSONS, createActivePractitionerPersonsList());
         typeToListMap.put(ListType.ORDER_PRIORITY, createSamplePriorityList());
+        
+        
+        typeToListMap.put(ListType.PATHOLOGY_TECHNIQUES, createDictionaryListForCategory("pathology_techniques"));
+        typeToListMap.put(ListType.PATHOLOGIST_REQUESTS, createDictionaryListForCategory("pathologist_requests"));
+        
+        
 
     }
 
@@ -453,6 +488,9 @@ public class DisplayListService implements LocaleChangeListener {
         case PATIENT_HEALTH_REGIONS: {
             typeToListMap.put(ListType.PATIENT_HEALTH_REGIONS, createPatientHealthRegions());
             break;
+        }
+        case PROGRAM: {
+            typeToListMap.put(ListType.PROGRAM, createProgramList());
         }
         case DICTIONARY_TEST_RESULTS: {
             typeToListMap.put(ListType.DICTIONARY_TEST_RESULTS, createDictionaryTestResults());

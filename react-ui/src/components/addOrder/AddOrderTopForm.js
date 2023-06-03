@@ -256,6 +256,7 @@ const AddOrderTopForm = (props) => {
     }
 
     useEffect(() => {
+       
         const currentDate = findConfigurationProperty("currentDateAsText");
         const currentTime = findConfigurationProperty("currentTimeAsText");
         const siteNameConfig = findConfigurationProperty("restrictFreeTextRefSiteEntry");
@@ -287,7 +288,6 @@ const AddOrderTopForm = (props) => {
     }
 
     useEffect(() => {
-
         getFromOpenElisServer("/rest/SamplePatientEntry", getSampleEntryPreform);
         getFromOpenElisServer("/rest/configuration-properties", fetchConfigurationProperties)
 

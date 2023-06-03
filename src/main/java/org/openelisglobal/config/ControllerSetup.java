@@ -13,10 +13,6 @@ import org.openelisglobal.externalconnections.valueholder.ExternalConnection.Aut
 import org.openelisglobal.externalconnections.valueholder.ExternalConnection.ProgrammedConnection;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.beans.propertyeditors.URIEditor;
-import org.springframework.core.annotation.Order;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
@@ -24,9 +20,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
@@ -84,5 +83,12 @@ public class ControllerSetup extends ResponseEntityExceptionHandler {
 
         return new ResponseEntity<>(body, headers, status);
 
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleHttpMediaTypeNotSupported(HttpMediaTypeNotSupportedException ex,
+            HttpHeaders headers, HttpStatus status, WebRequest request) {
+        LogEvent.logErrorStack(ex);
+        return super.handleHttpMediaTypeNotSupported(ex, headers, status, request);
     }
 }

@@ -1,0 +1,283 @@
+import React, {useEffect, useRef, useState} from 'react'
+import {
+    FilterableMultiSelect,
+    Select,
+    SelectItem,
+    TextInput
+} from '@carbon/react';
+
+import '../../index.css';
+import '../../App.css';
+import "../Style.css";
+
+import {getFromOpenElisServer} from '../utils/Utils';
+
+export const Questionnaire = ({questionnaire, onAnswerChange = () => {}}) => {
+
+    const getSelectOption = (answerOption, index) => {
+        if ('valueString' in answerOption) {
+            return <SelectItem key={index} value={answerOption.valueString} text={answerOption.valueString}/>
+        } else if ('valueCoding' in answerOption) {
+            return <SelectItem key={index} value={answerOption.valueCoding.code} text={answerOption.valueCoding.display}/>
+        }
+        else {
+            return <></>
+        }
+    }
+
+    const renderQuestion = (item) => {
+        console.log(JSON.stringify(item))
+
+        var options = [];
+        if (item.type == "choice" && item.repeats === true && 'answerOption' in item) {
+            item.answerOption.map( (answerOption, index) => 
+            {
+                if ('valueString' in answerOption) {
+                    options.push({"value":answerOption.valueString, "text": answerOption.valueString});
+                }
+                if ('valueCoding' in answerOption) {
+                    options.push({"value":answerOption.valueCoding.code, "text": answerOption.valueCoding.display});
+                }
+            })
+        };
+
+        return <>
+        {item.type == "boolean" && <Select
+                id={item.linkId}
+                labelText={item.text}
+                onChange={onAnswerChange} 
+                >
+                <SelectItem disabled value="" text="Choose an option"/>
+                <SelectItem value="" text=""/>
+                <SelectItem value="true" text="Yes"/>
+                <SelectItem value="false" text="No"/>
+                </Select>}
+        {item.type == "choice" && item.repeats !== true && <Select
+                id={item.linkId}
+                labelText={item.text}
+                
+                defaultValue={'inital' in item ? 
+                    'valueString' in item.initial[0] ? 
+                        item.initial[0].valueString :  
+                        'valueCoding' in item.initial[0] ? 
+                            item.initial[0].valueCoding : 
+                            '' :
+                        ''}
+                onChange={onAnswerChange} 
+                >
+                <SelectItem disabled value="" text="Choose an option"/>
+                <SelectItem value="" text=""/>
+                {'answerOption' in item && item.answerOption.map( (answerOption, index) => 
+                    getSelectOption(answerOption, index)
+                )}
+                </Select>}
+        {item.type == "choice" && item.repeats === true && <FilterableMultiSelect
+                id={item.linkId}
+                titleText={item.text}
+                label=""
+                items={options}
+                itemToString={(item) => (item ? item.text : '')} 
+                onChange={(changes) => {var e = {"target": {}}; e.target.id = item.linkId; e.target.value = changes.selectedItems; onAnswerChange(e);}}         
+                selectionFeedback="top-after-reopen"
+                />}
+        {item.type == "integer" && <TextInput id={item.linkId} labelText={item.text} onChange={onAnswerChange} type="number" step="1" pattern="\d+"/>}
+        {item.type == "decimal" && <TextInput id={item.linkId} labelText={item.text} onChange={onAnswerChange} type="number" step="0.01"/>}
+        {item.type == "date" && <TextInput id={item.linkId} labelText={item.text} onChange={onAnswerChange} type="date"/>}
+        {item.type == "time" && <TextInput id={item.linkId} labelText={item.text} onChange={onAnswerChange} type="time"/>}
+        {item.type == "string" && <TextInput id={item.linkId} labelText={item.text} onChange={onAnswerChange} type="text"/>}
+        {item.type == "text" && <TextInput id={item.linkId} labelText={item.text} onChange={onAnswerChange} type="text"/>}
+        {item.type == "quantity" && <TextInput id={item.linkId} labelText={item.text} onChange={onAnswerChange} type="number"/>}
+        </>
+    }
+        if (questionnaire) {
+        var inputs = 'item' in questionnaire && questionnaire.item.map( (item, index) => {
+            return <span key={index}>{renderQuestion(item)}</span>
+        });
+
+        var groups = [];
+        var children = [];
+        var i = 0;
+        for (; i < inputs.length; i++) {
+            children.push(inputs[i]);
+            if (children.length === 2) {
+                groups.push(<div className="formInlineDiv" key={"group_" + i}>{children}</div>);
+                children = [];
+            }
+        }
+        if (children.length > 0 ) {
+            groups.push(<div className="formInlineDiv" key={"group_" + i}>{children}</div>);
+        }
+
+        return <div className='extraQuestions'>
+            {groups}
+        </div>}
+}
+
+const OrderEntryAdditionalQuestions = ({orderFormValues, setOrderFormValues = () => {}}) => {
+
+    const componentMounted = useRef(true);
+    const [questionnaire, setQuestionnaire] = useState({});
+    const [questionnaireResponse, setQuestionnaireResponse] = useState({});
+    const [programs, setPrograms] = useState([]);
+
+    const handleProgramSelection = (event) => {
+        if (event.target.value === "") {
+          setAdditionalQuestions("{}");
+          setOrderFormValues({...orderFormValues, 'programId': null});
+        } else  {
+            getFromOpenElisServer('/program/' + event.target.value + '/questionnaire', setAdditionalQuestions);
+            setOrderFormValues({...orderFormValues, programId: event.target.value});
+        }
+    }
+
+    function convertQuestionnaireToResponse(questionnaire) {
+        var items = [];
+        if ('item' in questionnaire) {
+            for (let i = 0; i < questionnaire.item.length; i++) {
+                let currentItem = questionnaire.item[i];
+                items.push({
+                  "linkId": currentItem.linkId,
+                  "definition": currentItem.definition,
+                  "text": currentItem.text,
+                  "answer": []
+                })
+            }
+    
+            var convertedQuestionnaireResponse = {
+                "resourceType" : "QuestionnaireResponse",
+                "id" : "",
+                "questionnaire" : "Questionnaire/" + questionnaire.id,
+                "status" : "in-progress",
+                "item" : items
+              };
+              return convertedQuestionnaireResponse;
+        }
+
+    }
+
+    function setAdditionalQuestions(res) {
+        console.log(res)
+        setQuestionnaire(res);
+        var convertedQuestionnaireResponse = convertQuestionnaireToResponse(res);
+        setQuestionnaireResponse(convertedQuestionnaireResponse);
+    }
+
+    const fetchPrograms = (programsList) => {
+        if (componentMounted.current) {
+            setPrograms(programsList);
+        }
+    }
+
+    const answerChange = (e) => {
+      const { id, value } = e.target;
+
+      var updatedQuestionnaireResponse = { ...questionnaireResponse };
+      var responseItem = updatedQuestionnaireResponse.item.find(
+        (item) => item.linkId === id
+      );
+      var questionnaireItem = questionnaire.item.find(
+        (item) => item.linkId === id
+      );
+      responseItem.answer = [];
+      if (value !== "") {
+        switch (questionnaireItem.type) {
+          case "boolean":
+            responseItem.answer.push({ valueBoolean: value });
+            break;
+          case "decimal":
+            responseItem.answer.push({ valueDecimal: value });
+            break;
+          case "integer":
+            responseItem.answer.push({ valueInteger: value });
+            break;
+          case "date":
+            responseItem.answer.push({ valueDate: value });
+            break;
+          case "time":
+            responseItem.answer.push({ valueTime: value });
+            break;
+          case "string":
+          case "text":
+            responseItem.answer.push({ valueString: value });
+            break;
+          case "quantity":
+            responseItem.answer.push({ valueQuantity: value });
+            break;
+          case "choice":
+            //make single select and multiselect have the same shape to reuse code
+            var items = value;
+            if (!Array.isArray(items)) {
+                items = [{"value": value}];
+            }
+            for (var i = 0; i < items.length; i++) {
+                var curValue = items[i].value;
+              var option = questionnaireItem?.answerOption?.find(
+                (option) => option?.valueCoding?.code === curValue
+              );
+              if (option) {
+                responseItem.answer.push({ valueCoding: option.valueCoding });
+              } else {
+                var option = questionnaireItem?.answerOption?.find(
+                  (option) => option.valueString === curValue
+                );
+                if (option) {
+                  responseItem.answer.push({ valueString: option.valueString });
+                } else {
+                  console.error(
+                    "couldn't find a matching questionnaire answer for '" +
+                    curValue +
+                      "'"
+                  );
+                }
+              }
+            }
+            break;
+        }
+      }
+      setQuestionnaireResponse(updatedQuestionnaireResponse);
+      setOrderFormValues({
+            ...orderFormValues, 
+            additionalQuestions: updatedQuestionnaireResponse,
+      });
+    }
+
+    useEffect(() => {
+
+        getFromOpenElisServer("/rest/displayList/PROGRAM", fetchPrograms)
+
+        return () => {
+            componentMounted.current = false
+        }
+    }, []);
+
+
+    return (
+        <>
+        {JSON.stringify(questionnaireResponse)}
+        <div className="formInlineDiv">
+            {programs.length > 0 && 
+                <Select
+                id="additionalQuestionsSelect"
+                labelText="program"
+                onChange={handleProgramSelection}>
+                    <SelectItem value="" text=""/>
+                    {
+                        programs.map(program => {
+                            return (
+                                <SelectItem key={program.id}
+                                            value={program.id}
+                                            text={program.value}/>
+                            )
+                        })
+                    }
+                </Select>
+            }
+           
+            </div>
+           <Questionnaire questionnaire={questionnaire} onAnswerChange={answerChange}/>
+            <input type="hidden" name="additionalQuestions" value={questionnaireResponse}/>
+        </>
+    )
+}
+
+export default OrderEntryAdditionalQuestions

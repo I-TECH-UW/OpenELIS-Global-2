@@ -1,5 +1,5 @@
 import React from "react";
-import { Route } from "react-router-dom";
+import { Route, useParams } from "react-router-dom";
 import IdleTimer from 'react-idle-timer'
 import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css' // Import css
@@ -14,6 +14,7 @@ class SecureRoute extends React.Component {
         super(props);
         this.idleTimer = null
         this.state = {
+            loading: true, 
             authenticated: false,
             isIdle: false,
             refreshTimeoutSet: false,
@@ -31,7 +32,7 @@ class SecureRoute extends React.Component {
                 if (jsonResp.authenticated) {
                     console.info("Authenticated");
                    // console.log(JSON.stringify(jsonResp))
-                    this.setState({ authenticated: true, userSessionDetails: jsonResp });
+                    this.setState({ loading: false, authenticated: true, userSessionDetails: jsonResp });
                     this.props.onAuth(jsonResp);
                     localStorage.setItem("CSRF", jsonResp.csrf)
                     if (this.hasPermission()) {
@@ -55,10 +56,12 @@ class SecureRoute extends React.Component {
                     }
 
                 } else {
+                    this.setState({ loading: false});
                     window.location.href = this.props.config.loginRedirect;
                 }
             }).catch(error => {
                 console.log(error);
+                this.setState({ loading: false });
                 const options = {
                     title: 'System Error',
                     message: "Error : " + error.message,
@@ -115,8 +118,11 @@ class SecureRoute extends React.Component {
     }
 
     render() {
-        if (!this.state.authenticated) {
+        if (this.state.loading) {
             return (<Loading/>);
+        } 
+        else if (!this.state.authenticated) {
+            return ("Not authenticated");
         } else {
             if (this.hasPermission()) {
                 console.info("Access Allowed");

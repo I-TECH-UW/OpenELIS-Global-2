@@ -24,6 +24,8 @@ import AddOrder from "./components/addOrder/Index";
 import RoutineReports from "./components/Reports/Routine";
 import StudyReports from "./components/Reports/Study";
 import StudyValidation from "./components/validation/Study";
+import PathologyDashboard from "./components/pathology/PathologyDashboard";
+import PathologyCaseView from "./components/pathology/PathologyCaseView"
 
 let i18nConfig = {
   locale: navigator.language.split(/[-_]/)[0],
@@ -154,10 +156,30 @@ class App extends React.Component {
                   isLoggedIn={this.isLoggedIn}
                 />
                 <SecureRoute
+                  path="/PathologyDashboard"
+                  exact
+                  component={() => <PathologyDashboard />}
+                  role="Global Administrator"
+                  config={this.state.config}
+                  onAuth={this.onAuth}
+                  logout={this.logout}
+                  isLoggedIn={this.isLoggedIn}
+                />
+                <SecureRoute
+                  path="/PathologyCaseView/:pathologySampleId"
+                  exact
+                  component={() => <PathologyCaseView />}
+                  role="Global Administrator"
+                  config={this.state.config}
+                  onAuth={this.onAuth}
+                  logout={this.logout}
+                  isLoggedIn={this.isLoggedIn}
+                />
+                <SecureRoute
                     path="/AddOrder"
                     exact
                     component={() => <AddOrder />}
-                    role="Reception"
+                    role={["Reception"]}
                     config={this.state.config}
                     onAuth={this.onAuth}
                     logout={this.logout}

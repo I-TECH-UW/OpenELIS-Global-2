@@ -112,7 +112,7 @@ public class SampleOrderService {
 
         if (ConfigurationProperties.getInstance().isPropertyValueEqual(ConfigurationProperties.Property.ORDER_PROGRAM,
                 "true")) {
-            orderItems.setProgramList(DisplayListService.getInstance().getList(DisplayListService.ListType.PROGRAM));
+            orderItems.setProgramList(DisplayListService.getInstance().getList(DisplayListService.ListType.DICTIONARY_PROGRAM));
         }
 
         return orderItems;

@@ -409,6 +409,12 @@ public class FhirTransformServiceImpl implements FhirTransformService {
             orderEntryObjects.sampleEntryObjectsList.add(fhirSampleEntryObjects);
         }
 
+        if (updateData.getProgramQuestionnaireResponse() != null) {
+            updateData.getProgramQuestionnaireResponse()
+                    .setId(updateData.getProgramSample().getQuestionnaireResponseUuid().toString());
+            this.addToOperations(fhirOperations, tempIdGenerator, updateData.getProgramQuestionnaireResponse());
+        }
+
         // TODO location?
         // TODO create encounter?
 

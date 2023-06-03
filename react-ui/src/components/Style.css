@@ -151,6 +151,11 @@ button {
   font-size: 10px;
 }
 
+.inlineDivBlock > div {
+  display: inline-block;
+  margin-right: 1rem;
+}
+
 .inlineChildDiv {
   margin-left : 1%
 }
@@ -326,4 +331,11 @@ button {
   width: 200px;
   --cds-text-secondary: black;
     margin-bottom: 20px;
+}
+
+.exampleDiv {
+  background-color: #f1f1f1;
+  overflow: auto;
+  text-align: justify;
+  padding: 0.6875rem 1rem;
 }

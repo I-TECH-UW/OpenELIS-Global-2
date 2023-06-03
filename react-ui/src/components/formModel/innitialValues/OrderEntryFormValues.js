@@ -107,7 +107,9 @@ export const SampleOrderFormValues = {
     testSectionList: null,
     warning: false,
     useReferral: false,
-    rejectReasonList:null
+    rejectReasonList:null,
+    additionalQuestions: null,
+    programId: null
 }
 
 export const  ReferralItem =  {

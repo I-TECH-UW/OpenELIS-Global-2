@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -29,6 +30,12 @@ public class DisplayListController {
 
     @Autowired
     private PersonService personService;
+
+    @GetMapping(value = "displayList/{listType}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<IdValuePair> getDisplayList(@PathVariable DisplayListService.ListType listType) {
+        return DisplayListService.getInstance().getList(listType);
+    }
 
     @GetMapping(value = "tests", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -64,6 +71,30 @@ public class DisplayListController {
     @ResponseBody
     public List<IdValuePair> getNationalityList() {
         return DisplayListService.getInstance().getList(ListType.PATIENT_NATIONALITY);
+    }
+
+    @GetMapping(value = "programs", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<IdValuePair> getPrograms() {
+        return DisplayListService.getInstance().getList(ListType.PROGRAM);
+    }
+
+    @GetMapping(value = "dictionaryPrograms", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<IdValuePair> getDictionaryPrograms() {
+        return DisplayListService.getInstance().getList(ListType.DICTIONARY_PROGRAM);
+    }
+
+    @GetMapping(value = "patientPaymentsOptions", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<IdValuePair> getSamplePatientPaymentOptions() {
+        return DisplayListService.getInstance().getList(ListType.SAMPLE_PATIENT_PAYMENT_OPTIONS);
+    }
+
+    @GetMapping(value = "testLocationCodes", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<IdValuePair> getTestLocationCodes() {
+        return DisplayListService.getInstance().getList(ListType.TEST_LOCATION_CODE);
     }
 
     @GetMapping(value = "test-rejection-reasons", produces = MediaType.APPLICATION_JSON_VALUE)

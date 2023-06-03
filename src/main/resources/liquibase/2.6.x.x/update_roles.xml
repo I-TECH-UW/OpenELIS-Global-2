@@ -174,8 +174,7 @@
 			Trail';
 		</sql>
 	</changeSet>
-	<changeSet author="CIV Developer Group" id="202303248"
-		context="ci_regional,ci_general">
+	<changeSet author="CIV Developer Group" id="202303248">
 		<preConditions onFail="CONTINUE">
 			<tableExists tableName="system_role"
 				schemaName="clinlims" />

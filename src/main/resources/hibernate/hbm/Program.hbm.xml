@@ -22,5 +22,8 @@
 		<property name="programName" type="java.lang.String">
 			<column name="NAME" length="50" not-null="true" />
 		</property>
+		<property name="questionnaireUUID" type="java.util.UUID">
+			<column name="questionnaire_fhir_uuid"/>
+		</property>
 	</class>
 </hibernate-mapping>

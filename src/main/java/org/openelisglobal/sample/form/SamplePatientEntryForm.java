@@ -6,6 +6,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
+import org.hl7.fhir.r4.model.QuestionnaireResponse;
 import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.util.validator.CustomDateValidator.DateRelation;
@@ -94,6 +95,10 @@ public class SamplePatientEntryForm extends BaseForm {
 
     // for display
     private List<IdValuePair> rejectReasonList;
+
+    private QuestionnaireResponse additionalQuestions;
+
+    private String programId;
 
     public SamplePatientEntryForm() {
         setFormName("samplePatientEntryForm");
@@ -297,5 +302,21 @@ public class SamplePatientEntryForm extends BaseForm {
 
     public void setRememberSiteAndRequester(Boolean rememberSiteAndRequester) {
         this.rememberSiteAndRequester = rememberSiteAndRequester;
+    }
+
+    public QuestionnaireResponse getAdditionalQuestions() {
+        return additionalQuestions;
+    }
+
+    public void setAdditionalQuestions(QuestionnaireResponse additionalQuestions) {
+        this.additionalQuestions = additionalQuestions;
+    }
+
+    public String getProgramId() {
+        return programId;
+    }
+
+    public void setProgramId(String programId) {
+        this.programId = programId;
     }
 }

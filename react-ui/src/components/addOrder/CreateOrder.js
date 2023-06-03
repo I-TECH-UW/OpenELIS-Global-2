@@ -12,6 +12,7 @@ import {NotificationContext} from "../layout/Layout";
 
 import {SampleOrderFormValues} from "../formModel/innitialValues/OrderEntryFormValues";
 import {postToOpenElisServer} from "../utils/Utils";
+import OrderEntryAdditionalQuestions from "./OrderEntryAdditionalQuestions";
 
 const CreateOrder = () => {
     const [selectedPatient, setSelectedPatient] = useState({
@@ -115,8 +116,8 @@ const CreateOrder = () => {
         <Grid fullWidth={true} className="gridBoundary">
             <Column lg={16}>
                 <Form>
+                <OrderEntryAdditionalQuestions orderFormValues={orderFormValues} setOrderFormValues={setOrderFormValues}/>
                     <AddOrderTopForm orderFormValues={orderFormValues} setOrderFormValues={setOrderFormValues}/>
-                    <br/>
                     <AddSample setSamples={setSamples} orderFormValues={orderFormValues} setOrderFormValues={setOrderFormValues}/>
                 </Form>
                 <SearchPatientForm getSelectedPatient={getSelectedPatient}></SearchPatientForm>
@@ -134,8 +135,6 @@ const CreateOrder = () => {
                         </div>)
                     }
                 })}
-            </Column>
-            <Column lg={6}>
                 <div>
                     <Button type="button" id="submit" onClick={handleSubmitOrderForm}>
                         <FormattedMessage id="label.button.save"/>
@@ -143,6 +142,7 @@ const CreateOrder = () => {
                     <Button id="clear" kind='danger'>
                         <FormattedMessage id="label.button.clear"/>
                     </Button>
+                    {JSON.stringify(orderFormValues)}
                 </div>
             </Column>
 

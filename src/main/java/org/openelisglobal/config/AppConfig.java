@@ -2,14 +2,20 @@ package org.openelisglobal.config;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
-import java.util.List;
 
 import org.apache.commons.validator.GenericValidator;
+import org.hl7.fhir.r4.model.Questionnaire;
+import org.hl7.fhir.r4.model.QuestionnaireResponse;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
+import org.openelisglobal.fhir.springserialization.QuestionnaireDeserializer;
+import org.openelisglobal.fhir.springserialization.QuestionnaireResponseDeserializer;
+import org.openelisglobal.fhir.springserialization.QuestionnaireResponseSerializer;
+import org.openelisglobal.fhir.springserialization.QuestionnaireSerializer;
 import org.openelisglobal.interceptor.CommonPageAttributesInterceptor;
 import org.openelisglobal.interceptor.UrlErrorsInterceptor;
 import org.openelisglobal.internationalization.GlobalLocaleResolver;
@@ -28,6 +34,8 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
@@ -41,10 +49,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
+
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter; 
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module; 
 
 
 
@@ -186,6 +195,14 @@ public class AppConfig implements WebMvcConfigurer {
         ObjectMapper mapper = new ObjectMapper();
         //Registering Hibernate4Module to support lazy objects
         mapper.registerModule(new Hibernate5Module());
+        mapper.setSerializationInclusion(Include.NON_NULL);
+
+        SimpleModule module = new SimpleModule();
+        module.addSerializer(Questionnaire.class, new QuestionnaireSerializer());
+        module.addDeserializer(Questionnaire.class, new QuestionnaireDeserializer());
+        module.addSerializer(QuestionnaireResponse.class, new QuestionnaireResponseSerializer());
+        module.addDeserializer(QuestionnaireResponse.class, new QuestionnaireResponseDeserializer());
+        mapper.registerModule(module);
 
         messageConverter.setObjectMapper(mapper);
         return messageConverter;

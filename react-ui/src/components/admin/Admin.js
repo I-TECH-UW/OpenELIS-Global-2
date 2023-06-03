@@ -3,6 +3,7 @@ import config from "../../config.json";
 import { FormattedMessage, injectIntl } from 'react-intl'
 import '../Style.css'
 import ReflexTestManagement from './reflexTests/ReflexTestManagement'
+import ProgramManagement from './program/ProgramManagement'
 import PathRoute from "../utils/PathRoute"
 import {
     SideNav,
@@ -43,12 +44,16 @@ class Admin extends React.Component {
                             <SideNavMenuItem href="#7">Link</SideNavMenuItem>
                             <SideNavMenuItem href="#8">Link</SideNavMenuItem>
                         </SideNavMenu>
+                        <SideNavMenuItem href="#program" >Program entry</SideNavMenuItem>
                         <SideNavMenuItem target="_blank" href={config.serverBaseUrl + "/MasterListsPage"}><FormattedMessage id="admin.legacy"/></SideNavMenuItem>
                     </SideNavItems>
                 </SideNav>
 
                 <PathRoute path="#reflex">
                     <ReflexTestManagement />
+                </PathRoute>
+                <PathRoute path="#program">
+                    <ProgramManagement />
                 </PathRoute>
             </>
 
