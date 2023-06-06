@@ -22,6 +22,7 @@ import PatientHistory from "./components/patient/PatientHistory";
 import Workplan from "./components/workplan/Workplan";
 //import "./components/patient/resultsViewer/results-viewer.styles.scss"
 import AddOrder from "./components/addOrder/Index";
+import ModifyOrder from "./components/modifyOrder/Index";
 import RoutineReports from "./components/Reports/Routine";
 import StudyReports from "./components/Reports/Study";
 import StudyValidation from "./components/validation/Study";
@@ -158,6 +159,16 @@ class App extends React.Component {
                     path="/AddOrder"
                     exact
                     component={() => <AddOrder />}
+                    role="Reception"
+                    config={this.state.config}
+                    onAuth={this.onAuth}
+                    logout={this.logout}
+                    isLoggedIn={this.isLoggedIn}
+                />
+                 <SecureRoute
+                    path="/ModifyOrder"
+                    exact
+                    component={() => <ModifyOrder />}
                     role="Reception"
                     config={this.state.config}
                     onAuth={this.onAuth}

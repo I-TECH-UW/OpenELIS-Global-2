@@ -42,6 +42,7 @@
     "banner.menu.workplan.priority"            :"By Priority",
     "label.form.searchby"                      :"Search By",
     "order.label.add" : "Add Order",
+    "order.label.modify":"Modify Order",
     "result.noTestsFound": "No appropriate tests were found.",
     "quick.entry.accession.number":"Accession Number",
     "patient.subject.number":"Unique Health ID number",

@@ -42,6 +42,7 @@
     "banner.menu.workplan.unit"               :"Par Unit\u00E9",
     "label.form.searchby"                      :"Rechercher par",
     "order.label.add" : "Ajouter Ordonnance",
+    "order.label.modify":"Modifier la commande",
     "result.noTestsFound": "Aucun test approprié trouvé",
     "quick.entry.accession.number":"N° Labo",
     "patient.subject.number":"Sujet No.",
