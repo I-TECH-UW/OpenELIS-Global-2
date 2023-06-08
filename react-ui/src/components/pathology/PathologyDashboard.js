@@ -117,24 +117,24 @@ function PathologyDashboard() {
     <>
         {notificationVisible === true ? <AlertDialog/> : ""}
         <Grid fullWidth={true} className="gridBoundary">
-                    <Column lg={16}>
+                    <Column lg={16} md={8} sm={4}>
         <Heading>
             Pathology
         </Heading>
         </Column>
-        <Column lg={4} >
+        <Column lg={4} md={2} sm={1}>
         {counts.inProgress} Cases in Progress 
         </Column>
-        <Column lg={4}>
+        <Column lg={4} md={2} sm={1}>
         {counts.awaitingReview} Awaiting Pathology Review 
         </Column>
-        <Column lg={4}>
+        <Column lg={4} md={2} sm={1}>
         {counts.additionalRequests} Additional Pathology Requests
         </Column>
-        <Column lg={4}/>
-        <Column lg={16} style={{"marginBottom": "1rem" ,"marginTop": "1rem"}}>
+        <Column lg={4} md={2} sm={1}/>
+        <Column lg={16} md={8} sm={4} style={{"marginBottom": "1rem" ,"marginTop": "1rem"}}>
         {counts.complete} Complete</Column>
-        <Column lg={8}>
+        <Column lg={8} md={4} sm={2}>
         <Search
               size="sm"
               value={filters.searchTerm}
@@ -143,7 +143,7 @@ function PathologyDashboard() {
               labelText="Search by LabNo or Family Name"
             />
         </Column>
-        <Column lg={8}>
+        <Column lg={8} md={4} sm={2}>
             <div className="inlineDivBlock">
             <div >Filters:</div>
             <Checkbox labelText="My cases" 
@@ -168,7 +168,7 @@ function PathologyDashboard() {
                     })}</Select></div>
         </Column>
         
-        <Column lg={16}>
+        <Column lg={16} md={8} sm={4}>
         <DataTable rows={pathologyEntries} headers={[
     {
       key: 'requestDate',

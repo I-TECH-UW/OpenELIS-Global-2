@@ -197,6 +197,10 @@ class OEHeader extends React.Component {
                       <SideNavMenuItem href={config.serverBaseUrl + "/WorkPlanByTestSection?type="}>By Unit</SideNavMenuItem>
                       <SideNavMenuItem href={config.serverBaseUrl + "/WorkPlanByPriority?type=priority"}>By Priority</SideNavMenuItem>
                     </SideNavMenu>
+                    <SideNavMenu
+                      aria-label="Pathology" title="Pathology"                    >
+                      <SideNavMenuItem href={"/PathologyDashboard"}>Dashboard</SideNavMenuItem>
+                    </SideNavMenu>
                     <SideNavMenu aria-label="Results" title="Results">
                       <SideNavMenuItem href={config.serverBaseUrl + "/LogbookResults?type="}>Enter by Unit</SideNavMenuItem>
                       <SideNavMenuItem href="/result">Search</SideNavMenuItem>

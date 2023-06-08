@@ -142,7 +142,6 @@ const CreateOrder = () => {
                     <Button id="clear" kind='danger'>
                         <FormattedMessage id="label.button.clear"/>
                     </Button>
-                    {JSON.stringify(orderFormValues)}
                 </div>
             </Column>
 

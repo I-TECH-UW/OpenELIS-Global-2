@@ -26,7 +26,6 @@ export const Questionnaire = ({questionnaire, onAnswerChange = () => {}}) => {
     }
 
     const renderQuestion = (item) => {
-        console.log(JSON.stringify(item))
 
         var options = [];
         if (item.type == "choice" && item.repeats === true && 'answerOption' in item) {
@@ -253,7 +252,6 @@ const OrderEntryAdditionalQuestions = ({orderFormValues, setOrderFormValues = ()
 
     return (
         <>
-        {JSON.stringify(questionnaireResponse)}
         <div className="formInlineDiv">
             {programs.length > 0 && 
                 <Select
