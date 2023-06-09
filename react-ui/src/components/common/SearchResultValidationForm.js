@@ -25,12 +25,14 @@ import {
 } from '@carbon/react';
 import DataTable from 'react-data-table-component';
 import { Formik, Field } from "formik";
-import SearchResultFormValues from '../formModel/innitialValues/SearchResultFormValues';
+//import SearchResultFormValues from '../formModel/innitialValues/SearchResultFormValues';
+import SearchResultValidationFormValues from '../formModel/innitialValues/SearchResultValidationFormValues';
+
 import { AlertDialog, NotificationKinds } from "../common/CustomNotification";
 import { NotificationContext } from "../layout/Layout";
 
 
-class CodeTestForm extends React.Component {
+class SearchResultValidationForm extends React.Component {
     static contextType = NotificationContext;
 
     constructor(props) {
@@ -51,7 +53,7 @@ class CodeTestForm extends React.Component {
 
     columns = [
         {
-            name: 'Sample Info',
+            name: 'Sample V Info',
             cell: (row, index, column, id) => {
                 return this.renderCell(row, index, column, id);
             },
@@ -64,14 +66,6 @@ class CodeTestForm extends React.Component {
             sortable: true,
             width: "7rem"
         },
-        // {
-        //     name: 'Methods',
-        //     cell: (row, index, column, id) => {
-        //         return this.renderCell(row, index, column, id);
-        //     },
-        //     width: "12rem",
-        //     sortable: true,
-        // },
         {
             name: "Analyzer Result",
             selector: row => row.analysisMethod,
@@ -123,15 +117,15 @@ class CodeTestForm extends React.Component {
     ];
 
     renderCell(row, index, column, id) {
-        console.log("renderCell:" + column.name + ":" + row.resultType);
+        // console.log("renderCell:" + column.name + ":" + row.resultType);
         switch (column.name) {
-            case "Sample Info":
+            case "Sample V Info":
                 // return <input id={"results_" + id} type="text" size="6"></input>  
                 return (
                     <>
                         <div className='sampleInfo'>
                             <TextArea value={row.accessionNumber + "-" + row.sequenceNumber + "\n" + row.patientName + "\n" + row.patientInfo}
-                                disabled={true} type="text" labelText="" rows={3} >
+                                disabled={false} type="text" labelText="" rows={3}  >
                             </TextArea>
                         </div>
                     </>
@@ -263,25 +257,25 @@ class CodeTestForm extends React.Component {
                         // />
 
                         return <TextInput
-                        id={"currentResultValue" + row.id}
-                        name={"testResult[" + row.id + "].resultValue"}
-                        //type="text"
-                        value={this.state.resultForm.testResult[row.id].resultValue}
-                        // labelText="Text input label"
-                        // helperText="Optional help text"
-                        onChange={(e) => this.handleChange(e, row.id)}
-                    />
+                            id={"currentResultValue" + row.id}
+                            name={"testResult[" + row.id + "].resultValue"}
+                            //type="text"
+                            value={this.state.resultForm.testResult[row.id].resultValue}
+                            // labelText="Text input label"
+                            // helperText="Optional help text"
+                            onChange={(e) => this.handleChange(e, row.id)}
+                        />
 
 
-                        // return <TextInput
-                        //     id={"testResult[" + row.id + "].resultValue"}
-                        //     name={"testResult[" + row.id + "].resultValue"}
-                        //     type="text"
-                        //     value={this.state.resultForm.testResult[row.id].resultValue}
-                        //     // labelText="Text input label"
-                        //     // helperText="Optional help text"
-                        //     onChange={(e) => this.validateResults(e, row.id, row)}
-                        // />
+                    // return <TextInput
+                    //     id={"testResult[" + row.id + "].resultValue"}
+                    //     name={"testResult[" + row.id + "].resultValue"}
+                    //     type="text"
+                    //     value={this.state.resultForm.testResult[row.id].resultValue}
+                    //     // labelText="Text input label"
+                    //     // helperText="Optional help text"
+                    //     onChange={(e) => this.validateResults(e, row.id, row)}
+                    // />
 
                     // <input id={"results_" + param.rowId} type="text" size="6"></input>
 
@@ -432,7 +426,7 @@ class CodeTestForm extends React.Component {
 
     validateResults = (e, rowId, row) => {
         console.log("validateResults:" + e.target.value)
-       // e.target.value;
+        // e.target.value;
         this.handleChange(e, rowId)
     }
 
@@ -572,126 +566,126 @@ class CodeTestForm extends React.Component {
             <>
                 {this.context.notificationVisible === true ? <AlertDialog /> : ""}
 
-                {/* <Grid  fullWidth={true} className="gridBoundary"> */}
-                {/* <Column  lg={3}> */}
-                <Formik
-                    initialValues={SearchResultFormValues}
-                    //validationSchema={}
-                    onSubmit={this.handleSubmit}
-                    onChange
-                >
-                    {({ values,
-                        errors,
-                        touched,
-                        handleChange,
-                        //handleBlur,
-                        handleSubmit
-                    }) => (
-
-                        <Form
-                            onSubmit={handleSubmit}
-                            onChange={handleChange}
-                        //onBlur={handleBlur}
+                <Grid fullWidth={true} >
+                    <Column lg={16}>
+                        <Formik
+                            initialValues={SearchResultValidationFormValues}
+                            //validationSchema={}
+                            onSubmit={this.handleSubmit}
+                            onChange
                         >
-                            <Stack gap={2}>
+                            {({ values,
+                                errors,
+                                touched,
+                                handleChange,
+                                //handleBlur,
+                                handleSubmit
+                            }) => (
 
-                                <FormLabel>
-                                    <Section>
-                                        <Section>
-                                            <Section>
-                                                <Heading>
-                                                    <FormattedMessage id="label.button.range" />
-                                                </Heading>
-                                            </Section>
-                                        </Section>
-                                    </Section>
-                                </FormLabel>
-                                <Field name="labNumber"
+                                <Form
+                                    onSubmit={handleSubmit}
+                                    onChange={handleChange}
+                                //onBlur={handleBlur}
                                 >
-                                    {({ field }) =>
-                                        <TextInput
-                                            className="searchLabNumber"
-                                            name={field.name} labelText="Lab Number" id={field.name} />
-                                    }
-                                </Field>
-                                <Grid>
-                                    <Column lg={2}>
-                                        <Field name="doRange"
+                                    <Stack gap={2}>
+
+                                        <FormLabel>
+                                            <Section>
+                                                <Section>
+                                                    <Section>
+                                                        <Heading>
+                                                            <FormattedMessage id="label.button.resultValidationSearch" />
+                                                        </Heading>
+                                                    </Section>
+                                                </Section>
+                                            </Section>
+                                        </FormLabel>
+                                        <Field name="labNumber"
                                         >
                                             {({ field }) =>
-                                                <Checkbox
-                                                    defaultChecked={this.state.doRange}
-                                                    onChange={this.handleDoRangeChange}
-                                                    name={field.name}
-                                                    labelText="Do Range"
-                                                    id={field.name} />
+                                                <TextInput
+                                                    className="searchLabNumber"
+                                                    name={field.name} id={field.name} />
                                             }
                                         </Field>
-                                    </Column>
-                                    <Column lg={2}>
-                                        <Field name="finished"
-                                        >
-                                            {({ field }) =>
-                                                <Checkbox
-                                                    defaultChecked={this.state.finished}
-                                                    onChange={this.handleFinishedChange}
-                                                    //onClick={() => (this.state.doRange = false)}
-                                                    name={field.name}
-                                                    labelText="Display All"
-                                                    id={field.name} />
-                                            }
-                                        </Field>
-                                    </Column>
-                                </Grid>
-                                <Button type="submit" id="submit">
-                                    <FormattedMessage id="label.button.search" />
-                                </Button>
-                            </Stack>
-                        </Form>
-                    )}
-                </Formik>
-                {/* </Column> */}
-                {/* <Column></Column> */}
-                {/* <Column  lg={12} > */}
+                                        <Grid>
+                                            <Column lg={2}>
+                                                <Field name="doRange"
+                                                >
+                                                    {({ field }) =>
+                                                        <Checkbox
+                                                            defaultChecked={this.state.doRange}
+                                                            onChange={this.handleDoRangeChange}
+                                                            name={field.name}
+                                                            labelText="Show Entire Results"
+                                                            id={field.name} />
+                                                    }
+                                                </Field>
+                                            </Column>
+                                            <Column lg={2}>
+                                                <Field name="finished"
+                                                >
+                                                    {({ field }) =>
+                                                        <Checkbox
+                                                            defaultChecked={this.state.finished}
+                                                            onChange={this.handleFinishedChange}
+                                                            //onClick={() => (this.state.doRange = false)}
+                                                            name={field.name}
+                                                            labelText="Show Next 99 Orders"
+                                                            id={field.name} />
+                                                    }
+                                                </Field>
+                                            </Column>
+                                        </Grid>
+                                        <Button type="submit" id="submit">
+                                            <FormattedMessage id="label.button.search" />
+                                        </Button>
+                                    </Stack>
+                                </Form>
+                            )}
+                        </Formik>
+                        {/* </Column> */}
+                        {/* <Column></Column> */}
+                        {/* <Column  lg={12} > */}
 
-                {/* {this.myComponent()} */}
+                        {/* {this.myComponent()} */}
 
-                <>
-                    <Formik
-                        initialValues={SearchResultFormValues}
-                        //validationSchema={}
-                        onSubmit={this.handleSave}
-                        onChange
-                    >
-                        {({ values,
-                            errors,
-                            touched,
-                            handleChange,
-                            //handleBlur,
-                            handleSubmit }) => (
-
-                            <Form
-                                onSubmit={handleSubmit}
-                                onChange={handleChange}
-                            //onBlur={handleBlur}
+                        <>
+                            <Formik
+                                initialValues={SearchResultValidationFormValues}
+                                //validationSchema={}
+                                onSubmit={this.handleSave}
+                                onChange
                             >
+                                {({ values,
+                                    errors,
+                                    touched,
+                                    handleChange,
+                                    //handleBlur,
+                                    handleSubmit }) => (
 
-                                <DataTable
-                                    data={this.state.resultForm.testResult}
-                                    columns={this.columns} isSortable
-                                    expandableRows
-                                    expandableRowsComponent={this.renderReferral}>
-                                </DataTable><Pagination onChange={this.handlePageChange} page={this.state.page} pageSize={this.state.pageSize}
-                                    pageSizes={[100]} totalItems={this.state.resultForm.testResult.length}></Pagination>
+                                    <Form
+                                        onSubmit={handleSubmit}
+                                        onChange={handleChange}
+                                    //onBlur={handleBlur}
+                                    >
 
-                                <Button type="submit" id="submit">
-                                    <FormattedMessage id="label.button.save" />
-                                </Button>
-                            </Form>)}
-                    </Formik>
-                </>
-                {/* </Column> */}
-                {/* </Grid> */}
+                                        <DataTable
+                                            data={this.state.resultForm.testResult}
+                                            columns={this.columns} isSortable
+                                            expandableRows
+                                            expandableRowsComponent={this.renderReferral}>
+                                        </DataTable><Pagination onChange={this.handlePageChange} page={this.state.page} pageSize={this.state.pageSize}
+                                            pageSizes={[100]} totalItems={this.state.resultForm.testResult.length}></Pagination>
+
+                                        <Button type="submit" id="submit">
+                                            <FormattedMessage id="label.button.save" />
+                                        </Button>
+                                    </Form>)}
+                            </Formik>
+                        </>
+                    </Column>
+                </Grid>
             </>
 
         );
@@ -699,4 +693,4 @@ class CodeTestForm extends React.Component {
     }
 }
 
-export default injectIntl(CodeTestForm)
+export default injectIntl(SearchResultValidationForm)
