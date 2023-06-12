@@ -102,6 +102,7 @@ public class UserRoleDAOImpl extends BaseDAOImpl<UserRole, UserRolePK> implement
         return inRole;
     }
 
+
     @Override
     public void deleteLabUnitRoleMap(LabUnitRoleMap roleMap) {
         try {

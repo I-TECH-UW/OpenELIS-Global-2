@@ -3,6 +3,7 @@ package org.openelisglobal.program.valueholder.pathology;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -58,6 +59,48 @@ public class PathologySample extends ProgramSample {
     @JoinColumn(name = "pathology_sample_id")
     private List<PathologySlide> slides;
 
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "pathology_sample_id")
+    private List<PathologyRequest> requests;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "pathology_sample_id")
+    private List<PathologyTechnique> techniques;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "pathology_sample_id")
+    private List<PathologyConclusion> conclusions;
+
+    @Column(name = "gross_exam")
+    private String grossExam;
+
+    @Column(name = "microscopy_exam")
+    private String microscopyExam;
+
+    public List<PathologyRequest> getRequests() {
+        return requests;
+    }
+
+    public void setRequests(List<PathologyRequest> requests) {
+        this.requests = requests;
+    }
+
+    public List<PathologyTechnique> getTechniques() {
+        return techniques;
+    }
+
+    public void setTechniques(List<PathologyTechnique> techniques) {
+        this.techniques = techniques;
+    }
+
+    public List<PathologyConclusion> getConclusions() {
+        return conclusions;
+    }
+
+    public void setConclusions(List<PathologyConclusion> conclusions) {
+        this.conclusions = conclusions;
+    }
+
     public PathologyStatus getStatus() {
         return status;
     }
@@ -96,6 +139,22 @@ public class PathologySample extends ProgramSample {
 
     public void setSlides(List<PathologySlide> slides) {
         this.slides = slides;
+    }
+
+    public String getGrossExam() {
+        return grossExam;
+    }
+
+    public void setGrossExam(String grossExam) {
+        this.grossExam = grossExam;
+    }
+
+    public String getMicroscopyExam() {
+        return microscopyExam;
+    }
+
+    public void setMicroscopyExam(String microscopyExam) {
+        this.microscopyExam = microscopyExam;
     }
 
 }

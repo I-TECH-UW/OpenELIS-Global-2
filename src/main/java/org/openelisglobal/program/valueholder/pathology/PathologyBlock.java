@@ -1,5 +1,6 @@
 package org.openelisglobal.program.valueholder.pathology;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -18,9 +19,8 @@ public class PathologyBlock extends BaseObject<Integer> {
     @SequenceGenerator(name = "pathology_block_generator", sequenceName = "pathology_block_seq", allocationSize = 1)
     private Integer id;
 
-    private PathologySample pathologySample;
-
-    private Integer slideNumber;
+    @Column(name = "block_number")
+    private Integer blockNumber;
 
     @Override
     public Integer getId() {
@@ -32,20 +32,12 @@ public class PathologyBlock extends BaseObject<Integer> {
         this.id = id;
     }
 
-    public Integer getSlideNumber() {
-        return slideNumber;
+    public Integer getBlockNumber() {
+        return blockNumber;
     }
 
-    public void setSlideNumber(Integer slideNumber) {
-        this.slideNumber = slideNumber;
-    }
-
-    public PathologySample getPathologySample() {
-        return pathologySample;
-    }
-
-    public void setPathologySample(PathologySample pathologySample) {
-        this.pathologySample = pathologySample;
+    public void setBlockNumber(Integer blockNumber) {
+        this.blockNumber = blockNumber;
     }
 
 }

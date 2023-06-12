@@ -76,7 +76,7 @@
 	</changeSet>
 	
 	<changeSet author="csteele" id="3">
-	<validCheckSum>8:dbb648d7be93b72bb42edec89434d954</validCheckSum>
+	<validCheckSum>8:ab895f74386ecc421575297f4641e78b</validCheckSum>
 		<preConditions onFail="MARK_RAN">
 			<not>
 				<tableExists tableName="pathology_sample" schemaName="clinlims" />
@@ -113,6 +113,8 @@
 			<column name="sample_id" type="NUMERIC(10)"/>
 			<column name="status" type="VARCHAR(255)"/>
 			<column name="questionnaire_response_uuid" type="uuid" />
+			<column name="gross_exam" type="VARCHAR(255)"/>
+			<column name="microscopy_exam" type="VARCHAR(255)"/>
 			<column name="last_updated" type="datetime"/>
 		</createTable>
 		<addForeignKeyConstraint constraintName="pathology_sample_program_id_fk"
@@ -138,6 +140,7 @@
 			</column>
 			<column name="pathology_sample_id" type="int"/>
 			<column name="slide_number" type="int"/>
+			<column name="image" type="bytea"/>
 			<column name="last_updated" type="datetime"/>
 		</createTable>
 		<addForeignKeyConstraint constraintName="pathology_sample_pathology_slide_id_fk"
@@ -146,6 +149,7 @@
 	</changeSet>
 	
 	<changeSet author="csteele" id="5">
+	<validCheckSum>8:db30ce3786f7fe7b51dbe0a521add066</validCheckSum>
 		<preConditions onFail="MARK_RAN">
 			<not>
 				<tableExists tableName="pathology_block" schemaName="clinlims" />
@@ -159,7 +163,7 @@
 				<constraints primaryKey="true" nullable="false"/>
 			</column>
 			<column name="pathology_sample_id" type="int"/>
-			<column name="slide_number" type="int"/>
+			<column name="block_number" type="int"/>
 			<column name="last_updated" type="datetime"/>
 		</createTable>
 		<addForeignKeyConstraint constraintName="pathology_sample_pathology_block_id_fk"
@@ -168,6 +172,7 @@
 	</changeSet>
 	
 	<changeSet author="csteele" id="6">
+	<validCheckSum>8:22d5e9de87e5470c6339d61a9d3dbbb2</validCheckSum>
     <preConditions onFail="MARK_RAN">
       <sqlCheck expectedResult="0">select count(*) from clinlims.dictionary_category where description = 'Pathology - Techniques';
     		</sqlCheck>
@@ -188,5 +193,85 @@
 			<column name="local_abbrev" value="PathReq" />
 			<column name="name" value="pathologist_requests" />
 		</insert>
+		<insert tableName="dictionary_category" schemaName="clinlims">
+			<column name="id" valueSequenceNext="dictionary_category_seq" />
+			<column name="description" value="Pathology - Conclusions" />
+			<column name="lastupdated" valueComputed="${now}"/>
+			<column name="local_abbrev" value="PathCon" />
+			<column name="name" value="pathologist_conclusions" />
+		</insert>
   </changeSet>
+	
+	<changeSet author="csteele" id="7">
+	<validCheckSum>8:0338784daadfe387c31f8908862f6527</validCheckSum>
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="pathology_conclusion" schemaName="clinlims" />
+			</not>
+		</preConditions>
+		<comment>create pathology_conclusion table</comment>
+		<createSequence incrementBy="1" schemaName="clinlims"
+			sequenceName="pathology_conclusion_seq" startValue="1" />
+		<createTable tableName="pathology_conclusion">
+			<column name="id" type="INTEGER" valueSequenceNext="pathology_conclusion_seq">
+				<constraints primaryKey="true" nullable="false"/>
+			</column>
+			<column name="pathology_sample_id" type="int"/>
+			<column name="value" type="varchar(255)"/>
+			<column name="type" type="VARCHAR(255)" defaultValue="T"/>
+			<column name="last_updated" type="datetime"/>
+		</createTable>
+		<addForeignKeyConstraint constraintName="pathology_sample_pathology_conclusion_id_fk"
+                                 baseTableName="pathology_conclusion" baseColumnNames="pathology_sample_id"
+                                 referencedTableName="pathology_sample" referencedColumnNames="id"/>
+	</changeSet>
+	
+	<changeSet author="csteele" id="8">
+	<validCheckSum>8:070091f25271aea6e563021fe959ec91</validCheckSum>
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="pathology_request" schemaName="clinlims" />
+			</not>
+		</preConditions>
+		<comment>create pathology_request table</comment>
+		<createSequence incrementBy="1" schemaName="clinlims"
+			sequenceName="pathology_request_seq" startValue="1" />
+		<createTable tableName="pathology_request">
+			<column name="id" type="INTEGER" valueSequenceNext="pathology_request_seq">
+				<constraints primaryKey="true" nullable="false"/>
+			</column>
+			<column name="pathology_sample_id" type="int"/>
+			<column name="status" type="VARCHAR(255)"/>
+			<column name="value" type="VARCHAR(255)"/>			
+			<column name="type" type="VARCHAR(255)" defaultValue="T"/>
+			<column name="last_updated" type="datetime"/>
+		</createTable>
+		<addForeignKeyConstraint constraintName="pathology_sample_pathology_request_id_fk"
+                                 baseTableName="pathology_request" baseColumnNames="pathology_sample_id"
+                                 referencedTableName="pathology_sample" referencedColumnNames="id"/>
+	</changeSet>
+	
+	<changeSet author="csteele" id="9">
+	<validCheckSum>8:07fddd977980ec9ef2cdc6ca5b834c76</validCheckSum>
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="pathology_technique" schemaName="clinlims" />
+			</not>
+		</preConditions>
+		<comment>create pathology_technique table</comment>
+		<createSequence incrementBy="1" schemaName="clinlims"
+			sequenceName="pathology_technique_seq" startValue="1" />
+		<createTable tableName="pathology_technique">
+			<column name="id" type="INTEGER" valueSequenceNext="pathology_technique_seq">
+				<constraints primaryKey="true" nullable="false"/>
+			</column>
+			<column name="pathology_sample_id" type="int"/>
+			<column name="value" type="VARCHAR(255)"/>
+			<column name="type" type="VARCHAR(255)" defaultValue="T"/>
+			<column name="last_updated" type="datetime"/>
+		</createTable>
+		<addForeignKeyConstraint constraintName="pathology_sample_pathology_technique_id_fk"
+                                 baseTableName="pathology_technique" baseColumnNames="pathology_sample_id"
+                                 referencedTableName="pathology_sample" referencedColumnNames="id"/>
+	</changeSet>
 </databaseChangeLog>

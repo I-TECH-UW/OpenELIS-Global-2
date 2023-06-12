@@ -88,7 +88,7 @@ public class DisplayListService implements LocaleChangeListener {
         UNIT_OF_MEASURE_ACTIVE, UNIT_OF_MEASURE_INACTIVE, DICTIONARY_TEST_RESULTS, LAB_COMPONENT,
         SEVERITY_CONSEQUENCES_LIST, SEVERITY_RECURRENCE_LIST, ACTION_TYPE_LIST, LABORATORY_COMPONENT, SAMPLE_NATURE,
         ELECTRONIC_ORDER_STATUSES, METHODS, METHODS_INACTIVE, METHOD_BY_NAME, PRACTITIONER_PERSONS, ORDER_PRIORITY,
-        PROGRAM, PATHOLOGY_STATUS, PATHOLOGY_TECHNIQUES, PATHOLOGIST_REQUESTS
+        PROGRAM, PATHOLOGY_STATUS, PATHOLOGY_TECHNIQUES, PATHOLOGIST_REQUESTS, PATHOLOGIST_CONCLUSIONS
     }
 
     private static Map<ListType, List<IdValuePair>> typeToListMap;
@@ -205,8 +205,10 @@ public class DisplayListService implements LocaleChangeListener {
         typeToListMap.put(ListType.LABORATORY_COMPONENT, createLaboratoryComponentList());
         typeToListMap.put(ListType.ORDER_PRIORITY, createSamplePriorityList());
         typeToListMap.put(ListType.PATHOLOGY_STATUS, createPathologyStatusList());
-        typeToListMap.put(ListType.PATHOLOGY_TECHNIQUES, createPathologyStatusList());
-        typeToListMap.put(ListType.PATHOLOGIST_REQUESTS, createPathologyStatusList());
+        typeToListMap.put(ListType.PATHOLOGY_TECHNIQUES, createDictionaryListForCategory("pathology_techniques"));
+        typeToListMap.put(ListType.PATHOLOGIST_REQUESTS, createDictionaryListForCategory("pathologist_requests"));
+        typeToListMap.put(ListType.PATHOLOGIST_CONCLUSIONS, createDictionaryListForCategory("pathologist_conclusions"));
+
     }
 
     private List<IdValuePair> createPathologyStatusList() {
@@ -402,6 +404,7 @@ public class DisplayListService implements LocaleChangeListener {
         
         typeToListMap.put(ListType.PATHOLOGY_TECHNIQUES, createDictionaryListForCategory("pathology_techniques"));
         typeToListMap.put(ListType.PATHOLOGIST_REQUESTS, createDictionaryListForCategory("pathologist_requests"));
+        typeToListMap.put(ListType.PATHOLOGIST_CONCLUSIONS, createDictionaryListForCategory("pathologist_conclusions"));
         
         
 

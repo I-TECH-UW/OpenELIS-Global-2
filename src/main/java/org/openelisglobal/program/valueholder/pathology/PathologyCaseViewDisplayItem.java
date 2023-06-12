@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.hl7.fhir.r4.model.Questionnaire;
 import org.hl7.fhir.r4.model.QuestionnaireResponse;
+import org.openelisglobal.common.util.IdValuePair;
 
 public class PathologyCaseViewDisplayItem extends PathologyDisplayItem {
 
@@ -14,6 +15,12 @@ public class PathologyCaseViewDisplayItem extends PathologyDisplayItem {
     private QuestionnaireResponse programQuestionnaireResponse;
     private List<PathologyBlock> blocks;
     private List<PathologySlide> slides;
+    private List<IdValuePair> techniques;
+    private List<IdValuePair> requests;
+    private List<IdValuePair> conclusions;
+    private String conclusionText;
+    private String grossExam;
+    private String microscopyExam;
 
     public String getAge() {
         return age;
@@ -69,6 +76,54 @@ public class PathologyCaseViewDisplayItem extends PathologyDisplayItem {
 
     public void setSlides(List<PathologySlide> slides) {
         this.slides = slides;
+    }
+
+    public List<IdValuePair> getConclusions() {
+        return conclusions;
+    }
+
+    public void setConclusions(List<IdValuePair> conclusions) {
+        this.conclusions = conclusions;
+    }
+
+    public List<IdValuePair> getTechniques() {
+        return techniques;
+    }
+
+    public void setTechniques(List<IdValuePair> techniques) {
+        this.techniques = techniques;
+    }
+
+    public String getGrossExam() {
+        return grossExam;
+    }
+
+    public void setGrossExam(String grossExam) {
+        this.grossExam = grossExam;
+    }
+
+    public String getMicroscopyExam() {
+        return microscopyExam;
+    }
+
+    public void setMicroscopyExam(String microscopyExam) {
+        this.microscopyExam = microscopyExam;
+    }
+
+    public String getConclusionText() {
+        return conclusionText;
+    }
+
+    public void setConclusionText(String conclusionText) {
+        this.conclusionText = conclusionText;
+    }
+
+    public List<IdValuePair> getRequests() {
+        return requests;
+    }
+
+    public void setRequests(List<IdValuePair> requests) {
+        this.requests = requests;
     }
 
 }

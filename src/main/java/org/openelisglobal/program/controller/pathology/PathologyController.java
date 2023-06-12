@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,7 +39,7 @@ public class PathologyController extends BaseRestController {
     public List<PathologyDisplayItem> getFilteredPathologyEntries(@RequestParam(required = false) String searchTerm,
             @RequestParam PathologyStatus... statuses) {
         return pathologySampleService.getWithStatus(Arrays.asList(statuses)).stream()
-                .map(e -> pathologyDisplayService.convertToDisplayItem(e))
+                .map(e -> pathologyDisplayService.convertToDisplayItem(e.getId()))
                 .collect(Collectors.toList());
     }
 
@@ -70,6 +71,15 @@ public class PathologyController extends BaseRestController {
     @ResponseBody
     public PathologyCaseViewDisplayItem getFilteredPathologyEntries(
             @PathVariable("pathologySampleId") Integer pathologySampleId) {
-        return pathologyDisplayService.convertToCaseDisplayItem(pathologySampleService.get(pathologySampleId));
+        return pathologyDisplayService.convertToCaseDisplayItem(pathologySampleId);
+    }
+
+    @PostMapping(value = "/rest/pathology/caseView/{pathologySampleId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public PathologySampleForm getFilteredPathologyEntries(@PathVariable("pathologySampleId") Integer pathologySampleId,
+            @RequestBody PathologySampleForm form) {
+        pathologySampleService.updateWithFormValues(pathologySampleId, form);
+
+        return form;
     }
 }

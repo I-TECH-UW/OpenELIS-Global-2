@@ -1,9 +1,11 @@
 package org.openelisglobal.program.valueholder.pathology;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -17,9 +19,10 @@ public class PathologySlide extends BaseObject<Integer> {
     @SequenceGenerator(name = "pathology_slide_generator", sequenceName = "pathology_slide_seq", allocationSize = 1)
     private Integer id;
 
+    @Column(name = "slide_number")
     private Integer slideNumber;
-
-//    private image image;
+    @Lob
+    private byte[] image;
 
     @Override
     public Integer getId() {
@@ -37,6 +40,14 @@ public class PathologySlide extends BaseObject<Integer> {
 
     public void setSlideNumber(Integer slideNumber) {
         this.slideNumber = slideNumber;
+    }
+
+    public byte[] getImage() {
+        return image;
+    }
+
+    public void setImage(byte[] image) {
+        this.image = image;
     }
 
 }
