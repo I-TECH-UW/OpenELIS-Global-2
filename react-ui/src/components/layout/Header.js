@@ -195,6 +195,10 @@ class OEHeader extends React.Component {
                             <SideNavMenuItem href="/WorkplanByUnit"><Microscope />&nbsp;<FormattedMessage id="banner.menu.workplan.unit"/></SideNavMenuItem>
                             <SideNavMenuItem href="/WorkplanByPriority"><WarningAlt />&nbsp;<FormattedMessage id="banner.menu.workplan.priority"/></SideNavMenuItem>
                           </SideNavMenu>
+                          <SideNavMenu
+                            aria-label="Pathology" title="Pathology"                    >
+                            <SideNavMenuItem href={"/PathologyDashboard"}>Dashboard</SideNavMenuItem>
+                          </SideNavMenu>
                           <SideNavMenu aria-label="Results" title="Results">
                             <SideNavMenuItem href={config.serverBaseUrl + "/LogbookResults?type="}>Enter by Unit</SideNavMenuItem>
                             <SideNavMenuItem href="/result">Search</SideNavMenuItem>
@@ -219,70 +223,6 @@ class OEHeader extends React.Component {
                       </SideNav>
                     </>
                   )}
-                  <li className="userDetails">
-                    <Select
-                      id="selector"
-                      name="selectLocale"
-                      className="selectLocale"
-                      invalidText="A valid locale value is required"
-                      labelText="Select locale"
-                      onChange={(event) => {
-                        this.props.onChangeLanguage(event.target.value);
-                      }}
-                      value={this.props.intl.locale}
-                    >
-                      <SelectItem text="English" value="en" />
-                      <SelectItem text="French" value="fr" />
-                    </Select>
-                  </li>
-                </ul>
-              </HeaderPanel>
-              {this.props.isLoggedIn() && (
-                <>
-                <SideNav aria-label="Side navigation"
-          expanded={isSideNavExpanded}
-          isPersistent={false}>
-            <SideNavItems>
-            <SideNavMenu aria-label="Order" title="Order">
-                      <SideNavMenuItem href="/AddOrder">Add Order</SideNavMenuItem>
-                      <SideNavMenuItem href={config.serverBaseUrl +"/SampleEdit?type=readwrite"}>Modify Order</SideNavMenuItem>
-                      <SideNavMenuItem href={config.serverBaseUrl +"/ElectronicOrders"}>Incoming Orders</SideNavMenuItem>
-                      <SideNavMenuItem href={config.serverBaseUrl +"/SampleBatchEntrySetup"}>Batch Order Entry</SideNavMenuItem>
-                      <SideNavMenuItem href={config.serverBaseUrl +"/PrintBarcode"}>Barcode</SideNavMenuItem>
-                    </SideNavMenu>
-                    <SideNavMenu aria-label="Patient" title="Patient">
-                      <SideNavMenuItem href="/PatientManagement">Add/Edit Patient</SideNavMenuItem>
-                      <SideNavMenuItem href="/PatientHistory">Patient History</SideNavMenuItem>
-                    </SideNavMenu>
-                    <SideNavMenu
-                      aria-label="Non-Conforming Events"
-                      title="Non-Conform"
-                    >
-                      <SideNavMenuItem href={config.serverBaseUrl + "/ReportNonConformingEvent"}>Report Non-Conforming Event</SideNavMenuItem>
-                      <SideNavMenuItem href={config.serverBaseUrl + "/ViewNonConformingEvent"}>View New Non-Conforming Events</SideNavMenuItem>
-                      <SideNavMenuItem href={config.serverBaseUrl + "/NCECorrectiveAction"}>Corrective actions</SideNavMenuItem>
-                    </SideNavMenu>
-                    <SideNavMenu aria-label="Workplan" title="Workplan">
-                      <SideNavMenuItem href={config.serverBaseUrl + "/WorkPlanByTest?type=test"}>By Test Type</SideNavMenuItem>
-                      <SideNavMenuItem href={config.serverBaseUrl + "/WorkPlanByPanel?type=panel"}>By Panel Type</SideNavMenuItem>
-                      <SideNavMenuItem href={config.serverBaseUrl + "/WorkPlanByTestSection?type="}>By Unit</SideNavMenuItem>
-                      <SideNavMenuItem href={config.serverBaseUrl + "/WorkPlanByPriority?type=priority"}>By Priority</SideNavMenuItem>
-                    </SideNavMenu>
-                    <SideNavMenu
-                      aria-label="Pathology" title="Pathology"                    >
-                      <SideNavMenuItem href={"/PathologyDashboard"}>Dashboard</SideNavMenuItem>
-                    </SideNavMenu>
-                    <SideNavMenu aria-label="Results" title="Results">
-                      <SideNavMenuItem href={config.serverBaseUrl + "/LogbookResults?type="}>Enter by Unit</SideNavMenuItem>
-                      <SideNavMenuItem href="/result">Search</SideNavMenuItem>
-                      <SideNavMenuItem href={config.serverBaseUrl + "/ReferredOutTests"}>Referred Tests</SideNavMenuItem>
-                    </SideNavMenu>
-                    <SideNavMenu
-                      aria-label="Validation" title="Validation"                    >
-                      <SideNavMenuItem href={config.serverBaseUrl + "/ResultValidation?type=&test="}>Routine</SideNavMenuItem>
-                      <SideNavMenuItem href="/validationStudy">Study</SideNavMenuItem>
-                      <SideNavMenuItem href="/validation">Search</SideNavMenuItem>
-                    </SideNavMenu>
                 </Header>
               )}
             />
