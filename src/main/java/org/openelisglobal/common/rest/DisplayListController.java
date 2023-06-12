@@ -1,17 +1,31 @@
 package org.openelisglobal.common.rest;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
+
+import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.DisplayListService.ListType;
+import org.openelisglobal.common.services.IStatusService;
+import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.person.service.PersonService;
 import org.openelisglobal.person.valueholder.Person;
 import org.openelisglobal.provider.service.ProviderService;
 import org.openelisglobal.provider.valueholder.Provider;
+import org.openelisglobal.role.service.RoleService;
+import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.systemuser.service.UserService;
+import org.openelisglobal.test.service.TestService;
+import org.openelisglobal.test.valueholder.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -23,13 +37,93 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping(value = "/rest/")
-public class DisplayListController {
+public class DisplayListController extends BaseRestController{
 
     @Autowired
     private ProviderService  providerService;
 
     @Autowired
     private PersonService personService;
+    
+	@Autowired
+	private UserService userService;
+	
+	@Autowired
+	protected TestService testService;
+	
+	@Autowired
+	private RoleService roleService;
+
+	
+	private static boolean HAS_NFS_PANEL = false;
+
+	static {
+		HAS_NFS_PANEL = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.CONDENSE_NFS_PANEL, "true");
+	}
+	
+
+	protected static List<Integer> statusList;
+	protected static List<String> nfsTestIdList;
+
+	@PostConstruct
+	private void initialize() {
+		if (statusList == null) {
+			statusList = new ArrayList<>();
+			statusList.add(Integer
+					.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NotStarted)));
+			statusList.add(Integer.parseInt(
+					SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.BiologistRejected)));
+			statusList.add(Integer.parseInt(
+					SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalRejected)));
+			statusList.add(Integer.parseInt(
+					SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NonConforming_depricated)));
+		}
+
+		if (nfsTestIdList == null) {
+			nfsTestIdList = new ArrayList<>();
+			nfsTestIdList.add(getTestId("GB"));
+			nfsTestIdList.add(getTestId("Neut %"));
+			nfsTestIdList.add(getTestId("Lymph %"));
+			nfsTestIdList.add(getTestId("Mono %"));
+			nfsTestIdList.add(getTestId("Eo %"));
+			nfsTestIdList.add(getTestId("Baso %"));
+			nfsTestIdList.add(getTestId("GR"));
+			nfsTestIdList.add(getTestId("Hb"));
+			nfsTestIdList.add(getTestId("HCT"));
+			nfsTestIdList.add(getTestId("VGM"));
+			nfsTestIdList.add(getTestId("TCMH"));
+			nfsTestIdList.add(getTestId("CCMH"));
+			nfsTestIdList.add(getTestId("PLQ"));
+		}
+
+	}
+	
+	protected String getTestId(String testName) {
+		Test test = testService.getTestByLocalizedName(testName);
+		if (test == null) {
+			test = new Test();
+		}
+		return test.getId();
+
+	}
+
+	protected List<IdValuePair> adjustNFSTests(List<IdValuePair> allTestsList) {
+		List<IdValuePair> adjustedList = new ArrayList<>(allTestsList.size());
+		for (IdValuePair idValuePair : allTestsList) {
+			if (!nfsTestIdList.contains(idValuePair.getId())) {
+				adjustedList.add(idValuePair);
+			}
+		}
+		// add NFS to the list
+		adjustedList.add(new IdValuePair("NFS", "NFS"));
+		return adjustedList;
+	}
+
+	protected boolean allNFSTestsRequested(List<String> testIdList) {
+		return (testIdList.containsAll(nfsTestIdList));
+
+	}
+	
 
     @GetMapping(value = "displayList/{listType}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -148,5 +242,54 @@ public class DisplayListController {
         return null;
     }
 
+	@GetMapping(value = "test-list", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	private List<IdValuePair> getTestDropdownList(HttpServletRequest request) {
+		List<IdValuePair> testList = userService.getAllDisplayUserTestsByLabUnit(getSysUserId(request),
+				Constants.ROLE_RESULTS);
 
+		if (HAS_NFS_PANEL) {
+			testList = adjustNFSTests(testList);
+		}
+		Collections.sort(testList, new ValueComparator());
+		return testList;
+	}
+	
+	@GetMapping(value = "priorities", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	private List<IdValuePair> createPriorityList() {
+		return DisplayListService.getInstance().getList(ListType.ORDER_PRIORITY);
+	}
+	
+	@GetMapping(value = "panels", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	private List<IdValuePair> createPanelList() {
+		return DisplayListService.getInstance().getList(ListType.PANELS);
+	}
+	
+	@GetMapping(value = "test-sections", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	private List<IdValuePair> createTestSectionsList() {
+		return DisplayListService.getInstance().getList(ListType.REFERRAL_ORGANIZATIONS);
+	}
+
+	@GetMapping(value = "user-test-sections", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	private List<IdValuePair> createUserTestSectionsList(HttpServletRequest request) {
+		String resultsRoleId = roleService.getRoleByName(Constants.ROLE_RESULTS).getId();
+		return userService.getUserTestSections(getSysUserId(request), resultsRoleId);
+	}
+	
+	
+	
+	
+	
+	class ValueComparator implements Comparator<IdValuePair> {
+
+		@Override
+		public int compare(IdValuePair p1, IdValuePair p2) {
+			return p1.getValue().toUpperCase().compareTo(p2.getValue().toUpperCase());
+		}
+	}
+	
 }

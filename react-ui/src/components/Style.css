@@ -322,6 +322,7 @@ button {
 }
 .toastDisplay{
   position: fixed; /*or fixed*/
+  top: 47px;
   right: 0px;
   z-index: 10;
 }
@@ -338,4 +339,16 @@ button {
   overflow: auto;
   text-align: justify;
   padding: 0.6875rem 1rem;
+}
+
+.error {
+  font-size: 12px; 
+	  color: red;
+    margin-bottom: 0.25rem;
+	  /* width: 150px; */
+	  /* 
+	  &:before {
+	    content: " ";
+	    font-size: 10px;
+	  } */
 }

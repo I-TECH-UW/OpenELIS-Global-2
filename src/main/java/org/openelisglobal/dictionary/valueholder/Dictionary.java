@@ -25,6 +25,8 @@ import org.openelisglobal.common.valueholder.ValueHolderInterface;
 import org.openelisglobal.dictionarycategory.valueholder.DictionaryCategory;
 import org.openelisglobal.localization.valueholder.Localization;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class Dictionary extends BaseObject<String> {
 
     private static final long serialVersionUID = 1L;
@@ -108,6 +110,7 @@ public class Dictionary extends BaseObject<String> {
         this.dictEntry = dictEntry;
     }
 
+    @JsonIgnore
     public String getDictEntryDisplayValue() {
         String dictEntryDisplayValue;
         if (!StringUtil.isNullorNill(this.localAbbreviation)) {

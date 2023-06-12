@@ -140,6 +140,27 @@
 			</whereParams>
 		</update>
 	</changeSet>
+	<changeSet author="moses_mutesa" id="2">
+		<preConditions onFail="MARK_RAN">
+			<tableExists tableName="system_role"
+				schemaName="clinlims" />
+				<sqlCheck expectedResult="0">
+					SELECT COUNT(*) FROM
+					clinlims.system_role WHERE name = 'Reception'
+				</sqlCheck>
+		</preConditions>
+		<comment>update Recetion Role</comment>
+		<update tableName="system_role" schemaName="clinlims">
+			<column name="name" value="Reception" />
+			<column name="grouping_parent"
+				valueComputed="(SELECT id FROM system_role WHERE name = 'Lab Unit Roles')" />
+			<where>id=:value</where>
+			<whereParams>
+				<param
+					valueComputed="(SELECT id FROM system_role WHERE name = 'Intake')" />
+			</whereParams>
+		</update>
+	</changeSet>	
 	<changeSet author="CIV Developer Group" id="202303247"
 		context="CDIRetroCI">
 		<preConditions onFail="CONTINUE">

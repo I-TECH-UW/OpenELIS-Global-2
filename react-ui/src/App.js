@@ -19,8 +19,10 @@ import { SecureRoute } from "./components/security";
 import "./index.scss";
 import PatientManagement from "./components/patient/PatientManagement";
 import PatientHistory from "./components/patient/PatientHistory";
+import Workplan from "./components/workplan/Workplan";
 //import "./components/patient/resultsViewer/results-viewer.styles.scss"
 import AddOrder from "./components/addOrder/Index";
+import ModifyOrder from "./components/modifyOrder/Index";
 import RoutineReports from "./components/Reports/Routine";
 import StudyReports from "./components/Reports/Study";
 import StudyValidation from "./components/validation/Study";
@@ -185,6 +187,16 @@ class App extends React.Component {
                     logout={this.logout}
                     isLoggedIn={this.isLoggedIn}
                 />
+                 <SecureRoute
+                    path="/ModifyOrder"
+                    exact
+                    component={() => <ModifyOrder />}
+                    role="Reception"
+                    config={this.state.config}
+                    onAuth={this.onAuth}
+                    logout={this.logout}
+                    isLoggedIn={this.isLoggedIn}
+                />
                 <SecureRoute
                   path="/PatientManagement"
                   exact
@@ -200,6 +212,46 @@ class App extends React.Component {
                   exact
                   component={() => <PatientHistory />}
                   role="Reception"
+                  config={this.state.config}
+                  onAuth={this.onAuth}
+                  logout={this.logout}
+                  isLoggedIn={this.isLoggedIn}
+                />
+                <SecureRoute
+                  path="/WorkplanByUnit"
+                  exact
+                  component={() => <Workplan type="unit"/>}
+                  role="Results"
+                  config={this.state.config}
+                  onAuth={this.onAuth}
+                  logout={this.logout}
+                  isLoggedIn={this.isLoggedIn}
+                />
+                <SecureRoute
+                  path="/WorkplanByTest"
+                  exact
+                  component={() => <Workplan type="test"/>}
+                  role="Results"
+                  config={this.state.config}
+                  onAuth={this.onAuth}
+                  logout={this.logout}
+                  isLoggedIn={this.isLoggedIn}
+                />
+                <SecureRoute
+                  path="/WorkplanByPanel"
+                  exact
+                  component={() => <Workplan type="panel"/>}
+                  role="Results"
+                  config={this.state.config}
+                  onAuth={this.onAuth}
+                  logout={this.logout}
+                  isLoggedIn={this.isLoggedIn}
+                />
+                <SecureRoute
+                  path="/WorkplanByPriority"
+                  exact
+                  component={() => <Workplan type="priority"/>}
+                  role="Results"
                   config={this.state.config}
                   onAuth={this.onAuth}
                   logout={this.logout}

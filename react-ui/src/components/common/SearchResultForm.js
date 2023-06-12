@@ -510,6 +510,9 @@ class SearchResultForm extends React.Component {
         //console.log("handleSave:" + values);
         values.status = this.state.saveStatus;
         var searchEndPoint = "/rest/ReactLogbookResultsUpdate"
+        this.state.resultForm.testResult.forEach( result => {
+            result.reportable = result.reportable === "N"?false : true
+        })
         postToOpenElisServer(searchEndPoint, JSON.stringify(this.state.resultForm), this.setStatus);
     }
 
