@@ -207,7 +207,7 @@ Follow the SOP at: [Backup Configuration](../backups)
 To set the identifier for this particular instance, use the /var/lib/openelisglobal/secrets/extra.properties file, and set the organization value to the same identifier as is set in the consolidated server FHIR location object. 
 EG: `org.openelisglobal.remote.source.identifier=Organization/8136bd30-901c-4d47-b133-72de813404ee`
 
-## Run OpenELIS Global 2 With Docker Compose 
+### Run OpenELIS Global 2 With Docker Compose 
 
 1. Install [Docker](https://linuxize.com/post/how-to-install-and-use-docker-on-ubuntu-20-04/) and [Docker Compose](https://linuxize.com/post/how-to-install-and-use-docker-compose-on-ubuntu-20-04/)
 
