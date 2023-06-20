@@ -11,20 +11,17 @@ import {
     FormLabel,
     TextInput,
     Button,
-    Grid,
-    Column,
     DatePicker,
     DatePickerInput,
     RadioButton,
     RadioButtonGroup,
-    Stack,
     Section,
     Select,
-    SelectItem
+    SelectItem, Accordion, AccordionItem
 
 } from '@carbon/react';
 
-import { Formik, Field ,ErrorMessage} from "formik";
+import {Formik, Field, ErrorMessage, useFormikContext} from "formik";
 import CreatePatientFormValues from '../formModel/innitialValues/CreatePatientFormValues';
 import PatientFormObserver from "./PatientFormObserver";
 import {AlertDialog, NotificationKinds} from "./CustomNotification";
@@ -37,7 +34,6 @@ class CreatePatientForm extends React.Component {
         super(props)
         this.state = {
             patientDetails: CreatePatientFormValues,
-            showForm: false,
             healthRegions: [],
             healthDistricts: [],
             educationList : [] ,
@@ -86,8 +82,7 @@ class CreatePatientForm extends React.Component {
                 this._healthDistricts = [];
             }
             nextState.patientDetails = nextProps.selectedPatient;
-            nextState.patientDetails.patientUpdateStatus="UPDATE"
-            nextState.showForm = true;
+            nextState.patientDetails.patientUpdateStatus="UPDATE";
            // this.setState({ healthRegions: nextProps.selectedPatient.healthRegions })
             this.state.formAction = "UPDATE";
         }
@@ -95,23 +90,28 @@ class CreatePatientForm extends React.Component {
         return true;
     }
 
+    repopulatePatientInfo = ()=>{
+        if(this.props.orderFormValues !== null) {
+            if (this.props.orderFormValues.patientProperties.firstName !== "" || this.props.orderFormValues.patientProperties.guid !== "") {
+                this.setState({
+                    patientDetails: this.props.orderFormValues.patientProperties
+                });
+            }
+        }
+    }
     componentDidMount() {
         this._isMounted = true;
         getFromOpenElisServer("/rest/health-regions", this.fetchHeathRegions);
         getFromOpenElisServer("/rest/education-list", this.fetchEducationList);
         getFromOpenElisServer("/rest/marital-statuses", this.fetchMaritalStatuses);
        // getFromOpenElisServer("/rest/nationalities", this.fetchNationalities);
+        this.repopulatePatientInfo();
     }
 
     componentWillUnmount() {
         this._isMounted = false;
     }
 
-    addNewPatient = () => {
-        this.setState({
-            showForm: true,
-        })
-    }
 
     fetchHeathRegions = (regions) => {
         if (this._isMounted) {
@@ -159,13 +159,10 @@ class CreatePatientForm extends React.Component {
     render() {
 
         return (
-            
-            <Grid fullWidth={true} className="gridBoundary" >
+
+            <>
                  {/* {JSON.stringify(this.state.patientDetails)} */}
                  {this.context.notificationVisible === true ? <AlertDialog/> : ""}
-                <Column lg={10} >
-                    <Button onClick={this.addNewPatient} kind='tertiary'>New Patient</Button>
-                    {this.state.showForm && (
                         <Formik
                             initialValues={this.state.patientDetails}
                             enableReinitialize
@@ -186,7 +183,6 @@ class CreatePatientForm extends React.Component {
                                     onChange={handleChange}
                                     onBlur={handleBlur}>
                                     {this.props.orderFormValues && <PatientFormObserver orderFormValues={this.props.orderFormValues} setOrderFormValues={this.props.setOrderFormValues} formAction={this.state.formAction}/> }
-                                    <Stack gap={2}>
                                         <FormLabel>
                                             <Section>
                                                 <Section>
@@ -198,17 +194,17 @@ class CreatePatientForm extends React.Component {
                                                 </Section>
                                             </Section>
                                         </FormLabel>
-                                        <div className="formInlineDiv">
+                                        <div className="inlineDiv">
                                             <Field name="subjectNumber"
                                             >
                                                 {({ field }) =>
-                                                    <TextInput value={values.subjectNumber} name={field.name} labelText="Unique Health ID number" id={field.name} className="" />
+                                                    <TextInput value={values.subjectNumber} name={field.name} labelText="Unique Health ID number" id={field.name} className="inputText" />
                                                 }
                                             </Field>
                                             <Field name="nationalId"
                                             >
                                                 {({ field }) =>
-                                                    <TextInput value={values.nationalId} name={field.name} labelText="National Id" id={field.name} className="" />
+                                                    <TextInput value={values.nationalId} name={field.name} labelText="National Id" id={field.name} className="inputText" />
                                                                                          
                                                 }
                                             </Field>
@@ -217,48 +213,48 @@ class CreatePatientForm extends React.Component {
                                                 <ErrorMessage name = "nationalId"></ErrorMessage>
                                            </div>                     
                                         </div>
-                                        <div className="formInlineDiv">
+                                        <div className="inlineDiv">
 
                                             <Field name="lastName"
                                             >
                                                 {({ field }) =>
-                                                    <TextInput value={values.lastName} name={field.name} labelText="Last Name" id={field.name} className="" />
+                                                    <TextInput value={values.lastName} name={field.name} labelText="Last Name" id={field.name} className="inputText" />
                                                 }
                                             </Field>
                                             <Field name="firstName"
                                             >
                                                 {({ field }) =>
-                                                    <TextInput value={values.firstName} name={field.name} labelText="First Name" id={field.name} className="" />
+                                                    <TextInput value={values.firstName} name={field.name} labelText="First Name" id={field.name} className="inputText" />
                                                 }
                                             </Field>
                                         </div>
-                                        <div className="formInlineDiv">
+                                        <div className="inlineDiv">
 
                                             <Field name="patientContact.person.lastName"
                                             >
                                                 {({ field }) =>
-                                                    <TextInput value={values.patientContact.person.lastName} name={field.name} labelText="Contact Last Name" id={field.name} className="" />
+                                                    <TextInput value={values.patientContact.person.lastName} name={field.name} labelText="Contact Last Name" id={field.name} className="inputText" />
                                                 }
                                             </Field>
                                             <Field name="patientContact.person.firstName"
                                             >
                                                 {({ field }) =>
-                                                    <TextInput value={values.patientContact.person.firstName} name={field.name} labelText="Contact First Name" id={field.name} className="" />
+                                                    <TextInput value={values.patientContact.person.firstName} name={field.name} labelText="Contact First Name" id={field.name} className="inputText" />
                                                 }
                                             </Field>
                                         </div>
-                                        <div className="formInlineDiv">
+                                        <div className="inlineDiv">
 
                                             <Field name="patientContact.person.email"
                                             >
                                                 {({ field }) =>
-                                                    <TextInput value={values.patientContact.person.email} name={field.name} labelText="Contact Email" id={field.name} className="" />
+                                                    <TextInput value={values.patientContact.person.email} name={field.name} labelText="Contact Email" id={field.name} className="inputText" />
                                                 }
                                             </Field>
                                             <Field name="patientContact.person.primaryPhone"
                                             >
                                                 {({ field }) =>
-                                                    <TextInput value={values.patientContact.person.primaryPhone} name={field.name} labelText="Contact Phone" id={field.name} className="" />
+                                                    <TextInput value={values.patientContact.person.primaryPhone} name={field.name} labelText="Contact Phone" id={field.name} className="inputText" />
                                                 }
                                             </Field>
                                             <div className="error">
@@ -266,94 +262,26 @@ class CreatePatientForm extends React.Component {
                                            </div> 
                                            <div className="error"></div>  
                                         </div>
-                                        <div className="formInlineDiv">
-
-                                            <Field name="streetAddress"
-                                            >
-                                                {({ field }) =>
-                                                    <TextInput value={values.streetAddress} name={field.name} labelText="Street" id={field.name} className="" />
-                                                }
-                                            </Field>
-                                            <Field name="commune"
-                                            >
-                                                {({ field }) =>
-                                                    <TextInput value={values.commune} name={field.name} labelText="Camp/Commune" id={field.name} className="" />
-                                                }
-                                            </Field>
-                                        </div>
-                                        <div className="formInlineDiv">
+                                        <div className="inlineDiv">
 
                                             <Field name="city"
                                             >
                                                 {({ field }) =>
-                                                    <TextInput value={values.city} name={field.name} labelText="Town" id={field.name} className="" />
+                                                    <TextInput value={values.city} name={field.name} labelText="Town" id={field.name} className="inputText" />
                                                 }
                                             </Field>
                                             <Field name="primaryPhone"
                                             >
                                                 {({ field }) =>
-                                                    <TextInput value={values.primaryPhone} name={field.name} labelText="Phone" id={field.name} className="" />
+                                                    <TextInput value={values.primaryPhone} name={field.name} labelText="Phone" id={field.name} className="inputText" />
                                                 }
                                             </Field>
                                         </div>
-                                        <div className="formInlineDiv">
-
-                                            <Field name="healthRegion"
-                                            >
-                                                {({ field }) =>
-                                                    <Select
-                                                        id="health_region"
-                                                        value={values.healthRegion}
-                                                        name={field.name}
-                                                        labelText="Region"
-                                                        className=""
-                                                        onChange={(e) => this.handleRegionSelection(e, values)}
-                                                    >
-                                                        <SelectItem
-                                                            text=""
-                                                            value=""
-                                                        />
-                                                        {this.state.healthRegions.map((region, index) => (
-                                                            <SelectItem
-                                                                text={region.value}
-                                                                value={region.id}
-                                                                key={index}
-                                                            />
-                                                        ))}
-                                                    </Select>
-                                                }
-                                            </Field>
-                                            <Field name="healthDistrict"
-                                            >
-                                                {({ field }) =>
-                                                    <Select
-                                                        id="health_district"
-                                                        value={values.healthDistrict}
-                                                        name={field.name}
-                                                        labelText="District"
-                                                        className=""
-                                                        onChange={()=> {}}
-                                                    >
-                                                        <SelectItem
-                                                            text=""
-                                                            value=""
-                                                        />
-                                                        {this._healthDistricts.map((district, index) => (
-                                                            <SelectItem
-                                                                text={district.value}
-                                                                value={district.value}
-                                                                key={index}
-                                                            />
-                                                        ))}
-                                                    </Select>
-                                                }
-                                            </Field>
-                                        </div>
-                                        <div className="formInlineDiv">
+                                        <div className="inlineDiv">
                                             <Field name="birthDateForDisplay"
                                             >
                                                 {({ field }) =>
-                                                    <DatePicker value={values.birthDateForDisplay} onChange={(...e) => this.handleDatePickerChange(values, ...e)} name={field.name} dateFormat="d/m/Y" datePickerType="single" light={true} className="">
+                                                    <DatePicker value={values.birthDateForDisplay} onChange={(...e) => this.handleDatePickerChange(values, ...e)} name={field.name} dateFormat="d/m/Y" datePickerType="single" light={true} className="inputText">
                                                         <DatePickerInput
                                                             id="date-picker-default-id"
                                                             placeholder="dd/mm/yyyy"
@@ -371,6 +299,7 @@ class CreatePatientForm extends React.Component {
                                                         valueSelected={values.gender}
                                                         legendText="Gender"
                                                         name={field.name}
+                                                        className="inputText"
                                                         id="create_patient_gender"
                                                     >
                                                         <RadioButton
@@ -393,94 +322,166 @@ class CreatePatientForm extends React.Component {
                                              <ErrorMessage name = "gender"></ErrorMessage>
                                             </div>   
                                         </div>
-                                        <div className="formInlineDiv">
+                                    <Accordion>
+                                        <AccordionItem title="Additional Information">
+                                            <div className="inlineDiv">
 
-                                            <Field name="education"
-                                            >
-                                                {({ field }) =>
-                                                    <Select
-                                                        id="education"
-                                                        value={values.education}
-                                                        name={field.name}
-                                                        labelText="Education"
-                                                        className=""
-                                                        onChange={()=> {}}
-                                                    >
-                                                        <SelectItem
-                                                            text=""
-                                                            value=""
-                                                        />
-                                                        {this.state.educationList.map((education, index) => (
-                                                            <SelectItem
-                                                                text={education.value}
-                                                                value={education.value}
-                                                                key={index}
-                                                            />
-                                                        ))}
-                                                    </Select>
-                                                }
-                                            </Field>
-                                            <Field name="maritialStatus"
-                                            >
-                                                {({ field }) =>
-                                                    <Select
-                                                        id="maritialStatus"
-                                                        value={values.maritialStatus}
-                                                        name={field.name}
-                                                        labelText="Marital Status"
-                                                        className=""
-                                                        onChange={()=> {}}
-                                                    >
-                                                        <SelectItem
-                                                            text=""
-                                                            value=""
-                                                        />
-                                                        {this.state.maritalStatuses.map((status, index) => (
-                                                            <SelectItem
-                                                                text={status.value}
-                                                                value={status.value}
-                                                                key={index}
-                                                            />
-                                                        ))}
-                                                    </Select>
-                                                }
-                                            </Field>
-                                        </div>
-                                        <div className="formInlineDiv">
+                                                <Field name="streetAddress"
+                                                >
+                                                    {({ field }) =>
+                                                        <TextInput value={values.streetAddress} name={field.name} labelText="Street" id={field.name} className="inputText" />
+                                                    }
+                                                </Field>
+                                                <Field name="commune"
+                                                >
+                                                    {({ field }) =>
+                                                        <TextInput value={values.commune} name={field.name} labelText="Camp/Commune" id={field.name} className="inputText" />
+                                                    }
+                                                </Field>
+                                            </div>
+                                            <div className="inlineDiv">
 
-                                            <Field name="nationality"
-                                            >
-                                                {({ field }) =>
-                                                    <Select
-                                                        id="nationality"
-                                                        value={values.nationality}
-                                                        name={field.name}
-                                                        labelText="Nationality"
-                                                        className=""
-                                                        onChange={()=> {}}
-                                                    >
-                                                        <SelectItem
-                                                            text=""
-                                                            value=""
-                                                        />
-                                                        {nationalityList.map((nationality, index) => (
+                                                <Field name="healthRegion"
+                                                >
+                                                    {({ field }) =>
+                                                        <Select
+                                                            id="health_region"
+                                                            value={values.healthRegion}
+                                                            name={field.name}
+                                                            labelText="Region"
+                                                            className="inputText"
+                                                            onChange={(e) => this.handleRegionSelection(e, values)}
+                                                        >
                                                             <SelectItem
-                                                                text={nationality.label}
-                                                                value={nationality.value}
-                                                                key={index}
+                                                                text=""
+                                                                value=""
                                                             />
-                                                        ))}
-                                                    </Select>
-                                                }
-                                            </Field>
-                                            <Field name="otherNationality"
-                                            >
-                                                {({ field }) =>
-                                                    <TextInput value={values.otherNationality} name={field.name} labelText="Specify Other nationality" id={field.name} className="" />
-                                                }
-                                            </Field>
-                                        </div>
-                                        {this.state.showActionsButton && <div className="formInlineDiv">
+                                                            {this.state.healthRegions.map((region, index) => (
+                                                                <SelectItem
+                                                                    text={region.value}
+                                                                    value={region.id}
+                                                                    key={index}
+                                                                />
+                                                            ))}
+                                                        </Select>
+                                                    }
+                                                </Field>
+                                                <Field name="healthDistrict"
+                                                >
+                                                    {({ field }) =>
+                                                        <Select
+                                                            id="health_district"
+                                                            value={values.healthDistrict}
+                                                            name={field.name}
+                                                            labelText="District"
+                                                            className="inputText"
+                                                            onChange={()=> {}}
+                                                        >
+                                                            <SelectItem
+                                                                text=""
+                                                                value=""
+                                                            />
+                                                            {this._healthDistricts.map((district, index) => (
+                                                                <SelectItem
+                                                                    text={district.value}
+                                                                    value={district.value}
+                                                                    key={index}
+                                                                />
+                                                            ))}
+                                                        </Select>
+                                                    }
+                                                </Field>
+                                            </div>
+                                            <div className="inlineDiv">
+
+                                                <Field name="education"
+                                                >
+                                                    {({ field }) =>
+                                                        <Select
+                                                            id="education"
+                                                            value={values.education}
+                                                            name={field.name}
+                                                            labelText="Education"
+                                                            className="inputText"
+                                                            onChange={()=> {}}
+                                                        >
+                                                            <SelectItem
+                                                                text=""
+                                                                value=""
+                                                            />
+                                                            {this.state.educationList.map((education, index) => (
+                                                                <SelectItem
+                                                                    text={education.value}
+                                                                    value={education.value}
+                                                                    key={index}
+                                                                />
+                                                            ))}
+                                                        </Select>
+                                                    }
+                                                </Field>
+                                                <Field name="maritialStatus"
+                                                >
+                                                    {({ field }) =>
+                                                        <Select
+                                                            id="maritialStatus"
+                                                            value={values.maritialStatus}
+                                                            name={field.name}
+                                                            labelText="Marital Status"
+                                                            className="inputText"
+                                                            onChange={()=> {}}
+                                                        >
+                                                            <SelectItem
+                                                                text=""
+                                                                value=""
+                                                            />
+                                                            {this.state.maritalStatuses.map((status, index) => (
+                                                                <SelectItem
+                                                                    text={status.value}
+                                                                    value={status.value}
+                                                                    key={index}
+                                                                />
+                                                            ))}
+                                                        </Select>
+                                                    }
+                                                </Field>
+                                            </div>
+                                            <div className="inlineDiv">
+
+                                                <Field name="nationality"
+                                                >
+                                                    {({ field }) =>
+                                                        <Select
+                                                            id="nationality"
+                                                            value={values.nationality}
+                                                            name={field.name}
+                                                            labelText="Nationality"
+                                                            className="inputText"
+                                                            onChange={()=> {}}
+                                                        >
+                                                            <SelectItem
+                                                                text=""
+                                                                value=""
+                                                            />
+                                                            {nationalityList.map((nationality, index) => (
+                                                                <SelectItem
+                                                                    text={nationality.label}
+                                                                    value={nationality.value}
+                                                                    key={index}
+                                                                />
+                                                            ))}
+                                                        </Select>
+                                                    }
+                                                </Field>
+                                                <Field name="otherNationality"
+                                                >
+                                                    {({ field }) =>
+                                                        <TextInput value={values.otherNationality} name={field.name} labelText="Specify Other nationality" id={field.name} className="inputText" />
+                                                    }
+                                                </Field>
+                                            </div>
+                                        </AccordionItem>
+                                    </Accordion>
+                                        {this.state.showActionsButton && <div className="inlineDiv">
                                             <Button type="submit" id="submit">
                                                 <FormattedMessage id="label.button.save" />
                                             </Button>
@@ -490,15 +491,11 @@ class CreatePatientForm extends React.Component {
 
                                         </div>
                                         }
-                                    </Stack>
                                 </Form>
 
                             )}
                         </Formik>
-                    )}
-
-                </Column>
-            </Grid >
+            </>
         )
     }
 }

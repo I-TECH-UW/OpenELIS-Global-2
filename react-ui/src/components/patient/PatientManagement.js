@@ -6,7 +6,7 @@ import {
     Heading,
     Grid,
     Column,
-    Section 
+    Section, Button
 
 } from '@carbon/react';
 import SearchPatientForm from '../common/SearchPatientForm';
@@ -18,12 +18,31 @@ class PatientManagement extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            selectedPatient: {}
+            selectedPatient: {},
+            searchPatientTab: {kind: "primary", active: true},
+            newPatientTab: {kind: "tertiary", active: false},
         }
+    }
+     handleSearchPatientTab = () => {
+        this.setState({
+            searchPatientTab: { kind: "primary", active: true },
+            newPatientTab: {kind: "tertiary", active: false}
+        });
+    }
+
+     handleNewPatientTab = () => {
+         this.setState({
+             newPatientTab: {kind: "primary", active: true},
+             searchPatientTab: { kind: "tertiary", active: false },
+         });
     }
 
     getSelectedPatient = (patient) => {
-        this.setState({ selectedPatient: patient })
+        this.setState({ selectedPatient: patient });
+        this.setState({
+            newPatientTab: {kind: "primary", active: true},
+            searchPatientTab: { kind: "tertiary", active: false },
+        });
     }
 
     render() {
@@ -41,13 +60,19 @@ class PatientManagement extends React.Component {
                     </Column>
                 </Grid>
                 <br></br>
-       
-                <SearchPatientForm getSelectedPatient={this.getSelectedPatient}></SearchPatientForm>
+                <div className="orderLegendBody">
+                    <div className="tabsLayout">
+                        <Button kind={this.state.searchPatientTab.kind} onClick={this.handleSearchPatientTab}>Search for
+                            Patient</Button>
+                        <Button kind={this.state.newPatientTab.kind} onClick={this.handleNewPatientTab}>New Patient</Button>
+                    </div>
+                    {this.state.searchPatientTab.active &&  <SearchPatientForm getSelectedPatient={this.getSelectedPatient}></SearchPatientForm> }
                 
                 <br></br>
                 {/* {JSON.stringify(this.state.selectedPatient)} */}
-                <CreatePatientForm showActionsButton={true} selectedPatient={this.state.selectedPatient}></CreatePatientForm>
-            </>
+                    {this.state.newPatientTab.active && <CreatePatientForm showActionsButton={true} selectedPatient={this.state.selectedPatient}></CreatePatientForm> }
+                </div>
+                </>
 
         );
 

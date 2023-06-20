@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {Column, Grid, Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@carbon/react";
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@carbon/react";
 import {UserInformationContext} from "../layout/Layout";
 import CustomTextInput from "../common/CustomTextInput";
 import CustomSelect from "../common/CustomSelect";
@@ -100,9 +100,8 @@ const OrderReferralRequest = ({
     }, [selectedTests]);
 
     return (<>
-        <Grid>
-            <Column lg={16}>
-                <Table useZebraStyles={false} id={`referralRequestTable_` + index}>
+        <>
+            <Table useZebraStyles={false} id={`referralRequestTable_` + index}>
                     <TableHead>
                         <TableRow>
                             {header.map((header, header_index) => (<TableHeader id={header.key} key={header_index}>
@@ -121,8 +120,7 @@ const OrderReferralRequest = ({
                         </TableRow>))}
                     </TableBody>
                 </Table>
-            </Column>
-        </Grid>
+        </>
     </>)
 }
 

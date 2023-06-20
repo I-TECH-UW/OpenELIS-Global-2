@@ -1,0 +1,560 @@
+import React, {useContext, useEffect, useRef, useState} from 'react';
+import {Checkbox, FormGroup, Layer, Search, Select, SelectItem, Tag, Tile} from "@carbon/react";
+import CustomCheckBox from "../common/CustomCheckBox";
+import CustomSelect from "../common/CustomSelect";
+import CustomDatePicker from "../common/CustomDatePicker";
+import CustomTimePicker from "../common/CustomTimePicker";
+import {NotificationKinds} from "../common/CustomNotification";
+import {FormattedMessage} from "react-intl";
+import {getFromOpenElisServer} from "../utils/Utils";
+import {NotificationContext, UserInformationContext} from "../layout/Layout";
+import {sampleTypeTestsStructure} from "../data/SampleEntryTestsForTypeProvider";
+import CustomTextInput from "../common/CustomTextInput";
+import OrderReferralRequest from "../addOrder/OrderReferralRequest";
+
+const SampleType = (props) => {
+    const {user} = useContext(UserInformationContext);
+    const {index, rejectSampleReasons, removeSample, sample} = props;
+    const componentMounted = useRef(true);
+    const [sampleTypes, setSampleTypes] = useState([]);
+    const sampleTypesRef = useRef(null);
+    const [selectedSampleType, setSelectedSampleType] = useState({id: null, name: "", element_index: 0});
+    const [sampleTypeTests, setSampleTypeTests] = useState(sampleTypeTestsStructure);
+    const [selectedTests, setSelectedTests] = useState([]);
+    const [searchBoxTests, setSearchBoxTests] = useState([]);
+    const [requestTestReferral, setRequestTestReferral] = useState(false);
+    const [referralReasons, setReferralReasons] = useState([]);
+    const [referralOrganizations, setReferralOrganizations] = useState([]);
+    const [testSearchTerm, setTestSearchTerm] = useState("");
+    const [referralRequest, setReferralRequest] = useState([]);
+    const {setNotificationVisible, setNotificationBody} = useContext(NotificationContext);
+    const [rejectionReasonsDisabled, setRejectionReasonsDisabled] = useState(true);
+    const [selectedPanels, setSelectedPanels] = useState([]);
+    const [panelSearchTerm, setPanelSearchTerm] = useState("");
+    const [searchBoxPanels, setSearchBoxPanels] = useState([]);
+    const [sampleXml, setSampleXml] = useState({
+        collectionDate: "",
+        collector: "",
+        rejected: false,
+        rejectionReason: "",
+        collectionTime: ""
+    });
+    const defaultSelect = {id: "", value: ""};
+
+
+    function handleCollectionDate(date) {
+        setSampleXml({
+            ...sampleXml,
+            collectionDate: date
+        });
+    }
+
+    function handleReasons(value) {
+        setSampleXml({
+            ...sampleXml,
+            rejectionReason: value
+        });
+    }
+
+    function handleCollectionTime(time) {
+        setSampleXml({
+            ...sampleXml,
+            collectionTime: time
+        });
+    }
+
+    function handleCollector(value) {
+        setSampleXml({
+            ...sampleXml,
+            collector: value
+        });
+    }
+
+    useEffect(() => {
+        updateSampleXml(sampleXml, index);
+    }, [sampleXml]);
+
+
+    const handleRemoveSampleTest = (index) => {
+        removeSample(index);
+    }
+
+    const handleReferralRequest = () => {
+        setRequestTestReferral(!requestTestReferral);
+        if (selectedTests.length > 0) {
+            const defaultReferralRequest = [];
+            selectedTests.map(test => {
+
+                defaultReferralRequest.push({
+                    reasonForReferral: referralReasons[0].id,
+                    referrer: user.firstName + " " + user.lastName,
+                    institute: referralOrganizations[0].id,
+                    sentDate: "",
+                    testId: test.id
+                });
+
+            });
+            setReferralRequest(defaultReferralRequest);
+        }
+    }
+
+    const handleTestSearchChange = (event) => {
+        const query = event.target.value;
+        setTestSearchTerm(query);
+        const results = sampleTypeTests.tests.filter(test => {
+            return test.name.toLowerCase().includes(query.toLowerCase());
+        });
+        setSearchBoxTests(results);
+    }
+
+    const handleRemoveSelectedTest = (test) => {
+        removedTestFromSelectedTests(test);
+        updateSampleTypeTests(test, false);
+    }
+
+    const handleFilterSelectTest = (test) => {
+        setTestSearchTerm("");
+        addTestToSelectedTests(test);
+        updateSampleTypeTests(test, true);
+    }
+
+    function updateSampleTypeTests(test, userBenchChoice = false) {
+        let tests = [...sampleTypeTests.tests];
+        let testIndex = findTestIndex(test.id);
+        tests[testIndex].userBenchChoice = userBenchChoice;
+        setSampleTypeTests({...sampleTypeTests, tests: tests});
+    }
+
+    const handleTestCheckbox = (e, test) => {
+        if (e.currentTarget.checked) {
+            updateSampleTypeTests(test, true);
+            addTestToSelectedTests(test)
+        } else {
+            updateSampleTypeTests(test, false);
+            removedTestFromSelectedTests(test);
+        }
+    }
+
+    function findTestById(testId) {
+        return sampleTypeTests.tests.find((test) => test.id === testId);
+    }
+
+    function findTestIndex(testId) {
+        return sampleTypeTests.tests.findIndex((test) => test.id === testId);
+    }
+
+    const triggerPanelCheckBoxChange = (isChecked, testMaps) => {
+        const testIds = testMaps.split(',').map(id => id.trim());
+        testIds.map(testId => {
+            let testIndex = findTestIndex(testId);
+            let test = findTestById(testId);
+            if (testIndex !== -1) {
+                updateSampleTypeTests(test, isChecked);
+                if (isChecked) {
+                    setSelectedTests(prevState => {
+                        return [...prevState, {id: test.id, name: test.name}];
+                    });
+                } else {
+                    removedTestFromSelectedTests(test);
+                }
+            }
+
+        });
+
+
+    }
+
+    const removedTestFromSelectedTests = (test) => {
+        let index = 0;
+        for (let i in selectedTests) {
+            if (selectedTests[i].id === test.id) {
+                const newTests = selectedTests;
+                newTests.splice(index, 1);
+                setSelectedTests([...newTests]);
+                break;
+            }
+            index++;
+        }
+    }
+
+    const handleFetchSampleTypeTests = (e, index) => {
+        setSelectedTests([]);
+        const {value} = e.target;
+        const selectedSampleTypeOption = sampleTypesRef.current.options[sampleTypesRef.current.selectedIndex].text
+        setSelectedSampleType({
+            ...selectedSampleType, id: value, name: selectedSampleTypeOption, element_index: index
+        });
+        props.sampleTypeObject({sampleTypeId: value, sampleObjectIndex: index});
+    }
+
+    const updateSampleXml = (sampleXML, index) => {
+        props.sampleTypeObject({sampleXML: sampleXML, sampleObjectIndex: index});
+    }
+
+    // const rows = TableSampleTableRows(index, selectedSampleType, rejectSampleReasons, selectedTests, updateSampleXml, handleRemoveSampleTest);
+
+    const fetchSamplesTypes = (res) => {
+        if (componentMounted.current) {
+            setSampleTypes(res);
+        }
+    }
+
+    const fetchSampleTypeTests = (res) => {
+        if (componentMounted.current) {
+            setSampleTypeTests(res);
+        }
+    }
+
+    useEffect(() => {
+        props.sampleTypeObject({selectedTests: selectedTests, sampleObjectIndex: index});
+    }, [selectedTests]);
+
+
+    useEffect(() => {
+        props.sampleTypeObject({referralItems: referralRequest, sampleObjectIndex: index});
+
+    }, [referralRequest]);
+
+
+    const displayReferralReasonsOptions = (res) => {
+        if (componentMounted.current) {
+            setReferralReasons(res);
+        }
+    }
+    const displayReferralOrgOptions = (res) => {
+        if (componentMounted.current) {
+            setReferralOrganizations(res);
+        }
+    }
+
+
+    function updateSampleTypeTests(test, userBenchChoice = false) {
+        let tests = [...sampleTypeTests.tests];
+        let testIndex = findTestIndex(test.id);
+        tests[testIndex].userBenchChoice = userBenchChoice;
+        setSampleTypeTests({...sampleTypeTests, tests: tests});
+    }
+
+    function handleRejection(checked) {
+        if (checked) {
+            setNotificationBody({
+                kind: NotificationKinds.warning,
+                title: "Notification Message",
+                message: <FormattedMessage id="reject.order.sample.notification"/>
+            });
+            setNotificationVisible(true);
+        }
+        setSampleXml({
+            ...sampleXml,
+            rejected: checked
+        });
+        setRejectionReasonsDisabled(!rejectionReasonsDisabled);
+    }
+
+    function findTestIndex(testId) {
+        return sampleTypeTests.tests.findIndex((test) => test.id === testId);
+    }
+
+    const removedPanelFromSelectedPanels = (panel) => {
+        let index = 0;
+        let panelId = panel.id !== undefined ? panel.id : panel.panelId;
+
+        for (let i in selectedPanels) {
+            if (selectedPanels[i].id === panelId) {
+                triggerPanelCheckBoxChange(false, selectedPanels[i].testMaps);
+                const newPanels = selectedPanels;
+                newPanels.splice(index, 1);
+                setSelectedPanels([...newPanels]);
+                break;
+            }
+            index++;
+        }
+    }
+
+    const handlePanelSearchChange = (event) => {
+        const query = event.target.value;
+        setPanelSearchTerm(query);
+        const results = sampleTypeTests.panels.filter(panel => {
+            return panel.name.toLowerCase().includes(query.toLowerCase());
+        });
+        setSearchBoxPanels(results);
+    }
+
+    const handleFilterSelectPanel = (panel) => {
+        setPanelSearchTerm("");
+        addPanelToSelectedPanels(panel);
+    }
+
+
+    const handlePanelCheckbox = (e, panel) => {
+        if (e.currentTarget.checked) {
+            addPanelToSelectedPanels(panel);
+        } else {
+            removedPanelFromSelectedPanels(panel);
+        }
+    }
+
+    const handleRemoveSelectedPanel = (panel) => {
+        removedPanelFromSelectedPanels(panel);
+    }
+
+    function addTestToSelectedTests(test) {
+        setSelectedTests([...selectedTests, {id: test.id, name: test.name}]);
+    }
+
+    const addPanelToSelectedPanels = (panel) => {
+        setSelectedPanels([...selectedPanels, {id: panel.panelId, name: panel.name, testMaps: panel.testMaps}]);
+        triggerPanelCheckBoxChange(true, panel.testMaps);
+    }
+
+    useEffect(() => {
+        componentMounted.current = true;
+        if (selectedSampleType.id != null) {
+            getFromOpenElisServer(`/rest/sample-type-tests?sampleType=${selectedSampleType.id}`, fetchSampleTypeTests);
+        }
+        return () => {
+            componentMounted.current = false;
+        }
+    }, [selectedSampleType.id]);
+
+
+    useEffect(() => {
+        componentMounted.current = true;
+        if (selectedSampleType.id != null) {
+            getFromOpenElisServer(`/rest/sample-type-tests?sampleType=${selectedSampleType.id}`, fetchSampleTypeTests);
+        }
+        return () => {
+            componentMounted.current = false;
+        }
+    }, [selectedSampleType.id]);
+
+    const repopulateUI = () => {
+        if (props.sample !== null) {
+            setSelectedTests(props.sample.tests);
+        }
+    }
+
+    useEffect(() => {
+        getFromOpenElisServer("/rest/referral-reasons", displayReferralReasonsOptions);
+        getFromOpenElisServer("/rest/referral-organizations", displayReferralOrgOptions);
+        repopulateUI();
+        getFromOpenElisServer("/rest/samples", fetchSamplesTypes);
+        return () => {
+            componentMounted.current = false;
+        }
+    }, []);
+
+    return (
+        <>
+            <div className="sampleBody">
+                <Select
+                    className="selectSampleType"
+                    id={"sampleId_" + index}
+                    ref={sampleTypesRef}
+                    value={props.sample.sampleTypeId === "" ? "" : props.sample.sampleTypeId}
+                    name="sampleId"
+                    labelText=""
+                    onChange={(e) => {
+                        handleFetchSampleTypeTests(e, index);
+                    }}
+                    required
+                >
+                    <SelectItem
+                        text=""
+                        value=""
+                    />
+                    {sampleTypes.map((sampleType, i) => (<SelectItem
+                        text={sampleType.value}
+                        value={sampleType.id}
+                        key={i}
+                    />))}
+                </Select>
+
+                <CustomCheckBox id={"reject_" + index} onChange={(value) => handleRejection(value)}
+                                label="Reject"/>
+                <CustomSelect id={"rejectedReasonId_" + index} options={rejectSampleReasons}
+                              disabled={rejectionReasonsDisabled}
+                              defaultSelect={defaultSelect}
+                              onChange={(e) => handleReasons(e)}/>
+
+                <div className="inlineDiv">
+
+                    <CustomDatePicker id={"collectionDate_" + index}
+                                      onChange={(date) => handleCollectionDate(date)}
+                                      labelText={"Collection Date"} className="inputText"/>
+
+                    <CustomTimePicker id={"collectionTime_" + index}
+                                      onChange={(time) => handleCollectionTime(time)}
+                                      className="inputText" labelText="Collection Time"/>
+
+                    <CustomTextInput id={"collector_" + index} onChange={(value) => handleCollector(value)}
+                                     defaultValue={""} labelText="Collector" className="inputText"/>
+                </div>
+                <div className="testPanels">
+                    <div className="cds--col">
+                        <h4>Panels</h4>
+                        <div className={"searchTestText"} style={{marginBottom: '1.188rem'}}>
+                            {selectedPanels && selectedPanels.length ? (
+                                <>
+                                    {selectedPanels.map((panel, panel_index) => (
+                                        <Tag
+                                            filter
+                                            key={`panelTags_` + panel_index}
+                                            onClose={() => handleRemoveSelectedPanel(panel)}
+                                            style={{marginRight: '0.5rem'}}
+                                            type={'green'}
+                                        >
+                                            {panel.name}
+                                        </Tag>
+                                    ))}
+                                </>
+                            ) : (<></>)}
+                        </div>
+                        <FormGroup legendText={'Search through the available panels'}>
+                            <Search
+                                size="lg"
+                                id={`panels_search_` + index}
+                                labelText={'Search Available panel'}
+                                placeholder={'Choose Available panel'}
+                                onChange={handlePanelSearchChange}
+                                value={(() => {
+                                    if (panelSearchTerm) {
+                                        return panelSearchTerm;
+                                    }
+                                    return '';
+                                })()}
+                            />
+                            <div>
+                                {(() => {
+                                    if (!panelSearchTerm) return null;
+                                    if (searchBoxPanels && searchBoxPanels.length) {
+                                        return (
+                                            <ul className={"searchTestsList"}>
+                                                {searchBoxPanels.map((panel, panel_index) => (
+                                                    <li
+                                                        role="menuitem"
+                                                        className={"singleTest"}
+                                                        key={`panelFilter_` + panel_index}
+                                                        onClick={() => handleFilterSelectPanel(panel)}
+                                                    >
+                                                        {panel.name}
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        );
+                                    }
+                                    return (<>
+                                        <Layer>
+                                            <Tile className={"emptyFilterTests"}>
+                                                <span>No panel found matching  <strong> "{panelSearchTerm}"</strong>  </span>
+                                            </Tile>
+                                        </Layer>
+                                    </>);
+                                })()}
+                            </div>
+                        </FormGroup>
+                        {sampleTypeTests.panels != null && sampleTypeTests.panels.map(panel => {
+                            return (
+                                panel.name === "" ? "" : <Checkbox onChange={(e) => handlePanelCheckbox(e, panel)}
+                                                                   labelText={panel.name}
+                                                                   id={`panel_` + index + "_" + panel.panelId}
+                                                                   key={index + panel.panelId}/>
+                            );
+                        })}
+                    </div>
+
+
+                </div>
+
+                <div className="cds--col">
+                    {selectedTests && !selectedTests.length ? "" : <h3>Ordered Tests</h3>}
+                    <div className={"searchTestText"} style={{marginBottom: '1.188rem'}}>
+                        {selectedTests && selectedTests.length ? (
+                            <>
+                                {selectedTests.map((test, index) => (
+                                    <Tag
+                                        filter
+                                        key={`testTags_` + index}
+                                        onClose={() => handleRemoveSelectedTest(test)}
+                                        style={{marginRight: '0.5rem'}}
+                                        type={'red'}
+                                    >
+                                        {test.name}
+                                    </Tag>
+                                ))}
+                            </>
+                        ) : (<></>)}
+                    </div>
+                    <FormGroup legendText={'Search through the available tests'}>
+                        <Search
+                            size="lg"
+                            id={`tests_search_` + index}
+                            labelText={'Search Available Test'}
+                            placeholder={'Choose Available test'}
+                            onChange={handleTestSearchChange}
+                            value={(() => {
+                                if (testSearchTerm) {
+                                    return testSearchTerm;
+                                }
+                                return '';
+                            })()}
+                        />
+                        <div>
+                            {(() => {
+                                if (!testSearchTerm) return null;
+                                if (searchBoxTests && searchBoxTests.length) {
+                                    return (
+                                        <ul className={"searchTestsList"}>
+                                            {searchBoxTests.map((test, test_index) => (
+                                                <li
+                                                    role="menuitem"
+                                                    className={"singleTest"}
+                                                    key={`filterTest_` + test_index}
+                                                    onClick={() => handleFilterSelectTest(test)}
+                                                >
+                                                    {test.name}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    );
+                                }
+                                return (<>
+                                    <Layer>
+                                        <Tile className={"emptyFilterTests"}>
+                                             <span>No test found matching
+                                                 <strong> "{testSearchTerm}"</strong>  </span>
+                                        </Tile>
+                                    </Layer>
+                                </>);
+                            })()}
+                        </div>
+                    </FormGroup>
+                    {sampleTypeTests.tests != null && sampleTypeTests.tests.map(test => {
+                        return (
+                            test.name === "" ? "" : <Checkbox onChange={(e) => handleTestCheckbox(e, test)}
+                                                              labelText={test.name}
+                                                              id={`test_` + index + "_" + test.id}
+                                                              key={`test_checkBox_` + index + test.id}
+                                                              checked={test.userBenchChoice}/>
+                        );
+                    })}
+                </div>
+
+                <div className="requestTestReferral">
+                    <Checkbox id={`useReferral_` + index} labelText="Refer test to a reference lab"
+                              onChange={handleReferralRequest}/>
+                    {
+                        requestTestReferral === true &&
+                        <OrderReferralRequest index={index} selectedTests={selectedTests}
+                                              referralReasons={referralReasons}
+                                              referralOrganizations={referralOrganizations}
+                                              referralRequest={referralRequest}
+                                              setReferralRequest={setReferralRequest}/>
+                    }
+                </div>
+            </div>
+        </>
+    );
+};
+
+export default SampleType;
