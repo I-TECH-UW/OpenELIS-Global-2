@@ -16,30 +16,50 @@ const AddSample = (props) => {
         let count = elementsCounter + 1
         updateSamples.push({
             index: count,
+            sampleRejected: false,
+            rejectionReason: "",
+            requestReferralEnabled: false,
             referralItems: [],
             sampleTypeId: "",
             sampleXML: null,
-            tests: []
+            panels: [],
+            tests: [],
         })
         setSamples(updateSamples);
         setElementsCounter(count);
     }
 
     const sampleTypeObject = (object) => {
-
-        const {sampleTypeId, selectedTests, sampleXML, referralItems, sampleObjectIndex} = object;
         let newState = [...samples];
-        if (sampleTypeId) {
-            console.log(samples)
-            newState[sampleObjectIndex].sampleTypeId = sampleTypeId;
-        } else if (selectedTests && selectedTests.length > 0) {
-            newState[sampleObjectIndex].tests = selectedTests;
-        } else if (referralItems && referralItems.length > 0) {
-            newState[sampleObjectIndex].referralItems = referralItems;
-        } else if (sampleXML != null) {
-            newState[sampleObjectIndex].sampleXML = sampleXML;
+        switch (true) {
+            case (object.sampleTypeId !== undefined && object.sampleTypeId !== ""):
+                newState[object.sampleObjectIndex].sampleTypeId = object.sampleTypeId;
+                break;
+            case (object.sampleRejected):
+                newState[object.sampleObjectIndex].sampleRejected = object.sampleRejected;
+                break;
+            case (object.rejectionReason !== undefined && object.rejectionReason !== null):
+                newState[object.sampleObjectIndex].rejectionReason = object.rejectionReason;
+                break;
+            case (object.selectedTests !== undefined && object.selectedTests.length > 0):
+                newState[object.sampleObjectIndex].tests = object.selectedTests;
+                break;
+            case (object.selectedPanels !== undefined && object.selectedPanels.length > 0):
+                newState[object.sampleObjectIndex].panels = object.selectedPanels;
+                break;
+            case (object.sampleXML !== undefined && object.sampleXML !== null):
+                newState[object.sampleObjectIndex].sampleXML = object.sampleXML;
+                break;
+            case (object.requestReferralEnabled):
+                newState[object.sampleObjectIndex].requestReferralEnabled = object.requestReferralEnabled;
+                break;
+            case (object.referralItems !== undefined && object.referralItems.length > 0):
+                newState[object.sampleObjectIndex].referralItems = object.referralItems;
+                break;
+            default:
+                props.setSamples(newState);
         }
-        props.setSamples(newState);
+
     }
 
     const removeSample = (index) => {

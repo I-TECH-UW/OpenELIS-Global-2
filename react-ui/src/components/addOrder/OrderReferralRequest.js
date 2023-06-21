@@ -21,45 +21,45 @@ const OrderReferralRequest = ({
                                   selectedTests,
                                   referralReasons,
                                   referralOrganizations,
-                                  referralRequest,
-                                  setReferralRequest
+                                  referralRequests,
+                                  setReferralRequests
                               }) => {
     const {user} = useContext(UserInformationContext);
     const [referralRows, setReferralRows] = useState([]);
 
     function handleReferrer(referrer, index) {
-        const update = [...referralRequest];
+        const update = [...referralRequests];
         update[index].referrer = referrer;
-        setReferralRequest(update);
+        setReferralRequests(update);
     }
 
     function handleReasonForReferral(reasonId, index) {
-        const update = [...referralRequest];
+        const update = [...referralRequests];
         update[index].reasonForReferral = reasonId;
-        setReferralRequest(update);
+        setReferralRequests(update);
     }
 
     function handleInstituteSelect(instituteId, index) {
-        const update = [...referralRequest];
+        const update = [...referralRequests];
         update[index].institute = instituteId;
-        setReferralRequest(update);
+        setReferralRequests(update);
     }
 
     function handleSentDatePicker(date, index) {
         if (date != null) {
-            const update = [...referralRequest];
+            const update = [...referralRequests];
             update[index].sentDate = date;
-            setReferralRequest(update);
+            setReferralRequests(update);
         }
     }
 
     const updateUIRender = () => {
         const rows = [];
         let obj = {};
-        const updateReferralRequest = [...referralRequest];
+        const updateReferralRequest = [...referralRequests];
         let testValue = {};
         let defaultSelect = {};
-        selectedTests.map((test, array_index) => {
+        selectedTests.map((test, i) => {
             let id = index + "_" + test.id;
             testValue = {
                 id: test.id, value: test.name
@@ -77,22 +77,27 @@ const OrderReferralRequest = ({
                 testId: test.id
             };
             let row = {
+
                 reason: <CustomSelect id={"referralReasonId_" + id} options={referralReasons}
-                                      onChange={(e) => handleReasonForReferral(e, array_index)}/>,
-                referrer: <CustomTextInput id={"referrer_" + id} defaultValue={obj.referrer}
-                                           onChange={(value) => handleReferrer(value, array_index)}/>,
+                                      value={referralRequests[i].reasonForReferral ? referralRequests[i].reasonForReferral : null}
+                                      onChange={(e) => handleReasonForReferral(e, i)}/>,
+                referrer: <CustomTextInput id={"referrer_" + id}
+                                           defaultValue={referralRequests[i].referrer ? referralRequests[i].referrer : obj.referrer}
+                                           onChange={(value) => handleReferrer(value, i)}/>,
                 institute: <CustomSelect id={"referredInstituteId_" + id} options={referralOrganizations}
-                                         onChange={(e) => handleInstituteSelect(e, array_index)}
+                                         value={referralRequests[i].institute ? referralRequests[i].institute : null}
+                                         onChange={(e) => handleInstituteSelect(e, i)}
                                          defaultSelect={defaultSelect}/>,
                 sentDate: <CustomDatePicker id={"sendDate_" + id}
-                                            onChange={(date) => handleSentDatePicker(date, array_index)} labelText={""}/>,
+                                            value={referralRequests[i].sentDate ? referralRequests[i].sentDate : null}
+                                            onChange={(date) => handleSentDatePicker(date, i)} labelText={""}/>,
                 testName: <CustomSelect id={"shadowReferredTest_" + id} defaultSelect={testValue}/>,
             };
             rows.push(row);
         });
         setReferralRows(rows);
         updateReferralRequest.push(obj);
-        setReferralRequest(updateReferralRequest);
+        setReferralRequests(updateReferralRequest);
     }
 
     useEffect(() => {
@@ -102,24 +107,24 @@ const OrderReferralRequest = ({
     return (<>
         <>
             <Table useZebraStyles={false} id={`referralRequestTable_` + index}>
-                    <TableHead>
-                        <TableRow>
-                            {header.map((header, header_index) => (<TableHeader id={header.key} key={header_index}>
-                                {header.header}
-                            </TableHeader>))}
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {referralRows.length > 0 && referralRows.map((row, td_index) => (<TableRow key={td_index}>
-                            {Object.keys(row)
-                                .filter((key) => key !== 'id')
-                                .map((key) => {
-                                    return <TableCell key={key}>{row[key]}
-                                    </TableCell>;
-                                })}
-                        </TableRow>))}
-                    </TableBody>
-                </Table>
+                <TableHead>
+                    <TableRow>
+                        {header.map((header, header_index) => (<TableHeader id={header.key} key={header_index}>
+                            {header.header}
+                        </TableHeader>))}
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {referralRows.length > 0 && referralRows.map((row, td_index) => (<TableRow key={td_index}>
+                        {Object.keys(row)
+                            .filter((key) => key !== 'id')
+                            .map((key) => {
+                                return <TableCell key={key}>{row[key]}
+                                </TableCell>;
+                            })}
+                    </TableRow>))}
+                </TableBody>
+            </Table>
         </>
     </>)
 }

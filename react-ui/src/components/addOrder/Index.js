@@ -9,7 +9,17 @@ import {NotificationContext} from "../layout/Layout";
 import {AlertDialog, NotificationKinds} from "../common/CustomNotification";
 import {postToOpenElisServer} from "../utils/Utils";
 
-export let sampleObject = {index: 0, sampleTypeId: "", sampleXML: null, tests: [], referralItems: []}
+export let sampleObject = {
+    index: 0,
+    sampleRejected: false,
+    rejectionReason: "",
+    sampleTypeId: "",
+    sampleXML: null,
+    panels: [],
+    tests: [],
+    requestReferralEnabled: false,
+    referralItems: [],
+}
 const Index = () => {
     const {notificationVisible} = useContext(NotificationContext);
     const [page, setPage] = useState(0);
@@ -151,7 +161,8 @@ const Index = () => {
                         {page === 1 &&
                             <AddSample setSamples={setSamples} samples={samples}/>}
                         {page === 2 &&
-                            <AddOrder orderFormValues={orderFormValues} setOrderFormValues={setOrderFormValues}/>}
+                            <AddOrder orderFormValues={orderFormValues} setOrderFormValues={setOrderFormValues}
+                                      samples={samples}/>}
                         <div className="navigationButtonsLayout">
                             {page !== 0 && <Button kind="tertiary" onClick={() => navigateBackWards()}>Back</Button>}
 

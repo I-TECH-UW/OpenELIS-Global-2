@@ -6,9 +6,10 @@ import {NotificationContext} from "../layout/Layout";
 import {priorities} from "../data/orderOptions";
 import {NotificationKinds} from "../common/CustomNotification";
 import AutoComplete from "../common/AutoComplete";
+import OrderResultReporting from "./OrderResultReporting";
 
 const AddOrder = (props) => {
-    const {orderFormValues, setOrderFormValues} = props;
+    const {orderFormValues, setOrderFormValues,samples} = props;
     const componentMounted = useRef(true);
     const [otherSamplingVisible, setOtherSamplingVisible] = useState(false);
     const [orderIconToggled, setOrderIconToggled] = useState(false);
@@ -278,6 +279,17 @@ const AddOrder = (props) => {
         }
     }
 
+    const reportingNotifications = (object) => {
+        setOrderFormValues({
+            ...orderFormValues,
+            customNotificationLogic: true,
+            patientSMSNotificationTestIds: object.patientSMSNotificationTestIds,
+            patientEmailNotificationTestIds: object.patientEmailNotificationTestIds,
+            providerSMSNotificationTestIds: object.providerSMSNotificationTestIds,
+            providerEmailNotificationTestIds: object.providerEmailNotificationTestIds,
+        });
+    }
+
 
     const getSampleEntryPreform = (response) => {
         if (componentMounted.current) {
@@ -479,6 +491,18 @@ const AddOrder = (props) => {
                                disabled={!otherSamplingVisible}
                                id="testLocationCodeOtherId" className="inputText"/>
                 </div>
+            </div>
+            <div className="orderLegendBody">
+                <h3>RESULT REPORTING</h3>
+                {samples.map((sample, index) => {
+                    if (sample.tests.length > 0) {
+                        return (<div key={index}>
+                            <h4>Sample {index + 1}</h4>
+                            <OrderResultReporting selectedTests={sample.tests}
+                                                  reportingNotifications={reportingNotifications}/>
+                        </div>)
+                    }
+                })}
             </div>
         </Stack>
     </>)

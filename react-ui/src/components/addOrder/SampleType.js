@@ -26,7 +26,7 @@ const SampleType = (props) => {
     const [referralReasons, setReferralReasons] = useState([]);
     const [referralOrganizations, setReferralOrganizations] = useState([]);
     const [testSearchTerm, setTestSearchTerm] = useState("");
-    const [referralRequest, setReferralRequest] = useState([]);
+    const [referralRequests, setReferralRequests] = useState([]);
     const {setNotificationVisible, setNotificationBody} = useContext(NotificationContext);
     const [rejectionReasonsDisabled, setRejectionReasonsDisabled] = useState(true);
     const [selectedPanels, setSelectedPanels] = useState([]);
@@ -54,6 +54,7 @@ const SampleType = (props) => {
             ...sampleXml,
             rejectionReason: value
         });
+        props.sampleTypeObject({rejectionReason: value, sampleObjectIndex: index});
     }
 
     function handleCollectionTime(time) {
@@ -94,7 +95,7 @@ const SampleType = (props) => {
                 });
 
             });
-            setReferralRequest(defaultReferralRequest);
+            setReferralRequests(defaultReferralRequest);
         }
     }
 
@@ -206,14 +207,24 @@ const SampleType = (props) => {
     }
 
     useEffect(() => {
-        props.sampleTypeObject({selectedTests: selectedTests, sampleObjectIndex: index});
-    }, [selectedTests]);
+        if (props.sample.referralItems.length > 0 && referralReasons.length > 0) {
+            setRequestTestReferral(props.sample.requestReferralEnabled)
+            setReferralRequests(props.sample.referralItems)
+        }
+    }, [referralReasons]);
+
+    useEffect(() => {
+        props.sampleTypeObject({requestReferralEnabled: requestTestReferral, sampleObjectIndex: index});
+    }, [requestTestReferral]);
 
 
     useEffect(() => {
-        props.sampleTypeObject({referralItems: referralRequest, sampleObjectIndex: index});
+        props.sampleTypeObject({selectedTests: selectedTests, sampleObjectIndex: index});
+    }, [selectedTests]);
 
-    }, [referralRequest]);
+    useEffect(() => {
+        props.sampleTypeObject({referralItems: referralRequests, sampleObjectIndex: index});
+    }, [referralRequests]);
 
 
     const displayReferralReasonsOptions = (res) => {
@@ -319,6 +330,14 @@ const SampleType = (props) => {
 
 
     useEffect(() => {
+        props.sampleTypeObject({sampleRejected: rejectionReasonsDisabled, sampleObjectIndex: index});
+    }, [rejectionReasonsDisabled]);
+
+    useEffect(() => {
+        props.sampleTypeObject({selectedPanels: selectedPanels, sampleObjectIndex: index});
+    }, [selectedPanels]);
+
+    useEffect(() => {
         componentMounted.current = true;
         if (selectedSampleType.id != null) {
             getFromOpenElisServer(`/rest/sample-type-tests?sampleType=${selectedSampleType.id}`, fetchSampleTypeTests);
@@ -331,6 +350,10 @@ const SampleType = (props) => {
     const repopulateUI = () => {
         if (props.sample !== null) {
             setSelectedTests(props.sample.tests);
+            setSelectedPanels(props.sample.panels);
+            setSelectedSampleType({
+                id: props.sample.sampleTypeId
+            });
         }
     }
 
@@ -548,8 +571,8 @@ const SampleType = (props) => {
                         <OrderReferralRequest index={index} selectedTests={selectedTests}
                                               referralReasons={referralReasons}
                                               referralOrganizations={referralOrganizations}
-                                              referralRequest={referralRequest}
-                                              setReferralRequest={setReferralRequest}/>
+                                              referralRequests={referralRequests}
+                                              setReferralRequests={setReferralRequests}/>
                     }
                 </div>
             </div>
