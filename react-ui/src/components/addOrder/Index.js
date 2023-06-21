@@ -23,30 +23,12 @@ export let sampleObject = {
 const Index = () => {
     const {notificationVisible} = useContext(NotificationContext);
     const [page, setPage] = useState(0);
-    const [selectedPatient, setSelectedPatient] = useState({
-        id: "", healthRegion: []
-    });
+
     const [orderFormValues, setOrderFormValues] = useState(SampleOrderFormValues);
 
     const [samples, setSamples] = useState([sampleObject]);
-    const [useReferral, setUseReferral] = useState(false);
 
     const {setNotificationVisible, setNotificationBody} = useContext(NotificationContext);
-
-    const getSelectedPatient = (patient) => {
-        setSelectedPatient(patient);
-    }
-
-    function reportingNotifications(object) {
-        setOrderFormValues({
-            ...orderFormValues,
-            customNotificationLogic: true,
-            patientSMSNotificationTestIds: object.patientSMSNotificationTestIds,
-            patientEmailNotificationTestIds: object.patientEmailNotificationTestIds,
-            providerSMSNotificationTestIds: object.providerSMSNotificationTestIds,
-            providerEmailNotificationTestIds: object.providerEmailNotificationTestIds,
-        });
-    }
 
     const showAlertMessage = (msg, kind) => {
         setNotificationVisible(true);
@@ -65,8 +47,13 @@ const Index = () => {
         postToOpenElisServer("/rest/SamplePatientEntry", JSON.stringify(orderFormValues
         ), handlePost)
     }
-
     useEffect(() => {
+        if (page === 2) {
+            attacheSamplesToFormValues();
+        }
+    }, [page]);
+
+    const attacheSamplesToFormValues = () => {
         let sampleXmlString = null;
         let referralItems = [];
         if (samples.length > 0) {
@@ -104,7 +91,6 @@ const Index = () => {
                             referredSendDate: sentDates,
                             referralReasonId: referralReasonIds
                         });
-                        setUseReferral(true);
                     }
 
                 });
@@ -113,11 +99,11 @@ const Index = () => {
         }
         setOrderFormValues({
             ...orderFormValues,
-            useReferral: useReferral,
+            useReferral: true,
             sampleXML: sampleXmlString,
             referralItems: referralItems
         });
-    }, [samples]);
+    }
 
 
     const navigateForward = () => {
@@ -170,7 +156,7 @@ const Index = () => {
                                                   onClick={() => navigateForward()}>Next</Button> :
 
                                 <Button kind="primary" className="forwardButton"
-                                        onClick={() => console.log("submit data")}>Submit</Button>}
+                                        onClick={handleSubmitOrderForm}>Submit</Button>}
 
                         </div>
                     </div>

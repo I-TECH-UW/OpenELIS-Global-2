@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useRef, useState} from 'react'
-import {Link, Select, SelectItem, Stack, TextInput, TimePicker} from "@carbon/react";
+import {Checkbox, Link, Select, SelectItem, Stack, TextInput, TimePicker} from "@carbon/react";
 import CustomDatePicker from "../common/CustomDatePicker";
 import {getFromOpenElisServer} from "../utils/Utils";
 import {NotificationContext} from "../layout/Layout";
@@ -9,10 +9,9 @@ import AutoComplete from "../common/AutoComplete";
 import OrderResultReporting from "./OrderResultReporting";
 
 const AddOrder = (props) => {
-    const {orderFormValues, setOrderFormValues,samples} = props;
+    const {orderFormValues, setOrderFormValues, samples} = props;
     const componentMounted = useRef(true);
     const [otherSamplingVisible, setOtherSamplingVisible] = useState(false);
-    const [orderIconToggled, setOrderIconToggled] = useState(false);
     const [programs, setPrograms] = useState([]);
     const [providers, setProviders] = useState([]);
     const [paymentOptions, setPaymentOptions] = useState([]);
@@ -128,12 +127,6 @@ const AddOrder = (props) => {
         });
     }
 
-    function handlePriority(e) {
-        setOrderFormValues({
-            ...orderFormValues, sampleOrderItems: {...orderFormValues.sampleOrderItems, priority: e.target.value}
-        });
-    }
-
 
     const handleLabNoGeneration = (e) => {
         e.preventDefault();
@@ -240,7 +233,7 @@ const AddOrder = (props) => {
     }
 
     useEffect(() => {
-       
+
         const currentDate = findConfigurationProperty("currentDateAsText");
         const currentTime = findConfigurationProperty("currentTimeAsText");
         const siteNameConfig = findConfigurationProperty("restrictFreeTextRefSiteEntry");
@@ -251,6 +244,7 @@ const AddOrder = (props) => {
                 ...orderFormValues.sampleOrderItems,
                 requestDate: currentDate,
                 receivedDateForDisplay: currentDate,
+                nextVisitDate: currentDate,
                 receivedTime: currentTime
             }
         });
@@ -344,7 +338,8 @@ const AddOrder = (props) => {
 
                 </div>
                 <div className="inlineDiv">
-                    <CustomDatePicker id={"requestDate"} labelText={"Request Date"} value={orderFormValues.sampleOrderItems.requestDate} className="inputText"
+                    <CustomDatePicker id={"requestDate"} labelText={"Request Date"}
+                                      value={orderFormValues.sampleOrderItems.requestDate} className="inputText"
                                       onChange={(date) => handleDatePickerChange("requestDate", date)}/>
 
                     <CustomDatePicker id={"receivedDate"} labelText={"Received Date"} className="inputText"
@@ -490,6 +485,11 @@ const AddOrder = (props) => {
                                value={orderFormValues.sampleOrderItems.otherLocationCode}
                                disabled={!otherSamplingVisible}
                                id="testLocationCodeOtherId" className="inputText"/>
+                </div>
+                <div className="inlineDiv">
+                    <Checkbox labelText="Remember site and requester" className="inputText"
+                              id="rememberSiteAndRequester"
+                              onChange={handleRememberCheckBox}/>
                 </div>
             </div>
             <div className="orderLegendBody">
