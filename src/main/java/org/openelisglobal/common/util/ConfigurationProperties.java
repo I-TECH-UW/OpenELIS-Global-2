@@ -169,6 +169,10 @@ public abstract class ConfigurationProperties {
         SPECIMEN_FIELD_SEX("patientSexCheck"), //
         SPECIMEN_FIELD_COLLECTED_BY("collectedByCheck"),
         SPECIMEN_FIELD_TESTS("testsCheck"), //
+        BLOCK_BARCODE_HEIGHT("heightBlockLabels"), //
+        BLOCK_BARCODE_WIDTH("widthBlockLabels"), //
+        SLIDE_BARCODE_HEIGHT("heightSlideLabels"), //
+        SLIDE_BARCODE_WIDTH("widthSlideLabels"), //
         ALT_ACCESSION_PREFIX("prePrintAltAccessionPrefix"), //
         USE_ALT_ACCESSION_PREFIX("prePrintUseAltAccession"), //
         LAB_DIRECTOR_NAME("labDirectorName"), //

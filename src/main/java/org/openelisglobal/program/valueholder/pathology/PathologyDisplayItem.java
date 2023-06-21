@@ -81,5 +81,4 @@ public class PathologyDisplayItem {
     public void setPathologySampleId(Integer pathologySampleId) {
         this.pathologySampleId = pathologySampleId;
     }
-
 }

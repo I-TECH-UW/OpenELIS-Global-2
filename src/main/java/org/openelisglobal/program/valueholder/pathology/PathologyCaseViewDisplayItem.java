@@ -13,6 +13,8 @@ public class PathologyCaseViewDisplayItem extends PathologyDisplayItem {
     private String referringFacility;
     private Questionnaire programQuestionnaire;
     private QuestionnaireResponse programQuestionnaireResponse;
+    private String assignedTechnicianId;
+    private String assignedPathologistId;
     private List<PathologyBlock> blocks;
     private List<PathologySlide> slides;
     private List<IdValuePair> techniques;
@@ -124,6 +126,22 @@ public class PathologyCaseViewDisplayItem extends PathologyDisplayItem {
 
     public void setRequests(List<IdValuePair> requests) {
         this.requests = requests;
+    }
+
+    public String getAssignedTechnicianId() {
+        return assignedTechnicianId;
+    }
+
+    public void setAssignedTechnicianId(String assignedTechnicianId) {
+        this.assignedTechnicianId = assignedTechnicianId;
+    }
+
+    public String getAssignedPathologistId() {
+        return assignedPathologistId;
+    }
+
+    public void setAssignedPathologistId(String assignedPathologistId) {
+        this.assignedPathologistId = assignedPathologistId;
     }
 
 }

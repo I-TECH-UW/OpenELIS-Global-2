@@ -22,6 +22,8 @@ public class PathologyBlock extends BaseObject<Integer> {
     @Column(name = "block_number")
     private Integer blockNumber;
 
+    private String location;
+
     @Override
     public Integer getId() {
         return id;
@@ -38,6 +40,14 @@ public class PathologyBlock extends BaseObject<Integer> {
 
     public void setBlockNumber(Integer blockNumber) {
         this.blockNumber = blockNumber;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 
 }

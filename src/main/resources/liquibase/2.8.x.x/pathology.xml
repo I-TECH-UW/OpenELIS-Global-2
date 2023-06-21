@@ -274,4 +274,56 @@
                                  baseTableName="pathology_technique" baseColumnNames="pathology_sample_id"
                                  referencedTableName="pathology_sample" referencedColumnNames="id"/>
 	</changeSet>
+	
+	<changeSet author="csteele" id="10">
+	<validCheckSum>8:6a0c6def79318d1db9029350ac199aa8</validCheckSum>
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists tableName="pathology_slide" columnName="type" schemaName="clinlims" />
+			</not>
+		</preConditions>
+		<addColumn tableName="pathology_slide">
+			<column name="file_type" type="VARCHAR(255)"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet author="csteele" id="11">
+	<validCheckSum>8:6f6b101b0516d89666917fbddca40094</validCheckSum>
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists tableName="pathology_slide" columnName="location" schemaName="clinlims" />
+			</not>
+		</preConditions>
+		<addColumn tableName="pathology_slide">
+			<column name="location" type="VARCHAR(255)"/>
+		</addColumn>
+		<addColumn tableName="pathology_block">
+			<column name="location" type="VARCHAR(255)"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet author="csteele" id="12">
+	<validCheckSum>8:6ea7ba511bcc261dc818d7fa2a2e57b8</validCheckSum>
+		<preConditions onFail="MARK_RAN">
+        <sqlCheck expectedResult="0">select count(*) from clinlims.test_section where name = 'Pathology'; </sqlCheck>
+		</preConditions>
+		<insert schemaName="clinlims" tableName="localization">
+			<column name="id" valueSequenceNext="localization_seq" />
+			<column name="lastupdated" valueComputed="${now}" />
+			<column name="description" value="pathology test section" />
+            <column name="english" value="Pathology" />
+            <column name="french" value="Pathology"/>			
+		</insert>
+		<insert tableName="test_section" schemaName="clinlims">
+			<column name="id" valueSequenceNext="test_section_seq" />
+			<column name="name" value="Pathology" />
+			<column name="description" value="Pathology Department" />
+			<column name="is_external" value="N" />
+			<column name="lastupdated" valueComputed="${now}"/>
+			<column name="sort_order" value="2147483647" />
+			<column name="is_active" value="Y" />
+			<column name="name_localization_id" valueComputed="(select id from localization where description = 'pathology test section' and english = 'Pathology' limit 1)" />
+			<column name="display_key" value="testsection.Pathology" />
+		</insert>
+	</changeSet>
 </databaseChangeLog>

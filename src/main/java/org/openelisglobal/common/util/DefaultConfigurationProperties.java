@@ -184,6 +184,10 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
                 "25.4");
         setDBPropertyMappingAndDefault(Property.SPECIMEN_BARCODE_WIDTH, Property.SPECIMEN_BARCODE_WIDTH.getName(),
                 "76.2");
+        setDBPropertyMappingAndDefault(Property.BLOCK_BARCODE_HEIGHT, Property.BLOCK_BARCODE_HEIGHT.getName(), "25.4");
+        setDBPropertyMappingAndDefault(Property.BLOCK_BARCODE_WIDTH, Property.BLOCK_BARCODE_WIDTH.getName(), "76.2");
+        setDBPropertyMappingAndDefault(Property.SLIDE_BARCODE_HEIGHT, Property.SLIDE_BARCODE_HEIGHT.getName(), "25.4");
+        setDBPropertyMappingAndDefault(Property.SLIDE_BARCODE_WIDTH, Property.SLIDE_BARCODE_WIDTH.getName(), "76.2");
         setDBPropertyMappingAndDefault(Property.SPECIMEN_FIELD_DATE, Property.SPECIMEN_FIELD_DATE.getName(), "true");
         setDBPropertyMappingAndDefault(Property.SPECIMEN_FIELD_COLLECTED_BY,
                 Property.SPECIMEN_FIELD_COLLECTED_BY.getName(), "true");

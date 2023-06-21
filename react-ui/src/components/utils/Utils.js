@@ -107,3 +107,7 @@ export const postToOpenElisServerForPDF = (endPoint, payLoad) => {
         console.log(error)
     })
 }
+
+export const hasRole = (userSessionDetails, role) => {
+      return userSessionDetails.roles && userSessionDetails.roles.includes(role)
+}

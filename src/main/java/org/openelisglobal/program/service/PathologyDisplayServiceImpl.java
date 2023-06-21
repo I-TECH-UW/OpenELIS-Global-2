@@ -64,10 +64,16 @@ public class PathologyDisplayServiceImpl implements PathologyDisplayService {
         displayItem.setRequestDate(pathologySample.getSample().getEnteredDate());
         if (pathologySample.getPathologist() != null) {
             displayItem.setAssignedPathologist(pathologySample.getPathologist().getDisplayName());
+            displayItem.setAssignedPathologistId(pathologySample.getPathologist().getId());
         }
         if (pathologySample.getTechnician() != null) {
             displayItem.setAssignedTechnician(pathologySample.getTechnician().getDisplayName());
+            displayItem.setAssignedTechnicianId(pathologySample.getTechnician().getId());
         }
+        pathologySample.getBlocks().size();
+        pathologySample.getSlides().size();
+        displayItem.setBlocks(pathologySample.getBlocks());
+        displayItem.setSlides(pathologySample.getSlides());
         Patient patient = sampleService.getPatient(pathologySample.getSample());
         displayItem.setFirstName(patient.getPerson().getFirstName());
         displayItem.setLastName(patient.getPerson().getLastName());

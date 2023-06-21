@@ -1,41 +1,42 @@
-import React from "react";
+import React, {useState, useContext, useEffect, useRef} from "react";
+import UserSessionDetailsContext from "../../UserSessionDetailsContext"
 import { Route, useParams } from "react-router-dom";
 import IdleTimer from 'react-idle-timer'
 import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css' // Import css
-import { Loading } from '@carbon/react';
+import { Loading } from '@carbon/react/';
 
 const idleTimeout = 1000 * 60 * 15; // milliseconds until idle warning will appear
 const idleWarningTimeout = 1000 * 60 * 1; // milliseconds until logout is automatically processed from idle warning
 
-class SecureRoute extends React.Component {
+function SecureRoute(props) {
 
-    constructor(props) { 
-        super(props);
-        this.idleTimer = null
-        this.state = {
-            loading: true, 
-            authenticated: false,
-            isIdle: false,
-            refreshTimeoutSet: false,
-            userSessionDetails: {}
-        }
-    }
+    const [loading, setLoading] = useState(true);
+    const [authenticated, setAuthenticated] = useState(false);
+    const [permissionGranted, setPermissionGranted] = useState(false);
+    const [isIdle, setIsIdle] = useState(false);
 
-    componentDidMount() {
-        fetch(this.props.config.serverBaseUrl + `/session`,
+    const idleTimer = useRef();
+
+    const { userSessionDetails, setUserSessionDetails } = useContext(UserSessionDetailsContext);
+
+    useEffect(()=>{
+        console.log('component mounted!');
+        fetch(props.config.serverBaseUrl + `/session`,
             //includes the browser sessionId in the Header for Authentication on the backend server
             { credentials: "include" }
         )
             .then((response) => response.json()).then(jsonResp => {
                 console.log(JSON.stringify(jsonResp))
+                setLoading(false);
                 if (jsonResp.authenticated) {
                     console.info("Authenticated");
                    // console.log(JSON.stringify(jsonResp))
-                    this.setState({ loading: false, authenticated: true, userSessionDetails: jsonResp });
-                    this.props.onAuth(jsonResp);
+                    setAuthenticated(true);
+                    props.onAuth(jsonResp);
+                    setUserSessionDetails(jsonResp);
                     localStorage.setItem("CSRF", jsonResp.csrf)
-                    if (this.hasPermission()) {
+                    if (hasPermission(jsonResp)) {
                         console.info("Access Allowed");
                     } else {
                         const options = {
@@ -56,12 +57,12 @@ class SecureRoute extends React.Component {
                     }
 
                 } else {
-                    this.setState({ loading: false});
-                    window.location.href = this.props.config.loginRedirect;
+                    setAuthenticated(false);
+                    window.location.href = props.config.loginRedirect;
                 }
             }).catch(error => {
                 console.log(error);
-                this.setState({ loading: false });
+               setLoading(false);
                 const options = {
                     title: 'System Error',
                     message: "Error : " + error.message,
@@ -79,26 +80,32 @@ class SecureRoute extends React.Component {
                 confirmAlert(options)
             }
             );
+      },[]);
+
+
+  useEffect(() => {
+    setPermissionGranted(hasPermission());
+  }, [userSessionDetails]);
+
+
+    const hasPermission = (userDetails = userSessionDetails) => {
+        return !props.role || [].concat(props.role).some(role => userDetails.roles && userDetails.roles.includes(role))
     }
 
-    hasPermission = () => {
-        return !this.props.role || [].concat(this.props.role).some(role => this.state.userSessionDetails.roles.includes(role))
+    const handleOnAction = (event) => {
     }
 
-    handleOnAction = (event) => {
-    }
-
-    handleOnActive = (event) => {
+    const handleOnActive = (event) => {
         console.log('user is active', event)
-        this.setState({ isIdle: false });
+        setIsIdle(false);
     }
 
-    handleOnIdle = (event) => {
+    const handleOnIdle = (event) => {
         console.log('user is idle', event)
-        this.setState({ isIdle: true });
+        setIsIdle(true);
 
         const timer = () => setTimeout(() => {
-            this.props.logout();
+            props.logout();
         }, idleWarningTimeout);
         const timeoutEventID = timer();
 
@@ -117,35 +124,28 @@ class SecureRoute extends React.Component {
         confirmAlert(options);
     }
 
-    render() {
-        if (this.state.loading) {
-            return (<Loading/>);
-        } 
-        else if (!this.state.authenticated) {
-            return ("Not authenticated");
-        } else {
-            if (this.hasPermission()) {
-                console.info("Access Allowed");
-                return (
-                    <>
-                        <IdleTimer
-                            ref={ref => { this.idleTimer = ref }}
-                            timeout={idleTimeout}
-                            onActive={this.handleOnActive}
-                            onIdle={this.handleOnIdle}
-                            onAction={this.handleOnAction}
-                            debounce={250}
-                        />
-                        <Route {...this.props} />
-                    </>
-                );
-            } else {
-                return <></>
+        return (
+            <>
+            {loading && 
+                <Loading/>}
+            {!loading && !authenticated &&
+                "Not Authenticated"
             }
-
-        }
-    }
-
+            {!loading && authenticated && permissionGranted &&
+                <>
+                <IdleTimer
+                    ref={idleTimer}
+                    timeout={idleTimeout}
+                    onActive={handleOnActive}
+                    onIdle={handleOnIdle}
+                    onAction={handleOnAction}
+                    debounce={250}
+                />
+                <Route {...props} />
+                </>
+            }
+            </>
+        )
 }
 
 export default SecureRoute;

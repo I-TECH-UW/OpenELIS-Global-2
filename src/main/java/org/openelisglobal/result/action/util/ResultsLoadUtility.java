@@ -202,6 +202,14 @@ public class ResultsLoadUtility {
      * N.B. The patient info is used to determine the limits for the results, not
      * for including patient information
      */
+    public List<TestResultItem> getGroupedTestsForSample(Sample sample) {
+        return getGroupedTestsForSample(sample, sampleHumanService.getPatientForSample(sample));
+    }
+
+    /*
+     * N.B. The patient info is used to determine the limits for the results, not
+     * for including patient information
+     */
     public List<TestResultItem> getGroupedTestsForSample(Sample sample, Patient patient) {
 
         reflexGroup = 1;
