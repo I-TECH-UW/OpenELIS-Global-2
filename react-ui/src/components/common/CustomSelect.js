@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React from 'react'
 import {Select, SelectItem} from "@carbon/react";
 
 const CustomSelect = (props) => {
@@ -11,6 +11,7 @@ const CustomSelect = (props) => {
         <Select
             onChange={handleSelect}
             labelText="" id={props.id}
+            defaultValue={props.value ? props.value : null}
             disabled={props.disabled}>
 
             {props.defaultSelect && <SelectItem

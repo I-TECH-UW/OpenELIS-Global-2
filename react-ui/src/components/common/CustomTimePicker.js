@@ -46,7 +46,7 @@ const CustomTimePicker = (props) => {
     return (
         <>
             <TimePicker id={props.id} value={currentTime == null ? '' : currentTime}
-                        onChange={(e) => handleTimePicker(e)}/>
+                        onChange={(e) => handleTimePicker(e)}  labelText={props.labelText == null ? '' : props.labelText}/>
         </>
     )
 }

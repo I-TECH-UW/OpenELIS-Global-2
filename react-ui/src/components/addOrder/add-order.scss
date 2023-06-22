@@ -32,3 +32,80 @@
 .emptyFilterTests span{
   color: #d4373a;
 }
+.orderLegendBody {
+  border: 0.5px solid #295785;
+  border-radius: 5px;
+  margin: 2%;
+  padding: 4%;
+}
+
+.ProgressIndicator {
+  margin: auto;
+  width: 50%;
+  padding: 10px;
+}
+
+.navigationButtonsLayout {
+  width: 100%;
+}
+
+
+.navigationButtonsLayout .forwardButton {
+  float: right;
+}
+
+.tabsLayout button {
+  margin: 5px;
+}
+
+.searchActionButtons {
+  padding: 2px;
+  margin: 5px;
+  display: inline-block;
+}
+
+.searchActionButtons button {
+  margin: 10px;
+  text-align: center;
+}
+
+.sampleType {
+  margin-top: 20px;
+  /*padding-bottom: 10px;*/
+  /*border-bottom: 1px solid #888787; !* whichever color you prefer *!*/
+}
+
+.sampleType a {
+  float: right;
+}
+
+.sampleType a text {
+  color: #d76262;
+}
+
+.inputText {
+  margin-right: 5px;
+  margin-left: 5px;
+}
+
+.cds--accordion__content {
+  padding: 0px !important;
+}
+
+.cds--date-picker__input {
+  width: 33rem !important;
+}
+
+.cds--time-picker__input-field {
+  width: 31.875rem !important
+}
+
+.requestTestReferral {
+  margin-top: 40px;
+  margin-bottom: 10px;
+}
+
+.requestTestReferral .cds--checkbox-label-text {
+  color: red !important;
+}
+

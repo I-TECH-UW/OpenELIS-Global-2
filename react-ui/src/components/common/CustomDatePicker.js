@@ -6,7 +6,7 @@ import {format} from 'date-fns';
 const CustomDatePicker = (props) => {
     const componentMounted = useRef(true);
     const [configurationProperties, setConfigurationProperties] = useState([]);
-    const [currentDate, setCurrentDate] = useState(null);
+    const [currentDate, setCurrentDate] = useState(props.value);
 
     function handleDatePickerChange(e) {
         let date = new Date(e[0]);
@@ -47,7 +47,7 @@ const CustomDatePicker = (props) => {
 
     return (
         <>
-            <DatePicker id={props.id} dateFormat="d/m/Y" datePickerType="single" value={currentDate}
+            <DatePicker id={props.id} dateFormat="d/m/Y" className={props.className} datePickerType="single" value={currentDate}
                         onChange={(e) => handleDatePickerChange(e)}>
                 <DatePickerInput id={props.id} placeholder="dd/mm/yyyy" type="text" labelText={props.labelText}/>
             </DatePicker>

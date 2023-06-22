@@ -2,7 +2,7 @@ import React, {useState} from 'react'
 import {TextInput} from "@carbon/react";
 
 const CustomTextInput = (props) => {
-    const {id, defaultValue, onChange} = props;
+    const {id, defaultValue, onChange,labelText} = props;
     const [inputText, setInputText] = useState("");
 
     const handleInputChange = (e) => {
@@ -14,7 +14,7 @@ const CustomTextInput = (props) => {
     }
     return (
         <>
-            <TextInput id={id} onChange={handleInputChange} labelText=""
+            <TextInput id={id} onChange={handleInputChange} labelText={labelText === "" ? "" : labelText}
                        value={inputText === "" ? defaultValue : inputText}/>
         </>
     )
