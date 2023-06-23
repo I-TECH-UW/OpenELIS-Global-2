@@ -87,8 +87,6 @@ class SearchPatientForm extends React.Component {
     return (
 
             <>
-                <Grid fullWidth={true} className="gridBoundary">
-                    <Column lg={3}>
                         <Formik
                             initialValues={SearchPatientFormValues}
                             // validationSchema={}
@@ -107,18 +105,7 @@ class SearchPatientForm extends React.Component {
                                     onSubmit={handleSubmit}
                                     onChange={handleChange}
                                     onBlur={handleBlur}>
-                                    <Stack gap={5}>
-                                        <FormLabel>
-                                            <Section>
-                                                <Section>
-                                                    <Section>
-                                                        <Heading>
-                                                            <FormattedMessage id="label.button.search" />
-                                                        </Heading>
-                                                    </Section>
-                                                </Section>
-                                            </Section>
-                                        </FormLabel>
+                                  <div className="inlineDiv">
                                         <Field name="labNumber"
                                         >
                                             {({ field }) =>
@@ -131,6 +118,8 @@ class SearchPatientForm extends React.Component {
                                                 <TextInput name={field.name} labelText="Patient Id" id={field.name} className="inputText" />
                                             }
                                         </Field>
+                                  </div>
+                                  <div className="inlineDiv">
                                         <Field name="lastName"
                                         >
                                             {({ field }) =>
@@ -143,6 +132,8 @@ class SearchPatientForm extends React.Component {
                                                 <TextInput name={field.name} labelText="First Name" id={field.name} className="inputText" />
                                             }
                                         </Field>
+                                  </div>
+                                  <div className="inlineDiv">
                                         <Field name="dateOfBirth"
                                         >
                                             {({ field }) =>
@@ -162,6 +153,7 @@ class SearchPatientForm extends React.Component {
                                         >
                                             {({ field }) =>
                                                 <RadioButtonGroup
+                                                    className="inputText"
                                                     defaultSelected=""
                                                     legendText="Gender"
                                                     name={field.name}
@@ -180,16 +172,20 @@ class SearchPatientForm extends React.Component {
                                                 </RadioButtonGroup>
                                             }
                                         </Field>
-                                        <Button type="submit" id="submit">
-                                            <FormattedMessage id="label.button.search" />
-                                        </Button>
-                                    </Stack>
+                                  </div>
+
+                                  <div className="formInlineDiv">
+                                    <div className="searchActionButtons">
+                                      <Button kind="tertiary">External Search</Button>
+                                      <Button type="submit"><FormattedMessage id="label.button.search"/></Button>
+                                    </div>
+                                  </div>
+
                                 </Form>
                             )}
                         </Formik>
-                    </Column>
-                    <Column></Column>
-                    <Column lg={12} >
+                  <div>
+                    <Column lg={16} >
                         <DataTable rows={this.state.patientSearchResults} headers={patientSearchHeaderData} isSortable >
                             {({ rows, headers, getHeaderProps, getTableProps }) => (
                                 <TableContainer title="Patient Results">
@@ -224,7 +220,7 @@ class SearchPatientForm extends React.Component {
                         </DataTable>
                         <Pagination onChange={this.handlePageChange} page={this.state.page} pageSize ={this.state.pageSize} pageSizes={[5, 10, 20, 30]} totalItems={this.state.patientSearchResults.length}></Pagination>
                     </Column>
-                </Grid>
+                  </div>
             </>
 
     )
