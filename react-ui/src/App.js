@@ -30,16 +30,17 @@ import PathologyCaseView from "./components/pathology/PathologyCaseView"
 
 export default function App() {
 
-  const [authenticated, setAuthenticated] = useState(false);
-  const [user, setUser] = useState({});
-  const [appConfig, setAppConfig] = useState(config);
-  const [userSessionDetails, setUserSessionDetails] = useState({});
-
   let i18nConfig = {
     locale: navigator.language.split(/[-_]/)[0],
     defaultLocale: "en",
     messages: messages_en,
   };
+
+  const [authenticated, setAuthenticated] = useState(false);
+  const [user, setUser] = useState({});
+  const [appConfig, setAppConfig] = useState(config);
+  const [userSessionDetails, setUserSessionDetails] = useState({});
+
 
   i18nConfig.locale =
   localStorage.getItem("locale") || navigator.language.split(/[-_]/)[0];
@@ -97,12 +98,7 @@ export default function App() {
         break;
     }
     i18nConfig.locale = lang;
-    setLocale(lang);
     localStorage.setItem("locale", lang);
-  };
-
-  const getLocale = () => {
-    return locale;
   };
 
   const onChangeLanguage = (lang) => {

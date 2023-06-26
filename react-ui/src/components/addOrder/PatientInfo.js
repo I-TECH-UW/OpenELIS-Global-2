@@ -28,12 +28,6 @@ const PatientInfo = (props) => {
         setSearchPatientTab({kind: "tertiary", active: false});
     }
 
-    const getSampleEntryPreform = (response) => {
-        if (componentMounted.current) {
-            setPrograms(response.sampleOrderItems.programList);
-        }
-    }
-
     useEffect(() => {
         if (orderFormValues.patientProperties.firstName !== "" || orderFormValues.patientProperties.guid !== "") {
             handleNewPatientTab();
