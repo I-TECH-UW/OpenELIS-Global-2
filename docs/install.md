@@ -138,7 +138,24 @@ Ensure all keystores have global read permission
 
     sudo chmod 644 /etc/openelis-global/keystore /etc/openelis-global/truststore /etc/openelis-global/client_facing_keystore
 	
-### Download OpenELIS Global
+## Options for installing OpenELIS Global software
+
+You can choose to install OpenELIS in an online mode for servers with fast internet connections, and offline, using less internet connectivity by providing a local copy of the images to be loaded. 
+
+### Online OpenELIS installation with docker Docker
+#### Running with published docker images
+    docker-compose up -d
+
+#### Building the docker images from source code
+    docker-compose -f build.docker-compose.yml up -d --build
+
+#### The Instaces can be accesed at 
+
+| Instance  |     URL       | credentials (user : password)|
+|---------- |:-------------:|------:                       |
+| OpenElis   |  https://localhost:8443/OpenELIS-Global/  | admin: adminADMIN! |
+
+### Downloaded Installer Offline Setup
 
 1. Install OpenELIS Global
 
