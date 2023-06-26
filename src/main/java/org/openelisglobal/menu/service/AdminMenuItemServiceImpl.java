@@ -22,7 +22,7 @@ public class AdminMenuItemServiceImpl implements AdminMenuItemService, Configura
     List<AdminMenuItem> adminMenuItems;
 
     @PostConstruct
-    public void createActiveList() {
+    public synchronized void createActiveList() {
         adminMenuItems = new ArrayList<>();
         String permissionBase = SystemConfiguration.getInstance().getPermissionAgent();
         AdminFormFields adminFields = AdminFormFields.getInstance();

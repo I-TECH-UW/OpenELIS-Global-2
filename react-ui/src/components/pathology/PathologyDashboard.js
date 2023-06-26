@@ -4,7 +4,7 @@ import {
     DataTable, TableContainer, Table, TableHead, TableRow, TableHeader, TableBody, TableCell,
     } from '@carbon/react';
     import { Search} from '@carbon/react';
-import { getFromOpenElisServer, postToOpenElisServerFullResponse } from "../utils/Utils";
+    import { getFromOpenElisServer, postToOpenElisServerFullResponse, hasRole } from "../utils/Utils";
 import { NotificationContext } from "../layout/Layout";
 import {AlertDialog} from "../common/CustomNotification";
 
@@ -44,7 +44,7 @@ function PathologyDashboard() {
         <Button type="button" onClick={(e) => {assignCurrentUserAsTechnician(e, pathologySampleId)}}>Start</Button>
       </TableCell>
     }
-    if (cell.info.header === 'assignedPathologist' && !cell.value && status === 'READY_PATHOLOGIST') {
+    if (cell.info.header === 'assignedPathologist' && !cell.value && status === 'READY_PATHOLOGIST' && hasRole("Pathologist")) {
       return <TableCell key={cell.id}>
         <Button type="button" onClick={(e) => {assignCurrentUserAsPathologist(e, pathologySampleId)}}>Start</Button>
       </TableCell>

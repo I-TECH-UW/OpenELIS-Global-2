@@ -71,10 +71,12 @@ public class ProgramController extends BaseRestController {
     @ResponseBody
     public Questionnaire getAdditionalEntryQuestions(HttpServletRequest request, @PathVariable String id)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        System.out.println(programService.get(id).getQuestionnaireUUID());
+        if (programService.get(id).getQuestionnaireUUID() != null) {
+            return fhirUtil.getLocalFhirClient().read().resource(Questionnaire.class)
+                    .withId(programService.get(id).getQuestionnaireUUID().toString()).execute();
+        }
+        return null;
 
-        return fhirUtil.getLocalFhirClient().read().resource(Questionnaire.class)
-                .withId(programService.get(id).getQuestionnaireUUID().toString()).execute();
     }
 
 }

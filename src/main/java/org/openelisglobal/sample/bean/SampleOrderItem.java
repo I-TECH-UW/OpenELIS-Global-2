@@ -25,7 +25,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
-import org.openelisglobal.validation.annotations.SafeHtml;
+import org.hl7.fhir.r4.model.QuestionnaireResponse;
 import org.openelisglobal.common.formfields.FormFields.Field;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.util.validator.CustomDateValidator.DateRelation;
@@ -36,6 +36,7 @@ import org.openelisglobal.sample.form.SamplePatientEntryForm.SamplePatientEntryB
 import org.openelisglobal.sample.valueholder.OrderPriority;
 import org.openelisglobal.samplebatchentry.form.SampleBatchEntryForm;
 import org.openelisglobal.validation.annotations.OptionalNotBlank;
+import org.openelisglobal.validation.annotations.SafeHtml;
 import org.openelisglobal.validation.annotations.ValidAccessionNumber;
 import org.openelisglobal.validation.annotations.ValidDate;
 import org.openelisglobal.validation.annotations.ValidName;
@@ -211,6 +212,10 @@ public class SampleOrderItem implements Serializable {
     private String contactTracingIndexName;
 
     private String contactTracingIndexRecordNumber;
+
+    private QuestionnaireResponse additionalQuestions;
+
+    private String programId;
 
     // for display
     private List<IdValuePair> priorityList;
@@ -575,5 +580,21 @@ public class SampleOrderItem implements Serializable {
 
     public void setProvidersList(List<IdValuePair> providersList) {
         this.providersList = providersList;
+    }
+
+    public QuestionnaireResponse getAdditionalQuestions() {
+        return additionalQuestions;
+    }
+
+    public void setAdditionalQuestions(QuestionnaireResponse additionalQuestions) {
+        this.additionalQuestions = additionalQuestions;
+    }
+
+    public String getProgramId() {
+        return programId;
+    }
+
+    public void setProgramId(String programId) {
+        this.programId = programId;
     }
 }

@@ -40,7 +40,6 @@ public class ProgramSample extends BaseObject<Integer> {
     @JoinColumn(name = "sample_id", referencedColumnName = "id")
     private Sample sample;
 
-    @NotNull
     @Column(name = "questionnaire_response_uuid")
     private UUID questionnaireResponseUuid;
 

@@ -8,7 +8,6 @@ import CreatePatientForm from "../common/CreatePatientForm";
 const PatientInfo = (props) => {
     const {orderFormValues, setOrderFormValues} = props;
     const componentMounted = useRef(true);
-    const [programs, setPrograms] = useState([]);
     const [searchPatientTab, setSearchPatientTab] = useState({kind: "primary", active: true});
     const [newPatientTab, setNewPatientTab] = useState({kind: "tertiary", active: false});
     const [selectedPatient, setSelectedPatient] = useState({
@@ -18,14 +17,6 @@ const PatientInfo = (props) => {
     const getSelectedPatient = (patient) => {
         setSelectedPatient(patient);
         handleNewPatientTab();
-    }
-
-    function handleProgramOptions(e) {
-        setOrderFormValues({
-            ...orderFormValues, sampleOrderItems: {
-                ...orderFormValues.sampleOrderItems, program: e.target.value
-            }
-        });
     }
 
     const handleSearchPatientTab = () => {
@@ -44,7 +35,6 @@ const PatientInfo = (props) => {
     }
 
     useEffect(() => {
-        getFromOpenElisServer("/rest/SamplePatientEntry", getSampleEntryPreform);
         if (orderFormValues.patientProperties.firstName !== "" || orderFormValues.patientProperties.guid !== "") {
             handleNewPatientTab();
         }
@@ -54,24 +44,6 @@ const PatientInfo = (props) => {
     }, []);
 
     return (<>
-        <div className="rules">
-            <div className="inlineDiv">
-                <Select
-                    id="programId"
-                    name="program"
-                    labelText="program:"
-                    value={orderFormValues.sampleOrderItems.program}
-                    onChange={handleProgramOptions}
-                    required>
-                    {programs.map(program => {
-                        return (<SelectItem key={program.id}
-                                            value={program.id}
-                                            text={program.value}/>)
-                    })}
-                </Select>
-            </div>
-        </div>
-
         <Stack gap={10}>
             <div className="orderLegendBody">
                 <h3>PATIENT</h3>

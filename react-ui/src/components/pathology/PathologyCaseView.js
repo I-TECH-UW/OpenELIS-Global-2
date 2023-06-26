@@ -105,7 +105,9 @@ function PathologyCaseView() {
       "slides": pathologySampleInfo.slides, 
       "grossExam": pathologySampleInfo.grossExam, 
       "microscopyExam": pathologySampleInfo.microscopyExam, 
-      "conclusionText": pathologySampleInfo.conclusionText
+      "conclusionText": pathologySampleInfo.conclusionText,
+      "release": pathologySampleInfo.release,
+      "referToImmunoHistoChemistry": pathologySampleInfo.referToImmunoHistoChemistry
     }
     if (pathologySampleInfo.techniques) {
       submitValues = {...submitValues, "techniques": pathologySampleInfo.techniques.map(e => {

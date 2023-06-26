@@ -15,10 +15,14 @@ export const getFromOpenElisServer = (endPoint, callback) => {
             if (response.url.includes("LoginPage")) {
                 throw "No Login Session";
             }
-            return response.json();
-        }).then(jsonResp => {
-            callback(jsonResp);
-            //console.log(JSON.stringify(jsonResp))
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.indexOf("application/json") !== -1) {
+                return response.json().then(jsonResp => {
+                    callback(jsonResp);
+                });
+            } else {
+                callback();
+            }
         }).catch(error => {
             console.log(error)
 

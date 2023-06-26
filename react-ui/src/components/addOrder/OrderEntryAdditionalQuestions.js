@@ -3,7 +3,8 @@ import {
     FilterableMultiSelect,
     Select,
     SelectItem,
-    TextInput
+    TextInput,
+    Stack
 } from '@carbon/react';
 
 import '../../index.css';
@@ -41,8 +42,10 @@ export const Questionnaire = ({questionnaire, onAnswerChange = () => {}}) => {
         };
 
         return <>
+          <div className="inputText">
         {item.type == "boolean" && <Select
                 id={item.linkId}
+                className="inputText"
                 labelText={item.text}
                 onChange={onAnswerChange} 
                 >
@@ -86,52 +89,112 @@ export const Questionnaire = ({questionnaire, onAnswerChange = () => {}}) => {
         {item.type == "string" && <TextInput id={item.linkId} labelText={item.text} onChange={onAnswerChange} type="text"/>}
         {item.type == "text" && <TextInput id={item.linkId} labelText={item.text} onChange={onAnswerChange} type="text"/>}
         {item.type == "quantity" && <TextInput id={item.linkId} labelText={item.text} onChange={onAnswerChange} type="number"/>}
+        </div>
         </>
     }
         if (questionnaire) {
-        var inputs = 'item' in questionnaire && questionnaire.item.map( (item, index) => {
-            return <span key={index}>{renderQuestion(item)}</span>
-        });
+          var inputs = 'item' in questionnaire && questionnaire.item.map( (item, index) => {
+              return <span key={index}>{renderQuestion(item)}</span>
+          });
 
-        var groups = [];
-        var children = [];
-        var i = 0;
-        for (; i < inputs.length; i++) {
-            children.push(inputs[i]);
-            if (children.length === 2) {
-                groups.push(<div className="formInlineDiv" key={"group_" + i}>{children}</div>);
-                children = [];
+          var groups = [];
+          var children = [];
+          var i = 0;
+          for (; i < inputs.length; i++) {
+              children.push(inputs[i]);
+              if (children.length === 2) {
+                  groups.push(<div className="formInlineDiv" key={"group_" + i}>{children}</div>);
+                  children = [];
+              }
+          }
+          if (children.length > 0 ) {
+              groups.push(<div className="formInlineDiv" key={"group_" + i}>{children}</div>);
+          }
+
+          return <div className='extraQuestions'>
+              {groups}
+          </div>
+        } else {
+          return <></>
+        }
+}
+
+export const ProgramSelect = ({programChange = () => {}}) => {
+  const componentMounted = useRef(true);
+
+  const [programs, setPrograms] = useState([]);
+
+  const fetchPrograms = (programsList) => {
+    if (componentMounted.current) {
+        setPrograms(programsList);
+    }
+  }
+
+  useEffect(() => {
+    componentMounted.current = true;
+      getFromOpenElisServer("/rest/displayList/PROGRAM", fetchPrograms)
+      return () => {
+          componentMounted.current = false;
+      }
+  }, []);
+
+  return <>
+    <div className="formInlineDiv">
+    {programs.length > 0 && 
+      <div className="inputText">
+        <Select
+        id="additionalQuestionsSelect"
+        labelText="program"
+        onChange={programChange}
+        defaultValue={
+          programs.find(program => {
+              return program.value === 'Routine Testing'              
+          })?.id}
+        >
+            <SelectItem value="" text=""/>
+            {
+                programs.map(program => {
+                    return (
+                        <SelectItem key={program.id}
+                                    value={program.id}
+                                    text={program.value}/>
+                    )
+                })
             }
-        }
-        if (children.length > 0 ) {
-            groups.push(<div className="formInlineDiv" key={"group_" + i}>{children}</div>);
-        }
-
-        return <div className='extraQuestions'>
-            {groups}
-        </div>}
+        </Select>
+        </div>
+    }
+  
+    </div>
+  </>
 }
 
 const OrderEntryAdditionalQuestions = ({orderFormValues, setOrderFormValues = () => {}}) => {
 
-    const componentMounted = useRef(true);
     const [questionnaire, setQuestionnaire] = useState({});
     const [questionnaireResponse, setQuestionnaireResponse] = useState({});
-    const [programs, setPrograms] = useState([]);
 
     const handleProgramSelection = (event) => {
         if (event.target.value === "") {
-          setAdditionalQuestions("{}");
-          setOrderFormValues({...orderFormValues, 'programId': null});
+          setAdditionalQuestions(null);
+          setOrderFormValues({
+              ...orderFormValues, sampleOrderItems: {
+                  ...orderFormValues.sampleOrderItems, programId: null
+              }
+          });
         } else  {
-            getFromOpenElisServer('/program/' + event.target.value + '/questionnaire', setAdditionalQuestions);
-            setOrderFormValues({...orderFormValues, programId: event.target.value});
+          getFromOpenElisServer('/program/' + event.target.value + '/questionnaire', setAdditionalQuestions);
+          setOrderFormValues({
+              ...orderFormValues, sampleOrderItems: {
+                  ...orderFormValues.sampleOrderItems, programId: event.target.value
+              }
+          });
         }
     }
 
     function convertQuestionnaireToResponse(questionnaire) {
         var items = [];
-        if ('item' in questionnaire) {
+        if (questionnaire && 'item' in questionnaire) {
             for (let i = 0; i < questionnaire.item.length; i++) {
                 let currentItem = questionnaire.item[i];
                 items.push({
@@ -151,6 +214,7 @@ const OrderEntryAdditionalQuestions = ({orderFormValues, setOrderFormValues = ()
               };
               return convertedQuestionnaireResponse;
         }
+        return null;
 
     }
 
@@ -159,12 +223,6 @@ const OrderEntryAdditionalQuestions = ({orderFormValues, setOrderFormValues = ()
         setQuestionnaire(res);
         var convertedQuestionnaireResponse = convertQuestionnaireToResponse(res);
         setQuestionnaireResponse(convertedQuestionnaireResponse);
-    }
-
-    const fetchPrograms = (programsList) => {
-        if (componentMounted.current) {
-            setPrograms(programsList);
-        }
     }
 
     const answerChange = (e) => {
@@ -235,45 +293,25 @@ const OrderEntryAdditionalQuestions = ({orderFormValues, setOrderFormValues = ()
       }
       setQuestionnaireResponse(updatedQuestionnaireResponse);
       setOrderFormValues({
-            ...orderFormValues, 
-            additionalQuestions: updatedQuestionnaireResponse,
+          ...orderFormValues, sampleOrderItems: {
+              ...orderFormValues.sampleOrderItems, additionalQuestions: updatedQuestionnaireResponse
+          }
       });
     }
-
-    useEffect(() => {
-
-        getFromOpenElisServer("/rest/displayList/PROGRAM", fetchPrograms)
-
-        return () => {
-            componentMounted.current = false
-        }
-    }, []);
 
 
     return (
         <>
-        <div className="formInlineDiv">
-            {programs.length > 0 && 
-                <Select
-                id="additionalQuestionsSelect"
-                labelText="program"
-                onChange={handleProgramSelection}>
-                    <SelectItem value="" text=""/>
-                    {
-                        programs.map(program => {
-                            return (
-                                <SelectItem key={program.id}
-                                            value={program.id}
-                                            text={program.value}/>
-                            )
-                        })
-                    }
-                </Select>
+        <Stack gap={10}>
+            <div className="orderLegendBody">
+                <h3>Program</h3>
+            <ProgramSelect programChange={handleProgramSelection}/>
+            <Questionnaire questionnaire={questionnaire} onAnswerChange={answerChange}/>
+            {questionnaireResponse && 
+              <input type="hidden" name="additionalQuestions" value={questionnaireResponse}/>
             }
-           
             </div>
-           <Questionnaire questionnaire={questionnaire} onAnswerChange={answerChange}/>
-            <input type="hidden" name="additionalQuestions" value={questionnaireResponse}/>
+            </Stack>
         </>
     )
 }

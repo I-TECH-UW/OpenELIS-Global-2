@@ -8,6 +8,7 @@ import {SampleOrderFormValues} from "../formModel/innitialValues/OrderEntryFormV
 import {NotificationContext} from "../layout/Layout";
 import {AlertDialog, NotificationKinds} from "../common/CustomNotification";
 import {postToOpenElisServer} from "../utils/Utils";
+import OrderEntryAdditionalQuestions from './OrderEntryAdditionalQuestions';
 
 export let sampleObject = {
     index: 0,
@@ -135,6 +136,9 @@ const Index = () => {
                                 label="Patient Info"
                             />
                             <ProgressStep
+                                label="Program Selection"
+                            />
+                            <ProgressStep
                                 label="Add Sample"
                             />
                             <ProgressStep
@@ -143,16 +147,22 @@ const Index = () => {
                         </ProgressIndicator>
 
                         {page === 0 &&
-                            <PatientInfo orderFormValues={orderFormValues} setOrderFormValues={setOrderFormValues}/>}
+                            <PatientInfo orderFormValues={orderFormValues} setOrderFormValues={setOrderFormValues}/>
+                        }
                         {page === 1 &&
-                            <AddSample setSamples={setSamples} samples={samples}/>}
+                            <OrderEntryAdditionalQuestions orderFormValues={orderFormValues} setOrderFormValues={setOrderFormValues}/>
+                        }
                         {page === 2 &&
+                            <AddSample setSamples={setSamples} samples={samples}/>
+                        }
+                        {page === 3 &&
                             <AddOrder orderFormValues={orderFormValues} setOrderFormValues={setOrderFormValues}
-                                      samples={samples}/>}
+                                      samples={samples}/>
+                        }
                         <div className="navigationButtonsLayout">
                             {page !== 0 && <Button kind="tertiary" onClick={() => navigateBackWards()}>Back</Button>}
 
-                            {page !== 2 ? <Button kind="primary" className="forwardButton"
+                            {page !== 3 ? <Button kind="primary" className="forwardButton"
                                                   onClick={() => navigateForward()}>Next</Button> :
 
                                 <Button kind="primary" className="forwardButton"

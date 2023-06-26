@@ -127,7 +127,8 @@ public class SamplePatientEntryRestController extends BaseSampleEntryController 
 			"referralItems*.referredResultType", "referralItems*.modified", "referralItems*.inLabResultId",
 			"referralItems*.referralReasonId", "referralItems*.referrer", "referralItems*.referredInstituteId",
 			"referralItems*.referredSendDate", "referralItems*.referredTestId", "referralItems*.referredReportDate",
-            "referralItems*.note", "useReferral", "additionalQuestions", "programId" };
+            "referralItems*.note", "useReferral", "sampleOrderItems.additionalQuestions",
+            "sampleOrderItems.programId" };
 
 	@Autowired
 	private SamplePatientEntryFormValidator formValidator;
@@ -241,6 +242,9 @@ public class SamplePatientEntryRestController extends BaseSampleEntryController 
 		updateData.setReferringId(sampleOrder.getExternalOrderNumber());
 		updateData.setPriority(sampleOrder.getPriority());
 		updateData.initProvider(sampleOrder);
+        if (!GenericValidator.isBlankOrNull(sampleOrder.getProgramId())) {
+            updateData.initProgramQuestions(sampleOrder.getProgramId(), sampleOrder.getAdditionalQuestions());
+        }
 		updateData.initSampleData(form.getSampleXML(), receivedDateForDisplay, trackPayments, sampleOrder);
 		updateData.setPatientEmailNotificationTestIds(form.getPatientEmailNotificationTestIds());
 		updateData.setPatientSMSNotificationTestIds(form.getPatientSMSNotificationTestIds());
@@ -251,9 +255,6 @@ public class SamplePatientEntryRestController extends BaseSampleEntryController 
 			setContactTracingInfo(updateData, sampleOrder);
 		}
 		updateData.validateSample(result);
-        if (!GenericValidator.isBlankOrNull(form.getProgramId())) {
-            updateData.initProgramQuestions(form.getProgramId(), form.getAdditionalQuestions());
-        }
 		if (result.hasErrors()) {
 			saveErrors(result);
 			setupForm(form, request, "");
