@@ -91,7 +91,7 @@ class CreatePatientForm extends React.Component {
     }
 
     repopulatePatientInfo = ()=>{
-        if(this.props.orderFormValues !== null) {
+        if(this.props.orderFormValues != null) {
             if (this.props.orderFormValues.patientProperties.firstName !== "" || this.props.orderFormValues.patientProperties.guid !== "") {
                 this.setState({
                     patientDetails: this.props.orderFormValues.patientProperties
