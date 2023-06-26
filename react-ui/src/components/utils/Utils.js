@@ -12,9 +12,9 @@ export const getFromOpenElisServer = (endPoint, callback) => {
     )
         .then(response => {
             console.log("checking response");
-            if (response.url.includes("LoginPage")) {
-                throw "No Login Session";
-            }
+            // if (response.url.includes("LoginPage")) {
+            //     throw "No Login Session";
+            // }
             return response.json();
         }).then(jsonResp => {
             callback(jsonResp);
@@ -75,9 +75,9 @@ export const getFromOpeElisServerSync = (endPoint, callback) => {
     request.open('GET', config.serverBaseUrl + endPoint, false);
     request.setRequestHeader("credentials", "include");
     request.send();
-    if (request.response.url.includes("LoginPage")) {
-        throw "No Login Session";
-    }
+    // if (request.response.url.includes("LoginPage")) {
+    //     throw "No Login Session";
+    // }
     callback(JSON.parse(request.response));
 }
 
