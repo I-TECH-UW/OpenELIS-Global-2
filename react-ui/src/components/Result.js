@@ -2,10 +2,6 @@ import React from 'react'
 import { injectIntl } from 'react-intl'
 import './Style.css'
 import ResultSearch from './resultPage/ResultSearch';
-
-import ResultRangeSearch from './resultPage/ResultRangeSearch';
-import CodeTest from './resultPage/CodeTest';
-
 import {
     Microscope,
     IbmWatsonDiscovery,
@@ -13,7 +9,6 @@ import {
 }
     from '@carbon/icons-react';
 import GlobalSideBar from "./common/GlobalSideBar";
-import { FourGPlusMobiledataOutlined } from '@mui/icons-material';
 
 
 export const resultsSideMenu = {
