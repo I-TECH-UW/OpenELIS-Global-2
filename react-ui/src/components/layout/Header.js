@@ -101,7 +101,13 @@ class OEHeader extends React.Component {
                     <span id="header-logo">{this.logo()}</span>
                     <span id="header-title">{this.props.config.title}</span>
                   </HeaderName>
+                  {this.props.isLoggedIn() && true && (
+                    <>
 
+                      {/* <HeaderMenuItem target="_blank" href={config.serverBaseUrl + "/MasterListsPage"}><FormattedMessage id="admin.billing"/></HeaderMenuItem> */}
+
+                    </>
+                  )}
                   <HeaderGlobalBar>
                     {this.props.isLoggedIn() && (
                       <>
@@ -172,7 +178,7 @@ class OEHeader extends React.Component {
                         <SideNavItems>
                           <SideNavMenu aria-label="Order" title="Order">
                             <SideNavMenuItem href="/AddOrder">Add Order</SideNavMenuItem>
-                            <SideNavMenuItem href="/ModifyOrder">Modify Order</SideNavMenuItem>
+                            <SideNavMenuItem href={config.serverBaseUrl + "/SampleEdit?type=readwrite"}>Modify Order</SideNavMenuItem>
                             <SideNavMenuItem href={config.serverBaseUrl + "/ElectronicOrders"}>Incoming Orders</SideNavMenuItem>
                             <SideNavMenuItem href={config.serverBaseUrl + "/SampleBatchEntrySetup"}>Batch Order Entry</SideNavMenuItem>
                             <SideNavMenuItem href={config.serverBaseUrl + "/PrintBarcode"}>Barcode</SideNavMenuItem>
@@ -189,15 +195,11 @@ class OEHeader extends React.Component {
                             <SideNavMenuItem href={config.serverBaseUrl + "/ViewNonConformingEvent"}>View New Non-Conforming Events</SideNavMenuItem>
                             <SideNavMenuItem href={config.serverBaseUrl + "/NCECorrectiveAction"}>Corrective actions</SideNavMenuItem>
                           </SideNavMenu>
-                          <SideNavMenu aria-label="Workplan" title={formatMessage({id:"banner.menu.workplan"})}>
-                            <SideNavMenuItem href="/WorkplanByTest"><Query /> &nbsp;<FormattedMessage id="banner.menu.workplan.test"/></SideNavMenuItem>
-                            <SideNavMenuItem href="/WorkplanByPanel"><TableOfContents />&nbsp;<FormattedMessage id="banner.menu.workplan.panel"/></SideNavMenuItem>
-                            <SideNavMenuItem href="/WorkplanByUnit"><Microscope />&nbsp;<FormattedMessage id="banner.menu.workplan.unit"/></SideNavMenuItem>
-                            <SideNavMenuItem href="/WorkplanByPriority"><WarningAlt />&nbsp;<FormattedMessage id="banner.menu.workplan.priority"/></SideNavMenuItem>
-                          </SideNavMenu>
-                          <SideNavMenu
-                            aria-label="Pathology" title="Pathology"                    >
-                            <SideNavMenuItem href={"/PathologyDashboard"}>Dashboard</SideNavMenuItem>
+                          <SideNavMenu aria-label="Workplan" title="Workplan">
+                            <SideNavMenuItem href={config.serverBaseUrl + "/WorkPlanByTest?type=test"}>By Test Type</SideNavMenuItem>
+                            <SideNavMenuItem href={config.serverBaseUrl + "/WorkPlanByPanel?type=panel"}>By Panel Type</SideNavMenuItem>
+                            <SideNavMenuItem href={config.serverBaseUrl + "/WorkPlanByTestSection?type="}>By Unit</SideNavMenuItem>
+                            <SideNavMenuItem href={config.serverBaseUrl + "/WorkPlanByPriority?type=priority"}>By Priority</SideNavMenuItem>
                           </SideNavMenu>
                           <SideNavMenu aria-label="Results" title="Results">
                             <SideNavMenuItem href={config.serverBaseUrl + "/LogbookResults?type="}>Enter by Unit</SideNavMenuItem>
@@ -217,11 +219,17 @@ class OEHeader extends React.Component {
                           </SideNavMenu>
                           <SideNavMenuItem href="/admin">Admin</SideNavMenuItem>
 
-                          <SideNavMenuItem target="_blank" href={"http://ozone.uwdigi.org:8069/"}><FormattedMessage id="admin.billing" /></SideNavMenuItem>
+                          <SideNavMenuItem
+                            target="_blank"
+                            href={"http://ozone.uwdigi.org:8069/"}><FormattedMessage
+                              id="admin.billing" />
+                          </SideNavMenuItem>
+
                         </SideNavItems>
                       </SideNav>
                     </>
                   )}
+
                 </Header>
               )}
             />

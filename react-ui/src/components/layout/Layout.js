@@ -1,5 +1,5 @@
 import React, {createContext, useState} from 'react'
-import Header from './Header'
+import Header from './newHeader'
 import Footer from './Footer'
 import {Content, Theme} from "@carbon/react";
 import {NotificationKinds} from "../common/CustomNotification";

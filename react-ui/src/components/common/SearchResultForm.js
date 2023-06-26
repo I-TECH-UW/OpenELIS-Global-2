@@ -123,7 +123,7 @@ class SearchResultForm extends React.Component {
     ];
 
     renderCell(row, index, column, id) {
-        console.log("renderCell:" + column.name + ":" + row.resultType);
+        // console.log("renderCell:" + column.name + ":" + row.resultType);
         switch (column.name) {
             case "Sample Info":
                 // return <input id={"results_" + id} type="text" size="6"></input>  
@@ -603,7 +603,7 @@ class SearchResultForm extends React.Component {
                                         <Section>
                                             <Section>
                                                 <Heading>
-                                                    <FormattedMessage id="label.button.range" />
+                                                    <FormattedMessage id="label.button.search" />
                                                 </Heading>
                                             </Section>
                                         </Section>
@@ -614,7 +614,7 @@ class SearchResultForm extends React.Component {
                                     {({ field }) =>
                                         <TextInput
                                             className="searchLabNumber"
-                                            name={field.name} labelText="Lab Number" id={field.name} />
+                                            name={field.name} id={field.name} />
                                     }
                                 </Field>
                                 <Grid>
