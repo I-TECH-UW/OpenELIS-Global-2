@@ -13,10 +13,6 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.json.simple.JSONObject;
-import org.json.simple.parser.ContainerFactory;
-import org.json.simple.parser.JSONParser;
-
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.StaleObjectStateException;
 import org.json.simple.JSONArray;
@@ -353,7 +349,6 @@ public class LogbookResultsController extends LogbookResultsBaseController {
                 .isPropertyValueEqual(Property.ALWAYS_VALIDATE_RESULTS, "true");
         boolean supportReferrals = FormFields.getInstance().useField(Field.ResultsReferral);
         String statusRuleSet = ConfigurationProperties.getInstance().getPropertyValueUpperCase(Property.StatusRules);
-        System.out.println("LogbookResultsController:showLogbookResultsUpdate:form:" + form.toString());
         
         ObjectMapper mapper = new ObjectMapper();
         String jsonForm = "";

@@ -100,7 +100,9 @@ export const SampleOrderFormValues = {
         contactTracingIndexName: null,
         contactTracingIndexRecordNumber: null,
         priorityList: null,
-        priority: "ROUTINE"
+        priority: "ROUTINE",
+        programId: null,
+        additionalQuestions: null,
     },
     initialSampleConditionList: [],
     sampleNatureList: null,
@@ -108,8 +110,6 @@ export const SampleOrderFormValues = {
     warning: false,
     useReferral: false,
     rejectReasonList:null,
-    additionalQuestions: null,
-    programId: null
 }
 
 export const  ReferralItem =  {

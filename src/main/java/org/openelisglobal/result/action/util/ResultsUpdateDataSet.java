@@ -130,4 +130,5 @@ public class ResultsUpdateDataSet implements IResultSaveService {
     public void setPreviousAnalysis(Analysis previousAnalysis) {
         this.previousAnalysis = previousAnalysis;
     }
+
 }

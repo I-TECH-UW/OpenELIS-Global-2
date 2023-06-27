@@ -320,7 +320,7 @@ const SampleType = (props) => {
 
     useEffect(() => {
         componentMounted.current = true;
-        if (selectedSampleType.id != null) {
+        if (selectedSampleType.id) {
             getFromOpenElisServer(`/rest/sample-type-tests?sampleType=${selectedSampleType.id}`, fetchSampleTypeTests);
         }
         return () => {
@@ -339,7 +339,7 @@ const SampleType = (props) => {
 
     useEffect(() => {
         componentMounted.current = true;
-        if (selectedSampleType.id != null) {
+        if (selectedSampleType.id) {
             getFromOpenElisServer(`/rest/sample-type-tests?sampleType=${selectedSampleType.id}`, fetchSampleTypeTests);
         }
         return () => {

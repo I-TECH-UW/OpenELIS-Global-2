@@ -2,6 +2,7 @@ package org.openelisglobal.program.service;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -10,12 +11,20 @@ import javax.transaction.Transactional;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.ResultSaveService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
+import org.openelisglobal.common.services.StatusService.OrderStatus;
 import org.openelisglobal.common.services.beanAdapters.ResultSaveBeanAdapter;
+import org.openelisglobal.common.services.registration.ResultUpdateRegister;
 import org.openelisglobal.common.services.serviceBeans.ResultSaveBean;
+import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.common.util.ConfigurationProperties.Property;
+import org.openelisglobal.common.util.DateUtil;
+import org.openelisglobal.internationalization.MessageUtil;
+import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.program.controller.pathology.PathologySampleForm;
 import org.openelisglobal.program.dao.PathologySampleDAO;
 import org.openelisglobal.program.valueholder.pathology.PathologyConclusion;
@@ -26,14 +35,18 @@ import org.openelisglobal.program.valueholder.pathology.PathologySample;
 import org.openelisglobal.program.valueholder.pathology.PathologySample.PathologyStatus;
 import org.openelisglobal.program.valueholder.pathology.PathologyTechnique;
 import org.openelisglobal.program.valueholder.pathology.PathologyTechnique.TechniqueType;
+import org.openelisglobal.result.action.util.ResultSet;
 import org.openelisglobal.result.action.util.ResultsLoadUtility;
+import org.openelisglobal.result.action.util.ResultsUpdateDataSet;
+import org.openelisglobal.result.service.LogbookResultsPersistService;
 import org.openelisglobal.result.valueholder.Result;
-import org.openelisglobal.resultvalidation.service.ResultValidationService;
+import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.systemuser.service.SystemUserService;
 import org.openelisglobal.systemuser.valueholder.SystemUser;
 import org.openelisglobal.test.beanItems.TestResultItem;
+import org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl.ResultType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -45,9 +58,11 @@ public class PathologySampleServiceImpl extends BaseObjectServiceImpl<PathologyS
     @Autowired
     protected SystemUserService systemUserService;
     @Autowired
-    private ResultValidationService resultValidationService;
+    private SampleService sampleService;
     @Autowired
     private AnalysisService analysisService;
+    @Autowired
+    private LogbookResultsPersistService logbookResultsPersistService;
 
     PathologySampleServiceImpl() {
         super(PathologySample.class);
@@ -95,11 +110,11 @@ public class PathologySampleServiceImpl extends BaseObjectServiceImpl<PathologyS
         pathologySample.getBlocks().removeAll(pathologySample.getBlocks());
         if (form.getBlocks() != null)
             form.getBlocks().stream().forEach(e -> e.setId(null));
-            pathologySample.getBlocks().addAll(form.getBlocks());
+        pathologySample.getBlocks().addAll(form.getBlocks());
         pathologySample.getSlides().removeAll(pathologySample.getSlides());
         if (form.getSlides() != null)
             form.getSlides().stream().forEach(e -> e.setId(null));
-            pathologySample.getSlides().addAll(form.getSlides());
+        pathologySample.getSlides().addAll(form.getSlides());
         pathologySample.setGrossExam(form.getGrossExam());
         pathologySample.setMicroscopyExam(form.getMicroscopyExam());
         pathologySample.getConclusions().removeAll(pathologySample.getConclusions());
@@ -118,35 +133,78 @@ public class PathologySampleServiceImpl extends BaseObjectServiceImpl<PathologyS
         if (form.getRelease()) {
             validatePathologySample(pathologySample, form);
         }
-        if (form.getReferToImmunoHistoChemistry()) {
-            referToImmunoHistoChemistry(pathologySample, form);
-        }
+//        if (form.getReferToImmunoHistoChemistry()) {
+//            referToImmunoHistoChemistry(pathologySample, form);
+//        }
     }
 
     private void validatePathologySample(PathologySample pathologySample, PathologySampleForm form) {
         Sample sample = pathologySample.getSample();
-        List<Result> resultUpdateList = new ArrayList<>();
-        List<Analysis> analysisUpdateList = new ArrayList<>();
+        Patient patient = sampleService.getPatient(sample);
+        ResultsUpdateDataSet actionDataSet = new ResultsUpdateDataSet("1");
 
         ResultsLoadUtility resultsUtility = SpringContext.getBean(ResultsLoadUtility.class);
         List<TestResultItem> testResultItems = resultsUtility.getGroupedTestsForSample(sample);
         for (TestResultItem testResultItem : testResultItems) {
-            Analysis analysis = analysisService.get(sample.getId());
-            ResultSaveBean bean = ResultSaveBeanAdapter.fromTestResultItem(testResultItem);
-            ResultSaveService resultSaveService = new ResultSaveService();
-            resultSaveService.setAnalysis(analysis);
-            List<Result> results = resultSaveService.createResultsFromTestResultItem(bean, new ArrayList<>());
-            for (Result result : results) {
-                // this code is pulled from LogbookResultsController
+            if (!testResultItem.getIsGroupSeparator()) {
+                if (ResultType.isTextOnlyVariant(testResultItem.getResultType())) {
+                    testResultItem.setResultValue(MessageUtil.getMessage("result.pathology.seereport"));
+                }
+                Analysis analysis = analysisService.get(sample.getId());
+                ResultSaveBean bean = ResultSaveBeanAdapter.fromTestResultItem(testResultItem);
+                ResultSaveService resultSaveService = new ResultSaveService(analysis, "1");
+                List<Result> results = resultSaveService.createResultsFromTestResultItem(bean, new ArrayList<>());
+                for (Result result : results) {
+                    boolean newResult = result.getId() == null;
+                    analysis.setEnteredDate(DateUtil.getNowAsTimestamp());
+
+                    if (newResult) {
+                        analysis.setRevision("1");
+                    } else {
+                        analysis.setRevision(String.valueOf(Integer.parseInt(analysis.getRevision()) + 1));
+                    }
+                    actionDataSet.getNewResults()
+                            .add(new ResultSet(result, null, null, patient, sample, new HashMap<>(), false));
+
+                    analysis.setStartedDateForDisplay(testResultItem.getTestDate());
+
+                    // This needs to be refactored -- part of the logic is in
+                    // getStatusForTestResult. RetroCI over rides to whatever was set before
+                    if (ConfigurationProperties.getInstance().getPropertyValueUpperCase(Property.StatusRules)
+                            .equals(IActionConstants.STATUS_RULES_RETROCI)) {
+                        if (!SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Canceled)
+                                .equals(analysis.getStatusId())) {
+                            analysis.setCompletedDate(
+                                    DateUtil.convertStringDateToSqlDate(testResultItem.getTestDate()));
+                            analysis.setStatusId(SpringContext.getBean(IStatusService.class)
+                                    .getStatusID(AnalysisStatus.TechnicalAcceptance));
+                        }
+                    } else if (SpringContext.getBean(IStatusService.class).matches(analysis.getStatusId(),
+                            AnalysisStatus.Finalized)
+                            || SpringContext.getBean(IStatusService.class).matches(analysis.getStatusId(),
+                                    AnalysisStatus.TechnicalAcceptance)
+                            || (analysis.isReferredOut()
+                                    && !GenericValidator.isBlankOrNull(testResultItem.getShadowResultValue()))) {
+                        analysis.setCompletedDate(DateUtil.convertStringDateToSqlDate(testResultItem.getTestDate()));
+                        analysis.setStatusId(
+                                SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized));
+                    }
+
+                    // this code is pulled from LogbookResultsController
 //                addResult(result, testResultItem, analysis, results.size() > 1, actionDataSet, useTechnicianName);
 //
 //                if (analysisShouldBeUpdated(testResultItem, result, supportReferrals)) {
 //                    updateAnalysis(testResultItem, testResultItem.getTestDate(), analysis, statusRuleSet);
 //                }
+                }
+                analysis.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized));
+                analysis.setReleasedDate(new java.sql.Date(Calendar.getInstance().getTimeInMillis()));
             }
-            analysis.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized));
-            analysis.setReleasedDate(new java.sql.Date(Calendar.getInstance().getTimeInMillis()));
+
         }
+
+        logbookResultsPersistService.persistDataSet(actionDataSet, ResultUpdateRegister.getRegisteredUpdaters(), "1");
+        sample.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(OrderStatus.Finished));
 
     }
 

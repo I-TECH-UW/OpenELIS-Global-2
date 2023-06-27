@@ -22,8 +22,16 @@ export let sampleObject = {
     referralItems: [],
 }
 const Index = () => {
+
+    const firstPageNumber = 0;
+    const lastPageNumber = 3
+    const patientInfoPageNumber = firstPageNumber;
+    const programPageNumber = firstPageNumber + 1;
+    const samplePageNumber = firstPageNumber + 2;
+    const orderPageNumber = lastPageNumber;
+
     const {notificationVisible} = useContext(NotificationContext);
-    const [page, setPage] = useState(0);
+    const [page, setPage] = useState(firstPageNumber);
 
     const [orderFormValues, setOrderFormValues] = useState(SampleOrderFormValues);
 
@@ -49,7 +57,7 @@ const Index = () => {
         ), handlePost)
     }
     useEffect(() => {
-        if (page === 2) {
+        if (page === samplePageNumber + 1) {
             attacheSamplesToFormValues();
         }
     }, [page]);
@@ -108,13 +116,13 @@ const Index = () => {
 
 
     const navigateForward = () => {
-        if (page < 3 && page >= 0) {
+        if (page <= lastPageNumber  && page >= firstPageNumber) {
             setPage(page + 1);
         }
     }
 
     const navigateBackWards = () => {
-        if (page > -1) {
+        if (page > firstPageNumber) {
             setPage(page + -1);
         }
     }
@@ -146,23 +154,23 @@ const Index = () => {
                             />
                         </ProgressIndicator>
 
-                        {page === 0 &&
+                        {page === patientInfoPageNumber &&
                             <PatientInfo orderFormValues={orderFormValues} setOrderFormValues={setOrderFormValues}/>
                         }
-                        {page === 1 &&
+                        {page === programPageNumber &&
                             <OrderEntryAdditionalQuestions orderFormValues={orderFormValues} setOrderFormValues={setOrderFormValues}/>
                         }
-                        {page === 2 &&
+                        {page === samplePageNumber &&
                             <AddSample setSamples={setSamples} samples={samples}/>
                         }
-                        {page === 3 &&
+                        {page === orderPageNumber &&
                             <AddOrder orderFormValues={orderFormValues} setOrderFormValues={setOrderFormValues}
                                       samples={samples}/>
                         }
                         <div className="navigationButtonsLayout">
-                            {page !== 0 && <Button kind="tertiary" onClick={() => navigateBackWards()}>Back</Button>}
+                            {page !== firstPageNumber && <Button kind="tertiary" onClick={() => navigateBackWards()}>Back</Button>}
 
-                            {page !== 3 ? <Button kind="primary" className="forwardButton"
+                            {page !== orderPageNumber ? <Button kind="primary" className="forwardButton"
                                                   onClick={() => navigateForward()}>Next</Button> :
 
                                 <Button kind="primary" className="forwardButton"
