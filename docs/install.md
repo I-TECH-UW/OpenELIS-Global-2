@@ -142,7 +142,7 @@ Ensure all keystores have global read permission
 
 You can choose to install OpenELIS in an online mode for servers with fast internet connections, and offline, using less internet connectivity by providing a local copy of the images to be loaded. 
 
-### Online OpenELIS installation with docker Docker
+### Online OpenELIS installation with Docker
 #### Running with published docker images
     docker-compose up -d
 
