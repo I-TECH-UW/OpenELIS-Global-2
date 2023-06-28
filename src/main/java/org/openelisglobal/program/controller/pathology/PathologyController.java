@@ -77,7 +77,8 @@ public class PathologyController extends BaseRestController {
     @PostMapping(value = "/rest/pathology/caseView/{pathologySampleId}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public PathologySampleForm getFilteredPathologyEntries(@PathVariable("pathologySampleId") Integer pathologySampleId,
-            @RequestBody PathologySampleForm form) {
+            @RequestBody PathologySampleForm form, HttpServletRequest request) {
+        form.setSystemUserId(this.getSysUserId(request));
         pathologySampleService.updateWithFormValues(pathologySampleId, form);
 
         return form;

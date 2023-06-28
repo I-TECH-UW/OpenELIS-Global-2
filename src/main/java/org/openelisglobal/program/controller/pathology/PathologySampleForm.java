@@ -27,6 +27,7 @@ public class PathologySampleForm {
 
     private List<String> conclusions;
     private String conclusionText;
+    private String systemUserId;
 
     private Boolean release;
     private Boolean referToImmunoHistoChemistry;
@@ -151,7 +152,16 @@ public class PathologySampleForm {
         this.referToImmunoHistoChemistry = referToImmunoHistoChemistry;
     }
 
+    public String getSystemUserId() {
+        return systemUserId;
+    }
+
+    public void setSystemUserId(String systemUserId) {
+        this.systemUserId = systemUserId;
+    }
+
     public static class PathologySlideForm extends PathologySlide {
+        private static final long serialVersionUID = 3142138533368581327L;
         private String base64Image;
 
         public String getBase64Image() {
