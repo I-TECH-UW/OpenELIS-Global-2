@@ -141,7 +141,7 @@ public class PathologySampleServiceImpl extends BaseObjectServiceImpl<PathologyS
     private void validatePathologySample(PathologySample pathologySample, PathologySampleForm form) {
         Sample sample = pathologySample.getSample();
         Patient patient = sampleService.getPatient(sample);
-        ResultsUpdateDataSet actionDataSet = new ResultsUpdateDataSet("1");
+        ResultsUpdateDataSet actionDataSet = new ResultsUpdateDataSet(form.getSystemUserId());
 
         ResultsLoadUtility resultsUtility = SpringContext.getBean(ResultsLoadUtility.class);
         List<TestResultItem> testResultItems = resultsUtility.getGroupedTestsForSample(sample);
@@ -152,7 +152,7 @@ public class PathologySampleServiceImpl extends BaseObjectServiceImpl<PathologyS
                 }
                 Analysis analysis = analysisService.get(sample.getId());
                 ResultSaveBean bean = ResultSaveBeanAdapter.fromTestResultItem(testResultItem);
-                ResultSaveService resultSaveService = new ResultSaveService(analysis, "1");
+                ResultSaveService resultSaveService = new ResultSaveService(analysis, form.getSystemUserId());
                 List<Result> results = resultSaveService.createResultsFromTestResultItem(bean, new ArrayList<>());
                 for (Result result : results) {
                     boolean newResult = result.getId() == null;
@@ -203,7 +203,8 @@ public class PathologySampleServiceImpl extends BaseObjectServiceImpl<PathologyS
 
         }
 
-        logbookResultsPersistService.persistDataSet(actionDataSet, ResultUpdateRegister.getRegisteredUpdaters(), "1");
+        logbookResultsPersistService.persistDataSet(actionDataSet, ResultUpdateRegister.getRegisteredUpdaters(),
+                form.getSystemUserId());
         sample.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(OrderStatus.Finished));
 
     }
