@@ -130,7 +130,7 @@ class AutoComplete extends Component {
                     onKeyDown={onKeyDown}
                     value={this.state.textValue}
                     invalid={this.state.invalid}
-                    required
+                    required={this.props.required ? this.props.required : false}
                     invalidText={this.props.invalidText}
                 />
                 {suggestionsListComponent}

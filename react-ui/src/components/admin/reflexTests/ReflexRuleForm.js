@@ -590,7 +590,7 @@ function ReflexRule() {
                               &nbsp;  &nbsp;
                             </div>
                             {rule.conditions.length - 1 === condition_index && (
-                              <div >
+                               <div className="second-row">
                                 <IconButton label={<FormattedMessage id="rulebuilder.label.addCondition"/>} className="ruleFieldButton" onClick={() => handleRuleFieldItemAdd(index, FIELD.conditions, conditionsObj)} kind='tertiary' size='sm'>  <Add size={18} /></IconButton>
                               </div>
                             )}
@@ -598,7 +598,7 @@ function ReflexRule() {
                               &nbsp;  &nbsp;
                             </div>
                             {rule.conditions.length !== 1 && (
-                              <div >
+                              <div className="second-row"> 
                                 <IconButton label={<FormattedMessage id="rulebuilder.label.removeCondition"/>} className="ruleFieldButton" onClick={() => handleRuleFieldItemRemove(index, condition_index, FIELD.conditions)} kind='danger' size='sm'>  <Subtract size={18} /></IconButton>
                               </div>
                             )}
@@ -711,7 +711,7 @@ function ReflexRule() {
                               &nbsp;  &nbsp;
                             </div>
                             {rule.actions.length - 1 === action_index && (
-                              <div >
+                              <div className="second-row"> 
                                 <IconButton label={<FormattedMessage id="rulebuilder.label.addAction"/>} className="ruleFieldButton" onClick={() => handleRuleFieldItemAdd(index, FIELD.actions, actionObj)} kind='tertiary' size='sm'>  <Add size={18} /></IconButton>
                               </div>
                             )}
@@ -719,7 +719,7 @@ function ReflexRule() {
                               &nbsp;  &nbsp;
                             </div>
                             {rule.actions.length !== 1 && (
-                              <div >
+                              <div className="second-row"> 
                                 <IconButton label={<FormattedMessage id="rulebuilder.label.removeAction"/>} className="ruleFieldButton" kind='danger' onClick={() => handleRuleFieldItemRemove(index, action_index, FIELD.actions)} size='sm'>  <Subtract size={18} /></IconButton>
                               </div>
                             )}
@@ -757,7 +757,6 @@ function ReflexRule() {
                 secondaryButtonText={<FormattedMessage id="label.button.cancel"/>} 
                 modalHeading={<FormattedMessage id="rulebuilder.label.confirmDelete" />} 
                 buttonTriggerText={<FormattedMessage id="rulebuilder.label.removeRule" />} 
-                danger
                 size='md'
               >
               </ModalWrapper>

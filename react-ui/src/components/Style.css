@@ -139,6 +139,7 @@ button {
   padding: 1%;
 }
 
+
 .errorMessage {
   font-size: 12px;
   color: red;
@@ -224,12 +225,26 @@ button {
   --cds-text-primary: black;
   width: 100%;
   --cds-text-secondary: black;
-  margin-top: 0.1%;
+  /* margin-top: 0.1%; */
+}
+
+.inputText2 {
+  --cds-text-primary: black;
+  width: 380px;
+  --cds-text-secondary: black;
+  padding-left: 1%;
+  /* margin-top: 0.1%; */
 }
 
 .inputSelect {
   --cds-text-primary: black;
-  width: 100px;
+  width: 100%;
+  --cds-text-secondary: black;
+}
+
+.inputSelect2 {
+  --cds-text-primary: black;
+  width: 380px;
   --cds-text-secondary: black;
 }
 
@@ -351,4 +366,13 @@ button {
 	    content: " ";
 	    font-size: 10px;
 	  } */
+}
+
+.second-row {
+  padding-top: 3%;
+  padding-left: 3%;
+}
+
+.first-row {
+  max-width : 500px ;
 }

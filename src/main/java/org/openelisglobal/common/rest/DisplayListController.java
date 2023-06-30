@@ -8,6 +8,7 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.DisplayListService.ListType;
@@ -25,7 +26,9 @@ import org.openelisglobal.role.service.RoleService;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.systemuser.service.UserService;
 import org.openelisglobal.test.service.TestService;
+import org.openelisglobal.test.service.TestServiceImpl;
 import org.openelisglobal.test.valueholder.Test;
+import org.openelisglobal.typeofsample.service.TypeOfSampleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -54,6 +57,8 @@ public class DisplayListController extends BaseRestController{
 	@Autowired
 	private RoleService roleService;
 
+	@Autowired
+    TypeOfSampleService typeOfSampleService;
 	
 	private static boolean HAS_NFS_PANEL = false;
 
@@ -135,6 +140,21 @@ public class DisplayListController extends BaseRestController{
     @ResponseBody
     public List<IdValuePair> getTests() {
         return DisplayListService.getInstance().getList(ListType.ALL_TESTS);
+    }
+
+	@GetMapping(value = "tests-by-sample", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<IdValuePair> getTestsBySample( @RequestParam String sampleType) {
+		 List<IdValuePair> tests = new ArrayList<>();
+		 List<Test> testList = new ArrayList<>();
+        if (StringUtils.isNotBlank(sampleType)) {
+            testList = typeOfSampleService.getActiveTestsBySampleTypeId(sampleType, false);
+        } else {
+            return tests;
+        }
+		
+        testList.forEach(test -> { tests.add(new IdValuePair(test.getId(), TestServiceImpl.getLocalizedTestNameWithType(test)));});
+        return tests;
     }
 
     @GetMapping(value = "samples", produces = MediaType.APPLICATION_JSON_VALUE)

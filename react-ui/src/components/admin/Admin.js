@@ -5,6 +5,7 @@ import '../Style.css'
 import ReflexTestManagement from './reflexTests/ReflexTestManagement'
 import ProgramManagement from './program/ProgramManagement'
 import PathRoute from "../utils/PathRoute"
+import CalculatedValue from "./calculatedValue/CalculatedValueForm"
 import {
     SideNav,
     SideNavItems,
@@ -30,7 +31,8 @@ class Admin extends React.Component {
                 >
                     <SideNavItems className="adminSideNav">
                         <SideNavMenu title="Test Management">
-                            <SideNavMenuItem href="#reflex" >Manage Testing Algorithms and Reflex tests</SideNavMenuItem>
+                            <SideNavMenuItem href="#reflex" >Manage Reflex tests</SideNavMenuItem>
+                            <SideNavMenuItem href="#calculatedValue" >Manage Calculated Value tests</SideNavMenuItem>
                             <SideNavMenuItem href="#1"> Link</SideNavMenuItem>
                             <SideNavMenuItem href="#2">Link</SideNavMenuItem>
                         </SideNavMenu>
@@ -54,6 +56,9 @@ class Admin extends React.Component {
                 </PathRoute>
                 <PathRoute path="#program">
                     <ProgramManagement />
+                </PathRoute>
+                <PathRoute path="#calculatedValue">
+                    <CalculatedValue></CalculatedValue>
                 </PathRoute>
             </>
 
