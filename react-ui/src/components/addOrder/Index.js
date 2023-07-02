@@ -9,6 +9,7 @@ import {NotificationContext} from "../layout/Layout";
 import {AlertDialog, NotificationKinds} from "../common/CustomNotification";
 import {postToOpenElisServer} from "../utils/Utils";
 import OrderEntryAdditionalQuestions from './OrderEntryAdditionalQuestions';
+import OrderSuccessMessage from "./OrderSuccessMessage";
 
 export let sampleObject = {
     index: 0,
@@ -24,11 +25,12 @@ export let sampleObject = {
 const Index = () => {
 
     const firstPageNumber = 0;
-    const lastPageNumber = 3
+    const lastPageNumber = 4
     const patientInfoPageNumber = firstPageNumber;
     const programPageNumber = firstPageNumber + 1;
     const samplePageNumber = firstPageNumber + 2;
-    const orderPageNumber = lastPageNumber;
+    const orderPageNumber = firstPageNumber + 3;
+    const successMsgPageNumber = lastPageNumber;
 
     const {notificationVisible} = useContext(NotificationContext);
     const [page, setPage] = useState(firstPageNumber);
@@ -53,6 +55,7 @@ const Index = () => {
     }
     const handleSubmitOrderForm = (e) => {
         e.preventDefault();
+        setPage(page + 1);
         postToOpenElisServer("/rest/SamplePatientEntry", JSON.stringify(orderFormValues
         ), handlePost)
     }
@@ -135,9 +138,9 @@ const Index = () => {
             <Stack gap={10}>
                 <div className='pageContent'>
                     {notificationVisible === true ? <AlertDialog/> : ""}
-                    <div className="orderLegendBody">
+                    <div className="orderWorkFlowDiv">
                         <h2>Test Request</h2>
-                        <ProgressIndicator currentIndex={page} className="ProgressIndicator" spaceEqually={true}
+                        {page <= orderPageNumber && <ProgressIndicator currentIndex={page} className="ProgressIndicator" spaceEqually={true}
                                            onChange={(e) => handleTabClickHandler(e)}>
                             <ProgressStep
                                 complete
@@ -152,7 +155,7 @@ const Index = () => {
                             <ProgressStep
                                 label="Add Order"
                             />
-                        </ProgressIndicator>
+                        </ProgressIndicator> }
 
                         {page === patientInfoPageNumber &&
                             <PatientInfo orderFormValues={orderFormValues} setOrderFormValues={setOrderFormValues}/>
@@ -167,14 +170,20 @@ const Index = () => {
                             <AddOrder orderFormValues={orderFormValues} setOrderFormValues={setOrderFormValues}
                                       samples={samples}/>
                         }
+
+                        {page === successMsgPageNumber &&
+                            <OrderSuccessMessage orderFormValues={orderFormValues}
+                                                 setOrderFormValues={setOrderFormValues}
+                                                 samples={samples}/>}
                         <div className="navigationButtonsLayout">
-                            {page !== firstPageNumber && <Button kind="tertiary" onClick={() => navigateBackWards()}>Back</Button>}
+                            {(page !== firstPageNumber && page <= orderPageNumber) &&
+                                <Button kind="tertiary" onClick={() => navigateBackWards()}>Back</Button>}
 
-                            {page !== orderPageNumber ? <Button kind="primary" className="forwardButton"
-                                                  onClick={() => navigateForward()}>Next</Button> :
+                            {page <  orderPageNumber && <Button kind="primary" className="forwardButton"
+                                                  onClick={() => navigateForward()}>Next</Button> }
 
-                                <Button kind="primary" className="forwardButton"
-                                        onClick={handleSubmitOrderForm}>Submit</Button>}
+                            {page === orderPageNumber && <Button kind="primary" className="forwardButton"
+                                                   onClick={handleSubmitOrderForm}>Submit</Button>}
 
                         </div>
                     </div>

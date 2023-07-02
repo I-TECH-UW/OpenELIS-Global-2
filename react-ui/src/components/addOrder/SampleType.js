@@ -192,8 +192,6 @@ const SampleType = (props) => {
         props.sampleTypeObject({sampleXML: sampleXML, sampleObjectIndex: index});
     }
 
-    // const rows = TableSampleTableRows(index, selectedSampleType, rejectSampleReasons, selectedTests, updateSampleXml, handleRemoveSampleTest);
-
     const fetchSamplesTypes = (res) => {
         if (componentMounted.current) {
             setSampleTypes(res);
@@ -320,7 +318,7 @@ const SampleType = (props) => {
 
     useEffect(() => {
         componentMounted.current = true;
-        if (selectedSampleType.id) {
+        if (selectedSampleType.id !== "" && selectedSampleType.id != null) {
             getFromOpenElisServer(`/rest/sample-type-tests?sampleType=${selectedSampleType.id}`, fetchSampleTypeTests);
         }
         return () => {
@@ -336,16 +334,6 @@ const SampleType = (props) => {
     useEffect(() => {
         props.sampleTypeObject({selectedPanels: selectedPanels, sampleObjectIndex: index});
     }, [selectedPanels]);
-
-    useEffect(() => {
-        componentMounted.current = true;
-        if (selectedSampleType.id) {
-            getFromOpenElisServer(`/rest/sample-type-tests?sampleType=${selectedSampleType.id}`, fetchSampleTypeTests);
-        }
-        return () => {
-            componentMounted.current = false;
-        }
-    }, [selectedSampleType.id]);
 
     const repopulateUI = () => {
         if (props.sample !== null) {
@@ -383,7 +371,7 @@ const SampleType = (props) => {
                     required
                 >
                     <SelectItem
-                        text=""
+                        text="Select sample type"
                         value=""
                     />
                     {sampleTypes.map((sampleType, i) => (<SelectItem
@@ -394,7 +382,7 @@ const SampleType = (props) => {
                 </Select>
 
                 <CustomCheckBox id={"reject_" + index} onChange={(value) => handleRejection(value)}
-                                label="Reject"/>
+                                label="Reject Sample"/>
                 <CustomSelect id={"rejectedReasonId_" + index} options={rejectSampleReasons}
                               disabled={rejectionReasonsDisabled}
                               defaultSelect={defaultSelect}
@@ -402,7 +390,7 @@ const SampleType = (props) => {
 
                 <div className="inlineDiv">
 
-                    <CustomDatePicker id={"collectionDate_" + index}
+                    <CustomDatePicker id={"collectionDate_" + index} autofillDate={true}
                                       onChange={(date) => handleCollectionDate(date)}
                                       labelText={"Collection Date"} className="inputText"/>
 
@@ -415,7 +403,7 @@ const SampleType = (props) => {
                 </div>
                 <div className="testPanels">
                     <div className="cds--col">
-                        <h4>Panels</h4>
+                        <h4>Order Panels</h4>
                         <div className={"searchTestText"} style={{marginBottom: '1.188rem'}}>
                             {selectedPanels && selectedPanels.length ? (
                                 <>
@@ -490,7 +478,7 @@ const SampleType = (props) => {
                 </div>
 
                 <div className="cds--col">
-                    {selectedTests && !selectedTests.length ? "" : <h3>Ordered Tests</h3>}
+                    {selectedTests && !selectedTests.length ? "" : <h4>Order Tests</h4>}
                     <div className={"searchTestText"} style={{marginBottom: '1.188rem'}}>
                         {selectedTests && selectedTests.length ? (
                             <>

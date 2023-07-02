@@ -106,16 +106,14 @@ class SearchPatientForm extends React.Component {
                                     onChange={handleChange}
                                     onBlur={handleBlur}>
                                   <div className="inlineDiv">
-                                        <Field name="labNumber"
-                                        >
+                                     <Field name="patientId">
+                                      {({ field }) =>
+                                          <TextInput name={field.name} labelText="Patient Id" id={field.name} className="inputText" />
+                                      }
+                                    </Field>
+                                        <Field name="labNumber">
                                             {({ field }) =>
-                                                <TextInput name={field.name} labelText="Lab Number" id={field.name} className="inputText" />
-                                            }
-                                        </Field>
-                                        <Field name="patientId"
-                                        >
-                                            {({ field }) =>
-                                                <TextInput name={field.name} labelText="Patient Id" id={field.name} className="inputText" />
+                                                <TextInput name={field.name} labelText="Previous Lab Number" id={field.name} className="inputText" />
                                             }
                                         </Field>
                                   </div>

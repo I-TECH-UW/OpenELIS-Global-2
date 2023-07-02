@@ -84,6 +84,7 @@ const AddSample = (props) => {
 
     useEffect(() => {
         getFromOpenElisServer("/rest/test-rejection-reasons", fetchRejectSampleReasons);
+        window.scrollTo(0, 0)
         return () => {
             componentMounted.current = false
         }
