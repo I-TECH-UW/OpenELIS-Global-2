@@ -15,6 +15,13 @@ class AutoComplete extends Component {
         };
     }
 
+      componentDidMount() {
+        if(this.props.textValue){
+          this.setState({textValue: this.props.textValue})
+        }
+      }
+    
+
     onChange = (e) => {
         const {suggestions} = this.props;
         const userInput = e.currentTarget.value;
@@ -122,7 +129,7 @@ class AutoComplete extends Component {
             <Fragment>
                 <TextInput
                     type="text"
-                    id={this.props.idField}
+                    id={this.props.id}
                     name={this.props.name}
                     labelText={this.props.label ? this.props.label : ""}
                     className={this.props.class}

@@ -9,8 +9,23 @@ import { getFromOpenElisServer, postToOpenElisServer, getFromOpeElisServerSync }
 
 interface CalculatedValueProps {
 }
-//<WatsonHealthSaveImage />
 
+type TestListField = 'TEST_RESULT' | 'FINAL_RESULT'
+//<WatsonHealthSaveImage />
+interface SampleTestListInterface {
+  TEST_RESULT: { [key: number]: { [key: number]: Array<TestResponse> } }
+  FINAL_RESULT: { [key: number]: Array<TestResponse> }
+}
+
+interface TestResponse {
+  id: number,
+  value: string,
+  type: string
+}
+
+var TestListObj: SampleTestListInterface = {
+  "TEST_RESULT": {}, "FINAL_RESULT": {}
+}
 
 const handleSubmit = (event) => {
   event.preventDefault();
@@ -24,7 +39,7 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
   const [ruleList, setRuleList] = useState([CalculatedValueFormValues]);
   const [showConfirmBox, setShowConfirmBox] = useState(true);
   const [sampleList, setSampleList] = useState([]);
-  const [sampleTestList, setSampleTestList] = useState({ "testResult": {}, "finalResult": {} }); //{field :{index :{field_index:[]}}}
+  const [sampleTestList, setSampleTestList] = useState(TestListObj);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
@@ -48,9 +63,14 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
     operations: [
       {
         type: 'TEST_RESULT',
-        value: ""
+        value: "",
+        sampleId: null,
+        testName: ""
       }
-    ]
+    ],
+    sampleId: null,
+    testId: null,
+    testName: ""
   };
 
   const handleRuleAdd = () => {
@@ -75,7 +95,9 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
 
     var operation: Operation = {
       type: type,
-      value: ''
+      value: '',
+      sampleId: null,
+      testName: ""
     }
     const list = [...ruleList];
     list[index]['operations'].push(operation);
@@ -89,38 +111,50 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
     setRuleList(list);
   }
 
-  const handleSampleSelected = (e, index, item_index) => {
+  const handleSampleSelected = (e: any, field: TestListField, index: number, item_index: number) => {
     const { value } = e.target;
-    getFromOpenElisServer("/rest/tests-by-sample?sampleType=" + value, (resp) => fetchTests(resp, index, item_index));
+    getFromOpenElisServer("/rest/tests-by-sample?sampleType=" + value, (resp) => fetchTests(resp, field, index, item_index));
   }
 
-  const loadSampleTestList = (field, index, item_index, resultList) => {
+  const loadSampleTestList = (field: TestListField, index: number, item_index: number, resultList: any) => {
     const results = { ...sampleTestList }
     if (!results[field][index]) {
       results[field][index] = {}
     }
-    results[field][index][item_index] = resultList
+    switch (field) {
+      case "TEST_RESULT":
+        results[field][index][item_index] = resultList
+        break
+      case "FINAL_RESULT":
+        results[field][index] = resultList
+        break
+    }
+
     console.log(JSON.stringify(results))
     setSampleTestList(results);
   }
 
-  const fetchTests = (testList, index, item_index) => {
-    loadSampleTestList("testResult",index, item_index, testList);
+  const fetchTests = (testList: any, field: TestListField, index: number, item_index: number) => {
+    loadSampleTestList(field, index, item_index, testList);
     setLoaded(true)
   }
 
-  function getOperationInputByType(index: number, operationIndex: number, type: OperationType) {
+  function handleTestSelection(id: number) {
+    alert(id)
+  }
+
+  function getOperationInputByType(index: number, operationIndex: number, type: OperationType, calculatedValue: CalculatedValueFormModel) {
     switch (type) {
       case "TEST_RESULT":
         return (<>
           <div className="first-row">
             <Select
-              id={index + "_"+ operationIndex+ "_sample"}
+              id={index + "_" + operationIndex + "_sample"}
               name="sampleId"
               labelText={<FormattedMessage id="rulebuilder.label.selectSample" />}
-              // value={condition.sampleId}
+              value={calculatedValue.sampleId}
               className="inputSelect"
-              onChange={(e) => {handleSampleSelected(e, index, operationIndex) }}
+              onChange={(e) => { handleSampleSelected(e, "TEST_RESULT", index, operationIndex) }}
               required
             >
               <SelectItem
@@ -137,11 +171,11 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
             </Select>
           </div>
           <div className="first-row">
-            <AutoComplete 
-            idField={index + "_" + operationIndex + "_testresult"} 
-            label="Test Result" 
-            class="inputText" 
-            suggestions={sampleTestList["testResult"][index] ? sampleTestList["testResult"][index][operationIndex] : []}>
+            <AutoComplete
+              id={index + "_" + operationIndex + "_testresult"}
+              label="Test Result"
+              class="inputText"
+              suggestions={sampleTestList["TEST_RESULT"][index] ? sampleTestList["TEST_RESULT"][index][operationIndex] : []}>
 
             </AutoComplete>
           </div>
@@ -270,7 +304,7 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
                     </div>
                     {rule.operations.map((operation, operation_index) => (
                       <div key={index + "_" + operation_index} className="inlineDiv">
-                        {getOperationInputByType(index, operation_index, operation.type)}
+                        {getOperationInputByType(index, operation_index, operation.type, rule)}
                         <div >
                           &nbsp;  &nbsp;
                         </div>
@@ -327,7 +361,7 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
                           labelText={<FormattedMessage id="rulebuilder.label.selectSample" />}
                           // value={condition.sampleId}
                           className="inputSelect"
-                          //onChange={(e) => { handleSampleSelected(e, index, operation_index) }}
+                          onChange={(e) => { handleSampleSelected(e, "FINAL_RESULT", index, 0) }}
                           required
                         >
                           <SelectItem
@@ -344,7 +378,14 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
                         </Select>
                       </div>
                       <div>
-                        <AutoComplete idField={index + "_finalresult"} class="inputText" label="Final Result"></AutoComplete>
+                        <AutoComplete
+                          id={index + "_finalresult"}
+                          class="inputText"
+                          label="Final Result"
+                          onSelect={handleTestSelection}
+                          textValue={rule.testName}
+                          suggestions={sampleTestList["FINAL_RESULT"][index] ? sampleTestList["FINAL_RESULT"][index] : []}>
+                        </AutoComplete>
                       </div>
                     </div>
 
