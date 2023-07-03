@@ -1,4 +1,5 @@
 @use '@carbon/styles/scss/type';
+
 .singleTest {
   padding: 1rem 0.75rem;
 }
@@ -116,7 +117,7 @@
   color: red !important;
 }
 .orderEntrySuccessMsg{
-  width: 100px;
+  width: 240px;
   top: 0;
   bottom: 0;
   left: 0;
@@ -127,7 +128,16 @@
   width: 220px;
   text-align: center;
 }
-.placeAnotherOrderBtn{
+
+.confirmPrintCodeBtn {
+  height: 30px;
+  width: 70px;
+  text-align: center;
+  margin-top: 26px;
+  margin-left: 10px;
+}
+
+.placeAnotherOrderBtn {
   width: 220px;
   text-align: center;
   margin-top: 10px;

@@ -174,7 +174,9 @@ const Index = () => {
                         {page === successMsgPageNumber &&
                             <OrderSuccessMessage orderFormValues={orderFormValues}
                                                  setOrderFormValues={setOrderFormValues}
-                                                 samples={samples}/>}
+                                                 setSamples={setSamples}
+                                                 setPage={setPage}/>
+                        }
                         <div className="navigationButtonsLayout">
                             {(page !== firstPageNumber && page <= orderPageNumber) &&
                                 <Button kind="tertiary" onClick={() => navigateBackWards()}>Back</Button>}
