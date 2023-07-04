@@ -1,12 +1,12 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { useContext, useState, useEffect, useRef } from "react";
 import { Form, Stack, TextInput, Select, SelectItem, Button, IconButton, Toggle, Loading, RadioButtonGroup, RadioButton, ModalWrapper } from '@carbon/react';
 import AutoComplete from '../../common/AutoComplete.js'
 import { Add, Subtract, Save } from '@carbon/react/icons';
 import { FormattedMessage } from "react-intl";
-import { CalculatedValueFormValues, CalculatedValueFormModel, OperationType, Operation } from '../../formModel/innitialValues/CalculatedValueFormSchema'
+import { CalculatedValueFormValues, CalculatedValueFormModel, OperationType, OperationModel } from '../../formModel/innitialValues/CalculatedValueFormSchema'
 import { getFromOpenElisServer, postToOpenElisServer, getFromOpeElisServerSync } from '../../utils/Utils.js';
-
+import { testdata } from '../../data/dummy/calculatedValueFormData.js'
 interface CalculatedValueProps {
 }
 
@@ -27,16 +27,11 @@ var TestListObj: SampleTestListInterface = {
   "TEST_RESULT": {}, "FINAL_RESULT": {}
 }
 
-const handleSubmit = (event) => {
-  event.preventDefault();
-  //alert("yeye")
-  //console.log(JSON.stringify(ruleList[index]))
-  // postToOpenElisServer("/rest/reflexrule", JSON.stringify(ruleList[index]), (status) => handleSubmited(status ,index))
-};
 
 const CalculatedValue: React.FC<CalculatedValueProps> = () => {
   const componentMounted = useRef(true);
-  const [ruleList, setRuleList] = useState([CalculatedValueFormValues]);
+  //const [calculationList, setCalculationList] = useState([CalculatedValueFormValues]);
+  const [calculationList, setCalculationList] = useState(testdata);
   const [showConfirmBox, setShowConfirmBox] = useState(true);
   const [sampleList, setSampleList] = useState([]);
   const [sampleTestList, setSampleTestList] = useState(TestListObj);
@@ -59,7 +54,7 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
 
   const CalculatedValueObj: CalculatedValueFormModel = {
     id: null,
-    ruleName: "",
+    name: "",
     operations: [
       {
         type: 'TEST_RESULT',
@@ -74,13 +69,13 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
   };
 
   const handleRuleAdd = () => {
-    setRuleList([...ruleList, CalculatedValueObj]);
+    setCalculationList([...calculationList, CalculatedValueObj]);
   };
 
   const handleRuleRemove = (index, id) => {
-    const list = [...ruleList];
+    const list = [...calculationList];
     list.splice(index, 1);
-    setRuleList(list);
+    setCalculationList(list);
     if (id) {
       // postToOpenElisServer("/rest/deactivate-reflexrule/" + id, {}, handleDelete);
     }
@@ -93,27 +88,27 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
 
   const addOperation = (index: number, type: OperationType) => {
 
-    var operation: Operation = {
+    var operation: OperationModel = {
       type: type,
       value: '',
       sampleId: null,
       testName: ""
     }
-    const list = [...ruleList];
+    const list = [...calculationList];
     list[index]['operations'].push(operation);
     console.log(JSON.stringify(list[index]['operations']))
-    setRuleList(list);
+    setCalculationList(list);
   };
 
   const removeOperation = (index: number, operationIndex: number) => {
-    const list = [...ruleList];
+    const list = [...calculationList];
     list[index]['operations'].splice(operationIndex, 1);
-    setRuleList(list);
+    setCalculationList(list);
   }
 
   const handleSampleSelected = (e: any, field: TestListField, index: number, item_index: number) => {
     const { value } = e.target;
-    getFromOpenElisServer("/rest/tests-by-sample?sampleType=" + value, (resp) => fetchTests(resp, field, index, item_index));
+    getFromOpenElisServer("/rest/test-beans-by-sample?sampleType=" + value, (resp) => fetchTests(resp, field, index, item_index));
   }
 
   const loadSampleTestList = (field: TestListField, index: number, item_index: number, resultList: any) => {
@@ -123,14 +118,12 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
     }
     switch (field) {
       case "TEST_RESULT":
-        results[field][index][item_index] = resultList
+        results[field][index][item_index] = resultList.filter(result => result.dataType === 'N');
         break
       case "FINAL_RESULT":
         results[field][index] = resultList
         break
     }
-
-    console.log(JSON.stringify(results))
     setSampleTestList(results);
   }
 
@@ -139,11 +132,51 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
     setLoaded(true)
   }
 
-  function handleTestSelection(id: number) {
-    alert(id)
+  function handleTestSelection(id: number, index: number) {
+    const list = [...calculationList];
+    list[index]["testId"] = id;
+    setCalculationList(list);
   }
 
-  function getOperationInputByType(index: number, operationIndex: number, type: OperationType, calculatedValue: CalculatedValueFormModel) {
+  function handleTextValue(textValue: string, index: number) {
+    const list = [...calculationList];
+    list[index]["testName"] = textValue;
+    setCalculationList(list);
+  }
+
+  function handleOperationTestSelection(id: number, index: number, operationIndex: number) {
+    const list = [...calculationList];
+    list[index]["operations"][operationIndex]["value"] = id;
+    setCalculationList(list);
+  }
+
+  function handleOperationTextValue(textValue: string, index: number, operationIndex: number) {
+    const list = [...calculationList];
+    list[index]["operations"][operationIndex]["testName"] = textValue;
+    setCalculationList(list);
+
+  }
+
+  const handleCalculationFieldChange = (e: any, index: number) => {
+    const { name, value } = e.target;
+    const list = [...calculationList];
+    list[index][name] = value;
+    setCalculationList(list);
+  };
+
+  const handleOperationFieldChange = (e: any, index: number, operationIndex: number) => {
+    const { name, value } = e.target;
+    const list = [...calculationList];
+    list[index]["operations"][operationIndex][name] = value;
+    setCalculationList(list);
+  };
+
+  const handleSubmit = (event: any, index: number) => {
+    event.preventDefault();
+    console.log(JSON.stringify(calculationList[index]))
+    // postToOpenElisServer("/rest/reflexrule", JSON.stringify(ruleList[index]), (status) => handleSubmited(status ,index))
+  };
+  function getOperationInputByType(index: number, operationIndex: number, type: OperationType, operation: OperationModel) {
     switch (type) {
       case "TEST_RESULT":
         return (<>
@@ -152,9 +185,9 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
               id={index + "_" + operationIndex + "_sample"}
               name="sampleId"
               labelText={<FormattedMessage id="rulebuilder.label.selectSample" />}
-              value={calculatedValue.sampleId}
+              value={operation.sampleId}
               className="inputSelect"
-              onChange={(e) => { handleSampleSelected(e, "TEST_RESULT", index, operationIndex) }}
+              onChange={(e) => { handleSampleSelected(e, "TEST_RESULT", index, operationIndex); handleOperationFieldChange(e, index, operationIndex) }}
               required
             >
               <SelectItem
@@ -175,8 +208,11 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
               id={index + "_" + operationIndex + "_testresult"}
               label="Test Result"
               class="inputText"
+              name="operationtestName"
+              textValue={operation.testName}
+              getTextValue={(textValue) => handleOperationTextValue(textValue, index, operationIndex)}
+              onSelect={(id) => handleOperationTestSelection(id, index, operationIndex)}
               suggestions={sampleTestList["TEST_RESULT"][index] ? sampleTestList["TEST_RESULT"][index][operationIndex] : []}>
-
             </AutoComplete>
           </div>
         </>);
@@ -184,11 +220,11 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
         return (<div className="first-row">
           <Select
             id={index + "_" + operationIndex + "_mathfunction"}
-            name="sampleId"
+            name="value"
             labelText={<FormattedMessage id="Mathematical Function" />}
-            // value=''
+            value={operation.value}
             className="inputSelect2"
-            //onChange={(e) => { }}
+            onChange={(e) => { handleOperationFieldChange(e, index, operationIndex) }}
             required
           >
             <SelectItem
@@ -196,32 +232,40 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
               value=""
             />
             <SelectItem
-              text="rrrrvvvvvvvvvv"
-              value="ddd"
+              text="("
+              value="("
+            />
+            <SelectItem
+              text=")"
+              value=")"
+            />
+            <SelectItem
+              text="+"
+              value="+"
             />
           </Select>
         </div>);
       case "INTEGER":
         return (<div className="first-row">
           <TextInput
-            name=""
+            name="value"
             className="inputText2"
             type="number"
             id={index + "_" + operationIndex + "_integer"}
             labelText={<FormattedMessage id="Integer" />}
-          // value=''
-          // onChange={(e) => handleRuleFieldItemChange(e, index, action_index, FIELD.actions)}
+            value={operation.value}
+            onChange={(e) => { handleOperationFieldChange(e, index, operationIndex) }}
           />
         </div>);
       case "PATIENT_ATTRIBUTE":
         return (<div className="first-row">
           <Select
             id={index + "_" + operationIndex + "_patientattribute"}
-            name="sampleId"
+            name="value"
             labelText={<FormattedMessage id="Patient attribute" />}
-            // value=''
+            value={operation.value}
             className="inputSelect2"
-            //onChange={(e) => { }}
+            onChange={(e) => { handleOperationFieldChange(e, index, operationIndex) }}
             required
           >
             <SelectItem
@@ -229,8 +273,12 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
               value=""
             />
             <SelectItem
-              text="rrrrgggggggggggg"
-              value="sss"
+              text="Age"
+              value="age"
+            />
+            <SelectItem
+              text="Sex"
+              value="sex"
             />
           </Select>
         </div>);
@@ -239,30 +287,29 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
     }
   }
 
-  const addOperationBySelect = (e, index) => {
-    const { name, value } = e.target;
+  const addOperationBySelect = (e: any, index: number) => {
+    const { value } = e.target;
     addOperation(index, value)
   }
 
   return (
     <div className='adminPageContent'>
-      {ruleList.map((rule, index) => (
+      {calculationList.map((calculation, index) => (
         <div key={index} className="rules" >
           <div className="first-division">
-            <Form onSubmit={(e) => handleSubmit(e)}>
+            <Form onSubmit={(e) => handleSubmit(e, index)}>
               <Stack gap={7}>
                 <div className="ruleBody">
                   <div className="inlineDiv">
                     <div>
                       <TextInput
-                        name=""
+                        name="name"
                         className="reflexInputText"
                         type="text"
-                        id=''
+                        id={index + "_name"}
                         labelText={<FormattedMessage id="Calculation Name" />}
-                      //value=''
-                      // onChange={(e) => handleRuleFieldItemChange(e, index, action_index, FIELD.actions)}
-
+                        value={calculation.name}
+                        onChange={(e) => handleCalculationFieldChange(e, index)}
                       />
                     </div>
                   </div>
@@ -302,9 +349,9 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
                     <div >
                       <h5><FormattedMessage id="Calculations" /></h5>
                     </div>
-                    {rule.operations.map((operation, operation_index) => (
+                    {calculation.operations.map((operation, operation_index) => (
                       <div key={index + "_" + operation_index} className="inlineDiv">
-                        {getOperationInputByType(index, operation_index, operation.type, rule)}
+                        {getOperationInputByType(index, operation_index, operation.type, operation)}
                         <div >
                           &nbsp;  &nbsp;
                         </div>
@@ -317,15 +364,14 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
                           &nbsp;  &nbsp;
                         </div>
                         <div >
-                          {rule.operations.length - 1 === operation_index && (
+                          {calculation.operations.length - 1 === operation_index && (
                             <Select
                               id={index + "_" + operation_index + "_addopeartion"}
-                              name="sampleId"
+                              name="addoperation"
                               labelText={<FormattedMessage id="Add Operation" />}
-                              // value=''
+                              value={calculation.sampleId}
                               className="inputSelect"
                               onChange={(e) => { addOperationBySelect(e, index) }}
-                              required
                             >
                               <SelectItem
                                 text=""
@@ -359,9 +405,9 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
                           id={index + "_sample"}
                           name="sampleId"
                           labelText={<FormattedMessage id="rulebuilder.label.selectSample" />}
-                          // value={condition.sampleId}
+                          value={calculation.sampleId}
                           className="inputSelect"
-                          onChange={(e) => { handleSampleSelected(e, "FINAL_RESULT", index, 0) }}
+                          onChange={(e) => { handleSampleSelected(e, "FINAL_RESULT", index, 0); handleCalculationFieldChange(e, index) }}
                           required
                         >
                           <SelectItem
@@ -382,8 +428,10 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
                           id={index + "_finalresult"}
                           class="inputText"
                           label="Final Result"
-                          onSelect={handleTestSelection}
-                          textValue={rule.testName}
+                          name="testName"
+                          getTextValue={(textValue) => handleTextValue(textValue, index)}
+                          onSelect={(id) => handleTestSelection(id, index)}
+                          textValue={calculation.testName}
                           suggestions={sampleTestList["FINAL_RESULT"][index] ? sampleTestList["FINAL_RESULT"][index] : []}>
                         </AutoComplete>
                       </div>
@@ -396,7 +444,7 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
                 </div>
               </Stack>
             </Form >
-            {ruleList.length - 1 === index && (
+            {calculationList.length - 1 === index && (
               <IconButton onClick={handleRuleAdd} label={<FormattedMessage id="rulebuilder.label.addRule" />} size='md' kind='tertiary' >
                 <Add size={16} />
                 <span><FormattedMessage id="rulebuilder.label.rule" /></span>
@@ -404,12 +452,12 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
             )}
           </div>
           <div className="second-division">
-            {ruleList.length !== 1 && (
+            {calculationList.length !== 1 && (
               <ModalWrapper
                 modalLabel={<FormattedMessage id="label.button.confirmDelete" />}
                 open={showConfirmBox}
                 onRequestClose={() => setShowConfirmBox(false)}
-                handleSubmit={() => handleRuleRemove(index, rule.id)}
+                handleSubmit={() => handleRuleRemove(index, calculation.id)}
                 onSecondarySubmit={handleCancelDelete}
                 primaryButtonText={<FormattedMessage id="label.button.confirm" />}
                 secondaryButtonText={<FormattedMessage id="label.button.cancel" />}
