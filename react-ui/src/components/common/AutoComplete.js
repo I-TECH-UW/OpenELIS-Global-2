@@ -56,7 +56,7 @@ class AutoComplete extends Component {
     };
 
     onClick = (e, id, suggestion) => {
-        const { onSelect ,getTextValue} = this.props;
+        const { onSelect} = this.props;
         this.setState({
             textValue: suggestion.value,
             activeSuggestion: 0,
@@ -68,10 +68,6 @@ class AutoComplete extends Component {
 
         if (typeof onSelect === "function") {
             onSelect(id);
-        }
-
-        if (typeof getTextValue === "function") {
-            getTextValue(suggestion.value);
         }
     };
 
