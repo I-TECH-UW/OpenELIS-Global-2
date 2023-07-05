@@ -30,21 +30,42 @@ var TestListObj: SampleTestListInterface = {
 
 const CalculatedValue: React.FC<CalculatedValueProps> = () => {
   const componentMounted = useRef(true);
-  //const [calculationList, setCalculationList] = useState([CalculatedValueFormValues]);
-  const [calculationList, setCalculationList] = useState(testdata);
+  const [calculationList, setCalculationList] = useState([CalculatedValueFormValues]);
   const [showConfirmBox, setShowConfirmBox] = useState(true);
   const [sampleList, setSampleList] = useState([]);
   const [sampleTestList, setSampleTestList] = useState(TestListObj);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    getFromOpenElisServer("/rest/samples", fetchSamples)
+    getFromOpenElisServer("/rest/samples", fetchSamples);
+    loadCalculationList(testdata);
 
     return () => { // This code runs when component is unmounted
       componentMounted.current = false;
     }
 
   }, []);
+
+  const loadCalculationList = (calculations) => {
+    if (componentMounted.current) {
+      // console.log(JSON.stringify(reflexRuleList))
+      if (calculations.length > 0) {
+        setCalculationList(calculations);
+
+        calculations.forEach((calculation, index) => {
+          if (calculation.sampleId) {
+            getFromOpenElisServer("/rest/test-beans-by-sample?sampleType=" + calculation.sampleId, (resp) => fetchTests(resp, "FINAL_RESULT", index, 0));
+          }
+
+          calculation.operations.forEach((operation, opeartionIdex) => {
+            if (operation.sampleId) {
+              getFromOpenElisServer("/rest/test-beans-by-sample?sampleType=" + operation.sampleId, (resp) => fetchTests(resp, "TEST_RESULT", index, opeartionIdex));
+            }
+          })
+        });
+      }
+    }
+  }
 
   const fetchSamples = (sampleList) => {
     if (componentMounted.current) {

@@ -11,15 +11,16 @@ class AutoComplete extends Component {
             filteredSuggestions: [],
             showSuggestions: false,
             userInput: "",
-            invalid: false
+            invalid: false ,
+            innitialised : false
         };
     }
 
-      componentDidMount() {
-        if(this.props.textValue){
-          this.setState({textValue: this.props.textValue})
+    static getDerivedStateFromProps(nextProps, prevState) {
+        if (nextProps.textValue && !prevState.innitialised) {
+            prevState.textValue  = nextProps.textValue
         }
-      }
+    }
     
 
     onChange = (e) => {
@@ -36,6 +37,7 @@ class AutoComplete extends Component {
             filteredSuggestions,
             showSuggestions: true,
             userInput: e.currentTarget.value,
+            innitialised: true
         });
 
 
@@ -52,7 +54,7 @@ class AutoComplete extends Component {
             filteredSuggestions: [],
             showSuggestions: false,
             userInput: e.currentTarget.innerText,
-            invalid: false
+            invalid: false ,
         });
 
         if (typeof onSelect === "function") {
