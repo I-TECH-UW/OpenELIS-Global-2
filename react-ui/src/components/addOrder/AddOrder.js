@@ -298,7 +298,7 @@ const AddOrder = (props) => {
     useEffect(() => {
         getFromOpenElisServer("/rest/SamplePatientEntry", getSampleEntryPreform);
         getFromOpenElisServer("/rest/configuration-properties", fetchConfigurationProperties)
-
+        window.scrollTo(0, 0)
         return () => {
             componentMounted.current = false
         }
@@ -338,11 +338,11 @@ const AddOrder = (props) => {
 
                 </div>
                 <div className="inlineDiv">
-                    <CustomDatePicker id={"requestDate"} labelText={"Request Date"}
+                    <CustomDatePicker id={"requestDate"} labelText={"Request Date"} autofillDate={true}
                                       value={orderFormValues.sampleOrderItems.requestDate} className="inputText"
                                       onChange={(date) => handleDatePickerChange("requestDate", date)}/>
 
-                    <CustomDatePicker id={"receivedDate"} labelText={"Received Date"} className="inputText"
+                    <CustomDatePicker id={"receivedDate"} labelText={"Received Date"} className="inputText" autofillDate={true}
                                       value={orderFormValues.sampleOrderItems.receivedDateForDisplay}
                                       onChange={(date) => handleDatePickerChange("receivedDate", date)}/>
                 </div>
@@ -353,7 +353,7 @@ const AddOrder = (props) => {
                     />
 
                     <CustomDatePicker id={"nextVisitDate"} className="inputText" labelText={"Next Visit Date"}
-                                      value={orderFormValues.sampleOrderItems.nextVisitDate}
+                                      value={orderFormValues.sampleOrderItems.nextVisitDate} autofillDate={false}
                                       onChange={(date) => handleDatePickerChange("nextVisitDate", date)}/>
                 </div>
                 <div className="inlineDiv">
