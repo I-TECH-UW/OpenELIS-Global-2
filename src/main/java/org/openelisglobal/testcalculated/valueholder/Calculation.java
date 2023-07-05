@@ -27,8 +27,6 @@ public class Calculation  extends BaseObject<Integer>{
 
     private Integer testId ;
     
-    private String testName;
-
     @Override
     public Integer getId() {
         // TODO Auto-generated method stub
@@ -70,15 +68,4 @@ public class Calculation  extends BaseObject<Integer>{
     public void setTestId(Integer testId) {
         this.testId = testId;
     }
-
-    
-    public String getTestName() {
-        return testName;
-    }
-
-    
-    public void setTestName(String testName) {
-        this.testName = testName;
-    }
-    
 }

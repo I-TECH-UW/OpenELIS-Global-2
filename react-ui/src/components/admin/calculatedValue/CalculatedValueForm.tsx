@@ -80,13 +80,11 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
       {
         type: 'TEST_RESULT',
         value: "",
-        sampleId: null,
-        testName: ""
+        sampleId: null
       }
     ],
     sampleId: null,
     testId: null,
-    testName: ""
   };
 
   const handleRuleAdd = () => {
@@ -113,7 +111,6 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
       type: type,
       value: '',
       sampleId: null,
-      testName: ""
     }
     const list = [...calculationList];
     list[index]['operations'].push(operation);
@@ -159,23 +156,10 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
     setCalculationList(list);
   }
 
-  function handleTextValue(textValue: string, index: number) {
-    const list = [...calculationList];
-    list[index]["testName"] = textValue;
-    setCalculationList(list);
-  }
-
   function handleOperationTestSelection(id: number, index: number, operationIndex: number) {
     const list = [...calculationList];
     list[index]["operations"][operationIndex]["value"] = id;
     setCalculationList(list);
-  }
-
-  function handleOperationTextValue(textValue: string, index: number, operationIndex: number) {
-    const list = [...calculationList];
-    list[index]["operations"][operationIndex]["testName"] = textValue;
-    setCalculationList(list);
-
   }
 
   const handleCalculationFieldChange = (e: any, index: number) => {
@@ -194,7 +178,8 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
 
   const handleSubmit = (event: any, index: number) => {
     event.preventDefault();
-    console.log(JSON.stringify(calculationList[index]))
+    //console.log(JSON.stringify(calculationList[index]))
+    console.log(JSON.stringify(calculationList))
     // postToOpenElisServer("/rest/reflexrule", JSON.stringify(ruleList[index]), (status) => handleSubmited(status ,index))
   };
   function getOperationInputByType(index: number, operationIndex: number, type: OperationType, operation: OperationModel) {
@@ -230,8 +215,7 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
               label="Test Result"
               class="inputText"
               name="operationtestName"
-              textValue={operation.testName}
-              getTextValue={(textValue) => handleOperationTextValue(textValue, index, operationIndex)}
+              value={operation.value}
               onSelect={(id) => handleOperationTestSelection(id, index, operationIndex)}
               suggestions={sampleTestList["TEST_RESULT"][index] ? sampleTestList["TEST_RESULT"][index][operationIndex] : []}>
             </AutoComplete>
@@ -450,9 +434,8 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
                           class="inputText"
                           label="Final Result"
                           name="testName"
-                          getTextValue={(textValue) => handleTextValue(textValue, index)}
                           onSelect={(id) => handleTestSelection(id, index)}
-                          textValue={calculation.testName}
+                          value={calculation.testId}
                           suggestions={sampleTestList["FINAL_RESULT"][index] ? sampleTestList["FINAL_RESULT"][index] : []}>
                         </AutoComplete>
                       </div>

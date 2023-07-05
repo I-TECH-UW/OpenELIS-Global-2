@@ -17,8 +17,17 @@ class AutoComplete extends Component {
     }
 
     static getDerivedStateFromProps(nextProps, prevState) {
-        if (nextProps.textValue && !prevState.innitialised) {
-            prevState.textValue  = nextProps.textValue
+        if (nextProps.value && !prevState.innitialised) {
+           if(nextProps.suggestions){
+            var filteredSuggestion = nextProps.suggestions.filter(
+                suggestion =>
+                    suggestion.id === nextProps.value
+            );
+
+            if(filteredSuggestion[0]){
+                prevState.textValue = filteredSuggestion[0].value;
+            }
+           }
         }
     }
     
