@@ -1,4 +1,4 @@
-package org.openelisglobal.testcalculated.dao.rest;
+package org.openelisglobal.testcalculated.controller.rest;
 
 import java.util.ArrayList;
 import java.util.List;

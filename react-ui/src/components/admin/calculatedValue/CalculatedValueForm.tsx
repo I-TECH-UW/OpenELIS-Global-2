@@ -78,6 +78,7 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
     name: "",
     operations: [
       {
+        id : null,
         type: 'TEST_RESULT',
         value: "",
         sampleId: null
@@ -108,6 +109,7 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
   const addOperation = (index: number, type: OperationType) => {
 
     var operation: OperationModel = {
+      id : null,
       type: type,
       value: '',
       sampleId: null,

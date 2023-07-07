@@ -9,8 +9,9 @@ export interface CalculatedValueFormModel {
 export type OperationType = 'TEST_RESULT' | 'MATH_FUNCTION' | 'INTEGER' | 'PATIENT_ATTRIBUTE' | '';
 
 export interface OperationModel {
+    id : number
     type: OperationType
-    value: number|string
+    value: string|number
     sampleId : number
 }
 
@@ -19,6 +20,7 @@ export const CalculatedValueFormValues:CalculatedValueFormModel = {
     name: "",
     operations: [
         {
+            id : null,
             type: 'TEST_RESULT',
             value: "",
             sampleId: null,
