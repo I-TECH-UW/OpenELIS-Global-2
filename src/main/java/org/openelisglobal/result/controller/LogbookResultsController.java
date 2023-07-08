@@ -404,7 +404,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
             if (e.getException() instanceof StaleObjectStateException) {
                 errorMsg = "errors.OptimisticLockException";
             } else {
-                LogEvent.logDebug(e);
+                LogEvent.logError(e);
                 errorMsg = "errors.UpdateException";
             }
 
@@ -481,8 +481,12 @@ public class LogbookResultsController extends LogbookResultsBaseController {
                     resultSaveService.isUpdatedResult() && analysisService.patientReportHasBeenDone(analysis));
 
             if (analysisService.hasBeenCorrectedSinceLastPatientReport(analysis)) {
-                actionDataSet.addToNoteList(noteService.createSavableNote(analysis, NoteType.EXTERNAL,
-                        MessageUtil.getMessage("note.corrected.result"), RESULT_SUBJECT, getSysUserId(request)));
+                Note note = noteService.createSavableNote(analysis, NoteType.EXTERNAL,
+                        MessageUtil.getMessage("note.corrected.result"), RESULT_SUBJECT, getSysUserId(request));
+                if (!noteService.duplicateNoteExists(note)) {
+                    actionDataSet.addToNoteList(noteService.createSavableNote(analysis, NoteType.EXTERNAL,
+                            MessageUtil.getMessage("note.corrected.result"), RESULT_SUBJECT, getSysUserId(request)));
+                }
             }
 
             // If there is more than one result then each user selected reflex gets mapped
