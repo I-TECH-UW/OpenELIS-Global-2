@@ -1,5 +1,7 @@
 package org.openelisglobal.testcalculated.valueholder;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -38,7 +40,7 @@ public class Calculation extends BaseObject<Integer> {
     
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "calculation_id", referencedColumnName = "id")
-    private Set<Operation> operations;
+    private List<Operation> operations;
 
     @Column(name = "toggled")
     private Boolean toggled;
@@ -86,11 +88,13 @@ public class Calculation extends BaseObject<Integer> {
         this.testId = testId;
     }
     
-    public Set<Operation> getOperations() {
-        return operations;
+    public List<Operation> getOperations() {
+        List<Operation> ops = this.operations;
+        Collections.sort(ops);
+        return ops;
     }
     
-    public void setOperations(Set<Operation> operations) {
+    public void setOperations(List<Operation> operations) {
         this.operations = operations;
     }
 

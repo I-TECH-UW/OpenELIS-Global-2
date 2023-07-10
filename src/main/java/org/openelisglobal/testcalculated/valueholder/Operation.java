@@ -14,20 +14,23 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "calculation_operation")
-public class Operation {
+public class Operation implements Comparable<Operation>{
     
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "calculation_operation_generator")
     @SequenceGenerator(name = "calculation_operation_generator", sequenceName = "calculation_operation_seq", allocationSize = 1)
     @Column(name = "id")
     private Integer id;
+
+    @Column(name = "operation_order")
+    private Integer order;
     
     @Enumerated(EnumType.STRING)
     @Column(name = "type")
     private OperationType type;
     
     @Column(name = "value")
-    private String value;;
+    private String value;
     
     @Column(name = "sample_id")
     private Integer sampleId;
@@ -64,6 +67,13 @@ public class Operation {
         this.sampleId = sampleId;
     }
     
+    public Integer getOrder() {
+        return order;
+    }
+
+    public void setOrder(Integer order) {
+        this.order = order;
+    }
     public enum OperationType {
         
         TEST_RESULT("Test Result"),
@@ -85,4 +95,9 @@ public class Operation {
             return Stream.of(OperationType.values());
         }
     }
+
+    @Override
+	public int compareTo(Operation operation) {
+		return this.getOrder().compareTo(operation.getOrder());
+	}
 }

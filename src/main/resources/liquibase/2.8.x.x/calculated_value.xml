@@ -48,6 +48,7 @@
 				<constraints nullable="false"/>
 			</column>
 			<column name="sample_id" type="int"/>
+            <column name="operation_order" type="int"/>
 			<column name="value" type="varchar(64)">
 				<constraints nullable="false"/>
 			</column>

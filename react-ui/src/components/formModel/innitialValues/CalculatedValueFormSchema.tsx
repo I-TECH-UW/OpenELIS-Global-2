@@ -12,6 +12,7 @@ export type OperationType = 'TEST_RESULT' | 'MATH_FUNCTION' | 'INTEGER' | 'PATIE
 
 export interface OperationModel {
     id : number
+    order : number
     type: OperationType
     value: string|number
     sampleId : number
@@ -27,6 +28,7 @@ export const CalculatedValueFormValues:CalculatedValueFormModel = {
     operations: [
         {
             id : null,
+            order : null,
             type: 'TEST_RESULT',
             value: "",
             sampleId: null,
