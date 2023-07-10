@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+	xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+	  http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+	<changeSet author="moses_mutesa" id="1">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="calculation" schemaName="clinlims"/>
+			</not>
+		</preConditions>
+		<comment>create calculation table</comment>
+		<createSequence incrementBy="1" schemaName="clinlims"
+			sequenceName="calculation_seq" startValue="1" />
+		<createTable tableName="calculation">
+			<column name="id" type="INTEGER" valueSequenceNext="calculation_seq">
+				<constraints primaryKey="true" nullable="false"/>
+			</column>
+			<column name="name" type="varchar(64)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="sample_id" type="int">
+				<constraints nullable="false"/>
+			</column>
+			<column name="test_id" type="int">
+				<constraints nullable="false"/>
+			</column>
+			<column name="toggled" type="boolean"/>
+			<column name="active" type="boolean"/>
+			<column name="last_updated" type="datetime"/>
+		</createTable>
+	</changeSet>
+	<changeSet author="moses_mutesa" id="2">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="calculation_operation" schemaName="clinlims" />
+			</not>
+		</preConditions>
+		<comment>create calculation_operation table</comment>
+		<createSequence incrementBy="1" schemaName="clinlims"
+			sequenceName="calculation_operation_seq" startValue="1" />
+		<createTable tableName="calculation_operation">
+			<column name="id" type="INTEGER" valueSequenceNext="calculation_operation">
+				<constraints primaryKey="true" nullable="false"/>
+			</column>
+			<column name="type" type="varchar(64)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="sample_id" type="int"/>
+			<column name="value" type="varchar(64)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="calculation_id" type="int"/>
+		</createTable>
+		<addForeignKeyConstraint constraintName="calculation_id_fk"
+                                 baseTableName="calculation_operation" baseColumnNames="calculation_id"
+                                 referencedTableName="calculation" referencedColumnNames="id"/>
+	</changeSet>
+</databaseChangeLog>

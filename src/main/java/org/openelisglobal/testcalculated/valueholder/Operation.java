@@ -13,12 +13,12 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "calculation_opearation")
+@Table(name = "calculation_operation")
 public class Operation {
     
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "calculation_opearation_generator")
-    @SequenceGenerator(name = "calculation_opeartion_generator", sequenceName = "calculation_opearation_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "calculation_operation_generator")
+    @SequenceGenerator(name = "calculation_operation_generator", sequenceName = "calculation_operation_seq", allocationSize = 1)
     @Column(name = "id")
     private Integer id;
     
@@ -26,10 +26,10 @@ public class Operation {
     @Column(name = "type")
     private OperationType type;
     
-     @Column(name = "value")
+    @Column(name = "value")
     private String value;;
     
-     @Column(name = "sampleId")
+    @Column(name = "sample_id")
     private Integer sampleId;
     
     public Integer getId() {

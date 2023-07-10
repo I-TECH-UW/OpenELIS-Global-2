@@ -13,6 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.openelisglobal.common.valueholder.BaseObject;
 
@@ -38,6 +39,18 @@ public class Calculation extends BaseObject<Integer> {
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "calculation_id", referencedColumnName = "id")
     private Set<Operation> operations;
+
+    @Column(name = "toggled")
+    private Boolean toggled;
+
+    @Column(name = "active")
+    private Boolean active = true;
+
+    @Transient
+    String localizedName ;
+    
+    @Transient
+    String stringId ;
     
     @Override
     public Integer getId() {
@@ -79,6 +92,38 @@ public class Calculation extends BaseObject<Integer> {
     
     public void setOperations(Set<Operation> operations) {
         this.operations = operations;
+    }
+
+    public Boolean getToggled() {
+        return toggled;
+    }
+
+    public void setToggled(Boolean toggled) {
+        this.toggled = toggled;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
+    public String getLocalizedName() {
+        return localizedName;
+    }
+
+    public void setLocalizedName(String localizedName) {
+        this.localizedName = localizedName;
+    }
+    
+    public String getStringId() {
+        return stringId;
+    }
+
+    public void setStringId(String stringId) {
+        this.stringId = stringId;
     }
     
 }
