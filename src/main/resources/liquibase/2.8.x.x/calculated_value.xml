@@ -26,6 +26,7 @@
 			<column name="test_id" type="int">
 				<constraints nullable="false"/>
 			</column>
+			<column name="result" type="varchar(64)"/>
 			<column name="toggled" type="boolean"/>
 			<column name="active" type="boolean"/>
 			<column name="last_updated" type="datetime"/>

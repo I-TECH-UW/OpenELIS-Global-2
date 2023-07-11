@@ -5,6 +5,7 @@ export interface CalculatedValueFormModel {
     operations: Array<OperationModel>
     sampleId : number
     testId : number
+    result : string
     toggled : boolean
     active : boolean
 }
@@ -20,9 +21,10 @@ export interface OperationModel {
 
 export const CalculatedValueFormValues:CalculatedValueFormModel = {
     id: null,
-    name: "",
+    name: null,
     sampleId: null,
     testId: null,
+    result : "",
     toggled: true,
     active : true,
     operations: [
@@ -30,7 +32,7 @@ export const CalculatedValueFormValues:CalculatedValueFormModel = {
             id : null,
             order : null,
             type: 'TEST_RESULT',
-            value: "",
+            value: null,
             sampleId: null,
         }
     ]

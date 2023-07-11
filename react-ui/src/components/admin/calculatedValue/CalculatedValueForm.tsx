@@ -20,13 +20,23 @@ interface SampleTestListInterface {
 interface TestResponse {
   id: number,
   value: string,
-  type: string
+  resultType: string
+  resultList: Array<IdValue>
+}
+
+interface IdValue {
+  id: number
+  value: string
 }
 
 var TestListObj: SampleTestListInterface = {
   "TEST_RESULT": {}, "FINAL_RESULT": {}
 }
 
+const mathFunction: IdValue = {
+  id: null,
+  value: null
+}
 
 const CalculatedValue: React.FC<CalculatedValueProps> = () => {
   const componentMounted = useRef(true);
@@ -36,10 +46,13 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
   const [sampleTestList, setSampleTestList] = useState(TestListObj);
   const [loaded, setLoaded] = useState(false);
   const { notificationVisible, setNotificationVisible, setNotificationBody } = useContext(NotificationContext);
+  const [mathFunctions, setMathFunctions] = useState([mathFunction]);
 
   useEffect(() => {
     getFromOpenElisServer("/rest/samples", fetchSamples);
     getFromOpenElisServer("/rest/test-calculations", loadCalculationList)
+    getFromOpenElisServer("/rest/math-functions", loadMathFunctions)
+
 
     return () => { // This code runs when component is unmounted
       componentMounted.current = false;
@@ -55,17 +68,21 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
 
         calculations.forEach((calculation, index) => {
           if (calculation.sampleId) {
-            getFromOpenElisServer("/rest/test-beans-by-sample?sampleType=" + calculation.sampleId, (resp) => fetchTests(resp, "FINAL_RESULT", index, 0));
+            getFromOpenElisServer("/rest/test-display-beans?sampleType=" + calculation.sampleId, (resp) => fetchTests(resp, "FINAL_RESULT", index, 0));
           }
 
           calculation.operations.forEach((operation, opeartionIdex) => {
             if (operation.sampleId) {
-              getFromOpenElisServer("/rest/test-beans-by-sample?sampleType=" + operation.sampleId, (resp) => fetchTests(resp, "TEST_RESULT", index, opeartionIdex));
+              getFromOpenElisServer("/rest/test-display-beans?sampleType=" + operation.sampleId, (resp) => fetchTests(resp, "TEST_RESULT", index, opeartionIdex));
             }
           })
         });
       }
     }
+  }
+
+  const loadMathFunctions = (functions) => {
+    setMathFunctions(functions)
   }
 
   const fetchSamples = (sampleList) => {
@@ -76,9 +93,10 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
 
   const CalculatedValueObj: CalculatedValueFormModel = {
     id: null,
-    name: "",
+    name: null,
     sampleId: null,
     testId: null,
+    result: null,
     toggled: true,
     active: true,
     operations: [
@@ -86,7 +104,7 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
         id: null,
         order: null,
         type: 'TEST_RESULT',
-        value: "",
+        value: null,
         sampleId: null
       }
     ]
@@ -125,7 +143,7 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
       id: null,
       order: null,
       type: type,
-      value: '',
+      value: null,
       sampleId: null,
     }
 
@@ -140,7 +158,7 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
       id: null,
       order: null,
       type: type,
-      value: '',
+      value: null,
       sampleId: null,
     }
     const list = [...calculationList];
@@ -158,7 +176,7 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
 
   const handleSampleSelected = (e: any, field: TestListField, index: number, item_index: number) => {
     const { value } = e.target;
-    getFromOpenElisServer("/rest/test-beans-by-sample?sampleType=" + value, (resp) => fetchTests(resp, field, index, item_index));
+    getFromOpenElisServer("/rest/test-display-beans?sampleType=" + value, (resp) => fetchTests(resp, field, index, item_index));
   }
 
   const loadSampleTestList = (field: TestListField, index: number, item_index: number, resultList: any) => {
@@ -168,7 +186,7 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
     }
     switch (field) {
       case "TEST_RESULT":
-        results[field][index][item_index] = resultList.filter(result => result.dataType === 'N');
+        results[field][index][item_index] = resultList.filter(result => result.resultType === 'N');
         break
       case "FINAL_RESULT":
         results[field][index] = resultList
@@ -184,20 +202,26 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
 
   function handleTestSelection(id: number, index: number) {
     const list = [...calculationList];
-    list[index]["testId"] = id;
+    list[index].testId = id;
     setCalculationList(list);
   }
 
   function handleOperationTestSelection(id: number, index: number, operationIndex: number) {
     const list = [...calculationList];
-    list[index]["operations"][operationIndex]["value"] = id;
+    list[index].operations[operationIndex].value = id;
     setCalculationList(list);
   }
 
-  function setOperationOrder(index: number, operationIndex: number) {
+
+  function resetCalculationValues(index: number, calculation: CalculatedValueFormModel) {
     const list = [...calculationList];
-    list[index]["operations"][operationIndex]["order"] = operationIndex;
-    setCalculationList(list);
+    list[index].result = ""
+    list[index].testId = null
+  }
+
+  function resetOperationValue(index: number, operationIndex: number, operation: OperationModel) {
+    const list = [...calculationList];
+    list[index].operations[operationIndex].value = ""
   }
 
   const handleCalculationFieldChange = (e: any, index: number) => {
@@ -226,10 +250,10 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
   };
 
   const handleSubmit = (event: any, index: number) => {
-    event.preventDefault(mathematicalOpeartion);
-    var mathematicalOpeartion ="";
+    event.preventDefault();
+    var mathematicalOpeartion = "";
     calculationList[index]['operations'].forEach(
-      (operation, opearationIndex) => { 
+      (operation, opearationIndex) => {
         operation.order = opearationIndex;
         mathematicalOpeartion = mathematicalOpeartion + operation.value + " ";
       }
@@ -239,7 +263,7 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
       eval(mathematicalOpeartion)
       console.log(JSON.stringify(calculationList[index]))
       postToOpenElisServer("/rest/test-calculation", JSON.stringify(calculationList[index]), (status) => handleCalculationSubmited(status, index))
-      
+
     } catch (error) {
       setNotificationVisible(true);
       setNotificationBody({ kind: NotificationKinds.error, title: "Notification Message", message: "Invalid Calculation Logic : " + error.message });
@@ -256,7 +280,7 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
               labelText={<FormattedMessage id="rulebuilder.label.selectSample" />}
               value={operation.sampleId}
               className="inputSelect"
-              onChange={(e) => { handleSampleSelected(e, "TEST_RESULT", index, operationIndex); handleOperationFieldChange(e, index, operationIndex) }}
+              onChange={(e) => { handleSampleSelected(e, "TEST_RESULT", index, operationIndex); handleOperationFieldChange(e, index, operationIndex); resetOperationValue(index, operationIndex, operation) }}
               required
             >
               <SelectItem
@@ -299,18 +323,13 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
               text=""
               value=""
             />
-            <SelectItem
-              text="("
-              value="("
-            />
-            <SelectItem
-              text=")"
-              value=")"
-            />
-            <SelectItem
-              text="+"
-              value="+"
-            />
+            {mathFunctions.map((fn, fn_index) => (
+              <SelectItem
+                text={fn.value}
+                value={fn.id}
+                key={fn_index}
+              />
+            ))}
           </Select>
         </div>);
       case "INTEGER":
@@ -341,18 +360,64 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
               value=""
             />
             <SelectItem
-              text="Age"
-              value="age"
+              text="Patient Age(Years)"
+              value="AGE"
             />
             <SelectItem
-              text="Sex"
-              value="sex"
+              text="Patient Weight(Kg)"
+              value="WEIGHT"
             />
           </Select>
         </div>);
     }
   }
 
+  function getResultInputByResultType(resultType: string, index: number, calculation: CalculatedValueFormModel) {
+    switch (resultType) {
+      case "D":
+        return (
+          <div >
+            <Select
+              id={index + "_resultdictionary"}
+              name="result"
+              labelText={<FormattedMessage id="rulebuilder.label.selectResult" />}
+              value={calculation.result}
+              className="inputSelect"
+              onChange={(e) => { handleCalculationFieldChange(e, index) }}
+              required
+            >
+              <SelectItem
+                text=""
+                value=""
+              />
+              {sampleTestList["FINAL_RESULT"][index].filter(test => test.id = calculation.testId)[0].resultList.map((result, result_index) => (
+                <SelectItem
+                  text={result.value}
+                  value={result.id}
+                  key={result_index}
+                />
+              ))}
+            </Select>
+          </div>
+        )
+
+      case "A":
+      case "R":
+        return (
+          <div>
+            <TextInput
+              name="result"
+              className="inputText"
+              id={index + "_resultfreetext"}
+              labelText={<FormattedMessage id="Enter Result" />}
+              value={calculation.result}
+              onChange={(e) => { handleCalculationFieldChange(e, index) }}
+            />
+          </div>
+        )
+    }
+
+  }
   const addOperationBySelect = (e: any, index: number, opearationIndex: number) => {
     const { value } = e.target;
     insertOperation(index, opearationIndex, value);
@@ -376,6 +441,7 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
                   <div className="inlineDiv">
                     <div>
                       <TextInput
+                        required
                         name="name"
                         className="reflexInputText"
                         type="text"
@@ -438,11 +504,11 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
                         </div>
                         <div className="section">
                           <div className="inlineDiv">
-                            {calculation.operations.map((operation, opearationIndex) => (
+                            {"[ "}  &nbsp; {calculation.operations.map((operation, opearationIndex) => (
                               <div>
                                 {operation.type === 'PATIENT_ATTRIBUTE' ? "patientAttr=" : ""}{operation.type === 'TEST_RESULT' ? "testId=" : ""}{operation.value}  &nbsp;
                               </div>
-                            ))}
+                            ))} {"] => testId=" + calculation.testId}
                           </div>
                         </div>
                         {calculation.operations.map((operation, operation_index) => (
@@ -503,7 +569,7 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
                               labelText={<FormattedMessage id="rulebuilder.label.selectSample" />}
                               value={calculation.sampleId}
                               className="inputSelect"
-                              onChange={(e) => { handleSampleSelected(e, "FINAL_RESULT", index, 0); handleCalculationFieldChange(e, index) }}
+                              onChange={(e) => { handleSampleSelected(e, "FINAL_RESULT", index, 0); handleCalculationFieldChange(e, index); resetCalculationValues(index, calculation) }}
                               required
                             >
                               <SelectItem
@@ -530,6 +596,14 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
                               suggestions={sampleTestList["FINAL_RESULT"][index] ? sampleTestList["FINAL_RESULT"][index] : []}>
                             </AutoComplete>
                           </div>
+                          <div >
+                            &nbsp;  &nbsp;
+                          </div>
+                          {sampleTestList["FINAL_RESULT"][index] && (
+                            <>
+                              {getResultInputByResultType(sampleTestList["FINAL_RESULT"][index].filter(test => test.id == calculation.testId)[0]?.resultType, index, calculation)}
+                            </>
+                          )}
                         </div>
 
                       </div>

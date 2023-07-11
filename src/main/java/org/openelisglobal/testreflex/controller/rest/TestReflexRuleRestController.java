@@ -94,7 +94,7 @@ public class TestReflexRuleRestController {
 
     @GetMapping(value = "test-details", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public List<TestDisplayBean> getTestList(HttpServletRequest request, @RequestParam String sampleType) {
+    public List<TestDisplayBean> getTestList(HttpServletRequest request, @RequestParam(required = false) String sampleType) {
         ArrayList<TestDisplayBean> tests = new ArrayList<>();
         List<Test> testList = new ArrayList<>();
         if (StringUtils.isNotBlank(sampleType)) {

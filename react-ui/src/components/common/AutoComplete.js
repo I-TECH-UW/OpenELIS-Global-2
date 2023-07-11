@@ -21,16 +21,14 @@ class AutoComplete extends Component {
            if(nextProps.suggestions){
             var filteredSuggestion = nextProps.suggestions.filter(
                 suggestion =>
-                    suggestion.id === nextProps.value
+                    suggestion.id == nextProps.value || suggestion.id === nextProps.value
             );
-
             if(filteredSuggestion[0]){
                 prevState.textValue = filteredSuggestion[0].value;
             }
            }
         }
-    }
-    
+    }    
 
     onChange = (e) => {
         const {suggestions} = this.props;

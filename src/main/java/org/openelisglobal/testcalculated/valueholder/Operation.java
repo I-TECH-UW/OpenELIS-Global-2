@@ -1,5 +1,7 @@
 package org.openelisglobal.testcalculated.valueholder;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Stream;
 
 import javax.persistence.Column;
@@ -11,6 +13,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+
+import org.openelisglobal.common.util.IdValuePair;
 
 @Entity
 @Table(name = "calculation_operation")
@@ -94,6 +98,43 @@ public class Operation implements Comparable<Operation>{
         public static Stream<OperationType> stream() {
             return Stream.of(OperationType.values());
         }
+    }
+
+    public enum PatientAttribute {
+        
+        AGE("Patient Age(Years)"),
+        WEIGHT("Patient Weight(Kg)");
+        
+        private String displayName;
+        
+        private PatientAttribute(String displayName) {
+            this.displayName = displayName;
+        }
+        
+        public String getDisplayName() {
+            return this.displayName;
+        }
+        
+        public static Stream<PatientAttribute> stream() {
+            return Stream.of(PatientAttribute.values());
+        }
+    }
+     
+    public static List<IdValuePair> mathFunctions(){
+      List<IdValuePair>  mathFunctions = new ArrayList<>();
+      mathFunctions.add(new IdValuePair("+" ,"Plus"));
+      mathFunctions.add(new IdValuePair("-" ,"Minus"));
+      mathFunctions.add(new IdValuePair("/" ,"Divided By"));
+      mathFunctions.add(new IdValuePair("*" ,"Multiplied By"));
+      mathFunctions.add(new IdValuePair("(" ,"Open Bracket"));
+      mathFunctions.add(new IdValuePair(")" ,"Close Bracket"));
+      mathFunctions.add(new IdValuePair("==" ,"Equals"));
+      mathFunctions.add(new IdValuePair("!=" ,"Does Not Equal"));
+      mathFunctions.add(new IdValuePair(">=" ,"Is Greater Than Or Equal"));
+      mathFunctions.add(new IdValuePair("<=" ,"Is Less Than Or Equal"));
+      mathFunctions.add(new IdValuePair("INSIDE_NORMAL_RANGE" ,"Is With In Normal Range"));
+      mathFunctions.add(new IdValuePair("OUTSIDE_NORMAL_RANGE" ,"Is Out Side Normal Range"));
+      return mathFunctions;
     }
 
     @Override
