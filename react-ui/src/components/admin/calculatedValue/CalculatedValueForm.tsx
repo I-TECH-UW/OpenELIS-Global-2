@@ -28,6 +28,17 @@ interface IdValue {
   id: number
   value: string
 }
+interface NotificationContextType {
+  notificationVisible: boolean;
+  setNotificationVisible: (visible: boolean) => void;
+  setNotificationBody: (body: NotificationBody) => void;
+}
+
+interface NotificationBody {
+  kind: any
+  title: string
+  message: string
+}
 
 var TestListObj: SampleTestListInterface = {
   "TEST_RESULT": {}, "FINAL_RESULT": {}
@@ -45,7 +56,7 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
   const [sampleList, setSampleList] = useState([]);
   const [sampleTestList, setSampleTestList] = useState(TestListObj);
   const [loaded, setLoaded] = useState(false);
-  const { notificationVisible, setNotificationVisible, setNotificationBody } = useContext(NotificationContext);
+  const { notificationVisible, setNotificationVisible, setNotificationBody } = useContext<NotificationContextType>(NotificationContext);
   const [mathFunctions, setMathFunctions] = useState([mathFunction]);
 
   useEffect(() => {
@@ -241,7 +252,7 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
   const handleCalculationSubmited = (status, index) => {
     setNotificationVisible(true);
     if (status == "200") {
-      const element = document.getElementById("submit_" + index)
+      const element = document.getElementById("submit_" + index) as HTMLInputElement;
       element.disabled = true;
       setNotificationBody({ kind: NotificationKinds.success, title: "Notification Message", message: "Succesfuly saved" });
     } else {
