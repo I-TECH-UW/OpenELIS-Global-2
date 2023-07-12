@@ -233,13 +233,13 @@ class CreatePatientForm extends React.Component {
                                             <Field name="patientContact.person.lastName"
                                             >
                                                 {({ field }) =>
-                                                    <TextInput value={values.patientContact.person.lastName} name={field.name} labelText="Contact Last Name" id={field.name} className="inputText" />
+                                                    <TextInput value={values.patientContact?.person.lastName} name={field.name} labelText="Contact Last Name" id={field.name} className="inputText" />
                                                 }
                                             </Field>
                                             <Field name="patientContact.person.firstName"
                                             >
                                                 {({ field }) =>
-                                                    <TextInput value={values.patientContact.person.firstName} name={field.name} labelText="Contact First Name" id={field.name} className="inputText" />
+                                                    <TextInput value={values.patientContact?.person.firstName} name={field.name} labelText="Contact First Name" id={field.name} className="inputText" />
                                                 }
                                             </Field>
                                         </div>
@@ -248,13 +248,13 @@ class CreatePatientForm extends React.Component {
                                             <Field name="patientContact.person.email"
                                             >
                                                 {({ field }) =>
-                                                    <TextInput value={values.patientContact.person.email} name={field.name} labelText="Contact Email" id={field.name} className="inputText" />
+                                                    <TextInput value={values.patientContact?.person.email} name={field.name} labelText="Contact Email" id={field.name} className="inputText" />
                                                 }
                                             </Field>
                                             <Field name="patientContact.person.primaryPhone"
                                             >
                                                 {({ field }) =>
-                                                    <TextInput value={values.patientContact.person.primaryPhone} name={field.name} labelText="Contact Phone" id={field.name} className="inputText" />
+                                                    <TextInput value={values.patientContact?.person.primaryPhone} name={field.name} labelText="Contact Phone" id={field.name} className="inputText" />
                                                 }
                                             </Field>
                                             <div className="error">
