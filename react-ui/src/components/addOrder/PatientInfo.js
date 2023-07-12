@@ -1,7 +1,6 @@
-import React, {useEffect, useRef, useState} from 'react'
-import {getFromOpenElisServer} from "../utils/Utils";
-import {Button, Select, SelectItem, Stack} from "@carbon/react";
-//import "./../admin/reflexTests/ReflexRuleForm"
+import React, {useEffect, useRef, useState} from 'react';
+import {Button, Stack} from "@carbon/react";
+import "./../admin/reflexTests/ReflexRule"
 import SearchPatientForm from "../common/SearchPatientForm";
 import CreatePatientForm from "../common/CreatePatientForm";
 
