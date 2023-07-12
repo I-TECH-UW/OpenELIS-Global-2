@@ -11,9 +11,24 @@ class AutoComplete extends Component {
             filteredSuggestions: [],
             showSuggestions: false,
             userInput: "",
-            invalid: false
+            invalid: false ,
+            innitialised : false
         };
     }
+
+    static getDerivedStateFromProps(nextProps, prevState) {
+        if (nextProps.value && !prevState.innitialised) {
+           if(nextProps.suggestions){
+            var filteredSuggestion = nextProps.suggestions.filter(
+                suggestion =>
+                    suggestion.id == nextProps.value || suggestion.id === nextProps.value
+            );
+            if(filteredSuggestion[0]){
+                prevState.textValue = filteredSuggestion[0].value;
+            }
+           }
+        }
+    }    
 
     onChange = (e) => {
         const {suggestions} = this.props;
@@ -29,6 +44,7 @@ class AutoComplete extends Component {
             filteredSuggestions,
             showSuggestions: true,
             userInput: e.currentTarget.value,
+            innitialised: true
         });
 
 
@@ -45,7 +61,7 @@ class AutoComplete extends Component {
             filteredSuggestions: [],
             showSuggestions: false,
             userInput: e.currentTarget.innerText,
-            invalid: false
+            invalid: false ,
         });
 
         if (typeof onSelect === "function") {
@@ -122,7 +138,7 @@ class AutoComplete extends Component {
             <Fragment>
                 <TextInput
                     type="text"
-                    id={this.props.idField}
+                    id={this.props.id}
                     name={this.props.name}
                     labelText={this.props.label ? this.props.label : ""}
                     className={this.props.class}
@@ -130,7 +146,7 @@ class AutoComplete extends Component {
                     onKeyDown={onKeyDown}
                     value={this.state.textValue}
                     invalid={this.state.invalid}
-                    required
+                    required={this.props.required ? this.props.required : false}
                     invalidText={this.props.invalidText}
                 />
                 {suggestionsListComponent}
