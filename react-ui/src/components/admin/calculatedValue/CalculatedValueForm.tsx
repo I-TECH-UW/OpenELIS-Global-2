@@ -260,6 +260,11 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
     }
   };
 
+  function replaceString(string : string, sequenceToReplace:string, replacement:string) {
+    const regex = new RegExp(sequenceToReplace, 'g');
+    return string.replace(regex, replacement);
+  }
+
   const handleSubmit = (event: any, index: number) => {
     event.preventDefault();
     var mathematicalOpeartion = "";
@@ -269,6 +274,12 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
         mathematicalOpeartion = mathematicalOpeartion + operation.value + " ";
       }
     )
+    // for the function validation , remove text values
+    mathematicalOpeartion = replaceString(mathematicalOpeartion ,"AGE" , "0");
+    mathematicalOpeartion = replaceString(mathematicalOpeartion ,"WEIGHT" , "0")
+    mathematicalOpeartion = replaceString(mathematicalOpeartion ,"IS_IN_NORMAL_RANGE" , ">=0 && 1<=10")
+    mathematicalOpeartion = replaceString(mathematicalOpeartion ,"IS_OUTSIDE_NORMAL_RANGE" , "<0 || 1>10")
+    
     try {
       // Code that might throw an error
       eval(mathematicalOpeartion)
@@ -517,9 +528,9 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
                           <div className="inlineDiv">
                             {"[ "}  &nbsp; {calculation.operations.map((operation, opearationIndex) => (
                               <div>
-                                {operation.type === 'PATIENT_ATTRIBUTE' ? "patientAttr=" : ""}{operation.type === 'TEST_RESULT' ? "testId=" : ""}{operation.value}  &nbsp;
+                                {operation.type === 'PATIENT_ATTRIBUTE' ? "patientAttribute#" : ""}{operation.type === 'TEST_RESULT' ? "test#" : ""}{operation.value}  &nbsp;
                               </div>
-                            ))} {"] => testId=" + calculation.testId}
+                            ))} {"] => test#" + calculation.testId}
                           </div>
                         </div>
                         {calculation.operations.map((operation, operation_index) => (

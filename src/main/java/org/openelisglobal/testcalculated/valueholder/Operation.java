@@ -13,12 +13,25 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
 import org.openelisglobal.common.util.IdValuePair;
 
 @Entity
 @Table(name = "calculation_operation")
 public class Operation implements Comparable<Operation>{
+
+    public final static  String ADD = "+";
+    public final static  String SUBTRACT = "-";
+    public final static  String DIVIDE =  "/";
+    public final static  String MULTIPLY =  "*";
+    public final static  String OPEN_BRACKET =  "(";
+    public final static  String CLOSE_BRACKET =  ")";
+    public final static  String EQUALS =  "==";
+    public final static  String NOT_EQUALS =  "!=";
+    public final static  String GREATER_OR_EQUALS =  ">=";
+    public final static  String LESS_OR_EQUALS =  "<=";
+    public final static  String IN_NORMAL_RANGE =  "IS_IN_NORMAL_RANGE";
+    public final static  String OUTSIDE_NORMAL_RANGE =  "IS_OUTSIDE_NORMAL_RANGE";
+    
     
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "calculation_operation_generator")
@@ -119,21 +132,21 @@ public class Operation implements Comparable<Operation>{
             return Stream.of(PatientAttribute.values());
         }
     }
-     
+
     public static List<IdValuePair> mathFunctions(){
       List<IdValuePair>  mathFunctions = new ArrayList<>();
-      mathFunctions.add(new IdValuePair("+" ,"Plus"));
-      mathFunctions.add(new IdValuePair("-" ,"Minus"));
-      mathFunctions.add(new IdValuePair("/" ,"Divided By"));
-      mathFunctions.add(new IdValuePair("*" ,"Multiplied By"));
-      mathFunctions.add(new IdValuePair("(" ,"Open Bracket"));
-      mathFunctions.add(new IdValuePair(")" ,"Close Bracket"));
-      mathFunctions.add(new IdValuePair("==" ,"Equals"));
-      mathFunctions.add(new IdValuePair("!=" ,"Does Not Equal"));
-      mathFunctions.add(new IdValuePair(">=" ,"Is Greater Than Or Equal"));
-      mathFunctions.add(new IdValuePair("<=" ,"Is Less Than Or Equal"));
-      mathFunctions.add(new IdValuePair("INSIDE_NORMAL_RANGE" ,"Is With In Normal Range"));
-      mathFunctions.add(new IdValuePair("OUTSIDE_NORMAL_RANGE" ,"Is Out Side Normal Range"));
+      mathFunctions.add(new IdValuePair(ADD ,"Plus"));
+      mathFunctions.add(new IdValuePair(SUBTRACT ,"Minus"));
+      mathFunctions.add(new IdValuePair(DIVIDE ,"Divided By"));
+      mathFunctions.add(new IdValuePair(MULTIPLY ,"Multiplied By"));
+      mathFunctions.add(new IdValuePair(OPEN_BRACKET ,"Open Bracket"));
+      mathFunctions.add(new IdValuePair(CLOSE_BRACKET ,"Close Bracket"));
+      mathFunctions.add(new IdValuePair(EQUALS ,"Equals"));
+      mathFunctions.add(new IdValuePair(NOT_EQUALS ,"Does Not Equal"));
+      mathFunctions.add(new IdValuePair(GREATER_OR_EQUALS ,"Is Greater Than Or Equal"));
+      mathFunctions.add(new IdValuePair(LESS_OR_EQUALS ,"Is Less Than Or Equal"));
+      mathFunctions.add(new IdValuePair(IN_NORMAL_RANGE ,"Is With In Normal Range"));
+      mathFunctions.add(new IdValuePair(OUTSIDE_NORMAL_RANGE ,"Is Out Side Normal Range"));
       return mathFunctions;
     }
 
