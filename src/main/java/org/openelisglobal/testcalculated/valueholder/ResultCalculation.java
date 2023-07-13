@@ -31,13 +31,13 @@ public class ResultCalculation extends BaseObject<Integer> {
     private Integer id;
     
     @ManyToOne
-	@JoinColumn(name = "calculation_id")
+    @JoinColumn(name = "calculation_id")
     private Calculation calculation;
-
+    
     @ManyToOne
-	@JoinColumn(name = "patient_id")
+    @JoinColumn(name = "patient_id")
     private Patient patient;
-
+    
     @ElementCollection
     @CollectionTable(name = "test_operations", joinColumns = @JoinColumn(name = "result_calculation_id", referencedColumnName = "id"))
     @Column(name = "test_id")
@@ -58,35 +58,35 @@ public class ResultCalculation extends BaseObject<Integer> {
     public void setId(Integer id) {
         this.id = id;
     }
-        
+    
     public Map<Integer, Integer> getTestRsultMap() {
         return testRsultMap;
     }
-
+    
     public Calculation getCalculation() {
         return calculation;
     }
-
+    
     public void setCalculation(Calculation calculation) {
         this.calculation = calculation;
     }
-
+    
     public Patient getPatient() {
         return patient;
     }
-
+    
     public void setPatient(Patient patient) {
         this.patient = patient;
     }
-
+    
     public void setTestRsultMap(Map<Integer, Integer> testRsultMap) {
         this.testRsultMap = testRsultMap;
     }
-
+    
     public List<Test> getTest() {
         return test;
     }
-
+    
     public void setTest(List<Test> test) {
         this.test = test;
     }
