@@ -70,7 +70,7 @@ function siteDepartmentSuccess (xhr) {
 
 <div id="siteSearch" style="display:inline;" >
 <table>
-<% if( useReferralSiteList ){ %>
+<%-- <% if( useReferralSiteList ){ %> --%>
 <tr>
     <td>
         <%= MessageUtil.getContextualMessage( "sample.entry.project.siteName" ) %>:
@@ -97,7 +97,7 @@ function siteDepartmentSuccess (xhr) {
 	    </td>
 	</tr>
 	<% } %>
-<% } %>
+<%-- <% } %> --%>
 <tr>
   		<td><spring:message code="report.patient.site.description"/></td>
 </tr>

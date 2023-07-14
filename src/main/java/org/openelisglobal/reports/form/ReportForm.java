@@ -138,6 +138,10 @@ public class ReportForm extends BaseForm {
     private String referringSiteId;
 
     private List<IdValuePair> referringSiteList;
+    
+    private String arvSiteId;
+
+    private List<IdValuePair> arvSiteList;
 
     private String referringSiteDepartmentId;
 
@@ -619,4 +623,20 @@ public class ReportForm extends BaseForm {
     public void setReceptionTime(List<ReceptionTime> receptionTime) {
         this.receptionTime = receptionTime;
     }
+
+	public String getArvSiteId() {
+		return arvSiteId;
+	}
+
+	public void setArvSiteId(String arvSiteId) {
+		this.arvSiteId = arvSiteId;
+	}
+
+	public List<IdValuePair> getArvSiteList() {
+		return arvSiteList;
+	}
+
+	public void setArvSiteList(List<IdValuePair> arvSiteList) {
+		this.arvSiteList = arvSiteList;
+	}
 }

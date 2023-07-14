@@ -27,13 +27,15 @@ import org.openelisglobal.validation.annotations.ValidTime;
 
 public class SampleEntryByProjectForm extends BaseForm implements IAccessionerForm {
 
-    @ValidDate(relative = DateRelation.TODAY)
+    private static final long serialVersionUID = 1L;
+
+	@ValidDate(relative = DateRelation.TODAY)
     private String currentDate = "";
 
     @ValidDate(relative = DateRelation.PAST)
     private String receivedDateForDisplay = "";
 
-    @ValidDate(relative = DateRelation.PAST)
+    @ValidTime
     private String receivedTimeForDisplay = "";
 
     @ValidDate(relative = DateRelation.PAST)
@@ -52,7 +54,7 @@ public class SampleEntryByProjectForm extends BaseForm implements IAccessionerFo
     private String doctor = "";
 
     // @NotBlank
-    @Size(max = 7)
+    @Size(max = 10)
     @Pattern(regexp = ValidationHelper.PATIENT_ID_REGEX)
     private String subjectNumber = "";
 

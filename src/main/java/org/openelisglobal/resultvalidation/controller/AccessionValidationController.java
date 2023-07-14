@@ -59,9 +59,9 @@ public class AccessionValidationController extends BaseController {
     }
 
     @RequestMapping(value = "/AccessionValidation", method = RequestMethod.GET)
-    public ModelAndView showAccessionValidation(HttpServletRequest request)
+    public ModelAndView showAccessionValidation(HttpServletRequest request,AccessionValidationForm form)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        AccessionValidationForm form = new AccessionValidationForm();
+        //AccessionValidationForm form = new AccessionValidationForm();
 
         request.getSession().setAttribute(SAVE_DISABLED, TRUE);
         form.setReferralReasons(DisplayListService.getInstance().getList(DisplayListService.ListType.REFERRAL_REASONS));

@@ -215,7 +215,6 @@ abstract public class CSVRoutineColumnBuilder {
         // MAKE SURE ALL GENERATED QUERIES STAY SQL INJECTION SAFE
         makeSQL();
         String sql = query.toString();
-        System.out.println("buildResultSet:" + sql);
         // LogEvent.logInfo(this.getClass().getName(), "method unkown", "===1===\n" +
         // sql.substring(0, 7000)); // the SQL is
         // chunked out only because Eclipse thinks printing really big strings to the
@@ -533,7 +532,8 @@ abstract public class CSVRoutineColumnBuilder {
         // String excludeAnalytes = getExcludedAnalytesSet();
         SQLConstant listName = SQLConstant.RESULT;
         query.append(", \n\n ( SELECT si.samp_id, si.id AS sampleItem_id, si.sort_order AS sampleItemNo, " + listName
-                + ".* " + " FROM sample_item AS si LEFT JOIN \n ");
+                + ".* " + " FROM sample_item AS si LEFT JOIN \n "
+                		+ " sample_projects sp ON si.samp_id = sp.samp_id LEFT JOIN \n");
 
         // Begin cross tab / pivot table
         query.append(" crosstab( " + "\n 'SELECT si.id, t.description, r.value "
@@ -570,7 +570,7 @@ abstract public class CSVRoutineColumnBuilder {
         query.append(" ) \n");
         // left join all sample Items from the right sample range to the results table.
         query.append("\n ON si.id = " + listName + ".si_id " // the inner use a few lines above
-                + "\n ORDER BY si.samp_id, si.id " + "\n) AS " + listName + "\n "); // outer re-use the list name to
+                + "\n WHERE sp.id IS NULL ORDER BY si.samp_id, si.id " + "\n) AS " + listName + "\n "); // outer re-use the list name to
                                                                                     // name this sparse matrix of
                                                                                     // results.
     }

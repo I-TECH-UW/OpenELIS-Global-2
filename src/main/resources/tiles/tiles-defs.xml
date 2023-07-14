@@ -477,7 +477,7 @@
 
 	<definition name="patientEntryByProjectCore"
 		template="/pages/patient/retroCIEntryByProject.jsp">
-		<put-attribute name="arvInitialStudyFragment"
+ 		<put-attribute name="arvInitialStudyFragment"
 			value="/pages/patient/CI/arvInitialStudy.jsp" />
 		<put-attribute name="arvFollowupStudyFragment"
 			value="/pages/patient/CI/arvFollowupStudy.jsp" />

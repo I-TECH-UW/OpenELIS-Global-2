@@ -324,7 +324,7 @@ rtn = new RtnProjectChecker();
 					onchange="makeDirty();compareAllObservationHistoryFields(true)"
 					id='rtn.${disease.name}'>
 					<option value=""></option>
-					<form:options items="${form.dictionaryLists['NotSpeced'].list}" itemLabel="localizedName" itemValue="id" />
+					<form:options items="${form.dictionaryLists['YES_NO_UNKNOWN_NA_NOTSPEC'].list}" itemLabel="localizedName" itemValue="id" />
 				</form:select>
 			</td>
 		</tr>
@@ -342,7 +342,7 @@ rtn = new RtnProjectChecker();
 					onchange="makeDirty();compareAllObservationHistoryFields(true)"
 					id='rtn.${disease.name}'>
 					<option value=""></option>
-					<form:options items="${form.dictionaryLists['NotSpeced'].list}" itemLabel="localizedName" itemValue="id" />
+					<form:options items="${form.dictionaryLists['YES_NO_UNKNOWN_NA_NOTSPEC'].list}" itemLabel="localizedName" itemValue="id" />
 				</form:select>
 			</td>
 		</tr>

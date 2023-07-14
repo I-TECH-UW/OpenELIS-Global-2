@@ -203,7 +203,8 @@ function setDefaultTests( div )
 }
 
 function initializeStudySelection() {
-    selectStudy($('projectFormName').value);
+    //selectStudy($('projectFormName').value);
+	selectStudy(sessionStorage.getItem("selectedDivId"));
 }
 
 function selectStudy( divId ) {
@@ -215,6 +216,7 @@ function selectStudy( divId ) {
 function switchStudyForm( divId ){	
     hideAllDivs();
     if (divId != "" && divId != "0") {
+    	sessionStorage.setItem("selectedDivId",divId);
         $("projectFormName").value = divId;
         switch (divId) {
         case "EID_Id":
@@ -1464,7 +1466,7 @@ function /*void*/ setSaveButton() {
     </tr>
    
      <tr>
-        <td></td>
+        <td class="required">*</td>
         <td>
             <spring:message code="patient.gender"/>
         </td>

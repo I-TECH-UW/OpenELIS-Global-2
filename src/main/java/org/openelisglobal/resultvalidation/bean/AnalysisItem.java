@@ -15,6 +15,7 @@
 */
 package org.openelisglobal.resultvalidation.bean;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -26,9 +27,11 @@ import org.openelisglobal.resultvalidation.form.ResultValidationForm;
 import org.openelisglobal.validation.annotations.SafeHtml;
 import org.openelisglobal.validation.annotations.ValidAccessionNumber;
 
-public class AnalysisItem {
+public class AnalysisItem implements Serializable{
 
-    private String id;
+    private static final long serialVersionUID = 1L;
+
+	private String id;
 
     private String units;
 

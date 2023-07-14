@@ -485,7 +485,7 @@ function createReferralOption(sampleNum, testNum, testId, testName, index) {
 	<c:forEach items="${form.referralOrganizations}" var="referralOrganization" varStatus="iter">
 	option = document.createElement('option');
 	option.value = '${referralOrganization.id}';
-	option.innerHTML = '${referralOrganization.value}';
+	option.innerHTML = "${referralOrganization.value}";
 	referralOrgSelect.appendChild(option);
 	</c:forEach>
 	cell2.innerHTML = "Institute ";
