@@ -41,9 +41,7 @@
     "web-vitals": "^2.1.4",
     "yup": "^0.29.2",
     "sass": "^1.54.3",
-    "sass-loader": "^12.3.0",
-    "style-loader": "^3.3.1",
-    "jsonpath" :"^1.1.1"
+    "sass-loader": "^12.3.0"
   },
   "scripts": {
     "start": "GENERATE_SOURCEMAP=false HTTPS=true react-scripts start",
@@ -73,6 +71,7 @@
     "**/@types/react": "16.14.5"
   },
   "devDependencies": {
+    "cypress": "^12.17.1",
     "sass": "^1.57.1"
   }
 }
