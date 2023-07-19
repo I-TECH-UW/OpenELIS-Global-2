@@ -39,7 +39,7 @@ const SampleType = (props) => {
         rejectionReason: "",
         collectionTime: ""
     });
-    const defaultSelect = {id: "", value: ""};
+    const defaultSelect = {id: "", value: "Choose Rejection Reason"};
 
 
     function handleCollectionDate(date) {
@@ -178,8 +178,33 @@ const SampleType = (props) => {
         }
     }
 
+
+    function addReferralRequest(test) {
+        setReferralRequests([...referralRequests, {
+            reasonForReferral: referralReasons[0].id,
+            referrer: user.firstName + " " + user.lastName,
+            institute: referralOrganizations[0].id,
+            sentDate: "",
+            testId: test.id
+        }]);
+    }
+
+    function removeReferralRequest(test) {
+        let index = 0;
+        for (let x in referralRequests) {
+            if (referralRequests[x].testId === test.id) {
+                const newReferralRequests = referralRequests;
+                newReferralRequests.splice(index, 1);
+                setReferralRequests([...newReferralRequests]);
+                break;
+            }
+            index++;
+        }
+    }
+
     const handleFetchSampleTypeTests = (e, index) => {
         setSelectedTests([]);
+        setReferralRequests([]);
         const {value} = e.target;
         const selectedSampleTypeOption = sampleTypesRef.current.options[sampleTypesRef.current.selectedIndex].text
         setSelectedSampleType({
@@ -213,6 +238,9 @@ const SampleType = (props) => {
 
     useEffect(() => {
         props.sampleTypeObject({requestReferralEnabled: requestTestReferral, sampleObjectIndex: index});
+        if (!requestTestReferral) {
+            setReferralRequests([]);
+        }
     }, [requestTestReferral]);
 
 
@@ -397,7 +425,8 @@ const SampleType = (props) => {
                     <CustomTimePicker id={"collectionTime_" + index}
                                       onChange={(time) => handleCollectionTime(time)}
                                       className="inputText" labelText="Collection Time"/>
-
+                </div>
+                <div className="inlineDiv">
                     <CustomTextInput id={"collector_" + index} onChange={(value) => handleCollector(value)}
                                      defaultValue={""} labelText="Collector" className="inputText"/>
                 </div>

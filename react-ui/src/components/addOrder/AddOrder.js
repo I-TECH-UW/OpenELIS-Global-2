@@ -12,7 +12,6 @@ const AddOrder = (props) => {
     const {orderFormValues, setOrderFormValues, samples} = props;
     const componentMounted = useRef(true);
     const [otherSamplingVisible, setOtherSamplingVisible] = useState(false);
-    const [programs, setPrograms] = useState([]);
     const [providers, setProviders] = useState([]);
     const [paymentOptions, setPaymentOptions] = useState([]);
     const [samplingPerformed, setSamplingPerformed] = useState([]);
@@ -21,6 +20,7 @@ const AddOrder = (props) => {
     const {setNotificationVisible, setNotificationBody} = useContext(NotificationContext);
     const [siteNames, setSiteNames] = useState([]);
     const [configurationProperties, setConfigurationProperties] = useState([{id: "", value: ""}]);
+    const [phoneFormat, setPhoneFormat] = useState("");
 
 
     const handleDatePickerChange = (datePicker, date) => {
@@ -239,6 +239,8 @@ const AddOrder = (props) => {
         const siteNameConfig = findConfigurationProperty("restrictFreeTextRefSiteEntry");
         const requesterConfig = findConfigurationProperty("restrictFreeTextProviderEntry");
 
+        setPhoneFormat(findConfigurationProperty("phoneFormat"));
+
         setOrderFormValues({
             ...orderFormValues, currentDate: currentDate, sampleOrderItems: {
                 ...orderFormValues.sampleOrderItems,
@@ -287,7 +289,6 @@ const AddOrder = (props) => {
 
     const getSampleEntryPreform = (response) => {
         if (componentMounted.current) {
-            setPrograms(response.sampleOrderItems.programList);
             setSiteNames(response.sampleOrderItems.referringSiteList)
             setPaymentOptions(response.sampleOrderItems.paymentOptions);
             setSamplingPerformed(response.sampleOrderItems.testLocationCodeList);
@@ -419,7 +420,7 @@ const AddOrder = (props) => {
                                disabled={allowRequesterOptions !== "false"}
                                onChange={handleRequesterWorkPhone}
                                value={orderFormValues.sampleOrderItems.providerWorkPhone}
-                               onMouseLeave={handlePhoneNoValidation} labelText="Requester Phone: +225-xx-xx-xx-xx: "
+                               onMouseLeave={handlePhoneNoValidation} labelText={`Requester Phone: ${phoneFormat}`}
                                id="providerWorkPhoneId" className="inputText"/>
 
                     <TextInput name="providerFax" labelText="Requester's Fax Number: "

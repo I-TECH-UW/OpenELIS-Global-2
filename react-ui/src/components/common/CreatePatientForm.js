@@ -39,6 +39,7 @@ class CreatePatientForm extends React.Component {
             educationList : [] ,
             maritalStatuses : [],
             nationalities : [],
+            phoneFormat: "",
             showActionsButton: props.showActionsButton,
             formAction: "ADD"
         }
@@ -99,11 +100,13 @@ class CreatePatientForm extends React.Component {
             }
         }
     }
+
     componentDidMount() {
         this._isMounted = true;
         getFromOpenElisServer("/rest/health-regions", this.fetchHeathRegions);
         getFromOpenElisServer("/rest/education-list", this.fetchEducationList);
         getFromOpenElisServer("/rest/marital-statuses", this.fetchMaritalStatuses);
+        getFromOpenElisServer("/rest/configuration-properties", this.fetchConfigurationProperties)
        // getFromOpenElisServer("/rest/nationalities", this.fetchNationalities);
         this.repopulatePatientInfo();
     }
@@ -125,6 +128,20 @@ class CreatePatientForm extends React.Component {
         }
     }
 
+    accessionNumberValidationResponse = (res) => {
+        if (res.status === false) {
+            this.context.setNotificationVisible(true);
+            this.context.setNotificationBody({kind: NotificationKinds.error, title: "Notification Message", message: res.body});
+        }
+
+    }
+
+    handleSubjectNoValidation = (numberType,fieldId,numberValue) =>{
+        if(numberValue !== ""){
+            getFromOpenElisServer(`/rest/subjectNumberValidationProvider?fieldId=${fieldId}&numberType=${numberType}&subjectNumber=${numberValue}`, this.accessionNumberValidationResponse);
+        }
+    }
+
     fetchMaritalStatuses = (statuses) => {
         if (this._isMounted) {
             this.setState({ maritalStatuses: statuses })
@@ -140,6 +157,16 @@ class CreatePatientForm extends React.Component {
     fetchHeathDistricts = (districts) => {
         this.setState({ healthDistricts: districts })
         this._healthDistricts = districts
+    }
+
+     fetchConfigurationProperties = (res) => {
+         if (res.length > 0) {
+             const filterProperty = res.find((config) => config.id === "phoneFormat");
+             console.log(filterProperty)
+             if (filterProperty !== undefined) {
+                 this.setState({phoneFormat: filterProperty.value});
+             }
+         }
     }
 
     handleSubmit = (values) => {
@@ -198,13 +225,15 @@ class CreatePatientForm extends React.Component {
                                             <Field name="subjectNumber"
                                             >
                                                 {({ field }) =>
-                                                    <TextInput value={values.subjectNumber} name={field.name} labelText="Unique Health ID number" id={field.name} className="inputText" />
+                                                    <TextInput value={values.subjectNumber} name={field.name} labelText="Unique Health ID number" id={field.name} className="inputText"
+                                                               onMouseOut={()=>{this.handleSubjectNoValidation("subjectNumber","subjectNumberID",values.subjectNumber)}}/>
                                                 }
                                             </Field>
                                             <Field name="nationalId"
                                             >
                                                 {({ field }) =>
-                                                    <TextInput value={values.nationalId} name={field.name} labelText="National Id" id={field.name} className="inputText" />
+                                                    <TextInput value={values.nationalId} name={field.name} labelText="National Id" id={field.name} className="inputText"
+                                                               onMouseOut={()=>{this.handleSubjectNoValidation("nationalId","nationalID",values.nationalId)}}/>
                                                                                          
                                                 }
                                             </Field>
@@ -254,7 +283,7 @@ class CreatePatientForm extends React.Component {
                                             <Field name="patientContact.person.primaryPhone"
                                             >
                                                 {({ field }) =>
-                                                    <TextInput value={values.patientContact?.person.primaryPhone} name={field.name} labelText="Contact Phone" id={field.name} className="inputText" />
+                                                    <TextInput value={values.patientContact?.person.primaryPhone} name={field.name}  labelText={`Contact Phone: ${this.state.phoneFormat}`} id={field.name} className="inputText" />
                                                 }
                                             </Field>
                                             <div className="error">
@@ -273,7 +302,7 @@ class CreatePatientForm extends React.Component {
                                             <Field name="primaryPhone"
                                             >
                                                 {({ field }) =>
-                                                    <TextInput value={values.primaryPhone} name={field.name} labelText="Phone" id={field.name} className="inputText" />
+                                                    <TextInput value={values.primaryPhone} name={field.name} labelText={`Phone: ${this.state.phoneFormat}`} id={field.name} className="inputText" />
                                                 }
                                             </Field>
                                         </div>

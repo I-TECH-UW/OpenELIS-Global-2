@@ -59,7 +59,7 @@ const OrderReferralRequest = ({
         const updateReferralRequest = [...referralRequests];
         let testValue = {};
         let defaultSelect = {};
-        selectedTests.map((test, i) => {
+         selectedTests.length > 0 && selectedTests.map((test, i) => {
             let id = index + "_" + test.id;
             testValue = {
                 id: test.id, value: test.name
@@ -83,12 +83,13 @@ const OrderReferralRequest = ({
                                       onChange={(e) => handleReasonForReferral(e, i)}/>,
                 referrer: <CustomTextInput id={"referrer_" + id}
                                            defaultValue={referralRequests[i].referrer ? referralRequests[i].referrer : obj.referrer}
-                                           onChange={(value) => handleReferrer(value, i)}/>,
+                                           onChange={(value) => handleReferrer(value, i)} labelText={""}/>,
                 institute: <CustomSelect id={"referredInstituteId_" + id} options={referralOrganizations}
                                          value={referralRequests[i].institute ? referralRequests[i].institute : null}
                                          onChange={(e) => handleInstituteSelect(e, i)}
                                          defaultSelect={defaultSelect}/>,
                 sentDate: <CustomDatePicker id={"sendDate_" + id} autofillDate={true}
+                                            className="orderReferralSentDate"
                                             value={referralRequests[i].sentDate ? referralRequests[i].sentDate : null}
                                             onChange={(date) => handleSentDatePicker(date, i)} labelText={""}/>,
                 testName: <CustomSelect id={"shadowReferredTest_" + id} defaultSelect={testValue}/>,

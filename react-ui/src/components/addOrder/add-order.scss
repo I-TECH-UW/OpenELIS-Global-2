@@ -95,7 +95,9 @@
   margin-right: 5px;
   margin-left: 5px;
 }
-
+.cds--accordion__heading{
+ background-color:#d9d8d9
+}
 .cds--accordion__content {
   padding: 0px !important;
 }
@@ -141,4 +143,7 @@
   width: 220px;
   text-align: center;
   margin-top: 10px;
+}
+.orderReferralSentDate input{
+  width: 13rem !important;
 }
