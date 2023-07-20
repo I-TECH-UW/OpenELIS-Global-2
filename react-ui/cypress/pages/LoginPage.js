@@ -1,5 +1,11 @@
+import HomePage from "./HomePage";
+import TestProperties from "../common/TestProperties";
+
 class LoginPage {
+    testProperties = null;
+
     constructor() {
+        this.testProperties = new TestProperties();
     }
 
     visit() {
@@ -28,10 +34,6 @@ class LoginPage {
         return this;
     }
 
-    checkInvalidPassword() {
-
-    }
-
     signIn() {
         const button = cy.get(`[type='submit']`);
         button.click();
@@ -43,6 +45,13 @@ class LoginPage {
         const link = cy.get(`#proceed-link`);
         link.click();
 
+    }
+
+    goToHomePage() {
+        this.enterUsername(this.testProperties.getUsername())
+        this.enterPassword(this.testProperties.getPassword())
+        this.signIn();
+        return new HomePage();
     }
 }
 
