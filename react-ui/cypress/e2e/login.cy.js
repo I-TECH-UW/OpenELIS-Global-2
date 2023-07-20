@@ -1,23 +1,36 @@
-import HomePage from "../pages/HomePage";
 import LoginPage from "../pages/LoginPage";
 
 const login = new LoginPage();
 
 describe('Failing or Succeeding to Login', function () {
 
-    before(() => {
+    before("User visits login page", () => {
         login.visit();
         // login.acceptSelfAssignedCert();
     });
 
-    it('User should enter username', function () {
-        login.enterUsername("admin");
-        login.getUsernameElement().should('contain.value', 'admin')
-    });
+    after('Close Browser', () => {
 
-    it('User should enter password', function () {
-        login.enterPassword("adminADMIN!");
-        login.getPasswordElement().should('contain.value', 'adminADMIN!');
+    })
+
+    it('Should validate user authentication', function () {
+        cy.fixture('Users').then((users) => {
+            users.forEach((user) => {
+                login.enterUsername(user.username);
+                login.getUsernameElement().should('contain.value', user.username)
+
+                login.enterPassword(user.password);
+                login.getPasswordElement().should('contain.value', user.password);
+                login.signIn();
+
+                if (user.correctPass === true) {
+                    cy.get('header#mainHeader > button[title=\'Open menu\']').should('exist')
+                        .and('span:nth-of-type(3) > .cds--btn.cds--btn--icon-only.cds--btn--primary.cds--header__action > svg > path:nth-of-type(1)', 'exist');
+                } else {
+                    cy.get('div[role=\'status\']').should('be.visible');
+                }
+            });
+        });
     });
 
 
