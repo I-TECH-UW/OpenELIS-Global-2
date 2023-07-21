@@ -5,7 +5,7 @@ module.exports = defineConfig({
     setupNodeEvents(on, config) {
       // implement node event listeners here
     },
-    baseUrl: "https://localhost",
+    baseUrl: "https://host.docker.internal",
     testIsolation: false,
   },
 });
