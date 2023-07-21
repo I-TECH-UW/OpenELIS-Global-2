@@ -53,8 +53,12 @@ jobs:
         run: npm install
         working-directory: react-ui
 
+      - name: Install React scripts
+        run: npm install react-scripts@5.0.1 -g
+        working-directory: react-ui
+
       - name: Cypress install
-        uses: cypress-io/github-action@v5
+        uses: cypress-io/github-action@v3
         with:
           working-directory: react-ui
           runTests: false
@@ -89,7 +93,7 @@ jobs:
           working-directory: react-ui/build
 
       - name: Cypress run
-        uses: cypress-io/github-action@v5
+        uses: cypress-io/github-action@v3
         with:
           working-directory: react-ui
           start: npm start
