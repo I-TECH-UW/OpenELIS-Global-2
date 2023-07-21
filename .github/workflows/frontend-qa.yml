@@ -49,18 +49,14 @@ jobs:
         with:
           node-version: 14.x
 
-      - name: Install Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 14.x
-
-      - run: npm install
+      - name: Install dependencies
+        run: npm install
         working-directory: react-ui
 
       - name: Cypress install
         uses: cypress-io/github-action@v5
         with:
-          path: react-ui
+          working-directory: react-ui
           runTests: false
           build: npm run build
 
@@ -69,7 +65,7 @@ jobs:
         with:
           name: build
           if-no-files-found: error
-          path: react-ui/build
+          working-directory: react-ui/build
 
       - name: Run OpenELS image
         run: docker-compose -f build.docker-compose.yml up -d
@@ -90,10 +86,11 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: build
-          path: react-ui/build
+          working-directory: react-ui/build
 
       - name: Cypress run
         uses: cypress-io/github-action@v5
         with:
+          working-directory: react-ui
           start: npm start
           browser: chrome
