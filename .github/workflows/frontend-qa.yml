@@ -49,11 +49,12 @@ jobs:
         with:
           node-version: 14.x
 
-      - name: Install Node and run npm install
+      - name: Install Node
         uses: actions/setup-node@v3
         with:
           node-version: 14.x
-        run: npm install
+
+      - run: npm install
         working-directory: react-ui
 
       - name: Cypress install
