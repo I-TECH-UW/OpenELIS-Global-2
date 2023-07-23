@@ -1,7 +1,7 @@
 package org.openelisglobal.testcalculated.valueholder;
 
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -41,13 +41,13 @@ public class ResultCalculation extends BaseObject<Integer> {
     @ElementCollection
     @CollectionTable(name = "test_operations", joinColumns = @JoinColumn(name = "result_calculation_id", referencedColumnName = "id"))
     @Column(name = "test_id")
-    private List<Test> test;
+    private Set<Test> test;
     
     @ElementCollection
     @CollectionTable(name = "test_result_map", joinColumns = @JoinColumn(name = "result_calculation_id", referencedColumnName = "id"))
     @MapKeyColumn(name = "test_id")
     @Column(name = "result_id")
-    private Map<Integer, Integer> testRsultMap;
+    private Map<Integer, Integer> testResultMap;
     
     @Override
     public Integer getId() {
@@ -58,11 +58,7 @@ public class ResultCalculation extends BaseObject<Integer> {
     public void setId(Integer id) {
         this.id = id;
     }
-    
-    public Map<Integer, Integer> getTestRsultMap() {
-        return testRsultMap;
-    }
-    
+       
     public Calculation getCalculation() {
         return calculation;
     }
@@ -78,16 +74,20 @@ public class ResultCalculation extends BaseObject<Integer> {
     public void setPatient(Patient patient) {
         this.patient = patient;
     }
-    
-    public void setTestRsultMap(Map<Integer, Integer> testRsultMap) {
-        this.testRsultMap = testRsultMap;
-    }
-    
-    public List<Test> getTest() {
+
+    public Set<Test> getTest() {
         return test;
     }
-    
-    public void setTest(List<Test> test) {
+
+    public void setTest(Set<Test> test) {
         this.test = test;
+    }
+
+    public Map<Integer, Integer> getTestResultMap() {
+        return testResultMap;
+    }
+
+    public void setTestResultMap(Map<Integer, Integer> testResultMap) {
+        this.testResultMap = testResultMap;
     }
 }

@@ -80,24 +80,6 @@ public class CalculatedValueRestController {
         } else {
             testCalculationService.save(calculation);
         }
-        // Patient pat = patientService.getAll().get(0);
-        // Result result = resultService.getAll().get(0);
-        
-        // ResultCalculation calc = new ResultCalculation();
-        // calc.setCalculation(calculation);
-        // calc.setPatient(pat);
-        // List<Test> tests = new ArrayList<>();
-        // calculation.getOperations().forEach(oper -> {
-        //     if (oper.getType().equals(Operation.OperationType.TEST_RESULT)) {
-        //         Test test = testService.getActiveTestById(Integer.valueOf(oper.getValue()));
-        //         tests.add(test);
-        //     }
-        // });
-        // calc.setTest(tests);
-        // Map<Integer , Integer> map = new HashMap<>();
-        // map.put(Integer.valueOf(result.getAnalysis().getTest().getId()), Integer.valueOf(result.getId()));
-        // calc.setTestRsultMap(map);
-        // resultCalculationService.insert(calc);
         
     }
     
