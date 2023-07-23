@@ -224,15 +224,15 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
   }
 
 
-  function resetCalculationValues(index: number, calculation: CalculatedValueFormModel) {
+  function resetCalculationValue(index: number, calculation: CalculatedValueFormModel) {
     const list = [...calculationList];
-    list[index].result = ""
+    list[index].result = null
     list[index].testId = null
   }
 
   function resetOperationValue(index: number, operationIndex: number, operation: OperationModel) {
     const list = [...calculationList];
-    list[index].operations[operationIndex].value = ""
+    list[index].operations[operationIndex].value = null;
   }
 
   const handleCalculationFieldChange = (e: any, index: number) => {
@@ -302,7 +302,7 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
               labelText={<FormattedMessage id="rulebuilder.label.selectSample" />}
               value={operation.sampleId}
               className="inputSelect"
-              onChange={(e) => { handleSampleSelected(e, "TEST_RESULT", index, operationIndex); handleOperationFieldChange(e, index, operationIndex); resetOperationValue(index, operationIndex, operation) }}
+              onChange={(e) => { handleSampleSelected(e, "TEST_RESULT", index, operationIndex); handleOperationFieldChange(e, index, operationIndex); /*resetOperationValue(index, operationIndex, operation)*/ }}
               required
             >
               <SelectItem
@@ -591,7 +591,7 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
                               labelText={<FormattedMessage id="rulebuilder.label.selectSample" />}
                               value={calculation.sampleId}
                               className="inputSelect"
-                              onChange={(e) => { handleSampleSelected(e, "FINAL_RESULT", index, 0); handleCalculationFieldChange(e, index); resetCalculationValues(index, calculation) }}
+                              onChange={(e) => { handleSampleSelected(e, "FINAL_RESULT", index, 0); handleCalculationFieldChange(e, index); /*resetCalculationValue(index, calculation)*/ }}
                               required
                             >
                               <SelectItem
