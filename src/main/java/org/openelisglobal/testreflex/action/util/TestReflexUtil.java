@@ -48,6 +48,9 @@ import org.openelisglobal.scriptlet.valueholder.Scriptlet;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.test.service.TestServiceImpl;
+import org.openelisglobal.testanalyte.valueholder.TestAnalyte;
+import org.openelisglobal.testreflex.action.bean.ReflexRule;
+import org.openelisglobal.testreflex.action.bean.ReflexRuleOptions;
 import org.openelisglobal.testreflex.service.TestReflexService;
 import org.openelisglobal.testreflex.valueholder.TestReflex;
 import org.openelisglobal.testresult.service.TestResultService;
@@ -263,20 +266,69 @@ public class TestReflexUtil {
         List<Analysis> parentAnalysisList = new ArrayList<>();
         List<Analysis> reflexAnalysises = new ArrayList<>();
 
+        Map<Integer, Set<Integer>> analyteTestMap = new HashMap<>();
+        for (TestReflexBean reflexBean : newResults) {
+            List<TestReflex> reflexesForResult = getReflexTests(reflexBean);
+            if (!reflexesForResult.isEmpty()) {
+                TestAnalyte testAnalyte = reflexesForResult.get(0).getTestAnalyte();
+                Integer analyteId = Integer.valueOf(testAnalyte.getAnalyte().getId());
+                Integer testAnalyteId = Integer.valueOf(testAnalyte.getId());
+                
+                if (analyteTestMap.keySet().contains(analyteId)) {
+                    analyteTestMap.get(analyteId).add(testAnalyteId);
+                } else {
+                    Set<Integer> testAnalyteIds = new HashSet<>();
+                    testAnalyteIds.add(testAnalyteId);
+                    analyteTestMap.put(analyteId, testAnalyteIds);
+                }
+            }
+        }
+        
         for (TestReflexBean reflexBean : newResults) {
             // list may be empty or have previous handled reflexes
             List<String> handledReflexIdList = getHandledReflexesForSample(sampleIdToHandledTestReflexIds, reflexBean);
 
             // use cases 1-6, 10
             if (reflexBean.getTriggersToSelectedReflexesMap().isEmpty()) {
-                reflexAnalysises.addAll(
-                        handleAutomaticReflexes(parentAnalysisList, reflexBean, handledReflexIdList, sysUserId));
+                List<Analysis> newReflexAnalyses = handleAutomaticReflexes(parentAnalysisList, reflexBean,
+                    handledReflexIdList, sysUserId);
+                Analyte analyte = reflexBean.getResult().getAnalyte();
+                if (analyte != null) {
+                    Integer analyteId = Integer.valueOf(analyte.getId());
+                    ReflexRule rule = testReflexService.getReflexRuleByAnalyteId(analyte.getId());
+                    if (rule != null) {
+                        if (rule.getOverall().equals(ReflexRuleOptions.OverallOptions.ALL)) {
+                            Set<Integer> testAnalyteIds = new HashSet<>();
+                            rule.getConditions().forEach(c -> testAnalyteIds.add(c.getTestAnalyteId()));
+                            if (testAnalyteIds.size() > analyteTestMap.get(analyteId).size()) {
+                                newReflexAnalyses = new ArrayList<>();
+                            }
+                        } 
+                    }
+                }
+                reflexAnalysises.addAll(newReflexAnalyses);
             } else { // use cases 7,8,9
                 reflexAnalysises.addAll(handleUserSelectedReflexes(parentAnalysisList, reflexBean, sysUserId));
-
             }
         }
         return reflexAnalysises;
+    }
+
+    private List<TestReflex> getReflexTests(TestReflexBean reflexBean) {
+        String resultType = testService.getResultType(reflexBean.getResult().getTestResult().getTest());
+        List<TestReflex> reflexesForResult = reflexResolver.getTestReflexesForResult(reflexBean.getResult());
+        if (resultType.equals("D")) {
+            reflexesForResult = applyDictionaryRelationRulesForReflex(reflexBean.getResult());
+        } else if (!resultType.equals("D")) {
+            if (resultType.equals("N")) {
+                reflexesForResult = reflexesForResult.stream()
+                        .filter(test -> applyNumericRelationRulesForReflex(test, reflexBean)).collect(Collectors.toList());
+            } else {
+                reflexesForResult = reflexesForResult.stream()
+                        .filter(test -> applyTextRelationRulesForReflex(test, reflexBean)).collect(Collectors.toList());
+            }
+        }
+        return reflexesForResult;
     }
 
     private List<Analysis> handleUserSelectedReflexes(List<Analysis> parentAnalysisList, TestReflexBean reflexBean,
@@ -324,19 +376,9 @@ public class TestReflexUtil {
             List<String> handledReflexIdList, String sysUserId) {
         // More than one reflex may be returned if more than one action
         // should be taken by the result
-        String resultType = testService.getResultType(reflexBean.getResult().getTestResult().getTest());
-        List<TestReflex> reflexesForResult = reflexResolver.getTestReflexesForResult(reflexBean.getResult());
-        if (resultType.equals("D")) {
-            reflexesForResult = applyDictionaryRelationRulesForReflex(reflexBean.getResult());
-        } else if (!resultType.equals("D")) {
-            if (resultType.equals("N")) {
-                reflexesForResult = reflexesForResult.stream()
-                        .filter(test -> applyNumericRelationRulesForReflex(test, reflexBean)).collect(Collectors.toList());
-            } else {
-                reflexesForResult = reflexesForResult.stream()
-                        .filter(test -> applyTextRelationRulesForReflex(test, reflexBean)).collect(Collectors.toList());
-            }
-        }
+        
+        List<TestReflex> reflexesForResult = getReflexTests(reflexBean);
+        
         List<Analysis> reflexAnalysises = new ArrayList<>();
         for (TestReflex reflexForResult : reflexesForResult) {
             // filter out handled reflexes

@@ -38,6 +38,8 @@ public interface TestReflexService extends BaseObjectService<TestReflex, String>
 
     void deactivateReflexRule(String id); 
 
+    ReflexRule getReflexRuleByAnalyteId(String analyteId);
+
     List<TestReflex> getTestReflexsByTestAnalyteId(String testAnalyteId) ;
 
 }
