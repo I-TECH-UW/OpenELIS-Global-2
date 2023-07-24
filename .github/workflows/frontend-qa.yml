@@ -60,13 +60,16 @@ jobs:
       - name: Run OpenELS image
         run: docker-compose -f build.docker-compose.yml up -d
 
-      - name: Sleep for 3 minutes for OpenELIS to start
-        run: sleep 3m
+      - name: Sleep for 8 minutes for OpenELIS to start
+        run: sleep 8m
         shell: bash
 
       - name: check containers
         run: docker ps
 
+  cypress-run:
+    runs-on: ubuntu-latest
+    steps:
       - name: Run Frontend Qa Workflow
         run: npx cypress run –headless
         working-directory: react-ui
