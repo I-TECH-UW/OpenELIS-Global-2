@@ -7,8 +7,19 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+
+import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.common.services.IStatusService;
+import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.util.DateUtil;
+import org.openelisglobal.note.service.NoteService;
+import org.openelisglobal.note.service.NoteServiceImpl.NoteType;
+import org.openelisglobal.note.valueholder.Note;
 import org.openelisglobal.result.action.util.ResultSet;
 import org.openelisglobal.result.service.ResultService;
 import org.openelisglobal.result.valueholder.Result;
@@ -21,6 +32,7 @@ import org.openelisglobal.testcalculated.valueholder.Calculation;
 import org.openelisglobal.testcalculated.valueholder.Operation;
 import org.openelisglobal.testcalculated.valueholder.ResultCalculation;
 import org.openelisglobal.testresult.service.TestResultService;
+import org.openelisglobal.testresult.valueholder.TestResult;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 
@@ -38,9 +50,12 @@ public class TestCalculatedUtil {
     
     private ResultService resultService = SpringContext.getBean(ResultService.class);
     
+    private AnalysisService analysisService = SpringContext.getBean(AnalysisService.class);
+    
+    private NoteService noteService = SpringContext.getBean(NoteService.class);
+    
     public List<Analysis> addNewTestsToDBForCalculatedTests(List<ResultSet> resultSetList, String sysUserId)
             throws IllegalStateException {
-        
         for (ResultSet resultSet : resultSetList) {
             List<Calculation> calculations = calculationService.getAll();
             for (Calculation calculation : calculations) {
@@ -80,7 +95,6 @@ public class TestCalculatedUtil {
                         map.put(Integer.valueOf(resultSet.result.getTestResult().getTest().getId()),
                             Integer.valueOf(resultSet.result.getId()));
                         calc.setTestResultMap(map);
-                        System.out.println(calc.getTestResultMap());
                         resultcalculationService.insert(calc);
                     }
                     
@@ -93,27 +107,29 @@ public class TestCalculatedUtil {
                     }
                 }
             }
+        }
+        
+        for (ResultSet resultSet : resultSetList) {
+            
             List<ResultCalculation> resultCalculations = resultcalculationService
                     .getResultCalculationByPatientAndTest(resultSet.patient, resultSet.result.getTestResult().getTest());
             
             if (!resultCalculations.isEmpty()) {
                 for (ResultCalculation resultCalculation : resultCalculations) {
-                    Boolean missingParams = false;
+                    Boolean isMissingParams = false;
                     for (Map.Entry<Integer, Integer> entry : resultCalculation.getTestResultMap().entrySet()) {
-                        Integer key = entry.getKey();
-                        Integer value = entry.getValue();
                         if (entry.getValue() == null) {
-                            missingParams = true;
+                            isMissingParams = true;
                         }
                     }
-                    if (!missingParams) {
-                        Calculation calculation = resultCalculation.getCalculation();
-                        
+                    Calculation calculation = resultCalculation.getCalculation();
+                    if (!isMissingParams) {
                         StringBuffer function = new StringBuffer();
                         calculation.getOperations().forEach(operation -> {
                             switch (operation.getType()) {
                                 case TEST_RESULT:
-                                     addNumericOperation(operation ,resultCalculation ,function ,Operation.OperationType.TEST_RESULT.toString());
+                                    addNumericOperation(operation, resultCalculation, function,
+                                        Operation.OperationType.TEST_RESULT.toString());
                                     break;
                                 case INTEGER:
                                     function.append(Integer.valueOf(operation.getValue())).append(" ");
@@ -122,12 +138,13 @@ public class TestCalculatedUtil {
                                     if (operation.getValue().equals(Operation.IN_NORMAL_RANGE.toLowerCase())) {
                                         int order = operation.getOrder();
                                         Operation prevOperation = calculation.getOperations().get(order - 1);
-                                        addNumericOperation(prevOperation ,resultCalculation ,function ,"IN_NORMAL_RANGE");
+                                        addNumericOperation(prevOperation, resultCalculation, function, "IN_NORMAL_RANGE");
                                         
                                     } else if (operation.getValue().equals(Operation.OUTSIDE_NORMAL_RANGE.toString())) {
                                         int order = operation.getOrder();
                                         Operation prevOperation = calculation.getOperations().get(order - 1);
-                                        addNumericOperation(prevOperation ,resultCalculation ,function , "OUTSIDE_NORMAL_RANGE");
+                                        addNumericOperation(prevOperation, resultCalculation, function,
+                                            "OUTSIDE_NORMAL_RANGE");
                                     } else {
                                         function.append(operation.getValue()).append(" ");
                                     }
@@ -142,10 +159,91 @@ public class TestCalculatedUtil {
                                 
                             }
                         });
+                        System.out.println(" >>>> FUNCTION ");
                         System.out.println(function);
+                        ScriptEngineManager scriptEngineManager = new ScriptEngineManager();
+                        ScriptEngine scriptEngine = scriptEngineManager.getEngineByName("JavaScript");
+                        
+                        try {
+                            String value = scriptEngine.eval(function.toString()).toString();
+                            createCalculatedResult(resultSet, calculation, value, sysUserId);
+                        }
+                        catch (ScriptException e) {
+                            e.printStackTrace();
+                        }
+                        
                     } else {
+                        createCalculatedResult(resultSet, calculation, null, sysUserId);
                     }
                 }
+            }
+        }
+        
+        return null;
+    }
+    
+    private void createCalculatedResult(ResultSet resultSet, Calculation calculation, String value, String systemUserId) {
+        Test test = testService.get(calculation.getTestId().toString());
+        String resultType = testService.getResultType(test);
+        if (test != null) {
+            Analysis analysis = createCalculatedAnalysis(test, resultSet.result, value);
+            if (value != null) {
+                TestResult testResult = getTestResultForCalculation(calculation);
+                Result result = new Result();
+                result.setAnalysis(analysis);
+                result.setTestResult(testResult);
+                result.setSysUserId(systemUserId);
+                if ("D".equals(resultType)) {
+                    if (Boolean.valueOf(value)) {
+                        result.setValue(calculation.getResult());
+                    }
+                } else {
+                    result.setValue(value);
+                }
+                resultService.insert(result);
+            }
+        }
+    }
+    
+    private void createInternalNote(Result result, Analysis newAnalysis, Analysis currentAnalysis) {
+        List<Note> notes = new ArrayList<>();
+        notes.add(noteService.createSavableNote(newAnalysis, NoteType.INTERNAL,
+            "Calculated From " + currentAnalysis.getTest().getLocalizedReportingName().getLocalizedValue(),
+            "Calculated Test Note", "1"));
+        notes.add(noteService.createSavableNote(newAnalysis, NoteType.INTERNAL,
+            "This is part of a set of tests, please ensure all tests are resulted before validation",
+            "Calculated From Test Note", "1"));
+        if (result.getParentResult() == null) {
+            Note note = noteService.createSavableNote(currentAnalysis, NoteType.INTERNAL,
+                "This is part of a set of tests, please ensure all tests are resulted before validation",
+                "Calculated From Test Note", "1");
+            if (!noteService.duplicateNoteExists(note)) {
+                notes.add(note);
+            }
+        }
+        noteService.saveAll(notes);
+    }
+    
+    private void createMissingValueInternalNote(Result result, Analysis newAnalysis, Analysis currentAnalysis) {
+        List<Note> notes = new ArrayList<>();
+        notes.add(noteService.createSavableNote(newAnalysis, NoteType.INTERNAL, "Missing Calculation Results",
+            "Missing Calculation Results Note", "1"));
+        noteService.saveAll(notes);
+    }
+    
+    private TestResult getTestResultForCalculation(Calculation calculation) {
+        Test test = testService.get(calculation.getTestId().toString());
+        String resultType = testService.getResultType(test);
+        if ("D".equals(resultType)) {
+            TestResult testResult;
+            testResult = testResultService.getTestResultsByTestAndDictonaryResult(test.getId(), calculation.getResult());
+            return testResult;
+        } else {
+            List<TestResult> testResultList = testResultService.getActiveTestResultsByTest(test.getId());
+            // we are assuming there is only one testResult for a numeric
+            // type result
+            if (!testResultList.isEmpty()) {
+                return testResultList.get(0);
             }
         }
         
@@ -172,11 +270,33 @@ public class TestCalculatedUtil {
                             function.append(" <= ").append(result.getMinNormal()).append(" || ").append(result.getValue())
                                     .append(" >= ").append(result.getMaxNormal()).append(" ");
                             break;
-                    }           
+                    }
                 }
             }
         }
         
     }
     
+    private Analysis createCalculatedAnalysis(Test test, Result result, String value) {
+        Analysis currentAnalysis = result.getAnalysis();
+        Analysis generatedAnalysis = new Analysis();
+        generatedAnalysis.setTest(test);
+        generatedAnalysis.setIsReportable(currentAnalysis.getIsReportable());
+        generatedAnalysis.setAnalysisType(currentAnalysis.getAnalysisType());
+        generatedAnalysis.setRevision(currentAnalysis.getRevision());
+        generatedAnalysis.setStartedDate(DateUtil.getNowAsSqlDate());
+        generatedAnalysis.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NotStarted));
+        generatedAnalysis.setParentAnalysis(currentAnalysis);
+        generatedAnalysis.setParentResult(result);
+        generatedAnalysis.setSampleItem(currentAnalysis.getSampleItem());
+        generatedAnalysis.setTestSection(currentAnalysis.getTestSection());
+        generatedAnalysis.setSampleTypeName(currentAnalysis.getSampleTypeName());
+        analysisService.insert(generatedAnalysis);
+        if (value != null) {
+            createInternalNote(result, generatedAnalysis, currentAnalysis);
+        } else {
+            createMissingValueInternalNote(result, generatedAnalysis, currentAnalysis);
+        }
+        return generatedAnalysis;
+    }
 }
