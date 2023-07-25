@@ -526,11 +526,11 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
                         </div>
                         <div className="section">
                           <div className="inlineDiv">
-                            {"[ "}  &nbsp; {calculation.operations.map((operation, opearationIndex) => (
+                             &nbsp; {calculation.operations.map((operation, opearationIndex) => (
                               <div>
                                 {operation.type === 'PATIENT_ATTRIBUTE' ? "patientAttribute#" : ""}{operation.type === 'TEST_RESULT' ? "test#" : ""}{operation.value}  &nbsp;
                               </div>
-                            ))} {"] => test#" + calculation.testId}
+                            ))} {" => test#" + calculation.testId}
                           </div>
                         </div>
                         {calculation.operations.map((operation, operation_index) => (
