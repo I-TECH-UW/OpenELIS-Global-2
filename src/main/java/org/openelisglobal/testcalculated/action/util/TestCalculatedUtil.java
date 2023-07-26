@@ -208,6 +208,8 @@ public class TestCalculatedUtil {
                 if ("D".equals(resultType)) {
                     if (Boolean.valueOf(value)) {
                         result.setValue(calculation.getResult());
+                    }else{
+                        return null;
                     }
                 } else {
                     result.setValue(value);
@@ -236,13 +238,13 @@ public class TestCalculatedUtil {
             String systemUserId) {
         List<Note> notes = new ArrayList<>();
         Note note = noteService.createSavableNote(newAnalysis, NoteType.INTERNAL,
-            "Result Calculated From Calculation Rule :" + calculatioName, CALCULATION_SUBJECT, systemUserId);
+            "Result Succesfully Calculated From Calculation Rule :" + calculatioName, CALCULATION_SUBJECT, systemUserId);
         if (!noteService.duplicateNoteExists(note)) {
             notes.add(note);
         }
         
         Note note2 = noteService.createSavableNote(newAnalysis, NoteType.INTERNAL,
-            "Calculated From " + currentAnalysis.getTest().getLocalizedReportingName().getLocalizedValue(),
+            "Calculation Parameters include Result of Test " + currentAnalysis.getTest().getLocalizedReportingName().getLocalizedValue(),
             CALCULATION_SUBJECT, systemUserId);
         if (!noteService.duplicateNoteExists(note2)) {
             notes.add(note2);
@@ -260,7 +262,7 @@ public class TestCalculatedUtil {
             notes.add(note);
         }
         Note note2 = noteService.createSavableNote(newAnalysis, NoteType.INTERNAL,
-            "Calculated From " + currentAnalysis.getTest().getLocalizedReportingName().getLocalizedValue(),
+            "Calculation Parameters include Result of Test : " + currentAnalysis.getTest().getLocalizedReportingName().getLocalizedValue(),
             CALCULATION_SUBJECT, systemUserId);
         if (!noteService.duplicateNoteExists(note2)) {
             notes.add(note2);
