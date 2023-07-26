@@ -115,7 +115,8 @@ public class ResultsTreeProviderRestController {
                     
                     for (Result result : testResultentry.getValue()) {
                         ResultDisplay resultDisplay = new ResultDisplay();
-                        if(result.getResultType().equals("N")){
+                        String resultType =testService.getResultType(result.getTestResult().getTest());
+                        if(resultType.equals("N")){
                             resultDisplay.setValue(result.getValue(true));
                         }else {
                             String dict = dictionaryService.get(result.getValue()).getDictEntry();
@@ -130,7 +131,7 @@ public class ResultsTreeProviderRestController {
                     TestDisplay testDisplay = new TestDisplay();
                     testDisplay.setDisplay(testResultentry.getKey().getLocalizedName());
                     testDisplay.setConceptUuid(testResultentry.getKey().getId());
-                    testDisplay.setDatatype(testResultentry.getValue().iterator().next().getResultType());
+                    testDisplay.setDatatype(testService.getResultType(testResultentry.getValue().iterator().next().getTestResult().getTest()));
                     testDisplay.setHiNormal(testResultentry.getValue().iterator().next().getMaxNormal());
                     testDisplay.setLowNormal(testResultentry.getValue().iterator().next().getMinNormal());
                     testDisplay.setHighCritical(testResultentry.getValue().iterator().next().getMaxNormal());
@@ -210,7 +211,7 @@ public class ResultsTreeProviderRestController {
             TestDisplay testDisplay = new TestDisplay();
             testDisplay.setDisplay(testResultentry.getKey().getLocalizedName());
             testDisplay.setConceptUuid(testResultentry.getKey().getId());
-            testDisplay.setDatatype(testResultentry.getValue().iterator().next().getResultType());
+            testDisplay.setDatatype(testService.getResultType(testResultentry.getValue().iterator().next().getTestResult().getTest()));
             testDisplay.setHiNormal(testResultentry.getValue().iterator().next().getMaxNormal());
             testDisplay.setLowNormal(testResultentry.getValue().iterator().next().getMinNormal());
             testDisplay.setHighCritical(testResultentry.getValue().iterator().next().getMaxNormal());

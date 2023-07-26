@@ -296,7 +296,7 @@ public class TestCalculatedUtil {
             Integer resultId = resultCalculation.getTestResultMap().get(Integer.valueOf(test.getId()));
             Result result = resultService.get(resultId.toString());
             if (result != null) {
-                if (result.getResultType().equals("N")) {
+                if (testService.getResultType(result.getTestResult().getTest()).equals("N")) {
                     switch (inputType) {
                         case "TEST_RESULT":
                             function.append(result.getValue()).append(" ");
