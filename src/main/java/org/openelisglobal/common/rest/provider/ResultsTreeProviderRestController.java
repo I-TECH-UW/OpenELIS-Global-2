@@ -116,11 +116,16 @@ public class ResultsTreeProviderRestController {
                     for (Result result : testResultentry.getValue()) {
                         ResultDisplay resultDisplay = new ResultDisplay();
                         String resultType =testService.getResultType(result.getTestResult().getTest());
-                        if(resultType.equals("N")){
-                            resultDisplay.setValue(result.getValue(true));
-                        }else {
-                            String dict = dictionaryService.get(result.getValue()).getDictEntry();
-                            resultDisplay.setValue(dict);
+                        if (resultType.equals("N")) {
+                            resultDisplay.setValue(result.getValue() != null ? result.getValue(true) : "");
+                        } else {
+                            if (result.getValue() != null) {
+                                String dict = dictionaryService.get(result.getValue()).getDictEntry();
+                                resultDisplay.setValue(dict);
+                            }else{
+                                resultDisplay.setValue("");
+                            }
+                            
                         }
                         
                         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
@@ -202,7 +207,7 @@ public class ResultsTreeProviderRestController {
             
             for (Result result : testResultentry.getValue()) {
                 ResultDisplay resultDisplay = new ResultDisplay();
-                resultDisplay.setValue(result.getValue(true));
+                resultDisplay.setValue(result.getValue(true) != null ? result.getValue(true) : "");
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
                 resultDisplay.setObsDatetime(dateFormat.format(result.getLastupdated()));
                 resultDisplays.add(resultDisplay);
