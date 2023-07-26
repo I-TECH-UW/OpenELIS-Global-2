@@ -13,11 +13,13 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.openelisglobal.common.valueholder.BaseObject;
 import org.openelisglobal.patient.valueholder.Patient;
+import org.openelisglobal.result.valueholder.Result;
 import org.openelisglobal.test.valueholder.Test;
 
 @Entity
@@ -37,6 +39,10 @@ public class ResultCalculation extends BaseObject<Integer> {
     @ManyToOne
     @JoinColumn(name = "patient_id")
     private Patient patient;
+
+    @OneToOne
+    @JoinColumn(name = "result_id")
+    private Result result;
     
     @ElementCollection
     @CollectionTable(name = "test_operations", joinColumns = @JoinColumn(name = "result_calculation_id", referencedColumnName = "id"))
@@ -89,5 +95,13 @@ public class ResultCalculation extends BaseObject<Integer> {
 
     public void setTestResultMap(Map<Integer, Integer> testResultMap) {
         this.testResultMap = testResultMap;
+    }
+ 
+    public Result getResult() {
+        return result;
+    }
+
+    public void setResult(Result result) {
+        this.result = result;
     }
 }

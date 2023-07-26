@@ -12,6 +12,7 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
+import org.jfree.util.Log;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.services.IStatusService;
@@ -53,6 +54,10 @@ public class TestCalculatedUtil {
     private AnalysisService analysisService = SpringContext.getBean(AnalysisService.class);
     
     private NoteService noteService = SpringContext.getBean(NoteService.class);
+    
+    private static final String INCOMPLETE_VALUE = "XXXX";
+    
+    private String CALCULATION_SUBJECT = "Calculated Result Note";
     
     public List<Analysis> addNewTestsToDBForCalculatedTests(List<ResultSet> resultSetList, String sysUserId)
             throws IllegalStateException {
@@ -120,6 +125,7 @@ public class TestCalculatedUtil {
                     for (Map.Entry<Integer, Integer> entry : resultCalculation.getTestResultMap().entrySet()) {
                         if (entry.getValue() == null) {
                             isMissingParams = true;
+                            break;
                         }
                     }
                     Calculation calculation = resultCalculation.getCalculation();
@@ -163,17 +169,17 @@ public class TestCalculatedUtil {
                         System.out.println(function);
                         ScriptEngineManager scriptEngineManager = new ScriptEngineManager();
                         ScriptEngine scriptEngine = scriptEngineManager.getEngineByName("JavaScript");
-                        
+                        String value = null;
                         try {
-                            String value = scriptEngine.eval(function.toString()).toString();
-                            createCalculatedResult(resultSet, calculation, value, sysUserId);
+                            value = scriptEngine.eval(function.toString()).toString();
                         }
                         catch (ScriptException e) {
-                            e.printStackTrace();
+                            Log.error("Ivalid Calication Rule: " + calculation.getName(), e);
                         }
+                        createCalculatedResult(resultCalculation, resultSet, calculation, value, sysUserId);
                         
                     } else {
-                        createCalculatedResult(resultSet, calculation, null, sysUserId);
+                        createCalculatedResult(resultCalculation, resultSet, calculation, null, sysUserId);
                     }
                 }
             }
@@ -182,17 +188,19 @@ public class TestCalculatedUtil {
         return null;
     }
     
-    private void createCalculatedResult(ResultSet resultSet, Calculation calculation, String value, String systemUserId) {
+    private void createCalculatedResult(ResultCalculation resultCalculation, ResultSet resultSet, Calculation calculation,
+            String value, String systemUserId) {
         Test test = testService.get(calculation.getTestId().toString());
         String resultType = testService.getResultType(test);
         if (test != null) {
-            Analysis analysis = createCalculatedAnalysis(test, resultSet.result, value);
+            Analysis analysis = createCalculatedAnalysis(test, resultSet.result, value, calculation.getName());
+            
+            TestResult testResult = getTestResultForCalculation(calculation);
+            Result result = resultCalculation.getResult() != null ? resultCalculation.getResult() : new Result();
+            result.setAnalysis(analysis);
+            result.setTestResult(testResult);
+            result.setSysUserId(systemUserId);
             if (value != null) {
-                TestResult testResult = getTestResultForCalculation(calculation);
-                Result result = new Result();
-                result.setAnalysis(analysis);
-                result.setTestResult(testResult);
-                result.setSysUserId(systemUserId);
                 if ("D".equals(resultType)) {
                     if (Boolean.valueOf(value)) {
                         result.setValue(calculation.getResult());
@@ -200,34 +208,39 @@ public class TestCalculatedUtil {
                 } else {
                     result.setValue(value);
                 }
+            } else {
+                result.setValue(INCOMPLETE_VALUE);
+            }
+            if (resultCalculation.getResult() != null) {
+                resultService.update(result);
+            } else {
                 resultService.insert(result);
             }
+            resultCalculation.setResult(result);
+            resultcalculationService.update(resultCalculation);
         }
     }
     
-    private void createInternalNote(Result result, Analysis newAnalysis, Analysis currentAnalysis) {
+    private void createInternalNote(Result result, Analysis newAnalysis, Analysis currentAnalysis, String calculatioName) {
         List<Note> notes = new ArrayList<>();
         notes.add(noteService.createSavableNote(newAnalysis, NoteType.INTERNAL,
-            "Calculated From " + currentAnalysis.getTest().getLocalizedReportingName().getLocalizedValue(),
-            "Calculated Test Note", "1"));
+            "Result Calculated From Calculation Rule :" + calculatioName, CALCULATION_SUBJECT, "1"));
+        
         notes.add(noteService.createSavableNote(newAnalysis, NoteType.INTERNAL,
-            "This is part of a set of tests, please ensure all tests are resulted before validation",
-            "Calculated From Test Note", "1"));
-        if (result.getParentResult() == null) {
-            Note note = noteService.createSavableNote(currentAnalysis, NoteType.INTERNAL,
-                "This is part of a set of tests, please ensure all tests are resulted before validation",
-                "Calculated From Test Note", "1");
-            if (!noteService.duplicateNoteExists(note)) {
-                notes.add(note);
-            }
-        }
+            "Calculated From " + currentAnalysis.getTest().getLocalizedReportingName().getLocalizedValue(),
+            CALCULATION_SUBJECT, "1"));
         noteService.saveAll(notes);
     }
     
-    private void createMissingValueInternalNote(Result result, Analysis newAnalysis, Analysis currentAnalysis) {
+    private void createMissingValueInternalNote(Result result, Analysis newAnalysis, Analysis currentAnalysis,
+            String calculatioName) {
         List<Note> notes = new ArrayList<>();
-        notes.add(noteService.createSavableNote(newAnalysis, NoteType.INTERNAL, "Missing Calculation Results",
-            "Missing Calculation Results Note", "1"));
+        notes.add(noteService.createSavableNote(newAnalysis, NoteType.INTERNAL,
+            "Result Missing Calculation Parameters From Calculation Rule : " + calculatioName, CALCULATION_SUBJECT, "1"));
+        
+        notes.add(noteService.createSavableNote(newAnalysis, NoteType.INTERNAL,
+            "Calculated From " + currentAnalysis.getTest().getLocalizedReportingName().getLocalizedValue(),
+            CALCULATION_SUBJECT, "1"));
         noteService.saveAll(notes);
     }
     
@@ -277,7 +290,7 @@ public class TestCalculatedUtil {
         
     }
     
-    private Analysis createCalculatedAnalysis(Test test, Result result, String value) {
+    private Analysis createCalculatedAnalysis(Test test, Result result, String value, String calculationName) {
         Analysis currentAnalysis = result.getAnalysis();
         Analysis generatedAnalysis = new Analysis();
         generatedAnalysis.setTest(test);
@@ -293,9 +306,9 @@ public class TestCalculatedUtil {
         generatedAnalysis.setSampleTypeName(currentAnalysis.getSampleTypeName());
         analysisService.insert(generatedAnalysis);
         if (value != null) {
-            createInternalNote(result, generatedAnalysis, currentAnalysis);
+            createInternalNote(result, generatedAnalysis, currentAnalysis, calculationName);
         } else {
-            createMissingValueInternalNote(result, generatedAnalysis, currentAnalysis);
+            createMissingValueInternalNote(result, generatedAnalysis, currentAnalysis, calculationName);
         }
         return generatedAnalysis;
     }

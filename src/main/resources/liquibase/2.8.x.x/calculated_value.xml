@@ -74,6 +74,7 @@
 			</column>
 			<column name="calculation_id" type="int"/>
 			<column name="patient_id" type="int"/>
+			<column name="result_id" type="int"/>
 			<column name="last_updated" type="datetime"/>
 		</createTable>
 		<addForeignKeyConstraint constraintName="result_calculation_calculation_id_fk"
@@ -81,7 +82,10 @@
                                  referencedTableName="calculation" referencedColumnNames="id"/>
 		<addForeignKeyConstraint constraintName="result_calculation_patient_id_fk"
                                  baseTableName="result_calculation" baseColumnNames="patient_id"
-                                 referencedTableName="patient" referencedColumnNames="id"/>						 
+                                 referencedTableName="patient" referencedColumnNames="id"/>	
+		<addForeignKeyConstraint constraintName="result_calculation_result_id_fk"
+                                 baseTableName="result_calculation" baseColumnNames="result_id"
+                                 referencedTableName="result" referencedColumnNames="id"/>						 
 	</changeSet>
 	<changeSet author="moses_mutesa" id="4">
 		<preConditions onFail="MARK_RAN">
