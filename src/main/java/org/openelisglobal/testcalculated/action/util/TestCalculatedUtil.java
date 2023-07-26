@@ -61,6 +61,7 @@ public class TestCalculatedUtil {
     
     public List<Analysis> addNewTestsToDBForCalculatedTests(List<ResultSet> resultSetList, String sysUserId)
             throws IllegalStateException {
+        List<Analysis> analyses = new ArrayList<>();
         for (ResultSet resultSet : resultSetList) {
             List<Calculation> calculations = calculationService.getAll();
             for (Calculation calculation : calculations) {
@@ -165,8 +166,6 @@ public class TestCalculatedUtil {
                                 
                             }
                         });
-                        System.out.println(" >>>> FUNCTION ");
-                        System.out.println(function);
                         ScriptEngineManager scriptEngineManager = new ScriptEngineManager();
                         ScriptEngine scriptEngine = scriptEngineManager.getEngineByName("JavaScript");
                         String value = null;
@@ -176,28 +175,33 @@ public class TestCalculatedUtil {
                         catch (ScriptException e) {
                             Log.error("Ivalid Calication Rule: " + calculation.getName(), e);
                         }
-                        createCalculatedResult(resultCalculation, resultSet, calculation, value, sysUserId);
+                        Analysis analysis = createCalculatedResult(resultCalculation, resultSet, calculation, value,
+                            sysUserId);
+                        if (analysis != null) {
+                            analyses.add(analysis);
+                        }
                         
                     } else {
-                        createCalculatedResult(resultCalculation, resultSet, calculation, null, sysUserId);
+                        Analysis analysis = createCalculatedResult(resultCalculation, resultSet, calculation, null,
+                            sysUserId);
+                        if (analysis != null) {
+                            analyses.add(analysis);
+                        }
                     }
                 }
             }
         }
-        
-        return null;
+        return analyses;
     }
     
-    private void createCalculatedResult(ResultCalculation resultCalculation, ResultSet resultSet, Calculation calculation,
-            String value, String systemUserId) {
+    private Analysis createCalculatedResult(ResultCalculation resultCalculation, ResultSet resultSet,
+            Calculation calculation, String value, String systemUserId) {
         Test test = testService.get(calculation.getTestId().toString());
         String resultType = testService.getResultType(test);
+        Analysis analysis = null;
         if (test != null) {
-            Analysis analysis = createCalculatedAnalysis(test, resultSet.result, value, calculation.getName());
-            
             TestResult testResult = getTestResultForCalculation(calculation);
             Result result = resultCalculation.getResult() != null ? resultCalculation.getResult() : new Result();
-            result.setAnalysis(analysis);
             result.setTestResult(testResult);
             result.setSysUserId(systemUserId);
             if (value != null) {
@@ -212,35 +216,55 @@ public class TestCalculatedUtil {
                 result.setValue(INCOMPLETE_VALUE);
             }
             if (resultCalculation.getResult() != null) {
+                analysis = createCalculatedAnalysis(resultCalculation.getResult().getAnalysis(), test, resultSet.result,
+                    value, calculation.getName(), systemUserId);
+                result.setAnalysis(analysis);
                 resultService.update(result);
             } else {
+                analysis = createCalculatedAnalysis(null, test, resultSet.result, value, calculation.getName(),
+                    systemUserId);
+                result.setAnalysis(analysis);
                 resultService.insert(result);
             }
             resultCalculation.setResult(result);
             resultcalculationService.update(resultCalculation);
         }
+        return analysis;
     }
     
-    private void createInternalNote(Result result, Analysis newAnalysis, Analysis currentAnalysis, String calculatioName) {
+    private void createInternalNote(Result result, Analysis newAnalysis, Analysis currentAnalysis, String calculatioName,
+            String systemUserId) {
         List<Note> notes = new ArrayList<>();
-        notes.add(noteService.createSavableNote(newAnalysis, NoteType.INTERNAL,
-            "Result Calculated From Calculation Rule :" + calculatioName, CALCULATION_SUBJECT, "1"));
+        Note note = noteService.createSavableNote(newAnalysis, NoteType.INTERNAL,
+            "Result Calculated From Calculation Rule :" + calculatioName, CALCULATION_SUBJECT, systemUserId);
+        if (!noteService.duplicateNoteExists(note)) {
+            notes.add(note);
+        }
         
-        notes.add(noteService.createSavableNote(newAnalysis, NoteType.INTERNAL,
+        Note note2 = noteService.createSavableNote(newAnalysis, NoteType.INTERNAL,
             "Calculated From " + currentAnalysis.getTest().getLocalizedReportingName().getLocalizedValue(),
-            CALCULATION_SUBJECT, "1"));
+            CALCULATION_SUBJECT, systemUserId);
+        if (!noteService.duplicateNoteExists(note2)) {
+            notes.add(note2);
+        }
         noteService.saveAll(notes);
     }
     
     private void createMissingValueInternalNote(Result result, Analysis newAnalysis, Analysis currentAnalysis,
-            String calculatioName) {
+            String calculatioName, String systemUserId) {
         List<Note> notes = new ArrayList<>();
-        notes.add(noteService.createSavableNote(newAnalysis, NoteType.INTERNAL,
-            "Result Missing Calculation Parameters From Calculation Rule : " + calculatioName, CALCULATION_SUBJECT, "1"));
-        
-        notes.add(noteService.createSavableNote(newAnalysis, NoteType.INTERNAL,
+        Note note = noteService.createSavableNote(newAnalysis, NoteType.INTERNAL,
+            "Result Missing Calculation Parameters From Calculation Rule : " + calculatioName, CALCULATION_SUBJECT,
+            systemUserId);
+        if (!noteService.duplicateNoteExists(note)) {
+            notes.add(note);
+        }
+        Note note2 = noteService.createSavableNote(newAnalysis, NoteType.INTERNAL,
             "Calculated From " + currentAnalysis.getTest().getLocalizedReportingName().getLocalizedValue(),
-            CALCULATION_SUBJECT, "1"));
+            CALCULATION_SUBJECT, systemUserId);
+        if (!noteService.duplicateNoteExists(note2)) {
+            notes.add(note2);
+        }
         noteService.saveAll(notes);
     }
     
@@ -290,9 +314,10 @@ public class TestCalculatedUtil {
         
     }
     
-    private Analysis createCalculatedAnalysis(Test test, Result result, String value, String calculationName) {
+    private Analysis createCalculatedAnalysis(Analysis existingAnalysis, Test test, Result result, String value,
+            String calculationName, String systemUserId) {
         Analysis currentAnalysis = result.getAnalysis();
-        Analysis generatedAnalysis = new Analysis();
+        Analysis generatedAnalysis = existingAnalysis != null ? existingAnalysis : new Analysis();
         generatedAnalysis.setTest(test);
         generatedAnalysis.setIsReportable(currentAnalysis.getIsReportable());
         generatedAnalysis.setAnalysisType(currentAnalysis.getAnalysisType());
@@ -304,11 +329,16 @@ public class TestCalculatedUtil {
         generatedAnalysis.setSampleItem(currentAnalysis.getSampleItem());
         generatedAnalysis.setTestSection(currentAnalysis.getTestSection());
         generatedAnalysis.setSampleTypeName(currentAnalysis.getSampleTypeName());
-        analysisService.insert(generatedAnalysis);
-        if (value != null) {
-            createInternalNote(result, generatedAnalysis, currentAnalysis, calculationName);
+        generatedAnalysis.setSysUserId(systemUserId);
+        if (existingAnalysis != null) {
+            analysisService.update(generatedAnalysis);
         } else {
-            createMissingValueInternalNote(result, generatedAnalysis, currentAnalysis, calculationName);
+            analysisService.insert(generatedAnalysis);
+        }
+        if (value != null) {
+            createInternalNote(result, generatedAnalysis, currentAnalysis, calculationName, systemUserId);
+        } else {
+            createMissingValueInternalNote(result, generatedAnalysis, currentAnalysis, calculationName, systemUserId);
         }
         return generatedAnalysis;
     }
