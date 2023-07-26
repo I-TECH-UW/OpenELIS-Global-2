@@ -300,7 +300,11 @@ public class TestReflexUtil {
                         if (rule.getOverall().equals(ReflexRuleOptions.OverallOptions.ALL)) {
                             Set<Integer> testAnalyteIds = new HashSet<>();
                             rule.getConditions().forEach(c -> testAnalyteIds.add(c.getTestAnalyteId()));
-                            if (testAnalyteIds.size() > analyteTestMap.get(analyteId).size()) {
+                            if (analyteTestMap.get(analyteId) != null) {
+                                if (testAnalyteIds.size() > analyteTestMap.get(analyteId).size()) {
+                                    newReflexAnalyses = new ArrayList<>();
+                                }
+                            }else {
                                 newReflexAnalyses = new ArrayList<>();
                             }
                         } 
