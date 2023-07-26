@@ -28,6 +28,7 @@ import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.sampleitem.valueholder.SampleItem;
 import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.testcalculated.action.util.TestCalculatedUtil;
 import org.openelisglobal.testreflex.action.util.TestReflexBean;
 import org.openelisglobal.testreflex.action.util.TestReflexUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -167,13 +168,16 @@ public class LogbookPersistServiceImpl implements LogbookResultsPersistService {
 
     protected List<Analysis> setTestReflexes(ResultsUpdateDataSet actionDataSet, String sysUserId) {
         TestReflexUtil testReflexUtil = new TestReflexUtil();
+        TestCalculatedUtil testCallatedUtil = new TestCalculatedUtil();
         List allResults = actionDataSet.getNewResults();
         allResults.addAll(actionDataSet.getModifiedResults());
         List<Analysis> reflexAnalysises = testReflexUtil
                 .addNewTestsToDBForReflexTests(convertToTestReflexBeanList(allResults), sysUserId);
         testReflexUtil.updateModifiedReflexes(convertToTestReflexBeanList(actionDataSet.getModifiedResults()),
                 sysUserId);
-        return reflexAnalysises;
+       List<Analysis> caclculatedAnalyses =  testCallatedUtil.addNewTestsToDBForCalculatedTests(allResults, sysUserId) ;       
+       reflexAnalysises.addAll(caclculatedAnalyses);
+       return reflexAnalysises;
     }
 
     private List<TestReflexBean> convertToTestReflexBeanList(List<ResultSet> resultSetList) {

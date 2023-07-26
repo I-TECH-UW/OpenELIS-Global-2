@@ -224,15 +224,15 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
   }
 
 
-  function resetCalculationValues(index: number, calculation: CalculatedValueFormModel) {
+  function resetCalculationValue(index: number, calculation: CalculatedValueFormModel) {
     const list = [...calculationList];
-    list[index].result = ""
+    list[index].result = null
     list[index].testId = null
   }
 
   function resetOperationValue(index: number, operationIndex: number, operation: OperationModel) {
     const list = [...calculationList];
-    list[index].operations[operationIndex].value = ""
+    list[index].operations[operationIndex].value = null;
   }
 
   const handleCalculationFieldChange = (e: any, index: number) => {
@@ -260,6 +260,11 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
     }
   };
 
+  function replaceString(string : string, sequenceToReplace:string, replacement:string) {
+    const regex = new RegExp(sequenceToReplace, 'g');
+    return string.replace(regex, replacement);
+  }
+
   const handleSubmit = (event: any, index: number) => {
     event.preventDefault();
     var mathematicalOpeartion = "";
@@ -269,6 +274,12 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
         mathematicalOpeartion = mathematicalOpeartion + operation.value + " ";
       }
     )
+    // for the function validation , remove text values
+    mathematicalOpeartion = replaceString(mathematicalOpeartion ,"AGE" , "0");
+    mathematicalOpeartion = replaceString(mathematicalOpeartion ,"WEIGHT" , "0")
+    mathematicalOpeartion = replaceString(mathematicalOpeartion ,"IS_IN_NORMAL_RANGE" , ">=0 && 1<=10")
+    mathematicalOpeartion = replaceString(mathematicalOpeartion ,"IS_OUTSIDE_NORMAL_RANGE" , "<0 || 1>10")
+    
     try {
       // Code that might throw an error
       eval(mathematicalOpeartion)
@@ -291,7 +302,7 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
               labelText={<FormattedMessage id="rulebuilder.label.selectSample" />}
               value={operation.sampleId}
               className="inputSelect"
-              onChange={(e) => { handleSampleSelected(e, "TEST_RESULT", index, operationIndex); handleOperationFieldChange(e, index, operationIndex); resetOperationValue(index, operationIndex, operation) }}
+              onChange={(e) => { handleSampleSelected(e, "TEST_RESULT", index, operationIndex); handleOperationFieldChange(e, index, operationIndex); /*resetOperationValue(index, operationIndex, operation)*/ }}
               required
             >
               <SelectItem
@@ -515,11 +526,11 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
                         </div>
                         <div className="section">
                           <div className="inlineDiv">
-                            {"[ "}  &nbsp; {calculation.operations.map((operation, opearationIndex) => (
+                             &nbsp; {calculation.operations.map((operation, opearationIndex) => (
                               <div>
-                                {operation.type === 'PATIENT_ATTRIBUTE' ? "patientAttr=" : ""}{operation.type === 'TEST_RESULT' ? "testId=" : ""}{operation.value}  &nbsp;
+                                {operation.type === 'PATIENT_ATTRIBUTE' ? "patientAttribute#" : ""}{operation.type === 'TEST_RESULT' ? "test#" : ""}{operation.value}  &nbsp;
                               </div>
-                            ))} {"] => testId=" + calculation.testId}
+                            ))} {" => test#" + calculation.testId}
                           </div>
                         </div>
                         {calculation.operations.map((operation, operation_index) => (
@@ -580,7 +591,7 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
                               labelText={<FormattedMessage id="rulebuilder.label.selectSample" />}
                               value={calculation.sampleId}
                               className="inputSelect"
-                              onChange={(e) => { handleSampleSelected(e, "FINAL_RESULT", index, 0); handleCalculationFieldChange(e, index); resetCalculationValues(index, calculation) }}
+                              onChange={(e) => { handleSampleSelected(e, "FINAL_RESULT", index, 0); handleCalculationFieldChange(e, index); /*resetCalculationValue(index, calculation)*/ }}
                               required
                             >
                               <SelectItem
