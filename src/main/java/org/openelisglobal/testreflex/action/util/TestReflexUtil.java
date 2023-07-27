@@ -290,8 +290,7 @@ public class TestReflexUtil {
 
             // use cases 1-6, 10
             if (reflexBean.getTriggersToSelectedReflexesMap().isEmpty()) {
-                List<Analysis> newReflexAnalyses = handleAutomaticReflexes(parentAnalysisList, reflexBean,
-                    handledReflexIdList, sysUserId);
+                List<Analysis> newReflexAnalyses = new ArrayList<>();
                 Analyte analyte = reflexBean.getResult().getAnalyte();
                 if (analyte != null) {
                     Integer analyteId = Integer.valueOf(analyte.getId());
@@ -301,13 +300,18 @@ public class TestReflexUtil {
                             Set<Integer> testAnalyteIds = new HashSet<>();
                             rule.getConditions().forEach(c -> testAnalyteIds.add(c.getTestAnalyteId()));
                             if (analyteTestMap.get(analyteId) != null) {
-                                if (testAnalyteIds.size() > analyteTestMap.get(analyteId).size()) {
-                                    newReflexAnalyses = new ArrayList<>();
+                                if (testAnalyteIds.size() == analyteTestMap.get(analyteId).size()) {
+                                    newReflexAnalyses = handleAutomaticReflexes(parentAnalysisList, reflexBean,
+                                        handledReflexIdList, sysUserId);
                                 }
-                            }else {
-                                newReflexAnalyses = new ArrayList<>();
                             }
-                        } 
+                        } else {
+                            newReflexAnalyses = handleAutomaticReflexes(parentAnalysisList, reflexBean, handledReflexIdList,
+                                sysUserId);
+                        }
+                    } else {
+                        newReflexAnalyses = handleAutomaticReflexes(parentAnalysisList, reflexBean, handledReflexIdList,
+                            sysUserId);
                     }
                 }
                 reflexAnalysises.addAll(newReflexAnalyses);
