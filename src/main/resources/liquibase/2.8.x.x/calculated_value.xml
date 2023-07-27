@@ -127,4 +127,16 @@
                                  baseTableName="test_result_map" baseColumnNames="result_id"
                                  referencedTableName="result" referencedColumnNames="id"/>						 				 
 	</changeSet>
+	<changeSet author="moses_mutesa" id="6">
+		<preConditions onFail="MARK_RAN">
+			<tableExists tableName="analysis" schemaName="clinlims" />
+			<not>
+				<columnExists tableName="analysis" columnName="result_calculated" />
+			</not>
+		</preConditions>
+		<comment>add result_calculated  Column to analysis table</comment>
+		<addColumn schemaName="clinlims" tableName="analysis">
+			<column name="result_calculated" type="boolean"  />
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>
