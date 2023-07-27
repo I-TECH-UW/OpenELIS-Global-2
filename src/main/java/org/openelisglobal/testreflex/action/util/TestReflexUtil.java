@@ -271,14 +271,12 @@ public class TestReflexUtil {
             List<TestReflex> reflexesForResult = getReflexTests(reflexBean);
             if (!reflexesForResult.isEmpty()) {
                 TestAnalyte testAnalyte = reflexesForResult.get(0).getTestAnalyte();
-                Integer analyteId = Integer.valueOf(testAnalyte.getAnalyte().getId());
-                Integer testAnalyteId = Integer.valueOf(testAnalyte.getId());
-                
+                Set<Integer> testAnalyteIds = new HashSet<>();
+                reflexesForResult.forEach(reflex -> testAnalyteIds.add(Integer.valueOf(reflex.getTestAnalyte().getId())));
+                Integer analyteId = Integer.valueOf(testAnalyte.getAnalyte().getId());       
                 if (analyteTestMap.keySet().contains(analyteId)) {
-                    analyteTestMap.get(analyteId).add(testAnalyteId);
+                    analyteTestMap.get(analyteId).addAll(testAnalyteIds);
                 } else {
-                    Set<Integer> testAnalyteIds = new HashSet<>();
-                    testAnalyteIds.add(testAnalyteId);
                     analyteTestMap.put(analyteId, testAnalyteIds);
                 }
             }
