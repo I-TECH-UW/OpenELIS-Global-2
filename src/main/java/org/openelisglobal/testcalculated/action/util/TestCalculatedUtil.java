@@ -207,10 +207,7 @@ public class TestCalculatedUtil {
             TestResult testResult = getTestResultForCalculation(calculation);
             Result result = null;
             if (resultCalculation.getResult() != null) {
-                // if (resultCalculation.getResult().getAnalysis().getResultCalculated()) {
-                //     result = new Result();
-                // } else {
-                    result = resultCalculation.getResult();
+                result = resultCalculation.getResult();
             } else {
                 result = new Result();
             }
@@ -238,16 +235,10 @@ public class TestCalculatedUtil {
                 result.setValue(INCOMPLETE_VALUE);
             }
             if (resultCalculation.getResult() != null) {
-                // if (resultCalculation.getResult().getAnalysis().getResultCalculated()) {
-                //     analysis = createCalculatedAnalysis(null, test, resultSet.result, value, calculation.getName(),
-                //         systemUserId, resultCalculated);
-                //     result.setAnalysis(analysis);
-                //     resultService.insert(result);
-                // } else {
-                    analysis = createCalculatedAnalysis(resultCalculation.getResult().getAnalysis(), test, resultSet.result,
-                        value, calculation.getName(), systemUserId, resultCalculated);
-                    result.setAnalysis(analysis);
-                    resultService.update(result);
+                analysis = createCalculatedAnalysis(resultCalculation.getResult().getAnalysis(), test, resultSet.result,
+                    value, calculation.getName(), systemUserId, resultCalculated);
+                result.setAnalysis(analysis);
+                resultService.update(result);
             } else {
                 analysis = createCalculatedAnalysis(null, test, resultSet.result, value, calculation.getName(), systemUserId,
                     resultCalculated);
@@ -355,10 +346,7 @@ public class TestCalculatedUtil {
         Analysis currentAnalysis = result.getAnalysis();
         Analysis generatedAnalysis = null;
         if (existingAnalysis != null) {
-            // if (existingAnalysis.getResultCalculated()) {
-            //     generatedAnalysis = new Analysis();
-            // } else {
-                generatedAnalysis = existingAnalysis;
+            generatedAnalysis = existingAnalysis;
         } else {
             generatedAnalysis = new Analysis();
         }
@@ -376,10 +364,7 @@ public class TestCalculatedUtil {
         generatedAnalysis.setSysUserId(systemUserId);
         generatedAnalysis.setResultCalculated(resultCalculated);
         if (existingAnalysis != null) {
-            // if (existingAnalysis.getResultCalculated()) {
-            //     analysisService.insert(generatedAnalysis);
-            // } else {
-                analysisService.update(generatedAnalysis);
+            analysisService.update(generatedAnalysis);
         } else {
             analysisService.insert(generatedAnalysis);
         }
