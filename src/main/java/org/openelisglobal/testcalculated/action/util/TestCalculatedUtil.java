@@ -59,7 +59,7 @@ public class TestCalculatedUtil {
     
     private ResultLimitService resultLimitService = SpringContext.getBean(ResultLimitService.class);
     
-    private static final String INCOMPLETE_VALUE = "XXXX";
+    private static final String INCOMPLETE_VALUE = "#####";
     
     private String CALCULATION_SUBJECT = "Calculated Result Note";
     
@@ -211,11 +211,13 @@ public class TestCalculatedUtil {
             } else {
                 result = new Result();
             }
+            result.setTestResult(testResult);
             ResultLimit resultLimit = resultLimitService.getResultLimitForTestAndPatient(test.getId(),
                 resultCalculation.getPatient());
-            result.setTestResult(testResult);
-            result.setMaxNormal(resultLimit.getHighNormal());
-            result.setMinNormal(resultLimit.getLowNormal());
+            if (resultLimit != null) {
+                result.setMaxNormal(resultLimit.getHighNormal());
+                result.setMinNormal(resultLimit.getLowNormal());
+            }
             result.setResultType(testService.getResultType(test));
             result.setSysUserId(systemUserId);
             Boolean resultCalculated = false;
@@ -227,7 +229,14 @@ public class TestCalculatedUtil {
                     } else {
                         return null;
                     }
-                } else {
+                }else if("R".equals(resultType) || "A".equals(resultType)){
+                    if (Boolean.valueOf(value)) {
+                        result.setValue(calculation.getResult());
+                        resultCalculated = true;
+                    } else {
+                        result.setValue(INCOMPLETE_VALUE);
+                    }
+                } else if("N".equals(resultType)) {
                     result.setValue(value);
                     resultCalculated = true;
                 }
@@ -368,7 +377,7 @@ public class TestCalculatedUtil {
         } else {
             analysisService.insert(generatedAnalysis);
         }
-        if (value != null) {
+        if (resultCalculated) {
             createInternalNote(result, generatedAnalysis, currentAnalysis, calculationName, systemUserId);
         } else {
             createMissingValueInternalNote(result, generatedAnalysis, currentAnalysis, calculationName, systemUserId);
