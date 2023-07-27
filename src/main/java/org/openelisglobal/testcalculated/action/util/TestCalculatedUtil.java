@@ -24,6 +24,8 @@ import org.openelisglobal.note.valueholder.Note;
 import org.openelisglobal.result.action.util.ResultSet;
 import org.openelisglobal.result.service.ResultService;
 import org.openelisglobal.result.valueholder.Result;
+import org.openelisglobal.resultlimit.service.ResultLimitService;
+import org.openelisglobal.resultlimits.valueholder.ResultLimit;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.test.valueholder.Test;
@@ -54,6 +56,8 @@ public class TestCalculatedUtil {
     private AnalysisService analysisService = SpringContext.getBean(AnalysisService.class);
     
     private NoteService noteService = SpringContext.getBean(NoteService.class);
+    
+    private ResultLimitService resultLimitService = SpringContext.getBean(ResultLimitService.class);
     
     private static final String INCOMPLETE_VALUE = "XXXX";
     
@@ -173,7 +177,7 @@ public class TestCalculatedUtil {
                             value = scriptEngine.eval(function.toString()).toString();
                         }
                         catch (ScriptException e) {
-                            Log.error("Ivalid Calication Rule: " + calculation.getName(), e);
+                            Log.error("Invalid Calication Rule: " + calculation.getName(), e);
                         }
                         Analysis analysis = createCalculatedResult(resultCalculation, resultSet, calculation, value,
                             sysUserId);
@@ -201,30 +205,54 @@ public class TestCalculatedUtil {
         Analysis analysis = null;
         if (test != null) {
             TestResult testResult = getTestResultForCalculation(calculation);
-            Result result = resultCalculation.getResult() != null ? resultCalculation.getResult() : new Result();
+            Result result = null;
+            if (resultCalculation.getResult() != null) {
+                if (resultCalculation.getResult().getAnalysis().getResultCalculated()) {
+                    result = new Result();
+                } else {
+                    result = resultCalculation.getResult();
+                }
+            } else {
+                result = new Result();
+            }
+            ResultLimit resultLimit = resultLimitService.getResultLimitForTestAndPatient(test.getId(),
+                resultCalculation.getPatient());
             result.setTestResult(testResult);
+            result.setMaxNormal(resultLimit.getHighNormal());
+            result.setMinNormal(resultLimit.getLowNormal());
+            result.setResultType(testService.getResultType(test));
             result.setSysUserId(systemUserId);
+            Boolean resultCalculated = false;
             if (value != null) {
                 if ("D".equals(resultType)) {
                     if (Boolean.valueOf(value)) {
                         result.setValue(calculation.getResult());
-                    }else{
+                        resultCalculated = true;
+                    } else {
                         return null;
                     }
                 } else {
                     result.setValue(value);
+                    resultCalculated = true;
                 }
             } else {
                 result.setValue(INCOMPLETE_VALUE);
             }
             if (resultCalculation.getResult() != null) {
-                analysis = createCalculatedAnalysis(resultCalculation.getResult().getAnalysis(), test, resultSet.result,
-                    value, calculation.getName(), systemUserId);
-                result.setAnalysis(analysis);
-                resultService.update(result);
+                if (resultCalculation.getResult().getAnalysis().getResultCalculated()) {
+                    analysis = createCalculatedAnalysis(null, test, resultSet.result, value, calculation.getName(),
+                        systemUserId, resultCalculated);
+                    result.setAnalysis(analysis);
+                    resultService.insert(result);
+                } else {
+                    analysis = createCalculatedAnalysis(resultCalculation.getResult().getAnalysis(), test, resultSet.result,
+                        value, calculation.getName(), systemUserId, resultCalculated);
+                    result.setAnalysis(analysis);
+                    resultService.update(result);
+                }
             } else {
-                analysis = createCalculatedAnalysis(null, test, resultSet.result, value, calculation.getName(),
-                    systemUserId);
+                analysis = createCalculatedAnalysis(null, test, resultSet.result, value, calculation.getName(), systemUserId,
+                    resultCalculated);
                 result.setAnalysis(analysis);
                 resultService.insert(result);
             }
@@ -244,7 +272,8 @@ public class TestCalculatedUtil {
         }
         
         Note note2 = noteService.createSavableNote(newAnalysis, NoteType.INTERNAL,
-            "Calculation Parameters include Result of Test " + currentAnalysis.getTest().getLocalizedReportingName().getLocalizedValue(),
+            "Calculation Parameters include Result of Test "
+                    + currentAnalysis.getTest().getLocalizedReportingName().getLocalizedValue(),
             CALCULATION_SUBJECT, systemUserId);
         if (!noteService.duplicateNoteExists(note2)) {
             notes.add(note2);
@@ -262,7 +291,8 @@ public class TestCalculatedUtil {
             notes.add(note);
         }
         Note note2 = noteService.createSavableNote(newAnalysis, NoteType.INTERNAL,
-            "Calculation Parameters include Result of Test : " + currentAnalysis.getTest().getLocalizedReportingName().getLocalizedValue(),
+            "Calculation Parameters include Result of Test : "
+                    + currentAnalysis.getTest().getLocalizedReportingName().getLocalizedValue(),
             CALCULATION_SUBJECT, systemUserId);
         if (!noteService.duplicateNoteExists(note2)) {
             notes.add(note2);
@@ -302,12 +332,18 @@ public class TestCalculatedUtil {
                             function.append(result.getValue()).append(" ");
                             break;
                         case "IN_NORMAL_RANGE":
-                            function.append(" >= ").append(result.getMinNormal()).append(" && ").append(result.getValue())
-                                    .append(" <= ").append(result.getMaxNormal()).append(" ");
+                            function.append(" >= ")
+                                    .append(result.getMinNormal() != null ? result.getMinNormal() : Double.NEGATIVE_INFINITY)
+                                    .append(" && ").append(result.getValue()).append(" <= ")
+                                    .append(result.getMaxNormal() != null ? result.getMaxNormal() : Double.POSITIVE_INFINITY)
+                                    .append(" ");
                             break;
                         case "OUTSIDE_NORMAL_RANGE":
-                            function.append(" <= ").append(result.getMinNormal()).append(" || ").append(result.getValue())
-                                    .append(" >= ").append(result.getMaxNormal()).append(" ");
+                            function.append(" <= ")
+                                    .append(result.getMinNormal() != null ? result.getMinNormal() : Double.NEGATIVE_INFINITY)
+                                    .append(" || ").append(result.getValue()).append(" >= ")
+                                    .append(result.getMaxNormal() != null ? result.getMaxNormal() : Double.POSITIVE_INFINITY)
+                                    .append(" ");
                             break;
                     }
                 }
@@ -317,9 +353,18 @@ public class TestCalculatedUtil {
     }
     
     private Analysis createCalculatedAnalysis(Analysis existingAnalysis, Test test, Result result, String value,
-            String calculationName, String systemUserId) {
+            String calculationName, String systemUserId, Boolean resultCalculated) {
         Analysis currentAnalysis = result.getAnalysis();
-        Analysis generatedAnalysis = existingAnalysis != null ? existingAnalysis : new Analysis();
+        Analysis generatedAnalysis = null;
+        if (existingAnalysis != null) {
+            if (existingAnalysis.getResultCalculated()) {
+                generatedAnalysis = new Analysis();
+            } else {
+                generatedAnalysis = existingAnalysis;
+            }
+        } else {
+            generatedAnalysis = new Analysis();
+        }
         generatedAnalysis.setTest(test);
         generatedAnalysis.setIsReportable(currentAnalysis.getIsReportable());
         generatedAnalysis.setAnalysisType(currentAnalysis.getAnalysisType());
@@ -332,8 +377,13 @@ public class TestCalculatedUtil {
         generatedAnalysis.setTestSection(currentAnalysis.getTestSection());
         generatedAnalysis.setSampleTypeName(currentAnalysis.getSampleTypeName());
         generatedAnalysis.setSysUserId(systemUserId);
+        generatedAnalysis.setResultCalculated(resultCalculated);
         if (existingAnalysis != null) {
-            analysisService.update(generatedAnalysis);
+            if (existingAnalysis.getResultCalculated()) {
+                analysisService.insert(generatedAnalysis);
+            } else {
+                analysisService.update(generatedAnalysis);
+            }
         } else {
             analysisService.insert(generatedAnalysis);
         }
