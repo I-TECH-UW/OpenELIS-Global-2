@@ -8,4 +8,5 @@
 	<include relativeToChangelogFile="true" file="reflex_rule.xml" />
 	<include relativeToChangelogFile="true" file="desynchronous_objects.xml" />
 	<include relativeToChangelogFile="true" file="pathology.xml" />
+	<include relativeToChangelogFile="true" file="calculated_value.xml" />
 </databaseChangeLog>

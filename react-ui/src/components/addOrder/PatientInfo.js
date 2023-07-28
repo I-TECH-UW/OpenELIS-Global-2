@@ -1,7 +1,5 @@
-import React, {useEffect, useRef, useState} from 'react'
-import {getFromOpenElisServer} from "../utils/Utils";
-import {Button, Select, SelectItem, Stack} from "@carbon/react";
-import "./../admin/reflexTests/ReflexRule"
+import React, {useEffect, useRef, useState} from 'react';
+import {Button, Stack} from "@carbon/react";
 import SearchPatientForm from "../common/SearchPatientForm";
 import CreatePatientForm from "../common/CreatePatientForm";
 
@@ -32,6 +30,7 @@ const PatientInfo = (props) => {
         if (orderFormValues.patientProperties.firstName !== "" || orderFormValues.patientProperties.guid !== "") {
             handleNewPatientTab();
         }
+        window.scrollTo(0, 0)
         return () => {
             componentMounted.current = false
         }

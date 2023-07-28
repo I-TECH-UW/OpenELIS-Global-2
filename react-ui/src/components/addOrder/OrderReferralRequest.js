@@ -88,7 +88,7 @@ const OrderReferralRequest = ({
                                          value={referralRequests[i].institute ? referralRequests[i].institute : null}
                                          onChange={(e) => handleInstituteSelect(e, i)}
                                          defaultSelect={defaultSelect}/>,
-                sentDate: <CustomDatePicker id={"sendDate_" + id}
+                sentDate: <CustomDatePicker id={"sendDate_" + id} autofillDate={true}
                                             value={referralRequests[i].sentDate ? referralRequests[i].sentDate : null}
                                             onChange={(date) => handleSentDatePicker(date, i)} labelText={""}/>,
                 testName: <CustomSelect id={"shadowReferredTest_" + id} defaultSelect={testValue}/>,

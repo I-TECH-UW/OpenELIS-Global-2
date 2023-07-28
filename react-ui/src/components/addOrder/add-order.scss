@@ -1,4 +1,5 @@
 @use '@carbon/styles/scss/type';
+
 .singleTest {
   padding: 1rem 0.75rem;
 }
@@ -32,8 +33,15 @@
 .emptyFilterTests span{
   color: #d4373a;
 }
+.orderWorkFlowDiv{
+  //border: 0.5px solid #295785;
+  border-radius: 5px;
+  margin: 2%;
+  padding: 4%;
+}
+
 .orderLegendBody {
-  border: 0.5px solid #295785;
+  background-color: #FFFFFF;
   border-radius: 5px;
   margin: 2%;
   padding: 4%;
@@ -108,4 +116,29 @@
 .requestTestReferral .cds--checkbox-label-text {
   color: red !important;
 }
+.orderEntrySuccessMsg{
+  width: 240px;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+}
+.printBarCodeBtn{
+  width: 220px;
+  text-align: center;
+}
 
+.confirmPrintCodeBtn {
+  height: 30px;
+  width: 70px;
+  text-align: center;
+  margin-top: 26px;
+  margin-left: 10px;
+}
+
+.placeAnotherOrderBtn {
+  width: 220px;
+  text-align: center;
+  margin-top: 10px;
+}

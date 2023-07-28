@@ -110,7 +110,7 @@ public class Result extends EnumValueItemImpl {
     }
 
     public String getValue(Boolean getActualNumericValue) {
-        if (getActualNumericValue) {
+        if (getActualNumericValue && this.resultType != null) {
             if ((this.resultType.equals("N") || this.resultType.equals("D") || this.resultType.equals("A"))
                     && this.value != null) {
                 return StringUtil.getActualNumericValue(value);

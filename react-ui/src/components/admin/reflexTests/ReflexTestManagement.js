@@ -1,6 +1,6 @@
 import React from 'react'
 import { injectIntl } from 'react-intl'
-import ReflexRule from './ReflexRule';
+import ReflexRule from './ReflexRuleForm';
 
 
 class ReflexTestManagement extends React.Component {

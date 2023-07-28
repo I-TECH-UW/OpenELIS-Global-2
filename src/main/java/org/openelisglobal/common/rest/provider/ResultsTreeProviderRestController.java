@@ -115,11 +115,17 @@ public class ResultsTreeProviderRestController {
                     
                     for (Result result : testResultentry.getValue()) {
                         ResultDisplay resultDisplay = new ResultDisplay();
-                        if(result.getResultType().equals("N")){
-                            resultDisplay.setValue(result.getValue(true));
-                        }else {
-                            String dict = dictionaryService.get(result.getValue()).getDictEntry();
-                            resultDisplay.setValue(dict);
+                        String resultType =testService.getResultType(result.getTestResult().getTest());
+                        if (resultType.equals("N")) {
+                            resultDisplay.setValue(result.getValue() != null ? result.getValue(true) : "");
+                        } else {
+                            if (result.getValue() != null) {
+                                String dict = dictionaryService.get(result.getValue()).getDictEntry();
+                                resultDisplay.setValue(dict);
+                            }else{
+                                resultDisplay.setValue("");
+                            }
+                            
                         }
                         
                         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
@@ -130,7 +136,7 @@ public class ResultsTreeProviderRestController {
                     TestDisplay testDisplay = new TestDisplay();
                     testDisplay.setDisplay(testResultentry.getKey().getLocalizedName());
                     testDisplay.setConceptUuid(testResultentry.getKey().getId());
-                    testDisplay.setDatatype(testResultentry.getValue().iterator().next().getResultType());
+                    testDisplay.setDatatype(testService.getResultType(testResultentry.getValue().iterator().next().getTestResult().getTest()));
                     testDisplay.setHiNormal(testResultentry.getValue().iterator().next().getMaxNormal());
                     testDisplay.setLowNormal(testResultentry.getValue().iterator().next().getMinNormal());
                     testDisplay.setHighCritical(testResultentry.getValue().iterator().next().getMaxNormal());
@@ -201,7 +207,7 @@ public class ResultsTreeProviderRestController {
             
             for (Result result : testResultentry.getValue()) {
                 ResultDisplay resultDisplay = new ResultDisplay();
-                resultDisplay.setValue(result.getValue(true));
+                resultDisplay.setValue(result.getValue(true) != null ? result.getValue(true) : "");
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
                 resultDisplay.setObsDatetime(dateFormat.format(result.getLastupdated()));
                 resultDisplays.add(resultDisplay);
@@ -210,7 +216,7 @@ public class ResultsTreeProviderRestController {
             TestDisplay testDisplay = new TestDisplay();
             testDisplay.setDisplay(testResultentry.getKey().getLocalizedName());
             testDisplay.setConceptUuid(testResultentry.getKey().getId());
-            testDisplay.setDatatype(testResultentry.getValue().iterator().next().getResultType());
+            testDisplay.setDatatype(testService.getResultType(testResultentry.getValue().iterator().next().getTestResult().getTest()));
             testDisplay.setHiNormal(testResultentry.getValue().iterator().next().getMaxNormal());
             testDisplay.setLowNormal(testResultentry.getValue().iterator().next().getMinNormal());
             testDisplay.setHighCritical(testResultentry.getValue().iterator().next().getMaxNormal());
