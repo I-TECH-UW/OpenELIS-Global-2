@@ -88,9 +88,9 @@ services:
       - source: common.properties
       
   frontend.openelis.org:
-    image: react-ui
+    image: frontend
     build:
-      context: ./react-ui
+      context: ./frontend
       dockerfile: ./Dockerfile
     container_name: openelisglobal-front-end  
     # ports:
@@ -98,8 +98,8 @@ services:
     networks:
       - default
     volumes:
-      - './react-ui/src:/app/src'
-      - './react-ui/public:/app/public'
+      - './frontend/src:/app/src'
+      - './frontend/public:/app/public'
     environment:
       - CHOKIDAR_USEPOLLING=true
     tty: true

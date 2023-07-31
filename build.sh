@@ -92,7 +92,7 @@ echo "creating docker images"
 #bash ${INSTALL_DIR}/buildProject.sh -dl ${CONSOLIDATED_SERVER_DIR}
 bash ${INSTALL_DIR}/buildProject.sh -dl ${PROJECT_DIR}/fhir -t hapi-fhir-jpaserver
 #create the frontend docker image 
-bash ${INSTALL_DIR}/buildProject.sh -dl ${PROJECT_DIR}/react-ui -t openelisglobal-frontend
+bash ${INSTALL_DIR}/buildProject.sh -dl ${PROJECT_DIR}/frontend -t openelisglobal-frontend
 #create the frontend docker image 
 bash ${INSTALL_DIR}/buildProject.sh -dl ${PROJECT_DIR}/nginx-proxy -t nginx-proxy
 #create the docker image 
