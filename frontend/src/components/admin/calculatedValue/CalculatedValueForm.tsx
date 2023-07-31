@@ -528,9 +528,9 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
                           <div className="inlineDiv">
                              &nbsp; {calculation.operations.map((operation, operationIndex) => (
                               <div>
-                               {operation.type === 'TEST_RESULT'?"'":""} {operation.type === 'TEST_RESULT' ? sampleTestList["TEST_RESULT"][index]?sampleTestList["TEST_RESULT"][index][operationIndex]?.filter(test => test.id == operation.value)[0]?.value + "'": "": operation.value}  &nbsp;
+                               {operation.type === 'TEST_RESULT' && operation.value?"'":""}{operation.type === 'TEST_RESULT' ? sampleTestList["TEST_RESULT"][index]?sampleTestList["TEST_RESULT"][index][operationIndex]?.filter(test => test.id == operation.value)[0]?.value + "'": "": operation.value}  &nbsp;
                               </div>
-                            ))}  {(<b style={{ color: 'red' }}>{" => "}</b>)} &nbsp; {"'"}{sampleTestList["FINAL_RESULT"][index]?sampleTestList["FINAL_RESULT"][index]?.filter(test => test.id == calculation.testId)[0]?.value + "'": ""}
+                            ))}  {(<b style={{ color: 'red' }}>{" => "}</b>)} &nbsp; {calculation.testId?"'" : ""}{sampleTestList["FINAL_RESULT"][index]?sampleTestList["FINAL_RESULT"][index]?.filter(test => test.id == calculation.testId)[0]?.value + "'": ""}
                           </div>
                         </div>
                         {calculation.operations.map((operation, operation_index) => (
