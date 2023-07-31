@@ -93,6 +93,16 @@ public class ARVFormMapper extends BaseProjectFormMapper implements IProjectForm
         return testList;
     }
 
+
+    public List<Test> getPSCTests(IProjectForm form) {
+        List<Test> testList = new ArrayList<>();
+        if (projectData.getViralLoadTest()) {
+            CollectionUtils.addIgnoreNull(testList, createTest("Viral Load", true));
+        }
+        return testList;
+    }
+
+    
     @Override
     public ArrayList<TypeOfSampleTests> getTypeOfSampleTests() {
         ArrayList<TypeOfSampleTests> sItemTests = new ArrayList<>();
@@ -117,6 +127,12 @@ public class ARVFormMapper extends BaseProjectFormMapper implements IProjectForm
         if (projectData.getdbsvlTaken()) {
             sItemTests.add(new TypeOfSampleTests(getTypeOfSample("DBS"), getEDTATubeTests(form)));
         }
+        
+        // Check for PSC Tests for Viral Load
+        if (projectData.isPscvlTaken()) {
+            sItemTests.add(new TypeOfSampleTests(getTypeOfSample("PSC"), getPSCTests(form)));
+        }
+
 
         return sItemTests;
     }

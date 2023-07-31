@@ -4,7 +4,7 @@
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="162"/>
+	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -23,6 +23,7 @@
 	<parameter name="rightHeaderImage" class="java.io.InputStream" isForPrompting="false"/>
 	<parameter name="imagesPath" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="vlPregnancy" class="java.lang.String"/>
+	<parameter name="vlSuckle" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -46,6 +47,8 @@
 	<field name="compleationdate" class="java.lang.String"/>
 	<field name="vih" class="java.lang.String"/>
 	<field name="vlPregnancy" class="java.lang.String"/>
+	<field name="sampleTypeName" class="java.lang.String"/>
+	<field name="vlSuckle" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -57,11 +60,14 @@
 			<subreport>
 				<reportElement x="0" y="135" width="552" height="69"/>
 				<subreportParameter name="accession_number"/>
-				<subreportParameter name="subjectNumber">
-					<subreportParameterExpression><![CDATA[$F{subjectno}==null ? $F{sitesubjectno}:$F{subjectno}]]></subreportParameterExpression>
-				</subreportParameter>
 				<subreportParameter name="birth_date">
 					<subreportParameterExpression><![CDATA[$F{birth_date}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="doctor">
+					<subreportParameterExpression><![CDATA[$F{doctor}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="subjectNumber">
+					<subreportParameterExpression><![CDATA[$F{subjectno}==null ? $F{sitesubjectno}:$F{subjectno}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="compleationdate">
 					<subreportParameterExpression><![CDATA[$F{compleationdate}]]></subreportParameterExpression>
@@ -71,6 +77,9 @@
 				</subreportParameter>
 				<subreportParameter name="age">
 					<subreportParameterExpression><![CDATA[$F{age}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="vlPregnancy">
+					<subreportParameterExpression><![CDATA[$F{vlPregnancy}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="labNo">
 					<subreportParameterExpression><![CDATA[$F{accession_number}]]></subreportParameterExpression>
@@ -84,8 +93,8 @@
 				<subreportParameter name="receptiondate">
 					<subreportParameterExpression><![CDATA[$F{receptiondate}]]></subreportParameterExpression>
 				</subreportParameter>
-				<subreportParameter name="doctor">
-					<subreportParameterExpression><![CDATA[$F{doctor}]]></subreportParameterExpression>
+				<subreportParameter name="vlSuckle">
+					<subreportParameterExpression><![CDATA[$F{vlSuckle}]]></subreportParameterExpression>
 				</subreportParameter>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource()]]></dataSourceExpression>
 				<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "Patient_ARV_Followup_patient_info.jasper"]]></subreportExpression>
@@ -191,7 +200,7 @@
 				<textElement>
 					<font isUnderline="true"/>
 				</textElement>
-				<text><![CDATA[Analyseur :]]></text>
+				<text><![CDATA[Automate :]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="7" y="148" width="122" height="15"/>
@@ -201,25 +210,18 @@
 				<text><![CDATA[Trousse commerciale:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="129" y="148" width="423" height="15"/>
+				<reportElement x="129" y="148" width="423" height="15" isPrintWhenDetailOverflows="true"/>
 				<textElement>
 					<font size="9" isItalic="false" isStrikeThrough="false"/>
 				</textElement>
-				<text><![CDATA[COBAS Taqman / Ampliprep  HIV-1 tests,V2.0 Quantitative  (HI2CAP) / ]]></text>
+				<text><![CDATA[COBAS Taqman/Ampliprep  HIV-1 tests,V2.0 Quantitative  (HI2CAP) / C4800 HIV-1 AMP/DET]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="129" y="129" width="339" height="15"/>
+				<reportElement x="129" y="129" width="421" height="15" isPrintWhenDetailOverflows="true"/>
 				<textElement>
 					<font size="9"/>
 				</textElement>
-				<text><![CDATA[Cobas Ampliprep / Cobas Taqman Series / Cobas 6800 Roche Diagnostic]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="129" y="97" width="284" height="15"/>
-				<textElement>
-					<font size="9"/>
-				</textElement>
-				<text><![CDATA[Sang total (plasma/EDTA) ; (Papier Buvard WHATMAN 903)]]></text>
+				<text><![CDATA[COBAS Ampliprep / Cobas Taqman Series / Cobas 6800 Roche Diagnostic / Cobas 4800]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="129" y="81" width="423" height="15"/>
@@ -268,13 +270,6 @@
 			<rectangle>
 				<reportElement x="5" y="243" width="157" height="20"/>
 			</rectangle>
-			<staticText>
-				<reportElement x="19" y="245" width="100" height="18"/>
-				<textElement>
-					<font size="12"/>
-				</textElement>
-				<text><![CDATA[HIV-1]]></text>
-			</staticText>
 			<textField>
 				<reportElement x="167" y="244" width="179" height="18"/>
 				<textElement textAlignment="Center" verticalAlignment="Top">
@@ -299,12 +294,24 @@
 				<imageExpression class="java.lang.String"><![CDATA[$P{imagesPath}+ "INTERPRETATIONS.jpg"]]></imageExpression>
 			</image>
 			<staticText>
-				<reportElement x="129" y="163" width="423" height="13"/>
+				<reportElement x="129" y="163" width="423" height="13" isPrintWhenDetailOverflows="true"/>
 				<textElement>
 					<font size="9" isItalic="false" isStrikeThrough="false"/>
 				</textElement>
 				<text><![CDATA[COBAS 6800/8800 HIV-1 P/N]]></text>
 			</staticText>
+			<textField>
+				<reportElement x="18" y="245" width="100" height="18"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{vih}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="130" y="96" width="354" height="15"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sampleTypeName}]]></textFieldExpression>
+			</textField>
 		</band>
 		<band height="472">
 			<printWhenExpression><![CDATA[$F{virologyVlQaEvent}!=null]]></printWhenExpression>
@@ -910,30 +917,37 @@
 					<pen lineWidth="0.75" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
+			<image>
+				<reportElement x="12" y="6" width="317" height="12"/>
+				<imageExpression class="java.lang.String"><![CDATA[$P{imagesPath}+ "RefVal.jpg"]]></imageExpression>
+			</image>
 			<staticText>
-				<reportElement x="12" y="23" width="534" height="19"/>
-				<textElement>
-					<font size="10"/>
-				</textElement>
-				<text><![CDATA[Seuil de détection de la technique (Tube EDTA): 20 copies /mL]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="12" y="60" width="534" height="19"/>
+				<reportElement x="10" y="88" width="534" height="19"/>
 				<textElement>
 					<font size="10"/>
 				</textElement>
 				<text><![CDATA[Valeur charge virale : < LL=virus HIV-1 indétectable dans le sang périphérique]]></text>
 			</staticText>
-			<image>
-				<reportElement x="12" y="5" width="317" height="12"/>
-				<imageExpression class="java.lang.String"><![CDATA[$P{imagesPath}+ "RefVal.jpg"]]></imageExpression>
-			</image>
 			<staticText>
-				<reportElement x="12" y="42" width="534" height="19"/>
+				<reportElement x="12" y="65" width="408" height="19"/>
 				<textElement>
 					<font size="10"/>
 				</textElement>
-				<text><![CDATA[Seuil de détection de la technique (Papier Buvard WHATMAN 903): 400 copies /mL]]></text>
+				<text><![CDATA[Seuil de détection de la technique W/PSC : 599 copies/mL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="10" y="21" width="408" height="19"/>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[Seuil de détection de la technique CV/PL : 20 copies /mL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="10" y="43" width="408" height="19"/>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[Seuil de détection de la technique CV/DBS : 400 copies /mL]]></text>
 			</staticText>
 		</band>
 	</pageFooter>

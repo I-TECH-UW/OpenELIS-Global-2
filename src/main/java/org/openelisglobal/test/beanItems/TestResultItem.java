@@ -114,6 +114,10 @@ public class TestResultItem implements ResultItem, Serializable {
     private double upperAbnormalRange;
     private double lowerAbnormalRange;
     private String normalRange = "";
+    private double lowerCritical;
+    private double higherCritical;
+    
+    
 
     private int significantDigits = -1;
 
@@ -418,6 +422,22 @@ public class TestResultItem implements ResultItem, Serializable {
 
     public void setLowerAbnormalRange(double lowerAbnormalRange) {
         this.lowerAbnormalRange = lowerAbnormalRange;
+    }
+
+    public double getLowerCritical() {
+        return lowerCritical;
+    }
+
+    public void setLowerCritical(double lowerCritical) {
+        this.lowerCritical = lowerCritical;
+    }
+
+    public double getHigherCritical() {
+        return higherCritical;
+    }
+
+    public void setHigherCritical(double higherCritical) {
+        this.higherCritical = higherCritical;
     }
 
     public String getReportable() {

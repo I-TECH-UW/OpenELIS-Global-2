@@ -13,20 +13,24 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class DBImageController {
 
-    @Autowired
-    private ImageService imageService;
+	@Autowired
+	private ImageService imageService;
 
-    @GetMapping(value = "/dbImage/siteInformation/{imageName}")
-    public @ResponseBody byte[] getImage(@PathVariable String imageName) {
-        Optional<Image> image = imageService.getImageBySiteInfoName(imageName);
-        if (image.isEmpty()) {
-            return getBlankImage();
-        }
-        return image.get().getImage();
-    }
+	@GetMapping(value = "/dbImage/siteInformation/{imageName}")
+	public @ResponseBody byte[] getImage(@PathVariable String imageName) {
+		Optional<Image> image = imageService.getImageBySiteInfoName(imageName);
+		if (image.isEmpty()) {
+			return getBlankImage();
+		}
+		try {
+			return image.get().getImage();
+		} catch (Exception e) {
+			return getBlankImage();
+		}
+	}
 
-    byte[] getBlankImage() {
-        return new byte[] {};
+	byte[] getBlankImage() {
+		return new byte[] {};
 
-    }
+	}
 }

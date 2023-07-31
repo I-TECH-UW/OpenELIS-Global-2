@@ -69,6 +69,7 @@
 	boolean autofillTechBox = ConfigurationProperties.getInstance()
 			.isPropertyValueEqual(Property.autoFillTechNameBox, "true");
 	boolean restrictNewReferringMethodEntries = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.restrictFreeTextMethodEntry, "true");
+	String criticalMessage = ConfigurationProperties.getInstance().getPropertyValue(ConfigurationProperties.Property.customCriticalMessage);
 		
 %>
 
@@ -102,6 +103,7 @@
 var compactHozSpace = '<%=compactHozSpace%>';
 var dirty = false;
 
+var criticalMsg = "<%=criticalMessage%>";
 var pager = new OEPager('<c:out value="${form.formName}" />', '&type=' + encodeURIComponent('<spring:escapeBody javaScriptEscape="true">${type}</spring:escapeBody>'));
 pager.setCurrentPageNumber('<spring:escapeBody javaScriptEscape="true">${form.paging.currentPage}</spring:escapeBody>');
 
@@ -551,6 +553,14 @@ function /*void*/ handleEnterEvent(  ){
 
 // });
 
+  function validateCriticalResults(resultBox,lowCritical,highCritical){
+	var actualValue = resultBox.value;
+	if (actualValue > lowCritical && actualValue < highCritical) {
+		resultBox.style.borderColor = "orange";
+            alert(criticalMsg);
+            return;
+        }
+  }
 </script>
 
 <c:if test="${form.displayTestSections}">
@@ -869,6 +879,10 @@ function /*void*/ handleEnterEvent(  ){
 					value="${testResult.lowerAbnormalRange}" />
 				<c:set var="upperAbnormalBound"
 					value="${testResult.upperAbnormalRange}" />
+				<c:set var="lowerCritical"
+					value="${testResult.lowerCritical}" />	
+				<c:set var="upperCritical"
+					value="${testResult.higherCritical}" />	
 				<c:set var="significantDigits"
 					value="${testResult.significantDigits}" />
 				<c:set var="accessionNumber" value="${testResult.accessionNumber}" />
@@ -1069,7 +1083,9 @@ function /*void*/ handleEnterEvent(  ){
 								style="background: ${testResult.valid ? testResult.normal ? '#ffffff' : '#ffffa0' : '#ffa0a0' }"
 								cssClass="resultValue"
 								disabled='${testResult.readOnly}'
-								onchange="validateResults( this, ${iter.index}, ${lowerBound}, ${upperBound}, ${lowerAbnormalBound}, ${upperAbnormalBound}, ${significantDigits}, 'XXXX' );
+								onchange="validateResults( this, ${iter.index}, ${lowerBound}, ${upperBound}, ${lowerAbnormalBound}, ${upperAbnormalBound}, 
+								 ${significantDigits}, 'XXXX' );
+								 validateCriticalResults(this, ${lowerCritical},${upperCritical});
 					   			 markUpdated(${iter.index});
 					   			 ${(testResult.reflexGroup && not testResult.childReflex) ? 'updateReflexChild(' += testResult.reflexParentGroup += ');' : ''}
 					   			 ${(noteRequired && not empty testResult.resultValue) ? 'showNote(' += iter.index += ');' : ''}

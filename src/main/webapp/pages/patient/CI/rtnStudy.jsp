@@ -232,7 +232,7 @@ rtn = new RtnProjectChecker();
 				onchange="rtn.checkGender(true)">
 				<option value=""></option>
 				<form:options items="${form.formLists.GENDERS}" itemLabel="localizedName"
-					itemValue="genderType" />
+					itemValue="id" />
 			</form:select>
 			<div id="genderMessage" class="blank"></div>
 		</td>

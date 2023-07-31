@@ -131,6 +131,13 @@ public class TestAddFormValidator implements Validator {
                                 StringUtil.nullSafeToString(resultLimit.get("highReportingRange")), "JsonWad",
                                 "result limit [" + i + "] highReportingRange", errors, false, 255,
                                 ValidationHelper.FLOAT_REGEX);
+                        ValidationHelper.validateField(StringUtil.nullSafeToString(resultLimit.get("lowCritical")),
+                                "JsonWad", "result limit [" + i + "] lowCritical", errors, false, 255,
+                                ValidationHelper.FLOAT_REGEX);
+
+                        ValidationHelper.validateField(StringUtil.nullSafeToString(resultLimit.get("highCritical")),
+                                "JsonWad", "result limit [" + i + "] highCritical", errors, false, 255,
+                                ValidationHelper.FLOAT_REGEX);
 
                         if ((Boolean) resultLimit.get("gender")) {
                             ValidationHelper.validateField(

@@ -65,6 +65,7 @@ public class ProjectData implements Serializable {
     private boolean dnaPCR;
     private boolean dbsTaken;
     private boolean dbsvlTaken;
+    private boolean pscvlTaken;
 
     // ARV
     private String doctor;
@@ -662,4 +663,12 @@ public class ProjectData implements Serializable {
     public void setInnoliaTest(boolean innoliaTest) {
         this.innoliaTest = innoliaTest;
     }
+
+	public boolean isPscvlTaken() {
+		return pscvlTaken;
+	}
+
+	public void setPscvlTaken(boolean pscvlTaken) {
+		this.pscvlTaken = pscvlTaken;
+	}
 }

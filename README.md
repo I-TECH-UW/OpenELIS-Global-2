@@ -7,7 +7,6 @@ You can find more information on how to set up OpenELIS at our [docs page](http:
 
 [![Publish Docker Image Status](https://github.com/I-TECH-UW/OpenELIS-Global-2/actions/workflows/publish.yml/badge.svg)](https://github.com/I-TECH-UW/OpenELIS-Global-2/actions/workflows/publish.yml)
 
-
 ### Running OpenELIS in Docker
 #### Running with published docker images
     docker-compose up -d
@@ -21,3 +20,4 @@ You can find more information on how to set up OpenELIS at our [docs page](http:
 |---------- |:-------------:|------:                       |
 | Legacy UI   |  https://localhost/api/OpenELIS-Global/  | admin: adminADMIN! |
 | New React UI  |    https://localhost/  |  admin: adminADMIN!
+

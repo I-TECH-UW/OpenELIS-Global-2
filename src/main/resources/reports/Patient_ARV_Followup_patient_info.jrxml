@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Patient_ARV_Followup_patient_info" pageWidth="552" pageHeight="802" columnWidth="552" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
-	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.zoom" value="1.6528925619834736"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
@@ -25,6 +25,7 @@
 	<parameter name="compleationdate" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="studyName" class="java.lang.String"/>
 	<parameter name="vlPregnancy" class="java.lang.String"/>
+	<parameter name="vlSuckle" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -43,7 +44,7 @@
 	<detail>
 		<band height="75" splitType="Stretch">
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement key="textField" x="61" y="18" width="76" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="textField" x="71" y="15" width="83" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -56,7 +57,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{birth_date}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement key="textField" x="35" y="36" width="39" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="textField" x="32" y="31" width="27" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -69,7 +70,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{age}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement key="textField" x="35" y="54" width="16" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="textField" x="119" y="31" width="16" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -82,7 +83,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{gender}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement key="textField" x="213" y="36" width="96" height="18" forecolor="#000000" backcolor="#FFFFFF">
+				<reportElement key="textField" x="255" y="36" width="71" height="18" forecolor="#000000" backcolor="#FFFFFF">
 					<printWhenExpression><![CDATA[$P{receptiondate}!= ""]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -97,7 +98,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{receptiondate}.substring(0,10)]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement key="textField" mode="Transparent" x="348" y="1" width="201" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="textField" mode="Transparent" x="371" y="0" width="178" height="18" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -110,10 +111,10 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{labNo}]]></textFieldExpression>
 			</textField>
 			<rectangle>
-				<reportElement key="rectangle-1" x="308" y="18" width="243" height="53" backcolor="#F8F8F8"/>
+				<reportElement key="rectangle-1" x="328" y="18" width="223" height="53" backcolor="#F8F8F8"/>
 			</rectangle>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement key="textField" x="338" y="37" width="211" height="17" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="textField" x="353" y="37" width="196" height="17" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -126,7 +127,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{orgname}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement key="textField" x="392" y="19" width="157" height="17" forecolor="#000000" backcolor="#FFFFFF">
+				<reportElement key="textField" x="401" y="19" width="151" height="17" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF">
 					<printWhenExpression><![CDATA[$P{showDoctor}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -141,14 +142,14 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{doctor}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-3" x="62" y="0" width="245" height="18"/>
+				<reportElement key="textField-3" x="62" y="0" width="263" height="18" isPrintWhenDetailOverflows="true"/>
 				<textElement>
 					<font size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{subjectNumber}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement key="staticText-1" x="309" y="37" width="29" height="18"/>
+				<reportElement key="staticText-1" x="328" y="37" width="29" height="18" isPrintWhenDetailOverflows="true"/>
 				<textElement>
 					<font size="9" isBold="true"/>
 				</textElement>
@@ -162,40 +163,40 @@
 				<text><![CDATA[Sujetno: ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-3" x="1" y="18" width="61" height="18"/>
+				<reportElement key="staticText-3" x="1" y="15" width="81" height="18" isPrintWhenDetailOverflows="true"/>
 				<textElement>
 					<font size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Date Naiss.:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-4" x="1" y="36" width="35" height="18"/>
+				<reportElement key="staticText-4" x="3" y="31" width="29" height="18"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Age:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-5" x="1" y="54" width="34" height="18"/>
+				<reportElement key="staticText-5" x="85" y="31" width="34" height="18"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Sexe:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-6" x="307" y="0" width="41" height="18"/>
+				<reportElement key="staticText-6" x="328" y="0" width="41" height="18"/>
 				<textElement>
 					<font size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Labno:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-7" x="137" y="18" width="76" height="18"/>
+				<reportElement key="staticText-7" x="178" y="18" width="75" height="18"/>
 				<textElement textAlignment="Right"/>
 				<text><![CDATA[Date de Prél.:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-8" x="309" y="19" width="83" height="17">
+				<reportElement key="staticText-8" x="328" y="19" width="73" height="17" isPrintWhenDetailOverflows="true">
 					<printWhenExpression><![CDATA[$P{showDoctor}]]></printWhenExpression>
 				</reportElement>
 				<textElement>
@@ -204,14 +205,14 @@
 				<text><![CDATA[Prescripteur:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-7" x="97" y="36" width="116" height="18">
+				<reportElement key="staticText-7" x="150" y="36" width="105" height="18">
 					<printWhenExpression><![CDATA[$P{receptiondate} != ""]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Right"/>
 				<text><![CDATA[Date de Réception:]]></text>
 			</staticText>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement key="textField" x="213" y="18" width="95" height="18" forecolor="#000000" backcolor="#FFFFFF">
+				<reportElement key="textField" x="254" y="18" width="71" height="18" forecolor="#000000" backcolor="#FFFFFF">
 					<printWhenExpression><![CDATA[$P{collectiondate}!= ""]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -226,14 +227,14 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{collectiondate}.substring(0,10)]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement key="staticText-1" x="310" y="55" width="62" height="16"/>
+				<reportElement key="staticText-1" x="328" y="55" width="62" height="16" isPrintWhenDetailOverflows="true"/>
 				<textElement>
 					<font size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Adresse:]]></text>
 			</staticText>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement key="textField-5" x="213" y="54" width="96" height="18" forecolor="#000000" backcolor="#FFFFFF">
+				<reportElement key="textField-5" x="255" y="54" width="70" height="18" forecolor="#000000" backcolor="#FFFFFF">
 					<printWhenExpression><![CDATA[$P{compleationdate}!= ""]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -248,10 +249,58 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{compleationdate}.substring(0,10)]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="51" y="54" width="162" height="18"/>
+				<reportElement x="135" y="54" width="120" height="18"/>
 				<textElement textAlignment="Right"/>
-				<text><![CDATA[Date de Réalisation du test:]]></text>
+				<text><![CDATA[Date de Réalisation :]]></text>
 			</staticText>
+			<staticText>
+				<reportElement key="staticText-5" x="3" y="46" width="73" height="13" isPrintWhenDetailOverflows="true">
+					<printWhenExpression><![CDATA[$P{gender}.equalsIgnoreCase("F")]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Grossesse: ]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="textField" x="72" y="46" width="47" height="13" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF">
+					<printWhenExpression><![CDATA[$P{gender}.equalsIgnoreCase("F")]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[($P{vlPregnancy}.isEmpty() || $P{vlPregnancy}.isEmpty())?" ":$P{vlPregnancy}.split("=")[1] ]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText-5" x="3" y="58" width="73" height="13" isPrintWhenDetailOverflows="true">
+					<printWhenExpression><![CDATA[$P{gender}.equalsIgnoreCase("F")]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Allaitement:]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="textField" x="72" y="58" width="47" height="13" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF">
+					<printWhenExpression><![CDATA[$P{gender}.equalsIgnoreCase("F")]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[($P{vlSuckle}.isEmpty() || $P{vlSuckle}.isEmpty())?" ":$P{vlSuckle}.split("=")[1] ]]></textFieldExpression>
+			</textField>
 		</band>
 	</detail>
 	<columnFooter>
