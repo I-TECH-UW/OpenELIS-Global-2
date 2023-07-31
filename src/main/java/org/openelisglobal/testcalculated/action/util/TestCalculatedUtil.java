@@ -227,16 +227,16 @@ public class TestCalculatedUtil {
                         result.setValue(calculation.getResult());
                         resultCalculated = true;
                     } else {
-                        return null;
+                        result.setValue("0");
                     }
-                }else if("R".equals(resultType) || "A".equals(resultType)){
+                } else if ("R".equals(resultType) || "A".equals(resultType)) {
                     if (Boolean.valueOf(value)) {
                         result.setValue(calculation.getResult());
                         resultCalculated = true;
                     } else {
                         result.setValue(INCOMPLETE_VALUE);
                     }
-                } else if("N".equals(resultType)) {
+                } else if ("N".equals(resultType)) {
                     result.setValue(value);
                     resultCalculated = true;
                 }
@@ -355,7 +355,7 @@ public class TestCalculatedUtil {
         Analysis currentAnalysis = result.getAnalysis();
         Analysis generatedAnalysis = null;
         if (existingAnalysis != null) {
-            generatedAnalysis = existingAnalysis;
+            generatedAnalysis = analysisService.get(existingAnalysis.getId());
         } else {
             generatedAnalysis = new Analysis();
         }
