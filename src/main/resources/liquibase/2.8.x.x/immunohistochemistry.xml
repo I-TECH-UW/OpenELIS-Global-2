@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+	xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+	 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+	 
+  	<property name="now" value="now()" dbms="postgresql"/>
+			
+	<changeSet author="csteele" id="1">
+	<validCheckSum>8:ab895f74386ecc421575297f4641e78b</validCheckSum>
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="immunohistochemistry_sample" schemaName="clinlims" />
+			</not>
+		</preConditions>
+		<comment>create immunohistochemistry table</comment>
+		<createTable tableName="immunohistochemistry_sample">
+			<column name="id" type="INTEGER" valueSequenceNext="program_sample_seq">
+				<constraints primaryKey="true" nullable="false"/>
+			</column>
+			<column name="technician_id" type="NUMERIC(10)"/>
+			<column name="pathologist_id" type="NUMERIC(10)"/>
+			<column name="program_id" type="NUMERIC(10)"/>
+			<column name="sample_id" type="NUMERIC(10)"/>
+			<column name="status" type="VARCHAR(255)"/>
+			<column name="questionnaire_response_uuid" type="uuid" />
+			<column name="last_updated" type="datetime"/>
+		</createTable>
+		<addForeignKeyConstraint constraintName="immunohistochemistry_sample_program_id_fk"
+                                 baseTableName="immunohistochemistry_sample" baseColumnNames="program_id"
+                                 referencedTableName="program" referencedColumnNames="id"/>
+		<addForeignKeyConstraint constraintName="immunohistochemistry_sample_sample_id_fk"
+                                 baseTableName="immunohistochemistry_sample" baseColumnNames="sample_id"
+                                 referencedTableName="sample" referencedColumnNames="id"/>
+	</changeSet>
+	
+</databaseChangeLog>

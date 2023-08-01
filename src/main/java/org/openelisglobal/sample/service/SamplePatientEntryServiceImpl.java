@@ -43,8 +43,10 @@ import org.openelisglobal.organization.valueholder.OrganizationType;
 import org.openelisglobal.panel.valueholder.Panel;
 import org.openelisglobal.patient.action.bean.PatientManagementInfo;
 import org.openelisglobal.person.service.PersonService;
+import org.openelisglobal.program.service.ImmunohistochemistrySampleService;
 import org.openelisglobal.program.service.PathologySampleService;
 import org.openelisglobal.program.service.ProgramSampleService;
+import org.openelisglobal.program.valueholder.immunohistochemistry.ImmunohistochemistrySample;
 import org.openelisglobal.program.valueholder.pathology.PathologySample;
 import org.openelisglobal.provider.service.ProviderService;
 import org.openelisglobal.requester.service.SampleRequesterService;
@@ -105,6 +107,8 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
     private AnalysisNotificationConfigService analysisNotificationConfigService;
     @Autowired
     private PathologySampleService pathologySampleService;
+    @Autowired
+    private ImmunohistochemistrySampleService immunohistochemistrySampleService;
     @Autowired
     private ProgramSampleService programSampleService;
 
@@ -217,6 +221,8 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
 
             if (updateData.getProgramSample() instanceof PathologySample) {
                 pathologySampleService.save((PathologySample) updateData.getProgramSample());
+            } else if (updateData.getProgramSample() instanceof ImmunohistochemistrySample) {
+                immunohistochemistrySampleService.save((ImmunohistochemistrySample) updateData.getProgramSample());
             } else {
                 programSampleService.save(updateData.getProgramSample());
             }

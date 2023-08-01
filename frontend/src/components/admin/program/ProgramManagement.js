@@ -13,6 +13,7 @@ function ProgramManagement() {
   const componentMounted = useRef(true);
   const [programs, setPrograms] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [programValues, setProgramValues] = useState(ProgramFormValues);
   const { notificationVisible ,setNotificationVisible,setNotificationBody} = useContext(NotificationContext);
 
@@ -55,6 +56,7 @@ const handleFieldChange = (e) => {
 
 async function  displayStatus(res) {
     setNotificationVisible(true);
+    setIsSubmitting(false);
     if(res.status == "200"){
         setNotificationBody({kind: NotificationKinds.success, title: "Notification Message", message: "Succesfuly Added/Edited"});
         getFromOpenElisServer("/rest/displayList/PROGRAM", fetchPrograms)
@@ -81,6 +83,7 @@ function isJson(item) {
 
 function handleSubmit(event) {
     event.preventDefault();
+    setIsSubmitting(true);
     var submitValues = {...programValues};
     if (submitValues.additionalOrderEntryQuestions) {
         submitValues.additionalOrderEntryQuestions = JSON.parse(submitValues.additionalOrderEntryQuestions);
@@ -136,10 +139,15 @@ function handleSubmit(event) {
                 <TextInput type="text" name="program.programName" id="program.programName" labelText="Program Name" 
                     value={programValues.program.programName}
                     onChange={handleFieldChange}/>
-                <TextInput type="text" name="program.code" id="program.code" labelText="Code" maxLength="10" 
-                    value={programValues.program.code}
+            </div>
+            <div className="formInlineDiv">
+                <TextInput type="text" name="program.questionnaireUUID" id="program.questionnaireUUID" labelText="UUID"
+                        value={programValues.program.questionnaireUUID}
                     onChange={handleFieldChange}/>
-                    </div>
+                    <TextInput type="text" name="program.code" id="program.code" labelText="Code" maxLength="10" 
+                        value={programValues.program.code}
+                        onChange={handleFieldChange}/>
+            </div>
             <div className="formInlineDiv">
                 <TextArea name="additionalOrderEntryQuestions" id="additionalOrderEntryQuestions" labelText="Questionnaire" 
                     value={programValues.additionalOrderEntryQuestions} 
@@ -159,6 +167,8 @@ function handleSubmit(event) {
             <div>
                 <Button type="submit" >
                     <FormattedMessage id="label.button.submit" />
+                    {isSubmitting &&
+                    <Loading small={true}/>}
                 </Button>
             </div>
             </Form>

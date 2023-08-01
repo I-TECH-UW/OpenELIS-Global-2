@@ -9,4 +9,5 @@
 	<include relativeToChangelogFile="true" file="desynchronous_objects.xml" />
 	<include relativeToChangelogFile="true" file="pathology.xml" />
 	<include relativeToChangelogFile="true" file="calculated_value.xml" />
+	<include relativeToChangelogFile="true" file="immunohistochemistry.xml" />
 </databaseChangeLog>

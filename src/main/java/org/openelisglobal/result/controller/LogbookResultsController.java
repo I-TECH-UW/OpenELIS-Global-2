@@ -328,7 +328,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
             e.printStackTrace();
         }
 
-        //System.out.println("LogbookResultsController:jsonForm:" + jsonForm);
+        // System.out.println("LogbookResultsController:jsonForm:" + jsonForm);
         return findForward(FWD_SUCCESS, form);
     }
 
@@ -350,11 +350,11 @@ public class LogbookResultsController extends LogbookResultsBaseController {
                 .isPropertyValueEqual(Property.ALWAYS_VALIDATE_RESULTS, "true");
         boolean supportReferrals = FormFields.getInstance().useField(Field.ResultsReferral);
         String statusRuleSet = ConfigurationProperties.getInstance().getPropertyValueUpperCase(Property.StatusRules);
-        
+
         ObjectMapper mapper = new ObjectMapper();
         String jsonForm = "";
         List<TestResultItem> testResultItemList = form.getTestResult();
-        //gnr
+        // gnr
         for (TestResultItem item : testResultItemList) {
             try {
                 jsonForm = mapper.writeValueAsString(item);
@@ -362,9 +362,10 @@ public class LogbookResultsController extends LogbookResultsBaseController {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-            //System.out.println("LogbookResultsController:showLogbookResultsUpdate:jsonForm:" + jsonForm);
+            // System.out.println("LogbookResultsController:showLogbookResultsUpdate:jsonForm:"
+            // + jsonForm);
         }
-        
+
         if ("true".equals(request.getParameter("pageResults"))) {
             return getLogbookResults(request, form);
         }
@@ -434,7 +435,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
             if (e.getException() instanceof StaleObjectStateException) {
                 errorMsg = "errors.OptimisticLockException";
             } else {
-                LogEvent.logDebug(e);
+                LogEvent.logError(e);
                 errorMsg = "errors.UpdateException";
             }
 
