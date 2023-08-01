@@ -358,7 +358,7 @@ public class PatientInfoHighwaySearch implements IExternalPatientSearch {
     }
 
     private void setDate(ExtendedPatientSearchResults patient, String dateString) throws ParseException {
-        String expectedPattern = "yyyy-MM-dd[[ ]['T']HH:mm[:ss][XXX]]";
+        String expectedPattern = "yyyy-MM-dd";
         SimpleDateFormat formatter = new SimpleDateFormat(expectedPattern);
         try {
             Date date = formatter.parse(dateString);
