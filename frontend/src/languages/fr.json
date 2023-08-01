@@ -79,5 +79,16 @@
     "rulebuilder.label.rule" : "Règle",
     "rulebuilder.label.confirmDelete" : "Voulez-vous vraiment supprimer cette règle ?",
     "rulebuilder.error.invalidNumeric" : "Valeur numérique invalide" ,
-    "rulebuilder.error.invalidTest" : "Test invalide"
+    "rulebuilder.error.invalidTest" : "Test invalide" ,
+    "testcalculation.label.name" : "Nom du calcul" ,
+    "testcalculation.label.testResult" : "Résultat du test",
+    "testcalculation.label.mathFucntion" : "Fonction mathématique" ,
+    "testcalculation.label.integer" : "Entier" ,
+    "testcalculation.label.patientAttribute" : "Attribut du patient" ,
+    "testcalculation.label.calculation" : "Calcul" ,
+    "testcalculation.label.searchNumericTest" : "Rechercher un test numérique" ,
+    "testcalculation.label.insertOperation" : "Insérer une opération" ,
+    "testcalculation.label.selectDictionaryValue" : "Sélectionnez la valeur du dictionnaire" ,
+    "testcalculation.label.textValue" : "Valeur de texte" ,
+    "testcalculation.label.finalresult" : "Résultat final" 
 }

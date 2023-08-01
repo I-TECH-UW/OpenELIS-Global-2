@@ -11,6 +11,9 @@ services:
             - default
         volumes:
             -  key_trust-store-volume:/etc/openelis-global
+            -  keys-vol:/etc/ssl/private/
+            -  certs-vol:/etc/ssl/certs/
+
     database:
         container_name: openelisglobal-database 
         image: postgres:9.5
@@ -34,7 +37,7 @@ services:
             
     oe.openelis.org:
         container_name: openelisglobal-webapp 
-        image: ghcr.io/i-tech-uw/openelis-global-2:develop     
+        image: ghcr.io/i-tech-uw/openelis-global-2:2.8    
         depends_on:
             - database
         ports:
@@ -80,6 +83,35 @@ services:
         volumes:
             -  key_trust-store-volume:/etc/openelis-global
             - ./volume/tomcat/hapi_server.xml:/usr/local/tomcat/conf/server.xml
+
+         
+    frontend.openelis.org:
+        image: ghcr.io/i-tech-uw/openelis-global-2-frontend:2.8
+        container_name: openelisglobal-front-end
+        # ports:
+        #   - 80:80
+        networks:
+        - default
+        volumes:
+        - './react-ui/src:/app/src'
+        - './react-ui/public:/app/public'
+        environment:
+        - CHOKIDAR_USEPOLLING=true
+        tty: true
+
+    proxy:
+        image: nginx:1.15-alpine
+        container_name: openelisglobal-proxy
+        ports:
+        - 80:80
+        - 443:443
+        volumes:
+        - certs-vol:/etc/nginx/certs/
+        - keys-vol:/etc/nginx/keys/
+        - ./volume/nginx/nginx-prod.conf:/etc/nginx/nginx.conf:ro
+        restart: unless-stopped
+        depends_on:
+        - certs        
             
 secrets:
   datasource.password:
@@ -97,3 +129,5 @@ networks:
 volumes:
   db-data:
   key_trust-store-volume:
+  certs-vol:
+  keys-vol:

@@ -321,7 +321,7 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
           <div className="first-row">
             <AutoComplete
               id={index + "_" + operationIndex + "_testresult"}
-              label="Test Result"
+              label={<FormattedMessage id="testcalculation.label.searchNumericTest" />} 
               class="inputText"
               name="operationtestName"
               value={operation.value}
@@ -335,7 +335,7 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
           <Select
             id={index + "_" + operationIndex + "_mathfunction"}
             name="value"
-            labelText={<FormattedMessage id="Mathematical Function" />}
+            labelText={<FormattedMessage id="testcalculation.label.mathFucntion" />}
             value={operation.value}
             className="inputSelect2"
             onChange={(e) => { handleOperationFieldChange(e, index, operationIndex) }}
@@ -361,7 +361,7 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
             className="inputText2"
             type="number"
             id={index + "_" + operationIndex + "_integer"}
-            labelText={<FormattedMessage id="Integer" />}
+            labelText={<FormattedMessage id="testcalculation.label.integer" />}
             value={operation.value}
             onChange={(e) => { handleOperationFieldChange(e, index, operationIndex) }}
           />
@@ -371,7 +371,7 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
           <Select
             id={index + "_" + operationIndex + "_patientattribute"}
             name="value"
-            labelText={<FormattedMessage id="Patient attribute" />}
+            labelText={<FormattedMessage id="testcalculation.label.patientAttribute" />}
             value={operation.value}
             className="inputSelect2"
             onChange={(e) => { handleOperationFieldChange(e, index, operationIndex) }}
@@ -402,7 +402,7 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
             <Select
               id={index + "_resultdictionary"}
               name="result"
-              labelText={<FormattedMessage id="rulebuilder.label.selectResult" />}
+              labelText={<FormattedMessage id="testcalculation.label.selectDictionaryValue" />}
               value={calculation.result}
               className="inputSelect"
               onChange={(e) => { handleCalculationFieldChange(e, index) }}
@@ -431,7 +431,7 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
               name="result"
               className="inputText"
               id={index + "_resultfreetext"}
-              labelText={<FormattedMessage id="Enter Result" />}
+              labelText={<FormattedMessage id="testcalculation.label.textValue" />}
               value={calculation.result}
               onChange={(e) => { handleCalculationFieldChange(e, index) }}
             />
@@ -468,7 +468,7 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
                         className="reflexInputText"
                         type="text"
                         id={index + "_name"}
-                        labelText={<FormattedMessage id="Calculation Name" />}
+                        labelText={<FormattedMessage id="testcalculation.label.name" />}
                         value={calculation.name}
                         onChange={(e) => handleCalculationFieldChange(e, index)}
                       />
@@ -492,7 +492,7 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
                         Add   &nbsp;  &nbsp;
                         <div>
                           <Button renderIcon={Add} id={index + "_testresult"} kind='tertiary' size='sm' onClick={() => addOperation(index, 'TEST_RESULT')}>
-                            <FormattedMessage id="Test Result" />
+                            <FormattedMessage id="testcalculation.label.testResult" />
                           </Button>
                         </div>
                         <div >
@@ -500,7 +500,7 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
                         </div>
                         <div>
                           <Button renderIcon={Add} id={index + "_mathfunction"} kind='tertiary' size='sm' onClick={() => addOperation(index, 'MATH_FUNCTION')}>
-                            <FormattedMessage id="Mathematical Function" />
+                            <FormattedMessage id="testcalculation.label.mathFucntion" />
                           </Button>
                         </div>
                         <div >
@@ -508,7 +508,7 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
                         </div>
                         <div>
                           <Button renderIcon={Add} id={index + "_integer"} kind='tertiary' size='sm' onClick={() => addOperation(index, 'INTEGER')}>
-                            <FormattedMessage id="Integer" />
+                            <FormattedMessage id="testcalculation.label.integer" />
                           </Button>
                         </div>
                         <div >
@@ -516,13 +516,13 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
                         </div>
                         <div>
                           <Button renderIcon={Add} id={index + "_patientattribute"} kind='tertiary' size='sm' onClick={() => addOperation(index, 'PATIENT_ATTRIBUTE')}>
-                            <FormattedMessage id="Patient Attribute" />
+                            <FormattedMessage id="testcalculation.label.patientAttribute" />
                           </Button>
                         </div>
                       </div>
                       <div className="section">
                         <div className="inlineDiv">
-                          <h5><FormattedMessage id="Calculation" /></h5>
+                          <h5><FormattedMessage id="testcalculation.label.calculation" /></h5>
                         </div>
                         <div className="section">
                           <div className="inlineDiv">
@@ -545,14 +545,14 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
                               )}
                             </div>
                             <div >
-                              &nbsp;  &nbsp;
+                              &nbsp;  &nbsp; &nbsp;  &nbsp; &nbsp;  &nbsp; &nbsp;  &nbsp; &nbsp;  &nbsp;
                             </div>
                             <div >
                               {/* {calculation.operations.length - 1 === operation_index && ( */}
                               <Select
                                 id={index + "_" + operation_index + "_addopeartion"}
                                 name="addoperation"
-                                labelText={<FormattedMessage id="Insert Operation Below" />}
+                                labelText={<FormattedMessage id="testcalculation.label.insertOperation" />}
                                 value={calculation.sampleId}
                                 className="inputSelect"
                                 onChange={(e) => { addOperationBySelect(e, index, operation_index) }}
@@ -583,6 +583,11 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
                           </div>
                         ))}
 
+                       </div>
+                       <div className="section">
+                       <div className="inlineDiv">
+                          <h6><FormattedMessage id="testcalculation.label.finalresult" /></h6>
+                        </div>
                         <div className="inlineDiv">
                           <div >
                             <Select
@@ -627,7 +632,6 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
                             </>
                           )}
                         </div>
-
                       </div>
                       <Button renderIcon={Save} id={"submit_" + index} type="submit" kind='primary' size='sm'>
                         <FormattedMessage id="label.button.submit" />

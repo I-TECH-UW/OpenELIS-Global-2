@@ -227,21 +227,21 @@ public class TestCalculatedUtil {
                         result.setValue(calculation.getResult());
                         resultCalculated = true;
                     } else {
-                        result.setValue("0");
+                        result.setValue("");
                     }
                 } else if ("R".equals(resultType) || "A".equals(resultType)) {
                     if (Boolean.valueOf(value)) {
                         result.setValue(calculation.getResult());
                         resultCalculated = true;
                     } else {
-                        result.setValue(INCOMPLETE_VALUE);
+                        result.setValue("");
                     }
                 } else if ("N".equals(resultType)) {
                     result.setValue(value);
                     resultCalculated = true;
                 }
             } else {
-                result.setValue(INCOMPLETE_VALUE);
+                result.setValue("");
             }
             if (resultCalculation.getResult() != null) {
                 analysis = createCalculatedAnalysis(resultCalculation.getResult().getAnalysis(), test, resultSet.result,
