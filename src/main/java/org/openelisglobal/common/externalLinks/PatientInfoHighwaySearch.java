@@ -358,13 +358,13 @@ public class PatientInfoHighwaySearch implements IExternalPatientSearch {
     }
 
     private void setDate(ExtendedPatientSearchResults patient, String dateString) throws ParseException {
-        String expectedPattern = "yyyy-MM-dd hh:mm:ss.S";
+        String expectedPattern = "yyyy-MM-dd[[ ]['T']HH:mm[:ss][XXX]]";
         SimpleDateFormat formatter = new SimpleDateFormat(expectedPattern);
         try {
             Date date = formatter.parse(dateString);
             patient.setBirthdate(DateUtil.formatDateAsText(date));
         } catch (ParseException e) {
-            LogEvent.logError("Could not parse date received from external search", e);
+            LogEvent.logError("Could not parse date '" + dateString + "' received from external search with pattern '" + expectedPattern + "'", e);
             throw e;
         }
     }
