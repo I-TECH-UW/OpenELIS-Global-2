@@ -52,7 +52,7 @@ class ResultSearchPage extends React.Component {
 }
 
 
-class SearchResultForm extends React.Component {
+export class SearchResultForm extends React.Component {
     static contextType = NotificationContext;
 
     constructor(props) {
@@ -186,7 +186,7 @@ class SearchResultForm extends React.Component {
     }
 }
 
-class SearchResults extends React.Component {
+export class SearchResults extends React.Component {
     static contextType = NotificationContext;
 
     constructor(props) {
