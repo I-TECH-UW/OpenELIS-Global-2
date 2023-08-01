@@ -10,7 +10,7 @@ import OrderResultReporting from "./OrderResultReporting";
 
 const AddOrder = (props) => {
     const {orderFormValues, setOrderFormValues, samples} = props;
-    const componentMounted = useRef(true);
+    const componentMounted = useRef(true); 
     const [otherSamplingVisible, setOtherSamplingVisible] = useState(false);
     const [providers, setProviders] = useState([]);
     const [paymentOptions, setPaymentOptions] = useState([]);

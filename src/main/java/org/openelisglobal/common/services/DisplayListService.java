@@ -47,6 +47,7 @@ import org.openelisglobal.panel.valueholder.Panel;
 import org.openelisglobal.panel.valueholder.PanelSortOrderComparator;
 import org.openelisglobal.program.service.ProgramService;
 import org.openelisglobal.program.valueholder.Program;
+import org.openelisglobal.program.valueholder.immunohistochemistry.ImmunohistochemistrySample;
 import org.openelisglobal.program.valueholder.pathology.PathologySample;
 import org.openelisglobal.provider.service.ProviderService;
 import org.openelisglobal.provider.valueholder.Provider;
@@ -88,7 +89,8 @@ public class DisplayListService implements LocaleChangeListener {
         UNIT_OF_MEASURE_ACTIVE, UNIT_OF_MEASURE_INACTIVE, DICTIONARY_TEST_RESULTS, LAB_COMPONENT,
         SEVERITY_CONSEQUENCES_LIST, SEVERITY_RECURRENCE_LIST, ACTION_TYPE_LIST, LABORATORY_COMPONENT, SAMPLE_NATURE,
         ELECTRONIC_ORDER_STATUSES, METHODS, METHODS_INACTIVE, METHOD_BY_NAME, PRACTITIONER_PERSONS, ORDER_PRIORITY,
-        PROGRAM, PATHOLOGY_STATUS, PATHOLOGY_TECHNIQUES, PATHOLOGIST_REQUESTS, PATHOLOGIST_CONCLUSIONS
+        PROGRAM, IMMUNOHISTOCHEMISTRY_STATUS, PATHOLOGY_STATUS, PATHOLOGY_TECHNIQUES, PATHOLOGIST_REQUESTS,
+        PATHOLOGIST_CONCLUSIONS
     }
 
     private static Map<ListType, List<IdValuePair>> typeToListMap;
@@ -205,6 +207,7 @@ public class DisplayListService implements LocaleChangeListener {
         typeToListMap.put(ListType.LABORATORY_COMPONENT, createLaboratoryComponentList());
         typeToListMap.put(ListType.ORDER_PRIORITY, createSamplePriorityList());
         typeToListMap.put(ListType.PATHOLOGY_STATUS, createPathologyStatusList());
+        typeToListMap.put(ListType.IMMUNOHISTOCHEMISTRY_STATUS, createImmunohistochemistryStatusList());
         typeToListMap.put(ListType.PATHOLOGY_TECHNIQUES, createDictionaryListForCategory("pathology_techniques"));
         typeToListMap.put(ListType.PATHOLOGIST_REQUESTS, createDictionaryListForCategory("pathologist_requests"));
         typeToListMap.put(ListType.PATHOLOGIST_CONCLUSIONS, createDictionaryListForCategory("pathologist_conclusions"));
@@ -213,6 +216,11 @@ public class DisplayListService implements LocaleChangeListener {
 
     private List<IdValuePair> createPathologyStatusList() {
         return Arrays.asList(PathologySample.PathologyStatus.values()).stream()
+                .map(e -> new IdValuePair(e.name(), e.getDisplay())).collect(Collectors.toList());
+    }
+
+    private List<IdValuePair> createImmunohistochemistryStatusList() {
+        return Arrays.asList(ImmunohistochemistrySample.ImmunohistochemistryStatus.values()).stream()
                 .map(e -> new IdValuePair(e.name(), e.getDisplay())).collect(Collectors.toList());
     }
 
@@ -348,6 +356,7 @@ public class DisplayListService implements LocaleChangeListener {
     public synchronized void refreshLists() {
         typeToListMap = new HashMap<>();
         typeToListMap.put(ListType.PATHOLOGY_STATUS, createPathologyStatusList());
+        typeToListMap.put(ListType.IMMUNOHISTOCHEMISTRY_STATUS, createImmunohistochemistryStatusList());
         typeToListMap.put(ListType.HOURS, createHourList());
         typeToListMap.put(ListType.MINS, createMinList());
         typeToListMap.put(ListType.SAMPLE_TYPE, createTypeOfSampleList());

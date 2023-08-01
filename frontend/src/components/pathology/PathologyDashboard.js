@@ -54,7 +54,7 @@ function PathologyDashboard() {
   }
 
   const setPathologyEntriesWithIds = (entries) => {
-    if (componentMounted.current) {
+    if (componentMounted.current && entries && entries.length > 0) {
       var i = 0;
       setPathologyEntries(entries.map((entry) => {
         return {...entry, id: '' + entry.pathologySampleId};

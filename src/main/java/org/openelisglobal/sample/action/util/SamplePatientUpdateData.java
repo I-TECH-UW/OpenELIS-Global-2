@@ -51,6 +51,7 @@ import org.openelisglobal.person.valueholder.Person;
 import org.openelisglobal.program.service.ProgramService;
 import org.openelisglobal.program.valueholder.Program;
 import org.openelisglobal.program.valueholder.ProgramSample;
+import org.openelisglobal.program.valueholder.immunohistochemistry.ImmunohistochemistrySample;
 import org.openelisglobal.program.valueholder.pathology.PathologySample;
 import org.openelisglobal.provider.service.ProviderService;
 import org.openelisglobal.provider.valueholder.Provider;
@@ -527,6 +528,8 @@ public class SamplePatientUpdateData {
         setProgramQuestionnaireResponse(additionalQuestions);
         if (program.getProgramName().toLowerCase().contains("pathology")) {
             setProgramSample(new PathologySample());
+        } else if (program.getProgramName().toLowerCase().contains("immunohistochemistry")) {
+            setProgramSample(new ImmunohistochemistrySample());
         } else {
             setProgramSample(new ProgramSample());
         }
