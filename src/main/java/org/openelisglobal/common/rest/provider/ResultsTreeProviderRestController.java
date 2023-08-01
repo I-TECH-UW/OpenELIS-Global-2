@@ -8,12 +8,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.rest.provider.bean.patientHistory.PanelDisplay;
 import org.openelisglobal.common.rest.provider.bean.patientHistory.ResultDisplay;
 import org.openelisglobal.common.rest.provider.bean.patientHistory.ResultTree;
 import org.openelisglobal.common.rest.provider.bean.patientHistory.TestDisplay;
 import org.openelisglobal.dictionary.service.DictionaryService;
+import org.openelisglobal.dictionary.valueholder.Dictionary;
 import org.openelisglobal.panel.valueholder.Panel;
 import org.openelisglobal.result.service.ResultService;
 import org.openelisglobal.result.valueholder.Result;
@@ -115,19 +117,21 @@ public class ResultsTreeProviderRestController {
                     
                     for (Result result : testResultentry.getValue()) {
                         ResultDisplay resultDisplay = new ResultDisplay();
-                        String resultType =testService.getResultType(result.getTestResult().getTest());
+                        String resultType = "" ;
+                        if(result.getTestResult() != null){
+                          resultType = testService.getResultType(result.getTestResult().getTest());
+                        } 
+                        resultDisplay.setValue("");
                         if (resultType.equals("N")) {
                             resultDisplay.setValue(result.getValue() != null ? result.getValue(true) : "");
-                        } else {
-                            if (result.getValue() != null) {
-                                String dict = dictionaryService.get(result.getValue()).getDictEntry();
-                                resultDisplay.setValue(dict);
-                            }else{
-                                resultDisplay.setValue("");
+                        } else if (resultType.equals("D")) {
+                            if (result.getValue() != null && StringUtils.isNumeric(result.getValue())) {
+                                Dictionary dict = dictionaryService.get(result.getValue());
+                                if (dict != null) {
+                                    resultDisplay.setValue(dict.getDictEntry());
+                                }
                             }
-                            
-                        }
-                        
+                        }    
                         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
                         resultDisplay.setObsDatetime(dateFormat.format(result.getLastupdated()));
                         resultDisplays.add(resultDisplay);
@@ -136,7 +140,7 @@ public class ResultsTreeProviderRestController {
                     TestDisplay testDisplay = new TestDisplay();
                     testDisplay.setDisplay(testResultentry.getKey().getLocalizedName());
                     testDisplay.setConceptUuid(testResultentry.getKey().getId());
-                    testDisplay.setDatatype(testService.getResultType(testResultentry.getValue().iterator().next().getTestResult().getTest()));
+                    testDisplay.setDatatype(testResultentry.getValue().iterator().next().getTestResult() != null ?testService.getResultType(testResultentry.getValue().iterator().next().getTestResult().getTest()): "");
                     testDisplay.setHiNormal(testResultentry.getValue().iterator().next().getMaxNormal());
                     testDisplay.setLowNormal(testResultentry.getValue().iterator().next().getMinNormal());
                     testDisplay.setHighCritical(testResultentry.getValue().iterator().next().getMaxNormal());
