@@ -56,7 +56,7 @@ public class SampleEntryByProjectController extends BaseSampleEntryController {
             "observations.eidInfantPTME", "observations.eidTypeOfClinic", "observations.eidHowChildFed",
             "observations.eidStoppedBreastfeeding", "observations.eidInfantSymptomatic", "observations.eidInfantsARV",
             "observations.eidInfantCotrimoxazole", "observations.eidMothersHIVStatus", "observations.eidMothersARV",
-            "ProjectData.dbsTaken", "ProjectData.dnaPCR", "ProjectData.INDsiteName", "ProjectData.address",
+            "ProjectData.dbsTaken","ProjectData.dbsvlTaken", "ProjectData.pscvlTaken", "ProjectData.dnaPCR", "ProjectData.INDsiteName", "ProjectData.address",
             "ProjectData.phoneNumber", "ProjectData.faxNumber", "ProjectData.email", "observations.indFirstTestDate",
             "observations.indFirstTestName", "observations.indFirstTestResult", "observations.indSecondTestDate",
             "observations.indSecondTestName", "observations.indSecondTestResult", "observations.indSiteFinalResult",

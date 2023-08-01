@@ -1,9 +1,6 @@
-import React, { useContext, useEffect, useRef, useState } from 'react'
-
+import React from 'react'
 import { FormattedMessage, injectIntl } from 'react-intl'
 import '../Style.css'
-import { jp } from 'jsonpath'
-
 import { getFromOpenElisServer, postToOpenElisServer } from '../utils/Utils';
 import {
     Heading,
@@ -30,19 +27,173 @@ import { AlertDialog, NotificationKinds } from "../common/CustomNotification";
 import { NotificationContext } from "../layout/Layout";
 
 
+class ResultSearchPage extends React.Component {
+
+    constructor(props) {
+        super(props)
+        this.state = {
+            resultForm: { testResult: [] },
+        }
+    }
+
+    setResults = (results) => {
+        this.setState({ resultForm: results });
+    }
+
+    render() {
+        return (
+            <>
+                <SearchResultForm setResults={this.setResults}/>
+                <SearchResults results={this.state.resultForm}/>
+            </>
+        )
+    }
+
+}
+
+
 class SearchResultForm extends React.Component {
     static contextType = NotificationContext;
 
     constructor(props) {
         super(props)
         this.state = {
-            dob: "",
-            resultForm: { testResult: [] },
-            tableTitle: "",
-            page: 1,
-            pageSize: 100,
             doRange: true,
             finished: true,
+        }
+    }
+
+    setResults = (results) => {
+        if (results) {
+            var i = 0;
+            if (results.testResult) {
+                results.testResult.forEach(item => item.id = "" + i++);
+            }
+            this.props.setResults?.(results);
+        } else {
+            this.props.setResults?.({ testResult: [] });
+        }
+    }
+
+    handleDoRangeChange = () => {
+        console.log("handleDoRangeChange:")
+        this.state.doRange = !this.state.doRange;
+    }
+
+    handleFinishedChange = () => {
+        console.log("handleFinishedChange:")
+        this.state.finished = !this.state.finished;
+    }
+
+    handleSubmit = (values) => {
+        this.setResults({ testResult: [] })
+        var searchEndPoint = "/rest/ReactLogbookResultsByRange?" +
+            "&labNumber=" + values.labNumber +
+            "&doRange=" + this.state.doRange +
+            "&finished=" + this.state.finished
+        getFromOpenElisServer(searchEndPoint, this.setResults);
+    };
+
+    render() {
+        const { page, pageSize } = this.state;
+        // const prefix = this.state.prefix;
+        return (
+            <>
+                {this.context.notificationVisible === true ? <AlertDialog /> : ""}
+
+                {/* <Grid  fullWidth={true} className="gridBoundary"> */}
+                {/* <Column  lg={3}> */}
+                <Formik
+                    initialValues={SearchResultFormValues}
+                    //validationSchema={}
+                    onSubmit={this.handleSubmit}
+                    onChange
+                >
+                    {({ values,
+                        errors,
+                        touched,
+                        handleChange,
+                        //handleBlur,
+                        handleSubmit
+                    }) => (
+
+                        <Form
+                            onSubmit={handleSubmit}
+                            onChange={handleChange}
+                        //onBlur={handleBlur}
+                        >
+                            <Stack gap={2}>
+
+                                <FormLabel>
+                                    <Section>
+                                        <Section>
+                                            <Section>
+                                                <Heading>
+                                                    <FormattedMessage id="label.button.search" />
+                                                </Heading>
+                                            </Section>
+                                        </Section>
+                                    </Section>
+                                </FormLabel>
+                                <Field name="labNumber"
+                                >
+                                    {({ field }) =>
+                                        <TextInput
+                                            className="searchLabNumber"
+                                            name={field.name} id={field.name} />
+                                    }
+                                </Field>
+                                <Grid>
+                                    <Column lg={2}>
+                                        <Field name="doRange"
+                                        >
+                                            {({ field }) =>
+                                                <Checkbox
+                                                    defaultChecked={this.state.doRange}
+                                                    onChange={this.handleDoRangeChange}
+                                                    name={field.name}
+                                                    labelText="Do Range"
+                                                    id={field.name} />
+                                            }
+                                        </Field>
+                                    </Column>
+                                    <Column lg={2}>
+                                        <Field name="finished"
+                                        >
+                                            {({ field }) =>
+                                                <Checkbox
+                                                    defaultChecked={this.state.finished}
+                                                    onChange={this.handleFinishedChange}
+                                                    //onClick={() => (this.state.doRange = false)}
+                                                    name={field.name}
+                                                    labelText="Display All"
+                                                    id={field.name} />
+                                            }
+                                        </Field>
+                                    </Column>
+                                </Grid>
+                                <Button type="submit" id="submit">
+                                    <FormattedMessage id="label.button.search" />
+                                </Button>
+                            </Stack>
+                        </Form>
+                    )}
+                </Formik>
+            </>
+
+        );
+
+    }
+}
+
+class SearchResults extends React.Component {
+    static contextType = NotificationContext;
+
+    constructor(props) {
+        super(props)
+        this.state = {
+            page: 1,
+            pageSize: 100,
             acceptAsIs: [],
             saveStatus: "",
         }
@@ -92,28 +243,28 @@ class SearchResultForm extends React.Component {
         },
         {
             name: 'Accept',
-            cell: (row, index, column, id, resultForm) => {
+            cell: (row, index, column, id) => {
                 return this.renderCell(row, index, column, id);
             },
             width: "8rem",
         },
         {
             name: 'Result',
-            cell: (row, index, column, id, resultForm) => {
+            cell: (row, index, column, id) => {
                 return this.renderCell(row, index, column, id);
             },
             width: "8rem",
         },
         {
             name: 'Current Result',
-            cell: (row, index, column, id, resultForm) => {
+            cell: (row, index, column, id) => {
                 return this.renderCell(row, index, column, id);
             },
             width: "8rem",
         },
         {
             name: 'Notes',
-            cell: (row, index, column, id, resultForm) => {
+            cell: (row, index, column, id) => {
                 return this.renderCell(row, index, column, id);
             },
             width: "16rem",
@@ -155,20 +306,13 @@ class SearchResultForm extends React.Component {
                 );
 
             case "Notes":
-                // let aNote;
-                // if (!this.state.resultForm.testResult[row.id].note) {
-                //     aNote = ""
-                // } else {
-                //     aNote = this.state.resultForm.testResult[row.id].note
-                // }
-
                 return (
                     <>
                         <div className='note'>
                             <TextArea
                                 id={"testResult" + row.id + ".note"}
                                 name={"testResult[" + row.id + "].note"}
-                                value={this.state.resultForm.testResult[row.id].note}
+                                value={this.props.results.testResult[row.id].note}
                                 disabled={false}
                                 type="text"
                                 labelText=""
@@ -204,12 +348,6 @@ class SearchResultForm extends React.Component {
                         </Select>
 
                     case "N":
-                        // return <input
-                        //     id={"Result" + row.id}
-                        //     name={"testResult[" + row.id + "].resultValue"}
-                        //     value={this.state.resultForm.testResult[row.id].resultVaule}
-                        //     onChange={(e) => this.validateResults(e, row.id, row)}
-                        // />
 
                         return <TextInput
                             id={"ResultValue" + row.id}
@@ -266,7 +404,7 @@ class SearchResultForm extends React.Component {
                         id={"currentResultValue" + row.id}
                         name={"testResult[" + row.id + "].resultValue"}
                         //type="text"
-                        value={this.state.resultForm.testResult[row.id].resultValue}
+                        value={this.props.results.testResult[row.id].resultValue}
                         // labelText="Text input label"
                         // helperText="Optional help text"
                         onChange={(e) => this.handleChange(e, row.id)}
@@ -436,18 +574,12 @@ class SearchResultForm extends React.Component {
         this.handleChange(e, rowId)
     }
 
-    // validateResults = (e, rowId) => {
-    //     console.log("validateResults:")
-    //     this.handleChange(e, rowId)
-    // }
-
-
     handleChange = (e, rowId) => {
         const { name, id, value } = e.target;
         console.log("handleChange:" + id + ":" + name + ":" + value + ":" + rowId);
         // this.setState({value: e.target.value})
         // console.log('State updated to ', e.target.value);
-        var form = this.state.resultForm;
+        var form = this.props.results;
         var jp = require('jsonpath');
         jp.value(form, name, value);
         var isModified = "testResult[" + rowId + "].isModified";
@@ -458,21 +590,11 @@ class SearchResultForm extends React.Component {
     handleDatePickerChange = (date, rowId) => {
         console.log("handleDatePickerChange:" + date)
         const d = new Date(date).toLocaleDateString('fr-FR');
-        var form = this.state.resultForm;
+        var form = this.props.results;
         var jp = require('jsonpath');
         jp.value(form, "testResult[" + rowId + "].sentDate_", d);
         var isModified = "testResult[" + rowId + "].isModified";
         jp.value(form, isModified, "true");
-    }
-
-    handleDoRangeChange = () => {
-        console.log("handleDoRangeChange:")
-        this.state.doRange = !this.state.doRange;
-    }
-
-    handleFinishedChange = () => {
-        console.log("handleFinishedChange:")
-        this.state.finished = !this.state.finished;
     }
 
     handleAcceptAsIsChange = (e, rowId) => {
@@ -501,38 +623,14 @@ class SearchResultForm extends React.Component {
         this.state.acceptAsIs[rowId] = !this.state.acceptAsIs[rowId];
     }
 
-    handleSaveChange = () => {
-        console.log("handleSaveChange:")
-
-    }
-
     handleSave = (values) => {
         //console.log("handleSave:" + values);
         values.status = this.state.saveStatus;
         var searchEndPoint = "/rest/ReactLogbookResultsUpdate"
-        this.state.resultForm.testResult.forEach( result => {
+        this.props.results.testResult.forEach( result => {
             result.reportable = result.reportable === "N"?false : true
         })
-        postToOpenElisServer(searchEndPoint, JSON.stringify(this.state.resultForm), this.setStatus);
-    }
-
-    handleSubmit = (values) => {
-        values.dateOfBirth = this.state.dob
-        //console.log("handleSubmit:" + this.state.doRange)
-        this.setState({ resultForm: { testResult: [] }, });
-
-        var searchEndPoint = "/rest/ReactLogbookResultsByRange?" +
-            "&labNumber=" + values.labNumber +
-            "&doRange=" + this.state.doRange +
-            "&finished=" + this.state.finished
-        getFromOpenElisServer(searchEndPoint, this.setResults);
-    };
-
-    setResults = (resultForm) => {
-        //console.log("setResults")
-        var i = 0;
-        resultForm.testResult.forEach(item => item.id = "" + i++);
-        this.setState({ resultForm: resultForm })
+        postToOpenElisServer(searchEndPoint, JSON.stringify(this.props.results), this.setStatus);
     }
 
     setStatus = (status) => {
@@ -574,91 +672,6 @@ class SearchResultForm extends React.Component {
         return (
             <>
                 {this.context.notificationVisible === true ? <AlertDialog /> : ""}
-
-                {/* <Grid  fullWidth={true} className="gridBoundary"> */}
-                {/* <Column  lg={3}> */}
-                <Formik
-                    initialValues={SearchResultFormValues}
-                    //validationSchema={}
-                    onSubmit={this.handleSubmit}
-                    onChange
-                >
-                    {({ values,
-                        errors,
-                        touched,
-                        handleChange,
-                        //handleBlur,
-                        handleSubmit
-                    }) => (
-
-                        <Form
-                            onSubmit={handleSubmit}
-                            onChange={handleChange}
-                        //onBlur={handleBlur}
-                        >
-                            <Stack gap={2}>
-
-                                <FormLabel>
-                                    <Section>
-                                        <Section>
-                                            <Section>
-                                                <Heading>
-                                                    <FormattedMessage id="label.button.search" />
-                                                </Heading>
-                                            </Section>
-                                        </Section>
-                                    </Section>
-                                </FormLabel>
-                                <Field name="labNumber"
-                                >
-                                    {({ field }) =>
-                                        <TextInput
-                                            className="searchLabNumber"
-                                            name={field.name} id={field.name} />
-                                    }
-                                </Field>
-                                <Grid>
-                                    <Column lg={2}>
-                                        <Field name="doRange"
-                                        >
-                                            {({ field }) =>
-                                                <Checkbox
-                                                    defaultChecked={this.state.doRange}
-                                                    onChange={this.handleDoRangeChange}
-                                                    name={field.name}
-                                                    labelText="Do Range"
-                                                    id={field.name} />
-                                            }
-                                        </Field>
-                                    </Column>
-                                    <Column lg={2}>
-                                        <Field name="finished"
-                                        >
-                                            {({ field }) =>
-                                                <Checkbox
-                                                    defaultChecked={this.state.finished}
-                                                    onChange={this.handleFinishedChange}
-                                                    //onClick={() => (this.state.doRange = false)}
-                                                    name={field.name}
-                                                    labelText="Display All"
-                                                    id={field.name} />
-                                            }
-                                        </Field>
-                                    </Column>
-                                </Grid>
-                                <Button type="submit" id="submit">
-                                    <FormattedMessage id="label.button.search" />
-                                </Button>
-                            </Stack>
-                        </Form>
-                    )}
-                </Formik>
-                {/* </Column> */}
-                {/* <Column></Column> */}
-                {/* <Column  lg={12} > */}
-
-                {/* {this.myComponent()} */}
-
                 <>
                     <Formik
                         initialValues={SearchResultFormValues}
@@ -674,18 +687,17 @@ class SearchResultForm extends React.Component {
                             handleSubmit }) => (
 
                             <Form
-                                onSubmit={handleSubmit}
                                 onChange={handleChange}
                             //onBlur={handleBlur}
                             >
 
                                 <DataTable
-                                    data={this.state.resultForm.testResult}
+                                    data={this.props.results.testResult}
                                     columns={this.columns} isSortable
                                     expandableRows
                                     expandableRowsComponent={this.renderReferral}>
                                 </DataTable><Pagination onChange={this.handlePageChange} page={this.state.page} pageSize={this.state.pageSize}
-                                    pageSizes={[100]} totalItems={this.state.resultForm.testResult.length}></Pagination>
+                                    pageSizes={[100]} totalItems={this.props.results.testResult.length}></Pagination>
 
                                 <Button type="submit" id="submit">
                                     <FormattedMessage id="label.button.save" />
@@ -702,4 +714,4 @@ class SearchResultForm extends React.Component {
     }
 }
 
-export default injectIntl(SearchResultForm)
+export default injectIntl(ResultSearchPage)

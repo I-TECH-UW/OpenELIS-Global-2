@@ -80,6 +80,7 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
         setDBPropertyMappingAndDefault(Property.notesRequiredForModifyResults,
                 Property.notesRequiredForModifyResults.getName(), "false");
         setDBPropertyMappingAndDefault(Property.resultTechnicianName, Property.resultTechnicianName.getName(), "false");
+        setDBPropertyMappingAndDefault(Property.customCriticalMessage, Property.customCriticalMessage.getName(), "");
         setDBPropertyMappingAndDefault(Property.allowResultRejection, Property.allowResultRejection.getName(), "false");
         setDBPropertyMappingAndDefault(Property.restrictFreeTextRefSiteEntry,
                 Property.restrictFreeTextRefSiteEntry.getName(), "false");

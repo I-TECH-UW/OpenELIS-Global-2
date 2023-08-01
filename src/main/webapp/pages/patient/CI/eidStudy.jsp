@@ -295,7 +295,7 @@ eid = new EidProjectChecker();
                          onchange="eid.checkGender(true)" >
                 <option value=""></option>
                 <form:options items="${formLists.GENDERS}"
-                    itemLabel="localizedName" itemValue="genderType" />
+                    itemLabel="localizedName" itemValue="id" />
                 </form:select>
                 <div id="eid.genderMessage" class="blank" ></div>
             </td>

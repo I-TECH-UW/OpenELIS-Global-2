@@ -9,8 +9,6 @@ import org.openelisglobal.program.valueholder.pathology.PathologySlide;
 
 public class PathologySampleForm {
 
-    private Integer pathologySampleId;
-
     private PathologyStatus status;
 
     private List<PathologyBlock> blocks;

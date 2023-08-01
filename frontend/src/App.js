@@ -26,7 +26,9 @@ import RoutineReports from "./components/Reports/Routine";
 import StudyReports from "./components/Reports/Study";
 import StudyValidation from "./components/validation/Study";
 import PathologyDashboard from "./components/pathology/PathologyDashboard";
-import PathologyCaseView from "./components/pathology/PathologyCaseView"
+import PathologyCaseView from "./components/pathology/PathologyCaseView";
+import ImmunohistochemistryDashboard from "./components/immunohistochemistry/ImmunohistochemistryDashboard"
+import ImmunohistochemistryCaseView from "./components/immunohistochemistry/ImmunohistochemistryCaseView"
 
 export default function App() {
 
@@ -164,6 +166,26 @@ export default function App() {
                   path="/PathologyCaseView/:pathologySampleId"
                   exact
                   component={() => <PathologyCaseView />}
+                  role={["Pathologist", "Reception"]}
+                  config={appConfig}
+                  onAuth={onAuth}
+                  logout={logout}
+                  isLoggedIn={isLoggedIn}
+                />
+                <SecureRoute
+                  path="/ImmunohistochemistryDashboard"
+                  exact
+                  component={() => <ImmunohistochemistryDashboard />}
+                  role={["Pathologist", "Reception"]}
+                  config={appConfig}
+                  onAuth={onAuth}
+                  logout={logout}
+                  isLoggedIn={isLoggedIn}
+                />
+                <SecureRoute
+                  path="/ImmunohistochemistryCaseView/:immunohistochemistrySampleId"
+                  exact
+                  component={() => <ImmunohistochemistryCaseView />}
                   role={["Pathologist", "Reception"]}
                   config={appConfig}
                   onAuth={onAuth}

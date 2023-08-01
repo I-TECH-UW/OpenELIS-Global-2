@@ -50,6 +50,7 @@ import org.openelisglobal.inventory.action.InventoryUtility;
 import org.openelisglobal.inventory.form.InventoryKitItem;
 import org.openelisglobal.note.service.NoteService;
 import org.openelisglobal.note.service.NoteServiceImpl.NoteType;
+import org.openelisglobal.note.valueholder.Note;
 import org.openelisglobal.organization.service.OrganizationService;
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.referral.action.beanitems.ReferralItem;
@@ -111,7 +112,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
             "testResult*.referralCanceled", "testResult*.considerRejectReason", "testResult*.hasQualifiedResult",
             "testResult*.shadowResultValue", "testResult*.reflexJSONResult", "testResult*.testDate",
             "testResult*.analysisMethod", "testResult*.testMethod", "testResult*.testKitInventoryId",
-            "testResult*.forceTechApproval", "testResult*.lowerNormalRange", "testResult*.upperNormalRange",
+            "testResult*.forceTechApproval", "testResult*.lowerNormalRange", "testResult*.upperNormalRange","testResult*.lowerCritical","testResult*.higherCritical",
             "testResult*.significantDigits", "testResult*.resultValue", "testResult*.qualifiedResultValue",
             "testResult*.multiSelectResultValues", "testResult*.testMethod", "testResult*.multiSelectResultValues",
             "testResult*.qualifiedResultValue", "testResult*.qualifiedResultValue", "testResult*.shadowReferredOut",
@@ -327,7 +328,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
             e.printStackTrace();
         }
 
-        //System.out.println("LogbookResultsController:jsonForm:" + jsonForm);
+        // System.out.println("LogbookResultsController:jsonForm:" + jsonForm);
         return findForward(FWD_SUCCESS, form);
     }
 
@@ -349,11 +350,11 @@ public class LogbookResultsController extends LogbookResultsBaseController {
                 .isPropertyValueEqual(Property.ALWAYS_VALIDATE_RESULTS, "true");
         boolean supportReferrals = FormFields.getInstance().useField(Field.ResultsReferral);
         String statusRuleSet = ConfigurationProperties.getInstance().getPropertyValueUpperCase(Property.StatusRules);
-        
+
         ObjectMapper mapper = new ObjectMapper();
         String jsonForm = "";
         List<TestResultItem> testResultItemList = form.getTestResult();
-        //gnr
+        // gnr
         for (TestResultItem item : testResultItemList) {
             try {
                 jsonForm = mapper.writeValueAsString(item);
@@ -361,9 +362,10 @@ public class LogbookResultsController extends LogbookResultsBaseController {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-            //System.out.println("LogbookResultsController:showLogbookResultsUpdate:jsonForm:" + jsonForm);
+            // System.out.println("LogbookResultsController:showLogbookResultsUpdate:jsonForm:"
+            // + jsonForm);
         }
-        
+
         if ("true".equals(request.getParameter("pageResults"))) {
             return getLogbookResults(request, form);
         }
@@ -433,7 +435,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
             if (e.getException() instanceof StaleObjectStateException) {
                 errorMsg = "errors.OptimisticLockException";
             } else {
-                LogEvent.logDebug(e);
+                LogEvent.logError(e);
                 errorMsg = "errors.UpdateException";
             }
 
@@ -510,10 +512,14 @@ public class LogbookResultsController extends LogbookResultsBaseController {
                     resultSaveService.isUpdatedResult() && analysisService.patientReportHasBeenDone(analysis));
 
             if (analysisService.hasBeenCorrectedSinceLastPatientReport(analysis)) {
-                actionDataSet.addToNoteList(noteService.createSavableNote(analysis, NoteType.EXTERNAL,
-                        MessageUtil.getMessage("note.corrected.result"), RESULT_SUBJECT, getSysUserId(request)));
+                Note note = noteService.createSavableNote(analysis, NoteType.EXTERNAL,
+                        MessageUtil.getMessage("note.corrected.result"), RESULT_SUBJECT, getSysUserId(request));
+                if (!noteService.duplicateNoteExists(note)) {
+                    actionDataSet.addToNoteList(noteService.createSavableNote(analysis, NoteType.EXTERNAL,
+                            MessageUtil.getMessage("note.corrected.result"), RESULT_SUBJECT, getSysUserId(request)));
+                }
             }
-
+            
             // If there is more than one result then each user selected reflex gets mapped
             // to that result
             for (Result result : results) {

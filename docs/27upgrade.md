@@ -92,7 +92,7 @@ If you are running these commands on a remote server, it is recommended to use a
     10.     run the setup script for the new version with updated db, ignoring db backup couldn’t occur step
 
 
-        a)     sudo setup_OpenELIS.py
+        a)     sudo python3 setup_OpenELIS.py
 
 
     11.  ensure systems start up and that data is present
