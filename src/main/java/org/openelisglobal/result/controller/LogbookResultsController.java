@@ -217,7 +217,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
         }
         newForm.setDisplayTestSections(false);
         newForm.setSearchByRange(true);
-        System.out.println("LogbookResultsController:call getLogbookResults");
+        System.out.println("LogbookResultsRestController:call getLogbookResults");
         return getLogbookResults(request, newForm);
     }
 
@@ -328,7 +328,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
             e.printStackTrace();
         }
 
-        // System.out.println("LogbookResultsController:jsonForm:" + jsonForm);
+        // System.out.println("LogbookResultsRestController:jsonForm:" + jsonForm);
         return findForward(FWD_SUCCESS, form);
     }
 
@@ -362,7 +362,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-            // System.out.println("LogbookResultsController:showLogbookResultsUpdate:jsonForm:"
+            // System.out.println("LogbookResultsRestController:showLogbookResultsUpdate:jsonForm:"
             // + jsonForm);
         }
 
