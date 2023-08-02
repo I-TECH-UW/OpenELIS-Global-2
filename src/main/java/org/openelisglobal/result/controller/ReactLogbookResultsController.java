@@ -13,6 +13,10 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.openelisglobal.common.provider.query.PatientSearchResults;
+import org.openelisglobal.result.form.StatusResultsForm;
+import org.openelisglobal.sampleitem.service.SampleItemService;
+import org.openelisglobal.search.service.SearchResultsService;
 import org.springframework.http.HttpEntity;
 
 import org.json.simple.JSONObject;
@@ -171,6 +175,12 @@ public class ReactLogbookResultsController extends LogbookResultsBaseController 
     @Autowired
     PatientService patientService;
 
+    @Autowired
+    SearchResultsService searchService;
+
+    @Autowired
+    SampleItemService sampleItemService;
+
     private final String RESULT_SUBJECT = "Result Note";
     private final String REFERRAL_CONFORMATION_ID;
     private static final String REFLEX_ACCESSIONS = "reflex_accessions";
@@ -198,15 +208,19 @@ public class ReactLogbookResultsController extends LogbookResultsBaseController 
 
     @GetMapping(value = "ReactLogbookResultsByRange", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public LogbookResultsForm showReactLogbookResults(@RequestParam String labNumber, @RequestParam boolean doRange,
+    public LogbookResultsForm showReactLogbookResults(@RequestParam String labNumber, @RequestParam String  nationalId,@RequestParam String  firstName,
+                                                      @RequestParam String lastName, @RequestParam String collectionDate, @RequestParam String recievedDate, @RequestParam String selectedTest, @RequestParam String selectedSampleStatus,
+                                                      @RequestParam String selectedAnalysisStatus, @RequestParam boolean doRange,
             @RequestParam boolean finished,
             @Validated(LogbookResults.class) @ModelAttribute("form") LogbookResultsForm form, BindingResult result)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
-        System.out.println("Get:ReactLogbookResultsController:ReactLogbookResultsByRange:labNumber:doRange:finished:"
-                + labNumber + ":" + doRange + ":" + finished);
-        
-       
+        StatusResultsForm statusResultsForm = new StatusResultsForm();
+        statusResultsForm.setCollectionDate(collectionDate);
+        statusResultsForm.setRecievedDate(recievedDate);
+        statusResultsForm.setSelectedTest(selectedTest);
+        statusResultsForm.setSelectedSampleStatus(selectedSampleStatus);
+        statusResultsForm.setSelectedAnalysisStatus(selectedAnalysisStatus);
 
         LogbookResultsForm newForm = new LogbookResultsForm();
         if (!(result.hasFieldErrors("type") || result.hasFieldErrors("testSectionId")
@@ -232,7 +246,7 @@ public class ReactLogbookResultsController extends LogbookResultsBaseController 
         newForm.setDisplayTestSections(true);
         newForm.setSearchByRange(false);
 
-        return getLogbookResults(request, newForm, labNumber, doRange, finished);
+        return getLogbookResults(request, newForm,statusResultsForm, labNumber,nationalId,firstName,lastName, doRange, finished);
     }
 
 //    @RequestMapping(value = "/ReactRangeResults", method = RequestMethod.GET)
@@ -246,8 +260,6 @@ public class ReactLogbookResultsController extends LogbookResultsBaseController 
             @RequestParam boolean doRange, @RequestParam boolean finished,
             @Validated(LogbookResults.class) @ModelAttribute("form") LogbookResultsForm form, BindingResult result)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-
-        System.out.println("Get:ReactLogbookResultsController showReactLogbookResultsByRange:labNumber:" + labNumber);
 
         LogbookResultsForm newForm = new LogbookResultsForm();
         if (!(result.hasFieldErrors("type") || result.hasFieldErrors("accessionNumber"))) {
@@ -268,10 +280,10 @@ public class ReactLogbookResultsController extends LogbookResultsBaseController 
         newForm.setSearchByRange(true);
         // System.out.println("Post:ReactLogbookResultsController:call
         // getLogbookResults");
-        return getLogbookResults(request, newForm, labNumber, doRange, finished);
+        return getLogbookResults(request, newForm,null, labNumber,"","","", doRange, finished);
     }
 
-    private LogbookResultsForm getLogbookResults(HttpServletRequest request, LogbookResultsForm form, String labNumber, boolean doRange,
+    private LogbookResultsForm getLogbookResults(HttpServletRequest request, LogbookResultsForm form,StatusResultsForm statusResultsForm, String labNumber,String nationalId,String firstName,String lastName, boolean doRange,
             boolean finished) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
         // boolean useTechnicianName = ConfigurationProperties.getInstance()
@@ -286,10 +298,6 @@ public class ReactLogbookResultsController extends LogbookResultsBaseController 
         String patientName = "";
         String patientInfo = "";
         Patient patient = null;
-        
-        
-        System.out.println("Get:ReactLogbookResultsController getLogbookResults:labNumber:" + labNumber);
-
 
         request.getSession().setAttribute(SAVE_DISABLED, TRUE);
 
@@ -334,21 +342,44 @@ public class ReactLogbookResultsController extends LogbookResultsBaseController 
                     }
                 }
                 form.setSearchFinished(true);
-            } else if (!GenericValidator.isBlankOrNull(form.getAccessionNumber())) {
-                
+            }else if (
+                    !GenericValidator.isBlankOrNull(statusResultsForm.getCollectionDate()) ||
+                    !GenericValidator.isBlankOrNull(statusResultsForm.getRecievedDate()) ||
+                    !GenericValidator.isBlankOrNull(statusResultsForm.getSelectedTest()) ||
+                    !GenericValidator.isBlankOrNull(statusResultsForm.getSelectedAnalysisStatus()) ||
+                            !GenericValidator.isBlankOrNull(statusResultsForm.getSelectedSampleStatus())
+            ) {
+                tests.clear();
+                ReactLogbookStatusResults  reactLogbookStatusResults =
+                        new ReactLogbookStatusResults(analysisService,sampleService,sampleItemService);
+
+                tests = reactLogbookStatusResults.setSearchResults(statusResultsForm, resultsLoadUtility);
+                filteredTests = userService.filterResultsByLabUnitRoles(getSysUserId(request), tests, Constants.ROLE_RESULTS);
+
+                request.setAttribute("pageSize", filteredTests.size());
+
+            } else if (!GenericValidator.isBlankOrNull(form.getAccessionNumber()) ||
+                    !GenericValidator.isBlankOrNull(form.getPatient().getPerson().getFirstName())
+                    || !GenericValidator.isBlankOrNull(form.getPatient().getPerson().getLastName())
+                    || !GenericValidator.isBlankOrNull(form.getPatient().getNationalId())
+            ) {
                 tests.clear();
                 tests = resultsLoadUtility.getUnfinishedTestResultItemsByAccession(labNumber, doRange, finished);
-                
+
                 // if no test try patientID
                 if(tests.isEmpty()) {
                     ResultsLoadUtility resultsUtility = SpringContext.getBean(ResultsLoadUtility.class);
                     resultsUtility.setSysUser(getSysUserId(request));
-                    String patientID = labNumber;
-                    //Patient patient = getPatient(patientID);
-                    patient = patientService.getPatientByNationalId(patientID);
+
+                    List<PatientSearchResults> results = searchService.getSearchResults(lastName, firstName, null,
+                            null, nationalId, null, null, null, null, null);
+                    for (PatientSearchResults result : results) {
+                        patient = getPatient(result.getPatientID());
+                    }
+
                     tests = resultsUtility.getGroupedTestsForPatient(patient);
                     patientName = patientService.getLastFirstName(patient);
-                    patientInfo = patientID + ", " + patientService.getGender(patient) + ", "
+                    patientInfo = nationalId + ", " + patientService.getGender(patient) + ", "
                             + patientService.getBirthdayForDisplay(patient);
                 } 
                 
@@ -485,7 +516,7 @@ public class ReactLogbookResultsController extends LogbookResultsBaseController 
         String statusRuleSet = ConfigurationProperties.getInstance().getPropertyValueUpperCase(Property.StatusRules);
 
         if ("true".equals(request.getParameter("pageResults"))) {
-            return getLogbookResults(request, form, "", true, true);
+            return getLogbookResults(request, form, null,"", "",null,"",true, true);
         }
 
         if (result.hasErrors()) {
