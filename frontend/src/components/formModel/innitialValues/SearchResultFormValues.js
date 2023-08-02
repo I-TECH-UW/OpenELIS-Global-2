@@ -12,6 +12,10 @@ export default {
     testDate: "",
     analysisMethod: "",
     testName: "",
+  collectionDate: "",
+  recievedDate:"",
+  sampleStatusType: "",
+  analysisStatus: "",
   
   testResult: [{
     accessionNumber: "",

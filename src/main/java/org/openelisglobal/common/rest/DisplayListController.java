@@ -13,6 +13,7 @@ import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.DisplayListService.ListType;
 import org.openelisglobal.common.services.IStatusService;
+import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
@@ -59,7 +60,7 @@ public class DisplayListController extends BaseRestController{
 
 	@Autowired
     TypeOfSampleService typeOfSampleService;
-	
+
 	private static boolean HAS_NFS_PANEL = false;
 
 	static {
@@ -301,11 +302,47 @@ public class DisplayListController extends BaseRestController{
 		String resultsRoleId = roleService.getRoleByName(Constants.ROLE_RESULTS).getId();
 		return userService.getUserTestSections(getSysUserId(request), resultsRoleId);
 	}
-	
-	
-	
-	
-	
+
+
+	@GetMapping(value = "analysis-status-types", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public List<IdValuePair> getAnalysisStatusTypes() {
+
+		List<IdValuePair> list = new ArrayList<>();
+		list.add(new IdValuePair("0", ""));
+
+		list.add(new IdValuePair(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NotStarted),
+				SpringContext.getBean(IStatusService.class).getStatusName(AnalysisStatus.NotStarted)));
+		list.add(new IdValuePair(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Canceled),
+				SpringContext.getBean(IStatusService.class).getStatusName(AnalysisStatus.Canceled)));
+		list.add(new IdValuePair(
+				SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalAcceptance),
+				SpringContext.getBean(IStatusService.class).getStatusName(AnalysisStatus.TechnicalAcceptance)));
+		list.add(new IdValuePair(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalRejected),
+				SpringContext.getBean(IStatusService.class).getStatusName(AnalysisStatus.TechnicalRejected)));
+		list.add(new IdValuePair(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.BiologistRejected),
+				SpringContext.getBean(IStatusService.class).getStatusName(AnalysisStatus.BiologistRejected)));
+
+		return list;
+	}
+
+	@GetMapping(value = "sample-status-types", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public List<IdValuePair> getSampleStatusTypes() {
+
+		List<IdValuePair> list = new ArrayList<>();
+		list.add(new IdValuePair("0", ""));
+
+		list.add(new IdValuePair(SpringContext.getBean(IStatusService.class).getStatusID(StatusService.OrderStatus.Entered),
+				SpringContext.getBean(IStatusService.class).getStatusName(StatusService.OrderStatus.Entered)));
+		list.add(new IdValuePair(SpringContext.getBean(IStatusService.class).getStatusID(StatusService.OrderStatus.Started),
+				SpringContext.getBean(IStatusService.class).getStatusName(StatusService.OrderStatus.Started)));
+
+		return list;
+	}
+
+
+
 	class ValueComparator implements Comparator<IdValuePair> {
 
 		@Override
