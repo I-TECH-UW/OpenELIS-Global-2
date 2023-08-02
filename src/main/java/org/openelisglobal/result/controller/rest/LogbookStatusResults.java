@@ -1,4 +1,4 @@
-package org.openelisglobal.result.controller;
+package org.openelisglobal.result.controller.rest;
 
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
@@ -24,7 +24,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class ReactLogbookStatusResults {
+public class LogbookStatusResults {
 
 
     private final AnalysisService analysisService;
@@ -49,7 +49,7 @@ public class ReactLogbookStatusResults {
                 .parseInt(SpringContext.getBean(IStatusService.class).getStatusID(StatusService.AnalysisStatus.SampleRejected)));
     }
 
-    public ReactLogbookStatusResults(AnalysisService analysisService, SampleService sampleService, SampleItemService sampleItemService) {
+    public LogbookStatusResults(AnalysisService analysisService, SampleService sampleService, SampleItemService sampleItemService) {
         this.analysisService = analysisService;
         this.sampleService = sampleService;
         this.sampleItemService = sampleItemService;

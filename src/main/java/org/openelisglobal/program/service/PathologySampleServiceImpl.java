@@ -190,7 +190,7 @@ public class PathologySampleServiceImpl extends BaseObjectServiceImpl<PathologyS
                                 SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized));
                     }
 
-                    // this code is pulled from LogbookResultsController
+                    // this code is pulled from LogbookResultsRestController
 //                addResult(result, testResultItem, analysis, results.size() > 1, actionDataSet, useTechnicianName);
 //
 //                if (analysisShouldBeUpdated(testResultItem, result, supportReferrals)) {
