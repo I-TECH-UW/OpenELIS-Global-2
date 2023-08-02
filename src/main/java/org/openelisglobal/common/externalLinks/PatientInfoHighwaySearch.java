@@ -358,15 +358,22 @@ public class PatientInfoHighwaySearch implements IExternalPatientSearch {
     }
 
     private void setDate(ExtendedPatientSearchResults patient, String dateString) throws ParseException {
-        String expectedPattern = "yyyy-MM-dd";
-        SimpleDateFormat formatter = new SimpleDateFormat(expectedPattern);
-        try {
-            Date date = formatter.parse(dateString);
-            patient.setBirthdate(DateUtil.formatDateAsText(date));
-        } catch (ParseException e) {
-            LogEvent.logError("Could not parse date '" + dateString + "' received from external search with pattern '" + expectedPattern + "'", e);
-            throw e;
-        }
+        String dateFormat = "yyyy-MM-dd";
+        String dateTimeFormat = "yyyy-MM-dd HH:mm:ss.S";
+        SimpleDateFormat dateFormatter = new SimpleDateFormat(dateFormat);
+        SimpleDateFormat dateTimeFormatter = new SimpleDateFormat(dateTimeFormat);
+        if (!GenericValidator.isBlankOrNull(dateString)) {
+            if (dateString.length() == dateFormat.length()) {
+                Date date = dateFormatter.parse(dateString);
+                patient.setBirthdate(DateUtil.formatDateAsText(date));
+            } else if (dateString.length() == dateTimeFormat.length()) {
+                Date date = dateTimeFormatter.parse(dateString);
+                patient.setBirthdate(DateUtil.formatDateAsText(date));
+            } else {                
+                LogEvent.logWarn(this.getClass().getName(), "setDate", 
+                    "Could not parse date received from infohighway search");
+            }
+        } 
     }
 
     private SOAPMessage createSOAPRequest(String soapAction) throws Exception {
