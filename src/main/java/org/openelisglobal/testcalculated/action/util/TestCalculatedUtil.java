@@ -58,9 +58,7 @@ public class TestCalculatedUtil {
     private NoteService noteService = SpringContext.getBean(NoteService.class);
     
     private ResultLimitService resultLimitService = SpringContext.getBean(ResultLimitService.class);
-    
-    private static final String INCOMPLETE_VALUE = "#####";
-    
+        
     private String CALCULATION_SUBJECT = "Calculated Result Note";
     
     public List<Analysis> addNewTestsToDBForCalculatedTests(List<ResultSet> resultSetList, String sysUserId)
@@ -146,16 +144,16 @@ public class TestCalculatedUtil {
                                     function.append(Integer.valueOf(operation.getValue())).append(" ");
                                     break;
                                 case MATH_FUNCTION:
-                                    if (operation.getValue().equals(Operation.IN_NORMAL_RANGE.toLowerCase())) {
+                                    if (operation.getValue().equals(Operation.IN_NORMAL_RANGE)) {
                                         int order = operation.getOrder();
                                         Operation prevOperation = calculation.getOperations().get(order - 1);
-                                        addNumericOperation(prevOperation, resultCalculation, function, "IN_NORMAL_RANGE");
+                                        addNumericOperation(prevOperation, resultCalculation, function, Operation.IN_NORMAL_RANGE);
                                         
-                                    } else if (operation.getValue().equals(Operation.OUTSIDE_NORMAL_RANGE.toString())) {
+                                    } else if (operation.getValue().equals(Operation.OUTSIDE_NORMAL_RANGE)) {
                                         int order = operation.getOrder();
                                         Operation prevOperation = calculation.getOperations().get(order - 1);
                                         addNumericOperation(prevOperation, resultCalculation, function,
-                                            "OUTSIDE_NORMAL_RANGE");
+                                            Operation.OUTSIDE_NORMAL_RANGE);
                                     } else {
                                         function.append(operation.getValue()).append(" ");
                                     }
@@ -326,17 +324,17 @@ public class TestCalculatedUtil {
             if (result != null) {
                 if (testService.getResultType(result.getTestResult().getTest()).equals("N")) {
                     switch (inputType) {
-                        case "TEST_RESULT":
+                        case Operation.TEST_RESULT:
                             function.append(result.getValue()).append(" ");
                             break;
-                        case "IN_NORMAL_RANGE":
+                        case Operation.IN_NORMAL_RANGE:
                             function.append(" >= ")
                                     .append(result.getMinNormal() != null ? result.getMinNormal() : Double.NEGATIVE_INFINITY)
                                     .append(" && ").append(result.getValue()).append(" <= ")
                                     .append(result.getMaxNormal() != null ? result.getMaxNormal() : Double.POSITIVE_INFINITY)
                                     .append(" ");
                             break;
-                        case "OUTSIDE_NORMAL_RANGE":
+                        case Operation.OUTSIDE_NORMAL_RANGE:
                             function.append(" <= ")
                                     .append(result.getMinNormal() != null ? result.getMinNormal() : Double.NEGATIVE_INFINITY)
                                     .append(" || ").append(result.getValue()).append(" >= ")

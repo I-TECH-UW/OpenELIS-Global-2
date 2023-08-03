@@ -19,6 +19,7 @@ import org.openelisglobal.common.util.IdValuePair;
 @Table(name = "calculation_operation")
 public class Operation implements Comparable<Operation>{
 
+    // mathematical operands
     public final static  String ADD = "+";
     public final static  String SUBTRACT = "-";
     public final static  String DIVIDE =  "/";
@@ -31,6 +32,8 @@ public class Operation implements Comparable<Operation>{
     public final static  String LESS_OR_EQUALS =  "<=";
     public final static  String IN_NORMAL_RANGE =  "IS_IN_NORMAL_RANGE";
     public final static  String OUTSIDE_NORMAL_RANGE =  "IS_OUTSIDE_NORMAL_RANGE";
+    // constants
+    public final static  String TEST_RESULT =  "TEST_RESULT";
     
     
     @Id
