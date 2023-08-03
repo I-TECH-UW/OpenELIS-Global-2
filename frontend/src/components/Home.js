@@ -1,6 +1,7 @@
 import React from 'react'
 import { injectIntl } from 'react-intl'
 import { Breadcrumb, BreadcrumbItem, Grid } from '@carbon/react';
+import HomeDashBoard from './home/Dashboard.tsx'
 
 
 
@@ -19,6 +20,9 @@ class Home extends React.Component {
                     <BreadcrumbItem href="/">Home</BreadcrumbItem>
                 </Breadcrumb>
             </Grid>
+             <div> 
+                <HomeDashBoard/>
+            </div> 
             </>
         );
 
