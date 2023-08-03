@@ -1,21 +1,15 @@
-package org.openelisglobal.result.controller;
+package org.openelisglobal.result.controller.rest;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.sql.Timestamp;
-
-import org.openelisglobal.common.util.IdValuePair;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.ContainerFactory;
-import org.json.simple.parser.JSONParser;
 
 import javax.servlet.http.HttpServletRequest;
+
+import org.openelisglobal.result.controller.LogbookResultsBaseController;
 import org.springframework.http.MediaType;
 
 import org.apache.commons.validator.GenericValidator;
-import org.json.JSONArray;
 import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.DisplayListService.ListType;
@@ -42,7 +36,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -54,7 +47,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Controller
 @RequestMapping(value = "/rest/")
-public class ReactResultsController extends LogbookResultsBaseController {
+public class ResultsRestController extends LogbookResultsBaseController {
 
     private String RESULT_EDIT_ROLE_ID = "";
 
@@ -68,7 +61,7 @@ public class ReactResultsController extends LogbookResultsBaseController {
     @Autowired
     private UserService userService;
 
-    public ReactResultsController(RoleService roleService) {
+    public ResultsRestController(RoleService roleService) {
         Role editRole = roleService.getRoleByName("Results modifier");
         if (editRole != null) {
             RESULT_EDIT_ROLE_ID = editRole.getId();
@@ -86,7 +79,7 @@ public class ReactResultsController extends LogbookResultsBaseController {
 
 //        return DisplayListService.getInstance().getList(DisplayListService.ListType.ALL_TESTS);
 //        HttpServletRequest request = null;
-        System.out.println("ReactResultsController getTestResult:labNumber:" + labNumber);
+        System.out.println("ResultsRestController getTestResult:labNumber:" + labNumber);
         String accessionNumber = labNumber;
         // String accessionNumber = "TESTA220000000000042";
         // String accessionNumber = "TESTA220000000000037";
@@ -161,7 +154,7 @@ public class ReactResultsController extends LogbookResultsBaseController {
             paging.page(request, form, Integer.parseInt(newPage));
         }
 
-        System.out.println("ReactResultsController getTestResult:");
+        System.out.println("ResultsRestController getTestResult:");
 
         List<TestResultItem> testResultItems = form.getTestResult();
 ////        Timestamp now = new Timestamp(System.currentTimeMillis());
@@ -185,7 +178,7 @@ public class ReactResultsController extends LogbookResultsBaseController {
 //        List<IdValuePair> forms = new ArrayList<>();
 //        forms.add(0, formsEntry);
 
-       //System.out.println("ReactResultsController jsonForm:" + jsonForm);
+       //System.out.println("ResultsRestController jsonForm:" + jsonForm);
 
         return (form);
     }
