@@ -27,7 +27,7 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
         <>
             <div className="dashboard-container">
                 {tilesData.map((tile, index) => (
-                    <Tile key={index} className="dashboard-tile">
+                    <ClickableTile  key={index} className="dashboard-tile">
                         <h3 className="tile-title">{tile.title}</h3>
                         <p className="tile-subtitle">{tile.subtitle}</p>
                         <p className="tile-value">{tile.value}</p>
@@ -38,7 +38,7 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
                                 />
                             </Link>
                         </div>
-                    </Tile>
+                    </ClickableTile>
                 ))}
             </div>
 
