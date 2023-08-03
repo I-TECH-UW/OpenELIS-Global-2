@@ -33,7 +33,7 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
                         <p className="tile-value">{tile.value}</p>
                         <div className="tile-icon">
                             <Link href="#">
-                                <ArrowUpRight
+                                <ArrowUpRight size={20}
                                     className="clickable-icon"
                                 />
                             </Link>
