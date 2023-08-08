@@ -235,7 +235,7 @@ export default function App() {
                   isLoggedIn={isLoggedIn}
                 />
                 <SecureRoute
-                  path="/WorkplanByUnit"
+                  path="/WorkPlanByTestSection"
                   exact
                   component={() => <Workplan type="unit"/>}
                   role="Results"
