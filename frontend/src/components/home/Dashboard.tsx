@@ -9,7 +9,7 @@ interface DashBoardProps {
 
 interface Tile {
     title: string,
-    subtitle: string,
+    subTitle: string,
     value: string
 }
 
