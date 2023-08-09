@@ -444,44 +444,49 @@ public class TestReflexUtil {
 
     private List<TestReflex> applyDictionaryRelationRulesForReflex(Result result) {
         List<TestReflex> reflexTests = new ArrayList<>();
-        
         reflexResolver.getTestReflexsByAnalyteAndTest(result).forEach(reflexTest -> {
-            switch (reflexTest.getRelation()) {
-                case EQUALS:
-                    if (reflexTest.getTestResult().getValue().equals(result.getValue())) {
-                        reflexTests.add(reflexTest);
-                    }
-                    break;
-                case NOT_EQUALS:
-                    if (!(reflexTest.getTestResult().getValue().equals(result.getValue()))) {
-                        reflexTests.add(reflexTest);
-                    }
-                    break;
-                case INSIDE_NORMAL_RANGE:
-                    List<ResultLimit> resultLimits = SpringContext.getBean(ResultLimitService.class).getResultLimits(result.getTestResult().getTest());
-                    if(!resultLimits.isEmpty() && StringUtils.isNotBlank(resultLimits.get(0).getDictionaryNormalId())){
-                        if (result.getValue().equals(resultLimits.get(0).getDictionaryNormalId())) {
+            if (reflexTest.getRelation() != null) {
+                switch (reflexTest.getRelation()) {
+                    case EQUALS:
+                        if (reflexTest.getTestResult().getValue().equals(result.getValue())) {
                             reflexTests.add(reflexTest);
                         }
-                    } 
-                    break;
-                case OUTSIDE_NORMAL_RANGE:
-                    List<ResultLimit> limits = SpringContext.getBean(ResultLimitService.class).getResultLimits(result.getTestResult().getTest());
-                    if(!limits.isEmpty() && StringUtils.isNotBlank(limits.get(0).getDictionaryNormalId())){
-                        if (!(result.getValue().equals(limits.get(0).getDictionaryNormalId()))) {
+                        break;
+                    case NOT_EQUALS:
+                        if (!(reflexTest.getTestResult().getValue().equals(result.getValue()))) {
                             reflexTests.add(reflexTest);
                         }
-                    } 
-                    break;   
-                default :
-                    break;
+                        break;
+                    case INSIDE_NORMAL_RANGE:
+                        List<ResultLimit> resultLimits = SpringContext.getBean(ResultLimitService.class)
+                                .getResultLimits(result.getTestResult().getTest());
+                        if (!resultLimits.isEmpty() && StringUtils.isNotBlank(resultLimits.get(0).getDictionaryNormalId())) {
+                            if (result.getValue().equals(resultLimits.get(0).getDictionaryNormalId())) {
+                                reflexTests.add(reflexTest);
+                            }
+                        }
+                        break;
+                    case OUTSIDE_NORMAL_RANGE:
+                        List<ResultLimit> limits = SpringContext.getBean(ResultLimitService.class)
+                                .getResultLimits(result.getTestResult().getTest());
+                        if (!limits.isEmpty() && StringUtils.isNotBlank(limits.get(0).getDictionaryNormalId())) {
+                            if (!(result.getValue().equals(limits.get(0).getDictionaryNormalId()))) {
+                                reflexTests.add(reflexTest);
+                            }
+                        }
+                        break;
+                    default:
+                        break;
+                }  
             }
         });
         return reflexTests;
     }
 
     private Boolean applyNumericRelationRulesForReflex(TestReflex reflexTest, TestReflexBean reflexBean) {
-        
+        if(reflexTest.getRelation() == null){
+            return false;
+        }
         switch (reflexTest.getRelation()) {
             case EQUALS:
                 return Double.valueOf(reflexTest.getNonDictionaryValue())
@@ -518,6 +523,9 @@ public class TestReflexUtil {
     }
 
     private Boolean applyTextRelationRulesForReflex(TestReflex reflexTest, TestReflexBean reflexBean) {
+         if(reflexTest.getRelation() == null){
+            return false;
+        }
         switch (reflexTest.getRelation()) {
             case EQUALS:
                 return reflexTest.getNonDictionaryValue().equals(reflexBean.getResult().getValue());   
