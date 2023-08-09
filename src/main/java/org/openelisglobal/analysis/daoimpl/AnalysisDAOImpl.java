@@ -978,6 +978,28 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         return null;
     }
 
+     @Override
+    @Transactional(readOnly = true)
+    public List<Analysis> getAnalysisCompletedOnByStatusId(Date completedDate, String statusId)
+            throws LIMSRuntimeException {
+        
+
+        String sql = "from Analysis a where a.releasedDate = :releasedDate and a.statusId = :statusId ";
+
+        try {
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
+            query.setParameter("releasedDate", completedDate);
+            query.setParameter("statusId", Integer.parseInt(statusId));
+
+            List<Analysis> analysisList = query.list();
+            return analysisList;
+        } catch (HibernateException e) {
+            handleException(e, "getAnalysisStartedOnExcludedByStatusId");
+        }
+
+        return null;
+    }
+
     @Override
 
     @Transactional(readOnly = true)

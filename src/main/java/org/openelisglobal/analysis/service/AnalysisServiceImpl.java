@@ -741,4 +741,9 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
             LocalDate upperDate) {
         return baseObjectDAO.getStudyAnalysisForSiteBetweenResultDates(referringSiteId, lowerDate, upperDate);
     }
+
+    @Override
+    public List<Analysis> getAnalysisCompletedOnByStatusId(Date completedDate, String statusId) {
+        return baseObjectDAO.getAnalysisCompletedOnByStatusId(completedDate ,statusId);
+    }
 }
