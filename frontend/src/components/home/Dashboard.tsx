@@ -1,5 +1,5 @@
 import React from "react";
-import { Icon, Link, Grid, Tile, ClickableTile, Column, ExpandableTile, TileAboveTheFoldContent, TileBelowTheFoldContent } from '@carbon/react';
+import { Icon, Link, Grid, Tile, ClickableTile, Column, ExpandableTile, TileAboveTheFoldContent, TileBelowTheFoldContent ,Loading} from '@carbon/react';
 import './Dashboard.css';
 import { ArrowUpRight } from '@carbon/react/icons';
 import { useContext, useState, useEffect, useRef } from "react";
@@ -16,6 +16,7 @@ interface Tile {
 const HomeDashBoard: React.FC<DashBoardProps> = () => {
 
     const [tileList, setTileList] = useState([Tile]);
+    const [loading, setLoading] = useState(true);
     const componentMounted = useRef(true);
 
     useEffect(() => {
@@ -30,10 +31,14 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
     const loadTiles = (tiles) => {
         if (componentMounted.current) {
             setTileList(tiles);
+            setLoading(false);
         }
     }
     return (
         <>
+            {loading && (
+                <Loading></Loading>
+            )}
             <div className="dashboard-container">
                 {tileList.map((tile, index) => (
                     <ClickableTile key={index} className="dashboard-tile">

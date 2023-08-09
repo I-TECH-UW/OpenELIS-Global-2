@@ -203,4 +203,6 @@ public interface AnalysisService extends BaseObjectService<Analysis, String> {
 
     List<Analysis> getStudyAnalysisForSiteBetweenResultDates(String referringSiteId, LocalDate lowerDate,
             LocalDate upperDate);
+
+    List<Analysis> getAnalysisCompletedOnByStatusId(Date completedDate, String statusId);       
 }

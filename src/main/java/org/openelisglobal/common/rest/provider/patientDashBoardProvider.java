@@ -57,19 +57,19 @@ public class patientDashBoardProvider {
                 case ORDERS_COMPLETED_TODAY:
                     //Completed Today
                     dashBoardTiles.add(new DashBoardTile("Orders Completed Today", "Total Orders Completed Today",
-                            analysisService
-                                    .getAnalysisStartedOnRangeByStatusId(DateUtil.getNowAsSqlDate(),
-                                        DateUtil.getNowAsSqlDate(), iStatusService.getStatusID(AnalysisStatus.Finalized))
-                                    .size()));
+                            analysisService.getAnalysisCompletedOnByStatusId(DateUtil.getNowAsSqlDate(),
+                                iStatusService.getStatusID(AnalysisStatus.Finalized)).size()));
                     break;
                 case ORDERS_PATIALLY_COMPLETED_TODAY:
                     // Partially Completed Today
-                    dashBoardTiles.add(new DashBoardTile("Patiallly Completed Today", "Total Orders Completed Today",
-                            analysisService
-                                    .getAnalysisStartedOnRangeByStatusId(DateUtil.getNowAsSqlDate(),
-                                        DateUtil.getNowAsSqlDate(), iStatusService.getStatusID(AnalysisStatus.Finalized))
-                                    .size()));
+                    Set<Integer> statusIds2 = new HashSet<>();
+                    statusIds2.add(Integer.parseInt(iStatusService.getStatusID(AnalysisStatus.SampleRejected)));
+                    statusIds2.add(Integer.parseInt(iStatusService.getStatusID(AnalysisStatus.Finalized)));
+                    dashBoardTiles.add(
+                        new DashBoardTile("Patiallly Completed Today", "Total Orders Completed Today", analysisService
+                                .getAnalysisStartedOnExcludedByStatusId(DateUtil.getNowAsSqlDate(), statusIds2).size()));
                     break;
+                
                 case ORDERS_ENTERED_BY_USER_TODAY:
                     //orders entered By user Today
                     Set<Integer> statusIds = new HashSet<>();
@@ -111,8 +111,8 @@ public class patientDashBoardProvider {
     }
     
     private double calculateAverageTime() {
-        List<Analysis> analyses = analysisService.getAnalysisStartedOnRangeByStatusId(DateUtil.getNowAsSqlDate(),
-            DateUtil.getNowAsSqlDate(), iStatusService.getStatusID(AnalysisStatus.Finalized));
+        List<Analysis> analyses = analysisService.getAnalysisCompletedOnByStatusId(DateUtil.getNowAsSqlDate(),
+            iStatusService.getStatusID(AnalysisStatus.Finalized));
         
         List<Long> hours = new ArrayList<>();
         analyses.forEach(analysis -> {
@@ -135,8 +135,8 @@ public class patientDashBoardProvider {
     }
     
     private int analysesWithDelayedTurnAroundTime() {
-        List<Analysis> analyses = analysisService.getAnalysisStartedOnRangeByStatusId(DateUtil.getNowAsSqlDate(),
-            DateUtil.getNowAsSqlDate(), iStatusService.getStatusID(AnalysisStatus.Finalized));
+        List<Analysis> analyses = analysisService.getAnalysisCompletedOnByStatusId(DateUtil.getNowAsSqlDate(),
+            iStatusService.getStatusID(AnalysisStatus.Finalized));
         
         List<Analysis> delayedAnalyses = new ArrayList<>();
         analyses.forEach(analysis -> {
