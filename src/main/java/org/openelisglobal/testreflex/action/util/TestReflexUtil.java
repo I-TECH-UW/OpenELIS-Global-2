@@ -321,6 +321,9 @@ public class TestReflexUtil {
     }
 
     private List<TestReflex> getReflexTests(TestReflexBean reflexBean) {
+        if(reflexBean.getResult().getTestResult() == null){
+            return new ArrayList<>();
+        }
         String resultType = testService.getResultType(reflexBean.getResult().getTestResult().getTest());
         List<TestReflex> reflexesForResult = reflexResolver.getTestReflexesForResult(reflexBean.getResult());
         if (resultType.equals("D")) {

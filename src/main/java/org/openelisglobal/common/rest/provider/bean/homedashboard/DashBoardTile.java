@@ -4,48 +4,6 @@ import java.util.stream.Stream;
 
 public class DashBoardTile {
     
-    private String title;
-    
-    private String subTitle;
-    
-    private String value;
-
-    public DashBoardTile(String title, String subTitle, int value) {
-        this.title = title;
-        this.subTitle = subTitle;
-        this.value = String.valueOf(value);
-    }
-    
-    public DashBoardTile(String title, String subTitle, String value) {
-        this.title = title;
-        this.subTitle = subTitle;
-        this.value = value;
-    }
-    
-    public String getTitle() {
-        return title;
-    }
-    
-    public void setTitle(String title) {
-        this.title = title;
-    }
-    
-    public String getSubTitle() {
-        return subTitle;
-    }
-    
-    public void setSubTitle(String subTitle) {
-        this.subTitle = subTitle;
-    }
-    
-    public String getValue() {
-        return value;
-    }
-    
-    public void setValue(String value) {
-        this.value = value;
-    }
-    
     public enum TileType {
         
         ORDERS_IN_PROGRESS,

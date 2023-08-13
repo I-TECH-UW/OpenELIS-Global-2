@@ -9,6 +9,7 @@ import java.util.Set;
 
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.common.rest.provider.bean.homedashboard.DashBoardCount;
 import org.openelisglobal.common.rest.provider.bean.homedashboard.DashBoardTile;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
@@ -21,12 +22,11 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping(value = "/rest/")
-public class patientDashBoardProvider {
+public class PatientDashBoardProvider {
     
     @Autowired
     AnalysisService analysisService;
@@ -37,77 +37,63 @@ public class patientDashBoardProvider {
     @Autowired
     ElectronicOrderService electronicOrderService;
     
-    @GetMapping(value = "dashboard-tiles", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "home-dashboard/counts", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public List<DashBoardTile> getDasBoardTiles() {
+    public DashBoardCount getDasBoardTiles() {
         
-        List<DashBoardTile> dashBoardTiles = new ArrayList<>();
+        DashBoardCount count = new DashBoardCount();
         DashBoardTile.TileType.stream().forEach(type -> {
             switch (type) {
                 case ORDERS_IN_PROGRESS:
-                    // in Progress
-                    dashBoardTiles.add(new DashBoardTile("In Progress", "Awaiting Result Entry", analysisService
-                            .getAnalysesForStatusId(iStatusService.getStatusID(AnalysisStatus.NotStarted)).size()));
+                    count.setOrdersInProgress(analysisService
+                            .getAnalysesForStatusId(iStatusService.getStatusID(AnalysisStatus.NotStarted)).size());
                     break;
                 case ORDERS_READY_FOR_VALIDATION:
-                    //Ready for validation
-                    dashBoardTiles.add(new DashBoardTile("Ready For Validation", "Awaiting Review", analysisService
-                            .getAnalysesForStatusId(iStatusService.getStatusID(AnalysisStatus.TechnicalAcceptance)).size()));
+                    count.setOrdersReadyForValidation(analysisService
+                            .getAnalysesForStatusId(iStatusService.getStatusID(AnalysisStatus.TechnicalAcceptance)).size());
                     break;
                 case ORDERS_COMPLETED_TODAY:
-                    //Completed Today
-                    dashBoardTiles.add(new DashBoardTile("Orders Completed Today", "Total Orders Completed Today",
-                            analysisService.getAnalysisCompletedOnByStatusId(DateUtil.getNowAsSqlDate(),
-                                iStatusService.getStatusID(AnalysisStatus.Finalized)).size()));
+                    count.setOrdersCompletedToday(analysisService.getAnalysisCompletedOnByStatusId(
+                        DateUtil.getNowAsSqlDate(), iStatusService.getStatusID(AnalysisStatus.Finalized)).size());
                     break;
                 case ORDERS_PATIALLY_COMPLETED_TODAY:
-                    // Partially Completed Today
                     Set<Integer> statusIds2 = new HashSet<>();
                     statusIds2.add(Integer.parseInt(iStatusService.getStatusID(AnalysisStatus.SampleRejected)));
                     statusIds2.add(Integer.parseInt(iStatusService.getStatusID(AnalysisStatus.Finalized)));
-                    dashBoardTiles.add(
-                        new DashBoardTile("Patiallly Completed Today", "Total Orders Completed Today", analysisService
-                                .getAnalysisStartedOnExcludedByStatusId(DateUtil.getNowAsSqlDate(), statusIds2).size()));
+                    count.setPatiallyCompletedToday(analysisService
+                            .getAnalysisStartedOnExcludedByStatusId(DateUtil.getNowAsSqlDate(), statusIds2).size());
                     break;
                 
                 case ORDERS_ENTERED_BY_USER_TODAY:
-                    //orders entered By user Today
                     Set<Integer> statusIds = new HashSet<>();
                     statusIds.add(Integer.parseInt(iStatusService.getStatusID(AnalysisStatus.SampleRejected)));
-                    dashBoardTiles.add(new DashBoardTile("Orders Entered By User", "Entered by user Today", analysisService
-                            .getAnalysisStartedOnExcludedByStatusId(DateUtil.getNowAsSqlDate(), statusIds).size()));
+                    count.setOrderEnterdByUserToday(analysisService
+                            .getAnalysisStartedOnExcludedByStatusId(DateUtil.getNowAsSqlDate(), statusIds).size());
                     break;
                 case ORDERS_REJECTED_TODAY:
-                    //Orders Rejected by Lab Today
-                    dashBoardTiles.add(new DashBoardTile("Orders Rejected", "Orders Rejected By Lab Today",
-                            analysisService.getAnalysisStartedOnRangeByStatusId(DateUtil.getNowAsSqlDate(),
-                                DateUtil.getNowAsSqlDate(), iStatusService.getStatusID(AnalysisStatus.SampleRejected))
-                                    .size()));
+                    count.setOrdersRejectedToday(
+                        analysisService.getAnalysisStartedOnRangeByStatusId(DateUtil.getNowAsSqlDate(),
+                            DateUtil.getNowAsSqlDate(), iStatusService.getStatusID(AnalysisStatus.SampleRejected)).size());
                     break;
                 case UN_PRINTED_RESULTS:
-                    //Un printed 
-                    dashBoardTiles
-                            .add(new DashBoardTile("Un Printed Results", "Un Printed Results", unprintedResults().size()));
+                    count.setUnPritendResults(unprintedResults().size());
                     break;
                 case INCOMING_ORDERS:
-                    //Incoming order
-                    dashBoardTiles.add(new DashBoardTile("Incoming Orders", "Electronic Orders'",
-                            electronicOrderService.getAllElectronicOrdersByDateAndStatus(null, null,
-                                iStatusService.getStatusID(ExternalOrderStatus.Entered),
-                                ElectronicOrder.SortOrder.EXTERNAL_ID).size()));
+                    count.setIncomigOrders(electronicOrderService.getAllElectronicOrdersByDateAndStatus(null, null,
+                        iStatusService.getStatusID(ExternalOrderStatus.Entered), ElectronicOrder.SortOrder.EXTERNAL_ID)
+                            .size());
                     break;
                 case AVERAGE_TURN_AROUND_TIME:
-                    dashBoardTiles.add(new DashBoardTile("Average Turn Around time", "Reception to Validation",
-                            String.valueOf(calculateAverageTime())));
+                    count.setAverageTurnAroudTime(calculateAverageTime());
                     break;
                 case DELAYED_TURN_AROUND:
-                    dashBoardTiles.add(
-                        new DashBoardTile("Delayed Turn Around", "More Than 96 hours", analysesWithDelayedTurnAroundTime()));
+                    
+                    count.setDelayedTurnAround(analysesWithDelayedTurnAroundTime().size());
                     break;
             }
         });
         
-        return dashBoardTiles;
+        return count;
     }
     
     private double calculateAverageTime() {
@@ -134,7 +120,7 @@ public class patientDashBoardProvider {
         return (double) sum / hours.size();
     }
     
-    private int analysesWithDelayedTurnAroundTime() {
+    private List<Analysis> analysesWithDelayedTurnAroundTime() {
         List<Analysis> analyses = analysisService.getAnalysisCompletedOnByStatusId(DateUtil.getNowAsSqlDate(),
             iStatusService.getStatusID(AnalysisStatus.Finalized));
         
@@ -150,7 +136,7 @@ public class patientDashBoardProvider {
             }
             
         });
-        return delayedAnalyses.size();
+        return delayedAnalyses;
     }
     
     private List<Analysis> unprintedResults() {

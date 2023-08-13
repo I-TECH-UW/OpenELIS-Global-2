@@ -1,0 +1,28 @@
+
+.dashboard-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 50px;
+}
+
+.dashboard-tile {
+    border-radius: 3px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #f4f4f4;
+}
+
+.tile-title {
+    margin: 0;
+    font-size: 1.2rem;
+}
+
+.tile-subtitle {
+    margin-top: 5px;
+    color: #666;
+}
+
+.tile-value {
+    margin-top: 10px;
+    font-size: 1.5rem;
+    font-weight: bold;
+}

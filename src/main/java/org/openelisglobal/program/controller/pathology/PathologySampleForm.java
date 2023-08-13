@@ -27,8 +27,8 @@ public class PathologySampleForm {
     private String conclusionText;
     private String systemUserId;
 
-    private Boolean release;
-    private Boolean referToImmunoHistoChemistry;
+    private Boolean release = false;
+    private Boolean referToImmunoHistoChemistry = false;
 
     public PathologyStatus getStatus() {
         return status;
