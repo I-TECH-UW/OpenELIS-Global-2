@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 
 import org.openelisglobal.common.rest.BaseRestController;
+import org.openelisglobal.program.bean.PathologyDashBoardCount;
 import org.openelisglobal.program.service.PathologyDisplayService;
 import org.openelisglobal.program.service.PathologySampleService;
 import org.openelisglobal.program.valueholder.pathology.PathologyCaseViewDisplayItem;
@@ -38,16 +39,22 @@ public class PathologyController extends BaseRestController {
     @ResponseBody
     public List<PathologyDisplayItem> getFilteredPathologyEntries(@RequestParam(required = false) String searchTerm,
             @RequestParam PathologyStatus... statuses) {
-        return pathologySampleService.getWithStatus(Arrays.asList(statuses)).stream()
+        return pathologySampleService.searchWithStatusAndTerm(Arrays.asList(statuses) ,searchTerm).stream()
                 .map(e -> pathologyDisplayService.convertToDisplayItem(e.getId()))
                 .collect(Collectors.toList());
     }
 
     @GetMapping(value = "/rest/pathology/dashboard/count", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Long> getFilteredPathologyEntries(@RequestParam PathologyStatus... statuses) {
-        return ResponseEntity.ok(pathologySampleService.getCountWithStatus(Arrays.asList(statuses)));
+    public ResponseEntity<PathologyDashBoardCount> getFilteredPathologyEntries() {
+        PathologyDashBoardCount count = new PathologyDashBoardCount();
+        count.setInProgress(pathologySampleService.getCountWithStatus(Arrays.asList(PathologyStatus.GROSSING ,PathologyStatus.CUTTING ,PathologyStatus.GROSSING ,PathologyStatus.SLICING,PathologyStatus.STAINING ,PathologyStatus.PROCESSING)));
+        count.setAwaitingReview(pathologySampleService.getCountWithStatus(Arrays.asList(PathologyStatus.READY_PATHOLOGIST)));
+        count.setAdditionalRequests(pathologySampleService.getCountWithStatus(Arrays.asList(PathologyStatus.ADDITIONAL_REQUEST)));
+        count.setComplete(pathologySampleService.getCountWithStatus(Arrays.asList(PathologyStatus.COMPLETED)));
+        return ResponseEntity.ok(count);
     }
+    
 
     @PostMapping(value = "/rest/pathology/assignTechnician", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody

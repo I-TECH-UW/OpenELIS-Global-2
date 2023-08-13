@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
@@ -107,6 +108,7 @@ public class PathologySampleServiceImpl extends BaseObjectServiceImpl<PathologyS
         if (!GenericValidator.isBlankOrNull(form.getAssignedTechnicianId())) {
             pathologySample.setTechnician(systemUserService.get(form.getAssignedTechnicianId()));
         }
+        pathologySample.setStatus(form.getStatus());
         pathologySample.getBlocks().removeAll(pathologySample.getBlocks());
         if (form.getBlocks() != null)
             form.getBlocks().stream().forEach(e -> e.setId(null));
@@ -160,11 +162,13 @@ public class PathologySampleServiceImpl extends BaseObjectServiceImpl<PathologyS
 
                     if (newResult) {
                         analysis.setRevision("1");
+                         actionDataSet.getNewResults()
+                            .add(new ResultSet(result, null, null, patient, sample, new HashMap<>(), false));
                     } else {
                         analysis.setRevision(String.valueOf(Integer.parseInt(analysis.getRevision()) + 1));
-                    }
-                    actionDataSet.getNewResults()
+                         actionDataSet.getModifiedResults()
                             .add(new ResultSet(result, null, null, patient, sample, new HashMap<>(), false));
+                    }           
 
                     analysis.setStartedDateForDisplay(testResultItem.getTestDate());
 
@@ -233,5 +237,28 @@ public class PathologySampleServiceImpl extends BaseObjectServiceImpl<PathologyS
         request.setValue(text);
         request.setType(type);
         return request;
+    }
+
+    @Override
+    public List<PathologySample> searchWithStatusAndTerm(List<PathologyStatus> statuses, String searchTerm) {
+        List<PathologySample> pathologySamples = baseObjectDAO.getWithStatus(statuses);
+        if (StringUtils.isNotBlank(searchTerm)) {
+            Sample sample = sampleService.getSampleByAccessionNumber(searchTerm);
+            if (sample != null) {
+                pathologySamples = baseObjectDAO.searchWithStatusAndAccesionNumber(statuses, searchTerm);
+            } else {
+                List<PathologySample> filteredpathologySamples = new ArrayList<>();
+                pathologySamples.forEach(pathologySample -> {
+                    Patient patient = sampleService.getPatient(pathologySample.getSample());
+                    if (patient.getPerson().getFirstName().equals(searchTerm)
+                            || patient.getPerson().getLastName().equals(searchTerm)) {
+                        filteredpathologySamples.add(pathologySample);
+                    }
+                });
+                pathologySamples = filteredpathologySamples;
+            }
+        }
+        
+        return pathologySamples;
     }
 }

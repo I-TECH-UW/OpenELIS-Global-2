@@ -10,5 +10,7 @@ public interface PathologySampleDAO extends BaseDAO<PathologySample, Integer> {
 
     List<PathologySample> getWithStatus(List<PathologyStatus> statuses);
 
+    List<PathologySample> searchWithStatusAndAccesionNumber(List<PathologyStatus> statuses ,String labNumber);
+
     Long getCountWithStatus(List<PathologyStatus> statuses);
 }
