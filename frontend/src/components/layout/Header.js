@@ -74,7 +74,7 @@ class OEHeader extends React.Component {
     return (
       <>
         <picture>
-          <img className="logo" src={`images/openelis_logo.png`} alt="logo" />
+          <img className="logo" src={`../images/openelis_logo.png`} alt="logo" />
         </picture>
       </>
     );

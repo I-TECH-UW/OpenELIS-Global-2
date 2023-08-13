@@ -142,7 +142,7 @@ function handleSubmit(event) {
             </div>
             <div className="formInlineDiv">
                 <TextInput type="text" name="program.questionnaireUUID" id="program.questionnaireUUID" labelText="UUID"
-                        value={programValues.program.questionnaireUUID}
+                       disabled={programValues.program.id !== ""?true : false } value={programValues.program.questionnaireUUID}
                     onChange={handleFieldChange}/>
                     <TextInput type="text" name="program.code" id="program.code" labelText="Code" maxLength="10" 
                         value={programValues.program.code}

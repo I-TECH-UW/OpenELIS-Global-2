@@ -106,7 +106,7 @@ function PathologyCaseView() {
       "grossExam": pathologySampleInfo.grossExam, 
       "microscopyExam": pathologySampleInfo.microscopyExam, 
       "conclusionText": pathologySampleInfo.conclusionText,
-      "release": pathologySampleInfo.release,
+      "release": pathologySampleInfo.release != undefined ? pathologySampleInfo.release : false,
       "referToImmunoHistoChemistry": pathologySampleInfo.referToImmunoHistoChemistry
     }
     if (pathologySampleInfo.techniques) {
@@ -125,6 +125,8 @@ function PathologyCaseView() {
       })}
     }
     
+    console.log(" ..submit....")
+    console.log(JSON.stringify(submitValues))
     postToOpenElisServerFullResponse("/rest/pathology/caseView/" + pathologySampleId, JSON.stringify(submitValues), displayStatus);
   }
 
@@ -236,6 +238,7 @@ function PathologyCaseView() {
               hideLabel={true}
               placeholder="Block Number" 
               value={block.blockNumber} 
+              type="number"
               onChange={e => { 
                 var newBlocks = [...pathologySampleInfo.blocks]; 
                 newBlocks[index].blockNumber = e.target.value;
@@ -292,6 +295,7 @@ function PathologyCaseView() {
                   hideLabel={true}
                   placeholder="Slide Number"
                   value={slide.slideNumber} 
+                  type="number"
                   onChange={e => { 
                     var newSlides = [...pathologySampleInfo.slides]; 
                     newSlides[index].slideNumber = e.target.value;

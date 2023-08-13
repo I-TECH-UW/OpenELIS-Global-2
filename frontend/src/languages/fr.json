@@ -91,5 +91,6 @@
     "testcalculation.label.selectDictionaryValue" : "Sélectionnez la valeur du dictionnaire" ,
     "testcalculation.label.textValue" : "Valeur de texte" ,
     "testcalculation.label.finalresult" : "Résultat final",
-    "advanced.search" : "Lancer la recherche"
+    "advanced.search" : "Lancer la recherche" ,
+    "pathology.label.title" : "Pathologie"
 }
