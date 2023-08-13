@@ -37,4 +37,15 @@ public class PathologySampleDAOImpl extends BaseDAOImpl<PathologySample, Integer
 
         return count;
     }
+
+    @Override
+    public List<PathologySample> searchWithStatusAndAccesionNumber(List<PathologyStatus> statuses ,String labNumber) {
+        String sql = "from PathologySample ps where ps.status in (:statuses) and ps.sample.accessionNumber = :labNumber";
+        Query<PathologySample> query = entityManager.unwrap(Session.class).createQuery(sql, PathologySample.class);
+        query.setParameterList("statuses", statuses.stream().map(e -> e.toString()).collect(Collectors.toList()));
+        query.setParameter("labNumber" ,labNumber);
+        List<PathologySample> list = query.list();
+
+        return list;
+    }
 }

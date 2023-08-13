@@ -119,8 +119,14 @@ public class TestCalculatedUtil {
         
         for (ResultSet resultSet : resultSetList) {
             
-            List<ResultCalculation> resultCalculations = resultcalculationService
-                    .getResultCalculationByPatientAndTest(resultSet.patient, resultSet.result.getTestResult().getTest());
+            List<ResultCalculation> resultCalculations = new ArrayList<>();
+            if (resultSet.result.getTestResult() == null) {
+                break;
+            } else {
+                resultCalculations = resultcalculationService.getResultCalculationByPatientAndTest(resultSet.patient,
+                    resultSet.result.getTestResult().getTest());
+            }
+             
             
             if (!resultCalculations.isEmpty()) {
                 for (ResultCalculation resultCalculation : resultCalculations) {
