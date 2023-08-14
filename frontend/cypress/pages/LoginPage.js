@@ -13,11 +13,11 @@ class LoginPage {
     }
 
     getUsernameElement() {
-        return cy.get(`.inputText .cds--text-input--md`);
+        return cy.getElement(`.inputText .cds--text-input--md`);
     }
 
     getPasswordElement() {
-        return cy.get(`input#password`);
+        return cy.getElement(`input#password`);
     }
 
     enterUsername(value) {
@@ -35,7 +35,7 @@ class LoginPage {
     }
 
     signIn() {
-        const button = cy.get(`[type='submit']`);
+        const button = cy.getElement(`[type='submit']`);
         button.click();
     }
 
@@ -48,9 +48,14 @@ class LoginPage {
     }
 
     goToHomePage() {
-        this.enterUsername(this.testProperties.getUsername())
-        this.enterPassword(this.testProperties.getPassword())
-        this.signIn();
+        cy.wait(1000);
+        cy.url().then(url => {
+            if (url.includes('/login')) {
+                this.enterUsername(this.testProperties.getUsername())
+                this.enterPassword(this.testProperties.getPassword())
+                this.signIn();
+            }
+        });
         return new HomePage();
     }
 }
