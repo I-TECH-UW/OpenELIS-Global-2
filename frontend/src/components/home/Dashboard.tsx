@@ -3,7 +3,7 @@ import { Icon, Link, Grid, Tile, ClickableTile, Column, ExpandableTile, TileAbov
 import './Dashboard.css';
 import { ArrowUpRight } from '@carbon/react/icons';
 import { useContext, useState, useEffect, useRef } from "react";
-import { getFromOpenElisServer, postToOpenElisServer, getFromOpeElisServerSync } from '../utils/Utils.js';
+import { getFromOpenElisServer } from '../utils/Utils.js';
 interface DashBoardProps {
 }
 

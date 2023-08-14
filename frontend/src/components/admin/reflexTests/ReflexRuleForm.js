@@ -3,7 +3,7 @@ import { Form, Stack, TextInput, Select, SelectItem, Button, IconButton, Toggle,
 import { Add, Subtract } from '@carbon/react/icons';
 import Autocomplete from "./AutoComplete";
 import RuleBuilderFormValues from "../../formModel/innitialValues/RuleBuilderFormValues";
-import { getFromOpenElisServer, postToOpenElisServer, getFromOpeElisServerSync } from "../../utils/Utils";
+import { getFromOpenElisServer, postToOpenElisServer, getFromOpenElisServerSync } from "../../utils/Utils";
 import { NotificationContext } from "../../layout/Layout";
 import { AlertDialog,  NotificationKinds} from "../../common/CustomNotification";
 import { FormattedMessage} from "react-intl";
@@ -82,7 +82,7 @@ function ReflexRule() {
       if (rule.conditions) {
         rule.conditions.forEach(function (condition, conditionIndex) {
           if (condition.sampleId) {
-            getFromOpeElisServerSync("/rest/test-details?sampleType=" + condition.sampleId, (resp) => fetchDeafultTests(resp, index, conditionIndex, FIELD.conditions));
+            getFromOpenElisServerSync("/rest/test-details?sampleType=" + condition.sampleId, (resp) => fetchDeafultTests(resp, index, conditionIndex, FIELD.conditions));
           }
           if (condition.value) {
             const test = defaultSampleTests.conditions[index][conditionIndex].find(test => {
@@ -100,7 +100,7 @@ function ReflexRule() {
       if (rule.actions) {
         rule.actions.forEach(function (action, actionIndex) {
           if (action.sampleId) {
-            getFromOpeElisServerSync("/rest/test-details?sampleType=" + action.sampleId, (resp) => fetchDeafultTests(resp, index, actionIndex, FIELD.actions));
+            getFromOpenElisServerSync("/rest/test-details?sampleType=" + action.sampleId, (resp) => fetchDeafultTests(resp, index, actionIndex, FIELD.actions));
           }
         });
 

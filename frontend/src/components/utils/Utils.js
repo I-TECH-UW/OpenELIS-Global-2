@@ -74,7 +74,7 @@ export const postToOpenElisServerFullResponse = (endPoint, payLoad, callback, ex
 }
 
 //provides Synchronous calls to the api
-export const getFromOpeElisServerSync = (endPoint, callback) => {
+export const getFromOpenElisServerSync = (endPoint, callback) => {
     const request = new XMLHttpRequest()
     request.open('GET', config.serverBaseUrl + endPoint, false);
     request.setRequestHeader("credentials", "include");

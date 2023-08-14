@@ -1,10 +1,9 @@
-import useSWR from 'swr';
-import { OBSERVATION_INTERPRETATION } from '../commons';
+
 import { assessValue } from '../loadPatientTestData/helpers';
-import { useMemo } from 'react';
-import { FetchResponse, showNotification } from '../commons';
+import {  showNotification } from '../commons';
 import { TreeNode } from '../filter/filter-types';
-import { getFromOpeElisServerSync } from "../../../utils/Utils.js";
+import { getFromOpenElisServer} from "../../../utils/Utils.js";
+import { useMemo ,useState ,useEffect} from 'react';
 
 function computeTrendlineData(treeNode: TreeNode): Array<TreeNode> {
   const tests: Array<TreeNode> = [];
@@ -37,17 +36,23 @@ export function useObstreeData(
   isValidating: boolean;
 } {
 
-  var { data, error, isLoading , isValidating} = {data : null , error: null , isLoading: false ,  isValidating : false}
+  const [data, setData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [isValidating, setIsValidating] = useState(false);
 
   const fetchResults = (results) => {
-    data  = results ;
-    error = false;
-    isLoading = false;
+        setData(results);
+        setIsLoading(false);
   }
 
-  if(patientUuid && conceptUuid){
-    getFromOpeElisServerSync(`/rest/test-result-tree?patientId=${patientUuid}&testId=${conceptUuid}` , fetchResults)
-   }
+  useEffect(() => {
+    if(patientUuid && conceptUuid){
+        getFromOpenElisServer(`/rest/test-result-tree?patientId=${patientUuid}&testId=${conceptUuid}` , fetchResults)
+    }
+    
+  }, [patientUuid ,conceptUuid]);
+
   if (error) {
     showNotification({
       title: error.name,

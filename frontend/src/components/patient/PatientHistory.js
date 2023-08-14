@@ -5,57 +5,58 @@ import {
     Heading,
     Grid,
     Column,
-    Section 
+    Section
 
 } from '@carbon/react';
 import SearchPatientForm from '../common/SearchPatientForm';
-import RoutedResultsViewer from './resultsViewer/results-viewer.tsx'
-import config from '../../config.json';
+import {useState, useEffect, useRef } from "react";
 
 
-class PatientHistory extends React.Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-            selectedPatient: {}
+const PatientHistory = () => {
+
+    const [selectedPatient, setSelectedPatient] = useState({});
+    const componentMounted = useRef(false);
+
+    const getSelectedPatient = (patient) => {
+        if (componentMounted.current) {
+            setSelectedPatient(patient);
         }
     }
 
-    getSelectedPatient = (patient) => {
-        this.setState({ selectedPatient: patient })
+    useEffect(() => {
+        componentMounted.current = true;
+        openPatientResults(selectedPatient.patientPK);
+
+        return () => {
+            componentMounted.current = false
+        }
+    }, [selectedPatient]);
+
+    const openPatientResults = (patientId) => {
+        if (patientId) {
+            window.location.href = "/PatientResults/" + patientId;
+        }
     }
 
-    render() {
-        return (
-            <>
-                <Grid fullWidth={true}>
-                    <Column lg={16}>
-                        <Section>
-                            <Section >
-                                <Heading >
-                                    <FormattedMessage id="label.page.patientHistory" />
-                                </Heading>
-                            </Section>
+    return (
+        <>
+            <Grid fullWidth={true}>
+                <Column lg={16}>
+                    <Section>
+                        <Section >
+                            <Heading >
+                                <FormattedMessage id="label.page.patientHistory" />
+                            </Heading>
                         </Section>
-                    </Column>
-                </Grid>
-                <br></br>
-       
-                <SearchPatientForm getSelectedPatient={this.getSelectedPatient}></SearchPatientForm>
-                
-                <br></br>
-                <Grid fullWidth={true}>
-                    <Column lg={16}>
-                   {/* {JSON.stringify(this.state.selectedPatient.fhirUuid)}          */}
-                 <RoutedResultsViewer  patientUuid={this.state.selectedPatient.patientPK} basePath={config.serverBaseUrl}/>
-                 </Column>
-                </Grid>
+                    </Section>
+                </Column>
+            </Grid>
+            <br></br>
 
-            </>
+            <SearchPatientForm getSelectedPatient={getSelectedPatient}></SearchPatientForm>
+        </>
 
-        );
-
-    }
+    );
 
 }
 export default injectIntl(PatientHistory)
