@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect, useRef } from 'react';
-import { Heading, Grid, Column, Section, Loading, Breadcrumb, BreadcrumbItem, } from '@carbon/react';
+import { Heading, Grid, Column, Section, Loading, Breadcrumb, BreadcrumbItem, Tag} from '@carbon/react';
 import { useTranslation } from 'react-i18next';
 import { EmptyState, ErrorState } from './commons';
 import { FilterContext, FilterProvider } from './filter';
@@ -92,10 +92,11 @@ const RoutedResultsViewer: React.FC<ResultsViewerProps> = () => {
           <Section>
             <Section>
               {patient ? (<div className="patient-header">
-                <div className="patient-name">{patient.firstName}  {patient.lastName}</div>
-                <div className="patient-dob"> {patient.gender} {patient.birthDateForDisplay}</div>
-                <div className="patient-id">{patient.subjectNumber}  {patient.nationalId}</div>
-              </div>) : (<div className="patient-header">
+                <div className="patient-name"><Tag type="blue">Name :</Tag>{patient.firstName}  {patient.lastName}</div>
+                <div className="patient-dob"> <Tag type="blue">Gender :</Tag>{patient.gender === 'M'?"Male" : "Female" } <Tag>DOB :</Tag> {patient.birthDateForDisplay}</div>
+                 <div className="patient-id"><Tag type="blue">Unique Health ID number :</Tag>{patient.subjectNumber}  </div>
+                 <div className="patient-id"><Tag type="blue">National ID :</Tag>{patient.nationalId}</div>
+                </div>) : (<div className="patient-header">
                 <div className="patient-name">Patient Id Doest Exist</div>
               </div>)}
             </Section>
