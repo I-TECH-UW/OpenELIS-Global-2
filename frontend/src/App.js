@@ -29,6 +29,7 @@ import PathologyDashboard from "./components/pathology/PathologyDashboard";
 import PathologyCaseView from "./components/pathology/PathologyCaseView";
 import ImmunohistochemistryDashboard from "./components/immunohistochemistry/ImmunohistochemistryDashboard"
 import ImmunohistochemistryCaseView from "./components/immunohistochemistry/ImmunohistochemistryCaseView"
+import RoutedResultsViewer  from './components/patient/resultsViewer/results-viewer.tsx'
 
 export default function App() {
 
@@ -226,6 +227,16 @@ export default function App() {
                   path="/PatientHistory"
                   exact
                   component={() => <PatientHistory />}
+                  role="Reception"
+                  config={appConfig}
+                  onAuth={onAuth}
+                  logout={logout}
+                  isLoggedIn={isLoggedIn}
+                />
+                <SecureRoute
+                  path="/PatientResults/:patientId"
+                  exact
+                  component={() => <RoutedResultsViewer />}
                   role="Reception"
                   config={appConfig}
                   onAuth={onAuth}

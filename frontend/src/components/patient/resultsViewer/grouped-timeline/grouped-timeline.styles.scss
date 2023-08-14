@@ -77,14 +77,14 @@
   background-color: $color-gray-30;
   grid-template: auto auto / 9em auto;
   border-collapse: collapse;
-  overflow-x: auto;
+  overflow-x: scroll;
   width: 100%;
   background-color: white;
   scrollbar-width: none;
-  &::-webkit-scrollbar {
-    // needed for Chrome, Edge, Opera, Safari
-    display: none;
-  }
+  // &::-webkit-scrollbar {
+  //   // needed for Chrome, Edge, Opera, Safari
+  //   display: none;
+  // }
 }
 
 
