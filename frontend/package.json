@@ -72,6 +72,7 @@
   },
   "devDependencies": {
     "cypress": "^12.17.3",
+    "cypress-xpath": "^2.0.1",
     "sass": "^1.57.1"
   }
 }

@@ -1,0 +1,12 @@
+{
+  "samples": [
+    {
+      "sampleType": "Serum"
+    }
+  ],
+  "siteName": "example site",
+  "requester": {
+    "firstName": "Optimus",
+    "lastName": "Prime"
+  }
+}
