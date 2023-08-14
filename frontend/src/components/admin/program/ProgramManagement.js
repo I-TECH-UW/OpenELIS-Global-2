@@ -2,7 +2,7 @@ import {useContext, useState, useEffect, useRef } from "react";
 import { createPortal } from 'react-dom'
 import { Form, FormLabel, Heading, TextArea, TextInput, Select, SelectItem, Button, IconButton, Toggle,  Loading, RadioButtonGroup, RadioButton ,ModalWrapper} from '@carbon/react';
 import ProgramFormValues from "./ProgramFormValues";
-import { getFromOpenElisServer, postToOpenElisServerFullResponse, getFromOpeElisServerSync } from "../../utils/Utils";
+import { getFromOpenElisServer, postToOpenElisServerFullResponse,} from "../../utils/Utils";
 import { Questionnaire } from '../../addOrder/OrderEntryAdditionalQuestions'
 import { NotificationContext } from "../../layout/Layout";
 import {AlertDialog, NotificationKinds} from "../../common/CustomNotification";

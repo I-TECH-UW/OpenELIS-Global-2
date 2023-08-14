@@ -5,7 +5,7 @@ import AutoComplete from '../../common/AutoComplete.js'
 import { Add, Subtract, Save } from '@carbon/react/icons';
 import { FormattedMessage } from "react-intl";
 import { CalculatedValueFormValues, CalculatedValueFormModel, OperationType, OperationModel } from '../../formModel/innitialValues/CalculatedValueFormSchema'
-import { getFromOpenElisServer, postToOpenElisServer, getFromOpeElisServerSync } from '../../utils/Utils.js';
+import { getFromOpenElisServer, postToOpenElisServer} from '../../utils/Utils.js';
 import { NotificationContext } from "../../layout/Layout";
 import { AlertDialog, NotificationKinds } from "../../common/CustomNotification";
 interface CalculatedValueProps {
