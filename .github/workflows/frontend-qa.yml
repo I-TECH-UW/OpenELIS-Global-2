@@ -15,7 +15,7 @@ jobs:
 
       - name: Install dependencies
         run: npm install
-        working-directory: frontend
+        working-directory: ./frontend
 
       - name: Install React scripts
         run: npm install react-scripts@5.0.1 -g
