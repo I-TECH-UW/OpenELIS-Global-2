@@ -12,14 +12,17 @@ jobs:
         with:
           repository: ${{github.repository}}
           node-version: 14.x
-      
+          
+      - name: check files
+        run: ls
+        shell: bash 
       - name: Install dependencies
         run: npm install
-        working-directory: /home/runner/work/OpenELIS-Global-2/frontend
+        working-directory: frontend
 
       - name: Install React scripts
         run: npm install react-scripts@5.0.1 -g
-        working-directory: /home/runner/work/OpenELIS-Global-2/frontend
+        working-directory: frontend
 
       - name: Run Frontend Qa Workflow
         run: npx cypress run –headless
