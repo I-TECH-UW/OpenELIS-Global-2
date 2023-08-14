@@ -28,7 +28,7 @@ const FilterSet: React.FC<FilterSetProps> = ({ hideFilterSetHeader = false }) =>
         (!showSearchInput ? (
           <div className="filterSetHeader">
             <h4>{t('Tree', 'Tree')}</h4>
-            <div className="filterSetActions">
+            {/* <div className="filterSetActions">
               <Button
                 kind="ghost"
                 size="sm"
@@ -40,7 +40,7 @@ const FilterSet: React.FC<FilterSetProps> = ({ hideFilterSetHeader = false }) =>
               <Button kind="ghost" size="sm" renderIcon={SearchIcon} onClick={() => setShowSearchInput(true)}>
                 {t('search', 'Search')}
               </Button>
-            </div>
+            </div> */}
           </div>
         ) : (
           <div className="filterTreeSearchHeader">
