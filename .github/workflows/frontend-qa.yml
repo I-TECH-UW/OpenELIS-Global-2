@@ -7,10 +7,14 @@ jobs:
   install:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout OpenELIS-Global2
+        uses: actions/checkout@v2
+        with:
+         repository: ${{github.repository}} 
+         
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          repository: ${{github.repository}}
           node-version: 14.x
           
       - name: check files
