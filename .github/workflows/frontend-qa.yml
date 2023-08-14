@@ -12,7 +12,9 @@ jobs:
         with:
           repository: ${{github.repository}}
           node-version: 14.x
-
+      - name: check path 
+        run: pwd
+        shell: bash 
       - name: Install dependencies
         run: npm install
         working-directory: ./frontend
