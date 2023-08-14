@@ -10,7 +10,7 @@ describe('Failing or Succeeding to Login', function () {
     });
 
     after('Close Browser', () => {
-
+       cy.clearLocalStorage();
     })
 
     it('Should validate user authentication', function () {

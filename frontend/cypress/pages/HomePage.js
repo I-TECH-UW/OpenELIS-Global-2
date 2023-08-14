@@ -1,5 +1,6 @@
 import LoginPage from "./LoginPage";
 import PatientEntryPage from "./PatientEntryPage";
+import OrderEntityPage from "./OrderEntityPage";
 
 class HomePage {
     constructor() {
@@ -11,6 +12,13 @@ class HomePage {
 
     goToSign() {
         return new LoginPage();
+    }
+
+    goToOrderPage() {
+        this.openNavigationMenu();
+        cy.getElement('li:nth-of-type(1) > .cds--side-nav__submenu > .cds--side-nav__icon.cds--side-nav__icon--small.cds--side-nav__submenu-chevron').click();
+        cy.getElement('li:nth-of-type(1) > .cds--side-nav__menu > li:nth-of-type(1) > .cds--side-nav__link').click();
+        return new OrderEntityPage();
     }
 
     openNavigationMenu() {
