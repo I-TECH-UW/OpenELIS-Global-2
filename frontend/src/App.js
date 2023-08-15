@@ -25,6 +25,8 @@ import ModifyOrder from "./components/modifyOrder/Index";
 import RoutineReports from "./components/Reports/Routine";
 import StudyReports from "./components/Reports/Study";
 import StudyValidation from "./components/validation/Study";
+import Validation from "./components/validation/Index";
+// import Validation from "./components/resultValidation/ResultValidation";
 import PathologyDashboard from "./components/pathology/PathologyDashboard";
 import PathologyCaseView from "./components/pathology/PathologyCaseView";
 import ImmunohistochemistryDashboard from "./components/immunohistochemistry/ImmunohistochemistryDashboard"
@@ -292,6 +294,7 @@ export default function App() {
                   <SecureRoute path="/RoutineReports" exact component={() => <RoutineReports />} role="Global Administrator" config={appConfig} onAuth={onAuth} logout={logout} isLoggedIn={isLoggedIn} />
                   <SecureRoute path="/StudyReports" exact component={() => <StudyReports />} role="Global Administrator" config={appConfig} onAuth={onAuth} logout={logout} isLoggedIn={isLoggedIn} />
                   <SecureRoute path="/validationStudy" exact component={() => <StudyValidation />} role="Global Administrator" config={appConfig} onAuth={onAuth} logout={logout} isLoggedIn={isLoggedIn} />
+                <SecureRoute path="/validation" exact component={() => <Validation />} role="Global Administrator" config={appConfig} onAuth={onAuth} logout={logout} isLoggedIn={isLoggedIn} />
               </Switch>
             </Layout>
           </Router>
