@@ -100,11 +100,39 @@ function PathologyDashboard() {
     setCounts(data);
   }
 
+  function formatDateToDDMMYYYY(date) {
+    var day = date.getDate();
+    var month = date.getMonth() + 1; // Month is zero-based
+    var year = date.getFullYear();
+
+    // Ensure leading zeros for single-digit day and month
+    var formattedDay = (day < 10 ? '0' : '') + day;
+    var formattedMonth = (month < 10 ? '0' : '') + month;
+
+    // Construct the formatted string
+    var formattedDate = formattedDay + '/' + formattedMonth + '/' + year;
+    return formattedDate;
+  }
+
+  const getPastWeek = () => {
+    // Get the current date
+    var currentDate = new Date();
+
+    // Calculate the date of the past week
+    var pastWeekDate = new Date(currentDate);
+    pastWeekDate.setDate(currentDate.getDate() - 7);
+
+    // Format the date as "YYYY-MM-DD"
+    //var formattedPastWeekDate = pastWeekDate.toISOString().split('T')[0];
+    //var formattedCurrentDate = currentDate.toISOString().split('T')[0];
+    return formatDateToDDMMYYYY(currentDate) + " - " + formatDateToDDMMYYYY(pastWeekDate);
+  }
+
   const tileList = [
     {"title" : "Cases in Progress"  , "count" : counts.inProgress} ,
     {"title" : "Awaiting Pathology Review"  , "count" : counts.awaitingReview},
     {"title" : "Additional Pathology Requests"  , "count" : counts.additionalRequests},
-    {"title" : "Complete"  , "count" : counts.complete}
+    {"title" : "Complete (Week " + getPastWeek() + " )"   , "count" : counts.complete}
   ]
 
   useEffect(() => {

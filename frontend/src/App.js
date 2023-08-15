@@ -157,7 +157,8 @@ export default function App() {
                   path="/PathologyDashboard"
                   exact
                   component={() => <PathologyDashboard />}
-                  role={["Pathologist", "Reception"]}
+                  role=""
+                  labUnitRole={{"Pathology": ["Results"]}}
                   config={appConfig}
                   onAuth={onAuth}
                   logout={logout}
@@ -167,7 +168,8 @@ export default function App() {
                   path="/PathologyCaseView/:pathologySampleId"
                   exact
                   component={() => <PathologyCaseView />}
-                  role={["Pathologist", "Reception"]}
+                  role=""
+                  labUnitRole={{"Pathology": ["Results"]}}
                   config={appConfig}
                   onAuth={onAuth}
                   logout={logout}

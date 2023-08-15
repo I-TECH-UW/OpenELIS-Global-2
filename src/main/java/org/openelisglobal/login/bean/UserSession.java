@@ -1,5 +1,7 @@
 package org.openelisglobal.login.bean;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class UserSession {
@@ -11,6 +13,7 @@ public class UserSession {
     private String firstName;
     private String lastName;
     private Set<String> roles;
+    private Map<String,List<String>> userLabRolesMap;
     private String CSRF;
 
     public Boolean getAuthenticated() {
@@ -77,4 +80,11 @@ public class UserSession {
         this.sessionId = sessionId;
     }
 
+    public Map<String, List<String>> getUserLabRolesMap() {
+        return userLabRolesMap;
+    }
+
+    public void setUserLabRolesMap(Map<String, List<String>> userLabRolesMap) {
+        this.userLabRolesMap = userLabRolesMap;
+    }
 }

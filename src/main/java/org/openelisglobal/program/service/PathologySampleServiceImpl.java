@@ -1,5 +1,6 @@
 package org.openelisglobal.program.service;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -141,6 +142,7 @@ public class PathologySampleServiceImpl extends BaseObjectServiceImpl<PathologyS
     }
 
     private void validatePathologySample(PathologySample pathologySample, PathologySampleForm form) {
+        pathologySample.setStatus(PathologyStatus.COMPLETED);
         Sample sample = pathologySample.getSample();
         Patient patient = sampleService.getPatient(sample);
         ResultsUpdateDataSet actionDataSet = new ResultsUpdateDataSet(form.getSystemUserId());
@@ -260,5 +262,10 @@ public class PathologySampleServiceImpl extends BaseObjectServiceImpl<PathologyS
         }
         
         return pathologySamples;
+    }
+
+    @Override
+    public Long getCountWithStatusBetweenDates(List<PathologyStatus> statuses, Timestamp from, Timestamp to) {
+        return baseObjectDAO.getCountWithStatusBetweenDates(statuses ,from ,to);
     }
 }
