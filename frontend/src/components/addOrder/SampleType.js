@@ -39,8 +39,8 @@ const SampleType = (props) => {
         rejectionReason: "",
         collectionTime: ""
     });
+  
     const defaultSelect = {id: "", value: "Choose Rejection Reason"};
-
 
     function handleCollectionDate(date) {
         setSampleXml({

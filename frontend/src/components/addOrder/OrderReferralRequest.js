@@ -59,6 +59,7 @@ const OrderReferralRequest = ({
         const updateReferralRequest = [...referralRequests];
         let testValue = {};
         let defaultSelect = {};
+      
          selectedTests.length > 0 && selectedTests.map((test, i) => {
             let id = index + "_" + test.id;
             testValue = {

@@ -100,7 +100,7 @@ class CreatePatientForm extends React.Component {
             }
         }
     }
-
+  
     componentDidMount() {
         this._isMounted = true;
         getFromOpenElisServer("/rest/health-regions", this.fetchHeathRegions);

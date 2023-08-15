@@ -130,14 +130,6 @@ public class TestModifyEntryFormValidator implements Validator {
                                 "JsonWad", "result limit [" + i + "] highCritical", errors, false, 255,
                                 ValidationHelper.FLOAT_REGEX); 
 
-                        ValidationHelper.validateField(StringUtil.nullSafeToString(resultLimit.get("lowCriticalRangeLow")),
-                                "JsonWad", "result limit [" + i + "] lowCriticalRangeLow", errors, false, 255,
-                                ValidationHelper.FLOAT_REGEX);
-
-                        ValidationHelper.validateField(StringUtil.nullSafeToString(resultLimit.get("lowCriticalRangeHigh")),
-                                "JsonWad", "result limit [" + i + "] lowCriticalRangeHigh", errors, false, 255,
-                                ValidationHelper.FLOAT_REGEX);
-
                         ValidationHelper.validateField(StringUtil.nullSafeToString(resultLimit.get("highCriticalRangeLow")),
                                 "JsonWad", "result limit [" + i + "] highCriticalRangeLow", errors, false, 255,
                                 ValidationHelper.FLOAT_REGEX);
