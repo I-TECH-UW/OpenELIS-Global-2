@@ -92,6 +92,5 @@
     "testcalculation.label.textValue" : "Valeur de texte" ,
     "testcalculation.label.finalresult" : "Résultat final",
     "advanced.search" : "Lancer la recherche" ,
-    "pathology.label.title" : "Pathologie",
-    "immunohistochemistry.label.title" : "Immunohistochimie"
+    "pathology.label.title" : "Pathologie"
 }

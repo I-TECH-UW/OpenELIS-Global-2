@@ -1,8 +1,5 @@
 package org.openelisglobal.program.controller.pathology;
 
-import java.sql.Timestamp;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -54,12 +51,7 @@ public class PathologyController extends BaseRestController {
         count.setInProgress(pathologySampleService.getCountWithStatus(Arrays.asList(PathologyStatus.GROSSING ,PathologyStatus.CUTTING ,PathologyStatus.GROSSING ,PathologyStatus.SLICING,PathologyStatus.STAINING ,PathologyStatus.PROCESSING)));
         count.setAwaitingReview(pathologySampleService.getCountWithStatus(Arrays.asList(PathologyStatus.READY_PATHOLOGIST)));
         count.setAdditionalRequests(pathologySampleService.getCountWithStatus(Arrays.asList(PathologyStatus.ADDITIONAL_REQUEST)));
-        
-        Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
-        Instant weekAgoInstant = Instant.now().minus(7, ChronoUnit.DAYS);
-        Timestamp weekAgoTimestamp = Timestamp.from(weekAgoInstant);
-        
-        count.setComplete(pathologySampleService.getCountWithStatusBetweenDates(Arrays.asList(PathologyStatus.COMPLETED),weekAgoTimestamp ,currentTimestamp));
+        count.setComplete(pathologySampleService.getCountWithStatus(Arrays.asList(PathologyStatus.COMPLETED)));
         return ResponseEntity.ok(count);
     }
     

@@ -9,7 +9,7 @@ import { Launch, Subtract } from '@carbon/react/icons';
 import { getFromOpenElisServer, postToOpenElisServerFullResponse, hasRole } from "../utils/Utils";
 import UserSessionDetailsContext from "../../UserSessionDetailsContext"
 import { NotificationContext } from "../layout/Layout";
-import { AlertDialog ,NotificationKinds } from "../common/CustomNotification";
+import { AlertDialog } from "../common/CustomNotification";
 import "./PathologyDashboard.css"
 
 
@@ -88,17 +88,6 @@ function PathologyCaseView() {
   async function displayStatus(response) {
     var body = await response.json();
     console.log(body)
-    var status = response.status;
-    setNotificationVisible(true);
-    if (status == "200") {
-      const save1 = document.getElementById("pathology_save");
-      const save2 = document.getElementById("pathology_save2");
-      save1.disabled = true;
-      save2.disabled = true;
-      setNotificationBody({ kind: NotificationKinds.success, title: "Notification Message", message: "Succesfuly saved" });
-    } else {
-      setNotificationBody({ kind: NotificationKinds.error, title: "Notification Message", message: "Error while saving" });
-    }
   }
 
   const toBase64 = file => new Promise((resolve, reject) => {
@@ -174,7 +163,7 @@ function PathologyCaseView() {
     <>
      <Breadcrumb>
         <BreadcrumbItem href="/">Home</BreadcrumbItem>
-        <BreadcrumbItem href="/PathologyDashboard">Pathology DashBoard</BreadcrumbItem>
+        <BreadcrumbItem href="/PathologyDashboardy">Pathology DashBoard</BreadcrumbItem>
       </Breadcrumb>
 
       <Grid fullWidth={true}>
@@ -217,7 +206,7 @@ function PathologyCaseView() {
       <Grid fullWidth={true} className="gridBoundary">
         {notificationVisible === true ? <AlertDialog /> : ""}
         <Column lg={16} md={8} sm={4}>
-          <Button id="pathology_save" onClick={(e) => { e.preventDefault(); save(e) }}>Save</Button>
+          <Button onClick={(e) => { e.preventDefault(); save(e) }}>Save</Button>
         </Column>
         <Column lg={4} md={2} sm={2} >
           <Select id="status"
@@ -434,7 +423,7 @@ function PathologyCaseView() {
         <Column lg={12} md={6} sm={0}>
         </Column>
         <Column lg={16} md={8} sm={4}></Column>
-        {hasRole( userSessionDetails ,"Pathologist") &&
+        {hasRole("Pathologist") &&
           <>
             <Column lg={8} md={4} sm={2}>
               {initialMount && <FilterableMultiSelect
@@ -537,7 +526,7 @@ function PathologyCaseView() {
               setPathologySampleInfo({ ...pathologySampleInfo, referToImmunoHistoChemistry: !pathologySampleInfo.referToImmunoHistoChemistry });
             }} />
         </Column>
-        <Column><Button id ="pathology_save2"onClick={(e) => { e.preventDefault(); save(e) }}>Save</Button></Column>
+        <Column><Button onClick={(e) => { e.preventDefault(); save(e) }}>Save</Button></Column>
 
       </Grid>
 

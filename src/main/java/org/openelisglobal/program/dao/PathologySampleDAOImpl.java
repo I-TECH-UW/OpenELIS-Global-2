@@ -1,6 +1,5 @@
 package org.openelisglobal.program.dao;
 
-import java.sql.Timestamp;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,16 +47,5 @@ public class PathologySampleDAOImpl extends BaseDAOImpl<PathologySample, Integer
         List<PathologySample> list = query.list();
 
         return list;
-    }
-
-    @Override
-    public Long getCountWithStatusBetweenDates(List<PathologyStatus> statuses, Timestamp from, Timestamp to) {
-        String sql = "select count(*) from PathologySample ps where ps.status in (:statuses) and ps.lastupdated between :datefrom and :dateto";
-        Query<Long> query = entityManager.unwrap(Session.class).createQuery(sql, Long.class);
-        query.setParameterList("statuses", statuses.stream().map(e -> e.toString()).collect(Collectors.toList()));
-        query.setParameter("datefrom" , from);
-        query.setParameter("dateto", to);
-        Long count = query.uniqueResult();
-        return count;
     }
 }

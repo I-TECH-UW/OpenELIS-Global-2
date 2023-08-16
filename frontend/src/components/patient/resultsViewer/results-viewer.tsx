@@ -92,8 +92,8 @@ const RoutedResultsViewer: React.FC<ResultsViewerProps> = () => {
           <Section>
             <Section>
               {patient ? (<div className="patient-header">
-                <div className="patient-name"><Tag type="blue">Name :</Tag>{patient.lastName} {patient.firstName}</div>
-                <div className="patient-dob"> <Tag type="blue">Gender :</Tag>{patient.gender === 'M'?"Male" : "Female" } <Tag type="blue">DOB :</Tag> {patient.birthDateForDisplay}</div>
+                <div className="patient-name"><Tag type="blue">Name :</Tag>{patient.firstName}  {patient.lastName}</div>
+                <div className="patient-dob"> <Tag type="blue">Gender :</Tag>{patient.gender === 'M'?"Male" : "Female" } <Tag>DOB :</Tag> {patient.birthDateForDisplay}</div>
                  <div className="patient-id"><Tag type="blue">Unique Health ID number :</Tag>{patient.subjectNumber}  </div>
                  <div className="patient-id"><Tag type="blue">National ID :</Tag>{patient.nationalId}</div>
                 </div>) : (<div className="patient-header">
