@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import {Button, Column, Form, FormLabel, Heading, Row, Section, Stack, TextInput} from "@carbon/react";
 import {FormattedMessage} from "react-intl";
 import {Formik, Field} from "formik";
@@ -6,19 +6,30 @@ import ValidationSearchFormValues from "../formModel/innitialValues/ValidationSe
 import {getFromOpenElisServer} from "../utils/Utils";
 
 const SearchForm = (props) => {
-
+    const [searchResults, setSearchResults] = useState();
     const validationResults = (data) => {
-        if (data.resultList) {
-            const results = data.resultList.map((data, idx) => {
-                let tempData = {...data}
-                tempData.id = idx
-                return tempData
-            });
-            props.setResults(results)
+        if (data) {
+            setSearchResults(data);
+            if (data.resultList) {
+                const newResultsList = data.resultList.map((data, idx) => {
+                    let tempData = {...data}
+                    tempData.id = idx
+                    return tempData
+                });
+                setSearchResults(prevState => ({
+                    ...prevState,
+                    resultList: newResultsList
+                }));
+            }
         } else {
-            props.setResults([]);
+            props.setResults?.({resultList: []});
         }
     }
+
+    useEffect(() => {
+        props.setResults(searchResults)
+    }, [searchResults]);
+
     const handleSubmit = (values) => {
         let searchEndPoint = "/rest/accessionValidationByRange?" +
             "accessionNumber=" + values.accessionNumber
@@ -28,6 +39,7 @@ const SearchForm = (props) => {
     const handleChange = () => {
 
     }
+
 
     return (
         <>

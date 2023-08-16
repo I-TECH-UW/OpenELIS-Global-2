@@ -464,6 +464,9 @@ public class ResultsValidationUtility {
         resultLimit.getLowCritical() == Double.NEGATIVE_INFINITY ? 0 : resultLimit.getLowCritical());
              testItem.setHigherCritical(
                 resultLimit.getHighCritical() == Double.POSITIVE_INFINITY ? 0 : resultLimit.getHighCritical());
+
+            testItem.setNormalRange(SpringContext.getBean(ResultLimitService.class).getDisplayReferenceRange(
+                    resultLimit, testResults.isEmpty() ? "0" : testResults.get(0).getSignificantDigits(), " - "));
         }
     }
 
@@ -605,6 +608,7 @@ public class ResultsValidationUtility {
                 currentMultiSelectAnalysisItem.setQualifiedResultValue(testResultItem.getQualifiedResultValue());
                 currentMultiSelectAnalysisItem.setQualifiedDictionaryId(testResultItem.getQualifiedDictionaryId());
                 currentMultiSelectAnalysisItem.setHasQualifiedResult(true);
+                currentMultiSelectAnalysisItem.setNormalRange(testResultItem.getNormalRange());
             }
         }
 

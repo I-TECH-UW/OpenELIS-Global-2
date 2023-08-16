@@ -20,6 +20,7 @@ import ValidationSearchFormValues from "../formModel/innitialValues/ValidationSe
 import {NotificationKinds} from "../common/CustomNotification";
 import {stringify} from "qs";
 import jp from "jsonpath";
+import {postToOpenElisServer} from "../utils/Utils";
 
 const Validation = (props) => {
 
@@ -50,13 +51,6 @@ const Validation = (props) => {
             width: "8rem",
         },
         {
-            name: 'Current Result',
-            cell: (row, index, column, id) => {
-                return renderCell(row, index, column, id);
-            },
-            width: "8rem",
-        },
-        {
             name: 'Save',
             cell: (row, index, column, id) => {
                 return renderCell(row, index, column, id);
@@ -81,22 +75,25 @@ const Validation = (props) => {
 
     ];
 
-    const handleSave = () => {
-
+    const handleSave = (values) => {
+        values.status = this.state.saveStatus;
+        postToOpenElisServer("/rest/accessionValidationByRangeUpdate",
+            JSON.stringify(props.results), handleResponse);
     }
+    const handleResponse = (response) => {
+        console.log(response);
+    }
+
     const handlePageChange = () => {
 
     }
 
-   const handleChange = (e, rowId) => {
-        const { name, id, value } = e.target;
-        console.log("handleChange:" + id + ":" + name + ":" + value + ":" + rowId);
-        // this.setState({value: e.target.value})
-        // console.log('State updated to ', e.target.value);
-        var form = props.results;
+    const handleChange = (e, rowId) => {
+        const {name, id, value} = e.target;
+        let form = props.results;
         var jp = require('jsonpath');
         jp.value(form, name, value);
-        var isModified = "testResult[" + rowId + "].isModified";
+        var isModified = "resultList[" + rowId + "].isModified";
         jp.value(form, isModified, "true");
     }
 
@@ -105,11 +102,11 @@ const Validation = (props) => {
         const d = new Date(date).toLocaleDateString('fr-FR');
         var form = props.results;
         var jp = require('jsonpath');
-        jp.value(form, "testResult[" + rowId + "].sentDate_", d);
-        var isModified = "testResult[" + rowId + "].isModified";
+        jp.value(form, "resultList[" + rowId + "].sentDate_", d);
+        var isModified = "resultList[" + rowId + "].isModified";
         jp.value(form, isModified, "true");
     }
-    const handleAcceptAsIsChange = (e, rowId) => {
+    const handleCheckBox = (e, rowId) => {
         handleChange(e, rowId)
     }
     const validateResults = (e, rowId) => {
@@ -133,14 +130,13 @@ const Validation = (props) => {
             case "Save":
                 return (
                     <>
-                        <Field name="forceTechApproval">
+                        <Field name="isAccepted">
                             {({field}) =>
                                 <Checkbox
-                                    id={"testResult" + row.id + ".forceTechApproval"}
-                                    name={"testResult[" + row.id + "].forceTechApproval"}
+                                    id={"resultList" + row.id + ".isAccepted"}
+                                    name={"resultList[" + row.id + "].isAccepted"}
                                     labelText=""
-                                    //defaultChecked={this.state.acceptAsIs}
-                                    onChange={(e) => handleAcceptAsIsChange(e, row.id)}
+                                    onChange={(e) => handleCheckBox(e, row.id)}
                                 />
                             }
                         </Field>
@@ -150,14 +146,13 @@ const Validation = (props) => {
             case "Retest":
                 return (
                     <>
-                        <Field name="forceTechApproval">
+                        <Field name="isRejected">
                             {({field}) =>
                                 <Checkbox
-                                    id={"testResult" + row.id + ".forceTechApproval"}
-                                    name={"testResult[" + row.id + "].forceTechApproval"}
+                                    id={"resultList" + row.id + ".isRejected"}
+                                    name={"resultList[" + row.id + "].isRejected"}
                                     labelText=""
-                                    //defaultChecked={this.state.acceptAsIs}
-                                    onChange={(e) => handleAcceptAsIsChange(e, row.id)}
+                                    onChange={(e) => handleCheckBox(e, row.id)}
                                 />
                             }
                         </Field>
@@ -169,9 +164,9 @@ const Validation = (props) => {
                     <>
                         <div className='note'>
                             <TextArea
-                                id={"testResult" + row.id + ".note"}
-                                name={"testResult[" + row.id + "].note"}
-                                // value={this.props.results.testResult[row.id].note}
+                                id={"resultList" + row.id + ".note"}
+                                name={"resultList[" + row.id + "].note"}
+                                // value={this.props.results.resultList[row.id].note}
                                 disabled={false}
                                 type="text"
                                 labelText=""
@@ -187,8 +182,8 @@ const Validation = (props) => {
                 switch (row.resultType) {
                     case "D":
                         return <Select className='result'
-                                       id={"resultValue" + row.id}
-                                       name={"testResult[" + row.id + "].resultValue"}
+                                       id={"result" + row.id}
+                                       name={"resultList[" + row.id + "].result"}
                                        noLabel={true}
                                        onChange={(e) => validateResults(e, row.id)}>
                             <SelectItem
@@ -208,154 +203,121 @@ const Validation = (props) => {
 
                         return <TextInput
                             id={"ResultValue" + row.id}
-                            name={"testResult[" + row.id + "].resultValue"}
-                            //type="text"
-                            // value={this.state.resultForm.testResult[row.id].resultValue}
+                            name={"resultList[" + row.id + "].result"}
                             labelText=""
-                            // helperText="Optional help text"
+                            value={props.results ? props.results.resultList[row.id].result : ""}
                             onChange={(e) => handleChange(e, row.id)}
                         />
                     default:
-                        return row.resultValue
+                        return row.result
                 }
 
-            case "Current Result":
-                switch (row.resultType) {
-                    case "D":
-                        return <Select className='currentResult'
-                                       id={"currentResultValue" + row.id}
-                                       name={"testResult[" + row.id + "].resultValue"}
-                                       noLabel={true}
-                                       onChange={(e) => validateResults(e, row.id)}>
-                            <SelectItem
-                                text=""
-                                value=""
-                            />
-                            {row.dictionaryResults.map((dictionaryResult, dictionaryResult_index) => (
-                                <SelectItem
-                                    text={dictionaryResult.value}
-                                    value={dictionaryResult.id}
-                                    key={dictionaryResult_index}
-                                />
-                            ))}
-                        </Select>
-
-                    case "N":
-                        return <TextInput
-                            id={"currentResultValue" + row.id}
-                            name={"testResult[" + row.id + "].resultValue"}
-                            //type="text"
-                            // value={this.props.results.testResult[row.id].resultValue}
-                            // labelText="Text input label"
-                            // helperText="Optional help text"
-                            onChange={(e) => handleChange(e, row.id)}
-                            labelText={""}/>
-                    default:
-                        return row.resultValue
-                }
         }
-        return row.resultValue;
+        return row.result;
     }
     const renderReferral = ({data}) => {
-        <div className='referralRow'>
-            <Grid>
-                <Column lg={3}>
-                    <div>
-                        <Select
-                            id={"testMethod" + data.id}
-                            name={"testResult[" + data.id + "].testMethod"}
-                            labelText={"Methods"}
-                            onChange={(e) => handleChange(e, data.id)}
-                            value={data.method}
-                        >
-                            <SelectItem
-                                text=""
-                                value=""
-                            />
-                            {data.methods.map((method, method_index) => (
+        return (
+            <div className='referralRow'>
+                <Grid>
+                    <Column lg={3}>
+                        <div>
+                            <Select
+                                id={"testMethod" + data.id}
+                                name={"resultList[" + data.id + "].testMethod"}
+                                labelText={"Methods"}
+                                onChange={(e) => handleChange(e, data.id)}
+                                value={data.method}
+                            >
                                 <SelectItem
-                                    text={method.value}
-                                    value={method.id}
-                                    key={method_index}
+                                    text=""
+                                    value=""
                                 />
-                            ))}
-                        </Select>
-                    </div>
-                </Column>
-                <Column lg={3}>
-                    <div>
-                        <Select className='referralReason'
-                                id={"referralReason" + data.id}
-                                name={"testResult[" + data.id + "].referralReason"}
-                                labelText={"Referral Reason"}
+                                {data.methods.map((method, method_index) => (
+                                    <SelectItem
+                                        text={method.value}
+                                        value={method.id}
+                                        key={method_index}
+                                    />
+                                ))}
+                            </Select>
+                        </div>
+                    </Column>
+                    <Column lg={3}>
+                        <div>
+                            <Select className='referralReason'
+                                    id={"referralReason" + data.id}
+                                    name={"resultList[" + data.id + "].referralReason"}
+                                    labelText={"Referral Reason"}
+                                    onChange={(e) => handleChange(e, data.id)}>
+                                <SelectItem
+                                    text=""
+                                    value=""
+                                />
+                                {data.referralReasons.map((method, method_index) => (
+                                    <SelectItem
+                                        text={method.value}
+                                        value={method.id}
+                                        key={method_index}
+                                    />
+                                ))}
+                            </Select>
+                        </div>
+                    </Column>
+                    <Column lg={3}>
+                        <div className='institute'>
+                            <Select
+                                id={"institute" + data.id}
+                                name={"resultList[" + data.id + "].institute"}
+                                labelText={"Institute"}
                                 onChange={(e) => handleChange(e, data.id)}>
-                            <SelectItem
-                                text=""
-                                value=""
-                            />
-                            {data.referralReasons.map((method, method_index) => (
+
+
                                 <SelectItem
-                                    text={method.value}
-                                    value={method.id}
-                                    key={method_index}
+                                    text=""
+                                    value=""
                                 />
-                            ))}
-                        </Select>
-                    </div>
-                </Column>
-                <Column lg={3}>
-                    <div className='institute'>
-                        <Select
-                            id={"institute" + data.id}
-                            name={"testResult[" + data.id + "].institute"}
-                            labelText={"Institute"}
-                            onChange={(e) => handleChange(e, data.id)}>
+                                {data.referralOrganizations.map((method, method_index) => (
+                                    <SelectItem
+                                        text={method.value}
+                                        value={method.id}
+                                        key={method_index}
+                                    />
+                                ))}
+                            </Select>
+                        </div>
+                    </Column>
+                    <Column lg={3}>
+                        <div className='testToPerform'>
+                            <Select
+                                id={"testToPerform" + data.id}
+                                name={"resultList[" + data.id + "].testToPerform"}
+                                labelText={"Test to Perform"}
+                                onChange={(e) => handleChange(e, data.id)}>
 
-
-                            <SelectItem
-                                text=""
-                                value=""
-                            />
-                            {data.referralOrganizations.map((method, method_index) => (
                                 <SelectItem
-                                    text={method.value}
-                                    value={method.id}
-                                    key={method_index}
-                                />
-                            ))}
-                        </Select>
-                    </div>
-                </Column>
-                <Column lg={3}>
-                    <div className='testToPerform'>
-                        <Select
-                            id={"testToPerform" + data.id}
-                            name={"testResult[" + data.id + "].testToPerform"}
-                            labelText={"Test to Perform"}
-                            onChange={(e) => handleChange(e, data.id)}>
+                                    text={data.testName}
+                                    value={data.id}/>
+                            </Select>
+                        </div>
+                    </Column>
+                    <Column lg={3}>
+                        <DatePicker datePickerType="single"
+                                    id={"sentDate_" + data.id}
+                                    name={"resultList[" + data.id + "].sentDate_"}
+                                    onChange={(date) => handleDatePickerChange(date, data.id)}
+                        >
+                            <DatePickerInput
+                                placeholder="mm/dd/yyyy"
+                                labelText="Sent Date"
+                                id="date-picker-single"
+                                size="md"
+                            />
+                        </DatePicker>
+                    </Column>
+                </Grid>
+            </div>
+        )
 
-                            <SelectItem
-                                text={data.testName}
-                                value={data.id}/>
-                        </Select>
-                    </div>
-                </Column>
-                <Column lg={3}>
-                    <DatePicker datePickerType="single"
-                                id={"sentDate_" + data.id}
-                                name={"testResult[" + data.id + "].sentDate_"}
-                                onChange={(date) => handleDatePickerChange(date, data.id)}
-                    >
-                        <DatePickerInput
-                            placeholder="mm/dd/yyyy"
-                            labelText="Sent Date"
-                            id="date-picker-single"
-                            size="md"
-                        />
-                    </DatePicker>
-                </Column>
-            </Grid>
-        </div>
     }
     return (
         <>
@@ -380,7 +342,7 @@ const Validation = (props) => {
                     >
 
                         <DataTable
-                            data={props.results}
+                            data={props.results ? props.results.resultList : []}
                             columns={columns} isSortable
                             expandableRows
                             expandableRowsComponent={renderReferral}>
@@ -388,7 +350,7 @@ const Validation = (props) => {
                         <Pagination onChange={handlePageChange} page={page}
                                     pageSize={pageSize}
                                     pageSizes={[100]}
-                                    totalItems={props.results.length}></Pagination>
+                                    totalItems={props.results ? props.results.resultList.length : 0}></Pagination>
 
                         <Button type="submit" id="submit">
                             <FormattedMessage id="label.button.save"/>

@@ -79,6 +79,7 @@ public class AnalysisItem {
     private String resultId;
     private double lowerCritical;
     private double higherCritical;
+    private  String normalRange;
 
     @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { ResultValidationForm.ResultValidation.class })
     private String resultType;
@@ -238,6 +239,14 @@ public class AnalysisItem {
 
     public String getResult() {
         return result;
+    }
+
+    public String getNormalRange() {
+        return normalRange;
+    }
+
+    public void setNormalRange(String normalRange) {
+        this.normalRange = normalRange;
     }
 
     public void setReceivedDate(String receivedDate) {

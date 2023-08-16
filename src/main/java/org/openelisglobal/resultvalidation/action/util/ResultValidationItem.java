@@ -84,6 +84,7 @@ public class ResultValidationItem implements ResultItem, Serializable {
     private String qualificationResultId;
     private boolean hasQualifiedResult = false;
     private boolean normalResult;
+    private String normalRange;
     private double lowerCritical;
     private double higherCritical;
 
@@ -450,6 +451,14 @@ public class ResultValidationItem implements ResultItem, Serializable {
 
     public void setNormalResult(boolean normalResult) {
         this.normalResult = normalResult;
+    }
+
+    public String getNormalRange() {
+        return normalRange;
+    }
+
+    public void setNormalRange(String normalRange) {
+        this.normalRange = normalRange;
     }
 
     public double getLowerCritical() {
