@@ -64,6 +64,10 @@ public class ImmunohistochemistryDisplayServiceImpl implements Immunohistochemis
             displayItem.setAssignedTechnician(immunohistochemistrySample.getTechnician().getDisplayName());
             displayItem.setAssignedTechnicianId(immunohistochemistrySample.getTechnician().getId());
         }
+        immunohistochemistrySample.getReports().size();
+        if(immunohistochemistrySample.getReports() != null){
+           displayItem.setReports(immunohistochemistrySample.getReports());
+        }
         Patient patient = sampleService.getPatient(immunohistochemistrySample.getSample());
         displayItem.setFirstName(patient.getPerson().getFirstName());
         displayItem.setLastName(patient.getPerson().getLastName());

@@ -1,5 +1,6 @@
 package org.openelisglobal.program.service;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 import org.openelisglobal.common.service.BaseObjectService;
@@ -19,6 +20,8 @@ public interface PathologySampleService extends BaseObjectService<PathologySampl
     void assignPathologist(Integer pathologySampleId, SystemUser systemUser);
 
     Long getCountWithStatus(List<PathologyStatus> statuses);
+
+    Long getCountWithStatusBetweenDates(List<PathologyStatus> statuses , Timestamp from , Timestamp to);
 
     void updateWithFormValues(Integer pathologySampleId, PathologySampleForm form);
 }

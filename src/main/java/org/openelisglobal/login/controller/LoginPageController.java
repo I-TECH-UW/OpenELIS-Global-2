@@ -1,10 +1,13 @@
 package org.openelisglobal.login.controller;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -14,8 +17,12 @@ import org.openelisglobal.login.bean.UserSession;
 import org.openelisglobal.login.form.LoginForm;
 import org.openelisglobal.role.service.RoleService;
 import org.openelisglobal.systemuser.service.SystemUserService;
+import org.openelisglobal.systemuser.service.UserService;
 import org.openelisglobal.systemuser.valueholder.SystemUser;
+import org.openelisglobal.test.service.TestSectionService;
 import org.openelisglobal.userrole.service.UserRoleService;
+import org.openelisglobal.userrole.valueholder.LabUnitRoleMap;
+import org.openelisglobal.userrole.valueholder.UserLabUnitRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ResolvableType;
@@ -38,6 +45,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class LoginPageController extends BaseController {
 
     private static final String[] ALLOWED_FIELDS = new String[] { "loginName", "password" };
+    public static final String ALL_LAB_UNITS = "AllLabUnits";
 
     @Value("${org.itech.login.saml:false}")
     private Boolean useSAML;
@@ -55,6 +63,10 @@ public class LoginPageController extends BaseController {
     UserRoleService userRoleService;
     @Autowired
     RoleService roleService;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private TestSectionService testSectionService;
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -113,6 +125,7 @@ public class LoginPageController extends BaseController {
             session.setFirstName(user.getFirstName());
             session.setLastName(user.getLastName());
             session.setCSRF(token.getToken());
+            setLabunitRolesForExistingUser(session);
             Set<String> roles = new HashSet<>();
             for (String roleId : userRoleService.getRoleIdsForUser(user.getId())) {
                 roles.add(roleService.getRoleById(roleId).getName().trim());
@@ -120,6 +133,26 @@ public class LoginPageController extends BaseController {
             session.setRoles(roles);
         }
         return session;
+    }
+
+    private void setLabunitRolesForExistingUser(UserSession session) {
+        UserLabUnitRoles roles = userService.getUserLabUnitRoles(session.getUserId());
+        if (roles != null) {
+            Set<LabUnitRoleMap> roleMaps = roles.getLabUnitRoleMap();
+            List<String> userLabUnits = new ArrayList<>();
+            roleMaps.forEach(map -> userLabUnits.add(map.getLabUnit()));
+            Map<String,List<String>> userLabRolesMap = new HashMap<>();
+            if (userLabUnits.contains(ALL_LAB_UNITS)) {
+                roleMaps.stream().filter(map -> map.getLabUnit().equals(ALL_LAB_UNITS)).forEach(
+                        map -> userLabRolesMap.put(map.getLabUnit(), map.getRoles().stream().map(r -> roleService.getRoleById(r).getName().trim()).collect(Collectors.toList())));
+            } else {
+                for (LabUnitRoleMap map : roleMaps) {
+                    userLabRolesMap.put(testSectionService.get(map.getLabUnit()).getLocalizedName(), map.getRoles().stream().map(r -> roleService.getRoleById(r).getName().trim()).collect(Collectors.toList()));
+                }
+            }
+
+           session.setUserLabRolesMap(userLabRolesMap);
+        }
     }
 
     @Override

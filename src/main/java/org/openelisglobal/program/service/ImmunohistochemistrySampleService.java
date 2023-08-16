@@ -1,5 +1,6 @@
 package org.openelisglobal.program.service;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 import org.openelisglobal.common.service.BaseObjectService;
@@ -19,5 +20,9 @@ public interface ImmunohistochemistrySampleService extends BaseObjectService<Imm
     Long getCountWithStatus(List<ImmunohistochemistryStatus> statuses);
 
     void updateWithFormValues(Integer immunohistochemistrySampleId, ImmunohistochemistrySampleForm form);
+
+    List<ImmunohistochemistrySample> searchWithStatusAndTerm(List<ImmunohistochemistryStatus> statuses , String searchTerm);
+
+    Long getCountWithStatusBetweenDates(List<ImmunohistochemistryStatus> statuses , Timestamp from , Timestamp to);
 
 }
