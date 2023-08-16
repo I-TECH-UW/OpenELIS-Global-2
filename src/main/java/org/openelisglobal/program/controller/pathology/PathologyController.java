@@ -59,8 +59,6 @@ public class PathologyController extends BaseRestController {
         Instant weekAgoInstant = Instant.now().minus(7, ChronoUnit.DAYS);
         Timestamp weekAgoTimestamp = Timestamp.from(weekAgoInstant);
         
-        System.out.println("Current Timestamp: " + currentTimestamp);
-        System.out.println("Timestamp of a Week Ago: " + weekAgoTimestamp);
         count.setComplete(pathologySampleService.getCountWithStatusBetweenDates(Arrays.asList(PathologyStatus.COMPLETED),weekAgoTimestamp ,currentTimestamp));
         return ResponseEntity.ok(count);
     }

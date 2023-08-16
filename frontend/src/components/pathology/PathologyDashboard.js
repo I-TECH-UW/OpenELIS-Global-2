@@ -122,9 +122,6 @@ function PathologyDashboard() {
     var pastWeekDate = new Date(currentDate);
     pastWeekDate.setDate(currentDate.getDate() - 7);
 
-    // Format the date as "YYYY-MM-DD"
-    //var formattedPastWeekDate = pastWeekDate.toISOString().split('T')[0];
-    //var formattedCurrentDate = currentDate.toISOString().split('T')[0];
     return formatDateToDDMMYYYY(currentDate) + " - " + formatDateToDDMMYYYY(pastWeekDate);
   }
 

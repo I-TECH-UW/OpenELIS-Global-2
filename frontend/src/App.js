@@ -179,7 +179,8 @@ export default function App() {
                   path="/ImmunohistochemistryDashboard"
                   exact
                   component={() => <ImmunohistochemistryDashboard />}
-                  role={["Pathologist", "Reception"]}
+                  role=""
+                  labUnitRole={{"Immunohistochemistry": ["Results"]}}
                   config={appConfig}
                   onAuth={onAuth}
                   logout={logout}
@@ -189,7 +190,8 @@ export default function App() {
                   path="/ImmunohistochemistryCaseView/:immunohistochemistrySampleId"
                   exact
                   component={() => <ImmunohistochemistryCaseView />}
-                  role={["Pathologist", "Reception"]}
+                  role=""
+                  labUnitRole={{"Immunohistochemistry": ["Results"]}}
                   config={appConfig}
                   onAuth={onAuth}
                   logout={logout}

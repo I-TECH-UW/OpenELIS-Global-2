@@ -58,8 +58,6 @@ public class PathologySampleDAOImpl extends BaseDAOImpl<PathologySample, Integer
         query.setParameter("datefrom" , from);
         query.setParameter("dateto", to);
         Long count = query.uniqueResult();
-
-
         return count;
     }
 }

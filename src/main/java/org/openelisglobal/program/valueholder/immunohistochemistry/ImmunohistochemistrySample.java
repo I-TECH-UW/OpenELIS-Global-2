@@ -1,9 +1,13 @@
 package org.openelisglobal.program.valueholder.immunohistochemistry;
 
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.Valid;
@@ -46,6 +50,10 @@ public class ImmunohistochemistrySample extends ProgramSample {
     @NotNull
     private ImmunohistochemistryStatus status = ImmunohistochemistryStatus.IN_PROGRESS;
 
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "immunohistochemistry_sample_id")
+    private List<ImmunohistochemistrySampleReport> reports;
+
     public ImmunohistochemistryStatus getStatus() {
         return status;
     }
@@ -70,4 +78,12 @@ public class ImmunohistochemistrySample extends ProgramSample {
         this.pathologist = pathologist;
     }
 
+    
+    public List<ImmunohistochemistrySampleReport> getReports() {
+        return reports;
+    }
+
+    public void setReports(List<ImmunohistochemistrySampleReport> reports) {
+        this.reports = reports;
+    }
 }

@@ -434,7 +434,7 @@ function PathologyCaseView() {
         <Column lg={12} md={6} sm={0}>
         </Column>
         <Column lg={16} md={8} sm={4}></Column>
-        {hasRole("Pathologist") &&
+        {hasRole( userSessionDetails ,"Pathologist") &&
           <>
             <Column lg={8} md={4} sm={2}>
               {initialMount && <FilterableMultiSelect

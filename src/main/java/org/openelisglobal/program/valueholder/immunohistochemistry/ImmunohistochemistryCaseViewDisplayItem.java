@@ -1,5 +1,7 @@
 package org.openelisglobal.program.valueholder.immunohistochemistry;
 
+import java.util.List;
+
 import org.hl7.fhir.r4.model.Questionnaire;
 import org.hl7.fhir.r4.model.QuestionnaireResponse;
 
@@ -12,6 +14,7 @@ public class ImmunohistochemistryCaseViewDisplayItem extends Immunohistochemistr
     private QuestionnaireResponse programQuestionnaireResponse;
     private String assignedTechnicianId;
     private String assignedPathologistId;
+    private List<ImmunohistochemistrySampleReport> reports;
 
     public String getAge() {
         return age;
@@ -68,5 +71,12 @@ public class ImmunohistochemistryCaseViewDisplayItem extends Immunohistochemistr
     public void setAssignedTechnicianId(String assignedTechnicianId) {
         this.assignedTechnicianId = assignedTechnicianId;
     }
+ 
+    public List<ImmunohistochemistrySampleReport> getReports() {
+        return reports;
+    }
 
+    public void setReports(List<ImmunohistochemistrySampleReport> reports) {
+        this.reports = reports;
+    }
 }

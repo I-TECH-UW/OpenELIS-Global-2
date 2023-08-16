@@ -1,5 +1,6 @@
 package org.openelisglobal.program.dao;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,5 +39,28 @@ public class ImmunohistochemistrySampleDAOImpl extends BaseDAOImpl<Immunohistoch
         Long count = query.uniqueResult();
 
         return count;
+    }
+
+    @Override
+    public Long getCountWithStatusBetweenDates(List<ImmunohistochemistryStatus> statuses, Timestamp from, Timestamp to) {
+        String sql = "select count(*) from ImmunohistochemistrySample is where is.status in (:statuses) and is.lastupdated between :datefrom and :dateto";
+        Query<Long> query = entityManager.unwrap(Session.class).createQuery(sql, Long.class);
+        query.setParameterList("statuses", statuses.stream().map(e -> e.toString()).collect(Collectors.toList()));
+        query.setParameter("datefrom" , from);
+        query.setParameter("dateto", to);
+        Long count = query.uniqueResult();
+        return count;
+    }
+
+    @Override
+    public List<ImmunohistochemistrySample> searchWithStatusAndAccesionNumber(List<ImmunohistochemistryStatus> statuses,
+            String labNumber) {
+        String sql = "from from ImmunohistochemistrySample is where is.status in (:statuses) and is.sample.accessionNumber = :labNumber";
+        Query<ImmunohistochemistrySample> query = entityManager.unwrap(Session.class).createQuery(sql, ImmunohistochemistrySample.class);
+        query.setParameterList("statuses", statuses.stream().map(e -> e.toString()).collect(Collectors.toList()));
+        query.setParameter("labNumber" ,labNumber);
+        List<ImmunohistochemistrySample> list = query.list();
+
+        return list;
     }
 }
