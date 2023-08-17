@@ -69,7 +69,7 @@ public class ImmunohistochemistrySampleReport extends BaseObject<Integer> {
     }
 
     public enum ImmunoHistologyReportType {
-        DUAL_IN_SITU("Dual In Situ Hybridisation (ISH) Report"), BREAST_CANCER("Breast Cancer Hormone Receptor Status Report"), IMMUNOHISTOCHEMISTRY("Immunohistochemistry Report");
+        DUAL_IN_SITU_HYBRIDISATION("Dual In Situ Hybridisation (ISH) Report"), BREAST_CANCER_HORMONE_RECEPTOR("Breast Cancer Hormone Receptor Status Report"), IMMUNOHISTOCHEMISTRY("Immunohistochemistry Report");
 
         private String display;
 
