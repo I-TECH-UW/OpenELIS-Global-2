@@ -26,7 +26,12 @@ import { patientSearchHeaderData } from '../data/PatientResultsTableHeaders'
 import { Formik, Field } from 'formik'
 import SearchPatientFormValues from '../formModel/innitialValues/SearchPatientFormValues'
 
+import {NotificationContext} from "../layout/Layout";
+import {NotificationKinds} from "./CustomNotification";
+
 class SearchPatientForm extends React.Component {
+  static contextType = NotificationContext;
+
   constructor (props) {
     super(props)
     this.state = {
@@ -44,9 +49,14 @@ class SearchPatientForm extends React.Component {
   }
 
   fetchPatientResults = (patientsResults) => {
-    patientsResults.forEach(item => item.id = item.patientID)
-    // console.log(JSON.stringify(patientsResults))
-    this.setState({ patientSearchResults: patientsResults })
+    if(patientsResults.length > 0){
+      patientsResults.forEach(item => item.id = item.patientID)
+      // console.log(JSON.stringify(patientsResults))
+      this.setState({ patientSearchResults: patientsResults })
+    }else{
+      this.context.setNotificationBody({title: "Notification Message", message: "No patients found matching search terms", kind: NotificationKinds.warning})
+      this.context.setNotificationVisible(true);
+    }
   }
 
   fetchPatientDetails = (patientDetails) => {

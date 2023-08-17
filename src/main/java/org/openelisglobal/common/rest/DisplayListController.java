@@ -247,6 +247,8 @@ public class DisplayListController extends BaseRestController{
 			    ConfigurationProperties.Property.restrictFreeTextProviderEntry)));
 	    configs.add(new IdValuePair("restrictFreeTextRefSiteEntry", ConfigurationProperties.getInstance().getPropertyValue(
 			    ConfigurationProperties.Property.restrictFreeTextRefSiteEntry)));
+		configs.add(new IdValuePair("phoneFormat", ConfigurationProperties.getInstance().getPropertyValue(
+			    Property.PHONE_FORMAT)));
 	    configs.add(new IdValuePair("currentDateAsText", DateUtil.getCurrentDateAsText()));
 	    configs.add(new IdValuePair("currentTimeAsText", DateUtil.getCurrentTimeAsText()));
         return configs;
