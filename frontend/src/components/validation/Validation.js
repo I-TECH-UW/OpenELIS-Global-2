@@ -187,6 +187,7 @@ const Validation = (props) => {
                                        id={"result" + row.id}
                                        name={"resultList[" + row.id + "].result"}
                                        noLabel={true}
+                                       value={row.result}
                                        onChange={(e) => validateResults(e, row.id)}>
                             <SelectItem
                                 text=""
@@ -213,6 +214,8 @@ const Validation = (props) => {
                     default:
                         return row.result
                 }
+
+                default :
 
         }
         return row.result;
