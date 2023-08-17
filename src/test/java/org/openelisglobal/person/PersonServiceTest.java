@@ -34,12 +34,12 @@ public class PersonServiceTest {
 
         Person pat = createPerson(firstName, lastname);
 
-        Assert.assertEquals(1, personService.getAllPersons().size());
+        Assert.assertEquals(0, personService.getAllPersons().size());
         // save person to the DB
         String personIdId = personService.insert(pat);
         Person savedPerson = personService.get(personIdId);
 
-        Assert.assertEquals(2, personService.getAllPersons().size());
+        Assert.assertEquals(1, personService.getAllPersons().size());
         Assert.assertEquals(firstName, savedPerson.getFirstName());
         Assert.assertEquals(lastname, savedPerson.getLastName());
     }
