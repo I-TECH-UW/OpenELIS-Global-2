@@ -244,6 +244,8 @@ public class PathologySampleServiceImpl extends BaseObjectServiceImpl<PathologyS
         immunoHistoSample.setProgram(pathologySample.getProgram());
         immunoHistoSample.setQuestionnaireResponseUuid(pathologySample.getQuestionnaireResponseUuid());
         immunoHistoSample.setSample(pathologySample.getSample());
+        immunoHistoSample.setPathologySample(pathologySample);
+        immunoHistoSample.setReffered(true);
         immunohistochemistrySampleService.save(immunoHistoSample);
 
         Analysis currentAnalysis = analysisService.getAnalysesBySampleId(pathologySample.getSample().getId()).get(0);

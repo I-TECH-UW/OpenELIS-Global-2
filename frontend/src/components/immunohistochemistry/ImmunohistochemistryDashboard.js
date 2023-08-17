@@ -1,6 +1,6 @@
 import {useContext, useState, useEffect, useRef } from "react";
 import { 
-    Checkbox, Heading, TextInput, Select, SelectItem, Button, Grid, Column,Tile,
+    Checkbox, Heading, TextInput, Select, SelectItem, Button, Grid, Column,Tile,Loading,
     DataTable, TableContainer, Table, TableHead, TableRow, TableHeader, TableBody, TableCell, Section
     } from '@carbon/react';
     import { Search} from '@carbon/react';
@@ -21,6 +21,7 @@ function ImmunohistochemistryDashboard() {
   const [immunohistochemistryEntries, setImmunohistochemistryEntries] = useState([])
   const [filters, setFilters] = useState({searchTerm: "", myCases: false, statuses: []});
   const { userSessionDetails, setUserSessionDetails } = useContext(UserSessionDetailsContext);
+  const [loading, setLoading] = useState(true);
 
   function formatDateToDDMMYYYY(date) {
     var day = date.getDate();
@@ -97,6 +98,9 @@ function ImmunohistochemistryDashboard() {
         return {...entry, id: '' + entry.immunohistochemistrySampleId};
       }));
     }
+    if (componentMounted.current){
+      setLoading(false);
+    }
     
   }
 
@@ -157,6 +161,9 @@ function ImmunohistochemistryDashboard() {
   return (
     <>
         {notificationVisible === true ? <AlertDialog/> : ""}
+        {loading && (
+                <Loading description="Loading Dasboard..." />
+      )}
         <Grid fullWidth={true}>
         <Column lg={16}>
           <Section>

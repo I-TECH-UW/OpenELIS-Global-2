@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import config from "../../config.json";
 import {
   IconButton, Heading, TextInput, Select, FilterableMultiSelect, SelectItem, Button, Grid, Column,
-  Checkbox, FileUploader, Tag, TextArea ,Section ,Breadcrumb ,BreadcrumbItem ,Stack
+  Checkbox, FileUploader, Tag, TextArea ,Section ,Breadcrumb ,BreadcrumbItem ,Stack,Loading
 } from '@carbon/react';
 import { Launch, Subtract } from '@carbon/react/icons';
 import { getFromOpenElisServer, postToOpenElisServerFullResponse, hasRole } from "../utils/Utils";
@@ -80,11 +80,9 @@ function ImmunohistochemistryCaseView() {
 
   const [statuses, setStatuses] = useState([]);
   const [reportTypes, setReportTypes] = useState([]);
-  const [techniques, setTechniques] = useState([]);
-  const [requests, setRequests] = useState([]);
-  const [conclusions, setConclusions] = useState([]);
   const [technicianUsers, setTechnicianUsers] = useState([]);
   const [pathologistUsers, setPathologistUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   async function displayStatus(response) {
     var body = await response.json();
@@ -130,9 +128,14 @@ function ImmunohistochemistryCaseView() {
   const setInitialImmunohistochemistrySampleInfo = (e) => {
     if(hasRole(userSessionDetails ,"Pathologist") && !e.assignedPathologistId && e.status === "READY_PATHOLOGIST"){
       e.assignedPathologistId = userSessionDetails.userId
-      e.assignedPathologist = userSessionDetails.lastName +""+ userSessionDetails
+      e.assignedPathologist = userSessionDetails.lastName +" "+ userSessionDetails.firstName
    }
+   if(!e.assignedTechnicianId){
+     e.assignedTechnicianId = userSessionDetails.userId 
+     e.assignedTechnician = userSessionDetails.lastName +" "+ userSessionDetails.firstName
+  }
     setImmunohistochemistrySampleInfo(e);
+    setLoading(false);
     setInitialMount(true);
   }
 
@@ -197,6 +200,9 @@ function ImmunohistochemistryCaseView() {
       <Stack gap={4}>
       <Grid fullWidth={true} className="gridBoundary">
         {notificationVisible === true ? <AlertDialog /> : ""}
+        {loading && (
+                <Loading description="Loading Dasboard..." />
+       )}
 
         <Column lg={16} md={8} sm={4}>
           {/* <SearchResults results={this.state.resultForm}/> */}
@@ -208,9 +214,69 @@ function ImmunohistochemistryCaseView() {
         <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>    
         </Column>
         <Column lg={4} md={2} sm={2} >
+          <Select id="status"
+            name="status"
+            labelText="Status"
+            value={immunohistochemistrySampleInfo.status}
+            onChange={(event) => {
+              setImmunohistochemistrySampleInfo({ ...immunohistochemistrySampleInfo, status: event.target.value });
+            }}>
+            <SelectItem disabled value="placeholder" text="Status" />
+
+            {statuses.map((status, index) => {
+              return (<SelectItem key={index}
+                text={status.value}
+                value={status.id}
+              />);
+            })}
+          </Select>
+        </Column>
+        <Column lg={2} md={1} sm={2}>
+        </Column>
+        <Column lg={4} md={1} sm={2} >
+
+          <Select id="assignedTechnician"
+            name="assignedTechnician"
+            labelText="Technician Assigned"
+            value={immunohistochemistrySampleInfo.assignedTechnicianId}
+            onChange={(event) => {
+              setImmunohistochemistrySampleInfo({ ...immunohistochemistrySampleInfo, assignedTechnicianId: event.target.value });
+            }}>
+            <SelectItem />
+            {technicianUsers.map((user, index) => {
+              return (<SelectItem key={index}
+                text={user.value}
+                value={user.id}
+              />);
+            })}
+          </Select>
+        </Column>
+        <Column lg={2} md={1} sm={2} >
+        </Column>
+        <Column lg={4} md={2} sm={2}>
+          <Select id="assignedPathologist"
+            name="assignedPathologist"
+            labelText="Pathologist Assigned"
+            value={immunohistochemistrySampleInfo.assignedPathologistId}
+            onChange={e => {
+              setImmunohistochemistrySampleInfo({ ...immunohistochemistrySampleInfo, assignedPathologistId: e.target.value });
+            }}>
+            <SelectItem />
+            {pathologistUsers.map((user, index) => {
+              return (<SelectItem key={index}
+                text={user.value}
+                value={user.id}
+              />);
+            })}
+          </Select>
+        </Column>
+        <Column lg={16} md={8} sm={4}>
+        <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>    
+        </Column>
+        <Column lg={4} md={2} sm={2} >
           <Select id="report"
             name="report"
-            labelText="report"
+            labelText="Add Report"
             //value={immunohistochemistrySampleInfo.report}
             onChange={(event) => {
               setImmunohistochemistrySampleInfo({...immunohistochemistrySampleInfo, reports: [...(immunohistochemistrySampleInfo.reports || []), {id: '', reportType: event.target.value}]});
@@ -223,12 +289,28 @@ function ImmunohistochemistryCaseView() {
               />);
             })}
           </Select>
+          </Column>
+          <Column lg={12} md={2} sm={2} ></Column>
+          <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>  
+          <Column  lg={16} md={8} sm={4}>  
+           <hr style={{width:'120%' , margin: '', border: ' solid #ccc' }} />
+           <h5>Reports</h5>
+          </Column>
           {immunohistochemistrySampleInfo.reports && immunohistochemistrySampleInfo.reports.map((report, index) => {
           return (
             <>
-           <div className="file-container">
-              <Column lg={2} md={1} sm={2}>
-                
+           
+           <Column lg={2} md={8} sm={4}>
+                <IconButton label="Remove Report" onClick={() => {
+                  var newReports = [...immunohistochemistrySampleInfo.reports];
+                  setImmunohistochemistrySampleInfo({ ...immunohistochemistrySampleInfo, reports: newReports.splice(index, 1) });
+                }} kind='tertiary' size='sm'>
+                  <Subtract size={18} /> Report
+                </IconButton>
+            </Column>
+
+            
+            <Column lg={4} md={1} sm={2} style={{marginTop: '-30px'}}> 
                 <FileUploader
                   buttonLabel={"Upload File For Report " + report.reportType}
                   iconDescription="file upload"
@@ -255,6 +337,8 @@ function ImmunohistochemistryCaseView() {
                     setImmunohistochemistrySampleInfo({ ...immunohistochemistrySampleInfo, slides: newReports });
                   }}
                 />
+              </Column>  
+              <Column lg={2} md={1} sm={2}>
                 {immunohistochemistrySampleInfo.reports[index].image &&
                   <>
                     <Button onClick={() => {
@@ -266,179 +350,89 @@ function ImmunohistochemistryCaseView() {
                   </>
                 }
               </Column>
-              {/* <Column lg={4} md={5} sm={3} /> */}
-              </div>
+             <Column lg={8} md={5} sm={3} /> 
+              {/* </div> */}
+              {/* </Column> */}
             </>
           )
         })}
+        <Column  lg={16} md={8} sm={4}>  
+           <hr style={{width:'100%' , margin: '1rem 0', border: '1px solid #ccc' }} />
         </Column>
-        <Column lg={4} md={2} sm={2} >
-          <Select id="status"
-            name="status"
-            labelText="Status"
-            value={immunohistochemistrySampleInfo.status}
-            onChange={(event) => {
-              setImmunohistochemistrySampleInfo({ ...immunohistochemistrySampleInfo, status: event.target.value });
-            }}>
-            <SelectItem disabled value="placeholder" text="Status" />
-
-            {statuses.map((status, index) => {
-              return (<SelectItem key={index}
-                text={status.value}
-                value={status.id}
-              />);
-            })}
-          </Select>
+          <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>  
+  
+    {immunohistochemistrySampleInfo.reffered && (
+        <>
+        <Column  lg={16} md={8} sm={4}>  
+          <hr style={{width:'100%' , margin: '1rem 0', border: '1px solid #ccc' }} />
+           <h5>Blocks</h5>
         </Column>
-        <Column lg={2} md={1} sm={2} style={{ "marginBottom": "1rem", "marginTop": "1rem" }}>
-        </Column>
-        <Column lg={2} md={1} sm={2} style={{ "marginBottom": "1rem", "marginTop": "1rem" }}>
-
-          <Select id="assignedTechnician"
-            name="assignedTechnician"
-            labelText="Technician Assigned"
-            value={immunohistochemistrySampleInfo.assignedTechnicianId}
-            onChange={(event) => {
-              setImmunohistochemistrySampleInfo({ ...immunohistochemistrySampleInfo, assignedTechnicianId: event.target.value });
-            }}>
-            <SelectItem />
-            {technicianUsers.map((user, index) => {
-              return (<SelectItem key={index}
-                text={user.value}
-                value={user.id}
-              />);
-            })}
-          </Select>
-        </Column>
-        <Column lg={8} md={4} sm={2} />
-        <Column lg={16} md={8} sm={4}>
-        </Column >
+        <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>   
+        <Column  lg={16} md={8} sm={4}/> 
         {immunohistochemistrySampleInfo.blocks && immunohistochemistrySampleInfo.blocks.map((block, index) => {
           return (
             <>
-
-              <Column lg={16} md={8} sm={4}>
-                <IconButton label="remove block" onClick={() => {
-                  var newBlocks = [...immunohistochemistrySampleInfo.blocks];
-                  newBlocks = newBlocks.splice(index, 1);
-                  setImmunohistochemistrySampleInfo({ ...immunohistochemistrySampleInfo, blocks: newBlocks });
-                }} kind='tertiary' size='sm'>
-                  <Subtract size={18} />
-                </IconButton>
-                Block
-              </Column>
-              <Column lg={4} md={2} sm={1} key={index}>
+              <Column lg={2} md={2} sm={1} key={index}>
                 <TextInput
                   id="blockNumber"
                   labelText="block number"
                   hideLabel={true}
                   placeholder="Block Number"
                   value={block.blockNumber}
-                  onChange={e => {
-                    var newBlocks = [...immunohistochemistrySampleInfo.blocks];
-                    newBlocks[index].blockNumber = e.target.value;
-                    setImmunohistochemistrySampleInfo({ ...immunohistochemistrySampleInfo, blocks: newBlocks });
-                  }} />
+                  disabled={true}
+                    />
               </Column>
-              <Column lg={4} md={2} sm={1}>
+              <Column lg={2} md={2} sm={1}>
                 <TextInput
                   id="location"
                   labelText="location"
                   hideLabel={true}
                   placeholder="Location"
                   value={block.location}
-                  onChange={e => {
-                    var newBlocks = [...immunohistochemistrySampleInfo.blocks];
-                    newBlocks[index].location = e.target.value;
-                    setImmunohistochemistrySampleInfo({ ...immunohistochemistrySampleInfo, blocks: newBlocks });
-                  }}
+                  disabled={true}
                 />
               </Column>
-              <Column lg={4} md={2} sm={2}>
+              <Column lg={2} md={2} sm={2}>
                 <Button onClick={(e) => {
                   window.open(config.serverBaseUrl + '/LabelMakerServlet?labelType=block&code=' + block.blockNumber, '_blank')
                 }}>Print Label</Button>
               </Column>
-              <Column lg={4} md={2} sm={0} />
+              <Column lg={10} md={2} sm={0} />
             </>
           )
         })}
-        {/* <Column lg={16} md={8} sm={4}>
-                  <Button onClick={() => {
-          setImmunohistochemistrySampleInfo({...immunohistochemistrySampleInfo, blocks: [...(immunohistochemistrySampleInfo.blocks || []), {id: '', blockNumber: ''}]});
-        }}>
-          Add Block
-          </Button>
-          </Column> */}
-        <Column lg={16} md={8} sm={4}>
+        
+        <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>    
+        <Column  lg={16} md={8} sm={4}>  
+          <hr style={{width:'100%' , margin: '1rem 0', border: '1px solid #ccc' }} />
+           <h5>Slides</h5>
         </Column>
+        <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>    
+        <Column  lg={16} md={8} sm={4}/>  
         {immunohistochemistrySampleInfo.slides && immunohistochemistrySampleInfo.slides.map((slide, index) => {
           return (
             <>
-              <Column lg={16} md={8} sm={4}>
-                <IconButton label="remove slide" onClick={() => {
-                  var newSlides = [...immunohistochemistrySampleInfo.slides];
-                  setImmunohistochemistrySampleInfo({ ...immunohistochemistrySampleInfo, slides: newSlides.splice(index, 1) });
-                }} kind='tertiary' size='sm'>
-                  <Subtract size={18} />
-                </IconButton>
-                Slide
-              </Column>
-              <Column lg={4} md={2} sm={1} key={index}>
+              <Column lg={2} md={2} sm={1} key={index}>
                 <TextInput
                   id="slideNumber"
                   labelText="slide number"
                   hideLabel={true}
+                  disabled={true}
                   placeholder="Slide Number"
                   value={slide.slideNumber}
-                  onChange={e => {
-                    var newSlides = [...immunohistochemistrySampleInfo.slides];
-                    newSlides[index].slideNumber = e.target.value;
-                    setImmunohistochemistrySampleInfo({ ...immunohistochemistrySampleInfo, slides: newSlides });
-                  }}
                 />
               </Column>
-              <Column lg={4} md={2} sm={1}>
+              <Column lg={2} md={2} sm={1}>
                 <TextInput
                   id="location"
                   labelText="location"
                   hideLabel={true}
                   placeholder="Location"
                   value={slide.location}
-                  onChange={e => {
-                    var newSlides = [...immunohistochemistrySampleInfo.slides];
-                    newSlides[index].location = e.target.value;
-                    setImmunohistochemistrySampleInfo({ ...immunohistochemistrySampleInfo, slides: newSlides });
-                  }}
+                  disabled={true}
                 />
               </Column>
-              <Column lg={4} md={1} sm={2}>
-                <FileUploader
-                  buttonLabel="Upload Image"
-                  iconDescription="file upload"
-                  multiple={false}
-                  accept={['image/jpeg', 'image/png', 'application/pdf']}
-                  disabled={false}
-                  name=""
-                  buttonKind="primary"
-                  size="lg"
-                  filenameStatus="edit"
-                  onChange={async (e) => {
-                    e.preventDefault();
-                    let file = e.target.files[0];
-                    var newSlides = [...immunohistochemistrySampleInfo.slides];
-                    let encodedFile = await toBase64(file);
-                    newSlides[index].base64Image = encodedFile;
-                    setImmunohistochemistrySampleInfo({ ...immunohistochemistrySampleInfo, slides: newSlides });
-                  }}
-                  onClick={function noRefCheck() { }}
-                  onDelete={(e) => {
-                    e.preventDefault();
-                    var newSlides = [...immunohistochemistrySampleInfo.slides];
-                    newSlides[index].base64Image = '';
-                    setImmunohistochemistrySampleInfo({ ...immunohistochemistrySampleInfo, slides: newSlides });
-                  }}
-                />
+              <Column lg={2} md={1} sm={2}>
                 {immunohistochemistrySampleInfo.slides[index].image &&
                   <>
                     <Button onClick={() => {
@@ -449,145 +443,76 @@ function ImmunohistochemistryCaseView() {
                     </Button>
                   </>
                 }
+                </Column> 
+                <Column lg={2} md={1} sm={2}>
                 <Button onClick={(e) => {
                   window.open(config.serverBaseUrl + '/LabelMakerServlet?labelType=slide&code=' + slide.slideNumber, '_blank')
                 }}>Print Label</Button>
               </Column>
-              <Column lg={4} md={5} sm={3} />
+              <Column lg={8} md={1} sm={2}/>
+               
             </>
           )
         })}
 
-        {/* <Column lg={16} md={8} sm={4}>
-        <Button onClick={() => {
-            setImmunohistochemistrySampleInfo({...immunohistochemistrySampleInfo, slides: [...(immunohistochemistrySampleInfo.slides || []), {id: '', slideNumber: ''}]});
-        }}>
-          Add Slide
-          </Button>
-        </Column> */}
-        <Column lg={4} md={2} sm={2}>
-          <Select id="assignedPathologist"
-            name="assignedPathologist"
-            labelText="Pathologist Assigned"
-            value={immunohistochemistrySampleInfo.assignedPathologistId}
-            onChange={e => {
-              setImmunohistochemistrySampleInfo({ ...immunohistochemistrySampleInfo, assignedPathologistId: e.target.value });
-            }}>
-            <SelectItem />
-            {pathologistUsers.map((user, index) => {
-              return (<SelectItem key={index}
-                text={user.value}
-                value={user.id}
-              />);
-            })}
-          </Select>
+         <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>    
+        <Column  lg={16} md={8} sm={4}>  
+          <hr style={{width:'100%' , margin: '1rem 0', border: '1px solid #ccc' }} />
         </Column>
-        <Column lg={12} md={6} sm={0}>
+        <Column lg={16} md={8} sm={4}>
+        <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>    
         </Column>
         <Column lg={16} md={8} sm={4}></Column>
         {hasRole(userSessionDetails ,"Pathologist") &&
           <>
             <Column lg={8} md={4} sm={2}>
-              {initialMount && <FilterableMultiSelect
-                id="techniques"
-                titleText="Techniques Used"
-                items={techniques}
-                itemToString={(item) => (item ? item.value : '')}
-                initialSelectedItems={immunohistochemistrySampleInfo.techniques}
-                onChange={(changes) => {
-                  setImmunohistochemistrySampleInfo({ ...immunohistochemistrySampleInfo, techniques: changes.selectedItems });
-                }}
-                selectionFeedback="top-after-reopen"
-              />
-              }
-            </Column>
-            <Column lg={8} md={4} sm={2}>
+            <Tag>Techniques: </Tag>
               {immunohistochemistrySampleInfo.techniques && immunohistochemistrySampleInfo.techniques.map((technique, index) => (
-                <Tag
-                  key={index}
-                  onClose={() => { }}
-                >
-                  {technique.value}
-                </Tag>
+                <>
+                  {technique.value}  &nbsp; 
+                </>
               ))}
             </Column>
             <Column lg={16} md={8} sm={4}></Column>
             <Column lg={8} md={4} sm={2}>
-              {initialMount && <FilterableMultiSelect
-                id="requests"
-                titleText="Add Request"
-                items={requests}
-                itemToString={(item) => (item ? item.value : '')}
-                initialSelectedItems={immunohistochemistrySampleInfo.requests}
-                onChange={(changes) => {
-                  setImmunohistochemistrySampleInfo({ ...immunohistochemistrySampleInfo, "requests": changes.selectedItems });
-                }}
-                selectionFeedback="top-after-reopen"
-              />
-              }
-            </Column>
-            <Column lg={8} md={4} sm={2}>
+            <Tag>Requests: </Tag>
               {immunohistochemistrySampleInfo.requests && immunohistochemistrySampleInfo.requests.map((technique, index) => (
-                <Tag
-                  key={index}
-                  onClose={() => { }}
-                >
-                  {technique.value}
-                </Tag>
+                  <>
+                  {technique.value}  &nbsp;
+                  </>
               ))}
             </Column>
             <Column lg={16} md={8} sm={4}>
-              <TextArea labelText="Gross Exam" value={immunohistochemistrySampleInfo.grossExam} onChange={e => {
-                setImmunohistochemistrySampleInfo({ ...immunohistochemistrySampleInfo, grossExam: e.target.value });
-              }} />
+              <Tag> Gross Exam :</Tag> 
+              <>{immunohistochemistrySampleInfo.grossExam}  </>
             </Column>
             <Column lg={16} md={8} sm={4}>
-              <TextArea labelText="Microscopy Exam" value={immunohistochemistrySampleInfo.microscopyExam} onChange={e => {
-                setImmunohistochemistrySampleInfo({ ...immunohistochemistrySampleInfo, microscopyExam: e.target.value });
-              }} />
+            <Tag> Microscopy Exam :</Tag> 
+              <>{immunohistochemistrySampleInfo.microscopyExam} </>
             </Column>
             <Column lg={8} md={4} sm={2}>
-              {initialMount && <FilterableMultiSelect
-                id="conclusion"
-                titleText="Conclusion"
-                items={conclusions}
-                itemToString={(item) => (item ? item.value : '')}
-                initialSelectedItems={immunohistochemistrySampleInfo.conclusions}
-                onChange={(changes) => {
-                  setImmunohistochemistrySampleInfo({ ...immunohistochemistrySampleInfo, "conclusions": changes.selectedItems });
-                }}
-                selectionFeedback="top-after-reopen"
-              />
-              }
-            </Column>
-            <Column lg={8} md={4} sm={2}>
+            <Tag> Conclusions :</Tag> 
               {immunohistochemistrySampleInfo.conclusions && immunohistochemistrySampleInfo.conclusions.map((conclusion, index) => (
-                <Tag
-                  key={index}
-                >
-                  {conclusion.value}
-                </Tag>
+                <>
+                  {conclusion.value}  &nbsp;
+                </>
               ))}
             </Column>
             <Column lg={16} md={8} sm={4}>
-              <TextArea labelText="Conclusion" value={immunohistochemistrySampleInfo.conclusionText} onChange={e => {
-                setImmunohistochemistrySampleInfo({ ...immunohistochemistrySampleInfo, conclusionText: e.target.value });
-              }} />
+            <Tag> Conclusion Text :</Tag> 
+              <>{immunohistochemistrySampleInfo.conclusionText}</>
 
             </Column>
           </>}
+          </>
+          )}
         <Column lg={16}>
           <Checkbox labelText="Ready for Release" id="release"
             onChange={() => {
               setImmunohistochemistrySampleInfo({ ...immunohistochemistrySampleInfo, release: !immunohistochemistrySampleInfo.release });
             }} />
         </Column>
-        {/* <Column lg={16}>
-          <Checkbox labelText="Refer to ImmunoHistoChemistry" id="referToImmunoHistoChemistry"
-            onChange={() => {
-              setImmunohistochemistrySampleInfo({ ...immunohistochemistrySampleInfo, referToImmunoHistoChemistry: !immunohistochemistrySampleInfo.referToImmunoHistoChemistry });
-            }} />
-        </Column> */}
+  
         <Column><Button id="pathology_save2" onClick={(e) => { e.preventDefault(); save(e) }}>Save</Button></Column>
 
       </Grid>
