@@ -29,6 +29,7 @@ public class PathologySampleForm {
 
     private Boolean release = false;
     private Boolean referToImmunoHistoChemistry = false;
+    String immunoHistoChemistryTestId ;
 
     public PathologyStatus getStatus() {
         return status;
@@ -158,6 +159,16 @@ public class PathologySampleForm {
         this.systemUserId = systemUserId;
     }
 
+    public String getImmunoHistoChemistryTestId() {
+        return immunoHistoChemistryTestId;
+    }
+
+    
+    public void setImmunoHistoChemistryTestId(String immunoHistoChemistryTestId) {
+        this.immunoHistoChemistryTestId = immunoHistoChemistryTestId;
+    }
+    
+
     public static class PathologySlideForm extends PathologySlide {
         private static final long serialVersionUID = 3142138533368581327L;
         private String base64Image;
@@ -175,5 +186,4 @@ public class PathologySampleForm {
         }
 
     }
-
 }

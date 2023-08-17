@@ -128,6 +128,10 @@ function ImmunohistochemistryCaseView() {
   }
 
   const setInitialImmunohistochemistrySampleInfo = (e) => {
+    if(hasRole(userSessionDetails ,"Pathologist") && !e.assignedPathologistId && e.status === "READY_PATHOLOGIST"){
+      e.assignedPathologistId = userSessionDetails.userId
+      e.assignedPathologist = userSessionDetails.lastName +""+ userSessionDetails
+   }
     setImmunohistochemistrySampleInfo(e);
     setInitialMount(true);
   }
@@ -174,8 +178,8 @@ function ImmunohistochemistryCaseView() {
                 <div className="patient-dob"> <Tag type="blue">Sex :</Tag>{immunohistochemistrySampleInfo.sex === 'M' ? "Male" : "Female"}<Tag type="blue">Age :</Tag>{immunohistochemistrySampleInfo.age} </div>
                 <div className="patient-id"><Tag type="blue">Order Date :</Tag>{immunohistochemistrySampleInfo.requestDate}</div>
                 <div className="patient-id"><Tag type="blue">Lab Number :</Tag>{immunohistochemistrySampleInfo.labNumber}</div>
-                <div className="patient-id"><Tag type="blue">Referring Facility:</Tag> <Tag type="blue">Ward/Dept/Unit: :</Tag></div>
-                <div className="patient-id"><Tag type="blue">Requester: :</Tag>{immunohistochemistrySampleInfo.assignedTechnician}</div>
+                <div className="patient-id"><Tag type="blue">Referring Facility:</Tag>{immunohistochemistrySampleInfo.referringFacility} <Tag type="blue">Ward/Dept/Unit: :</Tag> {immunohistochemistrySampleInfo.department}</div>
+                <div className="patient-id"><Tag type="blue">Requester: :</Tag>{immunohistochemistrySampleInfo.requester}</div>
               </div>) : (<div className="patient-header">
                 <div className="patient-name">Patient Id Doest Exist</div>
               </div>)}
@@ -194,25 +198,14 @@ function ImmunohistochemistryCaseView() {
       <Grid fullWidth={true} className="gridBoundary">
         {notificationVisible === true ? <AlertDialog /> : ""}
 
-        {/* <Column lg={16} md={8} sm={4}>
-        <Heading>
-            Immunohistochemistry - {immunohistochemistrySampleInfo.labNumber}
-        </Heading>
-        </Column>
-
-        <Column lg={16} md={8} sm={4}>
-        Order Date {immunohistochemistrySampleInfo.requestDate}
-        Name: {immunohistochemistrySampleInfo.lastName}, {immunohistochemistrySampleInfo.firstName}
-        Age: {immunohistochemistrySampleInfo.age} Sex: {immunohistochemistrySampleInfo.sex}
-        </Column> */}
-        {/* <Column lg={16} md={8} sm={4}>
-          <QuestionnaireResponse questionnaireResponse={immunohistochemistrySampleInfo.programQuestionnaireResponse} />
-        </Column> */}
         <Column lg={16} md={8} sm={4}>
           {/* <SearchResults results={this.state.resultForm}/> */}
         </Column>
         <Column lg={16} md={8} sm={4}>
           <Button id="pathology_save" onClick={(e) => { e.preventDefault(); save(e) }}>Save</Button>
+        </Column>
+        <Column lg={16} md={8} sm={4}>
+        <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>    
         </Column>
         <Column lg={4} md={2} sm={2} >
           <Select id="report"
@@ -589,12 +582,12 @@ function ImmunohistochemistryCaseView() {
               setImmunohistochemistrySampleInfo({ ...immunohistochemistrySampleInfo, release: !immunohistochemistrySampleInfo.release });
             }} />
         </Column>
-        <Column lg={16}>
+        {/* <Column lg={16}>
           <Checkbox labelText="Refer to ImmunoHistoChemistry" id="referToImmunoHistoChemistry"
             onChange={() => {
               setImmunohistochemistrySampleInfo({ ...immunohistochemistrySampleInfo, referToImmunoHistoChemistry: !immunohistochemistrySampleInfo.referToImmunoHistoChemistry });
             }} />
-        </Column>
+        </Column> */}
         <Column><Button id="pathology_save2" onClick={(e) => { e.preventDefault(); save(e) }}>Save</Button></Column>
 
       </Grid>

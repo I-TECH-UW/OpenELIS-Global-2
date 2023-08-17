@@ -26,9 +26,13 @@ import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.internationalization.MessageUtil;
+import org.openelisglobal.note.service.NoteService;
+import org.openelisglobal.note.service.NoteServiceImpl.NoteType;
+import org.openelisglobal.note.valueholder.Note;
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.program.controller.pathology.PathologySampleForm;
 import org.openelisglobal.program.dao.PathologySampleDAO;
+import org.openelisglobal.program.valueholder.immunohistochemistry.ImmunohistochemistrySample;
 import org.openelisglobal.program.valueholder.pathology.PathologyConclusion;
 import org.openelisglobal.program.valueholder.pathology.PathologyConclusion.ConclusionType;
 import org.openelisglobal.program.valueholder.pathology.PathologyRequest;
@@ -48,6 +52,10 @@ import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.systemuser.service.SystemUserService;
 import org.openelisglobal.systemuser.valueholder.SystemUser;
 import org.openelisglobal.test.beanItems.TestResultItem;
+import org.openelisglobal.test.service.TestSectionService;
+import org.openelisglobal.test.service.TestService;
+import org.openelisglobal.test.valueholder.Test;
+import org.openelisglobal.test.valueholder.TestSection;
 import org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl.ResultType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -65,6 +73,15 @@ public class PathologySampleServiceImpl extends BaseObjectServiceImpl<PathologyS
     private AnalysisService analysisService;
     @Autowired
     private LogbookResultsPersistService logbookResultsPersistService;
+    @Autowired
+    private TestService testService;
+    @Autowired
+    private NoteService noteService;
+    @Autowired
+    private ImmunohistochemistrySampleService immunohistochemistrySampleService;
+    @Autowired
+    private TestSectionService testSectionService;
+
 
     PathologySampleServiceImpl() {
         super(PathologySample.class);
@@ -136,9 +153,9 @@ public class PathologySampleServiceImpl extends BaseObjectServiceImpl<PathologyS
         if (form.getRelease()) {
             validatePathologySample(pathologySample, form);
         }
-//        if (form.getReferToImmunoHistoChemistry()) {
-//            referToImmunoHistoChemistry(pathologySample, form);
-//        }
+       if (form.getReferToImmunoHistoChemistry()) {
+           referToImmunoHistoChemistry(pathologySample, form);
+       }
     }
 
     private void validatePathologySample(PathologySample pathologySample, PathologySampleForm form) {
@@ -216,8 +233,42 @@ public class PathologySampleServiceImpl extends BaseObjectServiceImpl<PathologyS
     }
 
     private void referToImmunoHistoChemistry(PathologySample pathologySample, PathologySampleForm form) {
-        // TODO Auto-generated method stub
+         Test immunoHistologyTest  =  null ;
+         if(StringUtils.isNotBlank(form.getImmunoHistoChemistryTestId())){
+            immunoHistologyTest = testService.get(form.getImmunoHistoChemistryTestId());
+         }
+         if(immunoHistologyTest == null){
+           return;
+         }
+        ImmunohistochemistrySample immunoHistoSample = new ImmunohistochemistrySample();
+        immunoHistoSample.setProgram(pathologySample.getProgram());
+        immunoHistoSample.setQuestionnaireResponseUuid(pathologySample.getQuestionnaireResponseUuid());
+        immunoHistoSample.setSample(pathologySample.getSample());
+        immunohistochemistrySampleService.save(immunoHistoSample);
 
+        Analysis currentAnalysis = analysisService.getAnalysesBySampleId(pathologySample.getSample().getId()).get(0);
+        Analysis analysis = new Analysis();
+        analysis.setTest(immunoHistologyTest);
+        analysis.setIsReportable(currentAnalysis.getIsReportable());
+        analysis.setAnalysisType(currentAnalysis.getAnalysisType());
+        analysis.setRevision(currentAnalysis.getRevision());
+        analysis.setStartedDate(DateUtil.getNowAsSqlDate());
+        analysis.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NotStarted));
+        analysis.setParentAnalysis(currentAnalysis);
+        analysis.setSampleItem(currentAnalysis.getSampleItem());
+        TestSection testSection = testSectionService.getTestSectionByName("Immunohistochemistry");
+        analysis.setTestSection(testSection);
+        analysis.setSampleTypeName(currentAnalysis.getSampleTypeName());
+        analysis.setSysUserId(form.getSystemUserId());
+        analysisService.insert(analysis);
+        
+        List<Note> notes = new ArrayList<>();
+        Note note = noteService.createSavableNote(analysis, NoteType.INTERNAL,
+            "Refered From Pathology Programme : "+ pathologySample.getProgram().getProgramName()+ "to Immunohistochemistry", "Refered to Immunohistochemistry" ,form.getSystemUserId());
+        if (!noteService.duplicateNoteExists(note)) {
+            notes.add(note);
+        }
+        noteService.saveAll(notes);
     }
 
     public PathologyConclusion createConclusion(String text, ConclusionType type) {

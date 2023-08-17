@@ -2,14 +2,20 @@ package org.openelisglobal.program.service;
 
 import javax.transaction.Transactional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.r4.model.Questionnaire;
 import org.hl7.fhir.r4.model.QuestionnaireResponse;
+import org.openelisglobal.common.services.SampleOrderService;
+import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.dataexchange.fhir.FhirUtil;
 import org.openelisglobal.dictionary.service.DictionaryService;
+import org.openelisglobal.organization.service.OrganizationService;
+import org.openelisglobal.organization.valueholder.Organization;
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.program.valueholder.immunohistochemistry.ImmunohistochemistryCaseViewDisplayItem;
 import org.openelisglobal.program.valueholder.immunohistochemistry.ImmunohistochemistryDisplayItem;
 import org.openelisglobal.program.valueholder.immunohistochemistry.ImmunohistochemistrySample;
+import org.openelisglobal.sample.bean.SampleOrderItem;
 import org.openelisglobal.sample.service.SampleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +31,8 @@ public class ImmunohistochemistryDisplayServiceImpl implements Immunohistochemis
     private DictionaryService dictionaryService;
     @Autowired
     private FhirUtil fhirUtil;
+    @Autowired
+    private OrganizationService organizationService;
 
     @Override
     @Transactional
@@ -78,6 +86,18 @@ public class ImmunohistochemistryDisplayServiceImpl implements Immunohistochemis
         displayItem.setProgramQuestionnaireResponse(
                 fhirUtil.getLocalFhirClient().read().resource(QuestionnaireResponse.class)
                         .withId(immunohistochemistrySample.getQuestionnaireResponseUuid().toString()).execute());
+       
+        SampleOrderService sampleOrderService = new SampleOrderService(immunohistochemistrySample.getSample());
+        SampleOrderItem sampleItem = sampleOrderService.getSampleOrderItem();
+        displayItem.setReferringFacility(sampleItem.getReferringSiteName());  
+        if (StringUtils.isNotBlank(sampleItem.getReferringSiteDepartmentId())) {
+            Organization org = organizationService.get(sampleItem.getReferringSiteDepartmentId());
+            if (org != null) {
+                displayItem.setDepartment(org.getLocalizedName());
+            }
+        } 
+        displayItem.setRequester(sampleItem.getProviderLastName() +" "+ sampleItem.getProviderFirstName());  
+        displayItem.setAge(DateUtil.getCurrentAgeForDate(patient.getBirthDate() ,DateUtil.getNowAsTimestamp()));
 
         return displayItem;
     }

@@ -9,6 +9,7 @@ import { NotificationContext } from "../layout/Layout";
 import {AlertDialog} from "../common/CustomNotification";
 import { FormattedMessage, injectIntl } from 'react-intl'
 import "./../pathology/PathologyDashboard.css"
+import UserSessionDetailsContext from "../../UserSessionDetailsContext"
 
 function ImmunohistochemistryDashboard() {
 
@@ -19,6 +20,7 @@ function ImmunohistochemistryDashboard() {
   const [statuses, setStatuses] = useState([]);
   const [immunohistochemistryEntries, setImmunohistochemistryEntries] = useState([])
   const [filters, setFilters] = useState({searchTerm: "", myCases: false, statuses: []});
+  const { userSessionDetails, setUserSessionDetails } = useContext(UserSessionDetailsContext);
 
   function formatDateToDDMMYYYY(date) {
     var day = date.getDate();
@@ -71,7 +73,7 @@ function ImmunohistochemistryDashboard() {
   const renderCell = (cell, row) => {
     var status = row.cells.find(
       (e) => e.info.header === 'status'
-    ).info.header.status;
+    ).value;
     var immunohistochemistrySampleId = row.id;
     
     if (cell.info.header === 'assignedTechnician' && !cell.value ) {
@@ -79,7 +81,7 @@ function ImmunohistochemistryDashboard() {
         <Button type="button" onClick={(e) => {assignCurrentUserAsTechnician(e, immunohistochemistrySampleId)}}>Start</Button>
       </TableCell>
     }
-    if (cell.info.header === 'assignedPathologist' && !cell.value && status === 'READY_PATHOLOGIST' && hasRole("Pathologist")) {
+    if (cell.info.header === 'assignedPathologist' && !cell.value && status === 'READY_PATHOLOGIST' && hasRole(userSessionDetails ,"Pathologist")) {
       return <TableCell key={cell.id}>
         <Button type="button" onClick={(e) => {assignCurrentUserAsPathologist(e, immunohistochemistrySampleId)}}>Start</Button>
       </TableCell>
