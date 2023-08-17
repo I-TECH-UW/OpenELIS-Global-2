@@ -91,7 +91,7 @@ public class DisplayListService implements LocaleChangeListener {
         SEVERITY_CONSEQUENCES_LIST, SEVERITY_RECURRENCE_LIST, ACTION_TYPE_LIST, LABORATORY_COMPONENT, SAMPLE_NATURE,
         ELECTRONIC_ORDER_STATUSES, METHODS, METHODS_INACTIVE, METHOD_BY_NAME, PRACTITIONER_PERSONS, ORDER_PRIORITY,
         PROGRAM, IMMUNOHISTOCHEMISTRY_STATUS, PATHOLOGY_STATUS, PATHOLOGY_TECHNIQUES, PATHOLOGIST_REQUESTS,
-        PATHOLOGIST_CONCLUSIONS ,IMMUNOHISTOCHEMISTRY_REPORT_TYPES
+        PATHOLOGIST_CONCLUSIONS ,IMMUNOHISTOCHEMISTRY_REPORT_TYPES ,IMMUNOHISTOCHEMISTRY_MARKERS_TESTS
     }
 
     private static Map<ListType, List<IdValuePair>> typeToListMap;
@@ -196,6 +196,7 @@ public class DisplayListService implements LocaleChangeListener {
 
         typeToListMap.put(ListType.ORDERABLE_TESTS, createOrderableTestList());
         typeToListMap.put(ListType.ALL_TESTS, createTestList());
+        typeToListMap.put(ListType.IMMUNOHISTOCHEMISTRY_MARKERS_TESTS, createImmunoHistoChemistryTestList());
         typeToListMap.put(ListType.TEST_LOCATION_CODE, createDictionaryListForCategory("testLocationCode"));
         typeToListMap.put(ListType.PROGRAM, createProgramList());
         typeToListMap.put(ListType.DICTIONARY_PROGRAM, createDictionaryListForCategory("programs"));
@@ -398,6 +399,7 @@ public class DisplayListService implements LocaleChangeListener {
         typeToListMap.put(ListType.PANELS_INACTIVE, createPanelList(true));
         typeToListMap.put(ListType.ORDERABLE_TESTS, createOrderableTestList());
         typeToListMap.put(ListType.ALL_TESTS, createTestList());
+        typeToListMap.put(ListType.IMMUNOHISTOCHEMISTRY_MARKERS_TESTS, createImmunoHistoChemistryTestList());
         typeToListMap.put(ListType.REJECTION_REASONS, createDictionaryListForCategory("resultRejectionReasons"));
         typeToListMap.put(ListType.REFERRAL_REASONS, createReferralReasonList());
         typeToListMap.put(ListType.REFERRAL_ORGANIZATIONS, createReferralOrganizationList());
@@ -445,6 +447,11 @@ public class DisplayListService implements LocaleChangeListener {
         case ALL_TESTS: {
             testService.refreshTestNames();
             typeToListMap.put(ListType.ALL_TESTS, createTestList());
+            break;
+        }
+        case IMMUNOHISTOCHEMISTRY_MARKERS_TESTS: {
+            testService.refreshTestNames();
+            typeToListMap.put(ListType.IMMUNOHISTOCHEMISTRY_MARKERS_TESTS, createImmunoHistoChemistryTestList());
             break;
         }
         case ORDERABLE_TESTS: {
@@ -637,6 +644,27 @@ public class DisplayListService implements LocaleChangeListener {
             });
         }
 
+        return tests;
+    }
+
+    private List<IdValuePair> createImmunoHistoChemistryTestList() {
+        ArrayList<IdValuePair> tests = new ArrayList<>();
+        String id = testSectionService.getTestSectionByName("Immunohistochemistry").getId();
+        if (id == null) {
+            return tests;
+        }
+        List<Test> testList = testService.getTestsByTestSectionId(id);
+        for (Test test : testList) {
+            tests.add(new IdValuePair(test.getId(), TestServiceImpl.getLocalizedTestNameWithType(test)));
+            
+            Collections.sort(tests, new Comparator<IdValuePair>() {
+                
+                @Override
+                public int compare(IdValuePair o1, IdValuePair o2) {
+                    return o1.getValue().compareTo(o2.getValue());
+                }
+            });
+        }
         return tests;
     }
 

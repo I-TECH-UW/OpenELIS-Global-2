@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import config from "../../config.json";
 import {
   IconButton, Heading, TextInput, Select, FilterableMultiSelect, SelectItem, Button, Grid, Column,
-  Checkbox, Section, FileUploader, Tag, TextArea ,Breadcrumb ,BreadcrumbItem
+  Checkbox, Section, FileUploader, Tag, TextArea ,Breadcrumb ,BreadcrumbItem ,Row
 } from '@carbon/react';
 import { Launch, Subtract } from '@carbon/react/icons';
 import { getFromOpenElisServer, postToOpenElisServerFullResponse, hasRole } from "../utils/Utils";
@@ -82,6 +82,7 @@ function PathologyCaseView() {
   const [techniques, setTechniques] = useState([]);
   const [requests, setRequests] = useState([]);
   const [conclusions, setConclusions] = useState([]);
+  const [immunoHistoChemistryTests, setImmunoHistoChemistryTests] = useState([]);
   const [technicianUsers, setTechnicianUsers] = useState([]);
   const [pathologistUsers, setPathologistUsers] = useState([]);
 
@@ -119,7 +120,8 @@ function PathologyCaseView() {
       "microscopyExam": pathologySampleInfo.microscopyExam,
       "conclusionText": pathologySampleInfo.conclusionText,
       "release": pathologySampleInfo.release != undefined ? pathologySampleInfo.release : false,
-      "referToImmunoHistoChemistry": pathologySampleInfo.referToImmunoHistoChemistry
+      "referToImmunoHistoChemistry": pathologySampleInfo.referToImmunoHistoChemistry,
+      "immunoHistoChemistryTestId": pathologySampleInfo.immunoHistoChemistryTestId
     }
     if (pathologySampleInfo.techniques) {
       submitValues = {
@@ -150,6 +152,10 @@ function PathologyCaseView() {
 
 
   const setInitialPathologySampleInfo = (e) => {
+    if(hasRole(userSessionDetails ,"Pathologist") && !e.assignedPathologistId && e.status === "READY_PATHOLOGIST"){
+       e.assignedPathologistId = userSessionDetails.userId
+       e.assignedPathologist = userSessionDetails.lastName +""+ userSessionDetails
+    }
     setPathologySampleInfo(e);
     setInitialMount(true);
   }
@@ -160,6 +166,7 @@ function PathologyCaseView() {
     getFromOpenElisServer("/rest/displayList/PATHOLOGY_TECHNIQUES", setTechniques);
     getFromOpenElisServer("/rest/displayList/PATHOLOGIST_REQUESTS", setRequests);
     //TODO make conclusions list instead of reusing pathrequest
+    getFromOpenElisServer("/rest/displayList/IMMUNOHISTOCHEMISTRY_MARKERS_TESTS", setImmunoHistoChemistryTests);
     getFromOpenElisServer("/rest/displayList/PATHOLOGIST_CONCLUSIONS", setConclusions);
     getFromOpenElisServer("/rest/users/", setTechnicianUsers);
     getFromOpenElisServer("/rest/users/Pathologist", setPathologistUsers);
@@ -198,8 +205,8 @@ function PathologyCaseView() {
                 <div className="patient-dob"> <Tag type="blue">Sex :</Tag>{pathologySampleInfo.sex === 'M' ? "Male" : "Female"}<Tag type="blue">Age :</Tag>{pathologySampleInfo.age} </div>
                 <div className="patient-id"><Tag type="blue">Order Date :</Tag>{pathologySampleInfo.requestDate}</div>
                 <div className="patient-id"><Tag type="blue">Lab Number :</Tag>{pathologySampleInfo.labNumber}</div>
-                <div className="patient-id"><Tag type="blue">Referring Facility:</Tag> <Tag type="blue">Ward/Dept/Unit: :</Tag></div>
-                <div className="patient-id"><Tag type="blue">Requester: :</Tag>{pathologySampleInfo.assignedTechnician}</div>
+                <div className="patient-id"><Tag type="blue">Referring Facility:</Tag> {pathologySampleInfo.referringFacility}<Tag type="blue">Ward/Dept/Unit: </Tag>{pathologySampleInfo.department}</div>
+                <div className="patient-id"><Tag type="blue">Requester: </Tag>{pathologySampleInfo.requester}</div>
               </div>) : (<div className="patient-header">
                 <div className="patient-name">Patient Id Doest Exist</div>
               </div>)}
@@ -218,6 +225,9 @@ function PathologyCaseView() {
         {notificationVisible === true ? <AlertDialog /> : ""}
         <Column lg={16} md={8} sm={4}>
           <Button id="pathology_save" onClick={(e) => { e.preventDefault(); save(e) }}>Save</Button>
+        </Column>
+        <Column lg={16} md={8} sm={4}>
+        <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>    
         </Column>
         <Column lg={4} md={2} sm={2} >
           <Select id="status"
@@ -260,19 +270,24 @@ function PathologyCaseView() {
         <Column lg={8} md={4} sm={2} />
         <Column lg={16} md={8} sm={4}>
         </Column >
+        <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>    
+        <Column  lg={16} md={8} sm={4}>  
+          <hr style={{width:'100%' , margin: '1rem 0', border: '1px solid #ccc' }} />
+           <h5>Blocks</h5>
+        </Column>
+        <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>    
         {pathologySampleInfo.blocks && pathologySampleInfo.blocks.map((block, index) => {
           return (
             <>
-
               <Column lg={16} md={8} sm={4}>
                 <IconButton label="remove block" onClick={() => {
                   var newBlocks = [...pathologySampleInfo.blocks];
                   newBlocks = newBlocks.splice(index, 1);
                   setPathologySampleInfo({ ...pathologySampleInfo, blocks: newBlocks });
                 }} kind='tertiary' size='sm'>
-                  <Subtract size={18} />
+                  <Subtract size={18} />  Block
                 </IconButton>
-                Block
+              
               </Column>
               <Column lg={4} md={2} sm={1} key={index}>
                 <TextInput
@@ -318,8 +333,12 @@ function PathologyCaseView() {
             Add Block
           </Button>
         </Column>
-        <Column lg={16} md={8} sm={4}>
+        <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>    
+        <Column  lg={16} md={8} sm={4}>  
+          <hr style={{width:'100%' , margin: '1rem 0', border: '1px solid #ccc' }} />
+           <h5>Slides</h5>
         </Column>
+        <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>    
         {pathologySampleInfo.slides && pathologySampleInfo.slides.map((slide, index) => {
           return (
             <>
@@ -328,9 +347,9 @@ function PathologyCaseView() {
                   var newSlides = [...pathologySampleInfo.slides];
                   setPathologySampleInfo({ ...pathologySampleInfo, slides: newSlides.splice(index, 1) });
                 }} kind='tertiary' size='sm'>
-                  <Subtract size={18} />
+                  <Subtract size={18} />  Slide
                 </IconButton>
-                Slide
+               
               </Column>
               <Column lg={4} md={2} sm={1} key={index}>
                 <TextInput
@@ -413,6 +432,11 @@ function PathologyCaseView() {
           }}>
             Add Slide
           </Button>
+          <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>    
+        <Column  lg={16} md={8} sm={4}>  
+          <hr style={{width:'100%' , margin: '1rem 0', border: '1px solid #ccc' }} />
+        </Column>  
+        <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>   
         </Column>
         <Column lg={4} md={2} sm={2}>
           <Select id="assignedPathologist"
@@ -531,13 +555,30 @@ function PathologyCaseView() {
               setPathologySampleInfo({ ...pathologySampleInfo, release: !pathologySampleInfo.release });
             }} />
         </Column>
-        <Column lg={16}>
+        <Column lg={8}>
           <Checkbox labelText="Refer to ImmunoHistoChemistry" id="referToImmunoHistoChemistry"
             onChange={() => {
               setPathologySampleInfo({ ...pathologySampleInfo, referToImmunoHistoChemistry: !pathologySampleInfo.referToImmunoHistoChemistry });
             }} />
         </Column>
-        <Column><Button id ="pathology_save2"onClick={(e) => { e.preventDefault(); save(e) }}>Save</Button></Column>
+        {pathologySampleInfo.referToImmunoHistoChemistry && (
+          <Column lg={8}>
+            <Select id="immunoHistoChemistryTest"
+              name="immunoHistoChemistryTest"
+              labelText="immunoHistoChemistryTest"
+              onChange={(event) => {
+                setPathologySampleInfo({ ...pathologySampleInfo, immunoHistoChemistryTestId: event.target.value });
+              }}>
+              <SelectItem />
+              {immunoHistoChemistryTests.map((test, index) => {
+                return (<SelectItem key={index}
+                  text={test.value}
+                  value={test.id}
+                />);
+              })}
+            </Select>
+          </Column>)}
+        <Column lg={16}><Button id ="pathology_save2"onClick={(e) => { e.preventDefault(); save(e) }}>Save</Button></Column>
 
       </Grid>
 

@@ -3,6 +3,7 @@ import {
   Checkbox, Heading, TextInput, Select, SelectItem, Button, Grid, Column, Section,
   DataTable, TableContainer, Table, TableHead, TableRow, TableHeader, TableBody, TableCell, Tile
 } from '@carbon/react';
+import UserSessionDetailsContext from "../../UserSessionDetailsContext"
 import { Search } from '@carbon/react';
 import { getFromOpenElisServer, postToOpenElisServerFullResponse, hasRole } from "../utils/Utils";
 import { NotificationContext } from "../layout/Layout";
@@ -15,6 +16,7 @@ function PathologyDashboard() {
   const componentMounted = useRef(false);
 
   const { notificationVisible, setNotificationVisible, setNotificationBody } = useContext(NotificationContext);
+  const { userSessionDetails, setUserSessionDetails } = useContext(UserSessionDetailsContext);
   const [statuses, setStatuses] = useState([]);
   const [pathologyEntries, setPathologyEntries] = useState([])
   const [filters, setFilters] = useState({ searchTerm: "", myCases: false, statuses: [] });
@@ -37,7 +39,7 @@ function PathologyDashboard() {
   const renderCell = (cell, row) => {
     var status = row.cells.find(
       (e) => e.info.header === 'status'
-    ).info.header.status;
+    ).value;
     var pathologySampleId = row.id;
 
     if (cell.info.header === 'assignedTechnician' && !cell.value) {
@@ -45,7 +47,7 @@ function PathologyDashboard() {
         <Button type="button" onClick={(e) => { assignCurrentUserAsTechnician(e, pathologySampleId) }}>Start</Button>
       </TableCell>
     }
-    if (cell.info.header === 'assignedPathologist' && !cell.value && status === 'READY_PATHOLOGIST' && hasRole("Pathologist")) {
+    if (cell.info.header === 'assignedPathologist' && !cell.value && status === 'READY_PATHOLOGIST' && hasRole(userSessionDetails ,"Pathologist")) {
       return <TableCell key={cell.id}>
         <Button type="button" onClick={(e) => { assignCurrentUserAsPathologist(e, pathologySampleId) }}>Start</Button>
       </TableCell>

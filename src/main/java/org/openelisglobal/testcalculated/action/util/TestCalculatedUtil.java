@@ -65,13 +65,20 @@ public class TestCalculatedUtil {
             throws IllegalStateException {
         List<Analysis> analyses = new ArrayList<>();
         for (ResultSet resultSet : resultSetList) {
+            if (resultSet.result == null) {
+                continue;
+            }
+            if (resultSet.result.getTestResult() == null) {
+                continue;
+            }   
             List<Calculation> calculations = calculationService.getAll();
             for (Calculation calculation : calculations) {
                 if (!calculation.getActive()) {
-                    break;
+                    continue;
                 }
                 List<ResultCalculation> resultCalculations = resultcalculationService
                         .getResultCalculationByPatientAndCalculation(resultSet.patient, calculation);
+                     
                 if (resultCalculations.isEmpty()) {
                     Boolean createResultCalculation = false;
                     for (Operation oper : calculation.getOperations()) {
@@ -118,16 +125,17 @@ public class TestCalculatedUtil {
         }
         
         for (ResultSet resultSet : resultSetList) {
-            
+            if (resultSet.result == null) {
+                continue;
+            }
             List<ResultCalculation> resultCalculations = new ArrayList<>();
             if (resultSet.result.getTestResult() == null) {
-                break;
+                continue;
             } else {
                 resultCalculations = resultcalculationService.getResultCalculationByPatientAndTest(resultSet.patient,
                     resultSet.result.getTestResult().getTest());
             }
-             
-            
+               
             if (!resultCalculations.isEmpty()) {
                 for (ResultCalculation resultCalculation : resultCalculations) {
                     Boolean isMissingParams = false;

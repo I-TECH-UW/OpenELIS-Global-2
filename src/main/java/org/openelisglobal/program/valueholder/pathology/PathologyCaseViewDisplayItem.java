@@ -11,6 +11,8 @@ public class PathologyCaseViewDisplayItem extends PathologyDisplayItem {
     private String age;
     private String sex;
     private String referringFacility;
+    private String department;
+    private String requester;
     private Questionnaire programQuestionnaire;
     private QuestionnaireResponse programQuestionnaireResponse;
     private String assignedTechnicianId;
@@ -144,4 +146,19 @@ public class PathologyCaseViewDisplayItem extends PathologyDisplayItem {
         this.assignedPathologistId = assignedPathologistId;
     }
 
+    public String getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(String department) {
+        this.department = department;
+    }
+
+    public String getRequester() {
+        return requester;
+    }
+    
+    public void setRequester(String requester) {
+        this.requester = requester;
+    } 
 }
