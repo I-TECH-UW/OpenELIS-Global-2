@@ -112,7 +112,7 @@ public class UnifiedSystemUserController extends BaseController {
                 .map(e -> new IdValuePair(e.getId(), e.getDisplayName())).collect(Collectors.toList());
     }
 
-    @GetMapping(value = "/rest/users/")
+    @GetMapping(value = "/rest/users")
     @ResponseBody
     public List<IdValuePair> getUsersWithRole() {
         List<SystemUser> users = systemUserService.getAll();

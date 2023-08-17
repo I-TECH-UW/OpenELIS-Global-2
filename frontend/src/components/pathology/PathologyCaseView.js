@@ -168,7 +168,7 @@ function PathologyCaseView() {
     //TODO make conclusions list instead of reusing pathrequest
     getFromOpenElisServer("/rest/displayList/IMMUNOHISTOCHEMISTRY_MARKERS_TESTS", setImmunoHistoChemistryTests);
     getFromOpenElisServer("/rest/displayList/PATHOLOGIST_CONCLUSIONS", setConclusions);
-    getFromOpenElisServer("/rest/users/", setTechnicianUsers);
+    getFromOpenElisServer("/rest/users", setTechnicianUsers);
     getFromOpenElisServer("/rest/users/Pathologist", setPathologistUsers);
     getFromOpenElisServer("/rest/pathology/caseView/" + pathologySampleId, setInitialPathologySampleInfo);
 

@@ -141,7 +141,7 @@ function ImmunohistochemistryCaseView() {
     getFromOpenElisServer("/rest/displayList/IMMUNOHISTOCHEMISTRY_STATUS", setStatuses);
     getFromOpenElisServer("/rest/displayList/IMMUNOHISTOCHEMISTRY_REPORT_TYPES", setReportTypeList);
     //TODO make conclusions list instead of reusing pathrequest
-    getFromOpenElisServer("/rest/users/", setTechnicianUsers);
+    getFromOpenElisServer("/rest/users", setTechnicianUsers);
     getFromOpenElisServer("/rest/users/Pathologist", setPathologistUsers);
     getFromOpenElisServer("/rest/immunohistochemistry/caseView/" + immunohistochemistrySampleId, setInitialImmunohistochemistrySampleInfo);
 
