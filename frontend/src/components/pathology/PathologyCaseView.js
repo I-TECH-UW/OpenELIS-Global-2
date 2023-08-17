@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import config from "../../config.json";
 import {
   IconButton, Heading, TextInput, Select, FilterableMultiSelect, SelectItem, Button, Grid, Column,
-  Checkbox, Section, FileUploader, Tag, TextArea ,Breadcrumb ,BreadcrumbItem ,Row
+  Checkbox, Section, FileUploader, Tag, TextArea ,Breadcrumb ,BreadcrumbItem ,Loading
 } from '@carbon/react';
 import { Launch, Subtract } from '@carbon/react/icons';
 import { getFromOpenElisServer, postToOpenElisServerFullResponse, hasRole } from "../utils/Utils";
@@ -85,6 +85,7 @@ function PathologyCaseView() {
   const [immunoHistoChemistryTests, setImmunoHistoChemistryTests] = useState([]);
   const [technicianUsers, setTechnicianUsers] = useState([]);
   const [pathologistUsers, setPathologistUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   async function displayStatus(response) {
     var body = await response.json();
@@ -154,9 +155,14 @@ function PathologyCaseView() {
   const setInitialPathologySampleInfo = (e) => {
     if(hasRole(userSessionDetails ,"Pathologist") && !e.assignedPathologistId && e.status === "READY_PATHOLOGIST"){
        e.assignedPathologistId = userSessionDetails.userId
-       e.assignedPathologist = userSessionDetails.lastName +""+ userSessionDetails
+       e.assignedPathologist = userSessionDetails.lastName +" "+userSessionDetails.firstName
+    }
+    if (!e.assignedTechnicianId) {
+      e.assignedTechnicianId = userSessionDetails.userId
+      e.assignedTechnician = userSessionDetails.lastName + " " + userSessionDetails.firstName
     }
     setPathologySampleInfo(e);
+    setLoading(false);
     setInitialMount(true);
   }
 
@@ -223,6 +229,9 @@ function PathologyCaseView() {
       </Grid>
       <Grid fullWidth={true} className="gridBoundary">
         {notificationVisible === true ? <AlertDialog /> : ""}
+        {loading && (
+                <Loading description="Loading Dasboard..." />
+       )}
         <Column lg={16} md={8} sm={4}>
           <Button id="pathology_save" onClick={(e) => { e.preventDefault(); save(e) }}>Save</Button>
         </Column>
@@ -247,9 +256,9 @@ function PathologyCaseView() {
             })}
           </Select>
         </Column>
-        <Column lg={2} md={1} sm={2} style={{ "marginBottom": "1rem", "marginTop": "1rem" }}>
+        <Column lg={2} md={1} sm={2} >
         </Column>
-        <Column lg={2} md={1} sm={2} style={{ "marginBottom": "1rem", "marginTop": "1rem" }}>
+        <Column lg={2} md={1} sm={2} >
 
           <Select id="assignedTechnician"
             name="assignedTechnician"
@@ -267,7 +276,24 @@ function PathologyCaseView() {
             })}
           </Select>
         </Column>
-        <Column lg={8} md={4} sm={2} />
+        <Column lg={2} md={4} sm={2} />
+        <Column lg={4} md={2} sm={2}>
+          <Select id="assignedPathologist"
+            name="assignedPathologist"
+            labelText="Pathologist Assigned"
+            value={pathologySampleInfo.assignedPathologistId}
+            onChange={e => {
+              setPathologySampleInfo({ ...pathologySampleInfo, assignedPathologistId: e.target.value });
+            }}>
+            <SelectItem />
+            {pathologistUsers.map((user, index) => {
+              return (<SelectItem key={index}
+                text={user.value}
+                value={user.id}
+              />);
+            })}
+          </Select>
+        </Column>
         <Column lg={16} md={8} sm={4}>
         </Column >
         <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>    
@@ -289,7 +315,7 @@ function PathologyCaseView() {
                 </IconButton>
               
               </Column>
-              <Column lg={4} md={2} sm={1} key={index}>
+              <Column lg={2} md={2} sm={1} key={index}>
                 <TextInput
                   id="blockNumber"
                   labelText="block number"
@@ -303,7 +329,7 @@ function PathologyCaseView() {
                     setPathologySampleInfo({ ...pathologySampleInfo, blocks: newBlocks });
                   }} />
               </Column>
-              <Column lg={4} md={2} sm={1}>
+              <Column lg={2} md={2} sm={1}>
                 <TextInput
                   id="location"
                   labelText="location"
@@ -322,7 +348,7 @@ function PathologyCaseView() {
                   window.open(config.serverBaseUrl + '/LabelMakerServlet?labelType=block&code=' + block.blockNumber, '_blank')
                 }}>Print Label</Button>
               </Column>
-              <Column lg={4} md={2} sm={0} />
+              <Column lg={8} md={2} sm={0} />
             </>
           )
         })}
@@ -351,7 +377,7 @@ function PathologyCaseView() {
                 </IconButton>
                
               </Column>
-              <Column lg={4} md={2} sm={1} key={index}>
+              <Column lg={2} md={2} sm={1} key={index}>
                 <TextInput
                   id="slideNumber"
                   labelText="slide number"
@@ -366,7 +392,7 @@ function PathologyCaseView() {
                   }}
                 />
               </Column>
-              <Column lg={4} md={2} sm={1}>
+              <Column lg={2} md={2} sm={1}>
                 <TextInput
                   id="location"
                   labelText="location"
@@ -381,6 +407,19 @@ function PathologyCaseView() {
                 />
               </Column>
               <Column lg={4} md={1} sm={2}>
+              {pathologySampleInfo.slides[index].image &&
+                  <>
+                    <Button onClick={() => {
+                      var win = window.open();
+                      win.document.write('<iframe src="' + slide.fileType + ";base64," + slide.image + '" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>');
+                    }}>
+                      <Launch /> View
+                    </Button>
+                  </>
+                }
+                <Button onClick={(e) => {
+                  window.open(config.serverBaseUrl + '/LabelMakerServlet?labelType=slide&code=' + slide.slideNumber, '_blank')
+                }}>Print Label</Button>
                 <FileUploader
                   buttonLabel="Upload Image"
                   iconDescription="file upload"
@@ -407,21 +446,8 @@ function PathologyCaseView() {
                     setPathologySampleInfo({ ...pathologySampleInfo, slides: newSlides });
                   }}
                 />
-                {pathologySampleInfo.slides[index].image &&
-                  <>
-                    <Button onClick={() => {
-                      var win = window.open();
-                      win.document.write('<iframe src="' + slide.fileType + ";base64," + slide.image + '" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>');
-                    }}>
-                      <Launch /> View
-                    </Button>
-                  </>
-                }
-                <Button onClick={(e) => {
-                  window.open(config.serverBaseUrl + '/LabelMakerServlet?labelType=slide&code=' + slide.slideNumber, '_blank')
-                }}>Print Label</Button>
               </Column>
-              <Column lg={4} md={5} sm={3} />
+              <Column lg={8} md={5} sm={3} />
             </>
           )
         })}
@@ -438,29 +464,13 @@ function PathologyCaseView() {
         </Column>  
         <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>   
         </Column>
-        <Column lg={4} md={2} sm={2}>
-          <Select id="assignedPathologist"
-            name="assignedPathologist"
-            labelText="Pathologist Assigned"
-            value={pathologySampleInfo.assignedPathologistId}
-            onChange={e => {
-              setPathologySampleInfo({ ...pathologySampleInfo, assignedPathologistId: e.target.value });
-            }}>
-            <SelectItem />
-            {pathologistUsers.map((user, index) => {
-              return (<SelectItem key={index}
-                text={user.value}
-                value={user.id}
-              />);
-            })}
-          </Select>
-        </Column>
+       
         <Column lg={12} md={6} sm={0}>
         </Column>
         <Column lg={16} md={8} sm={4}></Column>
         {hasRole( userSessionDetails ,"Pathologist") &&
           <>
-            <Column lg={8} md={4} sm={2}>
+            <Column lg={4} md={4} sm={2}>
               {initialMount && <FilterableMultiSelect
                 id="techniques"
                 titleText="Techniques Used"
@@ -474,7 +484,7 @@ function PathologyCaseView() {
               />
               }
             </Column>
-            <Column lg={8} md={4} sm={2}>
+            <Column lg={12} md={4} sm={2}>
               {pathologySampleInfo.techniques && pathologySampleInfo.techniques.map((technique, index) => (
                 <Tag
                   key={index}
@@ -485,7 +495,7 @@ function PathologyCaseView() {
               ))}
             </Column>
             <Column lg={16} md={8} sm={4}></Column>
-            <Column lg={8} md={4} sm={2}>
+            <Column lg={4} md={4} sm={2}>
               {initialMount && <FilterableMultiSelect
                 id="requests"
                 titleText="Add Request"
@@ -499,7 +509,7 @@ function PathologyCaseView() {
               />
               }
             </Column>
-            <Column lg={8} md={4} sm={2}>
+            <Column lg={12} md={4} sm={2}>
               {pathologySampleInfo.requests && pathologySampleInfo.requests.map((technique, index) => (
                 <Tag
                   key={index}
@@ -519,7 +529,7 @@ function PathologyCaseView() {
                 setPathologySampleInfo({ ...pathologySampleInfo, microscopyExam: e.target.value });
               }} />
             </Column>
-            <Column lg={8} md={4} sm={2}>
+            <Column lg={4} md={4} sm={2}>
               {initialMount && <FilterableMultiSelect
                 id="conclusion"
                 titleText="Conclusion"
@@ -533,7 +543,7 @@ function PathologyCaseView() {
               />
               }
             </Column>
-            <Column lg={8} md={4} sm={2}>
+            <Column lg={12} md={4} sm={2}>
               {pathologySampleInfo.conclusions && pathologySampleInfo.conclusions.map((conclusion, index) => (
                 <Tag
                   key={index}

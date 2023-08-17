@@ -1,5 +1,8 @@
 package org.openelisglobal.program.service;
 
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
@@ -7,6 +10,7 @@ import org.hl7.fhir.r4.model.Questionnaire;
 import org.hl7.fhir.r4.model.QuestionnaireResponse;
 import org.openelisglobal.common.services.SampleOrderService;
 import org.openelisglobal.common.util.DateUtil;
+import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.dataexchange.fhir.FhirUtil;
 import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.organization.service.OrganizationService;
@@ -15,6 +19,11 @@ import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.program.valueholder.immunohistochemistry.ImmunohistochemistryCaseViewDisplayItem;
 import org.openelisglobal.program.valueholder.immunohistochemistry.ImmunohistochemistryDisplayItem;
 import org.openelisglobal.program.valueholder.immunohistochemistry.ImmunohistochemistrySample;
+import org.openelisglobal.program.valueholder.pathology.PathologyConclusion;
+import org.openelisglobal.program.valueholder.pathology.PathologyConclusion.ConclusionType;
+import org.openelisglobal.program.valueholder.pathology.PathologyRequest.RequestType;
+import org.openelisglobal.program.valueholder.pathology.PathologySample;
+import org.openelisglobal.program.valueholder.pathology.PathologyTechnique.TechniqueType;
 import org.openelisglobal.sample.bean.SampleOrderItem;
 import org.openelisglobal.sample.service.SampleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,7 +107,39 @@ public class ImmunohistochemistryDisplayServiceImpl implements Immunohistochemis
         } 
         displayItem.setRequester(sampleItem.getProviderLastName() +" "+ sampleItem.getProviderFirstName());  
         displayItem.setAge(DateUtil.getCurrentAgeForDate(patient.getBirthDate() ,DateUtil.getNowAsTimestamp()));
-
+        displayItem.setReffered(immunohistochemistrySample.getReffered());
+        // set items refered from Pathology .Read only
+        PathologySample pathologySample = immunohistochemistrySample.getPathologySample();
+        if (pathologySample != null && immunohistochemistrySample.getReffered()) {
+            pathologySample.getBlocks().size();
+            pathologySample.getSlides().size();
+            displayItem.setBlocks(pathologySample.getBlocks());
+            displayItem.setSlides(pathologySample.getSlides());
+            displayItem.setGrossExam(pathologySample.getGrossExam());
+            displayItem.setMicroscopyExam(pathologySample.getMicroscopyExam());
+            
+            displayItem.setConclusions(
+                pathologySample.getConclusions().stream().filter(e -> e.getType() == ConclusionType.DICTIONARY)
+                        .map(e -> new IdValuePair(e.getValue(), dictionaryService.get(e.getValue()).getLocalizedName()))
+                        .collect(Collectors.toList()));
+            Optional<PathologyConclusion> conclusion = pathologySample.getConclusions().stream()
+                    .filter(e -> e.getType() == ConclusionType.TEXT).findFirst();
+            if (conclusion.isPresent())
+                displayItem.setConclusionText(conclusion.get().getValue());
+            
+            displayItem.setConclusions(
+                pathologySample.getConclusions().stream().filter(e -> e.getType() == ConclusionType.DICTIONARY)
+                        .map(e -> new IdValuePair(e.getValue(), dictionaryService.get(e.getValue()).getLocalizedName()))
+                        .collect(Collectors.toList()));
+            displayItem.setTechniques(
+                pathologySample.getTechniques().stream().filter(e -> e.getType() == TechniqueType.DICTIONARY)
+                        .map(e -> new IdValuePair(e.getValue(), dictionaryService.get(e.getValue()).getLocalizedName()))
+                        .collect(Collectors.toList()));
+            displayItem.setRequests(pathologySample.getRequests().stream().filter(e -> e.getType() == RequestType.DICTIONARY)
+                    .map(e -> new IdValuePair(e.getValue(), dictionaryService.get(e.getValue()).getLocalizedName()))
+                    .collect(Collectors.toList()));
+            
+        }
         return displayItem;
     }
 

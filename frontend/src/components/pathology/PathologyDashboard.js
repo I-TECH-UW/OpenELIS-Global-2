@@ -1,7 +1,7 @@
 import { useContext, useState, useEffect, useRef } from "react";
 import {
   Checkbox, Heading, TextInput, Select, SelectItem, Button, Grid, Column, Section,
-  DataTable, TableContainer, Table, TableHead, TableRow, TableHeader, TableBody, TableCell, Tile
+  DataTable, TableContainer, Table, TableHead, TableRow, TableHeader, TableBody, TableCell, Tile ,Loading
 } from '@carbon/react';
 import UserSessionDetailsContext from "../../UserSessionDetailsContext"
 import { Search } from '@carbon/react';
@@ -21,6 +21,7 @@ function PathologyDashboard() {
   const [pathologyEntries, setPathologyEntries] = useState([])
   const [filters, setFilters] = useState({ searchTerm: "", myCases: false, statuses: [] });
   const [counts ,setCounts] = useState({ inProgress: 0, awaitingReview: 0, additionalRequests: 0, complete: 0});
+  const [loading, setLoading] = useState(true);
 
   const setStatusList = (statusList) => {
     if (componentMounted.current) {
@@ -62,6 +63,9 @@ function PathologyDashboard() {
       setPathologyEntries(entries.map((entry) => {
         return { ...entry, id: '' + entry.pathologySampleId };
       }));
+    }
+    if (componentMounted.current){
+      setLoading(false);
     }
 
   }
@@ -156,6 +160,9 @@ function PathologyDashboard() {
   return (
     <>
       {notificationVisible === true ? <AlertDialog /> : ""}
+      {loading && (
+                <Loading description="Loading Dasboard..." />
+      )}
 
       <Grid fullWidth={true}>
         <Column lg={16}>

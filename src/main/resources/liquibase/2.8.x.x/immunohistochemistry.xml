@@ -83,5 +83,23 @@
                                  baseTableName="immunohistochemistry_report" baseColumnNames="immunohistochemistry_sample_id"
                                  referencedTableName="immunohistochemistry_sample" referencedColumnNames="id"/>
 	</changeSet>
+
+	<changeSet author="mozzymutesa" id="4">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists tableName="immunohistochemistry_sample" columnName="pathology_sample_id" schemaName="clinlims" />
+			</not>
+		</preConditions>
+		<comment>add columns to the immunohistochemistry_sample table</comment>
+		<addColumn schemaName="clinlims" tableName="immunohistochemistry_sample">
+			<column name="pathology_sample_id" type="INTEGER"/>
+		</addColumn>
+		<addColumn schemaName="clinlims" tableName="immunohistochemistry_sample">
+			<column name="reffered" type="boolean"/>
+		</addColumn>
+		<addForeignKeyConstraint constraintName="immunohistochemistry_pathology_sample_id_fk"
+                                 baseTableName="immunohistochemistry_sample" baseColumnNames="pathology_sample_id"
+                                 referencedTableName="pathology_sample" referencedColumnNames="id"/>
+	</changeSet>
 	
 </databaseChangeLog>
