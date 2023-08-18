@@ -108,7 +108,7 @@ public class PathologySampleServiceImpl extends BaseObjectServiceImpl<PathologyS
     @Override
     public void assignPathologist(Integer pathologySampleId, SystemUser systemUser) {
         PathologySample pathologySample = get(pathologySampleId);
-        pathologySample.setTechnician(systemUser);
+        pathologySample.setPathologist(systemUser);
     }
 
     @Override

@@ -41,65 +41,68 @@ public class CytologySample extends ProgramSample {
             return display;
         }
     }
-
+    
     @Valid
     @OneToOne
     @JoinColumn(name = "technician_id", referencedColumnName = "id")
     private SystemUser technician;
+    
     @Valid
     @OneToOne
-    @JoinColumn(name = "pathologist_id", referencedColumnName = "id")
-    private SystemUser pathologist;
-
+    @JoinColumn(name = "cytopathologist_id", referencedColumnName = "id")
+    private SystemUser cytoPathologist;
+    
     @Enumerated(EnumType.STRING)
     @NotNull
     @Column(name = "status")
     private CytologyStatus status = CytologyStatus.PREPARING_SLIDES;
-
+    
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "cytology_sample_id")
     private List<CytologySlide> slides;
-
+    
+    @Valid
+    @OneToOne
+    @JoinColumn(name = "specimen_adequacy_id", referencedColumnName = "id")
+    private CytologySpecimenAdequacy specimenAdequacy;
     
     public SystemUser getTechnician() {
         return technician;
     }
-
     
     public void setTechnician(SystemUser technician) {
         this.technician = technician;
     }
-
-    
-    public SystemUser getPathologist() {
-        return pathologist;
-    }
-
-    
-    public void setPathologist(SystemUser pathologist) {
-        this.pathologist = pathologist;
-    }
-
     
     public CytologyStatus getStatus() {
         return status;
     }
-
     
     public void setStatus(CytologyStatus status) {
         this.status = status;
     }
-
     
     public List<CytologySlide> getSlides() {
         return slides;
     }
-
     
     public void setSlides(List<CytologySlide> slides) {
         this.slides = slides;
     }
+     
+    public SystemUser getCytoPathologist() {
+        return cytoPathologist;
+    }
     
+    public void setCytoPathologist(SystemUser cytoPathologist) {
+        this.cytoPathologist = cytoPathologist;
+    }
+ 
+    public CytologySpecimenAdequacy getSpecimenAdequacy() {
+        return specimenAdequacy;
+    }
 
-    
+    public void setSpecimenAdequacy(CytologySpecimenAdequacy specimenAdequacy) {
+        this.specimenAdequacy = specimenAdequacy;
+    }
 }

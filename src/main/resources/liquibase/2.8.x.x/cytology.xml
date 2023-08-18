@@ -19,7 +19,8 @@
 				<constraints primaryKey="true" nullable="false"/>
 			</column>
 			<column name="technician_id" type="NUMERIC(10)"/>
-			<column name="pathologist_id" type="NUMERIC(10)"/>
+			<column name="cytopathologist_id" type="NUMERIC(10)"/>
+			<column name="specimen_adequacy_id" type="NUMERIC(10)"/>
 			<column name="program_id" type="NUMERIC(10)"/>
 			<column name="sample_id" type="NUMERIC(10)"/>
 			<column name="status" type="VARCHAR(255)"/>
@@ -32,6 +33,15 @@
 		<addForeignKeyConstraint constraintName="cytology_sample_sample_id_fk"
                                  baseTableName="cytology_sample" baseColumnNames="sample_id"
                                  referencedTableName="sample" referencedColumnNames="id"/>
+	    <addForeignKeyConstraint constraintName="cytology_sample_technician_id_fk"
+                                 baseTableName="cytology_sample" baseColumnNames="technician_id"
+                                 referencedTableName="sysytem_user" referencedColumnNames="id"/>
+		<addForeignKeyConstraint constraintName="cytology_sample_cytopathologist_id_fk"
+                                 baseTableName="cytology_sample" baseColumnNames="cytopathologist_id"
+                                 referencedTableName="sysytem_user" referencedColumnNames="id"/>
+	    <addForeignKeyConstraint constraintName="cytology_sample_specimen_adequacy_id_fk"
+                                 baseTableName="cytology_sample" baseColumnNames="specimen_adequacy_id"
+                                 referencedTableName="cytology_specimen_adequacy" referencedColumnNames="id"/>						 							 
 	</changeSet>
 	
 	<changeSet author="mozzymutesa" id="2">
@@ -94,7 +104,7 @@
 		<insert tableName="system_role" schemaName="clinlims">
 			<column name="id" valueSequenceNext="system_role_seq" />
 			<column name="name" value="Cytopathologist" />
-			<column name="description" value="Access to Pathology Page" />
+			<column name="description" value="Access to Cytology Page" />
 			<column name="is_grouping_role" value="false" />
 			<column name="grouping_parent"
 				valueComputed="(SELECT id FROM system_role WHERE name = 'Global Roles')" />
@@ -104,8 +114,8 @@
 		</insert>
 		<insert schemaName="clinlims" tableName="system_module">
 			<column name="id" valueSequenceNext="system_module_seq" />
-			<column name="name" value="Cytrology" />
-			<column name="description" value="Cytrology pages" />
+			<column name="name" value="Cytology" />
+			<column name="description" value="Cytology pages" />
 		</insert>
 		<insert tableName="system_role_module" schemaName="clinlims">
 			<column name="id" valueSequenceNext="system_role_module_seq" />
@@ -115,25 +125,81 @@
 			<column name="system_role_id"
 				valueComputed="(SELECT id FROM clinlims.system_role WHERE name = 'Cytopathologist')" />
 			<column name="system_module_id"
-				valueComputed="(SELECT id FROM clinlims.system_module WHERE name = 'Cytrology')" />
+				valueComputed="(SELECT id FROM clinlims.system_module WHERE name = 'Cytology')" />
 		</insert>
 		<insert tableName="system_module_url" schemaName="clinlims">
 			<column name="id" valueSequenceNext="system_module_url_seq" />
-			<column name="url_path" value="/CytrologyOrderEntry" />
+			<column name="url_path" value="/CytologyOrderEntry" />
 			<column name="system_module_id"
-				valueComputed="(SELECT id FROM clinlims.system_module WHERE name = 'Cytrology')" />
+				valueComputed="(SELECT id FROM clinlims.system_module WHERE name = 'Cytology')" />
 		</insert>
 		<insert tableName="system_module_url" schemaName="clinlims">
 			<column name="id" valueSequenceNext="system_module_url_seq" />
-			<column name="url_path" value="/CytrologyDashboard" />
+			<column name="url_path" value="/CytologyDashboard" />
 			<column name="system_module_id"
-				valueComputed="(SELECT id FROM clinlims.system_module WHERE name = 'Cytrology')" />
+				valueComputed="(SELECT id FROM clinlims.system_module WHERE name = 'Cytology')" />
 		</insert>
 		<insert tableName="system_module_url" schemaName="clinlims">
 			<column name="id" valueSequenceNext="system_module_url_seq" />
-			<column name="url_path" value="/CytrologyCaseView" />
+			<column name="url_path" value="/CytologyCaseView" />
 			<column name="system_module_id"
-				valueComputed="(SELECT id FROM clinlims.system_module WHERE name = 'Cytrology')" />
+				valueComputed="(SELECT id FROM clinlims.system_module WHERE name = 'Cytology')" />
 		</insert>
+	</changeSet>
+
+	<changeSet author="mozzymutesa" id="5">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">select count(*) from clinlims.dictionary_category where description = 'Cytology Specimen Adequacy - Satisfactory';
+    		</sqlCheck>
+    </preConditions>
+    <comment>adds Cytology adequacy in dictionary_category</comment>
+   
+		<insert tableName="dictionary_category" schemaName="clinlims">
+			<column name="id" valueSequenceNext="dictionary_category_seq" />
+			<column name="description" value="Cytology Specimen Adequacy - Satisfactory" />
+			<column name="lastupdated" valueComputed="${now}"/>
+			<column name="local_abbrev" value="cytoAdquacySatisfactory" />
+			<column name="name" value="cytology_adequacy_satisfactory" />
+		</insert>
+		<insert tableName="dictionary_category" schemaName="clinlims">
+			<column name="id" valueSequenceNext="dictionary_category_seq" />
+			<column name="description" value="Cytology Specimen Adequacy - Un Satisfactory" />
+			<column name="lastupdated" valueComputed="${now}"/>
+			<column name="local_abbrev" value="cytoAdquacyUnSatisfactory" />
+			<column name="name" value="cytology_adequacy_unsatisfactory" />
+		</insert>
+  </changeSet>
+  <changeSet author="mozzymutesa" id="6">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="cytology_specimen_adequacy" schemaName="clinlims" />
+			</not>
+		</preConditions>
+		<comment>create cytology_specimen_adequacy table</comment>
+		<createSequence incrementBy="1" schemaName="clinlims"
+			sequenceName="cytology_specimen_adequacy_seq" startValue="1" />
+		<createTable tableName="cytology_specimen_adequacy">
+			<column name="id" type="INTEGER" valueSequenceNext="cytology_specimen_adequacy_seq">
+				<constraints primaryKey="true" nullable="false"/>
+			</column>
+			<column name="result_type" type="VARCHAR(255)"/>
+			<column name="satisfaction" type="VARCHAR(255)"/>
+			<column name="last_updated" type="datetime"/>
+		</createTable>
+	</changeSet>
+	<changeSet author="mozzymutesa" id="7">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="cytology_specimen_adequacy_value" schemaName="clinlims" />
+			</not>
+		</preConditions>
+		<comment>create cytology_specimen_adequacy_value table</comment>
+		<createTable tableName="cytology_specimen_adequacy_value">
+			<column name="value" type="VARCHAR(255)"/>
+			<column name="cytology_specimen_adequacy_id" type="INTEGER"/>
+		</createTable>
+		<addForeignKeyConstraint constraintName="cytology_specimen_adequacy_value_cytology_specimen_adequacy_id_fk"
+                                 baseTableName="cytology_specimen_adequacy_value" baseColumnNames="cytology_specimen_adequacy_id"
+                                 referencedTableName="cytology_specimen_adequacy" referencedColumnNames="id"/>
 	</changeSet>
 </databaseChangeLog>

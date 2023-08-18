@@ -47,6 +47,7 @@ import org.openelisglobal.panel.valueholder.Panel;
 import org.openelisglobal.panel.valueholder.PanelSortOrderComparator;
 import org.openelisglobal.program.service.ProgramService;
 import org.openelisglobal.program.valueholder.Program;
+import org.openelisglobal.program.valueholder.cytology.CytologySample;
 import org.openelisglobal.program.valueholder.immunohistochemistry.ImmunohistochemistrySample;
 import org.openelisglobal.program.valueholder.immunohistochemistry.ImmunohistochemistrySampleReport;
 import org.openelisglobal.program.valueholder.pathology.PathologySample;
@@ -91,9 +92,10 @@ public class DisplayListService implements LocaleChangeListener {
         SEVERITY_CONSEQUENCES_LIST, SEVERITY_RECURRENCE_LIST, ACTION_TYPE_LIST, LABORATORY_COMPONENT, SAMPLE_NATURE,
         ELECTRONIC_ORDER_STATUSES, METHODS, METHODS_INACTIVE, METHOD_BY_NAME, PRACTITIONER_PERSONS, ORDER_PRIORITY,
         PROGRAM, IMMUNOHISTOCHEMISTRY_STATUS, PATHOLOGY_STATUS, PATHOLOGY_TECHNIQUES, PATHOLOGIST_REQUESTS,
-        PATHOLOGIST_CONCLUSIONS ,IMMUNOHISTOCHEMISTRY_REPORT_TYPES ,IMMUNOHISTOCHEMISTRY_MARKERS_TESTS
-    }
+        PATHOLOGIST_CONCLUSIONS ,IMMUNOHISTOCHEMISTRY_REPORT_TYPES ,IMMUNOHISTOCHEMISTRY_MARKERS_TESTS ,CYTOLOGY_STATUS,
+        CYTOLOGY_SATISFACTORY_FOR_EVALUATION ,CYTOLOGY_UN_SATISFACTORY_FOR_EVALUATION
 
+    }
     private static Map<ListType, List<IdValuePair>> typeToListMap;
     private static Map<String, List<IdValuePair>> dictionaryToListMap = new HashMap<>();
 
@@ -209,16 +211,24 @@ public class DisplayListService implements LocaleChangeListener {
         typeToListMap.put(ListType.LABORATORY_COMPONENT, createLaboratoryComponentList());
         typeToListMap.put(ListType.ORDER_PRIORITY, createSamplePriorityList());
         typeToListMap.put(ListType.PATHOLOGY_STATUS, createPathologyStatusList());
+        typeToListMap.put(ListType.CYTOLOGY_STATUS, createCytologyStatusList());
         typeToListMap.put(ListType.IMMUNOHISTOCHEMISTRY_STATUS, createImmunohistochemistryStatusList());
         typeToListMap.put(ListType.IMMUNOHISTOCHEMISTRY_REPORT_TYPES, createImmunohistochemistryReportTypeList());
         typeToListMap.put(ListType.PATHOLOGY_TECHNIQUES, createDictionaryListForCategory("pathology_techniques"));
+        typeToListMap.put(ListType.CYTOLOGY_SATISFACTORY_FOR_EVALUATION, createDictionaryListForCategory("cytology_adequacy_satisfactory"));
+        typeToListMap.put(ListType.CYTOLOGY_UN_SATISFACTORY_FOR_EVALUATION, createDictionaryListForCategory("cytology_adequacy_unsatisfactory"));
         typeToListMap.put(ListType.PATHOLOGIST_REQUESTS, createDictionaryListForCategory("pathologist_requests"));
         typeToListMap.put(ListType.PATHOLOGIST_CONCLUSIONS, createDictionaryListForCategory("pathologist_conclusions"));
-
+    
     }
 
     private List<IdValuePair> createPathologyStatusList() {
         return Arrays.asList(PathologySample.PathologyStatus.values()).stream()
+                .map(e -> new IdValuePair(e.name(), e.getDisplay())).collect(Collectors.toList());
+    }
+
+    private List<IdValuePair> createCytologyStatusList() {
+        return Arrays.asList(CytologySample.CytologyStatus.values()).stream()
                 .map(e -> new IdValuePair(e.name(), e.getDisplay())).collect(Collectors.toList());
     }
 
@@ -363,6 +373,7 @@ public class DisplayListService implements LocaleChangeListener {
 
     public synchronized void refreshLists() {
         typeToListMap = new HashMap<>();
+        typeToListMap.put(ListType.CYTOLOGY_STATUS, createCytologyStatusList());
         typeToListMap.put(ListType.PATHOLOGY_STATUS, createPathologyStatusList());
         typeToListMap.put(ListType.IMMUNOHISTOCHEMISTRY_STATUS, createImmunohistochemistryStatusList());
         typeToListMap.put(ListType.IMMUNOHISTOCHEMISTRY_REPORT_TYPES, createImmunohistochemistryReportTypeList());
@@ -424,6 +435,8 @@ public class DisplayListService implements LocaleChangeListener {
         typeToListMap.put(ListType.PATHOLOGY_TECHNIQUES, createDictionaryListForCategory("pathology_techniques"));
         typeToListMap.put(ListType.PATHOLOGIST_REQUESTS, createDictionaryListForCategory("pathologist_requests"));
         typeToListMap.put(ListType.PATHOLOGIST_CONCLUSIONS, createDictionaryListForCategory("pathologist_conclusions"));
+        typeToListMap.put(ListType.CYTOLOGY_SATISFACTORY_FOR_EVALUATION, createDictionaryListForCategory("cytology_adequacy_satisfactory"));
+        typeToListMap.put(ListType.CYTOLOGY_UN_SATISFACTORY_FOR_EVALUATION, createDictionaryListForCategory("cytology_adequacy_unsatisfactory"));
         
         
 

@@ -13,7 +13,7 @@ public class CytologyDisplayItem {
     private String lastName;
     private String firstName;
     private String assignedTechnician;
-    private String assignedPathologist;
+    private String assignedCytoPathologist;
     private String labNumber;
 
     private Integer pathologySampleId;
@@ -57,14 +57,6 @@ public class CytologyDisplayItem {
         this.assignedTechnician = assignedTechnician;
     }
 
-    public String getAssignedPathologist() {
-        return assignedPathologist;
-    }
-
-    public void setAssignedPathologist(String assignedPathologist) {
-        this.assignedPathologist = assignedPathologist;
-    }
-
     public String getLabNumber() {
         return labNumber;
     }
@@ -79,6 +71,14 @@ public class CytologyDisplayItem {
 
     public void setPathologySampleId(Integer pathologySampleId) {
         this.pathologySampleId = pathologySampleId;
+    }
+ 
+    public String getAssignedCytoPathologist() {
+        return assignedCytoPathologist;
+    }
+
+    public void setAssignedCytoPathologist(String assignedCytoPathologist) {
+        this.assignedCytoPathologist = assignedCytoPathologist;
     }
     
 }

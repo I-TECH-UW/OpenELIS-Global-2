@@ -5,17 +5,29 @@ import java.util.List;
 import org.hl7.fhir.r4.model.Questionnaire;
 import org.hl7.fhir.r4.model.QuestionnaireResponse;
 
-public class CytologyCaseViewDisplayItem extends CytologyDisplayItem{
+public class CytologyCaseViewDisplayItem extends CytologyDisplayItem {
+    
     private String age;
+    
     private String sex;
+    
     private String referringFacility;
+    
     private String department;
+    
     private String requester;
+    
     private Questionnaire programQuestionnaire;
+    
     private QuestionnaireResponse programQuestionnaireResponse;
+    
     private String assignedTechnicianId;
+    
     private String assignedPathologistId;
+    
     private List<CytologySlide> slides;
+    
+    private CytologySpecimenAdequacy adequacy;
     
     public String getAge() {
         return age;
@@ -95,5 +107,13 @@ public class CytologyCaseViewDisplayItem extends CytologyDisplayItem{
     
     public void setSlides(List<CytologySlide> slides) {
         this.slides = slides;
+    }
+    
+    public CytologySpecimenAdequacy getAdequacy() {
+        return adequacy;
+    }
+    
+    public void setAdequacy(CytologySpecimenAdequacy adequacy) {
+        this.adequacy = adequacy;
     }
 }
