@@ -27,6 +27,8 @@ import StudyReports from "./components/Reports/Study";
 // import StudyValidation from "./components/validation/Study";
 import StudyValidation from "./components/validation/Index";
 import PathologyDashboard from "./components/pathology/PathologyDashboard";
+import CytologyDashboard from "./components/cytology/CytologyDashBoard";
+import CytologyCaseView from "./components/cytology/CytologyCaseView";
 import PathologyCaseView from "./components/pathology/PathologyCaseView";
 import ImmunohistochemistryDashboard from "./components/immunohistochemistry/ImmunohistochemistryDashboard"
 import ImmunohistochemistryCaseView from "./components/immunohistochemistry/ImmunohistochemistryCaseView"
@@ -193,6 +195,28 @@ export default function App() {
                   component={() => <ImmunohistochemistryCaseView />}
                   role=""
                   labUnitRole={{"Immunohistochemistry": ["Results"]}}
+                  config={appConfig}
+                  onAuth={onAuth}
+                  logout={logout}
+                  isLoggedIn={isLoggedIn}
+                />
+                 <SecureRoute
+                  path="/CytologyDashboard"
+                  exact
+                  component={() => <CytologyDashboard />}
+                  role=""
+                  labUnitRole={{"Cytology": ["Results"]}}
+                  config={appConfig}
+                  onAuth={onAuth}
+                  logout={logout}
+                  isLoggedIn={isLoggedIn}
+                />
+                <SecureRoute
+                  path="/CytologyCaseView/:cytologySampleId"
+                  exact
+                  component={() => <CytologyCaseView />}
+                  role=""
+                  labUnitRole={{"Cytology": ["Results"]}}
                   config={appConfig}
                   onAuth={onAuth}
                   logout={logout}

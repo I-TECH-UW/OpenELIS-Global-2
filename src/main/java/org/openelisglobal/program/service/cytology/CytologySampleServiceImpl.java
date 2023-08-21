@@ -1,10 +1,11 @@
-package org.openelisglobal.program.service;
+package org.openelisglobal.program.service.cytology;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
@@ -26,10 +27,13 @@ import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.patient.valueholder.Patient;
-import org.openelisglobal.program.controller.immunohistochemistry.ImmunohistochemistrySampleForm;
-import org.openelisglobal.program.dao.ImmunohistochemistrySampleDAO;
-import org.openelisglobal.program.valueholder.immunohistochemistry.ImmunohistochemistrySample;
-import org.openelisglobal.program.valueholder.immunohistochemistry.ImmunohistochemistrySample.ImmunohistochemistryStatus;
+import org.openelisglobal.program.controller.cytology.CytologySampleForm;
+import org.openelisglobal.program.dao.cytology.CytologySampleDAO;
+import org.openelisglobal.program.valueholder.cytology.CytologySample;
+import org.openelisglobal.program.valueholder.cytology.CytologySpecimenAdequacy;
+import org.openelisglobal.program.valueholder.cytology.CytologySpecimenAdequacy.SpecimenAdequacyResultType;
+import org.openelisglobal.program.valueholder.cytology.CytologySpecimenAdequacy.SpecimenAdequancySatisfaction;
+import org.openelisglobal.program.valueholder.cytology.CytologySample.CytologyStatus;
 import org.openelisglobal.result.action.util.ResultSet;
 import org.openelisglobal.result.action.util.ResultsLoadUtility;
 import org.openelisglobal.result.action.util.ResultsUpdateDataSet;
@@ -46,77 +50,112 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ImmunohistochemistrySampleServiceImpl extends BaseObjectServiceImpl<ImmunohistochemistrySample, Integer>
-        implements ImmunohistochemistrySampleService {
+public class CytologySampleServiceImpl extends BaseObjectServiceImpl<CytologySample, Integer> implements CytologySampleService {
+    
     @Autowired
-    protected ImmunohistochemistrySampleDAO baseObjectDAO;
+    
+    protected CytologySampleDAO baseObjectDAO;
+    
     @Autowired
     protected SystemUserService systemUserService;
+    
     @Autowired
     private SampleService sampleService;
+    
     @Autowired
     private AnalysisService analysisService;
+    
     @Autowired
     private LogbookResultsPersistService logbookResultsPersistService;
-
-    ImmunohistochemistrySampleServiceImpl() {
-        super(ImmunohistochemistrySample.class);
+    
+    CytologySampleServiceImpl() {
+        super(CytologySample.class);
     }
 
-    @Override
-    protected ImmunohistochemistrySampleDAO getBaseObjectDAO() {
+     @Override
+    protected CytologySampleDAO getBaseObjectDAO() {
         return baseObjectDAO;
     }
-
+    
     @Override
-    public List<ImmunohistochemistrySample> getWithStatus(List<ImmunohistochemistryStatus> statuses) {
+    public List<CytologySample> getWithStatus(List<CytologyStatus> statuses) {
         return baseObjectDAO.getWithStatus(statuses);
     }
-
+    
     @Transactional
     @Override
-    public void assignTechnician(Integer immunohistochemistrySampleId, SystemUser systemUser) {
-        ImmunohistochemistrySample immunohistochemistrySample = get(immunohistochemistrySampleId);
-        immunohistochemistrySample.setTechnician(systemUser);
+    public void assignTechnician(Integer cytologySampleId, SystemUser systemUser) {
+        CytologySample cytologySample = get(cytologySampleId);
+        cytologySample.setTechnician(systemUser);
     }
-
+    
     @Transactional
     @Override
-    public void assignPathologist(Integer immunohistochemistrySampleId, SystemUser systemUser) {
-        ImmunohistochemistrySample immunohistochemistrySample = get(immunohistochemistrySampleId);
-        immunohistochemistrySample.setPathologist(systemUser);
+    public List<CytologySample> searchWithStatusAndTerm(List<CytologyStatus> statuses, String searchTerm) {
+        List<CytologySample> cytologySamples = baseObjectDAO.getWithStatus(statuses);
+        if (StringUtils.isNotBlank(searchTerm)) {
+            Sample sample = sampleService.getSampleByAccessionNumber(searchTerm);
+            if (sample != null) {
+                cytologySamples = baseObjectDAO.searchWithStatusAndAccesionNumber(statuses, searchTerm);
+            } else {
+                List<CytologySample> filteredCytologySamples = new ArrayList<>();
+                cytologySamples.forEach(cytologySample -> {
+                    Patient patient = sampleService.getPatient(cytologySample.getSample());
+                    if (patient.getPerson().getFirstName().equals(searchTerm)
+                            || patient.getPerson().getLastName().equals(searchTerm)) {
+                        filteredCytologySamples.add(cytologySample);
+                    }
+                });
+                cytologySamples = filteredCytologySamples;
+            }
+        }
+        
+        return cytologySamples;
     }
-
+    
+    @Transactional
     @Override
-    public Long getCountWithStatus(List<ImmunohistochemistryStatus> statuses) {
+    public void assignCytoPathologist(Integer cytologySampleId, SystemUser systemUser) {
+        CytologySample cytologySample = get(cytologySampleId);
+        cytologySample.setCytoPathologist(systemUser);
+    }
+    
+    @Override
+    public Long getCountWithStatus(List<CytologyStatus> statuses) {
         return baseObjectDAO.getCountWithStatus(statuses);
     }
-
+    
+    @Override
+    public Long getCountWithStatusBetweenDates(List<CytologyStatus> statuses, Timestamp from, Timestamp to) {
+        return baseObjectDAO.getCountWithStatusBetweenDates(statuses ,from ,to);
+    }
+    
     @Transactional
     @Override
-    public void updateWithFormValues(Integer immunohistochemistrySampleId, ImmunohistochemistrySampleForm form) {
-        ImmunohistochemistrySample immunohistochemistrySample = get(immunohistochemistrySampleId);
-        if (!GenericValidator.isBlankOrNull(form.getAssignedPathologistId())) {
-            immunohistochemistrySample.setPathologist(systemUserService.get(form.getAssignedPathologistId()));
+    public void updateWithFormValues(Integer cytologySampleId, CytologySampleForm form) {
+        CytologySample cytologySample = get(cytologySampleId);
+        if (!GenericValidator.isBlankOrNull(form.getAssignedCytoPathologistId())) {
+            cytologySample.setCytoPathologist(systemUserService.get(form.getAssignedCytoPathologistId()));
         }
         if (!GenericValidator.isBlankOrNull(form.getAssignedTechnicianId())) {
-            immunohistochemistrySample.setTechnician(systemUserService.get(form.getAssignedTechnicianId()));
+            cytologySample .setTechnician(systemUserService.get(form.getAssignedTechnicianId()));
         }
-        immunohistochemistrySample.setStatus(form.getStatus());
+        cytologySample.setStatus(form.getStatus());
         
-        immunohistochemistrySample.getReports().removeAll(immunohistochemistrySample.getReports());
-        if (form.getReports() != null)
-            form.getReports().stream().forEach(e -> e.setId(null));
-        immunohistochemistrySample.getReports().addAll(form.getReports());
+        cytologySample.getSlides().removeAll(cytologySample.getSlides());
+        if (form.getSlides() != null)
+            form.getSlides().stream().forEach(e -> e.setId(null));
+        cytologySample.getSlides().addAll(form.getSlides());
+        cytologySample.setSpecimenAdequacy(form.getSpecimenAdequacy());
+
         if (form.getRelease()) {
-            validateImmunohistochemistrySample(immunohistochemistrySample, form);
+            validateCytologySample(cytologySample, form);
         }
     }
 
-    private void validateImmunohistochemistrySample(ImmunohistochemistrySample immunohistochemistrySample,
-            ImmunohistochemistrySampleForm form) {
-        immunohistochemistrySample.setStatus(ImmunohistochemistryStatus.COMPLETED);
-        Sample sample = immunohistochemistrySample.getSample();
+    private void validateCytologySample(CytologySample cytologySample, CytologySampleForm form) {
+        cytologySample.setStatus(CytologyStatus.COMPLETED);
+        Sample sample = cytologySample.getSample();
         Patient patient = sampleService.getPatient(sample);
         ResultsUpdateDataSet actionDataSet = new ResultsUpdateDataSet(form.getSystemUserId());
 
@@ -125,7 +164,7 @@ public class ImmunohistochemistrySampleServiceImpl extends BaseObjectServiceImpl
         for (TestResultItem testResultItem : testResultItems) {
             if (!testResultItem.getIsGroupSeparator()) {
                 if (ResultType.isTextOnlyVariant(testResultItem.getResultType())) {
-                    testResultItem.setResultValue(MessageUtil.getMessage("result.immunochemistry.seereport"));
+                    testResultItem.setResultValue(MessageUtil.getMessage("result.cytoology.seereport"));
                 }
                 Analysis analysis = analysisService.get(sample.getId());
                 ResultSaveBean bean = ResultSaveBeanAdapter.fromTestResultItem(testResultItem);
@@ -137,11 +176,13 @@ public class ImmunohistochemistrySampleServiceImpl extends BaseObjectServiceImpl
 
                     if (newResult) {
                         analysis.setRevision("1");
+                         actionDataSet.getNewResults()
+                            .add(new ResultSet(result, null, null, patient, sample, new HashMap<>(), false));
                     } else {
                         analysis.setRevision(String.valueOf(Integer.parseInt(analysis.getRevision()) + 1));
-                    }
-                    actionDataSet.getNewResults()
+                         actionDataSet.getModifiedResults()
                             .add(new ResultSet(result, null, null, patient, sample, new HashMap<>(), false));
+                    }           
 
                     analysis.setStartedDateForDisplay(testResultItem.getTestDate());
 
@@ -184,34 +225,5 @@ public class ImmunohistochemistrySampleServiceImpl extends BaseObjectServiceImpl
                 form.getSystemUserId());
         sample.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(OrderStatus.Finished));
 
-    }
-
-    @Override
-    public List<ImmunohistochemistrySample> searchWithStatusAndTerm(List<ImmunohistochemistryStatus> statuses, String searchTerm) {
-        List<ImmunohistochemistrySample> immunohistochemistrySamples = baseObjectDAO.getWithStatus(statuses);
-        if (StringUtils.isNotBlank(searchTerm)) {
-            Sample sample = sampleService.getSampleByAccessionNumber(searchTerm);
-            if (sample != null) {
-                immunohistochemistrySamples = baseObjectDAO.searchWithStatusAndAccesionNumber(statuses, searchTerm);
-            } else {
-                List<ImmunohistochemistrySample> filteredImmunohistochemistrySamples = new ArrayList<>();
-                immunohistochemistrySamples.forEach(pathologySample -> {
-                    Patient patient = sampleService.getPatient(pathologySample.getSample());
-                    if (patient.getPerson().getFirstName().equals(searchTerm)
-                            || patient.getPerson().getLastName().equals(searchTerm)) {
-                        filteredImmunohistochemistrySamples.add(pathologySample);
-                    }
-                });
-                immunohistochemistrySamples = filteredImmunohistochemistrySamples;
-            }
-        }
-        
-        return immunohistochemistrySamples;
-    }
-
-    @Override
-    public Long getCountWithStatusBetweenDates(List<ImmunohistochemistryStatus> statuses, Timestamp from, Timestamp to) {
-        return baseObjectDAO.getCountWithStatusBetweenDates(statuses ,from ,to);
-    }
-
+    }  
 }

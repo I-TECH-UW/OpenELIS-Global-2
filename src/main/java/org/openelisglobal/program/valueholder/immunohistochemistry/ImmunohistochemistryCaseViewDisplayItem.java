@@ -21,7 +21,7 @@ public class ImmunohistochemistryCaseViewDisplayItem extends Immunohistochemistr
     private String assignedPathologistId;
     private List<ImmunohistochemistrySampleReport> reports;
     private Boolean reffered = false;
-    //refered form pathology. Read Only
+    //refered from pathology.These are Read Only
     private List<PathologyBlock> blocks;
     private List<PathologySlide> slides;
     private List<IdValuePair> techniques;
