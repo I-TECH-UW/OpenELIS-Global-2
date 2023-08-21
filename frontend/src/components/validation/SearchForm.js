@@ -1,16 +1,19 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useContext} from 'react'
 import {Button, Column, Form, FormLabel, Heading, Row, Section, Stack, TextInput} from "@carbon/react";
 import {FormattedMessage} from "react-intl";
 import {Formik, Field} from "formik";
 import ValidationSearchFormValues from "../formModel/innitialValues/ValidationSearchFormValues";
 import {getFromOpenElisServer} from "../utils/Utils";
+import {NotificationContext} from "../layout/Layout";
+import {NotificationKinds} from "../common/CustomNotification";
 
 const SearchForm = (props) => {
+    const {setNotificationVisible, setNotificationBody} = useContext(NotificationContext);
     const [searchResults, setSearchResults] = useState();
     const validationResults = (data) => {
         if (data) {
             setSearchResults(data);
-            if (data.resultList) {
+            if (data.resultList.length > 0) {
                 const newResultsList = data.resultList.map((data, idx) => {
                     let tempData = {...data}
                     tempData.id = idx
@@ -20,9 +23,19 @@ const SearchForm = (props) => {
                     ...prevState,
                     resultList: newResultsList
                 }));
+            } else {
+                setSearchResults(prevState => ({
+                    ...prevState,
+                    resultList: []
+                }));
+
+                setNotificationBody({
+                    kind: NotificationKinds.warning,
+                    title: "Notification Message",
+                    message: "No Results found to be validated"
+                });
+                setNotificationVisible(true);
             }
-        } else {
-            props.setResults?.({resultList: []});
         }
     }
 
