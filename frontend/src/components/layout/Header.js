@@ -209,6 +209,10 @@ class OEHeader extends React.Component {
                             aria-label="Immunohistochemistry" title="Immunohistochemistry"                    >
                             <SideNavMenuItem href={"/ImmunohistochemistryDashboard"}>Dashboard</SideNavMenuItem>
                           </SideNavMenu>
+                          <SideNavMenu
+                            aria-label="Cytology" title="Cytology"                    >
+                            <SideNavMenuItem href={"/CytologyDashboard"}>Dashboard</SideNavMenuItem>
+                          </SideNavMenu>
                           <SideNavMenu aria-label="Results" title="Results">
                             <SideNavMenuItem href={config.serverBaseUrl + "/LogbookResults?type="}>Enter by Unit</SideNavMenuItem>
                             <SideNavMenuItem href="/result">Search</SideNavMenuItem>

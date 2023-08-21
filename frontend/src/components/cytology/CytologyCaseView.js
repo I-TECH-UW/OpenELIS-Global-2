@@ -3,13 +3,13 @@ import { useParams } from "react-router-dom";
 import config from "../../config.json";
 import {
   IconButton, Heading, TextInput, Select, FilterableMultiSelect, SelectItem, Button, Grid, Column,
-  Checkbox, Section, FileUploader, Tag, TextArea ,Breadcrumb ,BreadcrumbItem ,Loading
+  Checkbox, Section, FileUploader, Tag, TextArea, Breadcrumb, BreadcrumbItem, Loading, RadioButtonGroup, RadioButton
 } from '@carbon/react';
 import { Launch, Subtract } from '@carbon/react/icons';
 import { getFromOpenElisServer, postToOpenElisServerFullResponse, hasRole } from "../utils/Utils";
 import UserSessionDetailsContext from "../../UserSessionDetailsContext"
 import { NotificationContext } from "../layout/Layout";
-import { AlertDialog ,NotificationKinds } from "../common/CustomNotification";
+import { AlertDialog, NotificationKinds } from "../common/CustomNotification";
 import "../pathology/PathologyDashboard.css"
 
 
@@ -69,7 +69,7 @@ function CytologyCaseView() {
 
   const componentMounted = useRef(false);
 
-  const {cytologySampleId} = useParams()
+  const { cytologySampleId } = useParams()
 
   const { notificationVisible, setNotificationVisible, setNotificationBody } = useContext(NotificationContext);
   const { userSessionDetails, setUserSessionDetails } = useContext(UserSessionDetailsContext);
@@ -81,6 +81,7 @@ function CytologyCaseView() {
   const [statuses, setStatuses] = useState([]);
   const [satisfactoryForEvaluation, setSatisfactoryForEvaluation] = useState([]);
   const [unSatisfactoryForEvaluation, setUnSatisfactoryForEvaluation] = useState([]);
+  const [adequacySatisfactionList, setAdequacySatisfactionList] = useState([]);
   const [technicianUsers, setTechnicianUsers] = useState([]);
   const [pathologistUsers, setPathologistUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -109,51 +110,48 @@ function CytologyCaseView() {
   });
 
   const save = (e) => {
+    let specimenAdequacy = null;
+    if (pathologySampleInfo.satisfaction) {
+      specimenAdequacy = {
+        "satisfaction": pathologySampleInfo.satisfaction,
+        "resultType": "DICTIONARY",
+      }
+
+      if (pathologySampleInfo.adequacies) {
+        specimenAdequacy = {
+          ...specimenAdequacy, "values": pathologySampleInfo.adequacies.map(e => {
+            return e.id;
+          })
+        }
+      }
+
+    }
+
     let submitValues = {
       "assignedTechnicianId": pathologySampleInfo.assignedTechnicianId,
-      "assignedPathologistId": pathologySampleInfo.assignedPathologistId,
+      "assignedCytoPathologistId": pathologySampleInfo.assignedPathologistId,
       "status": pathologySampleInfo.status,
-      "blocks": pathologySampleInfo.blocks,
       "slides": pathologySampleInfo.slides,
-      "grossExam": pathologySampleInfo.grossExam,
-      "microscopyExam": pathologySampleInfo.microscopyExam,
-      "conclusionText": pathologySampleInfo.conclusionText,
       "release": pathologySampleInfo.release != undefined ? pathologySampleInfo.release : false,
-      "referToImmunoHistoChemistry": pathologySampleInfo.referToImmunoHistoChemistry,
-      "immunoHistoChemistryTestId": pathologySampleInfo.immunoHistoChemistryTestId
     }
-    if (pathologySampleInfo.techniques) {
+
+    if (specimenAdequacy) {
       submitValues = {
-        ...submitValues, "techniques": pathologySampleInfo.techniques.map(e => {
-          return e.id;
-        })
-      }
-    }
-    if (pathologySampleInfo.requests) {
-      submitValues = {
-        ...submitValues, "requests": pathologySampleInfo.requests.map(e => {
-          return e.id;
-        })
-      }
-    }
-    if (pathologySampleInfo.conclusions) {
-      submitValues = {
-        ...submitValues, "conclusions": pathologySampleInfo.conclusions.map(e => {
-          return e.id;
-        })
+        ...submitValues, "specimenAdequacy": specimenAdequacy
       }
     }
 
+
     console.log(" ..submit....")
     console.log(JSON.stringify(submitValues))
-    postToOpenElisServerFullResponse("/rest/cytology/caseView/" + cytologySampleId, JSON.stringify(submitValues), displayStatus);
+     postToOpenElisServerFullResponse("/rest/cytology/caseView/" + cytologySampleId, JSON.stringify(submitValues), displayStatus);
   }
 
 
   const setInitialPathologySampleInfo = (e) => {
-    if(hasRole(userSessionDetails ,"CytoPathologist") && !e.assignedPathologistId && e.status === "READY_FOR_CYTOPATHOLOGIST"){
-       e.assignedPathologistId = userSessionDetails.userId
-       e.assignedPathologist = userSessionDetails.lastName +" "+userSessionDetails.firstName
+    if (hasRole(userSessionDetails, "CytoPathologist") && !e.assignedPathologistId && e.status === "READY_FOR_CYTOPATHOLOGIST") {
+      e.assignedPathologistId = userSessionDetails.userId
+      e.assignedPathologist = userSessionDetails.lastName + " " + userSessionDetails.firstName
     }
     if (!e.assignedTechnicianId) {
       e.assignedTechnicianId = userSessionDetails.userId
@@ -169,9 +167,10 @@ function CytologyCaseView() {
     getFromOpenElisServer("/rest/displayList/CYTOLOGY_STATUS", setStatuses);
     getFromOpenElisServer("/rest/displayList/CYTOLOGY_SATISFACTORY_FOR_EVALUATION", setSatisfactoryForEvaluation);
     getFromOpenElisServer("/rest/displayList/CYTOLOGY_UN_SATISFACTORY_FOR_EVALUATION", setUnSatisfactoryForEvaluation);
+    getFromOpenElisServer("/rest/displayList/CYTOLOGY_SPECIMEN_ADEQUACY_SATISFACTION", setAdequacySatisfactionList);
     //TODO make conclusions list instead of reusing pathrequest
     getFromOpenElisServer("/rest/users", setTechnicianUsers);
-    getFromOpenElisServer("/rest/users/CytoPathologist", setPathologistUsers);
+    getFromOpenElisServer("/rest/users/Cytopathologist", setPathologistUsers);
     getFromOpenElisServer("/rest/cytology/caseView/" + cytologySampleId, setInitialPathologySampleInfo);
 
     return () => {
@@ -181,9 +180,9 @@ function CytologyCaseView() {
 
   return (
     <>
-     <Breadcrumb>
+      <Breadcrumb>
         <BreadcrumbItem href="/">Home</BreadcrumbItem>
-        <BreadcrumbItem href="/PathologyDashboard">Pathology DashBoard</BreadcrumbItem>
+        <BreadcrumbItem href="/CytologyDashboard">Cytology DashBoard</BreadcrumbItem>
       </Breadcrumb>
 
       <Grid fullWidth={true}>
@@ -191,7 +190,7 @@ function CytologyCaseView() {
           <Section>
             <Section >
               <Heading >
-                Pathology
+                Cytology
                 {/* <FormattedMessage id="label.page.patientHistory" /> */}
               </Heading>
             </Section>
@@ -226,13 +225,13 @@ function CytologyCaseView() {
       <Grid fullWidth={true} className="gridBoundary">
         {notificationVisible === true ? <AlertDialog /> : ""}
         {loading && (
-                <Loading description="Loading Dasboard..." />
-       )}
+          <Loading description="Loading Dasboard..." />
+        )}
         <Column lg={16} md={8} sm={4}>
           <Button id="pathology_save" onClick={(e) => { e.preventDefault(); save(e) }}>Save</Button>
         </Column>
         <Column lg={16} md={8} sm={4}>
-        <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>    
+          <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>
         </Column>
         <Column lg={4} md={2} sm={2} >
           <Select id="status"
@@ -292,13 +291,13 @@ function CytologyCaseView() {
         </Column>
         <Column lg={16} md={8} sm={4}>
         </Column >
-        
-        <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>    
-        <Column  lg={16} md={8} sm={4}>  
-          <hr style={{width:'100%' , margin: '1rem 0', border: '1px solid #ccc' }} />
-           <h5>Slides</h5>
+
+        <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>
+        <Column lg={16} md={8} sm={4}>
+          <hr style={{ width: '100%', margin: '1rem 0', border: '1px solid #ccc' }} />
+          <h5>Slides</h5>
         </Column>
-        <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>    
+        <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>
         {pathologySampleInfo.slides && pathologySampleInfo.slides.map((slide, index) => {
           return (
             <>
@@ -309,7 +308,7 @@ function CytologyCaseView() {
                 }} kind='tertiary' size='sm'>
                   <Subtract size={18} />  Slide
                 </IconButton>
-               
+
               </Column>
               <Column lg={2} md={2} sm={1} key={index}>
                 <TextInput
@@ -341,7 +340,7 @@ function CytologyCaseView() {
                 />
               </Column>
               <Column lg={4} md={1} sm={2}>
-              {pathologySampleInfo.slides[index].image &&
+                {pathologySampleInfo.slides[index].image &&
                   <>
                     <Button onClick={() => {
                       var win = window.open();
@@ -392,44 +391,90 @@ function CytologyCaseView() {
           }}>
             Add Slide
           </Button>
-          <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>    
-        <Column  lg={16} md={8} sm={4}>  
-          <hr style={{width:'100%' , margin: '1rem 0', border: '1px solid #ccc' }} />
-        </Column>  
-        <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>   
+          <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>
+          <Column lg={16} md={8} sm={4}>
+            <hr style={{ width: '100%', margin: '1rem 0', border: '1px solid #ccc' }} />
+          </Column>
+          <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>
         </Column>
-       
+
         <Column lg={12} md={6} sm={0}>
         </Column>
         <Column lg={16} md={8} sm={4}></Column>
-        {hasRole( userSessionDetails ,"Pathologist") &&
+        {hasRole(userSessionDetails, "Cytopathologist") &&
           <>
-            <Column lg={4} md={4} sm={2}>
-              {initialMount && <FilterableMultiSelect
-                id="techniques"
-                titleText="Techniques Used"
-                items={setSatisfactoryForEvaluation}
-                itemToString={(item) => (item ? item.value : '')}
-                initialSelectedItems={pathologySampleInfo.techniques}
-                onChange={(changes) => {
-                  setPathologySampleInfo({ ...pathologySampleInfo, techniques: changes.selectedItems });
-                }}
-                selectionFeedback="top-after-reopen"
-              />
-              }
+            <Column lg={4} md={1} sm={2} >
+
+              <Select id="specimenAdequacy"
+                name="specimenAdequacy"
+                labelText="Specimen Adequacy"
+                value={pathologySampleInfo.satisfaction}
+                onChange={(event) => {
+                 
+                  setPathologySampleInfo({ ...pathologySampleInfo, satisfaction: event.target.value , adequacies : []});
+                }}>
+                <SelectItem />
+                {adequacySatisfactionList.map((user, index) => {
+                  return (<SelectItem key={index}
+                    text={user.value}
+                    value={user.id}
+                  />);
+                })}
+              </Select>
             </Column>
-            <Column lg={12} md={4} sm={2}>
-              {pathologySampleInfo.techniques && pathologySampleInfo.techniques.map((technique, index) => (
-                <Tag
-                  key={index}
-                  onClose={() => { }}
+            {pathologySampleInfo.satisfaction && pathologySampleInfo.satisfaction === 'UN_SATISFACTORY_FOR_EVALUATION' && (
+              <>
+                <Column lg={4} md={4} sm={2}>
+                  {initialMount && <FilterableMultiSelect
+                    id="adequacy"
+                    titleText="Specimen Adequacy"
+                    items={unSatisfactoryForEvaluation}
+                    itemToString={(item) => (item ? item.value : '')}
+                    initialSelectedItems={pathologySampleInfo.adequacies}
+                    onChange={(changes) => {
+                      setPathologySampleInfo({ ...pathologySampleInfo, adequacies: changes.selectedItems });
+                    }}
+                    selectionFeedback="top-after-reopen"
+                  />
+                  }
+                </Column>
+                <Column lg={8} md={4} sm={2}>
+                  {pathologySampleInfo.adequacies && pathologySampleInfo.adequacies.map((adequacy, index) => (
+                    <Tag
+                      key={index}
+                      onClose={() => { }}
+                    >
+                      {adequacy.value}
+                    </Tag>
+                  ))}
+                </Column>
+              </>
+            )}
+            {pathologySampleInfo.satisfaction && pathologySampleInfo.satisfaction === 'SATISFACTORY_FOR_EVALUATION' && (
+              <Column lg={8}>
+                <RadioButtonGroup
+                  valueSelected={pathologySampleInfo.adequacies ? pathologySampleInfo.adequacies[0]?.id : null}
+                  legendText={"Select Adequacy"}
+                  name="adequacy"
+                  id="adequacy"
+                  onChange={(value) => {
+                    setPathologySampleInfo({ ...pathologySampleInfo, adequacies: [{"id" : value}] });
+                  }}
                 >
-                  {technique.value}
-                </Tag>
-              ))}
-            </Column>
+                  {satisfactoryForEvaluation.map((adequacy, index) => (
+                    <RadioButton
+                      index={index}
+                      id={"adquacy" + index}
+                      labelText={adequacy.value}
+                      value={adequacy.id}
+                    />
+                  ))}
+                </RadioButtonGroup>
+              </Column>
+            )}
+
             <Column lg={16} md={8} sm={4}></Column>
-            
+
           </>}
         <Column lg={16}>
           <Checkbox labelText="Ready for Release" id="release"
@@ -437,7 +482,7 @@ function CytologyCaseView() {
               setPathologySampleInfo({ ...pathologySampleInfo, release: !pathologySampleInfo.release });
             }} />
         </Column>
-        <Column lg={16}><Button id ="pathology_save2"onClick={(e) => { e.preventDefault(); save(e) }}>Save</Button></Column>
+        <Column lg={16}><Button id="pathology_save2" onClick={(e) => { e.preventDefault(); save(e) }}>Save</Button></Column>
 
       </Grid>
     </>

@@ -10,4 +10,5 @@
 	<include relativeToChangelogFile="true" file="pathology.xml" />
 	<include relativeToChangelogFile="true" file="calculated_value.xml" />
 	<include relativeToChangelogFile="true" file="immunohistochemistry.xml" />
+	<include relativeToChangelogFile="true" file="cytology.xml" />
 </databaseChangeLog>

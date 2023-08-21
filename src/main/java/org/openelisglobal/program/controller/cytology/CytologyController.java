@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 
 import org.openelisglobal.common.rest.BaseRestController;
+import org.openelisglobal.program.bean.CytologyDashBoardCount;
 import org.openelisglobal.program.bean.PathologyDashBoardCount;
 import org.openelisglobal.program.service.cytology.CytologyDisplayService;
 import org.openelisglobal.program.service.cytology.CytologySampleService;
@@ -51,17 +52,14 @@ public class CytologyController extends BaseRestController {
     
     @GetMapping(value = "/rest/cytology/dashboard/count", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<PathologyDashBoardCount> getFilteredCytologyEntries() {
-       PathologyDashBoardCount count = new PathologyDashBoardCount();
+    public ResponseEntity<CytologyDashBoardCount> getFilteredCytologyEntries() {
+        CytologyDashBoardCount count = new CytologyDashBoardCount();
         count.setInProgress(cytologySampleService.getCountWithStatus(Arrays.asList(CytologyStatus.PREPARING_SLIDES , CytologyStatus.SCREENING)));
         count.setAwaitingReview(cytologySampleService.getCountWithStatus(Arrays.asList(CytologyStatus.READY_FOR_CYTOPATHOLOGIST )));
-        count.setAdditionalRequests(
-            cytologySampleService.getCountWithStatus(Arrays.asList(CytologyStatus.CYTOPATHOLOGIST_REVIEW)));
         
         Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
         Instant weekAgoInstant = Instant.now().minus(7, ChronoUnit.DAYS);
-        Timestamp weekAgoTimestamp = Timestamp.from(weekAgoInstant);
-        
+        Timestamp weekAgoTimestamp = Timestamp.from(weekAgoInstant); 
         count.setComplete(cytologySampleService.getCountWithStatusBetweenDates(Arrays.asList(CytologyStatus.COMPLETED),
             weekAgoTimestamp, currentTimestamp));
         return ResponseEntity.ok(count);

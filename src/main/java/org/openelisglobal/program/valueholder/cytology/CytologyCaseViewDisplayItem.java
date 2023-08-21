@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.hl7.fhir.r4.model.Questionnaire;
 import org.hl7.fhir.r4.model.QuestionnaireResponse;
+import org.openelisglobal.common.util.IdValuePair;
+import org.openelisglobal.program.valueholder.cytology.CytologySpecimenAdequacy.SpecimenAdequancySatisfaction;
 
 public class CytologyCaseViewDisplayItem extends CytologyDisplayItem {
     
@@ -27,7 +29,9 @@ public class CytologyCaseViewDisplayItem extends CytologyDisplayItem {
     
     private List<CytologySlide> slides;
     
-    private CytologySpecimenAdequacy adequacy;
+    private List<IdValuePair> adequacies;
+    
+    private SpecimenAdequancySatisfaction satisfaction;
     
     public String getAge() {
         return age;
@@ -109,11 +113,20 @@ public class CytologyCaseViewDisplayItem extends CytologyDisplayItem {
         this.slides = slides;
     }
     
-    public CytologySpecimenAdequacy getAdequacy() {
-        return adequacy;
+    public SpecimenAdequancySatisfaction getSatisfaction() {
+        return satisfaction;
     }
     
-    public void setAdequacy(CytologySpecimenAdequacy adequacy) {
-        this.adequacy = adequacy;
+    public void setSatisfaction(SpecimenAdequancySatisfaction satisfaction) {
+        this.satisfaction = satisfaction;
     }
+    
+    public List<IdValuePair> getAdequacies() {
+        return adequacies;
+    }
+    
+    public void setAdequacies(List<IdValuePair> adequacies) {
+        this.adequacies = adequacies;
+    }
+    
 }

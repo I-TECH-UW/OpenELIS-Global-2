@@ -20,7 +20,7 @@ function CytologyDashboard() {
   const [statuses, setStatuses] = useState([]);
   const [pathologyEntries, setPathologyEntries] = useState([])
   const [filters, setFilters] = useState({ searchTerm: "", myCases: false, statuses: [] });
-  const [counts ,setCounts] = useState({ inProgress: 0, awaitingReview: 0, additionalRequests: 0, complete: 0});
+  const [counts ,setCounts] = useState({ inProgress: 0, awaitingReview: 0, complete: 0});
   const [loading, setLoading] = useState(true);
 
   const setStatusList = (statusList) => {
@@ -48,7 +48,7 @@ function CytologyDashboard() {
         <Button type="button" onClick={(e) => { assignCurrentUserAsTechnician(e, pathologySampleId) }}>Start</Button>
       </TableCell>
     }
-    if (cell.info.header === 'assignedCytoPathologist' && !cell.value && status === 'READY_FOR_CYTOPATHOLOGIST' && hasRole(userSessionDetails ,"CytoPathologist")) {
+    if (cell.info.header === 'assignedCytoPathologist' && !cell.value && status === 'READY_FOR_CYTOPATHOLOGIST' && hasRole(userSessionDetails ,"Cytopathologist")) {
       return <TableCell key={cell.id}>
         <Button type="button" onClick={(e) => { assignCurrentUserAsPathologist(e, pathologySampleId) }}>Start</Button>
       </TableCell>
@@ -133,8 +133,7 @@ function CytologyDashboard() {
 
   const tileList = [
     {"title" : "Cases in Progress"  , "count" : counts.inProgress} ,
-    {"title" : "Awaiting Pathology Review"  , "count" : counts.awaitingReview},
-    {"title" : "Additional Pathology Requests"  , "count" : counts.additionalRequests},
+    {"title" : "Awaiting Cytopathologist Review"  , "count" : counts.awaitingReview},
     {"title" : "Complete (Week " + getPastWeek() + " )"   , "count" : counts.complete}
   ]
 

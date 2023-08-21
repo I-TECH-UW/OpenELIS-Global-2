@@ -23,13 +23,11 @@ public class CytologySample extends ProgramSample {
     
     public enum CytologyStatus {
         
-        INCOMPLETE("Incomplete Only"),
         PREPARING_SLIDES("Preparing slides"),
         SCREENING("Screening"),
-        CYTOPATHOLOGIST_REVIEW("Cytopathologist Review"),
-        COMPLETED("Completed"),
-        READY_FOR_SCREEMER("Ready for screener"),
-        READY_FOR_CYTOPATHOLOGIST("Ready for Cytopathologist");
+        READY_FOR_CYTOPATHOLOGIST("Ready for Cytopathologist"),
+        COMPLETED("Completed");
+       
         
         private String display;
         
@@ -62,7 +60,7 @@ public class CytologySample extends ProgramSample {
     private List<CytologySlide> slides;
     
     @Valid
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "specimen_adequacy_id", referencedColumnName = "id")
     private CytologySpecimenAdequacy specimenAdequacy;
     

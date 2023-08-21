@@ -6,8 +6,41 @@
 	 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 	 
   	<property name="now" value="now()" dbms="postgresql"/>
-	
 	<changeSet author="mozzymutesa" id="1">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="cytology_specimen_adequacy" schemaName="clinlims" />
+			</not>
+		</preConditions>
+		<comment>create cytology_specimen_adequacy table</comment>
+		<createSequence incrementBy="1" schemaName="clinlims"
+			sequenceName="cytology_specimen_adequacy_seq" startValue="1" />
+		<createTable tableName="cytology_specimen_adequacy">
+			<column name="id" type="INTEGER" valueSequenceNext="cytology_specimen_adequacy_seq">
+				<constraints primaryKey="true" nullable="false"/>
+			</column>
+			<column name="result_type" type="VARCHAR(255)"/>
+			<column name="satisfaction" type="VARCHAR(255)"/>
+			<column name="last_updated" type="datetime"/>
+		</createTable>
+	</changeSet>
+	<changeSet author="mozzymutesa" id="2">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="cytology_specimen_adequacy_value" schemaName="clinlims" />
+			</not>
+		</preConditions>
+		<comment>create cytology_specimen_adequacy_value table</comment>
+		<createTable tableName="cytology_specimen_adequacy_value">
+			<column name="value" type="VARCHAR(255)"/>
+			<column name="cytology_specimen_adequacy_id" type="INTEGER"/>
+		</createTable>
+		<addForeignKeyConstraint constraintName="cytology_specimen_adequacy_value_cytology_specimen_adequacy_id_fk"
+                                 baseTableName="cytology_specimen_adequacy_value" baseColumnNames="cytology_specimen_adequacy_id"
+                                 referencedTableName="cytology_specimen_adequacy" referencedColumnNames="id"/>
+	</changeSet>
+	
+	<changeSet author="mozzymutesa" id="3">
 		<preConditions onFail="MARK_RAN">
 			<not>
 				<tableExists tableName="cytology_sample" schemaName="clinlims" />
@@ -20,7 +53,7 @@
 			</column>
 			<column name="technician_id" type="NUMERIC(10)"/>
 			<column name="cytopathologist_id" type="NUMERIC(10)"/>
-			<column name="specimen_adequacy_id" type="NUMERIC(10)"/>
+			<column name="specimen_adequacy_id" type="INTEGER"/>
 			<column name="program_id" type="NUMERIC(10)"/>
 			<column name="sample_id" type="NUMERIC(10)"/>
 			<column name="status" type="VARCHAR(255)"/>
@@ -35,16 +68,16 @@
                                  referencedTableName="sample" referencedColumnNames="id"/>
 	    <addForeignKeyConstraint constraintName="cytology_sample_technician_id_fk"
                                  baseTableName="cytology_sample" baseColumnNames="technician_id"
-                                 referencedTableName="sysytem_user" referencedColumnNames="id"/>
+                                 referencedTableName="system_user" referencedColumnNames="id"/>
 		<addForeignKeyConstraint constraintName="cytology_sample_cytopathologist_id_fk"
                                  baseTableName="cytology_sample" baseColumnNames="cytopathologist_id"
-                                 referencedTableName="sysytem_user" referencedColumnNames="id"/>
+                                 referencedTableName="system_user" referencedColumnNames="id"/>
 	    <addForeignKeyConstraint constraintName="cytology_sample_specimen_adequacy_id_fk"
                                  baseTableName="cytology_sample" baseColumnNames="specimen_adequacy_id"
                                  referencedTableName="cytology_specimen_adequacy" referencedColumnNames="id"/>						 							 
 	</changeSet>
 	
-	<changeSet author="mozzymutesa" id="2">
+	<changeSet author="mozzymutesa" id="4">
 		<preConditions onFail="MARK_RAN">
 			<not>
 				<tableExists tableName="cytology_slide" schemaName="clinlims" />
@@ -68,7 +101,7 @@
                                  baseTableName="cytology_slide" baseColumnNames="cytology_sample_id"
                                  referencedTableName="cytology_sample" referencedColumnNames="id"/>
 	</changeSet>
-	<changeSet author="mozzymutesa" id="3">
+	<changeSet author="mozzymutesa" id="5">
 		<preConditions onFail="MARK_RAN">
         <sqlCheck expectedResult="0">select count(*) from clinlims.test_section where name = 'Cytology'; </sqlCheck>
 		</preConditions>
@@ -92,7 +125,7 @@
 		</insert>
 	</changeSet>
 
-    <changeSet author="mozzymutesa" id="4">
+    <changeSet author="mozzymutesa" id="6">
 		<preConditions onFail="MARK_RAN">
 			<tableExists tableName="system_role"
 				schemaName="clinlims" />
@@ -147,7 +180,7 @@
 		</insert>
 	</changeSet>
 
-	<changeSet author="mozzymutesa" id="5">
+	<changeSet author="mozzymutesa" id="7">
     <preConditions onFail="MARK_RAN">
       <sqlCheck expectedResult="0">select count(*) from clinlims.dictionary_category where description = 'Cytology Specimen Adequacy - Satisfactory';
     		</sqlCheck>
@@ -158,48 +191,15 @@
 			<column name="id" valueSequenceNext="dictionary_category_seq" />
 			<column name="description" value="Cytology Specimen Adequacy - Satisfactory" />
 			<column name="lastupdated" valueComputed="${now}"/>
-			<column name="local_abbrev" value="cytoAdquacySatisfactory" />
+			<column name="local_abbrev" value="AdqSatis" />
 			<column name="name" value="cytology_adequacy_satisfactory" />
 		</insert>
 		<insert tableName="dictionary_category" schemaName="clinlims">
 			<column name="id" valueSequenceNext="dictionary_category_seq" />
 			<column name="description" value="Cytology Specimen Adequacy - Un Satisfactory" />
 			<column name="lastupdated" valueComputed="${now}"/>
-			<column name="local_abbrev" value="cytoAdquacyUnSatisfactory" />
+			<column name="local_abbrev" value="AdqUnSatis" />
 			<column name="name" value="cytology_adequacy_unsatisfactory" />
 		</insert>
   </changeSet>
-  <changeSet author="mozzymutesa" id="6">
-		<preConditions onFail="MARK_RAN">
-			<not>
-				<tableExists tableName="cytology_specimen_adequacy" schemaName="clinlims" />
-			</not>
-		</preConditions>
-		<comment>create cytology_specimen_adequacy table</comment>
-		<createSequence incrementBy="1" schemaName="clinlims"
-			sequenceName="cytology_specimen_adequacy_seq" startValue="1" />
-		<createTable tableName="cytology_specimen_adequacy">
-			<column name="id" type="INTEGER" valueSequenceNext="cytology_specimen_adequacy_seq">
-				<constraints primaryKey="true" nullable="false"/>
-			</column>
-			<column name="result_type" type="VARCHAR(255)"/>
-			<column name="satisfaction" type="VARCHAR(255)"/>
-			<column name="last_updated" type="datetime"/>
-		</createTable>
-	</changeSet>
-	<changeSet author="mozzymutesa" id="7">
-		<preConditions onFail="MARK_RAN">
-			<not>
-				<tableExists tableName="cytology_specimen_adequacy_value" schemaName="clinlims" />
-			</not>
-		</preConditions>
-		<comment>create cytology_specimen_adequacy_value table</comment>
-		<createTable tableName="cytology_specimen_adequacy_value">
-			<column name="value" type="VARCHAR(255)"/>
-			<column name="cytology_specimen_adequacy_id" type="INTEGER"/>
-		</createTable>
-		<addForeignKeyConstraint constraintName="cytology_specimen_adequacy_value_cytology_specimen_adequacy_id_fk"
-                                 baseTableName="cytology_specimen_adequacy_value" baseColumnNames="cytology_specimen_adequacy_id"
-                                 referencedTableName="cytology_specimen_adequacy" referencedColumnNames="id"/>
-	</changeSet>
 </databaseChangeLog>

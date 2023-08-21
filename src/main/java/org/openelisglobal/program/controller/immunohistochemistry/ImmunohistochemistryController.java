@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 
 import org.openelisglobal.common.rest.BaseRestController;
+import org.openelisglobal.program.bean.ImmunohistochemistryDashBoardCount;
 import org.openelisglobal.program.bean.PathologyDashBoardCount;
 import org.openelisglobal.program.service.ImmunohistochemistryDisplayService;
 import org.openelisglobal.program.service.ImmunohistochemistrySampleService;
@@ -49,11 +50,10 @@ public class ImmunohistochemistryController extends BaseRestController {
 
     @GetMapping(value = "/rest/immunohistochemistry/dashboard/count", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<PathologyDashBoardCount> getFilteredImmunohistochemistryEntries() {
-         PathologyDashBoardCount count = new PathologyDashBoardCount();
+    public ResponseEntity<ImmunohistochemistryDashBoardCount> getFilteredImmunohistochemistryEntries() {
+        ImmunohistochemistryDashBoardCount count = new ImmunohistochemistryDashBoardCount();
         count.setInProgress(immunohistochemistrySampleService.getCountWithStatus(Arrays.asList(ImmunohistochemistryStatus.IN_PROGRESS)));
         count.setAwaitingReview(immunohistochemistrySampleService.getCountWithStatus(Arrays.asList(ImmunohistochemistryStatus.READY_PATHOLOGIST)));
-        count.setAdditionalRequests(immunohistochemistrySampleService.getCountWithStatus(Arrays.asList(ImmunohistochemistryStatus.READY_PATHOLOGIST)));
         
         Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
         Instant weekAgoInstant = Instant.now().minus(7, ChronoUnit.DAYS);

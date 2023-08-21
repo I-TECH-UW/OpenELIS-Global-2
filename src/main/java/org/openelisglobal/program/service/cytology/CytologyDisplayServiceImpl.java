@@ -1,10 +1,15 @@
 package org.openelisglobal.program.service.cytology;
 
+import java.util.stream.Collectors;
+
+import javax.transaction.Transactional;
+
 import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.r4.model.Questionnaire;
 import org.hl7.fhir.r4.model.QuestionnaireResponse;
 import org.openelisglobal.common.services.SampleOrderService;
 import org.openelisglobal.common.util.DateUtil;
+import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.dataexchange.fhir.FhirUtil;
 import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.organization.service.OrganizationService;
@@ -19,19 +24,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class CytologyDisplayServiceImpl implements CytologyDisplayService{
-
-
+public class CytologyDisplayServiceImpl implements CytologyDisplayService {
+    
     @Autowired
     private SampleService sampleService;
+    
     @Autowired
     private CytologySampleService cytologySampleService;
+    
     @Autowired
     private FhirUtil fhirUtil;
+    
     @Autowired
     private OrganizationService organizationService;
-
+    
+    @Autowired
+    private DictionaryService dictionaryService;
+    
     @Override
+    @Transactional
     public CytologyCaseViewDisplayItem convertToCaseDisplayItem(Integer cytologySampleId) {
         CytologySample cytologySample = cytologySampleService.get(cytologySampleId);
         CytologyCaseViewDisplayItem displayItem = new CytologyCaseViewDisplayItem();
@@ -39,39 +50,46 @@ public class CytologyDisplayServiceImpl implements CytologyDisplayService{
         displayItem.setRequestDate(cytologySample.getSample().getEnteredDate());
         if (cytologySample.getCytoPathologist() != null) {
             displayItem.setAssignedCytoPathologist(cytologySample.getCytoPathologist().getDisplayName());
+            displayItem.setAssignedPathologistId(cytologySample.getCytoPathologist().getId());
         }
         if (cytologySample.getTechnician() != null) {
             displayItem.setAssignedTechnician(cytologySample.getTechnician().getDisplayName());
+            displayItem.setAssignedTechnicianId(cytologySample.getTechnician().getId());
         }
         Patient patient = sampleService.getPatient(cytologySample.getSample());
         displayItem.setFirstName(patient.getPerson().getFirstName());
         displayItem.setLastName(patient.getPerson().getLastName());
         displayItem.setLabNumber(cytologySample.getSample().getAccessionNumber());
         displayItem.setPathologySampleId(cytologySample.getId());
-         displayItem.setProgramQuestionnaire(fhirUtil.getLocalFhirClient().read().resource(Questionnaire.class)
+        displayItem.setProgramQuestionnaire(fhirUtil.getLocalFhirClient().read().resource(Questionnaire.class)
                 .withId(cytologySample.getProgram().getQuestionnaireUUID().toString()).execute());
-        displayItem.setProgramQuestionnaireResponse(fhirUtil.getLocalFhirClient().read()
-                .resource(QuestionnaireResponse.class).withId(cytologySample.getQuestionnaireResponseUuid().toString())
-                .execute());
+        displayItem
+                .setProgramQuestionnaireResponse(fhirUtil.getLocalFhirClient().read().resource(QuestionnaireResponse.class)
+                        .withId(cytologySample.getQuestionnaireResponseUuid().toString()).execute());
         
         cytologySample.getSlides().size();
-        displayItem.setSlides(cytologySample.getSlides()); 
-        displayItem.setAdequacy(cytologySample.getSpecimenAdequacy());       
+        displayItem.setSlides(cytologySample.getSlides());
+        if (cytologySample.getSpecimenAdequacy() != null) {
+            displayItem.setSatisfaction(cytologySample.getSpecimenAdequacy().getSatisfaction());
+            displayItem.setAdequacies(cytologySample.getSpecimenAdequacy().getValues().stream()
+                    .map(e -> new IdValuePair(e, dictionaryService.get(e).getLocalizedName())).collect(Collectors.toList()));  
+        }
         SampleOrderService sampleOrderService = new SampleOrderService(cytologySample.getSample());
         SampleOrderItem sampleItem = sampleOrderService.getSampleOrderItem();
-        displayItem.setReferringFacility(sampleItem.getReferringSiteName()); 
+        displayItem.setReferringFacility(sampleItem.getReferringSiteName());
         if (StringUtils.isNotBlank(sampleItem.getReferringSiteDepartmentId())) {
             Organization org = organizationService.get(sampleItem.getReferringSiteDepartmentId());
             if (org != null) {
                 displayItem.setDepartment(org.getLocalizedName());
             }
-        } 
-        displayItem.setRequester(sampleItem.getProviderLastName() +" "+ sampleItem.getProviderFirstName());                  
-        displayItem.setAge(DateUtil.getCurrentAgeForDate(patient.getBirthDate() ,DateUtil.getNowAsTimestamp()));        
-        return displayItem; 
+        }
+        displayItem.setRequester(sampleItem.getProviderLastName() + " " + sampleItem.getProviderFirstName());
+        displayItem.setAge(DateUtil.getCurrentAgeForDate(patient.getBirthDate(), DateUtil.getNowAsTimestamp()));
+        return displayItem;
     }
-
+    
     @Override
+    @Transactional
     public CytologyDisplayItem convertToDisplayItem(Integer cytologySampleId) {
         CytologySample cytologySample = cytologySampleService.get(cytologySampleId);
         CytologyDisplayItem displayItem = new CytologyDisplayItem();

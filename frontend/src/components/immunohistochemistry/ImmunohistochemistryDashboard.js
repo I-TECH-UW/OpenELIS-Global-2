@@ -16,7 +16,7 @@ function ImmunohistochemistryDashboard() {
   const componentMounted = useRef(false);
 
   const { notificationVisible ,setNotificationVisible,setNotificationBody} = useContext(NotificationContext);
-  const [counts ,setCounts] = useState({ inProgress: 0, awaitingReview: 0, additionalRequests: 0, complete: 0});
+  const [counts ,setCounts] = useState({ inProgress: 0, awaitingReview: 0,  complete: 0});
   const [statuses, setStatuses] = useState([]);
   const [immunohistochemistryEntries, setImmunohistochemistryEntries] = useState([])
   const [filters, setFilters] = useState({searchTerm: "", myCases: false, statuses: []});
@@ -51,7 +51,6 @@ function ImmunohistochemistryDashboard() {
   const tileList = [
     {"title" : "Cases in Progress"  , "count" : counts.inProgress} ,
     {"title" : "Awaiting Immunohistochemistry Review"  , "count" : counts.awaitingReview},
-    {"title" : "Additional Immunohistochemistry Requests"  , "count" : counts.additionalRequests},
     {"title" : "Complete (Week " + getPastWeek() + " )"   , "count" : counts.complete}
   ]
 
