@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useContext} from 'react'
 import {Field, Formik} from "formik";
 import {
     Button,
@@ -18,12 +18,11 @@ import DataTable from "react-data-table-component";
 import {FormattedMessage} from "react-intl";
 import ValidationSearchFormValues from "../formModel/innitialValues/ValidationSearchFormValues";
 import {NotificationKinds} from "../common/CustomNotification";
-import {stringify} from "qs";
-import jp from "jsonpath";
 import {postToOpenElisServer} from "../utils/Utils";
+import {NotificationContext} from "../layout/Layout";
 
 const Validation = (props) => {
-
+    const {setNotificationVisible, setNotificationBody} = useContext(NotificationContext);
     const [page, setPage] = useState(0);
     const [pageSize, setPageSize] = useState(0);
 
@@ -85,7 +84,18 @@ const Validation = (props) => {
             JSON.stringify(props.results), handleResponse);
     }
     const handleResponse = (response) => {
-        console.log(response);
+        let message = "Oops, try gain";
+        let kind = NotificationKinds.error;
+        if (response.status === 200) {
+            message = "Results have been validated successfully";
+            kind = NotificationKinds.success
+        }
+        setNotificationBody({
+            kind: kind,
+            title: "Notification Message",
+            message: message
+        });
+        setNotificationVisible(true);
     }
 
     const handlePageChange = () => {
@@ -203,19 +213,19 @@ const Validation = (props) => {
                         </Select>
 
                     case "N":
-
                         return <TextInput
                             id={"ResultValue" + row.id}
                             name={"resultList[" + row.id + "].result"}
                             labelText=""
-                            value={props.results ? props.results.resultList[row.id].result : ""}
+                            type="number"
+                            defaultValue={props.results ? props.results.resultList[row.id].result : ""}
                             onChange={(e) => handleChange(e, row.id)}
                         />
                     default:
                         return row.result
                 }
 
-                default :
+            default :
 
         }
         return row.result;
@@ -357,7 +367,7 @@ const Validation = (props) => {
                                     pageSizes={[100]}
                                     totalItems={props.results ? props.results.resultList.length : 0}></Pagination>
 
-                        <Button type="button" onClick={()=>handleSave(values)} id="submit">
+                        <Button type="button" onClick={() => handleSave(values)} id="submit">
                             <FormattedMessage id="label.button.save"/>
                         </Button>
                     </Form>)}

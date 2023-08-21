@@ -1,11 +1,15 @@
-import React, {useEffect, useState} from 'react'
+import React, {useContext, useState} from 'react'
 import SearchForm from "./SearchForm";
 import Validation from "./Validation";
+import {AlertDialog} from "../common/CustomNotification";
+import {NotificationContext} from "../layout/Layout";
 
 const Index = () => {
-    const [results, setResults] = useState();
+    const {notificationVisible} = useContext(NotificationContext);
+    const [results, setResults] = useState({resultList: []});
     return (
         <>
+            {notificationVisible === true ? <AlertDialog/> : ""}
             <SearchForm setResults={setResults}/>
             <Validation results={results}/>
         </>
