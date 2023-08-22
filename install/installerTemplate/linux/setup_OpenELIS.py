@@ -1577,7 +1577,7 @@ def backup_db():
                         clean_exit()  
             elif LOCAL_DB:
                 os.system(
-                    "PGPASSWORD=\"" + CLINLIMS_PWD + "\";export PGPASSWORD; su -c  'pgdump_all --verbose --clean -h localhost -U clinlims clinlims > " + INSTALLER_ROLLBACK_DIR + backup_name + "'")
+                    "PGPASSWORD=\"" + CLINLIMS_PWD + "\";export PGPASSWORD; su -c  'pg_dumpall --verbose --clean -h localhost -U clinlims clinlims > " + INSTALLER_ROLLBACK_DIR + backup_name + "'")
             else:
                 log("can't backup remote databases. proceeding". PRINT_TO_CONSOLE)
         else:
