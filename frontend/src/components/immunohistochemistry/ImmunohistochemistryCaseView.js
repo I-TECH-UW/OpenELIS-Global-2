@@ -71,7 +71,7 @@ function ImmunohistochemistryCaseView() {
   const { immunohistochemistrySampleId } = useParams()
 
   const { notificationVisible } = useContext(NotificationContext);
-  const [immunohistochemistrySampleInfo, setImmunohistochemistrySampleInfo ] = useState({});
+  const [immunohistochemistrySampleInfo, setImmunohistochemistrySampleInfo ] = useState({ labNumber: ""});
 
   const [initialMount, setInitialMount ] = useState(false);
 
@@ -81,11 +81,33 @@ function ImmunohistochemistryCaseView() {
   const [conclusions, setConclusions ] = useState([]);
   const [technicianUsers, setTechnicianUsers] = useState([]);
   const [pathologistUsers, setPathologistUsers] = useState([]);
+  const [results, setResults] = useState({ testResult: [] });
 
   async function displayStatus (response) {
     var body = await response.json();
     console.log(body)
   }
+
+  const setResultsWithId = (results) => {
+      if (results) {
+          var i = 0;
+          if (results.testResult) {
+              results.testResult.forEach(item => item.id = "" + i++);
+          }
+          setResults(results);
+      } else {
+          setResults({ testResult: [] });
+      }
+  }
+
+  const getResults = () => {
+      setResults({ testResult: [] })
+      var searchEndPoint = "/rest/ReactLogbookResultsByRange?" +
+          "&labNumber=" + immunohistochemistrySampleInfo.labNumber +
+          "&doRange=" + false +
+          "&finished=" + false;
+      getFromOpenElisServer(searchEndPoint, setResultsWithId);
+  };
 
   const toBase64 = file => new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -123,6 +145,14 @@ function ImmunohistochemistryCaseView() {
       componentMounted.current = false
     }
   }, []);
+
+  useEffect(() => {
+    componentMounted.current = true;
+    getResults();
+    return () => {
+      componentMounted.current = false;
+    }
+  }, [immunohistochemistrySampleInfo.labNumber]);
   
   return (
     <>
@@ -145,10 +175,9 @@ function ImmunohistochemistryCaseView() {
         <QuestionnaireResponse questionnaireResponse={immunohistochemistrySampleInfo.programQuestionnaireResponse}/>
         </Column>
         <Column lg={16} md={8} sm={4}>
-          <SearchResults results={this.state.resultForm}/>
+          <SearchResults results={results}/>
         </Column>
         <Column lg={16}  md={8} sm={4}>
-        <Button onClick={(e) => {e.preventDefault();save(e)}}>Save</Button>
         </Column>
         <Column lg={4}  md={2} sm={2} >
                 <Select id="status"

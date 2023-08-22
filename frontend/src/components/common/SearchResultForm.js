@@ -63,7 +63,7 @@ export class SearchResultForm extends React.Component {
         }
     }
 
-    setResults = (results) => {
+    setResultsWithId = (results) => {
         if (results) {
             var i = 0;
             if (results.testResult) {
@@ -91,7 +91,7 @@ export class SearchResultForm extends React.Component {
             "&labNumber=" + values.labNumber +
             "&doRange=" + this.state.doRange +
             "&finished=" + this.state.finished
-        getFromOpenElisServer(searchEndPoint, this.setResults);
+        getFromOpenElisServer(searchEndPoint, this.setResultsWithId);
     };
 
     render() {
@@ -350,6 +350,30 @@ export class SearchResults extends React.Component {
                     case "N":
 
                         return <TextInput
+                            id={"ResultValue" + row.id}
+                            name={"testResult[" + row.id + "].resultValue"}
+                            //type="text"
+                            // value={this.state.resultForm.testResult[row.id].resultValue}
+                            labelText=""
+                            // helperText="Optional help text"
+                            onChange={(e) => this.handleChange(e, row.id)}
+                        />
+
+                    case "R":
+
+                        return <TextArea
+                            id={"ResultValue" + row.id}
+                            name={"testResult[" + row.id + "].resultValue"}
+                            //type="text"
+                            // value={this.state.resultForm.testResult[row.id].resultValue}
+                            labelText=""
+                            // helperText="Optional help text"
+                            onChange={(e) => this.handleChange(e, row.id)}
+                        />
+
+                    case "A":
+
+                        return <TextArea
                             id={"ResultValue" + row.id}
                             name={"testResult[" + row.id + "].resultValue"}
                             //type="text"
