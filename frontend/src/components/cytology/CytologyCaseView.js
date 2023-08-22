@@ -144,7 +144,7 @@ function CytologyCaseView() {
 
     console.log(" ..submit....")
     console.log(JSON.stringify(submitValues))
-     postToOpenElisServerFullResponse("/rest/cytology/caseView/" + cytologySampleId, JSON.stringify(submitValues), displayStatus);
+    postToOpenElisServerFullResponse("/rest/cytology/caseView/" + cytologySampleId, JSON.stringify(submitValues), displayStatus);
   }
 
 
@@ -296,12 +296,12 @@ function CytologyCaseView() {
         <Column lg={16} md={8} sm={4}>
           <hr style={{ width: '100%', margin: '1rem 0', border: '1px solid #ccc' }} />
           <h5>Slides</h5>
+          <hr style={{ width: '100%', margin: '1rem 0', border: '1px solid #ccc' }} />
         </Column>
-        <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>
         {pathologySampleInfo.slides && pathologySampleInfo.slides.map((slide, index) => {
           return (
             <>
-              <Column lg={16} md={8} sm={4}>
+              <Column lg={2} md={8} sm={4}>
                 <IconButton label="remove slide" onClick={() => {
                   var newSlides = [...pathologySampleInfo.slides];
                   setPathologySampleInfo({ ...pathologySampleInfo, slides: newSlides.splice(index, 1) });
@@ -310,7 +310,7 @@ function CytologyCaseView() {
                 </IconButton>
 
               </Column>
-              <Column lg={2} md={2} sm={1} key={index}>
+              <Column lg={3} md={2} sm={1} key={index}>
                 <TextInput
                   id="slideNumber"
                   labelText="slide number"
@@ -325,7 +325,7 @@ function CytologyCaseView() {
                   }}
                 />
               </Column>
-              <Column lg={2} md={2} sm={1}>
+              <Column lg={3} md={2} sm={1}>
                 <TextInput
                   id="location"
                   labelText="location"
@@ -339,22 +339,10 @@ function CytologyCaseView() {
                   }}
                 />
               </Column>
-              <Column lg={4} md={1} sm={2}>
-                {pathologySampleInfo.slides[index].image &&
-                  <>
-                    <Button onClick={() => {
-                      var win = window.open();
-                      win.document.write('<iframe src="' + slide.fileType + ";base64," + slide.image + '" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>');
-                    }}>
-                      <Launch /> View
-                    </Button>
-                  </>
-                }
-                <Button onClick={(e) => {
-                  window.open(config.serverBaseUrl + '/LabelMakerServlet?labelType=slide&code=' + slide.slideNumber, '_blank')
-                }}>Print Label</Button>
+              <Column lg={3} md={1} sm={2}>
                 <FileUploader
-                  buttonLabel="Upload Image"
+                 style={{marginTop: '-10px'}}
+                  buttonLabel="Upload File"
                   iconDescription="file upload"
                   multiple={false}
                   accept={['image/jpeg', 'image/png', 'application/pdf']}
@@ -380,7 +368,25 @@ function CytologyCaseView() {
                   }}
                 />
               </Column>
-              <Column lg={8} md={5} sm={3} />
+              <Column lg={2} md={1} sm={2}>
+                {pathologySampleInfo.slides[index].image &&
+                  <>
+                    <Button onClick={() => {
+                      var win = window.open();
+                      win.document.write('<iframe src="' + slide.fileType + ";base64," + slide.image + '" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>');
+                    }}>
+                      <Launch /> View
+                    </Button>
+                  </>
+                }
+              </Column>
+              <Column lg={2} md={1} sm={2}>
+                <Button onClick={(e) => {
+                  window.open(config.serverBaseUrl + '/LabelMakerServlet?labelType=slide&code=' + slide.slideNumber, '_blank')
+                }}>Print Label</Button>
+              </Column>
+
+              {/* <Column lg={8} md={5} sm={3} /> */}
             </>
           )
         })}
@@ -410,8 +416,8 @@ function CytologyCaseView() {
                 labelText="Specimen Adequacy"
                 value={pathologySampleInfo.satisfaction}
                 onChange={(event) => {
-                 
-                  setPathologySampleInfo({ ...pathologySampleInfo, satisfaction: event.target.value , adequacies : []});
+
+                  setPathologySampleInfo({ ...pathologySampleInfo, satisfaction: event.target.value, adequacies: [] });
                 }}>
                 <SelectItem />
                 {adequacySatisfactionList.map((user, index) => {
@@ -458,7 +464,7 @@ function CytologyCaseView() {
                   name="adequacy"
                   id="adequacy"
                   onChange={(value) => {
-                    setPathologySampleInfo({ ...pathologySampleInfo, adequacies: [{"id" : value}] });
+                    setPathologySampleInfo({ ...pathologySampleInfo, adequacies: [{ "id": value }] });
                   }}
                 >
                   {satisfactoryForEvaluation.map((adequacy, index) => (

@@ -300,12 +300,12 @@ function PathologyCaseView() {
         <Column  lg={16} md={8} sm={4}>  
           <hr style={{width:'100%' , margin: '1rem 0', border: '1px solid #ccc' }} />
            <h5>Blocks</h5>
+           <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>    
         </Column>
-        <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>    
         {pathologySampleInfo.blocks && pathologySampleInfo.blocks.map((block, index) => {
           return (
             <>
-              <Column lg={16} md={8} sm={4}>
+              <Column lg={2} md={8} sm={4}>
                 <IconButton label="remove block" onClick={() => {
                   var newBlocks = [...pathologySampleInfo.blocks];
                   newBlocks = newBlocks.splice(index, 1);
@@ -315,7 +315,7 @@ function PathologyCaseView() {
                 </IconButton>
               
               </Column>
-              <Column lg={2} md={2} sm={1} key={index}>
+              <Column lg={3} md={2} sm={1} key={index}>
                 <TextInput
                   id="blockNumber"
                   labelText="block number"
@@ -329,7 +329,7 @@ function PathologyCaseView() {
                     setPathologySampleInfo({ ...pathologySampleInfo, blocks: newBlocks });
                   }} />
               </Column>
-              <Column lg={2} md={2} sm={1}>
+              <Column lg={3} md={2} sm={1}>
                 <TextInput
                   id="location"
                   labelText="location"
@@ -343,12 +343,15 @@ function PathologyCaseView() {
                   }}
                 />
               </Column>
-              <Column lg={4} md={2} sm={2}>
+              <Column lg={3} md={2} sm={2}>
                 <Button onClick={(e) => {
                   window.open(config.serverBaseUrl + '/LabelMakerServlet?labelType=block&code=' + block.blockNumber, '_blank')
                 }}>Print Label</Button>
               </Column>
-              <Column lg={8} md={2} sm={0} />
+              <Column lg={5} md={2} sm={0} />
+              <Column  lg={16} md={8} sm={4}>  
+                    <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>    
+               </Column>
             </>
           )
         })}
@@ -363,12 +366,13 @@ function PathologyCaseView() {
         <Column  lg={16} md={8} sm={4}>  
           <hr style={{width:'100%' , margin: '1rem 0', border: '1px solid #ccc' }} />
            <h5>Slides</h5>
+           <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>    
         </Column>
-        <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>    
+        
         {pathologySampleInfo.slides && pathologySampleInfo.slides.map((slide, index) => {
           return (
             <>
-              <Column lg={16} md={8} sm={4}>
+              <Column lg={2} md={8} sm={4}>
                 <IconButton label="remove slide" onClick={() => {
                   var newSlides = [...pathologySampleInfo.slides];
                   setPathologySampleInfo({ ...pathologySampleInfo, slides: newSlides.splice(index, 1) });
@@ -377,7 +381,7 @@ function PathologyCaseView() {
                 </IconButton>
                
               </Column>
-              <Column lg={2} md={2} sm={1} key={index}>
+              <Column lg={3} md={2} sm={1} key={index}>
                 <TextInput
                   id="slideNumber"
                   labelText="slide number"
@@ -392,7 +396,7 @@ function PathologyCaseView() {
                   }}
                 />
               </Column>
-              <Column lg={2} md={2} sm={1}>
+              <Column lg={3} md={2} sm={1}>
                 <TextInput
                   id="location"
                   labelText="location"
@@ -406,22 +410,10 @@ function PathologyCaseView() {
                   }}
                 />
               </Column>
-              <Column lg={4} md={1} sm={2}>
-              {pathologySampleInfo.slides[index].image &&
-                  <>
-                    <Button onClick={() => {
-                      var win = window.open();
-                      win.document.write('<iframe src="' + slide.fileType + ";base64," + slide.image + '" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>');
-                    }}>
-                      <Launch /> View
-                    </Button>
-                  </>
-                }
-                <Button onClick={(e) => {
-                  window.open(config.serverBaseUrl + '/LabelMakerServlet?labelType=slide&code=' + slide.slideNumber, '_blank')
-                }}>Print Label</Button>
+              <Column lg={3} md={1} sm={2}>
                 <FileUploader
-                  buttonLabel="Upload Image"
+                  style={{ marginTop: '-10px' }}
+                  buttonLabel="Upload File"
                   iconDescription="file upload"
                   multiple={false}
                   accept={['image/jpeg', 'image/png', 'application/pdf']}
@@ -447,7 +439,23 @@ function PathologyCaseView() {
                   }}
                 />
               </Column>
-              <Column lg={8} md={5} sm={3} />
+              <Column lg={3} md={1} sm={2}>
+              {pathologySampleInfo.slides[index].image &&
+                  <>
+                    <Button onClick={() => {
+                      var win = window.open();
+                      win.document.write('<iframe src="' + slide.fileType + ";base64," + slide.image + '" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>');
+                    }}>
+                      <Launch /> View
+                    </Button>
+                  </>
+                }
+                 </Column>
+                <Column lg={2} md={1} sm={2}>
+                <Button onClick={(e) => {
+                  window.open(config.serverBaseUrl + '/LabelMakerServlet?labelType=slide&code=' + slide.slideNumber, '_blank')
+                }}>Print Label</Button>
+                 </Column>
             </>
           )
         })}
