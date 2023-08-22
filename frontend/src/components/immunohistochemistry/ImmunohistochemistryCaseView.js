@@ -115,9 +115,17 @@ function ImmunohistochemistryCaseView() {
   const getResults = () => {
       setResults({ testResult: [] })
       var searchEndPoint = "/rest/ReactLogbookResultsByRange?" +
-          "&labNumber=" + immunohistochemistrySampleInfo.labNumber +
+          "labNumber=" + immunohistochemistrySampleInfo.labNumber +
           "&doRange=" + false +
-          "&finished=" + false;
+          "&finished=" + false +
+          "&nationalId=" + 
+          "&firstName=" + 
+          "&lastName=" + 
+          "&collectionDate=" + 
+          "&recievedDate=" + 
+          "&selectedTest=" + 
+          "&selectedSampleStatus=" + 
+          "&selectedAnalysisStatus=";
       getFromOpenElisServer(searchEndPoint, setResultsWithId);
   };
 
