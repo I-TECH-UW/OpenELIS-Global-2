@@ -1,5 +1,6 @@
 package org.openelisglobal.program.service;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -7,6 +8,7 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
@@ -82,7 +84,7 @@ public class ImmunohistochemistrySampleServiceImpl extends BaseObjectServiceImpl
     @Override
     public void assignPathologist(Integer immunohistochemistrySampleId, SystemUser systemUser) {
         ImmunohistochemistrySample immunohistochemistrySample = get(immunohistochemistrySampleId);
-        immunohistochemistrySample.setTechnician(systemUser);
+        immunohistochemistrySample.setPathologist(systemUser);
     }
 
     @Override
@@ -94,10 +96,26 @@ public class ImmunohistochemistrySampleServiceImpl extends BaseObjectServiceImpl
     @Override
     public void updateWithFormValues(Integer immunohistochemistrySampleId, ImmunohistochemistrySampleForm form) {
         ImmunohistochemistrySample immunohistochemistrySample = get(immunohistochemistrySampleId);
+        if (!GenericValidator.isBlankOrNull(form.getAssignedPathologistId())) {
+            immunohistochemistrySample.setPathologist(systemUserService.get(form.getAssignedPathologistId()));
+        }
+        if (!GenericValidator.isBlankOrNull(form.getAssignedTechnicianId())) {
+            immunohistochemistrySample.setTechnician(systemUserService.get(form.getAssignedTechnicianId()));
+        }
+        immunohistochemistrySample.setStatus(form.getStatus());
+        
+        immunohistochemistrySample.getReports().removeAll(immunohistochemistrySample.getReports());
+        if (form.getReports() != null)
+            form.getReports().stream().forEach(e -> e.setId(null));
+        immunohistochemistrySample.getReports().addAll(form.getReports());
+        if (form.getRelease()) {
+            validateImmunohistochemistrySample(immunohistochemistrySample, form);
+        }
     }
 
     private void validateImmunohistochemistrySample(ImmunohistochemistrySample immunohistochemistrySample,
             ImmunohistochemistrySampleForm form) {
+        immunohistochemistrySample.setStatus(ImmunohistochemistryStatus.COMPLETED);
         Sample sample = immunohistochemistrySample.getSample();
         Patient patient = sampleService.getPatient(sample);
         ResultsUpdateDataSet actionDataSet = new ResultsUpdateDataSet(form.getSystemUserId());
@@ -107,7 +125,7 @@ public class ImmunohistochemistrySampleServiceImpl extends BaseObjectServiceImpl
         for (TestResultItem testResultItem : testResultItems) {
             if (!testResultItem.getIsGroupSeparator()) {
                 if (ResultType.isTextOnlyVariant(testResultItem.getResultType())) {
-                    testResultItem.setResultValue(MessageUtil.getMessage("result.pathology.seereport"));
+                    testResultItem.setResultValue(MessageUtil.getMessage("result.immunochemistry.seereport"));
                 }
                 Analysis analysis = analysisService.get(sample.getId());
                 ResultSaveBean bean = ResultSaveBeanAdapter.fromTestResultItem(testResultItem);
@@ -149,7 +167,7 @@ public class ImmunohistochemistrySampleServiceImpl extends BaseObjectServiceImpl
                                 SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized));
                     }
 
-                    // this code is pulled from LogbookResultsController
+                    // this code is pulled from LogbookResultsRestController
 //                addResult(result, testResultItem, analysis, results.size() > 1, actionDataSet, useTechnicianName);
 //
 //                if (analysisShouldBeUpdated(testResultItem, result, supportReferrals)) {
@@ -166,6 +184,34 @@ public class ImmunohistochemistrySampleServiceImpl extends BaseObjectServiceImpl
                 form.getSystemUserId());
         sample.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(OrderStatus.Finished));
 
+    }
+
+    @Override
+    public List<ImmunohistochemistrySample> searchWithStatusAndTerm(List<ImmunohistochemistryStatus> statuses, String searchTerm) {
+        List<ImmunohistochemistrySample> immunohistochemistrySamples = baseObjectDAO.getWithStatus(statuses);
+        if (StringUtils.isNotBlank(searchTerm)) {
+            Sample sample = sampleService.getSampleByAccessionNumber(searchTerm);
+            if (sample != null) {
+                immunohistochemistrySamples = baseObjectDAO.searchWithStatusAndAccesionNumber(statuses, searchTerm);
+            } else {
+                List<ImmunohistochemistrySample> filteredImmunohistochemistrySamples = new ArrayList<>();
+                immunohistochemistrySamples.forEach(pathologySample -> {
+                    Patient patient = sampleService.getPatient(pathologySample.getSample());
+                    if (patient.getPerson().getFirstName().equals(searchTerm)
+                            || patient.getPerson().getLastName().equals(searchTerm)) {
+                        filteredImmunohistochemistrySamples.add(pathologySample);
+                    }
+                });
+                immunohistochemistrySamples = filteredImmunohistochemistrySamples;
+            }
+        }
+        
+        return immunohistochemistrySamples;
+    }
+
+    @Override
+    public Long getCountWithStatusBetweenDates(List<ImmunohistochemistryStatus> statuses, Timestamp from, Timestamp to) {
+        return baseObjectDAO.getCountWithStatusBetweenDates(statuses ,from ,to);
     }
 
 }

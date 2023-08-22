@@ -45,12 +45,12 @@
 }
 
 .leftSection {
-  width: 45%;
+  width: 30%;
   margin-right: spacing.$spacing-05;
 }
 
 .rightSection, .rightSectionHeader {
-  width: 55%;
+  width: 70%;
 }
 
 .rightSectionHeader {
@@ -127,3 +127,39 @@
     fill: $ui-01 !important;
   }
 }
+
+// patient header
+.patient-header {
+  background-color: #f5f5f5;
+  border: 1px solid #ddd;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  text-align: left;
+  margin-top: 20px;
+}
+
+.patient-name {
+  font-size: 18px;
+  // font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.patient-dob {
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 5px;
+}
+
+.patient-id {
+  font-size: 14px;
+  color: #888;
+}
+
+
+
+
+
+

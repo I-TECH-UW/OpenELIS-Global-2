@@ -1,5 +1,6 @@
 package org.openelisglobal.program.service;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -8,6 +9,7 @@ import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
@@ -24,9 +26,13 @@ import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.internationalization.MessageUtil;
+import org.openelisglobal.note.service.NoteService;
+import org.openelisglobal.note.service.NoteServiceImpl.NoteType;
+import org.openelisglobal.note.valueholder.Note;
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.program.controller.pathology.PathologySampleForm;
 import org.openelisglobal.program.dao.PathologySampleDAO;
+import org.openelisglobal.program.valueholder.immunohistochemistry.ImmunohistochemistrySample;
 import org.openelisglobal.program.valueholder.pathology.PathologyConclusion;
 import org.openelisglobal.program.valueholder.pathology.PathologyConclusion.ConclusionType;
 import org.openelisglobal.program.valueholder.pathology.PathologyRequest;
@@ -46,6 +52,10 @@ import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.systemuser.service.SystemUserService;
 import org.openelisglobal.systemuser.valueholder.SystemUser;
 import org.openelisglobal.test.beanItems.TestResultItem;
+import org.openelisglobal.test.service.TestSectionService;
+import org.openelisglobal.test.service.TestService;
+import org.openelisglobal.test.valueholder.Test;
+import org.openelisglobal.test.valueholder.TestSection;
 import org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl.ResultType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -63,6 +73,15 @@ public class PathologySampleServiceImpl extends BaseObjectServiceImpl<PathologyS
     private AnalysisService analysisService;
     @Autowired
     private LogbookResultsPersistService logbookResultsPersistService;
+    @Autowired
+    private TestService testService;
+    @Autowired
+    private NoteService noteService;
+    @Autowired
+    private ImmunohistochemistrySampleService immunohistochemistrySampleService;
+    @Autowired
+    private TestSectionService testSectionService;
+
 
     PathologySampleServiceImpl() {
         super(PathologySample.class);
@@ -89,7 +108,7 @@ public class PathologySampleServiceImpl extends BaseObjectServiceImpl<PathologyS
     @Override
     public void assignPathologist(Integer pathologySampleId, SystemUser systemUser) {
         PathologySample pathologySample = get(pathologySampleId);
-        pathologySample.setTechnician(systemUser);
+        pathologySample.setPathologist(systemUser);
     }
 
     @Override
@@ -107,6 +126,7 @@ public class PathologySampleServiceImpl extends BaseObjectServiceImpl<PathologyS
         if (!GenericValidator.isBlankOrNull(form.getAssignedTechnicianId())) {
             pathologySample.setTechnician(systemUserService.get(form.getAssignedTechnicianId()));
         }
+        pathologySample.setStatus(form.getStatus());
         pathologySample.getBlocks().removeAll(pathologySample.getBlocks());
         if (form.getBlocks() != null)
             form.getBlocks().stream().forEach(e -> e.setId(null));
@@ -133,12 +153,13 @@ public class PathologySampleServiceImpl extends BaseObjectServiceImpl<PathologyS
         if (form.getRelease()) {
             validatePathologySample(pathologySample, form);
         }
-//        if (form.getReferToImmunoHistoChemistry()) {
-//            referToImmunoHistoChemistry(pathologySample, form);
-//        }
+       if (form.getReferToImmunoHistoChemistry()) {
+           referToImmunoHistoChemistry(pathologySample, form);
+       }
     }
 
     private void validatePathologySample(PathologySample pathologySample, PathologySampleForm form) {
+        pathologySample.setStatus(PathologyStatus.COMPLETED);
         Sample sample = pathologySample.getSample();
         Patient patient = sampleService.getPatient(sample);
         ResultsUpdateDataSet actionDataSet = new ResultsUpdateDataSet(form.getSystemUserId());
@@ -160,11 +181,13 @@ public class PathologySampleServiceImpl extends BaseObjectServiceImpl<PathologyS
 
                     if (newResult) {
                         analysis.setRevision("1");
+                         actionDataSet.getNewResults()
+                            .add(new ResultSet(result, null, null, patient, sample, new HashMap<>(), false));
                     } else {
                         analysis.setRevision(String.valueOf(Integer.parseInt(analysis.getRevision()) + 1));
-                    }
-                    actionDataSet.getNewResults()
+                         actionDataSet.getModifiedResults()
                             .add(new ResultSet(result, null, null, patient, sample, new HashMap<>(), false));
+                    }           
 
                     analysis.setStartedDateForDisplay(testResultItem.getTestDate());
 
@@ -190,7 +213,7 @@ public class PathologySampleServiceImpl extends BaseObjectServiceImpl<PathologyS
                                 SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized));
                     }
 
-                    // this code is pulled from LogbookResultsController
+                    // this code is pulled from LogbookResultsRestController
 //                addResult(result, testResultItem, analysis, results.size() > 1, actionDataSet, useTechnicianName);
 //
 //                if (analysisShouldBeUpdated(testResultItem, result, supportReferrals)) {
@@ -210,8 +233,44 @@ public class PathologySampleServiceImpl extends BaseObjectServiceImpl<PathologyS
     }
 
     private void referToImmunoHistoChemistry(PathologySample pathologySample, PathologySampleForm form) {
-        // TODO Auto-generated method stub
+         Test immunoHistologyTest  =  null ;
+         if(StringUtils.isNotBlank(form.getImmunoHistoChemistryTestId())){
+            immunoHistologyTest = testService.get(form.getImmunoHistoChemistryTestId());
+         }
+         if(immunoHistologyTest == null){
+           return;
+         }
+        ImmunohistochemistrySample immunoHistoSample = new ImmunohistochemistrySample();
+        immunoHistoSample.setProgram(pathologySample.getProgram());
+        immunoHistoSample.setQuestionnaireResponseUuid(pathologySample.getQuestionnaireResponseUuid());
+        immunoHistoSample.setSample(pathologySample.getSample());
+        immunoHistoSample.setPathologySample(pathologySample);
+        immunoHistoSample.setReffered(true);
+        immunohistochemistrySampleService.save(immunoHistoSample);
 
+        Analysis currentAnalysis = analysisService.getAnalysesBySampleId(pathologySample.getSample().getId()).get(0);
+        Analysis analysis = new Analysis();
+        analysis.setTest(immunoHistologyTest);
+        analysis.setIsReportable(currentAnalysis.getIsReportable());
+        analysis.setAnalysisType(currentAnalysis.getAnalysisType());
+        analysis.setRevision(currentAnalysis.getRevision());
+        analysis.setStartedDate(DateUtil.getNowAsSqlDate());
+        analysis.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NotStarted));
+        analysis.setParentAnalysis(currentAnalysis);
+        analysis.setSampleItem(currentAnalysis.getSampleItem());
+        TestSection testSection = testSectionService.getTestSectionByName("Immunohistochemistry");
+        analysis.setTestSection(testSection);
+        analysis.setSampleTypeName(currentAnalysis.getSampleTypeName());
+        analysis.setSysUserId(form.getSystemUserId());
+        analysisService.insert(analysis);
+        
+        List<Note> notes = new ArrayList<>();
+        Note note = noteService.createSavableNote(analysis, NoteType.INTERNAL,
+            "Refered From Pathology Programme : "+ pathologySample.getProgram().getProgramName()+ "to Immunohistochemistry", "Refered to Immunohistochemistry" ,form.getSystemUserId());
+        if (!noteService.duplicateNoteExists(note)) {
+            notes.add(note);
+        }
+        noteService.saveAll(notes);
     }
 
     public PathologyConclusion createConclusion(String text, ConclusionType type) {
@@ -233,5 +292,33 @@ public class PathologySampleServiceImpl extends BaseObjectServiceImpl<PathologyS
         request.setValue(text);
         request.setType(type);
         return request;
+    }
+
+    @Override
+    public List<PathologySample> searchWithStatusAndTerm(List<PathologyStatus> statuses, String searchTerm) {
+        List<PathologySample> pathologySamples = baseObjectDAO.getWithStatus(statuses);
+        if (StringUtils.isNotBlank(searchTerm)) {
+            Sample sample = sampleService.getSampleByAccessionNumber(searchTerm);
+            if (sample != null) {
+                pathologySamples = baseObjectDAO.searchWithStatusAndAccesionNumber(statuses, searchTerm);
+            } else {
+                List<PathologySample> filteredpathologySamples = new ArrayList<>();
+                pathologySamples.forEach(pathologySample -> {
+                    Patient patient = sampleService.getPatient(pathologySample.getSample());
+                    if (patient.getPerson().getFirstName().equals(searchTerm)
+                            || patient.getPerson().getLastName().equals(searchTerm)) {
+                        filteredpathologySamples.add(pathologySample);
+                    }
+                });
+                pathologySamples = filteredpathologySamples;
+            }
+        }
+        
+        return pathologySamples;
+    }
+
+    @Override
+    public Long getCountWithStatusBetweenDates(List<PathologyStatus> statuses, Timestamp from, Timestamp to) {
+        return baseObjectDAO.getCountWithStatusBetweenDates(statuses ,from ,to);
     }
 }

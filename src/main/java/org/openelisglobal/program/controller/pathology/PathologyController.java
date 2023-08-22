@@ -1,5 +1,8 @@
 package org.openelisglobal.program.controller.pathology;
 
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -7,6 +10,7 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 
 import org.openelisglobal.common.rest.BaseRestController;
+import org.openelisglobal.program.bean.PathologyDashBoardCount;
 import org.openelisglobal.program.service.PathologyDisplayService;
 import org.openelisglobal.program.service.PathologySampleService;
 import org.openelisglobal.program.valueholder.pathology.PathologyCaseViewDisplayItem;
@@ -38,16 +42,27 @@ public class PathologyController extends BaseRestController {
     @ResponseBody
     public List<PathologyDisplayItem> getFilteredPathologyEntries(@RequestParam(required = false) String searchTerm,
             @RequestParam PathologyStatus... statuses) {
-        return pathologySampleService.getWithStatus(Arrays.asList(statuses)).stream()
+        return pathologySampleService.searchWithStatusAndTerm(Arrays.asList(statuses) ,searchTerm).stream()
                 .map(e -> pathologyDisplayService.convertToDisplayItem(e.getId()))
                 .collect(Collectors.toList());
     }
 
     @GetMapping(value = "/rest/pathology/dashboard/count", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Long> getFilteredPathologyEntries(@RequestParam PathologyStatus... statuses) {
-        return ResponseEntity.ok(pathologySampleService.getCountWithStatus(Arrays.asList(statuses)));
+    public ResponseEntity<PathologyDashBoardCount> getFilteredPathologyEntries() {
+        PathologyDashBoardCount count = new PathologyDashBoardCount();
+        count.setInProgress(pathologySampleService.getCountWithStatus(Arrays.asList(PathologyStatus.GROSSING ,PathologyStatus.CUTTING ,PathologyStatus.GROSSING ,PathologyStatus.SLICING,PathologyStatus.STAINING ,PathologyStatus.PROCESSING)));
+        count.setAwaitingReview(pathologySampleService.getCountWithStatus(Arrays.asList(PathologyStatus.READY_PATHOLOGIST)));
+        count.setAdditionalRequests(pathologySampleService.getCountWithStatus(Arrays.asList(PathologyStatus.ADDITIONAL_REQUEST)));
+        
+        Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
+        Instant weekAgoInstant = Instant.now().minus(7, ChronoUnit.DAYS);
+        Timestamp weekAgoTimestamp = Timestamp.from(weekAgoInstant);
+        
+        count.setComplete(pathologySampleService.getCountWithStatusBetweenDates(Arrays.asList(PathologyStatus.COMPLETED),weekAgoTimestamp ,currentTimestamp));
+        return ResponseEntity.ok(count);
     }
+    
 
     @PostMapping(value = "/rest/pathology/assignTechnician", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody

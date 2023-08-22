@@ -1,6 +1,6 @@
-import { useMemo } from 'react';
+import { useMemo ,useState ,useEffect} from 'react';
 import { assessValue, exist } from '../loadPatientTestData/helpers';
-import { getFromOpeElisServerSync } from "../../../utils/Utils.js";
+import {getFromOpenElisServer} from "../../../utils/Utils.js";
 
 export const getName = (prefix, name) => {
   return prefix ? `${prefix}-${name}` : name;
@@ -32,16 +32,21 @@ const augmentObstreeData = (node, prefix) => {
 
 const useGetManyObstreeData = (patientUuid) => {
  
-  var { data, error, isLoading } = {data : [] , error: null , isLoading: null}
+  const [data, setData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const fetchResultsTree = (resultsTree) => {
-        data  =resultsTree ;
-        error = false ;
-        isLoading = false;
+        setData(resultsTree);
+        setIsLoading(false);
   }
-   if(patientUuid){
-    getFromOpeElisServerSync(`/rest/result-tree?patientId=${patientUuid}` , fetchResultsTree)
+
+  useEffect(() => {
+    if(patientUuid){
+      getFromOpenElisServer(`/rest/result-tree?patientId=${patientUuid}` , fetchResultsTree)
    }
+    
+  }, [patientUuid]);
 
   const result = useMemo(() => {
     return (
@@ -67,7 +72,7 @@ const useGetManyObstreeData = (patientUuid) => {
     );
   }, [data]);
   const roots = result.map((item) => item.data);
-  const loading = result.some((item) => item.loading);
+  const loading = isLoading;
   return { roots, loading, error };
 }
 

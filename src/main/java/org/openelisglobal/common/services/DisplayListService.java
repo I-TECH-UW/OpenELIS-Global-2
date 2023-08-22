@@ -47,7 +47,10 @@ import org.openelisglobal.panel.valueholder.Panel;
 import org.openelisglobal.panel.valueholder.PanelSortOrderComparator;
 import org.openelisglobal.program.service.ProgramService;
 import org.openelisglobal.program.valueholder.Program;
+import org.openelisglobal.program.valueholder.cytology.CytologySample;
+import org.openelisglobal.program.valueholder.cytology.CytologySpecimenAdequacy;
 import org.openelisglobal.program.valueholder.immunohistochemistry.ImmunohistochemistrySample;
+import org.openelisglobal.program.valueholder.immunohistochemistry.ImmunohistochemistrySampleReport;
 import org.openelisglobal.program.valueholder.pathology.PathologySample;
 import org.openelisglobal.provider.service.ProviderService;
 import org.openelisglobal.provider.valueholder.Provider;
@@ -89,10 +92,11 @@ public class DisplayListService implements LocaleChangeListener {
         UNIT_OF_MEASURE_ACTIVE, UNIT_OF_MEASURE_INACTIVE, DICTIONARY_TEST_RESULTS, LAB_COMPONENT,
         SEVERITY_CONSEQUENCES_LIST, SEVERITY_RECURRENCE_LIST, ACTION_TYPE_LIST, LABORATORY_COMPONENT, SAMPLE_NATURE,
         ELECTRONIC_ORDER_STATUSES, METHODS, METHODS_INACTIVE, METHOD_BY_NAME, PRACTITIONER_PERSONS, ORDER_PRIORITY,
-        PROGRAM, IMMUNOHISTOCHEMISTRY_STATUS, PATHOLOGY_STATUS, PATHOLOGY_TECHNIQUES, PATHOLOGIST_REQUESTS,
-        PATHOLOGIST_CONCLUSIONS
-    }
+        PROGRAM, IMMUNOHISTOCHEMISTRY_STATUS, PATHOLOGY_STATUS, CYTOLOGY_SPECIMEN_ADEQUACY_SATISFACTION, PATHOLOGY_TECHNIQUES, PATHOLOGIST_REQUESTS,
+        PATHOLOGIST_CONCLUSIONS ,IMMUNOHISTOCHEMISTRY_REPORT_TYPES ,IMMUNOHISTOCHEMISTRY_MARKERS_TESTS ,CYTOLOGY_STATUS,
+        CYTOLOGY_SATISFACTORY_FOR_EVALUATION ,CYTOLOGY_UN_SATISFACTORY_FOR_EVALUATION
 
+    }
     private static Map<ListType, List<IdValuePair>> typeToListMap;
     private static Map<String, List<IdValuePair>> dictionaryToListMap = new HashMap<>();
 
@@ -195,6 +199,7 @@ public class DisplayListService implements LocaleChangeListener {
 
         typeToListMap.put(ListType.ORDERABLE_TESTS, createOrderableTestList());
         typeToListMap.put(ListType.ALL_TESTS, createTestList());
+        typeToListMap.put(ListType.IMMUNOHISTOCHEMISTRY_MARKERS_TESTS, createImmunoHistoChemistryTestList());
         typeToListMap.put(ListType.TEST_LOCATION_CODE, createDictionaryListForCategory("testLocationCode"));
         typeToListMap.put(ListType.PROGRAM, createProgramList());
         typeToListMap.put(ListType.DICTIONARY_PROGRAM, createDictionaryListForCategory("programs"));
@@ -207,11 +212,16 @@ public class DisplayListService implements LocaleChangeListener {
         typeToListMap.put(ListType.LABORATORY_COMPONENT, createLaboratoryComponentList());
         typeToListMap.put(ListType.ORDER_PRIORITY, createSamplePriorityList());
         typeToListMap.put(ListType.PATHOLOGY_STATUS, createPathologyStatusList());
+        typeToListMap.put(ListType.CYTOLOGY_SPECIMEN_ADEQUACY_SATISFACTION, createCytologySpecimenAdequacySatisfactionList());
+        typeToListMap.put(ListType.CYTOLOGY_STATUS, createCytologyStatusList());
         typeToListMap.put(ListType.IMMUNOHISTOCHEMISTRY_STATUS, createImmunohistochemistryStatusList());
+        typeToListMap.put(ListType.IMMUNOHISTOCHEMISTRY_REPORT_TYPES, createImmunohistochemistryReportTypeList());
         typeToListMap.put(ListType.PATHOLOGY_TECHNIQUES, createDictionaryListForCategory("pathology_techniques"));
+        typeToListMap.put(ListType.CYTOLOGY_SATISFACTORY_FOR_EVALUATION, createDictionaryListForCategory("cytology_adequacy_satisfactory"));
+        typeToListMap.put(ListType.CYTOLOGY_UN_SATISFACTORY_FOR_EVALUATION, createDictionaryListForCategory("cytology_adequacy_unsatisfactory"));
         typeToListMap.put(ListType.PATHOLOGIST_REQUESTS, createDictionaryListForCategory("pathologist_requests"));
         typeToListMap.put(ListType.PATHOLOGIST_CONCLUSIONS, createDictionaryListForCategory("pathologist_conclusions"));
-
+    
     }
 
     private List<IdValuePair> createPathologyStatusList() {
@@ -219,8 +229,23 @@ public class DisplayListService implements LocaleChangeListener {
                 .map(e -> new IdValuePair(e.name(), e.getDisplay())).collect(Collectors.toList());
     }
 
+    private List<IdValuePair> createCytologyStatusList() {
+        return Arrays.asList(CytologySample.CytologyStatus.values()).stream()
+                .map(e -> new IdValuePair(e.name(), e.getDisplay())).collect(Collectors.toList());
+    }
+
     private List<IdValuePair> createImmunohistochemistryStatusList() {
         return Arrays.asList(ImmunohistochemistrySample.ImmunohistochemistryStatus.values()).stream()
+                .map(e -> new IdValuePair(e.name(), e.getDisplay())).collect(Collectors.toList());
+    }
+
+     private List<IdValuePair> createCytologySpecimenAdequacySatisfactionList() {
+        return Arrays.asList(CytologySpecimenAdequacy.SpecimenAdequancySatisfaction.values()).stream()
+                .map(e -> new IdValuePair(e.name(), e.getDisplay())).collect(Collectors.toList());
+    }
+
+     private List<IdValuePair> createImmunohistochemistryReportTypeList() {
+        return Arrays.asList(ImmunohistochemistrySampleReport.ImmunoHistologyReportType.values()).stream()
                 .map(e -> new IdValuePair(e.name(), e.getDisplay())).collect(Collectors.toList());
     }
 
@@ -355,8 +380,11 @@ public class DisplayListService implements LocaleChangeListener {
 
     public synchronized void refreshLists() {
         typeToListMap = new HashMap<>();
+        typeToListMap.put(ListType.CYTOLOGY_STATUS, createCytologyStatusList());
         typeToListMap.put(ListType.PATHOLOGY_STATUS, createPathologyStatusList());
+        typeToListMap.put(ListType.CYTOLOGY_SPECIMEN_ADEQUACY_SATISFACTION, createCytologySpecimenAdequacySatisfactionList());
         typeToListMap.put(ListType.IMMUNOHISTOCHEMISTRY_STATUS, createImmunohistochemistryStatusList());
+        typeToListMap.put(ListType.IMMUNOHISTOCHEMISTRY_REPORT_TYPES, createImmunohistochemistryReportTypeList());
         typeToListMap.put(ListType.HOURS, createHourList());
         typeToListMap.put(ListType.MINS, createMinList());
         typeToListMap.put(ListType.SAMPLE_TYPE, createTypeOfSampleList());
@@ -390,6 +418,7 @@ public class DisplayListService implements LocaleChangeListener {
         typeToListMap.put(ListType.PANELS_INACTIVE, createPanelList(true));
         typeToListMap.put(ListType.ORDERABLE_TESTS, createOrderableTestList());
         typeToListMap.put(ListType.ALL_TESTS, createTestList());
+        typeToListMap.put(ListType.IMMUNOHISTOCHEMISTRY_MARKERS_TESTS, createImmunoHistoChemistryTestList());
         typeToListMap.put(ListType.REJECTION_REASONS, createDictionaryListForCategory("resultRejectionReasons"));
         typeToListMap.put(ListType.REFERRAL_REASONS, createReferralReasonList());
         typeToListMap.put(ListType.REFERRAL_ORGANIZATIONS, createReferralOrganizationList());
@@ -414,6 +443,8 @@ public class DisplayListService implements LocaleChangeListener {
         typeToListMap.put(ListType.PATHOLOGY_TECHNIQUES, createDictionaryListForCategory("pathology_techniques"));
         typeToListMap.put(ListType.PATHOLOGIST_REQUESTS, createDictionaryListForCategory("pathologist_requests"));
         typeToListMap.put(ListType.PATHOLOGIST_CONCLUSIONS, createDictionaryListForCategory("pathologist_conclusions"));
+        typeToListMap.put(ListType.CYTOLOGY_SATISFACTORY_FOR_EVALUATION, createDictionaryListForCategory("cytology_adequacy_satisfactory"));
+        typeToListMap.put(ListType.CYTOLOGY_UN_SATISFACTORY_FOR_EVALUATION, createDictionaryListForCategory("cytology_adequacy_unsatisfactory"));
         
         
 
@@ -437,6 +468,11 @@ public class DisplayListService implements LocaleChangeListener {
         case ALL_TESTS: {
             testService.refreshTestNames();
             typeToListMap.put(ListType.ALL_TESTS, createTestList());
+            break;
+        }
+        case IMMUNOHISTOCHEMISTRY_MARKERS_TESTS: {
+            testService.refreshTestNames();
+            typeToListMap.put(ListType.IMMUNOHISTOCHEMISTRY_MARKERS_TESTS, createImmunoHistoChemistryTestList());
             break;
         }
         case ORDERABLE_TESTS: {
@@ -629,6 +665,27 @@ public class DisplayListService implements LocaleChangeListener {
             });
         }
 
+        return tests;
+    }
+
+    private List<IdValuePair> createImmunoHistoChemistryTestList() {
+        ArrayList<IdValuePair> tests = new ArrayList<>();
+        String id = testSectionService.getTestSectionByName("Immunohistochemistry").getId();
+        if (id == null) {
+            return tests;
+        }
+        List<Test> testList = testService.getTestsByTestSectionId(id);
+        for (Test test : testList) {
+            tests.add(new IdValuePair(test.getId(), TestServiceImpl.getLocalizedTestNameWithType(test)));
+            
+            Collections.sort(tests, new Comparator<IdValuePair>() {
+                
+                @Override
+                public int compare(IdValuePair o1, IdValuePair o2) {
+                    return o1.getValue().compareTo(o2.getValue());
+                }
+            });
+        }
         return tests;
     }
 

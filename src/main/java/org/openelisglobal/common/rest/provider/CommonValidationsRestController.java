@@ -1,18 +1,26 @@
 package org.openelisglobal.common.rest.provider;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
 
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.provider.query.PatientSearchResults;
 import org.openelisglobal.common.provider.validation.IAccessionNumberValidator;
 import org.openelisglobal.common.provider.validation.ProgramAccessionValidator;
 import org.openelisglobal.common.services.PhoneNumberService;
+import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.project.service.ProjectService;
 import org.openelisglobal.project.valueholder.Project;
 import org.openelisglobal.sample.util.AccessionNumberUtil;
 import org.openelisglobal.sample.util.CI.ProjectForm;
+import org.openelisglobal.search.service.SearchResultsService;
+import org.openelisglobal.spring.util.SpringContext;
+import org.owasp.encoder.Encode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -28,6 +36,8 @@ public class CommonValidationsRestController {
 
 	@Autowired
 	protected ProjectService projectService;
+
+	protected SearchResultsService searchResultsService = SpringContext.getBean(SearchResultsService.class);
 
 	public CommonValidationsRestController() {
 		this.responseObject = new ResponseObject();
@@ -174,6 +184,52 @@ public class CommonValidationsRestController {
 		return responseObject;
 	}
 
+	@GetMapping(value = "subjectNumberValidationProvider", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public ResponseObject validateSubjectNumberAndNationalId(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+
+		String fieldId = request.getParameter("fieldId");
+		String number = request.getParameter("subjectNumber");
+		String numberType = request.getParameter("numberType");
+		String STNumber = numberType.equals("STnumber") ? number : null;
+		String subjectNumber = numberType.equals("subjectNumber") ? number : null;
+		String nationalId = numberType.equals("nationalId") ? number : null;
+
+		responseObject.setStatus(false);
+		String	queryResponse = "";
+		// We just care about duplicates but blank values do not count as duplicates
+		if (!(GenericValidator.isBlankOrNull(STNumber) && GenericValidator.isBlankOrNull(subjectNumber)
+				&& GenericValidator.isBlankOrNull(nationalId))) {
+			List<PatientSearchResults> results = searchResultsService.getSearchResultsExact(null, null, STNumber,
+					subjectNumber, nationalId, null, null, null, null, null);
+
+			boolean allowDuplicateSubjectNumber = ConfigurationProperties.getInstance()
+					.isPropertyValueEqual(ConfigurationProperties.Property.ALLOW_DUPLICATE_SUBJECT_NUMBERS, "true");
+			boolean allowDuplicateNationalId = ConfigurationProperties.getInstance()
+					.isPropertyValueEqual(ConfigurationProperties.Property.ALLOW_DUPLICATE_NATIONAL_IDS, "true");
+			if (!results.isEmpty() && !GenericValidator.isBlankOrNull(subjectNumber)) {
+				 queryResponse = (allowDuplicateSubjectNumber ? "warning#" + MessageUtil.getMessage("alert.warning")
+						: "fail#" + MessageUtil.getMessage("alert.error")) + ": "
+						+ MessageUtil.getMessage("error.duplicate.subjectNumber.warning");
+				responseObject.setBody(queryResponse);
+
+			} else if (!results.isEmpty() && !GenericValidator.isBlankOrNull(nationalId)) {
+			 	queryResponse = (allowDuplicateNationalId ? "warning#" + MessageUtil.getMessage("alert.warning")
+						: "fail#" + MessageUtil.getMessage("alert.error")) + ": "
+						+ MessageUtil.getMessage("error.duplicate.subjectNumber.warning");
+				responseObject.setBody(queryResponse);
+			} else if (!results.isEmpty()) {
+				queryResponse = "fail#" + MessageUtil.getMessage("alert.error") + ": "
+						+ MessageUtil.getMessage("error.duplicate.subjectNumber.warning");
+				responseObject.setBody(queryResponse);
+			}else{
+				responseObject.setStatus(true);
+				responseObject.setBody("Valid");
+			}
+		}
+		return responseObject;
+	}
 	public static class ResponseObject {
 
 		private boolean status = false;

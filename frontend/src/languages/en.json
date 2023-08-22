@@ -90,5 +90,8 @@
     "testcalculation.label.insertOperation" : "Insert Operation" ,
     "testcalculation.label.selectDictionaryValue" : "Select Dictionary Value" ,
     "testcalculation.label.textValue" : "Text Value" ,
-    "testcalculation.label.finalresult" : "Final Result" 
+    "testcalculation.label.finalresult" : "Final Result",
+    "advanced.search": "Advanced Search",
+    "pathology.label.title" : "Pathology",
+    "immunohistochemistry.label.title" : "Immunohistochemistry"
 }

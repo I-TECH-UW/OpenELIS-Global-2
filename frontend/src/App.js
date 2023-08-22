@@ -24,11 +24,15 @@ import AddOrder from "./components/addOrder/Index";
 import ModifyOrder from "./components/modifyOrder/Index";
 import RoutineReports from "./components/Reports/Routine";
 import StudyReports from "./components/Reports/Study";
-import StudyValidation from "./components/validation/Study";
+// import StudyValidation from "./components/validation/Study";
+import StudyValidation from "./components/validation/Index";
 import PathologyDashboard from "./components/pathology/PathologyDashboard";
+import CytologyDashboard from "./components/cytology/CytologyDashBoard";
+import CytologyCaseView from "./components/cytology/CytologyCaseView";
 import PathologyCaseView from "./components/pathology/PathologyCaseView";
 import ImmunohistochemistryDashboard from "./components/immunohistochemistry/ImmunohistochemistryDashboard"
 import ImmunohistochemistryCaseView from "./components/immunohistochemistry/ImmunohistochemistryCaseView"
+import RoutedResultsViewer  from './components/patient/resultsViewer/results-viewer.tsx'
 
 export default function App() {
 
@@ -156,7 +160,8 @@ export default function App() {
                   path="/PathologyDashboard"
                   exact
                   component={() => <PathologyDashboard />}
-                  role={["Pathologist", "Reception"]}
+                  role=""
+                  labUnitRole={{"Pathology": ["Results"]}}
                   config={appConfig}
                   onAuth={onAuth}
                   logout={logout}
@@ -166,7 +171,8 @@ export default function App() {
                   path="/PathologyCaseView/:pathologySampleId"
                   exact
                   component={() => <PathologyCaseView />}
-                  role={["Pathologist", "Reception"]}
+                  role=""
+                  labUnitRole={{"Pathology": ["Results"]}}
                   config={appConfig}
                   onAuth={onAuth}
                   logout={logout}
@@ -176,7 +182,8 @@ export default function App() {
                   path="/ImmunohistochemistryDashboard"
                   exact
                   component={() => <ImmunohistochemistryDashboard />}
-                  role={["Pathologist", "Reception"]}
+                  role=""
+                  labUnitRole={{"Immunohistochemistry": ["Results"]}}
                   config={appConfig}
                   onAuth={onAuth}
                   logout={logout}
@@ -186,7 +193,30 @@ export default function App() {
                   path="/ImmunohistochemistryCaseView/:immunohistochemistrySampleId"
                   exact
                   component={() => <ImmunohistochemistryCaseView />}
-                  role={["Pathologist", "Reception"]}
+                  role=""
+                  labUnitRole={{"Immunohistochemistry": ["Results"]}}
+                  config={appConfig}
+                  onAuth={onAuth}
+                  logout={logout}
+                  isLoggedIn={isLoggedIn}
+                />
+                 <SecureRoute
+                  path="/CytologyDashboard"
+                  exact
+                  component={() => <CytologyDashboard />}
+                  role=""
+                  labUnitRole={{"Cytology": ["Results"]}}
+                  config={appConfig}
+                  onAuth={onAuth}
+                  logout={logout}
+                  isLoggedIn={isLoggedIn}
+                />
+                <SecureRoute
+                  path="/CytologyCaseView/:cytologySampleId"
+                  exact
+                  component={() => <CytologyCaseView />}
+                  role=""
+                  labUnitRole={{"Cytology": ["Results"]}}
                   config={appConfig}
                   onAuth={onAuth}
                   logout={logout}
@@ -233,7 +263,17 @@ export default function App() {
                   isLoggedIn={isLoggedIn}
                 />
                 <SecureRoute
-                  path="/WorkplanByUnit"
+                  path="/PatientResults/:patientId"
+                  exact
+                  component={() => <RoutedResultsViewer />}
+                  role="Reception"
+                  config={appConfig}
+                  onAuth={onAuth}
+                  logout={logout}
+                  isLoggedIn={isLoggedIn}
+                />
+                <SecureRoute
+                  path="/WorkPlanByTestSection"
                   exact
                   component={() => <Workplan type="unit"/>}
                   role="Results"
@@ -276,7 +316,7 @@ export default function App() {
                   <SecureRoute path="/AccessionResults" exact component={() => <Admin />} role="Global Administrator" config={appConfig} onAuth={onAuth} logout={logout} isLoggedIn={isLoggedIn} />
                   <SecureRoute path="/RoutineReports" exact component={() => <RoutineReports />} role="Global Administrator" config={appConfig} onAuth={onAuth} logout={logout} isLoggedIn={isLoggedIn} />
                   <SecureRoute path="/StudyReports" exact component={() => <StudyReports />} role="Global Administrator" config={appConfig} onAuth={onAuth} logout={logout} isLoggedIn={isLoggedIn} />
-                  <SecureRoute path="/validationStudy" exact component={() => <StudyValidation />} role="Global Administrator" config={appConfig} onAuth={onAuth} logout={logout} isLoggedIn={isLoggedIn} />
+                  <SecureRoute path="/validation" exact component={() => <StudyValidation />} role="Global Administrator" config={appConfig} onAuth={onAuth} logout={logout} isLoggedIn={isLoggedIn} />
               </Switch>
             </Layout>
           </Router>

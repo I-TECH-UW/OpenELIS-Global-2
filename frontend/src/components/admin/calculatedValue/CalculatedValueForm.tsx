@@ -5,7 +5,7 @@ import AutoComplete from '../../common/AutoComplete.js'
 import { Add, Subtract, Save } from '@carbon/react/icons';
 import { FormattedMessage } from "react-intl";
 import { CalculatedValueFormValues, CalculatedValueFormModel, OperationType, OperationModel } from '../../formModel/innitialValues/CalculatedValueFormSchema'
-import { getFromOpenElisServer, postToOpenElisServer, getFromOpeElisServerSync } from '../../utils/Utils.js';
+import { getFromOpenElisServer, postToOpenElisServer} from '../../utils/Utils.js';
 import { NotificationContext } from "../../layout/Layout";
 import { AlertDialog, NotificationKinds } from "../../common/CustomNotification";
 interface CalculatedValueProps {
@@ -55,7 +55,7 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
   const [showConfirmBox, setShowConfirmBox] = useState(true);
   const [sampleList, setSampleList] = useState([]);
   const [sampleTestList, setSampleTestList] = useState(TestListObj);
-  const [loaded, setLoaded] = useState(false);
+  const [loading, setLoading] = useState(true);
   const { notificationVisible, setNotificationVisible, setNotificationBody } = useContext<NotificationContextType>(NotificationContext);
   const [mathFunctions, setMathFunctions] = useState([mathFunction]);
 
@@ -89,6 +89,7 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
           })
         });
       }
+      setLoading(false)
     }
   }
 
@@ -208,7 +209,6 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
 
   const fetchTests = (testList: any, field: TestListField, index: number, item_index: number) => {
     loadSampleTestList(field, index, item_index, testList);
-    setLoaded(true)
   }
 
   function handleTestSelection(id: number, index: number) {
@@ -454,6 +454,9 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
   return (
     <div className='adminPageContent'>
       {notificationVisible === true ? <AlertDialog /> : ""}
+      {loading && (
+        <Loading></Loading>
+      )}
       {calculationList.map((calculation, index) => (
         <div key={index} className="rules" >
           <div className="first-division">

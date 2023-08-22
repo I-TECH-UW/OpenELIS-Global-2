@@ -74,7 +74,7 @@ class OEHeader extends React.Component {
     return (
       <>
         <picture>
-          <img className="logo" src={`images/openelis_logo.png`} alt="logo" />
+          <img className="logo" src={`../images/openelis_logo.png`} alt="logo" />
         </picture>
       </>
     );
@@ -196,10 +196,10 @@ class OEHeader extends React.Component {
                             <SideNavMenuItem href={config.serverBaseUrl + "/NCECorrectiveAction"}>Corrective actions</SideNavMenuItem>
                           </SideNavMenu>
                           <SideNavMenu aria-label="Workplan" title="Workplan">
-                            <SideNavMenuItem href={config.serverBaseUrl + "/WorkPlanByTest?type=test"}>By Test Type</SideNavMenuItem>
-                            <SideNavMenuItem href={config.serverBaseUrl + "/WorkPlanByPanel?type=panel"}>By Panel Type</SideNavMenuItem>
-                            <SideNavMenuItem href={config.serverBaseUrl + "/WorkPlanByTestSection?type="}>By Unit</SideNavMenuItem>
-                            <SideNavMenuItem href={config.serverBaseUrl + "/WorkPlanByPriority?type=priority"}>By Priority</SideNavMenuItem>
+                            <SideNavMenuItem href={"/WorkplanByTest"}>By Test Type</SideNavMenuItem>
+                            <SideNavMenuItem href={ "/WorkPlanByPanel"}>By Panel Type</SideNavMenuItem>
+                            <SideNavMenuItem href={ "/WorkPlanByTestSection"}>By Unit</SideNavMenuItem>
+                            <SideNavMenuItem href={ "/WorkplanByPriority"}>By Priority</SideNavMenuItem>
                           </SideNavMenu>
                           <SideNavMenu
                             aria-label="Pathology" title="Pathology"                    >
@@ -208,6 +208,10 @@ class OEHeader extends React.Component {
                           <SideNavMenu
                             aria-label="Immunohistochemistry" title="Immunohistochemistry"                    >
                             <SideNavMenuItem href={"/ImmunohistochemistryDashboard"}>Dashboard</SideNavMenuItem>
+                          </SideNavMenu>
+                          <SideNavMenu
+                            aria-label="Cytology" title="Cytology"                    >
+                            <SideNavMenuItem href={"/CytologyDashboard"}>Dashboard</SideNavMenuItem>
                           </SideNavMenu>
                           <SideNavMenu aria-label="Results" title="Results">
                             <SideNavMenuItem href={config.serverBaseUrl + "/LogbookResults?type="}>Enter by Unit</SideNavMenuItem>

@@ -89,7 +89,24 @@ function SecureRoute(props) {
 
 
     const hasPermission = (userDetails = userSessionDetails) => {
-        return !props.role || [].concat(props.role).some(role => userDetails.roles && userDetails.roles.includes(role))
+        var hasRole = !props.role || [].concat(props.role).some(role => userDetails.roles && userDetails.roles.includes(role))
+        var containsLabUnitRole = false;
+        if (props.labUnitRole) {
+            Object.keys(props.labUnitRole).forEach(labunit => {
+                if (userDetails.userLabRolesMap) {
+                    const userRoles = userDetails.userLabRolesMap["AllLabUnits"]? userDetails.userLabRolesMap["AllLabUnits"] : userDetails.userLabRolesMap[labunit] || [];
+                    const roles = props.labUnitRole[labunit];
+                    roles.forEach(r => {
+                        if (userRoles.includes(r)) {
+                            containsLabUnitRole = true;
+                        }
+                    })
+
+                }
+            })
+        }
+        var hasLabUnitRole = !props.labUnitRole || containsLabUnitRole
+        return hasRole && hasLabUnitRole
     }
 
     const handleOnAction = (event) => {

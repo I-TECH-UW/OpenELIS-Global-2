@@ -1,15 +1,21 @@
 package org.openelisglobal.program.valueholder.immunohistochemistry;
 
+import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.openelisglobal.program.valueholder.ProgramSample;
+import org.openelisglobal.program.valueholder.pathology.PathologySample;
 import org.openelisglobal.systemuser.valueholder.SystemUser;
 
 @Entity
@@ -46,6 +52,18 @@ public class ImmunohistochemistrySample extends ProgramSample {
     @NotNull
     private ImmunohistochemistryStatus status = ImmunohistochemistryStatus.IN_PROGRESS;
 
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "immunohistochemistry_sample_id")
+    private List<ImmunohistochemistrySampleReport> reports;
+
+    @Valid
+    @OneToOne
+    @JoinColumn(name = "pathology_sample_id", referencedColumnName = "id")
+    private PathologySample pathologySample;
+
+    @Column(name = "reffered")
+    private Boolean reffered = false;
+
     public ImmunohistochemistryStatus getStatus() {
         return status;
     }
@@ -70,4 +88,27 @@ public class ImmunohistochemistrySample extends ProgramSample {
         this.pathologist = pathologist;
     }
 
+    public List<ImmunohistochemistrySampleReport> getReports() {
+        return reports;
+    }
+
+    public void setReports(List<ImmunohistochemistrySampleReport> reports) {
+        this.reports = reports;
+    }
+
+    public PathologySample getPathologySample() {
+        return pathologySample;
+    }
+
+    public void setPathologySample(PathologySample pathologySample) {
+        this.pathologySample = pathologySample;
+    }
+
+    public Boolean getReffered() {
+        return reffered;
+    }
+
+    public void setReffered(Boolean reffered) {
+        this.reffered = reffered;
+    }
 }

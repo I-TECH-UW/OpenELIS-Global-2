@@ -19,6 +19,7 @@ import {
     Pagination,
     Select,
     SelectItem,
+    Row
 } from '@carbon/react';
 import DataTable from 'react-data-table-component';
 import { Formik, Field } from "formik";
@@ -60,8 +61,12 @@ export class SearchResultForm extends React.Component {
         this.state = {
             doRange: true,
             finished: true,
+            tests: [],
+            analysisStatusTypes: [],
+            sampleStatusTypes: [],
         }
     }
+    _isMounted = false;
 
     setResultsWithId = (results) => {
         if (results) {
@@ -73,6 +78,10 @@ export class SearchResultForm extends React.Component {
         } else {
             this.props.setResults?.({ testResult: [] });
         }
+    }
+
+    handleAdvancedSearch = () =>{
+
     }
 
     handleDoRangeChange = () => {
@@ -88,11 +97,44 @@ export class SearchResultForm extends React.Component {
     handleSubmit = (values) => {
         this.setResults({ testResult: [] })
         var searchEndPoint = "/rest/ReactLogbookResultsByRange?" +
-            "&labNumber=" + values.labNumber +
+            "labNumber=" + values.accessionNumber +
+            "&nationalId="+ values.nationalId +
+            "&firstName="+ values.firstName +
+            "&lastName="+ values.lastName +
+            "&collectionDate="+values.collectionDate +
+            "&recievedDate="+values.recievedDate +
+            "&selectedTest="+values.testName +
+            "&selectedSampleStatus="+values.sampleStatusType +
+            "&selectedAnalysisStatus="+values.analysisStatus +
             "&doRange=" + this.state.doRange +
             "&finished=" + this.state.finished
         getFromOpenElisServer(searchEndPoint, this.setResultsWithId);
     };
+
+    getTests = (tests) => {
+        if (this._isMounted) {
+            this.setState({ tests: tests });
+        }
+    }
+    getAnalysisStatusTypes  = (analysisStatusTypes) => {
+        if (this._isMounted) {
+            this.setState({ analysisStatusTypes: analysisStatusTypes });
+        }
+    }
+
+    getSampleStatusTypes  = (sampleStatusTypes) => {
+        if (this._isMounted) {
+            this.setState({ sampleStatusTypes: sampleStatusTypes });
+        }
+    }
+
+    componentDidMount() {
+        this._isMounted = true;
+        getFromOpenElisServer("/rest/health-regions", this.fetchHeathRegions);
+        getFromOpenElisServer("/rest/test-list", this.getTests);
+        getFromOpenElisServer("/rest/analysis-status-types", this.getAnalysisStatusTypes);
+        getFromOpenElisServer("/rest/sample-status-types", this.getSampleStatusTypes);
+    }
 
     render() {
         const { page, pageSize } = this.state;
@@ -135,14 +177,155 @@ export class SearchResultForm extends React.Component {
                                         </Section>
                                     </Section>
                                 </FormLabel>
-                                <Field name="labNumber"
+
+                                <Row lg={12}>
+                                <div className="inlineDiv">
+
+                                <Field name="accessionNumber"
                                 >
                                     {({ field }) =>
                                         <TextInput
-                                            className="searchLabNumber"
-                                            name={field.name} id={field.name} />
+                                            placeholder={"Enter LabNo"}
+                                            className="searchLabNumber inputText"
+                                            name={field.name} id={field.name} labelText=""/>
                                     }
                                 </Field>
+
+                                    <Field name="nationalId"
+                                    >
+                                        {({ field }) =>
+                                            <TextInput
+                                                placeholder={"Enter Patient National Id"}
+                                                className="inputText"
+                                                name={field.name} id={field.name}  labelText=""/>
+                                        }
+                                    </Field>
+                                </div>
+                                <div className="inlineDiv">
+                                    <Field name="firstName">
+                                        {({ field }) =>
+                                            <TextInput
+                                                placeholder={"Enter Patient First name"}
+                                                className="searchFirstName inputText"
+                                                name={field.name} id={field.name}  labelText=""/>
+                                        }
+                                    </Field>
+
+                                    <Field name="lastName">
+                                        {({ field }) =>
+                                            <TextInput
+                                                placeholder={"Enter Patient last name"}
+                                                className="searchLastName inputText"
+                                                name={field.name} id={field.name}  labelText=""/>
+                                        }
+                                    </Field>
+                                </div>
+                            </Row>
+                                <div className="advancedSearchFilters">
+                                    <Row lg={12}>
+                                        <div className="inlineDiv">
+                                            <Field name="collectionDate"
+                                            >
+                                                {({ field }) =>
+                                                    <TextInput
+                                                        placeholder={"Collection Date(dd/mm/yyyy)"}
+                                                        className="collectionDate inputText"
+                                                        name={field.name} id={field.name}  labelText=""/>
+                                                }
+                                            </Field>
+                                            <Field name="recievedDate"
+                                            >
+                                                {({ field }) =>
+                                                    <TextInput
+                                                        placeholder={"Received Date(dd/mm/yyyy)"}
+                                                        className="receivedDate inputText"
+                                                        name={field.name} id={field.name}  labelText=""/>
+                                                }
+                                            </Field>
+                                        </div>
+                                        <div className="inlineDiv">
+                                            <Field name="testName"
+                                            >
+                                                {({ field }) =>
+                                                    <Select
+                                                        className="analysisStatus inputText"
+                                                        labelText="Select Test Name"
+                                                        name={field.name} id={field.name}>
+                                                        <SelectItem
+                                                            text=""
+                                                            value=""
+                                                        />
+                                                        {
+                                                            this.state.tests.map((test,index)=>{
+                                                                return(
+                                                                    <SelectItem
+                                                                        key={index}
+                                                                        text={test.value}
+                                                                        value={test.id} />
+                                                                )
+                                                            })
+                                                        }
+                                                    </Select>
+                                                }
+                                            </Field>
+                                            <Field name="analysisStatus"
+                                            >
+                                                {({ field }) =>
+                                                    <Select
+                                                        className="analysisStatus inputText"
+                                                        labelText="Select Analysis Status"
+                                                        name={field.name} id={field.name}
+
+                                                    >
+                                                        <SelectItem
+                                                            text=""
+                                                            value=""
+                                                        />
+                                                        {
+                                                            this.state.analysisStatusTypes.map((test,index)=>{
+                                                                return(
+                                                                    <SelectItem
+                                                                        key={index}
+                                                                        text={test.value}
+                                                                        value={test.id} />
+                                                                )
+                                                            })
+                                                        }
+                                                    </Select>
+                                                }
+                                            </Field>
+
+                                            <Field name="sampleStatusType"
+                                            >
+                                                {({ field }) =>
+                                                    <Select
+                                                        className="sampleStatus inputText"
+                                                        labelText="Select Sample Status"
+                                                        name={field.name} id={field.name}
+
+                                                    >
+                                                        <SelectItem
+                                                            text=""
+                                                            value=""
+                                                        />
+                                                        {
+                                                            this.state.sampleStatusTypes.map((test,index)=>{
+                                                                return(
+                                                                    <SelectItem
+                                                                        key={index}
+                                                                        text={test.value}
+                                                                        value={test.id} />
+                                                                )
+                                                            })
+                                                        }
+                                                    </Select>
+                                                }
+                                            </Field>
+                                        </div>
+
+
+                                    </Row>
+                                </div>
                                 <Grid>
                                     <Column lg={2}>
                                         <Field name="doRange"
@@ -172,9 +355,17 @@ export class SearchResultForm extends React.Component {
                                         </Field>
                                     </Column>
                                 </Grid>
-                                <Button type="submit" id="submit">
+
+                                <Column lg={6}>
+                                <Button type="submit" id="submit" className="searchResultsBtn">
                                     <FormattedMessage id="label.button.search" />
                                 </Button>
+
+                                <Button kind="secondary" className="advancedSearchResultsBtn"
+                                        onClick={this.handleAdvancedSearch}>
+                                    <FormattedMessage id="advanced.search" />
+                                </Button>
+                            </Column>
                             </Stack>
                         </Form>
                     )}
