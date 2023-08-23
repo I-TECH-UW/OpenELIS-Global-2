@@ -411,10 +411,10 @@ const SampleType = (props) => {
 
                 <CustomCheckBox id={"reject_" + index} onChange={(value) => handleRejection(value)}
                                 label="Reject Sample"/>
-                <CustomSelect id={"rejectedReasonId_" + index} options={rejectSampleReasons}
+                { sampleXml.rejected && <CustomSelect id={"rejectedReasonId_" + index} options={rejectSampleReasons}
                               disabled={rejectionReasonsDisabled}
                               defaultSelect={defaultSelect}
-                              onChange={(e) => handleReasons(e)}/>
+                              onChange={(e) => handleReasons(e)}/> }
 
                 <div className="inlineDiv">
 

@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react';
-import {Button, Row, TextInput} from "@carbon/react";
+import React, {useEffect} from 'react';
+import {Button, Row} from "@carbon/react";
 import config from "../../config.json";
 import {SampleOrderFormValues} from "../formModel/innitialValues/OrderEntryFormValues";
 import {sampleObject} from "./Index";
@@ -7,18 +7,9 @@ import {sampleObject} from "./Index";
 
 const OrderSuccessMessage = (props) => {
     const {orderFormValues, setOrderFormValues, setSamples, setPage} = props;
-    const [allowPrintBarCodes, setAllowPrintBarCodes] = useState(false);
-    const [numberOfPrints, setNumberOfPrints] = useState(1);
-
 
     const handlePrintBarCode = () => {
-        setAllowPrintBarCodes(true)
-    }
-    const handleNumberOfPrints = (e) => {
-        setNumberOfPrints(e.target.value);
-    }
-    const confirmPrintHandler = () => {
-        let barcodesPdf = config.serverBaseUrl + `/LabelMakerServlet?labNo=${orderFormValues.sampleOrderItems.labNo}&type=order&quantity=${numberOfPrints}`;
+        let barcodesPdf = config.serverBaseUrl + `/LabelMakerServlet?labNo=${orderFormValues.sampleOrderItems.labNo}&type=order&quantity=${1}`;
         window.open(barcodesPdf);
     }
 
@@ -71,18 +62,6 @@ const OrderSuccessMessage = (props) => {
             <Row>
                 <Button className="" onClick={handlePrintBarCode}>Print Barcode</Button>
             </Row>
-            {allowPrintBarCodes &&
-                <Row>
-                    <div className="inlineDiv">
-                        <TextInput id="quatityOfBarCodes" value={numberOfPrints} onChange={(e) => {
-                            handleNumberOfPrints(e)
-                        }} labelText="Number to Print"/>
-                        <Button kind="danger" className="confirmPrintCodeBtn" onClick={confirmPrintHandler}
-                                size='sm'>Confirm</Button>
-                    </div>
-                </Row>
-            }
-
             <Row>
                 {orderFormValues.rememberSiteAndRequester &&
                     <Button className="placeAnotherOrderBtn" kind="tertiary" onClick={handleAnotherSiteOrder}>Place same
