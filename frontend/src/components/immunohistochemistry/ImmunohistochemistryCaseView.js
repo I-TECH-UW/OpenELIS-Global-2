@@ -117,7 +117,7 @@ function ImmunohistochemistryCaseView() {
       var searchEndPoint = "/rest/ReactLogbookResultsByRange?" +
           "labNumber=" + immunohistochemistrySampleInfo.labNumber +
           "&doRange=" + false +
-          "&finished=" + false +
+          "&finished=" + true +
           "&nationalId=" + 
           "&firstName=" + 
           "&lastName=" + 
