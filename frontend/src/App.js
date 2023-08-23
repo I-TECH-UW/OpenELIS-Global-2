@@ -8,7 +8,8 @@ import { IntlProvider } from "react-intl";
 import Layout from "./components/layout/Layout";
 import Home from "./components/Home";
 import Login from "./components/Login";
-import { Admin, Result } from "./components";
+import { Admin } from "./components";
+import ResultSearch from "./components/resultPage/ResultSearch"
 import UserSessionDetailsContext from "./UserSessionDetailsContext"
 import "./App.css";
 import messages_en from "./languages/en.json";
@@ -312,7 +313,7 @@ export default function App() {
                   logout={logout}
                   isLoggedIn={isLoggedIn}
                 />
-                  <SecureRoute path="/result" exact component={() => <Result />} role="Global Administrator" config={appConfig} onAuth={onAuth} logout={logout} isLoggedIn={isLoggedIn} />
+                  <SecureRoute path="/result" exact component={() => <ResultSearch />} role="Global Administrator" config={appConfig} onAuth={onAuth} logout={logout} isLoggedIn={isLoggedIn} />
                   <SecureRoute path="/AccessionResults" exact component={() => <Admin />} role="Global Administrator" config={appConfig} onAuth={onAuth} logout={logout} isLoggedIn={isLoggedIn} />
                   <SecureRoute path="/RoutineReports" exact component={() => <RoutineReports />} role="Global Administrator" config={appConfig} onAuth={onAuth} logout={logout} isLoggedIn={isLoggedIn} />
                   <SecureRoute path="/StudyReports" exact component={() => <StudyReports />} role="Global Administrator" config={appConfig} onAuth={onAuth} logout={logout} isLoggedIn={isLoggedIn} />

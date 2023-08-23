@@ -214,9 +214,7 @@ class OEHeader extends React.Component {
                             <SideNavMenuItem href={"/CytologyDashboard"}>Dashboard</SideNavMenuItem>
                           </SideNavMenu>
                           <SideNavMenu aria-label="Results" title="Results">
-                            <SideNavMenuItem href={config.serverBaseUrl + "/LogbookResults?type="}>Enter by Unit</SideNavMenuItem>
-                            <SideNavMenuItem href="/result">Search</SideNavMenuItem>
-                            <SideNavMenuItem href={config.serverBaseUrl + "/ReferredOutTests"}>Referred Tests</SideNavMenuItem>
+                            <SideNavMenuItem href="/result">Search Results</SideNavMenuItem>
                           </SideNavMenu>
                           <SideNavMenu
                             aria-label="Validation" title="Validation"                    >
