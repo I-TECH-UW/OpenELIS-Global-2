@@ -27,7 +27,6 @@ public class CytologySample extends ProgramSample {
         SCREENING("Screening"),
         READY_FOR_CYTOPATHOLOGIST("Ready for Cytopathologist"),
         COMPLETED("Completed");
-       
         
         private String display;
         
@@ -59,10 +58,13 @@ public class CytologySample extends ProgramSample {
     @JoinColumn(name = "cytology_sample_id")
     private List<CytologySlide> slides;
     
-    @Valid
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "specimen_adequacy_id", referencedColumnName = "id")
     private CytologySpecimenAdequacy specimenAdequacy;
+    
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "cytology_diagnosis_id", referencedColumnName = "id")
+    private CytologyDiagnosis diagnosis;
     
     public SystemUser getTechnician() {
         return technician;
@@ -87,7 +89,7 @@ public class CytologySample extends ProgramSample {
     public void setSlides(List<CytologySlide> slides) {
         this.slides = slides;
     }
-     
+    
     public SystemUser getCytoPathologist() {
         return cytoPathologist;
     }
@@ -95,12 +97,20 @@ public class CytologySample extends ProgramSample {
     public void setCytoPathologist(SystemUser cytoPathologist) {
         this.cytoPathologist = cytoPathologist;
     }
- 
+    
     public CytologySpecimenAdequacy getSpecimenAdequacy() {
         return specimenAdequacy;
     }
-
+    
     public void setSpecimenAdequacy(CytologySpecimenAdequacy specimenAdequacy) {
         this.specimenAdequacy = specimenAdequacy;
+    }
+
+    public CytologyDiagnosis getDiagnosis() {
+        return diagnosis;
+    }
+
+    public void setDiagnosis(CytologyDiagnosis diagnosis) {
+        this.diagnosis = diagnosis;
     }
 }

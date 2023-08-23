@@ -250,6 +250,18 @@ function ImmunohistochemistryCaseView() {
         <Column lg={16} md={8} sm={4}>
         <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>    
         </Column>
+        <Column lg={2} md={1} sm={2}>
+        </Column>
+        <Column  lg={16} md={8} sm={4}>  
+           <hr style={{width:'100%' , margin: '1rem 0', border: '1px solid #ccc' }} />
+           <h5>Results</h5>
+        </Column>
+        <Column lg={16} md={8} sm={4}>
+          <SearchResults results={results}/>
+        </Column>
+        <Column  lg={16} md={8} sm={4}>  
+           <hr style={{width:'100%' , margin: '1rem 0', border: '1px solid #ccc' }} />
+        </Column>
         <Column lg={4} md={2} sm={2} >
           <Select id="status"
             name="status"
@@ -267,13 +279,6 @@ function ImmunohistochemistryCaseView() {
               />);
             })}
           </Select>
-        </Column>
-        <Column lg={2} md={1} sm={2}>
-        </Column>
-        <Column lg={16} md={8} sm={4}>
-          <SearchResults results={results}/>
-        </Column>
-        <Column lg={16}  md={8} sm={4}>
         </Column>
         <Column lg={4} md={1} sm={2} >
           <Select id="assignedTechnician"
@@ -340,20 +345,21 @@ function ImmunohistochemistryCaseView() {
           {immunohistochemistrySampleInfo.reports && immunohistochemistrySampleInfo.reports.map((report, index) => {
           return (
             <>
-           
            <Column lg={2} md={8} sm={4}>
                 <IconButton label="Remove Report" onClick={() => {
-                  var newReports = [...immunohistochemistrySampleInfo.reports];
-                  setImmunohistochemistrySampleInfo({ ...immunohistochemistrySampleInfo, reports: newReports.splice(index, 1) });
+                  var info = {...immunohistochemistrySampleInfo};
+                  info["reports"].splice(index, 1);
+                  setImmunohistochemistrySampleInfo(info);
                 }} kind='tertiary' size='sm'>
                   <Subtract size={18} /> Report
                 </IconButton>
             </Column>
 
             
-            <Column lg={4} md={1} sm={2} style={{marginTop: '-30px'}}> 
+            <Column lg={3} md={1} sm={2} > 
                 <FileUploader
-                  buttonLabel={"Upload File For Report " + report.reportType}
+                  style={{marginTop: '-30px'}}
+                  buttonLabel={"Upload File"}
                   iconDescription="file upload"
                   multiple={false}
                   accept={['image/jpeg', 'image/png', 'application/pdf']}
@@ -379,6 +385,9 @@ function ImmunohistochemistryCaseView() {
                   }}
                 />
               </Column>  
+              <Column lg={4}>
+                {reportTypes.filter(type => type.id === report.reportType)[0]?.value}
+              </Column>
               <Column lg={2} md={1} sm={2}>
                 {immunohistochemistrySampleInfo.reports[index].image &&
                   <>
@@ -391,9 +400,11 @@ function ImmunohistochemistryCaseView() {
                   </>
                 }
               </Column>
-             <Column lg={8} md={5} sm={3} /> 
-              {/* </div> */}
-              {/* </Column> */}
+             <Column lg={3} md={5} sm={3} /> 
+             <Column lg={16} md={8} sm={4}>
+               <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>    
+             </Column>
+
             </>
           )
         })}
@@ -439,16 +450,21 @@ function ImmunohistochemistryCaseView() {
                 }}>Print Label</Button>
               </Column>
               <Column lg={10} md={2} sm={0} />
+              <Column lg={16} md={8} sm={4}>
+               <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>    
+             </Column>
             </>
           )
         })}
         
-        <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>    
+          
         <Column  lg={16} md={8} sm={4}>  
+        <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div> 
           <hr style={{width:'100%' , margin: '1rem 0', border: '1px solid #ccc' }} />
            <h5>Slides</h5>
+           <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>    
         </Column>
-        <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>    
+        
         <Column  lg={16} md={8} sm={4}/>  
         {immunohistochemistrySampleInfo.slides && immunohistochemistrySampleInfo.slides.map((slide, index) => {
           return (
@@ -491,6 +507,9 @@ function ImmunohistochemistryCaseView() {
                 }}>Print Label</Button>
               </Column>
               <Column lg={8} md={1} sm={2}/>
+              <Column lg={16} md={8} sm={4}>
+               <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>    
+             </Column>
                
             </>
           )

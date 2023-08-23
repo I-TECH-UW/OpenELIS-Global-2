@@ -195,9 +195,9 @@ public class LogbookResultsRestController extends LogbookResultsBaseController {
 
     @GetMapping(value = "ReactLogbookResultsByRange", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public LogbookResultsForm showReactLogbookResults(@RequestParam String labNumber, @RequestParam String  nationalId,@RequestParam String  firstName,
-                                                      @RequestParam String lastName, @RequestParam String collectionDate, @RequestParam String recievedDate, @RequestParam String selectedTest, @RequestParam String selectedSampleStatus,
-                                                      @RequestParam String selectedAnalysisStatus, @RequestParam boolean doRange,
+    public LogbookResultsForm showReactLogbookResults(@RequestParam(required = false) String labNumber, @RequestParam(required = false) String  nationalId,@RequestParam(required = false) String  firstName,
+                                                      @RequestParam(required = false) String lastName, @RequestParam(required = false) String collectionDate, @RequestParam(required = false) String recievedDate, @RequestParam(required = false) String selectedTest, @RequestParam(required = false) String selectedSampleStatus,
+                                                      @RequestParam(required = false) String selectedAnalysisStatus, @RequestParam(required = false) boolean doRange,
             @RequestParam boolean finished,
             @Validated(LogbookResults.class) @ModelAttribute("form") LogbookResultsForm form, BindingResult result)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {

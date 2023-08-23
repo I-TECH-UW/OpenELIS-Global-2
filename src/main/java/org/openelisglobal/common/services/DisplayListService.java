@@ -94,11 +94,14 @@ public class DisplayListService implements LocaleChangeListener {
         ELECTRONIC_ORDER_STATUSES, METHODS, METHODS_INACTIVE, METHOD_BY_NAME, PRACTITIONER_PERSONS, ORDER_PRIORITY,
         PROGRAM, IMMUNOHISTOCHEMISTRY_STATUS, PATHOLOGY_STATUS, CYTOLOGY_SPECIMEN_ADEQUACY_SATISFACTION, PATHOLOGY_TECHNIQUES, PATHOLOGIST_REQUESTS,
         PATHOLOGIST_CONCLUSIONS ,IMMUNOHISTOCHEMISTRY_REPORT_TYPES ,IMMUNOHISTOCHEMISTRY_MARKERS_TESTS ,CYTOLOGY_STATUS,
-        CYTOLOGY_SATISFACTORY_FOR_EVALUATION ,CYTOLOGY_UN_SATISFACTORY_FOR_EVALUATION
+        CYTOLOGY_SATISFACTORY_FOR_EVALUATION ,CYTOLOGY_UN_SATISFACTORY_FOR_EVALUATION ,
+        CYTOLOGY_DIAGNOSIS_RESULT_EPITHELIAL_CELL_SQUAMOUS ,CYTOLOGY_DIAGNOSIS_RESULT_EPITHELIAL_CELL_GLANDULAR ,CYTOLOGY_DIAGNOSIS_RESULT_NON_NEO_PLASTIC_CELLULAR,
+        CYTOLOGY_DIAGNOSIS_RESULT_REACTIVE_CELLULAR ,CYTOLOGY_DIAGNOSIS_RESULT_ORGANISMS , CYTOLOGY_DIAGNOSIS_RESULT_OTHER ;
 
     }
     private static Map<ListType, List<IdValuePair>> typeToListMap;
     private static Map<String, List<IdValuePair>> dictionaryToListMap = new HashMap<>();
+    
 
     @Autowired
     private TypeOfSampleService typeOfSampleService;
@@ -221,7 +224,12 @@ public class DisplayListService implements LocaleChangeListener {
         typeToListMap.put(ListType.CYTOLOGY_UN_SATISFACTORY_FOR_EVALUATION, createDictionaryListForCategory("cytology_adequacy_unsatisfactory"));
         typeToListMap.put(ListType.PATHOLOGIST_REQUESTS, createDictionaryListForCategory("pathologist_requests"));
         typeToListMap.put(ListType.PATHOLOGIST_CONCLUSIONS, createDictionaryListForCategory("pathologist_conclusions"));
-    
+        typeToListMap.put(ListType.CYTOLOGY_DIAGNOSIS_RESULT_EPITHELIAL_CELL_SQUAMOUS, createDictionaryListForCategory("cytology_epithelial_cell_abnomalit_squamous"));
+        typeToListMap.put(ListType.CYTOLOGY_DIAGNOSIS_RESULT_EPITHELIAL_CELL_GLANDULAR, createDictionaryListForCategory("cytology_epithelial_cell_abnomalit_glandular"));
+        typeToListMap.put(ListType.CYTOLOGY_DIAGNOSIS_RESULT_NON_NEO_PLASTIC_CELLULAR, createDictionaryListForCategory("cytology_non-neoplastic_cellular_variations"));
+        typeToListMap.put(ListType.CYTOLOGY_DIAGNOSIS_RESULT_REACTIVE_CELLULAR, createDictionaryListForCategory("cytology_reactive_cellular_changes"));
+        typeToListMap.put(ListType.CYTOLOGY_DIAGNOSIS_RESULT_ORGANISMS, createDictionaryListForCategory("cytology_diagnosis_organisms"));
+        typeToListMap.put(ListType.CYTOLOGY_DIAGNOSIS_RESULT_OTHER, createDictionaryListForCategory("cytology_diagnosis_other"));    
     }
 
     private List<IdValuePair> createPathologyStatusList() {
@@ -445,9 +453,12 @@ public class DisplayListService implements LocaleChangeListener {
         typeToListMap.put(ListType.PATHOLOGIST_CONCLUSIONS, createDictionaryListForCategory("pathologist_conclusions"));
         typeToListMap.put(ListType.CYTOLOGY_SATISFACTORY_FOR_EVALUATION, createDictionaryListForCategory("cytology_adequacy_satisfactory"));
         typeToListMap.put(ListType.CYTOLOGY_UN_SATISFACTORY_FOR_EVALUATION, createDictionaryListForCategory("cytology_adequacy_unsatisfactory"));
-        
-        
-
+        typeToListMap.put(ListType.CYTOLOGY_DIAGNOSIS_RESULT_EPITHELIAL_CELL_SQUAMOUS, createDictionaryListForCategory("cytology_epithelial_cell_abnomalit_squamous"));
+        typeToListMap.put(ListType.CYTOLOGY_DIAGNOSIS_RESULT_EPITHELIAL_CELL_GLANDULAR, createDictionaryListForCategory("cytology_epithelial_cell_abnomalit_glandular"));
+        typeToListMap.put(ListType.CYTOLOGY_DIAGNOSIS_RESULT_NON_NEO_PLASTIC_CELLULAR, createDictionaryListForCategory("cytology_non-neoplastic_cellular_variations"));
+        typeToListMap.put(ListType.CYTOLOGY_DIAGNOSIS_RESULT_REACTIVE_CELLULAR, createDictionaryListForCategory("cytology_reactive_cellular_changes"));
+        typeToListMap.put(ListType.CYTOLOGY_DIAGNOSIS_RESULT_ORGANISMS, createDictionaryListForCategory("cytology_diagnosis_organisms"));
+        typeToListMap.put(ListType.CYTOLOGY_DIAGNOSIS_RESULT_OTHER, createDictionaryListForCategory("cytology_diagnosis_other"));
     }
 
     public void refreshList(ListType listType) {

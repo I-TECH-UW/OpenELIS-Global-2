@@ -30,9 +30,6 @@ import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.program.controller.cytology.CytologySampleForm;
 import org.openelisglobal.program.dao.cytology.CytologySampleDAO;
 import org.openelisglobal.program.valueholder.cytology.CytologySample;
-import org.openelisglobal.program.valueholder.cytology.CytologySpecimenAdequacy;
-import org.openelisglobal.program.valueholder.cytology.CytologySpecimenAdequacy.SpecimenAdequacyResultType;
-import org.openelisglobal.program.valueholder.cytology.CytologySpecimenAdequacy.SpecimenAdequancySatisfaction;
 import org.openelisglobal.program.valueholder.cytology.CytologySample.CytologyStatus;
 import org.openelisglobal.result.action.util.ResultSet;
 import org.openelisglobal.result.action.util.ResultsLoadUtility;
@@ -146,7 +143,12 @@ public class CytologySampleServiceImpl extends BaseObjectServiceImpl<CytologySam
         if (form.getSlides() != null)
             form.getSlides().stream().forEach(e -> e.setId(null));
         cytologySample.getSlides().addAll(form.getSlides());
-        cytologySample.setSpecimenAdequacy(form.getSpecimenAdequacy());
+        if(form.getSpecimenAdequacy() != null){
+            cytologySample.setSpecimenAdequacy(form.getSpecimenAdequacy());
+        }
+        if(form.getDiagnosis() != null){
+           cytologySample.setDiagnosis(form.getDiagnosis());
+        }
 
         if (form.getRelease()) {
             validateCytologySample(cytologySample, form);
