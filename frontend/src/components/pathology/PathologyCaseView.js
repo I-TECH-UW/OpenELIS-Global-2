@@ -307,9 +307,9 @@ function PathologyCaseView() {
             <>
               <Column lg={2} md={8} sm={4}>
                 <IconButton label="remove block" onClick={() => {
-                  var newBlocks = [...pathologySampleInfo.blocks];
-                  newBlocks = newBlocks.splice(index, 1);
-                  setPathologySampleInfo({ ...pathologySampleInfo, blocks: newBlocks });
+                  var info = {...pathologySampleInfo};
+                  info["blocks"].splice(index, 1);
+                  setPathologySampleInfo(info);
                 }} kind='tertiary' size='sm'>
                   <Subtract size={18} />  Block
                 </IconButton>
@@ -374,8 +374,9 @@ function PathologyCaseView() {
             <>
               <Column lg={2} md={8} sm={4}>
                 <IconButton label="remove slide" onClick={() => {
-                  var newSlides = [...pathologySampleInfo.slides];
-                  setPathologySampleInfo({ ...pathologySampleInfo, slides: newSlides.splice(index, 1) });
+                   var info = {...pathologySampleInfo};
+                   info["slides"].splice(index, 1);
+                   setPathologySampleInfo(info);
                 }} kind='tertiary' size='sm'>
                   <Subtract size={18} />  Slide
                 </IconButton>

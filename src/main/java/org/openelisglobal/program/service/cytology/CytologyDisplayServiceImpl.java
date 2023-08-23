@@ -1,5 +1,7 @@
 package org.openelisglobal.program.service.cytology;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
@@ -16,6 +18,7 @@ import org.openelisglobal.organization.service.OrganizationService;
 import org.openelisglobal.organization.valueholder.Organization;
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.program.valueholder.cytology.CytologyCaseViewDisplayItem;
+import org.openelisglobal.program.valueholder.cytology.CytologyDiagnosis;
 import org.openelisglobal.program.valueholder.cytology.CytologyDisplayItem;
 import org.openelisglobal.program.valueholder.cytology.CytologySample;
 import org.openelisglobal.sample.bean.SampleOrderItem;
@@ -70,9 +73,31 @@ public class CytologyDisplayServiceImpl implements CytologyDisplayService {
         cytologySample.getSlides().size();
         displayItem.setSlides(cytologySample.getSlides());
         if (cytologySample.getSpecimenAdequacy() != null) {
-            displayItem.setSatisfaction(cytologySample.getSpecimenAdequacy().getSatisfaction());
-            displayItem.setAdequacies(cytologySample.getSpecimenAdequacy().getValues().stream()
-                    .map(e -> new IdValuePair(e, dictionaryService.get(e).getLocalizedName())).collect(Collectors.toList()));  
+            CytologyCaseViewDisplayItem.SpecimenAdequacy adquecy = new CytologyCaseViewDisplayItem.SpecimenAdequacy();
+            adquecy.setSatisfaction(cytologySample.getSpecimenAdequacy().getSatisfaction());
+            adquecy.setValues(cytologySample.getSpecimenAdequacy().getValues().stream().filter(e -> e != null)
+                    .map(e -> new IdValuePair(e, dictionaryService.get(e).getLocalizedName())).collect(Collectors.toList()));
+            displayItem.setSpecimenAdequacy(adquecy);
+        }
+        CytologyDiagnosis cytoDiagnosis = cytologySample.getDiagnosis();
+        if (cytoDiagnosis != null) {
+            CytologyCaseViewDisplayItem.Diagnosis diagnosis = new CytologyCaseViewDisplayItem.Diagnosis();
+            diagnosis.setNegativeDiagnosis(cytologySample.getDiagnosis().getNegativeDiagnosis());
+            
+            List<CytologyCaseViewDisplayItem.Diagnosis.DiagnosisResultsMap> resultsMaps = new ArrayList<>();
+            if (cytoDiagnosis.getDiagnosisResultsMaps() != null) {
+                cytoDiagnosis.getDiagnosisResultsMaps().forEach(diagnosisResult -> {
+                    CytologyCaseViewDisplayItem.Diagnosis.DiagnosisResultsMap resultsMap = new CytologyCaseViewDisplayItem.Diagnosis.DiagnosisResultsMap();
+                    resultsMap.setCategory(diagnosisResult.getCategory());
+                    resultsMap.setResultType(diagnosisResult.getResultType());
+                    resultsMap.setResults(diagnosisResult.getResults().stream().filter(e -> StringUtils.isNotBlank(e))
+                            .map(e -> new IdValuePair(e, dictionaryService.get(e).getLocalizedName()))
+                            .collect(Collectors.toList()));
+                    resultsMaps.add(resultsMap);
+                });
+            }
+            diagnosis.setDiagnosisResultsMaps(resultsMaps);
+            displayItem.setDiagnosis(diagnosis);
         }
         SampleOrderService sampleOrderService = new SampleOrderService(cytologySample.getSample());
         SampleOrderItem sampleItem = sampleOrderService.getSampleOrderItem();

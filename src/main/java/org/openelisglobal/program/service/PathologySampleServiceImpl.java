@@ -237,9 +237,7 @@ public class PathologySampleServiceImpl extends BaseObjectServiceImpl<PathologyS
          if(StringUtils.isNotBlank(form.getImmunoHistoChemistryTestId())){
             immunoHistologyTest = testService.get(form.getImmunoHistoChemistryTestId());
          }
-         if(immunoHistologyTest == null){
-           return;
-         }
+        
         ImmunohistochemistrySample immunoHistoSample = new ImmunohistochemistrySample();
         immunoHistoSample.setProgram(pathologySample.getProgram());
         immunoHistoSample.setQuestionnaireResponseUuid(pathologySample.getQuestionnaireResponseUuid());
@@ -247,6 +245,10 @@ public class PathologySampleServiceImpl extends BaseObjectServiceImpl<PathologyS
         immunoHistoSample.setPathologySample(pathologySample);
         immunoHistoSample.setReffered(true);
         immunohistochemistrySampleService.save(immunoHistoSample);
+
+         if(immunoHistologyTest == null){
+           return;
+         }
 
         Analysis currentAnalysis = analysisService.getAnalysesBySampleId(pathologySample.getSample().getId()).get(0);
         Analysis analysis = new Analysis();

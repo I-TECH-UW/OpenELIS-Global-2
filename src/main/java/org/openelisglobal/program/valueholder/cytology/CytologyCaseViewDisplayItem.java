@@ -5,6 +5,8 @@ import java.util.List;
 import org.hl7.fhir.r4.model.Questionnaire;
 import org.hl7.fhir.r4.model.QuestionnaireResponse;
 import org.openelisglobal.common.util.IdValuePair;
+import org.openelisglobal.program.valueholder.cytology.CytologyDiagnosis.CytologyDiagnosisResultType;
+import org.openelisglobal.program.valueholder.cytology.CytologyDiagnosis.DiagnosisCategory;
 import org.openelisglobal.program.valueholder.cytology.CytologySpecimenAdequacy.SpecimenAdequancySatisfaction;
 
 public class CytologyCaseViewDisplayItem extends CytologyDisplayItem {
@@ -29,9 +31,9 @@ public class CytologyCaseViewDisplayItem extends CytologyDisplayItem {
     
     private List<CytologySlide> slides;
     
-    private List<IdValuePair> adequacies;
+    private SpecimenAdequacy specimenAdequacy;
     
-    private SpecimenAdequancySatisfaction satisfaction;
+    private Diagnosis diagnosis;
     
     public String getAge() {
         return age;
@@ -113,20 +115,100 @@ public class CytologyCaseViewDisplayItem extends CytologyDisplayItem {
         this.slides = slides;
     }
     
-    public SpecimenAdequancySatisfaction getSatisfaction() {
-        return satisfaction;
+    public SpecimenAdequacy getSpecimenAdequacy() {
+        return specimenAdequacy;
     }
     
-    public void setSatisfaction(SpecimenAdequancySatisfaction satisfaction) {
-        this.satisfaction = satisfaction;
+    public void setSpecimenAdequacy(SpecimenAdequacy specimenAdequacy) {
+        this.specimenAdequacy = specimenAdequacy;
     }
     
-    public List<IdValuePair> getAdequacies() {
-        return adequacies;
+    public Diagnosis getDiagnosis() {
+        return diagnosis;
     }
     
-    public void setAdequacies(List<IdValuePair> adequacies) {
-        this.adequacies = adequacies;
+    public void setDiagnosis(Diagnosis diagnosis) {
+        this.diagnosis = diagnosis;
     }
     
+    public static class SpecimenAdequacy {
+        
+        private List<IdValuePair> values;
+        
+        private SpecimenAdequancySatisfaction satisfaction;
+        
+        public List<IdValuePair> getValues() {
+            return values;
+        }
+        
+        public void setValues(List<IdValuePair> values) {
+            this.values = values;
+        }
+        
+        public SpecimenAdequancySatisfaction getSatisfaction() {
+            return satisfaction;
+        }
+        
+        public void setSatisfaction(SpecimenAdequancySatisfaction satisfaction) {
+            this.satisfaction = satisfaction;
+        }
+        
+    }
+    
+    public static class Diagnosis {
+        
+        private Boolean negativeDiagnosis = true;
+        
+        private List<DiagnosisResultsMap> diagnosisResultsMaps;
+        
+        public Boolean getNegativeDiagnosis() {
+            return negativeDiagnosis;
+        }
+        
+        public void setNegativeDiagnosis(Boolean negativeDiagnosis) {
+            this.negativeDiagnosis = negativeDiagnosis;
+        }
+        
+        public List<DiagnosisResultsMap> getDiagnosisResultsMaps() {
+            return diagnosisResultsMaps;
+        }
+        
+        public void setDiagnosisResultsMaps(List<DiagnosisResultsMap> diagnosisResultsMaps) {
+            this.diagnosisResultsMaps = diagnosisResultsMaps;
+        }
+        
+        public static class DiagnosisResultsMap {
+            
+            private List<IdValuePair> results;
+            
+            private DiagnosisCategory category;
+            
+            private CytologyDiagnosisResultType resultType;
+            
+            public CytologyDiagnosisResultType getResultType() {
+                return resultType;
+            }
+            
+            public void setResultType(CytologyDiagnosisResultType resultType) {
+                this.resultType = resultType;
+            }
+            
+            public DiagnosisCategory getCategory() {
+                return category;
+            }
+            
+            public void setCategory(DiagnosisCategory category) {
+                this.category = category;
+            }
+            
+            public List<IdValuePair> getResults() {
+                return results;
+            }
+            
+            public void setResults(List<IdValuePair> results) {
+                this.results = results;
+            }
+            
+        }
+    }
 }

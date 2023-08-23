@@ -3,6 +3,7 @@ package org.openelisglobal.program.controller.cytology;
 import java.util.Base64;
 import java.util.List;
 
+import org.openelisglobal.program.valueholder.cytology.CytologyDiagnosis;
 import org.openelisglobal.program.valueholder.cytology.CytologySlide;
 import org.openelisglobal.program.valueholder.cytology.CytologySpecimenAdequacy;
 import org.openelisglobal.program.valueholder.cytology.CytologySample.CytologyStatus;
@@ -22,6 +23,8 @@ public class CytologySampleForm {
     private String systemUserId;
     
     private Boolean release = false;
+    
+    private CytologyDiagnosis diagnosis;
     
     public CytologyStatus getStatus() {
         return status;
@@ -70,13 +73,21 @@ public class CytologySampleForm {
     public void setAssignedCytoPathologistId(String assignedCytoPathologistId) {
         this.assignedCytoPathologistId = assignedCytoPathologistId;
     }
-
+    
     public CytologySpecimenAdequacy getSpecimenAdequacy() {
         return specimenAdequacy;
     }
-
+    
     public void setSpecimenAdequacy(CytologySpecimenAdequacy specimenAdequacy) {
         this.specimenAdequacy = specimenAdequacy;
+    }
+    
+    public CytologyDiagnosis getDiagnosis() {
+        return diagnosis;
+    }
+    
+    public void setDiagnosis(CytologyDiagnosis diagnosis) {
+        this.diagnosis = diagnosis;
     }
     
     public static class CytologySlideForm extends CytologySlide {
@@ -97,5 +108,5 @@ public class CytologySampleForm {
             setImage(Base64.getDecoder().decode(imageInfo[1]));
         }
     }
-
+    
 }

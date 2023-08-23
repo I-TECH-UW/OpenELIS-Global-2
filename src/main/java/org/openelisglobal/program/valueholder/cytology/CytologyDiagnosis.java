@@ -37,7 +37,7 @@ public class CytologyDiagnosis extends BaseObject<Integer> {
             return display;
         }
     }
-
+    
     public enum CytologyDiagnosisResultType {
         
         DICTIONARY("D"),
@@ -45,7 +45,7 @@ public class CytologyDiagnosis extends BaseObject<Integer> {
         
         private String code;
         
-      CytologyDiagnosisResultType(String code) {
+        CytologyDiagnosisResultType(String code) {
             this.code = code;
         }
         
@@ -71,7 +71,7 @@ public class CytologyDiagnosis extends BaseObject<Integer> {
     private Integer id;
     
     @Column(name = "negative_diagnosis")
-    private Boolean neagitveDiagnosis = true;
+    private Boolean negativeDiagnosis = true;
     
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "cytology_diagnosis_id")
@@ -95,11 +95,12 @@ public class CytologyDiagnosis extends BaseObject<Integer> {
         this.diagnosisResultsMaps = diagnosisResultsMaps;
     }
     
-    public Boolean getNeagitveDiagnosis() {
-        return neagitveDiagnosis;
+    public Boolean getNegativeDiagnosis() {
+        return negativeDiagnosis;
     }
     
-    public void setNeagitveDiagnosis(Boolean neagitveDiagnosis) {
-        this.neagitveDiagnosis = neagitveDiagnosis;
+    public void setNegativeDiagnosis(Boolean negativeDiagnosis) {
+        this.negativeDiagnosis = negativeDiagnosis;
     }
+    
 }

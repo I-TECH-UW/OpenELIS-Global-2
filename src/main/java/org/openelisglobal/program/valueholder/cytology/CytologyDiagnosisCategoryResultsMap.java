@@ -16,6 +16,7 @@ import javax.persistence.Table;
 import org.openelisglobal.common.hibernateConverter.StringListConverter;
 import org.openelisglobal.common.valueholder.BaseObject;
 import org.openelisglobal.program.valueholder.cytology.CytologyDiagnosis.CytologyDiagnosisResultType;
+import org.openelisglobal.program.valueholder.cytology.CytologyDiagnosis.DiagnosisCategory;
 
 @Entity
 @Table(name = "cytology_diagnosis_result_map")
@@ -29,8 +30,8 @@ public class CytologyDiagnosisCategoryResultsMap extends BaseObject<Integer> {
     
     @Enumerated(EnumType.STRING)
     @Column(name = "category")
-    private CytologyDiagnosis category;
-
+    private DiagnosisCategory category;
+    
     @Enumerated(EnumType.STRING)
     @Column(name = "result_type")
     private CytologyDiagnosisResultType resultType;
@@ -49,14 +50,6 @@ public class CytologyDiagnosisCategoryResultsMap extends BaseObject<Integer> {
         this.id = id;
     }
     
-    public CytologyDiagnosis getCategory() {
-        return category;
-    }
-    
-    public void setCategory(CytologyDiagnosis category) {
-        this.category = category;
-    }
-    
     public List<String> getResults() {
         return results;
     }
@@ -64,12 +57,21 @@ public class CytologyDiagnosisCategoryResultsMap extends BaseObject<Integer> {
     public void setResults(List<String> results) {
         this.results = results;
     }
-
+    
     public CytologyDiagnosisResultType getResultType() {
         return resultType;
     }
-
+    
     public void setResultType(CytologyDiagnosisResultType resultType) {
         this.resultType = resultType;
     }
+    
+    public DiagnosisCategory getCategory() {
+        return category;
+    }
+    
+    public void setCategory(DiagnosisCategory category) {
+        this.category = category;
+    }
+    
 }

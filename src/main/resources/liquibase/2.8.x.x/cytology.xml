@@ -261,23 +261,30 @@
 
 	<changeSet author="mozzymutesa" id="11">
     <preConditions onFail="MARK_RAN">
-      <sqlCheck expectedResult="0">select count(*) from clinlims.dictionary_category where name = 'cytology_epithelial_cell_abnomality';
+      <sqlCheck expectedResult="0">select count(*) from clinlims.dictionary_category where name = 'cytology_epithelial_cell_abnomalit_squamous';
     		</sqlCheck>
     </preConditions>
     <comment>adds Cytology Diagnosis Results in dictionary_category</comment> 
    
 		<insert tableName="dictionary_category" schemaName="clinlims">
 			<column name="id" valueSequenceNext="dictionary_category_seq" />
-			<column name="description" value="Cytology Epithelial Cell Abnomality" />
+			<column name="description" value="Cytology Epithelial Cell Abnomality - Squamous" />
 			<column name="lastupdated" valueComputed="${now}"/>
-			<column name="local_abbrev" value="diagEpith" />
-			<column name="name" value="cytology_epithelial_cell_abnomality" />
+			<column name="local_abbrev" value="diagEpithS" />
+			<column name="name" value="cytology_epithelial_cell_abnomalit_squamous" />
+		</insert>
+		<insert tableName="dictionary_category" schemaName="clinlims">
+			<column name="id" valueSequenceNext="dictionary_category_seq" />
+			<column name="description" value="Cytology Epithelial Cell Abnomality - Glandular" />
+			<column name="lastupdated" valueComputed="${now}"/>
+			<column name="local_abbrev" value="diagEpithG" />
+			<column name="name" value="cytology_epithelial_cell_abnomalit_glandular" />
 		</insert>
 		<insert tableName="dictionary_category" schemaName="clinlims">
 			<column name="id" valueSequenceNext="dictionary_category_seq" />
 			<column name="description" value="Cytology Non-neoplastic cellular variations" />
 			<column name="lastupdated" valueComputed="${now}"/>
-			<column name="local_abbrev" value="daigNoNneo" />
+			<column name="local_abbrev" value="daigNonNeo" />
 			<column name="name" value="cytology_non-neoplastic_cellular_variations" />
 		</insert>
 		<insert tableName="dictionary_category" schemaName="clinlims">

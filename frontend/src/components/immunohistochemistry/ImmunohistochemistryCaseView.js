@@ -339,8 +339,9 @@ function ImmunohistochemistryCaseView() {
             <>
            <Column lg={2} md={8} sm={4}>
                 <IconButton label="Remove Report" onClick={() => {
-                  var newReports = [...immunohistochemistrySampleInfo.reports];
-                  setImmunohistochemistrySampleInfo({ ...immunohistochemistrySampleInfo, reports: newReports.splice(index, 1) });
+                  var info = {...immunohistochemistrySampleInfo};
+                  info["reports"].splice(index, 1);
+                  setImmunohistochemistrySampleInfo(info);
                 }} kind='tertiary' size='sm'>
                   <Subtract size={18} /> Report
                 </IconButton>
