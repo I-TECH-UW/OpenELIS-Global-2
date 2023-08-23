@@ -95,7 +95,7 @@ export class SearchResultForm extends React.Component {
     }
 
     handleSubmit = (values) => {
-        this.setResults({ testResult: [] })
+        this.props.setResults({ testResult: [] })
         var searchEndPoint = "/rest/ReactLogbookResultsByRange?" +
             "labNumber=" + values.accessionNumber +
             "&nationalId="+ values.nationalId +
