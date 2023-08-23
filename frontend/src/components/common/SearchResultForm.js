@@ -503,7 +503,7 @@ export class SearchResults extends React.Component {
                             <TextArea
                                 id={"testResult" + row.id + ".note"}
                                 name={"testResult[" + row.id + "].note"}
-                                value={this.props.results.testResult[row.id].note}
+                                value={this.props.results.testResult[row.id].pastNotes}
                                 disabled={false}
                                 type="text"
                                 labelText=""
@@ -844,11 +844,14 @@ export class SearchResults extends React.Component {
         var searchEndPoint = "/rest/ReactLogbookResultsUpdate"
         this.props.results.testResult.forEach( result => {
             result.reportable = result.reportable === "N"?false : true
+            delete result.result
         })
+        console.log(this.props.results)
         postToOpenElisServer(searchEndPoint, JSON.stringify(this.props.results), this.setStatus);
     }
 
     setStatus = (status) => {
+        console.log(status)
         //console.log("setStatus" + status)
         if (status != 200) {
             this.context.setNotificationBody({
@@ -859,7 +862,7 @@ export class SearchResults extends React.Component {
         } else {
             this.context.setNotificationBody({
                 title: "Notification Message",
-                message: "Success: " + status,
+                message: "Test Results have been saved successfully",
                 kind: NotificationKinds.success
             })
         }
@@ -891,7 +894,7 @@ export class SearchResults extends React.Component {
                     <Formik
                         initialValues={SearchResultFormValues}
                         //validationSchema={}
-                        onSubmit={this.handleSave}
+                        onSubmit
                         onChange
                     >
                         {({ values,
@@ -914,7 +917,7 @@ export class SearchResults extends React.Component {
                                 </DataTable><Pagination onChange={this.handlePageChange} page={this.state.page} pageSize={this.state.pageSize}
                                     pageSizes={[100]} totalItems={this.props.results.testResult.length}></Pagination>
 
-                                <Button type="submit" id="submit">
+                                <Button type="button" id="submit" onClick={this.handleSave}>
                                     <FormattedMessage id="label.button.save" />
                                 </Button>
                             </Form>)}
