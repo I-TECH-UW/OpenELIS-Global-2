@@ -143,28 +143,14 @@ public class CytologySampleServiceImpl extends BaseObjectServiceImpl<CytologySam
         if (form.getSlides() != null)
             form.getSlides().stream().forEach(e -> e.setId(null));
         cytologySample.getSlides().addAll(form.getSlides());
-        if(form.getSpecimenAdequacy() != null){
+        if (form.getSpecimenAdequacy() != null) {
             cytologySample.setSpecimenAdequacy(form.getSpecimenAdequacy());
         }
-       
-        if (cytologySample.getDiagnosis() != null) {
-            cytologySample.getDiagnosis().getDiagnosisResultsMaps()
-                    .removeAll(cytologySample.getDiagnosis().getDiagnosisResultsMaps());
-            
-            if (form.getDiagnosis() != null) {
-                if (!form.getDiagnosis().getDiagnosisResultsMaps().isEmpty()) {
-                    form.getDiagnosis().getDiagnosisResultsMaps().forEach(e -> e.setId(null));
-                    cytologySample.getDiagnosis().getDiagnosisResultsMaps()
-                            .addAll(form.getDiagnosis().getDiagnosisResultsMaps());
-                }
-            }
-        }else{
-            if (form.getDiagnosis() != null) {
-                cytologySample.setDiagnosis(form.getDiagnosis());
-            }
+        
+        if (form.getDiagnosis() != null) {
+            cytologySample.setDiagnosis(form.getDiagnosis());
         }
-
-       
+        
         if (form.getRelease()) {
             validateCytologySample(cytologySample, form);
         }
