@@ -136,7 +136,7 @@ function CytologyCaseView() {
         var newDiagnosisResultsMaps = []
         pathologySampleInfo.diagnosis.diagnosisResultsMaps.forEach(resultMap => {
           var newResultMap = resultMap;
-          var results = filterDiagnosisResultsByCategory(resultMap.category).results.map(e => {
+          var results = filterDiagnosisResultsByCategory(resultMap.category , resultMap.resultType).results.map(e => {
             return e.id;
           })
           newResultMap.results = results;
@@ -172,8 +172,8 @@ function CytologyCaseView() {
     console.log(JSON.stringify(submitValues))
     postToOpenElisServerFullResponse("/rest/cytology/caseView/" + cytologySampleId, JSON.stringify(submitValues), displayStatus);
   }
-  const filterDiagnosisResultsByCategory = (category) => {
-    return pathologySampleInfo.diagnosis?.diagnosisResultsMaps?.find(r => r.category === category)
+  const filterDiagnosisResultsByCategory = (category ,type) => {
+    return pathologySampleInfo.diagnosis?.diagnosisResultsMaps?.find(r => r.category === category && r.resultType === type)
   }
 
   const setInitialPathologySampleInfo = (e) => {
@@ -561,12 +561,12 @@ function CytologyCaseView() {
                     titleText="Select Result"
                     items={combinedDiagnoses}
                     itemToString={(item) => (item ? item.value : '')}
-                    initialSelectedItems={filterDiagnosisResultsByCategory("EPITHELIAL_CELL_ABNORMALITY")?.results}
+                    initialSelectedItems={filterDiagnosisResultsByCategory("EPITHELIAL_CELL_ABNORMALITY" ,"DICTIONARY")?.results}
                     onChange={(changes) => {
 
                       var diagnosis = { ...pathologySampleInfo.diagnosis }
                       var diagnosisResultsMaps = diagnosis.diagnosisResultsMaps;
-                      var filteredMapIndex = diagnosisResultsMaps?.findIndex(r => r.category === "EPITHELIAL_CELL_ABNORMALITY");
+                      var filteredMapIndex = diagnosisResultsMaps?.findIndex(r => r.category === "EPITHELIAL_CELL_ABNORMALITY" && r.resultType === "DICTIONARY");
                       var diagnosisResultMap = {};
                       var newDiagnosisResultMaps = []
                       diagnosisResultMap.category = "EPITHELIAL_CELL_ABNORMALITY";
@@ -590,10 +590,10 @@ function CytologyCaseView() {
                   />
                 </Column>
                 {diagnosisResultEpithelialCellSquamous && pathologySampleInfo &&
-                  <Column lg={6} md={4} sm={2}>
+                  <Column lg={4} md={4} sm={2}>
                     Squamous :
                     {
-                      filterDiagnosisResultsByCategory("EPITHELIAL_CELL_ABNORMALITY")?.results.filter(result => diagnosisResultEpithelialCellSquamous?.some(item => item.id == result.id))?.map((result, index) => (
+                      filterDiagnosisResultsByCategory("EPITHELIAL_CELL_ABNORMALITY" , "DICTIONARY")?.results.filter(result => diagnosisResultEpithelialCellSquamous?.some(item => item.id == result.id))?.map((result, index) => (
                         <Tag
                           key={index}
                           onClose={() => { }}
@@ -605,10 +605,10 @@ function CytologyCaseView() {
                 }
 
                 {diagnosisResultEpithelialCellGlandular && pathologySampleInfo &&
-                  <Column lg={6} md={4} sm={2}>
+                  <Column lg={4} md={4} sm={2}>
                     Glandular :
                     {
-                      filterDiagnosisResultsByCategory("EPITHELIAL_CELL_ABNORMALITY")?.results.filter(result => diagnosisResultEpithelialCellGlandular?.some(item => item.id == result.id))?.map((result, index) => (
+                      filterDiagnosisResultsByCategory("EPITHELIAL_CELL_ABNORMALITY" , "DICTIONARY")?.results.filter(result => diagnosisResultEpithelialCellGlandular?.some(item => item.id == result.id))?.map((result, index) => (
                         <Tag
                           key={index}
                           onClose={() => { }}
@@ -620,6 +620,41 @@ function CytologyCaseView() {
                   </Column>
                 }
 
+                 <Column lg={4} md={4} sm={2}>
+                  Other Malignant Neoplasms :
+                    <TextInput
+                      id="otherNeoPlasms"
+                      labelText="Enter text rest"
+                      hideLabel={true}
+                      placeholder="Other Malignant"
+                      value={filterDiagnosisResultsByCategory("EPITHELIAL_CELL_ABNORMALITY" , "TEXT")?.results[0].value}
+                      onChange={e => {
+                        var diagnosis = { ...pathologySampleInfo.diagnosis }
+                        var diagnosisResultsMaps = diagnosis.diagnosisResultsMaps;
+                        var filteredMapIndex = diagnosisResultsMaps?.findIndex(r => r.category === "EPITHELIAL_CELL_ABNORMALITY" && r.resultType === "TEXT");
+                        var diagnosisResultMap = {};
+                        var newDiagnosisResultMaps = []
+                        diagnosisResultMap.category = "EPITHELIAL_CELL_ABNORMALITY";
+                        diagnosisResultMap.resultType = "TEXT";
+                        diagnosisResultMap.results = [{"id" : e.target.value , "value": e.target.value }]
+
+                        if (filteredMapIndex != -1) {
+                          diagnosisResultsMaps[filteredMapIndex] = diagnosisResultMap;
+                          newDiagnosisResultMaps = diagnosisResultsMaps;
+                        } else {
+                          if (!diagnosisResultsMaps) {
+                            diagnosisResultsMaps = []
+                          }
+                          newDiagnosisResultMaps = [...diagnosisResultsMaps, diagnosisResultMap]
+                        }
+                        diagnosis.diagnosisResultsMaps = newDiagnosisResultMaps
+                        setPathologySampleInfo({ ...pathologySampleInfo, diagnosis: diagnosis });
+
+                      }}
+                    />
+
+                  </Column>
+
                 <Column lg={16} md={8} sm={4}>
                   <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>
                   Non-neoplastic cellular variations
@@ -630,7 +665,7 @@ function CytologyCaseView() {
                     titleText="Select Result"
                     items={diagnosisResultNonNeoPlasticCellular}
                     itemToString={(item) => (item ? item.value : '')}
-                    initialSelectedItems={filterDiagnosisResultsByCategory("NON_NEOPLASTIC_CELLULAR_VARIATIONS")?.results}
+                    initialSelectedItems={filterDiagnosisResultsByCategory("NON_NEOPLASTIC_CELLULAR_VARIATIONS" ,"DICTIONARY")?.results}
                     onChange={(changes) => {
 
                       var diagnosis = { ...pathologySampleInfo.diagnosis }
@@ -660,7 +695,7 @@ function CytologyCaseView() {
                 </Column>
                 <Column lg={12} md={4} sm={2}>
                   {
-                    filterDiagnosisResultsByCategory("NON_NEOPLASTIC_CELLULAR_VARIATIONS")?.results.map((result, index) => (
+                    filterDiagnosisResultsByCategory("NON_NEOPLASTIC_CELLULAR_VARIATIONS" ,"DICTIONARY")?.results.map((result, index) => (
                       <Tag
                         key={index}
                         onClose={() => { }}
@@ -680,7 +715,7 @@ function CytologyCaseView() {
                     titleText="Select Result"
                     items={diagnosisResultReactiveCellular}
                     itemToString={(item) => (item ? item.value : '')}
-                    initialSelectedItems={filterDiagnosisResultsByCategory("REACTIVE_CELLULAR_CHANGES")?.results}
+                    initialSelectedItems={filterDiagnosisResultsByCategory("REACTIVE_CELLULAR_CHANGES" ,"DICTIONARY")?.results}
                     onChange={(changes) => {
 
                       var diagnosis = { ...pathologySampleInfo.diagnosis }
@@ -710,7 +745,7 @@ function CytologyCaseView() {
                 </Column>
                 <Column lg={12} md={4} sm={2}>
                   {
-                    filterDiagnosisResultsByCategory("REACTIVE_CELLULAR_CHANGES")?.results.map((result, index) => (
+                    filterDiagnosisResultsByCategory("REACTIVE_CELLULAR_CHANGES" , "DICTIONARY")?.results.map((result, index) => (
                       <Tag
                         key={index}
                         onClose={() => { }}
@@ -730,7 +765,7 @@ function CytologyCaseView() {
                     titleText="Select Result"
                     items={diagnosisResultOrganisms}
                     itemToString={(item) => (item ? item.value : '')}
-                    initialSelectedItems={filterDiagnosisResultsByCategory("ORGANISMS")?.results}
+                    initialSelectedItems={filterDiagnosisResultsByCategory("ORGANISMS" ,"DICTIONARY")?.results}
                     onChange={(changes) => {
 
                       var diagnosis = { ...pathologySampleInfo.diagnosis }
@@ -760,7 +795,7 @@ function CytologyCaseView() {
                 </Column>
                 <Column lg={12} md={4} sm={2}>
                   {
-                    filterDiagnosisResultsByCategory("ORGANISMS")?.results.map((result, index) => (
+                    filterDiagnosisResultsByCategory("ORGANISMS" ,"DICTIONARY")?.results.map((result, index) => (
                       <Tag
                         key={index}
                         onClose={() => { }}
@@ -779,7 +814,7 @@ function CytologyCaseView() {
                     titleText="Select Result"
                     items={diagnosisResultOther}
                     itemToString={(item) => (item ? item.value : '')}
-                    initialSelectedItems={filterDiagnosisResultsByCategory("OTHER")?.results}
+                    initialSelectedItems={filterDiagnosisResultsByCategory("OTHER" ,"DICTIONARY")?.results}
                     onChange={(changes) => {
 
                       var diagnosis = { ...pathologySampleInfo.diagnosis }
@@ -809,7 +844,7 @@ function CytologyCaseView() {
                 </Column>
                 <Column lg={12} md={4} sm={2}>
                   {
-                    filterDiagnosisResultsByCategory("OTHER")?.results.map((result, index) => (
+                    filterDiagnosisResultsByCategory("OTHER" ,"DICTIONARY")?.results.map((result, index) => (
                       <Tag
                         key={index}
                         onClose={() => { }}

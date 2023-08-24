@@ -21,6 +21,7 @@ import org.openelisglobal.program.valueholder.cytology.CytologyCaseViewDisplayIt
 import org.openelisglobal.program.valueholder.cytology.CytologyDiagnosis;
 import org.openelisglobal.program.valueholder.cytology.CytologyDisplayItem;
 import org.openelisglobal.program.valueholder.cytology.CytologySample;
+import org.openelisglobal.program.valueholder.cytology.CytologyDiagnosis.CytologyDiagnosisResultType;
 import org.openelisglobal.sample.bean.SampleOrderItem;
 import org.openelisglobal.sample.service.SampleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,9 +91,16 @@ public class CytologyDisplayServiceImpl implements CytologyDisplayService {
                     CytologyCaseViewDisplayItem.Diagnosis.DiagnosisResultsMap resultsMap = new CytologyCaseViewDisplayItem.Diagnosis.DiagnosisResultsMap();
                     resultsMap.setCategory(diagnosisResult.getCategory());
                     resultsMap.setResultType(diagnosisResult.getResultType());
-                    resultsMap.setResults(diagnosisResult.getResults().stream().filter(e -> StringUtils.isNotBlank(e))
+                    if(diagnosisResult.getResultType().equals(CytologyDiagnosisResultType.DICTIONARY)){
+                       resultsMap.setResults(diagnosisResult.getResults().stream().filter(e -> StringUtils.isNotBlank(e))
                             .map(e -> new IdValuePair(e, dictionaryService.get(e).getLocalizedName()))
                             .collect(Collectors.toList()));
+                    }else{
+                        List<IdValuePair> result = new ArrayList<>();
+                        result.add(new IdValuePair(diagnosisResult.getResults().get(0), diagnosisResult.getResults().get(0)));
+                       resultsMap.setResults(result);
+                    }
+
                     resultsMaps.add(resultsMap);
                 });
             }
