@@ -1,7 +1,9 @@
 package org.openelisglobal.image.controller;
 
+import java.util.Base64;
 import java.util.Optional;
 
+import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.image.service.ImageService;
 import org.openelisglobal.image.valueholder.Image;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,20 +19,13 @@ public class DBImageController {
 	private ImageService imageService;
 
 	@GetMapping(value = "/dbImage/siteInformation/{imageName}")
-	public @ResponseBody byte[] getImage(@PathVariable String imageName) {
+	@ResponseBody
+	public IdValuePair getImage(@PathVariable String imageName) {
 		Optional<Image> image = imageService.getImageBySiteInfoName(imageName);
 		if (image.isEmpty()) {
-			return getBlankImage();
+			return new IdValuePair(imageName, "");
 		}
-		try {
-			return image.get().getImage();
-		} catch (Exception e) {
-			return getBlankImage();
-		}
-	}
-
-	byte[] getBlankImage() {
-		return new byte[] {};
-
+		String imageData = "data:image/jpg;base64," + Base64.getEncoder().encodeToString(image.get().getImage());
+		return new IdValuePair(imageName, imageData);
 	}
 }
