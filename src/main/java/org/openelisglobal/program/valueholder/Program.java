@@ -21,6 +21,7 @@ import javax.validation.constraints.Pattern;
 
 import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.common.valueholder.BaseObject;
+import org.openelisglobal.test.valueholder.TestSection;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
@@ -40,6 +41,7 @@ public class Program extends BaseObject<String> {
     private String programName;
     @JsonProperty("questionnaireUUID")
     private UUID questionnaireUUID;
+    private TestSection testSection;
 
     public Program() {
         super();
@@ -79,4 +81,11 @@ public class Program extends BaseObject<String> {
         this.questionnaireUUID = questionnaireUUID;
     }
 
+    public TestSection getTestSection() {
+        return testSection;
+    }
+
+    public void setTestSection(TestSection testSection) {
+        this.testSection = testSection;
+    }   
 }

@@ -14,6 +14,7 @@ import java.util.Map;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.constants.Constants;
+import org.openelisglobal.common.rest.BaseRestController;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.login.valueholder.UserSessionData;
@@ -38,7 +39,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping(value = "/rest/")
-public class SampleEntryTestsForTypeProviderRestController {
+public class SampleEntryTestsForTypeProviderRestController extends BaseRestController{
 
 	private static String USER_TEST_SECTION_ID;
 
@@ -90,6 +91,22 @@ public class SampleEntryTestsForTypeProviderRestController {
 		createSearchResultXML(sampleType, testUnitIds);
 
 		return sampleEntryTests;
+	}
+
+	@GetMapping(value = "user-sample-types", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public List<IdValuePair> getUserSampleTests(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+
+		return userService.getUserSampleTypes(getSysUserId(request) ,Constants.ROLE_RECEPTION);
+	}
+
+	@GetMapping(value = "user-programs", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public List<IdValuePair> getUserSPrograms(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+
+		return userService.getUserPrograms(getSysUserId(request) ,Constants.ROLE_RECEPTION);
 	}
 
 	private void createSearchResultXML(String sampleType, List<String> testUnitIds) {

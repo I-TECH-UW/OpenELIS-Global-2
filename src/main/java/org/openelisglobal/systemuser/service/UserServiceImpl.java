@@ -14,6 +14,7 @@ import org.openelisglobal.common.services.DisplayListService.ListType;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.login.service.LoginUserService;
 import org.openelisglobal.login.valueholder.LoginUser;
+import org.openelisglobal.program.service.ProgramService;
 import org.openelisglobal.resultvalidation.bean.AnalysisItem;
 import org.openelisglobal.role.service.RoleService;
 import org.openelisglobal.systemuser.controller.UnifiedSystemUserController;
@@ -42,6 +43,8 @@ public class UserServiceImpl implements UserService {
     private RoleService roleService;
     @Autowired
     private TypeOfSampleService typeOfSampleService;
+    @Autowired
+    ProgramService programService;
 
     @Override
     @Transactional
@@ -251,5 +254,18 @@ public class UserServiceImpl implements UserService {
         List<String> allTestsIds = new ArrayList<>();
         allTests.forEach(test -> allTestsIds.add(test.getId()));
         return results.stream().filter(result -> allTestsIds.contains(result.getTest().getId())).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<IdValuePair> getUserPrograms(String systemUserId, String userRole) {
+        String resultsRoleId = roleService.getRoleByName(userRole).getId();
+        List<IdValuePair> testSections = getUserTestSections(systemUserId, resultsRoleId);
+        List<String> testUnitIds = new ArrayList<>();
+        if (testSections != null) {
+            testSections.forEach(testSection -> testUnitIds.add(testSection.getId()));
+        }
+
+         List<IdValuePair> allPrograms = DisplayListService.getInstance().getList(ListType.PROGRAM);
+         return allPrograms.stream().filter(p -> programService.get(p.getId()).getTestSection() != null).filter(p -> testUnitIds.contains( programService.get(p.getId()).getTestSection().getId())).collect(Collectors.toList());
     }
 }
