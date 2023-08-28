@@ -575,10 +575,11 @@ public class SamplePatientUpdateData {
                     ValueType.DICTIONARY);
         }
         if (ConfigurationProperties.getInstance().isPropertyValueEqual(Property.ORDER_PROGRAM, "true")) {
-            if (GenericValidator.isBlankOrNull(sampleOrder.getProgramId()))
+            if (!GenericValidator.isBlankOrNull(sampleOrder.getProgramId())){
                 createObservation(programService.get(sampleOrder.getProgramId()).getProgramName(),
                     observationHistoryService.getObservationTypeIdForType(ObservationType.PROGRAM),
                         ValueType.LITERAL);
+            }
         }
     }
 

@@ -351,5 +351,20 @@
             <column name="name" value="People living with HIV Program - Follow-up Visit" />
 		</insert>
 	</changeSet>
+	<changeSet author="mozzymutesa" id="14">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists schemaName="clinlims"
+					tableName="program" columnName="test_section_id" />
+			</not>
+		</preConditions>
+		<comment>add test_section_id column to the program table</comment>
+		<addColumn schemaName="clinlims" tableName="program">
+			<column name="test_section_id" type="INTEGER" />
+		</addColumn>
+		<addForeignKeyConstraint constraintName="test_section_id_program_fk"
+                                 baseTableName="program" baseColumnNames="test_section_id"
+                                 referencedTableName="test_section" referencedColumnNames="id"/>
+	</changeSet>
 	
 </databaseChangeLog>

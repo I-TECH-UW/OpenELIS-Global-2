@@ -12,6 +12,7 @@ function ProgramManagement() {
 
   const componentMounted = useRef(true);
   const [programs, setPrograms] = useState([]);
+  const [testSections, setTestSections] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [programValues, setProgramValues] = useState(ProgramFormValues);
@@ -22,6 +23,12 @@ function ProgramManagement() {
           setPrograms(programsList);
       }
   }
+
+  const fetchTestSections = (testSectionListList) => {
+    if (componentMounted.current) {
+        setTestSections(testSectionListList);
+    }
+}
 
   const handleProgramSelection = (event) => {
     if (event.target.value === "") {
@@ -96,6 +103,7 @@ function handleSubmit(event) {
   useEffect(() => {
 
     getFromOpenElisServer("/rest/displayList/PROGRAM", fetchPrograms)
+    getFromOpenElisServer("/rest/displayList/TEST_SECTION_ACTIVE", fetchTestSections)
 
       return () => {
           componentMounted.current = false
@@ -139,6 +147,25 @@ function handleSubmit(event) {
                 <TextInput type="text" name="program.programName" id="program.programName" labelText="Program Name" 
                     value={programValues.program.programName}
                     onChange={handleFieldChange}/>
+            </div>
+            <div className="formInlineDiv">
+            <Select
+                id="test_section"
+                labelText="Test Section"
+                name="testSectionId" 
+                value={programValues.testSectionId}
+                onChange={handleFieldChange}>
+                <SelectItem value="" text=""/>
+                {
+                    testSections.map(testSection => {
+                        return (
+                            <SelectItem key={testSection.id}
+                                        value={testSection.id}
+                                        text={testSection.value}/>
+                        )
+                    })
+                }
+            </Select>
             </div>
             <div className="formInlineDiv">
                 <TextInput type="text" name="program.questionnaireUUID" id="program.questionnaireUUID" labelText="UUID"

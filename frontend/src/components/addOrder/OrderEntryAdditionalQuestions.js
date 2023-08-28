@@ -132,7 +132,7 @@ export const ProgramSelect = ({programChange = () => {}}) => {
 
   useEffect(() => {
     componentMounted.current = true;
-      getFromOpenElisServer("/rest/displayList/PROGRAM", fetchPrograms)
+      getFromOpenElisServer("/rest/user-programs", fetchPrograms)
       return () => {
           componentMounted.current = false;
       }

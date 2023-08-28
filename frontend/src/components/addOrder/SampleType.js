@@ -377,7 +377,7 @@ const SampleType = (props) => {
         getFromOpenElisServer("/rest/referral-reasons", displayReferralReasonsOptions);
         getFromOpenElisServer("/rest/referral-organizations", displayReferralOrgOptions);
         repopulateUI();
-        getFromOpenElisServer("/rest/samples", fetchSamplesTypes);
+        getFromOpenElisServer("/rest/user-sample-types", fetchSamplesTypes);
         return () => {
             componentMounted.current = false;
         }

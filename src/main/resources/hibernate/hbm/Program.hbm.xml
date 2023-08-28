@@ -25,5 +25,10 @@
 		<property name="questionnaireUUID" type="java.util.UUID">
 			<column name="questionnaire_fhir_uuid"/>
 		</property>
+		<many-to-one name="testSection"
+			class="org.openelisglobal.test.valueholder.TestSection"
+			fetch="select" lazy="false">
+			<column name="test_section_id" precision="10" scale="0" />
+		</many-to-one>
 	</class>
 </hibernate-mapping>

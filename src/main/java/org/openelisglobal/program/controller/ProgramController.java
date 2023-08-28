@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.hl7.fhir.r4.model.Questionnaire;
 import org.openelisglobal.common.rest.BaseRestController;
@@ -15,6 +16,8 @@ import org.openelisglobal.dataexchange.fhir.exception.FhirLocalPersistingExcepti
 import org.openelisglobal.dataexchange.fhir.service.FhirPersistanceService;
 import org.openelisglobal.program.service.ProgramService;
 import org.openelisglobal.program.valueholder.Program;
+import org.openelisglobal.test.service.TestSectionService;
+import org.openelisglobal.test.valueholder.TestSection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,6 +36,8 @@ public class ProgramController extends BaseRestController {
     private FhirUtil fhirUtil;
     @Autowired
     private ProgramService programService;
+    @Autowired
+    private TestSectionService testSectionService;
 
     @GetMapping(value = "/program/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -42,6 +47,9 @@ public class ProgramController extends BaseRestController {
         if (form.getProgram().getQuestionnaireUUID() != null) {
             form.setAdditionalOrderEntryQuestions(fhirUtil.getLocalFhirClient().read().resource(Questionnaire.class)
                     .withId(form.getProgram().getQuestionnaireUUID().toString()).execute());
+        }
+        if(form.getProgram().getTestSection() != null){
+            form.setTestSectionId(form.getProgram().getTestSection().getId());
         }
         return form;
     }
@@ -59,6 +67,13 @@ public class ProgramController extends BaseRestController {
         }
         if (questionnaire == null) {
             questionnaire = new Questionnaire();
+        }
+        program.setTestSection(null);
+        if(StringUtils.isNotBlank(form.getTestSectionId())){
+          TestSection testSection = testSectionService.get(form.getTestSectionId());
+          if(testSection != null){
+             program.setTestSection(testSection);
+          }
         }
         program = programService.save(program);
         questionnaire.setId(program.getQuestionnaireUUID().toString());
