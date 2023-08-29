@@ -116,7 +116,7 @@ class OEHeader extends React.Component {
                     <span id="header-logo">{this.logo()}</span>
                     <div class="banner">
                       <h5>{this.state.header.title}</h5>
-                      <p> Verion: {this.state.header.version}</p>
+                      <p> Version: {this.state.header.version}</p>
                     </div>
                   </HeaderName>
                   {this.props.isLoggedIn() && true && (
