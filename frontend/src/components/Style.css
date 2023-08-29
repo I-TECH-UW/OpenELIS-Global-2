@@ -15,6 +15,12 @@
   height: max-content;
 }
 
+.banner p {
+  margin: 0;
+  /* padding: 5px 0; */;
+  font-size: 10px;
+}
+
 div {
   display: block;
 }

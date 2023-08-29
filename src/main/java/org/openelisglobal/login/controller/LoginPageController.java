@@ -13,6 +13,10 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.controller.BaseController;
+import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.common.util.ConfigurationProperties.Property;
+import org.openelisglobal.localization.service.LocalizationService;
+import org.openelisglobal.login.bean.OEHeader;
 import org.openelisglobal.login.bean.UserSession;
 import org.openelisglobal.login.form.LoginForm;
 import org.openelisglobal.role.service.RoleService;
@@ -67,6 +71,8 @@ public class LoginPageController extends BaseController {
     private UserService userService;
     @Autowired
     private TestSectionService testSectionService;
+    @Autowired
+    LocalizationService localizationService;
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -133,6 +139,16 @@ public class LoginPageController extends BaseController {
             session.setRoles(roles);
         }
         return session;
+    }
+
+    @GetMapping(value = "/header", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public OEHeader getHederDetails() {
+        OEHeader header = new OEHeader();
+        header.setTitle(localizationService
+                .getLocalizedValueById(ConfigurationProperties.getInstance().getPropertyValue(Property.BANNER_TEXT)));
+        header.setVersion(ConfigurationProperties.getInstance().getPropertyValue(Property.releaseNumber));
+        return header;
     }
 
     private void setLabunitRolesForExistingUser(UserSession session) {
