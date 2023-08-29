@@ -218,9 +218,10 @@ class OEHeader extends React.Component {
                           </SideNavMenu>
                           <SideNavMenu
                             aria-label="Validation" title="Validation"                    >
-                            <SideNavMenuItem href={config.serverBaseUrl + "/ResultValidation?type=&test="}>Routine</SideNavMenuItem>
-                            <SideNavMenuItem href="/validationStudy">Study</SideNavMenuItem>
-                            <SideNavMenuItem href="/validation">Search</SideNavMenuItem>
+                            <SideNavMenuItem href="/validation?type=routine"> Search By Routine</SideNavMenuItem>
+                            <SideNavMenuItem href="/validationStudy">Search By Study</SideNavMenuItem>
+                            <SideNavMenuItem href="/validation?type=order">Search By Order</SideNavMenuItem>
+                            <SideNavMenuItem href="/validation?type=testDate">Search By Test Date</SideNavMenuItem>
                           </SideNavMenu>
 
                           <SideNavMenu aria-label="Reports" title="Reports">
