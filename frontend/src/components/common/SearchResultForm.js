@@ -19,7 +19,8 @@ import {
     Pagination,
     Select,
     SelectItem,
-    Row
+    Row ,
+    Loading
 } from '@carbon/react';
 import DataTable from 'react-data-table-component';
 import { Formik, Field } from "formik";
@@ -43,7 +44,8 @@ class ResultSearchPage extends React.Component {
 
     render() {
         return (
-            <>
+            <> 
+              
                 <SearchResultForm setResults={this.setResults}/>
                 <SearchResults results={this.state.resultForm}/>
             </>
@@ -64,6 +66,7 @@ export class SearchResultForm extends React.Component {
             tests: [],
             analysisStatusTypes: [],
             sampleStatusTypes: [],
+            loading : false
         }
     }
     _isMounted = false;
@@ -75,6 +78,7 @@ export class SearchResultForm extends React.Component {
                 results.testResult.forEach(item => item.id = "" + i++);
             }
             this.props.setResults?.(results);
+            this.setState({loading : false})
         } else {
             this.props.setResults?.({ testResult: [] });
             this.context.setNotificationBody({
@@ -83,6 +87,7 @@ export class SearchResultForm extends React.Component {
                 kind: NotificationKinds.warning
             })
             this.context.setNotificationVisible(true);
+            this.setState({loading : false})
         }
     }
 
@@ -101,6 +106,7 @@ export class SearchResultForm extends React.Component {
     }
 
     handleSubmit = (values) => {
+        this.setState({loading : true})
         this.props.setResults({ testResult: [] })
         var searchEndPoint = "/rest/ReactLogbookResultsByRange?" +
             "labNumber=" + values.accessionNumber +
@@ -147,6 +153,7 @@ export class SearchResultForm extends React.Component {
         return (
             <>
                 {this.context.notificationVisible === true ? <AlertDialog /> : ""}
+                {this.state.loading && <Loading></Loading>}
 
                 {/* <Grid  fullWidth={true} className="gridBoundary"> */}
                 {/* <Column  lg={3}> */}
