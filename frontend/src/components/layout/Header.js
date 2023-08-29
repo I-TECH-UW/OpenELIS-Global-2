@@ -214,7 +214,10 @@ class OEHeader extends React.Component {
                             <SideNavMenuItem href={"/CytologyDashboard"}>Dashboard</SideNavMenuItem>
                           </SideNavMenu>
                           <SideNavMenu aria-label="Results" title="Results">
-                            <SideNavMenuItem href="/result">Search Results</SideNavMenuItem>
+                            <SideNavMenuItem href="/result?type=unit">By Unit</SideNavMenuItem>
+                            <SideNavMenuItem href="/result?type=patient">By Patient</SideNavMenuItem>
+                            <SideNavMenuItem href="/result?type=order">By Order</SideNavMenuItem>
+                            <SideNavMenuItem href="/result?type=date">By Test Date</SideNavMenuItem>
                           </SideNavMenu>
                           <SideNavMenu
                             aria-label="Validation" title="Validation"                    >
