@@ -136,13 +136,13 @@ public class AccessionValidationRestController extends BaseResultValidationContr
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
         ResultValidationForm newForm = new ResultValidationForm();
-        if (request.getParameter("accessionNumber") != null) {
+        if (request.getParameter("accessionNumber") != null && !Objects.equals(request.getParameter("accessionNumber"), "")) {
             newForm.setAccessionNumber(request.getParameter("accessionNumber"));
-        } else if (request.getParameter("date") != null) {
+        } else if (request.getParameter("date") != null && !Objects.equals(request.getParameter("date"), "")) {
             newForm.setTestDate(request.getParameter("date"));
+        }else if(request.getParameter("unitType") != null && !Objects.equals(request.getParameter("unitType"), "")){
+            newForm.setTestSectionId(request.getParameter("unitType"));
         }
-        newForm.setTestSectionId(oldForm.getTestSectionId());
-        newForm.setTestSection(oldForm.getTestSection());
         return getResultValidation(request, newForm);
     }
 
