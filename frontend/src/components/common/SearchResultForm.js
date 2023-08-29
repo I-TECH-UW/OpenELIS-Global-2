@@ -44,8 +44,8 @@ class ResultSearchPage extends React.Component {
 
     render() {
         return (
-            <> 
-              
+            <>
+
                 <SearchResultForm setResults={this.setResults}/>
                 <SearchResults results={this.state.resultForm}/>
             </>
@@ -66,7 +66,8 @@ export class SearchResultForm extends React.Component {
             tests: [],
             analysisStatusTypes: [],
             sampleStatusTypes: [],
-            loading : false
+            loading : false,
+            searchBy: ""
         }
     }
     _isMounted = false;
@@ -145,6 +146,8 @@ export class SearchResultForm extends React.Component {
         getFromOpenElisServer("/rest/test-list", this.getTests);
         getFromOpenElisServer("/rest/analysis-status-types", this.getAnalysisStatusTypes);
         getFromOpenElisServer("/rest/sample-status-types", this.getSampleStatusTypes);
+        let param = (new URLSearchParams(window.location.search)).get("type")
+        this.setState({searchBy: param});
     }
 
     render() {
@@ -193,7 +196,7 @@ export class SearchResultForm extends React.Component {
                                 <Row lg={12}>
                                 <div className="inlineDiv">
 
-                                <Field name="accessionNumber"
+                                    {this.state.searchBy === "order" && <Field name="accessionNumber"
                                 >
                                     {({ field }) =>
                                         <TextInput
@@ -201,8 +204,10 @@ export class SearchResultForm extends React.Component {
                                             className="searchLabNumber inputText"
                                             name={field.name} id={field.name} labelText=""/>
                                     }
-                                </Field>
-
+                                </Field> }
+                                </div>
+                                    {this.state.searchBy === "patient" &&
+                                        <div className="inlineDiv">
                                     <Field name="nationalId"
                                     >
                                         {({ field }) =>
@@ -212,8 +217,6 @@ export class SearchResultForm extends React.Component {
                                                 name={field.name} id={field.name}  labelText=""/>
                                         }
                                     </Field>
-                                </div>
-                                <div className="inlineDiv">
                                     <Field name="firstName">
                                         {({ field }) =>
                                             <TextInput
@@ -231,10 +234,9 @@ export class SearchResultForm extends React.Component {
                                                 name={field.name} id={field.name}  labelText=""/>
                                         }
                                     </Field>
-                                </div>
+                                </div> }
                             </Row>
-                                <div className="advancedSearchFilters">
-                                    <Row lg={12}>
+                                    {this.state.searchBy === "date" &&  <div lg={12}>
                                         <div className="inlineDiv">
                                             <Field name="collectionDate"
                                             >
@@ -336,9 +338,8 @@ export class SearchResultForm extends React.Component {
                                         </div>
 
 
-                                    </Row>
-                                </div>
-                                <Grid>
+                                    </div> }
+                                {this.state.searchBy === "order" && <Grid>
                                     <Column lg={2}>
                                         <Field name="doRange"
                                         >
@@ -366,7 +367,7 @@ export class SearchResultForm extends React.Component {
                                             }
                                         </Field>
                                     </Column>
-                                </Grid>
+                                </Grid> }
 
                                 <Column lg={6}>
                                 <Button type="submit" id="submit" className="searchResultsBtn">
@@ -683,8 +684,8 @@ export class SearchResults extends React.Component {
                         return row.resultValue
                 }
             default :
-             return 
-            
+             return
+
 
         }
         return row.resultValue;
