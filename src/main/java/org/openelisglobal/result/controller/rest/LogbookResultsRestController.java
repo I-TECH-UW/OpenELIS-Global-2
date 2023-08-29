@@ -357,8 +357,10 @@ public class LogbookResultsRestController extends LogbookResultsBaseController {
 
             for (TestResultItem resultItem : filteredTests) {
                     Result newResult = new Result();
-                    newResult.setId(resultItem.getResult().getId());
-                    resultItem.setResult(newResult);
+                    if(resultItem.getResult() != null){
+                      newResult.setId(resultItem.getResult().getId());
+                      resultItem.setResult(newResult);
+                    }
                 }
 
             paging.setDatabaseResults(request, form, filteredTests);
