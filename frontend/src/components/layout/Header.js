@@ -4,6 +4,7 @@ import { withRouter } from "react-router-dom";
 import "../Style.css";
 import { Select, SelectItem } from "@carbon/react";
 import config from "../../config.json";
+import { getFromOpenElisServer } from '../utils/Utils';
 import {
   Search,
   Notification,
@@ -41,8 +42,22 @@ class OEHeader extends React.Component {
     this.headerPanelRef = React.createRef();
     this.state = {
       switchCollapsed: true,
+      header : {}
     };
   }
+  _isMounted = false;
+
+  loadHeader = (header) => {
+    if (this._isMounted) {
+        this.setState({ header: header });
+    }
+}
+
+  componentDidMount() {
+    this._isMounted = true;
+    getFromOpenElisServer("/header", this.loadHeader);
+
+}
 
   panelSwitchLabel = () => {
     return this.props.isLoggedIn() ? "User" : "Lang";
@@ -99,7 +114,10 @@ class OEHeader extends React.Component {
                     />}
                   <HeaderName href="/" prefix="">
                     <span id="header-logo">{this.logo()}</span>
-                    <span id="header-title">{this.props.config.title}</span>
+                    <div class="banner">
+                      <h5>{this.state.header.title}</h5>
+                      <p> Verion: {this.state.header.version}</p>
+                    </div>
                   </HeaderName>
                   {this.props.isLoggedIn() && true && (
                     <>

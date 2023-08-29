@@ -140,9 +140,13 @@ public class PatientDashBoardProvider {
     }
     
     private List<Analysis> unprintedResults() {
-        List<Analysis> analyses = analysisService
-                .getAnalysesForStatusId(iStatusService.getStatusID(AnalysisStatus.Finalized));
+        List<Analysis> analyses = analysisService.getAnalysisCompletedOnByStatusId(DateUtil.getNowAsSqlDate(),
+            iStatusService.getStatusID(AnalysisStatus.Finalized));
+        
         List<Analysis> unprintedAnalyses = new ArrayList<>();
+        if(analyses == null){
+           return unprintedAnalyses;
+        }
         analyses.forEach(a -> {
             if (a.getPrintedDate() == null) {
                 unprintedAnalyses.add(a);
