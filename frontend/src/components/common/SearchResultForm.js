@@ -19,7 +19,8 @@ import {
     Pagination,
     Select,
     SelectItem,
-    Row
+    Row ,
+    Loading
 } from '@carbon/react';
 import DataTable from 'react-data-table-component';
 import { Formik, Field } from "formik";
@@ -43,7 +44,8 @@ class ResultSearchPage extends React.Component {
 
     render() {
         return (
-            <>
+            <> 
+              
                 <SearchResultForm setResults={this.setResults}/>
                 <SearchResults results={this.state.resultForm}/>
             </>
@@ -64,19 +66,28 @@ export class SearchResultForm extends React.Component {
             tests: [],
             analysisStatusTypes: [],
             sampleStatusTypes: [],
+            loading : false
         }
     }
     _isMounted = false;
 
     setResultsWithId = (results) => {
-        if (results) {
+        if (results.testResult) {
             var i = 0;
             if (results.testResult) {
                 results.testResult.forEach(item => item.id = "" + i++);
             }
             this.props.setResults?.(results);
+            this.setState({loading : false})
         } else {
             this.props.setResults?.({ testResult: [] });
+            this.context.setNotificationBody({
+                title: "Notification Message",
+                message: "No results found!",
+                kind: NotificationKinds.warning
+            })
+            this.context.setNotificationVisible(true);
+            this.setState({loading : false})
         }
     }
 
@@ -95,6 +106,7 @@ export class SearchResultForm extends React.Component {
     }
 
     handleSubmit = (values) => {
+        this.setState({loading : true})
         this.props.setResults({ testResult: [] })
         var searchEndPoint = "/rest/ReactLogbookResultsByRange?" +
             "labNumber=" + values.accessionNumber +
@@ -108,7 +120,7 @@ export class SearchResultForm extends React.Component {
             "&selectedAnalysisStatus="+values.analysisStatus +
             "&doRange=" + this.state.doRange +
             "&finished=" + this.state.finished
-        getFromOpenElisServer(searchEndPoint, this.setResultsWithId);
+           getFromOpenElisServer(searchEndPoint, this.setResultsWithId);
     };
 
     getTests = (tests) => {
@@ -130,7 +142,6 @@ export class SearchResultForm extends React.Component {
 
     componentDidMount() {
         this._isMounted = true;
-        getFromOpenElisServer("/rest/health-regions", this.fetchHeathRegions);
         getFromOpenElisServer("/rest/test-list", this.getTests);
         getFromOpenElisServer("/rest/analysis-status-types", this.getAnalysisStatusTypes);
         getFromOpenElisServer("/rest/sample-status-types", this.getSampleStatusTypes);
@@ -142,6 +153,7 @@ export class SearchResultForm extends React.Component {
         return (
             <>
                 {this.context.notificationVisible === true ? <AlertDialog /> : ""}
+                {this.state.loading && <Loading></Loading>}
 
                 {/* <Grid  fullWidth={true} className="gridBoundary"> */}
                 {/* <Column  lg={3}> */}
@@ -387,8 +399,38 @@ export class SearchResults extends React.Component {
             pageSize: 100,
             acceptAsIs: [],
             saveStatus: "",
+            referalOrganizations : [] ,
+            methods : [] ,
+            referralReasons : []
         }
+    }
 
+    _isMounted = false;
+
+    componentDidMount() {
+        this._isMounted = true;
+        getFromOpenElisServer("/rest/displayList/REFERRAL_ORGANIZATIONS", this.loadReferalOrganizations);
+        getFromOpenElisServer("/rest/displayList/METHODS", this.loadMehtods);
+        getFromOpenElisServer("/rest/displayList/REFERRAL_REASONS", this.loadReferalReasons);
+
+    }
+
+    loadReferalOrganizations  = (results) => {
+        if (this._isMounted) {
+            this.setState({ referalOrganizations: results });
+        }
+    }
+
+    loadMehtods  = (results) => {
+        if (this._isMounted) {
+            this.setState({ methods: results });
+        }
+    }
+
+    loadReferalReasons  = (results) => {
+        if (this._isMounted) {
+            this.setState({ referralReasons: results });
+        }
     }
 
     columns = [
@@ -574,12 +616,6 @@ export class SearchResults extends React.Component {
                             onChange={(e) => this.handleChange(e, row.id)}
                         />
 
-                    // <input id={"results_" + param.rowId} type="text" size="6"></input>
-
-                    //         <input id="results_0" name="testResult[0].resultValue" class="resultValue" 
-                    // style="background: rgb(255, 255, 255);" onchange="validateResults( this, 0, 7.0, 40.0, 7.0, 350.0, 0, 'XXXX' );
-                    // 		   			 markUpdated(0);
-                    // 		   			 updateShadowResult(this, 0);" type="text" value="" size="6" title=""></input>
                     default:
                         return row.resultValue
                 }
@@ -592,6 +628,7 @@ export class SearchResults extends React.Component {
                             name={"testResult[" + row.id + "].resultValue"}
                             noLabel={true}
                             onChange={(e) => this.validateResults(e, row.id)}
+                            value = {row.resultValue}
                         >
                             {/* {...updateShadowResult(e, this, param.rowId)} */}
                             <SelectItem
@@ -619,8 +656,8 @@ export class SearchResults extends React.Component {
                         id={"currentResultValue" + row.id}
                         name={"testResult[" + row.id + "].resultValue"}
                         //type="text"
-                        value={this.props.results.testResult[row.id].resultValue}
-                        // labelText="Text input label"
+                        value={row.resultValue}
+                         labelText=""
                         // helperText="Optional help text"
                         onChange={(e) => this.handleChange(e, row.id)}
                     />
@@ -645,27 +682,9 @@ export class SearchResults extends React.Component {
                     default:
                         return row.resultValue
                 }
-
-            // case "Methods":
-            //     return <Select
-            //         id={"testMethod" + row.id}
-            //         name={"testResult[" + row.id + "].testMethod"}
-            //         noLabel={true}
-            //         onChange={(e) => this.handleChange(e, row.id)}
-            //         value={row.method}
-            //     >
-            //         <SelectItem
-            //             text=""
-            //             value=""
-            //         />
-            //         {row.methods.map((method, method_index) => (
-            //             <SelectItem
-            //                 text={method.value}
-            //                 value={method.id}
-            //                 key={method_index}
-            //             />
-            //         ))}
-            //     </Select>
+            default :
+             return 
+            
 
         }
         return row.resultValue;
@@ -687,7 +706,7 @@ export class SearchResults extends React.Component {
                                 text=""
                                 value=""
                             />
-                            {data.methods.map((method, method_index) => (
+                            {this.state.methods.map((method, method_index) => (
                                 <SelectItem
                                     text={method.value}
                                     value={method.id}
@@ -711,11 +730,11 @@ export class SearchResults extends React.Component {
                                 text=""
                                 value=""
                             />
-                            {data.referralReasons.map((method, method_index) => (
+                            {this.state.referralReasons.map((reason, reason_index) => (
                                 <SelectItem
-                                    text={method.value}
-                                    value={method.id}
-                                    key={method_index}
+                                    text={reason.value}
+                                    value={reason.id}
+                                    key={reason_index}
                                 />
                             ))}
                         </Select>
@@ -736,11 +755,11 @@ export class SearchResults extends React.Component {
                                 text=""
                                 value=""
                             />
-                            {data.referralOrganizations.map((method, method_index) => (
+                            {this.state.referalOrganizations.map((org, org_index) => (
                                 <SelectItem
-                                    text={method.value}
-                                    value={method.id}
-                                    key={method_index}
+                                    text={org.value}
+                                    value={org.id}
+                                    key={org_index}
                                 />
                             ))}
                         </Select>

@@ -188,11 +188,6 @@ public class LogbookResultsRestController extends LogbookResultsBaseController {
         binder.setAllowedFields(ALLOWED_FIELDS);
     }
 
-//    @RequestMapping(value = "/ReactLogbookResults", method = RequestMethod.GET)
-//    public ModelAndView showReactLogbookResults(HttpServletRequest request,
-//            @Validated(LogbookResults.class) @ModelAttribute("form") LogbookResultsForm form, BindingResult result)
-//            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-
     @GetMapping(value = "ReactLogbookResultsByRange", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public LogbookResultsForm showReactLogbookResults(@RequestParam(required = false) String labNumber, @RequestParam(required = false) String  nationalId,@RequestParam(required = false) String  firstName,
@@ -219,17 +214,6 @@ public class LogbookResultsRestController extends LogbookResultsBaseController {
             String currentDate = getCurrentDate();
             newForm.setCurrentDate(currentDate);
             newForm.setAccessionNumber(labNumber);
-            newForm.setReferralReasons(
-                    DisplayListService.getInstance().getList(DisplayListService.ListType.REFERRAL_REASONS));
-            newForm.setRejectReasons(DisplayListService.getInstance()
-                    .getNumberedListWithLeadingBlank(DisplayListService.ListType.REJECTION_REASONS));
-
-            // load testSections for drop down
-            String resultsRoleId = roleService.getRoleByName(Constants.ROLE_RESULTS).getId();
-            List<IdValuePair> testSections = userService.getUserTestSections(getSysUserId(request), resultsRoleId);
-            newForm.setTestSections(testSections);
-            newForm.setTestSectionsByName(DisplayListService.getInstance().getList(ListType.TEST_SECTION_BY_NAME));
-            newForm.setMethods(DisplayListService.getInstance().getList(ListType.METHODS));
         }
         newForm.setDisplayTestSections(true);
         newForm.setSearchByRange(false);
@@ -237,10 +221,6 @@ public class LogbookResultsRestController extends LogbookResultsBaseController {
         return getLogbookResults(request, newForm,statusResultsForm, labNumber,nationalId,firstName,lastName, doRange, finished);
     }
 
-//    @RequestMapping(value = "/ReactRangeResults", method = RequestMethod.GET)
-//    public ModelAndView showReactLogbookResultsByRange(HttpServletRequest request,
-//            @Validated(LogbookResults.class) @ModelAttribute("form") LogbookResultsForm form, BindingResult result)
-//            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
     @GetMapping(value = "ReactRangeResults", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -256,33 +236,16 @@ public class LogbookResultsRestController extends LogbookResultsBaseController {
 
             String currentDate = getCurrentDate();
             newForm.setCurrentDate(currentDate);
-            newForm.setReferralReasons(
-                    DisplayListService.getInstance().getList(DisplayListService.ListType.REFERRAL_REASONS));
-            newForm.setRejectReasons(DisplayListService.getInstance()
-                    .getNumberedListWithLeadingBlank(DisplayListService.ListType.REJECTION_REASONS));
-            newForm.setMethods(DisplayListService.getInstance().getList(ListType.METHODS));
-
-            // load testSections for drop down
         }
         newForm.setDisplayTestSections(false);
         newForm.setSearchByRange(true);
-        // System.out.println("Post:LogbookResultsRestController:call
-        // getLogbookResults");
+
         return getLogbookResults(request, newForm,null, labNumber,"","","", doRange, finished);
     }
 
     private LogbookResultsForm getLogbookResults(HttpServletRequest request, LogbookResultsForm form,StatusResultsForm statusResultsForm, String labNumber,String nationalId,String firstName,String lastName, boolean doRange,
             boolean finished) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-
-        // boolean useTechnicianName = ConfigurationProperties.getInstance()
-        // .isPropertyValueEqual(Property.resultTechnicianName, "true");
-        // boolean alwaysValidate = ConfigurationProperties.getInstance()
-        // .isPropertyValueEqual(Property.ALWAYS_VALIDATE_RESULTS, "true");
-        // boolean supportReferrals =
-        // FormFields.getInstance().useField(Field.ResultsReferral);
-        // String statusRuleSet =
-        // ConfigurationProperties.getInstance().getPropertyValueUpperCase(Property.StatusRules);
-        
+   
         String patientName = "";
         String patientInfo = "";
         Patient patient = null;
@@ -361,6 +324,9 @@ public class LogbookResultsRestController extends LogbookResultsBaseController {
 
                     List<PatientSearchResults> results = searchService.getSearchResults(lastName, firstName, null,
                             null, nationalId, null, null, null, null, null);
+                    if(results.isEmpty()){
+                        return form;
+                    }        
                     for (PatientSearchResults result : results) {
                         patient = getPatient(result.getPatientID());
                     }
@@ -389,6 +355,14 @@ public class LogbookResultsRestController extends LogbookResultsBaseController {
                 }
             }
 
+            for (TestResultItem resultItem : filteredTests) {
+                    Result newResult = new Result();
+                    if(resultItem.getResult() != null){
+                      newResult.setId(resultItem.getResult().getId());
+                      resultItem.setResult(newResult);
+                    }
+                }
+
             paging.setDatabaseResults(request, form, filteredTests);
 
         } else {
@@ -409,7 +383,6 @@ public class LogbookResultsRestController extends LogbookResultsBaseController {
         form.setHivKits(hivKits);
         form.setSyphilisKits(syphilisKits);
         form.setInventoryItems(inventoryList);
-        form.setReferralOrganizations(DisplayListService.getInstance().getList(ListType.REFERRAL_ORGANIZATIONS));
 
         addFlashMsgsToRequest(request);
 
@@ -417,25 +390,8 @@ public class LogbookResultsRestController extends LogbookResultsBaseController {
             if (patientName != "") resultItem.setPatientName(patientName); 
             if (patientInfo != "") resultItem.setPatientInfo(patientInfo); 
             
-            resultItem.setMethods(DisplayListService.getInstance().getList(ListType.METHODS));
-            resultItem.setReferralOrganizations(
-                    DisplayListService.getInstance().getList(ListType.REFERRAL_ORGANIZATIONS));
-            resultItem.setReferralReasons(
-                    DisplayListService.getInstance().getList(DisplayListService.ListType.REFERRAL_REASONS));
-
          }
 
-//        ObjectMapper mapper = new ObjectMapper();
-//        String jsonForm = "";
-//        try {
-//            jsonForm = mapper.writeValueAsString(form);
-//        } catch (JsonProcessingException e) {
-//            // TODO Auto-generated catch block
-//            e.printStackTrace();
-//        }
-
-        // System.out.println("LogbookResultsRestController:jsonForm:" + jsonForm);
-        // return findForward(FWD_SUCCESS, form);
         return (form);
     }
 
@@ -451,42 +407,18 @@ public class LogbookResultsRestController extends LogbookResultsBaseController {
             @Validated(LogbookResultsForm.LogbookResults.class) @RequestBody LogbookResultsForm Form,
             BindingResult result) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
-        // System.out.println("LogbookResultsRestController:Form:" + Form.toString());
-
-//        JSONParser parser = new JSONParser();
-//        JSONObject jsonObject = new JSONObject();
-//        try {
-//            jsonObject = (JSONObject) parser.parse("{\"formName\":\"LogbookResultsForm\",\"formAction\":null,\"formMethod\":\"POST\",\"cancelAction\":\"Home\",\"submitOnCancel\":false,\"cancelMethod\":\"POST\",\"paging\":{\"totalPages\":\"1\",\"currentPage\":\"1\",\"searchTermToPage\":[]},\"accessionNumber\":null,\"singlePatient\":false,\"currentDate\":\"03/17/2023\",\"displayTestMethod\":true,\"displayTestKit\":false,\"testResult\":[],\"referralItems\":null,\"inventoryItems\":[],\"hivKits\":[],\"syphilisKits\":[],\"type\":\"\",\"referralReasons\":[{\"id\":\"1\",\"value\":\"Test not performed\"},{\"id\":\"2\",\"value\":\"Confirmation requested\"},{\"id\":\"3\",\"value\":\"Further testing required\"},{\"id\":\"4\",\"value\":\"Reagent expired\"},{\"id\":\"5\",\"value\":\"Reagents unavailable\"},{\"id\":\"6\",\"value\":\"Equipment failure\"},{\"id\":\"7\",\"value\":\"Verification of EQA\"},{\"id\":\"8\",\"value\":\"Specimen sent for serotyping\"},{\"id\":\"9\",\"value\":\"EQA by Repeat Testing\"},{\"id\":\"10\",\"value\":\"Other\"}],\"rejectReasons\":[{\"id\":\"0\",\"value\":\"\"},{\"id\":\"1140\",\"value\":\"1. Measurement not available due to technical problem. Please submit another sample.\"},{\"id\":\"1141\",\"value\":\"2. Sample / request form not / misidentified . Please submit another sample.\"},{\"id\":\"1142\",\"value\":\"3. Sample / request form incompatible . Please submit another sample.\"},{\"id\":\"1143\",\"value\":\"4. Free sample request form or vice versa. Please submit another sample.\"},{\"id\":\"1144\",\"value\":\"5. Sample transported / stored incorrectly. Please submit another sample.\"},{\"id\":\"1145\",\"value\":\"6. Identification of improper sample. Please submit another sample.\"},{\"id\":\"1146\",\"value\":\"7. Sample was collected in the wrong tube. Please submit another sample.\"},{\"id\":\"1147\",\"value\":\"8. Incorrect quantity of the sample. Please submit another sample.\"},{\"id\":\"1148\",\"value\":\"9. The sample received is not suitable for test requested . Please submit the appropriate sample.\"},{\"id\":\"1149\",\"value\":\"10. The sample received is coagulated . Please submit another sample.\"},{\"id\":\"1150\",\"value\":\"11. The received sample was refrigerated . Please submit another sample.\"},{\"id\":\"1151\",\"value\":\"12. Tube received arrived broken or spilled . Please submit another sample.\"},{\"id\":\"1152\",\"value\":\"13. The received sample is hemolyzed . Please submit another sample.\"},{\"id\":\"1160\",\"value\":\"14. The sample received is jaundiced. Please submit another sample.\"},{\"id\":\"1161\",\"value\":\"15. The sample received is lipemic. Please submit another sample.\"},{\"id\":\"1153\",\"value\":\"16. The sample is contaminated. Please submit another sample.\"},{\"id\":\"1154\",\"value\":\"17. The sample received was insufficient volume . Please submit another sample.\"},{\"id\":\"1155\",\"value\":\"18. Following a mistake in sample intake, a not requested test has been scheduled but not executed.\"},{\"id\":\"1162\",\"value\":\"19. Other.\"}],\"testSections\":null,\"testSectionsByName\":null,\"referralOrganizations\":[{\"id\":\"3210\",\"value\":\"CEDRES\"},{\"id\":\"3131\",\"value\":\"CENTRAL HEALTH LABORATORY\"},{\"id\":\"3219\",\"value\":\"CIRBA\"},{\"id\":\"2878\",\"value\":\"PROJECT RETROCI\"},{\"id\":\"3224\",\"value\":\"SSR AIRPORT LAB\"},{\"id\":\"3614\",\"value\":\"Test referral lab\"},{\"id\":\"2769\",\"value\":\"Training Reflab\"}],\"methods\":[{\"id\":\"39\",\"value\":\"EIA\"},{\"id\":\"40\",\"value\":\"PCR\"},{\"id\":\"41\",\"value\":\"STAIN\"},{\"id\":\"42\",\"value\":\"CULTURE\"},{\"id\":\"43\",\"value\":\"PROBE\"},{\"id\":\"44\",\"value\":\"BIOCHEMICAL\"},{\"id\":\"45\",\"value\":\"Diane Test\"},{\"id\":\"46\",\"value\":\"HPLC\"},{\"id\":\"47\",\"value\":\"DNA SEQUENCING\"},{\"id\":\"48\",\"value\":\"AUTO\"},{\"id\":\"49\",\"value\":\"MANUAL\"},{\"id\":\"50\",\"value\":\"HIV_TEST_KIT\"},{\"id\":\"51\",\"value\":\"SYPHILIS_TEST_KIT\"}],\"methodsByName\":null,\"displayMethods\":true,\"methodId\":null,\"testSectionId\":null,\"displayTestSections\":false,\n"
-//                    + "\"searchByRange\":true,\"searchFinished\":false}");
-//        } catch (Exception e) {
-//            
-//            System.out.println("Post:LogbookResultsRestController:ERROR:" + e.toString());
-//        }
-
         ObjectMapper mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
         String jsonString = new String();
-//        //mapper.registerModule(new ParameterNamesModule(Mode.PROPERTIES));
-//       
-//        LogbookResultsForm form = new LogbookResultsForm();
-//
+
         try {
-            // form = mapper.readValue(Form.toJSONString(), LogbookResultsForm.class);
             jsonString = mapper.writeValueAsString(Form);
         } catch (Exception e) {
             System.out.println("Post:LogbookResultsRestController:ERROR:" + e.toString());
         }
-//        //System.out.println("Post:LogbookResultsRestController:form:" + form.toString());
+
         System.out.println("Post:LogbookResultsRestController:SUCCESS" + jsonString);
 
-        // return("");
     }
-
-//    @RequestMapping(value = { "/ReactLogbookResults", "/PatientResults", "/AccessionResults",
-//            "/StatusResults" }, method = RequestMethod.POST)
-//    public LogbookResultsForm showReactLogbookResultsUpdate(HttpServletRequest request,
-//            @ModelAttribute("form") @Validated(LogbookResultsForm.LogbookResults.class) LogbookResultsForm form,
-//            BindingResult result, RedirectAttributes redirectAttributes)
-//            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
     @PostMapping(value = "ReactLogbookResultsUpdate", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -509,11 +441,8 @@ public class LogbookResultsRestController extends LogbookResultsBaseController {
 
         if (result.hasErrors()) {
             saveErrors(result);
-//            return findForward(FWD_FAIL_INSERT, form);
         }
 
-//  gnr: shows current session records, can be current, stale/empty vs. other user
-//        ie: empty when another user saved and hasn't reloaded.
 
         List<Result> checkPagedResults = (List<Result>) request.getSession()
                 .getAttribute(IActionConstants.RESULTS_SESSION_CACHE);
@@ -534,14 +463,10 @@ public class LogbookResultsRestController extends LogbookResultsBaseController {
 
             if (true) {
                 saveErrors(errors);
-//                return findForward(FWD_VALIDATION_ERROR, form);
             }
         }
 
         List<IResultUpdate> updaters = ResultUpdateRegister.getRegisteredUpdaters();
-
-        // gnr
-        // if (true) return(form);
 
         ResultsPaging paging = new ResultsPaging();
         paging.updatePagedResults(request, form);
@@ -554,7 +479,6 @@ public class LogbookResultsRestController extends LogbookResultsBaseController {
 
         if (errors.hasErrors()) {
             saveErrors(errors);
-//            return findForward(FWD_VALIDATION_ERROR, form);
         }
 
         createResultsFromItems(actionDataSet, supportReferrals, alwaysValidate, useTechnicianName, statusRuleSet);
@@ -563,8 +487,6 @@ public class LogbookResultsRestController extends LogbookResultsBaseController {
         try {
             List<Analysis> reflexAnalysises = logbookPersistService.persistDataSet(actionDataSet, updaters,
                     getSysUserId(request));
-//            redirectAttributes.addFlashAttribute(REFLEX_ACCESSIONS, reflexAnalysises.stream()
-//                    .map(e -> analysisService.getOrderAccessionNumber(e)).collect(Collectors.toList()));
             try {
                 fhirTransformService.transformPersistResultsEntryFhirObjects(actionDataSet);
             } catch (FhirTransformationException | FhirPersistanceException e) {
@@ -581,7 +503,6 @@ public class LogbookResultsRestController extends LogbookResultsBaseController {
 
             errors.reject(errorMsg, errorMsg);
             saveErrors(errors);
-//            return findForward(FWD_FAIL_INSERT, form);
 
         }
 
@@ -595,15 +516,11 @@ public class LogbookResultsRestController extends LogbookResultsBaseController {
             }
         }
 
-//        redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
         if (GenericValidator.isBlankOrNull(form.getType())) {
-//            return findForward(FWD_SUCCESS_INSERT, form);
         } else {
             Map<String, String> params = new HashMap<>();
             params.put("type", form.getType());
-//            return getForwardWithParameters(findForward(FWD_SUCCESS_INSERT, form), params);
         }
-        // added return
         return (form);
     }
 
@@ -691,8 +608,6 @@ public class LogbookResultsRestController extends LogbookResultsBaseController {
 
         referral.setReferralReasonId(referralItem.getReferralReasonId());
 
-//            referralService.insert(referral);
-//        referrals.add(referral);
         ReferralResult referralResult = new ReferralResult();
         referralResult.setReferralId(referral.getId());
         referralResult.setSysUserId(actionDataSet.getCurrentUserId());
@@ -700,8 +615,6 @@ public class LogbookResultsRestController extends LogbookResultsBaseController {
         if (results.size() == 1) {
             referralResult.setResult(results.get(0));
         }
-//            referralResult.setResult(result);
-//            referralResultService.insert(referralResult);
 
         ReferralSet referralSet = new ReferralSet();
         referralSet.setReferral(referral);
