@@ -219,17 +219,17 @@ public class LogbookResultsRestController extends LogbookResultsBaseController {
             String currentDate = getCurrentDate();
             newForm.setCurrentDate(currentDate);
             newForm.setAccessionNumber(labNumber);
-            newForm.setReferralReasons(
-                    DisplayListService.getInstance().getList(DisplayListService.ListType.REFERRAL_REASONS));
-            newForm.setRejectReasons(DisplayListService.getInstance()
-                    .getNumberedListWithLeadingBlank(DisplayListService.ListType.REJECTION_REASONS));
+            // newForm.setReferralReasons(
+            //         DisplayListService.getInstance().getList(DisplayListService.ListType.REFERRAL_REASONS));
+            // newForm.setRejectReasons(DisplayListService.getInstance()
+            //         .getNumberedListWithLeadingBlank(DisplayListService.ListType.REJECTION_REASONS));
 
             // load testSections for drop down
-            String resultsRoleId = roleService.getRoleByName(Constants.ROLE_RESULTS).getId();
-            List<IdValuePair> testSections = userService.getUserTestSections(getSysUserId(request), resultsRoleId);
-            newForm.setTestSections(testSections);
-            newForm.setTestSectionsByName(DisplayListService.getInstance().getList(ListType.TEST_SECTION_BY_NAME));
-            newForm.setMethods(DisplayListService.getInstance().getList(ListType.METHODS));
+           // String resultsRoleId = roleService.getRoleByName(Constants.ROLE_RESULTS).getId();
+            //List<IdValuePair> testSections = userService.getUserTestSections(getSysUserId(request), resultsRoleId);
+            //newForm.setTestSections(testSections);
+            //newForm.setTestSectionsByName(DisplayListService.getInstance().getList(ListType.TEST_SECTION_BY_NAME));
+           // newForm.setMethods(DisplayListService.getInstance().getList(ListType.METHODS));
         }
         newForm.setDisplayTestSections(true);
         newForm.setSearchByRange(false);
@@ -256,11 +256,11 @@ public class LogbookResultsRestController extends LogbookResultsBaseController {
 
             String currentDate = getCurrentDate();
             newForm.setCurrentDate(currentDate);
-            newForm.setReferralReasons(
-                    DisplayListService.getInstance().getList(DisplayListService.ListType.REFERRAL_REASONS));
-            newForm.setRejectReasons(DisplayListService.getInstance()
-                    .getNumberedListWithLeadingBlank(DisplayListService.ListType.REJECTION_REASONS));
-            newForm.setMethods(DisplayListService.getInstance().getList(ListType.METHODS));
+            // newForm.setReferralReasons(
+            //         DisplayListService.getInstance().getList(DisplayListService.ListType.REFERRAL_REASONS));
+            // newForm.setRejectReasons(DisplayListService.getInstance()
+            //         .getNumberedListWithLeadingBlank(DisplayListService.ListType.REJECTION_REASONS));
+            // newForm.setMethods(DisplayListService.getInstance().getList(ListType.METHODS));
 
             // load testSections for drop down
         }
@@ -361,6 +361,9 @@ public class LogbookResultsRestController extends LogbookResultsBaseController {
 
                     List<PatientSearchResults> results = searchService.getSearchResults(lastName, firstName, null,
                             null, nationalId, null, null, null, null, null);
+                    if(results.isEmpty()){
+                        return form;
+                    }        
                     for (PatientSearchResults result : results) {
                         patient = getPatient(result.getPatientID());
                     }
@@ -389,6 +392,12 @@ public class LogbookResultsRestController extends LogbookResultsBaseController {
                 }
             }
 
+            for (TestResultItem resultItem : filteredTests) {
+                    Result newResult = new Result();
+                    newResult.setId(resultItem.getResult().getId());
+                    resultItem.setResult(newResult);
+                }
+
             paging.setDatabaseResults(request, form, filteredTests);
 
         } else {
@@ -409,7 +418,7 @@ public class LogbookResultsRestController extends LogbookResultsBaseController {
         form.setHivKits(hivKits);
         form.setSyphilisKits(syphilisKits);
         form.setInventoryItems(inventoryList);
-        form.setReferralOrganizations(DisplayListService.getInstance().getList(ListType.REFERRAL_ORGANIZATIONS));
+       // form.setReferralOrganizations(DisplayListService.getInstance().getList(ListType.REFERRAL_ORGANIZATIONS));
 
         addFlashMsgsToRequest(request);
 
@@ -417,11 +426,11 @@ public class LogbookResultsRestController extends LogbookResultsBaseController {
             if (patientName != "") resultItem.setPatientName(patientName); 
             if (patientInfo != "") resultItem.setPatientInfo(patientInfo); 
             
-            resultItem.setMethods(DisplayListService.getInstance().getList(ListType.METHODS));
-            resultItem.setReferralOrganizations(
-                    DisplayListService.getInstance().getList(ListType.REFERRAL_ORGANIZATIONS));
-            resultItem.setReferralReasons(
-                    DisplayListService.getInstance().getList(DisplayListService.ListType.REFERRAL_REASONS));
+           // resultItem.setMethods(DisplayListService.getInstance().getList(ListType.METHODS));
+            //resultItem.setReferralOrganizations(
+                   // DisplayListService.getInstance().getList(ListType.REFERRAL_ORGANIZATIONS));
+           // resultItem.setReferralReasons(
+                   // DisplayListService.getInstance().getList(DisplayListService.ListType.REFERRAL_REASONS));
 
          }
 
