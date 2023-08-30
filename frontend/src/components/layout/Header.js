@@ -232,12 +232,13 @@ class OEHeader extends React.Component {
                             <SideNavMenuItem href={"/CytologyDashboard"}> <FormattedMessage id="sidenav.label.pathology.dashboard"/> </SideNavMenuItem>
                           </SideNavMenu>
                           <SideNavMenu aria-label="Results" title={<FormattedMessage id="sidenav.label.results"/>}  >
-                            <SideNavMenuItem href="/result?type=unit"> <FormattedMessage id="sidenav.label.results.unit"/> </SideNavMenuItem>
-                            <SideNavMenuItem href="/result?type=patient"> <FormattedMessage id="sidenav.label.results.patient"/> </SideNavMenuItem>
-                            <SideNavMenuItem href="/result?type=order"> <FormattedMessage id="sidenav.label.results.order"/> </SideNavMenuItem>
-                            <SideNavMenuItem href="/result?type=date"> <FormattedMessage id="sidenav.label.results.testdate"/> </SideNavMenuItem>
+                            <SideNavMenuItem href="/result?type=unit&doRange=false"> <FormattedMessage id="sidenav.label.results.unit"/> </SideNavMenuItem>
+                            <SideNavMenuItem href="/result?type=patient&doRange=false"> <FormattedMessage id="sidenav.label.results.patient"/> </SideNavMenuItem>
+                            <SideNavMenuItem href="/result?type=order&doRange=false"> <FormattedMessage id="sidenav.label.results.order"/> </SideNavMenuItem>
+                            <SideNavMenuItem href="/result?type=range&doRange=true">By Range of Order numbers</SideNavMenuItem>
+                            <SideNavMenuItem href="/result?type=date&doRange=false"> <FormattedMessage id="sidenav.label.results.testdate"/> </SideNavMenuItem>
                           </SideNavMenu>
-                          <SideNavMenu
+                            <SideNavMenu
                             aria-label="Validation" title={<FormattedMessage id="sidenav.label.validation"/>}                    >
                             <SideNavMenuItem href="/validation?type=routine">  <FormattedMessage id="sidenav.label.validation.routine"/> </SideNavMenuItem>
                             <SideNavMenuItem href="/validationStudy"> <FormattedMessage id="sidenav.label.validation.study"/> </SideNavMenuItem>

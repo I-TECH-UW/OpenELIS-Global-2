@@ -716,12 +716,12 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
     
     @Override
     public List<Analysis> getPageAnalysisByStatusFromAccession(List<Integer> analysisStatusList,
-            List<Integer> sampleStatusList, String accessionNumber, boolean doRange, boolean finished) {
+            List<Integer> sampleStatusList, String accessionNumber,String upperRangeAccessionNumber, boolean doRange, boolean finished) {
         if (accessionNumber != null && accessionNumber.contains(".")) {
             accessionNumber = accessionNumber.substring(0, accessionNumber.indexOf('.'));
         }
         return baseObjectDAO.getPageAnalysisByStatusFromAccession(analysisStatusList, sampleStatusList,
-                accessionNumber, doRange, finished);
+                accessionNumber,upperRangeAccessionNumber, doRange, finished);
     }
 
 

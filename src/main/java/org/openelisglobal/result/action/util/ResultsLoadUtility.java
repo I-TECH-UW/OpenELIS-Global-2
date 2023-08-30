@@ -1048,9 +1048,9 @@ public class ResultsLoadUtility {
         return getGroupedTestsForAnalysisList(analysisList, SORT_FORWARD);
     }
     
-    public List<TestResultItem> getUnfinishedTestResultItemsByAccession(String accessionNumber, boolean doRange, boolean finished) {
+    public List<TestResultItem> getUnfinishedTestResultItemsByAccession(String accessionNumber,String upperRangeAccessionNumber, boolean doRange, boolean finished) {
         List<Analysis> analysisList = analysisService.getPageAnalysisByStatusFromAccession(analysisStatusList,
-                sampleStatusList, accessionNumber, doRange, finished);
+                sampleStatusList, accessionNumber,upperRangeAccessionNumber, doRange, finished);
 
         return getGroupedTestsForAnalysisList(analysisList, SORT_FORWARD);
     }
