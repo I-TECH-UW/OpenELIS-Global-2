@@ -35,10 +35,6 @@ import {
   HeaderPanel,
 } from "@carbon/react";
 
-function FormattedMessageBy(props) {
-  return null;
-}
-
 class OEHeader extends React.Component {
   constructor(props) {
     super(props);
