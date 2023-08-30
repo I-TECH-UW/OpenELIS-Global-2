@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Column, Grid, Select, SelectItem } from "@carbon/react";
-import { injectIntl, FormattedMessage } from "react-intl";
+import { injectIntl } from "react-intl";
 import "../Style.css";
 import { getFromOpenElisServer } from "../utils/Utils";
 
@@ -8,17 +8,15 @@ function TestSectionSelectForm(props) {
   const mounted = useRef(false);
   const [testUnits, setTestUnits] = useState([]);
 
-  const { formatMessage } = props.intl;
-
   const handleChange = (e) => {
-    props.value(e.target.value,e.target.selectedOptions[0].text)
+    props.value(e.target.value, e.target.selectedOptions[0].text);
   };
 
   const getTestUnits = (res) => {
     if (mounted.current) {
-      setTestUnits(res)
+      setTestUnits(res);
     }
-  }
+  };
 
   useEffect(() => {
     mounted.current = true;
@@ -26,7 +24,7 @@ function TestSectionSelectForm(props) {
     return () => {
       mounted.current = false;
     };
-  }, [])
+  }, []);
 
   return (
     <>
@@ -40,21 +38,12 @@ function TestSectionSelectForm(props) {
             labelText=""
             onChange={handleChange}
           >
-            <SelectItem
-              text=""
-              value="" />
+            <SelectItem text="" value="" />
             {testUnits.map((item, idx) => {
-              return (
-                <SelectItem
-                  key={idx}
-                  text={item.value}
-                  value={item.id} />
-              );
+              return <SelectItem key={idx} text={item.value} value={item.id} />;
             })}
-
           </Select>
         </Column>
-
       </Grid>
     </>
   );

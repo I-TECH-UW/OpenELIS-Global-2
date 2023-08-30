@@ -32,30 +32,23 @@ import { AlertDialog, NotificationKinds } from "../common/CustomNotification";
 import { NotificationContext } from "../layout/Layout";
 
 
-class SearchResultValidationForm extends React.Component {
-    static contextType = NotificationContext;
+function SearchResultValidationForm(props) {
 
-    constructor(props) {
-        super(props)
-        this.state = {
-            dob: "",
-            resultForm: { testResult: [] },
-            tableTitle: "",
-            page: 1,
-            pageSize: 100,
-            doRange: true,
-            finished: true,
-            acceptAsIs: [],
-            saveStatus: "",
-        }
+    const {notificationVisible, setNotificationBody, setNotificationVisible} = useContext(NotificationContext);
 
-    }
+    const [resultForm, setResultForm] = useState({ testResult: [] });
+    const [page, setPage] = useState(1);
+    const [pageSize, setPageSize] = useState(100);
+    const [doRange, setDoRange] = useState(true);
+    const [finished, setFinished] = useState(true);
+    const [acceptAsIs, setAcceptAsIs] = useState([]);
+    const [saveStatus, setSaveStatus] = useState("");
 
     columns = [
         {
             name: 'Sample V Info',
             cell: (row, index, column, id) => {
-                return this.renderCell(row, index, column, id);
+                return renderCell(row, index, column, id);
             },
             sortable: true,
             width: "19rem"
@@ -87,28 +80,28 @@ class SearchResultValidationForm extends React.Component {
         {
             name: 'Accept',
             cell: (row, index, column, id, resultForm) => {
-                return this.renderCell(row, index, column, id);
+                return renderCell(row, index, column, id);
             },
             width: "8rem",
         },
         {
             name: 'Result',
             cell: (row, index, column, id, resultForm) => {
-                return this.renderCell(row, index, column, id);
+                return renderCell(row, index, column, id);
             },
             width: "8rem",
         },
         {
             name: 'Current Result',
             cell: (row, index, column, id, resultForm) => {
-                return this.renderCell(row, index, column, id);
+                return renderCell(row, index, column, id);
             },
             width: "8rem",
         },
         {
             name: 'Notes',
             cell: (row, index, column, id, resultForm) => {
-                return this.renderCell(row, index, column, id);
+                return renderCell(row, index, column, id);
             },
             width: "16rem",
         },
@@ -116,7 +109,7 @@ class SearchResultValidationForm extends React.Component {
 
     ];
 
-    renderCell(row, index, column, id) {
+    const renderCell = (row, index, column, id) => {
         // console.log("renderCell:" + column.name + ":" + row.resultType);
         switch (column.name) {
             case "Sample V Info":
@@ -140,8 +133,8 @@ class SearchResultValidationForm extends React.Component {
                                     id={"testResult" + row.id + ".forceTechApproval"}
                                     name={"testResult[" + row.id + "].forceTechApproval"}
                                     labelText=""
-                                    //defaultChecked={this.state.acceptAsIs}
-                                    onChange={(e) => this.handleAcceptAsIsChange(e, row.id)}
+                                    //defaultChecked={acceptAsIs}
+                                    onChange={(e) => handleAcceptAsIsChange(e, row.id)}
                                 />
                             }
                         </Field>
@@ -150,10 +143,10 @@ class SearchResultValidationForm extends React.Component {
 
             case "Notes":
                 // let aNote;
-                // if (!this.state.resultForm.testResult[row.id].note) {
+                // if (!resultForm.testResult[row.id].note) {
                 //     aNote = ""
                 // } else {
-                //     aNote = this.state.resultForm.testResult[row.id].note
+                //     aNote = resultForm.testResult[row.id].note
                 // }
 
                 return (
@@ -162,12 +155,12 @@ class SearchResultValidationForm extends React.Component {
                             <TextArea
                                 id={"testResult" + row.id + ".note"}
                                 name={"testResult[" + row.id + "].note"}
-                                value={this.state.resultForm.testResult[row.id].note}
+                                value={resultForm.testResult[row.id].note}
                                 disabled={false}
                                 type="text"
                                 labelText=""
                                 rows={3}
-                                onChange={(e) => this.handleChange(e, row.id)}
+                                onChange={(e) => handleChange(e, row.id)}
                             >
                             </TextArea>
                         </div>
@@ -181,7 +174,7 @@ class SearchResultValidationForm extends React.Component {
                             id={"resultValue" + row.id}
                             name={"testResult[" + row.id + "].resultValue"}
                             noLabel={true}
-                            onChange={(e) => this.validateResults(e, row.id)}
+                            onChange={(e) => validateResults(e, row.id)}
                         >
                             {/* {...updateShadowResult(e, this, param.rowId)} */}
                             <SelectItem
@@ -201,18 +194,18 @@ class SearchResultValidationForm extends React.Component {
                         // return <input
                         //     id={"Result" + row.id}
                         //     name={"testResult[" + row.id + "].resultValue"}
-                        //     value={this.state.resultForm.testResult[row.id].resultVaule}
-                        //     onChange={(e) => this.validateResults(e, row.id, row)}
+                        //     value={resultForm.testResult[row.id].resultVaule}
+                        //     onChange={(e) => validateResults(e, row.id, row)}
                         // />
 
                         return <TextInput
                             id={"ResultValue" + row.id}
                             name={"testResult[" + row.id + "].resultValue"}
                             //type="text"
-                            // value={this.state.resultForm.testResult[row.id].resultValue}
+                            // value={resultForm.testResult[row.id].resultValue}
                             labelText=""
                             // helperText="Optional help text"
-                            onChange={(e) => this.handleChange(e, row.id)}
+                            onChange={(e) => handleChange(e, row.id)}
                         />
 
                     // <input id={"results_" + param.rowId} type="text" size="6"></input>
@@ -232,7 +225,7 @@ class SearchResultValidationForm extends React.Component {
                             id={"currentResultValue" + row.id}
                             name={"testResult[" + row.id + "].resultValue"}
                             noLabel={true}
-                            onChange={(e) => this.validateResults(e, row.id)}
+                            onChange={(e) => validateResults(e, row.id)}
                         >
                             {/* {...updateShadowResult(e, this, param.rowId)} */}
                             <SelectItem
@@ -252,7 +245,7 @@ class SearchResultValidationForm extends React.Component {
                         //return
                         // <input id={"currentResult" + row.id}
                         //     name={"testResult[" + row.id + "].resultValue"}
-                        //     onChange={(e) => this.validateResults(e, row.id)}
+                        //     onChange={(e) => validateResults(e, row.id)}
                         // //onChange={(e) => markUpdated(e)} sb. disabled and setto value
                         // />
 
@@ -260,10 +253,10 @@ class SearchResultValidationForm extends React.Component {
                             id={"currentResultValue" + row.id}
                             name={"testResult[" + row.id + "].resultValue"}
                             //type="text"
-                            value={this.state.resultForm.testResult[row.id].resultValue}
+                            value={resultForm.testResult[row.id].resultValue}
                             // labelText="Text input label"
                             // helperText="Optional help text"
-                            onChange={(e) => this.handleChange(e, row.id)}
+                            onChange={(e) => handleChange(e, row.id)}
                         />
 
 
@@ -271,10 +264,10 @@ class SearchResultValidationForm extends React.Component {
                     //     id={"testResult[" + row.id + "].resultValue"}
                     //     name={"testResult[" + row.id + "].resultValue"}
                     //     type="text"
-                    //     value={this.state.resultForm.testResult[row.id].resultValue}
+                    //     value={resultForm.testResult[row.id].resultValue}
                     //     // labelText="Text input label"
                     //     // helperText="Optional help text"
-                    //     onChange={(e) => this.validateResults(e, row.id, row)}
+                    //     onChange={(e) => validateResults(e, row.id, row)}
                     // />
 
                     // <input id={"results_" + param.rowId} type="text" size="6"></input>
@@ -292,7 +285,7 @@ class SearchResultValidationForm extends React.Component {
             //         id={"testMethod" + row.id}
             //         name={"testResult[" + row.id + "].testMethod"}
             //         noLabel={true}
-            //         onChange={(e) => this.handleChange(e, row.id)}
+            //         onChange={(e) => handleChange(e, row.id)}
             //         value={row.method}
             //     >
             //         <SelectItem
@@ -312,7 +305,8 @@ class SearchResultValidationForm extends React.Component {
         return row.resultValue;
     }
 
-    renderReferral = ({ data }) => <pre>
+    const renderReferral = ({ data }) => 
+        <pre>
         <div className='referralRow'>
             <Grid >
                 <Column lg={3}>
@@ -321,7 +315,7 @@ class SearchResultValidationForm extends React.Component {
                             id={"testMethod" + data.id}
                             name={"testResult[" + data.id + "].testMethod"}
                             labelText={"Methods"}
-                            onChange={(e) => this.handleChange(e, data.id)}
+                            onChange={(e) => handleChange(e, data.id)}
                             value={data.method}
                         >
                             <SelectItem
@@ -345,7 +339,7 @@ class SearchResultValidationForm extends React.Component {
                             name={"testResult[" + data.id + "].referralReason"}
                             // noLabel={true} 
                             labelText={"Referral Reason"}
-                            onChange={(e) => this.handleChange(e, data.id)}
+                            onChange={(e) => handleChange(e, data.id)}
                         >
                             {/* {...updateShadowResult(e, this, param.rowId)} */}
                             <SelectItem
@@ -369,7 +363,7 @@ class SearchResultValidationForm extends React.Component {
                             name={"testResult[" + data.id + "].institute"}
                             // noLabel={true} 
                             labelText={"Institute"}
-                            onChange={(e) => this.handleChange(e, data.id)}
+                            onChange={(e) => handleChange(e, data.id)}
                         >
                             {/* {...updateShadowResult(e, this, param.rowId)} */}
 
@@ -394,7 +388,7 @@ class SearchResultValidationForm extends React.Component {
                             name={"testResult[" + data.id + "].testToPerform"}
                             // noLabel={true} 
                             labelText={"Test to Perform"}
-                            onChange={(e) => this.handleChange(e, data.id)}
+                            onChange={(e) => handleChange(e, data.id)}
                         >
                             {/* {...updateShadowResult(e, this, param.rowId)} */}
 
@@ -409,7 +403,7 @@ class SearchResultValidationForm extends React.Component {
                     <DatePicker datePickerType="single"
                         id={"sentDate_" + data.id}
                         name={"testResult[" + data.id + "].sentDate_"}
-                        onChange={(date) => this.handleDatePickerChange(date, data.id)}
+                        onChange={(date) => handleDatePickerChange(date, data.id)}
                     >
                         <DatePickerInput
                             placeholder="mm/dd/yyyy"
@@ -424,24 +418,17 @@ class SearchResultValidationForm extends React.Component {
 
     </pre >;
 
-    validateResults = (e, rowId, row) => {
+    const validateResults = (e, rowId, row) => {
         console.log("validateResults:" + e.target.value)
         // e.target.value;
-        this.handleChange(e, rowId)
+        handleChange(e, rowId)
     }
 
-    // validateResults = (e, rowId) => {
-    //     console.log("validateResults:")
-    //     this.handleChange(e, rowId)
-    // }
-
-
-    handleChange = (e, rowId) => {
+    const handleChange = (e, rowId) => {
         const { name, id, value } = e.target;
         console.log("handleChange:" + id + ":" + name + ":" + value + ":" + rowId);
-        // this.setState({value: e.target.value})
         // console.log('State updated to ', e.target.value);
-        var form = this.state.resultForm;
+        var form = resultForm;
         var jp = require('jsonpath');
         jp.value(form, name, value);
         var isModified = "testResult[" + rowId + "].isModified";
@@ -449,30 +436,30 @@ class SearchResultValidationForm extends React.Component {
     }
 
 
-    handleDatePickerChange = (date, rowId) => {
+    const handleDatePickerChange = (date, rowId) => {
         console.log("handleDatePickerChange:" + date)
         const d = new Date(date).toLocaleDateString('fr-FR');
-        var form = this.state.resultForm;
+        var form = resultForm;
         var jp = require('jsonpath');
         jp.value(form, "testResult[" + rowId + "].sentDate_", d);
         var isModified = "testResult[" + rowId + "].isModified";
         jp.value(form, isModified, "true");
     }
 
-    handleDoRangeChange = () => {
+    const handleDoRangeChange = () => {
         console.log("handleDoRangeChange:")
-        this.state.doRange = !this.state.doRange;
+        setDoRange(!doRange);
     }
 
-    handleFinishedChange = () => {
+    const handleFinishedChange = () => {
         console.log("handleFinishedChange:")
-        this.state.finished = !this.state.finished;
+        setFinished(!finished);
     }
 
-    handleAcceptAsIsChange = (e, rowId) => {
-        console.log("handleAcceptAsIsChange:" + this.state.acceptAsIs[rowId])
-        this.handleChange(e, rowId)
-        if (this.state.acceptAsIs[rowId] == undefined) {
+    const handleAcceptAsIsChange = (e, rowId) => {
+        console.log("handleAcceptAsIsChange:" + acceptAsIs[rowId])
+        handleChange(e, rowId)
+        if (acceptAsIs[rowId] == undefined) {
             var message = `Checking this box will indicate that you accept the results unconditionally.\n` +
                 `Expected uses:\n` +
                 `1. The test has been redone and the result is the same.\n` +
@@ -485,93 +472,80 @@ class SearchResultValidationForm extends React.Component {
 
             alert(message);
 
-            this.context.setNotificationBody({
+            setNotificationBody({
                 title: "Notification Message",
                 message: message,
                 kind: NotificationKinds.warning
             })
-            this.context.setNotificationVisible(true);
+            setNotificationVisible(true);
         }
-        this.state.acceptAsIs[rowId] = !this.state.acceptAsIs[rowId];
-    }
+        var newAcceptAsIs = acceptAsIs;
+        newAcceptAsIs[rowId] = !acceptAsIs[rowId];
+        setAcceptAsIs(newAcceptAsIs);
+    };
 
-    handleSaveChange = () => {
-        console.log("handleSaveChange:")
-
-    }
-
-    handleSave = (values) => {
+    const handleSave = (values) => {
         //console.log("handleSave:" + values);
-        values.status = this.state.saveStatus;
+        values.status = saveStatus;
         var searchEndPoint = "/rest/ReactLogbookResultsUpdate"
-        postToOpenElisServer(searchEndPoint, JSON.stringify(this.state.resultForm), this.setStatus);
-    }
+        postToOpenElisServer(searchEndPoint, JSON.stringify(resultForm), setStatus);
+    };
 
-    handleSubmit = (values) => {
-        values.dateOfBirth = this.state.dob
-        //console.log("handleSubmit:" + this.state.doRange)
-        this.setState({ resultForm: { testResult: [] }, });
+    const handleSubmit = (values) => {;
+        //console.log("handleSubmit:" + doRange)
+        setResultForm({testResult: [] });
 
         var searchEndPoint = "/rest/ReactLogbookResultsByRange?" +
             "&labNumber=" + values.labNumber +
-            "&doRange=" + this.state.doRange +
-            "&finished=" + this.state.finished
-        getFromOpenElisServer(searchEndPoint, this.setResults);
+            "&doRange=" + doRange +
+            "&finished=" + finished
+        getFromOpenElisServer(searchEndPoint, setResults);
     };
 
-    setResults = (resultForm) => {
+    const setResults = (resultForm) => {
         //console.log("setResults")
         var i = 0;
         resultForm.testResult.forEach(item => item.id = "" + i++);
-        this.setState({ resultForm: resultForm })
-    }
+        setResultForm(resultForm);
+    };
 
-    setStatus = (status) => {
+    const setStatus = (status) => {
         //console.log("setStatus" + status)
         if (status != 200) {
-            this.context.setNotificationBody({
+            setNotificationBody({
                 title: "Notification Message",
                 message: "Error: " + status,
                 kind: NotificationKinds.error
             })
         } else {
-            this.context.setNotificationBody({
+            setNotificationBody({
                 title: "Notification Message",
                 message: "Success: " + status,
                 kind: NotificationKinds.success
             })
         }
-        this.context.setNotificationVisible(true);
-    }
+        setNotificationVisible(true);
+    };
 
-
-
-    handlePageChange = (pageInfo) => {
-        if (this.state.page != pageInfo.page) {
-            this.setState({ page: pageInfo.page });
+    const handlePageChange = (pageInfo) => {
+        if (page != pageInfo.page) {
+            setPage(pageInfo.page);
         }
-        if (this.state.pageSize != pageInfo.pageSize) {
-            this.setState({ pageSize: pageInfo.pageSize });
+        if (pageSize != pageInfo.pageSize) {
+            setPageSize(pageInfo.pageSize);
         }
     };
 
-    handlePerPageChange = (newPerPage) => {
-        this.setState({ perPage: newPerPage });
-    };
-
-    render() {
-        const { page, pageSize } = this.state;
-        // const prefix = this.state.prefix;
         return (
             <>
-                {this.context.notificationVisible === true ? <AlertDialog /> : ""}
+                {notificationVisible === true ? <AlertDialog /> : ""}
 
                 <Grid fullWidth={true} >
                     <Column lg={16}>
                         <Formik
                             initialValues={SearchResultValidationFormValues}
                             //validationSchema={}
-                            onSubmit={this.handleSubmit}
+                            onSubmit={handleSubmit}
                             onChange
                         >
                             {({ values,
@@ -614,8 +588,8 @@ class SearchResultValidationForm extends React.Component {
                                                 >
                                                     {({ field }) =>
                                                         <Checkbox
-                                                            defaultChecked={this.state.doRange}
-                                                            onChange={this.handleDoRangeChange}
+                                                            defaultChecked={doRange}
+                                                            onChange={handleDoRangeChange}
                                                             name={field.name}
                                                             labelText="Show Entire Results"
                                                             id={field.name} />
@@ -627,9 +601,9 @@ class SearchResultValidationForm extends React.Component {
                                                 >
                                                     {({ field }) =>
                                                         <Checkbox
-                                                            defaultChecked={this.state.finished}
-                                                            onChange={this.handleFinishedChange}
-                                                            //onClick={() => (this.state.doRange = false)}
+                                                            defaultChecked={finished}
+                                                            onChange={handleFinishedChange}
+                                                            //onClick={() => (doRange = false)}
                                                             name={field.name}
                                                             labelText="Show Next 99 Orders"
                                                             id={field.name} />
@@ -648,13 +622,13 @@ class SearchResultValidationForm extends React.Component {
                         {/* <Column></Column> */}
                         {/* <Column  lg={12} > */}
 
-                        {/* {this.myComponent()} */}
+                        {/* {myComponent()} */}
 
                         <>
                             <Formik
                                 initialValues={SearchResultValidationFormValues}
                                 //validationSchema={}
-                                onSubmit={this.handleSave}
+                                onSubmit={handleSave}
                                 onChange
                             >
                                 {({ values,
@@ -671,12 +645,12 @@ class SearchResultValidationForm extends React.Component {
                                     >
 
                                         <DataTable
-                                            data={this.state.resultForm.testResult}
-                                            columns={this.columns} isSortable
+                                            data={resultForm.testResult}
+                                            columns={columns} isSortable
                                             expandableRows
-                                            expandableRowsComponent={this.renderReferral}>
-                                        </DataTable><Pagination onChange={this.handlePageChange} page={this.state.page} pageSize={this.state.pageSize}
-                                            pageSizes={[100]} totalItems={this.state.resultForm.testResult.length}></Pagination>
+                                            expandableRowsComponent={renderReferral}>
+                                        </DataTable><Pagination onChange={handlePageChange} page={page} pageSize={pageSize}
+                                            pageSizes={[100]} totalItems={resultForm.testResult.length}></Pagination>
 
                                         <Button type="submit" id="submit">
                                             <FormattedMessage id="label.button.save" />

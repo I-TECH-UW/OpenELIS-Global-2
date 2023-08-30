@@ -390,7 +390,6 @@ export function SearchResultForm(props) {
 }
 
 export function SearchResults(props) {
-  /* eslint-disable @typescript-eslint/no-var-requires */
   const jp = require("jsonpath");
 
   const { notificationVisible, setNotificationBody, setNotificationVisible } =

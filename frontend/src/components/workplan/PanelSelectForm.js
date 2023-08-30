@@ -9,14 +9,14 @@ function PanelSelectForm(props) {
   const [panels, setPanels] = useState([]);
 
   const handleChange = (e) => {
-    props.value(e.target.value,e.target.selectedOptions[0].text)
+    props.value(e.target.value, e.target.selectedOptions[0].text);
   };
 
   const getPanels = (res) => {
     if (mounted.current) {
-      setPanels(res)
+      setPanels(res);
     }
-  }
+  };
 
   useEffect(() => {
     mounted.current = true;
@@ -24,7 +24,7 @@ function PanelSelectForm(props) {
     return () => {
       mounted.current = false;
     };
-  }, [])
+  }, []);
 
   return (
     <>
@@ -38,20 +38,12 @@ function PanelSelectForm(props) {
             labelText=""
             onChange={handleChange}
           >
-            <SelectItem
-              text=""
-              value="" />
+            <SelectItem text="" value="" />
             {panels.map((item, idx) => {
-              return (
-                <SelectItem
-                  key={idx}
-                  text={item.value}
-                  value={item.id} />
-              );
+              return <SelectItem key={idx} text={item.value} value={item.id} />;
             })}
           </Select>
         </Column>
-
       </Grid>
     </>
   );

@@ -1,82 +1,77 @@
-import React from 'react'
-import { FormattedMessage, injectIntl } from 'react-intl'
+import React, { useState } from "react";
+import { FormattedMessage, injectIntl } from "react-intl";
 import "../Style.css";
 
-import {
-    Heading,
-    Grid,
-    Column,
-    Section, Button
+import { Heading, Grid, Column, Section, Button } from "@carbon/react";
+import SearchPatientForm from "../common/SearchPatientForm";
+import CreatePatientForm from "../common/CreatePatientForm";
 
-} from '@carbon/react';
-import SearchPatientForm from '../common/SearchPatientForm';
-import CreatePatientForm from '../common/CreatePatientForm';
+function PatientManagement() {
+  const [selectedPatient, setSelectedPatient] = useState({});
+  const [searchPatientTab, setSearchPatientTab] = useState({
+    kind: "primary",
+    active: true,
+  });
+  const [newPatientTab, setNewPatientTab] = useState({
+    kind: "tertiary",
+    active: false,
+  });
 
+  const handleSearchPatientTab = () => {
+    setNewPatientTab({ kind: "tertiary", active: false });
+    setSearchPatientTab({ kind: "primary", active: true });
+  };
 
-class PatientManagement extends React.Component {
+  const handleNewPatientTab = () => {
+    setNewPatientTab({ kind: "primary", active: true });
+    setSearchPatientTab({ kind: "tertiary", active: false });
+  };
 
-    constructor(props) {
-        super(props)
-        this.state = {
-            selectedPatient: {},
-            searchPatientTab: {kind: "primary", active: true},
-            newPatientTab: {kind: "tertiary", active: false},
-        }
-    }
-     handleSearchPatientTab = () => {
-        this.setState({
-            searchPatientTab: { kind: "primary", active: true },
-            newPatientTab: {kind: "tertiary", active: false}
-        });
-    }
+  const getSelectedPatient = (patient) => {
+    setSelectedPatient(patient);
+    setNewPatientTab({ kind: "primary", active: true });
+    setSearchPatientTab({ kind: "tertiary", active: false });
+  };
 
-     handleNewPatientTab = () => {
-         this.setState({
-             newPatientTab: {kind: "primary", active: true},
-             searchPatientTab: { kind: "tertiary", active: false },
-         });
-    }
+  return (
+    <>
+      <Grid fullWidth={true}>
+        <Column lg={16}>
+          <Section>
+            <Section>
+              <Heading>
+                <FormattedMessage id="patient.label.modify" />
+              </Heading>
+            </Section>
+          </Section>
+        </Column>
+      </Grid>
+      <br></br>
+      <div className="orderLegendBody">
+        <div className="tabsLayout">
+          <Button kind={searchPatientTab.kind} onClick={handleSearchPatientTab}>
+            Search for Patient
+          </Button>
+          <Button kind={newPatientTab.kind} onClick={handleNewPatientTab}>
+            New Patient
+          </Button>
+        </div>
+        {searchPatientTab.active && (
+          <SearchPatientForm
+            getSelectedPatient={getSelectedPatient}
+          ></SearchPatientForm>
+        )}
 
-    getSelectedPatient = (patient) => {
-        this.setState({ selectedPatient: patient });
-        this.setState({
-            newPatientTab: {kind: "primary", active: true},
-            searchPatientTab: { kind: "tertiary", active: false },
-        });
-    }
-
-    render() {
-        return (
-            <>
-                <Grid fullWidth={true}>
-                    <Column lg={16}>
-                        <Section>
-                            <Section >
-                                <Heading >
-                                    <FormattedMessage id="patient.label.modify" />
-                                </Heading>
-                            </Section>
-                        </Section>
-                    </Column>
-                </Grid>
-                <br></br>
-                <div className="orderLegendBody">
-                    <div className="tabsLayout">
-                        <Button kind={this.state.searchPatientTab.kind} onClick={this.handleSearchPatientTab}>Search for
-                            Patient</Button>
-                        <Button kind={this.state.newPatientTab.kind} onClick={this.handleNewPatientTab}>New Patient</Button>
-                    </div>
-                    {this.state.searchPatientTab.active &&  <SearchPatientForm getSelectedPatient={this.getSelectedPatient}></SearchPatientForm> }
-                
-                <br></br>
-                {/* {JSON.stringify(this.state.selectedPatient)} */}
-                    {this.state.newPatientTab.active && <CreatePatientForm showActionsButton={true} selectedPatient={this.state.selectedPatient}></CreatePatientForm> }
-                </div>
-                </>
-
-        );
-
-    }
+        <br></br>
+        {newPatientTab.active && (
+          <CreatePatientForm
+            showActionsButton={true}
+            selectedPatient={selectedPatient}
+          ></CreatePatientForm>
+        )}
+      </div>
+    </>
+  );
 }
 
-export default injectIntl(PatientManagement)
+export default injectIntl(PatientManagement);

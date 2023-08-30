@@ -1,10 +1,10 @@
 export default {
-    "program": {
-        "programName": "",
-        "code":"",
-        "id": "",
-        "questionnaireUUID": "",
-    },
-    "additionalOrderEntryQuestions": "",
-    "testSectionId" : ""
+  program: {
+    programName: "",
+    code: "",
+    id: "",
+    questionnaireUUID: "",
+  },
+  additionalOrderEntryQuestions: "",
+  testSectionId: "",
 };
