@@ -214,4 +214,9 @@ public class ImmunohistochemistrySampleServiceImpl extends BaseObjectServiceImpl
         return baseObjectDAO.getCountWithStatusBetweenDates(statuses ,from ,to);
     }
 
+    @Override
+    public ImmunohistochemistrySample getByPathologySampleId(Integer pathologySampleId) {
+        return baseObjectDAO.getByPathologySampleId(pathologySampleId);
+    }
+
 }

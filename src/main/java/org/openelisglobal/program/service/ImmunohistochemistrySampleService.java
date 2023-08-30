@@ -25,4 +25,6 @@ public interface ImmunohistochemistrySampleService extends BaseObjectService<Imm
 
     Long getCountWithStatusBetweenDates(List<ImmunohistochemistryStatus> statuses , Timestamp from , Timestamp to);
 
+    ImmunohistochemistrySample getByPathologySampleId(Integer pathologySampleId);
+
 }

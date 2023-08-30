@@ -10,6 +10,7 @@ import { getFromOpenElisServer, postToOpenElisServerFullResponse, hasRole } from
 import UserSessionDetailsContext from "../../UserSessionDetailsContext"
 import { NotificationContext } from "../layout/Layout";
 import { AlertDialog, NotificationKinds } from "../common/CustomNotification";
+import { FormattedMessage} from 'react-intl'
 import "../pathology/PathologyDashboard.css"
 
 
@@ -236,8 +237,7 @@ function CytologyCaseView() {
           <Section>
             <Section >
               <Heading >
-                Cytology
-                {/* <FormattedMessage id="label.page.patientHistory" /> */}
+                <FormattedMessage id="cytology.label.title" /> 
               </Heading>
             </Section>
           </Section>
@@ -248,14 +248,14 @@ function CytologyCaseView() {
           <Section>
             <Section>
               {pathologySampleInfo ? (<div className="patient-header">
-                <div className="patient-name"><Tag type="blue">Name :</Tag>{pathologySampleInfo.lastName}  {pathologySampleInfo.firstName}</div>
-                <div className="patient-dob"> <Tag type="blue">Sex :</Tag>{pathologySampleInfo.sex === 'M' ? "Male" : "Female"}<Tag type="blue">Age :</Tag>{pathologySampleInfo.age} </div>
-                <div className="patient-id"><Tag type="blue">Order Date :</Tag>{pathologySampleInfo.requestDate}</div>
-                <div className="patient-id"><Tag type="blue">Lab Number :</Tag>{pathologySampleInfo.labNumber}</div>
-                <div className="patient-id"><Tag type="blue">Referring Facility:</Tag> {pathologySampleInfo.referringFacility}<Tag type="blue">Ward/Dept/Unit: </Tag>{pathologySampleInfo.department}</div>
-                <div className="patient-id"><Tag type="blue">Requester: </Tag>{pathologySampleInfo.requester}</div>
+                <div className="patient-name"><Tag type="blue"> <FormattedMessage id="patient.label.name" />:</Tag>{pathologySampleInfo.lastName}  {pathologySampleInfo.firstName}</div>
+                <div className="patient-dob"> <Tag type="blue"><FormattedMessage id="patient.label.sex" /> :</Tag>{pathologySampleInfo.sex === 'M' ? "Male" : "Female"}<Tag type="blue"><FormattedMessage id="patient.label.age" /> :</Tag>{pathologySampleInfo.age} </div>
+                <div className="patient-id"><Tag type="blue"><FormattedMessage id="sample.label.orderdate" /> :</Tag>{pathologySampleInfo.requestDate}</div>
+                <div className="patient-id"><Tag type="blue"><FormattedMessage id="sample.label.labnumber" /> :</Tag>{pathologySampleInfo.labNumber}</div>
+                <div className="patient-id"><Tag type="blue"> <FormattedMessage id="sample.label.facility" />:</Tag> {pathologySampleInfo.referringFacility}<Tag type="blue"><FormattedMessage id="sample.label.dept" />: </Tag>{pathologySampleInfo.department}</div>
+                <div className="patient-id"><Tag type="blue"><FormattedMessage id="sample.label.requester" />: </Tag>{pathologySampleInfo.requester}</div>
               </div>) : (<div className="patient-header">
-                <div className="patient-name">Patient Id Doest Exist</div>
+                <div className="patient-name"> <FormattedMessage id="patient.label.nopatientid" /> </div>
               </div>)}
             </Section>
           </Section>
@@ -341,7 +341,7 @@ function CytologyCaseView() {
         <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>
         <Column lg={16} md={8} sm={4}>
           <hr style={{ width: '100%', margin: '1rem 0', border: '1px solid #ccc' }} />
-          <h5>Slides</h5>
+          <h5> <FormattedMessage id="pathology.label.slides" /></h5>
           <hr style={{ width: '100%', margin: '1rem 0', border: '1px solid #ccc' }} />
         </Column>
         {pathologySampleInfo.slides && pathologySampleInfo.slides.map((slide, index) => {
@@ -353,7 +353,7 @@ function CytologyCaseView() {
                   info["slides"].splice(index, 1);
                   setPathologySampleInfo(info);
                 }} kind='tertiary' size='sm'>
-                  <Subtract size={18} />  Slide
+                  <Subtract size={18} />  <FormattedMessage id="pathology.label.slide" />
                 </IconButton>
 
               </Column>
@@ -389,7 +389,7 @@ function CytologyCaseView() {
               <Column lg={3} md={1} sm={2}>
                 <FileUploader
                   style={{ marginTop: '-10px' }}
-                  buttonLabel="Upload File"
+                  buttonLabel={<FormattedMessage id="label.button.uploadfile" />}
                   iconDescription="file upload"
                   multiple={false}
                   accept={['image/jpeg', 'image/png', 'application/pdf']}
@@ -409,9 +409,6 @@ function CytologyCaseView() {
                   onClick={function noRefCheck() { }}
                   onDelete={(e) => {
                     e.preventDefault();
-                    var newSlides = [...pathologySampleInfo.slides];
-                    newSlides[index].base64Image = '';
-                    setPathologySampleInfo({ ...pathologySampleInfo, slides: newSlides });
                   }}
                 />
               </Column>
@@ -422,7 +419,7 @@ function CytologyCaseView() {
                       var win = window.open();
                       win.document.write('<iframe src="' + slide.fileType + ";base64," + slide.image + '" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>');
                     }}>
-                      <Launch /> View
+                      <Launch /> <FormattedMessage id="pathology.label.view" />
                     </Button>
                   </>
                 }
@@ -430,7 +427,7 @@ function CytologyCaseView() {
               <Column lg={2} md={1} sm={2}>
                 <Button onClick={(e) => {
                   window.open(config.serverBaseUrl + '/LabelMakerServlet?labelType=slide&code=' + slide.slideNumber, '_blank')
-                }}>Print Label</Button>
+                }}> <FormattedMessage id="pathology.label.printlabel" /></Button>
               </Column>
 
             </>
@@ -441,7 +438,7 @@ function CytologyCaseView() {
           <Button onClick={() => {
             setPathologySampleInfo({ ...pathologySampleInfo, slides: [...(pathologySampleInfo.slides || []), { id: '', slideNumber: '' }] });
           }}>
-            Add Slide
+            <FormattedMessage id="pathology.label.addslide" />
           </Button>
           <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>
           <Column lg={16} md={8} sm={4}>
@@ -458,7 +455,7 @@ function CytologyCaseView() {
             <Column lg={4} md={1} sm={2} >
               <Select id="specimenAdequacy"
                 name="specimenAdequacy"
-                labelText="Specimen Adequacy"
+                labelText={<FormattedMessage id="cytology.label.specimen" />}
                 value={pathologySampleInfo.specimenAdequacy?.satisfaction}
                 onChange={(event) => {
                   var specimenAdequacy = { ...pathologySampleInfo.specimenAdequacy };
@@ -482,7 +479,7 @@ function CytologyCaseView() {
                 <Column lg={4} md={4} sm={2}>
                   {initialMount && <FilterableMultiSelect
                     id="adequacy"
-                    titleText="Specimen Adequacy"
+                    titleText={<FormattedMessage id="label.button.select" />}
                     items={unSatisfactoryForEvaluation}
                     itemToString={(item) => (item ? item.value : '')}
                     initialSelectedItems={pathologySampleInfo.specimenAdequacy?.values}
@@ -511,7 +508,7 @@ function CytologyCaseView() {
               <Column lg={8}>
                 <RadioButtonGroup
                   valueSelected={pathologySampleInfo.specimenAdequacy?.values[0]?.id}
-                  legendText={"Select Adequacy"}
+                  legendText={<FormattedMessage id="label.button.select" />}
                   name="adequacy"
                   id="adequacy"
                   onChange={(value) => {
@@ -539,7 +536,7 @@ function CytologyCaseView() {
             <Column lg={16} md={8} sm={4}>
               <Checkbox
                 checked={pathologySampleInfo.diagnosis ? pathologySampleInfo.diagnosis.negativeDiagnosis : true}
-                labelText="NEGATIVE FOR INTRAEPITHELIAL LESION OR MALIGNANCY"
+                labelText={<FormattedMessage id="cytology.label.negative" />}
                 id="checked"
                 onChange={(e) => {
                   var diagnosis = { ...pathologySampleInfo.diagnosis };
@@ -553,12 +550,12 @@ function CytologyCaseView() {
               <>
                 <Column lg={16} md={8} sm={4}>
                   <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>
-                  Epithelial Cell Abnomality
+                  <FormattedMessage id="cytology.label.cellabnomality" />
                 </Column>
                 <Column lg={4} md={8} sm={4}>
                   <FilterableMultiSelect
                     id="cellAbnomality"
-                    titleText="Select Result"
+                    titleText={<FormattedMessage id="label.button.select" />}
                     items={combinedDiagnoses}
                     itemToString={(item) => (item ? item.value : '')}
                     initialSelectedItems={filterDiagnosisResultsByCategory("EPITHELIAL_CELL_ABNORMALITY" ,"DICTIONARY")?.results}
@@ -590,8 +587,11 @@ function CytologyCaseView() {
                   />
                 </Column>
                 {diagnosisResultEpithelialCellSquamous && pathologySampleInfo &&
-                  <Column lg={4} md={4} sm={2}>
-                    Squamous :
+                <>
+                  <Column lg={1} md={4} sm={2}>
+                     <FormattedMessage id="cytology.label.squamous" /> 
+                     </Column>  
+                     <Column lg={3} md={4} sm={2}>  
                     {
                       filterDiagnosisResultsByCategory("EPITHELIAL_CELL_ABNORMALITY" , "DICTIONARY")?.results.filter(result => diagnosisResultEpithelialCellSquamous?.some(item => item.id == result.id))?.map((result, index) => (
                         <Tag
@@ -602,11 +602,15 @@ function CytologyCaseView() {
                         </Tag>
                       ))}
                   </Column>
+                  </>
                 }
 
                 {diagnosisResultEpithelialCellGlandular && pathologySampleInfo &&
-                  <Column lg={4} md={4} sm={2}>
-                    Glandular :
+                <>
+                  <Column lg={1} md={4} sm={2}>
+                  <FormattedMessage id="cytology.label.glandular" />
+                    </Column>  
+                     <Column lg={3} md={4} sm={2}>
                     {
                       filterDiagnosisResultsByCategory("EPITHELIAL_CELL_ABNORMALITY" , "DICTIONARY")?.results.filter(result => diagnosisResultEpithelialCellGlandular?.some(item => item.id == result.id))?.map((result, index) => (
                         <Tag
@@ -618,10 +622,11 @@ function CytologyCaseView() {
                       ))}
 
                   </Column>
+                  </>
                 }
 
                  <Column lg={4} md={4} sm={2}>
-                  Other Malignant Neoplasms :
+                 <FormattedMessage id="cytology.label.other" /> :
                     <TextInput
                       id="otherNeoPlasms"
                       labelText="Enter text rest"
@@ -657,7 +662,7 @@ function CytologyCaseView() {
 
                 <Column lg={16} md={8} sm={4}>
                   <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>
-                  Non-neoplastic cellular variations
+                  <FormattedMessage id="cytology.label.neoplastic" />
                 </Column>
                 <Column lg={4} md={8} sm={4}>
                   <FilterableMultiSelect
@@ -707,7 +712,7 @@ function CytologyCaseView() {
 
                 <Column lg={16} md={8} sm={4}>
                   <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>
-                  Reactive cellular changes
+                  <FormattedMessage id="cytology.label.reactive" />
                 </Column>
                 <Column lg={4} md={8} sm={4}>
                   <FilterableMultiSelect
@@ -757,7 +762,7 @@ function CytologyCaseView() {
 
                 <Column lg={16} md={8} sm={4}>
                   <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>
-                  Organisms
+                  <FormattedMessage id="cytology.label.organisms" />
                 </Column>
                 <Column lg={4} md={8} sm={4}>
                   <FilterableMultiSelect
@@ -806,7 +811,7 @@ function CytologyCaseView() {
                 </Column>
                 <Column lg={16} md={8} sm={4}>
                   <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>
-                  Other Diagnosis Result
+                  <FormattedMessage id="cytology.label.otherResult" />
                 </Column>
                 <Column lg={4} md={8} sm={4}>
                   <FilterableMultiSelect
@@ -858,7 +863,7 @@ function CytologyCaseView() {
             }
           </>}
         <Column lg={16}>
-          <Checkbox labelText="Ready for Release" id="release"
+          <Checkbox labelText={<FormattedMessage id="pathology.label.release" />} id="release"
             onChange={() => {
               setPathologySampleInfo({ ...pathologySampleInfo, release: !pathologySampleInfo.release });
             }} />

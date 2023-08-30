@@ -11,6 +11,7 @@ import UserSessionDetailsContext from "../../UserSessionDetailsContext"
 import { NotificationContext } from "../layout/Layout";
 import { AlertDialog ,NotificationKinds} from "../common/CustomNotification";
 import { SearchResults } from "../common/SearchResultForm"
+import { FormattedMessage} from 'react-intl'
 import "./../pathology/PathologyDashboard.css"
 
 
@@ -202,8 +203,7 @@ function ImmunohistochemistryCaseView() {
           <Section>
             <Section >
               <Heading >
-                Immunohistochemistry
-                {/* <FormattedMessage id="label.page.patientHistory" /> */}
+                <FormattedMessage id="immunohistochemistry.label.title" />
               </Heading>
             </Section>
           </Section>
@@ -214,14 +214,14 @@ function ImmunohistochemistryCaseView() {
           <Section>
             <Section>
               {immunohistochemistrySampleInfo ? (<div className="patient-header">
-                <div className="patient-name"><Tag type="blue">Name :</Tag>{immunohistochemistrySampleInfo.lastName}  {immunohistochemistrySampleInfo.firstName}</div>
-                <div className="patient-dob"> <Tag type="blue">Sex :</Tag>{immunohistochemistrySampleInfo.sex === 'M' ? "Male" : "Female"}<Tag type="blue">Age :</Tag>{immunohistochemistrySampleInfo.age} </div>
-                <div className="patient-id"><Tag type="blue">Order Date :</Tag>{immunohistochemistrySampleInfo.requestDate}</div>
-                <div className="patient-id"><Tag type="blue">Lab Number :</Tag>{immunohistochemistrySampleInfo.labNumber}</div>
-                <div className="patient-id"><Tag type="blue">Referring Facility:</Tag>{immunohistochemistrySampleInfo.referringFacility} <Tag type="blue">Ward/Dept/Unit: :</Tag> {immunohistochemistrySampleInfo.department}</div>
-                <div className="patient-id"><Tag type="blue">Requester: :</Tag>{immunohistochemistrySampleInfo.requester}</div>
+                <div className="patient-name"><Tag type="blue"><FormattedMessage id="patient.label.name" /> :</Tag>{immunohistochemistrySampleInfo.lastName}  {immunohistochemistrySampleInfo.firstName}</div>
+                <div className="patient-dob"> <Tag type="blue"> <FormattedMessage id="patient.label.sex" />:</Tag>{immunohistochemistrySampleInfo.sex === 'M' ? "Male" : "Female"}<Tag type="blue"><FormattedMessage id="patient.label.age" /> :</Tag>{immunohistochemistrySampleInfo.age} </div>
+                <div className="patient-id"><Tag type="blue"><FormattedMessage id="sample.label.orderdate" /> :</Tag>{immunohistochemistrySampleInfo.requestDate}</div>
+                <div className="patient-id"><Tag type="blue"><FormattedMessage id="sample.label.labnumber" /> :</Tag>{immunohistochemistrySampleInfo.labNumber}</div>
+                <div className="patient-id"><Tag type="blue"><FormattedMessage id="sample.label.facility" />:</Tag>{immunohistochemistrySampleInfo.referringFacility} <Tag type="blue"><FormattedMessage id="sample.label.dept" /> :</Tag> {immunohistochemistrySampleInfo.department}</div>
+                <div className="patient-id"><Tag type="blue"><FormattedMessage id="sample.label.requester" />: :</Tag>{immunohistochemistrySampleInfo.requester}</div>
               </div>) : (<div className="patient-header">
-                <div className="patient-name">Patient Id Doest Exist</div>
+                <div className="patient-name"><FormattedMessage id="patient.label.nopatientid" /> </div>
               </div>)}
             </Section>
           </Section>
@@ -323,7 +323,6 @@ function ImmunohistochemistryCaseView() {
           <Select id="report"
             name="report"
             labelText="Add Report"
-            //value={immunohistochemistrySampleInfo.report}
             onChange={(event) => {
               setImmunohistochemistrySampleInfo({...immunohistochemistrySampleInfo, reports: [...(immunohistochemistrySampleInfo.reports || []), {id: '', reportType: event.target.value}]});
             }}>
@@ -340,7 +339,7 @@ function ImmunohistochemistryCaseView() {
           <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>  
           <Column  lg={16} md={8} sm={4}>  
            <hr style={{width:'120%' , margin: '', border: ' solid #ccc' }} />
-           <h5>Reports</h5>
+           <h5> <FormattedMessage id="immunohistochemistry.label.reports" /></h5>
           </Column>
           {immunohistochemistrySampleInfo.reports && immunohistochemistrySampleInfo.reports.map((report, index) => {
           return (
@@ -351,7 +350,7 @@ function ImmunohistochemistryCaseView() {
                   info["reports"].splice(index, 1);
                   setImmunohistochemistrySampleInfo(info);
                 }} kind='tertiary' size='sm'>
-                  <Subtract size={18} /> Report
+                  <Subtract size={18} /> <FormattedMessage id="immunohistochemistry.label.report" />
                 </IconButton>
             </Column>
 
@@ -359,7 +358,7 @@ function ImmunohistochemistryCaseView() {
             <Column lg={3} md={1} sm={2} > 
                 <FileUploader
                   style={{marginTop: '-30px'}}
-                  buttonLabel={"Upload File"}
+                  buttonLabel={<FormattedMessage id="label.button.uploadfile" />}
                   iconDescription="file upload"
                   multiple={false}
                   accept={['image/jpeg', 'image/png', 'application/pdf']}
@@ -379,9 +378,6 @@ function ImmunohistochemistryCaseView() {
                   onClick={function noRefCheck() { }}
                   onDelete={(e) => {
                     e.preventDefault();
-                    var newReports = [...immunohistochemistrySampleInfo.reports];
-                    newReports[index].base64Image = '';
-                    setImmunohistochemistrySampleInfo({ ...immunohistochemistrySampleInfo, slides: newReports });
                   }}
                 />
               </Column>  
@@ -395,7 +391,7 @@ function ImmunohistochemistryCaseView() {
                       var win = window.open();
                       win.document.write('<iframe src="' + report.fileType + ";base64," + report.image + '" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>');
                     }}>
-                      <Launch /> View
+                      <Launch />  <FormattedMessage id="pathology.label.view" />
                     </Button>
                   </>
                 }
@@ -417,7 +413,7 @@ function ImmunohistochemistryCaseView() {
         <>
         <Column  lg={16} md={8} sm={4}>  
           <hr style={{width:'100%' , margin: '1rem 0', border: '1px solid #ccc' }} />
-           <h5>Blocks</h5>
+           <h5> <FormattedMessage id="pathology.label.blocks" /></h5>
         </Column>
         <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>   
         <Column  lg={16} md={8} sm={4}/> 
@@ -447,7 +443,7 @@ function ImmunohistochemistryCaseView() {
               <Column lg={2} md={2} sm={2}>
                 <Button onClick={(e) => {
                   window.open(config.serverBaseUrl + '/LabelMakerServlet?labelType=block&code=' + block.blockNumber, '_blank')
-                }}>Print Label</Button>
+                }}> <FormattedMessage id="pathology.label.printlabel" /></Button>
               </Column>
               <Column lg={10} md={2} sm={0} />
               <Column lg={16} md={8} sm={4}>
@@ -461,7 +457,7 @@ function ImmunohistochemistryCaseView() {
         <Column  lg={16} md={8} sm={4}>  
         <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div> 
           <hr style={{width:'100%' , margin: '1rem 0', border: '1px solid #ccc' }} />
-           <h5>Slides</h5>
+           <h5> <FormattedMessage id="pathology.label.slides" /></h5>
            <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>    
         </Column>
         
@@ -496,7 +492,7 @@ function ImmunohistochemistryCaseView() {
                       var win = window.open();
                       win.document.write('<iframe src="' + slide.fileType + ";base64," + slide.image + '" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>');
                     }}>
-                      <Launch /> View
+                      <Launch />  <FormattedMessage id="pathology.label.view" />
                     </Button>
                   </>
                 }
@@ -504,7 +500,7 @@ function ImmunohistochemistryCaseView() {
                 <Column lg={2} md={1} sm={2}>
                 <Button onClick={(e) => {
                   window.open(config.serverBaseUrl + '/LabelMakerServlet?labelType=slide&code=' + slide.slideNumber, '_blank')
-                }}>Print Label</Button>
+                }}> <FormattedMessage id="pathology.label.printlabel" /></Button>
               </Column>
               <Column lg={8} md={1} sm={2}/>
               <Column lg={16} md={8} sm={4}>
@@ -524,55 +520,66 @@ function ImmunohistochemistryCaseView() {
         </Column>
         <Column lg={16} md={8} sm={4}></Column>
         {hasRole(userSessionDetails ,"Pathologist") &&
-          <>
-            <Column lg={8} md={4} sm={2}>
-            <Tag>Techniques: </Tag>
-              {immunohistochemistrySampleInfo.techniques && immunohistochemistrySampleInfo.techniques.map((technique, index) => (
                 <>
-                  {technique.value}  &nbsp; 
-                </>
-              ))}
-            </Column>
-            <Column lg={16} md={8} sm={4}></Column>
-            <Column lg={8} md={4} sm={2}>
-            <Tag>Requests: </Tag>
-              {immunohistochemistrySampleInfo.requests && immunohistochemistrySampleInfo.requests.map((technique, index) => (
-                  <>
-                  {technique.value}  &nbsp;
-                  </>
-              ))}
-            </Column>
-            <Column lg={16} md={8} sm={4}>
-              <Tag> Gross Exam :</Tag> 
-              <>{immunohistochemistrySampleInfo.grossExam}  </>
-            </Column>
-            <Column lg={16} md={8} sm={4}>
-            <Tag> Microscopy Exam :</Tag> 
-              <>{immunohistochemistrySampleInfo.microscopyExam} </>
-            </Column>
-            <Column lg={8} md={4} sm={2}>
-            <Tag> Conclusions :</Tag> 
-              {immunohistochemistrySampleInfo.conclusions && immunohistochemistrySampleInfo.conclusions.map((conclusion, index) => (
-                <>
-                  {conclusion.value}  &nbsp;
-                </>
-              ))}
-            </Column>
-            <Column lg={16} md={8} sm={4}>
-            <Tag> Conclusion Text :</Tag> 
-              <>{immunohistochemistrySampleInfo.conclusionText}</>
+                  <Column lg={2} md={4} sm={2}>
+                    <Tag><FormattedMessage id="pathology.label.techniques" />: </Tag>
+                  </Column>
+                  <Column lg={14} md={4} sm={2}>
+                    {immunohistochemistrySampleInfo.techniques && immunohistochemistrySampleInfo.techniques.map((technique, index) => (
+                      <>
+                        {technique.value}  &nbsp;
+                      </>
+                    ))}
+                  </Column>
+                  <Column lg={2} md={4} sm={2}>
+                    <Tag><FormattedMessage id="pathology.label.request" />: </Tag>
+                  </Column>
+                  <Column lg={14} md={4} sm={2}>
+                    {immunohistochemistrySampleInfo.requests && immunohistochemistrySampleInfo.requests.map((technique, index) => (
+                      <>
+                        {technique.value}  &nbsp;
+                      </>
+                    ))}
+                  </Column>
+                  <Column lg={2} md={8} sm={4}>
+                    <Tag> <FormattedMessage id="pathology.label.grossexam" /> :</Tag>
+                  </Column>
+                  <Column lg={14} md={8} sm={4}>
+                    <>{immunohistochemistrySampleInfo.grossExam}  </>
+                  </Column>
+                  <Column lg={2} md={8} sm={4}>
+                    <Tag> <FormattedMessage id="pathology.label.microexam" /> :</Tag>
+                  </Column>
+                  <Column lg={14} md={8} sm={4}>
+                    <>{immunohistochemistrySampleInfo.microscopyExam} </>
+                  </Column>
+                  <Column lg={2} md={4} sm={2}>
+                    <Tag> <FormattedMessage id="pathology.label.conclusion" /> :</Tag>
+                  </Column>
+                  <Column lg={14} md={4} sm={2}>
+                    {immunohistochemistrySampleInfo.conclusions && immunohistochemistrySampleInfo.conclusions.map((conclusion, index) => (
+                      <>
+                        {conclusion.value}  &nbsp;
+                      </>
+                    ))}
+                  </Column>
+                  <Column lg={2} md={8} sm={4}>
+                    <Tag> <FormattedMessage id="pathology.label.textconclusion" /> :</Tag>
+                  </Column>
+                  <Column lg={14} md={8} sm={4}>
+                    <>{immunohistochemistrySampleInfo.conclusionText}</>
 
-            </Column>
-          </>}
-          </>
+                  </Column>
+                </>}
+            </>
           )}
-        <Column lg={16}>
-          <Checkbox labelText="Ready for Release" id="release"
-            onChange={() => {
-              setImmunohistochemistrySampleInfo({ ...immunohistochemistrySampleInfo, release: !immunohistochemistrySampleInfo.release });
-            }} />
-        </Column>
-  
+          <Column lg={16}>
+            <Checkbox labelText={<FormattedMessage id="pathology.label.release" />} id="release"
+              onChange={() => {
+                setImmunohistochemistrySampleInfo({ ...immunohistochemistrySampleInfo, release: !immunohistochemistrySampleInfo.release });
+              }} />
+          </Column>
+
         <Column><Button id="pathology_save2" onClick={(e) => { e.preventDefault(); save(e) }}>Save</Button></Column>
 
       </Grid>
