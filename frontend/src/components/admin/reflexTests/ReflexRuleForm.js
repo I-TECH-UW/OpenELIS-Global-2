@@ -375,7 +375,7 @@ function ReflexRule() {
                       &nbsp;  &nbsp;  &nbsp;  &nbsp;
                     </div>
                     <div >
-                      <Checkbox labelText="Active" name="active" id={index + "_active"} checked={rule.active}
+                      <Checkbox labelText={"Active: " + rule.active} name="active" id={index + "_active"} checked={rule.active}
                        disabled={rule.active}
                         onChange={(e) => {
                            const list = [...ruleList];

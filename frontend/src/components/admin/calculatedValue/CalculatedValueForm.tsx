@@ -492,7 +492,7 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
                       &nbsp;  &nbsp; &nbsp;  &nbsp; &nbsp;  &nbsp;
                     </div>
                     <div >
-                      <Checkbox labelText="Active" name="active" id={index + "_active"} checked={calculation.active}
+                      <Checkbox labelText={"Active: " + calculation.active} name="active" id={index + "_active"} checked={calculation.active}
                         disabled={calculation.active}
                        onChange={(e) => {
                            const list = [...calculationList];
