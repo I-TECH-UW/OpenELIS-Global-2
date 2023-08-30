@@ -232,10 +232,11 @@ class OEHeader extends React.Component {
                             <SideNavMenuItem href={"/CytologyDashboard"}>Dashboard</SideNavMenuItem>
                           </SideNavMenu>
                           <SideNavMenu aria-label="Results" title="Results">
-                            <SideNavMenuItem href="/result?type=unit">By Unit</SideNavMenuItem>
-                            <SideNavMenuItem href="/result?type=patient">By Patient</SideNavMenuItem>
-                            <SideNavMenuItem href="/result?type=order">By Order</SideNavMenuItem>
-                            <SideNavMenuItem href="/result?type=date">By Test Date</SideNavMenuItem>
+                            <SideNavMenuItem href="/result?type=unit&doRange=false">By Unit</SideNavMenuItem>
+                            <SideNavMenuItem href="/result?type=patient&doRange=false">By Patient</SideNavMenuItem>
+                            <SideNavMenuItem href="/result?type=order&doRange=false">By Order</SideNavMenuItem>
+                            <SideNavMenuItem href="/result?type=range&doRange=true">By Range of Order numbers</SideNavMenuItem>
+                            <SideNavMenuItem href="/result?type=date&doRange=false">By Test Date</SideNavMenuItem>
                           </SideNavMenu>
                           <SideNavMenu
                             aria-label="Validation" title="Validation"                    >

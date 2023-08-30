@@ -196,7 +196,7 @@ public interface AnalysisService extends BaseObjectService<Analysis, String> {
             List<Integer> sampleStatusList, String accessionNumber);
     
     List<Analysis> getPageAnalysisByStatusFromAccession(List<Integer> analysisStatusList,
-            List<Integer> sampleStatusList, String accessionNumber, boolean doRange, boolean finished);
+            List<Integer> sampleStatusList, String accessionNumber,String upperRangeAccessionNumber, boolean doRange, boolean finished);
 
     List<Analysis> getAnalysisForSiteBetweenResultDates(String referringSiteId, LocalDate lowerDate,
             LocalDate upperDate);
