@@ -45,7 +45,7 @@ function ImmunohistochemistryDashboard() {
     var pastWeekDate = new Date(currentDate);
     pastWeekDate.setDate(currentDate.getDate() - 7);
 
-    return formatDateToDDMMYYYY(currentDate) + " - " + formatDateToDDMMYYYY(pastWeekDate);
+    return formatDateToDDMMYYYY(pastWeekDate) + " - " + formatDateToDDMMYYYY(currentDate);
   }
 
   const tileList = [
