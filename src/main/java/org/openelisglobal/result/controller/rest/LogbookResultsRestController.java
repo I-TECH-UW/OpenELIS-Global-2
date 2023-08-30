@@ -192,11 +192,12 @@ public class LogbookResultsRestController extends LogbookResultsBaseController {
     @ResponseBody
     public LogbookResultsForm showReactLogbookResults(@RequestParam(required = false) String labNumber, @RequestParam(required = false) String  nationalId,@RequestParam(required = false) String  firstName,
                                                       @RequestParam(required = false) String lastName, @RequestParam(required = false) String collectionDate, @RequestParam(required = false) String recievedDate, @RequestParam(required = false) String selectedTest, @RequestParam(required = false) String selectedSampleStatus,
-                                                      @RequestParam(required = false) String selectedAnalysisStatus, @RequestParam(required = false) boolean doRange,
+                                                      @RequestParam(required = false) String selectedAnalysisStatus,@RequestParam(required = false) String upperRangeAccessionNumber, @RequestParam(required = false) boolean doRange,
             @RequestParam boolean finished,
             @Validated(LogbookResults.class) @ModelAttribute("form") LogbookResultsForm form, BindingResult result)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         System.out.println("LabNo: "+labNumber);
+        System.out.println("upperRangeAccessionNumber: "+upperRangeAccessionNumber);
         System.out.println("Patient: "+labNumber);
         StatusResultsForm statusResultsForm = new StatusResultsForm();
         statusResultsForm.setCollectionDate(collectionDate);
@@ -218,14 +219,14 @@ public class LogbookResultsRestController extends LogbookResultsBaseController {
         newForm.setDisplayTestSections(true);
         newForm.setSearchByRange(false);
 
-        return getLogbookResults(request, newForm,statusResultsForm, labNumber,nationalId,firstName,lastName, doRange, finished);
+        return getLogbookResults(request, newForm,statusResultsForm, labNumber,nationalId,firstName,lastName,upperRangeAccessionNumber, doRange, finished);
     }
 
 
     @GetMapping(value = "ReactRangeResults", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public LogbookResultsForm showReactLogbookResultsByRange(@RequestParam String labNumber,
-            @RequestParam boolean doRange, @RequestParam boolean finished,
+                                                             @RequestParam String  upperRangeAccessionNumber,@RequestParam boolean doRange, @RequestParam boolean finished,
             @Validated(LogbookResults.class) @ModelAttribute("form") LogbookResultsForm form, BindingResult result)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
@@ -240,10 +241,10 @@ public class LogbookResultsRestController extends LogbookResultsBaseController {
         newForm.setDisplayTestSections(false);
         newForm.setSearchByRange(true);
 
-        return getLogbookResults(request, newForm,null, labNumber,"","","", doRange, finished);
+        return getLogbookResults(request, newForm,null, labNumber,"","","",upperRangeAccessionNumber, doRange, finished);
     }
 
-    private LogbookResultsForm getLogbookResults(HttpServletRequest request, LogbookResultsForm form,StatusResultsForm statusResultsForm, String labNumber,String nationalId,String firstName,String lastName, boolean doRange,
+    private LogbookResultsForm getLogbookResults(HttpServletRequest request, LogbookResultsForm form,StatusResultsForm statusResultsForm, String labNumber,String nationalId,String firstName,String lastName,String upperRangeAccessionNumber, boolean doRange,
             boolean finished) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
    
         String patientName = "";
@@ -315,7 +316,7 @@ public class LogbookResultsRestController extends LogbookResultsBaseController {
                     || !GenericValidator.isBlankOrNull(nationalId)
             ) {
                 tests.clear();
-                tests = resultsLoadUtility.getUnfinishedTestResultItemsByAccession(labNumber, doRange, finished);
+                tests = resultsLoadUtility.getUnfinishedTestResultItemsByAccession(labNumber,upperRangeAccessionNumber, doRange, finished);
 
                 // if no test try patientID
                 if(tests.isEmpty()) {
@@ -436,7 +437,7 @@ public class LogbookResultsRestController extends LogbookResultsBaseController {
         String statusRuleSet = ConfigurationProperties.getInstance().getPropertyValueUpperCase(Property.StatusRules);
 
         if ("true".equals(request.getParameter("pageResults"))) {
-            return getLogbookResults(request, form, null,"", "",null,"",true, true);
+            return getLogbookResults(request, form, null,"", "",null,"",null,true, true);
         }
 
         if (result.hasErrors()) {

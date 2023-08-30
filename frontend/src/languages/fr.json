@@ -155,6 +155,7 @@
     "sidenav.label.results.patient" : "Par Patient",
     "sidenav.label.results.order" : "Par Commande",
     "sidenav.label.results.testdate" : "Par Date de Test",
+    "sidenav.label.results.byrange" : "Par plage de numéros de commande",
     "sidenav.label.validation" : "Validation",
     "sidenav.label.validation.routine" : "Recherche Par Routine",
     "sidenav.label.validation.study" : "Recherche Par Étude",

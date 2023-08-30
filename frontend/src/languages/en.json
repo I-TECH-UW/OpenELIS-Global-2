@@ -155,6 +155,7 @@
     "sidenav.label.results.patient" : "By Patient" ,
     "sidenav.label.results.order" : "By Order" ,
     "sidenav.label.results.testdate" : "By Test Date" ,
+    "sidenav.label.results.byrange" : "By Range of Order numbers" ,
     "sidenav.label.validation" : "Validation" ,
     "sidenav.label.validation.routine" : "Search By Routine",
     "sidenav.label.validation.study" : "Search By Study",

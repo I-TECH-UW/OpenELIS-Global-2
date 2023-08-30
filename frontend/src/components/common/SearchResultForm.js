@@ -61,13 +61,11 @@ export class SearchResultForm extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            doRange: true,
-            finished: true,
             tests: [],
             analysisStatusTypes: [],
             sampleStatusTypes: [],
             loading : false,
-            searchBy: ""
+            searchBy: { type:"",doRange:false}
         }
     }
     _isMounted = false;
@@ -96,21 +94,16 @@ export class SearchResultForm extends React.Component {
 
     }
 
-    handleDoRangeChange = () => {
-        console.log("handleDoRangeChange:")
-        this.state.doRange = !this.state.doRange;
-    }
-
-    handleFinishedChange = () => {
-        console.log("handleFinishedChange:")
-        this.state.finished = !this.state.finished;
-    }
-
     handleSubmit = (values) => {
         this.setState({loading : true})
         this.props.setResults({ testResult: [] })
-        var searchEndPoint = "/rest/ReactLogbookResultsByRange?" +
-            "labNumber=" + values.accessionNumber +
+
+        const labNo = values.accessionNumber!==""? values.accessionNumber: values.startLabNo ;
+        const endLabNo = values.endLabNo !==undefined? values.endLabNo : "";
+
+        let searchEndPoint = "/rest/ReactLogbookResultsByRange?" +
+            "labNumber=" + labNo+
+            "&upperRangeAccessionNumber=" + endLabNo+
             "&nationalId="+ values.nationalId +
             "&firstName="+ values.firstName +
             "&lastName="+ values.lastName +
@@ -119,8 +112,8 @@ export class SearchResultForm extends React.Component {
             "&selectedTest="+values.testName +
             "&selectedSampleStatus="+values.sampleStatusType +
             "&selectedAnalysisStatus="+values.analysisStatus +
-            "&doRange=" + this.state.doRange +
-            "&finished=" + this.state.finished
+            "&doRange=" + this.state.searchBy.doRange+
+            "&finished=" + true
            getFromOpenElisServer(searchEndPoint, this.setResultsWithId);
     };
 
@@ -146,8 +139,14 @@ export class SearchResultForm extends React.Component {
         getFromOpenElisServer("/rest/test-list", this.getTests);
         getFromOpenElisServer("/rest/analysis-status-types", this.getAnalysisStatusTypes);
         getFromOpenElisServer("/rest/sample-status-types", this.getSampleStatusTypes);
-        let param = (new URLSearchParams(window.location.search)).get("type")
-        this.setState({searchBy: param});
+        let displayFormType = (new URLSearchParams(window.location.search)).get("type");
+        let doRange = (new URLSearchParams(window.location.search)).get("doRange");
+        this.setState({
+            searchBy: {
+                type:displayFormType,
+                doRange:doRange
+            }
+        });
     }
 
     render() {
@@ -196,17 +195,39 @@ export class SearchResultForm extends React.Component {
                                 <Row lg={12}>
                                 <div className="inlineDiv">
 
-                                    {this.state.searchBy === "order" && <Field name="accessionNumber"
+                                    {this.state.searchBy.type === "order" && <Field name="accessionNumber"
                                 >
                                     {({ field }) =>
                                         <TextInput
                                             placeholder={"Enter LabNo"}
                                             className="searchLabNumber inputText"
-                                            name={field.name} id={field.name} labelText=""/>
+                                            name={field.name} id={field.name} labelText="Enter accession No"/>
                                     }
                                 </Field> }
+
+                                    {this.state.searchBy.type === "range" &&
+                                        <div className="inlineDiv">
+                                            <Field name="startLabNo">
+                                                {({ field }) =>
+                                                    <TextInput
+                                                        placeholder={"Enter LabNo"}
+                                                        className="searchLabNumber inputText"
+                                                        name={field.name} id={field.name} labelText="From"/>
+                                                }
+                                            </Field>
+
+                                            <Field name="endLabNo">
+                                                {({ field }) =>
+                                                    <TextInput
+                                                        placeholder={"Enter LabNo"}
+                                                        className="searchLabNumber inputText"
+                                                        name={field.name} id={field.name} labelText="To"/>
+                                                }
+                                            </Field>
+                                        </div>
+                                    }
                                 </div>
-                                    {this.state.searchBy === "patient" &&
+                                    {this.state.searchBy.type === "patient" &&
                                         <div className="inlineDiv">
                                     <Field name="nationalId"
                                     >
@@ -236,7 +257,7 @@ export class SearchResultForm extends React.Component {
                                     </Field>
                                 </div> }
                             </Row>
-                                    {this.state.searchBy === "date" &&  <div lg={12}>
+                                    {this.state.searchBy.type === "date" &&  <div lg={12}>
                                         <div className="inlineDiv">
                                             <Field name="collectionDate"
                                             >
@@ -339,35 +360,6 @@ export class SearchResultForm extends React.Component {
 
 
                                     </div> }
-                                {this.state.searchBy === "order" && <Grid>
-                                    <Column lg={2}>
-                                        <Field name="doRange"
-                                        >
-                                            {({ field }) =>
-                                                <Checkbox
-                                                    defaultChecked={this.state.doRange}
-                                                    onChange={this.handleDoRangeChange}
-                                                    name={field.name}
-                                                    labelText="Do Range"
-                                                    id={field.name} />
-                                            }
-                                        </Field>
-                                    </Column>
-                                    <Column lg={2}>
-                                        <Field name="finished"
-                                        >
-                                            {({ field }) =>
-                                                <Checkbox
-                                                    defaultChecked={this.state.finished}
-                                                    onChange={this.handleFinishedChange}
-                                                    //onClick={() => (this.state.doRange = false)}
-                                                    name={field.name}
-                                                    labelText="Display All"
-                                                    id={field.name} />
-                                            }
-                                        </Field>
-                                    </Column>
-                                </Grid> }
 
                                 <Column lg={6}>
                                 <Button type="submit" id="submit" className="searchResultsBtn">
