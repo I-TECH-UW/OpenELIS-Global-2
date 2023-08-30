@@ -35,6 +35,10 @@ import {
   HeaderPanel,
 } from "@carbon/react";
 
+function FormattedMessageBy(props) {
+  return null;
+}
+
 class OEHeader extends React.Component {
   constructor(props) {
     super(props);
@@ -235,7 +239,7 @@ class OEHeader extends React.Component {
                             <SideNavMenuItem href="/result?type=unit&doRange=false"> <FormattedMessage id="sidenav.label.results.unit"/> </SideNavMenuItem>
                             <SideNavMenuItem href="/result?type=patient&doRange=false"> <FormattedMessage id="sidenav.label.results.patient"/> </SideNavMenuItem>
                             <SideNavMenuItem href="/result?type=order&doRange=false"> <FormattedMessage id="sidenav.label.results.order"/> </SideNavMenuItem>
-                            <SideNavMenuItem href="/result?type=range&doRange=true">By Range of Order numbers</SideNavMenuItem>
+                            <SideNavMenuItem href="/result?type=range&doRange=true"> <FormattedMessage id="sidenav.label.results.byrange"/></SideNavMenuItem>
                             <SideNavMenuItem href="/result?type=date&doRange=false"> <FormattedMessage id="sidenav.label.results.testdate"/> </SideNavMenuItem>
                           </SideNavMenu>
                             <SideNavMenu
