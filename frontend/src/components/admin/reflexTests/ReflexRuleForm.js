@@ -1,5 +1,5 @@
 import {useContext, useState, useEffect, useRef } from "react";
-import { Form, Stack, TextInput, Select, SelectItem, Button, IconButton, Toggle,  Loading, RadioButtonGroup, RadioButton ,ModalWrapper} from '@carbon/react';
+import { Form, Stack, TextInput, Select, SelectItem, Button,Checkbox , IconButton, Toggle,  Loading, RadioButtonGroup, RadioButton ,ModalWrapper} from '@carbon/react';
 import { Add, Subtract } from '@carbon/react/icons';
 import Autocomplete from "./AutoComplete";
 import RuleBuilderFormValues from "../../formModel/innitialValues/RuleBuilderFormValues";
@@ -244,7 +244,7 @@ function ReflexRule() {
       element.disabled = true;
       setNotificationBody({kind: NotificationKinds.success, title: "Notification Message", message: "Succesfuly saved"});
     }else{
-      setNotificationBody({kind: NotificationKinds.error, title: "Notification Message", message: "Error while saving"});
+      setNotificationBody({kind: NotificationKinds.error, title: "Notification Message", message: "Duplicate Calculation Name or Error while saving"});
     }
   };
 
@@ -370,6 +370,20 @@ function ReflexRule() {
                         onToggle={(e) => toggleRule(e, index)}
                         onClick={handleClick}
                       />
+                    </div>
+                    <div >
+                      &nbsp;  &nbsp;  &nbsp;  &nbsp;
+                    </div>
+                    <div >
+                      <Checkbox labelText="Active" name="active" id={index + "_active"} checked={rule.active}
+                       disabled={rule.active}
+                        onChange={(e) => {
+                           const list = [...ruleList];
+                           list[index]["active"] = e.target.checked;
+                           setRuleList(list);
+                        }}
+
+                        />
                     </div>
                   </div>
                   {rule.toggled && (

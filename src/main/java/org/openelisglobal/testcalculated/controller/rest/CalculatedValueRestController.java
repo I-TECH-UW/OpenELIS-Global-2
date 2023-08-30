@@ -87,8 +87,7 @@ public class CalculatedValueRestController {
     @GetMapping(value = "test-calculations", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public List<Calculation> getReflexRules(HttpServletRequest request) {
-        List<Calculation> calculations = testCalculationService.getAll().stream()
-                .filter(c -> Boolean.TRUE.equals(c.getActive())).collect(Collectors.toList());
+        List<Calculation> calculations = testCalculationService.getAll().stream().collect(Collectors.toList());
         calculations.forEach(c -> c.setToggled(false));
         return !calculations.isEmpty() ? calculations : Collections.<Calculation> emptyList();
     }

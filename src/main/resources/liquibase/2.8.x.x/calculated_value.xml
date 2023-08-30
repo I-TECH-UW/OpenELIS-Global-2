@@ -139,4 +139,12 @@
 			<column name="result_calculated" type="boolean"  />
 		</addColumn>
 	</changeSet>
+	<changeSet  author="mozzymutesa" id="7">
+	  <preConditions onFail="MARK_RAN">
+            <columnExists tableName="calculation" columnName="name"/>
+        </preConditions>
+        <addUniqueConstraint tableName="calculation"
+                             columnNames="name"
+                             constraintName="calculation_name_unique_constraint"/>
+    </changeSet>
 </databaseChangeLog>

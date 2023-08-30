@@ -75,9 +75,9 @@
     "rulebuilder.label.addAction" : "Add Action",
     "rulebuilder.label.removeAction" : "Remove Action",
     "rulebuilder.label.addRule" : "Add Rule",
-    "rulebuilder.label.removeRule" : "Remove Rule",
+    "rulebuilder.label.removeRule" : "Deactivate Rule",
     "rulebuilder.label.rule" : "Rule",
-    "rulebuilder.label.confirmDelete" : "Are you sure you want to delete this Rule?",
+    "rulebuilder.label.confirmDelete" : "Are you sure you want to deactivate this Rule?",
     "rulebuilder.error.invalidNumeric" : "Invalid Numeric Value" ,
     "rulebuilder.error.invalidTest" : "Invalid Test",
     "testcalculation.label.name" : "Calculation Name" ,
@@ -181,5 +181,6 @@
     "sample.label.requester" : "Requester" ,
     "sample.label.dept" : "Ward/Dept/Unit" ,
     "label.button.uploadfile": "Upload file" ,
-    "label.button.select": "Select"
+    "label.button.select": "Select" ,
+    "label.button.add": "Add"
 }
