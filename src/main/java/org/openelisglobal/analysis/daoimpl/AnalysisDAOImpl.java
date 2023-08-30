@@ -26,6 +26,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -38,8 +39,6 @@ import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.paging.PagingProperties;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
-import org.openelisglobal.common.services.StatusService.OrderStatus;
-import org.openelisglobal.common.services.StatusService.SampleStatus;
 import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.result.valueholder.Result;
@@ -1575,7 +1574,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         }
         
         String sql = "";
-        if (doRange && !Objects.equals(upperRangeAccessionNumber, "") )
+        if (doRange && StringUtils.isNotBlank(upperRangeAccessionNumber))
             sql = "From Analysis a WHERE a.sampleItem.sample.accessionNumber between :accessionNumber and :upperRangeAccessionNumber"//
                     + " AND length(a.sampleItem.sample.accessionNumber) = length(:accessionNumber)"//
                     + " AND a.statusId IN (:analysisStatusList)"//
@@ -1591,7 +1590,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         try {
             Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
             query.setParameter("accessionNumber", accessionNumber);
-            if(!Objects.equals(upperRangeAccessionNumber, "")){
+            if(StringUtils.isNotBlank(upperRangeAccessionNumber)){
                 query.setParameter("upperRangeAccessionNumber", upperRangeAccessionNumber);
             }
             query.setParameterList("analysisStatusList", analysisStatusList);

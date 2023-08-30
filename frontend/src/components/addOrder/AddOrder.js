@@ -35,6 +35,8 @@ const AddOrder = (props) => {
             case "nextVisitDate":
                 obj = {...orderFormValues.sampleOrderItems, nextVisitDate: date}
                 break;
+            default :
+                  
         }
         setOrderFormValues({
             ...orderFormValues, sampleOrderItems: obj
@@ -340,20 +342,20 @@ const AddOrder = (props) => {
                 </div>
                 <div className="inlineDiv">
                     <CustomDatePicker id={"order_requestDate"} labelText={"Request Date"} autofillDate={true}
-                                      value={orderFormValues.sampleOrderItems.requestDate} className="inputText"
+                                      value={orderFormValues.sampleOrderItems.requestDate} className="inputDate"
                                       onChange={(date) => handleDatePickerChange("requestDate", date)}/>
 
-                    <CustomDatePicker id={"order_receivedDate"} labelText={"Received Date"} className="inputText" autofillDate={true}
+                    <CustomDatePicker id={"order_receivedDate"} labelText={"Received Date"} className="inputDate" autofillDate={true}
                                       value={orderFormValues.sampleOrderItems.receivedDateForDisplay}
                                       onChange={(date) => handleDatePickerChange("receivedDate", date)}/>
                 </div>
                 <div className="inlineDiv">
-                    <TimePicker id="order_receivedTime" className="inputText" labelText="Reception Time (hh:mm):"
+                    <TimePicker id="order_receivedTime" className="inputTime" labelText="Reception Time (hh:mm):"
                                 onChange={handleReceivedTime}
                                 value={orderFormValues.sampleOrderItems.receivedTime == null ? '' : orderFormValues.sampleOrderItems.receivedTime}
                     />
 
-                    <CustomDatePicker id={"order_nextVisitDate"} className="inputText" labelText={"Next Visit Date"}
+                    <CustomDatePicker id={"order_nextVisitDate"} className="inputDate" labelText={"Next Visit Date"}
                                       value={orderFormValues.sampleOrderItems.nextVisitDate} autofillDate={false}
                                       onChange={(date) => handleDatePickerChange("nextVisitDate", date)}/>
                 </div>
