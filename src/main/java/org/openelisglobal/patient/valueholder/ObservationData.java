@@ -24,7 +24,7 @@ import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.Pattern;
 
-import org.apache.commons.httpclient.NameValuePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.dictionary.ObservationHistoryList;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
@@ -102,11 +102,11 @@ public class ObservationData implements Serializable {
     @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String currentDiseasesValue; // actual string containing other Diseases which is answer to "please specify"
 
-    private List<NameValuePair> priorDiseasesList;
-    private List<NameValuePair> currentDiseasesList;
+    private List<Pair<String, String>> priorDiseasesList;
+    private List<Pair<String, String>> currentDiseasesList;
 
-    private List<NameValuePair> rtnPriorDiseasesList;
-    private List<NameValuePair> rtnCurrentDiseasesList;
+    private List<Pair<String, String>> rtnPriorDiseasesList;
+    private List<Pair<String, String>> rtnCurrentDiseasesList;
 
     private List<@SafeHtml(level = SafeHtml.SafeListLevel.NONE) String> priorARVTreatmentINNs = Arrays
             .asList(new String[] { null, null, null, null });
@@ -1388,44 +1388,44 @@ public class ObservationData implements Serializable {
         this.priorVLDate = priorVLDate;
     }
 
-    public List<NameValuePair> getPriorDiseasesList() {
+    public List<Pair<String, String>> getPriorDiseasesList() {
         if (priorDiseasesList == null) {
             priorDiseasesList = makeDiseaseList("P", ObservationHistoryList.ARV_DISEASES.getList());
         }
         return priorDiseasesList;
     }
 
-    private List<NameValuePair> makeDiseaseList(String prefix, List<Dictionary> dictionaryList) {
-        List<NameValuePair> nvList = new ArrayList<>();
+    private List<Pair<String, String>> makeDiseaseList(String prefix, List<Dictionary> dictionaryList) {
+        List<Pair<String, String>> nvList = new ArrayList<>();
         for (Dictionary dictionary : dictionaryList) {
-            nvList.add(new NameValuePair(prefix + dictionary.getLocalAbbreviation(), dictionary.getLocalizedName()));
+            nvList.add(Pair.of(prefix + dictionary.getLocalAbbreviation(), dictionary.getLocalizedName()));
         }
         return nvList;
     }
 
-    public NameValuePair getPriorDiseases(int index) {
+    public Pair<String, String> getPriorDiseases(int index) {
         return getPriorDiseasesList().get(index);
     }
 
-    public List<NameValuePair> getCurrentDiseasesList() {
+    public List<Pair<String, String>> getCurrentDiseasesList() {
         if (currentDiseasesList == null) {
             currentDiseasesList = makeDiseaseList("C", ObservationHistoryList.ARV_DISEASES_SHORT.getList());
         }
         return currentDiseasesList;
     }
 
-    public NameValuePair getCurrentDiseases(int index) {
+    public Pair<String, String> getCurrentDiseases(int index) {
         return getCurrentDiseasesList().get(index);
     }
 
-    public List<NameValuePair> getRtnPriorDiseasesList() {
+    public List<Pair<String, String>> getRtnPriorDiseasesList() {
         if (rtnPriorDiseasesList == null) {
             rtnPriorDiseasesList = makeDiseaseList("", ObservationHistoryList.RTN_DISEASES.getList());
         }
         return rtnPriorDiseasesList;
     }
 
-    public List<NameValuePair> getRtnCurrentDiseasesList() {
+    public List<Pair<String, String>> getRtnCurrentDiseasesList() {
         if (rtnCurrentDiseasesList == null) {
             rtnCurrentDiseasesList = makeDiseaseList("", ObservationHistoryList.RTN_EXAM_DISEASES.getList());
         }

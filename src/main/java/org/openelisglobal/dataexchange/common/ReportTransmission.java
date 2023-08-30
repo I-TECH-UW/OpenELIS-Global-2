@@ -103,14 +103,14 @@ public class ReportTransmission {
             // LogEvent.logInfo(this.getClass().getName(), "method unkown", contents );
             switch (httpType) {
             case GET:
-                sender = new HttpGetSender();
+                sender = SpringContext.getBean(HttpGetSender.class);
                 break;
             case POST:
-                sender = new HttpPostSender();
+                sender = SpringContext.getBean(HttpPostSender.class);
                 sender.setMessage(contents);
                 break;
             default:
-                sender = new HttpPostSender();
+                sender = SpringContext.getBean(HttpPostSender.class);
                 break;
             }
 
