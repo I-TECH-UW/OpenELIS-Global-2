@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { useContext, useState, useEffect, useRef } from "react";
-import { Form, Stack, TextInput, Select, SelectItem, Button, IconButton, Toggle, Loading, RadioButtonGroup, RadioButton, ModalWrapper } from '@carbon/react';
+import { Form, Stack, TextInput, Select, SelectItem, Button, IconButton, Toggle, Loading, Checkbox,RadioButtonGroup, RadioButton, ModalWrapper } from '@carbon/react';
 import AutoComplete from '../../common/AutoComplete.js'
 import { Add, Subtract, Save } from '@carbon/react/icons';
 import { FormattedMessage } from "react-intl";
@@ -256,7 +256,7 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
       element.disabled = true;
       setNotificationBody({ kind: NotificationKinds.success, title: "Notification Message", message: "Succesfuly saved" });
     } else {
-      setNotificationBody({ kind: NotificationKinds.error, title: "Notification Message", message: "Error while saving" });
+      setNotificationBody({ kind: NotificationKinds.error, title: "Notification Message", message: "Duplicate Calculation Name or Error while saving" });
     }
   };
 
@@ -488,11 +488,25 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
                         onToggle={(e) => toggleCalculation(e, index)}
                       />
                     </div>
+                    <div >
+                      &nbsp;  &nbsp; &nbsp;  &nbsp; &nbsp;  &nbsp;
+                    </div>
+                    <div >
+                      <Checkbox labelText="Active" name="active" id={index + "_active"} checked={calculation.active}
+                        disabled={calculation.active}
+                       onChange={(e) => {
+                           const list = [...calculationList];
+                           list[index]["active"] = e.target.checked;
+                           setCalculationList(list);
+
+                        }}
+                        />
+                    </div>
                   </div>
                   {calculation.toggled && (
                     <>
                       <div className="inlineDiv">
-                        Add   &nbsp;  &nbsp;
+                      <FormattedMessage id="label.button.add" />  &nbsp;  &nbsp;
                         <div>
                           <Button renderIcon={Add} id={index + "_testresult"} kind='tertiary' size='sm' onClick={() => addOperation(index, 'TEST_RESULT')}>
                             <FormattedMessage id="testcalculation.label.testResult" />

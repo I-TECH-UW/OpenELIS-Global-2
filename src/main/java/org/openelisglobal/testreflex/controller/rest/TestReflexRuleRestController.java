@@ -64,8 +64,7 @@ public class TestReflexRuleRestController {
     @GetMapping(value = "reflexrules", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public List<ReflexRule> getReflexRules(HttpServletRequest request) {
-        List<ReflexRule> rules = reflexService.getAllReflexRules().stream()
-                .filter(rule -> Boolean.TRUE.equals(rule.getActive())).collect(Collectors.toList());
+        List<ReflexRule> rules = reflexService.getAllReflexRules().stream().collect(Collectors.toList());
         rules.forEach(rule -> rule.setToggled(false));
         return !rules.isEmpty() ? rules : Collections.<ReflexRule>emptyList();
     }
