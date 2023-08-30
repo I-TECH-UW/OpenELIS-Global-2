@@ -120,7 +120,6 @@ function ImmunohistochemistryCaseView() {
           "&doRange=" + false +
           "&finished=" + true +
           "&nationalId=" + 
-          "&upperRangeAccessionNumber=" +
           "&firstName=" + 
           "&lastName=" + 
           "&collectionDate=" + 
