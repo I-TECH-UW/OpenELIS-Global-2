@@ -1,16 +1,13 @@
-import React, {useState} from "react";
-import {
-  BrowserRouter as Router,
-  Route,
-  Switch,
-} from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { confirmAlert } from "react-confirm-alert";
 import { IntlProvider } from "react-intl";
 import Layout from "./components/layout/Layout";
 import Home from "./components/Home";
 import Login from "./components/Login";
 import { Admin } from "./components";
-import ResultSearch from "./components/resultPage/ResultSearch"
-import UserSessionDetailsContext from "./UserSessionDetailsContext"
+import ResultSearch from "./components/resultPage/ResultSearch";
+import UserSessionDetailsContext from "./UserSessionDetailsContext";
 import "./App.css";
 import messages_en from "./languages/en.json";
 import messages_fr from "./languages/fr.json";
@@ -20,37 +17,73 @@ import "./index.scss";
 import PatientManagement from "./components/patient/PatientManagement";
 import PatientHistory from "./components/patient/PatientHistory";
 import Workplan from "./components/workplan/Workplan";
-//import "./components/patient/resultsViewer/results-viewer.styles.scss"
 import AddOrder from "./components/addOrder/Index";
 import ModifyOrder from "./components/modifyOrder/Index";
 import RoutineReports from "./components/Reports/Routine";
 import StudyReports from "./components/Reports/Study";
-// import StudyValidation from "./components/validation/Study";
 import StudyValidation from "./components/validation/Index";
 import PathologyDashboard from "./components/pathology/PathologyDashboard";
 import CytologyDashboard from "./components/cytology/CytologyDashBoard";
 import CytologyCaseView from "./components/cytology/CytologyCaseView";
 import PathologyCaseView from "./components/pathology/PathologyCaseView";
-import ImmunohistochemistryDashboard from "./components/immunohistochemistry/ImmunohistochemistryDashboard"
-import ImmunohistochemistryCaseView from "./components/immunohistochemistry/ImmunohistochemistryCaseView"
-import RoutedResultsViewer  from './components/patient/resultsViewer/results-viewer.tsx'
+import ImmunohistochemistryDashboard from "./components/immunohistochemistry/ImmunohistochemistryDashboard";
+import ImmunohistochemistryCaseView from "./components/immunohistochemistry/ImmunohistochemistryCaseView";
+import RoutedResultsViewer from "./components/patient/resultsViewer/results-viewer.tsx";
 
 export default function App() {
-
   let i18nConfig = {
     locale: navigator.language.split(/[-_]/)[0],
     defaultLocale: "en",
     messages: messages_en,
   };
 
-  const [authenticated, setAuthenticated] = useState(false);
-  const [user, setUser] = useState({});
-  const [appConfig, setAppConfig] = useState(config);
   const [userSessionDetails, setUserSessionDetails] = useState({});
 
+  useEffect(() => {
+    getUserSessionDetails();
+  }, []);
+
+  const getUserSessionDetails = async () => {
+    let counter = 0;
+    while (counter < 10 && !("authenticated" in userSessionDetails)) {
+      try {
+        const response = await fetch(
+          config.serverBaseUrl + `/session`,
+          //includes the browser sessionId in the Header for Authentication on the backend server
+          { credentials: "include" },
+        );
+        const jsonResp = await response.json();
+        console.log(JSON.stringify(jsonResp));
+        if (jsonResp.authenticated) {
+          localStorage.setItem("CSRF", jsonResp.csrf);
+        }
+        setUserSessionDetails(jsonResp);
+        return jsonResp;
+      } catch (error) {
+        console.log(error);
+        const options = {
+          title: "System Error",
+          message: "Error : " + error.message,
+          buttons: [
+            {
+              label: "OK",
+              onClick: () => {
+                window.location.href = window.location.origin;
+              },
+            },
+          ],
+          closeOnClickOutside: false,
+          closeOnEscape: false,
+        };
+        confirmAlert(options);
+      }
+      ++counter;
+    }
+    return userSessionDetails;
+  };
 
   i18nConfig.locale =
-  localStorage.getItem("locale") || navigator.language.split(/[-_]/)[0];
+    localStorage.getItem("locale") || navigator.language.split(/[-_]/)[0];
   switch (i18nConfig.locale) {
     case "en":
       i18nConfig.messages = messages_en;
@@ -64,7 +97,7 @@ export default function App() {
   }
 
   const logout = () => {
-    fetch(appConfig.serverBaseUrl + "/Logout", {
+    fetch(config.serverBaseUrl + "/Logout", {
       //includes the browser sessionId in the Header for Authentication on the backend server
       method: "POST",
       headers: {
@@ -73,23 +106,14 @@ export default function App() {
       },
     })
       .then((response) => response.status)
-      .then((status) => {
-        setAuthenticated(false);
-        window.location.href = appConfig.loginRedirect;
+      .then(() => {
+        getUserSessionDetails();
+        window.location.href = config.loginRedirect;
         //console.log(JSON.stringify(jsonResp))
       })
       .catch((error) => {
         console.log(error);
       });
-  };
-
-  const onAuth = (user) => {
-    setAuthenticated(true);
-    setUser(user);
-  };
-
-  const isLoggedIn = () => {
-    return authenticated;
   };
 
   const changeLanguage = (lang) => {
@@ -112,218 +136,172 @@ export default function App() {
     changeLanguage(lang);
   };
 
-    return (
-      <IntlProvider
-        locale={i18nConfig.locale}
-        key={i18nConfig.locale}
-        defaultLocale={i18nConfig.defaultLocale}
-        messages={i18nConfig.messages}
+  const isCheckingLogin = () => {
+    return !("authenticated" in userSessionDetails);
+  };
+
+  return (
+    <IntlProvider
+      locale={i18nConfig.locale}
+      key={i18nConfig.locale}
+      defaultLocale={i18nConfig.defaultLocale}
+      messages={i18nConfig.messages}
+    >
+      <UserSessionDetailsContext.Provider
+        value={{
+          userSessionDetails,
+          isCheckingLogin,
+          logout,
+        }}
       >
-        <UserSessionDetailsContext.Provider value={{userSessionDetails, setUserSessionDetails}}>
-          <>
+        <>
           <Router>
-            <Layout
-              config={appConfig}
-              onChangeLanguage={onChangeLanguage}
-              logout={logout}
-              isLoggedIn={isLoggedIn}
-              user={user}
-            >
+            <Layout onChangeLanguage={onChangeLanguage}>
               <Switch>
-                <Route
-                  path="/login"
-                  exact
-                  component={() => (
-                    <Login onAuth={onAuth} />
-                  )}
-                />
+                <Route path="/login" exact component={() => <Login />} />
                 <SecureRoute
                   path="/"
                   exact
                   component={() => <Home />}
                   role=""
-                  config={appConfig}
-                  onAuth={onAuth}
-                  logout={logout}
-                  isLoggedIn={isLoggedIn}
                 />
                 <SecureRoute
                   path="/admin"
                   exact
                   component={() => <Admin />}
                   role="Global Administrator"
-                  config={appConfig}
-                  onAuth={onAuth}
-                  logout={logout}
-                  isLoggedIn={isLoggedIn}
                 />
                 <SecureRoute
                   path="/PathologyDashboard"
                   exact
                   component={() => <PathologyDashboard />}
                   role=""
-                  labUnitRole={{"Pathology": ["Results"]}}
-                  config={appConfig}
-                  onAuth={onAuth}
-                  logout={logout}
-                  isLoggedIn={isLoggedIn}
+                  labUnitRole={{ Pathology: ["Results"] }}
                 />
                 <SecureRoute
                   path="/PathologyCaseView/:pathologySampleId"
                   exact
                   component={() => <PathologyCaseView />}
                   role=""
-                  labUnitRole={{"Pathology": ["Results"]}}
-                  config={appConfig}
-                  onAuth={onAuth}
-                  logout={logout}
-                  isLoggedIn={isLoggedIn}
+                  labUnitRole={{ Pathology: ["Results"] }}
                 />
                 <SecureRoute
                   path="/ImmunohistochemistryDashboard"
                   exact
                   component={() => <ImmunohistochemistryDashboard />}
                   role=""
-                  labUnitRole={{"Immunohistochemistry": ["Results"]}}
-                  config={appConfig}
-                  onAuth={onAuth}
-                  logout={logout}
-                  isLoggedIn={isLoggedIn}
+                  labUnitRole={{ Immunohistochemistry: ["Results"] }}
                 />
                 <SecureRoute
                   path="/ImmunohistochemistryCaseView/:immunohistochemistrySampleId"
                   exact
                   component={() => <ImmunohistochemistryCaseView />}
                   role=""
-                  labUnitRole={{"Immunohistochemistry": ["Results"]}}
-                  config={appConfig}
-                  onAuth={onAuth}
-                  logout={logout}
-                  isLoggedIn={isLoggedIn}
+                  labUnitRole={{ Immunohistochemistry: ["Results"] }}
                 />
-                 <SecureRoute
+                <SecureRoute
                   path="/CytologyDashboard"
                   exact
                   component={() => <CytologyDashboard />}
                   role=""
-                  labUnitRole={{"Cytology": ["Results"]}}
-                  config={appConfig}
-                  onAuth={onAuth}
-                  logout={logout}
-                  isLoggedIn={isLoggedIn}
+                  labUnitRole={{ Cytology: ["Results"] }}
                 />
                 <SecureRoute
                   path="/CytologyCaseView/:cytologySampleId"
                   exact
                   component={() => <CytologyCaseView />}
                   role=""
-                  labUnitRole={{"Cytology": ["Results"]}}
-                  config={appConfig}
-                  onAuth={onAuth}
-                  logout={logout}
-                  isLoggedIn={isLoggedIn}
+                  labUnitRole={{ Cytology: ["Results"] }}
                 />
                 <SecureRoute
-                    path="/AddOrder"
-                    exact
-                    component={() => <AddOrder />}
-                    role={["Reception"]}
-                    config={appConfig}
-                    onAuth={onAuth}
-                    logout={logout}
-                    isLoggedIn={isLoggedIn}
+                  path="/AddOrder"
+                  exact
+                  component={() => <AddOrder />}
+                  role={["Reception"]}
                 />
-                 <SecureRoute
-                    path="/ModifyOrder"
-                    exact
-                    component={() => <ModifyOrder />}
-                    role="Reception"
-                    config={appConfig}
-                    onAuth={onAuth}
-                    logout={logout}
-                    isLoggedIn={isLoggedIn}
+                <SecureRoute
+                  path="/ModifyOrder"
+                  exact
+                  component={() => <ModifyOrder />}
+                  role="Reception"
                 />
                 <SecureRoute
                   path="/PatientManagement"
                   exact
                   component={() => <PatientManagement />}
                   role="Reception"
-                  config={appConfig}
-                  onAuth={onAuth}
-                  logout={logout}
-                  isLoggedIn={isLoggedIn}
                 />
                 <SecureRoute
                   path="/PatientHistory"
                   exact
                   component={() => <PatientHistory />}
                   role="Reception"
-                  config={appConfig}
-                  onAuth={onAuth}
-                  logout={logout}
-                  isLoggedIn={isLoggedIn}
                 />
                 <SecureRoute
                   path="/PatientResults/:patientId"
                   exact
                   component={() => <RoutedResultsViewer />}
                   role="Reception"
-                  config={appConfig}
-                  onAuth={onAuth}
-                  logout={logout}
-                  isLoggedIn={isLoggedIn}
                 />
                 <SecureRoute
                   path="/WorkPlanByTestSection"
                   exact
-                  component={() => <Workplan type="unit"/>}
+                  component={() => <Workplan type="unit" />}
                   role="Results"
-                  config={appConfig}
-                  onAuth={onAuth}
-                  logout={logout}
-                  isLoggedIn={isLoggedIn}
                 />
                 <SecureRoute
                   path="/WorkplanByTest"
                   exact
-                  component={() => <Workplan type="test"/>}
+                  component={() => <Workplan type="test" />}
                   role="Results"
-                  config={appConfig}
-                  onAuth={onAuth}
-                  logout={logout}
-                  isLoggedIn={isLoggedIn}
                 />
                 <SecureRoute
                   path="/WorkplanByPanel"
                   exact
-                  component={() => <Workplan type="panel"/>}
+                  component={() => <Workplan type="panel" />}
                   role="Results"
-                  config={appConfig}
-                  onAuth={onAuth}
-                  logout={logout}
-                  isLoggedIn={isLoggedIn}
                 />
                 <SecureRoute
                   path="/WorkplanByPriority"
                   exact
-                  component={() => <Workplan type="priority"/>}
+                  component={() => <Workplan type="priority" />}
                   role="Results"
-                  config={appConfig}
-                  onAuth={onAuth}
-                  logout={logout}
-                  isLoggedIn={isLoggedIn}
                 />
-                  <SecureRoute path="/result" exact component={() => <ResultSearch />} role="Global Administrator" config={appConfig} onAuth={onAuth} logout={logout} isLoggedIn={isLoggedIn} />
-                  <SecureRoute path="/AccessionResults" exact component={() => <Admin />} role="Global Administrator" config={appConfig} onAuth={onAuth} logout={logout} isLoggedIn={isLoggedIn} />
-                  <SecureRoute path="/RoutineReports" exact component={() => <RoutineReports />} role="Global Administrator" config={appConfig} onAuth={onAuth} logout={logout} isLoggedIn={isLoggedIn} />
-                  <SecureRoute path="/StudyReports" exact component={() => <StudyReports />} role="Global Administrator" config={appConfig} onAuth={onAuth} logout={logout} isLoggedIn={isLoggedIn} />
-                  <SecureRoute path="/validation" exact component={() => <StudyValidation />} role="Global Administrator" config={appConfig} onAuth={onAuth} logout={logout} isLoggedIn={isLoggedIn} />
+                <SecureRoute
+                  path="/result"
+                  exact
+                  component={() => <ResultSearch />}
+                  role="Global Administrator"
+                />
+                <SecureRoute
+                  path="/AccessionResults"
+                  exact
+                  component={() => <Admin />}
+                  role="Global Administrator"
+                />
+                <SecureRoute
+                  path="/RoutineReports"
+                  exact
+                  component={() => <RoutineReports />}
+                  role="Global Administrator"
+                />
+                <SecureRoute
+                  path="/StudyReports"
+                  exact
+                  component={() => <StudyReports />}
+                  role="Global Administrator"
+                />
+                <SecureRoute
+                  path="/validation"
+                  exact
+                  component={() => <StudyValidation />}
+                  role="Global Administrator"
+                />
               </Switch>
             </Layout>
           </Router>
         </>
-        </UserSessionDetailsContext.Provider>
-      </IntlProvider>
-    );
-  }
-
+      </UserSessionDetailsContext.Provider>
+    </IntlProvider>
+  );
+}
