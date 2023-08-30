@@ -114,9 +114,9 @@ class OEHeader extends React.Component {
                     />}
                   <HeaderName href="/" prefix="">
                     <span id="header-logo">{this.logo()}</span>
-                    <div class="banner">
+                    <div className="banner">
                       <h5>{this.state.header.title}</h5>
-                      <p> Version: {this.state.header.version}</p>
+                      <p> <FormattedMessage id="header.label.version"/> &nbsp; {this.state.header.version}</p>
                     </div>
                   </HeaderName>
                   {this.props.isLoggedIn() && true && (
@@ -166,7 +166,7 @@ class OEHeader extends React.Component {
                             onClick={this.props.logout}
                           >
                             <Logout id="sign-out" />
-                            Logout
+                            <FormattedMessage id="header.label.logout"/>
                           </li>
                         </>
                       )}
@@ -176,7 +176,7 @@ class OEHeader extends React.Component {
                           name="selectLocale"
                           className="selectLocale"
                           invalidText="A valid locale value is required"
-                          labelText="Select locale"
+                          labelText={<FormattedMessage id="header.label.selectlocale" />}
                           onChange={(event) => {
                             this.props.onChangeLanguage(event.target.value);
                           }}
@@ -194,62 +194,62 @@ class OEHeader extends React.Component {
                         expanded={isSideNavExpanded}
                         isPersistent={false}>
                         <SideNavItems>
-                          <SideNavMenu aria-label="Order" title="Order">
-                            <SideNavMenuItem href="/AddOrder">Add Order</SideNavMenuItem>
-                            <SideNavMenuItem href={config.serverBaseUrl + "/SampleEdit?type=readwrite"}>Modify Order</SideNavMenuItem>
-                            <SideNavMenuItem href={config.serverBaseUrl + "/ElectronicOrders"}>Incoming Orders</SideNavMenuItem>
-                            <SideNavMenuItem href={config.serverBaseUrl + "/SampleBatchEntrySetup"}>Batch Order Entry</SideNavMenuItem>
-                            <SideNavMenuItem href={config.serverBaseUrl + "/PrintBarcode"}>Barcode</SideNavMenuItem>
+                          <SideNavMenu aria-label="Order" title={<FormattedMessage id="sidenav.label.order"/>}>
+                            <SideNavMenuItem href="/AddOrder"><FormattedMessage id="sidenav.label.addorder"/></SideNavMenuItem>
+                            <SideNavMenuItem href={config.serverBaseUrl + "/SampleEdit?type=readwrite"}><FormattedMessage id="sidenav.label.editorder"/></SideNavMenuItem>
+                            <SideNavMenuItem href={config.serverBaseUrl + "/ElectronicOrders"}><FormattedMessage id="sidenav.label.incomingorder"/></SideNavMenuItem>
+                            <SideNavMenuItem href={config.serverBaseUrl + "/SampleBatchEntrySetup"}><FormattedMessage id="sidenav.label.batchorder"/></SideNavMenuItem>
+                            <SideNavMenuItem href={config.serverBaseUrl + "/PrintBarcode"}><FormattedMessage id="sidenav.label.barcode"/></SideNavMenuItem>
                           </SideNavMenu>
-                          <SideNavMenu aria-label="Patient" title="Patient">
-                            <SideNavMenuItem href="/PatientManagement">Add/Edit Patient</SideNavMenuItem>
-                            <SideNavMenuItem href="/PatientHistory">Patient History</SideNavMenuItem>
+                          <SideNavMenu aria-label="Patient" title={<FormattedMessage id="sidenav.label.patient"/>}>
+                            <SideNavMenuItem href="/PatientManagement"><FormattedMessage id="sidenav.label.editpatient"/></SideNavMenuItem>
+                            <SideNavMenuItem href="/PatientHistory"><FormattedMessage id="sidenav.label.patientHistory"/></SideNavMenuItem>
                           </SideNavMenu>
                           <SideNavMenu
                             aria-label="Non-Conforming Events"
-                            title="Non-Conform"
+                            title={<FormattedMessage id="sidenav.label.nonConform"/>}
                           >
-                            <SideNavMenuItem href={config.serverBaseUrl + "/ReportNonConformingEvent"}>Report Non-Conforming Event</SideNavMenuItem>
-                            <SideNavMenuItem href={config.serverBaseUrl + "/ViewNonConformingEvent"}>View New Non-Conforming Events</SideNavMenuItem>
-                            <SideNavMenuItem href={config.serverBaseUrl + "/NCECorrectiveAction"}>Corrective actions</SideNavMenuItem>
+                            <SideNavMenuItem href={config.serverBaseUrl + "/ReportNonConformingEvent"}> <FormattedMessage id="sidenav.label.nonConform.report"/> </SideNavMenuItem>
+                            <SideNavMenuItem href={config.serverBaseUrl + "/ViewNonConformingEvent"}> <FormattedMessage id="sidenav.label.nonConform.view"/></SideNavMenuItem>
+                            <SideNavMenuItem href={config.serverBaseUrl + "/NCECorrectiveAction"}> <FormattedMessage id="sidenav.label.nonConform.actions"/> </SideNavMenuItem>
                           </SideNavMenu>
-                          <SideNavMenu aria-label="Workplan" title="Workplan">
-                            <SideNavMenuItem href={"/WorkplanByTest"}>By Test Type</SideNavMenuItem>
-                            <SideNavMenuItem href={ "/WorkPlanByPanel"}>By Panel Type</SideNavMenuItem>
-                            <SideNavMenuItem href={ "/WorkPlanByTestSection"}>By Unit</SideNavMenuItem>
-                            <SideNavMenuItem href={ "/WorkplanByPriority"}>By Priority</SideNavMenuItem>
-                          </SideNavMenu>
-                          <SideNavMenu
-                            aria-label="Pathology" title="Pathology"                    >
-                            <SideNavMenuItem href={"/PathologyDashboard"}>Dashboard</SideNavMenuItem>
+                          <SideNavMenu aria-label="Workplan" title={<FormattedMessage id="sidenav.label.workplan"/>}>
+                            <SideNavMenuItem href={"/WorkplanByTest"}> <FormattedMessage id="sidenav.label.workplan.test"/> </SideNavMenuItem>
+                            <SideNavMenuItem href={ "/WorkPlanByPanel"}> <FormattedMessage id="sidenav.label.workplan.panel"/> </SideNavMenuItem>
+                            <SideNavMenuItem href={ "/WorkPlanByTestSection"}> <FormattedMessage id="sidenav.label.workplan.unit"/> </SideNavMenuItem>
+                            <SideNavMenuItem href={ "/WorkplanByPriority"}> <FormattedMessage id="sidenav.label.workplan.priority"/> </SideNavMenuItem>
                           </SideNavMenu>
                           <SideNavMenu
-                            aria-label="Immunohistochemistry" title="Immunohistochemistry"                    >
-                            <SideNavMenuItem href={"/ImmunohistochemistryDashboard"}>Dashboard</SideNavMenuItem>
+                            aria-label="Pathology" title={<FormattedMessage id="sidenav.label.pathology"/>}                   >
+                            <SideNavMenuItem href={"/PathologyDashboard"}> <FormattedMessage id="sidenav.label.pathology.dashboard"/> </SideNavMenuItem>
                           </SideNavMenu>
                           <SideNavMenu
-                            aria-label="Cytology" title="Cytology"                    >
-                            <SideNavMenuItem href={"/CytologyDashboard"}>Dashboard</SideNavMenuItem>
-                          </SideNavMenu>
-                          <SideNavMenu aria-label="Results" title="Results">
-                            <SideNavMenuItem href="/result?type=unit">By Unit</SideNavMenuItem>
-                            <SideNavMenuItem href="/result?type=patient">By Patient</SideNavMenuItem>
-                            <SideNavMenuItem href="/result?type=order">By Order</SideNavMenuItem>
-                            <SideNavMenuItem href="/result?type=date">By Test Date</SideNavMenuItem>
+                            aria-label="Immunohistochemistry" title={<FormattedMessage id="sidenav.label.immunochem"/>}                   >
+                            <SideNavMenuItem href={"/ImmunohistochemistryDashboard"}> <FormattedMessage id="sidenav.label.pathology.dashboard"/> </SideNavMenuItem>
                           </SideNavMenu>
                           <SideNavMenu
-                            aria-label="Validation" title="Validation"                    >
-                            <SideNavMenuItem href="/validation?type=routine"> Search By Routine</SideNavMenuItem>
-                            <SideNavMenuItem href="/validationStudy">Search By Study</SideNavMenuItem>
-                            <SideNavMenuItem href="/validation?type=order">Search By Order</SideNavMenuItem>
-                            <SideNavMenuItem href="/validation?type=testDate">Search By Test Date</SideNavMenuItem>
+                            aria-label="Cytology" title={<FormattedMessage id="sidenav.label.cytology"/>}                    >
+                            <SideNavMenuItem href={"/CytologyDashboard"}> <FormattedMessage id="sidenav.label.pathology.dashboard"/> </SideNavMenuItem>
+                          </SideNavMenu>
+                          <SideNavMenu aria-label="Results" title={<FormattedMessage id="sidenav.label.results"/>}  >
+                            <SideNavMenuItem href="/result?type=unit"> <FormattedMessage id="sidenav.label.results.unit"/> </SideNavMenuItem>
+                            <SideNavMenuItem href="/result?type=patient"> <FormattedMessage id="sidenav.label.results.patient"/> </SideNavMenuItem>
+                            <SideNavMenuItem href="/result?type=order"> <FormattedMessage id="sidenav.label.results.order"/> </SideNavMenuItem>
+                            <SideNavMenuItem href="/result?type=date"> <FormattedMessage id="sidenav.label.results.testdate"/> </SideNavMenuItem>
+                          </SideNavMenu>
+                          <SideNavMenu
+                            aria-label="Validation" title={<FormattedMessage id="sidenav.label.validation"/>}                    >
+                            <SideNavMenuItem href="/validation?type=routine">  <FormattedMessage id="sidenav.label.validation.routine"/> </SideNavMenuItem>
+                            <SideNavMenuItem href="/validationStudy"> <FormattedMessage id="sidenav.label.validation.study"/> </SideNavMenuItem>
+                            <SideNavMenuItem href="/validation?type=order"> <FormattedMessage id="sidenav.label.validation.order"/> </SideNavMenuItem>
+                            <SideNavMenuItem href="/validation?type=testDate"> <FormattedMessage id="sidenav.label.validation.testdate"/> </SideNavMenuItem>
                           </SideNavMenu>
 
-                          <SideNavMenu aria-label="Reports" title="Reports">
-                            <SideNavMenuItem href="/RoutineReports">Routine</SideNavMenuItem>
-                            <SideNavMenuItem href="/StudyReports">Study</SideNavMenuItem>
+                          <SideNavMenu aria-label="Reports" title={<FormattedMessage id="sidenav.label.reports"/>}  >
+                            <SideNavMenuItem href="/RoutineReports"> <FormattedMessage id="sidenav.label.reports.routine"/> </SideNavMenuItem>
+                            <SideNavMenuItem href="/StudyReports"> <FormattedMessage id="sidenav.label.reports.study"/> </SideNavMenuItem>
                           </SideNavMenu>
-                          <SideNavMenuItem href="/admin">Admin</SideNavMenuItem>
+                          <SideNavMenuItem href="/admin"> <FormattedMessage id="sidenav.label.admin"/> </SideNavMenuItem>
 
                           <SideNavMenuItem
                             target="_blank"

@@ -168,8 +168,7 @@ function CytologyDashboard() {
           <Section>
             <Section >
               <Heading >
-                Cytology
-                {/* <FormattedMessage id="pathology.label.title" /> */}
+                <FormattedMessage id="cytology.label.title" /> 
               </Heading>
             </Section>
           </Section>

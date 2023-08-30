@@ -10,6 +10,7 @@ import { getFromOpenElisServer, postToOpenElisServerFullResponse, hasRole } from
 import UserSessionDetailsContext from "../../UserSessionDetailsContext"
 import { NotificationContext } from "../layout/Layout";
 import { AlertDialog ,NotificationKinds } from "../common/CustomNotification";
+import { FormattedMessage} from 'react-intl'
 import "./PathologyDashboard.css"
 
 
@@ -186,8 +187,8 @@ function PathologyCaseView() {
   return (
     <>
      <Breadcrumb>
-        <BreadcrumbItem href="/">Home</BreadcrumbItem>
-        <BreadcrumbItem href="/PathologyDashboard">Pathology DashBoard</BreadcrumbItem>
+        <BreadcrumbItem href="/"> Home </BreadcrumbItem> 
+        <BreadcrumbItem href="/PathologyDashboard"> Pathology DashBoard</BreadcrumbItem>
       </Breadcrumb>
 
       <Grid fullWidth={true}>
@@ -195,8 +196,7 @@ function PathologyCaseView() {
           <Section>
             <Section >
               <Heading >
-                Pathology
-                {/* <FormattedMessage id="label.page.patientHistory" /> */}
+                <FormattedMessage id="pathology.label.title" />
               </Heading>
             </Section>
           </Section>
@@ -207,14 +207,14 @@ function PathologyCaseView() {
           <Section>
             <Section>
               {pathologySampleInfo ? (<div className="patient-header">
-                <div className="patient-name"><Tag type="blue">Name :</Tag>{pathologySampleInfo.lastName}  {pathologySampleInfo.firstName}</div>
-                <div className="patient-dob"> <Tag type="blue">Sex :</Tag>{pathologySampleInfo.sex === 'M' ? "Male" : "Female"}<Tag type="blue">Age :</Tag>{pathologySampleInfo.age} </div>
-                <div className="patient-id"><Tag type="blue">Order Date :</Tag>{pathologySampleInfo.requestDate}</div>
-                <div className="patient-id"><Tag type="blue">Lab Number :</Tag>{pathologySampleInfo.labNumber}</div>
-                <div className="patient-id"><Tag type="blue">Referring Facility:</Tag> {pathologySampleInfo.referringFacility}<Tag type="blue">Ward/Dept/Unit: </Tag>{pathologySampleInfo.department}</div>
-                <div className="patient-id"><Tag type="blue">Requester: </Tag>{pathologySampleInfo.requester}</div>
+                <div className="patient-name"><Tag type="blue"><FormattedMessage id="patient.label.name" /> :</Tag>{pathologySampleInfo.lastName}  {pathologySampleInfo.firstName}</div>
+                <div className="patient-dob"> <Tag type="blue"><FormattedMessage id="patient.label.sex" /> :</Tag>{pathologySampleInfo.sex === 'M' ? "Male" : "Female"}<Tag type="blue"><FormattedMessage id="patient.label.age" /> :</Tag>{pathologySampleInfo.age} </div>
+                <div className="patient-id"><Tag type="blue"><FormattedMessage id="sample.label.orderdate" />  :</Tag>{pathologySampleInfo.requestDate}</div>
+                <div className="patient-id"><Tag type="blue"> <FormattedMessage id="sample.label.labnumber" /> :</Tag>{pathologySampleInfo.labNumber}</div>
+                <div className="patient-id"><Tag type="blue">  <FormattedMessage id="sample.label.facility" /> :</Tag> {pathologySampleInfo.referringFacility}<Tag type="blue"> <FormattedMessage id="sample.label.requester" />: </Tag>{pathologySampleInfo.department}</div>
+                <div className="patient-id"><Tag type="blue"> <FormattedMessage id="sample.label.requester" />: </Tag>{pathologySampleInfo.requester}</div>
               </div>) : (<div className="patient-header">
-                <div className="patient-name">Patient Id Doest Exist</div>
+                <div className="patient-name"> <FormattedMessage id="patient.label.nopatientid" /> </div>
               </div>)}
             </Section>
           </Section>
@@ -299,7 +299,7 @@ function PathologyCaseView() {
         <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>    
         <Column  lg={16} md={8} sm={4}>  
           <hr style={{width:'100%' , margin: '1rem 0', border: '1px solid #ccc' }} />
-           <h5>Blocks</h5>
+           <h5><FormattedMessage id="pathology.label.blocks" /></h5>
            <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>    
         </Column>
         {pathologySampleInfo.blocks && pathologySampleInfo.blocks.map((block, index) => {
@@ -311,7 +311,7 @@ function PathologyCaseView() {
                   info["blocks"].splice(index, 1);
                   setPathologySampleInfo(info);
                 }} kind='tertiary' size='sm'>
-                  <Subtract size={18} />  Block
+                  <Subtract size={18} />  <FormattedMessage id="pathology.label.block" />
                 </IconButton>
               
               </Column>
@@ -346,7 +346,7 @@ function PathologyCaseView() {
               <Column lg={3} md={2} sm={2}>
                 <Button onClick={(e) => {
                   window.open(config.serverBaseUrl + '/LabelMakerServlet?labelType=block&code=' + block.blockNumber, '_blank')
-                }}>Print Label</Button>
+                }}> <FormattedMessage id="pathology.label.printlabel" /></Button>
               </Column>
               <Column lg={5} md={2} sm={0} />
               <Column  lg={16} md={8} sm={4}>  
@@ -359,13 +359,13 @@ function PathologyCaseView() {
           <Button onClick={() => {
             setPathologySampleInfo({ ...pathologySampleInfo, blocks: [...(pathologySampleInfo.blocks || []), { id: '', blockNumber: '' }] });
           }}>
-            Add Block
+            <FormattedMessage id="pathology.label.addblock" />
           </Button>
         </Column>
         <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>    
         <Column  lg={16} md={8} sm={4}>  
           <hr style={{width:'100%' , margin: '1rem 0', border: '1px solid #ccc' }} />
-           <h5>Slides</h5>
+           <h5><FormattedMessage id="pathology.label.slides" /></h5>
            <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>    
         </Column>
         
@@ -378,7 +378,7 @@ function PathologyCaseView() {
                    info["slides"].splice(index, 1);
                    setPathologySampleInfo(info);
                 }} kind='tertiary' size='sm'>
-                  <Subtract size={18} />  Slide
+                  <Subtract size={18} />  <FormattedMessage id="pathology.label.slide" />
                 </IconButton>
                
               </Column>
@@ -414,7 +414,7 @@ function PathologyCaseView() {
               <Column lg={3} md={1} sm={2}>
                 <FileUploader
                   style={{ marginTop: '-10px' }}
-                  buttonLabel="Upload File"
+                  buttonLabel={<FormattedMessage id="label.button.uploadfile" />}
                   iconDescription="file upload"
                   multiple={false}
                   accept={['image/jpeg', 'image/png', 'application/pdf']}
@@ -434,9 +434,6 @@ function PathologyCaseView() {
                   onClick={function noRefCheck() { }}
                   onDelete={(e) => {
                     e.preventDefault();
-                    var newSlides = [...pathologySampleInfo.slides];
-                    newSlides[index].base64Image = '';
-                    setPathologySampleInfo({ ...pathologySampleInfo, slides: newSlides });
                   }}
                 />
               </Column>
@@ -447,7 +444,7 @@ function PathologyCaseView() {
                       var win = window.open();
                       win.document.write('<iframe src="' + slide.fileType + ";base64," + slide.image + '" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>');
                     }}>
-                      <Launch /> View
+                      <Launch /> <FormattedMessage id="pathology.label.view" />
                     </Button>
                   </>
                 }
@@ -455,7 +452,7 @@ function PathologyCaseView() {
                 <Column lg={2} md={1} sm={2}>
                 <Button onClick={(e) => {
                   window.open(config.serverBaseUrl + '/LabelMakerServlet?labelType=slide&code=' + slide.slideNumber, '_blank')
-                }}>Print Label</Button>
+                }}><FormattedMessage id="pathology.label.printlabel" /></Button>
                  </Column>
             </>
           )
@@ -465,7 +462,7 @@ function PathologyCaseView() {
           <Button onClick={() => {
             setPathologySampleInfo({ ...pathologySampleInfo, slides: [...(pathologySampleInfo.slides || []), { id: '', slideNumber: '' }] });
           }}>
-            Add Slide
+            <FormattedMessage id="pathology.label.addslide" />
           </Button>
           <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>    
         <Column  lg={16} md={8} sm={4}>  
@@ -482,7 +479,7 @@ function PathologyCaseView() {
             <Column lg={4} md={4} sm={2}>
               {initialMount && <FilterableMultiSelect
                 id="techniques"
-                titleText="Techniques Used"
+                titleText={<FormattedMessage id="pathology.label.techniques" />}
                 items={techniques}
                 itemToString={(item) => (item ? item.value : '')}
                 initialSelectedItems={pathologySampleInfo.techniques}
@@ -507,7 +504,7 @@ function PathologyCaseView() {
             <Column lg={4} md={4} sm={2}>
               {initialMount && <FilterableMultiSelect
                 id="requests"
-                titleText="Add Request"
+                titleText={<FormattedMessage id="pathology.label.request" />}
                 items={requests}
                 itemToString={(item) => (item ? item.value : '')}
                 initialSelectedItems={pathologySampleInfo.requests}
@@ -529,19 +526,19 @@ function PathologyCaseView() {
               ))}
             </Column>
             <Column lg={16} md={8} sm={4}>
-              <TextArea labelText="Gross Exam" value={pathologySampleInfo.grossExam} onChange={e => {
+              <TextArea labelText={<FormattedMessage id="pathology.label.grossexam" />} value={pathologySampleInfo.grossExam} onChange={e => {
                 setPathologySampleInfo({ ...pathologySampleInfo, grossExam: e.target.value });
               }} />
             </Column>
             <Column lg={16} md={8} sm={4}>
-              <TextArea labelText="Microscopy Exam" value={pathologySampleInfo.microscopyExam} onChange={e => {
+              <TextArea labelText={<FormattedMessage id="pathology.label.microexam" />} value={pathologySampleInfo.microscopyExam} onChange={e => {
                 setPathologySampleInfo({ ...pathologySampleInfo, microscopyExam: e.target.value });
               }} />
             </Column>
             <Column lg={4} md={4} sm={2}>
               {initialMount && <FilterableMultiSelect
                 id="conclusion"
-                titleText="Conclusion"
+                titleText={<FormattedMessage id="pathology.label.conclusion" />}
                 items={conclusions}
                 itemToString={(item) => (item ? item.value : '')}
                 initialSelectedItems={pathologySampleInfo.conclusions}
@@ -562,20 +559,20 @@ function PathologyCaseView() {
               ))}
             </Column>
             <Column lg={16} md={8} sm={4}>
-              <TextArea labelText="Conclusion" value={pathologySampleInfo.conclusionText} onChange={e => {
+              <TextArea labelText={<FormattedMessage id="pathology.label.textconclusion" />} value={pathologySampleInfo.conclusionText} onChange={e => {
                 setPathologySampleInfo({ ...pathologySampleInfo, conclusionText: e.target.value });
               }} />
 
             </Column>
           </>}
         <Column lg={16}>
-          <Checkbox labelText="Ready for Release" id="release"
+          <Checkbox labelText={<FormattedMessage id="pathology.label.release" />} id="release"
             onChange={() => {
               setPathologySampleInfo({ ...pathologySampleInfo, release: !pathologySampleInfo.release });
             }} />
         </Column>
         <Column lg={8}>
-          <Checkbox labelText="Refer to ImmunoHistoChemistry" id="referToImmunoHistoChemistry"
+          <Checkbox labelText={<FormattedMessage id="pathology.label.refer" />} id="referToImmunoHistoChemistry"
             onChange={() => {
               setPathologySampleInfo({ ...pathologySampleInfo, referToImmunoHistoChemistry: !pathologySampleInfo.referToImmunoHistoChemistry });
             }} />
@@ -606,4 +603,4 @@ function PathologyCaseView() {
   )
 }
 
-export default PathologyCaseView;
+export default PathologyCaseView

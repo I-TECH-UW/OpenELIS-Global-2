@@ -16,4 +16,6 @@ public interface ImmunohistochemistrySampleDAO extends BaseDAO<Immunohistochemis
     Long getCountWithStatusBetweenDates(List<ImmunohistochemistryStatus> statuses , Timestamp from , Timestamp to);
 
     List<ImmunohistochemistrySample> searchWithStatusAndAccesionNumber(List<ImmunohistochemistryStatus> statuses ,String labNumber);
+
+    ImmunohistochemistrySample getByPathologySampleId(Integer pathologySampleId);
 }
