@@ -79,7 +79,7 @@ function SecureRoute(props) {
   };
 
   const handleOnAction = (event) => {
-    console.log("no actions is defined on the IdleTimer", event);
+    console.log("no action is defined on the IdleTimer", event);
   };
 
   const handleOnActive = (event) => {
