@@ -27,6 +27,7 @@ import { Formik, Field } from "formik";
 import SearchResultFormValues from '../formModel/innitialValues/SearchResultFormValues';
 import { AlertDialog, NotificationKinds } from "../common/CustomNotification";
 import { NotificationContext } from "../layout/Layout";
+import SearchPatientForm from "./SearchPatientForm";
 
 
 class ResultSearchPage extends React.Component {
@@ -65,7 +66,10 @@ export class SearchResultForm extends React.Component {
             analysisStatusTypes: [],
             sampleStatusTypes: [],
             loading : false,
-            searchBy: { type:"",doRange:false}
+            searchBy: { type:"",doRange:false},
+            patient:{
+                patientPK: ""
+            }
         }
     }
     _isMounted = false;
@@ -93,20 +97,25 @@ export class SearchResultForm extends React.Component {
     handleAdvancedSearch = () =>{
 
     }
+     getSelectedPatient = (patient) => {
+      this.setState({
+          patient:patient
+      });
+      this.querySearch(SearchResultFormValues);
+    }
 
-    handleSubmit = (values) => {
+    querySearch (values){
         this.setState({loading : true})
         this.props.setResults({ testResult: [] })
 
-        const labNo = values.accessionNumber!==""? values.accessionNumber: values.startLabNo ;
+        let accessionNumber = values.accessionNumber!==""? values.accessionNumber: values.startLabNo ;
+        let labNo = accessionNumber!==undefined? accessionNumber: "";
         const endLabNo = values.endLabNo !==undefined? values.endLabNo : "";
 
         let searchEndPoint = "/rest/ReactLogbookResultsByRange?" +
-            "labNumber=" + labNo+
-            "&upperRangeAccessionNumber=" + endLabNo+
-            "&nationalId="+ values.nationalId +
-            "&firstName="+ values.firstName +
-            "&lastName="+ values.lastName +
+            "labNumber=" + labNo +
+            "&upperRangeAccessionNumber=" + endLabNo +
+            "&patientPK="+ this.state.patient.patientPK +
             "&collectionDate="+values.collectionDate +
             "&recievedDate="+values.recievedDate +
             "&selectedTest="+values.testName +
@@ -114,7 +123,11 @@ export class SearchResultForm extends React.Component {
             "&selectedAnalysisStatus="+values.analysisStatus +
             "&doRange=" + this.state.searchBy.doRange+
             "&finished=" + true
-           getFromOpenElisServer(searchEndPoint, this.setResultsWithId);
+        getFromOpenElisServer(searchEndPoint, this.setResultsWithId);
+    }
+
+    handleSubmit = (values) => {
+        this.querySearch(values);
     };
 
     getTests = (tests) => {
@@ -192,7 +205,6 @@ export class SearchResultForm extends React.Component {
                                     </Section>
                                 </FormLabel>
 
-                                <Row lg={12}>
                                 <div className="inlineDiv">
 
                                     {this.state.searchBy.type === "order" && <Field name="accessionNumber"
@@ -228,35 +240,8 @@ export class SearchResultForm extends React.Component {
                                     }
                                 </div>
                                     {this.state.searchBy.type === "patient" &&
-                                        <div className="inlineDiv">
-                                    <Field name="nationalId"
-                                    >
-                                        {({ field }) =>
-                                            <TextInput
-                                                placeholder={"Enter Patient National Id"}
-                                                className="inputText"
-                                                name={field.name} id={field.name}  labelText=""/>
-                                        }
-                                    </Field>
-                                    <Field name="firstName">
-                                        {({ field }) =>
-                                            <TextInput
-                                                placeholder={"Enter Patient First name"}
-                                                className="searchFirstName inputText"
-                                                name={field.name} id={field.name}  labelText=""/>
-                                        }
-                                    </Field>
-
-                                    <Field name="lastName">
-                                        {({ field }) =>
-                                            <TextInput
-                                                placeholder={"Enter Patient last name"}
-                                                className="searchLastName inputText"
-                                                name={field.name} id={field.name}  labelText=""/>
-                                        }
-                                    </Field>
-                                </div> }
-                            </Row>
+                                        <SearchPatientForm getSelectedPatient={this.getSelectedPatient}></SearchPatientForm>
+                                    }
                                     {this.state.searchBy.type === "date" &&  <div lg={12}>
                                         <div className="inlineDiv">
                                             <Field name="collectionDate"
@@ -362,6 +347,7 @@ export class SearchResultForm extends React.Component {
                                     </div> }
 
                                 <Column lg={6}>
+                                    {this.state.searchBy.type !== "patient" &&  <div className="searchActionButtons">
                                 <Button type="submit" id="submit" className="searchResultsBtn">
                                     <FormattedMessage id="label.button.search" />
                                 </Button>
@@ -370,6 +356,7 @@ export class SearchResultForm extends React.Component {
                                         onClick={this.handleAdvancedSearch}>
                                     <FormattedMessage id="advanced.search" />
                                 </Button>
+                                    </div> }
                             </Column>
                             </Stack>
                         </Form>
