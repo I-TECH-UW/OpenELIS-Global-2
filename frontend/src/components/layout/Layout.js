@@ -6,7 +6,6 @@ import { NotificationKinds } from "../common/CustomNotification";
 import UserSessionDetailsContext from "../../UserSessionDetailsContext";
 import { getFromOpenElisServer } from "../utils/Utils";
 
-export const UserInformationContext = createContext(null);
 export const ConfigurationContext = createContext(null);
 export const NotificationContext = createContext(null);
 

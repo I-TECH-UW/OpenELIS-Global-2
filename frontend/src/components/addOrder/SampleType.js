@@ -16,13 +16,14 @@ import CustomTimePicker from "../common/CustomTimePicker";
 import { NotificationKinds } from "../common/CustomNotification";
 import { FormattedMessage } from "react-intl";
 import { getFromOpenElisServer } from "../utils/Utils";
-import { NotificationContext, UserInformationContext } from "../layout/Layout";
+import { NotificationContext } from "../layout/Layout";
 import { sampleTypeTestsStructure } from "../data/SampleEntryTestsForTypeProvider";
+import UserSessionDetailsContext from "../../UserSessionDetailsContext";
 import CustomTextInput from "../common/CustomTextInput";
 import OrderReferralRequest from "../addOrder/OrderReferralRequest";
 
 const SampleType = (props) => {
-  const { user } = useContext(UserInformationContext);
+  const { userSessionDetails } = useContext(UserSessionDetailsContext);
   const { index, rejectSampleReasons } = props;
   const componentMounted = useRef(true);
   const [sampleTypes, setSampleTypes] = useState([]);
@@ -102,7 +103,8 @@ const SampleType = (props) => {
       selectedTests.map((test) => {
         defaultReferralRequest.push({
           reasonForReferral: referralReasons[0].id,
-          referrer: user.firstName + " " + user.lastName,
+          referrer:
+            userSessionDetails.firstName + " " + userSessionDetails.lastName,
           institute: referralOrganizations[0].id,
           sentDate: "",
           testId: test.id,
