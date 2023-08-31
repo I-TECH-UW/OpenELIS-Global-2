@@ -119,9 +119,7 @@ function ImmunohistochemistryCaseView() {
           "labNumber=" + immunohistochemistrySampleInfo.labNumber +
           "&doRange=" + false +
           "&finished=" + true +
-          "&nationalId=" + 
-          "&firstName=" + 
-          "&lastName=" + 
+          "&patientPK=" +
           "&collectionDate=" + 
           "&recievedDate=" + 
           "&selectedTest=" + 

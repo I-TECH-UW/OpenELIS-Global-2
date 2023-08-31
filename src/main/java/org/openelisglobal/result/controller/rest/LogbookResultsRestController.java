@@ -12,6 +12,7 @@ import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.openelisglobal.common.provider.query.PatientSearchResults;
 import org.openelisglobal.result.controller.LogbookResultsBaseController;
 import org.openelisglobal.result.form.StatusResultsForm;
@@ -190,15 +191,15 @@ public class LogbookResultsRestController extends LogbookResultsBaseController {
 
     @GetMapping(value = "ReactLogbookResultsByRange", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public LogbookResultsForm showReactLogbookResults(@RequestParam(required = false) String labNumber, @RequestParam(required = false) String  nationalId,@RequestParam(required = false) String  firstName,
-                                                      @RequestParam(required = false) String lastName, @RequestParam(required = false) String collectionDate, @RequestParam(required = false) String recievedDate, @RequestParam(required = false) String selectedTest, @RequestParam(required = false) String selectedSampleStatus,
+    public LogbookResultsForm showReactLogbookResults(@RequestParam(required = false) String labNumber, @RequestParam(required = false) String  patientPK,
+                                                       @RequestParam(required = false) String collectionDate, @RequestParam(required = false) String recievedDate, @RequestParam(required = false) String selectedTest, @RequestParam(required = false) String selectedSampleStatus,
                                                       @RequestParam(required = false) String selectedAnalysisStatus,@RequestParam(required = false) String upperRangeAccessionNumber, @RequestParam(required = false) boolean doRange,
             @RequestParam boolean finished,
             @Validated(LogbookResults.class) @ModelAttribute("form") LogbookResultsForm form, BindingResult result)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         System.out.println("LabNo: "+labNumber);
         System.out.println("upperRangeAccessionNumber: "+upperRangeAccessionNumber);
-        System.out.println("Patient: "+labNumber);
+        System.out.println("Patient: "+patientPK);
         StatusResultsForm statusResultsForm = new StatusResultsForm();
         statusResultsForm.setCollectionDate(collectionDate);
         statusResultsForm.setRecievedDate(recievedDate);
@@ -219,7 +220,7 @@ public class LogbookResultsRestController extends LogbookResultsBaseController {
         newForm.setDisplayTestSections(true);
         newForm.setSearchByRange(false);
 
-        return getLogbookResults(request, newForm,statusResultsForm, labNumber,nationalId,firstName,lastName,upperRangeAccessionNumber, doRange, finished);
+        return getLogbookResults(request, newForm,statusResultsForm, labNumber,patientPK,upperRangeAccessionNumber, doRange, finished);
     }
 
 
@@ -241,10 +242,10 @@ public class LogbookResultsRestController extends LogbookResultsBaseController {
         newForm.setDisplayTestSections(false);
         newForm.setSearchByRange(true);
 
-        return getLogbookResults(request, newForm,null, labNumber,"","","",upperRangeAccessionNumber, doRange, finished);
+        return getLogbookResults(request, newForm,null, labNumber,"",upperRangeAccessionNumber, doRange, finished);
     }
 
-    private LogbookResultsForm getLogbookResults(HttpServletRequest request, LogbookResultsForm form,StatusResultsForm statusResultsForm, String labNumber,String nationalId,String firstName,String lastName,String upperRangeAccessionNumber, boolean doRange,
+    private LogbookResultsForm getLogbookResults(HttpServletRequest request, LogbookResultsForm form,StatusResultsForm statusResultsForm, String labNumber,String patientPK,String upperRangeAccessionNumber, boolean doRange,
             boolean finished) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
    
         String patientName = "";
@@ -311,9 +312,7 @@ public class LogbookResultsRestController extends LogbookResultsBaseController {
                 request.setAttribute("pageSize", filteredTests.size());
 
             } else if (!GenericValidator.isBlankOrNull(form.getAccessionNumber()) ||
-                    !GenericValidator.isBlankOrNull(firstName)
-                    || !GenericValidator.isBlankOrNull(lastName)
-                    || !GenericValidator.isBlankOrNull(nationalId)
+                    !GenericValidator.isBlankOrNull(patientPK)
             ) {
                 tests.clear();
                 tests = resultsLoadUtility.getUnfinishedTestResultItemsByAccession(labNumber,upperRangeAccessionNumber, doRange, finished);
@@ -323,19 +322,15 @@ public class LogbookResultsRestController extends LogbookResultsBaseController {
                     ResultsLoadUtility resultsUtility = SpringContext.getBean(ResultsLoadUtility.class);
                     resultsUtility.setSysUser(getSysUserId(request));
 
-                    List<PatientSearchResults> results = searchService.getSearchResults(lastName, firstName, null,
-                            null, nationalId, null, null, null, null, null);
-                    if(results.isEmpty()){
-                        return form;
-                    }        
-                    for (PatientSearchResults result : results) {
-                        patient = getPatient(result.getPatientID());
+                    if(StringUtils.isBlank(patientPK)){
+                        return (form);
                     }
+                    patient = patientService.get(patientPK);
 
                     tests = resultsUtility.getGroupedTestsForPatient(patient);
                     patientName = patientService.getLastFirstName(patient);
-                    patientInfo = nationalId + ", " + patientService.getGender(patient) + ", "
-                            + patientService.getBirthdayForDisplay(patient);
+                    patientInfo = patient.getNationalId() + ", " + patient.getGender() + ", "
+                            + patient.getBirthDateForDisplay();
                 } 
                 
                 filteredTests = userService.filterResultsByLabUnitRoles(getSysUserId(request), tests, Constants.ROLE_RESULTS);
@@ -437,7 +432,7 @@ public class LogbookResultsRestController extends LogbookResultsBaseController {
         String statusRuleSet = ConfigurationProperties.getInstance().getPropertyValueUpperCase(Property.StatusRules);
 
         if ("true".equals(request.getParameter("pageResults"))) {
-            return getLogbookResults(request, form, null,"", "",null,"",null,true, true);
+            return getLogbookResults(request, form, null,"", "",null,true, true);
         }
 
         if (result.hasErrors()) {

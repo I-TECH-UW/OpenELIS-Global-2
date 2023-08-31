@@ -100,7 +100,7 @@ class SearchPatientForm extends React.Component {
                         <Formik
                             initialValues={SearchPatientFormValues}
                             // validationSchema={}
-                            onSubmit={this.handleSubmit}
+                            onSubmit
                             onChange
                         >
                             {({
@@ -185,7 +185,7 @@ class SearchPatientForm extends React.Component {
                                   <div className="formInlineDiv">
                                     <div className="searchActionButtons">
                                       <Button kind="tertiary">External Search</Button>
-                                      <Button type="submit"><FormattedMessage id="label.button.search"/></Button>
+                                      <Button type="button" onClick={()=> {this.handleSubmit(values)}}><FormattedMessage id="label.button.search"/></Button>
                                     </div>
                                   </div>
 
