@@ -12,7 +12,7 @@ const idleWarningTimeout = 1000 * 60 * 1; // milliseconds until logout is automa
 
 function SecureRoute(props) {
   const [permissionGranted, setPermissionGranted] = useState(false);
-  const [setIsIdle] = useState(false);
+  const [isIdle, setIsIdle] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const idleTimer = useRef();
@@ -126,7 +126,7 @@ function SecureRoute(props) {
             onAction={handleOnAction}
             debounce={250}
           />
-          <Route {...props} />
+          {!isIdle && <Route {...props} />}
         </>
       )}
     </>
