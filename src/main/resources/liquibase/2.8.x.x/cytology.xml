@@ -309,4 +309,27 @@
 			<column name="name" value="cytology_diagnosis_other" />
 		</insert>
   </changeSet>
+  <changeSet author="mozzymutesa" id="12">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="cytology_report" schemaName="clinlims" />
+			</not>
+		</preConditions>
+		<comment>create cytology_report table</comment>
+		<createSequence incrementBy="1" schemaName="clinlims"
+			sequenceName="cytology_report_seq" startValue="1" />
+		<createTable tableName="cytology_report">
+			<column name="id" type="INTEGER" valueSequenceNext="cytology_report_seq">
+				<constraints primaryKey="true" nullable="false"/>
+			</column>
+			<column name="cytology_sample_id" type="int"/>
+			<column name="report_type" type="VARCHAR(255)"/>
+			<column name="image" type="bytea"/>
+			<column name="file_type" type="VARCHAR(255)"/>
+			<column name="last_updated" type="datetime"/>
+		</createTable>
+		<addForeignKeyConstraint constraintName="cytology_report_report_cytology_sample_id_fk"
+                                 baseTableName="cytology_report" baseColumnNames="cytology_sample_id"
+                                 referencedTableName="cytology_sample" referencedColumnNames="id"/>
+	</changeSet>
 </databaseChangeLog>

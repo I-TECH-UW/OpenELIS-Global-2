@@ -82,6 +82,10 @@ public class PathologyDisplayServiceImpl implements PathologyDisplayService {
         pathologySample.getSlides().size();
         displayItem.setBlocks(pathologySample.getBlocks());
         displayItem.setSlides(pathologySample.getSlides());
+        pathologySample.getReports().size();
+        if( pathologySample.getReports() != null){
+           displayItem.setReports( pathologySample.getReports());
+        }
         Patient patient = sampleService.getPatient(pathologySample.getSample());
         displayItem.setFirstName(patient.getPerson().getFirstName());
         displayItem.setLastName(patient.getPerson().getLastName());

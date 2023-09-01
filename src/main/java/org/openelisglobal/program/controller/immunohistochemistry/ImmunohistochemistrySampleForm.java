@@ -13,7 +13,7 @@ public class ImmunohistochemistrySampleForm {
     private String systemUserId;
     private Boolean release = false;
 
-     private List<ImmunohistochemistryReportForm> reports;
+   private List<ImmunohistochemistryReportForm> reports;
 
     public ImmunohistochemistryStatus getStatus() {
         return status;

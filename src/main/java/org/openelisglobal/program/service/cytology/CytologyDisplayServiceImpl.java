@@ -73,6 +73,10 @@ public class CytologyDisplayServiceImpl implements CytologyDisplayService {
         
         cytologySample.getSlides().size();
         displayItem.setSlides(cytologySample.getSlides());
+        cytologySample.getReports().size();
+        if(cytologySample.getReports() != null){
+           displayItem.setReports(cytologySample.getReports());
+        }
         if (cytologySample.getSpecimenAdequacy() != null) {
             CytologyCaseViewDisplayItem.SpecimenAdequacy adquecy = new CytologyCaseViewDisplayItem.SpecimenAdequacy();
             adquecy.setSatisfaction(cytologySample.getSpecimenAdequacy().getSatisfaction());

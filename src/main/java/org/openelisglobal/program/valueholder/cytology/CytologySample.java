@@ -66,6 +66,10 @@ public class CytologySample extends ProgramSample {
     @JoinColumn(name = "cytology_diagnosis_id", referencedColumnName = "id")
     private CytologyDiagnosis diagnosis;
     
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "cytology_sample_id")
+    private List<CytologyReport> reports;
+    
     public SystemUser getTechnician() {
         return technician;
     }
@@ -105,12 +109,21 @@ public class CytologySample extends ProgramSample {
     public void setSpecimenAdequacy(CytologySpecimenAdequacy specimenAdequacy) {
         this.specimenAdequacy = specimenAdequacy;
     }
-
+    
     public CytologyDiagnosis getDiagnosis() {
         return diagnosis;
     }
-
+    
     public void setDiagnosis(CytologyDiagnosis diagnosis) {
         this.diagnosis = diagnosis;
     }
+    
+    public List<CytologyReport> getReports() {
+        return reports;
+    }
+    
+    public void setReports(List<CytologyReport> reports) {
+        this.reports = reports;
+    }
+    
 }

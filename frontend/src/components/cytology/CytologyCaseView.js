@@ -91,6 +91,7 @@ function CytologyCaseView() {
   const [technicianUsers, setTechnicianUsers] = useState([]);
   const [pathologistUsers, setPathologistUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [reportTypes, setReportTypes] = useState([]);
 
 
   async function displayStatus(response) {
@@ -154,6 +155,7 @@ function CytologyCaseView() {
       "assignedCytoPathologistId": pathologySampleInfo.assignedPathologistId,
       "status": pathologySampleInfo.status,
       "slides": pathologySampleInfo.slides,
+      "reports": pathologySampleInfo.reports,
       "release": pathologySampleInfo.release != undefined ? pathologySampleInfo.release : false,
     }
 
@@ -175,6 +177,12 @@ function CytologyCaseView() {
   }
   const filterDiagnosisResultsByCategory = (category ,type) => {
     return pathologySampleInfo.diagnosis?.diagnosisResultsMaps?.find(r => r.category === category && r.resultType === type)
+  }
+
+  const setReportTypeList = (reportTypes) => {
+    if (componentMounted.current) {
+      setReportTypes(reportTypes);
+    }
   }
 
   const setInitialPathologySampleInfo = (e) => {
@@ -215,6 +223,7 @@ function CytologyCaseView() {
     getFromOpenElisServer("/rest/displayList/CYTOLOGY_DIAGNOSIS_RESULT_REACTIVE_CELLULAR", setDiagnosisResultReactiveCellular);
     getFromOpenElisServer("/rest/displayList/CYTOLOGY_DIAGNOSIS_RESULT_ORGANISMS", setDiagnosisResultOrganisms);
     getFromOpenElisServer("/rest/displayList/CYTOLOGY_DIAGNOSIS_RESULT_OTHER", setDiagnosisResultOther);
+    getFromOpenElisServer("/rest/displayList/CYTOLOGY_REPORT_TYPES", setReportTypeList);
     //TODO make conclusions list instead of reusing pathrequest
     getFromOpenElisServer("/rest/users", setTechnicianUsers);
     getFromOpenElisServer("/rest/users/Cytopathologist", setPathologistUsers);
@@ -336,14 +345,15 @@ function CytologyCaseView() {
           </Select>
         </Column>
         <Column lg={16} md={8} sm={4}>
+           <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>
         </Column >
-
-        <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>
         <Column lg={16} md={8} sm={4}>
           <hr style={{ width: '100%', margin: '1rem 0', border: '1px solid #ccc' }} />
           <h5> <FormattedMessage id="pathology.label.slides" /></h5>
-          <hr style={{ width: '100%', margin: '1rem 0', border: '1px solid #ccc' }} />
         </Column>
+        <Column lg={16} md={8} sm={4}>
+           <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>
+        </Column >
         {pathologySampleInfo.slides && pathologySampleInfo.slides.map((slide, index) => {
           return (
             <>
@@ -440,14 +450,105 @@ function CytologyCaseView() {
           }}>
             <FormattedMessage id="pathology.label.addslide" />
           </Button>
-          <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>
-          <Column lg={16} md={8} sm={4}>
-            <hr style={{ width: '100%', margin: '1rem 0', border: '1px solid #ccc' }} />
-          </Column>
-          <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>
         </Column>
 
-        <Column lg={12} md={6} sm={0}>
+        <Column lg={16} md={8} sm={4}>
+            <hr style={{ width: '100%', margin: '1rem 0', border: '1px solid #ccc' }} />
+        </Column>
+
+        <Column lg={16} md={8} sm={4}>
+        <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>    
+        </Column>
+        <Column lg={4} md={2} sm={2} >
+          <Select id="report"
+            name="report"
+            labelText="Add Report"
+            onChange={(event) => {
+              setPathologySampleInfo({...pathologySampleInfo, reports: [...(pathologySampleInfo.reports || []), {id: '', reportType: event.target.value}]});
+            }}>
+            <SelectItem disabled value="ADD" text="Add Report" />
+            {reportTypes.map((report, index) => {
+              return (<SelectItem key={index}
+                text={report.value}
+                value={report.id}
+              />);
+            })}
+          </Select>
+          </Column>
+          <Column lg={12} md={2} sm={2} ></Column>
+          <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>  
+          <Column  lg={16} md={8} sm={4}>  
+           <hr style={{width:'100%' , margin: '', border: '1px solid #ccc' }} />
+           <h5> <FormattedMessage id="immunohistochemistry.label.reports" /></h5>
+          </Column>
+          <Column lg={16} md={8} sm={4}>
+           <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>
+          </Column >
+          {pathologySampleInfo.reports && pathologySampleInfo.reports.map((report, index) => {
+          return (
+            <>
+           <Column lg={2} md={8} sm={4}>
+                <IconButton label="Remove Report" onClick={() => {
+                  var info = {...pathologySampleInfo};
+                  info["reports"].splice(index, 1);
+                  setPathologySampleInfo(info);
+                }} kind='tertiary' size='sm'>
+                  <Subtract size={18} /> <FormattedMessage id="immunohistochemistry.label.report" />
+                </IconButton>
+            </Column>
+
+            
+            <Column lg={3} md={1} sm={2} > 
+                <FileUploader
+                  style={{marginTop: '-30px'}}
+                  buttonLabel={<FormattedMessage id="label.button.uploadfile" />}
+                  iconDescription="file upload"
+                  multiple={false}
+                  accept={['image/jpeg', 'image/png', 'application/pdf']}
+                  disabled={false}
+                  name=""
+                  buttonKind="primary"
+                  size="lg"
+                  filenameStatus="edit"
+                  onChange={async (e) => {
+                    e.preventDefault();
+                    let file = e.target.files[0];
+                    var newReports = [...pathologySampleInfo.reports];
+                    let encodedFile = await toBase64(file);
+                    newReports[index].base64Image = encodedFile;
+                    setPathologySampleInfo({ ...pathologySampleInfo, reports: newReports });
+                  }}
+                  onClick={function noRefCheck() { }}
+                  onDelete={(e) => {
+                    e.preventDefault();
+                  }}
+                />
+              </Column>  
+              <Column lg={4}>
+                {reportTypes.filter(type => type.id === report.reportType)[0]?.value}
+              </Column>
+              <Column lg={2} md={1} sm={2}>
+                {pathologySampleInfo.reports[index].image &&
+                  <>
+                    <Button onClick={() => {
+                      var win = window.open();
+                      win.document.write('<iframe src="' + report.fileType + ";base64," + report.image + '" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>');
+                    }}>
+                      <Launch />  <FormattedMessage id="pathology.label.view" />
+                    </Button>
+                  </>
+                }
+              </Column>
+             <Column lg={3} md={5} sm={3} /> 
+             <Column lg={16} md={8} sm={4}>
+               <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>    
+             </Column>
+
+            </>
+          )
+        })}
+        <Column lg={16} md={8} sm={4}>
+            <hr style={{ width: '100%', margin: '1rem 0', border: '1px solid #ccc' }} />
         </Column>
         <Column lg={16} md={8} sm={4}></Column>
         {hasRole(userSessionDetails, "Cytopathologist") && initialMount &&

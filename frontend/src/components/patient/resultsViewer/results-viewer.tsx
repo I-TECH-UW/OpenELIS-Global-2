@@ -106,9 +106,11 @@ const RoutedResultsViewer: React.FC<ResultsViewerProps> = () => {
       {roots?.length ? (
         <Grid fullWidth={true}>
           <Column lg={16}>
+            <div className="orderLegendBody">
             <FilterProvider roots={loading ? roots : []}>
               <ResultsViewer patientId={patientId} basePath={config.serverBaseUrl} loading={loading} />
             </FilterProvider>
+            </div>
           </Column>
         </Grid>
       ) : (<Grid fullWidth={true}>
