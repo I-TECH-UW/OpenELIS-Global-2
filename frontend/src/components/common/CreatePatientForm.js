@@ -284,7 +284,11 @@ function CreatePatientForm(props) {
               <Field name="patientContact.person.lastName">
                 {({ field }) => (
                   <TextInput
-                    value={values.patientContact?.person.lastName}
+                    value={
+                      values.patientContact?.person.lastName === undefined
+                        ? ""
+                        : values.patientContact?.person.lastName
+                    }
                     name={field.name}
                     labelText="Contact Last Name"
                     id={field.name}
@@ -295,7 +299,11 @@ function CreatePatientForm(props) {
               <Field name="patientContact.person.firstName">
                 {({ field }) => (
                   <TextInput
-                    value={values.patientContact?.person.firstName}
+                    value={
+                      values.patientContact?.person.firstName === undefined
+                        ? ""
+                        : values.patientContact?.person.firstName
+                    }
                     name={field.name}
                     labelText="Contact First Name"
                     id={field.name}
@@ -308,7 +316,11 @@ function CreatePatientForm(props) {
               <Field name="patientContact.person.email">
                 {({ field }) => (
                   <TextInput
-                    value={values.patientContact?.person.email}
+                    value={
+                      values.patientContact?.person.email === undefined
+                        ? ""
+                        : values.patientContact?.person.email
+                    }
                     name={field.name}
                     labelText="Contact Email"
                     id={field.name}
@@ -319,7 +331,11 @@ function CreatePatientForm(props) {
               <Field name="patientContact.person.primaryPhone">
                 {({ field }) => (
                   <TextInput
-                    value={values.patientContact?.person.primaryPhone}
+                    value={
+                      values.patientContact?.person.primaryPhone === undefined
+                        ? ""
+                        : values.patientContact?.person.primaryPhone
+                    }
                     name={field.name}
                     labelText={`Contact Phone: ${configurationProperties.PHONE_FORMAT}`}
                     id={field.name}

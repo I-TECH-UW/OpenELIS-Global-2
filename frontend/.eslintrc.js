@@ -19,8 +19,9 @@ module.exports = {
     node: true,
   },
   rules: {
-    "react/prop-types": "warn",
+    "react/prop-types": "off",
     "react/no-unescaped-entities": "warn",
+    "react-hooks/exhaustive-deps": "off",
     "no-unused-vars": "warn",
     "@typescript-eslint/no-empty-function": "warn",
     "prettier/prettier": ["warn"],

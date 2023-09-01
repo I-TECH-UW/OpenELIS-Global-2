@@ -344,6 +344,7 @@ const AddOrder = (props) => {
   };
 
   useEffect(() => {
+    componentMounted.current = true;
     getFromOpenElisServer("/rest/SamplePatientEntry", getSampleEntryPreform);
     window.scrollTo(0, 0);
     return () => {
