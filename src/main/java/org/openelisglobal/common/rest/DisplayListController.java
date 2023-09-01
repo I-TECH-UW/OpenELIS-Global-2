@@ -134,13 +134,13 @@ public class DisplayListController extends BaseRestController{
     @GetMapping(value = "displayList/{listType}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public List<IdValuePair> getDisplayList(@PathVariable DisplayListService.ListType listType) {
-        return DisplayListService.getInstance().getList(listType);
+        return DisplayListService.getInstance().getFreshList(listType);
     }
 
     @GetMapping(value = "tests", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public List<IdValuePair> getTests() {
-        return DisplayListService.getInstance().getList(ListType.ALL_TESTS);
+        return DisplayListService.getInstance().getFreshList(ListType.ALL_TESTS);
     }
 
 	@GetMapping(value = "tests-by-sample", produces = MediaType.APPLICATION_JSON_VALUE)

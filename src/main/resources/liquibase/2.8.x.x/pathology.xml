@@ -366,5 +366,28 @@
                                  baseTableName="program" baseColumnNames="test_section_id"
                                  referencedTableName="test_section" referencedColumnNames="id"/>
 	</changeSet>
+	<changeSet author="mozzymutesa" id="15">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="pathology_report" schemaName="clinlims" />
+			</not>
+		</preConditions>
+		<comment>create pathology_report table</comment>
+		<createSequence incrementBy="1" schemaName="clinlims"
+			sequenceName="pathology_report_seq" startValue="1" />
+		<createTable tableName="pathology_report">
+			<column name="id" type="INTEGER" valueSequenceNext="pathology_report_seq">
+				<constraints primaryKey="true" nullable="false"/>
+			</column>
+			<column name="pathology_sample_id" type="int"/>
+			<column name="report_type" type="VARCHAR(255)"/>
+			<column name="image" type="bytea"/>
+			<column name="file_type" type="VARCHAR(255)"/>
+			<column name="last_updated" type="datetime"/>
+		</createTable>
+		<addForeignKeyConstraint constraintName="pathology_report_pathology_sample_id_fk"
+                                 baseTableName="pathology_report" baseColumnNames="pathology_sample_id"
+                                 referencedTableName="pathology_sample" referencedColumnNames="id"/>
+	</changeSet>
 	
 </databaseChangeLog>

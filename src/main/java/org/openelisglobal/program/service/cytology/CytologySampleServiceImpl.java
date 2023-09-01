@@ -145,6 +145,11 @@ public class CytologySampleServiceImpl extends BaseObjectServiceImpl<CytologySam
         if (form.getSpecimenAdequacy() != null) {
             cytologySample.setSpecimenAdequacy(form.getSpecimenAdequacy());
         }
+
+        cytologySample.getReports().removeAll(cytologySample.getReports());
+        if (form.getReports() != null)
+            form.getReports().stream().forEach(e -> e.setId(null));
+        cytologySample.getReports().addAll(form.getReports());
         
         if (form.getDiagnosis() != null) {
             cytologySample.setDiagnosis(form.getDiagnosis());

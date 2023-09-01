@@ -61,61 +61,68 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class PathologySampleServiceImpl extends BaseObjectServiceImpl<PathologySample, Integer>
-        implements PathologySampleService {
+public class PathologySampleServiceImpl extends BaseObjectServiceImpl<PathologySample, Integer> implements PathologySampleService {
+    
     @Autowired
     protected PathologySampleDAO baseObjectDAO;
+    
     @Autowired
     protected SystemUserService systemUserService;
+    
     @Autowired
     private SampleService sampleService;
+    
     @Autowired
     private AnalysisService analysisService;
+    
     @Autowired
     private LogbookResultsPersistService logbookResultsPersistService;
+    
     @Autowired
     private TestService testService;
+    
     @Autowired
     private NoteService noteService;
+    
     @Autowired
     private ImmunohistochemistrySampleService immunohistochemistrySampleService;
+    
     @Autowired
     private TestSectionService testSectionService;
-
-
+    
     PathologySampleServiceImpl() {
         super(PathologySample.class);
     }
-
+    
     @Override
     protected PathologySampleDAO getBaseObjectDAO() {
         return baseObjectDAO;
     }
-
+    
     @Override
     public List<PathologySample> getWithStatus(List<PathologyStatus> statuses) {
         return baseObjectDAO.getWithStatus(statuses);
     }
-
+    
     @Transactional
     @Override
     public void assignTechnician(Integer pathologySampleId, SystemUser systemUser) {
         PathologySample pathologySample = get(pathologySampleId);
         pathologySample.setTechnician(systemUser);
     }
-
+    
     @Transactional
     @Override
     public void assignPathologist(Integer pathologySampleId, SystemUser systemUser) {
         PathologySample pathologySample = get(pathologySampleId);
         pathologySample.setPathologist(systemUser);
     }
-
+    
     @Override
     public Long getCountWithStatus(List<PathologyStatus> statuses) {
         return baseObjectDAO.getCountWithStatus(statuses);
     }
-
+    
     @Transactional
     @Override
     public void updateWithFormValues(Integer pathologySampleId, PathologySampleForm form) {
@@ -144,26 +151,30 @@ public class PathologySampleServiceImpl extends BaseObjectServiceImpl<PathologyS
                     .map(e -> createConclusion(e, ConclusionType.DICTIONARY)).collect(Collectors.toList()));
         pathologySample.getRequests().removeAll(pathologySample.getRequests());
         if (form.getRequests() != null)
-            pathologySample.getRequests().addAll(form.getRequests().stream()
-                    .map(e -> createRequest(e, RequestType.DICTIONARY)).collect(Collectors.toList()));
+            pathologySample.getRequests().addAll(
+                form.getRequests().stream().map(e -> createRequest(e, RequestType.DICTIONARY)).collect(Collectors.toList()));
         pathologySample.getTechniques().removeAll(pathologySample.getTechniques());
         if (form.getTechniques() != null)
             pathologySample.getTechniques().addAll(form.getTechniques().stream()
                     .map(e -> createTechnique(e, TechniqueType.DICTIONARY)).collect(Collectors.toList()));
+       pathologySample.getReports().removeAll(pathologySample.getReports());
+        if (form.getReports() != null)
+            form.getReports().stream().forEach(e -> e.setId(null));
+        pathologySample.getReports().addAll(form.getReports());
         if (form.getRelease()) {
             validatePathologySample(pathologySample, form);
         }
-       if (form.getReferToImmunoHistoChemistry()) {
-           referToImmunoHistoChemistry(pathologySample, form);
-       }
+        if (form.getReferToImmunoHistoChemistry()) {
+            referToImmunoHistoChemistry(pathologySample, form);
+        }
     }
-
+    
     private void validatePathologySample(PathologySample pathologySample, PathologySampleForm form) {
         pathologySample.setStatus(PathologyStatus.COMPLETED);
         Sample sample = pathologySample.getSample();
         Patient patient = sampleService.getPatient(sample);
         ResultsUpdateDataSet actionDataSet = new ResultsUpdateDataSet(form.getSystemUserId());
-
+        
         ResultsLoadUtility resultsUtility = SpringContext.getBean(ResultsLoadUtility.class);
         List<TestResultItem> testResultItems = resultsUtility.getGroupedTestsForSample(sample);
         for (TestResultItem testResultItem : testResultItems) {
@@ -178,82 +189,81 @@ public class PathologySampleServiceImpl extends BaseObjectServiceImpl<PathologyS
                 for (Result result : results) {
                     boolean newResult = result.getId() == null;
                     analysis.setEnteredDate(DateUtil.getNowAsTimestamp());
-
+                    
                     if (newResult) {
                         analysis.setRevision("1");
-                         actionDataSet.getNewResults()
-                            .add(new ResultSet(result, null, null, patient, sample, new HashMap<>(), false));
+                        actionDataSet.getNewResults()
+                                .add(new ResultSet(result, null, null, patient, sample, new HashMap<>(), false));
                     } else {
                         analysis.setRevision(String.valueOf(Integer.parseInt(analysis.getRevision()) + 1));
-                         actionDataSet.getModifiedResults()
-                            .add(new ResultSet(result, null, null, patient, sample, new HashMap<>(), false));
-                    }           
-
+                        actionDataSet.getModifiedResults()
+                                .add(new ResultSet(result, null, null, patient, sample, new HashMap<>(), false));
+                    }
+                    
                     analysis.setStartedDateForDisplay(testResultItem.getTestDate());
-
+                    
                     // This needs to be refactored -- part of the logic is in
                     // getStatusForTestResult. RetroCI over rides to whatever was set before
                     if (ConfigurationProperties.getInstance().getPropertyValueUpperCase(Property.StatusRules)
                             .equals(IActionConstants.STATUS_RULES_RETROCI)) {
                         if (!SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Canceled)
                                 .equals(analysis.getStatusId())) {
-                            analysis.setCompletedDate(
-                                    DateUtil.convertStringDateToSqlDate(testResultItem.getTestDate()));
-                            analysis.setStatusId(SpringContext.getBean(IStatusService.class)
-                                    .getStatusID(AnalysisStatus.TechnicalAcceptance));
+                            analysis.setCompletedDate(DateUtil.convertStringDateToSqlDate(testResultItem.getTestDate()));
+                            analysis.setStatusId(
+                                SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalAcceptance));
                         }
-                    } else if (SpringContext.getBean(IStatusService.class).matches(analysis.getStatusId(),
-                            AnalysisStatus.Finalized)
+                    } else if (SpringContext.getBean(IStatusService.class)
+                            .matches(analysis.getStatusId(), AnalysisStatus.Finalized)
                             || SpringContext.getBean(IStatusService.class).matches(analysis.getStatusId(),
-                                    AnalysisStatus.TechnicalAcceptance)
+                                AnalysisStatus.TechnicalAcceptance)
                             || (analysis.isReferredOut()
                                     && !GenericValidator.isBlankOrNull(testResultItem.getShadowResultValue()))) {
                         analysis.setCompletedDate(DateUtil.convertStringDateToSqlDate(testResultItem.getTestDate()));
                         analysis.setStatusId(
-                                SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized));
+                            SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized));
                     }
-
+                    
                     // this code is pulled from LogbookResultsRestController
-//                addResult(result, testResultItem, analysis, results.size() > 1, actionDataSet, useTechnicianName);
-//
-//                if (analysisShouldBeUpdated(testResultItem, result, supportReferrals)) {
-//                    updateAnalysis(testResultItem, testResultItem.getTestDate(), analysis, statusRuleSet);
-//                }
+                    //                addResult(result, testResultItem, analysis, results.size() > 1, actionDataSet, useTechnicianName);
+                    //
+                    //                if (analysisShouldBeUpdated(testResultItem, result, supportReferrals)) {
+                    //                    updateAnalysis(testResultItem, testResultItem.getTestDate(), analysis, statusRuleSet);
+                    //                }
                 }
                 analysis.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized));
                 analysis.setReleasedDate(new java.sql.Date(Calendar.getInstance().getTimeInMillis()));
             }
-
+            
         }
-
+        
         logbookResultsPersistService.persistDataSet(actionDataSet, ResultUpdateRegister.getRegisteredUpdaters(),
-                form.getSystemUserId());
+            form.getSystemUserId());
         sample.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(OrderStatus.Finished));
-
+        
     }
-
+    
     private void referToImmunoHistoChemistry(PathologySample pathologySample, PathologySampleForm form) {
-         Test immunoHistologyTest  =  null ;
-         if(StringUtils.isNotBlank(form.getImmunoHistoChemistryTestId())){
+        Test immunoHistologyTest = null;
+        if (StringUtils.isNotBlank(form.getImmunoHistoChemistryTestId())) {
             immunoHistologyTest = testService.get(form.getImmunoHistoChemistryTestId());
-         }
+        }
         
-         ImmunohistochemistrySample immunoHistoSample = immunohistochemistrySampleService
-                 .getByPathologySampleId(pathologySample.getId());
-         if (immunoHistoSample == null) {
-             immunoHistoSample = new ImmunohistochemistrySample();
-         }
-         immunoHistoSample.setProgram(pathologySample.getProgram());
-         immunoHistoSample.setQuestionnaireResponseUuid(pathologySample.getQuestionnaireResponseUuid());
-         immunoHistoSample.setSample(pathologySample.getSample());
-         immunoHistoSample.setPathologySample(pathologySample);
-         immunoHistoSample.setReffered(true);
-         immunohistochemistrySampleService.save(immunoHistoSample);
+        ImmunohistochemistrySample immunoHistoSample = immunohistochemistrySampleService
+                .getByPathologySampleId(pathologySample.getId());
+        if (immunoHistoSample == null) {
+            immunoHistoSample = new ImmunohistochemistrySample();
+        }
+        immunoHistoSample.setProgram(pathologySample.getProgram());
+        immunoHistoSample.setQuestionnaireResponseUuid(pathologySample.getQuestionnaireResponseUuid());
+        immunoHistoSample.setSample(pathologySample.getSample());
+        immunoHistoSample.setPathologySample(pathologySample);
+        immunoHistoSample.setReffered(true);
+        immunohistochemistrySampleService.save(immunoHistoSample);
         
-         if(immunoHistologyTest == null){
-           return;
-         }
-
+        if (immunoHistologyTest == null) {
+            return;
+        }
+        
         Analysis currentAnalysis = analysisService.getAnalysesBySampleId(pathologySample.getSample().getId()).get(0);
         Analysis analysis = new Analysis();
         analysis.setTest(immunoHistologyTest);
@@ -271,35 +281,37 @@ public class PathologySampleServiceImpl extends BaseObjectServiceImpl<PathologyS
         analysisService.insert(analysis);
         
         List<Note> notes = new ArrayList<>();
-        Note note = noteService.createSavableNote(analysis, NoteType.INTERNAL,
-            "Refered From Pathology Programme : "+ pathologySample.getProgram().getProgramName()+ "to Immunohistochemistry", "Refered to Immunohistochemistry" ,form.getSystemUserId());
+        Note note = noteService.createSavableNote(
+            analysis, NoteType.INTERNAL, "Refered From Pathology Programme : "
+                    + pathologySample.getProgram().getProgramName() + "to Immunohistochemistry",
+            "Refered to Immunohistochemistry", form.getSystemUserId());
         if (!noteService.duplicateNoteExists(note)) {
             notes.add(note);
         }
         noteService.saveAll(notes);
     }
-
+    
     public PathologyConclusion createConclusion(String text, ConclusionType type) {
         PathologyConclusion conclusion = new PathologyConclusion();
         conclusion.setValue(text);
         conclusion.setType(type);
         return conclusion;
     }
-
+    
     public PathologyRequest createRequest(String text, RequestType type) {
         PathologyRequest request = new PathologyRequest();
         request.setValue(text);
         request.setType(type);
         return request;
     }
-
+    
     public PathologyTechnique createTechnique(String text, TechniqueType type) {
         PathologyTechnique request = new PathologyTechnique();
         request.setValue(text);
         request.setType(type);
         return request;
     }
-
+    
     @Override
     public List<PathologySample> searchWithStatusAndTerm(List<PathologyStatus> statuses, String searchTerm) {
         List<PathologySample> pathologySamples = baseObjectDAO.getWithStatus(statuses);
@@ -322,9 +334,9 @@ public class PathologySampleServiceImpl extends BaseObjectServiceImpl<PathologyS
         
         return pathologySamples;
     }
-
+    
     @Override
     public Long getCountWithStatusBetweenDates(List<PathologyStatus> statuses, Timestamp from, Timestamp to) {
-        return baseObjectDAO.getCountWithStatusBetweenDates(statuses ,from ,to);
+        return baseObjectDAO.getCountWithStatusBetweenDates(statuses, from, to);
     }
 }

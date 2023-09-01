@@ -252,7 +252,7 @@ function ImmunohistochemistryCaseView() {
         </Column>
         <Column  lg={16} md={8} sm={4}>  
            <hr style={{width:'100%' , margin: '1rem 0', border: '1px solid #ccc' }} />
-           <h5>Results</h5>
+           <h5><FormattedMessage id="sidenav.label.results" /></h5>
         </Column>
         <Column lg={16} md={8} sm={4}>
           <SearchResults results={results}/>
@@ -336,9 +336,12 @@ function ImmunohistochemistryCaseView() {
           <Column lg={12} md={2} sm={2} ></Column>
           <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>  
           <Column  lg={16} md={8} sm={4}>  
-           <hr style={{width:'120%' , margin: '', border: ' solid #ccc' }} />
+           <hr style={{width:'100%' , margin: '', border: '1px solid #ccc' }} />
            <h5> <FormattedMessage id="immunohistochemistry.label.reports" /></h5>
           </Column>
+          <Column lg={16} md={8} sm={4}>
+             <div > &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;</div>    
+        </Column> 
           {immunohistochemistrySampleInfo.reports && immunohistochemistrySampleInfo.reports.map((report, index) => {
           return (
             <>

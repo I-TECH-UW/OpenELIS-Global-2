@@ -47,6 +47,7 @@ import org.openelisglobal.panel.valueholder.Panel;
 import org.openelisglobal.panel.valueholder.PanelSortOrderComparator;
 import org.openelisglobal.program.service.ProgramService;
 import org.openelisglobal.program.valueholder.Program;
+import org.openelisglobal.program.valueholder.cytology.CytologyReport;
 import org.openelisglobal.program.valueholder.cytology.CytologySample;
 import org.openelisglobal.program.valueholder.cytology.CytologySpecimenAdequacy;
 import org.openelisglobal.program.valueholder.immunohistochemistry.ImmunohistochemistrySample;
@@ -94,7 +95,7 @@ public class DisplayListService implements LocaleChangeListener {
         ELECTRONIC_ORDER_STATUSES, METHODS, METHODS_INACTIVE, METHOD_BY_NAME, PRACTITIONER_PERSONS, ORDER_PRIORITY,
         PROGRAM, IMMUNOHISTOCHEMISTRY_STATUS, PATHOLOGY_STATUS, CYTOLOGY_SPECIMEN_ADEQUACY_SATISFACTION, PATHOLOGY_TECHNIQUES, PATHOLOGIST_REQUESTS,
         PATHOLOGIST_CONCLUSIONS ,IMMUNOHISTOCHEMISTRY_REPORT_TYPES ,IMMUNOHISTOCHEMISTRY_MARKERS_TESTS ,CYTOLOGY_STATUS,
-        CYTOLOGY_SATISFACTORY_FOR_EVALUATION ,CYTOLOGY_UN_SATISFACTORY_FOR_EVALUATION ,
+        CYTOLOGY_SATISFACTORY_FOR_EVALUATION ,CYTOLOGY_UN_SATISFACTORY_FOR_EVALUATION ,CYTOLOGY_REPORT_TYPES,
         CYTOLOGY_DIAGNOSIS_RESULT_EPITHELIAL_CELL_SQUAMOUS ,CYTOLOGY_DIAGNOSIS_RESULT_EPITHELIAL_CELL_GLANDULAR ,CYTOLOGY_DIAGNOSIS_RESULT_NON_NEO_PLASTIC_CELLULAR,
         CYTOLOGY_DIAGNOSIS_RESULT_REACTIVE_CELLULAR ,CYTOLOGY_DIAGNOSIS_RESULT_ORGANISMS , CYTOLOGY_DIAGNOSIS_RESULT_OTHER ;
 
@@ -219,6 +220,7 @@ public class DisplayListService implements LocaleChangeListener {
         typeToListMap.put(ListType.CYTOLOGY_STATUS, createCytologyStatusList());
         typeToListMap.put(ListType.IMMUNOHISTOCHEMISTRY_STATUS, createImmunohistochemistryStatusList());
         typeToListMap.put(ListType.IMMUNOHISTOCHEMISTRY_REPORT_TYPES, createImmunohistochemistryReportTypeList());
+        typeToListMap.put(ListType.CYTOLOGY_REPORT_TYPES, createCytologyReportTypeList());
         typeToListMap.put(ListType.PATHOLOGY_TECHNIQUES, createDictionaryListForCategory("pathology_techniques"));
         typeToListMap.put(ListType.CYTOLOGY_SATISFACTORY_FOR_EVALUATION, createDictionaryListForCategory("cytology_adequacy_satisfactory"));
         typeToListMap.put(ListType.CYTOLOGY_UN_SATISFACTORY_FOR_EVALUATION, createDictionaryListForCategory("cytology_adequacy_unsatisfactory"));
@@ -254,6 +256,11 @@ public class DisplayListService implements LocaleChangeListener {
 
      private List<IdValuePair> createImmunohistochemistryReportTypeList() {
         return Arrays.asList(ImmunohistochemistrySampleReport.ImmunoHistologyReportType.values()).stream()
+                .map(e -> new IdValuePair(e.name(), e.getDisplay())).collect(Collectors.toList());
+    }
+
+    private List<IdValuePair> createCytologyReportTypeList() {
+        return Arrays.asList(CytologyReport.CytologyReportType.values()).stream()
                 .map(e -> new IdValuePair(e.name(), e.getDisplay())).collect(Collectors.toList());
     }
 
@@ -393,6 +400,7 @@ public class DisplayListService implements LocaleChangeListener {
         typeToListMap.put(ListType.CYTOLOGY_SPECIMEN_ADEQUACY_SATISFACTION, createCytologySpecimenAdequacySatisfactionList());
         typeToListMap.put(ListType.IMMUNOHISTOCHEMISTRY_STATUS, createImmunohistochemistryStatusList());
         typeToListMap.put(ListType.IMMUNOHISTOCHEMISTRY_REPORT_TYPES, createImmunohistochemistryReportTypeList());
+         typeToListMap.put(ListType.CYTOLOGY_REPORT_TYPES, createCytologyReportTypeList());
         typeToListMap.put(ListType.HOURS, createHourList());
         typeToListMap.put(ListType.MINS, createMinList());
         typeToListMap.put(ListType.SAMPLE_TYPE, createTypeOfSampleList());
