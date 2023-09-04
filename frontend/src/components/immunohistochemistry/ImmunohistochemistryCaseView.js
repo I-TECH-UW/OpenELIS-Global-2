@@ -84,6 +84,7 @@ function ImmunohistochemistryCaseView() {
   const [pathologistUsers, setPathologistUsers] = useState([]);
   const [results, setResults] = useState({ testResult: [] });
   const [loading, setLoading] = useState(true);
+  const [resultsLoading, setResultsLoading] = useState(true);
 
   async function displayStatus(response) {
     var body = await response.json();
@@ -111,6 +112,7 @@ function ImmunohistochemistryCaseView() {
       } else {
           setResults({ testResult: [] });
       }
+      setResultsLoading(false)
   }
 
   const getResults = () => {
@@ -235,7 +237,7 @@ function ImmunohistochemistryCaseView() {
       <Stack gap={4}>
       <Grid fullWidth={true} className="gridBoundary">
         {notificationVisible === true ? <AlertDialog /> : ""}
-        {loading && (
+        {(loading || resultsLoading) && (
                 <Loading description="Loading Dasboard..." />
        )}
 

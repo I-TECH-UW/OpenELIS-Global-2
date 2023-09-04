@@ -1,7 +1,7 @@
 import React from 'react'
 import { FormattedMessage, injectIntl } from 'react-intl'
 import '../Style.css'
-import { getFromOpenElisServer, postToOpenElisServer } from '../utils/Utils';
+import { getFromOpenElisServer, postToOpenElisServerJsonResponse} from '../utils/Utils';
 import {
     Heading,
     Form,
@@ -846,29 +846,40 @@ export class SearchResults extends React.Component {
             delete result.result
         })
         console.log(this.props.results)
-        postToOpenElisServer(searchEndPoint, JSON.stringify(this.props.results), this.setStatus);
+        postToOpenElisServerJsonResponse(searchEndPoint, JSON.stringify(this.props.results), this.setResponse);
     }
 
-    setStatus = (status) => {
-        console.log(status)
-        //console.log("setStatus" + status)
-        if (status != 200) {
+   setResponse = (resp) => {
+        console.log("setStatus" + JSON.stringify(resp))
+        if (resp) {
             this.context.setNotificationBody({
-                title: <FormattedMessage id="notification.title"/>,
-                message: "Error: " + status,
-                kind: NotificationKinds.error
+                title: "Notification Message",
+                message: this.createMesssage(resp) ,
+                kind: NotificationKinds.success
             })
         } else {
             this.context.setNotificationBody({
-                title: <FormattedMessage id="notification.title"/>,
-                message: "Test Results have been saved successfully",
-                kind: NotificationKinds.success
+                title: "Notification Message",
+                message: "Error whilt Saving",
+                kind: NotificationKinds.error
             })
         }
         this.context.setNotificationVisible(true);
     }
 
-
+    createMesssage =(resp) => {
+        var message = ""
+        if(resp.reflex.length > 0){
+            message += "Reflex Tests : " + resp.reflex.join(', ')
+        }
+        if(resp.calculated.length > 0){
+            message += "Calculated Tests : " + resp.calculated.join(', ')
+        }
+        if(message === ""){
+            message += "Saved Succesfully" ;
+        }
+        return message ;
+    }
 
     handlePageChange = (pageInfo) => {
         if (this.state.page != pageInfo.page) {
