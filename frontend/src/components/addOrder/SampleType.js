@@ -276,7 +276,7 @@ const SampleType = (props) => {
         if (checked) {
             setNotificationBody({
                 kind: NotificationKinds.warning,
-                title: "Notification Message",
+                title: <FormattedMessage id="notification.title"/>,
                 message: <FormattedMessage id="reject.order.sample.notification"/>
             });
             setNotificationVisible(true);
@@ -410,7 +410,7 @@ const SampleType = (props) => {
                 </Select>
 
                 <CustomCheckBox id={"reject_" + index} onChange={(value) => handleRejection(value)}
-                                label="Reject Sample"/>
+                                label={<FormattedMessage id="sample.reject.label"/>}/>
                 { sampleXml.rejected && <CustomSelect id={"rejectedReasonId_" + index} options={rejectSampleReasons}
                               disabled={rejectionReasonsDisabled}
                               defaultSelect={defaultSelect}
@@ -420,15 +420,15 @@ const SampleType = (props) => {
 
                     <CustomDatePicker id={"collectionDate_" + index} autofillDate={true}
                                       onChange={(date) => handleCollectionDate(date)}
-                                      labelText={"Collection Date"} className="inputText"/>
+                                      labelText={<FormattedMessage id="sample.collection.date"/>} className="inputText"/>
 
                     <CustomTimePicker id={"collectionTime_" + index}
                                       onChange={(time) => handleCollectionTime(time)}
-                                      className="inputText" labelText="Collection Time"/>
+                                      className="inputText" labelText={<FormattedMessage id="sample.collection.time"/>}/>
                 </div>
                 <div className="inlineDiv">
                     <CustomTextInput id={"collector_" + index} onChange={(value) => handleCollector(value)}
-                                     defaultValue={""} labelText="Collector" className="inputText"/>
+                                     defaultValue={""} labelText={<FormattedMessage id="collector.label"/>} className="inputText"/>
                 </div>
                 <div className="testPanels">
                     <div className="cds--col">
@@ -450,7 +450,7 @@ const SampleType = (props) => {
                                 </>
                             ) : (<></>)}
                         </div>
-                        <FormGroup legendText={'Search through the available panels'}>
+                        <FormGroup legendText={<FormattedMessage id="sample.search.panel.legend.text"/>}>
                             <Search
                                 size="lg"
                                 id={`panels_search_` + index}
@@ -486,7 +486,7 @@ const SampleType = (props) => {
                                     return (<>
                                         <Layer>
                                             <Tile className={"emptyFilterTests"}>
-                                                <span>No panel found matching  <strong> "{panelSearchTerm}"</strong>  </span>
+                                                <span><FormattedMessage id="sample.panel.search.error.msg"/>  <strong> "{panelSearchTerm}"</strong>  </span>
                                             </Tile>
                                         </Layer>
                                     </>);

@@ -131,7 +131,7 @@ class CreatePatientForm extends React.Component {
     accessionNumberValidationResponse = (res) => {
         if (res.status === false) {
             this.context.setNotificationVisible(true);
-            this.context.setNotificationBody({kind: NotificationKinds.error, title: "Notification Message", message: res.body});
+            this.context.setNotificationBody({kind: NotificationKinds.error, title: <FormattedMessage id="notification.title"/>, message: res.body});
         }
 
     }
@@ -177,9 +177,9 @@ class CreatePatientForm extends React.Component {
     handlePost = (status) => {
         this.context.setNotificationVisible(true);
         if(status === 200){
-            this.context.setNotificationBody({title: "Notification Message", message: "Patient Saved Succsfuly", kind: NotificationKinds.success})
+            this.context.setNotificationBody({title: <FormattedMessage id="notification.title"/>, message: "Patient Saved Succsfuly", kind: NotificationKinds.success})
         }else{
-            this.context.setNotificationBody({title: "Notification Message", message: "Error While Saving Patient", kind: NotificationKinds.error})
+            this.context.setNotificationBody({title: <FormattedMessage id="notification.title"/>, message: "Error While Saving Patient", kind: NotificationKinds.error})
         }
       };
 

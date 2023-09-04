@@ -35,7 +35,7 @@ function PanelSelectForm(props) {
           <Select
             defaultValue="placeholder-item"
             id="select-1"
-            invalidText="This is an invalid error message."
+            invalidText={<FormattedMessage id="workplan.panel.selection.error.msg"/>}
             helperText={props.title}
             labelText=""
             onChange={handleChange}

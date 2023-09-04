@@ -54,7 +54,7 @@ class SearchPatientForm extends React.Component {
       // console.log(JSON.stringify(patientsResults))
       this.setState({ patientSearchResults: patientsResults })
     }else{
-      this.context.setNotificationBody({title: "Notification Message", message: "No patients found matching search terms", kind: NotificationKinds.warning})
+      this.context.setNotificationBody({title: <FormattedMessage id="notification.title"/>, message: "No patients found matching search terms", kind: NotificationKinds.warning})
       this.context.setNotificationVisible(true);
     }
   }
@@ -118,12 +118,12 @@ class SearchPatientForm extends React.Component {
                                   <div className="inlineDiv">
                                      <Field name="patientId">
                                       {({ field }) =>
-                                          <TextInput name={field.name} labelText="Patient Id" id={field.name} className="inputText" />
+                                          <TextInput name={field.name} labelText={<FormattedMessage id="patient.id"/>} id={field.name} className="inputText" />
                                       }
                                     </Field>
                                         <Field name="labNumber">
                                             {({ field }) =>
-                                                <TextInput name={field.name} labelText="Previous Lab Number" id={field.name} className="inputText" />
+                                                <TextInput name={field.name} labelText={<FormattedMessage id="patient.prev.lab.no"/>} id={field.name} className="inputText" />
                                             }
                                         </Field>
                                   </div>
@@ -131,13 +131,13 @@ class SearchPatientForm extends React.Component {
                                         <Field name="lastName"
                                         >
                                             {({ field }) =>
-                                                <TextInput name={field.name} labelText="Last Name" id={field.name} className="inputText" />
+                                                <TextInput name={field.name} labelText={<FormattedMessage id="patient.last.name"/>} id={field.name} className="inputText" />
                                             }
                                         </Field>
                                         <Field name="firstName"
                                         >
                                             {({ field }) =>
-                                                <TextInput name={field.name} labelText="First Name" id={field.name} className="inputText" />
+                                                <TextInput name={field.name} labelText={<FormattedMessage id="patient.first.name"/>} id={field.name} className="inputText" />
                                             }
                                         </Field>
                                   </div>
@@ -149,7 +149,7 @@ class SearchPatientForm extends React.Component {
                                                     <DatePickerInput
                                                         id="date-picker-default-id"
                                                         placeholder="dd/mm/yyyy"
-                                                        labelText="Date of Birth"
+                                                        labelText={<FormattedMessage id="patient.dob"/>}
                                                         type="text"
                                                         name={field.name}
 
@@ -169,12 +169,12 @@ class SearchPatientForm extends React.Component {
                                                 >
                                                     <RadioButton
                                                         id="search-radio-1"
-                                                        labelText="Male"
+                                                        labelText={<FormattedMessage id="patient.male"/>}
                                                         value="M"
                                                     />
                                                     <RadioButton
                                                         id="search-radio-2"
-                                                        labelText="Female"
+                                                        labelText={<FormattedMessage id="patient.female"/>}
                                                         value="F"
                                                     />
                                                 </RadioButtonGroup>

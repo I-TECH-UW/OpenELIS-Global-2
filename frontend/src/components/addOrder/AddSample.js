@@ -3,7 +3,7 @@ import {Button, Link, Row, Stack} from "@carbon/react";
 import {Add} from '@carbon/react/icons';
 import {getFromOpenElisServer} from "../utils/Utils";
 import SampleType from "./SampleType";
-
+import { FormattedMessage} from 'react-intl';
 const AddSample = (props) => {
     const {samples, setSamples} = props;
     const componentMounted = useRef(true);
@@ -100,8 +100,7 @@ const AddSample = (props) => {
                         return (
                             <div className="sampleType" key={i}>
                                 <h4>Sample {i + 1}</h4>
-                                <Link href="#" onClick={(e) => handleRemoveSample(e, sample)}>Remove
-                                    Sample</Link>
+                                <Link href="#" onClick={(e) => handleRemoveSample(e, sample)}>{<FormattedMessage id="sample.remove.action"/>}</Link>
                                 <SampleType index={i} rejectSampleReasons={rejectSampleReasons}
                                             removeSample={removeSample} sample={sample}
                                             sampleTypeObject={sampleTypeObject}/>
@@ -110,7 +109,7 @@ const AddSample = (props) => {
                     })}
                     <Row>
                         <div className="inlineDiv">
-                            <Button onClick={handleAddNewSample}>Add Sample
+                            <Button onClick={handleAddNewSample}>{<FormattedMessage id="sample.add.action"/>}
                                 &nbsp;  &nbsp;
                                 <Add size={16}/>
                             </Button>

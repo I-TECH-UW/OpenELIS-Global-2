@@ -139,9 +139,9 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
   const handleDelete = (status) => {
     setNotificationVisible(true);
     if (status == "200") {
-      setNotificationBody({ kind: NotificationKinds.success, title: "Notification Message", message: "Succesfuly Deleted" });
+      setNotificationBody({ kind: NotificationKinds.success, title: <FormattedMessage id="notification.title"/>, message: <FormattedMessage id="delete.success.msg"/> });
     } else {
-      setNotificationBody({ kind: NotificationKinds.error, title: "Notification Message", message: "Error while Deleting" });
+      setNotificationBody({ kind: NotificationKinds.error, title: <FormattedMessage id="notification.title"/>, message: <FormattedMessage id="delete.error.msg"/> });
     }
   }
 
@@ -254,9 +254,9 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
     if (status == "200") {
       const element = document.getElementById("submit_" + index) as HTMLInputElement;
       element.disabled = true;
-      setNotificationBody({ kind: NotificationKinds.success, title: "Notification Message", message: "Succesfuly saved" });
+      setNotificationBody({ kind: NotificationKinds.success, title: <FormattedMessage id="notification.title"/>, message: "Succesfuly saved" });
     } else {
-      setNotificationBody({ kind: NotificationKinds.error, title: "Notification Message", message: "Duplicate Calculation Name or Error while saving" });
+      setNotificationBody({ kind: NotificationKinds.error, title: <FormattedMessage id="notification.title"/>, message: "Duplicate Calculation Name or Error while saving" });
     }
   };
 
@@ -288,7 +288,7 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
 
     } catch (error) {
       setNotificationVisible(true);
-      setNotificationBody({ kind: NotificationKinds.error, title: "Notification Message", message: "Invalid Calculation Logic : " + error.message });
+      setNotificationBody({ kind: NotificationKinds.error, title: <FormattedMessage id="notification.title"/>, message: "Invalid Calculation Logic : " + error.message });
     }
   };
   function getOperationInputByType(index: number, operationIndex: number, type: OperationType, operation: OperationModel) {
