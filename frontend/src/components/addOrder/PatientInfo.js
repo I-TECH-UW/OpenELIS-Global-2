@@ -2,7 +2,7 @@ import React, {useEffect, useRef, useState} from 'react';
 import {Button, Stack} from "@carbon/react";
 import SearchPatientForm from "../common/SearchPatientForm";
 import CreatePatientForm from "../common/CreatePatientForm";
-
+import { FormattedMessage} from 'react-intl';
 const PatientInfo = (props) => {
     const {orderFormValues, setOrderFormValues} = props;
     const componentMounted = useRef(true);
@@ -41,9 +41,8 @@ const PatientInfo = (props) => {
             <div className="orderLegendBody">
                 <h3>PATIENT</h3>
                 <div className="tabsLayout">
-                    <Button kind={searchPatientTab.kind} onClick={handleSearchPatientTab}>Search for
-                        Patient</Button>
-                    <Button kind={newPatientTab.kind} onClick={handleNewPatientTab}>New Patient</Button>
+                    <Button kind={searchPatientTab.kind} onClick={handleSearchPatientTab}>{<FormattedMessage id="search.patient.label"/>}</Button>
+                    <Button kind={newPatientTab.kind} onClick={handleNewPatientTab}>{<FormattedMessage id="new.patient.label"/>}</Button>
                 </div>
                 <div className="container">
                     {searchPatientTab.active && <SearchPatientForm getSelectedPatient={getSelectedPatient}/>}

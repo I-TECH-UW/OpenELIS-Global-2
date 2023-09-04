@@ -85,7 +85,7 @@ export class SearchResultForm extends React.Component {
         } else {
             this.props.setResults?.({ testResult: [] });
             this.context.setNotificationBody({
-                title: "Notification Message",
+                title: <FormattedMessage id="notification.title"/>,
                 message: "No results found!",
                 kind: NotificationKinds.warning
             })
@@ -828,7 +828,7 @@ export class SearchResults extends React.Component {
             alert(message);
 
             this.context.setNotificationBody({
-                title: "Notification Message",
+                title: <FormattedMessage id="notification.title"/>,
                 message: message,
                 kind: NotificationKinds.warning
             })
@@ -854,13 +854,13 @@ export class SearchResults extends React.Component {
         //console.log("setStatus" + status)
         if (status != 200) {
             this.context.setNotificationBody({
-                title: "Notification Message",
+                title: <FormattedMessage id="notification.title"/>,
                 message: "Error: " + status,
                 kind: NotificationKinds.error
             })
         } else {
             this.context.setNotificationBody({
-                title: "Notification Message",
+                title: <FormattedMessage id="notification.title"/>,
                 message: "Test Results have been saved successfully",
                 kind: NotificationKinds.success
             })

@@ -4,6 +4,7 @@ import './Dashboard.css';
 import { ArrowUpRight } from '@carbon/react/icons';
 import { useContext, useState, useEffect, useRef } from "react";
 import { getFromOpenElisServer } from '../utils/Utils.js';
+import { FormattedMessage } from 'react-intl'
 interface DashBoardProps {
 }
 
@@ -35,16 +36,16 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
     }
 
     const tileList: Array<Tile> = [
-        { title: 'In Progress', subTitle: 'Awaiting Result Entry', value: counts.ordersInProgress },
-        { title: 'Ready For Validation', subTitle: 'Awaiting Review', value: counts.ordersReadyForValidation },
-        { title: 'Orders Completed Today', subTitle: 'Total Orders Completed Today', value: counts.ordersCompletedToday },
-        { title: 'Patiallly Completed Today', subTitle: 'Total Orders Completed Today', value: counts.patiallyCompletedToday },
-        { title: 'Orders Entered By User', subTitle: 'Entered by user Today', value: counts.orderEnterdByUserToday },
-        { title: 'Orders Rejected', subTitle: 'Rejected By Lab Today', value: counts.ordersRejectedToday },
-        { title: 'Un Printed Results', subTitle: 'Un Prited Results Today', value: counts.unPritendResults },
-        { title: 'Incoming Orders', subTitle: 'Electronic Orders', value: counts.incomigOrders },
-        { title: 'Average Turn Around time', subTitle: 'Reception to Validation', value: counts.averageTurnAroudTime },
-        { title: 'Delayed Turn Around', subTitle: 'More Than 96 hours', value: counts.delayedTurnAround },
+        { title: <FormattedMessage id="dashboard.in.progress.label"/>, subTitle: <FormattedMessage id="dashboard.in.progress.subtitle.label"/>, value: counts.ordersInProgress },
+        { title: <FormattedMessage id="dashboard.validation.ready.label"/>, subTitle: <FormattedMessage id="dashboard.validation.ready.subtitle.label"/>, value: counts.ordersReadyForValidation },
+        { title: <FormattedMessage id="dashboard.complete.orders.label"/>, subTitle: <FormattedMessage id="dashboard.orders.subtitle.label"/>, value: counts.ordersCompletedToday },
+        { title: <FormattedMessage id="dashboard.partially.completed.label"/>, subTitle: <FormattedMessage id="dashboard.partially.completed..subtitle.label"/>, value: counts.patiallyCompletedToday },
+        { title: <FormattedMessage id="dashboard.user.orders.label"/>, subTitle: <FormattedMessage id="dashboard.user.orders.subtitle.label"/>, value: counts.orderEnterdByUserToday },
+        { title: <FormattedMessage id="dashboard.rejected.orders"/>, subTitle: <FormattedMessage id="dashboard.rejected.orders.subtitle"/>, value: counts.ordersRejectedToday },
+        { title: <FormattedMessage id="dashboard.unprints.results.label"/>, subTitle: <FormattedMessage id="dashboard.unprints.results.subtitle.label"/>, value: counts.unPritendResults },
+        { title: <FormattedMessage  id="sidenav.label.incomingorder"/>, subTitle: <FormattedMessage id="label.electronic.orders"/>, value: counts.incomigOrders },
+        { title: <FormattedMessage id="dashboard.avg.turn.around.label"/>, subTitle: 'Reception to Validation', value: counts.averageTurnAroudTime },
+        { title: <FormattedMessage id="dashboard.turn.around.label"/>, subTitle: <FormattedMessage id="dashboard.turn.around.subtitle.label"/>, value: counts.delayedTurnAround },
     ];
     return (
         <>

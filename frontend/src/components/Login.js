@@ -90,7 +90,7 @@ class Login extends React.Component {
           window.location.href = "/";
         } else {
           console.log(this.context.notificationVisible);
-          this.context.setNotificationBody({title: "Notification Message", message: data.error, kind: NotificationKinds.error})
+          this.context.setNotificationBody({title: <FormattedMessage id="notification.title"/>, message: data.error, kind: NotificationKinds.error})
           this.context.setNotificationVisible(true);
         }
       })

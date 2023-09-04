@@ -12,7 +12,7 @@ import '../../App.css';
 import "../Style.css";
 
 import {getFromOpenElisServer} from '../utils/Utils';
-
+import { FormattedMessage} from 'react-intl';
 export const Questionnaire = ({questionnaire, onAnswerChange = () => {}}) => {
 
     const getSelectOption = (answerOption, index) => {
@@ -49,10 +49,10 @@ export const Questionnaire = ({questionnaire, onAnswerChange = () => {}}) => {
                 labelText={item.text}
                 onChange={onAnswerChange} 
                 >
-                <SelectItem disabled value="" text="Choose an option"/>
+                <SelectItem disabled value="" text={<FormattedMessage id="select.default.option.label"/>}/>
                 <SelectItem value="" text=""/>
-                <SelectItem value="true" text="Yes"/>
-                <SelectItem value="false" text="No"/>
+                <SelectItem value="true" text={<FormattedMessage id="yes.option"/>}/>
+                <SelectItem value="false" text={<FormattedMessage id="no.option"/>}/>
                 </Select>}
         {item.type == "choice" && item.repeats !== true && <Select
                 id={item.linkId}
@@ -67,7 +67,7 @@ export const Questionnaire = ({questionnaire, onAnswerChange = () => {}}) => {
                         ''}
                 onChange={onAnswerChange} 
                 >
-                <SelectItem disabled value="" text="Choose an option"/>
+                <SelectItem disabled value="" text={<FormattedMessage id="select.default.option.label"/>}/>
                 <SelectItem value="" text=""/>
                 {'answerOption' in item && item.answerOption.map( (answerOption, index) => 
                     getSelectOption(answerOption, index)
@@ -144,7 +144,7 @@ export const ProgramSelect = ({programChange = () => {}}) => {
       <div className="inputText">
         <Select
         id="additionalQuestionsSelect"
-        labelText="program"
+        labelText={<FormattedMessage id="label.program"/>}
         onChange={programChange}
         defaultValue={
           programs.find(program => {

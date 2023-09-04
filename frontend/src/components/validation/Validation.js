@@ -92,7 +92,7 @@ const Validation = (props) => {
         }
         setNotificationBody({
             kind: kind,
-            title: "Notification Message",
+            title: <FormattedMessage id="notification.title"/>,
             message: message
         });
         setNotificationVisible(true);
