@@ -111,7 +111,7 @@ public class CalculatedValueRestController {
             results.forEach(result -> {
                 if (result.getValue() != null) {
                     Dictionary dict = dictionaryService.getDictionaryById(result.getValue());
-                    resultList.add(new IdValuePair(dict.getId(), dict.getDictEntryDisplayValue()));
+                    resultList.add(new IdValuePair(dict.getId(), dict.getLocalizedName()));
                 }
             });
             testDisplayBean.setResultList(resultList);

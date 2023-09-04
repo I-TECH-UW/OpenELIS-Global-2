@@ -223,18 +223,6 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
     setCalculationList(list);
   }
 
-
-  function resetCalculationValue(index: number, calculation: CalculatedValueFormModel) {
-    const list = [...calculationList];
-    list[index].result = null
-    list[index].testId = null
-  }
-
-  function resetOperationValue(index: number, operationIndex: number, operation: OperationModel) {
-    const list = [...calculationList];
-    list[index].operations[operationIndex].value = null;
-  }
-
   const handleCalculationFieldChange = (e: any, index: number) => {
     const { name, value } = e.target;
     const list = [...calculationList];
@@ -412,7 +400,7 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
                 text=""
                 value=""
               />
-              {sampleTestList["FINAL_RESULT"][index].filter(test => test.id = calculation.testId)[0].resultList.map((result, result_index) => (
+              {sampleTestList["FINAL_RESULT"][index].filter(test => test.id == calculation.testId)[0].resultList.map((result, result_index) => (
                 <SelectItem
                   text={result.value}
                   value={result.id}

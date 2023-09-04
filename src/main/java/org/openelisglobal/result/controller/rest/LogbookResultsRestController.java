@@ -9,11 +9,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
-import org.openelisglobal.common.provider.query.PatientSearchResults;
 import org.openelisglobal.result.controller.LogbookResultsBaseController;
 import org.openelisglobal.result.form.StatusResultsForm;
 import org.openelisglobal.sampleitem.service.SampleItemService;
@@ -418,7 +418,7 @@ public class LogbookResultsRestController extends LogbookResultsBaseController {
 
     @PostMapping(value = "ReactLogbookResultsUpdate", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public LogbookResultsForm showReactLogbookResultsUpdate(HttpServletRequest request,
+    public Map<String ,List<String>> showReactLogbookResultsUpdate(HttpServletRequest request,
             @Validated(LogbookResultsForm.LogbookResults.class) @RequestBody LogbookResultsForm form,
             BindingResult result) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
@@ -429,10 +429,12 @@ public class LogbookResultsRestController extends LogbookResultsBaseController {
         boolean alwaysValidate = ConfigurationProperties.getInstance()
                 .isPropertyValueEqual(Property.ALWAYS_VALIDATE_RESULTS, "true");
         boolean supportReferrals = FormFields.getInstance().useField(Field.ResultsReferral);
+         Map<String ,List<String>> reflexMap  = new HashMap<>();
         String statusRuleSet = ConfigurationProperties.getInstance().getPropertyValueUpperCase(Property.StatusRules);
 
         if ("true".equals(request.getParameter("pageResults"))) {
-            return getLogbookResults(request, form, null,"", "",null,true, true);
+            getLogbookResults(request, form, null,"", "",null,true, true);
+            return reflexMap;
         }
 
         if (result.hasErrors()) {
@@ -483,6 +485,8 @@ public class LogbookResultsRestController extends LogbookResultsBaseController {
         try {
             List<Analysis> reflexAnalysises = logbookPersistService.persistDataSet(actionDataSet, updaters,
                     getSysUserId(request));
+            reflexMap.put("reflex" , reflexAnalysises.stream().filter(e -> !e.getResultCalculated()).map(e -> analysisService.getOrderAccessionNumber(e)).collect(Collectors.toList()));
+            reflexMap.put("calculated" , reflexAnalysises.stream().filter(e -> e.getResultCalculated()).map(e -> analysisService.getOrderAccessionNumber(e)).collect(Collectors.toList()));
             try {
                 fhirTransformService.transformPersistResultsEntryFhirObjects(actionDataSet);
             } catch (FhirTransformationException | FhirPersistanceException e) {
@@ -517,7 +521,7 @@ public class LogbookResultsRestController extends LogbookResultsBaseController {
             Map<String, String> params = new HashMap<>();
             params.put("type", form.getType());
         }
-        return (form);
+        return reflexMap;
     }
 
     private void createAnalysisOnlyUpdates(ResultsUpdateDataSet actionDataSet) {
