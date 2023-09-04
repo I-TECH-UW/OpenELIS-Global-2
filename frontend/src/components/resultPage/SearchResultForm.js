@@ -27,7 +27,7 @@ import { Formik, Field } from "formik";
 import SearchResultFormValues from '../formModel/innitialValues/SearchResultFormValues';
 import { AlertDialog, NotificationKinds } from "../common/CustomNotification";
 import { NotificationContext } from "../layout/Layout";
-import SearchPatientForm from "./SearchPatientForm";
+import SearchPatientForm from "../patient/SearchPatientForm";
 
 
 class ResultSearchPage extends React.Component {
@@ -69,7 +69,8 @@ export class SearchResultForm extends React.Component {
             searchBy: { type:"",doRange:false},
             patient:{
                 patientPK: ""
-            }
+            },
+            testSections: []
         }
     }
     _isMounted = false;
@@ -116,6 +117,7 @@ export class SearchResultForm extends React.Component {
             "labNumber=" + labNo +
             "&upperRangeAccessionNumber=" + endLabNo +
             "&patientPK="+ this.state.patient.patientPK +
+            "&testSectionId="+ values.unitType +
             "&collectionDate="+values.collectionDate +
             "&recievedDate="+values.recievedDate +
             "&selectedTest="+values.testName +
@@ -147,11 +149,16 @@ export class SearchResultForm extends React.Component {
         }
     }
 
+     fetchTestSections = (response) => {
+         this.setState({testSections: response});
+    }
+
     componentDidMount() {
         this._isMounted = true;
         getFromOpenElisServer("/rest/test-list", this.getTests);
         getFromOpenElisServer("/rest/analysis-status-types", this.getAnalysisStatusTypes);
         getFromOpenElisServer("/rest/sample-status-types", this.getSampleStatusTypes);
+        getFromOpenElisServer('/rest/user-test-sections', this.fetchTestSections);
         let displayFormType = (new URLSearchParams(window.location.search)).get("type");
         let doRange = (new URLSearchParams(window.location.search)).get("doRange");
         this.setState({
@@ -206,6 +213,30 @@ export class SearchResultForm extends React.Component {
                                 </FormLabel>
 
                                 <div className="inlineDiv">
+                                    {this.state.searchBy.type === "unit" &&
+                                        <Field name="unitType">
+                                            {({field}) =>
+                                                <Select
+                                                    className="inputText"
+                                                    labelText="Select Unit Type"
+                                                    name={field.name} id={field.name}>
+                                                    <SelectItem
+                                                        text=""
+                                                        value=""/>
+                                                    {
+                                                        this.state.testSections.map((test, index) => {
+                                                            return (
+                                                                <SelectItem
+                                                                    key={index}
+                                                                    text={test.value}
+                                                                    value={test.id}/>
+                                                            )
+                                                        })
+                                                    }
+                                                </Select>
+                                            }
+                                        </Field>
+                                    }
 
                                     {this.state.searchBy.type === "order" && <Field name="accessionNumber"
                                 >

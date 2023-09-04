@@ -10,7 +10,7 @@ import { getFromOpenElisServer, postToOpenElisServerFullResponse, hasRole } from
 import UserSessionDetailsContext from "../../UserSessionDetailsContext"
 import { NotificationContext } from "../layout/Layout";
 import { AlertDialog ,NotificationKinds} from "../common/CustomNotification";
-import { SearchResults } from "../common/SearchResultForm"
+import { SearchResults } from "../resultPage/SearchResultForm"
 import { FormattedMessage} from 'react-intl'
 import "./../pathology/PathologyDashboard.css"
 

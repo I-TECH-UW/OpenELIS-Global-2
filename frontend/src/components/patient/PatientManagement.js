@@ -9,8 +9,8 @@ import {
     Section, Button
 
 } from '@carbon/react';
-import SearchPatientForm from '../common/SearchPatientForm';
-import CreatePatientForm from '../common/CreatePatientForm';
+import SearchPatientForm from './SearchPatientForm';
+import CreatePatientForm from './CreatePatientForm';
 
 
 class PatientManagement extends React.Component {
