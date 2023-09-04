@@ -1,13 +1,16 @@
-import {useContext, useState, useEffect, useRef } from "react";
+import {useContext, useState, useEffect, useRef ,useMemo} from "react";
 import { Form, Stack, TextInput, Select, SelectItem, Button,Checkbox , IconButton, Toggle,  Loading, RadioButtonGroup, RadioButton ,ModalWrapper} from '@carbon/react';
 import { Add, Subtract } from '@carbon/react/icons';
 import Autocomplete from "./AutoComplete";
 import RuleBuilderFormValues from "../../formModel/innitialValues/RuleBuilderFormValues";
-import { getFromOpenElisServer, postToOpenElisServer, getFromOpenElisServerSync } from "../../utils/Utils";
+import { getFromOpenElisServer, postToOpenElisServer} from "../../utils/Utils";
 import { NotificationContext } from "../../layout/Layout";
 import { AlertDialog,  NotificationKinds} from "../../common/CustomNotification";
 import { FormattedMessage} from "react-intl";
 import "./ReflexStyles.css"
+
+var defaultTestResultList = {};
+var defaultSampleTests = { "conditions": {}, "actions": {} };
 
 
 function ReflexRule() {
@@ -57,18 +60,16 @@ function ReflexRule() {
   const [testResultList, setTestResultList] = useState({ 0: { 0: { type: "N", list: [] } } }); //{index :{field_index:{type : "T" ,list : []}}}
   const [sampleTestList, setSampleTestList] = useState({ "conditions": {}, "actions": {} }); //{field :{index :{field_index:[]}}}
   const [counter, setCounter] = useState(0);
-  const [loaded, setLoaded] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState({});
   const { notificationVisible ,setNotificationVisible,setNotificationBody} = useContext(NotificationContext);
   const [showConfirmBox, setShowConfirmBox] = useState(true);
-  var defaultTestResultList = {};
-  var defaultSampleTests = { "conditions": {}, "actions": {} };
+  
 
   useEffect(() => {
     getFromOpenElisServer("/rest/samples", fetchSamples)
     getFromOpenElisServer("/rest/reflexrule-options", fetchRuleOptions)
     getFromOpenElisServer("/rest/reflexrules", fetchReflexRules)
-
 
     return () => { // This code runs when component is unmounted
       componentMounted.current = false;
@@ -76,39 +77,32 @@ function ReflexRule() {
 
   }, []);
 
-  const loadDefaultTestResultList = () => {
+  useEffect(() => {
+    if(loading){
+      loadDefaultTestResultList();
+    }
+  }, [ruleList]);
 
+
+  const loadDefaultTestResultList = () => {
     ruleList.forEach(function (rule, index) {
       if (rule.conditions) {
         rule.conditions.forEach(function (condition, conditionIndex) {
           if (condition.sampleId) {
-            getFromOpenElisServerSync("/rest/test-details?sampleType=" + condition.sampleId, (resp) => fetchDeafultTests(resp, index, conditionIndex, FIELD.conditions));
-          }
-          if (condition.value) {
-            const test = defaultSampleTests.conditions[index][conditionIndex].find(test => {
-              if (test.value.trim() === condition.testId) {
-                return true
-              }
-            })
-
-            if (test) {
-              loadDefaultResultList(index, conditionIndex, test);
-            }
+            getFromOpenElisServer("/rest/test-details?sampleType=" + condition.sampleId, (resp) => fetchDeafultTests(resp, index, conditionIndex, FIELD.conditions ,condition));
           }
         });
       }
       if (rule.actions) {
         rule.actions.forEach(function (action, actionIndex) {
           if (action.sampleId) {
-            getFromOpenElisServerSync("/rest/test-details?sampleType=" + action.sampleId, (resp) => fetchDeafultTests(resp, index, actionIndex, FIELD.actions));
+            getFromOpenElisServer("/rest/test-details?sampleType=" + action.sampleId, (resp) => fetchDeafultTests(resp, index, actionIndex, FIELD.actions , null));
           }
         });
 
       }
     });
 
-    setTestResultList(defaultTestResultList);
-    setSampleTestList(defaultSampleTests);
   }
 
   const addError = (errorObj) => {
@@ -123,8 +117,26 @@ function ReflexRule() {
     setErrors(error)
   }
 
-  const fetchDeafultTests = (testList, index, item_index, field) => {
+  const fetchDeafultTests = (testList, index, item_index, field ,condition) => {
     loadDeafultSampleTestList(field, index, item_index, testList);
+
+    if(field == FIELD.conditions){
+      if (condition.value) {
+            const test = defaultSampleTests.conditions[index][item_index].find(test => {
+              if (test.value.trim() === condition.testId) {
+                return true
+              }
+            })
+
+            if (test) {
+              loadDefaultResultList(index, item_index, test);
+            }
+        }
+    }
+
+    if(Object.keys(defaultSampleTests["conditions"]).length == ruleList.length){
+      setLoading(false)
+    }
   }
 
   const loadDeafultSampleTestList = (field, index, item_index, resulList) => {
@@ -189,7 +201,7 @@ function ReflexRule() {
 
   const handleSampleSelected = (e, index, item_index, field) => {
     const { value } = e.target;
-    getFromOpenElisServer("/rest/test-details?sampleType=" + value, (resp) => fetchTests(resp, index, item_index, field));
+     getFromOpenElisServer("/rest/test-details?sampleType=" + value, (resp) => fetchTests(resp, index, item_index, field));
   }
 
   const handleCancelDelete = () => {
@@ -256,7 +268,6 @@ function ReflexRule() {
 
   const fetchTests = (testList, index, item_index, field) => {
     loadSampleTestList(field, index, item_index, testList);
-    setLoaded(true)
   }
 
   const fetchSamples = (sampleList) => {
@@ -282,16 +293,16 @@ function ReflexRule() {
         setNumericRelationOptions(options.numericRelationOptions);
         setOverallOptions(options.overallOptions)
       }
-      setLoaded(true)
     }
   }
 
   const handleClick = () => {
     var count = counter + 1;
-    if (count == 1) {
-      loadDefaultTestResultList();
-    }
-    setCounter(count);
+   if (count == 1) {
+      setTestResultList(defaultTestResultList);
+      setSampleTestList(defaultSampleTests);
+   }
+   setCounter(count);
   };
 
   const validateTextInPut = (value, type ) => {
@@ -334,7 +345,7 @@ function ReflexRule() {
   return (
     <>
      {notificationVisible === true ? <AlertDialog/> : ""}
-      {!loaded && (
+      {loading && (
         <Loading></Loading>
       )}
       {ruleList.map((rule, index) => (

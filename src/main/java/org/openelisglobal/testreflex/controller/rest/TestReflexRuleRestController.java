@@ -111,7 +111,7 @@ public class TestReflexRuleRestController {
             results.forEach(result -> {
                 if (result.getValue() != null) {
                     Dictionary dict = dictionaryService.getDictionaryById(result.getValue());
-                    resultList.add(new LabelValuePair(dict.getDictEntryDisplayValue(), dict.getId()));
+                    resultList.add(new LabelValuePair(dict.getLocalizedName(), dict.getId()));
                 }
             });
             testObj.setResultList(resultList);
