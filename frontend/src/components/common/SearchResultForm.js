@@ -853,14 +853,14 @@ export class SearchResults extends React.Component {
         console.log("setStatus" + JSON.stringify(resp))
         if (resp) {
             this.context.setNotificationBody({
-                title: "Notification Message",
+                title: <FormattedMessage id="notification.title"/>,
                 message: this.createMesssage(resp) ,
                 kind: NotificationKinds.success
             })
         } else {
             this.context.setNotificationBody({
-                title: "Notification Message",
-                message: "Error whilt Saving",
+                title: <FormattedMessage id="notification.title"/>,
+                message: "Error while Saving",
                 kind: NotificationKinds.error
             })
         }
