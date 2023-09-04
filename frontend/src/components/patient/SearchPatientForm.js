@@ -27,7 +27,7 @@ import { Formik, Field } from 'formik'
 import SearchPatientFormValues from '../formModel/innitialValues/SearchPatientFormValues'
 
 import {NotificationContext} from "../layout/Layout";
-import {NotificationKinds} from "./CustomNotification";
+import {NotificationKinds} from "../common/CustomNotification";
 
 class SearchPatientForm extends React.Component {
   static contextType = NotificationContext;

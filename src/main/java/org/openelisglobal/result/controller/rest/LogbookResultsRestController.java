@@ -197,9 +197,7 @@ public class LogbookResultsRestController extends LogbookResultsBaseController {
             @RequestParam boolean finished,
             @Validated(LogbookResults.class) @ModelAttribute("form") LogbookResultsForm form, BindingResult result)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        System.out.println("LabNo: "+labNumber);
-        System.out.println("upperRangeAccessionNumber: "+upperRangeAccessionNumber);
-        System.out.println("Patient: "+patientPK);
+
         StatusResultsForm statusResultsForm = new StatusResultsForm();
         statusResultsForm.setCollectionDate(collectionDate);
         statusResultsForm.setRecievedDate(recievedDate);

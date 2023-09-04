@@ -1,6 +1,6 @@
 import React, {useState,useEffect,useContext} from 'react'
 import { Column, Form, Grid} from '@carbon/react';
-import SearchPatientForm from '../common/SearchPatientForm';
+import SearchPatientForm from '../patient/SearchPatientForm';
 
 
 class  ModifyOrder extends React.Component {
