@@ -1,7 +1,7 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {Button, Stack} from "@carbon/react";
-import SearchPatientForm from "../common/SearchPatientForm";
-import CreatePatientForm from "../common/CreatePatientForm";
+import SearchPatientForm from "../patient/SearchPatientForm";
+import CreatePatientForm from "../patient/CreatePatientForm";
 import { FormattedMessage} from 'react-intl';
 const PatientInfo = (props) => {
     const {orderFormValues, setOrderFormValues} = props;

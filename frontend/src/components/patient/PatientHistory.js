@@ -8,7 +8,7 @@ import {
     Section
 
 } from '@carbon/react';
-import SearchPatientForm from '../common/SearchPatientForm';
+import SearchPatientForm from './SearchPatientForm';
 import {useState, useEffect, useRef } from "react";
 
 
