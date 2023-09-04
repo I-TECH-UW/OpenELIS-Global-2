@@ -1,5 +1,5 @@
 import React from 'react'
-import { injectIntl } from 'react-intl'
+import { injectIntl,FormattedMessage } from 'react-intl'
 import { Breadcrumb, BreadcrumbItem, Grid } from '@carbon/react';
 import HomeDashBoard from './home/Dashboard.tsx'
 
@@ -17,7 +17,7 @@ class Home extends React.Component {
         return (
             <><Grid>
                 <Breadcrumb>
-                    <BreadcrumbItem href="/">Home</BreadcrumbItem>
+                    <BreadcrumbItem href="/"><FormattedMessage id="home.label"/></BreadcrumbItem>
                 </Breadcrumb>
             </Grid>
              <div> 

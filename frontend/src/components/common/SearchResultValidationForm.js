@@ -486,7 +486,7 @@ class SearchResultValidationForm extends React.Component {
             alert(message);
 
             this.context.setNotificationBody({
-                title: "Notification Message",
+                title: <FormattedMessage id="notification.title"/>,
                 message: message,
                 kind: NotificationKinds.warning
             })
@@ -530,13 +530,13 @@ class SearchResultValidationForm extends React.Component {
         //console.log("setStatus" + status)
         if (status != 200) {
             this.context.setNotificationBody({
-                title: "Notification Message",
+                title: <FormattedMessage id="notification.title"/>,
                 message: "Error: " + status,
                 kind: NotificationKinds.error
             })
         } else {
             this.context.setNotificationBody({
-                title: "Notification Message",
+                title: <FormattedMessage id="notification.title"/>,
                 message: "Success: " + status,
                 kind: NotificationKinds.success
             })

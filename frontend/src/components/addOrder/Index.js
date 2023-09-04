@@ -10,6 +10,7 @@ import {AlertDialog, NotificationKinds} from "../common/CustomNotification";
 import {postToOpenElisServer} from "../utils/Utils";
 import OrderEntryAdditionalQuestions from './OrderEntryAdditionalQuestions';
 import OrderSuccessMessage from "./OrderSuccessMessage";
+import { FormattedMessage} from 'react-intl';
 
 export let sampleObject = {
     index: 0,
@@ -43,14 +44,14 @@ const Index = () => {
 
     const showAlertMessage = (msg, kind) => {
         setNotificationVisible(true);
-        setNotificationBody({kind: kind, title: "Notification Message", message: msg});
+        setNotificationBody({kind: kind, title: <FormattedMessage id="notification.title"/>, message: msg});
     }
 
     const handlePost = (status) => {
         if (status === 200) {
-            showAlertMessage("Sample Order Entry has been saved successfully", NotificationKinds.success);
+            showAlertMessage(<FormattedMessage id="save.order.success.msg"/>, NotificationKinds.success);
         } else {
-            showAlertMessage("Oops, Server error please contact administrator", NotificationKinds.error);
+            showAlertMessage(<FormattedMessage id="server.error.msg"/>, NotificationKinds.error);
         }
     }
     const handleSubmitOrderForm = (e) => {
@@ -139,21 +140,21 @@ const Index = () => {
                 <div className='pageContent'>
                     {notificationVisible === true ? <AlertDialog/> : ""}
                     <div className="orderWorkFlowDiv">
-                        <h2>Test Request</h2>
+                        <h2>{<FormattedMessage id="order.test.request.heading"/>}</h2>
                         {page <= orderPageNumber && <ProgressIndicator currentIndex={page} className="ProgressIndicator" spaceEqually={true}
                                            onChange={(e) => handleTabClickHandler(e)}>
                             <ProgressStep
                                 complete
-                                label="Patient Info"
+                                label={<FormattedMessage id="order.step.patient.info"/>}
                             />
                             <ProgressStep
-                                label="Program Selection"
+                                label={<FormattedMessage id="order.step.program.selection"/>}
                             />
                             <ProgressStep
-                                label="Add Sample"
+                                label={<FormattedMessage id="sample.add.action"/>}
                             />
                             <ProgressStep
-                                label="Add Order"
+                                label={<FormattedMessage id="order.label.add"/>}
                             />
                         </ProgressIndicator> }
 
@@ -179,13 +180,13 @@ const Index = () => {
                         }
                         <div className="navigationButtonsLayout">
                             {(page !== firstPageNumber && page <= orderPageNumber) &&
-                                <Button kind="tertiary" onClick={() => navigateBackWards()}>Back</Button>}
+                                <Button kind="tertiary" onClick={() => navigateBackWards()}>{<FormattedMessage id="back.action.button"/>}</Button>}
 
                             {page <  orderPageNumber && <Button kind="primary" className="forwardButton"
-                                                  onClick={() => navigateForward()}>Next</Button> }
+                                                  onClick={() => navigateForward()}>{<FormattedMessage id="next.action.button"/>}</Button> }
 
                             {page === orderPageNumber && <Button kind="primary" className="forwardButton"
-                                                   onClick={handleSubmitOrderForm}>Submit</Button>}
+                                                   onClick={handleSubmitOrderForm}>{<FormattedMessage id="label.button.submit"/>}</Button>}
 
                         </div>
                     </div>

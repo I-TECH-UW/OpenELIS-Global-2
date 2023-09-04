@@ -85,7 +85,7 @@ export class SearchResultForm extends React.Component {
         } else {
             this.props.setResults?.({ testResult: [] });
             this.context.setNotificationBody({
-                title: "Notification Message",
+                title: <FormattedMessage id="notification.title"/>,
                 message: "No results found!",
                 kind: NotificationKinds.warning
             })
@@ -828,7 +828,7 @@ export class SearchResults extends React.Component {
             alert(message);
 
             this.context.setNotificationBody({
-                title: "Notification Message",
+                title: <FormattedMessage id="notification.title"/>,
                 message: message,
                 kind: NotificationKinds.warning
             })
@@ -860,7 +860,7 @@ export class SearchResults extends React.Component {
         } else {
             this.context.setNotificationBody({
                 title: "Notification Message",
-                message: "Error whilt Saving",
+                message: "Error while Saving",
                 kind: NotificationKinds.error
             })
         }

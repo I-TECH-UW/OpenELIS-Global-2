@@ -96,9 +96,9 @@ function ImmunohistochemistryCaseView() {
       const save2 = document.getElementById("pathology_save2");
       save1.disabled = true;
       save2.disabled = true;
-      setNotificationBody({ kind: NotificationKinds.success, title: "Notification Message", message: "Succesfuly saved" });
+      setNotificationBody({ kind: NotificationKinds.success, title: <FormattedMessage id="notification.title"/>, message: "Succesfuly saved" });
     } else {
-      setNotificationBody({ kind: NotificationKinds.error, title: "Notification Message", message: "Error while saving" });
+      setNotificationBody({ kind: NotificationKinds.error, title: <FormattedMessage id="notification.title"/>, message: "Error while saving" });
     }
   }
 

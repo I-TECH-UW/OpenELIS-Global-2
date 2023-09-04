@@ -104,9 +104,9 @@ function CytologyCaseView() {
       const save2 = document.getElementById("pathology_save2");
       save1.disabled = true;
       save2.disabled = true;
-      setNotificationBody({ kind: NotificationKinds.success, title: "Notification Message", message: "Succesfuly saved" });
+      setNotificationBody({ kind: NotificationKinds.success, title: <FormattedMessage id="notification.title"/>, message: "Succesfuly saved" });
     } else {
-      setNotificationBody({ kind: NotificationKinds.error, title: "Notification Message", message: "Error while saving" });
+      setNotificationBody({ kind: NotificationKinds.error, title: <FormattedMessage id="notification.title"/>, message: "Error while saving" });
     }
   }
 
@@ -312,7 +312,7 @@ function CytologyCaseView() {
 
           <Select id="assignedTechnician"
             name="assignedTechnician"
-            labelText="Technician Assigned"
+            labelText={<FormattedMessage id="assigned.technician.label"/>}
             value={pathologySampleInfo.assignedTechnicianId}
             onChange={(event) => {
               setPathologySampleInfo({ ...pathologySampleInfo, assignedTechnicianId: event.target.value });
@@ -330,7 +330,7 @@ function CytologyCaseView() {
         <Column lg={4} md={2} sm={2}>
           <Select id="assignedPathologist"
             name="assignedPathologist"
-            labelText="Pathologist Assigned"
+            labelText={<FormattedMessage id="assigned.pathologist.label"/>}
             value={pathologySampleInfo.assignedPathologistId}
             onChange={e => {
               setPathologySampleInfo({ ...pathologySampleInfo, assignedPathologistId: e.target.value });
@@ -370,9 +370,9 @@ function CytologyCaseView() {
               <Column lg={3} md={2} sm={1} key={index}>
                 <TextInput
                   id="slideNumber"
-                  labelText="slide number"
+                  labelText={<FormattedMessage id="pathology.label.slide.number"/>}
                   hideLabel={true}
-                  placeholder="Slide Number"
+                  placeholder={<FormattedMessage id="pathology.label.slide.number"/>}
                   value={slide.slideNumber}
                   type="number"
                   onChange={e => {
@@ -385,9 +385,9 @@ function CytologyCaseView() {
               <Column lg={3} md={2} sm={1}>
                 <TextInput
                   id="location"
-                  labelText="location"
+                  labelText={<FormattedMessage id="pathology.label.location"/>}
                   hideLabel={true}
-                  placeholder="Location"
+                  placeholder={<FormattedMessage id="pathology.label.location"/>}
                   value={slide.location}
                   onChange={e => {
                     var newSlides = [...pathologySampleInfo.slides];
@@ -462,11 +462,11 @@ function CytologyCaseView() {
         <Column lg={4} md={2} sm={2} >
           <Select id="report"
             name="report"
-            labelText="Add Report"
+            labelText={<FormattedMessage id="immunohistochemistry.label.addreport"/>}
             onChange={(event) => {
               setPathologySampleInfo({...pathologySampleInfo, reports: [...(pathologySampleInfo.reports || []), {id: '', reportType: event.target.value}]});
             }}>
-            <SelectItem disabled value="ADD" text="Add Report" />
+            <SelectItem disabled value="ADD" text={<FormattedMessage id="immunohistochemistry.label.addreport"/>} />
             {reportTypes.map((report, index) => {
               return (<SelectItem key={index}
                 text={report.value}

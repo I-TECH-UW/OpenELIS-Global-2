@@ -221,9 +221,9 @@ function ReflexRule() {
   const handleDelete = (status) => {
     setNotificationVisible(true);
     if(status == "200"){
-      setNotificationBody({kind: NotificationKinds.success, title: "Notification Message", message: "Succesfuly Deleted"});
+      setNotificationBody({kind: NotificationKinds.success, title: <FormattedMessage id="notification.title"/>, message: "Succesfuly Deleted"});
     }else{
-      setNotificationBody({kind: NotificationKinds.error, title: "Notification Message", message: "Error while Deleting"});
+      setNotificationBody({kind: NotificationKinds.error, title: <FormattedMessage id="notification.title"/>, message: "Error while Deleting"});
     }
   }
 
@@ -254,9 +254,9 @@ function ReflexRule() {
     if(status == "200"){
       const element = document.getElementById("submit_"+index)
       element.disabled = true;
-      setNotificationBody({kind: NotificationKinds.success, title: "Notification Message", message: "Succesfuly saved"});
+      setNotificationBody({kind: NotificationKinds.success, title: <FormattedMessage id="notification.title"/>, message: "Succesfuly saved"});
     }else{
-      setNotificationBody({kind: NotificationKinds.error, title: "Notification Message", message: "Duplicate Calculation Name or Error while saving"});
+      setNotificationBody({kind: NotificationKinds.error, title: <FormattedMessage id="notification.title"/>, message: "Duplicate Calculation Name or Error while saving"});
     }
   };
 
