@@ -36,8 +36,8 @@ interface NotificationContextType {
 
 interface NotificationBody {
   kind: any
-  title: string
-  message: string
+  title: string | JSX.Element
+  message: string | JSX.Element
 }
 
 var TestListObj: SampleTestListInterface = {
