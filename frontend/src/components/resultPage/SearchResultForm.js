@@ -112,6 +112,7 @@ export class SearchResultForm extends React.Component {
         let accessionNumber = values.accessionNumber!==""? values.accessionNumber: values.startLabNo ;
         let labNo = accessionNumber!==undefined? accessionNumber: "";
         const endLabNo = values.endLabNo !==undefined? values.endLabNo : "";
+        values.unitType = values.unitType?values.unitType:"";
 
         let searchEndPoint = "/rest/ReactLogbookResultsByRange?" +
             "labNumber=" + labNo +
