@@ -9,8 +9,8 @@ interface DashBoardProps {
 }
 
 interface Tile {
-    title: string,
-    subTitle: string,
+    title: string | JSX.Element,
+    subTitle: string | JSX.Element,
     value: number
 }
 
