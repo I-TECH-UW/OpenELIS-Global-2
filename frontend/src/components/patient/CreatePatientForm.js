@@ -24,7 +24,7 @@ import {
 import {Formik, Field, ErrorMessage, useFormikContext} from "formik";
 import CreatePatientFormValues from '../formModel/innitialValues/CreatePatientFormValues';
 import PatientFormObserver from "./PatientFormObserver";
-import {AlertDialog, NotificationKinds} from "./CustomNotification";
+import {AlertDialog, NotificationKinds} from "../common/CustomNotification";
 import {NotificationContext} from "../layout/Layout";
 import CreatePatientValidationSchema from '../formModel/validationSchema/CreatePatientValidationShema';
 
