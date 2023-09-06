@@ -268,6 +268,11 @@
     "patient.first.name": "First Name",
     "patient.last.name": "Last Name",
     "patient.prev.lab.no": "Previous Lab Number",
-    "patient.id": "Patient Id"
+    "patient.id": "Patient Id",
+    "label.button.select.status": "Select Status" ,
+    "label.button.select.technician": "Select Technician" ,
+    "label.button.select.pathologist": "Select Pathologist" ,
+    "label.button.select.test": "Select Test",
+    "assigned.cytopathologist.label" : "CytoPathologist Assigned"
 
 }

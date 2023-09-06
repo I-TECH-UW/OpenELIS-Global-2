@@ -266,5 +266,10 @@
     "patient.first.name": "Prénom",
     "patient.last.name": "Nom de famille",
     "patient.prev.lab.no": "Numéro de laboratoire précédent",
-    "patient.id": "Numéro du patient"
+    "patient.id": "Numéro du patient",
+    "label.button.select.status": "Sélectionner l'état",
+    "label.button.select.technician": "Sélectionner le technicien",
+    "label.button.select.pathologist": "Sélectionner le pathologiste",
+    "label.button.select.test": "Sélectionner le test",
+    "assigned.cytopathologist.label": "Cytopathologiste attribué"
 }

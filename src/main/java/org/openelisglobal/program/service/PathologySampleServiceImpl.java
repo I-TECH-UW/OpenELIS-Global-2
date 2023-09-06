@@ -37,6 +37,7 @@ import org.openelisglobal.program.valueholder.pathology.PathologyConclusion;
 import org.openelisglobal.program.valueholder.pathology.PathologyConclusion.ConclusionType;
 import org.openelisglobal.program.valueholder.pathology.PathologyRequest;
 import org.openelisglobal.program.valueholder.pathology.PathologyRequest.RequestType;
+import org.openelisglobal.program.valueholder.pathology.PathologyRequest.RequestStatus;
 import org.openelisglobal.program.valueholder.pathology.PathologySample;
 import org.openelisglobal.program.valueholder.pathology.PathologySample.PathologyStatus;
 import org.openelisglobal.program.valueholder.pathology.PathologyTechnique;
@@ -150,9 +151,10 @@ public class PathologySampleServiceImpl extends BaseObjectServiceImpl<PathologyS
             pathologySample.getConclusions().addAll(form.getConclusions().stream()
                     .map(e -> createConclusion(e, ConclusionType.DICTIONARY)).collect(Collectors.toList()));
         pathologySample.getRequests().removeAll(pathologySample.getRequests());
-        if (form.getRequests() != null)
+        if (form.getRequests() != null){
             pathologySample.getRequests().addAll(
-                form.getRequests().stream().map(e -> createRequest(e, RequestType.DICTIONARY)).collect(Collectors.toList()));
+                form.getRequests().stream().map(e -> createRequest(e.getValue(), RequestType.DICTIONARY ,e.getStatus())).collect(Collectors.toList()));
+        }
         pathologySample.getTechniques().removeAll(pathologySample.getTechniques());
         if (form.getTechniques() != null)
             pathologySample.getTechniques().addAll(form.getTechniques().stream()
@@ -298,10 +300,11 @@ public class PathologySampleServiceImpl extends BaseObjectServiceImpl<PathologyS
         return conclusion;
     }
     
-    public PathologyRequest createRequest(String text, RequestType type) {
+    public PathologyRequest createRequest(String text, RequestType type , RequestStatus status) {
         PathologyRequest request = new PathologyRequest();
         request.setValue(text);
         request.setType(type);
+        request.setStatus(status);
         return request;
     }
     

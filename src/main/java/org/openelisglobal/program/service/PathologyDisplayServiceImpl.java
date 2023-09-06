@@ -22,6 +22,7 @@ import org.openelisglobal.program.valueholder.pathology.PathologyConclusion.Conc
 import org.openelisglobal.program.valueholder.pathology.PathologyDisplayItem;
 import org.openelisglobal.program.valueholder.pathology.PathologyRequest.RequestType;
 import org.openelisglobal.program.valueholder.pathology.PathologySample;
+import org.openelisglobal.program.valueholder.pathology.PathologyCaseViewDisplayItem.RequestDisplayBean;
 import org.openelisglobal.program.valueholder.pathology.PathologyTechnique.TechniqueType;
 import org.openelisglobal.sample.bean.SampleOrderItem;
 import org.openelisglobal.sample.service.SampleService;
@@ -119,7 +120,7 @@ public class PathologyDisplayServiceImpl implements PathologyDisplayService {
                         .collect(Collectors.toList()));
         displayItem.setRequests(pathologySample.getRequests().stream()
                 .filter(e -> e.getType() == RequestType.DICTIONARY)
-                        .map(e -> new IdValuePair(e.getValue(), dictionaryService.get(e.getValue()).getLocalizedName()))
+                        .map(e -> new RequestDisplayBean(e.getValue(), dictionaryService.get(e.getValue()).getLocalizedName() ,e.getStatus()))
                         .collect(Collectors.toList()));
         
         SampleOrderService sampleOrderService = new SampleOrderService(pathologySample.getSample());

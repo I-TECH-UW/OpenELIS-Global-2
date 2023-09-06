@@ -16,7 +16,17 @@ import org.openelisglobal.common.valueholder.BaseObject;
 public class PathologyRequest extends BaseObject<Integer> {
 
     public enum RequestStatus {
-        OPENED, RESOLVED, CANCELLED
+        OPENED("Opened"), COMPLETED("Completed"), CANCELLED("Cancelled") ;
+        
+        private String display;
+        
+        RequestStatus(String display) {
+            this.display = display;
+        }
+        
+        public String getDisplay() {
+            return display;
+        }
     }
 
     public enum RequestType {
@@ -49,7 +59,7 @@ public class PathologyRequest extends BaseObject<Integer> {
     private Integer id;
 
     @Enumerated(EnumType.STRING)
-    private RequestStatus status;
+    private RequestStatus status = RequestStatus.OPENED;
 
     @Enumerated(EnumType.STRING)
     private RequestType type;
