@@ -1,0 +1,59 @@
+{
+  "program": {
+    "code": "PATH",
+    "programName": "Histopathology",
+    "questionnaireUUID": "73f19a23-3899-4c4f-b7a1-8f945b72ded8",
+    "testSection": {
+      "testSectionName": "Pathology"
+    }
+  },
+  "additionalOrderEntryQuestions": {
+    "resourceType": "Questionnaire",
+    "id": "73f19a23-3899-4c4f-b7a1-8f945b72ded8",
+    "text": {
+      "status": "generated",
+      "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">\n      \n      <pre>\n            1.Comorbidity?\n              1.1 Cardial Comorbidity\n                1.1.1 Angina?\n                1.1.2 MI?\n              1.2 Vascular Comorbidity?\n              ...\n            Histopathology\n              Abdominal\n                pT category?\n              ...\n          </pre>\n    \n    </div>"
+    },
+    "url": "",
+    "identifier": [
+      {
+        "system": "urn:ietf:rfc:3986",
+        "value": "urn:oid:2.16.840.1.113883.4.642.20.2"
+      }
+    ],
+    "name": "Pathology Reception",
+    "title": "",
+    "status": "active",
+    "subjectType": ["Patient", "Specimen", "ServiceRequest"],
+    "description": "Extra information for Pathology workflow",
+    "item": [
+      {
+        "linkId": "6d821b70-fee6-4da0-a094-1e9d20a55d48",
+        "text": "Site of Specimen",
+        "type": "choice",
+        "answerOption": []
+      },
+      {
+        "linkId": "5c89c621-7dcc-481a-abd6-d64af8077a58",
+        "text": "Procedure performed",
+        "type": "choice",
+        "answerOption": [
+          { "valueString": "Core Biopsy" },
+          { "valueString": "Lumpectomy" },
+          { "valueString": "Core Biopsy" }
+        ]
+      },
+      {
+        "linkId": "e430bd11-4557-4666-ac0c-d87c562b6078",
+        "text": "Provisional Clinical Diagnosis",
+        "type": "choice",
+        "answerOption": []
+      },
+      {
+        "linkId": "f63294dc-c115-4015-a910-831edb12a6a1",
+        "text": "Previous Surgery / Treatment",
+        "type": "text"
+      }
+    ]
+  }
+}
