@@ -3,11 +3,11 @@ package org.openelisglobal.program.controller.pathology;
 import java.util.Base64;
 import java.util.List;
 
-import org.openelisglobal.program.controller.cytology.CytologySampleForm.CytologyReportForm;
 import org.openelisglobal.program.valueholder.pathology.PathologyBlock;
 import org.openelisglobal.program.valueholder.pathology.PathologyReport;
 import org.openelisglobal.program.valueholder.pathology.PathologySample.PathologyStatus;
 import org.openelisglobal.program.valueholder.pathology.PathologySlide;
+import org.openelisglobal.program.valueholder.pathology.PathologyRequest.RequestStatus;
 
 public class PathologySampleForm {
     
@@ -23,7 +23,7 @@ public class PathologySampleForm {
     
     private List<String> techniques;
     
-    private List<String> requests;
+    private List<PathologyRequestForm> requests;
     
     private List<String> resolvedRequests;
     
@@ -95,11 +95,11 @@ public class PathologySampleForm {
         this.techniques = techniques;
     }
     
-    public List<String> getRequests() {
+    public List<PathologyRequestForm> getRequests() {
         return requests;
     }
     
-    public void setRequests(List<String> requests) {
+    public void setRequests(List<PathologyRequestForm> requests) {
         this.requests = requests;
     }
     
@@ -227,5 +227,27 @@ public class PathologySampleForm {
             setFileType(imageInfo[0]);
             setImage(Base64.getDecoder().decode(imageInfo[1]));
         }
+    }
+
+    public static class PathologyRequestForm {
+        private String value ;
+        private RequestStatus status ;
+        
+        public String getValue() {
+            return value;
+        }
+        
+        public void setValue(String value) {
+            this.value = value;
+        }
+        
+        public RequestStatus getStatus() {
+            return status;
+        }
+        
+        public void setStatus(RequestStatus status) {
+            this.status = status;
+        }
+        
     }
 }

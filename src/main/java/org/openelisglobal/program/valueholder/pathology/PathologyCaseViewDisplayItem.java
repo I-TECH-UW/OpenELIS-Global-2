@@ -5,7 +5,7 @@ import java.util.List;
 import org.hl7.fhir.r4.model.Questionnaire;
 import org.hl7.fhir.r4.model.QuestionnaireResponse;
 import org.openelisglobal.common.util.IdValuePair;
-import org.openelisglobal.program.valueholder.immunohistochemistry.ImmunohistochemistrySampleReport;
+import org.openelisglobal.program.valueholder.pathology.PathologyRequest.RequestStatus;
 
 public class PathologyCaseViewDisplayItem extends PathologyDisplayItem {
     
@@ -33,7 +33,7 @@ public class PathologyCaseViewDisplayItem extends PathologyDisplayItem {
     
     private List<IdValuePair> techniques;
     
-    private List<IdValuePair> requests;
+    private List<RequestDisplayBean> requests;
     
     private List<IdValuePair> conclusions;
     
@@ -141,11 +141,11 @@ public class PathologyCaseViewDisplayItem extends PathologyDisplayItem {
         this.conclusionText = conclusionText;
     }
     
-    public List<IdValuePair> getRequests() {
+    public List<RequestDisplayBean> getRequests() {
         return requests;
     }
     
-    public void setRequests(List<IdValuePair> requests) {
+    public void setRequests(List<RequestDisplayBean> requests) {
         this.requests = requests;
     }
     
@@ -187,6 +187,28 @@ public class PathologyCaseViewDisplayItem extends PathologyDisplayItem {
     
     public void setReports(List<PathologyReport> reports) {
         this.reports = reports;
+    }
+    
+    public static class RequestDisplayBean extends IdValuePair {
+        
+        public RequestDisplayBean(String id, String value) {
+            super(id, value);
+        }
+        
+        public RequestDisplayBean(String id, String value, RequestStatus status) {
+            super(id, value);
+            this.status = status;
+        }
+        
+        private RequestStatus status;
+        
+        public RequestStatus getStatus() {
+            return status;
+        }
+        
+        public void setStatus(RequestStatus status) {
+            this.status = status;
+        }
     }
     
 }
