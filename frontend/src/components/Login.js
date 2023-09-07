@@ -74,7 +74,7 @@ function Login(props) {
           window.location.href = "/";
         } else {
           setNotificationBody({
-            title: "Notification Message",
+            title: <FormattedMessage id="notification.title" />,
             message: data.error,
             kind: NotificationKinds.error,
           });

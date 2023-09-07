@@ -196,9 +196,9 @@ function CytologyDashboard() {
     pastWeekDate.setDate(currentDate.getDate() - 7);
 
     return (
-      formatDateToDDMMYYYY(currentDate) +
+      formatDateToDDMMYYYY(pastWeekDate) +
       " - " +
-      formatDateToDDMMYYYY(pastWeekDate)
+      formatDateToDDMMYYYY(currentDate)
     );
   };
 
@@ -235,8 +235,7 @@ function CytologyDashboard() {
           <Section>
             <Section>
               <Heading>
-                Cytology
-                {/* <FormattedMessage id="pathology.label.title" /> */}
+                <FormattedMessage id="cytology.label.title" />
               </Heading>
             </Section>
           </Section>

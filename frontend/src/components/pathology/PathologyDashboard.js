@@ -197,9 +197,9 @@ function PathologyDashboard() {
     pastWeekDate.setDate(currentDate.getDate() - 7);
 
     return (
-      formatDateToDDMMYYYY(currentDate) +
+      formatDateToDDMMYYYY(pastWeekDate) +
       " - " +
-      formatDateToDDMMYYYY(pastWeekDate)
+      formatDateToDDMMYYYY(currentDate)
     );
   };
 

@@ -2,7 +2,7 @@ import React from "react";
 import { FormattedMessage, injectIntl } from "react-intl";
 import "../Style.css";
 import { Heading, Grid, Column, Section } from "@carbon/react";
-import SearchPatientForm from "../common/SearchPatientForm";
+import SearchPatientForm from "./SearchPatientForm";
 import { useState, useEffect, useRef } from "react";
 
 const PatientHistory = () => {
@@ -45,9 +45,9 @@ const PatientHistory = () => {
       </Grid>
       <br></br>
 
-      <SearchPatientForm
-        getSelectedPatient={getSelectedPatient}
-      ></SearchPatientForm>
+      <div className="orderLegendBody">
+        <SearchPatientForm getSelectedPatient={getSelectedPatient} />
+      </div>
     </>
   );
 };

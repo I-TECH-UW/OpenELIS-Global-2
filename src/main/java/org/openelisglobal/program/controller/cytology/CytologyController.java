@@ -11,7 +11,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.openelisglobal.common.rest.BaseRestController;
 import org.openelisglobal.program.bean.CytologyDashBoardCount;
-import org.openelisglobal.program.bean.PathologyDashBoardCount;
 import org.openelisglobal.program.service.cytology.CytologyDisplayService;
 import org.openelisglobal.program.service.cytology.CytologySampleService;
 import org.openelisglobal.program.valueholder.cytology.CytologyCaseViewDisplayItem;

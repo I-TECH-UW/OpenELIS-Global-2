@@ -89,8 +89,8 @@ function ProgramManagement() {
     if (res.status == "200") {
       setNotificationBody({
         kind: NotificationKinds.success,
-        title: "Notification Message",
-        message: "Succesfuly Added/Edited",
+        title: <FormattedMessage id="notification.title" />,
+        message: <FormattedMessage id="success.add.edited.msg" />,
       });
       getFromOpenElisServer("/rest/displayList/PROGRAM", fetchPrograms);
       var body = await res.json();
@@ -105,8 +105,8 @@ function ProgramManagement() {
     } else {
       setNotificationBody({
         kind: NotificationKinds.error,
-        title: "Notification Message",
-        message: "Error while Editing/Adding",
+        title: <FormattedMessage id="notification.title" />,
+        message: <FormattedMessage id="error.add.edited.msg" />,
       });
     }
   }
@@ -158,7 +158,9 @@ function ProgramManagement() {
       <div className="adminPageContent">
         <Form onSubmit={handleSubmit}>
           <FormLabel>
-            <Heading>Add/Edit Program</Heading>
+            <Heading>
+              <FormattedMessage id="edit.add.program.title" />
+            </Heading>
           </FormLabel>
           <div className="formInlineDiv">
             <Select
@@ -166,7 +168,10 @@ function ProgramManagement() {
               labelText="program"
               onChange={handleProgramSelection}
             >
-              <SelectItem value="" text="New Program" />
+              <SelectItem
+                value=""
+                text={<FormattedMessage id="new.program.label" />}
+              />
               {programs.map((program) => {
                 return (
                   <SelectItem
@@ -191,7 +196,7 @@ function ProgramManagement() {
               type="text"
               name="program.programName"
               id="program.programName"
-              labelText="Program Name"
+              labelText={<FormattedMessage id="program.name.label" />}
               value={programValues.program.programName}
               onChange={handleFieldChange}
             />
@@ -199,7 +204,7 @@ function ProgramManagement() {
           <div className="formInlineDiv">
             <Select
               id="test_section"
-              labelText="Test Section"
+              labelText={<FormattedMessage id="test.section.label" />}
               name="testSectionId"
               value={programValues.testSectionId}
               onChange={handleFieldChange}

@@ -50,7 +50,7 @@ const SearchForm = (props) => {
 
         setNotificationBody({
           kind: NotificationKinds.warning,
-          title: "Notification Message",
+          title: <FormattedMessage id="notification.title" />,
           message: "No Results found to be validated",
         });
         setNotificationVisible(true);

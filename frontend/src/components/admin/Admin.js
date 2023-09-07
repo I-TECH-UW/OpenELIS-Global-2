@@ -18,27 +18,37 @@ function Admin() {
     <>
       <SideNav aria-label="Side navigation" expanded={true}>
         <SideNavItems className="adminSideNav">
-          <SideNavMenu title="Test Management">
+          <SideNavMenu
+            title={<FormattedMessage id="sidenav.label.admin.testmgt" />}
+          >
             <SideNavMenuItem href="#reflex">
-              Manage Reflex tests
+              <FormattedMessage id="sidenav.label.admin.testmgt.reflex" />
             </SideNavMenuItem>
             <SideNavMenuItem href="#calculatedValue">
-              Manage Calculated Value tests
+              <FormattedMessage id="sidenav.label.admin.testmgt.calculated" />
             </SideNavMenuItem>
             <SideNavMenuItem href="#1"> Link</SideNavMenuItem>
             <SideNavMenuItem href="#2">Link</SideNavMenuItem>
           </SideNavMenu>
-          <SideNavMenu title="User Management">
+          <SideNavMenu
+            title={<FormattedMessage id="sidenav.label.admin.usermgt" />}
+          >
             <SideNavMenuItem href="#3">Link</SideNavMenuItem>
             <SideNavMenuItem href="#4">Link</SideNavMenuItem>
             <SideNavMenuItem href="#5">Link</SideNavMenuItem>
           </SideNavMenu>
-          <SideNavMenu title="Organization Management">
+          <SideNavMenu
+            title={
+              <FormattedMessage id="sidenav.label.admin.organizationmgt" />
+            }
+          >
             <SideNavMenuItem href="#6">Link</SideNavMenuItem>
             <SideNavMenuItem href="#7">Link</SideNavMenuItem>
             <SideNavMenuItem href="#8">Link</SideNavMenuItem>
           </SideNavMenu>
-          <SideNavMenuItem href="#program">Program entry</SideNavMenuItem>
+          <SideNavMenuItem href="#program">
+            <FormattedMessage id="sidenav.label.admin.program" />
+          </SideNavMenuItem>
           <SideNavMenuItem
             target="_blank"
             href={config.serverBaseUrl + "/MasterListsPage"}

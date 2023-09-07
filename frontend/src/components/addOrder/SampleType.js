@@ -18,13 +18,13 @@ import { FormattedMessage } from "react-intl";
 import { getFromOpenElisServer } from "../utils/Utils";
 import { NotificationContext } from "../layout/Layout";
 import { sampleTypeTestsStructure } from "../data/SampleEntryTestsForTypeProvider";
-import UserSessionDetailsContext from "../../UserSessionDetailsContext";
 import CustomTextInput from "../common/CustomTextInput";
 import OrderReferralRequest from "../addOrder/OrderReferralRequest";
+import UserSessionDetailsContext from "../../UserSessionDetailsContext";
 
 const SampleType = (props) => {
   const { userSessionDetails } = useContext(UserSessionDetailsContext);
-  const { index, rejectSampleReasons } = props;
+  const { index, rejectSampleReasons, removeSample, sample } = props;
   const componentMounted = useRef(true);
   const [sampleTypes, setSampleTypes] = useState([]);
   const sampleTypesRef = useRef(null);
@@ -95,6 +95,10 @@ const SampleType = (props) => {
   useEffect(() => {
     updateSampleXml(sampleXml, index);
   }, [sampleXml]);
+
+  const handleRemoveSampleTest = (index) => {
+    removeSample(index);
+  };
 
   const handleReferralRequest = () => {
     setRequestTestReferral(!requestTestReferral);
@@ -190,28 +194,32 @@ const SampleType = (props) => {
     }
   };
 
-  // function addReferralRequest(test) {
-  //     setReferralRequests([...referralRequests, {
-  //         reasonForReferral: referralReasons[0].id,
-  //         referrer: user.firstName + " " + user.lastName,
-  //         institute: referralOrganizations[0].id,
-  //         sentDate: "",
-  //         testId: test.id
-  //     }]);
-  // }
+  function addReferralRequest(test) {
+    setReferralRequests([
+      ...referralRequests,
+      {
+        reasonForReferral: referralReasons[0].id,
+        referrer:
+          userSessionDetails.firstName + " " + userSessionDetails.lastName,
+        institute: referralOrganizations[0].id,
+        sentDate: "",
+        testId: test.id,
+      },
+    ]);
+  }
 
-  // function removeReferralRequest(test) {
-  //     let index = 0;
-  //     for (let x in referralRequests) {
-  //         if (referralRequests[x].testId === test.id) {
-  //             const newReferralRequests = referralRequests;
-  //             newReferralRequests.splice(index, 1);
-  //             setReferralRequests([...newReferralRequests]);
-  //             break;
-  //         }
-  //         index++;
-  //     }
-  // }
+  function removeReferralRequest(test) {
+    let index = 0;
+    for (let x in referralRequests) {
+      if (referralRequests[x].testId === test.id) {
+        const newReferralRequests = referralRequests;
+        newReferralRequests.splice(index, 1);
+        setReferralRequests([...newReferralRequests]);
+        break;
+      }
+      index++;
+    }
+  }
 
   const handleFetchSampleTypeTests = (e, index) => {
     setSelectedTests([]);
@@ -290,7 +298,7 @@ const SampleType = (props) => {
     if (checked) {
       setNotificationBody({
         kind: NotificationKinds.warning,
-        title: "Notification Message",
+        title: <FormattedMessage id="notification.title" />,
         message: <FormattedMessage id="reject.order.sample.notification" />,
       });
       setNotificationVisible(true);
@@ -435,7 +443,7 @@ const SampleType = (props) => {
         <CustomCheckBox
           id={"reject_" + index}
           onChange={(value) => handleRejection(value)}
-          label="Reject Sample"
+          label={<FormattedMessage id="sample.reject.label" />}
         />
         {sampleXml.rejected && (
           <CustomSelect
@@ -452,7 +460,7 @@ const SampleType = (props) => {
             id={"collectionDate_" + index}
             autofillDate={true}
             onChange={(date) => handleCollectionDate(date)}
-            labelText={"Collection Date"}
+            labelText={<FormattedMessage id="sample.collection.date" />}
             className="inputText"
           />
 
@@ -460,7 +468,7 @@ const SampleType = (props) => {
             id={"collectionTime_" + index}
             onChange={(time) => handleCollectionTime(time)}
             className="inputText"
-            labelText="Collection Time"
+            labelText={<FormattedMessage id="sample.collection.time" />}
           />
         </div>
         <div className="inlineDiv">
@@ -468,7 +476,7 @@ const SampleType = (props) => {
             id={"collector_" + index}
             onChange={(value) => handleCollector(value)}
             defaultValue={""}
-            labelText="Collector"
+            labelText={<FormattedMessage id="collector.label" />}
             className="inputText"
           />
         </div>
@@ -497,7 +505,11 @@ const SampleType = (props) => {
                 <></>
               )}
             </div>
-            <FormGroup legendText={"Search through the available panels"}>
+            <FormGroup
+              legendText={
+                <FormattedMessage id="sample.search.panel.legend.text" />
+              }
+            >
               <Search
                 size="lg"
                 id={`panels_search_` + index}
@@ -535,7 +547,7 @@ const SampleType = (props) => {
                       <Layer>
                         <Tile className={"emptyFilterTests"}>
                           <span>
-                            No panel found matching{" "}
+                            <FormattedMessage id="sample.panel.search.error.msg" />{" "}
                             <strong> "{panelSearchTerm}"</strong>{" "}
                           </span>
                         </Tile>

@@ -22,13 +22,11 @@ import java.sql.Date;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.Vector;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -41,8 +39,6 @@ import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.paging.PagingProperties;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
-import org.openelisglobal.common.services.StatusService.OrderStatus;
-import org.openelisglobal.common.services.StatusService.SampleStatus;
 import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.result.valueholder.Result;
@@ -1556,7 +1552,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
     
     @Override
     public List<Analysis> getPageAnalysisByStatusFromAccession(List<Integer> analysisStatusList,
-            List<Integer> sampleStatusList, String accessionNumber, boolean doRange, boolean finished) {
+            List<Integer> sampleStatusList, String accessionNumber,String upperRangeAccessionNumber, boolean doRange, boolean finished) {
                
         if(finished) {
         analysisStatusList.add(
@@ -1578,8 +1574,8 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         }
         
         String sql = "";
-        if (doRange)
-            sql = "From Analysis a WHERE a.sampleItem.sample.accessionNumber >= :accessionNumber"//
+        if (doRange && StringUtils.isNotBlank(upperRangeAccessionNumber))
+            sql = "From Analysis a WHERE a.sampleItem.sample.accessionNumber between :accessionNumber and :upperRangeAccessionNumber"//
                     + " AND length(a.sampleItem.sample.accessionNumber) = length(:accessionNumber)"//
                     + " AND a.statusId IN (:analysisStatusList)"//
                     + " AND a.sampleItem.sample.statusId IN (:sampleStatusList)"//
@@ -1594,6 +1590,9 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         try {
             Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
             query.setParameter("accessionNumber", accessionNumber);
+            if(StringUtils.isNotBlank(upperRangeAccessionNumber)){
+                query.setParameter("upperRangeAccessionNumber", upperRangeAccessionNumber);
+            }
             query.setParameterList("analysisStatusList", analysisStatusList);
             query.setParameterList("sampleStatusList", sampleStatusList);
             query.setMaxResults(SpringContext.getBean(PagingProperties.class).getResultsPageSize());

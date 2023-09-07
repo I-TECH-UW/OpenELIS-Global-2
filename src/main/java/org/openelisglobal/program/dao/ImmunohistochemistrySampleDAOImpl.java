@@ -63,4 +63,14 @@ public class ImmunohistochemistrySampleDAOImpl extends BaseDAOImpl<Immunohistoch
 
         return list;
     }
+
+    @Override
+    public ImmunohistochemistrySample getByPathologySampleId(Integer pathologySampleId) {
+         String sql = "from from ImmunohistochemistrySample is where is.pathologySample.id = :pathologySampleId";
+        Query<ImmunohistochemistrySample> query = entityManager.unwrap(Session.class).createQuery(sql, ImmunohistochemistrySample.class);
+        query.setParameter("pathologySampleId" ,pathologySampleId);
+        query.setMaxResults(1);
+        ImmunohistochemistrySample sample = query.uniqueResult();
+        return sample;
+    }
 }

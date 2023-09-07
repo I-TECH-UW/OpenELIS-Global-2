@@ -1,4 +1,5 @@
-import React, { useContext, useState, useEffect, useRef } from "react";
+import React, { useCallback } from "react";
+import { useContext, useState, useEffect, useRef } from "react";
 import {
   Form,
   Stack,
@@ -9,6 +10,9 @@ import {
   IconButton,
   Toggle,
   Loading,
+  Checkbox,
+  RadioButtonGroup,
+  RadioButton,
   ModalWrapper,
 } from "@carbon/react";
 import AutoComplete from "../../common/AutoComplete.js";
@@ -56,8 +60,8 @@ interface NotificationContextType {
 
 interface NotificationBody {
   kind: any;
-  title: string;
-  message: string;
+  title: string | JSX.Element;
+  message: string | JSX.Element;
 }
 
 const TestListObj: SampleTestListInterface = {
@@ -174,14 +178,14 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
     if (status == "200") {
       setNotificationBody({
         kind: NotificationKinds.success,
-        title: "Notification Message",
-        message: "Succesfuly Deleted",
+        title: <FormattedMessage id="notification.title" />,
+        message: <FormattedMessage id="delete.success.msg" />,
       });
     } else {
       setNotificationBody({
         kind: NotificationKinds.error,
-        title: "Notification Message",
-        message: "Error while Deleting",
+        title: <FormattedMessage id="notification.title" />,
+        message: <FormattedMessage id="delete.error.msg" />,
       });
     }
   };
@@ -291,17 +295,6 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
     setCalculationList(list);
   }
 
-  // function resetCalculationValue(index: number, calculation: CalculatedValueFormModel) {
-  //   const list = [...calculationList];
-  //   list[index].result = null
-  //   list[index].testId = null
-  // }
-
-  // function resetOperationValue(index: number, operationIndex: number, operation: OperationModel) {
-  //   const list = [...calculationList];
-  //   list[index].operations[operationIndex].value = null;
-  // }
-
   const handleCalculationFieldChange = (e: any, index: number) => {
     const { name, value } = e.target;
     const list = [...calculationList];
@@ -329,14 +322,14 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
       element.disabled = true;
       setNotificationBody({
         kind: NotificationKinds.success,
-        title: "Notification Message",
+        title: <FormattedMessage id="notification.title" />,
         message: "Succesfuly saved",
       });
     } else {
       setNotificationBody({
         kind: NotificationKinds.error,
-        title: "Notification Message",
-        message: "Error while saving",
+        title: <FormattedMessage id="notification.title" />,
+        message: "Duplicate Calculation Name or Error while saving",
       });
     }
   };
@@ -386,7 +379,7 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
       setNotificationVisible(true);
       setNotificationBody({
         kind: NotificationKinds.error,
-        title: "Notification Message",
+        title: <FormattedMessage id="notification.title" />,
         message: "Invalid Calculation Logic : " + error.message,
       });
     }
@@ -541,7 +534,7 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
             >
               <SelectItem text="" value="" />
               {sampleTestList["FINAL_RESULT"][index]
-                .filter((test) => (test.id = calculation.testId))[0]
+                .filter((test) => test.id == calculation.testId)[0]
                 .resultList.map((result, result_index) => (
                   <SelectItem
                     text={result.value}
@@ -625,11 +618,26 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
                         onToggle={(e) => toggleCalculation(e, index)}
                       />
                     </div>
+                    <div>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div>
+                    <div>
+                      <Checkbox
+                        labelText={"Active: " + calculation.active}
+                        name="active"
+                        id={index + "_active"}
+                        checked={calculation.active}
+                        disabled={calculation.active}
+                        onChange={(e) => {
+                          const list = [...calculationList];
+                          list[index]["active"] = e.target.checked;
+                          setCalculationList(list);
+                        }}
+                      />
+                    </div>
                   </div>
                   {calculation.toggled && (
                     <>
                       <div className="inlineDiv">
-                        Add &nbsp; &nbsp;
+                        <FormattedMessage id="label.button.add" /> &nbsp; &nbsp;
                         <div>
                           <Button
                             renderIcon={Add}

@@ -25,7 +25,7 @@ import { patientSearchHeaderData } from "../data/PatientResultsTableHeaders";
 import { Formik, Field } from "formik";
 import SearchPatientFormValues from "../formModel/innitialValues/SearchPatientFormValues";
 import { NotificationContext } from "../layout/Layout";
-import { NotificationKinds } from "./CustomNotification";
+import { NotificationKinds } from "../common/CustomNotification";
 
 function SearchPatientForm(props) {
   const { setNotificationVisible, setNotificationBody } =
@@ -65,7 +65,7 @@ function SearchPatientForm(props) {
       setPatientSearchResults(patientsResults);
     } else {
       setNotificationBody({
-        title: "Notification Message",
+        title: <FormattedMessage id="notification.title" />,
         message: "No patients found matching search terms",
         kind: NotificationKinds.warning,
       });
@@ -209,7 +209,6 @@ function SearchPatientForm(props) {
                 )}
               </Field>
             </div>
-
             <div className="formInlineDiv">
               <div className="searchActionButtons">
                 <Button kind="tertiary">External Search</Button>

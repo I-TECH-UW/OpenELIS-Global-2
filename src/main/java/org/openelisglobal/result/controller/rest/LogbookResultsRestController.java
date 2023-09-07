@@ -9,10 +9,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.openelisglobal.common.provider.query.PatientSearchResults;
+import org.apache.commons.lang3.StringUtils;
 import org.openelisglobal.result.controller.LogbookResultsBaseController;
 import org.openelisglobal.result.form.StatusResultsForm;
 import org.openelisglobal.sampleitem.service.SampleItemService;
@@ -190,14 +191,13 @@ public class LogbookResultsRestController extends LogbookResultsBaseController {
 
     @GetMapping(value = "ReactLogbookResultsByRange", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public LogbookResultsForm showReactLogbookResults(@RequestParam(required = false) String labNumber, @RequestParam(required = false) String  nationalId,@RequestParam(required = false) String  firstName,
-                                                      @RequestParam(required = false) String lastName, @RequestParam(required = false) String collectionDate, @RequestParam(required = false) String recievedDate, @RequestParam(required = false) String selectedTest, @RequestParam(required = false) String selectedSampleStatus,
-                                                      @RequestParam(required = false) String selectedAnalysisStatus, @RequestParam(required = false) boolean doRange,
+    public LogbookResultsForm showReactLogbookResults(@RequestParam(required = false) String labNumber, @RequestParam(required = false) String  patientPK,
+                                                       @RequestParam(required = false) String collectionDate, @RequestParam(required = false) String recievedDate, @RequestParam(required = false) String selectedTest, @RequestParam(required = false) String selectedSampleStatus,
+                                                      @RequestParam(required = false) String selectedAnalysisStatus,@RequestParam(required = false) String upperRangeAccessionNumber, @RequestParam(required = false) boolean doRange,
             @RequestParam boolean finished,
             @Validated(LogbookResults.class) @ModelAttribute("form") LogbookResultsForm form, BindingResult result)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        System.out.println("LabNo: "+labNumber);
-        System.out.println("Patient: "+labNumber);
+
         StatusResultsForm statusResultsForm = new StatusResultsForm();
         statusResultsForm.setCollectionDate(collectionDate);
         statusResultsForm.setRecievedDate(recievedDate);
@@ -218,14 +218,14 @@ public class LogbookResultsRestController extends LogbookResultsBaseController {
         newForm.setDisplayTestSections(true);
         newForm.setSearchByRange(false);
 
-        return getLogbookResults(request, newForm,statusResultsForm, labNumber,nationalId,firstName,lastName, doRange, finished);
+        return getLogbookResults(request, newForm,statusResultsForm, labNumber,patientPK,upperRangeAccessionNumber, doRange, finished);
     }
 
 
     @GetMapping(value = "ReactRangeResults", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public LogbookResultsForm showReactLogbookResultsByRange(@RequestParam String labNumber,
-            @RequestParam boolean doRange, @RequestParam boolean finished,
+                                                             @RequestParam String  upperRangeAccessionNumber,@RequestParam boolean doRange, @RequestParam boolean finished,
             @Validated(LogbookResults.class) @ModelAttribute("form") LogbookResultsForm form, BindingResult result)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
@@ -240,10 +240,10 @@ public class LogbookResultsRestController extends LogbookResultsBaseController {
         newForm.setDisplayTestSections(false);
         newForm.setSearchByRange(true);
 
-        return getLogbookResults(request, newForm,null, labNumber,"","","", doRange, finished);
+        return getLogbookResults(request, newForm,null, labNumber,"",upperRangeAccessionNumber, doRange, finished);
     }
 
-    private LogbookResultsForm getLogbookResults(HttpServletRequest request, LogbookResultsForm form,StatusResultsForm statusResultsForm, String labNumber,String nationalId,String firstName,String lastName, boolean doRange,
+    private LogbookResultsForm getLogbookResults(HttpServletRequest request, LogbookResultsForm form,StatusResultsForm statusResultsForm, String labNumber,String patientPK,String upperRangeAccessionNumber, boolean doRange,
             boolean finished) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
    
         String patientName = "";
@@ -310,31 +310,25 @@ public class LogbookResultsRestController extends LogbookResultsBaseController {
                 request.setAttribute("pageSize", filteredTests.size());
 
             } else if (!GenericValidator.isBlankOrNull(form.getAccessionNumber()) ||
-                    !GenericValidator.isBlankOrNull(firstName)
-                    || !GenericValidator.isBlankOrNull(lastName)
-                    || !GenericValidator.isBlankOrNull(nationalId)
+                    !GenericValidator.isBlankOrNull(patientPK)
             ) {
                 tests.clear();
-                tests = resultsLoadUtility.getUnfinishedTestResultItemsByAccession(labNumber, doRange, finished);
+                tests = resultsLoadUtility.getUnfinishedTestResultItemsByAccession(labNumber,upperRangeAccessionNumber, doRange, finished);
 
                 // if no test try patientID
                 if(tests.isEmpty()) {
                     ResultsLoadUtility resultsUtility = SpringContext.getBean(ResultsLoadUtility.class);
                     resultsUtility.setSysUser(getSysUserId(request));
 
-                    List<PatientSearchResults> results = searchService.getSearchResults(lastName, firstName, null,
-                            null, nationalId, null, null, null, null, null);
-                    if(results.isEmpty()){
-                        return form;
-                    }        
-                    for (PatientSearchResults result : results) {
-                        patient = getPatient(result.getPatientID());
+                    if(StringUtils.isBlank(patientPK)){
+                        return (form);
                     }
+                    patient = patientService.get(patientPK);
 
                     tests = resultsUtility.getGroupedTestsForPatient(patient);
                     patientName = patientService.getLastFirstName(patient);
-                    patientInfo = nationalId + ", " + patientService.getGender(patient) + ", "
-                            + patientService.getBirthdayForDisplay(patient);
+                    patientInfo = patient.getNationalId() + ", " + patient.getGender() + ", "
+                            + patient.getBirthDateForDisplay();
                 } 
                 
                 filteredTests = userService.filterResultsByLabUnitRoles(getSysUserId(request), tests, Constants.ROLE_RESULTS);
@@ -422,7 +416,7 @@ public class LogbookResultsRestController extends LogbookResultsBaseController {
 
     @PostMapping(value = "ReactLogbookResultsUpdate", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public LogbookResultsForm showReactLogbookResultsUpdate(HttpServletRequest request,
+    public Map<String ,List<String>> showReactLogbookResultsUpdate(HttpServletRequest request,
             @Validated(LogbookResultsForm.LogbookResults.class) @RequestBody LogbookResultsForm form,
             BindingResult result) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
@@ -433,10 +427,12 @@ public class LogbookResultsRestController extends LogbookResultsBaseController {
         boolean alwaysValidate = ConfigurationProperties.getInstance()
                 .isPropertyValueEqual(Property.ALWAYS_VALIDATE_RESULTS, "true");
         boolean supportReferrals = FormFields.getInstance().useField(Field.ResultsReferral);
+         Map<String ,List<String>> reflexMap  = new HashMap<>();
         String statusRuleSet = ConfigurationProperties.getInstance().getPropertyValueUpperCase(Property.StatusRules);
 
         if ("true".equals(request.getParameter("pageResults"))) {
-            return getLogbookResults(request, form, null,"", "",null,"",true, true);
+            getLogbookResults(request, form, null,"", "",null,true, true);
+            return reflexMap;
         }
 
         if (result.hasErrors()) {
@@ -487,6 +483,8 @@ public class LogbookResultsRestController extends LogbookResultsBaseController {
         try {
             List<Analysis> reflexAnalysises = logbookPersistService.persistDataSet(actionDataSet, updaters,
                     getSysUserId(request));
+            reflexMap.put("reflex" , reflexAnalysises.stream().filter(e -> !e.getResultCalculated()).map(e -> analysisService.getOrderAccessionNumber(e)).collect(Collectors.toList()));
+            reflexMap.put("calculated" , reflexAnalysises.stream().filter(e -> e.getResultCalculated()).map(e -> analysisService.getOrderAccessionNumber(e)).collect(Collectors.toList()));
             try {
                 fhirTransformService.transformPersistResultsEntryFhirObjects(actionDataSet);
             } catch (FhirTransformationException | FhirPersistanceException e) {
@@ -521,7 +519,7 @@ public class LogbookResultsRestController extends LogbookResultsBaseController {
             Map<String, String> params = new HashMap<>();
             params.put("type", form.getType());
         }
-        return (form);
+        return reflexMap;
     }
 
     private void createAnalysisOnlyUpdates(ResultsUpdateDataSet actionDataSet) {

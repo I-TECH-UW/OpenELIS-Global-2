@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Column, Grid, Select, SelectItem } from "@carbon/react";
-import { injectIntl } from "react-intl";
+import { FormattedMessage, injectIntl } from "react-intl";
 import "../Style.css";
 import { getFromOpenElisServer } from "../utils/Utils";
 
@@ -33,7 +33,9 @@ function TestSectionSelectForm(props) {
           <Select
             defaultValue="placeholder-item"
             id="select-1"
-            invalidText="This is an invalid error message."
+            invalidText={
+              <FormattedMessage id="workplan.panel.selection.error.msg" />
+            }
             helperText={props.title}
             labelText=""
             onChange={handleChange}

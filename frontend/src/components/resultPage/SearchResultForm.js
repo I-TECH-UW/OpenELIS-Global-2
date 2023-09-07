@@ -1,7 +1,10 @@
 import React, { useContext, useEffect, useState, useRef } from "react";
 import { FormattedMessage, injectIntl } from "react-intl";
 import "../Style.css";
-import { getFromOpenElisServer, postToOpenElisServer } from "../utils/Utils";
+import {
+  getFromOpenElisServer,
+  postToOpenElisServerJsonResponse,
+} from "../utils/Utils";
 import {
   Heading,
   Form,
@@ -19,7 +22,6 @@ import {
   Pagination,
   Select,
   SelectItem,
-  Row,
   Loading,
 } from "@carbon/react";
 import DataTable from "react-data-table-component";
@@ -27,10 +29,10 @@ import { Formik, Field } from "formik";
 import SearchResultFormValues from "../formModel/innitialValues/SearchResultFormValues";
 import { AlertDialog, NotificationKinds } from "../common/CustomNotification";
 import { NotificationContext } from "../layout/Layout";
+import SearchPatientForm from "../patient/SearchPatientForm";
 
 function ResultSearchPage() {
   const [resultForm, setResultForm] = useState({ testResult: [] });
-
   return (
     <>
       <SearchResultForm setResults={setResultForm} />
@@ -43,18 +45,18 @@ export function SearchResultForm(props) {
   const { notificationVisible, setNotificationVisible, setNotificationBody } =
     useContext(NotificationContext);
 
-  const [doRange, setDoRange] = useState(true);
-  const [finished, setFinished] = useState(true);
   const [tests, setTests] = useState([]);
   const [analysisStatusTypes, setAnalysisStatusTypes] = useState([]);
   const [sampleStatusTypes, setSampleStatusTypes] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [searchBy, setSearchBy] = useState("");
+  const [searchBy, setSearchBy] = useState({ type: "", doRange: false });
+  const [patient, setPatient] = useState({ patientPK: "" });
+  const [testSections, setTestSections] = useState([]);
 
   const componentMounted = useRef(false);
 
   const setResultsWithId = (results) => {
-    if (results) {
+    if (results.testResult) {
       var i = 0;
       if (results.testResult) {
         results.testResult.forEach((item) => (item.id = "" + i++));
@@ -64,7 +66,7 @@ export function SearchResultForm(props) {
     } else {
       props.setResults?.({ testResult: [] });
       setNotificationBody({
-        title: "Notification Message",
+        title: <FormattedMessage id="notification.title" />,
         message: "No results found!",
         kind: NotificationKinds.warning,
       });
@@ -75,29 +77,33 @@ export function SearchResultForm(props) {
 
   const handleAdvancedSearch = () => {};
 
-  const handleDoRangeChange = () => {
-    console.log("handleDoRangeChange:");
-    setDoRange(!doRange);
+  const getSelectedPatient = (patient) => {
+    setPatient(patient);
+    querySearch(SearchResultFormValues);
   };
 
-  const handleFinishedChange = () => {
-    console.log("handleFinishedChange:");
-    setFinished(!finished);
-  };
-
-  const handleSubmit = (values) => {
+  const querySearch = (values) => {
     setLoading(true);
-    props.setResults?.({ testResult: [] });
-    var searchEndPoint =
+    props.setResults({ testResult: [] });
+
+    let accessionNumber =
+      values.accessionNumber !== ""
+        ? values.accessionNumber
+        : values.startLabNo;
+    let labNo = accessionNumber !== undefined ? accessionNumber : "";
+    const endLabNo = values.endLabNo !== undefined ? values.endLabNo : "";
+    values.unitType = values.unitType ? values.unitType : "";
+
+    let searchEndPoint =
       "/rest/ReactLogbookResultsByRange?" +
       "labNumber=" +
-      values.accessionNumber +
-      "&nationalId=" +
-      values.nationalId +
-      "&firstName=" +
-      values.firstName +
-      "&lastName=" +
-      values.lastName +
+      labNo +
+      "&upperRangeAccessionNumber=" +
+      endLabNo +
+      "&patientPK=" +
+      patient.patientPK +
+      "&testSectionId=" +
+      values.unitType +
       "&collectionDate=" +
       values.collectionDate +
       "&recievedDate=" +
@@ -109,10 +115,14 @@ export function SearchResultForm(props) {
       "&selectedAnalysisStatus=" +
       values.analysisStatus +
       "&doRange=" +
-      doRange +
+      searchBy.doRange +
       "&finished=" +
-      finished;
+      true;
     getFromOpenElisServer(searchEndPoint, setResultsWithId);
+  };
+
+  const handleSubmit = (values) => {
+    querySearch(values);
   };
 
   const getTests = (tests) => {
@@ -133,6 +143,10 @@ export function SearchResultForm(props) {
     }
   };
 
+  const fetchTestSections = (response) => {
+    setTestSections(response);
+  };
+
   useEffect(() => {
     componentMounted.current = true;
     getFromOpenElisServer("/rest/test-list", getTests);
@@ -141,20 +155,21 @@ export function SearchResultForm(props) {
       getAnalysisStatusTypes,
     );
     getFromOpenElisServer("/rest/sample-status-types", getSampleStatusTypes);
-    let param = new URLSearchParams(window.location.search).get("type");
-    setSearchBy(param);
-    return () => {
-      componentMounted.current = false;
-    };
+    getFromOpenElisServer("/rest/user-test-sections", fetchTestSections);
+    let displayFormType = new URLSearchParams(window.location.search).get(
+      "type",
+    );
+    let doRange = new URLSearchParams(window.location.search).get("doRange");
+    setSearchBy({
+      type: displayFormType,
+      doRange: doRange,
+    });
   }, []);
 
   return (
     <>
       {notificationVisible === true ? <AlertDialog /> : ""}
       {loading && <Loading></Loading>}
-
-      {/* <Grid  fullWidth={true} className="gridBoundary"> */}
-      {/* <Column  lg={3}> */}
       <Formik
         initialValues={SearchResultFormValues}
         //validationSchema={}
@@ -162,11 +177,11 @@ export function SearchResultForm(props) {
         onChange
       >
         {({
-          //values,
-          //errors,
-          //touched,
+          //   values,
+          //   errors,
+          //   touched,
           handleChange,
-          //handleBlur,
+          //   handleBlur,
           handleSubmit,
         }) => (
           <Form
@@ -187,62 +202,79 @@ export function SearchResultForm(props) {
                 </Section>
               </FormLabel>
 
-              <Row lg={12}>
-                <div className="inlineDiv">
-                  {searchBy === "order" && (
-                    <Field name="accessionNumber">
+              <div className="inlineDiv">
+                {searchBy.type === "unit" && (
+                  <Field name="unitType">
+                    {({ field }) => (
+                      <Select
+                        className="inputText"
+                        labelText="Select Unit Type"
+                        name={field.name}
+                        id={field.name}
+                      >
+                        <SelectItem text="" value="" />
+                        {testSections.map((test, index) => {
+                          return (
+                            <SelectItem
+                              key={index}
+                              text={test.value}
+                              value={test.id}
+                            />
+                          );
+                        })}
+                      </Select>
+                    )}
+                  </Field>
+                )}
+
+                {searchBy.type === "order" && (
+                  <Field name="accessionNumber">
+                    {({ field }) => (
+                      <TextInput
+                        placeholder={"Enter LabNo"}
+                        className="searchLabNumber inputText"
+                        name={field.name}
+                        id={field.name}
+                        labelText="Enter accession No"
+                      />
+                    )}
+                  </Field>
+                )}
+
+                {searchBy.type === "range" && (
+                  <div className="inlineDiv">
+                    <Field name="startLabNo">
                       {({ field }) => (
                         <TextInput
                           placeholder={"Enter LabNo"}
                           className="searchLabNumber inputText"
                           name={field.name}
                           id={field.name}
-                          labelText=""
-                        />
-                      )}
-                    </Field>
-                  )}
-                </div>
-                {searchBy === "patient" && (
-                  <div className="inlineDiv">
-                    <Field name="nationalId">
-                      {({ field }) => (
-                        <TextInput
-                          placeholder={"Enter Patient National Id"}
-                          className="inputText"
-                          name={field.name}
-                          id={field.name}
-                          labelText=""
-                        />
-                      )}
-                    </Field>
-                    <Field name="firstName">
-                      {({ field }) => (
-                        <TextInput
-                          placeholder={"Enter Patient First name"}
-                          className="searchFirstName inputText"
-                          name={field.name}
-                          id={field.name}
-                          labelText=""
+                          labelText="From"
                         />
                       )}
                     </Field>
 
-                    <Field name="lastName">
+                    <Field name="endLabNo">
                       {({ field }) => (
                         <TextInput
-                          placeholder={"Enter Patient last name"}
-                          className="searchLastName inputText"
+                          placeholder={"Enter LabNo"}
+                          className="searchLabNumber inputText"
                           name={field.name}
                           id={field.name}
-                          labelText=""
+                          labelText="To"
                         />
                       )}
                     </Field>
                   </div>
                 )}
-              </Row>
-              {searchBy === "date" && (
+              </div>
+              {searchBy.type === "patient" && (
+                <SearchPatientForm
+                  getSelectedPatient={getSelectedPatient}
+                ></SearchPatientForm>
+              )}
+              {searchBy.type === "date" && (
                 <div>
                   <div className="inlineDiv">
                     <Field name="collectionDate">
@@ -336,50 +368,27 @@ export function SearchResultForm(props) {
                   </div>
                 </div>
               )}
-              {searchBy === "order" && (
-                <Grid>
-                  <Column lg={2}>
-                    <Field name="doRange">
-                      {({ field }) => (
-                        <Checkbox
-                          defaultChecked={doRange}
-                          onChange={handleDoRangeChange}
-                          name={field.name}
-                          labelText="Do Range"
-                          id={field.name}
-                        />
-                      )}
-                    </Field>
-                  </Column>
-                  <Column lg={2}>
-                    <Field name="finished">
-                      {({ field }) => (
-                        <Checkbox
-                          defaultChecked={finished}
-                          onChange={handleFinishedChange}
-                          //onClick={() => (doRange = false)}
-                          name={field.name}
-                          labelText="Display All"
-                          id={field.name}
-                        />
-                      )}
-                    </Field>
-                  </Column>
-                </Grid>
-              )}
 
               <Column lg={6}>
-                <Button type="submit" id="submit" className="searchResultsBtn">
-                  <FormattedMessage id="label.button.search" />
-                </Button>
+                {searchBy.type !== "patient" && (
+                  <div className="searchActionButtons">
+                    <Button
+                      type="submit"
+                      id="submit"
+                      className="searchResultsBtn"
+                    >
+                      <FormattedMessage id="label.button.search" />
+                    </Button>
 
-                <Button
-                  kind="secondary"
-                  className="advancedSearchResultsBtn"
-                  onClick={handleAdvancedSearch}
-                >
-                  <FormattedMessage id="advanced.search" />
-                </Button>
+                    <Button
+                      kind="secondary"
+                      className="advancedSearchResultsBtn"
+                      onClick={handleAdvancedSearch}
+                    >
+                      <FormattedMessage id="advanced.search" />
+                    </Button>
+                  </div>
+                )}
               </Column>
             </Stack>
           </Form>
@@ -390,8 +399,6 @@ export function SearchResultForm(props) {
 }
 
 export function SearchResults(props) {
-  const jp = require("jsonpath");
-
   const { notificationVisible, setNotificationBody, setNotificationVisible } =
     useContext(NotificationContext);
 
@@ -604,7 +611,7 @@ export function SearchResults(props) {
                 id={"ResultValue" + row.id}
                 name={"testResult[" + row.id + "].resultValue"}
                 //type="text"
-                // value={.resultForm.testResult[row.id].resultValue}
+                // value={resultForm.testResult[row.id].resultValue}
                 labelText=""
                 // helperText="Optional help text"
                 onChange={(e) => handleChange(e, row.id)}
@@ -617,7 +624,7 @@ export function SearchResults(props) {
                 id={"ResultValue" + row.id}
                 name={"testResult[" + row.id + "].resultValue"}
                 //type="text"
-                // value={.resultForm.testResult[row.id].resultValue}
+                // value={resultForm.testResult[row.id].resultValue}
                 labelText=""
                 // helperText="Optional help text"
                 onChange={(e) => handleChange(e, row.id)}
@@ -707,7 +714,7 @@ export function SearchResults(props) {
             return row.resultValue;
         }
       default:
-        return row.resultValue;
+        return;
     }
   };
 
@@ -812,14 +819,17 @@ export function SearchResults(props) {
 
   const validateResults = (e, rowId) => {
     console.log("validateResults:" + e.target.value);
+    // e.target.value;
     handleChange(e, rowId);
   };
 
   const handleChange = (e, rowId) => {
     const { name, id, value } = e.target;
     console.log("handleChange:" + id + ":" + name + ":" + value + ":" + rowId);
+    // setState({value: e.target.value})
     // console.log('State updated to ', e.target.value);
     var form = props.results;
+    var jp = require("jsonpath");
     jp.value(form, name, value);
     var isModified = "testResult[" + rowId + "].isModified";
     jp.value(form, isModified, "true");
@@ -829,6 +839,7 @@ export function SearchResults(props) {
     console.log("handleDatePickerChange:" + date);
     const d = new Date(date).toLocaleDateString("fr-FR");
     var form = props.results;
+    var jp = require("jsonpath");
     jp.value(form, "testResult[" + rowId + "].sentDate_", d);
     var isModified = "testResult[" + rowId + "].isModified";
     jp.value(form, isModified, "true");
@@ -851,7 +862,7 @@ export function SearchResults(props) {
       alert(message);
 
       setNotificationBody({
-        title: "Notification Message",
+        title: <FormattedMessage id="notification.title" />,
         message: message,
         kind: NotificationKinds.warning,
       });
@@ -871,29 +882,43 @@ export function SearchResults(props) {
       delete result.result;
     });
     console.log(props.results);
-    postToOpenElisServer(
+    postToOpenElisServerJsonResponse(
       searchEndPoint,
       JSON.stringify(props.results),
-      setStatus,
+      setResponse,
     );
   };
 
-  const setStatus = (status) => {
-    console.log(status);
-    if (status != 200) {
+  const setResponse = (resp) => {
+    console.log("setStatus" + JSON.stringify(resp));
+    if (resp) {
       setNotificationBody({
-        title: "Notification Message",
-        message: "Error: " + status,
-        kind: NotificationKinds.error,
+        title: <FormattedMessage id="notification.title" />,
+        message: createMesssage(resp),
+        kind: NotificationKinds.success,
       });
     } else {
       setNotificationBody({
-        title: "Notification Message",
-        message: "Test Results have been saved successfully",
-        kind: NotificationKinds.success,
+        title: <FormattedMessage id="notification.title" />,
+        message: "Error while Saving",
+        kind: NotificationKinds.error,
       });
     }
     setNotificationVisible(true);
+  };
+
+  const createMesssage = (resp) => {
+    var message = "";
+    if (resp.reflex.length > 0) {
+      message += "Reflex Tests : " + resp.reflex.join(", ");
+    }
+    if (resp.calculated.length > 0) {
+      message += "Calculated Tests : " + resp.calculated.join(", ");
+    }
+    if (message === "") {
+      message += "Saved Succesfully";
+    }
+    return message;
   };
 
   const handlePageChange = (pageInfo) => {
@@ -916,12 +941,12 @@ export function SearchResults(props) {
           onChange
         >
           {({
-            //values,
-            //errors,
-            //touched,
+            // values,
+            // errors,
+            // touched,
             handleChange,
             //handleBlur,
-            //handleSubmit
+            // handleSubmit,
           }) => (
             <Form
               onChange={handleChange}
@@ -949,8 +974,6 @@ export function SearchResults(props) {
           )}
         </Formik>
       </>
-      {/* </Column> */}
-      {/* </Grid> */}
     </>
   );
 }

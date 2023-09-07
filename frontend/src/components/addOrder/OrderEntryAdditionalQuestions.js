@@ -6,11 +6,10 @@ import {
   TextInput,
   Stack,
 } from "@carbon/react";
-
+import { FormattedMessage } from "react-intl";
 import "../../index.css";
 import "../../App.css";
 import "../Style.css";
-
 import { getFromOpenElisServer } from "../utils/Utils";
 
 export const Questionnaire = ({
@@ -74,10 +73,16 @@ export const Questionnaire = ({
               labelText={item.text}
               onChange={onAnswerChange}
             >
-              <SelectItem disabled value="" text="Choose an option" />
+              <FormattedMessage id="select.default.option.label">
+                {(msg) => <SelectItem disabled value="" text={msg} />}
+              </FormattedMessage>
               <SelectItem value="" text="" />
-              <SelectItem value="true" text="Yes" />
-              <SelectItem value="false" text="No" />
+              <FormattedMessage id="yes.option">
+                {(msg) => <SelectItem disabled value="true" text={msg} />}
+              </FormattedMessage>
+              <FormattedMessage id="no.option">
+                {(msg) => <SelectItem disabled value="false" text={msg} />}
+              </FormattedMessage>
             </Select>
           )}
           {item.type == "choice" && item.repeats !== true && (
@@ -95,7 +100,9 @@ export const Questionnaire = ({
               }
               onChange={onAnswerChange}
             >
-              <SelectItem disabled value="" text="Choose an option" />
+              <FormattedMessage id="select.default.option.label">
+                {(msg) => <SelectItem disabled value="" text={msg} />}
+              </FormattedMessage>
               <SelectItem value="" text="" />
               {"answerOption" in item &&
                 item.answerOption.map((answerOption, index) =>
@@ -247,7 +254,7 @@ export const ProgramSelect = ({
           <div className="inputText">
             <Select
               id="additionalQuestionsSelect"
-              labelText="program"
+              labelText={<FormattedMessage id="label.program" />}
               onChange={programChange}
               defaultValue={
                 programs.find((program) => {

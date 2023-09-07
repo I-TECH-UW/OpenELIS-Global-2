@@ -85,6 +85,27 @@ export const postToOpenElisServerFullResponse = (
     });
 };
 
+export const postToOpenElisServerJsonResponse = (endPoint, payLoad, callback, extraParams) => {
+    fetch(config.serverBaseUrl + endPoint,
+
+        {
+            //includes the browser sessionId in the Header for Authentication on the backend server
+            credentials: "include",
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+                "X-CSRF-Token": localStorage.getItem("CSRF")
+            },
+            body: payLoad
+        }
+    )
+        .then( response => response.json()).then( json =>{
+            callback(json, extraParams)
+        }).catch(error => {
+            console.log(error)
+        })
+}
+
 //provides Synchronous calls to the api
 export const getFromOpenElisServerSync = (endPoint, callback) => {
   const request = new XMLHttpRequest();

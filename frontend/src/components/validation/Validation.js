@@ -96,7 +96,7 @@ const Validation = (props) => {
     }
     setNotificationBody({
       kind: kind,
-      title: "Notification Message",
+      title: <FormattedMessage id="notification.title" />,
       message: message,
     });
     setNotificationVisible(true);
@@ -105,9 +105,6 @@ const Validation = (props) => {
   const handlePageChange = (pageInfo) => {
     if (page != pageInfo.page) {
       setPage(pageInfo.page);
-    }
-    if (pageSize != pageInfo.pageSize) {
-      setPageSize(pageInfo.pageSize);
     }
   };
 

@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 import { FormattedMessage, injectIntl } from "react-intl";
 import "../Style.css";
-
 import { Heading, Grid, Column, Section, Button } from "@carbon/react";
-import SearchPatientForm from "../common/SearchPatientForm";
-import CreatePatientForm from "../common/CreatePatientForm";
+import SearchPatientForm from "./SearchPatientForm";
+import CreatePatientForm from "./CreatePatientForm";
 
 function PatientManagement() {
   const [selectedPatient, setSelectedPatient] = useState({});

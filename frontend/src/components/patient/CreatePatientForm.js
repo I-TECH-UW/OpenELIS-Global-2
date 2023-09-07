@@ -24,10 +24,9 @@ import {
 import { Formik, Field, ErrorMessage } from "formik";
 import CreatePatientFormValues from "../formModel/innitialValues/CreatePatientFormValues";
 import PatientFormObserver from "./PatientFormObserver";
-import { AlertDialog, NotificationKinds } from "./CustomNotification";
+import { AlertDialog, NotificationKinds } from "../common/CustomNotification";
 import { NotificationContext, ConfigurationContext } from "../layout/Layout";
 import CreatePatientValidationSchema from "../formModel/validationSchema/CreatePatientValidationShema";
-
 function CreatePatientForm(props) {
   const { notificationVisible, setNotificationVisible, setNotificationBody } =
     useContext(NotificationContext);
@@ -115,7 +114,7 @@ function CreatePatientForm(props) {
       setNotificationVisible(true);
       setNotificationBody({
         kind: NotificationKinds.error,
-        title: "Notification Message",
+        title: <FormattedMessage id="notification.title" />,
         message: res.body,
       });
     }
@@ -159,13 +158,13 @@ function CreatePatientForm(props) {
     setNotificationVisible(true);
     if (status === 200) {
       setNotificationBody({
-        title: "Notification Message",
+        title: <FormattedMessage id="notification.title" />,
         message: "Patient Saved Succsfuly",
         kind: NotificationKinds.success,
       });
     } else {
       setNotificationBody({
-        title: "Notification Message",
+        title: <FormattedMessage id="notification.title" />,
         message: "Error While Saving Patient",
         kind: NotificationKinds.error,
       });

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import SearchPatientForm from "../common/SearchPatientForm";
+import SearchPatientForm from "../patient/SearchPatientForm";
 
 function ModifyOrder() {
   const [selectedPatient, setSelectedPatient] = useState({});

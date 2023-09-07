@@ -6,6 +6,7 @@ import {
   Select,
   SelectItem,
   Button,
+  Checkbox,
   IconButton,
   Toggle,
   Loading,
@@ -16,11 +17,7 @@ import {
 import { Add, Subtract } from "@carbon/react/icons";
 import Autocomplete from "./AutoComplete";
 import RuleBuilderFormValues from "../../formModel/innitialValues/RuleBuilderFormValues";
-import {
-  getFromOpenElisServer,
-  postToOpenElisServer,
-  getFromOpenElisServerSync,
-} from "../../utils/Utils";
+import { getFromOpenElisServer, postToOpenElisServer } from "../../utils/Utils";
 import { NotificationContext } from "../../layout/Layout";
 import {
   AlertDialog,
@@ -28,6 +25,9 @@ import {
 } from "../../common/CustomNotification";
 import { FormattedMessage } from "react-intl";
 import "./ReflexStyles.css";
+
+var defaultTestResultList = {};
+var defaultSampleTests = { conditions: {}, actions: {} };
 
 function ReflexRule() {
   const componentMounted = useRef(true);
@@ -80,13 +80,11 @@ function ReflexRule() {
     actions: {},
   }); //{field :{index :{field_index:[]}}}
   const [counter, setCounter] = useState(0);
-  const [loaded, setLoaded] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState({});
   const { notificationVisible, setNotificationVisible, setNotificationBody } =
     useContext(NotificationContext);
   const [showConfirmBox, setShowConfirmBox] = useState(true);
-  var defaultTestResultList = {};
-  var defaultSampleTests = { conditions: {}, actions: {} };
 
   useEffect(() => {
     getFromOpenElisServer("/rest/samples", fetchSamples);
@@ -99,12 +97,18 @@ function ReflexRule() {
     };
   }, []);
 
+  useEffect(() => {
+    if (loading) {
+      loadDefaultTestResultList();
+    }
+  }, [ruleList]);
+
   const loadDefaultTestResultList = () => {
     ruleList.forEach(function (rule, index) {
       if (rule.conditions) {
         rule.conditions.forEach(function (condition, conditionIndex) {
           if (condition.sampleId) {
-            getFromOpenElisServerSync(
+            getFromOpenElisServer(
               "/rest/test-details?sampleType=" + condition.sampleId,
               (resp) =>
                 fetchDeafultTests(
@@ -112,39 +116,30 @@ function ReflexRule() {
                   index,
                   conditionIndex,
                   FIELD.conditions,
+                  condition,
                 ),
             );
-          }
-          if (condition.value) {
-            const test = defaultSampleTests.conditions[index][
-              conditionIndex
-            ].find((test) => {
-              if (test.value.trim() === condition.testId) {
-                return true;
-              }
-            });
-
-            if (test) {
-              loadDefaultResultList(index, conditionIndex, test);
-            }
           }
         });
       }
       if (rule.actions) {
         rule.actions.forEach(function (action, actionIndex) {
           if (action.sampleId) {
-            getFromOpenElisServerSync(
+            getFromOpenElisServer(
               "/rest/test-details?sampleType=" + action.sampleId,
               (resp) =>
-                fetchDeafultTests(resp, index, actionIndex, FIELD.actions),
+                fetchDeafultTests(
+                  resp,
+                  index,
+                  actionIndex,
+                  FIELD.actions,
+                  null,
+                ),
             );
           }
         });
       }
     });
-
-    setTestResultList(defaultTestResultList);
-    setSampleTestList(defaultSampleTests);
   };
 
   const addError = (errorObj) => {
@@ -159,8 +154,30 @@ function ReflexRule() {
     setErrors(error);
   };
 
-  const fetchDeafultTests = (testList, index, item_index, field) => {
+  const fetchDeafultTests = (testList, index, item_index, field, condition) => {
     loadDeafultSampleTestList(field, index, item_index, testList);
+
+    if (field == FIELD.conditions) {
+      if (condition.value) {
+        const test = defaultSampleTests.conditions[index][item_index].find(
+          (test) => {
+            if (test.value.trim() === condition.testId) {
+              return true;
+            }
+          },
+        );
+
+        if (test) {
+          loadDefaultResultList(index, item_index, test);
+        }
+      }
+    }
+
+    if (
+      Object.keys(defaultSampleTests["conditions"]).length == ruleList.length
+    ) {
+      setLoading(false);
+    }
   };
 
   const loadDeafultSampleTestList = (field, index, item_index, resulList) => {
@@ -253,13 +270,13 @@ function ReflexRule() {
     if (status == "200") {
       setNotificationBody({
         kind: NotificationKinds.success,
-        title: "Notification Message",
+        title: <FormattedMessage id="notification.title" />,
         message: "Succesfuly Deleted",
       });
     } else {
       setNotificationBody({
         kind: NotificationKinds.error,
-        title: "Notification Message",
+        title: <FormattedMessage id="notification.title" />,
         message: "Error while Deleting",
       });
     }
@@ -294,14 +311,14 @@ function ReflexRule() {
       element.disabled = true;
       setNotificationBody({
         kind: NotificationKinds.success,
-        title: "Notification Message",
+        title: <FormattedMessage id="notification.title" />,
         message: "Succesfuly saved",
       });
     } else {
       setNotificationBody({
         kind: NotificationKinds.error,
-        title: "Notification Message",
-        message: "Error while saving",
+        title: <FormattedMessage id="notification.title" />,
+        message: "Duplicate Calculation Name or Error while saving",
       });
     }
   };
@@ -318,7 +335,6 @@ function ReflexRule() {
 
   const fetchTests = (testList, index, item_index, field) => {
     loadSampleTestList(field, index, item_index, testList);
-    setLoaded(true);
   };
 
   const fetchSamples = (sampleList) => {
@@ -344,14 +360,14 @@ function ReflexRule() {
         setNumericRelationOptions(options.numericRelationOptions);
         setOverallOptions(options.overallOptions);
       }
-      setLoaded(true);
     }
   };
 
   const handleClick = () => {
     var count = counter + 1;
     if (count == 1) {
-      loadDefaultTestResultList();
+      setTestResultList(defaultTestResultList);
+      setSampleTestList(defaultSampleTests);
     }
     setCounter(count);
   };
@@ -399,7 +415,7 @@ function ReflexRule() {
   return (
     <>
       {notificationVisible === true ? <AlertDialog /> : ""}
-      {!loaded && <Loading></Loading>}
+      {loading && <Loading></Loading>}
       {ruleList.map((rule, index) => (
         <div key={index} className="rules">
           <div className="first-division">
@@ -432,6 +448,21 @@ function ReflexRule() {
                         }
                         onToggle={(e) => toggleRule(e, index)}
                         onClick={handleClick}
+                      />
+                    </div>
+                    <div>&nbsp; &nbsp; &nbsp; &nbsp;</div>
+                    <div>
+                      <Checkbox
+                        labelText={"Active: " + rule.active}
+                        name="active"
+                        id={index + "_active"}
+                        checked={rule.active}
+                        disabled={rule.active}
+                        onChange={(e) => {
+                          const list = [...ruleList];
+                          list[index]["active"] = e.target.checked;
+                          setRuleList(list);
+                        }}
                       />
                     </div>
                   </div>

@@ -1,11 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Button, Stack } from "@carbon/react";
-import SearchPatientForm from "../common/SearchPatientForm";
-import CreatePatientForm from "../common/CreatePatientForm";
+import SearchPatientForm from "../patient/SearchPatientForm";
+import CreatePatientForm from "../patient/CreatePatientForm";
+import { FormattedMessage } from "react-intl";
 
 const PatientInfo = (props) => {
   const { orderFormValues, setOrderFormValues } = props;
-  const componentMounted = useRef(true);
+  const componentMounted = useRef(false);
   const [searchPatientTab, setSearchPatientTab] = useState({
     kind: "primary",
     active: true,
@@ -28,12 +29,15 @@ const PatientInfo = (props) => {
     setSearchPatientTab({ kind: "primary", active: true });
     setNewPatientTab({ kind: "tertiary", active: false });
   };
+
   const handleNewPatientTab = () => {
     setNewPatientTab({ kind: "primary", active: true });
     setSearchPatientTab({ kind: "tertiary", active: false });
   };
 
   useEffect(() => {
+    componentMounted.current = true;
+
     if (
       orderFormValues.patientProperties.firstName !== "" ||
       orderFormValues.patientProperties.guid !== ""
@@ -56,10 +60,10 @@ const PatientInfo = (props) => {
               kind={searchPatientTab.kind}
               onClick={handleSearchPatientTab}
             >
-              Search for Patient
+              <FormattedMessage id="search.patient.label" />
             </Button>
             <Button kind={newPatientTab.kind} onClick={handleNewPatientTab}>
-              New Patient
+              <FormattedMessage id="new.patient.label" />
             </Button>
           </div>
           <div className="container">

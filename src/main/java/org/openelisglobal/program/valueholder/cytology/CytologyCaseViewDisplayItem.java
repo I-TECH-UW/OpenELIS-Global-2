@@ -8,6 +8,7 @@ import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.program.valueholder.cytology.CytologyDiagnosis.CytologyDiagnosisResultType;
 import org.openelisglobal.program.valueholder.cytology.CytologyDiagnosis.DiagnosisCategory;
 import org.openelisglobal.program.valueholder.cytology.CytologySpecimenAdequacy.SpecimenAdequancySatisfaction;
+import org.openelisglobal.program.valueholder.pathology.PathologyReport;
 
 public class CytologyCaseViewDisplayItem extends CytologyDisplayItem {
     
@@ -35,8 +36,18 @@ public class CytologyCaseViewDisplayItem extends CytologyDisplayItem {
     
     private Diagnosis diagnosis;
     
+    private List<CytologyReport> reports;
+    
     public String getAge() {
         return age;
+    }
+    
+    public List<CytologyReport> getReports() {
+        return reports;
+    }
+    
+    public void setReports(List<CytologyReport> reports) {
+        this.reports = reports;
     }
     
     public void setAge(String age) {
