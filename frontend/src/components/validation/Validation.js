@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect, useRef } from "react";
 import { Field, Formik } from "formik";
 import {
   Button,
@@ -20,14 +20,52 @@ import ValidationSearchFormValues from "../formModel/innitialValues/ValidationSe
 import { NotificationKinds } from "../common/CustomNotification";
 import { postToOpenElisServer } from "../utils/Utils";
 import { NotificationContext } from "../layout/Layout";
+import { getFromOpenElisServer } from "../utils/Utils";
 
 const Validation = (props) => {
-  var jp = require("jsonpath");
-
   const { setNotificationVisible, setNotificationBody } =
     useContext(NotificationContext);
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(0);
+  const [referalOrganizations, setReferalOrganizations] = useState([]);
+  const [methods, setMethods] = useState([]);
+  const [referralReasons, setReferralReasons] = useState([]);
+
+  const componentMounted = useRef(false);
+
+  useEffect(() => {
+    componentMounted.current = true;
+    getFromOpenElisServer(
+      "/rest/displayList/REFERRAL_ORGANIZATIONS",
+      loadReferalOrganizations,
+    );
+    getFromOpenElisServer("/rest/displayList/METHODS", loadMehtods);
+    getFromOpenElisServer(
+      "/rest/displayList/REFERRAL_REASONS",
+      loadReferalReasons,
+    );
+    return () => {
+      componentMounted.current = false;
+    };
+  }, []);
+
+  const loadReferalOrganizations = (results) => {
+    if (componentMounted.current) {
+      setReferalOrganizations(results);
+    }
+  };
+
+  const loadMehtods = (results) => {
+    if (componentMounted.current) {
+      setMethods(results);
+    }
+  };
+
+  const loadReferalReasons = (results) => {
+    if (componentMounted.current) {
+      setReferralReasons(results);
+    }
+  };
 
   const columns = [
     {
@@ -80,7 +118,7 @@ const Validation = (props) => {
     },
   ];
 
-  const handleSave = () => {
+  const handleSave = (values) => {
     postToOpenElisServer(
       "/rest/accessionValidationByRangeUpdate",
       JSON.stringify(props.results),
@@ -102,15 +140,12 @@ const Validation = (props) => {
     setNotificationVisible(true);
   };
 
-  const handlePageChange = (pageInfo) => {
-    if (page != pageInfo.page) {
-      setPage(pageInfo.page);
-    }
-  };
+  const handlePageChange = () => {};
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+  const handleChange = (e, rowId) => {
+    const { name, id, value } = e.target;
     let form = props.results;
+    var jp = require("jsonpath");
     jp.value(form, name, value);
   };
 
@@ -118,6 +153,7 @@ const Validation = (props) => {
     console.log("handleDatePickerChange:" + date);
     const d = new Date(date).toLocaleDateString("fr-FR");
     var form = props.results;
+    var jp = require("jsonpath");
     jp.value(form, "resultList[" + rowId + "].sentDate_", d);
   };
   const handleCheckBox = (e, rowId) => {
@@ -128,7 +164,6 @@ const Validation = (props) => {
   };
 
   const renderCell = (row, index, column, id) => {
-    console.log("index: " + index + ", id: " + id);
     switch (column.name) {
       case "Sample Info":
         return (
@@ -149,7 +184,7 @@ const Validation = (props) => {
         return (
           <>
             <Field name="isAccepted">
-              {() => (
+              {({ field }) => (
                 <Checkbox
                   id={"resultList" + row.id + ".isAccepted"}
                   name={"resultList[" + row.id + "].isAccepted"}
@@ -166,7 +201,7 @@ const Validation = (props) => {
         return (
           <>
             <Field name="isRejected">
-              {() => (
+              {({ field }) => (
                 <Checkbox
                   id={"resultList" + row.id + ".isRejected"}
                   name={"resultList[" + row.id + "].isRejected"}
@@ -230,7 +265,7 @@ const Validation = (props) => {
                 labelText=""
                 type="number"
                 defaultValue={
-                  props.results ? props.results.resultList[row.id].result : ""
+                  props.results ? props.results.resultList[row.id]?.result : ""
                 }
                 onChange={(e) => handleChange(e, row.id)}
               />
@@ -257,7 +292,7 @@ const Validation = (props) => {
                 value={data.method}
               >
                 <SelectItem text="" value="" />
-                {data.methods.map((method, method_index) => (
+                {methods.map((method, method_index) => (
                   <SelectItem
                     text={method.value}
                     value={method.id}
@@ -277,7 +312,7 @@ const Validation = (props) => {
                 onChange={(e) => handleChange(e, data.id)}
               >
                 <SelectItem text="" value="" />
-                {data.referralReasons.map((method, method_index) => (
+                {referralReasons.map((method, method_index) => (
                   <SelectItem
                     text={method.value}
                     value={method.id}
@@ -296,7 +331,7 @@ const Validation = (props) => {
                 onChange={(e) => handleChange(e, data.id)}
               >
                 <SelectItem text="" value="" />
-                {data.referralOrganizations.map((method, method_index) => (
+                {referalOrganizations.map((method, method_index) => (
                   <SelectItem
                     text={method.value}
                     value={method.id}
@@ -347,11 +382,11 @@ const Validation = (props) => {
       >
         {({
           values,
-          //errors,
-          //touched,
+          errors,
+          touched,
           handleChange,
           //handleBlur,
-          //handleSubmit
+          handleSubmit,
         }) => (
           <Form
             onChange={handleChange}

@@ -8,11 +8,11 @@ const Index = () => {
   const { notificationVisible } = useContext(NotificationContext);
   const [results, setResults] = useState({ resultList: [] });
   return (
-    <>
+    <div className="orderLegendBody">
       {notificationVisible === true ? <AlertDialog /> : ""}
       <SearchForm setResults={setResults} />
       <Validation results={results} />
-    </>
+    </div>
   );
 };
 
