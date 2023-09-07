@@ -424,7 +424,6 @@ export class SearchResults extends React.Component {
         getFromOpenElisServer("/rest/displayList/REFERRAL_ORGANIZATIONS", this.loadReferalOrganizations);
         getFromOpenElisServer("/rest/displayList/METHODS", this.loadMehtods);
         getFromOpenElisServer("/rest/displayList/REFERRAL_REASONS", this.loadReferalReasons);
-
     }
 
     loadReferalOrganizations  = (results) => {

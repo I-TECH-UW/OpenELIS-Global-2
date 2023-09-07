@@ -268,7 +268,7 @@ function ImmunohistochemistryCaseView() {
           <Column lg={4} md={1} sm={2} >
             <Select id="assignedTechnician"
               name="assignedTechnician"
-              labelText={<FormattedMessage id="label.button.select.teachnician"/>}
+              labelText={<FormattedMessage id="label.button.select.technician"/>}
               value={immunohistochemistrySampleInfo.assignedTechnicianId}
               onChange={(event) => {
                 setImmunohistochemistrySampleInfo({ ...immunohistochemistrySampleInfo, assignedTechnicianId: event.target.value });

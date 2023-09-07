@@ -49,10 +49,10 @@ export const Questionnaire = ({questionnaire, onAnswerChange = () => {}}) => {
                 labelText={item.text}
                 onChange={onAnswerChange} 
                 >
-                <SelectItem disabled value="" text={<FormattedMessage id="select.default.option.label"/>}/>
+                <SelectItem disabled value="" text="Choose an option"/>
                 <SelectItem value="" text=""/>
-                <SelectItem value="true" text={<FormattedMessage id="yes.option"/>}/>
-                <SelectItem value="false" text={<FormattedMessage id="no.option"/>}/>
+                <SelectItem value="true" text="Yes"/>
+                <SelectItem value="false" text="No"/>
                 </Select>}
         {item.type == "choice" && item.repeats !== true && <Select
                 id={item.linkId}
@@ -67,7 +67,7 @@ export const Questionnaire = ({questionnaire, onAnswerChange = () => {}}) => {
                         ''}
                 onChange={onAnswerChange} 
                 >
-                <SelectItem disabled value="" text={<FormattedMessage id="select.default.option.label"/>}/>
+                <SelectItem disabled value="" text="Choose an option"/>
                 <SelectItem value="" text=""/>
                 {'answerOption' in item && item.answerOption.map( (answerOption, index) => 
                     getSelectOption(answerOption, index)
