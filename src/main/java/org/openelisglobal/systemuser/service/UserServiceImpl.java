@@ -182,7 +182,9 @@ public class UserServiceImpl implements UserService {
         Set<String> sampleIds = new HashSet<>();
         // clear cache to create a fresh Map of testId To TypeOfSample
         typeOfSampleService.clearCache();
-        allTests.forEach(test -> sampleIds.add(typeOfSampleService.getTypeOfSampleForTest(test.getId()).getId()));
+        allTests.forEach(test -> sampleIds.addAll(
+            typeOfSampleService.getTypeOfSampleForTest(test.getId()).stream().map(e -> e.getId()).collect(Collectors.toList())
+        ));
 
         List<IdValuePair> userSampleTypes = allSampleTypes.stream().filter(type -> sampleIds.contains(type.getId()))
                 .collect(Collectors.toList());
@@ -266,6 +268,6 @@ public class UserServiceImpl implements UserService {
         }
 
          List<IdValuePair> allPrograms = DisplayListService.getInstance().getList(ListType.PROGRAM);
-         return allPrograms.stream().filter(p -> programService.get(p.getId()).getTestSection() != null).filter(p -> testUnitIds.contains( programService.get(p.getId()).getTestSection().getId())).collect(Collectors.toList());
+         return allPrograms.stream().filter(p -> programService.get(p.getId()).getTestSection() == null || testUnitIds.contains( programService.get(p.getId()).getTestSection().getId())).collect(Collectors.toList());
     }
 }

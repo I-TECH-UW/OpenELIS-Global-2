@@ -115,18 +115,7 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
 
     @Transactional(readOnly = true)
     public String getSampleType(Result result) {
-        Test test = result.getAnalysis() != null ? result.getAnalysis().getTest() : null;
-        if (test == null) {
-            return "";
-        }
-
-        TypeOfSampleTest sampleTestType = typeOfSampleTestService.getTypeOfSampleTestForTest(test.getId());
-
-        if (sampleTestType != null) {
-            return typeOfSampleService.getNameForTypeOfSampleId(sampleTestType.getTypeOfSampleId());
-        }
-
-        return "";
+        return result.getAnalysis() != null ? typeOfSampleService.getNameForTypeOfSampleId(result.getAnalysis().getSampleItem().getTypeOfSampleId()) : "";
     }
 
     @Override

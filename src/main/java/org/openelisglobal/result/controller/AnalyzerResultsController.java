@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -264,7 +265,7 @@ public class AnalyzerResultsController extends BaseController {
             }
         }
 
-        form.setDisplayMissingTestMsg(new Boolean(missingTest));
+        form.setDisplayMissingTestMsg(Boolean.valueOf(missingTest));
         return analyzerResultItemList;
     }
 
@@ -285,28 +286,17 @@ public class AnalyzerResultsController extends BaseController {
                 // If there is a nonconforming sample item then we need to check if it is the
                 // one for this
                 // test if it is then it is nonconforming if not then it is not nonconforming
-                if (!nonConformingSampleItems.isEmpty()) {
-                    TypeOfSampleTest typeOfSample = sampleTypeTestService
-                            .getTypeOfSampleTestForTest(resultItem.getTestId());
-                    if (typeOfSample != null) {
-                        String sampleTypeId = typeOfSample.getTypeOfSampleId();
-                        nonconforming = false;
-                        for (SampleItem sampleItem : nonConformingSampleItems) {
-                            if (sampleTypeId.equals(sampleItem.getTypeOfSample().getId())) {
-                                nonconforming = true;
-                                break;
-                            }
-                        }
-
+                TypeOfSample sampleType = analysisService.getTypeOfSample(analysisService.get(resultItem.getAnalysisId()));
+                nonconforming = false;
+                for (SampleItem nonConformingSampleItem : nonConformingSampleItems) {
+                    if (sampleType.getId().equals(nonConformingSampleItem.getTypeOfSample().getId())) {
+                        nonconforming = true;
+                        break;
                     }
                 }
-
             }
-
         }
-
         resultItem.setNonconforming(nonconforming);
-
     }
 
     private List<List<AnalyzerResultItem>> groupAnalyzerResults(List<AnalyzerResults> analyzerResultsList) {
@@ -890,9 +880,9 @@ public class AnalyzerResultsController extends BaseController {
     protected SampleItem getOrCreateSampleItem(List<AnalyzerResultItem> groupedAnalyzerResultItems, Sample sample) {
         List<Analysis> dBAnalysisList = analysisService.getAnalysesBySampleId(sample.getId());
 
-        TypeOfSampleTest typeOfSampleForNewTest = typeOfSampleTestService
-                .getTypeOfSampleTestForTest(groupedAnalyzerResultItems.get(0).getTestId());
-        String typeOfSampleId = typeOfSampleForNewTest.getTypeOfSampleId();
+        List<TypeOfSampleTest> typeOfSampleForNewTest = typeOfSampleTestService
+                .getTypeOfSampleTestsForTest(groupedAnalyzerResultItems.get(0).getTestId());
+        List<String> typeOfSampleIds = typeOfSampleForNewTest.stream().map(e -> e.getTypeOfSampleId()).collect(Collectors.toList());
 
         SampleItem sampleItem = null;
         int maxSampleItemSortOrder = 0;
@@ -902,7 +892,7 @@ public class AnalyzerResultsController extends BaseController {
                 maxSampleItemSortOrder = Math.max(maxSampleItemSortOrder,
                         Integer.parseInt(dbAnalysis.getSampleItem().getSortOrder()));
             }
-            if (typeOfSampleId.equals(dbAnalysis.getSampleItem().getTypeOfSampleId())) {
+            if (typeOfSampleIds.contains(dbAnalysis.getSampleItem().getTypeOfSampleId())) {
                 sampleItem = dbAnalysis.getSampleItem();
                 break;
             }
@@ -915,7 +905,7 @@ public class AnalyzerResultsController extends BaseController {
             sampleItem.setSysUserId(getSysUserId(request));
             sampleItem.setSortOrder(Integer.toString(maxSampleItemSortOrder + 1));
             sampleItem.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(SampleStatus.Entered));
-            TypeOfSample typeOfSample = typeOfSampleService.get(typeOfSampleId);
+            TypeOfSample typeOfSample = typeOfSampleService.get(typeOfSampleIds.get(0));
             sampleItem.setTypeOfSample(typeOfSample);
         }
         return sampleItem;
@@ -1003,14 +993,14 @@ public class AnalyzerResultsController extends BaseController {
                 Test test = testService.get(resultItem.getTestId());
                 analysis.setTest(test);
                 // A new sampleItem may be needed
-                TypeOfSample typeOfSample = SpringContext.getBean(TypeOfSampleService.class)
+                List<TypeOfSample> typeOfSamples = SpringContext.getBean(TypeOfSampleService.class)
                         .getTypeOfSampleForTest(test.getId());
                 List<SampleItem> sampleItemsForSample = sampleItemService.getSampleItemsBySampleId(sample.getId());
 
                 // if the type of sample is found then assign to analysis
                 // otherwise create it and assign
                 for (SampleItem item : sampleItemsForSample) {
-                    if (item.getTypeOfSample().getId().equals(typeOfSample.getId())) {
+                    if (typeOfSamples.stream().map(e -> e.getId()).collect(Collectors.toList()).contains(item.getTypeOfSample().getId())) {
                         sampleItem = item;
                         analysis.setSampleItem(sampleItem);
                     }
@@ -1022,7 +1012,7 @@ public class AnalyzerResultsController extends BaseController {
                     sampleItem
                             .setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(SampleStatus.Entered));
                     sampleItem.setCollectionDate(DateUtil.getNowAsTimestamp());
-                    sampleItem.setTypeOfSample(typeOfSample);
+                    sampleItem.setTypeOfSample(typeOfSamples.get(0));
                     analysis.setSampleItem(sampleItem);
                 }
             } else {

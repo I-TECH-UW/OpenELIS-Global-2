@@ -97,7 +97,6 @@ public class SampleEntryTestsForTypeProviderRestController extends BaseRestContr
 	@ResponseBody
 	public List<IdValuePair> getUserSampleTests(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-
 		return userService.getUserSampleTypes(getSysUserId(request) ,Constants.ROLE_RECEPTION);
 	}
 

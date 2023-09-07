@@ -24,11 +24,11 @@ public class TypeOfSampleTestServiceImpl extends BaseObjectServiceImpl<TypeOfSam
         return baseObjectDAO;
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public TypeOfSampleTest getTypeOfSampleTestForTest(String testId) {
-        return getMatch("testId", testId).orElse(null);
-    }
+    // @Override
+    // @Transactional(readOnly = true)
+    // public TypeOfSampleTest getTypeOfSampleTestForTest(String testId) {
+    //     return getMatch("testId", testId).orElse(null);
+    // }
 
     @Override
     @Transactional(readOnly = true)

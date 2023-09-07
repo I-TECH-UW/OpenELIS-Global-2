@@ -41,6 +41,7 @@ public class Program extends BaseObject<String> {
     private String programName;
     @JsonProperty("questionnaireUUID")
     private UUID questionnaireUUID;
+    @JsonProperty("testSection")
     private TestSection testSection;
 
     public Program() {

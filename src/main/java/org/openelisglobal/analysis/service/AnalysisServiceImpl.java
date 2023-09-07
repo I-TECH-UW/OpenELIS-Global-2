@@ -95,14 +95,16 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
         }
         Test test = getTest(analysis);
         String name = TestServiceImpl.getLocalizedTestNameWithType(test);
-
-        TypeOfSample typeOfSample = SpringContext.getBean(TypeOfSampleService.class)
-                .getTypeOfSampleForTest(test.getId());
-
-        if (typeOfSample != null && typeOfSample.getId().equals(
-                SpringContext.getBean(TypeOfSampleService.class).getTypeOfSampleIdForLocalAbbreviation("Variable"))) {
+        if (analysis.getSampleItem().getTypeOfSampleId().equals(SpringContext.getBean(TypeOfSampleService.class).getTypeOfSampleIdForLocalAbbreviation("Variable"))) {
             name += "(" + analysis.getSampleTypeName() + ")";
         }
+
+        // TypeOfSample typeOfSample = SpringContext.getBean(TypeOfSampleService.class)
+        //         .getTypeOfSampleForTest(test.getId());
+        // if (typeOfSample != null && typeOfSample.getId().equals(
+        //         SpringContext.getBean(TypeOfSampleService.class).getTypeOfSampleIdForLocalAbbreviation("Variable"))) {
+        //     name += "(" + analysis.getSampleTypeName() + ")";
+        // }
 
         String parentResultType = analysis.getParentResult() != null ? analysis.getParentResult().getResultType() : "";
         if (TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(parentResultType)) {
