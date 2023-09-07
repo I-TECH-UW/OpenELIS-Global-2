@@ -8,7 +8,7 @@ class ResultSearch extends React.Component {
   render() {
     return (
       <>
-        <div className='resultPageContent'>
+        <div className='orderLegendBody'>
           <ResultSearchPage />
         </div>
       </>

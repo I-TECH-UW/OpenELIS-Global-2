@@ -1,4 +1,4 @@
-import React, {useState, useContext} from 'react'
+import React, {useState, useContext ,useEffect ,useRef} from 'react'
 import {Field, Formik} from "formik";
 import {
     Button,
@@ -20,11 +20,46 @@ import ValidationSearchFormValues from "../formModel/innitialValues/ValidationSe
 import {NotificationKinds} from "../common/CustomNotification";
 import {postToOpenElisServer} from "../utils/Utils";
 import {NotificationContext} from "../layout/Layout";
+import { getFromOpenElisServer} from "../utils/Utils";
 
 const Validation = (props) => {
     const {setNotificationVisible, setNotificationBody} = useContext(NotificationContext);
     const [page, setPage] = useState(0);
     const [pageSize, setPageSize] = useState(0);
+    const [referalOrganizations ,setReferalOrganizations] = useState([])
+    const [methods ,setMethods] = useState([])
+    const [referralReasons ,setReferralReasons] = useState([])
+
+    const componentMounted = useRef(false);
+
+    useEffect(() => {
+        componentMounted.current = true;
+        getFromOpenElisServer("/rest/displayList/REFERRAL_ORGANIZATIONS", loadReferalOrganizations);
+        getFromOpenElisServer("/rest/displayList/METHODS", loadMehtods);
+        getFromOpenElisServer("/rest/displayList/REFERRAL_REASONS", loadReferalReasons);
+        return () => {
+            componentMounted.current = false
+          }
+
+    }, []);
+
+    const loadReferalOrganizations  = (results) => {
+        if (componentMounted.current) {
+        setReferalOrganizations(results)
+        }
+    }
+
+    const loadMehtods  = (results) => {
+        if (componentMounted.current) {
+        setMethods(results)
+        }
+    }
+
+    const loadReferalReasons  = (results) => {
+        if (componentMounted.current) {
+        setReferralReasons(results)
+        }
+    }
 
     const columns = [
         {
@@ -218,7 +253,7 @@ const Validation = (props) => {
                             name={"resultList[" + row.id + "].result"}
                             labelText=""
                             type="number"
-                            defaultValue={props.results ? props.results.resultList[row.id].result : ""}
+                            defaultValue={props.results ? props.results.resultList[row.id]?.result : ""}
                             onChange={(e) => handleChange(e, row.id)}
                         />
                     default:
@@ -247,7 +282,7 @@ const Validation = (props) => {
                                     text=""
                                     value=""
                                 />
-                                {data.methods.map((method, method_index) => (
+                                {methods.map((method, method_index) => (
                                     <SelectItem
                                         text={method.value}
                                         value={method.id}
@@ -268,7 +303,7 @@ const Validation = (props) => {
                                     text=""
                                     value=""
                                 />
-                                {data.referralReasons.map((method, method_index) => (
+                                {referralReasons.map((method, method_index) => (
                                     <SelectItem
                                         text={method.value}
                                         value={method.id}
@@ -291,7 +326,7 @@ const Validation = (props) => {
                                     text=""
                                     value=""
                                 />
-                                {data.referralOrganizations.map((method, method_index) => (
+                                {referalOrganizations.map((method, method_index) => (
                                     <SelectItem
                                         text={method.value}
                                         value={method.id}

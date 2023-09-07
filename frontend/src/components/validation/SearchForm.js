@@ -12,7 +12,8 @@ import {
     SelectItem,
     Select,
     DatePicker,
-    DatePickerInput
+    DatePickerInput,
+    Loading
 } from "@carbon/react";
 import {FormattedMessage} from "react-intl";
 import {Formik, Field} from "formik";
@@ -28,6 +29,7 @@ const SearchForm = (props) => {
     const [searchBy, setSearchBy] = useState();
     const [testSections, setTestSections] = useState([]);
     const [testDate, setTestDate] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
     const validationResults = (data) => {
         if (data) {
             setSearchResults(data);
@@ -55,6 +57,7 @@ const SearchForm = (props) => {
                 setNotificationVisible(true);
             }
         }
+        setIsLoading(false)
     }
 
     useEffect(() => {
@@ -62,10 +65,14 @@ const SearchForm = (props) => {
     }, [searchResults]);
 
     const handleSubmit = (values) => {
+        setIsLoading(true)
+         var accessionNumber =  values.accessionNumber?values.accessionNumber:"";
+         var unitType = values.unitType?values.unitType:""
+         var  date = testDate?testDate:""
         let searchEndPoint = "/rest/accessionValidationByRange?" +
-            "accessionNumber=" + values.accessionNumber +
-            "&unitType=" + values.unitType +
-            "&date=" + testDate
+            "accessionNumber=" + accessionNumber +
+            "&unitType=" + unitType +
+            "&date=" + date
         getFromOpenElisServer(searchEndPoint, validationResults);
     }
 
@@ -89,6 +96,9 @@ const SearchForm = (props) => {
     }, []);
     return (
         <>
+           {isLoading && (
+            <Loading></Loading>
+           )}
             <Formik
                 initialValues={ValidationSearchFormValues}
                 //validationSchema={}

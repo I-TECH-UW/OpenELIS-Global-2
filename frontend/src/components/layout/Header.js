@@ -241,7 +241,7 @@ class OEHeader extends React.Component {
                             <SideNavMenu
                             aria-label="Validation" title={<FormattedMessage id="sidenav.label.validation"/>}                    >
                             <SideNavMenuItem href="/validation?type=routine">  <FormattedMessage id="sidenav.label.validation.routine"/> </SideNavMenuItem>
-                            <SideNavMenuItem href="/validationStudy"> <FormattedMessage id="sidenav.label.validation.study"/> </SideNavMenuItem>
+                            <SideNavMenuItem href="/api/OpenELIS-Global/ResultValidationRetroC?type=Immunology"> <FormattedMessage id="sidenav.label.validation.study"/> </SideNavMenuItem>
                             <SideNavMenuItem href="/validation?type=order"> <FormattedMessage id="sidenav.label.validation.order"/> </SideNavMenuItem>
                             <SideNavMenuItem href="/validation?type=testDate"> <FormattedMessage id="sidenav.label.validation.testdate"/> </SideNavMenuItem>
                           </SideNavMenu>

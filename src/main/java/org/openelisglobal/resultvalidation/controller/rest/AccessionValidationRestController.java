@@ -25,7 +25,6 @@ import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.note.service.NoteService;
 import org.openelisglobal.note.service.NoteServiceImpl.NoteType;
 import org.openelisglobal.note.valueholder.Note;
-import org.openelisglobal.patient.service.PatientService;
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.referencetables.service.ReferenceTablesService;
 import org.openelisglobal.reports.service.DocumentTrackService;
@@ -48,7 +47,6 @@ import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.systemuser.service.SystemUserService;
 import org.openelisglobal.systemuser.service.UserService;
 import org.openelisglobal.systemuser.valueholder.SystemUser;
-import org.openelisglobal.test.beanItems.TestResultItem;
 import org.openelisglobal.test.service.TestSectionService;
 import org.openelisglobal.test.valueholder.TestSection;
 import org.openelisglobal.testresult.service.TestResultService;
@@ -62,7 +60,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.InvocationTargetException;
@@ -206,12 +204,7 @@ public class AccessionValidationRestController extends BaseResultValidationContr
 
         for (AnalysisItem analysisItem : filteredresultList) {
             analysisItem.setPatientName(patientName);
-            analysisItem.setMethods(DisplayListService.getInstance().getList(ListType.METHODS));
-            analysisItem.setReferralOrganizations(
-                    DisplayListService.getInstance().getList(ListType.REFERRAL_ORGANIZATIONS));
-            analysisItem.setReferralReasons(
-                    DisplayListService.getInstance().getList(DisplayListService.ListType.REFERRAL_REASONS));
-
+    
         }
 
         return form;
@@ -261,13 +254,7 @@ public class AccessionValidationRestController extends BaseResultValidationContr
         if (checkResults.size() == 0) {
             System.out.println("Operation failed");
             LogEvent.logDebug(this.getClass().getName(), "ResultValidation()", "Attempted save of stale page.");
-//            Errors errors = new BaseErrors();
-//            errors.reject("alert.error", "An error occured while saving");
-//            saveErrors(errors);
-//            redirectAttributes.addFlashAttribute(FWD_FAIL_INSERT, true);
-//            return findForward(FWD_SUCCESS_INSERT, form);
             return form;
-//            return new ModelAndView("redirect:/ResultValidation?blank=true");
         }
 
         ResultValidationPaging paging = new ResultValidationPaging();

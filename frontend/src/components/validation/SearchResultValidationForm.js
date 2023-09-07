@@ -47,8 +47,39 @@ class SearchResultValidationForm extends React.Component {
             finished: true,
             acceptAsIs: [],
             saveStatus: "",
+            referalOrganizations : [] ,
+            methods : [] ,
+            referralReasons : []
         }
 
+    }
+
+    _isMounted = false;
+
+    componentDidMount() {
+        this._isMounted = true;
+        getFromOpenElisServer("/rest/displayList/REFERRAL_ORGANIZATIONS", this.loadReferalOrganizations);
+        getFromOpenElisServer("/rest/displayList/METHODS", this.loadMehtods);
+        getFromOpenElisServer("/rest/displayList/REFERRAL_REASONS", this.loadReferalReasons);
+
+    }
+
+    loadReferalOrganizations  = (results) => {
+        if (this._isMounted) {
+            this.setState({ referalOrganizations: results });
+        }
+    }
+
+    loadMehtods  = (results) => {
+        if (this._isMounted) {
+            this.setState({ methods: results });
+        }
+    }
+
+    loadReferalReasons  = (results) => {
+        if (this._isMounted) {
+            this.setState({ referralReasons: results });
+        }
     }
 
     columns = [
@@ -149,12 +180,7 @@ class SearchResultValidationForm extends React.Component {
                 );
 
             case "Notes":
-                // let aNote;
-                // if (!this.state.resultForm.testResult[row.id].note) {
-                //     aNote = ""
-                // } else {
-                //     aNote = this.state.resultForm.testResult[row.id].note
-                // }
+                
 
                 return (
                     <>
@@ -198,12 +224,6 @@ class SearchResultValidationForm extends React.Component {
                         </Select>
 
                     case "N":
-                        // return <input
-                        //     id={"Result" + row.id}
-                        //     name={"testResult[" + row.id + "].resultValue"}
-                        //     value={this.state.resultForm.testResult[row.id].resultVaule}
-                        //     onChange={(e) => this.validateResults(e, row.id, row)}
-                        // />
 
                         return <TextInput
                             id={"ResultValue" + row.id}
@@ -215,12 +235,7 @@ class SearchResultValidationForm extends React.Component {
                             onChange={(e) => this.handleChange(e, row.id)}
                         />
 
-                    // <input id={"results_" + param.rowId} type="text" size="6"></input>
-
-                    //         <input id="results_0" name="testResult[0].resultValue" class="resultValue" 
-                    // style="background: rgb(255, 255, 255);" onchange="validateResults( this, 0, 7.0, 40.0, 7.0, 350.0, 0, 'XXXX' );
-                    // 		   			 markUpdated(0);
-                    // 		   			 updateShadowResult(this, 0);" type="text" value="" size="6" title=""></input>
+                    
                     default:
                         return row.resultValue
                 }
@@ -249,12 +264,7 @@ class SearchResultValidationForm extends React.Component {
                         </Select>
 
                     case "N":
-                        //return
-                        // <input id={"currentResult" + row.id}
-                        //     name={"testResult[" + row.id + "].resultValue"}
-                        //     onChange={(e) => this.validateResults(e, row.id)}
-                        // //onChange={(e) => markUpdated(e)} sb. disabled and setto value
-                        // />
+                        
 
                         return <TextInput
                             id={"currentResultValue" + row.id}
@@ -267,47 +277,12 @@ class SearchResultValidationForm extends React.Component {
                         />
 
 
-                    // return <TextInput
-                    //     id={"testResult[" + row.id + "].resultValue"}
-                    //     name={"testResult[" + row.id + "].resultValue"}
-                    //     type="text"
-                    //     value={this.state.resultForm.testResult[row.id].resultValue}
-                    //     // labelText="Text input label"
-                    //     // helperText="Optional help text"
-                    //     onChange={(e) => this.validateResults(e, row.id, row)}
-                    // />
-
-                    // <input id={"results_" + param.rowId} type="text" size="6"></input>
-
-                    //         <input id="results_0" name="testResult[0].resultValue" class="resultValue" 
-                    // style="background: rgb(255, 255, 255);" onchange="validateResults( this, 0, 7.0, 40.0, 7.0, 350.0, 0, 'XXXX' );
-                    // 		   			 markUpdated(0);
-                    // 		   			 updateShadowResult(this, 0);" type="text" value="" size="6" title=""></input>
                     default:
                         return row.resultValue
                 }
-
-            // case "Methods":
-            //     return <Select
-            //         id={"testMethod" + row.id}
-            //         name={"testResult[" + row.id + "].testMethod"}
-            //         noLabel={true}
-            //         onChange={(e) => this.handleChange(e, row.id)}
-            //         value={row.method}
-            //     >
-            //         <SelectItem
-            //             text=""
-            //             value=""
-            //         />
-            //         {row.methods.map((method, method_index) => (
-            //             <SelectItem
-            //                 text={method.value}
-            //                 value={method.id}
-            //                 key={method_index}
-            //             />
-            //         ))}
-            //     </Select>
-
+                default :
+                    break
+            
         }
         return row.resultValue;
     }
@@ -328,7 +303,7 @@ class SearchResultValidationForm extends React.Component {
                                 text=""
                                 value=""
                             />
-                            {data.methods.map((method, method_index) => (
+                            {this.state.methods.map((method, method_index) => (
                                 <SelectItem
                                     text={method.value}
                                     value={method.id}
@@ -352,7 +327,7 @@ class SearchResultValidationForm extends React.Component {
                                 text=""
                                 value=""
                             />
-                            {data.referralReasons.map((method, method_index) => (
+                            {this.state.referralReasons.map((method, method_index) => (
                                 <SelectItem
                                     text={method.value}
                                     value={method.id}
@@ -377,7 +352,7 @@ class SearchResultValidationForm extends React.Component {
                                 text=""
                                 value=""
                             />
-                            {data.referralOrganizations.map((method, method_index) => (
+                            {this.state.referalOrganizations.map((method, method_index) => (
                                 <SelectItem
                                     text={method.value}
                                     value={method.id}

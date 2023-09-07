@@ -125,7 +125,7 @@ function handleSubmit(event) {
                 id="additionalQuestionsSelect"
                 labelText="program"
                 onChange={handleProgramSelection}>
-                <SelectItem value="" text={<FormattedMessage id="new.program.label"/>}/>
+                <SelectItem value="" text="New Program"/>
                 {
                     programs.map(program => {
                         return (
