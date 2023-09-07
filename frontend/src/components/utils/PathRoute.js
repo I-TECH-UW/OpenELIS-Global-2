@@ -1,5 +1,5 @@
 const PathRoute = ({ path, children }) => {
-    return window.location.href.endsWith(path) ? children : null
-}
+  return window.location.href.endsWith(path) ? children : null;
+};
 
-export default PathRoute
+export default PathRoute;

@@ -22,7 +22,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -462,7 +464,7 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
             test = testService.getActiveTestsByLoinc(loinc).get(0);
         }
         if (typeOfSample == null) {
-            typeOfSample = typeOfSampleService.getTypeOfSampleForTest(test.getId());
+            typeOfSample = typeOfSampleService.getTypeOfSampleForTest(test.getId()).get(0);
         }
         tests.add(new Request(test.getName(), loinc, typeOfSample.getLocalizedName()));
     }
@@ -488,16 +490,20 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
             List<Test> tests = testService.getActiveTestsByLoinc(testRequest.getLoinc());
 
             Test singleTest = tests.get(0);
-            TypeOfSample singleSampleType = typeOfSampleService.getTypeOfSampleForTest(singleTest.getId());
-            boolean hasSingleSampleType = tests.size() == 1;
+            List<TypeOfSample> sampleTypes = typeOfSampleService.getTypeOfSampleForTest(singleTest.getId());
+            TypeOfSample singleSampleType = sampleTypes.get(0);
+            boolean hasSingleSampleType = sampleTypes.size() == 1 && tests.size() == 1;
 
             if (tests.size() > 1) {
                 if (!GenericValidator.isBlankOrNull(testRequest.getSampleType())) {
                     for (Test test : tests) {
-                        TypeOfSample typeOfSample = typeOfSampleService.getTypeOfSampleForTest(test.getId());
-                        if (typeOfSample.getDescription().equals(testRequest.getSampleType())) {
+                        List<TypeOfSample> typeOfSamples = typeOfSampleService.getTypeOfSampleForTest(test.getId());
+                        Optional<TypeOfSample> matchingSampleType = typeOfSamples.stream()
+                            .filter(e -> e.getDescription().equals(testRequest.getSampleType()))
+                            .findFirst();
+                        if (matchingSampleType.isPresent()) {
                             hasSingleSampleType = true;
-                            singleSampleType = typeOfSample;
+                            singleSampleType = matchingSampleType.get();
                             singleTest = test;
                             break;
                         }
@@ -513,8 +519,10 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
                     }
 
                     for (Test test : tests) {
-                        testSampleTypeList.add(
-                                new TestSampleType(test, typeOfSampleService.getTypeOfSampleForTest(test.getId())));
+                        sampleTypes = typeOfSampleService.getTypeOfSampleForTest(test.getId());
+                        for (TypeOfSample sampleType : sampleTypes) {
+                            testSampleTypeList.add(new TestSampleType(test, sampleType));
+                        }
                     }
                 }
             }

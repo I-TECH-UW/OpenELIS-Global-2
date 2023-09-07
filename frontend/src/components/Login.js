@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useEffect, useState, createRef } from "react";
 import config from "../config.json";
 import "./Style.css";
 import qs from "qs";
@@ -12,46 +12,29 @@ import {
   Column,
   TextInput,
   Button,
-  Stack
+  Stack,
+  Loading,
 } from "@carbon/react";
 import { Formik } from "formik";
-import {AlertDialog, NotificationKinds} from "./common/CustomNotification";
-import {NotificationContext} from "./layout/Layout";
+import { AlertDialog, NotificationKinds } from "./common/CustomNotification";
+import UserSessionDetailsContext from "../UserSessionDetailsContext";
+import { NotificationContext } from "./layout/Layout";
 
-class Login extends React.Component {
-  static contextType = NotificationContext;
+function Login(props) {
+  const { notificationVisible, setNotificationBody, setNotificationVisible } =
+    useContext(NotificationContext);
+  const { userSessionDetails } = useContext(UserSessionDetailsContext);
+  const [submitting, setSubmitting] = useState(false);
+  const firstInput = createRef();
 
-  constructor(props) {
-    super(props);
-    this.state = { formValid: false, loginError: "" };
-    this.firstInput = React.createRef();
-  }
+  useEffect(() => {
+    firstInput.current.focus();
+    if (userSessionDetails.authenticated) {
+      window.location.href = "/";
+    }
+  }, []);
 
-  componentDidMount() {
-    // CSL - this is a workaround for checking login state when NOT in a secure route
-    // if more pages require this checking, we need to find a way to centralize checking login state
-    // as App.js only has the correct state if mounting a SecureRoute
-    fetch(
-      config.serverBaseUrl + `/session`,
-      //includes the browser sessionId in the Header for Authentication on the backend server
-      { credentials: "include" }
-    )
-      .then((response) => response.json())
-      .then((jsonResp) => {
-        console.log(JSON.stringify(jsonResp));
-        if (jsonResp.authenticated) {
-          window.location.href = "/";
-        }
-      });
-
-    this.firstInput.current.focus(); 
-  }
-
-  handlePost = (status) => {
-    alert(status);
-  };
-
-  loginMessage = () => {
+  const loginMessage = () => {
     return (
       <>
         <div>
@@ -72,10 +55,11 @@ class Login extends React.Component {
     );
   };
 
-  doLogin = (data) => {
+  const doLogin = (data) => {
+    setSubmitting(true);
     fetch(config.serverBaseUrl + "/ValidateLogin?apiCall=true", {
       //includes the browser sessionId in the Header for Authentication on the backend server
-      credentials: 'include',
+      credentials: "include",
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
@@ -85,119 +69,111 @@ class Login extends React.Component {
       .then(async (response) => {
         // get json response here
         let data = await response.json();
-
+        setSubmitting(false);
         if (response.status === 200) {
           window.location.href = "/";
         } else {
-          console.log(this.context.notificationVisible);
-          this.context.setNotificationBody({title: <FormattedMessage id="notification.title"/>, message: data.error, kind: NotificationKinds.error})
-          this.context.setNotificationVisible(true);
+          setNotificationBody({
+            title: <FormattedMessage id="notification.title" />,
+            message: data.error,
+            kind: NotificationKinds.error,
+          });
+          setNotificationVisible(true);
         }
       })
       .catch((error) => {
+        setSubmitting(false);
         console.log(error);
       });
   };
 
-  render() {
-    return (
-      <>
-        <div className="loginPageContent">
-          {this.context.notificationVisible === true ? <AlertDialog/> : ""}
-          <Grid fullWidth={true}>
-            <Column lg={0} md={0} sm={4}>
-              {this.loginMessage()}
-            </Column>
-            <Column lg={4} md={4} sm={4}>
-              <Section>
-                <Formik
-                  initialValues={{
-                    username: "",
-                    password: "",
-                  }}
-                  onSubmit={(values, actions) => {
-                    fetch(config.serverBaseUrl + "/LoginPage", {
-                      //includes the browser sessionId in the Header for Authentication on the backend server
-                      credentials: 'include',
-                      method: "GET",
+  return (
+    <>
+      <div className="loginPageContent">
+        {notificationVisible === true ? <AlertDialog /> : ""}
+        <Grid fullWidth={true}>
+          <Column lg={0} md={0} sm={4}>
+            {loginMessage()}
+          </Column>
+          <Column lg={4} md={4} sm={4}>
+            <Section>
+              <Formik
+                initialValues={{
+                  username: "",
+                  password: "",
+                }}
+                onSubmit={(values) => {
+                  fetch(config.serverBaseUrl + "/LoginPage", {
+                    //includes the browser sessionId in the Header for Authentication on the backend server
+                    credentials: "include",
+                    method: "GET",
+                  })
+                    .then((response) => response.status)
+                    .then(() => {
+                      doLogin(values);
                     })
-                      .then((response) => response.status)
-                      .then((status) => {
-                        this.doLogin(values);
-                        //console.log(JSON.stringify(jsonResp))
-                      })
-                      .catch((error) => {
-                        console.log(error);
-                      });
-                  }}
-                >
-                  {({
-                    values,
-                    isValid,
-                    errors,
-                    touched,
-                    handleChange,
-                    handleSubmit,
-                  }) => (
-                    <Form onSubmit={handleSubmit} onChange={handleChange}>
-                       <Stack gap={5}>
+                    .catch((error) => {
+                      console.log(error);
+                    });
+                }}
+              >
+                {({ isValid, handleChange, handleSubmit }) => (
+                  <Form onSubmit={handleSubmit} onChange={handleChange}>
+                    <Stack gap={5}>
                       <FormLabel>
                         <Heading>
                           <FormattedMessage id="login.title" />
                         </Heading>
                       </FormLabel>
-                      <div className="errorMessage">
-                        {this.state.loginError && (
-                          <FormattedMessage id={this.state.loginError} />
-                        )}
-                      </div>
                       <TextInput
                         className="inputText"
                         id="loginName"
-                        invalidText={this.props.intl.formatMessage({
+                        invalidText={props.intl.formatMessage({
                           id: "login.msg.username.missing",
                         })}
-                        labelText={this.props.intl.formatMessage({
+                        labelText={props.intl.formatMessage({
                           id: "login.msg.username",
                         })}
                         hideLabel={true}
-                        placeholder={this.props.intl.formatMessage({
+                        placeholder={props.intl.formatMessage({
                           id: "login.msg.username",
                         })}
                         autoComplete="off"
-                        ref={this.firstInput}
+                        ref={firstInput}
                       />
                       <TextInput.PasswordInput
                         className="inputText"
                         id="password"
-                        invalidText={this.props.intl.formatMessage({
+                        invalidText={props.intl.formatMessage({
                           id: "login.msg.password.missing",
                         })}
-                        labelText={this.props.intl.formatMessage({
+                        labelText={props.intl.formatMessage({
                           id: "login.msg.password",
                         })}
                         hideLabel={true}
-                        placeholder={this.props.intl.formatMessage({
+                        placeholder={props.intl.formatMessage({
                           id: "login.msg.password",
                         })}
                       />
                       <Button type="submit" disabled={!isValid}>
                         <FormattedMessage id="label.button.submit" />
                       </Button>
-                      </Stack>
-                    </Form>
-                  )}
-                </Formik>
-              </Section>
-            </Column>
-            <Column lg={8} md={4} sm={0}>
-              {this.loginMessage()}
-            </Column>
-          </Grid>
-        </div>
-      </>
-    );
-  }
+                      {submitting && (
+                        <Loading small={true} withOverlay={false} />
+                      )}
+                    </Stack>
+                  </Form>
+                )}
+              </Formik>
+            </Section>
+          </Column>
+          <Column lg={8} md={4} sm={0}>
+            {loginMessage()}
+          </Column>
+        </Grid>
+      </div>
+    </>
+  );
 }
 
 export default injectIntl(Login);

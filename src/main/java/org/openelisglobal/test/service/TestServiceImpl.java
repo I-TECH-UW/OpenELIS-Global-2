@@ -191,13 +191,13 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
             return null;
         }
 
-        TypeOfSampleTest typeOfSampleTest = typeOfSampleTestService.getTypeOfSampleTestForTest(test.getId());
+        List<TypeOfSampleTest> typeOfSampleTests = typeOfSampleTestService.getTypeOfSampleTestsForTest(test.getId());
 
-        if (typeOfSampleTest == null) {
+        if (typeOfSampleTests == null || typeOfSampleTests.isEmpty()) {
             return null;
         }
 
-        String typeOfSampleId = typeOfSampleTest.getTypeOfSampleId();
+        String typeOfSampleId = typeOfSampleTests.get(0).getTypeOfSampleId();
 
         return typeOfSampleService.getTypeOfSampleById(typeOfSampleId);
     }

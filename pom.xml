@@ -24,7 +24,7 @@
 		<postgresql.version>42.4.3</postgresql.version>
 		<log4j.version>2.17.1</log4j.version>
 		<springframework.version>5.3.26</springframework.version>
-		<springsecurity.version>5.7.5</springsecurity.version>
+		<springsecurity.version>5.7.10</springsecurity.version>
 		<testContainersVersion>1.15.3</testContainersVersion>
 	</properties>
 	<dependencies>
@@ -106,11 +106,6 @@
 			<groupId>commons-fileupload</groupId>
 			<artifactId>commons-fileupload</artifactId>
 			<version>1.5</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-httpclient</groupId>
-			<artifactId>commons-httpclient</artifactId>
-			<version>3.1</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>
@@ -447,7 +442,7 @@
 		<dependency>
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
-			<version>20190722</version>
+			<version>20230618</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jsoup</groupId>

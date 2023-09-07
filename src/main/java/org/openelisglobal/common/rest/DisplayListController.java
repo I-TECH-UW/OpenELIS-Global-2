@@ -3,12 +3,15 @@ package org.openelisglobal.common.rest;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.DisplayListService.ListType;
@@ -239,18 +242,32 @@ public class DisplayListController extends BaseRestController{
 
     @GetMapping(value = "configuration-properties", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    private List<IdValuePair> getConfigurationProperties() {
+    private Map<String, String> getConfigurationProperties() {
+        Map<String, String> configs = getOpenConfigurationProperties();
+		return configs;
+	}
+
+	//these are fetched before login
+    @GetMapping(value = "open-configuration-properties", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    private  Map<String, String> getOpenConfigurationProperties() {
         ConfigurationProperties.forceReload();
 
-        List<IdValuePair> configs = new ArrayList<>();
-	    configs.add(new IdValuePair("restrictFreeTextProviderEntry", ConfigurationProperties.getInstance().getPropertyValue(
-			    ConfigurationProperties.Property.restrictFreeTextProviderEntry)));
-	    configs.add(new IdValuePair("restrictFreeTextRefSiteEntry", ConfigurationProperties.getInstance().getPropertyValue(
-			    ConfigurationProperties.Property.restrictFreeTextRefSiteEntry)));
-		configs.add(new IdValuePair("phoneFormat", ConfigurationProperties.getInstance().getPropertyValue(
-			    Property.PHONE_FORMAT)));
-	    configs.add(new IdValuePair("currentDateAsText", DateUtil.getCurrentDateAsText()));
-	    configs.add(new IdValuePair("currentTimeAsText", DateUtil.getCurrentTimeAsText()));
+        Map<String, String> configs = new HashMap<>();
+	    configs.put(Property.restrictFreeTextProviderEntry.toString(), ConfigurationProperties.getInstance().getPropertyValue(
+			    Property.restrictFreeTextProviderEntry));
+	    configs.put(Property.restrictFreeTextRefSiteEntry.toString(), ConfigurationProperties.getInstance().getPropertyValue(
+			    Property.restrictFreeTextRefSiteEntry));
+	    configs.put(Property.PHONE_FORMAT.toString(), ConfigurationProperties.getInstance().getPropertyValue(
+			    Property.PHONE_FORMAT));
+	    configs.put(Property.releaseNumber.toString(), ConfigurationProperties.getInstance().getPropertyValue(
+			    Property.releaseNumber));
+	    configs.put(Property.restrictFreeTextProviderEntry.toString(), ConfigurationProperties.getInstance().getPropertyValue(
+			    Property.restrictFreeTextProviderEntry));
+	    configs.put(Property.restrictFreeTextProviderEntry.toString(), ConfigurationProperties.getInstance().getPropertyValue(
+			    Property.restrictFreeTextProviderEntry));
+		configs.put("currentDateAsText", DateUtil.getCurrentDateAsText());
+		configs.put("currentTimeAsText",DateUtil.getCurrentTimeAsText());
         return configs;
 	}
 

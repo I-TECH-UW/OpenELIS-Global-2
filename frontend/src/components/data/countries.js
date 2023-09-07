@@ -1,1194 +1,1192 @@
-
 const nationalityDetails = [
   {
-    "label": "COSTA RICA",
-    "value": "COSTA RICAN"
+    label: "COSTA RICA",
+    value: "COSTA RICAN",
   },
   {
-    "label": "CROATIA",
-    "value": "CROTIAN"
+    label: "CROATIA",
+    value: "CROTIAN",
   },
   {
-    "label": "CUBA",
-    "value": "CUBAN"
+    label: "CUBA",
+    value: "CUBAN",
   },
   {
-    "label": "CYPRUS",
-    "value": "CYPRIOT"
+    label: "CYPRUS",
+    value: "CYPRIOT",
   },
   {
-    "label": "CZECH REPUBLIC",
-    "value": "CZECH"
+    label: "CZECH REPUBLIC",
+    value: "CZECH",
   },
   {
-    "label": "NORTH KOREA DEM PEOPLES",
-    "value": "NORTH KOREAN"
+    label: "NORTH KOREA DEM PEOPLES",
+    value: "NORTH KOREAN",
   },
   {
-    "label": "REPUBLIC OF CONGO",
-    "value": "CONGOLESE (BRAZ)"
+    label: "REPUBLIC OF CONGO",
+    value: "CONGOLESE (BRAZ)",
   },
   {
-    "label": "DENMARK",
-    "value": "DANE"
+    label: "DENMARK",
+    value: "DANE",
   },
   {
-    "label": "DJIBOUTI",
-    "value": "DHIBOUTI"
+    label: "DJIBOUTI",
+    value: "DHIBOUTI",
   },
   {
-    "label": "DOMINICA",
-    "value": "DOMINICAN"
+    label: "DOMINICA",
+    value: "DOMINICAN",
   },
   {
-    "label": "EGYPT",
-    "value": "EGYPTIAN"
+    label: "EGYPT",
+    value: "EGYPTIAN",
   },
   {
-    "label": "EL SALVADOR",
-    "value": "SALVADORAN"
+    label: "EL SALVADOR",
+    value: "SALVADORAN",
   },
   {
-    "label": "EQUATORIAL GUINEA",
-    "value": "EQUATORIAL GUINEA"
+    label: "EQUATORIAL GUINEA",
+    value: "EQUATORIAL GUINEA",
   },
   {
-    "label": "ERITREA",
-    "value": "ERITREAN"
+    label: "ERITREA",
+    value: "ERITREAN",
   },
   {
-    "label": "ESTONIA",
-    "value": "ESTONIAN"
+    label: "ESTONIA",
+    value: "ESTONIAN",
   },
   {
-    "label": "PAKISTAN",
-    "value": "PAKISTANI"
+    label: "PAKISTAN",
+    value: "PAKISTANI",
   },
   {
-    "label": "PALAU",
-    "value": "PALAUAN"
+    label: "PALAU",
+    value: "PALAUAN",
   },
   {
-    "label": "PAPUA NEW GUINEA",
-    "value": "PAPUA NEW GUINEAN"
+    label: "PAPUA NEW GUINEA",
+    value: "PAPUA NEW GUINEAN",
   },
   {
-    "label": "PARAGUAY",
-    "value": "PARAGUAYAN"
+    label: "PARAGUAY",
+    value: "PARAGUAYAN",
   },
   {
-    "label": "PERU",
-    "value": "PERUVIAN"
+    label: "PERU",
+    value: "PERUVIAN",
   },
   {
-    "label": "PHILIPPINES",
-    "value": "FILIPINO"
+    label: "PHILIPPINES",
+    value: "FILIPINO",
   },
   {
-    "label": "PITCAIRN",
-    "value": "PITCAIRN"
+    label: "PITCAIRN",
+    value: "PITCAIRN",
   },
   {
-    "label": "POLAND",
-    "value": "POLE"
+    label: "POLAND",
+    value: "POLE",
   },
   {
-    "label": "PUERTO RICO",
-    "value": "PUERTO RICAN"
+    label: "PUERTO RICO",
+    value: "PUERTO RICAN",
   },
   {
-    "label": "QATAR",
-    "value": "QATAR"
+    label: "QATAR",
+    value: "QATAR",
   },
   {
-    "label": "REPUBLIC OF MOLDOVA",
-    "value": "MOLDOVAN"
+    label: "REPUBLIC OF MOLDOVA",
+    value: "MOLDOVAN",
   },
   {
-    "label": "REPUBLIC OF KOREA  SOUTH",
-    "value": "SOUTH KOREAN"
+    label: "REPUBLIC OF KOREA  SOUTH",
+    value: "SOUTH KOREAN",
   },
   {
-    "label": "RUSSIAN FEDERATION",
-    "value": "RUSSIAN"
+    label: "RUSSIAN FEDERATION",
+    value: "RUSSIAN",
   },
   {
-    "label": "RUWANDA",
-    "value": "RWANDAN"
+    label: "RUWANDA",
+    value: "RWANDAN",
   },
   {
-    "label": "ST. HELENA",
-    "value": "ST. HELENA"
+    label: "ST. HELENA",
+    value: "ST. HELENA",
   },
   {
-    "label": "SAINT KITTS AND NEVIS",
-    "value": "SAINT KITTS AND NEVIS"
+    label: "SAINT KITTS AND NEVIS",
+    value: "SAINT KITTS AND NEVIS",
   },
   {
-    "label": "SAINT VINCENT GRENADIN",
-    "value": "SAINT VINCENT GRENADINES"
+    label: "SAINT VINCENT GRENADIN",
+    value: "SAINT VINCENT GRENADINES",
   },
   {
-    "label": "SAMOA",
-    "value": "SAMOAN"
+    label: "SAMOA",
+    value: "SAMOAN",
   },
   {
-    "label": "SAN MARINO",
-    "value": "SAN MARINO"
+    label: "SAN MARINO",
+    value: "SAN MARINO",
   },
   {
-    "label": "SAO TOME AND PRINCIPE",
-    "value": "SAO TOME AND PRINCIPE"
+    label: "SAO TOME AND PRINCIPE",
+    value: "SAO TOME AND PRINCIPE",
   },
   {
-    "label": "SAUDI ARABIA",
-    "value": "SAUDI"
+    label: "SAUDI ARABIA",
+    value: "SAUDI",
   },
   {
-    "label": "SENEGAL",
-    "value": "SENEGALESE"
+    label: "SENEGAL",
+    value: "SENEGALESE",
   },
   {
-    "label": "SEYCHELLES",
-    "value": "SEYCHELLES"
+    label: "SEYCHELLES",
+    value: "SEYCHELLES",
   },
   {
-    "label": "SINGAPORE",
-    "value": "SINGAPOREAN"
+    label: "SINGAPORE",
+    value: "SINGAPOREAN",
   },
   {
-    "label": "SLOVAKIA",
-    "value": "SLOVAK"
+    label: "SLOVAKIA",
+    value: "SLOVAK",
   },
   {
-    "label": "SOLOMON  ISLANDS",
-    "value": "SOLOMON ISLANDS"
+    label: "SOLOMON  ISLANDS",
+    value: "SOLOMON ISLANDS",
   },
   {
-    "label": "SOMALIA",
-    "value": "SOMALI"
+    label: "SOMALIA",
+    value: "SOMALI",
   },
   {
-    "label": "SOUTH AFRICA",
-    "value": "SOUTH AFRICAN"
+    label: "SOUTH AFRICA",
+    value: "SOUTH AFRICAN",
   },
   {
-    "label": "SOUTH GEORGIA SANWICH ISL",
-    "value": "SOUTH GEORGIA SANWICH ISL"
+    label: "SOUTH GEORGIA SANWICH ISL",
+    value: "SOUTH GEORGIA SANWICH ISL",
   },
   {
-    "label": "SPAIN",
-    "value": "SPANISH"
+    label: "SPAIN",
+    value: "SPANISH",
   },
   {
-    "label": "SUDAN",
-    "value": "SUDANESE"
+    label: "SUDAN",
+    value: "SUDANESE",
   },
   {
-    "label": "SVALBARD JAN MEYEN ISLAND",
-    "value": "SVALBARD JAN MEYEN ISLAND"
+    label: "SVALBARD JAN MEYEN ISLAND",
+    value: "SVALBARD JAN MEYEN ISLAND",
   },
   {
-    "label": "SWAZILAND",
-    "value": "SWAZILAND"
+    label: "SWAZILAND",
+    value: "SWAZILAND",
   },
   {
-    "label": "SWEDEN",
-    "value": "SWEDE"
+    label: "SWEDEN",
+    value: "SWEDE",
   },
   {
-    "label": "SWITZERLAND",
-    "value": "SWISS"
+    label: "SWITZERLAND",
+    value: "SWISS",
   },
   {
-    "label": "TAIWAN, PROVINCE OF CHINA",
-    "value": "TAIWANESE"
+    label: "TAIWAN, PROVINCE OF CHINA",
+    value: "TAIWANESE",
   },
   {
-    "label": "TAJIKISTAN",
-    "value": "TAJIKISTANI"
+    label: "TAJIKISTAN",
+    value: "TAJIKISTANI",
   },
   {
-    "label": "THAILAND",
-    "value": "THAI"
+    label: "THAILAND",
+    value: "THAI",
   },
   {
-    "label": "REP OF NORTH MACEDONIA",
-    "value": "MACEDONIAN"
+    label: "REP OF NORTH MACEDONIA",
+    value: "MACEDONIAN",
   },
   {
-    "label": "TOGO",
-    "value": "TOGO"
+    label: "TOGO",
+    value: "TOGO",
   },
   {
-    "label": "TOKELAU",
-    "value": "TOKELAU"
+    label: "TOKELAU",
+    value: "TOKELAU",
   },
   {
-    "label": "TUNISIA",
-    "value": "TUNISIAN"
+    label: "TUNISIA",
+    value: "TUNISIAN",
   },
   {
-    "label": "TURKEY",
-    "value": "TURK"
+    label: "TURKEY",
+    value: "TURK",
   },
   {
-    "label": "TURKS AND CAICOS ISLANDS",
-    "value": "TURKS AND CAICOS ISLANDS"
+    label: "TURKS AND CAICOS ISLANDS",
+    value: "TURKS AND CAICOS ISLANDS",
   },
   {
-    "label": "TUVALU",
-    "value": "TUVALUAN"
+    label: "TUVALU",
+    value: "TUVALUAN",
   },
   {
-    "label": "UGANDA",
-    "value": "UGANDAN"
+    label: "UGANDA",
+    value: "UGANDAN",
   },
   {
-    "label": "UKRAINE",
-    "value": "UKRAINIAN"
+    label: "UKRAINE",
+    value: "UKRAINIAN",
   },
   {
-    "label": "UNITED ARAB EMIRATES",
-    "value": "EMIRATI"
+    label: "UNITED ARAB EMIRATES",
+    value: "EMIRATI",
   },
   {
-    "label": "UNITED KINGDOM",
-    "value": "BRITISH - CITIZEN"
+    label: "UNITED KINGDOM",
+    value: "BRITISH - CITIZEN",
   },
   {
-    "label": "UK - DEPENDANT",
-    "value": "BRITISH - DEPENDANT"
+    label: "UK - DEPENDANT",
+    value: "BRITISH - DEPENDANT",
   },
   {
-    "label": "UK - NATIONAL",
-    "value": "BRITISH - NATIONAL"
+    label: "UK - NATIONAL",
+    value: "BRITISH - NATIONAL",
   },
   {
-    "label": "UK - OVERSEAS CITIZEN",
-    "value": "BRITISH- OVERSEAS CITIZEN"
+    label: "UK - OVERSEAS CITIZEN",
+    value: "BRITISH- OVERSEAS CITIZEN",
   },
   {
-    "label": "UK -SUBJECT",
-    "value": "BRITISH - SUBJECT"
+    label: "UK -SUBJECT",
+    value: "BRITISH - SUBJECT",
   },
   {
-    "label": "UNITED STATES",
-    "value": "AMERICAN"
+    label: "UNITED STATES",
+    value: "AMERICAN",
   },
   {
-    "label": "US MINOR OUTLYING ISLANDS",
-    "value": "US MINOR OUTLYING ISLANDS"
+    label: "US MINOR OUTLYING ISLANDS",
+    value: "US MINOR OUTLYING ISLANDS",
   },
   {
-    "label": "URUGUAY",
-    "value": "URUGUAYAN"
+    label: "URUGUAY",
+    value: "URUGUAYAN",
   },
   {
-    "label": "UZBEKISTAN",
-    "value": "UZBEKISTANI"
+    label: "UZBEKISTAN",
+    value: "UZBEKISTANI",
   },
   {
-    "label": "VANUATU",
-    "value": "VANUATU"
+    label: "VANUATU",
+    value: "VANUATU",
   },
   {
-    "label": "VATICAN CITY STATE",
-    "value": "VATICAN"
+    label: "VATICAN CITY STATE",
+    value: "VATICAN",
   },
   {
-    "label": "VIETNAM",
-    "value": "VIETNAMESE"
+    label: "VIETNAM",
+    value: "VIETNAMESE",
   },
   {
-    "label": "VIRGIN ISLANDS (BRITISH)",
-    "value": "VIRGIN ISLANDS (BRITISH)"
+    label: "VIRGIN ISLANDS (BRITISH)",
+    value: "VIRGIN ISLANDS (BRITISH)",
   },
   {
-    "label": "VIRGIN ISLANDS (US)",
-    "value": "VIRGIN ISLANDS (US)"
+    label: "VIRGIN ISLANDS (US)",
+    value: "VIRGIN ISLANDS (US)",
   },
   {
-    "label": "WALLIS AND FUTUNA ISLANDS",
-    "value": "WALLIS AND FUTUNA ISLANDS"
+    label: "WALLIS AND FUTUNA ISLANDS",
+    value: "WALLIS AND FUTUNA ISLANDS",
   },
   {
-    "label": "WESTERN SAHARA",
-    "value": "WESTERN SAHARA"
+    label: "WESTERN SAHARA",
+    value: "WESTERN SAHARA",
   },
   {
-    "label": "YEMEN",
-    "value": "YEMENI"
+    label: "YEMEN",
+    value: "YEMENI",
   },
   {
-    "label": "ZAMBIA",
-    "value": "ZAMBIAN"
+    label: "ZAMBIA",
+    value: "ZAMBIAN",
   },
   {
-    "label": "ZIMBABWE ZWE",
-    "value": "ZIMBABWEAN ZWE"
+    label: "ZIMBABWE ZWE",
+    value: "ZIMBABWEAN ZWE",
   },
   {
-    "label": "ETHIOPIA",
-    "value": "ETHIOPIAN"
+    label: "ETHIOPIA",
+    value: "ETHIOPIAN",
   },
   {
-    "label": "FALKLAND ISLANDS",
-    "value": "FALKLAND ISLANDS"
+    label: "FALKLAND ISLANDS",
+    value: "FALKLAND ISLANDS",
   },
   {
-    "label": "FAROE ISLANDS",
-    "value": "FAROE ISLANDS"
+    label: "FAROE ISLANDS",
+    value: "FAROE ISLANDS",
   },
   {
-    "label": "FIJI",
-    "value": "FIJIAN"
+    label: "FIJI",
+    value: "FIJIAN",
   },
   {
-    "label": "FINLAND",
-    "value": "FINN"
+    label: "FINLAND",
+    value: "FINN",
   },
   {
-    "label": "FRANCE",
-    "value": "FRENCH"
+    label: "FRANCE",
+    value: "FRENCH",
   },
   {
-    "label": "FRANCE, METROPOLITAN",
-    "value": "FRANCE, METROPOLITAN"
+    label: "FRANCE, METROPOLITAN",
+    value: "FRANCE, METROPOLITAN",
   },
   {
-    "label": "FRENCH GUYIANA",
-    "value": "GUIANESE (FRENCH)"
+    label: "FRENCH GUYIANA",
+    value: "GUIANESE (FRENCH)",
   },
   {
-    "label": "FRENCH POLYNESIA",
-    "value": "FRENCH POLYNESIAN"
+    label: "FRENCH POLYNESIA",
+    value: "FRENCH POLYNESIAN",
   },
   {
-    "label": "FRENCH SOUTHERN TERRITORY",
-    "value": "FRENCH SOUTHERN TERRITORY"
+    label: "FRENCH SOUTHERN TERRITORY",
+    value: "FRENCH SOUTHERN TERRITORY",
   },
   {
-    "label": "GABON",
-    "value": "GABON"
+    label: "GABON",
+    value: "GABON",
   },
   {
-    "label": "GAMBIA",
-    "value": "GAMBIAN"
+    label: "GAMBIA",
+    value: "GAMBIAN",
   },
   {
-    "label": "GEORGIA",
-    "value": "GEORGIAN"
+    label: "GEORGIA",
+    value: "GEORGIAN",
   },
   {
-    "label": "GHANA",
-    "value": "GHANAIAN"
+    label: "GHANA",
+    value: "GHANAIAN",
   },
   {
-    "label": "GIBRALTA",
-    "value": "GIBRALTAR"
+    label: "GIBRALTA",
+    value: "GIBRALTAR",
   },
   {
-    "label": "GREECE",
-    "value": "GREEK"
+    label: "GREECE",
+    value: "GREEK",
   },
   {
-    "label": "GREENLAND",
-    "value": "GREENLAND"
+    label: "GREENLAND",
+    value: "GREENLAND",
   },
   {
-    "label": "GRENADA",
-    "value": "GRENADIAN"
+    label: "GRENADA",
+    value: "GRENADIAN",
   },
   {
-    "label": "GUADELOUPE",
-    "value": "GUADELOUPE"
+    label: "GUADELOUPE",
+    value: "GUADELOUPE",
   },
   {
-    "label": "GUAM",
-    "value": "GUAM"
+    label: "GUAM",
+    value: "GUAM",
   },
   {
-    "label": "GUATEMALA",
-    "value": "GUATEMALA"
+    label: "GUATEMALA",
+    value: "GUATEMALA",
   },
   {
-    "label": "GUINEA",
-    "value": "GUINEAN"
+    label: "GUINEA",
+    value: "GUINEAN",
   },
   {
-    "label": "GUINEA - BISSAU",
-    "value": "GUINEA - BISSAU NATIONAL"
+    label: "GUINEA - BISSAU",
+    value: "GUINEA - BISSAU NATIONAL",
   },
   {
-    "label": "GUYANA",
-    "value": "GUYANESE"
+    label: "GUYANA",
+    value: "GUYANESE",
   },
   {
-    "label": "HAITI",
-    "value": "HAITIAN"
+    label: "HAITI",
+    value: "HAITIAN",
   },
   {
-    "label": "HEARD AND MCDONALD ISLAND",
-    "value": "HEARD AND MCDONALD ISLAND"
+    label: "HEARD AND MCDONALD ISLAND",
+    value: "HEARD AND MCDONALD ISLAND",
   },
   {
-    "label": "HONDURAS",
-    "value": "HONDURAN"
+    label: "HONDURAS",
+    value: "HONDURAN",
   },
   {
-    "label": "HUNGARY",
-    "value": "HUNGARIAN"
+    label: "HUNGARY",
+    value: "HUNGARIAN",
   },
   {
-    "label": "ICELAND",
-    "value": "ICELANDER"
+    label: "ICELAND",
+    value: "ICELANDER",
   },
   {
-    "label": "INDONESIA",
-    "value": "INDONESIAN"
+    label: "INDONESIA",
+    value: "INDONESIAN",
   },
   {
-    "label": "IRAN",
-    "value": "IRANIAN"
+    label: "IRAN",
+    value: "IRANIAN",
   },
   {
-    "label": "IRAQ",
-    "value": "IRAQI"
+    label: "IRAQ",
+    value: "IRAQI",
   },
   {
-    "label": "IRELAND",
-    "value": "IRISH"
+    label: "IRELAND",
+    value: "IRISH",
   },
   {
-    "label": "ISRAEL",
-    "value": "ISRAELI"
+    label: "ISRAEL",
+    value: "ISRAELI",
   },
   {
-    "label": "JAPAN",
-    "value": "JAPANESE"
+    label: "JAPAN",
+    value: "JAPANESE",
   },
   {
-    "label": "KENYA",
-    "value": "KENYAN"
+    label: "KENYA",
+    value: "KENYAN",
   },
   {
-    "label": "KIRIBATI",
-    "value": "KIRIBATIAN"
+    label: "KIRIBATI",
+    value: "KIRIBATIAN",
   },
   {
-    "label": "KUWAIT",
-    "value": "KUWAITI"
+    label: "KUWAIT",
+    value: "KUWAITI",
   },
   {
-    "label": "KYRGYZSTAN",
-    "value": "KYRGYSTANI"
+    label: "KYRGYZSTAN",
+    value: "KYRGYSTANI",
   },
   {
-    "label": "LATVIA",
-    "value": "LATVIAN"
+    label: "LATVIA",
+    value: "LATVIAN",
   },
   {
-    "label": "LEBANON",
-    "value": "LEBANESE"
+    label: "LEBANON",
+    value: "LEBANESE",
   },
   {
-    "label": "LESOTHO",
-    "value": "LESOTHO"
+    label: "LESOTHO",
+    value: "LESOTHO",
   },
   {
-    "label": "LIBERIA",
-    "value": "LIBERIAN"
+    label: "LIBERIA",
+    value: "LIBERIAN",
   },
   {
-    "label": "LITHUANIA",
-    "value": "LITHUANIAN"
+    label: "LITHUANIA",
+    value: "LITHUANIAN",
   },
   {
-    "label": "MACAU",
-    "value": "MACAU"
+    label: "MACAU",
+    value: "MACAU",
   },
   {
-    "label": "MADAGASCAR",
-    "value": "MADAGASCAR"
+    label: "MADAGASCAR",
+    value: "MADAGASCAR",
   },
   {
-    "label": "MALAWI",
-    "value": "MALAWIAN"
+    label: "MALAWI",
+    value: "MALAWIAN",
   },
   {
-    "label": "MALAYSIA",
-    "value": "MALAYSIAN"
+    label: "MALAYSIA",
+    value: "MALAYSIAN",
   },
   {
-    "label": "MALDIVES",
-    "value": "MALDIVIAN"
+    label: "MALDIVES",
+    value: "MALDIVIAN",
   },
   {
-    "label": "MARSHALL ISLANDS",
-    "value": "MARSHALL ISLANDS"
+    label: "MARSHALL ISLANDS",
+    value: "MARSHALL ISLANDS",
   },
   {
-    "label": "MARTINIQUE",
-    "value": "MARTINIQUE"
+    label: "MARTINIQUE",
+    value: "MARTINIQUE",
   },
   {
-    "label": "MAURITANIA",
-    "value": "MAURITANIAN"
+    label: "MAURITANIA",
+    value: "MAURITANIAN",
   },
   {
-    "label": "MAURITIUS",
-    "value": "MAURITIAN"
+    label: "MAURITIUS",
+    value: "MAURITIAN",
   },
   {
-    "label": "MAYOTTE",
-    "value": "MAYOTTE"
+    label: "MAYOTTE",
+    value: "MAYOTTE",
   },
   {
-    "label": "MEXICO",
-    "value": "MEXICAN"
+    label: "MEXICO",
+    value: "MEXICAN",
   },
   {
-    "label": "US PACIFIC ISLANDS",
-    "value": "US PACIFIC ISLANDS"
+    label: "US PACIFIC ISLANDS",
+    value: "US PACIFIC ISLANDS",
   },
   {
-    "label": "UPPER VOLTA",
-    "value": "UPPER VOLTA"
+    label: "UPPER VOLTA",
+    value: "UPPER VOLTA",
   },
   {
-    "label": "MAURITIUS (ISLAND)",
-    "value": "MAURITIUS (ISLAND)"
+    label: "MAURITIUS (ISLAND)",
+    value: "MAURITIUS (ISLAND)",
   },
   {
-    "label": "DIEGO GARCIA (MTIUS)",
-    "value": "DIEGO GARCIA (MTIUS)"
+    label: "DIEGO GARCIA (MTIUS)",
+    value: "DIEGO GARCIA (MTIUS)",
   },
   {
-    "label": "PEROS BANHOS (MTIUS)",
-    "value": "PEROS BANHOS (MTIUS)"
+    label: "PEROS BANHOS (MTIUS)",
+    value: "PEROS BANHOS (MTIUS)",
   },
   {
-    "label": "STATELESS",
-    "value": "STATELESS"
+    label: "STATELESS",
+    value: "STATELESS",
   },
   {
-    "label": "YEMEN DEMOCRATIC",
-    "value": "YEMEN DEMOCRATIC"
+    label: "YEMEN DEMOCRATIC",
+    value: "YEMEN DEMOCRATIC",
   },
   {
-    "label": "CANTON  I",
-    "value": "CANTON  I"
+    label: "CANTON  I",
+    value: "CANTON  I",
   },
   {
-    "label": "NOT SPECIFIED",
-    "value": "NOT SPECIFIED"
+    label: "NOT SPECIFIED",
+    value: "NOT SPECIFIED",
   },
   {
-    "label": "PACIFIC ISLANDS",
-    "value": "PACIFIC ISLANDS"
+    label: "PACIFIC ISLANDS",
+    value: "PACIFIC ISLANDS",
   },
   {
-    "label": "HIGH SEAS",
-    "value": "HIGH SEAS"
+    label: "HIGH SEAS",
+    value: "HIGH SEAS",
   },
   {
-    "label": "RODRIGUES (MTIUS)",
-    "value": "RODRIGUES (MTIUS)"
+    label: "RODRIGUES (MTIUS)",
+    value: "RODRIGUES (MTIUS)",
   },
   {
-    "label": "JOHNSTON ISLAND",
-    "value": "JOHNSTON ISLAND"
+    label: "JOHNSTON ISLAND",
+    value: "JOHNSTON ISLAND",
   },
   {
-    "label": "KAMPUCHEA",
-    "value": "KAMPUCHEA"
+    label: "KAMPUCHEA",
+    value: "KAMPUCHEA",
   },
   {
-    "label": "ST PIERRE ",
-    "value": "ST PIERRE "
+    label: "ST PIERRE ",
+    value: "ST PIERRE ",
   },
   {
-    "label": "AGALEGA (MTIUS)",
-    "value": "AGALEGA (MTIUS)"
+    label: "AGALEGA (MTIUS)",
+    value: "AGALEGA (MTIUS)",
   },
   {
-    "label": "DOMINICAN REPUBLIC",
-    "value": "DOMINICAN REPUBLIC"
+    label: "DOMINICAN REPUBLIC",
+    value: "DOMINICAN REPUBLIC",
   },
   {
-    "label": "DRONNING MAUD LAND",
-    "value": "DRONNING MAUD LAND"
+    label: "DRONNING MAUD LAND",
+    value: "DRONNING MAUD LAND",
   },
   {
-    "label": "GERMANY, FED. REP OF",
-    "value": "GERMANY, FED. REP OF"
+    label: "GERMANY, FED. REP OF",
+    value: "GERMANY, FED. REP OF",
   },
   {
-    "label": "CZECHOSLOVAKIA",
-    "value": "CZECHOSLOVAKIA"
+    label: "CZECHOSLOVAKIA",
+    value: "CZECHOSLOVAKIA",
   },
   {
-    "label": "ST. BRANDON (MTIUS)",
-    "value": "ST. BRANDON (MTIUS)"
+    label: "ST. BRANDON (MTIUS)",
+    value: "ST. BRANDON (MTIUS)",
   },
   {
-    "label": "BYELORUSSIAN SSR",
-    "value": "BYELORUSSIAN SSR"
+    label: "BYELORUSSIAN SSR",
+    value: "BYELORUSSIAN SSR",
   },
   {
-    "label": "ST. LUCIA",
-    "value": "ST. LUCIA"
+    label: "ST. LUCIA",
+    value: "ST. LUCIA",
   },
   {
-    "label": "USSR",
-    "value": "USSR"
+    label: "USSR",
+    value: "USSR",
   },
   {
-    "label": "ZAIRE",
-    "value": "ZAIRE"
+    label: "ZAIRE",
+    value: "ZAIRE",
   },
   {
-    "label": "WAKE ISLAND",
-    "value": "WAKE ISLAND"
+    label: "WAKE ISLAND",
+    value: "WAKE ISLAND",
   },
   {
-    "label": "MADEIRA ISLANDS",
-    "value": "MADEIRA ISLANDS"
+    label: "MADEIRA ISLANDS",
+    value: "MADEIRA ISLANDS",
   },
   {
-    "label": "MOSCOW",
-    "value": "MOSCOW"
+    label: "MOSCOW",
+    value: "MOSCOW",
   },
   {
-    "label": "MOSCOW",
-    "value": "MOSCOW"
+    label: "MOSCOW",
+    value: "MOSCOW",
   },
   {
-    "label": "ISLAND OF GUERNSEY",
-    "value": "ISLAND OF GUERNSEY"
+    label: "ISLAND OF GUERNSEY",
+    value: "ISLAND OF GUERNSEY",
   },
   {
-    "label": "MAURITIUS-MIG",
-    "value": "MAURITIAN-MIG"
+    label: "MAURITIUS-MIG",
+    value: "MAURITIAN-MIG",
   },
   {
-    "label": "JAMAICA",
-    "value": "JAMAICAN"
+    label: "JAMAICA",
+    value: "JAMAICAN",
   },
   {
-    "label": "JORDAN",
-    "value": "JORDANIAN"
+    label: "JORDAN",
+    value: "JORDANIAN",
   },
   {
-    "label": "KAZAKHSTAN",
-    "value": "KAZAKH"
+    label: "KAZAKHSTAN",
+    value: "KAZAKH",
   },
   {
-    "label": "LAO DEMOCRATIC REPUBLIC",
-    "value": "LAO"
+    label: "LAO DEMOCRATIC REPUBLIC",
+    value: "LAO",
   },
   {
-    "label": "LIBYA",
-    "value": "LIBYAN"
+    label: "LIBYA",
+    value: "LIBYAN",
   },
   {
-    "label": "LIECHTENSTEIN",
-    "value": "LIECHTENSTEINER"
+    label: "LIECHTENSTEIN",
+    value: "LIECHTENSTEINER",
   },
   {
-    "label": "LUXEMBOURG",
-    "value": "LUXEMBURG"
+    label: "LUXEMBOURG",
+    value: "LUXEMBURG",
   },
   {
-    "label": "MALI",
-    "value": "MALIAN"
+    label: "MALI",
+    value: "MALIAN",
   },
   {
-    "label": "MALTA",
-    "value": "MALTESE"
+    label: "MALTA",
+    value: "MALTESE",
   },
   {
-    "label": "KOSOVO",
-    "value": "KOSOVAN"
+    label: "KOSOVO",
+    value: "KOSOVAN",
   },
   {
-    "label": "SAHARA",
-    "value": "SAHARA DEMO REP"
+    label: "SAHARA",
+    value: "SAHARA DEMO REP",
   },
   {
-    "label": "SIBERIA",
-    "value": "SIBERIAN"
+    label: "SIBERIA",
+    value: "SIBERIAN",
   },
   {
-    "label": "MONROVIA",
-    "value": "MONROVIAN"
+    label: "MONROVIA",
+    value: "MONROVIAN",
   },
   {
-    "label": "INTERPOL",
-    "value": "INTERPOL REPRESENTATIVE"
+    label: "INTERPOL",
+    value: "INTERPOL REPRESENTATIVE",
   },
   {
-    "label": "MONTENEGRO MNE",
-    "value": "MONTENEGRO MNE"
+    label: "MONTENEGRO MNE",
+    value: "MONTENEGRO MNE",
   },
   {
-    "label": "UNITED  NATIONS",
-    "value": "UN REPRESENTATIVE(UNA)"
+    label: "UNITED  NATIONS",
+    value: "UN REPRESENTATIVE(UNA)",
   },
   {
-    "label": "ISLAND OF JERSEY",
-    "value": "ISLAND OF JERSEY"
+    label: "ISLAND OF JERSEY",
+    value: "ISLAND OF JERSEY",
   },
   {
-    "label": "DEMOCRATIC REP. OF CONGO",
-    "value": "CONGOLESE (DRC)"
+    label: "DEMOCRATIC REP. OF CONGO",
+    value: "CONGOLESE (DRC)",
   },
   {
-    "label": "AFRICAN REINSURANCE SORPO",
-    "value": "AFRICAN INSURANCE"
+    label: "AFRICAN REINSURANCE SORPO",
+    value: "AFRICAN INSURANCE",
   },
   {
-    "label": "REPUBLIC OF SOMALILAND",
-    "value": "SOMALILANDER"
+    label: "REPUBLIC OF SOMALILAND",
+    value: "SOMALILANDER",
   },
   {
-    "label": "ISLE OF MAN",
-    "value": "MANN"
+    label: "ISLE OF MAN",
+    value: "MANN",
   },
   {
-    "label": "SOUTH SUDAN",
-    "value": "SOUTH SUDANESE"
+    label: "SOUTH SUDAN",
+    value: "SOUTH SUDANESE",
   },
   {
-    "label": "ZIMBABWE ZIM",
-    "value": "ZIMBABWEAN ZIM"
+    label: "ZIMBABWE ZIM",
+    value: "ZIMBABWEAN ZIM",
   },
   {
-    "label": "SERBIA SRB",
-    "value": "SERBIAN SRB"
+    label: "SERBIA SRB",
+    value: "SERBIAN SRB",
   },
   {
-    "label": "ROMANIA ROU",
-    "value": "ROMANIAN ROU"
+    label: "ROMANIA ROU",
+    value: "ROMANIAN ROU",
   },
   {
-    "label": "UNITED NATIONS",
-    "value": "UN REPRESENTATIVE (UNO)"
+    label: "UNITED NATIONS",
+    value: "UN REPRESENTATIVE (UNO)",
   },
   {
-    "label": "MIG",
-    "value": "MIG"
+    label: "MIG",
+    value: "MIG",
   },
   {
-    "label": "FEDERAL STATE MICRONESIA",
-    "value": "MICRONESIAN"
+    label: "FEDERAL STATE MICRONESIA",
+    value: "MICRONESIAN",
   },
   {
-    "label": "MONACO",
-    "value": "MONACO"
+    label: "MONACO",
+    value: "MONACO",
   },
   {
-    "label": "MONGOLIA",
-    "value": "MONGOLIAN"
+    label: "MONGOLIA",
+    value: "MONGOLIAN",
   },
   {
-    "label": "MONTSERRAT",
-    "value": "MONTSERRAT"
+    label: "MONTSERRAT",
+    value: "MONTSERRAT",
   },
   {
-    "label": "MOROCCO",
-    "value": "MOROCCAN"
+    label: "MOROCCO",
+    value: "MOROCCAN",
   },
   {
-    "label": "MOZAMBIQUE",
-    "value": "MOZAMBIQUE"
+    label: "MOZAMBIQUE",
+    value: "MOZAMBIQUE",
   },
   {
-    "label": "MYANMAR",
-    "value": "MYANMAR"
+    label: "MYANMAR",
+    value: "MYANMAR",
   },
   {
-    "label": "NAMIBIA",
-    "value": "NAMIBIAN"
+    label: "NAMIBIA",
+    value: "NAMIBIAN",
   },
   {
-    "label": "NAURU",
-    "value": "NAURU"
+    label: "NAURU",
+    value: "NAURU",
   },
   {
-    "label": "NEPAL",
-    "value": "NEPALESE"
+    label: "NEPAL",
+    value: "NEPALESE",
   },
   {
-    "label": "NETHERLAND",
-    "value": "DUTCH"
+    label: "NETHERLAND",
+    value: "DUTCH",
   },
   {
-    "label": "NETHERLANDS ANTILLES",
-    "value": "NETHERLANDS ANTILLES"
+    label: "NETHERLANDS ANTILLES",
+    value: "NETHERLANDS ANTILLES",
   },
   {
-    "label": "NEUTRAL ZONE",
-    "value": "NEUTRAL ZONE"
+    label: "NEUTRAL ZONE",
+    value: "NEUTRAL ZONE",
   },
   {
-    "label": "NEW CALEDONIA",
-    "value": "NEW CALEDONIAN"
+    label: "NEW CALEDONIA",
+    value: "NEW CALEDONIAN",
   },
   {
-    "label": "NEW ZEALAND",
-    "value": "NEW ZEALANDER"
+    label: "NEW ZEALAND",
+    value: "NEW ZEALANDER",
   },
   {
-    "label": "NICARAGUA",
-    "value": "NICARAGUAN"
+    label: "NICARAGUA",
+    value: "NICARAGUAN",
   },
   {
-    "label": "NIGER",
-    "value": "NIGERIEN"
+    label: "NIGER",
+    value: "NIGERIEN",
   },
   {
-    "label": "NIGERIA",
-    "value": "NIGERIAN"
+    label: "NIGERIA",
+    value: "NIGERIAN",
   },
   {
-    "label": "NIUE",
-    "value": "NIUE"
+    label: "NIUE",
+    value: "NIUE",
   },
   {
-    "label": "NORFOLK ISLAND",
-    "value": "NORFOLK ISLAND"
+    label: "NORFOLK ISLAND",
+    value: "NORFOLK ISLAND",
   },
   {
-    "label": "NOTHERN MARIANA ISLANDS",
-    "value": "NOTHERN MARIANA ISLANDS"
+    label: "NOTHERN MARIANA ISLANDS",
+    value: "NOTHERN MARIANA ISLANDS",
   },
   {
-    "label": "NORWAY",
-    "value": "NORWEGIAN"
+    label: "NORWAY",
+    value: "NORWEGIAN",
   },
   {
-    "label": "OMAN",
-    "value": "OMAN"
+    label: "OMAN",
+    value: "OMAN",
   },
   {
-    "label": "GERMANY",
-    "value": "GERMAN"
+    label: "GERMANY",
+    value: "GERMAN",
   },
   {
-    "label": "ITALY",
-    "value": "ITALIAN"
+    label: "ITALY",
+    value: "ITALIAN",
   },
   {
-    "label": "PORTUGAL",
-    "value": "PORTUGUESE"
+    label: "PORTUGAL",
+    value: "PORTUGUESE",
   },
   {
-    "label": "SLOVENIA ",
-    "value": "SLOVENE"
+    label: "SLOVENIA ",
+    value: "SLOVENE",
   },
   {
-    "label": "PALASTINE",
-    "value": "PALASTINIAN"
+    label: "PALASTINE",
+    value: "PALASTINIAN",
   },
   {
-    "label": "MIANMAR",
-    "value": "MIANMARIAN"
+    label: "MIANMAR",
+    value: "MIANMARIAN",
   },
   {
-    "label": "YUGOSLOVIA",
-    "value": "YUGOSLOVIAN"
+    label: "YUGOSLOVIA",
+    value: "YUGOSLOVIAN",
   },
   {
-    "label": "TRINIDAD AND TOBAGO",
-    "value": "TRINIDADIAN"
+    label: "TRINIDAD AND TOBAGO",
+    value: "TRINIDADIAN",
   },
   {
-    "label": "SERBIA SCG",
-    "value": "SERB SCG"
+    label: "SERBIA SCG",
+    value: "SERB SCG",
   },
   {
-    "label": "SURINAME",
-    "value": "SURINAMIAN"
+    label: "SURINAME",
+    value: "SURINAMIAN",
   },
   {
-    "label": "SYRIAN ARAB REPUBLIC",
-    "value": "SYRIAN"
+    label: "SYRIAN ARAB REPUBLIC",
+    value: "SYRIAN",
   },
   {
-    "label": "EAST TIMOR",
-    "value": "EAST TIMORESE"
+    label: "EAST TIMOR",
+    value: "EAST TIMORESE",
   },
   {
-    "label": "REPUBLIC OF TANZANIA",
-    "value": "TANZANIAN"
+    label: "REPUBLIC OF TANZANIA",
+    value: "TANZANIAN",
   },
   {
-    "label": "VENEZUELA",
-    "value": "VENEZUELAN"
+    label: "VENEZUELA",
+    value: "VENEZUELAN",
   },
   {
-    "label": "ARGENTINA",
-    "value": "ARGENTINE"
+    label: "ARGENTINA",
+    value: "ARGENTINE",
   },
   {
-    "label": "CENTRAL AFRICAN REPUBLIC",
-    "value": "CENTRAL AFRICAN REPUBLIC"
+    label: "CENTRAL AFRICAN REPUBLIC",
+    value: "CENTRAL AFRICAN REPUBLIC",
   },
   {
-    "label": "ECUADOR",
-    "value": "ECUDORIAN"
+    label: "ECUADOR",
+    value: "ECUDORIAN",
   },
   {
-    "label": "UK - PROTECTED",
-    "value": "BRITISH - PROTECTED"
+    label: "UK - PROTECTED",
+    value: "BRITISH - PROTECTED",
   },
   {
-    "label": "PANAMA",
-    "value": "PANAMANIAN"
+    label: "PANAMA",
+    value: "PANAMANIAN",
   },
   {
-    "label": "ROMANIA ROM",
-    "value": "ROMANIAN ROM"
+    label: "ROMANIA ROM",
+    value: "ROMANIAN ROM",
   },
   {
-    "label": "SIERRA LEONE",
-    "value": "SIERRA LEONEAN"
+    label: "SIERRA LEONE",
+    value: "SIERRA LEONEAN",
   },
   {
-    "label": "TURKMENISTAN",
-    "value": "TURKMENISTANI"
+    label: "TURKMENISTAN",
+    value: "TURKMENISTANI",
   },
   {
-    "label": "IVORY COAST",
-    "value": "IVOIRIAN"
+    label: "IVORY COAST",
+    value: "IVOIRIAN",
   },
   {
-    "label": "TONGA",
-    "value": "TONGAN"
+    label: "TONGA",
+    value: "TONGAN",
   },
   {
-    "label": "CAYMAN ISLANDS",
-    "value": "CAYMEN ISLANDS"
+    label: "CAYMAN ISLANDS",
+    value: "CAYMEN ISLANDS",
   },
   {
-    "label": "ANGUILLA",
-    "value": "ANGUILLAN"
+    label: "ANGUILLA",
+    value: "ANGUILLAN",
   },
   {
-    "label": "COOK ISLANDS",
-    "value": "COOK ISLANDS"
+    label: "COOK ISLANDS",
+    value: "COOK ISLANDS",
   },
   {
-    "label": "REUNION",
-    "value": "REUNIONNAIS"
+    label: "REUNION",
+    value: "REUNIONNAIS",
   },
   {
-    "label": "AUSTRALIA",
-    "value": "AUSTRALIAN"
+    label: "AUSTRALIA",
+    value: "AUSTRALIAN",
   },
   {
-    "label": "BANGLADESH",
-    "value": "BANGLADESHI"
+    label: "BANGLADESH",
+    value: "BANGLADESHI",
   },
   {
-    "label": "BRAZIL",
-    "value": "BRAZILIAN"
+    label: "BRAZIL",
+    value: "BRAZILIAN",
   },
   {
-    "label": "CANADA",
-    "value": "CANADIAN"
+    label: "CANADA",
+    value: "CANADIAN",
   },
   {
-    "label": "SRI LANKA",
-    "value": "SRI LANKAN"
+    label: "SRI LANKA",
+    value: "SRI LANKAN",
   },
   {
-    "label": "INDIA",
-    "value": "INDIAN"
+    label: "INDIA",
+    value: "INDIAN",
   },
   {
-    "label": "HONG KONG",
-    "value": "HONG KONG"
+    label: "HONG KONG",
+    value: "HONG KONG",
   },
   {
-    "label": "AFGHANISTAN",
-    "value": "AFGHAN"
+    label: "AFGHANISTAN",
+    value: "AFGHAN",
   },
   {
-    "label": "ALBANIA",
-    "value": "ALBANIAN"
+    label: "ALBANIA",
+    value: "ALBANIAN",
   },
   {
-    "label": "ALGERIA",
-    "value": "ALGERIAN"
+    label: "ALGERIA",
+    value: "ALGERIAN",
   },
   {
-    "label": "AMERICAN SAMOA",
-    "value": "AMERICAN SAMOAN"
+    label: "AMERICAN SAMOA",
+    value: "AMERICAN SAMOAN",
   },
   {
-    "label": "ANDORRA",
-    "value": "ANDORRAN"
+    label: "ANDORRA",
+    value: "ANDORRAN",
   },
   {
-    "label": "ANGOLA",
-    "value": "ANGOLAN"
+    label: "ANGOLA",
+    value: "ANGOLAN",
   },
   {
-    "label": "ANTARCTICA",
-    "value": "ANTARCTICAN"
+    label: "ANTARCTICA",
+    value: "ANTARCTICAN",
   },
   {
-    "label": "ANTIGUA AND BARBUDA",
-    "value": "ANTIGUAN"
+    label: "ANTIGUA AND BARBUDA",
+    value: "ANTIGUAN",
   },
   {
-    "label": "ARMENIA",
-    "value": "ARMENIAN"
+    label: "ARMENIA",
+    value: "ARMENIAN",
   },
   {
-    "label": "ARUBA",
-    "value": "ARUBAN"
+    label: "ARUBA",
+    value: "ARUBAN",
   },
   {
-    "label": "AUSTRIA",
-    "value": "AUSTRIAN"
+    label: "AUSTRIA",
+    value: "AUSTRIAN",
   },
   {
-    "label": "AZERBAIJAN",
-    "value": "AZERI"
+    label: "AZERBAIJAN",
+    value: "AZERI",
   },
   {
-    "label": "BAHAMAS",
-    "value": "BAHAMIAN"
+    label: "BAHAMAS",
+    value: "BAHAMIAN",
   },
   {
-    "label": "BAHRAIN",
-    "value": "BAHRAINI"
+    label: "BAHRAIN",
+    value: "BAHRAINI",
   },
   {
-    "label": "BARBADOS",
-    "value": "BARBADIAN"
+    label: "BARBADOS",
+    value: "BARBADIAN",
   },
   {
-    "label": "BELARUS",
-    "value": "BELARUSIAN"
+    label: "BELARUS",
+    value: "BELARUSIAN",
   },
   {
-    "label": "BELGIUM",
-    "value": "BELGIAN"
+    label: "BELGIUM",
+    value: "BELGIAN",
   },
   {
-    "label": "BELIZE",
-    "value": "BELIZEAN"
+    label: "BELIZE",
+    value: "BELIZEAN",
   },
   {
-    "label": "BENIN",
-    "value": "BENIN"
+    label: "BENIN",
+    value: "BENIN",
   },
   {
-    "label": "BERMUDA",
-    "value": "BERMUDIAN"
+    label: "BERMUDA",
+    value: "BERMUDIAN",
   },
   {
-    "label": "BHUTAN",
-    "value": "BHUTANIAN"
+    label: "BHUTAN",
+    value: "BHUTANIAN",
   },
   {
-    "label": "BOLIVIA",
-    "value": "BOLIVIAN"
+    label: "BOLIVIA",
+    value: "BOLIVIAN",
   },
   {
-    "label": "BOZNIA HERZEGOVNIA",
-    "value": "BOSNIAN"
+    label: "BOZNIA HERZEGOVNIA",
+    value: "BOSNIAN",
   },
   {
-    "label": "BOTSWANA",
-    "value": "BOTSWANIAN"
+    label: "BOTSWANA",
+    value: "BOTSWANIAN",
   },
   {
-    "label": "BOUVET ISLAND",
-    "value": "BOUVET ISLAND"
+    label: "BOUVET ISLAND",
+    value: "BOUVET ISLAND",
   },
   {
-    "label": "BRITISH INDIAN OCEAN",
-    "value": "BRITISH INDIAN OCEAN"
+    label: "BRITISH INDIAN OCEAN",
+    value: "BRITISH INDIAN OCEAN",
   },
   {
-    "label": "BRUNEI DARUSSALAM",
-    "value": "BRUNIE DARUSSALAM"
+    label: "BRUNEI DARUSSALAM",
+    value: "BRUNIE DARUSSALAM",
   },
   {
-    "label": "BULGARIA",
-    "value": "BULGARIAN"
+    label: "BULGARIA",
+    value: "BULGARIAN",
   },
   {
-    "label": "BURKINA FASO",
-    "value": "BURKINABE"
+    label: "BURKINA FASO",
+    value: "BURKINABE",
   },
   {
-    "label": "BURUNDI",
-    "value": "BURUNDIAN"
+    label: "BURUNDI",
+    value: "BURUNDIAN",
   },
   {
-    "label": "CAMBODIA",
-    "value": "CAMBODIAN"
+    label: "CAMBODIA",
+    value: "CAMBODIAN",
   },
   {
-    "label": "CAMEROON",
-    "value": "CAMEROONIAN"
+    label: "CAMEROON",
+    value: "CAMEROONIAN",
   },
   {
-    "label": "CAPE VERDE",
-    "value": "CAPE VERDEAN"
+    label: "CAPE VERDE",
+    value: "CAPE VERDEAN",
   },
   {
-    "label": "CHAD",
-    "value": "CHADIAN"
+    label: "CHAD",
+    value: "CHADIAN",
   },
   {
-    "label": "CHILE",
-    "value": "CHILEAN"
+    label: "CHILE",
+    value: "CHILEAN",
   },
   {
-    "label": "CHINA",
-    "value": "CHINESE"
+    label: "CHINA",
+    value: "CHINESE",
   },
   {
-    "label": "CHRISTMAS ISLANDS",
-    "value": "CHRISTMAS ISLANDS"
+    label: "CHRISTMAS ISLANDS",
+    value: "CHRISTMAS ISLANDS",
   },
   {
-    "label": "COCOS (KEELING) ISLANDS",
-    "value": "COCOS (KEELING) ISLANDS"
+    label: "COCOS (KEELING) ISLANDS",
+    value: "COCOS (KEELING) ISLANDS",
   },
   {
-    "label": "COLOMBIA",
-    "value": "COLOMBIAN"
+    label: "COLOMBIA",
+    value: "COLOMBIAN",
   },
   {
-    "label": "COMOROS",
-    "value": "COMORIAN"
+    label: "COMOROS",
+    value: "COMORIAN",
   },
   {
-    "label": "MONTENEGRO MON",
-    "value": "MONTENEGRO MON"
-  }
- ]
+    label: "MONTENEGRO MON",
+    value: "MONTENEGRO MON",
+  },
+];
 
- const valuesList = []
+const valuesList = [];
 
-  for (var nationality in nationalityDetails) {
-    var nationalityItem = nationalityDetails[nationality];
-    valuesList.push({
-      "value": nationalityItem.value ,
-      "label": nationalityItem.value
-    })
-  }
-  
+for (var nationality in nationalityDetails) {
+  var nationalityItem = nationalityDetails[nationality];
+  valuesList.push({
+    value: nationalityItem.value,
+    label: nationalityItem.value,
+  });
+}
 
-export const nationalityList =  valuesList.sort((a, b) => a.label.localeCompare(b.label));
-
-  
+export const nationalityList = valuesList.sort((a, b) =>
+  a.label.localeCompare(b.label),
+);

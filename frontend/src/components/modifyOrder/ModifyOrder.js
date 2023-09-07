@@ -1,28 +1,21 @@
-import React, {useState,useEffect,useContext} from 'react'
-import { Column, Form, Grid} from '@carbon/react';
-import SearchPatientForm from '../patient/SearchPatientForm';
+import React, { useState } from "react";
+import SearchPatientForm from "../patient/SearchPatientForm";
 
+function ModifyOrder() {
+  const [selectedPatient, setSelectedPatient] = useState({});
 
-class  ModifyOrder extends React.Component {
+  const getSelectedPatient = (patient) => {
+    setSelectedPatient(patient);
+    console.log("selectedPatient:" + selectedPatient);
+  };
 
-    constructor(props) {
-        super(props)
-        this.state = {
-            selectedPatient: {}
-        }
-    }
-
-
-    getSelectedPatient = (patient) => {
-        this.setState({ selectedPatient: patient })
-    }
-
-    render() {
-        return (
-            <>
-                <SearchPatientForm getSelectedPatient={this.getSelectedPatient}></SearchPatientForm>          
-            </>
-        );
-    }
+  return (
+    <>
+      <SearchPatientForm
+        getSelectedPatient={getSelectedPatient}
+      ></SearchPatientForm>
+    </>
+  );
 }
+
 export default ModifyOrder;

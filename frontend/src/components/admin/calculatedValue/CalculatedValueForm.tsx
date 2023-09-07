@@ -1,32 +1,56 @@
 import React, { useCallback } from "react";
 import { useContext, useState, useEffect, useRef } from "react";
-import { Form, Stack, TextInput, Select, SelectItem, Button, IconButton, Toggle, Loading, Checkbox,RadioButtonGroup, RadioButton, ModalWrapper } from '@carbon/react';
-import AutoComplete from '../../common/AutoComplete.js'
-import { Add, Subtract, Save } from '@carbon/react/icons';
+import {
+  Form,
+  Stack,
+  TextInput,
+  Select,
+  SelectItem,
+  Button,
+  IconButton,
+  Toggle,
+  Loading,
+  Checkbox,
+  RadioButtonGroup,
+  RadioButton,
+  ModalWrapper,
+} from "@carbon/react";
+import AutoComplete from "../../common/AutoComplete.js";
+import { Add, Subtract, Save } from "@carbon/react/icons";
 import { FormattedMessage } from "react-intl";
-import { CalculatedValueFormValues, CalculatedValueFormModel, OperationType, OperationModel } from '../../formModel/innitialValues/CalculatedValueFormSchema'
-import { getFromOpenElisServer, postToOpenElisServer} from '../../utils/Utils.js';
+import {
+  CalculatedValueFormValues,
+  CalculatedValueFormModel,
+  OperationType,
+  OperationModel,
+} from "../../formModel/innitialValues/CalculatedValueFormSchema";
+import {
+  getFromOpenElisServer,
+  postToOpenElisServer,
+} from "../../utils/Utils.js";
 import { NotificationContext } from "../../layout/Layout";
-import { AlertDialog, NotificationKinds } from "../../common/CustomNotification";
-interface CalculatedValueProps {
-}
+import {
+  AlertDialog,
+  NotificationKinds,
+} from "../../common/CustomNotification";
+interface CalculatedValueProps {}
 
-type TestListField = 'TEST_RESULT' | 'FINAL_RESULT'
+type TestListField = "TEST_RESULT" | "FINAL_RESULT";
 interface SampleTestListInterface {
-  TEST_RESULT: { [key: number]: { [key: number]: Array<TestResponse> } }
-  FINAL_RESULT: { [key: number]: Array<TestResponse> }
+  TEST_RESULT: { [key: number]: { [key: number]: Array<TestResponse> } };
+  FINAL_RESULT: { [key: number]: Array<TestResponse> };
 }
 
 interface TestResponse {
-  id: number,
-  value: string,
-  resultType: string
-  resultList: Array<IdValue>
+  id: number;
+  value: string;
+  resultType: string;
+  resultList: Array<IdValue>;
 }
 
 interface IdValue {
-  id: number
-  value: string
+  id: number;
+  value: string;
 }
 interface NotificationContextType {
   notificationVisible: boolean;
@@ -35,40 +59,43 @@ interface NotificationContextType {
 }
 
 interface NotificationBody {
-  kind: any
-  title: string | JSX.Element
-  message: string | JSX.Element
+  kind: any;
+  title: string | JSX.Element;
+  message: string | JSX.Element;
 }
 
-var TestListObj: SampleTestListInterface = {
-  "TEST_RESULT": {}, "FINAL_RESULT": {}
-}
+const TestListObj: SampleTestListInterface = {
+  TEST_RESULT: {},
+  FINAL_RESULT: {},
+};
 
 const mathFunction: IdValue = {
   id: null,
-  value: null
-}
+  value: null,
+};
 
 const CalculatedValue: React.FC<CalculatedValueProps> = () => {
   const componentMounted = useRef(true);
-  const [calculationList, setCalculationList] = useState([CalculatedValueFormValues]);
+  const [calculationList, setCalculationList] = useState([
+    CalculatedValueFormValues,
+  ]);
   const [showConfirmBox, setShowConfirmBox] = useState(true);
   const [sampleList, setSampleList] = useState([]);
   const [sampleTestList, setSampleTestList] = useState(TestListObj);
   const [loading, setLoading] = useState(true);
-  const { notificationVisible, setNotificationVisible, setNotificationBody } = useContext<NotificationContextType>(NotificationContext);
+  const { notificationVisible, setNotificationVisible, setNotificationBody } =
+    useContext<NotificationContextType>(NotificationContext);
   const [mathFunctions, setMathFunctions] = useState([mathFunction]);
 
   useEffect(() => {
     getFromOpenElisServer("/rest/samples", fetchSamples);
-    getFromOpenElisServer("/rest/test-calculations", loadCalculationList)
-    getFromOpenElisServer("/rest/math-functions", loadMathFunctions)
+    getFromOpenElisServer("/rest/test-calculations", loadCalculationList);
+    getFromOpenElisServer("/rest/math-functions", loadMathFunctions);
 
-
-    return () => { // This code runs when component is unmounted
+    return () => {
+      // This code runs when component is unmounted
       componentMounted.current = false;
-    }
-
+    };
   }, []);
 
   const loadCalculationList = (calculations) => {
@@ -79,29 +106,35 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
 
         calculations.forEach((calculation, index) => {
           if (calculation.sampleId) {
-            getFromOpenElisServer("/rest/test-display-beans?sampleType=" + calculation.sampleId, (resp) => fetchTests(resp, "FINAL_RESULT", index, 0));
+            getFromOpenElisServer(
+              "/rest/test-display-beans?sampleType=" + calculation.sampleId,
+              (resp) => fetchTests(resp, "FINAL_RESULT", index, 0),
+            );
           }
 
           calculation.operations.forEach((operation, opeartionIdex) => {
             if (operation.sampleId) {
-              getFromOpenElisServer("/rest/test-display-beans?sampleType=" + operation.sampleId, (resp) => fetchTests(resp, "TEST_RESULT", index, opeartionIdex));
+              getFromOpenElisServer(
+                "/rest/test-display-beans?sampleType=" + operation.sampleId,
+                (resp) => fetchTests(resp, "TEST_RESULT", index, opeartionIdex),
+              );
             }
-          })
+          });
         });
       }
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const loadMathFunctions = (functions) => {
-    setMathFunctions(functions)
-  }
+    setMathFunctions(functions);
+  };
 
   const fetchSamples = (sampleList) => {
     if (componentMounted.current) {
       setSampleList(sampleList);
     }
-  }
+  };
 
   const CalculatedValueObj: CalculatedValueFormModel = {
     id: null,
@@ -115,11 +148,11 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
       {
         id: null,
         order: null,
-        type: 'TEST_RESULT',
+        type: "TEST_RESULT",
         value: null,
-        sampleId: null
-      }
-    ]
+        sampleId: null,
+      },
+    ],
   };
 
   const handleRuleAdd = () => {
@@ -131,85 +164,120 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
     list.splice(index, 1);
     setCalculationList(list);
     if (id) {
-      postToOpenElisServer("/rest/deactivate-test-calculation/" + id, {}, handleDelete);
+      postToOpenElisServer(
+        "/rest/deactivate-test-calculation/" + id,
+        {},
+        handleDelete,
+      );
     }
-    setShowConfirmBox(false)
+    setShowConfirmBox(false);
   };
 
   const handleDelete = (status) => {
     setNotificationVisible(true);
     if (status == "200") {
-      setNotificationBody({ kind: NotificationKinds.success, title: <FormattedMessage id="notification.title"/>, message: <FormattedMessage id="delete.success.msg"/> });
+      setNotificationBody({
+        kind: NotificationKinds.success,
+        title: <FormattedMessage id="notification.title" />,
+        message: <FormattedMessage id="delete.success.msg" />,
+      });
     } else {
-      setNotificationBody({ kind: NotificationKinds.error, title: <FormattedMessage id="notification.title"/>, message: <FormattedMessage id="delete.error.msg"/> });
+      setNotificationBody({
+        kind: NotificationKinds.error,
+        title: <FormattedMessage id="notification.title" />,
+        message: <FormattedMessage id="delete.error.msg" />,
+      });
     }
-  }
+  };
 
   const handleCancelDelete = () => {
-    setShowConfirmBox(false)
+    setShowConfirmBox(false);
   };
 
   const addOperation = (index: number, type: OperationType) => {
     const list = [...calculationList];
-    var operation: OperationModel = {
+    const operation: OperationModel = {
       id: null,
       order: null,
       type: type,
       value: null,
       sampleId: null,
-    }
+    };
 
-    list[index]['operations'].push(operation);
-    console.log(JSON.stringify(list[index]['operations']))
+    list[index]["operations"].push(operation);
+    console.log(JSON.stringify(list[index]["operations"]));
     setCalculationList(list);
   };
 
-  const insertOperation = (index: number, operationIndex: number, type: OperationType) => {
-
-    var operation: OperationModel = {
+  const insertOperation = (
+    index: number,
+    operationIndex: number,
+    type: OperationType,
+  ) => {
+    const operation: OperationModel = {
       id: null,
       order: null,
       type: type,
       value: null,
       sampleId: null,
-    }
+    };
     const list = [...calculationList];
     //list[index]['operations'].push(operation);
-    list[index]['operations'].splice(operationIndex + 1, 0, operation);
-    console.log(JSON.stringify(list[index]['operations']))
+    list[index]["operations"].splice(operationIndex + 1, 0, operation);
+    console.log(JSON.stringify(list[index]["operations"]));
     setCalculationList(list);
   };
 
   const removeOperation = (index: number, operationIndex: number) => {
     const list = [...calculationList];
-    list[index]['operations'].splice(operationIndex, 1);
+    list[index]["operations"].splice(operationIndex, 1);
     setCalculationList(list);
-  }
+  };
 
-  const handleSampleSelected = (e: any, field: TestListField, index: number, item_index: number) => {
+  const handleSampleSelected = (
+    e: any,
+    field: TestListField,
+    index: number,
+    item_index: number,
+  ) => {
     const { value } = e.target;
-    getFromOpenElisServer("/rest/test-display-beans?sampleType=" + value, (resp) => fetchTests(resp, field, index, item_index));
-  }
+    getFromOpenElisServer(
+      "/rest/test-display-beans?sampleType=" + value,
+      (resp) => fetchTests(resp, field, index, item_index),
+    );
+  };
 
-  const loadSampleTestList = (field: TestListField, index: number, item_index: number, resultList: any) => {
-    const results = { ...sampleTestList }
+  const loadSampleTestList = (
+    field: TestListField,
+    index: number,
+    item_index: number,
+    resultList: any,
+  ) => {
+    const results = { ...sampleTestList };
     if (!results[field][index]) {
-      results[field][index] = {}
+      results[field][index] = {};
     }
     switch (field) {
       case "TEST_RESULT":
-        results[field][index][item_index] = resultList.filter(result => result.resultType === 'N');
-        break
+        results[field][index][item_index] = resultList.filter(
+          (result) => result.resultType === "N",
+        );
+        break;
       case "FINAL_RESULT":
-        results[field][index] = resultList
-        break
+        results[field][index] = resultList;
+        break;
     }
     setSampleTestList(results);
-  }
+  };
 
-  const fetchTests = (testList: any, field: TestListField, index: number, item_index: number) => {
+  const fetchTests = (
+    testList: any,
+    field: TestListField,
+    index: number,
+    item_index: number,
+  ) => {
     loadSampleTestList(field, index, item_index, testList);
-  }
+  };
 
   function handleTestSelection(id: number, index: number) {
     const list = [...calculationList];
@@ -217,7 +285,11 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
     setCalculationList(list);
   }
 
-  function handleOperationTestSelection(id: number, index: number, operationIndex: number) {
+  function handleOperationTestSelection(
+    id: number,
+    index: number,
+    operationIndex: number,
+  ) {
     const list = [...calculationList];
     list[index].operations[operationIndex].value = id;
     setCalculationList(list);
@@ -230,7 +302,11 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
     setCalculationList(list);
   };
 
-  const handleOperationFieldChange = (e: any, index: number, operationIndex: number) => {
+  const handleOperationFieldChange = (
+    e: any,
+    index: number,
+    operationIndex: number,
+  ) => {
     const { name, value } = e.target;
     const list = [...calculationList];
     list[index]["operations"][operationIndex][name] = value;
@@ -240,176 +316,235 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
   const handleCalculationSubmited = (status, index) => {
     setNotificationVisible(true);
     if (status == "200") {
-      const element = document.getElementById("submit_" + index) as HTMLInputElement;
+      const element = document.getElementById(
+        "submit_" + index,
+      ) as HTMLInputElement;
       element.disabled = true;
-      setNotificationBody({ kind: NotificationKinds.success, title: <FormattedMessage id="notification.title"/>, message: "Succesfuly saved" });
+      setNotificationBody({
+        kind: NotificationKinds.success,
+        title: <FormattedMessage id="notification.title" />,
+        message: "Succesfuly saved",
+      });
     } else {
-      setNotificationBody({ kind: NotificationKinds.error, title: <FormattedMessage id="notification.title"/>, message: "Duplicate Calculation Name or Error while saving" });
+      setNotificationBody({
+        kind: NotificationKinds.error,
+        title: <FormattedMessage id="notification.title" />,
+        message: "Duplicate Calculation Name or Error while saving",
+      });
     }
   };
 
-  function replaceString(string : string, sequenceToReplace:string, replacement:string) {
-    const regex = new RegExp(sequenceToReplace, 'g');
+  function replaceString(
+    string: string,
+    sequenceToReplace: string,
+    replacement: string,
+  ) {
+    const regex = new RegExp(sequenceToReplace, "g");
     return string.replace(regex, replacement);
   }
 
   const handleSubmit = (event: any, index: number) => {
     event.preventDefault();
-    var mathematicalOpeartion = "";
-    calculationList[index]['operations'].forEach(
-      (operation, opearationIndex) => {
-        operation.order = opearationIndex;
-        mathematicalOpeartion = mathematicalOpeartion + operation.value + " ";
-      }
-    )
+    let mathematicalOperation = "";
+    calculationList[index]["operations"].forEach(
+      (operation, operationIndex) => {
+        operation.order = operationIndex;
+        mathematicalOperation = mathematicalOperation + operation.value + " ";
+      },
+    );
     // for the function validation , remove text values
-    mathematicalOpeartion = replaceString(mathematicalOpeartion ,"AGE" , "0");
-    mathematicalOpeartion = replaceString(mathematicalOpeartion ,"WEIGHT" , "0")
-    mathematicalOpeartion = replaceString(mathematicalOpeartion ,"IS_IN_NORMAL_RANGE" , ">=0 && 1<=10")
-    mathematicalOpeartion = replaceString(mathematicalOpeartion ,"IS_OUTSIDE_NORMAL_RANGE" , "<0 || 1>10")
-    
+    mathematicalOperation = replaceString(mathematicalOperation, "AGE", "0");
+    mathematicalOperation = replaceString(mathematicalOperation, "WEIGHT", "0");
+    mathematicalOperation = replaceString(
+      mathematicalOperation,
+      "IS_IN_NORMAL_RANGE",
+      ">=0 && 1<=10",
+    );
+    mathematicalOperation = replaceString(
+      mathematicalOperation,
+      "IS_OUTSIDE_NORMAL_RANGE",
+      "<0 || 1>10",
+    );
+
     try {
       // Code that might throw an error
-      eval(mathematicalOpeartion)
-      console.log(JSON.stringify(calculationList[index]))
-      postToOpenElisServer("/rest/test-calculation", JSON.stringify(calculationList[index]), (status) => handleCalculationSubmited(status, index))
-
+      eval(mathematicalOperation);
+      console.log(JSON.stringify(calculationList[index]));
+      postToOpenElisServer(
+        "/rest/test-calculation",
+        JSON.stringify(calculationList[index]),
+        (status) => handleCalculationSubmited(status, index),
+      );
     } catch (error) {
       setNotificationVisible(true);
-      setNotificationBody({ kind: NotificationKinds.error, title: <FormattedMessage id="notification.title"/>, message: "Invalid Calculation Logic : " + error.message });
+      setNotificationBody({
+        kind: NotificationKinds.error,
+        title: <FormattedMessage id="notification.title" />,
+        message: "Invalid Calculation Logic : " + error.message,
+      });
     }
   };
-  function getOperationInputByType(index: number, operationIndex: number, type: OperationType, operation: OperationModel) {
+  function getOperationInputByType(
+    index: number,
+    operationIndex: number,
+    type: OperationType,
+    operation: OperationModel,
+  ) {
     switch (type) {
       case "TEST_RESULT":
-        return (<>
+        return (
+          <>
+            <div className="first-row">
+              <Select
+                id={index + "_" + operationIndex + "_sample"}
+                name="sampleId"
+                labelText={
+                  <FormattedMessage id="rulebuilder.label.selectSample" />
+                }
+                value={operation.sampleId}
+                className="inputSelect"
+                onChange={(e) => {
+                  handleSampleSelected(e, "TEST_RESULT", index, operationIndex);
+                  handleOperationFieldChange(
+                    e,
+                    index,
+                    operationIndex,
+                  ); /*resetOperationValue(index, operationIndex, operation)*/
+                }}
+                required
+              >
+                <SelectItem text="" value="" />
+                {sampleList.map((sample, sample_index) => (
+                  <SelectItem
+                    text={sample.value}
+                    value={sample.id}
+                    key={sample_index}
+                  />
+                ))}
+              </Select>
+            </div>
+            <div className="first-row">
+              <AutoComplete
+                id={index + "_" + operationIndex + "_testresult"}
+                label={
+                  <FormattedMessage id="testcalculation.label.searchNumericTest" />
+                }
+                class="inputText"
+                name="operationtestName"
+                value={operation.value}
+                onSelect={(id) =>
+                  handleOperationTestSelection(id, index, operationIndex)
+                }
+                suggestions={
+                  sampleTestList["TEST_RESULT"][index]
+                    ? sampleTestList["TEST_RESULT"][index][operationIndex]
+                    : []
+                }
+              ></AutoComplete>
+            </div>
+          </>
+        );
+      case "MATH_FUNCTION":
+        return (
           <div className="first-row">
             <Select
-              id={index + "_" + operationIndex + "_sample"}
-              name="sampleId"
-              labelText={<FormattedMessage id="rulebuilder.label.selectSample" />}
-              value={operation.sampleId}
-              className="inputSelect"
-              onChange={(e) => { handleSampleSelected(e, "TEST_RESULT", index, operationIndex); handleOperationFieldChange(e, index, operationIndex); /*resetOperationValue(index, operationIndex, operation)*/ }}
+              id={index + "_" + operationIndex + "_mathfunction"}
+              name="value"
+              labelText={
+                <FormattedMessage id="testcalculation.label.mathFucntion" />
+              }
+              value={operation.value}
+              className="inputSelect2"
+              onChange={(e) => {
+                handleOperationFieldChange(e, index, operationIndex);
+              }}
               required
             >
-              <SelectItem
-                text=""
-                value=""
-              />
-              {sampleList.map((sample, sample_index) => (
-                <SelectItem
-                  text={sample.value}
-                  value={sample.id}
-                  key={sample_index}
-                />
+              <SelectItem text="" value="" />
+              {mathFunctions.map((fn, fn_index) => (
+                <SelectItem text={fn.value} value={fn.id} key={fn_index} />
               ))}
             </Select>
           </div>
-          <div className="first-row">
-            <AutoComplete
-              id={index + "_" + operationIndex + "_testresult"}
-              label={<FormattedMessage id="testcalculation.label.searchNumericTest" />} 
-              class="inputText"
-              name="operationtestName"
-              value={operation.value}
-              onSelect={(id) => handleOperationTestSelection(id, index, operationIndex)}
-              suggestions={sampleTestList["TEST_RESULT"][index] ? sampleTestList["TEST_RESULT"][index][operationIndex] : []}>
-            </AutoComplete>
-          </div>
-        </>);
-      case "MATH_FUNCTION":
-        return (<div className="first-row">
-          <Select
-            id={index + "_" + operationIndex + "_mathfunction"}
-            name="value"
-            labelText={<FormattedMessage id="testcalculation.label.mathFucntion" />}
-            value={operation.value}
-            className="inputSelect2"
-            onChange={(e) => { handleOperationFieldChange(e, index, operationIndex) }}
-            required
-          >
-            <SelectItem
-              text=""
-              value=""
-            />
-            {mathFunctions.map((fn, fn_index) => (
-              <SelectItem
-                text={fn.value}
-                value={fn.id}
-                key={fn_index}
-              />
-            ))}
-          </Select>
-        </div>);
+        );
       case "INTEGER":
-        return (<div className="first-row">
-          <TextInput
-            name="value"
-            className="inputText2"
-            type="number"
-            id={index + "_" + operationIndex + "_integer"}
-            labelText={<FormattedMessage id="testcalculation.label.integer" />}
-            value={operation.value}
-            onChange={(e) => { handleOperationFieldChange(e, index, operationIndex) }}
-          />
-        </div>);
+        return (
+          <div className="first-row">
+            <TextInput
+              name="value"
+              className="inputText2"
+              type="number"
+              id={index + "_" + operationIndex + "_integer"}
+              labelText={
+                <FormattedMessage id="testcalculation.label.integer" />
+              }
+              value={operation.value}
+              onChange={(e) => {
+                handleOperationFieldChange(e, index, operationIndex);
+              }}
+            />
+          </div>
+        );
       case "PATIENT_ATTRIBUTE":
-        return (<div className="first-row">
-          <Select
-            id={index + "_" + operationIndex + "_patientattribute"}
-            name="value"
-            labelText={<FormattedMessage id="testcalculation.label.patientAttribute" />}
-            value={operation.value}
-            className="inputSelect2"
-            onChange={(e) => { handleOperationFieldChange(e, index, operationIndex) }}
-            required
-          >
-            <SelectItem
-              text=""
-              value=""
-            />
-            <SelectItem
-              text="Patient Age(Years)"
-              value="AGE"
-            />
-            <SelectItem
-              text="Patient Weight(Kg)"
-              value="WEIGHT"
-            />
-          </Select>
-        </div>);
+        return (
+          <div className="first-row">
+            <Select
+              id={index + "_" + operationIndex + "_patientattribute"}
+              name="value"
+              labelText={
+                <FormattedMessage id="testcalculation.label.patientAttribute" />
+              }
+              value={operation.value}
+              className="inputSelect2"
+              onChange={(e) => {
+                handleOperationFieldChange(e, index, operationIndex);
+              }}
+              required
+            >
+              <SelectItem text="" value="" />
+              <SelectItem text="Patient Age(Years)" value="AGE" />
+              <SelectItem text="Patient Weight(Kg)" value="WEIGHT" />
+            </Select>
+          </div>
+        );
     }
   }
 
-  function getResultInputByResultType(resultType: string, index: number, calculation: CalculatedValueFormModel) {
+  function getResultInputByResultType(
+    resultType: string,
+    index: number,
+    calculation: CalculatedValueFormModel,
+  ) {
     switch (resultType) {
       case "D":
         return (
-          <div >
+          <div>
             <Select
               id={index + "_resultdictionary"}
               name="result"
-              labelText={<FormattedMessage id="testcalculation.label.selectDictionaryValue" />}
+              labelText={
+                <FormattedMessage id="testcalculation.label.selectDictionaryValue" />
+              }
               value={calculation.result}
               className="inputSelect"
-              onChange={(e) => { handleCalculationFieldChange(e, index) }}
+              onChange={(e) => {
+                handleCalculationFieldChange(e, index);
+              }}
               required
             >
-              <SelectItem
-                text=""
-                value=""
-              />
-              {sampleTestList["FINAL_RESULT"][index].filter(test => test.id == calculation.testId)[0].resultList.map((result, result_index) => (
-                <SelectItem
-                  text={result.value}
-                  value={result.id}
-                  key={result_index}
-                />
-              ))}
+              <SelectItem text="" value="" />
+              {sampleTestList["FINAL_RESULT"][index]
+                .filter((test) => test.id == calculation.testId)[0]
+                .resultList.map((result, result_index) => (
+                  <SelectItem
+                    text={result.value}
+                    value={result.id}
+                    key={result_index}
+                  />
+                ))}
             </Select>
           </div>
-        )
+        );
 
       case "A":
       case "R":
@@ -419,34 +554,39 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
               name="result"
               className="inputText"
               id={index + "_resultfreetext"}
-              labelText={<FormattedMessage id="testcalculation.label.textValue" />}
+              labelText={
+                <FormattedMessage id="testcalculation.label.textValue" />
+              }
               value={calculation.result}
-              onChange={(e) => { handleCalculationFieldChange(e, index) }}
+              onChange={(e) => {
+                handleCalculationFieldChange(e, index);
+              }}
             />
           </div>
-        )
+        );
     }
-
   }
-  const addOperationBySelect = (e: any, index: number, opearationIndex: number) => {
+  const addOperationBySelect = (
+    e: any,
+    index: number,
+    operationIndex: number,
+  ) => {
     const { value } = e.target;
-    insertOperation(index, opearationIndex, value);
-  }
+    insertOperation(index, operationIndex, value);
+  };
 
   const toggleCalculation = (e, index) => {
     const list = [...calculationList];
     list[index]["toggled"] = e;
     setCalculationList(list);
-  }
+  };
 
   return (
-    <div className='adminPageContent'>
+    <div className="adminPageContent">
       {notificationVisible === true ? <AlertDialog /> : ""}
-      {loading && (
-        <Loading></Loading>
-      )}
+      {loading && <Loading></Loading>}
       {calculationList.map((calculation, index) => (
-        <div key={index} className="rules" >
+        <div key={index} className="rules">
           <div className="first-division">
             <Form onSubmit={(e) => handleSubmit(e, index)}>
               <Stack gap={7}>
@@ -459,155 +599,239 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
                         className="reflexInputText"
                         type="text"
                         id={index + "_name"}
-                        labelText={<FormattedMessage id="testcalculation.label.name" />}
+                        labelText={
+                          <FormattedMessage id="testcalculation.label.name" />
+                        }
                         value={calculation.name}
                         onChange={(e) => handleCalculationFieldChange(e, index)}
                       />
                     </div>
-                    <div >
-                      &nbsp;  &nbsp;
-                    </div>
-                    <div >
+                    <div>&nbsp; &nbsp;</div>
+                    <div>
                       <Toggle
                         toggled={calculation.toggled}
                         aria-label="toggle button"
                         id={index + "_toggle"}
-                        labelText={<FormattedMessage id="rulebuilder.label.toggleRule" />}
+                        labelText={
+                          <FormattedMessage id="rulebuilder.label.toggleRule" />
+                        }
                         onToggle={(e) => toggleCalculation(e, index)}
                       />
                     </div>
-                    <div >
-                      &nbsp;  &nbsp; &nbsp;  &nbsp; &nbsp;  &nbsp;
-                    </div>
-                    <div >
-                      <Checkbox labelText={"Active: " + calculation.active} name="active" id={index + "_active"} checked={calculation.active}
+                    <div>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div>
+                    <div>
+                      <Checkbox
+                        labelText={"Active: " + calculation.active}
+                        name="active"
+                        id={index + "_active"}
+                        checked={calculation.active}
                         disabled={calculation.active}
-                       onChange={(e) => {
-                           const list = [...calculationList];
-                           list[index]["active"] = e.target.checked;
-                           setCalculationList(list);
-
+                        onChange={(e) => {
+                          const list = [...calculationList];
+                          list[index]["active"] = e.target.checked;
+                          setCalculationList(list);
                         }}
-                        />
+                      />
                     </div>
                   </div>
                   {calculation.toggled && (
                     <>
                       <div className="inlineDiv">
-                      <FormattedMessage id="label.button.add" />  &nbsp;  &nbsp;
+                        <FormattedMessage id="label.button.add" /> &nbsp; &nbsp;
                         <div>
-                          <Button renderIcon={Add} id={index + "_testresult"} kind='tertiary' size='sm' onClick={() => addOperation(index, 'TEST_RESULT')}>
+                          <Button
+                            renderIcon={Add}
+                            id={index + "_testresult"}
+                            kind="tertiary"
+                            size="sm"
+                            onClick={() => addOperation(index, "TEST_RESULT")}
+                          >
                             <FormattedMessage id="testcalculation.label.testResult" />
                           </Button>
                         </div>
-                        <div >
-                          &nbsp;  &nbsp;
-                        </div>
+                        <div>&nbsp; &nbsp;</div>
                         <div>
-                          <Button renderIcon={Add} id={index + "_mathfunction"} kind='tertiary' size='sm' onClick={() => addOperation(index, 'MATH_FUNCTION')}>
+                          <Button
+                            renderIcon={Add}
+                            id={index + "_mathfunction"}
+                            kind="tertiary"
+                            size="sm"
+                            onClick={() => addOperation(index, "MATH_FUNCTION")}
+                          >
                             <FormattedMessage id="testcalculation.label.mathFucntion" />
                           </Button>
                         </div>
-                        <div >
-                          &nbsp;  &nbsp;
-                        </div>
+                        <div>&nbsp; &nbsp;</div>
                         <div>
-                          <Button renderIcon={Add} id={index + "_integer"} kind='tertiary' size='sm' onClick={() => addOperation(index, 'INTEGER')}>
+                          <Button
+                            renderIcon={Add}
+                            id={index + "_integer"}
+                            kind="tertiary"
+                            size="sm"
+                            onClick={() => addOperation(index, "INTEGER")}
+                          >
                             <FormattedMessage id="testcalculation.label.integer" />
                           </Button>
                         </div>
-                        <div >
-                          &nbsp;  &nbsp;
-                        </div>
+                        <div>&nbsp; &nbsp;</div>
                         <div>
-                          <Button renderIcon={Add} id={index + "_patientattribute"} kind='tertiary' size='sm' onClick={() => addOperation(index, 'PATIENT_ATTRIBUTE')}>
+                          <Button
+                            renderIcon={Add}
+                            id={index + "_patientattribute"}
+                            kind="tertiary"
+                            size="sm"
+                            onClick={() =>
+                              addOperation(index, "PATIENT_ATTRIBUTE")
+                            }
+                          >
                             <FormattedMessage id="testcalculation.label.patientAttribute" />
                           </Button>
                         </div>
                       </div>
                       <div className="section">
                         <div className="inlineDiv">
-                          <h5><FormattedMessage id="testcalculation.label.calculation" /></h5>
+                          <h5>
+                            <FormattedMessage id="testcalculation.label.calculation" />
+                          </h5>
                         </div>
                         <div className="section">
                           <div className="inlineDiv">
-                             &nbsp; {calculation.operations.map((operation, operationIndex) => (
-                              <div>
-                               {operation.type === 'TEST_RESULT' && operation.value?"'":""}{operation.type === 'TEST_RESULT' ? sampleTestList["TEST_RESULT"][index]?sampleTestList["TEST_RESULT"][index][operationIndex]?.filter(test => test.id == operation.value)[0]?.value + "'": "": operation.value}  &nbsp;
-                              </div>
-                            ))}  {(<b style={{ color: 'red' }}>{" => "}</b>)} &nbsp; {calculation.testId?"'" : ""}{sampleTestList["FINAL_RESULT"][index]?sampleTestList["FINAL_RESULT"][index]?.filter(test => test.id == calculation.testId)[0]?.value + "'": ""}
+                            &nbsp;{" "}
+                            {calculation.operations.map(
+                              (operation, operationIndex) => (
+                                <div key={index + "_" + operationIndex}>
+                                  {operation.type === "TEST_RESULT" &&
+                                  operation.value
+                                    ? "'"
+                                    : ""}
+                                  {operation.type === "TEST_RESULT"
+                                    ? sampleTestList["TEST_RESULT"][index]
+                                      ? sampleTestList["TEST_RESULT"][index][
+                                          operationIndex
+                                        ]?.filter(
+                                          (test) => test.id == operation.value,
+                                        )[0]?.value + "'"
+                                      : ""
+                                    : operation.value}{" "}
+                                  &nbsp;
+                                </div>
+                              ),
+                            )}{" "}
+                            {<b style={{ color: "red" }}>{" => "}</b>} &nbsp;{" "}
+                            {calculation.testId ? "'" : ""}
+                            {sampleTestList["FINAL_RESULT"][index]
+                              ? sampleTestList["FINAL_RESULT"][index]?.filter(
+                                  (test) => test.id == calculation.testId,
+                                )[0]?.value + "'"
+                              : ""}
                           </div>
                         </div>
-                        {calculation.operations.map((operation, operation_index) => (
-                          <div key={index + "_" + operation_index} className="inlineDiv">
-                            {getOperationInputByType(index, operation_index, operation.type, operation)}
-                            <div >
-                              &nbsp;  &nbsp;
-                            </div>
-                            <div className="second-row">
-                              {operation.type !== '' && (
-                                <IconButton renderIcon={Subtract} id={index + "_removeoperation"} kind='danger' label='' size='sm' onClick={() => removeOperation(index, operation_index)} />
+                        {calculation.operations.map(
+                          (operation, operation_index) => (
+                            <div
+                              key={index + "_" + operation_index}
+                              className="inlineDiv"
+                            >
+                              {getOperationInputByType(
+                                index,
+                                operation_index,
+                                operation.type,
+                                operation,
                               )}
+                              <div>&nbsp; &nbsp;</div>
+                              <div className="second-row">
+                                {operation.type !== "" && (
+                                  <IconButton
+                                    renderIcon={Subtract}
+                                    id={index + "_removeoperation"}
+                                    kind="danger"
+                                    label=""
+                                    size="sm"
+                                    onClick={() =>
+                                      removeOperation(index, operation_index)
+                                    }
+                                  />
+                                )}
+                              </div>
+                              <div>
+                                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                                &nbsp; &nbsp; &nbsp;
+                              </div>
+                              <div>
+                                {/* {calculation.operations.length - 1 === operation_index && ( */}
+                                <Select
+                                  id={
+                                    index +
+                                    "_" +
+                                    operation_index +
+                                    "_addopeartion"
+                                  }
+                                  name="addoperation"
+                                  labelText={
+                                    <FormattedMessage id="testcalculation.label.insertOperation" />
+                                  }
+                                  value={calculation.sampleId}
+                                  className="inputSelect"
+                                  onChange={(e) => {
+                                    addOperationBySelect(
+                                      e,
+                                      index,
+                                      operation_index,
+                                    );
+                                  }}
+                                >
+                                  <SelectItem text="" value="" />
+                                  <SelectItem
+                                    text="Test Result"
+                                    value="TEST_RESULT"
+                                  />
+                                  <SelectItem
+                                    text="Mathematical Function"
+                                    value="MATH_FUNCTION"
+                                  />
+                                  <SelectItem text="Integer" value="INTEGER" />
+                                  <SelectItem
+                                    text="Patient Attribute"
+                                    value="PATIENT_ATTRIBUTE"
+                                  />
+                                </Select>
+                                {/* )} */}
+                              </div>
                             </div>
-                            <div >
-                              &nbsp;  &nbsp; &nbsp;  &nbsp; &nbsp;  &nbsp; &nbsp;  &nbsp; &nbsp;  &nbsp;
-                            </div>
-                            <div >
-                              {/* {calculation.operations.length - 1 === operation_index && ( */}
-                              <Select
-                                id={index + "_" + operation_index + "_addopeartion"}
-                                name="addoperation"
-                                labelText={<FormattedMessage id="testcalculation.label.insertOperation" />}
-                                value={calculation.sampleId}
-                                className="inputSelect"
-                                onChange={(e) => { addOperationBySelect(e, index, operation_index) }}
-                              >
-                                <SelectItem
-                                  text=""
-                                  value=""
-                                />
-                                <SelectItem
-                                  text="Test Result"
-                                  value="TEST_RESULT"
-                                />
-                                <SelectItem
-                                  text="Mathematical Function"
-                                  value="MATH_FUNCTION"
-                                />
-                                <SelectItem
-                                  text="Integer"
-                                  value="INTEGER"
-                                />
-                                <SelectItem
-                                  text="Patient Attribute"
-                                  value="PATIENT_ATTRIBUTE"
-                                />
-                              </Select>
-                              {/* )} */}
-                            </div>
-                          </div>
-                        ))}
-
-                       </div>
-                       <div className="section">
-                       <div className="inlineDiv">
-                          <h6><FormattedMessage id="testcalculation.label.finalresult" /></h6>
+                          ),
+                        )}
+                      </div>
+                      <div className="section">
+                        <div className="inlineDiv">
+                          <h6>
+                            <FormattedMessage id="testcalculation.label.finalresult" />
+                          </h6>
                         </div>
                         <div className="inlineDiv">
-                          <div >
+                          <div>
                             <Select
                               id={index + "_sample"}
                               name="sampleId"
-                              labelText={<FormattedMessage id="rulebuilder.label.selectSample" />}
+                              labelText={
+                                <FormattedMessage id="rulebuilder.label.selectSample" />
+                              }
                               value={calculation.sampleId}
                               className="inputSelect"
-                              onChange={(e) => { handleSampleSelected(e, "FINAL_RESULT", index, 0); handleCalculationFieldChange(e, index); /*resetCalculationValue(index, calculation)*/ }}
+                              onChange={(e) => {
+                                handleSampleSelected(
+                                  e,
+                                  "FINAL_RESULT",
+                                  index,
+                                  0,
+                                );
+                                handleCalculationFieldChange(
+                                  e,
+                                  index,
+                                ); /*resetCalculationValue(index, calculation)*/
+                              }}
                               required
                             >
-                              <SelectItem
-                                text=""
-                                value=""
-                              />
+                              <SelectItem text="" value="" />
                               {sampleList.map((sample, sample_index) => (
                                 <SelectItem
                                   text={sample.value}
@@ -625,56 +849,85 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
                               name="testName"
                               onSelect={(id) => handleTestSelection(id, index)}
                               value={calculation.testId}
-                              suggestions={sampleTestList["FINAL_RESULT"][index] ? sampleTestList["FINAL_RESULT"][index] : []}>
-                            </AutoComplete>
+                              suggestions={
+                                sampleTestList["FINAL_RESULT"][index]
+                                  ? sampleTestList["FINAL_RESULT"][index]
+                                  : []
+                              }
+                            ></AutoComplete>
                           </div>
-                          <div >
-                            &nbsp;  &nbsp;
-                          </div>
+                          <div>&nbsp; &nbsp;</div>
                           {sampleTestList["FINAL_RESULT"][index] && (
                             <>
-                              {getResultInputByResultType(sampleTestList["FINAL_RESULT"][index].filter(test => test.id == calculation.testId)[0]?.resultType, index, calculation)}
+                              {getResultInputByResultType(
+                                sampleTestList["FINAL_RESULT"][index].filter(
+                                  (test) => test.id == calculation.testId,
+                                )[0]?.resultType,
+                                index,
+                                calculation,
+                              )}
                             </>
                           )}
                         </div>
                       </div>
-                      <Button renderIcon={Save} id={"submit_" + index} type="submit" kind='primary' size='sm'>
+                      <Button
+                        renderIcon={Save}
+                        id={"submit_" + index}
+                        type="submit"
+                        kind="primary"
+                        size="sm"
+                      >
                         <FormattedMessage id="label.button.submit" />
                       </Button>
                     </>
                   )}
                 </div>
               </Stack>
-            </Form >
+            </Form>
             {calculationList.length - 1 === index && (
-              <IconButton onClick={handleRuleAdd} label={<FormattedMessage id="rulebuilder.label.addRule" />} size='md' kind='tertiary' >
+              <IconButton
+                onClick={handleRuleAdd}
+                label={<FormattedMessage id="rulebuilder.label.addRule" />}
+                size="md"
+                kind="tertiary"
+              >
                 <Add size={16} />
-                <span><FormattedMessage id="rulebuilder.label.rule" /></span>
+                <span>
+                  <FormattedMessage id="rulebuilder.label.rule" />
+                </span>
               </IconButton>
             )}
           </div>
           <div className="second-division">
             {calculationList.length !== 1 && (
               <ModalWrapper
-                modalLabel={<FormattedMessage id="label.button.confirmDelete" />}
+                modalLabel={
+                  <FormattedMessage id="label.button.confirmDelete" />
+                }
                 open={showConfirmBox}
                 onRequestClose={() => setShowConfirmBox(false)}
                 handleSubmit={() => handleRuleRemove(index, calculation.id)}
                 onSecondarySubmit={handleCancelDelete}
-                primaryButtonText={<FormattedMessage id="label.button.confirm" />}
-                secondaryButtonText={<FormattedMessage id="label.button.cancel" />}
-                modalHeading={<FormattedMessage id="rulebuilder.label.confirmDelete" />}
-                buttonTriggerText={<FormattedMessage id="rulebuilder.label.removeRule" />}
-                size='md'
-              >
-              </ModalWrapper>
+                primaryButtonText={
+                  <FormattedMessage id="label.button.confirm" />
+                }
+                secondaryButtonText={
+                  <FormattedMessage id="label.button.cancel" />
+                }
+                modalHeading={
+                  <FormattedMessage id="rulebuilder.label.confirmDelete" />
+                }
+                buttonTriggerText={
+                  <FormattedMessage id="rulebuilder.label.removeRule" />
+                }
+                size="md"
+              ></ModalWrapper>
             )}
-
           </div>
         </div>
       ))}
     </div>
   );
-}
+};
 
 export default CalculatedValue;

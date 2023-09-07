@@ -1,6 +1,7 @@
 package org.openelisglobal.typeofsample.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -36,7 +37,7 @@ public class TypeOfSampleServiceImpl extends BaseObjectServiceImpl<TypeOfSample,
     private Map<String, List<Test>> sampleIdTestMap = new HashMap<>();
     private Map<String, String> typeOfSampleIdToNameMap;
     private Map<String, String> typeOfSampleWellKnownNameToIdMap;
-    private Map<String, TypeOfSample> testIdToTypeOfSampleMap = null;
+    private Map<String, List<TypeOfSample>> testIdToTypeOfSampleMap = null;
     private Map<String, List<TypeOfSample>> panelIdToTypeOfSampleMap = null;
     // The purpose of this map is to make sure all the references refer to the same
     // instances of the TypeOfSample objects
@@ -149,7 +150,7 @@ public class TypeOfSampleServiceImpl extends BaseObjectServiceImpl<TypeOfSample,
 
     @Override
     @Transactional(readOnly = true)
-    public synchronized TypeOfSample getTypeOfSampleForTest(String testId) {
+    public synchronized List<TypeOfSample> getTypeOfSampleForTest(String testId) {
         if (testIdToTypeOfSampleMap == null) {
             createTestIdToTypeOfSampleMap();
         }
@@ -166,7 +167,11 @@ public class TypeOfSampleServiceImpl extends BaseObjectServiceImpl<TypeOfSample,
             String testId = typeTest.getTestId();
             TypeOfSample typeOfSample = typeOfSampleIdtoTypeOfSampleMap
                     .get(baseObjectDAO.getTypeOfSampleById(typeTest.getTypeOfSampleId()).getId());
-            testIdToTypeOfSampleMap.put(testId, typeOfSample);
+            if (testIdToTypeOfSampleMap.containsKey(testId)) {
+                testIdToTypeOfSampleMap.get(testId).add(typeOfSample);
+            } else {
+                testIdToTypeOfSampleMap.put(testId, Arrays.asList(typeOfSample));
+            }
         }
     }
 

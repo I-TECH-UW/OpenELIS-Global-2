@@ -23,6 +23,7 @@
     "formik-error-focus": "2.0.0",
     "jsonpath": "^1.1.1",
     "lodash-es": "^4.17.15",
+    "prettier-eslint": "^15.0.1",
     "qs": "6.11.0",
     "react": "^17.0.2",
     "react-confirm-alert": "^2.7.0",
@@ -73,6 +74,11 @@
   "devDependencies": {
     "cypress": "^12.17.3",
     "cypress-xpath": "^2.0.1",
+    "eslint": "^8.48.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.0",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
     "sass": "^1.57.1"
   }
 }
