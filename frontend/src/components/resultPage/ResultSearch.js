@@ -6,7 +6,7 @@ import ResultSearchPage from "./SearchResultForm";
 function ResultSearch() {
   return (
     <>
-      <div className="resultPageContent">
+      <div className="orderLegendBody">
         <ResultSearchPage />
       </div>
     </>

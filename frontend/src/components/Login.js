@@ -75,7 +75,7 @@ function Login(props) {
         } else {
           setNotificationBody({
             title: <FormattedMessage id="notification.title" />,
-            message: data.error,
+            message: <FormattedMessage id={data.error} /> ,
             kind: NotificationKinds.error,
           });
           setNotificationVisible(true);

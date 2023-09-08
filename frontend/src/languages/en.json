@@ -273,6 +273,9 @@
     "label.button.select.technician": "Select Technician" ,
     "label.button.select.pathologist": "Select Pathologist" ,
     "label.button.select.test": "Select Test",
-    "assigned.cytopathologist.label" : "CytoPathologist Assigned"
+    "assigned.cytopathologist.label" : "CytoPathologist Assigned" ,
+    "label.search.patient" : "Search Patient" ,
+    "immunohistochemistry.label.dashboard" : "Immunohistochemistry DashBoard" ,
+    "cytology.label.dashboard" : "Cytology DashBoard" 
 
 }

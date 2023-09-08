@@ -569,7 +569,7 @@ export function SearchResults(props) {
               <TextArea
                 id={"testResult" + row.id + ".note"}
                 name={"testResult[" + row.id + "].note"}
-                value={props.results.testResult[row.id].pastNotes}
+                value={props.results.testResult[row.id]?.pastNotes}
                 disabled={false}
                 type="text"
                 labelText=""

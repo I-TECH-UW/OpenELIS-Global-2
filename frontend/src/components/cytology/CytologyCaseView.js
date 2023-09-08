@@ -30,7 +30,7 @@ import {
 import UserSessionDetailsContext from "../../UserSessionDetailsContext";
 import { NotificationContext } from "../layout/Layout";
 import { AlertDialog, NotificationKinds } from "../common/CustomNotification";
-import { FormattedMessage } from "react-intl";
+import { FormattedMessage ,useIntl} from "react-intl";
 import "../pathology/PathologyDashboard.css";
 
 export const QuestionnaireResponse = ({ questionnaireResponse }) => {
@@ -130,6 +130,7 @@ function CytologyCaseView() {
   const [pathologistUsers, setPathologistUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [reportTypes, setReportTypes] = useState([]);
+  const intl = useIntl()
 
   async function displayStatus(response) {
     var body = await response.json();
@@ -349,10 +350,8 @@ function CytologyCaseView() {
   return (
     <>
       <Breadcrumb>
-        <BreadcrumbItem href="/">Home</BreadcrumbItem>
-        <BreadcrumbItem href="/CytologyDashboard">
-          Cytology DashBoard
-        </BreadcrumbItem>
+        <BreadcrumbItem href="/">{intl.formatMessage({ id: "home.label" })}</BreadcrumbItem>
+        <BreadcrumbItem href="/CytologyDashboard">{intl.formatMessage({ id: "cytology.label.dashboard" })}</BreadcrumbItem>
       </Breadcrumb>
 
       <Grid fullWidth={true}>

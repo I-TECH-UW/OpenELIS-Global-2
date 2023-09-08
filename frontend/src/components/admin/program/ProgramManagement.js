@@ -21,7 +21,7 @@ import {
   AlertDialog,
   NotificationKinds,
 } from "../../common/CustomNotification";
-import { FormattedMessage } from "react-intl";
+import { FormattedMessage ,useIntl} from "react-intl";
 
 function ProgramManagement() {
   const componentMounted = useRef(true);
@@ -32,6 +32,7 @@ function ProgramManagement() {
   const [programValues, setProgramValues] = useState(ProgramFormValues);
   const { notificationVisible, setNotificationVisible, setNotificationBody } =
     useContext(NotificationContext);
+  const intl = useIntl();
 
   const fetchPrograms = (programsList) => {
     if (componentMounted.current) {
@@ -170,7 +171,7 @@ function ProgramManagement() {
             >
               <SelectItem
                 value=""
-                text={<FormattedMessage id="new.program.label" />}
+                text={intl.formatMessage({ id :"new.program.label"})}
               />
               {programs.map((program) => {
                 return (

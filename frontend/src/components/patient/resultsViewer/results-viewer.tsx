@@ -7,7 +7,7 @@ import { useGetManyObstreeData } from './grouped-timeline';
 import './results-viewer.styles.scss';
 import { useParams } from 'react-router-dom';
 import TreeViewWrapper from './tree-view';
-import { FormattedMessage, injectIntl } from 'react-intl'
+import { FormattedMessage, injectIntl ,useIntl } from 'react-intl'
 import config from '../../../config.json';
 import { getFromOpenElisServer } from "../../utils/Utils";
 
@@ -54,6 +54,7 @@ const RoutedResultsViewer: React.FC<ResultsViewerProps> = () => {
       setPatient(patient);
     }
   }
+  const intl = useIntl();
 
 
   const { roots, loading, error } = useGetManyObstreeData(patientId);
@@ -83,8 +84,8 @@ const RoutedResultsViewer: React.FC<ResultsViewerProps> = () => {
     <>
 
       <Breadcrumb>
-        <BreadcrumbItem href="/">Home</BreadcrumbItem>
-        <BreadcrumbItem href="/PatientHistory">Search Patient</BreadcrumbItem>
+        <BreadcrumbItem href="/">{intl.formatMessage({ id: "home.label" })}</BreadcrumbItem>
+        <BreadcrumbItem href="/PatientHistory">{intl.formatMessage({ id: "label.search.patient" })}</BreadcrumbItem>
       </Breadcrumb>
 
       <Grid fullWidth={true}>

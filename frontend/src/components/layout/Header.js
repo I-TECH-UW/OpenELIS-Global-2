@@ -13,6 +13,7 @@ import {
   Language,
   UserAvatarFilledAlt,
   Logout,
+  Close 
 } from "@carbon/icons-react";
 
 import {
@@ -50,9 +51,9 @@ function OEHeader(props) {
 
   const panelSwitchIcon = () => {
     return userSessionDetails.authenticated ? (
-      <UserAvatarFilledAlt size={20} />
+       switchCollapsed?<UserAvatarFilledAlt size={20} />:<Close size={20}/>
     ) : (
-      <Language size={20} />
+      switchCollapsed? <Language size={20} />:<Close size={20}/>
     );
   };
 
@@ -75,7 +76,7 @@ function OEHeader(props) {
       <div className="container">
         <Theme>
           <HeaderContainer
-            render={({ isSideNavExpanded, onClickSideNavExpand }) => (
+            render={({ isSideNavExpanded, onClickSideNavExpand}) => (
               <Header id="mainHeader" className="mainHeader" aria-label="">
                 {userSessionDetails.authenticated && (
                   <HeaderMenuButton
@@ -320,7 +321,7 @@ function OEHeader(props) {
                           <SideNavMenuItem href="/validation?type=routine">
                             <FormattedMessage id="sidenav.label.validation.routine" />
                           </SideNavMenuItem>
-                          <SideNavMenuItem href="/validationStudy">
+                          <SideNavMenuItem href={config.serverBaseUrl + "/ResultValidationRetroC?type=Immunology"}>
                             <FormattedMessage id="sidenav.label.validation.study" />
                           </SideNavMenuItem>
                           <SideNavMenuItem href="/validation?type=order">
