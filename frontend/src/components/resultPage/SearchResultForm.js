@@ -75,7 +75,7 @@ export function SearchResultForm(props) {
     }
   };
 
-  const handleAdvancedSearch = () => {};
+  const handleAdvancedSearch = () => { };
 
   const getSelectedPatient = (patient) => {
     setPatient(patient);
@@ -187,21 +187,10 @@ export function SearchResultForm(props) {
           <Form
             onSubmit={handleSubmit}
             onChange={handleChange}
-            //onBlur={handleBlur}
+          //onBlur={handleBlur}
           >
             <Stack gap={2}>
-              <FormLabel>
-                <Section>
-                  <Section>
-                    <Section>
-                      <Heading>
-                        <FormattedMessage id="label.button.search" />
-                      </Heading>
-                    </Section>
-                  </Section>
-                </Section>
-              </FormLabel>
-
+              <FormattedMessage id="label.button.search" />
               <div className="inlineDiv">
                 {searchBy.type === "unit" && (
                   <Field name="unitType">
@@ -379,14 +368,6 @@ export function SearchResultForm(props) {
                     >
                       <FormattedMessage id="label.button.search" />
                     </Button>
-
-                    <Button
-                      kind="secondary"
-                      className="advancedSearchResultsBtn"
-                      onClick={handleAdvancedSearch}
-                    >
-                      <FormattedMessage id="advanced.search" />
-                    </Button>
                   </div>
                 )}
               </Column>
@@ -462,14 +443,7 @@ export function SearchResults(props) {
       sortable: true,
       width: "7rem",
     },
-    // {
-    //     name: 'Methods',
-    //     cell: (row, index, column, id) => {
-    //         return renderCell(row, index, column, id);
-    //     },
-    //     width: "12rem",
-    //     sortable: true,
-    // },
+
     {
       name: "Analyzer Result",
       selector: (row) => row.analysisMethod,
@@ -569,7 +543,7 @@ export function SearchResults(props) {
               <TextArea
                 id={"testResult" + row.id + ".note"}
                 name={"testResult[" + row.id + "].note"}
-                value={props.results.testResult[row.id].pastNotes}
+                value={props.results.testResult[row.id]?.pastNotes}
                 disabled={false}
                 type="text"
                 labelText=""
@@ -675,12 +649,6 @@ export function SearchResults(props) {
             );
 
           case "N":
-            //return
-            // <input id={"currentResult" + row.id}
-            //     name={"testResult[" + row.id + "].resultValue"}
-            //     onChange={(e) => validateResults(e, row.id)}
-            // //onChange={(e) => markUpdated(e)} sb. disabled and setto value
-            // />
 
             return (
               <TextInput
@@ -694,22 +662,6 @@ export function SearchResults(props) {
               />
             );
 
-          // return <TextInput
-          //     id={"testResult[" + row.id + "].resultValue"}
-          //     name={"testResult[" + row.id + "].resultValue"}
-          //     type="text"
-          //     value={resultForm.testResult[row.id].resultValue}
-          //     // labelText="Text input label"
-          //     // helperText="Optional help text"
-          //     onChange={(e) => validateResults(e, row.id, row)}
-          // />
-
-          // <input id={"results_" + param.rowId} type="text" size="6"></input>
-
-          //         <input id="results_0" name="testResult[0].resultValue" class="resultValue"
-          // style="background: rgb(255, 255, 255);" onchange="validateResults( this, 0, 7.0, 40.0, 7.0, 350.0, 0, 'XXXX' );
-          // 		   			 markUpdated(0);
-          // 		   			 updateShadowResult(this, 0);" type="text" value="" size="6" title=""></input>
           default:
             return row.resultValue;
         }
@@ -950,7 +902,7 @@ export function SearchResults(props) {
           }) => (
             <Form
               onChange={handleChange}
-              //onBlur={handleBlur}
+            //onBlur={handleBlur}
             >
               <DataTable
                 data={props.results.testResult}
