@@ -274,5 +274,6 @@
     "assigned.cytopathologist.label": "Cytopathologiste attribué" ,
     "label.search.patient": "Rechercher un patient",
     "immunohistochemistry.label.dashboard": "Tableau de bord en immunohistochimie",
-    "cytology.label.dashboard": "Tableau de bord en cytologie"
+    "cytology.label.dashboard": "Tableau de bord en cytologie",
+    "label.button.start" : "Commencer" 
 }

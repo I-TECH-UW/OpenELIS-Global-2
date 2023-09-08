@@ -276,6 +276,7 @@
     "assigned.cytopathologist.label" : "CytoPathologist Assigned" ,
     "label.search.patient" : "Search Patient" ,
     "immunohistochemistry.label.dashboard" : "Immunohistochemistry DashBoard" ,
-    "cytology.label.dashboard" : "Cytology DashBoard" 
+    "cytology.label.dashboard" : "Cytology DashBoard"  ,
+    "label.button.start" : "Start" 
 
 }

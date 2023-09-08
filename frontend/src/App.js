@@ -38,6 +38,7 @@ export default function App() {
   };
 
   const [userSessionDetails, setUserSessionDetails] = useState({});
+  const [locale, setLocale] = useState("en");
 
   useEffect(() => {
     getUserSessionDetails();
@@ -130,6 +131,8 @@ export default function App() {
     }
     i18nConfig.locale = lang;
     localStorage.setItem("locale", lang);
+    //rerender the component on changing locale
+    setLocale(lang)
   };
 
   const onChangeLanguage = (lang) => {

@@ -86,7 +86,7 @@ function CytologyDashboard() {
               assignCurrentUserAsTechnician(e, pathologySampleId);
             }}
           >
-            Start
+             <FormattedMessage id="label.button.start"/>
           </Button>
         </TableCell>
       );
@@ -105,7 +105,7 @@ function CytologyDashboard() {
               assignCurrentUserAsPathologist(e, pathologySampleId);
             }}
           >
-            Start
+             <FormattedMessage id="label.button.start"/>
           </Button>
         </TableCell>
       );
