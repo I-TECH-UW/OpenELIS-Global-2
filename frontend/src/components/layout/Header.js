@@ -1,5 +1,5 @@
 import React, { useContext, useState, createRef, useEffect } from "react";
-import { FormattedMessage, injectIntl } from "react-intl";
+import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import { withRouter } from "react-router-dom";
 import { ConfigurationContext } from "../layout/Layout";
 import UserSessionDetailsContext from "../../UserSessionDetailsContext";
@@ -38,6 +38,7 @@ function OEHeader(props) {
   const userSwitchRef = createRef();
   const headerPanelRef = createRef();
   const componentMounted = createRef(false);
+  const intl = useIntl();
 
   useEffect(() => {
     componentMounted.current = true;
@@ -200,7 +201,9 @@ function OEHeader(props) {
                       <SideNavItems>
                         <SideNavMenu
                           aria-label="Order"
-                          title={<FormattedMessage id="sidenav.label.order" />}
+                          title={intl.formatMessage({
+                            id: "sidenav.label.order",
+                          })}
                         >
                           <SideNavMenuItem href="/AddOrder">
                             <FormattedMessage id="sidenav.label.addorder" />
@@ -241,9 +244,9 @@ function OEHeader(props) {
                         </SideNavMenu>
                         <SideNavMenu
                           aria-label="Non-Conforming Events"
-                          title={
-                            <FormattedMessage id="sidenav.label.nonConform" />
-                          }
+                          title={intl.formatMessage({
+                            id: "sidenav.label.nonConform",
+                          })}
                         >
                           <SideNavMenuItem
                             href={
@@ -286,9 +289,9 @@ function OEHeader(props) {
                         </SideNavMenu>
                         <SideNavMenu
                           aria-label="Immunohistochemistry"
-                          title={
-                            <FormattedMessage id="sidenav.label.immunochem" />
-                          }
+                          title={intl.formatMessage({
+                            id: "sidenav.label.immunochem",
+                          })}
                         >
                           <SideNavMenuItem
                             href={"/ImmunohistochemistryDashboard"}
@@ -298,9 +301,9 @@ function OEHeader(props) {
                         </SideNavMenu>
                         <SideNavMenu
                           aria-label="Cytology"
-                          title={
-                            <FormattedMessage id="sidenav.label.cytology" />
-                          }
+                          title={intl.formatMessage({
+                            id: "sidenav.label.cytology",
+                          })}
                         >
                           <SideNavMenuItem href={"/CytologyDashboard"}>
                             <FormattedMessage id="sidenav.label.pathology.dashboard" />
@@ -325,9 +328,9 @@ function OEHeader(props) {
                         </SideNavMenu>
                         <SideNavMenu
                           aria-label="Validation"
-                          title={
-                            <FormattedMessage id="sidenav.label.validation" />
-                          }
+                          title={intl.formatMessage({
+                            id: "sidenav.label.validation",
+                          })}
                         >
                           <SideNavMenuItem href="/validation?type=routine">
                             <FormattedMessage id="sidenav.label.validation.routine" />

@@ -8,7 +8,7 @@ import {
   TableRow,
 } from "@carbon/react";
 import CustomCheckBox from "../common/CustomCheckBox";
-import { FormattedMessage } from "react-intl";
+import { useIntl, FormattedMessage } from "react-intl";
 const PatientEmailAndSMS = (testId, index, handlePatientEmailAndSMS) => {
   function handlePatientSMS(checked) {
     handlePatientEmailAndSMS("PatientSMS", index, checked, testId);
@@ -66,10 +66,11 @@ const OrderResultReporting = (props) => {
     providerSMSNotificationTestIds: [],
     providerEmailNotificationTestIds: [],
   });
+  const intl = useIntl();
   const headers = [
     "",
-    <FormattedMessage id="patient.label" />,
-    <FormattedMessage id="requester.label" />,
+    intl.formatMessage({ id: "patient.label" }),
+    intl.formatMessage({ id: "requester.label" }),
   ];
   let rows = [];
   props.selectedTests.map((test, index) => {

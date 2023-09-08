@@ -1,6 +1,6 @@
 import React from "react";
 import config from "../../config.json";
-import { FormattedMessage, injectIntl } from "react-intl";
+import { FormattedMessage, useIntl, injectIntl } from "react-intl";
 import "../Style.css";
 import ReflexTestManagement from "./reflexTests/ReflexTestManagement";
 import ProgramManagement from "./program/ProgramManagement";
@@ -14,12 +14,13 @@ import {
 } from "@carbon/react";
 
 function Admin() {
+  const intl = useIntl();
   return (
     <>
       <SideNav aria-label="Side navigation" expanded={true}>
         <SideNavItems className="adminSideNav">
           <SideNavMenu
-            title={<FormattedMessage id="sidenav.label.admin.testmgt" />}
+            title={intl.formatMessage({ id: "sidenav.label.admin.testmgt" })}
           >
             <SideNavMenuItem href="#reflex">
               <FormattedMessage id="sidenav.label.admin.testmgt.reflex" />
@@ -31,16 +32,16 @@ function Admin() {
             <SideNavMenuItem href="#2">Link</SideNavMenuItem>
           </SideNavMenu>
           <SideNavMenu
-            title={<FormattedMessage id="sidenav.label.admin.usermgt" />}
+            title={intl.formatMessage({ id: "sidenav.label.admin.usermgt" })}
           >
             <SideNavMenuItem href="#3">Link</SideNavMenuItem>
             <SideNavMenuItem href="#4">Link</SideNavMenuItem>
             <SideNavMenuItem href="#5">Link</SideNavMenuItem>
           </SideNavMenu>
           <SideNavMenu
-            title={
-              <FormattedMessage id="sidenav.label.admin.organizationmgt" />
-            }
+            title={intl.formatMessage({
+              id: "sidenav.label.admin.organizationmgt",
+            })}
           >
             <SideNavMenuItem href="#6">Link</SideNavMenuItem>
             <SideNavMenuItem href="#7">Link</SideNavMenuItem>
