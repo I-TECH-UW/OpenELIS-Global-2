@@ -32,28 +32,13 @@ import {
 
 function OEHeader(props) {
   const { releaseNumber } = useContext(ConfigurationContext);
+  const {BANNER_TEXT} = useContext(ConfigurationContext);
   const { userSessionDetails, logout } = useContext(UserSessionDetailsContext);
   const [switchCollapsed, setSwitchCollapsed] = useState(true);
-  const [header, setHeader] = useState({});
   const userSwitchRef = createRef();
   const headerPanelRef = createRef();
   const componentMounted = createRef(false);
   const intl = useIntl();
-
-  useEffect(() => {
-    componentMounted.current = true;
-    getFromOpenElisServer("/header", loadHeader);
-
-    return () => {
-      componentMounted.current = false;
-    };
-  }, []);
-
-  const loadHeader = (value) => {
-    if (componentMounted.current) {
-      setHeader(value);
-    }
-  };
 
   const panelSwitchLabel = () => {
     return userSessionDetails.authenticated ? "User" : "Lang";
@@ -103,11 +88,11 @@ function OEHeader(props) {
                 <HeaderName href="/" prefix="">
                   <span id="header-logo">{logo()}</span>
                   <div className="banner">
-                    <h5>{header.title}</h5>
+                    <h5>{BANNER_TEXT}</h5>
                     <p>
                       {" "}
                       <FormattedMessage id="header.label.version" /> &nbsp;{" "}
-                      {header.version}
+                      {releaseNumber}
                     </p>
                   </div>
                 </HeaderName>
@@ -187,7 +172,7 @@ function OEHeader(props) {
                       </Select>
                     </li>
                     <li className="userDetails">
-                      <label className="cds--label">Ver: {releaseNumber}</label>
+                      <label className="cds--label"> <FormattedMessage id="header.label.version" />: {releaseNumber}</label>
                     </li>
                   </ul>
                 </HeaderPanel>

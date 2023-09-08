@@ -141,16 +141,6 @@ public class LoginPageController extends BaseController {
         return session;
     }
 
-    @GetMapping(value = "/header", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public OEHeader getHederDetails() {
-        OEHeader header = new OEHeader();
-        header.setTitle(localizationService
-                .getLocalizedValueById(ConfigurationProperties.getInstance().getPropertyValue(Property.BANNER_TEXT)));
-        header.setVersion(ConfigurationProperties.getInstance().getPropertyValue(Property.releaseNumber));
-        return header;
-    }
-
     private void setLabunitRolesForExistingUser(UserSession session) {
         UserLabUnitRoles roles = userService.getUserLabUnitRoles(session.getUserId());
         if (roles != null) {
