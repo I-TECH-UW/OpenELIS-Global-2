@@ -170,7 +170,7 @@ public class TypeOfSampleServiceImpl extends BaseObjectServiceImpl<TypeOfSample,
             if (testIdToTypeOfSampleMap.containsKey(testId)) {
                 testIdToTypeOfSampleMap.get(testId).add(typeOfSample);
             } else {
-                testIdToTypeOfSampleMap.put(testId, Arrays.asList(typeOfSample));
+                testIdToTypeOfSampleMap.put(testId, new ArrayList<>(Arrays.asList(typeOfSample)));
             }
         }
     }
