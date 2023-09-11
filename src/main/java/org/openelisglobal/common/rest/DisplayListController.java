@@ -11,7 +11,6 @@ import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.DisplayListService.ListType;
@@ -22,6 +21,7 @@ import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.IdValuePair;
+import org.openelisglobal.localization.service.LocalizationService;
 import org.openelisglobal.person.service.PersonService;
 import org.openelisglobal.person.valueholder.Person;
 import org.openelisglobal.provider.service.ProviderService;
@@ -63,6 +63,9 @@ public class DisplayListController extends BaseRestController{
 
 	@Autowired
     TypeOfSampleService typeOfSampleService;
+
+	@Autowired
+    LocalizationService localizationService;
 
 	private static boolean HAS_NFS_PANEL = false;
 
@@ -268,6 +271,8 @@ public class DisplayListController extends BaseRestController{
 			    Property.restrictFreeTextProviderEntry));
 		configs.put("currentDateAsText", DateUtil.getCurrentDateAsText());
 		configs.put("currentTimeAsText",DateUtil.getCurrentTimeAsText());
+		configs.put(Property.BANNER_TEXT.toString(), localizationService
+		.getLocalizedValueById(ConfigurationProperties.getInstance().getPropertyValue(Property.BANNER_TEXT)));
         return configs;
 	}
 

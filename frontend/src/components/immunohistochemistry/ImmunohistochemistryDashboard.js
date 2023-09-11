@@ -132,7 +132,7 @@ function ImmunohistochemistryDashboard() {
               assignCurrentUserAsTechnician(e, immunohistochemistrySampleId);
             }}
           >
-            Start
+             <FormattedMessage id="label.button.start"/>
           </Button>
         </TableCell>
       );
@@ -151,7 +151,7 @@ function ImmunohistochemistryDashboard() {
               assignCurrentUserAsPathologist(e, immunohistochemistrySampleId);
             }}
           >
-            Start
+             <FormattedMessage id="label.button.start"/>
           </Button>
         </TableCell>
       );

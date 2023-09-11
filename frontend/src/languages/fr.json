@@ -271,5 +271,9 @@
     "label.button.select.technician": "Sélectionner le technicien",
     "label.button.select.pathologist": "Sélectionner le pathologiste",
     "label.button.select.test": "Sélectionner le test",
-    "assigned.cytopathologist.label": "Cytopathologiste attribué"
+    "assigned.cytopathologist.label": "Cytopathologiste attribué" ,
+    "label.search.patient": "Rechercher un patient",
+    "immunohistochemistry.label.dashboard": "Tableau de bord en immunohistochimie",
+    "cytology.label.dashboard": "Tableau de bord en cytologie",
+    "label.button.start" : "Commencer" 
 }

@@ -28,24 +28,18 @@ function Admin() {
             <SideNavMenuItem href="#calculatedValue">
               <FormattedMessage id="sidenav.label.admin.testmgt.calculated" />
             </SideNavMenuItem>
-            <SideNavMenuItem href="#1"> Link</SideNavMenuItem>
-            <SideNavMenuItem href="#2">Link</SideNavMenuItem>
           </SideNavMenu>
           <SideNavMenu
             title={intl.formatMessage({ id: "sidenav.label.admin.usermgt" })}
           >
-            <SideNavMenuItem href="#3">Link</SideNavMenuItem>
-            <SideNavMenuItem href="#4">Link</SideNavMenuItem>
-            <SideNavMenuItem href="#5">Link</SideNavMenuItem>
+            <SideNavMenuItem href={config.serverBaseUrl + "/UnifiedSystemUserMenu"}> <FormattedMessage id="sidenav.label.admin.usermgt"/></SideNavMenuItem>
           </SideNavMenu>
           <SideNavMenu
             title={intl.formatMessage({
               id: "sidenav.label.admin.organizationmgt",
             })}
           >
-            <SideNavMenuItem href="#6">Link</SideNavMenuItem>
-            <SideNavMenuItem href="#7">Link</SideNavMenuItem>
-            <SideNavMenuItem href="#8">Link</SideNavMenuItem>
+             <SideNavMenuItem href={config.serverBaseUrl + "/OrganizationMenu"}> <FormattedMessage id="sidenav.label.admin.organizationmgt"/></SideNavMenuItem>
           </SideNavMenu>
           <SideNavMenuItem href="#program">
             <FormattedMessage id="sidenav.label.admin.program" />

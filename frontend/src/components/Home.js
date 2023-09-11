@@ -1,14 +1,15 @@
 import React from "react";
-import { injectIntl } from "react-intl";
+import { injectIntl ,useIntl } from "react-intl";
 import { Breadcrumb, BreadcrumbItem, Grid } from "@carbon/react";
 import HomeDashBoard from "./home/Dashboard.tsx";
 
 function Home() {
+  const intl = useIntl();
   return (
     <>
       <Grid>
         <Breadcrumb>
-          <BreadcrumbItem href="/">Home</BreadcrumbItem>
+          <BreadcrumbItem href="/">{intl.formatMessage({ id: "home.label" })}</BreadcrumbItem>
         </Breadcrumb>
       </Grid>
       <div>

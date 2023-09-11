@@ -71,7 +71,7 @@ public class SecurityConfig {
     // pages that have special security constraints
     public static final String[] OPEN_PAGES = { "/pluginServlet/**", "/ChangePasswordLogin",
             "/UpdateLoginChangePassword", "/health/**", "/rest/open-configuration-properties" };
-    public static final String[] LOGIN_PAGES = { "/LoginPage", "/ValidateLogin" ,"/session" ,"/header"};
+    public static final String[] LOGIN_PAGES = { "/LoginPage", "/ValidateLogin" ,"/session"};
 
     public static final String[] AUTH_OPEN_PAGES = { "/Home", "/Dashboard", "/Logout", "/MasterListsPage",
             "/analyzer/runAction/**" };
