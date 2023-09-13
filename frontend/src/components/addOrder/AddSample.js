@@ -111,13 +111,17 @@ const AddSample = (props) => {
 
   return (
     <>
-      <h3>SAMPLE</h3>
+      <h3>
+        <FormattedMessage id="label.button.sample" />
+      </h3>
       <Stack gap={10}>
         <div className="orderLegendBody">
           {samples.map((sample, i) => {
             return (
               <div className="sampleType" key={i}>
-                <h4>Sample {i + 1}</h4>
+                <h4>
+                  <FormattedMessage id="label.button.sample" /> {i + 1}
+                </h4>
                 <Link href="#" onClick={(e) => handleRemoveSample(e, sample)}>
                   {<FormattedMessage id="sample.remove.action" />}
                 </Link>
