@@ -438,7 +438,11 @@ const AddOrder = (props) => {
               className="inputTime"
               labelText={<FormattedMessage id="order.reception.time" />}
               onChange={handleReceivedTime}
-              value={orderFormValues.sampleOrderItems.receivedTime?orderFormValues.sampleOrderItems.receivedTime:configurationProperties.receivedTime}
+              value={
+                orderFormValues.sampleOrderItems.receivedTime
+                  ? orderFormValues.sampleOrderItems.receivedTime
+                  : configurationProperties.receivedTime
+              }
             />
 
             <CustomDatePicker

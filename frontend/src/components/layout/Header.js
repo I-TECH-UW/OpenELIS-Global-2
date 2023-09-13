@@ -305,10 +305,10 @@ function OEHeader(props) {
                           <SideNavMenuItem href="/result?type=order&doRange=false">
                             <FormattedMessage id="sidenav.label.results.order" />
                           </SideNavMenuItem>
-                          <SideNavMenuItem href="/result?type=order">
+                          <SideNavMenuItem href="/result?type=range&doRange=true">
                             <FormattedMessage id="sidenav.label.results.byrange" />
                           </SideNavMenuItem>
-                          <SideNavMenuItem href="/result?type=date">
+                          <SideNavMenuItem href="/result?type=date&doRange=false">
                             <FormattedMessage id="sidenav.label.results.testdate" />
                           </SideNavMenuItem>
                         </SideNavMenu>
