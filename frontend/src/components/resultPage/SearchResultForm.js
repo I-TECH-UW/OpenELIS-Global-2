@@ -79,8 +79,10 @@ export function SearchResultForm(props) {
 
   const getSelectedPatient = (patient) => {
     setPatient(patient);
-    querySearch(SearchResultFormValues);
   };
+  useEffect(() => {
+    querySearch(SearchResultFormValues);
+  }, [patient]);
 
   const querySearch = (values) => {
     setLoading(true);
@@ -258,11 +260,7 @@ export function SearchResultForm(props) {
                   </div>
                 )}
               </div>
-              {searchBy.type === "patient" && (
-                <SearchPatientForm
-                  getSelectedPatient={getSelectedPatient}
-                ></SearchPatientForm>
-              )}
+
               {searchBy.type === "date" && (
                 <div>
                   <div className="inlineDiv">
@@ -375,6 +373,11 @@ export function SearchResultForm(props) {
           </Form>
         )}
       </Formik>
+      {searchBy.type === "patient" && (
+        <SearchPatientForm
+          getSelectedPatient={getSelectedPatient}
+        ></SearchPatientForm>
+      )}
     </>
   );
 }

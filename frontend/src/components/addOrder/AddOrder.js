@@ -16,6 +16,7 @@ import { NotificationKinds } from "../common/CustomNotification";
 import AutoComplete from "../common/AutoComplete";
 import OrderResultReporting from "./OrderResultReporting";
 import { FormattedMessage } from "react-intl";
+import { ConfigurationContext } from "../layout/Layout";
 const AddOrder = (props) => {
   const { orderFormValues, setOrderFormValues, samples } = props;
   const componentMounted = useRef(true);
@@ -28,10 +29,10 @@ const AddOrder = (props) => {
   const { setNotificationVisible, setNotificationBody } =
     useContext(NotificationContext);
   const [siteNames, setSiteNames] = useState([]);
-  const [configurationProperties, setConfigurationProperties] = useState([
-    { id: "", value: "" },
-  ]);
+  const [innitialized, setInnitialized] = useState(false);
   const [phoneFormat, setPhoneFormat] = useState("");
+  const configurationProperties = useContext(ConfigurationContext);
+
 
   const handleDatePickerChange = (datePicker, date) => {
     let obj = null;
@@ -293,49 +294,28 @@ const AddOrder = (props) => {
     });
   }
 
-  function findConfigurationProperty(property) {
-    if (configurationProperties.length > 0) {
-      const filterProperty = configurationProperties.find(
-        (config) => config.id === property,
-      );
-      if (filterProperty !== undefined) {
-        return filterProperty.value;
-      }
-    }
-  }
-
-  const fetchConfigurationProperties = (res) => {
-    if (componentMounted.current) {
-      setConfigurationProperties(res);
-    }
-  };
 
   useEffect(() => {
-    const currentDate = findConfigurationProperty("currentDateAsText");
-    const currentTime = findConfigurationProperty("currentTimeAsText");
-    const siteNameConfig = findConfigurationProperty(
-      "restrictFreeTextRefSiteEntry",
-    );
-    const requesterConfig = findConfigurationProperty(
-      "restrictFreeTextProviderEntry",
-    );
+    if (!innitialized) {
+      setPhoneFormat(configurationProperties.phoneFormat);
+      setOrderFormValues({
+        ...orderFormValues,
+        sampleOrderItems: {
+          ...orderFormValues.sampleOrderItems,
+          requestDate: configurationProperties.currentDateAsText,
+          receivedDateForDisplay: configurationProperties.currentDateAsText,
+          nextVisitDate: configurationProperties.currentDateAsText,
+          receivedTime: configurationProperties.currentTimeAsText,
+        },
+      });
+      setAllowSiteNameOptions(configurationProperties.restrictFreeTextRefSiteEntry);
+      setAllowRequesterOptions(configurationProperties.restrictFreeTextProviderEntry);
+    }
+    if (orderFormValues.sampleOrderItems.requestDate != "") {
+      setInnitialized(true);
+    }
 
-    setPhoneFormat(findConfigurationProperty("phoneFormat"));
-
-    setOrderFormValues({
-      ...orderFormValues,
-      currentDate: currentDate,
-      sampleOrderItems: {
-        ...orderFormValues.sampleOrderItems,
-        requestDate: currentDate,
-        receivedDateForDisplay: currentDate,
-        nextVisitDate: currentDate,
-        receivedTime: currentTime,
-      },
-    });
-    setAllowSiteNameOptions(siteNameConfig);
-    setAllowRequesterOptions(requesterConfig);
-  }, [configurationProperties]);
+  }, [orderFormValues]);
 
   function handlePriority(e) {
     setOrderFormValues({
@@ -382,10 +362,6 @@ const AddOrder = (props) => {
 
   useEffect(() => {
     getFromOpenElisServer("/rest/SamplePatientEntry", getSampleEntryPreform);
-    getFromOpenElisServer(
-      "/rest/configuration-properties",
-      fetchConfigurationProperties,
-    );
     window.scrollTo(0, 0);
     return () => {
       componentMounted.current = false;
@@ -451,7 +427,7 @@ const AddOrder = (props) => {
               id={"order_receivedDate"}
               labelText={<FormattedMessage id="sample.receivedDate" />}
               className="inputDate"
-              autofillDate={true}
+               autofillDate={true}
               value={orderFormValues.sampleOrderItems.receivedDateForDisplay}
               onChange={(date) => handleDatePickerChange("receivedDate", date)}
             />
@@ -463,9 +439,9 @@ const AddOrder = (props) => {
               labelText={<FormattedMessage id="order.reception.time" />}
               onChange={handleReceivedTime}
               value={
-                orderFormValues.sampleOrderItems.receivedTime == null
-                  ? ""
-                  : orderFormValues.sampleOrderItems.receivedTime
+                orderFormValues.sampleOrderItems.receivedTime
+                  ? orderFormValues.sampleOrderItems.receivedTime
+                  : configurationProperties.receivedTime
               }
             />
 
@@ -474,7 +450,7 @@ const AddOrder = (props) => {
               className="inputDate"
               labelText={<FormattedMessage id="sample.entry.nextVisit.date" />}
               value={orderFormValues.sampleOrderItems.nextVisitDate}
-              autofillDate={false}
+              autofillDate={true}
               onChange={(date) => handleDatePickerChange("nextVisitDate", date)}
             />
           </div>
@@ -666,7 +642,7 @@ const AddOrder = (props) => {
             if (sample.tests.length > 0) {
               return (
                 <div key={index}>
-                  <h4>Sample {index + 1}</h4>
+                  <h4> <FormattedMessage id="label.button.sample" /> {index + 1}</h4>
                   <OrderResultReporting
                     selectedTests={sample.tests}
                     reportingNotifications={reportingNotifications}
