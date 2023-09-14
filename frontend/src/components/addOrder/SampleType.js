@@ -8,6 +8,7 @@ import {
   SelectItem,
   Tag,
   Tile,
+  Loading
 } from "@carbon/react";
 import CustomCheckBox from "../common/CustomCheckBox";
 import CustomSelect from "../common/CustomSelect";
@@ -57,6 +58,7 @@ const SampleType = (props) => {
     rejectionReason: "",
     collectionTime: "",
   });
+  const [loading, setLoading] = useState(true);
 
   const defaultSelect = { id: "", value: "Choose Rejection Reason" };
 
@@ -243,6 +245,7 @@ const SampleType = (props) => {
   const fetchSamplesTypes = (res) => {
     if (componentMounted.current) {
       setSampleTypes(res);
+      setLoading(false)
     }
   };
 
@@ -419,6 +422,7 @@ const SampleType = (props) => {
 
   return (
     <>
+      {loading && <Loading />}
       <div className="sampleBody">
         <Select
           className="selectSampleType"

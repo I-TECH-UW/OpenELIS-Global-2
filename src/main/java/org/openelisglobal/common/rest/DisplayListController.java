@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.HashMap;
 import java.util.List;
 
@@ -11,6 +12,7 @@ import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
+import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.DisplayListService.ListType;
@@ -22,6 +24,8 @@ import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.localization.service.LocalizationService;
+import org.openelisglobal.organization.service.OrganizationService;
+import org.openelisglobal.organization.valueholder.Organization;
 import org.openelisglobal.person.service.PersonService;
 import org.openelisglobal.person.valueholder.Person;
 import org.openelisglobal.provider.service.ProviderService;
@@ -65,7 +69,10 @@ public class DisplayListController extends BaseRestController{
     TypeOfSampleService typeOfSampleService;
 
 	@Autowired
-    LocalizationService localizationService;
+    private LocalizationService localizationService;
+
+	@Autowired
+	private OrganizationService organizationService;
 
 	private static boolean HAS_NFS_PANEL = false;
 
@@ -371,6 +378,21 @@ public class DisplayListController extends BaseRestController{
 		public int compare(IdValuePair p1, IdValuePair p2) {
 			return p1.getValue().toUpperCase().compareTo(p2.getValue().toUpperCase());
 		}
+	}
+
+
+	@GetMapping(value = "departments-for-site", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public List<IdValuePair> getDepartmentsForReferingSite(@RequestParam String refferingSiteId) {
+		
+		List<IdValuePair> list = new ArrayList<>();
+		List<Organization> departments = organizationService.getOrganizationsByParentId(refferingSiteId).stream()
+		        .filter(org -> org.getIsActive().equals(IActionConstants.YES)).collect(Collectors.toList());
+		departments.forEach(d -> {
+			list.add(new IdValuePair(d.getId(), d.getOrganizationName()));
+		});
+		
+		return list;
 	}
 	
 }

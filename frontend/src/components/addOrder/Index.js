@@ -64,6 +64,7 @@ const Index = () => {
   const handleSubmitOrderForm = (e) => {
     e.preventDefault();
     setPage(page + 1);
+    console.log(JSON.stringify(orderFormValues))
     postToOpenElisServer(
       "/rest/SamplePatientEntry",
       JSON.stringify(orderFormValues),

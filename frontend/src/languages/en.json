@@ -277,6 +277,7 @@
     "label.search.patient" : "Search Patient" ,
     "immunohistochemistry.label.dashboard" : "Immunohistochemistry DashBoard" ,
     "cytology.label.dashboard" : "Cytology DashBoard"  ,
-    "label.button.start" : "Start" 
+    "label.button.start" : "Start" ,
+    "label.button.sample" : "Sample" 
 
 }
