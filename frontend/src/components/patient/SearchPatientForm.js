@@ -20,6 +20,7 @@ import {
   TableBody,
   TableCell,
   Pagination,
+  Loading
 } from "@carbon/react";
 import { patientSearchHeaderData } from "../data/PatientResultsTableHeaders";
 import { Formik, Field } from "formik";
@@ -35,8 +36,10 @@ function SearchPatientForm(props) {
   const [patientSearchResults, setPatientSearchResults] = useState([]);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = (values) => {
+    setLoading(true);
     values.dateOfBirth = dob;
     const searchEndPoint =
       "/rest/patient-search-results?" +
@@ -71,6 +74,7 @@ function SearchPatientForm(props) {
       });
       setNotificationVisible(true);
     }
+    setLoading(false)
   };
 
   const fetchPatientDetails = (patientDetails) => {
@@ -102,6 +106,7 @@ function SearchPatientForm(props) {
 
   return (
     <>
+      {loading && <Loading/>}
       <Formik
         initialValues={SearchPatientFormValues}
         // validationSchema={}
