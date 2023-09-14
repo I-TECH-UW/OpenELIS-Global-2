@@ -32,6 +32,7 @@ const AddOrder = (props) => {
   const [innitialized, setInnitialized] = useState(false);
   const [phoneFormat, setPhoneFormat] = useState("");
   const configurationProperties = useContext(ConfigurationContext);
+  const [departments, setDepartments] = useState([]);
 
 
   const handleDatePickerChange = (datePicker, date) => {
@@ -213,7 +214,13 @@ const AddOrder = (props) => {
   }
 
   function handleRequesterDept(e) {
-    //TODO???
+    setOrderFormValues({
+      ...orderFormValues,
+      sampleOrderItems: {
+        ...orderFormValues.sampleOrderItems,
+        referringSiteDepartmentId: e.target.value,
+      },
+    });
   }
 
   function handleSiteName(e) {
@@ -234,6 +241,13 @@ const AddOrder = (props) => {
         referringSiteId: siteId,
       },
     });
+    getFromOpenElisServer(
+      "/rest/departments-for-site?refferingSiteId=" + siteId,
+      loadDepartments,
+    );
+  }
+  const loadDepartments =(data) => {
+    setDepartments(data);
   }
 
   function handleLabNo(e) {
@@ -492,6 +506,13 @@ const AddOrder = (props) => {
               required
             >
               <SelectItem value="" text="" />
+              {departments.map((department, index) => (
+                <SelectItem
+                  key={index}
+                  text={department.value}
+                  value={department.id}
+                />
+              ))}
             </Select>
           </div>
           {allowRequesterOptions === "false" ? (
