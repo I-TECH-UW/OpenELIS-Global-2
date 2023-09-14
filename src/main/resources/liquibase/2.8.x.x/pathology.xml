@@ -202,6 +202,169 @@
 		</insert>
   </changeSet>
 	
+	<changeSet author="csteele" id="6.1">
+	<validCheckSum>8:dcab853f5da450cfcf7bbf2d73b32e61</validCheckSum>
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">select count(*) from clinlims.dictionary where dict_entry = 'Haematoxylin and Eosin';
+    	</sqlCheck>
+    </preConditions>
+    <comment>adds in dictionary</comment>
+		<insert tableName="dictionary" schemaName="clinlims">
+			<column name="id" valueSequenceNext="dictionary_seq" />
+			<column name="is_active" value="Y" />
+			<column name="lastupdated" valueComputed="${now}"/>
+			<column name="dict_entry" value="Stain Haematoxylin and Eosin" />
+		    <column name="dictionary_category_id" valueComputed="(select id from dictionary_category where name = 'pathologist_requests' limit 1)" />
+		</insert>
+		<insert tableName="dictionary" schemaName="clinlims">
+			<column name="id" valueSequenceNext="dictionary_seq" />
+			<column name="is_active" value="Y" />
+			<column name="lastupdated" valueComputed="${now}"/>
+			<column name="dict_entry" value="Stain A/Blue" />
+		    <column name="dictionary_category_id" valueComputed="(select id from dictionary_category where name = 'pathologist_requests' limit 1)" />
+		</insert>
+		<insert tableName="dictionary" schemaName="clinlims">
+			<column name="id" valueSequenceNext="dictionary_seq" />
+			<column name="is_active" value="Y" />
+			<column name="lastupdated" valueComputed="${now}"/>
+			<column name="dict_entry" value="Stain Congo Red" />
+		    <column name="dictionary_category_id" valueComputed="(select id from dictionary_category where name = 'pathologist_requests' limit 1)" />
+		</insert>
+		<insert tableName="dictionary" schemaName="clinlims">
+			<column name="id" valueSequenceNext="dictionary_seq" />
+			<column name="is_active" value="Y" />
+			<column name="lastupdated" valueComputed="${now}"/>
+			<column name="dict_entry" value="Stain Giemsa" />
+		    <column name="dictionary_category_id" valueComputed="(select id from dictionary_category where name = 'pathologist_requests' limit 1)" />
+		</insert>
+		<insert tableName="dictionary" schemaName="clinlims">
+			<column name="id" valueSequenceNext="dictionary_seq" />
+			<column name="is_active" value="Y" />
+			<column name="lastupdated" valueComputed="${now}"/>
+			<column name="dict_entry" value="Stain Gordon &amp; Sweet" />
+		    <column name="dictionary_category_id" valueComputed="(select id from dictionary_category where name = 'pathologist_requests' limit 1)" />
+		</insert>
+		<insert tableName="dictionary" schemaName="clinlims">
+			<column name="id" valueSequenceNext="dictionary_seq" />
+			<column name="is_active" value="Y" />
+			<column name="lastupdated" valueComputed="${now}"/>
+			<column name="dict_entry" value="Stain Gram" />
+		    <column name="dictionary_category_id" valueComputed="(select id from dictionary_category where name = 'pathologist_requests' limit 1)" />
+		</insert>
+		<insert tableName="dictionary" schemaName="clinlims">
+			<column name="id" valueSequenceNext="dictionary_seq" />
+			<column name="is_active" value="Y" />
+			<column name="lastupdated" valueComputed="${now}"/>
+			<column name="dict_entry" value="Stain Grimelius" />
+		    <column name="dictionary_category_id" valueComputed="(select id from dictionary_category where name = 'pathologist_requests' limit 1)" />
+		</insert>
+		<insert tableName="dictionary" schemaName="clinlims">
+			<column name="id" valueSequenceNext="dictionary_seq" />
+			<column name="is_active" value="Y" />
+			<column name="lastupdated" valueComputed="${now}"/>
+			<column name="dict_entry" value="Stain Grocott" />
+		    <column name="dictionary_category_id" valueComputed="(select id from dictionary_category where name = 'pathologist_requests' limit 1)" />
+		</insert>
+		<insert tableName="dictionary" schemaName="clinlims">
+			<column name="id" valueSequenceNext="dictionary_seq" />
+			<column name="is_active" value="Y" />
+			<column name="lastupdated" valueComputed="${now}"/>
+			<column name="dict_entry" value="Stain Luxol fast blue" />
+		    <column name="dictionary_category_id" valueComputed="(select id from dictionary_category where name = 'pathologist_requests' limit 1)" />
+		</insert>
+		<insert tableName="dictionary" schemaName="clinlims">
+			<column name="id" valueSequenceNext="dictionary_seq" />
+			<column name="is_active" value="Y" />
+			<column name="lastupdated" valueComputed="${now}"/>
+			<column name="dict_entry" value="Stain Masson trichrome" />
+		    <column name="dictionary_category_id" valueComputed="(select id from dictionary_category where name = 'pathologist_requests' limit 1)" />
+		</insert>
+		<insert tableName="dictionary" schemaName="clinlims">
+			<column name="id" valueSequenceNext="dictionary_seq" />
+			<column name="is_active" value="Y" />
+			<column name="lastupdated" valueComputed="${now}"/>
+			<column name="dict_entry" value="Stain Masson Fontana" />
+		    <column name="dictionary_category_id" valueComputed="(select id from dictionary_category where name = 'pathologist_requests' limit 1)" />
+		</insert>
+		<insert tableName="dictionary" schemaName="clinlims">
+			<column name="id" valueSequenceNext="dictionary_seq" />
+			<column name="is_active" value="Y" />
+			<column name="lastupdated" valueComputed="${now}"/>
+			<column name="dict_entry" value="Stain MGP" />
+		    <column name="dictionary_category_id" valueComputed="(select id from dictionary_category where name = 'pathologist_requests' limit 1)" />
+		</insert>
+		<insert tableName="dictionary" schemaName="clinlims">
+			<column name="id" valueSequenceNext="dictionary_seq" />
+			<column name="is_active" value="Y" />
+			<column name="lastupdated" valueComputed="${now}"/>
+			<column name="dict_entry" value="Stain MSB" />
+		    <column name="dictionary_category_id" valueComputed="(select id from dictionary_category where name = 'pathologist_requests' limit 1)" />
+		</insert>
+		<insert tableName="dictionary" schemaName="clinlims">
+			<column name="id" valueSequenceNext="dictionary_seq" />
+			<column name="is_active" value="Y" />
+			<column name="lastupdated" valueComputed="${now}"/>
+			<column name="dict_entry" value="Stain PAS" />
+		    <column name="dictionary_category_id" valueComputed="(select id from dictionary_category where name = 'pathologist_requests' limit 1)" />
+		</insert>
+		<insert tableName="dictionary" schemaName="clinlims">
+			<column name="id" valueSequenceNext="dictionary_seq" />
+			<column name="is_active" value="Y" />
+			<column name="lastupdated" valueComputed="${now}"/>
+			<column name="dict_entry" value="Stain PAS D" />
+		    <column name="dictionary_category_id" valueComputed="(select id from dictionary_category where name = 'pathologist_requests' limit 1)" />
+		</insert>
+		<insert tableName="dictionary" schemaName="clinlims">
+			<column name="id" valueSequenceNext="dictionary_seq" />
+			<column name="is_active" value="Y" />
+			<column name="lastupdated" valueComputed="${now}"/>
+			<column name="dict_entry" value="Stain Perls" />
+		    <column name="dictionary_category_id" valueComputed="(select id from dictionary_category where name = 'pathologist_requests' limit 1)" />
+		</insert>
+		<insert tableName="dictionary" schemaName="clinlims">
+			<column name="id" valueSequenceNext="dictionary_seq" />
+			<column name="is_active" value="Y" />
+			<column name="lastupdated" valueComputed="${now}"/>
+			<column name="dict_entry" value="Stain PTAH" />
+		    <column name="dictionary_category_id" valueComputed="(select id from dictionary_category where name = 'pathologist_requests' limit 1)" />
+		</insert>
+		<insert tableName="dictionary" schemaName="clinlims">
+			<column name="id" valueSequenceNext="dictionary_seq" />
+			<column name="is_active" value="Y" />
+			<column name="lastupdated" valueComputed="${now}"/>
+			<column name="dict_entry" value="Stain Rhodamine" />
+		    <column name="dictionary_category_id" valueComputed="(select id from dictionary_category where name = 'pathologist_requests' limit 1)" />
+		</insert>
+		<insert tableName="dictionary" schemaName="clinlims">
+			<column name="id" valueSequenceNext="dictionary_seq" />
+			<column name="is_active" value="Y" />
+			<column name="lastupdated" valueComputed="${now}"/>
+			<column name="dict_entry" value="Stain Verhoeff" />
+		    <column name="dictionary_category_id" valueComputed="(select id from dictionary_category where name = 'pathologist_requests' limit 1)" />
+		</insert>
+		<insert tableName="dictionary" schemaName="clinlims">
+			<column name="id" valueSequenceNext="dictionary_seq" />
+			<column name="is_active" value="Y" />
+			<column name="lastupdated" valueComputed="${now}"/>
+			<column name="dict_entry" value="Stain Weigert Van G" />
+		    <column name="dictionary_category_id" valueComputed="(select id from dictionary_category where name = 'pathologist_requests' limit 1)" />
+		</insert>
+		<insert tableName="dictionary" schemaName="clinlims">
+			<column name="id" valueSequenceNext="dictionary_seq" />
+			<column name="is_active" value="Y" />
+			<column name="lastupdated" valueComputed="${now}"/>
+			<column name="dict_entry" value="Stain ZN Lepra" />
+		    <column name="dictionary_category_id" valueComputed="(select id from dictionary_category where name = 'pathologist_requests' limit 1)" />
+		</insert>
+		<insert tableName="dictionary" schemaName="clinlims">
+			<column name="id" valueSequenceNext="dictionary_seq" />
+			<column name="is_active" value="Y" />
+			<column name="lastupdated" valueComputed="${now}"/>
+			<column name="dict_entry" value="Stain ZN TB" />
+		    <column name="dictionary_category_id" valueComputed="(select id from dictionary_category where name = 'pathologist_requests' limit 1)" />
+		</insert>
+  </changeSet>
+	
 	<changeSet author="csteele" id="7">
 	<validCheckSum>8:0338784daadfe387c31f8908862f6527</validCheckSum>
 		<preConditions onFail="MARK_RAN">
